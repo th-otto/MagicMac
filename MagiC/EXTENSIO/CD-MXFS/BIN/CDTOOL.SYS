@@ -1,0 +1,19 @@
+; CD-Tool BEGIN
+; Note that everything up to `; CD-Tool END' will be erased by
+; CD-Tool's configuration tool!
+;
+; created by CD-Tool 2.49á, Fri May 09 08:41:28 1997
+;
+; devices
+;
+; SCSI 3: `SONY    CD-ROM CDU-8002' -> A
+;
+; BOS drivers
+;
+*BOS, c:\auto\hs-cdrom.bos, A:11
+;
+; DOS drivers
+;
+*DOS, c:\auto\hs-iso.dos -c16, Z:A
+;
+; CD-Tool END

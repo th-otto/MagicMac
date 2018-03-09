@@ -1,0 +1,25 @@
+VT52.PRG
+;.C [-P]				;Absolute Adressierung zwischen Modulen benutzen
+=
+PCMXSTRT.O
+VT_EMU.C (wstruct.h,wlib.h,vtstruct.h,vt_emu.h)
+VT_SEM.S
+VT_BIOS.S
+VT_XBIOS.S
+VT_BELL.S
+;VT_COOK.S
+VT_VDI.S
+VT_AES.S
+VT_ETERM.S
+VT_MOVE.S
+VT_MENU.C (vtstruct.h,vt_emu.h,vtsys.h,wlib.h,vt52.h,wstruct.h)
+               
+WLIB.C (wstruct.h,list.h)
+LIST_NEW.C (list.h)
+
+PCTOSLIB.LIB
+PCSTDLIB.LIB
+DRAGDROP.LIB
+MT_AES.LIB
+PCGEMLIB.LIB		;fÅr VDI-Funktionen
+

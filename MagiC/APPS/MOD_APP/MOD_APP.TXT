@@ -1,0 +1,118 @@
+Das Dienstprogramm MOD_APP
+==========================
+
+Formatierung:	Tabulatorbreite 5
+
+Andreas Kromke
+3.5.98
+letzte énderung: 31.3.99
+
+
+Wozu?
+-----
+
+Bei der Installation eines Programms, Åblicherweise durch ein 
+Installationsprogramm, sollte dieses nicht nur die zugehîrigen 
+Programmdateien auf die Festplatte kopieren, sondern das neue 
+Programm auch dem System "bekannt machen". Dieser Vorgang wird 
+unter GEM/TOS traditionell als "Anwendung anmelden" bezeichnet und 
+muûte bisher von Hand durchgefÅhrt werden.
+MOD_APP.TTP ist ein kleines Programm, das diese Arbeit abnimmt. Es 
+modifiziert die MagiC-Systemdateien, die die Applikations- 
+Informationen inklusive der Icon-Zuordnungen enthalten. Die 
+énderungen werden automatisch beim nÑchsten Start des AES aktiv.
+
+
+Vorgehensweise
+--------------
+
+Ein Installationsprogramm sollte zunÑchst die erforderlichen Dateien 
+auf die Festplatte kopieren. Dann muû es das Laufwerk bestimmen, auf 
+dem MagiC liegt (also i.a. das Bootlaufwerk). Schlieûlich wird 
+"<Boot-Lw>:\GEMSYS\GEMDESK\MOD_APP.TTP" ggf. mehrmals per 
+normalem Pexec() aufgerufen, um die énderungen an den Systemdateien 
+vorzunehmen; dabei sollten die RÅckgabewerte ausgewertet werden.
+
+MOD_APP modifiziert die Systemdateien derart, daû beim nÑchsten Start 
+des AES die neuen Einstellungen von MAGXDESK beachtet werden. 
+Theoretisch wÑre es auch mîglich, die Einstellungen sofort zu 
+aktivieren, dazu mÅûte lediglich APPLICAT aufgerufen werden. Da 
+jedoch APPLICAT nur unter MagiC lÑuft, wÑre der Vorteil von MOD_APP, 
+unter jedem TOS-System zu laufen, dahin.
+
+
+Anwendung anmelden
+------------------
+
+Aufruf:
+
+	mod_app -Xia prgname rscname|- iconnr|-1 path|- 1
+
+Dabei bedeuten:
+
+	X		der Laufwerkbuchstabe fÅr das MagiC-Laufwerk
+	prgname	z.B. jinnee.prg
+	rscname	z.B. MAGICICN.RSC oder - fÅr das Default-Icon
+	iconnr	Nummer des Icons (Objektnummer - 1) bzw. -1
+	path		z.B. C:\JINNEE\JINNEE.APP oder "-", wenn kein Pfad 
+			eingetragen werden soll. Ein Pfad wird immer dann 
+			benîtigt, wenn Dateitypen zugewiesen werden.
+	1		Hier sollte immer eine 1 stehen fÅr "GEM-Programm"
+
+Beispiel:
+
+	mod_app -Cia papillon.prg - -1 - 1
+
+TrÑgt das Programm "Papillon" ein, und zwar ohne Pfad und mit dem
+Default-Icon fÅr Programme.
+
+
+Dateityp fÅr Applikation anmelden und Icon zuweisen
+---------------------------------------------------
+
+Aufruf:
+
+	mod_app -Xid prgname ftyp rscname|- iconnr|-1
+
+Dabei bedeuten:
+
+	prgname	z.B. jinnee.prg
+	ftyp		z.B. *.JIC oder *.JINC oder ICONS.INF
+	rscname	s.o.
+	iconnr	s.o.
+
+Beispiel:
+
+	mod_app -Cid papillon *.x - -1
+
+TrÑgt den Dateityp "*.x" fÅr das Programm "Papillon" ein, und zwar mit
+dem Default-Icon fÅr Dateien.
+
+
+RÅckgabewerte
+-------------
+
+	0				OK
+	< 0				Systemfehler
+	1				Syntaxfehler beim Aufruf
+	2				Formatfehler in APPLICAT.INF
+	3				Kennung schon vergeben
+	4				Applikation nicht eingetragen (-Xid)
+	5				Pfad fÅr Applikation fehlt (-Xid)
+
+
+Bemerkungen
+-----------
+
+- Wenn Dateitypen angemeldet werden sollen, muû MOD_APP mehrmals 
+  aufgerufen werden. Bei jedem Aufruf kann man anhand des 
+  RÅckgabewerts feststellen, ob der Dateityp schon anderweitig 
+  zugewiesen wurde.
+- Einige Fehler kînnen von MOD_APP nicht erkannt werden. Beim 
+  nÑchsten Start des AES werden diese Fehler aber automatisch 
+  korrigiert (hoffentlich...).
+- Alle énderungen, die MOD_APP durchfÅhren kann, sind ausschlieûlich 
+  konstruktiv. Es kînnen keine Applikationen abgemeldet oder 
+  Dateitypen ab- oder umgemeldet werden. Wenn also ein Dateityp schon 
+  belegt ist, so sollte eine Fehlermeldung ausgegeben werden, damit 
+  der Anwender ggf. den Typ manuell Ñndern kann.

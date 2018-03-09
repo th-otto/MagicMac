@@ -1,0 +1,1 @@
+mod_app -is ABCD eintrag magicicn.rsc 12

@@ -1,0 +1,65 @@
+;Parameter fÅrs Kopieren
+;0: CR,LF am Zeilenende
+;1: Steuerzeichen lîschen
+;2: nicht wandeln
+#COPY 0
+
+;Parameter fÅrs EinfÅgen
+;0: CR,LF in CR umwandeln
+;1: LF in CR umwandeln
+;2: Steuerzeichen lîschen
+;3: nicht wandeln
+#PASTE 0
+
+;Spaltenanzahl
+#COLUMNS 80
+
+;Zeilenanzahl
+#ROWS 25
+
+;Bufferzeilen
+#BUFFER 50
+
+;Ausgabeverhalten
+;0: TOS-Programm weiterlaufen lassen, wenn keine Ausgabe mîglich ist
+;1: TOS-Programm bis zur Ausgabe anhalten
+#UPDATE 0
+
+;Eingabezeile sichtbar
+;0: Bei Eingaben wird der Fensterausschnitt nicht automatisch verschoben
+;1: Bei Eingaben wird die Eingabezeile sichtbar
+#INPUTLINE 1
+
+;Redraw-Intervall
+#TIMER 500
+
+;Ende von TOS-Programmen allgemein
+;0: Meldung ausgeben und Fenster offen lassen
+;1: Fenster schlie·en
+#CLOSE 0
+
+;Verhalten nach dem Ende des letzten TOS-Programms
+;0: VT52 bleibt die aktive laufende Applikation
+;1: VT52 wird in den Hintergrund geblendet
+;2: VT52 wird beendet
+#TERM 0
+
+;Nummer des Zeichensatzes
+#FACE 64
+
+;Schrifthîhe in Punkten
+#POINTS 10
+
+;Position und Grî·e des Standardfensters
+#WINDOW 0 0 10000 10000
+
+;Automatisch auszufÅhrende Programme
+;Pfad in AnfÅhrungszeichen
+;Kommandozeile in AnfÅhrungszeichen
+;Fensterposition und -grî·e von 0 - 10000
+;Spaltenanzahl
+;Zeilenanzahl
+;Bufferzeilen
+;Zeichensatznummer
+;Hîhe in Punkten
+#EXEC "G:\EASE\COMMAND.TOS" "" 900 2000 10000 10000 80 25 50 64 10

@@ -1,0 +1,46 @@
+Readme MagiC 5.12
+
+Noms de fichiers longs avec systŠme de fichier VFAT
+===================================================
+MagiC 5 supporte les noms de fichiers longs sur Atari et donc
+compatible avec Windows 95. Ceci pr‚sente plusieurs avantages :
+* Il n'est pas n‚cessaire de reformater le disque dur afin de pouvoir
+  utiliser les noms de fichiers longs.
+* Les disquettes de Windows 95 et supports amovibles (… condition
+  d'avoir le pilote ad‚quat, par ex. HDDRIVER5) peuvent ˆtre
+  directement lus et ‚crits sur Atari.
+
+Activer les noms de fichiers longs
+==================================
+C'est le programme VFATCONF.PRG qui est responsable de
+l'activation des noms de fichiers longs, programme que vous trouverez
+aprŠs installation de MagiC dans le dossier C:\GEMSYS\MAGIC\UTILITY.
+Lorsque vous lancez VFATCONF, une boŒte de dialogue
+apparaŒt o— vous pouvez d‚terminer sur quels lecteurs vous souhaitez
+travailler avec des noms de fichiers longs.
+
+VFATCONF fait la distinction entre une installation permanente
+ou temporaire. Alors que le r‚glage temporaire ne sera valable que
+jusqu'… la prochaine extinction de MagiC, le r‚glage permanent sera
+sauv‚ dans MAGX.INF et automatiquement pris en compte
+au prochain lancement du systŠme.
+
+
+Utiliser des noms de fichiers longs
+===================================
+Tous les programmes ne sont pas pr‚par‚s … l'usage de fichiers …
+noms longs. Mais ce n'est pas grave, car MagiC outre le nom de fichier
+long cr‚e ‚galement un nom court explicite avec lequel d'anciens
+programmes peuvent alors avoir accŠs aux fichiers sur un lecteur …
+noms de fichiers longs.
+Qu'un programme sache se tirer d'affaires avec des noms de fichiers
+longs vous sera indiqu‚ par le fait que soudainement le champ de
+saisie s'allongera et ne sera donc plus limit‚ aux 8+3 caractŠres.
+
+D‚sactiver les noms de fichiers longs
+=====================================
+Vous pouvez … tout moment d‚sactiver les noms de fichiers longs sans
+perte de donn‚es, donc par exemple avoir accŠs sans MagiC … un
+lecteur sur lequel vous avez avec MagiC utilis‚ des noms de fichiers
+longs.
+

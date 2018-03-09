@@ -1,0 +1,9 @@
+DIS2.TTP
+=
+TCSTART.O
+DIS2
+DIS
+DISASS
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib

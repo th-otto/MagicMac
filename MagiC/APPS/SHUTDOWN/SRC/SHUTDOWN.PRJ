@@ -1,0 +1,9 @@
+shutdown.prg
+.L[-S=$1000]   ; Stackgr”že 4k (der thread hat mehr)
+=              ; list of modules follows...
+pcmxstrt.o     ; startup code mit ARGV und Quoting
+shutdown
+pcstdlib.lib   ; standard lib
+pctoslib.lib
+mt_aes.lib
+pcgemlib.lib

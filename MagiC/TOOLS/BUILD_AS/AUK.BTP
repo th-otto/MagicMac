@@ -1,0 +1,1 @@
+mas -v %1 -d=COUNTRY=3

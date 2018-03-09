@@ -1,0 +1,9 @@
+DIS1.TTP
+=
+TCNSTART.O
+DIS1
+DEC
+SHELSORT
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib

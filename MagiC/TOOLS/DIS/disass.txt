@@ -1,0 +1,488 @@
+                                                  Hannover, den 23.8.89
+
+             BEDIENUNGSANLEITUNG ZUM GEMDOS - DISASSEMBLER
+             ---------------------------------------------
+
+
+Updates für Version vom Dezember '88:
+
+- vollständige  Unterstützung  von GEMDOS-  Objektdateien  (DRI-  Format). 
+  Diese  können  mit Hilfe sämtlicher  Symbol-  und  Relocationinformation 
+  vollständig disassembliert werden. Außerdem werden XDEF- (Export), XREF- 
+  (Import) und EQU- Listen in den Quelltext aufgenommen.
+- neue Behandlung der Adressierung xx(PC,Rx) "PC-relativ mit Index". Diese 
+  wird  jetzt als Label(PC,Rx) interpretiert,  wichtig für  Sprungtabellen 
+  von "switch"- bzw. "case of"- Statements.
+- Übernahme des vollständigen Dateinamens in den Quelltext (ohne ? und *).
+- Auswertung  der  Symboltabelle für ausführbare  Dateien.  Der  Quelltext 
+  enthält alle originalen Labelnamen.
+- Berücksichtigung der Eigenheit eines gewissen Assemblers,  Nullworte  an 
+  TEXT und DATA anzufügen.
+- Berücksichtigung  von relozierbaren Langworten (DC.L  lblxxx,  etwa  für 
+  Sprungtabellen) jetzt auch im TEXT- Segment
+- Korrekturen  im  Format  der .SYM  -  Datei.  Z.B.  werden  undefinierte 
+  (externe) Labels ohne Wertangabe ausgegeben.
+
+Updates für Version vom Januar '89:
+
+- Korrektur des Befehls asl <ea>
+- Berücksichtigung folgender Daten im TEXT- Segments:
+     DC.W 0
+     DS.W 1
+     DC.B x
+     DS.B 1
+- Schalter u für die Ausgabe von Assemblercode für "MAS-68K"
+- Keine ASCII- Ausgabe mehr bei relokatiblen Langworten (DC.L lblxxx)
+- ASCII hinter falschen Opcodes in TEXT (wie in DATA)
+- Fehlerausgabe nach STDERR (Handle 4, wenn vorhanden)
+- Keine Leerzeilen mehr hinter END
+- Sonderbehandlung von Turbo-C Kompilaten (Stacksegment/Header)
+- Detaillierte Beschreibung der Schalter beim Starten ohne Parameter
+- Kein Absturz der ersten Phase mehr bei zuvielen Labels
+
+Updates für die Version vom August '89:
+
+- Sonderbehandlung  für die Disassemblierung von  Speicherbereichen  (etwa 
+  von Teilen des Betriebssystems):
+  Mit direkter Langwortadressierung adressierte Speicherstellen,  die sich 
+  innerhalb  des  disassemblierten Bereichs befinden,  werden  als  Labels 
+  behandelt. Beispiel:
+     Speicherbereich FC0030 bis FE0000 disassemblieren.
+     Steht irgendwo "jsr $fc2345", so setzt der Disassembler an die Stelle 
+     $fc2345 ein Label und schreibt für den jsr- Befehl "jsr lblFC2345".
+     Lautet  der  Befehl jedoch "jsr $fa0000",  so wird er auch  genau  so 
+     ausgegeben.
+- Pufferung  der Quelltextausgabe,  solange nicht nach  STDOUT  ausgegeben 
+  wird.  Damit  wird  die  zweite Phase des  Disassemblers  gegenüber  der 
+  bisherigen Version drastisch beschleunigt.
+- Erkennen  von Betriebssystemaufrufen.  Alle GEMDOS-,  BIOS-  und  XBIOS- 
+  Aufrufe werden erkannt und im Klartext als Kommentar  ausgegeben.  Nicht 
+  vorhandene Funktionsnummern werden als Zahlen ausgegeben. Beispiel:
+     clr.w   -(sp)
+     trap    #1                ; gemdos Pterm0
+     move.w  #11,-(sp)
+     trap    #$d               ; bios Kbshift
+     move.w  #$c8,-(sp)
+     trap    #1                ; gemdos $c8
+  Dabei muß vor dem Trap ein Befehl der Art "move.w #x,-(sp)" oder  "clr.w 
+  -(sp)"  stehen;  andere  Konstrukte wie "moveq  #x,d0  move.w  d0,-(sp)" 
+  können natürlich nicht erkannt werden.
+
+
+0. Vorwort
+----------
+
+Dis.prg besteht aus insgesamt vier Dateien:
+ 1) Der Batchdatei    "dis.bat"
+ 2) Der ersten  Phase "dis1.ttp"
+ 3) Der zweiten Phase "dis2.ttp"
+ 4) Der Anleitung     "disass.doc"
+Jede  Datei  ist  für den Programmablauf  bzw.  für  das  Verständnis  des 
+Programms unbedingt notwendig.
+
+  Für  die  Anwendung  ist  es  sinnvoll,   eine  Benutzeroberfläche   wie 
+"command.prg" zu verwenden.  Fehlermeldungen sind beim Starten vom Desktop 
+nicht  zu  lesen,  da  sich nach Ablauf des Programms  sofort  wieder  das 
+Desktop auf den Bildschirm malt.
+  Sowohl dis1 als auch dis2 liefern bei Fehlern einen Rückgabewert > 0, so 
+daß  ein  Fehlerzustand  in Batch-  Dateien  abgefragt  werden  kann.  Ein 
+Beispiel  für solch eine Batch- Datei mit IF- Statement,  das aber  leider 
+nur bei wenigen "command"- Programmen funktioniert (MS-DOS müßt' man  halt 
+haben):
+
+  dis1 %1 %2 %3 %4 %5
+  IF NOT ERRORLEVEL 1 dis2 -i %1 %2 %3 %4 %5
+
+  Vorher sollte man natürlich sichergehen,  daß "command" die  Programmda-
+teien  dis1  und  dis2  auch findet (PATH  setzen  oder  gleich  pfad\dis1 
+schreiben).
+
+  Noch etwas zur Programmlänge:  dis2 ist etwa 14k,  dis1 11k  lang.  Dies 
+heißt nicht etwa, daß es sich um einfache Programme handelt. Im Gegentum:
+Der  Source für den Disassembler ist weit über 100kB in C,  die  Programme 
+sind  so  kurz  durch jeglichen Verzicht  auf  C-  Funktionen  (sprintf(), 
+fopen()  usw.)  und  ausschließlicher  Verwendung  von  GEMDOS-   Routinen 
+(Cconws(),  Fopen() usw.) sowie massiven Einsatz von "register"- Variablen 
+sowohl lokal als auch als Parameter.
+DISASS  wurde  ausschließlich  mit  Turbo-C  von  Heimsoeth/Borland   ohne 
+Assemblerteile erstellt.
+
+DISASS kann disassemblieren:
+- Ausführbare Dateien mit oder ohne Symboltabelle
+- Objektdateien (natürlich im DRI- Format)
+- allgemeine Dateien
+- Speicherbereiche (TOS oder andere residente Programme)
+
+
+GEMDOS ist eingetragenes Warenzeichen der Digital Research Inc.
+MS-DOS ist eingetragenes Warenzeichen der Microsoft Corp.
+
+
+1. Anwendungsgebiet
+-------------------
+
+  Ein Disassembler wandelt ein lauffähiges Programm (*.TOS,*.TTP,*.PRG) in 
+einen  Assembler- Source *.S um.  Dabei wird versucht,  diese Datei so  zu 
+erzeugen,  daß  sie wiederum als Eingabedatei für einen  Assembler  dienen 
+kann.  So kann man an Programmen Änderungen durchführen,  ohne daß man den 
+Source- Code zur Verfügung hat.
+  Leider  sieht das in der Praxis nicht so schön aus.  Meistens läßt  sich 
+eine Datei nicht direkt in einen assemblierbaren Source  zurückübersetzen, 
+sondern  muß noch von Hand korrigiert werden.  Trotzdem stellt der  Disas-
+sembler eine wertvolle Hilfe beim Analysieren von fertigen Programmen dar.
+  Die Schwierigkeiten beim Disassemblieren liegen einfach daran,  daß beim 
+Compilieren  (bzw.  Assemblieren) und Linken im lauffähigen Programm  alle 
+unnötigen  Labelnamen und andere Informationen verlorengehen und  meistens 
+nur unvollständig wiedergewonnen werden können.
+  Der vorliegende Disassembler unterscheidet sich von den meisten  anderen 
+dadurch,  daß  er  nicht nur bloße Adressen  ausgibt,  sondern  sich  auch 
+bemüht, alle Labels im Programm zu setzen und zu adressieren.
+  Außerdem  kann  DISASS nicht nur  Dateien,  sondern  auch  Speicherteile 
+disassemblieren;  damit  lassen sich zum Beispiel Routinen  des  Betriebs-
+systems analysieren.
+
+
+2. Probleme
+-----------
+
+In den seltensten Fällen gelingt es dem Disassembler,  ein Programm so  zu 
+disassemblieren,  daß  es,  wieder assembliert,  mit dem  Original  völlig 
+übereinstimmt  (bei fast allen mit DRI-C compilierten Programmen  ist  das 
+tatsächlich möglich).  Meistens gibt es jedoch Probleme. Im folgenden sind 
+einige Ursachen für auftretende Schwierigkeiten aufgeführt:
+
+  a) Das Programm ist im sogenannten GST- Format erstellt (mit  LINK.PRG). 
+     Dabei liegen initialisierte (DC.x) und uninitialisierte Daten  (DS.x) 
+     mit  dem  Programmcode  gemischt im TEXT-  Segment.  In  diesem  Fall 
+     versucht der Disassembler,  auch diese Daten als Anweisungen für  den 
+     68000 zu interpretieren (er verläßt sich auf die Segmentierung,  voll 
+     Vertrauen in die Qualität des Programmierers), was natürlich zu Chaos 
+     führt.   Der  Disassembler  erkennt  zum  Beispiel  fälschlicherweise 
+     Labels,  und  nach dem Datenteil ist er ins "Stolpern"  gekommen  und 
+     kann richtige Maschinenbefehle nicht mehr erkennen.
+     Abhilfe kann man versuchen zu schaffen,  indem man Programmteile, die 
+     als Daten zu erkennen sind, mit Option d behandelt.
+     Beispiel: Alle mit LC ohne Option -t, mit ASSEM ohne Option j und F77 
+               compilierten bzw. assemblierten Programme.
+
+  b) Das  Programm  ist  unsauber geschrieben  oder  in  sonderbarer  Form 
+     compiliert, so daß teilweise Daten im TEXT- Segment liegen.
+     Prinzipiell gilt hier dasselbe wie unter a).
+     Beispiel: Die meisten direkt in Assembler geschriebenen Programme.
+
+  c) Das Programm enthält Befehle wie "cmp #3,d0" oder lange Sprünge,  die 
+     auch  kurz sein dürften (BRA statt BRA.S) sowie andere  verbesserbare 
+     Befehle.
+     Manche  Assembler optimieren solche Befehle etwa zu "cmpi #3,d0"  was 
+     bei  einer erneuten Assemblierung zu einem etwas anderen Code  führen 
+     kann. Will man den Code nur analysieren, gibt es aber keine Probleme.
+
+  d) Das Programm enthält Differenzen zwischen relokatiblen Adressen,  zum 
+     Beispiel:  "move  #(anfang-ende),d0",  wobei "anfang" und "ende"  zum 
+     Beispiel Labels sind.
+     Falls   der  benutzte  Assembler  nicht  optimiert,   dürften   keine 
+     Schwierigkeiten auftreten, wenn jedoch c) auftritt, d.h. zwischen den 
+     Labels  "anfang"  und  "ende" ein Befehl  steht,  den  der  Assembler 
+     optimiert, stimmt das Programm natürlich nicht mehr.
+
+  e) Das Programm enthält Befehle wie "lea name+15,a0".
+     Der  Disassembler  nimmt  in  diesem Fall ein  Label  an  der  Stelle 
+     (label+15)   an   und  versucht  es  zu  setzen.   Dies   gibt   z.B. 
+     Schwierigkeiten, wenn (label+15) außerhalb des Programms liegt. Keine 
+     Probleme  gibt es hier in Objektdateien,  falls <label> ein  externes 
+     Symbol ist; DISASS gibt hier tatsächlich "label+15" aus.
+     Bei Labels,  die adressiert,  aber nicht gesetzt werden konnten, gibt 
+     der Disassembler eine Fehlertabelle am Ende des Quelltextes aus.
+
+  f) Das Programm enthält Adressierungen des Typs "label-anfang(ax)". Wenn 
+     der Assembler einmal den Wert "label-anfang" berechnet und eingesetzt 
+     hat,  erinnert  nichts mehr daran,  daß hier einmal etwas  von  einem 
+     Label stand; das disassemblierte Programm wird unleserlich. Tritt nun 
+     der  Fall c) ein,  stimmt das Displacement natürlich nicht  mehr  und 
+     damit das Programm nach erneutem Assemblieren auch nicht.
+     Beispiel: Alle mit MMCC compilierten Programme.
+
+  g) Beim Disassemblieren eines Speicherbereichs oder einer nicht ausführ-
+     baren Datei stehen keine Relocation- Tabellen zur Verfügung,  so  daß 
+     der  Disassembler hier weniger Informationen erhält als bei  normalen 
+     Programmen.  Bei  Programmen mit absoluten Adressen sieht  man  einem 
+     Langwort nicht mehr an,  ob es sich um einen normalen, absoluten Wert 
+     handelt  oder  um ein Label (bei einem  relokatiblen  Programm  steht 
+     die Adresse dieses Labels in der Relocation- Tabelle).  Das erschwert 
+     natürlich  die  Analyse.  Am leichtesten läßt sich  eine  Objektdatei 
+     disassemblieren.  Meistens  (wenn  sie z.B.  mit  as68  oder  mas-68k 
+     erstellt wurde) wird dies sogar vollständig gelingen.
+
+
+Außerdem    gibt    es    noch    viele    andere    programmiertechnische 
+Hinterhältigkeiten,  mit  denen ein Disassembler nicht klar  kommt.  Diese 
+alle aufzuzählen ist wohl unmöglich.
+
+
+2. Strategie des Disassemblers
+------------------------------
+
+Da ein Assembler üblicherweise mit 2 Durchläufen arbeitet,  liegt es nahe, 
+daß  dies auch für einen Disassembler sinnvoll ist.  Tatsächlich  geht  es 
+kaum anders,  falls man symbolisch,  d.h. mit Labels disassemblieren will. 
+Schließlich  muß  man bei jedem Befehl wissen,  ob  er  vielleicht  weiter 
+hinten im Programm als Label adressiert wird.
+Der   vorliegende   Disassembler  arbeitet  also  mit   zwei   Durchläufen 
+("Passes"),  die in zwei getrennten Programmen ablaufen.  Die Vorteile der 
+Aufteilung  in mehrere Einzelprogramme ist nicht nur für  die  Entwicklung 
+und Testphase praktisch,  sondern auch später für den Gebrauch, wie weiter 
+unten erläutert.
+Im  folgenden  wird  die  Vorgehensweise  der  zwei  Passes   beschrieben. 
+Gestartet werden sie mit "dis? filename.ext":
+
+  a) Die erste Phase "dis1.ttp":
+     Der GEMDOS- Programmkopf wird gelesen.  Die Segmentgrößen werden  für 
+Ä     die Phase 2 auf die Datei "filename.rlo" geschrieben.
+     Achtung:  Alle  Dateien mit Endung ".o" werden als  Objektdateien  im 
+     GEMDOS- Format interpretiert.
+     Anschließend  wird  die Relocation- Tabelle ebenfalls auf  die  Datei 
+     "filename.rlo" geschrieben und diese geschlossen.
+     Falls  die Option M(emory) aktiviert wurde oder die angegebene  Datei 
+     nicht ausführbar ist, wird keine rlo- Datei erstellt.
+     Falls es sich um eine Objektdatei handelt (Endung ".o"),  wird  keine 
+     Relocationtabelle   abgespeichert,    da   dis2   direkt   mit    den 
+     Relocationdaten der Objekdatei arbeitet.
+     Falls  eine  Symboltabelle  existiert,   wird  diese  auf  die  Datei 
+     "filename.sym" ausgegeben (wie bei NM68.PRG).  Diese Tabelle ist  nur 
+     "just for fun" und wird von dis2 nicht benutzt (dis2 arbeitet  direkt 
+     mit der in der Programm- bzw.  Objektdatei vorhandenen Tabelle, falls 
+     vorhanden).
+     Die Relocation- Tabelle (falls vorhanden) enthält alle  Programmstel-
+     len, die bei einer Verschiebung des Programms angepaßt werden müssen. 
+     Folglich  sind die Langworte,  auf die die  Tabelleneinträge  zeigen, 
+     relokatible Symbole,  also meistens Labels.  Daher werden alle  diese 
+     Langworte als Labels in eine Tabelle aufgenommen,  diese sortiert und 
+     doppelte Einträge entfernt.
+     Schließlich  wird das Programm Schritt für Schritt durchgegangen  und 
+     jeder Maschinenbefehl soweit disassembliert,  daß alle  Befehle,  die 
+     keine relokatiblen,  sondern relative Adressen  enthalten,  dekodiert 
+     und die Adressen in die Tabelle eingefügt werden.  Zu diesen Befehlen 
+     gehören:  BRA,BSR,Bcc,DBcc  sowie  alle  Befehle  mit  xxxx(PC)  oder 
+     xx(PC,Rx).
+     Die sortierte Label- Tabelle wird unter "filename.lbl" abgespeichert.
+
+  b) Die  zweite  Phase "dis2.ttp" ("die 2.  Phase kann noch  mehr!")  Die 
+     gesamte   Ausgabe   (außer  Fehlermeldungen)  wird  auf   die   Datei 
+     "filename.s" geschrieben.
+     Die  Dateien  "filename.rlo"  (falls  vorhanden)  und  "filename.lbl" 
+     werden eingelesen.  Die Segmentgrößen werden berücksichtigt,  so  daß 
+     jeder Programmteil getrennt disassembliert wird:
+
+     i) TEXT
+
+        Vor dem Disassemblieren wird in der Label- Tabelle nachgesehen, ob 
+        der  gerade disassemblierte Befehl als Label vorkommt.  In  diesem 
+        Fall wird zunächst das Label ausgegeben.
+        Ist  die  Adresse des Befehls  relokatibel,  wird  anstelle  eines 
+        Assemblerbefehls ein "DC.L lblxxx" ausgegeben. Ähnliches passiert, 
+        wenn das zweite Byte des Befehls als Label adressiert  wird.  Auch 
+        hier  wird "DC ..." ausgegeben.  Falsche Opcodes werden  ebenfalls 
+        als "DC.W" ausgegeben.  In allen diesen Ausnahmefällen handelt  es 
+        sich immer um Daten im TEXT- Segment.
+        Der  Befehl  wird dann disassembliert.  Enthält er  eine  relative 
+        Adresse,    wird   statt   "adresse"   "lbladresse"    ausgegeben, 
+        desgleichen,   wenn  der  Befehl  ein  zu  relozierendes  Langwort 
+        enthält.  Bsp. ("anfang" sei ein Label an Adresse 100 ab Programm-
+        anfang):
+              Assembler:               Disassembler:
+             
+              move.l  #100,a0          move.l  #100,d0
+              move.l  #anfang,a0       move.l  #lbl100,a0
+
+        In Maschinensprache sind die obigen Befehle absolut identisch, der 
+        Unterschied   besteht  lediglich  darin,   daß  die  Adresse   des 
+        Langwortes  "100" (als Teil des Maschinenbefehls) im zweiten  Fall 
+        in der Relocation- Tabelle eingetragen ist.
+
+     ii) DATA
+
+        Um Platz zu sparen,  werden nach Möglichkeit 3 Langworte nebenein-
+        ander  ausgegeben,  soweit  kein Label oder eine  zu  relozierende 
+        Adresse  dazwischenliegt.  Auch hier gibt es den Unterschied  zwi-
+        schen "DC.L  100" und "DC.L  lbl100",  aus dem gleichen Grund  wie 
+        oben.
+
+     iii) BSS
+
+        Das BSS- Segment wird als Folge von "DS.B  n" interpretiert.
+
+
+4. Optionen
+-----------
+
+Für  dis1 gibt es nur zwei Optionen:
+
+dis1 datei.prg                *Datei disassemblieren
+dis1 -mfc0000-fc0100 datei    *Speicherbereich disassemblieren
+dis1 -n ...                   *Objektdatei ohne Opcode- Markierung
+
+  Andere Parameter als "-m" sind möglich, werden jedoch einfach ignoriert. 
+Alle Parameter außer dem letzten, der immer der Dateiname ist, werden nach 
+dem "-m" und nach -...n...  durchsucht.  So können z.B. auch die Parameter 
+von dis2 an dis1 übergeben werden, ohne daß ein Fehler auftritt.
+  Es  wird die zu disassemblierende Datei (mit Extension,  mit  oder  ohne 
+Pfad) als letzter Parameter angegeben.  Der Dateiname darf nur dann  Joker 
+('*','?')  enthalten,  wenn die Option m fehlt;  in diesem Fall  wird  die 
+erste  "passende"  Datei angenommen.  Die  Arbeitsdateien  (*.rlo,  *.lbl, 
+*.sym) werden im aktuellen Directory erstellt.
+  Dis2 erwartet die Arbeitsdateien im aktuellen Directory.
+  Für dis2 sind z.B. folgende Optionen erlaubt:
+
+dis2 datei                    *ganze Datei disassemblieren
+dis2 f56-13e4 datei           *nur bestimmten Bereich disassemblieren
+dis2 100 datei                *ab 100H disassemblieren
+dis2 -netdcazi datei          *folgende Optionen sind erlaubt:
+
+                              e(XECUTABLE): Datei nicht ausführbar
+                              t           : Ausgabe nach stdout
+                              d(ATA)      : Wie DATA- Segment behandeln
+                              c(ODE)      : Code mit angeben
+                              a(DDR)      : Adressen mit angeben
+                              z(EICHEN)   : ASCII mit angeben
+                              i(NTERMED.) : Zwischendateien löschen
+                              n(o Opcode) : keine Opcode- Makierung
+                              u           : Schalter für "MAS-68K"
+
+dis2 -ofc0000 datei           *o(RIGIN)   : Adressangaben ab fc0000H
+dis2 -mfc0000-fc0020 datei    *Speicherbereich disassemblieren
+
+
+  Die Flags können in beliebiger Reihenfolge und auch getrennt  aufgeführt 
+werden, z.B. "dis2 -i -t -acd datei".
+
+  Das  Flag "n" bezieht sich auf GEMDOS- Objektdateien;  alle Dateien  mit 
+Endung  ".o"  werden als solche behandelt.  Im Format dieser  Dateien  ist 
+festgelegt, daß der Beginn eines jeden Opcodes (Maschinenbefehl) mit einem 
+besonderen Wert in der Relocation- Tabelle zu kennzeichnen sei. Damit kann 
+es nicht mehr passieren,  daß beim Disassemblieren Daten als  Maschinenbe-
+fehle  und  umgekehrt interpretiert werden.  Die  Markierung  eines  jeden 
+Opcodes ist jedoch für den Linker nicht von Interesse,  daher lassen viele 
+Compiler/Assembler (z.B. GfA, Metacomco) diese einfach weg. In diesem Fall 
+ist  das Flag "n" zu spezifizieren,  damit der Disassembler weiß,  daß  er 
+nicht auf die Opcode- Markierung achten soll.
+
+  Bei  ausführbaren  Programmen bezieht sich die  Bereichsangabe  auf  den 
+tatsächlichen Programmanfang,  der 28 Bytes hinter dem Dateianfang beginnt 
+(die ersten 28 Bytes ist der GEMDOS- Header). Bei anderen Dateien, die mit 
+Option "e" behandelt werden müssen, und beim Disassemblieren von Speicher-
+bereichen wird als Anfangsadresse der Datei-/Bereichsanfang angenommen.
+
+  Bei Option e wird keine Relocationtabelle verwendet.
+  Bei Option t wird statt auf die Datei "filename.s" nach stdout geschrie-
+ben.  Die Ausgabe kann dann mittels eines "command" auf eine andere  Datei 
+umgelenkt  werden.  Auch "Pipes" wie "dis2 -t x.prg | more" sind  möglich, 
+falls das "command diese Möglichkeit bietet.  Fehlermeldungen werden  nach 
+STDERR  geschrieben  (Handle 4) und  können  ggf.  umgelenkt  werden.  Die 
+Titelmeldung  wird  direkt  nach  "CON:" ausgegeben  und  kann  nicht  vom 
+Bildschirm umgelenkt werden.
+  Bei  Option  u  wird als Kommentarzeichen ';' statt  '*'  verwendet  und 
+".b"  statt ".s" bei allen Verzweigungen mit 8 Bit Offset;  außerdem  wird 
+statt  "EQUR" nur "EQU" ausgegeben.  Dies ist für den Assembler  "MAS-68K" 
+von Heimsoeth/Borland nötig (gehört zu Turbo-C).
+
+Beim Analysieren des ROMs empfiehlt sich z.B. folgende Parameterwahl:
+  dis -mfc0000-fc0200 -ofc0000 -ac tos
+In  diesem Beispiel wird die Reset- Routine des TOS  (der  Speicherbereich 
+$fc0000  bis  $fc0200) als Assemblercode unter dem Namen  TOS.S  disassem-
+bliert;  DATA bekommt man mit Option -ad.  Die Option -o ist notwendig, da 
+sonst  alle Adressen ausgegeben würden,  als ob der  zu  disassemblierende 
+Speicherbereich an Adresse 0 stünde.
+
+Hinweis:  Falls  die  Datei  mehrmals  hintereinander  mit   verschiedenen 
+          Bereichsangaben  disassembliert werden soll,  braucht die  erste 
+          Phase trotzdem nur einmal ausgeführt zu werden,  da die Arbeits-
+          dateien erhalten bleiben. Hier liegt der Hauptvorteil der beiden 
+          getrennten Passes.
+          Außerdem ist dies der Grund dafür,  daß die lbl und rlo- Dateien 
+          nach  erfolgter  Disassemblierung  nicht  automatisch   entfernt 
+          werden.  Falls  dies dennoch gewünscht wird,  kann die Option  i 
+          verwendet  werden.   Die  folgende  Batchdatei  läßt  die   zwei 
+          getrennten  Passes  wie  ein einziges  Programm  erscheinen  und 
+          löscht die Zwischendateien automatisch:
+
+                              dis1 %1 %2 %3 %4 %5
+                              IF NOT ERRORLEVEL 1 dis2 -i %1 %2 %3 %4 %5
+
+          Erst wird der Pass 1 aufgerufen;  falls kein Fehler  aufgetreten 
+          ist,  wird dann der Pass 2 mit zusätzlicher Option i aufgerufen. 
+          An dis1 werden dieselben Parameter wie an dis2 übergeben,  wobei 
+          dis1  nur  die  für ihn relevanten  auswertet  und  die  anderen 
+          ignoriert (s.o.).
+
+
+5. Fehlermeldungen
+------------------
+
+Fehlermeldungen  werden grundsätzlich auf "CON:" (Bildschirm)  geschrieben 
+und können daher NICHT umgelenkt werden.
+
+  a) Fehlermeldungen von dis1:
+
+     "Usage: ..."                    - Programm   wurde   ohne   Parameter 
+                                       gestartet.
+     "No match for ....."            - Die  angegebene,  zu  disassemblie-
+                                       rende  Datei  existiert  nicht   im 
+                                       angegebenen Directory.
+     "Cannot open ....."             - Die zu disassemblierende Datei läßt 
+                                       sich  aus  unerfindlichen   Gründen 
+                                       nicht öffnen.
+     ".... is not a program file"    - Bei der zu disassemblierenden Datei 
+                                       handelt  es sich nicht um ein  aus-
+                                       führbares  Programm  (der   GEMDOS- 
+                                       Kopf entspricht nicht dem gewünsch-
+                                       ten Format).
+                                       In diesem Fall werden weder  Label- 
+                                       noch Relocation- Tabelle erstellt.
+     "Not enough Memory"             - Der  Rechner verfügt  über  zuwenig 
+                                       Hauptspeicher.
+                                       Evtl.   Ramdisk   und   Accessories 
+                                       entfernen.
+     "Read error"                    - Lesefehler  auf  der  Eingabedatei.
+                                       Vermutlich Diskette defekt.
+     "Cannot create workfiles"       - Die  *.lbl  oder  *.rlo  -  Dateien 
+                                       können nicht erstellt werden.
+                                       Vermutlich    ist   das    Default- 
+                                       Laufwerk schreibgeschützt.
+     "Write error"                   - Schreibfehler.
+                                       Vermutlich aktuelles Laufwerk  voll 
+                                       oder Diskette defekt.
+     "Cannot read Relocation Data"   - Lesefehler auf der Eingabedatei.
+                                       Entweder   Diskette   defekt   oder 
+                                       Programmkopf   der   Datei    nicht 
+                                       korrekt.
+     "Illegal Labels"                - Relocation-  Adresse ungerade  oder 
+                                       außerhalb  der  Datei.   Fehler  im 
+                                       Linker.
+
+
+  b) Fehlermeldungen von dis2:
+
+     "Usage: ..."                    - Programm   wurde   ohne   Parameter 
+                                       gestartet.
+     "No match for ....."            - Die  angegebene,  zu  disassemblie-
+                                       rende  Datei  existiert  nicht   im 
+                                       angegebenen Directory.
+     "Cannot open ....."             - Die zu disassemblierende Datei läßt 
+                                       sich  aus  unerfindlichen   Gründen 
+                                       nicht öffnen.
+     "Cannot open workfile(s)"       - Die   *.lbl  und   *.rlo-   Dateien 
+                                       existieren   nicht   im   aktuellen 
+                                       Directory.
+                                       Entweder  wurde  vergessen,  vorher 
+                                       dis1 zu starten, oder die Datei ist 
+                                       nicht ausführbar (e- Flag setzen!).
+     "Syntax error(s) in arguments"  - Die  Kommandozeile  enthält   unzu- 
+                                       lässige Argumente.
+     "Out of Range"                  - Der  zu  disassemblierende  Bereich 
+                                       liegt außerhalb der Dateigröße.
+     "Write error"                   - Schreibfehler auf der *.S Datei.
+                                       Die Diskette ist entweder  schreib-
+                                       geschützt oder voll.  Man  beachte, 
+                                       daß    disassemblierte    Programme 
+                                       gewaltige Ausmaße annehmen können.
+

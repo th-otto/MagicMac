@@ -1,0 +1,4 @@
+DIVU.W <ea>,Dn      32/16 -> 16r:16q
+                  DIVU.L <ea>,Dq      32/32 -> 32q     ( MC68020 )
+                  DIVU.L <ea>,Dr:Dq   64/32 -> 32r:32q ( MC68020 )
+                  DIVUL.L <ea>,Dr:Dq  32/32 -> 32r:32q ( MC68020 )

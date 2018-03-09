@@ -1,0 +1,13 @@
+mgview.app
+.L[-S=$1000]   ; Stackgr”že 4k (der thread hat mehr)
+=              ; list of modules follows...
+pcmxstrt.o     ; startup code mit ARGV und Quoting
+mgview        	(mgview.h,globals.h,windows.h)
+windows		(windows.h,globals.h)
+mgwind		(mgwind.h,globals.h,windows.h)
+memchar2.s
+c:\pc\mylibs\gemut_mt.o
+pcstdlib.lib   ; standard lib
+pctoslib.lib
+mt_aes.lib
+pcgemlib.lib

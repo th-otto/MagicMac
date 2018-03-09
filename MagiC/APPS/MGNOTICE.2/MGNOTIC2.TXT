@@ -1,0 +1,29 @@
+Hallo,
+
+anbei die erste halbwegs laufende Version von
+MGNOTICE2. "Die mit dem Editor tanzt".
+
+Damit Ihr Euch nicht Eure schînen Notizen kaputt macht,
+sucht MGNOTICE2 seine Testdaten in
+
+"X:\\pc\\source\\deskutil\\mgnotice.2\\notice\\"
+
+Das mÅût Ihr halt anlegen.
+
+Es gibt das Konzept des aktiven Fensters nicht mehr, also
+ist der MenÅpunkt "îffnen" leider vîllig funktionslos.
+Eine Notiz wird durch Doppelklick aktiviert. Eine aktive
+Notiz erkennt man daran, daû sie einen Cursor hat.
+
+Die Notiz wird wieder inaktiv durch "Esc".
+
+Beim Einlesen und beim Inaktiv-Werden wird die Fenstergrîûe
+neu berechnet.
+Abgespeichert werden jetzt auch Notizhîhe und -breite. Beide
+werden nicht proportional auf die Auflîsung umgerechnet. Breite
+ist notwendig fÅr den neuen Umbruch. Hîhe ist redundant.
+
+Nicht aktive Notizen lassen sich verschieben und
+vergrîûern/verkleinern.
+
+Jede Notiz kann maximal 512 Bytes lang sein.

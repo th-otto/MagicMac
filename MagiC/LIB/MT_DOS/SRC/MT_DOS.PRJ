@@ -1,0 +1,6 @@
+mt_dos.lib
+
+; .C[-P]		ggf.
+.L[-J]
+=
+mt_dos.s

@@ -1,0 +1,65 @@
+Aufbau der ICO-Datei fÅr MAGXDESK
+=================================
+
+/* Alle Zeiger sind relativ zum Dateianfang */
+
+/* Header: */
+
+struct ico_head {
+	long magic;                   /* ist 'AnKr' */
+	long version;                 /* ist z.Zt. 1L */
+	long n_ap2ic;                 /* LÑnge der Tabelle ap2ic */
+	long p_ap2ic;                 /* Zeiger auf Tabelle ap2ic */
+	long n_da2ic;                 /* LÑnge der Tabelle da2ic */
+	long p_da2ic;                 /* Zeiger auf Tabelle da2ic */
+	long	n_pa2ic;				/* LÑnge der Tabelle pa2ic */
+	long	p_pa2ic;				/* Zeiger Tabelle pa2ic */
+	long	n_sp2ic;				/* LÑnge der Tabelle sp2ic */
+	long	p_sp2ic;				/* Zeiger Tabelle sp2ic */
+	long n_icn;                   /* Anzahl CICONBLKs */
+	long p_icn;                   /* Zeiger auf Tabelle icn */
+};
+
+/* Daten */
+
+for  (0..n_ap2ic-1)
+     char [n]                 /* Applikationsnamen ohne Extension */
+for  (?)
+     char[n]                  /* Pfade */
+for  (0..n_da2ic-1)
+     char [n]                 /* Dateitypen */
+
+/* Zuweisungstabelle Applikationsname => Icon */
+
+for  (0..n_ap2ic-1)
+     long apname;             /* Zeiger auf Name ohne Extension */
+     long path;               /* NULL oder Zeiger auf Pfad */
+     int  config;             /* -1 oder Konfigurationsbits */
+     long icon_nr;            /* 0..n_icn-1 */
+
+/* Zuweisungstabelle Dateityp => Icon */
+
+for  (0..n_da2ic-1)
+     long daname;             /* Zeiger auf Dateityp */
+     long ap;                 /* Zeiger auf apname,path usw. */
+     long icon_nr;            /* 0..n_icn-1 */
+
+/* Tabelle icn */
+/* Folgendes wie in der Ressource-Datei, bis auf Endekennung und */
+/* fehlenden Text fÅr Icons */
+
+for  (0..n_icn-1)
+     CICONBLK  *cicn;         /* Iconblock ohne Text, ggf. mainlist == NULL */
+
+for  (0..n_icn-1)
+     ICONBLK
+     long n_colicn;
+     WORD ic_mono[n];
+     WORD ic_mask[n];
+     for  (0..n_colicn-1)
+          CICON
+          WORD[n]        Daten
+          WORD[n]        Maske
+          if   (sel)
+               WORD[n]   sel_daten
+               WORD[n]   sel_mask

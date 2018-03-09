@@ -1,0 +1,64 @@
+
+
+
+$000709BE: cmp2.w    $0004(a0),d1
+$000709C4: cmp2.w    $0004(a0),a2
+$000709CA: bra       $00070AB6
+$000709CE: chk2.w    $0004(a0),d1
+$000709D4: chk2.w    $0004(a0),a2
+$000709DA: bra       $00070AB8
+$000709DE: cas.w     d3,d4,$0005(a0)
+$000709E4: cas2.w    d1:d2,d3:d4,(a6):(d5)
+$000709EA: bra       $00070ABA
+$000709EE: moves.w   $0005(a0),d0
+$000709F4: moves.w   $0007(a4),d0
+$000709FA: bra       $00070ABC
+$000709FE: illegal   $4B2D
+$00070A00: ori.b     #$00,d7
+$00070A04: illegal   $00BA
+$00070A06: move.w    ccr,d7
+$00070A08: bra       $00070AC0
+$00070A0C: link.l    a0,#$12345678
+$00070A12: bra       $00070AC2
+$00070A16: bkpt      #5
+$00070A18: bra       $00070AC4
+$00070A1C: extb.l    d7
+$00070A1E: bra       $00070AC6
+$00070A22: mulS.l    $0005(a4),d5
+$00070A28: mulU.l    $0005(a4),d5:d6
+$00070A2E: bra       $00070AC8
+$00070A32: divUL.l   $0004(a4),d3:d3
+$00070A38: divU.l    $0004(a4),d7
+$00070A3E: divUL.l   $0004(a4),d4:d7
+$00070A44: bra       $00070ACA
+$00070A48: rtd       #$0005
+$00070A4C: movec.l   cacr,d7
+$00070A50: movec.l   d7,cacr
+$00070A54: movec.l   d7,VBR
+$00070A58: bra       $00070ACC
+$00070A5A: Tne
+$00070A5C: tpeq.w    #$0006
+$00070A60: tpcs.l    #$00000006
+$00070A66: bra       $00070ACE
+$00070A6C: pack      -(a4),-(a5),#$0012
+$00070A70: pack      d4,d5,#$0012
+$00070A74: unpk      -(a4),-(a5),#$0012
+$00070A78: unpk      d4,d5,#$0012
+$00070A7C: bra       $00070AD0
+$00070A7E: bfchg     $00000012.w{7:8}
+$00070A84: bfchg     $00000012.w{d7:d2}
+$00070A8A: bfclr     $00000012.w{d7:d2}
+$00070A90: bfexts    $00000012.w{d7:d2},d6
+$00070A96: bfextu    $00000012.w{d7:d2},d6
+$00070A9C: bfffo     $00000012.w{d7:d2},d6
+$00070AA2: bfins     d5,$00000012.w{d7:d2}
+$00070AA8: bfset     $00000012.w{d7:d2}
+$00070AAE: bftst     $00000012.w{d7:d2}
+$00070AB4: bra       $00070AD2
+$00070AB6: nop
+$00070AB8: nop
+$00070ABA: nop
+$00070ABC: nop
+$00070ABE: nop
+$00070AC0: nop
+L=> 

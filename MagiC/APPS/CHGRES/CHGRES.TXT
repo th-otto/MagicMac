@@ -1,0 +1,26 @@
+README zu Changeres                                                  16.03.96
+===================
+
+Unter MagiC 4 wird das Programm Changeres von MagiC-Desk benutzt, um die
+Aufl”sung zu wechseln. Das in diesem Ordner liegende Programm CHGRES.PRG ist
+speziell an Ihre Grafikkarte angepat und zeigt im Auswahldialog auch die
+Aufl”sungen der Grafikkarte an, wodurch Sie auf einen zeitraubenden Neustart
+verzichten k”nnen.
+
+ù  Installation
+   ÿÿÿÿÿÿÿÿÿÿÿÿ
+   Im Ordner \GEMSYS\GEMDESK\befindet sich nach der MagiC-Installation bereits
+   eine Version von CHGRES.PRG, die allerdings nur die Standardaufl”sungen
+   anzeigt. Sichern Sie diese Version und die dazugeh”rige RSC-Datei in einem
+   Ordner. Kopieren Sie danach die neuen Dateien (CHGRES.PRG und CHGRES.RSC) in
+   den Ordner GEMDESK. Denken Sie bitte daran, das im AUTO-Ordner liegende
+   Programm SLCT_DEV.PRG deaktivieren; „ndern Sie ggf. den Namen in SLCT_DEV.PRX.
+
+   W„hlen anschlieend in MagiC-Desk den Menpunkt "Aufl”sung wechseln..." an.
+   Der neue Aufl”sungsdialog erscheint und zeigt die eingestellte Aufl”sung an.
+   Best„tigen Sie den Dialog, indem Sie auf "OK" klicken. MagiC fhrt darauf
+   einen Shutdown durch, speichert die Aufl”sung und startet das System sofort
+   wieder. Nach dem n„chsten Start ist die neue Changeres-Version aktiv.
+
+
+

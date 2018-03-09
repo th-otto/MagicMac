@@ -1,0 +1,7 @@
+\PC\LIB\dragdrop.lib
+
+.C[-P -G]		;Absolute Calls, Size Optimization
+.L[-J]
+=
+
+dragdrop.c

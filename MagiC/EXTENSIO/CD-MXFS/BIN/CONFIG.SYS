@@ -1,0 +1,11 @@
+; Beispielkonfiguration fr SPIN!
+;
+; devices
+;
+; SCSI 3: `SONY    CD-ROM CDU-8002' -> A
+
+; CD-ROM auf SCSI 3 (8 + 3 = 11)
+*BOS, c:\auto\spin_sd.bos, A:11
+
+; als logisches Laufwerk Z: installieren, 16k Cache
+*DOS, c:\auto\hs-iso.dos -c16, Z:A

@@ -1,0 +1,12 @@
+EDIT.PRG
+.L[-S=$800]
+=              ; list of modules follows...
+pcmxstrt.o      ; startup code
+edit.c (edit.h)
+slb_bind.o
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib
+mt_aes.lib
+pcgemlib.lib	; fÅr VDI
+

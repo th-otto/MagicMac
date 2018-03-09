@@ -1,0 +1,80 @@
+Befehl:                               FSORT
+
+
+
+Typ:           Extern
+
+Zweck:         Sortiert eine oder mehrere Dateien.
+
+
+Syntax:        fsort [-u[datei]] [-odatei] [-m] [-b] [-c] [-d] [-f] [-i] [-n]
+                     [-r] [-v] [-p<Pos1>[,<Pos2>]]      [Datei(en)...]
+
+
+Kommentar:     Ohne Benutzung des "O"- Flags und ohne Angabe von Dateien
+               wirkt fsort als Filter, d.h. eine Datei wird von STDIN gelesen,
+               sortiert und nach STDOUT geschrieben.
+               Die Switches haben folgende Bedeutung:
+
+               -u[datei]      ("unique")
+                              Gleiche Zeilen in der Ausgabedatei weglassen
+                              Wird eine Datei spezifiziert, werden diese
+                              weggelassenen Zeilen nach <datei> geschrieben.
+                              <datei> darf KEINE Eingabedatei sein.
+
+               -odatei        ("Output")
+                              Die sortierte Datei soll nicht nach STDOUT,
+                              sondern auf die spezifizierte Datei geschrieben
+                              werden, die auch eine Eingabedatei sein darf.
+
+               -b             ("skip blanks")
+                              öberliest Leerzeichen und TABs am Anfang des
+                              Schluesselfeldes.
+
+               -m             ("merge only")
+                              Die Dateien sind bereits sortiert und brauchen
+                              nur noch gemischt zu werden.
+
+               -c             ("check only")
+                              Es wird keine Ausgbe erzeugt, sondern nur auf dem
+                              Bildschirm ausgegeben, wenn eine Datei nicht
+                              sortiert ist.
+
+               -d             ("dictionary")
+                              Nur Buchstaben, Ziffern, Leerzeichen vergleichen
+
+               -f             ("fold")
+                              Gross- fÅr Vergleich in Kleinbuchstaben wandeln
+
+               -i             ("ASCII")
+                              Nur Zeichen 0x20-0x7f beruecksichtigen
+
+               -n             ("numerical")
+                              Nach numerischen Werten am Feldanfang sortieren
+                              Als Datentyp wird "long" angenommen.
+              
+               -r             ("reverse")
+                              Reihenfolge beim Sortieren umdrehen
+
+               -v             ("verbose")
+                              Waehrend des Programmlaufs Kommentare ausgeben
+
+               pos1           Anfangsposition des Schluesselfelds
+                              (1 <= pos1 < 1000)
+
+               pos2           Letzte Position des Schluesselfeldes
+                              (pos1 <= pos2 <= 1000)
+
+
+               Bei unsinnigen Angaben Åber die Position des Schluesselfelds
+               wird ab pos1 oder die ganze Zeile sortiert.
+               Die Vergleichs- Flags wirken sich auch auf das "unique"-
+               Verfahren aus, indem Zeilen zum Beispiel als gleich angenommen
+               werden wenn sie zwischen pos1 und pos2 uebereinstimmen.
+
+Beispiel:      fsort -odb.srt -p1,10 db1.dat db2.dat
+
+               Sortiert die Dateien "db1.dat" und "db2.dat" nach den ersten
+               10 Zeichen einer Zeile, mischt sie zusammen und schreibt das
+               Endergebnis nach "db.srt".
+

@@ -1,0 +1,11 @@
+INSTMAGC.PRG
+=
+tcmstart.o     ; startup code
+instmagc.c	(instmagc.h,xcopy.h)
+xcopy.c		(xcopy.h)
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib
+magxlib.lib	; MagiX lib
+tcgem2.lib	; AES/VDI lib
+

@@ -1,0 +1,18 @@
+
+	XREF	_GemParB
+
+TOS14	EQU	0				; TOS 1.4- Funktionen nicht anbinden!
+
+	OFFSET
+
+CONTRL:	DS.W	15
+GLOBAL:	DS.W	80
+INTIN:	DS.W	128
+INTOUT:	DS.W	45
+PTSOUT:	DS.W	128
+ADDRIN:	DS.L	128
+ADDROUT:	DS.L	6
+PTSIN:	DS.W	128
+
+	   TEXT
+

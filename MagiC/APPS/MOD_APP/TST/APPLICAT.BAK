@@ -1,0 +1,35 @@
+[APPLICAT Header V 0]
+SCREENSIZE 1024,749
+WINDOW APPLICATIONS 8,144,578,450
+WINDOW ICONS 624,0,399,719
+WINDOW DATEITYP_EDIT 97,445,0,0
+WINDOW ANW_ANMELDEN 241,250,0,0
+WINDOW PATHS 98,278,0,0
+WINDOW SPECIAL 222,213,0,0
+WINDOW PFAD_ANMELDEN 244,259,0,0
+;PROGRAMS = 2
+;FILETYPES = 2
+;PATHS = 0
+;SPECS = 10
+;ICONS = 11 of 178
+[PAPILLON]
+- -1 "-"
+
+1
+[<frei>]
+<intern> 2 "DATEI"
+
+0
+[<Pfade>]
+[<Spezial>]
+APPS Applikationen MAGICICN.RSC 60 "PROGRAMM"
+DATS Dateien MAGICICN.RSC 17 "DATEN"
+BTCH Batchdatei <intern> 3 "BATCHDATEI"
+DEVC GerÑtedatei <intern> 2 "DATEI"
+ALIS Aliase <intern> 2 "DATEI"
+FLDR Ordner <intern> 0 "ORDNER"
+PARD ZurÅck <intern> 6 "ELTER"
+DRVS Laufwerke <intern> -1 "DISK"
+TRSH Papierkorb <intern> 4 "PAPIERKORB"
+PRNT Drucker <intern> 5 "DRUCKER"
+[End]

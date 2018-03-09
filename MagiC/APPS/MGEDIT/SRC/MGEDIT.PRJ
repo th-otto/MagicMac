@@ -1,0 +1,14 @@
+mgedit.app
+.L[-S=$1000]   ; Stackgr”e 4k
+=
+pcmxstrt.o     ; startup code
+mgedit         (mgedit.h,globals.h)
+opt_dial		(mgedit.h,globals.h)
+mgedwind		(globals.h)
+slb_bind.o
+c:\pc\mylibs\gemut_m2.o
+
+pcstdlib.lib   ; standard lib
+pctoslib.lib
+mt_aes.lib	; fr AES
+pcgemlib.lib	; fr VDI

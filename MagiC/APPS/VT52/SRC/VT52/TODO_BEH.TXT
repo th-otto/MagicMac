@@ -1,0 +1,56 @@
+TODO fÅr Sven und Wilfried:
+
+a)	FÅr Threads: Welche VDI-Aufrufe sind unterbrechbar? Entsprechende
+	MT-sichere Bibliotheksfunktionen bereitstellen.
+	Bibliothekname: MT_VDI.C/MT_VDI.H/MT_VDI.LIB
+
+b)	vt52_inherit(apid_src, apid_dst) zum Vererben eines Terminalfensters.
+
+c)	vt52_uninherit(apid) zum Wieder-Abmelden.
+
+d)	Tastaturabfrage: TastendrÅcke werden erstmal fÅr das Fenster
+	gespeichert. Dann bekommen alle APPs, die diesem Terminalfenster
+	zugeordnet sind und auf Tastendruck warten, eine Nachricht.
+	Wer als erster die Nachricht auswertet, bekommt die Taste. Wer
+	aufgeweckt worden ist und den Tastaturpuffer des Fensters wieder leer
+	vorfindet, legt sich gleich wieder schlafen.
+	Das ist die einfachste und eleganteste Lîsung.
+
+e)	vt52_bg(apid)
+	vt52_fg(apid)
+	UnterstÅtzung von Hintergrundprozessen. Damit kann man einen Prozeû
+	von der Tastatur "ab" und "anklemmen". D.h. ein Hintergrundprozeû, der
+	auf eine Taste wartet, bekommt halt keine, bis er in den Vordergrund
+	gelegt wird.
+	Es ist darauf zu achten, daû ein Hintergrundprozeû in dem Moment, in
+	dem er in den Vordergrund gelegt wird, evtl. wartende TastendrÅcke
+	auch wirklich bekommt, d.h. z.B. erstmal aufwecken!
+	
+f)	VT52: Verwendung der Kernelfunktionen "beg_critic" und "end_critic".
+	Das ist dringend notwendig, damit ein Prozeû in einem VT52-Fenster nicht
+	an einer Stelle angehalten werden kann (mit SIGSTOP), an der das
+	gesamte System eingefroren wird (passiert sonst ganz schnell, wenn ein
+	Prozeû, der durchgehend Cconout() macht, per SIGSTOP angehalten wird).
+
+g)	VT52: Bei Schlieûen eines Fensters sollte SIGHUP an das laufende Programm
+	verschickt werden. Umrechung apid->pid Åber appl_find().
+	Problem: Wenn ein Prozeû einen anderen Pexec()t hat, mÅssen alle
+	Prozesse SIGHUP bekommen. Alle Pexec()ten Prozesse haben dieselbe ap_id,
+	also entweder solange warten, bis CH_EXIT fÅr die entsprechende ap_id
+	kommt, oder der Kernel muû eine Funktion bereitstellen, die fÅr eine
+	ap_id alle zugehîrigen Prozeû-IDs liefert.
+
+h)	VT52: Bei Empfangen von ^C sollte SIGINT an alle Vordergrundprozesse
+	des Fensters verschickt werden (normalerweise nur eine ap_id), die mit
+	c_in_cooked warten (im Raw-Mode muû das Zeichen so Åbergeben werden).
+	Ich weiû nicht mehr, ob VT52 Åberhaupt Ctrl-C auswertet. Bitte
+	nachsehen.
+
+i)	MiNT.DOC legt noch fest:
+	Ctrl-\ sendet SIGQUIT
+	Ctrl-Z sendet SIGTSTP
+	énderung der Fenstergrîûe sendet SIGWINCH
+
+	Das kînnen wir vielleicht erstmal ignorieren, vor allem, weil MiNT noch
+	den cooked und den raw-mode kennt. Im raw-Mode werden nÑmlich Ctrl-
+	Sequenzen NICHT ausgewertet, sondern an das Programm geliefert.

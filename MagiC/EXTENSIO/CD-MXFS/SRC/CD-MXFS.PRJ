@@ -1,0 +1,11 @@
+spinmxfs.prg
+.C [-DMAGIC]
+=
+pcstart.o      ; startup code
+cd-mxfsc.c (cd-mxfs.h, mgx_xfs.h, cfgread.c)
+cd-mxfs.s
+cd-mxfsk.s
+pctoslib.lib
+pcstdlib.lib
+libcdfs.lib
+libdosix.lib

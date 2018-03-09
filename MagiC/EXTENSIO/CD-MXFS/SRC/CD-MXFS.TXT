@@ -1,0 +1,48 @@
+/*
+*
+* nderungen am CD-ROM-XFS-Treiber fr MagiC
+*
+*/
+
+29.5.97
+-------
+
+- Fehlerhaften Open-Modus beseitigt. ™ffnen und Lesen
+  sollte jetzt klappen.
+- Fopen mit OM_WRITE nicht mehr verboten. Fehler erst bei dev_write().
+- Blockdevice eingebaut. Klappt aber nur fr das erste CD-ROM, dabei
+  heit das Device u:\dev\cdrom. Grund: 
+  Laufwerk U: hat in MagiC 8+3 Dateinamen, ich kann also Julians sch”ne
+  Dateinamen "dsk.c0t3d0s5" (Solaris l„t gren!) nicht einbauen.
+  Weiterhin kann ich beim Installieren eines Ger„tetreibers keinen
+  zus„tzlichen Parameter, z.B. fr die Laufwerknummer, bergeben
+  (Fehldesign in MagiC, l„t sich aber ber die Auswertung des Dateinamens
+  leicht umgehen).
+  Ich k”nnte mich so behelfen, da ich bei ddev_open() ber fd_name den Namen
+  und daraus dann den Laufwerkbuchstaben berechne, das habe ich mir aber
+  geschenkt.
+  Ich denke, ein CDROM in u:\dev sollte reichen.
+
+5.6.97
+------
+
+- Wenn METAXBS nicht geladen ist, versucht der XFS-Treiber, das Programm
+  /gemsys/magic/xtension/metaxbs.sys nachzuladen.
+  Man kann also den MagiC-XFS-Treiber jetzt als .XFS in den XTENSION-Ordner
+  kopieren und METAXBS in .SYS umbenennen und dazulegen. Die CONFIG.SYS
+  mu wohl (Julian ?) im AUTO-Ordner liegen.
+- Leider macht METAXBS auch mit Uwes Hddriver kein Hintergrund-DMA.
+  B-(
+- Ich habe immer noch Probleme mit dem Diskwechsel. Nach jedem Wechsel mu
+  ich erst einen Alert wegklicken, ehe ich das Laufwerk ”ffnen kann. Irgendwo
+  fehlt wohl wieder eines dieser omin”sen Dkinitvol().
+
+7.6.97
+------
+
+- Hintergrund-DMA auf dem Atari geht natrlich doch. Man mu nur den
+  spin_sd.bos nehmen und Hddriver >= 7.0 installieren. Die SCSI-ID mu im
+  Hddriver aktiviert sein, und die PD-Untersttzung fr dieses Laufwerk
+  mu deaktiviert bleiben.
+- Der Diskwechsel macht nur beim Auswurf ber ^J Probleme. Benutzt man den
+  Auswurfknopf des Laufwerks, gibt es keinen rger. Sehr mysteri”s.

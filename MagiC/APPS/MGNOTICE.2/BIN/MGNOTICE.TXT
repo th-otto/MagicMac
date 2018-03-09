@@ -1,0 +1,124 @@
+Beschreibung des Programms MGNOTICE, Version 2.00 (ab MagiC 6.00)
+-------------------------------------------------
+
+Andreas Kromke
+17.05.98
+
+
+1. Unterschiede zur Version 1.00
+--------------------------------
+
+Es gibt keinen Eingabedialog mehr, und ein aktives Fenster wird auch
+nicht mehr durch einen Balken gekennzeichnet. Stattdessen wird das neue
+EDIT-Objekt der SharedLib EDITOBJC.SLB verwendet.
+
+Ein Fenster wird durch Doppelklick aktiviert, es ist am eingeschalteten
+Cursor zu erkennen. Durch "Esc" wird das Fenster deaktiviert.
+
+Das Fenster kann nur im deaktivierten Zustand verschoben oder in der
+Gr”e ver„ndert werden.
+
+
+1. Was ist MGNOTICE ?
+---------------------
+
+Mit diesem Programm k”nnen Notizzettel („hnlich wie das Notizzettel-Programm
+fr den Mac) erstellt und verwaltet werden. Die Notizzettel werden im
+Gegensatz zur Ease-L”sung in Fenstern angezeigt und sind unabh„ngig von
+der verwendeten Shell.
+
+Bekannte M„ngel:
+
+- Die Backdrop-Buttons der Dialoge reagieren etwas sonderbar.
+
+
+2. Installation
+---------------
+
+Entweder von Hand starten oder in den Start-Ordner (/gemsys/magic/start)
+schieben. Die Notizen werden in /gemsys/gemdesk/notice/ abgelegt, dieser
+Ordner wird ggf. beim ersten Start erzeugt. Die INF-Datei wird im HOME-
+Verzeichnis gespeichert, falls vorhanden. Alle Dateien sind ASCII (!!).
+Also keine kilobyteweisen, kryptischen Bin„rwsten, die bei jedem Update
+weggeworfen werden mssen. Die Fensterpositionen sind wie bei MAGXDESK
+rundungsfehlerfrei und aufl”sungsunabh„ngig, also kein Durcheinander mit
+verschiedenen Dateien pro Aufl”sung.
+
+
+3. Notiz erstellen
+------------------
+
+Datei/Neu anw„hlen. Notiz eingeben und [Esc] w„hlen.
+Die Notiz wird aus Sicherheitsgrnden sofort abgespeichert. Wird die
+Fensterposition der Notiz sp„ter ge„ndert, wird die neue Position erst
+beim Beenden von MGNOTICE bzw. Herunterfahren des Systems gesichert.
+Die Notiz erscheint zun„chst links oben, kann aber nach der Eingabe
+verschoben werden.
+
+
+4. Notizprogramm nach vorn holen und nach hinten legen
+------------------------------------------------------
+
+Per MagiC-Popup oder durch Klick auf einen Notizzettel werden alle Notizzettel
+sichtbar. Wird ein anderes Fenster nach vorn gebracht oder die Menleiste
+per MagiC-Popup gewechselt, landen alle Notizzettel hinten.
+
+
+5. Zeichensatz oder Farbe „ndern
+--------------------------------
+
+Notiz doppelt anklicken. Es erscheint ein Cursor. Jetzt
+Eigenschaften/Zeichensatz bzw. Eigenschaften/Farbe anw„hlen.
+Die nderung wird sofort gesichert.
+Der eingeschaltete Cursor kennzeichnet immer die selektierte Notiz.
+Hat der Bildschirm eine Darstellung mit weniger als 16 Farben, werden
+vom System alle "ungltigen" Farben als Schwarz dargestellt. MGNOTICE
+w„hlt in diesem Fall immer weie Schrift. Hat man also Schwarz auf Hellblau
+eingestellt und sieht sich das ganze in Schwarzwei an, erh„lt man weie
+Schrift auf schwarzem Grund. In den Notizen ist aber die ursprngliche
+Farbwahl gespeichert und wird beim Rckschalten auf eine Bildschirmaufl”sung
+mit mindestens 16 Farben wieder Schwarz auf Hellblau.
+Wer m”chte, kann MGNOTICE.RSC editieren und in der Farbpalette eigene
+Farben fr den Text eintragen (z.B. Hellrot auf Hellblau usw.).
+
+
+6. Notiz l”schen
+----------------
+
+Notiz doppel anklicken. Cursor erscheint. Jetzt Datei/l”schen...
+Das selektierte Fenster wird geschlossen und die Notizdatei sofort gel”scht.
+Es gibt (noch) keine Sicherheitsabfrage.
+
+
+7. Notiz „ndern
+---------------
+
+Notiz anklicken. Cursor erscheint. Jetzt editieren und Editiermodus
+mit Esc verlassen. Fenstergr”e kann auerhalb des Nicht-Editiermodus
+ver„ndert werden.
+Beim Verlassen des Editiermodus sowie beim Laden einer Notiz wird das
+Notizfenster wird automatisch in der Gr”e angepat.
+
+Alternativ (Notfall):	Die Dateien sind ASCII und k”nnen notfalls mit
+					einem blichen Editor ge„ndert werden. Die
+					Schlsselw”rter vor und die Zeile BEGIN selbst
+					drfen aber nicht ver„ndert werden. Natrlich
+					vorher MGNOTICE beenden, damit die Notiz nicht
+					gleich wieder berschrieben wird.
+
+
+8. Notiz verschieben
+--------------------
+
+Fenster mit der Maus anklicken und verschieben. Da das Fenster keinen echten
+MOVER hat, geht das Echtzeitverschieben natrlich (noch) nicht.
+Verschieben geht nur im Nicht-Editiermodus. Im Editiermodus gehen alle
+Mausklicks an das Editobjekt.
+
+
+9. Voreinstellungen „ndern
+--------------------------
+
+Eigenschaften/Voreinstellungen. Klick auf Zeichensatznamen oder -gr”e ruft
+die Zeichensatzauswahl auf. Klick auf Hintergrundfarbe das Farb-Popup.
+Die Fensterposition des Dialogs wird mitgesichert.

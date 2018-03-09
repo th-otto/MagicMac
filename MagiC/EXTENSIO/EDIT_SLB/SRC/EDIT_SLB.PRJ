@@ -1,0 +1,14 @@
+EDITOBJC.SLB
+.L[-S=256]	; minimaler Stack
+=
+edithead.s      ; startup code for SLBs
+edit_slb.c (editob.h)
+editob.c (editob.h)
+memchar2.s
+
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib
+mt_aes.lib
+pcgemlib.lib	; fÅr VDI
+

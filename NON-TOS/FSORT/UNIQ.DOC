@@ -1,0 +1,61 @@
+Befehl:                               UNIQUE
+
+
+
+Typ:           Extern
+
+Zweck:         Gleiche, hintereinanderliegende Zeilen einer Datei entfernen
+
+
+Syntax:        unique [-udatei] [-b] [-d] [-f] [-i] [-n] [-v]
+                      [-p<Pos1>[,<Pos2>]]  [Datei(en)]
+
+
+Kommentar:     Ohne Angabe von Dateien wirkt UNIQUE als Filter, d.h. eine Datei
+               wird von STDIN gelesen, gleiche Zeilen entfernt und der Rest
+               nach STDOUT geschrieben.
+               Die Switches haben folgende Bedeutung:
+
+               -udatei        ("unique")
+                              Gleiche Zeilen werden nicht einfach weggelassen,
+                              sondern nach <datei> geschrieben.
+                              <datei> darf KEINE Eingabedatei sein.
+
+               -b             ("skip blanks")
+                              öberliest Leerzeichen und TABs am Anfang des
+                              Schluesselfeldes.
+
+               -d             ("dictionary")
+                              Nur Buchstaben, Ziffern, Leerzeichen vergleichen
+
+               -f             ("fold")
+                              Gross- fÅr Vergleich in Kleinbuchstaben wandeln
+
+               -i             ("ASCII")
+                              Nur Zeichen 0x20-0x7f beruecksichtigen
+
+               -n             ("numerical")
+                              Nach numerischen Werten am Feldanfang
+                              vergleichen.
+                              Als Datentyp wird "long" angenommen.
+              
+               -v             ("verbose")
+                              Waehrend des Programmlaufs Kommentare ausgeben
+
+               pos1           Anfangsposition des Schluesselfelds
+                              (1 <= pos1 < 1000)
+
+               pos2           Letzte Position des Schluesselfeldes
+                              (pos1 <= pos2 <= 1000)
+
+
+               Bei unsinnigen Angaben ueber die Position des Schluesselfelds
+               wird ab pos1 oder die ganze Zeile zum Vergleich herangezogen.
+
+Beispiel:      unique -p1,10 db1.dat db2.dat
+
+               Entfernt nacheinander aus den Dateien "db1.dat" und "db2.dat"
+               die gleichen Zeilen und schreibt das Ergebnis nach STDOUT.
+               Zeilen werden als gleich angenommen, wenn sie in den ersten
+               10 Zeichen uebereinstimmen.
+

@@ -1,0 +1,486 @@
+08000000200800
+1
+2Seite #
+F0110030
+9[...........................................................]011
+€Hannover,den23.8.89
+
+‰BEDIENUNGSANLEITUNGZUMGEMDOSˆ¿‰DISASSEMBLER
+€
+
+UpdatesfrVersionvomDezember'88:
+
+-vollst„ndigeUntersttzungvonGEMDOS-Objektdateien(DRI-Format).
+Diesek”nnenmitHilfes„mtlicherSymbol-undRelocationinformation
+vollst„ndigdisassembliertwerden.AuerdemwerdenXDEF-(Export),XREF-
+(Import)undEQU-ListenindenQuelltextaufgenommen.
+-neueBehandlungderAdressierungxx(PC,Rx)"PC-relativmitIndex".Diese
+wirdjetztalsLabel(PC,Rx)interpretiert,wichtigfrSprungtabellen
+von"switch"-bzw."caseof"-Statements.
+-šbernahmedesvollst„ndigenDateinamensindenQuelltext(ohne?und*).
+-AuswertungderSymboltabellefrausfhrbareDateien.DerQuelltext
+enth„ltalleoriginalenLabelnamen.
+-BercksichtigungderEigenheiteinesgewissenAssemblers,Nullwortean
+TEXTundDATAanzufgen.
+-BercksichtigungvonrelozierbarenLangworten(DC.Llblxxx,etwafr
+Sprungtabellen)jetztauchimTEXT-Segment
+-KorrekturenimFormatder.SYM-Datei.Z.B.werdenundefinierte
+(externe)LabelsohneWertangabeausgegeben.
+
+UpdatesfrVersionvomJanuar'89:
+
+-KorrekturdesBefehlsasl<ea>
+-BercksichtigungfolgenderDatenimTEXT-Segments:
+DC.W0
+DS.W1
+DC.Bx
+DS.B1
+-SchalterufrdieAusgabevonAssemblercodefr"MAS-68K"
+-KeineASCII-AusgabemehrbeirelokatiblenLangworten(DC.Llblxxx)
+-ASCIIhinterfalschenOpcodesinTEXT(wieinDATA)
+-FehlerausgabenachSTDERR(Handle4,wennvorhanden)
+-KeineLeerzeilenmehrhinterEND
+-SonderbehandlungvonTurbo-CKompilaten(Stacksegment/Header)
+-DetaillierteBeschreibungderSchalterbeimStartenohneParameter
+-KeinAbsturzdererstenPhasemehrbeizuvielenLabels
+
+UpdatesfrdieVersionvomAugust'89:
+
+-SonderbehandlungfrdieDisassemblierungvonSpeicherbereichen(etwa
+vonTeilendesBetriebssystems):
+MitdirekterLangwortadressierungadressierteSpeicherstellen,diesich
+innerhalbdesdisassembliertenBereichsbefinden,werdenalsLabels
+behandelt.Beispiel:
+SpeicherbereichFC0030bisFE0000disassemblieren.
+Stehtirgendwo"jsr$fc2345",sosetztderDisassemblerandieStelle
+$fc2345einLabelundschreibtfrdenjsr-Befehl"jsrlblFC2345".
+LautetderBefehljedoch"jsr$fa0000",sowirderauchgenauso
+ausgegeben.
+-PufferungderQuelltextausgabe,solangenichtnachSTDOUTausgegeben
+wird.DamitwirddiezweitePhasedesDisassemblersgegenberder
+bisherigenVersiondrastischbeschleunigt.
+-ErkennenvonBetriebssystemaufrufen.AlleGEMDOS-,BIOS-undXBIOS-
+AufrufewerdenerkanntundimKlartextalsKommentarausgegeben.Nicht
+vorhandeneFunktionsnummernwerdenalsZahlenausgegeben.Beispiel:
+clr.w-(sp)
+     trap#1;gemdosPterm0
+     move.w#11,-(sp)
+     trap #$d;biosKbshift
+     move.w#$c8,-(sp)
+     trap #1               ;gemdos$c8
+DabeimuvordemTrapeinBefehlderArt"move.w#x,-(sp)"oder"clr.w
+-(sp)"stehen;andereKonstruktewie"moveq#x,d0move.wd0,-(sp)"
+k”nnennatrlichnichterkanntwerden.
+
+
+ˆ0.Vorwort€
+
+Dis.prgbestehtausinsgesamtvierDateien:
+1)DerBatchdatei   "dis.bat"
+2)DererstenPhase"dis1.ttp"
+3)DerzweitenPhase"dis2.ttp"
+4)DerAnleitung"disass.doc"
+JedeDateiistfrdenProgrammablaufbzw.frdasVerst„ndnisdes
+€Programmsunbedingtnotwendig.
+
+  FrdieAnwendungistessinnvoll,eineBenutzeroberfl„chewie
+"command.prg"zuverwenden.FehlermeldungensindbeimStartenvomDesktop
+nichtzulesen,dasichnachAblaufdesProgrammssofortwiederdas
+DesktopaufdenBildschirmmalt.
+  Sowohldis1alsauchdis2liefernbeiFehlerneinenRckgabewert>0,so
+daeinFehlerzustandinBatch-Dateienabgefragtwerdenkann.Ein
+BeispielfrsolcheineBatch-DateimitIF-Statement,dasaberleider
+nurbeiwenigen"command"-Programmenfunktioniert(MS-DOSmt'manhalt
+haben):
+
+dis1%1%2%3%4%5
+IFNOTERRORLEVEL1dis2-i%1%2%3%4%5
+
+  Vorhersolltemannatrlichsichergehen,da"command"dieProgrammda
+teiendis1unddis2auchfindet(PATHsetzenodergleichpfad\dis1
+schreiben).
+
+  NochetwaszurProgramml„nge:dis2istetwa14k,dis111klang.Dies
+heitnichtetwa,daessichumeinfacheProgrammehandelt.ImGegentum:
+DerSourcefrdenDisassembleristweitber100kBinC,dieProgramme
+sindsokurzdurchjeglichenVerzichtaufC-Funktionen(sprintf(),
+fopen()usw.)undausschlielicherVerwendungvonGEMDOS-Routinen
+(Cconws(),Fopen()usw.)sowiemassivenEinsatzvon"register"-Variablen
+sowohllokalalsauchalsParameter.
+DISASSwurdeausschlielichmitTurbo-CvonHeimsoeth/Borlandohne
+Assemblerteileerstellt.
+
+DISASSkanndisassemblieren:
+-AusfhrbareDateienmitoderohneSymboltabelle
+-Objektdateien(natrlichimDRI-Format)
+-allgemeineDateien
+-Speicherbereiche(TOSoderandereresidenteProgramme)
+
+
+GEMDOSisteingetragenesWarenzeichenderDigitalResearchInc.
+MS-DOSisteingetragenesWarenzeichenderMicrosoftCorp.
+
+
+ˆ1.Anwendungsgebiet€
+
+  EinDisassemblerwandelteinlauff„higesProgramm(*.TOS,*.TTP,*.PRG)in
+einenAssembler-Source*.Sum.Dabeiwirdversucht,dieseDateisozu
+erzeugen,dasiewiederumalsEingabedateifreinenAssemblerdienen
+kann.SokannmananProgrammennderungendurchfhren,ohnedamanden
+Source-CodezurVerfgunghat.
+  LeidersiehtdasinderPraxisnichtsosch”naus.Meistensl„tsich
+eineDateinichtdirektineinenassemblierbarenSourcezurckbersetzen,
+sondernmunochvonHandkorrigiertwerden.TrotzdemstelltderDisas
+semblereinewertvolleHilfebeimAnalysierenvonfertigenProgrammendar.
+  DieSchwierigkeitenbeimDisassemblierenliegeneinfachdaran,dabeim
+Compilieren(bzw.Assemblieren)undLinkenimlauff„higenProgrammalle
+unn”tigenLabelnamenundandereInformationenverlorengehenundmeistens
+nurunvollst„ndigwiedergewonnenwerdenk”nnen.
+  DervorliegendeDisassemblerunterscheidetsichvondenmeistenanderen
+dadurch,daernichtnurbloeAdressenausgibt,sondernsichauch
+bemht,alleLabelsimProgrammzusetzenundzuadressieren.
+  AuerdemkannDISASSnichtnurDateien,sondernauchSpeicherteile
+disassemblieren;damitlassensichzumBeispielRoutinendesBetriebs
+systemsanalysieren.
+
+
+ˆ2.Probleme€
+
+IndenseltenstenF„llengelingtesdemDisassembler,einProgrammsozu
+disassemblieren,daes,wiederassembliert,mitdemOriginalv”llig
+bereinstimmt(beifastallenmitDRI-CcompiliertenProgrammenistdas
+tats„chlichm”glich).MeistensgibtesjedochProbleme.Imfolgendensind
+einigeUrsachenfrauftretendeSchwierigkeitenaufgefhrt:
+
+a)DasProgrammistimsogenanntenGST-Formaterstellt(mitLINK.PRG).
+Dabeiliegeninitialisierte(DC.x)unduninitialisierteDaten(DS.x)
+mitdemProgrammcodegemischtimTEXT-Segment.IndiesemFall
+versuchtderDisassembler,auchdieseDatenalsAnweisungenfrden
+68000zuinterpretieren(erverl„tsichaufdieSegmentierung,voll
+VertrauenindieQualit„tdesProgrammierers),wasnatrlichzuChaos
+fhrt.DerDisassemblererkenntzumBeispielf„lschlicherweise
+€Labels,undnachdemDatenteilisterins"Stolpern"gekommenund
+kannrichtigeMaschinenbefehlenichtmehrerkennen.
+Abhilfekannmanversuchenzuschaffen,indemmanProgrammteile,die
+alsDatenzuerkennensind,mitOptiondbehandelt.
+Beispiel:AllemitLCohneOption-t,mitASSEMohneOptionjundF77
+compiliertenbzw.assembliertenProgramme.
+
+b)DasProgrammistunsaubergeschriebenoderinsonderbarerForm
+compiliert,sodateilweiseDatenimTEXT-Segmentliegen.
+Prinzipiellgilthierdasselbewieuntera).
+Beispiel:DiemeistendirektinAssemblergeschriebenenProgramme.
+
+c)DasProgrammenth„ltBefehlewie"cmp#3,d0"oderlangeSprnge,die
+auchkurzseindrften(BRAstattBRA.S)sowieandereverbesserbare
+Befehle.
+MancheAssembleroptimierensolcheBefehleetwazu"cmpi#3,d0"was
+beieinererneutenAssemblierungzueinemetwasanderenCodefhren
+kann.WillmandenCodenuranalysieren,gibtesaberkeineProbleme.
+
+d)DasProgrammenth„ltDifferenzenzwischenrelokatiblenAdressen,zum
+Beispiel:"move#(anfang-ende),d0",wobei"anfang"und"ende"zum
+BeispielLabelssind.
+FallsderbenutzteAssemblernichtoptimiert,drftenkeine
+Schwierigkeitenauftreten,wennjedochc)auftritt,d.h.zwischenden
+Labels"anfang"und"ende"einBefehlsteht,denderAssembler
+optimiert,stimmtdasProgrammnatrlichnichtmehr.
+
+e)DasProgrammenth„ltBefehlewie"leaname+15,a0".
+DerDisassemblernimmtindiesemFalleinLabelanderStelle
+(label+15)anundversuchteszusetzen.Diesgibtz.B.
+Schwierigkeiten,wenn(label+15)auerhalbdesProgrammsliegt.Keine
+ProblemegibteshierinObjektdateien,falls<label>einexternes
+Symbolist;DISASSgibthiertats„chlich"label+15"aus.
+BeiLabels,dieadressiert,abernichtgesetztwerdenkonnten,gibt
+derDisassemblereineFehlertabelleamEndedesQuelltextesaus.
+
+f)DasProgrammenth„ltAdressierungendesTyps"label-anfang(ax)".Wenn
+derAssemblereinmaldenWert"label-anfang"berechnetundeingesetzt
+hat,erinnertnichtsmehrdaran,dahiereinmaletwasvoneinem
+Labelstand;dasdisassemblierteProgrammwirdunleserlich.Trittnun
+derFallc)ein,stimmtdasDisplacementnatrlichnichtmehrund
+damitdasProgrammnacherneutemAssemblierenauchnicht.
+Beispiel:AllemitMMCCcompiliertenProgramme.
+
+g)BeimDisassembliereneinesSpeicherbereichsodereinernichtausfhr
+barenDateistehenkeineRelocation-TabellenzurVerfgung,soda
+derDisassemblerhierwenigerInformationenerh„ltalsbeinormalen
+Programmen.BeiProgrammenmitabsolutenAdressensiehtmaneinem
+Langwortnichtmehran,obessichumeinennormalen,absolutenWert
+handeltoderumeinLabel(beieinemrelokatiblenProgrammsteht
+dieAdressediesesLabelsinderRelocation-Tabelle).Daserschwert
+natrlichdieAnalyse.Amleichtestenl„tsicheineObjektdatei
+disassemblieren.Meistens(wennsiez.B.mitas68odermas-68k
+erstelltwurde)wirddiessogarvollst„ndiggelingen.
+
+
+Auerdemgibtesnochvieleandereprogrammiertechnische
+Hinterh„ltigkeiten,mitdeneneinDisassemblernichtklarkommt.Diese
+alleaufzuz„hlenistwohlunm”glich.
+
+
+ˆ2.StrategiedesDisassemblers€
+
+DaeinAssemblerblicherweisemit2Durchl„ufenarbeitet,liegtesnahe,
+dadiesauchfreinenDisassemblersinnvollist.Tats„chlichgehtes
+kaumanders,fallsmansymbolisch,d.h.mitLabelsdisassemblierenwill.
+SchlielichmumanbeijedemBefehlwissen,obervielleichtweiter
+hintenimProgrammalsLabeladressiertwird.
+DervorliegendeDisassemblerarbeitetalsomitzweiDurchl„ufen
+("Passes"),dieinzweigetrenntenProgrammenablaufen.DieVorteileder
+AufteilunginmehrereEinzelprogrammeistnichtnurfrdieEntwicklung
+undTestphasepraktisch,sondernauchsp„terfrdenGebrauch,wieweiter
+untenerl„utert.
+ImfolgendenwirddieVorgehensweisederzweiPassesbeschrieben.
+Gestartetwerdensiemit"dis?filename.ext":
+
+a)DieerstePhase"dis1.ttp":
+DerGEMDOS-Programmkopfwirdgelesen.DieSegmentgr”enwerdenfr
+€diePhase2aufdieDatei"filename.rlo"geschrieben.
+Achtung:AlleDateienmitEndung".o"werdenalsObjektdateienim
+GEMDOS-Formatinterpretiert.
+AnschlieendwirddieRelocation-TabelleebenfallsaufdieDatei
+"filename.rlo"geschriebenunddiesegeschlossen.
+FallsdieOptionM(emory)aktiviertwurdeoderdieangegebeneDatei
+nichtausfhrbarist,wirdkeinerlo-Dateierstellt.
+FallsessichumeineObjektdateihandelt(Endung".o"),wirdkeine
+Relocationtabelleabgespeichert,dadis2direktmitden
+RelocationdatenderObjekdateiarbeitet.
+FallseineSymboltabelleexistiert,wirddieseaufdieDatei
+"filename.sym"ausgegeben(wiebeiNM68.PRG).DieseTabelleistnur
+"justforfun"undwirdvondis2nichtbenutzt(dis2arbeitetdirekt
+mitderinderProgramm-bzw.ObjektdateivorhandenenTabelle,falls
+vorhanden).
+DieRelocation-Tabelle(fallsvorhanden)enth„ltalleProgrammstel
+len,diebeieinerVerschiebungdesProgrammsangepatwerdenmssen.
+FolglichsinddieLangworte,aufdiedieTabelleneintr„gezeigen,
+relokatibleSymbole,alsomeistensLabels.Daherwerdenallediese
+LangwortealsLabelsineineTabelleaufgenommen,diesesortiertund
+doppelteEintr„geentfernt.
+SchlielichwirddasProgrammSchrittfrSchrittdurchgegangenund
+jederMaschinenbefehlsoweitdisassembliert,daalleBefehle,die
+keinerelokatiblen,sondernrelativeAdressenenthalten,dekodiert
+unddieAdressenindieTabelleeingefgtwerden.ZudiesenBefehlen
+geh”ren:BRA,BSR,Bcc,DBccsowiealleBefehlemitxxxx(PC)oder
+xx(PC,Rx).
+DiesortierteLabel-Tabellewirdunter"filename.lbl"abgespeichert.
+
+b)DiezweitePhase"dis2.ttp"("die2.Phasekannnochmehr!")Die
+gesamteAusgabe(auerFehlermeldungen)wirdaufdieDatei
+"filename.s"geschrieben.
+DieDateien"filename.rlo"(fallsvorhanden)und"filename.lbl"
+werdeneingelesen.DieSegmentgr”enwerdenbercksichtigt,soda
+jederProgrammteilgetrenntdisassembliertwird:
+
+i)TEXT
+
+VordemDisassemblierenwirdinderLabel-Tabellenachgesehen,ob
+dergeradedisassemblierteBefehlalsLabelvorkommt.Indiesem
+Fallwirdzun„chstdasLabelausgegeben.
+IstdieAdressedesBefehlsrelokatibel,wirdanstelleeines
+Assemblerbefehlsein"DC.Llblxxx"ausgegeben.hnlichespassiert,
+wenndaszweiteBytedesBefehlsalsLabeladressiertwird.Auch
+hierwird"DC..."ausgegeben.FalscheOpcodeswerdenebenfalls
+als"DC.W"ausgegeben.InallendiesenAusnahmef„llenhandeltes
+sichimmerumDatenimTEXT-Segment.
+DerBefehlwirddanndisassembliert.Enth„ltereinerelative
+Adresse,wirdstatt"adresse""lbladresse"ausgegeben,
+desgleichen,wennderBefehleinzurelozierendesLangwort
+enth„lt.Bsp.("anfang"seieinLabelanAdresse100abProgramm
+anfang):
+Assembler:Disassembler:
+
+move.l#100,a0move.l#100,d0
+move.l#anfang,a0move.l#lbl100,a0
+
+InMaschinensprachesinddieobigenBefehleabsolutidentisch,der
+Unterschiedbestehtlediglichdarin,dadieAdressedes
+Langwortes"100"(alsTeildesMaschinenbefehls)imzweitenFall
+inderRelocation-Tabelleeingetragenist.
+
+ii)DATA
+
+UmPlatzzusparen,werdennachM”glichkeit3Langwortenebenein
+anderausgegeben,soweitkeinLabelodereinezurelozierende
+Adressedazwischenliegt.AuchhiergibtesdenUnterschiedzwi
+schen"DC.L100"und"DC.Llbl100",ausdemgleichenGrundwie
+oben.
+
+iii)BSS
+
+DasBSS-SegmentwirdalsFolgevon"DS.Bn"interpretiert.
+
+
+ˆ4.Optionen€
+
+Frdis1gibtesnurzweiOptionen:
+€
+dis1datei.prg*Dateidisassemblieren
+dis1-mfc0000-fc0100datei*Speicherbereichdisassemblieren
+dis1-n...*ObjektdateiohneOpcode-Markierung
+
+  AndereParameterals"-m"sindm”glich,werdenjedocheinfachignoriert.
+AlleParameterauerdemletzten,derimmerderDateinameist,werdennach
+dem"-m"undnach-...n...durchsucht.Sok”nnenz.B.auchdieParameter
+vondis2andis1bergebenwerden,ohnedaeinFehlerauftritt.
+  EswirddiezudisassemblierendeDatei(mitExtension,mitoderohne
+Pfad)alsletzterParameterangegeben.DerDateinamedarfnurdannJoker
+('*','?')enthalten,wenndieOptionmfehlt;indiesemFallwirddie
+erste"passende"Dateiangenommen.DieArbeitsdateien(*.rlo,*.lbl,
+*.sym)werdenimaktuellenDirectoryerstellt.
+  Dis2erwartetdieArbeitsdateienimaktuellenDirectory.
+  Frdis2sindz.B.folgendeOptionenerlaubt:
+
+dis2datei*ganzeDateidisassemblieren
+dis2f56-13e4datei*nurbestimmtenBereichdisassemblieren
+dis2100datei*ab100Hdisassemblieren
+dis2-netdcazidatei*folgendeOptionensinderlaubt:
+
+e(XECUTABLE):Dateinichtausfhrbar
+t:Ausgabenachstdout
+d(ATA):WieDATA-Segmentbehandeln
+c(ODE):Codemitangeben
+a(DDR):Adressenmitangeben
+z(EICHEN):ASCIImitangeben
+i(NTERMED.):Zwischendateienl”schen
+n(oOpcode):keineOpcode-Makierung
+u:Schalterfr"MAS-68K"
+
+dis2-ofc0000datei*o(RIGIN):Adressangabenabfc0000H
+dis2-mfc0000-fc0020datei*Speicherbereichdisassemblieren
+
+
+  DieFlagsk”nneninbeliebigerReihenfolgeundauchgetrenntaufgefhrt
+werden,z.B."dis2-i-t-acddatei".
+
+  DasFlag"n"beziehtsichaufGEMDOS-Objektdateien;alleDateienmit
+Endung".o"werdenalssolchebehandelt.ImFormatdieserDateienist
+festgelegt,daderBeginneinesjedenOpcodes(Maschinenbefehl)miteinem
+besonderenWertinderRelocation-Tabellezukennzeichnensei.Damitkann
+esnichtmehrpassieren,dabeimDisassemblierenDatenalsMaschinenbe
+fehleundumgekehrtinterpretiertwerden.DieMarkierungeinesjeden
+OpcodesistjedochfrdenLinkernichtvonInteresse,daherlassenviele
+Compiler/Assembler(z.B.GfA,Metacomco)dieseeinfachweg.IndiesemFall
+istdasFlag"n"zuspezifizieren,damitderDisassemblerwei,daer
+nichtaufdieOpcode-Markierungachtensoll.
+
+  BeiausfhrbarenProgrammenbeziehtsichdieBereichsangabeaufden
+tats„chlichenProgrammanfang,der28ByteshinterdemDateianfangbeginnt
+(dieersten28BytesistderGEMDOS-Header).BeianderenDateien,diemit
+Option"e"behandeltwerdenmssen,undbeimDisassemblierenvonSpeicher
+bereichenwirdalsAnfangsadressederDatei-/Bereichsanfangangenommen.
+
+  BeiOptionewirdkeineRelocationtabelleverwendet.
+  BeiOptiontwirdstattaufdieDatei"filename.s"nachstdoutgeschrie
+ben.DieAusgabekanndannmittelseines"command"aufeineandereDatei
+umgelenktwerden.Auch"Pipes"wie"dis2-tx.prg|more"sindm”glich,
+fallsdas"commanddieseM”glichkeitbietet.Fehlermeldungenwerdennach
+STDERRgeschrieben(Handle4)undk”nnenggf.umgelenktwerden.Die
+Titelmeldungwirddirektnach"CON:"ausgegebenundkannnichtvom
+Bildschirmumgelenktwerden.
+  BeiOptionuwirdalsKommentarzeichen';'statt'*'verwendetund
+".b"statt".s"beiallenVerzweigungenmit8BitOffset;auerdemwird
+statt"EQUR"nur"EQU"ausgegeben.DiesistfrdenAssembler"MAS-68K"
+vonHeimsoeth/Borlandn”tig(geh”rtzuTurbo-C).
+
+BeimAnalysierendesROMsempfiehltsichz.B.folgendeParameterwahl:
+dis-mfc0000-fc0200-ofc0000-actos
+IndiesemBeispielwirddieReset-RoutinedesTOS(derSpeicherbereich
+$fc0000bis$fc0200)alsAssemblercodeunterdemNamenTOS.Sdisassem
+bliert;DATAbekommtmanmitOption-ad.DieOption-oistnotwendig,da
+sonstalleAdressenausgegebenwrden,alsobderzudisassemblierende
+SpeicherbereichanAdresse0stnde.
+
+Hinweis:FallsdieDateimehrmalshintereinandermitverschiedenen
+€Bereichsangabendisassembliertwerdensoll,brauchtdieerste
+Phasetrotzdemnureinmalausgefhrtzuwerden,dadieArbeits
+dateienerhaltenbleiben.HierliegtderHauptvorteilderbeiden
+getrenntenPasses.
+AuerdemistdiesderGrunddafr,dadielblundrlo-Dateien
+nacherfolgterDisassemblierungnichtautomatischentfernt
+werden.Fallsdiesdennochgewnschtwird,kanndieOptioni
+verwendetwerden.DiefolgendeBatchdateil„tdiezwei
+getrenntenPasseswieeineinzigesProgrammerscheinenund
+l”schtdieZwischendateienautomatisch:
+
+                              dis1 %1 %2 %3 %4 %5
+                              IF NOT ERRORLEVEL 1 dis2 -i %1 %2 %3 %4 %5
+
+ErstwirdderPass1aufgerufen;fallskeinFehleraufgetreten
+ist,wirddannderPass2mitzus„tzlicherOptioniaufgerufen.
+Andis1werdendieselbenParameterwieandis2bergeben,wobei
+dis1nurdiefrihnrelevantenauswertetunddieanderen
+ignoriert(s.o.).
+
+
+ˆ5.Fehlermeldungen€
+
+Fehlermeldungenwerdengrunds„tzlichauf"CON:"(Bildschirm)geschrieben
+undk”nnendaherNICHTumgelenktwerden.
+
+a)Fehlermeldungenvondis1:
+
+"Usage: ..."-ProgrammwurdeohneParameter
+gestartet.
+"No match for ....."-Dieangegebene,zudisassemblie
+rendeDateiexistiertnichtim
+angegebenenDirectory.
+"Cannot open ....."-DiezudisassemblierendeDateil„t
+sichausunerfindlichenGrnden
+nicht”ffnen.
+".... is not a program file"-BeiderzudisassemblierendenDatei
+handeltessichnichtumeinaus
+fhrbaresProgramm(derGEMDOS-
+Kopfentsprichtnichtdemgewnsch
+tenFormat).
+IndiesemFallwerdenwederLabel-
+nochRelocation-Tabelleerstellt.
+"Not enough Memory"-DerRechnerverfgtberzuwenig
+Hauptspeicher.
+Evtl.RamdiskundAccessories
+entfernen.
+"Read error"-LesefehleraufderEingabedatei.
+VermutlichDiskettedefekt.
+"Cannot create workfiles"-Die*.lbloder*.rlo-Dateien
+k”nnennichterstelltwerden.
+VermutlichistdasDefault-
+Laufwerkschreibgeschtzt.
+"Write error"-Schreibfehler.
+VermutlichaktuellesLaufwerkvoll
+oderDiskettedefekt.
+"Cannot read Relocation Data"-LesefehleraufderEingabedatei.
+EntwederDiskettedefektoder
+ProgrammkopfderDateinicht
+korrekt.
+"Illegal Labels"-Relocation-Adresseungeradeoder
+auerhalbderDatei.Fehlerim
+Linker.
+
+
+b)Fehlermeldungenvondis2:
+
+"Usage: ..."-ProgrammwurdeohneParameter
+gestartet.
+"No match for ....."-Dieangegebene,zudisassemblie
+rendeDateiexistiertnichtim
+angegebenenDirectory.
+"Cannot open ....."-DiezudisassemblierendeDateil„t
+sichausunerfindlichenGrnden
+nicht”ffnen.
+"Cannot open workfile(s)"-Die*.lblund*.rlo-Dateien
+existierennichtimaktuellen
+Directory.
+€Entwederwurdevergessen,vorher
+dis1zustarten,oderdieDateiist
+nichtausfhrbar(e-Flagsetzen!).
+"Syntax error(s) in arguments"-DieKommandozeileenth„ltunzu-
+l„ssigeArgumente.
+"Out of Range"-DerzudisassemblierendeBereich
+liegtauerhalbderDateigr”e.
+"Writeerror"-Schreibfehleraufder*.SDatei.
+DieDisketteistentwederschreib
+geschtztodervoll.Manbeachte,
+dadisassemblierteProgramme
+gewaltigeAusmaeannehmenk”nnen.
+

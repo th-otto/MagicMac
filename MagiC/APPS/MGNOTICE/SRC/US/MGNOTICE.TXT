@@ -1,0 +1,93 @@
+Description of the MGNOTICE program, version 1.00
+-------------------------------------------------
+
+Andreas Kromke
+11/02/97
+
+
+1. What is MGNOTICE ?
+---------------------
+
+This little program can draw and manage notes similar to the notes program 
+for the Macintosh. The notes are displayed in windows unlike the desktop 
+notes in Ease and are therefore independent of the loaded Shell.
+
+
+2. Installation
+---------------
+
+Start manually or load at bootup from the start folder (/gemsys/magic/start). 
+All notes will be saved in /gemsys/gemdesk/notice/. This folder will be 
+created automatically, if it does not already exist. The INF file will be 
+saved in the current directory of MGNOTICE. All files are ASCII (!!). So 
+there are no kilobytes of kryptic Binary waste, which have to be thrown away 
+with every update. MGNOTICE's window positions are free of rounding errors 
+and resolution independent, so there is no mess with different files for 
+different resolutions.
+
+
+3. How to draw notes
+--------------------
+
+Select File/New. Type the note and press [Return]. The note will be saved 
+immediately. Changed window positions will be saved when the system is 
+shutdown. New notes will appear at the position of the input window. The 
+position of the input window will be permanently saved in the MGNOTICE.INF 
+with Properties/Preferences/Save.
+
+
+4. Moving the note program to the front and back
+------------------------------------------------
+
+Use the MagiC program menu or clicking on a note makes all notes visible. 
+Clicking on another program window, or activating another menu bar via the 
+MagiC program menu, moves the notes program to the back again.
+
+
+5. Changing fonts and colours
+-----------------------------
+
+Click on a note. The top will turn grey. Select Properties/Font or 
+Properties/Colour. The change will be saved immediately. The selected note 
+always has a grey top. "Invalid" colours will be shown as black in all screen 
+modes with less than 16 colours. Where this is the case MGNOTICE always 
+chooses white text. If for example, black text has been selected with a light 
+blue background, this will appear as black and white. This will not change 
+the original properties of notes. Changing the screen resolution to one with 
+at least 16 colours will reveal the original property settings of black on 
+light blue again. You can edit the MGNOTICE.RSC colour palette to get your 
+preferred own text colours (e.g. light red with light blue etc..).
+
+
+6. Deleting notes
+-----------------
+
+Click on a note. The top will turn grey. Then go to File/Delete... The 
+selected window will be closed deleting the note immediately. There is no 
+confirmation dialog!
+
+
+7. Changing notes
+-----------------
+
+Click on a note. The top will turn grey. Then go to File/Open... or Double 
+click the note. The window size adjusts automatically to fit the new text.
+
+Alternative (emergency):  All files are ASCII and can be edited with any 
+editor. Do not change the keywords before and including the line BEGIN. 
+MGNOTICE should be terminated before editing notes with an editor the notes 
+will be overwritten again!
+
+
+8. Moving notes
+---------------
+
+With the mouse, click/hold on the window and move.
+
+
+9. Changing Properties
+----------------------
+
+Properties/Preferences. Clicking on the Font or Size selection brings up the 
+font selector. Clicking on the Background colour selection brings up the 
+colour popup. The window position of the dialog will be saved, too.
