@@ -1,0 +1,8 @@
+SLC_DEMO.TOS
+=              ; list of modules follows...
+tcmstart.o      ; startup code
+slc_demo.c (slb.h)
+mt_dos.lib
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib

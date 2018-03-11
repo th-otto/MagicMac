@@ -1,0 +1,5 @@
+; x	y	w	h	wrmode	color	interior	style
+; wrmode (1=replace,2=transparent,3=xor,4=rev xor)
+; interior (0=leer,1=deckend,2=muster,3=schraff,4=userdef)
+; style (Schraffur: 1..4    Muster: 1..25)
+100	100	100	100	1		4		2		1

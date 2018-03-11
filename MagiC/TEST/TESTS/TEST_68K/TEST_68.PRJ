@@ -1,0 +1,9 @@
+test_68k.tos
+.C [-DMAGIC]
+=
+pcmxstrt.o      ; startup code
+test_68k.c (ass68k.h)
+ass68k.s
+mt_dos.lib
+pctoslib.lib
+pcstdlib.lib

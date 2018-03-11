@@ -4,3 +4,4 @@ Andreas Kromke
 
 MagiC shared library for EDIT object, with test application.
 The EDIT object provides multi line input for AES applications and supports GDOS fonts.
+Needed for MGEDIT

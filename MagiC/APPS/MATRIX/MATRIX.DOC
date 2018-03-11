@@ -1,0 +1,383 @@
+066000002000000132000000004000000
+11
+2Seite #1
+F0110030001
+9[.............................................................]0110
+€Hannover,den29.12.86
+
+‰BEDIENUNGSANLEITUNGZUMATRIX1.0€
+
+ˆ0.Vorwort€
+
+Matrix1.0istfreikopierbar,derAutor
+
+  AndreasKromke
+  3000Hannover61
+  Steinbruchstrae17
+
+verzichtetaufjeglicheHonorierung.
+DeshalbdarfdasProgrammauchnichtvonanderengegenBezahlungweiterge
+gebenoderdasProgrammselbstoderdiezugeh”rigenDateiendurch
+unsachgem„eEingriffever„ndertwerden.
+Dahermerke:
+
+„WerMatrix-Programmenachmachtoderverf„lschtoder
+nachgemachteoderverf„lschteMatrix-Programmesich
+verschafftundinVerkehrbringt,wirdmitAnalysis-
+Zettelnnichtunter2Stckbestraft
+€
+FrSch„den,diedurchAnwendungdiesesProgrammsentstehen(z.B.falsche
+HausaufgabenoderAugensch„den)kannderAutorselbstverst„ndlichnicht
+haften.
+EventuellehnlichkeitenderMatrix1.0-Benutzeroberfl„chemitanderen
+ProgrammennamhafteroderunbekannterHerstellersindnichtbeabsichtigt,
+sondernw„renreinzuf„llig.
+
+Verbesserungsvorschl„geundHinweiseauf(sicherlich)vorhandeneFehler
+sindwillkommen;fallseineAntworterwartetwird,aberbittenurmit
+Rckporto!
+
+Matrix1.0ben”tigtdieResource-Datei"matrix.rsc",umgestartetwerden
+zuk”nnen;diesemusichentwederimselbenOrdnerbefindenwiedas
+Programm"matrix.prg"oderaufderoberstenEbenevonLaufwerkA.
+Matrix1.0istaufeinemMonochrom-Monitorgeschriebenworden,l„uftaber
+auchaufmittlererAufl”sunginFarbe.FrbeideModiwirddasselbe
+Resource-FileverwendetundvomProgrammselbst„ndigangepat;daher
+wirkendieIconsimFarbmodusauchetwas"schlank".
+
+èˆ1.DasDesktop€
+
+DasDesktopvonMatrix1.0enth„ltfolgendeSymbole:
+
+-MatrixsymboleA..J
+-Druckersymbol
+-Papierkorb
+
+DurchAnklickenundVerschiebenmitderMaussindfolgendeOperationen
+m”glich:
+
+-VerschiebenderSymboleaufdemBildschirmdurchAnklickenunddannbei
+gedrckterlinkerMaustaste.BeidieserOperationwirdstattdesPfeils
+eineHandalsMauszeigerdargestellt.
+
+-KopierenvonMatrizendurchVerschiebendesentsprechendenSymbolsber
+daseineranderenMatrixoderineinFenster,dasdieseMatrix
+darstellt.
+Bemerkung:DieEinheitsmatrixEistfestvordefiniertundkanndaher
+wedergel”schtoderandersver„ndertwerden.Siekannjedochaufeine
+andereMatrixkopiertwerden.DieDimensionenderaltenMatrixbleiben
+dabeierhalten.
+
+-L”scheneinerMatrix(d.h.alleElemente=0setzen)durchVerschieben
+desentsprechendenSymbolsberdenPapierkorb.
+
+-AusdruckeneinerMatrixaufeinemangeschlossenenDruckerdurch
+VerschiebendesentsprechendenMatrixsymbolsberdasDruckersymbol.
+Bemerkung:DieMatrixwirdmitderselbenAnzahlvonNachkommastellen
+ausgedruckt,wiesieineinemeventuellge”ffnetenFensterangezeigt
+werden.šbersteigtdieMatrixbreite80Zeichen,wirdderDruckermitSI
+aufSchmalschriftgeschaltet.
+
+-AktiviereneinerMatrix(auerderE-Matrix)durcheinfachesAnklicken
+deszugeh”rigenSymbolsmitderlinkenMaustaste.
+
+-™ffneneinesAnzeigefenstersdurchDoppelklickaufdasMatrixsymbol
+(ebenfallsauerE-Matrix).
+
+-WenndasEditierfensternochnichtge”ffnetist,™ffnendesEditierfen
+stersfrdieaktivierteMatrixmitDruckaufirgendeineTasteder
+Tastatur.
+
+ˆ2.DieAnzeigefenster€
+
+Matrix1.0kanngleichzeitigin5FensternbeliebigeMatrizendarstellen,
+auerdemgibtesnochdas->Editierfenster.
+AlleblichenFenstermanipulationensindzul„ssig,also:
+
+-Schlieen
+-Vergr”ern/Verkleinern
+-Verschieben
+-Maximalgr”e
+-zeilen/spaltenweiseScrollen
+-seitenweiseScrollen
+-Scrollbalkenverschieben
+
+Zus„tzlichkannmandurchDoppelklickaufeinbeliebigesMatrixelementdas
+->EditierfensterandieserStelle”ffnen.
+
+DasFormat(AnzahlderNachkommastellen)deraktiviertenMatrix(invers
+dargestelltesSymbol)wirddurchdieMenleistefestgelegt,ebensowiedie
+horizontaleundvertikaleDimension.
+MaximalverarbeitetMatrix1.0(16,16)-Matrizen.AlleZahlenwerdenintern
+€mitdoppelterGenauigkeit(64 bit)dargestellt.
+
+ˆ3.DasEditierfenster€
+
+EsgibtzweiM”glichkeiten,dasEditierfensterzu”ffnen:
+
+-irgendeineTastedrcken.IndiesemFallwirddasEditierfensterfrdie
+aktivierteMatrixge”ffnet.
+
+-irgendeinbeliebigesMatrixelementinirgendeinemFenstermit
+Doppelklickanklicken.DasEditierfensterwirddanngenaufrdiese
+MatrixundfrdiesesMatrixelementge”ffnet.
+
+DiezweiteMethodefunktioniertauch,fallsdasEditierfensterbereits
+ge”ffnetist,dabeikanndasdoppeltangeklickteMatrixelementauchim
+Editierfensterselbstsein.
+
+AbgesehenvondenblichenFenstermanipulationenkannmanMatrizenvon
+Handeingeben.DieEingabeeinerZahlerfolgtnatrlichberdieTastatur,
+dabeihabenfolgendeTasteneinebesondereBedeutung:
+
+ReturnoderEnter:AbschluderEingabe,Cursoraufn„chstesMatrixele
+ment.BeifehlerhafterEingabeert”ntderGong.
+
+BackspaceoderDel:zuletzteingegebenesZeichenl”schen
+
+Home:CursoraufMatrixelement(1,1)
+
+Undo:bisherigenInhaltderMatrixzelleinnormalisierter
+Darstellunganzeigen
+
+Esc:bisherigeEingabel”schen
+
+Cursortasten:Cursorbewegungen
+
+Zul„ssigalsEingabesindalleblichenDarstellungenvonKommazahlenund
+zus„tzlichnochfolgendeAusdrcke:
+
+zahl1@zahl2
+zahl@
+@zahl
+  wzahl
+szahl
+
+wobei@einOperator('+','-','*','/'),wdasZeichen'w'oder'W'unds
+dasZeichen's'oder'S'ist.
+FolgendeOperationenwerdenjeweilsausgefhrt:
+
+  "@zahl"         neuerWert:=bisherigerWert@zahl
+  "zahl@"          neuerWert:=zahl@bisherigerWert
+  "zahl1@zahl2"   neuerWert:=zahl1@zahl2
+  "wzahl"          neuerWert:=sqrt(zahl)
+  "szahl"          neuerWert:=sin(zahl)
+
+BesonderspraktischdrftedabeiinsbesonderedieM”glichkeitsein,Brche
+wie"1/3"oderWurzelnwie"w2"frû2einzugeben.
+
+öˆ4.DieMenleiste€
+
+DiemeistenderMenpunktesinddurchihrenNamenschonselbsterkl„rend.
+Zus„tzlichistfolgendeszuerw„hnen:
+
+-DieUmwandlungenerfolgenimmermitdergeradeaktiviertenMatrix,also
+Vorsichtz.B.nacheinemKopiervorgang!
+
+-AlleUmwandlungenwerdenohnevorherigeSicherheitsfrageundauchohne
+anschlieendeErfolgsmeldungdurchgefhrt.Eswerdenlediglichalle
+Fenster,diediever„nderteMatrixenthalten,neugezeichnet.
+
+-DerGau-AlgorithmuszurBestimmungderoberenDreiecksmatrixundder
+InversensowiefrdasL”seneinesLGS(ˆl€inearenˆG€leichungsˆs€ystems)wird
+mitpartiellerPivotwahl(Zeilenvertauschung)durchgefhrt.
+
+-BeimL”seneinesLGSwirddieKoeffizientenmatrixsoweitm”glichindie
+Einheitsmatrixumgeformt,sodamandieWertedirektimrechten
+Spaltenvektorablesenkann.IstdasLGSnichteindeutigl”sbar,lassen
+sichsoaucheinfacheBeziehungenwiex 1€=3x 2€usw.ablesen.
+
+-Rundenbedeutet,daalleWertekleinerals1e-11aufNullgesetzt
+werden.
+
+-NegierenistdieOperation"Matrix:=-Matrix"
+
+-WertderMatrixnormundKonditionszahl(Men"Verschiedenes")sindvon
+derimMen"Editieren"eingestelltenMatrixnormabh„ngig.Dabei
+bedeuten:
+
+-ES-NormErhardt-Schmidt-Norm(standardm„igeingestellt)
+-SS-NormSpaltensummen-Norm
+-ZS-NormZeilensummen-Norm
+
+-DascharakteristischePolynomwirdimmerinnormalisierterDarstellung
+angezeigt.Dabeiist"Koeffizienti"derKoeffizientvorxi€.
+
+-BeimAbspeichernmuderDateinameauf".MTX"enden.
+
+-EswerdennurdieMatrizenA..Dabgespeichertundgeladen,umein
+"Mischen"vonDateienzuerm”glichen.
+Dateiformat:
+16*16*8=2048BytesfrdieMatrixelementevonMatrixA
+2Bytesx-DimensionvonMatrixA
+2Bytesy-DimensionvonMatrixA
+16*16*8=2048BytesfrdieMatrixelementevonMatrixB
+2Bytesx-DimensionvonMatrixB
+.
+.
+2Bytesy-DimensionvonMatrixD
+1BytefrAnzahlderVorkommastellenvonMatrixA
+1BytefrAnzahlderNachkommastellenvonMatrixA
+1BytefrAnzahlderVorkommastellenvonMatrixB
+.
+.
+1BytefrAnzahlderNachkommastellenvonMatrixD
+-------
+8216Bytes
+
+-DerMenpunkt"bermatrix.prg"enth„ltnichtnurdenCopyright-
+Vermerk,sondernauchdasDatumderErstellungdieserProgrammversion.
+
+-FrdieArithmetiksiehen„chstesKapitel.
+
+÷ˆ4.DieArithmetik€
+
+BeimAnw„hlenderFunktion"Arithmetik"imMen"Umwandlungen"kannman
+einenkurzenarithmetischenAusdruckeingeben.Dieserwirdausgewertet
+undderderMatrixlinksdesGleichheitszeichenszugewiesen.
+MatrizennamenA..JsindinGrobuchstabeneinzugeben.
+FolgendeAusdrckesinderlaubt:
+
+  matrix@matrix
+  matrix
+
+mit
+
+  @='+','-','*','/'(letzteresfrMultiplikationmitderInversen)
+  matrix=matrixname
+         =zahl(anstellevon"zahl*E")
+        =zahl*matrixname
+  matrixname='A'..'J'
+  zahl=(blicheDarstellungfrGleitkommazahlen)
+
+
+Beispiele:
+
+A=B„quivalentzumKopierenderMatrixBnachA
+B=5.12Abkrzungfr"B=5.12*E"
+B=1„quivalentzumKopierenderE-MatrixnachB
+C=3.5*A  +    B
+D=E      -    1.3*D
+ F=0„quivalentzumL”schenderMatrixF
+G=1      /    G„quivalentzumInvertierenvonG
+ H=3*F    /    4*H
+ I=-1*I„quivalentzumNegierenvonI
+I=0-I-"-
+J=1/3
+(DieZwischenr„umedienenhiernurderšbersicht)
+Zubeachtenistdabei:
+
+-AndieEinheitsmatrix'E'darfnichtzugewiesenwerden.
+
+-DieDimensionenderMatrizenmssenzueinanderpassen;dieEinheitsma
+trixwirdimmerautomatischangepat.
+
+-Durcheinesingul„reMatrixkannnichtgeteilt,d.hnichtmitderen
+Inversermultipliziertwerden.
+
+IndenbeidenletztenF„llenerfolgteineentsprechendeFehlermeldung,bei
+sonstigenSyntaxfehlernwirdlediglichdieDialogboxwiederneugezeich
+net,damitmandieEingabekorrigierenkann.
+
+ğˆA.Anhang(Updates)€
+
+FolgendeFehlerwurdenbeiVersion1.1beseitigt:
+
+-DieFensterwerdennachBeendigungkorrektgel”scht,sodaMATRIXjetzt
+auchmitcommand.prgl„uft.
+DiealteVersiontatdiesnicht.BeimStartdesProgrammsvomDesktop
+trataberderFehlernichtauf.
+
+-Ein"Bug"inderDruckroutinewurdebeseitigt,sodaMATRIXjetztauch
+nicht-quadratischeMatrizenkorrektdruckt.
+
+-IndenarithmetischenAusdrckenwerdenjetztauchGleitkommazahlenvom
+Typnnne-mm(mitnegativemDezimal-Exponenten)zugelassen.
+BisherfhrtedieszueinerFehlermeldung.
+
+FolgendeVerbesserungenundErweiterungenwurdeninVersion1.1
+aufgenommen:
+
+-DerGau-AlgorithmuswirdmitpartiellerPivotwahldurchgefhrt,um
+Rundungsfehlerzuverringern.
+
+-BeijederAdditionimGau-AlgorithmuswirdeineRundungdes
+Ergebnissesdurchgefhrt.Damitwirdz.B.dieMatrix
+
+          1011-1
+          21200
+  01012
+  1-21-1-5
+  32321
+
+bei"obereDreiecksmatrix"und"LGSl”sen"korrektbehandelt.
+MATRIX1.0berechneteaufgrundvonRundungsfehlerneinv”lligfalsches
+Ergebnis.
+
+-StattnureinerEingabezeilefrarithmetischeOperationenk”nnenjetzt
+7eingegebenwerden,diedannvonobennachuntenabgearbeitetwerden.
+Sok”nnenauchkompliziertereFormelnberechnetwerden.
+
+-DerDateipfadwirdnichtjedesmalneugesetzt,sondernbeibehalten,wie
+eseigentlichjedesguteProgrammtunmte.Auerdemkannmanjetzt
+nichtmehrdieDateischlieen,ohnesievorherge”ffnetzuhaben(das
+ergabbeiVersion1.0eineDateimitNamen????????.MTXaufder
+Diskette).
+
+-NachjederMatrixwirdbeiderAusgabeaufdenDruckereineLeerzeile
+gedruckt,umhintereinanderausgedruckteMatrizenvoneinanderzu
+trennen.
+
+-ImMen"Editieren"unterdemEintrag"Dimensionen"kannmanfrjede
+MatrixdasAttribut"symmetrisch"festsetzen.
+IsteineMatrixalssymmetrischdefiniert,wirdimEditierfensternur
+dieeineH„lfteder(teil-)symmetrischenMatrixdargestellt.Beijeder
+EingabeindieserH„lftewirdderentsprechendeWertinderanderen
+H„lftederMatrixebenfallsge„ndert.
+DasAttribut"symmetrisch"istauchfrnicht-quadratischeMatrizen
+anwendbar,derenobererlinkerTeilsymmetrischist.
+DasAttribut"symmetrisch"istnureineEingabehilfeundhatkeine
+AuswirkungaufirgendwelcheRechenoperationen.
+AusKompatibilit„tsgrndenzuMATRIX1.0wirddasAttribut"symmetrisch"
+nichtinder*.MTX-Dateiabgespeichert.
+
+FolgendeVerbesserungenwurdeninderVersion2.1vorgenommen:
+
+€-MATRIXistjetztmitTurbo-Cbersetztunddaherwesentlichschneller
+undgenaueralsdiealtenVersionen.
+-EineneueRoutinezurUmwandlungderGleitkommazahlenindie
+Zeichenketten,dieindenFensterndargestelltwerden,istwesentlich
+schnellerundsichereralsdiealte.SokommtesnichtmehrzuProblemen
+wiemit-.0oder„hnlichenResultaten.
+
+FolgendeVerbesserungenwurdeninderVersion2.11vorgenommen:
+
+-WirddasFenstervergr”ertunddannautomatischderFensterinhalt
+gescrollt,wirdjetzteinRedrawgesendet,damitKAOS1.4imModus
+"SmartRedraw"korrektfunktioniert.
+-WurdederVergr”erungsknopfberhrt,ohnedaeineGr”enver„nderung
+stattfand,werdenwederdasFensterneugesetztnochdieScrollbalken
+neugezeichnet.
+-DieFileselectorboxenth„ltabAES-Version$140undvor$200(d.h.ab
+TOS1.4undnichtunterGEM2.x)eineTitelzeile,diediejeweilige
+Aktionbeschreibt.InallenanderenF„llenwirdautomatischdienormale
+BoxohneTitelzeileaufgerufen.
+
+FolgendeVerbesserungenwurdeninderVersion2.13vorgenommen:
+
+-WirdeinIconangew„hlt,dasganzlinksliegt,wirddiesesnichtmehr
+auerhalbdesBildschirmsplaziert,auerdemstrztNVDIdabeijetzt
+nichtmehrab.
+-WerdenPapierkorboderDruckerverschoben,sowirddieselektierte
+Matrixnichtmehrdeselektiert,d.h.eskannnichtmehrvorkommen,da
+nichtgenaueinederMatrizenA,B,C,D,F,G,H,I,Jselektiertist.
+-BeimVerschiebeneinesIconswirddiesesnichtmehrumdieMausherum
+zentriert,sondernverbleibtzun„chstanseinerPosition.
+-BeianderenSystemzeichensatz-Gr”enwerdendieIconstrotzdemin
+korrekterGr”edargestellt.
+-DieAlertswurdenanKAOS1.4.2angepat.
+-WerdenDialogboxenwegenFehleingabenocheinmalneuaufgebaut,sowird
+nichtmehrdasevtl.darunterliegendefremdeFensterneugezeichnetund
+dabeidieDialogboxzerst”rt.
+
+

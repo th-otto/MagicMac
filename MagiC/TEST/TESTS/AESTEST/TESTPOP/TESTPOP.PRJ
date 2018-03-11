@@ -1,0 +1,8 @@
+test.tos
+.L[-S=$4000]   ; Stackgr”že auf 16 KByte setzen
+=              ; list of modules follows...
+tcnstart.o     ; startup code
+test       (test.h)
+pcstdlib.lib   ; standard lib
+pctoslib.lib
+mt_aes.lib

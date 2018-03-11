@@ -1,0 +1,16 @@
+mgedit7.app
+.L[-S=$1000]   ; Stackgrîûe 4k
+=
+pcmxstrt.o     ; startup code
+mgedit7         (mgedit.h,globals.h,mm7.h)
+opt_dial		(mgedit.h,globals.h)
+mgedwind		(globals.h)
+slb_bind.o
+c:\pc\mylibs\gemut_m2.o
+
+pcstdlib.lib   ; standard lib
+pctoslib.lib
+mt_aes.lib	; fÅr AES
+pcgemlib.lib	; fÅr VDI
+MM7	(mm7.h)	[-P]
+MAC_API.C          ; call interface to Mac OS functions

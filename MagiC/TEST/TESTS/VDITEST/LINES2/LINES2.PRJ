@@ -1,0 +1,10 @@
+LINES2.PRG
+.L[-S=$800]
+=
+pcmxstrt.o	; bester Startup
+LINES2
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
+mt_dos.lib	; zus„tzliche DOS-Aufrufe
+mt_aes.lib	; MAGIX AES- lib
+pcgemlib.lib	; GEM lib

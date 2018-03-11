@@ -1,0 +1,24 @@
+;>>>>>>> MEN_DEMO.PRJ for use with MagiCMac-Cookie-Demo <<<<<<<<
+
+MEN_DEMO.TOS      ; name of executable program
+
+.C [ -A- -Y+ -T- ]  ; compiler options:
+                    ;  Y+: add debug information
+                    ;  T-: no stack checking because of "Supexec" usage
+.L [ -L -Y ]
+=                  ; list of modules follows...
+
+PCSTART.O          ; startup code
+
+MEN_DEMO.C         ; the main program
+MAC_API.C          ; call interface to Mac OS functions
+
+PCSTDLIB.LIB       ; standard library
+PCTOSLIB.LIB       ; TOS library
+
+;PCEXTLIB.LIB       ; extended library
+;PCGEMLIB.LIB       ; AES and VDI library
+mt_aes.lib	; MAGIX AES- lib
+pcgemlib.lib	; GEM lib
+
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

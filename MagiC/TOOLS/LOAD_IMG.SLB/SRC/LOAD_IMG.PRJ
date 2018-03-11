@@ -1,0 +1,10 @@
+load_img.slb
+.L[-S=256]	; minimaler Stack
+=
+libhead.s      ; startup code for SLBs
+load_img.c (imgload.h)
+imgload.c (imgload.h)
+slb_bind.o
+pctoslib.lib
+pcstdlib.lib
+pcgemlib.lib		; VDI

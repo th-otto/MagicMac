@@ -1,0 +1,385 @@
+                                                  Hannover, den 29.12.86
+
+                     BEDIENUNGSANLEITUNG ZU MATRIX 1.0
+
+0. Vorwort
+----------
+
+Matrix 1.0 ist frei kopierbar, der Autor
+
+  Andreas Kromke
+  3000 Hannover 61
+  Steinbruchstraße 17
+
+verzichtet  auf jegliche Honorierung.
+Deshalb darf das Programm auch nicht von anderen gegen Bezahlung weiterge-
+geben  oder  das  Programm  selbst  oder  die  zugehörigen  Dateien  durch 
+unsachgemäße Eingriffe verändert werden.
+Daher merke:
+
+     Wer Matrix- Programme nachmacht oder verfälscht oder 
+     nachgemachte oder verfälschte Matrix- Programme sich 
+     verschafft und in Verkehr bringt, wird mit Analysis- 
+     Zetteln nicht unter 2 Stück bestraft
+
+Für Schäden,  die durch Anwendung dieses Programms entstehen (z.B. falsche 
+Hausaufgaben  oder Augenschäden) kann der Autor  selbstverständlich  nicht 
+haften.
+Eventuelle éhnlichkeiten der Matrix 1.0 - Benutzeroberfläche  mit  anderen 
+Programmen namhafter oder unbekannter Hersteller sind nicht  beabsichtigt, 
+sondern wären rein zufällig.
+
+Verbesserungsvorschläge  und Hinweise auf (sicherlich)  vorhandene  Fehler 
+sind  willkommen;  falls eine Antwort erwartet wird,  aber bitte  nur  mit 
+Rückporto!
+
+Matrix 1.0 benötigt die Resource- Datei "matrix.rsc",  um gestartet werden 
+zu  können;  diese  muß sich entweder im selben Ordner  befinden  wie  das 
+Programm "matrix.prg" oder auf der obersten Ebene von Laufwerk A.
+Matrix 1.0 ist auf einem Monochrom- Monitor geschrieben worden, läuft aber 
+auch  auf  mittlerer  Auflösung in Farbe.  Für beide  Modi  wird  dasselbe 
+Resource-File  verwendet  und vom  Programm  selbständig  angepaßt;  daher 
+wirken die Icons im Farbmodus auch etwas "schlank".
+
+1. Das Desktop
+--------------
+
+Das Desktop von Matrix 1.0 enthält folgende Symbole:
+
+- Matrixsymbole A .. J
+- Druckersymbol
+- Papierkorb
+
+Durch  Anklicken  und Verschieben mit der Maus sind  folgende  Operationen 
+möglich:
+
+- Verschieben der Symbole auf dem Bildschirm durch Anklicken und dann  bei 
+  gedrückter linker Maustaste.  Bei dieser Operation wird statt des Pfeils 
+  eine Hand als Mauszeiger dargestellt.
+
+- Kopieren von Matrizen durch Verschieben des entsprechenden Symbols  über 
+  das  einer  anderen  Matrix  oder  in  ein  Fenster,  das  diese  Matrix 
+  darstellt.
+  Bemerkung:  Die  Einheitsmatrix E ist fest vordefiniert und  kann  daher 
+  weder  gelöscht oder anders verändert werden.  Sie kann jedoch auf  eine 
+  andere Matrix kopiert werden.  Die Dimensionen der alten Matrix  bleiben 
+  dabei erhalten.
+
+- Löschen einer Matrix (d.h.  alle Elemente = 0 setzen) durch  Verschieben 
+  des entsprechenden Symbols über den Papierkorb.
+
+- Ausdrucken   einer  Matrix  auf  einem  angeschlossenen  Drucker   durch 
+  Verschieben des entsprechenden Matrixsymbols über das Druckersymbol.
+  Bemerkung:  Die  Matrix wird mit derselben Anzahl  von  Nachkommastellen 
+  ausgedruckt,  wie  sie in einem eventuell geöffneten  Fenster  angezeigt 
+  werden.  öbersteigt die Matrixbreite 80 Zeichen, wird der Drucker mit SI 
+  auf Schmalschrift geschaltet.
+
+- Aktivieren  einer Matrix (außer der E-Matrix) durch einfaches  Anklicken 
+  des zugehörigen Symbols mit der linken Maustaste.
+
+- ôffnen  eines  Anzeigefensters durch Doppelklick  auf  das  Matrixsymbol 
+  (ebenfalls außer E-Matrix).
+
+- Wenn das Editierfenster noch nicht geöffnet ist,  ôffnen des Editierfen-
+  sters  für  die  aktivierte Matrix mit Druck auf  irgendeine  Taste  der 
+  Tastatur.
+
+2. Die Anzeigefenster
+---------------------
+
+Matrix 1.0 kann gleichzeitig in 5 Fenstern beliebige Matrizen  darstellen, 
+außerdem gibt es noch das -> Editierfenster.
+Alle üblichen Fenstermanipulationen sind zulässig, also:
+
+- Schließen
+- Vergrößern/Verkleinern
+- Verschieben
+- Maximalgröße
+- zeilen/spaltenweise Scrollen
+- seitenweise Scrollen
+- Scrollbalken verschieben
+
+Zusätzlich kann man durch Doppelklick auf ein beliebiges Matrixelement das 
+-> Editierfenster an dieser Stelle öffnen.
+
+Das  Format (Anzahl der Nachkommastellen) der aktivierten  Matrix  (invers 
+dargestelltes Symbol) wird durch die Menüleiste festgelegt, ebenso wie die 
+horizontale und vertikale Dimension.
+Maximal verarbeitet Matrix 1.0 (16,16)-Matrizen. Alle Zahlen werden intern 
+mit doppelter Genauigkeit (64 bit) dargestellt.
+
+3. Das Editierfenster
+---------------------
+
+Es gibt zwei Möglichkeiten, das Editierfenster zu öffnen:
+
+- irgendeine Taste drücken. In diesem Fall wird das Editierfenster für die 
+  aktivierte Matrix geöffnet.
+
+- irgendein   beliebiges   Matrixelement  in   irgendeinem   Fenster   mit 
+  Doppelklick  anklicken.  Das  Editierfenster wird dann genau  für  diese 
+  Matrix und für dieses Matrixelement geöffnet.
+
+Die  zweite Methode funktioniert auch,  falls das  Editierfenster  bereits 
+geöffnet  ist,  dabei kann das doppelt angeklickte Matrixelement  auch  im 
+Editierfenster selbst sein.
+
+Abgesehen  von  den üblichen Fenstermanipulationen kann man  Matrizen  von 
+Hand eingeben. Die Eingabe einer Zahl erfolgt natürlich über die Tastatur, 
+dabei haben folgende Tasten eine besondere Bedeutung:
+
+Return oder Enter:  Abschluß der Eingabe,  Cursor auf nächstes  Matrixele-
+                    ment. Bei fehlerhafter Eingabe ertönt der Gong.
+
+Backspace oder Del: zuletzt eingegebenes Zeichen löschen
+
+Home:               Cursor auf Matrixelement (1,1)
+
+Undo:               bisherigen  Inhalt der Matrixzelle  in  normalisierter 
+                    Darstellung anzeigen
+
+Esc:                bisherige Eingabe löschen
+
+Cursortasten:       Cursorbewegungen
+
+Zulässig als Eingabe sind alle üblichen Darstellungen von Kommazahlen  und 
+zusätzlich noch folgende Ausdrücke:
+
+  zahl1 @ zahl2
+  zahl @
+  @ zahl
+  w zahl
+  s zahl
+
+wobei @ ein Operator ('+','-','*','/'),  w das Zeichen 'w' oder 'W' und  s 
+das Zeichen 's' oder 'S' ist.
+Folgende Operationen werden jeweils ausgeführt:
+
+  "@ zahl"          neuer Wert := bisheriger Wert @ zahl
+  "zahl @"          neuer Wert := zahl @ bisheriger Wert
+  "zahl1 @ zahl2"   neuer Wert := zahl1 @ zahl2
+  "w zahl"          neuer Wert := sqrt(zahl)
+  "s zahl"          neuer Wert := sin(zahl)
+
+Besonders praktisch dürfte dabei insbesondere die Möglichkeit sein, Brüche 
+wie "1/3" oder Wurzeln wie "w2" für ˚2 einzugeben.
+
+4. Die Menüleiste
+-----------------
+
+Die  meisten der Menüpunkte sind durch ihren Namen schon  selbsterklärend. 
+Zusätzlich ist folgendes zu erwähnen:
+
+- Die Umwandlungen erfolgen immer mit der gerade aktivierten Matrix,  also 
+  Vorsicht z.B. nach einem Kopiervorgang!
+
+- Alle  Umwandlungen werden ohne vorherige Sicherheitsfrage und auch  ohne 
+  anschließende  Erfolgsmeldung  durchgeführt.  Es werden  lediglich  alle 
+  Fenster, die die veränderte Matrix enthalten, neu gezeichnet.
+
+- Der  Gauß- Algorithmus zur Bestimmung der oberen Dreiecksmatrix und  der 
+  Inversen sowie für das Lösen eines LGS (linearen Gleichungssystems) wird 
+  mit partieller Pivotwahl (Zeilenvertauschung) durchgeführt.
+
+- Beim Lösen eines LGS wird die Koeffizientenmatrix soweit möglich in  die 
+  Einheitsmatrix  umgeformt,  so  daß  man die  Werte  direkt  im  rechten 
+  Spaltenvektor ablesen kann.  Ist das LGS nicht eindeutig lösbar,  lassen 
+  sich so auch einfache Beziehungen wie x1 = 3x2 usw. ablesen.
+
+- Runden  bedeutet,  daß  alle Werte kleiner als 1e-11  auf  Null  gesetzt 
+  werden.
+
+- Negieren ist die Operation "Matrix := - Matrix"
+
+- Wert  der Matrixnorm und Konditionszahl (Menü "Verschiedenes") sind  von 
+  der  im  Menü  "Editieren"  eingestellten  Matrixnorm  abhängig.   Dabei 
+  bedeuten:
+
+  - ES-Norm    Erhardt-Schmidt-Norm (standardmäßig eingestellt)
+  - SS-Norm    Spaltensummen-Norm
+  - ZS-Norm    Zeilensummen-Norm
+
+- Das  charakteristische Polynom wird immer in normalisierter  Darstellung 
+  angezeigt. Dabei ist "Koeffizient i" der Koeffizient vor xi.
+
+- Beim Abspeichern muß der Dateiname auf ".MTX" enden.
+
+- Es  werden  nur  die Matrizen A..D abgespeichert  und  geladen,  um  ein 
+  "Mischen" von Dateien zu ermöglichen.
+  Dateiformat:
+     16*16*8 = 2048 Bytes für die Matrixelemente von Matrix A
+     2 Bytes x-Dimension von Matrix A
+     2 Bytes y-Dimension von Matrix A
+     16*16*8 = 2048 Bytes für die Matrixelemente von Matrix B
+     2 Bytes x-Dimension von Matrix B
+     .
+     .
+     2 Bytes y-Dimension von Matrix D
+     1 Byte für Anzahl der Vorkommastellen von Matrix A
+     1 Byte für Anzahl der Nachkommastellen von Matrix A
+     1 Byte für Anzahl der Vorkommastellen von Matrix B
+     .
+     .
+     1 Byte für Anzahl der Nachkommastellen von Matrix D
+  -------
+  8216 Bytes
+
+- Der  Menüpunkt  "über  matrix.prg"  enthält  nicht  nur  den  Copyright- 
+  Vermerk, sondern auch das Datum der Erstellung dieser Programmversion.
+
+- Für die Arithmetik siehe nächstes Kapitel.
+
+4. Die Arithmetik
+-----------------
+
+Beim  Anwählen der Funktion "Arithmetik" im Menü "Umwandlungen"  kann  man 
+einen  kurzen arithmetischen Ausdruck eingeben.  Dieser  wird  ausgewertet 
+und der der Matrix links des Gleichheitszeichens zugewiesen.
+Matrizennamen A..J sind in Großbuchstaben einzugeben.
+Folgende Ausdrücke sind erlaubt:
+
+  matrix @ matrix
+  matrix
+
+mit
+
+  @ = '+','-','*','/' (letzteres für Multiplikation mit der Inversen)
+  matrix = matrixname
+         = zahl       (anstelle von "zahl * E")
+         = zahl * matrixname
+  matrixname = 'A'..'J'
+  zahl = (übliche Darstellung für Gleitkommazahlen)
+
+
+Beispiele:
+
+ A=B                          äquivalent zum Kopieren der Matrix B nach A
+ B=5.12                       Abkürzung für "B=5.12 * E"
+ B=1                          äquivalent zum Kopieren der E-Matrix nach B
+ C=3.5*A  +    B
+ D=E      -    1.3*D
+ F=0                          äquivalent zum Löschen der Matrix F
+ G=1      /    G              äquivalent zum Invertieren von G
+ H=3*F    /    4*H
+ I=-1     *    I              äquivalent zum Negieren von I
+ I= 0     -    I                        - " -
+ J=1      /    3
+(Die Zwischenräume dienen hier nur der öbersicht)
+Zu beachten ist dabei:
+
+- An die Einheitsmatrix 'E' darf nicht zugewiesen werden.
+
+- Die Dimensionen der Matrizen müssen zueinander passen;  die  Einheitsma-
+  trix wird immer automatisch angepaßt.
+
+- Durch  eine  singuläre Matrix kann nicht geteilt,  d.h nicht  mit  deren 
+  Inverser multipliziert werden.
+
+In den beiden letzten Fällen erfolgt eine entsprechende Fehlermeldung, bei 
+sonstigen  Syntaxfehlern wird lediglich die Dialogbox wieder neu  gezeich-
+net, damit man die Eingabe korrigieren kann.
+
+A. Anhang (Updates)
+-------------------
+
+Folgende Fehler wurden bei Version 1.1 beseitigt:
+
+- Die Fenster werden nach Beendigung korrekt gelöscht, so daß MATRIX jetzt 
+  auch mit command.prg läuft.
+  Die  alte Version tat dies nicht.  Beim Start des Programms vom  Desktop 
+  trat aber der Fehler nicht auf.
+
+- Ein "Bug" in der Druckroutine wurde beseitigt,  so daß MATRIX jetzt auch 
+  nicht-quadratische Matrizen korrekt druckt.
+
+- In den arithmetischen Ausdrücken werden jetzt auch Gleitkommazahlen  vom 
+  Typ nnne-mm (mit negativem Dezimal- Exponenten) zugelassen.
+  Bisher führte dies zu einer Fehlermeldung.
+
+Folgende   Verbesserungen   und  Erweiterungen  wurden  in   Version   1.1 
+aufgenommen:
+
+- Der  Gauß- Algorithmus wird mit partieller  Pivotwahl  durchgeführt,  um 
+  Rundungsfehler zu verringern.
+
+- Bei   jeder  Addition  im  Gauß-  Algorithmus  wird  eine  Rundung   des 
+  Ergebnisses durchgeführt. Damit wird z.B. die Matrix
+
+          1  0  1  1 -1
+          2  1  2  0  0
+          0  1  0  1  2
+          1 -2  1 -1 -5
+          3  2  3  2  1
+
+  bei "obere Dreiecksmatrix" und "LGS lösen" korrekt behandelt.
+  MATRIX  1.0 berechnete aufgrund von Rundungsfehlern ein völlig  falsches 
+  Ergebnis.
+
+- Statt nur einer Eingabezeile für arithmetische Operationen können  jetzt 
+  7 eingegeben werden,  die dann von oben nach unten abgearbeitet  werden. 
+  So können auch kompliziertere Formeln berechnet werden.
+
+- Der Dateipfad wird nicht jedesmal neu gesetzt,  sondern beibehalten, wie 
+  es  eigentlich jedes gute Programm tun müßte.  Außerdem kann  man  jetzt 
+  nicht mehr die Datei schließen,  ohne sie vorher geöffnet zu haben  (das 
+  ergab  bei  Version  1.0  eine Datei  mit  Namen  ????????.MTX  auf  der 
+  Diskette).
+
+- Nach  jeder Matrix wird bei der Ausgabe auf den Drucker  eine  Leerzeile 
+  gedruckt,   um  hintereinander  ausgedruckte  Matrizen  voneinander   zu 
+  trennen.
+
+- Im  Menü "Editieren" unter dem Eintrag "Dimensionen" kann man  für  jede 
+  Matrix das Attribut "symmetrisch" festsetzen.
+  Ist  eine Matrix als symmetrisch definiert,  wird im Editierfenster  nur 
+  die eine Hälfte der (teil-) symmetrischen Matrix dargestellt.  Bei jeder 
+  Eingabe  in  dieser Hälfte wird der entsprechende Wert  in  der  anderen 
+  Hälfte der Matrix ebenfalls geändert.
+  Das  Attribut  "symmetrisch" ist auch  für  nicht-quadratische  Matrizen 
+  anwendbar, deren oberer linker Teil symmetrisch ist.
+  Das  Attribut  "symmetrisch"  ist nur eine Eingabehilfe  und  hat  keine 
+  Auswirkung auf irgendwelche Rechenoperationen.
+  Aus Kompatibilitätsgründen zu MATRIX 1.0 wird das Attribut "symmetrisch" 
+  nicht in der *.MTX - Datei abgespeichert.
+
+Folgende Verbesserungen wurden in der Version 2.1 vorgenommen:
+
+- MATRIX  ist jetzt mit Turbo-C übersetzt und daher  wesentlich  schneller 
+  und genauer als die alten Versionen.
+- Eine   neue   Routine  zur  Umwandlung  der  Gleitkommazahlen   in   die 
+  Zeichenketten,  die in den Fenstern dargestellt werden,  ist  wesentlich 
+  schneller und sicherer als die alte. So kommt es nicht mehr zu Problemen 
+  wie mit -.0 oder ähnlichen Resultaten.
+
+Folgende Verbesserungen wurden in der Version 2.11 vorgenommen:
+
+- Wird  das  Fenster  vergrößert und dann  automatisch  der  Fensterinhalt 
+  gescrollt,  wird  jetzt  ein Redraw gesendet,  damit KAOS 1.4  im  Modus 
+  "Smart Redraw" korrekt funktioniert.
+- Wurde  der Vergrößerungsknopf berührt,  ohne daß eine  Größenveränderung 
+  stattfand,  werden  weder das Fenster neu gesetzt noch die  Scrollbalken 
+  neu gezeichnet.
+- Die Fileselectorbox enthält ab AES- Version $140 und vor $200  (d.h.  ab 
+  TOS  1.4  und nicht unter GEM 2.x) eine Titelzeile,  die  die  jeweilige 
+  Aktion beschreibt.  In allen anderen Fällen wird automatisch die normale 
+  Box ohne Titelzeile aufgerufen.
+
+Folgende Verbesserungen wurden in der Version 2.13 vorgenommen:
+
+- Wird ein Icon angewählt,  das ganz links liegt,  wird dieses nicht  mehr 
+  außerhalb  des Bildschirms plaziert,  außerdem stürzt NVDI  dabei  jetzt 
+  nicht mehr ab.
+- Werden  Papierkorb  oder Drucker verschoben,  so  wird  die  selektierte 
+  Matrix nicht mehr deselektiert,  d.h.  es kann nicht mehr vorkommen, daß 
+  nicht genau eine der Matrizen A,B,C,D,F,G,H,I,J selektiert ist.
+- Beim  Verschieben eines Icons wird dieses nicht mehr um die  Maus  herum 
+  zentriert, sondern verbleibt zunächst an seiner Position.
+- Bei  anderen  Systemzeichensatz-  Größen werden die  Icons  trotzdem  in 
+  korrekter Größe dargestellt.
+- Die Alerts wurden an KAOS 1.4.2 angepaßt.
+- Werden Dialogboxen wegen Fehleingabe noch einmal neu aufgebaut,  so wird 
+  nicht mehr das evtl.  darunterliegende fremde Fenster neu gezeichnet und 
+  dabei die Dialogbox zerstört.
+
+
