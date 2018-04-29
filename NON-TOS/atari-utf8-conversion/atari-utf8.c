@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 #define ATARI_DIV			0xf6		// ÷
 #define ATARI_NEARLY_EQ		0xf7		// ≈
 #define ATARI_DEGREE		0xf8		// °
-#define ATARI_BULLET		0xf9		// ∙
+#define ATARI_BULLET		0xf9		// •
 #define ATARI_INTERPUNCT	0xfa		// ·
 #define ATARI_ROOT			0xfb		// √
 #define ATARI_N_SUPER		0xfc		// ⁿ
@@ -293,7 +293,11 @@ const char *Atari2Unicode[0x80] =
      /* #define ATARI_DIV			0xf6 */ "÷",
      /* #define ATARI_NEARLY_EQ		0xf7 */ "≈",
      /* #define ATARI_DEGREE		0xf8 */ "°",
-     /* #define ATARI_BULLET		0xf9 */ "∙",
+#if 0
+     /* #define ATARI_BULLET		0xf9 */ "∙",		// U+2219
+#else
+     /* #define ATARI_BULLET		0xf9 */ "•",		// U+2022
+#endif
      /* #define ATARI_INTERPUNCT	0xfa */ "·",
      /* #define ATARI_ROOT			0xfb */ "√",
      /* #define ATARI_N_SUPER		0xfc */ "ⁿ",
@@ -428,7 +432,22 @@ static void convert(const char *filename)
 
 				if (verbose)
 				{
-					printf("replace Atari character 0x%02x -> %s\n", c, utf);
+					char buf[64];
+					buf[0] = '\0';
+					int n = strlen(utf);
+					const char *p = utf;
+					while (n)
+					{
+						sprintf(buf + strlen(buf), "0x%02x", (*p & 0x00ff));
+						n--;
+						p++;
+						if (n > 0)
+						{
+							strcat(buf, " ");
+						}
+					}
+
+					printf("replace Atari character 0x%02x -> %s (%s)\n", c, utf, buf);
 				}
 
 				fwrite(utf, 1, strlen(utf), fo);
