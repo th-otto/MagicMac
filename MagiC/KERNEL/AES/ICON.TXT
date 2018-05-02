@@ -1,0 +1,37 @@
+einfarbiges Icon ausgeben:
+==========================
+
+Vordergrund/Hintergrundfarbe aus ICONBLK ermitteln.
+Selektiert => Farben Vorder-/Hintergrund austauschen
+Maske ausgeben:
+     vrt_cpyfm
+     Modus TRANSPARENT
+     col0 = Vordergrundfarbe  (BLACK)
+     col1 = Hintergrundfarbe  (WHITE)
+
+Icon ausgeben:
+     vrt_cpyfm
+     Modus TRANSPARENT
+     col0 = Hintergrundfarbe  (WHITE)
+     col1 = Vordergrundfarbe  (BLACK)
+
+
+Farbicon ausgeben:
+==================
+
+Maske ausgeben:
+     wie bei einfarbigem Icon.
+     Wenn selektiert, aber sel_mask nehmen, falls existiert.
+
+Icon ausgeben:
+     vro_cpyfm
+     Modus S=D
+     Daten: col_data, wenn selektiert und existiert: sel_data
+
+verdunkeln:
+     nur dann, wenn es keine sel_data gibt.
+     Dann mit sel_mask verdunkeln
+     col0 = BLACK
+     col1 = WHITE
+     vrt_cpyfm
+     Modus TRANSPARENT
