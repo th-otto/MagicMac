@@ -1,0 +1,4065 @@
+                        Die Programmierdoku zu
+
+                               WDIALOG
+
+                             Version 1.94
+                             (25.02.1997)
+
+                                 von
+
+                        Sven & Wilfried Behne
+
+
+Inhaltsverzeichnis
+==================
+
+ 1  Intentionen, Konditionen, Ovationen
+    1.1  Installation
+    1.2  Konditionen
+    1.3  Ausschluû der Haftung
+    1.4  Disclaimer
+
+ 2  WDIALOG Programmer's Guide
+    2.1  Datentypen und Strukturen
+    2.2  Wie erkenne ich WDIALOG?
+    2.3  Fensterdialoge
+         2.3.1  Aufrufschema fÅr Fensterdialoge
+         2.3.2  WINDOW DIALOG - CREATE (AES 160)
+         2.3.3  WINDOW DIALOG - OPEN (AES 161)
+         2.3.4  WINDOW DIALOG - CLOSE (AES 162)
+         2.3.5  WINDOW DIALOG - DELETE (AES 163)
+         2.3.6  WINDOW DIALOG - GET OBJECT TREE (AES 164, 0)
+         2.3.7  WINDOW DIALOG - GET EDIT OBJECT (AES 164, 1)
+         2.3.8  WINDOW DIALOG - GET USERDATA (AES 164, 2)
+         2.3.9  WINDOW DIALOG - GET WINDOW HANDLE (AES 164, 3)
+         2.3.10  WINDOW DIALOG - SET EDIT OBJECT (AES 165, 0)
+         2.3.11  WINDOW DIALOG - SET TREE (AES 165, 1)
+         2.3.12  WINDOW DIALOG - SET SIZE (AES 165, 2)
+         2.3.13  WINDOW DIALOG - ICONIFY (AES 165, 3)
+         2.3.14  WINDOW DIALOG - UNICONIFY (AES 165, 4)
+         2.3.15  WINDOW DIALOG - EVENT (AES 166)
+         2.3.16  WINDOW DIALOG - REDRAW (AES 167)
+    2.4  Listboxen
+         2.4.1  Aufrufschema fÅr modalen Dialog
+         2.4.2  LIST BOX - CREATE (AES 170)
+         2.4.3  LIST BOX - UPDATE (AES 171)
+         2.4.4  LIST BOX - DO (AES 172)
+         2.4.5  LIST BOX - DELETE (AES 173)
+         2.4.6  LIST BOX - COUNT ITEMS (AES 174, 0)
+         2.4.7  LIST BOX - GET TREE (AES 174, 1)
+         2.4.8  LIST BOX - GET NUMBER OF VISIBLE ITEMS, SLIDER A (AES 174, 2)
+         2.4.9  LIST BOX - GET USER DATA (AES 174, 3)
+         2.4.10  LIST BOX - GET FIRST VISIBLE ITEM, SLIDER A (AES 174, 4)
+         2.4.11  LIST BOX - GET INDEX of SELECTED ITEM (AES 174, 5)
+         2.4.12  LIST BOX - GET ITEMS (AES 174, 6)
+         2.4.13  LIST BOX - GET ITEM (AES 174, 7)
+         2.4.14  LIST BOX - GET SELECTED ITEM (AES 174, 8)
+         2.4.15  LIST BOX - GET ITEM INDEX (AES 174, 9)
+         2.4.16  LIST BOX - GET NUMBER OF VISIBLE ITEMS, SLIDER B (AES 174, 10)
+         2.4.17  LIST BOX - GET NUMBER OF ITEMS, SLIDER B (AES 174, 11)
+         2.4.18  LIST BOX - GET FIRST VISIBLE ITEM, SLIDER B (AES 174, 12)
+         2.4.19  LIST BOX - SET SLIDER A (AES 175, 0)
+         2.4.20  LIST BOX - SET NEW ITEM LIST (AES 175, 1)
+         2.4.21  LIST BOX - FREE ITEMS (AES 175, 2)
+         2.4.22  LIST BOX - FREE ITEM LIST (AES 175, 3)
+         2.4.23  LIST BOX - SCROLL TO, SLIDER A (AES 175, 4)
+         2.4.24  LIST BOX - SET SLIDER B (AES 175, 5)
+         2.4.25  LIST BOX - SET NUMBER OF ENTRIES, SLIDER B (AES 175, 6)
+         2.4.26  LIST BOX - SCROLL TO, SLIDER B (AES 175, 7)
+    2.5  Zeichensatzauswahl
+         2.5.1  Aufrufschema fÅr Fontauswahl im Fenster
+         2.5.2  Aufrufschema fÅr modale Fontauswahl
+         2.5.3  FONT SELECTOR - CREATE (AES 180)
+         2.5.4  FONT SELECTOR - DELETE (AES 181)
+         2.5.5  FONT SELECTOR - OPEN WINDOW (AES 182)
+         2.5.6  FONT SELECTOR - CLOSE WINDOW (AES 183)
+         2.5.7  FONT SELECTOR - GET NUMBER OF STYLES (AES 184, 0)
+         2.5.8  FONT SELECTOR - GET STYLE ID (AES 184, 1)
+         2.5.9  FONT SELECTOR - GET FONT NAME (AES 184, 2)
+         2.5.10  FONT SELECTOR - GET FONT INFO (AES 184, 3)
+         2.5.11  FONT SELECTOR - ADD USER FONTS (AES 185, 0)
+         2.5.12  FONT SELECTOR - REMOVE USER FONTS (AES 185, 1)
+         2.5.13  FONT SELECTOR - UPDATE WINDOW (AES 185, 2)
+         2.5.14  FONT SELECTOR - HANDLE EVENT (AES 186)
+         2.5.15  FONT SELECTOR - DO (AES 187)
+    2.6  Druckdialoge
+         2.6.1  Aufrufschema fÅr Druckdialog im Fenster
+         2.6.2  Aufrufschema fÅr modalen Druckdialog
+         2.6.3  PRINT DIALOG - CREATE (AES 200)
+         2.6.4  PRINT DIALOG - DELETE (AES 201)
+         2.6.5  PRINT DIALOG - OPEN WINDOW (AES 202)
+         2.6.6  PRINT DIALOG - CLOSE WINDOW (AES 203)
+         2.6.7  PRINT DIALOG - GET SETTING STRUCTURE SIZE (AES 204, 0)
+         2.6.8  PRINT DIALOG - ADD PRIVATE PRINTERS (AES 205, 0)
+         2.6.9  PRINT DIALOG - REMOVE PRIVATE PRINTERS (AES 205, 1)
+         2.6.10  PRINT DIALOG - UPDATE WINDOW (AES 205, 2)
+         2.6.11  PRINT DIALOG - ADD PRIVATE DIALOGS (AES 205, 3)
+         2.6.12  PRINT DIALOG - REMOVE PRIVATE DIALOGS (AES 205, 4)
+         2.6.13  PRINT DIALOG - NEW DEFAULT SETTINGS (AES 205, 5)
+         2.6.14  PRINT DIALOG - FREE SETTINGS (AES 205, 6)
+         2.6.15  PRINT DIALOG - DEFAULT SETTINGS (AES 205, 7)
+         2.6.16  PRINT DIALOG - VALIDATE SETTINGS (AES 205, 8)
+         2.6.17  PRINT DIALOG - USE SETTINGS (AES 205, 9)
+         2.6.18  PRINT DIALOG - HANDLE EVENT (AES 206)
+         2.6.19  PRINT DIALOG - DO (AES 207)
+    2.7  Konvertierung erweiterter Objekttypen
+
+Anhang
+======
+
+ A  Funktions- und Strukturdefinitionen
+
+ B  Binding
+
+ C  Beispiel-Quelltexte
+
+
+
+1  Intentionen, Konditionen, Ovationen
+**************************************
+
+Die BenutzeroberflÑche unter GEM hat sich in den letzten zehn Jahren
+stark weiterentwickelt. Aktuelle Programme arbeiten mit Fensterdialo-
+gen, die Radiobuttons, Checkboxen, Popups, Listboxen und vieles mehr
+enthalten.
+
+Da diese Erweiterungen nicht ins TOS integriert wurden, mÅssen Pro-
+grammierer immer wieder "das Rad neu erfinden": Meist wird zum Pro-
+gramm eine Bibliothek hinzugelinkt, die nur die AES-Funktionen der
+ersten TOS-Versionen voraussetzt. Alle Erweiterungen werden durch den
+Programmcode der Bibliothek realisiert.
+
+Leider hat das den Nachteil, daû die Programmgrîûe "nur" aus GrÅnden
+der Optik stark anwÑchst (was im Multitaskingbetrieb genau den Spei-
+cher kostet, den man gerade nicht hat) und die FÑhigkeiten neuerer
+OS-Versionen nicht oder nur unvollstÑndig genutzt werden.
+
+Wir haben daher einen anderen Ansatz mit folgenden Vorgaben gewÑhlt:
+
+   ˘ Kompakte, residente Erweiterung stellt hÑufig benîtigte Routinen
+     (Fensterdialoge, Listboxen, Zeichensatzauswahl, Druckdialoge) zur
+     VerfÅgung.
+
+   ˘ Hohe FlexibilitÑt der Routinen; d.h. keine statischen
+     BeschrÑnkungen in der Anzahl der Dialoge oder gleichzeitig
+     offenen Fontselektoren; Listboxen, die mehr als nur Text-Objekte
+     verwalten kînnen, Mehrfachselektion, Auto-Scrolling, etc. ... .
+
+   ˘ Vorteile und Erweiterungen des OS sollen genutzt werden (3D-
+     Effekte, Clipboard in Editfeldern, ...).
+
+   ˘ Erweiterte Objekttypen (Gruppenrahmen, Radiobuttons, etc.) werden
+     als vorhanden vorausgesetzt, so daû das RSC-File kompakt bleibt.
+
+   ˘ In Ñlteren OS-Versionen fehlende Objekttypen sollen durch ein
+     kurze Routine automatisch generiert werden (-> ADAPTRSC.C).
+
+   ˘ Design der ProgrammoberflÑche soll zur "Personality" des OS
+     passen (kein "Dino-Tuning" mit 3D-Effekten unter TOS 1.0).
+
+Herausgekommen ist WDIALOG: Eine Systemerweiterung, die MagiC-
+kompatible AES-Erweiterungen zur VerfÅgung stellt.
+
+
+1.1  Installation
+=================
+
+WDIALOG.PRG in AUTO-Ordner kopieren und einen Neustart des Systems
+durchfÅhren. Nach gÑngigen Erfahrungen empfiehlt sich eine AUTO-Ordner
+Reihenfolge, bei der WDIALOG vor NVDI liegt.
+
+
+1.2  Konditionen
+================
+
+Die Dokumentation zu WDIALOG und der Archivinhalt von WDIALOG.LZH sind
+Public Domain, d.h. es darf frei kopiert und benutzt werden. Das
+Archiv darf nur komplett weitergegeben werden!
+
+Es ist erlaubt, die Quellcodes fÅr die eigenen Anforderungen zu
+verÑndern. Es ist jedoch NICHT erlaubt, diese verÑnderten Dateien in
+Umlauf zu bringen. Der entgeldliche Vertrieb ist untersagt.
+
+Der Vertrieb von WDIALOG im Zusammenhang mit anderen Software-
+Produkten ist erlaubt, sofern dem Kunden dadurch keine zusÑtzlichen
+Kosten entstehen und der empfohlene Verkaufspreis dieser Software 50
+DM nicht Åbersteigt.
+
+Ausnahmen bedÅrfen einer schriftlichen Genehmigung der Autoren!
+Zuwiderhandlungen werden strafrechtlich verfolgt.
+
+Das Copyright verbleibt allein bei den Autoren, Sven & Wilfried Behne
+
+Zu WDIALOG.LZH gehîren folgende Dateien:
+
+   ˘ DOC_WDLG.TXT
+
+   ˘ WDIALOG.PRG
+
+   ˘ SAMPLE-Ordner mit den Programmen und Quellen zu WDLG_SMP.APP,
+     XOBJ_SMP.APP, FNT_SMPL.APP, FNT_SMP2.APP, FNT_SMP3.APP,
+     PDLGSMP1.APP und PDLGSMP2.APP.
+
+   ˘ Snapshots der Beispielprogramme unter TOS 1.04 und MagiC 4 (16
+     Farb-IMGs).
+
+FÅr WÅnsche, Anregungen und Fehlerkorrekturen haben wir natÅrlich
+immer ein offenes Ohr.
+
+FÅr die Hypertextumsetzung sind Thomas Much und UDO6 verantwortlich.
+
+
+1.3  Ausschluû der Haftung
+==========================
+
+Die Haftung fÅr unmittelbare und mittelbare SchÑden, FolgeschÑden und
+DrittschÑden durch die Benutzung der Systemerweiterung WDIALOG sind
+ausgeschlossen. FÅr die VollstÑndigkeit und Richtigkeit der gemachten
+Angaben wird keinerlei GewÑhr Åbernommen.
+
+
+1.4  Disclaimer
+===============
+
+Die meisten hier erwÑhnten Produkte sind in der Regel durch
+Warenzeichen geschÅtzt. Das Fehlen gesonderter Hinweise bedeutet
+nicht, daû diese Produkte frei von Rechten Dritter sind.
+
+
+
+2  WDIALOG Programmer's Guide
+*****************************
+
+Stand: 25.02.97 (vorlÑufige Fassung)
+
+Diese Funktionsbeschreibung zu WDIALOG ist in die folgenden Teile
+gegliedert:
+
+
+2.1  Datentypen und Strukturen
+==============================
+
+Die Deklarationen und Beschreibungen arbeiten mit den folgenden
+Datentypen:
+
+
+ +-------+--------+--------------------+----------------------------+
+ | BYTE  |  8 Bit | vorzeichenbehaftet |        -128 bis 127        |
+ +-------+--------+--------------------+----------------------------+
+ | UBYTE |  8 Bit | kein Vorzeichen    |         0 bis 255          |
+ +-------+--------+--------------------+----------------------------+
+ | WORD  | 16 Bit | vorzeichenbehaftet |      -32768 bis 32767      |
+ +-------+--------+--------------------+----------------------------+
+ | UWORD | 16 Bit | kein Vorzeichen    |        0 bis 65535         |
+ +-------+--------+--------------------+----------------------------+
+ | LONG  | 32 Bit | vorzeichenbehaftet | -2147483648 bis 2147483647 |
+ +-------+--------+--------------------+----------------------------+
+ | ULONG | 32 Bit | kein Vorzeichen    |      0 bis 4294967295      |
+ +-------+--------+--------------------+----------------------------+
+
+
+2.2  Wie erkenne ich WDIALOG?
+=============================
+
+Unterfunktion 7 von appl_getinfo() liefert in den untersten 5 Bits von
+ap_gout1 zurÅck, ob die wdlg/lbox/fnts/fslx/pdlg_xx()-Funktionen
+vorhanden sind.
+
+
+Deklaration:
+WORD appl_getinfo( WORD ap_gtype, WORD *ap_gout1, WORD *ap_gout2,
+                                  WORD *ap_gout3, WORD *ap_gout4 );
+
+Aufruf:
+ap_greturn = appl_getinfo( 7, &ap_gout1, &ap_gout2,
+                              &ap_gout3, &ap_gout4 );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        130                 appl_getinfo
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        0                   EintrÑge in addrin
+
+intin[0]         ap_gtype            Nummer der Unterfunktion (7)
+
+Ausgaben:
+
+contrl[2]        5                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        ap_greturn          0: Fehler 1: alles in Ordnung
+intout[1]        ap_gout1            siehe Beschreibung
+intout[2]        ap_gout2
+intout[3]        ap_gout3
+intout[4]        ap_gout4
+
+Bits in ap_gout1:
+Bit 0:           wdlg_xx()-Funktionen sind vorhanden (1)
+Bit 1:           lbox_xx()-Funktionen sind vorhanden (1)
+Bit 2:           fnts_xx()-Funktionen sind vorhanden (1)
+Bit 3:           fslx_xx()-Funktionen sind vorhanden (1) *
+Bit 4:           pdlg_xx()-Funktionen sind vorhanden (1)
+
+*: fslx_xx()-Funktionen werden nur von MagiC zur VerfÅgung gestellt.
+   Bei TOS + WDIALOG ist das Bit nicht gesetzt. Zur Beschreibung der
+   Dateiauswahl siehe fslx.txt (Bestandteil der MagiC-Doku).
+
+
+Bemerkung: Die Funktion appl_getinfo() ist nicht in allen AES-
+Versionen vorhanden. Um festzustellen, ob sie vorhanden ist, sollten
+Sie appl_find("?AGI") aufrufen. Wenn appl_find() keinen Fehler
+zurÅckliefert, ist appl_getinfo() vorhanden. Dieses Vorgehen
+funktioniert auch bei alten TOS-Versionen, da WDIALOG eine rudimentÑre
+appl_getinfo()-Funktion zur VerfÅgung stellt und appl_find() abfÑngt.
+
+Ab V1.06 wird von WDIALOG in alten TOS-Versionen auch die
+form_popup()-Funktion von MagiC nachgerÅstet.
+
+
+2.3  Fensterdialoge
+===================
+
+
++----------------------+-----------------------------------------------+
+| wdlg_create()        | Fensterdialoge initialisieren, Speicher an-   |
+|                      | fordern                                       |
+| wdlg_open()          | Fenster îffnen                                |
+| wdlg_close()         | Fenster schlieûen                             |
+| wdlg_delete()        | Speicher freigeben                            |
++----------------------+-----------------------------------------------+
+| wdlg_get_tree()      | Zeiger auf Objektbaum und umgebendes Rechteck |
+|                      | zurÅckliefern                                 |
+| wdlg_get_edit()      | Editobjekt und Cursorposition zurÅckliefern   |
+| wdlg_get_udata()     | applikationseigene Daten zurÅckliefern        |
+| wdlg_get_handle()    | Fensterhandle zurÅckliefern                   |
++----------------------+-----------------------------------------------+
+| wdlg_set_edit()      | Editobjekt setzen                             |
+| wdlg_set_tree()      | neuen Objektbaum setzen                       |
+| wdlg_set_size()      | Grîûe des Fensters und des Objektbaums        |
+|                      | verÑndern                                     |
+| wdlg_set_iconify()   | Iconify des Fensters                          |
+| wdlg_set_uniconify() | Uniconify                                     |
++----------------------+-----------------------------------------------+
+| wdlg_evnt()          | Events fÅr den Fensterdialog behandeln        |
+| wdlg_redraw()        | Redraw des Objektbaums auslîsen               |
++----------------------+-----------------------------------------------+
+
+
+2.3.1  Aufrufschema fÅr Fensterdialoge
+--------------------------------------
+
+Programmstart:
+   .
+   .
+   .
+Dialog îffnen:             wdlg_create(), wdlg_open()
+   .
+   .
+   .
+Event-Loop:                wdlg_evnt() (ruft Callback-Funktion auf)
+   .
+   .
+   .
+Dialog schlieûen:          wdlg_close(), wdlg_delete()
+   .
+   .
+   .
+Programmende:
+
+
+2.3.2  WINDOW DIALOG - CREATE (AES 160)
+---------------------------------------
+
+Diese Funktion fordert Speicher fÅr eine Dialog-Strukur an und
+initialisiert sie.
+
+
+Deklaration:
+DIALOG  *wdlg_create( HNDL_OBJ handle_exit, OBJECT *tree,
+                      void *user_data, WORD code, void *data,
+                                               WORD flags );
+
+Aufruf:
+dialog = wdlg_create( handle_exit, tree, user_data,
+                             code, data, WDLG_BKGD );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        160                 wdlg_create
+contrl[1]        2                   EintrÑge in intin
+contrl[3]        4                   EintrÑge in addrin
+
+intin[0]         code                wird handle_exit() in
+                                     <clicks> Åbergeben
+intin[1]         flags
+
+addrin[0]        handle_exit         Zeiger auf die Service-Funktion
+addrin[1]        tree                Zeiger auf den Objektbaum
+addrin[2]        user_data           Zeiger auf Benutzer-Informationen
+addrin[3]        data                wird handle_exit() in <data>
+                                     Åbergeben
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       dialog              Zeiger auf die Dialog-Struktur
+
+
+Beschreibung von <handle_exit>:
+
+<handle_exit> ist der Zeiger auf eine Service-Routine, die u.a. von
+wdlg_evnt() aufgerufen wird. <handle_exit> wird aufgerufen, wenn auf
+ein Exit- oder Touchexit-Objekt geklickt wurde (in diesem Fall ist
+<obj> eine positive Objektnummer) oder wenn ein den Dialog
+betreffendes Ereignis eingetreten ist (dann ist <obj> negativ und
+enthÑlt eine entsprechende Funktionsnummer wie z.B. HNDL_CLSD).
+
+Die Parameter werden Åber den Stack Åbergeben und die Routine darf
+Register d0-d2/a0-a2 verÑndern.
+
+Beispiel fÅr eine Service-Routine:
+
+
+WORD cdecl handle_exit( DIALOG *dialog, EVNT *events, WORD obj,
+                                       WORD clicks, void *data );
+{
+  if ( obj < 0 )         /* Ereignis oder Objektnummer? */
+  {
+                         /* alle Ereignisse auûer HNDL_CLSD */
+                         /* werden bei diesem Beispiel ignoriert */
+
+     if ( obj == HNDL_CLSD ) /* Closer betÑtigt? */
+        return( 0 );         /* beenden */
+
+
+     if ( obj == HNDL_EDIT )
+     {
+        /* In Fensterdialogen kann es nÅtzlich sein, Tastenkombinati-
+           onen mit Control in Eingabefeldern zu ignorieren, damit
+           Shortcuts wie z.B. Ctrl-U, Ctrl-W oder Ctrl-Q in der Event-
+           schleife des Programms abgearbeitet werden kînnen. In
+           diesem Fall sollte nach HNDL_EDIT eine 0 zurÅckgeliefert
+           werden, damit die Taste nicht von objc_edit() bearbeitet
+           wird.
+        */
+     }
+  }
+  else                       /* ein Objekt ist angewÑhlt worden */
+  {
+     switch ( obj )          /* Aktionen einleiten (falls nîtig) */
+     {
+        case ...
+          .
+          .
+          .
+        case MY_EXIT_OBJECT: ..... return( 0 );   /* beenden */
+     }
+  }
+  return( 1 );                     /* weitermachen */
+}
+
+
+Die Parameter haben folgende Bedeutung:
+
+dialog: Zeiger auf eine Dialog-Struktur. Auf die Struktur sollte nicht
+direkt zugegriffen werden. Die wdlg_xx-Funktionen sollten benutzt
+werden!
+
+events: Wenn <obj> eine Objektnummer ist (>= 0), dann zeigt <events>
+auf die EVNT-Struktur, die bei wdlg_evnt() Åbergeben wurde.
+Andernfalls ist <events> grundsÑtzlich 0L und kann nicht zur
+Adressierung benutzt werden.
+
+obj: >= 0: Objektnummer < 0: Funktionsnummer (siehe unten)
+
+clicks: Anzahl der Mausklicks (falls es sich bei <obj> um eine
+Objektnummer handelt)
+
+data: der Inhalt hÑngt von <obj> ab
+
+Bedeutung von <data> abhÑngig von <obj>:
+
+Falls <obj> eine (positive) Objektnummer ist, wird in <data> die
+Variable <user_data> Åbergeben (siehe wdlg_create). <clicks> enthÑlt
+die Anzahl der Mausklicks auf dieses Objekt.
+
+
+ +------------+-----------------------------------------------------+
+ | HNDL_INIT: | <data> ist die bei wdlg_create Åbergebene Variable. |
+ | -1         | Wenn handle_exit() 0 zurÅckliefert, legt            |
+ |            | wdlg_create() keine Dialog-Struktur an (Fehler).    |
+ |            | Die Variable <code> wird in <clicks> Åbergeben.     |
+ +------------+-----------------------------------------------------+
+ | HNDL_OPEN: | <data> ist die bei wdlg_open Åbergebene Variable.   |
+ | -5         | Die Variable <code> wird in <clicks> Åbergeben.     |
+ +------------+-----------------------------------------------------+
+ | HNDL_CLSD: | <data> ist <user_data>. Wenn handle_exit() 0        |
+ | -3         | zurÅckliefert, wird der Dialog geschlossen -        |
+ |            | wdlg_evnt() liefert 0 zurÅck.                       |
+ |            | <events> zeigt auf die bei wdlg_evnt() Åbergebene   |
+ |            | EVNT-Struktur.                                      |
+ +------------+-----------------------------------------------------+
+ | HNDL_MOVE: | <data> ist <user_data>. Wenn handle_exit() 0        |
+ | -9         | zurÅckliefert, wird der Dialog geschlossen -        |
+ |            | wdlg_evnt() liefert 0 zurÅck.                       |
+ |            | <events> zeigt auf die bei wdlg_evnt() Åbergebene   |
+ |            | EVNT-Struktur.                                      |
+ +------------+-----------------------------------------------------+
+ | HNDL_TOPW: | <data> ist <user_data>. Wenn handle_exit() 0        |
+ | -10        | zurÅckliefert, wird der Dialog geschlossen -        |
+ |            | wdlg_evnt() liefert 0 zurÅck.                       |
+ |            | <events> zeigt auf die bei wdlg_evnt() Åbergebene   |
+ |            | EVNT-Struktur.                                      |
+ +------------+-----------------------------------------------------+
+ | HNDL_UNTP: | <data> ist <user_data>. Wenn handle_exit() 0        |
+ | -11        | zurÅckliefert, wird der Dialog geschlossen -        |
+ |            | wdlg_evnt() liefert 0 zurÅck.                       |
+ |            | <events> zeigt auf die bei wdlg_evnt() Åbergebene   |
+ |            | EVNT-Struktur.                                      |
+ +------------+-----------------------------------------------------+
+ | HNDL_EDIT: | <data> zeigt auf ein Wort mit dem Tastencode.       |
+ | -6         | Wenn handle_exit() 1 zurÅckliefert, wird der        |
+ |            | Tastendruck verarbeitet, bei 0 ignoriert.           |
+ |            | <events> zeigt auf die bei wdlg_evnt() Åbergebene   |
+ |            | EVNT-Struktur.                                      |
+ +------------+-----------------------------------------------------+
+ | HNDL_EDDN: | <data> zeigt auf ein Wort mit dem Tastencode.       |
+ | -7         | <events> zeigt auf die bei wdlg_evnt() Åbergebene   |
+ |            | EVNT-Struktur.                                      |
+ +------------+-----------------------------------------------------+
+ | HNDL_EDCH: | <data> zeigt auf ein Wort mit der Objektnummer      |
+ | -8         | des neuen Edit-Felds.                               |
+ +------------+-----------------------------------------------------+
+ | HNDL_MESG: | <data> ist <user_data>. Wenn handle_exit() 0        |
+ | -2         | zurÅckliefert, wird der Dialog geschlossen -        |
+ |            | wdlg_evnt() liefert 0 zurÅck.                       |
+ |            | <events> zeigt auf die bei wdlg_evnt() Åbergebene   |
+ |            | EVNT-Struktur.                                      |
+ |            | HNDL_MESG wird nur dann Åbergeben, wenn ein         |
+ |            | Nachrichtencode zwischen 20 und 39 empfangen wurde, |
+ |            | der nicht mit den anderen Opcodes bearbeitet wird.  |
+ |            | Wird z.B. fÅr die Ikonifizierung benîtigt.          |
+ |            |                                                     |
+ |            | Achtung: Dieser Opcode ist erst ab                  |
+ |            | MagiC 4.5 vom 18.4.96 vorhanden.                    |
+ +------------+-----------------------------------------------------+
+
+Von diesen Funktionsnummern muû nur auf HNDL_CLSD reagiert werden.
+Alle anderen Ereignisse kînnen je nach Bedarf beachtet werden.
+
+Wenn handle_exit mit einer unbekannten Funktionsnummer in <obj>
+aufgerufen wird oder eine der obigen Funktionsnummern ignoriert werden
+soll, muû 1 zurÅckgeliefert werden.
+
+Bemerkung: WDIALOG-Versionen kleiner als 1.06 haben einen Fehler in
+der Editobjekt-Behandlung, der bei einem Objektbaum mit nur einem
+Objekt (ROOT) zu einem Absturz fÅhren kann. Wer unbedingt einen leeren
+Fensterdialog anzeigen mîchte, sollte darauf achten, daû der Baum aus
+mindestens zwei Objekten besteht.
+
+
+2.3.3  WINDOW DIALOG - OPEN (AES 161)
+-------------------------------------
+
+OPEN îffnet ein Fenster mit der Titelzeile <title> an der Position
+<x>, <y>. Bevor wdlg_open() zum Aufrufer zurÅckkehrt wird noch die
+Service-Routine <handle_exit> (s.o.) mit der Funktionsnummer HNDL_OPEN
+aufgerufen: handle_exit( dialog, HNDL_OPEN, code, data );
+
+
+Deklaration:
+WORD wdlg_open( DIALOG *dialog, BYTE *title, WORD kind, WORD x,
+                                WORD y, WORD code, void *data );
+
+Aufruf:
+handle = wdlg_open( dialog, title, NAME + CLOSER + MOVER, x, y,
+                                                     code, data );
+
+Variable         Belegung    Bedeutung
+Eingaben:
+
+contrl[0]        161         wdlg_open
+contrl[1]        4           EintrÑge in intin
+contrl[3]        3           EintrÑge in addrin
+
+intin[0]         kind        Fensterkomponenten (NAME/MOVER/CLOSER)
+intin[1]         x           x-Koordinate des Dialogs oder -1 (zentriert)
+intin[2]         y           y-Koordinate des Dialogs oder -1 (zentriert)
+intin[3]         code        wird handle_exit() in <clicks> Åbergeben
+
+addrin[0]        dialog      Zeiger auf die Dialog-Struktur
+addrin[1]        title       Zeiger auf den Fensternamen oder 0L
+addrin[2]        data        wird handle_exit() in <data> Åbergeben
+
+Ausgaben:
+
+contrl[2]        1           EintrÑge in intout
+contrl[4]        0           EintrÑge in addrout
+
+intout[0]        handle      Handle des Dialog-Fensters (0: Fehler)
+
+
+
+2.3.4  WINDOW DIALOG - CLOSE (AES 162)
+--------------------------------------
+
+Diese Funktion schlieût den Fensterdialog <dialog>.
+
+
+Deklaration:
+WORD wdlg_close( DIALOG *dialog );
+
+Aufruf:
+wdlg_close( dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        162                 wdlg_close
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+
+Ausgaben:
+
+contrl[2]        3                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+intout[1]        x                   letzte x-Koordinate des Dialogs
+intout[2]        y                   letzte y-Koordinate des Dialogs
+
+
+Bemerkung: Alte WDIALOG-Versionen liefern nicht die Fensterkoordinaten
+zurÅck. In diesem Fall trÑgt das Binding -1 ein, so daû der Dialog
+beim nÑchsten Aufruf automatisch zentriert wird.
+
+
+2.3.5  WINDOW DIALOG - DELETE (AES 163)
+---------------------------------------
+
+Diese Funktion gibt den Speicher fÅr einen Fensterdialog frei.
+
+
+Deklaration:
+WORD wdlg_delete( DIALOG *dialog );
+
+Aufruf:
+wdlg_delete( dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        163                 wdlg_delete
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+
+
+
+2.3.6  WINDOW DIALOG - GET OBJECT TREE (AES 164, 0)
+---------------------------------------------------
+
+wdlg_get_tree() liefert die Adresse des Objektbaums und die Grîûe des
+Fensters (der ArbeitsflÑche) zurÅck. Sofern die Dialoggrîûe nicht mit
+wdlg_set_size() verÑndert wurde, entspricht die ArbeitsflÑche dem
+GRECT des Wurzelobjekts.
+
+
+Deklaration:
+WORD wdlg_get_tree( DIALOG *dialog, OBJECT **tree, GRECT *r );
+
+Aufruf:
+wdlg_get_tree( dialog, &tree, &r );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        164                 wdlg_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        3                   EintrÑge in addrin
+
+intin[0]         0                   wdlg_get_tree
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+addrin[1]        tree                Zeiger auf Zeiger auf Objektbaum
+addrin[2]        rect                Zeiger auf GRECT
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+
+
+
+2.3.7  WINDOW DIALOG - GET EDIT OBJECT (AES 164, 1)
+---------------------------------------------------
+
+Diese Funktion liefert die Nummer des aktuellen Edit-Objekts. Wenn das
+Ergebnis 0 ist, dann ist momentan kein Edit-Objekt aktiv.
+
+
+Deklaration:
+WORD wdlg_get_edit( DIALOG *dialog, WORD *cursor );
+
+Aufruf:
+edit_obj = wdlg_get_edit( dialog, &cursor );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        164                 wdlg_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         1                   wdlg_get_edit
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+
+Ausgaben:
+
+contrl[2]        2                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        edit_obj            Nummer des aktuellen Edit-Objekts
+                                     (oder 0, wenn keins aktiv ist)
+intout[1]        cursor              Index des Zeichens
+
+
+Bemerkung: Bei alten WDIALOG-Versionen wird <cursor> nicht
+zurÅckgeliefert. Das Binding sorgt dafÅr, daû in diesem Fall -1
+eingetragen wird.
+
+
+2.3.8  WINDOW DIALOG - GET USERDATA (AES 164, 2)
+------------------------------------------------
+
+DIese Funktion liefert die Variable <user_data> zurÅck, die beim
+Aufruf von wdlg_create() Åbergeben wurde.
+
+
+Deklaration:
+void *wdlg_get_udata( DIALOG *dialog );
+
+Aufruf:
+user_data = wdlg_get_udata( dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        164                 wdlg_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         2                   wdlg_get_udata
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       user_data           der Zeiger user_data
+
+
+
+2.3.9  WINDOW DIALOG - GET WINDOW HANDLE (AES 164, 3)
+-----------------------------------------------------
+
+GET WINDOW HANDLE liefert das Handle des Dialog-Fensters.
+
+
+Deklaration:
+WORD wdlg_get_handle( DIALOG *dialog );
+
+Aufruf:
+handle = wdlg_get_handle( dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        164                 wdlg_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         3                   wdlg_get_handle
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        handle              Fenster-Handle
+
+
+
+2.3.10  WINDOW DIALOG - SET EDIT OBJECT (AES 165, 0)
+----------------------------------------------------
+
+SET EDIT OBJECT aktiviert ein Edit-Objekt, d.h. der Cursor wird im
+Objekt <obj> gezeichnet und in einem evtl. vorher aktiven Objekt
+gelîscht.
+
+
+Deklaration:
+WORD wdlg_set_edit( DIALOG *dialog, WORD obj );
+
+Aufruf:
+edit_obj = wdlg_set_edit( dialog, new_edit_obj );
+
+Variable         Belegung         Bedeutung
+Eingaben:
+
+contrl[0]        165              wdlg_set
+contrl[1]        2                EintrÑge in intin
+contrl[3]        1                EintrÑge in addrin
+
+intin[0]         0                wdlg_set_edit
+intin[1]         obj              Nummer des neuen Edit-Objekts
+                                  (oder 0, wenn keins aktiv sein soll)
+
+addrin[0]        dialog           Zeiger auf die Dialog-Struktur
+
+Ausgaben:
+
+contrl[2]        1                EintrÑge in intout
+contrl[4]        0                EintrÑge in addrout
+
+intout[0]        edit_obj         Nummer des aktuellen Edit-Objekts
+
+
+
+2.3.11  WINDOW DIALOG - SET TREE (AES 165, 1)
+---------------------------------------------
+
+SET TREE stellt einen neuen Objektbaum im Dialog dar. Falls das neue
+Wurzelobjekt eine andere Grîûe hat, wird die Fenstergrîûe angepaût.
+Der Fensterinhalt wird in jedem Fall aktualisiert.
+
+
+Deklaration:
+WORD wdlg_set_tree( DIALOG *dialog, OBJECT *new_tree );
+
+Aufruf:
+wdlg_set_tree( dialog, new_tree );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        165                 wdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         1                   wdlg_set_tree
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+addrin[1]        new_tree            Zeiger auf den neuen Objektbaum
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+
+
+
+2.3.12  WINDOW DIALOG - SET SIZE (AES 165, 2)
+---------------------------------------------
+
+Mit wdlg_set_size() kann die Grîûe eines Fensterdialogs verÑndert
+werden. Das GRECT <new_size> bestimmt die neue Position und Grîûe der
+ArbeitsflÑche des Fensters. SET SIZE Ñndert weder Position noch Grîûe
+des Wurzelobjekts. Soll das Wurzelobjekt verschoben oder vergrîûert
+werden, mÅssen die Objektausmaûe vor dem Aufruf von wdlg_set_size()
+geÑndert werden.
+
+
+Deklaration:
+WORD wdlg_set_size( DIALOG *dialog, GRECT *new_size );
+
+Aufruf:
+wdlg_set_size( dialog, new_size );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        165                 wdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[2]        1                   EintrÑge in intout
+contrl[3]        2                   EintrÑge in addrin
+contrl[4]        0                   EintrÑge in addrout
+
+intin[0]         2                   wdlg_set_size
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+addrin[1]        new_size            Zeiger auf GRECT
+
+Ausgaben:
+
+intout[0]        1
+
+
+Bemerkung: Die Buttons mÅssen sich immer vollstÑndig innerhalb der
+ArbeitsflÑche des Fensters befinden, da form_button() nicht die
+Rechteckliste beachtet.
+
+Der normale Anwendungsfall fÅr wdlg_set_size() sind vergrîûerbare
+Dialoge, die ein Sizer-Objekt in der rechten unteren Ecke enthalten.
+
+
+2.3.13  WINDOW DIALOG - ICONIFY (AES 165, 3)
+--------------------------------------------
+
+Mit wdlg_set_iconify() kann eine Fensterdialog ikonifiziert werden.
+Das GRECT <g> bestimmt die neue Position und Grîûe des Fensters
+(Auûenmaû). Im allgemeinen wird man hier msg+4 Åbergeben, wenn man die
+Nachricht WM_ICONIFIY erhalten hat. Genauso kann man jedoch auch ein
+GRECT {-1,-1,-1,-1} Åbergeben, wobei MagiC die Position ermittelt.
+
+ICONIFY Ñndert Position und Grîûe des Wurzelobjekts. Da man i.a. fÅr
+ikonifizierte Fenster einen anderen Objektbaum anzeigen mîchte, kann
+dieser in <tree> Åbergeben werden (sonst auf NULL setzen).
+
+öblicherweise besteht ein solcher Objektbaum lediglich aus dem
+Wurzelobjekt (G_BOX) und einem Icon (G_(C)ICON). Soll das Icon (oder
+ein anderes Objekt) im Fenster zentriert werden, Åbergibt man die
+Objektnummer in <obj>, andernfalls -1. Weiterhin kann ein neuer
+Fenstertitel angegeben werden. Der Aufrufer hat dabei aber selbst
+dafÅr zu sorgen, bei wdlg_set_uniconify wieder den ursprÅnglichen
+Titel einzusetzen.
+
+
+Deklaration:
+WORD wdlg_set_iconify( DIALOG *dialog, GRECT *g,
+               char *title, OBJECT *tree, WORD obj );
+
+Aufruf:
+wdlg_set_iconify( dialog, g, title, tree, obj );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        165                 wdlg_set
+contrl[1]        2                   EintrÑge in intin
+contrl[2]        1                   EintrÑge in intout
+contrl[3]        4                   EintrÑge in addrin
+
+intin[0]         3                   wdlg_set_iconify
+intin[1]         obj                 zu zentrierendes Objekt oder -1
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+addrin[1]        g                   Zeiger auf GRECT
+addrin[2]        title               neuer Fenstertitel oder NULL
+addrin[3]        tree                neuer Fensterbaum oder NULL
+
+Ausgaben:
+
+intout[0]        1
+
+
+Bemerkung: Diese Funktion ist erst ab WDIALOG 1.05 vorhanden. Wenn sie
+nicht vorhanden ist, enthÑlt intout[0] eine 0.
+
+
+2.3.14  WINDOW DIALOG - UNICONIFY (AES 165, 4)
+----------------------------------------------
+
+Das GegenstÅck zu wdlg_set_iconify(). Das GRECT <g> bestimmt die neue
+Position und Grîûe des Fensters (Auûenmaû). Im allgemeinen wird man
+hier msg+4 Åbergeben, wenn man die Nachricht WM_UNICONIFIY erhalten
+hat. UNICONIFY Ñndert Position und Grîûe des Wurzelobjekts. Da man
+i.a. fÅr ikonifizierte Fenster einen anderen Objektbaum angezeigt
+hatte, kann der ursprÅngliche Baum in <tree> Åbergeben werden (sonst
+auf NULL setzen). Weiterhin kann der ursprÅngliche Fenstertitel
+angegeben werden, wenn dieser mit wdlg_set_iconify verÑndert worden
+war.
+
+
+Deklaration:
+WORD wdlg_set_uniconify( DIALOG *dialog, GRECT *g,
+                       char *title, OBJECT *tree );
+
+Aufruf:
+wdlg_set_uniconify( dialog, g, title, tree );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        165                 wdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[2]        1                   EintrÑge in intout
+contrl[3]        4                   EintrÑge in addrin
+
+intin[0]         4                   wdlg_set_uniconify
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+addrin[1]        g                   Zeiger auf GRECT
+addrin[2]        title               neuer Fenstertitel oder NULL
+addrin[3]        tree                neuer Fensterbaum oder NULL
+
+Ausgaben:
+
+intout[0]        1
+
+
+Bemerkung: Diese Funktion ist erst ab WDIALOG 1.05 vorhanden. Wenn sie
+nicht vorhanden ist, enthÑlt intout[0] eine 0.
+
+
+2.3.15  WINDOW DIALOG - EVENT (AES 166)
+---------------------------------------
+
+Diese Funktion muû im Event-Loop aufgerufen werden. In dem Bitvektor
+<mwhich> werden die Ereignis-Bits gelîscht, die sich auf den
+Fensterdialog beziehen. Nach wdlg_evnt() kann die EVNT-Struktur von
+der Applikation zur Auswertung der fÅr sie bestimmten Events benutzt
+werden. Liefert wdlg_evnt() eine 0 zurÅck, muû der Fensterdialog
+geschlossen werden (wdlg_close() aufrufen).
+
+
+Deklaration:
+WORD wdlg_evnt( DIALOG *dialog, EVNT *events );
+
+Aufruf:
+cont = wdlg_evnt( dialog, &events );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        166                 wdlg_evnt
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+addrin[1]        events              Zeiger auf die EVNT-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        cont                0: Dialog schlieûen
+                                     1: alles in Ordnung
+
+Beschreibung der EVNT-Struktur:
+
+typedef struct
+{
+   WORD  mwhich;               /* Art der Ereignisse */
+   WORD  mx;                   /* x-Koordinate des Mauszeigers */
+   WORD  my;                   /* y-Koordinate des Mauszeigers */
+   WORD  mbutton;              /* gedrÅckte Maustaste */
+   WORD  kstate;               /* Status der Sondertasten (kbshift) */
+   WORD  key;                  /* Scancode der gedrÅckten Taste */
+   WORD  mclicks;              /* Anzahl der Mausklicks */
+   WORD  reserved[9];          /* reserviert */
+   WORD  msg[16];              /* Message-Buffer */
+} EVNT;
+
+
+Bemerkung: Das Iconify-Event wird nicht von wdlg_evnt() unterstÅtzt.
+Wer den Iconifier bei wdlg_open() als Fensterelement anmeldet muû
+daher dieses Ereignis auswerten und selber behandeln. Das gleiche
+gilt, wenn man den Sizer als Element anmeldet.
+
+
+2.3.16  WINDOW DIALOG - REDRAW (AES 167)
+----------------------------------------
+
+REDRAW funktioniert Ñhnlich wie objc_draw(). Im Gegensatz dazu wird
+aber die Rechteckliste fÅr das Dialog-Fenster beachtet. Mîchte man ein
+Objekt innerhalb des Dialogs zeichnen, so sollte man immer
+wdlg_redraw() und nicht objc_draw() verwenden. Vor dem Aufruf von
+wdlg_redraw ist genauso wie vor und nach objc_draw() der Aufruf von
+wind_update() nîtig.
+
+
+Deklaration:
+void wdlg_redraw( DIALOG *dialog, GRECT *rect, WORD obj, WORD depth );
+
+Aufruf:
+wdlg_redraw( dialog, &rect, obj, MAX_DEPTH );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        167                 wdlg_redraw
+contrl[1]        2                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         obj                 Nummer des Startobjekts
+intin[1]         depth               Anzahl der Ebene/Tiefe
+
+addrin[0]        dialog              Zeiger auf die Dialog-Struktur
+addrin[1]        rect                Zeiger auf begrenzendes GRECT
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+
+
+2.4  Listboxen
+==============
+
+
++-------------------------+--------------------------------------------+
+| lbox_create()           | Listbox anlegen, Speicher anfordern        |
+| lbox_update()           | AES-Objekte aktualisieren                  |
+| lbox_do()               | Button behandeln                           |
+| lbox_delete()           | Speicher freigeben                         |
++-------------------------+--------------------------------------------+
+| lbox_cnt_items();       | Anzahl der Listenelemente zurÅckliefern    |
+| lbox_get_tree();        | Zeiger auf Objektbaum des Dialogs zurÅck-  |
+|                         | geben                                      |
+| lbox_get_visible() bzw. |                                            |
+| lbox_get_avis();        | Anzahl der sichtbaren Listboxelemente      |
+|                         | liefern (Slider A)                         |
+| lbox_get_bvis();        | Anzahl der sichtbaren Listboxelemente      |
+|                         | liefern (Slider B)                         |
+| lbox_get_udata();       | Zeiger auf programmeigene Daten holen      |
+| lbox_get_first() bzw.   |                                            |
+| lbox_get_afirst();      | Index des ersten sichtbaren Element        |
+|                         | zurÅckgeben (Slider A)                     |
+| lbox_get_bfirst();      | Index des ersten sichtbaren Element        |
+|                         | zurÅckgeben (Slider B)                     |
+| lbox_get_slct_idx();    | Index des ersten selektierten Element      |
+|                         | ermitteln                                  |
+| lbox_get_items();       | Zeiger auf das erste Element der Liste     |
+|                         | zurÅckgeben                                |
+| lbox_get_item();        | Zeiger auf n-tes Element zurÅckliefern     |
+| lbox_get_slct_item();   | Zeiger auf das erste selektierte Element   |
+|                         | liefern                                    |
+| lbox_get_idx();         | Index eines Elements ermitteln             |
+| lbox_get_bentries;      | Anzahl der Elemente fÅr Slider B liefern   |
++-------------------------+--------------------------------------------+
+| lbox_set_slider() bzw.  |                                            |
+| lbox_set_asldr();       | Position des Sliders setzen (Slider A)     |
+| lbox_set_bsldr();       | Position des Sliders setzen (Slider A)     |
+| lbox_set_items();       | neue Elementliste setzen                   |
+| lbox_free_items();      | Elementliste freigeben                     |
+| lbox_free_list();       | Elementliste freigeben                     |
+| lbox_set_bentries();    | Anzahl der Elemente fÅr Slider B setzen    |
+| lbox_scroll_to() bzw.   |                                            |
+| lbox_ascroll_to();      | Inhalt der Listbox bis zu einem bestimmten |
+|                         | Element verschieben (Slider A)             |
+| lbox_bscroll_to();      | Inhalt der Listbox bis zu einem bestimmten |
+|                         | Element verschieben (Slider B)             |
++-------------------------+--------------------------------------------+
+
+
+2.4.1  Aufrufschema fÅr modalen Dialog
+--------------------------------------
+
+
+wind_update()           Schirm sperren
+lbox_create()           Listbox anlegen
+form_center()           Dialog zentrieren
+form_dial()             Ausschnitt puffern
+   .
+   .
+Schleife:   form_do() <----
+               .           |
+               .           |
+            lbox_do() -----
+
+   .
+   .
+Ende der Schleife (z.B. OK oder Abbruch betÑtigt)
+   .
+   .
+evtl. lbox_get_slct_item()...
+   .
+   .
+form_dial()             Redraw-Message versenden
+wind_update()           Schirm freigeben
+lbox_delete()           Speicher fÅr Listbox freigeben
+
+
+
+2.4.2  LIST BOX - CREATE (AES 170)
+----------------------------------
+
+Diese Funktion legt Speicher fÅr eine Listbox an und initialisiert die
+Objekte, indem sie die Routine <set> fÅr jedes der in <objs>
+Åbergebenen Objekte aufruft. Die Listbox wird jedoch nicht gezeichnet!
+
+Bit 0 der Variable <flags> legt fest, ob es sich um eine horizontale
+(das erste Listenelement ist links und das letzte rechts) oder
+vertikale (das erste Listenelement ist oben und das letzte unten)
+Listbox handelt. UnabhÑngig von dieser Hauptscrollrichtung kann die
+Listbox noch einen zweiten Slider haben, wenn die Elemente selber noch
+gescrollt werden sollen. Das kann z.B. bei einer vertikalen Listbox
+mit Textelementen, die breiter als die Box sind, sinnvoll sein.
+
+
+Deklaration:
+LIST_BOX *lbox_create( OBJECT *tree, SLCT_ITEM slct, SET_ITEM set,
+                       LBOX_ITEM *items, WORD visible_a, WORD first_a,
+                       WORD *ctrl_objs, WORD *objs, WORD flags,
+                       WORD pause_a, void *user_data, DIALOG *dialog,
+                       visible_b, first_b, entries_b, pause_b );
+
+Aufruf:
+box = lbox_create( tree, slct_item, set_item, item_list, 10, 0,
+                   ctrl_objs, objs, lbox_flags, 20, 0L, 0L, 10,
+                                                     0, 40, 5 );
+
+Variable         Belegung   Bedeutung
+Eingaben:
+
+contrl[0]        170        lbox_create
+contrl[1]        4 oder 8   EintrÑge in intin
+contrl[3]        8          EintrÑge in addrin
+
+intin[0]         visible_a  Anzahl der sichtbaren EintrÑge
+                            (Slider A)
+intin[1]         first_a    Index des ersten sichtbaren Eintrags
+                            (Slider A)
+intin[2]         flags      diverse Flags
+intin[3]         pause_a    Verzîgerung beim Scrolling in ms
+                            (Slider A)
+
+intin[4]         visible_b  Anzahl der sichtbaren ELemente
+                            (Slider B)
+intin[5]         first_b    erstes sichtbares Element (Slider B)
+intin[6]         entries_b  Anzahl der Elemente (Slider B)
+intin[7]         pause_b    Verzîgerung beim Scrolling in ms
+                            (Slider B)
+
+addrin[0]        tree       Zeiger auf den Objektbaum des Dialogs
+addrin[1]        slct       Zeiger auf Auswahl-Routine
+addrin[2]        set        Zeiger auf Setz-Routine
+addrin[3]        items      Zeiger auf verkettete Liste mit LBOX_ITEMs
+addrin[4]        ctrl_objs  Zeiger auf ein Feld mit den Objektnummern
+                            der Buttons und Slider (5 EintrÑge)
+addrin[5]        objs       Zeiger auf ein Feld mit den Objektnummer
+                            der Listbox-EintrÑge (<entries> EintrÑge)
+addrin[6]        user_data  Zeiger fÅr Applikation
+addrin[7]        dialog     Zeiger auf die Fensterdialog-Struktur
+                            oder 0L
+
+Ausgaben:
+
+contrl[2]        0            EintrÑge in intout
+contrl[4]        1            EintrÑge in addrout
+
+addrout[0]       box          Zeiger auf die Listbox-Struktur
+                              oder 0L
+
+
+Sowohl <slct> als auch <set> sind Funktionen, deren Parameter auf dem
+Stack Åbergeben werden. Die Funktionen dÅrfen Register d0-d2/a0-a2
+verÑndern.
+
+<slct> ist ein Zeiger auf eine Auswahl-Routine, die immer dann
+aufgerufen wird, wenn ein Eintrag selektiert oder deselektiert wurde:
+
+
+typedef void (cdecl *SLCT_ITEM)( LIST_BOX *box, OBJECT *tree,
+                                 struct _lbox_item *item,
+                                 void *user_data,
+                                 WORD obj_index, WORD last_state );
+
+
+
+ <box>         zeigt auf die Listbox-Struktur                          
+ <tree>        zeigt auf den Objektbaum des Dialogs                    
+ <item>        zeigt auf die LBOX_ITEM-Struktur des ausgewÑhlten       
+               Eintrags                                                
+ <user_data>   ist der bei lbox_create() Åbergebene Zeiger             
+ <obj_index>   ist die Nummer des angewÑhlten Objekts. Bei einem       
+               Doppelklick ist Ñhnlich wie nach form_do() das oberste  
+               Bit gesetzt. Wenn <obj_index> 0 ist, heiût das, daû dem 
+               Eintrag kein Objekt zugeordnet ist; er ist nicht sicht- 
+               bar. Normalerweise ist das nur der Fall, wenn gescrollt 
+               wird und durch Auswahl eines neuen Objekts die          
+               (mittler weile nicht mehr sichtbare) Selektion gelîscht 
+               werden muû.                                             
+ <last_state>  ist der vorhergehende Status des Objekts. <last_state>  
+               kann auch den gleichen Wert wie <item->selected> haben. 
+               In diesem Fall kann die Funktion <slct> normalerweise   
+               sofort verlassen werden.                                
+
+<slct> wird auch dann aufgerufen, wenn die Selektion eines Objekts
+aufgehoben wird! Die Variable <selected> aus der LBOX_ITEM-Struktur
+enthÑlt beim Aufruf von <slct> bereits den neuen Status des Objekts.
+
+<set> zeigt auf die Funktion, die den Inhalt eines LBOX_ITEMs in ein
+Objekt des Listbox-Dialogs eintragen soll:
+
+
+typedef WORD (cdecl *SET_ITEM)( LIST_BOX *box, OBJECT *tree,
+                                struct _lbox_item *item,
+                                WORD obj_index,
+                                void *user_data, GRECT *rect,
+                                WORD first );
+
+
+
+   <box>        zeigt auf die Listbox-Struktur                     
+   <tree>       zeigt auf den Objektbaum des Dialogs               
+   <item>       zeigt auf die LBOX_ITEM-Struktur des zu setzenden  
+                Eintrags                                           
+   <obj_index>  ist die Nummer des zu setzenden Objekts            
+   <user_data>  ist der bei lbox_create() Åbergebene Zeiger        
+   <rect>       ist der Zeiger auf das GRECT fÅr das Objekt Redraw 
+                oder 0L                                            
+   <first>      enthÑlt die Nummer des ersten sichtbaren Elements  
+                fÅr Slider B                                       
+
+Bei einer Listbox, die nur Text-Strings enthÑlt, ist <set>
+typischerweise eine Funktion, die ein String, auf den die LBOX_ITEM-
+Struktur verweist, in das Objekt <index> kopiert.
+
+<rect> ist 0L, wenn ein Redraw der Dialogbox durchgefÅhrt wird oder
+wenn lbox_update() aufgerufen wurde.
+
+<rect> ist nicht 0L, wenn der Anwender ein Objekt selektiert oder
+deselektiert hat, und zeigt auf das GRECT fÅr den Redraw. Der
+RÅckgabewert von <set> ist die Nummer des Startobjekts fÅr
+objc_draw()/wdlg_redraw(). Bei EintrÑgen in der Listbox, die aus
+mehreren Objekten bestehen, ist es manchmal sinnvoll bei
+Selektion/Deselektion eines Objekts das Redraw-Rechteck zu verkleinern
+oder das Startobjekt zu Ñndern, um unnîtige Zeichenoperationen und
+unnîtiges Geflacker zu vermeiden.
+
+In den meisten FÑllen rufen die Listbox-Routinen nach <set> die
+Funktion objc_draw()/wdlg_redraw() auf, um den geÑnderten Inhalt
+anzuzeigen.
+
+<first> enthÑlt die Nummer des ersten sichtbaren Elements fÅr Slider
+B, wenn die Listbox 2 Slider hat. Bei einer (vertikalen) Listbox mit
+Text-Strings und zwei Slidern gibt man z.B. beim Aufruf von
+lbox_create() die Anzahl der sichtbaren Zeichen in <visible_b>, die
+gesamte StringlÑnge in <entries_b> und den Index des ersten sichtbaren
+Zeichens in <first_b> an. Wird der Text horizontal gescrollt, wird
+<set> fÅr alle sichtbaren Strings aufgerufen und der Bereich
+neugezeichnet bzw. verschoben. Wenn die Listbox nur einen Slider hat,
+ist <first> immer 0.
+
+<items> zeigt auf das erste Element einer Liste aus LBOX_ITEMs. Die
+fÅr die Elemente verwendete Struktur muû als erstes Element einen
+Zeiger auf den Nachfolger enthalten (next) und als zweites ein Wort
+fÅr den Zustand (selected):
+
+
+   typedef struct _lbox_item
+   {
+      struct _lbox_item *next;
+        /* Zeiger auf den nÑchsten Eintrag in der Liste */
+      WORD  selected;
+        /* gibt an, ob das Objekt selektiert ist */
+
+      WORD  data1;
+        /* Daten fÅr das Programm... */
+      void  *data2;
+      void  *data3;
+
+   } LBOX_ITEM;
+
+
+Die Struktur kann aber, wenn bei den Aufrufen entsprechend gecastet
+wird, durchaus wie das folgende Beispiel aussehen:
+
+
+   typedef struct
+   {
+      void  *next;
+      WORD  selected;
+
+      ... ab hier nach Belieben der Applikation...
+
+   } LB_EXAMPLE;
+
+
+<ctrl_objs> ist ein Zeiger auf ein Feld mit 5 bzw. 9 EintrÑgen, das
+die Nummern der Kontroll-Objekte (Buttons) enthÑlt:
+
+
+ ctrl_objs[0]:  Objektnummer der BOX oder IBOX, die die eigentlichen  
+                Listbox-Objekt enthÑlt.                               
+ ctrl_objs[1]:  Objektnummer des Buttons fÅr das Scrolling nach oben  
+                bzw. links.                                           
+ ctrl_objs[2]:  Objektnummer des Buttons fÅr das Scrolling nach unten 
+                bzw. rechts.                                          
+ ctrl_objs[3]:  Objektnummer der Box des Slider-Hintergrunds.         
+ ctrl_objs[4]:  Objektnummer der Slider-Box.                          
+
+Falls die Listbox 2 Slider hat, enhalten ctrl_objs[5-8] die Nummern
+der Objekte von Slider B:
+
+
+ ctrl_objs[5]:  Objektnummer des Buttons fÅr das Scrolling nach oben  
+                bzw. links.                                           
+ ctrl_objs[6]:  Objektnummer des Buttons fÅr das Scrolling nach unten 
+                bzw. rechts.                                          
+ ctrl_objs[7]:  Objektnummer der Box des Slider-Hintergrunds.         
+ ctrl_objs[8]:  Objektnummer der Slider-Box.                          
+
+Die Buttons, der Slider und der Slider-Hintergrund sollten TOUCHEXIT-
+Status haben. Wenn die Listbox nur die Buttons und keinen Slider hat,
+mÅssen ctrl_objs[3/4 bzw. 7/8] -1 enthalten.
+
+<objs> ist ein Feld mit <entries> EintrÑgen, das die Nummern der
+Listbox- Objekte enthÑlt (die Objekte sind normalerweise Kinder von
+ctrl_objs[0]).
+
+
+   objs[0]:             Nummer des ersten Objekts
+        .
+        .
+        .
+   objs[entries - 1]:   Nummer des letzten Objekts
+
+
+Die Objekt sollten normalerweise TOUCHEXIT-Status haben.
+
+Das Wort <flags> beeinfluût das Verhalten der Listbox:
+
+
++-----+---------+-------------------------------------------------------+
+| Bit | Zustand | Beschreibung                                          |
++-----+---------+-------------------------------------------------------+
+|  0  |    0    | Die Box scrollt horizontal.                           |
+|     |    1    | Die Box scrollt vertikal.                             |
++-----+---------+-------------------------------------------------------+
+|  1  |    0    | kein automatisches Scrolling                          |
+|     |    1    | Es wird autmatisch gescrollt, sobald bei gedrÅckter   |
+|     |         | Maustaste der Mauszeiger Åber das erste oder letzte   |
+|     |         | Element hinausbewegt wird.                            |
++-----+---------+-------------------------------------------------------+
+|  2  |    0    | Die Auswahl-Routine wird erst aufgerufen, wenn das    |
+|     |         | automatische Scrolling aufgehîrt hat, d.h. sie wird   |
+|     |         | fÅr den letzten selektierten Eintrag aufgerufen.      |
+|     |    1    | Beim automatischen Scrolling wird die Auswahl-Routine |
+|     |         | beim Scrolling fÅr jeden selektieren Eintrag aufge-   |
+|     |         | rufen.                                                |
++-----+---------+-------------------------------------------------------+
+|  3  |    0    | Bei Bewegung des Sliders wird ein Rahmen verschoben   |
+|     |         | (graf_slidebox), die Listbox wird erst nach Loslassen |
+|     |         | der Maustaste aktualisiert.                           |
+|     |    1    | Der Slider ist ein Real-Time-Slider.                  |
++-----+---------+-------------------------------------------------------+
+|  4  |    0    | Mehrfachselektion innerhalb der Listbox ist mîglich.  |
+|     |    1    | Es kann nur ein Element selektiert werden.            |
++-----+---------+-------------------------------------------------------+
+|  5  |    0    | Mehrfachselektion ist ohne Shift-Taste mîglich.       |
+|     |    1    | Mehrfachselektion ist nur mit Shift-Taste mîglich.    |
++-----+---------+-------------------------------------------------------+
+|  6  |    0    | Bei Selektion ist der Status immer SELECTED           |
+|     |    1    | Bei Selektion wird der Status immer gewechselt        |
++-----+---------+-------------------------------------------------------+
+|  7  |    0    | Listbox hat nur einen Slider                          |
+|     |    1    | Listbox hat zwei Slider                               |
++-----+---------+-------------------------------------------------------+
+
+
+#define  LBOX_VERT   1      /* Listbox mit vertikalem Slider */
+#define  LBOX_AUTO   2      /* Auto-Scrolling */
+#define  LBOX_AUTOSLCT  4   /* automatische Darstellung beim
+                               Auto-Scrolling */
+#define  LBOX_REAL   8      /* Real-Time-Slider */
+#define  LBOX_SNGL   16     /* nur ein anwÑhlbarer Eintrag */
+#define  LBOX_SHFT   32     /* Mehrfachselektionen mit Shift */
+#define  LBOX_TOGGLE 64     /* Status eines Eintrags bei Selektion
+                               wechseln */
+#define  LBOX_2SLDRS 128    /* 2 Slider unterstÅtzen */
+
+
+Das Flag LBOX_SNGL kann auch mit LBOX_SHFT oder LBOX_TOGGLE kombiniert
+werden, um in einer Listbox mit nur einem anwÑhlbaren Eintrag auch
+Deselektion zu ermîglichen. LBOX_SNGL + LBOX_SHFT bedeutet, daû der
+selektierte Eintrag durch Klick mit gedrÅckter Shift-Taste
+deselektiert werden kann. LBOX_SNGL + LBOX_TOGGLE bewirkt bei einem
+Klick auf einen selektierten Eintrag dessen Deselektion.
+
+Der Zeiger <items> kann auch 0L sein, wenn die Listbox noch leer ist
+und keine EintrÑge enthÑlt.
+
+
+2.4.3  LIST BOX - UPDATE (AES 171)
+----------------------------------
+
+UPDATE aktualisiert den Inhalt der Listbox-Objekte, d.h. die Funktion
+<set> (s.o.) wird fÅr jedes der Objekte aufgerufen. Wenn <rect> nicht
+0L ist, wird es als Zeiger auf ein GRECT betrachtet, das fÅr den
+Redraw der Listbox benutzt wird. Andernfalls werden die Objekte nur
+aktualisiert, aber nicht gezeichnet.
+
+
+Deklaration:
+void lbox_update( LIST_BOX *box, GRECT *rect );
+
+Aufruf:
+lbox_update( box, &redraw_rect );
+
+Variable         Belegung        Bedeutung
+Eingaben:
+
+contrl[0]        171             lbox_update
+contrl[1]        0               EintrÑge in intin
+contrl[3]        2               EintrÑge in addrin
+
+addrin[0]        box             Zeiger auf die Listbox-Struktur
+addrin[1]        rect            Zeiger auf das Redraw-GRECT oder 0L
+
+Ausgaben:
+
+contrl[2]        0               EintrÑge in intout
+contrl[4]        0               EintrÑge in addrout
+
+
+
+2.4.4  LIST BOX - DO (AES 172)
+------------------------------
+
+DO reagiert auf die BetÑtigung eines Buttons. Diese Funktion sollte
+nach form_do() aufgerufen werden (oder von der Service-Funktion des
+Fensterdialogs). Wenn einer der EintrÑge der Listbox mit einem
+Doppelklick ausgewÑhlt wurde, liefert lbox_do() -1 zurÅck. Der Dialog
+sollte dann geschlossen, so als wÑre der OK-Button betÑtigt worden.
+
+lbox_do() erkennt Doppelklicks am gesetzten obersten Bit der
+Objektnummer <obj> (Objektnummer | 0x8000). Bei der zurÅckgelieferten
+Objektnummer <slct_obj> ist das oberste Bit in jedem Fall gelîscht.
+
+
+Deklaration:
+WORD lbox_do( LIST_BOX *box, WORD obj );
+
+Aufruf:
+slct_obj = lbox_do( box, obj );
+
+Variable         Belegung          Bedeutung
+Eingaben:
+
+contrl[0]        172               lbox_do
+contrl[1]        1                 EintrÑge in intin
+contrl[3]        1                 EintrÑge in addrin
+
+intin[0]         obj               Nummer des ausgewÑhlten Objekts
+
+addrin[0]        box               Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                 EintrÑge in intout
+contrl[4]        0                 EintrÑge in addrout
+
+intout[0]        slct_obj          Nummer des ausgewÑhlten Objekts
+                                   oder -1, wenn ein Doppelklick auf
+                                   einen Eintrag erfolgte
+
+
+
+2.4.5  LIST BOX - DELETE (AES 173)
+----------------------------------
+
+DELETE gibt den Speicher fÅr die Listbox wieder frei.
+
+
+Deklaration:
+WORD lbox_delete( LIST_BOX *box );
+
+Aufruf:
+lbox_delete( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        173                 lbox_delete
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+
+
+
+2.4.6  LIST BOX - COUNT ITEMS (AES 174, 0)
+------------------------------------------
+
+COUNT ITEMS zÑhlt die Elemente der verketteten Liste.
+
+
+Deklaration:
+WORD lbox_cnt_items( LIST_BOX *box );
+
+Aufruf:
+no = lbox_cnt_items( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         0                   lbox_cnt_items
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        no                  Anzahl der Elemente in der Liste
+
+
+
+2.4.7  LIST BOX - GET TREE (AES 174, 1)
+---------------------------------------
+
+GET TREE liefert den Zeiger auf den Objektbaum der Dialogbox zurÅck.
+
+
+Deklaration:
+OBJECT  *lbox_get_tree( LIST_BOX *box );
+
+Aufruf:
+tree = lbox_get_tree( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         1                   lbox_get_tree
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       tree                Zeiger auf den Objektbaum des
+                                     Dialogs
+
+
+
+2.4.8  LIST BOX - GET NUMBER OF VISIBLE ITEMS, SLIDER A (AES 174, 2)
+--------------------------------------------------------------------
+
+GET SIZE liefert die Anzahl der sichtbaren EintrÑge zurÅck.
+
+
+Deklaration:
+WORD lbox_get_visible( LIST_BOX *box );
+
+Aufruf:
+entries = lbox_get_visble( box );
+               oder
+entries = lbox_get_avisb( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         2                   lbox_get_size
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        entries             Anzahl der sichtbaren EintrÑge
+
+
+
+2.4.9  LIST BOX - GET USER DATA (AES 174, 3)
+--------------------------------------------
+
+...liefert den Zeiger <user_data> zurÅck.
+
+
+Deklaration:
+void *lbox_get_udata( LIST_BOX *box );
+
+Aufruf:
+user_data = lbox_get_udata( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         3                   lbox_get_udata
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       user_data
+
+
+
+2.4.10  LIST BOX - GET FIRST VISIBLE ITEM, SLIDER A (AES 174, 4)
+----------------------------------------------------------------
+
+GET FIRST liefert den Index des ersten sichtbaren Elements zurÅck.
+
+
+Deklaration:
+WORD lbox_get_first( LIST_BOX *box );
+
+Aufruf:
+first = lbox_get_first( box );
+               oder
+first = lbox_get_afirst( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         4                   lbox_get_first
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        first               Index des ersten sichtbaren
+                                     Eintrags
+
+
+
+2.4.11  LIST BOX - GET INDEX of SELECTED ITEM (AES 174, 5)
+----------------------------------------------------------
+
+Der Index des ersten selektierten Eintrags wird ermittelt. Ist kein
+Eintrag in der Listbox selektiert, wird -1 zurÅckgegeben.
+
+
+Deklaration:
+WORD lbox_get_slct_idx( LIST_BOX *box );
+
+Aufruf:
+index = lbox_get_slct_idx( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         5                   lbox_get_slct_idx
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        index               Index des ausgewÑhlten Eintrags
+
+
+
+2.4.12  LIST BOX - GET ITEMS (AES 174, 6)
+-----------------------------------------
+
+GET ITEMS gibt einen Zeiger auf die Liste der LBOX_ITEMs zurÅck.
+
+
+Deklaration:
+LBOX_ITEM  *lbox_get_items( LIST_BOX *box );
+
+Aufruf:
+items = lbox_get_items( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         6                   lbox_get_items
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       items               Zeiger auf verkettete Liste
+
+
+
+2.4.13  LIST BOX - GET ITEM (AES 174, 7)
+----------------------------------------
+
+GET ITEM liefert einen Zeiger auf das Element <n> der Liste.
+
+
+Deklaration:
+LBOX_ITEM  *lbox_get_item( LIST_BOX *box, WORD n );
+
+Aufruf:
+item = lbox_get_item( box, n );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        2                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         7                   lbox_get_item
+intin[1]         n                   Index des Elements
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       item                Zeiger auf Element n oder 0L
+
+
+
+2.4.14  LIST BOX - GET SELECTED ITEM (AES 174, 8)
+-------------------------------------------------
+
+GET SELECTED ITEM liefert einen Zeiger auf das erste ausgewÑhlte
+Element der Liste.
+
+
+Deklaration:
+LBOX_ITEM *lbox_get_slct_item( LIST_BOX *box );
+
+Aufruf:
+item = lbox_get_slct_item( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         8                   lbox_get_slct_item
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       item                Zeiger auf Element n oder 0L
+
+
+
+2.4.15  LIST BOX - GET ITEM INDEX (AES 174, 9)
+----------------------------------------------
+
+Diese Funktion liefert den Index <n> des Elements <item> zurÅck. Ist
+<item> kein Element der Liste, ist der RÅckgabewert -1.
+
+
+Deklaration:
+WORD lbox_get_idx( LBOX_ITEM *items, LBOX_ITEM *search );
+
+Aufruf:
+n = lbox_get_idx( items, search );
+
+Variable         Belegung      Bedeutung
+Eingaben:
+
+contrl[0]        174           lbox_get
+contrl[1]        1             EintrÑge in intin
+contrl[3]        2             EintrÑge in addrin
+
+intin[0]         9             lbox_get_idx
+
+addrin[0]        items         Zeiger auf das erste Element der Liste
+addrin[1]        search        Zeiger auf das zu suchende Element
+
+Ausgaben:
+
+contrl[2]        1             EintrÑge in intout
+contrl[4]        0             EintrÑge in addrout
+
+intout[0]        n             Index des Elements
+
+
+
+2.4.16  LIST BOX - GET NUMBER OF VISIBLE ITEMS, SLIDER B (AES 174, 10)
+----------------------------------------------------------------------
+
+GET SIZE liefert die Anzahl der sichtbaren EintrÑge zurÅck.
+
+
+Deklaration:
+WORD lbox_get_bvis( LIST_BOX *box );
+
+Aufruf:
+entries = lbox_get_bvis( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         10                  lbox_get_bvis
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        entries             Anzahl der sichtbaren EintrÑge
+
+
+
+2.4.17  LIST BOX - GET NUMBER OF ITEMS, SLIDER B (AES 174, 11)
+--------------------------------------------------------------
+
+... liefert die Anzahl der Elemente fÅr Slider B zurÅck.
+
+
+Deklaration:
+WORD lbox_get_bentries( LIST_BOX *box );
+
+Aufruf:
+entries = lbox_get_bentries( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         11                  lbox_get_bentrs
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        entries             Anzahl der Elemente
+
+
+
+2.4.18  LIST BOX - GET FIRST VISIBLE ITEM, SLIDER B (AES 174, 12)
+-----------------------------------------------------------------
+
+GET FIRST liefert den Index des ersten sichtbaren Elements zurÅck
+(Slider B!).
+
+
+Deklaration:
+WORD lbox_get_bfirst( LIST_BOX *box );
+
+Aufruf:
+first = lbox_get_bfirst( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        174                 lbox_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         12                  lbox_get_bfirst
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        first               Index des ersten sichtbaren
+                                     Eintrags
+
+
+
+2.4.19  LIST BOX - SET SLIDER A (AES 175, 0)
+--------------------------------------------
+
+Diese Funktion positioniert den Slider A und zeichnet ihn innerhalb
+des Redraw-Rechtecks <rect>. Der Inhalt der Listbox wird nicht
+aktualisiert, d.h. evtl. muû lbox_update() aufgerufen werden. Ist
+<rect> 0L, dann wird nur die Position der Slider-Objekte geÑndert,
+aber die Objekte werden nicht gezeichnet.
+
+
+Deklaration:
+void lbox_set_slider( LIST_BOX *box, WORD first, GRECT *rect );
+
+Aufruf:
+lbox_set_slider( box, first, &rect );
+       oder
+lbox_set_asldr( box, first, &rect );
+
+Variable         Belegung       Bedeutung
+Eingaben:
+
+contrl[0]        175            lbox_set
+contrl[1]        2              EintrÑge in intin
+contrl[3]        2              EintrÑge in addrin
+
+intin[0]         0              lbox_set_slider
+intin[1]         first          Index des ersten sichtbaren Eintrags
+
+addrin[0]        box            Zeiger auf die Listbox-Struktur
+addrin[1]        rect           Zeiger auf Redraw-Rechteck oder 0L
+
+Ausgaben:
+
+contrl[2]        0              EintrÑge in intout
+contrl[4]        0              EintrÑge in addrout
+
+
+
+2.4.20  LIST BOX - SET NEW ITEM LIST (AES 175, 1)
+-------------------------------------------------
+
+Diese funktion setzt eine neue Liste mit Listbox-EintrÑgen. Die alte
+Liste muû vorher mit lbox_free_items() freigegeben werden.
+
+
+Deklaration:
+void lbox_set_items( LIST_BOX *box, LBOX_ITEM *items );
+
+Aufruf:
+lbox_set_items( box, items );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        175                 lbox_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         1                   lbox_set_items
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+addrin[1]        items
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+
+Der Zeiger <items> kann auch 0L sein, wenn die Listbox leer ist und
+keine EintrÑge enthÑlt.
+
+
+2.4.21  LIST BOX - FREE ITEMS (AES 175, 2)
+------------------------------------------
+
+Diese Funktion gibt den Speicher fÅr die verkettete Liste aus
+LBOX_ITEMs zurÅck. Voraussetzung dafÅr ist, das fÅr jedes Element der
+Liste Speicher mit Malloc() angefordert wurde.
+
+Wurde fÅr die LBOX_ITEMs eine eigene Speicherverwaltung benutzt (z.B.
+die C-Standard-Funktionen), muû auch eine eigene Funktion zum
+Freigeben des Speichers aufgerufen werden.
+
+
+Deklaration:
+void lbox_free_items( LIST_BOX *box );
+
+Aufruf:
+lbox_free_items( box );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        175                 lbox_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         2                   lbox_free_items
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+
+
+2.4.22  LIST BOX - FREE ITEM LIST (AES 175, 3)
+----------------------------------------------
+
+Diese Funktion arbeitet genauso wie lbox_free_items(). Im Gegensatz
+dazu wird lbox_free_list() aber mit dem Zeiger auf das erste LBOX_ITEM
+der Liste aufgerufen.
+
+
+Deklaration:
+void lbox_free_list( LBOX_ITEM *items );
+
+Aufruf:
+lbox_free_list( items );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        175                 lbox_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         3                   lbox_free_list
+
+addrin[0]        items               Zeiger auf verkettete Liste mit
+                                     LBOX_ITEMs
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+
+
+2.4.23  LIST BOX - SCROLL TO, SLIDER A (AES 175, 4)
+---------------------------------------------------
+
+Diese Funktion positioniert den Slider A und aktualisiert den Inhalt
+der Listbox. <box_rect> ist das Redraw-Rechteck fÅr die Listbox und
+<slider_rect> ist das Redraw-Rechteck fÅr den Slider.
+
+SCROLL TO funktioniert prinzipiell wie ein Aufruf von
+lbox_set_slider() mit anschlieûendem lbox_update(); wenn mîglich wird
+aber gescrollt, um nur wenig neu zeichnen zu mÅssen. Sollte sich die
+Elementliste der Listbox geÑndert haben, darf lbox_scroll_to() daher
+nicht benutzt werden.
+
+
+Deklaration:
+void lbox_scroll_to( LIST_BOX *box, WORD first, GRECT *box_rect,
+                                              GRECT *slider_rect );
+
+Aufruf:
+lbox_scroll_to( box, first, &box_rect, &slider_rect );
+      oder
+lbox_ascroll_to( box, first, &box_rect, &slider_rect );
+
+Variable         Belegung         Bedeutung
+Eingaben:
+
+contrl[0]        175              lbox_set
+contrl[1]        2                EintrÑge in intin
+contrl[3]        3                EintrÑge in addrin
+
+intin[0]         4                lbox_scroll_to
+intin[1]         first            Index des ersten sichtbaren Eintrags
+
+addrin[0]        box              Zeiger auf die Listbox-Struktur
+addrin[1]        box_rect         Zeiger auf Redraw-Rechteck oder 0L
+addrin[2]        slider_rect      Zeiger auf Redraw-Rechteck oder 0L
+
+Ausgaben:
+
+contrl[2]        0                EintrÑge in intout
+contrl[4]        0                EintrÑge in addrout
+
+
+
+2.4.24  LIST BOX - SET SLIDER B (AES 175, 5)
+--------------------------------------------
+
+Diese Funktion positioniert den Slider B und zeichnet ihn innerhalb
+des Redraw-Rechtecks <rect>. Der Inhalt der Listbox wird nicht
+aktualisiert, d.h. evtl. muû lbox_update() aufgerufen werden. Ist
+<rect> 0L, dann wird nur die Position der Slider-Objekte geÑndert,
+aber die Objekte werden nicht gezeichnet.
+
+
+Deklaration:
+void lbox_set_bsldr( LIST_BOX *box, WORD first, GRECT *rect );
+
+Aufruf:
+lbox_set_bsldr( box, first, &rect );
+
+Variable         Belegung       Bedeutung
+Eingaben:
+
+contrl[0]        175            lbox_set
+contrl[1]        2              EintrÑge in intin
+contrl[3]        2              EintrÑge in addrin
+
+intin[0]         5              lbox_set_bsldr
+intin[1]         first          Index des ersten sichtbaren Eintrags
+
+addrin[0]        box            Zeiger auf die Listbox-Struktur
+addrin[1]        rect           Zeiger auf Redraw-Rechteck oder 0L
+
+Ausgaben:
+
+contrl[2]        0              EintrÑge in intout
+contrl[4]        0              EintrÑge in addrout
+
+
+
+2.4.25  LIST BOX - SET NUMBER OF ENTRIES, SLIDER B (AES 175, 6)
+---------------------------------------------------------------
+
+Diese Funktion setzt die Anzahl der Element (der Unterteilungen) fÅr
+Slider B.
+
+
+Deklaration:
+void lbox_set_bentries( LIST_BOX *box, WORD entries );
+
+Aufruf:
+lbox_set_bentries( box, entries );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        175                 lbox_set
+contrl[1]        2                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         7                   lbox_set_bentries
+intin[1]         entries             Anzahl der Elemente
+
+addrin[0]        box                 Zeiger auf die Listbox-Struktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+
+
+2.4.26  LIST BOX - SCROLL TO, SLIDER B (AES 175, 7)
+---------------------------------------------------
+
+Diese Funktion positioniert den Slider B und aktualisiert den Inhalt
+der Listbox. <box_rect> ist das Redraw-Rechteck fÅr die Listbox und
+<slider_rect> ist das Redraw-Rechteck fÅr den Slider.
+
+SCROLL TO funktioniert prinzipiell wie ein Aufruf von lbox_set_bsldr()
+mit anschlieûendem lbox_update(); wenn mîglich wird aber gescrollt, um
+nur wenig neu zeichnen zu mÅssen. Sollte sich die Elementliste der
+Listbox geÑndert haben, darf lbox_bscroll_to() daher nicht benutzt
+werden.
+
+
+Deklaration:
+void lbox_bscroll_to( LIST_BOX *box, WORD first, GRECT *box_rect,
+                                              GRECT *slider_rect );
+
+Aufruf:
+lbox_bscroll_to( box, first, &box_rect, &slider_rect );
+
+Variable         Belegung       Bedeutung
+Eingaben:
+
+contrl[0]        175            lbox_set
+contrl[1]        2              EintrÑge in intin
+contrl[3]        3              EintrÑge in addrin
+
+intin[0]         7              lbox_bscroll_to
+intin[1]         first          Index des ersten sichtbaren Eintrags
+
+addrin[0]        box            Zeiger auf die Listbox-Struktur
+addrin[1]        box_rect       Zeiger auf Redraw-Rechteck oder 0L
+addrin[2]        slider_rect    Zeiger auf Redraw-Rechteck oder 0L
+
+Ausgaben:
+
+contrl[2]        0              EintrÑge in intout
+contrl[4]        0              EintrÑge in addrout
+
+
+
+2.5  Zeichensatzauswahl
+=======================
+
+
++----------------------+----------------------------------------------+
+| fnts_create()        | Zeichensatzauswahl initialisieren, Speicher  |
+|                      | anfordern                                    |
+| fnts_open()          | Auswahldialog im Fenster îffnen              |
+| fnts_close()         | Fenster schlieûen                            |
+| fnts_delete()        | Speicher freigeben                           |
++----------------------+----------------------------------------------+
+| fnts_get_no_styles() | Anzahl der Stile einer Fontfamilie ermitteln |
+| fnts_get_style()     | ID des n-ten Stil einer Familie liefern      |
+| fnts_get_name()      | Namen eines Fonts zurÅckliefern              |
++----------------------+----------------------------------------------+
+| fnts_add()           | eigene Fonts zur Auswahl hinzufÅgen          |
+|                      | (z.B. Signum-Fonts)                          |
+| fnts_remove()        | eigene Fonts aus der Liste entfernen         |
++----------------------+----------------------------------------------+
+| fnts_evnt()          | Events fÅr Dialog im Fenster behandeln       |
++----------------------+----------------------------------------------+
+| fnts_do()            | modalen Dialog anzeigen                      |
++----------------------+----------------------------------------------+
+
+
+2.5.1  Aufrufschema fÅr Fontauswahl im Fenster
+----------------------------------------------
+
+
+Programmstart:             fnts_create()
+   .
+   .
+   .
+Aufruf der Fontauswahl:    fnts_open()
+   .
+   .
+   .
+Event-Loop:                fnts_evnt()
+   .                             .
+   .                             .
+   ......evtl. fnts_get_no_styles()/fnts_get_style()/...
+                 (je nach Status der Checkboxen)
+   .                             .
+   .                             .
+Schlieûen der Fontauswahl: fnts_close()
+   .
+   .
+   .
+Programmende:              fnts_delete()
+
+
+
+2.5.2  Aufrufschema fÅr modale Fontauswahl
+------------------------------------------
+
+
+Programmstart:             fnts_create()
+   .
+   .
+   .
+Aufruf der Fontauswahl:    fnts_do()
+   .
+   .
+   ......evtl. fnts_get_no_styles()/fnts_get_style()/...
+               (je nach Status der Checkboxen)
+   .
+   .
+Programmende:              fnts_delete()
+
+
+
+2.5.3  FONT SELECTOR - CREATE (AES 180)
+---------------------------------------
+
+Diese Funktion initialisiert den Fontselektor. Wenn <no_fonts> 0 ist,
+wird vst_load_fonts() mit <vdi_handle> aufgerufen. Andernfalls wird
+davon ausgegangen, daû <no_fonts> die Anzahl aller Åber <vdi_handle>
+verfÅgbaren Fonts ist, d.h. die Anzahl aller Systemfonts (work_out[10]
+bei v_opnvwk()/vq_extnd()) plus die Anzahl der nachgeladenen Fonts
+(RÅckgabewert von vst_load_fonts()).
+
+
+Deklaration:
+FNT_DIALOG *fnts_create( WORD vdi_handle, WORD no_fonts,
+                         WORD font_flags, WORD dialog_flags,
+                         BYTE *sample, BYTE *opt_button );
+
+Aufruf:
+fnt_dialog = fnts_create( vdi_handle, 0, 0xf, "The quick brown..." );
+
+Variable         Belegung       Bedeutung
+Eingaben:
+
+contrl[0]        180            fnts_create
+contrl[1]        4              EintrÑge in intin
+contrl[3]        2              EintrÑge in addrin
+
+intin[0]         vdi_handle     Handle der zu benutzenden Workstation
+intin[1]         no_fonts       Anzahl der verfÅgbaren Fonts oder 0,
+                                wenn vst_load_fonts() aufgerufen
+                                werden soll
+intin[2]         font_flags     Art der anzuzeigenden Fonts
+intin[3]         dialog_flags   Aussehen des Dialogs
+
+addrin[0]        sample         Zeiger auf String fÅr den Beispieltext
+addrin[1]        opt_button     Zeiger auf String fÅr optionalen
+                                Button oder 0L
+
+Ausgaben:
+
+contrl[2]        0               EintrÑge in intout
+contrl[4]        1               EintrÑge in addrout
+
+addrout[0]       fnt_dialog      Zeiger auf Verwaltungsstruktur
+
+Beschreibung von <font_flags>:
+
+#define  FNTS_BTMP   1           /* Bitmapfonts anzeigen */
+#define  FNTS_OUTL   2           /* Vektorfonts anzeigen */
+#define  FNTS_MONO   4           /* Ñquidistante Fonts anzeigen */
+#define  FNTS_PROP   8           /* proportionale Fonts anzeigen */
+
+Beschreibung von <dialog_flags>:
+
+#define  FNTS_3D     1           /* Auswahl im 3D-Look anzeigen */
+
+
+Bemerkung: Da diese Funktion je nach Systemkonfiguration durchaus 1
+Sekunde (evtl. auch mehr) benîtigt, sollte man sie am Programmstart
+aufrufen und nicht erst direkt vor der Anzeige der Fontauswahl
+aufrufen.
+
+Bitte beachten: Der Fontselektor verÑndert die Attribute der mit
+<vdi_handle> bezeichneten Workstation. Wenn man die bei fnts_create()
+Åbergebene Workstation noch fÅr andere Zwecke benutzen mîchte, mÅssen
+auf jeden Fall die Attribute vorher gesetzt werden, da sie evtl.
+zwischenzeitlich vom Fontselektor geÑndert wurden.
+
+
+2.5.4  FONT SELECTOR - DELETE (AES 181)
+---------------------------------------
+
+Diese Funktion gibt den Speicher fÅr die Zeichensaztauswahl frei. Ist
+<vdi_handle> ungleich 0, wird vst_unload_fonts() aufgerufen.
+
+
+Deklaration:
+WORD fnts_delete( FNT_DIALOG *fnt_dialog, WORD vdi_handle );
+
+Aufruf:
+fnts_delete( fnt_dialog, vdi_handle );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        181                 fnts_delete
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         vdi_handle          Handle der Workstation oder 0,
+                                     wenn vst_unload_fonts() nicht
+                                     aufgerufen werden soll
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+
+
+
+2.5.5  FONT SELECTOR - OPEN WINDOW (AES 182)
+--------------------------------------------
+
+OPEN WINDOW îffnet einen Fensterdialog mit dem Fontselektor. Das
+Handle des Fensters wird zurÅckgeliefert, wenn kein Fehler aufgetreten
+ist. Im Fehlerfall ist der RÅckgabewert 0.
+
+
+Deklaration:
+WORD fnts_open( FNT_DIALOG *fnt_dialog, WORD button_flags,
+                 WORD x, WORD y, LONG id, LONG pt, LONG ratio );
+
+Aufruf:
+whdl = fnts_open( fnt_dialog, 0x3f0f, -1, -1, id, pt, ratio );
+
+Variable         Belegung         Bedeutung
+Eingaben:
+
+contrl[0]        182              fnts_open
+contrl[1]        9                EintrÑge in intin
+contrl[3]        1                EintrÑge in addrin
+
+intin[0]         button_flags     Flags fÅr unterstÅzte Buttons
+intin[1]         x                x-Koordinate des Fensters oder -1
+                                  (zentriert)
+intin[2]         y                y-Koordinate des Fensters oder -1
+                                  (zentriert)
+intin[3/4]       id               ID des Fonts
+intin[5/6]       pt               Hîhe in 1/65536 Punkten
+intin[7/8]       ratio            VerhÑltnis Breite/Hîhe in 1/65536
+
+addrin[0]        fnt_dialog       Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        1                EintrÑge in intout
+contrl[4]        0                EintrÑge in addrout
+
+intout[0]        whdl             Handle des Fensters oder 0 (Fehler)
+
+Beschreibung von <button_flags>:
+
+#define  FNTS_SNAME     0x01  /* Checkbox fÅr die Namen selektieren */
+#define  FNTS_SSTYLE    0x02  /* Checkbox fÅr die Stile selektieren */
+#define  FNTS_SSIZE     0x04  /* Checkbox fÅr die Hîhe selektieren */
+#define  FNTS_SRATIO    0x08  /* Checkbox fÅr das VerhÑltnis
+                                 Breite/Hîhe selektieren */
+
+#define  FNTS_CHNAME    0x0100  /* Checkbox fÅr die Namen anzeigen */
+#define  FNTS_CHSTYLE   0x0200  /* Checkbox fÅr die Stile anzeigen */
+#define  FNTS_CHSIZE    0x0400  /* Checkbox fÅr die Hîhe anzeigen */
+#define  FNTS_CHRATIO   0x0800  /* Checkbox fÅr das VerhÑltnis
+                                   Breite/Hîhe anzeigen */
+#define  FNTS_RATIO     0x1000  /* VerhÑltnis Breite/Hîhe ein-
+                                   stellbar */
+#define  FNTS_BSET      0x2000  /* Button "setzen" anwÑhlbar */
+#define  FNTS_BMARK     0x4000  /* Button "markieren" anwÑhlbar */
+
+
+
+2.5.6  FONT SELECTOR - CLOSE WINDOW (AES 183)
+---------------------------------------------
+
+CLOSE WINDOW schlieût das Fenster der Zeichensatzauswahl.
+
+
+Deklaration:
+WORD fnts_close( FNT_DIALOG *fnt_dialog, WORD *x, WORD *y );
+
+Aufruf:
+fnts_close( *fnt_dialog, &x, &y );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        183                 fnts_close
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        3                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+intout[1]        x                   letzte x-Koordinate des Dialogs
+intout[2]        y                   letzte y-Koordinate des Dialogs
+
+
+Bemerkung: Alte WDIALOG-Versionen liefern nicht die Fensterkoordinaten
+zurÅck. In diesem Fall trÑgt das Binding -1 ein, so daû der Dialog
+beim nÑchsten Aufruf automatisch zentriert wird.
+
+
+2.5.7  FONT SELECTOR - GET NUMBER OF STYLES (AES 184, 0)
+--------------------------------------------------------
+
+Diese Funktion liefert zurÅck, wie viele Fonts zur gleichen Familie
+wie der Font <id> gehîren, d.h. wieviel Stile die Familie hat. <id>
+ist die ID eines Fonts dieser Familie, die z.B. bei fnts_evnt()
+zurÅckgeliefert worden sein kann.
+
+
+Deklaration:
+WORD fnts_get_no_styles( FNT_DIALOG *fnt_dialog, LONG id );
+
+Aufruf:
+no_fonts = WORD  fnts_get_no_styles( fnt_dialog, id );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        184                 fnts_get
+contrl[1]        3                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         0                   fnts_get_no_styles
+intin[1/2]       id                  ID eines Fonts der Familie
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        no_fonts            Anzahl der zur Familie gehîrenden
+                                     Stile
+
+
+
+2.5.8  FONT SELECTOR - GET STYLE ID (AES 184, 1)
+------------------------------------------------
+
+GET STYLE ID liefert die ID des <index>-ten Fonts der Familie zurÅck,
+zu der auch der Font <id> gehîrt. <index> muû eine Zahl zwischen 1 und
+dem Ergebnis von fnts_get_no_styles() sein.
+
+
+Deklaration:
+LONG fnts_get_style( FNT_DIALOG *fnt_dialog, LONG id, WORD index );
+
+Aufruf:
+style_id = fnts_get_style( fnt_dialog, id, index );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        184                 fnts_get
+contrl[1]        4                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         1                   fnts_get_style
+intin[1/2]       id                  ID eines Fonts der Familie
+intin[3]         index               Index innerhalb der Familie
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        2                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0/1]      style_id            ID des <index>-ten Fonts der
+                                     Familie
+
+
+
+2.5.9  FONT SELECTOR - GET FONT NAME (AES 184, 2)
+-------------------------------------------------
+
+GET FONT NAME liefert fÅr den Font <id> den vollstÑndigen Namen, den
+Familiennamen und den Stilnamen zurÅck.
+
+
+Deklaration:
+WORD fnts_get_name( FNT_DIALOG *fnt_dialog, LONG id,
+                    BYTE *full_name, BYTE *family_name,
+                    BYTE *style_name );
+
+Aufruf:
+ret = fnts_get_name( FNT_DIALOG *fnt_dialog, id, &full_name,
+                                  &family_name, &style_name );
+
+Variable         Belegung       Bedeutung
+Eingaben:
+
+contrl[0]        184            fnts_get
+contrl[1]        3              EintrÑge in intin
+contrl[3]        4              EintrÑge in addrin
+
+intin[0]         2              fnts_get_name
+intin[1/2]       id             ID des Fonts
+
+addrin[0]        fnt_dialog     Zeiger auf Verwaltungsstruktur
+addrin[1]        full_name      Zeiger auf vollstÑndigen Namen oder 0L
+addrin[2]        family_name    Zeiger auf den Familiennamen oder 0L
+addrin[3]        style_name     Zeiger auf den Stilnamen oder 0L
+
+Ausgaben:
+
+contrl[2]        1              EintrÑge in intout
+contrl[4]        0              EintrÑge in addrout
+
+intout[0]        ret            0: Fehler 1: alles in Ordnung
+
+
+
+2.5.10  FONT SELECTOR - GET FONT INFO (AES 184, 3)
+--------------------------------------------------
+
+
+Deklaration:
+WORD fnts_get_info( FNT_DIALOG *fnt_dialog, LONG id,
+                          WORD *mono, WORD *outline );
+
+Aufruf:
+index = fnts_get_info( fnt_dialog, id, &mono, &outline );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        184                 fnts_get
+contrl[1]        3                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         3                   fnts_get_info
+intin[1/2]       id                  ID des Fonts
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        3                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        index               0: Fehler
+                                    >0: Index fÅr vqt_name()
+intout[1]        mono                Flag fÅr équidistanz
+intout[2]        outline             Flag fÅr Vektorfont
+
+
+
+2.5.11  FONT SELECTOR - ADD USER FONTS (AES 185, 0)
+---------------------------------------------------
+
+Mit ADD USER FONTS kann ein Programm eigene Fonts zu den von der
+Zeichensatzauswahl angezeigten Fonts hinzufÅgen. Die ID dieser Fonts
+muû grîûer als 65535 sein. Auûerdem muû im Strukturelement <display>
+der Zeiger auf eine Anzeigefunktion eingetragen werden.
+
+
+Deklaration:
+WORD fnts_add( FNT_DIALOG *fnt_dialog, FNTS_ITEM *user_fonts );
+
+Aufruf:
+ret = WORD fnts_add( fnt_dialog, user_fonts );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        185                 fnts_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         0                   fnts_add
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        user_fonts          Zeiger auf programmeigene Fonts
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        ret                 0: Fehler 1: alles in Ordnung
+
+Deklaration von FNTS_ITEM:
+
+typedef struct _fnts_item
+{
+   struct   _fnts_item  *next;
+   /* Zeiger auf den nÑchsten Font oder 0L (Ende der Liste) */
+   UTXT_FN  display;
+   /* Zeiger auf die Anzeige-Funktion fÅr applikationseigene Fonts */
+   LONG     id;
+   /* ID des Fonts, >= 65536 fÅr applikationseigene Fonts */
+   WORD     index;         /* muû 0 sein, da kein VDI-Font */
+   BYTE     mono;          /* Flag fÅr Ñquidistante Fonts */
+   BYTE     outline;       /* Flag fÅr Vektorfont */
+   WORD     npts;          /* Anzahl der vordefinierten Punkthîhen */
+   BYTE     *full_name;    /* Zeiger auf den vollstÑndigen Namen */
+   BYTE     *family_name;  /* Zeiger auf den Familiennamen */
+   BYTE     *style_name;   /* Zeiger auf den Stilnamen */
+   BYTE     *pts;          /* Zeiger auf Feld mit Punkthîhen */
+   LONG     reserved[4];   /* reserviert, mÅssen 0 sein */
+} FNTS_ITEM;
+
+typedef void (cdecl *UTXT_FN)( WORD x, WORD y, WORD *clip_rect,
+                               LONG id, LONG pt, LONG ratio,
+                                                BYTE *string );
+
+
+
+2.5.12  FONT SELECTOR - REMOVE USER FONTS (AES 185, 1)
+------------------------------------------------------
+
+REMOVE USER FONTS entfernt die mit ADD FONTS angemeldeten Fonts aus
+der Verkettung. Sind eigene programmeigene Fonts angemeldet, muû
+fnts_remove() vor fnts_delete() aufgerufen werden.
+
+
+Deklaration:
+void fnts_remove( FNT_DIALOG *fnt_dialog );
+
+Aufruf:
+fnts_remove( fnt_dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        185                 fnts_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         1                   fnts_remove
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+
+
+2.5.13  FONT SELECTOR - UPDATE WINDOW (AES 185, 2)
+--------------------------------------------------
+
+
+Deklaration:
+WORD fnts_update( FNT_DIALOG *fnt_dialog, WORD button_flags,
+                               LONG id, LONG pt, LONG ratio );
+
+Aufruf:
+result = fnts_update( fnt_dialog, 0x3f0f, id, pt, ratio );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        185                 fnts_set
+contrl[1]        8                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         2                   fnts_update
+intin[1]         button_flags        Flags fÅr unterstÅzte Buttons
+intin[2/3]       id                  ID des Fonts
+intin[4/5]       pt                  Hîhe in 1/65536 Punkten
+intin[6/7]       ratio               VerhÑltnis Breite/Hîhe in 1/65536
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        result
+
+
+Beschreibung von <result>:
+
+
+   -1:  Funktion nicht vorhanden                                    
+    0:  Fehler (nicht genÅgend Speicher), der Fontselektor muû dann 
+        mit fnts_close() geschlossen werden.                        
+    1:  alles in Ordnung                                            
+
+
+Beschreibung von <button_flags>:
+
+#define FNTS_SNAME     0x01  /* Checkbox fÅr die Namen selektieren */
+#define FNTS_SSTYLE    0x02  /* Checkbox fÅr die Stile selektieren */
+#define FNTS_SSIZE     0x04  /* Checkbox fÅr die Hîhe selektieren */
+#define FNTS_SRATIO    0x08  /* Checkbox fÅr das VerhÑltnis
+                                Breite/Hîhe selektieren */
+
+#define FNTS_CHNAME   0x0100  /* Checkbox fÅr die Namen anzeigen */
+#define FNTS_CHSTYLE  0x0200  /* Checkbox fÅr die Stile anzeigen */
+#define FNTS_CHSIZE   0x0400  /* Checkbox fÅr die Hîhe anzeigen */
+#define FNTS_CHRATIO  0x0800  /* Checkbox fÅr das VerhÑltnis
+                                 Breite/Hîhe anzeigen */
+#define FNTS_RATIO    0x1000  /* VerhÑltnis Breite/Hîhe einstellbar */
+#define FNTS_BSET     0x2000  /* Button "setzen" anwÑhlbar */
+#define FNTS_BMARK    0x4000  /* Button "markieren" anwÑhlbar */
+
+
+Bemerkung: In Ñlteren Versionen von WDIALOG war diese Funktion nicht
+vorhanden. Das Binding sorgt dafÅr, daû in diesem Fall -1 in intout[0]
+zurÅckgeliefert wird.
+
+
+2.5.14  FONT SELECTOR - HANDLE EVENT (AES 186)
+----------------------------------------------
+
+HANDLE EVENT wertet die Åbergebene EVNT-Struktur aus und ruft intern
+wdlg_evnt() auf. Wenn einer der Exit-Buttons betÑtigt wurde
+("Abbruch", "OK", "setzen", "markieren" oder "Optionen") liefert die
+Funktion eine 0 zurÅck und in button wird zurÅckgeliefert, welche
+Knopf der Anwender ausgewÑhlt hat.
+
+
+Deklaration:
+WORD fnts_evnt( FNT_DIALOG *fnt_dialog, EVNT *events, WORD *button,
+               WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio );
+
+Aufruf:
+cont = fnts_evnt( fnt_dialog, &events, &button, &check_boxes,
+                                            &id, &pt, &ratio );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        186                 fnts_evnt
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        events              Zeiger auf EVNT-Struktur
+
+Ausgaben:
+
+contrl[2]        9                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        cont                0: Exit-Button angewÑhlt
+                                     1: nichts passsiert
+intout[1]        button              angewÑhlter Button (oder 0)
+intout[2]        check_boxes         Status der Checkboxen
+intout[3/4]      id                  ID des ausgewÑhlten Fonts
+intout[5/6]      pt                  Hîhe in 1/65536 Punkten
+intout[7/8]      ratio               VerhÑltnis Breite/Hîhe
+
+Beschreibung von <check_boxes>:
+
+#define  FNTS_SNAME     0x01   /* Checkbox fÅr die Namen selektiert */
+#define  FNTS_SSTYLE    0x02   /* Checkbox fÅr die Stile selektiert */
+#define  FNTS_SSIZE     0x04   /* Checkbox fÅr die Hîhe selektiert */
+#define  FNTS_SRATIO    0x08   /* Checkbox fÅr das VerhÑltnis
+                                  Breite/Hîhe selektiert */
+
+
+
+2.5.15  FONT SELECTOR - DO (AES 187)
+------------------------------------
+
+fnts_do() ist das GegenstÅck zu fnts_opne()/fnts_evnt()/fnts_close().
+Diese Funktion îffnet einen modalen Dialog und kehrt erst zum Aufrufer
+zurÅck, wenn einer der Exit-Buttons betÑtigt wurde ("Abbruch", "OK",
+"setzen", "markieren" oder "Optionen").
+
+
+Deklaration:
+WORD fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags,
+              LONG id_in, LONG pt_in, LONG ratio_in,
+              WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio );
+
+Aufruf:
+button = fnts_do( fnt_dialog, button_flags, id_in, pt_in, ratio_in,
+                                 &check_boxes, &id, &pt, &ratio );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        187                 fnts_do
+contrl[1]        7                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         button_flags
+intin[1/2]       id_in
+intin[3/4]       pt_in
+intin[5/6]       ratio_in
+
+addrin[0]        fnt_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        8                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        button              angewÑhlter Button (oder 0)
+intout[1]        check_boxes         Status der Checkboxen
+intout[2/3]      id                  ID des ausgewÑhlten Fonts
+intout[4/5]      pt                  Hîhe in 1/65536 Punkten
+intout[6/7]      ratio               VerhÑltnis Breite/Hîhe
+
+
+
+2.6  Druckdialoge
+=================
+
+
++---------------------------+--------------------------------------------+
+| pdlg_create()             | Druckdialog initialisieren, Speicher       |
+|                           | anfordern                                  |
+| pdlg_open()               | Auswahldialog im Fenster îffnen            |
+| pdlg_close()              | Fenster schlieûen                          |
+| pdlg_delete()             | Speicher freigeben                         |
++---------------------------+--------------------------------------------+
+| pdlg_get_setsize()        | Grîûe der Struktur erfragen                |
++---------------------------+--------------------------------------------+
+| pdlg_add_printers()       | applikationseigene Drucker hinzufÅgen      |
+| pdlg_remove_printers()    | applikationseigene Drucker entfernen       |
+| pdlg_update()             | Fenstertitel aktualisieren                 |
+| pdlg_add_sub_dialogs()    | applikationseigene Unterdialoge hinzufÅgen |
+| pdlg_remove_sub_dialogs() | applikationseigene Unterdialoge entfernen  |
+| pdlg_new_settings()       | Zeiger auf initialisierte Drucker-         |
+|                           | einstellung zurÅckliefern                  |
+| pdlg_free_settings()      | Speicher fÅr Druckereinstellung freigeben  |
+| pdlg_dflt_settings()      | Speicherbereich mit Druckereinstellung     |
+|                           | initialisieren                             |
+| pdlg_validate_settings()  | Druckereinstellung ÅberprÅfen              |
+| pdlg_use_settings()       | Druckereinstellung ÅberprÅfen und          |
+|                           | Åbernehmen                                 |
++---------------------------+--------------------------------------------+
+| pdlg_evnt()               | Events fÅr Dialog im Fenster behandeln     |
+| pdlg_do()                 | modalen Dialog anzeigen                    |
++---------------------------+--------------------------------------------+
+
+
+2.6.1  Aufrufschema fÅr Druckdialog im Fenster
+----------------------------------------------
+
+
+Programmstart:
+   .
+   .                       pdlg_create()
+   .
+   .
+   .
+Aufruf des Druckdialogs:   pdlg_open()
+   .
+   .
+   .
+Event-Loop:                pdlg_evnt()
+   .                             .
+   .                             .
+   .                             .
+   .                             .
+Schlieûen des Druckdialogs: pdlg_close()
+   .
+   .
+   .
+   .                       pdlg_delete()
+   .
+Programmende:
+
+
+
+2.6.2  Aufrufschema fÅr modalen Druckdialog
+-------------------------------------------
+
+
+Programmstart:
+   .
+   .                       pdlg_create()
+   .
+   .
+   .
+Aufruf des Druckdialogs:   pdlg_do()
+   .
+   .
+   .
+   .                       pdlg_delete()
+   .
+Programmende:
+
+
+
+2.6.3  PRINT DIALOG - CREATE (AES 200)
+--------------------------------------
+
+CREATE initialisiert den Druckdialog. In <dialog_flags> wird
+Åbergeben, ob der Dialog im 3D-Look angezeigt werden soll oder nicht.
+Beim Aufruf der Funktion werden die vorhandenen Druckertreiber
+gescannt und Speicher wird fÅr das Resource angefordert.
+
+
+Deklaration:
+PRN_DIALOG *pdlg_create( int16 dialog_flags )
+
+Aufruf:
+prn_dialog = pdlg_create( PDLG_3D );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        200                 pdlg_create
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        0                   EintrÑge in addrin
+
+intin[0]         flags               z.Zt. nur 3D-Flag
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       prn_dialog          Zeiger auf Verwaltungsstruktur
+
+Beschreibung von <dialog_flags>:
+
+#define  PDLG_3D     1               /* Auswahl im 3D-Look anzeigen */
+
+
+
+2.6.4  PRINT DIALOG - DELETE (AES 201)
+--------------------------------------
+
+Diese Funktion gibt den Speicher fÅr den Druckdialog frei.
+
+
+Deklaration:
+WORD pdlg_delete( PRN_DIALOG *prn_dialog );
+
+Aufruf:
+pdlg_delete( prn_dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        201                 pdlg_delete
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+
+
+
+2.6.5  PRINT DIALOG - OPEN WINDOW (AES 202)
+-------------------------------------------
+
+OPEN WINDOW îffnet ein Fenster mit dem Druckdialog. Das Handle des
+Fensters wird zurÅckgeliefert, wenn kein Fehler aufgetreten ist. Im
+Fehlerfall ist der RÅckgabewert 0. Die Struktur <settings> enthÑlt die
+Druckereinstellung, die mit jedem Dokument gespeichert werden sollte.
+Wenn zu einem Dokument noch keine Einstellung existiert, kann sie
+entweder mit pdlg_new_settings() erzeugt werden (der Speicherblock
+gehîrt dem System) oder die Applikation kann Malloc() und anschlieûend
+pdlg_dflt_settings() aufrufen, um den Speicher zu initialisieren.
+
+In <option_flags> wird u.a. mitgeteilt, ob der Dialog als Einstell-
+(PDLG_PREFS) oder Druckdialog (PDLG_PRINT) angezeigt werden soll. Mit
+den Flags PDLG_ALWAYS_COPIES, PDLG_ALWAYS_SCALE und PDLG_ALWAYS_ORIENT
+kann auûerdem festgelegt werden, daû Skalierung, Kopieroption und
+Querdruck auch dann angeboten werden, wenn ein Treiber sie nicht
+unterstÅtzt, so daû die Applikation z.B. die Seite gedreht ausgeben
+muû. Durch PDLG_EVENDODD werden die Buttons fÅr gerade/ungerade Seiten
+anwÑhlbar.
+
+
+Deklaration:
+WORD pdlg_open( PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings,
+                BYTE *document_name, WORD option_flags,
+                                        WORD x, WORD y );
+
+Aufruf:
+whdl = pdlg_open( prn_dialog, settings, "ohne Namen",
+                                  PDLG_PREFS, -1, -1 );
+
+Variable         Belegung         Bedeutung
+Eingaben:
+
+contrl[0]        202              pdlg_open
+contrl[1]        3                EintrÑge in intin
+contrl[3]        3                EintrÑge in addrin
+
+intin[0]         option_flags
+intin[1]         x                x-Koordinate des Fensters oder -1
+                                  (zentriert)
+intin[2]         y                y-Koordinate des Fensters oder -1
+                                  (zentriert)
+
+addrin[0]        prn_dialog       Zeiger auf Verwaltungsstruktur
+addrin[1]        settings         Druckereinstellung
+addrin[2]        document_name    Dokumentenname
+
+Ausgaben:
+
+contrl[2]        1                EintrÑge in intout
+contrl[4]        0                EintrÑge in addrout
+
+intout[0]        whdl             Handle des Fensters oder 0 (Fehler)
+
+
+Beschreibung von <option_flags>:
+
+#define PDLG_PREFS          0x0000  /* Einstelldialog anzeigen */
+#define PDLG_PRINT          0x0001  /* Druckdialog anzeigen */
+
+#define PDLG_ALWAYS_COPIES  0x0010  /* immer Kopien anbieten */
+#define PDLG_ALWAYS_ORIENT  0x0020  /* immer Querformat anbieten */
+#define PDLG_ALWAYS_SCALE   0x0040  /* immer Skalierung anbieten */
+
+#define PDLG_EVENODD        0x0100  /* Option fÅr gerade und ungerade
+                                       Seiten anbieten */
+
+Beschreibung von <settings>:
+
+/* <page_flags> */
+#define  PG_EVEN_PAGES  0x0001
+  /* nur Seiten mit gerader Seitennummer ausgeben */
+#define  PG_ODD_PAGES   0x0002
+  /* nur Seiten mit ungerader Seitennummer ausgeben */
+
+/* <first_page/last_page> */
+#define  PG_MIN_PAGE    1
+#define  PG_MAX_PAGE    9999
+
+/* <orientation> */
+#define  PG_UNKNOWN     0x0000
+  /* Ausrichtung unbekannt und nicht verstellbar */
+#define  PG_PORTRAIT    0x0001
+  /* Seite im Hochformat ausgeben */
+#define  PG_LANDSCAPE   0x0002
+  /* Seite im Querformat ausgeben */
+
+
+typedef struct _prn_settings
+{
+   LONG  magic;            /* 'pset' */
+-->LONG  length;           /* StrukturlÑnge */
+   LONG  format;           /* Strukturtyp */
+   LONG  reserved;
+
+-->LONG  page_flags;       /* Flags, u.a. gerade Seiten, ungerade Seiten */
+-->WORD  first_page;       /* erste zu druckende Seite */
+-->WORD  last_page;        /* letzte zu druckende Seite */
+-->WORD  no_copies;        /* Anzahl der Kopien */
+-->WORD  orientation;      /* Drehung */
+-->LONG  scale;            /* Skalierung: 0x10000L entspricht 100% */
+
+-->WORD  driver_id;        /* VDI-GerÑtenummer */
+   WORD  driver_type;      /* Typ des eingestellten Treibers */
+   LONG  driver_mode;      /* Flags, u.a. fÅr Hintergrunddruck */
+   LONG  reserved1;
+   LONG  reserved2;
+
+   LONG  printer_id;       /* Druckernummer */
+   LONG  mode_id;          /* Modusnummer */
+   WORD  mode_hdpi;        /* horizontale Auflîsung in dpi */
+   WORD  mode_vdpi;        /* vertikale Auflîsung in dpi */
+   LONG  quality_id;       /* Druckmodus (hardwÑremÑûige QualitÑt,
+                              z.B. Microweave oder Econofast) */
+
+   LONG  color_mode;       /* Farbmodus */
+   LONG  plane_flags;      /* Flags fÅr auszugebende Farbebenen
+                              (z.B. nur cyan) */
+   LONG  dither_mode;      /* Rasterverfahren */
+   LONG  dither_value;     /* Parameter fÅr das Rasterverfahren */
+
+   LONG  size_id;          /* Papierformat */
+   LONG  type_id;          /* Papiertyp (normal, glossy) */
+   LONG  input_id;         /* Papiereinzug */
+   LONG  output_id;        /* Papierauswurf */
+
+   LONG  contrast;         /* Kontrast: 0x10000L entspricht
+                              Normaleinstellung */
+   LONG  brightness;       /* Helligkeit: 0x1000L entspricht
+                              Normaleinstellung */
+   LONG  reserved3;
+   LONG  reserved4;
+
+   LONG  reserved5;
+   LONG  reserved6;
+   LONG  reserved7;
+   LONG  reserved8;
+
+   BYTE  device[128];      /* Dateiname fÅr den Ausdruck */
+
+#ifdef __PRINTING__
+   TPrint   mac_settings;  /* Einstellung des Mac-Druckertreibers */
+#else
+   struct
+   {
+      UBYTE inside[120];
+   } mac_settings;
+#endif
+
+} PRN_SETTINGS;
+
+
+Die mit -> gekennzeichneten Strukturelemente kînnen von der
+Applikation ausgelesen werden. Auf alle anderen EintrÑge sollte nicht
+zugegriffen werden. Daten wie z.B. die Druckerauflîsung oder die
+Farbanzahl sollten nicht der Einstellstruktur entnommen werden,
+sondern beim Start des Ausdrucks vom Drucker erfragt werden (es wÑre
+z.B. mîglich, daû der Druckertreiber durch Speichermangel gezwungen
+wird, die Druckauflîsung gegenÅber der in PRN_SETTINGS eingetragenen
+Einstellung zu verringern).
+
+
+2.6.6  PRINT DIALOG - CLOSE WINDOW (AES 203)
+--------------------------------------------
+
+CLOSE WINDOW schlieût das Fenster des Druckdialogs. In <x> und <y>
+wird die letzte Fensterposition zurÅckgeliefert.
+
+
+Deklaration:
+WORD pdlg_close( PRN_DIALOG *prn_dialog, WORD *x, WORD *y );
+
+Aufruf:
+pdlg_close( prn_dialog, &x, &y );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        203                 pdlg_close
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        3                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+intout[1]        x                   x-Koordinate des Fensters
+intout[2]        y                   y-Koordinate des Fensters
+
+
+
+2.6.7  PRINT DIALOG - GET SETTING STRUCTURE SIZE (AES 204, 0)
+-------------------------------------------------------------
+
+Diese Funktion liefert die LÑnge der PRN_SETTINGS-Struktur zurÅck.
+
+
+Deklaration:
+LONG pdlg_get_setsize( void );
+
+Aufruf:
+length = pdlg_get_setsize();
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        204                 pdlg_get
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        0                   EintrÑge in addrin
+
+intin[0]         0                   pdlg_get_setsize
+
+Ausgaben:
+
+contrl[2]        2                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0..1]     length              StrukturlÑnge in Bytes
+
+
+
+2.6.8  PRINT DIALOG - ADD PRIVATE PRINTERS (AES 205, 0)
+-------------------------------------------------------
+
+Mit ADD PRIVATE PRINTERS kann ein Programm eigene
+Druckerbeschreibungen zum Dialog hinzufÅgen. <drv_info> enthÑlt einen
+Zeiger auf die Liste der verfÅgbaren Drucker und der Rasterverfahren.
+Die Treibernummer sollte auf 0x7fff gesetzt werden, um den eigenen
+Treiber von OS-Treibern zu unterscheiden.
+
+
+Deklaration:
+WORD pdlg_add_printers( PRN_DIALOG *prn_dialog, DRV_INFO *drv_info );
+
+Aufruf:
+ret = pdlg_add_printers( prn_dialog, &drv_info );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         0                   pdlg_add_driver
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        driver
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        ret                 0: Fehler 1: alles in Ordnung
+
+
+Strukturbeschreibung:
+
+typedef struct
+{
+   LONG        magic;                                       /* 'pdnf' */
+   LONG        length;                                      /* StrukturlÑnge */
+   LONG        format;                                      /* Datenformat */
+   LONG        reserved;                                    /* reserviert */
+
+   WORD        driver_id;                                   /* Treibernummer fÅrs VDI */
+   WORD        driver_type;                                 /* Treibertyp */
+   LONG        reserved1;
+   LONG        reserved2;
+   LONG        reserved3;
+
+   PRN_ENTRY   *printers;                                   /* Liste der zum Treiber gehîrenden Drucker */
+   DITHER_MODE *dither_modes;                               /* Liste der vom Treiber unterstÅtzten Rasterverfahren */
+   LONG        reserved4;
+   LONG        reserved5;
+
+   LONG        reserved6;
+   LONG        reserved7;
+   LONG        reserved8;
+   LONG        reserved9;
+   
+   BYTE        device[128];                                 /* Ausgabedatei des Druckertreibers */
+   
+} DRV_INFO;
+
+typedef struct _dither_mode
+{
+   struct _dither_mode  *next;
+   LONG        length;                                      /* StrukturlÑnge */
+   LONG        format;                                      /* Datenformat */
+   LONG        reserved;                                    /* reserviert */
+
+   LONG        dither_id;                                   /* Kennung */
+   LONG        color_modes;                                 /* unterstÅtzte Farbtiefen */
+   LONG        reserved1;
+   LONG        reserved2;
+
+   BYTE        name[32];                                    /* Name des Rasterverfahrens */
+} DITHER_MODE;
+
+typedef struct _prn_entry                                   /* GerÑtebeschreibung */
+{
+   struct _prn_entry *next;                                 /* Zeiger auf die die nÑchste GerÑtebeschreibung */
+   LONG        length;                                      /* StrukturlÑnge */
+   LONG        format;                                      /* Datenformat */
+   LONG        reserved;                                    /* reserviert */
+   
+   WORD        driver_id;                                   /* Treiberkennung */
+   WORD        driver_type;                                 /* Treibertyp */
+   LONG        printer_id;                                  /* Druckerkennung */
+   LONG        printer_capabilities;                        /* Druckereigenschaften */
+   LONG        reserved1;
+
+   LONG        flags;
+   struct _pdlg_sub  *sub_dialogs;                          /* Zeiger auf die Liste der Unterdialoge fÅr diesen Drucker */
+   PRN_SWITCH  setup_panel;                                 /* Unterdialog bei Druckerwechsel initialisieren */
+   PRN_SWITCH  close_panel;                                 /* Unterdialog bei Druckerwechsel schlieûen */
+
+   PRN_MODE    *modes;                                      /* Liste der vorhandenen Auflîsungen */
+   MEDIA_SIZE  *papers;                                     /* Liste der vorhandenen Papierformate */
+   PRN_TRAY    *input_trays;                                /* Liste der EinzÅge */
+   PRN_TRAY    *output_trays;                               /* Liste der AuswÅrfe */
+
+   BYTE        name[32];                                    /* Name des Druckers */
+} PRN_ENTRY;
+
+/* old_printer kann auch 0L sein */
+typedef LONG  (cdecl *PRN_SWITCH)( struct _drv_entry *drivers, struct _prn_settings *settings, struct _prn_entry *old_printer, struct _prn_entry *new_printer );
+
+#define  PRN_STD_SUBS   0x0001
+
+typedef struct _prn_mode                                    /* Beschreibung eines Druckermodus */
+{
+   struct _prn_mode *next;                                  /* Zeiger auf den nÑchsten Druckermodus */
+
+   LONG        mode_id;                                     /* Moduskennung (Index innerhalb der Datei) */
+   WORD        hdpi;                                        /* horizontale Auflîsung in dpi */
+   WORD        vdpi;                                        /* vertikale Auflîsung in dpi */
+   LONG        mode_capabilities;                           /* Moduseigenschaften */
+
+   LONG        color_capabilities;                          /* einstellbare Farbmodi */
+   LONG        dither_flags;                                /* Flags, die angeben, ob der korrespondierende Farbmodus mit oder ohne Dithern ansprechbar ist */
+   MEDIA_TYPE  *paper_types;                                /* geeignete Papiertypen */
+   LONG        reserved;
+
+   BYTE        name[32];                                    /* Modusname */
+} PRN_MODE;
+
+typedef struct _media_type                                  /* Beschreibung eines Papiertyps/Druckmediums */
+{
+   struct _media_type   *next;
+
+   LONG        type_id;                                     /* Kennung des Papierformats */
+   BYTE        name[32];                                    /* Name des Papierformats */
+} MEDIA_TYPE;
+
+typedef struct _media_size                                  /* Beschreibung eines Papierformats */
+{
+   struct _media_size   *next;
+
+   LONG        size_id;                                     /* Kennung des Papierformats */
+   BYTE        name[32];                                    /* Name des Papierformats */
+} MEDIA_SIZE;
+
+typedef struct _prn_tray                                    /* Beschreibung eines Einzugs/Auswurfs */
+{
+   struct _prn_tray  *next;
+   
+   LONG        tray_id;                                     /* Nummer des Einzugs oder Auswurfs */
+   BYTE        name[32];                                    /* Name des Schachts */
+} PRN_TRAY;
+
+
+
+2.6.9  PRINT DIALOG - REMOVE PRIVATE PRINTERS (AES 205, 1)
+----------------------------------------------------------
+
+REMOVE PRIVATE PRINTERS entfernt die mit ADD PRIVATE PRINTERS
+angemeldeten Drucker aus der Verkettung. pdlg_remove_printers() muû
+vor pdlg_delete() aufgerufen werden.
+
+
+Deklaration:
+WORD pdlg_remove_printers( PRN_DIALOG *prn_dialog );
+
+Aufruf:
+pdlg_remove_printers( prn_dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         1                   pdlg_remove_driver
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]
+
+
+
+2.6.10  PRINT DIALOG - UPDATE WINDOW (AES 205, 2)
+-------------------------------------------------
+
+Diese Funktion setzt einen neuen Fensternamen. Sie sollte aufgerufen
+werden, wenn der Fensterdialog im Hintergrund liegt und der Anwender
+ein neues Dokumentenfenster nach vorne bringt.
+
+
+Deklaration:
+WORD pdlg_update( PRN_DIALOG *prn_dialog, BYTE *document_name );
+
+Aufruf:
+pdlg_update( prn_dialog, "ohne Namen #1" );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        3                   EintrÑge in addrin
+
+intin[0]         2                   pdlg_update
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        0                   reserviert (muû 0 sein!)
+addrin[2]        document_name       neuer Dokumentenname
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]         0/1                0: Fehler
+                                     1: alles in Ordnung
+
+
+
+2.6.11  PRINT DIALOG - ADD PRIVATE DIALOGS (AES 205, 3)
+-------------------------------------------------------
+
+Mit pdlg_add_sub_dialogs() kann eine Anwendung eigene Unterdialoge zum
+Druckdialog hinzufÅgen, um besondere Druckoptionen anzubieten (z.B.
+Marken, Hintergrundbilder, etc.).
+
+
+Deklaration:
+WORD pdlg_add_sub_dialogs( PRN_DIALOG *prn_dialog,
+                           PDLG_SUB *sub_dialog );
+
+Aufruf:
+ret = pdlg_add_sub_dialogs( prn_dialog, sub_dialogs );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         3                   pdlg_add_sub_dialog
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        sub_dialogs         Liste von Unterdialogen
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        ret                 0: Fehler 1: alles in Ordnung
+
+
+Bemerkung:
+
+Das EinhÑngen eigener Unterdialoge wird in den Beispielprogrammen PDLGSMP3.C und 
+PDLGSMP4.C demonstriert.
+
+Strukturbeschreibung:
+
+#define  PDLG_CHG_SUB   0x80000000L
+#define  PDLG_IS_BUTTON 0x40000000L
+
+#define  PDLG_PREBUTTON 0x20000000L
+#define  PDLG_PB_OK     1
+#define  PDLG_PB_CANCEL 2
+#define  PDLG_PB_DEVICE 3
+
+#define  PDLG_BUT_OK    ( PDLG_PREBUTTON + PDLG_PB_OK )
+#define  PDLG_BUT_CNCL  ( PDLG_PREBUTTON + PDLG_PB_CANCEL )
+#define  PDLG_BUT_DEV   ( PDLG_PREBUTTON + PDLG_PB_DEVICE )
+
+typedef  int32 (cdecl *PDLG_INIT)( struct _prn_settings *settings, struct _pdlg_sub *sub );
+typedef  int32 (cdecl *PDLG_HNDL)( struct _prn_settings *settings, struct _pdlg_sub *sub, int16 exit_obj );
+typedef  int32 (cdecl *PDLG_RESET)( struct _prn_settings *settings, struct _pdlg_sub *sub );
+
+typedef struct _pdlg_sub                                    /* Unterdialog fÅr GerÑteeinstellung */
+{
+   struct _pdlg_sub *next;                                  /* Zeiger auf den Nachfolger in der Liste */
+   int32       length;                                      /* StrukturlÑnge */
+   int32       format;                                      /* Datenformat */
+   int32       reserved;                                    /* reserviert */
+   
+   void        *drivers;                                    /* nur fÅr interne Dialoge */
+   int16       option_flags;                                /* Flags, u.a. PDLG_PRINTING, PDLG_PREFS */
+   int16       sub_id;                                      /* Kennung des Unterdialogs, wird fÅr globale Unterdialoge von pdlg_add() eingetragen */
+   DIALOG      *dialog;                                     /* Zeiger auf die Struktur des Fensterdialogs oder 0L */
+   OBJECT      *tree;                                       /* Zeiger auf den zusammengesetzen Objektbaum */
+   int16       index_offset;                                /* Indexverschiebung des Unterdialogs */
+   int16       reserved1;
+   int32       reserved2;
+   int32       reserved3;
+   int32       reserved4;
+
+   PDLG_INIT   init_dlg;                                    /* Initialisierungsfunktion */
+   PDLG_HNDL   do_dlg;                                      /* Behandlungsfunktion */
+   PDLG_RESET  reset_dlg;                                   /* ZurÅcksetzfunktion */
+   int32       reserved5;
+
+   OBJECT      *sub_icon;                                   /* Zeiger auf das Icon fÅr die Listbox */
+   OBJECT      *sub_tree;                                   /* Zeiger auf den Objektbaum des Unterdialogs */
+   int32       reserved6;
+   int32       reserved7;
+
+   int32       private1;                                    /* dialogeigene Informationen */
+   int32       private2;
+   int32       private3;
+   int32       private4;
+
+} PDLG_SUB;
+
+
+
+2.6.12  PRINT DIALOG - REMOVE PRIVATE DIALOGS (AES 205, 4)
+----------------------------------------------------------
+
+... Entfernt die applikationseignen Unterdialoge.
+
+
+Deklaration:
+WORD pdlg_remove_sub_dialogs( PRN_DIALOG *prn_dialog );
+
+Aufruf:
+pdlg_remove_sub_dialogs( prn_dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         4                   pdlg_remove_sub_dialogs
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]
+
+
+
+2.6.13  PRINT DIALOG - NEW DEFAULT SETTINGS (AES 205, 5)
+--------------------------------------------------------
+
+Speicher fÅr Druckereinstellungen wird angefordert, die Struktur wird
+initialisiert und zurÅckgeliefert.
+
+
+Deklaration:
+PRN_SETTINGS *pdlg_new_settings( PRN_DIALOG *prn_dialog );
+
+Aufruf:
+settings = pdlg_new_settings( prn_dialog );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         5                   pdlg_new_settings
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+
+Ausgaben:
+
+contrl[2]        0                   EintrÑge in intout
+contrl[4]        1                   EintrÑge in addrout
+
+addrout[0]       settings            Druckereinstellung
+
+
+
+2.6.14  PRINT DIALOG - FREE SETTINGS (AES 205, 6)
+-------------------------------------------------
+
+Gibt den bei pdlg_new_settings() angeforderten Speicher wieder frei.
+
+
+Deklaration:
+WORD pdlg_free_settings( PRN_SETTINGS *settings );
+
+Aufruf:
+pdlg_free_settings( settings )
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        1                   EintrÑge in addrin
+
+intin[0]         6                   pdlg_free_settings
+
+addrin[0]        settings            Druckereinstellung
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]
+
+
+
+2.6.15  PRINT DIALOG - DEFAULT SETTINGS (AES 205, 7)
+----------------------------------------------------
+
+Initialisiert die Struktur, auf die <settings> zeigt. (StrukturlÑnge
+kann bei pdlg_get_setsize() erfragt werden).
+
+
+Deklaration:
+WORD pdlg_dflt_settings( PRN_DIALOG *prn_dialog,
+                         PRN_SETTINGS *settings );
+
+Aufruf:
+pdlg_dflt_settings( prn_dialog, settings );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         7                   pdlg_dflt_settings
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        settings            Druckereinstellung
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        1
+
+
+
+2.6.16  PRINT DIALOG - VALIDATE SETTINGS (AES 205, 8)
+-----------------------------------------------------
+
+Druckereinstellung ÅberprÅfen, Strukturinhalte gegebenfalls
+korrigieren.
+
+
+Deklaration:
+WORD pdlg_validate_settings( PRN_DIALOG *prn_dialog,
+                             PRN_SETTINGS *settings );
+
+Aufruf:
+pdlg_validate_settings( prn_dialog, settings );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         8                   pdlg_validate_settings
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        settings            Druckereinstellung
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        0/1                 0: Fehler 1: alles in Ordnung
+
+
+
+2.6.17  PRINT DIALOG - USE SETTINGS (AES 205, 9)
+------------------------------------------------
+
+Diese Funktion sollte aufgerufen werden, wenn ein Programm gleich
+ausdrucken mîchte und es nicht mîglich ist, pdlg_do() oder pdlg_open()
+und pdlg_evnt() aufzurufen (z.B. Calamus-Druckdialoge). Die
+Åbergebenen Druckereinstellungen werden ÅberprÅft (und bei alten
+Treiber gesichert).
+
+
+Deklaration:
+WORD pdlg_use_settings( PRN_DIALOG *prn_dialog,
+                        PRN_SETTINGS *settings );
+
+Aufruf:
+pdlg_use_settings( prn_dialog, settings );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        205                 pdlg_set
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        2                   EintrÑge in addrin
+
+intin[0]         9                   pdlg_use_settings
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        settings            Druckereinstellung
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        0/1                 0: Fehler 1: alles in Ordnung
+
+
+
+2.6.18  PRINT DIALOG - HANDLE EVENT (AES 206)
+---------------------------------------------
+
+HANDLE EVENT wertet die Åbergebene EVNT-Struktur aus und ruft intern
+wdlg_evnt() auf. Wenn einer der Exit-Buttons betÑtigt wurde
+("Abbruch", "OK", "setzen", "markieren" oder "Optionen") liefert die
+Funktion eine 0 zurÅck und in button wird zurÅckgeliefert, welche
+Knopf der Anwender ausgewÑhlt hat. Wenn der Dialog bestÑtigt wurde,
+wird in <settings> die neue Druckereinstellung zurÅckgeliefert.
+
+
+Deklaration:
+WORD pdlg_evnt( PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings,
+                                 EVNT *events, WORD *button );
+
+Aufruf:
+cont = pdlg_evnt( prn_dialog, settings, &events, &button );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        206                 pdlg_evnt
+contrl[1]        0                   EintrÑge in intin
+contrl[3]        3                   EintrÑge in addrin
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        settings            Druckereinstellung
+addrin[2]        events              Zeiger auf EVNT-Struktur
+
+Ausgaben:
+
+contrl[2]        2                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        cont                0: Exit-Button angewÑhlt
+                                     1: nichts passsiert
+intout[1]        button              angewÑhlter Button (oder 0)
+
+
+Beschreibung von <button>:
+
+#define  PDLG_CANCEL 1  /* "Abbruch" wurde angewÑhlt */
+#define  PDLG_OK     2  /* "OK" wurde gedrÅckt */
+
+Beschreibung von <settings>:
+siehe pdlg_open...
+
+
+
+2.6.19  PRINT DIALOG - DO (AES 207)
+-----------------------------------
+
+pdlg_do() ist das GegenstÅck zu pdlg_open()/pdlg_evnt()/pdlg_close().
+Diese Funktion îffnet einen modalen Dialog und kehrt erst zum Aufrufer
+zurÅck, wenn einer der Exit-Buttons betÑtigt wurde ("Abbruch", "OK" ).
+
+
+Deklaration:
+WORD pdlg_do( PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings,
+                   BYTE *document_name, WORD option_flags );
+
+Aufruf:
+button = pdlg_do( prn_dialog, settings, "ohne Namen", PDLG_PRINT );
+
+Variable         Belegung            Bedeutung
+Eingaben:
+
+contrl[0]        207                 pdlg_do
+contrl[1]        1                   EintrÑge in intin
+contrl[3]        3                   EintrÑge in addrin
+
+intin[0]         option_flags
+
+addrin[0]        prn_dialog          Zeiger auf Verwaltungsstruktur
+addrin[1]        settings            Druckereinstellung
+addrin[2]        document_name       Dokumentenname
+
+Ausgaben:
+
+contrl[2]        1                   EintrÑge in intout
+contrl[4]        0                   EintrÑge in addrout
+
+intout[0]        button              angewÑhlter Button (oder 0)
+
+
+Beschreibung von <option_flags>:
+
+#define PDLG_PREFS          0x0000  /* Einstelldialog anzeigen */
+#define PDLG_PRINT          0x0001  /* Druckdialog anzeigen */
+
+#define PDLG_ALWAYS_COPIES  0x0010  /* immer Kopien anbieten */
+#define PDLG_ALWAYS_ORIENT  0x0020  /* immer Querformat anbieten */
+#define PDLG_ALWAYS_SCALE   0x0040  /* immer Skalierung anbieten */
+
+#define PDLG_EVENODD        0x0100  /* Option fÅr gerade und ungerade
+                                       Seiten anbieten */
+
+Beschreibung von <button>:
+
+#define  PDLG_CANCEL 1              /* "Abbruch" wurde angewÑhlt */
+#define  PDLG_OK     2              /* "OK" wurde gedrÅckt */
+
+Beschreibung von <settings>:
+siehe pdlg_open...
+
+
+
+2.7  Konvertierung erweiterter Objekttypen
+==========================================
+
+Das Modul ADAPTRSC.C stellt einige nÅtzliche Funktionen zur VerfÅgung:
+
+   ˘ Es liefert Informationen Åber die vorhandenen AES-Funktionen
+     zurÅck.
+
+   ˘ Es paût RSC-Dateien an die (unschîne) MultiTOS-Eigenart an, 3D-
+     Objekte Åber die in der OBJECT-Struktur eingetragenen Ausmaûe zu
+     vergrîûern.
+
+   ˘ Es nimmt (soweit automatisch mîglich) RSC-Anpassungen von 3D nach
+     2D vor.
+
+   ˘ Es generiert, wenn notwendig, automatisch Userdef-Funktionen fÅr
+     erweiterte MagiC 3-Objekte: öberschrift mit Unterstreichung,
+     Gruppenrahmen, Radiobutton und Checkbox (mit nachfolgendem
+     String).
+
+Das Modul belegt ca. 2 kB Speicher.
+
+
+
+
+A  Funktions- und Strukturdefinitionen
+**************************************
+
+MT_AES.H
+
+
+
+B  Binding
+**********
+
+MT_AES.LIB
+
+
+
+C  Beispiel-Quelltexte
+**********************
+
+   ˘ FNT_SMPL.C, FNT_SMP2.C, FNT_SMP3.C,
+
+   ˘ PDLGSMP1.C, PDLGSMP2.C,
+
+   ˘ WDLG_SMP.C,
+
+   ˘ XOBJ_SMP.C,
+
+   ˘ ADAPTRSC.C
+
+
+
+

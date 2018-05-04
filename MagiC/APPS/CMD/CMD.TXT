@@ -1,0 +1,1603 @@
+                                                  Hannover, den 22.06.90
+
+BEDIENUNGSANLEITUNG ZUR GEMDOS (C) SHELL "CMD" und KAOS SHELL "KCMD" V2.59
+
+
+
+Inhaltsverzeichnis
+------------------
+
+0. Allgemeines
+1. Die internen Befehle
+   1.1  ATTRIB
+   1.2  BREAK
+   1.3  CD
+   1.4  CLS
+   1.5  CK
+   1.6  COPY
+   1.7  DATE
+   1.8  DEL
+   1.9  DIR
+   1.10 ECHO
+   1.11 END
+   1.12 EXIT
+   1.13 FIND
+   1.14 FOR
+   1.15 FREE
+   1.16 GOTO
+   1.17 IF
+   1.18 MD
+   1.19 MORE
+   1.20 MV
+   1.21 PATH
+   1.22 PAUSE
+   1.23 PROMPT
+   1.24 RD
+   1.25 REN
+   1.26 SHIFT
+   1.27 SET
+   1.28 SORT
+   1.29 TIME
+   1.30 TOUCH
+   1.31 TREE
+   1.32 TYPE
+   1.33 VER
+   1.34 VERIFY
+2. Externe Kommandos im BIN- Ordner
+   2.1  PRINT
+   2.2  CRASHDMP
+   2.3  EXE2BIN
+   2.4  LABEL
+   2.5  FC
+   2.6  KILLRAM
+   2.7  ASTOWORD
+   2.8  WORDTOAS
+   2.9  DUMP
+   2.10 SPLIT
+3. Stdout/Stdin- Umlenkung
+4. Geräte (Devices)
+5. Kommandozeilen- Auswertung
+6. Editor- Steuertasten
+7. Starten von Programmen (Externe Kommandos)
+8. Batch- Dateien
+9. CMD als Accessory. Allgemeines und spezielles
+
+
+0. Allgemeines
+--------------
+
+
+Updates von V2.55 => V2.56:
+- Korrektur des Befehls "COPY datei nul", der bisher bei mehr als 64k 
+  Dateilänge nicht funktionierte.
+- Korrektur der Datumsverarbeitung für Jahreszahlen nach dem Jahr 2000.
+- Anpassung von KCMD.ACC an das endgültige TOS 1.4 vom 6.4.89
+- Korrektur einer Unschönheit beim Kopieren von Dateien. Wegen ungerader 
+  Größe des Kopierpuffers konnte es vorkommen, daß das Kopieren 
+  unerträglich langsam wurde, da Sektoren auf ungerade Adressen übertragen 
+  werden mußten.
+
+Updates von V2.56 => V2.57:
+- Wenn \AUTOEXEC.BAT bzw. \BOOT.BAT nicht gefunden werden können, wird 
+  C:\AUTOEXEC.BAT  gesucht.  Wer  ein  anderes  Laufwerk  bevorzugt,  möge 
+  einfach mit MUTIL suchen, sehen und patchen.
+- Bei MORE wird der Tastendruck nicht mehr von BIOS, sondern von GEMDOS 
+  geholt; daher kann man während der Ausgabe schon eine Taste drücken, die 
+  dann in den GEMDOS- Tastaturpuffer kommt.
+- Bei DEL,COPY,MV,ATTRIB wird nach jeder Datei der GEMDOS- Tastaturpuffer 
+  abgefragt, so daß man zwischendurch mit ^S anhalten, mit ^Q weiterlaufen 
+  lassen und mit ^C abbrechen kann (zumindest unter KAOS).
+- Bei DEL wird ein Schalter "-N" ausgewertet, mit dem man die 
+  Sicherheitsabfrage abschalten kann.
+- Bei KCMD setzt der Sconfig- Aufruf nicht mehr die Konfiguration  einfach 
+  auf 1 (alle Bits außer automatischer Pfadsuche auf 0),  sondern holt die 
+  aktuelle  Konfiguration,  setzt Bit 0 ohne Veränderung der anderen  Bits 
+  und setzt dann diese Konfiguration.
+
+Updates von V2.57 => V2.58:
+- Bei  "more" kann man mit der Leertaste ein Seite weiter und  sonst  eine 
+  Zeile weiter scrollen.
+- ACCs werden im Grafikmodus gestartet.
+
+Updates von V2.58 => V2.59:
+- Es wird zuerst nach C:\AUTOEXEC.BAT, dann nach \AUTOEXEC.BAT gesucht.
+- Der  Event-Critic-Manager wurde an KAOS 1.4 angepaßt und bricht  mit  ^C 
+  das laufende Programm ab.
+- Für Turbo-C 2.0 wird der Befehl "sh" in der Kommandozeile ignoriert.
+- neues externes Kommando: SPLIT
+- überarbeitet: DUMP
+
+
+CMD  V2.59 samt Ordner BIN\ ist Shareware,  der Sharewarebeitrag  ist  bei 
+regelmäßiger Benutzung zu entrichten und beträgt 20 DM (direkt per  Scheck 
+oder Schein an den Autor), der Autor
+
+  Andreas Kromke
+  3000 Hannover 61
+  Steinbruchstraße 17
+
+verlangt  aber,  daß der Ordner KCMD immer als Ganzes  weiterzugeben  wird 
+und  dieser  oder Teile davon nicht in irgendwelche  Softwarepakete  inte-
+griert werden.  Eine gedruckte Anleitung oder ein Update- Service ist  bei 
+einem  so geringen Beitrag natürlich nicht möglich.  Kommerzielle  Nutzung 
+(Vertrieb,  Beigabe  zu kommerziell  vertriebenen  Programmen,  Weitergabe 
+gegen  Gebühren etc.  in jeder Form (dies schließt auch den Vertrieb  über 
+Public-Domain-Sammeldisketten oder ähnliches ein) ist ünicht gestattet.
+Die  Dateien dürfen nicht von anderen gegen Bezahlung  weitergegeben  oder 
+das  Programm  selbst  oder die  zugehörigen  Dateien  durch  unsachgemäße 
+Eingriffe verändert werden.
+Daher merke:
+
+     Wer Kommandoprozessoren nachmacht oder verfälscht oder 
+     nachgemachte oder verfälschte Kommandoprozessoren sich 
+     verschafft und in Verkehr bringt, wird mit Analysis- 
+     Zetteln nicht unter 2 Stück bestraft
+
+Für  Schäden,  die durch Anwendung dieses Programms  entstehen,  kann  der 
+Autor selbstverständlich nicht haften.
+Eventuelle  éhnlichkeiten  von CMD oder den  Hilfsprogrammen  mit  anderen 
+Programmen namhafter oder unbekannter Hersteller sind nicht  beabsichtigt, 
+sondern wären rein zufällig.
+
+Das Betriebssystem GEMDOS des Atari ist,  einschließlich der Funktionsnum-
+mern für die DOS- Aufrufe, fast kompatibel zu MS-DOS 2.0. Auch lassen sich 
+MS-DOS Disketten problemlos lesen und beschreiben.
+Diese  éhnlichkeit  hat mich bereits 1986  dazu  bewogen,  eine  Kommando- 
+Oberfläche  wie COMMAND.COM für den Atari zu schreiben,  ohne  mich  dabei 
+sklavisch an das "große" Vorbild zu halten.  Wer MS-DOS kennt,  wird  sehr 
+schnell mit CMD umgehen können.  Man könnte dabei fast vergessen,  daß man 
+es  mit einem Atari zu hat;  ja,  wenn nicht die vielen Fehler des  GEMDOS 
+(oder  JAM-DOS ?) wären;  nicht umsonst heißt die Version ja auch bei  TOS 
+1.2  noch  0.19 und bei TOS 1.4 0.21 (siehe internes  Kommando  VER),  was 
+auch kein großes Vertrauen einflößen kann.
+Daher enthält diese Diskette drei Versionen des CMD:
+
+1)   CMD.PRG   geht sehr nachsichtig mit dem Betriebssystem um und  korri-
+               giert einige DOS - Fehler wie die Diskwechselerkennung, das 
+               Setzen der Uhrzeit von Dateien und einen Fehler beim Setzen 
+               der  Standardpfade.  Die Fehler  der  Ein-/Ausgabeumlenkung 
+               werden  NICHT umgangen;  CMD selbst funktioniert  aber  bei 
+               Umlenkung.
+               Die Haupteigenschaft ist der vom Betriebssystem unabhängige 
+               Zeileneditor,  der  in seinen Funktionen des in KAOS  1.2.3 
+               integrierten Editors enspricht.
+               CMD  läuft  auf  sämtlichen  alten  und  zukünftigen   TOS- 
+               Versionen,  da  es völlig  betriebssystemversionsunabhängig 
+               ist (langes Wort...).
+2)   KCMD.PRG  für  das KAOS- Betriebssystem mit DOS- Versionsnummer  0.21 
+               oder höher.  Einige Features sind nur bei KCMD,  nicht  bei 
+               CMD  vorhanden.  Auch  KCMD läuft "im  Prinzip"  mit  jedem 
+               Betriebssystem; es enthält jedoch keine Umgehungen von DOS- 
+               Fehlern,  da dies bei KAOS nicht mehr nötig ist.  So dürfte 
+               KCMD  besonders  auf den bisherigen TOS -  Versionen  nicht 
+               immer perfekt funktionieren.
+               Die  Hauptbesonderheit ist,  daß KCMD  keinen  integrierten 
+               Zeileneditor besitzt,  sondern den vom DOS  verwendet.  Auf 
+               dem normalen TOS ist KCMD also nicht besonders komfortabel.
+               Alle  KCMD und KAOS betreffenden Stellen  dieser  Anleitung 
+               sind hell markiert.
+3)   KCMD.ACC  Die  Accessory- Version von KCMD.PRG.  Gegenüber  der  Pro-
+               gramm-  Version müssen natürlich einige Einschränkungen  in 
+               Kauf genommen werden.  So können beispielsweise keine  GEM- 
+               Applikationen  gestartet  werden  (GfA-  BASIC  funktiniert 
+               aber). Ansonsten mit KCMD im wesentlichen identisch. Alles, 
+               was für die Accessory- Version und nicht für KCMD.PRG gilt, 
+               ist hier kursiv hervorgehoben.
+
+Ansonsten  sind   CMD.PRG,   KCMD.PRG  und  KCMD.ACC  unabhängig  von  der 
+Betriebssystem- Version und laufen daher mit sämtlichen bekannten  Versio-
+nen des TOS (1.0 / 1.2 / 1.4).
+
+Achtung:   Aufgrund  eines Fehlers im AES ist das Starten  von  Programmen 
+           unter KCMD.ACC nur unter folgenden TOS- Versionen möglich:
+  TOS 1.0 vom 6.2.86
+  TOS 1.2 vom 22.4.87
+  TOS 1.4 vom 6.4.89
+Bei  diesen Versionen wurde der Fehler umgangen,  leider mußte dabei  eine 
+Versions-  Abhängigkeit in Kauf genommen werden.  Näheres steht  in  Kapi-
+tel 9.
+
+Noch ein Hinweis zu GEMDOS- Fehlern:
+
+Angeblich  existiert eine Liste mit 96 Fehlern,  was nicht  genau  stimmen 
+muß, aber durchaus glaubwürdig erscheint. Fast alle diese Fehler treten im 
+Desktop  nicht  auf,  werden daher von 99% aller Atari-  Besitzer  niemals 
+bemerkt werden.  Unter CMD, das sich ausschließlich auf GEMDOS verläßt und 
+keinen seiner Fehler abfängt,  sieht das ganz anders aus.  Ständig  treten 
+neue, unbekannte Fehlfunktionen auf.
+
+Ein Fehler ist dabei eigentlich alles, was bei MS-DOS 2.0 funktioniert und 
+bei GEMDOS nicht.  Meistens sagt einem aber auch der gesunde  Menschenver-
+stand, ob etwas so sein sollte oder nicht.
+
+Ein besonders ärgerlicher Fehler ist z.B. :
+
+  Verwendet  man Pfadnamen wie "A:CMD.PRG" anstelle  von  "A:\....",  also 
+  verwendet  den aktuellen Pfad eines Laufwerks,  kann es vorkommen  (auch 
+  unter  TOS 1.4 und auf dem TT !!!!),  daß GEMDOS mit seinen  Pfaden  und 
+  Laufwerken völlig durcheinanderkommt.  Z.B.  kann bei "DIR A:" der Disk-
+  name von A:  und dann das Verzeichnis von D:  erscheinen. Der Disketten-
+  name stimmt immer,  da er immer vom Wurzelverzeichnis geholt  wird,  was 
+  keine Schwierigkeiten macht.
+
+  Abhilfe: Erscheint z.B.  bei "DIR D:" das Verzeichnis von A:,  genügt es 
+           meistens,  "CD  D:\"  und "CD A:\" einzugeben.  Dann  hat  sich 
+           GEMDOS   wieder   beruhigt,   vielleicht   bis   zum   nächsten 
+           Diskwechsel.
+           Der  Fehler  tritt gar nicht auf,  wenn  man  alle  Pfadangaben 
+           immer auf der Root beginnt.  Also "DIR A:\" geht (fast)  immer. 
+           Aus  diesem  Grund hat auch das  Desktop  keine  Probleme,  das 
+           sowieso die meisten Fehler des GEMDOS abfängt.
+
+Alle  diese Fehler sind unter KAOS behoben und dürfen bei KAOS+KCMD  nicht 
+auftreten.  KCMD schaltet per Sconfig(1,1L) die automatische  Pfadüberprü-
+fung  ein  (siehe Beschreibung von KAOS) und stellt vor  Programmende  den 
+vorherigen Zustand wieder her.
+
+Wurde CMD mit Kommandozeile gestartet,  wird diese ausgeführt. Andernfalls 
+wird,  falls vorhanden,  eine Batchdatei "\AUTOEXEC.BAT" ausgeführt  (d.h. 
+auf  dem Wurzelverzeichnis des aktuellen Laufwerks);  wurde CMD  im  AUTO- 
+Ordner  oder mit der comload- Option gestartet,  wird  statt  AUTOEXEC.BAT 
+eine Batchdatei mit Namen BOOT.BAT ausgeführt.  Schlägt der erste  Versuch 
+fehl,  wird  nach  C:\AUTOEXEC.BAT gesucht (auch im  Fall  AUTO-  Ordner). 
+Danach wird immer der freie Speicher angezeigt.
+Wird beim Laden die Taste CTRL-C gedrückt, unterbleiben obige Aktivitäten.
+Ein Tip:  Im  Desktop unter "EXTRAS:  Anwendung anmelden" für CMD.PRG  als 
+          Dateityp ".BAT" anmelden.  Wenn man eine Festplatte benutzt, das 
+          DESKTOP.INF  in  einen  geeigneten Editor laden  und  statt  nur 
+          "CMD.PRG" den Pfad, auf dem sich CMD befindet, mit angeben, z.B. 
+          "C:\CMD.PRG".
+          Dann  kann  jede  Batchdatei mit Doppelklick  wie  ein  Programm 
+          gestartet  werden.  Enthält die Batchdatei einen  EXIT-  Befehl, 
+          wird nach Ablauf des Batchprogramms wieder ins Desktop zurückge-
+          kehrt;  man kann auch vor EXIT einen PAUSE- Befehl einfügen, der 
+          erst auf einen Tastendruck wartet.
+          Für  TOS 1.0 und 1.2 beachte man,  daß ein Doppelklick auf  eine 
+          Datei .BAT folgendes bewirkt:
+           -   Das Verzeichnis, in dem die Datei (!) liegt, wird aktuelles 
+               Verzeichnis.
+           -   pfad\CMD wird mit dem einfachen Dateinamen ohne  Pfadangabe 
+               gestartet.
+          In TOS 1.4 (8.8.88) gilt:
+           -   Das  Verzeichnis,  in  dem CMD (!)  liegt,  wird  aktuelles    
+               Verzeichnis.
+           -   CMD wird in seinem eigenen (aktuellen) Verzeichnis  gestar-
+               tet und erhält als Parameter den vollständigen (!)  Pfadna-
+               men  der Datei.  Falls sich CMD und .BAT im  selben  Ordner 
+               befinden,  verzichtet AES auf den Pfad der Datei,  aber das 
+               hat keinen Einfluß auf die Wirkungsweise.
+
+CMD  enthält keine GEM- Aufrufe,  kann also im AUTO- Ordner oder  mit  der 
+comload- Option des Bootprogramms geladen werden. In diesem Fall kann aber 
+natürlich  kein  GEM-  Programm von CMD  aus  gestartet  werden.  Ist  das 
+aufgerufene GEM- Programm ordentlich geschrieben (leider selten der Fall), 
+so  wird  es  einfach mit  oder  ohne  Fehlermeldung  abbrechen.  Außerdem 
+funktioniert  das  Einschalten des Mauszeigers nicht,  wenn CMD  im  AUTO- 
+Ordner  stand,  da die zugehörigen LineA- Funktionen zu  diesem  Zeitpunkt 
+noch nicht initialisiert sind.
+Wurde CMD mit der comload - Option gestartet,  ist es nicht zu  empfehlen, 
+das Kommando "exit" einzugeben, da dies zum Systemabsturz führt. Atari hat 
+diesen Fall offensichtlich nicht berücksichtigt.
+Wurde  CMD im AUTO- Ordner gestartet,  sollte man die Diskette auf  keinen 
+Fall wechseln,  damit der AUTO- Vorgang nach Beendigung von CMD weiterlau-
+fen kann.  Muß die Diskette doch gewechselt werden,  muß man unbedingt vor 
+dem  "exit"-  Kommando die AUTO- Diskette wieder einlegen  und  "cd  auto" 
+eingeben (um den Ordner GEMDOS bekanntzumachen).
+
+KCMD.ACC wertet niemals eine Kommandozeile aus,  sondern lädt AUTOEXEC.BAT 
+beim ersten Anwählen des Accessories. Aktiviert man später noch einmal das 
+Accessory, wird sofort das erste Kommando von der Tastatur erwartet.
+
+KCMD.ACC enthält natürlich GEM- Aufrufe zum Anmelden im Menü.  Accessories 
+werden  immmer erst nach dem Start von AES geladen.  Daher gibt  es  keine 
+Sonderregelungen für den Start aus dem AUTO- Ordner etc.
+Man kann für das Accessory keinen Dateityp anmelden.
+
+In CMD wird bei jedem Dateizugriff interner Kommandos festgestellt,  ob im 
+angesprochenen  Laufwerk  die Diskette gewechselt  wurde.  Wenn  ja,  wird 
+GEMDOS  durch  den Aufruf von Fsfirst()  dazu  veranlaßt,  seine  internen 
+Pfadpuffer zu aktualisieren.  Daher ist darauf zu achten,  daß  z.B.  beim 
+Wechsel des aktuellen Laufwerks schon eine Diskette eingelegt ist.
+¸Da  besagter  Fsfirst() - Aufruf mit dem Wurzelverzeichnis  als  Pfad  der 
+einzige  (!) GEMDOS - Befehl ist,  der den Diskettenwechsel abfragt  (auch 
+ein Programmierfehler!),  gibt es sonst Schwierigkeiten mit dem  Auffinden 
+von Pfaden und Dateien z.B.  bei COPY und CD.
+Die Schwierigkeiten bleiben jedoch bei externen Befehlen:
+Hat man z.B.  in A:  eine neue Disk eingelegt und ruft auf D: ein externes 
+Programm  mit  "D>pgm a:\subdir\dat"  auf,  wird GEMDOS  die  Datei  "dat" 
+(sofern  das externe Programm seinen Parameter durch Fopen()  sucht)  i.a. 
+nicht  finden können,  bevor es nicht durch einen Fsfirst()-  Aufruf  dazu 
+veranlaßt wurde, seine internen Pfadpuffer neu aufzubauen.
+Abhilfe:  Nach jedem Diskwechsel in X:  erst mit "X:" oder "dir X:" GEMDOS 
+initialisieren, bevor man ein Programm startet.
+ÇUnter  KAOS  und KCMD tritt der Fehler nicht auf,  da  per  Sconfig()  die 
+automatische  Pfadüberprüfung eingestellt wurde.  Weder bei internen  noch 
+bei externen Kommandos dürfte es zu Schwierigkeiten kommen.  Damit hat man 
+mit  KCMD und KAOS dieselbe Zuverlässigkeit wie unter COMMAND.COM und  MS-
+DOS;  mit dem Unterschied,  daß bei nicht schreibgeschützten Disketten der 
+Pfadzugriff  sehr viel schneller verläuft,  da MS-DOS die Pfade  nicht  im 
+Speicher hält.
+
+
+1. Die internen Befehle
+-----------------------
+
+
+1.1 ATTRIB
+----------
+
+Syntax: ATTRIB [schalter1 schalter2 ...] name1 name2 ...
+               schalter = +|-{rsha}
+               name     = Dateiname oder -muster oder Pfad
+Zweck:  Attributbyte von Dateien anzeigen oder ändern.
+Werden keine Schalter angegeben, werden die Attribute nur angezeigt:
+  R Read-Only                 (schreibgeschützt)
+  S System                    (versteckte Systemdatei)
+  H Hidden                    (versteckte Datei)
+  A Archive                   (erst ab TOS 1.4 unterstützt)
+Mit  "ATTRIB  +r c:  f:" lassen sich beispielsweise alle  Dateien  in  den 
+aktuellen Verzeichnissen der Laufwerke C: und F: schreibschützen.
+"ATTRIB -rsha d:\cmd.prg"  löscht alle obigen Attribute der Datei  cmd.prg 
+im Wurzelverzeichnis von D:.
+Ab  TOS 1.4 wird das Attribut 'A' korrekt ausgewertet,  ansonsten  erfüllt 
+kein   einziges  der  Attribute  bei  irgendeinem  von  Atari   stammenden
+Betriebssystem   den   ursprünglich  dokumentierten   Zweck!   Das   heißt 
+beispielsweise,  daß  man schreibgeschützte Dateien unter TOS  munter  be-
+schreiben kann.
+Disknamen und Ordner werden nicht angezeigt oder verändert!
+
+1.2 BREAK
+---------
+
+Syntax: BREAK
+        BREAK ON
+        BREAK OFF
+Zweck:  Break-  Verify-  Flag des  KAOS  anzeigen/ändern.  Unter  normalem 
+        GEMDOS bewirkt der Befehl einfach nichts.
+Beim  Starten  von  CMD  ist das  Break-  Flag  immer  ausgeschaltet.  Bei 
+eingeschaltetem  Flag kann man ein laufendes Programm vor und  nach  jedem 
+GEMDOS- Aufruf abbrechen.
+Im  Gegensatz  zu MS-DOS bewirkt das Betätigen von CTRL-C  im  TOS  leider 
+keinen  Interrupt in eine Break-Handling-Routine.  Daher funktioniert  die 
+Betätigung  von CTRL-C wirklich nur bei Eintritt und Austritt aus  GEMDOS, 
+wo  der  Tastaturpuffer  durchsucht und  bei  Bedarf  ein  Programmabbruch 
+bewirkt wird.
+
+1.3 CD
+------
+
+Syntax: CD
+        CD d:
+        CD pfad
+        CD d:pfad
+Zweck:  Aktuelles Verzeichnis anzeigen oder ändern
+CD  (change directory) ohne Parameter zeigt das aktuelle  Verzeichnis  des 
+aktuellen Laufwerks.
+CD d: zeigt das aktuelle Verzeichnis des Laufwerks d:.
+CD pfad setzt <pfad> als aktuelles Verzeichnis des aktuellen Laufwerks.
+CD d:pfad setzt <pfad> als aktuelles Verzeichnis des Laufwerks  d:.  Diese 
+Befehlsform  mit  d:  als  einem  nicht  aktuellen  Laufwerk  ist,  obwohl 
+dokumentiert,  bei  den von Atari stammenden TOS- Versionen nicht  möglich 
+und funktioniert nur unter KAOS.
+
+1.4 CLS
+-------
+
+Syntax: CLS
+Zweck:  Bildschirm löschen. Außerdem WRAP ON und INVERS OFF.
+
+1.5 CK
+------
+
+Syntax: CK
+        CK d:
+Zweck:  Laufwerk- Informationen ausgeben
+CK (checkdisk) gibt die Laufwerks- Informationen für das Laufwerk d:  aus. 
+Wurde kein Parameter angegeben, wird das aktuelle Laufwerk benutzt.
+Außerdem  wird die Größe des Hauptspeichers angezeigt.  CMD  verläßt  sich 
+dabei auf die Systemvariable phystop;  ist diese Variable z.B.  von  einer 
+resetfesten  Ramdisk manipuliert worden,  kann der  tatsächliche  Speicher 
+größer sein, als von CK angezeigt.
+
+1.6 COPY
+--------
+
+Syntax: COPY [-t] pfad
+        COPY [-t] datei(muster)
+        COPY [-t] pfad pfad
+        COPY [-t] datei(muster) pfad
+        COPY [-t] datei1 datei2
+
+Zweck:  Datei(en) kopieren
+
+Fehlt der zweite Parameter, wird das aktuelle Verzeichnis angenommen.
+Ist  die  Quelle ein Pfad oder ein Dateimuster,  werden alle  Dateien  des 
+Pfades bzw. alle passenden Dateien kopiert.
+
+Ein Pfad kann auf '\' enden oder auch nicht.
+
+Wird <datei2> angegeben, bekommt die Kopie der Datei den Namen <datei2>.
+Quelle  und Ziel können auch Geräte ("CON:","AUX:","PRN:") sein.  Ist  die 
+Quelle ein Gerät (CON:,AUX:),  wird kopiert,  bis eine Zeile gelesen wird, 
+die  nur  aus  CTRL-Z besteht.  Nach jeder  eingelesenen  Zeile  wird  die 
+Zeichenfolge CR/LF ergänzt.
+
+Eine  Datei  kann nicht in sich selbst kopiert werden;  CMD  fängt  diesen 
+Fehler geschickt ab.Ç KAOS tut dies selbst.
+
+Sind weniger als 10kB Speicher frei,  wird der gesamte freie Speicher  als 
+Kopierpuffer benutzt,  sonst wird nur die Hälfte verwendet.  So kann  sich 
+(im  Gegensatz  zum  Desktop  ab TOS 1.2)  eine  dynamische  Ramdisk  noch 
+vergrößern.
+
+Im Gegensatz zum Desktop-COPY beim ungepatchten TOS behalten Dateien  beim 
+Kopieren  ihr  altes  Datum und die Uhrzeit (nicht  bei  ungepatchtem  TOS 
+1.0/1.2 und KCMD.PRG,  da KCMD den DOS- Fehler nicht abfängt).  Jedoch ist 
+das Dateiattribut immer 0 (normale Datei, nicht schreibgeschützt, sichtbar 
+usw.).
+
+Mit  Hilfe des Schalters 'T' bekommt die Zieldatei  das  Tagesdatum,  also 
+entspricht "COPY -t ..." dem üblichen Desktop- COPY.  Dieser Schalter  ist 
+zu empfehlen,  wenn man z.B.  Dateien mit dem nichtssagenden Datum  6.2.86 
+oder 22.4.87 kopiert.  'T' ist die Abkürzung für "Touch" und bedeutet, daß 
+eine  Datei  das Tagesdatum bekommt,  wie wenn sie  geändert  worden  wäre 
+(siehe auch internes Kommando "TOUCH"). Wichtig ist das z.B., wenn man ein 
+MAKE benutzt.
+
+Bemerkung: In MS-DOS existiert eine Befehlsform zum Verketten von  Dateien 
+           ("COPY  datei1+datei2+...  zieldatei).  CMD verwendet dazu  den 
+           TYPE- Befehl (s.u.).
+           Für das Erstellen von Batchdateien eignet sich der Befehl "COPY 
+           CON:  datei".  Die Eingabe wird mit einer Zeile  abgeschlossen, 
+           die nur aus CTRL-Z besteht.
+
+           Für das Testen,  ob eine Datei einen Lesefehler enthält, eignet 
+           sich  besonders  der  Befehl "COPY  datei  nul".  Hierbei  wird 
+           besonders schnell gelesen, da nichts geschrieben werden muß.
+
+1.7 DATE
+--------
+
+Syntax: DATE
+        DATE datumsangabe
+Zweck:  Systemdatum setzen
+Wird  DATE ohne Parameter gestartet,  kann das Datum von  Hand  eingegeben 
+werden.  Wird nur <Return> gedrückt, bleibt die alte Einstellung erhalten. 
+Wird nur eine Zahl eingegeben,  wird nur der Tag geändert, bei zwei Zahlen 
+Tag und Monat.  Tag,  Monat,  Jahr können durch beliebige  nichtnumerische 
+Zeichen voneinander getrennt werden.
+Bemerkung: Mit  "DATE  <datei"  kann das Datum  statt  von  der  Standard- 
+           Eingabe auch von einer Datei gelesen werden.
+           Bei TOS 1.0 wird nur die GEMDOS- Uhr gesetzt,  so daß die  alte 
+           Zeit  im  Tastaturprozessor (XBIOS- Aufruf) und  so  bei  einem 
+           Reset  erhalten  bleibt.  Ab  TOS 1.2 wird  die  Hardware-  Uhr 
+           (Quarzuhr bzw. Tastaturprozessor) mitgesetzt.
+
+1.8 DEL
+-------
+
+Syntax: DEL [-n] datei1 datei2 ...
+Zweck:  Datei(en) löschen
+DEL (delete) kann beliebig viele Argumente haben (OS/2 läßt  grüßen).  Ist 
+<datei> ein Dateimuster oder ein Pfad,  werden alle passenden Dateien nach 
+Sicherheitsabfragen gelöscht; diese Sicherheitsabfrage kann mit dem 
+Schalter "-N" abgeschaltet werden.
+Auf die Sicherheitsabfragen kann geantwortet werden:
+J,Y       Ja, angezeigte Datei löschen; weiterfragen
+N         Nein, angezeigte Datei nicht löschen; weiterfragen
+G         Global, ab jetzt alle Dateien ohne Abfragen löschen
+A,Q,^C    Abbruch, Löschen beenden
+Wenn  ein  Fehler auftritt,  muß dies nicht daran liegen,  daß  die  Datei 
+schreibgeschützt ist.  Ein Fehler tritt auch dann auf,  wenn die Datei von 
+CMD  oder  einem  anderen Vorgängerprozeß geöffnet wurde  und  noch  nicht 
+geschlossen  ist.  In  solch einem Fall genügt es,  die Diskette  mit  dem 
+Kommando "free" (s.u.) abzumelden.
+
+1.9 DIR
+-------
+
+Syntax: DIR pfad1 pfad2 ...
+        DIR -W -P -Q -S ...
+        DIR -WQP pfad
+        DIR -P pfad1 -W pfad2 -W -D pfad3 ...
+Zweck:  Inhaltsverzeichnis anzeigen
+
+-W gibt ein "platzsparendes" Listing aus          (wide).
+-P hält das Listing nach jeder Seite an           (page).
+-Q verzichtet auf Diskname und freien Speicher    (quick).
+-S listet alle Dateien mit Attributen             (system).
+
+Sortiermodi:
+-N ordne Namen
+-D ordne Datum/Zeit
+-G ordne Größe
+-A ordne Art
+-U unsortiert
+
+Beim Sortieren (wenn nicht Option -U aktiv ist) werden Ordner immer zuerst 
+angezeigt.  Wird  kein Sortiermodus angegeben,  wird der des letzten  DIR- 
+Aufrufs  benutzt;  bei  Fehleingaben wird nach  Namen  sortiert.  Bei  der 
+Ausgabe eines Verzeichnis wird der Sortiermodus mit ausgegeben, wenn ünicht 
+nach Namen sortiert wird.
+
+DIR kann maximal 512 Einträge sortieren und benötigt dazu kurzfristig etwa 
+14k Hautpspeicher.  Ist nicht genügend freier Speicher vorhanden, wird das 
+Verzeichnis  unsortiert  ausgegeben.  Dies ist besonders  für  Accessories 
+wichtig,  WORDPLUS läßt immer nur etwa 4k frei, andere Programme sind noch 
+schlimmer.
+
+DIR  kann beliebig viele Argumente haben,  die Verzeichnisse  werden  dann 
+nacheinander  ausgegeben.  Dabei  wird  die Anzahl  der  Dateien  und  die 
+Dateilängen  insgesamt addiert und erst ganz zum  Schluß  ausgegeben.  Die 
+freien  Bytes  der Disk werden nicht  ausgegeben.  Diese  Möglichkeit  ist 
+praktisch,  wenn man die Gesamtlänge bestimmter Dateien ermitteln  möchte, 
+die auf verschiedenen Pfaden liegen, um sie auf eine Disk zu kopieren, auf 
+der womöglich nicht mehr genügend Platz ist.
+
+Ist  <pfad> ein Dateimuster (z.B.  "texte\*.doc"),  werden alle  passenden 
+Dateien ausgegeben.
+
+Wenn  der  Schalter  "s"  nicht  angegeben  wurde,  werden  nur  "normale" 
+Dateien angezeigt.  Mit "s" werden auch Systemdateien oder versteckte  (!) 
+Dateien angezeigt, Dateien mit Attribut "Volume" jedoch nie.
+
+Man beachte,  daß beim ungepatchten GEMDOS  z.B.  schreibgeschützte,  ver-
+steckte Dateien oder versteckte Disknamen wieder sichtbar  werden.  Dieser 
+Fehler  ist auch in TOS 1.4 noch enthalten,  aber die Dokumentation  wurde 
+dem Fehler angepaßt ("It's a feature, not a bug").
+
+Der  Schalter  "q" ist für TOS vor 1.4 und Festplatten  gedacht,  die  mit 
+kleinen  Clustern  (1 kB) formatiert sind und daher eine  besonders  große 
+FAT haben. Die Ausgabe erfolgt dann sehr viel schneller.
+
+1.10 ECHO
+---------
+
+Syntax: ECHO
+        ECHO [-n] string1 string2 ...
+        ECHO ON
+        ECHO OFF
+Zweck:  Zeichenketten ausgeben oder ECHO- Modus setzen/anzeigen
+ECHO  ohne Parameter zeigt den ECHO- Modus für den  Batchbetrieb  an.  Per 
+Default  ist  ECHO  immer OFF (d.h.  die  ausgeführten  Zeilen  werden  im 
+Batchbetrieb ünicht angezeigt).
+ECHO ON oder ECHO OFF setzt den ECHO- Modus.
+ECHO <string> gibt <string> und dann einen Zeilenvorschub nach stdout aus, 
+mit der Option -n wird dieser Zeilenvorschub unterdrückt.
+
+1.11 END
+--------
+
+Syntax: END
+Zweck:  Bricht Batchdatei ab
+END  bricht nur die laufende Batchdatei ab;  wenn diese von einer  anderen 
+Batchdatei  aufgerufen  wurde,  wird  die nächste  Zeile  wieder  aus  der 
+übergeordneten Batchdatei geholt.
+
+1.12 EXIT
+---------
+
+Syntax: EXIT
+Zweck:  cmd verlassen
+Im  Gegensatz  zu COMMAND.COM in MS-DOS bewirkt auch im  Batchbetrieb  der 
+Befehl EXIT ein Verlassen des Kommandointerpreters.
+
+1.13 FIND
+---------
+
+Syntax: FIND string
+Zweck:  Zeichenketten in Textdateien suchen
+FIND  ist  ein Filter,  das heißt,  er liest von stdin und  schreibt  nach 
+stdout. Man muß also stdin auf die zu durchsuchende Datei umlenken.
+FIND unterscheidet nicht zwischen Groß- und Kleinschreibung.
+Bemerkung: Falls <string> Leerstellen enthält, muß <string> in Anführungs-
+           zeichen gesetzt werden.
+           CTRL-Z wird als Dateiende erkannt
+
+1.14 FOR
+--------
+
+Syntax: FOR var ( wert1 wert2 .. ) ...
+  Setzt var=wert1, führt ... aus. Beim nächstenmal wird var=wert2 gesetzt
+  und ... ausgeführt usw. Ist die Liste zuende, d.h. ')' erreicht, wird
+  ... nicht ausgeführt, sondern gleich zum nächsten Kommando übergegangen.
+        FOR NOT var ( wert1 wert2 .. ) ...
+  Setzt var=wert1, überspringt ... Beim nächstenmal wird var=wert2 gesetzt
+  und ... wieder  übersprungen  usw. Ist  die  Liste  zuende,   d.h.   ')' 
+  erreicht, wird ... ausgeführt.
+Zweck:  Steuerung in Batch- Dateien
+FOR darf nicht geschachtelt werden!!!
+Die Leerzeichen vor und nach den Klammern sind notwendig!!!
+
+1.15 FREE
+---------
+
+Syntax: FREE [x:]
+Zweck:  Gibt GEMDOS- Speicher für aktuelles oder Laufwerk x: frei.
+Wenn  das  100 Ordner Problem akut wird,  kann man mit diesem  Befehl  den 
+Speicher  für eine gerade nicht benötigte Harddisk-  Partition  freigeben. 
+Außerdem kann man diesen Befehl anwenden, wenn GEMDOS sich weigert, Ordner 
+oder  Dateien zu löschen,  obwohl diese leer bzw.  nicht  schreibgeschützt 
+sind.
+
+1.16 GOTO
+---------
+
+Syntax: GOTO label
+Zweck:  Unbedingter Sprung in Batch- Dateien
+Das Label in einer Batchdatei hat die Form ":name"
+
+1.17 IF
+-------
+
+Syntax: IF ERRORLEVEL n ... Führt ... aus, wenn Fehlercode >= n oder < 0
+        IF s1 == s2 ...     Führt ... aus, wenn <s1> = <s2>.
+        IF EXIST datei ...  Führt ... aus, wenn <datei> existiert.
+        IF NOT ...          Führt ... aus, wenn Bedingung nicht erfüllt
+Zweck:  Bedingter Sprung in Batch- Datei.
+Der  Fehlercode  wird  vom letzten  ausgeführten  internen  oder  externen 
+Kommando zurückgegeben.  Ein Wert ungleich Null signalisiert i.a.  daß ein 
+Fehler aufgetreten ist.  Die Befehle IF,END,FOR,GOTO verändern den Fehler-
+code nicht.
+
+1.18 MD
+-------
+
+Syntax: MD datei
+Zweck:  Neuen Ordner erstellen
+MD  (make directory) erstellt einen neuen Ordner mit  Namen  <datei>.  Ein 
+Ordner  oder  eine  Datei  gleichen Namens  darf  nicht  schon  im  selben 
+Verzeichnis vorhanden sein.
+Achtung:  Normale  Dateien oder Disknamen werden vor TOS 1.4  wegen  eines 
+          GEMDOS- Fehlers durch MD gelöscht,  wenn sie denselben Namen wie 
+          der neue Ordner haben. Alternative: KAOS benutzen.
+
+1.19 MORE
+---------
+
+Syntax: MORE
+Zweck:  Seitenweise Ausgabe von Texten
+MORE ist ein Filter.  Wird "--Mehr--" angezeigt,  kann die Ausgabe mit  ^C 
+abgebrochen werden.  Mit der Leertaste wird eine Seite,  sonst eine  Zeile 
+weitergescrollt.
+^Z in der Datei wird als Dateiende erkannt.
+MORE  sollte wie alle Filter nur in Pipes oder bei  umgelenkter  Standard- 
+Eingabe angewendet werden,  da sonst von der Tastatur gelesen  wird;  z.B. 
+wirkt  "MORE <datei" ähnlich wie die Funktion "Datei anzeigen" im  Desktop 
+(ohne  sich  jedoch  bei  leeren Dateien oder  solchen  mit  n*4096  Bytes 
+oder Lesefehlern aufzuhängen...)
+
+1.20 MV
+-------
+
+Syntax: Siehe COPY
+Zweck:  Datei(en) umbenennen oder verschieben
+MV  (move)  wirkt ähnlich wie COPY,  kopiert die Datei(en)  jedoch  nicht, 
+sondern  verschiebt  sie innerhalb der Verzeichnis- Struktur  eines  Lauf-
+werks, was natürlich viel schneller geht. Beispiele:
+
+- "MV datei neuername"        benennt die die <datei> einfach um.
+- "MV . \"                    verschiebt alle Dateien im aktuellen  Unter-
+                              verzeichnis  (".") in das  Wurzelverzeichnis 
+                              ("\").
+- "MV \*.h headers"           verschiebt alle C- Headerdateien vom Wurzel-
+                              verzeichnis in den (hoffentlich vorhandenen) 
+                              Ordner "headers".
+- "MV auto\dat.prg"           Schiebt die Datei "dat.prg" vom AUTO- Ordner 
+                              ins aktuelle Verzeichnis.
+
+Das Verschieben ist immer nur auf demselben Laufwerk möglich.  Die  Angabe 
+von Geräten (CON:,AUX:,PRN:) ist unzulässig.  Ebenso darf keine Datei  mit 
+dem neuen Namen schon existieren.
+MV  gibt bei Fehlernummern den vom DOS erhaltenen Fehlercode  im  Klartext 
+aus.Ç  Leider hat dieser nur bei KAOS unmittelbar etwas mit dem tatsächlich 
+aufgetretenen Fehler zu tun.
+Wenn  man nicht unter KAOS arbeitet,  ist der MV- Befehl mit  Vorsicht  zu 
+genießen.   Schwierigkeiten  gibt  es  beispielsweise  bei  vollem   Root- 
+Directory oder Umbenennen in ein existierendes Unterverzeichnis usw.
+Bemerkung: Bei MS-DOS ist hier nur das Umbenennen EINER Datei in DEMSELBEN 
+           VERZEICHNIS möglich.  CMD bietet dagegen alle Möglichkeiten des 
+           UNIX- Kommandos MV.
+           Außerdem  hat  auch CMD den Befehl REN,  der wie  unter  MS-DOS 
+           arbeitet und ab TOS 1.4 auch Ordner umbenennen kann.
+
+1.21 PATH
+---------
+
+Syntax: PATH
+        PATH pfad1;pfad2...
+Zweck:  Kommando- Suchpfad setzen oder anzeigen
+PATH  ohne  Parameter zeigt den Suchpfad an.  Mit  Parameter  wird  dieser 
+gesetzt. Es wird nicht geprüft, ob die Pfadangaben korrekt sind.
+Bemerkung: Der Suchpfad ist eine Environment- Variable, kann also auch mit 
+           SET manipuliert werden, z.B.
+               SET %path%;pfad3
+           hängt <pfad3> an den Suchpfad an
+
+1.22 PAUSE
+----------
+
+Syntax: PAUSE
+        PAUSE string1 string2 ...
+Zweck:  Unterbrechung und Verzweigung in Batch- Datei
+PAUSE schreibt den <string> nach "CON:",  nicht nach stdout;  ebenso  wird 
+IMMER von "CON:" (Tastatur) gelesen,  ohne Rücksicht auf die  Standardein-
+gabe- Umlenkung.
+Wird kein <string> angegeben, gibt PAUSE die Meldung "Taste drücken" aus.
+Der  Ascii- Code der betätigten Taste wird nach "errorlevel"  geschrieben. 
+Mit  Hilfe  des  IF  ERRORLEVEL  - Befehls  kann  dann  abhängig  von  der 
+betätigten Taste im Batchprogramm verzweigt werden.
+
+1.23 PROMPT
+-----------
+
+Syntax: PROMPT
+        PROMPT zeichenkette
+Zweck:  Promptzeichen ändern
+PROMPT  ohne Parameter setzt das Default- Prompt ("$n$g"),  mit  Parameter 
+können außer den normalen Zeichen auch die bei MS-DOS üblichen  Sonderzei-
+chen  verwendet  werden,  z.B.  "$p$g" für die  komplette  Pfadangabe  als 
+Prompt oder auch "$ej$eH$eK$t$ek$n$g":
+
+  $$    Das Dollarzeichen '$' selbst
+  $_    Neue Zeile (CR,LF)
+  $b    Das Zeichen '|'
+  $d    Datum
+  $e    Das Zeichen ESC (1BH)
+  $g    Das Zeichen '>'
+  $h    Backspace
+  $l    Das Zeichen '<'
+  $n    aktuelles Laufwerk
+  $p    kompletter aktueller Pfad mit Laufwerk
+  $q    Das Zeichen '='
+  $t    Zeit
+
+Bemerkung: Das Prompt ist eine Environment- Variable,  kann also auch  mit 
+           SET manipuliert werden.
+           Das  bei  MS-DOS  vorhandene Promptzeichen "$v"  für  die  DOS- 
+           Version  fehlt bei CMD.  Als Ersatz siehe das interne  Kommando 
+           "ver".
+
+1.24 RD
+-------
+
+Syntax: RD ordnername
+Zweck:  Verzeichnis löschen
+RD (remove directory) kann nur leere (!) Verzeichnisse löschen.
+Außer  bei KAOS bewirkt das Löschen des aktuellen (leeren)  Verzeichnisses 
+Bomben oder Schlimmeres. Bei KAOS gibt es nur ein "Zugriff unmöglich". Man 
+beachte, daß auch die aktuellen Verzeichnisse des Desktop geschützt werden 
+müssen  und  nicht gelöscht werden sollten.  KAOS tut dies von  sich  aus; 
+daher  kann  es vorkommen,  daß sich Ordner aus  "unerfindlichen"  Gründen 
+nicht  löschen  lassen.  In diesem Fall genügt ein  FREE  (s.o.),  um  das 
+Laufwerk  auch  für  DESKTOP abzumelden;  dann  lassen  sich  alle  Ordner 
+löschen.
+Bemerkung: Aufgrund  eines der vielen TOS- Fehler kann es  vorkommen,  daß 
+           ein  gerade erstelltes Verzeichnis nicht gelöscht werden  kann. 
+           Abhilfe :  IBM kaufen,  KAOS benutzen oder einfach  UNDO,RETURN 
+           drücken.
+
+1.25 REN
+--------
+
+Syntax: REN alter_pfadname neuer_dateiname
+Zweck:  Eine Datei oder einen Ordner umbenennen
+Der  Befehl  REN  entspricht völlig seinem  Pendent  in  COMMAND.COM.  Der 
+Parameter  <alter_pfadname>  enthält Pfad und  Namen  der  umzubenennenden 
+Datei, der Parameter <neuer_dateiname> enthält den neuen Namen üohne Pfad.
+Mit  diesem Befehl kann eine Datei im selben Verzeichnis  umbenannt,  also 
+nicht  verschoben werden (siehe MV).  Außerdem wird immer nur  üeine  Datei 
+behandelt, die Parameter dürfen beide keine Wildcards ('?','*') enthalten.
+üAb  TOS 1.4 können mit diesem Befehl auch Ordner  umbenannt  werden.  Dazu 
+wird der Ordner wie eine Datei ohne abschließendes '\' spezifiziert.
+1. Beispiel:
+  ren c:\compiler\turbo\tc.prg tc.ttp
+ist äquivalent zu
+  mv  c:\compiler\turbo\tc.prg c:\compiler\turbo\tc.ttp
+2. Beispiel (ab TOS 1.4):
+  ren folder ordner
+Benennt  üden Ordner "folder" in "ordner" um.  Ein äquivalenter MV-  Befehl 
+ist  nicht  möglich,  da dieser alle Dateien aus dem  Ordner  "folder"  zu 
+verschieben versuchte.  Das Verschieben von Ordnern ist auch unter TOS 1.4 
+nicht möglich,  so daß der MV- Befehl beim Behandeln von Ordnern überhaupt 
+nicht verwendet wird.
+
+1.26 SHIFT
+----------
+
+Syntax: SHIFT
+Zweck:  Die Parameter der Batchdatei verschieben
+SHIFT schiebt den Parameter %1 nach %0,  %2 nach %1 usw.;  so können  auch 
+mehr  als 10 Parameter verwendet werden oder in einer FOR - Schleife  eine 
+Aktion für alle Parameter ausgeführt werden.
+
+1.27 SET
+--------
+
+Syntax: SET
+        SET symbol=
+        SET symbol=wert
+Zweck:  Environment manipulieren
+Ohne Parameter wird das Environment ausgegeben. Mit "SET symbol=" wird die 
+Environment- Variable <symbol> gelöscht,  mit "SET symbol=wert" auf  einen 
+neuen Wert gesetzt.
+Soll  der Wert Leerstellen enthalten,  setze man "symbol=wert"  in  Anfüh-
+rungszeichen.
+Bemerkung: Das Environment ist etwa 1kB groß, also i.a. ausreichend.
+
+1.28 SORT
+---------
+
+Syntax: SORT [-C] [-R] [-n]
+Zweck:  Textdatei sortieren
+^Z in der Datei wird als Dateiende erkannt.
+SORT ist ein Filter.  Mit -C wird Groß-/Kleinschreibung unterschieden. Mit 
+-R wird umgekehrt sortiert.  -n enthält die Position des Schlüssels;  z.B. 
+vergleicht SORT -4 die Zeilen erst ab der vierten Spalte.
+Es können nur Dateien sortiert werden, die ganz in den Speicher passen.
+
+1.29 TIME
+---------
+
+(siehe DATE)
+Wie DATE, nur mit Zeit statt Datum.
+
+1.30 TOUCH
+----------
+
+Syntax: TOUCH datei1 datei2 ...
+Zweck: Datum und Uhrzeit der Datei auf aktuelles Datum/Uhrzeit setzen, als 
+ob sie geändert worden wäre.  Das Archivbit (ab TOS 1.4 unterstützt)  wird 
+nicht beeinflußt.
+Als <datei> kann man auch einen Pfad angeben,  etwa "TOUCH \", dann werden 
+alle Dateien auf dem Wurzellaufwerk in Uhrzeit und Datum aktualisiert.
+Sinnvoll  ist  die  Anwendung  für ein MAKE,  das  man  so  zwingen  kann, 
+Quelltexte  neu zu übersetzen,  da sich jetzt ein neueres Datum haben  als 
+die bereits erzeugten Objektdateien,  oder für den Fall,  daß man  Dateien 
+mit dem nichtssagenden Datum 6.2.86 hat.
+
+1.31 TREE
+---------
+
+(siehe CK)
+Wie  CK,   es  werden  jedoch  nur  die  zulässigen  Pfade  des  Laufwerks 
+ausgegeben.
+
+1.32 TYPE
+---------
+
+Syntax: TYPE datei1 datei2 ...
+Zweck:  Datei(en) anzeigen
+TYPE kann beliebig viele Argumente haben. Ist <datei> ein Dateimuster oder 
+ein Pfad, werden alle passenden Dateien angezeigt. Die Dateinamen erschei-
+nen  nur auf dem Bildschirm und werden nicht nach stdout  geschrieben.  Im 
+Gegensatz  zu  "MORE" wird das Zeichen ^Z  nicht  ausgewertet,  damit  die 
+Verkettung von Dateien auch bei solchen Dateien funktioniert,  die  dieses 
+Zeichen enthalten.
+Bemerkung: TYPE  wirkt wie CAT in UNIX.  Mit "TYPE datei1 datei2  >datei3" 
+           kann  man  Dateien  verketten.   Dabei  bekommt  <datei3>,   im 
+           Gegensatz zum COPY- Befehl, das aktuelle Datum.
+
+1.33 VER
+--------
+
+Syntax: VER
+Zweck:  TOS/KAOS- Version, GEMDOS- Version und CMD- Version anzeigen.
+Die GEMDOS- Version hat nicht unbedingt etwas mit der TOS- Version zu tun.
+Hier eine Aufstellung der bisher bekannten (deutschen!) Versionen für  den 
+ST (ohne die für STE oder TT):
+
+TOS  1.0 20/06/85, GEMDOS 0.13     Diskversion (uralt)
+TOS  1.0 20/11/85, GEMDOS 0.19     Diskversion (erste "endgültige")
+TOS  1.0 06/02/86, GEMDOS 0.19     Diskversion
+                                   ROMs ("Rom- TOS")
+TOS  1.0 06/02/86, GEMDOS 0.20     dito mit Turbo-DOS
+TOS  1.2 22/04/87, GEMDOS 0.19     ROMs ("Blitter TOS")
+KAOS 1.2 22/04/87, GEMDOS 0.20     KAOS (Vorversion vom November '87)
+KAOS 1.2 22/04/87, GEMDOS 0.21     KAOS 1.2.3  (vom Juli '88)
+TOS  1.4 18/05/88, GEMDOS 0.21     Diskversion 1.4 (Beta Version)
+TOS  1.4 08/08/88, GEMDOS 0.21     Diskversion 1.4 (Developer Version)
+TOS  1.4 22/02/89, GEMDOS 0.21     ROMs 1.4        (Messe- Version)
+TOS  1.4 06/04/89, GEMDOS 0.21     ROMs ("Rainbow" TOS 1.4)
+KAOS 1.4 06/04/89, GEMDOS 0.22     KAOS 1.4.x
+
+
+KCMD.ACC  gibt  hier  auch die AES- Versionsnummer  aus,  die  jedoch  von 
+geringerem Interesse ist. TOS 1.0/1.2 geben hier $120 an (wird dezimal als 
+V1.32 angezeigt), TOS 1.4 gibt $140 an (wird als V1.64 angezeigt) und KAOS 
+1.4 $141 (also V1.65).  GEM 2.2 von ABC hat Versionsnummer $210 (als V2.16 
+angezeigt).
+
+1.34 VERIFY
+-----------
+
+Syntax: VERIFY
+        VERIFY ON
+        VERIFY OFF
+Zweck:  Read/Write- Verify- Flag des BIOS anzeigen/ändern
+Beim  Einschalten des Rechners ist das VERIFY- Flag (im Gegensatz  zu  MS-
+DOS)  immer eingeschaltet.  Wenn man mit Diskette arbeitet,  kann man  die 
+Schreibzugriffe  durch  "VERIFY  OFF"  stark  beschleunigen.   Dafür  wird 
+besonders bei billigen Disketten das Risiko etwas höher, daß Schreibfehler 
+nicht erkannt werden.
+Das  Verify- Flag hat normalerweise nur Auswirkungen auf die Laufwerke  A: 
+und B:,  es sei denn, ein anderes Treiberprogramm (Festplatte) fragt diese 
+Systemvariable ebenfalls ab.
+
+
+2. Externe Kommandos im BIN- Ordner
+-----------------------------------
+
+Auf  der  Diskette befinden sich im Ordner BIN einige  externe  Kommandos. 
+Damit  man diese ohne Angabe des Pfadnamens starten kann,  sollte man  die 
+PATH- Variable entsprechend setzen.
+
+Alle  Kommandos sind reine TOS- Programme,  die Ausgaben nach  STDOUT  und 
+Fehlermeldungen  nach Handle 4 (STDERR) oder direkt nach  CON:  schreiben. 
+Sie geben als Rückgabewert DOS- Fehlercodes oder bei fehlerlosem Lauf eine 
+0 zurück.
+
+Die externen Kommandos haben keine Versionsnummer. Neuere Versionen lassen 
+sich nur am Datum der Programmdatei erkennen.
+
+Startet man ein externes Kommando ohne Parameter,  erhält man in der Regel 
+eine kurze Erklärung der möglichen Parameter.
+
+2.1 PRINT
+---------
+
+Syntax: PRINT {-[p][s][i][c][d]} datei1 datei2...
+Zweck:  Textdatei(en) auf Epson- kompatiblen Druckern ausgeben
+-tn  Tabulatorweite <n> Stellen
+-p   Seitenvorschub nach jeder Datei
+-s   Schmaler Zeilenabstand (1/8")
+-i   Initialisierung vor jeder Datei
+-c   Schmalschrift (Compressed)
+-d   Breitschrift  (Double Width)
+
+Die  Textdatei  wird ausgedruckt,  wobei  alle  nationalen  Sonderzeichen, 
+soweit möglich,  in Epson- Zeichen übersetzt werden. Einige Zeichen werden 
+dafür neu definiert.
+
+Beim  Ausdrucken hält eine beliebige Taste die Ausgabe an,  CTRL-C  bricht 
+den laufenden Druckvorgang sofort ab. Wenn kein Drucker eingeschaltet oder 
+dieser OFF-LINE ist,  kann der Druckvorgang ebenfalls abgebrochen  werden, 
+ohne auf die berühmt- berüchtigten 30sec. "Time-Out" zu warten.
+
+PRINT  spricht  den Drucker über die Standarddatei stdprn  an.  Durch  die 
+Korrektur  der  Ein-/Ausgabeumlenkung  einschließlich  der  Statusabfragen 
+(z.B.  Cprnos()) ist es unter KAOS völlig problemlos möglich,  die Ausgabe 
+von PRINT in eine Datei oder auf den Bildschirm zu lenken, etwa mit "PRINT 
+datei  3>datei.prt".   Für  andere  TOS-  Versionen  wage  ich  es  nicht, 
+Vorhersagen zu treffen...
+
+2.2 CRASHDMP
+------------
+
+Syntax: CRASHDMP
+Zweck:  Daten der letzten Exception (Bomben) anzeigen
+Die Art der letzten Exception (z.B.  Busfehler) sowie alle Registerinhalte 
+bei  deren Auftreten werden lesbar nach stdout geschrieben.  Im Fall  Bus- 
+oder  Adreßfehler  werden die obersten Einträge des  Supervisorstacks  bei 
+Auftreten der Exception ebenfalls dekodiert.  Man erhält Informationen wie 
+etwa  :  "Adreßfehler  bei PC=xxx,SR=xxx und Lesezugriff im  Usermode  auf 
+Adresse xxx, verantwortlicher Maschinenbefehl: xxx".
+Besonders  hier ist die Umlenkung CRASHDMP >datei für  spätere  Verwendung 
+sinnvoll.
+
+2.3 EXE2BIN
+-----------
+
+Syntax: EXE2BIN dateimuster/pfad
+Zweck:  Programmdateien in ein Spezialformat umwandeln
+Auf die Extension .PRG und .TOS und .TTP kann verzichtet  werden,  EXE2BIN 
+ergänzt  sie automatisch.  Bei Angabe von Pfaden oder Dateimustern  werden 
+alle passenden Dateien bearbeitet.
+Programme ohne Relocation- Daten (also "position independent") können  vom 
+GEMDOS  sehr viel schneller als normale Programme  geladen  werden.  Dabei 
+werden  weder  das BSS- Segment noch der übrige freie  Speicher  gelöscht, 
+bevor das Programm gestartet wird.
+EXE2BIN prüft nun, ob das Programm "position independent" ist, und wandelt 
+es dann in eine Art COM- Format um. Man hat dabei selbst darauf zu achten, 
+daß sich das Programm nicht auf ein gelöschtes BSS- Segment verläßt.
+Wird EXE2BIN unter KAOS gestartet,  wird die Fshrink- Funktion benutzt, um 
+die  nun nutzlosen (Null-) Relocationdaten von der Datei zu entfernen  und 
+diese so zu kürzen.
+Ab TOS 1.4 gibt es ein sogenanntes "Fastload- Bit" im Programmheader,  das 
+bewirkt,  daß nicht mehr der gesamte freie Speicher,  sondern nur noch das 
+BSS gelöscht wird. EXE2BIN fragt nun ab, ob dieses Bit bereits gesetzt ist 
+und,  wenn  nicht,  setzt es.  Dabei bleiben Datum und Uhrzeit  der  Datei 
+explizit erhalten.
+
+2.4 LABEL
+---------
+
+Syntax: LABEL                        Diskname anzeigen
+        LABEL x:                     Diskname von Laufwerk x: anzeigen
+        LABEL name                   Disk benamsen
+        LABEL x:name                 Disk in Laufwerk x: benamsen
+Zweck:  Diskettennamen anzeigen, setzen oder löschen
+Wird als neuer Name "-" angegeben, wird der Diskname, falls vorhanden,
+einfach gelöscht.
+LABEL funktioniert bei allen Diskettenarten,  Harddisk,  Ramdisk usw.  und 
+mit sämtlichen TOS- Versionen.
+LABEL gibt GEMDOS- Fehlercodes zurück, falls etwas nicht funktioniert hat.
+
+2.5 FC
+------
+
+Syntax: FC [-s] [datei1 [datei2|pfad2]]
+Zweck: Dateien vergleichen (ab Adresse <s>)
+Die  beiden Dateien werden Byte für Byte eingelesen  und  verglichen.  Die 
+Unterschiede werden als Hex- und Ascii- Codes nach stdout geschrieben.
+Sind die Dateilängen unterschiedlich,  wird abgebrochen.  Ebenso kann  man 
+die Ausgabe auf den Bildschirm mit CTRL-C abbrechen.
+Wird  FC  ohne  Parameter  gestartet,  werden  die  Dateinamen  von  STDIN 
+eingelesen.
+Endet der zweite Parameter auf ':' oder '\',  wird angenommen, daß es sich 
+um  eine  Pfadangabe  handelt.  Der  reine  Dateiname  wird  von  <datei1> 
+extrahiert und an <pfad2> angehängt.
+Wird nur ein Parameter angegeben,  wird als zweiter Parameter das aktuelle 
+Verzeichnis angenommen.
+Mit Hilfe dieser beiden Möglichkeiten wird es leicht, gleichnamige Dateien 
+in verschieden Pfaden zu vergleichen.
+Bei mehr als zwei Parametern wird die Syntax ausgegeben.
+
+2.6 KILLRAM
+-----------
+
+Syntax: KILLRAM
+Zweck:   Ausschalter simulieren;  'N','n' und rechte Maustaste brechen ab, 
+alle   anderen   Tasten  und  die  linke   Maustaste   führen   aus.   Für 
+Tastatureingaben wird auch der MIDI- Port abgefragt.
+
+2.7 ASTOWORD.TTP
+----------------
+
+Syntax: ASTOWORD asciidatei
+Zweck:  Konvertiert Datei von ASCII->WORDPLUS
+Die Ausgabedatei hat denselben Namen wie die Eingabedatei,  jedoch mit der 
+Extension ".doc". Existiert solch eine Datei schon, wird sie gelöscht.
+
+2.8 WORDTOAS.TTP
+----------------
+
+Syntax: WORDTOAS datei[.doc]
+Zweck:  Konvertiert Datei von WORDPLUS->ASCII
+Enthält  <datei>  keine oder eine andere Extension als  ".doc",  wird  als 
+Extension ".doc" eingesetzt.
+
+Die Ausgabedatei hat denselben Namen wie die Eingabedatei,  jedoch mit der 
+Extension ".txt". Existiert solch eine Datei schon, wird sie gelöscht.
+
+2.9 DUMP.TTP
+------------
+
+Syntax: DUMP [-bci] [[-[s]hhhhhh[-hhhhhh]] datei]
+Zweck:  Hex-/Ascii/C- Dump von allen Dateien (auch CON:)
+Das  Programm ersetzt das gleichnamige Programm im  Entwicklungspaket  von 
+Atari,  ist  jedoch  kürzer (2k statt 10k) und gibt  auch  solche  Dateien 
+korrekt aus,  die nicht ein Vielfaches von 16 Bytes Länge haben.  Außerdem 
+kann die Ausgabe als Eingabe für einen C-Compiler benutzt werden.
+Das  Zeichen  "s"  im  Schalter zur Angabe  der  Startadresse  (Hex)  kann 
+weggelassen werden.
+Ist  die Datei "CON:",  kann die Eingabe mit ^C,  einer leeren Zeile  (nur 
+Return) oder einer Zeile abgebrochen werden, die nur ^Z enthält.
+Die Schalter b,c,i sind für die Ausgabe als C-Quelltext (Schalter "c") und 
+bedeuten "mit Kommentar" ("i"), "byteweise" ("b").
+
+2.10 SPLIT.TTP
+--------------
+
+Syntax: SPLIT [-t] [-[s]hhhhhh] datei [ziel1 [ziel2]]
+Zweck:  (Text-) <datei> in <ziel1> und <ziel2>  aufspalten
+Wenn  der Schalter -t angegeben wurde,  wird die Datei immer hinter  einem 
+Zeilenende  aufgespalten,  dieser Schalter muß also immer  dann  angegeben 
+werden, wenn es sich um eine Textdatei handelt.
+Wird keine Aufspaltposition (-shhhhhh,  hexadezimal) angegeben,  wird  die 
+Datei möglichst in der Mitte zerlegt.
+Werden  die  Parameter <ziel1> und <ziel2> nicht angegeben,  so  wird  der 
+erste Teil von <datei> in eine neue Datei __EINS__ geschrieben.  Wird  nur 
+<ziel1>  angegeben,  so wird nur der erste Teil der <datei>  nach  <ziel1> 
+geschrieben, bei Angabe von <ziel2> der zweite Teil nach <ziel2>.
+Will man nur den zweiten Teil der Datei abspalten,  kann man <ziel1> unter 
+KAOS als NUL oder NUL: angeben.
+Beispiel:  SPLIT -1c CMD.PRG NUL CMD.XXX
+           schreibt  die Datei CMD.PRG ohne die ersten 28 Bytes  Programm-
+           header nach CMD.XXX
+
+
+3. Stdout/Stdin- Umlenkung
+--------------------------
+
+Wie  MS-DOS  und  UNIX hat auch GEMDOS sogenannte  Standard-  Dateien  und 
+physikalische Dateien.
+Die Standard- Dateien haben die Handle- Nummern 0 bis 5, dabei sind:
+
+  0  "stdin",  Standard- Eingabe     (normalerweise Tastatur)
+  1  "stdout", Standard- Ausgabe     (normalerweise Bildschirm)
+  2  "stdaux", Standard- Hilfsdatei  (normalerweise RS-232)
+  3  "stdprn", Standard- Druckdatei  (normalerweise Centronics)
+  4  "stderr", unbenutzt             (bei KAOS und ab TOS 1.4: Bildschirm)
+  5  "stdxtra" unbenutzt             (bei KAOS und ab TOS 1.4: Bildschirm)
+
+Alle  Standarddateien (0 bis 5) können mit der DOS- Funktion Fforce()  auf 
+jede  beliebige  Datei oder jedes beliebige Gerät  umgelenkt  werden.  Die 
+"normalen"  Dateien  dagegen  (Handles 6 bis 75)  können  nicht  umgelenkt 
+werden.
+
+Weitere Information:  siehe ST 4/87 :  "Die XENIX - Struktur des  GEMDOS". 
+Die  Umlenkung ist jedoch nicht so problemlos,  wie es den  Anschein  hat. 
+Neben  der total verkorksten Behandlung der Standardpfade liegen hier  die 
+schlimmsten Fehler des GEMDOS (in Fforce(), Fdup(), Fclose()).
+
+Im  Gegensatz  zu COMMAND.COM unter MS-DOS kann CMD  unter  TOS  sämtliche 
+6  Standarddateien  auf  der  Kommandozeile  umlenken.  Bei  den  internen 
+Befehlen des CMD (z.B.  DIR >dirlist) funktioniert die Umlenkung  problem-
+los.  Beim  Aufruf von (externen) Programmen (z.B.  SID >list) konnte  man 
+bisher  auch  beim  TOS 1.2 die Ausgabe nicht  umlenken,  da  die  gesamte 
+zeichenorientierte  Ausgabe nicht funktioniert.  Diese Fehler  sind  unter 
+KAOS völlig und ab TOS 1.4 z.T. behoben.
+Umlenkungen werden in folgender Form eingegeben:
+
+>datei              Erstellt <datei>, lenkt STDOUT auf <datei>
+>>datei             Hängt STDOUT an <datei> an. Erstellt ggf. <datei>
+<datei              Lenkt STDIN auf <datei>, falls diese existiert
+pgm | .. | pgm      Pipe
+n>datei             für 0 <= n <= 5 : Wie oben, aber mit bel. Std.datei
+n>>datei            für 0 <= n <= 5 : Wie oben, aber mit bel. Std.datei
+
+Die  Ausgabedatei wird bei '<' zum Lesen,  bei '>' und '>>' zum Lesen  und 
+Schreiben  geöffnet.   Die Eingaben  "pgm  >out"  und  "pgm  1>out"   sind 
+äquivalent.  Die Handles 2..5 können nicht mit '<' umgelenkt werden; daher 
+werden sie immer zum Lesen und Schreiben geöffnet und ggf.  erstellt.  Bei 
+der Umlenkung von STDAUX (mit "2>datei") wird sowohl die Ein- als auch die 
+Ausgabe auf die serielle Schnittstelle unter DOS umgelenkt.  Es sind  also 
+sowohl  die  Befehle Cauxout(),  Cauxos() als auch Cauxin()  und  Cauxis() 
+betroffen.  Es ist im übrigen nicht zu empfehlen, STDIN auf den Drucker zu 
+lenken, da man von dort nicht viel lesen kann...
+
+Auch eine Pipe kann umgelenkt werden, z.B. "DIR | SORT >dirlist".
+
+Als  Kommandos  zwischen  dem ersten und letzten "|" der  Pipe  kommen  in 
+erster Linie "Filter" in Frage, also solche Programme, die von stdin lesen 
+und nach stdout schreiben.
+
+Für  die  Pipes werden normalerweise im  Wurzelverzeichnis  des  aktuellen 
+Laufwerks temporäre Dateien mit Namen "\$$PIPE?.?" erstellt.  Daher  soll-
+ten sich keine Dateien dieses Namens dort befinden,  und außerdem darf das 
+aktuelle  Laufwerk  nicht schreibgeschützt  sein.  Ist  eine  Environment- 
+Variable  TMPDIR vorhanden,  werden die temporären Dateien  dort  erstellt 
+(inzwischen  ist  der Hersteller von MS-DOS auch auf  den  Dreh  gekommen, 
+Version 5.0 macht es genauso,  wie CMD es seit Jahren tut). Beispielsweise 
+bei  TMPDIR=c:\tmp oder TMPDIR=c:\tmp\ heißen die temporären Dateien  dann 
+c:\tmp\$$pipe?.?.  Durch  dieses praktische Feature läßt  sich  erreichen, 
+daß Pipes immer auf dem schnellsten Speichermedium,  also auf Ramdisk oder 
+Festplatte  angelegt werden,  auch wenn man sich gerade "auf der  Diskette 
+befindet".
+
+Ein Anwendungsbeispiel für das Umlenken einer anderen Standarddatei:
+"PRINT drucktext 3>out"
+
+Ruft  das Programm "PRINT" (s.u.) auf mit umgelenkter STDPRN-  Datei.  Die 
+Datei  drucktext  wird  jetzt nicht direkt auf  den  Drucker  geschrieben, 
+sondern  einschließlich  aller Steuerzeichen in die  Datei  "out".  Ebenso 
+könnte man mit:
+
+"PRINT drucktext 3>con"
+
+den für Epson- Drucker übersetzten Text auf den Bildschirm  schreiben.  So 
+lassen sich gut eigene oder fremde Programme testen,  die eine Ausgabe auf 
+den  Drucker  machen.  Das  Resultat läßt sich hinterher  exakt  mit  DUMP 
+analysieren.
+
+Ich empfehle,  eigene Programme so zu schreiben,  daß der Standardkanal  4 
+für die Fehlerausgabe (STDERR) verwendet wird.
+Mit:
+
+"PGM 4>prn"
+
+könnte man dann z.B.  alle Fehlermeldungen auf den Drucker lenken. Man muß 
+allerdings  vorher  prüfen,  ob der Standardkanal 4 gültig ist  (etwa  mit 
+Fdup),  dies ist für TOS- Versionen vor 1.4 notwendig,  KAOS bereitet auch 
+in der Version 1.2.3 keine Probleme.
+
+
+4. Geräte (Devices)
+-------------------
+
+TOS kennt 3 Geräte,  die wie normale Dateien behandelt werden,  z.B.  kann 
+die Standard- Ausgabe auf den Drucker gelenkt werden:
+
+1) CON:   Bildschirm/Tastatur
+2) AUX:   RS-232
+3) PRN:   Drucker
+
+Mit  "TYPE  datei >AUX:" kann man z.B.  einfach Daten  über  die  serielle 
+Schnittstelle schicken.
+Im Gegensatz zu MS-DOS fehlt erstens das Gerät "NUL:", zweitens können die 
+Doppelpunkte ünicht weggelassen werden.
+
+Unter KAOS gilt:
+1)   Es gibt das Gerät NUL:
+2)   Auch "con","a:\Con" oder "con.c" usw. werden als Geräte erkannt, dies 
+     wegen der behaupteten Kompatibilität zu MS-DOS.
+3)   Das Erstellen von Ordnern mit Gerätenamen sowie das Umbenennen in ein 
+     Gerät wird von KAOS abgewiesen.
+
+
+5. Kommandozeilen- Auswertung
+-----------------------------
+
+Vor  Ausführung  jeder Kommandozeile (ob von Tastatur oder  Batch-  Datei) 
+werden Parameter voneinander getrennt, evtl. Datei - Umlenkungen vorgenom-
+men und Environment- Variable ausgewertet.  Das Trennzeichen ist immer die 
+Leerstelle,  während  unter  MS-DOS auch das  Komma  zugelassen  ist.  Mit 
+Setzen in Anführungszeichen wird die Auswertung verhindert.  Eine Zeichen-
+kette in Anführungszeichen ist immer ein ganzer Parameter,  egal, ob davor 
+oder  dahinter  oder  dazwischen  Leerzeichen  oder  andere  Sonderzeichen 
+('>','<','|','%') stehen oder nicht.  Die Auswertung von Variablen wie  %1 
+oder  %path%  oder  Steuerzeichen wie %\n%  kann  durch  Einklammerung  in 
+Hochkommata verhindert werden.
+
+"......"          ... ist EIN Parameter, kann ' oder SPACE enthalten.
+'......'          Wertet ... nicht aus, kann " oder SPACE enthalten.
+%var%             Gibt Wert von var (mit SET gesetzt) an, falls vorhanden.
+%%                Das '%'- Zeichen selbst
+%\n%              Zeilenvorschub (Line Feed)
+%\r%              Wagenrücklauf  (Carriage Return)
+%\b%              Rückschritt    (Backspace)
+%\t%              Tabulator
+
+Beispiel: SET "f1=dir -q%\n%" belegt eine Funktionstaste.  Beim  Betätigen 
+          wird der Befehl automatisch ausgeführt.
+
+Im Gegensatz zu UNIX werden Environment- Variable in '%' eingeklammert, um 
+-das  Ende  des  Variablennamens  deutlich  zu  markieren;   Ausdrücke  wie 
+"$(pfad)/datei"  (UNIX) sind daher nicht notwendig,  man schreibt  einfach 
+"%pfad%\datei".
+
+Bemerkung: MS-DOS  kennt weder die einfachen Anführungszeichen ',  um  die 
+           doppelten Anführungszeichen " innerhalb eines Parameters einge-
+           ben zu können,  noch die Möglichkeit, Environment- Variable mit 
+           Hilfe des % - Zeichens innerhalb der Eingabezeile einzusetzen.
+
+
+6. Editor- Steuertasten
+-----------------------
+
+Wegen der vielen Fehler des Systemaufrufs Cconrs() (falsche Behandlung von 
+Umlauten,  falsche  Reaktion bei Überlauf des Eingabepuffers,  Fehler  bei 
+Eingaben  über ein Zeilenende hinaus) enthält CMD eine eigene Routine  zur 
+Eingabe einer Zeile. Sie wird benutzt bei der Eingabe eines Kommandos, bei 
+DATE und TIME.  Da von stdin gelesen wird, kann die Eingabe auch umgelenkt 
+werden.
+
+Der  größte Vorteil der eigenen Eingaberoutine ist  die  Möglichkeit,  die 
+Funktionstasten  frei zu definieren.  Die Belegung dieser Tasten steht  im 
+Environment, wird also mit dem SET- Befehl vorgenommen. Ein Beispiel:
+
+  SET "f1=edit "
+
+belegt die Funktionstaste F1 mit der Zeichenkette "edit ".  Wenn wie  hier 
+die Zeichenkette Leerstellen enthält, muß der Parameter des SET- Kommandos 
+in Anführungszeichen gesetzt werden.  Für die Taste F10 muß F0 geschrieben 
+werden. Sinnigerweise sollten die Funktionstasten- Belegungen zusammen mit 
+der PATH- Definition in der AUTOEXEC.BAT- Datei stehen.
+Folgende Sondertasten werden benutzt:
+
+F1..F10             Je nach Belegung
+TAB                 Cursor an Anfang/Ende der Eingabe
+BS                  Zeichen links von Cursor löschen
+DEL                 Zeichen unter Cursor löschen
+RETURN              Eingabe abschließen, Befehl in UNDO- Puffer
+ENTER               Eingabe abschließen
+INSERT              Einfüge- /Überschreibmodus wechseln
+CLR                 Eingabe löschen
+UNDO                letzte Eingabe aufrufen
+Cursor L/R          Cursor bewegen
+
+Unter KAOS gilt:
+
+  Es wird einfach der Cconrs- Aufruf (bzw.  Fread(STDIN,...) benutzt. KAOS 
+  enthält komplett den oben beschriebenen Editor, der damit jedem Programm 
+  zugänglich ist.  Damit sind unter jedem Programm, das von KCMD gestartet 
+  wurde,  die Funktionstasten belegt (z.B. SID,PROBE,PASCAL- Programme mit 
+  readln(), FORTRAN- Programme mit READ(*,*) usw.).
+
+  In  KAOS 1.4 ist der Zeileneditor noch einmal verbessert  und  erweitert 
+  worden, siehe dortige Dokumentation!
+
+
+7. Starten von Programmen (Externe Kommandos)
+---------------------------------------------
+
+Die  Programme  auf  der Diskette/Harddisk werden  als  externe  Kommandos 
+bezeichnet.  Insbesondere  gilt  das für  solche,  die  die  Kommandozeile 
+auswerten  (i.a.  alle  TTPs).  Bei der Umlenkung  der  Standardein-  bzw. 
+Ausgabe  ist darauf zu achten,  daß einige Laufzeitsysteme  von  Compiler-
+sprachen  von  sich  aus die Kommandozeile  nach  Einträgen  wie  ">datei" 
+absuchen  und  die  Ausgabe selbst  umlenken.  Will  man  diese  Umlenkung 
+benutzen,  muß man den Ausdruck ">datei" in Anführungszeichen  setzen,  um 
+die Auswertung durch CMD zu verhindern.
+
+An  das aufrufende Programm wird außer der Kommandozeile auch  eine  Kopie 
+des (durch SET anzeigbaren) Environments übergeben.  Das Programm kann  so 
+alle Einträge des Environments verwenden,  ohne sie jedoch zu ändern (z.B. 
+die PATH- Variable oder die Funktionstasten- Definitionen). Am einfachsten 
+zeigt sich dieser Effekt,  wenn man von CMD aus einfach noch einmal  "CMD" 
+eingibt.
+
+Nützlich  ist  die Einrichtung der PATH-  Variablen,  die  es  ermöglicht, 
+externe  Kommandos  aufzurufen,  die sich nicht im  aktuellen  Verzeichnis 
+befinden, ohne lange Pfadangaben zu machen. Beispiel:
+
+Sei  PATH=p1;p2;  gesetzt und als Kommando  "edit"  eingegeben.  Kommandos 
+werden in folgender Reihenfolge gesucht:
+
+- Internes Kommando "edit"
+- Batchdatei   "edit.bat",    "edit.btp"
+- TOS-Programm "edit.ttp",    "edit.tos"
+- GEM-Programm "edit.prg",    "edit.app"
+- Batchdatei   "p1\edit.bat"  "p1\edit.btp"
+- TOS-Programm "p1\edit.ttp", "p1\edit.tos"
+- GEM-Programm "p1\edit.prg", "p1\edit.app"
+- Batchdatei   "p2\edit.bat", "p2\edit.btp"
+- TOS-Programm "p2\edit.ttp", "p2\edit.tos"
+- GEM-Programm "p2\edit.prg", "p2\edit.app"
+
+Man kann den Dateityp auch explizit angeben (z.B.  "edit.prg"),  wenn  man 
+verhindern will,  daß eine gleichnamige Batchdatei o.ä.  aufgerufen  wird. 
+Der  Dateityp .ACC wird nicht automatisch gesucht,  wenn  keine  Extension 
+eingegeben wurde,  kann aber explizit etwa mit "C:\KAOSCONF.ACC" gestartet 
+werden.  Programme  mit Extension .ACC werden wie Programme mit  Extension 
+.PRG oder .APP im Grafikmodus gestartet.
+
+Gibt man einen expliziten Pfad an,  z.B. "a:edit", wird die PATH- Variable 
+nicht verwendet und nur im angegebenen Directory gesucht.
+
+Achtung:  Beim Betrieb als Accessory werden Kommandos,  die auf .PRG  oder 
+.APP enden,  nicht automatisch gesucht und daher nicht gefunden,  wenn man 
+keine Extension eingibt.  Dies ist als Vorsichtsmaßnahme nötig,  da GEM es 
+nicht schafft,  mehrere Applikationen gleichzeitig zu  verwalten.  Startet 
+man  etwa  WORDPLUS von WORDPLUS aus,  gibt  es  Bombenterror.  Eigentlich 
+könnte ja AES diesen (häufig auftretenden) Fall abfangen, aber leider...
+Will man trotz aller Warnungen ein Programm mit Endung .PRG  starten,  muß 
+man die Extension mit eingeben.
+
+GEM-  Programme  werden  mit Mauszeiger und  ohne  Cursor  gestartet.  Der 
+etv_critic-  Handler  des DESKTOP wird  installiert  (Diskettenfehler  per 
+Alertbox  anzeigen).  Der Bildschirm wird bei Aufruf des  Programms  nicht 
+gelöscht. Man kann dies aber vorher durch CLS tun.
+
+TOS-  Programme oder Batch- Dateien werden mit Cursor und ohne  Mauszeiger 
+gestartet. Der etv_critic- Handler des CMD bleibt installiert.
+
+Ansonsten  besteht kein Unterschied zwischen dem Aufruf von GEM- und  TOS- 
+Programmen.   Selbstverständlich   können  Parameter  an  GEM-   Programme 
+übergeben  werden.  Ob  diese auch ausgewertet  werden,  ist  eine  andere 
+Frage...  Die  Dateiarten  BAT/BTP und TOS/TTP und PRG/APP  sind  für  CMD 
+jeweils äquvalent.  Der Dateityp BTP existiert für die speziellen  Freunde 
+von Neodesk.
+
+Nach dem Aufruf jedes Programmes wird dessen Rückgabewert untersucht.  Ist 
+er  negativ,  wird er als DOS- oder BIOS- Fehlercode interpretiert und  im 
+Klartext ausgegeben.  Beim Designen eigener Programme kann man  beispiels-
+weise so kodieren:
+
+     if   (0 > (handle = Fopen("program.hlp",O_RDONLY)))
+          exit(handle);       /* Mit DOS- Fehlercode beenden */
+
+oder:
+
+     if   (NULL == (ptr = (char *) Malloc(10240L)))
+          Pterm((int) ENSMEM);
+
+statt:
+     if   (...)
+          {
+          fprintf(stderr,"Nicht genügend Speicher!\n");
+          exit(1);
+          }
+
+Das  spart nicht nur Tipparbeit,  sondern grenzt den Fehler  (unter  KAOS, 
+denn TOS liefert häufig falsche Codes) häufig auch noch besser  ein,  z.B. 
+im oberen Fall:
+  "Datei nicht gefunden"
+  "Pfad nicht gefunden"
+  "Ungültiges Laufwerk"
+  "Interner Fehler"
+  "Nicht genügend (interner) Speicher"
+  "Nicht genügend Dateihandles"
+  "Spur nicht gefunden"
+  "CRC- Fehler"
+  "Sektor nicht gefunden"
+  "Laufwerk nicht bereit"
+
+
+8. Batch- Dateien
+-----------------
+
+Das  Konzept  der Batch- Datei entspricht im wesentlichen dem  im  MS-DOS. 
+Batch- Befehle sind GOTO,SHIFT,IF,END,FOR,PAUSE.
+
+Das Label für GOTO sieht so aus:  ":label". Es steht am Zeilenanfang einer 
+Zeile der Batchdatei. Steht dahinter ein Leerzeichen, so wird alles rechts 
+von dem Leerzeichen stehende ignoriert. Mit ": Kommentar" kann man so eine 
+Batchdatei  kommentieren,  ein  Befehl REM des MS-DOS wird bei  CMD  nicht 
+benötigt.
+
+Das ECHO- Flag wirkt bei CMD nur auf die Ausführung von  Batchdateien.  Es 
+ist  normalerweise (anders als bei MS-DOS) ausgeschaltet und  braucht  nur 
+mit ECHO ON eingeschaltet zu werden, wenn man eine komplizierte Batchdatei 
+verfolgen möchte.
+
+Batchdateien können verschachtelt werden,  die neue Batchdatei erhält auch 
+neue Parameter. Bis zu 3 Ebenen sind möglich.
+
+Eine Batchdatei kann mit CTRL-C abgebrochen werden.  Nach jeder Ausführung 
+einer  Kommandozeile  prüft CMD,  ob CTRL-C im  Tastaturpuffer  steht.  In 
+diesem  Fall wird der gesamte Batchprozeß sofort unterbrochen,  also  auch 
+bei Verschachtelung der Batchdateien sofort die nächste Kommandozeile  von 
+der Tastatur erwartet.
+
+Enthält  das  Kommando zum Aufruf einer Batchdatei eine  Ein-/  Ausgabeum-
+lenkung (für irgendeinen oder mehrere der 6 Standard- Kanäle), so gilt (im 
+Gegensatz  zu  MS-DOS)  die  Umlenkung  für  die  ganze  Batchdatei.  Soll 
+innerhalb  der  Batchdatei  eine  Ausgabe  unbedingt  auf  den  Bildschirm 
+ausgegeben werden, kann man z.B. schreiben:
+
+"ECHO string >CON:"
+
+Die  folgenden  Zeilen der Batchdatei verwenden wieder den für  die  ganze 
+Batchdatei gültigen Ausgabekanal.
+
+
+9. CMD als Accessory. Allgemeines und spezielles 
+------------------------------------------------
+
+CMD ist ein Programm, daß, einmal gestartet oder aktiviert, völlig auf GEM 
+verzichtet. Es ist in seiner Funktion völlig von DOS abhängig.
+Ein Accessory läuft bei GEM unter einer eigenen "Applikation",  aber unter 
+demselben "Prozeß" wie das gerade laufende Hauptprogramm.  Das heißt,  daß 
+es  sich  für  AES um zwei verschiedene Applikationen,  für  DOS  aber  um 
+denselben   Prozeß   handelt.   Gerade  letzteres  führt   zu   ziemlichen 
+Schwierigkeiten, da KCMD.ACC für DOS kein eigenständiges Programm ist.
+DOS merkt sich bei den folgenden Resourcen, welchem Prozeß sie angehören:
+
+1)   geöffnete Dateien
+2)   Speicherblöcke (per Malloc geholt)
+3)   Standardpfade
+4)   Standardlaufwerk
+5)   Standarddateien.
+
+Anhand   des   PD   (ProzeßDeskriptor)  wählt   DOS   zum   Beispiel   das 
+Standardlaufwerk aus,  so wie etwa VDI anhand des Gerätehandles die gerade 
+eingestellte   Füllfarbe   verwendet.   Ein  Accessory,   das   etwa   das 
+Standardlaufwerk   oder  einen  Pfad  ändert,   würde  das   Hauptprogramm 
+beeinflussen und ggf.  in Schwierigkeiten bringen. Andererseits müßten bei 
+jeder  Aktivierung  des  Accessories die  Pfade  und  Standarddateien  vom 
+Hauptprogramm wieder übernommen werden.
+
+Die  Antwort  auf  die  Lösung  all  dieser  Probleme  ist  einfach,   die 
+Realisierung schon schwieriger:
+
+Man müßte KCMD.ACC als EIGENEN Prozeß laufen lassen.
+Wie teilt man AES eine neue Applikation mit : appl_init()
+Wie identifiziert AES eine Applikation: durch eine ap_id ("Handle")
+Wie löscht man diese Applikation wieder: appl_exit()
+Wie teilt man VDI eine neue "Workstation" mit: v_opnvwk()
+Wie identifiziert VDI eine "Workstation": durch ein Handle
+Wie löscht man eine solche wieder: v_clsvwk()
+
+Wie erzeugt man einen neuen Prozeß: durch Pexec()
+Wie identifiziert DOS einen Prozeß: durch den PD (Basepage)
+Wie löscht man einen Prozeß: mit Pterm() oder Ptermres()
+
+Leider  verwaltet das altmodische GEMDOS keine "Prozeßhandles",  die  sich 
+wie in moderneren Betriebssystemen erzeugen und wieder löschen lassen.
+Was  bleibt also:  Pexec() erzeugt einen neuen Prozeß.  Der Modus 0  kommt 
+nicht in Frage, er lädt eine Programmdatei, das möchten wir vermeiden. Die 
+Modi  5  (Basepage  anlegen)  und  dann  4  (starten)  könnten  vielleicht 
+funktionieren.
+
+Was passiert aber mit unserem Prozeß,  wenn er per "exit"  verlassen wurde 
+und die Hauptapplikation wieder zum Zug kommen soll?  Nehmen wir etwa  an, 
+wir  haben für Laufwerk A:  den Standardpfad "\texte",  und die Disk  wird 
+gewechselt,  während das Accessory nicht aktiv ist.  Wie ist es umgekehrt, 
+wenn die Hauptapplikation den Pfad "a:\meinetexte" hat, und wir müssen die 
+Disk wechseln, während KCMD.ACC aktiv ist.
+
+Die Antwort auf alle diese Fragen ist: Durcheinander
+
+Es sei denn, man verwendet KAOS:
+
+KAOS  behandelt bei Diskwechseln nicht nur den laufenden  Prozeß,  sondern 
+auch alle Vorgänger (über p_parent verkettet).  Nur so ist sichergestellt, 
+daß  auch  die "schlafenden" Prozesse nicht "abgehängt"  werden  und  alle 
+Diskwechsel mitbekommen über:
+
+1)   Ungültigmachen des aktuellen Pfades (zurück zur Root)
+2)   Ungültigmachen aller Standarddateien, die auf der alten Disk liegen
+
+Also  läuft  KCMD.ACC  ohne größere Überraschungen  nur  unter  KAOS.  Die 
+Umschaltung  der  Prozesse geschieht ganz problemlos über die ab  TOS  1.2 
+dokumentierte  Systemvariable  _run,  die im TOS-  Header  enthalten  ist. 
+Diese Methode ist einfacher als das Erzeugen einer Basepage o.ä.
+
+Wird  KCMD.ACC vor Aktivieren des Desktop zur  Initialisierung  gestartet, 
+passiert folgendes:
+
+Die Basepage von KCMD.ACC (die bisher für GEMDOS unbekannt ist),  wird als 
+Prozeß  unter den Ur-PD eingehängt (das Großelter des  Desktop).  So  kann 
+KCMD.ACC alle Diskwechsel mitbekommen,  solange es  schläft.  Anschließend 
+wird einfach in den event-multi gesprungen.
+
+Wird KCMD.ACC nun aktiviert, tut sich folgendes:
+
+KCMD.ACC  hängt  seine  Basepage  aus  der  Kette  der  Prozesse  aus  und 
+installiert wieder NULL als Ur-Großelter des Desktop.  Anschließend  hängt 
+sich  KCMD.ACC über die laufende Applikation.  Für GEMDOS sieht  es  jetzt 
+also so aus,  daß KCMD.ACC von der Hauptapplikation über Pexec() gestartet 
+wurde.  Schließlich wird die Variable _run auf KCMD.ACC geleitet, also für 
+GEMDOS der neue Prozeß gestartet.
+
+Bei  der  Eingabe  von "exit" wird wieder _run  auf  die  laufende  Haupt- 
+Applikation gelegt und KCMD.ACC als Ur-Großelter des Desktop installiert.
+
+Durch diese Vorgehensweise wird erreicht,  daß sowohl AES als auch  GEMDOS 
+das Accessory als eigenständige Applikation bzw.  Prozeß ansehen und es zu 
+keinen "Besitzstreitigkeiten" oder "Kompetenzproblemen" kommt.
+
+
+Große  Probleme bereitet das Starten von Programmen von  Accessories  aus. 
+Die  Erfahrung  mit verschiedenen  Accessories  (STOOLS,  Schröttle-Shell) 
+zeigte folgendes Verhalten:
+
+- Applikationen  (Programme  unter  GEM) DÜRFEN  NICHT  gestartet  werden. 
+  Bisher kann AES nur eine Applikation gleichzeitig verwalten.
+- Das Starten von TOS- Programmen unter DESKTOP ist möglich
+- Das  Starten  von TOS- Programmen unter anderen Applikationen  ist  zwar 
+  zunächst   möglich,   die  Eingabe  von  "exit"  zur  Rückkehr  in   die 
+  Hauptapplikation endet jedoch IMMER mit einem Systemabsturz.
+
+Der Grund für das letztere Verhalten ist folgendes:
+
+GEMDOS legt für jeden Prozeß einen Supervisor- Stack an.  Dieser wird  für 
+Interrupts  genutzt;  auch die Rücksprungadresse von einem Trap wird  hier 
+aufbewahrt.  Leider ist dieser "Interrupt- Stack" jedesmal DERSELBE (nicht 
+nur  der gleich,  sondern tatsächlich derselbe).  TOS  1.2  beispielsweise 
+setzt den ssp immer auf $755a beim Start eines Prozesses.
+Beim Aktivieren des ACC geschieht folgendes:
+
+- Die  Hauptapplikation  ruft AES  auf  (evnt...);  Rücksprungadresse  und 
+  geretteter SR liegen auf dem Supervisorstack der Hauptapplikation.
+- Der  Kontextwechsel (Umschalten aller Register einschließlich  ssp)  auf 
+  das ACC findet statt.
+- Das ACC läuft.  ACCs haben einen eigenen Supervisor- Stack,  der von AES 
+  angelegt  wird,  bevor  das  ACC (nicht über  Pexec()!)  das  erste  Mal 
+  gestartet wird.
+- Wird nun ein neuer Prozeß gestartet,  legt GEMDOS denselben  Supervisor- 
+  Stack an,  wie ihn die Haupapplikation hat.  Beim ersten Interrupt  oder 
+  DOS- Aufruf werden Rücksprungadresse und geretteter SR zerstört.
+  Soll  nun  die  Hauptapplikation  wieder  gestartet  werden,  liegt  die 
+  Rücksprungadresse nicht mehr auf dem Stack. Das System stürzt ab.
+
+Der Fehler tritt im Desktop nicht auf, da DESKTOP einen eigenen Interrupt- 
+Stack hat und ständig im Supervisormodus läuft.
+Der Fehler ist offensichtlich gleichzeitig AES und GEMDOS anzulasten.  Man 
+kann  auch sagen,  daß das Starten von Prozessen von einem  Accessory  aus 
+einfach nicht erlaubt ist.
+
+Die  Korrektur:  KCMD.ACC weiß von TOS 1.0,1.2,1.4 (vom  6.4.89),  welchen 
+Default- Supervisor- Stack GEMDOS für neue Prozesse anlegt.  Es fragt  die 
+TOS- Versionsnummer ab und merkt sich diesen Default- SSP.
+
+Wird  das ACC aktiviert,  werden die obersten 20 Langworte  dieses  Stacks 
+gesichert  (sicherheitshalber,  es müßten eigentlich die obersten 3  Worte 
+genügen).  Wird  dieser  Stack zerstört,  macht das  nichts,  da  vor  dem 
+nächsten  AES-  Aufruf  (zur  Rückkehr in  die  Hauptapplikation)  die  20 
+Langworte wieder zurückgeschrieben werden.  Bisher hat sich diese Maßnahme 
+als  ausreichend  erwiesen.   Trotzdem  könnten  im  Einzelfall   Probleme 
+auftreten.  Man sollte vorher immer testen,  ob der Aufruf von  Programmen 
+funktioniert, bevor man wichtige Daten aufs Spiel setzt.

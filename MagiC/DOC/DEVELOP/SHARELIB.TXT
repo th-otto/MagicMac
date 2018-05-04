@@ -1,0 +1,302 @@
+Gemeinsame Bibliotheken (Shared Libraries) in MagiC ab V6.00
+------------------------------------------------------------
+
+Andreas Kromke
+26.10.97
+Tabulatorweite: 5
+énderungen:
+- 20.8.99: Slbclose() ergÑnzt und SLBEXEC korrigiert
+
+
+Anmerkung:	Shared Libraries wurden bereits mit Version 5.20
+			eingefÅhrt. Aufgrund eines Designfehlers muûte ich
+			das Format der Bibliothek ab Version 6.00 Ñndern.
+			Da unterschiedliche "magische" Kennungen verwendet
+			werden, kann es aber nicht zu AbstÅrzen kommen,
+			sondern die Bibliotheken fÅr 6.00 werden lediglich
+			von der alten Version 5.20 nicht erkannt und
+			umgekehrt. Aufgrund mehrerer UnzulÑnglichkeiten
+			in der Version 5.20 sollten ohnehin nur
+			Bibliotheken fÅr 6.00 erstellt werden.
+
+
+1. Was sind Shared Libraries ?
+==============================
+
+Meist werden Bibliotheken mit hÑufig genutzten Prozeduren in einem 
+eigenen Objektmodul zusammengefaût und mit mehreren Programmen 
+zusammengelinkt. Dabei erhÑlt jedes Programm eine Kopie der 
+Bibliothek, die fest in die PRG-Datei integriert wird.
+Shared Libraries dagegen existieren als eigene Dateien nur ein 
+einziges Mal auf der Festplatte und werden von mehreren Programmen, 
+auch gleichzeitig, verwendet.
+
+
+2. Wozu Shared Libraries ?
+==========================
+
+GegenÅber fest eingelinkten Bibliotheken ergeben sich eine Reihe von 
+Vorteilen:
+
+- Speicherplatzersparnis auf der Festplatte. Je mehr Programme 
+  dieselben Bibliotheken verwenden, desto grîûer ist die Ersparnis.
+- Speicherplatzersparnis im Hauptspeicher. Dies kommt erst dann zum 
+  Tragen, wenn mehrere Programme gleichzeitig geladen sind, die 
+  dieselbe Bibliothek verwenden.
+- Systematische Wartung fÅr den Programmierer: Beim Update genÅgt es  
+  mitunter, nur eine neue Bibliothek nachzureichen. Von diesem Update 
+  profitieren dann alle Programme, die die Bibliothek verwenden.   
+  Auûerdem sind weniger Quelltexte zu warten. Wenn eine Bibliothek   
+  verÑndert wurde, mÅssen nicht alle Programme, die sie verwenden, 
+  neu Åbersetzt werden.
+
+NatÅrlich gibt es auch Nachteile:
+
+- Das Programmladen dauert etwas lÑnger. Jedoch nur, wenn die 
+  Bibliothek noch nicht geladen ist.
+- Es kînnen sich Wechselwirkungen von Updates verschiedener Programme 
+  ergeben. Beim Austausch einer Bibliothek kînnen mehrere Programme 
+  betroffen sein (positiv oder negativ).
+- Bei der Installation eines Programms mÅssen Dateien in den XTENSION-
+  bzw. den ersten in der Suchliste SLBPATH angegebenen Ordner (ab 
+  MagiC 6) kopiert werden, es ist also nicht mehr ohne weiteres 
+  nachvollziehbar, zu welchem Programm welche Shared Library gehîrt.
+  Abhilfe z.B.:
+
+	- Nur Aliase in den XTENSION-Ordner bzw. den ersten durch die
+	  Environment-Variable SLBPATH (s.u.) angegebenen Ordner legen.
+	- SharedLibraries in einem Unterverzeichnis des Programms belassen
+	  und lediglich die Environment-Variable SLBPATH in MAGX.INF
+	  um dieses Verzeichnis erweitern (ab MagiC 6 mîglich). Falls
+	  noch keine Variable SLBPATH existiert, muû der XTENSION-Pfad dort
+	  zunÑchst eingetragen werden.
+
+
+3. Wie verwende ich eine Bibliothek ?
+=====================================
+
+ZunÑchst einmal: Das ist ganz einfach. Als Beispiel steht das 
+Programm SLC_DEMO ('C' steht fÅr Client).
+
+ZunÑchst benîtigt man zum Aufruf der beiden neuen DOS-Funktionen das 
+Objektmodul SLB_BIND, dazu muû man die Datei SLB.H einbinden.
+
+FÅr jede benutzte Bibliothek deklariert man einen Deskriptor vom Typ 
+SHARED_LIB und einen Funktionszeiger vom Typ SLB_EXEC.
+
+Jede Bibliothek wird mit Slbopen() geîffnet (das ôffnen und Schlieûen 
+sollte nur im User-Modus erfolgen), dabei werden folgende Parameter 
+Åbergeben:
+
+	char *name		Der Name der Bibliothek, in Groûschrift, 
+					inkl. Extension (".SLB"). Der 	
+					Bibliotheksname ist gleichzeitig Dateiname.
+	char *path		Wenn dieser Parameter nicht NULL ist, wird 
+					hier zuerst nach der Bibliothek gesucht (der 
+					Pfad muû in MagiC 5.20 mit '\' abgeschlossen 
+					sein; dies ist in MagiC 6 nicht mehr nîtig).
+					Der Pfad sollte absolut sein, damit die
+					Shared Library weiû, wo sie liegt.
+					Wenn der Parameter NULL ist oder die 
+					Bibliothek im angegebenen Pfad nicht 
+					gefunden wurde, wird im XTENSION-Ordner 
+					gesucht.
+					Ab MagiC 6 wird die Environment-Variable
+					SLBPATH ausgewertet. Sie enthÑlt wie PATH eine
+					Liste der Suchpfade, jeweils durch ';' getrennt.
+					Ist die Variable definiert, wird nicht mehr
+					extra im XTENSION-Ordner gesucht.
+	LONG min_ver		Minimal notwendige Versionsnummer der 
+					Bibliothek.
+					Wenn ein Programm etwa die Version 3 
+					benîtigt, die Bibliothek aber erst Version 2 
+					ist, wird ERANGE zurÅckgegeben. Die 		
+					tatsÑchliche Versionsnummer der Bibliothek 
+					wird als RÅckgabewert geliefert.
+	SHARED_LIB *sl		Zeiger auf den Deskriptor. Wenn die 
+					Bibliothek geîffnet wurde, wird hier der 
+					Deskriptor eingetragen.
+	SLB_EXEC *fn		Zeiger auf den Funktionszeiger. Wenn die 
+					Bibliothek geîffnet wurde, wird hier der 
+					Funktionszeiger eingetragen.
+
+RÅckgabewert kann sein:
+
+	>= 0				Alles OK, Versionsnummer der Bibliothek.
+	ERANGE			Versionsnummer zu niedrig
+	EACCDN			Bibliothek schon von diesem Prozeû geîffnet
+	EFILNF			Bibliothek nicht gefunden
+	ENSMEM			zuwenig Speicher
+	...				andere Fehlercodes.
+
+Die Bibliothek kann nun verwendet und schlieûlich mit Slbclose() 
+wieder geschlossen werden. Dabei wird nur ein Parameter Åbergeben:
+
+	SHARED_LIB sl		Der Deskriptor, den man von Slbopen() 
+					erhalten hat.
+
+Das Schlieûen ist nicht unbedingt notwendig, da alle geîffneten 
+Bibliotheken bei Programmende automatisch geschlossen werden, aber es 
+ist guter Programmierstil. Auf keinen Fall darf eine Bibliothek 
+mehrmals geschlossen werden, der Kernel kann solche Fehler nicht 
+erkennen!
+
+Einige Bibliotheken, wie z.B. EDITOBJC.SLB, installieren neue 
+Systemaufrufe, in diesem Fall die AES-Aufrufe 210..217. FÅr diese 
+Bibliotheken wird der Funktionszeiger nicht benîtigt. Ansonsten 
+werden alle Funktionen der Bibliothek Åber den Funktionszeiger 
+aufgerufen. Die Bibliotheks-Aufruf-Funktion ist folgendermaûen 
+deklariert:
+
+ typedef LONG cdecl (*SLB_EXEC)( SHARED_LIB sl, LONG fn,
+ 				WORD nargs, ... );
+
+Der Aufruf jeder Bibliotheksfunktion erwartet folgende Parameter:
+
+     Den Deskriptor der Bibliothek
+     Ein Langwort (!!!) fÅr die Funktionsnummer
+     Ein WORD, das die Anzahl der Argumente in WORDs
+      (d.h. alle "..."-Argumente) angibt
+     weitere Argumente je nach Funktion
+
+Am besten geschieht der Aufruf Åber ein Makro, das in einer 
+Headerdatei fÅr die Bibliothek definiert werden sollte, z.B.:
+
+JPEG.H:
+
+#define SLBJPEG_WANDELN (a,b) (*slbjpeg_exec)(slbjpeg, 7L, 4, a, b)
+
+Hierbei werden <slbjpeg_exec> und <slbjpeg> bei Slbopen() ermittelt, 
+7L ist die Funktionsnummer fÅr den Aufruf WANDELN, 4 bezeichnet die 
+LÑnge der folgenden Argumente (a und b sind zwei Zeiger => 2*4 Bytes 
+=> 4 WORDs), a und b sind die Argumente der Funktion WANDELN.
+
+Wenn die Funktion nicht vorhanden ist (die Bibliothek enthÑlt fÅr 
+diese Funktion einen Nullzeiger, oder die Funktionsnummer ist hîher 
+als die Anzahl der tatsÑchlich vorhandenen Funktionen), erhÑlt man 
+EINVFN als Funktionsergebnis (tatsÑchlich klappt das erst ab MagiC 6
+korrekt).
+
+
+4. Wie schreibe ich eine Bibliothek?
+====================================
+
+Auch dazu gibt es eine Beispielbibliothek SLB_DEMO, die alle 
+notwendigen Elemente und Beschreibungen enthÑlt.
+Am besten, man kopiert SLB_DEMO.C, LIBHEAD.S und SLB_DEMO.PRJ und 
+modifiziert die Dateien entsprechend. Es muû dringend darauf geachtet 
+werden, daû Bit 3 der Flags im Programmheader einer Bibliothek 
+gesetzt ist, dazu kann man PH_BIT3.TTP verwenden.
+
+LIBHEAD ist der Header fÅr eine SharedLibrary. Der Zeiger auf die 
+Funktionsnamen kann entfallen, ansonsten zeigt er auf eine Tabelle 
+von Zeigern mit den Namen der Bibliotheksfunktionen.
+Die Anzahl der Funktionen muû korrekt festgelegt werden, ebenso die 
+Tabelle der Funktionen und der Bibliotheksname, welcher mit dem 
+Dateinamen identisch ist (wichtig, sonst werden Bibliotheken bei 
+jedem Aufruf von Slbopen() neu geladen, hier fehlt eine 
+Sicherheitsabfrage im Kernel).
+Beim HinzufÅgen von Funktionen muû darauf geachtet werden, die 
+Funktionsanzahl entsprechend anzupassen und ggf. die Versionsnummer 
+zu erhîhen.
+
+Bei îffentlich zugÑnglichen SharedLibraries ist sicherzustellen, daû 
+dokumentierte Funktionsaufrufe nie geÑndert werden! Entweder sind 
+neue Parameter zu ergÑnzen (die aufgerufene Funktion kann die Anzahl 
+der tatsÑchlich Åbergebenen Parameter abfragen), oder es ist eine 
+neue Funktionsnummer zu verwenden.
+FÅr die Funktionszeiger sind auch Nullzeiger zulÑssig, sie liefern 
+beim Aufruf der Funktion ein EINVFN.
+
+Folgende Funktionen zur (De-) Initialisierung sind obligatorisch:
+
+slb_init()/slb_exit()
+---------------------
+
+Werden beim Laden bzw. Entfernen der Bibliothek aufgerufen, und zwar 
+im Supervisor-Modus und im Kontext (Prozeû) der Bibliothek.
+Typischerweise lÑdt slb_init() eine Konfigurationsdatei, alloziert 
+globalen Speicher fÅr die Bibliothek und îffnet eine virtuelle VDI-
+Workstation. slb_exit() schreibt die Konfigurationsdatei zurÅck, gibt 
+den Speicher wieder frei und schlieût die VDI-Workstation.
+
+Falls slb_init() eine Datei îffnet, darf auf das Handle erst wieder 
+bei slb_exit() zugegriffen werden, da alle anderen Aufrufe der 
+Bibliothek im Kontext des Aufrufers ablaufen.
+
+Ab MagiC 6 erhÑlt die Bibliothek in der Kommandozeilen-Struktur der 
+Basepage eine normale 'C'-Zeichenkette Åbergeben, welche den 
+vollstÑndigen Pfad der SharedLibrary enthÑlt. Falls die SharedLibrary 
+Konfigurations- oder RSC-Dateien laden muû, kann der Pfad extrahiert 
+und der Dateiname der Konfigurationsdatei entsprechend 
+zusammengebastelt werden.
+
+Falls slb_init() z.B. aufgrund eines Busfehlers beendet wird, erhÑlt 
+der Aufrufer EXCPT als Ergebnis des Slbopen()-Aufrufs. Um die 
+unplanmÑûige Terminierung der Bibliothek abzufangen, installiert der 
+Kernel vor Aufruf von slb_init()/exit() einen etv_term-Handler fÅr 
+die Bibliothek.
+
+slb_open()/slb_close()
+----------------------
+
+Werden beim ôffnen bzw. Schlieûen der Bibliothek aufgerufen. Wenn die 
+Bibliothek nur einmal geîffnet wird, ist die Reihenfolge:
+
+	slb_init()
+	slb_open()
+	slb_close()
+	slb_exit()
+
+Im Gegensatz zu slb_init()/slb_exit() laufen slb_open()/slb_close() 
+im Kontext des Aufrufers und im Usermodus mit dem Userstack des 
+Aufrufers ab, auch dann, wenn der Slbopen()-Aufruf im Supervisormodus 
+erfolgt ist.
+
+Die Bibliothek kann auch bei slb_open Speicher allozieren, dieser 
+gehîrt jedoch dem Aufrufer und sollte bei slb_close() wieder 
+freigegeben werden. Um die Zuordnung von alloziertem Speicher zum 
+Aufrufer zu ermîglichen, wird der Bibliothek bei slb_open(), 
+slb_close() und bei jedem Funktionsaufruf der aktuelle Prozeû-
+Deskriptor mit Åbergeben.
+
+Achtung: Die öbergabe des PD an slb_open() und slb_close() geht
+	    aufgrund eines Bugs in 5.20 erst ab MagiC 6.
+
+Der Kernel stellt sicher, daû die open/close Aufrufe korrekt 
+geschachtelt sind, d.h. ein Prozeû kann eine Bibliothek nicht 
+mehrmals îffnen.
+
+Funktionen
+----------
+
+Funktionen sind nicht obligatorisch, so kann eine Bibliothek auch 
+Systemaufrufe Åber AES oder DOS einhÑngen, die nach Beendigung wieder 
+entfernt werden, i.a. werden jedoch Funktionen zur VerfÅgung gestellt.
+
+Eine Funktion wird mit folgenden Parametern auf dem Stack aufgerufen:
+
+	PD *pd		Prozeû-Deskriptor des Aufrufers, korrespondiert 
+				mit dem zugehîrigen slb_open()/close()
+	LONG fn		Funktionsnummer. Praktisch, wenn mehrere 
+				Funktionen zusammengelegt sind (identische 
+				Funktionszeiger in LIBHEAD)
+	WORD nargs	Anzahl der folgenden Argumente, in WORDs. Hat 
+				eine Funktion eine variable Anzahl von 
+				Parametern, kann die tatsÑchliche Anzahl 
+				ermittelt werden. Sehr praktisch bei 	
+				Erweiterungen, ohne neue Funktionen einzubauen.
+				Beispiel: Erwartet eine Funktion immer einen 
+				Zeiger, optional aber noch ein WORD, erhÑlt sie 
+				entweder 2 oder 3 als <nargs>.
+	...			die Åbrigen Parameter
+
+Die Funktionen werden im Kontext des Aufrufers und mit dessen Stack 
+ausgefÅhrt. Da dieser Aufruf i.a. im User-Modus erfolgt, wird das 
+Multitasking auch bei lÑngeren Aktionen nicht unterbrochen. Das 
+Funktions-Ergebnis kann je nach Funktion LONG, WORD, void usw. sein.
+
+Eine Funktion darf die Register d0-d2 und a0-a1 Ñndern, alle anderen
+Register mÅssen ggf. gerettet werden. Insbesondere darf Register a2
+nicht verÑndert werden, damit Routinen von PureC aus aufgerufen werden
+kînnen.

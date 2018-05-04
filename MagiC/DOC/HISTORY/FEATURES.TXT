@@ -1,0 +1,29 @@
+FEATURES MAGIC 4.50 GEGENöBER 4.02
+==================================
+
+- Windows95-Dateisystem (VFAT). Dateinamen bis 64 Zeichen LÑnge.
+  Volle KompatibilitÑt zu alten Programmen durch eindeutige Kurznamen.
+  Austausch von Medien mit langen Dateinamen zum PC, zur Linux-DOSe
+  und zum Mac.
+  EinschrÑnkung: Geht bisher nicht auf dem Bootlaufwerk.
+- VFAT-XFS kann auch einen Ordner verschieben.
+  EinschrÑnkung: Wird von MGCOPY noch nicht genutzt.
+- Kleinere Korrekturen an XMEN_MGR/MGCOPY/MGSEARCH/Dateiauswahl.
+- MGCOPY nutzt Thread-Mechanismus. Besseres Feedback bei Hintergrund-DMA
+- Anzahl der parallelen Tasks von 20 auf 126 erhîht. Dazu ein automatisch
+  scrollendes PopupmenÅ eingebaut.
+  EinschrÑnkung: Geht bisher nicht mit dem Taskmanager (Ctrl-Alt-Esc)
+- Threads implementiert. MT-fÑhige AES-Bibliothek erhÑltlich.
+- MGFORMAT auf Threads umgestellt und Ikonifizierung eingebaut.
+- EinschrÑnkung: Die Ease gehîrt endgÅltig in die TONNE.
+- _IDT-Cookie installiert.
+- Alle Signalfunktionen von MiNT implementiert.
+- VFAT-XFS: Drastischer Geschwindigkeitsgewinn beim Schreiben auf groûen
+  Partitionen.
+- VFAT-XFS: Umstellung auf 32-Bit-Sektornummern. Damit sind DOS-kompatible
+  Partitionen bis zu 1 GB mîglich. Wechselmedien (Syquest) kînnen mit DOSen
+  ausgetauscht werden.
+  Voraussetzung: HDDRIVER (Hushi kann das, glaube ich, nicht).
+- Die parallelen MiNT-Pexec-Modi implementiert. Damit kann die Mupfel auch
+  Programme parallel im Terminalfenster starten.
+- MAGXDESK: AV-Protokoll eingebaut

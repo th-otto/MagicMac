@@ -1,0 +1,92 @@
+Einstellungen von MagiC
+-----------------------
+
+VFAT
+----
+
+MAGX.INF:	"drives="
+wird per Dcntl() geÑndert
+
+AES
+---
+
+Auflîsung: #_DEV
+- wird per shel_write() geÑndert
+
+Grîûe des Shell-Puffers: #_BUF
+- kann noch nicht geÑndert werden.
+
+Zeichensatz: #_TXT
+- soll nicht verÑndert werden.
+
+Anzahl Fenster: #_WND
+- kann noch nicht geÑndert werden.
+
+Environment: #_ENV
+- kann noch nicht geÑndert werden
+- Abfrage Åber shel_envrn()
+
+Design-Flags: #_FLG
+- kînnen noch nicht geÑndert werden
+- Bit 1: objc_sysvar()
+	/*  Bit 0: Position des Logos 		*/
+	/*  Bit 1: 3D-Effekte ausschalten		*/
+	/*  Bit 2: Backdrop-Button abschalten	*/
+	/*  Bit 3: kein neuer Fenstertitel		*/
+	/*  Bit 4: Fenstertitelname nicht 3D	*/
+	/*  Bit 5: Onlinescrolling nur mit Ctrl	*/
+	/*  Bit 6: Online move/size mit Ctrl	*/
+
+Zeitscheiben-Steuerung: #_TSL
+- Åber AESVARS, Funktionszeiger bei Offset 0x64
+
+Scrap-Verzeichnis; #_SCP
+- Åber scrp_read()/scrp_write()
+
+Auswahlbox-Muster: #_FSL
+- kînnen noch nicht verÑndert werden
+
+Auswahlbox-Sortiermodus: <fslx_sortmode>
+Auswahlbox-Flags: <fslx_flags>
+- Åber fslx_set_flags()
+
+Terminal-Emulator: #_TRM
+- kann noch nicht verÑndert werden
+
+Autostart-APP: #_AUT
+- soll nicht verÑndert werden.
+
+Shell: #_SHL
+- Åber shel_rdef() und shel_wdef()
+
+ACC-Pfad: #_ACC
+- soll nicht verÑndert werden.
+
+APP-Pfad: #_APP
+- soll nicht verÑndert werden.
+
+Kontrollfeld-Daten: #_CTR
+- Åber shel_get()/shel_put()
+
+SubmenÅs: NICHT IN MAGX.INF
+- Åber menu_settings()
+	   LONG  Display; - the submenu display delay
+	   LONG  Drag;    - the submenu drag delay
+	   LONG  Delay;   - the single-click scroll delay
+	   LONG  Speed;   - the continuous scroll delay
+	   WORD  Height;  - the menu scroll height
+
+MenÅs Pulldown/Dropdown:
+- Åber menu_click()
+  (Bit 10 von config_status)
+
+3D-Objekte
+- Åber objc_sysvar()
+	* LK3DIND 	1
+	* LK3DACT 	2
+	* INDBUTCOL	3
+	* ACTBUTCOL	4
+	* BACKGRCOL	5
+	* AD3DVALUE	6
+	*
+	* MX_ENABLE3D	10

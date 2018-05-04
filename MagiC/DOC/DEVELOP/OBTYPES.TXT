@@ -1,0 +1,619 @@
+Objekttypen in MagiC
+--------------------
+
+Andreas Kromke
+7.2.98
+letzte énderung:
+Tabulatorweite: 5
+
+
+1. Einleitung
+=============
+
+Aufgrund der stÑndigen Erweiterungen der GEM-Objektstruktur sowie der 
+teilweise unterschiedlichen Konzepte von MagiC und MultiTOS wird es 
+Zeit, einmal alle Objekttypen und -strukturen geordnet aufzufÅhren 
+und in Zukunft auch auf dem neuesten Stand zu halten.
+
+Diese Datei soll die verschiedenen Varianten sowie ihre VerfÅgbarkeit 
+auf verschiedenen Systemen beschreiben.
+
+
+2. Die Struktur OBJECT
+======================
+
+In allen TOS-kompatiblen Betriebssystemen ist die eigentliche 
+Objektstruktur identisch:
+
+typedef struct {
+	WORD		ob_next;		/* Index des nÑchsten Geschwist */
+	WORD		ob_head;		/* -1 oder Index des ersten Kinds */
+	WORD		ob_tail;		/* -1 oder Index des letzten Kinds */
+	WORD		ob_type;		/* Objekttyp */
+	WORD		ob_flags;		/* Flags */
+	WORD		ob_state;		/* weitere Flags */
+	LONG		ob_spec;		/* je nach Objekttyp */
+	WORD		ob_x;		/* x-Position relativ zum Elter */
+	WORD		ob_y;		/* y-Position relativ zum Elter */
+	WORD		ob_width;		/* Breite */
+	WORD		ob_height;	/* Hîhe */
+} OBJECT;
+
+ob_type
+-------
+
+Das Hibyte wird vom AES nur fÅr SubmenÅs verwendet. Ist das hîchste 
+Bit von ob_type (0x8000) sowie das Bit SUBMENU in ob_flags, so geben 
+Bit 8..14 an, welches SubmenÅ mit dem MenÅeintrag gekoppelt ist. D.h. 
+jede Applikation kann maximal 128 SubmenÅs haben.
+MagiC liest aus ob_type stets nur das Lobyte aus, auûer fÅr die 
+SubmenÅ-Behandlung.
+TOS reagiert auf unbekannte Objekttypen (z.B. die reinen MagiC-Typen 
+G_SWBUTTON usw.) "sauber", d.h. die Objekte werden nicht gezeichnet.
+
+ob_flags
+--------
+
+SELECTABLE (0x0001)
+
+Wird nur von form_do() und form_button() ausgewertet und zeigt an, 
+daû das Objekt auswÑhlbar ist, d.h. beim Anklicken wird in ob_state 
+das Flag SELECTED gewechselt.
+
+DEFAULT (0x0002)
+
+Wird von form_do() und form_keybd() ausgewertet und zeigt an, daû 
+dieses Objekt dasjenige ist, welches bei [Return] ausgewÑhlt wird. Es 
+sollte nur maximal ein Objekt im Baum Defaultobjekt sein.
+Weiterhin bewirkt es beim Objekttyp G_BUTTON einen zusÑtzlichen Rand 
+von einem Pixel auûerhalb des Objekts (d.h. zusammen mit EXIT sind es 
+dann 3 Pixel).
+
+EXIT (0x0004)
+
+Wird von form_do() und form_keybd() ausgewertet und zeigt an, daû 
+bei Anwahl dieses Objekts der Dialog verlassen wird und die Kontolle 
+an den Aufrufer zurÅckgegeben wird.
+Weiterhin bewirkt es beim Objekttyp G_BUTTON einen zusÑtzlichen Rand 
+von einem Pixel auûerhalb des Objekts (d.h. zusammen mit DEFAULT sind 
+es dann 3 Pixel).
+
+EDITABLE (0x0008)
+
+Wird von form_do(), form_keybd() und form_button() ausgewertet und 
+zeigt an, daû der Cursor durch Anklicken bzw. Cursor hoch/runter und 
+Tab/Shift-Tab in dieses Feld gestellt werden kann.
+
+RBUTTON (0x0010)
+
+Von allen Geschwister-Objekten mit RBUTTON muû immer genau eines 
+selektiert sein (ob_state SELECTED). Daher wird dieses Flag von 
+form_do() und form_button() ausgewertet, um bei Selektion des Objekts 
+alle Geschwister-Objekte, die ebenfalls RBUTTON gesetzt haben, 
+zurÅckzusetzen.
+Das Flag wird _NICHT_ von objc_change() ausgewertet, daher muû dieses 
+RÅcksetzen von Hand durchgefÅhrt werden.
+
+LASTOB (0x0020)
+
+Kennzeichnet das letzte Objekt des Baums. Das Flag wird von 
+form_keybd() und form_do() benîtigt, um den Objektbaum linear zu 
+durchsuchen (z.B. nach dem nÑchsten Eingabefeld oder in MagiC 
+auch nach einem Objekt mit TastenkÅrzel).
+
+TOUCHEXIT (0x0040)
+
+Wie EXIT, jedoch wird der Dialog nicht erst bei Loslassen der 
+Maustaste, sondern sofort verlassen. Daher kînnen auch Doppeklicks 
+erkannt werden. Wenn TOUCHEXIT gesetzt ist, ist das Flag EXIT 
+bedeutungslos.
+
+HIDETREE (0x0080)
+
+Das Objekt und alle Unterobjekte werden bei objc_draw() und 
+objc_find() versteckt. Weiterhin wird das Flag ab MagiC 5.20 auch von 
+form_keybd() ausgewertet, wenn Objekte zu TastenkÅrzeln gesucht 
+werden.
+Eine Eingabe in versteckte Objekte (d.h. wenn das Objekt oder 
+irgendein Elter oder Ur-Elter Objekt versteckt ist) ist jedoch immer 
+noch mîglich. Um dies zu verhindern, muû EDITABLE gelîscht werden.
+
+INDIRECT (0x0100)
+
+Dieses Flag ist nur fÅr Objekttypen sinnvoll, bei denen ob_spec ein 
+Zeiger ist. Es bedeutet, daû der Zeiger indirekt ist, d.h. auf einen 
+Zeiger zeigt, der wiederum auf die Daten zeigt.
+
+FL3DIND (0x0200)
+
+Erzeugt unter MultiTOS ein dreidimensionales Objekt. Unter MagiC 
+(ab Version 3.0) erst ab 16 Farben, und wenn der 3D-Effekt nicht 
+abgeschaltet wurde.
+Zu diesem Zweck wird ein hohles, weiû gefÅlltes Objekt hellgrau 
+gezeichnet und ein 3D-Rand ergÑnzt. Dieser Rand liegt bei MultiTOS 
+auûerhalb des Objekt und vergrîûert es dadurch. In MagiC bleibt die 
+Objektgrîûe unverÑndert.
+FÅr alle 3D-Objekte in MagiC gilt, daû G_(BOX)TEXT mit deckendem Text 
+in transparenten Text gewandelt wird. Das ist notwendig, da durch 
+eine DesignschwÑche des VDI deckender Text immer einen weiûen 
+Hintergrund hat.
+
+Die INDICATOR Objekte sind als "rastende" Schalter zu verstehen, d.h. 
+bei Selektion wird das Objekt nicht nur "eingedrÅckt", sondern auch 
+farblich hervorgehoben.
+
+Beim Selektieren eines INDICATOR-Objekts wird die Boxfarbe von 
+hellgrau nach dunkelgrau gewandelt. Ferner wird eine evtl. 
+vorhandener Text in einer anderen Farbe gezeichnet.
+
+Unter MultiTOS funktioniert das folgendermaûen:
+
+     0    <=>  1
+     2    <=>  13
+     3    <=>  15
+     4    <=>  14
+     5    <=>  10
+     6    <=>  12
+     7    <=>  11
+     8    <=>  9
+
+Das funktioniert in MultiTOS jedoch NICHT bei G_BUTTON, G_TITLE und 
+G_STRING, hier bleibt die Textfarbe unverÑndert. Eine Systematik 
+der Farbzuordung ist ebenfalls nicht zu erkennen, auûer daû hellgrau 
+und dunkelgrau und schwarz und weiû vertauscht werden.
+
+MagiC hat daher folgende Umsetzung:
+
+     0    <=>  1
+     8    <=>  9
+     sonst: Bit 3 toggeln, d.h. Farbe abdunkeln/aufhellen
+
+In MagiC funktioniert diese Farbumsetzung natÅrlich auch bei 
+G_BUTTON, G_TITLE und G_STRING.
+objc_change() zeichnet bei Selektion und Deselektion das Objekt immer 
+neu.
+
+FL3DBAK (0x0400)
+
+Im Prinzip wie FL3DIND, soll jedoch ein "Hintergrund-Objekt", z.B. 
+einen Dialog-Hintergrund erzeugen.
+TatsÑchlich besteht der einzige Unterschied darin, daû beim 
+Selektieren das Objekt per XOR-Maske modifiziert wird.
+objc_change() zeichnet bei (De-)Selektion ebenfalls eine XOR-Maske.
+
+FL3DACT (0x0600)
+
+Da ein 3D-Objekt nicht gleichzeitig INDICATOR und BACKGROUND sein 
+kann, wird diese Bitkombination verwendet, um ein ACTIVATOR-Objekt zu 
+erzeugen. Im Prinzip funktioniert es wie FL3DIND, erzeugt jedoch ein 
+Objekt, welches bei Aktivierung "federt" und nicht rastet.
+Beim Selektieren wird ein evtl. vorhandener Rahmen "umgedreht" (um 
+das ReindrÅcken darzutellen), ein eventuell vorhandener Text um 1 
+Pixel nach rechts unten verschoben.
+objc_change() zeichnet bei Selektion und Deselektion das Objekt immer 
+neu.
+
+SUBMENU (0x0800)
+
+Wird in MultiTOS und ab MagiC 5.10 verwendet, um SubmenÅs zu 
+kennzeichnen. menu_attach() setzt dieses Bit in einem MenÅeintrag, um 
+zu kennzeichnen, daû hier ein SubmenÅ angehÑngt ist. Das Hibyte von 
+ob_type enthÑlt dann die SubmenÅ-Nummer (128..255), d.h. Bit 15 von 
+ob_type ist immer gleichzeitig mit SUBMENU gesetzt.
+
+ob_state
+--------
+
+SELECTED (0x0001)
+
+Zeigt, daû ein Objekt "ausgewÑhlt" ist, und zwar i.a. durch 
+VerÑnderung seines Aussehens. So werden etwa 2D-Buttons schwarz, 3D-
+Objekte werden eingedrÅckt. Die Wirkung des Flags ist also vom 
+Objekttyp abhÑngig. Bei G_USERDEF wird, wenn die Zeichenroutine das 
+Flag nicht selbst auswertet, ein schwarzes Rechteck im Modus XOR Åber 
+das Objekt gezeichnet.
+
+CROSSED (0x0002)
+
+Zeichnet ein schwarzes X im Modus XOR Åber das Objekt. Ist daher nur 
+fÅr Rechteck-Objekte (G_BOXTEXT, G_BOX, G_BUTTON) sinnvoll. Wenn 
+Åberhaupt, denn es wird nur sehr selten eingesetzt. Wenn ein Objekt 
+als nicht-auswÑhlbar gekennzeichnet werden soll, sollte man lieber 
+DISABLED nehmen.
+
+CHECKED (0x0004)
+
+Zeichnet das ASCII-Zeichen 8 (HÑkchen) in Schwarz und im Modus 
+Transparent links in das Objekt. Wird hauptsÑchlich fÅr MenÅ-EintrÑge 
+verwendet, jedoch auch fÅr an-/ausklickbare Schalter in Dialogen, 
+weil es nicht so dick aussieht wie ein Button. In MagiC ist in 
+Dialogen der Kreuzchen-Button (s.u.) vorzuziehen.
+
+DISABLED (0x0008)
+
+Zeichnet ein graues (eigentlich fein S/W kariertes) rechteckiges 
+Muster (IP_4PATT) im Modus Transparent Åber das Objekt.
+In MagiC wird bei 3D-Background-Objekten das Muster in LWHITE 
+(Hellgrau) gezeichnet.
+Anstelle des Rechteck-Muster-Verfahrens werden ab MagiC 5.20 bei 
+mindestens 16 Farben G_STRING und G_TITLE in Dunkelgrau gezeichnet. 
+Weiterhin wird ein G_STRING, der nur aus Minuszeichen besteht, in 
+MagiC 5.20 durch eine dunkelgraue Linie ersetzt.
+
+OUTLINED (0x0010)
+
+Vergrîûert das Objekt zusÑtzlich um drei Pixel in alle Richtungen. Es 
+wird ein weiûer Rahmen der Breite 2 und ein schwarzer der Breite 1 
+gezeichnet.
+In MagiC erhalten 3D-Objekte mit 2 Pixel innen und OUTLINED 
+stattdessen den "Schmuckrahmen" fÅr Dialogboxen.
+
+SHADOWED (0x0020)
+
+Rechts und unter dem Objekt wird ein schwarzer Schatten gezeichnet, 
+und zwar mit der doppelten Breite des Objektrands.
+Bei G_ICON und G_CICON wird mit diesem Flag stattdessen eine andere 
+Schriftart eingeschaltet.
+
+WHITEBAK (0x0040)
+
+Bewirkt bei G_ICON und G_CICON und weiûer Hintergrundfarbe, daû die 
+Icon-Maske nicht gezeichnet wird. Auf weiûem Hintergrund lassen sich 
+damit Icons schneller ausgeben.
+Ab MagiC 3 werden mit diesem Flag bei G_BUTTON Sonderformen 
+(Kreuzchenbutton, runder Button, Gruppenrahmen, öberschrift) sowie 
+Unterstriche und Tastaturbedienbarkeit eingeschaltet. Diese 
+FunktionalitÑt ist Åber appl_getinfo(), Unterfunktion 13, viertes 
+WORD, Bit 2 abzufragen.
+
+DRAW3D (0x0080)
+
+Bewirkt bei GEM 2.0 und MagiC 1.x und 2.x, daû bei selektiertem 
+G_ICON die Maske dreimal schrÑg Åbereinander gezeichnet wird, um 
+einen dreidimensionalen Effekt zu erzeugen.
+
+UNDERLINE (0x0f00)
+
+Ab MagiC 2.0, nur bei G_STRING, G_TITLE und G_BUTTON und nur in 
+Verbindung mit WHITEBAK: Hier werden die Position und Grîûe des 
+Unterstrichs festgelegt.
+
+XSTATE (0xf000)
+
+Ab MagiC 2.0, nur bei G_STRING, G_TITLE und G_BUTTON und nur in 
+Verbindung mit WHITEBAK: Hier werden verschiedene Button-Typen 
+umgeschaltet.
+
+
+3. Die Struktur TEDINFO
+=======================
+
+
+Bei einigen Objekttypen:
+
+	G_TEXT
+	G_BOXTEXT
+	G_FTEXT
+	G_FBOXTEXT
+
+zeigt <ob_spec> auf eine TEDINFO (Text Edit Information) Struktur. 
+Sie beschreibt Ausrichtung, Farbe und Grîûe des auszugebenden Textes 
+und ggf. des unterlegten Rechtecks). Die Struktur sieht 
+folgendermaûen aus:
+
+typedef struct
+{
+     char     *te_ptext;        /* ptr to text (must be 1st)    */
+     char     *te_ptmplt;       /* ptr to template              */
+     char     *te_pvalid;       /* ptr to validation            */
+     WORD     te_font;          /* font                         */
+     WORD     te_junk1;         /* junk int                     */
+     WORD     te_just;          /* justification: left, right...*/
+     WORD     te_color;         /* color information            */
+     WORD     te_junk2;         /* junk int                     */
+     WORD     te_thickness;     /* border thickness             */
+     WORD     te_txtlen;        /* text string length           */
+     WORD     te_tmplen;        /* template string length       */
+} TEDINFO;
+
+te_ptext
+--------
+
+Zeigt auf den auszugebenden Text. Der Zeiger muû immer gÅltig sein, 
+er darf ggf. aber auf ein Nullbyte zeigen.
+
+te_ptmplt
+---------
+
+Die Schablone ("template"). Sie wird nur bei G_FTEXT und G_FBOXTEXT 
+verwendet, d.h. kann bei G_TEXT und G_BOXTEXT NULL sein.
+Bei der Ausgabe werden alle '_' in der Schablone sukzessive durch die 
+Zeichen in <te_ptext> ersetzt, d.h. es wird eine Misch-Zeichenkette 
+gebildet. I.A. wird die Schablone also soviele '_' enthalten, wie der 
+Puffer fÅr <te_ptext> lang ist (ohne Nullbyte).
+
+
+4. Objekttypen
+==============
+
+G_BOX (20, 0x14)
+----------------
+
+Zeichnet ein Rechteck.
+ob_spec ist ein Langwort und enthÑlt folgende Informationen:
+Bit 0..3:		Innenfarbe (0..15)
+Bit 4..6:		Muster (0=hohl .. 7=ganz gefÅllt)
+Bit 16..23:	Rahmendicke (-128 .. 127)
+			< 0: Rahmen innerhalb des Objekts
+			> 0: Rahmen auûerhalb des Objekts
+			0: kein Rahmen
+
+
+G_TEXT (21, 0x15)
+-----------------
+
+Zeichnet einen ausgerichteten Text in verschiedenen Farben und 
+Schriftgrîûen.
+
+
+G_BOXTEXT (22, 0x16)
+--------------------
+
+
+G_IMAGE (23, 0x17)
+------------------
+
+
+G_USERDEF (24, 0x18)
+--------------------
+
+
+G_IBOX (25, 0x19)
+-----------------
+
+
+G_BUTTON (26, 0x1a)
+-------------------
+
+In MagiC ab 2.00 kînnen folgende Sonder-Buttons festgelegt werden:
+
+Unterstrich fÅr G_BUTTON. Es wird ein Buchstabe unterstrichen, das 
+Objekt ist per Alt-Taste tastaturbedienbar, das klappt auch mit 
+Ziffern. Es wird empfohlen, die Objekthîhe um einen Pixel zu 
+vergrîûern:
+
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) & 0xf bestimmt die Position des Unterstrichs
+  (ob_state >> 8) & 0xf0 ist 0
+
+Gruppenrahmen:
+
+  ob_type = G_BUTTON
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) == 0xfe
+
+Kreuzchen-Button:
+
+  ob_type = G_BUTTON
+  bei ob_flags  RADIOBUTTON _deaktivieren_
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) == 0xff
+
+Kreuzchen-Button, mit Unterstrich tastaturbedienbar:
+
+  ob_type = G_BUTTON
+  bei ob_flags  RADIOBUTTON _deaktivieren_
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) & 0xf bestimmt die Position des Unterstrichs
+  (ob_state >> 8) & 0xf0 == 0x80
+
+runder Radio-Button:
+
+  ob_type = G_BUTTON
+  bei ob_flags  RADIOBUTTON _aktivieren_
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) == 0xff
+
+runder Radio-Button, mit Unterstrich tastaturbedienbar:
+
+  ob_type = G_BUTTON
+  bei ob_flags  RADIOBUTTON _aktivieren_
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) & 0xf bestimmt die Position des Unterstrichs
+  (ob_state >> 8) & 0xf0 == 0x80
+
+
+G_BOXCHAR (27, 0x1b)
+--------------------
+
+
+G_STRING (28, 0x1c)
+-------------------
+
+In MagiC ab 2.00 kînnen folgende Sonder-Typen fesgelegt werden:
+
+Unterstriche fÅr G_STRING und G_TITLE. Es wird ein Buchstabe   
+unterstrichen, das Objekt ist per Alt-Taste tastaturbedienbar, das 
+klappt auch mit Ziffern:
+
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) & 0xf bestimmt die Position des Unterstrichs
+  (ob_state >> 8) & 0xf0 ist 0
+
+öberschrift (komplett unterstrichener G_STRING). Es wird empfohlen, 
+die Objekthîhe um zwei bis drei Pixel zu vergrîûern:
+
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) == 0xff
+
+Der Objekttyp G_STRING wird auch fÅr MenÅ-EintrÑge verwendet. Damit 
+diese EintrÑge auch bei proportionalen AES-ZeichensÑtzen brauchbar 
+aussehen, werden sie von MagiC speziell behandelt, wenn folgendes 
+zutrifft:
+
+	1. Der groûe AES-Zeichensatz ist proportional
+	2. Der Objektbaum ist ein MenÅ
+	3. Der G_STRING beginnt mit zwei Leerzeichen
+
+Wenn nun der G_STRING (auûer den zwei Leerzeichen) nur aus '-' 
+besteht und DISABLED ist, wird stattdessen eine Trennlinie 
+ausgegeben. Ansonsten wird versucht, die Zeichenkette in Kommando und 
+TastaturkÅrzel aufzuspalten und entsprechend auszugeben. Da dieser 
+Automatismus nicht immer funktioniert, sollte im Zweifelsfall der 
+spezielle MagiC-Objekttyp G_SHORTCUT verwendet werden.
+
+
+G_FTEXT (29, 0x1d)
+------------------
+
+3D-Eingabefeld:
+
+  ob_type = G_FTEXT
+  3D-Flags BACKGROUND
+  Rand: auûen 2 Pixel
+
+
+G_FBOXTEXT (30, 0x1e)
+---------------------
+
+
+G_ICON (31, 0x1f)
+-----------------
+
+
+G_TITLE (32, 0x20)
+-------------------
+
+In MagiC ab 2.00 kînnen folgende Sonder-Typen festgelegt werden:
+
+Unterstrich fÅr G_TITLE. Es wird ein Buchstabe unterstrichen:
+
+  WHITEBAK in ob_state setzen
+  (ob_state >> 8) & 0xf bestimmt die Position des Unterstrichs
+  (ob_state >> 8) & 0xf0 ist 0
+
+
+G_CICON (33, 0x21)
+------------------
+
+Bei Objekten G_CICON, die aber kein CICON enthalten (soll vorkommen), 
+wird als Zeiger cib_mainlist eine -1L eingetragen. Wenn dort eine 
+NULL steht, kann man also davon ausgehen, daû dahinter noch CICONs 
+folgen.
+
+
+G_SWBUTTON (34, 0x22)
+---------------------
+
+Der "Switchbutton" steht ab MagiC 1.00 zur VerfÅgung, er wird von 
+anderen Betriebssystemen nicht unterstÅtzt. Das Vorhandensein des 
+Objekttyps ist Åber appl_getinfo(), Unterfunktion 13, viertes WORD, 
+Bit 0 abzufragen.
+
+Der "Switchbutton" kann verwendet werden, wenn ein Button mehr als 
+zwei ZustÑnde haben muû. Ein G_SWBUTTON sieht zunÑchst aus wie ein 
+G_BUTTON, beim Anklicken wechselt er jedoch zyklisch seine 
+Beschriftung (ein Doppelklick schaltet die ZustÑnde "rÅckwÑrts" 
+durch).
+
+Ein G_SWBUTTON ist einfacher zu programmieren und, bei einer kurzen 
+Auswahlliste, auch einfacher zu bedienen als ein Popup. Da er jedoch 
+nur unter MagiC existiert und bei mehr als drei ZustÑnden 
+unÅbersichtlich wird, wird lieber die flexiblere Popup-Lîsung 
+verwendet.
+
+Bei G_SWBUTTON zeigt <ob_spec> auf eine Struktur SWINFO, die in 
+MT_AES.H definiert ist:
+
+typedef struct {
+     char *string;           /* etwa "TOS|MSDOS|MAG!X"           */
+     WORD num;               /* Nr. der aktuellen Zeichenkette   */
+     WORD maxnum;            /* maximal erlaubtes <num>          */
+     } SWINFO;
+
+
+G_POPUP (35, 0x23)
+------------------
+
+Der Popup-Button steht ab MagiC 1.00 zur VerfÅgung, er wird von 
+anderen Betriebssystemen nicht unterstÅtzt. Das Vorhandensein des 
+Objekttyps ist Åber appl_getinfo(), Unterfunktion 13, viertes WORD, 
+Bit 1 abzufragen.
+
+Mit diesem Objekttyp ist es sehr (!) einfach, innerhalb eines 
+(Fenster-) Dialogs ein Popup fÅr eine Mehrfach-Auswahl 
+unterzubringen. Unter MultiTOS wÑre dazu ein Button zu definieren, 
+der den Status EXIT hat. Beim Verlassen von form_do() mÅûte dann ein 
+menu_popup() aufgerufen und ausgewertet werden. In MagiC wird dies 
+durch G_POPUP alles automatisch erledigt, weshalb die MagiC-
+Dienstprogramme regen Gebrauch von diesem Objekttyp machen.
+
+ob_spec zeigt auf eine Struktur POPINFO, die in MT_AES.H definiert 
+ist:
+
+typedef struct {
+     OBJECT *tree;           /* Popup- MenÅ                      */
+     WORD obnum;             /* aktuelles Objekt von <tree>      */
+     } POPINFO;
+
+tree zeigt auf einen Objektbaum, der etwa fÅr form_popup() als 
+Eingabe dienen kînnte. D.h. die Box sollte als Objekt 0 eine G_BOX 
+oder G_IBOX enthalten, die von den anderen Objekten vollstÑndig 
+bedeckt wird. Objekte, die nicht auswÑhlbar sind, sollten wie im 
+Dropdown- MenÅ den Status DISABLED erhalten. Alle wÑhlbaren Objekte 
+mÅssen den Status SELECTABLE haben. ZusÑtzlich mÅssen bei der 
+Verwendung durch G_POPUP alle selektierbaren Objekte vom Typ G_STRING 
+(bzw. besser -> G_SHORTCUT) oder G_BUTTON sein und mit zwei 
+Leerstellen beginnen, letzteres wegen des HÑkchens, das von 
+form_button() bzw. form_(x)do() automatisch gesetzt wird! Wichtig 
+ist, daû ob_x, ob_y von Objekt 0 des MenÅs relativ zum G_POPUP- 
+Objekt angegeben werden, d.h. sie werden meistens beide 0 sein.
+
+Es wird empfohlen, einen Schatten und einen Rand der StÑrke -1 
+anzugeben.
+
+G_POPUP sieht wie G_BUTTON aus, die Zeichenkette wird jedoch nicht 
+zentriert, um mîglichst mit den Zeichenketten im MenÅ auf einer Linie 
+zu liegen.
+
+
+G_WINTITLE (36, 0x24)
+---------------------
+
+Diese Objektnummer wird von MagiC intern dazu verwendet, Fenstertitel 
+darzustellen. Der Aufbau dieses Objekttyps kann sich jederzeit Ñndern 
+und wird daher nicht dokumentiert.
+
+
+G_EDIT (37, 0x25)
+-----------------
+
+Ab MagiC 5.20 steht ein in einer "Shared Library" implementiertes 
+mehrzeiliges Eingabe-Objekt zur VerfÅgung. Zur Verwendung dieses 
+Objekttyps siehe EDITOB.TXT.
+Man beachte, daû dieser Objekttyp (noch) _NICHT_ von form_(x)do(), 
+form_button(), form_keybd(), objc_edit(), wdlg_evnt() und wdlg_do() 
+unterstÅtzt wird. D.h. die Ereignisse (Maus und/oder Tastatur) mÅssen 
+"von Hand" Åber edit_evnt() an das Objekt weitergeleitet werden.
+
+
+G_SHORTCUT (38, 0x26)
+---------------------
+
+Dieser Objekttyp steht nur unter MagiC und erst ab der Version 6 zur 
+VerfÅgung. Er wird Ñhnlich wie G_STRING behandelt (d.h. ob_spec 
+zeigt auf die Zeichenkette), ein vorhandenes TastaturkÅrzel wird 
+jedoch abgespalten und rechtsbÅndig ausgegeben.
+
+Das Vorhandensein des Objekttyps ist Åber appl_getinfo(), 
+Unterfunktion 13, viertes WORD, Bit 3 abzufragen.
+
+Die EinfÅhrung proportionaler AES-ZeichensÑtze durch MagiC 6 machte 
+eine neue Strategie fÅr die Ausrichtung der MenÅeintrÑge 
+erforderlich. Um TastaturkÅrzel ("Shortcuts") rechtsbÅndig ausrichten 
+zu kînnen, werden Objekte vom Typ G_STRING innerhalb eines MenÅs 
+entsprechend in Kommando und KÅrzel aufgespalten. Diese Strategie 
+versagt jedoch bei MenÅs, die vom Programm selbst, z.B. innerhalb 
+eines Fensters oder eines Popup-MenÅs, verwaltet werden. Um auch hier 
+eine brauchbare Ausrichtung zu erreichen, muûte dieser neue Objekttyp 
+eingefÅhrt werden.

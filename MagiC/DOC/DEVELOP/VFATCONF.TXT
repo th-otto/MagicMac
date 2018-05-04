@@ -1,0 +1,158 @@
+Beschreibung des Programms VFATCONF (fr MagiC 5.01)
+-----------------------------------
+
+Andreas Kromke
+30.6.96
+
+
+1. Was ist VFATCONF ?
+---------------------
+
+Mit diesem Programm kann man festlegen, auf welchem Diskettenlaufwerk und
+auf welcher Festplattenpartition lange Dateinamen untersttzt werden sollen.
+
+2. Was fr lange Dateinamen ?
+-----------------------------
+
+Microsoft¾ hat mit "Windows¾ 95¾" eine M”glichkeit eingefhrt, auf
+normalen DOS¾-Medien (Disketten, Festplatten, ...) lange¾ Dateinamen¾ mit bis
+zu 256¾ Zeichen abzulegen. Eine weitere Beschr„nkung liegt allerdings darin,
+da der gesamte Pfad nur maximal 256 Zeichen lang sein darf, weshalb MagiC
+auch die maximale L„nge fr einen einzelnen Dateinamen auf 64 Zeichen begrenzt
+(d.h. mit dem abschlieenden Nullbyte insgesamt 65 Zeichen).
+
+Die langen Dateinamen liegen im sogenannten Unicode vor, d.h. sie k”nnen,
+weit ber den ASCII-Code hinaus, z.B. auch japanische Schriftzeichen
+enthalten (insgesamt umfat der Unicode 65536 Zeichen, der ASCII-Code nur
+256 Zeichen). MagiC ist jedoch nicht in der Lage, diese Schriftzeichen
+darzustellen, und ersetzt sie beim Einlesen des Verzeichnisses durch "¼".
+Lange Dateinamen drfen Gro- und Kleinschrift gemischt und auch Leerzeichen
+oder mehrere Punkte enthalten. Als Dateityp gelten dabei die Zeichen hinter
+dem letzten Punkt, d.h. die Datei "Brief.ans.Finanzamt.Pap" hat den
+Dateityp "*.PAP", ist also ein Dokument der Textverarbeitung Papyrus.
+
+Um die Kompatibilit„t mit „lterer Software und die Austauschbarkeit mit
+anderen Rechnern sicherzustellen, bekommt jede Datei mit langem Namen
+einen eindeutigen, zweiten Namen in Kurzform, d.h. in der Form 8+3.
+ltere Software findet nur diese Kurznamen auf dem Laufwerk, statt
+"dies_ist_ein_langer.Name" also z.B. "DIES_~1.NAM". (Die Kurznamen werden im
+Microsoft-Jargon als Alias bezeichnet. Um die Verwechslung mit den
+Macintosh-Aliasen und den symbolischen Links zu vermeiden, wird an dieser
+Stelle von Kurznamen gesprochen). Entspricht ein Name jedoch bereits dem
+8+3-Groschrift-Format, wird nur ein Kurzname abgelegt.
+
+Die Schwierigkeit fr MagiC liegt nun darin, da aus Kompatibilit„tsgrnden
+sichergestellt werden mu, da auf bestimmten Laufwerken keine l„ngeren
+Dateinamen als 8+3 abgelegt werden. Andernfalls k”nnte „ltere Software
+(KOBOLD, CORRECT, ...) v”llig verwirrt werden. Da die Information, ob auf
+einem Laufwerk lange Dateinamen zugelassen sind oder nicht, nicht auf diesem
+Laufwerk abgelegt werden kann, wird VFATCONF ben”tigt. Der Name dieses
+Programms rhrt daher, da Microsoft das Dateisystem von Windows 95 als
+"VFAT"-System (virtual FAT), das alte Dateisystem als FAT-System bezeichnet.
+
+Wie kann es nun passieren, da unbeabsichtigt lange Dateinamen erzeugt 
+werden, wenn diese auf dem entsprechenden Laufwerk zugelassen sind ? 
+Manche Programme, auch „ltere, haben die Eigenschaft, Dateinamen in 
+Kleinschrift statt Groschrift zu verwenden. Auf dem alten FAT-System ist 
+das einerlei, weil die Dateinamen in jedem Fall in Groschrift abgelegt 
+werden (TOS scheitert hier an den Umlauten, aber glcklicherweise gibt es 
+ja nur Amerikaner auf dieser Welt). Auf einem VFAT-System wird jedoch fr 
+eine Datei "laber.txt" ein langer Dateiname "laber.txt" und ein 
+zugeh”riger Kurzname "LABER.TXT" abgelegt.
+
+3. Wann ist VFATCONF einsetzbar ?
+---------------------------------
+
+Die hier beschriebene Version von VFATCONF l„uft mit MagiC 5.01 fr Atari,
+Mac und PC.
+
+Mit der Ease sind bei „lteren Versionen als 5.00 nur kurze Dateinamen im Format
+8+3 m”glich. Deaktivieren Sie bei Verwendung „lterer Versionen der Ease daher
+unbedingt die langen Dateinamen auf s„mtlichen Laufwerken einschlielich der
+Diskettenlaufwerke.
+Alle g„ngigen anderen Shells (Gemini, Thing, Magxdesk) sind dagegen kompatibel
+zu MagiC und k”nnen daher lange Dateinamen verarbeiten.
+
+4. Bedienung
+------------
+
+Starten Sie das Programm. Oben erscheinen nun die Laufwerke, auf denen 
+z.Zt. lange Dateinamen zugelassen wird, als selektierte Buttons. Unten 
+links ist der Button "tempor„r" aktiv. M”chten Sie nun, ohne die 
+Grundeinstellung zu „ndern, kurzfristig fr eine eingelegte und 
+ge”ffnete Diskette lange Dateinamen zulassen, aktivieren Sie den Button 
+fr Laufwerk A: bzw. B: und bet„tigen den OK-Button. Die Shell baut nun 
+die entsprechenden Verzeichnisfenster neu auf. Wenn Sie die Diskette 
+wechseln, wird fr die neu eingelegte Diskette wieder die Grundeinstellung 
+aktiv. Die Einstellung "tempor„r" ist haupts„chlich fr Wechselmedien
+(Disketten, Wechselplatten) vorgesehen.
+
+Die Grundeinstellung k”nnen Sie „ndern, nachdem Sie links unten auf den Button 
+"permanent" geklickt haben. Sie k”nnen nun fr jeden Laufwerkbuchstaben 
+festlegen, ob das Laufwerk beim ™ffnen ("Mounten") mit langen oder kurzen 
+Dateinamen betrieben werden soll. Diese Einstellungen sind nur fr noch 
+nicht ge”ffnete Laufwerke wirksam, bereits ge”ffnete mssen mit der 
+"tempor„r"-Funktion behandelt werden. Haben Sie die "permanent"-Einstellung
+ge„ndert, speichert VFATCONF die neue Einstellung in die Konfigurationsdatei
+MAGX.INF ab. Dazu enth„lt die MAGX.INF im Abschnitt "#[vfat]" z.B. die
+Zuweisung "drives=fgh". Mit Hilfe eines Editors k”nnen Sie diese Einstellung
+auch "per Hand" in die MAGX.INF eintragen.
+
+Beachten Sie, da Sie damit auch auf dem Bootlaufwerk lange Dateinamen 
+aktivieren k”nnen. Wenn Sie jedoch manchmal wahlweise mit „lterer System-
+Software (TOS oder Derivate) booten wollen, k”nnte es jedoch zu Konflikten
+kommen; insbesondere k”nnen bei Schreibzugriffen die langen Dateinamen zerst”rt
+werden, so da nur die Kurznamen brig bleiben.
+
+Es empfiehlt sich, auf der Festplatte einige Partitionen mit langen 
+Dateinamen einzurichten und auf diesen Partitionen solche Software zu 
+installieren, die problemlos mit langen Namen umgehen kann. Sollte einmal 
+TOS gebootet werden mssen, k”nnen die dort abgelegten Dateien mit den 
+Kurznamen angesprochen werden. Sie sollten jedoch auf keinen Fall unter 
+TOS Dateien l”schen (oder verschieben oder umbenennen), die einen langen
+Dateinamen haben, da in diesem Fall der lange Name als Leiche im Verzeichnis
+stehen bleibt und nicht mehr gel”scht werden kann. Unter MagiC dagegen ist
+der Zugriff, auch das L”schen, ber den Kurznamen immer m”glich, der lange
+Name wird dabei automatisch mit behandelt. Dies gilt jedoch nicht, wenn auf
+einem Laufwerk lange Dateinamen liegen, diese jedoch mit VFATCONF deaktiviert
+sind; in diesem Fall gibt es dieselben Probleme wie beim Zugriff unter TOS.
+
+Es bleibt zu hoffen, da es bald Disk-Korrekturprogramme wie CHKDISK oder
+CORRECT geben wird, die lange Dateinamen korrekt erkennen und ggf. Leichen 
+entfernen.
+
+5. Technische Beschreibung des VFAT-Dateisystems
+------------------------------------------------
+
+typedef struct {
+ char		head;		/* Bit 0..4: Nummer, Bit 6: Endofname	*/
+ unsigned char	name1[10];	/* 5 Unicode- Zeichen				*/
+ char		attr;		/* Attribut (0x0f)					*/
+ char		unused;
+ char		chksum;		/* Checksumme des kurzen Namens		*/
+ unsigned char	name2[12];	/* 6 Unicode- Zeichen				*/
+ WORD		stcl;		/* erster Cluster (0)				*/
+ unsigned char	name3[4];		/* 2 Unicode-Zeichen				*/
+} LDIR;
+
+Dabei ist <head> beim ersten Eintrag z.B. 0x01, beim zweiten 0x02 und
+beim dritten 0x43, wenn der Name drei Eintr„ge braucht.
+Pro Eintrag k”nnen 13 Zeichen abgelegt werden. Die Eintr„ge mit dem langen
+Dateinamen liegen immer unmittelbar vor dem Haupteintrag. Die Unicode-
+Zeichen sind ver-intel-t, d.h. umgedreht, daher habe ich sie hier als
+char statt WORD deklariert. Im letzten Eintrag werden nach dem Nullbyte
+die nicht verwendeten Zeichen mit 0xff,0xff belegt.
+<stcl> ist immer Null.
+<code> ist eine Checksumme.
+
+Es ist noch zu erw„hnen, da die Reihenfolge der Eintr„ge umgekehrt
+ist. D.h. die letzten 13 Zeichen des langen Namens liegen physikalisch an
+erster Stelle. Der letzte Verzeichniseintrag, der mit gesetztem Bit 6 im
+Feld <head> gekennzeichnet ist, liegt physikalisch an erster Stelle.
+
+<chksum> berechnet sich aus dem kurzen Namen (im internen Format)
+durch abwechselndes Rechtsrotieren des bisherigen Ergebnisses und Aufaddieren
+der 11 Zeichen.
+Linux verwendet das <unused>-Feld, um Flags fr Gro-/Kleinschrift
+abzuspeichern. Die aktuelle Windows95-Version schreibt jedoch immer Nullen
+in dieses Feld, so verh„lt sich auch MagiC.

@@ -1,0 +1,117 @@
+Pipes in MagiC ab V3.00
+-----------------------
+
+Andreas Kromke
+24.1.98
+letzte nderung:
+17.5.99
+Tabulatorweite: 5
+
+
+1. Was sind Pipes ?
+===================
+
+Pipes sind Speicherbl”cke, die zur Kommunikation zwischen
+Prozesses (Programmen) verwendet werden. Zur Verwendung der
+Pipes werden DOS-Aufrufe (Fcreate(),Fopen(),...) verwendet.
+Fr jede Pipe wird eine Pseudo-Datei in U:\PIPE abgelegt.
+
+
+2. Unidirektionale Pipes
+========================
+
+Unidirektionale Pipes werden zur Ein-/Ausgabe-Umlenkung in UNIX-
+Shells verwendet, z.B. auch in der Mupfel. Mit "ls | more" wird
+eine Pipe erstellt, die Ausgabe von "ls" und die Eingabe von "more"
+in die Pipe gelenkt. Fr den asynchronen Datenaustausch sorgt der
+Systemkernel ("more" wartet z.B. solange, bis "ls" wieder Daten liefert).
+Unidirektionale Pipes k”nnen ber Fcreate("U:\PIPE\....") oder ber
+Fpipe() erstellt werden (=> MGX_DOS.TXT).
+Unidirektionale Pipes haben nur einen Puffer (2048 Bytes).
+
+
+3. Bidirektionale Pipes
+=======================
+
+Bidirektionale Pipes werden fr das MultiTOS-konforme Drag&Drop-
+Protokoll verwendet. Sie k”nnen nur ber Fcreate("U:\PIPE\....")
+erstellt werden (=> MGX_DOS.TXT).
+Bidirektionale Pipes haben zwei Puffer mit je 2048 Bytes. Welcher
+der beiden Puffer verwendet wird, h„ngt vom Aufrufer ab. Hier hat
+sich leider aufgrund der etwas diffusen Dokumentation von MiNT eine
+kleine Inkompatibilit„t in MagiC eingeschlichen, die allerdings in der
+blichen Praxis, n„mlich beim Drag&Drop, nicht auftritt:
+
+- In MagiC bis Version 6.10 liest der Proze, der die Pipe erstellt 
+  hat, immer von Puffer 1 und schreibt immer nach Puffer 2.
+  Jeder andere Proze, der die Pipe ”ffnet, liest von Puffer 2 und
+  schreibt nach Puffer 1.
+- In MiNT und MagiC ab Version 6.20 liest das von Fcreate() 
+  zurckgegebene Handle immer von Puffer 1 und schreibt nach Puffer 2.
+  Bei jedem (!) weiteren ™ffnen, egal ob vom selben oder von
+  einem anderen Proze, wird immer von Puffer 2 gelesen und nach
+  Puffer 1 geschrieben.
+
+
+4. Varianten
+============
+
+Fpipe() erstellt eine unidirektionale Pipe mit Attribut 1; andere
+Varianten k”nnen mit Fcreate() erstellt werden, wobei die Bits des
+Attributs folgende Bedeutung erhalten:
+
+	Bit 0 = 0		bidirektionale Pipe (z.B. fr Drag&Drop)
+	      = 1		unidirektionale Pipe (z.B. fr I/O-Umlenkung)
+	Bit 1 = 0		Schreiben auf eine Pipe, die sonst nicht
+	      		zum Lesen ge”ffnet ist, erzeugt kein SIGPIPE-
+	      		Signal, sondern wartet ggf. beliebig lange.
+	      		Lesen auf eine Pipe, die sonst nicht
+	      		zum Schreiben ge”ffnet ist, gibt kein EOF
+	      		zurck, sondern wartet beliebig lange.
+	      = 1		Schreiben auf eine Pipe, die sonst nicht
+				zum Lesen ge”ffnet ist, erzeugt ein SIGPIPE
+				Signal.
+				Lesen auf eine Pipe, die sonst nicht
+				zum Schreiben ge”ffnet ist, erzeugt EOF, d.h. die
+				Anzahl der gelesenen Bytes (ggf. 0) wird
+				zurckgegeben.
+	Bit 2 = 0		Es wird eine "normale" Pipe erstellt.
+	      = 1		Es wird ein "Pseudo TTY" erstellt.
+	Bit 5 = 0		Lesen von einer Pipe wird erst durch EOF (Pipe
+				nicht zum Schreiben ge”ffnet) oder durch Lesen
+				aller Bytes beendet.
+		 = 1		Lesen wird bereits ohne Warten beendet, wenn
+		 		berhaupt ein Byte eingelesen wurde.
+
+
+5. Einschr„nkungen in MagiC
+===========================
+
+Es sind nur bis zu 32 Pipes gleichzeitig m”glich.
+
+SIGPIPE wird nicht untersttzt, d.h. nie erzeugt.
+
+Pseudo-TTYs werden nicht untersttzt.
+
+In MagiC wird bei Fcreate() nur Bit 0 ausgewertet. Das Verhalten beim 
+Lesen und Schreiben l„t sich nicht beeinflussen, stattdessen wird 
+beim Lesen von einer nicht zum Schreiben ge”ffneten Pipe sowie beim 
+Schreiben auf eine nicht zum Lesen ge”ffnete Pipe immer EOF geliefert.
+
+Beim ™ffnen einer Pipe kann es in MagiC < 6.20 passieren, da das 
+Handle > 31 ist, dann ist Fselect() nicht m”glich.
+
+
+6. Anmerkungen
+==============
+
+Der Zugriff auf Pipes erfolgt rein asynchron, Applikationen warten 
+auf Lesen/Schreiben und wecken ggf. beim Lesen/Schrieben eine andere 
+Applikation wieder auf.
+
+Fseek auf Pipes fhrt grunds„tzlich zur Rckgabe von 0L (d.h. der 
+Dateizeiger kann nicht beeinflut werden).
+
+Pipes werden automatisch nach dem Schlieen gel”scht. Pipes 
+erscheinen im Verzeichnis mit der L„nge 2k (unidirektional) bzw. 4k 
+(bidirektional) und dem korrekten Erstelldatum.

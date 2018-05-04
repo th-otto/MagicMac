@@ -1,0 +1,1670 @@
+Liste der neuesten nderungen/Bemerkungen zu MagiC 6
+====================================================
+
+
+
+======================= VERSION 6.00alpha =======================
+
+11.1.98
+-------
+
+- AES: Neuen Window-Manager eingebaut.
+  Er verwaltet die Fensterstrukturen dynamisch und macht bei jedem
+  wind_create() ein Malloc() und bei wind_delete() ein Mfree().
+- AES: Fensterbehandlung generell beschleunigt. Das betrifft alle
+  Operationen (”ffnen/schlieen/Redraws/verschieben/scrollen/...).
+- AES: Bit 7 des FLG in MAGX.INF schaltet graue 3D-Mens und Submens ein.
+- AES: Schnittstelle fr alternativen Fensterrahmen-Manager eingebaut.
+- MAGX.INF: Eintrag #_SLB <ver> <name> eingebaut.
+- AES: SLBs/ACCs/APPs erst ganz zum Schlu laden.
+- AES: Neue fatale Fehlermeldung: "Fataler Fehler in Fensterverwaltung"
+- WINFRAME: Alternative Fensterrahmen. Bitte nur ab 16 Farben einsetzen.
+  Installation:
+  - Abschnittkennung [shelbuf] vor #_CTR in MAGX.INF einfgen, damit der
+    Abschnitt [aes] korrekt abgeschlossen ist.
+  - Eintrag "#_SLB 0 WINFRAME.SLB" in MAGX.INF, natrlich in den
+    Abschnitt [aes].
+  - WINFRAME.SLB nach /gemsys/magic/xtension.
+  - WINMAN.RSC aufs Wurzelverzeichnis des Bootlaufwerks (das werde ich
+    natrlich noch „ndern).
+
+18.1.98
+-------
+
+- DOS: Sind auf einem (V)FAT-Medium lange Namen vorhanden, aber nicht
+  aktiviert, werden bei Dgetpath() nur kurze Namen geliefert.
+- AES: Beim Verschieben des obersten Fensters wird auch der obere Teil des
+  Fensters korrekt neu gezeichnet.
+  Damit ergeben sich mit den neuen Fensterrahmen und QED keine Redraw-Fehler
+  mehr, wenn das oberste Fenster ein Pixel unter der Menleiste lag.
+- AES: Wenn ein Scrollpfeil das 3D-Flag ACTIVATOR hat, wird ein evtl.
+  vorhandenes erstes "child" bei der Selektion um ein Pixel nach rechts
+  unten versetzt.
+- AES: Slidergr”e -1 wird wieder korrekt behandelt.
+- AES: Fehler bei der Einbindung eines alternativen Fensterrahmen-Managers
+  beseitigt.
+- AES/WINFRAME: Der alternative Fensterrahmen-Manager legt die H”he des
+  ge-shade-ten Fensters fest.
+- AES/WINFRAME: Das Flag "kein expliziter Bdrop-Button" aus MAGX.INF
+  wird ausgewertet.
+- WINFRAME: Name bei ikonifiziertem Fenster kleiner.
+- WINFRAME: Name und Info werden auf leere Zeichenkette initialisiert.
+- WINFRAME: diverse optische Feinheiten fr die Breite des Namensfelds.
+- WINFRAME: Das Fenster kann am 3D-Rahmen verschoben werden, jedoch nur
+  auerhalb des Gr”enfelds.
+- WINFRAME: Fenster ohne alle Elemente bekommen nur einen einfachen
+  3D-Rahmen (ben”tigt 2 Pixel).
+- Die Abschnittkennung vor #_CTR in MAGX.INF mu natrlich lauten
+  "#[shelbuf]", Wilfried hatte das '#' vergessen, ebenso bei "#[aes]",
+  daher wurde die Datei nicht korrekt ausgewertet.
+- AES: Sinnlos Zeit vergeudet, einen Fehler im Zusammenhang mit PRINTMON
+  zu finden. Es gibt keinen im AES, es befolgt korrekt alle Aufrufe.
+- CALAMUS-98: Der H„nger lag natrlich an Calamus, aber ich habe einen
+  Workaround eingebaut. Ursache: wind_set(WF_NAME/WF_INFO) fr ein Fenster,
+  das weder NAME noch INFO hat. Jetzt liefert wind_set() bei diesem Unsinn
+  explizit 0 zurck.
+- AES: Neue fatale Fehlermeldung: "Zuwenig Speicher in Fensterverwaltung"
+- AES: shel_find() komplett neu geschrieben. Da jetzt fr die Dateisuche
+  Fxattr() statt bisher Fsfirst() verwendet wird, sind nun lange
+  Dateinamen m”glich. Die neue Routine ist noch nicht vollst„ndig getestet,
+  daher kann es sein, da z.B. PATH noch nicht korrekt ausgewertet wird.
+
+22.1.98
+-------
+
+- AES: Bei G_ICONs wird jetzt auch, wie bisher nur bei G_CICONs, der Text-
+  hintergrund weggelassen, wenn als seine Breite 0 angegeben wurde.
+- AES: Fehler im neuen shel_find() korrigiert. Sucht jetzt wieder im Pfad
+  des Programms.
+- AES: weiterer Redraw-Fehler beim Nach-unten-Schieben von Fenstern behoben.
+
+24.1.98
+-------
+
+- Environment-Variable SLBPATH wird zum Suchen nach SharedLibraries
+  ausgewertet. Ist diese Variable nicht gesetzt, wird wie bisher
+  nur in "<bootdrv>:/gemsys/magic/xtension" gesucht.
+- SharedLibraries bekommen statt der Kommandozeile in der Basepage eine
+  Zeichenkette, die den kompletten Pfad der SLB-Datei enth„lt, also z.B.
+  "C:\GEMSYS\MAGIC\XTENSION\WINFRAME.SLB". Der Pfad wird _nicht_ im blichen
+  Format bergeben (1. Byte = L„nge), sondern als normale 'C'-Zeichenkette.
+  MagiC 5.20 bergibt hier nur Nullen.
+  SharedLibraries, die Konfigurationsdateien ben”tigen, sollten aus der
+  Basepage den Pfad extrahieren und den Dateinamen anh„ngen.
+- WINFRAME: Sucht seine RSC-Datei im eigenen Pfad. Ihr k”nnt Eurer
+  Wurzelverzeichnis wieder aufr„umen.
+- WINFRAME: Installiert sich nicht bei weniger als 16 Farben.
+- wind_close() korrigiert, gibt jetzt den Speicher fr die Rechteckliste
+  des Fensters frei. Der "fatale Fehler in der Fensterverwaltung" sollte
+  jetzt nicht mehr auftreten.
+- Doku: Ich habe die Doku fr das Editobjekt endlich fertiggestellt,
+  auerdem die Doku ber das DOS erweitert und eine spezielle Datei zu
+  den Pipes geschrieben.
+- Jetzt ist es raus: Das Submen bei Texel bleibt wei, weil das Muster des
+  Hintergrunds auf "gefllt" statt "leer" gesetzt ist. Daher bringt der
+  Schalter 3D-Beckgraund halt nix.
+- AES: Die erweiterte Form von shel_write() wurde um einen zus„tzlichen
+  Parameter erweitert. Das zus„tzliche Langwort gibt in Bit 0 an, da die
+  Applikation keinen proportionalen AES-Zeichensatz vertr„gt.
+- APPLICAT: Bei "Anwendung anmelden" kann angegeben werden, da eine
+  Applikation keinen proportionalen AES-Zeichensatz vertr„gt.
+- MAGXDESK 4: Bei shel_write() wird ggf. zus„tzlich die Information
+  bergeben, da die Applikation keinen proportionalen AES-Zeichensatz
+  vertr„gt.
+- Achtung!!!!
+
+   Wenn man angibt, da eine Applikation keinen prop. AES-Zeichensatz
+   versteht, wird bisher (zu Testzwecken) lediglich appl_getinfo()
+   manipuliert, d.h. solche Programme bekommen immer die Daten des
+   Systemfonts.
+   Leider scheint das ausschlielich bei wenigen Programmen
+   zu funktionieren:
+
+   - THING, PHOTO_ST, KOBOLD, TREECHECK, CORRECT und SCIGRAPH zeigen fr
+     alle eigenen Objekte wie gewnscht den Systemzeichensatz.
+     (THING: alte Version, neue sollen mit prop. Zeichensatz laufen)
+     Sie sind daher einigermaen bedienbar (SCIGRAPH blieb vorher sogar
+     komplett h„ngen).
+   - INTRFACE h„ngt sich nicht mehr auf, verwendet fr seine eigenen
+     Objekte den Systemfont, aber (!) in der Gr”e des eingestellten
+     prop. Zeichensatzes.
+     D.h. INTRFACE ermittelt die Zeichensatzh”he nicht (!) ber
+     appl_getinfo() ??!!??
+   - ADRESSE bleibt wie bisher plump h„ngen, also kein Effekt.
+   - QED verwendet weiterhin den AES-Zeichensatz, also nicht den, den
+     es ber appl_getinfo() erhalten h„tte.
+   - GEMINI verh„lt sich wie QED.
+
+   Damit ist das ganze Konzept also ziemlich sinnlos. Die Frage ist, wie
+   diese omin”sen Programme den AES-Zeichensatz ermitteln. Offenbar gibt
+   es auer TEXEL kein einziges Programm, das appl_getinfo() verwendet.
+   => Scheibenkleister!!!
+
+   Jetzt bleibt nur noch brig, zu versuchen, Kontakt mit dem Sch”pfer
+   oder dem Hter der omin”sen MyDials aufzunehmen, um herauszufinden,
+   was sich wer dabei gedacht hat. Mir f„llt jedenfalls nichts mehr ein.
+   Irgendwer hat jedenfalls tchtig herumgeschweinert, und ich mu die
+   Suppe jetzt ausl”ffeln.
+
+26.1.98
+-------
+
+- Dummer Tippfehler in MAGXDESK 4: Beim Laden von Textdateien ber
+  Ctrl-Doppelklick wurden die in APPLICAT eingetragenen Informationen
+  ignoriert.
+  Jetzt zeigt QED bei korrekter Anmeldung den Systemzeichensatz in den
+  Dialogen.
+- MGEDIT: Legt seine INF-Datei ins HOME-Verzeichnis.
+- MGNOTICE: Legt seine INF-Datei ins HOME-Verzeichnis. Die Notizen selbst
+  liegen noch im GEMDESK-Verzeichnis, sind also Rechner-global. Das sollte
+  ich nochmal konfigurierbar machen.
+  Vielleicht w„re es ganz witzig, wenn es lokale und globale Notizen g„be?
+  z.B.: "Wilfried an Sven, bitte den Mll rausbringen".
+- MGSEARCH: Legt seine INF-Datei ins HOME-Verzeichnis.
+- neues MGCOPY: Legt seine INF-Datei ins HOME-Verzeichnis.
+- neues MGCOPY: Ist die Best„tigung abgeschaltet, erscheint nicht kurz
+  der Wahldialog, sondern sofort der Fortschrittdialog.
+- EDITOBJC.SLB: ^A selektiert den gesamten Text.
+
+20.2.98
+-------
+
+- AES: Allen Unkenrufen (Hallo, Oliver!) zum Trotz haben die Behnes 
+  eine M”glichkeit gefunden, die vermaledeiten MyDial-Programme zum Laufen
+  zu bringen. Diesen fiesen Hack habe ich jetzt eingebaut, er arbeitet
+  folgendermaen: Fr Unverbesserliche erstellt das AES nach dem ™ffnen der
+  VDI-Workstation eine zweite, Dummy-Workstation. Zeichensatz dieser Dummy-
+  Workstation bleibt der Systemzeichensatz in Default-Gr”e.
+  Die D”sbaddels kriegen jetzt bei graf_handle() diese Dummy-Workstation
+  pr„sentiert und damit ihr Fett weg.
+  Klappe zu und Affe tot.
+- MGCOPY: Fortschrittsbalken klappt auch bei Verschieben auf demselben
+  Laufwerk.
+- AES: wind_open() auerhalb des Bildschirms erzeugt kein WM_MOVED mehr.
+  Der Effekt kam durch das automatische "Einblenden" beim ™ffnen eines
+  Fensters, wenn das Fenster unterhalb des Bildschirms lag.
+- AES: Scrollende MultiTOS-Dialoge berschreiben beim Scrollen nicht mehr
+  die Pfeile.
+- AES: Scrollende MultiTOS-Dialoge scrollen korrekt bei gedrckter Maustaste.
+- DOS: Ist bei Slbopen() der usp ungltig (NULL), wird die open-Funktion
+  und ggf. die init-Funktion der slb im Supervisor-Modus ausgefhrt.
+- DOS: Fehler bei Slbopen() beseitigt. Der Prozedeskriptor des Aufrufers
+  wurde nicht korrekt an slb_open() bergeben.
+- DOS: Fehler bei Slbopen() beseitigt: Absturz, wenn der Aufrufer kein
+  Environment hatte.
+- MAGXDESK: Doppelklick auf rechter Maustaste geht wieder. Das ist beim
+  Umstellen auf MT_AES schief gelaufen.
+- MAGXDESK: Start eines Programms bei keinem ge”ffneten Fenster stellt
+  nicht mehr falsches Default-Laufwerk ein.
+- AES: wind_set(WF_KIND) wird untersttzt. Es wird versucht, in einigen
+  F„llen sinnvolle Redraws auszufhren.
+- MAGXDESK4: Textmodus hat jetzt horiz. Scrollpfeile und -balken.
+  Iconmodus hat keinen horiz. Scrollbalken mehr.
+- MAGXDESK 4: freier Speicher in Infozeile, rechtsbndig.
+- MGEDIT,MGNOTICE,MGSEARCH,MGCOPY: Die INF-Datei wird korrekt ins
+  HOME gelegt, auch wenn der Pfad in der MAGX.INF einen abschlieenden
+  '\' enth„lt.
+- VFAT: Bei UNICode-Zeichen, die keine ASCII-Ensprechung haben, konnte
+  es vorkommen, da die Umwandlung in einer Endlosschleife stecken blieb,
+  z.B. bei 0x2308. Das sollte jetzt nicht mehr vorkommen.
+- AES: Fehler im alten (internen) Fensterrahmen-Manager beseitigt. Trat
+  auf, wenn die Linien im Titel ausgeschaltet waren.
+- AES: Fehler beim Aufl”sungswechsel beseitigt. Vor dem Schlieen der
+  physikalischen VDI-Workstation per v_clswk() durch das AES werden jetzt
+  zun„chst alle geladenen "shared libraries" geschlossen. Diese erhalten
+  dabei die Gelegenheit, vorher ihre virtuellen Workstations per v_clsvwk()
+  zu schlieen.
+  Das Problem trat bei WINFRAME.SLB (ben”tigt eine virtuelle Workstation)
+  und ohne NVDI auf (NVDI ist offenbar robuster).
+- Bootvorgang: Neuer Eintrag in MAGX.INF:
+
+	#[boot]
+	log=<log-Dateipfad>
+	tiles=<Kachel-IMG-Dateipfad>
+	image=<IMG-Dateipfad>
+
+  Dabei bedeuten:
+
+	#[boot]		Der neue Abschnitt, der in Zukunft vielleicht noch
+				mehr Informationen beinhalten soll.
+	log			Eine Log-Datei, in die die BIOS-Ausgabe bis zum Start
+				des AES umgelenkt wird. Man kann hier natrlich
+				auch z.B. NUL: angeben.
+	tiles		Kachelhintergrund wie bei MAGXDESK.
+	image		Titelbild, das ber die Kacheln gezeichnet wird.
+
+  Es ist zu beachten, da die Log-Datei aus Geschwindigkeitsgrnden nur
+  einmal ge”ffnet und einmal am Ende geschlossen wird. Falls also irgendein
+  amoklaufendes AUTO-Ordner-Programm das System abschieen sollte, wird die
+  Datei nicht korrekt geschlossen, und das Dateisystem ist besch„digt.
+  Das Problem kann natrlich nicht auf einer HFS-Partition in MagicMac
+  auftreten; weiterhin kann man auch das Null-Device angegeben und damit
+  die Ausgabe vollst„ndig und risikolos unterdrcken.
+
+  Momentan werden nur IMG-Dateien und auch nur solche mit Bittiefen von
+  1, 2, 4 oder 8 Bit untersttzt. Die Umwandlung wird durch die
+  Bibliothek XP_RASTR.SLB und das Laden und Anzeigen durch LOAD_IMG.SLB
+  durchgefhrt. Diese Bibliotheken k”nnen natrlich in Zukunft fr andere
+  Dateiformate und andere Bildtiefen erweitert werden. Ebenso ist damit eine
+  sp„tere Umsetzung direkt in GDI-Aufrufe m”glich.
+- AES: Bei allen TEDINFO-Objekten ist <te_font = 4> fr MagiC
+  reserviert. Bisher sind nur 0..2 fr MuliTOS, 3 und 5 fr TOS reserviert.
+- AES: Neuer Eintrag in MAGX.INF:
+
+	#_INW lineh fontID monoFlag fontH
+
+  dabei bedeuten:
+
+	lineh	Zeilenh”he fr die INFO-Zeile aller Fenster. Eine H”he von
+			0 bedeutet: Standardh”he
+	fontID	Zeichensatz-ID fr die INFO-Zeile. Eine 0 bedeutet: derselbe
+			Zeichensatz wie fr den groen AES-Text
+	monoFlag	1 („quidistant) oder 0 (proportional)
+	fontH	Zeichensatzh”he fr vst_height
+
+- DOS: Ich mute leider das Format der SLBs „ndern. Neue Doku und neue
+  SLBs sind notwendig. Siehe SHARELIB.TXT
+- Atari: Wird bei Maddalt() ein FRB angelegt (seit MagiC 5.04), so wird
+  jetzt auch ein Cookie eingetragen. Das klappt aber nur, wenn der Cookie
+  Jar gengend gro ist. Da diese Aktion i.a. im AUTO-Ordner als erstes
+  passiert, sollte das OK sein.
+  Diese Aktion betrifft nur solche Rechner, die nachtr„glich mit nicht
+  Atari-konformen RAM- und/oder Beschleunigerkarten ausgestattet wurden.
+  Z.B. den Ar...brenner.
+- MAGXDESK 4: Fehler beim Deikonifizieren nach ALLICONIFY behoben. Es wurde
+  immer nur ein Fenster wieder hergestellt.
+- MGCOPY: Falscher Fenstertitel bei "nicht Best„tigen" korrigiert.
+- MGCOPY: Das Fortschritt-Fenster l„t sich verkleinern, dies wird auch
+  in der INF-Datei vermerkt.
+- MGCOPY: Bei abgeschalteten 3D-Effekten ist der Fortschrittsbalken
+  Grau (Muster 4) auf Wei, und der Rahmen ist ein statt zwei Pixel breit.
+- Beim neuen MXVDI konnte ich auf dem Mac keinen (!) Unterschied feststellen.
+  MagicMac startet nach wie vor mit weiem Bildschirm. Vielleicht fhrt schon
+  Thomas' Emulator das L”schen aus.
+- MAGXDESK 4: Bisher konnten Verzeichnisses mit einem Speicherbedarf von
+  maximal 256kB eingelesen werden. Das Konzept wurde jetzt dynamisch
+  ausgelegt, die Grenze erh”ht sich auf 2MB.
+  Dennoch sollten lange Verzeichnisse tunlichst vermieden werden, da
+  MAGXDESK nicht sicherstellt, da gengend Speicher fr das System frei
+  bleibt.
+- Dateiauswahl: Bisher konnten Verzeichnisses mit einem Speicherbedarf von
+  maximal 128kB eingelesen werden. Das Konzept wurde jetzt dynamisch
+  ausgelegt, die Grenze erh”ht sich auf 2MB.
+  Dennoch sollten lange Verzeichnisse tunlichst vermieden werden, da
+  die Dateiauswahl nicht sicherstellt, da gengend Speicher fr das System
+  frei bleibt.
+- SEHR SEHR WICHTIG: MagicMac soll "Hintergrund-DMA"-f„hig sein. Dazu
+  habe ich drei der XFS-Funktionen auf "asynchronen Zugriff" (MacOS-
+  Jargon) umgestellt. Genau:
+
+  -	zu dev_read() und dev_write() gibt es jeweils eine neue, asynchrone
+	Variante dev_pread() und dev_pwrite(), die bei eingeschaltetem
+	preemptivem Multitasking (d.h. ab Start des AES) verwendet wird.
+	Der neue MagiC-Kern (*.ram) ben”tigt also einen neuen Emulatorkern
+	(MagicMac Debug), den ich in einer Testversion beilege.
+	Ansonsten: ABSTURZ!!!
+  -	xfs_sync() arbeitet jetzt etwas intelligenter und IMMER asynchron.
+
+  Da ich mit der mir zur Verfgung stehenden Compiler-Version nur die
+  Debug-Version und nur Version 2.0.4 von MagicMac erstellen kann, mu
+  ich genau diese Version beilegen. Erst wenn das Konzept seine Brauchbarkeit
+  bewiesen hat, kann ich Thomas Tempelmann den neuen XFS-Quelltext schicken,
+  damit er ihn in die aktuelle Version einbauen kann. Ich habe die MacOS-
+  Versionsabfrage entfernt, so da dieses MagicMac auch unter OS 8 l„uft.
+
+  Bitte testet also die aktuelle Version, die ich leider nur auf meiner
+  AWS und nur unter System 7.6 ausprobieren kann!
+
+  Stabilit„t: Beim gleichzeitigen Compilieren unter PureC und Kopieren
+  mit MGCOPY habe ich "unm”gliche" Fehler erzeugen k”nnen, deren Ursprung
+  ich absolut nicht ergrnden kann. Im schlimmsten Fall strzt MagicMac ab,
+  und Ihr mt den Mac neu booten. Da der Mac sein Dateisystem automatisch
+  und meiner Erfahrung nach sicher repariert, sind echte Datenverluste meiner
+  Erfahrung nach fast unm”glich, jedenfalls ist mir noch nichts derartiges
+  untergekommen. Nach Wilfrieds Erfahrungen l„uft m”glicherweise MacOS 8
+  auch stabiler als 7.x. Vielleicht l„uft auch einen Power-Mac stabiler als
+  mein "altes" Teil. Interessant ist fr mich auch, wie der aynchrone Transfer
+  auf einer IDE-Platte wirkt, die ja bekanntlich kein DMA verwendet.
+
+  Bedeutung: Gerade beim Hintergrunddruck ber das neue NVDI 5 ist es
+  sehr angenehm, wenn der Rechner w„hrend der dabei stattfindenden
+  Dateioperationen nicht "h„ngt". Auch zeigen sich die Vorteile des
+  asynchronen Transfers bei l„ngeren MGCOPY-Aktionen; aufgrund des
+  berlegenen (im Vergleich zu Windows95  B-) ) Thread-Konzepts bleibt dabei
+  die Dialogbox voll bedienbar.
+  Bisher hatten TT-Besitzer und solche, die einen "stabilen" Falcon hatten,
+  gegenber der Mac-Version einen groen Vorsprung. Dort l„uft zusammen mit
+  dem HDDRIVER und CBHD der Hintergrund-Transfer bereits seit MagiC 3
+  problemlos. In Krze soll der Druckvorgang in MagicMac ebenfalls asynchron
+  stattfinden, was eine weitere Verbesserung bringt.
+  A propos: Ein MagicMac mit asynchronem Transfer verdient eigentlich mal
+  wieder einen etwas gr”eren Versionssprung, also z.B. 2.3.
+- AES: wind_set(WF_BEVENT) erweitert. MT_AES.H definiert:
+
+	#define BEVENT_WORK		0x0001	/* AES 4.0	*/
+	#define BEVENT_INFO		0x0002	/* MagiC 6	*/
+
+  Dabei bewirkt BEVENT_INFO, da der Bereich der INFO-Zeile in Bezug auf
+  Mausklick-šbermittlung wie der Arbeitsbereich des Fensters behandelt
+  wird.
+- MAGXDESK 4: Klick auf INFO-Zeile zeigt Alert mit freiem Speicher.
+- MAGXDESK 4: Wenn eine neue MAGX.INF erzeugt wird, werden die Abschnitte
+
+	#[boot]
+	#[aes]
+	#[shelbuf]
+
+  erzeugt. Bisher wurde f„lschlicherweise "[aes]" statt "#[aes]" erzeugt.
+- MAGXDESK 4: In den Dialogen "Disk-Informationen" und "Ordner-Informationen"
+  gab es einen šberlauf bei groen Partitionen. Ich habe die L„nge der
+  Zeichenkette erweitert, so da jetzt maximal 99GB m”glich sind.
+- MGSEARCH: "Y2000 compliant".
+
+25.2.98
+-------
+
+- MAGXDESK 4: Mit gedrckter Alt-Taste kann man ber "Ausschalten" das
+  AES neu starten. Ich habe das nur fr Programmentwicklung/Testzwecke
+  eingebaut, da es fr diesen Fall auf dem Mac bisher keine M”glichkeit
+  gab (kennt keinen Aufl”sungswechsel).
+- MAGXDESK 4: Erster Versuch einer "Fensteroptimalgr”enfunktion":
+  Bisher wurde INSERT wie der Maximalgr”enknopf behandelt, jetzt bewirkt
+  er eine Optimalgr”enfunktion. Das Konzept arbeitet in dieser ersten
+  Implementation so, da die Anzahl der sichtbaren Spalten nach M”glichkeit
+  beibehalten und das Fenster unter keinen Umst„nden verschoben
+  wird. Wenn nicht alle Dateien dargestellt werden k”nnen, wird das Fenster
+  in der Vertikalen maximiert.
+  Ist das Fenster bereits "optimal", wird es in den vorherigen Zustand
+  zurckversetzt.
+- appl_getinfo(): Unterfunktion 10 gibt Bit 12 als erweiterten shel_write()-
+  Modus an (wg. prop. Zeichens„tze).
+- appl_getinfo(): Unterfunktion 13 erweitert, siehe folgenden Punkt.
+- Zu form_popup(): Hier gilt dasselbe wie bei menu_popup(). Bei Verwendung
+  von Tastaturkrzeln sowie von Trennlinien sollte der Objekttyp G_SHORTCUT
+  statt G_STRING verwendet werden. Die Funktion objc_draw() hat sonst leider
+  keine M”glichkeit, festzustellen, woher sie kommt.
+  Das Vorhandensein des Objekttyps ist ber appl_getinfo(), Unterfunktion 13,
+  viertes WORD, Bit 3 erkennbar.
+- Neuer Eintrag im Abschnitt [boot] in MAGX.INF:
+
+	cookies=<n>
+
+  Wenn <n> gr”er als die voreingestellte Zahl der Cookies (z.Zt: 21) ist,
+  wird ein neuer Cookie-Bereich der angegebenen Gr”e alloziert.
+
+29.2.98
+-------
+
+- Kleine Pixeleien an der Ausrichtung des Fenstertitels.
+- Kleine Pixeleien in der Fensterversion der Dateiauswahl => keine doppelten
+  schwarzen Striche mehr links und rechts neben dem Auswahlbereich.
+- Fensterverwaltung nochmals verbessert. Fr jedes Fenster wird eine
+  Minimalgr”e mitgefhrt, die bei wind_create() und wind_set(WF_KIND)
+  berechnet wird. Falls Interesse bestehen sollte, kann ich dieses GRECT
+  auch ber wind_set/get() zug„nglich machen.
+- Einbindung des alternativen Fensterrahmens ge„ndert. Die Einbindung ist
+  jetzt bersichtlicher und flexibler, auerdem mu der Fensterahmen-Manager
+  jetzt die Minimalgr”e festlegen.
+- SEHR SEHR WICHTIG: Ich habe die "Hintergrund-DMA"-F„higkeit von MagicMac
+  jetzt st„ndig eingeschaltet. Dabei sind mir aber sporadisch Fehler
+  untergekommen:
+
+	MGCOPY meldet immer wieder ab und zu geheimnisvolle TOS-Fehler mit
+	positivem (!) Fehlercode (91). Dieser Fehler kann prinzipiell in
+	MGCOPY berhaupt nicht auftreten; das zeigt, da irgendwo etwas
+	ziemlich durcheinander geraten ist. Komischerweise konnte ich den
+	Fehler jedoch nie reproduzieren.
+	Das scheint mir aber jetzt gelungen zu sein, und zwar beim Kopieren
+	einer groen Datei (834034 Bytes) von einer Platte auf eine andere
+	Platte. Der Fehler kam manchmal beim Lesen, manchmal beim Schreiben.
+	Ich konnte den Fehler sofort vermeiden, indem ich WBDAEMON entfernte
+	(per Ctrl-Alt-Asc und Entfernen).
+	Das ganze scheint anzudeuten, da mein MacOS 7.6 auf der AWS nicht
+	vernnftig reentrant ist, vermutlich kommt der SCSI-Manager mit
+	mehreren gleichzeitigen Anfragen durcheinander (MGCOPY und WBDAEMON
+	sind fr das MacOS _eine_ Applikation).
+	Teilt mir bitte mit, ob Ihr den Fehler auch so reproduzieren k”nnt
+	bzw. ob Ihr mit neueren MacOS-Versionen (8.0 oder 8.1) oder anderen
+	Rechnern (PowerPC) vielleicht bessere Erfahrungen machen k”nnt.
+	Ich kann das leider mangels MacOS 8.x und PowerPC nicht testen, bin
+	also auf Hilfe angewiesen.
+
+	Natrlich: Ihr mt die unmittelbare Dateisicherung ausschalten.
+	Bremst das System sowieso frchterlich aus. Auerdem schaltet die
+	Rechenzeitabgabe ans MacOS auch aus. Bei eingeschalteter Rechenzeit-
+	abgabe trat der Fehler bei mir noch h„ufiger auf, kann aber Zufall sein.
+
+	Hallo Ben: Meine AWS reagiert bei Rechenzeitabgabe ans MacOS nicht
+	deutlich tr„ger als ohne. Mu wohl an Deinem Rechner liegen. Oder
+	irgendein Mac-Programm fummelt herum.
+
+	Nochwas: Ich benutze die ADB-Maussteuerung und den NVDI-eigenen
+	Mausbeschleuniger. Auerdem den Copy-Back-Cache des 040. Mit der
+	Cache-Einstellung "Ein", d.h. ohne Copy-Back, gibt es aber dieselben
+	Fehler.
+
+7.3.98
+------
+
+- MGVIEW: Wertet zus„tzlich die Tasten BildHoch (Mac), BildRunter (Mac),
+  Ende (Mac) und Ende (MF-2) aus.
+- Neue Informationen zum Problem des asynchronen Transfers auf dem Mac.
+  Ich habe das Problem folgendermaen eingekreist:
+
+	1. Das Problem tritt mit und ohne irgendwelche Systemerweiterungen
+	   auf.
+	2. Das Problem tritt mit OS 7.6 und 8.1 auf.
+	3. Das Problem tritt (zumindest unter OS 7.6, das ich lieber als
+	   8.1 benutze) nur dann auf, wenn ich Dateien auf das Startvolume
+	   kopiere.
+- Die minimal zul„ssige Fenstergr”e (fr CURRXYWH) kann jetzt per
+  wind_get() abgefragt werden (MT_AES.H entsprechend erweitert):
+
+	#define WF_MINXYWH 103 /* MagiC 6 */
+
+  Achtung: Der Aufruf existiert nur in MagiC, es gibt sonst leider keine
+  M”glichkeit, die Existenz des Aufrufs zu ermitteln.
+- MAGXDESK verwendet wind_get(WF_MINXYWH) fr die Optimalgr”enfunktion.
+- Bzgl. systemglobaler Farbauswahl: Ich schlage die AES-Funktionsnummern
+  220 bis 229 vor, halte es aber fr sinnvoller, einfach eine Shared Lib
+  zu schreiben. Fr TOS, MiNT und konsorten mte man dann noch eine
+  L”sung machen, die den Shared Lib Mechanismus nachbildet.
+- Mac: Ich bin jetzt in der Lage, eine neuere Version von MagicMac zu
+  compilieren. Zur Zeit habe ich die Quelltexte fr die Version 2.2.4.
+  Damit es kein Durcheinander mit den von Tempi erstellten und damit
+  offiziellen Versionen gibt und da ich auerdem nur die "Debug"-Version
+  erstellen kann (ich wei leider nicht, worin sich bei Tempi die
+  Release-Version von der Debug-Version unterscheidet, auer zus„tzlichen,
+  Zeit kostenden Sicherheitsabfragen auf der Mac-Seite), nenne ich das
+  Programm immer "MagicMac v.r.u AK Debug".
+- Mac-XFS: Merkt sich jetzt immer die Zeit des letzten Zugriffs (lesen oder
+  schreiben) sowie den Status "asynchroner Zugriff aktiv". Damit wird
+  verhindert, da der Wbdaemon (und damit PBFlushvol) w„hrend eines laufenden
+  Transfers aufgerufen wird.
+  Der Mechanismus ist noch unvollkommen und funktioniert nur bei einem
+  gleichzeitig laufenden Plattenzugriff, d.h. z.B. w„hrend eines
+  Kopiervorgangs ber MGCOPY. Fr weitere gleichzeitige Zugriffe mu ich
+  den Mechanismus noch verfeinern, aber es geht mir jetzt erstmal um
+  die Information, ob die Version so einigermaen l„uft oder nicht.
+- MGCOPY: Eine Eigenschaft von MGCOPY definiere ich als "known bug", weil
+  ich sie nicht beheben will. Kopiert man Daten im Modus "umbenennen", so
+  wirkt diese Einstellung offenbar nur auf Dateien, nicht auf Ordner.
+
+28.3.98
+-------
+
+- MAGXDESK 4 hat jetzt einen Rckw„rtspfeil. Der Schlieknopf des
+  Fensters schliet sofort, der Rckw„rtspfeil reagiert auf Einzelklick.
+- Der asynchrone Dateitransfer fr Mac-Laufwerke in MagicMac hat jetzt
+  hoffentlich seine endgltige Form erhalten. Fr die Abstrze, die auf
+  meinem Mac auftraten, hat sich folgender Fehler im MacOS
+  als verantwortlich herausgestellt, und zwar in PBFlushVol():
+
+	Wird PBFlushVol() aufgerufen, w„hrend irgendein asynchroner
+	Lese- oder Schreibvorgang aktiv ist, werden irgendwelche
+	Speicherbereiche berschrieben, bei MGCOPY z.B. der Bereich auf
+	dem Stapel, der den letzten Fehlercode enthielt. Daher die
+	"Fehlercode #113" oder "Fehlercode #89" Meldungen.
+
+	Dieses Problem habe ich mit einer Semaphore fr jedes
+	einzelne Mac-Volume umgangen. Dabei habe ich sichergestellt,
+	da, wenn C: und D: auf demselben (ja, demselben, nicht etwa
+	nur dem gleichen!) Volume liegen, auch dieselbe (auch hier
+	dieselbe, nicht nur die gleiche) Semaphore verwendet wird.
+
+  Der Transfer verwendet in dieser MagiC-Version erstmals den Callback-
+  Mechanismus des MacOS so, da damit die auf den I/O-Transfer wartende
+  MagiC-Task wieder aufgeweckt wird.
+  Der Transfer wird also voll ber den dafr vorgesehenen MagiC-Mechanismus
+  evnt_IO() abgewickelt, da hier eine deutlich bessere Rechenzeit-
+  Ausnutzung erreicht wird als mit den bisherigen appl_yield()-Schleifen.
+
+1.4.98
+------
+
+- Maximalgr”enknopf in Magxdesk ist Optimalgr”e.
+- Der Diskzugriff in Magxdesk beim Schlieen von Fenstern sollte jetzt
+  nicht mehr auftreten.
+- MGCOPY: Nicht JA, sondern Ja. Nicht NEIN, sondern Nein.
+- Die neue Version l„uft bis Mitte Juli.
+- minimale Gr”e des Shell-Puffers auf 8k statt 4k.
+- Wichtig: Beim Booten wird unbedingt das neue img_slb ben”tigt, das
+  ich hier beifge. Es ist 15374 Bytes lang und vom 24.2.98. Diese Version
+  stammt von den Behnes und kann mehrere Dateiformate lesen (?).
+  Die alte XP_RASTR.SLB wird nicht mehr ben”tigt.
+
+2.4.98
+------
+
+- MAGXDESK: Farbicon fr den Rckw„rtspfeil eingebaut. Dazu mu die
+  APPLICAT.INF in einen Editor geladen werden, und folgende Zeile mu
+  im Abschnitt [<Spezial>] hinter der FLDR-Zeile eingefgt werden:
+
+	PARD Zurck MAGICICN.RSC 132 "ZURUECK"
+
+  Natrlich vorher die neue, beigefgte MAGICICN.RSC installieren. Sie
+  enth„lt n„mlich das Icon 132. Man kann das Icon „ndern, indem man auf
+  den Papierkorb klickt und "Icon „ndern..." aufruft. Dann sind n„mlich
+  alle Icons der Kategorie "Spezial" „nderbar.
+- MAGXDESK: Freier Speicher wird nicht mehr in %, sondern in K,M oder G
+  angezeigt. Wer sich ber die niedrigen Zahlen (HD-Diskette hat 1,3M)
+  wundert: Ich habe mit K=2^10, M=2^20, G=2^30 gerechnet.
+
+6.4.98
+------
+
+- AES: Der weie Schatten bei 3D-Fenstertiteln lag ein Pixel zu tief und
+  ein Pixel zu weit links.
+- Alte Fensterrahmen: Die Einstellungen von WINCOLOUR wurden bei allen
+  Fensterelementen nicht bercksichtigt, die vom Typ G_BOXCHAR sind.
+- AES: Bei pdlg_create() wird ein Slbopen("PDLG.SLB",0) durchgefhrt.
+  Bei Erfolg wird in den AES-Dispatcher zurckgesprungen, bei Mierfolg
+  wird eine 0 in intout[0] und eine NULL in addrout[0] geschrieben.
+- MAGXDESK: GB statt G, MB statt M, KB statt K.
+
+9.4.98
+------
+
+- Asche ber mein Haupt! Der vermeintliche Code, der bei menu_attach()
+  das Submen mit FL3D_BACKGR eingrauen sollte, war in meinem Quelltext
+  nicht mehr drin, vielleicht auf meinem TT verloren gegangen. Kein Wunder,
+  da Texels Subemens immer unschuldig wei waren.
+  Ist jetzt korrigiert und funktioniert.
+- Der alternative Fensterrahmen funktionierte bisher nur bei einem
+  Objektraster von 8*16.
+  Das ist jetzt sowohl fr Rasterbreite wie -h”he korrigiert. D.h. der
+  Fensterrand ver„ndert seine Ausmae nicht mehr mit dem Raster.
+  Wenn ich, wie ich Olaf schon vor 10 Jahren gesagt habe (leier, leier, ...)
+  in INTRFACE die Objektausmae vernnftig h„tte einstellen k”nnen, w„re
+  das alles kein Problem gewesen...
+  Schimpf!!!
+- Anmerkung: Das (V)FAT-Dateisystem weist (schon immer und auch zumindest
+  in einigen TOS-Versionen) eine kleine Inkompatibilit„t zum MS-DOS Standard
+  auf, und zwar wird nur die Cluster-Nummer -1 (0xffff) als Dateiende
+  erkannt.
+  Soweit ich mich erinnere, k”nnen laut Standard die Nummern
+  0xfff0..0xffff das Dateiende markieren. Der Gedanke dabei war wohl, da
+  eine Datei entweder zu Ende oder ganz zu Ende oder gar ganz am Ende bzw.
+  endlich sein k”nnte, auerdem wollte man sich weitere Varianten
+  fr NT 6.0 offenhalten.
+- nderungen der WDIALOG-, LISTBOX- und FNTMENU-Bibliothek von Sven&Wilfried
+  bernommen. fnts_close() und wdlg_close() geben x/y-Koordinaten zurck, und
+  beim Selektieren eines Listbox-Elements wird ab Wurzelobjekt gezeichnet.
+  Auerdem stellt WDIALOG den Rand eines Dialogs nach Schlieen wieder her.
+- Bei „quidistantem AES-Zeichensatz sollten eigentlich die alten Regeln bei
+  den Objektgr”en gelten, d.h. die H”he einer RSC-Einheit sollte der H”he
+  des groen Zeichensatzes entsprechen. Bzw. in der Praxis: Hat der
+  Eintrag #_TXB in der MAGX.INF eine "1" fr "„quidistant", so sollte
+  keine (!) #_OBS Zeile angegeben sein, damit das AES die RSC-Einheiten
+  entsprechend automatisch korrekt berechnet.
+  Trotzdem habe ich fr G”tz die Sonderbehandlung fr G_(BOX)TEXT Objekte
+  mit DECKEND und LINKSBšNDIG, die ich bei prop. Zeichens„tzen verwende,
+  ebenfalls eingebaut. D.h., wenn ein Objekt eine RSC-Einheit hoch ist, aber
+  der Zeichensatz zu klein ist (H”he < RSC-Einheit), so wird vor dem Zeichnen
+  des Textes eine weie Box "untergelegt". Diese neue Abfrage resultiert in
+  einer etwas verlangsamten Ausgabegeschwindigkeit fr „quidistante AES-
+  Zeichens„tze (auch fr den Systemfont), aber erspart vielleicht ein paar
+  Telefonate an der Hotline.
+- Default-Desktop-Hintergrund: Ich habe die Initialisierung folgendermaen
+  ge„ndert:
+
+	Das Muster wird zun„chst auf 50% Schwarz gesetzt ($41).
+	Das Muster wird ggf. aus der MAGX.INF ausgelesen und ver„ndert.
+	Ist der Bildschirm S/W und hat das Muster eine Farbe > 1, d.h.
+	 ist das Muster nicht S/W, so wird es wieder auf 50% Schwarz gesetzt.
+
+  Wer also einen Eintrag fr 100% Hellgrau in der MAGX.INF hat, erh„lt, wenn
+  der Rechner in S/W-Aufl”sung startet, trotzdem ein Muster von 50% Schwarz.
+
+  Wer sich im VierteWeltLaden eineN AtomstromfilterIn gekauft hat und eine
+  Sonne auf seine katalysatorlose Ente geklebt hat und unheimlich auf einen
+  grnen Hintergrund steht, mu selbigen explizit in der MAGX.INF einstellen.
+- MAGXDESK: In der INFO-Zeile der Fenster werden die Gr”enangaben jetzt
+  mit 1000er-Punkten angegeben.
+- MAGXDESK: Ermittelt das Trennzeichen fr Datumsangaben sowie die Reihenfolge
+  der Datumsangaben (TMJ/MTJ,...) aus dem _IDT Cookie.
+  Das Trennzeichen fr die Uhrzeit kann man mit dem Cookie offenbar nicht
+  angeben, ich habe es daher fest auf ':' gesetzt. Auerdem ignoriere ich
+  die Angabe fr 12h/24h Darstellung, da ich bei 12h durch das AM/PM immer
+  eine andere Zeichenkettenl„nge erhalte und Probleme mit der
+  Spaltendarstellung bekomme.
+- Achtung: Thomas Much weist darauf hin, da der Aufruf wind_get() mit
+  WF_MINXYWH nur in MagiC existiert, es gibt sonst leider keine M”glichkeit,
+  die Existenz des Aufrufs zu ermitteln.
+
+  Ich denke, man mu die MagiC-Version abfragen. Leider gibt TOS offenbar
+  in intout[0] keinen vernnftigen Fehlercode zurck.
+- Fehler bei Dgetpath() auf Laufwerk U: behoben. Der Fehler hatte sich
+  offenbar bei MagiC 5.10 eingeschlichen und bewirkt, da der fhrende
+  Backslash fehlte (siehe 31.5.97).
+- EDITOB.SLB: edit_evnt() liefert jetzt einen Fehlercode (=> EDITOB.TXT)
+- MT_AES: G_SHORTCUT erg„nzt. Fehlercode bei edit_evnt() erg„nzt, Makros
+  fr fslx_...() erg„nzt.
+- WINFRAME: Ich habe den Sonderfall "inneres Rechteck hat H”he 0"
+  bercksichtigt. Bisher hatte das Fenster dann immer ein "Loch".
+  Das Ergebnis ist, bedingt durch den leeren inneren Rahmen, der wie ein
+  schwarzer dicker Strich aussieht, nicht berauschend, aber zul„ssig, d.h.
+  das Loch ist gestopft.
+- AES: Die Funktion objc_sysvar() um die Unterfunktion
+
+	MENUCOL	11
+
+  erweitert. Modus "set" ist verboten, "get" liefert je nach Systemeinstellung
+  zur Zeit 0 (WHITE) oder 8 (LWHITE, d.h. hellgrau).
+- EDITOBJC.SLB: OneOffBug beseitigt, der zum Textpufferberlauf und zur
+  Zerst”rung der Speicherverwaltung fhren konnte.
+- EDITOBJC.SLB: OneOffBug beseitigt, der falsche Zeichenposition zur
+  Pixelposition des Cursors berechnete.
+
+27.4.98
+-------
+
+- DOS: Internen Speicher vergr”ert, um die Notwendigkeit fr ADDMEM
+  hinauszuz”gern.
+- Neuen Mechanismus fr Installationsprogramme eingebaut, die bei der
+  Installation eines Programmes gleich eine Iconzuweisung usw. macht.
+  Zur Beschreibung siehe MOD_APP.TXT.
+- EDIOBJC.SLB: edit_set_font() und edit_get_font() erweitert. Das neue
+  Flag "fontPix" gibt an, ob die Zeichensatzh”he in Punkten (0) oder
+  Pixeln (1) angegeben wurde.
+- MT_AES: edit_set_font() und edit_get_font() erweitert, um Zeichengr”en
+  statt in Pt alternativ in Pixeln angeben zu k”nnen.
+- MT_AES: Makro fr edit_evnt() korrigiert.
+- MAGXDESK: Ben”tigt unbedingt das neue System vom 27.4.98
+- Dateiauswahl: Bercksichtigt den IDT-Cookie fr die Darstellung des
+  Datums. Er wird beim Start des AES abgefragt.
+
+8.5.98
+------
+
+- MGCOPY: Bei falschen Kommandozeilen konnte das Programm abstrzen. Ich
+  habe das Problem durch eine Sicherheitsabfrage entsch„rft.
+  Symptom war: Wurden in MAGXDESK viele Objekte innerhalb eines Fensters
+  selektiert und dann an MGCOPY bergeben (zum Kopieren, L”schen usw.), so
+  kam es bei MAGXDESK zum šberlauf eines allozierten Puffers und damit zum
+  Abschneiden der an MGCOPY bergebenen Kommandozeile, die damit unvollst„ndig
+  und ungltig war.
+- MAGXDESK: Bisher wurde ein Block von 10 kB alloziert, um Kommandos an
+  MGCOPY zu bergeben (per ARGV oder VA_START). Dieser Block ist jetzt
+  variabel gro, d.h. er wird ggf. beliebig oft dynamisch in 10 kB-Schritten
+  vergr”ert. Endlich kann ich mal Mshrink() bzw. Mgrow() richtig ausreizen.
+  Wenn der Block dahinter belegt ist, kopiert MAGXDESK die Daten in einen
+  anderen, neu allozierten Block um. Also gleiches Prinzip wie beim Einlesen
+  von Verzeichnissen.
+- EDITOBJC.SLB: edit_set_format() berechnet bei nderung des <autowrap>-
+  Parameters die Anzahl der Zeilen neu. Doku EDITOB.TXT erg„nzt und korrigiert.
+- wind_set(WF_NAME oder WF_INFO): Verursacht kein Neuzeichnen des ge„nderten
+  Objekts, wenn dieses nicht Teil des Objektbaums ist.
+  wind_set(WF_KIND) fhrte vorher bei ikonifiziertem oder ge-shade-tem
+  Fenster zu einer Endlosschleife im System.
+
+14.5.98
+-------
+
+- AES: Shortcuts RETURN und TAB werden erkannt und ggf. rechtsbndig
+  ausgegeben.
+- EDITOBJC.SLB: B”sen Fehler behoben, der beim zweiten Editobjekt zum
+  Programmabsturz fhrte.
+- WINFRAME.SLB: wind_get(WF_WORKXYWH) fhrte bei ge-shade-ten Fenstern zu
+  einer falschen Berechnung. Beim internen Fensterrahmen-Manager gab es
+  keine Probleme.
+
+17.5.98
+-------
+
+- EDITOBJC.SLB: Weiteren Fehler behoben, der zu falschen Zeichensatz-
+  Berechnungen fhrte, wenn mehr als ein Editobjekt im Spiel war.
+- MGNOTICE 2.0: Neue Version unter Verwendung des Edit-Objekts.
+
+21.5.98
+-------
+
+- TT-SCSI und Falcon-SCSI: Untersttzung von Bus-Arbitrierung.
+- MAGXDESK: Auf besonderen Wunsch von ASH ist die Anzeige des ".."
+  Verzeichnis-Eintrags abschaltbar. Dafr habe ich mir die M”glichkeit
+  geschonken, die fliegenden Dialoge abzuschalten.
+  Konfigurierungsfetischisten werden eh' die Jinnee bevorzugen.
+- INSTMAGC: Kopiert auf beiden Disketten zun„chst das Unterverzeichnis
+  MAGX_<n>/_COPY auf das MagiC-Laufwerk. Dadurch lassen sich die Dateien
+  besser auf die zwei Disketten verteilen. Ob's jetzt pat?
+- AES: Automatisches Nachladen von PDLG.SLB klappt jetzt. War nur ein
+  Tippfehler, auerdem mu appl_getinfo(7) natrlich Bit 4 setzen.
+
+23.5.98
+-------
+
+- PDLG.SLB: Das Konzept hat die Schwachstelle, da zwar die SharedLib
+  automatisch bei pdlg_create() geladen, jedoch erst bei Terminieren des
+  Prozesses wieder freigegeben wird.
+  Da z.B. COPS pdlg_create() aufruft, sich aber nie beendet, hat es wenig Sinn,
+  PDLG.SLB immer nachzuladen (es bleibt nach dem ersten Aufruf durch COPS
+  sowieso im Speicher). COPS k”nnte natrlich Slbopen() und Slbclose() explizit
+  aufrufen, wie dies auch MGEDIT und MGNOTICE bei EDITOBJC machen, aber das
+  w„re eine weitere MagiC-Sonderbehandlung (unter TOS nicht notwendig, da
+  WDIALOG.PRG immer da ist).
+  Daher sollte man PDLG.SLB einfach in die MAGX.INF eintragen, wie ich dies
+  auch in der Release-Version gemacht habe. Gegenber WDIALOG.PRG ergeben
+  sich dann immer noch leichte Speicherplatzvorteile, ein besseres
+  Aufl”sungswechsel-Handling (SLB wird dabei automatisch entfernt und dann
+  neu geladen) sowie der fr mich gr”te Vorteil: PDLG.SLB h„ngt nicht in
+  Trap #2.
+- MAGICICN.RSC: 8-Bit-Icon fr NVDI entfernt.
+- INSTMAGC: Bgelt CHGRES.PRG und CHGRES.RSC nicht ber.
+- INSTMAGX: bernimmt die Zeilen
+	#_ENV HOME=
+  im Abschnitt
+	#[aes]
+  und
+	drives=
+  im Abschnitt
+	#[vfat]
+  aus einer ggf. vorhandenen, alten MAGX.INF.
+  Eigentlich sollte jede #_ENV-Zeile bernommen werden, aber ich befrchte,
+  da ich mir dabei noch irgendeinen Fehler in INSTMAGC.PRG einfange.
+- Wilfried: Ich habe nur ein tslice.cpx, und das ist immer 6034 Bytes.
+  Vielleicht sind mir irgendwelche CPXe mal verloren gegangen.
+- Wilfried: MGVIEW ist auf disk #2
+- Wilfried: RMSLINK kann ich nicht finden. Wo sollte das liegen???
+- Wilfried: MCMD.TOS l„t sich bei mir problemlos mit dem Beenden des
+  VT52 beenden. Das Binary enth„lt die Zeichenfolge XBRAKLME, und dann geht
+  es. Nur wenn das KLME nicht stimmt, bleibt MCMD im Speicher.
+- Wilfried: Euer pdlg.slb macht bei slb_exit() irgendeinen Kram mit
+  appl_init() und appl_exit().
+  Bitte ENTFERNEN!!! T™DLICH!!!
+- Wilfried: Ein Problem mit neuen Fenstern in MAGXDESK konnte ich nicht
+  erkennen. Ich hatte 8 Fenster in MAGX.INF eingetragen und konnte dann
+  ohne Probleme 20 ”ffnen.
+- MAGXDESK: "Rckw„rtspfeil" statt ".." im Einstellungsdialog
+- Release-Paket an ASH:
+	neues MGEDIT
+	neues MGSEARCH
+	neue VDI-Treiber in gemsys/
+	MGNOTICE in magic/start
+	MAGX.INF enth„lt "#_SLB PDLG.SLB"
+	neue Kernel
+	neues INSTMAGC
+- DOS: Absturz beim automatischen Entfernen von SharedLibraries w„hrend des
+  Terminierens von Accessories beseitigt.
+  Genau:
+  Die slbclose-Funktion einer SharedLibrary wird normalerweise, d.h. wenn
+  der usp gltig ist, im User-Modus aufgerufen.
+  Beim Beenden eines Accessorys (egal ob per Pterm(), Pkill(), Ctrl-Alt-Esc
+  usw.) war aber der usp undefiniert.
+  Jetzt wird explizit ein NULL-Zeiger als usp eingetragen, dadurch wird
+  das DOS veranlat, die slbclose-Funktion der SharedLibrary im
+  Supervisor-Modus aufzurufen.
+- AES: Ich habe im Maus-Event-Handling eine Vereinfachung/Beschleunigung
+  vorgenommen. Damit ist eine m”gliche Ursache fr die manchmal
+  zer-formatierten Mens w„hrend des IMG-Treiber-Drucks beseitigt.
+  Ob es das bringt, wei ich allerdings nicht. Bitte ausprobieren!
+
+25.5.98
+-------
+
+- form_xdo: B”sen šberlauffehler beim Zeichnen des Eselsohrs in 2D behoben.
+  Gemeinerweise trat der Fehler mit den „lteren Mac-Bildschirmtreibern
+  nicht auf, auch nicht mit NVDI 4.11 auf dem Atari.
+  Folgender Effekt war zu beobachten: In S/W waren die Eselsohren komplett
+  schwarz, und, wenn irgendwann irgendein Alert oder Dialog verschoben worden
+  war, strzte MagicMac beim Herunterfahren ab.
+- MagiC-Installationsprogramm auf dem Mac: Das Programm hat offenbar noch
+  einen Fehler. Alle Dateien erhalten dasselbe Datum, und zwar das Tagesdatum.
+  So geht das natrlich nicht! Wie soll man da jemals die Versionsbersicht
+  behalten?
+- RELEASE-Archiv:
+	- neues Magic.img (mit Rahmen)
+	- neues TSLICE.CPX (grau)
+	- neues PDLG.SLB (interne AES-Aufrufe)
+	- neue Kernel fr Mac und Atari
+  fehlt laut Behnes noch: neue OSD-Dateien. Da ich ber diese Tierchen leider
+  keine šbersicht habe, warte ich auf neue Dateinen von den Behnes.
+- noch ein Problem: MGNOTICE mu bei zuwenig Farben automatisch S/W anzeigen.
+  Das hat bei MGNOTICE 1.0 problemlos funktioniert, ich mu aber einen
+  „hnlichen Mechanismus in die 2.0 einbauen.
+
+29.5.98
+-------
+
+- DOS: Neue Dcntl-Modi eingefhrt, da sich die alten mit dem Minix-XFS
+  beien. Alle MagiC-Codes haben jetzt ein 'm' im HighByte. Unberhrt davon
+  bleiben die VFAT-Codes, die ihr 'V' behalten.
+  Die neuen Codes sind in MagiC 6 „quivalent zu den alten, d.h. es werden
+  beide Varianten erkannt:
+
+	KER_GETINFO (0x0100) -> MX_KER_GETINFO (0x6d00)
+	KER_DOSLIMITS (0x0101) -> MX_KER_DOSLIMITS (0x6d01)
+	KER_INSTXFS (0x0200) -> MX_KER_INSTXFS (0x6d02)
+	KER_DRVSTAT (0x0104) -> MX_KER_DRVSTAT (0x6d04)
+	KER_XFSNAME (0x0105) -> MX_KER_XFSNAME (0x6d05)
+	DEV_M_INSTALL (0xcd00) -> MX_DEV_INSTALL (0x6d20)
+	DFS_GETINFO (0x1100) -> MX_DFS_GETINFO (0x6d40)
+	DFS_INSTDFS (0x1200) -> MX_DFS_INSTDFS (0x6d41)
+
+- MAGXDESK: Korrekte Fehlermeldung "Keine Fenster mehr." bei eben diesem
+  Fehler.
+- MAGXDESK: Kann leider den Fehler mit den kleinen Fenstern nicht
+  nachvollziehen. Wenn ich "Arbeit sichern" aufrufe und mir die INF-Datei
+  ansehe, ist sie immer 100% OK.
+- MT_AES: MT_appl_search() korrigiert.
+- EDITOBJC.SLB: T”dlichen Fehler bei edit_set_font() korrigiert. Der Wechsel
+  der Zeichensatzh”he fhrte unter MGEDIT zum Programm-Absturz.
+- MGEDIT: Abstrze entfernt, die durch Linken mit neuem MT_AES entstanden
+  waren.
+- MGNOTICE: Setzt die Zeichenfarbe automatisch auf Wei, wenn der
+  Hintergrund eine nicht darstellbare Farbe hat. D.h. Notizen, die schwarz
+  auf gelb eingegeben wurden, erscheinen auf einem S/W-Bildschirm wei
+  auf schwarz (wie bei der alten MGNOTICE-Version).
+- INSTMAGC: "#_DEV"-Zeile wird aus alter MAGX.INF bernommen.
+- objc_draw(): Clipping-Fehler bei G_(F)(BOX)TEXT behoben.
+- interner Fensterrahmen-Manager: Bercksichtigt Fensterfarben (WINCOLOUR)
+  jetzt auch wieder fr Scrollbalken.
+- rsrc_load(), shel_find(), Slbopen(): Ein Fehler in der zentralen
+  Datei-Finde-Routine fhrte zu unvorhersagbaren Resultaten, wenn die PATH
+  bzw. SLBPATH Variable leere Pfade enthielt oder mit einem ';'
+  abgeschlossen war.
+- RELEASE-Archiv:
+	- neues PDLG.SLB
+	- neue Kernel fr Atari und Mac
+	- neues EDITOBJC.SLB
+	- neues MGEDIT.APP
+	- neues MAGXDESK.APP
+	- neues MAGICICN.RSC
+	- HRD entfernt
+	- neues INSTMAGC.PRG
+	- neues MGNOTICE.APP
+	- neue OSD-Treiber
+	- neue MFM-Treiber und OSD-Treiber fr Mac
+	- MGNOTICE.TXT aus dem START-Ordner entfernt. Bitte, ASH, berlegt
+	  Euch, ob die Anleitung fr MGNOTICE notwendig ist bzw. ob sie
+	  im Handbuch in Papierform schon vorliegt.
+- Kann leider auf dem Mac kein Problem beim Start von PAPILLON bei
+  gedrckter Alt-Taste feststellen.
+- AES: MT-sicherer Aufruf von vsc_form(). Vielleicht sind die Redraw-Probleme
+  beim Umschalten der Applikation w„hrend des IMG-Drucks jetzt beseitigt.
+  Bitte ausprobieren!
+- VFAT-XFS: Bei der Umwandlung eines Dateinamens in das 8+3 Format wurde fr
+  den Fall, da der Name mehrere Punkte enth„lt und der eigentliche Dateiname
+  8 Zeichen oder mehr enth„lt, f„lschlicherweise der Namensteil nach dem ersten
+  Punkt als Erweiterung erkannt. Jetzt wird korrekt der Teil nach dem letzten
+  Punkt verwendet.
+- Bemerkung: Offenbar hat QED 4.5beta einen Fehler: Die Dateiauswahl bietet
+  "*.*" statt "*" an. Damit werden Dateien ohne Erweiterung unsichtbar.
+- neues MGFORMAT: Behandlung der MGFORMAT.INF wie bei den anderen Programmen,
+  d.h. im ASCII-Format und aus $HOME. Bitte testen, damit wir uns jetzt nicht
+  noch b”se Fehler einhandeln.
+
+9.6.98 (release an ASH)
+------
+
+- Atari-Version: Supervisorstack pro Task von 5k auf 8k erh”ht. Auf Wilfrieds
+  Fo:ken gab es immer einen Stapelberlauf beim Start von Programmen im
+  "single mode". Auf dem TT trat der Fehler nicht auf.
+
+20.6.98
+-------
+
+- Weiteren Fehler in QED 4.5beta gefunden: Nicht nur hat es Probleme mit
+  Leerzeichen in Pfaden, sondern auch einen Fehler in der RSC: Die Menleiste
+  ist nicht wei, sondern schwarz. Daher wird das Flag FL3DBAK nicht, die
+  Menleiste bleibt also wei, auch wenn das entsprechende Bit in der
+  MAGX.INF gesetzt ist.
+- EDITOBJC.SLB: Backspace funktioniert jetzt auch, wenn der Cursor ganz
+  links oben im sichtbaren Textausschnitt steht.
+- Mac-XFS: Fehler in xfs_dpathconf() korrigiert. Modus DP_MODEATTR liefert
+  jetzt das Bit DP_FT_LNK.
+- Wilfried: Schick mir bitte mal die Angaben, die Dfree() fr Deine 4G-Platte
+  liefert! Ich kann in Magxdesk keinen Fehler finden, und die Anzeigefunktion
+  selbst ist i.o.
+
+27.6.98
+-------
+
+- MAGXDESK: Ein Fehler bei Ctrl-W konnte in eine Endlosschleife fhren,
+  wenn kein MAGXDESK-Fenster offen war. Ursache war nicht, wie Sven vermutet
+  hatte, ein Deadlock.
+  Neue Version an ASH.
+- Bug im Mac-XFS: Die Funktion Dfree() arbeitet auf solchen Mac-Volumes nicht
+  korrekt, die gr”er als 2 GB sind oder die mit HFS+ formatiert sind.
+  Ersteres liee sich beheben, indem die seit System 7.5.2 vorhandene
+  Mac-Funktion PBXGetVolInfo() statt bisher PBHGetVInfo() aufgerufen wird.
+  Die neue Funktion hat zwar 64-Bit-Felder fr freie und belegte Bytes,
+  jedoch sind die Eintr„ge ioVFrBlk (Anzahl belegter Bl”cke) und ioVNmAlBlks
+  (Gesamtanzahl Bl”cke) wie bei der alten Funktion nur 16-Bit gro. Sowas von
+  Kurzsichtigkeit! Noch sch”ner: Fr Kompatibilit„t lgen beide Funktionen im
+  Eintrag ioVAlBlkSiz, der zwar 32-Bit gro ist, aber bei HFS+ Volumes
+  kompletten Unsinn enth„lt (riesige Blockgr”en statt der tats„chlich
+  vorhandenen 4k). Dieser Unsinn hat wohl das Ziel, das Produkt aus
+  ioVAlBlkSiz und ioVNmAlBlks immer dicht bei 2GB zu halten.
+  Fazit: Weder beim Compiler noch auf Apples WWW-Seiten gibt es den Hauch
+  eines Systemaufrufs, mit dem sich die Blockgr”e von HFS+ Volumes
+  abfragen l„t.
+  Kein Wunder, da Apple bis jetzt noch kein vernnftiges Betriebssystem
+  geschrieben hat. Erst die Oberpanne mit dem kaputten PBFlushVol(), und nun
+  ein nicht existierender Aufruf!
+- An Sven&Wilfried:
+  NAME und INFO von Fenster #0 werden beim Start des AES auf "" initialisiert.
+  Sie k”nnten nur ge„ndert werden, wenn w_kind das Bit fr NAME bzw. INFO
+  enthielte, was aber nicht der Fall ist, da der Fenstertyp immer 0 ist.
+- An Sven&Wilfried:
+  In der Tat kann ein Ger„tetreiber erkennen, ob er als Standard-Ger„t (<0)
+  ge”ffnet worden ist oder nicht. Standard-Ger„te haben stets fd_refcnt == -1.
+  Sie werden bei der Initialisierung des Systems sowie bei
+  Fforce(neg_hdl, ...) erzeugt.
+  fd_refcnt ist normalerweise 1. Es wird nur dann erh”ht, wenn ein Proze
+  per Fforce() ein Standard-Handle auf dieses Handle umlenkt. Dann ist
+  fd_refcnt 2. Wenn nun der Proze Kinder und Kindeskinder bekommt, wird
+  fd_refcnt jedesmal erh”ht. Auch dann, wenn andere Standardhandles ebenfalls
+  auf dieses Handle umgelenkt werden. Ein fd_refcnt von drei k”nnte z.B.
+  bedeuten:
+
+	FD referenzierbar als Proze A, Handle 6.
+	FD referenzierbar als Proze A, Handle 1.
+	FD referenzierbar als Proze B (Kind von A), Handle 1.
+
+  Damit k”nnte der Druckertreiber so aussehen:
+
+  LONG write( FD *fd, LONG count, char *buf )
+  {
+  	LONG err;
+  
+  	if	(fd->refcnt == -1)
+  		... Schnittstelle ”ffnen ...
+  	err = DruckAusgabe( buf, count );
+  	if	(fd->refcnt == -1)
+  		... Schnittstelle schlieen ...
+  	return( err );
+  }
+
+29.6.98
+-------
+
+- Heute eine l„ngere Debugging-Session auf dem guten alten TT. Leider l„uft
+  die Maus nur noch horizontal. Auch mal nett...
+- nderung im AES:
+  Mens: Ist ein Men zu gro (pat nicht in den festen Bildschirmpuffer), so
+  wird dieser feste Bildschirmpuffer zumindest ungltig gemacht, damit beim
+  Restore (Men wieder verlassen) kein Mist auf den Bildschirm kommt.
+  Beispiel: Das "Bearbeiten" Men in QED.
+- Beim Einfrieren von Applikationen (z.B. beim "single start") war offenbar
+  seit langem (MagiX 1.0 ???) ein Fehler beim Verstecken der Fenster, der
+  m”glicherweise nur dann auftrat, wenn mehrere Applikationen Fenster offen
+  hatten und die Fenster eine bestimmte Reihenfolge hatten.
+  Es ist mir aber schleierhaft, warum der Fehler auf dem Mac nicht auftrat
+  und warum nicht schon frher. Ich wei auch nicht, ob ich den Fehler
+  tats„chlich beseitigt habe.
+  Bitte, Ihr alle, die Ihr werweiwasfr Probleme mit dem Start von
+  Programmen im "single mode" hattet, probiert die neue Version mal tchtig
+  aus!
+- Liebe ASH-ler: Bitte setzt die neuen Release-Versionen fr Atari und Mac
+  nur dann ein, wenn das "single mode" Problem behoben ist!
+- Nur noch einmal mein Wissens-Status zum "asynchroner Dateitransfer" Problem:
+
+  - Probleme gibt es durch die Mac-Funktion PBFlushvol(). Diese wird von
+    WBDAEMON und nur von WBDAEMON aufgerufen.
+    Diese Funktion ist in s„mtlichen mir bekannten Versionen des
+    MacOS kaputt (getestet mit 7.5, 7.6 und 8.1)!!!
+  - Probleme gibt es nur auf dem MacOS-Boot-Volume.
+  - Auf den meisten Macs (AWS 95, PB 68k) konnte ich das Problem umgehen,
+    indem ich eine Semaphore eingebaut habe, die den Aufruf von PBFlushvol()
+    w„hrend eines laufenden asynchronen Transfers verhindert.
+    Das klappt aber offenbar auf den neuen G3 Macs nicht mehr.
+
+  Fazit:
+
+  - Wer einen alten Mac hat, sollte unbedingt (!) den asynchronen Transfer
+    einschalten und WBDAEMON aktivieren. L„uft super!
+  - Bei wem es knallt, sollte entweder WBDAEMON weglassen (ausprobieren, ob
+    ein Absturz von MM Verlust von Daten nach sich zieht!), auf den
+    asynchronen Transfer verzichten oder ein vernnftiges Betriebssystem
+    installieren (NT 5.0).
+
+4.7.98
+------
+
+- AES: B”sen Fehler bei der Berechnung des Bildschirmpuffers fr Mens und
+  Alerts behoben. Dieser Fehler trat nur bei Verwendung von proportionalen
+  AES-Zeichens„tzen auf (das intout[]-Feld war zu klein und berschrieb
+  den folgenden Speicher).
+  Dieser Fehler drfte fr die klebenden Mens bei der Verwendung von
+  Nova-Grafikkarten auf dem Atari verantwortlich sein. Auf meinem Mac
+  wirkte sich der Fehler nur so aus, da 500k statt 300k Puffer angefordert
+  wurden.
+  Release an ASH.
+- WINFRAME.SLB: Beim ndern von Fensterposition oder -gr”e eines ge-shade-ten
+  Fensters wurde der Arbeitsbereich (W_WORK) falsch berechnet. Sollte jetzt
+  korrigiert sein.
+
+13.7.98
+-------
+
+- Neues EDIT-Objekt:
+  Zwar hatte ich in EDITOB schon immer vorgesehen, beliebige Zeilen-Enden 
+  zu bercksichtigen (CR, LF, CRLF), das hatte ich aber nie zu Ende gefhrt, 
+  daher klappte es nur mit CRLF.
+  Das habe ich versucht zu korrigieren. Eigentlich sollte jetzt jedes
+  m”gliche Zeilen-Ende erkannt werden, d.h. CR,LF,CRLF und LFCR.
+
+  EDITOB unterscheidet nicht zwischen UNIX-Text und DOS-Text usw.,
+  sondern beim Bet„tigen von [Return] wird _IMMER_ ein CRLF eingefgt.
+  Andere Zeilen-Enden werden erkannt, aber nicht erzeugt. In einer Datei
+  k”nnen beliebig verschiedene Zeilen-Enden vorkommen.
+
+18.7.98 (Version 6.01)
+-------
+
+- Neue Bibliothek MT_DOS.LIB enth„lt fehlende DOS-Aufufe fr PureC. Das
+  alte Binding SLB_BIND.C sollte nicht mehr verwendet werden, weil es
+  nicht MT-sicher ist.
+- Mac-XFS: Dfree() funktioniert jetzt auch auf HFS-Plus-Volumes. Neuen
+  Quelltext an Tempi verschickt.
+  Achtung: Das Produkt aus Sektorgr”e, Clustergr”e und Cluster-Anzahl
+  kann jetzt natrlich gr”er als 32 Bit sein (mit 32 Bit ohne VZ k”nnen
+  genau 4 GB verarbeitet werden).
+  Vorschlag: Zun„chst Sektorgr”e mit Anzahl Sektoren pro Cluster
+  multiplizieren. Hoffen, da das Ergebnis durch 1024 teilbar ist (ggf. mit
+  AND Operation sicherstellen). Das Ergebnis dann um 10 Bit nach rechts
+  schieben und erst dann mit der Cluster-Anzahl multiplizieren. Das Ergebnis
+  ist dann die Anzahl der kB.
+- BIOS: Bei in eine Datei umgelenkter Bildschirmausgabe w„hrend des
+  Bootvorgangs war ein "critical error" leider t”dlich, da es zu einer
+  Rekursion kam. Der Handler macht n„mlich seine Ausgabe "Abbruch, Wiederholen,
+  Ignorieren" auf das BIOS-Ger„t 2, welches seinerseits wiederum
+  auf eine Datei umgelenkt ist.
+  Ich habe daher eine Semaphore eingefhrt, die durch den CEH verwaltet wird
+  und anhand der die umgelenkte Ausgaberoutine feststellen kann, da
+  sie sich im CEH befindet. In diesem Fall wird der alte Vektor aufgerufen,
+  d.h. der CEH erscheint wie bisher auf dem Bildschirm.
+
+21.7.98
+-------
+
+- MGCOPY: Wird ein Ordner im Modus "šberschreiben" oder "Backup" kopiert
+  und existiert das Zielobjekt schon, jedoch nicht als Ordner, so wird
+  wie im Modus "Best„tigen" verfahren, d.h. es ”ffnet sich ein Dialog.
+- MGCOPY: Wird ein Ordner kopiert und existiert das Zielobjekt schon, jedoch
+  nicht als Ordner (d.h. als Datei oder Alias oder Ger„t), so wird im Modus
+  "Best„tigen" statt des Ordner-Dialogs "Benutzen, OK, Abbruch" nun der
+  Datei-Dialog mit "šberspringen, OK, Abbruch" ge”ffnet.
+  Dadurch gibt es keinen rger mehr mit ungltigen Zielpfaden, wenn der
+  Quellordner weitere Dateien enthielt (man kann eben einen Nicht-Ordner
+  nicht "benutzen").
+- MGCOPY: Wird ein Ordner innerhalb eines Laufwerks bzw. Volumes verschoben
+  und existiert der Ordner bereits, so wird er im Modus "Backup" und
+  "šberschreiben" ohne Rckfrage benutzt.
+
+29.7.98
+-------
+
+- Beispiel-MAGX.INF auf der Auslieferungs-Diskette:
+  Eintrag _FSL erg„nzt (hatte ich vergessen, existiert seit MagiC 5.10)
+- B”sen (!) Tippfehler in INSTMAGC behoben: APPLICAT.INF und APPLICAT.DAT
+  wurden beim Installieren gnadenlos berschrieben, falls sie schon
+  vorhanden waren.
+
+2.8.98
+------
+
+- Neuen Fehler in QED gefunden: Die Auswertung der Kommandozeile funktioniert
+  nicht, wenn der Dateiname zwei Leerzeichen hintereinander enth„lt.
+- MGCOPY: Beim Verschieben auf demselben Laufwerk werden Dateien im
+  Modus "Best„tigen" nicht mehr bergebgelt. Der Fehler hatte sich in
+  der Version vom 21.7. eingeschlichen.
+- WINFRDEM.LZH enth„lt einen einfachen Fensterrahmen-Manager fr MagiC 6,
+  der als Vorlage fr eigene Experimente dienen kann. Die SLB enth„lt nur
+  das allern”tigste, die Rahmen sind dementsprechend "schlicht".
+
+8.8.98
+------
+
+- WINFRAME.SLB: Bei ge-shade-tem Fenster wird die rechte Ecke des
+  Fensterbalkens nicht mehr f„lschlich als Vergr”erungsfeld erkannt.
+- MAGXDESK 4.01: Bei der šbergabe von Dateinamen via Kommandozeile oder
+  D&D oder VA_START werden Dateinamen, die Leerzeichen und Hochkommata (')
+  enthalten, jetzt (hoffentlich) korrekt behandelt, indem n„mlich alle
+  Hochkommata verdoppelt werden.
+- MGVIEW: VA_START entfernt doppelte Hochkommata von ge-quote-ten Dateinamen.
+- MGEDIT: VA_START entfernt doppelte Hochkommata von ge-quote-ten Dateinamen.
+
+19.8.98
+-------
+
+- MAGXDESK: Sicherheitsabfrage fr fehlerhafte MAGX.INF mit Icons auerhalb
+  des sichtbaren Bereichs.
+- MGCOPY: Rechnet auf dem Zielpfad nicht mehr mit Bytes, sondern mit
+  Clustern, daher sollte es jetzt auf Laufwerken > 2GB keine Probleme
+  mehr geben ("Zuwenig Plattenplatz", obwohl Laufwerk fast leer).
+- MGCOPY und MAGXDESK: Pfadtiefe jetzt maximal 12 statt 8 Ebenen, maximale
+  Pfadl„nge 256 statt bisher 128 Zeichen, wobei der Pfad in der tiefsten
+  Ebene nur 189 Zeichen lang sein darf, damit Dateien mit max. 64 Zeichen
+  L„nge daran noch angeh„ngt werden k”nnen.
+
+9.10.98 (Version 6.10alpha)
+-------
+
+- EDITOBJC.SLB: Bei leerem Text schaltet ^A nicht mehr f„lschlicherweise den
+  Cursor aus, ohne da man ihn wieder anschalten konnte.
+- EDITOBJC.SLB: ^Y wird ausgewertet: Ist kein Block selektiert, so wird die
+  aktuelle Zeile selektiert. Anschlieend wird wie bei ^X vorgegangen.
+  D.h. ^Y l”scht den selektierten Block bzw. die aktuelle Zeile.
+- AES: form_alert() und form_(x)error() verwenden nicht mehr F1,F2,F3 als
+  Tastaturkrzel fr die Dialoge, sondern ordnet selbst„ndig den Buttons
+  Alt-Buchstabe Kombinationen zu. Bei gleichen Anfangsbuchstaben wird ggf.
+  der zweite, dritte usw. Buchstabe unterstrichen, wobei der Default-Button
+  Priorit„t hat. Leerzeichen werden ignoriert.
+- Bin in Trauer: Mein DAT ist endgltig hin. Jetzt kann ich mir meine
+  sch”nen Cassetten in eine Glasvitrine stellen.
+- MAGXDESK: In der MAGX.INF wird jetzt auch der Fall abgespeichert,
+  da alle Fenster gleichzeitig per Ctrl-Iconify ikonifiziert wurden. Bisher
+  funktionierte das nicht, und es war immer nur ein Fenster ikonifiziert.
+- AES: Bei Verwendung des Clipboards in Eingabefeldern wird der Fall
+  abgefangen, da irgendein Schweineprogramm einen SCRAP-Pfad ohne
+  abschlieenden Backslash eingestellt hat (d.h. der fehlende Backslash wird
+  erg„nzt).
+- DOS: Psetpgrp() und Pgetpgrp() implementiert.
+- DOS: Pkill mit Parameter pid=0 und pid<0 implementiert.
+
+1.11.98
+-------
+
+- FAT_DFS: Untersttzung von 32-Bit FATs. Da es leider keine vernnftige
+  M”glichkeit gibt, auf dem Atari eine FAT32-Partition einzurichten, hier
+  eine Vorgehensweise:
+
+	1. HDDRUTIL aufrufen.
+	2. Eine Partition mit Kennung F32 anlegen. Laufwerkbuchstabe sei X:.
+	3. mkfatfs aus dem freemint-1.15 Paket besorgen.
+	4. Aufruf (ggf. Parameter erg„nzen): "mkfatfs X:"
+
+  Die Partition sollte nun sowohl mit freemint-1.15 als auch mit MagiC
+  angesprochen werden k”nnen.
+
+  Einschr„nkungen:
+
+	1. Es werden nur max. 2 FATs untersttzt.
+	2. Der INFO-Sektor wird noch nicht richtig ausgewertet.
+	3. Ich habe es auf dem Mac noch nicht getestet. M”glicherweise
+	   braucht man dazu den SCSI-Treiber
+
+- DOS: Pexec() Modus 200 eingebaut. Eigentlich wollte ich Pfork() und
+  Pvfork() einbauen, aber das ist nur grausam. So kopiert der Kernel von
+  MiNT bei einem Pfork()-ten Proze z.B. bei jedem Taskwechsel alle
+  Speicherbl”cke hin und her, damit ein Proze nicht den Speicher des
+  anderen beeinflussen kann.
+
+12.11.98
+--------
+
+- WBDAEMON.PRG mit FPU_PATCH behandelt.
+- MAGXDESK: Fehler bei der Berechnung des Inhalts von Ordnern behoben.
+  Es wurde die Gr”e der normalen Dateien zur Anzahl (!) der versteckten
+  Dateien addiert.
+- MAGXDESK: Der Dialog "Disk-Info" sowie der Alert, der beim Klicken auf
+  die Fenster-Infozeile erscheint, verwenden fr die gesamten, freien
+  und belegten Bytes auf dem Laufwerk 64-Bit-Arithmetik.
+  Damit k”nnen auch Laufwerke mit mehr als 4 Gigabyte Kapazit„t korrekt
+  behandelt werden. Bei diesen Laufwerken werden ggf. kBytes statt Bytes
+  angegeben, die Laufwerke drfen also max. 4 Terabytes gro sein.
+
+  Die Arithmetik verwendet nicht den "mulu.l dm,dh:dl"-Aufruf, da der
+  leider erst ab 68020 existiert, sondern normale 16-Bit-Multiplikationen,
+  die auch der 68000 kann.
+- MAGXDESK: Die Dialoge "Datei-Info" und "Ordner-Info" verwenden bei der
+  Anzahl der Bytes Tausenderkommas.
+- MAGXDESK: Wird bei AV_STARTPROG ein nicht angemeldeter Dateityp bergeben,
+  wird jetzt automatisch das Default-Anzeigeprogramm (i.a. MGVIEW)
+  gestartet. Der ASH Emailer kann jetzt also die Textdateien anzeigen.
+  Man h„tte allerdings auch MGVIEW auf den Dateityp *.SND anmelden k”nnen.
+- DFS_FAT: Die Anzahl der freien Cluster wird jetzt fr jedes Laufwerk
+  gepuffert, damit ist nur fr den ersten Dfree()-Aufruf ein Plattenzugriff
+  notwendig.
+- AES: Fehler bei wdlg_open() beseitigt. War kein Fenster mehr frei, so
+  wurde trotzdem das Wurzelobjekt des Dialogs modifiziert (OUTLINED entfernt).
+- AES: Fehler bei diversen Objekttypen beseitigt, der auftrat, wenn die
+  Zeichenh”he gr”er als die Objekth”he ist. Typischerweise ist dies
+  der Fall bei Vektor-Zeichens„tzen, z.B. bei "Lucida Sans Unicode" mit einer
+  H”he von mindestens 12 Pixeln.
+  Zu erkennen war das Problem z.B. im "Suchen"-Dialog von PureC: Das
+  Eingabefeld hatte eine zerst”rte untere Linie, da das Objekt zu gro
+  gezeichnet wurde (ber die logische Objektgrenze hinweg). Dementsprechend
+  war auch der Cursor immer etwas zu kurz.
+- MAGXDESK 4: Das Tausenderkomma wird jetzt aus der RSC-Datei geholt, damit
+  wird "1.024" in der UK-Version zu "1,024".
+- MAGXDESK 4: Der ".."-Eintrag in einem Verzeichnis wird jetzt beim
+  Sortieren ausgenommen. Damit ist garantiert, da er auch dann an erster
+  Stelle steht, wenn es z.B. ein Verzeichnis "-hallo" gibt.
+- B”sen Fehler bei FAT32 beseitigt. Er trat bei Fseek() auf, wenn eine
+  Clusternummer gr”er als 16 Bit war.
+
+2.1.99
+------
+
+- Kleinen Fehler in der Programmladeroutine gefunden: Manfred Lippert hatte
+  zwei fast identische SLBs, von denen die eine geladen werden konnte und
+  die andere nicht. Ich mute dem Problem auf dem guten alten TT mit dem
+  Templmon zu Leibe rcken, um die Ursache zu finden:
+  Die Programmladeroutine l„dt die Relokationstabelle bzw. immer einen
+  m”glichst groen Teil davon in den Speicher, um die Relozierung
+  durchzufhren. Als Puffer dienen dabei BSS und Heap des geladenen Programms.
+  Nun hat eine SLB aber keinen Heap, und Manfreds SLBs haben auch kein BSS,
+  folglich konnte die Relozierung nicht durchgefhrt werden. Gemeinerweise
+  hatte aber die zweite SLB einen Mini-Heap von 2 Bytes, der dadurch
+  zustande kam, da die L„nge von TEXT+DATA nicht durch 4 teilbar ist,
+  MagiC aber intern mit Langwortadressen arbeitet und daher 2 Bytes mehr
+  allozierte, als die SLB netto ben”tigte.
+
+  Abhilfe: Ich k”nnte das Problem zwar beseitigen, aber dann wrden
+  problematische SLBs erst ab MagiC 6.10 laufen. Alternativ kann man eine
+  SLB schreiben und sie, wenn sie sich nicht laden l„t, irgendwo um 2 Bytes
+  verl„ngern. Die einfachste L”sung ist, ein Dummy-BSS von vielleicht
+  16 Bytes zu erstellen.
+- Kleinen Fehler in MAGXDESK beseitigt: Wurde beim Doppelklick auf den
+  Fenstertitel die Maustaste gedrckt gehalten, so erschien f„lschlicherweise
+  der Alert, der den freien Speicher auf dem Laufwerk anzeigt, wenn man
+  auf das INFO-Feld klickt.
+  Um das Problem zu beseitigen, mute ich die M”glichkeit schaffen, die
+  Ausmae des INFO-Feldes abzufragen, daher funktioniert das neue MAGXDESK,
+  bei dem der Fehler behoben ist, richtig nur mit einem neuen MagiC (bei
+  „lteren drfte berhaupt nie ein Alert erscheinen).
+- (V)FAT-XFS: Prozesse drfen in der MiNT-Domain schreibgeschtzte Dateien
+  umbenennen. In der TOS-Domain wird aus Kompatibilit„tsgrnden immer
+  noch EACCDN geliefert.
+- FAT-DFS: B”sen Fehler bei Dfree() behoben. Der neue Mechanismus mit dem
+  Cache fr die Anzahl freier Cluster funktionierte nur dann, wenn vor dem
+  ersten Schreibzugriff auf das Dateisystem Dfree() aufgerufen wurde, z.B.
+  beim ™ffnen eines Fensters in MAGXDESK.
+- Pfork() implementiert. -> MAGX_DOS.TXT
+- Taskmanager berarbeitet. Sieht zwar jetzt komisch aus, weil nicht
+  gengend Platz fr die Zeichenkette "Bytes" ist, aber es werden die
+  neueren Wartemodi "warten auf Fork" und "warten auf pid" angezeigt.
+- Fcntl(F_SETSHMBLK) berarbeitet. Der Speicherblock wird nun tats„chlich als
+  "shared memory" behandelt. D.h. er erh„lt einen Referenzz„hler, der durch
+  den Aufruf erh”ht wird. Durch L”schen der Datei wird der Referenz„hler wieder
+  dekrementiert und ggf. der Speicherblock freigegeben.
+  Bisher hat jeder Aufruf von Mfree() den Block freigegeben, auch w„hrend er
+  an die Pseudodatei angekoppelt war.
+- Fcntl(F_SETSHMBLK) liefert, wie MiNT, ERANGE, wenn bereits ein Block
+  zugewiesen wurde.
+
+24.1.99
+-------
+
+- MT_AES: te_colour fr TEDINFO durch eine Bit-Struktur ersetzt.
+- APPLICAT.APP: Internes Icon fr Rckw„rtspfeil erg„nzt.
+- MagicMac: Fsymlink() erzeugt fr Aliase, deren Original ein Pfad ist,
+  ein Ordner-Icon statt eines Datei-Icons fr den Finder.
+- Dateiauswahl: L„uft die Dateiauswahl im Fenster, l„t sich der Dialog
+  horizontal vergr”ern. Die neue Gr”e wird bis zum Neu-Boot beibehalten
+  und gilt auch fr die Dateiauswahl im Dialog. Bisher gibt es aber keine
+  M”glichkeit, die Gr”e in der MAGX.INF zu sichern.
+- Dateiauswahl: Macht den Dxreaddir()-Aufruf jetzt mit gerader Adresse.
+
+19.2.99
+-------
+
+- Diverse Korrekturen an der Dateiauswahl.
+- MGX_DOS.TXT erweitert.
+- MGNOTICE: Doppelklick bringt das Programm nach oben, damit die Texteingaben
+  in das Notizfenster gehen.
+- MGEDIT: Verwendet Dateiauswahl im Fenster.
+- MGCOPY: Bei einer Clustergr”e von 512 Bytes wurde der Speicherbedarf beim
+  Kopieren f„lschlicherweise abgerundet, so da eine Datei mit z.B. 287 Bytes
+  als "0 kBytes" angezeigt wurde. Jetzt wird aufgerundet.
+  Beim L”schen wird, wie bisher, die Clustergr”e nicht bestimmt, sondern
+  alle Dateigr”en in 1024-Byte-Einheiten angegeben. Daher trat der
+  Rundungsfehler hier nicht auf.
+
+25.2.99
+-------
+
+- Beim ersten Ausprobieren von MPC unter VPC gleich einen Fehler in 
+  Mdesk5 gefunden: Im Fenster wird angezeigt "1,: GB frei", wenn 
+  65535 Cluster mit 32kB Gr”e frei sind. Diese Gr”e wird   
+  typischerweise Windows95 untergejubelt, wenn ein Volume gr”er als  
+  2GB ist (Windows95 kann, wie auch die zugeh”rige Stufe des SMB-
+  "Protokolls", keine Laufwerke mit mehr als 2 GB, jedenfalls nicht 
+  in der Protokollstufe 139, sondern erst in Stufe 158, jeweils so 
+  ungef„hr...)
+- Signalhandler werden jetzt bei P(v)fork() vererbt.
+- Der Absturz beim Bet„tigen des MagiC-Popup bei installiertem MAGTOROM und
+  proportionalem groem AES-Zeichensatz ist behoben.
+- Auf Wunsch von Oliver F1-F3 fr Alertboxen wieder aktiviert.
+- Neue Version des VT52 mit neuer Systemanbindung gemacht. Er l„uft nur mit dem
+  neuen MagiC-Kernel zusammen, macht aber mit dem alten Kernel nicht viel
+  falsch (der DOS-Zeileneditor funktioniert nicht).
+  Sicherheitshalber habe ich die Anbindung an die alte Version des VT52 noch
+  im MagiC-Kernel dringelassen, ich werde sie aber irgendwann entfernen.
+
+  Fr den Anwender sind nur folgende nderungen sichtbar:
+
+	- Es sollte etwas "Thread-fester" sein, da fr jedes Terminalfenster
+	  eine Liste aller Tasks (d.h. auch Threads, Signalhandler und per
+	  GEMDOS mit Pexec(10x) oder P(v)fork() erzeugte Tasks) gefhrt wird,
+	  die dieses Fenster benutzen. Der Umbau ist aber noch nicht fertig,
+	  auch ziemlich aufwendig, da VT52 ursprnglich fr eine 1-1 Beziehung
+	  zwischen Task und Terminalfenster konzipiert war.
+	- Wenn zuwenige Fenster zur Verfgung stehen, gibt es kein Speicherleck
+	  mehr beim ™ffnen eines neuen Fensters.
+	- "Buffer" heit jetzt "Puffer".
+	- Das Ikonifizieren klappt so halb. Die ikonifizierten Fenster zeigen
+	  noch nichts vernnftiges an, das De-ikonifizieren erzeugt manchmal
+	  Mll, und das All-Ikonifizieren funktioniert noch berhaupt nicht.
+
+13.3.99
+-------
+
+- Fcntl(PLOADINFO) eingebaut. Funktioniert leider nur mit solchen Programmen,
+  die "normal" gestartet werden, also z.B. nicht mit ACCs.
+
+18.3.99 (Version 6.10 gamma, als Release an ASH)
+-------
+
+- MAGXDESK5: Auto-Update fr die Laufwerke A: und B: nur noch auf dem Mac.
+
+27.3.99
+-------
+
+- (X)BIOS: negative Funktionsnummern fhren nicht mehr zum Systemabsturz.
+
+5.4.99
+------
+
+- Atari: Neue Behandlung der Echtzeituhren. Falls Unregelm„igkeiten auftreten,
+  bitte melden.
+- Atari: Beim Ermitteln und Setzen der IKBD-Uhr werden Werte 0..79 hoffentlich
+  jetzt korrekt als 2000 bis 2079 interpretiert. Das sollte jedoch nur „ltere
+  STs ohne Echtzeituhr betreffen.
+- shel_write() verarbeitet jetzt auch Kommandozeilen mit mehr als 32k L„nge.
+  Damit kommt MGCOPY auch mit vielen Dateien klar, wenn es zum ersten Mal
+  gestartet wird (sp„ter werden Parameter ber VA_START bergeben).
+
+9.4.99
+------
+
+- MGEDIT: Das Beenden des Programms kann mit "Abbruch" im Alert
+  "Datei sichern? Ja/Nein/Abbruch" abgebrochen werden.
+
+
+Version 6.20
+
+2.5.99
+------
+
+- Dies ist eine Testversion, daher bitte die alte 6.10 behalten! Die groen
+  Umbauten enthalten bestimmt noch manchen Fehler!
+  Die gesamte Pexec()-Behandlung ist neu geschrieben, auerdem alles, was
+  mit Datei-Handles zu tun hat. Diese Version speichert die Handles lokal zu
+  jedem Proze, auerdem wird der F_SETFD/F_GETFD-Kram sowie O_NOINHERIT
+  untersttzt. P(v)fork() sollte also mit dieser Version richtig funktionieren.
+- Fcntl(F_DUPFD) eingebaut.
+- Fdup() dupliziert alle Handles.
+- Fforce() kann alle Handles umleiten.
+- Auerdem habe ich die Routine mit den bidirektionalen Pipes berarbeitet.
+  Sie sollte jetzt so wie unter MiNT funktionieren und die "creator"-Seite
+  nur einmal vergeben, und zwar beim Erstellen. Jedes weitere ™ffnen ”ffnet
+  die "client"-Seite.
+
+10.5.99
+-------
+
+- Dusselig: Offenbar habe ich beim letzten Verschicken eine alte
+  Version erwischt. Also erst heute der neue DOS-Kernel, dafr bereits mit
+  behobenen Fehlern.
+- DOS: Diverse Fehlerkorrekturen im Zusammenhang mit dem neuen Handle-
+  Konzept (Shutdown, Fcntl(F_DUPFD), Prozename bei Pexec(200), ...).
+- AES (Men-Manager): F„hrt man mit der Maus ins Men, wird der Bildschirm
+  nicht mehr bis zum n„chsten Mausklick gesperrt, wenn der Mauszeiger ber
+  einen DISABLE-ten Meneintrag bewegt wurde.
+
+13.6.99
+-------
+
+- VT52: Jetzt funktioniert auch das Ikonfizieren. Ikonifizierte Fenster
+  werden mit einem Image als Inhalt dargestellt, eine Eingabe, Ausgabe oder
+  Markierung ist nicht m”glich. Macht ein Programm Ausgaben in das Fenster,
+  wird dies am Wechsel des Fensterinhalts sichtbar.
+
+17.6.99
+-------
+
+- Fcntl(F_DUPFD) gibt bei Erfolg im Hiword keinen Mll mehr zurck.
+
+22.6.99
+-------
+
+- Titelbild auf dem Mac geht wieder.
+- Beim Erstellen einer Pipe wird das Flag fr "Pseudo-TTY" zumindest insoweit
+  ausgewertet, als bei einem "Seek" fr solche Pipes 0 statt EACCDN
+  zurckgegeben wird.
+- Permanent lange Dateinamen fr U: einstellbar. Da sich U: nicht un-mounten
+  l„t, werden die langen Namen "tempor„r" eingeschaltet.
+
+2.6.99
+------
+
+- Fclose() schliet fr Prozesse in der MiNT-Domain auch die Standard-
+  Dateien 0..5. Fr Prozesse in der TOS-Domain werden nach wie vor die
+  entsprechenden BIOS-Ger„te eingetragen.
+
+3.6.99
+------
+
+- DOS Ssysconf() mit den Unterfunktionen 0,1,2 eingebaut.
+
+30.6.99
+-------
+
+- AES: Fr die Position des Unterstrichs, z.B. bei Buttons, werden nur noch
+  die Bits 8-11 verwendet, wie es bereits in der Dokumentation OBTYPES.TXT
+  beschrieben ist. Damit gilt fr das High-Byte von ob_state:
+
+  0x00 - 0x0f		genau einen Buchstaben unterstreichen
+  0x10 - 0xfe		reserviert
+  0xff			das ganze Objekt unterstreichen
+
+- MAGXDESK: "Original finden" fhrt bei ungltigem Alias-Inhalt nicht mehr
+  zum Busfehler.
+- AES, Men-Manager: Ich habe das BEG_MCTRL entfernt, damit Tastendrcke bei
+  heruntergeklapptem Men nicht beim SCRENMGR, sondern (wie vor MagiC 5.1)
+  bei der Applikation landen.
+- Die Umlenkung der Boot-Ausgaben sollte jetzt wieder funktionieren. Ich habe
+  fr den Zugriff auf das Dateihandle den Zeiger auf den aktuellen Proze
+  kurz umgebogen. Keine sch”ne L”sung, aber geht.
+
+11.7.99
+-------
+
+- Die Domain (TOS/MiNT) wird bei Fork() vererbt.
+
+5.8.99
+------
+
+- Die Umstellung des Handle-Konzepts auf MiNT-konforme prozelokale 
+  Handles, auch fr die Ger„te-Handles -1,-2 und -3, hat mit sich 
+  gebracht, da die alte Umlenkung der Ger„te-Handles und damit auch 
+  der Standard-Handles 0..5 auf andere Ger„tetreiber (z.B. 
+  "u:/dev/xyz") nicht mehr funktionieren kann und darf.
+
+  Aus diesem Grund habe ich, „hnlich wie in MiNT, neue Eintr„ge im 
+  [boot]-Abschnitt der MAGX.INF eingefhrt, mit denen diese Umlenkung 
+  erfolgen kann. Weiterhin habe ich die Boot-Reihenfolge etwas 
+  ge„ndert und die M”glichkeit eingefhrt, das Verzeichnis u:/dev 
+  besser an den eigenen Rechner, z.B. den Milan, anzupassen. Das wird 
+  z.B. dann interessant, wenn weniger (etwa kein MIDI) oder mehr 
+  (mehrere serielle Schnittstellen) existieren als beim Original-
+  Atari (bisher waren Namen und Anzahl abh„ngig vom Rechnertyp, was 
+  aber auf Macs und Milanen nicht sinnvoll ist).
+
+  Das Konzept im einzelnen:
+
+	1. Beim Booten werden zun„chst alle Ger„te in U:\DEV und 
+	   alle Handles normal angelegt, so da sich fr den 
+	   Hddriver, der DOS-Aufrufe zur Texteingabe/-ausgabe 
+	   verwendet, keine nderungen ergeben.
+	2. Dann wird die Datei MAGX.INF eingelesen.
+	3. Es werden alle Handles -4 bis 5 wieder geschlossen und 
+	   damit ungltig. Weiterhin werden alle Ger„te auer NULL aus 
+	   U:\DEV wieder gel”scht.
+	4. Ger„tetreiber und Dateisystemtreiber werden geladen. Diese 
+	   k”nnen dann natrlich keine DOS-Aufrufe auf Ger„tehandles 
+	   machen. Es mssen BIOS-Aufrufe verwendet werden. So ein 
+	   Treiber k”nnte sich daher aber z.B. als U:\DEV\CON 
+	   installieren.
+	5. Aus dem Abschnitt [boot] der MAGX.INF werden alle Eintr„ge 
+	   mit dem Schlsselwort "biosdev" bearbeitet. Hier kann man zum 
+	   Beispiel eine zweite serielle Schnittstelle mit 
+	   "biosdev=7,u:\dev\modem2" anmelden.
+	   Die hier eingetragenen Ger„te verwenden einen sehr einfachen 
+	   DOS-Treiber, der lediglich die BIOS-Funktionen aufruft, bis 
+	   auf Ger„t 2 (mit Zeilen-Editor) und Ger„t 3 (ostat und istat 
+	   sind bei MIDI vertauscht).
+	6. Wenn die Ger„tedateien noch nicht existieren, werden 
+	   "u:/dev/con" mit BIOS-Ger„t 2, "u:/dev/prn" mit BIOS-
+	   Ger„t 0 und "u:/dev/aux" mit BIOS-Ger„t 1 zum zweiten Mal 
+	   erstellt.
+	7. Aus dem Abschnitt [boot] der MAGX.INF werden alle Eintr„ge 
+	   mit dem Schlsselwort "con", "aux" oder "prn" bearbeitet. 
+	   Hier kann man zum Beispiel die Tastatureingabe ber Handle -1 
+	   auf ein anderes Ger„t legen. Oder ein anderes Beispiel: 
+	   "prn=u:\dev\fastprn" meldet einen anderen Treiber fr Handle
+	   -3 an.
+	8. Jetzt werden alle noch nicht zugewiesenen Handles -1,-2 und
+	   -3 mit den blichen Dateien belegt, z.B. Handle -1 mit 
+	   "u:\dev\con".
+	9. Schlielich werden die Standard-Handles des Boot-Prozesses 
+	   mit den negativen Handles belegt, also z.B. Handle 0 und 1 
+	   mit Handle -1.
+
+  Da ohne nderungen an der MAGX.INF ein paar Dateinamen in u:/dev 
+  fehlen werden, hier einige Beispiele fr verschiedene Rechnertypen, 
+  die zu erg„nzen sind:
+
+		Atari ST:
+		biosdev=3,u:\dev\midi
+		biosdev=6,u:\dev\modem1
+
+		Atari Mega-STE:
+		biosdev=3,u:\dev\midi
+		biosdev=6,u:\dev\modem1
+		biosdev=7,u:\dev\modem2
+		biosdev=8,u:\dev\serial2
+
+		Atari TT:
+		biosdev=3,u:\dev\midi
+		biosdev=6,u:\dev\modem1
+		biosdev=7,u:\dev\modem2
+		biosdev=8,u:\dev\serial1
+		biosdev=9,u:\dev\serial2
+
+		Atari Falcon:
+		biosdev=3,u:\dev\midi
+		biosdev=6,u:\dev\modem1
+		biosdev=7,u:\dev\lan
+
+26.12.99
+--------
+
+- Die Beta-Versionen haben jetzt kein Verfalldatum mehr.
+- Die Gr”e von U:\ wurde von 40 auf 64 Eintr„ge vergr”ert. Trotzdem
+  frage ich mich, wie man soviele Eintr„ge verbrauchen kann. Vielleicht, wenn
+  man alle Dateinamen klein schreibt?
+- Fr Dateisysteme, die Gro-/Kleinschreibung streng unterscheiden, habe ich
+  in den zur Dokumentation geh”renden *.H und *.C Dateien alle Verweise auf
+  Dateinamen (#include) konsequent auf Kleinschrift gesetzt.
+
+30.12.99
+--------
+
+- B”sen Fehler aus MagicMac OS behoben, der dazu fhrte, da das Mac-
+  Dateisystem nicht angesprochen werden konnte.
+- Pgetuid(),Psetuid(),Pgeteuid(),Pseteuid(),Psetreuid(),Psetregid(),
+  Pgetauid(),Psetauid(),Pgetegid(),Pgetgid(),Psetgid() eingebaut.
+
+  Das bedeutet aber nur, da die Funktionen aufgerufen werden und
+  irgendwelche Werte zurckliefern (werden auch bei Pexec() vererbt),
+  es ergeben sich im Gegensatz zu MiNT keine Einschr„nkungen fr
+  Dateizugriffe, BIOS-Aufrufe, Uhrzeitfunktionen, Prozesse usw.,
+  d.h. man kann "fremde" Prozesse nach wie vor abschieen. Die
+  User/GroupID- Funktionen existieren nur aus MiNT-Kompatibilit„t.
+
+  Damit werden zur Zeit noch folgende MiNT-GEMDOS-Funktionen nicht
+  untersttzt (es gibt sicher aber inzwischen l„ngst mehr davon):
+
+	Pnice()
+	Prusage()
+	Talarm()
+	Pmsg()
+	Fmidipipe()
+	Prenice()
+	Salert()
+	Tmalarm()
+
+  Zuzglich einer Unmenge von Fcntl()-Funktionen, speziell fr Terminals.
+
+  Pnice() und Prenice() liee sich noch ziemlich leicht implementieren
+  (bzw. simulieren, denn sie h„tten keine Auswirkung). Die ganzen Terminal-
+  Fcntls() sind eine Sysyphos-Arbeit, ebenso die noch nicht untersttzte
+  Spezial-Pipe (pseudo-TTY 0x04). Die Unix-Pipe (0x20) liee sich 
+  noch einigermaen leicht nachbauen, ist nur die Frage, wer sowas 
+  braucht.
+
+2.1.2000
+--------
+
+- Pnice() und Prenice() eingebaut. Die Werte werden nur gespeichert und
+  auf das Intervall -20..20 begrenzt, haben aber keine Auswirkung auf die
+  Ausfhrungspriorit„t. Das w„re auch v”llig unsinnig, denn die Priorit„t
+  gilt ja nicht fr den Proze, sondern fr einen Thread, und man mu
+  unbedingt die Threads innerhalb eines Prozesses unterschiedlich priorisieren
+  k”nnen.
+
+9.1.2000
+--------
+
+- Nichtinitialisierte Variable behoben, die beim L”schen der Ger„tedateien
+  in u:\dev nach dem Bootvorgang beim Mac mitunter zum Absturz fhrte. Auf
+  meinem G3 hatte ich keine Probleme, auf dem AWS strzte die vorherige
+  Version ab, aber nur, wenn ich das Titelbild eingeschaltet hatte.
+- Der Mechanismus mit dem Festlegen der Ger„tenamen in u:\dev sollte jetzt
+  auch auf dem Atari/PC funktionieren.
+
+20.1.2000
+---------
+
+- Talarm() und Tmalarm() implementiert.
+
+29.1.2000
+---------
+
+- Fehler im FAT32-Dateisystem beseitigt. Dfree() lieferte einen falschen
+  Wert fr die Anzahl der freien Cluster, nachdem das Medium mindestens
+  einmal gewechselt wurde.
+
+20.2.2000
+---------
+
+- Der FSINFO-Sektor bei FAT32-Dateisystemen wird jetzt (hoffentlich) 
+  korrekt behandelt. Das ™ffnen eines seit dem letzten Bootvorgang 
+  nicht verwendeten FAT32-Laufwerks sollte jetzt deutlich schneller 
+  gehen.
+  Die Daten im FSINFO-Sektor werden jedoch nur angefat, wenn   
+  tats„chlich Schreibvorg„nge durchgefhrt werden. Wird ein Laufwerk 
+  nur lesend verwendet, werden auch ungltige Eintr„ge im FSINFO-
+  Sektor nicht gltig gemacht, das erste ™ffnen nach dem n„chsten 
+  Booten wird daher wieder langsam sein (da der freie Plattenplatz 
+  durch Durchsuchen der gesamten FAT ermittelt wird).
+
+2.10.2000  (release 6.20 an ASH)
+---------
+
+- wind_set(WF_ICONFIFY): Wird als Rechteck {-1,-1-1,-1} bergeben, sucht sich
+  das AES selbst ein Pl„tzchen fr das ikonifizierte Fenster. Dabei kann jetzt
+  auch der Platz genutzt werden, den das zu ikonifizierende Fenster belegt.
+  Durch einen Fehler wurde bisher das zu ikonifizierende Fenster bei der
+  Wahl des freien Platzes bereits als ikonifiziert angenommen, und daher
+  konnte das ikonifizierte Fenster dort nicht liegen.
+
+11.9.2001
+---------
+
+- Fehler beim Auslesen der Mega-ST-Uhr beseitigt. Keine neue Versionsnummer,
+  nur BIOS-Datum 10.9.2001

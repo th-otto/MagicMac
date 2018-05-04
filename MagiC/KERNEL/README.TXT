@@ -10,3 +10,6 @@ WINFRAME
 
 WINFRAME.DEM/
 	unknown purpose, maybe an older version or a demo version of WINFRAME
+
+ALLG
+	common routines used by MagiC kernel ("common" == „allgemein“ in German)

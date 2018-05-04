@@ -1,0 +1,747 @@
+Das Edit-Objekt im AES
+======================
+
+Formatierung:	Tabulatorbreite 5
+
+Andreas Kromke
+27.1.98
+
+letzte nderung:
+9.5.98
+
+
+Wie erkenne ich, ob die Funktionen vorhanden sind ?
+===================================================
+
+Das Edit-Objekt steht ab MagiC 5.20 zur Verfgung. Da es
+als SharedLibrary implementiert ist, braucht man lediglich
+die Bibliothek mit
+
+	Slbopen("EDITOBJC.SLB", NULL, 0L, &slb, &slbexec);
+
+zu ”ffnen (->SHARELIB.TXT).
+Die Bibliothek installiert einen neuen AES-Objekttyp
+G_EDIT (37) sowie die AES-Funktionen 210..217.
+
+
+šbersicht ber die Verwendung eines G_EDIT-Objekts
+==================================================
+
+Der Beispielcode fr MGEDIT zeigt am einfachsten, wie der neue
+Objekttyp genutzt werden kann:
+
+- In der RSC-Datei wird eine G_BOX, wei, ohne Rahmen eingetragen
+- Im Programm wird die SharedLib geladen
+- Fr jedes G_EDIT-Objekt:
+
+  - Textpuffer anlegen.
+  - Editobjekt mit edit_create() erzeugen.
+  - Objekttyp in G_EDIT „ndern und ob_spec auf das Editobjekt legen.
+  - mit edit_set_buf() den Textpuffer zuweisen.
+  - Ggf. Einstellungen des Edit-Objekt per edit_set_xxx() „ndern.
+  - Edit-Objekt mit edit_open() ”ffnen.
+  - Erst dann den Baum per objc_draw() zeichnen.
+
+- Um Tastaturcodes und Mausklicks an das Edit-Objekt zu bergeben,
+  mu man edit_evnt() aufrufen. Die Syntax ist v”llig analog zu
+  wdlg_evnt(), fslx_evnt() und fnts_evnt().
+- Beim Schlieen mu das Edit-Feld per edit_close() geschlossen
+  werden, per edit_delete() wird der Speicher fr das Editfeld
+  wieder freigegeben. Es darf dann kein objc_draw() mehr durchgefhrt
+  werden! Ggf. den Objekttyp wieder auf G_BOX setzen.
+
+
+Welche Tastaturcodes werden von G_EDIT ausgewertet?
+===================================================
+
+Cursor					Cursorbewegung
+Ctrl-Cursor-hoch/runter		Scrollen
+Ctrl-Cursor-links/rechts		Wortweise Cursor bewegen
+Shift-Cursor-links/rechts	Cursor zum Zeilenanfang/-ende
+Esc						(noch) nichts
+Einf
+Insert					(noch) nichts
+Shift-Einf
+Shift-Insert				(noch) nichts
+Backspace					Zeichen links vom Cursor l”schen
+Delete					Zeichen rechts vom Cursor l”schen
+Ctrl-Delete				(noch) nichts
+Home						Cursor an Textanfang
+Ende (MF-2)
+Ende (Mac)
+Shift-Clr/Home				Textende
+Bild hoch (Mac)
+Shift-Cursor-hoch			Cursor eine Seite hoch
+Bild runter (Mac)
+Shift-Cursor-runter			Cursor eine Seite runter
+^A						alles ausw„hlen (seit 27.1.98)
+^C						Block aufs Klemmbrett
+^X						Block l”schen und aufs Klemmbrett
+^V						Klemmbrett an Cursorposition einfgen
+
+
+Wie sehen die Systemaufrufe aus?
+================================
+
+Editobjekt erstellen
+--------------------
+
+Prototyp:
+		void * edit_create( void );
+
+Aufruf:
+		contrl[0] = 210		Funktionsnummer
+		contrl[1] = 0			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 0			Eintr„ge in addrin
+		contrl[4] = 1			Eintr„ge in addrout
+
+		addrout[0] = editob		Liefert einen Deskriptor fr die weiteren
+							Aktionen bzw. NULL, wenn ein Fehler
+							aufgetreten ist (zuwenig Speicher).
+							Der Deskriptor mu als ob_spec in das
+							Objekt eingetragen werden.
+
+Der entsprechende Deskriptor wird angelegt (Speicher wird reserviert), aber
+der Editor ist noch nicht ge”ffnet. Es k”nnen jetzt verschiedene Einstellungen
+ber edit_set() ge„ndert werden. Die Default-Einstellungen sind:
+
+	Systemzeichensatz, 10 pt
+	Schwarz auf Wei
+	Kein Zeilenumbruch
+	Tabulatorweite 64 Pixel
+
+
+Textpuffer zuweisen
+-------------------
+
+Prototyp:
+		void edit_set_buf( OBJECT *tree, WORD obj,
+						char *buf, LONG buflen );
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_set()
+		contrl[1] = 4			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 2			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]	 = obj		Objektnummer
+		intin[1]	 = 0			Subcode fr edit_set
+		intin[2,3] = buflen		L„nge des Textpuffers inklusive
+							abschlieendem Nullbyte.
+
+		addrin[0] = tree		Objektbaum
+		addrin[1] = buf		Textpuffer. Der Text liegt im DOS-
+							Format mit CR/LF als Zeilenende-
+							Kennzeichen vor und wird mit einem 
+							Nullbyte abgeschlossen.
+
+Der Puffer wird dem Edit-Objekt zugewiesen, die Anzahl der Zeilen 
+wird bestimmt. Der Cursor wird an den Textanfang gesetzt.
+Dieser Aufruf l”scht das Dirty-Flag.
+
+
+Editobjekt ”ffnen
+-----------------
+
+Prototyp:
+		WORD edit_open(
+			OBJECT *tree,
+			WORD obj
+			);
+
+Aufruf:
+		contrl[0] = 211		Funktionsnummer
+		contrl[1] = 1			Eintr„ge in intin
+		contrl[2] = 1			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		addrin[0] = tree		RSC-Baum des Objekts
+		intin[0]  = obj		Objektnummer
+
+		intout[0] = err		1, wenn OK
+
+Fr die Objektgr”e wird ausgerechnet, wieviele Zeilen und Spalten Text
+sichtbar sind, und entsprechende Zeiger angelegt. Dafr wird Speicher
+angefordert.
+
+
+Editobjekt schlieen
+--------------------
+
+Prototyp:
+		void edit_close(
+			OBJECT *tree, WORD obj,
+			);
+
+Aufruf:
+		contrl[0] = 212		Funktionsnummer
+		contrl[1] = 1			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		addrin[0] = tree		RSC-Baum des Objekts
+		intin[0]  = obj		Objektnummer
+
+Die von der Objektgr”e abh„ngigen Verwaltungsstrukturen werden
+geschlossen und der Speicher freigegeben. Der Deskriptor selbst bleibt
+jedoch erhalten. Textbehandlung ist jetzt nicht mehr m”glich.
+
+
+Editobjekt entfernen
+--------------------
+
+Prototyp:
+		void edit_delete(
+			void *editinfo,
+			);
+
+Aufruf:
+		contrl[0] = 213		Funktionsnummer
+		contrl[1] = 0			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		addrin[0] = editinfo	Zeiger von edit_create()
+
+Der Deskriptor wird freigegeben. Soll das Objekt weiter verwendet werden,
+mu der Objekttyp auf G_BOX zurckgesetzt werden.
+
+
+Cursor an/aus
+-------------
+
+Prototyp:
+		void edit_cursor(
+			OBJECT *tree, WORD obj,
+			WORD whdl,
+			WORD show
+			);
+
+Aufruf:
+		contrl[0] = 214		Funktionsnummer
+		contrl[1] = 3			Eintr„ge in intin
+		contrl[2] = 1			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		addrin[0] = tree		RSC-Baum des Objekts
+		intin[0]  = obj		Objektnummer
+		intin[1]  = whdl		Fenster-Handle oder -1
+		intin[2]  = show		
+
+Der Cursor wird eingeschaltet (show == 1), ausgeschaltet (show == 0)
+oder abgefragt (show == -1).
+Der Aufruf kann geschachtelt werden. Rckgabewert ist der
+Cursor-Aus-Z„hler.
+
+
+Editobjekt bedienen
+-------------------
+
+Prototyp:
+		WORD edit_evnt(
+			OBJECT *tree,
+			WORD obj,
+			WORD whdl,
+			EVNT *events,
+			LONG *errcode
+			);
+
+Aufruf:
+		contrl[0] = 215		Funktionsnummer
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 3			Eintr„ge in intout
+		contrl[3] = 2			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = whdl		Fenster-Handle oder -1
+		addrin[0] = tree		RSC-Baum des Objekts
+		addrin[1] = events		EVENT-Struktur wie bei wdlg_evnt(),
+							fnts_evnt. Die Events werden vom Dialog
+							verarbeitet, wenn sie fr das zugeh”rige
+							Fenster bestimmt sind.
+
+		intout[0]				Ist 0, wenn die bergebenen Ereignisse
+							nicht alle verarbeitet wurden, z.B. weil
+							der Textpuffer voll war oder ein Fehler
+							aufgetreten ist.
+		intout[1,2]			Fehlercode (-200 = Textpuffer voll)
+
+Events, d.h. Mausklicks und Tasten, werden an das Edit-Objekt bermittelt
+und von diesem ggf. verarbeitet. Wenn ein Ereignis verarbeitet wurde, wird
+das entsprechende Bit in der EVENT- Struktur gel”scht.
+Der Fehlercode <errcode> ist erst ab Version 7 vorhanden, das Binding in
+MT_AES sorgt dafr, da alte SLB-Versionen immer Nullen liefern. Umgekehrt
+erkennen neue SLB-Versionen per contrl[2], ob ein Fehlercode angefordert
+wurde.
+
+
+Einstellungen abfragen: Textpuffer
+----------------------------------
+
+Prototyp:
+		WORD edit_get_buf(
+			OBJECT *tree,
+			WORD obj,
+			char **buf, LONG *buflen,
+			LONG *txtlen,
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 5			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 1			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 0			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]				0 bei Fehler, sonst 1
+		intout[1,2]=buflen		Puffer-L„nge
+		intout[3,4]=txtlen		aktuelle Textl„nge ohne EOS
+		addrout[0]= buf		Adresse des Puffers
+
+
+
+Einstellungen abfragen: Formatierung
+------------------------------------
+
+Prototyp:
+		WORD edit_get_format(
+			OBJECT *tree,
+			WORD obj,
+			WORD *tabwidth, WORD *autowrap
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 3			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 1			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]				0 bei Fehler, sonst 1
+		intout[1]	= tabwidth	Tabulatorweite
+		intout[2]	= autowrap	> 0: Pixelbreite fr autom. Zeilenumbruch
+							     (i.a. == Objektbreite)
+							= 0: kein Umbruch, sondern horiz. Scrolling
+
+
+Einstellungen abfragen: Farben
+------------------------------
+
+Prototyp:
+		WORD edit_get_colour(
+			OBJECT *tree,
+			WORD obj,
+			WORD *tcolour, WORD *bcolour
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 3			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 2			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]				0 bei Fehler, sonst 1
+		intout[1]	= tcolour		Textfarbe
+		intout[2]	= bcolour		Hintergrundfarbe
+
+
+Einstellungen abfragen: Zeichensatz
+-----------------------------------
+
+Prototyp:
+		WORD edit_get_font(
+			OBJECT *tree,
+			WORD obj,
+			WORD *fontID, WORD *fontH, WORD *fontPix, WORD *mono,
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 5			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 3			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]				0 bei Fehler, sonst 1
+		intout[1]	= fontID		Zeichensatz-ID
+		intout[2]	= fontH		H”he fr vst_point()
+		intout[3]	= mono		Flag fr „quidistanten Zeichensatz
+		intout[4] = fontPix		0=Punkt 1=Pixel (ab 3.5.98)
+
+fontPix steht erst ab Version 8 der SLB zur Verfgung. MT_AES sorgt dafr, da
+alte SLB-Versionen immer eine Null liefern. Umgekehrt erkennen neue SLB-Versionen
+per contrl[2], ob fontPix angefordert wurde.
+
+
+Einstellungen abfragen: absolute Cursorposition
+-----------------------------------------------
+
+Prototyp:
+		WORD edit_get_cursor(
+			OBJECT *tree,
+			WORD obj,
+			char **cursorpos
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 1			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 1			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 4			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]	= err		0 (Fehler) oder 1 (OK)
+		addrout[0]= cursorpos	Cursorposition im Text
+
+
+Einstellungen abfragen: Dirty-Flag
+-----------------------------------
+
+Prototyp:
+		WORD edit_get_dirty(
+			OBJECT *tree,
+			WORD obj
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 1			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 7			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]	= dirty		0 oder 1
+
+Hiermit kann ermittelt werden, ob der Text zwischenzeitlich ge„ndert wurde.
+Das Flag kann mit edit_set_dirty() oder edit_set_buf() wieder
+zurckgesetzt werden.
+
+
+Einstellungen abfragen: Selektierter Bereich
+--------------------------------------------
+
+Prototyp:
+		WORD edit_get_sel(
+			OBJECT *tree,
+			WORD obj,
+			char **bsel, char **esel
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 2			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 8			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		addrout[0]= bsel		Beginn des selektierten Bereichs
+		addrout[1]= esel		hinter das Ende des selektierten Bereichs
+
+Wenn kein Bereich selektiert ist, ist bsel == NULL.
+
+
+Einstellungen abfragen: Scroll-Informationen
+--------------------------------------------
+
+Prototyp:
+		void edit_get_scrollinfo(
+			OBJECT *tree,
+			WORD obj,
+			LONG *nlines, LONG *yscroll,
+			WORD *yvis, WORD *yval,
+			WORD *ncols, WORD *xscroll, WORD *xvis
+			);
+
+Aufruf:
+		contrl[0] = 216		Funktionsnummer fr edit_get()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 10			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 9			Subcode fr Funktion
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]				undefiniert
+		intout[1,2]= nlines		Anzahl Zeilen im Text
+		intout[3,4]= yscroll	erste sichtbare Zeile
+		intout[5]	= yvis		Anzahl max. sichtbarer Zeilen
+		intout[6]	= yval		Anzahl momentan sichtbarer Zeilen
+		intout[7]	= ncols		Anzahl Spalten oder -1 (unbekannt)
+		intout[8]	= xscroll		horiz. Scroll-Offset in Pixeln
+		intout[9]	= xvis		Anzahl sichtbarer Spalten (in Pixeln)
+
+Diese Informationen werden ben”tigt, um horizontale und vertikale
+Scrollbalken einzustellen. Da das Edit-Objekt fr jede einzelne Zeile
+ein vq_extend() machen mte, und zwar bei jeder nderung einer Zeile,
+wird die Anzahl Spalten momentan nicht bestimmt, der Aufruf liefert -1.
+MGEDIT nimmt hier einfach eine feste Breite an, wie dies andere Programme,
+z.B. VIEW.PRG und PC.PRG ebenfalls tun.
+<yval> ist immer kleiner oder gleich <yvis>. Falls der Text weniger als
+<yvis> Zeilen hat, ist <yval> immer kleiner.
+
+
+Einstellungen „ndern: Textpuffer
+--------------------------------
+
+Prototyp:
+		void edit_set_buf(
+			OBJECT *tree, WORD obj,
+			char *buf, LONG buflen
+			);
+
+Da dieser Aufruf immer ben”tigt wird, ist er oben aufgefhrt.
+Also s.o.
+
+
+Einstellungen „ndern: Formatierung
+----------------------------------
+
+Prototyp:
+		void edit_set_format(
+			OBJECT *tree, WORD obj,
+			WORD tabwidth, WORD autowrap
+			);
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_set()
+		contrl[1] = 4			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]	= obj		Objektnummer
+		intin[1]	= 1			Subcode fr edit_set
+		intin[2]	= tabwidth	-1 oder Tabulatorbreite in Pixeln
+		intin[3]	= autowrap	-1: nicht „ndern
+							> 0: Pixelbreite fr autom. Zeilenumbruch
+							     (i.a. == Objektbreite)
+							= 0: kein Umbruch, sondern horiz. Scrolling
+		addrin[0] = tree		Objektbaum
+
+Wenn eines der beiden Attribute unver„ndert bleiben soll, kann -1
+bergeben werden.
+Wenn das Editobjekt bereits ge”ffnet wurde, ist bei nderung eines
+der Attributs i.a. ein Redraw auszul”sen. Ab Version 9 der SLB wird bei
+nderung der <autowrap>-Einstellung die Anzahl der Zeilen neu berechnet. In
+„lteren Versionen geschieht das nur bei edit_set_buf().
+
+
+Einstellungen „ndern: Farben
+----------------------------
+
+Prototyp:
+		void edit_set_colour(
+			OBJECT *tree, WORD obj,
+			WORD tcolour, WORD bcolour
+			);
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_set()
+		contrl[1] = 4			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]	= obj		Objektnummer
+		intin[1]	= 2			Subcode fr edit_set
+		intin[2]	= tcolour		-1 oder Textfarbe
+		intin[3]	= bcolour		-1 oder Hintergrundfarbe
+
+		addrin[0] = tree		Objektbaum
+
+Wenn eines der beiden Attribute unver„ndert bleiben soll, kann -1
+bergeben werden.
+Wenn das Editobjekt bereits ge”ffnet wurde, ist bei nderung eines
+der Attributs i.a. ein Redraw auszul”sen.
+
+
+Einstellungen „ndern: Zeichensatz
+---------------------------------
+
+Prototyp:
+		void edit_set_font(
+			OBJECT *tree, WORD obj,
+			WORD fontID, WORD fontH, WORD fontPix, WORD mono
+			);
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_set()
+		contrl[1] = 6			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]	= obj		Objektnummer
+		intin[1]	= 3			Subcode fr edit_set
+		intin[2]	= fontID		Zeichensatz-ID
+		intin[3]	= fontH		Zeichenh”he in "Punkt"
+		intin[4]	= mono		Flag "„quidistant"
+		intin[5]	= fontPix		0=Punkt 1=Pixel (ab 3.5.98)
+
+		addrin[0] = tree		Objektbaum
+
+Wenn das Editobjekt bereits ge”ffnet wurde, ist bei nderung des
+Zeichensatzes i.a. ein Redraw auszul”sen.
+Das Flag "mono" wird ben”tigt, um dem Editobjekt die M”glichkeit zu
+geben, „quidistante Zeichens„tze (mono == 1) wesentlich schneller zu
+bearbeiten als proportionale Zeichens„tze (mono == 0).
+fontPix steht erst ab Version 8 der SLB zur Verfgung. ltere Versionen
+nehmen immer fontPix=0 an, d.h. verwenden ausschlielich vst_point() zum
+Einstellen der Zeichenh”he. Die SLB erkennt an contrl[1], ob fontPix
+bergeben wurde. Wenn nicht, wird 0 angenommen.
+
+
+Einstellungen „ndern: Cursor absolut positionieren
+--------------------------------------------------
+
+Prototyp:
+		void edit_set_cursor(
+			OBJECT *tree, WORD obj,
+			char *cursorpos
+			);
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_set()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]	= obj		Objektnummer
+		intin[1]	= 4			Subcode fr edit_set
+
+		addrin[0] = tree		Objektbaum
+		addrin[1] = cursorpos	absolute Cursorposition
+
+
+Einstellungen „ndern: Objektgr”e
+---------------------------------
+
+Prototyp:
+		WORD edit_resized(
+			OBJECT *tree,
+			WORD obj,
+			WORD *oldrh, WORD *newrh
+			);
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_set()
+		contrl[1] = 2			Eintr„ge in intin
+		contrl[2] = 3			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 6			Subcode fr Funktion
+
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]	= err		1 (OK) oder 0 (Fehler)
+		intout[1]	= *oldrh		alte Netto-H”he des Objekts
+		intout[2]	= *newrh		neue Netto-H”he des Objekts
+
+Das Editobjekt mu bei Ver„nderung der Objektgr”e Speicher freigeben
+und anfordern. Daher kann es im Extremfall vorkommen, da die Operation
+wegen Speichermangel fehlschl„gt. Rckgabewert ist dann 0.
+Damit das aufrufende Programm einen korrekten Redraw ausfhren kann, wird
+die vorherige und neue tats„chliche H”he zurckgegeben. Tats„chlich
+bedeutet hier die Anzahl sichtbarer Zeilen, multipliziert mit der Zeilenh”he,
+d.h. die Objekth”he ohne unbenutzten, unteren weien Rand.
+
+
+Einstellungen „ndern: Dirty-Flag
+--------------------------------
+
+Prototyp:
+		void edit_set_dirty(
+			OBJECT *tree, WORD obj,
+			WORD dirty
+			);
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_get()
+		contrl[1] = 3			Eintr„ge in intin
+		contrl[2] = 0			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 7			Subcode fr Funktion
+		intin[2]	= dirty		0 oder 1
+		addrin[0] = tree		RSC-Baum des Objekts
+
+Hiermit kann das Dirty-Flag gel”scht werden, wenn der Text
+abgespeichert wurde.
+
+
+Einstellungen „ndern: Scroll-Positionen
+---------------------------------------
+
+Prototyp:
+		WORD edit_scroll(
+			OBJECT *tree, WORD obj,
+			WORD whdl,
+			LONG yscroll,
+			WORD xscroll
+			);
+
+Aufruf:
+		contrl[0] = 217		Funktionsnummer fr edit_get()
+		contrl[1] = 6			Eintr„ge in intin
+		contrl[2] = 1			Eintr„ge in intout
+		contrl[3] = 1			Eintr„ge in addrin
+		contrl[4] = 0			Eintr„ge in addrout
+
+		intin[0]  = obj		Objektnummer
+		intin[1]  = 9			Subcode fr Funktion
+		intin[2]	= whdl		Fenster-Handle oder -1
+		intin[3,4]= yscroll		vertik. Scroll-Offset in Zeilen
+		intin[5]	= xscroll		horiz. Scroll-Offset in Pixeln
+		addrin[0] = tree		RSC-Baum des Objekts
+
+		intout[0]	= err		1 (OK) oder 0 (Fehler)
+
+Hiermit wird horizontal und vertikal absolut gescrollt. Dieser Aufruf
+wird ben”tigt, wenn ein Scrollbalken oder -pfeil bet„tigt wurde.
+Das Fenster-Handle wird ben”tigt, damit beim Scrollen die Rechteckliste
+bercksichtigt werden kann.
+Ein Fehlercode wird zurckgegeben, wenn die Anzahl der Zeilen
+berschritten wurde.

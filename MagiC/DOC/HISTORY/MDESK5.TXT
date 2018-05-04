@@ -1,0 +1,64 @@
+History zu Magxdesk 5
+---------------------
+
+11.12.98
+--------
+
+- Auto-Update fr Fenster. Klappt leider nur bei Mac-Laufwerken, da 
+  bei FAT- Laufwerken kein nderungsdatum von Verzeichnissen 
+  existiert (nur das Erstelldatum).
+- Info-Dialog fr Dateien und Ordner im Fenster. Es k”nnen beliebig 
+  viele Dialogfenster ge”ffnet werden. Wenn keine Fenster mehr zur 
+  Verfgung stehen, wird automatisch ein fester Dialog verwendet.
+- Wird an eine Applikation eine leere Kommandozeile per AV_START 
+  verschickt (Programm ist schon geladen), so werden Menzeile, ggf. 
+  Hintergrund sowie alle Fenster dieser Applikation nach oben 
+  gebracht.
+- Beim Auto-Update werden Selektionsmaske bzw. selektierte Dateien
+  beibehalten.
+- šberlauf bei der Selektionsmaske beseitigt (trat manchmal auf, wenn
+  ein langer Dateiname von MGSEARCH gefunden wurde).
+- Button "Original finden" im Info-Dialog, wenn die Datei ein Alias 
+  ist.
+
+17.1.99
+-------
+
+- Datei-Info hat Sonderbehandlung fr Dateien/Ordner auf dem Desktop.
+- Maximale L„nge der Selektionsmaske auf 31 Zeichen erh”ht.
+- šberlauf der INFO-Zeile behoben, wenn z.B. MGSEARCH Dateien mit langem
+  Namen gefunden hat.
+
+23.1.99
+-------
+
+- Einstellung "erweiterte Laufwerk-Informationen anzeigen" wird
+  gespeichert.
+
+6.2.99
+------
+
+- Im Dialogfenster "Datei/Ordner-Informationen" wurde manchmal der
+  unterstrichene Titel des festen Dialogs f„lschlicherweise angezeigt.
+  Das sollte jetzt nicht mehr passieren.
+
+ca. 10.5.99
+-----------
+
+- Die Informationsdialoge in Fenstern werden bei niedrigen Aufl”sungen
+  in nur einem Stapel und am oberen Bildschirmrand angezeigt. Die
+  Fensterdialoge waren sonst bei 640*400 nicht vollst„ndig sichtbar.
+
+24.5.99
+-------
+
+- Der Dialog "Informationen" setzt jetzt die Objektgr”e des Icons aus der
+  Pixelgr”e des ICONBLKs, damit kommt es nicht mehr zu Redraw-Fehlern beim
+  Vergr”ern, wenn das Icon gr”er als 32*32 Pixel ist.
+
+17.10.99 (Version 5.02)
+--------
+
+- Das Umbenennen von Medien sollte jetzt wieder m”glich sein. Hatte ich
+  glatt vergessen aus Magxdesk 4 zu bernehmen. Erstaunlich, da das erst
+  im September aufgefallen ist.

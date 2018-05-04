@@ -1,0 +1,100 @@
+noch vorhandene Probleme beim Betrieb von MagiC 5
+-------------------------------------------------
+
+Andreas Kromke
+22.4.95/9.6.97
+
+
+- Es kann vorkommen, da bei aktiviertem DMA-Hintergrundtransfer beim Booten
+  von XCONTROL die Meldung kommt, da zuwenig Speicher vorhanden ist.
+  Verantwortlich dafr ist die (leider dokumentierte) Eigenschaft des GEMDOS,
+  einem Programm beim Laden den gesamten Speicher zuzuteilen. Ist nun der
+  Ladevorgang unterbrechbar (wg. Hintergrundtransfer) und fordert gleichzeitig
+  ein anderes Programm Speicher an, gibt es den entsprechenden Fehler.
+  Abhilfe: Die Zeile "#_TSL" aus magx.inf entfernen und das prae-emptive
+  Multitasking erst mit Hilfe des CPX-Moduls aktivieren.
+
+- MANVIEW hat noch einige Probleme mit der Standarddatei-Umlenkung, die eine
+  Verkettung unglcklicher Umst„nde sind:
+
+  1. STDOUT wird auf eine Datei (Handle 7) umgelenkt.
+     Der Referenzz„hler fr Handle 7 ist also 2.
+  2. Die Datei "CON:" wird im Modus ReadOnly im TOS- Kompatibilit„tsmodus
+     ge”ffnet, d.h. in Mag!X "shared read & exclusive write".
+     Das Dateihandle ist 8.
+     Ich habe deshalb nicht -1 als Dateihandle zurckgegeben, weil ich den
+     vielen genialen Programmen, die die geniale Pure-C oder Turbo-C Include-
+     Datei TOS.H verwenden, die M”glichkeit zu geben, auf ein Ger„t
+     auszugeben (die meisten Programme deklarieren Fopen und Fcreate als
+     "int").
+  3. STDOUT wird auf die Datei 8 umgelenkt.
+     Der Referenzz„hler fr Handle 7 ist 1.
+     Der Referenzz„hler fr Handle 8 ist 2.
+  4. Handle 7 wird zweimal geschlossen, da der Referenzz„hler nur 1 ist, wird
+     beim zweiten Mal EINHNDL zurckgegeben.
+     Handle 7 ist geschlossen.
+  5. Handle 7 wird neu ge”ffnet (mit einer Datei).
+  6. STDOUT wird auf eine Datei (Handle 7) umgelenkt.
+     Der Referenzz„hler fr Handle 7 ist also 2.
+  7. Die Datei "CON:" wird noch einmal ge”ffnet. Da Handle 8 nicht
+     geschlossen wurde, wird EACCDN geliefert, jedoch von MANVIEW ignoriert.
+  8. STDOUT wird intelligenterweise nach <EACCDN> umgelenkt, was Mag!X mit
+     EINHNDL quittiert, aber von MANVIEW wieder ignoriert wird.
+     STDOUT zeigt also weiterhin auf Handle 7.
+     Der Referenzz„hler fr Handle 7 bleibt also 2.
+  9. Um einen Fehler im TOS (!) zu umgehen, wird intelligenterweise das
+     Handle 7 zweimal geschlossen. Weil der Referenzz„hler 2 war, geht dies
+     ohne Fehlermeldung ab, der Referenzz„hler ist 0.
+     STDOUT zeigt auf das _UNGšLTIGE_ Handle 7.
+ 10. Handle 7 wird neu ge”ffnet (mit einer Datei).
+     Jetzt zeigt STDOUT auf Handle 7 (also auf die Datei), aber der
+     Referenzz„hler ist nur 1.
+ 11. STDOUT wird auf Handle 7 umgelenkt.
+     Dazu wird erst die bisherige Umlenkung (war schon Handle 7) geschlossen,
+     dabei wird Handle 7 v”llig geschlossen. Die neue Umlenkung ist jetzt
+     ungltig, Mag!X lenkt die Datei wieder nach CON: um.
+
+  Um das Dilemma zu umgehen, f„llt mir z.Zt. keine Universall”sung ein. Wenn
+  man dann noch bercksichtigen mu, da zur Befriedigung irgendwelcher v”llig
+  maroden TOS- Versionen noch gef„hrliche Spielchen getrieben werden, wird
+  das ganze noch etwas problematischer.
+
+- Achtung: Beim Betrieb mit parallel arbeitendem Plattentreiber (HDDRIVER
+           4.x) drfen keine Cache-Programme wie TCACHE verwendet werden,
+           weil sie i.a. nicht reentrant sind.
+  Achtung: Das gleiche gilt fr SPEEDO-GDOS, auch dieses ist nicht reentrant.
+
+- Die interne Hardcopyroutine fr 9-Nadel-Epsondrucker ist aus dem BIOS
+  rausgeflogen. Statt der ALT-Help-Routine, Scrdmp und Prtblk sind nur noch
+  Dummy-Routinen vorhanden.
+  Das beiliegende Programm HARDCOPY.PRG installiert die bisher im BIOS
+  integrierten Hardcopy-Funktionen. Das Programm l„t sich nur unter MagiC
+  starten. Aber Achtung: Es hat keine Abfrage auf die MagiC- Version und darf
+  unter MagiC 2.0 oder „lteren 3.0- Versionen nicht gestartet werden.
+
+- Bei wind_get(WF_TOP) den Hack fr Tempus entfernt.
+  Tempus KANN JETZT NICHT MEHR LAUFEN!!!!!!!! Bei Problemen bitte an Wilfried
+  wenden.
+
+- Auf besonderen Wunsch zweier einzelner Herrn, die immer paarweise genannt
+  werden, wird der Kreuzchenbutton im 2D- Modus nicht mehr im Modus XOR,
+  sondern REPLACE gezeichnet.
+  Es ist daher darauf zu achten, da im 2D-Modus der Hintergrund wei ist,
+  sonst gibt es Grtze.
+
+- Ist die Aufl”sung ungeeignet, um Fenster mit 3D-Rahmen darzustellen, wird
+  die Breite des 3D-Rahmens verkleinert. Vorher waren s„mtliche 3D-Buttons
+  leer.
+  Es wird dringend empfohlen, in TT low auf 2D-Darstellung zu schalten.
+
+- Erinnerung: Pipes mit Modus 4 (Pseudo-TTYs) werden nicht untersttzt. MagiC
+  kennt nur uni- und bidirektionale Pipes und erstellt bei Modus 4 eine
+  bidirektionale Pipe. Der Hauptgrund fr Pipes sind zur Zeit das Drag&Drop-
+  Protokoll. Alles andere ist noch Spielerei.
+
+- Fsfirst/next k”nnen keine relativen Symlinks dereferenzieren, wenn das
+  durchsuchte Verzeichnis nicht das aktuelle ist. Hintergrund: Der
+  altertmliche Mechanismus l„t bei Fsnext() keine Rckschlsse auf das
+  Verzeichnis zu, in dem gerade gesucht wird und von dem aus der Symlink
+  verfolgt wird.
+  Abhilfe: Absolute Symlinks oder noch besser gleich Dxreaddir verwenden.

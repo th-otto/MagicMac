@@ -1,0 +1,158 @@
+KAOS 1.4.2 (12/90)
+----------
+
+1.00 (1/92)
+----
+
+1.10 (11/92)
+----
+
+lauffÑhig auf dem TT
+erweiterte Objekttypen: unterstrichene G_BUTTONs und G_STRINGs
+
+1.11 (11/92)
+----
+
+erweiterte Objekttypen: Kreuzchenbutton und runder Radiobutton
+ Åber G_BOXTEXT (bei 2.00 wieder geÑndert!)
+
+
+2.00 (7/93)
+----
+
+PrÑemptives Multitasking
+VT52 im Fenster
+bis 64 Fenster statt 16
+Farbe der FensterrÑnder einstellbar
+Bedienung von Hintergrundfenstern
+MenÅleiste mit oberstem Fenster gekoppelt
+Programm ausblenden/andere ausblenden/alle einblenden
+Ctrl-Alt-Tab
+GEMDOS reentrant
+Diverse MultiTOS-Funktionen im AES
+neue Objekttypen: Unterstriche, Gruppenrahmen, Kreuzchenbutton
+MagiX -> MagiC
+
+3.00 (3/95)
+----
+
+MiNT-Funktionen
+Iconify
+Drag&Drop
+3D-Look
+Hintergrund-DMA
+WriteBack Cache
+Shutdown
+Laufwerk U:
+XFS-Konzept
+MagicMac
+Symbolische Links
+XMEN_MGR fÅr SubmenÅs
+neue Dateiauswahl
+
+4.00 (12/95)
+------------
+
+vîllig neues Magxdesk 3 mit APPLICAT und MGCOPY, Farbicons,
+  langen Dateinamen, Disk-Eject, GDOS-ZeichensÑtze im Fenster,
+  Kopieren im Hintergrund, Kobold-UnterstÅtzung, Autolocator,
+  Hintergrundkacheln, UnterstÅtzung von Symlinks, ObjektmenÅ
+lauffÑhig auf dem Falcon
+Echtzeit-Scrolling in Fenstern
+3D-Fenstertitelleiste
+ACCs nachtrÑglich installierbar
+Zeichensatzauswahl
+Fensterdialoge und Listboxen
+
+5.00
+----
+
+VFAT
+max. 126 Tasks
+Threads
+Signale
+
+5.04 (12/96)
+------------
+
+MGVIEW
+COPS
+
+5.10 (3/97)
+----
+
+32-Bit Sektornummern fÅr MagicMac
+Dateityp-Popup in Dateiauswahl Ñnderbar
+Pwait(), Pwaitpid(),Pwait3()
+erweiterter etv_critic im AES
+objc_wdraw()
+objc_wchange()
+graf_wwatchbox()
+form_wbutton()
+wind_get(WF_BOTTOM) erweitert
+Echtzeitverschieben/-vergrîûern fÅr Fenster
+Fenster-Shading
+MGNOTICE
+wind_set(WF_STACK) ohne die Option fÅr geschlossene Fenster
+WIND_SET(WF_TOPALL)
+form_wkeybd()
+wind_set(WF_BOTTOMALL) ohne einzelnes Fenster gesondert
+objc_wedit()
+Ctrl-Backdrop-Button legt alle Fenster nach hinten
+Fortschrittsbalken bei MGCOPY
+Autoscrolling in MAGXDESK
+XMEN_MGR integriert
+
+5.11
+----
+
+lauffÑhig auf dem Hades
+
+5.20 (11/97)
+----
+
+Shared Libraries
+MGEDIT
+Edit-Objekt
+Bit 3 im Programmheader
+Tastaturtabellen KEYTABLS.SYS
+
+6.00 (6/98)
+----
+
+alternativer Fensterrahmen
+prop. AES-ZeichensÑtze
+G_SHORTCUT
+Shared Libraries (neues Format)
+Boot-Startbild
+PDLG.SLB
+neue Dcntl-Modi
+Magxdesk 4 (Optimalgrîûe, horiz. Slider, RÅckwÑrtspfeil)
+Mgcopy mit Fortschrittsbalken)
+MagicMac mit asynchronem Dateitransfer
+
+6.10 (3/99)
+----
+
+Alerts mit automatischen TastenkÅrzeln
+Prozeûgruppen
+FAT32
+Pexec200
+Pfork
+Pvfork
+Fcntl(PLOADINFO)
+Dateiauswahl im Fenster horizontal aufziehbar
+MAGXDESK 5:
+MAGXDESK kann viele Info-Dialoge, grîûenverÑnderbar in Fenstern
+MAGXDESK kann Partitionen > 4 GB
+
+6.20
+----
+
+VT52 ikonifizierbar
+Lokale Datei-Handles
+Fcntl: F_DUPFD,F_SETFD,F_GETFD
+Fopen: O_NOINHERIT
+Fforce,Fdup,Fclose MiNT-konform
+Ssysconf()
+Permanent lange Dateinamen fÅr U:

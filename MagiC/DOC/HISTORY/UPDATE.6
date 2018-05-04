@@ -1,0 +1,115 @@
+Updates in MagiC 6
+------------------
+
+- DESIGN
+
+Wahlweise proportionale ZeichensÑtze fÅr AES-Objekte. FÅr unwillige
+Programme (die mit prop. ZeichensÑtzen abstÅrzen) kann in APPLICAT
+eine Ausnahmebehandlung eingestellt werden.
+
+Neuer Fenster-Manager fÅr schnellere Fensterbehandlung, insbesondere
+bei langsameren Rechnern sichtbar (Atari, MagicPC). Gilt fÅr
+Verschieben/Vergrîûern/Verkleinern/Scrollen,...
+
+SLB- Schnittstelle fÅr alternative Fensterrahmen. Der mitgelieferte
+wird in die MAGX.INF eingetragen und Ñndert die Fensterrahmen in
+ein MacOS-Ñhnliches Aussehen.
+
+Titelmuster und -Bild beim Start, Boot-Log in Datei umlenkbar, ggf.
+auch nach /dev/null.
+
+Aussehen der INFO-Zeile einstellbar, und zwar Zeichensatz,
+Zeichensatzhîhe und Objekthîhe.
+
+Der FLG-Eintrag in der MAGX.INF schaltet Åber Bit 7 graue MenÅs
+ein. Geht nur bei proportionalem AES-Zeichensatz.
+
+Asynchroner Dateitransfer in MagicMac.
+
+MAGXDESK hat viele Fenster, einen RÅckwÑrtspfeil (abschaltbar), und
+der Maximal-grîûenknopf hat eine Optimalgrîûenfunktion.
+
+MAGXDESK hat in der Textdarstellung einen horizontalen Scrollbalken,
+in der Icon-Darstellung wird er abgeschaltet. Der freie Speicher auf
+dem Laufwerk wird rechtsbÅndig in der INFO-Zeile angezeigt.
+Klick auf INFO-Zeile zeigt freien Speicher genau an.
+
+MGCOPY hat einen Fortschrittsbalken, der sich auch noch aus- und
+einklappen lÑût, Ñhnlich wie im Finder.
+
+MGNOTICE ermîglicht Texteingabe und -Ñnderung direkt in der Notiz, mit
+automatischem Zeilenumbruch.
+
+Alle Magxdesk-Dienstprogramme legen ihre Konfigurationen im
+HOME-Verzeichnis an, falls vorhanden.
+
+MGVIEW wertet erweiterte Mac-Tastatur aus.
+
+WDIALOG wird nicht mehr benîtigt. Druckdialoge werden aus einer
+SharedLibrary PDLG.SLB bei Bedarf automatisch nachgeladen.
+
+-TECHNISCH
+
+SharedLibrary-Behandlung erweitert und umgebaut. Leider inkompatibel
+mit MagiC 5.20. D.h. MagiC 6 braucht ein neues Format.
+
+S/W-Icons lassen leeren Texthintergrund weg.
+
+shel_find() kann lange Dateinamen.
+
+Variable SLBPATH legt Suchpfade fÅr SharedLibraries fest.
+
+shel_write() fÅr Ausschalten prop. ZeichensÑtze erweitert.
+
+Anzahl Cookies in MAGX.INF einstellbar.
+
+Interruptgetriebenes Mac-XFS in MagicMac. Gilt fÅr Fread(),
+Fwrite() und Ssync().
+
+Neuer Objekttyp G_SHORTCUT. AuffÅhrliche Doku Åber Objekttypen.
+(OBTYPES.TXT)
+
+Fenster-Minimalgrîûenfunktion.
+
+Initiator-Identifizierung bei TT und Falcon [Fo:kn]
+
+DOS: Internen Speicher vergrîûert, um die Notwendigkeit fÅr ADDMEM
+hinauszuzîgern.
+
+AES: Shell-Puffer von 4k auf 8k
+  
+Die Funktion objc_sysvar() um die Unterfunktion MENUCOL erweitert
+
+-BUGFIXES
+
+Dgetpath() auf U:\ korrigiert.
+
+wind_set(WF_NAME/WF_INFO), wenn das Fenster kein INFO bzw.
+Name hat, liefert jetzt explizit einen Fehlercode.
+
+sind auf einem (V)FAT-Medium lange Namen vorhanden, aber nicht
+aktiviert, werden bei Dgetpath() nur kurze Namen geliefert.
+
+Bei UNICode-Zeichen in Dateinamen auf VFAT-Laufwerken, die keine ASCII-
+Ensprechung haben, konnte es vorkommen, daû die Umwandlung in einer
+Endlosschleife stecken blieb, z.B. bei 0x2308. Jetzt nicht mehr.
+
+Redrawfehler bei scrollenden MultiTOS-MenÅs behoben.
+
+Diverse Korrekturen in der SLB-Behandlung
+
+Maddalt() legt ggf. FRB-Cookie an (Atari).
+
+Dateiauswahl und MAGXDESK kommen mit grîûeren Verzeichnissen klar
+(2 MB statt 128k).
+
+Dateiauswahl und MAGXDESK werten den _IDT Cookie aus.
+
+öberlÑufe in MAGXDESK-Dialogen entschÑrft (Byte-Zahlen zu groû).
+
+Magxdesk kann jetzt auch viele Objekte an MGCOPY Åbergeben.
+
+MGSEARCH: Y2k
+
+MOD_APP: Hilfsprogramm zur automatischen Registrierung von Applikationen
+und Dateitypen.

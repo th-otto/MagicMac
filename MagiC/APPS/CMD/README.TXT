@@ -15,3 +15,6 @@ The executable should be named as follows:
 The TOS version tries to avoid operating system bugs that do not exist without TOS.
 
 This program seems to be not localised, i.e. is written for Germany.
+
+CMD.DOC is the original documentation (only German) in WORDPLUS format.
+CMD.TXT has been converted to UTF-8.

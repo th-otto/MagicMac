@@ -1,0 +1,2069 @@
+Liste der neuesten énderungen/Bemerkungen zu MagiC 5
+====================================================
+
+
+
+======================= VERSION 5.01 =======================
+
+26.6.96
+-------
+
+- AES: Farbiconroutine liefert per Default "pixel packed" fÅr unbekannte
+  alte Grafikkarten mit 8 Planes.
+- MAGX.H und MT_AES.H: SC_CHANGED ist jetzt 80 statt bisher 91.
+  Dank an Thomas Much.
+- VFAT-XFS: Dcntl(FUTIME) war beim Erweitern des DOS-XFS zum VFAT-XFS
+  nicht richtig umgesetzt worden. Sollte jetzt nicht mehr EFILNF liefern,
+  sondern wieder wie frÅher funktionieren.
+  Dank an Dirk Haun.
+- MGX_XFS.INC: proc_info in der Kernelstruktur ergÑnzt. Weil das fehlte,
+  stimmten die Offsets nicht.
+  Dank an Thomas Binder.
+- MGX_XFS.H: Neue Kernelfunktionen ergÑnzt.
+- DOS: Fcntl(FIONREAD/WRITE) und damit auch Finstat() und Foutstat() fÅr
+  Pipes korrigiert. Es wurde ein Zufallswert geliefert.
+  Leider lÑuft Dirks Programm immer noch nicht. Ich habe eine Stunde gebraucht,
+  bis ich merkte, daû die PureC-Bibliotheksfunktion fÅr Finstat() kaputt ist
+  und es nur daran lag. SCHEI...........!!!!!!!!!!!!!
+- DOS: Die Prozess-IDs fangen ab 999 wieder bei 1 an, bleiben dabei aber
+  (hoffentlich) eindeutig.
+- MAGXDESK: Die Esc-Taste erzwingt ein Neueinlesen der Verzeichnisse nicht
+  mehr fÅr das Laufwerk, dessen Buchstabe im Pfad steht, sondern fÅr das
+  Laufwerk, auf dem das Verzeichnis tatsÑchlich liegt.
+  Beispiel: Das Fenster zeigt "f:\dies_ist_ein_alias\*", wobei der Alias
+  ein Ordner auf C: ist. Dann werden bei Esc alle Fenster neu eingelesen,
+  die auf C: liegen, d.h. auch das o.g. Fenster.
+- MAGXDESK V3.11: Der MenÅpunkt "ôffnen...", Ñquivalent zu den Tasten [Return],
+  [Enter] oder [^O], wirkt jetzt wie ein Doppelklick und nicht mehr wie ein
+  Doppelklick mit gedrÅckter [Ctrl]-Taste.
+- MAGXDESK: Beim Umbenennen, Datum oder Attribute éndern wird nicht mehr das
+  nominelle, sondern das tatsÑchliche Laufwerk neu eingelesen. Ist z.B.
+  ein Alias Bestandteil des Pfads, wird das tatsÑchliche Laufwerk behandelt.
+  Bug:	Das klappt nicht, wenn das Laufwerk in U: z.B. als "U:\ramdisk\"
+  		eingetragen ist. Ich habe dann keine Chance, den Ñquivalenten
+  		Laufwerkbuchstaben zu erraten.
+- MGCOPY: Der (De-)Ikonifiziervorgang wird jetzt in ein BEG/END_UPDATE
+  geklammert. Bisher war es mîglich, daû der Kopier-Thread in einem ungÅnstigen
+  Moment den Hauptthread unterbrechen konnte und dann beim Update des Fensters
+  abstÅrzte.
+- MAGXDESK: Beim Empfangen von SH_WDRAW werden nicht nur diejenigen Fenster
+  neu eingelesen, die physikalisch auf diesem Laufwerk liegen, sondern
+  sicherheitshalber auch die, die logisch dort liegen. Bei Dateiaktionen in
+  einem Pfad, der Åber einen Alias angesprochen wird, wird damit das richtige
+  Fenster auch neu eingelesen.
+  Generell Åberlege ich mir, ob ich das Update-Handling nicht Åber Device-IDs
+  statt Laufwerken machen kann. Leider gibt es kein entsprechendes
+  SH_DEVCHANGED.
+- BIOS/AES: Die MAGX.INF wird jetzt direkt nach dem Bootvorgang, d.h. nach der
+  Initialisierung des VDI (Laden der GerÑtetreiber von \gemsys\) geladen.
+  Sie wird vom AES nur noch ausgelesen und dann freigegeben. Bei einem
+  Auflîsungswechsel wird die MAGX.INF noch einmal neu geladen, jedoch nur
+  vom AES neu ausgewertet.
+- AES: Beim Auswerten der MAGX.INF wird eine fehlerhafte Zeile auf dem
+  Bildschirm dargestellt. Das kann nicht in einem Alert passieren, weil das
+  AES zu diesem Zeitpunkt natÅrlich noch nicht initialisiert ist.
+- AES: Sucht jetzt nach einer Abschnittkennung:
+
+	#[aes]
+
+  Mit der folgenden Zeile beginnen die Informationen fÅr das AES.
+  Wird keine Abschnittkennung gefunden, wird implizit eine solche Kennung
+  vor der ersten Zeile angenommen.
+- VFAT-XFS: Wertet direkt nach dem Booten und vor AusfÅhrung des XTENSION-
+  und des AUTO-Ordners die MAGX.INF aus, und zwar die Abschnittkennung:
+
+	#[vfat]
+
+  Die folgende Zeile muû mit dem SchlÅsselwort "drives=" beginnen. Es folgen
+  die Laufwerkbuchstaben (Klein-/oder Groûschrift) fÅr die Laufwerke, fÅr die
+  lange Namen eingestellt sind. Beispiel:
+
+	drives=cefh
+
+  FÅr jedes angegebene Laufwerk wird dann ein unmount durchgefÅhrt. Dadurch
+  ist es mîglich, auch fÅr das Bootlaufwerk lange Namen permament einzustellen.
+  Dieser Eintrag in der MAGX.INF entspricht also der "permanent"-Einstellung
+  in VFATCONF.
+- MAGXDESK: Existiert keine MAGX.INF, wird die "#[aes]"-Sektionskennung
+  erzeugt.
+- VFATCONF: Schreibt die Konfiguration fÅr "Permanent" nicht mehr in die
+  eigene Datei und sollte daher auch nicht mehr im START-Ordner liegen.
+  Stattdessen wird die Konfiguration in die MAGX.INF geschrieben. Fehlt die
+  Abschnittkennung "#[vfat]", wird ein solcher Abschnitt erzeugt.
+- DOS: Beim Lîschen einer Programmdatei in u:\proc\ wird nicht mehr SIGKILL,
+  sondern SIGTERM verschickt. Dabei wird ein Pkill-Aufruf Åber den Trap
+  durchgefÅhrt, hoffentlich gibt es keine Reentranzprobleme mit irgendwelchen
+  Schweineprogrammen.
+- DOS: Beim Lîschen einer Programmdatei in u:\proc\ wird der Datei-Eintrag
+  nicht sofort gelîscht, sondern erst dann, wenn der Prozeû sich beendet.
+
+1.7.96
+------
+
+- MAGX.INF: Absturz bei fehlendem [vfat] Abschnitt beseitigt.
+- Mac-XFS: Konvertierungsprobleme bei Frename() beseitigt.
+- Mac-XFS: Konvertierungsprobleme bei Fsfirst/next beseitigt.
+- Mac-XFS: Groû-/Kleinschrift- bzw. 8+3-Konvertierung bei Frename zwischen
+  zwei MagiC-Laufwerken auf demselben Mac-Volume beseitigt.
+
+  ACHTUNG!!!!!!!!!!!!!!!
+  Der neue Magic-Mac Emulator benîtigt einen neuen MagiC-Kernel, weil sonst
+  Frename() Åberhaupt nicht funktioniert.
+  Der MagiC-Kernel lÑuft zwar auch mit dem alten Emulator, aber dann ist
+  der beschriebene Fehler nicht beseitigt.
+
+  FÅr Thomas: Siehe in mgx_xfs.c die Funktion xfs_link().
+
+6.7.96
+------
+
+- MGCOPY: Beim Verschieben von Dateien auf demselben Laufwerk wird die
+  Option "umbenennen" jetzt korrekt behandelt.
+
+13.7.96
+-------
+
+- MGVIEW: FÅr das Desk-Set ist ein weiteres Programm entstanden, welches das
+  veraltete SHOWFILE.TTP ablîst. Zwar gibt es eine Reihe von Anzeigeprogrammen
+  (1stview, guck), die als Shareware Åber DFö zu beziehen sind, doch ist dies
+  nicht unbedingt jedem Kunden zuzumuten; schlieûlich soll ein vollstÑndiges
+  Paket geliefert werden.
+
+  MGVIEW bietet folgende FunktionalitÑten:
+
+	-	Zeigt ASCII-Text an im Format DOS (Zeilenende CRLF)
+		oder UNIX (Zeilenende LF).
+		An Steuerzeichen werden nur Tabulatoren unterstÅtzt.
+	-	Berechnet beim Einlesen die Anzahl der Zeilen sowie die
+		maximale Zeilenbreite unter BerÅcksichtigung von Tabulatoren.
+	-	Die Tabulatorbreite ist umschaltbar, wobei der horizontale
+		Scrollbalken neu berechnet wird.
+	-	Beherrscht Dateinamen mit Leerzeichen (ggf. per Quoting).
+	-	Beherrscht das ARGV-Verfahren.
+	-	Beherrscht VA_START.
+	-	Schickt AV_STARTED.
+	-	Reagiert auf AP_TERM.
+	-	Ist gigantische 9078 Bytes groû und daher nicht Ease-kompatibel
+		(->not enough memory used, system halted).
+	-	Tastencodes:
+
+		^Q		beendet das Programm (wie Ctrl-Closebutton)
+		^U		schlieût das oberste Fenster, ggf. das Programm
+		^W		Fenster zyklisch wechseln
+		Home		Ganz nach oben scrollen
+		SH-Home	Ganz nach unten scrollen
+		Cursor	scrollen
+		SH-Cursor	Seitenweise scrollen
+		0		Tabulatoren ausschalten
+		1..9		Tabulatorweite umschalten (Default: 8)
+
+  MGVIEW hat noch folgende Mankos:
+
+	-	Zeigt Texte falsch an, die Null-Bytes enthalten.
+	-	Beherrscht das Ikonifizieren nicht.
+	-	Kann nicht Kaffee kochen.
+
+  Warum habe ich nicht VIEW.PRG genommen ?
+
+	-	Kann kein VA_START.
+	-	Kann kein ARGV.
+	-	Mag keine Dateinamen mit Leerzeichen.
+	-	Kann nur Tabulatorbreite 8.
+	-	Nimmt immer 256 Zeichen pro Zeile an.
+	-	Mag keine UNIX-Dateien (->weiûer Adler auf weiûem Grund).
+	-	Reagiert nicht auf AP_TERM.
+	-	Schlieût grundsÑtzlich keine Dateien.
+	-	Zeichnet beim Redraw immer das gesamte Fenster.
+
+17.7.96
+-------
+
+- Neuen VDI-Kernel eingelinkt.
+- MGVIEW: Busfehler bei mehr als 1024 Zeichen pro Zeile behoben.
+- MGVIEW:	Ich muûte die Zeilenbreite auf 272 Zeichen begrenzen, da sonst
+  das (N)VDI Zufallszeichen in Zufallskoordinaten schreibt. Ich hatte leider
+  nicht genÅgend Zeit, zu testen, ob die Koordinaten wenigstens normalverteilt
+  sind.
+- MGVIEW: Nullbytes werden als Leerzeichen angezeigt.
+- MGVIEW: Schnellere Textausgabe.
+
+20.7.96
+-------
+
+- MGVIEW: Merkt sich nach dem Laden der Datei jetzt sÑmtliche ZeilenanfÑnge,
+  daher ist das Scrolling besonders bei lÑngeren Dateien jetzt deutlich
+  schneller. Mehr ist jetzt nicht mehr rauszuholen.
+- VFAT-XFS: Das Verschieben geîffneter Dateien/Ordner erzeugt keinen
+  fatalen Fehler mehr im DOS.
+- VFAT-XFS: Beim Verschieben von Ordnern werden beim ".."-Eintrag die Felder
+  Start-Cluster, Zeit und Datum neu erzeugt.
+- MGCOPY: Bearbeitet jetzt auch Dateien mit 64 Zeichen DateinamenlÑnge.
+- MGCOPY: Kopieren und Verschieben mit Umbenennen korrigiert.
+- MGCOPY: Verwendet Frename() zum Verschieben von Ordnern. Das geht wesentlich
+  schneller als das bisherige, rekursive Vorgehen. UnterstÅtzt das XFS kein
+  Verschieben von Ordnern, wird die bisherige Methode (Dcreate,Ddelete)
+  verwendet.
+
+24.7.96
+-------
+
+- MGCOPY: Rekursives Kopieren geht jetzt wieder.
+- MGCOPY: Kein Busfehler mehr beim Kopieren einer kompletten Disk.
+- VFAT-XFS: Beim KÅrzen eines Dateinamens auf 8+3 wird die Extension nicht
+  mehr wie in TOS nach dem ersten, sondern nach dem letzten Punkt genommen,
+  d.h.:
+  	"test.tar.Z" => "TEST.TAR"		unter TOS
+  	"test.tar.Z" => "TEST.Z"			MagiC 5.02
+- VFAT-XFS: Ist ein Dateiname, auûer was die Groû-/Kleinschrift angeht, nicht
+  in 8+3 darstellbar, wird der Name in jedem Fall mit einem '~' gebildet,
+  d.h.:
+  	"test.tar.Z" => "TEST.Z"			MagiC 5.01
+  	"test.tar.Z" => "TEST~1.Z"		MagiC 5.02
+  Damit werden Namenskonflikte mit anderen Dateien, die in das 8+3-Schema
+  passen, vermieden.
+
+26.7.96: 5.02D und 5.02UK
+-------------------------
+
+- AES: Pexec(10x) verschickt bei Beendigung des Kindprozesses CH_EXIT. Dabei
+  war jedoch msg[4] fehlerhaft, dort sollte der RÅckgabewert des Kindprozesses
+  stehen. Fehler korrigiert.
+- MGCOPY/MGFORMAT/MT_AES: Umgestellt auf die umstÑndliche N.AES und MTOS-
+  Methode, d.h. das global-Feld wird explizit Åbergeben. Damit sollte es
+  auch keine Probleme mehr mit diversen ÅberflÅssigen Filet-Selektoren geben,
+  die in Traps herumhÑngen und Rechenzeit fressen.
+
+======================= VERSION 5.02 =======================
+
+31.7.96
+-------
+
+- MGFORMAT: Diskcopy korrigiert. Gab sofort einen Busfehler.
+
+4.8.96
+------
+
+- Farbicons: Wenn es von Seiten des VDI funktionierte, kînnte das AES jetzt
+  auch fÅr ET4000 in 16 Farben Farbicons darstellen.
+  Patch: In der Speicherstelle (16 Bit), die momentan bei $3566 liegt (xp_mode)
+  ist per Hand eine -1 ($ffff) statt der vorhandenen Null einzutragen. Dann
+  werden Farbicons korrekt dargestellt.
+  Der Vorteil des 16-Farb-Modus der ET4000: Extrem schnelles Scrolling, und
+  mehr als 16 Farben kann das AES sowieso nicht nutzen. Hier merkt man auch
+  den gewaltigen Geschwindigkeitsvorteil, den MGVIEW gegenÅber VIEW.PRG hat.
+- Hi Wilfried (N3PGDOKU):
+  Es heiût "niedrigstwertiges" und "hîchstwertiges" Bit, nicht etwa
+  "niedrigstwertigstes" oder "hochwertigstes" usw.
+- MAGXDESK: Kachelroutine korrigiert. Es kînnen jetzt auch in der Auflîsung
+  ET4000/16-Farben Hintergrundkacheln angezeigt werden (mit o.g. Patch)
+
+11.8.96
+-------
+
+- MGCOPY: Beim Verschieben auf ein anderes Laufwerk im Modus "BestÑtigen" fÅhrt
+  die Aktion "öberspringen" im Dialog "Datei existiert schon" nicht mehr zum
+  Lîschen der Quelldatei.
+
+18.8.96
+-------
+
+- MAGXDESK: Ist die INF-Datei in der Art beschÑdigt worden, daû ein auf dem
+  Desktop liegendes Programm-Icon keinen korrekten Dateinamen hat; genau: wenn
+  die Extension fehlt (z.B. "TEMP" statt "TEMPUS.PRG"), tritt kein Busfehler
+  mehr auf, sondern es wird das Standard-Programm-Icon angezeigt.
+- AES: das scrollende Popup fÅr den Fall korrigiert, daû auf einen Scrollpfeil
+  geklickt wurde. Der Klick wird ignoriert.
+- AES: form_popup() erweitert:
+  Am 24.8. nochmal geÑndert!
+
+======================= VERSION 5.03beta =======================
+
+25.8.96
+-------
+
+- BIOS: Shutdown fÅr MagicPC eingebaut.
+- MGVIEW: Schaltet Maus auf Pfeilform.
+- MGVIEW: Arbeitet auch mit verÑnderter Systemfontgrîûe. Benutzt immer den
+  VDI-Standardfont.
+- MGVIEW: Mit neuer MT_AES-Bibliothek gelinkt.
+- Apfelsinenkiste (O-Ton ASH): etwas aufgepÑppelt, die neue Version
+  heiût statt MAGXDESK jetzt OBOXDESK ("orange box desktop") Version 3.20.
+  Leider das 300-kB-ProgrammlÑnge-Ziel wieder knapp verfehlt, daher keine
+  Version 4.00.
+  Benîtigt den neuen Kernel vom 25.8.
+- AES: Callback fÅr xfrm_popup() auf "cdecl" korrigiert, MT_AES
+  entsprechend korrigiert.
+
+27.8.96
+-------
+
+- APPLICAT: Fehlermeldungen, die beim Laden der Ressourcedateien angezeigt
+  werden sollten, waren entweder verstÅmmelt oder fÅhrten zum Absturz.
+  Fehler korrigiert. Der Alert "Zuviele Ressourcedateien" funktioniert jetzt.
+- APPLICAT: In die APPLICAT.INF ist folgende Zeile:
+
+ALIS Aliase MAGICICN.RSC 124 "ALIAS"
+
+  nach der Zeile "DEVC GerÑtedatei..." einzufÅgen.
+  OBOXDESK braucht den Eintrag, um ein spezielles Icon fÅr nicht-auflîsbare
+  Aliase (d.h. symbolische Links, die auf eine nicht existierende Datei bzw.
+  einen nicht existierenden Ordner zeigen) anzuzeigen.
+- OBOXDESK: Nicht dereferenzierbare Aliase werden mit einem speziellen Icon
+  angezeigt. Dieses kann, wie z.B. auch das fÅr Devices, normal mit APPLICAT
+  ausgetauscht werden.
+- Mac-XFS: Fsymlink() liefert jetzt EACCDN bei Anwendung auf eine existierende
+  Datei. Bisher wurde die Resource-Fork geÑndert (bîse Sache, aber da
+  jeder Kunde die Ease verwendet und die keine Aliase kennt, ist der Fehler
+  wohl niemandem aufgefallen.
+- AES: Das Nach-Hinten-Stellen eines Fensters, sei es durch wind_set() oder
+  durch den Backdrop-Button, beeinfluût nicht mehr ausgeblendete Fenster.
+  Bisher wurde die Applikation, deren Fenster dann oberstes wurde, wieder
+  eingeblendet, wenn sie ausgeblendet war.
+
+4.9.96
+------
+
+- Diese Version will ASH vertreiben als:
+	Atari/PC/Mac jeweils GER/UK
+- Mac-BIOS: Die Taste mit dem Scancode 76dez wird als AltGr ausgewertet. Sie
+  aktiviert die Tastaturtabelle fÅr AltGr und Shift-AltGr. Bisher konnte die
+  Taste nur per Alt-CapsLock emuliert werden.
+  Thomas will einen ensprechenden Schalter in den Konfigurationsdialog
+  einbauen, mit dem man die AltGr-Taste aktivieren kann. Bisher wurde AltGr
+  wie Alt behandelt.
+- AES: xfrm_popup() korrigiert; funktioniert jetzt.
+- AES: xfrm_popup() Åbergibt jetzt auch die initiale Scrollposition in
+  intin[5], MT_AES ist entsprechend korrigiert. Der Callback ist "void", nicht
+  WORD.
+  Das Binding lautet jetzt:
+
+Prototyp:
+		WORD xfrm_popup(
+			OBJECT *tree,
+			WORD x,
+			WORD y,
+			WORD firstscrlob,
+			WORD lastscrlob,
+			WORD nlines,
+			void	cdecl (*init)(OBJECT *tree, WORD scrollpos,
+						WORD nlines, void *param),
+			void *param,
+			WORD *lastscrlpos
+			);
+
+Aufruf:
+		contrl[0] = 135		Funktionsnummer (form_popup)
+		contrl[1] = 6			EintrÑge in intin
+		contrl[2] = 2			EintrÑge in intout
+		contrl[3] = 3			EintrÑge in addrin
+		contrl[4] = 0			EintrÑge in addrout
+
+		intin[0] = x
+		intin[1] = y			geben die Mausposition an, um die die Box
+							zentriert werden soll.
+							Sind x und y Null, wird die Position der Box
+							nicht beeinfluût und muû vom Aufrufer
+							gesetzt werden.
+							Das MenÅ sowie die Koordinaten x und y
+							dÅrfen beliebige Werte annehmen,  Mag!X
+							sorgt immer dafÅr, daû das MenÅ vollstÑndig
+							auf dem Bildschirm liegt.
+		intin[2] = firstscrlob	Objektnummer des ersten scrollenden
+							Objekts.
+		intin[3] = lastscrlob	Objektnummer des letzten scrollenden
+							Objekts.
+		intin[4] = nlines		Anzahl tatsÑchlich vorhandener Zeilen.
+		intin[5] = scrlpos		anfÑngliche Scrollposition ( = *lastscrlpos)
+
+		addrin[0] = tree		Der Objektbaum. Die Box sollte als Objekt 0
+							eine G_BOX oder G_IBOX enthalten, die von
+							den anderen Objekten vollstÑndig bedeckt
+							wird. Objekte, die nicht auswÑhlbar sind,
+							sollten den Status DISABLED erhalten.
+							Alle wÑhlbaren Objekte mÅssen den Status
+							SELECTABLE haben.
+		addrin[1] = init		Callback- Routine zum Umsetzen der Objekte.
+							<tree>, <param> und <nlines> sind die
+							Parameter, die	an xfrm_popup() Åbergeben
+							wurden. <scrollpos> gibt die aktuelle
+							Scrollposition an. Sie liegt in:
+							0..(nlines-(lastscrlob-firstscrlob+1).
+							Soll das Popup nicht scrollen, muû
+							init == NULL Åbergeben werden.
+		addrin[2] = param		benutzerdefinierter Parameter
+
+		intout[0]				Nummer des angewÑhlten Objekts oder -1
+		intout[1]	= lastscrlpos	letzte Scrollposition
+
+- ErgÑnzung zu Beschreibung von xfrm_popup():
+
+	1.	Der Objektbaum wird vor dem ersten Zeichnen automatisch durch
+		Aufruf der init()- Routine initialisiert.
+	2.	Die Variable <scrollpos> braucht nicht initialisiert zu werden,
+		das System beginnt immer bei Scrollpos 0.
+	3.	Die Init-Routine ist dafÅr verantwortlich, das erste/und/oder
+		letzte Scrollobjekt mit einem Pfeil zu initialisieren.
+	4.	Die scrollenden Objekte sind <firstscrlob> .. <lastscrlob>. Die
+		Objektnummern mÅssen direkt aufeinanderfolgen. Die Objekte mÅssen
+		untereinander liegen und alle dieselbe Grîûe haben.
+
+14.9.96
+-------
+
+- Diese Version will ASH vertreiben als:
+	Atari/PC/Mac jeweils GER/UK
+  Hoffen wir, daû die Version vom 4.9. nicht in Umlauf kommt.
+- AES: Neues WDIALOG eingabaut. Fehler fÅr Baum mit genau einem Objekt
+  behoben.
+- VFAT: Bîsen Fehler in Frename() behoben. Beim Umbenennen im selben
+  Verzeichnis wurde beim Test, ob die Datei bereits ist, nicht am Verzeichnis-
+  Anfang gesucht. Das konnte dazu fÅhren, daû Dateinamen mehrfach vorkamen.
+- DOS-Kernel: Wird beim Verfolgen eines Alias in einem Pfadnamen ein Fehler
+  gefunden, d.h. der Alias kann nicht dereferenziert werden, wird jetzt immer
+  EPTHNF geliefert, unabhÑngig davon, ob der Alias aufgrund eines Lesefehlers
+  (EREADF), ungÅltigen Laufwerks (EDRIVE) oder ungÅltigen Pfads (EFILNF oder
+  EPTHNF) nicht dereferenziert werden konnte.
+  Damit funktioniert Dpathconf() jetzt auch fÅr Aliase. Beispiel: Wenn keine
+  Disk eingelegt war, konnte man fÅr den Alias U:\A kein "Info anzeigen" in
+  MAGXDESK machen, weil Dpathconf() fÑlschlicherweise EDRIVE lieferte. Jetzt
+  liefert Dpathconf("U:\A") die Informationen zu U:\, und der Dialog erscheint
+  korrekt.
+- MAGXDESK: StÅrzt bei fehlendem "ALIS"-Eintrag in APPLICAT.INF nicht mehr
+  ab. Stattdessen wird das Icon fÅr GerÑtedateien (Devices) angezeigt, wenn
+  ein Alias nicht dereferenziert werden konnte.
+- MAGXDESK: Nicht dereferenzierbare Aliase erscheinen im Textmodus unter-
+  strichen und sind so leicht zu erkennen.
+- MAGXDESK: Wurde bei mehreren geîffneten Fenstern ein ALLICONFIY abwechselnd
+  mit einem der beiden Fenster durchgefÅhrt, so waren beim zweiten Durchlauf
+  alle anderen Fenster verschwunden.
+  Fehler korrigiert, beim Uniconify erscheinen alle Fenster wieder.
+- MagicMac (XBIOS): Der Aufruf
+
+	Ikbdws(0, "\x1c");
+
+  zum Abfragen der Uhrzeit des IKBD-Chips wird emuliert.
+  Dazu werden Uhrzeit und Datum vom Mac geholt, in BCD gewandelt und Åber
+  Kbdvecs.clockvec dem Behandlungsprogramm Åbergeben.
+  Damit funktioniert jetzt die Exportversion von Adimens.
+- MagicMac (Plattentreiber): Ich habe versucht, mit meinem bescheidenen Wissen
+  eine UnterstÅtzung langer DOS-Partitionen einzubauen. Meine Syquest-Medien
+  sind ab Werk partitioniert fÅr eine Partition mit 4 Sektoren pro Cluster.
+  Diese Partition wird vom HDDRIVER auf dem Atari erkannt, leider lieferte
+  MagicMac bisher vîllig falsche Daten (falsche Anzahl von Clustern im BPB).
+  Das habe ich jetzt korrigiert, und ich kann die Syquest-Medien auch auf
+  meinem Mac verwenden. Vielleicht habe ich dabei aber andere Features
+  kaputt gemacht, also bitte testen.
+  Ich schicke das neue XFS sowie den neuen Plattentreiber an Thomas, denn nur
+  der kann ihn einbauen. Ich habe sowieso nur alte Quelltexte (2.01).
+
+16.9.96
+-------
+
+- ASH: Im Archiv MACNEU.LZH liegt die Mac-Version vom 16.9. GegenÅber der
+  Version vom 14.9. habe ich die Behandlung des "etv_critic" geÑndert. Bei
+  Fehlern wie "Daten auf Disk A: defekt" oder "Disk A: schreibgeschÅtzt"
+  sollte es jetzt (vielleicht) keine Speicherzerstîrung mehr geben.
+  Da ich mir noch nicht sicher bin, ob ich mit dieser énderung nicht
+  irgend etwas anderes kaputt gemacht habe und ich ferner den Speicherschieûer
+  nie 100%ig reproduzieren konnte, bitte ich um entsprechende Tests.
+
+  Beta: Die Archive heiûen einfach MAC.LZH und ATARI.LZH. Die Version vom
+  14.9. sparen wir uns gleich. Bitte den etv_critic ausprobieren. Besonders
+  bitte auf dem Atari, damit ich mir da keinen neuen Fehler einfange.
+
+19.9.96
+-------
+
+- Diese Version will ASH vertreiben als:
+	Atari/PC/Mac jeweils GER/UK
+  Daher keine Beta-Kennung.
+- ASH: Neue Versionen fÅr Atari und Mac fÅr FRG und UK. DRINGEND (!) das
+  neue INSTMAGC verwenden. Bitte vorher Probeinstallation.
+- AES: Der gelegentliche Absturz beim Aufruf des Popup-MenÅs in der MenÅleiste
+  oder in der Dateiauswahl sollte behoben sein. Ich konnte den Fehler leider
+  nie nachvollziehen, aber ich habe eine "kritische" Stelle korrigiert.
+- BIOS: Die Tastaturtabellen sind per magischer Zeichenkette fÅr das
+  Installationsprogramm zu finden. Es wird daher der neue (!!) Installer
+  benîtigt.
+- BIOS (nur die Atari-Version fÅr unsere auslÑndischen Kunden):
+  Die UK-Version hat jetzt bereits eincompilierte UK-Tastaturtabellen,
+  ebenso hat die FRA-Version FRA-Tastaturtabellen.
+- INSTMAGC: Dringend erforderlich fÅr die neuen Versionen.
+- MGCOPY: Aliase erstellen im Modus "Umbenennen" funktioniert jetzt.
+- Doku: SHUTDOWN.TXT fÅr Franz erweitert.
+
+
+======================= VERSION 5.04alpha =======================
+
+21.9.96
+-------
+
+- MAGXDESK: Dateien oder Ordner mit Leerzeichen werden, auf dem Desktop
+  abgelegt, nach "Arbeit sichern" und Neustart korrekt wieder auf dem
+  Desktop angelegt.
+- Dateiauswahl: Bei abgeschalteten 3D-Effekten wird fÅr den "RÅckwÑrts"-Knopf
+  sowie fÅr die Ordner-Icons das S/W-Icon verwendet.
+- WDIALOG: Aufgrund eines Konfigurationsfehlers enthÑlt die Version 5.03
+  leider doch nicht das neue WDIALOG-Modul. Jetzt also erst ab 5.04alpha.
+- Dateiauswahl: In der MAGX.INF kann innerhalb des [aes]-Abschnitts eine
+  Vorgabe fÅr zusÑtzliche Dateitypen angegeben werden. Typisch wÑre:
+
+#_FSL 0 *.C;*.H;*.S
+
+  Dabei ist <0> ein Flag, das zur Zeit noch ignoriert wird und daher immer
+  Null sein sollte. Es folgt eine Zeichenkette mîglicher Extensions, die
+  durch ';' getrennt sind. Doppelmuster werden voneinander durch ','
+  getrennt (z.B. "*.PRG,*.APP" oder "*.JPG,*.JPEG").
+- Dateiauswahl: Per Doppelklick auf das Dateityp-Popup kann dieses editiert
+  werden. Der Editiervorgang wird mit der Taste [Return] abgeschlossen.
+
+  Existiert die eingegebene Extension bereits im Popup, wird der zugehîrige
+  Eintrag angewÑhlt.
+
+  Existiert die eingegebene Extension noch nicht im Popup, so wird sie
+  hinzufÅgt, falls die aktuelle Extension eine vom Programm vorgegebene ist.
+  Dies ist notwendig, da diese Extensions nicht verÑndert werden dÅrfen.
+  Leere Extensions kînnen nicht angefÅgt werden, sie werden ignoriert.
+
+  Existiert die eingegebene Extension noch nicht im Popup und ist die
+  aktive Extension eine der global vorgegebenen (d.h. nicht vom Aufrufer
+  Åbergeben), so wird die aktive Extension durch die neu eingegebene
+  Åberschrieben. Ist die neue Extension leer, wird die entsprechende
+  Vorgabe entfernt.
+
+  Die aktive Extensionliste kann z.Zt. noch nicht abgespeichert werden. Dazu
+  muû die MAGX.INF mit einem Editor angepaût werden.
+
+  Die maximale LÑnge der globalen Extensions betrÑgt 256 Bytes inkl. aller
+  notwendigen Nullbytes und der Ende-Kennung.
+- Das "valid"-Muster fÅr die 8+3-Namen wurde TOS angepaût und von 'f' auf 'F'
+  geÑndert. Damit ist die Eingabe von '*' und '?' mîglich. Dies war fÅr
+  lange Dateinamen schon immer mîglich (!!!).
+- Bei zuwenig Speicher sowie bei Lesefehlern wÑhrend des Einlesens der
+  Verzeichnisse wird eine Fehlermeldung per form_xerr(), d.h. in einer
+  Alertbox, ausgegeben.
+- FÅr Julians Mupfel: Die MiNT-Aufrufe Pumask() und Pusrval() sind
+  implementiert. Beide Werte sind ab Boot auf Null initialisiert und werden
+  wie bei MiNT an Kindprozesse vererbt.
+- Beim Terminieren eines Prozesses wird der Fall berÅcksichtigt, daû der
+  parent _vor_ dem Kind terminiert. Der Zeiger auf die Basepage des
+  Parent wird dann auf NULL gesetzt.
+- Beim Terminieren eines Prozesses wird das Signal SIGCHLD an den Parent
+  verschickt.
+
+24.9.96
+-------
+
+- MAGXDESK: Busfehler bei Doppelklick auf Desktop-Icon behoben.
+
+25.9.96
+-------
+
+- BIOS/DOS fÅr Atari: Behandlung des FRB-Puffers an neuere TOS-Versionen
+  (neuer als 3.06) angepaût. Damit das ominîse Multiboard mit seinem mehr oder
+  weniger alternativen Speicher auch funktioniert, wird die folgende Strategie
+  eingeschlagen:
+
+	- Beim Booten wird der FRB-Puffer nebst _FRB-Cookie genau dann angelegt,
+	  wenn TT-RAM (d.h. RAM ab Adresse $1000000) da ist.
+	  Bisher wurde dies genau dann getan, wenn der Prozessor > 68020 war.
+	  Damit spart man bei einem Falcon ohne FastRAM 64k Speicher. Schon
+	  wieder Platz fÅr ein Drittel einer EASE.INF.
+	- Beim Aufruf von Maddalt() wird, wenn noch kein FRB-Puffer da ist,
+	  per Mxalloc() einer angelegt. Ein Cookie wird nicht (!) angelegt,
+	  weil das zu umstÑndlich ist.
+	- Der FRB wird immer dann verwendet, wenn die Startadresse des zu
+	  schreibenden/lesenden Blocks >= phystop ist. Bisher wurde die Adresse
+	  $a00000 (d.h. 10 MB) TOS-3.01-konform als magische Grenze verwendet.
+
+29.9.96
+-------
+
+- MGFORMAT: Will man ein Laufwerk formatieren, das kein Diskettenlaufwerk ist,
+  kommt eine Alertbox, die man erst bestÑtigen muû: "Alle Daten auf Disk X:
+  werden gelîscht. OK/Abbruch".
+  Bei der Umstellung von MGFORMAT auf die MagiC-interne WDIALOG-Bibliothek
+  hatte sich hier ein Fehler eingeschlichen, der bewirkte, daû OK und Abbruch
+  keinen Unterschied machten, und in jedem Fall das Dialogfenster zum
+  Initialisieren erschien.
+  Fehler korrigiert. Bei "Abbruch" wird die Operation sofort abgebrochen.
+
+7.10.96
+-------
+
+- shel_write(SHW_KILL_THREAD) korrigiert. Ging Åberhaupt nicht.
+- Pwaitpid() eingebaut.
+- Pwait3() eingebaut.
+- Pwait() eingebaut.
+- Die Pwaitxxx()-Funktionen behandeln bereits Prozeûgruppen. Die Funktion,
+  die die Prozeûgruppe abfragt und festlegt, fehlt aber noch.
+- Beim Terminieren eines Prozesses werden alle Zombie-Kinder entfernt. Ich
+  weiû leider nicht, wie MiNT da vorgeht, aber es erschien mir notwendig,
+  damit keine Leichen herumliegen.
+
+20.10.96
+--------
+
+- MAGXDESK 3.21: Optional Doppelklick auf rechter Maustaste.
+  Zugehîrige Texte fÅr franzîsische und englische Ressource mÅssen noch
+  Åberarbeitet werden.
+- MAGXDESK: Beim Empfang der Nachricht AV_XOPENWIND (z.B. von MGSEARCH) wird
+  die Selektionsmaske jetzt auch dann in Groûschrift gewandelt, wenn ein neues
+  Fenster geîffnet wird. Bisher hat das Selektieren von Dateien aus dem
+  MGSEARCH-Fenster bei kleingeschriebenen Dateinamen nur dann funktioniert,
+  wenn schon ein Fenster offen war.
+- MAGXDESK: Beim Empfang der Nachricht AV_XOPENWIND (z.B. von MGSEARCH) wird
+  an die Selektionsmaske beim Abschneiden auf 13 Zeichen (= MaximallÑnge)
+  automatisch ein '*' angehÑngt. Dateinamen mit mehr als 13 Zeichen kînnen
+  so jetzt auch vom MGSEARCH-Fenster selektiert werden. Sind die ersten 13
+  Zeichen nicht eindeutig, werden u.U. mehrere Dateien selektiert.
+- APPLICAT: Doppelt vergebenen Shortcut in der Ressource korrigiert.
+- DOS: Maximale Anzahl der EintrÑge im Wurzelverzeichnis von U: von 32 auf
+  40 erhîht. Damit bleiben bei max. 25 Laufwerken (ohne U:) und den vier
+  Spezialverzeichnissen PROC,SHM,PIPE,DEV noch 13 freie EintrÑge.
+- Haruns Diskmounter-Problem untersucht:
+  Das DOS ist reentrant, da gibt es keine Probleme. Reentrant ist auch das
+  FAT-Dateisystem. Probleme gibt es erst bei der Sektor-Cache-Verwaltung.
+  Auch diese ist reentrant, solange jede Instanz ihre eine Applikationskennung
+  (d.h. die Kennung der Task) hat. Probleme gibt es erst, wenn eine Task,
+  die einen Sektor per Semaphore gesperrt hat, diesen Sektorpuffer noch
+  einmal benîtigt. Sie kann dann nicht warten, bis er freigegeben wird, da
+  sie ihn selber sperrt.
+  Haruns Programm kînnte nur so gerettet werden, indem die Dateizugriffe unter
+  einer anderen Applikation stattfinden, oder, noch besser, unter einem
+  eigenen Prozeû.
+- AES: Gibt bei unbekanntem AES-Aufruf im Alert den Opcode aus.
+- AES: Der "Critical error handler" spricht bei EWRPRO jetzt auf Uwes Wunsch
+  nicht mehr von "Diskette", sondern von "Medium". Z.B:
+
+	--------------------------------------------------------
+	|  *	 Das Medium ist schreibgeschÅtzt. Kann den Geist	|
+  	|  |       von Erich Honecker nicht erreichen.		|
+	|											|
+  	|	       [Friede]  [Freude]  [Sozialismus]		|
+  	--------------------------------------------------------
+
+- AES: erweiterten "critical error handler" eingebaut, erwartet folgende
+  Parameter:
+
+	WORD errcode;			/* Fehlercode (< 0) wie bisher */
+	WORD	drv;				/* Laufwerknummer wie bisher */
+	LONG magic1;			/* wenn == 'XMSG', ist xerrcode gÅltig */
+	WORD xerrcode;			/* erweiterter Fehlercode (< 0 oder == 1) */
+	LONG magic2;			/* wenn == 'XMSG', ist xerrmsg gÅltig */
+	char *xerrmsg;			/* Fehlertext */
+
+  Beim Aufruf geht das AES nun folgendermaûen vor:
+
+  1. Fall: <magic1> ist ungÅltig.
+
+	Dies entspricht der bisherigen Vorgehensweise.
+	Ist <errcode> bekannt (z.Zt.: 0 >= errcode >= -17), wird der
+	zugehîrige Fehlertext angezeigt, ansonsten ein Default-Fehlertext.
+
+  2. Fall: <magic1> ist gÅltig
+
+	<errcode> wird ignoriert, stattdessen <xerrcode> ausgewertet.
+	Ist <xerrcode> bekannt (z.Zt. nur: 0 >= errcode >= -17), wird der
+	zugehîrige Fehlertext angezeigt, ansonsten ein Default-Fehlertext.
+	Wenn <magic2> gÅltig ist, legt <xerrmsg> den Default-Fehlertext fest.
+	Setzt man <xerrcode> auf 1, wird immer der Default-Fehlertext
+	angezeigt.
+	D.h. insbesondere: <magic1> und <magic2> gÅltig und <xerrcode>==1
+	erzwingt, daû einfach der in <xerrmsg> festgelegte Fehlertext angezeigt
+	wird.
+
+  Aufbau von <xerrmsg>:
+  Die Zeichenkette legt eine Zeichenkette fÅr form_alert() fest, aber mit
+  zwei Unterschieden:
+
+  	-	Das erste Zeichen legt den Default-Button fest, ist also 1 oder 2.
+  	-	Die Zeichenfolge %S ist Platzhalter fÅr das Laufwerk.
+
+  Dazu ein Beispiel in Assembler:
+
+	DC.B 2,'[1][Disk in Laufwerk %S:|ist grÅn.][Abbruch| Nochmal ]',0
+
+  Und in 'C':
+
+	"\2[1][Disk in Laufwerk %S:|ist grÅn.][Abbruch| Nochmal ]"
+
+25.10.96
+--------
+
+- MGCOPY: Ist die BestÑtigung fÅrs Lîschen ausgeschaltet, wurden manchmal die
+  Inhalte der Dialogbox durcheinandergebracht, in jedem Fall aber unsinnige
+  Werte fÅr Zahl und Speicherbedarf der Dateien und Ordner angezeigt.
+  Fehler korrigiert.
+- MGCOPY: Wurden wÑhrend des Kopier-/Lîschvorgangs innerhalb eines zu
+  kopierenden/zu lîschenden Baumes Dateien oder Ordner gleichzeitig von einem
+  anderen Prozeû entfernt, wurde die Dialogboxstruktur zerstîrt.
+  FÅr diesen Fall ist jetzt eine Sicherheitsabfrage eingebaut.
+- APPLICAT: Bearbeitet jetzt (endlich!) auch Programme korrekt, die
+  Leerzeichen im Namen oder im Pfad haben.
+- FÅr Uwe hier die Fehlertexte des CEH:
+
+	IF	COUNTRY=FRG
+al_ewrpro:	DC.B 2,'[1][Das Medium in Laufwerk %S:|ist schreibgeschÅtzt.][Abbruch| Nochmal ]',0
+al_edrvnr:	DC.B 2,'[2][Laufwerk %S: antwortet nicht.|Bitte Laufwerk ÅberprÅfen oder|Medium einlegen!][Abbruch| Nochmal ]',0
+al_rwfault:	DC.B 2,'[1][Daten auf Diskette in Laufwerk|%S: eventuell defekt.][Abbruch| Nochmal ]',0
+al_ereadf:	DC.B 1,'[2][Lesefehler auf Laufwerk %S:.][Abbruch| Nochmal ]',0
+al_ewritf:	DC.B 2,'[1][Ihr AusgabegerÑt empfÑngt|keine Daten.][Abbruch| Nochmal ]',0
+al_echgab:	DC.B 1,'[3][Bitte Diskette %S in|Laufwerk A: einlegen!][  OK  ]',0
+	ENDIF
+	IF	COUNTRY=USA
+al_ewrpro:	DC.B 2,'[1][Disk in drive %S:|is write protected.][Cancel| Retry ]',0
+al_edrvnr:	DC.B 2,'[2][Drive %S: not connected.|Check drive|or insert disk!][Cancel| Retry ]',0
+al_rwfault:	DC.B 2,'[1][Data in drive|%S: may be damaged.][Cancel| Retry ]',0
+al_ereadf:	DC.B 1,'[2][Read error on drive %S:.][Cancel| Retry ]',0
+al_ewritf:	DC.B 2,"[1][Output device hasn't received|any data.][Cancel| Retry ]",0
+al_echgab:	DC.B 1,'[3][Please insert|disk %S into drive A: ?][  OK  ]',0
+	ENDIF
+	IF  COUNTRY=FRA
+al_ewrpro:	DC.B 2,'[1][La disquette dans le lecteur %S:|est protÇgÇe en Çcriture.][Abandon| RÇpeter ]',0
+al_edrvnr:	DC.B 2,'[2][Lecteur %S: ne rÇpond pas.|VÇrifiez le lecteur ou|insÇrez une disquette !][Abandon| RÇpeter ]',0
+al_rwfault:	DC.B 2,'[1][DonnÇes sur disquette du lecteur|%S: Çventuellement dÇfectueuses.][Abandon | RÇpeter ]',0
+al_ereadf:	DC.B 1,'[2][Erreur de lecture sur lecteur %S:.][Abandon| RÇpeter ]',0
+al_ewritf:	DC.B 2,'[1][Votre pÇriphique de sortie ne|reáoit pas de donnÇes.][Abandon| RÇpeter ]',0
+al_echgab:	DC.B 1,'[3][Svp, insÇrez disquette %S |dans le lecteur A: !][  OK  ]',0
+	ENDIF
+
+2.11.96
+-------
+
+- AES: Beim Start der Shell wird eine beim vorherigen Programmstart Åbergebene,
+  erweiterte (ARGV-) Kommandozeile jetzt explizit entfernt.
+  Damit kommt es nicht mehr vor, daû die Shell z.B. beim Programmstart Åber
+  "Magxdesk nicht resident" oder Åber "Single mode" fÑlschlicherweise die
+  erweiterte Kommandozeile des aufgerufenen Programms Åbergeben bekommt.
+  Dank an Thomas Binder fÅr diesen Bugreport.
+- Mac-XFS: Ein nicht dereferenzierbarer Alias (zeigt entweder auf ein DOS-
+  Laufwerk oder auf eine nicht existierende Datei eines Mac-Laufwerks)
+  fÅhrt zum Fehler EFILNF oder EPTHNF, nicht mehr fÑlschlicherweise zu
+  EINTRN.
+  Damit funktioniert das "Info anzeigen" in Magxdesk jetzt auch auf Mac-
+  Partitionen fÅr nicht-dereferenzierbare Aliase.
+- MAGXDESK: Die Tastenkombination Alt-Shift-< sendet die Nachricht:
+	VA_START mit den Parametern msg[3..7] = 0
+  an die Applikation "START", wenn diese im Speicher liegt.
+  Damit sollte eigentlich StartMeUp sein Popup îffnen. Leider wird die
+  Nachricht geflissentlich von SMU ignoriert. Vielleicht habe ich aber auch
+  eine zu alte Version (SMU 1.07).
+- XMEN_MGR: Beendete man ein Popup, das man durch eine schrÑge Mausbedienung
+  betreten hatte, dadurch, daû man mit schneller Bewegung auf einen anderen
+  MenÅeintrag des Åbergeordneten MenÅs ging, so wurde der alte Eintrag nicht
+  deselektiert.
+  Ich hoffe, ich habe diesen Fall abgefangen, jedenfalls sollten mehr als
+  ein selektierter Eintrag pro MenÅ jetzt weniger hÑufig auftreten.
+
+7.11.96
+-------
+
+- INSTMAGX: Beim Eintragen des Lizenzinhabers wird nicht mehr nach der
+  Zeichenkette "Lizenz an", sondern nach "Erika Mustermann" gesucht. Damit
+  darf die Zeichenkette "Lizenz an" jetzt auch lokalisiert werden.
+- MAGXDESK: VA_SENDKEY mit Leertaste fÅhrt nicht mehr zum Busfehler, wenn
+  das oberste Fenster nicht zu MAGXDESK gehîrt.
+
+======================= VERSION 5.05alpha =======================
+
+18.11.96
+--------
+
+- Atari-BIOS: Die Exceptionvektoren, die Bomben ausgeben, holen ihre
+  jeweilige Vektornummer nicht mehr aus dem obersten Byte (68000) bzw. aus
+  dem Stackframe (68010 ff.), sondern es gibt jetzt fÅr jeden Vektor eine
+  eigene Behandlungsroutine. Dabei braucht dann nicht mehr zwischen den
+  verschiedenen Prozessortypen unterschieden zu werden.
+  Wozu der ganze Aufwand?
+  Franz hat einen virtuellen Prozessor 68FS000 erfunden, der im wesentlichen
+  dem 68000 entspricht, aber einen 32-Bit-Adreûraum hat. Und daher darf man
+  das oberste Adreûbyte nicht mehr miûbrauchen.
+- MGFORMAT: Mit neuer MT_AES.LIB gelinkt. VertrÑgt sich jetzt (vielleicht)
+  mit dem neuen WDIALOG (warum, weiû ich nicht).
+- MT_AES: fnts_do() korrigiert. Funktionsnummer war falsch.
+
+1.1.97
+------
+
+- APPLICAT: Maximale Anzahl der Ressourcedateien von 10 auf 30 erhîht.
+- AES: Bei jedem Beenden eines Programms wird jetzt der etv_term-Vektor
+  zurÅckgesetzt. Bisher hat das z.B. im single mode nicht funktioniert.
+- MGCOPY: Werden Dateien mit langen Dateinamen auf ein Medium mit kurzen
+  Dateinamen kopiert oder verschoben, so werden die Namen vom System i.a.
+  automatisch gekÅrzt. Kommt es aufgrund der NamensverkÅrzung zu Namens-
+  konflikten (z.B. "langer_Name.text" und "langer_Name_2.tex" werden beide
+  bei 8+3 auf "LANGER_N.TEX" verkÅrzt und haben so identische Namen), so
+  ergab das im Dialog "Datei/Ordner existiert schon" einen öberlauf im
+  Eingabefeld.
+  Dieser Fehler wurde behoben, der Name wird im Eingabefeld jetzt korrekt
+  auf 8+3 gekÅrzt.
+- MGCOPY: Mit neuerem MT_AES gelinkt.
+- MT_AES: pdlg_xxx()-Funktionen ergÑnzt.
+- MAGXDESK V3.22: Selektiert man ein Objekt in einem ikonifizierten Fenster
+  und îffnet es per MenÅ oder Tastatur-Shortcut (nicht per Doppelklick!!!),
+  so wird das Fenster jetzt korrekt deikonifiziert.
+  Bisher wurde das Fenster nicht korrekt deikonifiziert, sondern blieb klein,
+  aber mit "normalem" Fensterinhalt.
+- MAGXDESK: Anpassung an Kobold 3.5: Pfade, die Leerzeichen enthalten, werden
+  gequotet Åbergeben.
+  Achtung: Nach Aussagen in maus.sys.atari.software soll es derbe Probleme
+  mit Kobold 3.5 geben. Insbesondere werden Pfade, die Åber Aliase gebildet
+  werden, offenbar nicht korrekt ausgewertet, d.h. Kobold kann u.U. auf dem
+  falschen Laufwerk arbeiten.
+  Aber was soll's, die Ease kann ja wohl immer noch keine Aliase. Komisch,
+  daû das niemanden stîrt. Vielleicht eine Shell fÅr Dummies.
+- MAGXDESK: Beim Icon-Zuweisen bleiben jetzt die Disknamen auf dem Desktop
+  erhalten. Bisher wurde bei jeder Icon-énderung fÑlschlicherweise immer der
+  Default-Name ("DISK") eingetragen.
+  Dies war mîglicherweise auch der Grund dafÅr, daû die Diskicons beim
+  wiederholten Aufruf von APPLICAT auf Wanderschaft gingen.
+  Bitte testen!
+- AES: Die Funktionen
+
+	objc_wdraw()
+	objc_wchange()
+	graf_wwatchbox()
+	form_wbutton()
+
+  ergÑnzt. Zur Beschreibung siehe WINDFUN.TXT. Insbesondere mit form_wbutton()
+  ist eine Dialogbedienung im Hintergrund mîglich. Alle Funktionen dienen
+  dem Zeichnen von Objekten innerhalb eines Fensters, dessen WindowHandle
+  Åbergeben wird.
+- INSTMAGX: Beim rekursiven Kopieren der Dateien fÅhren ungÅltige Dateien
+  (VFAT-Dateinamen-Leichen) nicht mehr zu Fehlern, sondern werden ignoriert.
+  (Umgehung eines Fehlers im TOS, denn unter diesem findet die Installation
+  ja Åblicherweise statt).
+- MGCOPY: Mir ist noch ein kleines Problem beim Verschieben von Mac-Dateien
+  aufgefallen: Der Macintosh kann leider keine Datei gleichzeitig verschieben
+  und umbenennen, klarer Fall von Fehldesign.
+  MGCOPY liefert daher in solch einem Fall ein "Zugriff verweigert", falls im
+  Zielverzeichnis eine Datei gleichen Namens schon existiert. Die Datei muû in
+  einem solchen Fall erst umbenannt und dann verschoben werden.
+- MT_AES: Korrektur bei MT_wind_get()
+- AES: wind_get(WF_BOTTOM) erweitert:
+
+	in intin[2] kann eine ap_id Åbergeben werden. FÅr diese Applikation
+	erhÑlt man dann die folgenden Informationen in intout[2]:
+		whdl =  0: liefert das oberste Fenster der Applikation
+		whdl = -1: liefert das unterste Fenster der Applikation
+		whdl >  0: liefert das nach <whdl> nÑchste Fenster der Applikation
+
+  Mit Modus -1 kann man elegant den zyklischen Fenstertausch per ^W
+  durchfÅhren, mit den anderen Modi eine Liste der eigenen Fenster von vorn
+  nach hinten erstellen.
+- APPLICAT: Tastaturkommandos:
+
+	^W	zyklischer Fensterwechsel
+	^U	oberstes Fenster schlieûen, ggf. Programm beenden
+	^Q	Programm beenden
+
+- APPLICAT: Im Dialog "Default-Icons anmelden" sind die Zeilen, wie schon in
+  den anderen Dialogen, selektierbar.
+- APPLICAT: Durch Selektion einer Zeile in den Icon-Zuordnung-Dialogen und
+  durch anschlieûenden Doppelklick auf ein Icon im Icon-Auswahlfenster kann
+  ein Icon zugewiesen werden.
+  Das ist eine Alternative zur Drag&Drop-Methode und besonders bei kleinen
+  Bildschirmen praktisch.
+- MAGXDESK: In den RSC-Dateien, die die Icons enthalten, muû der Text unter
+  den Icons immer _LINKS_-bÅndig sein. D.h. <ICONBLK.ib_xtext> muû Null sein!
+  Sonst kommt es zu Redraw-Fehlern.
+- AES: Die Echtzeit-Verschiebe und -GrîûenÑnderung fÅr Fenster lÑût sich
+  durch DrÅcken der Ctrl-Taste verhindern. Analog zum Scrolling lÑût sich
+  die Wirkung der Ctrl-Taste durch Setzen von Bit 6 der Flags in MAGX.INF
+  umkehren.
+
+6.1.97
+------
+
+- AES: Die énderung vom 7.4.96 wieder rÅckgÑngig gemacht. Da VT52 ein
+  CH_EXIT an den tatsÑchlichen parent weiterreicht, kamen immer zwei
+  Nachrichten an, jetzt herrscht wieder der "status ante".
+  Sinnvoller wÑre es allerdings, den VT52 entsprechend zu Ñndern und das
+  Weiterreichen der Nachricht zu entfernen.
+_ wind_set(WF_BOTTOM) schaltet jetzt ggf. die MenÅleiste um, das ist
+  konsequent im Vergleich zu WF_TOP.
+- form_xdo(): Die Auswertung der Alt-Tastencodes (unterstrichene Objekte)
+  funktioniert jetzt auch dann, wenn wÑhrenddessen der Mauszeiger Åber der
+  abgeknickten Ecke liegt. Bisher wurde der Alt-Tastencode dann ignoriert.
+- form_xdo(): Man kann jetzt beim Verschieben des Dialogs die (beim Mac
+  fehlende) rechte Maustaste durch die Alt-Taste ersetzen. D.h. verschiebt
+  man den Dialog bei gedrÅckter Alt-Taste, kann man Åberall in den Dialog
+  klicken (nicht nur auf die Eselsecke), und der Dialog wird unsichtbar,
+  d.h. man sieht, was dahinter ist.
+- MagiC-Popup: Mit der Alt-Taste kann man die rechte Maustaste simulieren,
+  d.h. mit Mausklick bei gedrÅckter Alt-Taste die MenÅleiste ohne das oberste
+  Fenster umschalten.
+- menu_bar(): Verwendet jetzt wind_update(), um Konflikte bei gerade aktiver
+  MenÅleiste (z.B. eines anderen Programms) zu vermeiden.
+- Window-Shading eingebaut. WM_SHADED (0x5758) und WM_UNSHADED (0x5759) werden
+  nach Konvention von WINX 2.3x verschickt.
+  Shading ist auûer diesen beiden Nachrichten vîllig transparent fÅr die
+  Applikation. Shading ikonifizierter Fenster ist nicht mîglich. Werden
+  ge-shade-te, ikonifizierte Fenster wieder de-ikonifiziert, bleiben sie
+  ge-shade-t. Eine Applikation kann (Un)Shading weder auslîsen noch den
+  Shading-Status abfragen.
+- MGSEARCH: Tastaturkommandos fÅr das Dateinamenfenster:
+
+	Cursor hoch/runter
+	Shift-Cursor hoch/runter
+	Home
+	Shift-Home
+	^Q		(ist schon lÑnger eingebaut)
+	^U		(ist schon lÑnger eingebaut)
+
+- MAGXDESK: In der Icon-Datei waren fÅr einige Icons in der S/W-Darstellung
+  nur die Standard-Icons eingebaut. Diese waren:
+
+	Ordner	ST-Guide
+	Ordner	Papyrus
+	Ordner	Papillon
+	Ordner	C-Compiler
+	Ordner	Packer
+	Ordner	Audio
+	Datei	CPZ
+	Datei	MAGX FILE
+	Datei	INF
+	Datei	MUP
+	Datei	Audio-Daten
+
+  Weiterhin war das S/W Icon "Packer Programm" falsch.
+  Die neue Icondatei enthÑlt korrigierte Icons.
+- MT_AES: fnts_get_name() korrigiert.
+- Neues Notizzettel-Programm MGNOTICE. Anleitung siehe MGNOTICE.TXT.
+
+18.1.97
+-------
+
+- Fehler bei Pexec(104) entfernt. Beim zweiten Aufruf innerhalb eines
+  Programms wurde die Liste der "shared memory blocks" falsch komprimiert
+  und dabei zerstîrt.
+- Fehler bei wind_set(WF_BOTTOM) korrigiert. War zum Zeitpunkt des Aufrufs kein
+  Fenster aktiv, wurde trotzdem nach dem Aufruf das oberste Fenster aktiviert.
+  Dadurch konnte es vorkommen, daû MenÅleiste und oberstes Fenster nicht
+  zusammengehîrten.
+  Durch die Fehlerkorrektur hat MGNOTICE jetzt auch keine Probleme mehr mit
+  dem Applikationswechsel. Durch das wind_set(WF_BOTTOM) erzeugte WM_ONTOP
+  Nachrichten hatten MGNOTICE veranlaût, seine Fenster wieder nach vorn zu
+  verlegen.
+- Mehrere Nullzeigerzugriffe bei MGNOTICE behoben, die auf dem Atari zum
+  Busfehler fÅhrten.
+- objc_edit/form_(x)do: Die Tasten ^X,^C,^V wirken nicht mehr auf einen
+  internen Puffer, sondern tauschen Daten mit dem Scrap-Manager, d.h. mit der
+  Datei SCRAP.TXT im Scrap-Pfad aus.
+
+31.1.97
+-------
+
+- Bîsen (!) Fehler im Mac-XFS von MagiCMac gefunden. Aus der Tatsache, daû
+  das noch keinem aufgefallen ist, kann man leicht erkennen, daû hier offenbar
+  nur die Ease eingesetzt wird, die sowieso jedes Feature im Keim abwÅrgt.
+  Problem: Ein Frename() zwischen verschiedenen Mac-Volumes verschob die
+  Datei auf irgendein Verzeichnis des Quell-Laufwerks (und zwar das mit
+  derselben DirectoryID), anstatt ENSAME zu liefern.
+  MGCOPY ist nÑmlich nicht so doof wie gewisse andere Kopierprogramme und
+  versucht immer zunÑchst Frename(), auch wenn die Laufwerkbuchstaben
+  verschieden sind. Erst bei ENSAME wird "Kopieren+Original lîschen"
+  durchgefÅhrt. Shells, die zu blîde fÅr Aliase sind und sich seit Jahr und
+  Tag an MSDOS- konforme Laufwerkbuchstaben halten, konnten Åber diesen
+  Fehler natÅrlich nicht stolpern.
+- MGNOTICE: Eine neue Notiz ist immer aktiviert, so daû man gleich Farbe
+  und Zeichensatz Ñndern kann, ohne sie nochmal explizit anzuklicken.
+- MGNOTICE: Nicht-Vektorfonts funktionieren jetzt auch und werden nicht
+  mehr als Systemfont angezeigt.
+- MGNOTICE: Farbnamen im Popup korrigiert.
+- MGNOTICE: Position des Farb-Popups abhÑngig vom eingestellten Wert.
+- MGNOTICE: Tastatur-Shortcuts.
+- MGNOTICE: Fenstertitel Ñndert sich je nach Eingeben/éndern einer Notiz.
+- MAGXDESK: Ich habe die Icon-Kollektion um ein paar Icons fÅr HTML und
+  CAB erweitert, die mir zur VerfÅgung gestellt wurden. Auûerdem fehlte
+  noch ein Icon fÅr TeX-Ordner.
+- Fehler in MT_AES in der Funktion form_xdial() gefunden.
+  Der Fehler fÅhrte z.B. dazu, daû MGNOTICE beim Anzeigen des Info-Dialogs
+  auf dem Atari abstÅrzte.
+  Fehler in MT_AES korrigiert und MGNOTICE neu gelinkt.
+- AES: Bei Ctrl-Alt-Del wird an die Shell (MAGXDESK) die Nachricht AP_TERM
+  geschickt. Die Shell muû sich dann _IMMER_ beenden und das Shutdown-
+  Programm SHUTDOWN.PRG starten. Es ist _NICHT_ erlaubt, daû die Shell
+  igendwelche anderen Maûnahmen ergreift, d.h. z.B. AP_TFAIL ans AES schickt
+  und den Shutdown aufhÑlt.
+  Die Dokumentation SHUTDOWN.TXT ist hier eindeutig.
+
+  Da THING aus unerfindlichen GrÅnden offenbar den Shutdown verhindern
+  will, ist es ab MagiC 5.10 jetzt auch fÅr die Shell mîglich, per
+  Nachricht AP_TFAIL den Ctrl-Alt-Del Mechanismus zurÅckzusetzen, d.h. bei
+  erneuter BetÑtigung wird wieder AP_TERM verschickt. Man beachte, daû
+  DIESES VERHALTEN UNZULéSSIG IST, da der WRITE-BACK-DAEMON zu diesem
+  Zeitpunkt schon beendet wurde und auf dem Macintosh keine Dateisicherung
+  mehr ausgefÅhrt werden kann, d.h. beim Absturz von MagicMac sind
+
+	ALLE VERéNDERTEN DATEIEN FöR IMMER FUTSCH
+	-----------------------------------------
+
+  Eine Mîglichkeit fÅr MiûverstÑndnisse:
+
+  Das AP_TERM mit ungÅltiger Initiator-ID ist eigentlich kein AP_TERM,
+  denn der Shutdown-Vorgang ist damit noch nicht eingeleitet. Es ist nur
+  eine Nachricht fÅr MAGXDESK, daû Ctrl-Alt-Del gedrÅckt wurde. Wahrscheinlich
+  wÑre es besser gewesen, eine neue Nachricht SH_CTRLALTDEL zu erfinden.
+- Kernel: Fehler behoben, der beim Beenden eines Prozesses, bei dem noch ein
+  Signalhandler aktiv war, zum Absturz des letzteren fÅhrte.
+  Der Prozeû kann nicht warten, bis sich alle Threads beendet haben, weil es
+  dabei einen Deadlock geben kînnte. Daher werden die Threads vom System
+  "adoptiert", damit sich der Prozeû beenden kann. Diese Adoption war fÅr
+  Signalhandler unzureichend, was dazu fÅhrte, daû dieser auf Daten des
+  bereits ungÅltigen Prozesses zugriff.
+  Das Problem mit Julians Mupfel tritt jetzt nicht mehr auf. Der Fehler trat
+  vermutlich deshalb nur in der Gemini-Konsole, nicht jedoch im VT52 auf, weil
+  letzerer das System nicht sperrt, sondern volles Multitasking ermîglicht,
+  wodurch der Signalhandler immer rechtzeitig beendet war.
+  Vielen Dank an Julian und die anderen, die mir bei der Fehlersuche geholfen
+  haben!
+- Mac-XFS: Ein Ordner-Alias konnte zwar auf ein anderes Mac-Volume zeigen,
+  aber ein Zugriff auf diesen Ordner war bisher nicht mîglich. Jetzt sind
+  solche Aliase mîglich.
+  Der MagiC-Kernel enthÑlt einen Workaround fÅr alte Emulator-Versionen, der
+  fÅr RÅckwÑrtskompatibilitÑt sorgt. Damit der Fehler behoben ist, wird aber
+  ein neuer Emulator auf der Macintosh-Seite mit dem korrigierten XFS benîtigt.
+  Der neue Emulator benîtigt seinerseits unbedingt einen neuen MagiC-Kernel,
+  sonst kracht es.
+
+5.2.97
+------
+
+- Die Ease 5.01 hat Probleme mit ge-shade-ten Dialogfenstern. Da sich wahre
+  Programmierer offenbar nicht an so etwas Triviales wie Fenster-Rechtecklisten
+  zu halten brauchen, landen Texteingabefelder auûerhalb des Fensters.
+  Da die Ease sowieso nach dem Motto programmiert ist "besser dreimal zuviel
+  zeichnen als einmal zuwenig" (warum wird eine Eingabezeile bei jedem
+  Tastendruck komplett neu aufgebaut?) wundert das allerdings nicht.
+  Im Åbrigen habe ich das kalte K... bekommen, als ich die Darstellung der
+  Dateien mit Vektorfonts eingestellt hatte. Genauso besch... wie in der
+  Version 3 und damit von allen Shells (Oboxdesk, Gemini, Thing, Ease) die
+  mit Abstand schlechteste "Lîsung".
+  Fazit: Ease+Vektorfonts = unbrauchbar.
+- McCoy hat Probleme mit dem Echtzeitverschieben von Fenstern. Offenbar werden
+  die Events nicht schnell genug abgeholt oder intern gepuffert und dann
+  nachgeholt. Witziger Effekt, aber harmlos.
+- APPLICAT: Es gibt offenbar Leute, die ihre APPLICAT.INF gern zersemmeln.
+  FÅr diese Leute enthÑlt APPLICAT jetzt zwei neue Features:
+
+	1. Werden fehlende WINDOW EintrÑge, die die Fensterpositionen
+	   angeben, automatisch in der APPLICAT.INF ergÑnzt, falls sie fehlen.
+	2. Werden Fensterpositionen aller geîffneten und geschlossenen
+	   Fenster gesichert. Wenn man also APPLICAT mit [OK] verlÑût, ohne
+	   vorher das Icon-Fenster zu schlieûen, wird trotzdem die Position
+	   des Icon-Fensters mitgesichert.
+
+- DOS: Wurde ein GerÑtetreiber mit Ptermres() installiert und spÑter durch
+  Lîschen seiner Datei aus u:/dev/ gelîscht, so gab es einen Busfehler.
+  Ursache: Fehlendes Lîschen eines ungÅltigen Zeigers bei Offset 0x60 der
+  Basepage.
+  Wer einen GerÑtetreiber schreibt, kann fÅr den Fall, daû die MagiC-Version
+  zwischen 5.00 und 5.05 liegt, sicherheitshalber diesen Zeiger lîschen, bevor
+  kernel->pfree aufgerufen wird. In spÑteren Versionen wird sich die
+  Basepage-Struktur wahrscheinlich Ñndern, so daû da nichts mehr manipuliert
+  werden darf.
+  Den Fehler hat ein A.Houghton aus UK (!) gefunden.
+- AES: Stillschweigend sind folgende Opcodes fÅr wind_set() eingebaut:
+
+	WF_STACK ohne die Option fÅr geschlossene Fenster
+	WF_TOPALL
+
+  Doku siehe WINX 2.3.
+  Ich habe den entsprechenden appl_getinfo()-Aufruf fÅr WINX nicht eingebaut,
+  weil WF_STACK nocht nicht vollstÑndig unterstÅtzt wird, ich nix testen
+  kann und ich noch kein Programm kenne, das das Zeugs braucht.
+  Daher "stillschweigend".
+- AES: Beim Wechsel der aktiven Applikation Åber Ctrl-Alt-Tab oder Åber
+  das MagiC-Popup werden _alle_ Fenster der Applikation nach oben gebracht.
+  Auch dann, wenn das oberste der Applikation schon gehîrt und ein anderes
+  von dem einer anderen Applikation verdeckt ist.
+- MAGXDESK: Klickt man auf eine leere Stelle im Desktop-Hintergrund, so wird
+  das Programm das aktive. Genau wie beim Umschalten Åber das MagiC-Popup.
+- MAGXDESK: Neue Icons fÅr OLGA und SMU.
+- GEMDOS: Dgetpath() und Dgetcwd() hatten Probleme bei der Diskwechsel-
+  Erkennung. Anstatt fÅr das gewechselte Medium den Standardpfad "\"
+  einzutragen, lieferten sie den RÅckgabewert E_CHNG, der normalerweise nicht
+  an den Aufrufer weitergereicht wird, sondern eine Wiederholung des
+  Systemaufrufs auf dem neuen Medium bewirkt.
+  Eine Auswirkung dieses Fehlers war das Verhalten des Dateiauswahldialogs,
+  der beim Diskwechsel manchmal zwei AnlÑufe brauchte.
+
+  öbrigens: Die Dateiauswahl erwartet den Tastencode Ctrl-Esc zum Neueinlesen
+  des Verzeichnisses. Das war schon immer so und steht auch in der Doku.
+  Irgendeine Fummelei mit Hin- und Herwechseln des Laufwerks ist ÅberflÅssig.
+11.2.97
+- AES: Ein Fehler im WDIALOG-Modul sorgte dafÅr, daû Zeichen, die mit Hilfe von
+  Alt-Tasten-Kombinationen erzeugt wurden, nicht in Texteingabefeldern
+  funktionierten. Stattdessen hatte WDIALOG versucht, Buttons mit
+  entsprechendem Shortcut zu finden. Jetzt wird nur dann nach solchen Buttons
+  gesucht, wenn die Taste keinen ASCII-Code liefert.
+  Witzigerweise war dieser Effekt, der schon immer da war, erst Thomas Much
+  im MGNOTICE aufgefallen. Und mir auch nicht, da ich immer AltGr benutze,
+  sowohl auf dem Atari wie auch auf dem Mac.
+- AES: Beim Shaden und De-Shaden wurde generell das vorherige Rechteck
+  (WF_PREVXYWH) falsch behandelt. Das fÅhrte dazu, daû auf Maximalgrîûe
+  gebrachte, ge-shade-te Fenster bei der erneuten BetÑtigung des Maximalgrîûen-
+  felds ziemlich sonderbar aussahen. Auch das de-shade-n solcher Fenster hat
+  nicht korrekt funktioniert.
+  Jetzt wird dafÅr gesorgt, daû PREVXYWH immer korrekte Werte fÅr das nicht
+  ge-shade-te Fenster enthÑlt.
+- MAGXDESK: Kachelroutine zum Zeichnen des Hintergrunds beschleunigt.
+- AES:
+
+	objc_wdraw()
+	objc_wchange()
+	graf_wwatchbox()
+	form_wbutton()
+
+  schneiden jetzt die Ausgabe nicht nur mit der Fenster-Rechteckliste,
+  sondern auch mit dem Arbeitsbereich des Fensters.
+- MAGXDESK: Macht den Redraw komplett Åber objc_wdraw() und benîtigt daher
+  keine Rechtecklisten mehr. Sollte ein biûchen schneller laufen.
+- MGNOTICE: Farbnamen auf energisches DrÑngen von Wilfried entfernt.
+- MGNOTICE: weiûe Schrift, wenn Hintergrundfarbe wegen zu geringer Farbtiefe
+  des Bildschirms als Schwarz dargestellt wird.
+- BIOS (Mac und Atari): Die Tastenkombinationen Ctrl-Shift-Num2 und
+  Ctrl-Shift-Num6 lieferten den falschen ASCII-Wert (fÑlschlicherweise
+  $12 und $16 statt $00 und $1e).
+  Jetzt lÑufts wie im TOS.
+- Doku, MGX_XFS.H: Falsche EintrÑge in der Kernel-Struktur:
+	(APPL *) in (APPL **) korrigiert
+  Den hat auch A.Houghton gefunden. Der ist im Gegensatz zu meiner ersten
+  Behauptung aber nur jenseits des kleinen Teichs, also in UK.
+
+12.2.97
+-------
+
+- Wurde ein ge-shade-tes Fenster ikonifiziert und dieses ikonifizierte
+  Fenster verschoben, gab es MÅll.
+  Fehler korrigiert.
+- AES: form_wkeybd() ergÑnzt (AES-Funktion 64). Doku folgt.
+- WDIALOG: Umgestellt auf form_wbutton(), form_wkeybd() und objc_wedit().
+  Damit kein BildschirmmÅll mehr bei Texteingabe in ge-shade-te Fensterdialoge.
+
+13.2.97
+-------
+
+- MGNOTICE: Einlesen der Default-Hintergrundfarbe aus MGNOTICE.INF geht
+  jetzt.
+- MGNOTICE: Fensterpositionen der Notizen sind jetzt auflîsungsunabhÑngig.
+
+14.2.97
+-------
+
+- MGVIEW: Gibt bei MTOS-Drag&Drop NAK zurÅck.
+- MAGXDESK: Gibt bei MTOS-Drag&Drop NAK zurÅck.
+- MGVIEW: Kann jetzt auch Macintosh-Textdateien (Zeilenende-Kennung CR)
+  anzeigen.
+- MGNOTICE: Funktioniert jetzt wieder bei Bildschirmauflîsungen mit mehr
+  als 256 Farben.
+- AES: UnterstÅtzt stillschweigend wind_set(WF_BOTTOMALL), allerdings ohne
+  die Option, ein einzelnes Fenster gesondert zu behandeln.
+- MGNOTICE: Verwendet wind_set(WF_TOPALL) und wind_set(WF_BOTTOMALL) fÅr
+  die Fensterbehandlung.
+
+17.2.97
+-------
+
+- AES: form_keybd() sucht bei Alt-Tastenkombinationen bekanntlich nach
+  Buttons, von deren Text einzelne Buchstaben unterstrichen sind.
+  Bei Dialogen mit mehreren Kategorien/Ebenen/Karteikarten usw. mÅssen immer
+  einzelne Teile des Dialogs, i.a. G_BOXen, per HIDETREE ausgeblendet werden.
+  Leider hat form_keybd() das HIDETREE-Flag nicht ausgewertet, was dazu fÅhrte,
+  daû unsichtbare Buttons bei Alt-Tastenkombinationen plîtzlich sichtbar
+  wurden. Jetzt werden solche Buttons nicht mehr ausgewertet.
+  Nun hÅlfe das leider wenig bei Multi-Dialogen, bei denen nicht jeder einzelne
+  Button, sondern ganze G_BOXen ausgeblendet werden, auf denen dann wieder
+  Gruppenrahmen und auf diesen wieder Buttons liegen (siehe Dialog
+  Optionen/Einstellungen in Magxdesk). Aus diesem Grund wird jetzt eine
+  aufwendige Strategie verfolgt:
+
+	Ein Button ist danach nur dann gÅltig, wenn weder er noch irgendeiner
+	seiner Vorfahren (parent, parent des parent usw.) versteckt (HIDETREE)
+	ist.
+
+  Damit gibt es jetzt keine Probleme mehr mit Dialogen wie
+  Optionen/Einstellungen, egal wie tief sie verschachtelt sind und egal
+  welche Objektebene ausgeblendet wurde. Auch gleiche TastaturkÅrzel in
+  mehreren Unterdialogen stellen kein Problem mehr dar.
+
+  Und was bringt das jetzt bei anderen Programmen auûer Magxdesk?
+  Nix, weil's kein Schwein benutzt.
+
+19.2.97
+-------
+
+- AES: objc_wedit() ist AES-Funktion 65.
+- AES: Schlieûen eines Fensters ent-shaded dieses. Beim erneuten ôffnen
+  ist es also nicht mehr shaded.
+
+21.2.97
+-------
+
+- MGVIEW: AV_START geht jetzt wieder.
+- MGNOTICE: Fehlendes wind_update() beim Redraw ergÑnzt.
+- MGSEARCH: Fehlendes wind_update() beim Redraw ergÑnzt.
+- MGVIEW: Fehlendes wind_update() beim Redraw ergÑnzt.
+- AES: Bei wind_set(WF_BOTTOMALL) wird verhindert, daû, wenn keine anderen
+  Fenster offen, aber ein anderes Programm aktiv ist (MenÅ und Tastatur),
+  unsere Applikation aktiv wird.
+- AES: wind_set(WF_BOTTOMALL) schaltet ggf. die MenÅleiste um.
+- Ctrl-Backdrop-Button legt alle Fenster der Applikation in den Hintergrund,
+  ohne ihre Reihenfolge zu Ñndern. Dabei wird ggf. die MenÅleiste umgeschaltet.
+  Gibt es keine anderen Fenster, hat der Button keine Wirkung.
+  öbernimmt die Applikation selbst die Behandlung des Backrop-Buttons, ergeben
+  sich keine Unterschiede zur bisherigen Vorgehensweise, da es keine Nachricht
+  WM_BOTTOMALL gibt. Bessere VorschlÑge?
+- appl_getinfo(10): Gibt zu, daû Bit 8 von doex wie in MultiTOS behandelt
+  wird (Psetlimit()).
+- VFAT-XFS: AbhÑngig von der Domain (TOS oder MiNT) liefern Dgetpath() und
+  Dgetcwd() jetzt entweder den langen oder den kurzen Pfadnamen. Bisher wurde
+  fÑlschlicherweise immer der kurze zurÅckgegeben.
+- Dateiauswahl: Wird der Dateiauswahl ein Dateiname Åbergeben, wird der
+  Autolocator aktiviert.
+
+22.3.97
+-------
+
+- AES: objc_wchange() und form_wbutton() (ruft die erstgenannte Funktion auf)
+  funktionierten nicht mit dem Objekttyp "Kreuzchenbutton".
+  Ursache war folgende Kombination:
+
+   form_wbutton() ruft objc_wchange() auf.
+   objc_wchange() ruft objc_wdraw() auf, zeichnet nur das Objekt.
+
+  Nun war der Kreuzchenbutton (wie der Objekttyp G_STRING) ein "hohles" Objekt,
+  d.h. es erschien innerhalb des Objekts die Hintergrundfarbe. objc_draw()
+  hat daher fÅr den nicht-selektierten Zustand Åberhaupt kein Kreuzchen
+  gezeichnet. Daher konnte der Button optisch nicht deselektiert werden.
+
+  Jetzt ist der Kreuzchenbutton stark vereinfacht:
+
+  Es wird _IMMER_ das ausgefÅllte Quadrat gezeichnet (weiû fÅr 2D, hellgrau
+  fÅr 3D), dann ggf. fÅr den selektierten Zustand das Kreuzchen. Der
+  Kreuzchenbutton ist jetzt also (wie der Radiobutton) ein ausgefÅlltes
+  Objekt.
+- AES: Beim Aus- und Einblenden von Applikationen wird die Hîhe ge-shade-ter
+  Fenster jetzt korrekt erhalten.
+- MGNOTICE: Behandelt den Fehlerfall "kein Fenster mehr verfÅgbar" jetzt
+  korrekt.
+- MGCOPY: Behandelt den Fehlerfall "kein Fenster mehr verfÅgbar" jetzt
+  korrekt.
+- APPLICAT: Behandelt den Fehlerfall "kein Fenster mehr verfÅgbar" jetzt
+  korrekt.
+
+5.4.97
+------
+
+- MGCOPY: Fortschrittsbalken eingebaut.
+- AES: Fenster lassen sich auch links aus dem Bildschirm herausschieben.
+  keine Probleme (getestet unter MagicMac) u.a. bei:
+
+	QED
+	ARTWORKS
+	TEXEL
+	CAB
+	GEMINI
+	KANDINSKY
+	LDWPOWER
+	PHOENIX
+	THING
+	GEMVIEW
+	INTRFACE
+	CALAMUS '93
+
+  Probleme bei:
+
+	PC.PRG	(PureC-Entwicklungsumgebung)
+	SCRIPT II
+
+  Papyrus verhindert die Positionierung jenseits des linken Bildschirmrands.
+  Ebenso PAPILLON.
+- MAGXDESK: Gibt bei VA_PROTOSTATUS jetzt auch an, AV_EXIT verarbeiten zu
+  kînnen (wird tatsÑchlich z.Zt. noch ignoriert).
+- MAGXDESK: Antwortet jetzt auf AV_(X)OPENWIND mit der entsprechenden
+  VA_OPEN(X)WIND Antwortnachricht.
+- MAGXDESK: Autoscrolling beim Verschieben von Objekten mit der Maus. Der
+  Mauszeiger kann auch Åber die Scrollpfeile plaziert werden.
+- MAGXDESK: Sofortige énderung der Infozeile beim Selektieren und Verschieben
+  eines Objekts im Fenster.
+- MAGXDESK: Die Aktion beim Verschieben von Objekten hÑngt jetzt nicht mehr vom
+  Zustand der Umschalttasten _VOR_ dem Mausklick ab, sondern vom Zustand beim
+  Loslassen der Maustaste. Die jeweilige Aktion wird durch einen spezifischen
+  Mauszeiger signalisiert:
+
+	Pfeil:		Kopieren
+	flache Hand:	Verschieben
+	zeigende Hand:	Aliase erzeugen
+
+11.4.97
+-------
+
+- Kann keinen Fehler beim Ikonifizieren oder beim Deikonifizieren von
+  MGCOPY oder MGFORMAT feststellen.
+- MGCOPY: Fortschrittsbalken verkleinert. Wer ihn blau haben will, kann sich
+  die RSC-Datei gern patchen.
+
+18.4.97
+-------
+
+- Neuer Installer: Es gibt kein MAGXCONF.ACC mehr. Nur noch CPXe. Ggf. wird
+  \CPX\ erzeugt.
+- Problem beim Installer: Wenn ich die Release-Datei per LZH packe, lÑût der
+  Packer offenbar leere Ordner weg. Daher fehlt der XTENSION-Ordner usw.
+  Jetzt packe ich mit Schalter -r, damit sind auch leere Ordner drin.
+
+8.5.97
+------
+
+- Der erweiterte MenÅ-Manager XMEN_MGR, der die Funktionen
+
+	menu_popup()
+	menu_attach()
+	menu_istart()
+	menu_settings()
+
+  sowie scrollende MenÅs implementierte, ist jetzt Bestandteil des MagiC-
+  Kernels. XMEN_MGR.PRG sollte ggf. aus dem Start-Ordner entfernt werden.
+  Wird dieses Programm versehentlich doch gestartet, wird es, statt sich zu
+  installieren, vom MagiC-Kernel terminiert und richtet daher keinen
+  Schaden an.
+- Im Gegensatz zu XMEN_MGR verwendet MagiC zur Markierung von MenÅeintrÑgen,
+  die auf SubmenÅs zeigen, Bit 11 von ob_flags (MT_AES.H wurde entsprechend
+  erweitert mit "#define SUBMENU 0x800"). Dies entspricht dem Verhalten
+  von AES 4.1.
+  Wenn ich jetzt noch shel_write() Ñndere, kann ich die AES-Version endlich
+  auf 4.0 setzen.
+- MAGXDESK: Single-Mode-Programm per ^O gestartet, fÅhrt nicht mehr zu
+  selektiert gebliebenem MenÅtitel "Datei".
+
+17.5.97
+-------
+
+- Die franzîsische Release-Version 5.12 entspricht der Beta-Version, nur daû
+  das Herausschieben der Fenster Åber den linken Bildschirmrand deaktiviert
+  ist. Der mitgelieferte Desktop sowie das MGCOPY sind die von Version 5.10D
+  und 5.11UK.
+
+23.5.97
+-------
+
+- Dateiauswahl: Die Tab-Taste wird jetzt abgefangen, damit man nicht mehr
+  fÑlschlicherweise in der Muster-Eingabe landet.
+- MAGXDESK: Beim Laden der Defaults wird sichergestellt, daû (im Fall einer
+  zerstîrten INF-Datei) alle Fenster sichtbar sind.
+- MagicMac: Beim Diskwechsel eines Mac-Laufwerks geht kein interner Speicher
+  mehr verloren.
+
+31.5.97
+-------
+
+- MGCOPY: Merkt sich die Fensterpositionen des BestÑtigungs-Dialogs sowie
+  des Fortschrittdialogs.
+  Die Datei MGCOPY.INF wird nur dann geschrieben, wenn die Fenster-Positionen
+  geÑndert sind (!).
+- DOS: Dgetpath() und Dgetcwd() berÅcksichtigen jetzt den Fall, daû ein
+  symbolischer Link in U:\ auf ein Laufwerk umbenannt worden ist.
+  D.h. wenn z.B. "U:\A" => "U:\FLOPPY" umbenannt ist, liefert Dgetpath()
+  nicht mehr fÑlschlicherweise "\A" als Pfad.
+- BIOS: Beim Booten werden optional aus einer Datei
+
+	/GEMSYS/MAGIC/XTENSION/KEYTABLS.SYS
+
+  die nationalen Tastaturtabellen geladen. Die Datei ist 1152 Bytes lang und
+  enthÑlt insgesamt 9 Tabellen Ö 128 Bytes. Die Tabellen sind:
+
+	normale Belegung
+	Belegung mit Shift
+	Belegung mit CapsLock
+	Belegung mit AltGr (Bei Atari Åber Alt-CapsLock arretieren)
+	Belegung mit Shift-Altgr
+	Belegung mit Altgr und aktivem CapsLock (i.a. wie AltGr)
+	Alt-Ebene (bei der US- und der UK-Tastatur nur Nullen)
+	Shift-Alt-Ebene
+	Alt-Ebene bei aktivem CapsLock (i.a. wie Alt)
+
+  Das System selbst enthÑlt ab sofort nur noch die deutsche Belegung.
+  Zur Installation einer nationalen Tastatur gibt es die vier Programme:
+
+	KEYB_US	fÅr die US-amerikanische Tastatur
+	KEYB_UK	fÅr die britische Tastatur
+	KEYB_FRA	fÅr die franzîsische Tastatur
+	KEYB_SWG	fÅr die (schweizer-)deutschsprachige Schweiz
+
+  Die Programme erzeugen jeweils eine Datei KEYTABLS.SYS, die per Hand in
+  das XTENSION Verzeichnis kopiert werden muû. Da der Quelltext beiliegt,
+  sollten sich weitere Programme fÅr andere Tastaturen leicht erzeugen lassen.
+
+7.6.97
+------
+
+- AES: Wird bei einem Programm mit MenÅ und Desktophintergrund zunÑchst das
+  MenÅ abgeschaltet, dann der Desktop-Hintergrund, so blieb durch einen
+  Fehler in der Abmelderoutine der Hintergrund trotzdem aktiv, wenn weitere
+  Programme geladen waren.
+  Enthielt der Hintergrund benutzerdefinierte Objekte, so fÅhrte dies beim
+  Redraw zur Fehlermeldung des NVDI "UngÅltiges Handle", weil zum Zeitpunkt
+  des Redraws die VDI-Workstation schon geschlossen war.
+
+  Der Fehler sollte jetzt eigentlich nicht mehr auftreten, bitte testen!
+- MGCOPY: Merkt sich nicht mehr die Fensterposition, wenn ein Fenster
+  ikonifiziert wurde.
+- För Wilfried: Bei Offset $8a der AESVARS liegt der Zeiger auf die Struktur:
+
+	WORD xp_mode
+	void *xp_ptr
+
+  Vor v_openwk() wird xp_ptr auf NULL gesetzt und kann ggf. von v_openwk()
+  gesetzt werden, dann wird xp_init() nach v_openwk() nicht durchgefÅhrt.
+  xp_mode muû auch entsprechend gesetzt werden !!!
+- xfrm_popup() verwendet in der externen Variante nicht mehr den festen
+  Bildschirmpuffer, sondern alloziert ihn per Malloc. Damit kollidiert die
+  Routine nicht mehr mit Farbicons, die ebenfalls den festen Puffer verwenden.
+- Wer Icons ohne Text ausgeben mîchte, soll doch dafÅr sorgen, daû das Text-
+  Rechteck innerhalb des Icons leer ist. Dazu kann man Hîhe und Breite auf
+  Null setzen. Was kann MagiC dafÅr, daû INTRFACE immer als Mindestbreite
+  fÅr den Text eine "1" erfindet?
+- Lauf Hypertext fÅr StartMeUp soll shutdown.prg nur dann funktionieren, wenn
+  es im selben Ordner wie StartMeUp liegt.
+  Ich habe es auf dem Mac ausprobiert mit:
+
+	START.PRG		in E:\START\
+	SHUTDOWN.PRG	in C:\GEMSYS\GEMDESK\
+	$HOME		ist C:\GEMSYS\HOME
+
+  und aktivem QED.
+  Beim Shutdown wird der  korrekt beendet, und ich lande im Mac-Finder.
+  Wo soll das Problem liegen?
+
+25.6.96
+-------
+
+- MAGXDESK: Fehler bei der ParameterÅbergabe Åber ARGV behoben.
+  Enthielt mindestens einer der Parameter ein Leerzeichen, wurde die
+  ARGV-Liste nicht korrekt terminiert, daher gab es zusÑtzliche
+  MÅll-Parameter.
+  Das Problem trat weder bei VA_START noch bei D&D noch bei öbergabe Åber
+  die Kommandozeile (max. 126 Zeichen) auf.
+- MAGXDESK: Fehler bei der Berechnung der an ein Programm Åbergebenen
+  Parameterliste behoben.
+  Wenn der angelegte Puffer, in dem die Parameter angelegt werden, um genau
+  ein Byte zu klein war, wurde der folgende Speicherblock Åberschrieben.
+- MGCOPY: Durch einen Fehler stand bei appl_exit() im global-Feld eine Null.
+  Dadurch wurde die nachladbare Version von WDIALOG verwirrt, weil sie davon
+  ausging, das Hauptprogramm werde beendet. Ein Problem trat also nur auf,
+  wenn MGCOPY als "nicht resident" angemeldet war.
+- MGCOPY: Im Modus "Backup" wurde der Fortschrittsbalken nicht weitergefÅhrt,
+  wenn eine Datei nicht kopiert wurde (weil sie Ñlter oder gleich alt war).
+- AES: wind_get(WF_SHADE) und wind_set(WF_SHADE) eingebaut.
+  Aber appl_getinfo() liefert kein OK, weil:
+
+	beim manuellen Ein-/Ausklappen keine Nachricht verschickt wird.
+
+- AES: Es ist jetzt mîglich, ikonifizierte Fenster zu shade-n.
+- AES: Beim Ikonifizieren ge-shade-ter Fenster erscheint nur der Fenstertitel.
+  Zum manuellen De-ikonifizieren muû man erst das Fenster ent-shade-n, weil
+  man sonst keinen Doppelklick auf den Arbeitsbereich machen kann.
+- objc_change() fÅr Kreuzchenbuttons in 2D korrigiert.
+
+29.6.97
+-------
+
+- AES: DISABLE-te MenÅeintrÑge erzeugen jetzt keine MN_SELECTED mehr. Dieser
+  Fehler war wohl schon immer im erweiterten MenÅ-Manager drin.
+- Taskmanager: Speicherverbrauchanzeige korrigiert
+- DOS: Pwaitpid/Pwait3 usw.: Busfehler korrigiert
+- DOS: Pexec(10x) korrigiert.
+
+30.6.97
+-------
+
+- AES: Das Verschieben ge-shade-ter ikonifiziselierter Fenster geht wieder.
+
+7.7.97
+------
+
+- FAT-DFS: Ein Register-Zuweisungsfehler bei Fsnext() konnte zum Zugriff auf
+  zufÑllige Sektornummern fÅhren. Der Fehler war seit der Umstellung auf
+  32-Bit-Sektornummern (MagiC 5.0) vorhanden.
+
+13.7.97
+-------
+
+- MAGXDESK: Die Tastaturkombinationen Ctrl-<Buchstabe> werden jetzt vom
+  Scancode Åber die Tastaturtabelle bestimmt. Damit wird erreicht, daû auch
+  auf nicht-deutschen Tastaturen Kombinationen wie Ctrl-Z und Ctrl-Y richtig
+  erkannt werden.
+
+2.8.97
+------
+
+- Neues MGCOPY: öberlauf bei der Berechnung des Fortschrittsbalkens beseitigt.
+  Der Fehler fÅhrte dazu, daû bei groûen Dateimengen der Balken vor Erreichen
+  der Maximalgrîûe stehenblieb und sich nicht mehr vergrîûerte.
+
+8.8.97
+------
+
+- AES: Textausgabe umgestellt auf vst_alignment mit Zeichenzellenoberkante.
+- Neues SchlÅsselwort fÅr MAGX.INF:
+
+	#_OBS <ow> <oh> <ww> <bw> <bh>
+
+  mit folgenden Parametern:
+
+	ow,oh legen die Umrechnungsfaktoren fÅr die Grîûe von Objekten (OBJECTs)
+	bei der Umrechnung von Zeichen- in Pixelkoordinaten fest.
+
+	bw,bh legen die Breite und Hîhe der Fensterelemente sowie die Hîhe der
+	MenÅleiste fest.
+
+  Jeder Parameter, der zu Null gesetzt wurde, wird vom System automatisch
+  bestimmt:
+
+	ow	Zeichenbreite des groûen Systemzeichensatzes
+	oh	Zeichenhîhe
+	bh	Zeichenhîhe + 3
+	bw	wird aus bh so berechnet, daû die Box quadratisch aussieht.
+
+  Die vier Parameter sind genau diejenigen, die von graf_handle()
+  zurÅckgegeben werden.
+
+- Neue SchlÅsselwîrter fÅr MAGX.INF:
+
+	#_TXB <id> <mono> <h>
+	#_TXS <id> <mono> <h>
+
+  mit folgenden Parametern
+
+	id	Font-ID fÅr groûen (TXB) bzw. kleinen (TXS) Font
+	mono	Flag fÅr Ñquidistanten Font
+	h	Hîhe fÅr vst_height
+
+  Wenn man z.B. nur die TXB-Zeile angibt, wird fÅr den kleinen Zeichensatz
+  immer der 6x6-Systemfont verwendet.
+  Auf dem Mac kann man folgendes eintragen, damit habe ich alles getestet:
+
+#_TXB 9217 0 12
+;#_TXS 9217 0 8
+#_OBS 8 16 0 0
+
+- G_BUTTON: Text wird auch bei Proportionalfonts zentriert.
+- G_BUTTON: einzelner Unterstrich richtet sich nach Texthîhe, nicht nach
+  dem vertikalen Objektraster.
+- G_BUTTON: horizontale Position und LÑnge des Unterstrichs eines einzelnen
+  Zeichens fÅr proportionale Fonts korrigiert.
+- G_BOXCHAR,G_TEXT,G_BOXTEXT: Ausgabe und Justierung von Proportionalfonts
+  korrigiert.
+- Fenstertitel: Darstellung fÅr Proportionalfonts korrigiert.
+- G_F(BOX)TEXT in 3D: Die Textbreiten werden immer als Resource-Einheiten
+  bzw. 6 Pixel (kleiner Font) vorgesehen, damit sich der Text beim Tippen
+  mit Proportionalfonts nicht verschiebt.
+  Proportionalfonts werden im Modus REPLACE mit einer weiûen Box unterlegt,
+  damit sich die Breite der erzeugten FlÑche nicht Ñndert.
+- VFAT: Leere Dateinamen (z.B. Fopen("", RMODE_RD)) fÅhren nicht mehr zu
+  unvorhergesehenen ZustÑnden, sondern zu EFILNF (wie dies bei FAT bisher
+  auch funktioniert hat).
+- G_(BOX)TEXT: Im Modus REPLACE wird der Text mit einem weiûen Rechteck
+  unterlegt, das so breit wie die TextlÑnge * Ressourceeinheit ist.
+  Das Unterlegen des Textes im Modus REPLACE wird nur dann
+  ausgefÅhrt, wenn das Objekt mit TE_LEFT zentriert ist.
+  Die Zeichensatzauswahl des Systems hat einen Programmierfehler, der
+  dazu fÅhrt, daû die selektierte Fontgrîûe zentriert ist. Dies fÅhrt
+  zu einem Darstellungsfehler.
+- G_(BOX)TEXT: Ist das Objekt genau eine Ressource-Einheit hoch und der
+  Text mit TE_LEFT justiert und im Modus REPLACE und proportional, wird
+  die gesamte Objekthîhe weiû unterlegt.
+- G_F(BOX)TEXT: Cursor-Positionierung Åber Mausklick geht jetzt auch fÅr
+  proportionale Fonts. Dazu wird eine binÑre Suche Åber vqt_extent()
+  verwendet.
+- G_STRING im MenÅ bei proportionalem AES-Zeichensatz: Das letzte Wort wird
+  rechtsbÅndig ausgegeben, wenn es als TastenkÅrzel erkannt wurde. Da diese
+  Erkennung nur heuristisch durchgefÅhrt werden kann, gibt es einige Ausreiûer.
+  Das Wort wird als TastenkÅrzel erkannt, wenn:
+
+	- Es mit Pfeil hoch, rechts, dem Maximalgrîûenfeld oder
+	  dem Circonflex beginnt.
+	- oder wenn vor dem Wort mindestens zwei Leerzeichen stehen.
+- G_STRING im MenÅ bei proportionalem AES-Zeichensatz:
+  Beginnt der String mit zwei Leerzeichen, werden links zwei Ressource-
+  Einheiten Platz gelassen, unabhÑngig vom Zeichensatz.
+- G_STRING im MenÅ gilt auch fÅr das MagiC-Popup.
+- G_STRING im MenÅ bei proportionalem AES-Zeichensatz: Wenn das Objekt
+  DISABLED ist und nur aus Zeichen des Typs '-' besteht, wird es durch eine
+  horizontale Linie ersetzt.
+- G_TITLE bei proportionalen Systemfonts:
+  Die Titel werden beim Anmelden des MenÅs in der Breite modifiziert, so daû
+  links und rechts des Titels eine Ressource-Einheit Abstand ist.
+  Beim Anzeigen werden die Titel ensprechend ausgerichtet.
+  Die MenÅs werden unter den Titeln ausgerichtet.
+  Die Breite des Parent der MenÅtitel wird entsprechend korrigiert.
+- Problemkinder fÅr proportionalen Systemfont (Auszug):
+
+	INTRFACE: bleibt hÑngen
+	VMG4000: bleibt hÑngen
+
+- lÑuft problemlos mit proportionalen Systemfonts (Auszug):
+
+	ARTWORX
+	JINNEE
+- objc_wdraw(): Bei Fensterhandle -1 jetzt wie objc_draw().
+- G_(F)BOXTEXT: Åberarbeitet. LÑuft leider noch nicht korrekt beim Scrollen.
+- EDITOR: Erste Probe-Version, noch standalone.
+  EDITOB.H beschreibt das Binding fÅr die zukÅnftige interne Version.
+  Die Behandlung von Templates lasse ich aber erstmal weg, d.h. ich werde,
+  das, was ich schon eingebaut habe, wieder entfernen.
+  Es fehlt noch die UnterstÅtzung von Tabulatoren. Ich beabsichtige, in der
+  Editor-Struktur ein Feld fÅr die Tabulatorweite in Pixeln einzufÅhren.
+  Null bedeutet dabei, daû die Tabs nicht expandiert werden.
+
+24.9.97
+-------
+
+- Korrektur der scrollbaren Eingabefelder
+- G_STRING: Immer wenn die Zeichenkette mit zwei Leerzeichen beginnt, wird
+  der Text zwei Ressource-Einheiten nach rechts verschoben. D.h. es geht
+  jetzt auch z.B. bei G_POPUP.
+- Heuristik zur Erkennung von TastenkÅrzeln in MenÅs leicht Åberarbeitet.
+- G_STRING, G_BUTTON, G_(BOX)TEXT, G_BOXCHAR: EnthÑlt bei proportionalem
+  Systemfont das Objekt Steuerzeichen im Bereich 1..31 (z.B. Pfeile), so
+  werden diese im Default-VDI-Font ausgegeben. Bei der Ausrichtung wird
+  wie bei der Ausgabe die Zeichenkette entsprechend aus Blîcken gleicher
+  ZeichensÑtze zusammengesetzt.
+- Objekte mit Flag CHECKED: Ist ein proportionaler Systemfont eingestellt,
+  wird das HÑkchen im Default-VDI-Font ausgegeben.
+- lÑuft ebenfalls problemlos mit proportionalen Systemfonts:
+
+	PC
+	SCIGRAPH
+	ST-GUIDE
+	RCS28K
+	PRGFLAGS
+
+  lÑuft nicht:
+
+	KANDINSKY
+	INTRFACE
+
+  macht Probleme beim Bildschirmaufbau:
+
+	PAPILLON
+	PHOENIX	(Systemfont statt AES-Font in allen Dialogen)
+	TEXEL	(Eingabefelder)
+	THING	(gruselig!)
+	KOBOLD	(greuslich!)
+	QED		(sÑmtliche Dialoge, insbesondere Eingabefelder)
+	LZHSHELL	(Unterstriche in den Selfmade-Objects deplaziert)
+	CAB		(ebenfalls Selfmade-Unterstriche deplaziert)
+	EASE		(Eingabefelder sind zwangsÑquidistanziert)
+	IDEALIST	(unterstrichene TastaturkÅrzel)
+
+26.9.97
+-------
+
+- Gruppenrahmen bei Proportionalfonts korrigiert.
+- Fehler in der Berechnung von G_F(BOX)TEXT korrigiert.
+- Interne Strukturen erweitert, so daû jetzt maximal 256 Zeichen in den
+  Eingabefeldern verarbeitet werden. Texel hatte in der letzten Beta-Version
+  einen öberlauf mit totalem Systemabsturz verursacht.
+- G_STRING und G_TITLE: Beim mindestens 16 Farben werden DISABLE-te Objekte
+  in Dunkelgrau gezeichnet.
+
+1.10.97
+-------
+
+- Bei proportionalem Systemfont werden G_STRINGs mit gesetztem SUBMENU-Flag
+  wie MenÅ-EintrÑge behandelt, damit der Rechtspfeil rechtsbÅndig ausgegeben
+  wird.
+- appl_getinfo(0,1) geben jetzt korrekt eine "1" im dritten Wort zurÅck, wenn
+  der Zeichensatz nicht der Systemzeichensatz ist.
+  Eigentlich ist diese Angabe redundant, denn das zweite Wort gibt die FontID
+  an, die genau beim Systemfont immer 1 ist. Typische Atari-Definition.
+- objc_draw() von selektiertem G_TITLE bei proportionalem AES-Zeichensatz
+  ergab eine Verschiebung des Selektionsrechtecks um eine RSC-Breite nach
+  rechts. Das fÅhrte z.B. bei Phînix zu den falsch gezeichneten MenÅs.
+  Da beim BetÑtigen von MenÅs sowie bei menu_tnormal() intern die Funktion
+  objc_change() verwendet wird, fiel dieses Problem bisher nicht so auf.
+- Zu bidirektionalen Pipes:
+  Die Implementation in MagiC entsprach, wie ich jetzt feststellen muûte, nie
+  ganz der Dokumentation in MiNT, und zwar sagt in "MINT.DOC" das
+  Kleingedruckte:
+
+	Note that one program can be both client and server, if it creates a
+	FIFO with Fcreate and then opens it again with Fopen.
+
+  Genau das geht in MagiC leider nicht. Server und Client werden nÑmlich
+  anhand ihrer Prozeû-Deskriptoren unterschieden. Der Prozeû, der die Pipe
+  erstellt hat, ist "Server", alle anderen sind "Clients". MiNT macht es
+  ganz billig: Beim ersten ôffnen der Pipe (d.h. gleich beim Erstellen)
+  erwischt man die "Server"-Seite, bei spÑterem nochmaligem ôffnen jedoch
+  immer die "Client"-Seite. Hat man einmal die "Server"-Seite geschlossen,
+  kommt man nie mehr dran.
+
+  Da mir all diese FÑlle ziemlich an der Praxis vorbei konstruiert zu sein
+  scheinen, laû ich das erstmal alles so, bis ich akuten Handlungsbedarf sehe.
+- EDITOR:
+	Shift-Cursor hoch/runter scrollen seitenweise.
+	Bild hoch/runter wie Shift-Cursor hoch/runter.
+	Home zum Textanfang.
+	Sh-Home wie Ende (Macintosh) zum Textende.
+- EDITOR: Sprung zum Blockende korrigiert. Scrollte zu weit, und bei einem
+  nicht mit CR/LF abgeschlossenen Text und Blockmarkierung bei Blockende
+  gab es einen Busfehler.
+
+8.10.97
+-------
+
+- Der "Bug" im Editor, senkrechte dÅnne Striche beim Schieben des Fensters
+  auûerhalb des Bildschirms zu produzieren, ist ein Bug im NVDI. Liegt das
+  Clipping-Rechteck komplett ausûerhalb des Bildschirms, setzen sowohl
+  NVDI als auch das interne MagiC-VDI das Clipping-Rechteck auf eine
+  ein Pixel breite Linie am linken Bildschirmrand.
+  Ich habe das Problem umgangen, indem ich diesen Fall im AES abgefangen
+  habe.
+- Der "Bug" im Editor, bei Ctrl-Alt-Home sonderbar zu reagieren, ist ein Bug
+  in MagicMac. Die Tastenkombinationen mit Alt und Home werden nicht korrekt
+  verarbeitet und sollten vermieden werden.
+  Das Problem wird jetzt umgangen.
+- objc_edit(ED_CRSR): Thomas hat hier einen Bug der Marke Asbach gefunden.
+  Bei Edit-Objekten mit festem linken Schablonenteil, z.B.:
+
+  	"Filetvorname: ________.___"
+
+  klappte die Cursor-Positionierung nicht, so z.B. im Dialog
+  "Darstellung/Maske setzen" von MAGXDESK. Das sollte jetzt funktionieren.
+- G_STRING: Der neue Effekt, daû in den FenstermenÅs die TastaturkÅrzel
+  rechtsbÅndig funktionieren, war ein Programmierfehler. FÑlschlicherweise
+  wurden _ALLE_ G_STRINGs als MenÅ-EintrÑge behandelt.
+  Jetzt wird das SUBMENU-Bit korrekt abgefragt.
+
+11.10.97
+--------
+
+- Wenn ein proportionaler Zeichensatz eingestellt ist und in in einem
+  Eingabefeld die Zeichenkette zu breit wird (z.B. WWWWWWWW.WWW), scrollt
+  das Feld jetzt auch, wenn es ein normales F(BOX)TEXT- Objekt ist.
+  Dazu muûte ich das Hibyte von te_just miûbrauchen, es enthÑlt den Scroll-
+  Offset.
+- Atari-BIOS: FÅr den Diskwechsel der Floppy wird auûer der TOS-Seriennummer
+  jetzt auch die MSDOS-Seriennummer abgefragt.
+- Eingabefelder im AES: Adreûfehler beim EinfÅgen aus dem Scrap per ^V
+  beseitigt, den Fehler hat Harun auf seinem ST gefunden, er trat nur beim
+  68000 auf.
+
+16.10.97
+--------
+
+- Auf besonderen Wunsch von Sven wird die VDI-Workstation des AES beim
+  Shutdown auf dem Mac geschlossen.
+- Berechnungsfehler bei zentrierten Eingabefeldern beseitigt.
+
+25.10.97
+--------
+
+- Bit 3 der Flags im Programmheader ist bei TOS und MiNT unbenutzt und immer
+  Null. Das Bit wird in MagiC ab sofort folgendermaûen verwendet, dies
+  wird auch fÅr evtl. neue MiNT-Versionen empfohlen:
+
+  Bit 3 = 1: Beim Laden wird nur soviel Speicher alloziert, daû Platz fÅr
+             Text+Daten+Symbol+Bss vorhanden ist.
+             Diese Einstellung ist notwendig (!) fÅr alle SharedLibs (.SLB),
+             in jedem Fall vorteilhaft fÅr alle Accessories (weil das AES
+             sonst sowieso Mshrink() macht und in den allermeisten FÑllen
+             problemlos und vorteilhaft fÅr alle Programme.
+             Mit dem Programm PH_BIT3.TTP lÑût sich das Bit setzen, leider
+             noch nicht wieder zurÅcksetzen.
+
+             Achtung: Meine Kopie von TEMPLMON.PRG auf dem Atari ist
+             fehlerhaft. In den Flags steht 0x1fL. Das ist in 0x7L zu
+             Ñndern, sonst wird die Speicherverwaltung zerstîrt.
+
+  Bit 3 = 0: Die alte Vorgehensweise. Das Programm wird immer (!) in den
+             grîûten freien Block geladen und damit der Speicher
+             unnîtigerweise maximal ungÅnstig defragmentiert.
+
+- AES: Basepages werden mit dem o.g. Bit alloziert, womit die Speicher-
+  fragmentierung beim Laden von parallelen Programmen vermindert wird.
+- AES: Das MagiC-Logo in der MenÅleiste wird transparent ausgegeben, damit
+  bei grauer MenÅzeile kein weiûer Fleck entsteht.
+- AES: Mit dem Eintrag "#_BKG <num>" in der MAGX.INF kann man Farbe und
+  FÅllmuster des Default-Desktop-Hintergrunds einstellen.
+  <num> = 120 (== 0x78) ergibt beispielsweise hellgrau. Dabei ist
+  0x70 das FÅllmuster (7=ganz gefÅllt) und 8 die Farbe.
+- DOS: Fehler im Programmlader beseitigt, der bei jedem Programmladen
+  die Speicherstelle 0x14c zerstîrte.
+- DOS: Zwei neue Funktionen
+
+	Slbopen()
+	Slbclose()
+
+  fÅr die Verwendung von Gemeinsamen Bibliotheken (Shared Libraries).
+  FÅr die Beschreibung des Konzepts siehe SHARELIB.TXT.
+  Beispielbibliothek siehe SLB_DEMO.LZH.
+- EDIT.PRG: Umgestellt auf das SLB-Konzept. Fehler bei der Integration des
+  neuen Objekttyps beseitigt (fÅhrte zu Fehler -1 beim Start von EDIT_SYS.PRG).
+  EDIT_SYS.PRG wird nun nicht mehr benîtigt. Stattdessen EDITOBJC.SLB in den
+  XTENSION-Ordner kopieren.
+- Zeichensatzauswahl: RSC-Fehler (zentrierte Zeile) entfernt. FÅhrte bei
+  proportionalem AES-Zeichensatz zu Aufbaufehlern.
+
+30.10.97
+--------
+
+- Neuer Objekttyp G_SHORTCUT (38). VerhÑlt sich wie G_STRING, jedoch wird
+  bei proportionalem AES-Zeichensatz nach einem TastenkÅrzel gesucht und
+  dieses rechtsbÅndig ausgegeben.
+- Popup-MenÅs (menu_popup() und SubmenÅs): Die Angabe des Startobjekts wird
+  nun ausgewertet und das MenÅ ggf. vertikal auf dieses ausgerichtet.
+
+  Achtung:	Ein Konstrukt wie
+
+				menu_popup(&pop, p_x, p_y, &pop);
+
+			ist tîdlich! Wenn kein Objekt angeklickt wurde und die
+			Funktion 0 liefert, ist die Struktur <pop> zerstîrt, es
+			werden dann nÑmlich eine NULL fÅr den Baum, eine -1 fÅr
+			die Objektnummer usw. zurÅckgegeben.
+			Also immer:
+
+				menu_popup(&inpop, p_x, p_y, &outpop);
+
+			schreiben!
+
+- Eine Bitte: Zumindest zwei Betatester haben Probleme mit Ñquidistanten
+  SystemzeichensÑtzen und der Dateiauswahl. Offenbar scrollt das Eingabefeld,
+  auch wenn dies nicht notwendig wÑre, was zu Bildaufbaufehlern fÅhrt.
+  Diesen Fehler konnte ich weder auf dem TT noch auf dem Mac nachvollziehen,
+  und im Quelltext konnte ich auch keinen Fehler finden.
+  Bitte probiert mal aus:
+
+	- sowohl auf PC als auch ST oder Mac: Tritt der Fehler immer auf?
+	- mit Systemfont oder Crystal: Beide Male Fehler?
+	- mit nicht vorhandener MAGX.INF: Immer noch Fehler?
+	- mit und ohne NVDI: Beide Male Fehler?
+	- nur in der Dateiauswahl, oder auch in Magxdesk "Neuer Ordner":
+	  Tritt der Fehler auch hier auf (ist das gleiche Objekt)?
+	- Ohne alle Autoordner-Programme usw.: Tritt der Fehler immer noch auf?
+
+  Danke!
+
+2.11.97
+-------
+
+- AES: Den Unterstrich bei proportionalem Systemfont um ein Pixel verkÅrzt.
+- MGCOPY: Fehler beim Verschieben von Dateien korrigiert, der auftrat, wenn
+  die Zieldatei auf demselben Volume schon existierte.
+- MagicMac: Fehler im Mac-XFS behoben. Eine Datei konnte nicht gleichzeitig
+  verschoben und umbenannt werden, wenn der der alte Name im Zielverzeichnis
+  existierte. Jetzt wird die Datei zunÑchst in einen temporÑren, kryptischen
+  Dateinamen umbenannt, dann verschoben und schlieûlich endgÅltig umbenannt.
+  Leider kann ich kein neues MagicMac machen, weil ich nur die Version
+  2.0.4 erstellen kann, ich habe keine neueren Quelltexte und keinen
+  Compiler. Ich versuche, das XFS an Tempi zu schicken.
+- DOS: Fehler bei Slbopen() beseitigt: Falsche Versionsabfrage, wenn die
+  Bibliothek geladen werden muûte. Die Abfrage war richtig fÅr eine
+  geladene Bibliothek.
+- EDITOBJC.SLB: Diverse Erweiterungen. Versionsnummer erhîht.
+- MGEDIT: Ein kleiner, unfertiger Editor, welcher den G_EDIT Objekttyp
+  verwendet.
+  Ich nehme noch keine Bugreports entgegen !!!
+  Ich mache daraus aber auch keinen SuperEditor. Ich gedenke, den
+   Quelltext freizugeben.
+- Ich lese gerade aus dem Readme fÅr Jinnee. Zitat:
+
+---- schnipp ----
+˘ Objekte kînnen auf Dateien gezogen werden, die selbst wiederum
+Programmen zugeordnet sind. Man kann somit z.B. Dateien auf
+Mupfel-Skripte ziehen.
+Einzelne Mupfel-Skripte als "Applikationen" anzumelden und somit
+bestimmte Datei-Endungen zuzuordnen geht jedoch (noch?) nicht (z.B.
+EXTRACT.MUP anmelden und *.LZH zuordnen).
+
+Trickreich: Man kann somit auch mehrere Files gleichzeitig îffnen,
+ohne sie auf das Programm ziehen zu mÅssen. Z.B. *.CWG ist ArtWorx
+zugeordnet. Ich selektiere mehrere CWG-Files und ziehe sie auf ein
+weiteres CWG-File (darf auch eins von den selektierten sein!).
+Anschlieûend wird ArtWorx mit allen selektierten gestartet.
+---- schnipp ----
+
+  Dazu muû ich jetzt mal anmerken, daû das in Magxdesk auch mal ging, bis
+  ich dieses Feature auf besonderen Wunsch von Sven und Wilfried entfernt
+  habe.
+
+8.11.97
+-------
+
+- EDITOBJC.SLB: Ich muûte den Funktionsumfang ein wenig erweitern, um
+  die FenstergrîûenÑnderung im Editor MGEDIT in den Griff zu bekommen. Das
+  Problem war der weiûe Rand unter den Textzeilen, der neu zu zeichnen ist,
+  wenn die Anzahl der Textzeilen sich Ñndert.
+- MGEDIT: FenstergrîûenÑnderung eingebaut.
+
+10.11.97
+--------
+
+- AES-Eingabefelder mit proportionalem AES-Zeichensatz:
+  Hat das Feld einen Rahmen und enthÑlt die Schablone genau eine
+  zusammenhÑngende Folge von Unterstrichen, werden diese Unterstriche
+  nicht angezeigt.
+
+12.11.97
+--------
+
+- AES: Unterstriche einzelner Buchstaben werden nicht mehr am Objektraster,
+  sondern an der Basislinie des Zeichensatzes ausgerichtet. Insbesondere
+  mit den ZeichensÑtzen Charcoal und Lucida sehen die Dialoge jetzt deutlich
+  besser aus.
+- G_(BOX)TEXT: Ist das Objekt genau eine Ressource-Einheit hoch und der
+  Text mit TE_LEFT justiert und im Modus REPLACE und proportional, wird
+  der Text auf das Objekt-Rechteck ge-clip-t, wenn der Zeichensatz hîher
+  als eine Ressource-Einheit ist.
+
+14.11.97
+--------
+
+- AES: Alle Objekte mit formatierten Textausgaben, d.h.: G_BOXCHAR,
+  G_(F)(BOX)TEXT und G_(C)ICON, setzen bei der Textausgabe ein Clipping-
+  Rechteck auf das Innere des Objekts. Damit sollte einerseits jedes
+  öberschreib-Problem bei zu groûen ZeichensÑtzen behoben sein,
+  andererseits wird aber die Objektausgabe in jedem Fall verlangsamt,
+  ob ein Clipping nun notwendig ist oder nicht.
+
+  Das Problem der weiûen Flecken im Dialog "Suchen" in PureC bei
+  den ZeichensÑtzen Charcoal und Lucida Sans Unicode ist damit
+  behoben.
+- AES: Bei G_STRING, G_POPUP, G_(SW)BUTTON wird ein Text nicht mehr um
+  das Objekt zentriert, wenn die Zeichenhîhe zu groû ist. Der Text
+  wird dann ab der Objekt-Oberkante ausgegeben.
+
+  Die 2D-Buttons z.B. in PureC sehen damit bei den ZeichensÑtzen
+  Charcoal und Lucida Sans Unicode endlich brauchbar aus.
+- AES: Irgendwie ist die Zeichensatzauswahl bei proportionalen AES-
+  ZeichensÑtzen noch nicht schîn. Viele Zeilen werden einfach
+  abgesÑgt.
+  Vermutlich wird die zulÑssige Zeichen-Anzahl anhand der RSC-
+  Einheiten berechnet. Die Dateiauswahl hat dieses Problem nicht, weil
+  hier die Zeilen bei der Ausgabe geclippt werden.
+- AES: Offenbar enthÑlt form_alert() noch einen Bug:
+  Artworks fragt beim Beenden "Datei schliessen?". Aber selbst nach der
+  Neuen Dummen Rechtsschreibsung sollte hier ein Eszet stehen.
+- Dateiauswahl: Statt der G_STRING-Objekte werden fÅr den Fall, daû der
+  AES-Zeichensatz proportional ist, USERDEFs verwendet.
+  Die USERDEFs entsprechen denjenigen aus MAGXDESK, d.h. die Dateinamen
+  werden ordentlich in Spalten angezeigt, und Aliase sind kursiv.
+- AES: Bei wdlg_evnt() wird jetzt das Bit MU_KEYBD gelîscht, wenn die
+  [Return]-Taste Åbergeben wurde.
+- EDITOBJC.SLB: Diverse Fehlerkorrekturen und Erweiterungen
+- MGEDIT:
+	Fenstervergrîûerung/-kleinerung: AbstÅrze beseitigt.
+	Blocksicherung (bei "sichern als...") eingebaut.
+	Dateiname wird bei "sichern als..." Åbernommen.
+	OK bei Voreinstellungen baut alle Fenster neu auf.
+
+20.11.97
+--------
+
+- sys_recalc_cicon_colours() fÅr die Jinnee eingebaut.
+- wind_get(WF_NAME) eingebaut. Liefert Zeiger in intout[1,2].
+
+======================= VERSION 5.20 release =======================
+
+22.11.97
+--------
+
+- Diese Version entspricht im wesentlichen der Version 5.20alpha vom
+  20.11.97, jedoch sind alle Mîglichkeiten entfernt, einen proportionalen
+  AES-Zeichensatz einzuschalten. Man kann auch keine geheime Variable setzen,
+  da tatsÑchlich Prozeduren fÅr proportionale ZeichensÑtze weggelassen sind.
+  Was funktioniert, sind die neuen EintrÑge OBS,TXB und TXS in der MAGX.INF;
+  diese EintrÑge sollen TXT ablîsen.
+- Dateiauswahl: Alertbox, falls Fehler beim Laufwerkwechsel auftreten.
+- AES: sys_recalc_cicon_colours() korrigiert.
+- Achtung: Der Fehler mit dem nicht anwÑhlbaren Laufwerk C: in der
+  Dateiauswahl lag _nicht_ an der Dateiauswahl selbst, sondern an einem
+  Problem in der Routine path2DD fÅr das Mac-XFS. Der Fehler Ñuûert
+  sich darin, daû Dgetpath() einen EPTHNF liefert, weil Dsetpath()
+  den aktuellen Pfad einem falschen Laufwerkbuchstaben zugeordnet hat.
+
+  Das Problem tritt nur dann auf, wenn der Dsetpath() Åbergebene Pfad
+  einen Alias enthÑlt und wenn mehrere Atari-"Laufwerke" auf demselben
+  Mac-Volume liegen. Dann ist es nÑmlich nicht mehr mîglich, aus der
+  vRefNum des Mac die "Laufwerknummer" des Atari eindeutig zu bestimmen.
+
+  Also: Wer einen Mac verwendet, sollte auf einem Mac-Volume immer nur
+  maximal ein Atari-"Laufwerk" anlegen.
+
+26.11.97
+--------
+
+- Neuen Fehler in sys_recalc_cicon_colours() korrigiert, der bei 32k oder
+  64k Farben auftrat. Bei TrueColour gab es keine Probleme.
+
+4.12.97
+-------
+
+- EDITOBJC,MGEDIT:
+  diverse Fehlerkorrekturen.
+  Bei Zeichensatz-/Tabulator-/Zeilenumbruch/Puffer-énderungen ist kein
+  edit_open/close mehr notwendig, die Cursorpositionen werden, wenn mîglich
+  beibehalten.
+  Bei Bild hoch/runter keine Beeinflussung des selektierten Bereichs
+  Cursor links geht auch in der obersten Zeile am Zeilenanfang.
+  Cursor rechts geht auch in der untersten Zeile am Zeilenende.
+
+5.12.97
+-------
+
+- EDITOBJC: Begann eine Datei mit einer Leerzeile, konnte der Cursor Åber diese
+  Zeile hinÅber in "unbekanntes Gebiet" bewegt werden.
+  Das ist jetzt behoben.
+- Windowmanager: Hat ein Fenster weder einen vertikalen Slider noch vertikale
+  Scrollpfeile, weiterhin keinen SIZER oder sowohl SIZER als auch einen
+  horizontalen Slider oder horizontalen Scrollpfeil, so bekommt das Fenster
+  jetzt keinen rechten Rand mehr.
+- MGEDIT: Diverse Fehler am vertikalen Scrollbalken korrigiert.
+- MGEDIT: Horizontalen Scrollbalken eingebaut.
+
+10.12.97
+--------
+
+- EDITOBJC: Busfehler bei Objekt-GrîûenÑnderung korrigiert.
+
+14.12.97
+--------
+
+- Dateiauswahl: Cursor-Schmutz bei Ctrl-Cursor hoch/runter in der
+  Dialogvariante bei proportionalem AES-Zeichensatz korrigiert.
+- Dateiauswahl: Cursor-Schmutz bei Selektion eines Eintrags in der
+  Fenstervariante bei proportionalem AES-Zeichensatz korrigiert.
+- AES: Die Cursorgrîûe bei Eingabefeldern wird jetzt durch die Objekthîhe
+  begrenzt. Bei grîûeren AES-ZeichensÑtzen kam es bei Dialogfenstern zu
+  Cursor-Schmutz, da der Cursor beim Redraw nicht vollstÑndig gezeichnet
+  wurde.
+
+26.12.97
+--------
+
+- AES: In Version 5.20 hat sich ein Fehler in objc_draw() eingeschlichen,
+  der bei folgender Objektkombination auftritt:
+
+	G_FBOXTEXT
+	Eingabemaske = "" (d.h. leer)
+	3D-Background
+
+  Der Fehler fÅhrt dazu, daû das AES-Clipping verstellt wird und alle weiteren
+  Objekte, die bei objc_draw() noch hÑtten gezeichnet werden mÅssen, nicht
+  mehr dargestellt werden.
+  Der Fehler ist jetzt behoben. Falls das Problem in der Praxis irgendwo
+  auftritt, mÅûte man vielleicht ein Zwischen-Release machen.
+  Dank an JÅrgen Koneczny fÅr die Beispiel-RSC-Datei.
+- ARTWORX: Die verkorkste %-Angabe bei proportionalen AES-ZeichensÑtzen
+  liegt natÅrlich doch an Artworx und _nicht_ an MagiC.
+  Nachdem ich den ganzen Kram auf den TT kopiert hatte und
+  per Templmon der Sache auf den Grund gehen konnte, war zweifelsfrei
+  festzustellen, daû der fragliche Button nur Leerzeichen enthÑlt und der
+  Text spÑter aus dem Nirvana auf den Bildschirm gekloppt wird.
+  Vielleicht kann jemand Christian Witt mal einen Tipp geben, ich habe seine
+  Email-Adresse momentan nicht im Kopf.

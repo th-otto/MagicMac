@@ -1,0 +1,1475 @@
+080000002000000160000000004000000
+11
+2Seite #1
+F0110030001
+R   [................................................]0110
+9[........................................................]0110
+ÄHannover,den22.06.90
+
+ÅâBEDIENUNGSANLEITUNGZURGEMDOSàøâSHELL"CMD"undKAOSSHELL"KCMD"V2.59
+Ä
+
+
+àInhaltsverzeichnisÄ
+
+
+9[...................................................]0010
+0.Allgemeines
+1.DieinternenBefehle
+   1.1  ATTRIB
+  1.2 BREAK
+  1.3 CD
+  1.4 CLS
+  1.5 CK
+  1.6 COPY
+  1.7 DATE
+  1.8 DEL
+  1.9 DIR
+   1.10ECHO
+   1.11END
+   1.12EXIT
+   1.13FIND
+   1.14FOR
+   1.15FREE
+   1.16GOTO
+   1.17IF
+   1.18MD
+   1.19MORE
+   1.20MV
+   1.21PATH
+   1.22PAUSE
+   1.23PROMPT
+   1.24RD
+   1.25REN
+   1.26SHIFT
+   1.27SET
+   1.28SORT
+   1.29TIME
+   1.30TOUCH
+   1.31TREE
+   1.32TYPE
+   1.33VER
+   1.34VERIFY
+2.ExterneKommandosimBIN-Ordner
+  2.1 PRINT
+  2.2 CRASHDMP
+  2.3 EXE2BIN
+  2.4 LABEL
+  2.5 FC
+  2.6 KILLRAM
+   2.7ASTOWORD
+   2.8WORDTOAS
+2.9DUMP
+2.10SPLIT
+3.Stdout/Stdin-Umlenkung
+4.GerÑte(Devices)
+5.Kommandozeilen-Auswertung
+6.Editor-Steuertasten
+7.StartenvonProgrammen(ExterneKommandos)
+8.Batch-Dateien
+9.CMDalsAccessory.Allgemeinesundspezielles
+
+
+9[...........................................................]0110
+
+à0.AllgemeinesÄ
+
+
+ˆÄUpdatesvonV2.55=>V2.56:
+-KorrekturdesBefehls"COPYdateinul",derbisherbeimehrals64k
+DateilÑngenichtfunktionierte.
+-KorrekturderDatumsverarbeitungfÅrJahreszahlennachdemJahr2000.
+-AnpassungvonKCMD.ACCandasendgÅltigeTOS1.4vom6.4.89
+-KorrektureinerUnschînheitbeimKopierenvonDateien.Wegenungerader
+GrîûedesKopierpufferskonnteesvorkommen,daûdasKopieren
+unertrÑglichlangsamwurde,daSektorenaufungeradeAdressenÅbertragen
+werdenmuûten.
+
+UpdatesvonV2.56=>V2.57:
+-Wenn\AUTOEXEC.BATbzw.\BOOT.BATnichtgefundenwerdenkînnen,wird
+C:\AUTOEXEC.BATgesucht.WereinanderesLaufwerkbevorzugt,mîge
+einfachmitMUTILsuchen,sehenundpatchen.
+-BeiMOREwirdderTastendrucknichtmehrvonBIOS,sondernvonGEMDOS
+geholt;daherkannmanwÑhrendderAusgabeschoneineTastedrÅcken,die
+dannindenGEMDOS-Tastaturpufferkommt.
+-BeiDEL,COPY,MV,ATTRIBwirdnachjederDateiderGEMDOS-Tastaturpuffer
+abgefragt,sodaûmanzwischendurchmit^Sanhalten,mit^Qweiterlaufen
+lassenundmit^Cabbrechenkann(zumindestunterKAOS).
+-BeiDELwirdeinSchalter"-N"ausgewertet,mitdemmandie
+Sicherheitsabfrageabschaltenkann.
+-BeiKCMDsetztderSconfig-AufrufnichtmehrdieKonfigurationeinfach
+auf1(alleBitsauûerautomatischerPfadsucheauf0),sondernholtdie
+aktuelleKonfiguration,setztBit0ohneVerÑnderungderanderenBits
+undsetztdanndieseKonfiguration.
+
+UpdatesvonV2.57=>V2.58:
+-Bei"more"kannmanmitderLeertasteeinSeiteweiterundsonsteine
+Zeileweiterscrollen.
+-ACCswerdenimGrafikmodusgestartet.
+
+UpdatesvonV2.58=>V2.59:
+-EswirdzuerstnachC:\AUTOEXEC.BAT,dannnach\AUTOEXEC.BATgesucht.
+-DerEvent-Critic-ManagerwurdeanKAOS1.4angepaûtundbrichtmit^C
+daslaufendeProgrammab.
+-FÅrTurbo-C2.0wirdderBefehl"sh"inderKommandozeileignoriert.
+-neuesexternesKommando:SPLIT
+-Åberarbeitet:DUMP
+
+
+CMDV2.59samtOrdnerBIN\istShareware,derSharewarebeitragistbei
+regelmÑûigerBenutzungzuentrichtenundbetrÑgt20 DM(direktperScheck
+oderScheinandenAutor),derAutor
+
+  AndreasKromke
+  3000Hannover61
+  Steinbruchstraûe17
+
+verlangtaber,daûderOrdnerKCMDimmeralsGanzesweiterzugebenwird
+unddieseroderTeiledavonnichtinirgendwelcheSoftwarepaketeinte
+griertwerden.EinegedruckteAnleitungodereinUpdate-Serviceistbei
+einemsogeringenBeitragnatÅrlichnichtmîglich.KommerzielleNutzung
+(Vertrieb,BeigabezukommerziellvertriebenenProgrammen,Weitergabe
+gegenGebÅhrenetc.injederForm(diesschlieûtauchdenVertriebÅber
+Public-Domain-SammeldiskettenoderÑhnlichesein)istÅnichtgestattetÄ.
+DieDateiendÅrfennichtvonanderengegenBezahlungweitergegebenoder
+dasProgrammselbstoderdiezugehîrigenDateiendurchunsachgemÑûe
+EingriffeverÑndertwerden.
+Dahermerke:
+
+ÑWerKommandoprozessorennachmachtoderverfÑlschtoder
+nachgemachteoderverfÑlschteKommandoprozessorensich
+verschafftundinVerkehrbringt,wirdmitAnalysis-
+Zettelnnichtunter2StÅckbestraft
+Ä
+FÅrSchÑden,diedurchAnwendungdiesesProgrammsentstehen,kannder
+AutorselbstverstÑndlichnichthaften.
+EventuelleéhnlichkeitenvonCMDoderdenHilfsprogrammenmitanderen
+ProgrammennamhafteroderunbekannterHerstellersindnichtbeabsichtigt,
+sondernwÑrenreinzufÑllig.
+
+ÛÄDasBetriebssystemGEMDOSdesAtariist,einschlieûlichderFunktionsnum
+mernfÅrdieDOS-Aufrufe,fastkompatibelzuMS-DOS2.0.Auchlassensich
+MS-DOSDiskettenproblemloslesenundbeschreiben.
+Dieseéhnlichkeithatmichbereits1986dazubewogen,eineKommando-
+OberflÑchewieCOMMAND.COMfÅrdenAtarizuschreiben,ohnemichdabei
+sklavischandas"groûe"Vorbildzuhalten.WerMS-DOSkennt,wirdsehr
+schnellmitCMDumgehenkînnen.Mankînntedabeifastvergessen,daûman
+esmiteinemAtarizuhat;ja,wennnichtdievielenFehlerdesGEMDOS
+(oderJAM-DOS?)wÑren;nichtumsonstheiûtdieVersionjaauchbeiTOS
+1.2noch0.19undbeiTOS1.40.21(sieheinternesKommandoVER),was
+auchkeingroûesVertraueneinflîûenkann.
+DaherenthÑltdieseDiskettedreiVersionendesCMD:
+
+1)CMD.PRGgehtsehrnachsichtigmitdemBetriebssystemumundkorri
+gierteinigeDOS-FehlerwiedieDiskwechselerkennung,das
+SetzenderUhrzeitvonDateienundeinenFehlerbeimSetzen
+derStandardpfade.DieFehlerderEin-/Ausgabeumlenkung
+werdenNICHTumgangen;CMDselbstfunktioniertaberbei
+Umlenkung.
+DieHaupteigenschaftistdervomBetriebssystemunabhÑngige
+Zeileneditor,derinseinenFunktionendesinKAOS1.2.3
+integriertenEditorsenspricht.
+CMDlÑuftaufsÑmtlichenaltenundzukÅnftigenTOS-
+Versionen,daesvîlligbetriebssystemversionsunabhÑngig
+ist(langesWort...).
+Ç2)KCMD.PRGfÅrdasKAOS-BetriebssystemmitDOS-Versionsnummer0.21
+oderhîher.EinigeFeaturessindnurbeiKCMD,nichtbei
+CMDvorhanden.AuchKCMDlÑuft"imPrinzip"mitjedem
+Betriebssystem;esenthÑltjedochkeineUmgehungenvonDOS-
+Fehlern,dadiesbeiKAOSnichtmehrnîtigist.SodÅrfte
+KCMDbesondersaufdenbisherigenTOS-Versionennicht
+immerperfektfunktionieren.
+DieHauptbesonderheitist,daûKCMDkeinenintegrierten
+Zeileneditorbesitzt,sonderndenvomDOSverwendet.Auf
+demnormalenTOSistKCMDalsonichtbesonderskomfortabel.
+AlleKCMDundKAOSbetreffendenStellendieserAnleitung
+sindhellmarkiert.
+Ñ3)KCMD.ACCDieAccessory-VersionvonKCMD.PRG.GegenÅberderPro
+gramm-VersionmÅssennatÅrlicheinigeEinschrÑnkungenin
+Kaufgenommenwerden.SokînnenbeispielsweisekeineGEM-
+Applikationengestartetwerden(GfA-BASICfunktiniert
+aber).AnsonstenmitKCMDimwesentlichenidentisch.Alles,
+wasfÅrdieAccessory-VersionundnichtfÅrKCMD.PRGgilt,
+isthierkursivhervorgehoben.
+Ä
+AnsonstensindCMD.PRG,KCMD.PRGundKCMD.ACCunabhÑngigvonder
+Betriebssystem-VersionundlaufendahermitsÑmtlichenbekanntenVersio
+nendesTOS(1.0/1.2/1.4).
+ÑAchtung:AufgrundeinesFehlersimAESistdasStartenvonProgrammen
+unterKCMD.ACCnurunterfolgendenTOS-Versionenmîglich:
+  TOS1.0vom6.2.86
+TOS1.2vom22.4.87
+TOS1.4vom6.4.89
+BeidiesenVersionenwurdederFehlerumgangen,leidermuûtedabeieine
+Versions-AbhÑngigkeitinKaufgenommenwerden.NÑheresstehtinKapi
+tel 9.
+Ä
+NocheinHinweiszuGEMDOS-Fehlern:
+AngeblichexistierteineListemit96Fehlern,wasnichtgenaustimmen
+muû,aberdurchausglaubwÅrdigerscheint.FastalledieseFehlertretenim
+Desktopnichtauf,werdendahervon99%allerAtari-Besitzerniemals
+bemerktwerden.UnterCMD,dassichausschlieûlichaufGEMDOSverlÑûtund
+keinenseinerFehlerabfÑngt,siehtdasganzandersaus.StÑndigtreten
+neue,unbekannteFehlfunktionenauf.
+EinFehleristdabeieigentlichalles,wasbeiMS-DOS2.0funktioniertund
+beiGEMDOSnicht.MeistenssagteinemaberauchdergesundeMenschenver
+stand,obetwassoseinsollteodernicht.
+EinbesondersÑrgerlicherFehleristz.B.:
+VerwendetmanPfadnamenwie"A:CMD.PRG"anstellevon"A:\....",also
+verwendetdenaktuellenPfadeinesLaufwerks,kannesvorkommen(auch
+unterTOS1.4undaufdemTT!!!!),daûGEMDOSmitseinenPfadenund
+Laufwerkenvîlligdurcheinanderkommt.Z.B.kannbei"DIRA:"derDisk
+namevonA:unddanndasVerzeichnisvonD:erscheinen.DerDisketten
+namestimmtimmer,daerimmervomWurzelverzeichnisgeholtwird,was
+keineSchwierigkeitenmacht.
+¯ÄAbhilfe:Erscheintz.B.bei"DIRD:"dasVerzeichnisvonA:,genÅgtes
+meistens,"CDD:\"und"CDA:\"einzugeben.Dannhatsich
+GEMDOSwiederberuhigt,vielleichtbiszumnÑchsten
+Diskwechsel.
+DerFehlertrittgarnichtauf,wennmanallePfadangaben
+immeraufderRootbeginnt.Also"DIRA:\"geht(fast)immer.
+AusdiesemGrundhatauchdasDesktopkeineProbleme,das
+sowiesodiemeistenFehlerdesGEMDOSabfÑngt.
+ÇAlledieseFehlersindunterKAOSbehobenunddÅrfenbeiKAOS+KCMDnicht
+auftreten.KCMDschaltetperSconfig(1,1L)dieautomatischePfadÅberprÅ
+fungein(sieheBeschreibungvonKAOS)undstelltvorProgrammendeden
+vorherigenZustandwiederher.
+Ä
+WurdeCMDmitKommandozeilegestartet,wirddieseausgefÅhrt.Andernfalls
+wird,fallsvorhanden,eineBatchdatei"\AUTOEXEC.BAT"ausgefÅhrt(d.h.
+aufdemWurzelverzeichnisdesaktuellenLaufwerks);wurdeCMDimAUTO-
+Ordnerodermitdercomload-Optiongestartet,wirdstattAUTOEXEC.BAT
+eineBatchdateimitNamenBOOT.BATausgefÅhrt.SchlÑgtderersteVersuch
+fehl,wirdnachC:\AUTOEXEC.BATgesucht(auchimFallAUTO-Ordner).
+DanachwirdimmerderfreieSpeicherangezeigt.
+WirdbeimLadendieTasteCTRL-CgedrÅckt,unterbleibenobigeAktivitÑten.
+EinTip:ImDesktopunter"EXTRAS:Anwendunganmelden"fÅrCMD.PRGals
+Dateityp".BAT"anmelden.WennmaneineFestplattebenutzt,das
+DESKTOP.INFineinengeeignetenEditorladenundstattnur
+"CMD.PRG"denPfad,aufdemsichCMDbefindet,mitangeben,z.B.
+"C:\CMD.PRG".
+DannkannjedeBatchdateimitDoppelklickwieeinProgramm
+gestartetwerden.EnthÑltdieBatchdateieinenEXIT-Befehl,
+wirdnachAblaufdesBatchprogrammswiederinsDesktopzurÅckge
+kehrt;mankannauchvorEXITeinenPAUSE-BefehleinfÅgen,der
+erstaufeinenTastendruckwartet.
+FÅrTOS1.0und1.2beachteman,daûeinDoppelklickaufeine
+Datei.BATfolgendesbewirkt:
+-DasVerzeichnis,indemdieDatei(!)liegt,wirdaktuelles
+Verzeichnis.
+-pfad\CMDwirdmitdemeinfachenDateinamenohnePfadangabe
+gestartet.
+InTOS1.4(8.8.88)gilt:
+-DasVerzeichnis,indemCMD(!)liegt,wirdaktuelles
+Verzeichnis.
+-CMDwirdinseinemeigenen(aktuellen)Verzeichnisgestar
+tetunderhÑltalsParameterdenvollstÑndigen(!)Pfadna
+menderDatei.FallssichCMDund.BATimselbenOrdner
+befinden,verzichtetAESaufdenPfadderDatei,aberdas
+hatkeinenEinfluûaufdieWirkungsweise.
+
+CMDenthÑltkeineGEM-Aufrufe,kannalsoimAUTO-Ordnerodermitder
+comload-OptiondesBootprogrammsgeladenwerden.IndiesemFallkannaber
+natÅrlichkeinGEM-ProgrammvonCMDausgestartetwerden.Istdas
+aufgerufeneGEM-Programmordentlichgeschrieben(leiderseltenderFall),
+sowirdeseinfachmitoderohneFehlermeldungabbrechen.Auûerdem
+funktioniertdasEinschaltendesMauszeigersnicht,wennCMDimAUTO-
+Ordnerstand,dadiezugehîrigenLineA-FunktionenzudiesemZeitpunkt
+nochnichtinitialisiertsind.
+WurdeCMDmitdercomload-Optiongestartet,istesnichtzuempfehlen,
+dasKommando"exit"einzugeben,dadieszumSystemabsturzfÅhrt.Atarihat
+diesenFalloffensichtlichnichtberÅcksichtigt.
+WurdeCMDimAUTO-Ordnergestartet,solltemandieDisketteaufkeinen
+Fallwechseln,damitderAUTO-VorgangnachBeendigungvonCMDweiterlau
+fenkann.MuûdieDiskettedochgewechseltwerden,muûmanunbedingtvor
+dem"exit"-KommandodieAUTO-Diskettewiedereinlegenund"cdauto"
+eingeben(umdenOrdnerGEMDOSbekanntzumachen).
+
+ÑKCMD.ACCwertetniemalseineKommandozeileaus,sondernlÑdtAUTOEXEC.BAT
+beimerstenAnwÑhlendesAccessories.AktiviertmanspÑternocheinmaldas
+Accessory,wirdsofortdasersteKommandovonderTastaturerwartet.Ä
+ÑKCMD.ACCenthÑltnatÅrlichGEM-AufrufezumAnmeldenimMenÅ.Accessories
+werdenimmmererstnachdemStartvonAESgeladen.Dahergibteskeine
+SonderregelungenfÅrdenStartausdemAUTO-Ordneretc.
+MankannfÅrdasAccessorykeinenDateitypanmelden.
+Ä
+InCMDwirdbeijedemDateizugriffinternerKommandosfestgestellt,obim
+angesprochenenLaufwerkdieDiskettegewechseltwurde.Wennja,wird
+GEMDOSdurchdenAufrufvonFsfirst()dazuveranlaût,seineinternen
+Pfadpufferzuaktualisieren.Daheristdaraufzuachten,daûz.B.beim
+WechseldesaktuellenLaufwerksschoneineDisketteeingelegtist.
+¸ÄDabesagterFsfirst()-AufrufmitdemWurzelverzeichnisalsPfadder
+einzige(!)GEMDOS-Befehlist,derdenDiskettenwechselabfragt(auch
+einProgrammierfehler!),gibtessonstSchwierigkeitenmitdemAuffinden
+vonPfadenundDateienz.B.beiCOPYundCD.
+DieSchwierigkeitenbleibenjedochbeiexternenBefehlen:
+Hatmanz.B.inA:eineneueDiskeingelegtundruftaufD:einexternes
+Programmmit"D>pgm a:\subdir\dat"auf,wirdGEMDOSdieDatei"dat"
+(soferndasexterneProgrammseinenParameterdurchFopen()sucht)i.a.
+nichtfindenkînnen,bevoresnichtdurcheinenFsfirst()-Aufrufdazu
+veranlaûtwurde,seineinternenPfadpufferneuaufzubauen.
+Abhilfe:NachjedemDiskwechselinX:erstmit"X:"oder"dirX:"GEMDOS
+initialisieren,bevormaneinProgrammstartet.
+ÇUnterKAOSundKCMDtrittderFehlernichtauf,daperSconfig()die
+automatischePfadÅberprÅfungeingestelltwurde.Wederbeiinternennoch
+beiexternenKommandosdÅrfteeszuSchwierigkeitenkommen.Damithatman
+mitKCMDundKAOSdieselbeZuverlÑssigkeitwieunterCOMMAND.COMundMS-
+DOS;mitdemUnterschied,daûbeinichtschreibgeschÅtztenDiskettender
+PfadzugriffsehrvielschnellerverlÑuft,daMS-DOSdiePfadenichtim
+SpeicherhÑlt.
+Ä
+
+à1.DieinternenBefehleÄ
+
+
+à1.1ATTRIBÄ
+
+Syntax:ATTRIB[schalter1schalter2...]name1name2...
+               schalter=+|-{rsha}
+               name=Dateinameoder-musteroderPfad
+Zweck:  AttributbytevonDateienanzeigenoderÑndern.
+WerdenkeineSchalterangegeben,werdendieAttributenurangezeigt:
+  RRead-Only                 (schreibgeschÅtzt)
+  SSystem                    (versteckteSystemdatei)
+  HHidden                    (versteckteDatei)
+  AArchive                   (erstabTOS1.4unterstÅtzt)
+Mit"ATTRIB+rc:f:"lassensichbeispielsweisealleDateieninden
+aktuellenVerzeichnissenderLaufwerkeC:undF:schreibschÅtzen.
+"ATTRIB -rsha d:\cmd.prg"lîschtalleobigenAttributederDateicmd.prg
+imWurzelverzeichnisvonD:.
+AbTOS1.4wirddasAttribut'A'korrektausgewertet,ansonstenerfÅllt
+keineinzigesderAttributebeiirgendeinemvonAtaristammenden
+BetriebssystemdenursprÅnglichdokumentiertenZweck!Dasheiût
+beispielsweise,daûmanschreibgeschÅtzteDateienunterTOSmunterbe
+schreibenkann.
+DisknamenundOrdnerwerdennichtangezeigtoderverÑndert!
+à
+ ä1.2BREAKÇ
+
+Syntax:BREAK
+BREAKON
+BREAKOFF
+Zweck:Break-Verify-FlagdesKAOSanzeigen/Ñndern.Unternormalem
+GEMDOSbewirktderBefehleinfachnichts.
+BeimStartenvonCMDistdasBreak-Flagimmerausgeschaltet.Bei
+eingeschaltetemFlagkannmaneinlaufendesProgrammvorundnachjedem
+GEMDOS-Aufrufabbrechen.
+ImGegensatzzuMS-DOSbewirktdasBetÑtigenvonCTRL-CimTOSleider
+keinenInterruptineineBreak-Handling-Routine.Daherfunktioniertdie
+BetÑtigungvonCTRL-CwirklichnurbeiEintrittundAustrittausGEMDOS,
+woderTastaturpufferdurchsuchtundbeiBedarfeinProgrammabbruch
+bewirktwird.
+Ä
+à1.3CDÄ
+
+Syntax:CD
+CDd:
+CDpfad
+CDd:pfad
+Zweck:AktuellesVerzeichnisanzeigenoderÑndern
+CD(changedirectory)ohneParameterzeigtdasaktuelleVerzeichnisdes
+aktuellenLaufwerks.
+CDd:zeigtdasaktuelleVerzeichnisdesLaufwerksd:.
+CDpfadsetzt<pfad>alsaktuellesVerzeichnisdesaktuellenLaufwerks.
+CDd:pfadsetzt<pfad>alsaktuellesVerzeichnisdesLaufwerksd:.Diese
+Befehlsformmitd:alseinemnichtaktuellenLaufwerkist,obwohl
+dokumentiert,beidenvonAtaristammendenTOS-Versionennichtmîglich
+undfunktioniertnurunterKAOS.
+
+˚à1.4CLSÄ
+
+Syntax:CLS
+Zweck:Bildschirmlîschen.AuûerdemWRAPONundINVERSOFF.
+
+à1.5CKÄ
+
+Syntax:CK
+CKd:
+Zweck:Laufwerk-Informationenausgeben
+CK(checkdisk)gibtdieLaufwerks-InformationenfÅrdasLaufwerkd:aus.
+WurdekeinParameterangegeben,wirddasaktuelleLaufwerkbenutzt.
+AuûerdemwirddieGrîûedesHauptspeichersangezeigt.CMDverlÑûtsich
+dabeiaufdieSystemvariablephystop;istdieseVariablez.B.voneiner
+resetfestenRamdiskmanipuliertworden,kanndertatsÑchlicheSpeicher
+grîûersein,alsvonCKangezeigt.
+
+;à1.6COPYÄ
+
+Syntax:COPY[-t]pfad
+COPY[-t]datei(muster)
+COPY[-t]pfadpfad
+COPY[-t]datei(muster)pfad
+COPY[-t]datei1datei2
+Zweck:Datei(en)kopieren
+FehltderzweiteParameter,wirddasaktuelleVerzeichnisangenommen.
+IstdieQuelleeinPfadodereinDateimuster,werdenalleDateiendes
+Pfadesbzw.allepassendenDateienkopiert.
+EinPfadkannauf'\'endenoderauchnicht.
+Wird<datei2>angegeben,bekommtdieKopiederDateidenNamen<datei2>.
+QuelleundZielkînnenauchGerÑte("CON:","AUX:","PRN:")sein.Istdie
+QuelleeinGerÑt(CON:,AUX:),wirdkopiert,biseineZeilegelesenwird,
+dienurausCTRL-Zbesteht.NachjedereingelesenenZeilewirddie
+ZeichenfolgeCR/LFergÑnzt.
+EineDateikannnichtinsichselbstkopiertwerden;CMDfÑngtdiesen
+Fehlergeschicktab.ÇKAOStutdiesselbst.Ä
+Sindwenigerals10kBSpeicherfrei,wirddergesamtefreieSpeicherals
+Kopierpufferbenutzt,sonstwirdnurdieHÑlfteverwendet.Sokannsich
+(imGegensatzzumDesktopabTOS1.2)einedynamischeRamdisknoch
+vergrîûern.
+ImGegensatzzumDesktop-COPYbeimungepatchtenTOSbehaltenDateienbeim
+KopierenihraltesDatumunddieUhrzeit(nichtbeiungepatchtemTOS
+1.0/1.2undKCMD.PRG,daKCMDdenDOS-FehlernichtabfÑngt).Jedochist
+dasDateiattributimmer0(normaleDatei,nichtschreibgeschÅtzt,sichtbar
+usw.).
+MitHilfedesSchalters'T'bekommtdieZieldateidasTagesdatum,also
+entspricht"COPY-t..."demÅblichenDesktop-COPY.DieserSchalterist
+zuempfehlen,wennmanz.B.DateienmitdemnichtssagendenDatum6.2.86
+oder22.4.87kopiert.'T'istdieAbkÅrzungfÅr"Touch"undbedeutet,daû
+eineDateidasTagesdatumbekommt,wiewennsiegeÑndertwordenwÑre
+(sieheauchinternesKommando"TOUCH").Wichtigistdasz.B.,wennmanein
+MAKEbenutzt.
+Bemerkung:InMS-DOSexistierteineBefehlsformzumVerkettenvonDateien
+("COPYdatei1+datei2+...zieldatei).CMDverwendetdazuden
+TYPE-Befehl(s.u.).
+FÅrdasErstellenvonBatchdateieneignetsichderBefehl"COPY
+CON:datei".DieEingabewirdmiteinerZeileabgeschlossen,
+dienurausCTRL-Zbesteht.
+ÇFÅrdasTesten,obeineDateieinenLesefehlerenthÑlt,eignet
+sichbesondersderBefehl"COPYdateinul".Hierbeiwird
+besondersschnellgelesen,danichtsgeschriebenwerdenmuû.
+Ä
+Ôà1.7DATEÄ
+
+Syntax:DATE
+        DATEdatumsangabe
+Zweck:  Systemdatumsetzen
+WirdDATEohneParametergestartet,kanndasDatumvonHandeingegeben
+werden.Wirdnur<Return>gedrÅckt,bleibtdiealteEinstellungerhalten.
+WirdnureineZahleingegeben,wirdnurderTaggeÑndert,beizweiZahlen
+TagundMonat.Tag,Monat,Jahrkînnendurchbeliebigenichtnumerische
+Zeichenvoneinandergetrenntwerden.
+Bemerkung:Mit"DATE<datei"kanndasDatumstattvonderStandard-
+EingabeauchvoneinerDateigelesenwerden.
+BeiTOS1.0wirdnurdieGEMDOS-Uhrgesetzt,sodaûdiealte
+ZeitimTastaturprozessor(XBIOS-Aufruf)undsobeieinem
+Reseterhaltenbleibt.AbTOS1.2wirddieHardware-Uhr
+(Quarzuhrbzw.Tastaturprozessor)mitgesetzt.
+
+#à1.8DELÄ
+
+Syntax:DEL[-n]datei1datei2...
+Zweck:Datei(en)lîschen
+DEL(delete)kannbeliebigvieleArgumentehaben(OS/2lÑûtgrÅûen).Ist
+<datei>einDateimusterodereinPfad,werdenallepassendenDateiennach
+Sicherheitsabfragengelîscht;dieseSicherheitsabfragekannmitdem
+Schalter"-N"abgeschaltetwerden.
+AufdieSicherheitsabfragenkanngeantwortetwerden:
+J,Y       Ja,angezeigteDateilîschen;weiterfragen
+NNein,angezeigteDateinichtlîschen;weiterfragen
+GGlobal,abjetztalleDateienohneAbfragenlîschen
+A,Q,^CAbbruch,Lîschenbeenden
+WenneinFehlerauftritt,muûdiesnichtdaranliegen,daûdieDatei
+schreibgeschÅtztist.EinFehlertrittauchdannauf,wenndieDateivon
+CMDodereinemanderenVorgÑngerprozeûgeîffnetwurdeundnochnicht
+geschlossenist.InsolcheinemFallgenÅgtes,dieDiskettemitdem
+Kommando"free"(s.u.)abzumelden.
+
+‘à1.9DIRÄ
+
+Syntax:DIRpfad1pfad2...
+DIR-W-P-Q-S...
+        DIR-WQPpfad
+DIR-Ppfad1-Wpfad2-W-Dpfad3...
+Zweck:Inhaltsverzeichnisanzeigen
+
+-Wgibtein"platzsparendes"Listingaus          (wide).
+-PhÑltdasListingnachjederSeitean           (page).
+-QverzichtetaufDisknameundfreienSpeicher    (quick).
+-SlistetalleDateienmitAttributen             (system).
+
+Sortiermodi:
+-NordneNamen
+-DordneDatum/Zeit
+-GordneGrîûe
+-AordneArt
+-Uunsortiert
+
+BeimSortieren(wennnichtOption-Uaktivist)werdenOrdnerimmerzuerst
+angezeigt.WirdkeinSortiermodusangegeben,wirdderdesletztenDIR-
+Aufrufsbenutzt;beiFehleingabenwirdnachNamensortiert.Beider
+AusgabeeinesVerzeichniswirdderSortiermodusmitausgegeben,wennÅnichtÄ
+nachNamensortiertwird.
+DIRkannmaximal512EintrÑgesortierenundbenîtigtdazukurzfristigetwa
+14kHautpspeicher.IstnichtgenÅgendfreierSpeichervorhanden,wirddas
+Verzeichnisunsortiertausgegeben.ÑDiesistbesondersfÅrAccessories
+wichtig,WORDPLUSlÑûtimmernuretwa4kfrei,andereProgrammesindnoch
+schlimmer.
+ÄDIRkannbeliebigvieleArgumentehaben,dieVerzeichnissewerdendann
+nacheinanderausgegeben.DabeiwirddieAnzahlderDateienunddie
+DateilÑngeninsgesamtaddiertunderstganzzumSchluûausgegeben.Die
+freienBytesderDiskwerdennichtausgegeben.DieseMîglichkeitist
+praktisch,wennmandieGesamtlÑngebestimmterDateienermittelnmîchte,
+dieaufverschiedenenPfadenliegen,umsieaufeineDiskzukopieren,auf
+derwomîglichnichtmehrgenÅgendPlatzist.
+Ist<pfad>einDateimuster(z.B."texte\*.doc"),werdenallepassenden
+Dateienausgegeben.
+WennderSchalter"s"nichtangegebenwurde,werdennur"normale"
+Dateienangezeigt.Mit"s"werdenauchSystemdateienoderversteckte(!)
+Dateienangezeigt,DateienmitAttribut"Volume"jedochnie.
+Manbeachte,daûbeimungepatchtenGEMDOSz.B.schreibgeschÅtzte,ver
+steckteDateienoderversteckteDisknamenwiedersichtbarwerden.Dieser
+FehleristauchinTOS1.4nochenthalten,aberdieDokumentationwurde
+demFehlerangepaût("It'safeature,notabug").
+DerSchalter"q"istfÅrTOSvor1.4undFestplattengedacht,diemit
+kleinenClustern(1kB)formatiertsindunddahereinebesondersgroûe
+FAThaben.DieAusgabeerfolgtdannsehrvielschneller.
+
+à1.10ECHOÄ
+
+Syntax:ECHO
+ECHO[-n]string1string2...
+ECHOON
+ECHOOFF
+Zweck:ZeichenkettenausgebenoderECHO-Modussetzen/anzeigen
+ECHOohneParameterzeigtdenECHO-ModusfÅrdenBatchbetrieban.Per
+DefaultistECHOimmerOFF(d.h.dieausgefÅhrtenZeilenwerdenim
+BatchbetriebÅnichtÄangezeigt).
+ECHOONoderECHOOFFsetztdenECHO-Modus.
+ECHO<string>gibt<string>unddanneinenZeilenvorschubnachstdoutaus,
+mitderOption-nwirddieserZeilenvorschubunterdrÅckt.
+
+à1.11ENDÄ
+
+Syntax:END
+Zweck:BrichtBatchdateiab
+ENDbrichtnurdielaufendeBatchdateiab;wenndiesevoneineranderen
+Batchdateiaufgerufenwurde,wirddienÑchsteZeilewiederausder
+ÅbergeordnetenBatchdateigeholt.
+
+˘à1.12EXITÄ
+
+Syntax:EXIT
+Zweck:cmdverlassen
+ImGegensatzzuCOMMAND.COMinMS-DOSbewirktauchimBatchbetriebder
+BefehlEXITeinVerlassendesKommandointerpreters.
+
+à1.13FIND
+Ä
+Syntax:FINDstring
+Zweck:ZeichenketteninTextdateiensuchen
+FINDisteinFilter,dasheiût,erliestvonstdinundschreibtnach
+stdout.ManmuûalsostdinaufdiezudurchsuchendeDateiumlenken.
+FINDunterscheidetnichtzwischenGroû-undKleinschreibung.
+Bemerkung:Falls<string>LeerstellenenthÑlt,muû<string>inAnfÅhrungs
+zeichengesetztwerden.
+CTRL-ZwirdalsDateiendeerkannt
+
+à1.14FORÄ
+
+Syntax:FOR var ( wert1 wert2 .. ) ...
+  Setzt var=wert1, fÅhrt ... aus. Beim nÑchstenmal wird var=wert2 gesetzt
+  und ... ausgefÅhrt usw. Ist die Liste zuende, d.h. ')' erreicht, wird
+  ... nicht ausgefÅhrt, sondern gleich zum nÑchsten Kommando Åbergegangen.
+ FOR NOT var ( wert1 wert2 .. ) ...
+  Setzt var=wert1, Åberspringt ... Beim nÑchstenmal wird var=wert2 gesetzt
+und ... wiederÅbersprungenusw. IstdieListezuende,d.h.')'
+erreicht,wird ... ausgefÅhrt.
+Zweck:SteuerunginBatch-Dateien
+FOR darf nicht geschachtelt werden!!!
+Die Leerzeichen vor und nach den Klammern sind notwendig!!!
+
+à1.15FREEÄ
+
+Syntax: FREE[x:]
+Zweck:GibtGEMDOS-SpeicherfÅraktuellesoderLaufwerkx:frei.
+Wenndas100OrdnerProblemakutwird,kannmanmitdiesemBefehlden
+SpeicherfÅreinegeradenichtbenîtigteHarddisk-Partitionfreigeben.
+AuûerdemkannmandiesenBefehlanwenden,wennGEMDOSsichweigert,Ordner
+oderDateienzulîschen,obwohldieseleerbzw.nichtschreibgeschÅtzt
+sind.
+
+à1.16GOTOÄ
+
+Syntax:GOTOlabel
+Zweck:UnbedingterSprunginBatch-Dateien
+DasLabelineinerBatchdateihatdieForm":name"
+
+à1.17IFÄ
+
+Syntax:IF ERRORLEVEL n ... FÅhrt ... aus, wenn Fehlercode >= n oder < 0
+ IF s1 == s2 ...    FÅhrt ... aus, wenn <s1> = <s2>.
+ IF EXIST datei ... FÅhrt ... aus, wenn <datei> existiert.
+ IF NOT ...         FÅhrt ... aus, wenn Bedingung nicht erfÅllt
+Zweck:BedingterSprunginBatch-Datei.
+DerFehlercodewirdvomletztenausgefÅhrteninternenoderexternen
+KommandozurÅckgegeben.EinWertungleichNullsignalisierti.a.daûein
+Fehleraufgetretenist.DieBefehleIF,END,FOR,GOTOverÑnderndenFehler
+codenicht.
+
+à1.18MDÄ
+
+Syntax:MDdatei
+Zweck:NeuenOrdnererstellen
+MD(makedirectory)erstellteinenneuenOrdnermitNamen<datei>.Ein
+OrdnerodereineDateigleichenNamensdarfnichtschonimselben
+Verzeichnisvorhandensein.
+Achtung:NormaleDateienoderDisknamenwerdenvorTOS1.4wegeneines
+GEMDOS-FehlersdurchMDgelîscht,wennsiedenselbenNamenwie
+derneueOrdnerhaben.Alternative:KAOSbenutzen.
+
+Ûà1.19MOREÄ
+
+Syntax:MORE
+Zweck:SeitenweiseAusgabevonTexten
+MOREisteinFilter.Wird"--Mehr--"angezeigt,kanndieAusgabemit^C
+abgebrochenwerden.MitderLeertastewirdeineSeite,sonsteineZeile
+weitergescrollt.
+^ZinderDateiwirdalsDateiendeerkannt.
+MOREsolltewiealleFilternurinPipesoderbeiumgelenkterStandard-
+Eingabeangewendetwerden,dasonstvonderTastaturgelesenwird;z.B.
+wirkt"MORE<datei"ÑhnlichwiedieFunktion"Dateianzeigen"imDesktop
+(ohnesichjedochbeileerenDateienodersolchenmitn*4096Bytes
+oderLesefehlernaufzuhÑngen...)
+
+1à1.20MVÄ
+
+Syntax:SieheCOPY
+Zweck:Datei(en)umbenennenoderverschieben
+MV(move)wirktÑhnlichwieCOPY,kopiertdieDatei(en)jedochnicht,
+sondernverschiebtsieinnerhalbderVerzeichnis-StrukturàeinesÄLauf
+werks,wasnatÅrlichvielschnellergeht.Beispiele:
+
+-"MVdateineuername"benenntdiedie<datei>einfachum.
+-"MV.\"verschiebtalleDateienimaktuellenUnter
+verzeichnis(".")indasWurzelverzeichnis
+("\").
+-"MV\*.hheaders"verschiebtalleC-HeaderdateienvomWurzel
+verzeichnisinden(hoffentlichvorhandenen)
+Ordner"headers".
+-"MVauto\dat.prg"SchiebtdieDatei"dat.prg"vomAUTO-Ordner
+insaktuelleVerzeichnis.
+
+DasVerschiebenistimmernuraufdemselbenLaufwerkmîglich.DieAngabe
+vonGerÑten(CON:,AUX:,PRN:)istunzulÑssig.EbensodarfkeineDateimit
+demneuenNamenschonexistieren.
+MVgibtbeiFehlernummerndenvomDOSerhaltenenFehlercodeimKlartext
+aus.ÇLeiderhatdiesernurbeiKAOSunmittelbaretwasmitdemtatsÑchlich
+aufgetretenenFehlerzutun.Ä
+WennmannichtunterKAOSarbeitet,istderMV-BefehlmitVorsichtzu
+genieûen.SchwierigkeitengibtesbeispielsweisebeivollemRoot-
+DirectoryoderUmbenennenineinexistierendesUnterverzeichnisusw.
+Bemerkung:BeiMS-DOSisthiernurdasUmbenennenEINERDateiinDEMSELBEN
+VERZEICHNISmîglich.CMDbietetdagegenalleMîglichkeitendes
+UNIX-KommandosMV.
+AuûerdemhatauchCMDdenBefehlREN,derwieunterMS-DOS
+arbeitetundabTOS1.4auchOrdnerumbenennenkann.
+
+à1.21PATHÄ
+
+Syntax:PATH
+PATHpfad1;pfad2...
+Zweck:Kommando-Suchpfadsetzenoderanzeigen
+PATHohneParameterzeigtdenSuchpfadan.MitParameterwirddieser
+gesetzt.EswirdnichtgeprÅft,obdiePfadangabenkorrektsind.
+Bemerkung:DerSuchpfadisteineEnvironment-Variable,kannalsoauchmit
+SETmanipuliertwerden,z.B.
+SET%path%;pfad3
+hÑngt<pfad3>andenSuchpfadan
+
+à1.22PAUSEÄ
+
+Syntax:PAUSE
+PAUSEstring1string2...
+Zweck:UnterbrechungundVerzweigunginBatch-Datei
+PAUSEschreibtden<string>nach"CON:",nichtnachstdout;ebensowird
+IMMERvon"CON:"(Tastatur)gelesen,ohneRÅcksichtaufdieStandardein
+gabe-Umlenkung.
+Wirdkein<string>angegeben,gibtPAUSEdieMeldung"TastedrÅcken"aus.
+DerAscii-CodederbetÑtigtenTastewirdnach"errorlevel"geschrieben.
+MitHilfedesIFERRORLEVEL-BefehlskanndannabhÑngigvonder
+betÑtigtenTasteimBatchprogrammverzweigtwerden.
+
+„à1.23PROMPTÄ
+
+Syntax:PROMPT
+PROMPTzeichenkette
+Zweck:PromptzeichenÑndern
+PROMPTohneParametersetztdasDefault-Prompt("$n$g"),mitParameter
+kînnenauûerdennormalenZeichenauchdiebeiMS-DOSÅblichenSonderzei
+chenverwendetwerden,z.B."$p$g"fÅrdiekomplettePfadangabeals
+Promptoderauch"$ej$eH$eK$t$ek$n$g":
+
+$$DasDollarzeichen'$'selbst
+$_NeueZeile(CR,LF)
+$bDasZeichen'|'
+$dDatum
+$eDasZeichenESC(1BH)
+$g    DasZeichen'>'
+$hBackspace
+$lDasZeichen'<'
+$naktuellesLaufwerk
+$pkompletteraktuellerPfadmitLaufwerk
+$qDasZeichen'='
+$tZeit
+
+Bemerkung:DasPromptisteineEnvironment-Variable,kannalsoauchmit
+SETmanipuliertwerden.
+DasbeiMS-DOSvorhandenePromptzeichen"$v"fÅrdieDOS-
+VersionfehltbeiCMD.AlsErsatzsiehedasinterneKommando
+"ver".
+à
+"1.24RDÄ
+
+Syntax:RDordnername
+Zweck:Verzeichnislîschen
+RD(removedirectory)kannnurleere(!)Verzeichnisselîschen.
+AuûerbeiKAOSbewirktdasLîschendesaktuellen(leeren)Verzeichnisses
+BombenoderSchlimmeres.ÇBeiKAOSgibtesnurein"Zugriffunmîglich".ÄMan
+beachte,daûauchdieaktuellenVerzeichnissedesDesktopgeschÅtztwerden
+mÅssenundnichtgelîschtwerdensollten.KAOStutdiesvonsichaus;
+daherkannesvorkommen,daûsichOrdneraus"unerfindlichen"GrÅnden
+nichtlîschenlassen.IndiesemFallgenÅgteinFREE(s.o.),umdas
+LaufwerkauchfÅrDESKTOPabzumelden;dannlassensichalleOrdner
+lîschen.
+Bemerkung:AufgrundeinesdervielenTOS-Fehlerkannesvorkommen,daû
+eingeradeerstelltesVerzeichnisnichtgelîschtwerdenkann.
+Abhilfe:IBMkaufen,KAOSbenutzenodereinfachUNDO,RETURN
+drÅcken.
+
+ à1.25RENÄ
+
+Syntax:RENalter_pfadnameneuer_dateiname
+Zweck:EineDateiodereinenOrdnerumbenennen
+DerBefehlRENentsprichtvîlligseinemPendentinCOMMAND.COM.Der
+Parameter<alter_pfadname>enthÑltPfadundNamenderumzubenennenden
+Datei,derParameter<neuer_dateiname>enthÑltdenneuenNamenÅohnePfadÄ.
+MitdiesemBefehlkanneineDateiimselbenVerzeichnisumbenannt,also
+nichtverschobenwerden(sieheMV).AuûerdemwirdimmernurÅeineÄDatei
+behandelt,dieParameterdÅrfenbeidekeineWildcards('?','*')enthalten.
+ÅAbTOS1.4kînnenmitdiesemBefehlauchOrdnerumbenanntwerden.ÄDazu
+wirdderOrdnerwieeineDateiohneabschlieûendes'\'spezifiziert.
+1.Beispiel:
+  renc:\compiler\turbo\tc.prgtc.ttp
+istÑquivalentzu
+  mvc:\compiler\turbo\tc.prgc:\compiler\turbo\tc.ttp
+2.Beispiel(abTOS1.4):
+  renfolderordner
+BenenntÅdenOrdnerÄ"folder"in"ordner"um.EinÑquivalenterMV-Befehl
+istnichtmîglich,dadieserÅalleDateienausdemOrdnerÄ"folder"zu
+verschiebenversuchte.DasVerschiebenvonOrdnernistauchunterTOS1.4
+nichtmîglich,sodaûderMV-BefehlbeimBehandelnvonOrdnernÅberhaupt
+nichtverwendetwird.
+
+¯à1.26SHIFTÄ
+
+Syntax:SHIFT
+Zweck:DieParameterderBatchdateiverschieben
+SHIFTschiebtdenParameter%1nach%0,%2nach%1usw.;sokînnenauch
+mehrals10ParameterverwendetwerdenoderineinerFOR-Schleifeeine
+AktionfÅralleParameterausgefÅhrtwerden.
+
+à1.27SETÄ
+
+Syntax:SET
+SETsymbol=
+SETsymbol=wert
+Zweck:Environmentmanipulieren
+OhneParameterwirddasEnvironmentausgegeben.Mit"SETsymbol="wirddie
+Environment-Variable<symbol>gelîscht,mit"SETsymbol=wert"aufeinen
+neuenWertgesetzt.
+SollderWertLeerstellenenthalten,setzeman"symbol=wert"inAnfÅh
+rungszeichen.
+Bemerkung:DasEnvironmentistetwa1kBgroû,alsoi.a.ausreichend.
+
+à1.28SORTÄ
+
+Syntax:SORT[-C][-R][-n]
+Zweck:Textdateisortieren
+^ZinderDateiwirdalsDateiendeerkannt.
+SORTisteinFilter.Mit-CwirdGroû-/Kleinschreibungunterschieden.Mit
+-Rwirdumgekehrtsortiert.-nenthÑltdiePositiondesSchlÅssels;z.B.
+vergleichtSORT-4dieZeilenerstabderviertenSpalte.
+EskînnennurDateiensortiertwerden,dieganzindenSpeicherpassen.
+
+à1.29TIMEÄ
+
+(sieheDATE)
+WieDATE,nurmitZeitstattDatum.
+
+à1.30TOUCH
+Ä
+Syntax:TOUCHdatei1datei2...
+Zweck:DatumundUhrzeitderDateiaufaktuellesDatum/Uhrzeitsetzen,als
+obsiegeÑndertwordenwÑre.DasArchivbit(abTOS1.4unterstÅtzt)wird
+nichtbeeinfluût.
+Als<datei>kannmanaucheinenPfadangeben,etwa"TOUCH\",dannwerden
+alleDateienaufdemWurzellaufwerkinUhrzeitundDatumaktualisiert.
+SinnvollistdieAnwendungfÅreinMAKE,dasmansozwingenkann,
+QuelltexteneuzuÅbersetzen,dasichjetzteinneueresDatumhabenals
+diebereitserzeugtenObjektdateien,oderfÅrdenFall,daûmanDateien
+mitdemnichtssagendenDatum6.2.86hat.
+
+à1.31TREEÄ
+
+(sieheCK)
+WieCK,eswerdenjedochnurdiezulÑssigenPfadedesLaufwerks
+ausgegeben.
+
+à1.32TYPEÄ
+
+Syntax:TYPEdatei1datei2...
+Zweck:Datei(en)anzeigen
+TYPEkannbeliebigvieleArgumentehaben.Ist<datei>einDateimusteroder
+einPfad,werdenallepassendenDateienangezeigt.DieDateinamenerschei
+nennuraufdemBildschirmundwerdennichtnachstdoutgeschrieben.Im
+Gegensatzzu"MORE"wirddasZeichen^Znichtausgewertet,damitdie
+VerkettungvonDateienauchbeisolchenDateienfunktioniert,diedieses
+Zeichenenthalten.
+Bemerkung:TYPEwirktwieCATinUNIX.Mit"TYPEdatei1datei2>datei3"
+kannmanDateienverketten.Dabeibekommt<datei3>,im
+GegensatzzumCOPY-Befehl,dasaktuelleDatum.
+
+‰à1.33VERÄ
+
+Syntax:VER
+Zweck:TOS/KAOS-Version,GEMDOS-VersionundCMD-Versionanzeigen.
+DieGEMDOS-VersionhatnichtunbedingtetwasmitderTOS-Versionzutun.
+HiereineAufstellungderbisherbekannten(deutschen!)VersionenfÅrden
+ST(ohnediefÅrSTEoderTT):
+
+TOS1.020/06/85,GEMDOS0.13Diskversion(uralt)
+TOS1.020/11/85,GEMDOS0.19Diskversion(erste"endgÅltige")
+TOS1.006/02/86,GEMDOS0.19Diskversion
+ROMs("Rom-TOS")
+TOS1.006/02/86,GEMDOS0.20ditomitTurbo-DOS
+TOS1.222/04/87,GEMDOS0.19ROMs("BlitterTOS")
+KAOS1.222/04/87, GEMDOS0.20KAOS(VorversionvomNovember'87)
+KAOS1.222/04/87,GEMDOS0.21KAOS1.2.3(vomJuli'88)
+TOS1.418/05/88,GEMDOS0.21Diskversion1.4(BetaVersion)
+TOS1.408/08/88,GEMDOS0.21Diskversion1.4(DeveloperVersion)
+TOS  1.422/02/89,GEMDOS0.21     ROMs1.4       (Messe-Version)
+TOS  1.406/04/89,GEMDOS0.21     ROMs("Rainbow"TOS1.4)
+KAOS1.406/04/89,GEMDOS0.22     KAOS1.4.x
+
+
+KCMD.ACCgibthierauchdieAES-Versionsnummeraus,diejedochvon
+geringeremInteresseist.TOS1.0/1.2gebenhier$120an(wirddezimalals
+V1.32angezeigt),TOS1.4gibt$140an(wirdalsV1.64angezeigt)undKAOS
+1.4$141(alsoV1.65).GEM2.2vonABChatVersionsnummer$210(alsV2.16
+angezeigt).
+
+ à1.34VERIFYÄ
+
+Syntax:VERIFY
+VERIFYON
+VERIFYOFF
+Zweck:Read/Write-Verify-FlagdesBIOSanzeigen/Ñndern
+BeimEinschaltendesRechnersistdasVERIFY-Flag(imGegensatzzuMS-
+DOS)immereingeschaltet.WennmanmitDiskettearbeitet,kannmandie
+Schreibzugriffedurch"VERIFYOFF"starkbeschleunigen.DafÅrwird
+besondersbeibilligenDiskettendasRisikoetwashîher,daûSchreibfehler
+nichterkanntwerden.
+DasVerify-FlaghatnormalerweisenurAuswirkungenaufdieLaufwerkeA:
+undB:,esseidenn,einanderesTreiberprogramm(Festplatte)fragtdiese
+Systemvariableebenfallsab.
+
+
+à2.ExterneKommandosimBIN-OrdnerÄ
+
+AufderDiskettebefindensichimOrdnerBINeinigeexterneKommandos.
+DamitmandieseohneAngabedesPfadnamensstartenkann,solltemandie
+PATH-Variableentsprechendsetzen.
+AlleKommandossindreineTOS-Programme,dieAusgabennachSTDOUTund
+FehlermeldungennachHandle4(STDERR)oderdirektnachCON:schreiben.
+SiegebenalsRÅckgabewertDOS-FehlercodesoderbeifehlerlosemLaufeine
+0zurÅck.
+DieexternenKommandoshabenkeineVersionsnummer.NeuereVersionenlassen
+sichnuramDatumderProgrammdateierkennen.
+StartetmaneinexternesKommandoohneParameter,erhÑltmaninderRegel
+einekurzeErklÑrungdermîglichenParameter.
+
+Ëà2.1PRINTÄ
+
+Syntax:PRINT{-[p][s][i][c][d]}datei1datei2...
+Zweck:Textdatei(en)aufEpson-kompatiblenDruckernausgeben
+-tnTabulatorweite<n>Stellen
+-pSeitenvorschubnachjederDatei
+-sSchmalerZeilenabstand(1/8")
+-iInitialisierungvorjederDatei
+-cSchmalschrift(Compressed)
+-dBreitschrift(DoubleWidth)
+DieTextdateiwirdausgedruckt,wobeiallenationalenSonderzeichen,
+soweitmîglich,inEpson-ZeichenÅbersetztwerden.EinigeZeichenwerden
+dafÅrneudefiniert.
+BeimAusdruckenhÑlteinebeliebigeTastedieAusgabean,CTRL-Cbricht
+denlaufendenDruckvorgangsofortab.WennkeinDruckereingeschaltetoder
+dieserOFF-LINEist,kannderDruckvorgangebenfallsabgebrochenwerden,
+ohneaufdieberÅhmt-berÅchtigten30sec."Time-Out"zuwarten.
+PRINTsprichtdenDruckerÅberdieStandarddateistdprnan.Durchdie
+KorrekturderEin-/AusgabeumlenkungeinschlieûlichderStatusabfragen
+(z.B.Cprnos())istesunterKAOSvîlligproblemlosmîglich,dieAusgabe
+vonPRINTineineDateioderaufdenBildschirmzulenken,etwamit"PRINT
+datei3>datei.prt".FÅrandereTOS-Versionenwageichesnicht,
+Vorhersagenzutreffen...
+
+1à2.2CRASHDMPÄ
+
+Syntax:CRASHDMP
+Zweck:DatenderletztenException(Bomben)anzeigen
+DieArtderletztenException(z.B.Busfehler)sowiealleRegisterinhalte
+beiderenAuftretenwerdenlesbarnachstdoutgeschrieben.ImFallBus-
+oderAdreûfehlerwerdendieoberstenEintrÑgedesSupervisorstacksbei
+AuftretenderExceptionebenfallsdekodiert.ManerhÑltInformationenwie
+etwa:"AdreûfehlerbeiPC=xxx,SR=xxxundLesezugriffimUsermodeauf
+Adressexxx,verantwortlicherMaschinenbefehl:xxx".
+BesondershieristdieUmlenkungCRASHDMP>dateifÅrspÑtereVerwendung
+sinnvoll.
+
+à2.3EXE2BINÄ
+
+Syntax:EXE2BIN dateimuster/pfad
+Zweck:ProgrammdateienineinSpezialformatumwandeln
+AufdieExtension.PRGund.TOSund.TTPkannverzichtetwerden,EXE2BIN
+ergÑnztsieautomatisch.BeiAngabevonPfadenoderDateimusternwerden
+allepassendenDateienbearbeitet.
+ProgrammeohneRelocation-Daten(also"positionindependent")kînnenvom
+GEMDOSsehrvielschnelleralsnormaleProgrammegeladenwerden.Dabei
+werdenwederdasBSS-SegmentnochderÅbrigefreieSpeichergelîscht,
+bevordasProgrammgestartetwird.
+EXE2BINprÅftnun,obdasProgramm"positionindependent"ist,undwandelt
+esdannineineArtCOM-Formatum.Manhatdabeiselbstdaraufzuachten,
+daûsichdasProgrammnichtaufeingelîschtesBSS-SegmentverlÑût.
+WirdEXE2BINunterKAOSgestartet,wirddieFshrink-Funktionbenutzt,um
+dienunnutzlosen(Null-)RelocationdatenvonderDateizuentfernenund
+diesesozukÅrzen.
+AbTOS1.4gibteseinsogenanntes"Fastload-Bit"imProgrammheader,das
+bewirkt,daûnichtmehrdergesamtefreieSpeicher,sondernnurnochdas
+BSSgelîschtwird.EXE2BINfragtnunab,obdiesesBitbereitsgesetztist
+und,wennnicht,setztes.DabeibleibenDatumundUhrzeitderDatei
+expliziterhalten.
+
+à2.4LABELÄ
+
+Syntax:LABELDisknameanzeigen
+LABELx:DisknamevonLaufwerkx:anzeigen
+LABELnameDiskbenamsen
+LABELx:nameDiskinLaufwerkx:benamsen
+Zweck:Diskettennamenanzeigen,setzenoderlîschen
+WirdalsneuerName"-"angegeben,wirdderDiskname,fallsvorhanden,
+einfachgelîscht.
+LABELfunktioniertbeiallenDiskettenarten,Harddisk,Ramdiskusw.und
+mitsÑmtlichenTOS-Versionen.
+LABELgibtGEMDOS-FehlercodeszurÅck,fallsetwasnichtfunktionierthat.
+
+Ìà2.5FCÄ
+
+Syntax:FC[-s][datei1[datei2|pfad2]]
+Zweck:Dateienvergleichen(abAdresse<s>)
+DiebeidenDateienwerdenBytefÅrByteeingelesenundverglichen.Die
+UnterschiedewerdenalsHex-undAscii-Codesnachstdoutgeschrieben.
+SinddieDateilÑngenunterschiedlich,wirdabgebrochen.Ebensokannman
+dieAusgabeaufdenBildschirmmitCTRL-Cabbrechen.
+WirdFCohneParametergestartet,werdendieDateinamenvonSTDIN
+eingelesen.
+EndetderzweiteParameterauf':'oder'\',wirdangenommen,daûessich
+umeinePfadangabehandelt.DerreineDateinamewirdvon<datei1>
+extrahiertundan<pfad2>angehÑngt.
+WirdnureinParameterangegeben,wirdalszweiterParameterdasaktuelle
+Verzeichnisangenommen.
+MitHilfedieserbeidenMîglichkeitenwirdesleicht,gleichnamigeDateien
+inverschiedenPfadenzuvergleichen.
+BeimehralszweiParameternwirddieSyntaxausgegeben.
+
+à2.6KILLRAMÄ
+
+Syntax:KILLRAM
+Zweck:Ausschaltersimulieren;'N','n'undrechteMaustastebrechenab,
+alleanderenTastenunddielinkeMaustastefÅhrenaus.FÅr
+TastatureingabenwirdauchderMIDI-Portabgefragt.
+
+à2.7ASTOWORD.TTPÄ
+
+Syntax:ASTOWORDasciidatei
+Zweck:KonvertiertDateivonASCII->WORDPLUS
+DieAusgabedateihatdenselbenNamenwiedieEingabedatei,jedochmitder
+Extension".doc".ExistiertsolcheineDateischon,wirdsiegelîscht.
+
+à2.8WORDTOAS.TTPÄ
+
+Syntax:WORDTOASdatei[.doc]
+Zweck:KonvertiertDateivonWORDPLUS->ASCII
+EnthÑlt<datei>keineodereineandereExtensionals".doc",wirdals
+Extension".doc"eingesetzt.
+DieAusgabedateihatdenselbenNamenwiedieEingabedatei,jedochmitder
+Extension".txt".ExistiertsolcheineDateischon,wirdsiegelîscht.
+
+à2.9DUMP.TTPÄ
+
+Syntax: DUMP [-bci] [[-[s]hhhhhh[-hhhhhh]] datei]
+Zweck:Hex-/Ascii/C-DumpvonallenDateien(auchCON:)
+DasProgrammersetztdasgleichnamigeProgrammimEntwicklungspaketvon
+Atari,istjedochkÅrzer(2kstatt10k)undgibtauchsolcheDateien
+korrektaus,dienichteinVielfachesvon16BytesLÑngehaben.Auûerdem
+kanndieAusgabealsEingabefÅreinenC-Compilerbenutztwerden.
+DasZeichen"s"imSchalterzurAngabederStartadresse(Hex)kann
+weggelassenwerden.
+IstdieDatei"CON:",kanndieEingabemit^C,einerleerenZeile(nur
+Return)odereinerZeileabgebrochenwerden,dienur^ZenthÑlt.
+DieSchalterb,c,isindfÅrdieAusgabealsC-Quelltext(Schalter"c")und
+bedeuten"mitKommentar"("i"),"byteweise"("b").
+
+#à2.10SPLIT.TTPÄ
+
+Syntax:SPLIT[-t][-[s]hhhhhh]datei[ziel1[ziel2]]
+Zweck:(Text-)<datei>in<ziel1>und<ziel2>aufspalten
+WennderSchalter-tangegebenwurde,wirddieDateiimmerhintereinem
+Zeilenendeaufgespalten,dieserSchaltermuûalsoimmerdannangegeben
+werden,wennessichumeineTextdateihandelt.
+WirdkeineAufspaltposition(-shhhhhh,hexadezimal)angegeben,wirddie
+DateimîglichstinderMittezerlegt.
+WerdendieParameter<ziel1>und<ziel2>nichtangegeben,sowirdder
+ersteTeilvon<datei>ineineneueDatei__EINS__geschrieben.Wirdnur
+<ziel1>angegeben,sowirdnurderersteTeilder<datei>nach<ziel1>
+geschrieben,beiAngabevon<ziel2>derzweiteTeilnach<ziel2>.
+WillmannurdenzweitenTeilderDateiabspalten,kannman<ziel1>unter
+KAOSalsNULoderNUL:angeben.
+Beispiel:SPLIT-1cCMD.PRGNULCMD.XXX
+schreibtdieDateiCMD.PRGohnedieersten28BytesProgramm
+headernachCMD.XXX
+
+
+Íà3.Stdout/Stdin-UmlenkungÄ
+
+WieMS-DOSundUNIXhatauchGEMDOSsogenannteStandard-Dateienund
+physikalischeDateien.
+DieStandard-DateienhabendieHandle-Nummern0bis5,dabeisind:
+
+0"stdin",Standard-Eingabe(normalerweiseTastatur)
+1"stdout",Standard-Ausgabe(normalerweiseBildschirm)
+2"stdaux",Standard-Hilfsdatei(normalerweiseRS-232)
+3"stdprn",Standard-Druckdatei(normalerweiseCentronics)
+4  "stderr",unbenutztÇ            (beiKAOSundabTOS1.4:Bildschirm)Ä
+5"stdxtra"Ç ÄunbenutztÇ             (beiKAOSundabTOS1.4:Bildschirm)Ä
+
+AlleStandarddateien(0bis5)kînnenmitderDOS-FunktionFforce()auf
+jedebeliebigeDateioderjedesbeliebigeGerÑtumgelenktwerden.Die
+"normalen"Dateiendagegen(Handles6bis75)kînnennichtumgelenkt
+werden.
+WeitereInformation:sieheST4/87:"DieXENIX-StrukturdesGEMDOS".
+DieUmlenkungistjedochnichtsoproblemlos,wieesdenAnscheinhat.
+NebendertotalverkorkstenBehandlungderStandardpfadeliegenhierdie
+schlimmstenFehlerdesGEMDOS(inFforce(),Fdup(),Fclose()).
+
+ImGegensatzzuCOMMAND.COMunterMS-DOSkannCMDunterTOSsÑmtliche
+6StandarddateienaufderKommandozeileumlenken.Beideninternen
+BefehlendesCMD(z.B.DIR >dirlist)funktioniertdieUmlenkungproblem
+los.BeimAufrufvon(externen)Programmen(z.B.SID >list)konnteman
+bisherauchbeimTOS1.2dieAusgabenichtumlenken,dadiegesamte
+zeichenorientierteAusgabenichtfunktioniert.DieseFehlersindunter
+KAOSvîlligundabTOS1.4z.T.behoben.
+UmlenkungenwerdeninfolgenderFormeingegeben:
+
+>datei              Erstellt <datei>, lenkt STDOUT auf <datei>
+>>datei             HÑngt STDOUT an <datei> an.Erstelltggf.<datei>
+<datei              Lenkt STDIN auf <datei>, falls diese existiert
+pgm | .. | pgm      Pipe
+n>datei        fÅr0<=n<=5:Wieoben,abermitbel.Std.datei
+n>>datei            fÅr0<=n<=5:Wieoben,abermitbel.Std.datei
+
+ DieAusgabedateiwirdbei'<'zumLesen,bei'>'und'>>'zumLesenund
+Schreibengeîffnet.DieEingaben"pgm>out"und"pgm1>out"sind
+Ñquivalent.DieHandles2..5kînnennichtmit'<'umgelenktwerden;daher
+werdensieimmerzumLesenundSchreibengeîffnetundggf.erstellt.Bei
+derUmlenkungvonSTDAUX(mit"2>datei")wirdsowohldieEin-alsauchdie
+AusgabeaufdieserielleSchnittstelleunterDOSumgelenkt.Essindalso
+sowohldieBefehleCauxout(),Cauxos()alsauchCauxin()undCauxis()
+betroffen.EsistimÅbrigennichtzuempfehlen,STDINaufdenDruckerzu
+lenken,damanvondortnichtviellesenkann...
+AucheinePipekannumgelenktwerden,z.B."DIR|SORT>dirlist".
+AlsKommandoszwischendemerstenundletzten"|"derPipekommenin
+ersterLinie"Filter"inFrage,alsosolcheProgramme,dievonstdinlesen
+undnachstdoutschreiben.
+FÅrdiePipeswerdennormalerweiseimWurzelverzeichnisdesaktuellen
+LaufwerkstemporÑreDateienmitNamen"\$$PIPE?.?"erstellt.Dahersoll
+tensichkeineDateiendiesesNamensdortbefinden,undauûerdemdarfdas
+aktuelleLaufwerknichtschreibgeschÅtztsein.IsteineEnvironment-
+VariableTMPDIRvorhanden,werdendietemporÑrenDateiendorterstellt
+(inzwischenistderHerstellervonMS-DOSauchaufdenDrehgekommen,
+Version5.0machtesgenauso,wieCMDesseitJahrentut).Beispielsweise
+beiTMPDIR=c:\tmpoderTMPDIR=c:\tmp\heiûendietemporÑrenDateiendann
+c:\tmp\$$pipe?.?.DurchdiesespraktischeFeaturelÑûtsicherreichen,
+daûPipesimmeraufdemschnellstenSpeichermedium,alsoaufRamdiskoder
+Festplatteangelegtwerden,auchwennmansichgerade"aufderDiskette
+befindet".
+
+ÌÄEinAnwendungsbeispielfÅrdasUmlenkeneineranderenStandarddatei:
+"PRINTdrucktext3>out"
+RuftdasProgramm"PRINT"(s.u.)aufmitumgelenkterSTDPRN-Datei.Die
+DateidrucktextwirdjetztnichtdirektaufdenDruckergeschrieben,
+sonderneinschlieûlichallerSteuerzeichenindieDatei"out".Ebenso
+kînntemanmit:
+"PRINTdrucktext3>con"
+denfÅrEpson-DruckerÅbersetztenTextaufdenBildschirmschreiben.So
+lassensichguteigeneoderfremdeProgrammetesten,dieeineAusgabeauf
+denDruckermachen.DasResultatlÑûtsichhinterherexaktmitDUMP
+analysieren.
+Ichempfehle,eigeneProgrammesozuschreiben,daûderStandardkanal4
+fÅrdieFehlerausgabe(STDERR)verwendetwird.
+Mit:
+"PGM4>prn"
+kînntemandannz.B.alleFehlermeldungenaufdenDruckerlenken.Manmuû
+allerdingsvorherprÅfen,obderStandardkanal4gÅltigist(etwamit
+Fdup),diesistfÅrTOS-Versionenvor1.4notwendig,KAOSbereitetauch
+inderVersion1.2.3keineProbleme.
+
+
+%à4.GerÑte(Devices)Ä
+
+TOSkennt3GerÑte,diewienormaleDateienbehandeltwerden,z.B.kann
+dieStandard-AusgabeaufdenDruckergelenktwerden:
+
+1)CON:Bildschirm/Tastatur
+2)AUX:RS-232
+3)PRN:Drucker
+
+Mit"TYPEdatei>AUX:"kannmanz.B.einfachDatenÅberdieserielle
+Schittstelleschicken.
+ImGegensatzzuMS-DOSfehlterstensdasGerÑt"NUL:",zweitenskînnendie
+DoppelpunkteÅnichtÄweggelassenwerden.
+Ç
+UnterKAOSgilt:
+1)EsgibtdasGerÑtNUL:
+2)Auch"con","a:\Con"oder"con.c"usw.werdenalsGerÑteerkannt,dies
+wegenderbehauptetenKompatibilitÑtzuMS-DOS.
+3)DasErstellenvonOrdnernmitGerÑtenamensowiedasUmbenenneninein
+GerÑtwirdvonKAOSabgewiesen.
+Ä
+
+(à5.Kommandozeilen-AuswertungÄ
+
+VorAusfÅhrungjederKommandozeile(obvonTastaturoderBatch-Datei)
+werdenParametervoneinandergetrennt,evtl.Datei-Umlenkungenvorgenom
+menundEnvironment-Variableausgewertet.DasTrennzeichenistimmerdie
+Leerstelle,wÑhrendunterMS-DOSauchdasKommazugelassenist.Mit
+SetzeninAnfÅhrungszeichenwirddieAuswertungverhindert.EineZeichen
+ketteinAnfÅhrungszeichenistimmereinganzerParameter,egal,obdavor
+oderdahinteroderdazwischenLeerzeichenoderandereSonderzeichen
+('>','<','|','%')stehenodernicht.DieAuswertungvonVariablenwie%1
+oder%path%oderSteuerzeichenwie%\n%kanndurchEinklammerungin
+Hochkommataverhindertwerden.
+
+"......"          ...istEINParameter, kann ' oder SPACE enthalten.
+'......'          Wertet ... nicht aus, kann " oder SPACE enthalten.
+%var%             Gibt Wert von var (mitSETgesetzt)an, falls vorhanden.
+%%                Das '%'- Zeichen selbst
+%\n%Zeilenvorschub(LineFeed)
+%\r%WagenrÅcklauf(CarriageReturn)
+%\b%RÅckschritt(Backspace)
+%\t%      Tabulator
+
+Beispiel:SET"f1=dir-q%\n%"belegteineFunktionstaste.BeimBetÑtigen
+wirdderBefehlautomatischausgefÅhrt.
+ImGegensatzzuUNIXwerdenEnvironment-Variablein'%'eingeklammert,um
+dasEndedesVariablennamensdeutlichzumarkieren;AusdrÅckewie
+"$(pfad)/datei"(UNIX)sinddahernichtnotwendig,manschreibteinfach
+"%pfad%\datei".
+Bemerkung:MS-DOSkenntwederdieeinfachenAnfÅhrungszeichen',umdie
+doppeltenAnfÅhrungszeichen"innerhalbeinesParameterseinge
+benzukînnen,nochdieMîglichkeit,Environment-Variablemit
+Hilfedes%-ZeichensinnerhalbderEingabezeileeinzusetzen.
+
+
+⁄à6.Editor-SteuertastenÄ
+
+WegendervielenFehlerdesSystemaufrufsCconrs()(falscheBehandlungvon
+Umlauten,falscheReaktionbeiöberlaufdesEingabepuffers,Fehlerbei
+EingabenÅbereinZeilenendehinaus)enthÑltCMDeineeigeneRoutinezur
+EingabeeinerZeile.SiewirdbenutztbeiderEingabeeinesKommandos,bei
+DATEundTIME.Davonstdingelesenwird,kanndieEingabeauchumgelenkt
+werden.
+DergrîûteVorteildereigenenEingaberoutineistdieMîglichkeit,die
+Funktionstastenfreizudefinieren.DieBelegungdieserTastenstehtim
+Environment,wirdalsomitdemSET-Befehlvorgenommen.EinBeispiel:
+  SET"f1=edit"
+belegtdieFunktionstasteF1mitderZeichenkette"edit".Wennwiehier
+dieZeichenketteLeerstellenenthÑlt,muûderParameterdesSET-Kommandos
+inAnfÅhrungszeichengesetztwerden.FÅrdieTasteF10muûF0geschrieben
+werden.SinnigerweisesolltendieFunktionstasten-Belegungenzusammenmit
+derPATH-DefinitioninderAUTOEXEC.BAT-Dateistehen.
+FolgendeSondertastenwerdenbenutzt:
+
+F1..F10             JenachBelegung
+TAB                 Cursor an Anfang/Ende der Eingabe
+BS                  Zeichen links von Cursor lîschen
+DEL                 Zeichen unter Cursor lîschen
+RETURN        Eingabe abschlieûen,BefehlinUNDO-Puffer
+ENTER        Eingabe abschlieûen
+INSERT              EinfÅge- /öberschreibmodus wechseln
+CLR                 Eingabe lîschen
+UNDO                letzte Eingabe aufrufen
+Cursor L/R          Cursor bewegen
+
+ÇUnterKAOSgilt:
+EswirdeinfachderCconrs-Aufruf(bzw.Fread(STDIN,...)benutzt.KAOS
+enthÑltkomplettdenobenbeschriebenenEditor,derdamitjedemProgramm
+zugÑnglichist.DamitsindunterjedemProgramm,dasvonKCMDgestartet
+wurde,dieFunktionstastenbelegt(z.B.SID,PROBE,PASCAL-Programmemit
+readln(),FORTRAN-ProgrammemitREAD(*,*)usw.).
+InKAOS1.4istderZeileneditornocheinmalverbessertunderweitert
+worden,siehedortigeDokumentation!
+Ä
+
+÷à7.StartenvonProgrammen(ExterneKommandos)Ä
+
+DieProgrammeaufderDiskette/HarddiskwerdenalsexterneKommandos
+bezeichnet.InsbesonderegiltdasfÅrsolche,diedieKommandozeile
+auswerten(i.a.alleTTPs).BeiderUmlenkungderStandardein-bzw.
+Ausgabeistdaraufzuachten,daûeinigeLaufzeitsystemevonCompiler
+sprachenvonsichausdieKommandozeilenachEintrÑgenwie">datei"
+absuchenunddieAusgabeselbstumlenken.WillmandieseUmlenkung
+benutzen,muûmandenAusdruck">datei"inAnfÅhrungszeichensetzen,um
+dieAuswertungdurchCMDzuverhindern.
+AndasaufrufendeProgrammwirdauûerderKommandozeileaucheineKopie
+des(durchSETanzeigbaren)EnvironmentsÅbergeben.DasProgrammkannso
+alleEintrÑgedesEnvironmentsverwenden,ohnesiejedochzuÑndern(z.B.
+diePATH-VariableoderdieFunktionstasten-Definitionen).Ameinfachsten
+zeigtsichdieserEffekt,wennmanvonCMDauseinfachnocheinmal"CMD"
+eingibt.
+NÅtzlichistdieEinrichtungderPATH-Variablen,dieesermîglicht,
+externeKommandosaufzurufen,diesichnichtimaktuellenVerzeichnis
+befinden,ohnelangePfadangabenzumachen.Beispiel:
+SeiPATH=p1;p2;gesetztundalsKommando"edit"eingegeben.Kommandos
+werdeninfolgenderReihenfolgegesucht:
+
+-InternesKommando"edit"
+-Batchdatei"edit.bat","edit.btp"
+-TOS-Programm"edit.ttp",    "edit.tos"
+-GEM-Programm"edit.prg",    "edit.app"
+-Batchdatei"p1\edit.bat""p1\edit.btp"
+-TOS-Programm"p1\edit.ttp", "p1\edit.tos"
+-GEM-Programm"p1\edit.prg", "p1\edit.app"
+-Batchdatei"p2\edit.bat","p2\edit.btp"
+-TOS-Programm"p2\edit.ttp", "p2\edit.tos"
+-GEM-Programm"p2\edit.prg", "p2\edit.app"
+
+MankanndenDateitypauchexplizitangeben(z.B."edit.prg"),wennman
+verhindernwill,daûeinegleichnamigeBatchdateio.Ñ.aufgerufenwird.
+DerDateityp.ACCwirdnichtautomatischgesucht,wennkeineExtension
+eingegebenwurde,kannaberexplizitetwamit"C:\KAOSCONF.ACC"gestartet
+werden.ProgrammemitExtension.ACCwerdenwieProgrammemitExtension
+.PRGoder.APPimGrafikmodusgestartet.
+GibtmaneinenexplizitenPfadan,z.B."a:edit",wirddiePATH-Variable
+nichtverwendetundnurimangegebenenDirectorygesucht.
+ÑAchtung:BeimBetriebalsAccessorywerdenKommandos,dieauf.PRGoder
+.APPenden,nichtautomatischgesuchtunddahernichtgefunden,wennman
+keineExtensioneingibt.DiesistalsVorsichtsmaûnahmenîtig,daGEMes
+nichtschafft,mehrereApplikationengleichzeitigzuverwalten.Startet
+manetwaWORDPLUSvonWORDPLUSaus,gibtesBombenterror.Eigentlich
+kînntejaAESdiesen(hÑufigauftretenden)Fallabfangen,aberleider...
+WillmantrotzallerWarnungeneinProgrammmitEndung.PRGstarten,muû
+mandieExtensionmiteingeben.
+ÄGEM-ProgrammewerdenmitMauszeigerundohneCursorgestartet.Der
+etv_critic-HandlerdesDESKTOPwirdinstalliert(Diskettenfehlerper
+Alertboxanzeigen).DerBildschirmwirdbeiAufrufdesProgrammsnicht
+gelîscht.MankanndiesabervorherdurchCLStun.
+TOS-ProgrammeoderBatch-DateienwerdenmitCursorundohneMauszeiger
+gestartet.Deretv_critic-HandlerdesCMDbleibtinstalliert.
+AnsonstenbestehtkeinUnterschiedzwischendemAufrufvonGEM-undTOS-
+Programmen.SelbstverstÑndlichkînnenParameteranGEM-Programme
+Åbergebenwerden.Obdieseauchausgewertetwerden,isteineandere
+Frage...DieDateiartenBAT/BTPundTOS/TTPundPRG/APPsindfÅrCMD
+jeweilsÑquvalent.DerDateitypBTPexistiertfÅrdiespeziellenFreunde
+vonNeodesk.
+NachdemAufrufjedesProgrammeswirddessenRÅckgabewertuntersucht.Ist
+ernegativ,wirderalsDOS-oderBIOS-Fehlercodeinterpretiertundim
+Klartextausgegeben.BeimDesigneneigenerProgrammekannmanbeispiels
+weisesokodieren:
+
+     if   (0>(handle=Fopen("program.hlp",O_RDONLY)))
+        exit(handle);       /*MitDOS-Fehlercodebeenden*/
+
+oder:
+
+     if   (NULL==(ptr=(char*)Malloc(10240L)))
+          Pterm((int)ENSMEM);
+
+statt:
+     if   (...)
+          {
+          fprintf(stderr,"NichtgenÅgendSpeicher!\n");
+Ä          exit(1);
+          }
+
+DasspartnichtnurTipparbeit,sonderngrenztdenFehler(unterKAOS,
+dennTOSlieferthÑufigfalscheCodes)hÑufigauchnochbesserein,z.B.
+imoberenFall:
+  "Dateinichtgefunden"
+  "Pfadnichtgefunden"
+"UngÅltigesLaufwerk"
+  "InternerFehler"
+  "NichtgenÅgend(interner)Speicher"
+  "NichtgenÅgendDateihandles"
+  "Spurnichtgefunden"
+  "CRC-Fehler"
+  "Sektornichtgefunden"
+  "Laufwerknichtbereit"
+
+
+,à8.Batch-DateienÄ
+
+DasKonzeptderBatch-DateientsprichtimwesentlichendemimMS-DOS.
+Batch-BefehlesindGOTO,SHIFT,IF,END,FOR,PAUSE.
+DasLabelfÅrGOTOsiehtsoaus:":label".EsstehtamZeilenanfangeiner
+ZeilederBatchdatei.StehtdahintereinLeerzeichen,sowirdallesrechts
+vondemLeerzeichenstehendeignoriert.Mit":Kommentar"kannmansoeine
+Batchdateikommentieren,einBefehlREMdesMS-DOSwirdbeiCMDnicht
+benîtigt.
+DasECHO-FlagwirktbeiCMDnuraufdieAusfÅhrungvonBatchdateien.Es
+istnormalerweise(andersalsbeiMS-DOS)ausgeschaltetundbrauchtnur
+mitECHOONeingeschaltetzuwerden,wennmaneinekomplizierteBatchdatei
+verfolgenmîchte.
+Batchdateienkînnenverschachteltwerden,dieneueBatchdateierhÑltauch
+neueParameter.Biszu3Ebenensindmîglich.
+EineBatchdateikannmitCTRL-Cabgebrochenwerden.NachjederAusfÅhrung
+einerKommandozeileprÅftCMD,obCTRL-CimTastaturpuffersteht.In
+diesemFallwirddergesamteBatchprozeûsofortunterbrochen,alsoauch
+beiVerschachtelungderBatchdateiensofortdienÑchsteKommandozeilevon
+derTastaturerwartet.
+EnthÑltdasKommandozumAufrufeinerBatchdateieineEin-/Ausgabeum
+lenkung(fÅrirgendeinenodermehrereder6Standard-KanÑle),sogilt(im
+GegensatzzuMS-DOS)dieUmlenkungfÅrdieganzeBatchdatei.Soll
+innerhalbderBatchdateieineAusgabeunbedingtaufdenBildschirm
+ausgegebenwerden,kannmanz.B.schreiben:
+"ECHOstring>CON:"
+DiefolgendenZeilenderBatchdateiverwendenwiederdenfÅrdieganze
+BatchdateigÅltigenAusgabekanal.
+
+
+à9.CMDalsAccessory.AllgemeinesundspeziellesÄ
+
+CMDisteinProgramm,daû,einmalgestartetoderaktiviert,vîlligaufGEM
+verzichtet.EsistinseinerFunktionvîlligvonDOSabhÑngig.
+EinAccessorylÑuftbeiGEMuntereinereigenen"Applikation",aberunter
+demselben"Prozeû"wiedasgeradelaufendeHauptprogramm.Dasheiût,daû
+essichfÅrAESumzweiverschiedeneApplikationen,fÅrDOSaberum
+denselbenProzeûhandelt.GeradeletzteresfÅhrtzuziemlichen
+Schwierigkeiten,daKCMD.ACCfÅrDOSkeineigenstÑndigesProgrammist.
+DOSmerktsichbeidenfolgendenResourcen,welchemProzeûsieangehîren:
+1)   geîffneteDateien
+2)Speicherblîcke(perMallocgeholt)
+3)Standardpfade
+4)Standardlaufwerk
+5)Standarddateien.
+AnhanddesPD(ProzeûDeskriptor)wÑhltDOSzumBeispieldas
+Standardlaufwerkaus,sowieetwaVDIanhanddesGerÑtehandlesdiegerade
+eingestellteFÅllfarbeverwendet.EinAccessory,dasetwadas
+StandardlaufwerkodereinenPfadÑndert,wÅrdedasHauptprogramm
+beeinflussenundggf.inSchwierigkeitenbringen.AndererseitsmÅûtenbei
+jederAktivierungdesAccessoriesdiePfadeundStandarddateienvom
+HauptprogrammwiederÅbernommenwerden.
+DieAntwortaufdieLîsungalldieserProblemeisteinfach,die
+Realisierungschonschwieriger:
+ManmÅûteKCMD.ACCalsEIGENENProzeûlaufenlassen.
+WieteiltmanAESeineneueApplikationmit:appl_init()
+WieidentifiziertAESeineApplikation:durcheineap_id("Handle")
+WielîschtmandieseApplikationwieder:appl_exit()
+WieteiltmanVDIeineneue"Workstation"mit:v_opnvwk()
+WieidentifiziertVDIeine"Workstation":durcheinHandle
+ÄWielîschtmaneinesolchewieder:v_clsvwk()
+
+WieerzeugtmaneinenneuenProzeû:durchPexec()
+WieidentifiziertDOSeinenProzeû:durchdenPD(Basepage)
+WielîschtmaneinenProzeû:mitPterm()oderPtermres()
+
+LeiderverwaltetdasaltmodischeGEMDOSkeine"Prozeûhandles",diesich
+wieinmodernerenBetriebssystemenerzeugenundwiederlîschenlassen.
+Wasbleibtalso:Pexec()erzeugteinenneuenProzeû.DerModus0kommt
+nichtinFrage,erlÑdteineProgrammdatei,dasmîchtenwirvermeiden.Die
+Modi5(Basepageanlegen)unddann4(starten)kînntenvielleicht
+funktionieren.
+WaspassiertabermitunseremProzeû,wennerper"exit"verlassenwurde
+unddieHauptapplikationwiederzumZugkommensoll?Nehmenwiretwaan,
+wirhabenfÅrLaufwerkA:denStandardpfad"\texte",unddieDiskwird
+gewechselt,wÑhrenddasAccessorynichtaktivist.Wieistesumgekehrt,
+wenndieHauptapplikationdenPfad"a:\meinetexte"hat,undwirmÅssendie
+Diskwechseln,wÑhrendKCMD.ACCaktivist.
+DieAntwortaufalledieseFragenist:Durcheinander
+Esseidenn,manverwendetKAOS:
+KAOSbehandeltbeiDiskwechselnnichtnurdenlaufendenProzeû,sondern
+auchalleVorgÑnger(Åberp_parentverkettet).Nursoistsichergestellt,
+daûauchdie"schlafenden"Prozessenicht"abgehÑngt"werdenundalle
+DiskwechselmitbekommenÅber:
+1)UngÅltigmachendesaktuellenPfades(zurÅckzurRoot)
+2)UngÅltigmachenallerStandarddateien,dieaufderaltenDiskliegen
+AlsolÑuftKCMD.ACCohnegrîûereöberraschungennurunterKAOS.Die
+UmschaltungderProzessegeschiehtganzproblemlosÅberdieabTOS1.2
+dokumentierteSystemvariable_run,dieimTOS-Headerenthaltenist.
+DieseMethodeisteinfacheralsdasErzeugeneinerBasepageo.Ñ.
+WirdKCMD.ACCvorAktivierendesDesktopzurInitialisierunggestartet,
+passiertfolgendes:
+DieBasepagevonKCMD.ACC(diebisherfÅrGEMDOSunbekanntist),wirdals
+ProzeûunterdenUr-PDeingehÑngt(dasGroûelterdesDesktop).Sokann
+KCMD.ACCalleDiskwechselmitbekommen,solangeesschlÑft.Anschlieûend
+wirdeinfachindenevent-multigesprungen.
+WirdKCMD.ACCnunaktiviert,tutsichfolgendes:
+KCMD.ACChÑngtseineBasepageausderKettederProzesseausund
+installiertwiederNULLalsUr-GroûelterdesDesktop.AnschlieûendhÑngt
+sichKCMD.ACCÅberdielaufendeApplikation.FÅrGEMDOSsiehtesjetzt
+alsosoaus,daûKCMD.ACCvonderHauptapplikationÅberPexec()gestartet
+wurde.SchlieûlichwirddieVariable_runaufKCMD.ACCgeleitet,alsofÅr
+GEMDOSderneueProzeûgestartet.
+BeiderEingabevon"exit"wirdwieder_runaufdielaufendeHaupt-
+ApplikationgelegtundKCMD.ACCalsUr-GroûelterdesDesktopinstalliert.
+
+DurchdieseVorgehensweisewirderreicht,daûsowohlAESalsauchGEMDOS
+dasAccessoryalseigenstÑndigeApplikationbzw.Prozeûansehenundeszu
+keinen"Besitzstreitigkeiten"oder"Kompetenzproblemen"kommt.
+
+
+GroûeProblemebereitetdasStartenvonProgrammenvonAccessoriesaus.
+DieErfahrungmitverschiedenenAccessories(STOOLS,Schrîttle-Shell)
+zeigtefolgendesVerhalten:
+-Applikationen(ProgrammeunterGEM)DöRFENNICHTgestartetwerden.
+BisherkannAESnureineApplikationgleichzeitigverwalten.
+-DasStartenvonTOS-ProgrammenunterDESKTOPistmîglich
+-DasStartenvonTOS-ProgrammenunteranderenApplikationenistzwar
+zunÑchstmîglich,dieEingabevon"exit"zurRÅckkehrindie
+HauptapplikationendetjedochIMMERmiteinemSystemabsturz.
+
+DerGrundfÅrdasletztereVerhaltenistfolgendes:
+GEMDOSlegtfÅrjedenProzeûeinenSupervisor-Stackan.DieserwirdfÅr
+Interruptsgenutzt;auchdieRÅcksprungadressevoneinemTrapwirdhier
+aufbewahrt.Leideristdieser"Interrupt-Stack"jedesmalDERSELBE(nicht
+nurdergleich,sonderntatsÑchlichderselbe).TOS1.2beispielsweise
+setztdensspimmerauf$755abeimStarteinesProzesses.
+BeimAktivierendesACCgeschiehtfolgendes:
+-DieHauptapplikationruftAESauf(evnt...);RÅcksprungadresseund
+geretteterSRliegenaufdemSupervisorstackderHauptapplikation.
+-DerKontextwechsel(UmschaltenallerRegistereinschlieûlichssp)auf
+dasACCfindetstatt.
+-DasACClÑuft.ACCshabeneineneigenenSupervisor-Stack,dervonAES
+angelegtwird,bevordasACC(nichtÅberPexec()!)dasersteMal
+gestartetwird.
+-WirdnuneinneuerProzeûgestartet,legtGEMDOSdenselbenSupervisor-
+Stackan,wieihndieHaupapplikationhat.BeimerstenInterruptoder
+DOS-AufrufwerdenRÅcksprungadresseundgeretteterSRzerstîrt.
+ÄSollnundieHauptapplikationwiedergestartetwerden,liegtdie
+RÅcksprungadressenichtmehraufdemStack.DasSystemstÅrztab.
+
+DerFehlertrittimDesktopnichtauf,daDESKTOPeineneigenenInterrupt-
+StackhatundstÑndigimSupervisormoduslÑuft.
+DerFehleristoffensichtlichgleichzeitigAESundGEMDOSanzulasten.Man
+kannauchsagen,daûdasStartenvonProzessenvoneinemAccessoryaus
+einfachnichterlaubtist.
+
+DieKorrektur:KCMD.ACCweiûvonTOS1.0,1.2,1.4(vom6.4.89),welchen
+Default-Supervisor-StackGEMDOSfÅrneueProzesseanlegt.Esfragtdie
+TOS-VersionsnummerabundmerktsichdiesenDefault-SSP.
+WirddasACCaktiviert,werdendieobersten20LangwortediesesStacks
+gesichert(sicherheitshalber,esmÅûteneigentlichdieobersten3Worte
+genÅgen).WirddieserStackzerstîrt,machtdasnichts,davordem
+nÑchstenAES-Aufruf(zurRÅckkehrindieHauptapplikation)die20
+LangwortewiederzurÅckgeschriebenwerden.BisherhatsichdieseMaûnahme
+alsausreichenderwiesen.TrotzdemkînntenimEinzelfallProbleme
+auftreten.Mansolltevorherimmertesten,obderAufrufvonProgrammen
+funktioniert,bevormanwichtigeDatenaufsSpielsetzt.

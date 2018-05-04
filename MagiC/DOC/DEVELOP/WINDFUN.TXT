@@ -1,0 +1,224 @@
+Die fensterorientierten Zeichenfunktionen im AES
+================================================
+
+Formatierung:	Tabulatorbreite 5
+
+Andreas Kromke
+22.2.97
+
+
+Wie erkenne ich, ob die Funktionen vorhanden sind ?
+===================================================
+
+zur Zeit nicht.
+
+
+Allgemeines
+-----------
+
+Die seit MagiC 5.10 vorhandenen Funktionen
+
+	objc_wdraw()
+	objc_wchange()
+	graf_wwatchbox()
+	form_wbutton()
+	form_wkeybd()
+	objc_wedit()
+
+entsprechen ihren jeweiligen Pendants
+
+	objc_draw()
+	objc_change()
+	graf_watchbox()
+	form_button()
+	form_keybd()
+	objc_edit()
+
+mit dem Unterschied, daû die Zeichenfunktion auf den sichtbaren Teil
+eines Fensters beschrÑnkt wird, d.h. die zu zeichnenden Objekte
+befinden sich innerhalb eines Fensters (auch Fenster #0 = Desktop).
+Dazu wird zusÑtzlich zu den bekannten Parametern ein WindowHandle
+Åbergeben.
+Benîtigt werden die Funktionen z.B. zur Hintergrundbedienung von
+Fensterdialogen.
+
+
+Objekt(baum) zeichnen
+---------------------
+
+Prototyp:
+		void objc_wdraw(
+			OBJECT *tree,
+			WORD object,
+			WORD	depth,
+			GRECT *clip,
+			WORD windowhandle
+			);
+
+Aufruf:
+		contrl[0] = 60			Funktionsnummer
+		contrl[1] = 3			EintrÑge in intin
+		contrl[2] = 0			EintrÑge in intout
+		contrl[3] = 2			EintrÑge in addrin
+		contrl[4] = 0			EintrÑge in addrout
+
+		intin[0] = object		wie bei objc_draw()
+		intin[1] = depth		wie bei objc_draw()
+		intin[2] = windowhandle	Fenster
+
+		addrin[0] = tree		wie bei objc_draw()
+		addrin[1] = clip		NULL => gesamtes Fenster
+
+
+Objektstatus Ñndern und Objekt neu zeichnen
+-------------------------------------------
+
+Prototyp:
+		void objc_wchange(
+			OBJECT *tree,
+			WORD object,
+			WORD	newstate,
+			GRECT *clip,
+			WORD windowhandle
+			);
+
+Aufruf:
+		contrl[0] = 61			Funktionsnummer
+		contrl[1] = 3			EintrÑge in intin
+		contrl[2] = 0			EintrÑge in intout
+		contrl[3] = 2			EintrÑge in addrin
+		contrl[4] = 0			EintrÑge in addrout
+
+		intin[0] = object		wie bei objc_change
+		intin[1] = newstate		wie bei objc_change
+		intin[2] = windowhandle	Fenster
+
+		addrin[0] = tree		wie bei objc_change()
+		addrin[1] = clip		NULL => gesamtes Fenster
+
+Dieser Aufruf ist Ñquivalent zu objc_change() ohne Neuzeichnen mit
+anschlieûendem objc_wdraw().
+
+
+Button im Fenster betÑtigen
+---------------------------
+
+Prototyp:
+		WORD graf_wwatchbox(
+			OBJECT *tree,
+			WORD object,
+			WORD instate,
+			WORD outstate,
+			WORD windowhandle
+			);
+
+Aufruf:
+		contrl[0] = 62			Funktionsnummer
+		contrl[1] = 4			EintrÑge in intin
+		contrl[2] = 1			EintrÑge in intout
+		contrl[3] = 1			EintrÑge in addrin
+		contrl[4] = 0			EintrÑge in addrout
+
+		intin[0] = object		wie bei graf_watchbox().
+		intin[1] = instate		wie bei graf_watchbox().
+		intin[2] = outstate		wie bei graf_watchbox().
+		intin[3] = windowhandle	Fenster
+
+		addrin[0] = tree		wie bei graf_watchbox()
+
+		intout[0]				wie bei graf_watchbox()
+
+
+Button-Event fÅr Fensterdialoge verarbeiten
+-------------------------------------------
+
+Prototyp:
+	WORD form_wbutton(
+			OBJECT *tree,
+			WORD object,
+			WORD nclicks,
+			WORD *nextob,
+			WORD windowhandle
+			);
+
+Aufruf:
+		contrl[0] = 63			Funktionsnummer
+		contrl[1] = 3			EintrÑge in intin
+		contrl[2] = 2			EintrÑge in intout
+		contrl[3] = 1			EintrÑge in addrin
+		contrl[4] = 0			EintrÑge in addrout
+
+		intin[0] = object		wie bei form_button()
+		intin[1] = nclicks		wie bei form_button()
+		intin[2] = windowhandle	Fenster
+
+		addrin[0] = tree		wie bei form_button()
+
+		intout[0]				wie bei form_button()
+		intout[1] = nextob		wie bei form_button()
+
+
+Tastatur-Event fÅr Fensterdialoge verarbeiten
+---------------------------------------------
+
+Prototyp:
+	WORD form_wkeybd(
+			OBJECT *tree,
+			WORD object,
+			WORD nextob,
+			WORD ichar,
+			WORD *onextob,
+			WORD *ochar,
+			WORD windowhandle
+			);
+
+Aufruf:
+		contrl[0] = 64			Funktionsnummer
+		contrl[1] = 3			EintrÑge in intin
+		contrl[2] = 3			EintrÑge in intout
+		contrl[3] = 1			EintrÑge in addrin
+		contrl[4] = 0			EintrÑge in addrout
+
+		intin[0] = object		wie bei form_keybd()
+		intin[1] = ichar		wie bei form_keybd()
+		intin[2] = nextob		wie bei form_keybd()
+		intin[3] = windowhandle	Fenster
+
+		addrin[0] = tree		wie bei form_keybd()
+
+		intout[0]				wie bei form_keybd()
+		intout[1] = onextob		wie bei form_keybd()
+		intout[2] = ochar		wie bei form_keybd()
+
+
+Textfeld-Eingabe fÅr Fensterdialoge
+-----------------------------------
+
+Prototyp:
+	WORD objc_wedit(
+			OBJECT *tree,
+			WORD object,
+			WORD edchar,
+			WORD *didx,
+			WORD kind,
+			WORD	windowhandle
+			);
+
+Aufruf:
+		contrl[0] = 65			Funktionsnummer
+		contrl[1] = 5			EintrÑge in intin
+		contrl[2] = 2			EintrÑge in intout
+		contrl[3] = 1			EintrÑge in addrin
+		contrl[4] = 0			EintrÑge in addrout
+
+		intin[0] = object		wie bei objc_edit()
+		intin[1] = edchar		wie bei objc_edit()
+		intin[2] = *didx		wie bei objc_edit()
+		intin[3] = kind		wie bei objc_edit()
+		intin[4] = windowhandle	Fenster
+
+		addrin[0] = tree		wie bei objc_edit()
+
+		intout[0]				wie bei objc_edit()
+		intout[1] = *didx		wie bei objc_edit()
+
