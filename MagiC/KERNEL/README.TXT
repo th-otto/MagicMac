@@ -13,3 +13,6 @@ WINFRAME.DEM/
 
 ALLG
 	common routines used by MagiC kernel ("common" == „allgemein“ in German)
+
+INC
+	common definitions (include files)
