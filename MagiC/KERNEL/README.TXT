@@ -5,6 +5,12 @@ Andreas Kromke
 AES/
 	MagiC kernel sources (AES)
 
+BIOS/
+	MagiC kernel sources (BIOS) for different platforms
+
+DOS/
+	MagiC kernel sources (DOS)
+
 WINFRAME
 	windows frames, written as SLB (shared library), to be moved to XTENSION folder
 
