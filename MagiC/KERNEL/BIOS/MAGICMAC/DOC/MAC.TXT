@@ -1,0 +1,169 @@
+Beschreibung der Übergabestruktur MAC->Atari
+============================================
+
+Achtung (2.12.95):
+ein neues Feld in der Übergabestruktur:
+MacSys_prn_wrts
+
+Der MAC-Loader macht folgendes:
+-------------------------------
+
+- MAGX-Datei laden und relozieren
+- im Atari-Adreßraum folgende Atari-Variablen initialisieren:
+     Übergabestruktur initialisieren (s.u.)
+- Die MacSys_init()-Funktion (siehe Übergabestruktur) initialisiert:
+     phystop
+     _v_bas_ad
+     _memtop
+     hdv_??? auf den SCSI-Manager o.ä.
+     sshiftmd auf irgendeinen sinnvollen Wert
+     end_os/exec_os im Header des BIOS und AES anpassen
+     fstrm_valid ($5a8) auf 0 setzen
+- In $f0 (Atari->MAC) und $f4 (MAC->Atari) Vektoren für die Umschaltung
+  einsetzen.
+- PMMU, vbr und Prozessor-Caches initialisieren
+- Exceptionvektoren initialisieren, außer priv.viol. und div0
+- hdv_xxx initialisieren.
+- MagiX starten (Supervisormode)
+
+
+Der "Atari" macht folgendes:
+----------------------------
+
+- sp aus der Übergabestruktur setzen
+- MacSys_init() aufrufen (a5 unverändert!)
+- FPU wird auf NULL initialisiert
+- Cartridges werden nicht unterstützt
+- Booten ausschließlich über hdv_boot:
+  1. Routine wird aufgerufen, wenn Funktionspointer != NULL.
+  2. darf nur d0-d2/a0-a2 verändern
+  3. Rückgabe d0.w == 0, dann wird _dskbufp per "jsr" aufgerufen.
+     Im Atari wird der Bootsektor von A: nach _dskbufp geladen und eine
+     Checksumme berechnet. Konnte der Sektor geladen werden und
+     stimmt die Checksumme, wird 0 in d0.w zurückgegeben.
+- colorptr und screenpt werden ignoriert, Umschalten der Farbpalette
+  ausschließlich über VDI
+- Physbase und Logbase liefern _v_bas_ad
+- Getrez liefert sshiftmd
+- Setscreen geht über MacSys_set_physbase
+
+
+Während des Betriebs:
+---------------------
+
+Während des Betriebs füttert der MAC-Systemteil folgende
+Interrupts ein (Achtung: Stack für Rücksprung per rte
+aufsetzen):
+
+- 200Hz-Interrupt über $114
+- VBL über $70
+- Tasten- und Mausereignisse über Vektor $118:
+
+    d7 = 'MAGC': Daten sind gültig
+    d6 = 0:   MIDI
+    d6 = 1:   Tastatur
+         d5 = Atari-Scancode
+    d6 = 2:   Mauspaket
+         a6 = char data[3]
+
+
+Übergabestruktur:
+-----------------
+
+Die Übergabestruktur steht direkt am Anfang der PRG-Datei,
+d.h. hinter dem Programmheader und vor dem TOS-Syshdr.
+Der Aufbau der Datei steht in MAC_KER.INC
+
+In MacSys_boot_sp schreibt der Loader den Stack rein, der beim
+Warmstart verwendet wird.
+
+In MacSys_pixmap schreibt die MAC-Applikation einen Zeiger auf eine
+Struktur rein, die dem VDI bei "vdi_blinit" in a0 übergeben wird. Im Atari
+wird ein NULL-Zeiger übergeben.
+
+In MacSys_32k_offs schreibt der Loader die physikalische Adresse
+der ersten 32k des Atari- Adreßraums rein.
+
+In MacSys_a5 schreibt der Loader das MAC-Register a5 auf, das vor jedem
+Umschalten in den MAC-Modus geladen wird.
+
+In MacSys_tasksw schreibt das Atari-BIOS die Adresse einer Routine rein, die
+beim preemptiven Multitasking den Taskswitch erledigt. Der MAC-Teil ruft
+diesen Vektor nach der Interruptbehandlung per jsr auf, wenn
+     1. Der Vektor != NULL ist.
+     2. Der Interrupt aus dem Usermode des Atari erfolgte.
+
+MacSys_syshdr ist bereits initialisiert.
+
+MacSys_biosinit wird vom Atari nach der BIOS-Initialisierung aufgerufen.
+
+MacSys_fpu und MacSys_cpu müssen vom Loader initialisiert werden, damit
+MagiX die Cookies installieren kann.
+
+MacSys_debugout ist fürs Debugging. Es wird in a0 ein Zeiger auf eine
+Zeichenkette übergeben, die auf dem MAC (etwa in Form einer Alertbox)
+ausgegeben werden muß. Kein Register darf verändert werden.
+
+Die Vektoren MacSys_xxxis/os/ usw. sind für die Emulation der parallelen und
+der seriellen Schnittstelle. Sie werden per jsr aufgerufen, dabei zeigt a0
+auf die Parameter, die der Benutzer bei Bconout() usw. auf dem Stack
+übergeben hat, und zwar hinter die Device-ID. Beispiel:
+Der Benutzer schreibt:      Bconout(0, 'A');
+Die Routine MacSys_prtout bekommt in a0 einen Zeiger auf das 'A', das auf dem
+Stack liegt, und muß sich per rts beenden. Alle Register außer d0-d2/a0-a2
+müssen gerettet werden.
+
+MacSys_gettime muß Datum und Uhrzeit im DOS-Format in d0.l liefern. Alle
+Register außer d0-d2/a0-a2 müssen gerettet werden.
+
+MacSys_coldboot wird bei Ctrl-Alt-RShift-Home aufgerufen.
+
+MacSys_bombs wird vom MAC nach der Exceptionbehandlung aufgerufen, damit der
+Atari seine post-mortem-dump-Daten setzen und den Prozeß terminieren kann.
+
+MacSys_syshalt wird vom Atari aufgerufen, wenn das System angehalten werden
+muß. In a0 steht ein Zeiger auf die auszugebende Zeichenkette. Fehlertexte
+sind z.B. "Fataler Fehler im BIOS" oder "Fataler Fehler im AES".
+
+MacSys_drv2devcode ist eine Routine, die in d0.w eine Laufwerknummer
+(0 für A, 1 für B, 2 für C usw.) bekommt. Diese Laufwerknummer ist in einen
+32-Bit-Code umzurechnen, der das Medium beschreibt (nicht das Volume, sondern
+das Medium, d.h. z.B. die SCSI-Target-Adresse). Es muß sichergestellt werden,
+daß diese ID eindeutig ist und daß mehrere Laufwerke auf demselben Medium auf
+unterschiedlichen Partitionen dieselbe ID bekommen. Bei einem Fehler ist eine
+Null zu liefern.
+
+MacSys_rawdrvr ist ein "raw"-Treiber für Speichermedien. In d0.w wird ein
+Opcode übergeben, in d1.l der 32-Bit-Code, der von MacSys_drv2devcode
+vergeben wurde. Z.Zt. existiert nur eine Funktion:
+     d0.w = 0:      Medium auswerfen
+Es ist ein TOS-Fehlercode in d0.l zurückzugeben bzw. E_OK, falls alles
+geklappt hat.
+
+MacSys_floprd/wr/fmt/ver/ werden mit a0 als Parameter aufgerufen, a0 zeigt
+auf die Parameterliste (auf dem Stack).
+
+MacSys_superstlen gibt die Länge des von MagiC pro Applikation festgelegten
+Supervisorstacks an. Sie wird zunächst auf 5k festgelegt, kann vom Mac-Loader
+jedoch vergrößert werden. Die Länge darf nur vom Loader beeinflußt werden und
+darf während des Betriebs nicht umgeschaltet werden.
+
+MacSys_dos_macfn ist ein Einsprung für die DOS-Funktionen 0x60 bis 0xfe. In
+d0.w wird die Funktionsnummer übergeben, in a0 ein Zeiger auf die Parameterliste.
+
+MacSys_settime ist ein Einsprung für die XBIOS-Funktion Settime. In a0 wird
+ein Zeiger auf die Parameterliste übergeben.
+
+MacSys_prn_wrts ist ein Zeiger auf eine Funktion. Dieser Funktion werden
+in a0 ein Zeiger (char *) auf einen Puffer und in d0.l die Anzahl der
+auszugebenden Zeichen übergeben (LONG). Die Zeichen müssen auf den Drucker
+ausgegeben werden. Die Funktion wird von GEMDOS Fwrite() angesprungen.
+Zurückgegeben wird die Anzahl der tatsächlich ausgedruckten Zeichen oder
+ein Fehlercode (z.B. EWRITF oder EACCDN usw.).
+
+Die Einsprünge in den MAC erfolgen nach Aufruf von [$f0] und nach Laden des
+Registers a5 mit MacSys_a5, vor Fortführung des Atari wird [$f4] aufgerufen
+und a5 restauriert. Dieser Mechanismus wird nur vom XFS verwendet, die
+anderen Routinen springen direkt über die Zeiger, d.h. der Emulatorteil muß
+ggf. die Umschaltung vornehmen.
+

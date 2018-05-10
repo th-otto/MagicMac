@@ -1,0 +1,26 @@
+ger\mac_bios
+..\allg\read_inf
+..\vdi\math
+..\allg\std
+..\ser_beta
+..\dos\ger\magido7 ..\dos\ger\malloc ..\dos\xfs_vdos.o ..\dos\vfat_s.o ..\dos\vfat.o ..\dos\dfs_u.o
+..\dos\dev_bio7.o ..\dos\dev_pipe.o ..\dos\dev_mem.o ..\dos\dfs_fat.o
+macxfs.o
+..\vdi\mxvdiknl.o
+..\vdi\drivers.o
+..\vdi\filediv.o
+..\vdi\init_res.o
+..\vdi\string.o
+..\vdi\tos.o
+..\aes\ger\aesmain7.o ..\aes\aesevt.o ..\aes\ger\aesfrm.o ..\aes\aesobj.o
+..\aes\aeswin.o ..\aes\aesmen.o ..\aes\aesgraf.o ..\aes\aesrsc.o
+..\aes\farbic.o
+..\aes\wdialog\wdialog.o
+..\aes\wdialog\listbox.o
+..\aes\wdialog\ger\fnt_menu.o
+..\aes\wdialog\shelsort.o
+..\aes\wdialog\wdintrfc.o
+..\aes\fsel\ger\fsel.o
+..\aes\xmen_mgr\mtsmn.o
+..\ende.o
+

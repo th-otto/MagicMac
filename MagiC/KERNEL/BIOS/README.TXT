@@ -5,12 +5,19 @@ Andreas Kromke
 ATARI/
 	BIOS sources for Atari (Mega)ST(e), Atari TT, Atari Falcon, Hades and MagicPC
 
+MAGICMAC
+	BIOS sources for MagicMac (classic Mac OS)
+
+MAGCMACX
+	BIOS sources for MagicMacX
+
 COMMON/
 	BIOS sources used by more than one platform
 	PROTOBT.S is only used for MagicMac and MagicMacX
 
 XFS95/
 	Code for MagicPC, provided by Franz Schmerbeck
+
 
 Dependencies:
 
@@ -34,7 +41,7 @@ Dependencies:
      		INCLUDE "IVID.S"		only for Atari
      		INCLUDE "HAD_IVID.S"	only for Hades
      INCLUDE "KEYB.S"
-          INCLUDE   "HANDLKEY.S"
+            INCLUDE "HANDLKEY.S"
      INCLUDE "FDC.S"				only for Atari
      INCLUDE "COOK.S"				only for Atari
      INCLUDE "HAD_FDC.S"			only for Hades
@@ -42,6 +49,39 @@ Dependencies:
      INCLUDE "HAD_SCSI.S"			only for Hades
      INCLUDE "UNIM_INT.S"			only for Hades
      INCLUDE "HAD_EXC.S"			only for Hades
+
+
+	MAGICMAC/MAC_BIOS.S
+
+     INCLUDE "LOWMEM.INC"
+     INCLUDE "BIOS.INC"
+     INCLUDE "DOS.INC"
+     INCLUDE "ERRNO.INC"
+     INCLUDE "KERNEL.INC"
+     INCLUDE "MAC_KER.INC"
+     INCLUDE "DEBUG.INC"
+     INCLUDE "AUTO.S"
+     INCLUDE "PUNTAES.S"
+     INCLUDE "PROTOBT.S"
+     INCLUDE "PRIV_EXC.S"
+     INCLUDE "HANDLKEY.S"
+
+
+	MAGCMACX/MACXBIOS.S
+
+     INCLUDE "LOWMEM.INC"
+     INCLUDE "BIOS.INC"
+     INCLUDE "DOS.INC"
+     INCLUDE "ERRNO.INC"
+     INCLUDE "KERNEL.INC"
+     INCLUDE "MACXKER.INC"
+     INCLUDE "DEBUG.INC"
+     INCLUDE "AUTO.S"
+     INCLUDE "PUNTAES.S"
+     INCLUDE "DRIVE.S"
+     INCLUDE "PROTOBT.S"
+     INCLUDE "PRIV_EXC.S"
+     INCLUDE "HANDLKEY.S"
 
 
 	COMMON/AUTO.S
