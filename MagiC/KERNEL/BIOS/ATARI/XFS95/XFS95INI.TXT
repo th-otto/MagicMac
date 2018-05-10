@@ -1,0 +1,60 @@
+
+30.05.96                      F. Schmerbeck
+                              Tel. 08106/22948
+                              Fax  08106/23753
+
+Hallo, Andreas,                                             
+
+Hier Quelle und DR-Objekt zu XFS95INI. Ich habe versucht, das Binding
+so zu realiseren,
+a) daß Du keine verschiedenen Versionen für verschiedene Plattformen
+   brauchst,
+b) daß ich das XFS_Dateisystem jederzeit modifizieren kann, ohne
+   Dir ein neues Binding schicken zu müssen.
+
+
+-------------------------------------------------------------------
+
+Das Modul enthält zwei Routinen als globale Symbole:
+
+-- DWORD mpc_da();
+         ========
+   Liefert NULL zurück, falls der Kernel NICHT unter
+   meinem 68000er-Emulator arbeitet.
+   Andernfalls einen Pointer auf die Struktur
+   struct mcp_da_info {
+     DWORD emu_version; // Versionsnummer des Emulators, monotan wachsend
+     DWORD emu_date;     // Erstellungs-Datum des Emulators, monoton wachsend
+     DWORD emu_flags;    // Bit 0: Dies ist eine Demo-Version
+     } ;
+
+-- long xfs95ini()
+        ==========
+   veranlaßt der Emulator, das XFS-Dateisystem zu installieren.
+   return: 1: alles ok,
+          <0: Fehler.
+
+
+Also eigentlich sollte es so auf ALLEN Plattformen funktionieren:
+   if (mpc_da() != NULL)
+     xfs95ini();
+
+-------------------------------------------------------------------------
+
+Details zu xfs95ini:
+1) xfs95ini fordert Speicherplatz K von GEMDOS an
+2) Der Emulator holt sich aus einer Windows-Datei den Motorola-Code 
+   XFS_PC.LDR zum XFS-System, relociert ihn und setzt ihn in den 
+   Speicherplatz K ein (geschieht alles auf INTEL-Seite).
+3) xfs95ini führt die XFS-Initialisierung in diesem Code K durch.
+
+Veraussetzung:
+==============
+Die von xfs95ini angeforderten Speicherbereiche bleiben PERMANENT
+erhalten.
+
+-----------------------------------------------------------------------
+
+     Gruß
+          Franz
+

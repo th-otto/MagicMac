@@ -2261,6 +2261,7 @@ tmadel_sub:
  rol.w    #8,d0
  rts
 
+
 **********************************************************************
 *
 * Wartet auf 240 Ereignisse von Timer B, dessen TBI immer dann
@@ -2273,6 +2274,14 @@ tmadel_sub:
 delay_special:
                                    ; aus TOS 2.05:
  bclr     #0,iera                  ; Timer B (display enable) aktivieren
+
+
+**********************************************************************
+*
+* Wird von boot_init_video() aufgerufen
+*
+
+delay_special_b:
  move.b   #0,tbcr                  ; Timer B stoppen
  clr.b    tbdr                     ; 0 in den Abwärtszähler
  move.b   #8,tbcr                  ; Ereigniszählung

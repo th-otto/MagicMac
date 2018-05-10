@@ -1,0 +1,32 @@
+Interrupts auf dem Atari:
+
+Quelle                             IPL            Vektor
+--------------------------------------------------------
+Hblank                             2              0x64
+Vblank                             4              0x70
+MFP 0 (Centronics busy)            6/0            0x100
+MFP 1 (serial dcd)                 6/1            0x104
+MFP 2 (serial cts)                 6/2            0x108
+MFP 3 (Blitter)                    6/3            0x10c
+MFP 4 (Baudratengen.)              6/4            0x100
+MFP 5 (200 Hz)                     6/5            0x114
+MFP 6 (IKBD/MIDI)                  6/6            0x118
+MFP 7 (FDC/ACSI)                   6/7            0x11c
+MFP 8 (display enable)             6/8            0x120
+MFP 9 (RS232 Sendefehler)          6/9            0x124
+MFP 10 (RS232 Sendepuffer leer)    6/10           0x128
+MFP 11 (RS232 Empfangsfehler)      6/11           0x12c
+MFP 12 (RS232 Puffer voll)         6/12           0x130
+MFP 13 Timer A                     6/13           0x134
+MFP 14 (ring indicator)            6/14           0x138
+MFP 15 (monochrom monitor)         6/15           0x13c
+TT-MFP 0                           6/16           0x140
+TT-MFP 1
+TT-MFP 2 (SCC DMA)                 6/18           0x148
+...
+TT-MFP 7 (NCR: DMA-Busfehler)      6/30           0x15c
+TT-MFP 14 (Uhr)                    6/30           0x
+TT-MFP 15 (NCR: DMA-Ende)          6/31           0x17c
+TT-SCC                             1              0x180
+..
+TT-SCC                             1              0x1bc
