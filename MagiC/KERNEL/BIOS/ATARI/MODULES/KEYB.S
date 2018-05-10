@@ -378,7 +378,7 @@ handle_key:
    eori.w   #$300,sr          ;von IPL 5 auf 6 zurück
    rts
 
-     INCLUDE   "handlkey.s"
+     INCLUDE   "HANDLKEY.S"
 
 ;-------------------------------------------------------
 ;

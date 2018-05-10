@@ -7,6 +7,7 @@ ATARI/
 
 COMMON/
 	BIOS sources used by more than one platform
+	PROTOBT.S is only used for MagicMac and MagicMacX
 
 XFS95/
 	Code for MagicPC, provided by Franz Schmerbeck
@@ -33,6 +34,7 @@ Dependencies:
      		INCLUDE "IVID.S"		only for Atari
      		INCLUDE "HAD_IVID.S"	only for Hades
      INCLUDE "KEYB.S"
+          INCLUDE   "HANDLKEY.S"
      INCLUDE "FDC.S"				only for Atari
      INCLUDE "COOK.S"				only for Atari
      INCLUDE "HAD_FDC.S"			only for Hades
