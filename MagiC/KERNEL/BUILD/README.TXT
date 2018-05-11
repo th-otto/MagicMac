@@ -1,5 +1,5 @@
 Andreas Kromke
-2018-05-10
+2018-05-11
 
 
 ATARI
@@ -13,3 +13,7 @@ MAGICMAC
 
 MAGICMAC
 	build batch files for MagicMacX
+
+MILAN
+	build batch files for Magic Milan
+

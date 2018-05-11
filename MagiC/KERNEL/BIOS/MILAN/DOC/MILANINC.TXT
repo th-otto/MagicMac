@@ -1,0 +1,293 @@
+Beschreibung der Schnittstelle von MagiC zum ROM-TOS des Milan
+==============================================================
+
+Stand: 30.6.99, letzte Änderungen mit '#' markiert.
+
+
+Zu den Adressen:
+MagiCs Systemvariablen beginnen bei 0x840L und enden bei 0x5000.
+
+
+Am besten erreicht MagiC die Milan-Schnittstelle über
+den Beginn des System-ROMs, über einen erweiterten
+TOS-Header.
+
+struct xsysheader {
+ WORD     shortbranch;        /* bra.b ... */
+ WORD     version;
+ void *   startadr;
+ struct xsysheader *syshdr;
+ void *   begin_ram;
+ void *   ptr;
+ void *   gem_magics;
+ LONG     us_date_bcd;
+ WORD     countrycode_palflag;
+ WORD     gemdos_date;
+ void *   _mifl;
+ char *   kbshift;
+ void **  act_pd;
+ void *   zero;
+ /* hier Milan-Sachen */
+ WORD     milan_reserved[4];
+ /* Ab hier die Erweiterung: */
+ LONG     milan_magic;        /* Muß z.B. 'Miln' sein */
+ MILAN_OS *milan_os;          /* Zeiger auf die Übergabestruktur */
+};
+
+
+Die Schnittstelle soll im wesentlichen Funktionszeiger
+enthalten, die MagiC aufruft. Dazu kommt etwas Kleinkram.
+Die Struktur ist so gestaltet, daß sie im ROM liegen
+kann, indem statt variabler Werte stets Zeiger enthalten sind.
+
+typedef struct {
+ LONG     version;            /* zunächst 0 */
+ MEMINFO  *meminfo;           /* Informationen über Speicherblöcke */
+ BIOSFN   *bios_fnx;          /* Tabelle der BIOS-Funktionen */
+ BIOSFN   *xbios_fnx;         /* Tabelle der XBIOS-Funktionen */
+ DEVVECS  *devvecs;           /* Tabelle der Gerätevektoren */
+ void     *ihdvvecs;          /* hdv_xxx initialisieren */
+ void     *iexcvecs;          /* HBL/LineA initialisieren */
+ void     *iperiph;           /* Peripherie initialisieren (MFP) */
+ void     *dmaboot;           /* von HD booten */
+ void     *coldboot;          /* Kaltstart */
+ void     *init_maptab;       /* für Bconmap */
+ void     *prn_wrts;          /* mehrere Zeichen auf Prn */
+ void     *hdl_pling;         /* "Hook" für Glocke */
+ void     *hdl_klick;         /* "Hook" für Tastaturklick */
+ WORD     *ncookies;          /* Anzahl maschinenspez. Cookies */
+ void     *inst_cookies;      /* machinenspez. Cookies installieren */
+ void     *get_cpu;           /* CPU-Typ ermitteln */
+ void     *get_fpu;           /* FPU-Typ ermitteln */
+ void     *gethtime;          /* Uhrzeit/Datum wie Xbios Gettime */
+ void     *vblhook;           /* Für MagiC-Interrupt VBL */
+ void     *iinit_hz200;       /* Für MagiC-Interrupt hz_200 */
+ void     *exit_hz200;
+ void     *iinit_ikbd;        /* Für MagiC-Interrupt IKBD */
+ void     *exit_ikbd;
+ void     *dosound;           /* wird mit 50 Hz im 200Hz-Int. aufgerufen */
+#void     *caps_led;          /* wird mit d0=kbshift aufgerufen */
+#void     *reserved[19];      /* alle NULL */
+} MILAN_OS;
+
+
+#<caps_led> wird, wenn der Vektor nicht NULL ist, bei jedem Betätigen der
+#Taste CapsLock aufgerufen. Dabei wird die Variable kbshift in d0
+#übergeben.
+
+
+<dosound> ist wie im TOS. Die Routine darf die üblichen Register
+verändern. Sie wird, wie alle Routinen im TOS, nur bei jedem 4.
+Interrupt aufgerufen.
+
+<prn_wrts> gibt mehrere Zeichen auf die parallele Schnittstelle aus.
+Gibt die Anzahl der ausgegebenen Zeichen zurück. Assembler-Prototyp:
+d0 = long prn_wrts( a0 = char *buf, d0 = long count ).
+Darf d0-d2/a0-a2 ändern.
+Im Prinzip kann man hier auch eine Schleife über die normale BIOS-
+Ausgabe programmieren, aber es gibt vielleicht eine schnellere
+Möglichkeit.
+
+
+<hdl_pling> und <hdl_klick> sind mit TOS 1.6 eingeführt worden.
+Ich könnte die Routinen auch einfach aus dem RAM übernehmen.
+Wäre höchstens kritisch, wenn jemand die umgebogen hat, bevor MagiC
+installiert wird. Sag Bescheid, wenn wir sie weglassen sollen.
+
+
+<icookies> installiert alle maschinenspezifischen Cookies, d.h.:
+     _CPU
+     _FPU
+     _VDO
+     _MCH
+     _SND
+     _FDC
+Die Routine erhält einen Zeiger auf die Cookie-Tabelle in a0 sowie
+die Tabellenlänge <ncookies> in d0. <ncookies> ist der Brutto-Platz
+in der Tabelle, d.h. sie hat Platz für <ncookies-1> Cookies plus
+Ende-Kennung. Rückgabewert E_OK bzw. ERROR (Überlauf). Im Fall eines
+Überlaufs wird die Tabelle trotzdem initialisiert, d.h. das erste
+LONG auf 0L und das zweite auf NCOOKIES gesetzt.
+Prototyp:
+LONG inst_cookies( a0 = COOKIE *co, d0 = LONG ncookies )
+
+
+<ihdvvecs> initialisiert die Systemvektoren:
+     hdv_init
+     hdv_rw
+     hdv_bpb
+     hdv_mediach
+     hdv_boot.
+Prototyp:
+void ihdvvecs( void )
+
+
+<iexcvecs> initialisiert diejenigen Exception-Vektoren, welche _NICHT_
+zu Bomben führen sollen und nicht ignoriert werden sollen. Bevor dieser
+Aufruf gemacht wird, initialisiert MagiC die Vektoren 2..63 auf Bomben,
+außer 25..31 auf "rte". Außerdem initialisiert MagiC die Privilegsverletzung
+zur Emulation von "move sr,ea" und die Division durch Null (einfach als
+"rte").
+Auf dem Atari müßten hier HBL und LineA initialisiert werden.
+
+
+<iperiph> initialisiert die Peripheriegeräte mit ihren Exception-
+Vektoren. Auf dem Atari sind das die MFPs und ihre Vektoren.
+
+
+<dmaboot> bootet von HD (SCSI/ACSI/IDE). Zu diesem Zeitpunkt hat MagiC
+bereits den Vektor hdv_boot aufgerufen, um von Floppy zu booten.
+Prototyp:
+void dmaboot( void )
+
+
+<coldboot> macht einen Kaltstart.
+Prototyp:
+void dmaboot( void )
+
+
+<get_cpu> liefert z.B. 40 oder 60 oder 586, je nach CPU.
+Prototyp:
+WORD get_cpu( void )
+
+<get_fpu> liefert z.B. 0 (keine FPU), 1 (für 68881), 2 (für 68882),
+40 (für 68040) oder 60 (für 68060), je nach CPU/FPU.
+Prototyp:
+WORD get_fpu( void )
+
+
+<gethtime> arbeitet wie Xbios(23), die Routine läßt sich
+aber mit "jsr" aufrufen, d.h. endet auf "rts".
+
+
+<vblhook> wird von MagiC im VBL-Interrupt aufgerufen, nachdem
+_frclock und vblsem bedient worden sind und bevor die VBL-
+Queue ausgeführt wird. Die Routine darf alle Register
+d0-d7/a0-a6 verändern und muß normal auf "rts" enden.
+Auf dem Atari wird hier die Umschaltung der Farbpalette, die
+Umschaltung der Bildschirmspeicheradresse sowie das Cursorblinken
+durchgeführt.
+
+
+<init_maptab> initialisiert die BCONMAP-Struktur.
+Prototyp:
+void imaptab( a0 = BCONMAP *bco )
+
+
+<iinit_hz200> und <iinit_ikbd> sind ROM-Routinen, die MagiC
+aufruft, um eine eigene 200Hz-Interrruptroutine bzw. eine
+Maus/Tastaturinterruptroutine einzuhängen. MagiC übergibt die
+Adresse seiner Routine in a0. Mit a0 == NULL klinkt es sich
+wieder aus.
+
+Für 200Hz:
+MagiCs Routine inkrementiert _hz_200, macht seine eigene
+Tastatur-Wiederholung und ruft die User-Interruptroutinen
+auf. MagiC ruft dann <exit_hz200> auf, um die Interruptbehandlung
+abzuschließen (diese Routine darf kein Register verändern, ggf. kann
+hier auch "rts" stehen). MagiCs Routine beendet die Interrupt-
+Behandlung schließlich mit "rte". Es ist wichtig, daß MagiC den
+Original-Interrupt-Frame bekommt, damit es feststellen kann, ob
+der Interrupt im Usermode oder im Supervisormode aufgetreten ist.
+Sound-Behandlung, Cursorblinken, VBL usw. sollte im ROM ausgeführt
+werden, bevor MagiCs Routine aufgerufen wird.
+
+
+Für ikbd:
+MagiCs Routine holt seine Parameter vom Stack. Die Daten sind
+gültig, wenn (sp) = 'Miln' ist. Dann:
+
+          (sp) = 'Miln':      Daten sind gültig
+dann:     4(sp) = 0:          MIDI
+          4(sp) = 1:          Tastatur
+                                   5(sp) = Atari-Scancode
+          4(sp) = 2:          Mauspaket
+                                   5(sp),6(sp),7(sp) = char data[3]
+
+MagiC entfernt diese Variablen selber wieder vom Stack.
+MagiC ruft dann <exit_ikbd> auf, um die Interruptbehandlung
+abzuschließen (diese Routine darf kein Register verändern, ggf. kann
+hier auch "rts" stehen). MagiCs Routine beendet die Interrupt-
+Behandlung schließlich mit "rte". Es ist wichtig, daß MagiC den
+Original-Interrupt-Frame bekommt, damit es feststellen kann, ob
+der Interrupt im Usermode oder im Supervisormode aufgetreten ist.
+MagiC verwendet seine eigene IOREC-Struktur für die Tastatur, die
+IORECs der anderen IOS-Geräte werden vom ROM übernommen.
+Sondertasten sollten so wie in MagicMac kodiert werden:
+; 0x49 ist Scancode für PgUp
+; 0x51 ist Scancode für PgDn
+; 0x4c ist Scancode für AltGr
+; 0x4f ist Scancode für Ende
+
+
+Die Tabelle der Gerätevektoren enthält die optimierten schnellen
+Original-Gerätevektoren mit der Registerübergabe. Die Routinen dürfen
+d0-d2/a0-a2 ändern und erhalten ihre Parameter in (a0), 2(a0) usw.
+Der erste Assembler-Befehl jeder Routine muß lauten: "lea 6(sp),a0"
+(auch für die Dummy-Funktionen der nicht vorhandenen Geräte).
+Gibt es mehrere serielle Schnittstellen, die per Bconmap() umgeschaltet
+werden können, ist hier die erste (primäre) eingetragen:
+
+struct {
+ void     *bconstat_dev0;          /* Prn */
+ void     *bconstat_dev1;          /* Ser-1 */
+ void     *bconstat_dev2;          /* Con */
+ void     *bconstat_dev3;          /* MIDI */
+ void     *bconstat_dev4;          /* IKBD */
+ void     *bconstat_dev5;          /* RAW */
+ void     *bconstat_dev6;
+ void     *bconstat_dev7;
+ void     *bconin_dev0;
+ void     *bconin_dev1;
+ void     *bconin_dev2;
+ void     *bconin_dev3;
+ void     *bconin_dev4;
+ void     *bconin_dev5;
+ void     *bconin_dev6;
+ void     *bconin_dev7;
+ void     *bcostat_dev0;
+ void     *bcostat_dev1;
+ void     *bcostat_dev2;
+ void     *bcostat_dev3;           /* Achtung: MIDI/IKBD tauschen! */
+ void     *bcostat_dev4;
+ void     *bcostat_dev5;
+ void     *bcostat_dev6;
+ void     *bcostat_dev7;
+ void     *bconout_dev0;
+ void     *bconout_dev1;
+ void     *bconout_dev2;
+ void     *bconout_dev3;
+ void     *bconout_dev4;
+ void     *bconout_dev5;
+ void     *bconout_dev6;
+ void     *bconsut_dev7;
+ }; DEVVECS;
+
+Die Tabelle der (X)BIOS-Funktionen beginnt mit einem WORD, das
+die Anzahl der Funktionen festlegt. Die erste Funktion hat den
+Opcode 0, die letzte den Opcode <len>-1.
+Die Routinen dürfen d0-d2/a0-a2 ändern und erhalten ihre Parameter
+in (a0), 2(a0) usw. Sie enden mit "rte":
+
+typedef struct {
+ WORD     len;                /* Länge der folgenden Tabelle */
+ void *   bios_fn;            /* Funktionszeiger */
+ /* ... weitere bios_fn ... */
+} MEMINFO;
+
+MagiC benötigt Informationen über das vorhandene RAM. Dazu
+gibt es eine Tabelle variabler Länge. Das erste Element ist
+ST-RAM, weitere sind TT-RAM. Gibt es nur ST-RAM, ist
+<len> == 1.
+Achtung!!! Das RAM, welches von dem Teil des Milan-ROM benötigt
+wird, den MagiC verwendet (Interrupt, VDI und (X)BIOS), darf
+natürlich _NICHT_ hier erscheinen, sonst wird es weggebügelt.
+Ich hoffe, daß weder (X)BIOS noch VDI des Milan ein Malloc()
+machen, sonst müssen wir uns etwas anderes ausdenken.
+
+typedef struct {
+ WORD     len;                /* Länge der folgenden Tabelle */
+ void *   memadr;
+ ULONG    memlen;
+ /* ... weitere memadr/memlen-Paare ... */
+} MEMINFO;

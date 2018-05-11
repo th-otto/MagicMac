@@ -1,5 +1,5 @@
 Andreas Kromke
-2018-05-02
+2018-05-11
 
 
 AES/
@@ -22,3 +22,7 @@ ALLG
 
 INC
 	common definitions (include files)
+
+XTERNSION/
+	HARDCOPY		more or less useless hardcopy function, not included in MagiC
+					obviously mainly disassembled from TOS

@@ -1,0 +1,155 @@
+MagiC Milan 6.10
+================
+
+Andreas Kromke
+31.3.99,7.4.99,14.4.99,26.4.99
+
+Im Gegensatz zu den Versionen für Atari, Hades und PC enthalten die 
+Versionen für Mac und Milan nur ein rudimentäres (X)BIOS und 
+überlassen die Hardware-spezifischen Funktionen dem MacOS bzw. dem 
+Milan-ROM. Freundlicherweise hat der Entwickler des Milan-ROM dieses 
+so modifiziert, daß wir Adreßkonflikte zwischen ROM und MagiC 
+vermeiden konnten und außerdem alle speziellen Fähigkeiten des Milan 
+(gegenwärtige und auch zukünftige) auch unter MagiC zur Verfügung 
+stehen. Wenn also z.B. weitere serielle Schnittstellen eingebaut 
+werden, werden diese von MagiC automatisch unterstützt. Das gilt auch 
+für spezifische XBIOS-Aufrufe, die automatisch im ROM landen, wenn 
+sie von MagiC nicht behandelt werden.
+
+
+ACHTUNG:
+
+	Es wird ein neues TOS.IMG (möglicherweise auch ein neuer 	
+	Bootblock) für das Flash-ROM des Milan benötigt, und zwar 
+	mindestens die Version vom 13.4.99. Bitte wendet Euch aus 
+	lizenzrechtlichen Gründen direkt an Michael Schwingen 
+	(rincewind@discworld.dascon.de).
+
+Installation:
+
+	Eine normale MagiC 6.10 Installation durchführen. Aber jetzt auf 
+	keinen Fall booten, sondern AUTO/MAGXBOOT.PRG durch die Milan-
+	Version ersetzen und MMILAN.RAM in das Wurzelverzeichnis legen 
+	(MAGIC.RAM kann dort gelöscht werden).
+	Sicherheitshalber MGNOTICE.APP aus /GEMSYS/MAGIC/START entfernen.
+	Sicherheitshalber eine /AUTO/AUTOEXEC.BAT erstellen und dort den 
+	Low-Level-VDI-Treiber des MILAN, dann NVDI eintragen.
+
+Einschränkungen:
+
+	Das Anzeigen des Boot-Bildes funktioniert nicht, da die 
+	LOAD_IMG.SLB von den Behnes ein mächtigeres VDI (mit EdDI-
+	Befehlen) benötigt.
+	Viele Programme funktionieren nicht ohne NVDI, darunter MGEDIT 
+	und MGNOTICE, da das ROM-VDI zu "schwach" ist.
+	Ctrl-Alt-Del führt einen Warmstart des ROM-TOS aus, nicht von 
+	MagiC.
+	Typ und Anzahl der in u:/dev eingetragenen Geräte entsprechen 
+	nicht unbedingt der Realität. Das ist aber bei MagiCMac nicht 
+	anders (z.B. MIDI Gerätedatei).
+	Statt des Backdrop-Zeichens enthält das ROM-VDI, das von MagiC 
+	benutzt wird, noch den "Pfeifenkopf". Bei Verwendung des neuen 
+	Fensterrahmen-Managers wird dieses Zeichen aber eh nicht mehr 
+	benötigt, weil es durch ein Icon ersetzt wurde.
+	Hintergrund-DMA wird nicht unterstützt, was bei IDE-Platten 
+	möglicherweise aber auch nicht so aufregend wäre.
+	Der Auflösungswechsel über CHGRES.PRG (Menüeintrag 
+	"Optionen/Auflösung wechseln..." funktioniert nicht. Daher 
+	sollte immer Gerät 1 in MAGX.INF eingetragen sein und die 
+	Auswahl beim Booten durch den Low-Level-VDI-Treiber des MILAN 
+	erfolgen.
+	Die Ausgabe von Zeichen auf den Parallelanschluß wird erst dann 
+	funktionieren, wenn das Milan-ROM eine entsprechende Routine zur 
+	Verfügung stellt. Die aktuelle ROM-Version liefert 
+	lediglich stets eine '0' für "kein Zeichen ausgegeben".
+
+Fehler:
+
+	Ctrl-Alt-Del funktioniert manchmal nicht richtig, leider kann 
+	ich mir keine Ursache dafür vorstellen. MagiC sollte daher per 
+	Menübefehl "Optionen/ausschalten" beendet werden.
+	Möglicherweise gibt es noch Ärger mit sogenannten "Packages", 
+	die z.B. SCSI-Treiber enthalten.
+
+
+
+Chronologische Liste der Änderungen (engl. "history")
+=====================================================
+
+MagiC-BIOS-Datum 29.3.99
+------------------------
+
+Dies ist die erste Version, die so weit lauffähig ist, daß ich sie 
+zum Test freigeben kann.
+ Frohe Ostern!
+
+MagiC-BIOS-Datum 7.4.99
+-----------------------
+
+- Ich habe die Tasten links oben (unter Esc) und rechts neben dem 'Ä' 
+  so umbelegt, daß sie der Aufschrift (MF-2 Layout) entsprechen und 
+  die gleiche Belegung wie im ROM haben. Wer ein anderes Tastatur-
+  Layout (KEYTABLS.SYS) verwendet, muß die Datei entsprechend ändern.
+- Bei Michael produzierte die letzte Version einen Fehler beim 
+  Booten. Die einzige wesentliche Änderung gegenüber der Vorversion 
+  war der Wert, der in der aktuellen Version bei Datei-Offset $162 
+  liegt. Der Wert dort ist zur Zeit $00002000. Wenn der Fehler wieder 
+  auftritt, versucht bitte, den Wert zu erhöhen (auf $00004000 oder 
+  gleich $00010000). Bitte teilt mir mit, welcher Wert funktioniert.
+- Der Uhrzeit-Fehler tritt bei mir auch mit dem neuen TOS vom 2.4. 
+  noch auf. Die AltGr-Taste funktioniert mit dieser TOS-Version.
+- Offenbar aktiviert MagiC den CPU-Cache noch nicht vollständig. 
+  Daher sollte cache040.cpx installiert werden (gehört zum Milan-TOS).
+
+MagiC-BIOS-Datum 10.4.99
+------------------------
+
+- Offenbar ist die Uhr doch OK, ich konnte den Fehler nicht reproduzieren.
+- MagiC erwartet von den Tasten Circonflex/Grad und Doppelkreuz/Grave 
+  den Scancode, der auch von MagiCMac verwendet wird. Offenbar sind 
+  im Milan-BIOS aber die beiden Tasten gegenüber MagiCMac vertauscht, 
+  daher erzeugen sie das falsche Zeichen.
+- Unmittelbar vor dem Start des AES schaltet das BIOS jetzt den CPU-Cache
+  ein, und zwar Daten- und Befehlscache.
+
+MagiC-BIOS-Datum 14.4.99
+------------------------
+
+- Achtung: Neues ROM benötigt!
+- Bei Busfehlern usw. wird jetzt die ROM-interne Routine zur Ausgabe der
+  Register auf dem Bildschirm aufgerufen.
+- Das Anzeigen der Startbilds wird komplett übersprungen, wenn kein EdDI-
+  Cookie angelegt ist. Damit stürzt MagicMilan beim Booten nicht mehr ab,
+  wenn die Default-"MAGX.INF" verwendet wird.
+
+MagiC-BIOS-Datum 20.4.99
+------------------------
+
+- Der magische Einfluß des Wertes von $00002000 (siehe 7.4.99) hat 
+  sich endlich geklärt. Ich habe den Fehler korrigiert, und der 
+  künstlich eingebaute Offset existiert jetzt nicht mehr.
+- Ich habe noch einen (aber vermutlich harmlosen) Fehler korrigiert, 
+  den der Linker (!) verursacht hat, der nämlich keinen Fehler bei 
+  einer fehlenden globalen Variablen meldet.
+
+MagiC-BIOS-Datum 22.4.99
+------------------------
+
+- Endlich geht auch Ctrl-Alt-Del. Die Tastaturbehandlungsroutine, die
+  auch für Atari und Mac verwendet wird, hatte einen Fehler, der erst
+  auf dem Milan zutage getreten war.
+
+26.4.99 (kein neues BIOS-Datum)
+-------
+
+- MagiC macht jetzt beim Pexec() mit Modus 4 oder 6 ein "flush cpu cache",
+  wie es MiNT auch macht. Bisher wurde der Cache nur beim Laden einer
+  Programmdatei (z.B. Modus 3) ge-flush-t.
+
+MagiC-BIOS-Datum 30.6.99
+------------------------
+
+- MagiC überläßt Setexc() dem ROM (Bios-Aufruf 5), damit die Interrupts für
+  die seriellen Schnittstellen richtig initialisiert werden.
+- Unterstützung der LED (neues ROM erforderlich).
+

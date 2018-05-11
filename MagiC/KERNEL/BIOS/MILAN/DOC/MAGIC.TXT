@@ -1,0 +1,73 @@
+Anmerkungen zur ersten Release-Version von MagiC Milan (6.10)
+=============================================================
+
+Andreas Kromke
+2.5.1999
+8.7.99
+
+Im Gegensatz zu den MagiC-Versionen für Atari, Hades und PC enthält 
+die vorliegende Version für den Milan kein eigenes VDI und nur ein 
+rudimentäres (X)BIOS. Alle Hardware-spezifischen Funktionen werden 
+dem TOS im Milan-ROM überlassen.
+
+Dieses Konzept stellt sicher, daß alle speziellen Fähigkeiten des 
+Milan (gegenwärtige und auch zukünftige) auch unter MagiC zur 
+Verfügung stehen. Wenn also z.B. weitere serielle Schnittstellen 
+eingebaut werden, werden diese von MagiC automatisch unterstützt. Das 
+gilt auch für spezifische XBIOS-Aufrufe, die automatisch vom ROM 
+ausgeführt werden, wenn sie von MagiC nicht behandelt werden.
+
+
+ACHTUNG:
+
+     Es wird ein neues TOS.IMG (möglicherweise auch ein neuer 
+     Bootblock) für das Flash-ROM des Milan benötigt, und zwar 
+     mindestens die Version vom 13.4.99. Ein neues ROM-"Image" 
+     ist erhältlich bei ???.
+
+     Für die vollständige Funktionalität von MagiC sollte NVDI 
+     installiert sein.
+
+     Für funktionierende serielle Schnittstellen und die CapsLock-LED 
+     wird mindestens das Milan-TOS vom 8.7.99 benötigt.
+
+Hauptsächlich wegen des nicht integrierten MagiC-VDI ergeben sich 
+folgende Einschränkungen gegenüber den MagiC-Versionen für Atari, PC 
+und Macintosh:
+
+-    Das Anzeigen des Boot-Bildes wird ignoriert. Die verwendete 
+     Bibliothek (LOAD_IMG.SLB) benötigt ein mächtigeres VDI, als es 
+     zum Zeitpunkt des Bootens im ROM zu Verfügung steht.
+
+-    Viele Programme (darunter MGEDIT und MGNOTICE) benötigen NVDI, 
+     da das ROM-VDI nicht alle benötigten Funktionalitäten zur 
+     Verfügung stellt.
+
+-    Ctrl-Alt-Del führt einen Warmstart des ROM-TOS aus, nicht von 
+     MagiC.
+
+-    Typ und Anzahl der in u:/dev eingetragenen Geräte entsprechen 
+     nicht unbedingt der Realität. Das ist aber bei MagiCMac nicht 
+     anders (z.B. MIDI Gerätedatei). Dieses Manko wird möglicherweise 
+     in einer späteren Version noch behoben werden.
+
+-    Statt des Backdrop-Zeichens enthält der Zeichensatz des ROM-VDI, 
+     das von MagiC benutzt wird, noch den "Pfeifenkopf". Bei 
+     Verwendung des neuen Fensterrahmen-Managers wird dieses Zeichen 
+     aber eh nicht mehr benötigt, weil es durch ein Icon ersetzt 
+     wurde. Die Unschönheit ist also nur in S/W sichtbar.
+
+-    Hintergrund-DMA wird nicht unterstützt, was bei IDE-Platten 
+     möglicherweise aber auch nicht so aufregend wäre.
+
+-    Der Auflösungswechsel über CHGRES.PRG (Menüeintrag 
+     "Optionen/Auflösung wechseln..." funktioniert leider nicht. 
+     Daher sollte immer Gerät 1 in MAGX.INF eingetragen sein und die 
+     Auswahl beim Booten durch den Low-Level-VDI-Treiber des MILAN 
+     erfolgen.
+
+Chronologische Änderungsliste:
+
+Die MagiC-Version vom 1.7.99 (BIOS-Datum) ermöglicht jetzt dem Milan-
+ROM eine korrekte Behandlung der seriellen Schnittstellen. Weiterhin 
+steuert MagiC nun die LED für den CapsLock-Zustand an.

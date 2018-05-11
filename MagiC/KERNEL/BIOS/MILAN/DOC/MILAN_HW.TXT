@@ -1,0 +1,103 @@
+$Id: milan_hw.txt,v 1.7 1998/11/03 12:26:07 rincewind Exp $
+
+Milan Hardwaredoku
+
+Memory layout:
+
+$00000000 - _phystop	ST-RAM
+$00E00000 - $00E7FFFF	TOS
+$01000000 - _ramtop	TT-RAM
+
+$40000000 - $7FFFFFFF	PCI memory, overlayed with ISA memory[1]
+$80000000 - $BFFFFFFF	PCI I/O, overlayed with ISA I/O[1]
+$C0000000 - $C000DFFF	PCI/ISA I/O using big endian addressing
+$FFFF8000 - $FFFFBFFF	used by ST hardware emulation
+$FFFFC000 - $FFFFDFFF	Milan onboard I/O:
+$FFFFC000		memory controller
+$FFFFC103+4*reg_no	MFP
+$FFFFC200		PLX 9080
+$FFFFE000 - $FFFFFFFF	used by ST hardware emulation
+
+[1] PCI memory and IO are subtractively decoded, ie. any access that is not
+claimed by a PCI device is forwarded to the ISA bus.
+
+
+ISA IO:
+
+byte read  adr: read from $C0000000+adr or read from $80000000+(adr^3)
+byte write adr: write to  $C0000000+adr or write to  $80000000+(adr^3)
+('adr' is an address on the ISA bus, eg. $278 for parallel port)
+
+word read  adr: read from $80000000+(adr^2) or read from $C0000000+adr [2]
+word write adr: write to  $80000000+(adr^2) or write to  $C0000000+adr [2]
+
+[2] When using $C0000000 for WORD I/O, the data read/written needs to be
+swapped (ror.w #8,d0)
+
+Used ISA addresses:
+
+$20  ISA interrupt controller
+$60  Keyboard
+$A0  ISA interrupt controller
+$15C PC87308 SuperIO configuration registers
+$1F0 primary IDE interface
+$170 secondary IDE interface
+$278 Parallel port
+$2A0 serial port 3 (optional)
+$2A8 serial port 4 (optional)
+$2F8 serial port 2
+$3F0 Floppy disk controller
+$3F8 serial port 1
+
+ISA Interrupts:
+ISA Interrupt vectors are located at $140+4*isa_int_vector.
+You must use Setexc() to set the vector, because otherwise the interrupt is
+not enabled in the interrupt controller. Restore the old vector using
+Setexc() when uninstalling your driver.
+
+Original ST MFP GPIO-Port:
+BIT  DIR
+ 0   IN	  Centronics BUSY
+ 1   IN   MFP serial port DCD
+ 2   IN   MFP serial port CTS
+ 3   IN   GPU DONE from blitter
+ 4   IN   MIDI/keyboard ACIA interrupt
+ 5   IN   FDC/ACSI interrupt
+ 6   IN   MFP serial port RI
+ 7   IN   monochrome detect signal
+
+MILAN MFP GPIO-Port:
+BIT  DIR
+ 0   OUT  * MFP serial port RTS
+ 1   IN     MFP serial port DCD
+ 2   IN     MFP serial port CTS
+ 3   OUT  * MFP serial port DTR
+ 4   IN   * MFP serial port DSR
+ 5   IN   * not used
+ 6   IN     MFP serial port RI
+ 7   IN   * KEYLOCK switch
+
+ISA Interrupts
+ 1	keyboard
+ 3	87308 serial port 2
+ 4	87308 serial port 1
+ 5
+ 6
+ 7	printer port
+ 8
+ 9
+10
+11
+12	PS/2 mouse port
+13
+14	PCI IDE primary channel
+15	PCI IDE secondary channel
+
+
+ISA I/O functions:
+#define inb(port) (*(volatile UBYTE *)(0xC0000000L + (port))))
+#define inw(port) (*(volatile UWORD *)(0x80000000L + (port)^2)))
+
+#define outb(data, port) *(volatile UBYTE *)(0xC0000000L + (port)) = data;
+#define outw(data, port) *(volatile UWORD *)(0x80000000L + (port)^2) = data;
+

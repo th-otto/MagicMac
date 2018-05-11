@@ -1,0 +1,37 @@
+Aufbau des MagiC-BIOS
+---------------------
+
+- CPU initialisieren
+  (sr, Cache, PMMU-Transparent-Translation-Register,
+  PMMU-tc, vbr)
+- Diagnostic-Cartridge starten
+- BIOS-Variablen löschen
+  ("endofvars" einschl. AES unterhalb Adresse 0x5000)
+- CPU-Typ ermitteln
+- Cookies installieren
+- Floppies deselektieren
+- Video initialisieren (noch nicht VDI)
+- Vektoren für hdv_init,hdv_boot,hdv_bpb,
+  hdv_rw,hdv_mediach (alles Floppy) initialisieren
+- FRB installieren
+- Semaphoren für Bausteine (DMA,NCR) installieren
+- Funktionstabelle für Hintergrund-DMA initialisieren
+- Sprungvektoren für "pling" und "klick" installieren
+- ggf. Emulationsroutine für "move sr,cc" installieren
+- für den 68060 diverse FPU-Exceptions installieren
+- Vektoren für BIOS, XBIOS und VBL installieren
+- LineA installieren
+- Device-Vektoren (BIOS) installieren
+- MFP/IKBD initialisieren
+- Auflösung und Palette setzen
+- VT52 initialisieren
+- Interrupts zulassen
+- DOS initialisieren
+- PMMU (-Tabelle) initialisieren
+- CPU-Cache einschalten
+- DSP initialisieren (Falcon)
+- Test auf SCSI-RAM
+- Booten von Floppy
+- Booten von Disk
+- VDI initialisieren
+- AUTO-Ordner usw.

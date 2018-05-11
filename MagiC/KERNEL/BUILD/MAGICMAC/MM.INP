@@ -2,7 +2,7 @@ ger\mac_bios
 ..\allg\read_inf
 ..\vdi\math
 ..\allg\std
-..\ser_beta
+..\ser_my
 ..\dos\ger\magidos ..\dos\ger\malloc ..\dos\xfs_vdos.o ..\dos\vfat_s.o ..\dos\vfat.o ..\dos\dfs_u.o
 ..\dos\dev_bios.o ..\dos\dev_pipe.o ..\dos\dev_mem.o ..\dos\dfs_fat.o
 macxfs.o

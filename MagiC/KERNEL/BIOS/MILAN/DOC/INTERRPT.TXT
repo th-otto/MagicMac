@@ -1,0 +1,66 @@
+BIOS:
+
+Die BIOS-Routinen düfen
+Interrupt-Routinen:
+
+
+MagiC benötigt drei Interrupt-Routinen:
+
+- 200 Hz
+- Tastatur
+- Maus
+
+Dabei sind auf dem Atari die Interruptroutinen von Tastatur
+und Maus identisch.
+
+vorgeschlagene Vorgehensweise:
+
+MagiC muß selbst im Interrupt hängen. Damit HW-spezifische
+Aktionen durchgeführt werden können, ruft die MagiC-
+Interruptroutine Routinen aus dem ROM auf.
+
+
+Ablauf bei 200 Hz:
+------------------
+
+- Interrupt springt in MagiC. MagiC inkrementiert "_hz_200".
+- MagiC ruft ROM-Routine auf. Diese Routine darf kein
+  Register verändern.
+  Auf dem Atari wird hier nichts getan, denn dort wird nur jeder
+  4-te Interrupt verwendet. Ggf. können wir das auf dem Milan
+  also auch weglassen.
+- MagiC prüft nun, ob 4 Interrupts vergangen sind (50 Hz).
+  Falls ja:
+  - MagiC rettet die Register d0-d7/a0-a6
+  - MagiC ruft wieder eine ROM-Routine auf. Auf dem Atari wird
+    hier der Sound verarbeitet und der IPL von 6 auf 5
+    geschaltet (eori.w #$300,sr).
+  - MagiC verabeitet die Tastatur-Wiederholung.
+  - MagiC ruft die User-Interruptroutinen auf.
+  - MagiC holt die Register zurück.
+- Nun wird das ROM aufgerufen, um den Interrupt abzuschließen.
+  Auf dem Atari wird hier das Interrupt-Service-Bit von Timer C
+  gelöscht. Diese Routine darf kein Register verändern.
+- MagiC beendet den Interrupt schließlich mit "rte"
+
+D.h. ich brauche drei ROM-Routinen:
+
+a) ROM_200HZ (optional)
+b) ROM_50HZ
+c) ROM_END200HZ
+
+Von diesen darf nur b) Register verändern.
+Außerdem wäre es sinnvoll, eine ROM-Routine nur Installation des
+200Hz-Interrupts zu haben. MagiC übergibt dieser dann die Adresse
+seiner eigenen Routine.
+
+Ablauf bei Tastaturinterrupt
+----------------------------
+
+- Interrupt springt in MagiC.
+  MagiC sichert die d0-d3 und a0-a3.
+- MagiC ruft ROM-Routine auf. Diese Routine darf die o.g. Register
+  verändern. Auf dem Atari wird hier die MIDI-Behandlung gemacht.
+- MagiC erhält Tastencode (Make/Break) und macht Tastaturbehandlung
+- MagiC beendet den Interrupt
+
