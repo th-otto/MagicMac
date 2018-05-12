@@ -1,19 +1,16 @@
 /*********************************************************************
 *
-* Mag!X 3.00
-* ==========
+* MagiC 3/4/5
+* ===========
 *
 * Strukturen fÅr die Einbindung eines XFS.
-* Die korrekten Prototypen fÅr die Implementation eines XFS
-* in 'C' folgen, so wie die 'C'- Schnittstelle fertig ist.
+* FÅr die Implementation eines XFS in 'C' sind die korrespondierenden
+* CDECL_xxx Strukturen fÅr MX_XFS und MX_DEV definiert.
+* Dies ermîglicht die Verwendung eines beliebigen Compilers.
 *
-* Da z.T. mehrere Register fÅr RÅckgabewerte verwendet werden und
-* auûerdem Zeiger in Datenregistern Åbergeben werden, ist eine
-* Schnittstelle als _cdecl geplant, d.h. sÑmtliche Parameter werden
-* auf dem Stapel Åbergeben, dies ermîglicht die Verwendung eines
-* beliebigen Compilers.
+* Es wird <portab.h> benîtigt.
 *
-* Version: 3.10.94
+* Version: 10.5.97
 *
 *********************************************************************/
 
@@ -25,7 +22,7 @@ typedef struct {
      void (*fast_clrmem)      ( void *von, void *bis );
      char (*toupper)          ( char c );
      void (*_sprintf)         ( char *dest, char *source, LONG *p );
-     void *act_pd;
+     PD	**act_pd;
      APPL *act_appl;
      APPL *keyb_app;
      WORD *pe_slice;
@@ -45,7 +42,26 @@ typedef struct {
      void int_mfree           ( void *memblk );
      void resv_intmem         ( void *mem, LONG bytes );
      LONG diskchange          ( WORD drv );
+/* Ab Kernelversion 1: */
+     LONG DMD_rdevinit		( struct _mx_dmd *dmd );
+/* Ab Kernelversion 2: */
+     LONG proc_info			( WORD code, PD *pd );
+/* Ab Kernelversion 4: */
+	LONG mxalloc			( LONG amount, WORD mode, PD *pd );
+	LONG mfree			( void *block );
+	LONG mshrink			( LONG newlen, void *block );
 } MX_KERNEL;
+
+
+typedef struct {
+	WORD	version;
+	LONG	_dir_srch;
+	LONG	reopen_FD;
+	LONG	close_DD;
+	LONG	match_8_3;
+	LONG	conv_8_3;
+	LONG	init_DTA;
+} MX_DFSKERNEL;
 
 
 typedef struct _mx_dev {
@@ -60,6 +76,21 @@ typedef struct _mx_dev {
      long      (*dev_getline)();
      long      (*dev_putc)();
 } MX_DEV;
+
+typedef struct _cdecl_mx_dev {
+     LONG cdecl     (*dev_close)( struct _mx_fd *f );
+     LONG cdecl	(*dev_read)( struct _mx_fd *f, LONG count, void *buf );
+     LONG cdecl     (*dev_write)( struct _mx_fd *f, LONG count, void *buf );
+     LONG cdecl     (*dev_stat)( struct _mx_fd *f, LONG *unselect,
+							WORD rwflag, LONG apcode );
+     LONG cdecl     (*dev_seek)( struct _mx_fd *f, LONG where, WORD mode );
+     LONG cdecl     (*dev_datime)( struct _mx_fd *f, WORD d[2], WORD set );
+     LONG cdecl     (*dev_ioctl)( struct _mx_fd *f, WORD cmd, void *buf );
+     LONG cdecl	(*dev_getc)( struct _mx_fd *f, WORD mode );
+     LONG cdecl     (*dev_getline)( struct _mx_fd *f, char *buf,
+     						LONG size, WORD mode );
+     LONG cdecl     (*dev_putc)( struct _mx_fd *f, WORD mode, LONG val );
+} CDECL_MX_DEV;
 
 
 typedef struct _mx_dd {
@@ -84,7 +115,7 @@ typedef struct _mx_dhd {
 typedef struct _mx_dta {
      char      dta_res1[20];
      char      dta_drive;
-     char      dta_attribute;
+     char      dta_attrib;
      WORD      dta_time;
      WORD      dta_date;
      ULONG     dta_len;
@@ -189,6 +220,56 @@ typedef struct _mx_xfs {
      long      (*xfs_dcntl)();
 } MX_XFS;
 
+typedef struct _cdecl_mx_xfs {
+     char			xfs_name[8];
+     struct _cdecl_mx_xfs *xfs_next;
+     ULONG		xfs_flags;
+     LONG cdecl	(*xfs_init)( void );
+     void cdecl     (*xfs_sync)( MX_DMD *dmd );
+     void	cdecl	(*xfs_pterm)( MX_DMD *dmd, PD *pd );
+     LONG cdecl	(*xfs_garbcoll)( MX_DMD *dmd );
+     void cdecl	(*xfs_freeDD)( MX_DD *dd );
+     LONG cdecl     (*xfs_drv_open)( MX_DMD *dmd );
+     LONG cdecl     (*xfs_drv_close)( MX_DMD *dmd, WORD mode );
+     MX_DD * cdecl  (*xfs_path2DD)( MX_DD *dd, char *path, WORD mode,
+     						char **restp, MX_DD **symlink_dd,
+     						void **symlink );
+     LONG cdecl     (*xfs_sfirst)( MX_DD *dd, char *name, DTA *dta,
+     						WORD attrib, void **symlink );
+     LONG cdecl     (*xfs_snext)( DTA *dta, MX_DMD *dmd, void **symlink );
+     MX_FD * cdecl  (*xfs_fopen)( MX_DD *dd, char *name, WORD omode,
+     						WORD attrib, void **symlink );
+     LONG cdecl     (*xfs_fdelete)( MX_DD *dd, char *name );
+     LONG cdecl     (*xfs_link)( MX_DD *altdd, MX_DD *neudd,
+							char *altname, char *neuname,
+							WORD flag );
+     LONG cdecl     (*xfs_xattr)( MX_DD *dd, char *name, XATTR *xa,
+							WORD mode );
+     LONG cdecl     (*xfs_attrib)( MX_DD *dd, char *name, WORD mode,
+							WORD attrib );
+     LONG cdecl     (*xfs_chown)( MX_DD *dd, char *name, WORD uid,
+							WORD gid );
+     LONG cdecl     (*xfs_chmod)( MX_DD *dd, char *name, WORD mode );
+     LONG cdecl     (*xfs_dcreate)( MX_DD *dd , char *name );
+     LONG cdecl     (*xfs_ddelete)( MX_DD *dd );
+     LONG cdecl     (*xfs_DD2name)( MX_DD *dd, char *buf, WORD buflen );
+     MX_DHD * cdecl (*xfs_dopendir)( MX_DD *d, WORD tosflag );
+     LONG cdecl     (*xfs_dreaddir)( MX_DHD *dh, WORD len, char *buf,
+							XATTR *xattr, LONG *xr );
+     LONG cdecl     (*xfs_drewinddir)( MX_DHD *dhd );
+     LONG cdecl     (*xfs_dclosedir)( MX_DHD *dhd );
+     LONG cdecl     (*xfs_dpathconf)( MX_DD *dd, WORD which );
+     LONG cdecl     (*xfs_dfree)( MX_DD *dd, LONG buf[4] );
+     LONG cdecl     (*xfs_wlabel)( MX_DD *dd, char *name );
+     LONG cdecl     (*xfs_rlabel)( MX_DD *dd, char *name, char *buf,
+     						WORD buflen );
+     LONG cdecl     (*xfs_symlink)( MX_DD *dd, char *name, char *to);
+     LONG cdecl     (*xfs_readlink)( MX_DD *dd, char *name, char *buf,
+     						WORD buflen );
+     LONG cdecl     (*xfs_dcntl)( MX_DD *dd, char *name, WORD cmd,
+     						LONG arg );
+} CDECL_MX_XFS;
+
 /* Dcntl(KER_DOSLIMITS) -> Zeiger auf Zeiger auf: */
 
 typedef struct {
@@ -256,12 +337,13 @@ typedef struct {
 /* unterstÅtzte Dcntl- Modi (Mag!X- spezifisch!) */
 #define   KER_GETINFO    0x0100
 #define   KER_DOSLIMITS  0x0101
-#define   KER_INTMAVAIL  0x0102
 #define   KER_INSTXFS    0x0200
-#define   KER_SETWBACK   0x0300
 #define   DFS_GETINFO    0x1100
 #define   DFS_INSTDFS    0x1200
 #define   DEV_M_INSTALL  0xcd00
+#ifndef CDROMEJECT
+#define	CDROMEJECT     0x4309	/* Kernel: Medium auswerfen */
+#endif
 
 /* unterstÅtzte Dcntl- Modi */
 /* # define FUTIME       0x4603 */

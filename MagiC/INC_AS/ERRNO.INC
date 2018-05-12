@@ -50,6 +50,7 @@ EXCPT          EQU  -69       ; -$45    KAOS: 68000- Exception
 
 * MiNT- Fehler:
 
+ELOOP          EQU  -80       ;         Symlink-Verschachtelung zu hoch
 EMOUNT         EQU  -200      ;         liefert path2DD bei root/..
 
 * Mag!X- Fehler
