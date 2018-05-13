@@ -1,0 +1,17 @@
+[Einfgung unter Beschreibung des BACKDROP-Elementes in C03]
+
+Bedienung von Hintergrundfenstern
+---------------------------------
+In einem fensterbasiertem Multitaskingsystem hat es sich als sehr praktisch
+erwiesen, wenn auch im Hintergrund liegende Fenster bedienbar sind. Sie
+ersparen sich damit das u.U. zeitraubendes Umschalten zwischen den Fenstern,
+da alle Fensterelemente (Fuller, Sizer, Scrollpfeile, etc.) bedienbar sind.
+Sie k”nnen die Objekte _innerhalb_ eines im Hintergrund liegenden Fensters
+ansprechen, indem Sie die rechte Maustaste gedrckt halten und anschlieend
+wie gewohnt mit der linken Maustaste das gewnschte Objekt selektieren.
+
+Einige „ltere und nicht ganz sauber geschriebene Programme haben jedoch
+Schwierigkeiten mit der Bearbeitung im Hintergrund liegender Fenster (meist
+bereitet das Scrollen Probleme). In diesem Fall sollten Sie zun„chst das
+Fenster nach vorn klicken und erst dann das jeweilige Fensterelement
+bet„tigen.

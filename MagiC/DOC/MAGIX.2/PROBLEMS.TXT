@@ -1,0 +1,10 @@
+ù Bei dem Programm Adimens gibt es offenbar Probleme mit der Dateiauswahlbox,
+  wenn der Benutzerspeicher mit LIMITMEM begrenzt wurde.
+  Grund hierfr ist die Tatsache, da der durch die Dateiauswahl ben”tigte
+  Speicher vom Gesamtkontingent der Applikation abgezogen wird. Folglich
+  kann es vorkommen, da die Dateiauswahlbox nicht ge”ffnet werden kann,
+  obwohl das System noch gengend Speicher hat.
+ù Der Assembler MAS aus dem Turbo-C Paket l„uft nicht korrekt, wenn er im
+  Fenster unter VT52.PRG l„uft. Ggf. mu VT52.PRG deaktiviert werden. Mit
+  dem neueren PASM von Pure-C gibt es keine Probleme
+

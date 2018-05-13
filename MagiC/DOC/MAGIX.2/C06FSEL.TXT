@@ -1,0 +1,55 @@
+6. Die Dateiauswahlbox
+----------------------
+
+Die Dateiauswahlbox ("file selector") von Mag!X sieht auf den ersten 
+Blick aus wie die von TOS 1.4, wurde jedoch v”llig neu entwickelt. Auch 
+hier stehen die im vorhergehenden Kapitel erw„hnten erweiterten 
+Dialogfunktionen zur Verfgung; d.h. die Dateiauswahl ist ber die Tastatur 
+bedienbar und auch verschiebbar.
+Gegenber TOS 1.4 wurden folgende Erweiterungen vorgenommen:
+
+- Die Dialogbox ist verschiebbar, wenn gengend Speicher frei ist.
+  
+- Ein Doppelklick auf das Schliefeld des "Fensters" schaltet direkt 
+  aufs Wurzelverzeichnis zurck.
+  
+- Wie in GEM 2.x kann das Dateimuster mehrteilig sein, etwa 
+  "*.DOC,*.BAK" oder "*.PRG,*.APP,*.TOS" usw.
+  
+- Unvollst„ndige Pfade werden komplettiert. šbergeben etwa Programme 
+  einfach nur "*.doc" oder "\*.gfa", so fgt Mag!X ggf. Laufwerknamen und 
+  aktuellen Pfad dazu. Sogar Rudimente wie "\" oder gar leere Pfade (!) 
+  werden automatisch mit Laufwerk, Pfad und Dateimuster ("*.*") 
+  komplettiert.
+  Bei ungltigem Pfad (etwa nach einem Diskwechsel existiert der 
+  Ordner nicht mehr) wird automatisch aufs Wurzelverzeichnis  zurck-
+  geschaltet.
+  
+- Ein Doppelklick auf das Dateimuster (hier: "*.PRG,*.APP") schaltet 
+  auf "*.*" um.
+  
+- Ein Doppelklick auf einen Laufwerkbutton zeigt die Anzahl der freien 
+  und belegten Bytes fr dieses Laufwerk an.
+  
+- Befindet sich der Cursor bei Bet„tigung von [Return] in der Pfad- 
+  Eingabezeile, so wird der Dialog nicht beendet, sondern das 
+  Verzeichnis neu eingelesen. Bei TOS 1.4 funktioniert dies nur, wenn 
+  der Pfad ge„ndert wurde.
+  
+- Beim Wechsel von Laufwerk oder Pfad bleibt der eingegebene Dateiname 
+  erhalten, um die M”glichkeit zu geben, eine Datei unter demselben 
+  Namen, aber in einem anderen Pfad abzuspeichern.
+
+Die Dateiauswahl ist ber die Maus und folgende Tastenkombinationen 
+bedienbar:
+
+  CTRL-Cursor_hoch            Scrollbalken eine Position nach oben
+  CTRL-Cursor_runter          Scrollbalken eine Position nach unten
+  ALT-A                       Auf Laufwerk A: umschalten
+  ...
+  ALT-P                       Auf Laufwerk P: umschalten
+  ALT-Esc                     Verzeichnis nach Diskwechsel neu lesen
+  ALT-Backspace               Wie Schliefeld
+  Return                      OK
+  Undo                        Abbruch
+

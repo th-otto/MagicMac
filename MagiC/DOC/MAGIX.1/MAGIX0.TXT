@@ -1,0 +1,221 @@
+Andreas Kromke									Hannover, den 05.04.91
+Steinbruchstr. 17
+3000 Hannover 61
+
+
+
+Vorl„ufige Kurzanleitung fr MagiX V0.1X
+========================================
+
+
+1. Einleitung
+-------------
+
+Achtung: jede Anleitung fr KAOS 1.4.2 gilt auch fr MagiX. Daher sind hier
+         nur die weitergehenden Erweiterungen beschrieben.
+
+MagiX (Multi Application Graphics Interface) ist ein KAOS- kompatibles
+Multitasking- Betriebssystem fr den Atari ST und STe. Auf dem Mega STe l„uft
+MagiX ebenfalls, ohne jedoch bisher die neuen Hardware- F„higkeiten nutzen
+zu k”nnen, der TT will leider noch nicht.
+Jede nlichkeit des Namens mit einem Suppenwrfelhersteller ist unbeabsich-
+tigt und w„re, wenn berhaupt, rein zuf„llig.
+
+Obwohl MagiX ein „hnliches Erscheinungsbild wie KAOS (und damit wie TOS) hat,
+enth„lt es dennoch ein von Grund auf neues, multitaskingf„higes AES und ein
+neues DOS, das die Umschaltung der Prozesse untersttzt. Als Beispiel mag
+die Dateiauswahlbox dienen, die zwar ein „hnliches Aussehen wie die des
+TOS 1.4 hat, aber im Gegensatz zu dieser pixelgenau konstruiert ist, weniger
+Objekte besitzt und von einem v”llig neuen und anderen Programm gesteuert
+wird. Das VDI sind bisher nur fehlerkorrigiert und unterliegt dem Copyright
+von Atari. Das Desktop (MAGIDESK) ist neu geschrieben.
+
+Die Multitaskingf„higkeit geht dabei etwa so weit wie unter dem Multifinder
+des Macintosh, die Bedienung ist „hnlich. TOS- Programme laufen immer allein
+und lassen keine anderen Programme zu, d.h. die anderen Programme schlafen
+w„hrenddessen. Eine Umschaltung der Programme ist nur m”glich, wenn ein
+Programm AES- Aufrufe macht. Will man ein reines Rechenprogramm im Multi-
+tasking- Betrieb laufen lassen, mu man selbst ab und zu einen AES- Aufruf
+machen; falls man nicht auf Ereignisse wartet, empfiehlt sich der
+Aufruf von "_appl_yield", der auch unter TOS funktioniert (move.w #$c9,d0;
+trap #2). Dieser Aufruf „ndert nur d0/a0 und darf unter MagiX (nicht unter
+KAOS/TOS) auch im Supervisormodus aufgerufen werden.
+
+
+Accessories werden weiterhin untersttzt, sind jedoch unzeitgem„ und
+v”llig unn”tig. Am elegantesten ist ein Programm, das nur eine kurze
+Menleiste mit einem Eintrag hat, der den Programmnamen angibt. Dieses
+Programm kann beim Warmstart automatisch geladen werden und wird ber das
+Umschalt- Popup- Men aktiviert. Im Gegensatz zu einem ACC kann man es
+beliebig wieder entfernen oder auch sp„ter manuell nachladen.
+
+Die Versionen 0.xx von MagiX sind absolute Vorversionen, die noch nicht
+das endgltige Desktop bzw. noch das Atari VDI enthalten. Ein neues VDI
+ist in Arbeit.
+
+
+2. Installation
+---------------
+
+- KBOOTRAM.PRG in den AUTO- Ordner des Bootlaufwerks (als erstes PRG)
+- MAGIX_*.RAM auf das Wurzelverzeichnis des Bootlaufwerks kopieren.
+- MAGIX.INF in einen Editor laden, alle Zeilen durchgehen und nach eigenen
+  Anforderungen „ndern. Wichtig: Pfade fr ACCs,APPs,Scrap und Laufwerke.
+  Ggf. sollte der Ordner C:\GEMSYS\GEMSCRAP angelegt werden.
+  Wichtig: Nur DESKTOP.APP (von ABC-GEM 2.2) und KAOSDESK entsprechen der
+		 GEM 2.x- Konvention fr Defaulshells. Alle anderen alternativen
+		 Desktops (Gemini,Neodesk,Aida,Desa,...) sind ggf. als Autostart-
+		 Applikation anzumelden!
+- Das angepate MAGIX.INF auf das Wurzelverzeichnis des Bootlaufwerks
+  kopieren
+- Auf dem Bootlaufwerk einen Ordner GEMSYS\GEMDESK anlegen und dort hinein
+  MAGIDESK.APP, KAOSDESK.RSC und KDESKL.RSC kopieren. Man kann auch diese
+  Dateien weglassen und ohne Desktop arbeiten, dann erscheint statt des
+  Desktop nur eine Dateiauswahlbox.
+  Man kann die Dateien auch ins Wurzelverzeichnis kopieren, dies erh”ht
+  allerdings i.a. nicht die šbersicht.
+  Wenn ein alternatives Desktop angemeldet wurde (bzw. Gemini als Autostart),
+  wird MAGIDESK erst gar nicht geladen, ben”tigt also keinen Speicher. Daher
+  sollte man ruhig MAGIDESK immer auf dem Bootlaufwerk haben.
+  Nachdem MAGIDESK zum ersten Mal (d.h. nach Abarbeiten der Autostart-
+  Programme und wenn kein alternatives Desktop angemeldet ist) gestartet
+  wurde, h„ngt es sich fest ins System ein.
+- Reset bet„tigen (am besten Kaltstart)
+
+Achtung: DESKTOP.INF hat fr MagiX keine Bedeutung mehr.
+
+
+3. paralleles Laden von Programmen
+----------------------------------
+
+In der Menleiste an einer freien Stelle, etwa ganz links oben, mit der
+linken Maustaste klicken. Es erscheint ein Popup- Men wie beim Multifinder.
+"laden..." ruft die Dateiauswahl zum Programmladen auf.
+"aufr„umen" zeichnet den Bildschirm neu, falls Programme herumgemllt
+            haben.
+Die Menleisten und Hintergrund lassen sich umschalten, vor der men-
+besitzenden Hauptapplikation steht ein H„kchen.
+
+andere M”glichkeit:
+ Unter MAGIDESK bzw. KAOSDESK beim Programmstart die ALT- Taste gedrckt
+ halten.
+
+Applikationen werden entweder beim Neustart eines Programms (genauer: beim
+Anmelden der Menleiste), ber das Popup- Men oder durch Wechsel des aktiven
+Fensters umgeschaltet.
+Man kann etwa unter MAGIDESK auch Tempus im aktiven Fenster laufen lassen,
+dann landen Tastaturdaten im aktiven Fenster, wobei das Men und der
+Hintergrund etwa MAGIDESK geh”ren.
+
+Bis zu 15 Applikationen inkl. ACCs sind gleichzeitig zugelassen. Diese
+Beschr„nkung ist natrlich rein willkrlich, hat sich jedoch in der Praxis
+als ausreichend erwiesen; besonders auf meinem 520ST+.
+
+ACCs sind vollwertige Programme, ihre Fenster bleiben beim Verlassen oder
+Neustarten von Applikationen erhalten. Es gibt kein AC_CLOSE mehr!!! ACCs
+drfen selbstverst„ndlich Speicher anfordern, Dateien lesen, Standardpfade
+ver„ndern, Menleisten und Desktophintergrund anmelden und natrlich auch
+Programme starten. ACCs drfen sich jedoch nicht beenden.
+
+Sollten Programme beim parallelen Starten versagen (Dialogbox und Speicher
+weg, keine Reaktion, sonstige Merkwrdigkeiten), so kann man fast alle
+Sorgenkinder trotzdem im "single tasking"- Betrieb zum Laufen bringen; dazu
+sind alle Applikationen auer dem Desktop bzw. MAGIDESK zu entfernen, alle
+ACC- Fenster zu schlieen und das Programm ganz normal mit Doppelklick zu
+starten.
+Alle diese kritischen Programme haben eindeutig Programmierfehler, die auch
+unter besonderen Umst„nden im normalen TOS zutage treten k”nnen. MagiX
+enth„lt besondere "Klauseln", um im "single tasking" Modus diese Fehler
+zu umgehen, das gelingt fast immer.
+
+
+4. Fenster
+----------
+
+Die Anzahl der Fenster wurde auf 15+Hintergrund erh”ht. Alle Fensterroutinen
+sind natrlich ebenfalls neu geschrieben, daher sehen die Fenster ein
+wenig anders aus.
+Niemand darf fremde Fenster manipulieren. ACCs behalten ihre Fenster beim
+Verlassen oder Umschalten der Hauptapplikation.
+Die Fenster- Vergr”erungsroutine wurde verbessert. Die Strichellinie liegt
+nun genau auf dem inneren Rand. Ferner wird die Minimalgr”e des Fensters
+korrekt berechnet, was bisher absoluter Mist war; jetzt sind immer alle
+Fensterelemente sichtbar.
+Achtung: Macht man bei Tempus das Fenster zu klein, knallt das Programm
+         den Scrollbalken nach Timbuktu. Nur ein Sch”nheitsfehler.
+
+
+5. Features, die ber KAOS 1.4 hinausgehen
+------------------------------------------
+
+Neue form_do- Routine: Cursor kann mit der Maus positioniert werden.
+Ungltige Zeichen am Zeilenende bewegen den Cursor nicht mehr.
+Unter MagiX funktionieren auch Eingabefelder mit kleiner Schrift.
+MagiX hat ein neues Speicherverwaltungskonzept, das das Ordnerproblem
+entsch„rft und (fast) beliebig viele Malloc()- Aufrufe zul„t. Programme,
+die in der alten Speicherverwaltung herumfummeln (Flexdisk) drfen keines-
+falls verwendet werden! Leider fallen einige Programme (GfA-Compiler und
+-Assembler, ab und zu auch TD) auf die Nase, d.h. sie zerst”ren Speicher-
+bl”cke, die ihnen nicht geh”ren.
+Neue Funktionen wie form_popup, form_xerr und form_xdo (untersttzt
+Tastaturbedienung und FlyDials) und neue Objekttypen (Umschalter und Popups).
+Beispiel in MAGXDEMO.PRG. Um das FlyDial in Dialogboxen zu aktivieren,
+klicke man bei gedrckter rechter Maustaste mit der Maus irgendwo innerhalb
+der Dialogbox und halte die Maustasten gedrckt. Wenn die flache Hand
+erscheint, bewege man die Strichelbox auf die neue Position und lasse die
+Maustaste los. Ein direktes Verschieben wie in Gemini w„re denkbar, ist
+aber (noch) nicht implementiert.
+Die FlyDials sind in der Dateiauswahlbox und bei allen (!) Alertboxen aktiv,
+auerdem auf Wunsch in MAGIDESK.
+Bei zuwenig Speicher oder Aufruf vom DOS aus werden sie gesperrt.
+Fr alle Alertboxen gilt: F1=linker Knopf,F2=mittlerer,F3=rechter Knopf
+
+
+6. Die Dateiauswahlbox
+----------------------
+
+neue Dateiauswahlbox: sieht zwar aus wie die alte, funktioniert aber intern
+ ganz anders. Doppelklick auf Laufwerkbutton zeigt Informationen an,
+ Doppelklick auf Dateimuster schaltet auf *.*. Gemischte Muster wie
+ "*.prg,*app" oder "*.doc,*.bak" sind erlaubt.
+ Doppelklick auf Schliefeld geht aufs Wurzelverzeichnis.
+ Pfade werden immer korrekt komplettiert (auch "*.doc" ohne Pfad!). Bei
+ Diskwechseln wird aufs Wurzelverzeichnis zurckgeschaltet. Meldungen wie
+ "Die Anwendung will das gewnschte Objekt heute mal nicht finden" geh”ren
+ endgltig der Vergangenheit an.
+ Vollst„ndige Tastaturbedienung:
+ CTRL-uparrow       nach oben scrollen
+ CTRL-dnarrow       nach unten scrollen
+ ALT-A              auf Laufwerk A: umschalten
+ ..
+ ALT-F              auf Laufwerk F: umschalten
+ ALT-1              oberste Datei/Ordner anw„hlen
+ ...
+ ALT-9              unterste Datei/Ordner anw„hlen
+ ALT-Esc            Verzeichnis neu einlesen
+ ALT-Backspace      Verzeichnis schlieen
+Die Dateiauswahlbox ist auerdem ein FlyDial, falls gengend Speicher frei
+ist.
+
+
+7. Probleme
+-----------
+
+Die fr KAOS gepatchten Programme NRSC und Ariadne laufen jetzt unter MagiX
+nicht mehr, da der usp berhaupt nicht mehr ben”tigt wird. AES- Aufrufe sind
+problemlos im Supervisormodus m”glich. Das interne Stackhandling wurde stark
+vereinfacht. Signum SCRCOP und TURBOINS haben Programmierfehler.
+FSMGDOS rettet zuwenig Register, daher mu FSMFIX.PRG hinter (!) diesem
+Programm im AUTO- Ordner stehen (am besten als letztes PRG).
+GfA Compiler und Assembler bleiben mit "Speicherverwaltung zerst”rt" h„ngen.
+
+MagiX nimmt strengste Gltigkeits- und Zugriffsrechtberprfungen fr
+Fenster vor. Man kann sich gar nicht vorstellen, wie viele "professionelle"
+Programme sich an ungltigen oder gar fremden (!) Fenstern vergreifen.
+wind_get und wind_set liefern 0 und (0,0,0,0) bei ungltigem Handle.
+
+Es gibt Programme, die sich allen Speicher unter den Nagel reien und daher
+keine weiteren parallelen Programme zulassen (WORDPLUS). Fr diese Programme
+existiert das Hilfsprogramm LIMITMEM, mit dem man diesen gierigen
+Applikationen Speicher zuteilen kann.
+

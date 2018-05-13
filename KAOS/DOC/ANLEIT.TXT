@@ -1,0 +1,1526 @@
+Formatierung: Tabulatorbreite 5 Zeichen
+
+Losl”sungsnotizen zu KAOS 1.4.2 vom 19.12.90    (KAOS 1.4.2 Release Notes)
+##############################################
+
+Inhaltsverzeichnis:
+
+0)   Einleitung
+1)   Intention
+2)   Installation
+3)   Features
+4)   Kompatibilit„t
+5)   Konfiguration
+6)   Probleme
+7)   KAOS fr Programmierer
+8)   Neue Funktionen in KAOS 1.2
+9)   Neue TOS- Funktionen in KAOS 1.4.2
+10)  Neue AES- Funktionen in KAOS 1.4.2
+11)  GEM  2.x- Funktionen in KAOS 1.4.2
+Literatur
+
+
+
+0)   Einleitung
+---------------
+
+  Seit der Atari ST auf der Cebit '85 zum ersten Mal einer erstaunten 
+Fachwelt pr„sentiert wurde, hat sich inzwischen manches ge„ndert. Der 
+Mega-STe 4 von heute ist im Vergleich mit dem damaligen 520 ST kaum 
+wiederzuerkennen. Seit Einfhrung der Mega STs im Jahr 1987 hat der 
+Atari nicht nur ein ordentliches Geh„use und eine brauchbare Tastatur 
+bekommen, sondern es sind auch nicht mehr nur 512 kByte oder 1 MByte, 
+sondern 2 oder 4 MByte Standard. Ferner sind die heutigen STs mit einem 
+Grafik- Beschleuniger, den sogenannten Blitter, ausgerstet und ver-
+fgen meistens auch ber eine Festplatte. Grafikkarten und Bildschirme 
+aller Aufl”sungen und Preisklassen lassen sich nachrsten, Beschleuni-
+gerkarten vom einfachen 68000 mit 16MHz und Cache bis zum 68030/68882 
+mit 50MHz werden angeboten.
+  Das  Softwareangebot ist reichhaltig und deckt vom CAD- Programm ber 
+Textverarbeitungen und nahezu alle Programmiersprachen fast alles ab, 
+was das Herz begehrt.
+  Je komplizierter und leistungsf„higer die Programme und je besser die 
+angebotenen Beschleunigunger wurden, desto mehr wurde klar, da das von 
+Atari mitgelieferte Betriebssystem den Ansprchen nicht mehr gengen 
+konnte. Obwohl Atari seit Einfhrung des Mega-ST mit der Version 1.2 
+des TOS den Blitter untersttzt und das heutige TOS 1.4 auch die 
+Geschwindigkeit von Festplatten richtig ausnutzen kann, bleiben doch 
+gravierende Schwachstellen erhalten. W„hrend andere Rechnerhersteller 
+den K„ufer jedes Jahr mit einer verbesserten Betriebssystemversion 
+beglcken, brachte es Atari bisher nur zu drei Versionen, von diesen 
+unterscheiden sich TOS 1.0 und 1.2 nur geringfgig und auch nur in 
+einigen Modulen. Fr die neueste Version, das TOS 1.4, wird es vor-
+aussichtlich auch keinen Nachfolger mehr geben, da Atari lieber am STe 
+oder am TT bastelt; deren Betriebssysteme sind aber auf dem "alten" ST 
+nicht lauff„hig.
+  Leider ist TOS 1.4 weder so absturzsicher noch so komfortabel, da 
+man sich mit diesem Zustand so einfach abfinden sollte; bekannte 
+Software- Hersteller beklagen sich sogar in Handbchern darber, da 
+sie groe Teile der Systemroutinen neu schreiben muten, die zwar im 
+Betriebssystem vorhanden waren, aber nicht oder nicht zuverl„ssig funk-
+tionierten. Auch eine ganze Reihe von Beschleuniger- Programmen 
+(TurboST, QuickST, VT52 usw.) zeugen davon, da man manche Aufgaben 
+besser l”sen kann, als dies Atari getan hat. Bei NVDI sind die Autoren 
+sogar so weit gegangen, einen groen Teil des Betriebssystems (gut ein 
+Viertel) lahmzulegen und komplett durch eigene Routinen zu ersetzen. 
+Ferner existieren eine ganze Reihe von Programmen, die das Atari- 
+Desktop ersetzen (Gemini, Neodesk, Aida, Desa usw.) und wesentlich 
+komfortabler als dieses sind; auerdem gibt es eine Reihe von nachladba-
+ren Dateiauswahlboxen, die die im System integrierte ersetzen. Was 
+bisher jedoch trotz all dieser Anstrengungen nicht gelungen war, ist, 
+die Betriebssicherheit zu erh”hen; nach wie vor geh”ren unvermutete und 
+unverschuldete Abstrze zum Alltag des ST- Benutzers, Tabellen mit 
+bekannten Systemfehlern fllen Seiten ber Seiten, ebenfalls Probleme 
+mit "hochgezchteten" STs, die bei aller Beschleunigung mit dem Atari-
+TOS nicht mehr zusammenarbeiten wollen.
+  Um diesem Manko abzuhelfen, wurde KAOS entwickelt. Die erste Version 
+(eine Modifikation von TOS 1.2) wurde im Novemberheft '88 der c't 
+vorgestellt. Sie enthielt ein extrem absturzsicheres und zuverl„ssiges 
+GEMDOS und eine verbesserte und korrigierte Dateiauswahlbox. Zum ersten 
+Mal war es jetzt m”glich, etwa mit dem ST und einem Kommandozeilen- In-
+terpreter zu arbeiten.
+  KAOS 1.4 ist ist als logische und konsequente Weiterentwicklung 
+dieses erfolgreichen Projekts eine Modifikation von TOS 1.4 und enth„lt 
+nun alle Vorteile von KAOS 1.2, dazu noch die von TOS 1.4 und eine 
+ganze Reihe weiterer Korrekturen, šberarbeitungen und Erweiterungen, 
+die der Betriebssicherheit, der Geschwindigkeit oder dem Komfort die-
+nen. Ferner wurden Mechanismen integriert, die das Zusammenspiel von 
+beliebigen Prozessoren der 680x0- Serie und beliebigen Beschleuniger- 
+Karten erm”glichen.
+  KAOS 1.4 enth„lt nicht nur Korrekturen von Betriebssystemroutinen, 
+wodurch Patchprogramme im AUTO- Ordner (TOS14FIX.PRG, POOLFIX.PRG, VDI-
+FIX.PRG) berflssig und eine ganze Reihe weiterer Fehler entsch„rft 
+werden, sondern ist auch schneller als das Originalsystem, und zwar je 
+nach Anwendungsfall bis 90% (Grafikausgabe unter NVDI); Plattenzugriffe 
+sind ebenfalls z.T. bis zu 40% schneller. Schlielich enth„lt KAOS 1.4 
+noch eine Reihe von ntzlichen Erweiterungen. Einige davon sind in 
+allen Programmen wirksam, die das Betriebssystem nutzen, andere jedoch 
+k”nnen nur in Programmen genutzt werden, die speziell fr KAOS ge-
+schrieben wurden. Eines davon ist KAOSDESK, in dem die neuen M”glich-
+keiten von KAOS 1.4 optimal genutzt werden. Fr eigene Programme gibt 
+ausfhrliche Informationen in den Kapiteln 7 bis 11.
+
+
+2)   Intention
+--------------
+
+  KAOS 1.4.2 wurde entwickelt, um folgenden Ansprchen gerecht zu 
+werden:
+
+-	Drastische Erh”hung der Betriebssicherheit sowohl beim 
+	Massenspeicherzugriff ber GEMDOS (Bomben) als auch beim Umgang mit 
+	der Maus im AES (H„ngenbleiben des Systems). Alle bekannten Fehler 
+	wurden beseitigt, dazu jede Menge bisher unbekannter.
+	Patchprogramme (TOS14FIX.PRG,POOLFIX.PRG,VDIFIX.PRG) sind berflssig 
+	und sollten nicht verwendet werden.
+-	Erh”hung der Geschwindigkeit beim Bildschirmaufbau (Dialogboxen und 
+	Texte) und beim Dateizugriff.
+	Um KAOS 1.4.2 voll auszureizen, sollte trotzdem ein Grafik- Beschleu-
+	niger (TurboST) oder noch besser ein neues VDI (NVDI) eingesetzt 
+	werden. KAOS 1.4 und Beschleuniger machen zusammen den ST so schnell, 
+	da er einen normalen TT in punkto Bildschirmaufbau  deutlich ber-
+	trifft. Fr die Zukunft von KAOS ist die Integration eines Grafikbe-
+	schleunigers geplant.
+-	Erh”hung des Bedienungskomforts sowohl in TOS- Programmen 
+	(Zeileneditor, zus„tzliche Tastaturebene) als auch in GEM- Programmen 
+	(Backdrop- Button, Tastaturbefehle fr Dialogboxen).
+-	Anpassung an deutsche Umlaute. Bisher ist dies von Atari nur 
+	unvollkommen bewerkstelligt worden. Jetzt sind z.B. Umlaute in 
+	Dateinamen kein Problem mehr.
+-	Volle Einsetzbarkeit fr ST, Mega ST und 1040 STe. Im Gegensatz zum 
+	TOS denkt KAOS auch an Leute ohne Echtzeituhr. KAOS 1.4.1, KAOSDESK 
+	und KCMD wurden von Andreas Kromke allein auf einem nicht auf-
+	gersteten 520 ST+ entwickelt, nur fr die 68030- Anpassung in KAOS 
+	1.4.2 wurde ein anderer Rechner ben”tigt.
+-	Kompatibilit„t zu MSDOS 2.11 und GEM/3, soweit m”glich. In den F„llen, 
+	in denen die Kompatibilit„t zu TOS gef„hrdet war, wurde auf 
+	Ver„nderungen verzichtet.
+	Wer das ABC-GEM 2.2 besitzt und noch alte Programme dafr herumliegen 
+	hat, kann sie unter KAOS 1.4 einsetzen. Das TT-TOS "3.1" hat zwar auch 
+	die GEM- Versionsnummer 3.1, aber nicht die dazu geh”rigen Funktionen.
+-	Kompatibilit„t zu TOS 1.4, TOS 1.6 und KAOS 1.2.
+-	Kompatibilit„t mit jedem Prozessor der 680x0 Serie bei jeder 
+	Taktfrequenz.
+-	Erweiterung um Funktionsaufrufe, die bisher fehlten bzw. unsauber 
+	ausgefhrt werden muten. Diese neuen Aufruf sind mit Vorsicht zu 
+	genieen, da sie unter TOS natrlich fehlen. Es wird empfohlen, extra 
+	auf KAOS abzuprfen.
+
+
+2)   Installation
+-----------------
+
+  Eine Anwenderregistrierung ist nicht notwendig, da dies bereits durch 
+Ihre Bestellung erledigt wurde. Da nur registrierte Anwender Anspruch 
+auf Untersttzung haben, geben Sie bitte bei allen Anfragen Ihren Namen 
+exakt an, sonst kann Ihre Anfrage nicht bearbeitet werden. Die Hotline- 
+Bedingungen werden im Anhang "Support" beschrieben.
+
+  Bevor Sie mit der Installation beginnen, stellen Sie sicher, da Sie 
+einen Atari ST mit TOS 1.4 besitzen. ltere Betriebssystemversionen 
+(TOS 1.0 oder TOS 1.2) oder neuere (TOS 1.6 oder TOS 2.x im STe oder 
+3.x im TT) sind nicht geeignet; KAOS 1.4 ist eben eine Modifikation 
+Ihres TOS 1.4  und kein vollst„ndiges Betriebssystem. Das Programm 
+KINSTALL mu daher Ihr TOS modifizieren und die modifizierte Version 
+abspeichern. Falls Sie Zweifel haben, fragen Sie Ihren H„ndler, der 
+Ihnen ggf. auch ein Original- TOS 1.4 einbauen kann. Sie k”nnen auch 
+einfach versuchen, KINSTALL zu starten; das Programm erkennt falsche 
+TOS- Versionen automatisch und weist Sie darauf hin.
+  Machen Sie zun„chst von Ihrer KAOS 1.4.2-Originaldiskette eine 
+Sicherheitskopie. Wie man dabei vorgeht, steht im ST- Handbuch.
+
+  Verwahren Sie Ihre Originaldiskette an einem sicheren Ort, und legen 
+Sie die Kopie in Ihr Diskettenlaufwerk ein.
+  Starten Sie das Programm KINSTALL.TOS. Die Diskette darf nicht 
+schreibgeschtzt sein. KINSTALL beginnt zu arbeiten, Fehler werden ggf. 
+am Bildschirm ausgegeben.
+  Meldet sich KINSTALL mit der Meldung "Datei KAOS erstellt!", ist alles 
+gutgegangen. Sie k”nnen eine Taste bet„tigen und befinden sich wieder im 
+Atari- Desktop. Auf Ihrer Diskette mu sich nun eine Datei "KAOS" mit 
+einer L„nge von 196608 Bytes befinden
+
+1)	Sie wollen KAOS 1.4.2 sicher und dauerhaft in Ihrem Rechner 
+	verfgbar haben und daher Eproms einsetzen.
+
+  Die Datei "KAOS" kann direkt in Eproms gebrannt werden. Als Hilfspro-
+gramm steht ggf. \UTILITY\ZERLEG.TTP zur Verfgung, das Ihre Datei in 6 
+Dateien fr die 6 Eproms aufspaltet. Falls Sie selbst ber keinen 
+Eprom- Brenner verfgen, fragen Sie Ihren H„ndler oder einen Bekannten. 
+Stellen Sie dabei sicher, keine Kopie Ihrer Datei "KAOS" irgendwo zu 
+vergessen. Diese Datei ist Ihr pers”nliches Exemplar und enth„lt ver-
+steckt eine Seriennummer, ber die man den Eigentmer ermitteln kann.
+  Wie man die Eproms einsetzt, ist in der Einbauanleitung beschrieben. 
+Ggf. mssen Sie den Einbau von einem Fachmann vornehmen lassen.
+  Wenn Ihr Rechner sich beim Einschalten mit den neuen Icons meldet und 
+unter "Info anzeigen..." die Copyright- Meldung von KAOS 1.4.2 
+erscheint, ist der Einbau mit gr”ter Wahrscheinlichkeit gelungen, und 
+Sie drfen jetzt erst einmal aufatmen.
+
+2)	Sie haben keine M”glichkeit, Eproms zu brennen, m”chten den 
+	Garantieanspruch nicht verlieren oder KAOS 1.4.2 zun„chst einmal 
+	v”llig risikolos und nur testweise einsetzen.
+
+  Fr diesen Fall gibt es jetzt die M”glichkeit, eine nachladbare 
+Version von KAOS zu erstellen.
+  Dazu stellen Sie sicher, da sich "KAOS" und "KS14RELO.TOS" im selben 
+Verzeichnis befinden und starten Sie das Programm KS14RELO.TOS.
+Die Frage nach der Startadresse am besten mit der Speichergr”e minus 
+30000H beantworten, also:
+
+      50000         bei einem Rechner mit 512 kB  (260ST,   520ST)
+      D0000         bei einem Rechner mit 1MB     (520ST+, 1040ST)
+     1D0000         bei einem Rechner mit 2MB     (ST2)
+     250000         bei einem Rechner mit 2.5MB   (???)
+     2D0000         bei einem Rechner mit 3MB     (???)
+     3D0000         bei einem Rechner mit 4MB     (ST4)
+
+  KS14RELO erzeugt aus der vorhandenen Datei KAOS eine neue Datei 
+KAOS.IMG, die identisch mit der Datei KAOS ist, aber entsprechend der 
+eingegebenen Adresse reloziert wurde. Diese Datei KAOS.IMG kopieren Sie 
+auf das Wurzelverzeichnis Ihres Bootlaufwerks, also i.a. nach C:\.
+  Jetzt mssen Sie noch KSBOOT.PRG in den AUTO- Ordner des Bootlauf-
+werks kopieren, also i.a. nach C:\AUTO\. KSBOOT sollte die erste Datei 
+im AUTO- Ordner sein; also am besten den Ordner neu anlegen und dann 
+erst KSBOOT kopieren. Die Reihenfolge der Dateien im Desktop ist 
+brigens dabei v”llig belanglos.
+  Bootet der Rechner, so kann man KSBOOT mit Control-C abbrechen oder 
+das Betriebssystem mit Esc bzw. Leertaste laden. Hat man das System mit 
+Esc geladen, so ist man nach Bet„tigen des Resetknopfes wieder im alten 
+Betriebssystem (KAOS bleibt inaktiv im Speicher liegen), ansonsten ist 
+KAOS 1.4.2 resetfest.
+  Um KAOS ganz aus dem Speicher zu entfernen, ist ein Kaltstart zu 
+machen, d.h. Control-Alt-Rshift-Del zu bet„tigen oder der Rechner auszu-
+schalten.
+Achtung: Programme, die die Systemvariablen "phystop" und "resvector"
+-------- manipulieren, sind i.a. unvertr„glich mit dem KAOS im RAM.
+         Insbesondere sollte man keine resetfesten Ramdisks oder Multipro-
+         gramm- Umschalter (K-SWITCH, MULTI-ST usw.) benutzen.
+
+
+  Funktioniert sonst alles wieder wie bisher mit dem alten TOS, kopieren 
+Sie die Datei "KAOSCONF.ACC" in das Wurzelverzeichnis Ihres 
+Bootlaufwerks bzw. auf Ihre Bootdiskette. Mit diesem Accessory k”nnen 
+Sie einige Einstellungen vornehmen, n„heres in Kapitel 5.
+  Wenn Sie viele Laufwerke bzw. Festplatten- Partitionen verwenden und 
+bisher das Programm FOLDRnnn.PRG verwenden muten, bleibt Ihnen das 
+unter KAOS 1.4 leider auch nicht erspart. Aufgrund der anderen internen 
+Struktur mu aber hier das Programm ADDMEM.PRG benutzt werden, das Sie 
+auf Ihrer KAOS- Diskette finden.  Dieses Programm entspricht in etwa 
+einem FOLDR50.PRG. Gegebenenfalls mu man ADDMEM mehrmals unter ver-
+schiedenen Namen in den AUTO-Ordner legen.
+  Wenn Sie kein Experte sind und nur etwas schneller, komfortabler und 
+sicherer arbeiten m”chten, brauchen Sie nur noch die Kapitel 3 und 5 zu 
+lesen, die alle ntzlichen Erweiterungen beschreiben. Nur so k”nnen Sie 
+Ihren "neuen" Rechner auch richtig nutzen. Sehr viele Ver„nderungen 
+arbeiten ausschlielich im verborgenen und schlagen sich nur in der Ab-
+sturzstatistik nieder, andere wiederum betreffen nur den Programmierer.
+
+
+3)   Features von KAOS 1.4.2
+-----------------------------
+
+  KAOS 1.4 enth„lt auer einer Reihe von Fehlerkorrekturen und Beschleu-
+nigungen auch einige Verbesserungen, die den Umgang mit dem Atari 
+erleichtern:
+
+  Das DESKTOP behandelt bei "Datei anzeigen" die linke Maustaste wie 
+die Leertaste und die rechte wie ^C; dies wurde von Atari selbst erst 
+ab TOS 1.6 eingebaut.
+
+  Im DESKTOP wird bei "Info anzeigen..." im Farbmodus nicht mehr das 
+Farbenspiel gezeigt, von dem TOS 1.4 seinen Namen "Rainbow TOS" hat, da 
+jeder Speicher ben”tigt wurde. Die Versionsnummer von KAOS setzt sich 
+folgendermaen zusammen: TOS- Versionsnummer ("1.4") und die KAOS- 
+Modifikationsnummer ("0", "1" oder "2"). Genauere Informationen ber 
+die KAOS- Version: KAOSCONF starten, unten steht das Erstelldatum.
+
+  Der gesamte Atari- Zeichensatz ist von der Tastatur abrufbar, indem 
+man die Tastatur mit ALT- CapsLock umschaltet. Wenn man jetzt 'e' 
+bet„tigt, erscheint etwa '‚', zusammen mit Shift ''. šber ALT- Caps-
+Lock kann man die Tastatur wieder zurckschalten.
+  Leider haben die M„ngel des Betriebssystems viele Programmierer dazu 
+getrieben, eigene Routinen statt der des Systems zu verwenden; deren 
+Programme k”nnen dann eben von verbesserten Systemen nicht profitieren. 
+So funktioniert etwa die neue Tastaturebene in Wordplus nicht bei 
+Version 3.11, jedoch bei allen frheren Versionen und dann wieder in 
+der neuesten Version 3.15. In Tempus und Tempus Word ist ebenfalls 
+keine Umschaltung m”glich.
+
+  KAOS 1.4.2 wurde fr die neueren Motorola- Prozessoren angepat und 
+sowohl mit einem 68010, 68020 und 68030 getestet, letzterer von 25 bis 
+50 MHz.  Die Erkennung des 68040 wurde zwar bereits implementiert, 
+konnte aber aus Existenzgrnden noch nicht getestet werden. Allerdings 
+drfte im Falle des 68040 noch etwas Arbeit zu leisten sein, denn 
+zwischen ihm und seinen Vorg„ngern gibt es doch sehr gravierende 
+Unterschiede.
+  Im Gegensatz zu blichen L”sungen bercksichtigt KAOS 1.4 verschieden 
+schnelle Prozessoren desselben Typs. So drfte es auch mit hoch-
+gezchteten 68000ern (Turbo16, Hypercache usw.) keine Probleme geben.
+
+  Beim Booten von Festplatte werden 2 Versuche statt nur einem gemacht, 
+um das "Unit Attention" einiger SCSI- Laufwerke korrekt zu verarbeiten. 
+Bei manchen Festplatten wird das Booten damit besser funktionieren, fr 
+die anderen ergibt sich kein Unterschied.
+
+  Bei fatalen Fehlern des Systems, die durch amoklaufende Programme 
+verursacht wurden und auch durch Beenden des laufenden Programms mit 
+Bomben nicht zu beheben w„ren, wird das System mit folgender Meldung 
+angehalten (das Original- TOS w„re in solch einem Fall stehengeblieben 
+oder h„tte einen Dauerboot verursacht):
+
+     *** FATALER FEHLER ...:
+     *** SYSTEM ANGEHALTEN ***
+
+  Die beliebten Cookies werden installiert, die sonst erst ab TOS 1.6 
+vorhanden sind. Das hinzugekommene KAOS- Cookie enth„lt das Erstellda-
+tum, etwa $22121989. Der "_FPU"- Cookie ist in Kapitel 9 beschrieben.
+
+  An vielen Stellen im Betriebssystem, bei denen das System in einem 
+kritischen Zustand ist, werden jetzt die Interrupts gesperrt, was 
+bedeutet, da KAOS 1.4.2 seltener abstrzen wird als TOS. Schnelle 
+Tipper haben bestimmt schon einmal Wordplus dazu gebracht, pl”tzlich von 
+selbst wirre Zeichen zu schreiben und schlielich ganz und gar kl„glich 
+zu verenden.
+
+  Der beliebte Fastload- Patch fr das schnellere Lesen von Disketten 
+wurde integriert. Im Gegensatz zu den blichen L”sungen ist dieser 
+jedoch nur beim Lesen aktiv, nicht beim Schreiben auf Diskette. So kann 
+optimale Datensicherheit garantiert werden. Trotzdem ist Fastload noch 
+abschaltbar, siehe Kapitel 5. Sind die verwendeten Disketten im DESKTOP 
+von TOS 1.4 oder unter KAOSDESK formatiert worden, bringt Fastload 
+brigens keinerlei Gewinn, da hier ein anderer Sektorversatz als in 
+„lteren TOS- Versionen gew„hlt wurde.
+
+  Als Druckertyp wird per Default Epson/Einzelblatt eingestellt. Auer-
+dem wurden Tastenwiederholung und Wiederholungs- Verz”gerung auf einen 
+anderen Wert eingestellt. Dies ist natrlich nur wirksam, wenn Sie kein 
+Kontrollfeld verwenden.
+
+  Der Zeileneditor von GEMDOS wurde erweitert. Er wird automatisch von 
+TOS- Programmen genutzt, die keine eigene Zeilen- Eingaberoutine enthal-
+ten. Hier alle Funktionen im šberblick:
+
+     Taste:              Funktion:
+     ------              ---------
+
+	Return              schliet die Eingabe ab. Setzt den UNDO- Puffer
+	Enter               wie CR, l„t aber UNDO- Puffer unver„ndert
+	Cursor links        Cursor eine Position nach links
+	Cursor rechts       Cursor eine Position nach rechts
+     Shift Cursor links  Cursor auf den Anfang der Eingabezeile
+     Shift Cursor rechts Cursor auf das Ende der Eingabezeile
+     Home                Wie Shift Cursor links
+	Tab                 Anfang/Ende der Eingabezeile
+     Cursor hoch         letzte Eingabe(n) wiederholen
+     Cursor runter       letzte Eingabe(n) zurckscrollen
+     Shift Clr           Eingabe l”schen
+     Delete              Zeichen unter Cursor l”schen
+	Backspace           Zeichen vor Cursor l”schen, Cursor nach links
+     Undo                letzte Eingabe holen (max. 319 Zeichen Puffer)
+     F1..F10             Funktionstastenwerte aus dem Environment
+     Insert              Einfgemodus
+     Shift Insert        šberschreibmodus
+
+  Die Funktionstasten k”nnen z.B. von dem Kommandoprozessor KCMD aus 
+belegt werden, z.B. mit der Eingabe "SET Fn=xxxxx", wobei n=1,2..9,0 
+sein kann. N„heres dazu in der Anleitung zu KCMD.
+  KCMD nutzt auch den obigen Zeileneditor. Zum Vergleich sollte man 
+KCMD einmal unter dem Original- TOS laufen lassen.
+  Der Undo- Puffer hat eine Gr”e von insgesamt 319 Zeichen, die dyna-
+misch auf die eingegebenen Zeichenketten verteilt werden. In der Praxis 
+kann man so ungef„hr die letzten 10 bis 20 Eingaben zurckholen, wobei 
+die „lteste unvollst„ndig sein kann.
+
+  Die Eingabe von Zeichenketten in Dialogboxen wurde erweitert. Falls 
+Programme die entsprechenden Betriebssystemaufrufe nutzen, hat man in 
+jeder Dialogbox mit Texteingabe die folgenden Zusatzfunktionen:
+
+     Taste:              Funktion:
+     ------              ---------
+
+     Shift Cursor hoch   Cursor auf das erste Eingabefeld
+	Shift Cursor runter Cursor auf das letzte Eingabefeld
+     Shift Cursor links  Cursor auf den Anfang des Eingabefeldes
+     Shift Cursor rechts Cursor auf das Ende des Eingabefeldes
+     Home                Wie Shift Cursor links
+     Shift Clr           Wie Esc
+     Insert              Einfgemodus
+     Shift Insert        Uberschreibmodus
+	Undo				Button "Abbruch","Zurck","Cancel","Abort"
+	Help                Button "Hilfe" oder "Help"
+     ^Q				Button "Ende","Verlassen","Ausgang","Quit","Exit"
+
+  Man beachte, da nach M”glichkeit „hnliche Tastenkombinationen sowohl 
+im GEMDOS auch im GEM verwendet wurden. Am besten lassen sich die neuen 
+M”glichkeiten im Dialog "Programme" in KAOSDESK ausprobieren. Die Taste 
+Undo ist besonders bei Fehlermeldungen wie "Disk in Laufwerk X: ist 
+schreibgeschtzt..." usw. ntzlich, da man den Abbruchknopf einfach per 
+Tastendruck anw„hlen kann.
+  Leider ergibt sich auch hier das gleiche Problem wie bei der 
+Tastaturumschaltung. Viele Programme (etwa Adimens) enthalten eigene 
+Routinen, die zwar zun„chst komfortabler sind, aber sie k”nnen eben von 
+KAOS wenig profitieren.
+
+  Die Alertboxen wurden ein wenig geliftet. Alle Alerts, die mit dem 
+alten TOS 1.0 noch halbwegs anst„ndig aussahen, wirkten ab "Blitter" 
+TOS 1.2 reichlich deplaziert. Jetzt kann man form_alert() wieder an-
+wenden, ohne da dem Benutzer schlecht wird; der Text ist sogar noch 
+exakter ausgerichtet als unter TOS 1.0 und sieht sogar ohne Icon 
+brauchbar aus.
+
+  In allen Texteingabefeldern, bei denen die Zeichen in Groschrift 
+konvertiert werden, das sind z.B. alle Felder, in denen Dateien eingege-
+ben werden, wird ERST die Umwandlung in Grobuchstaben durchgefhrt und 
+DANN geprft, ob das Zeichen zul„ssig ist. Damit erspart man sich z.B. 
+im Feld "Tempor„rlaufwerk" im Dialog "Disk kopieren" in KAOSDESK das 
+Drcken der Shift- Taste.
+
+  Die verwendete Routine zum Umwandeln in Grobuchstaben ist fr alle 
+nationalen Sonderzeichen erweitert worden. Daher werden u.a. auch die 
+deutschen Umlaute in der Dateiauswahlbox konvertiert. Wenn Sie also 
+etwa in WORDPLUS eine neue Datei "LNDER.DOC" anlegen m”chten, so wird 
+keine Datei "L„NDER.DOC" (mit kleinem "„") erstellt, sondern alle 
+Zeichen erscheinen in Grobuchstaben. Trotzdem k”nnen noch alte Dateien 
+mit klein geschriebenen nationalen Umlauten benutzt werden, da GEMDOS 
+ebenfalls alle diese Buchstaben in Groschrift umwandelt.
+
+  Accessories werden grunds„tzlich vom Bootlaufwerk geladen und das 
+DESKTOP.INF auf dieses Laufwerk abgespeichert. Falls Sie also einen 
+Festplattentreiber verwenden, der die Auswahl der Bootpartition er-
+laubt, werden Accessories ebenfalls von dieser Bootpartition geladen. 
+Es gibt allerdings Festplattentreiber, die dieses Feature schon be-
+inhalten, indem sie das Betriebssystem ausgetricksen. Diese Plattentrei-
+ber k”nnen jetzt auf ein Zehntel ihrer L„nge gekrzt werden.
+
+  Wer viel Speicher besitzt und daher das Fastload- Bit sch„tzen gelernt 
+hat, darf dieses unter KAOS 1.4.2 jetzt auch fr Accessories nutzen; 
+damit kann die Bootphase besonders auf einem 4 MB- Rechner erheblich 
+verkrzt werden.
+  Achtung: Wer ab und zu seine Accessories zusammen mit einem TOS 1.4 
+o.„. verwendet, sollte auf das Fastload- Bit verzichten, da der 
+Bootvorgang fr das Atari- Betriebssystem sonst ungesund werden k”nnte.
+
+  In der Dateiauswahlbox wird jetzt das L”schen des vorgegebenen Datei-
+namens beim Pfadwechsel verhindert. Ein Beispiel: Sie haben mit 
+WORDPLUS eine Datei TEST.DOC von der Festplatte geladen und wollen 
+diese aber jetzt mit "Speichern als" nach Diskettenlaufwerk A: schrei-
+ben. Wenn die Dateiauswahlbox mit dem Festplattenverzeichnis erscheint 
+und Sie den Knopf fr A: bet„tigen, l”scht das normale TOS den 
+vorgegebenen Dateinamen, den Sie neu eingeben mssen. Unter KAOS gengt 
+dagegen ein Druck auf die Return- Taste, um die Datei abzuspeichern.
+
+  Das Dateidatum und die Uhrzeit werden bei jedem Schreibzugriff aufs 
+Tagesdatum gesetzt. Wenn Sie etwa ADIMENS benutzen, bekommen Ihre 
+Datenbankdateien das Datum der letzen nderung. Den gleichen Effekt 
+haben Sie auch, wenn Sie mit Hilfe eines Diskettenmonitors (etwa MUTIL) 
+Dateien ver„ndern. Wie auf allen vernnftigen Computern ist auch auf 
+dem Atari unter KAOS das Dateidatum nicht das Erstelldatum, sondern das 
+Datum des letzten Schreibzugriffs.
+
+  GEMDOS enth„lt einen "Event- Critic- Handler". Das bedeutet, da man 
+auch bei TOS- Programmen, die vom DESKTOP gestartet wurden, auf Dis-
+kettenlesefehler reagieren kann. In GEM- Programmen erscheint in solch 
+einem Fall eine Alertbox mit "Daten auf Disk A: defekt...". Bisher 
+konnte man in TOS- Programmen nichts derartiges sehen, der Leseversuch 
+wurde einfach abgebrochen; nun erscheint eine Meldung wie:
+
+     Sektor nicht gefunden auf Laufwerk A:
+     [A]bbruch,[W]iederholen,[I]gnorieren ?
+
+  Mit "A" wird der Diskzugriff abgebrochen, das aufrufende Programm 
+erh„lt eine Fehlermeldung. Mit "W" oder "R" (Retry) kann man den 
+Diskzugriff noch einmal wiederholen, mit "I" bekommt das aufrufende 
+Programm trotz des Fehlers keine Fehlermeldung, geht also davon aus, 
+da die Daten korrekt gelesen bzw. geschrieben wurden. Daher sollte "I" 
+mit groer, beim Schreiben sogar mit allergr”ter Vorsicht verwendet 
+werden. Schlielich k”nnen Sie auch ^C bet„tigen, um das laufende 
+Programm ganz abzubrechen.
+  Interessant ist der neue Event- Critic- Handler auch fr die Ver-
+wendung von Laufwerk B:, wenn Sie nur ein Diskettenlaufwerk angeschlos-
+sen haben. Bisher war dies in TOS- Programmen schlicht unm”glich, jetzt 
+dagegen erscheint etwa:
+
+     Bitte Disk B: in Laufwerk A: einlegen!
+
+  Jetzt k”nnen Sie entweder wie oben das Programm mit ^C ganz abbrechen 
+oder mit einer beliebigen anderen Taste nach dem Diskwechsel weiterma-
+chen.
+  Der Event- Critic- Handler ist bereits w„hrend des Bootvorgangs 
+installiert. Sie k”nnen das einfach einmal ausprobieren, indem Sie das 
+System ohne bootf„hige Festplatte und ohne eingelegte Diskette einschal-
+ten oder zurcksetzen. Man mu brigens etwa 6 mal "A" bet„tigen, um 
+bis ins DESKTOP vorzustoen.
+
+  Das '' im 8x16- Zeichensatz (fr hohe Aufl”sung) wurde ver„ndert, um 
+es vom Beta ("á") unterscheiden zu k”nnen. Auerdem wurden die groen 
+Umlaute und das '' des 6x6- Zeichensatzes (etwa im Text unter Datei- 
+Icons) ver„ndert, damit sie mit den anderen Grobuchstaben auf einer 
+Linie liegen.
+
+  Die Grafikausgabe von Dialogboxen unter KAOS 1.4.2 ist etwa 50-90% 
+schneller als unter TOS 1.4 (beide mit NVDI, TurboST oder „hnlichen 
+Beschleunigern).
+
+  KAOS 1.4.2 ist, soweit m”glich, kompatibel zu GEM 2.2 und enth„lt 
+sogar alle AES- Funktionen von GEM/3.
+  Damit sollten alle Programme, die fr GEM 2.2 geschrieben wurden, 
+auch unter KAOS laufen. Getestet wurden DESKTOP.APP, OUTPUT, GEMDiary, 
+GEMDrawPlus, GEMPaint und GEMWordchart. Dazu ist jedoch das NVDI n”tig, 
+das als einziges VDI ein GEM 2.x- kompatibles GDOS enth„lt.
+  Sollte jemand tats„chlich das GEM 2.2- Desktop benutzen wollen, kann 
+er das auf der KAOS- Diskette befindliche Programm DESK2.PRG starten. Es 
+mu sich im selben Ordner wie DESKTOP.APP befinden. Um DESKTOP.APP 
+wieder zu verlassen, einfach DESK2.PRG noch einmal starten.
+
+  KAOS 1.4.2 enth„lt eine vollst„ndige Schnittstelle fr ein alter-
+natives Desktop. Diese Schnittstelle wird von KAOSDESK genutzt, wodurch 
+das Atari- Desktop vollst„ndig ersetzt wird. Unter KAOSDESK kann man 
+sogar das Rommodul benutzen und die Aufl”sung wechseln; hinzu kommt, 
+da KAOSDESK im Modus "nicht resident" kein einziges Byte Speicher 
+ben”tigt. Wie oben bereits bemerkt: KAOS denkt an Leute mit 1MB 
+Speicher.
+
+  Der sogenannte "Window Manager" des GEM wurde v”llig neu geschrieben, 
+weil der alte beim Neuzeichnen ("Redraw") von Fenstern nach einer 
+Fensteroperation (Schlieen, Verschieben, Toppen, Vergr”ern) einen 
+viel gr”eren Bereich neu zeichnete, als n”tig gewesen w„re. Ein 
+Beispiel: ™ffnen Sie im DESKTOP unter TOS zwei Fenster, die sich nicht 
+berlappen. Wenn Sie nun eines schlieen, wird das andere v”llig neu 
+gezeichnet, obwohl es auch vorher sichtbar war, also ein Neuzeichnen 
+berhaupt nicht n”tig gewesen w„re. Gleiches gilt auch fr das Toppen 
+(nach oben Bringen) von Fenstern. Sobald das Fenster an einer kleinen 
+Ecke verdeckt war, wird es ganz neu gezeichnet. Insgesamt ergeben sich 
+im GEM st„ndig Flackereffekte durch unn”tiges Neuzeichnen der Fenster. 
+Auf dem Macintosh kann man sehen, wie es funktionieren sollte.
+  Unter KAOS 1.4 wurde nun das Neuzeichnen korrigiert, so da die 
+Fensteroperationen schneller laufen (weniger Neuzeichnen) und nicht 
+mehr st”rend wirken. Am besten ist das im DESKTOP oder in KAOSDESK bei 
+"Anzeigen als Text" sichtbar.
+  Beim Vergr”ern von Fenstern k”nnen einige Programme Schwierigkeiten 
+bekommen, da sie davon ausgehen, da immer das ganze Fenster neu 
+gezeichnet wird. Durch Konfiguration von KAOS kann man dann dieses 
+Problem beheben; n„heres in den Kapiteln "Konfiguration" und 
+"Probleme".
+
+  Beim Gr”enver„ndern eines Fensters wird das Fenster nicht schon beim 
+Bet„tigen der Maustaste verkleinert, sondern die Gr”e bleibt bis zum 
+Bewegen der Maus unver„ndert. Damit fhrt ein kurzes Anklicken des 
+Vergr”erungsfeldes nicht mehr zu einer Verkleinerung. Fenstergr”en 
+lassen sich jetzt im Gegensatz zu TOS pixelgenau einstellen.
+
+  In nahezu allen Programmen kann man Fenster mit einem Mausklick jetzt 
+nach hinten legen, das heit als unterstes Fenster setzen. Der dazugeh”-
+rige Button liegt rechts oben im Fenster, links vom Maximalgr”enfeld.
+
+  Das DESKTOP hat jetzt ein zus„tzliches Icon mit Iconnummer 5, das ein   
+Diskettenlaufwerk darstellt. Defaultm„ig wird ansonsten fr alle 
+Laufwerke eine Harddisk angezeigt.
+  Um das zus„tzliche Icon zu benutzen, ist etwa
+     #M 00 00 05 FF A FLOPPY
+in die Datei DESKTOP.INF zu schreiben, wobei 05 die Iconnummer ist.   
+Ein solches DESKTOP.INF erzeugt auf dem normalen TOS 1.2 allerdings 
+einen Absturz, und auf dem TOS 1.4 werden mit diesem Icon versehene 
+Laufwerke nicht mehr angezeigt. Es ist deshalb ratsam, auf die zus„tz-
+lichen Icons ganz zu verzichten, wenn man ab und zu ein „lteres TOS 
+verwendet.
+
+  Die automatische Wiederholung des Fensterscrollens mit den Pfeilen 
+oder dem grauen Bereich wurde ge„ndert. H„lt man die Maustaste ge-
+drckt, kommt erst nur ein Scroll, dann eine Verz”gerung und schlie-
+lich die automatische Wiederholung. Unter TOS 1.4 funktionierte das 
+nicht richtig und verz”gerte immer VOR dem ersten Scrollen. Auerdem 
+unterbleibt unter KAOS 1.4 die Verz”gerung, wenn nach dem ersten Scroll 
+die Maustaste schon wieder losgelassen wurde. Unter Original TOS 1.4 
+wird IMMER verz”gert, egal, ob wiederholt werden soll oder nicht.
+
+  Bei Anlicken der Scrollpfeile von Fenstern werden diese solange inver-
+tiert, wie man die Maustaste gedrckt h„lt.
+
+  Wie unter GEM/3, so kann man auch unter KAOS 1.4.2 w„hlen, ob die 
+GEM- Mens bei Berhren aktiviert werden sollen oder erst bei An-
+klicken. KAOS 1.4.2 kommt hier dem Wunsch vieler Benutzer entgegen, die 
+immer wieder beim Verschieben von Fenstern o.„. ungewollt in der 
+Menleiste landen und das heruntergefallene Men mhsam wieder weg-
+klicken mssen. Im Gegensatz zu GEM/3 braucht nur der erste Mentitel 
+angeklickt zu werden; will man den Mentitel wechseln, so verh„lt sich 
+das Men wie bisher und reagiert auf Berhrung.
+
+  Unter KAOS warten alle TOS- Programme, die vom DESKTOP aus gestartet 
+wurden, auf einen Tastendruck. Man kann auch eine Maustaste bet„tigen. 
+Dieses Feature ist abschaltbar (siehe Kapitel 5).
+
+  Die sogenannten "Grow- und Shrinkboxen", die beim ™ffnen von Fenstern 
+und Dialogboxen ausgegeben werden und manchmal den Bildschirmaufbau 
+st”rend verlangsamen, sind abschaltbar (siehe Kapitel 5).
+
+  Das sogenannte "Gummiband" wurde berarbeitet, um das totale H„ngen-
+bleiben des Systems zu verhindern. Bisher kam es unter TOS 1.4 bei 
+einigen Leuten, die sehr fix mit der Maus sind, h„ufig vor, da sich 
+keine Mens mehr anw„hlen lieen, keine Tasten mehr angenommen wurden 
+und man einen Reset ausl”sen mute.
+
+  Wenn ein Programm Bomben geworfen hat, erscheint vor der Rckkehr ins 
+DESKTOP eine Alertbox mit Text "Ein schwerwiegender Systemfehler ist 
+aufgetreten". Man kann in solch einem Fall in Ruhe die Bomben z„hlen 
+und dann Return bet„tigen.
+
+  Wenn ein Programm nicht ausfhrbar ist, weil etwa der Linker eine 
+falsche Datei erzeugt hat, erscheint jetzt "ungltiges Programmformat" 
+statt "TOS Fehler #35". Ausprobieren kann man das, indem man etwa 
+DESKTOP.INF in DESKTOP.PRG umbenennt und dann startet.
+
+  Die Uhrzeit ist auch bei STs ohne Echtzeituhr resetfest. Die Uhr mu 
+also nur noch nach dem Einschalten gestellt werden. Atari hat ebenfalls 
+im TOS 1.4 einen Versuch unternommen, dieses Feature zu integrieren. 
+Offenbar hat man in Sunnyvale aber keinen alten ST mehr, daher blieb es 
+beim Versuch.
+
+  Wurde ein Programm mit ^C abgebrochen, erscheint die Zeichenkette 
+"^C" auf dem Bildschirm.
+
+  Auf s„mtlichen Speichermedien stehen 2 Cluster, also i.a. 2 kB mehr 
+Speicherplatz zur Verfgung. Auf eine Standarddiskette passen also 
+jetzt genau 728.064 Bytes, das Atari- Desktop zeigt dies nach dem 
+Formatieren an. Ist die Kompatibilit„t aktiviert (siehe Kapitel 5), 
+bildet KAOS 1.4 den Programmierfehler des TOS nach und versteckt die 2 
+kB wieder.
+
+  FOLDRxxx.PRG kann nicht mehr verwendet werden. Fr KAOS 1.4 ist das 
+beiliegende ADDMEM.PRG zu benutzen, das etwa 50 Ordner zus„tzlich 
+zul„t. Ben”tigt wird es etwa auch fr Turbo C, wenn mehr sehr groe 
+Projekte (mit sehr vielen Objektmodulen) bersetzen m”chte.
+
+  Unter KAOS 1.4.2 stehen etwa 13 kB mehr Benutzerspeicher als unter 
+TOS 1.4 zur Verfgung.
+
+
+4)   Kompatibilit„t
+-------------------
+
+  KAOS 1.4.2 ist eine Modifikation des TOS 1.4, also bleiben i.a. sogar 
+undokumentierte Systemvariablen an ihrem Platz. Bisher hat es in einer 
+ber ein Jahr dauernden Testphase kaum Programme gegeben, die nicht 
+funktionierten.
+  Da KAOS 1.4 nach wie vor das Systemdatum vom 6.4.89 und die TOS- Ver-
+sionsnummer 1.4 tr„gt, mute auf eine gr”tm”gliche Kompatibilit„t 
+geachtet werden. Einige Verbesserungen und Korrekturen sind daher ab-
+schaltbar, um auch Programme benutzen zu k”nnen, die sich nicht ganz 
+vorschriftsm„ig verhalten, aber rein zuf„llig unter dem Original- TOS 
+zu funktionieren scheinen. Dazu siehe im Kapitel 5 (Konfiguration von 
+KAOS 1.4) die Beschreibungen zu den Schaltern "Kompatibilit„t" und 
+"Smart Redraw".
+  Obwohl die Versionsnummer von KAOS 1.4 nach wie vor 1.4 lautet und 
+das Betriebssystem problemlos in die 192kB ROMs pat, ist es voll 
+kompatibel zum TOS 1.6 fr den STe. Alle Hardware- Verbesserungen, die 
+den STe vom ST unterscheiden und von TOS 1.6 untersttzt werden, werden 
+auch von KAOS 1.4 untersttzt; dies sind vor allem die Bildschirmadres-
+se auf Wortgrenze und die feinere Farbabstufung. Ferner wird der DMA- 
+Sound initialisiert und die Cookies installiert. KAOS 1.4 ist in der 
+Lage, sich automatisch und selbst„ndig an den STe anzupassen und ggf. 
+etwa feinere Farbabstufungen zuzulassen; Benutzerprogramme k”nnen an-
+hand der Cookies _VDO und _MCH feststellen, mit was fr einer Maschine 
+sie es zu tun haben. Im Fall, da von KAOS kein STe erkannt wird, wird 
+brigens der _SWI- Cookie nicht installiert.
+  KAOS 1.4 ist in sofern kompatibel zu KAOS 1.2, als alle hier 
+enthaltenen Betriebssystem- Erweiterungen in KAOS 1.4 ebenfalls 
+enthalten sind. Das betrifft besonders die Standarddatei- Umlenkung und 
+die MSDOS- "Kompatibilit„t".
+
+
+5)   Konfiguration von KAOS 1.4.2
+----------------------------------
+
+  KAOS 1.4.2 enth„lt eine Reihe von Ver„nderungen gegenber TOS 1.4, 
+die abschaltbar sind. Einerseits ist dies dann n”tig, wenn es um die 
+Frage des pers”nlichen Geschmacks geht, andererseits dann, wenn Program-
+me mit KAOS nicht oder nicht zufriedenstellend funktionieren. Aus 
+diesem Grund ist auf der Diskette ein Programm enthalten: KAOSCONF.ACC.
+  KAOSCONF erfllt drei Funktionen in einem Programm:
+
+1)	Als Accessory installiert, setzt KAOSCONF zun„chst beim Geladenwer-
+	den die mit "Sichern" festgelegte Einstellung (falls frher schon 
+	einmal "Sichern" bet„tigt worden war). Diese Einstellung kann 
+	jederzeit ge„ndert und mit "Sichern" auch fr den n„chsten Bootvor-
+	gang dauerhaft festgelegt werden.
+2)	Als Programm (einfach in KAOSCONF.PRG umbenennen) kann KAOSCONF 
+	einfach gestartet werden, reagiert sonst wie beim Aufrufen des 
+	Accessories.
+3)	Als Programm im AUTO- Ordner setzt es die mit "Sichern" festgeleg-
+	te Einstellung und verabschiedet sich wieder, belegt also keinen 
+	Speicherplatz.
+
+  Die Einstellungsschalter haben im einzelnen folgende Bedeutung:
+
+Fastload:
+  Der bekannte und beliebte Fastload- Patch fr schnellere Diskettenzu-
+griffe, der unter KAOS jedoch aus Sicherheitsgrnden nur beim Lesen 
+benutzt wird. Auch dieses ist abschaltbar, falls Ihr Laufwerk h„ufig 
+Lesefehler haben sollte.
+
+Kompatibilit„t zu TOS:
+  KAOS enth„lt eine Reihe von Sicherheitsabfragen und Parameterberpr-
+fungen, denen einige Programme nicht standhalten. Mit diesem Schalter 
+kann man diese Sicherheitsabfragen abschalten und so auch nicht ganz 
+sauber geschriebene Programme nutzen. Falls Sie selbst der Autor eines 
+solchen Programms sind, sollten Sie es unbedingt korrigieren, sonst 
+sollten Sie sich mit dem Autor bzw. Hersteller in Verbindung setzen.
+  Beachten Sie, da das Aktivieren der Kompatibilit„t die Betriebssi-
+cherheit Ihres Systems deutlich herabsetzt und auch Komfort und Ge-
+schwindigkeit beeintr„chtigt. Falls irgendwie m”glich, sollten Sie da-
+her die Kompatibilit„t immer deaktivieren.
+
+Smart Redraw:
+  Mit diesem Schalter, den man im Deutschen mit "Intelligentes Neuzeich-
+nen von Fenstern" beschriften mte, kann man einen Teil der optimier-
+ten Fensterroutinen deaktivieren, falls beim Vergr”ern oder Verschie-
+ben von Fenstern Fehler auftreten. Es wird dann bei diesen Operationen 
+immer wieder das ganze Fenster neu gezeichnet; einige Programme wie 
+etwa GEMINI 1.1 und 1.2 nutzen diesen GEM- Designfehler aus. Am besten 
+probieren Sie die Programme einfach aus, Bildschirmfehler sind stets 
+harmlos und nur etwas unsch”n, sie beeintr„chtigen nicht die Betriebs-
+sicherheit.
+
+Grow- / und Shrinkboxen:
+  Diese grafischen Effekte des GEM sollen den Eindruck eines 
+"Explodierens" oder "Implodierens" erwecken, wenn Dialogboxen oder Fen-
+ster ge”ffnet oder geschlossen werden. Sie sind in GEM 2.2 und GEM/3 
+brigens dem Rechtsstreit mit Apple zum Opfer gefallen.
+  Zwecks Beschleunigung des Bildschirmaufbaus bei Fenstern oder Dialog-
+boxen kann man diese Effekte abschalten. Es ergeben sich damit keiner-
+lei Schwierigkeiten.
+
+Halt nach TOS Programmen:
+  Bezieht sich auf das Starten von TOS- Programmen vom DESKTOP aus. 
+Diese warten unter KAOS 1.4 normalerweise auf einen (Maus-) Tasten-
+druck. Dies kann man mit diesem Schalter beeinflussen.
+
+Pulldown- Mens:
+  Hiermit kann man w„hlen, ob die Mens erst auf Mausklick aktiviert 
+werden (Schalter auf "ein") bzw. wie bisher schon bei Berhrung 
+herunterfallen sollen ("aus"). Die beste Stellung dieses Schalters 
+entspricht dem pers”nlichen Geschmack und sollte einfach ausprobiert 
+werden.
+  Wichtig ist, da man nach Deaktivieren des Schalters (d.h. Zurck-
+schalten auf Dropdown- Mens) erst noch einmal ein Men anklicken mu, 
+ehe die Umschaltung wirksam wird.
+
+
+6)   Probleme
+--------------
+
+  Einige Programme haben Schwierigkeiten mit den optimierten Fenster-
+routinen. Hier eine Auflistung aller getesteten Programme:
+
+  Programme, die vom neuen Redraw sehr profitieren und KAOS 1.4 mit zum 
+Teil wesentlich schnellerem Bildschirmaufbau nutzen k”nnen:
+
+     DESKTOP
+     Turbo C
+     NRSC 1.3
+     KAOSDESK
+     GST- Editor 1.01
+     Mprolog
+     Metacomco- Editor 2.08
+     Alice Pascal 1.4.1
+     Easydraw 2.32
+     GEMPAINT
+     VIP
+     KGRAPH
+     MATRIX 2.11
+     Tempus Word
+     Edison Editor
+     Clix Editor
+     SCIGRAPH
+
+  Programme, die gut mit dem neuen Redraw zurechtkommen, aber nicht 
+besonders profitieren, da sie entweder sowieso immer das ganze Fenster 
+neu aufbauen (Tempus, Devpac, Megamax-Editor, NeoDesk) oder sowieso 
+schon schnell im Redraw sind (Tempus):
+
+     Tempus
+     RCS2
+     Devpac
+     Megamax- Editor 1.0
+     NeoDesk
+
+  Programme, bei denen der Schalter "Smart Redraw" deaktiviert werden 
+sollte, da sie bei der Vergr”erung von Fenstern Streifen verursachen 
+oder die Fenster nicht korrekt scrollen.
+
+     Wordplus
+     Prospero- Editor (Fortran, Pascal)
+     APL 68000 (sehr merkwrdige Effekte)
+     ST- Logo
+     Adimens EXEC
+     Adimens INIT
+     ST- BASIC (Metacomco)
+     Profi- Painter
+     Touch Up
+     KSPRED
+     HDU
+     Gemini
+     LPR Modula
+     Calamus
+     Ariadne
+     Script
+
+  Programme, die sehr sehr omin”se Redraws veranstalten:
+
+     Laser C Editor V2.1
+     Doodle
+
+  Das Programm EASYRIDER enth„lt zumindest in der Version 2.1 einen 
+Programmierfehler, so da der Fensteraufbau nicht funktioniert und das 
+Programm dabei in eine Endlosschleife ger„t. Ein Patch ist noch nicht 
+erstellt.
+  Das Programm NRSC.PRG (Resource Construction Set von KUMA) enth„lt 
+einen so schweren Programmierfehler, da es trotz gesetzer Kompatibili-
+t„tsflags nicht funktioniert.
+
+  Die meisten Programme, die unter KAOS 1.4 sonderbar reagieren, lassen 
+sich mit eingeschalteter Kompatibilit„t trotzdem nutzen. Ein typisches 
+Symptom ist die Meldung "Kann Datei nicht lesen/erstellen/schreiben" 
+usw., das Grafikprogramm STAD (zumindest bis V1.3) geh”rt zu dieser 
+Spezies. Mitunter werden auch leere Dateien erstellt, oder das Programm 
+strzt sang- und klanglos ab.
+  Funktioniert ein Programm nicht, gehen Sie bitte erst folgende 
+Checkliste durch, ehe Sie sich an uns wenden:
+
+1)	Laden Sie KAOSCONF, falls Sie es nicht als Accessory installiert 
+	haben, und setzen Sie den Schalter "Kompatibilit„t" auf "ein".
+		Die meisten Programme mten jetzt funktionieren.
+2)	Setzen Sie den Schalter "Smart Redraw" auf "aus". Wenn das Programm 
+	jetzt funktioniert, kann das Programm die neuen Fensterroutinen 
+	nicht nutzen.
+3)	Testen Sie das Programm unter TOS 1.4, ggf. bei einem Bekannten 
+	oder H„ndler, oder auch gleich auf einem TT.
+	Funktioniert das Programm hier auch nicht, liegt der Fehler mit 
+	gr”ter Wahrscheinlichkeit an diesem selbst. Setzen Sie sich mit 
+	dem Autor bzw. Hersteller des Programms in Verbindung.
+4)	Nehmen Sie eine leere Diskette (ggf. formatieren), kopieren Sie nur 
+	das fehlerhaft laufende Programm und KAOSCONF.PRG hier hinein. 
+	Schalten oder klemmen Sie Ihre Festplatte und weitere Erweiterun-
+	gen ab, legen Sie die Diskette mit dem zu testenden Programm in 
+	Ihr Diskettenlaufwerk und bet„tigen Sie CTRL-ALT-RSHIFT-DEL.
+	Ihr Rechner sollte mit leerem DESKTOP erscheinen. Testen Sie nun 
+	das Programm von der Diskette und danach auch mit eingeschalteter 
+	Kompatibilit„t.
+	Funktioniert Ihr Programm jetzt, liegt der Fehler im Zusammenspiel 
+	mit Ihrem Festplattentreiber, AUTO- Ordner- Programmen oder 
+	Accessories. Sie k”nnen jetzt versuchen zu ermitteln, wer der 
+	"St”renfried" ist.
+
+  Wenn alle Bemhungen nicht gefruchtet haben, setzen Sie sich bitte 
+mit den Programmierern von KAOS in Verbindung. Geben Sie bitte Ihren 
+Namen und Ihre Seriennummer an (Sie mssen sich mit der beiliegenden 
+Karte registrieren lassen haben). Geben Sie Ihren Rechnertyp und die 
+Version des nicht funktionierenden Programms an. Ggf. mssen Sie uns 
+eine Kopie zuschicken, damit wir das Problem untersuchen k”nnen; Ihre 
+Diskette wird selbstverst„ndlich nur zur Fehlersuche verwendet und 
+nicht weiter verbreitet werden.
+  Falls Sie ansonsten Fragen haben und in etwa wissen, welcher Bereich 
+des Systems fr Ihr Problem zust„ndig ist, hier die "Zust„ndigkeiten":
+
+Andreas Kromke:     GEMDOS/AES/(X)BIOS,Hilfsprogramme
+Dirk Katzschke:	Beschleunigerkarten und sonstige Hardware- Erweite-
+	rungen,680x0- Untersttzung,Cookies,Ressourcen
+Atari Corp.:		DESKTOP,VDI
+
+
+7)   KAOS fr Programmierer
+---------------------------
+
+  Generell ist es immer problematisch, Funktionen von KAOS 1.4.2 zu 
+benutzen, die unter TOS nicht existieren. Bevor Sie sich zu diesem 
+schwierigen Schritt entschlieen, berlegen Sie folgendes:
+
+1)	Kann man nicht doch eine dokumentierte Betriebssystemfunktion des 
+	TOS verwenden, ggf. aus einer anderen Bibliothek (etwa VDI ?)
+2)	L„t sich der Aufruf vielleicht durch mehrere andere TOS- 
+	Funktionen nachbilden ?
+3)	Wollen Sie das Programm vermarkten, so da es auf Original- TOS 
+	laufen mu ?
+4)	Wollen Sie das Programm (etwa als Public Domain) weitergeben, so 
+	da auch hier die Lauff„higkeit auf allen TOS- Versionen wnschens-
+	wert w„re ?
+
+  Wenn Sie alle diese Fragen mit "nein" bzw. mit "viel zu umst„ndlich" 
+oder "ist mir egal" beantworten k”nnen, gehen Sie bitte folgende 
+Checkliste durch:
+
+1)	Existiert die Funktion auch unter KAOS 1.2.3, so da eine Abfrage 
+	per Sconfig() (s.u.) ausreicht ?
+2)	Kann ich das Programm vielleicht so schreiben, da etwa nur eine 
+	spezielle Funktion unter dem normalen TOS nicht m”glich ist ?
+
+  Auerdem ist wichtig, wie weit sich KAOS verbreiten wird. Bei 
+entsprechender Verfgbarkeit entfallen natrlich einige Vorbehalte. 
+Helfen Sie aber bitte nicht mit Raubkopien nach!
+  Falls Sie ernsthaft Software entwickeln wollen, ben”tigen Sie 
+unbedingt eine M”glichkeit, Ihr Programm auf einem Original- TOS zu 
+testen; und sei es nur, um die Meldung "Programm l„uft nur unter KAOS" 
+zu provozieren. Am besten testet man ein Programm gleich unter mehreren 
+TOS- Versionen und Aufl”sungen und auch auf dem TT.
+
+  Will man die neuen Funktionen fr eigene Programme nutzen, so kann 
+man fr C auf die Datei KAOS.H zurckgreifen, die auf der KAOS- 
+Diskette enthalten ist. Die Bibliothek KAOSLIB.O ist fr Turbo C 
+geschrieben und kann ggf. modifiziert und mit einem geeigneten 
+Assembler neu bersetzt werden; fr andere Compiler als Turbo C mu die 
+Bibliothek auf jeden Fall angepat werden, da nur letzteres die Parame-
+terbergabe in Registern durchfhrt.
+
+
+8)   Neue Funktionen in KAOS 1.2
+--------------------------------
+
+  Ein groer Teil der neuen Funktionen von KAOS 1.4.2 ist bereits in 
+KAOS 1.2 vorhanden. Um speziell fr KAOS 1.4.2 geschriebene Programme 
+universell lauff„hig zu halten, sollte man prfen, ob die Funktion 
+bereits in KAOS 1.2 enthalten ist, und dann nur diese Abfrage durch-
+fhren:
+
+#include <KAOS.H>
+...
+if   (Sconfig(SC_GET) < 0L)
+     {
+     Cconws("Programm l„uft nur unter KAOS");
+     Pterm(-1));
+     }
+
+  Da der DOS- Aufruf Sconfig() beim normalen GEMDOS nicht existiert und 
+immer EINVFN (Ungltige Funktionsnummer) liefert, wird das Programm 
+dann abgebrochen.
+  Hier die neuen Funktionsaufrufe, die in KAOS 1.2 und 1.4 identisch 
+arbeiten:
+
+  Mshrink() im GEMDOS kann jetzt auch, wie in MSDOS, einen Speicher-
+block nicht nur verkleinern, sondern auch vergr”ern. Dazu wird die 
+gewnschte Gr”e wie bisher einfach bergeben. Gibt es keinen freien 
+Speicher direkt ber diesem Speicherblock oder ist dieser zu klein, so 
+kann der angegebene Block natrlich nicht vergr”ert werden, und man 
+erh„lt EGSBF. šbergibt man statt der gewnschten L„nge -1L, so wird 
+(analog zu Malloc()) die maximal m”gliche Gr”e des Speicherblocks 
+zurckgegeben (d.h. die aktuelle Gr”e + die Gr”e eines evtl. darber 
+liegenden, freien Speicherblocks).
+
+  Das GEMDOS- Ger„t NUL (oder NUL:) wurde hinzugefgt; es existiert auch 
+unter MSDOS. Das NUL- Device hat Handle -4, wirkt beim Schreiben wie 
+ein schwarzes Loch (d.h. der Schreibbefehl bewirkt einfach gar nichts) 
+und beim Lesen wie eine leere Datei. Das NUL- Device ist besonders im 
+Kommandoprozessor KCMD ntzlich, "COPY datei nul" prft etwa, ob eine 
+Datei lesbar ist. Ein anderes Beispiel fr den Atari- Linker "aln", das 
+nur eine Symboltabelle erstellt, ohne eine Objektdatei (nul.prg) zu 
+erzeugen:
+
+  aln -v -l -m -o nul -c kaos.inp >symbols
+
+  Die Schreibweise der Devices wurde korrigiert und damit an MSDOS 
+angeglichen. Daher funktioniert jetzt auch gemischte Gro-
+/Kleinschreibung (CoN:), und auerdem kann auf den Doppelpunkt verzich-
+tet werden. Schlielich wird noch ein evtl. eingegebener Pfad und eine 
+Extension ignoriert. Man kann daher in der Dateiauswahlbox einfach CON 
+eingeben; wenn das Programm den Pfad davor- und eine Extension dahinter-
+h„ngt (etwa C:\BIN\CON.DOC), so wird trotzdem die Konsole erkannt. 
+W„hlen Sie doch einfach einmal in WORDPLUS "Speichern als" und geben 
+Sie "CON" als Dateinamen ein. Sie k”nnen in solch einem Fall auch immer 
+NUL eingeben, um ein Abspeichern ganz zu verhindern.
+
+  Generell wurden GEMDOS- Fehlermeldungen korrigiert. Wenn Sie also 
+eine Fehlerbehandlung in Ihr Programm einbauen m”chten, k”nnen Sie 
+sicher sein, da etwa bei "Fsfirst" auch einmal die Fehlermeldung 
+EPTHNF ("Pfad nicht gefunden") oder EDRIVE ("unbekanntes Laufwerk") 
+kommen kann, und nicht nur ein uninteressantes, monotones und g„nzlich 
+nichtssagendes EFILNF wie im Original- TOS. Ein Beispiel dazu aus 
+KAOSDESK: Wenn Sie auf einer Diskette einen Ordner "AUTO" ge”ffnet 
+haben, die Diskette wechseln und Esc bet„tigen, und die neue Diskette 
+hat keinen AUTO- Ordner, so erh„lt KAOSDESK unter KAOS die Fehlermel-
+dung EPTHNF und schliet automatisch den Ordner. Unter TOS erh„lt man 
+jedoch immer die Meldung EFILNF, kann also nicht zwischen einem leeren 
+und einem nicht existierenden Verzeichnis unterscheiden! Das ist sicher-
+lich eine ausgemachte Schlamperei.
+
+  Der GEMDOS- Aufruf Fwrite wurde erweitert. In MSDOS kann man durch 
+Angabe von 0L als "count" erreichen, da die Datei auf die aktuelle 
+Position des Dateizeigers gekrzt wird. Dies ist jetzt auch mit KAOS 
+m”glich. Damit die Funktion nicht unabsichtlich von einem Programm 
+aufgerufen wird, das wirklich 0 Bytes schreiben m”chte, mu man in KAOS 
+als "buffer" -1L bergeben. Nach Ausfhrung sind Dateil„nge und ak-
+tuelle Dateiposition identisch (EOF- Status). Das Verkrzen ist nur 
+m”glich, wenn die Datei zum Schreiben ge”ffnet wurde. Vorsicht: Ist die 
+Datei auerdem noch (mit einem anderen Handle) zum Lesen ge”ffnet, so 
+fhrt dies zu unsch”nen Resultaten, wenn man ber das jetzt verkrzte 
+Dateiende lesen m”chte. Diese Unterfunktion von Fwrite ist in KAOS.H 
+als Fshrink(int handle) enthalten.
+
+  Dsetpath() im GEMDOS kann jetzt auch den Standardpfad fr ein anderes 
+als das Defaultlaufwerk setzen, so kann man etwa mit 
+Dsetpath("B:\PTH\") den Standardpfad fr B: „ndern, ohne das aktuelle 
+Laufwerk zu „ndern. Eigentlich ist ist dies keine Erweiterung, sondern 
+eine Fehlerkorrektur, da diese Funktionsweise nach der Originaldokumen-
+tation, nach logischen šberlegungen und in MSDOS garantiert wird.
+
+
+9)   Neue TOS- Funktionen in KAOS 1.4.2
+---------------------------------------
+
+  Will man GEMDOS- Funktionen nutzen, die im KAOS 1.2.3 noch nicht 
+vorhanden waren, aber jetzt im KAOS 1.4.2 implementiert sind, mu man 
+in das entsprechende Programm eine etwas kompliziertere Einfrage einbau-
+en:
+
+#include <KAOS.H>
+...
+if   (Sconfig(SC_GET) < 0L || Sversion() < 0x1600)
+     {
+     Cconws("Programm l„uft erst ab KAOS 1.4");
+     Pterm(-1);
+     }
+
+oder im Supervisormodus:
+
+#include <KAOS.H>
+...
+if   (Sconfig(SC_GET) < 0L || _sysbase->os_version < 0x0104)
+     {
+     Cconws("Programm l„uft erst ab KAOS 1.4");
+     Pterm(-1);
+     }
+
+  Das GEMDOS des Atari hat leider einen ziemlich schwerwiegenden Design-
+fehler: Erstens l„t ist es nicht reentrant (darf also nicht im 
+Interrupt aufgerufen werden, wenn gerade ein DOS- Aufruf bearbeitet 
+wird), und zweitens wird ein erneuter Aufruf nicht einmal unterbunden 
+und fhrt zu Bomben. Ein Beispiel: Es gibt viele Programme, die mit 
+Hilfe von ALT-HELP den Bildschirmspeicher als Datei auf Disk speichern. 
+Bisher funktionierte von diesen Programmen kein einziges wirklich zuver-
+l„ssig, da beim Drcken von ALT-HELP w„hrend einer Eingabe ber DOS 
+oder w„hrend eines Diskzugriffs zwar manchmal die Hardcopydatei erzeugt 
+wurde, dann aber das System sofort abstrzte.
+  Der groe Bruder MSDOS hat im Prinzip dieselben Probleme. Hier wird 
+jedoch ein Neuaufruf mit Hilfe eines Semaphoren- Mechanismus unterbun-
+den; die Adresse der Semaphore ist auerdem zug„nglich. Diese Idee ist 
+in „hnlicher Form jetzt endlich in KAOS 1.4 verwirklicht worden.  Die 
+sogenannte In- DOS- Semaphore, deren Adresse man mit Sconfig() (s.u.) 
+erh„lt, verhindert wirkungsvoll den Aufruf von DOS, w„hrend noch ein 
+anderer DOS- Aufruf abgearbeitet wird. Der zweite Aufrufer erh„lt dann 
+EINTRN als Fehlermeldung; damit wird DOS zwar nicht reentrant, aber 
+harmlos. Die Semaphore wird beim Eintritt in DOS gesetzt und beim 
+Verlassen wieder gel”scht. Auerdem gibt es noch das Problem, da man 
+auch ber den etv_term- Vektor ins Userprogramm zurckkehren kann. KAOS 
+1.4 l”st das Problem, indem geprft wird, ob etv_term auf "rts" zeigt. 
+In diesem Fall wird erst gar nicht der Vektor aufgerufen. Andernfalls 
+wird die "In DOS"- Semaphore gel”scht und in den Vektor gesprungen. 
+Falls das Userprogramm aber nur noch ein paar BIOS- Aufrufe o.„. machen 
+m”chte und dann mit "rts" in Pterm zurckspringt (sehr unwahrschein-
+lich), ist DOS fr diese Zeit "ungeschtzt". Dieses Problem kann jedoch 
+vernachl„ssigt werden.
+  Damit bei einem Bombenfehler im DOS selbst (etwa bei šbergabe eines 
+ungltigen Zeigers an Dgetpath()) das Programm abgebrochen werden kann, 
+ist trotz gesetzter Semaphore ein Pterm oder Pterm0 im Supervisor-Modus 
+m”glich; offensichtlich fhrt das nicht zu Problemen, da der durch 
+Bomben unterbrochene DOS- Aufruf nicht wieder aufgenommen wird.
+  Wer GEMDOS im Interrupt benutzen m”chte, also etwa ein Hardcopy- 
+Programm mit Abspeichern auf Diskette schreiben m”chte, kann entweder 
+ohne vorherige šberprfung einen Fcreate()- Aufruf machen, der dann 
+evtl. mit EINTRN endet, oder aber bei der Initialisierung die Adresse 
+der Semaphore ermitteln (mit Sconfig(2), s.u.) und diese vor dem DOS- 
+Aufruf abfragen; trotzdem k”nnte zwischen der Abfrage der Semaphore und 
+dem DOS- Aufruf ein Interrupt auftreten und dabei die Semaphore gesetzt 
+werden, der Rckgabewert ist also in jedem Fall auf EINTRN zu berpr-
+fen. šbrigens ist (X)BIOS schon immer reentrant (bis zu einer begrenz-
+ten Schachtelungstiefe). Bisher gab es jedoch eine "kritische Stelle", 
+bei der ein Neuaufruf garantiert zum Systemabsturz gefhrt h„tte. 
+Obwohl dieser Fall sehr unwahrscheinlich ist, wurde trotzdem dieser 
+Programmabschnitt in KAOS 1.4 geschtzt.
+Achtung:	Es mu dringend davor gewarnt werden, die "in_dos"- Semaphore 
+	zu ver„ndern.
+
+  Es gibt eine neue DOS- Funktion "long Sconfig(int mode, long bitset)" 
+mit Funktionsnummer 0x33, mit dem u.a. das Konfigurations- Bitfeld 
+gesetzt (mode == 1) oder gelesen (mode == 0) werden kann. In beiden 
+F„llen erh„lt man in d0.l den alten Wert zurck (Unter KAOS 1.2 gab es 
+nur diese beiden Unterfunktionen, und es waren nur die Bits 0..4 
+benutzt).
+  In MS-DOS kann man mit der DOS- Funktion 0x33 das Break- Flag ein- 
+oder ausschalten.
+  Bisher sind folgende Bits belegt (vergl. Kapitel 4):
+
+  - Bit 0        Pfadberprfung ein
+  - Bit 1        Diskwechsel- Simulation im DESKTOP (nur bei KAOS 1.2)
+  - Bit 2        Break ein; CTRL-C Abfrage bei jedem DOS- Aufruf
+  - Bit 3        CTRL-C Abfrage aus; fr zeichenorientierte Funktionen
+  - Bit 4        Floppy lesen,verifizieren: Fastload aus
+  - Bit 5        Kompatibilit„t ein
+  - Bit 6        kein "Smart Redraw" (und andere AES- Optimierungen)
+  - Bit 7        keine Shrink- und Growboxen
+  - Bit 8        kein Halt nach TOS- Programmen
+  - Bit 9        strengstens reserviert
+  - Bit 10       Pulldown- Mens
+  - Bit 11..30   strengstens reserviert
+  - Bit 31       mu unbedingt 0 sein, sonst Fehler
+
+  Man beachte, da alle Bits auer Bit 3,4,6 und 7 eine Funktion ein~
+schalten, wenn sie auf 1 gesetzt sind.
+
+  Das Break- Flag sollte vor der Rckkehr ins DESKTOP unbedingt ausge-
+schaltet werden, da sonst das DESKTOP bei CTRL-C sofort abstrzt (der 
+Proze "AES/DESKTOP" darf beim Atari nicht beendet werden).
+
+  Bei eingeschalteter Kompatibilit„t liefert KAOS 1.4 auf den 
+Sconfig()- Aufruf ein EINVFN, so da KAOS 1.4 fr Benutzerprogramme 
+nicht mehr zu erkennen ist. Insbesondere ist bei eingeschalteter Kompa-
+tibilit„t ein Rcksetzen des Kompatibilit„tsflags mit legalen Mitteln 
+nicht m”glich (da dies KAOSCONF trotzdem kann, drfte das keine besonde-
+re Einschr„nkung sein).
+
+  Das 'KAOS'- Cookie kann durchsucht werden, um die KAOS- Versionen ab 
+1.4 zu unterscheiden. Zurckgeliefert wird ein Langwort mit dem Erstel-
+lungsdatum von KAOS im gepackten BCD- Format, also etwa:
+
+    0x22121989L fr "22.12.1989"
+
+  Auerdem kann man Sconfig benutzen, um auf undokumentierte Systemvari-
+able zuzugreifen. Dies ist etwa fr Uhren ntzlich, die im Interrupt 
+die DOS- Zeit auslesen wollen. Nicht alle zug„nglichen Variablen soll-
+ten benutzt werden. Nur die mit (!) markierten sind normalerweise 
+sinnvoll zu verwenden.
+  Mit mode == 2 erh„lt man einen Zeiger auf folgende Struktur:
+
+  typedef struct
+     {
+     char      *in_dos;          (!)    /* Adresse der DOS- Semaphore */
+     int       *dos_time;        (!)    /* Adresse der DOS- Zeit      */
+     int       *dos_date;        (!)    /* Adresse des DOS- Datums    */
+     long      dos_stack;               /* Stack fr DOS selbst       */
+     long      pgm_superst;             /* Benutzerpgm.- Sup.stack    */
+     MD        *memlist[3];      (!)    /* Adresse der 3 MD- Listen   */
+     PD        *act_pd;          (!)    /* Laufendes Programm         */
+     FCB       *fcbx;                   /* Dateien                    */
+     int       fcbn;                    /* L„nge von fcbx[]           */
+     DMD       *dmdx;                   /* Zeiger auf 16 DMDs         */
+     IMB       *imbx;                   /* interne DOS- Speicherliste */
+     void      (*resv_intmem)();        /* DOS- Speicher erweitern    */
+     long      (*etv_critic)();         /* etv_critic des GEMDOS      */
+     char      (*err_to_str)();         /* Umrechnung Code->Klartext  */
+     } DOSVARS;
+
+  Es wird dringend gebeten, alle Pointer vor Verwendung auf NULL zu 
+berprfen. Wenn einmal in einer sp„teren KAOS- Version etwa das 
+Konzept der Speicherverwaltung ge„ndert wird, wird diese Version in 
+<memlist> einen NULL- Pointer enthalten und die Liste der DOSVARs um 
+die neuen Strukturen erweitert.
+
+  Die genaueren Beschreibungen der drei Funktionen in obiger Struktur 
+lauten:
+
+     void resv_intmem(a0 = void *adr, d0 = long len);
+
+erweitert die DOS- Speicherleiste um <d0.l> Bytes ab Adresse <a0>. Der 
+Speicher darf anschlieend nicht mehr angetastet werden und darf auch 
+nicht mehr aus der DOS- Speicherliste entfernt werden.
+  Die šbergabe der Parameter erfolgt in Registern (Turbo C Konvention).
+
+     long etv_critic(int errcode, int drvnr);
+
+ist der Event-Critic-Manager des DOS, der beim Initialisieren des DOS 
+aktiviert wird. Er ist zum Zeitpunkt der Initialisierung von AES 
+installiert und wird automatisch beim Start von TOS- Programmen statt 
+des AES- Handlers wieder aktiviert. Die Adresse ist eigentlich nur von 
+Nutzen, wenn man statt des AES- Handlers (ber Alertboxen) in einem 
+eigenen Programm lieber den DOS- Handler verwenden m”chte (etwa in 
+einem Kommandoprozessor).
+
+     char *err_to_str(d0 = char errcode);
+
+ist ein Unterprogramm, das in d0.b einen DOS- oder BIOS- Fehlercode 
+erwartet und diesen in einen (landessprachlichen) Klartext umrechnet. 
+In d0 bekommt man entweder 0L zurck, falls der Fehlercode kein 
+Standardfehler ist, oder aber einen Zeiger auf den Fehler im Klartext, 
+etwa "Datei nicht gefunden". Ist d0.l Null, zeigt a0 auf den Default- 
+Fehlertext "TOS Fehler", ansonsten haben d0 und a0 denselben Wert. Auch 
+hier entspricht die Parameterbergabe den Turbo C Konventionen, auer 
+der Verwendung von a0.
+
+  Da KAOS 1.4.2 den Anspruch erhebt, kompatibel zum TOS 1.6 zu sein, 
+wurden die g„ngigen Cookies und die Variable _longframe (Adresse $59e) 
+implementiert, die bei nicht-68000-Prozessoren ungleich Null ist. N„he-
+res entnehme man den g„ngigen Dokumentationen von Atari. Zus„tzlich 
+gibt es das KAOS- Cookie, das das Erstelldatum enth„lt, und das sonst 
+erst im TT-TOS enthaltene _FPU- Cookie (prft im Gegensatz zur Implemen-
+tation im TT, wo nur nur eine LineF FPU gemeldet wird, auf alle 
+verschiedenen Typen):
+
+ 0 = keine FPU
+ 1 = Atari Register FPU
+ 2 = LineF FPU
+ 3 = Atari Register FPU + LineF FPU 
+ 4 = mit Sicherheit 68881 LineF FPU
+ 5 = Atari Register FPU + mit Sicherheit 68881 LineF FPU
+ 6 = mit Sicherheit 68882 LineF FPU
+ 7 = Atari Register FPU + mit Sicherheit 68882 LineF FPU
+ 8 = 68040 interne LineF FPU
+ 9 = Atari Register FPU + 68040 interne LineF FPU
+
+Das Low-word ist derzeit immer 0.
+
+  Mit Einfhrung des STe TOS 1.6 wurden von Atari die Systemvariablen 
+bell_hook ($5ac) und kcl_hook ($5b0) definiert. šber diese Variablen 
+k”nnen nun neue Sounds fr die Glocke bei ^G (bell-hook) bzw. den 
+Tastaturklick (kcl_hook) eingeh„ngt werden. Alle ROM-Routinen fhren 
+einen jsr ber den jeweiligen Sprungvektor durch. Um also z.B. den 
+Tastenklick zu ersetzen, mu ein TSR-Programm nur noch die Adresse der 
+neuen Sound- Routine in kcl_hook ($5ac) eintragen. In beiden F„llen 
+drfen neue Sounds die Register d0-d2 sowie a0-a2 verwenden; alle 
+anderen Register mssen vor ihrer Verwendung gerettet und sp„ter wieder 
+rekonstruiert werden. Soundroutinen laufen im Supervisormodus und soll-
+ten mit einem normalen "rts" beendet werden. Die neuen Sounds drfen 
+beliebig lange dauern und auf andere BIOS Funktionen zugreifen. Bei dem 
+Tastaturklick sollte man bei l„ngerer Dauer allerdings besser auf 
+Interrupt- Routinen zurckgreifen. Beide Routinen brauchen nicht in der 
+Systemvariablen "conterm" zu testen, ob der entsprechende Ton berhaupt 
+aktiviert ist; dies erledigt bereits das Betriebssystem vor Aufruf der 
+Sprungvektoren.
+
+
+10)   Neue AES- Funktionen in KAOS 1.4.2
+----------------------------------------
+
+  Fr GEM- Programme birgt die im vorigen Kapitel beschriebene Vorge-
+hensweise (ber Sconfig oder Sversion) ein wichtiges Problem in sich. 
+Es ist n„mlich m”glich, das im ROM befindliche AES durch ein anderes, 
+nachladbares zu ersetzen; hierbei liefern sowohl Sconfig als auch 
+Sversion dieselben Werte wie mit dem ROM- AES. Dies ist bei GEM 2.2 von 
+ABC der Fall und auch bei dem neuen Atari- Desktop. Abgesehen davon, 
+da der Einsatz solcher Programme den Groteil der Verbesserungen von 
+KAOS 1.4.2 einfach lahmlegt, sollte der Programmierer jedoch auf den 
+Geschmack m”glichst vieler Anwender Rcksicht nehmen.
+  Um sicherzugehen, da das KAOS-GEM installiert ist (Variable 
+"iskgem"), ist daher etwa in  Turbo-C folgendermaen vorzugehen, wir 
+prfen dabei auch gleich auf GEM 2.x (Variable "isgem2") ab:
+
+if   ((ap_id = appl_init()) < 0)
+     Pterm(-1);
+isgem2 = (_GemParBlk.global[0] >= 0x0200 &&
+          _GemParBlk.global[0] <  0x0300);        /* GEM 2.x */
+iskgem = (_GemParBlk.intin[0] == 'KA') && (_GemParBlk.intin[1] == 'OS');
+
+  KAOS- GEM liefert bei appl_init() in intin[0] und intin[1] die magi-
+schen Worte 'KA' und 'OS' zurck. Durch die Abfrage dieser magischen 
+Werte geht man auch sicher, da nicht etwa KAOS 1.2.3 installiert ist, 
+das noch keine šberarbeitung des AES besa.
+  Die Abfrage "_GemParBlk.global[0] < 0x0300" ist leider notwendig 
+geworden, da Atari dem AES im TT in einer Art Hybris die Versionsnummer 
+>= 3.0 gegeben hat, ohne jedoch die Funktionen von GEM 2.0, geschweige 
+denn die von 3.0 zu implementieren. Offenbar will man sich vom Rest der 
+Welt endgltig abwenden und sich an keine vernnftigen Standards mehr 
+halten.
+
+Nun zu den neuen Betriebssystemaufrufen:
+
+  Ein neues Fensterobjekt fr wind_create() ist dazugekommen, und zwar 
+BACKDROP (0x2000). Ist dieses angegeben, so erh„lt das aufrufende 
+Programm, wenn der Drop- Button angeklickt wurde, eine Meldung 
+WM_BACKDROPPED (31), statt da AES die Funktion selbst ausfhrt. Bei 
+ausgeschaltetem "Smart Redraw" (d.h. eingeschalteter AES- 
+Kompatibilit„t) wird das entsprechende Bit des Fenstertyps ignoriert. 
+Alle neuen Konstanten sind in KAOS.H definiert.
+
+  Die Funktion wind_set() des AES wurde um folgende Unterfunktion erwei-
+tert:
+
+wind_set(whdl, WF_BACKDROP);     /* WF_BACKDROP == 100 aus KAOS.H */
+
+  Damit kann ein Fenster (wenn es nicht schon das unterste ist) auf 
+einen Schlag nach unten gebracht werden, ohne die Reihenfolge der 
+anderen Fenster zu ver„ndern (siehe KAOSDESK). (Intuition l„t gren)
+
+  Die Funktion wind_get() des AES wurde um folgende Unterfunktionen 
+erweitert:
+
+wind_get(0,    WF_NEWDESK, &hi, &lo, &fstob);
+wind_get(whdl, WF_OWNER, &id);     /* WF_OWNER == 101 aus KAOS.H */
+wind_get(whdl, WF_WINDLIST, &hi, &lo);     /* WF_WINDLIST == 102 */
+
+  WF_NEWDESK ermittelt den aktuellen Desktophintergrund (Low- Word und 
+High- Word getrennt) und die Nummer des ersten zu zeichnenden Objekts, 
+analog zu wind_set(WF_NEWDESK, ...);
+  Mit WF_OWNER kann in <id> der Eigner eines Fensters, d.h. seine 
+ap_id, bestimmt werden. Dies erm”glicht, wenn ein Programm ein Icon in 
+ein fremdes Fenster geschoben hat, dessen Eigentmer eine Nachricht zu 
+bermitteln. Dies wird besonders fr eine sp„tere Multitasking- Version 
+von GEM interessant werden, kann aber auch die Kommunikation zwischen 
+der Hauptapplikation und einem ACC enorm vereinfachen. Es ist 
+DRINGENDST darauf zu achten, da das angegebene Fenster existiert und 
+ge”ffnet ist, also am besten sofort nach BEG_UPDATE und wind_find() 
+oder WF_WINDLIST aufrufen!
+  Mit WF_WINDLIST erh„lt man einen Zeiger auf die geordnete und durch 0 
+(Fenster #0 = Desktophintergrund = unterstes Fenster) abgeschlossene 
+Liste aller ge”ffneten Fenster vom obersten an. Die Tabelle darf nicht 
+ge„ndert werden. Um die Informationen auszuwerten, sind alle zugeh”ri-
+gen Aktionen zwischen BEG_UPDATE und END_UPDATE auszufhren, da sonst 
+inzwischen etwa ein ACC sein Fenster schlieen k”nnte.
+Warnung:	Wer WF_WINDLIST mibraucht, etwa um sich an fremden Fenstern 
+	z.B. schlieenderweise zu vergreifen, der wird bei der von 
+	JFR angekndigten Multitasking- Version von GEM frchterlich 
+	auf die Nase fallen.
+
+  Um den Applikationsnamen bei bekannter ap_id zu ermitteln, bergebe 
+man der Funktion appl_find() einen String der Art "?\0\n", wobei n die 
+ap_id ist. Wenn man als Funktionswert 0 erh„lt, ist die ap_id ungltig. 
+Ansonsten erh„lt man eine 1, und der String wurde mit dem Applikations-
+namen berschrieben. Es handelt sich insofern nicht um eine Umkehrung 
+des normalen appl_find(), das die ap_id zu bekanntem Namen ermittelt, 
+als verschiedene Applikationen durchaus denselben Namen haben k”nnen 
+und das normale appl_find() nur immer die erste dieses Namens findet.
+
+  form_alert() wurde wesentlich versch”nert, und šberl„ufe in Buttons 
+oder Textzeilen werden abgefangen. Ferner kann man jetzt Textzeilen bis 
+40 Zeichen und Buttons bis 20 Zeichen anzeigen, dies war wegen GEM 2.x 
+n”tig.
+
+  Wie unter GEM 2.x drfen ACCs Menleisten anmelden, unter KAOS 1.4.2 
+sogar einen Desktophintergrund (!). Dies in Vorbereitung zum angeblich 
+in der Entwicklung befindlichen Multi- GEM, in dem mehrere 
+Hauptapplikationen parallel laufen k”nnen.
+
+  Die in Kapitel 3 erw„hnte Erweiterung der Routine zur Bearbeitung von 
+Texteingaben in Dialogboxen ist in den AES- Funktionen form_keybd() und 
+objc_edit() enthalten, die von form_do() aufgerufen werden. Wer also 
+eine eigene form_do()- Routine schreibt, der m”ge bitte die Betriebs-
+systemaufrufe form_keybd() (fr SH-Crsr-hoch, SH-Crsr-runter, Undo, 
+Help und ^Q) und objc_edit() (fr die restlichen Steuertasten) in 
+dieser Routine verwenden. Als besonders sch”nes Beispiel sind hier 
+Tempus 2.x und FCOPY zu nennen, die zwar eine eigene Dialogboxbehand-
+lung haben (Buttons etwa mit Tastenkombinationen ausw„hlen), aber alle 
+neuen M”glichkeiten von KAOS 1.4 zur Verfgung stellen.
+
+Achtung:	Durch Expansion der sogenannten Line- F- Traps wurde das 
+	leidige Problem des numerischen Koprozessors ein fr alle mal 
+	gel”st und auerdem ein deutlicher Geschwindigkeitsgewinn im 
+	AES erzielt. KAOS 1.4 arbeitet daher mit Prozessor-Austausch-
+	karten wie der PAK-68 wesentlich effizienter als bisherige 
+	L”sungen.
+	Der Line-F- Trap zeigt unter KAOS 1.4 auf die Routine zur 
+	Ausgabe von 11 B”mbchen, daher sind Programme, die diesen 
+	Trap illegalerweise benutzen, nicht mehr funktionsf„hig. Au-
+	erdem wird dieser Trap von Debuggern wie TEMPLMON nicht 
+	abgefangen, so da man jetzt auch w„hrend des Debuggens u.U. 
+	Bomben bekommt, wenn das Programm in einen Datenbereich 
+	l„uft. Damit wird jedoch auch das Debuggen sicherer, weil 
+	ungltige Befehle unter KAOS mit viel gr”erer Wahrscheinlich-
+	keit zu Bomben fhren, w„hrend unter TOS pl”tzlich irgendwel-
+	che Unterprogramme des AES aufgerufen wurden.
+	Da jedoch weder TOS 1.6 noch TOS 030 (fr den TT) die Line-F 
+	Opcodes benutzen, sind in Zukunft keine Probleme zu erwarten, 
+	da Programme ja auch auf diesen Betriebssystemen funktionie-
+	ren mssen.
+
+
+11)  Die GEM 2.x- Funktionen in KAOS 1.4.2
+------------------------------------------
+
+  Alle im Profibuch erw„hnten Funktionen von GEM 2.x wurden soweit 
+m”glich und sinnvoll in KAOS 1.4.2 implementiert. Dabei wurde jedoch 
+nicht auf Kompatibilit„t zum Profibuch, sondern zum real existierenden 
+GEM 2.2 von ABC geachtet; alle hierfr geschriebenen Applikationen 
+laufen unter KAOS 1.4.2. Wer das GEM 2.2 Desktop besitzt, kann DESK2.PRG 
+in dasselbe Verzeichnis legen, in dem das Desktop liegt und DESK2.PRG 
+starten. Ein weiterer Start schaltet wieder das Atari- Desktop an.
+  Um die Funktionen fr eigene Programme zu nutzen, mu man die Datei 
+"KAOS.H" per #include einbinden sowie die KAOS- Bibliothek KAOSLIB.O 
+hinzubinden. KAOSLIB.O liegt selbstverst„ndlich im DRI- Format vor und 
+ist damit auch fr Turbo C verwendbar. Fr die genaue Beschreibung der 
+Parameterbergabe ist KAOSLIB.O auch im Quelltext enthalten.
+  Hier die Beschreibung aller Erweiterungen, die laut Profibuch GEM 2.x 
+von Atari- GEM unterscheiden, dazu Anmerkungen ber etwaige 
+unterschiedliche oder erweiterte Implementation:
+
+void appl_bvset(int disk, int hard);
+
+  Setzt den Bitvektor <disk> aller vorhandenen Laufwerke und <hard> 
+aller derjenigen aus <disk>, die Festplatten sind. Im Gegensatz zu 
+Drvmap() steht fr Laufwerk A: das h”chste Bit. Die gesetzten Bits von 
+<hard> mssen stets eine Teilmenge derjenigen von <disk> darstellen.
+  Die bergebenen Werte bekommen Applikationen brigens in global[13] 
+und global[14] auch im Original- TOS 1.4. Die Werte werden vom 
+Desktop gesetzt, und zwar je nach angemeldeten Icons (wie man 
+Floppyicons anmeldet, ist in Kapitel 3 beschrieben), TOS 1.4 kennt 
+offensichtlich nur Floppies. In KAOS 1.4 k”nnen Benutzerprogramme also 
+genau feststellen, welche Laufwerke dem DESKTOP bekannt sind und welche 
+mit dem Festplattenicon dargestellt werden.
+
+void appl_yield( void );
+
+  Diese Funktion ist eine Art Dummy- AES- Aufruf, um dem System die 
+M”glichkeit zu geben, wichtige Aufgaben wahrzunehmen. Wie man das 
+Problem eleganter und vor allem fr alle TOS- Versionen l”st, ist in 
+[4] beschrieben; Die dort vorgestellte Funktion ist als _appl_yield() 
+in KAOSLIB.O enthalten und darf unter s„mtlichen TOS- und GEM- Versio-
+nen eingesetzt werden.
+
+int  menu_unregister( int menu_id );
+
+  Meldet einen Meneintrag wieder ab. šbergibt man -1, werden alle 
+Meneintr„ge der Applikation abgemeldet. Gibt 0 bei ungltiger <menu_id> 
+oder schon gel”schtem Eintrag zurck, sonst 1.
+  Man beachte, da diese Funktion zumindest unter ABC- GEM 2.2 unbrauch-
+bar ist, aber unter KAOS 1.4.2 natrlich funktioniert.
+
+int  menu_click ( int val, int setit );
+
+  Diese Funktion existiert erst ab GEM/3. Mit <setit> = 1 setzt man den 
+Menstatus, mit <setit> = 0 erh„lt man ihn nur als Rckgabewert. Fšr 
+<val> und den Rckgabewert gilt: 0 = Dropdown- Mens, 1 = Pulldown- 
+Mens. In jedem Fall wird der alte Wert zurckgegeben.
+
+int  scrp_clear( void );
+
+  L”scht alle Dateien im Scrap- Directory. Rckgabe 0 bei Fehler.
+
+void shel_rdef  ( char *cmd, char *dir );
+
+  Ermittelt Dateinamen (in <cmd>) und Ordner (in <dir>) der 
+Defaultshell, die man per shel_wdef() anstelle des ROM- Desktop instal-
+lieren kann. Erh„lt man in KAOS 1.4.2 fr "sh_rlpcmd" einen Leerstring, 
+d.h. das erste Byte ist 0, so ist kein alternatives Desktop 
+installiert.
+
+void shel_wdef  ( char *cmd, char *dir );
+
+  Meldet das Programm <cmd> im Ordner <dir> als Default- Shell anstelle 
+des ROM- Desktop an. Folgende Besonderheiten sind unter KAOS 1.4.2 zu 
+beachten:
+	1.	Der Parameter <dir> darf leer sein (dann mu mam in <cmd> 
+	unbedingt den vollst„ndigen Pfad bergeben), und der abschlieen-
+	de '\' darf fehlen und wird dann vom AES erg„nzt.
+	2.	šbergibt man fr <cmd> einen Leerstring, ist das Atari- Desktop 
+	wieder installiert.
+  Folgendes sollte ein installiertes alternatives Desktop beachten:
+	1.	Es wird nicht unbedingt im eigenen Verzeichnis gestartet und 
+	sollte daher entweder alle Dateien ber shel_find() holen oder 
+	den eigenen Pfad ber shel_read() holen und diesen zum aktuellen 
+	machen.
+	2.	Zum Programmaufruf mu es ein shel_write() machen und sich dann 
+	mit Rckgabewert 0 beenden (exit(0) bzw. Pterm0()).
+	3.	Der letzte Fehlercode eines ausgefhrten Programms wird in der 
+	AES- Kommandozeile bergeben, die man mit shel_read() abrufen 
+	kann. Da die Kommandozeile mit zwei Nullbytes beginnt, wird sie 
+	von DOS nicht bergeben, in der Basepage liegt daher keine 
+	Kommandozeile.
+		Die AES- Kommandozeile der Shell sieht folgendermaen aus:
+           int  fill;                   /* Ein Nullwort */
+           long magic;                  /* ist 'SHEL' */
+           int  isfirst;                /* erstmals gestartet */
+           long err;                    /* letzter Fehlercode */
+           int  was_gr;                 /* Fehler ist bereits angezeigt */
+	Um festzustellen, ob eine Shell zum ersten Mal gestartet wurde, 
+	ist zu prfen, ob entweder (<magic> != 'SHEL') ist (Start oder 
+	Autostart, dann mu sich die Shell selbst„ndig mit shel_wdef() 
+	anmelden) oder ob <isfirst>=1 ist; dann ist das Programm zum 
+	ersten Mal gestartet worden. <was_gr> zeigt an, ob das letzte 
+	Programm eine Grafikanwendung war und daher der eventuelle Feh-
+	lercode schon angezeigt worden ist.
+	4.	Gibt die Shell einen negativen Fehlercode zurck oder kann die 
+	Shell nicht gefunden oder geladen werden, wird DESKTOP wieder als 
+	Shell installiert.
+
+int  xgrf_stepcalc      (                                                               /* GEM 2.x      */
+                                  int orgw, int orgh,
+                                  int xc, int yc, int w, int h,
+                                  int *cx, int *cy,
+                                  int *stepcnt, int *xstep, int *ystep
+                                );
+int  xgrf_2box          (                                                               /* GEM 2.x      */
+                                  int xc, int yc, int w, int h,
+                                  int corners, int stepcnt,
+                                  int xstep, int ystep, int doubled
+                                );
+
+  Nur aus Kompatibilit„t zu GEM 2.x enthalten. Da graf_growbox() und 
+graf_shrinkbox() noch vorhanden sind, wird man blicherweise diese 
+Funktionen nutzen. Wer m”chte, kann einmal ein wenig experimentieren, 
+die Implementation in KAOSLIB.O unterscheidet sich brigens ein wenig 
+vom Profibuch und entspricht dem realen GEM 2.2.
+
+  fsel_exinput() wurde zu GEM 2.x kompatibel gemacht, indem Pfade wie 
+"c:\*.doc,*.bak" wie "c:\*.*" behandelt werden.
+
+  form_alert() wurde nicht nur versch”nert, sondern an GEM 2.x ange-
+pat. Die Alerts sehen zwar nicht genauso aus wie unter GEM 2.x, sind 
+aber lesbar.
+
+  Wie unter GEM 2.x drfen ACCs Menleisten anmelden, unter KAOS 1.4.2 
+sogar einen Desktophintergrund (!). Dies in Vorbereitung zum in der 
+Entwicklung befindlichen Multi- GEM, in dem mehrere Hauptapplikationen 
+parallel laufen k”nnen.
+
+Die GEM 2.x- Funktion wind_set(WF_SIZTOP, ...) wurde implementiert. 
+wind_set(WF_TATTRB, ...) wird einfach ignoriert.
+
+  Das GEM 2.x- Flag DRAW3D (0x80) wurde implementiert. WHITEBAK (0x40) 
+ist bereits im TOS 1.0 vorhanden (!) und funktioniert (!!); beide sind 
+in KAOS.H definiert. Zu DRAW3D ist anzumerken, da dieses Flag erst bei 
+WHITEBAK und Selektierung wirksam wird und die Maske dann zus„tzlich 
+noch einmal nach links oben und rechts unten versetzt ausgibt; nur der 
+Icontext wird invertiert.
+
+  Die HOTCLOSEBOX von GEM 2.x wurde implementiert. Sie bewirkt, da die 
+Closebox des Fensters wie TOUCHEXIT wirkt.
+
+  Die Meldung AC_OPEN enth„lt die menu_id jetzt sowohl in msgbuf[4] als 
+auch in msgbuf[3], um sowohl mit TOS als auch mit GEM 2.x kompatibel zu 
+sein.
+
+
+Literatur:
+
+[1]	Jankowski,Rabich,Reschke, Atari ST Profibuch, Sybex Verlag, Dssel-
+	dorf 1988.
+[2]	Andreas Kromke, Das wahre GEMDOS, Fehlerbeseitigung und Optimierung 
+	im TOS 1.2 des Atari ST, c't 11/88, S. 194
+[3]	Andreas Kromke, TOS, die vierte, Das neue Rainbow- TOS fr den 
+	Atari ST, c't 2/90, S. 226
+[4]	Andreas Kromke, Tiefen einer Oberfl„che, AES- Tips fr den Atari 
+	ST, c't 5/90, S. 198
+

@@ -26,3 +26,6 @@ INC
 XTERNSION/
 	HARDCOPY		more or less useless hardcopy function, not included in MagiC
 					obviously mainly disassembled from TOS
+
+DOC/
+	C_BIND.H		most probably unnecessary file

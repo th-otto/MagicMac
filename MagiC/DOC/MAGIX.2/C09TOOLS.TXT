@@ -1,0 +1,45 @@
+9. Begrenzung des Speicherbedarfs einzelner Programme
+-----------------------------------------------------
+
+Unter TOS und Mag!X erh„lt ein Programm zun„chst den gesamten freien
+Speicher. Es liegt nun in der Verantwortlichkeit des Programmierers,
+dafr zu sorgen, da nur soviel Speicher reserviert wird, wie tats„chlich
+gerade ben”tigt wird; der brige Speicher wird dem System sofort
+zurckgegeben. Sp„ter kann man dann immer noch ggf. Speicher nachfordern
+und zurckgeben.
+Leider gibt es immer noch einige wenige Programme, die sich (fast) den
+gesamten Speicher unter den Nagel reien, WORDPLUS etwa geh”rt zu dieser
+Spezies.
+Gegen diese Unm„igkeit gibt es unter Mag!X ein Mittel: LIMITMEM.TTP.  Mit
+Hilfe dieses Programms k”nnen Sie den Speicherhunger der Programme d„mpfen.
+Dazu mssen Sie beim Start des Programmes zwei Argumente bergeben.
+1. Den _kompletten_ Programmnamen inkl. Pfad
+2. Die Anzahl der Kilobytes, die Sie dem Programm maximal zugestehen
+   m”chten.
+
+Beispielsweise l„t der Aufruf "LIMITMEM WORDPLUS.PRG 1024" (aus einem
+Kommmandozeileninterpreter) fr Wordplus ein Megabyte Speicher fr Texte
+brig. Der Aufruf "LIMITMEM WORDPLUS.PRG -" macht die Speicherbegrenzung
+wieder rckg„ngig.
+
+Wenn Sie LIMITMEM.TTP von MAGXDESK aus per Doppelklick starten, mssen Sie
+in der Dialogbox fr die Parameter natrlich das Wort LIMITMEM nicht
+eingeben. Hier gengen Programmname und ggf. die Anzahl der zu
+reservierenden Kilobytes bzw. "-".
+
+
+9.1 MEMEXAMN
+------------
+Mit dem Programm MEMEXAMN k”nnen Sie untersuchen, was sich so im Speicher
+herumtreibt. Ohne Parameter gestartet, gibt MEMEXAMN die aktuelle
+Speicherbelegung an. šbergeben Sie beim Start von MEMEXAMN einen
+Buchstaben, so sucht MEMEXAMN im Wurzelverzeichnis dieses Laufwerks nach
+einer _sys_-Datei.
+
+[Bild: MEMLIST.IMG]
+
+Diese Datei wird von Mag!X bei einer Zerst”rung der Speicherliste auf
+Wunsch angelegt, bevor das System angehalten wird. Im Environment jedes
+Programms findet sich eine Variable namens "_PNAM", hinter der immer der
+Dateiname des Programms vermerkt ist, wodurch MEMEXAMN eine Identifikation und
+Zuordnung der Speicherbl”cke erm”glicht wird.

@@ -1,0 +1,560 @@
+3. Die ersten Schritte - Bedienung von MAGXDESK
+-----------------------------------------------
+
+Nach dem ersten Start von Mag!X pr„sentiert sich Ihnen der Startbildschirm
+mit den Standardicons von MAGXDESK:
+
+
+[ Bild MAGXDESK.IMG ]
+
+
+Sie sehen fr jedes angeschlossene Laufwerk, fr den Drucker und fr den
+Papierkorb je ein Icon. Wenn kein MAGX.INF vorliegt oder das Mag!X- System
+frisch installiert wurde, werden die Laufwerke A: und B: als Diskette, C:
+bis F: als Festplatte und weitere Laufwerke als Ramdisk angezeigt. Sie
+k”nnen den Laufwerktyp „ndern, indem Sie das Laufwerk anklicken
+(selektieren), den Dialog "Optionen: Laufwerk anmelden ..." anw„hlen und
+den gewnschten Laufwerktyp anklicken. Beachten Sie bitte, da sich einige
+Funktionen von MAGXDESK fr die unterschiedlichen Medien unterscheiden. Die
+Verantwortung fr die richtige Typzuordnung liegt bei Ihnen und sollte
+ernst genommen werden!
+
+Die Icons k”nnen mit der Maus angeklickt, verschoben und mit Doppelklick
+ge”ffnet werden; Ausnahme sind der Drucker und der Papierkorb. Alle
+Laufwerkicons erhalten dabei als Text den Namen der Diskette bzw.
+Partition, die sie anzeigen. Wird etwa das Icon fr Laufwerk A: ge”ffnet
+und heit die Diskette in  Laufwerk A: "JAZZFROM.HEL", so erh„lt das Icon
+fr Laufwerk A: die Beschriftung "JAZZFROM.HEL". Bei Disketten ohne Namen
+wird die Default-Bezeichnung angezeigt, etwa "FLOPPYDISK".
+
+
+Die Fenster des Desktops
+------------------------
+
+Beim Doppelklick auf ein Laufwerkicon ”ffnet MAGXDESK ein Fenster mit dem
+Inhaltsverzeichnis des angw„hlten Laufwerks.
+Das Fenster k”nnte etwa folgendermaen aussehen:
+
+
+[ Bild MDSKWIND.IMG ]
+
+
+In der Infozeile wird die Anzahl der im Fenster enthaltenen Objekte sowie
+der von ihnen belegte Speicherplatz angezeigt. Da MAGXDESK die Icons
+beziehungsweise Textzeilen immer so anordnet, da sie sichtbar sind, hat
+nur der vertikale Scrollbalken eine (Scroll-) Funktion. Diese
+Scrollfunktion k”nnen Sie ber die Maus oder auch ber die Cursortasten
+ausl”sen; bei gedrckter SHIFT-Taste wird mit den Cursortasten im Fenster
+seitenweise gescrollt, w„hrend HOME bzw. SHIFT-HOME (CLR) das Scrollen an
+den Anfang bzw. das Ende des Fensterinhalts bewirken.
+
+Der horizontale Scrollbalken gibt den Fllgrad der Diskette wieder. Der
+weie Balken repr„sentiert die belegten Bytes, ein Fenster mit
+vollst„ndig weiem unteren Rand zeigt eine volle Diskette an. Ein Klick auf
+den horizontalen Scrollbalken liefert den auf dem Laufwerk noch
+verbleibenden freien Speicherplatz.
+
+Wenn Sie ein Objekt im Fenster selektieren, wird in der Infozeile neben der
+Dateigr”e auch das Dateidatum und das Dateiattribut angezeigt. Die Zeichen
+fr die Attribute bedeuten:
+
+  R     nur lesen (read only)
+  S     Systemdatei (system)
+  H     versteckt (hidden)
+  A     Archiv (archive)
+  E     ausfhrbar (executable)
+
+W„hlen Sie im Fenster mehrere Objekte an, dann wird der von den Objekten
+belegte Speicherplatz zusammengez„hlt, so da Sie leicht sehen k”nnen, ob
+die Dateien beim Kopieren auf eine Diskette passen oder nicht.
+
+Wenn Sie eine andere Diskette einlegen und das Verzeichnis neu einlesen
+oder aktualisieren (ESC-Taste), so werden Fenster mit ungltigem (nicht
+mehr existenten) Pfaden aktualisiert, und es wird gegebenenfalls auf das
+Wurzelverzeichnis zurckgeschaltet.
+
+Neben den bekannten Fensterelementen wird Ihnen vielleicht auch schon das
+Element links neben dem Maximalgr”en-Button ("Fuller") aufgefallen sein:
+
+
+[ Bild BACKDROP.IMG]
+
+
+Es handelt sich hier um den Backdrop-Button, mit dem Sie ein Fenster
+gezielt in den Hintergrund bef”rdern k”nnen. In vielen Situationen kommen
+Sie damit bedeutend schneller an ein verdecktes Fenster, als wenn Sie ber
+die Tastatur (CTRL-W) zyklisch die Fenster wechseln oder mit der Maus die
+Fenster so lange verschieben, bis Sie endlich das gewnschte Fenster nach
+oben klicken k”nnen.
+
+
+Darstellung des Fensterinhalts
+------------------------------
+
+Bevorzugen Sie statt der Icons im Fenster eher die Textdarstellung? Dann
+kann Ihnen geholfen werden. W„hlen Sie dazu das Men "Anzeige".
+Hier k”nnen Sie neben der Textdarstellung auch die Zeichengr”e und die
+gewnschten Zusatzinformationen wie Datum, Gr”e und Zeit ber die Dateien
+einstellen.
+Sofern gengend Platz im Fenster ist, gibt MAGXDESK diese Informationen
+mehrspaltig aus. Auf Wunsch k”nnen Sie das verhindern, indem Sie
+die einspaltige Darstellung anw„hlen.
+
+Wenn im Fenster sehr viele Dateien angezeigt werden, kann es manchmal
+schwierig sein, eine bestimmte Datei auf Anhieb zu finden. Hier hilft Ihnen
+die F„higkeit von MAGXDESK weiter, fr jedes Fenster eine Maske vorgeben zu
+k”nnen. Die Maske legt fest, welche Dateien in diesem Fenster angezeigt
+werden. Rufen Sie z.B. den Menpunkt "Sortieren: Maske setzen ..."
+auf, und geben Sie die Maske "*.ACC" ein. Neben den Ordnern werden jetzt alle
+diejenigen Dateien im obersten Fenster angezeigt, auf die die Endung .ACC pat.
+
+Die Dateien im Fenster werden immer in einer bestimmten Reihenfolge (nach
+einem Sortierkriterium) ausgegeben. Dieses Sortierkriterium k”nnen Sie
+unter dem Menpunkt "Sortieren" vorgeben. M”glich sind
+
+- nach Namen
+- nach Datum
+- nach Gr”e
+- nach Typ (also die Endung)
+- unsortiert
+
+Erw„hnenswert ist dabei der Eintrag "unsortiert". Ist dieser aktiviert, so
+werden die Dateien in der Reihenfolge ausgegeben, in der sie tats„chlich
+physikalisch auf dem Datentr„ger gespeichert sind. Dieses Feature ist dann
+sehr ntzlich, wenn sich im AUTO-Ordner Programme befinden, die in einer
+bestimmten Reihenfolge abgearbeitet werden mssen.
+Damit Sie sofort im Bilde sind und nicht erst im Men nachschauen mssen,
+wird das aktuelle Sortierkriterium auch in der Menzeile (hell)
+dargestellt.
+
+
+Icons aus Fenstern auf dem Desktop
+----------------------------------
+
+Neben den Standardicons k”nnen Sie auch Icons aus den Fenstern auf den
+Desktop ziehen. Auf dieses Programm, diesen Ordner oder diese Datei k”nnen
+Sie sehr schnell zugreifen, ohne sich durch diverse Pfade klicken zu mssen
+oder berhaupt ein Fenster zu ”ffnen.
+Ziehen Sie z.B. das Icon eines Programms aus einem Fenster auf den Desktop,
+so bleibt es dort liegen, sobald sie die Maustaste loslassen. Dieses Icon
+k”nnen Sie - mit einer Ausnahme, dem L”schen - genauso wie die Icons im
+Fenster behandeln. Sie k”nnen das Objekt kopieren, Programme ausfhren,
+Parameter bergeben, Ordner ”ffnen, etc.
+
+Die Ausnahme: Ziehen Sie diese Icons in den Papierkorb, so verschwinden sie
+kommentarlos. Dabei wird jedoch nichts gel”scht, sondern nur das Objekt vom
+Desktop entfernt!
+Dieses Verhalten gilt nur fr die Icons, die aus einem Fenster auf den
+Desktop gezogen wurden, nicht jedoch fr die Standardicons. Wenn Sie z.B.
+das Icon Ihrer Festplatte vom Desktop in den Papierkorb bewegen und die
+L”schabfrage best„tigen, dann sind die Daten weg!
+
+Die Anzahl der Icons auf dem Desktop ist unbeschr„nkt. Um jedoch eine
+Speicherzerstckelung zu vermeiden, ermittelt MAGXDESK beim Einlesen der
+MAGX.INF-Datei die Anzahl der Desktop-Icons und der angemeldeten
+Applikationen und alloziert Speicher fr zehn zus„tzliche Icons und zehn
+zus„tzliche Applikationen.
+Wenn nun neue Applikationen oder Desktop-Icons angemeldet werden und die
+interne Tabelle berl„uft (Meldung "Desktop ist voll"), sollten Sie
+zun„chst den Menpunkt "Option: Arbeit sichern" aufrufen und dann ber den
+Button "MAGX.INF laden" im Dialog "Optionen: Einstellungen ..." die
+MAGX.INF-Datei neu laden. Danach ist wieder Platz fr zehn weitere Icons
+und Programme vorhanden.
+
+Die Erfahrung zeigt, da es nicht sinnvoll ist, den ganzen Desktop mit Icons
+aus den Fenstern zu belegen. Zu schnell gehen die šbersicht und der Vorteil
+des schnelleren Zugriffs verloren.
+Unser Tip: Die Icons aus Fenstern sollten nicht mehr als ein Siebtel bis
+maximal ein Fnftel des Desktops bedecken.
+
+
+Kopieren, Verschieben und L”schen von Dateien
+---------------------------------------------
+
+Kopieren
+--------
+Um eine Datei zu kopieren, schieben Sie das Dateiicon auf das Icon des
+Ziellaufwerks, des Zielordners oder des Zielfensters. Wollen Sie alle
+Objekte eines Laufwerks kopieren, so k”nnen Sie entweder alle Objekte mit
+der Maus anw„hlen, sie ber den Menpunkt "alle ausw„hlen" selektieren oder
+das Icon des Quellaufwerks auf das Zielobjekt ziehen.
+In allen genannten F„llen erfolgt ein dateiweises Kopieren Ihrer Daten.
+
+Bevor MAGXDESK mit Kopieren beginnt, erscheint eine Dialogbox, die Sie ber
+die Anzahl der zu kopierenden Ordner und Dateien sowie deren Platzbedarf
+informiert und Ihnen die M”glichkeit gibt, den Kopiermodus festzulegen.
+
+Die Kopiermodi wirken sich sowohl auf das Kopieren als auch auf das
+Verschieben aus und haben folgende Funktion:
+
+- Best„tigen        Alle gleichnamigen Dateien werden nur nach Warnung
+                    berschrieben.
+
+- Backup            Alle gleichnamigen Dateien, die ein „lteres
+                    Dateidatum haben, werden ohne Warnung
+                    berschrieben. Bei gleichem oder jngerem Datum
+                    werden sie bersprungen bzw. gel”scht (beim
+                    Verschieben). Bei dieser Einstellung erscheint
+                    keine Warnung, da das Ziellaufwerk voll ist, da
+                    ja nicht alle Dateien kopiert werden und auerdem
+                    auf dem Ziellaufwerk noch Dateien gel”scht werden.
+
+- šberschreiben     Alle gleichnamigen Dateien werden ohne Warnung
+                    berschrieben.
+
+Verschieben
+-----------
+Das Verschieben einer oder mehrerer Dateien entspricht einem Kopieren und
+anschlieendem L”schen der Quelldatei(en). Unter MAGXDESK l”sen Sie das
+Verschieben aus, indem Sie _vor_ dem Drcken der linken Maustaste die
+CTRL-Taste gedrckt halten.
+
+W„hrend des Kopierens/Verschiebens/L”schens zeigt MAGXDESK Ihnen an, was es
+gerade tut, also welche Datei/Ordner auf welchem Laufwerk bearbeitet wird.
+
+Sollte sich im Zielpfad bereits eine Datei mit demselben Namen befinden,
+erscheint eine Dialogbox:
+
+
+[ Bild DOUBLDAT.IMG ]
+
+
+Hier haben Sie die M”glichkeit, die zu kopierende Datei unter einem neuen
+Namen in den Zielpfad zu kopieren, die existierende Datei durch die Datei
+selben Namens zu ersetzen oder die Datei mit demselben Namen zu
+berspringen.
+
+Falls solch ein Namenskonflikt mit einem Ordner auftritt, erscheint folgende
+Dialogbox:
+
+
+[ Bild DOUBLFOL.IMG ]
+
+
+Hier haben Sie die M”glichkeit, den bereits existierenden Ordner zu
+benutzen (die Dateien des Quellordners landen dann im Zielordner), einen
+neuen Ordnernamen festzulegen oder den gesamten Vorgang abzubrechen.
+
+MAGXDESK verwendet einen sehr ausgeklgelten Algorithmus, um bereits vor
+dem Start des Kopiervorgangs festzustellen, ob fr die zu kopierenden Daten
+gengend Platz auf dem Ziellaufwerk vorhanden ist. Die l„stige Situation,
+da Sie kurz vor Ende des Kopiervorgangs feststellen, "es pat nicht alles
+auf die Diskette", geh”rt damit der Vergangenheit an.
+Sollte der Platz auf dem Ziellaufwerk nicht ausreichen, erscheint eine
+Warnung, die Sie nur ignorieren sollten, falls Sie Dateien kopieren wollen,
+die unter demselben Namen bereits vorhanden sind. In diesem Fall werden die
+alten Dateien gel”scht, so da auf dem Ziellaufwerk trotz der Warnung genug
+Speicherplatz frei sein kann.
+
+
+L”schen
+-------
+Ordner und Dateien werden gel”scht, indem Sie deren Icons aus dem Fenster
+in den Papierkorb ziehen oder sie selektieren und den Menpunkt "Datei:
+l”schen ..." anw„hlen.
+Bevor MAGXDESK mit dem L”schen beginnt, erscheint eine Dialogbox, die Sie
+ber die Anzahl der zu l”schenden Ordner und Dateien sowie deren aktuellen
+Platzbedarf informiert:
+
+
+[ Bild DELFILES.IMG ]
+
+
+Sie sehen also gleich, wieviel mehr Speicher Sie auf dem Medium nach dem
+L”schen der Dateien haben werden.
+
+Sie k”nnen s„mtliche Vorg„nge durch Gedrckthalten beider SHIFT-Tasten
+unterbrechen; MAGXDESK wird in diesem Fall den jeweiligen Schreib-/
+Lesevorgang sobald wie m”glich beenden.
+
+Wenn Sie die Abfragen vor dem Kopieren, Verschieben oder L”schen st”ren,
+k”nnen Sie diese ber den Menpunkt "Optionen: Einstellungen ..."
+abschalten. Doch Vorsicht: Ohne die L”schabfrage sind schnell wichtige
+Daten aus Versehen vernichtet!
+
+
+Umbenennen
+----------
+
+In MAGXDESK k”nnen Sie sowohl Dateien und Ordner als auch Laufwerkmedien
+(Disketten, Festplattenpartitionen, etc.) umbenennen. Selektieren Sie dazu
+eine Datei-, ein Ordner- oder ein Laufwerkicon und w„hlen Sie den
+Menpunkt "Datei: Informationen ..." an.
+Die weiteren, vom Objekt abh„ngigen, vielf„ltigen Informationen werden im
+Kapitel ber die Menstruktur von MAGXDESK (Abschnitt "Datei:
+Informationen") eingehend erl„utert.
+
+
+Formatieren und Initialisieren von Laufwerkmedien
+--------------------------------------------------
+
+Um auf einer fabrikneuen Diskette Daten zu speichern, mssen Sie diese
+formatieren. Selektieren Sie dazu ein Diskettenicon und w„hlen Sie den
+Menpunkt "Datei: formatiere ..." an.
+Es erscheint folgender Dialog:
+
+
+[ Bild FORMAT.IMG]
+
+
+In diesem Dialog k”nnen Sie neben dem Diskettenformat (also Anzahl der
+Spuren, Diskettenseiten und der Datendichte (DD/HD)) auch gleich den
+Diskettennamen eingeben, den nachher MAGXDESK fr dieses Medium unter dem
+Laufwerkicon anzeigt.
+Beim Formatieren wird die komplette Diskette gel”scht und das Medium auf
+Besch„digungen untersucht. Daten, die sich vorher auf der Disk befanden,
+sind also unwiederbringlich verloren!
+Meldet Ihnen das Formatierprogramm bei einer Diskette einen Fehler (z.B.
+"Sektor defekt"), der auch beim nochmaligen Versuch des Formatierens nicht
+verschwindet, sollten Sie aus Grnden der Datensicherheit auf die weitere
+Verwendung dieser Diskette verzichten.
+šbrigens wird beim Formatieren mit der h”chsten Spur begonnen. Da beim
+Beschreiben die Diskette beginnend mit den niedrigen Spuren gefllt wird,
+k”nnen Sie bei versehentlicher Bet„tigung schnell mit SHIFT-SHIFT abbrechen und
+so Ihre Daten retten.
+
+Wollen Sie eine Diskette l”schen, die bereits formatiert wurde, gengt es, den
+Button "Init" (Initialisieren) zu bet„tigen. In diesem Fall wird nur das Inhaltsverzeichnis
+der Diskette gel”scht, was natrlich bedeutend schneller geht, als den
+gesamten Inhalt zu l”schen. Beim Versuch, ein Festplattenicon zu
+formatieren, wird eine Warnung ausgegeben, und Sie erhalten die M”glichkeit,
+diese Partition zu initialisieren. Zum Formatieren Ihrer Festplatte mssen
+Sie weiterhin auf die bekannten Festplatten-Hilfsprogramme (HDX, SCSITOOL, etc.)
+zurckgreifen.
+
+Beachten Sie bitte auch (wir hatten es zu Anfang dieses Kapitels bereits
+erw„hnt), da der Icontyp entscheidend dafr ist, wie MAGXDESK reagiert:
+Der Versuch, ein Diskettenlaufwerkicon C: zu formatieren, wird zwar keine
+Warnung nach sich ziehen, aber mit Sicherheit zu irgendwelchen
+Schwierigkeiten fhren, wenn es sich nicht um ein Diskettenlaufwerk
+handelt.
+
+
+Kopieren von Disketten
+----------------------
+
+Zum Erstellen einer Sicherheitskopie wichtiger Daten mssen Sie natrlich
+auch in der Lage sein, eine komplette Diskette zu kopieren. Diesen Vorgang
+l”sen Sie nicht durch das šbereinanderlegen von Disketten-Icons aus (das
+bedeutet "dateiweise  kopieren"), sondern ber den Menpunkt "Datei: Disk
+kopieren ...". Es erscheint folgender Dialog:
+
+
+[ Bild DISKCOPY.IMG ]
+
+
+In diesem Dialog k”nnen Sie von und auf alle Laufwerke kopieren, die als
+Diskettenicon angemeldet sind (wobei Diskettenlaufwerk A: immer als
+vorhanden angenommen wird). Das Klicken auf einen Laufwerkbuchstaben schaltet auf
+das n„chsth”here Laufwerk.
+Um den Kopiervorgang nicht unn”tig in die L„nge zu ziehen, verwendet das
+Kopierprogramm von MAGXDESK einen Algorithmus, der automatisch das Format
+der Quelldiskette analysiert und gegebenenfalls die Zieldiskette
+umformatiert.
+Haben Sie den Kopiermodus "ohne Formatieren" angew„hlt, so werden die
+Formate von Quell- und Zieldiskette verglichen und erst dann mit dem
+Kopiervorgang begonnen; wenn Sie nur mit einem Diskettenlaufwerk arbeiten,
+ist jetzt ein Diskwechsel erforderlich. Wenn das Kopierprogramm feststellt,
+da die Formate unterschiedlich sind und doch neu formatiert werden mu,
+erscheint eine Warnmeldung, nach der Sie entweder den Kopiervorgang
+abbrechen k”nnen oder die Zieldiskette im Format der Quelldiskette
+formatieren k”nnen.
+
+Sollte Ihr Rechner ber ein Diskettenlaufwerk und eine Festplatte, aber nur
+ber verh„ltnism„ig wenig Speicher verfgen, so da eine Diskette nicht
+komplett eingelesen werden kann, hat das Kopierprogramm noch eine Option
+parat, mit der Sie diese Diskette trotzdem mit nur einem Wechsel kopieren
+k”nnen. W„hlen Sie dazu in diesem Dialog den Button "Optionen" an und geben
+Sie ein "Tempor„rlaufwerk" auf Ihrer Festplatte vor. Wenn auf der
+Festplatte gengend Speicher vorhanden ist, wird die Quelldiskette
+vollst„ndig eingelesen und in eine Datei auf dem Tempor„rlaufwerk
+geschrieben. Anschlieend k”nnen Sie die Zieldiskette einlegen und in einem
+Rutsch beschreiben. Zum Schlu wird die Tempor„rdatei gel”scht.
+Falls gengend Hauptspeicher (RAM) oder nicht gengend Speicher auf der
+Festplatte vorhanden ist, wird keine Tempor„rdatei angelegt. Ebenso wie das
+Formatieren k”nnen Sie auch das Kopieren durch Drcken beider SHIFT-Tasten
+jederzeit abbrechen.
+
+
+Anzeige von Dateien
+-------------------
+
+In MAGXDESK k”nnen Sie Dateien, fr die keine Anwendung angemeldet ist,
+durch externe Programme anzeigen lassen. Das Anzeigeprogramm (z.B. das sehr
+empfehlenswerte Sharewareprogramm "1st Guide") wird im Menpunkt "Option:
+Programme ..." unter dem Punkt "Anzeige:" eingetragen.
+Haben Sie hier keinen Eintrag vorgenommen und ist keine Anwendung fr
+diese Datei angemeldet, verwendet MAGXDESK eine interne Anzeigenfunktion.
+Die Optionen und M”glichkeiten der internen Anzeigefunktion finden Sie im
+Kapitel ber die Menstruktur von MAGXDESK (Abschnitt "Datei anzeigen")
+n„her erl„utert.
+
+
+
+Starten von GEM-Programmen
+--------------------------
+
+Nachdem Sie einen šberblick ber die F„higkeiten von MAGXDESK erhalten
+haben, wollen Sie natrlich endlich auch einmal Multitasking in Aktion
+erleben. Die einfachste Methode, wenn Sie in MAGXDESK sind, besteht darin,
+das entsprechende Programm per Doppelklick zu starten.
+Eine andere Art, Programme zu starten, ist das Ziehen eines (oder mehrerer)
+Dateiicons auf das Programmicon. MAGXDESK bergibt in diesem Fall die
+Dateinamen der Icons  als Parameter an das Programm. Nicht alle Programme
+beachten diese bergebenen Parameter, aber bei den neueren klappt das fast
+immer - probieren Sie es einfach aus. Fr Spezialisten bietet MAGXDESK noch
+zwei weitere Arten der Parameterbergabe, die im Abschnitt "Besonderheiten
+bei Iconoperationen" eingehend erl„utert werden.
+
+Um weitere Programme parallel zu starten, greifen Sie einfach wieder auf
+die Fenster von MAGXDESK zu. Leider gibt es aber immer noch Programme, die
+ihren eigenen Desktop anmelden, so da MAGXDESK nicht auf Anhieb erreichbar
+ist. Dies bringt uns zum n„chsten Abschnitt: Der Umschaltung von
+Programmen.
+
+
+
+Umschalten von Programmen
+-------------------------
+
+Die einfachste M”glichkeit, zwischen mehreren Programmen hin und her zu
+schalten, besteht darin, in ein Fenster der gewnschten Applikation zu
+klicken. Mag!X bringt dann dieses Fenster nach oben und stellt die
+Menleiste der angew„hlten Applikation dar.
+
+
+... ber die Tastatur
+---------------------
+Mit der Tastenkombination CTRL-ALT-TAB k”nnen Sie die aktive Applikation
+zyklisch umschalten. Halten Sie dazu die CTRL- und die ALT-Taste gedrckt
+und bet„tigen sie die TAB-Taste so oft, bis der Name der gewnschten
+Applikation in der Box (in der Bildschirmmitte) erscheint, und lassen Sie
+dann die Tasten los.
+
+
+... und ber das Popup
+----------------------
+Klicken Sie mit der linke Maustaste irgendwo an einer freien Stelle der
+Menleiste. Es erscheint in etwa folgendes Popup-Men:
+
+
+[Bild: MANPOPUP.IMG]
+
+
+Oben sind alle gerade geladenen Applikationen aufgefhrt, die ein Men oder
+einen Desktop- Hintergrund haben. Vor der Applikation, der das oberste
+Fenster geh”rt oder deren Men und Hintergrund gerade aktiv sind (genauer: die
+Applikation, die die Tastatureingaben empf„ngt), steht ein H„kchen. Mit einem
+Mausklick w„hlen Sie die Applikation aus und schalten gleichzeitig die
+Menzeile und gegebenenfalls den Hintergrund und das oberste Fenster um.
+
+
+Programme ein-/ausblenden
+-------------------------
+
+Wenn Sie auf einem kleineren Bildschirm arbeiten oder sehr viele Programme
+gestartet haben, wird Sie bestimmt schon einmal das Durcheinander auf dem
+Bildschirm gest”rt haben. Damit Sie nicht mhsam alle Fenster von Hand
+schlieen mssen, haben wir im Popup einige sehr ntzliche Funktionen
+untergebracht.
+
+Programm ausblenden
+-------------------
+Bei Anwahl dieses Punktes werden alle Fenster der aktiven Applikation vom
+Bildschirm entfernt. Anschlieend wird zur n„chsten Applikation
+umgeschaltet.
+
+Andere Programme ausblenden
+---------------------------
+Mit dieser Funktion werden alle Fenster auer denen der aktiven Applikation
+vom Bildschirm entfernt.
+Beim Ausblenden werden die Fenster brigens nicht geschlossen, sondern nur
+auerhalb des sichtbaren Bildschirms verschoben (die Applikation erh„lt
+eine Mitteilung, der Benutzer habe das Fenster auerhalb des Bildschirms
+verschoben). Das bedeutet, da das Programm weiterhin im Multitaskingbetrieb
+l„uft! Wir haben diese Methode gew„hlt, damit auch „ltere Programme von
+dieser Funktion profitieren und spezielle Abfragen vermieden werden k”nnen.
+Wenn ein Programm das Verschieben des Fensters nicht zul„t, bleibt es
+einfach sichtbar.
+
+Alle Programme einblenden
+-------------------------
+Die ausgeblendeten Fenster aller Applikationen werden sichtbar gemacht.
+Diesen Eintrag k”nnen Sie nur anw„hlen, wenn ausgeblendete Fenster
+existieren. Applikationen mit versteckten Fenstern werden durch einen '*'
+hinter dem Programmnamen gekennzeichnet.
+Durch Umschalten auf eine Applikation ber das Popupmen oder durch eine
+andere Aktion werden alle eventuell entfernten Fenster der Applikation
+wiederhergestellt.
+
+Bildschirm aufr„umen
+--------------------
+Durch "aufr„umen" wird der gesamte Bildschirm neu gezeichnet. Sollten Sie
+ein Programm gestartet haben, das den Bildschirm oder seine Fenster nicht
+ordnungsgem„ restauriert und "Bildschirmmll" hinterl„t, k”nnen Sie hiermit
+wieder Ordnung auf dem Bildschirm schaffen.
+
+Programm laden
+--------------
+Falls Sie gerade nicht an MAGXDESK herankommen, k”nnen Sie hier mit
+"laden..." die Dateiauswahlbox aufrufen und ein anschlieend parallel
+laufendes Programm starten.
+
+Freier Speicher
+---------------
+In der letzten Zeile des Popup-Mens wird der noch freie Speicherplatz
+angezeigt. Manche Programme reservieren sich beim Start fast den gesamten
+Speicher. Hier k”nnen Sie vor dem Programmstart berprfen, ob noch genug
+Speicher vorhanden ist oder ob Sie zuvor ein anderes Programm beenden
+mssen.
+
+
+
+Starten von TOS-Programmen
+--------------------------
+
+Programme mit der Endung .TOS oder .TTP werden als TOS-Programme bezeichnet. Sie
+unterscheiden sich von GEM-Programmen dadurch, da die Ein- und Ausgabe rein
+textbasiert ist, also keine grafischen Elemente oder gar die Maus verwendet
+werden. TOS-Programme k”nnen in MAGXDESK wie GEM-Programme mit Doppelklick
+gestartet werden. Programmen mit der Endung .TTP (TOS Takes Parameter) k”nnen
+Sie auch Daten bergeben. Starten Sie ein Programm mit der Endung .TTP mit
+Doppelklick, so ”ffnet MAGXDESK eine Dialogbox, in der Sie die Parameter fr
+dieses Programm eintragen k”nnen. Starten Sie das TOS-Programm, indem Sie ein
+oder mehrere Icons auf das Programmicon schieben, werden die Dateinamen dieser
+Icons automatisch bergeben, und die Darstellung der Dialogbox fr die Parameter
+unterbleibt.
+
+Da Sie mit einem fensterbasiertem System arbeiten, w„re es natrlich l„stig,
+wenn die Ausgabe eines TOS-Programms einfach Ihre Fenster berdecken wrde, und
+auerdem m”chten Sie natrlich in einem Multitaskingsystem mehr als ein
+TOS-Programm parallel starten k”nnen (z.B. einen Packer und einen Raytracer).
+Die L”sung dieser Probleme lautet: Leite die Ein-und Ausgaben von TOS-Programmen
+ebenfalls in Fenster um!
+Diese Umleitung bernimmt das Programm VT52. Es stellt fr jedes TOS-Programm,
+das Sie von MAGXDESK aus starten, ein eigenes Fenster zur Verfgung, wodurch
+alle TOS-Programme konfliktfrei parallel laufen k”nnen. Durch die Umlenkung ins
+Fenster sind jetzt auch fr TOS-Programme einige sehr praktische Funktionen
+verfgbar, die sonst GEM-Programmen vorbehalten sind (Clipboard-Untersttzung,
+Scrollen der Ausgabe, Einstellung des Zeichensatzes, etc.). Mehr dazu finden Sie
+im Kapitel ber die Menstruktur von VT52.
+
+
+Accessories
+-----------
+
+Ein Wort noch zu Accessories. Obwohl Accessories eigentlich der Philosophie von
+Mag!X widersprechen, werden sie natrlich voll untersttzt. Sie finden sie wie
+gewohnt ganz links im ersten Meneintrag. Mag!X l„dt Accessories von dem Pfad,
+den Sie bei der Installation angegeben haben und der in dann der Datei MAGX.INF
+(mehr dazu im Kapitel ber die "Konfiguration von Mag!X") vermerkt wurde.
+
+Wir m”chten Ihnen empfehlen, so wenig Accessories wie m”glich zu verwenden.
+Nichts ist „rgerlicher, als wenn Ihnen der Speicher beim Arbeiten ausgeht, nur
+weil ein paar Accessories, die Sie selten aufrufen, gleich einige hundert
+Kilobytes Ihres Speichers belegen!
+Durch die M”glichkeit, Programme beim Booten automatisch starten zu lassen oder
+Programme nachtr„glich zu starten, k”nnen Sie bereits auf das eine oder andere
+Accessory verzichten. Der Vorteil parallel gestarteter Programme liegt
+darin, da sie sich jederzeit wieder aus dem Speicher entfernen lassen, falls
+dieser mal zu knapp werden sollte. Das geht bei Accessories nicht ohne weiteres.

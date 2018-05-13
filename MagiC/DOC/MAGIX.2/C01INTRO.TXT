@@ -1,0 +1,86 @@
+1. Einleitung
+-------------
+
+Wenn heutzutage ein neuer Rechner vorgestellt wird, der nicht
+unbedingt kompatibel zu irgendeinem anderen sein mu, kommt der
+Hersteller nicht umhin, diesen mit Multitasking auszustatten. Ohne die
+Eigenschaft, mehrere Programme quasi gleichzeitig  auszufhren, wird
+heute kein Betriebssystem mehr entwickelt. Die Anwendungen fr
+Multitasking sind vielf„ltig. Das beginnt damit, ein Text- und ein
+Grafikprogramm gleichzeitig im Speicher zu halten, um Bilder, die in
+den Text eingefgt werden sollen, bequem nebenbei zu  erstellen, und
+endet mit der šbersetzung, dem Ausdrucken oder dem Kopieren gr”erer
+Dateien, w„hrend man einen Text eintippt.
+
+Das ursprngliche GEM-Konzept des ATARI verbindet ein einfaches Single-
+Tasking-Betriebssystem mit einigen Elementen eines kooperativen
+Multitasking-Systems, die aber nicht vollst„ndig ausgefhrt wurden. Mag!X
+(der Name steht fr Multi Application Graphics Interface Extension) ersetzt
+Ihr Orginal-ATARI-Betriebssystem durch ein eigenes, schnelleres, das auf den
+Rechnern der ATARI ST/STE/TT-Serie pr„emptives Multitasking erm”glicht.
+
+Das erlaubt es Ihnen, mehrere Programme parallel zu starten, zwischen diesen
+umzuschalten und auáerdem, w„hrend ein Programm im Hintergrund rechnet, mit
+einem anderen Programm im Vordergrund weiterzuarbeiten.
+
+Im Gegensatz zu anderen L”sungen stand bei Mag!X das Ziel im Vordergrund,
+diesen Vorteil nicht mit Geschwindigkeitseinbuen zu erkaufen. Sie
+brauchen sich also keinen neuen Rechner zu kaufen, um in die Welt des
+"echten" Multitaskings einzusteigen, sondern Ihr uralter 8 MHz ST ist fr
+Mag!X 2.0 in jedem Fall ausreichend.
+
+
+Features von Mag!X
+------------------
+
+Die folgende Liste ist nur eine Auswahl der M”glichkeiten, die Mag!X Ihnen
+bietet. Den vollen Funktionsumfang werden Sie erst mit der Lektre des
+ganzen Handbuchs kennenlernen.
+
+- Pr„emptives Multitasking mit bis zu 16 Programmen. Bei Nutzung aller
+  Accessory-Eintr„ge k”nnen zus„tzlich zum Desktop noch 10 Applikationen
+  gleichzeitig im Speicher gehalten werden.
+
+- Bis zu 64 Fenster gleichzeitig m”glich.
+
+- Komfortable Bedienung durch Neuprogrammierung der gesamten grafischen
+  Bedieneroberfl„che. Dadurch schnelle und einfache  Umschaltm”glichkeiten
+  zwischen den Mens der verschiedenen Applikationen.
+
+- Fehlersuch-Hilfen fr Programmierer, Programm-Manager zum "Einfrieren"
+  oder gezielten Entfernen "klemmender" Applikationen.
+
+- Erweiterte Dialogfunktionen, zus„tzliche Betriebssystemaufrufe fr
+  fliegende Dialoge, Tastaturbedienung in Dialogen, Popup-Mens usw.
+
+- Weitgehend kompatibel zu TOS, kritische Programme k”nnen im Single-
+  Tasking-Betrieb ausgefhrt werden. Kompatibel zu Beschleuniger- und
+  Grafikkarten.
+
+- Drastisch erh”hte Betriebssicherheit, um die Einflunahme unsauberer
+  Applikationen auf andere zu verhindern. Nach Absturz einer fehlerhaften
+  Applikation wird das System komplett aufger„umt, so da mit groer
+  Wahrscheinlichkeit die anderen Programme weiter funktionsf„hig sind.
+
+- Neu entwickeltes Desktop MAGXDESK mit beliebigen Icons und umfangreichen
+  Funktionen.
+
+- Gegenber dem Originalsystem drastisch erh”hte Ausfhrungsgeschwin-
+  digkeit Ihrer Programme.
+
+
+
+Hardware-Voraussetzungen
+------------------------
+
+Ben”tigt wird ein beliebiger Rechner der Serien Atari ST, Mega ST,
+Atari STE, Mega STE oder ATARI TT. Eine Version von Mag!X fr den ATARI
+Falcon ist in Vorbereitung. Ben”tigt wird ferner ein TOS im ROM, welches
+aber seit 1986 in alle Rechner eingebaut ist.
+
+Eine Festplatte ist zu empfehlen, um Boot- und Ladezeiten nicht ins
+Unermeliche zu steigern. Theoretisch l„uft Mag!X auch mit 512 kB
+Hauptspeicher, fr eine optimale Anwendung sind jedoch mindestens 2 MB
+Speicher empfohlen.
+Fr einen noch schnelleren Bildschirmaufbau und volle Funktionsf„higkeit
+durch GDOS empfehlen wir NVDI.

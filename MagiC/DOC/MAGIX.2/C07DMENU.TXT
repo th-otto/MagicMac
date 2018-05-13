@@ -1,0 +1,707 @@
+7. Die Menstruktur von MAGXDESK
+--------------------------------
+
+In der Menzeile von MAGXDESK finden Sie fnf Mens. Die Meneintr„ge
+k”nnen mit der Maus oder durch eine Tastenkombination (angels„chselnd auch
+"Short-Cut" genannt) aufgerufen werden. Bei diesen hinter den
+Meneintr„gen aufgefhrten Tastenkombinationen steht:
+
+   ^  fr die Control-Taste
+   #  fr die Alternate-Taste
+
+[ Bild: MDSKMENU.IMG ]
+
+
+7.1 MAGXDESK: šber Mag!X...
+---------------------------
+Hier finden Sie die Copyrightmeldung, die Versionsnummer von Mag!X
+und MAGXDESK sowie den Namen und die Adresse des Lizenznehmers.
+
+7.2 Das "Datei"-Men
+--------------------
+
+Datei: ”ffnen ^O
+----------------
+Dieser Eintrag kann aktiviert werden, wenn genau ein Icon selektiert
+ist. Es wird eine Box zur Parameterbergabe ge”ffnet. Alternativ k”nnen Sie
+diese Funktion auch durch CTRL-Doppelklick ausl”sen.
+
+Datei: Informationen... ^I
+--------------------------
+Dieser Eintrag kann aktiviert werden, wenn genau ein Icon selektiert
+ist. Sie erhalten, je nach selektiertem Icon, Informationen ber eine
+Datei, einen Ordner oder ber ein Laufwerk.
+Bei einem Order erscheint etwa folgende Dialogbox
+
+[Bild: FOLDINFO.IMG]
+
+in der Sie auch den Ordnernamen „ndern k”nnen.
+
+In einer anderen Dialogbox werden Informationen ber eine Datei angezeigt:
+
+[Bild: FILEINFO.IMG]
+
+Sie k”nnen den Namen der Datei und die Dateiattribute „ndern. Die Checkbox
+"Tagesdatum einsetzen" entspricht einem sogenannten "touch"- Kommando;
+intelligente Compiler k”nnen hierdurch gezwungen werden, Quelltexte
+neu zu bersetzen, wenn das Erstelldatum sich ge„ndert hat. Backup-Programme
+k”nnen dazu gebracht werden, diese Dateien mitzuretten. Schlielich kann man
+die Funktion noch dazu benutzen, Dateien mit dem Datum 6.2.86 oder 0.0.2028
+usw. ein ordentliches Datum zu verpassen.
+
+[Bild: DISKINFO.IMG]
+
+Fr Laufwerke werden alle greifbaren Informationen angezeigt. Bei Disketten
+werden zus„tzlich auch Informationen des Bootsektors ausgewertet; Sie
+erhalten dabei Angaben ber die Anzahl der Spuren und der Sektoren pro Spur.
+Sollte die Diskette einen ausfhrbaren Bootsektor enthalten (m”glicherweise
+ein Virus ?!?), erscheint zus„tzlich die Meldung "BOOTSEKTOR AUSFšHRBAR".
+
+Datei: l”schen... ^L
+--------------------
+Mit dieser Funktion k”nnen Sie alle selektierten Icons im obersten Fenster
+l”schen (als wenn sie in den Papierkorb geschoben worden w„ren). Das ist
+dann sehr praktisch, wenn der Papierkorb "unsichtbar" unter einem  Fenster
+liegt.
+Dieser Eintrag kann nur dann aktiviert werden, wenn ausschlielich Icons im
+obersten Fenster selektiert sind!
+
+Datei: neuer Ordner... ^N
+-------------------------
+
+[Bild: NEWFOLDR.IMG]
+
+Diesen Menpunkt gestattet Ihnen das Anlegen eines neuen Orders im obersten
+Fenster von MAGXDESK.
+
+Datei: schliee Fenster ^U
+--------------------------
+Bewirkt das Schlieen des obersten Fensters von MAGXDESK.
+
+Datei: alle ausw„hlen ^A
+------------------------
+Mit diesem Menpunkt k”nnen Sie im obersten Fenster von MAGXDESK alle
+Objekte selektieren.
+Ist kein Fenster von MAGXDESK ge”ffnet, so werden alle Objekte des
+Desktophintergrunds selektiert!
+
+Datei: formatiere...
+--------------------
+Der Menpunkt "Formatieren" ist genau dann aktiv, wenn das einzige
+selektierte Icon ein Laufwerk ist.
+
+[Bild: FORMAT.IMG]
+
+Handelt es sich bei dem Icon um eine Harddisk, dann k”nnen Sie das Laufwerk
+lediglich initialisieren. Beachten Sie bitte, da MAGXDESK nur anhand des
+Icontyps entscheidet, ob ein Medium formatierbar ist oder nicht; der
+Versuch, ein Diskettenlaufwerk C: zu formatieren, wird jedoch zu
+irgendwelchen Schwierigkeiten fhren, wenn es sich nicht um ein
+Diskettenlaufwerk handelt.
+In der oberen Zeile k”nnen Sie schon beim Formatieren einen Namen fr das
+Medium eingeben, den MAGXDESK dann unterhalb des Icons anzeigt. Wenn Sie
+es nicht zu eilig haben, sollten Sie immer einen Namen angeben.
+
+Fr das Formatieren wird in Bezug auf Sektorversatz usw. genauso
+vorgegangen, wie dies TOS 1.04 tut. Der Bootsektor ist jedoch, soweit
+m”glich, IBM-kompatibel gehalten.
+Fr die "Profis" unter Ihnen sind unter "Optionen" noch weitere Parameter
+(Interleave, Versatz und Clustergr”e) zug„nglich, die vor jedem Aufruf
+der Formatierbox jedoch wieder auf die Standardwerte gesetzt werden.
+Beachten Sie bitte, da die Formatierroutine nicht in der Lage ist, auf
+DD-Laufwerken 11-Sektor-Formate zu erzeugen.
+Mit den Buttons DD/HD k”nnen Sie die beiden g„ngigsten Formate mit 2
+Seiten, 80 Spuren und 9 bzw. 18 Sektoren mit einem Mausklick einstellen.
+
+Beim Formatieren wird beim h”chsten Track begonnen, so da Sie bei
+versehentlicher Bet„tigung das Formatieren schnell mit SHIFT-SHIFT
+abbrechen k”nnen (die Verwaltungsinformationen und die wichtigsten Daten
+liegen auf den niedrigen Spuren).
+Tritt beim Formatieren ein Fehler auf, gilt dasselbe wie bei "Disketten
+kopieren". In beiden F„llen sollte man nach einem Zwangsabbruch die Diskette aus
+dem Laufwerk entfernen, da sie noch nicht vollst„ndig initialisiert wurde
+und daher ungltige Daten enth„lt.
+
+Datei: Disk kopieren... ^K
+--------------------------
+
+[Bild: DISKCOPY.IMG]
+
+In diesem Dialog k”nnen Sie von und auf alle Laufwerke kopieren, die als
+Diskettenicon angemeldet sind (wobei wir Diskettenlaufwerk A: immer als
+vorhanden annehmen). Das Klicken auf einen Laufwerkbuchstaben schaltet auf
+das n„chsth”here Laufwerk.
+Haben Sie den Kopiermodus "ohne Formatieren" angew„hlt, so werden die
+Formate von Quell- und Zieldiskette verglichen und dann erst mit dem
+Kopiervorgang begonnen; wenn Sie nur mit einem Diskettenlaufwerk arbeiten,
+ist jetzt ein Diskwechsel erforderlich. Wenn das Kopierprogramm feststellt,
+da die Formate unterschiedlich sind und doch neu formatiert werden mu,
+dann erscheint eine Warnmeldung, nach der Sie entweder den Kopiervorgang
+abbrechen k”nnen oder die Zieldiskette im Format der Quelldiskette
+formatieren k”nnen.
+Da MAGXDESK mit Hilfe des Betriebssystems formatiert, k”nnen mit dieser
+Funktion auf DD-Laufwerken keine 11-Sektor-Formate erzeugt werden. Wenn
+die Quelldiskette ein derartiges Format hat, mssen Sie hier abbrechen und
+ggf. ein Spezialkopierprogramm verwenden.
+
+Sollte Ihr Rechner ber ein Diskettenlaufwerk und eine Festplatte, aber nur
+ber verh„ltnism„ig wenig Speicher verfgen, so da eine Diskette nicht
+komplett eingelesen werden kann, hat das Kopierprogramm noch eine Option
+parat, mit der Sie diese Diskette trotzdem mit nur einem Wechsel kopieren
+k”nnen. W„hlen Sie dazu in diesem Dialog den Button "Optionen" an und geben
+Sie ein "Tempor„rlaufwerk" auf Ihrer Festplatte vor. Wenn nicht gengend
+Hauptspeicher (RAM) fr den Kopiervorgang, aber auf der Festplatte gengend
+Speicher vorhanden ist, wird die Quelldiskette vollst„ndig eingelesen und in
+eine Datei auf dem Tempor„rlaufwerk geschrieben. Anschlieend k”nnen Sie die
+Zieldiskette einlegen und in einem Rutsch beschreiben. Zum Schlu wird die
+Tempor„rdatei gel”scht. Falls nicht gengend Speicher auf der Festplatte
+vorhanden ist, wird keine Tempor„rdatei angelegt.
+
+Bei Diskettenfehlern erscheint eine Alertbox mit dem Fehlercode im Klartext
+und mit folgenden Entscheidungsm”glichkeiten:
+
+     Abbruch:  Fehlermeldung weiterreichen, Funktion wird abgebrochen
+     Nochmal:  Wiederholen der Funktion (etwa nach Entfernen
+               des Schreibschutzes)
+     Weiter:   Ignorieren des Fehlers (tun, als ob alles in Ordnung w„re)
+
+Der zweite Button, "Nochmal", ist der Defaultbutton.
+
+Wenn der Kopiervorgang vor Beendigung abgebrochen wurde, sollten Sie
+unbedingt die Zieldiskette aus dem Laufwerk entfernen und nicht versuchen,
+ein Inhaltsverzeichnis anzuzeigen, da die Diskette undefinierte Daten
+enth„lt.
+Ebenso wie das Formatieren k”nnen Sie auch das Kopieren durch Drcken
+beider SHIFT-Tasten jederzeit abbrechen.
+
+Datei: Ende
+-----------
+Dieser Menpunkt ist fr zuknftige Erweiterungen reserviert und im Moment
+noch nicht anw„hlbar.
+
+
+7.3 Anzeige:
+-------------
+Die Objekte im Fenster k”nnen als Icons oder mit ihrem Dateinamen als Text
+dargestellt werden. Handelt es sich bei der Datei um ein ausfhrbares
+Programm, wird dem Namen (bei Textdarstellung) ein Punkt vorangestellt. Die
+Gr”e der Schrift fr die Dateinamen kann unter diesem Menpunkt eingestellt
+werden. Ebenso, ob Gr”e, Datum und Uhrzeit mit angezeigt werden sollen. Ist
+"einspaltig" gew„hlt, werden die Dateien im Textmodus immer nur einspaltig
+angezeigt. Andernfalls ordnet MAGXDESK die Dateinamen bei entsprechender
+Breite des Fensters automatisch mehrspaltig an.
+
+7.4 Sortieren:
+--------------
+Unter diesem Eintrag k”nnen Sie das Sortierkriterium fr die Ausgabe
+im Fenster setzen. Erw„hnenswert ist dabei der Eintrag "unsortiert".
+Ist dieser aktiviert, so werden die Dateien in der Reihenfolge
+ausgegeben, in der sie tats„chlich physikalisch auf dem Laufwerkmedium
+gespeichert sind.
+Das aktuelle Sortierkriterium wird in der Menzeile (hell) dargestellt und
+kann auch mit den Funktionstasten F1-F5 ausgel”st werden.
+
+Sortieren: Maske setzen... #M
+-----------------------------
+
+[Bild: MASK.IMG]
+
+In diesem Dialog k”nnen Sie eine Maske setzen, um nur bestimmte Dateien
+anzeigen zu lassen. Diese Maske kann fr jedes Fenster individuell gesetzt
+werden.
+
+7.5 Optionen:
+-------------
+
+Optionen: Laufwerk anmelden... #L
+---------------------------------
+
+[Bild: INSTDRIV.IMG]
+
+In diesem Dialog haben Sie die M”glichkeit, Laufwerk-, Drucker- und
+Papierkorb-Icons hinzuzufgen, zu „ndern oder zu entfernen.
+Haben Sie keines der Standardicons selektiert, dann k”nnen Sie nur ein
+neues Icon hinzufgen. Beim Papierkorb- und Druckericon geschieht das,
+indem Sie die Maustaste beim Klick auf das Iconsymbol gedrckt halten und
+den Umri des neuen Icons an die gewnschte Stelle Stelle verschieben. Beim
+Hinzufgen von Laufwerkicons mssen Sie zus„tzlich vorher die
+Laufwerkkennung eingeben.
+Die Buttons "ndern" und "Entfernen" sind dann anw„hlbar, wenn beim
+Aufruf der Dialogbox genau ein Laufwerk- /Papierkorb- oder Druckericon
+selektiert war. Wenn Sie ein selektiertes Icon „ndern wollen, so geschieht
+dies, indem Sie einen kurzen Klick auf das gewnschte Iconsymbol absetzen;
+der Symboltyp und ggf. die Laufwerkkennung werden dann ge„ndert.
+
+Beachten Sie bitte, da sich einige Funktionen von MAGXDESK fr die
+unterschiedlichen Medien unterscheiden. Die Verantwortung fr die richtige
+Typzuordnung liegt bei Ihnen und sollte ernst genommen werden!
+
+Optionen: Anwendung anmelden... #A
+----------------------------------
+
+[Bild: INSTAPPL.IMG]
+
+Der Eintrag "Anwendung  anmelden" ist anw„hlbar, wenn genau ein
+Programmicon oder ein zu einem Programm angemeldetes Dateiicon selektiert
+ist. Die Anzahl der Dateitypen pro Programm ist auf 2 beschr„nkt.
+Fr Programme, die Probleme in einer Multitaskingumgebung haben, k”nnen Sie
+hier den Status "Single" anmelden. Wird ein "Single"-Programm gestartet, so
+wird MAGXDESK verlassen, und die parallel laufenden Programme werden
+eingefroren. Das "single"- Programm l„uft also unbeeinflut ab.
+
+
+Optionen: Einstellungen... #E
+-----------------------------
+
+[Bild: PREFS.IMG]
+
+In dieser Dialogbox k”nnen Sie folgende Einstellungen fr MAGXDESK
+vornehmen:
+
+- Sicherheitsabfragen fr das L”schen/Kopieren (de)aktivieren.
+
+- Den Kopiermodi (Best„tigen, Backup und šberschreiben) anw„hlen; siehe
+  dazu auch Kapitel 3.
+
+- Die Berechnung des Speicherbedarfs vor dem Kopier-/L”schvorgang
+  (de)aktivieren.
+
+- Die fliegenden Dialoge in MAGXDESK (de)aktivieren.
+
+- MAGXDESK resident: Normalerweise verbleibt MAGXDESK beim Programmstart
+  immer im Speicher, so da Sie neben dem parallel gestarteten Programm
+  immer Zugriff auf den Desktop haben. Ist dieser Punkt deaktiviert, dann
+  wird MAGXDESK beim Programmstart berladen.
+
+  Hinweis: Dieses Verhalten k”nnen Sie durch Gedrckthalten der ALT-Taste
+  beim Programmstart aus MAGXDESK "invertieren". Beispiel: Ist "MAGXDESK
+  resident" angew„hlt, und Sie halten beim Programmstart die ALT-Taste
+  gedrckt, so wird MAGXDESK berladen. Ist "MAGXDESK resident" deaktiviert,
+  und Sie halten beim Programmstart die ALT-Taste gedrckt, dann wird das
+  Programm parallel zu MAGXDESK gestartet.
+
+- Versteckte Dateien anzeigen: Ist dieser Punkt aktiviert, so werden auch
+  versteckte Dateien in MAGXDESK angezeigt.
+
+- Uhr anzeigen: Ganz rechts in der Menleiste wird die Uhrzeit in Stunden
+  und Minuten angezeigt. Die Uhrzeit wird alle 10s aktualisiert (falls
+  nicht gerade kein Dialog bearbeitet wird oder ein Men heruntergefallen
+  ist). Falls Sie eine andere Uhr verwenden (z.B. die auf der Mag!X-Disk
+  beiliegende CLOCK), k”nnen Sie diese Funktion deaktivieren.
+
+- Disknamen initialisieren: Ist dieser Punkt aktiviert, dann werden beim
+  Start als auch beim Nachladen von MAGXDESK die Namen aller Hard- und
+  RAMDisks ermittelt und in den entsprechenden Laufwerkicons angezeigt.
+  Ist dieser Punkt deaktiviert, so werden die Laufwerknamen nur beim
+  ™ffnen von Fenstern ermittelt.
+
+- Ger„tetreiber: In diesem Popup k”nnen Sie die gewnschte
+  Bildschirmaufl”sung anw„hlen. Die Ger„tetreiber 2,3,4,6,8 und 9 sind die
+  von ATARI vorgegeben Standardaufl”sungen. Dabei k”nnen Sie z.B. "TT high"
+  natrlich nur dann anw„hlen, wenn Sie einen TT mit angeschlossenem
+  Grobildschirm oder eine Grafikkarte mit entsprechendem Treiber
+  verwenden. Bei Grafikkarten sind in der Regel auch die anderen
+  Ger„tetreiber belegt (wie, das h„ngt von Ihrer ASSIGN.SYS-Datei ab).
+  Beachten Sie bitte, da beim Wechsel der Aufl”sung ein Reset ausgefhrt
+  wird. Sie sollten also vorher noch nicht gesicherte Dokumente
+  abspeichern, besser noch: Sie sollten alle noch laufenden Programme
+  ordnungsgem„ verlassen.
+
+- MAGX.INF laden: Dieser Button l„dt die MAGX.INF-Datei von dem Laufwerk,
+  von dem aus die letzte MAGX.INF-Datei geladen worden war.
+
+
+Optionen: Programme... #P
+-------------------------
+
+[Bild: PROGS.IMG]
+
+Hinter diesem Menpunkt verbirgt sich die Verwaltung mehrerer Applikationen,
+die zu folgendem Zweck eingesetzt werden k”nnen:
+
+- Command: Der Eintrag fr den Kommandointerpreter (z.B. MCMD.TOS), der
+  ber ^B direkt aufgerufen werden kann und der die Bearbeitung der .BAT-
+  und .BTP-Dateien bernimmt.
+
+- Anzeige: Hier wird das Default-Programm eingetragen, das immer dann
+  aufgerufen wird, wenn MAGXDESK mit einer Datei nichts anderes anfangen
+  kann; d.h. wenn die Datei weder ausfhrbar ist noch als zu einem
+  bestimmten Programm geh”rig angemeldet wurde. Ein externes Programm (z.B.
+  "1st Guide" oder "Gemview") kann diese Datei beispielsweise als Bild
+  o.„. anzeigen.
+  Ist hier kein Programm eingetragen, wird eine interene Ausgabefunktion
+  verwendet, die die Datei auf dem Bildschirm als Text ausgibt.
+
+- Ausgabe: Hier wird das Programm eingetragen, das aufgerufen wird, wenn
+  Dateien auf das Druckersymbol von MAGXDESK verschoben werden. Auf der
+  Mag!X-Disk finden Sie als Beispielprogramm PRINT.TTP.
+
+Ist die Zeile leer, wird die interne Druckfunktion von MAGXDESK aufgerufen,
+die die Datei unver„ndert auf die Datei PRN: ausgibt (das bedeutet, da der
+GEMDOS- Druckertreiber verwendet wird, die Daten landen also direkt auf der
+parallelen Schnittstelle). Der  Druckvorgang kann bei Verwendung der
+internen Druckfunktion ber SHIFT-SHIFT unterbrochen werden.
+
+Im Pfad des Anzeige- und des Druckprogramms werden alle Zeichen zugelassen,
+damit Sie auch direkt Parameter bzw. Optionen angeben k”nnen. Der Dateiname
+selbst (bis zum ersten Leerzeichen) wird immer automatisch in
+Grobuchstaben umgewandelt.
+
+- Editor: Hier wird der Standardeditor eingetragen, der aufgerufen wird,
+  wenn Sie Textdatei(en) mit (SHIFT-)CTRL-Doppelklick ”ffnen.
+
+Fr all diese Eintr„ge gilt: Ist dem Namen des eingetragenen Programm kein
+'*' vorangestellt, so wird das Programm (wie der Kommandoprozessor ber ^B)
+in den durch das oberste Fenster vorgegebenen Standardpfaden aufgerufen.
+
+Die Eintr„ge ^F1 bis ^F10 stehen zu Ihrer freien Verfgung. Hier gilt:
+Wenn dem Programmnamen ein '*' vorangestellt ist, werden alle selektierten
+Icons als Parameter an das Programm bergeben. Auerdem wird das Programm
+dann immer in seinem eigenen Pfad gestartet. Ist dem Namen hingegen kein
+'*' vorangestellt, so wird das  Programm mit den durch die obersten MAGXDESK-
+Fenster vorgegebenen Standardpfaden aufgerufen.
+
+
+Optionen: Arbeit sichern... #S
+------------------------------
+Unter diesem Punkt k”nnen Sie die aktuelle MAGXDESK-Konfiguration sichern.
+Es erscheint eine Alertbox, die Ihnen anzeigt, in welche Datei und auf
+welches Laufwerk die INF-Datei gesichert wird.
+MAGXDESK sichert die INF-Datei auf dem Laufwerk, auf dem sie zuletzt
+eingelesen wurde. Wenn Sie zum Beispiel die INF-Datei (mit CTRL-SHIFT-D)
+von Laufwerk D:\ eingelesen haben, so erscheint jetzt die Angabe, da der
+Status nach D:\ gesichert wird.
+
+Optionen: Blitter
+-----------------
+Hier k”nnen Sie den Blitter ein- und ausschalten. Besitzt Ihr Rechner
+keinen Blitter, so wird der Meneintrag "disabled"; ein H„kchen vor dem
+Eintrag bedeutet dann nur, da die MAGX.INF-Datei auf einem Rechner mit
+Blitter erstellt wurde und dieser dabei eingeschaltet war.
+
+7.6 Tastenbelegung von MAGXDESK
+-------------------------------
+Neben den Tastenkombinationen fr die einzelnen Menpunkte, die Sie in den
+vorangegangenen Abschnitten kennengelernt haben, beherrscht MAGXDESK noch
+einige ntzliche Kurztasten:
+
+ESC             Das Inhaltsverzeichnis des obersten Fensters wird neu
+                eingelesen.
+
+UNDO            Das oberste Fenster wird aufs Wurzelverzeichnis
+                zurckgeschaltet.
+
+Backspace       Geht im obersten Fenster eine Verzeichnisebene zurck.
+                Ist das Wurzelverzeichnis erreicht, wird die Taste
+                ignoriert.
+
+Tab             Wirkt wie CTRL-I (Info anzeigen).
+
+Insert          Aktiviert den Maximalgr”enknopf des obersten
+                Fensters.
+
+Home            Home setzt den Scrollbalken ganz nach oben.
+Clr             Clr (SHIFT-Home) setzt den Scrollbalken ganz nach unten.
+
+Cursor hoch
+Cursor runter   Scrollt zeilenweise im obersten Fenster von MAGXDESK.
+
+SHIFT-Cursor hoch
+SHIFT-Curs. runter Scrollt seitenweise im obersten Fenster von MAGXDESK.
+
+Leertaste       Deselektiert auf einen Schlag alle Objekte
+
+A-Z             Mit den Grobuchstaben lassen sich Laufwerke anw„hlen
+                (einmal tippen) und ”ffnen (2 mal schnell hintereinander
+                tippen). Fr die Grobuchstaben kann man, statt jedesmal
+                SHIFT zu drcken, auch CapsLock aktivieren.
+
+a-z             Mit den Kleinbuchstaben l„t sich, indem man sie zweimal
+                schnell hintereinander eingibt, das Laufwerk des obersten
+                Fensters wechseln. Dabei wird immer aufs Wurzelverzeichnis
+                geschaltet. Es werden nur Buchstaben akzeptiert, die in
+                Laufwerkicons auf dem Desktop vorkommen. Nach Diskwechseln
+                sollten Sie lieber ESC verwenden.
+
+CTRL B          Startet den Kommandoprozessor ohne Parameter in den
+                durch die Fenster vorgegebenen Pfaden. Es ist m”glich,
+                mehrere Exemplare des Programms ("Instanzen") zu starten.
+
+CTRL E          Startet den Standardeditor ohne Parameter in den durch
+                die Fenster vorgegebenen Pfaden.
+
+CTRL W          Wechselt das oberste Fenster. Ggf. mu CTRL-W solange
+                bet„tigt  werden, bis das gewnschte Fenster oben
+                liegt.
+
+CTRL SHIFT a-z  Mit den Buchstabentasten und CTRL-SHIFT l„t sich eine
+                neue INF-Datei von dem betreffenden Laufwerk nachladen. Ist
+                keine INF-Datei auf dem ausgew„hlten Laufwerk vorhanden,
+                kann man entscheiden, ob man den Vorgang abbrechen oder die
+                Defaults laden m”chte.
+
+ALT             H„lt man beim Schlieen des Fensters ber den
+                Closebutton oder ber <Backspace> die Taste <ALT>
+                gedrckt, so wird in Analogie zum ™ffnen eines Ordners
+                ein neues Fenster ge”ffnet, das den bergeordneten
+                Pfad darstellt.
+
+                Bei Ordnern wird ein neues Fenster mit dem Inhalt des
+                angeklickten Ordners ge”ffnet.
+
+                Wird ein Programm mit gedrckter ALT-Taste gestartet, so
+                wird der Modus "Optionen: Einstellungen/MAGXDESK resident"
+                fr diesen Programmstart invertiert.
+
+CTRL            H„lt man beim Schlieen des Fensters ber den
+                Closebutton oder ber <Backspace> die Taste <CTRL>
+                gedrckt, so wird das Fenster geschlossen.
+
+                Wird ein Programm mit gedrcker CTRL-Taste gestartet, so
+                wird immer ein Dialog ge”ffnet, in dem Sie Parameter an das
+                zu startende Programm bergeben k”nnen. Das funktioniert
+                auch mit mehreren selektierten Dateien mittels
+                CTRL-SHIFT-Doppelklick.
+
+ALT 1 - ALT 0   Schaltet die Aufl”sung um.
+
+
+Interne Anzeigefunktion von MAGXDESK
+------------------------------------
+Falls kein Programm fr die Anzeige von Dateien angemeldet wurde, wird die
+interne Anzeigefunktion von MAGXDESK verwendet. Diese gibt grunds„tzlich
+nur Textdateien aus, enth„lt jedoch eine Spezialroutine fr Dateien mit der
+Endung .DOC (einige Sonderzeichen von WORDPLUS werden ausgwertet), so da
+diese Dateien recht gut lesbar sind.
+Im internen Anzeigemodus haben folgende Tasten eine spezielle Bedeutung:
+
+G               (Go) Schaltet in den Hold-Modus. Die Ausgabe kann mit
+                einer Umschalttaste (z.B. SHIFT) angehalten werden. Eine
+                beliebige andere Taste (z.B. RETURN) schaltet zurck.
+
+CTRL C,
+CTRL N
+CTRL Q          Abbrechen
+
+Leertaste       Eine Seite weiter
+
+D               Eine halbe Seite weiter
+
++               4096 Bytes vorbl„ttern
+
+-               4096 Bytes zurckbl„ttern, auch bei Anzeige "--EOF--"
+
+sonstige Taste  Eine Zeile weiter.
+
+H„lt die Ausgabe an, so kann man fr "Weiter" die linke Maustaste und
+fr "Abbruch" die rechte Maustaste drcken.
+
+7.7 Besonderheiten bei Iconoperationen
+--------------------------------------
+Bei den Grundoperationen mit Icons verh„lt sich MAGXDESK so, wie Sie das
+bereits von TOS oder anderen alternativen Desktops gew”hnt sind:
+
+- Ein Klick auf ein Icon selektiert dieses; alle anderen werden dabei
+  deselektiert.
+- Beim Verschieben von Icons mit der Maus werden grunds„tzlich nur die
+  Icons eines Fensters oder des Desktops gleichzeitig mitverschoben.
+- Bei gedrckt gehaltener rechter Maustaste k”nnen Sie auch auf die Objekte
+  in nicht aktivierten Fenstern zugreifen.
+- Ein Klick auf eine freie Stelle in einem Fenster oder auf dem Desktop
+  deselektiert alle Icons. Die Selektierung wird von "normalen"
+  Fensteroperationen wie Scrollen, Verschieben, ndern des Sortiermodus
+  usw. nicht ver„ndert.
+
+Im Gegensatz zu „lteren Desktops bleiben bei gedrckter SHIFT-Taste alle
+Icons selektiert, wenn Sie "daneben" klicken. Dadurch kann es ihnen nicht
+mehr passieren, da beim mhsamen Selektieren von Objekten die Arbeit durch
+einen einzigen Klick an falscher Stelle zunichte gemacht wird.
+
+Klicken Sie mit gedrckter SHIFT-Taste auf ein bereits selektiertes Icon,
+so wird dieses wieder deselektiert. Ebenso reagiert das Gummiband bei
+gedrckter SHIFT-Taste. Die "erfaten" Icons werden invertiert, wobei sich
+auch mehrere Gummib„nder ziehen lassen. "Erfassen" Sie bei gedrckter
+SHIFT-Taste mit dem Gummiband ein bereits selektiertes Icon, so wird dieses
+wieder deselektiert.
+
+
+Parameterbergabe in MAGXDESK
+-----------------------------
+Neben der bekannten Methode Dateien (aus einem Fenster) an ein Programm zu
+bergeben, indem Sie die Dateiicons auf das Programmicon ziehen, gibt es in
+MAGXDESK noch die M”glichkeit, auch Dateien aus verschiedenen Fenstern an
+ein Programm zu bergeben.
+Typische Anwendung: Sie haben ein Programm zum Vergleich zweier Dateien und
+wollen ihm Dateien aus verschiedenen Fenstern zum Vergleich bergeben. Dies
+geschieht, indem Sie die Dateien per SHIFT-Klick selektieren und
+anschlieend bei gedrckter SHIFT-Taste das Programm mit Doppelklick
+starten.
+Halten Sie beim Doppelklick auf das Programm nicht nur die SHIFT-, sondern
+auch die CTRL-Taste gedrckt, so werden alle in allen Fenstern und auf dem
+Desktop ausgew„hlten Dateien als Parameter bergeben und im Dialog
+"Parameter bergeben" mit angezeigt.
+Wollen Sie nur eine Datei in den Standardeditor (siehe "Optionen:
+Programme...") laden, so gengt bei gedrckter CTRL-Taste ein Doppelklick
+auf das Dateiicon. Wenn Sie Dateien aus verschiedenen Fenstern an den
+Standardeditor bergeben wollen, gengt es, die gewnschten Dateien zu
+selektieren und anschlieend auf eine der selektierten Dateien bei
+gedrckten SHIFT-CTRL-Tasten einen Doppelklick abzusetzen.
+
+MAGXDESK verhindert brigens, da ein bereits laufendes Programm noch
+einmal geladen wird und schickt stattdessen dem bereits geladenen Programm
+eine Nachricht. Diese Nachricht (es handelt sich um VA_START) teilt dem
+Programm mit, da es ggf. weitere Dateien laden soll. ltere Programme
+verstehen diese Nachricht mitunter nicht. In diesem Fall mssen Sie das
+Programm selbst in den Vordergrund bringen und das Laden der Datei ber den
+entsprechenden Menpunkt im Programm ausl”sen.
+
+
+7.8 Einschr„nkungen von MAGXDESK
+--------------------------------
+
+Anzahl verschiedener Laufwerke:                   max. 26
+Anzahl Fenster:                                        5
+Anzahl Icons auf dem Desktop:                     unbegrenzt
+Anzahl Dateien insgesamt:                         max. 600
+Anzahl anmeldbarer Programme:                     unbegrenzt
+maximale Pfadl„nge fr Desktop-Icons/Programme:   max. 80  Zeichen
+maximale Pfadl„nge fr Disk- Operationen:         max. 128 Zeichen
+maximale Pfadtiefe:                               max. 8   Ebenen
+Anzahl zus„tzlicher Programm- Icons:              unbegrenzt
+Anzahl zus„tzlicher Datei- Icons:                 unbegrenzt
+Anzahl Icons zugewiesener Dateinamen:             unbegrenzt
+
+"Anzahl Dateien insgesamt" bedeutet, da MAGXDESK in allen Fenster zusammen
+max. 600 Objekte anzeigen kann. Da  der Speicher fr die Fenster dynamisch
+festgelegt wird, k”nnen sich die Dateien beliebig auf die Fenster
+verteilen. Sollten in einem Fenster mehr Objekte vorhanden sein, als
+MAGXDESK aufgrund der Obergrenze (600) noch frei hat, so werden die noch
+darstellbaren Objekte angezeigt, und die Infozeile des Fensters enth„lt eine
+šberlaufmeldung.
+
+Die Anzahl der Icons auf dem Desktop ist unbeschr„nkt. Um jedoch eine
+Speicherzerstckelung zu vermeiden, ermittelt MAGXDESK beim Einlesen der
+MAGX.INF-Datei die Anzahl der Desktop-Icons und der angemeldeten
+Applikationen und alloziert Speicher fr zehn zus„tzliche Icons und zehn
+zus„tzliche Applikationen.
+Wenn nun neue Applikationen oder Desktop-Icons angemeldet werden und die
+interne Tabelle berl„uft (Meldung "Desktop ist voll"), sollten Sie
+zun„chst den Menpunkt "Option: Arbeit sichern" aufrufen und dann ber den
+Button "MAGX.INF laden" im Dialog "Optionen: Einstellungen ..." die
+MAGX.INF-Datei neu laden. Danach ist wieder Platz fr zehn weitere Icons
+und Programme vorhanden.
+
+Beachten Sie bitte auch, da s„mtliche Einstellungen von Mag!X und MAGXDESK
+ausschlielich in der Datei MAGX.INF abgelegt werden. Eine eventuell
+vorhandene Datei DESKTOP.INF oder NEWDESK.INF wird von Mag!X nicht
+ausgewertet oder verwendet. In der MAGX.INF-Datei sind brigens alle
+Angaben ber die Fenster- und Iconpositionen von MAGXDESK
+aufl”sungsunabh„ngig abgelegt. Die Koordinaten werden derart proportional zur
+Bildschirmgr”e umgerechnet, da keine Rundungsfehler auftreten und in jeder
+Aufl”sung die gleiche Objektanordnung erzielt wird.
+
+
+7.9 Icons
+---------
+
+Iconzuweisung
+-------------
+Grunds„tzlich werden in MAGXDESK alle Programme (also Dateien mit der
+Endung PRG,APP,TOS,TTP) als Icon dargestellt, das einem stilisierten,
+leeren Bildschirm mit Menleiste entspricht. Batchdateien (BAT,BTP) haben
+ebenfalls ein spezielles Symbol. Alle brigen Dateien werden als leeres
+Blatt mit rechts oben abgeknickter Ecke angezeigt.
+
+[Bild: ICONTYP.IMG]
+
+Um Programme und Ihre Dateien optisch leichter unterscheiden zu k”nnen und
+die Optik Ihres Desktops aufzuwerten, bietet Ihnen MAGXDESK die
+M”glichkeit, zus„tzliche Icons fr Programme und Dateien einzubinden.
+Kopieren Sie dazu die Dateien MAGXICNS.RSC, MKICONS2.PRG und NAMES.TXT
+zusammen in einen Ordner:
+- Die Datei MAGXICONS.RSC enth„lt Icons fr eine Vielzahl von Anwendungen
+  und Programmen.
+- In der Datei NAMES.TXT, die Sie mit einem Texteditor modifizieren
+  k”nnen, findet sich die Zuweisung der Programm- und Dateinamen zu den
+  jeweiligen Icons.
+  Icons, denen keine Datei zugewiesen wurde, werden nicht in MAGXDESK
+  eingebunden; belegen also auch keinen Arbeitsspeicher.
+
+Die Einbindung in MAGXDESK bernimmt das Programm MKICONS2.PRG. Nach dem
+Start arbeitet es vollst„ndig im Hintergrund; nur bei Fehlern meldet es
+sich mit einer Alertbox.
+
+Beachten Sie bitte, da die Einbindung der Icons den Speicherplatzbedarf
+des Desktops erh”ht. Wenn Sie ber sehr wenig Speicher verfgen, kann es
+sinnvoll sein, auf die Einbindung zus„tzlicher Icons zu verzichten.
+
+Bearbeiten der Iconsammlung
+---------------------------
+Je nach Ausstattung haben Sie zwei M”glichkeiten, die Iconsammlung zu
+erweitern oder zu ver„ndern.
+Wenn Sie ber ein Resource Construction Set mit integriertem Editor (z.B.
+INTERFACE) oder einem Iconeditor verfgen, der eine Resourcedatei
+bearbeiten kann, dann k”nnen Sie ohne Umwege die Datei MAGXICNS.RSC
+bearbeiten.
+Beachten Sie bitte beim Hinzufgen oder Ver„ndern der Icons, da die Icons
+nur durch den Icontitel unterschieden werden. Jeder Name (max. 8 Buchstaben
+plus Endung) darf nur einmal vorhanden sein, mu gro geschrieben sein und
+die Endung .ICP (Programmicon) bzw. .ICD (Dateiicon) haben. Die Icons haben
+alle das Format 32 (Breite) mal 28 (H”he). Die Iconmaske darf nicht
+ver„ndert werden, da sie fr alle Icons fest vorgegeben ist.
+Die neu erstellten Icons sollten in der Regel in Abmessungen und „ueren
+Berandungslinien dem vorliegenden  Format entsprechen, also Dateiicons mit
+abgeknickter Ecke und Programmicons mit schwarzem Balken.
+
+Steht Ihnen kein Editor fr die RSC-Datei zur Verfgung, mssen Sie auf den
+beiliegenden Iconeditor ICNEDIT zurckgreifen.
+Dieser verarbeitet jedoch keine Ressourcedateien, so da Sie zun„chst alle
+Icons aus der Datei MAGXICNS.RSC extrahieren mssen. Kopieren Sie dazu von
+der Orginaldiskette die Dateien ICNEDIT.PRG, ICNEDIT.RSC, ICX2RSC und
+RSC2ICX.PRG in das Verzeichnis, in dem schon NAMES.TXT, MAGXICNS.RSC und
+MKICONS2.PRG liegen.
+Starten Sie nun das Program RSC2ICX.PRG. Es extrahiert aus der
+Resourcedatei MAGXICNS.RSC einzelne Programm- (.ICP) und Dateiicons (.ICD),
+die von ICNEDIT bearbeitet werden k”nnen. Benennen Sie anschlieend die
+Datei MAGXICNS.RSC um, oder verschieben Sie sie in ein anderes Verzeichnis.
+Mit ICNEDIT k”nnen Sie nun neue Icons erstellen oder bestehende „ndern. Die
+Zuordnung der Icons zu Programmen und Dateien erfolgt wie gehabt ber die
+Datei NAMES.TXT.
+Starten Sie nun MKICONS2.PRG. Es sucht zun„chst nach der Datei MAGXICNS.RSC
+im aktuellen Verzeichnis. Wird es dort nicht fndig, so werden
+Einzeldateien mit der Endung .ICD und .ICP gesucht, wobei die Zeile "FROM"
+in NAMES.TXT angibt, wo diese Icondateien gesucht werden sollen. Fehlt die
+Zeile mit "FROM" in NAMES.TXT, wird im aktuellen Verzeichnis gesucht. Um
+Ordnung zu schaffen, k”nnen Sie also die .ICP- und .ICD-Dateien auch in
+einem anderen Ordner ablegen.
+Mit dem Programm ICX2RSC.PRG k”nnen Sie ggf. wieder alle .ICD- und
+.ICP-Dateien zu einer neuen Datei MAGXICNS.RSC zusammen fassen. Kopieren
+Sie dazu einfach das Programm in das Verzeichnis mit den Icondateien und
+starten Sie es.
+
+Die neuen Icons bzw. Zuweisungen sind dann nach dem n„chsten Warmstart
+verfgbar.
+
+Der Iconeditor ICNEDIT
+----------------------
+
+[Bild: ICNEDIT.IMG]
+
+Mit ICNEDIT k”nnen Sie zus„tzliche Icons fr Programme und Dateien
+erstellen oder „ndern. Nicht ge„ndert werden k”nnen Icons fr Papierkorb,
+Drucker, Laufwerke, Batchdateien sowie die Standard-Programm- und
+-Druckericons. Dazu ben”tigen Sie einen "ausgewachsenen" Resourceeditor,
+wobei Sie darauf achten mssen die Icongr”e nicht zu ver„ndern!
+ICNEDIT verarbeitet Dateien des Typs .ICP (Programmicon) und .ICD
+(Dateiicon) mit je 112 Bytes. ICNEDIT kann mit  maximal je einem Programm-
+Icon und einem Datei-Icon als Parameter aufgerufen werden.
+Bei ungltigen Dateinamen oder bei mehr als einem Parameter desselben
+Typs wird eine Fehlermeldung ausgegeben.
+Jedes Icon hat das Format 32 (Breite) mal 28 (H”he), allerdings k”nnen
+nicht alle Pixel beliebig gesetzt oder gel”scht werden, sondern nur
+innerhalb einer Schablone, die von ICNEDIT vorgegeben wird; die Iconmasken
+lassen sich nicht „ndern, sondern sind wie die  Schablone fest vorgegeben.
+Mit der linken Maustaste k”nnen Sie Punkte setzen, mit der rechten
+Maustaste Punkt l”schen. Jeder gesetzte und gel”schte Punkt wird simultan
+unten in der Originalgr”e des Icons angezeigt. Auerdem enth„lt die
+Unterschrift der Icons die aktuellen Dateinamen (ohne Pfad).

@@ -1,0 +1,2351 @@
+NDERUNGEN UND FEATURES VON KAOS 1.4.2 (VOM 10.01.91)
+#####################################################
+
+Inhalt:
+
+I)	 Ver„nderungen im (X)BIOS
+II)	 Ver„nderungen im DOS
+III	 Ver„nderungen im VDI
+IV)	 Ver„nderungen im AES
+V)	 Ver„nderungen im DESKTOP
+VI)	 Hilfsprogramme
+
+AI)	 Anhang: Funktionsweise der Modi von Pexec
+AII)  Anhang: Der GEMDOS- Zeileneditor
+AIII) Anhang: Die GEMDOS- Dateiattribute
+AIV)  Anhang: Benchmarks
+AV)	 Anhang: Patches fr Programmfehler
+AVI)  Anhang: Zus„tzliche Dokumentation
+
+
+
+I) Ver„nderungen im (X)BIOS
+===========================
+
+- KAOS 1.4 pat sich selbst„ndig an den STe an. KAOS 1.4 reagiert in einem
+  ST wie TOS 1.4 und in einem STe wie TOS 1.6.
+- Bcostat fr den Drucker wird ggf. auf die serielle Schnittstelle umge-
+  schaltet. Bisher landete die Ausgabe zwar auf dem seriellen, die Status-
+  abfrage jedoch auf dem parallelen Drucker.
+- bios(1) = Bconstat()
+  Wird als Ger„t 0 (= Drucker) angegeben, erh„lt man 0L in d0 zurck, d.h.
+  kein Zeichen vom Drucker als Eingabe verfgbar.
+  Bisher war der Rckgabewert undefiniert. KAOS 1.4 liefert die 0 aus
+  Kompatibilit„t zu KAOS 1.2.
+- Bconin wurde fr den Extremfall korrigiert, da zwischen erster und zweiter
+  Abfrage, ob der Puffer nicht leer ist, dieser geleert wird.
+- Druckeranpassung
+  Als Druckertyp wird per Default Epson/Einzelblatt eingestellt.
+- Tastaturklick und Glocke werden jetzt indirekt aufgerufen, und zwar ber
+  bell_hook und kcl_hook wie im TOS 1.6.
+- Tastenwiederholung
+  Die Werte fr Tastenwiederholung und Wiederholungs- Verz”gerung wurden auf
+  einen anderen Wert eingestellt.
+- Der Mechanismus fr die Tastaturwiederholung wurde berarbeitet.
+  Die Unterschiede:
+
+   1) Die Rate wird nicht mehr auf die Anfangsverz”gerung addiert, so da
+	 bei nderung der Rate die Verz”gerung konstant bleibt.
+   2) Um den Effekt auszugleichen, da bei kurzer Verz”gerung und langsamer
+	 Wiederholung erst zwei Zeichen sehr schnell, dann die folgenden
+	 langsam kommen, wird das zweite Zeichen mit dem Maximum aus
+	 Wiederholverz”gerung und Wiederholrate verz”gert (anstelle mit der
+	 Summe wie im Original).
+   3) Alle Werte mssen bei gleichem Effekt um 1 kleiner sein als bisher,
+	 da ein Wert von 1 nicht mehr wie 0 behandelt wird. Das alte
+	 Kontrollfeld kann keinen Wert von 0 einstellen, jedoch das neue,
+	 das also schon an KAOS 1.4.2 angepat ist.
+- Die Affengriff- Abfrage im Tastaturtreiber des BIOS wurde korrigiert. Der
+  Affengriff funktioniert jetzt auch bei vollem Tastaturpuffer und exotischen
+  Tastaturtabellen.
+  Die Eingabe in den Puffer wird jetzt per Interruptmaske 7 geschtzt.
+- Der Tastaturtreiber des BIOS enth„lt drei zus„tzliche Ebenen, und zwar
+  AltGr normal/shift/caps. Dafr wurde die KEYTAB- Struktur erweitert.
+  Die XBIOS- Funktion Keytbl() liefert jetzt einen Zeiger auf eine Struktur
+  XKEYTAB, die zur bisherigen Struktur KEYTAB aufw„rtskompatibel ist:
+
+		typedef struct
+		{
+			char *unshift;
+			char *shift;
+			char *capslock;
+			char *altgr_unshift;
+			char *altgr_shift;
+			char *altgr_capslock;
+		} XKEYTAB;
+
+  Bioskeys() war bisher "void" und liefert jetzt einen Zeiger auf folgende
+  Struktur:
+
+		typedef struct
+		{
+			XKEYTAB	*keytblx; 	    /* Adresse der 6 Tabellen 	*/
+			char 	*kbshift; 	    /* Adresse des Shiftstatus	*/
+			char 	*altgr_status;     /* Adresse des AltGr- Status	*/
+			void 	(*handle_key)();   /* Adresse der Tastaturroutine */
+			char 	*keyrepeat;	    /* Adresse der Wdh.daten		*/
+		} KEYBDPARMS;
+
+  keytblx ist auch ber Keytbl() zu ermitteln, kbshift ist auch ber den TOS-
+  Header ermittelbar. Das Flag altgr_status darf nur $00 oder $ff sein!
+  Die Tastaturbelegung unter AltGr ist so gew„hlt, da die akzentuierten
+  Zeichen stets in der N„he der zugeh”rigen Grundzeichen liegen. Einige der
+  Tasten (Cursortasten, Leertaste usw.) haben unter AltGr ihre normale
+  Funktion, alle anderen liefern im Lobyte das ASCII- Zeichen und im High-
+  byte immer $5f, was ein ungltiger Scancode ist. Die Belegung ist an eine
+  Standard- MF2 Tastatur angepat.
+  Gedacht ist diese Erweiterung fr einen Treiber fr eine MF2 Tastatur, der
+  selbst das AltGr- Flag kontrolliert und dem TOS- Treiber lediglich
+  Scancodes liefert.
+  Um nicht nur die AltGr- Tabellen, sondern auch die Standardtabellen an die
+  MF2- Tastatur anpassen zu k”nnen, enth„lt das BIOS die ersten drei
+  Tastaturtabellen zus„tzlich auch in MF2- Ausfhrung. Um das TOS auf MF2
+  umzuschalten, schaltet man das KAOS- Konfigurationsbit 9 ein. Der n„chste
+  XBIOS- Aufruf Bioskeys() setzt dann je nach diesem Bit die Atari- oder die
+  MF2- Tabellen. Die AltGr- Tabellen ohne SHIFT und mit CapsLock werden dabei
+  immer als identisch gesetzt.
+  Um die zus„tzlichen Tastaturebenen auch auf der Originaltastatur verfgbar
+  zu machen, kann man mit ALT-CapsLock das AltGr- Flag toggeln.
+- Rwabs und Getbpb reagieren korrekt bei negativen Devicenummern. Bisher
+  gab es Systemabstrze. Getbpb l„t kein Ignorieren eines Lesefehlers zu.
+- alle Floppy- Timeouts wurden von Z„hlschleifen auf _hz_200 umgestellt.
+  Fr die Z„hlschleifen, die zu kurz fr _hz_200 sind, wird in der Bootphase
+  ein Prozessor- Benchmark ausgefhrt (bei aktiviertem Befehls- Cache) und
+  die Anzahl der Schleifendurchl„ufe entsprechend umgerechnet.
+  Damit sollte KAOS 1.4 mit jeglicher Prozessorkonfiguration zurechtkommen.
+- Fastload:
+  Nicht der g„ngige Patch fr Fastload ist enthalten, sondern eine modifizierte
+  "go2track"- Routine, die beim Lesen und Verifizieren aufgerufen wird.
+  Der Unterschied zur blichen L”sung besteht darin, da beim Schreiben die
+  Originalroutine aufgerufen wird, was absolute Datensicherheit auf jedem
+  Laufwerk garantiert.
+  Der Fastload brachte sowieso nichts beim Schreiben, so da die KAOS- L”sung
+  gegenber dem blichen Patch keinen Geschwindigkeitsverlust bedeutet.
+  Fastload ist ber Setzen von Bit 4 des Konfigurationsbytes mit Sconfig()
+  ausschaltbar (standardm„ig Bit = 0, also Fastload eingeschaltet).
+  Fastload hat keine Auswirkung, wenn man Disketten benutzt, die unter
+  TOS/KAOS 1.4 oder KAOSDESK formatiert wurden, da das Desktop jetzt einen
+  anderen Versatz benutzt.
+- negative Funktionsnummern fr (X)BIOS werden abgefangen. Bisher gab es
+  Systemabstrze
+- Vor dem Starten von resetfesten Programmen ber den resvalid/resvector-
+  Mechanismus werden Bus/Adrefehler/Illegal/Privilegverletzung auf eine
+  Routine geleitet, die resvalid ungltig machen und wieder einen Warmstart
+  machen.
+  Damit wird verhindert, da der ST beim Ausfhren defekter resetfester
+  Programme in einen Endlosboot ger„t.
+- Der DMA- Boot macht 2 Versuche statt nur einem, um das "Unit Attention"
+  einiger SCSI- Laufwerke korrekt zu verarbeiten.
+- Bei fatalen Fehlern beim Booten, die zu totalem Speicherplatzverlust
+  gefhrt haben, wird das System angehalten, und zwar mit der Meldung:
+
+	*** FATALER FEHLER BEIM BOOTEN:
+	*** SYSTEM ANGEHALTEN ***
+
+- Bei ungltigem _bootdev wird dieses, wenn es noch nicht auf A: liegt, auf
+  A: gesetzt. Existiert A: ebenfalls nicht, wird abgebrochen.
+- Bei floplock wird ein Zittern des Kopfes nicht mehr ausgefhrt. Bisher:
+  seek(0),seek(1),seek(0). Jetzt nur noch seek(0).
+- Beim Reset wird der Tongenerator ausgeschaltet.
+- Das Boot- Device wird korrekt in den Environment- String bernommen. Bisher
+  lautete es immer 'A', egal, welches Laufwerk Bootlaufwerk war.
+  Es handelt sich hier im Gegensatz zu TOS und KAOS 1.2 nicht um _bootdev,
+  sondern das beim Booten aktuelle Laufwerk (von dem aus der AUTO- Ordner
+  geladen wurde). Bei der Auswahl des Bootlaufwerks mit Hilfe des c't
+  Treibers landet jetzt dieses Laufwerk im "PATH=..." des Default- Environments,
+  was bewirkt, da der Shellmanager des AES nicht mehr auf A: herumsucht,
+  wenn er irgendetwas nicht finden kann.
+  Zusammen mit den AES- Patches ist damit das _bootdev- Problem auf optimale
+  Weise beseitigt worden.
+- Der AUTO- Proze, der beim Booten fr das Ausfhren des AUTO- Ordners
+  erstellt, aber nie korrekt beendet wird, wurde entfernt. Der Bootproze
+  (d.h. der Urproze) l„uft im Supervisormode im Default- SSP, der jedem
+  Proze vom GEMDOS zugewiesen wird. Wenn nun der AUTO- Proze erzeugt wurde,
+  lief dieser im Supervisormode mit einem 128 Byte kleinen Stack, was
+  vermutlich sehr knapp bemessen war. Die im AUTO- Ordner gestarteten
+  Programme wiederum benutzen ebenfalls den Default- SSP. Um das Chaos
+  perfekt zu machen, wurde der AUTO- Proze mit einem wilden Sprung beendet,
+  wobei wieder der Default- SSP als Stack gesetzt wurde. Das Funktionieren
+  war eigentlich reiner Zufall.
+  Hinzu kam, da die Routinen zum Ausfhren der residenten Programme, fr
+  das Booten von Floppy und Harddisk ebenfalls vom Urproze aufgerufen
+  werden, w„hrend der Stack auf dem Default- SSP liegt. Wenn also etwa beim
+  Booten irgendwo ein GEMDOS- Proze erzeugt wird (etwa beim Booten von OMTI-
+  Platte!), so bekam dieser neue Stack ebenfalls den Default- SSP zugewiesen.
+  Daher konnte die Rcksprungadresse ins ROM bergebraten werden. Vielleicht
+  ist das einer der Grnde, weshalb mein ST beim Booten mitunter h„ngenbleibt
+  oder abstrzt.
+  In KAOS 1.4.2 wird nun kein AUTO- Proze mehr erzeugt. Fr das Ausfhren
+  der residenten Programme, fr das Booten von ACSI und Floppy sowie fr das
+  Ausfhren der AUTO- Programme wird der bis dahin nicht benutzte BSS- 
+  Bereich des AES als Stack mibraucht; dieser drfte mit ber 16k gro genug
+  sein. Ferner drfte es nicht zu Komplikationen mit anderen GEMDOS-
+  Prozessen kommen.
+  Auer der Vereinfachung, der Verkrzung und der erh”hten Sicherheit werden
+  auch noch 258 Bytes fr Basepage und Environment gespart, auerdem mehrere
+  Pfadhandles und Memory- Deskriptoren.
+  šbrigens zeigt ein Test: in KAOS 1.4.2 stehen etwa 13168 Bytes mehr als
+  unter TOS 1.4 (jeweils in KAOSDesk) zur Verfgung.
+- Die Alarmzeit der Echtzeituhr wird beim Reset nicht mehr zerst”rt
+- Die Uhrzeit:
+  Das Datum wird nicht jedesmal auf den 6.4.89 gestellt, wenn nicht die
+  Hardware- Uhr zur Verfgung steht, sondern wird aus dem XBIOS gelesen.
+  Damit bleiben Zeit und Datum beim Reset im Tastaturprozessor erhalten und
+  werden in die Systemuhr (GEMDOS- Uhr) bernommen. Im Fall, da die Daten
+  ungltig sind (Hibyte ist 0), wird das Default- Systemdatum (6.4.89)
+  bernommen.
+  Die Uhr braucht also nur beim EINSCHALTEN gestellt zu werden, nicht beim
+  RESET.
+- KAOS 1.4.2 ist 68010/20/30/40 fest. Die Variable $59e.w, die seit TOS 1.6
+  offiziell dokumentiert ist, enth„lt den Prozessortyp, und zwar dezimal
+  0,10,20,30,40.
+  Alle Caches werden in der Bootphase aktiviert, auer beim 68040.
+- Cookies werden installiert, und zwar ist Platz fr bis zu 16+1 Cookies
+  vorhanden. Auer _CPU, _FPU, _VDO, _SND und _MCH wird noch ein KAOS-
+  Cookie installiert, dessen Langwort das Erstelldatum (gepacktes BCD-
+  Format in internationaler Schreibweise, im Gegensatz zur nationalamerika-
+  nischen) angibt.
+  Das _SWI- Cookie wird nur dann installiert, wenn ein STe erkannt wurde.
+  Das _FPU- Cookie wird gem„ Atari- Dokumentation installiert und prft auf
+  s„mtliche Konfigurationen, also unterscheidet auch zwischen 68881/2/040.
+  Eine SFP004 wird ebenfalls erkannt.
+- Protobt wurde optimiert und reagiert jetzt gutmtig auf falsche Disktypen,
+  es wird dann immer das 728kB- Format verwendet
+- _shell_p wird beim Warmstart gel”scht
+- Beim Bombenlegen wird nun auch Register a5 korrekt in den "crashdmp"-
+  Bereich abgelegt. Bisher war a5 immer 0, so da CRASHDMP eine fehlerhafte
+  Adresse in a5 nicht erkennen konnte.
+- Bombengenerator:
+  KAOS 1.4 liefert ERROR bei eingeschalteter Kompatibilit„t (TOS- Modus),
+  EXCPT bei ausgeschalteter Kompatibilit„t (KAOS- Modus).
+- Ein kleiner Fehler bei der Stackkorrektur wurde behoben (siehe ST 11/89).
+- Beim Retten der Register fr BIOS- oder XBIOS- Aufrufe und beim Zurckholen
+  wird die Interruptmaske kurzzeitig auf 7 gestellt. Damit wird (X)BIOS
+  reentrant, solange die Aufrufe in der korrekten Reihenfolge beendet werden
+  (der letzte Aufruf zuerst).
+  Da fr das Retten des Statusregisters das Register d1 ben”tigt wird, ist
+  dieses jetzt grunds„tzlich nach einem (X)BIOS- Aufruf zerst”rt. (X)BIOS
+  selbst restauriert sowieso nur d3-d7/a3-a7; nur diese Register bleiben
+  also erhalten, andere je nach Funktionsnummer. Das einzige Programm, das
+  bisher Probleme machte, war der dynamische Maustreiber (c't), der hier sehr
+  unsauber programmiert ist.
+- Rsconf:
+  Laut Atari funktioniert die RTS/CTS- Einstellung nicht. Daher habe ich
+  den Patch des offiziellen Atariprogramms TOS14FIX.PRG direkt bernommen
+  und in KAOS integriert; mit dem Unterschied, da der Rckgabewert bei
+  Rsconf(-2, ...) unter KAOS "unsigned long" ist und unter TOS das
+  Hiword von d0 nur Mll enth„lt.
+- Setscreen/Physbase
+  Wenn ein STe erkannt wurde, kann die Bildschirmadresse auf Wortgrenze
+  festgelegt werden.
+- Setcolor
+  Wenn ein STe erkannt wurde, sind feinere Farbabstufungen m”glich, aber
+  nur dann. Wenn man einfach TOS 1.6 auf dem ST startete, g„be es bezglich
+  der Farbregister Inkompatibilit„ten gegenber TOS 1.4. Dies wird unter
+  KAOS 1.4 durch automatische Anpassung an die Hardware verhindert.
+- VBL-Routine/Setscreen() = xbios(5):
+  Ist die physikalische Bildschirm- Adresse einmal ge„ndert worden, fhrt jeder
+  Versuch, die logische Adresse zu „ndern, zum Scheitern.
+  Der Grund: Bei jedem VBL wird geprft, ob in <screenpt> ($45e) eine neue
+  Bildschirmadresse steht (!= 0). Wenn ja, wird diese als physikalische und
+  logische gesetzt. Anschlieend wird aber vergessen, die Variable $45e wieder
+  zu l”schen, so da die physikalische und logische Bildschirmadresse bei
+  jedem folgenden VBL wieder neu gesetzt werden. Ein ndern nur der logischen
+  Adresse funktioniert dann nicht, da sie schon beim n„chsten VBL wieder
+  von der physikalischen in $45e berschrieben wird.
+  Der Patch beseitigt diesen Fehler. Wie schon bei <colorpt> ($45a) wird
+  der Zeiger nach einmaligem Neusetzen der Adressen gel”scht.
+
+
+
+II) Ver„nderungen im DOS
+========================
+
+- "indos"- Semaphore.
+  Die In- DOS- Semaphore, deren Adresse man mit Sconfig() (s.u.) erh„lt,
+  verhindert wirkungsvoll den Aufruf von DOS, w„hrend noch ein anderer DOS-
+  Aufruf abgearbeitet wird. Der zweite Aufrufer erh„lt dann EINTRN; damit wird
+  DOS zwar nicht reentrant, aber harmlos.
+  Die Semaphore wird beim Eintritt in DOS gesetzt und beim Verlassen wieder
+  gel”scht. Auerdem gibt es noch das Problem, da man auch ber den
+  etv_term- Vektor ins Userprogramm zurckkehren kann. KAOS 1.4 l”st das
+  Problem, indem geprft wird, ob etv_term auf "rts" zeigt. In diesem Fall
+  wird erst gar nicht der Vektor aufgerufen. Andernfalls wird die "In DOS"-
+  Semaphore gel”scht und in den Vektor gesprungen. Falls das Userprogramm
+  aber nur noch ein paar BIOS- Aufrufe o.„. machen m”chte und dann mit
+  "rts" in Pterm zurckspringt (sehr unwahrscheinlich), ist DOS fr diese
+  Zeit "ungeschtzt".
+  Damit bei einem Bombenfehler im DOS selbst (etwa bei šbergabe eines
+  ungltigen Zeigers an Dgetpath()) das Programm abgebrochen werden
+  kann, ist trotz gesetzter Semaphore ein Pterm oder Pterm0 im Supervisor-
+  Modus m”glich; offensichtlich fhrt das nicht zu Problemen, da der
+  durch Bomben unterbrochene DOS- Aufruf nicht wieder aufgenommen wird.
+- interne Speicherverwaltung ("100 Ordner- Problem")
+  Die Fehlermeldung "System angehalten" erscheint (wenn berhaupt) jetzt
+  in Deutsch.
+  Unter TOS 1.4 kam es h„ufig vor, da bei hohem Verbrauch von internem
+  Speicher (auf mehreren Partitionen "Info anzeigen") das System in der
+  Speicherverwaltung abstrzte (bei Malloc()). Dieser Fehler konnte insgesamt
+  drei Ursachen haben:
+
+  1. MDs wurden verschoben, nicht aber Zeiger auf diese umgesetzt, so da
+	diese Zeiger dann ins Leere zeigten.
+  2. verschobene MDs bekamen den Eigentmer NULL und wurden daher, falls
+	sie aus der "allocated list" stammten, bei Programmende nicht mehr
+	automatisch freigegeben.
+  3. MDs, die von dem defekten Ptermres() her stammten, und daher unbenutzt,
+	aber nicht in den Listen lagen, konnten nicht korrekt behandelt
+	werden und zum Systemabsturz fhren
+
+  Die ganze Routine zur Beschaffung internen Speichers wurde neu geschrieben,
+  ist wesentlich bersichtlicher, einfacher und krzer geworden (v”llig
+  anderer, sehr trickreicher und trotzdem simpler Algorithmus) und funktio-
+  niert seit Behebung einiger Tippfehler bisher perfekt.
+  Insgesamt sind die Fehler der internen Speicherverwaltung die schlimmsten
+  Fehler im neuen TOS 1.4, da sie an Stelle des bekannten und daher berechen-
+  baren 100 Ordner- Problems stattdessen immer wieder unvermutet und nie
+  nachvollziehbar zum Absturz fhrten.
+  Offensichtlich hat inzwischen auch Atari gemerkt, da mit der internen
+  Speicherverwaltung etwas nicht stimmt und flugs ein Patchprogramm erstellt.
+  Das offizielle Atari- Patchprogramm POOLFIXn.PRG verweigert aufgrund der
+  h”heren GEMDOS- Versionsnummer (0.22 statt 0.21) nicht nur den Dienst,
+  sondern ist auch seit KAOS 1.4.0 nicht mehr n”tig.
+- Event Critic Manager
+  DOS enth„lt jetzt einen "Event Critic Manager", und zwar den von CMD.PRG,
+  so da man jetzt auch bei DOS- Programmen, die nicht von KCMD gestartet
+  wurden, auf Fehler sinnvoll reagieren kann. Bisher konnte man nicht einmal
+  zwischen verschiedenen Fehlercodes unterscheiden, da der Event- Critic-
+  "Manager" des BIOS nur aus den Befehlen "moveq #-1,d0;rts" bestand, also
+  immer Fehler -1 ("allgemeiner Fehler") produzierte. Selbst ein Diskwechsel
+  "Bitte Disk B in Laufwerk A: einlegen" war nicht m”glich, da das System
+  dafr nicht anhielt.
+  Der Benutzer hat folgende Auswahlen:
+
+	A(bbruch) 	Der Fehlercode wird ans Programm weitergegeben, welches
+				 natrlich irgendwie darauf reagieren sollte.
+	W(iederholen)	Die I/O- Operation wird wiederholt.
+	I(gnorieren)	Es wird dem Benutzerprogramm ein Rckgabewert 0
+				 ("kein Fehler") zurckgegeben. VORSICHT!!
+	^C			Programm mit EBREAK bzw. EINVFN abbrechen.
+
+  Im Fall "Bitte Disk X in Laufwerk A: einlegen" kann man, wenn man nicht
+  wechseln m”chte, nur ^C zur Programmbeendigung bet„tigen. Alle anderen
+  Eingaben fhren zum Wiederholen des Diskzugriffs (nachdem man die Diskette
+  gewechselt hat).
+- Zeichenorientierte Ein-/Ausgabe
+  Im Prinzip aus KAOS 1.2, alle Verbesserungen von TOS 1.4 bercksichtigt,
+  soweit m”glich. Eingabe und -status vom Drucker werden grunds„tzlich
+  abgefangen. Tabs werden nicht mehr expandiert, da dies der Atari nicht
+  n”tig hat, weil der VT52- Emulator "Eigenintelligenz" besitzt und eine
+  Behandlung durch DOS nicht nur verz”gert, sondern auch dem VT52 ins
+  Handwerk pfuscht.
+- Cauxin() geht jetzt ber den Vorlaufpuffer. Bisher waren Zeichen, die bei
+  der Ausgabe ber AUX: in diesen Puffer gesammelt wurden, unwiederbringlich
+  verloren.
+- Zeileneditor fr Cconrs() und Fread() von CON:. Siehe Anhang AII)
+- Cauxin()/Cnecin()/Cconin()/Crawcin() von Datei:
+  Bisher lieferten alle Funktionen Zufallsergebnisse, wenn das Dateiende
+  erreicht war. Jetzt wird in diesem Fall 0xffff geliefert. Bei Fehlern
+  wird die (negative) Fehlernummer zurckgegeben.
+  Crawio(0xff) ist in TOS 1.4 korrigiert und liefert das eingelesene Zeichen
+  oder 0L, wenn nichts gelesen wurde (EOF).
+  KAOS 1.4 behandelt alle Funktionen gleich und liefert im Fall EOF -1L bei
+  ausgeschalteter, 0L bei eingeschalteter Kompatibilit„t. Auerdem bedeutet
+  bei KAOS ein negativer Rckgabewert ansonsten einen Fehler, w„hrend
+  TOS 1.4 Zeichen immer vorzeichenerweitert.
+  Cconin echoet die Eingabe bei ausgeschalteter Kompatibilit„t (KAOS- Modus)
+  nach stdout, sonst (TOS- Modus) berhaupt nicht.
+- Cconws() war in TOS 1.4 ebenfalls korrigiert und liefert dasselbe Ergebnis
+  wie Fwrite(1,...), also die Anzahl der ausgegebenen Zeichen oder einen
+  Fehlercode oder ERROR bei "Diskette voll".
+  Bei ausgeschalteter Kompatibilit„t liefert KAOS 1.4 immer lediglich den
+  Rckgabewert des Fwrite- Befehls, also < strlen bei "Diskette voll".
+- Die Ausgabefunktionen (Cprnout(),Cconout(),Cauxout(), Crawio()) lieferten
+  unter TOS 1.4 immer 0L. Jetzt liefern sie direkt den Fehlercode des
+  Fwrite()- Befehls, wenn die Kompatibilit„t ausgeschaltet wurde (KAOS-
+  Modus).
+- Cconrs() liefert, auf Dateien umgelenkt, immer 0L.
+  Unter KAOS 1.4 wird auerdem das Programm abgebrochen, wenn nichts einge-
+  lesen wurde (wie ^C), damit Programme bei umgelenkter Eingabe nicht
+  "h„ngen" k”nnen.
+- Cconis() / Cauxis()
+  TOS 1.4 liefert 0L, wenn das Handle ungltig ist oder bei EOF- Status.
+  Ansonsten wird -1L geliefert.
+  KAOS 1.4 verlangt zus„tzlich noch, da die Datei zum Lesen ge”ffnet wurde
+  (Modus RMODE_RD oder RMODE_RW), liefert dann -1L und sonst 0L.
+- Cconos() / Cprnos() / Cauxos()
+  Liefern unter TOS 1.4 immer -1L (bereit).
+  Unter KAOS 1.4 wird verlangt, da die Datei existiert, zum Schreiben
+  ge”ffnet wurde und die Diskette nicht voll ist.
+- Cconin() auf Device
+  TOS 1.4 echot nach STDIN. KAOS 1.4 bei eingeschalteter Kompatibilit„t
+  ebenfalls, sonst nach STDOUT.
+- Cconis() / Cauxis()
+  Wie in der GEMDOS Dokumentation und bei MS-DOS werden bei diesen Funktionen
+  jetzt auch Steuerzeichen (^C, ^S, ^Q, ...) abgefragt (bei ausgeschalteter
+  Kompatibilit„t).
+- Cconrs()
+  Wie in der GEMDOS Dokumentation und bei MS-DOS wird die Eingabe nicht nach
+  STDIN, sondern nach STDOUT geechot.
+  Bei Erreichen des Endes der Eingabe (Puffer voll) wird nicht mehr auto-
+  matisch die Eingabe beendet, sondern explizit ein CR verlangt, wie es
+  ebenfalls sowohl bei MS-DOS wie auch in der GEMDOS Dokumentation steht.
+  Bei Eingaben von der Tastatur wird in jedem Fall (anders als in MS-DOS)
+  auch nach CON geechot, also braucht man nicht mehr blind zu tippen, auch
+  wenn die Ausgabe umgelenkt ist.
+  Siehe auch Beschreibung des Zeileneditors.
+  (Wurde STDIN auf eine Datei gelenkt und das Dateiende erreicht, fhrt ein
+  Leseversuch ber Cconrs() jetzt zum Programmabbruch (wie CTRL-C). Damit wird
+  erreicht, da Programme wie SID bei umgelenkter Standard- Eingabe nicht
+  in einer Endlos- Schleife versacken (MS-DOS bercksichtigt das nicht, aber da
+  hat man ja dort noch die Break- Taste)).
+- Cconws() und Fwrite() auf den Bildschirm wurden sehr stark beschleunigt
+  und sind jetzt fast ebenso schnell wie direkt ber BIOS (siehe Anhang AIV).
+  Diese Beschleunigung ist nur bei NVDI wirksam und und auch nur bei
+  ausgeschalteter Kompatibilit„t. Trotzdem sollte es keine Probleme geben,
+  da das Vorhandensein von NVDI immer abgefragt wird.
+- Zeichenausgabe
+  Die gesamte Zeichenausgabe ber DOS ist durch den neu geschriebenen dos_entry
+  (Dispatcher) und die Optimierung aller Zeichenausgabe- Routinen deutlich
+  schneller geworden. Das macht sich natrlich nur bei solchen Programmen
+  bemerkbar, die nicht ber BIOS oder LineA Texte ausgeben.
+  Betroffen sind die Funktionen Fwrite(),Cconws(),Cconout(),Crawio().
+- CTRL-C
+  Bei Bet„tigung dieser Tastenkombination wird jetzt die Zeichenfolge
+	  ^,C,CR,LF
+  auf den Bildschirm geschrieben. Das Programm wird je nach Kompatibilit„ts-
+  flag mit EBREAK (KAOS) bzw. EINVFN (TOS) abgebrochen.
+- dos_entry (Dispatcher)
+  Wird eine negative Funktionsnummer bergeben, fhrt das nicht mehr zu
+  Bomben, sondern zu EINVFN.
+  Das W”rtchen "unsigned" scheint den GEMDOS- Programmierern offensichtlich
+  v”llig fremd zu sein. GEMDOS enth„lt viele solche Fehler.
+  dos_entry mit der gesamten STDXX- Umlenkung und den Device- Namen wurde
+  v”llig neu geschrieben und damit krzer, bersichtlicher und schneller.
+- Devices
+  Bisher erkannte GEMDOS nur die Devices CON:,AUX: und PRN:. Die Namen muten
+  ganz gro oder ganz klein geschrieben werden. Fcreate("Con:",0) erstellte
+  eine Datei mit Namen "con:", was eigentlich nicht beabsichtigt war.
+  KAOS kennt zus„tzlich das Device NUL:, das sowohl in der GEMDOS Dokumentation
+  wie auch in MS-DOS vorhanden ist. NUL: hat Handle -4.
+  Auerdem werden Ger„te auch folgendermaen erkannt:
+   CON:
+   con:
+   Con:
+   CoN:
+   con
+   \con
+   a:con
+   b:\texte\con.dat
+   con.txt
+  Will man mit Dcreate() ein Verzeichnis mit einem Devicenamen erstellen oder
+  mit Frename() eine Datei in ein Device umbenennen, so fhrt das bei KAOS
+  zu einer Fehlermeldung EACCDN. Bisher konnte man mit Frename() einer Datei
+  einen Devicenamen geben und diese dann nicht mehr ”ffnen, es sei denn mit
+  Pfadangabe, z.B. ".\CON:"
+  Das bisher fehlende Device NUL: wurde hinzugefgt. Werden Daten nach NUL:
+  geschrieben, so wirkt NUL: als schwarzes Loch. Die Daten verschwinden
+  einfach. Damit lassen sich z.B. l„stige Fehlermeldungen ausblenden.
+  Wird von NUL: gelesen, so erreicht man sofort EOF. NUL: wirkt beim Lesen
+  also wie eine leere Datei.
+- Sversion()
+  Liefert jetzt als GEMDOS- Versionsnummer 0.22 statt 0.21. Da dies mit
+  zuknftigen TOS- Versionen kollidieren k”nnte, sollte man zus„tzlich noch
+  Sconfig(0) aufrufen, wenn man feststellen m”chte, ob man es mit KAOS oder
+  einem Original- TOS zu tun hat. Letzteres mte dann EINVFN liefern (s.o.).
+- Fehlermeldungen
+  Bei einem unzul„ssigen Laufwerk wird jetzt EDRIVE statt ERROR oder EFILNF
+  oder EPTHNF zurckgegeben.
+  Bei falschem Pfad wird EPTHNF statt EFILNF zurckgegeben.
+  Bei ungltigem Dateinamen ("" oder "." oder ".." bei Fcreate() oder
+  Dcreate()) wird EBADRQ statt EPTHNF zurckgegeben.
+  Bei zuwenig Speicher wird ENSMEM statt EPTHNF oder EFILNF zurckgegeben.
+  Einige andere Fehlermeldungen wurden ebenfalls den tats„chlich vorliegenden
+  Fehlern angepat. Dieser Patch durchzieht das gesamte DOS, wo berall
+  Fehlermeldungen verzerrt weitergegeben wurden.
+- Laufwerknummern
+  GEMDOS reagierte unvorhersehbar und allergisch auf Laufwerknummern, die
+  nicht im Bereich A: .. P: bzw. 0..15 liegen.
+  Jetzt wird eine Bereichberprfung vorgenommen und bei falschem Bereich
+  EDRIVE zurckgegeben.
+- Diskettenwechsel
+  Beim Diskettenwechsel wurden zwar alle Strukturen der alten Diskette
+  freigegeben, jedoch nicht die Standardhandles und -pfade in den Basepages
+  der gerade nicht aktiven Programme, was besonders die Standardpfadbehandlung
+  empfindlich st”rt. KAOS 1.4 verwendet die Routinen von KAOS 1.2, die genau
+  dieses leisten und fehlerfrei sind.
+- Standardpfade
+  Diese  wurden beim Diskwechsel in nicht aktiven Prozessen nicht freigegeben.
+  Daher war bisher unter CMD ein Arbeiten mit TOS kaum ohne st„ndige šber-
+  raschungen m”glich. Die Korrektur in KAOS 1.4 entspricht der in KAOS 1.2.
+- Speichermedien allgemein
+  GEMDOS rechnet bei jedem Speichermedium (Diskette/Harddisk/Ramdisk...)
+  immer mit 2 Clustern weniger, als auf dem Medium zur Verfgung stehen.
+  Bei Standard- Disketten (1 Cluster = 2 Sektoren = 1 kB) werden daher von den
+  728.064 Bytes 2k weniger, also nur 726.016 Bytes genutzt. IBM- Disketten
+  k”nnen unter GEMDOS nur 728.064 statt 730.112 Bytes aufnehmen.
+  Mit der Behebung dieses Fehlers stehen nun also auf jedem Speichermedium,
+  dessen BPB (Bios-Parameter-Block) stimmt, 2k mehr zur Verfgung.
+  Disketten, die unter KAOS bis auf den letzten Cluster beschrieben wurden,
+  k”nnen von normalen STs ohne Schwierigkeiten gelesen werden, auch die
+  letzten 2k. Auch der Diskcopy funktioniert.
+  Schwierigkeiten macht z.B. HYPERFORMAT. Diese Disketten haben im Bootsektor
+  zwei Datencluster mehr eingetragen, als tats„chlich zur Verfgung stehen,
+  um den GEMDOS- Fehler zu "berlisten". Unter KAOS fhrt ein Schreibversuch
+  auf diese letzten zwei kB zu einem Schreibfehler. Normalerweise drften
+  solche Disketten aber nie so voll werden. Besser sollte man natrlich den
+  Bootsektor wieder so in Ordnung bringen, da soviele Cluster angegeben
+  werden, wie tats„chlich vorhanden sind. Desgleichen gilt fr Ramdisk- und
+  Harddisktreiber, wenn deren BPB den GEMDOS- Fehler mit illegalen Mitteln
+  auszutricksen versuchen sollten. Es sei hier an die Softwarehersteller
+  appelliert, in Zukunft auf solche schmutzigen Tricks zu verzichten.
+  Bei eingeschalteter Kompatibilit„t wird dieser Patch abgeschaltet.
+- Fcreate() / Frename() / Dcreate()
+  Soll eine Datei mit leerem Namen erzeugt werden (gilt auch dann, wenn der
+  Name mit einem Leerzeichen beginnt) oder enth„lt der Dateiname Joker
+  (Fragezeichen oder Sternchen) oder einen Doppelpunkt, so wird mit EACCDN
+  oder EBADRQ abgebrochen.
+  Bereits vorhandene Ordner mit leerem Namen, die etwa unter GEMINI zum
+  Systemabsturz fhren, lassen sich leicht folgendermaen mit dem Kommando-
+  prozessor l”schen:
+	RD " "
+- Ptermres(), interne Speicherverwaltung
+  Bisher wurden die MDs der durch den beendeten Proze verwendeten Speicher-
+  bl”cke nicht freigegeben, was erstens DOS- Speicher kostet und zweitens zu
+  erheblichen Problemen bei der internen Speicherverwaltung fhrt, da die MDs
+  zwar benutzt, jedoch nicht in einer der Speicherlisten liegen (-> System-
+  absturz). Nach der Korrektur funktioniert Ptermres() wie frher, und es
+  kommt nicht zu Problemen mit der internen Speicherverwaltung.
+- Mshrink()
+  Wie in MS-DOS so kann auch nun auf dem Atari ein Speicherblock nicht nur
+  verkleinert, sondern auch vergr”ert werden. Dazu wird die gewnschte
+  Gr”e wie bisher einfach bergeben. Gibt es keinen freien Speicher direkt
+  ber diesem Speicherblock, so kann dieser natrlich nicht vergr”ert werden,
+  und man erh„lt EGSBF.
+  šbergibt man statt der gewnschten L„nge -1L, so wird (analog zu Malloc())
+  die maximal m”gliche Gr”e des Speicherblocks zurckgegeben (d.h. die
+  aktuelle Gr”e + die Gr”e eines evtl. darber liegenden, freien Speicher-
+  blocks).
+- Malloc liefert als Pointer 1L, wenn man 0 Bytes holen m”chte. Bisher wurde
+  ein MD fr einen 0- Bytes- Bereich erstellt.
+  Der 1-Pointer hat den Vorteil, da ein nicht erlaubter Zugriff sofort zu
+  einem Busfehler fhrt.
+- Konfiguration der M”glichkeiten von KAOS
+  Es gibt eine neue DOS- Funktion "long Sconfig(int mode, long bitset)" mit
+  Funktionsnummer 0x33, mit dem das Konfigurations- Bitfeld gesetzt (mode == 1)
+  oder gelesen (mode == 0) werden kann. In beiden F„llen erh„lt man in d0.l
+  den alten Wert zurck (Achtung: unter KAOS 1.2 war fr das Setzen ein Wert
+  != 0 fr mode ausreichend, jetzt wird explizit "1" verlangt, um M”glichkeiten
+  fr Erweiterungen zu schaffen).
+  Bisher sind folgende Bits belegt:
+
+  - Bit 0 	  Pfadberprfung ein
+  - Bit 1 	  Diskwechsel- Simulation im Desktop ein (nur bei KAOS 1.2)
+  - Bit 2 	  Break ein; CTRL-C Abfrage bei jedem DOS- Aufruf
+  - Bit 3 	  CTRL-C Abfrage aus; fr zeichenorientierte Funktionen
+  - Bit 4 	  Floppy lesen,verifizieren: Fastload aus
+  - Bit 5 	  Kompatibilit„t ein
+  - Bit 6 	  "Smart Redraw" aus
+  - Bit 7 	  Shrink- und Growboxen aus
+  - Bit 8 	  Halt nach TOS- Programmen aus
+  - Bit 9 	  MF2- Layout ein	(nicht ber KAOSCONF zug„nglich)
+  - Bit 10	  Pulldown- Mens ein
+  - Bit 11..30   strengstens reserviert (alle 0)
+  - Bit 31	  mu unbedingt 0 sein, sonst Fehler
+
+  Fr das Ver„ndern der Einstellungen ist das Programm KAOSCONF ntzlich,
+  siehe Kapitel VI).
+  Wird eine andere Konfiguration als Default- Konfiguration gewnscht, so
+  ist das Default- Langwort von KAOS bzw. KAOS.IMG zu patchen, das in der
+  vorliegenden Datei auf $00000000 gesetzt ist. Dafr steht das Programm
+  KAOSPTCH zur Verfgung (siehe VI)).
+
+  Man beachte, da alle Bits auer Bit 3,4,6 und 7 eine Funktion einschalten,
+  wenn sie auf 1 gesetzt sind.
+  Das Break- Flag sollte vor der Rckkehr ins Desktop unbedingt ausgeschaltet
+  werden, da sonst das Desktop bei CTRL-C sofort abstrzt (der Proze
+  "AES/DESKTOP.APP" darf beim Atari nicht beendet werden).
+  Achtung: Die brigen Bits drfen nicht angetastet werden, da sie fr
+		 zuknftige Erweiterungen vorgesehen sind.
+
+  In MS-DOS kann man mit der DOS- Funktion 0x33 das Break- Flag ein- oder
+  ausschalten.
+  Bei eingeschalteter Kompatibilit„t liefert KAOS 1.4 auf den Sconfig()-
+  Aufruf ein EINVFN, so da KAOS 1.4 fr Benutzerprogramme nicht mehr zu
+  erkennen ist. Insbesondere ist bei eingeschalteter Kompatibilit„t ein
+  Rcksetzen des Kompatibilit„tsflags mit legalen Mitteln nicht m”glich
+  (da dies KAOSCONF trotzdem kann, drfte das keine besondere Einschr„nkung
+  sein).
+
+  Auerdem kann man Sconfig benutzen, um auf undokumentierte Systemvariable
+  zuzugreifen. Dies ist etwa fr Uhren ntzlich, die im Interrupt die DOS-
+  Zeit auslesen wollen. Nicht alle zug„nglichen Variablen sollten benutzt
+  werden. Nur die markierten sind normalerweise sinnvoll zu verwenden.
+  Mit mode == 2 erh„lt man einen Zeiger auf folgende Struktur:
+
+  typedef struct
+	{
+	char 	*in_dos;		   (!)	/* Adresse der DOS- Semaphore */
+	int		*dos_time;	   (!)	/* Adresse der DOS- Zeit 	*/
+	int		*dos_date;	   (!)	/* Adresse des DOS- Datums	*/
+	long 	dos_stack;			/* Stack fr DOS selbst		*/
+	long 	pgm_superst;			/* Benutzerpgm.- Sup.stack	*/
+	MD		*memlist[3];			/* Adresse der 3 MD- Listen	*/
+	PD		*act_pd;		   (!)	/* Laufendes Programm		*/
+	FCB		*fcbx;				/* Dateien				*/
+	int		fcbn;				/* L„nge von fcbx[] 		*/
+	DMD		*dmdx;				/* Zeiger auf 16 DMDs		*/
+	IMB		*imbx;				/* interne DOS- Speicherliste */
+	void 	(*resv_intmem)();		/* DOS- Speicher erweitern	*/
+	long 	(*etv_critic)();		/* etv_critic des GEMDOS 	*/
+	char 	(*err_to_str)();		/* Umrechnung Code->Klartext	*/
+	} DOSVARS;
+
+  Die genaueren Beschreibungen der drei Funktionen (unten) lauten:
+
+	void resv_intmem(a0 = void *adr, d0 = long len);
+
+  erweitert die DOS- Speicherleiste um <d0.l> Bytes ab Adresse <a0>. Der
+  Speicher darf anschlieend nicht mehr angetastet werden und darf auch nicht
+  mehr aus der DOS- Speicherliste entfernt werden.
+  Die šbergabe der Parameter erfolgt in Registern (Turbo C Konvention).
+
+	long etv_critic(int errcode, int drvnr);
+
+  ist der Event-Critic-Manager des DOS, der beim Initialisieren des DOS
+  aktiviert wird. Er ist zum Zeitpunkt der Initialisierung von AES installiert
+  und wird automatisch beim Start von TOS- Programmen statt des AES- Handlers
+  wieder aktiviert. Die Adresse ist eigentlich nur von Nutzen, wenn man statt
+  des AES- Handlers (ber Alertboxen) in einem eigenen Programm lieber den
+  DOS- Handler verwenden m”chte (etwa in einem Kommandoprozessor).
+
+	char *err_to_str(d0 = char errcode);
+
+  ist ein Unterprogramm, das in d0.b einen DOS- oder BIOS- Fehlercode erwar-
+  tet und diesen in einen Klartext umrechnet. In d0 bekommt man entweder 0L
+  zurck, falls der Fehlercode kein Standardfehler ist, oder aber einen
+  Zeiger auf den Fehler im Klartext, etwa "Datei nicht gefunden". Ist d0.l
+  Null, zeigt a0 auf den Default- Fehlertext "TOS Fehler", ansonsten haben
+  d0 und a0 denselben Wert.
+  Auch hier entspricht die Parameterbergabe den Turbo C Konventionen, auer
+  der Verwendung von a0.
+- Das alte FOLDR100.PRG macht zwar keinen rger, aber ist unter KAOS 1.4
+  kaltgestellt, da es extrem ineffektiv w„re.
+  Wesentlich eleganter ist die DOS- Speichererweiterung ber die Funktion
+  "resv_intmem()", deren Adresse in DOSVARS zug„nglich ist. Ihr bergibt man
+  einen Zeiger auf den zu reservierenden Speicherbereich in a0 sowie dessen
+  L„nge in Bytes in d0.l. Der Speicher wird dann automatisch fr DOS zers„gt
+  und in die imb- Liste eingeklinkt. In der bisherigen DOS- Version ben”tigt
+  DOS 70 Byte- Bl”cke, die jeweils einen Ordner/Datei oder 4 MDs enthalten
+  k”nnen.
+  Das Programm ADDMEM.PRG reserviert etwa 7kB zus„tzlichen Speicher fr
+  GEMDOS, was etwa fr 100 zus„tzliche interne Speicherbl”cke ausreicht.
+  Damit kann GEMDOS etwa 50 Ordner oder 400 Benutzerspeicherbl”cke einrichten.
+  ADDMEM legt man am besten in den AUTO- Ordner, wenn man es ben”tigt; dies
+  ist der Fall, wenn ein Programm viele Dateien gleichzeitig ”ffnet oder
+  viele Speicherbl”cke anfordert. Bei noch h”herem Verbrauch mu man entweder
+  ADDMEM mehrmals in den AUTO-Ordner legen oder ADDMEM mit gr”erem Puffer
+  neu bersetzen.
+- Fwrite()
+  In MS-DOS kann man durch Angabe von 0L als "count" erreichen, da die Datei
+  auf die aktuelle L„nge des Dateizeigers gekrzt wird.
+  Dies ist jetzt auch mit KAOS m”glich. Damit die Funktion nicht unabsichtlich
+  von einem Programm aufgerufen wird, das wirklich 0 Bytes schreiben m”chte,
+  mu man in KAOS als "buffer" -1L bergeben. Wenn n”tig, werden Cluster der
+  Datei wieder freigegeben. Nach Ausfhrung sind Dateil„nge und aktuelle
+  Dateiposition identisch (EOF- Status).
+  Das Verkrzen ist nur m”glich, wenn die Datei zum Schreiben ge”ffnet wurde.
+  Vorsicht: Ist die Datei auerdem noch (mit einem anderen Handle) zum Lesen
+  ge”ffnet, so fhrt dies zu unsch”nen Resultaten, wenn man ber das jetzt
+  verkrzte Dateiende lesen m”chte.
+- Fwrite()
+  Anders als bei TOS, jedoch wie bei MSDOS wird bei jedem Schreibzugriff das
+  Datum und die Uhrzeit der Datei aufs Tagesdatum gesetzt. Damit ist das
+  Dateidatum unter TOS und KAOS 1.2 ein Erstelldatum, unter KAOS 1.4 und
+  MSDOS ein nderungsdatum. Da das Erstelldatum von relativ geringem
+  Interesse ist, wenn man die Datei ge„ndert hat, brauchen wir ihm nicht
+  nachzutrauern.
+- Pexec()
+  Wenn der vorhandene Benutzerspeicher zwar ausreicht, um das Programm zu
+  starten, jedoch nicht mehr genug Gemdos- Speicher fr die MDs (Memory-
+  Deskriptoren) zur Verfgung steht, wurden wild irgendwelche Bytes ab
+  Adresse 0 berschrieben, was zum Absturz fhrt.
+  Der Patch fragt bei Malloc() ab, ob ein NULL- Pointer bergeben wurde,
+  und bricht ggf. den Ladevorgang mit Fehlermeldung ENSMEM ab.
+  Tritt beim Laden ein Fehler auf, sei es, da die Datei sich nicht ”ffnen
+  l„t oder ein Lesefehler auftritt, wird der bereits fr den neuen Proze
+  reservierte Speicher wieder freigegeben.
+  Bisher wurde der Benutzerspeicher zwar freigegeben, aber die internen
+  Speicherlisten v”llig zerst”rt.
+  Die L„nge der Kommandozeile wird nicht mehr durch 124, sondern durch 126
+  beschr„nkt, es stehen also 2 Zeichen mehr zur Verfgung.
+  Trat beim Laden von Programmen mit Modus 3 (load) ein Fehler auf, der
+  jedoch nicht nur longjmp- Behandlung fhrte (also etwa EPLFMT insbesondere
+  bei zerst”rten Accessories), so wurde der Speicher nicht wieder freigegeben,
+  was immer zum Systemabsturz fhrte. Jetzt wird der Speicher grunds„tzlich
+  wieder freigegeben.
+  Bei Lesefehlern in der Ladroutine waren bisher die Standardpfade und
+  -dateien schon in die Basepage eingetragen und wurden nicht wieder
+  freigegeben, was zu Inkonsistenzen in den Referenzz„hlern fhrte. Jetzt
+  wird erst das Programm geladen und reloziert und erst vor dem Starten
+  die Standardpfade- und Dateien gesetzt.
+  Der Modus 4 (in Verbindung mit Modus 5 oder 3) war bisher sehr unsicher,
+  wenn das Programm mehrmals gestartet werden sollte. Jetzt gibt es keine
+  Probleme mehr, da erst beim Starten die Standardpfade und -dateien
+  eingesetzt werden. Kommandozeile und Environment mssen aus Kompatibili-
+  t„tsgrnden jedoch bereits bei Modus 3 und 5 eingesetzt werden.
+  Bei Programmlesefehlern, die zur longjmp- Behandlung fhren, wird jetzt
+  das Handle korrekt geschlossen, w„hrend bisher (unter KAOS 1.2) das
+  Handle erhalten blieb und die kaputte Datei nicht geschlossen werden
+  konnte.
+  Die Pexec- Routine wurde extrem optimiert und beschleunigt.
+  Bisher wurden fr jedes Environment 2 Bytes zuviel reserviert, was jetzt
+  korrigiert wurde.
+  šbergibt man als Environment -1L, so wird kein Environment angelegt und
+  als Environmentpointer 0L in die Basepage des neuen Programmes geschrieben.
+  Die Relozierroutine wurde wesentlich sicherer gemacht, indem
+  1) Der DOS- Header (28 Bytes) auf einmal eingelesen wird und nachgeprft
+	wird, ob auch wirklich 28 Bytes geladen wurden.
+  2) Auch beim Laden von TEXT und DATA wird abgefragt, ob genug Bytes gelesen
+	wurden.
+  3) Ungerade Relocationadressen werden abgefangen.
+  zu Pexec siehe Anhang AI)
+- Dsetpath
+  Funktioniert jetzt auch fr andere als das Default- Laufwerk.
+  Wie in der DRI- Dokumentation angegeben, kann z.B. mit "b:ordner" das
+  aktuelle Verzeichnis des Laufwerks B: ge„ndert werden.
+  Im Prinzip war in TOS 1.4 alles bis aufs falsche Laufwerk korrigiert.
+  Trotzdem wurde eine neue Routine geschrieben, die natrlich auf dem
+  richtigen Laufwerk sucht.
+- Pfade (insbesondere Dsetpath)
+  Sei folgendes angenommen:
+
+    Diskette 1 enthalte keinen Ordner AUTO; die Wurzel sei aktueller Pfad.
+    Diskette 2 enthalte einen Ordner AUTO, Diskette 2 werde eingelegt.
+    Griff man jetzt ber den Pfad \AUTO\... zu (Fopen(),Dsetpath(),...), so
+	wurde unter TOS 1.2 und 1.0 dieser Pfad nicht gefunden, da er auf der
+	alten Diskette nicht existierte und deren Pfadpuffer noch im Speicher
+	waren. Erst ein richtiger Diskzugriff (DIR \) veranlate GEMDOS dazu,
+	die neue Diskette anzumelden.
+
+  Unter TOS 1.4 schien nun dieser Fehler behoben. Wird der Pfad nicht
+  gefunden, wird auf die Diskette zugegriffen und so der Diskwechsel bemerkt.
+  Leider ist jedoch genau das umgekehrte Problem geblieben. Beispiel:
+
+    Die Disketten 1 und 2 enthalten beide (!) den Ordner \AUTO.
+    Diskette 1 sei eingelegt, der Ordner \AUTO sei schon einmal mit "DIR"
+	angezeigt worden, also im DOS- Pfadpuffer vorhanden. Das Wurzelverzeichnis
+	sei das aktuelle.
+    Es werde Diskette 2 eingelegt und "CD AUTO" eingegeben. GEMDOS hat diesen
+	Pfad noch im Speicher, der Ordner \AUTO wird ohne Diskzugriff aktueller
+	Ordner. GEMDOS "denkt" aber dabei, es handle sich um den Ordner von
+	Diskette 1.
+    Wenn man jetzt etwa einen neuen Ordner einrichten m”chte (MD NEU) oder
+	einen DIR- Befehl macht oder einen anderen Diskzugriff erzwingt, wird
+	GEMDOS gezwungen, pl”tzlich versp„tet den Diskwechsel zu erkennen, die
+	aktuellen Pfade zu verschrotten und so auf das Wurzelverzeichnis
+	zurckzuschalten. Schon liegt etwa der neue Ordner im falschen
+	Verzeichnis.
+
+  L”sung: Wie unter KAOS 1.2 wird Bit 0 des KAOS- Konfigurationslangworts
+  fr das Einschalten der automatischen Pfadberprfung reserviert.
+  Wenn diese aktiviert ist (Bit = 1), wird vor Beginn JEDER PFADAUSWERTUNG
+  zun„chst ein eventueller Diskwechsel abgefragt. Da dies bei schreibge-
+  schtzten Diskette immer zu einem Diskettenzugriff fhrt, liefe etwa
+  unter DESKTOP bei jedem Wechsel des aktuellen Fensters das Disketten-
+  laufwerk an. Aus diesem Grund ist die automatische Pfadberprfung
+  standardm„ig ABgeschaltet.
+  Ideal ist die automatische Pfadberprfung im Kommandoprozessor und wird
+  daher von KCMD immer eingeschaltet.
+- Fdatime()
+  Ein omin”ser Fehler in der neuen Routine bewirkte, da ge”ffnete Dateien der
+  L„nge 0 im selben Verzeichnis wie die leere zu „ndernde Datei ebenfalls mit
+  ge„ndert wurden. Dieser allerdings sehr unwahrscheinliche Fall wurde berck-
+  sichtigt und tritt nicht mehr auf.
+- Dateiverwaltung, unterste Ebene
+  f_swrite: B”ser Adressierungsfehler behoben, deren Auswirkungen aus purem
+  Zufall nicht geschadet haben. Irgendwo bei $4b2 oder $4b6 wurden DOS-
+  Puffer angesprochen, die dort aber garnicht existieren (nur ZEIGER) auf
+  diese.
+  f_mrw: Grund fr 32MB- Grenze beseitigt. Dennoch kann ich keinerlei Gew„hr
+  fr das Funktionieren einer 32MB- Partition bernehmen.
+- FAT- Routinen
+  leicht beschleunigt (merkt man beim Messen, siehe Benchmarks)
+- Dcreate
+  Die Datei wurde bei Fehler erst gel”scht, dann geschlossen. KAOS 1.4 geht
+  aus grunds„tzlichen prinzipiellen Erw„gungen andersherum vor.
+  In der Praxis mte beides gleich gut funktionieren.
+- Ddelete()
+  Wurde ein aktuelles Verzeichnis gel”scht, s„gte man den Ast ab, auf dem man
+  sa. Der n„chste Zugriff auf dieses Verzeichnis fhrte dann zum gefrchteten
+  Bombenterror.
+  Jetzt wird die Liste der aktuellen Verzeichnisse fr alle Prozesse durch-
+  sucht. Wird versucht, ein Verzeichnis zu l”schen, das irgendein Proze als
+  aktuelles Verzeichnis hat, wird jetzt EACCDN zurckgegeben.
+  Auerdem enthielt die Routine einen Fehler in der Abfrage auf interne
+  Fehler, der jetzt behoben ist.
+  Das L”schen der Root fhrte bisher zu zwei Bomben und ist jetzt als Folge
+  der behobenen Fehler ebenfalls nicht mehr m”glich:
+  - entweder ist die Root nicht leer, dann kann sie sowieso nicht gel”scht
+    werden.
+  - wenn die Root leer ist, MU sie Standardpfad fr das entsprechende
+    Laufwerk sein und darf so ebenfalls nicht gel”scht werden.
+  KAOS 1.4 enth„lt die Routine aus KAOS 1.2, jedoch ohne deren Fehler...
+- Pfad- und Dateinamen.
+  KAOS 1.4 als Produkt aus europ„ischen Landen untersttzt Umlaute aller
+  Art, indem sie in Groschrift umgewandelt werden. Alte Dateien mit klein
+  geschriebenen Umlauten k”nnen trotzdem gelesen werden. Folgende Zeichen
+  werden konvertiert:
+		„”‚…†‡‘¤°±³´À
+	in	™š¶€’¥·¸²µÁ
+- Attribute.
+  Das die Attribut- Match- Funktion von Fsfirst() (siehe Dokumentation zum
+  TOS 1.4 von Atari) reichlich hirnrissig ist, habe ich eine neue geschrieben.
+  Damit sind z.B. auch versteckte Ordner m”glich.
+  N„heres zu den Attributen in Anhang AIII).
+- Dfree()
+  Bei einem v”llig freien Speichermedium wurden unter "insgesamt verfgbare
+  Cluster" immer 2 Cluster mehr als unter "freie Cluster" angegeben.
+  Beim ungepatchten TOS stimmte die erstere Angabe, die zweite war immer um
+  2 Cluster zu klein. Mit Behebung des Fehlers 32) und Modifikation von
+  Dfree() stimmt nun sowohl die erste Angabe (freie Cluster) als auch die
+  zweite. Bei leerem Speichermedium sind die Angaben nun identisch und stimmen
+  im brigen mit den Angaben berein, die die MS-DOS Funktion "chkdsk" ausgibt.
+  Bei eingeschalteter Kompatibilit„t ist der Patch wirkungslos und zeigt
+  wieder 2 Cluster zuviel an.
+  Wenn man sich etwa unter KAOS eine Diskette anzeigen l„t, erh„lt man
+  728.064 Bytes insgesamt vorhanden. Schaltet man nun auf TOS um, ohne die
+  Diskette zwischendurch zu wechseln, so erh„lt man 730.112, da die Diskette
+  noch unter KAOS angemeldet wurde. Erst nach einem Diskwechsel stimmen die
+  Daten wieder mit TOS berein.
+- Fopen()
+  Bei illegalem Open- Modus (nicht 0,1,2) wird EINVFN zurckgegeben.
+  Diese Patch ist bei eingeschalteter Kompatibilit„t aufgehoben.
+- Frename()
+  Die Funktion strzte bisher ab (mit VERLUST der zu verschiebenden Datei),
+  wenn:
+   Das Directory voll war, in das die Datei geschoben werden sollte.
+   Nicht gengend Datei- Handles brig waren.
+   Der neue Name schon fr ein Verzeichnis vergeben war.
+   Bei Schreib-/Lesefehlern usw.
+  Die Funktion ist v”llig neu geschrieben worden. Alle Fehlerursachen wurden
+  abgefangen und der alte Name erst dann gel”scht, wenn alle anderen Prozeduren
+  ohne Fehlermeldungen ausgefhrt wurden.
+  Wenn beim Versuch, eine Datei umzubenennen, die Diskette schreibgeschtzt
+  war und der Versuch abgebrochen wurde, blieb bisher die Zieldatei ge”ffnet.
+  Dies fhrte unter KAOS dazu, da die Datei anschlieend nicht mehr zum
+  Schreiben ge”ffnet oder gel”scht werden konnte. Jetzt wird die Datei
+  immer korrekt geschlossen. Der Fehler war daher problematisch, da erst
+  die Quelldatei zum Lesen und dann die Zieldatei zum Schreiben ge”ffnet
+  wird. Bei letzterem wurde die Funktion dann abgebrochen, die Quelldatei
+  war also schon ge”ffnet.
+- Fdup()
+  War die Standard- Datei, deren Handle dupliziert werden soll, ein Ger„t, so
+  wird kein neuer Eintrag in der Handle- Tabelle erzeugt, sondern einfach
+  die Ger„tenummer zurckgegeben.
+  Diese Patch ist bei eingeschalteter Kompatibilit„t aufgehoben.
+  Auerdem werden mehr m”gliche Fehler abgefangen.
+- Fforce()
+  War die Standard- Datei, deren Handle gesetzt werden soll, kein Ger„t,
+  sondern hatte einen Eintrag in der Handle- Tabelle, wurde bisher einfach
+  das neue Handle der Standard- Datei eingesetzt, ohne den Referenzierungs-
+  z„hler der alten Datei zu „ndern. Damit stimmten nach jedem Fforce()
+  die Referenzierungsz„hler der Datei- Eintr„ge nicht mehr, es blieben
+  "Dateileichen" zurck, da die Handles nicht mehr verwendet wurden.
+  Bei einem Diskwechsel werden zwar alle Handles, die sich auf diese Disk
+  beziehen, wieder freigegeben, nicht jedoch bei Festplatten. In letzterem
+  Fall hilft nur noch der Resetknopf. Ebenso bei Ger„t- Handles, die von
+  der ungepatchten Fdup()- Routine sinnloserweise produziert wurden.
+  Nun wird vor dem Setzen des neuen Handles, also vor dem eigentlichen
+  Umlenken, die Standard- Datei ge-Fclose()-et, damit stimmt der
+  Referenzierungsz„hler wieder.
+  Auerdem werden mehr Kontrollen auf Zul„ssigkeit der Datei- Umlenkung
+  durchgefhrt.
+- Fclose()
+  Ist eine Standard- Datei auf eine normale Datei umgelenkt, so mssen erst
+  beide geschlossen werden, ehe der FD (die interne Datenstruktur fr Dateien)
+  freigegeben wird. Dasselbe gilt fr den Fall, da ein Standard- Handle mit
+  Fdup() dupliziert wurde.
+  Vorher: Es konnte mit dem brig gebliebenen Handle, das auf denselben FD
+		zeigte, die inzwischen l„ngst an den internen Gemdos- Speicher
+		zurckgegebene Dateistruktur manipuliert werden.
+		Beim (zur Freigabe der Handles notwendigen) zweiten Schlieen
+		derselben Datei (mit einem anderen Handle) bekam man EINTRN (interner
+		Fehler) zurck.
+  Nachher:Es mssen s„mtliche Verweise auf den FD gel”scht werden, ehe der
+		FD selbst gel”scht wird.
+		Da der FD zuletzt gel”scht wird, tritt EINTRN nicht mehr auf (bei
+		korrekter Handle- Verwendung des Benutzerprogramms).
+- Dateien ”ffnen (Fopen(),Fcreate())
+  Ist die Datei bereits ge”ffnet, darf die neue jetzt nur zum Lesen ge”ffnet
+  werden, sonst: EACCDN. Insbesondere kann damit nicht mehr eine Datei in
+  sich selbst kopiert werden, da i.a. immer zuerst die Quelldatei zum Lesen,
+  dann die Zieldatei zum Schreiben ge”ffnet wird.
+  (Diese Korrektur wird bei eingeschalteter Kompatibilit„t abgeschaltet).
+  In obigen Fall wird der neue FD in eine verkettete Liste mit FDs eingeh„ngt,
+  die alle auf dieselbe Datei zeigen. Leider wird diese Liste von GEMDOS
+  nicht mehr verwendet. Bisher war das Einh„ngen in diese Liste fehlerhaft.
+  Existiert zwar ein Handle, aber nicht gengend GEMDOS- Speicher, so
+  wird kein Handle verbraten, sondern nur ENSMEM zurckgegeben.
+  _open() wurde v”llig neu geschrieben.
+- Dateien l”schen (Fdelete(),Fcreate())
+  Ist die Datei bereits ge”ffnet, egal, von welchem Proze, darf sie nicht
+  gel”scht werden, und man erh„lt EACCDN.
+  Bisher wurde nur bei von fremden Prozessen ge”ffneten Dateien ein Fehler
+  erzeugt. Bei eigenem Proze wurde der FD zwar freigegeben und die Datei
+  geschlossen, aber das Handle nicht freigegeben, ebenso der Zeiger auf den
+  l„ngst freigegebenen FD (FileDescriptor, eine Datenstruktur, vergleichbar
+  mit den FCBs in MS-DOS oder CP/M).
+  Dieser Patch ist bei eingeschalteter Kompatibilit„t wirkungslos.
+- Mshrink() / Malloc()
+  Wird als gewnschte Speichermenge eine negative Zahl bergeben, so wird
+  diese jetzt als "unsigned" (also als sehr groe, positive Zahl) angesehen.
+  Dadurch treten keine Zufallswerte bei der Speicherzuteilung mehr auf.
+- Fread()
+  War die Datei im Modus 1 ge”ffnet worden (nur Schreiben), so konnte bisher
+  auch von dieser Datei gelesen werden. Jetzt erh„lt man EACCDN zurck.
+  Dieser Patch ist bei eingeschalteter Kompatibilit„t wirkungslos.
+- Fwrite()
+  War die Datei im Modus 0 ge”ffnet worden (nur Lesen), so konnte bisher
+  auch auf diese Datei geschrieben werden. Insbesondere wurde das Attribut
+  "ReadOnly" nur beim ™ffnen der Datei abgefragt und der ™ffnungsmodus sp„ter
+  nicht mehr verwendet; dadurch konnte man schreibgeschtzte Dateien zum Lesen
+  ”ffnen und dann beschreiben. Jetzt erh„lt man EACCDN zurck.
+  Dieser Patch ist bei eingeschalteter Kompatibilit„t wirkungslos.
+  Per Fcreate() erstellt, schreibgeschtzte Dateien werden immer im Modus
+  Lesen+Schreiben ge”ffnet und k”nnen daher auch beschrieben werden,
+  natrlich nur bis zum Schlieen des Handles.
+- Die Super()- Funktion wurde korrigiert. In dem Fall, da Einschalten des
+  Supervisormode mit oldssp=Super(0L) und Ausschalten mit Super(oldssp)
+  auf unterschiedlichen Prozedurebenen geschahen, wurde bisher immer nur
+  Mll fabriziert.
+- Tsetdate
+  Der Monat oder Tag 0 wird als Fehler erkannt
+		 Jahr > 2099 wird als Fehler erkannt
+- Tsettime
+  Stunden > 23 werden als Fehler erkannt
+
+
+
+III Ver„nderungen im VDI
+========================
+
+- Im 8x16- Zeichensatz wurde das '' korrigiert, so da es nicht mehr mit dem
+  Beta 'á' verwechselt werden kann.
+- Im 6x6- Zeichensatz wurde das '' ebenfalls korrigiert, da es bisher von
+  indiskutabler H„lichkeit war.
+- Im 6x6- Zeichensatz wurden die Umlaut- Grobuchstaben '','™','š'
+  korrigiert, damit sie auf gleicher H”he wie die brigen Grobuchstaben
+  liegen.
+- Im VDI- Dispatcher wurde die Bereichsberprfung auf maximal 512
+  Eingabekoordinatenpaare korrigiert (Vorzeichenfehler).
+- v_opnvwk() wurde neu geschrieben. Bisher kam es zu Fehlern, wenn Handles
+  nicht genau in umgekehrter Reihenfolge geschlossen wurden, in der sie
+  ge”ffnet worden waren. In diesem Fall bekam man bei jedem v_opnvwk()
+  dasselbe Handle zurckgeliefert, obwohl jedesmal eine neue Workstation
+  angelegt wurde.
+  Ein im Umlauf befindliches VDIFIX.PRG darf nicht verwendet werden.
+- Die Scrollroutinen des VT-52 Emulators wurden mittels eines Patches
+  korrigiert, der Probleme mit h”heren Aufl”sungen beseitigt. Der Fehler
+  trat dann auf, wenn die Anzahl der Bytes pro Bildschirmzeile nicht ein
+  Vielfaches von 16 war. Da dies jedoch normalerweise immer der Fall ist,
+  gab es keine Probleme.
+- Fr den Fall, da KAOS 1.4 in einem STe l„uft, werden im Farbmodus feinere
+  Farbabstufungen gemeldet (bei v_opn(v)wk steht in work_out[39] im ST fr
+  die Anzahl der Farben 512 und im STe 4096).
+- Fr den Fall, da KAOS 1.4 in einem STe l„uft, werden bei vs_color und
+  vq_color feinere Abstufungen untersttzt.
+  Im Gegensatz zu der Situation, die entsteht, wenn man TOS 1.6 auf einem
+  ST laufen l„t, reagiert KAOS 1.4 in einem ST korrekt und kompatibel zu
+  TOS 1.0/1.2/1.4.
+
+
+
+IV) Ver„nderungen im AES
+========================
+
+Ziele der AES- šberarbeitung:
+
+1. Optimierung des Fenster- Redraws.
+   Bisher wurde fr die Fensteroperationen "™ffnen", "Schlieen", "Toppen",
+   "Verschieben" und "Gr”enver„nderung" eine einzige Routine verwendet, die
+   anstelle von Redraws eigentlich nur Flackereffekte hervorrief.
+   Neu wurde die M”glichkeit eingebaut, Fenster in den Hintergrund zu legen
+   ("Backdrop"), fr die ein neuer Button existiert.
+2. Teile des Form- Managers wurden neu geschrieben, der fr die Bearbeitung
+   von Dialog- und Alertboxen zust„ndig ist. Hier wurden einige praktische
+   Erweiterungen eingebaut, etwa Tastaturbedienung in Dialogboxen
+3. Alle LineF- Aufrufe wurden durch Neubersetzen und Optimieren des AES
+   entfernt. GEM war daher leichter an den 680x0 anzupassen und auerdem
+   schneller geworden. Weniger wichtig ist die Ersparnis von 100 Bytes fr
+   den LineF- Handler.
+   Probleme k”nnten sich ergeben, wenn sich Programme in den LineF- Handler
+   einh„ngen, aber Autostarter braucht man ja unter TOS 1.4 nicht mehr.
+   Das Programm TOS14FIX wird damit ebenfalls kaltgestellt, aber die Patches
+   wurden bereits direkt in KAOS bernommen.
+4. Geschwindigkeitsoptimierungen, insbesondere bei objc_draw(), das etwa
+   unter QINDEX 50-90% schneller l„uft.hnliches gilt fr objc_offset().
+5. Einbau aller Funktionen von GEM 2.x und sogar GEM/3, soweit sie nicht zu
+   Inkompatibilit„t mit Atari- GEM fhren. Insbesondere laufen alle
+   Programme, die fr die ABC- Implementation von GEM 2.2 erstellt wurden.
+   Bisher wurden DESKTOP.APP, OUTPUT.APP und DIARY.ACC getestet.
+   Insbesondere hat man die M”glichkeit, ber shel_rdef() und shel_wdef() ein
+   alternatives Desktop zu installieren. Dabei wurde zus„tzlich die
+   M”glichkeit geschaffen, nicht nur nachladbare, sondern auch residente
+   Desktops zu installieren.
+   Die M”glichkeit eines alternativen Desktop wird von KAOSDESK genutzt.
+6. Verringerung des Speicherbedarfs von AES/DESKTOP um etwa 13 KB. Diese
+   13 KB RAM stehen jetzt dem Anwender mehr zur Verfgung.
+7. H”here Sicherheit des Eventmanagers. Das System sollte nicht mehr einfach
+   stehenbleiben.
+
+
+Hier die Einzelheiten:
+- Gr”enver„nderung eines Fensters
+  Das Berhren des Feldes (Klicken ohne Mausbewegung) bewirkt kein
+  "Schnappen", daher bleibt die Gr”e beim Loslassen des Mausknopfs
+  unver„ndert.
+- Neue "Rubberbox"- Routine fr die Fenster- Gr”en„nderung. Dadurch kein
+  Oszillieren der "rubberbox" mehr auch bei totaler Verkleinerung des
+  Fensters.
+- ™ffnen von Fenstern.
+  Obwohl die Routine neu ist, ergeben sich gegenber der alten Routine keine
+  sichtbaren Unterschiede, da dies die einzige war, die bisher zufrieden-
+  stellend funktionierte.
+- Schlieen von Fenstern.
+  Hier wird nur der bisher von dem zu schlieenden Fenster bedeckte Bereich
+  neu gezeichnet (optimale L”sung).
+- Verschieben des obersten Fensters.
+  Hier wird grunds„tzlich der sichtbare Bereich per Bitblt kopiert, dann bis
+  zu zwei Redraws gesendet. Der Hintergrund wird nur unter der alten Position
+  neu gezeichnet (optimale L”sung).
+  Diese Optimierung ist abschaltbar, siehe "Smart Redraw".
+- Nach oben Bringen von Fenstern.
+  Hier werden alle bisher von oberen Fenstern berdeckten Rechtecke vereinigt
+  und neu gezeichnet (optimale L”sung bei nur einem Redraw- Rechteck). Bei
+  nur zwei Fenstern ist auch hier der neugezeichnete Bereich minimal.
+- Nach unten Bringen von Fenstern (!).
+  Der Windowmanager erhielt ein neues Feature, und zwar wird in jedem
+  Fenster, das oberstes ist und das Maximalgr”enfeld enth„lt, links von
+  diesem das Backdrop- Feld angezeigt. Wenn man dieses anklickt, wird das
+  Fenster (das oberstes ist), nach ganz unten gestellt. Das Fenster, das
+  jetzt nach oben kommt, erh„lt zus„tzlich noch eine WM_TOPPED- Meldung,
+  damit applikationsinterne Umstellungen durchgefhrt werden k”nnen.
+  Obwohl die Schmutzeffekte unter Tempus harmlos sind, sollte man hier auf
+  die Verwendung dieses Buttons verzichten. Unter DESKTOP, KAOSDESK, TC
+  Adimens und Wordplus beispielsweise gibt es keinerlei Probleme.
+  Alle bisher verdeckten Fenster werden im bisher verdeckten Bereich neu
+  gezeichnet (optimale L”sung).
+  Fr den Backdrop- Button wird das ASCII- Zeichen $1f verwendet, das bisher
+  die rechte untere Ecke des Pfeifenkopfs darstellte. Dafr wurde das neue
+  Zeichen in allen drei Systemzeichens„tzen eingefgt. Wer einen alternativen
+  Systemzeichensatz installiert, sollte ihn entsprechend anpassen.
+  Siehe auch wind_set() und wind_create().
+- Vergr”ern von Fenstern.
+  Auch hier wird nur der neue Fensterbereich neu gezeichnet, also bis zu zwei
+  Redraw- Rechtecke (optimale L”sung). Auerdem wird der Hintergrund und die
+  unteren Fenster nur auf der alten Position neu gezeichnet.
+  Auch diese Optimierung ist abschaltbar.
+- Scrollen von Fenstern. H„lt man die Maustaste gedrckt, kommt erst nur ein
+  Scroll, dann eine Verz”gerung und schlielich die automatische Wiederholung.
+  Unter TOS 1.4 funktionierte das nicht richtig und verz”gerte immer VOR dem
+  ersten Scrollen. Auerdem unterbleibt unter KAOS 1.4 die Verz”gerung, wenn
+  nach dem ersten Scroll die Maustaste schon wieder losgelassen wurde. Unter
+  Original TOS 1.4 wird IMMER verz”gert, egal, ob wiederholt werden soll
+  oder nicht. Man kann jetzt viel darber sagen, aber die groe Verbesserung
+  zeigt sich erst, wenn man eine Weile mit TOS 1.4 herumprobiert hat und sich
+  immer wieder ber die verz”gernde Scrollroutine ge„rgert hat.
+- Scrollen von Fenstern. Bisher konnte man z.B. RCS2 durch dauerndes
+  Gedrckthalten der Maustaste zum Absturz bringen. Durch Verschmelzen der
+  Scroll- Events beim Schreiben in die Message- Queue wird deren šberfllung
+  verhindert. Auerdem erm”glicht die Routine mehr als ein Redraw- Rechteck
+  pro Fenster, was besonders trickreich programmiert werden mute.
+  Als weiteren Effekt bekommt man z.B. in KAOSDESK beim langen Druck auf den
+  horizontalen grauen Balken nicht mehr zwei, sondern nur noch eine Meldung.
+- Die Laufwerkwahl des AES wurde ver„ndert. Accessories werden grunds„tzlich
+  vom beim Booten aktuellen Laufwerk geladen und das DESKTOP.INF auf dieses
+  Laufwerk abgespeichert (wird von AES beim Initialisieren fr sp„ter gemerkt).
+  Siehe auch unter Sconfig.
+- Um Verschiebungen im Graumuster des oberen Randes und der Scrollfelder zu
+  verhindern, hat Atari seit TOS 1.2 einen Patch ins AES integriert, der
+  bewirkt, da der Rahmen des obersten Fensters in jedem Fall GANZ neu
+  gezeichnet wird. In KAOS 1.4 habe ich diesen Patch entfernt, daher unter-
+  bleibt das Fensterrand- Flackern, es bilden sich aber wieder die Fehler
+  im Muster.
+- Die Fileselect- Box wurde leicht gepatcht, um das automatische L”schen des
+  vom Benutzterprogramm vorgegebenen Dateinamens beim Pfadwechsel zu
+  verhindern.
+- Die AES- Version im global- Feld lautet nun $141 statt $140.
+- Um festzustellen, ob ein neues KAOS- GEM installiert ist, kann man nach
+  appl_init() die Felder intin[0] und intin[1] untersuchen. Sie enthalten
+  unter KAOS- GEM das magische Langwort $4b414f53. Nur dann darf man die
+  AES- Funktionen shel_wdef() oder shel_rdef() in der unten angegebenen Art
+  und Weise benutzen.
+- Die Ein- und Ausgabefelder (intin[],intout[],addrin[],addrout[]) werden
+  nicht mehr hin und herkopiert. Damit sind alle AES- Aufrufe (etwa
+  evnt_multi()) deutlich schneller geworden, auch wenn man das natrlich
+  nicht merkt.
+- Der Patch von shel_find() in TOS14FIX.PRG wurde direkt ins KAOS bernommen.
+  Bisher konnte es vorkommen, da Programme ihre Ressourcedateien nicht
+  finden konnten.
+- Eine neue Routine form_keybd() erkennt HELP, UNDO, ^Q, SHIFT-up und
+  SHIFT-down.
+  Im Fall SHIFT-up wird fr *fo_knxtobject das erste Editfeld des Formulars,
+  im Fall SHIFT-down das letzte zurckgegeben.
+  Drckt man "Help", so wird der erste Exitbutton (G_BUTTON mit ob_flag EXIT)
+  gesucht, dessen Text mit "HELP" oder "HILF"(e/stext) beginnt, bei "Undo"
+  sind es die Texte "ABBR"(uch/echen), "ZURš"(ck) und "CANC"(el). Dabei
+  werden kleine und groe Buchstaben gleich behandelt und Leerzeichen am
+  Textanfang berlesen. Mit ^Q kann man (meistens) ein Programm beenden.
+  Insbesondere KANN MAN JETZT ALLE EVENT_CRITIC- MELDUNGEN MIT TASTATUR
+  BEDIENEN (OK: RETURN, ABBRUCH: UNDO) !!!
+  Schwierigkeiten machen solche Dialogboxen, die kein LASTOB- Flag haben,
+  Dazu geh”rt das Programm "DegasElite". Enth„lt der Dialog n„mlich kein
+  passendes Objekt (kein Default- Objekt bei Return), so kann das Ende des
+  Baumes nicht erkannt werden, man landet im Nirwana. Bisher trat der Fehler
+  nur nicht auf, da alle Dialoge Default- Objekte hatten; sonst w„re der
+  Rechner schon bei "Return" h„ngengeblieben.
+  Da form_do() form_keybd() aufruft, hat man jetzt in JEDER (!) Dialogbox
+  die Zusatzfunktionen:
+	SHIFT-up		: Cursor aufs erste Eingabefeld
+	SHIFT-down	: Cursor aufs letzte Eingabefeld
+	Help 		: Button "HILF(E)" oder "HELP"
+	Undo 		: Button "ABBR(uch/echen)","ZURš(ck)","NEIN","CANC(el)","ABOR(t)"
+	^Q			: Button "ENDE","VERL(assen)","AUSG(ang)","EXIT","QUIT"
+- Die Funktion objc_edit() wurde berarbeitet und um einige Funktionen
+  erweitert. Da form_do() objc_edit() aufruft, hat man jetzt in JEDER (!)
+  Dialogbox, die mit AES- Funktionen verwaltet wird, die Zusatzfunktionen:
+	SHIFT-left	: Cursor auf den Anfang des Eingabefeldes
+	SHIFT-right	: Cursor auf das Ende des Eingabefeldes
+	Pos1 		: Wie SHIFT-left	(Atari- Tastatur: Home)
+	Ende 		: Wie SHIFT-right	(Atari- Tastatur: nicht verfgbar)
+	SH-Pos1		: Wie Esc 		(Atari- Tastatur: SH-Clr)
+	Einfg		: Einfgemodus 	(Atari- Tastatur: Insert)
+	SH-Einfg		: Uberschreibmodus	(Atari- Tastatur: SH-Insert)
+  Soweit m”glich, wurden die Tasten und Tastenkombinationen denen des
+  GEMDOS- Zeileneditors angeglichen (siehe Anhang AII).
+  Die Eingabe der Steuerzeichen in Dialogboxen ist brigens folgendermaen
+  m”glich:
+
+	    ASCII  1		= CTRL-'A'
+			 2		= CTRL-'B'
+			...
+		    $11		= CTRL-'1'
+			...
+		    $1a		= CTRL-'Z'
+		    $1b		= CTRL-SHIFT-';'
+		    $1c		= CTRL-'<'
+		    $1d		= CTRL-SHIFT-'3'
+		    $1e		= CTRL-'~'
+		    $1f		= CTRL-'-'
+
+- Die Unterfunktion von objc_edit(), die feststellt, ob ein Zeichen zul„ssig
+  ist (Masken 'X','9', ...) wurde neu geschrieben. Zur alten Funktion ergeben
+  sich folgende Unterschiede:
+	Bei allen Masken, bei denen die Zeichen in Groschrift konvertiert
+	 werden, das sind alle auer 'X','a' und 'n', wird ERST die Umwand-
+	 lung in Grobuchstaben durchgefhrt und DANN geprft, ob das Zeichen
+	 zul„ssig ist. Damit erspart man sich im Fall 'A' (Grobuchstaben und
+	 Leerzeichen) und 'N' (auch noch Ziffern) das Drcken der Shift- Taste.
+	 Man probiere einfach einmal die Eingabe eines Laufwerkbuchstabens fr
+	 das Tempor„rlaufwerk im Dialog "Disk kopieren" in KAOSDESK.
+	Die verwendete Routine "toupper()" zum Umwandeln in Grobuchstaben ist
+	 jetzt die von GEMDOS. Daher werden auch nationale Sonderzeichen bzw.
+	 Umlaute korrekt konvertiert.
+	 Man probiere einfach die Eingabe von Umlauten im Fileselector.
+  Siehe auch Anhang AVI).
+- die Funktion form_error() wurde um zwei Texte erweitert:
+
+	"Ungltiges Programmformat	statt	"TOS Fehler #35"
+	"68000- Exception"			statt	"TOS Fehler #38"
+
+- mit Bit 7 des KAOS- Konfigurationslangworts lassen sich die Growboxen und
+  Shrinkboxen abschalten (Bit 7 = 1), per Default sind sie eingeschaltet.
+- Mit Bit 8 des KAOS- Konfigurationslangworts (siehe GEMDOS: Sconfig()) l„t
+  sich einstellen, ob AES nach einem TOS- Programm auf einen Tastendruck oder
+  Mausklick warten soll oder nicht. Das Warten ist der Defaultwert.
+- Beim Aktivieren oder Neuinitialisieren des Grafikmodus, etwa vor Neustart
+  des Desktop nach Beendigung eines Programms, wird der Cursor ber
+  Cursconf() ausgeschaltet; damit gibt es knftig im Desktop keinen blinkenden
+  Cursor mehr.
+- Hat man ein shel_write() mit doex = 0 (Desktop) und wisgr = 0 (Textmodus)
+  gemacht, wurde bisher DESKTOP im Textmodus gestartet, und man konnte nichts
+  mehr tun, da die Maus abgeschaltet war. Dies ist jetzt behoben.
+  Das originale wie ein eventuelles alternatives Desktop werden IMMER im
+  Grafikmodus gestartet.
+- der Trap #2- Vektor wird nicht mehr nach dem Aufruf eines TOS- Programms
+  neu gesetzt. Damit funktioniert Turbo-ST auch fr GEM.PRG (ausfhrbare
+  Version des AES).
+- ein Vorzeichenfehler im Event-Critic-Manager wurde behoben, der bisher
+  bei positiven Fehlercodes zum Absturz fhrte.
+- Ein Pixelfehler beim Zeichnen von Rahmen (etwa fr "G_BUTTON") wurde
+  behoben. Bisher wurde bei „ueren Rahmen auch ein Rechteck eines inneren
+  Rahmens gemalt, das aber beim Ausfllen des Objekts wieder bergemalt
+  wurde (kann man wundersch”n in Zeitlupe sehen). Nach Behebung dieses
+  Fehlers (viele Objekte haben Rahmen) ist objc_draw() noch einmal wesentlich
+  schneller geworden.
+- die Funktion toupper wurde aus DOS bernommen. Alle Umlaute werden daher
+  immer konvertiert.
+- neue wind_get()- Unterfunktionen WF_OWNER (101) und WF_WINDLIST (102):
+
+   wind_get(int handle, WF_OWNER, &owner_id);
+   	liefert in <owner_id> den Eigner des Fensters <handle>
+
+   wind_get(int 0, WF_WINDLIST, &hi, &lo);
+	liefert in <hi,lo> einen Zeiger auf die Liste der ge”ffneten
+	Fenster, die mit dem hintersten Fenster (0) abgeschlossen ist.
+
+- die Funktion wind_set() wurde um folgende Unterfunktion erweitert:
+
+	#define WF_BACK	(100)	/* analog zu WF_TOP == 10 */
+	wind_set(whdl, WF_BACK);
+
+  Damit kann ein Fenster (wenn es nicht schon das unterste ist) auf einen
+  Schlag nach unten gebracht werden, ohne die Reihenfolge der anderen
+  Fenster zu ver„ndern. (Intuition l„t gren)
+
+- Ein neues Fensterobjekt ist dazugekommen, und zwar BACKDROP. Ist dieses
+  angegeben, so erh„lt das aufrufende Programm, wenn der Drop- Button
+  angeklickt wurde, eine Meldung WM_BACKDROPPED, statt da AES die Funktion
+  selbst ausfhrt.
+  Bei ausgeschaltetem "Smart Redraw" wird das entsprechende Bit bei
+  wind_create ausmaskiert.
+- Die Funktion wind_set() malt bei Setzen der Scrollbalken diese nur dann neu,
+  wenn sich die Werte ge„ndert haben.
+  Ist der "Smart Redraw" deaktiviert, werden die Scrollbalken immer neu
+  gemalt wie bisher.
+- Die AES- Funktion wind_new() macht vorhergehende graf_mouse(M_OFF) und
+  graf_mouse(M_ON)- Aufrufe rckg„ngig und schaltet die Maus ein.
+- Die Funktion zum Malen der Fensterr„nder wurde so optimiert, da weie
+  Balken mit Rand, die sich unter den Scrollbalken oder unter dem Titel
+  befinden, nicht mehr gezeichnet werden. Die Ausgabe der Fensterr„nder ist
+  daher schneller geworden, da das Zeichnen von bis zu 3 umrandeten weien
+  Boxen eingespart wurde.
+- shel_envrn wurde korrigiert. Bisher erhielt man bei Eingabe von:
+	"ABC="
+  und einem Environment
+	"ABCDEF=wert"
+  die Zeichenkette
+	"EF=wert"
+  zurck, was wohl nicht im Sinne des Aufrufers liegt. Ferner ben”tigte
+  die Funktion drei statt zwei Nullbytes am Ende und reagierte auch
+  sonderbar, wenn man etwa "ABCDEF=" suchte und "AB=" oder „hnliches fand;
+  dabei wurde die n„chste Variable berlesen.
+  Bei der Gelegenheit habe ich gleich die Behandlung der "PATH"- Variablen
+  korrigiert, sie wird vom BIOS auf "PATH=;#:\" gesetzt, wobei '#' der
+  Platzhalter fr das aktuelle Laufwerk ist.
+- Das von shel_envrn() und shel_find() benutzte Environment ist jetzt nicht
+  mehr das, das beim Start von AES aktuell war, sondern es wird in der
+  Basepage des AES jedesmal neu nachgesehen. Somit k”nnte man nach Hochfahren
+  des AES noch das Environment „ndern.
+- Die HOTCLOSEBOX vom GEM 2.x wurde implementiert. Sie bewirkt, da das
+  System bei Bet„tigen des Schliefelds nicht wartet, bis die Maustaste
+  losgelassen wurde.
+  Bei ausgeschaltetem "Smart Redraw" wird das entsprechende Bit bei
+  wind_create ausmaskiert.
+- Die wind_set- Unterfunktion WF_SIZTOP vom GEM 2.2 wurde implementiert.
+- Das ob_state- Flag von GEM 2.2, DRAW3D, wurde implementiert. Es wirkt nur
+  bei WHITEBAK und SELECTED, und zwar wird nur der Icontext invertiert
+  dargestellt. Icon und Zeichen werden normal ausgegeben. Die Maske wird
+  zweimal ausgegeben, und zwar einmal um ein Pixel nach links oben und einmal
+  nach rechts unten verschoben, und zwar in der Farbe des Icons.
+- Die wind_get- Unterfunktion WF_NEWDESK wurde implementiert. Damit ist es
+  nicht nur m”glich, den Objektbaum zu setzen, sondern auch, ihn zu
+  ermitteln!
+- Die GEM 2.x- Funktion menu_unregister() wurde implementiert.
+  Unter GEM 2.2 arbeitet diese Funktion nur dann korrekt, wenn der letzte
+  (oder einzige) Meneintrag entfernt wird.
+  Prototyp:	int menu_unregister( int menu_id )
+  Ist <menu_id> == -1, werden alle Eintr„ge des aufrufenden ACCs entfernt.
+  Ist die menu_id nicht 0..5 oder ist der Meneintrag schon ungltig, so
+  wird 0 zurckgeliefert, sonst 1; im letzten Fall wird das Men neu auf-
+  gebaut und gezeichnet.
+- Die GEM 2.x- Funktion scrp_clear() wurde implementiert. Es wird das
+  Verzeichnis nur gel”scht, wenn es ungleich "" ist. Fehlendes abschlieendes
+  '\' wird automatisch erg„nzt, ver„ndert aber nicht den Verzeichnisstring.
+- Erh„lt shel_write() einen Dateinamen ohne Pfad und ist DESKTOP.APP als
+  Defaultapplikation angemeldet, so wird diesem Dateinamen der aktuelle
+  Pfad automatisch vorangestellt. Damit k”nnen Programme unter dem DESKTOP
+  von GEM 2.2 gestartet werden.
+  Die Programme werden nach wie vor im Pfad von AES gestartet, was inkompa-
+  tibel zu GEM 2.2 ist, aber nicht ge„ndert werden darf.
+- Bekommt fsel_(ex)input() einen Pfad wie "c:\xxx\*.acc,*.acx", so wird
+  dieser automatisch wie "c:\xxx\*.*" behandelt. Damit ist fsel_input()
+  zumindest GEM 2.x- vertr„glich.
+- Die GEM 2.x- Funktion appl_bvset() wurde implementiert. Sie existierte
+  schon und wurde bisher nur vom Desktop direkt aufgerufen. Die bergebenen
+  Werte bekommen Applikationen brigens in global[13] und global[14] auch
+  im Original- TOS 1.4.
+  N„heres siehe Profibuch.
+- Die GEM 2.x- Funktion appl_yield() wurde implementiert oder vielmehr die
+  vorhandene interne Funktion ber Trap #2 zug„nglich gemacht.
+- Die GEM 2.x- Funktionen xgrf_stepcalc() und xgrf_2box() wurden implementiert.
+  Im Profibuch (S. 619) wurden bei xgrf_2box() die Felder intin[3] und
+  intin[4] vertauscht. Auerdem bewirkt das Flag <doubled> lediglich, da
+  sich die Gr”e der gezeichneten Rechtecke „ndert, wie es bei graf_???box()
+  blich ist. Andernfalls bleibt die Gr”e konstant, wie es bei
+  graf_movebox() verwendet wird.
+  Achtung: Um graf_???box() unter GEM 2.x nachzubilden, sollten der
+  "stepcalc" und der "2box"- Aufruf direkt hintereinander liegen, da der
+  "stepcalc" bereits die Schreibattribute setzt (Unter KAOS 1.4 ist dies
+  nicht n”tig).  Ferner mu man ggf. vor "2box" noch ein graf_movebox()
+  machen.
+  Die xgrf- Funktionen wurden gem„ GEM 2.2 implementiert, das dazu an dieser
+  Stelle disassembliert wurde. Die xgrf- Funktionen sind "im Prinzip" bereits
+  im Atari- GEM als interne Routinen vorhanden.
+- GEM/3 l„t gren. Da ich nicht wei, wie das korrekte Binding ist,
+  habe ich die AES- Funktion menu_click() folgendermaen implementiert
+  (wird nicht ver”ffentlicht, solange nicht gesichert ist, da dies
+  GEM/3 entspricht):
+
+	  contrl[0] = 37				; Funktionsnummer $25 fr menu_click
+	  contrl[1] = 2				; 2 intin- Werte
+	  contrl[2] = 1				; ein intout- Wert
+	  contrl[3] = 0				; kein addrin- Wert
+	  contrl[4] = 0				; kein addrout- Wert
+
+	  intin[0] = val
+	  intin[1] = set
+
+	  C- Prototyp:  int menu_click(int val, int set)
+
+	  set = 0: aktuelle Einstellung zurckgeben
+	  set = 1: val als neue Einstellung bergeben.
+			 val = 0: Dropdown- Mens
+			 val = 1: Pulldown- Mens
+
+  Achtung: Im Gegensatz zu GEM/3 auf dem PC mu nur einmal geklickt werden,
+		 wodurch das erste Men herunterf„llt.
+		 Beim Wechsel der Mens verhalten diese sich die Mentitel wie
+		 bisher, man hat also nach wie vor Dropdown- Mens.
+
+  Der Wert von menu_click() wird in Bit 10 des KAOS- Konfigurationsfeldes
+  gemerkt und kann daher auch mit Sconfig() beeinflut werden.
+- form_alert() wurde berarbeitet, zum Teil neu geschrieben. Um fr GEM 2.2
+  geeignet zu sein, wurde die maximale Breite einer Textzeile von 31 auf 40
+  Zeichen und die maximale Breite eines Buttons von 10 auf 20 Zeichen erh”ht.
+  Weiterhin wird die oberste Textzeile statt 3 Pixel jetzt 1 Zeichen unter
+  dem oberen Rand positioniert, wodurch die Texte nicht mehr unter dem Rand
+  kleben. Der Rand unter den Buttons wurde von 1/2 auf 1 Zeichen erh”ht,
+  der linke und rechte Rand auf 2 Zeichen festgelegt, letzterer war unter
+  TOS bisher davon abh„ngig, ob ein Icon angezeigt wurde (!), kann man in der
+  Infobox von Psion Chess sehen).
+  Generell sehen damit alle fr GEM 2.2 oder TOS 1.0 erstellten Alertboxen
+  wieder recht ordentlich aus. Speziell an TOS 1.2/1.4 angepate Alertboxen,
+  die die Fehler der Routine umgehen, wirken jedoch etwas deplaziert.
+  Schlielich wurde noch eine Reihe von Sicherheitsabfragen eingebaut:
+  1) Iconnummern ungleich 0,1,2,3 erzeugen Icon 1
+  2) Wenn ein Button mehr als 15 Zeichen hat, werden nur 15 verarbeitet
+  3) Wenn es mehr als 5 Zeilen sind, wird abgebrochen
+  4) Wenn es mehr als 3 Buttons sind, wird abgebrochen
+  5) Enth„lt der String ein EOS vor dem Zeichen']', wird abgebrochen
+- Wenn ein Alert (etwa in niedriger Aufl”sung) breiter als der Bildschirm
+  ist, strzte das System bisher beim Retten des Hintergrundes ab. Jetzt
+  wird der zu rettende Bereich mit dem Bildschirm geschnitten.
+- Beim Allozieren des Bildschirmpuffers fr die Alertboxen und die Mens
+  ist eine Sonderklausel eingefgt, die garantiert, da ein Bildschirm-
+  bereich von 50 (horizontal) mal 9 (vertikal) Zeicheneinheiten zuzglich
+  3 Pixel „uerer Rand fr OUTLINED gepuffert werden kann.
+  Damit werden in niedriger Aufl”sung etwa 16 (statt 13) kB Speicher reser-
+  viert, was ausreichen sollte. Fr andere Aufl”sungen gibt es keine
+  Ver„nderungen.
+- Die GEM 2.x- Funktion shel_rdef() wurde implementiert (siehe Profibuch).
+  Folgende Besonderheiten sind zu beachten:
+
+    1. In addrout[0] erh„lt man die Adresse des Pfadpuffers (256 Bytes)
+    2. Erh„lt man fr "sh_rlpcmd" einen Leerstring, d.h. das erste Byte ist
+	  0, so ist kein alternatives Desktop installiert.
+
+- Die GEM 2.x- Funktion shel_wdef() wurde implementiert (siehe Profibuch).
+  Folgende Besonderheiten sind zu beachten:
+
+    1. Der Parameter sh_wlpdir darf ein Leerstring "" sein, dann mu der
+	  erste Parameter bereits den vollen Pfad enthalten. Ein fehlendes '\'
+	  zwischen Pfad und Programmname wird ggf. vom AES erg„nzt.
+    2. šbergibt man fr sh_rlpcmd und sh_wlpdir je einen Leerstring, ist das
+	  Atari- Desktop wieder installiert.
+
+  Folgendes sollte ein installiertes alternatives Desktop beachten:
+
+    1. Es wird nicht unbedingt im eigenen Verzeichnis gestartet und sollte
+	  daher entweder alle Dateien ber shel_find() holen oder den eigenen
+	  Pfad ber shel_read() holen und diesen zum aktuellen machen.
+    2. Zum Programmaufruf mu es ein shel_write() machen und sich dann
+	  mit Rckgabewert 0 beenden (exit(0) bzw. Pterm0()).
+    3. Der letzte Fehlercode eines ausgefhrten Programms wird in der AES-
+	  Kommandozeile bergeben, die man mit shel_read() abrufen kann. Da die
+	  Kommandozeile mit zwei Nullbytes beginnt, wird sie von DOS nicht
+	  bergeben, in der Basepage liegt daher keine Kommandozeile.
+	  Die AES- Kommandozeile sieht folgendermaen aus:
+
+	   int	fill;			/* Ein Nullwort */
+	   long	magic;			/* ist 'SHEL' */
+	   int	isfirst;			/* unter KAOS immer 0 */
+	   long	err; 			/* letzter Fehlercode */
+	   int	was_alert;		/* Fehler ist bereits angezeigt */
+
+    4. Gibt die Shell einen negativen Fehlercode zurck oder kann die
+	  Shell nicht gefunden oder geladen werden, wird das erste Byte des
+	  Pfadpuffers des AES gel”scht und DESKTOP damit wieder als Shell
+	  installiert.
+    5. Will man AES etwa zum Wechsel der Aufl”sung neu initialisieren, mu
+	  man erst den XBIOS- Aufruf zum Wechsel der Aufl”sung machen und
+	  dann einen Aufruf
+		shel_write(0,0,2,"","")
+	  machen. Das ist kompatibel zu GEM 2.x (Parameter isover = 2).
+	  Wenn sich das laufende Programm beendet, wird, anstatt da das DESKTOP
+	  erscheint, das AES neu initialisiert.
+	  Unter TOS 1.0/1.2 gengte doex=0, unter TOS 1.4 ist die Neuinitiali-
+	  sierung des AES allein dem Desktop vorbehalten.
+	  Will das alternative Desktop die Aufl”sung „ndern, ist folgendes
+	  m”glich:
+			shel_write(0,0,2,"DEVICE=n","")
+	  <n> ist eine ein- oder zweistellige Dezimalzahl und gibt den VDI-
+	  Treiber an, der beim Neustart ge”ffnet werden soll.
+	  KAOSDESK arbeitet mit diesem Mechanismus, dabei wird nach Wechsel der
+	  Aufl”sung das Autostart- Programm (also KAOSDESK) sofort wieder
+	  gestartet.
+
+- Es ist jetzt m”glich, ACCs mit Menleisten zu benutzen. Als Beispiel mag
+  DIARY.ACC auf der Diskette von GEM 2.2 dienen. Da Atari am Menmanager
+  selber ziemlich herumgepatcht hat, kam es immer wieder vor, da das AES
+  klemmte. Dieses Problem sollte aber, wenn es noch immer auftritt, harmlos
+  sein. Mehrere Desktop- Hintergrundb„ume sind leider nicht m”glich, da in
+  der APPL- Struktur nur ein Zeiger noch frei war. Schon so habe ich zwei
+  Tage herumprobiert.
+  Wenn man etwa mit KAOSDESK,CONTROL,DIARY herumprobiert, so f„llt auf, da
+  das Men manchmal flackert. Verantwortlich ist dafr folgender Algorithmus:
+  - Wird ein Men abgeschaltet, so wird zun„chst geprft, ob der Besitzer
+    des obersten Fensters ein Men angemeldet hat. Wenn nicht, wird das
+    unterste Fenster (der Desktophintergrund) untersucht.
+  - Wird das oberste Fenster umgeschaltet und geh”rt das nun oberste Fenster
+    einer anderen Applikation als das bisherige und hat die Applikation des
+    nun obersten Fensters ein Men angemeldet, so wird dieses angezeigt.
+  DIARY geht nun so vor, da jedesmal, wenn etwa der Kalender getoppt wird,
+  hintereinander erst das Men von Hand ab- und dann wieder angeschaltet
+  wird. Beim Abschalten schaltet KAOS automatisch das Men von KAOSDESK ein,
+  das jedoch beim Wiederanschalten wieder bergemalt wird.
+  Der Effekt ist nicht so nett wie unter GEM 2.x, da der Name der aktuellen
+  Applikation nicht angezeigt wird, aber vielleicht kann sich mal jemand den
+  Spa machen und noch einmal ein ACC mit Menleiste schreiben.
+  Bei den Aufrufen menu_ienable(), menu_icheck() und menu_tnormal() wird
+  das Objekt nur dann neu gezeichnet, wenn der angegebene Objektbaum mit
+  dem aktuellen Menbaum identisch ist. Damit k”nnen gerade nicht aktive
+  Applikationen nicht die aktuelle Menleiste zerst”ren.
+
+  Folgende Eigenschaften des AES fehlen noch zur vollen GEM 2.x-
+  Kompatibilit„t:
+
+  1)  GEM 2.x liefert bei scrp_read() mit, welche Extensions gefunden wurden
+  2)  Die Versionsnummer in global[0] ist $2xx
+  3)  Wenn ein Fenster nach oben gebracht werden soll, bekommt das bisher
+	 oberste Fenster unter GEM 2.x eine Message WM_UNTOPPED.
+
+  Alle diese Punkte fhrten, wenn man sie einbaute, zur Inkompatibilit„t
+  zum Atari- GEM.
+  Folgende Eigenschaften des AES wurden in KAOS nur notdrftig eingebaut:
+
+  1)  GEM 2.2 merkt sich beim shel_write() bereits den aktuellen Pfad, dies
+	 tut KAOS aber jetzt auch.
+	 Ein Programm wird unter GEM 2.2 aber in diesem Pfad gestartet.
+  2)  GEM 2.x kann bei fsel_input() mehrere, durch Komma getrennte
+	 Dateimuster verarbeiten. KAOS nimmt dann "*.*" an.
+  3)  GEM 2.x hat bei wind_get() und wind_set() die Unterfunktion
+	 WF_TATTRB, mit der man mehrere Fenster aktiv machen kann.
+	 Dieser Aufruf wird unter KAOS einfach ignoriert.
+  4)  GEM 2.x hat bei shel_write() im Parameter "isover" die M”glichkeit,
+	 ein Programm sofort (isover=0) oder nach Beenden von AES (isover=2)
+	 zu starten, wobei die erste Funktion auf dem ABC-GEM zum Absturz
+	 fhrt und daher in KAOS nicht integriert zu werden braucht.
+	 Der Absturz rhrt wahrscheinlich von der Doppelbelegung des Super-
+	 visorstacks her.
+- Bei graf_rubberbox(), graf_dragbox() und graf_slidebox() wird statt
+  wind_update(XXX_UPDATE) jetzt wind_update(XXX_MCTRL) aufgerufen. Damit
+  wird sichergestellt, da die aufrufende Applikation berhaupt die Maus-
+  kontrolle bekommt und die Funktion laufen und dann auch abgebrochen werden
+  kann.
+- Bei graf_watchbox() wird jetzt wind_update(XXX_MCTRL) aufgerufen. Bisher
+  wurde das Anw„hlen von Mens usw. nicht verhindert.
+- Bei der Bearbeitung der Mausklicks in der Menleiste, ber einem
+  Fensterrand oder einem nicht aktiven Fenster wird die Mauskontrolle nicht
+  mehr an den Screenmanager bergeben, sondern nur dieser Mausklick an den
+  Screenmanager bermittelt.
+  Damit bleibt etwa das System nicht mehr h„ngen, wenn man im DESKTOP ein
+  Gummiband aufzieht und dieses mit einem Doppelklick ber einem nicht
+  aktiven Fenster beendet oder Icons mit Doppelklick in die Menleiste
+  zieht.
+- Ein Fehler wurde beseitigt, der das Umsetzen der Maus- und Tastaturkon-
+  trolle trotz BEG_MCTRL m”glich machte. Ob der Fehler je aufgetreten ist,
+  wei ich allerdings nicht.
+- An einigen kritischen Stellen beim Zugriff auf den Interrupt- Ringpuffer
+  des AES wurde die Prozessorpriorit„t hochgesetzt, um Inkonsistenzen zu
+  vermeiden. Bisher kam es, wenn auch selten, ab und zu vor, da AES beim
+  sehr schnellen Tippen in Wordplus oder Tempus abstrzte. Ob damit die
+  Ursache fr dieses Verhalten jetzt beseitigt ist, war jedoch bisher leider
+  nicht festzustellen.
+- rsrc_obfix() war als "void" geschrieben, jedoch als "int" aufgerufen
+  worden. KAOS 1.4 liefert jetzt explizit immer 1 fr "kein Fehler".
+- Die Applikationsnummer der Applikation, der die Menzeile geh”rt, war als
+  "long" gesetzt worden, jedoch als "int" abgefragt worden und war daher
+  immer 0 (= Hauptapplikation). Obwohl dies ein harmloser Fehler war, wurde
+  er dennoch korrigiert.
+- Die Meldung AC_OPEN enth„lt die menu_id jetzt sowohl in msgbuf[4] als auch
+  in msgbuf[3], um sowohl mit TOS als auch mit GEM 2.x kompatibel zu sein.
+- Die AES- Funktion evnt_dclicks() erwartet als zweiten Parameter einen Wert
+  von 0 bis 4. Da einige Programme (CPANEL) dazu neigen, ungltige Werte
+  anzugeben, wird jetzt eine Bereichsberprfung vorgenommen und im Fall
+  eines falschen neuen Wertes der aktuelle zurckgeliefert.
+  Der Effekt eines falschen Wertes war, da das System nicht mehr auf
+  Mausklicks zu reagieren schien und erst dann den Mausklick verarbeitete,
+  wenn man die Maus nach dem Klick kurz bewegte. Nur durch Rckkehr ins
+  Atari- Desktop konnte das AES beruhigt werden; daher trat der Fehler auch
+  besonders dann auf, wenn man etwa KAOSDESK automatisch anstelle des DESKTOP
+  startete.
+- Beim Anklicken der Scrollpfeile von Fenstern werden diese jetzt invertiert;
+  sie bleiben es solange, bis die Maustaste wieder losgelassen wird.
+  Programme wie NeoDesk oder Tempus lassen sich jedoch davon wenig
+  beeindrucken.
+  Theoretisch k”nnte diese Vorgehensweise Schwierigkeiten machen, wenn ein
+  Programm auf das Anklicken eines Scrollpfeils mit einer grafischen
+  Operation reagiert, die diesen berdeckt, wenn es also etwa eine Dialogbox
+  anzeigt. Das Ergebnis w„re aber nur ein leicht gest”rter Bildschirmaufbau
+  mit einem Scrollpfeil inmitten einer Dialogbox.
+- neue appl_find()- Unterfunktion:
+   s[0] = '?'; s[1] = '\0'; s[2] = id;
+   err = appl_find(s);
+	liefert (err == 1) in <s> den Namen der Applikation mit der ap_id <id>,
+	andernfalls (err == 0) existiert diese ap_id nicht.
+- Bei appl_write() mit ungltiger Ziel- ID wird das System angehalten.
+- Das Deinstallieren des Trap #2 wurde fr das XBRA- Verfahren korrigiert.
+  AES ist jetzt in der Lage, sich aus einer XBRA- Kette wieder korrekt
+  auszuklinken.
+- Bei appl_tplay() mit Skalierungsfaktor 0 wird nicht verz”gert. Bisher wurde
+  durch 0 geteilt, was einen Systemabsturz provozierte.
+  Die langsamste Wiedergabe erh„lt man mit scale=1, die zweitlangsamste mit
+  scale=2 usw. Bei scale=0 erh„lt man keine Verz”gerung, also die schnellste
+  Wiedergabe.
+- Bei appl_trecord() sind jetzt mehr als 32k Daten m”glich, und zwar genau
+  32767 Eintr„ge, d.h. 262136 Bytes.
+- Bei einem appl_exit spendiert KAOS jetzt den Accessories 20 statt bisher
+  nur einem AES- Aufruf/e, bis die Hauptapplikation wieder aktiv wird.
+  Bisher strzte das Kontrollfeld immer ab, wenn sein Fenster beim Beenden
+  der Hauptapplikation ge”ffnet war, jetzt wird das Kontrollfeldfenster
+  rechtzeitig geschlossen. Schon GEM 2.2 l„t hier 3 Aufrufe zu, die aber
+  im Fall des Kontrollfelds nicht ausreichten.
+- AES bekommt in der Bootphase jetzt einen Stack von 674 statt 130 Bytes,
+  was ausreichen sollte. Bisher wurden sporadisch wichtige Variablen
+  berschrieben.
+- Beim Starten von AES werden einige Variablen gel”scht, die DR bisher
+  vergessen hatte. Bisher funktionierte AES nur, weil zuf„llig dort immer
+  Nullen standen. Dazu geh”rt ein offensichtlicher Programmierfehler im
+  DESKTOP, der bewirkte, da beim Kopieren von Dateiicons der Z„hler fr
+  die Pfadtiefe nicht initialisiert wurde. Stand dort vorher etwa eine
+  zu groe Zahl, erschien der Alert "Pfad zu tief".
+- Ein Fehler bei der Neuinitialisierung der Timerfunktionen nach einem
+  Neustart des AES (Aufl”sungswechsel) wurde behoben. Es ist denkbar, da
+  bisher Fehler bei evnt_timer() auftreten konnten.
+- Ein schwerwiegender Fehler beim Laden von Accessories wurde behoben. Da
+  ab dem zweiten geladenen ACC fr die neuen Applikationstrukturen Speicher
+  alloziert werden mu, kam es vor, wenn das erste ACC das Fastload- Bit
+  gesetzt hatte, da der allozierte Speicher nicht gel”scht war und daher
+  die Struktur nicht initialisiert war. Diese Fehler traten insbesondere
+  dann auf, wenn KAOSCONF erstes ACC war, und zwar bei TurboST und CONTROL.
+- In vier F„llen, in denen bisher ein unkontrollierter Absturz im AES
+  verursacht wurde, wird das System jetzt mit der Meldung angehalten:
+
+	*** FATALER FEHLER IM AES:
+	*** SYSTEM ANGEHALTEN ***
+
+  Meistens ist dann fehlender Speicher die Ursache, etwa wenn DESKTOP nicht
+  gengend Speicher hat, um seine Resourcedateien ins RAM zu kopieren.
+- Der in den "STE TOS Release Notes" auf S.7 beschriebene Fehler wurde
+  korrigiert.
+  Bisher wurde jeweils NACH jedem Durchlauf des Original- Desktop die
+  Aufl”sung per Xbios ermittelt und bei weder 2 (Hi) noch 4 (Grobildschirm)
+  die Box fr den Hintergrund von Muster 4 auf 7 (IP_SOLID) ge„ndert. Eine
+  Rck„nderung war dabei nicht m”glich.
+  Jetzt wird bei der Initialisierung der Fenster (auch ber wind_new()) die
+  Anzahl der Planes ermittelt und bei 0 oder 1 Plane das Muster auf 4, sonst
+  auf 7 gestellt.
+- Die Funktion der Bitvektoren in global[13] (bvdisk) und global[14] (bvhard)
+  (kann man ber appl_bvset() „ndern) wurde korrigiert.
+  Das Desktop behandelt jetzt auch bvhard (s.u.).
+  Wurde eine Applikation per Autostart gestartet, war das Desktop noch nicht
+  gelaufen, also bvdisk und bvhard undefiniert, i.a. beide 0. Jetzt wird
+  defaultm„ig der von bios Drvmap gelieferte Bitvektor, bzw. die untersten
+  16 Bits, nach bvdisk bertragen (die Bits genau andersherum, also Bit 15
+  fr A: usw.), fr bvhard werden alle Laufwerke von bvdisk auer A: und
+  B: angemeldet, es gilt hier also immer: bvhard == bvdisk & 0x3fff.
+- Der Zeiger auf die Workstationtabelle des NVDI ist jedoch zug„nglich. Hier
+  die Struktur, auf die "magic" des TOS- Headers zeigt:
+
+	  DC.L	 $87654321			 ; AES- magic
+	  DC.L	 $0000a84e			 ; Ende der  AES- Variablen
+	  DC.L	 aes_start			 ; Start von AES/DESKTOP
+
+	  DC.L	 aes_bootdrv			 ; char *, hierhin kommt DESKTOP.INF
+	  DC.L	 vdi_device			 ; int, aktueller Ger„tetreiber
+	  DC.L	 nvdi_workstation		 ; void *, NVDI- Workstationpointer
+
+- Wenn die Workstation ge”ffnet wurde, wird der tats„chliche Ger„tetreiber
+  jetzt bei Verwendung von NVDI korrekt nach vdi_device bertragen.
+  Beispielsweise kann man Device 1 ”ffnen (aktuelle Aufl”sung) und erh„lt
+  dann Device 4 (hohe Aufl”sung) oder ”ffnet Device 4 (hohe Aufl”sung)
+  und erh„lt Device 2 (geringe Aufl”sung), da die hohe Aufl”sung nicht
+  dargestellt werden kann. Unter NVDI werden jetzt auch zuknftige
+  Aufl”sungen korrekt behandelt werden.
+  Merke: KAOS+NVDI+KAOSDESK sind zusammen zukunftssicher, aber bei
+	    KAOS+NVDI+DESKTOP oder KAOS+KAOSDESK geht es schon nicht mehr.
+- Das VDI- Device des AES ist per graf_handle() in intout[5] zug„nglich.
+  Aus Kompatibilit„tsgrnden wird nachgefragt, ob das aufrufende Programm in
+  contrl[2], also der L„nge des intout[], mehr als 5 ints angefordert hat.
+  Nur wenn ja, wird der zus„tzliche Wert bergeben.
+
+
+
+V) Ver„nderungen im DESKTOP
+===========================
+
+- Im Atari- Desktop wird wie im TOS 1.6 bei der Funktion "Datei anzeigen" die
+  linke Maustaste wie die Leertaste und die rechte wie ^C behandelt.
+- TOS "erlaubt" keine Parameter mehr, sondern "nimmt" sie.
+- Das Desktop erzeugt einen IBMmigeren Bootsektor mit $eb3490 im Beginn des
+  Bootsektors (fr Kenner: ein kurzer Branch mit Offset $34 und ein nop).
+- Fr den "Smart Redraw" wurde die Routine zur Vergr”erung von Desktop-
+  Fenstern korrigiert, so da DESKTOP jetzt problemlos mit dem "Smart Redraw"
+  zurechtkommt.
+- Als Fenstertyp wird nicht mehr -1, sondern $fff bergeben. Dies ist mit
+  Erweiterungen der Fensterattributliste kompatibel.
+- Die Box "Info anzeigen" enth„lt jetzt auch die KAOS- Versionsnummer:
+
+   KAOS 1.4.0 = TOS1.4, KAOS- Unterversion 0 (mit berarbeitetem GEMDOS)
+   KAOS 1.4.1 = TOS1.4, KAOS- Unterversion 1 (mit berarbeitetem AES)
+   KAOS 1.4.2 = TOS1.4, KAOS- Unterversion 2 (mit berarbeitetem BIOS)
+
+  Genauere Information ber die KAOS- Version: KAOSCONF starten, unten
+  links steht das Erstelldatum.
+- Die Box "Info anzeigen" erzeugt im Farbmodus nicht mehr das Farbenspiel,
+  von dem TOS 1.4 seinen Namen "Rainbow TOS" hat, da ich das Kilobyte
+  fr die Line-F-Expansion ben”tigt habe.
+- Die Datei DESKTOP.RSC wird nicht nur einmal vom ROM ins RAM kopiert und
+  bleibt dann dort, sondern wird bei jedem Aufruf von DESKTOP ins RAM kopiert
+  und nach dessen Beendigung wieder freigegeben.
+- Die Default- DESKTOP.INF Datei wird nicht mehr vom ROM ins RAM und dann bei
+  Bedarf in den shel_put/get - Puffer kopiert, sondern direkt vom ROM aus.
+- Der Stack zum Zeichnen von benutzerdefinierten Objekten wird nicht mehr
+  nur einmal alloziert, sondern jedesmal beim Start des Desktop alloziert
+  und vor einem Programmstart wieder freigegeben.
+  Zusammen mit den vorherigen nderungen, dem Verzicht auf LineFs und der
+  Korrektur der Environment- L„nge hat man unter KAOS 1.4.1 etwa 13kB mehr
+  Speicher als unter TOS 1.4 zur Verfgung.
+- DESKTOP.RSC und GEM.RSC wurden berarbeitet und eingedeutscht. Unter
+  anderem werden jetzt auch die Zeichen ²,Á in der Maske fr Grobuchstaben
+  zugelassen, Atari hatte das wohl vergessen.
+- Das Desktop hat jetzt ein zus„tzliches Icon mit Iconnummer 5, das ein
+  Diskettenlaufwerk darstellt. Defaultm„ig wird eine Harddisk angezeigt.
+  Um das zus„tzliche Icon zu benutzen, ist etwa
+	#M 00 00 05 FF A FLOPPY@ @ 
+  in die DESKTOP.INF zu schreiben, wobei 05 die Iconnummer ist.
+  Ein solches DESKTOP.INF erzeugt auf dem normalen TOS leider unangenehme
+  Effekte.
+- Die Funktion der Bitvektoren in global[13] (bvdisk) und global[14] (bvhard)
+  wurde gestestet und korrigiert.
+  Das Desktop behandelte bisher lediglich bvdisk, und zwar wurden alle
+  Laufwerke, die auf dem Desktop lagen, dort eingetragen, bvhard war also
+  immer 0. Jetzt untersucht das Desktop auch, ob das Disklaufwerk die
+  Iconnummer 0 (Harddisk) hat. Wenn ja, wird in bvhard das entsprechende Bit
+  ebenfalls gesetzt.
+- Das Men des Atari- Desktop wurde den Konventionen angepat.
+- Ein Fehler bei der Pfadtiefenbestimmung beim Kopieren einzelner Dateien
+  wurde behoben. Bisher konnte es vorkommen, da die Meldung "Indexpfad zu
+  tief" kam, wenn eine frhere Kopieraktion einen zu tiefen Pfad behandelt
+  hatte.
+
+
+
+VI) Hilfsprogramme
+==================
+
+1)	KAOSCONF
+
+Um die in II) beschriebenen Einstellungen des Konfigurationslangworts
+vornehmen zu k”nnen, existieren die Hilfprogramme KAOSCONF.ACC und
+KAOSCONF.TOS. W„hrend letzteres immer dann aufzurufen ist, wenn wegen
+irgendwelcher Grnde gerade kein GEM- Programm laufen darf, ist KAOSCONF.ACC
+universell und hat drei Funktionen:
+
+- Als PRG. Man kann das Programm aufrufen und per Hand die Einstellungen
+  „ndern. Mit "Sichern" kann man die Konfiguration fr die Funktion als
+  ACC oder AUTO- Programm abspeichern.
+- Als PRG im AUTO- Ordner. Der gesicherte Status wird gesetzt und KAOSCONF
+  sofort wieder beendet, es wird also kein Speicher belegt. Das "jungfr„u-
+  liche" KAOSCONF, das noch nicht konfiguriert wurde, „ndert den Status in
+  der Bootphase nicht.
+- Als ACC. Bei der Initialisierung wird ggf. der gesicherte Status
+  gesetzt, anschlieend ist das Programm in jeder Applikation aufrufbar.
+
+KAOSCONF.ACC ben”tigt keine Konfigurationsdatei, denn	dazu wird die Datei
+KAOSCONF.ACC bzw. KAOSCONF.PRG mit Hilfe von shel_find gesucht und der neue
+Wert direkt dahin gespeichert.
+
+2) KAOSPTCH
+
+Einige der Konfigurationsschalter kann man bereits in der KAOS- Datei selbst
+„ndern, ohne ein KAOSCONF zu benutzen. So kann man etwa die Grow-/Shrinkboxen
+standardm„ig v”llig abschalten.
+Wenn KAOSPTCH gestartet wird, mu sich KAOS142.ROM im aktuellen Verzeichnis
+befinden. Die Schalter werden einzeln angezeigt und k”nnen dann ge„ndert
+werden. Wenn man etwas ge„ndert hat, wird die neue Konfiguration direkt in
+die Datei KAOS142.ROM bernommen.
+
+3) DESK2
+
+Mit Hilfe dieses Programms l„t sich das Desktop von GEM 2.2 unter KAOS 1.4
+starten. Dazu startet man DESK2.PRG vom Atari- Desktop aus; Es mu sich im
+selben Ordner befinden wie DESKTOP.APP. Um das Atari- Desktop wieder zu
+aktivieren, mu DESK2 nur noch einmal gestartet werden.
+
+
+
+AI) Anhang: Funktionsweise der Modi von Pexec
+=============================================
+
+Mit KAOS 1.4 mte es erstmalig m”glich sein, die Pexec- Modi alle zu nutzen,
+da sie endlich alle problemlos funktionieren mten. Da bisher die
+Informationen ber die Modi auer 0 sp„rlich waren, hier nun die genaue
+Beschreibung aller Modi. Man beachte, da man unter KAOS 1.4 als Environment
+einen -1L- Pointer bergeben kann, falls der neue Proze kein Environment
+ben”tigt oder bekommen soll (etwa bei Ger„tetreibern, die mit Modus 3 geladen
+werden); dies wrde aber unter TOS oder KAOS 1.2 zum Absturz fhren.
+Die Initialisierung der Standarddateien usw. wurde auch deshalb NACH dem
+Laden und Relozieren gesetzt, da dies die Fehlerbehandlung vereinfacht. Dann
+mssen n„mlich die Standarddateien und -pfade nicht wieder gel”scht werden,
+wenn beim Laden oder Relozieren ein Fehler auftrat. Bisher war es nicht
+m”glich, den Proze wieder ordentlich aufzur„umen (genaugenommen funktio-
+nierte das Aufr„umen nur bei Modus 0 und Fehler EPLFMT v”llig korrekt).
+Aus Kompatibilit„tsgrnden werden jedoch schon beim Anlegen der Basepage das
+Defaultlaufwerk und die Standarddateien eingesetzt (bei letzteren allerdings
+nicht die tats„chlichen, sondern die Defaultger„te). Da diese bei jedem
+Programmstart mit Modus 4 oder 6 wieder berschrieben werden, gibt es da
+keine Probleme; umgekehrt ist aber die Basepage fr ACCs wenigstens teil-
+initialisiert, die ja nur geladen und berhaupt nicht legal gestartet werden.
+
+
+Vorgehensweise unter KAOS 1.4:
+------------------------------
+
+Modus 0 (load+exec):
+   Prfen, ob Datei existiert
+   setjmp fr Fehlerbehandlung
+   Speicher reservieren, geh”rt neuem Proze
+   Basepage/Environment/Kommandozeile
+   Programm laden und relozieren, evtl. Fehlerbehandlung
+   Standarddateien, -laufwerk und -pfade setzen
+   Programm starten
+
+Modus 3 (load):
+   Prfen, ob Datei existiert
+   setjmp fr Fehlerbehandlung
+   Speicher reservieren, geh”rt aktuellem Proze
+   Basepage/Environment/Kommandozeile
+   Programm laden und relozieren, evtl. Fehlerbehandlung
+   Basepage zurckgeben
+
+Modus 4 (exec):
+   Standarddateien, -laufwerk und -pfade setzen
+   Programm starten
+
+Modus 5 (basep):
+   Speicher reservieren, geh”rt aktuellem Proze
+   Basepage/Environment/Kommandozeile
+   Basepage zurckgeben
+
+Modus 6 (exec+free):
+   Standarddateien, -laufwerk und -pfade setzen
+   Basepage und Environment neuem Proze zuordnen
+   Programm starten
+
+
+Vorgehensweise bisher:
+----------------------
+
+Modus 0 (load+exec):
+   Prfen, ob Datei existiert
+   setjmp fr Fehlerbehandlung
+   Speicher reservieren, geh”rt neuem Proze
+   Basepage/Environment/Kommandozeile
+   Standarddateien, -laufwerk und -pfade setzen
+   Programm laden und relozieren, evtl. Fehlerbehandlung
+   Programm starten
+
+Modus 3 (load):
+   Prfen, ob Datei existiert
+   setjmp fr Fehlerbehandlung
+   Speicher reservieren, geh”rt aktuellem Proze
+   Basepage/Environment/Kommandozeile
+   Standarddateien, -laufwerk und -pfade setzen
+   Programm laden und relozieren, evtl. Fehlerbehandlung
+   Basepage zurckgeben
+
+Modus 4 (exec):
+   setjmp fr Fehlerbehandlung
+   Programm starten
+
+Modus 5 (basep):
+   setjmp fr Fehlerbehandlung
+   Speicher reservieren, geh”rt aktuellem Proze
+   Basepage/Environment/Kommandozeile
+   Standarddateien, -laufwerk und -pfade setzen
+   Basepage zurckgeben
+
+Modus 6 (exec and free):
+   setjmp fr Fehlerbehandlung
+   Basepage und Environment neuem Proze zuordnen
+   Programm starten
+
+
+einige Beispielanwendungen:
+---------------------------
+
+1. Verwendungszweck: Programm von Disk laden, ausfhren und dann
+   aus dem Speicher entfernen:
+
+   Pexec mit Modus 0 (Laden und Starten)
+
+   oder:
+
+   Pexec mit Modus 3 (laden)
+   Pexec mit Modus 6 (starten, dann l”schen)
+
+2. Verwendungszweck: Programm aus dem ROM ausfhren und dann aus dem
+   Speicher wieder entfernen:
+
+   Pexec mit Modus 5 (Speicher reservieren, Basepage erzeugen)
+   p_tbase,p_tlen usw. von Hand einsetzen (zeigt ggf. aufs ROM)
+   Pexec mit Modus 6 (Starten und nach Pterm l”schen)
+
+3. dito, aber ggf. mehrmals starten:
+   (Beispiel: AUTO- Proze, AES/Desktop vom BIOS aus)
+
+   Pexec mit Modus 5 (Speicher reservieren, Basepage erzeugen)
+   p_tbase,p_tlen usw. von Hand einsetzen (zeigt ggf. aufs ROM)
+   Pexec mit Modus 4 (Starten)
+   Pterm
+   Pexec mit Modus 4 (Starten)
+   ...
+   Pexec mit Modus 6 (Starten und dann l”schen
+
+4. von Disk laden und ggf. mehrmals starten:
+
+   Pexec mit Modus 3 (laden)
+   Pexec mit Modus 4 (Starten)
+   ...
+
+
+
+AII) Anhang: Der GEMDOS-Zeileneditor
+====================================
+
+Es wurde ein v”llig neuer Zeileneditor integriert, der die M”glichkeiten des
+TOS- internen VT52- Emulators nutzt. Will man einen anderen Emulator instal-
+lieren, mssen die Cursor- Positionen und Bereichsgrenzen des eingebauten
+Emulators genutzt werden, da Cconrs() diese ben”tigt (greift ber negative
+LineA- Variablen zu).
+Der Zeileneditor schaltet immer mit "xbios Cursconf" den Cursor ein.
+Funktionstasten k”nnen ber das Environment belegt werden. Die Eintr„ge
+mssen "F1=..." bis "F0=..." lauten. Der Zeileneditor holt die Funktions-
+tastenbelegung aus dem Environment des aktuellen Prozesses. Belegt man daher
+z.B. unter einem Kommandoprozessor die Funktionstasten, (z.B. mit SET
+"F1=edit "), so sind diese in jedem von dort aufgerufenen Programm gleicher-
+maen belegt.
+Damit der Editor auch fr mehr als eine Zeile funktioniert, mu WRAP ON ein-
+geschaltet werden (ESC+v).
+Der UNDO- Puffer wird nicht angetastet, wenn nichts eingegeben wurde (also
+nur CR bet„tigt wurde). Der UNDO- Puffer hat Platz fr insgesamt 319 Zeichen,
+die dynamisch fr beliebig viele Eingaben bentutzt werden. Je nach L„nge
+der Eingaben kann daher in der Praxis etwa 10-15 Zeilen zurckholen. Die
+letzte („lteste) Zeile kann dabei unvollst„ndig sein.
+Bei der folgenden Tabelle sind der Vollst„ndigkeit halber die Tasten sowohl
+fr die Atari- als auch fr die MF-II- Tastatur aufgefhrt, letztere besitzt
+eine "Ende"- Taste, die auf der Originaltastatur fehlt. Die damit ausgefhrte
+Funktion kann aber auch mit einer Cursortaste ausgefhrt werden.
+
+
+	MF-II:	Atari:	Funktion:
+	------	------	---------
+
+		Return		schliet die Eingabe ab. Setzt den UNDO- Puffer
+		Enter		wie CR, l„t aber UNDO- Puffer unver„ndert
+		left			Cursor eine Position nach links
+		right		Cursor eine Position nach rechts
+		SH-left 		Cursor auf den Anfang der Eingabezeile
+		SH-right 		Cursor auf das Ende der Eingabezeile
+	Pos1 	Home 	Wie SH-left
+	Ende 			Wie SH-right
+		Tab			Anfang/Ende der Eingabezeile
+		up			letzte Eingabe(n) wiederholen
+		down			letzte Eingabe(n) zurckscrollen
+	SH-Pos1	SH-Clr	Eingabe l”schen
+	Entf 	Del		Zeichen unter Cursor l”schen
+	   Backspace		Zeichen vor Cursor l”schen und Cursor nach links
+	Pause	Undo 	letzte Eingabe holen (max. 319 Zeichen Puffer)
+	F1..F10			Funktionstastenwerte aus dem Environment
+	Einfg	Insert	Einfgemodus
+	SH-Einfg	SH-Insert šberschreibmodus
+
+Man beachte, da ich versucht habe, dieselben Tasten sowohl im DOS- Zeilen-
+editor wie auch im AES fr die Behandlung von Editierfeldern zu verwenden
+(Insbesondere die Tasten Einfg,SH-Einfg,Pos1,Ende,SH-right,SH-left).
+
+
+
+AIII) Anhang: Die GEMDOS- Dateiattribute
+========================================
+
+Hier die Regeln der neuen Funktion, die prft, ob das Attribut einer
+gefundenen Datei mit dem Suchattribut von Fsfirst() zusammenpat, d.h.
+ob diese Datei dem Benutzer angezeigt wird:
+
+	1) ReadOnly und Archive werden bei dem Vergleich NIEMALS
+	   bercksichtigt.
+	2) Ist das Suchattribut 8, werden genau alle Dateien mit gesetztem
+	   Volume- Bit gefunden (auch versteckte usw.).
+	3) Ist das Suchattribut nicht 8, werden normale Dateien IMMER
+	   gefunden.
+	4) Ist das Suchattribut nicht 8, werden Ordner nur bei gesetztem
+	   Bit 4 gefunden.
+	5) Ist das Suchattribut nicht 8, werden Volumes nur bei gesetztem
+	   Bit 3 gefunden.
+	6) Ist das Suchattribut nicht 8, werden versteckte oder System-
+	   dateien (auch Ordner oder Volumes) NUR gefunden, wenn das
+	   entsprechende Bit im Suchattribut gesetzt ist.
+
+	Beispiele (die Bits ReadOnly und Archive sind ohne Belang):
+
+	   8    alle Dateien mit gesetztem Bit 3 (Volumes)
+	   0    nur normale Dateien
+	   2    normale und versteckte Dateien
+	   6    normale, versteckte und System- Dateien
+	 $10    normale Dateien, normale Ordner
+	 $12    normale und versteckte Dateien und Ordner
+	 $16    normale und versteckte und System- Dateien und -Ordner
+	  $a    normale und versteckte Dateien und Volumes
+	  $e    normale, versteckte und System- Dateien und -Volumes
+	 $1e    alles
+
+Groen Vorteil bietet die Routine eigentlich nur bei IBM- Disketten, auf
+denen Dateien h„ufig die Bits Hidden und ReadOnly oder Volume und Archive
+gesetzt haben, und fr eigene Experimente.
+Statt die Attributvergleichsfunktion zu korrigieren (das Anzeigen einer
+versteckten Datei, nur weil sie schreibgeschtzt ist, IST EIN FEHLER), hat
+Atari kurzerhand einige "unsinnige" (oder eher unbequeme ?) Kombinationen von
+Attributen verboten. Fattrib() und Fcreate() wachen jetzt darber, da einige
+Kombinationen nicht mehr auftreten. Auerdem enthalten DESKTOP und
+fsel_input() Sonderabfragen, um solche Kombinationen auf h”herer Ebene
+abzufangen.
+Da dies in meinen Augen alles Krcken sind, bin ich den radikalen Weg
+gegangen und habe die Attributbehandlung so implementiert, wie ich sie mir
+gewnscht habe. KAOS 1.4 untersttzt also schreibgeschtzte und versteckte
+Disknamen usw. Da man diese Attributkombinationen aber gar nicht erzeugen
+kann, ist der Nutzen eher fraglich. Ebenso sind zwar versteckte Ordner recht
+lustig, aber auf legale Methode sind sie nicht zu erzeugen. Vielleicht
+schreibe ich noch einmal ein illegales Programm dafr.
+
+
+
+AIV) Anhang: Benchmarks
+=======================
+
+Die folgenden Benchmarks stammen noch von KAOS 1.4.1 und haben sich inzwi-
+schen teilweise stark verbessert:
+
+HDBENCH (Festplattentest), jew. 5 Durchl„ufe und arith. Mittel:
+
+						KAOS 1.4		TOS 1.4		Verbesserung
+						------------------------------------------
+Erstellen und Schreiben: 	21.53  s		21.65  s		0.56 %
+Lesen			   : 	 2.214 s		 2.374 s		7.23 %
+L”schen			   : 	 2.82  s		 2.844 s		0.85 %
+
+
+Eine 50kB- Datei anzeigen (TYPE) bzw. zeichenweise lesen:
+
+						KAOS 1.4		TOS 1.4		Verbesserung
+						------------------------------------------
+Anzeigen	mit Turbo ST 1.6:	26.0   s		39.4   s	    51.54 %
+Anzeigen ohne Turbo ST : 	45.7   s		58.3   s	    27.57 %
+Byteweise lesen	   : 	35.3   s		49.7   s	    40.79 %
+
+Zum Vergleich: KAOS 1.2 ben”tigte 33.0 s fr den ersten und 44.4 s fr den
+dritten Test, ist also immer noch schneller als TOS 1.4.
+
+Aufbau von Dialogboxen (QINDEX, KAOS 1.4 vom 18.7.90):
+
+						KAOS 1.4		TOS 1.4		Verbesserung
+						------------------------------------------
+normal:					122 %		100 %		22 %
+normal, Blitter:						127 %
+mit TurboST 1.8:			434 %		284 %		53 %
+mit TurboST 1.8, ohne Boxen:	812 %		497 %		63 %
+mit NVDI vom 15.7.90:		500 %		268 %		87 %
+mit NVDI, ohne Boxen:		826 %		468 %		76 %
+
+benutzt man also Turbo ST oder ein effektives VDI, ist KAOS in diesem
+Test schneller als der Blitter, der erst bei groen Fl„chen effektiv
+arbeitet. Der Gewinn von KAOS bei einem Rechner ohne Blitter gegenber TOS
+liegt bei mindestens 53%, wenn man das neueste Turbo ST oder ein neues VDI
+verwendet.
+
+
+
+AV) Anhang: Probleme und Patches fr Programmfehler
+===================================================
+
+Die meisten Programme, die unter KAOS 1.2 ihren Dienst verweigerten, laufen
+jetzt unter KAOS 1.4 bei eingeschalteter Kompatibilit„t. Neue Probleme gibt
+es wegen der nderungen im AES, insbesondere beim Redraw des Windowmanagers.
+Meistens lassen sie sich durch Abschalten des "Smart Redraw" beheben.
+
+Programme, die vom neuen Redraw sehr profitieren und KAOS 1.4 mit zum Teil
+wesentlich schnellerem Bildschirmaufbau, zumindest aber mit visuell elegante-
+rem Redraw nutzen k”nnen:
+
+	NRSC
+	KAOSDESK
+	GST- Editor 1.01
+	Mprolog
+	Metacomco- Editor 2.08
+	Alice Pascal 1.4.1
+	Easydraw 2.32
+	GEMPAINT
+	VIP
+	Calamus
+	KGRAPH
+	MATRIX 2.11
+
+Programme, die gut mit dem neuen Redraw zurechtkommen, aber nicht besonders
+profitieren, da sie entweder sowieso immer das ganze Fenster neu aufbauen
+(Tempus, Devpac, Megamax-Editor,NeoDesk) oder sowieso schon schnell im Redraw
+sind (Tempus, TC):
+
+	Tempus
+	RCS2
+	Devpac
+	TC
+	Megamax- Editor 1.0
+	NeoDesk
+
+Programme, die bei der Vergr”erung von Fenstern Streifen verursachen
+(statt die Fensterbreite auf Bytegrenze zu bringen, werden halbe Buchstaben
+einfach wei bergemalt, diese Streifen jedoch beim Vergr”ern des Fensters
+nicht neu gezeichnet):
+
+	Wordplus
+	Prospero- Editor (Fortran, Pascal)
+	APL 68000 (sehr merkwrdige Effekte)
+	ST- Logo
+
+Programme, die daran scheitern, da sie bei maximaler Position des
+Scrollbalkens und dann Vergr”erung des Fensters automatisch scrollen, um
+das Aufziehen nur eines leeren weien Bereichs zu vermeiden, dieses Scrollen
+jedoch nur intern vornehmen und nicht selbst einen Redraw senden (wie es
+KAOSDESK tut). Diese Programme profitieren bis auf diese bl”de Situation
+meist sogar sehr von dem verbesserten Redraw. Programmierfehler kann ich das
+ja nicht nennen, da eins meiner eigenen Programme unter den Opfern ist...
+
+	DESKTOP (!)		(Inzwischen korrigiert)
+	MATRIX 2.1 (!!)	(Inzwischen korrigiert)
+	Adimens EXEC
+	Adimens INIT
+	ST- BASIC (Metacomco)
+	Profi- Painter
+	Touch Up
+	KSPRED
+	HDU
+	Gemini
+
+Programme, die sehr sehr omin”se Redraws veranstalten:
+
+	Laser C Editor V2.1
+	Doodle
+
+Gr”ere Probleme gibt es bei NRSC (Resource Construction Set von KUMA). Es
+ist mit Megamax C geschrieben und ben”tigt daher st„ndig die Register a4
+und a5 fr die relative Adressierung. NRSC benutzt an zwei Stellen
+benutzerdefinierte Objekte; offenbar kennt sich der Programmierer aber mit
+deren Verwendung nicht so gut aus und geht davon aus, da zumindest Register
+a4 erhalten geblieben ist, was rein zuf„lligerweise bisher auch der Fall war,
+da AES etwa Datentypen wie "OBJECT * " gern in Datenregister packt und daher
+Adreregister selten benutzt werden.
+Aufgrund der Optimierungen in objc_draw() sind die Register jetzt benutzt
+und mssen daher anderweitig wiederbeschafft werden. Prozeduren von benutzer-
+definierten Objekten werden quasi als Unterprogramme des AES aufgerufen und
+mssen daher alle benutzten Register auer a0-a2/d0-d2 retten, k”nnen
+andererseits auch nicht von irgendwelchen Werten in irgendwelchen Registern
+ausgehen. Im brigen laufen sie im Supervisormodus, die alten Registerwerte
+holt der Patch daher einfach mit Hilfe eines Offsets vom USP.
+
+	Adresse: ALT:		NEU:
+	-----------------------
+	013F35:  04		0C
+	013F36:  20		4E
+	013F37:  6C		68
+	013F38:  FF		4C
+	013F39:  FC		E8
+	013F3A:  2A		30
+	013F3B:  68		00
+	013F3D:  08		2C
+	013F41:  0C		10
+	013F4C:  20		30
+	0162B7:  04		0C
+	0162B8:  20		4E
+	0162B9:  6C		68
+	0162BA:  FF		4C
+	0162BB:  FC		E8
+	0162BC:  2A		30
+	0162BD:  68		00
+	0162BF:  08		2C
+	0162C3:  0C		10
+	0162CE:  20		30
+
+
+Durch den Wegfall der Hin- und Herkopiererei der Parameterfelder
+ist ein rein zuf„lliger Nebeneffekt verschwunden, der bisher bewirken konnte,
+da bei wind_get(whdl, NEXTXYWH, ...) und dem letzten Rechteck nicht nur w
+und h, sondern auch x und y Null waren. Obwohl s„mtliche Literatur darauf
+hinweist, w und h zu berprfen, gibt es doch ein Programm, das noch mehr
+Nullen haben will: EASYRIDER. Dieses Programm l„uft nicht mehr unter
+KAOS 1.4.1. Ein Patch ist noch nicht fertig.
+hnlich sieht es mit Starwriter (V1.02d) aus. Eine der Routinen fr benutzer-
+definierte Objekte hat einen Stackoffsetfehler. Die Tatsache, da der
+Supervisorstack um 4 Bytes "daneben" liegt, hat zur Folge, da Register nicht
+korrekt restauriert werden. Unter dem Nachfolgerprogramm "That's Write" ist
+dieser Fehler behoben!
+
+Ariadne strzte unter KAOS 1.4 immer ab, unter NVDI wurden zus„tzlich
+auch noch sonderbare Objekte angezeigt. Beide Fehler wurden durch den
+folgenden sehr geschickten Patch vollst„ndig beseitigt:
+
+	$1af3 = $714e71			($560000)
+	$1b00 = $7000				($4e5e)
+	$7106 = $48E71F1C286E083A	($286E00083A2C06BA)
+	$710F = $2C				($6C)
+	$7111 = $06BA6C00086700		($08670260044EFA)
+	$75AE = $4E71				($2F0C)
+	$75BC = $4CDF38F86072		($285F4E5E4E75)
+
+  Fehler 1 benutzte beim Zeichnen von benutzerdefinierten Objekten lustig
+  die Register a3/a4/d5, was natrlich t”dlich ist und den Bombenfehler
+  verursachte.
+  Fehler 2 deklarierte die Zeichenfunktion fr die benutzerdefinierten
+  Objekte als "void" statt als "int". Der Rckgabewert war also zuf„llig,
+  daher wurden Objekte mit Rand oder disabled dargestellt.
+
+
+
+AVI) Anhang: Zus„tzliche Dokumentation
+=====================================
+
+Aufgrund unvollst„ndiger AES- Dokumentation hier einige Zusatzinformationen
+zu objc_edit():
+
+	1) objc_edit() berprft nicht, ob das Objekt berhaupt ein editierbares
+	   Eingabefeld ist. Ruft man objc_edit() etwa mit einem Objekt G_BUTTON
+	   auf, strzt AES ab.
+	2) Die Unterfunktion ED_START hat keinerlei Funktion.
+	3) Der Rckgabewert ist immer "1", es findet keinerlei Fehlerberprfung
+	   statt. Fr knftige Erweiterungen sollte man aber trotzdem den Rck-
+	   gabewert abfragen.
+	4) Die Zeichenkette "te_pvalid" mu nicht so lang sein wie das Eingabe-
+	   Feld; im Prinzip reicht ein Zeichen. AES dupliziert bei Bedarf den
+	   letzten Buchstaben solange, bis die L„nge stimmt.
+	5) Es existieren zwei zus„tzliche Masken 'x' und 'f', die sehr praktisch
+	   und im Profibuch nicht erw„hnt sind. Wegen der Vollst„ndigkeit hier
+	   noch einmal eine Liste aller zul„ssigen Maskenzeichen:
+
+	   'X' : alle Zeichen
+	   'x' : Zeichen werden in Grobuchstaben konvertiert
+	   '9' : "0..9"
+	   'A' : "A..Z €’™š¥µ¶·¸Â..Ü"			('²','Á' unter KAOS auch)
+	   'N' : wie 'A', zus„tzlich noch "0..9"
+	   'P' : "0..9A..Z€..ÿ\?*:._"
+	   'p' : "0..9A..Z€..ÿ\:._"
+	   'F' : "a..z0..9A..Z€..ÿ:?*_"			(kein '.', aber':')
+	   'f' : "a..z0..9A..Z€..ÿ_"				(kein '.')
+	   'a' : "a..zA..Z €..ÿ"
+	   'n' : wie 'a', zus„tzlich noch "0..9"
+
+	   Man kann schlieen, da Dateien mit dem sch”nen Namen SM²RREBR²D
+	   von Atari nicht geduldet werden.
+
+Einige Informationen ber shel_write:
+
+  Nach der Dokumentation von TOS 1.4 soll man den Parameter "sh_wiscr" auf
+  Null setzen, obwohl der gegenw„rtig von AES ignoriert wird.
+  Das ist ABER SEHR GEFHRLICH, da GEM 2.x an dieser Stelle den Parameter
+  "sh_wisover" erwartet. Man sollte sich daher lieber an die Beschreibung
+  im Profibuch halten und den Parameter auf 1 setzen. Auerdem sollte man
+  immer ausprobieren, ob die verwendete Parameterwahl auch auf „lteren
+  TOS- Versionen noch funktioniert.
+
+Einige Informationen ber benutzerdefinierte Objekte (G_USERDEF):
+
+  Solche Objekte erstellt man, indem ob_spec des Objekts auf eine Struktur
+  USERBLK zeigt (siehe Profibuch S. 479).
+  Der Parameter ub_parm ist ntzlich, wenn mehrere Objekte verschiedene
+  USERBLKs haben, aber die Routine ub_code() jeweils gleich ist. Dann kann
+  ub_code n„mlich feststellen, woher sie aufgerufen wurde, wenn sie nicht
+  pb_tree und pb_obj auswerten m”chte. Auerdem lieen sich noch zus„tzliche
+  Statusinformationen ablegen.
+  ub_code() definiert man in Turbo C am besten mit:
+
+	cdecl int ub_code(PARMBLK *p);
+
+  Damit stellt man sicher, da ub_code() den Parameter auch vom Stapel und
+  nicht etwa aus Registern holt.
+  ub_code() wird ALS UNTERPROGRAMM DES AES aufgerufen, also insbesondere
+  im SUPERVISORMODUS und mit den Konventionen, da alle benutzten Register
+  auer a0-a2 und d0-d2 zu retten sind. Insbesondere kann NICHT von dem Wert
+  irgendeines Registers ausgegangen werden; daher sind benutzerdefinierte
+  Objekte in Megamax C ohne weiteres nicht m”glich, da Megamax C die
+  Register a4 und a5 als global konstant betrachtet. AES- Aufrufe drfen
+  natrlich in ub_code() nicht gemacht werden, da AES nicht reentrant ist,
+  wohl aber VDI- Aufrufe.
+  ub_code() wird vom AES bei Ausfhrung von objc_draw() oder objc_change()
+  aufgerufen, falls das Objekt im Clipping- Bereich liegt. Beim Aufruf ber
+  objc_draw() sind pb_prevstate und pb_currstate (siehe Struktur PARMBLK)
+  immer gleich, nicht jedoch bei objc_change().
+  ub_code() wird von AES vor Auswertung von ob_state aufgerufen, anschlieend
+  wird mit dem Rckgabewert von ub_code() als ob_state weitergerechnet und
+  die Deselektierung (DISABLED), Invertierung (SELECTED) usw. ausgefhrt.
+  Man bergebe daher alle Statusbits, die man nicht selbst auswerten m”chte,
+  also im einfachsten Fall:
+
+	return(p->pb_currstate);
+
+  Dann kmmert sich AES um den Rest der Objektzeichnung.
+
+Einige Informationen ber Objektausmae:
+
+  In OBJECT wird die Gr”e eines Objekts mit dem GRECT ob_x,ob_y,ob_width,
+  ob_height dargestellt. Alle Angaben sind in Pixeleinheiten (signed int)
+  angegeben.
+  Um Resourcedateien aufl”sungsunabh„ngig zu machen, werden die Werte dieses
+  GRECT in Resourcedateien nicht in Pixeleinheiten, sondern in Zeichenein-
+  heiten abgelegt, daher lassen sich etwa im Monochrommodus Objekte nur auf
+  eine von 80 horizontalen und eine von 25 vertikalen Positionen legen.
+  Dieses Zeichenraster l„t sich aber von einigen RCS abschalten, so da man
+  Objekte in beliebiger Gr”e auf beliebige Positionen legen kann.
+  Das Format eines ob_x,ob_y,ob_width oder ob_height- Wertes sieht
+  folgendermaen aus (bei der Beschreibung als Bitfeld wird rein hypothetisch
+  davon ausgegangen, da der Compiler Bitfelder von rechts nach links
+  anlegt):
+
+	struct {
+		unsigned charpos : 8;		/* Lobyte */
+		signed   offset  : 8;		/* Hibyte */
+	} obj_position;
+
+  Die AES- Routine rsrc_obfix() rechnet solch einen Wert nach folgendem Muster
+  in Pixelwerte um:
+
+    Ist bei ob_x oder ob_width der Wert fr <charpos> genau 80, so wird die
+    Bildschirmbreite (etwa 640) angenommen (Auf einem Grobildschirm mit mehr
+    als 80 Zeichen kann so ein Objekt mit 80 Zeichen gr”er als ein solches
+    mit 90 Zeichen werden).
+    Ansonsten wird der Wert mit gr_hhchar bzw. gr_hwchar (siehe graf_handle)
+    multipliziert.
+    In allen F„llen wird schlielich der <offset> addiert.
+
+  Aufgrund der Begrenzung des <offset> auf -128..127 ist das Ablegen von rein
+  pixelorientierten Daten nicht m”glich. Praktisch ist dies aber bei direktem
+  Beieinanderliegen von Objekten vom Typ G_BUTTON, die jeweils einen „ueren
+  Rand haben, der sich dann normalerweise berlappt. In KAOSCONF.PRG/.ACC ist
+  der Trick folgendermaen angewandt:
+
+	Der oberste Button hat etwa die y- Position 0x0002
+	Der zweite  Button hat dann die y- Position 0x0103
+	Der dritte  Button hat dann die y- Position 0x0204
+	  ...
+		(mehr als 128 Buttons drfen es nicht sein)
+
+  Wichtig ist, da auf alle tiefer liegenden Objekte jeweils das zuletzt
+  eingegebene Hibyte addiert werden mu und auch die Gesamtbox in der H”he
+  diesen Offset erh„lt, damit das Gesamtobjekt letztlich trotzdem aufl”sungs-
+  unabh„ngig bleibt. Fr die horizontale Position gilt Analoges.
+
+Einige Informationen ber evnt_button() und evnt_multi:
+
+  Das Hibyte von <nclicks> (Anzahl der behandelten Klicks) ist ein Flag fr
+  das Negieren der Event- Bedingung. Mit nclicks = 0x0102 (Negieren und
+  Doppelklicks), mask = 0x03 (Tasten 0 und 1) und state = 0x00 (alle Tasten
+  losgelassen) kann man zum Beispiel einen Event ausl”sen, wenn der Zustand
+  der linken und rechten Maustaste nicht 0 ist, d.h. wenn nicht beide
+  Maustasten losgelassen sind. Mit anderen Worten: Der Event wird ausgel”st,
+  wenn linke oder rechte Maustaste bet„tigt werden.
+  Die Funktion ist in ICNEDIT (zu KAOSDESK) realisiert und ist unter TOS 1.0,
+  TOS 1.2, KAOS 1.2.3, TOS 1.4, KAOS 1.4.1 und GEM 2.2 getestet worden.
+  Offentlich handelt es sich um ein Feature, das zu dokumentieren einfach
+  vergessen wurde.
+  šbrigens wird von <state> und <mask> nur das Lobyte ausgewertet, woraus
+  sich schlieen l„t, da AES M„use mit bis zu 8 Tasten behandeln kann.
+
+Eine Information ber wind_set:
+
+  Man kann als x-Position des Fensters -1 angeben. Dann beginnt der Benutzer-
+  bereich am linken Bildschirmrand, und der linke Rand des Fensters wird
+  nicht gezeichnet.
+
+Informationen ber Icons:
+
+  Achtung: Im Profibuch Seite 473 unten sind Fehler bei der Beschreibung
+		 der Objekt- States DRAW3D und WHITEBAK.
+		 Richtig mu es heien:
+
+		 WHITEBAK (0x0040)
+		 Nur fr ICONBLK. Ist die Hintergrundfarbe WHITE, wird die
+		 Iconmaske nicht gezeichnet. Bereits in TOS 1.0 vorhanden (!).
+
+		 DRAW3D (0x0080)
+		 Erst ab GEM 2.0: Ist das Icon selektiert, wird es dreimal schr„g
+		 bereinander gezeichnet (siehe DESKTOP).
+
+  Achtung: Im Profibuch Seite 477/78 bei der Beschreibung der ICONBLK-
+		 Struktur fehlt folgende Angabe:
+
+		 int ib_char; /* Bits 0..7:Zeichen,Bits 8..11:Hintergrundfarbe,
+					  Bits 12..15: Vordergrundfarbe */
+
+Informationen ber G_F(BOX)TEXT
+
+  Ich habe ein neues Feature von AES gefunden:
+  Bei Objekttypen G_F(BOX)TEXT (Das 'F' steht fr (f)ormatiert, also mit
+  te_ptext, te_ptmplt, te_pvalid) wird im TEDINFO im Parameter te_just
+  angegeben, ob man linksbndig (0), rechtsbndig (1) oder zentriert (2)
+  ausgeben will.
+  Im Fall 0,2 reagiert objc_draw ganz "normal" und mischt Schablone und
+  Text vom Stringanfang zum Stringende, im Fall 1 jedoch von hinten nach
+  vorne:
+
+		Schablone: "Gr”e: ______"
+		Text     : "123"
+
+	fhrt bei 0,2 zur Ausgabe:
+
+				 "Gr”e: 123___"
+
+	und im Fall 1 zur Ausgabe:
+
+				 "Gr”e: ___123"
+
+  Schablone und Text werden nach folgendem Muster gemischt:
+
+  1) fr das Zeichen '_' der Schablone wird immer ein Textzeichen geholt
+  2) fr andere Zeichen der Schablone oder, wenn alle Textzeichen verbraucht
+	sind, wird ein Zeichen der Schablone geholt
+
+  Damit ist die L„nge des Ergebnisses immer das der Schablone!
+  Jetzt kommt das b”se Ende: Das rechtsbndige Textfeld wird von objc_edit()
+  nicht richtig untersttzt, kann also nicht als Eingabefeld benutzt werden!
+
+

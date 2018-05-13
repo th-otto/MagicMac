@@ -1,0 +1,1172 @@
+form_center funktioniert jetzt auch mit Dialogboxen, die „ueren Rand haben.
+Man kann das sch”n unter NRSC ausprobieren: Box mit Riesenrand erstellen und
+dann testen.
+
+graf_rubbox oszilliert nicht mehr.
+
+shel_get() lieferte die Pufferl„nge (unsigned int), wenn als Anzahl der
+Bytes 0 angegeben wird.
+
+shel_put liefert 0, wenn der Puffer zu klein ist.
+
+appl_write erzeugt keinen šberlauf des Messagepuffers mehr, sondern bricht
+mit Rckgabewert 0 ab. Bei falscher ap_id wird Rckgabewert -1 geliefert.
+Rckgabe 1 zeigt erfolgreiche Ausfhrung an.
+
+appl_read liest nur aus dem eigenen Messagepuffer. Der Parameter ap_id wird
+immer ignoriert.
+
+Die Fenster- Vergr”erungsroutine wurde verbessert. Die Strichellinie liegt
+nun genau auf dem inneren Rand. Ferner wird die Minimalgr”e des Fensters
+korrekt berechnet, was bisher absoluter Mist war; jetzt sind immer alle
+Fensterelemente sichtbar.
+Achtung: Macht man bei Tempus das Fenster zu klein, knallt der Hirni von
+         Programmierer den Scrollbalken nach Timbuktu.
+
+Die Tastaturabfrage, die nicht ber Interrupts, sondern ber Polling
+arbeitet, ben”tigte bisher 3 VDI- Aufrufe (vq_key_s,vsin_mode,vsm_string),
+selbst wenn keine Taste gedrckt wurde. Jetzt greift MagiX direkt auf die
+Interruptvariablen kbshift und kb_iorec des BIOS zu. Die Geschwindigkeit
+des Kernals konnte so wesentlich gesteigert werden. Auch Qindex zeigt die
+Verbesserung an:
+
+     522 %          mit  Grow-/Shrinkboxen
+     856 %          ohne Grow-/Shrinkboxen
+
+Schon GEMDOS greift direkt auf kb_iorec zu, wenn auch dort ein eventuelles
+Verschieben der IOREC- Struktur keine b”sen Folgen h„tte. Unter MagiX darf
+diese Struktur jedoch nicht mehr verschoben werden, was auch eigentlich nie
+passiert.
+
+Da es sich bei MagiX nicht um ein "echtes" Multitaskingsystem handelt, d.h.
+man mu den Taskwechsel selbst herbeifhren, ist fr rechenintensive
+Programme, die im Hintergrund ablaufen sollen, folgendes zu empfehlen:
+In regelm„igen Abst„nden (sollte man ausprobieren) einen appl_yield- Aufruf
+machen (move.w #$c9,d0;trap #2). Dieser Aufruf „ndert nur d0/a0 und darf
+unter MagiX (nicht unter KAOS/TOS) auch im Supervisormodus aufgerufen werden.
+Bei TOS bzw. KAOS war die Geschwindigkeit dieses Aufrufs nicht so wichtig,
+wohl aber bei MagiX. Dazu wurde ein Testprogramm YTEST geschrieben, das
+immer 5000 appl_yield- Aufrufe macht und die Timerclicks z„hlt. Je nach
+Anzahl der ACCs und Art der Hauptapplikation ergeben sich dabei natrlich
+verschiedene Werte. Die folgenden sind ohne ACCs und mit dem Atari Desktop:
+
+     TOS   1.4      1023 Ticks
+     KAOS  1.4.2     728 Ticks
+     MagiX 0.00      675 Ticks
+     MagiX 0.01      257 Ticks
+     MagiX 0.02       61 Ticks
+
+Unter MagiX funktionieren auch Eingabefelder mit kleiner Schrift.
+
+MagiX macht bei fsel_(ex)input selbst ein wind_update. GfA-BASIC geh”rte zu
+den Programmen, die dies vers„umten.
+
+MagiX ben”tigt 9k weniger Speicher als KAOS 1.4.2. Und das trotz der neuen
+F„higkeiten!
+
+Die fr KAOS gepatchten Programme NRSC und Ariadne laufen jetzt unter MagiX
+nicht mehr, da der usp berhaupt nicht mehr ben”tigt wird. AES- Aufrufe sind
+problemlos im Supervisormodus m”glich. Das interne Stackhandling wurde stark
+vereinfacht.
+
+MagiX nimmt strengste Gltigkeits- und Zugriffsrechtberprfungen fr
+Fenster vor. Man kann sich gar nicht vorstellen, wie viele "professionelle"
+Programme sich an ungltigen oder gar fremden (!) Fenstern vergreifen.
+wind_get und wind_set liefern 0 und (0,0,0,0) bei ungltigem Handle.
+
+MagiX kommt jetzt, wie KAOS 1.4.2, mit dem Umbenennen auf schreibgeschtzten
+Disketten klar. Es wird keine Datei mehr ge”ffnet gelassen.
+
+Fr alle unverbesserlichen Fans des Atari- TT- Desktop:
+- Schiebe mal den Papierkorb oder ein Disklaufwerk in ein Programmicon. Das
+  Ergebnis ist mal wieder typisch Atari: Eine Schwachsinns- Kommandozeile.
+  Offensichlich wurde ein Nullpointer bergeben!
+- Versuche mal, mehrere Parameter aus verschiedenen Fenstern auf ein
+  Programmicon zu schieben. Wer es schafft, sollte den Zobelpreis
+  beantragen.
+- Schiebt man mehrere Icons in ein Programm, so wird nur h”chstens eines
+  (welches?) als Parameter bergeben.
+- Man kann auch Ordner bergeben. Wozu?
+- Es gibt Programme, die ein CR nach der Programmzeile verlangen. Diese
+  laufen unter KAOSDESK, nicht unter dem TT- Desktop.
+Und dann ruft mich jemand an und behauptet, die Parameterbergabe- M”glich-
+keiten des TT- Desktop seien denen von KAOSDESK berlegen, und ich solle
+doch mal versuchen, es auch so zu machen. Nein danke!
+Wer noch einmal ein einziges Wort fr das TT- Desktop ergreift, der darf
+sich hinfort nicht mehr unter meine Augen begeben.
+
+Ein Wort zu Diskus: Der "Programmierer" brstet sich, sein Bitfeld in reinem
+ Assembler geschrieben zu haben. Entweder war ein zu faul, ein ordentliches
+ GEM- Programm zu schreiben, oder er h„lt ein Fenster fr etwas, was seine
+ Mutter ab und zu mal putzen mu.
+ Das Machwerk kapituliert bereits, wenn man das Kontrollfeld auf dem Fenster
+ verschiebt. Unter MagiX zeigt sich dann erbarmungslos, warum der
+ Programmierer lieber ein ordentliches TOS- Programm h„tte schreiben oder
+ lieber gleich auf dem C64 bleiben sollen.
+
+nderungen in Version 0.04:
+
+- Achtung: der Eintrag in MAGIX.INF heit #_SCP statt #_CLB !!!
+- Alle nderungen in KAOS 1.4.2 gelten auch fr MagiX, u.a. ist das Problem
+  der Pulldown- Mens behoben.
+- Beim Umschalten des aktiven Mens wird auch der Eigner des Desktop-
+  Hintergrundes umgeschaltet. Dies geschieht auch dann, wenn kein eigener
+  Hintergrund angemeldet ist.
+- Beim ndern des Eigners des Desktophintergrunds (Fenster #0) wird fr den
+  Fall, da sonst kein Fenster ge”ffnet ist (d.h. Fenster #0 ist oberstes),
+  der Eigner von Fenster #0 als tastatur- und mausbesitzend gesetzt.
+- Bei jedem appl_init() wird die aufrufende Applikation, wenn keine andere
+  Applikation eine Menleiste oder einen Hintergrund angemeldet hat, die
+  Hauptapplikation.
+  In der Praxis bedeutet dies, da ein Programm beim Start Tastatur- und
+  Mauskontrolle erh„lt, wenn kein Fenster ge”ffnet ist und das Programm
+  allein l„uft.
+  Damit sollte praktisch jedes Programm wie bisher funktionieren, wenn es
+  im "single tasking mode" l„uft. Viele der Programme (DISKCOPY) laufen
+  jedoch nicht im Normalmodus. Das wird sich auch nicht „ndern.
+- Zu "Signum Scrcop":
+  Das ACC kreiert und ”ffnet ein Fenster, zeichnet dann mit objc_draw das
+  Innere des Fensters. Als Clippingdaten wird bergeben:
+     x=0,y=639,w=0,h=399
+  Offensichtlich hat Schwerbeck da GRECTs mit ORECTs vertauscht bzw. AES
+  mit VDI; kein Wunder, wenn man immer am System vorbeiprogrammiert.
+  Ein "Nebeneffekt" im TOS bewirkte bisher, da bei w=0 oder h=0 das
+  Clipping ganz ausgeschaltet wurde, was in MagiX nicht mehr passiert
+  (seit dem von den Autoren angeblich nicht fr wahr gehaltenen Clipping-
+  fehler des NVDI).
+  Fazit: wegwerfen oder patchen (?)
+- Zu CONTROL:
+  Hat man das Kontrollfeld geschlossen, so malt CONTROL trotzdem immer
+  seinen Mll (Datum/Uhrzeit) auf dem Bildschirm herum.
+  Verantwortlich dafr ist folgende Vorgehensweise:
+
+     while(sonne_scheint)
+          {
+          events = evnt_multi(... MU_TIMER...)
+          if   (events & MU_TIMER)
+               if   (wind_get(WF_TOP) == myhandle)
+                    ... male_meinen_mist ...
+          }
+
+  Ist das Kontrollfeld geschlossen worden, schreibt CONTROL den Wert -1
+  nach <myhandle>. Kommt nun unter MagiX ein wind_get(WF_TOP), so liefert
+  MagiX, wenn das oberste Fenster nicht CONTROL geh”rt, auch eine -1.
+  Diese Vorgehensweise war n”tig, um Tempus vor dem Herzstillstand zu retten.
+  Jetzt liefert MagiX im Fall "oberstes Fenster geh”rt nicht mir" eine -2,
+  damit ist das Problem jedoch nur verlagert worden.
+- Wurde ber das Popup- Men ein leerer Dateiname eingegeben, so wurde bisher
+  das ROM- Desktop gestartet, was zu groer Konfusion fhrte. Nach Einbau
+  einer fehlenden Abfrage ist jetzt sichergestellt, da sowohl das
+  alternative als auch das ROM- Desktop nur als Applikation #0 gestartet
+  werden. Bei allen anderen Applikationsnummern wird statt Start der
+  Defaultshell die Applikation beendet.
+- Das Installationsprogramm fr TurboAss, TURBOINS, zeigte sich als sehr
+  problematisches Sorgenkind. Zum einen funktionierte die Tastatureingabe
+  berhaupt nicht und die Mausabfrage nur sehr holperig und bei gedrckter
+  rechter Maustaste, zum anderen blieb beim Abbau der Dialogboxen immer ein
+  Mllrechteck brig.
+  TURBOINS begann sein Zwiegespr„ch mit dem AES quasi erst einmal mit dem
+  Abmelden des Desktophintergrunds. Damit gab MagiX die Mauskontrolle wieder
+  ans System zurck, Tastaturcodes landeten also beim SCRENMGR. Um dieses
+  Problem zu beseitigen, wird jetzt ein Abmelden eines sowieso nicht
+  angemeldeten Hintergrunds einfach ignoriert.
+  Der zweite Fehler hat mich fast zum Wahnsinn getrieben. Die fehlerhafte
+  Funktion war ein vro_cpyfm. Unter KAOS nachgeprft, meldete SYSMON jedoch
+  keinen derartigen Aufruf, hier wurde der Hintergrund mit vr_recfl
+  nachgezeichnet, der sich bei n„herem Hinsehen als ein form_dial(FMD_FINISH)
+  entpuppte, welcher wiederum unter MagiX einfach nicht auftrat.
+  DIS weigerte sich, TURBOINS zu disassemblieren, EASYRIDER streikte aus
+  demselben Grund: S„mtliche Assemblerbefehle liegen n„mlich im Datensegment.
+  Auerdem werden alle Variablen relativ zu irgendwelchen Adreregistern
+  angesprochen, ein Beispiel eines belsten Assemblergebr„us.
+  Eine Untersuchung mit TD (28 kB frei!) zeigte, da die verantwortliche
+  Variable offensichtlich turnusm„ig vom Stack berrollt wurde. Eine
+  Vergr”erung desselben brachte leider keine Verbesserung, Schuld ist die
+  wirklich sonderbare Adressierungstechnik, in der Register weder lokal noch
+  global sind, sondern glokal oder lobal, wobei man zwischen halblobal und
+  semiglokal noch unterscheiden mu.
+  Nachdem ich die Kiste erst einmal eine Stunde ausgeschaltet hatte, prfte
+  ich die Sachlage noch einmal unter KAOS 1.2, wo der Fehler nicht auftritt.
+  Unter TD brachte es TURBOINS dann sogar zu einem Adrefehler, was zeigt,
+  da der Fehler wohl bisher nur zuf„llig nicht auftrat.
+- Bisher wurde in dem Fall, da der Maustastenstatus von "keine Taste
+  gedrckt" nach "linke Taste gedrckt" wechselte und dies ber dem Desktop-
+  Hintergrund oder dem obersten Fenster geschah, die Mauskontrolle an dessen
+  jeweiligen Eigner bergeben.
+  Der Effekt dieser Strategie war z.B. folgender:
+   Das Fenster von Programm X sei oberstes. X schaltet den Mauszeiger inner-
+   halb des Fensters auf Textcursor, auerhalb auf Pfeil.
+   Der Hintergrund und die Menleiste geh”ren Programm Y. Der Benutzer klickt
+   nun auf den Hintergrund an eine freie Stelle. Ab diesem Moment funktio-
+   niert die Mauszeigerumschaltung nicht mehr, da jetzt Y die Mauskontrolle
+   hat.
+  Wie schon in KAOS beim Screenmanager, so wird jetzt in MagiX auch nur der
+  Klick an die Applikation bergeben. Wenn diese keinen BEG_MCTRL macht und
+  trotzdem einen evnt_..., so bleibt sie h„ngen, das l„t sich nicht „ndern.
+  Edison etwa zeigt sehr, sehr sonderbare Effekte, da er ber evnt_timer
+  immer den Maustastenstatus abfragt, man kann dann z.B. ein Icon von MATRIX
+  nehmen und es ber das oberste Fenster (geh”rt Edison) ziehen. Edison malt
+  pl”tzlich in seinem Fenster herum (selektiert einen Textblock, w„hrend das
+  Icon die ganze Zeit am Mauszeiger h„ngt) und mllt den Bildschirm mit
+  Cursorstrichen voll.
+- Die neue appl_find()- Unterfunktion sowie die wind_get()- Unterfunktionen
+  WF_OWNER und WF_WINDLIST gelten auch fr MagiX. Der Unterschied zu KAOS
+  ist, da die bei WF_WINDLIST erhaltene Liste die aktive ist, d.h. sie ist
+  immer gltig und wird vom AES st„ndig verwendet und aktualisiert. Im
+  Gegensatz zu KAOS werden ungltige Fensterhandles abgefangen und mit einem
+  Rckgabewert 0 quittiert, KAOS gibt immer 1 zurck.
+- Ein Fehler in form_popup() wurde beseitigt. Bisher wurde das angew„hlte
+  Objekt nicht automatisch deselektiert.
+- form_xdo() hat keine eigene AES- Funktionsnummer, sondern wird in dem Fall
+  aufgerufen, wenn form_do() mit contrl[3] >= 2 (d.h. mehr als 2 Werte in
+  addrin) aufgerufen wird.
+  Der Witz dabei ist, da beim Aufruf von form_xdo() im alten TOS der
+  Parameter fr die Scancode- Tabellen einfach ignoriert wird. Damit ist
+  volle Abw„rtskompatibilit„t gew„hrleistet. Es erhebt sich die Frage, warum
+  Atari bei fsel_exinput() nicht „hnlich verfahren ist. Vielleicht erhebt
+  sich die Frage allerdings auch nicht.
+- Ein neuer Objekttyp, G_SWBUTTON (34), wurde implementiert. ob_spec zeigt
+  auf eine Struktur SWINFO (siehe MAGIX.H).
+  Dieser Objekttyp erlaubt es, bei jedem Klicken zyklisch einen String vor
+  (Einfachklick) oder zurck (Doppelklick) zu schalten. Ein Beispiel:
+
+   string = "TOS|KAOS|MAGIX";
+   num    = 1;                     /* "KAOS" ist aktiv        */
+   maxnum = 2;                     /* 3 Einzelstrings (0,1,2) */
+
+  Ein Beispiel ist in MAGXDEMO.PRG der Button TOS|KAOS.
+  G_SWBUTTON sieht genau wie G_BUTTON aus.
+- Ein neuer Objekttyp, G_POPUP (35), wurde implementiert. ob_spec zeigt
+  auf eine Struktur POPINFO (siehe MAGIX.H).
+  Dieser Objekttyp erlaubt es, innerhalb von normalen Dialogboxen Popup-
+  Mens („hnlich XCONTROL oder GEMINI) zu verwenden, ohne gigantische
+  Klimmzge ber das VDI vorzunehmen.
+  tree zeigt auf einen Objektbaum, der etwa fr form_popup() als Eingabe
+  dienen k”nnte, wobei alle selektierbaren Objekte vom Typ G_STRING oder
+  G_BUTTON sein und mit zwei Leerstellen beginnen mssen, letzteres wegen
+  des H„kchens, das von form_button() bzw. form_(x)do() automatisch gesetzt
+  wird! Wichtig ist, da ob_x,ob_y von Objekt 0 des Mens relativ zum
+  G_POPUP- Objekt angegeben werden, d.h. sie werden meistens beide 0 sein.
+  Es wird empfohlen, einen Schatten und einen Rand der St„rke -1 anzugeben.
+  Ein Beispiel ist in MAGXDEMO.PRG der Button Dropdown|Pulldown.
+  G_POPINFO sieht wie G_BUTTON aus, die Zeichenkette wird jedoch nicht
+  zentriert (!!!), um m”glichst mit den Zeichenketten im Men auf einer
+  Linie zu liegen.
+- Achtung: um die neuen Objekttypen zu nutzen, sollte man im RCS einfach
+  einen Typ G_BUTTON oder G_BOX einsetzen und diesen per Programm „ndern.
+  Unter TOS/KAOS wird das Objekt einfach nicht gezeichnet, es gibt also
+  zumindest keinen Abgang.
+- Die Dateiauswahlbox wurde neu justiert, d.h. Objektgr”en und -positionen
+  korrigiert.
+  Das Schliefeld ist jetzt etwas gr”er, alle Linien sind dnn, und die
+  Box funktioniert unter allen Zeichengr”en.
+- Ein Fehler wurde beseitigt, der bewirkte, da der Desktophintergrund nicht
+  abgeschaltet werden konnte, wenn das Men noch da war.
+
+nderungen in Version 0.05:
+
+- Die Funktion form_xdo() wird um FlyDials erweitert werden. Noch nicht
+  implementiert.
+- Ein extrem b”ser Fehler wurde korrigiert. Gnters "DEMO5" bewirkte immer,
+  da man keine Mens mehr anw„hlen oder Fenster manipulieren konnte, wenn
+  man das Programm zweimal (gleichzeitig) parallel laufen lie.
+  Diagnose:    Die Maus flackerte, also lief noch irgendetwas
+               KAOSDESK machte kein Redraw, man konnte kein Fenster bewegen,
+                also waren Hauptapp und Screenmgr "tot".
+  Tats„chlich stellte ich fest, da immer die beiden Inkarnationen von DEMO5
+  abwechselnd liefen, ohne da eine andere Applikation an die Reihe kam. Da
+  normalerweise (appl_yield) immer das Programm an die Reihe kommt, das am
+  l„ngsten wartete, hatte ich bald wind_update() im Verdacht.
+  Und das war es auch: BEG_UPDATE h„ngt bei bereits aktiver Semaphore die
+  Applikation nach vorn in die Liste der APPs, die auf L”sen der Semaphore
+  warten. END_UPDATE nimmt ebenfalls das erste Element der Liste und macht
+  es aktiv. Wenn dann das andere Programm wieder ein BEG_UPDATE macht, kommen
+  SCRENMGR oder KAOSDESK niemals zum Zuge.
+  Der Fehler drfte in s„mtlichen TOS- Versionen vorkommen.
+  Unter MagiX wird jetzt immer die Applikation aktiv, die am l„ngsten
+  gewartet hat (first-in-first-out).
+- Die Defaultshell erh„lt in der Kommandozeile folgende Daten:
+
+        int    fill;               /* Ein Nullwort */
+        long   magic;              /* ist 'SHEL' */
+        int    isfirst;            /* unter KAOS immer 0 */
+        long   err;                /* letzter Fehlercode */
+        int    was_gr;             /* Fehler ist bereits angezeigt */
+
+  Beim Warmstart wird <isfirst> auf 1 gesetzt und nach jedem Aufruf der Shell
+  auf 0 zurckgesetzt.
+  Zur Kompatibilit„t mit KAOS ist zu prfen, ob entweder (magic != 'SHEL')
+  ist (Start oder Autostart, dann mu sich das Desktop selbst„ndig mit
+  shel_wdef anmelden) oder ob (isfirst == 1) ist; dann ist das Programm zum
+  ersten Mal gestartet worden.
+  <was_gr> zeigt an, ob das letzte Programm eine Grafikanwendung war und
+  daher der eventuelle Fehler schon angezeigt worden ist.
+  Achtung: KAOS 1.4.2 wurde ebenfalls diesbezglich ge„ndert, daher ist ein
+           neues KAOSDESK (V2.22) notwendig.
+- Die Aufl”sungs„nderung ist jetzt in KAOS und MagiX kompatibel. Dazu wurde
+  KAOS ge„ndert und KAOSDESK angepat.
+
+nderungen in Version 0.06:
+
+- Version 0.06 enth„lt nicht mehr das KAOS-GEMDOS, sondern eine neue Version,
+  in der die letzten Original- Routinen entfernt worden sind. Der Trap-
+  Handler springt sofort in die DOS- Funktion. Die Umlenkung wird jeweils
+  in der jeweiligen DOS- Funktion von Unterprogrammen ausgefhrt. Die
+  Parameter werden nicht mehr kopiert, sondern alle DOS- Funktionen erhalten
+  einen Zeiger auf die Parameterliste. Die Fehlerbehandlung erfolgt nicht
+  mehr ber longjmp, sondern alle Funktionen sind "long" statt "void" und
+  geben Fehlercodes zurck.
+  Der Schalter "^C vor und nach jedem DOS- Aufruf abfragen" ist jetzt
+  wirkungslos, die Abfrage wurde entfernt.
+- Die Speicherbegrenzung ist implementiert. Wenn ich das Konzept nicht noch
+  „ndere, funktioniert es folgendermaen:
+
+     Das Programm LIMITMEM.TTP schreibt hinter die Relocationdaten vier
+     magische Bytes und dann 4 Bytes fr die Speicherbegrenzung. Dieser Wert
+     gibt die Maximalgr”e des "Heap" an, d.h. die Anzahl der Bytes, die
+     sich das Programm zus„tzlich zu Environment,Basepage,Text,Data,Bss noch
+     holen darf.
+     Der Programmlader (Pexec) prft, auf die magischen Bytes ab und legt
+     ggf. das folgende Langwort in basepage.p_mem ab, andernfalls steht
+     dort $7fffffff. Die Gr”e des Heap wird ggf. verringert und p_mem um
+     dessen aktuelle Gr”e verkleinert. p_mem gibt ab sofort immer an,
+     wieviel Speicher sich das Programm noch holen darf. Ist der Wert 0,
+     scheint fr das Programm aller Speicher "belegt" zu sein.
+     Bei jedem Malloc(-1L) oder Mshrink(blk, -1L) wird das Minimum von freiem
+     Speicher und p_mem zurckgegeben.
+     Bei jedem Mfree() oder Mshrink() mit Blockverkleinerung wird p_mem
+     entsprechend erh”ht, der Maximalwert von $7fffffff wird dabei nicht
+     berschritten.
+     Bei jedem Malloc() oder Mshrink() mit Blockvergr”erung wird
+     abgebrochen, falls p_mem zu klein ist, ansonsten p_mem entsprechend
+     verkleinert. Auch bei Pexec() wird Speicher per Malloc() alloziert.
+     Da der Screenmanager (APPL #1) kein eigener DOS- Proze ist, sondern auf
+     dem jeweils aktiven l„uft, wird fr den Fall, da er gerade l„uft, die
+     Speicherbegrenzung auer Kraft gesetzt. Auch wenn der Screenmanager per
+     Pexec() einen neuen Proze erstellt, wird p_mem nicht ver„ndert.
+
+  Das Konzept ist extrem aufwendig und drfte die Geschwindigkeit von
+  Malloc/Mfree/Mshrink ziemlich verringern. Zumindest mit Wordplus funktio-
+  niert es aber bisher anscheinend.
+- Der Trap- Dispatcher sowie die Super- Funktion von GEMDOS wurden v”llig
+  neu geschrieben. Auerdem werden BIOS- Fehler nicht mehr per longjmp
+  behandelt, sondern der Fehlercode weitergegeben. Ebenfalls wurde die
+  berchtigte Funktion dos_entry v”llig entfernt und die Standarddatei-
+  Behandlung in die einzelnen Funktionen verlagert. Das Sconfig- Bit zum
+  Einschalten der ^C- Abfrage vor und nach jedem DOS- Aufruf ist jetzt
+  wirkungslos.
+  Der Aufbau der Basepage wurde ge„ndert, d.h. p_d0/p_a4/p_a5/p_a6 anderwei-
+  tig verwendet, etwa fr die Speicherbegrenzung. Damit sind wesentliche
+  Prinzipien von GEMDOS in MagiX nicht mehr vorhanden. Die Umstellung
+  erforderte jedenfalls einen betr„chtlichen Aufwand.
+  Bei n„herem Hinsehen ahnte ich jedoch bald, da Probleme mit Tempus
+  auftreten k”nnten. Tempus geht beim Speichern in sich selbst davon aus,
+  da ab
+
+               ((basepage.p_parent) -> p_reg) + $32
+
+  die Parameter des ausl”senden Pexec liegen. Dies war unter MagiX jedoch
+  nicht mehr der Fall, da der Kontext hier wesentlich eleganter und
+  effektiver gerettet wird. Als L”sung habe ich dann den Kontext unter
+  MagiX an eine andere Stelle der Basepage geschrieben und in p_reg einfach
+  einen Zeiger auf die Parameter, um $32 nach unten korrigiert, abgelegt.
+  Damit l„uft Tempus wieder. Auch in Zukunft wird MagiX diese Eigenschaft
+  des GEMDOS untersttzen.
+  Die neuen Basepage- Variablen:
+
+     long p_mem;              /* 0x68: soviel darf ich noch holen          */
+     long p_context;          /* 0x6c: unter MagiX statt p_reg benutzt     */
+     long p_mres2;
+     long p_mres3;
+     long p_mres4;
+     long *p_reg;             /* 0x7c: aus Kompatibilit„t zu TOS           */
+
+  p_context zeigt auf folgende Daten:
+
+     int       flag;          /* 0=user -1=super  */
+     long      d1_d7_a1_a6[13];
+     long      pr_stack;      /* super:usp, user:ssp */
+     int       pr_sr;
+     long      pr_pc;
+     int       pr_vo;         /* bei 680x0 */
+
+- form_xdial und form_xdo untersttzen jetzt FlyDials. Die Dialogbehandlung
+  sieht bisher folgendermaen aus:
+
+int do_dialog(OBJECT *dialog)
+{
+     int cx, cy, cw, ch;
+     int exitbutton;
+
+
+     form_center(dialog, &cx, &cy, &cw, &ch);               /* Position */
+     form_dial(FMD_START, 0,0,0,0, cx, cy, cw, ch);         /* Anfang */
+     objc_draw(dialog, ROOT, MAX_DEPTH, cx, cy, cw, ch);    /* malen  */
+     exitbutton = 0x7f & form_do(dialog, 0);                /* ausfhren */
+     form_dial(FMD_FINISH, 0,0,0,0,cx, cy, cw, ch);         /* Ende */
+     ob_dsel(dialog, exitbutton);
+     return(exitbutton);
+}
+
+  unter MagiX jetzt so:
+
+int do_dialog(OBJECT *dialog)
+{
+     int cx, cy, cw, ch;
+     int exitbutton;
+     void *flyinf;
+     void *scantab = NULL;         /* ggf. Tastencode- Tabelle */
+     int  lastcrsr;                /* Cursorposition bei Dialogende */
+
+
+     form_center( ... );
+     form_xdial(FMD_START,  0,0,0,0, cx, cy, cw, ch, &flyinf);
+     objc_draw( ... );
+     exitbutton = 0x7f & form_xdo(dialog, 0, &lastcrsr, scantab, flyinf);
+     form_xdial(FMD_FINISH, 0,0,0,0, cx, cy, cw, ch, &flyinf);
+     ob_dsel( ... );
+     return(exitbutton);
+}
+
+  Man sieht, da es kein Problem darstellt, fertige Programme entsprechend
+  abzu„ndern.
+  Das Betriebssystem merkt sich in der Variablen <flyinf> einen Zeiger auf
+  eine Struktur, die die Informationen ber die Position der Dialogbox und
+  den geretteten Bildschirminhalt enth„lt. Diese Struktur wird vom System
+  bei form_xdial(FMD_START, ...) per Malloc selbst angelegt. Bei zuwenig
+  Hauptspeicher setzt das System die Variable auf NULL, ansonsten wird der
+  Bildschirmausschnitt gerettet.
+  form_xdo erkennt, wenn die Variable <flyinf> NULL ist und fhrt dann
+  keine fliegenden Dialoge aus. Der Benutzer bewegt den Dialog durch Klick
+  auf das Objekt #0 der Dialogbox. Das Objekt #0 darf dabei nicht
+  SELECTABLE,EDITABLE,EXIT oder TOUCHEXIT sein.
+  form_xdial(FMD_FINISH, ...) prft, ob <flyinf> NULL ist und ruft dann
+  ggf. einfach FMD_FINISH auf, d.h. aktiviert den Redraw. War gengend
+  Hauptspeicher da, wird einfach der Bildschirm restauriert.
+
+  form_xdial und form_xdo haben dieselbe AES- Funktionsnummer wie form_dial
+  bzw. form_do. MagiX unterscheidet die Funktionen anhand der Parameterzahl,
+  KAOS/TOS ignoriert einfach die zus„tzlichen Parameter.
+  Hier ergab sich leider ein sehr unangenehmes Problem: MagiX fragte ab,
+  ob die Anzahl der addrin- Werte >= 1 war und wertete dann addrin[0] aus;
+  ansonsten wurde flyinf als NULL behandelt, was form_dial entspricht.
+  Leider jedoch strzte das System st„ndig mit Busfehlern ab. Der Grund:
+  TC enth„lt ab Version 1.0 bis heute einen Fehler in der AES- Bibliothek,
+  der die Anzahl der addrin- Werte bei form_dial immer mit 1 angibt (statt
+  0). Da TC sehr verbreitet ist, hat fast jedes Programm auf dem ST diesen
+  Fehler.
+  Jetzt fragt MagiX, ob die Anzahl mindestens 2 ist, und die MagiX-
+  Bibliothek setzt addrin[1] immer auf NULL.
+
+  Es wird gebeten, noch keine FlyDials zu verwenden, da sich die Aufruf-
+  parameter vermutlich noch einmal „ndern werden.
+
+  Man beachte, da die wichtigen Funktionen form_xdial und form_xdo v”llig
+  problemlos unter dem normalen TOS/KAOS funktionieren. Die zus„tzlichen
+  Parameter werden einfach ignoriert.
+
+- Die Dateiauswahlbox des Betriebssystems nutzt die FlyDials jetzt aus,
+  man kann also unter jedem beliebigen Programm die Box verschieben, auch
+  bei Anw„hlen von "laden" im Popup- Men.
+  Sind weniger als etwa 40k frei, ist die Box nicht verschiebbar.
+
+nderungen in Version 0.07:
+
+- Ein Fehler bei der Berechnung der Bildschirmpufferl„nge wurde behoben. Bis
+  jetzt wurden immer nur etwa 8k reserviert (wie TOS 1.0), was fr das
+  Dateimen von TeX-Draw nicht ausreichte. Jetzt werden mindestens 13k
+  reserviert.
+- Auch bei TOS- Programmen wird ggf. jetzt der Rckgabewert per Alertbox
+  angezeigt, falls ein Fehler aufgetreten ist. Die geschieht nur dann, wenn
+  "Halt nach TOS- Programmen" aktiviert ist, die Alertbox erscheint dann
+  anstelle der Tastendruck- Aufforderung.
+- Die FlyDials strzen nicht mehr ab, wenn die Box zu gro ist, d.h.
+  teilweise auerhalb des Bildschirms liegt.
+- Die FlyDials funktionieren jetzt auch im Farbmodus. Ich hatte das VDI fr
+  dmmer gehalten, als es ist, und fd_wdwidth mit fd_planes multipliziert.
+  Die einzige brauchbare Beschreibung von fd_wdwidth fand sich im Handbuch
+  zu Prospero Fortran...
+
+nderungen in Version 0.08:
+
+- Der Editor Clix (ein Klacks?) zeigte ein sehr ungesundes Verhalten: Im
+  Multitaskingbetrieb strzte das System bei Berhren des Clix- Desk- Mens
+  immer ab, wenn man vorher zwischenzeitlich etwa auf KAOSDESK umgeschaltet
+  hatte; dabei wurden die obersten beiden Eintr„ge des linken Mens noch
+  gezeichnet, danach landete man (hoffentlich) im Templmon. Der Grund:
+  Clix versucht verzweifelt, das Betriebssystem m”glichst wenig zu benutzen,
+  jedoch will auf dieses auch nicht ganz verzichten; also der Stoff fr
+  ein geradezu klassisches Drama, der Held ist hin und hergerissen.
+  Ist es edler im Gemte, des geschickten AESses Fehler zu erdulden oder
+  sich wappnen mit eigenen Routinen gegen eine See von Bomben ?
+  Sire, geben Sie Gewerbefreiheit!
+  Quax geht folgendermaen vor:
+
+    rsrc_load()          (das Men ist fr den RSC- Editor unlesbar!!!)
+    menu_bar()           (schafft AES noch gerade so)
+    hole die ACC- Namen aus dem Men, ersetze G_STRING durch
+     G_USERDEF und setze die eigenen HyperSuperDuperReschkeRoutinen ein
+
+  Wenn nun das Men ge”ffnet wird, verwaltet Quax die ACC- Eintr„ge, die
+  Frage ist nur: wozu ??? sag es mir ???
+  MagiX (und GEM 2.x und GEM/3 natrlich auch!!!) schalten nun ab und zu die
+  Mens hin und her und machen dabei intern jeweils menu_bar()s.
+  Das menu_bar() nimmt sich nun das Quax- Men vor und setzt in das Desk-
+  Men wieder die ACCs ein. Leider steht der Objekttyp jetzt auf
+  G_USERDEF. Uns (neu)schwant(stein) B”ses!
+  Nichtsahnend, voll Vertrauen auf die Kunst des Programmierers springt
+  das AES das vermeintliche USERDEF an und landet mitten im String.
+     Pardauz (bitte hier DMA Sound einfgen)
+  Die L”sung:
+  menu_bar in MagiX prft, ob die Objekte G_STRING,G_BUTTON oder G_TITLE
+  sind, d.h. ob ob_spec eine Zeichenkette ist, und setzt nur dann den String
+  des ACC ein. Jetzt l„uft auch Quax, das Bruchprogramm.
+  Und der Merkspruch fr heute:
+
+     Willst du alles selber machen, tut das System manchmal krachen,
+     Willst du besonders pfiffig ein, holen dich bald die Bomben ein.
+     Wer aber den System- Weg w„hlt, dem sein Programm sich brav verh„lt,
+     Er kann es mit Gewinn verkaufen, es wird auch noch nach Jahren laufen.
+
+- Die Speicherverwaltung des GEMDOS (jetzt MAGIDOS oder Maggi-DOS) wurde
+  v”llig neu geschrieben.
+  Fr den Unbedarften, hier die Beschreibung des bisherigen Mechanismus:
+
+  In der internen Speicherverwaltung wurden sogenannte Memory- Deskriptoren
+  verwaltet. Diese Strukturen hatten folgende Form:
+
+typedef struct {
+     MD   *md_link;           /* 0x00: Zeiger auf n„chsten MD              */
+     char *md_start;          /* 0x04: Zeiger auf Speicherblock            */
+     long md_len;             /* 0x08: L„nge des Speicherblocks            */
+     PD   *md_own;            /* 0x0c: Proze (1 = "MD unbenutzt")         */
+} MD;
+
+  Diese Deskriptoren, soweit benutzt, hingen in drei Speicherlisten:
+
+mem_freelist   EQU  $5328          ; Zeiger auf MD- Kette freier Bl”cke
+mem_alloclist  EQU  $532c          ; Zeiger auf MD- Kette belegter Bl”cke
+mem_rover      EQU  $5330          ; Zeiger auf n„chsten zu belegenden MD
+
+  Mit dem "mem_rover"- Konzept sollte erreicht werden, da aufeinander-
+  folgende Malloc- Aufrufe m”glichst aufeinanderfolgenden Speicher
+  anfordern (von vorlauten ST-Computer-Autoren als "Fehler bezeichnet").
+  Damit sollte die Segmentierung verringert werden. Diese Idee ist jedoch
+  Mist, wenn mehrere Programme gleichzeitig laufen und abwechselnd Mallocs
+  machen.
+  Das von DR implementierte Konzept hat den Vorteil, da es unempfindlich
+  gegen amoklaufende Programme ist, da die MDs im Systemspeicher liegen,
+  weit weg vom Benutzerspeicher. Ferner hat das MD- Konzept den Vorteil, da
+  der Speicher nicht zusammenh„ngend sein mu. Es w„re z.B. fr bios Getmpb
+  kein Problem, bei der Initialisierung der <freelist> mehrere Bl”cke
+  einzusetzen.
+  Ein bekannter Nachteil des bisherigen Konzepts ist, da nur endlich viele
+  Malloc- Aufrufe m”glich sind, da jedes Malloc() einen MD des endlichen
+  Systemspeichers aufzehrt. Dieser Systemspeicher wird auerdem noch
+  massiv von ge”ffneten Ordnern und Dateien belastet.
+  Ein Rechenbeispiel:
+  TOS 1.4 hat 80 IMBs, diese k”nnen entweder Dateien oder MDs aufnehmen. Wir
+  nehmen einmal 8 Harddisk- Partitions und ein Diskettenlaufwerk an.
+  Allein hierfr ben”tigt GEMDOS schon 36 der 80 Bl”cke (je ein DMD, eine
+  FAT und das Wurzelverzeichnis; fr Verzeichnisse ben”tigt man je zwei
+  Bl”cke). Hiervon wird davon ausgegangen, da alle im System befindlichen
+  Programme das Wurzelverzeichnis als aktuelles haben. In diesem Fall
+  verbleiben 44 Bl”cke, das sind 176 MDs. Ein Nachz„hlen ergab bei mir
+  24 belegte Bl”cke, obwohl nur KAOSDESK und WORDPLUS liefen. TC etwa
+  ben”tigt beim Linken sehr viele Bl”cke.
+  Ein weiterer Nachteil der bisherigen Speicherverwaltung: Wenn ein Programm
+  einen Speicherblock berlaufen l„t, d.h. ber dessen Ende hinausschreibt,
+  bleibt dies i.a. v”llig unbemerkt.
+
+  Besonders im Multitaskingsystem ist die Gef„hrlichkeit eines berschriebe-
+  nen Speicherblocks ungleich h”her als im TOS. Ferner ist die Anzahl der
+  ben”tigten Speicherbl”cke sowie auch die der Ordner (jedes Programm hat
+  eigene Standardverzeichnisse) h”her.
+  Aus diesem Grund hat MagiX jetzt ein v”llig neues Konzept. hnlichkeiten
+  mit dem des MSDOS sind nicht rein zuf„llig:
+
+  Es gibt nur noch eine Speicherliste, sie ist ber Sconfig(2) zug„nglich.
+  Die <freelist>, die vom BIOS geliefert wird, wird in die neue Struktur
+  umgerechnet.
+  Der Zeiger mem_root zeigt auf den ersten MCB:
+
+typedef struct {
+     long mcb_magic;          /* 0x00: 'ANDR' oder 'KROM' (letzter)        */
+     long mcb_len;            /* 0x04: Nettol„nge (immer >= 2 und gerade)  */
+     PD   *mcb_owner;         /* 0x08: Eigner oder NULL (freier Block)     */
+     MCB  *mcb_prev;          /* 0x0c: vorh. Block oder NULL               */
+} MCB;
+
+  <mcb_magic> ist 'KROM', wenn kein weiterer MCB folgt, sonst 'ANDR'. Im
+  letzen Fall liegt der n„chste MCB <mcb_len> Bytes hinter unserem MCB.
+  Die Liste ist per <mcb_prev> rckw„rts verkettet, also eine doppelt
+  verkettete Liste, was viele Operationen erheblich beschleunigt.
+  Ergeben sich irgendwo Bl”cke mit weniger als 18 Bytes, so werden sie vom
+  vorherigen nicht abgespalten, da 16 Bytes fr den MCB ben”tigt werden und
+  leere Bl”cke nicht erlaubt sind.
+  Die Malloc- Strategie ist einfaches "first fit", ein "best fit" w„re auch
+  m”glich.
+  Bei allen Speicheroperationen wird immer das <mcb_magic> berprft und
+  das System bei einem Fehler sofort angehalten (bis auf Mshrink und Mfree,
+  hier darf es beim angegebenen Block nur EIMBA geben, es werden aber
+  Nachfolger- und Vorg„ngerblock berprft).
+  Beim Anhalten aufgrund eines Speicherfehlers wird die Adresse des fehler-
+  haften MCB sowie die Daten (4 Langworte) ausgegeben. Anschlieend wird man
+  gefragt, auf welches Laufwerk man einen Systemauszug speichern m”chte.
+  Gibt man ein gltiges Laufwerk an (A..P), so wird der gesamte ST- Speicher
+  von 0 bis phystop auf das Wurzelverzeichnis des angegebenen Laufwerks
+  geschrieben, und zwar unter dem Namen "_sys_". Die Datei kann natrlich
+  je nach ST- Modell bis zu 4 oder gar 8 MB lang werden.
+  Speicherresidente Programme (Ptermres) arbeiten jetzt im Gegensatz zu
+  frher einfach nur so, da die Bl”cke nicht freigegeben werden, alle MCBs
+  bleiben intakt und werden auch weiterhin benutzt (jedesmal, wenn man in
+  die Menleiste klickt, wird der freie Speicher ausgegeben, dazu wird die
+  gesamte Liste einmal durchlaufen und dabei alle MCBs berprft). Wer also
+  m”chte, kann speicherresidente Programme nachtr„glich freigeben, oder auch
+  Teile davon.
+
+  Es wird empfohlen, Programme im Dauerbetrieb zu testen, damit es nicht
+  pl”tzlich passiert, da das System stehenbleibt und man nicht mehr dazu
+  kommt, seine Texte abzuspeichern. Ferner w„re eine Liste von kritischen
+  Programmen wnschenswert.
+
+  Falls es sich als n”tig erweisen sollte, wird noch der Vorg„ngerblock
+  ausgegeben (mcb_prev k”nnte auch zerst”rt sein!), bei halbem <magic>,
+  d.h. vielleicht 'DR' oder 'OM', k”nnte ein Reparaturmechanismus
+  implementiert werden. Mit dem oben erw„hnten Speicherdump sollten sich
+  aber die meisten Probleme l”sen lassen.
+
+  Die Blockvergr”erung ber Mshrink() ist nur noch erlaubt, wenn das
+  Programm nicht ber LIMITMEM beschr„nkt ist.
+
+  Es sollte noch erw„hnt werden, da die interne Speicherverwaltung, die
+  ja durch POOLFIXn.PRG notdrftig repariert wurde, jetzt erheblich verein-
+  facht wurde. Bl”cke brauchen nicht mehr zerlegt zu werden, da sie keine
+  MDs mehr enthalten k”nnen, die Kompaktierungsroutine wurde berflssig,
+  auch das st„ndige Whlen in Speicherlisten geh”rt der Vergangenheit an.
+  Ferner kommen alle nicht ben”tigten MDs der Anzahl der m”glichen Ordner
+  zugute. ADDMEM drfte fr den Normalsterblichen nicht mehr notwendig sein.
+
+nderungen in Version 0.10:
+
+- Tsetdate geht wieder.
+- Die FlyDials werden ber das Gedrckthalten der rechten Maustaste aufge-
+  rufen.
+- Das System strzt beim Programmladen nicht mehr ab, wenn ein Lesefehler
+  auftritt.
+- Der Aufruf von form_xdo() wurde ge„ndert. Alle bisherigen Demos sind
+  daher sofort zu vernichten.
+  Die bergebene Struktur:
+
+     typedef struct {
+          SCANX *unsh;
+          SCANX *shift;
+          SCANX *ctrl;
+          SCANX *alt;
+          int  (*filter)(int evtypes, OBJECT *tree, int *evnt_data);
+          } XDO_INF;
+
+  Neu sind die Tabellen <unsh> und <shift>; daher kann man jetzt auch
+  Funktionstasten fr die Dialogsteuerung benutzen.
+  Der <filter> wird direkt nach dem evnt_multi() aufgerufen und kann
+  Tastaturdaten „ndern oder andere Manipulationen vornehmen. Die Parameter:
+
+     evtypes        d0,Die Rckgabe des evnt_multi, eingetretene Events
+     tree           a0,Objektbaum der Dialogbox
+     evnt_data      a1,Rckgabewerte von evnt_multi, x,y,kstate usw.
+     Rckgabe:      d0,evtypes, mit dem weiter gerechnet wird
+
+- Die Buttons aller Alertboxen lassen sich ber F1/F2/F3 bedienen.
+- Alle Alertboxen sind fliegende Dialoge. Da ein Malloc() fr das Fliegen
+  notwendig ist, funktioniert dies nicht bei zuwenig Speicher oder Aufruf
+  aus dem DOS (etv_critic).
+- Ein b”ser Fehler beim Diskettenwechsel bzw. beim Lesefehler wurde behoben.
+  Die Situation in KAOSDESK:
+     1)   Disk X ist eingelegt, Pfad \ORDNER\
+     2)   Disk Y einlegen (enth„lt kein \ORDNER\), nicht Esc drcken
+     3)   Neuen Ordner anlegen
+  Leider strzte MagiX hier ab bzw. machte Mist. Jetzt reagiert das System
+  wieder wie in KAOS 1.4.2.
+  KAOSDESK gibt den erhaltenen Fehler zurck, also "Pfad nicht gefunden".
+  GEMINI erkl„rt allen Ernstes "Ordner existiert schon".
+
+nderungen in Version 0.11:
+
+- Das Atari- Desktop wurde entfernt. Stattdessen wird in den F„llen, in denen
+  bisher das Desktop gestartet wurde, erst nach einem Programm namens
+  x:\GEMSYS\GEMDESK\MAGIDESK.APP oder x:\MAGIDESK.APP gesucht (x ist dabei
+  das Bootlaufwerk) und dieses ggf. im eigenen Verzeichnis gestartet. Wurde
+  es nicht gefunden oder kehrt Pexec() mit einem Rckgabewert ungleich 0L
+  zurck (Fehler irgendwelcher Art), wird eine Dateiauswahlbox angezeigt, mit
+  der man ein (GEM-) Programm zum Starten ausw„hlen kann.
+  MAGIDESK klinkt sich vor dem Programmstart in den Desktop- Vektor des AES
+  ein und verbleibt resident im System.
+  Problem: Werden erst per Parallel- Autostart Programme ausgefhrt und dann
+  sp„ter das MAGIDESK gestartet, ist der Speicher nach Entfernen der
+  Autostart- Programme segmentiert.
+  Vielleicht werde ich das Konzept noch „ndern mssen, d.h. MAGIDESK vor
+  Abarbeitung des GEM-AUTO-Ordners laden.
+  Praktische Versuche sollten gemacht werden und das Ergebnis und Vorschl„ge
+  mir mitgeteilt werden.
+- shel_get() kopiert nicht mehr Zeichen, als der Puffer lang ist.
+- MAGIDESK sieht KAOSDESK sehr „hnlich, und zwar nicht umsonst. In MAGIDESK
+  fliegen jetzt die Dialoge, der Status wird in ASCII- Form gesichert (in
+  MAGIX.INF bzw. in den AES- Puffer), und zwar auch die TTP- Dialogzeilen
+  (!). Wenn der AES- Puffer zu klein ist, meldet MagiX einen šberlauf, in
+  MAGIX.INF mu man dann per Hand einen gr”eren AES- Puffer anmelden.
+  Der Button "KAOSDESK resident" hat keine Funktion mehr, ferner kann
+  MAGIDESK nicht verlassen werden (auer zum Programmstart).
+- Jetzt fehlt nur noch das VDI (hallo, ihr Behne Brothers!)
+- Bei Doppelklick auf einen Laufwerkbutton im Dateiauswahldialog wird dieser
+  nicht mehr aktiviert, sondern nur die Informations- Alertbox ausgegeben.
+- Nach Beendigung eines TOS- Programms wird jetzt anders verfahren. Bisher
+  passierte es leider, da bei einem Fehler und folgender Alertbox die
+  Ausgabe des Programms gel”scht wurde (warum steht in der NVDI- Anleitung
+  nicht drin, da auch bei "exit alpha text" der Bildschirm gel”scht wird?!).
+  Jetzt wartet MagiX bei aktiviertem "Warten auf TOS-Programm" immer, sonst
+  bei einem Rckgabewert ungleich 0 auf einen Tastendruck und zeigt die
+  Alertbox erst anschlieend an.
+
+nderungen in Version 0.12:
+
+- Es gibt jetzt einen Modus fr menu_bar, mit dem ein Men nur angemeldet,
+  jedoch noch nicht dargestellt wird. Dieser Modus sollte von ACCs und
+  automatisch gestarteten APPs genutzt werden und ist in MAGIX.H definiert.
+- Automatisch gestartete Programme und ACCs, d.h. Programme, die in den
+  "GEM-AUTO- Ordnern" liegen, bekommen als Befehlszeile (ber shel_read
+  lesbar) die Zeichenkette "\0\0AUTO", diese beginnt mit einem Nullwort und
+  wird daher von GEMDOS ignoriert.
+  Damit k”nnen etwa Editoren entscheiden, ob sie sich klammheimlich anmelden
+  (MENU_INSTL) oder wie blich die Menleiste anzeigen (MENU_SHOW) und den
+  Dateiauswahldialog fhren sollen.
+- Das Programm FONT EXPERT blieb beim Anzeigen des Fonts h„ngen. Grund dafr
+  war der Umstand, da FONT EXPERT grundlos sein Men abschaltet und dann
+  noch erwartet, Mausklicks und Tastendrcke zu bekommen. MagiX jedoch
+  prft, ob andere Programme mit Men oder Hintergrund im System sind und
+  schaltet ggf. auf diese um; wurde kein solches Programm gefunden, ging alle
+  Kontrolle an den Screenmanager ber, dieser erhielt alle Maus- und Tasten-
+  ereignisse (ist Tschaikowskys Klavierkonzert b-moll ein Tastenereignis?).
+  Jetzt wird in dem Fall, da keine andere Applikation da ist, die Applika-
+  tion berhaupt nicht umgeschaltet. Wahrscheinlich gibt es noch mehr
+  Programme, die vorher nicht liefen und jetzt im Singletasking- Modus
+  wieder funktionieren.
+- MagiX schaltet jetzt beim Wechsel der aktuellen Applikation nicht nur den
+  Prozedeskriptor, sondern auch den etv_term- Vektor um. Damit beeinflut
+  eine nderung dieses Vektors durch ein Anwenderprogramm immer nur die
+  aktuelle Applikation.
+  Diese Manahme wurde erforderlich, da etwa GEMINI und TEXSHELL eigene
+  etv_term- Routinen anmelden, die nicht nachfragen, welcher Proze gerade
+  beendet werden soll, und blind alle Routinen deinstallieren. Da dieser
+  Fehler auch bei TOS unter ACCs auftritt, die Programme starten (KCMD.ACC),
+  ist die neue etv_term- Behandlung ein Zugest„ndnis von MagiX an schlechten
+  Programmierstil.
+  Beim Booten merkt sich AES den zu diesem Zeitpunkt aktuellen etv_term-
+  Vektor und setzt diesen (i.a. den des GEMDOS oder BIOS, zeigt auf "rts")
+  fr jede neu erstellte Applikation bzw. ACC ein. Wer sich also dauerhaft
+  hinter jeden etv_term h„ngen will, mu dies bereits im AUTO- Ordner tun,
+  i.a. rufen Programme nach Durchlaufen ihres eigenen etv_term- Handlers und
+  ihrer Deinstallation den alten Vektor auf.
+- Bei eingeschalteter TOS- Kompatibilit„t werden jetzt nur noch die Sconfig-
+  Modi 0 und 1 mit EINVFN abges„gt, die anderen sind fr AES lebenswichtig
+  und drfen nicht deaktiviert werden.
+- Ein b”ser Fehler in MAGIX.H wurde behoben.
+- Das Schlieen fremder Fenster war dummerweise nicht korrekt verhindert
+  worden, Kurts Shell schlo immer fremde Fenster, ohne sie zu l”schen, was
+  ein frchterliches Durcheinander verursachte.
+  Jetzt ist das Schlieen wie bisher auch das L”schen fremder Fenster nicht
+  mehr erlaubt.
+- Die AES- Funktionen wind_open() und wind_close() sind nicht mehr als void
+  implementiert, sondern geben wie bereits wind_delete() einen Fehlercode
+  zurck, wenn die Funktion nicht ausgefhrt wurde.
+- Das BIOS wurde von KAOS 1.4.2 getrennt. Es erhielt die Versionsnummer 1.7
+  vom 13.4.91. Diese Manahme wurde n”tig, nachdem Kurts Shell auf undoku-
+  mentierte Systemvariablen des AES des TOS 1.4 zugriff.
+- wind_new gibt immer 1 (kein Fehler) zurck.
+- Schl„gt v_opnwk fehl, wird noch ein Versuch mit Workstation 1 unternommen.
+  Dies ist zwar in MAGIX.INF seit langem dokumentiert, jedoch bisher nicht
+  implementiert gewesen.
+
+nderungen in Version 0.13:
+
+ù menu_bar und objc_draw geben immer eine '1' zurck, also "kein Fehler".
+  Da der Rckgabewert in intout[0] aus Geschwindigkeitsgrnden bisher gesetzt
+  wurde, bevor die Funktion aufgerufen wurde, konnte es vorkommen, da die
+  TC- VDI- Bibliothek beim Zeichnen von benutzerdefinierten Objekten diesen
+  auf andere Werte zurcksetzte (die VDI- Bibliothek benutzt dasselbe
+  intout[]- Array, die Betonung liegt hier auf "selbe", nicht nur "gleiche").
+ù Statt MAGIDESK heit das Default- Desktop nun MAGIXDSK.
+ù Die Versionsnummer (0.13) ist jetzt ber die MAGIX- Variablen zug„nglich.
+ù Wird keine MAGIX.INF- Datei gefunden, werden Default- Kontrollfelddaten
+  in den AES- Puffer geschrieben. Bisher verursachte in solch einem Fall
+  das Kontrollfeld einen Systemabsturz.
+ù MAGIXDSK reagiert korrekt bei fehlender MAGIX.INF
+ù MAGIXDSK zeigt die MagiX- Versionsnummer in der Infobox an.
+ù Hier der Patch fr Turbo-C 2.0 ("Execute" fr GEM- Programme):
+    $17370 = $6f ($67)
+  In Assembler wird ein "beq" ersetzt durch "ble", was n”tig ist, da MagiX
+  bei fremdem oberen Fenster eine -2 liefert.
+  In 'C' sieht das ganze so aus:
+
+     void close_all_windows( void )
+     {
+          int handle,dummy;
+
+          while(1)
+               {
+               wind_get(0, WF_TOP, &handle, &dummy, &dummy, &dummy);
+               if   (handle == 0)            /* jetzt: "handle <= 0" */
+                    break;
+               wind_close(handle);
+               }
+     }
+
+  Damit funktioniert die Funktion unter TOS/KAOS wie gehabt und jetzt auch
+  problemlos unter MagiX. Das Problem bei Maxon-Pascal drfte „hnlich liegen,
+  ein Patch lohnt sich jedoch bei der gegenw„rtigen Qualit„t des Programms
+  noch nicht.
+ù Ganz speziell fr Wilfried werden bei verschiebbaren Dialogen jetzt die
+  Reschke- Ohren (im Volksmund: Eselsohren, was aber dasselbe ist) angezeigt.
+  Das geschieht so, da bei Beginn von form_do geprft wird, ob
+     a)   flydial- Informationen bergeben wurden
+     b)   gengend Speicher frei ist
+  Sind fliegende Dialoge m”glich, werden die Reschke- Ohren per v_pline in
+  der Farbe Schwarz im Replace- Modus ausgegeben. Dabei wird die Gr”e eines
+  Fensterbuttons gew„hlt (gr_hw/hbox), um das Objekt in allen Aufl”sungen
+  m”glichst quadratisch aussehen zu lassen.
+  Ein brauchbarer Eindruck entsteht leider nur, wenn die Box OUTLINED ist,
+  ansonsten mten die Reschke- Ohren individuell angepat werden.
+ù Bei Maustasten- Emulation ber ALT-Cursor werden die Daten nicht nur ber
+  a0, sondern auch ber den Stack bergeben, wie dies bei direkten Mausdaten
+  bisher immer der Fall war und auch so dokumentiert ist.
+  Da die Daten bei Maustastenemulation nur ber a0 bergeben wurden, ist
+  ein offensichtlicher Fehler, der der Atari- Dokumentation widerspricht.
+ù Der resvector wird nur beim Warmstart abgefragt, dies entspricht dem
+  Verhalten des TOS 2.05.
+ù Der Mega STE wird erkannt und untersttzt. MagiX verh„lt sich im wesentli-
+  chen wie TOS 2.05, mu jedoch Kompromisse mit der Kompatibilit„t mit TOS
+  1.x eingehen.
+  Wenn ein Mega STE erkannt wurde, wird das Loword des _MCH- Cookie auf
+  $10 gesetzt, also _MCH = $00010010.
+  Daher kann das Kontroll- CPX die Taktfrequenz umschalten.
+ù DMAread und DMAwrite wurden implementiert, ein Fehler des TOS 2.05 bei der
+  Belegung des DMA sector count register behoben.
+ù Bconmap wurde implementiert. Der Fehler des TOS 2.05, bei Iorec immer nur
+  Modem 1 zurckzugeben, wurde korrigiert.
+  Unter Mega STE und h”her werden die Schnittstellen Modem 2 und Serial 1
+  untersttzt.
+  Bei Ausfhrung von Bconmap zum Umschalten der Schnittstellen werden alle
+  Interrupts gesperrt (fehlt bei TOS 2.05).
+  Die zus„tzlichen seriellen Schnittstellen werden im Gegensatz zu TOS 2.05
+  nicht als BIOS- Ger„te 6,7 zug„nglich gemacht, um zu TOS 1.x kompatibel
+  zu bleiben. Unter TOS 2.05 k”nnen die in der Ger„te- Sprungtabelle angege-
+  benen Ger„te 6 und 7 niemals verwendet werden, auerdem werden die Bcon...-
+  Aufrufe extrem verlangsamt.
+ù handle_key ist ber Kbdvbase-4 zug„nglich und kann damit auch umgelenkt
+  werden. Dies in Kompatibilit„t zu TOS 2.05
+ù Die letzten Zeitschleifen im TOS wurden entfernt und durch Abfrage des
+  MFP- Timers C ersetzt. Die Geschwindigkeitsberechnung des Prozessors
+  entf„llt damit wieder.
+ù Die HD- Floppies im Mega STE werden untersttzt, die Floppy- DSBs entspre-
+  chen dem Format in TOS 2.05.
+ù Der Warmstart wurde beschleunigt, indem statt der ersten 64k nun nur noch
+  die vom BIOS/VDI/DOS benutzten Speicherbereiche gel”scht werden. Statt der
+  bisher 63104 Bytes mssen jetzt nur noch 23444 gel”scht werden, auerdem
+  wurde die L”schschleife optimiert.
+ù Technobox CAD wurde zum Laufen gebracht, indem ein Fehlerfall von
+  objc_draw() abgefangen wurde.
+  Es mu betont werden, da Technobox CAD einen b”sen Fehler hat, und zwar
+  wird ein wind_set(hdl, WF_VSLIDE, ...) fr ein Fenster gemacht, das keinen
+  vertikalen Slider besitzt. Soll nun das nicht existente Objekt neu
+  gezeichnet werden, so h„ngt das von objc_draw() zu zeichnende Objekt
+  praktisch in der Luft, d.h. es ist nicht Bestandteil des Objektbaums,
+  daher sind die Zeiger ob_next/head/tail alle -1. Um die Position des zu
+  zeichnenden Objekts zu ermitteln, ben”tigt objc_draw() das Elterobjekt, das
+  ber ob_next ermittelt wird. Zuf„lligerweise liegen nun im TOS 1.4 vor dem
+  Objektbaum des Fensters Nullbytes, so da Objektnummer -1 wieder auf
+  Objekt 0 zeigt, welches als Elterobjekt -1 liefert.
+  Unter KAOS liegen vor dem Fensterobjektbaum andere Daten, zuf„lligerweise
+  zeigt hier ob_next wieder auf ein ungltiges Objekt des Fensterbaumes, das
+  natrlich wieder -1 als Nachfolger hat; daher landet KAOS in einer
+  Endlosschleife.
+  Es ist also reiner Zufall, da TechnoboxCAD sein Fenster unter TOS 1.4
+  ”ffnen kann, es ist zu untersuchen, ob dies unter TOS 2.x oder 3.x oder
+  gar GEM 2.x noch funktioniert.
+  Obwohl es mir widerstrebt, Programmierfehler belster Art zu untersttzen
+  und weil es mir noch mehr widerstrebt, Zuf„lle nachzuprogrammieren, habe
+  ich folgende L”sung ersonnen:
+  objc_draw() prft, ob das Objekt entweder das Wurzelobjekt ist (d.h.
+  Objekt 0) oder, wenn es nicht das Wurzelobjekt ist, ob der ob_next- Zeiger
+  ungltig ist. In diesem Fall ist das Objekt nicht Bestandteil des Baumes
+  und wird daher nicht gezeichnet. Jetzt wrde es mir eine diebische Freude
+  bereiten, ein Programm zu schreiben, das aus demselben Grund, aber nun
+  in TOS 1.4 zum Stillstand fhrt.
+ù Die fliegenden Dialoge werden nun in zwei verschiedenen Modi untersttzt,
+  um noch Reschke- kompatibler ("reschkatibler") zu werden:
+  1. Einfach nur mit der linken Maustaste auf das Reschke-Ohr klicken und
+     die Box bei gedrckter linker Maustaste verschieben. Dabei rechte
+     Maustaste in Ruhe lassen.
+  2. Wie bisher in MagiX bei gedrckter rechter Maustaste mit der linken
+     Maustaste an beliebiger Stelle des Dialogs klicken. Die Box wird jetzt
+     unsichtbar, der Hintergrund kann betrachtet werden. Man kann auch die
+     Box bei gedrckter linker und rechter Maustaste verschieben.
+
+nderungen in Version 0.14:
+
+ù Speziell fr Wilfried, der anscheinend gern kritische Programme benutzt,
+  da sie den Kitzel des Unberechenbaren mit sich bringen, wurde ein
+  Mechanismus ins DOS eingebaut, um bei Zerst”rung eines Speicherblocks
+  diesen zu reparieren.
+  Der Mechanismus funktioniert nur dann, wenn der Fehler beim Pterm()
+  auftritt, d.h. in dem Moment, wo DOS die dem terminierenden Proze
+  geh”renden Speicherbl”cke freigeben will. Dies hilft z.B. bei dem
+  beliebten GfA- Assembler.
+  Das System gibt wie bisher eine Fehler- Information aus und fragt den
+  Anwender, ob dieser einen Reparaturversuch unternehmen m”chte. Antwortet
+  er mit 'n' oder 'N', reagiert das System wie bisher und gibt dem Anwender
+  noch die Gelegenheit, den Hauptspeicher auf Platte abzuspeichern.
+  Antwortet der Anwender mit 'j','J','y' oder 'Y', durchsucht das System den
+  Speicher hinter dem zerst”rten MCB bis maximal _memtop nach den magischen
+  Langworten 'ANDR' und 'KROM' eines eventuell folgenden MCB.
+  Wird vor _memtop keiner gefunden, so wird der zerst”rte MCB letzter der
+  Speicherkette und erh„lt den gesamten Speicher bis _memtop als unbelegten
+  Speicher.
+  Wird ein folgender MCB gefunden, wird der dazwischenliegende Speicher
+  als frei markiert und dem zerst”rten MCB zugewiesen. Dieser Mechanismus
+  funktioniert auch dann noch, wenn mehrere MCBs zerst”rt worden sind.
+  Achtung: Der Vorgang, der bis zu 4MB Hauptspeicher in 2-Byte-Schritten
+           durchsucht, kann einige Zeit in Anspruch nehmen. Daher nicht
+           gleich das Gewehr ins Getreide werfen und glauben, der Rechner
+           sei abgestrzt.
+  Achtung: Der beschriebene Mechanismus ist keinesfalls todsicher; er
+           behandelt einfach den unbekannten Speicher als frei, was in
+           einigen F„llen t”dliche Folgen haben kann. Daher ist dieser
+           Mechanismus lediglich als Notl”sung zu verstehen, und man sollte
+           anschlieend m”glichst schnell alles abspeichern und einen
+           Warmstart durchfhren!
+ù Der von Wilfried beschriebene "Fehler", da das Anw„hlen bestimmter
+  Mens in bestimmten Programmen bei niedriger Aufl”sung zu "fataler Fehler
+  im AES" fhrt, ist in Wirklichkeit ein šberlauf des Bildschirmpuffers fr
+  Mens und Alertboxen.
+  KAOS und TOS fangen den šberlauf nicht ab, daher scheint hier alles
+  problemlos zu funktionieren.
+
+nderungen in Version 0.15:
+
+ù Mit dem Bootprogramm MAGXBOOT kann MagiX an den Anfang des Speichers
+  gelegt werden. Hierbei wird phystop nicht ver„ndert, das System ist bei
+  Bet„tigung von Reset sofort gel”scht.
+  MagiX erkennt selbst„ndig, ob es als "RAM" (d.h. vorn im Speicher) oder
+  als "ROM" (hinten im Speicher) l„uft und pat sich entsprechend an.
+ù Eine neue AES- Funktion wurde implementiert. Sie heit "appl_freeze" und
+  ist in der Lage, eine beliebige im System befindliche AES- Applikation
+  anzuhalten und zu verstecken. Der Aufruf darf nicht auf die aktuelle
+  Applikation angewendet werden.
+  Der Aufruf versteckt alle zur Applikation geh”rigen Fenster, sie
+  erscheinen bei WF_WINDLIST als negative Handles. Ferner werden Menleiste
+  und Hintergrund abgemeldet, schlielich wird die Applikation g„nzlich aus
+  der Warteliste entfernt und erscheint in der Applikationstabelle als
+  negativer Pointer.
+ù Eine neue AES- Funktion wurde implementiert. Sie heit "appl_unfreeze" und
+  taut mit "appl_freeze" eingefrorene Applikationen wieder auf.
+  Da die Fensterhandles nur ungltig gemacht und ansonsten unver„ndert
+  mitgefhrt werden, erscheinen alle Fenster in der Position und der
+  Hierarchie, in der sie eingefroren wurden.
+  appl_unfreeze ist ebenfalls noch nicht zug„nglich
+ù Es gibt einen neuen Modus fr shel_write, und zwar isover = SHW_SINGLE
+  (101). Er funktioniert wie der normale Modus 1, jedoch werden vor
+  Programmstart alle Applikationen auer 0 und 1 eingefroren und nach
+  Programmende wieder aufgetaut.
+  Der Aufruf ist nur von Applikation 0 aus erlaubt.
+  Der Aufruf sperrt im Gegensatz zum TOS auch s„mtliche Accessories. Dies
+  ist n”tig, da Fenster von ACCs beim Programmstart nicht geschlossen werden
+  und es meistens gerade die Fenster sind, die unordentlich geschriebene
+  Applikationen verwirren.
+  Programme, die im Single-Modus gestartet worden sind, k”nnen ganz normal
+  andere Programme wieder parallel nachladen; die anderen Programme werden
+  nur beim Programmstart eingefroren, danach ergibt sich keine nderung zum
+  normalen Programmablauf bis auf die Tatsache, da alle eingefrorenen
+  Programme nach Programmende wieder aufgetaut werden.
+  Der Single- Modus ist unter anderem notwendig fr:
+
+     SIGNUM
+     MEGAPAINT
+     FONT EXPERT
+
+ù SERPTCH2 wurde integriert.
+ù Die Tastaturtabellen liegen jetzt an gerader Adresse, bisher strzte BUG
+  beim Verlassen ab, da er wortweise auf die Tastaturtabellen zugreift.
+ù Ein Tip: Falls das System wegen Zerst”rung eines Speicherblocks angehalten
+           worden ist, kann man den aktuellen Proze etwa mit TEMPLMON
+           abbrechen. Das System gibt einem dann die M”glichkeit, die
+           Speicherstruktur zu reparieren, d.h. den zerst”rten Speicher als
+           frei zu behandeln.
+ù Die FlyDial- Ecke wurde weiter reschkisiert, damit Wilfried nicht mehr
+  meckert.
+ù Die Vorlaufpuffer des DOS fr CON und AUX wurden entfernt. AUX wird ber-
+  haupt nicht mehr auf ^C/^S/^Q abgefragt, und fr CON hat DOS direkten
+  Zugriff auf den Tastaturpuffer.
+
+nderungen in Version 0.16:
+
+ù Sicherheitsabfragen verhindern das Abstrzen von Easydraw.
+ù Nicht verarbeitete Tastencodes werden von form_keybd weitergegeben.
+ù Redraw- Meldungen liegen innerhalb des Bildschirms
+ù Die gesamte interne Eventstruktur wurde umgekrempelt, was gut 800 Bytes
+  Code und einen ganzen Haufen Daten erspart. Das neue Konzept ist simpel
+  und rein statisch ohne Verzeigerung, Applikationen k”nnen nur auf die
+  per evnt_multi festlegbaren Ereigniskombinationen warten.
+  Durch die fehlende Verzeigerung ist die Chance gewaltig gestiegen, da
+  das System nach dem Absturz einer Applikation noch weiterhin lauff„hig ist.
+ù Nach dem Absturz einer Applikation werden ausstehende Timer- Events
+  ordentlich entfernt.
+ù Nach dem Absturz einer Applikation werden ausstehende Semaphoren- Events
+  ordentlich entfernt.
+ù Beim Einfrieren und Auftauen von Applikationen wird der Bildschirm nicht
+  mehr zerst”rt, sondern entsprechende Redraws gesendet.
+ù Es wird verhindert, da eingefrorene Fenster nach oben kommen und so
+  fr Verwirrung sorgen.
+ù Nach dem Abbruch einer GEM- Applikation (Programm mit Pterm(EBREAK)
+  beendet) wird der Bildschirm aufger„umt.
+  KCMD gibt jetzt unter MagiX EBREAK zurck, um den Bildschirm beim
+  parallelen Starten aufzur„umen.
+ù Der Screenmanager (SCRENMGR, Applikation 1) verarbeitet Nachrichten,
+  und zwar solche des Typs SM_SPECIAL, buf[3] mu 0 sein, buf[4] und buf[5]
+  mssen das magische Langwort 'MAGX' enthalten. Die Funktionen:
+
+   buf[6] = 0:      Bildschirm aufr„umen, buf[7] mu 0 sein
+   buf[6] = 1:      Applikation <buf[7]> entfernen
+   buf[6] = 2:      Applikation <buf[7]> umschalten
+   buf[6] = 3:      Applikation <buf[7]> einfrieren
+   buf[6] = 4:      Applikation <buf[7]> auftauen
+
+  Die Konstanten sind in MAGIX.H als SMC_? definiert.
+  Achtung: Der Screenmanager selbst sowie alle ACCs drfen keinesfalls
+           beendet werden.
+           Das Desktop sollte ebenfalls nicht beendet werden.
+ù Auf CTRL-ALT-ESC kommt man in ein Info- Men. Alle Applikationen werden in
+  der folgenden Form angezeigt:
+
+  Applikationsnummer (ap_id)
+  Applikationsname
+  Status der Applikation (running/ready/waiting/frozen/zombie)
+  Erwartete Ereignisse:  kb        Tastatur
+                         bt        Mausknopf
+                         m1        erstes  Mausrechteck
+                         m2        zweites Mausrechteck
+                         ms        Nachricht
+                         ti        Timer
+                         se        Semaphore (wind_update)
+  zugeh”rige Signale:    MENU      Men und/oder Desktop- Hintergrund
+                         MOUSE	Mausknopf und/oder Mausbewegung
+                         KBD		Tastatur
+                         SCR		Bildschirm- Semaphore (wind_update)
+  belegter Speicher
+
+  Die zugeh”rigen Signale sind diejenigen, die die Applikation im Moment
+  empfangen kann bzw. die Semaphoren, die die Applikation gesetzt hat.
+  Ein klassisches Beispiel fr einen Deadlock:
+
+   0 PROGRAMM waiting kb bt                SCR
+   1 SCRENMGR waiting                   se MOUSE KBD
+
+  PROGRAMM wartet auf Tastatur- und Mausevents, diese gelangen jedoch zum
+  SCRENMGR, welcher auf die Freigabe des von PROGRAMM gesperrten Bildschirms
+  wartet.
+
+  Bei Applikation 1 (SCRENMGR) wird der freie Speicher angezeigt, und zwar
+  die Summe aller freien Bl”cke. ACCs haben i.a. 0 Bytes, da Basepage und
+  Environment dem AES geh”ren. Es wird jeweils nur der Speicher des aktiven
+  Prozesses angezeigt, l„dt Tempus etwa MUTIL nach, so wird nur der von
+  MUTIL belegte Speicher angezeigt.
+  Das Entfernen von Programmen ist nicht mit WINDOWS zu vergleichen, wo
+  natrlich eine Applikation eine Nachricht erh„lt, sich doch bitte zu
+  beenden. Bei MagiX wird eine Applikation brutal und ohne ihr Einverst„ndnis
+  terminiert, was u.u. zu Problemen fhren kann.
+
+  Folgende Tasten sind aktiv:
+
+     Cursor hoch:   vorheriger Eintrag
+     Cursor runter: n„chster Eintrag
+     0..9:		Zeile direkt
+     Leertaste:     Dialog beenden
+     Del:           Applikation entfernen (nicht bei ACC,SCRENMGR,zombie)
+     Return:		Applikation umschalten, wie ber Popup- Men
+     F:			Applikation einfrieren
+     U:			Applikation auftauen
+
+  Achtung: Der Bildschirmspeicher wird in G„nze (per Rastercopy!) gerettet,
+           falls nicht gengend Speicher frei ist, wird eine Aufr„um-
+           Nachricht an den Screenmanager geschickt. Diese kann dieser
+           jedoch nur ausfhren, wenn keine Dialogbox aktiv ist. Daher kann
+           es u.u. zu einer Zerst”rung des Bilschirminhalts kommen.
+
+  Der Aufruf von CTRL-ALT-Esc kann theoretisch berall erfolgen, auch
+  w„hrend eines Popup- Mens zum Umschalten der Menzeile. Da die Info-
+  Routine die meisten Funktionen nicht selbst ausfhrt, sondern eine
+  entsprechende Message an den SCRENMGR schickt, wird die Ausfhrung solange
+  verz”gert, bis dieser wieder laufen kann, etwa bis zur Beendigung des
+  Dialogs.
+  Der Status "zombie" bedeutet, da das Programm gerade beendet wird. Man
+  kann diesen Status erzeugen, indem man w„hrend eines Dialogs oder Mens
+  das Programm entfernt. Da der SCRENMGR zu dieser Zeit gesperrt ist, kann
+  dieses noch nicht vollst„ndig entfernt werden, sondern bleibt "zombie".
+ù Zur wesentlichen Vereinfachung der Fehlersuche (Post- Mortem- Dump oder
+  zuknftige SYSMONs) erh„lt jeder Proze, wenn er nicht per Pexec- Modus
+  5 erzeugt wurde, im Environment eine Variable, die den Programmnamen
+  angibt. Die Form:
+
+  		_PNAM=name.ext
+
+  Bei Modus 5 kann ich leider nicht von einem sinnvollen Pfadzeiger aus-
+  gehen, daher bekommen solche Programme keine _PNAM- Variable.
+  Beim Erstellen des Environments werden zun„chst alle bestehenden _PNAM-
+  Variablen ausgefiltert und schlielich die aktuelle als erste Variable
+  angelegt. Die Zeichenkette wurde von Pexec() per Fsfirst() ermittelt und
+  enth„lt daher keine Suchzeichen (?,*) und ist immer in Grobuchstaben
+  angegeben. Es wird kein Pfad angegeben.
+ù MEMEXAMN wertet die _PNAM- Variable aus und zeigt den Prozenamen im
+  Klartext an.
+
+nderungen in Version 0.17:
+
+ù AES wird per Modus 6 gestartet, und ACCs sind jetzt ebenfalls Eigner ihrer
+  Basepages und Environments. Daher wird die Speicherangabe per CTRL-ALT-Esc
+  exakter, und auch MEMEXAMN kann die AES- und ACC- Bereiche erkennen.
+ù Das Ctrl-Alt-Esc Men hat eine zus„tzliche Funktion: Mit [C]ontrol kann
+  man Tastatur- und Mauskontrolle an eine Applikation bergeben, falls es
+  zu einer Verklemmung gekommen ist. Ferner kann man so Tastaturcodes an ein
+  unten liegendes Fenster bermitteln; einige Programme werten diese jedoch
+  nicht aus.
+ù Ein Fehler beim Einfrieren von APPs wurde entfernt. Er trat auf, wenn die
+  Applikation auf Timerevents wartete.
+ù Nach dem Vorbild von "Let them fly" werden folgende zus„tzlichen Tasten
+  in objc_edit() ausgewertet:
+
+	CTRL-Cursor links:	Vorheriges Wort bzw. Zeilenanfang
+	CTRL-Cursor rechts:	N„chstes Wort bzw. Zeilenende
+	CTRL-Del:			L”schen bis Zeilenende
+	CTRL-C:			Copy		(Zeile)
+	CTRL-X:			Cut		(Zeile)
+	CTRL-V:			Paste	(an Cursorposition)
+
+  Wort- Trennzeichen sind folgende: " !../:..?[\]{|}~ö÷øùú"
+  Der Copy-/Paste- Puffer ist 81 Zeichen lang und im AES selbst unterge-
+  bracht. Das SCRAP- Verzeichnis wird nicht verwendet.
+  ^V fgt den Puffer derart in die Zeile ein, als h„tte man die Tasten von
+  Hand bet„tigt, also bercksichtigt den Einfge-/šberschreibmodus.
+  Ferner werden auch die entsprechenden ungltigen Zeichen unterdrckt bzw.
+  in Groschrift konvertiert.
+ù Das Einfge-/šberschreib- Flag ist jetzt in Bit 1 des Konfigurations-
+  langworts untergebracht und kann daher von auen manipuliert und abgefragt
+  werden. Folglich wird fr DOS und AES dasselbe Flag verwendet.
+ù Das MagX- Cookie enth„lt einen Zeiger auf folgende Struktur:
+		
+	struct magxvars {
+		long	config_status;
+		void *dosvars;
+		void *aesvars;
+		};
+
+  Der Zeiger auf die AES- Variablen wird erst vom AES selbst eingetragen,
+  und zwar unmittelbar, bevor das System per appl_yield gestartet wird.
+

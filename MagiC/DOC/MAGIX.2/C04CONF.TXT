@@ -1,0 +1,416 @@
+4. Konfiguration von Mag!X
+--------------------------
+
+Die CPX-Module
+--------------
+Fr das variable Kontrollfeld XCONTROL.ACC von ATARI finden Sie im Ordner
+MAGX\ZUSATZ auf der Orginaldiskette die CPX-Module MAGXCONF.CPX und
+TSLICE.CPX, die Sie in den CPX-Ordner auf Ihrer Festplatte kopieren
+sollten. Beachten Sie bitte, da nicht alle XCONTROL-Versionen einwandfrei
+im Multitaskingbetrieb laufen. Verwenden Sie XCONTROL Version 1.31 oder
+neuer; XCONTROL kann unter Mag!X auch als GEM-Programm gestartet werden,
+wenn Sie es in XCONTROL.APP umbenennen.
+
+MAGXCONF
+--------
+In diesem Modul k”nnen Sie einige Voreinstellungen fr Mag!X vornehmen.
+Wenn Sie kein XCONTROL besitzen (fragen Sie einfach Ihren ATARI-H„ndler
+danach!), mssen Sie das Accessory MAGXCONF.ACC verwenden. Sie k”nnen
+MAGXCONF.ACC entweder als Accessory oder als Programm verwenden (indem Sie
+es in MAGXCONF.PRG umbenennen); kopieren Sie MAGXCONF.PRG in den
+AUTO-Ordner, so setzt es im AUTO-Ordner die vorher gesicherte
+Konfiguration und beendet sich wieder, braucht also keinen Speicher.
+
+
+[ Bild MAGXCONF.IMG ]
+
+
+Die Schalter von MAGXCONF haben im einzelnen folgende Bedeutung:
+
+Fastload:
+šber diesem Schalter k”nnen Sie ein schnelleres Lesen von Disketten
+einschalten. Dieser Punkt kann normalerweise immer aktiviert bleiben, auer
+bei h„ufigen Lesefehlern, wie Sie z.B. beim Anschlu „lterer
+5"1/4-Diskettenlaufwerke gelegentlich auftreten. Der Schalter ist in jedem
+Fall harmlos, da die Funktion nur beim Lesen wirksam ist, nicht beim
+Schreiben.
+
+TOS-Kompatibilit„t:
+Da unter Mag!X mehrere Programme gleichzeitig laufen, mssen strenge
+Sicherheitsvorkehrungen getroffen werden, die z.B. verhindern, da eine
+Datei von zwei Programmen gleichzeitig beschrieben wird. Leider gibt es
+immer noch Programme, die fehlerhafte Systemaufrufe machen, was unter
+Umst„nden in einem Multitaskingsystem zur Konfusion fhren kann. Mit Hilfe
+dieses Schalters k”nnen Sie die Sicherheitsabfragen deaktivieren, woraufhin
+manches fehlerhafte Programm wieder laufen wird. Da dieser Schalter die
+Betriebssicherheit senkt, sollten Sie die TOS-Kompatibilit„t m”glichst
+selten und dann auch nur kurzfristig einschalten!
+
+Smart Redraw:
+Dieser Schalter aktiviert einen Modus in Mag!X, der einen schnelleren und
+eleganteren Bildschirmaufbau erm”glicht. Um ein Gefhl dafr zu bekommen,
+was das bedeutet, deaktivieren Sie einfach den Schalter, stellen in
+MAGXDESK ber den Menpunkt "Anzeige: als Text" die Textdarstellung ein und
+vergr”ern anschlieend ein Fenster von MAGXDESK. Sollte eines Ihrer
+Programme ab und zu vergessen, bestimmte Bildschirmbereiche neu zu zeichnen
+(da es mit Smart Redraw nicht zurecht kommt), sollten Sie diesen Punkt
+deaktivieren.
+
+Grow- und Shrinkboxen:
+Deaktiviert auf Wunsch die Implosions- und Explosionseffekte, um einen
+(noch) schnelleren Bildschirmaufbau zu erhalten.
+
+Halt nach TOS- Programmen:
+Ist dieser Schalter aktiviert, wird nach dem Beenden eines TOS-Programms
+auf einen Tastendruck gewartet. Dies hat allerding nur eine Wirkung, wenn
+die TOS-Programme nicht ber das Programm VT52 in ein Fenster umgeleitet
+werden.
+
+Pull-Down-Mens:
+Unter Mag!X k”nnen Sie w„hlen, ob die Mens bei Berhrung oder erst nach
+Mausklick herunterfallen sollen. Die zweite Variante verhindert
+wirkungsvoll, da die Mens aus Versehen herunterfallen, falls Sie
+beispielsweise nur ein Fenster verschieben wollten und dabei mit der Maus in
+die Menzeile gerutscht sind.
+
+
+Pr„emptives Multitasking
+------------------------
+Nachdem Sie zu Anfang dieser Anleitung bereits ber den Begriff
+"pr„emptives Multitasking" gestolpert sind, wollen wir Ihnen vor der
+Beschreibung des n„chsten Konfigurationsmoduls einen kurzen Abri zu
+diesem Thema nachliefern.
+
+Normalerweise besitzt jeder Computer nur einen Prozessor, so da Programme
+nicht wirklich gleichzeitig abgearbeitet werden k”nnen. Es wird einfach so
+schnell zwischen den Programmen hin- und hergeschaltet, da sich fr den
+Benutzer der Eindruck der Quasi-Gleichzeitigkeit ergibt. Verschiedene
+Multitasking-Konzepte unterscheiden sich meistens dadurch, unter welchen
+Umst„nden dieser Umschaltung (der sogenannte "Task-Switch") stattfindet.
+
+Das GEM im ROM Ihres Atari und ebenso Windows fr Intel-PCs und das System 7
+fr den Apple Macintosh lassen diesen Task-Switch nur dann zu, wenn das
+laufende Programm einen Betriebssystemaufruf macht. Dieses Verhalten
+bezeichnet man als "kooperatives Multitasking". Macht das laufende Programm
+l„ngere Zeit keine Betriebssystemaufrufe, so bekommen die anderen Programme
+keine Rechenzeit, und das ganze System wirkt sehr hakelig, z.B. wird auf
+Ihre Maus- und Tastatureingaben nur sehr langsam und z„hflssig reagiert.
+
+Mag!X benutzt ebenso wie UNIX, OS/2 und (inzwischen auch) Windows NT
+zus„tzlich eine Zeitscheibensteuerung: Programme werden in regelm„igen
+Abst„nden unterbrochen und gegebenenfalls umgeschaltet, damit sich kein
+Programm die gesamte Rechenzeit reserviert. Dieses Task-Switch-Verhalten
+bezeichnet man als "pr„emptives Multitasking". Im Gegensatz zum
+kooperativem Multitasking erfordert ein pr„emptives Multitaskingsystem
+natrlich einen h”heren Verwaltungsaufwand, der sich (je nach Qualit„t der
+Implementierung) in einem Geschwindigkeitsverlust bemerkbar machen kann,
+aber nicht mu, wie Sie bei Mag!X sehen.
+
+Ein weit verbreitetes Vorurteil gegenber Multitasking-Systemen ist, da
+sie mehr Rechenzeit fr sich selbst ben”tigen, auch wenn nur ein einziges
+Programm im Moment ausgefhrt wird. Wenn ein Compilerlauf, auf dessen
+Ergebnis man sowieso gespannt wartet, auf einmal vier statt zwei Minuten
+dauert, hilft auch kein Megabyte Plattencache, es stellt sich stattdessen
+sofort die Frage nach dem Sinn und Zweck eines Multitaskingstems berhaupt.
+Glcklicherweise liegt der Rechenzeitverlust bei Mag!X weit unterhalb
+eines Prozents, womit sich das Vorurteil als genau ein solches
+herausstellt.
+
+Klingt alles sehr kompliziert? Keine Sorge, fr Sie bleibt, auer ein paar
+zus„tzlichen Einstellm”glichkeiten, die man getrost ignorieren kann, alles
+beim alten; zumindest, was den Aufwand angeht.
+Sie werden feststellen, da mit Mag!X das Arbeiten mit Ihrem ATARI wieder
+einmal eine Spur angenehmer geworden ist. Muten Sie bisher lange warten,
+bis rechenintensive Programme mit ihrer Arbeit fertig waren, k”nnen Sie nun
+mit dem Rechner parallel in einer anderen Applikation weiterarbeiten. Ganz
+besonders gilt dies fr TOS-Progamme, die in einem echten
+Multitasking-System natrlich ordentlich in Fenstern ablaufen. Compilieren
+oder assemblieren Sie einfach in einem TOS-Fenster, legen Sie dieses
+Fenster nach hinten und schreiben w„hrenddessen mit der Textverarbeitung
+weiter an einem Brief.
+
+Im Gegensatz zu blichen L”sungen arbeitet Mag!X nicht mit einer starren
+Priorit„tensteuerung, bei der bestimmten Programmen mehr Rechenzeit
+zugewiesen wird als anderen (was man aber immer im Einzelfall ausprobieren
+mu!), sondern mit einer Art Automatik. Hierbei wird dem Programm, mit dem
+Sie gerade arbeiten, die gr”te Aufmerksamkeit vom Betriebssystem
+geschenkt. Alle anderen Programme (deren Fenster z.B. im Hintergrund
+liegen) werden benachteiligt.
+So einfach es klingt, ist es auch: Es werden fast ausschlielich Ihre
+"Denkpausen" verwendet, um Hintergrundprogramme zum Zug kommen zu lassen.
+Fr Ihren Editor gibt es, trotz mehrerer laufender Programme, die z.B.
+Apfelm„nnchen berechnen, keine sprbare Verz”gerung; Sie haben fast das
+Gefhl, weiterhin auf einem Singletasking-System zu arbeiten, wenn nicht
+pl”tzlich aus dem Hintergrund das fertige Apfelm„nnchen k„me.
+
+Um die Rechenzeitverteilung Ihres Betriebssystems dennoch beeinflussen zu
+k”nnen, gibt es zwei M”glichkeiten, die im folgenden Abschnitt beschrieben
+werden.
+
+TSLICE.CPX
+----------
+
+
+  [Bild TSLICE.IMG]
+
+
+Das CPX beinhaltet zwei Schieber und einen Schalter. Mit Hilfe der beiden
+Schieber k”nnen Sie nun die Zeitscheibendauer (in [ms]) und die
+Hintergrundpriorit„t beeinflussen. Ein Wert von 1:1 entspricht dabei einer
+hohen Priorit„t, 1:64 einer niedrigen Priorit„t.
+
+In der Praxis hat sich eine Zeitscheibendauer von 5-10 ms und eine
+Hintergrundpriorit„t von 1:20 bis 1:32 bew„hrt. Eine Zeitscheibendauer von
+5 ms fhrt auf leistungsschw„cheren Rechnern (8 MHz ST) zu geringen
+Geschwindigkeitseinbuáen (das System verbraucht dann "zuviel" Zeit fr den
+Task-Switch). Auf einem 8 MHz ST sollten Sie sich daher mit einer
+Zeitscheibendauer von 10 ms begngen - auf leistungsst„rkeren Rechnern ist
+das natrlich kein Problem.
+
+Einen weitaus gr”áeren Einfluá auf das Verhalten Ihres Rechners hat
+hingegen die Hintergrundpriorit„t. Setzen Sie die Hintergrundpriorit„t
+nicht auf zu kleine Werte, da sonst die Hintergrundprogramme die
+Vordergrundprogramme stark verlangsamen k”nnen (ein TT verkraftet
+allerdings ohne weiteres eine Hintergrundpriorit„t von 1:10).
+
+Mit dem Schalter <Pr„emptives Multitasking> haben Sie die M”glichkeit, das
+pr„emptive Multitasking ganz abzuschalten, falls sich Programme als
+kritisch erweisen sollten. Mag!X arbeitet dann mit kooperativem
+Multitasking.
+Beachten Sie bitte, da bei pr„emptivem Multitasking mehrere Programme
+wirklich parallel arbeiten und sich nicht blockieren. Selbst wenn eine
+Dialogbox auf dem Bildschirm erscheint, erhalten die anderen Programme
+(z.B. der Packer im TOS-Fenster) weiterhin Rechenzeit. Bei kooperativem
+Multitasking wrde eine Dialogbox auf dem Bildschirm die anderen Programme
+anhalten!
+
+Die andere M”glichkeit, die Rechenzeitverteilung zu steuern, findet sich in
+der MAGX.INF-Datei. Die Zeile #_TSL gibt die L„nge einer
+Zeitscheibeneinheit vor und steuert die Priorit„t zwischen Vorder- und
+Hintergrundproze.
+
+TIP: Mag!X bearbeitet zuerst die MAGX.INF-Datei und startet anschlieend
+     die Accessories - falls installiert also auch XCONTROL.ACC mit den
+     Modulen MAGXCONF.CPX und TSLICE.CPX.
+     Wenn Sie ein Accessory oder ein (automatisch gestartetes) GEM-Programm
+     verwenden, das beim Booten Probleme mit dem pr„emptivem Multitasking
+     hat (die Utility CHAMELEON zum Nachladen von Accessories ist so
+     ein Fall), dann k”nnen Sie in der Datei MAGX.INF das pr„emptive Multitasking
+     ausschalten und es dann wieder durch das nachgestartete TSLICE.CPX
+     aktivieren.
+
+
+Manuelle Konfiguration ber MAGX.INF
+------------------------------------
+
+Bei der Installation von Mag!X wird im Wurzelverzeichnis Ihres Bootlaufwerks
+eine Datei namens MAGX.INF angelegt. Diese Datei enh„lt alle Einstellungen,
+die Sie bei der Installation von Mag!X bzw. unter dem Menpunkt "Optionen:
+Arbeit sichern" in MAGXDESK vorgenommen haben.
+
+Fortgeschrittene Benutzer k”nnen durch Ver„nderung und Erweiterung der
+MAGX.INF-Datei das System nach Belieben einrichten und dabei Manipulationen
+vornehmen, die von MAGXDESK aus ohne weiteres nicht m”glich sind.
+
+Nachfolgend finden Sie eine Auflistung aller Schlsselw”rter in der
+Reihenfolge, in der sie auch in der MAGX.INF-Datei eingesetzt werden
+sollten.
+Die fr Mag!X relevanten Zeilen beginnen alle mit #_??? und liegen _vor_
+der Zeile #_CTR. Die Parameter werden in der Beschreibung in geschweiften
+Klammern dargestellt. Kommentare k”nnen Sie mit einem Semikolon einleiten.
+Allgemein darf jede Zeile auer #_CTR und den darauf folgenden (nicht
+dokumentierten) Zeilen fr MAGXDESK fehlen; es werden dann Defaultwerte
+eingesetzt.
+
+#_MAG {version}
+Beispiel: #_MAG MAG!X V2.00
+
+Hier tr„gt das Installationsprogramm die Versionsnummer ein; bisher ein
+reiner Kommentar.
+
+
+#_ENV {environment}
+Beispiel: #_ENV PATH=C:\BIN\;A:\
+          #_ENV DESKFMT=C:\GEMSYS\GEMDESK\MGFORMAT.PRG
+
+Mit diesem Schlsselwort setzen Sie die Environmentvariablen. Da die
+Zeichenketten bis zum Zeilenende bernommen werden, darf kein Kommentar
+hinter einer #_ENV -Zeile stehen. Dies ist n”tig, um auch z.B. Semikolons
+oder Leerstellen im Environment-String zuzulassen.
+Das vom BIOS bermittelte Environment wird genau dann vom AES benutzt und
+weitergegeben, wenn keine #_ENV -Zeile angegeben wurde.
+
+
+#_BUF {bufsize}
+Beispiel: #_BUF 4192           ; Gr”e des Shell-Puffers, dezimal
+
+Diese Zeile legt die Gr”e des Shell-Puffers fest. Damit beliebige Shells
+ihre Daten unterbringen k”nnen, mu die Gr”e variabel sein. Die
+Minimalgr”e liegt bei 4192 Bytes; {bufsize} darf nicht gr”er als 65535
+werden. Die Gr”e des Puffers (unsigned int) kann ein Programm erfragen,
+indem es einen shel_get()-Aufruf mit 0 zu lesenden Bytes macht.
+Ist der Puffer zu klein, k”nnen nicht alle Daten von der Shell gespeichert
+werden.
+
+
+#_DEV {vdidevice}
+Beispiel: #_DEV 4              ; VDI- Treiber, 4 = hohe ST-Aufl”sung
+
+Diese Zeile wird beim Start des Systems ausgewertet und legt fest,
+welcher VDI-Treiber ge”ffnet werden soll. Gibt das VDI beim ™ffnen der
+Workstation einen Fehlercode zurck, so wird das VDI noch einmal mit
+Ger„tenummer 1 (aktuelle Aufl”sung) gestartet.
+
+Die blichen Aufl”sungen von ST/TT sind:
+ 2 = ST niedrig
+ 3 = ST mittel
+ 4 = ST hoch
+ 6 = TT mittel
+ 8 = TT hoch
+ 9 = TT niedrig
+
+Je nach verwendeter Hardware (z.B. Grafikkarte mit NVDI/ET 4000) k”nnen
+weitere VDI-Treiber in der ASSIGN.SYS-Datei angemeldet und verfgbar sein.
+
+
+#_TXT {bigfontsize smallfontsize fontid}
+Beispiel: #_TXT 0 0 1            ; Texth”hen+Font-ID, 0 = Default
+
+Mit diesem Schlsselwort k”nnen Sie in Mag!X die Fontfamilie und die
+Zeichenh”hen ausw„hlen, die das AES verwenden soll. Die Zeichenh”he
+{bigsize} bzw. {smallsize} wird vom AES ber die VDI-Funktion vst_height
+gesetzt. Fr die bekannten Systemfonts Ihres Rechners bedeutet das:
+ Zeichenh”he  4 =  6x6-Font
+ Zeichenh”he  6 =  8x8-Font
+ Zeichenh”he 13 =  8x16-Font
+ Zeichenh”he 26 = 16x32-Font
+
+Wird als Zeichenh”he 0 eingetragen, so werden die Standardeinstellungen
+verwendet. Die {fontid} legt die Zeichensatzfamilie fest; die ID des
+Systemfonts ist brigens 1.
+Mit diesem Schlsselwort k”nnen Sie z.B. auch in monochromer Darstellung
+den 8x8-Font verwenden - doch Vorsicht: Bei Programmen, die nicht ganz
+sauber geschrieben sind, kommt es dann zu fehlerhafter Darstellung oder gar
+zu Abstrzen. Beachten Sie bitte auch, da zur Zeit nur „quidistante Fonts
+untersttzt werden.
+Fr ein Programme sind die Zeichenh”hen und ID der verwendeten Fonts ber
+die Funktion appl_getinfo() erfragbar; mehr dazu im Programmierteil dieser
+Anleitung.
+
+
+#_FLG {bitvector}
+Beispiel: #_FLG 0                     ; Bit 0 = 1: Logo links
+
+Hier k”nnen Sie festlegen, ob das Mag!X-Logo (das Rotationssymbol - es
+handelt sich mitnichten um den "Grnen Punkt"!) in der Menleiste links
+(Bit 0 = 1) oder rechts (Bit 0 = 0) liegen soll. Fehlt der Eintrag, werden
+alle Flags als 0 angenommen.
+
+
+#_WND {numwindows}
+Beispiel: #_WND 32
+
+Dieses Schlsselwort legt die Anzahl der Fenster fest. Gltige Werte liegen
+zwischen 0 und 64, es sollten keine Werte < 16 eingetragen werden. Fehlt
+der Eintrag, wird 16 angenommen.
+
+
+#_TSL {slicelen bkgrprio}
+Beispiel: #_TSL 1 32
+
+Hiermit wird die Verteilung der Rechenzeit zwischen Vorder- und
+Hintergrundproze gesteuert. {slicelen} gibt die L„nge einer Zeitscheibe in
+5 ms-Einheiten an, {bkgrprio} die Hintergrundpriorit„t. Ein Wert von 32
+fr {bkgprio} bedeutet eine Priorit„t von 1:32 fr Hintergrundprozesse.
+Fehlt der Eintrag in der MAGX.INF-Datei, wird kein pr„emptives Multitasking
+aktiviert.
+
+
+#_SCP {scrappath}
+Beispiel: #_SCP C:\CLIPBRD\           ; Scrap-Pfad
+
+Der Scrap-Pfad ("Clipboard") legt fest, welches Verzeichnis die
+GEM-Applikationen zum Cut/Copy/Paste verwenden. Dieser Pfad sollte immer
+auf ein existierendes Verzeichnis gesetzt werden, da er sonst undefiniert
+ist.
+
+
+#_TRM {terminalpath}
+Beispiel: #_TRM C:\GEMSYS\GEMDESK\VT52.PRG
+
+#_TRM gibt an, wo sich das Programm zur Umlenkung der TOS- und
+TTP-Programme befindet. Sollte sich das Programm beim Start eines TOS- oder
+TTP-Programmes noch nicht im Speicher befinden, so versucht Mag!X es unter
+{terminalpath} nachzustarten.
+Wenn Sie VT52 automatisch (z.B. zusammen mit einer Kommandoshell)
+hochfahren wollen, so kopieren Sie VT52 in den \AUTO\APPS\-Ordner und
+vermerken diesen Pfad hinter #_TRM!
+
+
+#_ACC {accpath}
+Beispiel: #_ACC C:\AUTO\ACCS\            ; Pfad fr ACCs
+
+Durch dieses Schlsselwort legen Sie fest, aus welchem Pfad die Accessories
+geladen werden. Fehlt die Zeile, wird vom aktuellen Verzeichnis des
+Bootlaufwerks geladen, also i.a. vom Wurzelverzeichnis.
+
+
+#_APP {appath}
+Beispiel: #_APP C:\AUTO\APPS\              ; Pfad fr parallel geladene APPs
+
+Die Applikationen in {appath} werden vor dem Start des Desktops geladen und
+sind dann, parallel laufend, sofort verfgbar. Dies ist eine Alternative
+zum veralteten Accessory-Konzept, da Sie diese Applikationen im Gegensatz
+zu Accessories bei Bedarf auch wieder problemlos aus dem Speicher entfernen
+k”nnen.
+Wie fr alle Programme im Multitaskingbetrieb gilt auch hier: Sie sollten
+nur Programme einsetzen, die sich mavoll im Bezug auf Speicher verhalten.
+Programme die sich den gesamten Speicher schnappen, sind nur dann zu
+gebrauchen, wenn Sie vorher ihren Speicherhunger (mit LIMITMEM, siehe
+Abschnitt "Begrenzung des Speicherbedarfs einzelner Programme") begrenzt
+haben.
+Alle Programme in {appath} werden im Grafikmodus gestartet.
+
+
+#_AUT {autopath}
+Beispiel: #_AUT C:\LOGIN.PRG
+
+Unter #_AUT k”nnen Sie eine Applikation automatisch starten. Dies
+unterscheidet sich von den unter #_APP angemeldeten Programmen dadurch, da
+die unter #_AUT angegebene Applikation nicht parallel gestartet wird,
+sondern anstelle des Desktop bzw. der Default-Shell. Erst wenn sich die
+Applikation beendet hat und keinen Nachfolger per shel_write() bestimmt hat,
+wird das Desktop bzw. die Default-Shell gestartet (praktisch fr ein
+login.prg zum Einloggen in ein Netzwerk!).
+Die Applikation in {autopath} wird immer im Grafikmodus gestartet.
+
+
+#_SHL {shellpath}
+Beispiel: #_SHL C:\EASE\EASE.PRG          ; Shell
+
+Mit diesem Schlsselwort k”nnen Sie anstelle von MAGXDESK eine alternative
+Shell anmelden. Die Shell wird erst nach dem unter #_AUT angegebenen Programm
+gestartet (falls eines vorhanden war). Fehlt die #_SHL -Zeile, so wird
+MAGXDESK aus dem Pfad \GEMSYS\GEMDESK\ gestartet.
+Achten Sie bitte darauf, hier nur Shells einzutragen, die sich an die
+GEM 2.x-Konventionen fr Shells halten. Geeignet sind z.B. GEMINI 2 und
+EASE 3.x, die beide auch Mag!X aktiv untersttzen.
+Die Applikation in {shellpath} wird immer im Grafikmodus gestartet.
+
+
+Die Reihe der Mag!X- Variablen endet mit der Zeile #_CTR. Dies zeigt an,
+da die folgenden Daten direkt in den Shell-Puffer bernommen werden; es
+handelt sich dabei um die Daten fr das Kontrollfeld und fr den Desktop.
+Die Zeilen fr den Desktop beginnen 128 Bytes hinter #a und haben als erste
+Zeile #_DSK (die 128 Bytes sind eine alte TOS- Konvention).
+Wichtig ist, da die Zeile #d eine solche L„nge hat, da die Gesamtl„nge
+der Kontrollfelddaten genau 128 Bytes betr„gt. Da einige Editoren rechts-
+bndige Leerstellen entfernen (kann auch zu Fehlern bei Environment-
+Variablen fhren!), ist dieses Beispiel mit einem ';' statt einer Leerstelle
+abgeschlossen.
+
+#_CTR                                   ; Beginn der Kontrollfeld- Daten
+#a000000
+#b001001
+#c7770007000600070055200505552220770557075055507703111302
+#d                                            ;

@@ -1,0 +1,902 @@
+061000000000000122000000000000000
+11
+21
+F0110030001
+9[......................................................]0110
+‰vorl„ufigeANLEITUNGzuMagiXV0.xx
+€
+Inhaltsverzeichnis:
+
+0.   Vorwort
+1.   Hardware-VoraussetzungenundLeistungsmerkmale
+2.   Installation
+3.   LadenundUmschaltenvonProgrammem
+4.AccessoriesunterMagiX
+5.Autostart-Applikationen
+6.   DieverschiebbarenDialoge
+7.   DieerweitertenDialogfunktionen
+8.   Alertboxen
+9.DieDateiauswahlbox
+10.DerProgramm-Manager
+11.DieSpeicherverwaltung
+12.DieHilfsprogrammeLIMITMEM,MEMEXAMNundMAGIXCNF
+13.DerWindow-Manager
+14.VerschiedeneVerbesserungen
+A1)TipsfrProgrammierer
+A2)  NeueFunktioneninMagiX
+A3)  NeueTOS-FunktioneninMagiX
+A4)  ErweiterteGEM-undGEM/3-FunktioneninMagiX
+A5) ParallelesStartenvonProgrammen
+A6) DialogeunterMagiX
+A7) NeueGEM-FunktionenimAES
+A8) NeueObjekttypeninMagiX
+x.   DasDesktopMAGIXDSK
+
+
+ˆ0.Vorwort€
+
+  MagiXstehtfrˆM€ultiˆA€pplicationˆG€raphicsˆI€nterfaceEˆx€tensionund
+isteinBetriebssystem-ZusatzfrdenAtariST(E),dereineweitge
+hendeKompatibilit„tzumbisherigenSystembietetundeinigezus„tz
+licheEigenschaftenaufweist,dieMultitaskingerm”glichenundauch
+solche,diedieBedienungdesRechnerserleichtern.Multitaskingist
+dabeimitallenProgrammenm”glich,dienachdenGEM-Programmier-
+Richtlinienerstelltwurden,inFensternarbeitenundAccessories
+zulassen.GeradehieristimAugenblickeindeutlichwachsenderTrend
+zubeobachten.AuerdembeschleunigtMagiXIhrenRechnerundist
+kompatibelzuGEM2.x.
+  DanormalerweisejederComputernureinenProzessorbesitzt,k”nnen
+Programmenichtwirklichgleichzeitigabgearbeitetwerden,sondernes
+wirdschnellzwischendenProgrammenhinundhergeschaltet,soda
+sichfrdenBetrachtereineQuasi-Gleichzeitigkeitergibt.Ver
+schiedeneMultitasking-Konzepteunterscheidensichmeistensdadurch,
+unterwelchenUmst„ndendiesersogenannteTask-Switchstattfindet.
+DasGEMdesAtariundauchMagiXlassendiesennurdannzu,wenndas
+laufendeProgrammeinenBetriebssystemaufrufmacht(genauer:einen
+AES-Aufruf),alsoinsbesonderedann,wennessowiesoaufeineAktion
+desBenutzers(Tastendruck,Mausklick)wartetundnichtablaufenkann.
+AndereSystemewieUNIXoderOS/2benutzenzus„tzlichnocheine
+Zeitscheibensteuerung:Programmewerdeninregelm„igenAbst„nden
+unterbrochenundggf.umgeschaltet,damitsichkeinProgrammdie
+gesamteRechenzeitreserviert.DerVorteilderersterenVorgehensweise
+istjedochder,daderVerwaltungsaufwandfastgegenNullgeht,das
+heit,einProgramml„uftgenausoschnellwieuntereinemSingle-
+TaskingSystem;beieinerZeitscheiben-Steuerungmsseneinige
+Abstrichegemachtwerden.
+  DadieaufdemSTexistierendenProgrammemiteinerZeitscheiben
+€steuerungnichtzurechtk„men(vieleProgrammedrfennichtzujedem
+beliebigenZeitpunktunterbrochenwerden)undfreinMultitaskingwie
+unterUNIXeineganzeMengevonv”lligneuenBetriebssystemaufrufen
+n”tigw„ren,diekeinexistierendesProgrammnutzenk”nnte,wurdedas
+Multitasking-KonzeptinMagiXvomOriginal-GEMbernommen.Nurso
+l„tsichdienotwendigeKompatibilit„twahren,auerdemistdieses
+KonzeptfrdiemeistenAnwendungenmehralsausreichend.Leiderkann
+mandamitnichtz.B.TurboCimHintergrundcompilierenlassen,was
+abersowiesonichtm”glichist,dadiesesw„hrenddesCompilierensden
+BildschirmmiteinerDialogboxsperrtundsojedeUmschaltungauf
+andereProgrammeoderAccessoriesverhindert.Fastalleexistierenden
+Programmek”nntenalsovoneinerZeitscheibensteuerungberhauptnicht
+profitieren.
+  FallsinZukunftmehrProgrammeexistieren,die"zeitscheibenf„hig"
+sind,undeinentsprechenderBedarfentsteht,l„tsicheine
+Zeitscheibensteuerungfreinesp„tereVersionvonMagiXnicht
+ausschlieen.
+
+
+ˆ1.Hardware-VoraussetzungenundLeistungsmerkmale€
+
+  Ben”tigtwirdeinbeliebigerRechnerderSerienAtariST,MegaST,
+AtariSTEoderMegaSTE.EineVersionvonMagiXfrdenTTistnochin
+Vorbereitung.Ben”tigtwirdfernereinTOSimROM,wasaberseit1986
+inalleRechnereingebautist.
+  FrdenAnwenderbietetMagiXfolgendeLeistungsmerkmale:
+
+-Multitaskingmitbiszu16Programmen,beiNutzungallerAccessory-
+Eintr„gek”nnenzus„tzlichzumDesktopnoch8Applikationen
+gleichzeitigimSpeichergehaltenwerden.
+-Biszu16Fenstergleichzeitigm”glich.
+-KomfortableBedienungdurchNeuprogrammierungdergesamtengrafi
+schenBedieneroberfl„che.DadurchschnelleundeinfacheUmschalt
+m”glichkeitenzwischendenMensderverschiedenenApplikationen.
+-Fehlersuch-Hilfen,Programm-ManagerzumgezieltenEntfernen
+"klemmender"Applikationen.
+-NeuentwickeltesDesktopMAGIXDSKmitbeliebigenIconsundumfang
+reichenFunktionen.
+-ErweiterteDialogfunktionen,zus„tzlicheBetriebssystemaufrufefr
+fliegendeDialoge,TastaturbedienunginDialogen,Popup-Mensusw.
+-GegenberdemOriginalsystemdrastischerh”hteAusfhrungsgeschwin
+digkeitIhrerProgramme.
+-WeitgehendkompatibelzuTOS,kritischeProgrammek”nnenimSingle-
+Tasking-Betriebausgefhrtwerden.KompatibelzuallenBeschleuni
+ger-undGrafikkarten.
+-Drastischerh”hteBetriebssicherheit,umdieEinflunahmeunsauberer
+Applikationenaufanderezuverhindern.NachAbsturzeinerfehler
+haftenApplikationwirddasSystemkomplettaufger„umt,sodamit
+groerWahrscheinlichkeitdieanderenProgrammeweiterfunktionsf„
+higsind.
+-KompatibelzuGEM2.x.
+
+
+ˆ2.Installation€
+
+  Zun„chstfllenSiedieRegistrierkarteaus,umvomUpdate-Service
+zuprofitieren,undsendenSiesiean....LegenSiedieOriginaldis
+ketteinIhrLaufwerkA:einundstartendasProgrammINSTMAGX.PRG.
+WennSieMagiXaufDisketteinstallierenm”chten,w„hlenSieals
+LaufwerkB:,ansonstendieBoot-PartitionIhrerFestplatte(i.a.C:).
+W„hlenSiediegewnschteAufl”sung,inderMagiXerscheinensoll,
+€diesistjedochnurfrdenFarbmonitorvonBelang.
+
+  GebenSienunobendieSeriennummerein,dieaufderRegistrierkarte
+undaufdemDiskettenetikettaufgedrucktist.SeienSiedabeisehr
+sorgf„ltig,dieNummermuexaktstimmen.AnschlieendgebenSieIhren
+NamenundIhreAdresseein.
+  TragenSiejetztdasScrap-Verzeichnis("Clipboard")ein.Wennder
+PfadkeinexistierendesVerzeichnisangibt,wirddiesesvonINSTMAGX
+automatischerstellt.TragenSiefernerdieVerzeichnisseein,woIhre
+Accessoriesliegen(ACCs)undwoIhreautomatischgestartetenAppli
+kationenliegen(APPs);auchdieseOrdnerwerdenggf.vonINSTMAGX
+erstellt.FehltdieAngabe"APPs",werdenkeineProgrammeautomatisch
+geladen,fehltdieAngabe"ACCs",werdendieAccessoriesvomWurzel
+verzeichnisdesBootlaufwerksgeladen.DieautomatischgeladenenPro
+gramme(APPs)werdenvorStartdesDesktopgeladenundlaufenalle
+parallel.Wichtigist,daessichum"vertr„gliche"Programmehan
+delt,dienichtdengesamtenSpeicherbeanspruchenundGEM-konform
+geschriebensind.DieserMechanismusistalsErsatzfrdasveraltete
+Accessory-Konzeptgedacht,dasichsolcherartgeladeneProgramme
+natrlichjederzeitwiederausdemSpeicherentfernenlassen.
+  AlsletztestragenSieeineeventuelleAutostart-Applikationein,
+etwaeinalternativesDesktopwieGeminiodereinProgrammzum
+EinloggenineinNetz.Siek”nnendieseZeileauchzun„chstleer
+lassen.
+  šberprfenSienocheinmaldieSeriennummerundbet„tigendenButton
+"Installieren"perMausoderperReturn-Taste.DieInstallationwird
+automatischvorgenommen,allenotwendigenDateienaufIhreFestplatte
+bzw.IhrBootlaufwerkkopiert.
+  AufderOriginaldiskettebefindensichimOrdner\MAGIX\ZUSATZnoch
+weitereDateienundProgramme,dienurfrdenfortgeschrittenen
+BenutzervonInteressesindundnichtautomatischmitkopiertwerden.
+  WennSieResetbet„tigenundvondeminINSTMAGXangegebenen
+Laufwerkbooten,wirdMagiXautomatischgeladen.Siek”nnendasLaden
+unterbinden,indemSiebeimBootenbeideShift-Tastengedrckt
+halten.WenndasDesktopMAGIXDSKerscheint,istdieInstallation
+gelungen.NehmenSienunIhreWunscheinstellunginMAGIXDSKein(siehe
+KapitelxxfrdieBedienungvonMAGIXDSK)undw„hlenSieimMen
+"Optionen"denEintrag"Arbeitsichern".S„mtlicheEinstellungenvon
+MagiX,MAGIXDSKundKontrollfeldwerdenausschlielichinderDatei
+MAGIX.INFabgelegt,dieeventuellvorhandeneDateiDESKTOP.INFhat
+keinerleiBedeutungunterMagiX.
+  MagiXistresetfest.Siek”nnenMagiXwiederausdemRechner
+entfernen,indemSiedieTastenkombinationCTRL-ALT-RSHIFT-DELbet„
+tigenundentwedervoneinemanderenLaufwerkbootenoderdiebeiden
+Shifttastengedrckthalten.
+
+
+ˆ3.LadenundUmschaltenvonProgrammen€
+
+  UnterMagiXkanndasAusfhrenvonProgrammenaufzweiArten
+durchgefhrtwerden.
+  Daseinfachsteist,einProgrammvonMAGIXDSKausdurchDoppelklick
+zustarten.DazukenntMAGIXDSKzweiBetriebsmodi:InderDialogbox
+Optionen/Einstellungenkannmanunter"MAGIXDSKresident"w„hlen,ob
+Programmenormalerweiseparallelgestartetwerden(d.h.MAGIXDSKl„uft
+weiter)odernicht.DiejeweilsnichtaktiveBetriebsartkannbeim
+StartenvonProgrammendurchDrckenderAlternate-Tasteerzwungen
+werden.Istbeispielsweise"MAGIXDSKresident"angew„hlt,werdenPro
+grammedurchDoppelklickparallelgestartet,beiALT-Doppelklickwird
+MAGIXDSKverlassen.Programme,dieunsaubergeschriebensind,k”nnen
+unterOptionen/Anwendunganmeldenals"singletasking"angemeldet
+€werden.DieseProgrammewerdendannimmeralleingestartet,d.h.
+MAGIXDSKwirdverlassen;fernerwerdenbeiProgrammstartallezu
+diesemZeitpunktgeladenenProgrammeundAccessories"eingefroren"und
+ihreFenstergeschlossen.Damitistsichergestellt,dadiekritische
+Applikationsichwirklichv”lligalleinfhlt,nachderenBeendigung
+werdenalleanderenApplikationenwiederaufgetautunddieFenster
+wiederge”ffnet.EingefroreneAccessoriesk”nnennichtmehraufgerufen
+werden,ihreEintr„geimlinkenMensindgraudargestellt.
+  HatmaneinProgrammgestartetundistMAGIXDSKgeradenicht
+erreichbar,gengtes,aufeinefreieStellederMenleistezu
+klicken,alsoentwederrechtsoderganzlinks.EserscheinteinPopup-
+Men.ObensindallegeradegeladenenApplikationenaufgefhrt,die
+einMenodereinenDesktop-Hintergrundhaben.VorderApplikation,
+derenMenundHintergrundgeradeaktivist,stehteinH„kchen.Mit
+einemMausklickaufeinenderApplikations-Eintr„gek”nnenSienun
+MenundHintergrundumschalten.MitdemEintrag"aufr„umen"k”nnen
+SieeinenNeuaufbaudesBildschirmseinleiten,fallseinunsauberes
+Programm"Reste"hinterlassenhat.Achtung:EinigeProgramme,die
+nichtnachdenProgrammier-Richtliniengeschriebensind,k”nnenden
+NeuaufbaudesBildschirmsnichtausfhren;indiesemFallsollteauf
+eineBenutzungdiesesMeneintragsverzichtetwerden.DerEintrag
+"laden..."erm”glichtnun,zus„tzlicheProgrammeauchohneDesktop
+nachzuladen,vorhersolltemanallerdingseinenBlickaufdieunterste
+ZeiledesPopup-Menswerfen,diedenfreienSpeicheranzeigt.Mit
+dernunerscheinendenDateiauswahlk”nnenSiedaszustartende
+Programmangebenoderessichper"ABBRUCH"andersberlegen.
+  DieUmschaltungderMenleisteoderdesHintergrundsgeschiehti.a.
+durchWechseldesaktivenFensters.Immer,wennSieeinFenster
+eineranderenApplikationnachobenklicken,findeteineUmschaltung
+statt.IneinigenF„llenistespraktisch,z.B.dasFenstereines
+EditorsalsobersteszuhabenunddasMeneinesanderenProgramms,
+dessenBedienungsanleitungmanz.B.geradeschreibt.FrdiesenFall
+bringenSieeinfachdasEditorfensternachobenundw„hlenberdas
+Popup-MendiegewnschteMenleisteaus.
+
+
+ˆ4.AccessoriesunterMagiX€
+
+  ObwohlAccessorieseigentlichderPhilosophievonMagiX
+widersprechen,werdensienatrlichvolluntersttzt.MagiXl„dt
+AccessoriesvondemPfad,denSiebeiINSTMAGXangeben,erwirdinder
+DateiMAGIX.INFinderZeile#_ACCabgelegt.WennSiedenPfadnach
+Installationnoch„ndernm”chten,k”nnenSiediesmiteinem
+handelsblichenEditortun.GebenSiekeinenPfadan,fehltdieZeile
+inderMAGIX.INF-Datei,unddieAccessorieswerdenvom
+WurzelverzeichnisdesBootlaufwerksgeladen.
+  UnterMagiXsolltenSie,umdieBootphasebesondersbeieinem4MB-
+Rechnerzuverkrzen,dieAccessoriesmiteinemFastload-Bit
+versehen.DazugibtesvonAtaridasProgrammMAKEFAST,daszusammen
+mitdemTOS1.4ausgeliefertwird.Alternativk”nnenSieauchdas
+ProgrammEXE2BINverwenden,daszumShareware-Kommandointerpreter
+KCMDgeh”rt.KCMDbefindetsichaufIhrerMagiX-Diskette.
+  Accessoriesgeh”renunterGEMzudenStiefkinderndes
+Betriebssystems.Accessoriesk”nnenkeineMenleisteodereinen
+Desktop-HintergrundbesitzenundmssenbeijedemWechselder
+HauptapplikationihreFensterschlieen,allenSpeicherfreigebenund
+alleDateienschlieen;ambestenistessogar,wennAccessories
+berhauptkeineDOS-Aufrufemachen,daunbeabsichtigteBeeinflussung
+derHauptapplikationnieganzausgeschlossenist.AufjedenFall
+k”nnenAccesorieskeineweiterenProgrammestarten;derentsprechende
+SystemaufruffhrtzumAbsturzdesTOS.
+€  UnterMagiXsindAccessoriesdenProgrammengleichgestellt.Ihre
+FensterbleibenbeimProgrammwechselerhalten.SiedrfenMenund
+Desktophintergrundbesitzen,Programmenachladen,Dateien”ffnen,
+schlieen,l”schen,kopierenusw.
+  FrProgrammierer:DakeinGrundmehrbesteht,beimProgrammwechsel
+Fensterzuschlieen,gibteskeineAC_CLOSEMeldungmehr.Accessories
+werdenvomSystemnichtvonProgrammenunterschieden,abgesehendavon,
+dasiesichkeinesfallsbeendendrfen.ACCsdrfensichwieunter
+GEM/2auchwiederimMenabmelden,undzwarmitdemAES-Aufruf
+menu_unregister().AnstellevonACCssindunterMagiXApplikationen
+sinnvoll,dieeinfachnureineMenleistemiteinemMenanmeldenund
+imAPP-Autostart-Ordnerliegen.DieseApplikationenkannmandann
+beiBedarfnachladenundauchwiederentfernen.
+
+
+ˆ5.Autostart-Applikationen€
+
+  UnterMagiXgibtesverschiedeneM”glichkeiten,Programme
+automatischzustarten.BeimStartvonMagiXoderbeim
+Aufl”sungswechselwerdenzun„chstalleAccessoriesausihremOrdner
+geladen,danachdieProgrammemitderEndung.APPoder.PRGausdem
+Programm-Autostart-Ordner.BeideOrdnerwerdeninINSTMAGXangegeben
+undk”nnengegebenenfallsmiteinemhandelsblichenTexteditorin
+MAGIX.INFge„ndertwerden;diezugeh”rigeZeilebeginntmit#_ACCbzw.
+#_APP.AnschlieendwirddasebenfallsinINSTMAGXangegebeneProgramm
+gestartet,diezugeh”rigeZeileinMAGIX.INFbeginntmit#_AUT.Erst
+wennsichdieunter#_AUTangemeldeteApplikationbeendethat,wird
+dasDesktopMAGIXDSKgeladen.Dazuwirdzun„chstimOrdner
+\GEMSYS\GEMDESKaufdemBootlaufwerkgesucht,dannimWurzelverzeich
+nis.KannMAGIXDSKnichtgefundenwerden,wirdstattdesseneine
+Dateiauswahlboxangezeigt,mitHilfederermanProgrammestartenkann;
+letztereskannsinnvollsein,wennmanbersehrwenigSpeicher
+verfgt.
+  WereinalternativesDesktop(Geminio.„.)benutzenm”chte,sollte
+diesesalsAutostart-Applikationanmelden(entwederschonbei
+INSTMAGX,oderaberinderDateiMAGIX.INFeine#_AUTZeilenachtra
+gen).SolangedasalternativeDesktopnichtverlassenwird,wird
+MAGIXDSKnichtgeladen,ben”tigtalsokeinerleiSpeicher.BeachtenSie
+aber,daalternativeDesktopsProgrammenurwieunterTOSstarten
+k”nnen,zumparallelenStartenmssenSieberdasPopup-Mengehen,
+dasunterMagiXbeiKlickaufeinefreieStellederMenleiste
+erscheint(sieheKapitel3).
+  AlsAutostart-ProgrammekommennursolcheinFrage,dienichtden
+gesamtenSpeicherbeanspruchen;notfallsmumanmitLIMITMEM(s.u.)
+etwasnachhelfen.
+  FrProgrammierer:UnterMagiXwerdenACCsundApplikationenim
+Autostart-OrdnermitderAES-Kommandozeile"\0\0AUTO\0"gestartet.
+Diesewird,dasiemitNullbytesbeginnt,normalerweisenicht
+ausgewertet.Applikationen,diespeziellfrMagiXentwickeltwurden,
+k”nnenanhanddieserKommandozeilebeispielsweiseentscheiden,obsie
+dieMenleistedirektanzeigenodernuranmeldenwollen(sieheunten
+zumenu_bar)oderobsiemiteinerDateiauswahlboxbeginnensollen
+odernicht.
+
+
+ˆ6.DieverschiebbarenDialoge€
+
+  DieDateiauswahlbox,dieAlertboxensowiealleDialogevonMAGIXDSK
+sindverschiebbar.ErkennbaristdieseEigenschaftanderumgeknickten
+rechtenEckederBox("Eselsohr").InmanchenF„llenistnicht
+gengendSpeichervorhanden,dannwirddasEselsohrnichtangezeigt,
+€unddieBoxkannnichtverschobenwerden.
+  DasVerschiebenkannaufzweiArtenerfolgen:
+
+1)KlickenSiemitderlinkenMaustasteaufdasEselsohrundhalten
+SiedieMaustastegedrckt.DerMauszeigerverwandeltsichin
+eineflacheHand,undSiek”nnendenUmriderBoxverschieben.
+WennSiedieMaustasteloslassen,wirddieBoxverschoben.
+2)Bet„tigenSiedierechteMaustasteundlassenSiesiegedrckt.
+KlickenSienunmitderlinkenMaustasteaufeinebeliebige
+StellederDialogbox.Diesewirdunsichtbar,esistnurnochein
+Umrizuerkennen.IndenmeistenF„llengengteinBlick,was
+unterderBoxliegt,undSiek”nnendieMaustastewieder
+loslassen.Siek”nnendenUmriderBoxauchverschieben,bei
+LoslassenerscheintdieBoxanderneuenPosition.
+
+  FrProgrammierer:DieVerschieberoutinensindindenneuenAES-
+Aufrufenform_xdial()undform_xdo()enthalten,dieinKapitelxx
+erl„utertwerden.DieAnwendungdieserRoutinenbzw.Erweiterung
+bestehenderQuelltexteistabsolutsimpelunddazunochkompatibelzum
+normalenTOS.
+
+
+ˆ7.DieerweitertenDialogfunktionen€
+
+  DieBedienungvonDialogboxenwurdeerheblicherweitert.Injedem
+Dialog,derdieSystemaufrufebenutzt(etwaMAGIXDSK),hatmandie
+folgendenZusatzfunktionen(auerdenenvonTOS):
+
+  linkeMaustasteCursorexaktpositionieren,auchinnerhalb
+einerEingabezeile
+  Shift-CursorhochCursoraufdasletzteEingabefeld
+  Shift-CursorrunterCursoraufdasersteEingabefeld
+  Shift-Cursorlinks    CursoraufdenAnfangdesEingabefeldes
+  Ctrl-Cursor linksVorheriges Wort bzw. Zeilenanfang
+  Shift-Cursorrechts   CursoraufdasEndedesEingabefeldes
+  Ctrl-Cursor rechtsN„chstes Wort bzw. Zeilenende
+  HomeWieShift-Cursorlinks
+  Shift-ClrWieEsc
+ Ctrl-DeleteL”schen bis Zeilenende
+  InsertEinfgemodus
+  Shift-Insertšberschreibmodus
+  Ctrl-CCopy            (Zeile)
+  Ctrl-XCut             (Zeile)
+  Ctrl-VPaste   (an Cursorposition)
+  UndoButton"Abbruch","Zurck","Cancel",
+                              "Abort"
+  HelpButton"Hilfe","Help"
+  Ctrl+QButton"Ende","Verlassen","Ausgang",
+"Quit","Exit"
+
+  MitHilfederFunktionen^C,^X,^Vk”nnenDatenvoneiner
+Eingabezeileineineanderekopiertwerden.DasEinfgenmit^V
+geschiehtso,alsobdieDatenanCursorpositionperHandeingegeben
+wordenw„ren.
+  UnterMagiXfunktionierenauchEingabefeldermitkleinerSchrift!
+  LeidersindinletzterZeitsehrvieleProgrammeaufdenMarkt
+gekommen,dieeigeneDialogroutinenverwenden.IndiesenProgrammen
+sindkeineodernureinTeilderbeschriebenenFunktionenwirksam.Fr
+denEinzelfallhilfteinfachAusprobieren.
+  FrdenProgrammierer:DieFunktionenfrUndo,Shift-hoch,Shift-
+runterundCtrl-Qsindinform_keybd()enthalten,dieCursorpositio
+€nierungperMausinform_(x)do()undobjc_edit()unddierestlichen
+Funktioneninobjc_edit().WerindenGenuderentsprechendenFunk
+tionenkommenm”chte,mudiedazugeh”rigenAES-Aufrufebenutzen.
+
+
+ˆ8.Alertboxen€
+
+  AlertboxensindunterMagiXi.a.verschiebbar,habenalsoeine
+umgeknickterechteobereEcke.IndemFall,indemeineAlertboxeinen
+sogenannten"kritischenFehler"anzeigt,etwa"DateninDiskA:
+defekt",kanndieAlertboxnichtverschobenwerden;indiesemFall
+wirdauchnichtdasEselsohrangezeigt.Auchwennnichtgengend
+Speicherfreiist,kanndieAlertboxnichtverschobenwerden.
+  JedeAlertboxkannvollst„ndigberTastaturbedientwerden.Auer
+[Return]frdenDefault-Buttonund[Undo]bzw.[^Q]frdenAbbruch-
+Button(sieheKapitel5)kannmanmitderFunktionstasteF1den
+linken,mitF2denmittlerenundmitF3denrechtenButtonausl”sen.
+AuerdemhabendieAlertboxeneinengleichm„igenRandundsindauch
+ohneIconbrauchbar.LeidersindauchhierinletzterZeitwegender
+Unzul„nglichkeitdesTOSvieleselbstkonstruierteAlertboxen
+verwendetworden;diesek”nnennatrlichnichtvondenF„higkeitenvon
+MagiXprofitieren.
+  DieAlertboxen,dieeinenSystemfehleranzeigen,wurdenmitdiffe
+renzierten,aussagef„higenTextenversehen.ErscheintunterTOSetwa
+lapidar:
+
+    "DieseAnwendungkanndasObjektnichtfinden",
+
+sokannesunterMagiXjetztheien
+
+     "Dateinichtgefunden(Fehler#-33)"oder
+     "Pfadnichtgefunden(Fehler#-34)"oder
+     "UngltigesLaufwerk(Fehler#-46)".
+
+  FrProgrammierer:AlertboxendesEvent-Critic-Handlerswerden
+indirektvomGEMDOSaufgerufen.Dadiesesnichtreentrantist(durch
+Semaphoreverhindert!),kannkeinSpeicherzumRettendesHintergrunds
+alloziertwerden.AusKompatibilit„tzuGEM2.xdrfenTextzeilenbis
+zu40Zeichen(statt30)undButtonsbiszu20Zeichen(statt10)lang
+sein.SolcheDialogboxenfhrenunterTOSjedochnichtzumAbsturz
+(!),sondernwerdennurverstmmelt.
+
+
+ˆ9.DieDateiauswahlbox€
+
+  DieDateiauswahlbox("fileselector")vonMagiXsiehtaufdenersten
+BlickauswiedievonTOS1.4,wurdejedochv”lligneuentwickelt.Mit
+HilfederauchdemProgrammiererzug„nglichenneuenBetriebssystem
+funktionform_xdo()(sieheKapitelxx)istdieDateiauswahlboxvoll
+st„ndigberTastaturbedienbarundauerdemverschiebbar.
+  DieBedienungselementederDateiauswahlboxfunktionierenwie
+gewohnt,bisauffolgendeUnterschiede:
+
+-DieDialogboxistverschiebbar,wenngengendSpeicherfreiist,und
+erzeugtdannauchkeineRedraw-Meldung,daderHintergrund
+komplettgerettetwird.
+-EinDoppelklickaufdasSchliefelddes"Fensters"schaltetdirekt
+aufsWurzelverzeichniszurck.
+-WieinGEM2.xkanndasDateimustermehrteiligsein,etwa
+"*.DOC,*.BAK"oder"*.PRG,*.APP,*.TOS"usw.
+-Unvollst„ndigePfadewerdenaufwendigundkomfortabelkomplettiert.
+€šbergebenfauleProgrammeeinfachnur"*.doc"oder"\*.gfa",sofgt
+MagiXggf.LaufwerknamenundaktuellenPfaddazu.SogarRudimente
+wie"\"odergarleerePfade(!)werdenautomatischmitLaufwerk,
+PfadundDateimuster("*.*")komplettiert.
+BeiungltigemPfad(etwanacheinemDiskwechselexistiertder
+Ordnernichtmehr)wirdautomatischaufsWurzelverzeichniszurck
+geschaltet.
+-EinDoppelklickaufdasDateimuster(hier:"*.PRG,*.APP")schaltet
+auf"*.*"um.
+-EinDoppelklickaufeinenLaufwerkbuttonzeigtdieAnzahlderfreien
+undbelegtenBytesfrdiesesLaufwerkan.
+-BefindetsichderCursorbeiBet„tigungvon[Return]inderPfad-
+Eingabezeile,sowirdderDialognichtbeendet,sonderndas
+Verzeichnisneueingelesen.BeiTOS1.4funktioniertdiesnur,wenn
+derPfadge„ndertwurde.
+-BeimWechselvonLaufwerkoderPfadbleibtdereingegebeneDateiname
+erhalten,umdieM”glichkeitzugeben,eineDateiunterdemselben
+Namen,aberineinemanderenPfadabzuspeichern.
+-Tastaturbedienung:
+
+  CTRL-Cursor_hoch            ScrollbalkeneinePositionnachoben
+  CTRL-Cursor_runter          ScrollbalkeneinePositionnachunten
+  ALT-A                       AufLaufwerkA:umschalten
+  ...
+ALT-F                       AufLaufwerkF:umschalten
+ALT-1                       WieKlickaufoberstenEintrag
+  ...
+  ALT-9                       WieKlickaufunterstenEintrag
+  ALT-Esc                     VerzeichnisnachDiskwechselneulesen
+  ALT-Backspace               WieSchliefeld
+  Return                      OK
+  Undo                        Abbruch
+
+Laufwerkeh”heralsP:k”nnenperHandinderPfadzeileeingegeben
+werden.
+-Selbstverst„ndlichsindalleinKapitel5beschriebenenErweiterun
+genauchinderDateiauswahlboxvorhanden,alsoCursorpositionierung
+perMaus,Shift-Cursor-linksusw.
+
+
+ˆ10.DerProgramm-Manager€
+
+  šberdasPopup-MensinddiewichtigstenFunktionenzurVerwaltung
+derlaufendenApplikationenleichtzug„nglich.Darberhinausk”nnen
+tiefergreifendeManipulationenberdenProgramm-Managervorgenommen
+werden.DiesesHilfsmittelistjedochnurfrdenerfahrenenBenutzer
+zuempfehlen,besonderszurFehlersuchentzlich.
+  Immer,wenneinProgrammeinenAES-Aufrufmachtoderaufein
+Ereigniswartet,kommtmanberdieTastenkombinationCtrl-Alt-Escin
+denProgramm-Manager.ImGegensatzzumPopup-Menistdiesauch
+m”glich,w„hrendeinMenheruntergeklapptistodereineDialog-oder
+Alertboxangezeigtwird.Achtung:Tempusetwadarfnichtmitdieser
+Tastenkombinationangehaltenwerden,daesinzuvielenkritischen
+Interruptroutinenh„ngtunddasSystemabstrzenkann.
+AllemomentanimSystembefindlichenApplikationenwerdenineiner
+ZeilemitfolgendenInformationenangezeigt:
+
+a)Applikationsnummer(ap_id):
+DiesistdieNummer,diemanbeiappl_init()undinglobal[2]
+erh„lt.ImGegensatzzuTOSmunichtjedeNummervertretensein,
+daApplikationendynamischerzeugtundgel”schtwerden.
+€UnterMagiXunddenbisherigenTOS-Versionenhatdie
+HauptapplikationimmerdieNummer0undderBildschirm-Manager
+(SCRENMGR)dieNummer1.ImGegensatzzuTOSk”nnenProgramme
+unterMagiXauchApplikationsnummernungleich0bekommen,wieman
+inderAbbildungsieht.
+
+b)Applikationsname:
+DiesistderName,unterdemdasProgrammgestartetwurdeund
+berdenmanmitappl_find()anseineap_idkommt.UnterMagiX
+wirdderNameimmerinGrobuchstabenangegebenunddarfUmlaute
+enthalten.
+
+c)StatusderApplikation:
+"running"bedeutet,dadasProgrammgeradel„uft.
+"ready"isteinProgramm,dasaufnichtswartetundgleich
+weiterl„uft.
+EineApplikationmitStatus"waiting"wartetaufAktionendes
+BenutzersoderandereEreignisse.AufwelcheEreignissegewartet
+wird,istindenfolgendenBuchstabenangezeigt:
+
+kbTastatur
+btMausknopf
+m1erstesMausrechteck
+m2zweitesMausrechteck
+msNachricht
+tiTimer
+seSemaphore(wind_update)
+
+"frozen"sindeingefroreneProgramme,alsosolche,diew„hrend
+derAusfhrungeinesim"singleModus"gestartetenProgramms
+angehaltenwerden,odersolche,dieberdenProgramm-Manager
+mittelsderTaste'F'eingefrorenwordensind.
+ProgrammemitStatus"zombie"wartengeradeaufihreendgltige
+Beendigung.Siek”nnennichtmehrmanipuliertwerden,dasiebei
+dern„chstenGelegenheitausdemSpeicherentferntwerden.
+
+d)zugeh”rigeSignale:
+MENUzeigtan,dadiezugeh”rigeApplikationdiejenigeist,
+derenMenund/oderDesktop-Hintergrundgeradeaktivist.Diese
+ApplikationkannalsoMen-Nachrichtenempfangen.
+MOUSEbedeutet,daMausknopf-Bet„tigungenund/oderMausbewe
+gungenandieseApplikationbermitteltwerden.UnterTOSund
+MagiXkannimmernureineApplikationmausbesitzendsein.€Maus
+besitzeristdiejenigeApplikation,derdasobersteFenster
+geh”rtoderdiemitwind_update(BEG_MCTRL)sichTastatur-und
+Mauskontrollereservierthat.ImFall,daeinKlickmitder
+linkenMaustasteaufdenDesktop-Hintergrundausgefhrtwurde,
+wirddieserKlickandiezugeh”rigeApplikationbermittelt
+(fallsdieseaufMaustatenstatuswartet).DieMauskontrollever
+bleibtaberbeimoberstenFenster,weshalbdiedenHintergrund
+besitzendeApplikationggf.einwind_update(BEG_MCTRL)ausfhren
+mu,umetwaIconszuverschieben.
+FrKBD,alsodieTastatur,giltprinzipielldasselbewiefr
+MOUSE,alsogehenalleTastatureingabennormalerweiseinsoberste
+Fenster.
+SCRistdieBildschirm-Semaphore,d.h.daszugeh”rigeProgramm
+hatsichberwind_update()denBildschirmreserviertundsperrt
+damitalleanderenAusgaben.
+
+e)belegterSpeicher:
+ZuletztwirdderbelegteSpeicherangezeigt.DervonApplikation
+€0belegteSpeicheristderfreieSpeicher.
+FallseineApplikationeinanderesProgrammberGEMDOSnachge
+ladenhat,sowirdnurderSpeicherdesnachgeladenenProgramms
+angezeigt.
+
+  FrProgrammierer:
+MitHilfedesProgramm-Managersl„tsicheineVerklemmung
+leichtfindenundauchgezieltbeseitigen.EinklassischesBei
+spielfreinenDeadlock:
+
+0PROGRAMMwaitingkbbtSCR
+1SCRENMGRwaitingseMOUSEKBD
+
+PROGRAMMwartetaufTastatur-undMausevents,diesegelangen
+jedochzumSCRENMGR,welcheraufdieFreigabedesvonPROGRAMM
+gesperrtenBildschirmswartet.
+
+  ReturnwirktwiedasUmschaltenvonMenundHintergrundberdas
+Popup-Men.
+  MitderTaste'C'kannmangleichzeitigTastatur-undMauskontrolle
+aneineApplikationbergeben,umeineVerklemmungzuverhindern.
+Ursacheisthierimmereinfehlendeswind_update(BEG_MCTRL).
+  MitdenTasten'F'und'U'lassensichProgrammeeinfrierenundauch
+wiederauftauen.MitdiesenTastenerzieltmandenselbenEffektwie
+beimStartenvonProgrammenim"singleModus".DasProgrammwird
+angehaltenundnichtwiedergestartet,bisesmit'U'wieder
+aufgetautwurde.Programme,dieinirgendwelchenSystemvektoren
+h„ngen,k”nnenbeimEinfrierenausdiesennichtentferntwerden.
+Tempusbeispielsweisemagesberhauptnicht,eingefrorenzuwerden,
+andereProgrammemachenaberkeineSchwierigkeiten.Eingefrorene
+Accessoriesk”nnennichtmehraufgerufenwerden,ihreEintr„geim
+linkenMensindgraudargestellt.
+  DasEntfernenvonProgrammenkannebenfallskritischsein,dadie
+ApplikationohneihrWissenundEinverst„ndnisabgebrochenwerden.
+ZwaristdasmitdenmeistenProgrammenproblemlosm”glich,daMagiX
+einengewaltigenAufr„umungsaufwandtreibt,jedochProgrammewie
+Tempus,dieinverschiedenenInterruptroutinenh„ngen,drfennicht
+entferntwerden.AmbestenprobiertmandasEntferneneinfacheinmal
+aus.
+
+FrProgrammierer:
+AlsbesonderslobenswertesBeispielisthierGEMINIzuerw„hnen.
+ObwohlGEMINIinmehrerenSystemvektorenh„ngt,l„tessich
+trotzdemproblemlosbeenden,daesimetv_term-Vektoreine
+Aufr„um-Routineinstalliert.šberdiesenVektorspringtTOSund
+MagiXimmerdann,wenneinProgrammbeendetwird.
+DieseVorgehensweiseistnichtnurfrMagiXerforderlich,
+sondernnatrlichauchfrTOS,dennschlielichkannein
+Programm,besondersinderTestphase,auchdurchBombenbeendet
+werden.
+
+  WennbeiBet„tigungvonCtrl-Alt-EscgeradeeineDialogboxoderein
+MenangezeigtwurdeundnichtgengendSpeicherfreiist,kanneszu
+einerZerst”rungdesBildschirminhaltskommen.Diesistnursolange,
+bisSiedasMenoderdenDialogbeenden(notfallseinfachUndo
+bet„tigen,umeineDialogboxzubeenden).
+
+
+ˆ11.DieSpeicherverwaltung€
+
+
+€  (...)
+
+
+
+ˆ12.DieHilfsprogrammeLIMITMEM,MEMEXAMNundMAGIXCNF€
+
+UnterTOSundMagiXerh„lteinProgrammzun„chstdengesamtenfreien
+Speicher.EsliegtnuninderVerantwortlichkeitdesProgrammierers,
+dafrzusorgen,danursovielSpeicherreserviertwird,wietat
+s„chlichgeradeben”tigtwird;derbrigeSpeicherwirddemSystem
+sofortzurckgegeben.Sp„terkannmandannimmernochggf.Speicher
+nachfordernundzurckgeben.
+  LeidergibtesimmernocheinigewenigeProgramme,diesich(fast)
+dengesamtenSpeicherunterdenNagelreien,WORDPLUSetwageh”rtzu
+dieserSpezies.
+  GegendieseUnm„igkeitgibtesunterMagiXeinMittel:
+LIMITMEM.TTP.MitHilfediesesProgrammskannmandenSpeicherhunger
+derProgrammed„mpfen,dazumumanzweiArgumentebergeben.Zun„chst
+denProgrammnamenunddanndieAnzahlderKilobytes,diemandem
+Programmmaximalzugestehenm”chte.Beispielsweisel„tderAufruf
+"LIMITMEMWORDPLUS.PRG1024"frWordpluseinMegabyteSpeicherfr
+Textebrig.WennSiedasProgrammvonMAGIXDSKausstarten,mssen
+SienatrlichdasWortLIMITMEMnichteingeben.
+  DerAufruf"LIMITMEMWORDPLUS.PRG-"machtdieSpeicherbegrenzung
+wiederrckg„ngig.
+  MitdemProgrammMEMEXAMNkannmanunsersuchen,wassichsoim
+Speicherherumtreibt.OhneParametergestartet,gibtMEMEXAMNdie
+aktuelleSpeicherbelegungan,sonstkannmaneinenBuchstabenfrdas
+Laufwerkangeben,aufdessenWurzelverzeichniseine_sys_-Datei
+liegt.DieseDateiwirdvonMagiXbeieinerZerst”rungder
+SpeicherlisteaufWunschangelegt,bevordasSystemangehaltenwird.
+  FrProgrammierer:UmdieIdentifikationderSpeicherbl”ckezu
+erm”glichen,protokolliertMagiXdenDateinameneinesProgrammsin
+seinemEnvironment.DieVariableheit"_PNAM"undwirdimmerin
+GrobuchstabenundohneSuchzeichen(*,?)eingetragen.
+  DasProgrammMAGIXCNFistzurKonfigurationdesSystemsbestimmt.
+  Siek”nnendasProgrammentwederalsAccessoryverwendenoderin
+.PRGumbenennen.ImAUTO-Ordnersetztesauerdemdievorher
+gesicherteKonfiguration.
+  DieSchalterhabenimeinzelnenfolgendeBedeutung:
+
+Fastload:
+  IstdieblicheFastload-EinstellungzumschnellerenLesenvon
+Diskette,kannnormalerweiseimmeraktiviertbleiben,auerbei
+h„ufigenLesefehlern.IstinjedemFallharmlos,daderSchalternur
+beimLesenwirksamist,nichtbeimSchreiben.
+Kompatibilit„t:
+  AufgrundderTatsache,daMagiXmehrereProgrammegleichzeitig
+laufenlassenkann,mssenstrengeSicherheitsvorkehrungengetroffen
+werden.LeidergibtesimmernochProgramme,diefehlerhafte
+Systemaufrufemachen,wasunterUmst„ndenineinemMultitaskingsystem
+zurKomfusionfhrenkann.MitHilfediesesSchaltersk”nnendie
+Sicherheitsabfragendeaktiviertwerden,wasdieBetriebssicherheit
+natrlichherabsenkt.
+SmartRedraw:
+  AktivierteinenModusinMagiX,dereinenschnellerenund
+eleganterenBildschirmaufbauerm”glicht.UmeinGefhldafrzu
+bekommen,wasdasbedeutet,deaktivierenSieeinfachdenSchalterund
+vergr”erninMAGIXDSKeinFenster,w„hrendMAGIXDSKauf"Anzeigenals
+Text"eingestelltist.N„heresinKapitel13.
+Grow-undShrinkboxen:
+€  DeaktiviertaufWunschdieImplosions-undExplosionseffekte,um
+einenschnellerenBildschirmaufbauzuerhalten.DieEffektesind
+brigensunterMagiXmitNVDIpraktischnichtmehrzuerkennen,das
+dasSystemeinfachzuschnellist.
+HaltnachTOS-Programmen:
+  DerSchaltersprichtfrsich.
+Mens:
+  UnterMagiXk”nnenSiew„hlen,obdieMensbeiBerhrenodererst
+beiKlickherunterfallensollen.DiezweiteVarianteverhindert
+wirkungsvoll,dadieMensausVersehenherunterfallen,fallsSie
+beispielsweisenureinFensterverschiebenwollten.  
+
+
+ˆ13.DerWindow-Manager€
+
+  DerWindow-ManagervonMagiXarbeiteteinwenigandersalsdervon
+TOS.JedesMagiX-Fenster,vondenenesbrigens15gibt,hatinder
+rechtenoberenEckeeinensogenanntenBackdrop-Button.Bet„tigtman
+diesen,wirddasFensterindenHintergrundgelegt.
+  DieneueFunktionsweisebetrifftnichtnurdasAussehenderFenster,
+sondernauchdasZeichnen:
+  DamitfrdenBenutzerderBildschirmaufbautrotzausschlielicher
+BenutzungdokumentierterSystemaufrufesoschnellist,wieesetwain
+MAGIXDSKderFallist,muderProgrammierereinigesbeachten.Hater
+diesnichtgetan,muderBenutzermanchmalzumHilfsprogrammMAGIXCNF
+greifenundden"SmartRedraw"deaktivieren.Damitdiesnichtmehr
+notwendigist,hiereineBeschreibungdieserEigenschaft:
+  MagiXverfolgtdiePhilosophie,daGeschwindigkeitnichtmitbru
+talenMittelnwieGrafikprozessorenusw.erreichtwerdensoll,sondern
+miteinwenigNachdenken;dazugeh”rtvorallem,immernursovielzu
+tun,wien”tigist.W„hrendTOSbeimWechseldesaktuellenFensters,
+beimSchlieenoderbeimVerschiebenmitVorliebedasgesamteFenster
+odergarnochv”lligunschuldige,unbeteiligteandereFensterneu
+zeichnet,wirddiesunterMagiXwirkungsvollvermieden.Obwohldiese
+unsch”neEigenschaftdesTOSnirgendwo€dokumentiertist,nutzenleider
+sehrvieleProgrammeoderBibliotheken(etwadieausdemBuch"Vom
+Anf„ngerzumGEM-Profi")aus,dadasTOSbeimVergr”erneines
+Fenstersdiesesimmerneuzeichnet.DazueinBeispiel:
+  Nehmenwiran,ineinFensterpassenfnfSpaltennebeneinander,die
+auchangezeigtwerden.WennderBenutzernundasFenstersoweit
+verkleinert,danurnochvierSpaltenhineinpassen,sortiertdas
+ProgrammseineDatenumundveranlatanschlieendselbst„ndigein
+NeuzeichnendesFensters(TOSzeichnetbeiVerkleinerungdasFenster
+nichtvonsichausneu).Vergr”ertderBenutzerdagegendasFenster
+aufeineBreitevon7Spalten,sortiertdasAnwenderprogrammdieDaten
+ebenfallsum,veranlatjedochhierkeinNeuzeichnendesFensters.
+AufgrunddeseherdummenFehlverhaltendesTOS,dasFensterfrdiesen
+Fallimmerganzneuzuzeichnen,findetdanndieAusgabestatt.
+  MagiXzeichnetnunimmernurdenminimaln”tigenTeildesFensters
+neu,dasw„renimFalldesAufziehenseinesFenstersh”chstensrechts
+unduntenzweiRechtecke.FrdieProgramme,diedenobenbeschriebe
+nenFehlerdesTOSausnutzen,gibtsichsoeineDiskrepanzzwischen
+logischemundphysikalischemBildschirminhalt.Vieleinfacherw„rees
+gewesen,einfachaufdieFallunterscheidung"Fenstergr”eroder
+kleineralsvorher"zuverzichtenundimmerimFalldesUmsortierens
+einenRedrawzuveranlassen.DadasBetriebssystemauchimTOSdie
+Redrawszusammenfat,hateineventuellberflssigerRedrawniemals
+irgendwelcheAuswirkungen.
+  DengleichenEffektwiebeschriebenhatmanbrigensauchbeim
+Vergr”erndesFensters,wennbereitsdieuntersteZeilebzw.die
+rechtesteZeiledargestelltwird.AuchhiereinBeispiel:
+€  EinTexthabe100Zeilen,dasFensterhabeeineH”hevon20Zeilen.
+DaderScrollbalkenganzuntenist,werdenalsodieZeilen80bis100
+imFensterdargestellt.WirdnundasFensternachuntenvergr”ert,so
+daetwa30ZeilenPlatzfinden,k”nntemaneigentlichnureinen
+weienBereichaufziehen,daunterhalbvonZeile100jakeineDaten
+mehrsind.Umdieszuverhindern,scrollendiemeistenProgrammein
+dieserSituationihreDaten,inunseremBeispielum10Zeilennach
+oben.FolglichzeigtdasProgrammjetztdieZeilen70bis100an;da
+esaberaufeinemTOS-Fehleraufbaut,wirdkeinNeuzeichnenveran
+lat,wasunterMagiXnatrlichpromptzurKonfusionfhrt.Auchhier
+w„reeingenerellesNeuzeichnendesFenstersbeimUmsortierenauch
+unterTOSnichtnursauber,sondernauchohneNebenwirkung,daTOS
+auchhierunn”tigeRedrawsvermeidet.
+  BeimdirektenVergleichzwischen"SmartRedaw"und"TOSRedraw",was
+hierdurchausimw”rtlichenSinnalsGegenteilzuverstehenist,zeigt
+sichinersteremFalleinwesentlichschnellerer,ruhigererund
+sauberererBildschirmaufbau,derdurchausmitdemMacintosh-System
+konkurrierenkannundunterTOSselbstmitBlitterund68040Prozessor
+indieserFormnichtm”glichw„re.Daherwirddringendempfohlen,
+dieseeleganteL”sungnichtdurchAusnutzenundokumentierterEigen
+schaftendesTOSzunichtezumachen.
+
+
+ˆ14.VerschiedeneVerbesserungen€
+
+  MittelsALT-CapsLockistdieTastaturaufeinezu„tzlicheEbene
+umzuschalten.šberdieTastenmitundohneShiftkannman
+internationaleSonderzeichenusw.abrufen.Soerh„ltmanetwadas
+'‚'berdieTaste'E'unddas''berShift-E.Zurckschaltenkann
+mandieTastaturwiederberALT-CapsLock.
+  Nicht-amerikanischeUmlauteinDialogboxenundDateinamensindkein
+Tabuthemamehr.KonvertierungeninGro-/Kleinschriftwerdenebenso
+zuverl„ssigvorgenommenwiefrdienormalenZeichen.
+  NichtbehebbareFehler,diedurchamoklaufendeProgrammeentstehen
+k”nnen,fhrenzuMeldungenwieetwaderfolgenden:
+
+  ***FATALERFEHLER...:
+  ***SYSTEMANGEHALTEN***
+
+  TOS-ProgrammewiederShareware-KommandointerpreterKCMD,die
+keineeigenenEingaberoutinenverwenden,profitierenvonderneuen
+GEMDOS-Eingaberoutine,diefolgendeEditiertastenverarbeitet:
+
+  Cursorlinks/rechtsCursoreinZeichenbewegen
+Shift-Cursorl/rCursoranZeilenanfang/-ende
+  Shift-Cursorlinks    CursoraufdenAnfangdesEingabefeldes
+HomewieShift-Cursorlinks
+  Shift-ClrEingabel”schen
+  TabwechselseitigZeilenanfang/-ende
+  Cursorhoch/runterletzteEingabe(n)zurckholen
+  UndoletzteEingabe
+  Del/BackspaceZeichenunter/vorCursorl”schen
+  InsertEinfgemodus
+  Shift-Insertšberschreibmodus
+F1..F10EnvironmentvariablenF1..F0abrufen
+
+  DieEnvironment-Variablenk”nnenmitjedembeliebigenKommandoin
+terpreterbelegtwerden,i.a.miteinemSET-Kommando.
+  BeiTOS-Programmengibtesjetzt,wieschonimmerunterGEM-
+Programmen,dieM”glichkeit,aufDiskettenfehlerzureagieren.Bei
+einemLesefehlererscheintbeispielsweisedieNachricht:
+€
+     CRC-FehleraufLaufwerkA:
+     [A]bbruch,[W]iederholen,[I]gnorieren?
+
+  Jetztk”nnenSiedieFehlermeldungandasProgrammweiterreichen,
+dasdann(hoffentlich)sinnvollreagiert,denVersuchwiederholenoder
+dasProgrammberCtrl-Ceinfachganzabbrechen.DasIgnorierenist
+zwarm”glich,abergef„hrlichundsolltenormalerweisenichtverwendet
+werden.
+
+
+ˆAnhangA
+
+A1)TipsfrProgrammierer€
+
+  UmMultitaskingauchbeiProgrammenzuzulassen,diemitreiner
+Rechnereibesch„ftigtsind,ohneaufEingabendesBenutzerszuwarten,
+istfolgendeVorgehensweisezuemfehlen,dieauchunterdemnormalen
+TOSnichtzuSchwierigkeitenfhrt(fallsIhrProgrammeinAccessory
+istodermitAccessorieszusammenlaufenkann):
+  RufenSieinregelm„igenAbst„nden(ambestenineinerSchleife)
+dieFunktion_appl_yield()auf,dieinderBibliothekMAGIXLIB.LIB
+enthaltenist.TestenSieverschiedeneH„ufigkeiten,umdenKompromi
+zwischenminimalemGeschwindigkeitsverlustundmaximalerBedienbarkeit
+deranderenProgrammezufinden.FallsIhrProgrammAusgabeninein
+FenstermachtodereinMenbesitzt,solltenSieauchabundzueinmal
+einenevnt_multi()-Aufrufmachen(mitTimerzeit0),umdieM”glich
+keitzuhaben,aufVer„nderungderFensterpositionzureagieren.
+Beispielsweisek”nnenSieineinerinnerenSchleifeIhrerBerechnung
+den_appl_yield()-Aufrufmachenundineiner„uerenden
+evnt_multi();mankannauchetwabeijedemzehntenMalevnt_multi()
+statt_appl_yield()machen.DasDemonstrationsprogrammDEMO5aufder
+MagiX-Diskettearbeitet„hnlich.
+  Sowohl_appl_yield()alsauchalleEvent-Funktionensindgegenber
+demTOSdramatischschneller,sodasichVerlustestarkinGrenzen
+halten.HierdieZeitenfr5000Aufrufevon_appl_yield,wennein
+AccessoryimSpeicheristundkeineMausberhrtwird:
+
+     TOS   1.4      1023 Ticks
+     KAOS  1.4.2     728 Ticks
+     MagiX            61 Ticks
+
+  _appl_yield()„ndertbrigensnurdieRegisterd0/a0unddarfunter
+MagiX,imGegensatzzumTOS(!),auchimSupervisormodusaufgerufen
+werden,wiegenerellalle(!)AES-Aufrufe.
+  TOS-Programmewerdennichtge-multitask-t;siewerdenimmer
+seltenerundblockierenw„hrendihrerAusfhrungeinfachalleanderen
+Programme.NachihrerBeendigungwirdautomatischderBildschirmneu
+gezeichnet.AusdiesemGrundsindTOS-ProgrammeunterMagiXvoll
+kompatibelzuTOSundlaufenohnejeglichenZeitverlust(sogarmit
+Vorteil,wennsieSystemaufrufeverwenden).
+  DasUmschaltenderMenleisteerfolgtautomatischbeimKlickenauf
+einunteresFenster,daseineranderenApplikationgeh”rt,undauch
+beimProgrammstart,undzwar,genauer,beimAusfhrendesmenu_bar()-
+Aufrufs.Wichtigist,daalleProgramme,dieeinenanderenDesktop-
+Hintergrundanmelden,diesenordentlichberdieRechtecklisteausge
+ben,daIhreApplikationsichjaineinbereitslaufendesSystemmit
+Fensternusw.nahtloseinfgenmu.DieRechtecklistefrdenDesktop
+istberFensterhandle0abrufbar.
+  ImAugenblicknichtangezeigte,aberangemeldeteMenb„umefr
+Desktop-HintergrundoderMenwerdenvonMagiXmitdem"Hidden"-Flag
+€versehen,damitsievonSuch-oderZeichenroutinenignoriertwerden.
+FallsSieetwaeinIconvonIhremFensteraufdenDesktopziehen
+m”chten,erhaltenSieberobjc_find()immereine-1,wennIhr
+Desktop-Hintergrundgeradenichtangezeigtwird.MAGIXDSKreagiert
+daraufsinnvollerweisemiteinemkurzenTon,dereinenFehleranzeigt.
+AuchwennIhrProgrammberobjc_draw()dengesamtenBaumodereinen
+TeilvonHintergrundoderMenzeichenm”chte,wirddieserBefehl
+einfachnichtausgefhrt,wennIhrMenoderHintergrundgerade
+inaktivist.Sowirdverhindert,dadieProgrammesichgegenseitig
+IhrenBildschirmzerst”ren.Auchmenu_update()wirdnatrlichberck
+sichtigt.FallsgeradeeineTastefreinenMeneintragbet„tigt
+wurde,derandieApplikationgeschicktwird,derdasobersteFenster
+geh”rt,aberdasMeneinemanderenProgrammgeh”rt,darfderent
+sprechendeMentitelnatrlichnichtinvertiertwerden,wasMagiX
+verhindert.
+  Umzuverhindern,dasichProgrammeanfremdenFensternvergreifen,
+mutebetr„chtlicherAufwandgetriebenwerden.Leidergibtesimmer
+wiederProgramme,diebeiProgrammstartoderbeiBeendigungalle
+offenenFensterschlieenundl”schen,eigeneundfremde.MagiX
+verhindertjeglichenZugriffauffremdeFenster.Wegeneiniger
+ProgrammegibtMagiXbeieinemwind_get(WF_TOP)immer-2zurck,wenn
+dasobersteFenstereineranderenApplikationgeh”rt.Werunbedingt
+dasHandledesoberstenFenstersben”tigt,derseiaufdie
+UnterfunktionWF_WINDLISTvonwind_get()verwiesen,dieinKapitelAx
+vorgestelltwird.
+  WiebereitsinKapitel10erw„hnt,solltenProgramme,diesichin
+irgendwelcheSystemvektorenh„ngen,sichauchindenetv_term-Vektor
+einklinken.FallsdasProgrammnunabnormalbeendetwird,seiesdurch
+denProgramm-Manager,durcheinanderesamoklaufendesProgrammoder
+gardurcheinenProgrammierfehler,springtdasSystemzun„chstber
+denetv_term-Vektor.BeidieserGelegenheitk”nnenSiesichdannin
+RuheausallenVektorenzurckziehen.DaMagiXfrjedeApplikation
+eineneigenenetv_term-Vektorverwendet,kannesdabeinichtzu
+Kollisionenkommen.
+  DasichdieStrukturdesProzedeskriptors("Basepage")indennicht
+dokumentiertenBereichenge„nderthat,istunbedingtdaraufzuachten,
+nurdiedokumentiertenStrukturelementezuverwenden.
+
+
+ˆA2) NeueFunktioneninMagiX€
+
+(...)
+

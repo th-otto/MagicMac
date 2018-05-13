@@ -1,0 +1,82 @@
+2. Installation
+---------------
+
+Zun„chst fllen Sie die Registrierkarte aus, um vom Update-Service
+zu profitieren, und senden Sie an Ihren Mag!X-Distributor.
+
+Legen Sie nun die Originaldiskette in Laufwerk A: ein und starten das
+Programm INSTMAGX.PRG. Es erscheint folgende Dialogbox:
+
+
+[Bild: INSTAL.IMG]
+
+
+
+Geben Sie die Seriennummer ein, die sich auf dem Aufkleber auf der Diskette
+befindet. Seien Sie dabei sehr sorgf„ltig; die Nummer mu exakt stimmen.
+Anschlieend geben Sie Ihren Namen und Ihre Adresse ein.
+
+Die Angabe der "Aufl”sung" ist nur wichtig, falls Sie mit einer bestimmten
+Aufl”sung (z.B. ST-Mittel bei einem ST mit Farbbildschirm) booten m”chten.
+Im Normalfall solten Sie also "Default" w„hlen.
+
+Unter "Laufwerk" k”nnen Sie die Partition w„hlen, auf der Mag!X installiert
+werden soll. Im Normalfall ist dies "C:", Sie k”nnen sich auf diesem Weg
+aber auch eine Version fr den Diskettenbetrieb zusammenstellen (w„hlen Sie
+in diesem Fall als Laufwerk  "B:").
+
+"Scrap" ist das Verzeichnis, das als GEM-Klemmbrett verwendet wird. Dies
+ist im Normalfall "C:\CLIPBRD".
+
+Bei "ACCs" k”nnen Sie einen Pfad angeben, von dem die Accessories geladen
+werden. Fehlt die Angabe, werden diese wie gewohnt vom Wurzelverzeichnis
+(meist "C:") geladen.
+
+Unter "APPs" wird der Pfad angegeben, in dem Applikationen stehen, die bei
+jedem Systemstart automatisch mitgeladen werden sollen. Sie k”nnen hier
+z.B. die beiliegende AES-Lupe oder die CLOCK aus dem ZUSATZ-Ordner
+automatisch mitstarten lassen (Sie erinnern sich, es handelt sich bei Mag!X
+um ein Multitasking-Betriebssystem).
+Die automatisch geladenen Programme (APPs) werden vor Start des Desktop
+geladen und laufen alle parallel. Wichtig ist, da es sich um
+"vertr„gliche" Programme handelt, die nicht den gesamten Speicher
+beanspruchen und GEM-konform geschrieben sind. Dieser Mechanismus ist als
+Ersatz fr das veraltete Accessory-Konzept gedacht, da sich solcherart
+geladene Programme natrlich jederzeit wieder aus dem Speicher entfernen
+lassen. Fehlt eine Angabe bei "APPs", so werden keine Applikationen
+automatisch geladen.
+
+Als letztes tragen Sie unter "AUTO" eine eventuelle Autostart-Applikation
+ein, etwa ein alternatives Desktop oder ein Programm zum Einloggen in ein
+Netz (das Programm wird vor Start des Desktop geladen, erst nach seiner
+Beendigung gelangen Sie ins Desktop). Da Mag!X ein eigener Desktop beiliegt,
+k”nnen Sie diese Zeile zun„chst auch leer lassen.
+
+šberprfen Sie noch einmal die Seriennummer, und bet„tigen Sie nun den
+Button "Installieren" per Maus oder per Return-Taste. Die Installation wird
+automatisch vorgenommen, alle notwendigen Dateien auf Ihre Festplatte
+bzw. Ihr Bootlaufwerk kopiert.
+Auf der Originaldiskette befinden sich im Ordner \MAGX\ZUSATZ noch
+weitere Dateien und Programme, die nur fr den fortgeschrittenen
+Benutzer von Interesse sind und nicht automatisch mit kopiert werden.
+
+
+Starten von Mag!X
+-----------------
+
+Wenn Sie einen Reset ausfhren, wird Mag!X automatisch geladen. Beim
+Einschalten des Rechners oder einem Kaltstart wird zuerst MAGXBOOT.PRG
+gestartet. Dieses installiert Mag!X und bootet dann erneut. Bei einem
+Warmstart passiert das dann nicht mehr, da sich Mag!X bereits resetfest
+installiert hat. MAGXBOOT.PRG sollte m”glichst an erster Stelle im
+AUTO-Ordner stehen, damit das Booten bei einem Kaltstart nicht zu lange
+dauert.
+Sie k”nnen das Laden von Mag!X unterbinden, indem Sie beim Booten beide
+SHIFT-Tasten gedrckt halten. Sie k”nnen Mag!X aus dem Rechner entfernen,
+indem Sie die Tatenkombination CTRL-ALT-rechts-SHIFT-DEL drcken (also
+einen Kaltstart ausl”sen) und anschlieend von einem anderen Laufwerk
+booten oder beim Booten beide SHIFT-Tasten gedrckt halten.
+
+Wenn das Desktop MAGXDESK erscheint, ist die Installation gelungen. Nehmen
+Sie Ihre Wunscheinstellung in MAGXDESK vor (siehe auch "Bedienung von
+MAGXDESK"), und w„hlen Sie im Men "Optionen" den Eintrag "Arbeit sichern".

@@ -1,0 +1,96 @@
+5. Dialog- und Alertboxen
+-------------------------
+
+Beim Aufruf von Dialog- und Alertboxen in MAGXDESK und VT52 ist Ihnen
+bestimmt schon aufgefallen, da diese sich ein wenig von den unter TOS
+blichen unterscheiden.
+
+Dialogboxen
+-----------
+Der erste auff„llige Unterschied besteht in der umgeknickten rechten Ecke
+("Eselsohr"). Weitere Punkte sind Buttons mit unterstrichenen Buchstaben
+sowie runde Radiobuttons und Checkbuttons.
+Das Eselsohr zeigt Ihnen, da dieser Dialog verschiebbar ist, wobei das
+Verschieben auf zwei Arten erfolgen kann:
+
+- Klicken Sie mit der linken Maustaste auf das Eselsohr, und halten Sie die
+  Maustaste gedrckt. Der Mauszeiger verwandelt sich in eine flache Hand,
+  und Sie k”nnen den Umri der Box verschieben.
+  Wenn Sie die Maustaste loslassen, wird die Box verschoben.
+
+- Bet„tigen Sie die rechte Maustaste, und lassen Sie sie gedrckt. Klicken
+  Sie nun mit der linken Maustaste auf eine beliebige Stelle der Dialogbox.
+  Die Dialogbox wird unsichtbar; es ist nur noch ein Umri zu erkennen. In
+  den meisten F„llen gengt ein Blick, was unter der Box liegt, und Sie
+  k”nnen die Maustaste wieder loslassen. Sie k”nnen den Umri der Box auch
+  verschieben; beim Loslassen erscheint die Box an der neuen Position.
+
+Die unterstrichenen Buchstaben in den Dialogen zeigen an, da der jeweilige
+Button ber die Tastatur (ALT-Taste zusammen mit dem unterstrichenem
+Buchstaben) bedienbar ist.
+
+Um Ihnen die Bedienung von Dialogboxen noch weiter zu erleichtern, haben
+wir einige der Systemfunktionen erheblich erweitert. In jedem Programm, das
+die Systemfunktionen benutzt, stehen neben der von TOS bekannten
+Funktionalit„t folgende Erweiterungen zur Verfgung:
+
+  linke Maustaste        Cursor  exakt positionieren,  auch  innerhalb
+                         einer Eingabezeile
+  Shift- Cursor hoch     Cursor auf das letzte Eingabefeld
+  Shift- Cursor runter   Cursor auf das erste Eingabefeld
+  Shift- Cursor links    Cursor auf den Anfang des Eingabefeldes
+  Ctrl - Cursor links    Vorheriges Wort bzw. Zeilenanfang
+  Shift- Cursor rechts   Cursor auf das Ende des Eingabefeldes
+  Ctrl - Cursor rechts   N„chstes Wort bzw. Zeilenende
+  Home                   Wie Shift-Cursor links
+  Shift- Clr             Wie Esc
+  Ctrl - Delete          L”schen bis Zeilenende
+  Insert                 Einfgemodus
+  Shift- Insert          šberschreibmodus
+  Ctrl - C               Copy            (Zeile)
+  Ctrl - X               Cut             (Zeile)
+  Ctrl - V               Paste   (an Cursorposition)
+  Undo                   Button "Abbruch", "Zurck", "Cancel",
+                                "Abort"
+  Help                   Button "Hilfe","Help"
+  Ctrl+Q                 Button "Ende", "Verlassen", "Ausgang",
+                                "Quit", "Exit"
+
+Mit Hilfe des Cut/Copy/Paste-Mechanismus k”nnen Sie nun auch sehr einfach
+Daten von einer Eingabezeile in eine andere kopieren (z.B. von der
+Dateiauswahlbox in eine Dialogbox). Das Einfgen mit ^V geschieht so, als ob
+die Daten an Cursorposition per Hand eingegeben worden w„ren.
+
+Leider sind in letzter Zeit vermehrt Programme auf den Markt gekommen, die
+anstelle der Betriebssystemroutinen eigene Dialogroutinen verwenden. In
+diesen Programmen sind keine oder nur ein Teil der beschriebenen Funktionen
+wirksam. Fr den Einzelfall hilft einfach Ausprobieren.
+
+MAGXDESK und VT52 benutzen brigens ausschlielich die oben erw„hnten
+Systemfunktionen, die Sie zum Teil (Buttons mit unterstrichenen Buchstaben,
+runde Radiobuttons, Checkbuttons) sogar in „lteren Programmen einfach mit
+einen RSC-Editor "nachrsten" k”nnen - mehr darber im Programmierabschnitt
+dieses Handbuchs.
+
+Alertboxen
+----------
+Wie die Dialogboxen, so sind auch Alertboxen in Mag!X in der Regel
+verschiebbar, es sei denn, es kann kein Speicher mehr angefordert werden.
+In diesem Fall ist die Box nicht verschiebbar, und das Eselsohr fehlt.
+Um die dumme Situtation zu vermeiden, da die Alertbox auftaucht, aber weit
+und breit kein Mauszeiger vorhanden ist, k”nnen Sie in Mag!X jede Alertbox
+vollst„ndig ber die Tastatur bedienen. Auer [Return] fr den
+Default-Button und [Undo] bzw. [^Q] fr den Abbruch-Button kann man mit der
+Funktionstaste F1 den linken, mit F2 den mittleren und mit F3 den rechten
+Button ausl”sen.
+Auerdem haben wir uns bemht, Alertboxen bei Systemfehlern mit einem
+differenzierten und aussagef„higen Texten zu versehen. Erscheint unter TOS
+etwa lapidar:
+
+    "Diese Anwendung kann das Objekt nicht finden",
+
+so kann es unter Mag!X jetzt heien
+
+     "Datei nicht gefunden (Fehler #-33)" oder
+     "Pfad  nicht gefunden (Fehler #-34)" oder
+     "Ungltiges Laufwerk  (Fehler #-46)".

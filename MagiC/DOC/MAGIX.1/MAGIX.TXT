@@ -1,0 +1,2649 @@
+		ANLEITUNG zu Mag!X V1.00
+
+Inhaltsverzeichnis:
+
+0.   Vorwort
+1.   Hardware- Voraussetzungen und Leistungsmerkmale
+2.   Installation
+3.   Laden und Umschalten von Programmem
+4.	Accessories unter Mag!X
+5.	Autostart- Applikationen
+6.   Die verschiebbaren Dialoge
+7.   Die erweiterten Dialogfunktionen
+8.   Alertboxen
+9.	Die Dateiauswahlbox
+10.	Der Programm- Manager
+11.	Die Speicherverwaltung
+12.	Die Hilfsprogramme LIMITMEM, MEMEXAMN und MAGXCONF
+13.	Der Window- Manager
+14.	Verschiedene Verbesserungen
+A1)	Tips fr Programmierer
+A2)  Neue Funktionen in Mag!X
+A3)  Neue TOS- Funktionen in Mag!X
+A4)  Erweiterte GEM- und GEM/3- Funktionen in Mag!X
+A5)  Paralleles Starten von Programmen
+A6)  Dialoge unter Mag!X
+A7)  Neue GEM- Funktionen im AES
+A8)  Neue Objekttypen in Mag!X
+B)   Der Desktop MAGXDESK
+
+
+
+0. Vorwort
+
+  Wenn heutzutage ein neuer Rechner vorgestellt wird, der nicht 
+unbedingt kompatibel zu irgendeinem anderen sein mu, kommt der 
+Hersteller nicht umhin, diesen mit Multitasking auszustatten. Ohne die 
+Eigenschaft, mehrere Programme quasi gleichzeitig auszufhren, wird 
+heute kein Betriebssystem mehr entwickelt. Die Anwendungen fr 
+Multitasking sind vielf„ltig. Das beginnt damit, ein Text- und ein 
+Grafikprogramm gleichzeitig im Speicher zu halten, um Bilder, die in 
+den Text eingefgt werden sollen, bequem nebenbei zu erstellen, und 
+endet mit der šbersetzung, dem Ausdrucken oder dem Kopieren gr”erer 
+Dateien, w„hrend man einen Text eintippt.
+  Schwieriger wird das Problem, wenn man auf einen existierenden 
+Rechner und existierende Programme zurckgreifen mu, die fr ein 
+Nicht- Multitasking- System (sog. Single Tasking Systeme) entwickelt 
+wurden. Im Fall von Windows fr den PC war dies noch relativ einfach, 
+da Windows nicht auf einer grafischen Benutzeroberfl„che wie dem GEM 
+aufsetzt, sondern lediglich eine zeichenorientierte Umgebung verlangt. 
+Schwieriger wird es beim GEM auf dem Atari. Das ursprngliche Konzept 
+verbindet ein einfaches Single- Tasking- Betriebssystem mit einigen 
+Elementen eines Multitasking- Systems, die aber nicht vollst„ndig 
+ausgefhrt wurden.
+  Mag!X steht fr Multi Application Graphics Interface Extension und 
+ist ein Betriebssystem- Zusatz fr den Atari ST(E), der eine weitge-
+hende Kompatibilit„t zum bisherigen System bietet und einige zus„tz-
+liche Eigenschaften aufweist, die Multitasking erm”glichen und auch 
+solche, die die Bedienung des Rechners erleichtern. Multitasking ist 
+dabei mit allen Programmen m”glich, die nach den GEM- Programmier- 
+Richtlinien erstellt wurden, in Fenstern arbeiten und Accessories 
+zulassen. Gerade hier ist im Augenblick ein deutlich wachsender Trend 
+zu beobachten. Auerdem beschleunigt Mag!X Ihren Rechner und ist 
+kompatibel zu GEM 2.x.
+  Da normalerweise jeder Computer nur einen Prozessor besitzt, k”nnen 
+Programme nicht wirklich gleichzeitig abgearbeitet werden, sondern es 
+wird schnell zwischen den Programmen hin und her geschaltet, so da 
+sich fr den Betrachter eine Quasi- Gleichzeitigkeit ergibt. Ver-
+schiedene Multitasking- Konzepte unterscheiden sich meistens dadurch, 
+unter welchen Umst„nden dieser sogenannte Task- Switch stattfindet. 
+Das GEM des Atari und auch Mag!X lassen diesen nur dann zu, wenn das 
+laufende Programm einen Betriebssystemaufruf macht (genauer: einen 
+AES- Aufruf), also insbesondere dann, wenn es sowieso auf eine Aktion 
+des Benutzers (Tastendruck, Mausklick) wartet und nicht ablaufen kann. 
+Andere Systeme wie UNIX oder OS/2 benutzen zus„tzlich noch eine 
+Zeitscheibensteuerung: Programme werden in regelm„igen Abst„nden 
+unterbrochen und ggf. umgeschaltet, damit sich kein Programm die 
+gesamte Rechenzeit reserviert. Der Vorteil der ersteren Vorgehensweise 
+ist jedoch der, da der Verwaltungsaufwand fast gegen Null geht, das 
+heit, ein Programm l„uft genauso schnell wie unter einem Single- 
+Tasking System; bei einer Zeitscheiben- Steuerung mssen einige 
+Abstriche gemacht werden.
+  Da die auf dem ST existierenden Programme mit einer Zeitscheiben-
+steuerung nicht zurecht k„men (viele Programme drfen nicht zu jedem 
+beliebigen Zeitpunkt unterbrochen werden) und fr ein Multitasking wie 
+unter UNIX eine ganze Menge von v”llig neuen Betriebssystemaufrufen 
+n”tig w„ren, die kein existierendes Programm nutzen k”nnte, wurde das 
+Multitasking- Konzept in Mag!X vom Original- GEM bernommen. Nur so 
+l„t sich die notwendige Kompatibilit„t wahren, auerdem ist dieses 
+Konzept fr die meisten Anwendungen mehr als ausreichend. Leider kann 
+man damit nicht z.B. Turbo C im Hintergrund compilieren lassen, was 
+aber sowieso nicht m”glich ist, da dieses w„hrend des Compilierens den 
+Bildschirm mit einer Dialogbox sperrt und so jede Umschaltung auf 
+andere Programme oder Accessories verhindert. Fast alle existierenden 
+Programme k”nnten also von einer Zeitscheibensteuerung berhaupt nicht 
+profitieren.
+  Falls in Zukunft mehr Programme existieren, die "zeitscheibenf„hig" 
+sind, und ein entsprechender Bedarf entsteht, l„t sich eine 
+Zeitscheibensteuerung fr eine sp„tere Version von Mag!X nicht 
+ausschlieen.
+
+
+1. Hardware- Voraussetzungen und Leistungsmerkmale
+
+  Ben”tigt wird ein beliebiger Rechner der Serien Atari ST, Mega ST, 
+Atari STE oder Mega STE. Eine Version von Mag!X fr den TT ist noch in 
+Vorbereitung. Ben”tigt wird ferner ein TOS im ROM, was aber seit 1986 
+in alle Rechner eingebaut ist.
+  Eine Festplatte ist zu empfehlen, um Boot- und Ladezeiten nicht in 
+unermeliche zu steigern. Theoretisch l„uft Mag!X auch mit 512 kB 
+Hauptspeicher, fr eine optimale Anwendung sind jedoch mindestens 2 MB 
+erforderlich.
+  Fr einen noch schnelleren Bildschirmaufbau und volle Funktionsf„-
+higkeit durch GDOS wird NVDI empfohlen.
+  Fr den Anwender bietet Mag!X folgende Leistungsmerkmale:
+
+-	Multitasking mit bis zu 16 Programmen, bei Nutzung aller Accessory- 
+	Eintr„ge k”nnen zus„tzlich zum Desktop noch 8 Applikationen 
+	gleichzeitig im Speicher gehalten werden.
+-	Bis zu 16 Fenster gleichzeitig m”glich.
+-	Komfortable Bedienung durch Neuprogrammierung der gesamten grafi-
+	schen Bedieneroberfl„che. Dadurch schnelle und einfache Umschalt-
+	m”glichkeiten zwischen den Mens der verschiedenen Applikationen.
+-	Fehlersuch- Hilfen, Programm- Manager zum gezielten Entfernen 
+	"klemmender" Applikationen.
+-	Neu entwickeltes Desktop MAGXDESK mit beliebigen Icons und umfang-
+	reichen Funktionen.
+-	Erweiterte Dialogfunktionen, zus„tzliche Betriebssystemaufrufe fr 
+	fliegende Dialoge, Tastaturbedienung in Dialogen, Popup- Mens usw.
+-	Gegenber dem Originalsystem drastisch erh”hte Ausfhrungsgeschwin-
+	digkeit Ihrer Programme.
+-	Weitgehend kompatibel zu TOS, kritische Programme k”nnen im Single- 
+	Tasking- Betrieb ausgefhrt werden. Kompatibel zu allen Beschleuni-
+	ger- und Grafikkarten.
+-	Drastisch erh”hte Betriebssicherheit, um die Einflunahme unsauberer 
+	Applikationen auf andere zu verhindern. Nach Absturz einer fehler-
+	haften Applikation wird das System komplett aufger„umt, so da mit 
+	groer Wahrscheinlichkeit die anderen Programme weiter funktionsf„-
+	hig sind.
+-	Kompatibel zu GEM 2.x.
+
+
+2. Installation
+
+  Zun„chst fllen Sie die Registrierkarte aus, um vom Update- Service 
+zu profitieren, und senden Sie an Bela. Legen Sie die Originaldiskette 
+in Ihr Laufwerk A: ein und starten das Programm INSTMAGX.PRG. Wenn Sie 
+Mag!X auf Diskette installieren m”chten, w„hlen Sie als Laufwerk B:, 
+ansonsten die Boot- Partition Ihrer Festplatte (i.a. C:). W„hlen Sie 
+die gewnschte Aufl”sung, in der Mag!X erscheinen soll, dies ist 
+jedoch nur fr den Farbmonitor von Belang.
+
+8000500001\INSTALL.IMG
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Geben Sie nun oben die Seriennummer ein, die auf der Registrierkarte 
+und auf dem Diskettenetikett aufgedruckt ist. Seien Sie dabei sehr 
+sorgf„ltig, die Nummer mu exakt stimmen. Anschlieend geben Sie Ihren 
+Namen und Ihre Adresse ein.
+  Tragen Sie jetzt das Scrap- Verzeichnis ("Clipboard") ein. Wenn der 
+Pfad kein existierendes Verzeichnis angibt, wird dieses von INSTMAGX 
+automatisch erstellt. Tragen Sie ferner die Verzeichnisse ein, wo Ihre 
+Accessories liegen (ACCs) und wo Ihre automatisch gestarteten Appli-
+kationen liegen (APPs); auch diese Ordner werden ggf. von INSTMAGX 
+erstellt. Fehlt die Angabe "APPs", werden keine Programme automatisch 
+geladen, fehlt die Angabe "ACCs", werden die Accessories vom Wurzel-
+verzeichnis des Bootlaufwerks geladen. Die automatisch geladenen Pro-
+gramme (APPs) werden vor Start des Desktop geladen und laufen alle 
+parallel. Wichtig ist, da es sich um "vertr„gliche" Programme han-
+delt, die nicht den gesamten Speicher beanspruchen und GEM- konform 
+geschrieben sind. Dieser Mechanismus ist als Ersatz fr das veraltete 
+Accessory- Konzept gedacht, da sich solcherart geladene Programme 
+natrlich jederzeit wieder aus dem Speicher entfernen lassen.
+  Als letztes tragen Sie eine eventuelle Autostart- Applikation ein, 
+etwa ein alternatives Desktop wie Gemini oder ein Programm zum 
+Einloggen in ein Netz. Sie k”nnen diese Zeile auch zun„chst leer 
+lassen.
+  šberprfen Sie noch einmal die Seriennummer und bet„tigen den Button 
+"Installieren" per Maus oder per Return- Taste. Die Installation wird 
+automatisch vorgenommen, alle notwendigen Dateien auf Ihre Festplatte 
+bzw. Ihr Bootlaufwerk kopiert.
+  Auf der Originaldiskette befinden sich im Ordner \MAGX\ZUSATZ noch 
+weitere Dateien und Programme, die nur fr den fortgeschrittenen 
+Benutzer von Interesse sind und nicht automatisch mit kopiert werden.
+  Wenn Sie Reset bet„tigen und von dem in INSTMAGX angegebenen 
+Laufwerk booten, wird Mag!X automatisch geladen. Sie k”nnen das Laden 
+unterbinden, indem Sie beim Booten beide Shift- Tasten gedrckt 
+halten. Wenn das Desktop MAGXDESK erscheint, ist die Installation 
+gelungen. Nehmen Sie nun Ihre Wunscheinstellung in MAGXDESK vor (siehe 
+Anhang fr die Bedienung von MAGXDESK), und w„hlen Sie im Men 
+"Optionen" den Eintrag "Arbeit sichern". S„mtliche Einstellungen von 
+Mag!X, MAGXDESK und Kontrollfeld werden ausschlielich in der Datei 
+MAGX.INF abgelegt, die eventuell vorhandene Datei DESKTOP.INF hat 
+keinerlei Bedeutung unter Mag!X.
+  Mag!X ist resetfest. Sie k”nnen Mag!X wieder aus dem Rechner 
+entfernen, indem Sie die Tastenkombination CTRL-ALT-RSHIFT-DEL 
+bet„tigen und entweder von einem anderen Laufwerk booten oder die 
+beiden Shifttasten gedrckt halten.
+
+
+3. Laden und Umschalten von Programmen
+
+  Unter Mag!X kann das Ausfhren von Programmen auf zwei Arten 
+durchgefhrt werden.
+  Das einfachste ist, ein Programm von MAGXDESK aus durch Doppelklick 
+zu starten. Dazu kennt MAGXDESK zwei Betriebsmodi: In der Dialogbox 
+Optionen/Einstellungen kann man unter "MAGXDESK resident" w„hlen, ob 
+Programme normalerweise parallel gestartet werden (d.h. MAGXDESK l„uft 
+weiter) oder nicht. Die jeweils nicht aktive Betriebsart kann beim 
+Starten von Programmen durch Drcken der Alternate- Taste erzwungen 
+werden. Ist beispielsweise "MAGXDESK resident" angew„hlt, werden Pro-
+gramme durch Doppelklick parallel gestartet, bei ALT- Doppelklick wird 
+MAGXDESK verlassen. Programme, die unsauber geschrieben sind, k”nnen 
+unter Optionen/Anwendung anmelden als "single tasking" angemeldet 
+werden. Diese Programme werden dann immer allein gestartet, d.h. 
+MAGXDESK wird verlassen; ferner werden bei Programmstart alle zu 
+diesem Zeitpunkt geladenen Programme und Accessories "eingefroren" und 
+ihre Fenster geschlossen. Damit ist sichergestellt, da die kritische 
+Applikation sich wirklich v”llig allein fhlt, nach deren Beendigung 
+werden alle anderen Applikationen wieder aufgetaut und die Fenster 
+wieder ge”ffnet. Eingefrorene Accessories k”nnen nicht mehr aufgerufen 
+werden, ihre Eintr„ge im linken Men sind grau dargestellt.
+  Hat man ein Programm gestartet und ist MAGXDESK gerade nicht 
+erreichbar, gengt es, auf eine freie Stelle der Menleiste zu 
+klicken, also entweder rechts oder ganz links. Es erscheint ein Popup- 
+Men. Oben sind alle gerade geladenen Applikationen aufgefhrt, die 
+ein Men oder einen Desktop- Hintergrund haben. Vor der Applikation, 
+deren Men und Hintergrund gerade aktiv ist, steht ein H„kchen. Mit 
+einem Mausklick auf einen der Applikations- Eintr„ge k”nnen Sie nun 
+Men und Hintergrund umschalten. Mit dem Eintrag "aufr„umen" k”nnen 
+Sie einen Neuaufbau des Bildschirms einleiten, falls ein unsauberes 
+Programm "Reste" hinterlassen hat. Achtung: Einige Programme, die 
+nicht nach den Programmier- Richtlinien geschrieben sind, k”nnen den 
+Neuaufbau des Bildschirms nicht ausfhren; in diesem Fall sollte auf 
+eine Benutzung dieses Meneintrags verzichtet werden. Der Eintrag 
+"laden..." erm”glicht nun, zus„tzliche Programme auch ohne Desktop 
+nachzuladen, vorher sollte man allerdings einen Blick auf die unterste 
+Zeile des Popup- Mens werfen, die den freien Speicher anzeigt. Mit 
+der nun erscheinenden Dateiauswahl k”nnen Sie das zu startende 
+Programm angeben oder es sich per "ABBRUCH" anders berlegen.
+
+8000000001\MULTITSK.IMG
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Die Umschaltung der Menleiste oder des Hintergrunds geschieht i.a. 
+durch Wechsel des aktiven Fensters. Immer, wenn Sie ein Fenster 
+einer anderen Applikation nach oben klicken, findet eine Umschaltung 
+statt. In einigen F„llen ist es praktisch, z.B. das Fenster eines 
+Editors als oberstes zu haben und das Men eines anderen Programms, 
+dessen Bedienungsanleitung man z.B. gerade schreibt. Fr diesen Fall 
+bringen Sie einfach das Editorfenster nach oben und w„hlen ber das 
+Popup- Men die gewnschte Menleiste aus.
+
+
+4. Accessories unter Mag!X
+
+  Obwohl Accessories eigentlich der Philosophie von Mag!X 
+widersprechen, werden sie natrlich voll untersttzt. Mag!X l„dt 
+Accessories von dem Pfad, den Sie bei INSTMAGX angeben, er wird in der 
+Datei MAGX.INF in der Zeile #_ACC abgelegt. Wenn Sie den Pfad nach 
+Installation noch „ndern m”chten, k”nnen Sie dies mit einem handels-
+blichen Editor tun. Geben Sie keinen Pfad an, fehlt die Zeile in der 
+MAGX.INF- Datei, und die Accessories werden vom Wurzelverzeichnis des 
+Bootlaufwerks geladen.
+  Unter Mag!X sollten Sie, um die Bootphase besonders bei einem 4MB- 
+Rechner zu verkrzen, die Accessories mit einem Fastload- Bit 
+versehen. Dazu gibt es von Atari das Programm MAKEFAST, das zusammen 
+mit dem TOS 1.4 ausgeliefert wird. Alternativ k”nnen Sie auch das 
+Programm EXE2BIN verwenden, das zum Shareware- Kommandointerpreter 
+KCMD geh”rt. KCMD befindet sich auf Ihrer Mag!X- Diskette.
+  Accessories geh”ren unter GEM zu den Stiefkindern des 
+Betriebssystems. Accessories k”nnen keine Menleiste oder einen 
+Desktop- Hintergrund besitzen und mssen bei jedem Wechsel der 
+Hauptapplikation ihre Fenster schlieen, allen Speicher freigeben und 
+alle Dateien schlieen; am besten ist es sogar, wenn Accessories 
+berhaupt keine DOS- Aufrufe machen, da unbeabsichtigte Beeinflussung 
+der Hauptapplikation nie ganz ausgeschlossen ist. Auf jeden Fall 
+k”nnen Accesories keine weiteren Programme starten; der entsprechende 
+Systemaufruf fhrt zum Absturz des TOS.
+  Unter Mag!X sind Accessories den Programmen gleichgestellt. Ihre 
+Fenster bleiben beim Programmwechsel erhalten. Sie drfen Men und 
+Desktophintergrund besitzen, Programme nachladen, Dateien ”ffnen, 
+schlieen, l”schen, kopieren usw.
+  Fr Programmierer: Da kein Grund mehr besteht, beim Programmwechsel 
+Fenster zu schlieen, gibt es keine AC_CLOSE Meldung mehr. Accessories 
+werden vom System nicht von Programmen unterschieden, abgesehen davon, 
+da sie sich keinesfalls beenden drfen. ACCs drfen sich wie unter 
+GEM/2 auch wieder im Men abmelden, und zwar mit dem AES- Aufruf 
+menu_unregister(). Anstelle von ACCs sind unter Mag!X Applikationen 
+sinnvoll, die einfach nur eine Menleiste mit einem Men anmelden und 
+im APP- Autostart- Ordner liegen. Diese Applikationen kann man dann 
+bei Bedarf nachladen und auch wieder entfernen.
+
+
+5. Autostart- Applikationen
+
+  Unter Mag!X gibt es verschiedene M”glichkeiten, Programme 
+automatisch zu starten. Beim Start von Mag!X oder beim 
+Aufl”sungswechsel werden zun„chst alle Accessories aus ihrem Ordner 
+geladen, danach die Programme mit der Endung .APP oder .PRG aus dem 
+Programm- Autostart- Ordner. Beide Ordner werden in INSTMAGX angegeben 
+und k”nnen gegebenenfalls mit einem handelsblichen Texteditor in 
+MAGX.INF ge„ndert werden; die zugeh”rige Zeile beginnt mit #_ACC bzw. 
+#_APP. Anschlieend wird das ebenfalls in INSTMAGX angegebene Programm 
+gestartet, die zugeh”rige Zeile in MAGX.INF beginnt mit #_AUT. Erst 
+wenn sich die unter #_AUT angemeldete Applikation beendet hat, wird 
+das Desktop MAGXDESK geladen. Dazu wird zun„chst im Ordner 
+\GEMSYS\GEMDESK auf dem Bootlaufwerk gesucht, dann im Wurzelverzeich-
+nis. Kann MAGXDESK nicht gefunden werden, wird stattdessen eine 
+Dateiauswahlbox angezeigt, mit Hilfe derer man Programme starten kann; 
+letzteres kann sinnvoll sein, wenn man ber sehr wenig Speicher 
+verfgt.
+  Wer ein alternatives Desktop (Gemini o.„.) benutzen m”chte, sollte 
+dieses als Autostart- Applikation anmelden (entweder schon bei 
+INSTMAGX, oder aber in der Datei MAGX.INF eine #_AUT Zeile nachtra-
+gen). Solange das alternative Desktop nicht verlassen wird, wird 
+MAGXDESK nicht geladen, ben”tigt also keinerlei Speicher. Beachten Sie 
+aber, da alternative Desktops Programme nur wie unter TOS starten 
+k”nnen, zum parallelen Starten mssen Sie ber das Popup- Men gehen, 
+das unter Mag!X bei Klick auf eine freie Stelle der Menleiste 
+erscheint (siehe Kapitel 3).
+  Als Autostart- Programme kommen nur solche in Frage, die nicht den 
+gesamten Speicher beanspruchen; notfalls mu man mit LIMITMEM (s.u.) 
+etwas nachhelfen.
+  Fr Programmierer: Unter Mag!X werden ACCs und Applikationen im 
+Autostart- Ordner mit der AES- Kommandozeile "\0\0AUTO\0" gestartet. 
+Diese wird, da sie mit Nullbytes beginnt, normalerweise nicht 
+ausgewertet. Applikationen, die speziell fr Mag!X entwickelt wurden, 
+k”nnen anhand dieser Kommandozeile beispielsweise entscheiden, ob sie 
+die Menleiste direkt anzeigen oder nur anmelden wollen (siehe unten 
+zu menu_bar) oder ob sie mit einer Dateiauswahlbox beginnen sollen 
+oder nicht.
+
+
+6. Die verschiebbaren Dialoge
+
+  Die Dateiauswahlbox, die Alertboxen sowie alle Dialoge von MAGXDESK 
+sind verschiebbar. Erkennbar ist diese Eigenschaft an der umgeknickten 
+rechten Ecke der Box ("Eselsohr"). In manchen F„llen ist nicht 
+gengend Speicher vorhanden, dann wird das Eselsohr nicht angezeigt, 
+und die Box kann nicht verschoben werden.
+  Das Verschieben kann auf zwei Arten erfolgen:
+
+1)	Klicken Sie mit der linken Maustaste auf das Eselsohr und halten 
+	Sie die Maustaste gedrckt. Der Mauszeiger verwandelt sich in 
+	eine flache Hand, und Sie k”nnen den Umri der Box verschieben. 
+	Wenn Sie die Maustaste loslassen, wird die Box verschoben.
+2)	Bet„tigen Sie die rechte Maustaste und lassen Sie sie gedrckt. 
+	Klicken Sie nun mit der linken Maustaste auf eine beliebige 
+	Stelle der Dialogbox. Diese wird unsichtbar, es ist nur noch ein 
+	Umri zu erkennen. In den meisten F„llen gengt ein Blick, was 
+	unter der Box liegt, und Sie k”nnen die Maustaste wieder 
+	loslassen. Sie k”nnen den Umri der Box auch verschieben, bei 
+	Loslassen erscheint die Box an der neuen Position.
+
+  Fr Programmierer: Die Verschieberoutinen sind in den neuen AES- 
+Aufrufen form_xdial() und form_xdo() enthalten, die in Anhang A6 
+erl„utert werden. Die Anwendung dieser Routinen bzw. Erweiterung 
+bestehender Quelltexte ist absolut simpel und dazu noch kompatibel zum 
+normalen TOS.
+
+
+7. Die erweiterten Dialogfunktionen
+
+  Die Bedienung von Dialogboxen wurde erheblich erweitert. In jedem 
+Dialog, der die Systemaufrufe benutzt (etwa MAGXDESK), hat man die 
+folgenden Zusatzfunktionen (auer denen von TOS):
+
+  linke Maustaste	Cursor exakt positionieren, auch innerhalb 
+	einer Eingabezeile
+  Shift- Cursor hoch		Cursor auf das letzte Eingabefeld
+  Shift- Cursor runter	Cursor auf das erste Eingabefeld
+  Shift- Cursor links    Cursor auf den Anfang des Eingabefeldes
+  Ctrl - Cursor links	Vorheriges Wort bzw. Zeilenanfang
+  Shift- Cursor rechts   Cursor auf das Ende des Eingabefeldes
+  Ctrl - Cursor rechts	N„chstes Wort bzw. Zeilenende
+  Home				Wie Shift-Cursor links
+  Shift- Clr			Wie Esc
+  Ctrl - Delete		L”schen bis Zeilenende
+  Insert				Einfgemodus
+  Shift- Insert			šberschreibmodus
+  Ctrl - C				Copy            (Zeile)
+  Ctrl - X				Cut             (Zeile)
+  Ctrl - V				Paste   (an Cursorposition)
+  Undo				Button "Abbruch", "Zurck", "Cancel",
+                                "Abort"
+  Help				Button "Hilfe","Help"
+  Ctrl+Q	Button "Ende", "Verlassen", "Ausgang", 
+	       "Quit", "Exit"
+
+  Mit Hilfe der Funktionen ^C,^X,^V k”nnen Daten von einer 
+Eingabezeile in eine andere kopiert werden. Das Einfgen mit ^V 
+geschieht so, als ob die Daten an Cursorposition per Hand eingegeben 
+worden w„ren.
+  Unter Mag!X funktionieren auch Eingabefelder mit kleiner Schrift!
+  Leider sind in letzter Zeit sehr viele Programme auf den Markt 
+gekommen, die eigene Dialogroutinen verwenden. In diesen Programmen 
+sind keine oder nur ein Teil der beschriebenen Funktionen wirksam. Fr 
+den Einzelfall hilft einfach Ausprobieren.
+  Fr den Programmierer: Die Funktionen fr Help, Undo, Shift-hoch, 
+Shift-runter und Ctrl-Q sind in form_keybd() enthalten, die 
+Cursorpositionierung per Maus in form_(x)do() und objc_edit() und die 
+restlichen Funktionen in objc_edit(). Wer in den Genu der 
+entsprechenden Funktionen kommen m”chte, mu die dazu geh”rigen AES- 
+Aufrufe benutzen.
+
+
+8. Alertboxen
+
+  Alertboxen sind unter Mag!X i.a. verschiebbar, haben also eine 
+umgeknickte rechte obere Ecke. In dem Fall, in dem eine Alertbox einen 
+sogenannten "kritischen Fehler" anzeigt, etwa "Daten in Disk A: 
+defekt", kann die Alertbox nicht verschoben werden; in diesem Fall 
+wird auch nicht das Eselsohr angezeigt. Auch wenn nicht gengend 
+Speicher frei ist, kann die Alertbox nicht verschoben werden.
+  Jede Alertbox kann vollst„ndig ber Tastatur bedient werden. Auer 
+[Return] fr den Default- Button und [Undo] bzw. [^Q] fr den Abbruch- 
+Button (siehe Kapitel 5) kann man mit der Funktionstaste F1 den 
+linken, mit F2 den mittleren und mit F3 den rechten Button ausl”sen. 
+Auerdem haben die Alertboxen einen gleichm„igen Rand und sind auch 
+ohne Icon brauchbar. Leider sind auch hier in letzter Zeit wegen der 
+Unzul„nglichkeit des TOS viele selbst konstruierte Alertboxen 
+verwendet worden; diese k”nnen natrlich nicht von den F„higkeiten von 
+Mag!X profitieren.
+  Die Alertboxen, die einen Systemfehler anzeigen, wurden mit diffe-
+renzierten, aussagef„higen Texten versehen. Erscheint unter TOS etwa 
+lapidar:
+
+    "Diese Anwendung kann das Objekt nicht finden",
+
+so kann es unter Mag!X jetzt heien
+
+     "Datei nicht gefunden (Fehler #-33)" oder
+     "Pfad  nicht gefunden (Fehler #-34)" oder
+     "Ungltiges Laufwerk  (Fehler #-46)".
+
+  Fr Programmierer: Alertboxen des Event- Critic- Handlers werden 
+indirekt vom GEMDOS aufgerufen. Da dieses nicht reentrant ist (durch 
+Semaphore verhindert!), kann kein Speicher zum Retten des Hintergrunds 
+alloziert werden. Aus Kompatibilit„t zu GEM 2.x drfen Textzeilen bis 
+zu 40 Zeichen (statt 30) und Buttons bis zu 20 Zeichen (statt 10) lang 
+sein. Solche Dialogboxen fhren unter TOS jedoch nicht zum Absturz 
+(!), sondern werden nur verstmmelt.
+
+
+9. Die Dateiauswahlbox
+
+  Die Dateiauswahlbox ("file selector") von Mag!X sieht auf den ersten 
+Blick aus wie die von TOS 1.4, wurde jedoch v”llig neu entwickelt. Mit 
+Hilfe der auch dem Programmierer zug„nglichen neuen 
+Betriebssystemfunktion form_xdo() (siehe Kapitel A6) ist die 
+Dateiauswahlbox vollst„ndig ber Tastatur bedienbar und auerdem 
+verschiebbar.
+
+8001200001\FSEL_INP.IMG
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Die Bedienungselemente der Dateiauswahlbox funktionieren wie 
+gewohnt, bis auf folgende Unterschiede:
+
+-	Die Dialogbox ist verschiebbar, wenn gengend Speicher frei ist, und 
+	erzeugt dann auch keine Redraw- Meldung, da der Hintergrund 
+	komplett gerettet wird.
+-	Ein Doppelklick auf das Schliefeld des "Fensters" schaltet direkt 
+	aufs Wurzelverzeichnis zurck.
+-	Wie in GEM 2.x kann das Dateimuster mehrteilig sein, etwa 
+	"*.DOC,*.BAK" oder "*.PRG,*.APP,*.TOS" usw.
+-	Unvollst„ndige Pfade werden aufwendig und komfortabel komplettiert. 
+	šbergeben faule Programme einfach nur "*.doc" oder "\*.gfa", so fgt 
+	Mag!X ggf. Laufwerknamen und aktuellen Pfad dazu. Sogar Rudimente 
+	wie "\" oder gar leere Pfade (!) werden automatisch mit Laufwerk, 
+	Pfad und Dateimuster ("*.*") komplettiert.
+	Bei ungltigem Pfad (etwa nach einem Diskwechsel existiert der 
+	Ordner nicht mehr) wird automatisch aufs Wurzelverzeichnis zurck-
+	geschaltet.
+-	Ein Doppelklick auf das Dateimuster (hier: "*.PRG,*.APP") schaltet 
+	auf "*.*" um.
+-	Ein Doppelklick auf einen Laufwerkbutton zeigt die Anzahl der freien 
+	und belegten Bytes fr dieses Laufwerk an.
+-	Befindet sich der Cursor bei Bet„tigung von [Return] in der Pfad- 
+	Eingabezeile, so wird der Dialog nicht beendet, sondern das 
+	Verzeichnis neu eingelesen. Bei TOS 1.4 funktioniert dies nur, wenn 
+	der Pfad ge„ndert wurde.
+-	Beim Wechsel von Laufwerk oder Pfad bleibt der eingegebene Dateiname 
+	erhalten, um die M”glichkeit zu geben, eine Datei unter demselben 
+	Namen, aber in einem anderen Pfad abzuspeichern.
+-	Tastaturbedienung:
+
+  CTRL-Cursor_hoch            Scrollbalken eine Position nach oben
+  CTRL-Cursor_runter          Scrollbalken eine Position nach unten
+  ALT-A                       Auf Laufwerk A: umschalten
+  ...
+	ALT-F                       Auf Laufwerk F: umschalten
+	ALT-1                       Wie Klick auf obersten Eintrag
+  ...
+  ALT-9                       Wie Klick auf untersten Eintrag
+  ALT-Esc                     Verzeichnis nach Diskwechsel neu lesen
+  ALT-Backspace               Wie Schliefeld
+  Return                      OK
+  Undo                        Abbruch
+
+	Laufwerke h”her als P: k”nnen per Hand in der Pfadzeile eingegeben 
+	werden.
+-	Selbstverst„ndlich sind alle in Kapitel 5 beschriebenen Erweiterun-
+	gen auch in der Dateiauswahlbox vorhanden, also Cursorpositionierung 
+	per Maus, Shift-Cursor-links usw.
+
+
+10. Der Programm- Manager
+
+  šber das Popup- Men sind die wichtigsten Funktionen zur Verwaltung 
+der laufenden Applikationen leicht zug„nglich. Darber hinaus k”nnen 
+tiefergreifende Manipulationen ber den Programm- Manager vorgenommen 
+werden. Dieses Hilfsmittel ist jedoch nur fr den erfahrenen Benutzer 
+zu empfehlen, besonders zur Fehlersuche ntzlich.
+  Immer, wenn ein Programm einen AES- Aufruf macht oder auf ein 
+Ereignis wartet, kommt man ber die Tastenkombination Ctrl-Alt-Esc in 
+den Programm- Manager. Im Gegensatz zum Popup- Men ist dies auch 
+m”glich, w„hrend ein Men heruntergeklappt ist oder eine Dialog- oder 
+Alertbox angezeigt wird. Achtung: Tempus etwa darf nicht mit dieser 
+Tastenkombination angehalten werden, da es in zuvielen kritischen 
+Interruptroutinen h„ngt und das System abstrzen kann.
+
+8000000001\MANAGER.IMG
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Alle momentan im System befindlichen Applikationen werden in einer 
+Zeile mit folgenden Informationen angezeigt:
+
+a)	Applikationsnummer (ap_id):
+	Dies ist die Nummer, die man bei appl_init() und in global[2] 
+	erh„lt. Im Gegensatz zu TOS mu nicht jede Nummer vertreten sein, 
+	da Applikationen dynamisch erzeugt und gel”scht werden.
+	Unter Mag!X und den bisherigen TOS- Versionen hat die 
+	Hauptapplikation immer die Nummer 0 und der Bildschirm- Manager 
+	(SCRENMGR) die Nummer 1. Im Gegensatz zu TOS k”nnen Programme 
+	unter Mag!X auch Applikationsnummern ungleich 0 bekommen, wie man 
+	in der Abbildung sieht.
+
+b)	Applikationsname:
+	Dies ist der Name, unter dem das Programm gestartet wurde und 
+	ber den man mit appl_find() an seine ap_id kommt. Unter Mag!X 
+	wird der Name immer in Grobuchstaben angegeben und darf Umlaute 
+	enthalten.
+
+c)	Status der Applikation:
+		"running" bedeutet, da das Programm gerade l„uft.
+	"ready" ist ein Programm, das auf nichts wartet und gleich 
+	weiterl„uft.
+	Eine Applikation mit Status "waiting" wartet auf Aktionen des 
+	Benutzers oder andere Ereignisse. Auf welche Ereignisse gewartet 
+	wird, ist in den folgenden Buchstaben angezeigt:
+
+			kb        Tastatur
+			bt        Mausknopf
+			m1        erstes  Mausrechteck
+			m2        zweites Mausrechteck
+			ms        Nachricht
+			ti        Timer
+			se        Semaphore (wind_update)
+
+	"frozen" sind eingefrorene Programme, also solche, die w„hrend 
+	der Ausfhrung eines im "single Modus" gestarteten Programms 
+	angehalten werden, oder solche, die ber den Programm- Manager 
+	mittels der Taste 'F' eingefroren worden sind.
+	Programme mit Status "zombie" warten gerade auf ihre endgltige 
+	Beendigung. Sie k”nnen nicht mehr manipuliert werden, da sie bei 
+	der n„chsten Gelegenheit aus dem Speicher entfernt werden.
+
+d)	zugeh”rige Signale:
+	MENU zeigt an, da die zugeh”rige Applikation diejenige ist, 
+	deren Men und/oder Desktop- Hintergrund gerade aktiv ist. Diese 
+	Applikation kann also Men- Nachrichten empfangen.
+	MOUSE bedeutet, da Mausknopf- Bet„tigungen und/oder Mausbewe-
+	gungen an diese Applikation bermittelt werden. Unter TOS und 
+	Mag!X kann immer nur eine Applikation mausbesitzend sein. Maus-
+	besitzer ist diejenige Applikation, der das oberste Fenster 
+	geh”rt oder die mit wind_update(BEG_MCTRL) sich Tastatur- und 
+	Mauskontrolle reserviert hat. Im Fall, da ein Klick mit der 
+	linken Maustaste auf den Desktop- Hintergrund ausgefhrt wurde, 
+	wird dieser Klick an die zugeh”rige Applikation bermittelt 
+	(falls diese auf Maustatenstatus wartet). Die Mauskontrolle ver-
+	bleibt aber beim obersten Fenster, weshalb die den Hintergrund 
+	besitzende Applikation ggf. ein wind_update(BEG_MCTRL) ausfhren 
+	mu, um etwa Icons zu verschieben.
+	Fr KBD, also die Tastatur, gilt prinzipiell dasselbe wie fr 
+	MOUSE, also gehen alle Tastatureingaben normalerweise ins oberste 
+	Fenster.
+	SCR ist die Bildschirm- Semaphore, d.h. das zugeh”rige Programm 
+	hat sich ber wind_update() den Bildschirm reserviert und sperrt 
+	damit alle anderen Ausgaben.
+
+e)	belegter Speicher:
+	Zuletzt wird der belegte Speicher angezeigt. Der von Applikation 
+	0 belegte Speicher ist der freie Speicher.
+	Falls eine Applikation ein anderes Programm ber GEMDOS nachge-
+	laden hat, so wird nur der Speicher des nachgeladenen Programms 
+	angezeigt.
+
+  Fr Programmierer:
+	Mit Hilfe des Programm- Managers l„t sich eine Verklemmung 
+	leicht finden und auch gezielt beseitigen. Ein klassisches Bei-
+	spiel fr einen Deadlock:
+
+   0 PROGRAMM waiting kb bt                SCR
+   1 SCRENMGR waiting                   se MOUSE KBD
+
+	PROGRAMM wartet auf Tastatur- und Mausevents, diese gelangen 
+	jedoch zum SCRENMGR, welcher auf die Freigabe des von PROGRAMM 
+	gesperrten Bildschirms wartet.
+
+  Return wirkt wie das Umschalten von Men und Hintergrund ber das 
+Popup- Men.
+  Mit der Taste 'C' kann man gleichzeitig Tastatur- und Mauskontrolle 
+an eine Applikation bergeben, um eine Verklemmung zu verhindern. 
+Ursache ist hier immer ein fehlendes wind_update(BEG_MCTRL).
+  Mit den Tasten 'F' und 'U' lassen sich Programme einfrieren und auch 
+wieder auftauen. Mit diesen Tasten erzielt man denselben Effekt wie 
+beim Starten von Programmen im "single Modus". Das Programm wird 
+angehalten und nicht wieder gestartet, bis es mit 'U' wieder 
+aufgetaut wurde. Programme, die in irgendwelchen Systemvektoren 
+h„ngen, k”nnen beim Einfrieren aus diesen nicht entfernt werden. 
+Tempus beispielsweise mag es berhaupt nicht, eingefroren zu werden, 
+andere Programme machen aber keine Schwierigkeiten. Eingefrorene 
+Accessories k”nnen nicht mehr aufgerufen werden, ihre Eintr„ge im 
+linken Men sind grau dargestellt.
+  Das Entfernen von Programmen kann ebenfalls kritisch sein, da die 
+Applikation ohne ihr Wissen und Einverst„ndnis abgebrochen werden. 
+Zwar ist das mit den meisten Programmen problemlos m”glich, da Mag!X 
+einen gewaltigen Aufr„umungsaufwand treibt, jedoch Programme wie 
+Tempus, die in verschiedenen Interruptroutinen h„ngen, drfen nicht 
+entfernt werden. Am besten probiert man das Entfernen einfach einmal 
+aus.
+
+Fr Programmierer:
+	Als besonders lobenswertes Beispiel ist hier GEMINI zu erw„hnen. 
+	Obwohl GEMINI in mehreren Systemvektoren h„ngt, l„t es sich 
+	trotzdem problemlos beenden, da es im etv_term- Vektor eine 
+	Aufr„um- Routine installiert. šber diesen Vektor springt TOS und 
+	Mag!X immer dann, wenn ein Programm beendet wird.
+	Diese Vorgehensweise ist nicht nur fr Mag!X erforderlich, 
+	sondern natrlich auch fr TOS, denn schlielich kann ein 
+	Programm, besonders in der Testphase, auch durch Bomben beendet 
+	werden.
+
+  Wenn bei Bet„tigung von Ctrl-Alt-Esc gerade eine Dialogbox oder ein 
+Men angezeigt wurde und nicht gengend Speicher frei ist, kann es zu 
+einer Zerst”rung des Bildschirminhalts kommen. Dies ist nur solange, 
+bis Sie das Men oder den Dialog beenden (notfalls einfach Undo 
+bet„tigen, um eine Dialogbox zu beenden).
+
+
+11. Die Speicherverwaltung
+
+  Um den Mechanismus der Speicherverwaltung zu erl„utern, hier 
+zun„chst der Mechanismus, der vom TOS benutzt wird:
+
+  In der internen Speicherverwaltung des TOS werden sogenannte Memory- 
+Deskriptoren verwaltet. Diese Strukturen haben folgende Form:
+
+typedef struct {
+     MD   *md_link;           /* 0x00: Zeiger auf n„chsten MD      */
+     char *md_start;          /* 0x04: Zeiger auf Speicherblock    */
+     long md_len;             /* 0x08: L„nge des Speicherblocks    */
+     PD   *md_own;            /* 0x0c: Proze (1 = "MD unbenutzt") */
+} MD;
+
+  Diese Deskriptoren, soweit benutzt, h„ngen in drei Speicherlisten, 
+und zwar fr freie Bl”cke, belegte Bl”ck und fr den n„chsten zu 
+belegenden Block ("mem_rover"). Mit dem "mem_rover"- Konzept sollte 
+erreicht werden, da aufeinanderfolgende Malloc- Aufrufe m”glichst 
+aufeinanderfolgenden Speicher anfordern (wurde an anderer Stelle schon 
+als "Fehler bezeichnet"). Damit sollte die Segmentierung verringert 
+werden. Diese Idee ist jedoch unbrauchbar, wenn mehrere Programme 
+gleichzeitig laufen und abwechselnd Mallocs machen.
+  Das von Atari implementierte Konzept hat den Vorteil, da es unemp-
+findlich gegen amoklaufende Programme ist, da die MDs im Systemspei-
+cher liegen, weit weg vom Benutzerspeicher. Ein bekannter Nachteil des 
+beschriebenen Konzepts ist, da nur eine sehr begrenzte Anzahl von 
+Malloc- Aufrufen m”glich sind, da jeder Aufruf einen MD des 
+begrenzten Systemspeichers aufzehrt; dieser wird auerdem noch massiv 
+von ge”ffneten Ordnern und Dateien belastet.
+  Ein weiterer Nachteil der Speicherverwaltung des TOS: Wenn ein 
+Programm einen Speicherblock berlaufen l„t, d.h. ber dessen Ende 
+hinausschreibt, bleibt dies i.a. v”llig unbemerkt.
+
+  Besonders im Multitaskingsystem ist die Gef„hrlichkeit eines ber-
+schriebenen Speicherblocks ungleich h”her als im TOS. Ferner ist die 
+Anzahl der ben”tigten Speicherbl”cke sowie auch die der Ordner (jedes 
+Programm hat eigene Dateien und Standardverzeichnisse) wesentlich 
+h”her. Aus diesem Grund hat Mag!X ein v”llig anderes Konzept:
+
+  Es gibt nur noch eine Speicherliste, deren Zeiger zeigt auf den 
+ersten "memory control block" (MCB):
+
+typedef struct {
+     long mcb_magic;          /* 0x00: 'ANDR' oder 'KROM' (letzter) */
+     long mcb_len;            /* 0x04: Nettol„nge (>= 2 und gerade) */
+     PD   *mcb_owner;         /* 0x08: Eigner oder NULL (frei)      */
+     MCB  *mcb_prev;          /* 0x0c: vorheriger Block oder NULL   */
+} MCB;
+
+  <mcb_magic> ist 'KROM', wenn kein weiterer MCB folgt, sonst 'ANDR'; 
+im letzeren Fall liegt der n„chste MCB <mcb_len> Bytes hinter unserem 
+MCB. Die Liste ist per <mcb_prev> rckw„rts verkettet, was viele 
+Operationen erheblich beschleunigt.
+  Bei allen Speicheroperationen wird immer das <mcb_magic> berprft 
+und das System bei einem Fehler sofort angehalten. Beim Anhalten 
+aufgrund eines Speicherfehlers werden die Adresse des fehlerhaften MCB 
+sowie die Daten (4 Langworte) ausgegeben. Anschlieend wird man 
+gefragt, auf welches Laufwerk man einen Systemauszug speichern m”chte.
+  Gibt man ein gltiges Laufwerk an (A..P), so wird der gesamte ST- 
+Speicher von 0 bis phystop auf das Wurzelverzeichnis des angegebenen 
+Laufwerks geschrieben, und zwar unter dem Namen "_sys_". Die Datei 
+kann natrlich je nach ST- Modell bis zu 4 oder gar 16 MB lang werden. 
+  Speicherresidente Programme (beenden sich ber Ptermres) arbeiten 
+jetzt im Gegensatz zu frher einfach nur so, da die Bl”cke nicht 
+freigegeben werden, alle MCBs bleiben intakt und werden auch weiterhin 
+benutzt (jedesmal, wenn man in die Menleiste klickt, wird der freie 
+Speicher ausgegeben, dazu wird die gesamte Liste einmal durchlaufen 
+und dabei alle MCBs berprft). Wer also m”chte, kann speicherresi-
+dente Programme nachtr„glich freigeben, oder auch Teile davon.
+  Es wird empfohlen, Programme im Dauerbetrieb zu testen, damit es 
+nicht pl”tzlich passiert, da das System stehenbleibt und man nicht 
+mehr dazu kommt, seine Texte abzuspeichern. Bisher gab es nur rger 
+mit einigen „lteren Versionen des GfA- Assemblers.
+  Fr den Fall, da ein Speicherblock zerst”rt worden ist, kann in 
+einigen F„llen ein Reparaturversuch unternommen werden; dies ist nur 
+m”glich, wenn das Programm gerade beendet wird. Gibt der Benutzer in 
+dieser Situation auf die Frage, ob ein Reparaturversuch unternommen 
+werden soll, 'J' oder 'Y' ein, so durchsucht das System den Speicher 
+hinter dem zerst”rten MCB bis maximal _memtop nach einem eventuell 
+folgenden, intakten Block. Der nicht mehr identifizierbare Speicher-
+block wird als frei markiert. Dieser Vorgang kann durchaus einige Zeit 
+in Anspruch nehmen, etwas Geduld ist erforderlich.
+Achtung:	Der beschriebene Mechanismus ist keinesfalls todsicher; er 
+	behandelt einfach den unbekannten Speicher als frei, was in 
+	einigen F„llen t”dliche Folgen haben kann. Daher ist dieser 
+	Mechanismus lediglich als Notl”sung zu verstehen, und man 
+	sollte anschlieend m”glichst schnell alles abspeichern und 
+	einen Warmstart durchfhren!
+	Das fehlerhafte Programm sollte sicherheitshalber nicht mehr 
+	verwendet werden; setzen Sie sich mit dem Hersteller in 
+	Verbindung.
+
+
+12. Die Hilfsprogramme LIMITMEM, MEMEXAMN und MAGXCONF
+
+  Unter TOS und Mag!X erh„lt ein Programm zun„chst den gesamten freien 
+Speicher. Es liegt nun in der Verantwortlichkeit des Programmierers, 
+dafr zu sorgen, da nur soviel Speicher reserviert wird, wie tat-
+s„chlich gerade ben”tigt wird; der brige Speicher wird dem System 
+sofort zurckgegeben. Sp„ter kann man dann immer noch ggf. Speicher 
+nachfordern und zurckgeben.
+  Leider gibt es immer noch einige wenige Programme, die sich (fast) 
+den gesamten Speicher unter den Nagel reien, WORDPLUS etwa geh”rt zu 
+dieser Spezies.
+  Gegen diese Unm„igkeit gibt es unter Mag!X ein Mittel: 
+LIMITMEM.TTP. Mit Hilfe dieses Programms kann man den Speicherhunger 
+der Programme d„mpfen, dazu mu man zwei Argumente bergeben. Zun„chst 
+den Programmnamen und dann die Anzahl der Kilobytes, die man dem 
+Programm maximal zugestehen m”chte. Beispielsweise l„t der Aufruf 
+"LIMITMEM WORDPLUS.PRG 1024" fr Wordplus ein Megabyte Speicher fr 
+Texte brig. Wenn Sie das Programm von MAGXDESK aus starten, mssen 
+Sie natrlich das Wort LIMITMEM nicht eingeben.
+  Der Aufruf "LIMITMEM WORDPLUS.PRG -" macht die Speicherbegrenzung 
+wieder rckg„ngig.
+  Mit dem Programm MEMEXAMN kann man unsersuchen, was sich so im 
+Speicher herumtreibt. Ohne Parameter gestartet, gibt MEMEXAMN die 
+aktuelle Speicherbelegung an, sonst kann man einen Buchstaben fr das 
+Laufwerk angeben, auf dessen Wurzelverzeichnis eine _sys_- Datei 
+liegt. Diese Datei wird von Mag!X bei einer Zerst”rung der 
+Speicherliste auf Wunsch angelegt, bevor das System angehalten wird.
+  Fr Programmierer: Um die Identifikation der Speicherbl”cke zu 
+erm”glichen, protokolliert Mag!X den Dateinamen eines Programms in 
+seinem Environment. Die Variable heit "_PNAM" und wird immer in 
+Grobuchstaben und ohne Suchzeichen (*,?) eingetragen.
+  Das Programm MAGXCONF ist zur Konfiguration des Systems bestimmt. 
+
+8000000001\MAGIXCNF.IMG
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Sie k”nnen das Programm entweder als Accessory verwenden oder in 
+.PRG umbenennen. Im AUTO- Ordner setzt es auerdem die vorher 
+gesicherte Konfiguration.
+  Die Schalter haben im einzelnen folgende Bedeutung:
+
+Fastload:
+  Ist die bliche Fastload- Einstellung zum schnelleren Lesen von 
+Diskette, kann normalerweise immer aktiviert bleiben, auer bei 
+h„ufigen Lesefehlern. Ist in jedem Fall harmlos, da der Schalter nur 
+beim Lesen wirksam ist, nicht beim Schreiben.
+Kompatibilit„t:
+  Aufgrund der Tatsache, da Mag!X mehrere Programme gleichzeitig 
+laufen lassen kann, mssen strenge Sicherheitsvorkehrungen getroffen 
+werden. Leider gibt es immer noch Programme, die fehlerhafte 
+Systemaufrufe machen, was unter Umst„nden in einem Multitaskingsystem 
+zur Komfusion fhren kann. Mit Hilfe dieses Schalters k”nnen die 
+Sicherheitsabfragen deaktiviert werden, was die Betriebssicherheit 
+natrlich herabsenkt.
+Smart Redraw:
+  Aktiviert einen Modus in Mag!X, der einen schnelleren und 
+eleganteren Bildschirmaufbau erm”glicht. Um ein Gefhl dafr zu 
+bekommen, was das bedeutet, deaktivieren Sie einfach den Schalter und 
+vergr”ern in MAGXDESK ein Fenster, w„hrend MAGXDESK auf "Anzeigen als 
+Text" eingestellt ist. N„heres in Kapitel 13.
+Grow- und Shrinkboxen:
+  Deaktiviert auf Wunsch die Implosions- und Explosionseffekte, um 
+einen schnelleren Bildschirmaufbau zu erhalten. Die Effekte sind 
+brigens unter Mag!X mit NVDI praktisch nicht mehr zu erkennen, das 
+das System einfach zu schnell ist.
+Halt nach TOS- Programmen:
+  Der Schalter spricht fr sich.
+Mens:
+  Unter Mag!X k”nnen Sie w„hlen, ob die Mens bei Berhren oder erst 
+bei Klick herunterfallen sollen. Die zweite Variante verhindert 
+wirkungsvoll, da die Mens aus Versehen herunterfallen, falls Sie 
+beispielsweise nur ein Fenster verschieben wollten.  
+
+
+13. Der Window- Manager
+
+  Der Window- Manager von Mag!X arbeitet ein wenig anders als der von 
+TOS. Jedes Mag!X- Fenster, von denen es brigens 15 gibt, hat in der 
+rechten oberen Ecke einen sogenannten Backdrop- Button. Bet„tigt man 
+diesen, wird das Fenster in den Hintergrund gelegt.
+  Die neue Funktionsweise betrifft nicht nur das Aussehen der Fenster, 
+sondern auch das Zeichnen:
+  Damit fr den Benutzer der Bildschirmaufbau trotz ausschlielicher 
+Benutzung dokumentierter Systemaufrufe so schnell ist, wie es etwa in 
+MAGXDESK der Fall ist, mu der Programmierer einiges beachten. Hat er 
+dies nicht getan, mu der Benutzer manchmal zum Hilfsprogramm MAGXCONF 
+greifen und den "Smart Redraw" deaktivieren. Damit dies nicht mehr 
+notwendig ist, hier eine Beschreibung dieser Eigenschaft:
+  Mag!X verfolgt die Philosophie, da Geschwindigkeit nicht mit bru-
+talen Mitteln wie Grafikprozessoren usw. erreicht werden soll, sondern 
+mit ein wenig Nachdenken; dazu geh”rt vor allem, immer nur soviel zu 
+tun, wie n”tig ist. W„hrend TOS beim Wechsel des aktuellen Fensters, 
+beim Schlieen oder beim Verschieben mit Vorliebe das gesamte Fenster 
+oder gar noch v”llig unschuldige, unbeteiligte andere Fenster neu 
+zeichnet, wird dies unter Mag!X wirkungsvoll vermieden. Obwohl diese 
+unsch”ne Eigenschaft des TOS nirgendwo dokumentiert ist, nutzen leider 
+sehr viele Programme oder Bibliotheken (etwa die aus dem Buch "Vom 
+Anf„nger zum GEM- Profi") aus, da das TOS beim Vergr”ern eines 
+Fensters dieses immer neu zeichnet. Dazu ein Beispiel:
+  Nehmen wir an, in ein Fenster passen fnf Spalten nebeneinander, die 
+auch angezeigt werden. Wenn der Benutzer nun das Fenster so weit 
+verkleinert, da nur noch vier Spalten hineinpassen, sortiert das 
+Programm seine Daten um und veranlat anschlieend selbst„ndig ein 
+Neuzeichnen des Fensters (TOS zeichnet bei Verkleinerung das Fenster 
+nicht von sich aus neu). Vergr”ert der Benutzer dagegen das Fenster 
+auf eine Breite von 7 Spalten, sortiert das Anwenderprogramm die Daten 
+ebenfalls um, veranlat jedoch hier kein Neuzeichnen des Fensters. 
+Aufgrund des eher dummen Fehlverhalten des TOS, das Fenster fr diesen 
+Fall immer ganz neu zu zeichnen, findet dann die Ausgabe statt.
+  Mag!X zeichnet nun immer nur den minimal n”tigen Teil des Fensters 
+neu, das w„ren im Fall des Aufziehens eines Fensters h”chstens rechts 
+und unten zwei Rechtecke. Fr die Programme, die den oben beschriebe-
+nen Fehler des TOS ausnutzen, gibt sich so eine Diskrepanz zwischen 
+logischem und physikalischem Bildschirminhalt. Viel einfacher w„re es 
+gewesen, einfach auf die Fallunterscheidung "Fenster gr”er oder 
+kleiner als vorher" zu verzichten und immer im Fall des Umsortierens 
+einen Redraw zu veranlassen. Da das Betriebssystem auch im TOS die 
+Redraws zusammenfat, hat ein eventuell berflssiger Redraw niemals 
+irgendwelche Auswirkungen.
+  Den gleichen Effekt wie beschrieben hat man brigens auch beim 
+Vergr”ern des Fensters, wenn bereits die unterste Zeile bzw. die 
+rechteste Zeile dargestellt wird. Auch hier ein Beispiel:
+  Ein Text habe 100 Zeilen, das Fenster habe eine H”he von 20 Zeilen. 
+Da der Scrollbalken ganz unten ist, werden also die Zeilen 80 bis 100 
+im Fenster dargestellt. Wird nun das Fenster nach unten vergr”ert, so 
+da etwa 30 Zeilen Platz finden, k”nnte man eigentlich nur einen 
+weien Bereich aufziehen, da unterhalb von Zeile 100 ja keine Daten 
+mehr sind. Um dies zu verhindern, scrollen die meisten Programme in 
+dieser Situation ihre Daten, in unserem Beispiel um 10 Zeilen nach 
+oben. Folglich zeigt das Programm jetzt die Zeilen 70 bis 100 an; da 
+es aber auf einem TOS- Fehler aufbaut, wird kein Neuzeichnen veran-
+lat, was unter Mag!X natrlich prompt zur Konfusion fhrt. Auch hier 
+w„re ein generelles Neuzeichnen des Fensters beim Umsortieren auch 
+unter TOS nicht nur sauber, sondern auch ohne Nebenwirkung, da TOS 
+auch hier unn”tige Redraws vermeidet.
+  Beim direkten Vergleich zwischen "Smart Redaw" und "TOS Redraw", was 
+hier durchaus im w”rtlichen Sinn als Gegenteil zu verstehen ist, zeigt 
+sich in ersterem Fall ein wesentlich schnellerer, ruhigerer und 
+saubererer Bildschirmaufbau, der durchaus mit dem Macintosh- System 
+konkurrieren kann und unter TOS selbst mit Blitter und 68040 Prozessor 
+in dieser Form nicht m”glich w„re. Daher wird dringend empfohlen, 
+diese elegante L”sung nicht durch Ausnutzen undokumentierter Eigen-
+schaften des TOS zunichte zu machen.
+
+
+14. Verschiedene Verbesserungen
+
+  Mittels ALT-CapsLock ist die Tastatur auf eine zu„tzliche Ebene 
+umzuschalten. šber die Tasten mit und ohne Shift kann man 
+internationale Sonderzeichen usw. abrufen. So erh„lt man etwa das 
+'‚' ber die Taste 'E' und das '' ber Shift-E. Zurckschalten kann 
+man die Tastatur wieder ber ALT-CapsLock.
+  Nicht- amerikanische Umlaute in Dialogboxen und Dateinamen sind kein 
+Tabuthema mehr. Konvertierungen in Gro-/Kleinschrift werden ebenso 
+zuverl„ssig vorgenommen wie fr die normalen Zeichen.
+  Nicht behebbare Fehler, die durch amoklaufende Programme entstehen 
+k”nnen, fhren zu Meldungen wie etwa der folgenden:
+
+  *** FATALER FEHLER ...:
+  *** SYSTEM ANGEHALTEN ***
+
+  TOS- Programme wie der Shareware- Kommandointerpreter KCMD, die 
+keine eigenen Eingaberoutinen verwenden, profitieren von der neuen 
+GEMDOS- Eingaberoutine, die folgende Editiertasten verarbeitet:
+
+  Cursor links/rechts		Cursor ein Zeichen bewegen
+	Shift- Cursor l/r		Cursor an Zeilenanfang/-ende
+  Shift- Cursor links    Cursor auf den Anfang des Eingabefeldes
+	Home				wie Shift- Cursor links
+  Shift- Clr			Eingabe l”schen
+  Tab				wechselseitig Zeilenanfang/-ende
+  Cursor hoch/runter	letzte Eingabe(n) zurckholen
+  Undo				letzte Eingabe
+  Del/Backspace		Zeichen unter/vor Cursor l”schen
+  Insert				Einfgemodus
+  Shift- Insert			šberschreibmodus
+	F1..F10				Environmentvariablen F1..F0 abrufen
+
+  Die Environment- Variablen k”nnen mit jedem beliebigen Kommandoin-
+terpreter belegt werden, i.a. mit einem SET- Kommando.
+  Bei TOS- Programmen gibt es jetzt, wie schon immer unter GEM- 
+Programmen, die M”glichkeit, auf Diskettenfehler zu reagieren. Bei 
+einem Lesefehler erscheint beispielsweise die Nachricht:
+
+     CRC- Fehler auf Laufwerk A:
+     [A]bbruch, [W]iederholen, [I]gnorieren ?
+
+  Jetzt k”nnen Sie die Fehlermeldung an das Programm weiterreichen, 
+das dann (hoffentlich) sinnvoll reagiert, den Versuch wiederholen oder 
+das Programm ber Ctrl-C einfach ganz abbrechen. Das Ignorieren ist 
+zwar m”glich, aber gef„hrlich und sollte normalerweise nicht verwendet 
+werden.
+
+
+Anhang A
+
+A1) Tips fr Programmierer
+
+  Um Multitasking auch bei Programmen zuzulassen, die mit reiner 
+Rechnerei besch„ftigt sind, ohne auf Eingaben des Benutzers zu warten, 
+ist folgende Vorgehensweise zu emfehlen, die auch unter dem normalen 
+TOS nicht zu Schwierigkeiten fhrt (falls Ihr Programm ein Accessory 
+ist oder mit Accessories zusammen laufen kann):
+  Rufen Sie in regelm„igen Abst„nden (am besten in einer Schleife) 
+die Funktion _appl_yield() auf, die in der Bibliothek MAGXLIB.LIB 
+enthalten ist. Testen Sie verschiedene H„ufigkeiten, um den Kompromi 
+zwischen minimalem Geschwindigkeitsverlust und maximaler Bedienbarkeit 
+der anderen Programme zu finden. Falls Ihr Programm Ausgaben in ein 
+Fenster macht oder ein Men besitzt, sollten Sie auch ab und zu einmal 
+einen evnt_multi()- Aufruf machen (mit Timerzeit 0), um die M”glich-
+keit zu haben, auf Ver„nderung der Fensterposition zu reagieren. 
+Beispielsweise k”nnen Sie in einer inneren Schleife Ihrer Berechnung 
+den _appl_yield()- Aufruf machen und in einer „ueren den 
+evnt_multi(); man kann auch etwa bei jedem zehnten Mal evnt_multi() 
+statt _appl_yield() machen. Das Demonstrationsprogramm DEMO5 auf der 
+Mag!X- Diskette arbeitet „hnlich.
+  Sowohl _appl_yield() als auch alle Event- Funktionen sind gegenber 
+dem TOS dramatisch schneller, so da sich Verluste stark in Grenzen 
+halten. Hier die Zeiten fr 5000 Aufrufe von _appl_yield, wenn ein 
+Accessory im Speicher ist und keine Maus berhrt wird:
+
+     TOS   1.4      1023 Ticks
+     KAOS  1.4.2     728 Ticks
+     Mag!X            61 Ticks
+
+  _appl_yield() „ndert brigens nur die Register d0/a0 und darf unter 
+Mag!X, im Gegensatz zum TOS (!), auch im Supervisormodus aufgerufen 
+werden, wie generell alle (!) AES- Aufrufe.
+  TOS- Programme werden nicht ge-multitask-t; sie werden sowieso immer 
+seltener und blockieren daher unter Mag!X w„hrend ihrer Ausfhrung 
+einfach alle anderen Programme. Nach ihrer Beendigung wird automatisch 
+der Bildschirm neu gezeichnet. Aus diesem Grund sind TOS- Programme 
+unter Mag!X voll kompatibel zu TOS und laufen ohne jeglichen 
+Zeitverlust (sogar mit Vorteil, wenn sie Systemaufrufe verwenden).
+  Das Umschalten der Menleiste erfolgt automatisch beim Klicken auf 
+ein unteres Fenster, das einer anderen Applikation geh”rt, und auch 
+beim Programmstart, und zwar, genauer, beim Ausfhren des menu_bar()- 
+Aufrufs. Wichtig ist, da alle Programme, die einen anderen Desktop- 
+Hintergrund anmelden, diesen ordentlich ber die Rechteckliste ausge-
+ben, da Ihre Applikation sich ja in ein bereits laufendes System mit 
+Fenstern usw. nahtlos einfgen mu. Die Rechteckliste fr den Desktop 
+ist ber Fensterhandle 0 abrufbar.
+  Im Augenblick nicht angezeigte, aber angemeldete Menb„ume fr 
+Desktop- Hintergrund oder Men werden von Mag!X mit dem "Hidden"- Flag 
+versehen, damit sie von Such- oder Zeichenroutinen ignoriert werden. 
+Falls Sie etwa ein Icon von Ihrem Fenster auf den Desktop ziehen 
+m”chten, erhalten Sie ber objc_find() immer eine -1, wenn Ihr 
+Desktop- Hintergrund gerade nicht angezeigt wird. MAGXDESK reagiert 
+darauf sinnvollerweise mit einem kurzen Ton, der einen Fehler anzeigt. 
+Auch wenn Ihr Programm ber objc_draw() den gesamten Baum oder einen 
+Teil von Hintergrund oder Men zeichen m”chte, wird dieser Befehl 
+einfach nicht ausgefhrt, wenn Ihr Men oder Hintergrund gerade 
+inaktiv ist. So wird verhindert, da die Programme sich gegenseitig 
+ihren Bildschirm zerst”ren. Auch wind_update() wird natrlich berck-
+sichtigt. Falls gerade eine Taste fr einen Meneintrag bet„tigt 
+wurde, die an die Applikation geschickt wird, der das oberste Fenster 
+geh”rt, aber das Men einem anderen Programm geh”rt, darf der ent-
+sprechende Mentitel natrlich nicht invertiert werden, was Mag!X 
+verhindert.
+  Um zu verhindern, da sich Programme an fremden Fenstern vergreifen, 
+mute betr„chtlicher Aufwand getrieben werden. Leider gibt es immer 
+wieder Programme, die bei Programmstart oder bei Beendigung alle 
+offenen Fenster schlieen und l”schen, eigene und fremde. Mag!X 
+verhindert jeglichen Zugriff auf fremde Fenster. Wegen einiger 
+Programme gibt Mag!X bei einem wind_get(WF_TOP) immer -2 zurck, wenn 
+das oberste Fenster einer anderen Applikation geh”rt. Wer unbedingt 
+das Handle des obersten Fensters ben”tigt, der sei auf die 
+Unterfunktion WF_WINDLIST von wind_get() verwiesen, die in Kapitel A4 
+vorgestellt wird.
+  Wie bereits in Kapitel 10 erw„hnt, sollten Programme, die sich in 
+irgendwelche Systemvektoren h„ngen, sich auch in den etv_term- Vektor 
+einklinken. Falls das Programm nun abnormal beendet wird, sei es durch 
+den Programm- Manager, durch ein anderes amoklaufendes Programm oder 
+gar durch einen Programmierfehler, springt das System zun„chst ber 
+den etv_term- Vektor. Bei dieser Gelegenheit k”nnen Sie sich dann in 
+Ruhe aus allen Vektoren zurckziehen. Da Mag!X fr jede Applikation 
+einen eigenen etv_term- Vektor verwendet, kann es dabei nicht zu 
+Kollisionen kommen.
+  Da sich die Struktur des Prozedeskriptors ("Basepage") in den nicht 
+dokumentierten Bereichen ge„ndert hat, ist unbedingt darauf zu achten, 
+nur die dokumentierten Strukturelemente zu verwenden.
+
+
+A2) Neue Funktionen in Mag!X
+
+  Die folgenden Kapitel enthalten alle neuen und Erweiterungen von 
+alten Systemaufrufen, die Mag!X gegenber TOS bereitstellt. Falls Sie 
+einen dieser Aufrufe oder andere spezielle Eigenschaften von Mag!X 
+verwenden, sollten Sie sichergehen, da Ihr Programm entweder nur 
+unter Mag!X l„uft oder unter TOS auf irgendeine Art und Weise sinnvoll 
+reagiert. Einige der neuen Aufrufe sind gewissermaen aufw„rtskompa-
+tibel gehalten, so da ihre Verwendung unter TOS problemlos m”glich 
+ist, es werden nur einige Parameter ignoriert.
+  Fr den C- Programmierer stehen die beiden Dateien MAGXLIB.LIB und 
+MAGX.H auf Ihrer Mag!X- Diskette zur Verfgung, die alle erforderli-
+chen Funktionen und Definitionen enthalten. Falls Sie AES- Funktionen 
+benutzen, mssen Sie MAGX.H nach AES.H per #include einfgen.
+  Fr den Test, ob Mag!X gerade l„uft, k”nnte man natrlich die 
+Variable global[1] (ap_count) des AES abfragen, die die Maximalzahl 
+der gleichzeitig ablaufbaren Applikationen angibt. Sie ist unter TOS 
+natrlich 1, unter Mag!X z.zT. 15, was sich aber in sp„teren Versionen 
+durchaus „ndern kann. Wesentlich sicherer und daher auch dringend hier 
+empfohlen ist der Weg ber das Mag!X- Cookie.
+  Das Mag!X- Cookie enth„lt die Kennung 'MagX' und als Wert einen 
+Zeiger auf folgende Struktur:
+
+   typedef struct
+        {
+        long    config_status;
+        DOSVARS *dosvars;
+        AESVARS *aesvars;
+        } MAGX_COOKIE;
+
+  <config_status> ist der auch ber Sconfig() (s.u.) manipulierbare 
+Konfigurations- Bitvektor, <dosvars> ist ein Zeiger auf die DOSVARS- 
+Struktur und <aesvars> einer auf die AESVARS- Struktur, die beide in 
+MAGX.H definiert sind. Wichtig ist hierbei, da die Variable <aesvars> 
+erst beim Start von AES installiert wird und vorher NULL ist. Kein 
+Programm, das AES- Aufrufe benutzt, die nur unter Mag!X erlaubt sind, 
+sollte dies tun, bevor sowohl auf Existenz des Cookies als auch auf 
+den Wert der Variablen <aesvars> abgetestet wurde.
+
+
+A3) Neue TOS- Funktionen in Mag!X
+
+  Unter Mag!X k”nnen Speicherbl”cke mit Mshrink() vergr”ert werden, 
+bergibt man als Gr”e -1L, so erh„lt man die zum Zeitpunkt maximal 
+m”gliche Gr”e. Das Vergr”ern ist natrlich nur m”glich, wenn sich 
+ein freier Speicherblock darber befindet.
+  Zus„tzlich zu den vorhandenen Ger„ten CON, AUX, PRN wurde unter 
+GEMDOS das Ger„t NUL hinzugefgt. Die Schreibweise "c:\nul" oder "NuL" 
+oder "\nuL:" ist egal.
+  šbergibt man Fwrite() 0 zu schreibende Bytes und einen -1L- Zeiger 
+auf die zu schreibenden Daten, wird die Datei auf die aktuelle 
+Position des Dateizeigers geschrumpft. Diese Sonderfunktion existiert 
+als Makro Mshrink() in MAGX.H.
+  Eine neue GEMDOS- Funktion Sconfig() manipuliert das Konfigurations- 
+Langwort, das auch ber das Mag!X- Cookie zug„nglich ist. Der 
+Prototyp in C lautet "long Sconfig(int mode, long bitset)" und ist in 
+MAGX.H definiert. Die Variable bitset hat folgende Bedeutung:
+
+     Bit 0:    Pfadberprfung ein
+     Bit 1:    Einfgemodus fr GEMDOS und Dialogboxen
+     Bit 2:    reserviert
+     Bit 3:    reserviert
+     Bit 4:    Fastload fr Diskette aus
+     Bit 5:    TOS- Kompatibilit„t ein
+     Bit 6:    "smart redraw" aus
+     Bit 7:    Grow- und Shrinkboxen aus
+     Bit 8:    kein Halt nach TOS- Programmen
+     Bit 9:    reserviert
+     Bit 10:   Pulldown- Mens
+
+  Die restlichen Bits sind reserviert und drfen nicht ver„ndert 
+werden. Mit mode = 0 werden die Bits gelesen, mit mode = 1 
+geschrieben (geht nur bei deaktivierter Kompatibilit„t), mit mode = 2 
+erh„lt man einen Zeiger auf die DOSVARS Struktur, die in MAGX.H 
+definiert ist:
+
+typedef struct
+   {
+   char      *in_dos;                 /* Adresse der DOS- Semaphore */
+   int       *dos_time;               /* Adresse der DOS- Zeit      */
+   int       *dos_date;               /* Adresse des DOS- Datums    */
+   long      res1;                    /*                            */
+   long      res2;                    /*                            */
+   long      res3;                    /* ist 0L                     */
+   void      *act_pd;                 /* Laufendes Programm         */
+   long      res4;                    /*                            */
+   int       res5;                    /*                            */
+   void      res6;                    /*                            */
+   void      res7;                    /* interne DOS- Speicherliste */
+   void      (*resv_intmem)();        /* DOS- Speicher erweitern    */
+   long      (*etv_critic)();         /* etv_critic des GEMDOS      */
+   char *    ((*err_to_str)(char e)); /* Umrechnung Code->Klartext  */
+   long      res8;                    /*                            */
+   long      res9;                    /*                            */
+   } DOSVARS;
+
+  Mit Hilfe der Funktion resv_intmem() l„t sich „hnlich wie mit 
+FOLDRnnn Speicher fr die interne Speicherverwaltung reservieren. Im 
+Gegensatz zu TOS wird diese jedoch deutlich weniger belastet, so da 
+ein Erweitern i.a. nicht notwendig ist. Mu der Speicher erweitert 
+werden, was auch in ADDMEM geschieht, bergibt man der Funktion 
+resv_intmem() in a0 die Adresse und in d0 die L„nge des zu 
+reservierenden Speicherblocks.
+  Der Prototyp fr den Event- Critic- Handler lautet "long 
+etv_critic(int errcode, int drvnr)". Man beachte, da die Funktion die 
+Argumente auf dem Stapel erwartet und daher in Turbo C als "cdecl" 
+deklariert werden mu.
+  err_to_str() erwartet in d0 einen TOS- Fehlercode und gibt in d0 und 
+a0 einen Zeiger auf die beschreibende Zeichenkette zurck. Bei einem 
+ungltigen Fehlercode erh„lt man in d0 eine Null und in a0 einen 
+Zeiger auf die Zeichenkette "TOS Fehler".
+
+
+A4) Erweiterte GEM- und GEM/3- Funktionen in Mag!X
+
+  Der in Mag!X hinzugekommene Fenster- Backdrop- Button kann auch vom 
+Programm aus abgefragt werden. Dazu ist bei wind_create() das 
+Fensterobjekt BACKDROP hinzugekommen. Bei Bet„tigung erh„lt die 
+Applikation dann die Meldung WM_BACKDROPPED und kann das Fenster per 
+wind_set(whdl, WF_BACKDROP) selbst in den Hintergrund legen oder 
+anderweitig sinnvoll reagieren.
+  Die Funktion menu_bar() hat zus„tzlich zu den Unterfunktionen 
+MENU_SHOW (1) und MENU_HIDE (0) eine weitere, MENU_INSTL (100) 
+bekommenm. Hiermit kann man z.B. als Accessory oder GEM- Auto- 
+Programm ein Men installieren, ohne eine Umschaltung der obersten 
+Applikation zu erzwingen. Alle Konstanten sind in MAGX.H definiert.
+  Mit wind_get(whdl, WF_OWNER, &id) erh„lt man die ap_id des 
+zugeh”rigen Fenster- Eigners. Damit ist es etwa m”glich, Icons in 
+fremde Fenster zu verschieben. šber wind_find() erh„lt man das 
+Fenster- Handle, ber wind_get mit WF_OWNER erf„hrt man die ap_id des 
+Eigners und kann ber ein geeignetes Protokoll mit ihm in Verbindung 
+treten. šber appl_find("?\0\n") erh„lt man schlielich sogar den zuge-
+h”rigen Applikationsnamen, wobei n die zuvor ermittelte ap_id ist. 
+Logisch, da unter Mag!X fehlerhafte Applikationsnummern oder Window- 
+Handles zur Rckgabe von Fehlercodes statt zu Abstrzen fhren.
+  Im Gegensatz zum TOS funktioniert form_center() bei allen Dialogty-
+pen egal mit welchem Rand oder Schatten.
+  shel_get() liefert die Pufferl„nge (unsigned int), wenn als Anzahl 
+der Bytes 0 angegeben wird.
+
+  shel_put() liefert 0 als Rckgabewert, wenn der Puffer zu klein ist.
+
+  Unter Mag!X kann man Eingabefelder mit kleiner Schrift verwenden.
+
+  appl_write() erzeugt keinen šberlauf des Messagepuffers mehr, son-
+dern bricht mit Rckgabewert 0 ab. Bei falscher ap_id wird Rckgabe-
+wert -1 geliefert. Rckgabe 1 zeigt erfolgreiche Ausfhrung an.
+
+  wind_get(WF_TOP) liefert eine -2, wenn das oberste Fenster einer 
+anderen Applikation geh”rt. Dies war n”tig, da einige Programme mit 
+Vorliebe solange das oberste Fenster schlieen, bis dieses ungltig 
+ist. Wer unbedingt die Kennung des obersten Fensters ben”tigt, mu 
+unter Mag!X zu WF_WINDLIST greifen.
+  šber wind_get(0, WF_WINDLIST, &hi, &lo) erh„lt man im Pointer hi/lo 
+(nein, kein Segmentregister!) einen Zeiger auf die durch 0 
+abgeschlossene Tabelle der ge”ffneten Fenster (erstes Element = 
+oberstes Fenster), d.h. auf die Liste ihrer Handles als Integer- 
+Werte. Negative Handles geh”ren zu eingefrorenen Applikationen. Auf 
+keinen Fall darf ber den Zeiger schreibend zugegriffen werden.
+  Mit wind_get(0, WF_NEWDESK, &hi, &lo, &firstob) erh„lt man Adresse 
+und erstes Objekt des aktiven Desktop- Hintergrunds.
+  Wegen der Kompatibilit„t zu GEM/3 k”nnen Alertboxen jetzt 40 Zeichen 
+pro Textzeile und 20 Zeichen pro Button enthalten.
+  Die erweiterten Tastaturkommandos fr Dialogboxen sind im 
+wesentlichen in form_keybd() und objc_edit() enthalten, die daher fr 
+eigene Konstrukte immer mit einbezogen werden sollten.
+
+  Die in Mag!X enthaltenen Funktionen von GEM 2.x lassen sich in der 
+entsprechenden Literatur nachlesen. Ein wenig erweitert wurde der 
+Mechanismus zum Einbinden eines alternativen Desktop:
+  Mit shel_wdef( char *cmd, char *dir ) legt man das alternative 
+Desktop fest, dasselbe tut auch der Parameter #SHL in MAGX.INF. Sind 
+<cmd> und <dir> Leerstrings, ist MAGXDESK wieder installiert. Ein 
+alternatives Desktop macht zum Programmstart einfach ein shel_write 
+und beendet sich dann per Pterm0(). Ein alternatives Desktop bekommt 
+von Mag!X folgende Kommandozeile, die dieses ber shel_read() ermit-
+teln kann:
+
+typedef struct
+     {
+     int  dummy;                   /* ein Nullwort               */
+     long magic;                   /* 'SHEL', wenn ist Shell     */
+     int  isfirst;                 /* erster Aufruf der Shell    */
+     long lasterr;                 /* letzter Fehler             */
+     int  wasgr;                   /* Programm war Grafikapp.    */
+     } SHELTAIL;
+
+  Gibt die Shell einen negativen Fehlercode zurck, wird automatisch 
+wieder MAGXDESK aktiviert.
+
+
+A5) Paralleles Starten von Programmen
+
+  Manchmal kommt es vor, da man ein Programm nicht nur per 
+Doppelklick vom Desktop aus starten m”chte, sondern von einem eigenen 
+Programm aus. Hierzu gibt es prinzipiell immer zwei M”glichkeiten. 
+Soll das eigene Programm verlassen werden, so bergibt man dem AES per 
+shel_write() Pfad und Parameter des zu startenden Programms und 
+beendet sich. Die andere Methode ist, das Programm als "Kind- Proze" 
+direkt ber die DOS- Funktion Pexec() zu starten, was gewissermaen am 
+AES vorbei geschieht und zu Schwierigkeiten fhren kann, da Programm 
+und Parameter dem AES nicht bekannt sind. Im Gegensatz zur L”sung ber 
+shel_write() bleibt hier das aufrufende Programm im Speicher, das neue 
+wird wie ein Unterprogramm aufgerufen, w„hrend jenes solange 
+angehalten wird.
+  Die sauberere Alternative ist zweifelsohne der shel_write()- Aufruf. 
+Als Unterfunktion gibt es hierbei den Paramter <isover> (siehe 
+dazu einschl„gige Literatur), der folgende Werte annehmen kann (alle 
+in MAGX.H definiert):
+
+#define SHW_IMMED        0                           /* PC-GEM 2.x  */
+#define SHW_CHAIN        1                           /* TOS         */
+#define SHW_DOS          2                           /* PC-GEM 2.x  */
+#define SHW_PARALLEL     100                         /* MAG!X       */
+#define SHW_SINGLE       101                         /* MAG!X       */
+
+  Unter TOS existiert nur die Unterfunktion SHW_CHAIN, man darf daher 
+unter TOS auf keinen Fall einen anderen Wert als 1 bergeben, auch 
+wenn Atari schon anderes behauptet hat. Die Unterfunktion SHW_CHAIN 
+bernimmt einfach nur die Parameter und startet das Programm erst, 
+wenn das aktuelle beendet wurde; die Programme laufen also nacheinan-
+der ab. Nach Beendigung des neuen Programms landet man wieder im 
+Desktop, es sei denn, dieses macht wiederum einen entsprechenden 
+shel_write()- Aufruf.
+  Die Funktion SHW_IMMED startet unter PC-GEM 2.x oder 3.x das 
+Programm sofort, w„hrend das laufende solange angehalten wird. Nach 
+Beendigung des neuen Programms l„uft das alte weiter. Der Aufruf 
+funktioniert wie ein Pexec(), man ben”tigt ihn daher eigentlich nicht.
+  SHW_DOS beendet auf dem PC das GEM vollst„ndig, um ein Programm zu 
+starten, das nicht unter GEM l„uft und sehr viel Seicher ben”tigt (das 
+generelle Dosenproblem), Speicherprobleme gibt es auf dem Atari in der 
+Form nicht, also ist auch diese Unterfunktion uninteressant.
+  Unter Mag!X gibt es nun zus„tzliche Modi. Am wichtigsten ist 
+SHW_PARALLEL, der einfach eine neue Applikation startet; ab diesem 
+Moment laufen der alte und der neue Proze parallel. Zu diesem 
+Zeitpunkt kann der neue Proze natrlich noch keinen Rckgabewert 
+liefern, daher erh„lt man nur dann hier einen Fehlercode 0, wenn 
+Parameter falsch sind oder kein Speicher frei ist. Auch TOS- Programme 
+kann man parallel starten, w„hrenddessen bleiben die anderen Programme 
+zwar im Speicher, werden aber solange angehalten. Nach Beendigung 
+eines TOS- Programms wird der Bildschirm neu aufgebaut, ebenso nach 
+Beendigung von GEM- Programmen, die mit einem negativen Fehlercode 
+beendet wurden.
+  Der Modus SHW_SINGLE ist notwendig fr unsauber geschriebene Pro-
+gramme und funktioniert wie der ganz normale Modus SHW_CHAIN, jedoch 
+werden vor Programmstart alle Applikationen auer 0 (Hauptapplikation) 
+und 1 (Bildschirmmanager) eingefroren und nach Programmende wieder 
+aufgetaut; der Aufruf ist nur von Applikation 0 aus erlaubt. Dieser 
+Modus ist insofern nicht vollst„ndig kompatibel zum TOS, als hierbei 
+auch s„mtliche Accessories gesperrt werden. Dies ist jedoch n”tig, da 
+unter Mag!X Fenster von Accessories beim Programmstart nicht 
+geschlossen werden und es meistens gerade die Fenster sind, die 
+unordentlich geschriebene  Applikationen verwirren. Normalerweise 
+kommen Programme, die unter Mag!X nicht ordnungsgem„ funktionieren 
+und den Single- Modus ben”tigen, auch unter TOS nicht mit Accessories 
+klar, so da diese Eigenschaft von Mag!X unkritisch ist.
+
+
+A6) Dialoge unter Mag!X
+
+  Seit letzter Zeit ist es immer mehr in Mode gekommen, statt der 
+eingebauten Behandlungsroutinen fr Dialogboxen eigene zu verwenden, 
+die wesentlich komfortabler sind. Damit man nun das Rad nicht jedesmal 
+wieder neu erfinden mu, enth„lt Mag!X neue Dialogboxroutinen, die 
+zus„tzlich zur erh”hten Funktionalit„t noch den Vorteil haben, zu den 
+bisherigen Routinen abw„rtskompatibel zu sein. In der Praxis bedeutet 
+das, da Sie Ihre alten Programme nur leicht zu modifizieren brauchen, 
+um die Vorteile von Mag!X zu nutzen, und diese Programme laufen nach 
+wie vor problemlos unter allen TOS- Versionen. Erreicht wird dies, 
+indem Mag!X zus„tzliche Parameter bergeben werden, die das TOS 
+einfach ignoriert.
+  Zu Beginn eines Dialogs mu man den entsprechenden 
+Bildschirmausschnitt reservieren. Dies geschieht i.a. mit der Funktion 
+form_dial() und der Unterfunktion FMD_START. Um unter Mag!X die 
+fliegenden Dialoge zu nutzen, mu hierbei der Hintergrund vollst„ndig 
+gerettet werden. Dazu ruft man einfach statt form_dial() die 
+erweiterte Funktion form_xdial() auf, die als zus„tzlichen Parameter 
+<flydial> hat. Der Prototyp lautet:
+
+int  form_xdial     (
+                      int flag,
+                      int ltx, int lty, int ltw, int lth,
+                      int bgx, int bgy, int bgw, int bgh,
+                      void **flydial
+                    );
+
+Aufruf in Assembler:
+
+
+contrl[0] = 51      Opcode fr form_dial
+contrl[1] =  9      Eintr„ge in intin
+contrl[2] =  1      Eintr„ge in intout
+contrl[3] =  1      Eintr„ge in addrin
+contrl[4] =  0      Eintr„ge in addrout
+
+intin[0]  =  flag
+intin[1]  =  ltx
+intin[2]  =  lty
+intin[3]  =  ltw
+intin[4]  =  lth
+intin[5]  =  bgx
+intin[6]  =  bgy
+intin[7]  =  bgw
+intin[8]  =  bgh
+
+addrin[0] =  flydial
+
+intout[0] =  (Rckgabewert, 0 = Fehler)
+
+
+  Wenn <flydial> ungleich 0 ist, prft Mag!X, ob gengend Speicher zur 
+Verfgung steht, um den Hintergrund unter der Dialogbox zu retten. Ein 
+Zeiger auf die geretteten Daten wird dann im der Variablen ver-
+merkt.  Wird fr die Dialogboxbedienung die Funktion form_xdo() ver-
+wendet, ist die Box nun verschiebbar.
+  Nach Beendigung des Dialogs wird form_xdial() mit der Unterfunktion 
+FMD_FINISH aufgerufen. Auch hierbei wird die Variable <flydial> mit 
+bergeben. Mag!X restauriert nun den Bildschirm und gibt den Puffer 
+mit dem geretteten Hintergrund wieder frei.
+  Steht nicht gengend freier Speicher zur Verfgung, um den 
+Hintergrund zu retten, ist die Box nicht verschiebbar; es wird dann 
+auch keine abgeknickte Ecke angezeigt.
+  Die erweiterte Dialogbehandlungsroutine hat den Prototyp:
+
+int  form_xdo       (
+                      OBJECT *tree, int startob,
+                      int *lastcrsr, XDO_INF *tabs,
+                      void *flydial
+                    );
+
+Aufruf in Assembler:
+
+contrl[0] = 50      Opcode fr form_do
+contrl[1] =  1      Eintr„ge in intin
+contrl[2] =  2      Eintr„ge in intout
+contrl[3] =  3      Eintr„ge in addrin
+contrl[4] =  0      Eintr„ge in addrout
+
+intin[0]  =  startob
+
+addrin[0] =  tree
+addrin[1] =  tabs
+addrin[2] =  flydial
+
+intout[0] =  (Rckgabewert wie bei form_do)
+intout[1] =  lastcrsr
+
+
+  Die gerade nicht ben”tigten zus„tzlichen Parameter <tabs> oder 
+<flydial> k”nnen als Nullpointer bergeben werden.
+  <flydial> ist dieselbe Variable, die an form_xdial() bergeben und 
+initialisiert wurde, sie wird fr das Verschieben der Box verwendet. 
+In <lastcrsr> erh„lt man die Nummer desjenigen Objekts zurck, in dem 
+sich der Cursor bei Beenden des Dialogs befand, den Wert kann man z.B. 
+einem n„chsten form_(x)do() bergeben. <tabs> ist ein Zeiger auf fol-
+gende Struktur:
+
+typedef struct {
+     SCANX *unsh;
+     SCANX *shift;
+     SCANX *ctrl;
+     SCANX *alt;
+     void  *resvd;
+     } XDO_INF;
+
+  In dieser Struktur liegen Zeiger auf Tabellen, die einem Scancode 
+eine Objektnummer der Dialogbox zuordnen. Hiermit ist es auf 
+einfachste Weise m”glich, Dialoge vollst„ndig ber Tastatur zu 
+bedienen. <unsh> ist ein Zeiger fr Tasten ohne Shift, <shift> fr 
+Tasten mit Shift, <ctrl> fr Kombinationen mit der Taste Control und 
+<alt> fr Tasten, die mit der Taste Alt bet„tigt wurden. <resvd> mu 
+immer 0 sein! SCANX ist folgende Struktur:
+
+typedef struct {
+     char scancode;
+     char nclicks;
+     int  objnr;
+     } SCANX;
+
+  Sie enth„lt die Zuordnung fr die Taste mit dem Scancode <scancode>, 
+bei deren Bet„tigung ein <nclicks>- facher Klick auf das Objekt 
+<objnr> ausgefhrt wird. Ein Scancode von Null markiert jeweils das 
+Tabellenende.
+  Der Einfachheit halber hier einmal ein Beispielprogramm. Zun„chst 
+eine Routine, wie sie normalerweise fr die Dialogboxbehandlung 
+verwendet wird:
+
+int do_dialog(OBJECT *dialog)
+{
+     int cx, cy, cw, ch;
+     int exitbutton;
+
+
+     form_center(dialog, &cx, &cy, &cw, &ch);               /* Position */
+     form_dial(FMD_START, 0,0,0,0, cx, cy, cw, ch);         /* Anfang */
+     objc_draw(dialog, ROOT, MAX_DEPTH, cx, cy, cw, ch);    /* malen  */
+     exitbutton = 0x7f & form_do(dialog, 0);                /* ausfhren */
+     form_dial(FMD_FINISH, 0,0,0,0,cx, cy, cw, ch);         /* Ende */
+     ob_dsel(dialog, exitbutton);
+     return(exitbutton);
+}
+
+  Wenn Sie die Dialogbox verschieben m”chten, gengen einige wenige 
+Modifikationen. Sie mssen dann nur noch die Datei MAGX.H und die 
+Bibliothek MAGXLIB.LIB verwenden. Die erweiterte Funktion, die unter 
+TOS natrlich problemlos funktioniert, sieht dann so aus:
+
+int do_dialog(OBJECT *dialog)
+{
+     int cx, cy, cw, ch;
+     int exitbutton;
+     void *flyinf;
+     void *scantab = NULL;         /* ggf. Tastencode- Tabelle */
+     int  lastcrsr;                /* Cursorposition bei Dialogende */
+
+
+     form_center( ... );
+     form_xdial(FMD_START,  0,0,0,0, cx, cy, cw, ch, &flyinf);
+     objc_draw( ... );
+     exitbutton = 0x7f & form_xdo(dialog, 0, &lastcrsr, scantab, flyinf);
+     form_xdial(FMD_FINISH, 0,0,0,0, cx, cy, cw, ch, &flyinf);
+     ob_dsel( ... );
+     return(exitbutton);
+}
+
+
+A7) Neue GEM- Funktionen im AES
+
+  Mag!X enth„lt eine Reihe von neuen Funktionen, die bereits in vielen 
+Anwenderprogrammen existieren, jedoch mhsam immer wieder neu pro-
+grammiert werden mssen. Auerdem werden so die Programme unn”tig 
+lang, was sich in einem Multitaskingsystem mit mehreren Programmen 
+gleich multipliziert. Alle Funktionen und Konstanten sind in MAGX.H 
+deklariert und in MAGXLIB.LIB definiert, so da Sie sich um die 
+Einzelheiten nicht mehr zu kmmern brauchen.
+  Ein h„ufig auftretendes Bedienungselement ist ein Men, das 
+auerhalb der Menleiste und mitunter sogar an Cursorposition 
+erscheint, um schnell ohne viele Mauswege eine Auswahl treffen zu 
+k”nnen. Mag!X stellt mit der neuen Funktion form_popup() eine L”sung 
+dieses Problems bereit. Der Prototyp lautet:
+
+int  form_popup     ( OBJECT *tree, int x, int y );
+
+Aufruf in Assembler:
+
+contrl[0] = 135     Opcode fr form_popup
+contrl[1] =  2      Eintr„ge in intin
+contrl[2] =  1      Eintr„ge in intout
+contrl[3] =  1      Eintr„ge in addrin
+contrl[4] =  0      Eintr„ge in addrout
+
+intin[0]  =  x
+intin[1]  =  y
+
+addrin[0] =  tree
+
+intout[0] =  Nummer des angew„hlten Objekts oder -1
+
+
+  x und y geben die Mausposition an, um die die Box zentriert werden 
+soll, man erh„lt die Objektnummer des angeklicketen Objektes oder -1 
+zurck. Sind x und y Null, wird die Position der Box nicht beeinflut 
+und mu vom Aufrufer gesetzt werden. Das Men sowie die Koordinaten x 
+und y drfen beliebige Werte annehmen, Mag!X sorgt immer dafr, da 
+das Men vollst„ndig auf dem Bildschirm liegt. Die Box tree sollte als 
+Objekt 0 eine G_BOX oder G_IBOX enthalten, die von den anderen 
+Objekten vollst„ndig bedeckt wird. Objekte, die nicht ausw„hlbar sind, 
+sollten wie im Dropdown- Men den Status DISABLED erhalten. Alle 
+w„hlbaren Objekte mssen den Status SELECTABLE haben.
+
+  Ein Groteil der Programmierung besteht i.a. daraus, Fehleingaben 
+des Benutzers oder Fehler des des Systems zu erkennen und irgendwie 
+sinnvoll zu reagieren, dazu geh”rt insbesondere die Auswertung der vom 
+System erhaltenen Fehlermeldungen und šbersetzung der Codes in 
+allgemein verst„ndlichen Klartext. Die im AES enthaltene Funktion 
+form_error() existiert zwar fr diesen Zweck, bietet jedoch erstens 
+zuwenig differenzierte Fehlerbeschreibungen und ist zweitens nur fr 
+MSDOS- Fehlercodes ausgelegt. Um diesem Manko abzuhelfen, enth„lt 
+Mag!X die neue Funktion form_xerr() mit folgendem Prototyp:
+
+int  form_xerr      ( long errcode, char *errfile );
+
+Aufruf in Assembler:
+
+contrl[0] = 136     Opcode fr form_xerr
+contrl[1] =  2      Eintr„ge in intin
+contrl[2] =  1      Eintr„ge in intout
+contrl[3] =  1      Eintr„ge in addrin
+contrl[4] =  0      Eintr„ge in addrout
+
+intin[0]  =  errcode (Hi)
+intin[1]  =  errcode (Lo)
+
+addrin[0] =  errfile
+
+intout[0] =  (Rckgabewert wie bei form_err)
+
+
+  errcode ist ein normaler negativer GEMDOS- oder BIOS- Fehlercode, 
+wie er von diversen TOS- Funktionen zurckgegeben wird; im Fall 
+errcode == EBREAK oder errcode == E_OK wird keine Alertbox angezeigt. 
+Im Parameter errfile kann man den Pfad einer Datei angeben, in der der 
+Fehler aufgetreten ist (etwa beim Beschreiben der Datei). Gibt man 
+einen Nullpointer an, wird der Parameter ignoriert, ein Zeiger mit dem 
+Wert -1 fhrt dazu, da die Zeile "Programm gab zurck:" der Meldung 
+vorangestellt wird.
+
+
+A8) Neue Objekttypen in Mag!X
+
+  In letzter Zeit sind die Dialogboxen immer ausgefeilter und die 
+verwendeten Objekte immer raffinierter geworden. Da das GEM des Atari 
+diese Feinheiten nicht von sich aus bietet, mute auf sogenannte 
+benutzerdefinierte Objekte ausgewichen werden. Diese Vorgehensweise 
+birgt zwar eine hohe Flexibilit„t in sich, jedoch teilweise auch einen 
+hohen Programmieraufwand, vor allem, da die Zeichenroutinen das AES 
+nicht benutzt werden drfen.
+  Fr ein Standardproblem der Benutzeroberfl„chen- Programmierung, 
+n„mlich fr Buttons mit mehr als zwei Zust„nden (selektiert, nicht 
+selektiert), bietet Mag!X nun zwei neue Objekttypen. Beide sehen 
+zun„chst aus wie normale Buttons, beim Anklicken jedoch wechselt der 
+eine (G_SWBUTTON) seine Inschrift, die dann zyklisch weitergeschaltet 
+werden kann. Der andere neue Objekttyp (G_POPUP) ist leistungsf„higer, 
+aber auch aufwendiger. Hier erscheint bei Anklicken ein Popup- Men, 
+mit Hilfe dessen man schnell eine Auswahl unter beliebig (aber 
+endlich!) vielen M”glichkeiten treffen kann.
+  Bei Verwendung dieser nur in Mag!X vorhandenen Objekttypen ist 
+darauf zu achten, da das Programm irgendwie sinnvoll reagiert, wenn 
+es unter TOS gestartet wird. Wie man abprft, ob man gerade unter TOS 
+oder Mag!X arbeitet, ist oben beschrieben. Die bisherigen TOS- 
+Versionen verweigern einfach das Zeichnen der neuen Objekttypen, ein 
+Absturz konnte bisher nicht beobachtet werden. Fr die Implementation 
+ist es am einfachsten, im Resource Construction Set ein Objekt vom Typ 
+G_BUTTON anzugeben und diesen dann zur Laufzeit des Programms umzu-
+setzen.
+  Hier die genaue Beschreibung der neuen Objekttypen, die beide in 
+MAGXDEMO enthalten sind:
+  G_SWBUTTON (34), wurde implementiert, um Buttons mit mehr als zwei 
+Zust„nden elegant und einfach darstellen zu k”nnen. ob_spec zeigt auf 
+eine Struktur SWINFO, die in MAGX.H definiert ist:
+
+typedef struct {
+     char *string;                 /* etwa "TOS|MSDOS|MAG!X"               */
+     int  num;                     /* Nr. der aktuellen Zeichenkette       */
+     int  maxnum;                  /* maximal erlaubtes <num>              */
+     } SWINFO;
+
+  Dieser Objekttyp erlaubt es, bei jedem Klicken zyklisch einen String 
+vor (Einfachklick) oder zurck (Doppelklick) zu schalten, ansonsten 
+sieht das Objekt aus wie eines vom Typ BUTTON. Ein Beispiel:
+
+   string = "TOS|MSDOS|MAG!X";
+   num    = 1;                     /* "MSDOS" ist aktiv       */
+   maxnum = 2;                     /* 3 Einzelstrings (0,1,2) */
+
+  Ein weiterer Objekttyp, G_POPUP (35), mute bisher mit Hilfe von 
+benutzerdefinierten Objekten mhsam von Hand nachgebildet werden und 
+ist jetzt in Mag!X direkt verfgbar. ob_spec zeigt auf eine Struktur 
+POPINFO:
+
+typedef struct {
+     OBJECT *tree;                 /* Popup- Men                          */
+     int  obnum;                   /* aktuelles Objekt von <tree>          */
+     } POPINFO;
+
+  tree zeigt auf einen Objektbaum, der etwa fr form_popup() als 
+Eingabe dienen k”nnte, wobei alle selektierbaren Objekte vom Typ 
+G_STRING oder G_BUTTON sein und mit zwei Leerstellen beginnen mssen, 
+letzteres wegen des H„kchens, das von form_button() bzw. form_(x)do() 
+automatisch gesetzt wird! Wichtig ist, da ob_x, ob_y von Objekt 0 des 
+Mens relativ zum G_POPUP- Objekt angegeben werden, d.h. sie werden 
+meistens beide 0 sein.
+  Es wird empfohlen, einen Schatten und einen Rand der St„rke -1 
+anzugeben. Ein Beispiel ist in MAGXDEMO.PRG enthalten.
+  G_POPINFO sieht wie G_BUTTON aus, die Zeichenkette wird jedoch nicht 
+zentriert, um m”glichst mit den Zeichenketten im Men auf einer Linie 
+zu liegen.
+
+
+B)  Der Desktop MAGXDESK
+
+  MAGXDESK ist ein die Multitaskingf„higkeiten von Mag!X 
+untersttzender Desktop. MAGXDESK ist fr den Schwarzwei- Monitor 
+geschrieben, enth„lt jedoch keine einzige Konstante fr Texth”he, 
+Bildschirmkoordinaten oder „hnliches. Da in MAGXDESK, wo m”glich, 
+immer die h”chste Betriebssystemebene gew„hlt wurde, kommt der Desktop 
+auch mit anderen Systemumgebungen (Grobildschirm mit zugeh”rigem VDI- 
+Treiber oder NVDI) zurecht.
+  Um in jeder Aufl”sung die gleiche Objektanordnung zu erreichen, sind 
+die Angaben in der Datei MAGX.INF aufl”sungsunabh„ngig gemacht. Wird 
+(z.B. auf dem Grobildschirm) eine INF- Datei geladen, deren 
+abgespeicherte H”he oder Breite sich von der aktuellen unterscheidet, 
+so werden alle Koordinaten proportional umgerechnet. hnliches gilt 
+auch fr die Bildschirmaufteilung des Iconeditors ICNEDIT.
+  Beim Starten von Programmen bleibt MAGXDESK wahlweise resident 
+(schneller) oder wird vollst„ndig verlassen (mehr freier Speicher). 
+
+B0) Die Menzeile 
+
+  In der Menzeile von MAGXDESK finden Sie fnf Mens. Die 
+Meneintr„ge k”nnen mit der Maus oder durch eine Tastenkombination 
+(angels„chselnd auch "Short-Cut" genannt) aufgerufen werden. Bei 
+diesen, hinter den Meneintr„gen aufgefhrten Tastenkombinationen 
+steht:
+
+	^ fr die Control-Taste 
+	# fr die Alternate-Taste
+
+8000000001\DESKTOP.IMG
+
+
+
+
+
+
+
+
+
+
+
+B1.1.1) MAGXDESK: šber Mag!X...
+
+  Hier finden Sie die Copyrightmeldung, die Versionsnummer von Mag!X 
+und MAGXDESK sowie den Namen und die Adresse des Lizenznehmers.
+
+B1.2.1) Datei: ”ffnen ^O
+
+  Dieser Eintrag kann aktiviert werden, wenn genau ein Icon selektiert 
+ist. Es wird eine Box zur Parameterbergabe ge”ffnet. Alternativ kann 
+diese Funktion auch durch CTRL-Doppelklick ausgel”st werden.
+
+B1.2.2) Datei: Informationen... ^I
+
+  Dieser Eintrag kann aktiviert werden, wenn genau ein Icon selektiert 
+ist. Sie erhalten, je nach selektiertem Icon, Informationen ber eine 
+Datei, einen Ordner oder ber ein Laufwerk.
+  Jedes der vier Attribute l„t sich „ndern, indem man den 
+entsprechenden Knopf anklickt und den Dialog mit OK beendet. Der Knopf 
+"Tagesdatum einsetzen" entspricht einem "TOUCH", intelligente Compiler 
+k”nnen beim "TOUCHen" von Quelltexten gezwungen werden, diese 
+automatisch neu zu bersetzen; Backup- Programme k”nnen dazu gebracht 
+werden, diese mitzuretten. Schlielich kann man die Funktion noch dazu 
+benutzen, Dateien mit dem Datum 6.2.86 oder 0.0.2028 usw. ein 
+ordentliches Datum zu verpassen.
+  Bei "Disk Info anzeigen" werden auer allen greifbaren Informationen 
+(sogar Cluster- und Sektorgr”e) bei Disketten zus„tzlich auch 
+Informationen des Bootsektors ausgewertet. Man erh„lt die Anzahl der 
+Spuren und Sektoren pro Spur und sogar eine deutlich sichtbare (invers 
+dargestellte) Meldung, wenn der Bootsektor ausfhrbar ist und so 
+wom”glich einen Virus enthalten k”nnte. Bei anderen Speichermedien 
+werden diese Informationen nicht ausgegeben.
+
+B1.2.3) Datei: l”schen... ^L
+
+  Mit dieser Funktion l”scht man alle selektierten Icons im obersten 
+Fenster (als wenn sie in den Papierkorb geschoben worden w„ren). Ist 
+dann praktisch, wenn der Papierkorb "unsichtbar" unter einem Fenster 
+liegt.
+  Dieser Eintrag kann nur dann aktiviert werden, wenn nur Icons im 
+obersten Fenster selektiert sind.
+
+B1.2.4) Datei: neuer Ordner... ^N
+
+  Kann dann angew„hlt werden, wenn ein Fenster ge”ffnet ist und dieses 
+Fenster zu MAGXDESK und nicht zu einem Accessory oder parallel 
+laufenden Programm geh”rt. Der Ordner wird im Verzeichnis des obersten 
+Fensters erstellt.
+
+B1.2.5) Datei: schliee Fenster ^C
+
+  Kann dann angew„hlt werden, wenn ein Fenster ge”ffnet ist und dieses 
+Fenster zu MAGXDESK und nicht zu einem Accessory oder parallel 
+laufenden Programm geh”rt. Das oberste Fenster wird sofort 
+geschlossen.
+
+B1.2.6) Datei: alle ausw„hlen ^A
+
+  Kann dann angew„hlt werden, wenn kein Fenster ge”ffnet ist oder das 
+oberste Fenster zu MAGXDESK und nicht zu einem Accessory geh”rt. Alle 
+Objekte des obersten Fensters bzw. des Desktophintergrunds werden auf 
+einen Schlag selektiert, auch die nicht sichtbaren.
+
+B1.2.7) Datei: formatiere...
+
+  Der Eintrag "Formatieren" ist genau dann aktiv, wenn das einzige 
+selektierte Icon ein Laufwerk ist. Wenn es sich bei dem Icon um eine 
+Floppy handelt, ist im Dialog "Formatieren" der Button fr das 
+Formatieren selektierbar, andernfalls kann man das Laufwerk lediglich 
+initialisieren, d.h. alle Daten l”schen und ggf. den Namen „ndern, was 
+wesentlich schneller geht. Bei Festplattenicons wird vor Aufruf der 
+Dialogbox eine Warnung ausgegeben. Man beachte, da nur der Icontyp 
+entscheidend ist, wie MAGXDESK reagiert; der Versuch, ein 
+Diskettenlaufwerk C: zu formatieren, wird jedoch zu irgendwelchen 
+Schwierigkeiten fhren, wenn es sich nicht um ein Diskettenlaufwerk 
+handelt.
+  In der oberen Zeile kann man schon beim Formatieren einen 
+Diskettennamen eingeben, der dann unter MAGXDESK im Icon angezeigt 
+wird. Daher sollte man, wenn man es nicht zu eilig hat, immer einen 
+angeben.
+  Fr das Formatieren wird in Bezug auf Sektorversatz usw. genauso 
+vorgegangen, wie dies TOS 1.04 tut. Bei Standardformaten (80 Spuren, 9 
+Sektoren pro Spur) wird der Bootsektor mit XBIOS (Protobt) erzeugt, 
+sonst werden Gr”e der FAT usw. mit eigenen Formeln berechnet. Der 
+Bootsektor wird, soweit m”glich, IBM- kompatibel gehalten. Fr den 
+Profi sind unter "Optionen" noch weitere Parameter (Interleave, 
+Versatz und Clustergr”e) zug„nglich, die vor jedem Aufruf der 
+Formatierbox jedoch wieder auf die Standardwerte gesetzt werden.
+  Es lassen sich zwar fast beliebige Sektor- und Trackanzahlen 
+angeben, jedoch sollte man nicht mehr als 86 Spuren und 10 Sektoren 
+angeben. Die M”glichkeiten wurden fr solche Leute geschaffen, die 
+etwa ein HD- Diskettenlaufwerk besitzen und 18 oder mehr Sektoren 
+formatieren wollen. Mit den Buttons DD/HD kann man die beiden 
+g„ngigsten Formate mit 2 Seiten, 80 Spuren und 9 bzw. 18 Sektoren mit 
+einem Mausklick einstellen.
+  Beim Formatieren wird beim h”chsten Track begonnen. Daher kann man 
+bei versehentlicher Bet„tigung schnell mit SHIFT-SHIFT abbrechen. 
+Auerdem dauert es ggf. nicht so lange, bis sich ein Formatierfehler 
+auf den oberen Spuren bemerkbar macht, etwa wenn versucht wird, mehr 
+als 80 Spuren zu formatieren.
+  Tritt beim Formatieren ein Fehler auf, gilt dasselbe wie bei 
+"Disketten kopieren". Auch hier sollte man nach einem Zwangsabbruch 
+die Diskette aus dem Laufwerk entfernen, da sie noch nicht vollst„ndig 
+initialisiert wurde und daher ungltige Daten enth„lt.
+
+B1.2.8) Datei: Disk kopieren... ^K
+
+  Das Kopieren von Disketten wird nicht durch das šbereinanderlegen 
+von Disketten- Icons ausgel”st (das bedeutet "dateiweise kopieren"), 
+sondern ber das Men.
+  Im Dialog "Disk kopieren" k”nnen Sie von und auf alle Laufwerke 
+kopieren, die als Floppy- Icons angemeldet sind. Floppy A: wird immer 
+als vorhanden angenommen. Das Klicken auf die Laufwerknummern schaltet 
+auf die n„chsth”here Laufwerknummer.
+  MAGXDESK verwendet einen "intelligenten" Kopieralgorithmus, der 
+automatisch das Format der Quelldiskette analysiert und ggf. die 
+Zieldiskette (um-) formatiert. Bei "ohne Formatieren" werden zun„chst 
+die Formate von Quell- und Zieldiskette verglichen und dann erst mit 
+dem Kopiervorgang begonnen (dabei ist ggf. ein Diskwechsel 
+erforderlich). Sollte dabei festgestellt werden, da doch neu 
+formatiert werden mu, so wird zun„chst eine warnende Alertbox 
+angezeigt. Der Benutzer kann dann entweder den Kopiervorgang abbrechen 
+oder die Zieldiskette im Format der Quelldiskette formatieren lassen. 
+Da MAGXDESK mit Hilfe des Betriebssystems formatiert, k”nnen hiermit 
+auf normalen Diskettenlaufwerken keine 11- Sektor- Formate erzeugt 
+werden. Wenn die Quelldiskette ein derartiges Format hat, mu hier 
+abgebrochen werden.
+  Die Angabe "Tempor„rlaufwerk" erm”glicht dem Besitzer eines kleinen 
+ST (1 MB), aber mit Festplatte, eine doppelseitige Diskette mit nur 
+einem Wechsel zu kopieren. Dazu wird zun„chst die Quelldiskette 
+vollst„ndig eingelesen und in eine Datei auf dem Tempor„rlaufwerk 
+geschrieben. Anschlieend kann man die Zieldiskette einlegen und in 
+einem Rutsch beschreiben. Schlielich wird die Tempor„rdatei gel”scht. 
+Ist gengend Speicher da, wird keine Tempor„rdatei angelegt.
+  Bei Diskettenfehlern erscheint eine Alertbox mit dem Fehlercode im 
+Klartext und mit folgenden Entscheidungsm”glichkeiten:
+
+	Abbruch: Fehlermeldung weiterreichen, Funktion wird abgebrochen 
+	Nochmal: Wiederholen der Funktion (etwa nach Entfernen 
+	des Schreibschutzes) 
+	Weiter: Ignorieren des Fehlers (tun, als ob alles in Ordnung w„re)
+
+	Der zweite Button, "Nochmal", ist der Defaultbutton.
+
+  Wenn der Kopiervorgang vor Beendigung abgebrochen wurde, sollte man 
+unbedingt die Zieldiskette aus dem Laufwerk entfernen und nicht 
+versuchen, ein Inhaltsverzeichnis anzuzeigen, da sie undefinierte 
+Daten enth„lt.
+  Die Kopieraktion kann jederzeit durch Gedrckthalten der beiden 
+SHIFT- Tasten unterbrochen werden.
+
+B1.2.9) Datei: Ende
+
+  Dieser Menpunkt ist fr zuknftige Erweiterungen reserviert und im 
+Moment noch nicht anw„hlbar.
+
+B1.3) Anzeige:
+
+  Die Darstellung im Fenster kann durch Icons oder Text erfolgen. Bei 
+der Ausgabe im Textmodus ist neben der Zeichengr”e auch die Anzahl 
+der Zusatzinformationen wie Datum, Gr”e und Datum der Dateien 
+einstellbar.
+  Wenn gengend Platz im Fenster ist, gibt MAGXDESK diese 
+Informationen mehrspaltig aus. Dies l„t sich mit dem Menpunkt 
+"einspaltig" verhindern.
+
+B1.4.1-5) Sortieren:
+
+  Unter diesem Eintrag k”nnen Sie das Sortierkriterium fr die Ausgabe 
+im Fenster setzen. Erw„hnenswert ist dabei der Eintrag "unsortiert". 
+Ist dieser aktiviert, so werden die Dateien in der Reihenfolge 
+ausgegeben, in der sie tats„chlich physikalisch auf dem Datentr„ger 
+gespeichert sind. Das kann besonders dann interessant und wichtig 
+sein, wenn sich im AUTO-Ordner Programme befinden, die in einer 
+bestimmten Reihenfolge abgearbeitet werden mssen.
+  Das aktuelle Sortierkriterium wird in der Menzeile (hell) 
+dargestellt und kann auch mit den Funktionstasten F1-F5 ausgel”st 
+werden.
+
+B1.4.6) Sortieren: Maske setzen... #M
+
+  In diesem Dialog k”nnen sie eine Maske setzen, um nur bestimmte 
+Dateien anzeigen zu lassen. Diese Maske kann fr jedes Fenster 
+individuell gesetzt werden.
+
+B1.5.1) Optionen: Laufwerk anmelden... #L
+
+  Im Dialog "Laufwerk anmelden" sind die Buttons "ndern" und 
+"Entfernen" genau dann w„hlbar, wenn beim Aufruf der Box genau ein 
+Laufwerks- /Papierkorb- oder Druckericon aktiviert war. Dann ist auch 
+der Button "ndern" beim Aufruf bereits aktiv. Der Button "ndern" 
+schaltet um, ob man ein neues Icon erzeugen oder das aktivierte „ndern 
+m”chte. Im letzteren Fall „ndert man das Icon durch einen kurzen Klick 
+auf eines der Iconsymbole; Symboltyp und ggf. Laufwerkkennung werden 
+ge„ndert. Beim Neuerstellen von Icons h„lt man die Maustaste beim 
+Klick auf eins der Iconsymbole gedrckt und verschiebt dann den Umri 
+des neuen Icons an die gewnschte Stelle.
+
+Wichtig:	Die Verantwortung, da die Wahl des Icons (Platte/ Diskette/ 
+	Ramdisk) fr das Laufwerk korrekt ist, liegt bei Ihnen und 
+	sollte ernst genommen werden, da sich einige Funktionen von 
+	MAGXDESK fr die unterschiedlichen Medien unterscheiden.
+
+B1.5.2) Optionen: Anwendung anmelden... #A
+
+  Der Eintrag "Anwendung anmelden" ist w„hlbar, wenn genau ein 
+Programmicon oder ein zu einem Programm angemeldetes Dateiicon 
+selektiert ist. Die Auswahl "GEM", "TOS", "TTP" ist zwar vorhanden, 
+jedoch sollte in solch einem Fall die Datei lieber umbenannt werden. 
+Programme, die mit Cursor gestartet werden sollen, sollten immer die 
+Endung .TOS oder .TTP haben, die anderen .PRG oder .APP. Die Auswahl 
+zwischen .TOS und .TTP (TOS takes parameters) ist dabei unter MAGXDESK 
+von geringer Bedeutung, da man hier an jedes Programm Parameter 
+bergeben kann (siehe "Programme starten").
+  Beim "Anwendung anmelden" wird sinnvollerweise der gesamte Pfad des 
+Programms gemerkt (bis zu 80 Zeichen). Das Abmelden oder Ummelden kann 
+auch ber eine bereits angemeldete Datei geschehen. Die Anzahl der 
+Dateitypen pro Programm ist auf 2 beschr„nkt, diese Einschr„nkung kann 
+nicht umgangen werden; andere Dateien k”nnen aber immer noch auf die 
+bliche Weise bergeben werden (s.o.).
+  Fr unsaubere Programme kann man hier den Status "Single" anmelden. 
+Wird ein "Single"-Programm gestartet, so wird MAGXDESK verlassen, und 
+die parallel laufenden Programme werden eingefroren.
+
+B1.5.3) Optionen: Einstellungen... #E
+
+  Der Eintrag "MAGXDESK resident" kann auch ohne Anw„hlen der 
+Dialogbox direkt mit SHIFT-Ins aktiviert und mit SHIFT-Del deaktiviert 
+werden.
+  "Status neu laden" l„dt die .INF- Datei von dem Laufwerk, von dem 
+aus die letzte .INF- Datei geladen worden war, also i.a. vom MAGXDESK- 
+Laufwerk, wenn noch keine .INF- Datei per CTRL-SHIFT-A..P geladen 
+worden ist.
+  "Disknamen initialisieren" bedeutet, da sowohl beim Start als auch 
+beim Nachladen von MAGXDESK die Namen aller Hard- und RAMDisks 
+ermittelt und in den entsprechenden Laufwerkicons angezeigt werden. 
+Ansonsten werden Disknamen nur beim ™ffnen von Fenstern ermittelt.
+  Mit den Buttons fr die Ger„tetreiber kann man die Aufl”sung „ndern. 
+Fr die Ger„tetreiber (VDI- Z„hlweise; es wird angenommen, da dies 
+die XBIOS- Z„hlweise + 2 ist) gilt:
+
+	1 aktuelle Aufl”sung 
+	2 niedrige Aufl”sung 
+	3 mittlere Aufl”sung 
+	4 hohe Aufl”sung
+
+  Zu "Cache Untersttzung" s. Abschnitt 9)
+  Zu den Einstellungen fr das Kopieren s. Abschnitt 5)
+
+B1.5.4) Optionen: Programme... #P
+
+  Der Eintrag "Command" ist fr den Kommandoprozessor, der ber ^B 
+direkt aufgerufen werden kann und der die Bearbeitung der .BAT- und 
+.BTP- Dateien bernimmt.
+  Unter "Anzeige" wird das Default- Programm eingetragen, das immer 
+dann aufgerufen wird, wenn MAGXDESK mit der Datei nichts anderes 
+anfangen kann, d.h. wenn die Datei weder ausfhrbar ist noch als zu 
+einem bestimmten Programm geh”rig angemeldet wurde. Normalerweise wird 
+die Datei einfach auf dem Bildschirm als Text ausgegeben, dies tut 
+auch die interne Anzeigefunktion, wenn hier kein Programm angegeben 
+wurde. Ein externes Programm kann natrlich Dateien je nach Typ auch 
+als Bild o.„. anzeigen.
+  In der Zeile "Ausgabe" wird das Druckprogramm eingetragen, das 
+aufgerufen wird, wenn Dateien in das Druckersymbol verschoben wurden. 
+Ist die Zeile leer, wird die interne Druckfunktion von MAGXDESK 
+aufgerufen, die die Datei unver„ndert auf die Datei PRN: ausgibt. Der 
+Druckvorgang kann bei Verwendung der internen Druckfunktion ber 
+SHIFT-SHIFT unterbrochen werden.
+  Im Pfad des Anzeige- und des Druckprogramms werden alle Zeichen 
+zugelassen, damit man auch direkt Parameter bzw. Optionen angeben 
+kann. Der Dateiname selbst (bis zum ersten Leerzeichen) wird immer 
+automatisch in Grobuchstaben umgewandelt.
+  Unter "Editor" wird der Standardeditor eingetragen, der aufgerufen 
+wird, wenn man Textdatei(en) mit (SHIFT-)CTRL-Doppelklick ”ffnet.
+  Die Eintr„ge ^F1 bis ^F10 zeigen an, wie man die brigen Programme 
+aufrufen kann. Wenn der Programmname mit '*' beginnt, k”nnen Parameter 
+an das Programm bergeben werden (alle selektierten Dateien), auerdem 
+wird das Programm dann immer in seinem eigenen Pfad gestartet. Beginnt 
+der Name nicht mit '*', wird das entsprechende Programm (wie der 
+Kommandoprozessor ber ^B) in den durch die aktuellen Fenster 
+vorgegebenen Standardpfaden aufgerufen.
+
+B1.5.5) Optionen: Arbeit sichern... #S
+
+  Bei "Arbeit sichern" erscheint eine Alertbox, die genau anzeigt, in 
+welche Datei und auf welchem Laufwerk die INF-Datei gesichert wird.
+  MAGXDESK sichert die INF-Datei auf dem Laufwerk, auf dem sie zuletzt 
+eingelesen wurde. Wenn man mit CTRL-SHIFT-D etwa die letzte INF- Datei 
+von D:\ gelesen hat, erh„lt man die Angabe, da der Status jetzt nach 
+D:\ gesichert wird.
+
+B1.5.6) Optionen: Blitter
+
+  Der Eintrag "Blitter" l„t sich nicht auf einem ST ohne Blitter 
+aktivieren oder deaktivieren. Hier wird der Meneintrag "disabled"; 
+ein H„kchen vor dem Eintrag bedeutet dann nur, da die MAGX.INF- Datei 
+auf einem Rechner mit Blitter erstellt wurde und dieser dabei 
+eingeschaltet war.
+
+B1.6) Die Uhr
+
+  Ganz rechts in der Menleiste wird die Uhrzeit in Stunden und 
+Minuten angezeigt. Die Uhrzeit wird alle 10s aktualisiert; jedoch nur, 
+wenn kein Dialog l„uft und kein Men heruntergefallen ist. Diese Uhr 
+mu normalerweise nicht abgeschaltet werden, weil sie sofort beim 
+Start eines Programms verschwindet; dennoch kann man sie im Dialog 
+"Einstellungen „ndern" abschalten.
+
+B2) Besonderheiten bei Fensteroperationen:
+
+  MAGXDESK benutzt nur den vertikalen Scrollbalken, da die Icons 
+beziehungsweise Schriftzeilen so angeordnet werden, da sie immer 
+sichtbar sind. Das heit zum Beispiel, da bei jedem Ver„ndern der 
+Fensterbreite ausgerechnet wird, wieviele Objekte in einer Zeile 
+angezeigt werden k”nnen; hat sich die Anzahl ge„ndert, werden alle 
+Objekte im Fenster neu angeordnet.
+  Der horizontale Scrollbalken gibt den Fllgrad der Diskette wieder; 
+der weie Balken repr„sentiert die belegten Bytes, ein Fenster mit 
+vollst„ndig weiem unteren Rand zeigt eine volle Diskette an. 
+Operationen am horizontalen Scrollbalken (Klicken oder Verschieben) 
+zeigen immer den freien Speicher fr das entsprechende Laufwerk an. 
+Mit Rcksicht auf die Speichermillion„re unter uns (mit Festplatten) 
+werden Tausenderpunkte mit ausgegeben.
+  Die Berechnung des freien Speichers geschieht nur nach dem ™ffnen 
+eines Fensters und nach Operationen, die den freien Speicher eines 
+Mediums ver„ndern k”nnen (Kopieren, L”schen, Verschieben) und 
+natrlich beim Drcken von Esc oder wenn ein Diskwechsel erkannt wurde 
+(jedoch nicht beim Umbenennen oder Attribut ndern).
+  Die Infozeile enth„lt auch Informationen ber selektierte Datei(en), 
+so da fast immer auf den Dialog "Info anzeigen" verzichtet werden 
+kann und das entsprechende Icon nur selektiert zu werden braucht. Bei 
+der Selektion mehrerer Dateien werden die Bytes zusammengez„hlt. So 
+kann man leicht sehen, ob Dateien beim Kopieren noch auf eine Diskette 
+passen oder nicht. Die Zeichen fr die Attribute bedeuten:
+
+	R nur lesen (read only)
+	S Systemdatei (system)
+	H versteckt (hidden)
+	A Archiv (archive)
+	E ausfhrbar (executable)
+
+  Enth„lt ein Fenster einen nicht mehr gltigen Pfad und wird das 
+Verzeichnis eingelesen oder aktualisiert, so wird automatisch auf das 
+Wurzelverzeichnis zurckgeschaltet.
+
+Beispiel:	ein Ordner "AUTO" wurde ge”ffnet, das Verzeichnis ist im 
+	Fenster zu sehen; dann wird die Diskette gewechselt, die 
+	neue Diskette enth„lt keinen solchen Ordner. Versucht man 
+	nun, innerhalb des Ordners AUTO einen weiteren Ordner zu 
+	”ffnen oder drckt einfach Esc, so schaltet MAGXDESK wieder 
+	automatisch auf das Wurzelverzeichnis ("root") um.
+
+  Bei schreibenden Zugriffen auf Massenspeicher werden sogenannte 
+"dirty"- Flags gesetzt, wenn ein Zugriff erfolgreich war und sich der 
+Inhalt des Massenspeichers in irgendeiner Art ge„ndert hat (nicht bei 
+abgebrochenen Kopier- oder L”schaktionen oder beim miglckten 
+Schreibversuch bei aktiviertem Schreibschutz). Diskettenlesefehler 
+jeglicher Art bewirken, da ein Fenster entweder gar nicht erst 
+ge”ffnet oder sofort geschlossen wird; MAGXDESK gibt keine leeren 
+Fenster aus.
+  Die Fenster lassen sich zyklisch mit CTRL-W umschalten, so kann man 
+auch Fenster aktivieren, die vollst„ndig verdeckt sind. Auerdem steht 
+noch der "Backdrop"- Button (rechts oben) zur Verfgung, um ein 
+Fenster sehr schnell in den Hintergrund zu legen.
+  Alle Fenster drfen zusammen maximal 600 Objekte enthalten; da der 
+Speicher fr die Fenster dynamisch festgelegt wird, k”nnen sich diese 
+Dateien beliebig auf die Fenster verteilen. Sind in einem Fenster mehr 
+Objekte vorhanden, als MAGXDESK noch frei hat, werden die ersten 
+angezeigt, und die Infozeile des Fensters enth„lt die šberlaufmeldung.
+  Beim ndern der Maske ist keine Diskoperation n”tig, um das Fenster 
+neu auszugeben, da immer das gesamte Verzeichnis im Speicher gehalten 
+wird.
+  Da beim ndern der Anzeigemodi (Sortieren, Maske, Anzeigen usw.) die 
+Dateien nicht deselektiert werden, kann man etwa folgende Tricks 
+anwenden:
+
+- Alle Dateien mit Endung .H oder .C selektieren:
+	Maske *.* w„hlen und alle Icons deselektieren
+	Maske *.C w„hlen.
+	"alle ausw„hlen"
+	Maske *.H w„hlen
+	"alle ausw„hlen"
+	Maske *.* w„hlen
+
+- Alle Dateien auer denen mit Endung .C selektieren
+	Maske *.* w„hlen
+	"alle ausw„hlen"
+	Maske *.C w„hlen
+	alle Icons deselektieren
+	Maske *.* w„hlen
+
+B3) Besonderheiten bei Iconoperationen
+
+  Wenn kein MAGX.INF vorliegt oder das Mag!X- System frisch 
+installiert wurde, werden automatisch alle angemeldeten Laufwerke 
+sowie Drucker- und Papierkorbsymbol angezeigt. Die Laufwerke A: und B: 
+werden als Floppydisk, C: bis F: als Harddisk und weitere Laufwerke 
+als Ramdisk angezeigt
+  Alle Icons erhalten als Text den Namen der Diskette, die sie 
+anzeigen. Wird etwa das Icon fr Laufwerk A: ge”ffnet und heit die 
+Diskette in A: "QUICHOTE.DON", so erhalten alle Diskicons fr Laufwerk 
+A: die Beschriftung "QUICHOTE.DON". Bei Disketten ohne Namen wird die 
+Default- Bezeichnung angezeigt, etwa "FLOPPYDISK".
+  Alle Icons auf dem Desktop und in den Fenstern lassen sich 
+aktivieren:
+
+-	Klick auf ein Icon deaktiviert alle anderen Icons, aktiviert dann 
+	das geklickte Icon.
+
+-	SHIFT- Klick auf ein Icon invertiert den Status des selektierten 
+	Icons. 
+	Mit Shift lassen sich gleichzeitig Objekte in mehreren Fenstern bzw. 
+	auch gleichzeitig auf dem Desktop aktivieren. Damit kann man an ein 
+	Programm andere Dateien als Parameter bergeben, die in 
+	verschiedenen Fenstern liegen. Etwa: Im oberen Fenster C:\DATEI1, im 
+	unteren D:\DATEI2 und dann einen SHIFT- Doppelklick auf EDITOR.PRG 
+	auf dem Desktop. Desgleichen mit dem Aufrufen des Standardeditors 
+	mittels SHIFT-CTRL-Doppelklick auf eine Textdatei, wobei in anderen 
+	Fenstern weitere Dateien selektiert sein k”nnen. Beim 
+	Kopieren/Verschieben werden trotzdem nur die Objekte eines Fensters 
+	bzw. der Desktopfl„che bewegt.
+
+-	Nur das Klicken auf eine freie Stelle in einem Fenster oder auf dem 
+	Desktop deaktiviert alle Icons. Die Aktivierung wird von "normalen" 
+	Fensteroperationen wie Scrollen, Verschieben, Anzeigen als 
+	Bilder/Text, ndern des Sortiermodus oder der Maske usw. nicht 
+	ver„ndert. Bei gedrckter SHIFT-Taste bleiben die Icons selektiert. 
+	Dadurch kann es nicht mehr passieren, da beim mhsamen einzelnen 
+	Aktivieren von Objekten die Arbeit durch ein Klicken an falscher 
+	Stelle zunichte gemacht wird.
+
+Tips fr Mausartisten:
+
+-	Bei gedrckt gehaltener rechter Maustaste lassen sich auch nicht 
+	aktivierte Fenster ansprechen.
+
+-	Gummiband ziehen kann man auch bei gedrckter SHIFT- Taste. Die 
+	"erfaten" Icons werden invertiert. Es lassen sich auch mehrere 
+	Gummib„nder ziehen.
+
+-	Das Gummiband l„t sich auch nach oben oder nach links ziehen.
+
+Beim Verschieben von Icons mit der Maus werden grunds„tzlich nur Icons 
+eines Fensters oder des Desktop gleichzeitig mitverschoben.
+
+Mit Icons k”nnen folgende Operationen ausgefhrt werden:
+
+-	ein Icon vom Fenster aufs Desktop ziehen. Diese Icons unterliegen 
+	keinen Einschr„nkungen. Ordner k”nnen ge”ffnet und Dateien mit "Info 
+	anzeigen" untersucht werden. Im Gegensatz zu Fenster-Icons ben”tigt 
+	MAGXDESK jedoch einen Diskzugriff. Auerdem sind die blichen 
+	Operationen wie Kopieren, Verschieben usw. mit s„mtlichen Desktop-
+	Icons m”glich. Nur beim L”schen wird nur das Icon entfernt und nicht 
+	die Datei gel”scht.
+
+-	Icon(s) auf dem Desktop verschieben
+
+-	Icon(s) in den Papierkorb schieben. Handelt es sich um Desktop- 
+	Dateien, so werden nur die Icons entfernt, andernfalls die Dateien 
+	bzw. Pfade bzw. Disketten gel”scht.
+
+-	Icon(s) in den Drucker schieben.
+	Das im Dialog "Programme" unter "Ausgabe" angemeldete Druckprogramm 
+	wird mit den entsprechenden Parametern gestartet. Beim Eintragen des 
+	Druckprogramms wird die Angabe von Schaltern hinter dem Dateinamen, 
+	etwa "C:\PRINT.TTP -S -T5" zugelassen. Diese Schalter werden 
+	automatisch immer (mit) bergeben.
+
+-	Icons in Fenster/Ordner/Laufwerkicon schieben. 
+	Die Dateien/Pfade werden kopiert oder verschoben. Fr letzteres ist 
+	die CTRL- Taste gedrckt zu halten. Es ist egal, ob sich der 
+	Zielordner in einem Fenster oder auf dem Desktop befindet.
+
+	Tip:	Will man mehrere Dateien umbenennen, die sich im selben 
+	Verzeichnis befinden, kann man sie selektieren und im selben 
+	Verzeichnis verschieben (CTRL- Taste gedrckt halten). Fr 
+	jede Datei erscheint dann der "Dateiname existiert schon"- 
+	Dialog, in dem man einen neuen Namen eingeben kann.
+
+-	Doppelklick auf Icon. Programme werden gestartet, Ordner ge”ffnet. 
+	Bei Dateien wird entweder die angemeldete Standardapplikation 
+	gestartet, oder die Dateien werden angezeigt.
+
+Durch Gedrckthalten von SHIFT-, ALT- und/oder CTRL-Taste werden 
+folgende Sonderfunktionen ausgel”st:
+
+-	Beim Doppelklick mit gedrckter SHIFT-Taste werden alle in allen 
+	Fenstern und auf dem Desktop ausgew„hlten Dateien als Parameter 
+	bergeben oder im Dialog "Parameter bergeben" mit angezeigt (bei 
+	gedrckter CTRL-Taste oder vom Meneintrag "”ffnen").
+
+-	Doppelklick auf Icon bei gedrckter CTRL- Taste.
+	Bei Programmen wird immer ein Dialog ge”ffnet, in dem Sie Paramter 
+	an das zu startende Programm bergeben k”nnen. Bei Dateien wird der 
+	in den im Dialog "Programme" (Menpunkt Optionen -> Programme) unter 
+	"Editor" angemeldeten Standard- Editor geladen.
+
+	Das funktioniert auch mit mehreren selektierten Dateien mittels 
+	CTRL-SHIFT-Doppelklick.
+
+-	Doppelklick auf Icon bei gedrckter ALT- Taste.
+	Bei Ordnern wird ein neues Fenster mit dem Inhalt des angeklickten 
+	Ordners ge”ffnet. Programme bzw. angemeldete Dateien werden in 
+	Abh„ngigkeit vom Schalter "MAGXDESK resident" im Dialog 
+	"Einstellungen" (Menpunkt Optionen -> Einstellungen...) parallel 
+	zum Desktop oder anstelle des Desktop gestartet.
+
+-	Doppelklick auf Textdatei- Icon bei gedrckter ALT- und CTRL- Taste. 
+	Dateien werden als Text angezeigt oder an das im Dialog "Programme" 
+	(Menpunkt Optionen -> Programme...) unter "Anzeige" angemeldete 
+	Programm geladen.
+
+B4) Programme starten
+
+Auer beim Starten von Standardprogrammen (siehe Dialog "Programme") 
+ber ^B, ^E oder ^Fn werden alle Programme in ihrem eigenen 
+Verzeichnis gestartet (!!).
+  Schlielich wird sowohl beim Start von MAGXDESK als auch nach 
+Beendigung eines Programms die Farbpalette und die anderen sonst vom 
+Kontrollfeld vorgenommenen Einstellungen neu gesetzt. Dies wirkt so, 
+als wenn man kurz das Kontrollfeld ”ffnete und wieder schl”sse. 
+nderungen in den Einstellungen bleiben also nur dann wirksam, wenn 
+sie vom Kontrollfeld selbst oder einem „hnlichen Programm vorgenommen 
+wurden.
+  MAGXDESK unterscheidet beim Programmstart zwischen "normalen 
+Fehlern" und Programm- Rckgabewerten. Letztere werden in einer 
+Alertbox mit der obersten Zeile "Programm gab zurck:" angezeigt.
+
+B5) Dateien kopieren/verschieben/l”schen
+
+  Bei Kopiervorg„ngen wird immer der gesamte Speicher verwendet, es 
+sei denn, eine der beteiligten Speichermedien ist eine Ramdisk (wird 
+am Icontyp erkannt). Dann werden nur 50kB verwendet.
+  Im Dialog "Dateien kopieren/verschieben/l”schen" (erscheint nur, 
+wenn im Dialog "Einstellungen" die Best„tigung beim Kopieren angew„hlt 
+wurde) kann man mit den Buttons "Best„tigung", "Backup" und 
+"šberschreiben" angeben, ob man existierende Dateien beim Kopieren mit 
+oder ohne Warnung berschreiben m”chte; die entsprechenden Buttons des 
+Dialogs "Einstellungen „ndern" werden dabei mit ver„ndert.
+  Die Kopiermodi wirken sich sowohl auf das Kopieren als auch auf das 
+Verschieben aus und haben folgende Funktion:
+
+	šberschreiben:	Alle gleichnamigen Dateien werden ohne Warnung 
+	berschrieben.
+
+	Backup:	Alle gleichnamigen Dateien, die ein „lteres 
+	Dateidatum haben, werden ohne Warnung 
+	berschrieben. Bei gleichem oder jngerem Datum 
+	werden sie bersprungen bzw. gel”scht (beim 
+	Verschieben). Bei dieser Einstellung erscheint 
+	keine Warnung, da das Ziellaufwerk voll ist, da 
+	ja nicht alle Dateien kopiert werden und auerdem 
+	auf dem Ziellaufwerk noch Dateien gel”scht werden.
+
+	Best„tigen:	Alle gleichnamigen Dateien werden nur nach Warnung 
+	berschrieben.
+
+  W„hrend des Kopierens/Verschiebens/L”schens wird angezeigt, was 
+MAGXDESK gerade tut, also welche Datei/Ordner kopiert/gel”scht wird 
+usw. Dabei wird nicht wie im Desktop von TOS 1.4 der bergeordnete 
+Ordner, sondern das Laufwerk angezeigt.
+  Die Vorg„nge k”nnen durch Gedrckthalten beider SHIFT- Tasten 
+unterbrochen werden; ggf. mu man jedoch dabei etwas warten, solange 
+der jeweilige Schreib-/Lesevorgang andauert.
+  Wenn der Button "Freier Speicher" im Dialog "Einstellungen" aktiv 
+ist, errechnet MAGXDESK bei Kopier-/Verschiebe-/und L”schoperationen 
+den Speicherbedarf der Dateien auf dem Ziellaufwerk (L”schen: 
+Quellaufwerk); er wird in Kilobytes angezeigt. Wenn man den Kopier-
+/oder Verschiebevorgang startet, und auf dem Ziellaufwerk ist zuwenig 
+Platz, erscheint eine Warnung (nicht im Backupmodus). Falls Sie aber 
+etwa Dateien kopieren wollen, die unter demselben Namen bereits 
+vorhanden sind, werden die alten Dateien gel”scht, damit kann also auf 
+dem Ziellaufwerk trotz der Warnung genug Speicherplatz frei sein. Da 
+beim L”schen von Dateien ebenfalls der Speicherbedarf angezeigt wird, 
+hat den Sinn, da man gleich sehen kann, wieviel mehr Speicher man 
+nach L”schen der Dateien haben wird.
+  Bei s„mtlichen DOS- Funktionen werden Fehlercodes abgefragt und 
+ausgewertet. So kann es nie vorkommen, da man bei "Daten auf Disk A 
+defekt..." mehr als einmal auf "Abbruch" klicken mu, es sei denn, 
+MAGXDESK macht noch einen weiteren Versuch mit einer anderen 
+Strategie. Bei s„mtlichen DOS- und BIOS- Aufrufen, bei denen Fehler 
+auftreten, wird die entsprechende Aktion abgebrochen oder sinnvoll 
+beendet und der aufgetretene Fehler mit Fehlercode und Klartext als 
+Alert angezeigt. Fr s„mtliche auftretenden Fehler wird ein eigener 
+Fehlertext ausgegeben. Bei Kopier oder L”schoperationen wird zudem 
+noch die Datei und das Laufwerk angezeigt, auf dem der Fehler passiert 
+ist. Auch "Laufwerk voll" wird von MAGXDESK intern als Fehler 
+behandelt und entsprechend angezeigt. Aufgrund von Diskettenfehlern 
+leere und damit ungltige Fenster gibt es nicht. Bei ungligen Pfaden 
+wird immer auf die Root geschaltet, ansonsten das Fenster geschlossen.
+
+B6) Dateien anzeigen
+
+  Beim Doppelklick auf ein Datei-Icon wird zun„chst berprft, ob dies 
+fr eine Anwendung angemeldet ist. Ist das nicht der Fall, wird 
+berprft, ob im Dialog "Programme" fr "Anzeigen" ein Programm 
+eingetragen wurde. Wenn ja, wird dieses mit allen zu diesem Zeitpunkt 
+selektierten Icons als Parameter aufgerufen, ansonsten wird die 
+interne Anzeigefunktion von MAGXDESK verwendet.
+  Bei angemeldeten Dateien kann durch Drcken der ALT-CTRL-Taste und 
+Doppelklick auf das Datei-Icon die Anzeige erzwungen werden.
+
+B6.1 Die interne Anzeigefunktion
+
+  In der interne Anzeigefunktion von MAGXDESK werden Dateien mit 
+Endung ".DOC" speziell behandelt (einige Sonderzeichen von WORDPLUS 
+werden ausgwertet), so da diese Dateien recht gut lesbar sind.
+  Folgende Tasten haben eine spezielle Bedeutung. Sie funktionieren 
+auch bei laufender Ausgabe:
+
+Shift	Schaltet in Hold- Modus. Die Ausgabe h„lt bei 
+	gedrckter Taste an.
+
+G	(Go) Schaltet in den Hold- Modus. Die Ausgabe kann mit 
+	einer Umschalttaste angehalten werden. Eine beliebige 
+	andere Taste schaltet zurck
+
+CTRL C, 
+CTRL N 
+CTRL Q		abbrechen
+
+Leertaste	Eine Seite weiter
+
+D				Eine halbe Seite weiter
+
++				4096 Bytes vorbl„ttern
+
+-				4096 Bytes zurckbl„ttern, auch bei Anzeige "--EOF--"
+
+sonstige Taste	eine Zeile weiter.
+
+H„lt die Ausgabe an, so kann man fr "Weiter" die linke Maustaste und 
+fr "Abbruch" die rechte drcken.
+
+B7) Dateien ausgeben
+
+  Werden Icons in das Druckersymbol geschoben, wird zun„chst 
+berprft, ob fr "Ausgabe" ein Programm eingetragen wurde. Wenn ja, 
+wird dieses mit allen zu diesem Zeitpunkt selektierten Icons als 
+Parameter aufgerufen, ansonsten wird die interne Druckfunktion von 
+MAGXDESK verwendet.
+  Die interne Druckfunktion druckt die Datei ohne Konvertierung auf 
+die DOS- Datei PRN:. Zwischendurch wird immer die Tastenkombination 
+SHIFT-SHIFT abgefragt, mit Hilfe derer man den Vorgang abbrechen kann.
+
+B8) Tastatur-Belegung in MAGXDESK
+
+  Neben den hinter den einzelnen Menpunkten und den vorangegangenen 
+Abschnitten beschriebenen Tastenkombinationen beherscht MAGXDESK noch 
+einige ntzliche Kurztasten:
+
+ESC	Mit Esc wird MAGXDESK ein Diskwechsel im obersten 
+	Fenster mitgeteilt.
+
+UNDO	Das oberste Fenster wird aufs Wurzelverzeichnis 
+	zurckgeschaltet. Diskwechsel werden nicht erkannt.
+
+Backspace	Geht im obersten Fenster eine Verzeichnisebene zurck. 
+	Ist das Wurzelverzeichnis erreicht, wird die Taste 
+	ignoriert.
+
+Tab	Wirkt wie CTRL-I (Info anzeigen).
+
+Insert	Aktiviert den Maximalgr”enknopf des obersten 
+	Fensters.
+
+Home	Home setzt den Scrollbalken ganz nach oben.
+Clr			=SHIFT-Home ; setzt den Scrollbalken ganz nach unten.
+
+Cursor hoch 
+Cursor runter	Das obere Fenster l„t sich auch mit Hilfe der 
+	Cursortasten scrollen.
+
+Leertaste	Deselektiert auf einen Schlag alle Objekte
+
+A-Z	Mit den Grobuchstaben lassen sich Laufwerke anw„hlen 
+	(einmal tippen) und ”ffnen (2 mal schnell 
+	hintereinander tippen). Fr die Grobuchstaben kann 
+	man, statt jedesmal SHIFT zu drcken, auch CapsLock 
+	aktivieren.
+
+a-z	Mit den Kleinbuchstaben l„t sich, indem man sie 
+	zweimal schnell hintereinander eingibt, das Laufwerk 
+	des obersten Fensters wechseln. Dabei wird immer aufs 
+	Wurzelverzeichnis geschaltet. Es werden nur Buchstaben 
+	akzeptiert, die in Laufwerkicons auf dem Desktop 
+	vorkommen. Diskwechsel werden dabei nicht erkannt.
+
+CTRL B	Startet den Kommandoprozessor ohne Parameter in den 
+	durch die Fenster vorgegebenen Pfaden.
+
+CTRL E	Startet den Standardeditor ohne Parameter in den durch 
+	die Fenster vorgegebenen Pfaden.
+
+CTRL W	Wechselt das oberste Fenster. Ggf. mu CTRL-W solange 
+	bet„tigt werden, bis das gewnschte Fenster oben 
+	liegt.
+
+CTRL SHIFT a-z	Mit den Buchstabentasten und CTRL-SHIFT l„t sich eine 
+	neue INF- Datei von dem betreffenden Laufwerk 
+	nachladen. Die Icons werden NICHT neu geladen, da sie 
+	an die Resourcedatei angebunden sind. Ist keine INF- 
+	Datei auf dem ausgew„hlten Laufwerk vorhanden, kann 
+	man entscheiden, ob man den Vorgang abbrechen oder die 
+	Defaults laden m”chte.
+
+SHIFT Insert	Wirkt wie "Einstellungen „ndern, Resident ein". 
+SHIFT Delete	Wirkt wie "Einstellungen „ndern, Resident aus".
+
+ALT	H„lt man beim Schlieen des Fensters ber den 
+	Closebutton oder ber <Backspace> die Taste <Alt> 
+	gedrckt, so wird in Analogie zum ™ffnen eines Ordners 
+	ein neues Fenster ge”ffnet, das den bergeordneten 
+	Pfad darstellt.
+
+ALT 1 - ALT 0	Schaltet die Aufl”sung um.
+
+B9) Cache- Untersttzung
+
+  Ist unter "Einstellungen" die Cache- Untersttzung eingeschaltet, 
+wird bei Diskoperationen automatisch ein Cacheprogramm untersttzt. 
+Vor jeder Operation wird der Cache ein-, anschlieend wieder 
+ausgeschaltet. Ist kein Cache im System, fhrt dies nicht zu einer 
+Fehlermeldung.
+  Fr das Einschalten des Cache wird ein "gemdos(201, drv)", fr das 
+Ausschalten ein "gemdos(202, drv)" ausgefhrt. Langwort- negative 
+Rckgabewerte (auer EINVFN fr "Cache nicht installiert" oder EDRIVE 
+fr "Cache fr dieses Laufwerk nicht installiert") werden ausgewertet.
+  Cache-Untersttzung wird bei folgenden Operationen angewendet:
+
+-	Rekursives Durchlaufen eines Directory- Baumes (L”schen, Kopieren, 
+	Info anzeigen)
+
+-	L”schen von Dateien (fr den Pfad des Fensters, in dem die Dateien 
+	liegen). 
+
+-	Kopieren von Dateien (immer fr den Zielpfad, fr den Quellpfad nur 
+	bei mehr als einem Objekt). Unter Umst„nden wird der Cache 
+	verschachtelt ein- und ausgeschaltet. Das Cacheprogramm mu also 
+	verschachtelte Aufrufe untersttzen.
+
+B10) Icontypen
+
+  Bei "Anzeigen als Text" werden alle ausfhrbaren Programme durch 
+einen voranstehenden Punkt gekennzeichnet.
+  Im allgemeinen werden Programme (Dateien mit PRG,APP,TOS,TTP) mit 
+einem Icon dargestellt, das einem stilisierten, leeren Bildschirm mit 
+Menleiste entspricht. Batchdateien (BAT,BTP) haben ebenfalls ein 
+spezielles Symbol. Alle brigen Dateien werden als leeres Blatt mit 
+rechts oben abgeknickter Ecke angezeigt.
+  Liegen zus„tzliche Icons vor (dazu werden die Dateien MAGXDESK.RSC 
+und MAGXDESL.RSC erweitert, was aus Speicherplatzgrnden entfallen 
+kann), k”nnen zus„tzliche Icons angezeigt werden; die Zuordnung Icon 
+<-> Datei steht in der Textdatei NAMES.TXT und kann leicht mit einem 
+Texteditor ge„ndert werden. Anschlieend mssen die Resourcedateien 
+dann mit MKICONS.PRG modifiziert werden, s.u.
+  Eine eigene Iconsammlung l„t sich wie folgt erstellen:
+
+-	Kopieren Sie von der Orginal- Diskette die Dateien MAGXICNS.RSC, 
+	MKICONS.PRG und NAMES.TXT zusammen in ein Verzeichnis.
+
+-	Die Zuordnung der Icons zu den Programm- und Dateinamen steht in der 
+	Textdatei NAMES.TXT, die sich mit einem Texteditor „ndern l„t. Das 
+	Format l„t sich aus der Beispieldatei ersehen. Icons, denen keine 
+	Dateien zugewiesen werden, werden nicht in die Icondatei 
+	eingebunden.
+
+1. Fall: 
+	Sie verfgen ber einen sogenannten Resource Editor bzw. ein 
+	Resource Construction Set mit integriertem Icon- Editor.
+	Dann k”nnen Sie neue Icons erstellen oder bestehende ver„ndern, 
+	indem Sie die Datei MAGXICNS.RSC in Ihren Resource Editor laden und 
+	die darin enthaltenen Icons ver„ndern oder neue hinzufgen. Die 
+	Icons werden durch die Unterschrift spezifiziert. Jeder Name (max. 8 
+	Buchstaben) darf nur einmal vorhanden sein, mu gro geschrieben 
+	sein und die Endung .ICP bzw. .ICD haben. Die Icons haben alle das 
+	Format 32 (Breite) mal 28 (H”he). Die Iconmaske darf nicht ver„ndert 
+	werden, da sie fr alle Icons fest vorgegeben ist. Die Icons sollten 
+	in Abmessungen und „ueren Berandungslinien dem vorliegenden Format 
+	entsprechen, also Dateiicons mit abgeknickter Ecke und Programmicons 
+	mit schwarzem Balken. Die Zeile FROM in der Datei NAMES.TXT ist ohne 
+	Bedeutung, da die Icons direkt aus der Datei MAGXICNS.RSC geholt 
+	werden, die sich im selben Verzeichnis befinden mu wie NAMES.TXT 
+	und MKICONS.PRG. Starten Sie das Programm MKICONS.PRG. Dieses 
+	Programm arbeitet unter Mag!X vollst„ndig im Hintergrund. W„hrend 
+	des Vorgangs, in dem die Icons in die Ressourcedateien fr MAGXDESK 
+	eingebunden werden, bleibt das System voll bedienbar. Nur bei 
+	Fehlern meldet sich MKICONS.PRG mit einer Alertbox.
+
+2. Fall:
+	Sie verfgen ber kein geeignetes solches Programm. 
+	In diesem Fall mssen Sie den mitgelieferten Iconeditor ICNEDIT 
+	verwenden. Dieser verarbeitet jedoch keine Ressourcedateien, daher 
+	mssen Sie aus der Datei MAGXICNS.RSC zun„chst alle Icons 
+	extrahieren. Dazu kopieren Sie von der Originaldiskette die Dateien 
+	ICNEDIT.PRG, ICNEDIT.RSC und RSC2ICX.PRG in das Verzeichnis, in dem 
+	schon NAMES.TXT usw. liegen.
+
+	Starten Sie das Programm RSC2ICX.PRG, welches die Dateiicons (.ICD) 
+	und Programmicons (.ICP) aus der Ressourcedatei MAGXICNS.RSC 
+	extrahiert. Verschieben oder l”schen Sie die Datei MAGXICNS.RSC, 
+	oder benennen Sie sie um. Solange diese Datei vorhanden ist, wird 
+	sie statt der einzelnen Icondateien verwendet.
+
+	Nun k”nnen Sie mit ICNEDIT neue Icons erstellen oder bestehende 
+	„ndern oder die Zuordnung in NAMES.TXT „ndern oder erweitern. 
+	Starten Sie das Programm MKICONS.PRG. Dieses Programm arbeitet unter 
+	Mag!X vollst„ndig im Hintergrund. W„hrend des Vorgangs, in dem die 
+	Icons in die Ressourcedateien fr MAGXDESK eingebunden werden, 
+	bleibt das System voll bedienbar. Nur bei Fehlern meldet sich 
+	MKICONS.PRG mit einer Alertbox. MKICONS sucht zun„chst nach der 
+	Datei MAGXICNS.RSC im aktuellen Verzeichnis, um aus dieser Icons zu 
+	holen. Nur wenn die Datei nicht gefunden wird, werden Einzeldateien 
+	.ICD fr Dateiicons und .ICP fr Programmicons gesucht. Sie k”nnen 
+	die Icondateien auch in einem anderen Verzeichnis ablegen und dieses 
+	in NAMES.TXT in der Zeile FROM angeben.
+
+	Mit dem ebenfalls auf der Originaldiskette befindlichen Programm 
+	ICX2RSC k”nnen Sie alle .ICD und .ICP Dateien wieder zu einer neuen 
+	Datei MAGXICNS zusammenfassen. Dazu einfach das Programm in den 
+	Ordner mit den Icondateien kopieren und starten.
+
+Die neuen Icons bzw. Zuweisungen sind nach dem n„chsten Warmstart 
+verfgbar.
+
+B11) Der Iconeditor ICNEDIT
+
+  ICNEDIT kann lediglich zus„tzliche Icons fr Programme und 
+Dateitypen erstellen oder „ndern. Nicht ge„ndert werden k”nnen Icons 
+fr Papierkorb, Drucker, Laufwerke, Batchdateien sowie die Standard- 
+Programm- und -Druckericons (hierzu k”nnte man jedoch einen 
+Resourceeditor verwenden, wenn dabei die Icongr”e nicht ver„ndert 
+wird).
+  ICNEDIT verarbeitet Dateien des Typs .ICP (Programmicon) und .ICD 
+(Dateiicon) mit je 112 Bytes. ICNEDIT kann mit maximal je einem 
+Programm- Icon und einem Datei- Icon als Parameter aufgerufen werden. 
+Bei ungltigen Dateinamen oder bei mehr als einem Parameter desselben 
+Typs wird eine Fehlermeldung ausgegeben.
+  Jedes Icon hat das Format 32 (Breite) mal 28 (H”he), allerdings 
+k”nnen nicht alle Pixel beliebig gesetzt oder gel”scht werden, sondern 
+nur innerhalb einer Schablone, die vom Iconeditor ICNEDIT vorgegeben 
+wird; die Iconmasken lassen sich nicht „ndern, sondern sind wie die 
+Schablone fest vorgegeben. Punkte werden dabei mit der linken 
+Maustaste gesetzt und mit der rechten Maustaste gel”scht. Jeder 
+gesetzte und gel”schte Punkt wird simultan unten in der Originalgr”e 
+des Icons angezeigt. Auerdem enth„lt die Unterschrift der Icons die 
+aktuellen Dateinamen (ohne Pfad).
+
+B12) Einschr„nkungen
+
+Anzahl verschiedener Laufwerke max. 16 
+Anzahl Fenster 5 
+Anzahl Icons auf dem Desktop unbegrenzt 
+Anzahl Dateien insgesamt max. 600 
+Anzahl anmeldbarer Programme unbegrenzt 
+maximale Pfadl„nge fr Desktop-Icons/Programme max. 80 Zeichen 
+maximale Pfadl„nge fr Disk- Operationen max. 128 Zeichen 
+maximale Pfadtiefe max. 8 Ebenen 
+Anzahl zus„tzlicher Programm- Icons unbegrenzt 
+Anzahl zus„tzlicher Datei- Icons unbegrenzt 
+Anzahl Icons zugewiesener Dateinamen unbegrenzt
+
+  Die Anzahl der Icons auf dem Desktop und die Anzahl der angemeldeten 
+Applikationen ist unbeschr„nkt. Um Speicherfragmentierung zu 
+vermeiden, ermittelt MAGXDESK beim Einlesen der INF- Datei die Anzahl 
+der Desktop- Icons und der angemeldeten Applikationen und alloziert 
+Speicher fr 10 zus„tzliche Icons und 10 zus„tzliche Applikationen.
+  Wenn nun neue Applikationen oder Desktop- Icons angemeldet werden 
+und die interne Tabelle berl„uft, gengt es, zun„chst die "Arbeit zu 
+sichern" und dann ber den Button "Status neu laden" im Dialog 
+"Einstellungen" die Datei MAGX.INF neu zu laden. Danach ist wieder 
+Platz fr 10 weitere Icons und Programme vorhanden.
+

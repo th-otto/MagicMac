@@ -1,0 +1,69 @@
+
+
+  Der Window- Manager von Mag!X arbeitet ein wenig anders als der  von 
+TOS.  Jedes Mag!X- Fenster,  von denen es brigens 15 gibt, hat in der 
+rechten oberen Ecke einen sogenannten Backdrop- Button.  Bet„tigt  man 
+diesen, wird das Fenster in den Hintergrund gelegt.
+  Die neue Funktionsweise betrifft nicht nur das Aussehen der Fenster, 
+sondern auch das Zeichnen:
+  Damit  fr den Benutzer der Bildschirmaufbau trotz  ausschlielicher 
+Benutzung dokumentierter Systemaufrufe so schnell ist,  wie es etwa in 
+MAGXDESK der Fall ist,  mu der Programmierer einiges beachten. Hat er 
+dies nicht getan, mu der Benutzer manchmal zum Hilfsprogramm MAGXCONF 
+greifen  und den "Smart Redraw" deaktivieren.  Damit dies  nicht  mehr 
+notwendig ist, hier eine Beschreibung dieser Eigenschaft:
+  Mag!X verfolgt die Philosophie,  da Geschwindigkeit nicht mit  bru-
+talen Mitteln wie Grafikprozessoren usw. erreicht werden soll, sondern 
+mit ein wenig Nachdenken;  dazu geh”rt vor allem,  immer nur soviel zu 
+tun,  wie n”tig ist.  W„hrend TOS beim Wechsel des aktuellen Fensters, 
+beim Schlieen oder beim Verschieben mit Vorliebe das gesamte  Fenster 
+oder  gar  noch v”llig unschuldige,  unbeteiligte andere  Fenster  neu 
+zeichnet,  wird dies unter Mag!X wirkungsvoll vermieden.  Obwohl diese 
+unsch”ne Eigenschaft des TOS nirgendwo dokumentiert ist, nutzen leider 
+sehr  viele  Programme oder Bibliotheken (etwa die aus dem  Buch  "Vom 
+Anf„nger  zum  GEM- Profi") aus,  da das TOS  beim  Vergr”ern  eines 
+Fensters dieses immer neu zeichnet. Dazu ein Beispiel:
+  Nehmen wir an, in ein Fenster passen fnf Spalten nebeneinander, die 
+auch  angezeigt  werden.  Wenn der Benutzer nun das  Fenster  so  weit 
+verkleinert,  da  nur noch vier Spalten  hineinpassen,  sortiert  das 
+Programm  seine  Daten um und veranlat anschlieend  selbst„ndig  ein 
+Neuzeichnen  des Fensters (TOS zeichnet bei Verkleinerung das  Fenster 
+nicht von sich aus neu).  Vergr”ert der Benutzer dagegen das  Fenster 
+auf eine Breite von 7 Spalten, sortiert das Anwenderprogramm die Daten 
+ebenfalls  um,  veranlat jedoch hier kein Neuzeichnen  des  Fensters. 
+Aufgrund des eher dummen Fehlverhalten des TOS, das Fenster fr diesen 
+Fall immer ganz neu zu zeichnen, findet dann die Ausgabe statt.
+  Mag!X  zeichnet nun immer nur den minimal n”tigen Teil des  Fensters 
+neu,  das w„ren im Fall des Aufziehens eines Fensters h”chstens rechts 
+und unten zwei Rechtecke.  Fr die Programme, die den oben beschriebe-
+nen  Fehler des TOS ausnutzen,  gibt sich so eine Diskrepanz  zwischen 
+logischem und physikalischem Bildschirminhalt.  Viel einfacher w„re es 
+gewesen,  einfach  auf  die Fallunterscheidung  "Fenster  gr”er  oder 
+kleiner  als vorher" zu verzichten und immer im Fall des  Umsortierens 
+einen  Redraw zu veranlassen.  Da das Betriebssystem auch im  TOS  die 
+Redraws zusammenfat,  hat ein eventuell berflssiger Redraw  niemals 
+irgendwelche Auswirkungen.
+  Den  gleichen  Effekt  wie beschrieben hat man  brigens  auch  beim 
+Vergr”ern  des Fensters,  wenn bereits die unterste  Zeile  bzw.  die 
+rechteste Zeile dargestellt wird. Auch hier ein Beispiel:
+  Ein Text habe 100 Zeilen,  das Fenster habe eine H”he von 20 Zeilen. 
+Da der Scrollbalken ganz unten ist,  werden also die Zeilen 80 bis 100 
+im Fenster dargestellt. Wird nun das Fenster nach unten vergr”ert, so 
+da  etwa  30 Zeilen Platz finden,  k”nnte man  eigentlich  nur  einen 
+weien  Bereich aufziehen,  da unterhalb von Zeile 100 ja keine  Daten 
+mehr sind.  Um dies zu verhindern,  scrollen die meisten Programme  in 
+dieser  Situation ihre Daten,  in unserem Beispiel um 10  Zeilen  nach 
+oben.  Folglich zeigt das Programm jetzt die Zeilen 70 bis 100 an;  da 
+es  aber auf einem TOS- Fehler aufbaut,  wird kein Neuzeichnen  veran-
+lat,  was unter Mag!X natrlich prompt zur Konfusion fhrt. Auch hier 
+w„re  ein  generelles Neuzeichnen des Fensters beim  Umsortieren  auch 
+unter  TOS nicht nur sauber,  sondern auch ohne Nebenwirkung,  da  TOS 
+auch hier unn”tige Redraws vermeidet.
+  Beim direkten Vergleich zwischen "Smart Redaw" und "TOS Redraw", was 
+hier durchaus im w”rtlichen Sinn als Gegenteil zu verstehen ist, zeigt 
+sich  in  ersterem  Fall ein  wesentlich  schnellerer,  ruhigerer  und 
+saubererer  Bildschirmaufbau,  der durchaus mit dem Macintosh-  System 
+konkurrieren kann und unter TOS selbst mit Blitter und 68040 Prozessor 
+in  dieser  Form nicht m”glich w„re.  Daher wird  dringend  empfohlen, 
+diese  elegante L”sung nicht durch Ausnutzen  undokumentierter  Eigen-
+schaften des TOS zunichte zu machen.

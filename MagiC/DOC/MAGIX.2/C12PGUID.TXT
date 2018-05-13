@@ -1,0 +1,1669 @@
+Mag!X 2.0 Programmers Guide
+---------------------------
+
+Was kann Mag!X und was [noch] nicht?
+------------------------------------
+
+Mag!X ist ein Multitaskingsystem, das seit der Version 2.0 mit pr„emptivem
+Multitasking arbeitet, ein weitgehend MultiTOS-kompatibles AES und ein
+Mehrproze-DOS enth„lt.
+Mag!X arbeitet (zur Zeit) nicht mit MiNT zusammen - was aber nicht bedeuten
+mu, da berhaupt keine MiNT-kompatiblen Funktionen unter Mag!X zur Verfgung
+stehen werden!!
+
+
+Wie erkenne ich Mag!X?
+----------------------
+
+Mag!X legt einen Cookie mit der Kennung 'MagX' an. Der Cookie enth„lt als
+Wert einen Zeiger auf folgende Struktur (-> MAGX.H):
+
+   typedef struct
+   {
+      long    config_status;
+      DOSVARS *dosvars;
+      AESVARS *aesvars;
+   } MAGX_COOKIE;
+
+- <config_status> ist der Konfigurations- Bitvektor, der durch das
+  Konfigurationsmodul MAGXCONF.[CPX/ACC] ver„ndert wird.
+
+- <dosvars> ist ein Zeiger auf die  DOSVARS-Struktur
+   typedef struct
+      {
+         char      *in_dos;                 /* Adresse der DOS- Semaphore */
+         int       *dos_time;               /* Adresse der DOS- Zeit      */
+         int       *dos_date;               /* Adresse des DOS- Datums    */
+         long      res1;                    /*                            */
+         long      res2;                    /*                            */
+         long      res3;                    /* ist 0L                     */
+         void      *act_pd;                 /* Laufendes Programm         */
+         long      res4;                    /*                            */
+         int       res5;                    /*                            */
+         void      res6;                    /*                            */
+         void      res7;                    /* interne DOS- Speicherliste */
+         void      (*resv_intmem)();        /* DOS- Speicher erweitern    */
+         long      (*etv_critic)();         /* etv_critic des GEMDOS      */
+         char *    ((*err_to_str)(char e)); /* Umrechnung Code->Klartext  */
+         long      res8;                    /*                            */
+         long      res9;                    /*                            */
+         long      res10;                   /*                            */
+      } DOSVARS;
+
+   Diese Variablen sind READ-ONLY!
+
+- <aesvars> zeigt auf die AESVARS- Struktur
+
+   typedef struct
+     {
+        long magic;                   /* mu $87654321 sein            */
+        void *membot;                 /* Ende der AES- Variablen       */
+        void *aes_start;              /* Startadresse                  */
+        long magic2;                  /* ist 'MAGX'                    */
+        long date;                    /* Erstelldatum ttmmjjjj         */
+        void (*chgres)(int res, int txt);  /* Aufl”sung „ndern         */
+        long (**shel_vector)(void);   /* residentes Desktop            */
+        char *aes_bootdrv;            /* von hieraus wurde gebootet    */
+        int  *vdi_device;             /* vom AES benutzter VDI-Treiber */
+        void *reservd1;
+        void *reservd2;
+        void *reservd3;
+        int  version;
+        int  release;
+     } AESVARS;
+
+   Diese Variablen sind READ-ONLY!
+
+Die ersten drei Variablen sind brigens auch im TOS vorhanden und k”nnen dort
+ber den Betriebssystem- Header ermittelt werden.
+vdi_device ist ab Mag!X 2.0 berflssig, weil man die Ger„tenummer MultiTOS-
+kompatibel ber appl_getinfo() erh„lt.
+Wichtig ist hierbei, da die Variable <aesvars> erst  beim Start von
+Mag!X-AES installiert wird und vorher NULL ist. Kein Programm, das Mag!X-
+spezifische AES-Aufrufe benutzt, sollte dies tun, bevor sowohl die Existenz
+des Cookies sichergestellt wurde als auch der Wert der Variablen <aesvars>
+als gltig, d.h. ungleich NULL, erkannt wurde.
+
+Zum Test auf Mag!X und die Mag!X-Versionsnummer wird folgende Routine
+empfohlen:
+
+/*-------------------------------------------------------------------------*/
+/* InqMagX()                                                               */
+/*                                                                         */
+/* Liefert                                                                 */
+/*  -1:   Kein Mag!X vorhanden                                             */
+/*  -2:   Mag!X installiert, aber Mag!X-AES inaktiv; d.h. Mag!X wird nur   */
+/*        als schnelles Dateisystem benutzt!                               */
+/*  >0:   Mag!X vorhanden und Mag!X-AES aktiv. Der Rckgabewert enth„lt    */
+/*        die BCD-codierte Versionsnummer.                                 */
+/*-------------------------------------------------------------------------*/
+
+#include "magx.h"
+
+WORD  InqMagX(void)
+{
+   MAGX_COOKIE  *cv;
+
+   if( getcookie('MagX',(LONG *)&cv) ){
+      if( cv->aesvars ){
+         return(cv->aesvars->version);
+      }
+      else return(-2);
+   }
+   else  return(-1);
+}
+
+Arbeitet mein Programm in einem Multitaskingsystem?
+---------------------------------------------------
+Um das festzustellen, gengt es die maximale Anzahl der parallel laufenden
+Applikationen zu ermitteln. Diese findet sich in s„mtlichen GEM-Versionen
+im global[1]  (auch als <ap_count> bezeichnet). Bei Singletasking-TOS steht
+hier ein 1. Alles andere bedeutet: Es liegt ein Multitaskingsystem vor;
+steht hier -1 gibt es keine Beschr„nkung (auáer durch den vorhandenen
+Speicher).
+
+
+AES allgemein
+-------------
+Die Funktionalit„t des Mag!X-AES wurde in Version 2.0 soweit m”glich (und
+sinnvoll) an MultiTOS angen„hert. Welche Funktionen implementiert wurden,
+k”nnen Sie mit Hilfe der erweiterten appl_getinfo()-Funktion gezielt
+ermitteln. Die Funktion steht in dieser (erweiterten) Form auch ab MultiTOS
+Rev. 1.07 zur Verfgung!
+
+MTOS-kompatible AES-Funktionen in Mag!X 2.0
+-------------------------------------------
+
+APPL_FIND
+---------
+Diese   Funktion  ermittelt  im  GEM  die  ID  der  mit  <pname>  bergebenen
+Applikation.  In  Mag!X und MultiTOS kann man zus„tzlich durch šbergabe eines
+Nullpointers  die  ID  der  aktuellen  Applikation  ermitteln (ist eigentlich
+unn”tig,  da  diese  in  global[2]  unter  allen TOS- Versionen zur Verfgung
+steht, aber eben in MultiTOS so dokumentiert ...).
+Die  in  MultiTOS  eingebauten zus„tzlichen Modi zur Umsetzung der PID in die
+Applikations-ID  sind in Mag!X 2.0 nicht vorhanden. Sobald Dlock() eingebaut
+ist,  wird  diese  Funktion  jedoch  zur  Verfgung stehen. Das Vorhandensein
+dieses Features ist ber appl_getinfo() nachprfbar.
+
+Deklaration:
+
+   int appl_find(const char *pname);
+
+   Parameter:
+        contrl[0] = 13
+        contrl[1] = 0
+        contrl[2] = 1
+        contrl[3] = 1
+        contrl[4] = 0
+
+        int_out[0] = ap_id
+        addr_in[0] = pname
+
+   Bedeutung von <ap_id>
+
+       -1: falls das AES die angegebene Applikation nicht finden konnte
+    sonst: ID
+
+   Bedeutung von <pname>
+
+      Dateiname der zu suchenden Applikation (ohne Extension). Der
+      nullterminierte String mu aus 8 Zeichen bestehen - ggf. mit
+      Leerzeichen auffllen.
+      Wird ein Nullpointer bergeben, so wird die ID der aktuellen
+      Applikation ermittelt.
+
+
+APPL_READ
+---------
+Diese  Funktion  liest eine bestimmte Anzahl von Bytes aus der "message pipe"
+des  AES.  Die  Funktion  wartet  ggf.,  bis  die  angeforderte  Anzahl Bytes
+tats„chlich  zur  Verfgung stehen. In Mag!X und MultiTOS ist die Funktion so
+erweitert  worden, da sie mit einer entsprechenden Meldung zurckkehrt, wenn
+keine Daten vorhanden sind.
+
+Deklaration:
+
+   int appl_read(int rwid, int length, void *pbuff);
+
+   Parameter:
+        contrl[0] = 11
+        contrl[1] = 2
+        contrl[2] = 1
+        contrl[3] = 1
+        contrl[4] = 0
+
+        int_in[0]  = rwid
+        int_in[1]  = length
+        int_out[0] = ap_rreturn     0: Fehler
+        addr_in[0] = pbuff
+
+
+   Bedeutung von <rwid>
+        -1: Lies "message pipe" nur aus, wenn Daten vorhanden sind. Andernfalls
+            kehre sofort zurck
+     sonst: ap_id der [eigenen!] Applikation
+
+   Bedeutung von <length>
+      Anzahl der zu lesenden Bytes
+
+   Bedeutung von <pbuff>
+      Puffer, in dem die einzulesenden Bytes abgelegt werden sollen
+
+
+APPL_SEARCH
+------------
+Diese Funktion sucht in Mag!X und MultiTOS alle im System vorhanden
+Applikationen.
+
+Deklaration:
+   int   appl_search( int ap_smode, char *ap_sname, int *ap_stype,
+                      int *ap_sid );
+
+    Parameter:
+        contrl[0] = 18
+        contrl[1] = 1
+        contrl[2] = 3
+        contrl[3] = 1
+        contrl[4] = 0
+
+        int_in[0]     = ap_smode
+        addr_in[0]    = ap_sname
+        int_out[0]    = ap_sreturn
+        int_out[1]    = ap_stype
+        int_out[2]    = ap_sid
+
+   Bedeutung von <ap_smode>
+      0: Suche erste App.
+      1: Suche n„chste App.
+      2: Suche die System Shell
+
+   Bedeutung von <ap_sname>
+      Puffer, der den Namen der gefunden Applikation aufnimmt. Mindestgr”e
+      9 Bytes!
+
+   Bedeutung von <ap_stype>
+      1: System-Proze
+      2: Applikation
+      4: Accessory
+
+   Bedeutung von <ap_sid>
+      Applikations-ID
+
+   Bedeutung von <ap_sreturn>
+      0: keine weiteren Applikationen vorhanden
+      1: kein Fehler
+
+- appl_getinfo() s.u.
+
+
+
+GRAF_MOUSE
+----------
+In  Mag!X  und  Multitos  werden  die Mauszeiger applikationslokal verwaltet.
+Neben  den  im  TOS vorhandenen graf_mouse()-Opcodes stehen die Codes 258,259
+und  260  zur  Verfgung,  die  z.B. von neueren XCONTROL-Versionen verwendet
+werden.
+
+   Bedeutung der neuen Opcodes:
+
+      258 - Sichere aktuelle Mausform
+      259 - Stelle die zuletzt gesicherte Mausform wieder her
+      260 - Stelle die vorherige Mausform wieder her
+
+
+
+OBJC_SYSVAR
+-----------
+MultiTOS  bietet  zur  Modifikation der 3D-Objekte die Funktion objc_sysvar()
+an.  Diese  Funktion  ist  in Mag!X ebenfalls vorhanden, l„t aufgrund der in
+Mag!X  2.00  noch  fehlenden 3D-Objekte allerdings keine Modifikationen zu ->
+Rckgabewert von objc_sysvar() beachten!!
+
+
+MENU_BAR
+--------
+Diese  Funktion  zeichnet  oder  l”scht  die Menzeile. In Mag!X und MultiTOS
+kann man zus„tzlich den Eigner der Menleiste erfragen.
+
+Deklaration:
+   int menu_bar( OBJECT *me_btree, int me_bshow );
+
+     Parameter:
+        contrl[0] = 30
+        contrl[1] = 1
+        contrl[2] = 1
+        contrl[3] = 1
+        contrl[4] = 0
+
+        int_in[0]  = me_bshow
+        int_out[0] = me_breturn
+        addr_in[0] = me_btree
+
+   Bedeutung von  <me_bshow>
+       0:   L”sche Menzeile
+       1:   Zeichne Menzeile
+      -1:   menu_bar() ermittelt die ID des Eigners der Menzeile. Wenn der
+            Rckgabewert <me_breturn> -1 ist, so gibt es keinen Eigner.
+            Da die Menzeile laufend wechseln kann, mu zur sicheren Abfrage
+            der Bildschirm per wind_update gesperrt werden.
+
+            Beispiel:
+
+
+            wind_update(1);     
+
+            id = menu_bar( 0x0L, -1 );
+
+            if ( id == my_id )
+            {
+                 /* update the menu and draw it */
+            }
+            else
+            {
+               /* update the menu but don't draw it */
+            }
+
+            wind_update(0);
+
+
+RSRC_RCFIX
+----------
+Diese  in  Mag!X  und  Multitos  vorhanden  Funktion pat von der Applikation
+bereits   in  den  Speicher  geladene  Resourcedaten  an.  Dabei  werden  die
+Koordinaten vom Zeichen- in Pixelkoordinaten umgewandelt.
+Falls  die  Applikation vor dem Aufruf dieser Funktion bereits eine RSC-Datei
+geladen  hat,  so mu diese vorher mit rsrc_free() freigegeben werden. Ebenso
+mu beim Beenden der Applikation rsrc_free() aufgerufen werden.
+
+Also:
+
+     rsrc_load("dateiname")
+
+ist gleichbedeutend mit
+
+     "dateiname" einlesen (per Fopen/Fread)
+     rsrc_rcfix()
+
+Der  Vorteil  der  zweiten  Vorgehensweise  ist,  da  man,  statt  die Datei
+einzulesen,  diese  bereits  in  der  PRG- Datei integrieren kann und einfach
+rsrc_rcfix() aufruft.
+
+Deklaration:
+
+   int   rsrc_rcfix(RSHDR *rc_header);
+
+   Parameter:
+        contrl[0] = 115
+        contrl[1] = 0
+        contrl[2] = 1
+        contrl[3] = 1
+        contrl[4] = 0
+
+        int_out[0] = rc_return
+        addr_in[0] = rc_header
+
+   Bedeutung von <rc_header>
+      Die Adresse des RSC-Header im Speicher - hinter diesem mssen die RSC-
+      Daten liegen.
+
+SHEL_GET
+--------
+Diese  Funktion  dient  zum Einlesen von Zeichen aus dem sogenannten internen
+AES-  Environment-Speicher.  Unter Mag!X und MultiTOS kann man zus„tzlich die
+L„nge dieses Speichers ermitteln.
+Es  handelt sich nicht tats„chlich um das Environment (das Variablen wie PATH
+enth„lt),  sondern  um  den  Puffer, der im alten TOS das DESKTOP.INF mit den
+Kontrollfelddaten  enthielt. Unter Mag!X werden beim Start des AES alle Daten
+in den Puffer kopiert, die nach der Zeile #_CTR in MAGX.INF liegen.
+
+Deklaration:
+
+   int shel_get( char *sh_gaddr, int sh_glen );
+
+   Parameter:
+     contrl(0) = 122
+     contrl(1) = 1
+     contrl(2) = 1
+     contrl(3) = 1
+     contrl(4) = 0
+
+     int_in(0)  = sh_glen
+     addr_in(0) = sh_gaddr
+     int_out(0) = sh_greturn     0: Fehler
+
+   Bedeutung von <sh_glen>
+      -1:   <sh_greturn> liefert die Gr”e des internen Speichers zurck
+   sonst:   Anzahl der zu lesenden Bytes
+
+   Bedeutung von <sh_gaddr>
+      Anfangsadresse des Zielspeichers
+
+
+WIND_GET
+--------
+Liefert je nach Unterfunktion verschiedene Informationen ber ein Fenster.
+
+Deklaration:
+
+  int wind_get( int w_handle, int w_field, int *pw1, int *pw2,
+                int *pw3, int *pw4);
+
+  Parameter:
+        contrl[0] = 104
+        contrl[1] = 2
+        contrl[2] = 5
+        contrl[3] = 0
+        contrl[4] = 0
+
+        int_in[0]  = w_handle
+        int_in[1]  = w_field
+        int_out[0] = Return-Wert (0: Fehler)
+        int_out[1] = pw1
+        int_out[2] = pw2
+        int_out[3] = pw3
+        int_out[4] = pw4
+
+   Bedeutung von <w_handle>
+      Kennung des betreffenden Fensters
+
+   Bedeutung von <w_field>
+      Gewnschte Information. Die Inhalte von pw1 ... pw4 h„ngen ab von:
+
+Folgende Erweiterungen sind in Mag!X und MultiTOS vorhanden:
+
+WF_TOP (10):
+   pw1: topwin          ;Kennung des obersten Fensters
+   pw2: topowner        ;App-Id des Eigners
+   pw3: belowwin        ;n„chstes Fenster
+   pw4: topwin          ;nur unter Mag!X
+
+  Liefert die Kennung des obersten Fensters, des n„chsten Fensters (das
+  n„chste Fenster des Desktop-Hintergrund ist -1!) und die App-Id des
+  Eigners des obersten Fensters im Fensterstapel.
+  Ist kein Fenster offen, enth„lt topwin 0.
+
+  Achtung:  Mag!X mu als oberstes Fensterhandle eine negative Zahl (-2)
+            liefern, falls das Programm einer anderen Applikation geh”rt,
+            sonst laufen eine Reihe alter Programme nicht (->Tempus u.v.a.m).
+            Ab Mag!X 2.0 wird das tats„chliche Handle in pw4 zurckgeliefert.
+
+  Hinweis:  Eine einzelne Applikation sollte unter Mag!X 2.0 nicht mehr als
+            16 Fenster nutzen, da sonst der Nachrichtenpuffer des Systems
+            berlaufen kann und evtl. Redraws nicht mehr ausgefhrt werden
+            k”nnen.
+
+WF_NEWDESK (14)
+   pw1: hi
+   pw2: lo
+   pw3: firstob      ;nur unter Mag!X
+
+   Liefert die Adresse (hi/lo) des aktiven Desktop-Hintergrunds und (unter
+   Mag!X) zus„tzliche die Objektnummer.
+
+WF_OWNER (20):
+   pw1: owner           ;App-Id des Eigners
+   pw2: isopen          ;ge”ffnet (1) oder geschlossen (0)
+   pw3: abovewin        ;Kennung des darber liegenden Fensters
+   pw4: belowwin        ;Kennung des darunter liegenden Fensters
+
+  Liefert Informationen ber ein Fenster. Das Fenster kann auch
+  geschlossen sein (d.h. es ist nicht im Fensterstapel), bzw.
+  gar nicht existieren (dann liefert die Funktion 0).
+
+WF_BEVENT (24):
+   pw1: bstate
+
+  Liefert den BEVENT-Status des Fensters im Bit 0 von <bstate>.
+
+
+
+WF_DCOLOR (19):
+   pw1: Fensterelement
+   pw2: Farbe des aktiven Fensters
+   pw3: Farbe des inaktiven Fensters
+
+   Die Funktion liefert die Fensterfarben (wird z.B. von dem CPX-Modul
+   WCOLOR verwendet).
+
+
+
+WIND_SET
+--------
+Je nach Unterfunktion werden verschiedene Fenstereigenschaften ver„ndert
+
+Deklaration:
+
+  int wind_set( int w_handle, int w_field, int w1, int w2, int w3, int w4);
+
+  Parameter:
+        contrl[0] = 105
+        contrl[1] = 6
+        contrl[2] = 1
+        contrl[3] = 0
+        contrl[4] = 0
+
+        int_in[0] = w_handle
+        int_in[1] = w_field
+        int_in[2] = w1
+        int_in[3] = w2
+        int_in[4] = w3
+        int_in[5] = w4
+        int_out[0] = Return-Wert (0: Fehler)
+
+
+   Bedeutung von <w_handle>
+      Kennung des betreffenden Fensters
+
+   Bedeutung von <w_field>
+      Unterfunktionsnummer; w1 ... w4 werden in Abh„ngigkeit davon
+      interpretiert
+
+Folgende Erweiterungen sind in Mag!X und MultiTOS vorhanden:
+
+WF_DCOLOR (19):
+   w1: Fensterelement
+   w2: Farbe fr aktive Fenster
+   w3: Farbe fr inaktive Fenster
+
+   Die Funktion „ndert die Fensterfarben (wird z.B. von dem CPX-Modul
+   WCOLOR verwendet).
+
+   Achtung: Die Unterfunktion WF_COLOR (18), die einem bestimmten Fenster
+            eine eigene Farbgebung erm”glicht, wird nicht untersttzt. Die
+            Funktion belegt eine bereits durch GEM/2 definierte Funktion
+            (WF_TATTRB) und der Nutzen dieses Features ist mehr als
+            fragwrdig.
+            Wird die Fensterfarbe nicht beim Booten, sondern sp„ter von Hand
+            umgeschaltet, sollte ein Aufr„umen des Bildschirms durchgefhrt
+            werden.
+
+WF_BEVENT (24):
+   w1: bstate     ;1: WF_BEVENT aktiv, 0: inaktiv
+
+   WF_BEVENT sorgt dafr, da der Besitzer des Fensters beim Klick
+   in das Fensterinnere keine WM_TOPPED-Nachricht erh„lt, wenn das
+   Fenster nicht aktiv ist. Stattdessen wird ein MU_BUTTON aus-
+   gel”st, falls der Besitzer eine entsprechende Anforderung bei
+   evnt_multi() gestellt hat.
+
+WF_BOTTOM (25):
+   WF_BOTTOM stellt ein Fenster im Fensterstapel nach hinten. Das
+   Fenster mu offen sein!
+
+
+WIND_UPDATE
+-----------
+Mag!X implementiert den 'check and set mode' von AES 4.0, der durch ein
+gesetztes Bit 8 (also BEG_UPDATE | 0x100 bzw. BEG_MCTRL | 0x100) aktiviert
+wird.
+In diesem Modus wird die Update-Kontrolle nur noch bernommen, falls keine
+andere Applikation die Kontrolle hat oder die eigene Applikation die
+Update-Kontrolle besitzt.
+Kann die Applikation die Kontrolle nicht bernehmen, liefert die Funktion
+den Wert 0.
+
+
+Nachrichten
+-----------
+WM_UNTOPPED (30):
+WM_ONTOP (31):
+
+Diese Meldungen werden dazu benutzt, um Applikationen ber eine Ver„nderung
+des aktiven Fensters zu informieren. WM_UNTOPPED wird nach dem ™ffnen bzw.
+Aktivieren eines Fensters an den Besitzer des vorher aktiven Fensters
+geschickt. WM_ONTOP wird nach dem Schlieen bzw. Deaktivieren des aktiven
+Fensters an den Besitzer des danach aktiven Fensters geschickt. Zum
+Zeitpunkt der Ankunft der Nachricht kann sich der Fensterstapel bereits
+wieder ver„ndert haben. Beide Funktionen liefern in mbuf[3] die
+Fensterkennung.
+
+Achtung: Nach MultiTOS- Spezifikation werden die Nachrichten nur
+         verschickt, wenn die Applikation nicht mit einem Aufruf das
+         Fenster selbst in den Vordergrund/Hintergrund gelegt hat.
+         Die Nachrichten WM_ONTOP werden im Nachrichtenpuffer des AES
+         verschmolzen, damit wird immer die letzte Nachricht empfangen, es
+         k”nnen sich nicht mehrere im Puffer befinden.
+
+WM_BOTTOMED (33):
+
+Mit dieser Nachricht wird fordert der SCREENMANAGER die Applikation auf,
+das spezifizierte Fenster mit wind_set( win, WF_BOTTOM, 0,0,0,0) nach
+hinten zu stellen.
+
+Hinweis: Diese Nachricht war beim Erscheinen von Mag!X 2.0 in der
+         offiziellen MTOS-Version 1.01 noch nicht implementiert. Mag!X 2.0
+         sendet daher zur Zeit [noch] die (Mag!X-spezifische) WM_M_BDROPPED
+         (100)-Nachricht. Zuknftigen Mag!X-Versionen werden die
+         inzwischen in MTOS á-Versionen eingefhrte WM_BOTTOMED-Message
+         untersttzen.
+
+
+SH_WDRAW (72):
+
+Mit dieser Nachricht informiert eine Applikation die Shell, daá sich der
+Inhalt eines Laufwerks ge„ndert hat und die Fenster der Shell zu
+aktualisieren sind.
+Die Laufwerksnummer wird in mbuf[3] spezifiziert; 0 fr Laufwerk A:, 1 fr
+Laufwerk B:, etc.. Wird in mbuf[3] -1 eingetragen, so aktualisiert die
+Shell alle Fenster.
+Diese Nachricht wird von MAGXDESK und auch von EASE 3 und GEMINI 2
+untersttzt.
+
+CH_EXIT (90):
+
+Die Nachricht wird an den Parent-Prozeá geschickt, wenn das (per
+shel_write) gestartete Child beendet wird.
+mbuf[3] enth„lt die App-Id des Child; mbuf[4] den Rckgabewert ("exit
+code").
+
+
+Mag!X-spezifische Nachrichten
+-----------------------------
+WM_M_BDROPPED (100):
+
+Da die noch aus Mag!X 1.0 stammende Nachricht WM_BACKDROPPED leider mit
+WM_ONTOP (MultiTOS) identisch war, wurden die Mag!X-spezifischen
+Nachrichten ab Mag!X 2.0 auf Codes >= 100 gelegt und in MAGX.H mit XX_M_YY
+definiert.
+Statt WM_BACKDROPPED (31) gibt es jetzt WM_M_BDROPPED (100). Diese
+Nachricht erh„lt eine Applikation, wenn Sie beim wind_create() das
+Fensterobjekt BACKDROP (0x2000) angemeldet hat und der Backdrop-Button
+bet„tigt wurde. Die Applikation kann dann das Fenster per wind_set(whdl,
+WF_BOTTOM) selbst in den Hintergrund legen oder anderweitig sinnvoll
+reagieren.
+
+Wird das Bit BACKDROP bei wind_create() nicht gesetzt, bernimmt Mag!X in
+eigener Regie die vollst„ndige Behandlung des Backdrop- Buttons. Dies gilt
+insbesondere fr jegliche „ltere Software, die so ebenfalls vom Backdrop-
+Button profitieren kann. In diesem Fall schickt das AES die Nachricht
+WM_TOPPED an das n„chste Fenster, worauf das Programm mit wind_set(WF_TOP)
+reagieren kann. Statt das zweite Fenster nach oben zu bringen, schickt AES
+das oberste nach unten, womit das zweite nach oben kommt. Reagiert das
+Programm nicht auf die WM_TOPPED-Nachricht (weil z.B. ein Dialog erst
+beendet werden soll), so unterbleibt das Backdroppen.
+Mit der Funktion appl_getinfo() ist abfragbar, ob ein expliziter
+BACKDROP-Button vom AES untersttzt wird.
+
+... und wie kann ich erkennen, welche Funktionen zur Verfgung stehen?
+----------------------------------------------------------------------
+(appl_getinfo)
+
+Seit  geraumer  Zeit  (AES  Version 4.0, also auch im MultiTOS 1.0) existiert
+die  AES-  Funktion  appl_getinfo(),  die  seit  MultiTOS 1.07á (AES V4.01) in
+neuen   Unterfunktionen   (ab  Funktionsnummer  4)  auch  Informationen  ber
+vorhandene  Funktionsaufrufe  und Eigenschaften sowohl von Mag!X als auch von
+MultiTOS liefert.
+Mit  Hilfe dieser in Mag!X 2.0 und MultiTOS vorhandenen Funktion lassen sich
+gezielt   Eigenschaften   beider   Systeme   auch   zur   Laufzeit  erfragen.
+Gewissermaen  ist  dies  die  Absegnung  der neuen Mag!X- Funktionen seitens
+Atari.  Ferner  werden wir uns bemhen, zuknftige Erweiterungen beiderseitig
+abzustimmen,   um   Unvertr„glichkeiten   zwischen   Mag!X  und  MultiTOS  zu
+verhindern.
+Fr  den  Fall,  da  die  GEM-Bibliothek  Ihres Compilers diesen Aufruf noch
+nicht  untersttzt, folgt hier der Aufruf und die Definition dieser Funktion.
+Man bergibt eine Unterfunktionsnummer und erh„lt 4 Rckgabewerte:
+
+   ap_greturn = appl_getinfo( ap_gtype, &ap_gout1, &ap_gout2,
+                              &ap_gout3, &ap_gout4 );
+
+  Die Parameter sind:
+     control[0] = 130;
+     control[1] = 1;
+     control[2] = 5;
+     control[3] = 0;
+     control[4] = 0;
+
+     int_in[0]     = ap_gtype;      /* Unterfunktionsnummer */
+     int_out[0]    = ap_greturn;    /* Rckgabewert   */
+     int_out[1]    = ap_gout1;      /* Wort 1   */
+     int_out[2]    = ap_gout2;      /* Wort 2   */
+     int_out[3]    = ap_gout3;      /* Wort 3   */
+     int_out[4]    = ap_gout4;      /* Wort 4   */
+
+  <ap_greturn> zeigt ggf. Fehler an:
+      0 - Fehler
+      1 - Kein Fehler
+
+
+  Es gibt folgende Unterfunktionen; sie sind auch unter Mag!X vorhanden:
+
+  Funktion 0: Informationen ber den normalen AES- Zeichensatz
+  -> Wort 1    Fonth”he
+     Wort 2    Font-ID
+     Wort 3    Font-Typ (0=system,1=FSM)
+
+  Funktion 1: dito fr den kleinen Zeichensatz
+
+  Funktion 2: Farben
+  -> Wort 1    VDI-Ger„tenummer (device id)
+     Wort 2    Farben fr OBJECTs
+     Wort 3    Farbicons vorhanden (1) bzw. nicht (0)
+     Wort 4    neues RSC-Format vorhanden (1) oder nicht (0)
+
+  Funktion 3: Sprache
+  -> Wort 1    0 - Englisch
+               1 - Deutsch
+               2 - Franz”sisch
+               3 - reserviert
+               4 - Spanisch
+               5 - Italienisch
+               6 - Schwedisch
+
+  Funktion 4: allgemeine Information Nr. 1
+  -> Wort 1    Multitasking pr„emptiv (1) oder nicht (0)
+     Wort 2    appl_find konvertiert MiNT und AES-IDs (1) oder nicht (0)
+     Wort 3    appl_search vorhanden (1) oder nicht (0)
+     Wort 4    rsrc_rcfix vorhanden (1) oder nicht (0)
+
+  Funktion 5: allgemeine Information Nr. 2
+  -> Wort 1    objc_xfind vorhanden (1) oder nicht (0)
+     Wort 2    reserviert, immer 0
+     Wort 3    menu_click (GEM/3 + Mag!X) vorhanden (1) oder nicht (0)
+     Wort 4    shel_r/wdef (GEM/3 + Mag!X) vorhanden (1) oder nicht (0)
+
+  Funktion 6: allgemeine Information Nr. 3
+  -> Wort 1    appl_read(-1) vorhanden (1) oder nicht (0)
+     Wort 2    shel_get(-1) vorhanden (1) oder nicht (0)
+     Wort 3    menu_bar(-1) vorhanden (1) oder nicht (0)
+     Wort 4    menu_bar(MENU_INSTL) (Mag!X) vorhanden (1) oder nicht (0)
+
+  Funktion 7: reserviert fr Mag!X und andere Erweiterungen, MultiTOS setzt
+              alle Rckgabewerte immer auf 0
+
+  Funktion 8: Maus
+  -> Wort 1    graf_mouse- Modi 258-260 vorhanden (1) oder nicht (0)
+     Wort 2    Mausform vom AES fr jede App. verwaltet (1) oder nicht (0)
+
+  Funktion 9: Mens
+  -> Wort 1    MultiTOS-Submens vorhanden (1) oder nicht (0)
+     Wort 2    MultiTOS-Popups vorhanden (1) oder nicht (0)
+     Wort 3    MultiTOS-Scrollmens vorhanden (1) oder nicht (0)
+     Wort 4    erweiterte MN_SELECTED- Nachricht vorhanden (1) oder nicht (0)
+
+  Funktion 10: shel_write
+  -> Wort 1    vorhandene Modi
+               Bit 0..7:  h”chster zul„ssiger Wert fr sh_wdoex & 0x00ff
+               Bit 8..15: Bits von sh_wdoex & 0xff00, die wie in MultiTOS
+                          behandelt werden
+     Wort 2    1: shel_write(0) macht vorherige shel_write- Aufrufe ungltig
+                  (d.h. das Desktop wird Nachfolgeprogramm) (TOS 1.4 &
+                   Mag!X)
+               0: startet Programm (MultiTOS)
+     Wort 3    1: shel_write(1) startet Programm nach Beendigung des
+                  laufenden (TOS 1.4 & Mag!X)
+               0: startet Programm sofort (MultiTOS)
+     Wort 4    ARGV via sh_wiscr untersttzt (1) oder nicht (0)
+
+  Funktion 11: Fenster
+  -> Wort 1    gesetzte Bits signalisieren untersttzte Funktionen:
+               Bit 0: WF_TOP liefert zweitoberstes Fenster
+                   1: wind_get(WF_NEWDESK)
+                   2: wind_g/set(WF_COLOR)
+                   3: wind_g/set(WF_DCOLOR)
+                   4: wind_get(WF_OWNER)
+                   5: wind_g/set(WF_BEVENT)
+                   6: WF_BOTTOM
+                   7: WF_ICONIFY
+                   8: WF_UNICONIFY
+                   9..15: reserviert, immer 0
+     Wort 2    reserviert, 0
+     Wort 3    vorhandene Fensterbuttons:
+               Bit 0: Iconifier
+                   1: Backdrop-Button (Mag!X)
+                   2: Shift-Click fr Backdrop
+                   3: "Hot" Closebox (GEM/3 & Mag!X)
+                   4..15: reserviert, 0
+     Wort 4    wind_update check_and_set vorhanden (1) oder nicht (0)
+
+  Funktion 12: Nachrichten
+  -> Wort 1    gesetzte Bits signalisieren untersttzte Nachrichten:
+               Bit 0: WM_NEWTOP
+                   1: WM_UNTOPPED
+                   2: WM_ONTOP
+                   3: AP_TERM
+                   4: MultiTOS- Aufl”sungswechsel
+                   5: CH_EXIT
+                   6: WM_BOTTOM
+                   7: WM_ICONIFY
+                   8: WM_UNICONIFY
+                   9: WM_ALLICONIFY
+     Wort 2    reserviert, alle 0
+     Wort 3    WM_ICONIFY liefert Koordinaten (1) oder nicht (0)
+
+  Funktion 13: OBJECTs
+  -> Wort 1    3D- Objekte ber ob_flags vorhanden (1) oder nicht (0)
+     Wort 2    objc_sysvar vorhanden (1) oder nicht (0)
+
+
+     Wort 3    Speedo- und GDOS- Fonts im TEDINFO erlaubt (1) oder nicht (0)
+     Wort 4    reserviert fr Mag!X, wird von MultiTOS auf 0 gesetzt
+               Bit 0: G_SWBUTTON vorhanden
+                   1: G_POPUP vorhanden
+                   2: WHITEBAK steuert Unterstriche und Buttons
+
+  Funktion 14: Formulare (Mag!X form_xdo und form_xdial)
+  -> Wort 1    Mag!X- Flydials vorhanden (1) oder nicht (0)
+     Wort 2    Mag!X- Tastaturtabellen vorhanden (1) oder nicht (0)
+     Wort 3    letzte Cursorposition wird zurckgegeben (1) oder nicht (0)
+     Wort 4    reserviert, 0
+
+
+GEM/2- und GEM/3-kompatible Funktionen in Mag!X
+-----------------------------------------------
+
+Mag!X untersttzt folgende GEM/2- bzw. GEM/3-Funktionen:
+
+void appl_yield     ( void );                               /* GEM 2.x     */
+int  menu_click     ( int val, int setit );                 /* GEM 3.x     */
+void shel_rdef      ( char *cmd, char *dir );               /* GEM 2.x     */
+void shel_wdef      ( char *cmd, char *dir );               /* GEM 2.x     */
+int  menu_unregister( int menu_id );                        /* GEM 2.x     */
+int  scrp_clear     ( void );                               /* GEM 2.x     */
+int  xgrf_stepcalc  (                                       /* GEM 2.x     */
+                      int orgw, int orgh, int xc, int yc, int w, int h,
+                      int *cx, int *cy, int *stepcnt, int *xstep, int *ystep
+                    );
+int  xgrf_2box      (                                       /* GEM 2.x     */
+                      int xc, int yc, int w, int h,int corners, int stepcnt,
+                      int xstep, int ystep, int doubled
+                    );
+
+und als Fensterelement:
+
+#define HOTCLOSEBOX      0x1000                             /* GEM 2.x     */
+
+Die Bedeutung der einzelnen Funktionen entnehmen Sie bitte der entsprechenden
+GEM-Literatur. Gegenber der GEM/2-Doku muáten aus Kompatiblit„tsgrnden zu
+MultiTOS die Belegung von global[13] und global[14] ge„ndert werden - sie ist
+damit nicht mehr kompatibel zu GEM/2!
+Die Funktionen-Nummern von xgrf_stepcalc() und xgrf_2box() sollten von
+GEM-Programme nicht benutzt werden - sie sind nur aus Grnden der
+Abw„rtskompatiblit„t fr „ltere GEM/2-Programme implementiert.
+
+Ein wenig erweitert wurde der Mechanismus zum Einbinden eines alternativen
+Desktop:
+Mit shel_wdef( char *cmd, char *dir ) legt man das alternative Desktop fest,
+dasselbe tut auch der Parameter #_SHL in MAGX.INF. Sind <cmd> und <dir>
+Leerstrings, ist MAGXDESK wieder installiert. Ein alternatives Desktop macht
+zum  Programmstart einfach ein shel_write und beendet sich dann per Pterm0().
+Ein alternatives Desktop bekommt von Mag!X folgende Kommandozeile, die
+dieses ber shel_read() ermitteln kann:
+
+   typedef struct
+        {
+        int  dummy;                   /* ein Nullwort               */
+        long magic;                   /* 'SHEL', wenn ist Shell     */
+        int  isfirst;                 /* erster Aufruf der Shell    */
+        long lasterr;                 /* letzter Fehler             */
+        int  wasgr;                   /* Programm war Grafikapp.    */
+        } SHELTAIL;
+
+Gibt  die  Shell  einen negativen Fehlercode zurck, wird automatisch  wieder
+MAGXDESK aktiviert.
+
+Starten von Programmen
+----------------------
+Beim Start von Programmen aus einem eigenem Programm gibt es prinzipiell
+zwei M”glichkeiten:
+Soll das eigene Programm verlassen werden, so bergibt man dem AES per
+shel_write() Pfad und Parameter des zu startenden Programms und beendet
+sich. Die andere Methode ist, das Programm als "Kind-Proze" direkt ber
+die DOS-Funktion Pexec() zu starten, was gewissermaen am AES vorbei
+geschieht und zu Schwierigkeiten fhren kann, da Programm und Parameter dem
+AES nicht bekannt sind. Im Gegensatz zur L”sung ber shel_write() bleibt
+hier das aufrufende Programm im Speicher, das neue wird wie ein
+Unterprogramm aufgerufen, w„hrend jenes solange angehalten wird.
+Die sauberere Alternative ist zweifelsohne der shel_write()- Aufruf. Als
+Unterfunktion gibt es hierbei den Paramter <isover> und <isgr (siehe dazu
+einschl„gige Literatur),  wobei <isover> folgende Werte annehmen kann (alle
+in MAGX.H definiert):
+
+#define SHW_IMMED        0                           /* PC-GEM 2.x  */
+#define SHW_CHAIN        1                           /* TOS         */
+#define SHW_DOS          2                           /* PC-GEM 2.x  */
+#define SHW_PARALLEL     100                         /* MAG!X       */
+#define SHW_SINGLE       101                         /* MAG!X       */
+
+Unter TOS existiert nur die Unterfunktion SHW_CHAIN, man darf daher unter
+Singletasking-TOS auf keinen Fall einen anderen Wert als 1 bergeben, auch
+wenn Atari schon anderes behauptet hat. Die Unterfunktion  SHW_CHAIN
+bernimmt einfach nur die Parameter und startet das  Programm  erst, wenn
+das aktuelle beendet wurde; die Programme laufen also nacheinander ab. Nach
+Beendigung des neuen Programms landet man wieder im Desktop, es sei denn,
+dieses macht wiederum einen entsprechenden shel_write()- Aufruf.
+Die Funktion SHW_IMMED startet unter PC-GEM 2.x oder 3.x das Programm
+sofort, w„hrend das laufende solange angehalten wird. Nach Beendigung des
+neuen Programms l„uft das alte weiter. Der Aufruf funktioniert wie ein
+Pexec(), man ben”tigt ihn daher eigentlich nicht.
+SHW_DOS beendet auf dem PC das GEM vollst„ndig, um ein Programm zu starten,
+das nicht unter GEM l„uft und sehr viel Seicher ben”tigt (das generelle PC-
+Problem ...), Speicherprobleme gibt es auf dem Atari in der Form nicht,
+also ist auch diese Unterfunktion uninteressant.
+
+SHW_PARALLEL
+------------
+Unter Mag!X gibt es nun zus„tzliche  Modi. Am wichtigsten ist SHW_PARALLEL,
+der einfach eine neue Applikation startet; ab diesem Moment laufen der alte
+und der neue Proze parallel. Die Funktion lieft die <ap_id> der
+gestarteten Applikation zurck; wird diese beendet, so erh„lt der Aufrufer
+die Nachricht CH_EXIT.
+Zur Unterscheidung von GEM- und TOS-Programmen (letztere werden ins Fenster
+umgeleitet) dient der Parameter <isgr>. Der Wert 1 zeigt an, daá eine
+GEM-Applikation gestartet werden soll, ein Wert 0 zeigt an, daá das
+Programm keine Grafikapplikation (also ein TOS-Programm) ist.
+
+
+SHW_SINGLE
+----------
+Der Modus SHW_SINGLE ist notwendig fr unsauber geschriebene Programme und
+funktioniert wie der ganz normale Modus SHW_CHAIN, jedoch werden vor
+Programmstart alle Applikationen auer 0 (Hauptapplikation) und 1
+(Bildschirmmanager) eingefroren und nach Programmende wieder aufgetaut; der
+Aufruf ist (aus Kompatibilit„tsgrnden) _nur_ durch die Applikation 0
+m”glich. Dieser Modus ist insofern nicht vollst„ndig kompatibel zum TOS,
+als hierbei auch s„mtliche Accessories gesperrt werden. Dies ist jedoch
+n”tig, da unter Mag!X Fenster von Accessories beim Programmstart nicht
+geschlossen werden und es meistens gerade die Fenster sind, die
+unordentlich geschriebene Applikationen verwirren. Normalerweise kommen
+Programme, die unter Mag!X nicht ordnungsgem„ funktionieren und den
+Single-Modus ben”tigen, auch unter TOS nicht mit Accessories klar, so da
+diese Eigenschaft von Mag!X unkritisch ist.
+
+Beachten Sie bitte, daá die genannten Erweiterungen von shel_write() in
+dieser Form nur unter Mag!X zur Verfgung stehen. Fr die neuen shelwrite-Modi
+in MultiTOS wurde die Bedeutung der erw„hnten Parameter z.T. stark
+ver„ndert.
+
+
+Erweiterte GEM-Funktionen in Mag!X
+----------------------------------
+Zahlreiche GEM-Routinen wurden in Mag!X erweitert, mit neuen Features
+versehen und auf den Multitaskingbetrieb angepaát.
+Dies betrifft unter anderem folgende Funktionen:
+
+APPL_WRITE
+----------
+appl_write() erzeugt keinen šberlauf des Messagepuffers  mehr,  sondern
+bricht mit Rckgabewert 0 ab.  Bei falscher ap_id wird  Rckgabewert -1
+geliefert. Rckgabe 1 zeigt erfolgreiche Ausfhrung an.
+
+MENU_BAR
+--------
+Die Funktion menu_bar() hat zus„tzlich zu den Unterfunktionen MENU_SHOW (1)
+und MENU_HIDE (0) eine weitere, MENU_INSTL (100) bekommenm. Hiermit kann
+man z.B. als Accessory oder GEM-Auto-Programm ein Men installieren, ohne
+eine Umschaltung der obersten Applikation zu erzwingen. Alle Konstanten
+sind in MAGX.H definiert.
+
+SHEL_PUT
+--------
+shel_put() liefert 0 als Rckgabewert, wenn der Puffer zu klein ist.
+
+WIND_CREATE
+-----------
+Der in Mag!X hinzugekommene Backdrop-Button kann auch vom Programm aus
+abgefragt werden. Dazu ist bei wind_create() das Fensterobjekt BACKDROP
+hinzugekommen.
+
+
+WIND_NEW
+--------
+wind_new() ist erst ab TOS 1.4 vorhanden und l”schte unter TOS bisher immer
+rigoros alle anstehenden Update-Anforderungen und auch alle fremden Fenster
+(von Accessories).
+Mag!X fhrt wind_new() als aufwendige, globale und umfassende
+Aufr„umfunktion fr eine Applikation aus und l”scht daher auch nur noch
+deren Update-Anforderungen, Fenster, Mens usw usw.. Andere Applikationen
+werden auf keinen Fall beeintr„chtigt, die Funktion kann gefahrlos
+aufgerufen werden (ist i.a. nicht n”tig, da Mag!X selbst nach Beenden einer
+Applikation mit dem Schlimmsten rechnet und selbst wind_new() aufruft).
+
+
+Alertboxen
+----------
+Wegen der Kompatibilit„t zu GEM/3 k”nnen Alertboxen jetzt 40 Zeichen pro
+Textzeile und 20 Zeichen pro Button enthalten. Auáerdem sind die Alertboxen
+komplett tastaturbedienbar.
+
+
+Erweiterte Funktionen bei der Eingabe
+---------------------------------------
+Die Eingabefelder bieten in Mag!X von Haus aus bereits viele Funktionen,
+die sonst mhsam zu Fuá programmiert werden mssen. U.a. sind dies:
+
+- exakte Cursorpositionierung per Maus
+- Tastaturkrzel, um den Cursor zum vorherigen/n„chsten Wort oder zum
+  Zeilenanfang/Zeilenende zu bewegen.
+- Einfge/šberschreibmodus
+- L”schen bis Zeilenende
+- Cut, Copy, Paste
+- Eingabefelder mit kleiner Schrift funktionieren
+
+Die Funktionen fr Help, Undo, Shift-hoch, Shift-runter und Ctrl-Q sind in
+form_keybd() enthalten, die Cursorpositionierung per Maus in form_(x)do()
+und objc_edit() und die restlichen Funktionen in objc_edit(). Wer in den
+Genu der entsprechenden Funktionen kommen m”chte, mu die dazu geh”rigen
+AES-Aufrufe benutzen.
+
+Fr den Nachbau von Dialogen in Fenstern wurden folgende Erweiterungen
+vorgenommen:
+
+OBJC_EDIT
+---------
+Es gibt eine neue Unterfunktion von objc_edit() mit Modus 103, die wie
+Modus 3 (ED_END) funktioniert und den Cursor im XOR- Modus zeichnet.
+Zus„tzlich mu jedoch in addrin[1] ein Zeiger auf ein GRECT bergeben
+werden, auf das die Ausgabe beschr„nkt wird; wichtig fr den Redraw im
+Fenster.
+
+FORM_KEYBD
+----------
+Wird form_keybd() mit objnr == 0x8765 aufgerufen, so werden Tasten
+verarbeitet, die zusammen mit der ALT-Taste bet„tigt wurden. Der
+Rckgabewert ist 1, wenn ein passendes Objekt gefunden wurde; in diesem
+Fall ist <key> gel”scht, und die Objektnummer steht in <nxtobj>.
+
+
+Dialogroutinen
+--------------
+In  letzter  Zeit ist es immer mehr in Mode  gekommen,  statt  der
+eingebauten  Behandlungsroutinen fr Dialogboxen eigene zu  verwenden,
+die wesentlich komfortabler sind. Damit man nun das Rad nicht jedesmal
+wieder  neu erfinden mu,  enth„lt Mag!X neue  Dialogboxroutinen,  die
+zus„tzlich zur erh”hten Funktionalit„t noch den Vorteil haben,  zu den
+bisherigen Routinen abw„rtskompatibel zu sein.  In der Praxis bedeutet
+das, da Sie Ihre alten Programme nur leicht zu modifizieren brauchen,
+um die Vorteile von Mag!X zu nutzen. Noch mehr: Diese Programme laufen
+nach wie  vor problemlos unter allen TOS- Versionen einschlielich MultiTOS.
+Erreicht  wird  dies,indem  Mag!X  zus„tzliche  Parameter bergeben
+werden,  die  das  TOS einfach ignoriert.
+
+  Zu    Beginn    eines   Dialogs   mu   man    den    entsprechenden
+Bildschirmausschnitt reservieren. Dies geschieht i.a. mit der Funktion
+form_dial()  und  der  Unterfunktion FMD_START.  Um  unter  Mag!X  die
+fliegenden Dialoge zu nutzen,  mu hierbei der Hintergrund vollst„ndig
+gerettet  werden.   Dazu  ruft  man  einfach  statt  form_dial()   die
+erweiterte Funktion form_xdial() auf,  die als zus„tzlichen  Parameter
+<flydial> hat. Der Prototyp lautet:
+
+   int  form_xdial( int flag, int ltx, int lty, int ltw, int lth,
+                    int bgx, int bgy, int bgw, int bgh, void **flydial );
+
+   Aufruf in Assembler:
+
+   contrl[0] = 51      Opcode fr form_dial
+   contrl[1] =  9      Eintr„ge in intin
+   contrl[2] =  1      Eintr„ge in intout
+   contrl[3] =  2      Eintr„ge in addrin
+   contrl[4] =  0      Eintr„ge in addrout
+
+   intin[0]  =  flag
+   intin[1]  =  ltx
+   intin[2]  =  lty
+   intin[3]  =  ltw
+   intin[4]  =  lth
+   intin[5]  =  bgx
+   intin[6]  =  bgy
+   intin[7]  =  bgw
+   intin[8]  =  bgh
+
+   addrin[0] =  flydial
+   addrin[1] =  0
+
+   intout[0] =  (Rckgabewert, 0 = Fehler)
+
+
+  Wenn <flydial> ungleich 0 ist, prft Mag!X, ob gengend Speicher zur
+Verfgung steht, um den Hintergrund unter der Dialogbox zu retten. Ein
+Zeiger  auf  die  geretteten Daten wird dann  im  der  Variablen  ver-
+merkt.  Wird  fr die Dialogboxbedienung die Funktion form_xdo()  ver-
+wendet, ist die Box nun verschiebbar.
+  Nach Beendigung des Dialogs wird form_xdial() mit der  Unterfunktion
+FMD_FINISH  aufgerufen.  Auch hierbei wird die Variable <flydial>  mit
+bergeben.  Mag!X  restauriert nun den Bildschirm und gibt den  Puffer
+mit dem geretteten Hintergrund wieder frei.
+  Steht  nicht  gengend  freier  Speicher  zur  Verfgung,   um   den
+Hintergrund zu retten,  ist die Box nicht verschiebbar;  es wird  dann
+auch keine abgeknickte Ecke angezeigt.
+  Die erweiterte Dialogbehandlungsroutine hat den Prototyp:
+
+   int  form_xdo( OBJECT *tree, int startob, int *lastcrsr,
+                  XDO_INF *tabs, void *flydial );
+
+   Aufruf in Assembler:
+
+   contrl[0] = 50      Opcode fr form_do
+   contrl[1] =  1      Eintr„ge in intin
+   contrl[2] =  2      Eintr„ge in intout
+   contrl[3] =  3      Eintr„ge in addrin
+   contrl[4] =  0      Eintr„ge in addrout
+
+   intin[0]  =  startob
+
+   addrin[0] =  tree
+   addrin[1] =  tabs
+   addrin[2] =  flydial
+
+   intout[0] =  (Rckgabewert wie bei form_do)
+   intout[1] =  lastcrsr
+
+
+  Die  gerade  nicht  ben”tigten zus„tzlichen  Parameter  <tabs>  oder
+<flydial> k”nnen als Nullpointer bergeben werden.
+  <flydial> ist dieselbe Variable,  die an form_xdial() bergeben  und
+initialisiert wurde,  sie wird fr das Verschieben der Box  verwendet.
+In <lastcrsr> erh„lt man die Nummer desjenigen Objekts zurck,  in dem
+sich der Cursor bei Beenden des Dialogs befand, den Wert kann man z.B.
+einem n„chsten form_(x)do() bergeben.  <tabs> ist ein Zeiger auf fol-
+gende Struktur:
+
+   typedef struct {
+        SCANX *unsh;
+        SCANX *shift;
+        SCANX *ctrl;
+        SCANX *alt;
+        void  *resvd;
+        } XDO_INF;
+
+  In  dieser Struktur liegen Zeiger auf Tabellen,  die einem  Scancode
+eine  Objektnummer  der  Dialogbox  zuordnen.   Hiermit  ist  es   auf
+einfachste  Weise  m”glich,   Dialoge  vollst„ndig  ber  Tastatur  zu
+bedienen.  <unsh>  ist ein Zeiger fr Tasten ohne Shift,  <shift>  fr
+Tasten mit Shift,  <ctrl> fr Kombinationen mit der Taste Control  und
+<alt> fr Tasten,  die mit der Taste Alt bet„tigt wurden.  <resvd> mu
+immer NULL sein! SCANX ist folgende Struktur:
+
+   typedef struct {
+        char scancode;
+        char nclicks;
+        int  objnr;
+        } SCANX;
+
+  Sie enth„lt die Zuordnung fr die Taste mit dem Scancode <scancode>,
+bei  deren  Bet„tigung  ein <nclicks>- facher  Klick  auf  das  Objekt
+<objnr>  ausgefhrt wird.  Ein Scancode von Null markiert jeweils  das
+Tabellenende.
+Einfacher, aber weniger flexibel ist eine Tastaturbedienung ber die
+unterstrichenen Buttons zu erreichen (s.u.).
+  Der  Einfachheit halber hier einmal ein  Beispielprogramm.  Zun„chst
+eine  Routine,  wie  sie  normalerweise  fr  die  Dialogboxbehandlung
+verwendet wird:
+
+   int do_dialog(OBJECT *dialog)
+   {
+        int cx, cy, cw, ch;
+        int exitbutton;
+
+        form_center(dialog, &cx, &cy, &cw, &ch);               /* Position */
+        form_dial(FMD_START, 0,0,0,0, cx, cy, cw, ch);         /* Anfang */
+        objc_draw(dialog, ROOT, MAX_DEPTH, cx, cy, cw, ch);    /* malen  */
+        exitbutton = 0x7f & form_do(dialog, 0);                /* ausfhren */
+        form_dial(FMD_FINISH, 0,0,0,0,cx, cy, cw, ch);         /* Ende */
+        ob_dsel(dialog, exitbutton);
+        return(exitbutton);
+   }
+
+  Wenn  Sie die Dialogbox verschieben m”chten,  gengen einige  wenige
+Modifikationen.  Sie  mssen  dann nur noch die Datei MAGX.H  und  die
+Bibliothek MAGXLIB.LIB verwenden.  Die erweiterte Funktion,  die unter
+TOS natrlich problemlos funktioniert, sieht dann so aus:
+
+   int do_dialog(OBJECT *dialog)
+   {
+        int cx, cy, cw, ch;
+        int exitbutton;
+        void *flyinf;
+        void *scantab = NULL;         /* ggf. Tastencode- Tabelle */
+        int  lastcrsr;                /* Cursorposition bei Dialogende */
+
+        form_center( ... );
+        form_xdial(FMD_START,  0,0,0,0, cx, cy, cw, ch, &flyinf);
+        objc_draw( ... );
+        exitbutton = 0x7f & form_xdo(dialog, 0, &lastcrsr, scantab, flyinf);
+        form_xdial(FMD_FINISH, 0,0,0,0, cx, cy, cw, ch, &flyinf);
+        ob_dsel( ... );
+        return(exitbutton);
+   }
+
+Die Funktion form_center() funktioniert in Mag!X brigens bei allen
+Dialogtypen; egal mit welchem Rand oder Schatten.
+
+
+
+Neue GEM- Funktionen im Mag!X-AES
+---------------------------------
+
+Mag!X enth„lt eine Reihe von neuen Funktionen, die bereits in vielen
+Anwenderprogrammen  existieren, jedoch mhsam immer wieder  neu
+programmiert werden mssen. Auerdem werden so die  Programme unn”tig lang,
+was sich in einem Multitaskingsystem mit mehreren Programmen gleich
+multipliziert. Alle Funktionen und Konstanten sind in  MAGX.H deklariert
+und in MAGXLIB.LIB definiert, so da Sie sich um die Einzelheiten nicht
+mehr zu kmmern brauchen.
+Ein h„ufig auftretendes  Bedienungselement ist ein Men, das auerhalb der
+Menleiste und mitunter sogar an  Cursorposition erscheint, um schnell ohne
+viele Mauswege eine Auswahl treffen zu k”nnen. Mag!X stellt mit der neuen
+Funktion form_popup() eine L”sung dieses Problems bereit. Der Prototyp
+lautet:
+
+   int  form_popup     ( OBJECT *tree, int x, int y );
+
+   Aufruf in Assembler:
+
+   contrl[0] = 135     Opcode fr form_popup
+   contrl[1] =  2      Eintr„ge in intin
+   contrl[2] =  1      Eintr„ge in intout
+   contrl[3] =  1      Eintr„ge in addrin
+   contrl[4] =  0      Eintr„ge in addrout
+
+   intin[0]  =  x
+   intin[1]  =  y
+
+   addrin[0] =  tree
+
+   intout[0] =  Nummer des angew„hlten Objekts oder -1
+
+
+     x und y geben die Mausposition an,  um die die Box zentriert  werden
+   soll,  man erh„lt die Objektnummer des angeklicketen Objektes oder  -1
+   zurck.  Sind x und y Null, wird die Position der Box nicht beeinflut
+   und mu vom Aufrufer gesetzt werden.  Das Men sowie die Koordinaten x
+   und y drfen beliebige Werte annehmen,  Mag!X sorgt immer  dafr,  da
+   das Men vollst„ndig auf dem Bildschirm liegt. Die Box tree sollte als
+   Objekt  0  eine  G_BOX oder G_IBOX  enthalten,  die  von  den  anderen
+   Objekten vollst„ndig bedeckt wird. Objekte, die nicht ausw„hlbar sind,
+   sollten  wie  im Dropdown- Men den  Status  DISABLED  erhalten.  Alle
+   w„hlbaren Objekte mssen den Status SELECTABLE haben.
+
+
+Ein Groteil der Programmierung besteht i.a. daraus, Fehleingaben des
+Benutzers oder Fehler des des Systems zu erkennen und irgendwie sinnvoll zu
+reagieren, dazu geh”rt insbesondere die Auswertung der vom System
+erhaltenen Fehlermeldungen und šbersetzung der Codes in allgemein
+verst„ndlichen Klartext. Die im AES enthaltene Funktion form_error()
+existiert zwar fr diesen Zweck, bietet jedoch erstens zuwenig
+differenzierte Fehlerbeschreibungen und ist zweitens nur fr MSDOS-
+Fehlercodes ausgelegt. Um diesem Manko abzuhelfen, enth„lt Mag!X die neue
+Funktion form_xerr() mit folgendem Prototyp:
+
+   int  form_xerr      ( long errcode, char *errfile );
+
+   Aufruf in Assembler:
+
+   contrl[0] = 136     Opcode fr form_xerr
+   contrl[1] =  2      Eintr„ge in intin
+   contrl[2] =  1      Eintr„ge in intout
+   contrl[3] =  1      Eintr„ge in addrin
+   contrl[4] =  0      Eintr„ge in addrout
+
+   intin[0]  =  errcode (Hi)
+   intin[1]  =  errcode (Lo)
+
+   addrin[0] =  errfile
+
+   intout[0] =  (Rckgabewert wie bei form_err)
+
+
+     errcode  ist ein normaler negativer GEMDOS- oder  BIOS-  Fehlercode,
+   wie  er  von  diversen TOS- Funktionen  zurckgegeben  wird;  im  Fall
+   errcode == EBREAK ("Programm wurde vom Benutzer per ^C beendet) oder
+   errcode == E_OK ("kein Fehler") wird keine Alertbox  angezeigt.
+   Im Parameter errfile kann man den Pfad einer Datei angeben, in der der
+   Fehler  aufgetreten ist (etwa beim Beschreiben der  Datei).  Gibt  man
+   einen Nullpointer an, wird der Parameter ignoriert, ein Zeiger mit dem
+   Wert -1 fhrt dazu,  da die Zeile "Programm gab zurck:" der  Meldung
+   vorangestellt wird.
+
+
+
+AES-Objekttypen
+---------------
+
+Fr die bisherigen Standard-Objekttypen G_STRING, G_BUTTON und G_TITLE
+k”nnen jetzt Unterstriche festgelegt werden. Dies kann ganz einfach z.B.
+mit INTERFACE durchgefhrt werden. Zus„tzlich hat man zus„tzliche Buttontypen,
+n„mlich runde und solche mit Kreuzchen, zur Verfgung.
+
+Alle Modifikationen werden zun„chst durch Setzen des Bits WHITEBAK von
+ob_state aktiviert.
+
+Bei den Objekttypen G_STRING und G_TITLE legt nun das High-Byte von ob_state
+die Position des Unterstrichs fest. Ist das Hibyte = 255, wird das gesamte
+Objekt unterstrichen, womit man leicht šberschriften erzeugen kann. Durch
+Vergr”ern des Objekts ber die Textl„nge hinaus kann man die šberschrift
+leicht verbreitern.
+
+Aktiviert man bei einem G_BUTTON zus„tzlich zum Statusbit WHITEBAK noch Bit
+15 von ob_flags, wird ein Kreuzchen- Button angezeigt, falls es ein
+normaler Button ist, oder ein runder Button, falls es ein RADIOBUTTON ist.
+Dabei steht links vom Text steht ein K„stchen, das bei Selektion ein
+Kreuzchen enth„lt, bzw. ein Kreis, der bei Selektion einen schwarzen
+Inkreis enth„lt.
+Die Position des Unterstrichs steht im Hibyte von ob_state (ohne Bit 15, das
+die Spezialbuttons aktiviert), ein Wert von -1 fr ob_state signalisiert,
+da nicht unterstrichen wird. Unterstrichene Objekte k”nnen mit der Tastatur
+ber Alt-Buchstabe bedient werden.
+
+Standardm„ig sollten Buttons die H”he 1 Zeichen plus ein Pixel,
+šberschriften 1 Zeichen und 2 Pixel haben, damit der Unterstrich erkennbar
+ist.
+
+Wird eine derartige RSC-Datei unter normalem TOS eingesetzt, ergeben sich
+keinerlei Probleme, da die entsprechenden Bits komplett ignoriert werden.
+Die neuen, unterstrichenen Objekttypen werden von den Dialogroutinen
+ausgewertet, d.h. man mu sich um die Erkennung der Tastencodes fr diese
+Typen keine Gedanken machen, das erledigt das System. Man beachte, da nur
+Buchstabentasten A..Z und Zahlen 0..9 des Haupttastenblocks verarbeitet
+werden k”nnen.
+Ein Hauptaspekt an der vorliegenden Implementation der neuen, erweiterten
+Objekttypen ist, da sich hiermit alte Programme mit Hilfe eines Ressource-
+Editors sehr einfach "aufpeppen" lassen, ohne auch nur einen einzigen
+Eingriff in den Programmcode vornehmen zu mssen. Die Programme sind v”llig
+ohne Ver„nderung unter jeder TOS- Version lauff„hig, nur unter Mag!X
+entfalten sie pl”tzlich ihre versteckten F„higkeiten.
+
+Der Window- Manager
+-------------------
+
+  Der Window- Manager von Mag!X arbeitet ein wenig anders als der  von
+TOS. Jedes Mag!X- Fenster,  von denen es brigens max. 63 gibt, hat in
+in rechten oberen Ecke einen sogenannten Backdrop-Button. Bet„tigt man
+diesen, wird das Fenster in den Hintergrund gelegt.
+  Die neue Funktionsweise betrifft nicht nur das Aussehen der Fenster,
+sondern auch das Zeichnen:
+  Damit  fr den Benutzer der Bildschirmaufbau trotz  ausschlielicher
+Benutzung dokumentierter Systemaufrufe so schnell ist,  wie es etwa in
+MAGXDESK der Fall ist,  mu der Programmierer einiges beachten. Hat er
+dies nicht getan, mu der Benutzer manchmal zum Hilfsprogramm MAGXCONF
+greifen  und den "Smart Redraw" deaktivieren.  Damit dies  nicht  mehr
+notwendig ist, hier eine Beschreibung dieser Eigenschaft:
+  Mag!X verfolgt die Philosophie,  da Geschwindigkeit nicht mit  bru-
+talen Mitteln wie Grafikprozessoren usw. erreicht werden soll, sondern
+mit ein wenig Nachdenken;  dazu geh”rt vor allem,  immer nur soviel zu
+tun,  wie n”tig ist.  W„hrend TOS beim Wechsel des aktuellen Fensters,
+beim Schlieen oder beim Verschieben mit Vorliebe das gesamte  Fenster
+oder  gar  noch v”llig unschuldige,  unbeteiligte andere  Fenster  neu
+zeichnet,  wird dies unter Mag!X wirkungsvoll vermieden.  Obwohl diese
+unsch”ne Eigenschaft des TOS nirgendwo dokumentiert ist, nutzen leider
+sehr  viele  Programme oder Bibliotheken (etwa die aus dem  Buch  "Vom
+Anf„nger  zum  GEM- Profi") aus,  da das TOS  beim  Vergr”ern  eines
+Fensters dieses immer neu zeichnet. Dazu ein Beispiel:
+  Nehmen wir an, in ein Fenster passen fnf Spalten nebeneinander, die
+auch  angezeigt  werden.  Wenn der Benutzer nun das  Fenster  so  weit
+verkleinert,  da  nur noch vier Spalten  hineinpassen,  sortiert  das
+Programm  seine  Daten um und veranlat anschlieend  selbst„ndig  ein
+Neuzeichnen  des Fensters (TOS zeichnet bei Verkleinerung das  Fenster
+nicht von sich aus neu).  Vergr”ert der Benutzer dagegen das  Fenster
+auf eine Breite von 7 Spalten, sortiert das Anwenderprogramm die Daten
+ebenfalls  um,  veranlat jedoch hier kein Neuzeichnen  des  Fensters.
+Aufgrund des eher dummen Fehlverhalten des TOS, das Fenster fr diesen
+Fall immer ganz neu zu zeichnen, findet dann die Ausgabe statt.
+  Mag!X  zeichnet nun immer nur den minimal n”tigen Teil des  Fensters
+neu,  das w„ren im Fall des Aufziehens eines Fensters h”chstens rechts
+und unten zwei Rechtecke.  Fr die Programme, die den oben beschriebe-
+nen  Fehler des TOS ausnutzen,  gibt sich so eine Diskrepanz  zwischen
+logischem und physikalischem Bildschirminhalt.  Viel einfacher w„re es
+gewesen,  einfach  auf  die Fallunterscheidung  "Fenster  gr”er  oder
+kleiner  als vorher" zu verzichten und immer im Fall des  Umsortierens
+einen  Redraw zu veranlassen.  Da das Betriebssystem auch im  TOS  die
+Redraws zusammenfat,  hat ein eventuell berflssiger Redraw  niemals
+irgendwelche Auswirkungen.
+  Den  gleichen  Effekt  wie beschrieben hat man  brigens  auch  beim
+Vergr”ern  des Fensters,  wenn bereits die unterste  Zeile  bzw.  die
+rechteste Zeile dargestellt wird. Auch hier ein Beispiel:
+  Ein Text habe 100 Zeilen,  das Fenster habe eine H”he von 20 Zeilen.
+Da der Scrollbalken ganz unten ist,  werden also die Zeilen 80 bis 100
+im Fenster dargestellt. Wird nun das Fenster nach unten vergr”ert, so
+da  etwa  30 Zeilen Platz finden,  k”nnte man  eigentlich  nur  einen
+weien  Bereich aufziehen,  da unterhalb von Zeile 100 ja keine  Daten
+mehr sind.  Um dies zu verhindern,  scrollen die meisten Programme  in
+dieser  Situation ihre Daten,  in unserem Beispiel um 10  Zeilen  nach
+oben.  Folglich zeigt das Programm jetzt die Zeilen 70 bis 100 an;  da
+es  aber auf einem TOS- Fehler aufbaut,  wird kein Neuzeichnen  veran-
+lat,  was unter Mag!X natrlich prompt zur Konfusion fhrt. Auch hier
+w„re  ein  generelles Neuzeichnen des Fensters beim  Umsortieren  auch
+unter  TOS nicht nur sauber,  sondern auch ohne Nebenwirkung,  da  TOS
+auch hier unn”tige Redraws vermeidet.
+  Beim direkten Vergleich zwischen "Smart Redaw" und "TOS Redraw", was
+hier durchaus im w”rtlichen Sinn als Gegenteil zu verstehen ist, zeigt
+sich  in  ersterem  Fall ein  wesentlich  schnellerer,  ruhigerer  und
+saubererer  Bildschirmaufbau,  der durchaus mit dem Macintosh-  System
+konkurrieren kann und unter TOS selbst mit Blitter und 68040 Prozessor
+in  dieser  Form nicht m”glich w„re.  Daher wird  dringend  empfohlen,
+diese  elegante L”sung nicht durch Ausnutzen  undokumentierter  Eigen-
+schaften des TOS zunichte zu machen.
+
+
+Besonderheiten bei ACCs
+-----------------------
+  Accessories   geh”ren   unter   GEM   zu   den   Stiefkindern    des
+Betriebssystems.   Accessories  k”nnen  keine  Menleiste  oder  einen
+Desktop-  Hintergrund  besitzen  und  mssen  bei  jedem  Wechsel  der
+Hauptapplikation ihre Fenster schlieen,  allen Speicher freigeben und
+alle  Dateien  schlieen;  am besten ist es  sogar,  wenn  Accessories
+berhaupt keine DOS- Aufrufe machen,  da unbeabsichtigte Beeinflussung
+der  Hauptapplikation  nie ganz ausgeschlossen  ist.  Auf  jeden  Fall
+k”nnen Accesories keine weiteren Programme starten;  der entsprechende
+Systemaufruf fhrt zum Absturz des TOS.
+  Unter  Mag!X sind Accessories den  Programmen  gleichgestellt.  Ihre
+Fenster  bleiben beim Programmwechsel erhalten.  Sie drfen  Men  und
+Desktophintergrund  besitzen,  Programme  nachladen,  Dateien  ”ffnen,
+schlieen, l”schen, kopieren usw.
+Da kein Grund mehr besteht, beim Programmwechsel Fenster zu schlieen, gibt
+es keine AC_CLOSE Meldung mehr. Accessories werden vom System nicht von
+Programmen unterschieden, abgesehen davon, da  sie sich keinesfalls
+beenden drfen.  ACCs drfen sich wie unter GEM/2  auch  wieder im Men
+abmelden, und zwar mit dem AES-Aufruf menu_unregister().
+
+
+GEM-Autostart-Applikationen
+---------------------------
+  Unter   Mag!X   gibt  es   verschiedene   M”glichkeiten,   Programme
+automatisch   zu   starten.   Beim   Start   von   Mag!X   oder   beim
+Aufl”sungswechsel  werden zun„chst alle Accessories aus  ihrem  Ordner
+geladen,  danach  die Programme mit der Endung .APP oder .PRG aus  dem
+Programm- Autostart- Ordner. Beide Ordner werden in INSTMAGX angegeben
+und  k”nnen  gegebenenfalls mit einem  handelsblichen  Texteditor  in
+MAGX.INF ge„ndert werden;  die zugeh”rige Zeile beginnt mit #_ACC bzw.
+#_APP. Anschlieend wird das ebenfalls in INSTMAGX angegebene Programm
+gestartet,  die zugeh”rige Zeile in MAGX.INF beginnt mit  #_AUT.  Erst
+wenn  sich die unter #_AUT angemeldete Applikation beendet  hat,  wird
+das   Desktop  MAGXDESK  geladen.   Dazu  wird  zun„chst   im   Ordner
+\GEMSYS\GEMDESK auf dem Bootlaufwerk gesucht,  dann im Wurzelverzeich-
+nis.  Kann  MAGXDESK  nicht gefunden  werden,  wird  stattdessen  eine
+Dateiauswahlbox angezeigt, mit Hilfe derer man Programme starten kann;
+letzteres  kann  sinnvoll  sein,  wenn man ber  sehr  wenig  Speicher
+verfgt.
+  Als Autostart- Programme kommen nur solche in Frage,  die nicht  den
+gesamten Speicher beanspruchen;  notfalls mu man mit LIMITMEM  (s.u.)
+etwas nachhelfen.
+Unter Mag!X werden ACCs und Applikationen im GEM-Autostart-Ordner mit der
+AES-Kommandozeile "\0\0AUTO\0" gestartet. Diese wird, da sie mit Nullbytes
+beginnt, normalerweise nicht ausgewertet. Applikationen, die speziell fr
+Mag!X entwickelt wurden, k”nnen anhand dieser Kommandozeile beispielsweise
+entscheiden, ob sie die Menleiste direkt anzeigen oder nur anmelden wollen
+(siehe MENU_BAR) oder ob sie mit einer Dateiauswahlbox beginnen sollen oder
+nicht.
+
+GEMDOS
+------
+Mag!X enth„lt ein Mehrproze-DOS, das zwar kompatibel zum bisherigen GEMDOS
+ist, aber in entscheidenden Punkten (Filesystem, Speicherverwaltung) an die
+Erfordernisse des Multitaskingbetriebs angepaát wurde.
+Auáerdem sind folgende Erweiterungen verfgbar:
+
+Pfadauswertung
+--------------
+Behandelt TOS einen Pfad wie "\BIN\\x" wie eine Datei mit leerem Namen im
+Ordner BIN, ignoriert Mag!X nun s„mtliche berflssigen '\' und erkennt in
+diesem Fall eine Datei 'x' im Ordner "BIN". Auch "\\\\\BIN\\\\x" ist unter
+Mag!X ein gltiger Pfad. Auáerdem kann man jetzt mit "..." usw. auf
+bergeordnete Verzeichnisse direkt zugreifen. Bekannt ist dieses Feature
+etwa unter MSDOS.
+
+Speicherblock vergr”áern
+------------------------
+  Unter  Mag!X k”nnen Speicherbl”cke mit Mshrink() vergr”ert  werden,
+bergibt  man als Gr”e -1L,  so erh„lt man die zum Zeitpunkt  maximal
+m”gliche Gr”e.  Das Vergr”ern ist natrlich nur m”glich,  wenn  sich
+ein freier Speicherblock darber befindet.
+
+Fwrite
+-------
+  šbergibt  man Fwrite() 0 zu schreibende Bytes und einen -1L-  Zeiger
+auf  die  zu  schreibenden Daten,  wird die  Datei  auf  die  aktuelle
+Position des Dateizeigers geschrumpft.
+
+Sconfig
+-------
+  Eine neue GEMDOS- Funktion Sconfig() manipuliert das Konfigurations-
+Langwort,  das  auch  ber  das  Mag!X-  Cookie  zug„nglich  ist.  Der
+Prototyp in C lautet "long Sconfig(int mode,  long bitset)" und ist in
+MAGX.H definiert. Die Variable bitset hat folgende Bedeutung:
+
+     Bit 0:    Pfadberprfung ein
+     Bit 1:    Einfgemodus fr GEMDOS und Dialogboxen
+     Bit 2:    reserviert
+     Bit 3:    reserviert
+     Bit 4:    Fastload fr Diskette aus
+     Bit 5:    TOS- Kompatibilit„t ein
+     Bit 6:    "smart redraw" aus
+     Bit 7:    Grow- und Shrinkboxen aus
+     Bit 8:    kein Halt nach TOS- Programmen
+     Bit 9:    reserviert
+     Bit 10:   Pulldown- Mens
+
+  Die  restlichen  Bits  sind reserviert und  drfen  nicht  ver„ndert
+werden.  Mit  mode  =  0  werden  die  Bits  gelesen,  mit  mode  =  1
+geschrieben (geht nur bei deaktivierter Kompatibilit„t),  mit mode = 2
+erh„lt  man  einen  Zeiger auf die DOSVARS  Struktur,  die  in  MAGX.H
+definiert ist:
+
+typedef struct
+   {
+   char      *in_dos;                 /* Adresse der DOS- Semaphore */
+   int       *dos_time;               /* Adresse der DOS- Zeit      */
+   int       *dos_date;               /* Adresse des DOS- Datums    */
+   long      res1;                    /*                            */
+   long      res2;                    /*                            */
+   long      res3;                    /* ist 0L                     */
+   void      *act_pd;                 /* Laufendes Programm         */
+   long      res4;                    /*                            */
+   int       res5;                    /*                            */
+   void      res6;                    /*                            */
+   void      res7;                    /* interne DOS- Speicherliste */
+   void      (*resv_intmem)();        /* DOS- Speicher erweitern    */
+   long      (*etv_critic)();         /* etv_critic des GEMDOS      */
+   char *    ((*err_to_str)(char e)); /* Umrechnung Code->Klartext  */
+   long      res8;                    /*                            */
+   long      res9;                    /*                            */
+   } DOSVARS;
+
+  Mit  Hilfe  der  Funktion resv_intmem() l„t sich  „hnlich  wie  mit
+FOLDRnnn Speicher fr die interne Speicherverwaltung  reservieren.  Im
+Gegensatz zu TOS wird diese jedoch deutlich weniger belastet,  so  da
+ein  Erweitern i.a.  nicht notwendig ist.  Mu der Speicher  erweitert
+werden,  was  auch  in ADDMEM geschieht,  bergibt  man  der  Funktion
+resv_intmem()  in  a0  die  Adresse  und  in  d0  die  L„nge  des   zu
+reservierenden Speicherblocks.
+  Der   Prototyp   fr  den  Event-  Critic-  Handler   lautet   "long
+etv_critic(int errcode, int drvnr)". Man beachte, da die Funktion die
+Argumente  auf  dem Stapel erwartet und daher in Turbo C  als  "cdecl"
+deklariert werden mu.
+  err_to_str() erwartet in d0 einen TOS- Fehlercode und gibt in d0 und
+a0 einen Zeiger auf die beschreibende Zeichenkette zurck.  Bei  einem
+ungltigen  Fehlercode  erh„lt  man in d0 eine Null und  in  a0  einen
+Zeiger auf die Zeichenkette "TOS Fehler".
+
+GEMDOS Eingaberoutine
+---------------------
+  TOS-Programme wie der Shareware-Kommandointerpreter  MCMD, die keine
+eigenen Eingaberoutinen verwenden, profitieren von der neuen GEMDOS-
+Eingaberoutine, die folgende Editiertasten verarbeitet:
+
+  Cursor links/rechts    Cursor ein Zeichen bewegen
+  Shift- Cursor l/r      Cursor an Zeilenanfang/-ende
+  Shift- Cursor links    Cursor auf den Anfang des Eingabefeldes
+  Home                   wie Shift- Cursor links
+  Shift- Clr             Eingabe l”schen
+  Tab                    wechselseitig Zeilenanfang/-ende
+  Cursor hoch/runter     letzte Eingabe(n) zurckholen
+  Undo                   letzte Eingabe
+  Del/Backspace          Zeichen unter/vor Cursor l”schen
+  Insert                 Einfgemodus
+  Shift- Insert          šberschreibmodus
+  F1..F10                Environmentvariablen F1..F0 abrufen
+
+  Die  Environment-Variablen k”nnen mit jedem beliebigen
+  Kommandointerpreter belegt werden, i.a. mit einem SET- Kommando.
+
+Beachten Sie bitte, daá das Mag!X-GEMDOS (mit Ausnahme des Dateisystem - s.
+Hinweis) reentrant arbeitet. Sichtbar ist dies z.B. daran, da Altertboxen
+des Types "Daten auf Disk A: defekt" verschiebbar sind - hierzu mu n„mlich
+Speicher angefordert werden, was unter TOS nicht funktioniert, da gerade
+eine Dateioperation im GEMDOS abgearbeitet wird.
+
+Hinweis: Im Hinblick auf zuknftige Mag!X-Versionen sollten Sie den Einsatz
+         der GEMDOS Super()-Funktion vermeiden. Diese Funktion verursacht
+         im Zusammenhang mit virtuellem Speicher und unterbrechbaren (und
+         reentranten) Dateisystemen in einem Multitaskingsystem groáe
+         Probleme. Stellen Sie ggf. Ihren Code so um, daá Sie die
+         BIOS-Funktion Supexec() verwenden k”nnen.
+
+
+etv_term
+--------
+Programme, die sich in irgendwelche Systemvektoren h„ngen, solten sich auch
+in den etv_term-Vektor einklinken. Falls das Programm nun abnormal beendet
+wird, sei es durch den Programm-Manager, durch ein anderes amoklaufendes
+Programm oder gar durch einen Programmierfehler, springt das System
+zun„chst ber den etv_term-Vektor. Bei dieser Gelegenheit k”nnen Sie sich
+dann in Ruhe aus allen Vektoren zurckziehen. Da Mag!X fr jede Applikation
+einen eigenen etv_term-Vektor verwendet, kann es dabei nicht zu Kollisionen
+kommen.
+Da sich die Struktur des Prozedeskriptors ("Basepage") in den nicht
+dokumentierten Bereichen ge„ndert hat, ist unbedingt darauf zu achten,
+nur die dokumentierten Strukturelemente zu verwenden.
+
+
+(X)BIOS
+-------
+
+BIOS und XBIOS sind in Mag!X reentrant. D.h. diese Funktionen k”nnen
+(solange der jeweilge Supervisorstack nicht berl„uft...) auch aus
+Interrupts mehrfach aufgerufen werden.
+
+Hinweis:
+- Die <saveptr_area> des BIOS ist (aus Kompatiblit„tsgrnden) noch
+   vorhanden, wird jedoch vom System nicht benutzt.
+- Die Stackberprfung von Turbo C/Pure C wird bei Routinen versagen, die
+   im Supervisormodus ausgefhrt werden (unter TOS konnte das bisher nur
+   bei USERDEF-Routinen im AES, die ebenfalls im Supervisormdus ausgefhrt
+   werden, passieren).
+
+Falls Sie eigene Routinen ins (X)BIOS h„ngen, dann achten Sie darauf, diese
+voll reentrant zu gestalten. Machen Sie keine Annahmen ber den Inhalt der
+<saveptr_area>!
+
+Modems, Schnittstellenbeschleuniger, Interruptroutinen
+---------------------------------------------------------
+Mag!X 2.0 enth„lt hochoptimierte Interruptroutinen, die es gestatten, auch
+mit einem 8 MHz ST im Multitaskingbetrieb Hochgeschwindigkeitsbertragungen
+auf der seriellen Schnittstelle durchzufhren. Die bei vielen TOS-Versionen
+ben”tigten Fix-Programme (RS232ENC, SERFIX,...) sollten Sie unter Mag!X
+nicht einsetzen - sie bremsen bestenfalls das System (Ausnahme: HSMODEM; s.
+n„chster Abschnitt).
+
+Wenn Sie w„hrend einer šbertragung gleichzeitig mit einem Editor arbeiten
+(z.B. Pure C-Editor) ist auf einem 8 MHz ST ein sicherer Betrieb mit
+maximal 38400 Baud m”glich. 57600 Baud erfordern einen 68000er mit 16 MHz
+(oder Sie drfen w„hrend der šbertragung nicht tippen...).
+
+Schnittstellenbeschleuniger
+---------------------------
+Wie Sie sicherlich wissen, kann Ihr ST von Haus aus die serielle
+Schnittstelle nur mit 19200 Baud ansteuern - fr clevere Tftler war das
+natrlich mehr eine Herausforderung als ein Hindernis.
+Eine empfehlenswerte und leicht zu installierende L”sung (vier Kabel) ist
+RSVE von Harun Scheutzow. Sie stellt auf dem ST die Datenraten 38400, 57600
+und 115200 Baud zur Verfgung. Mit der beiliegende Software (HSMODEM; die
+Modem 1-Routinen von Mag!X basieren auf den dankenswerterweise von Harun
+Scheutzow zur Verfgung gestellten Routinen) sind durch Block-I/O zusammen
+mit einer angepaáten ZMODEM-Version weitere Steigerungen der
+šbertragungsrate m”glich.
+
+P.S. (fr Geschwindigkeitsfetischisten):
+Ein TT erreicht bei direkter Rechnerkopplung mit Mag!X und der
+Terminalsoftware CoNnect 2.4x (Modem 2-Schnittstelle mit 153000 Baud und internem
+ZModem) eine šbertragungsrate von ca. 15000 cps.
+
+Was sollten Sie im Hinblick auf zuknftige Mag!X-Versionen beachten?
+--------------------------------------------------------------------
+
+1. Bercksichtigen Sie, daá MiNT-kompatible Funktionen vorhanden sein
+   k”nnen. Das Vorhandensein einer GEMDOS-Funktion k”nnen Sie durch Aufruf
+   der Funktion (z.B. Dlock) prfen; im Fehlerfall liefert GEMDOS <EINVFN>
+   zurck.
+
+2. Testen Sie ob Pipes vorhanden sind. In diesem Fall k”nnen Sie das von
+   ATARI neu definierte Drag & Drop-Protokoll direkt verwenden.
+   Dazu notwendige Schritte sind:
+   - Ist Laufwerk U vorhanden?
+   - Ist Fxattr() vorhanden?
+   - Wenn ja, liefert es Typ PIPE zurck? ...
+
+3. Verwenden Sie wann immer m”glich die Xbios-Funktion Supexec() anstelle
+   der GEMDOS-Funktion Super(). Verwenden Sie beide Funktionen nur „uáerst
+   sparsam (in beiden F„llen wird der Taskswitch unterbunden).
+
+4. Im Hinblick auf zuknftige Mag!X-Versionen sollten Sie (z.B. beim
+   VA-Protokoll) darauf achten, da zur Kommunikation zwischen
+   verschiedenen Programmen benutzte oder ber Zeiger zugewiesene
+   Speicherbereiche global sein mssen (also ber die erweiterte
+   Mxalloc()-Funktion mit GLOBAL-Flag alloziert werden - siehe dazu
+   auch MiNT bzw. MultiTOS-Dokumentation).
+   Andernfalls wird es beim Einsatz auf Rechnern mit PMMU (TT, Falcon
+   oder sonstiger Rechner mit 68030) zu Speicherschutzverletzungen
+   kommen.
+

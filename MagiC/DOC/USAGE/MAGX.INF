@@ -1,0 +1,201 @@
+;               Beispiel- Konfigurationsdatei fr Mag!X 2.00
+;               ============================================
+;
+; ½ Andreas Kromke 1990-93
+
+; Die vorliegende, kommentierte MAGX.INF - Datei ist in dieser Form voll
+; funktionsf„hig und erl„utert auerdem alle M”glichkeiten, diese Datei zu
+; manipulieren.
+; Fr die normale Anwendung ist die durch INSTMAGX bei der Installation
+; vorgenommene Konfiguration v”llig ausreichend. Diese Datei richtet sich
+; ausschlielich an den fortgeschrittenen Benutzer.
+; Mit Hilfe dieser Datei kann man nicht nur den Aufbau der MAGX.INF exakt
+; nachvollziehen (etwa fr eigene Auswertungen), sondern man kann auch
+; Manipulationen vornehmen, die von MAGXDESK aus ohne weiteres nicht
+; m”glich sind.
+; Neu ab Mag!X 2.0:
+;    _WND
+;    _TSL
+;    _FLG
+;    _TRM
+;    _TXT      zus„tzliche Parameter!
+; Nicht mehr vorhanden ab 2.0:
+;    _DRV
+;    _DSK
+;  (wegen Inkompatibilit„t zwischen MultiTOS/GEM 3.0 entfernt)
+
+
+; Die fr das AES relevanten Zeilen beginnen alle mit #_??? und liegen
+; vor der Zeile #_CTR.
+; Andere Zeilen werden als Kommentar behandelt. Allgemein darf jede Zeile
+; auer #_CTR und den folgenden fehlen, es werden dann Defaultwerte
+; eingesetzt.
+
+#_MAG MAG!X V2.00                       ; bisher reiner Kommentar
+
+; Es folgen die Environment- Variablen. Da die Zeichenketten bis zum
+; Zeilenende bernommen werden, darf kein Kommentar hinter einer
+; #_ENV- Zeile stehen. Dies ist n”tig, um auch z.B. Semikolons oder
+; Leerstellen im Environment- String zuzulassen.
+; Das vom BIOS bermittelte Environment wird genau dann vom AES
+; benutzt und weitergegeben, wenn keine #_ENV - Zeile angegeben wurde.
+
+#_ENV PATH=C:\BIN\;A:\
+#_ENV PROMPT=$p$g
+#_ENV F1=tempus
+
+; Die Gr”e des Shell- Puffers mu variabel sein, damit alle beliebigen
+; Shells ihre Daten unterbringen k”nnen. Die Zahl darf nicht
+; gr”er als 65535 sein, auerdem werden immer mindestens 4192 Bytes
+; reserviert. Die Gr”e des Puffers (unsigned int) erf„hrt man, indem man
+; einen shel_get()- Aufruf mit 0 zu lesenden Bytes macht.
+; Ein zu kleiner Wert bedeutet unter Mag!X keinen Absturz, sondern die
+; Daten k”nnen nicht alle gespeichert werden.
+
+#_BUF 4192                              ; Gr”e des Shell- Puffers, dezimal
+
+; Die Ger„tenummer wird nicht ausgewertet, wenn das System fr einen
+; Aufl”sungswechsel gerade neu gestartet wird. Gibt das (N)VDI beim ™ffnen
+; der Workstation einen Fehlercode zurck (Handle 0), so wird das VDI
+; noch einmal mit Ger„tenummer 1 (aktuelle Aufl”sung) gestartet.
+; Die blichen Aufl”sungen von ST/TT sind
+;  2 = ST niedrig, 3 = ST mittel, 4 = ST hoch
+;  6 = TT mittel,  8 = TT hoch,   9 = TT niedrig,
+; weitere je nach in ASSIGN.SYS angemeldeten Ger„tetreibern (MGE,VGA,...)
+
+#_DEV 4                                 ; VDI- Treiber, 4 = hohe Aufl”sung
+
+; Font und Texth”he der AES- Zeichens„tze sind in Mag!X 2.00 variabel, so
+; kann man etwa auch in Monochrom den 8x8- Zeichensatz benutzen.
+; Die Syntax lautet:
+;  #_TXT <H”he des gr. Fonts> <H”he des kl. Fonts> <font-ID>
+; Die Zeichenh”he wird vom AES per vst_height gesetzt und ist z.B.:
+; 4=6x6-Font,6=8x8-Font,13=8x16-Font,26=16x32-Font.
+; H”hen von 0 bedeuten Standardeinstellungen, Font-ID 1 ist Systemfont.
+
+#_TXT 0 0 1                              ; Texth”hen+Font, 0 = Default
+
+; Hier kann man festlegen, ob das Mag!X- Logo in den Menleisten links
+; (Bit 0 = 1) oder rechts (Bit 0 = 0) liegen soll.
+; Fehlt der Eintrag, werden alle Flags als 0 angenommen.
+
+#_FLG 0                                 ; Bit 0 = 1: Logo links
+
+; Hier kann man die Anzahl der Fenster festlegen. Gltige Werte liegen
+; zwischen 0 und 64, es sollten keine Werte < 16 eingetragen werden.
+; Fehlt der Eintrag, wird 16 angenommen.
+
+#_WND 16
+
+; Hiermit wird die Verteilung der Rechenzeit zwischen Vorder- und
+; Hintergrundproze gesteuert. Der erste Wert gibt die L„nge einer
+; Zeitscheibe in 5ms-Einheiten an, der zweite die Hintergrundpriorit„t.
+; Ein Wert von 32 fr letztere bedeutet eine Priorit„t von 1:32 fr
+; Hintergrundprozesse. Fehlt der Eintrag, wird kein pr„-emptives
+; Multitasking aktiviert.
+
+#_TSL 1 32
+
+; Der Scrap- Pfad ("Clipboard") sollte immer auf ein existierendes
+; Verzeichnis gesetzt werden, da er sonst undefiniert ist.
+
+#_SCP C:\GEMSYS\GEMSCRAP\               ; Scrap- Directory
+
+; Die folgende Zeile enth„lt den Programmnamen und vollst„ndigen Pfad fr
+; das Program, das die Umlenkung von TOS- Programmen in Fenster durchfhrt.
+; Beim Start des ersten TOS- Programms wird das hier angegebene Programm
+; automatisch vorher in den Speicher geladen, falls es noch nicht
+; geladen ist.
+
+#_TRM C:\GEMSYS\GEMDESK\VT52.PRG
+
+; Vom in der #_ACC- Zeile angegebenen Pfad werden die Accessories geladen;
+; wenn keine gefunden werden, werden natrlich auch keine geladen. Fehlt
+; die Zeile, wird vom aktuellen Verzeichnis des Bootlaufwerks geladen, also
+; i.a. vom Wurzelverzeichnis.
+
+#_ACC C:\AUTO\ACCS\                     ; Pfad fr ACCs
+
+; Optional kann man, falls die #_APP- Zeile angegeben wurde, vor dem Starten
+; der Default- Shell Applikationen laden, die ab sofort parallel zu allen
+; anderen Programmen verfgbar sind. Dies ist eine Alternative zu dem
+; veralteten Accessory- Konzept, da jene im Gegensatz zu diesen auch wieder
+; aus dem Speicher entfernt werden k”nnen.
+; Hier kommen nur solche Programme in Frage, die sich mavoll in Bezug auf
+; Speicher verhalten; l„dt man etwa WORDPLUS auf diese Weise, so kann
+; kein anderes Programm mehr geladen werden (wenn man den Speicherhunger
+; nicht mit LIMITMEM begrenzt hat). Alle Programme werden im Grafikmodus
+; gestartet.
+
+#_APP C:\AUTO\APPS\                      ; Pfad fr parallel geladene APPs
+
+; Unter #_AUT kann man wie unter TOS 1.4 eine Applikation automatisch
+; starten, dies unterscheidet sich von den unter #_APP angemeldeten
+; Programmen dadurch, da die unter #_AUT angegebene Applikation nicht
+; parallel gestartet wird, sondern anstelle des Desktop bzw. der Default-
+; Shell. Erst wenn sich die Applikation beendet hat und keinen Nachfolger
+; per shel_write bestimmt hat, wird das Desktop bzw. die Default- Shell
+; gestartet (praktisch fr ein login.prg in Netzen!).
+; Die Applikation wird immer im Grafikmodus gestartet.
+
+;#_AUT C:\LOGIN.PRG
+
+; Die Defaultshell wird ggf. erst nach dem unter #_AUT angegebenen
+; Programm gestartet. Fehlt die Angabe, wird MAGXDESK gestartet.
+; Das Desktop bzw. die Default- Shell werden immer im Grafikmodus gestartet.
+; Achtung: Bisher nur DESKTOP.APP und KAOSDESK.PRG installieren sich nach
+;          GEM 2.x Konvention, nur solche Programme drfen hier angegeben
+;          werden. Z.Zt wird GEMINI angepat.
+
+;#_SHL C:\KAOSDESK\KAOSDESK.PRG          ; Shell
+
+; Die Reihe der Mag!X- Variablen endet mit der Zeile #_CTR. Dies zeigt an,
+; da die folgenden Daten direkt in den Shell- Puffer bernommen werden,
+; und zwar sind das die Daten frs Kontrollfeld und frs Desktop.
+; Die Zeilen frs Desktop beginnen 128 Bytes hinter #a und haben als erste
+; Zeile #_DSK (die 128 Bytes sind eine alte TOS- Konvention).
+; Wichtig ist, da die Zeile #d eine solche L„nge hat, da die Gesamtl„nge
+; der Kontrollfelddaten genau 128 Bytes betr„gt. Da einige Editoren rechts-
+; bndige Leerstellen entfernen (kann auch zu Fehlern bei Environment-
+; Variablen fhren), ist die Zeile hier mit einem ';' statt einer Leerstelle
+; abgeschlossen.
+
+#_CTR                                   ; Beginn der Kontrollfeld- Daten
+#a000000
+#b001001
+#c7770007000600070055200505552220770557075055507703111302
+#d                                            ;
+#_DSK MAGXDESK V2.42 1
+#_DSW 640 381 1 0 0 10 0111 1112110110000
+#_DFM F 2 80 9 1 2 2 2
+#_DWN 80 211 556 170 0 F:\XKAOS\*.*
+#_DWN 80 0 556 209 0 C:\*.*
+#_DWN 200 30 300 160 0
+#_DWN 220 40 300 160 0
+#_DWN 100 100 128 128 0
+#_DIC 1 A 0 0
+#_DIC 1 B 73 0
+#_DIC 2 C 0 48
+#_DIC 2 D 0 80
+#_DIC 2 E 0 113
+#_DIC 2 F 0 146
+#_DIC 4 @ 73 345
+#_DIC 5 @ 0 345
+#_DAP GP C:\TC\RCS28K.PRG RSC
+#_DAP GP E:\WORDPLUS\WORDPLUS.PRG DOC
+#_DPG C:\KAOSDESK\KCMD.PRG
+#_DPG C:\BIN\PRINT.TTP
+#_DPG C:\BIN\TEMPUS.PRG
+#_DPG *C:\TC\TC.PRG
+#_DPG *E:\SIGNUM\SIGNUM2.PRG
+#_DPG *E:\ADIPLUS\EXEC.PRG
+#_DPG *E:\WORDPLUS\WORDPLUS.PRG
+#_DPG *C:\BIN\TEMPUS.PRG
+#_DPG C:\BIN\MUTIL.PRG
+#_DPG
+#_DPG C:\BIN\WRPROT.TOS
+#_DPG *C:\BIN\FC.TTP
+#_DPG C:\BIN\BUG.TTP
+#_DPG C:\BIN\TEMPLMON.PRG
+#_DPG C:\BIN\MUTIL.PRG
+#_DPP

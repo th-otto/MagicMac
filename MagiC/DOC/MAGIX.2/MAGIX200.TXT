@@ -1,0 +1,329 @@
+Zusatzhandbuch fr Mag!X 2.00                               3.7.93
+=============================
+
+0. Vorwort
+
+Gut zwei Jahre sind seit Vorstellung von Mag!X vergangen, und das Programm
+hat seitdem eine ganze Reihe von Verbesserungen und Erweiterungen erfahren,
+die es jetzt, in der Version 2.00 unumg„nglich machen, eine
+Handbucherweiterung zu erstellen. Die wesentlichen Verbesserungen sind
+weitergehende Fensterbedienung, TOS-Programme in Fenstern und pr„emptives
+Multitasking. Letzteres erm”glicht, da Sie Mag!X nicht nur, wie gewohnt, als
+schnellen Programmumschalter verwenden k”nnen, sondern tats„chlich nebenbei
+Programme kompilieren oder assemblieren oder Daten ber diverse
+Schnittstellen bertragen k”nnen. Im Gegensatz zu anderen L”sungen stand bei
+Mag!X das Ziel im Vordergrund, diesen Vorteil nicht mit
+Geschwindigkeitseinbuen erkaufen zu mssen; Sie brauchen sich also keinen
+neuen Rechner zu kaufen, um in die Welt des "echten" Multitaskings
+einzusteigen, sondern Ihr uralter 8 MHz ST ist fr Mag!X 2.00 in jedem Fall
+ausreichend. An den Hardware- Voraussetzungen hat sich seit Mag!X 1.0 also
+nichts ge„ndert, zus„tzlich wird jedoch seit V1.10 auch der TT untersttzt.
+Eine Mag!X- Version fr den Falcon ist in Vorbereitung.
+
+1. Pr„emptives Multitasking
+---------------------------
+
+Im Gegensatz zu vorherigen Mag!X- Versionen und auch zum
+weitverbreiteten Windows fr Intel-PCs wurde das Multitasking- Konzept von
+Mag!X 2.00 um eine sogenannte Zeitscheibensteuerung erg„nzt. Keine Sorge,
+fr den Anwender bleibt, auer ein paar zus„tzlichen Einstellm”glichkeiten,
+die man getrost ignorieren kann, alles beim alten; zumindest, was den
+Aufwand angeht. Im Gegensatz zu „lteren Mag!X- Versionen werden Sie jedoch
+bald feststellen, da das Arbeiten mit Ihrem ST/TT mal wieder einmal eine
+Spur angenehmer geworden ist: Muten Sie bisher lange warten, bis
+rechenintensive Programme mit ihrer Arbeit fertig waren, k”nnen Sie nun mit
+dem Rechner parallel in einer anderen Applikation weiterarbeiten. Ganz
+besonders gilt dies fr sogenannte TOS- Progamme, die in einem echten
+Multitasking- System natrlich ordentlich in Fenstern ablaufen. Compilieren
+oder assemblieren Sie einfach in einem TOS- Fenster, legen Sie dieses
+Fenster nach hinten und schreiben mit einer Textverarbeitung einen Brief an
+Ihr Finanzamt, in dem Sie den Kaufpreis fr Mag!X als besondere Belastung
+geltend machen!
+Im Gegensatz zu blichen L”sungen arbeitet Mag!X nicht mit einer starren
+Priorit„tensteuerung, indem bestimmte Programme mehr Rechenzeit zugewiesen
+bekommen als andere (was man aber immer im Einzelfall ausprobieren mu!),
+sondern mit einer Art Automatik. Hierbei wird dem Programm, mit dem Sie
+gerade arbeiten, die gr”te Aufmerksamkeit vom Betriebssystem geschenkt. Alle
+anderen Programme (deren Fenster z.B. im Hintergrund liegen) werden
+benachteiligt. So einfach es klingt, ist es auch: Es werden fast
+ausschlielich Ihre "Denkpausen" verwendet, um Hintergrundprogramme zum Zug
+kommen zu lassen, fr Ihren Editor gibt es trotz mehrerer laufender
+Programme, die z.B. Apfelm„nnchen berechnen, keine sprbare Verz”gerung; Sie
+haben fast das Gefhl, weiterhin auf einem Singletasking- System zu arbeiten.
+Wenn nicht pl”tzlich aus dem Hintergrund das fertige Apfelm„nnchen k„me.
+Ein weit verbreitetes Vorurteil gegenber Multitasking- Systemen ist, da sie
+mehr Rechenzeit fr sich selbst ben”tigen, auch wenn nur ein einziges
+Programm im Moment ausgefhrt wird. Wenn ein Compilerlauf, auf dessen
+Ergebnis man sowieso gespannt wartet, auf einmal vier statt zwei Minuten
+dauert, hilft auch kein Megabyte Plattencache, es stellt sich stattdessen
+sofort die Frage nach dem Sinn und Zweck eines Multitaskingstems berhaupt.
+Glcklicherweise liegt der Rechenzeitverlust bei Mag!X 2.00 weit unterhalb
+von einem Prozent, womit sich das Vorurteil als genau ein solches
+herausstellt.
+Um die Rechenzeitverteilung Ihres Betriebssystems dennoch ein wenig
+beeinflussen zu k”nnen, gibt es zwei M”glichkeiten:
+
+a. In MAGX.INF
+
+   Die Zeile
+     #_TSL 1 32
+   steuert die Verteilung der Rechenzeit zwischen Vorder- und Hintergrund-
+   proze. Der erste Wert gibt die L„nge einer Zeitscheibe in 5ms-Einheiten
+   an, der zweite die Hintergrundpriorit„t.
+   Ein Wert von 32 fr letztere bedeutet eine Priorit„t von 1:32 fr
+   Hintergrundprozesse.
+   Fehlt die Zeile, wird kein pr„-emptives Multitasking aktiviert.
+
+b. In TSLICE.CPX
+
+   Sie ben”tigen hierzu das variable Kontrollfeld von Atari, am besten in der
+   Version 1.31 oder neuer. Kopieren Sie das CPX von Ihrer Mag!X- Diskette in
+   Ihr CPX- Verzeichnis. Mit Hilfe der beiden Schieber k”nnen Sie nun die
+   beiden Werte komfortabel beeinflussen. Wir empfehlen, insbesondere den
+   unteren Wert nicht zu klein zu machen, da sonst die Hintergrundprogramme
+   die Vordergrundprogramme stark verlangsamen k”nnen. Nach unseren
+   Erfahrungen sind keine Manipulationen notwendig.
+   Interessant ist noch die M”glichkeit, das pr„emptive Multitasking ganz
+   abzuschalten, falls sich Programme als kritisch erweisen sollten.
+
+2. Fensterbedienung und Programmumschaltung
+-------------------------------------------
+
+Mag!X stellte bisher insgesamt 16 Fenster zur Verfgung, die zwischen den
+laufenden Applikationen aufgeteilt werden konnten. Fr die meisten
+Anwendungen drften bereits weniger Fenster den Bildschirm v”llig berlasten,
+aber neuere Programme stellen immer h„ufiger auch Dialoge in Fenstern dar.
+Fr den Ernstfall kann man ab Mag!X 2.00 die Anzahl der insgesamt verfgbaren
+Fenster auf bis zu 64 erh”hen, dazu ist die Variable _WND in MAGX.INF
+anzupassen. Da Fenster Speicher ben”tigen, sollte der kleinstm”gliche Wert
+eingestellt werden, weniger als 16 Fenster sind unzul„ssig.
+Fr Programmierer: Eine einzelne Applikation sollte jedoch nie mehr als 16
+                   Fenster nutzen, da sonst der Nachrichtenpuffer des Systems
+                   berlaufen kann und evtl. Redraws nicht mehr ausgefhrt
+                   werden k”nnen.
+
+Die Farben der Fensterr„nder k”nnen mit g„ngigen CPX- Programmen individuell
+eingestellt werden.
+
+Mag!X erlaubt die Bedienung von Fensterelementen auch bei
+Hintergrundfenstern. Einige, insbesondere „ltere, Programme haben
+Schwierigkeiten mit dem Scrollen im Hintergrund; in diesem Fall sollte das
+Fenster zun„chst nach vorn geklickt werden. Mit kurzem Klick auf die
+Titelzeile des Fensters kann man Fenster nach oben bringen, bei
+Gedrckthalten der Maus wird das Hintergrundfenster verschoben.
+
+[Bild: MANPOPUP.IMG]
+
+Generell wurde das Umschalten der Menleiste zusammen mit dem obersten
+Fenster gekoppelt, um nach M”glichkeit immer die zugeh”rige Menleiste zu
+einem Fenster sichtbar zu haben. Beim Wechsel der Menleiste ber das Popup-
+Men kann man jedoch das Umschalten des obersten Fensters verhindern, indem
+man zun„chst das Popup- Men mit einem Klick nur der linken Maustaste in die
+Menzeile anzeigt und dann beim Umschalten der Programme die rechte
+Maustaste gedrckt h„lt. Bei Programmen ohne Menleiste wird der Hintergrund
+von MAGXDESK (oder ggf. einer alternativen Shell) angezeigt, diese Programme
+erscheinen jetzt ebenfalls im Popup- Men, mit Hilfe dessen dann deren
+oberstes Fenster aktiviert werden kann.
+
+Die Funktion des Popupmens fr die Programmumschaltung wurde um folgende
+neue Funktionen erweitert:
+
+  1. APPLIKAT ausblenden
+     Die Fenster der aktiven Applikation werden vom Bildschirm entfernt, dann
+     wird auf eine andere Applikation umgeschaltet.
+  2. andere ausblenden
+     Alle Fenster auer denen der aktiven Applikation werden vom Bildschirm
+     entfernt.
+  3. alle einblenden
+     Alle ausgeblendeten Fenster aller Applikationen werden sichtbar gemacht.
+     Dieser Eintrag ist nur w„hlbar, wenn entfernte Fenster existieren.
+     Applikationen mit versteckten Fenstern werden durch einen '*' hinter dem
+     Programmnamen gekennzeichnet.
+Durch Umschalten auf eine Applikation ber das Popupmen oder durch eine
+andere Aktion werden alle eventuell entfernten Fenster der Applikation
+wieder hergestellt.
+Fr Programmierer:
+     Das Entfernen geschieht dadurch, da der Applikation die Mitteilung
+     geschickt wird, der Benutzer habe das Fenster nach auerhalb des
+     Bildschirms verschoben. Einige Programme lassen das nicht zu, deren
+     Fenster bleiben dann einfach sichtbar.
+
+Es gibt jetzt auer Ctrl-Alt-Esc als weitere spezielle Tastenkombination
+Ctrl-ALt-Tab; hiermit kann man die aktive Applikation "zyklisch" umschalten.
+Zur Bedienung h„lt man Ctrl und Alt gedrckt und bet„tigt Tab, bis die
+gewnschte Applikation erreicht ist, dann l„t man Alt und Ctrl los.
+
+2. MAGXDESK
+-----------
+
+Erweiterte Objekttypen wurden in Mag!X eingefhrt und unter MAGXDESK
+verwendet. Daher sind einige Buttons unterstrichen, diese kann man durch
+Bet„tigen der Alt-Taste und des unterstrichenen Buchstabens anw„hlen.
+Unterstrichene Buttons und šberschriften lassen sich sehr einfach sowohl
+in eigenen Programmen einbauen als auch in bereits bestehende integrieren.
+Die Unterstriche werden beim Start eines solchen Programms unter TOS einfach
+ignoriert. Im Dialog "Einstellungen" ist die Aufl”sung nun ber ein
+Popup-Men „nderbar.
+Im Hinblick auf die Untersttzung des XRSC-Format wurde die Einbindung der
+Icons in MAGXDESK ver„ndert - die Icons werden jetzt direkt in das Programm
+gebunden. Die TO-Zeile in NAMES.TXT ist beim Umstieg von Mag!X 1.00
+entsprechend anzupassen. Neben MAGXDESK wurde dazu MKICONS (jetzt: MKICONS2)
+modifiziert.
+Statt der bisherigen Methode, Dateien per Shift-Doppelklick an Programme
+zu bergeben k”nnen jetzt Icons per "Kopierbefehl" auf ein Programmicon, eine
+Batchdatei oder eine angemeldete Datei gezogen werden. Will man mehrere
+Dateien aus verschiedenen Fenstern bergeben, mu die alte Methode angewandt
+werden.
+Es wird verhindert, da ein bereits laufendes Programm noch einmal geladen
+wird. Stattdessen wird dem Programm eine entsprechende Nachricht (Fr
+Programmierer: Es handelt sich um VA_START) geschickt, da es ggf. weitere
+Dateien laden soll. ltere Programme verstehen diese Nachricht mitunter
+nicht. In diesem Fall kann das Programm notfalls ber Alt-Doppelklick oder
+ber das Popup-Men gestartet werden.
+Die Tasten Shift-Cursor hoch/runter scrollen das oberste Fenster in
+MAGXDESK seitenweise.
+Mit Hilfe eines g„ngigen Resource-Editors ist es nun m”glich, Farbe und
+Muster des Desktop-Hintergrunds zu „ndern. MAGXDESK bernimmt die Angaben
+aus dem ersten Formular (= zweiter Baum) von MAGXDESK.RSC aus den beiden
+Rechtecken, auf denen die Icons liegen. Das oberste Rechteck wird bei
+Farbaufl”sungen verwendet (voreingestellt ist grn ohne Muster), das untere
+fr Schwarzwei-Aufl”sungen (voreingestellt sind 50% grau).
+H„lt man beim Kopier/Verschiebevorgang beim Verschieben der Icons die
+Alt-Taste gedrckt, k”nnen Dateien bereits beim Kopieren/Verschieben
+umbenenannt werden.
+
+3. Fšr Programmierer: GEMDOS
+----------------------------
+
+ù Die Pfadauswertung, die bisher Atari-kompatibel war, wurde ver„ndert.
+  Behandelt TOS einen Pfad wie "\BIN\\x" wie eine Datei mit leerem Namen im
+  Ordner BIN, ignoriert Mag!X nun s„mtliche berflssigen '\' und erkennt
+  in diesem Fall eine Datei 'x' im Ordner "BIN". Auch "\\\\\BIN\\\\x" ist
+  unter Mag!X ein gltiger Pfad.
+ù Die Pfadauswertung wurde verbessert. Man kann jetzt mit "..." usw. auf
+  bergeordnete Verzeichnisse direkt zugreifen. Bekannt ist dieses Feature
+  etwa unter MSDOS.
+ù Die Ger„tenamen wurden ge„ndert und aus Kompatibilit„tsgrnden wieder dem
+  TOS angen„hert.
+  "NUL" und "NUL.BAT" sind nun Dateinamen, "NUL:" und "NUL:.bat" sind
+  Ger„tenamen. Die Eingabe des Doppelpunkts in Dialogboxen ist nun m”glich.
+
+4. Fšr Programmierer: VDI
+-------------------------
+
+Wegen der TT-Kompatibilit„t existiert ein vierter Systemzeichensatz mit
+32*16 Punkten.
+
+5. Fr Programmierer: AES- Objekttypen
+--------------------------------------
+
+Fr die bisherigen Standard-Objekttypen G_STRING, G_BUTTON und G_TITLE
+k”nnen jetzt Unterstriche festgelegt werden. Dies kann ganz einfach z.B.
+mit INTRFACE durchgefhrt werden. Zus„tzlich hat man zus„tzliche Buttontypen,
+n„mlich runde und solche mit Kreuzchen, zur Verfgung.
+
+Alle Modifikationen werden zun„chst durch Setzen des Bits WHITEBAK von
+ob_state aktiviert.
+
+Bei den Objekttypen G_STRING und G_TITLE legt nun das High-Byte von ob_state
+die Position des Unterstrichs fest. Ist das Hibyte = 255, wird das gesamte
+Objekt unterstrichen, womit man leicht šberschriften erzeugen kann. Durch
+Vergr”ern des Objekts ber die Textl„nge hinaus kann man die šberschrift
+leicht verbreitern.
+
+Aktiviert man bei einem G_BUTTON zus„tzlich zum Statusbit WHITEBAK noch Bit
+15 von ob_flags, wird
+     ein Kreuzchen- Button angezeigt, falls es ein normaler Button ist.
+     ein runder Button angezeigt, falls es ein RADIOBUTTON ist.
+Dabei steht links vom Text steht ein K„stchen, das bei Selektion ein
+Kreuzchen enth„lt, bzw. ein Kreis, der bei Selektion einen schwarzen
+Inkreis enth„lt.
+Die Position des Unterstrichs steht im Hibyte von ob_state (ohne Bit 15, das
+die Spezialbuttons aktiviert), ein Wert von -1 fr ob_state signalisiert,
+da nicht unterstrichen wird. Unterstrichene Objekte k”nnen mit der Tastatur
+ber Alt-Buchstabe bedient werden.
+
+Standardm„ig sollten Buttons die H”he 1 Zeichen plus ein Pixel,
+šberschriften 1 Zeichen und 2 Pixel haben, damit der Unterstrich erkennbar
+ist.
+
+Wird eine derartige RSC-Datei unter normalem TOS eingesetzt, ergeben sich
+keinerlei Probleme, da die entsprechenden Bits komplett ignoriert werden.
+Die neuen, unterstrichenen Objekttypen werden von den Dialogroutinen
+ausgewertet, d.h. man mu sich um die Erkennung der Tastencodes fr diese
+Typen keine Gedanken machen, das erledigt das System. Man beachte, da nur
+Buchstabentasten A..Z und Zahlen 0..9 des Haupttastenblocks verarbeitet
+werden k”nnen.
+Ein Hauptaspekt an der vorliegenden Implementation der neuen, erweiterten
+Objekttypen ist, da sich hiermit alte Programme mit Hilfe eines Ressource-
+Editors sehr einfach "aufpeppen" lassen, ohne auch nur einen einzigen
+Eingriff in den Programmcode vornehmen zu mssen. Die Programme sind v”llig
+ohne Ver„nderung unter jeder TOS- Version lauff„hig, nur unter Mag!X
+entfalten sie pl”tzlich ihre versteckten F„higkeiten.
+
+Fr Programmierer: Haben Sie die neuen Objekttypen von Mag!X verwendet, ist
+                   leider etwas Arbeit n”tig, um die Resourcedateien unter
+                   Mag!X 2.00 genauso aussehen zu lassen:
+                         a) G_BOXTEXT in G_BUTTON wandeln (-> INTRFACE)
+                         b) Bit 15 der ob_flags setzen
+                   Natrlich ist es jetzt nicht mehr m”glich, Schreibmodus
+                   oder Farbe zu beeinflussen.
+
+6. Fr Programmierer: AES allgemein
+-----------------------------------
+
+Fr Programmierer:
+- Die Nachrichten WM_UNTOPPED, WM_ONTOP und CH_EXIT werden vom AES nach
+  MultiTOS- Spezifikation verschickt.
+- Die Unterfunktion WF_DCOLOR von wind_set() wird untersttzt. Damit ist es
+  jetzt m”glich, die Fensterfarben etwa mit Hilfe des variablen Kontrollfelds
+  zu ver„ndern.
+  Achtung: Die Unterfunktion WF_WCOLOR, die einem bestimmten Fenster eine
+           eigene Farbgebung erm”glicht, wird nicht untersttzt.
+           Der Nutzen dieses Features ist mehr als fragwrdig, und daher wird
+           es auch bisher von keinem g„ngigen Programm ausgenutzt.
+  Achtung: Wird die Fensterfarbe nicht beim Booten, sondern sp„ter von Hand
+           umgeschaltet, sollte ein Aufr„umen des Bildschirms durchgefhrt
+           werden.
+- Die MultiTOS- Funktionen appl_search(), appl_read(-1), appl_find(NULL),
+  menu_bar(-1), rsrc_rcfix(), shel_get(-1), wind_update "check and set"
+  wind_get(whdl, WF_OWNER, ...), wind_set(handle, WF_BOTTOM),
+  appl_getinfo(), graf_mouse(258/259/260) wurden implementiert.
+  wind_get(WF_TOP) wurde gem„ MultiTOS erweitert um ap_id und n„chstes
+  Fenster. Das n„chste Fenster des Desktop ist -1.
+  Achtung: Mag!X mu als oberstes Fensterhandle eine negative Zahl (-2)
+  liefern, falls das Programm einer anderen Applikation geh”rt, sonst laufen
+  eine Reihe alter Programme nicht (->Tempus u.v.a.m). Dies war bisher
+  immer der Fall, vor MultiTOS jedoch unkritisch.
+  Ab Mag!X 2.00 wird das tats„chliche Handle in wi_gw4 zurckgeliefert.
+  Der Inhalt von global[13] und global[14] nach MultiTOS- Spezifikation
+  gesetzt.
+- Die Behandlung von shel_write() mit isover == SHW_SINGLE wurde erweitert.
+  Beim Aufruf werden die aktuellen Pfade und das aktuelle Laufwerk fr den
+  Start des neuen Programmes aus den aktuellen Pfaden gesetzt. Nach dem
+  Aufruf sind die aktuellen Pfade des aufrufenden Programms zerst”rt. Dies
+  ist jedoch unkritisch, da dieses sich in jedem Fall sofort anschlieend
+  sowieso beendet.
+- Da die (noch von KAOS 1.4) stammende Nachricht WM_BACKDROPPED gemeiner-
+  weise mit WM_ONTOP identisch ist, wurden die Mag!X- spezifischen Nach-
+  richten auf Codes >= 100 gelegt und in MAGX.H mit XX_M_YY festgelegt.
+  Statt WM_BACKDROPPPED (31) gibt es jetzt WM_M_BDROPPED (100).
+- shel_write(isover SHW_PARALLEL) liefert jetzt die ap_id zurck, 0 bei
+  Fehler.
+- MAGXDESK verarbeitet jetzt SH_WDRAW.
+- GEMDOS arbeitet unter Mag!X reentrant, sichtbar ist dies z.B. daran, da
+  Altertboxen des Types "Daten auf Disk A: defekt" verschiebbar sind, hierzu
+  mu n„mlich Speicher angefordert werden, was unter (Multi)TOS nicht
+  funktioniert, da gerade eine Dateioperation im GEMDOS abgearbeitet wird.
+ù Es gibt eine neue Unterfunktion von objc_edit() mit Modus 103, die wie
+  Modus 3 (ED_END) funktioniert und den Cursor im XOR- Modus zeichnet.
+  Zus„tzlich mu jedoch in addrin[1] ein Zeiger auf ein GRECT bergeben
+  werden, auf das die Ausgabe beschr„nkt wird.
+  Diese Funktion wird ben”tigt, um fr Dialoge in Fenstern einen Redraw
+  machen zu k”nnen.
+ù Eine neue Unterfunktion von form_keybd() wird aufgerufen mit objnr ==
+  0x8765.
+  Hiermit werden Tasten verarbeitet, die mit ALT bet„tigt wurden. Rckgabe
+  ist 1, wenn ein Objekt gefunden wurde; in diesem Fall ist key gel”scht, und
+  die Objektnummer steht in nxtobj.
+  Wird zum Nachbau von form_do() fr Dialoge in Fenstern ben”tigt.

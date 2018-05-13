@@ -1,0 +1,141 @@
+8. Die Menstruktur von VT52
+----------------------------
+
+Um im Multitaskingbetrieb gleichzeitig mit mehreren TOS- und GEM-Programmen
+arbeiten zu k”nnen, mssen natrlich auch die TOS-Programme im Fenster
+laufen. Diese Umlenkung von TOS-Programmen bernimmt VT52.
+In der Menzeile von VT52 finden Sie fnf Mens. Die Meneintr„ge k”nnen
+mit der Maus oder durch eine Tastenkombination aufgerufen werden:
+
+[Bild: VT52MENU.IMG]
+
+
+8.1 VT52: šber VT52...
+----------------------
+Hier finden Sie die Copyrightmeldung und die Versionsnummer von VT52.
+
+
+8.2 Das Datei-Men
+------------------
+
+Datei: ™ffnen... #O
+-------------------
+Beim Start ber MAGXDESK oder einen an Mag!X angepaten Desktop werden TOS-
+und TTP-Programme automatisch in das VT52-Fenster umgelenkt. Wenn Sie einen
+nicht an Mag!X angepaten Desktop verwenden oder ein TOS/TTP-Programm mehrfach
+starten wollen, so k”nnen Sie ber diesen Eintrag ein Programm laden
+(letzteres ist beim Start des Kommandointerpreters ber Ctrl-B von MAGXDESK
+aus nicht notwendig, der Kommandointerpreter kann also immer mehrfach geladen
+werden).
+
+Datei: Informationen... #I
+--------------------------
+Unter diesem Menpunkt erhalten Sie Informationen ber das im obersten
+VT52-Fenster ablaufende Programm.
+
+Datei: Schlieen... #U
+----------------------
+šber diesen Menpunkt k”nnen Sie ein Fenster schlieen und gleichzeitig das
+darin laufende TOS-Programm beenden.
+
+Datei: Ende #Q
+--------------
+Dieser Punkt beendet (sofern m”glich) alle laufenden TOS-Programme,
+schliet deren Fenster und entfernt VT52 aus dem System.
+
+Hinweis: Falls vektorverbiegende Programme verwendet werden, die das
+         XBRA-Verfahren nicht untersttzen, ist es m”glich, da VT52 sich
+         nicht wieder aus den Systemvektoren entfernen kann (es erscheint
+         dann eine entsprechende Warnmeldung). In diesem Fall k”nnen Sie
+         VT52 nicht beenden.
+
+
+8.3 Copy & Paste
+----------------
+
+Text-Selektion
+--------------
+Die in GEM-Programmen bliche Selektierung (Block mit der Maus aufziehen
+und ber den Menpunkt 'Kopieren' in der GEM-Zwischenablage sichern) ist
+fr TOS-Programme nur bedingt geeignet.
+In VT52 selektieren Sie daher einen Block, indem Sie mit der Maus an eine
+Textstelle gehen und die linke Maustaste drcken (und gedrckt halten).
+Jetzt k”nnen Sie den Block zeichenweise selektieren. Beim Loslassen der
+Maustaste wird der Block automatisch in die GEM-Zwischenablage geschrieben.
+
+Bearbeiten: Einfgen #V
+-----------------------
+Fgt die in der GEM-Zwischenablage (Clipboard) vorhandenen Daten ab der
+aktuellen Cursorposition ein.
+
+8.4 Fenster: Wechseln #W
+------------------------
+Wechselt zum n„chsten VT52-Fenster.
+
+
+8.5 Optionen
+------------
+
+Optionen: Clipboard... #C
+-------------------------
+Hier k”nnen Sie fr die Textselektion ('Kopieren') und das Einfgen der
+Clipboard-Daten festlegen, in welcher Form die Daten gewandelt werden.
+
+[Bild: VTCLPBRD.IMG]
+
+Diese Wandlungsm”glichkeiten sind beim Export auf andere Systeme (Unix z.B.
+verwendet nur LF als Zeilenendekennung) oder beim Einfgen in andere
+GEM-Programme (z.B. in einem Editor, der keine Steuerzeichen verarbeiten kann)
+sehr ntzlich.
+
+Optionen: Terminal... #T
+------------------------
+Unter diesem Menpunkt k”nnen Sie die Terminalparameter beeinflussen.
+
+[Bild: VTTERM.IMG]
+
+In den ersten beiden Eintr„gen legen Sie die Gr”e des Terminals fest.
+Mit dem n„chsten Eintrag k”nnen Sie vorgeben, wieviele Ausgabezeilen gepuffert
+werden sollen. Sie haben dadurch z.B. die M”glichkeit, zurckzuscrollen, wenn
+bei einer Verzeichnisausgabe mit einem Kommandointerpreter Zeilen aus dem
+sichtbaren Textschirm herausgeschoben worden sind.
+
+Ist <Ausgaben abwarten> aktiviert, so wird fr den Fall, da ein anderes
+Programm den Bildschirm zur Ausgabe blockiert (z.B. weil eine Dialogbox
+dargestellt wird) und ein TOS-Programm (z.B. ein Packer) ebenfalls eine
+Ausgabe vornimmt, das TOS-Programm angehalten. Ist dieser Punkt nicht
+aktiviert, so puffert VT52 die Ausgaben des TOS-Programms (das TOS-Programm
+l„uft also weiter) und holt diese Ausgaben nach, sobald der Bildschirm
+wieder freigegeben ist.
+
+Mit dem <Timer-Redraw> legen Sie dabei fest, nach welcher Zeitspanne VT52
+versucht, das Terminalfenster wieder zu aktualisieren (500ms sind dabei
+i.a. v”llig ausreichend).
+
+Optionen: Programmende... #P
+----------------------------
+
+[Bild: VTPTERM.IMG]
+
+Hier k”nnen Sie einstellen, wie sich VT52 beim Beenden des letzten
+TOS-Programms verh„lt und ob nach Beendigung eines TOS-Programms das
+Fenster sofort geschlossen werden soll.
+
+Optionen: Zeichensatz... #Z
+---------------------------
+
+[Bild: VTFONTS.IMG]
+
+Hier k”nnen Sie den Zeichensatz und die gewnschte Zeichensatzgr”e in
+Punkten (pt) einstellen.
+
+Optionen: Parameter sichern... #S
+---------------------------------
+šber diesen Menpunkt k”nnen Sie die aktuellen Einstellungen in der Datei
+VT52.INF sichern. Dabei werden die Fensterposition, Fenstergr”e,
+verwendeter Zeichensatz und die Pfade der gerade aktiven TOS-Programme
+gespeichert.
+Mit anderen Worten: Sie k”nnen auch festlegen, welche TOS-Programme beim
+Start des VT52 automatisch geladen werden!
+Eine Beschreibung der von VT52 in der VT52.INF-Datei abgespeicherten
+Parameter finden Sie in der Datei VT52_BSP.INF im UTILITY-Ordner.
