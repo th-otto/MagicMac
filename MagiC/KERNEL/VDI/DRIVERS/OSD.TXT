@@ -1,0 +1,30 @@
+Hallo Andreas,
+
+anbei, der neue Drucksource und nochmal alle Screen- und OSD-Treiber.
+Eine kurze Auflistung, um die Benamung der Treiber zu erkl„ren:
+
+MFA*.SYS : Dies sind die Bildschirmtreiber fr ST/TT/Falcon/MagiC-PC
+MFM*.SYS : Dies sind die Bildschirmtreiber fr den MagiCMac
+
+wobei die Ziffern/Buchstabenkombination hinter den ersten drei
+Buchstaben die Farbtiefe und das Schirmformat angibt.
+
+Beispiel:
+
+4IP : steht fr 4 Farben, interleaved plane (ST Mid)
+
+MFA4IP.SYS ist also der 4-Farb-Treiber fr den ATARI
+
+MFM4IP.SYS ist der 4-Farb-Treiber fr die ST-Mid-Emulation unter
+MagiCMac (im Gegensatz zum ATARI-Treiber u.a. ohne Hardwarezugriffe auf
+Palettenbausteine, etc.)
+
+
+*.OSD sind die Offscreentreiber. Im Ordner \OSD\min-ATARI\ habe ich die
+Treiber gepackt, die auf jeden Fall der ATARI-Version beliegen MšSSEN.
+
+MagiCMac mssen alle OSD-Treiber aus dem \OSD-Ordner (_inkl._ derer aus
+dem \min-ATARI-Verzeichnis) beiliegen. Wenn es auf der ATARI-Disk noch
+pat, so sollten auch dort alle OSD-Treiber beiliegen.
+
+Gru, Wilfried
