@@ -17,7 +17,7 @@
  * Number of Trees:          1
  * Number of Userblks:       0
  * Number of Images:         0
- * Total file size:          3302
+ * Total file size:          3354
  */
 
 #undef RSC_NAME
@@ -50,7 +50,7 @@
 
 
 
-#define TREE1      0 /* menu */
+#define MENU1              0 /* menu */
 
 
 

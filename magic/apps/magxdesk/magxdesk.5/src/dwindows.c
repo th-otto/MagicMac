@@ -967,7 +967,7 @@ static long read_wind( WINDOW *w, int free_flag)
 
 		if	(was_long_names)
 			{
-			Rform_alert(1, ALRT_CONT_LNAMES);
+			/* Rform_alert(1, ALRT_CONT_LNAMES); */
 			}
 
 		if	(err == E_OK)
