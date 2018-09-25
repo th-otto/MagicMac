@@ -63,63 +63,6 @@
 #define F_SUBDIR 0x10
 #define F_ARCHIVE 0x20
 
-/* BIOS level errors */
-
-#define E_OK	  0L	/* OK, no error 		*/
-#define ERROR	 -1L	/* basic, fundamental error	*/
-#define EDRVNR	 -2L	/* drive not ready		*/
-#define EUNCMD	 -3L	/* unknown command		*/
-#define E_CRC	 -4L	/* CRC error			*/
-#define EBADRQ	 -5L	/* bad request			*/
-#define E_SEEK	 -6L	/* seek error			*/
-#define EMEDIA	 -7L	/* unknown media		*/
-#define ESECNF	 -8L	/* sector not found		*/
-#define EPAPER	 -9L	/* no paper			*/
-#define EWRITF	-10L	/* write fault			*/
-#define EREADF	-11L	/* read fault			*/
-#define EGENRL	-12L	/* general error		*/
-#define EWRPRO	-13L	/* write protect		*/
-#define E_CHNG	-14L	/* media change 		*/
-#define EUNDEV	-15L	/* unknown device		*/
-#define EBADSF	-16L	/* bad sectors on format	*/
-#define EOTHER	-17L	/* insert other disk	*/
-
-/* BDOS level errors */
-
-#define EINVFN	-32L	/* invalid function number		 1 */
-#define EFILNF	-33L	/* file not found				 2 */
-#define EPTHNF	-34L	/* path not found				 3 */
-#define ENHNDL	-35L	/* no handles left				 4 */
-#define EACCDN	-36L	/* access denied				 5 */
-#define EIHNDL	-37L	/* invalid handle				 6 */
-#define ENSMEM	-39L	/* insufficient memory			 8 */
-#define EIMBA	-40L	/* invalid memory block address 	 9 */
-#define EDRIVE	-46L	/* invalid drive was specified	15 */
-#define ENSAME -48L /* MV between two different drives 17 */
-#define ENMFIL	-49L	/* no more files				18 */
-
-/* our own inventions */
-
-#define ERANGE	-64L	/* range error					33 */
-#define EINTRN	-65L	/* internal error				34 */
-#define EPLFMT	-66L	/* invalid program load format	35 */
-#define EGSBF	-67L	/* setblock failure 			36 */
-
-/* KAOS extensions */
-
-#define EBREAK	-68L	/* user break (^C)				37 */
-#define EXCPT	-69L	/* 68000- exception ("bombs")		38 */
-
-/* MiNT extensions */
-
-#define ELOCKED -58L
-#define ENSLOCK -59L
-
-/*  MagiC extensions */
-
-#define EPTHOV -70L /* path overflow                           MAG!X    */
-#define ELOOP  -80L /* too many symlinks in path               MiNT */
-
 /* GEMDOS Pexec Modes */
 
 #define EXE_LDEX    0                                       /* TOS */
@@ -128,6 +71,10 @@
 #define EXE_BASE    5                                       /* TOS */
 #define EXE_EXFR    6                                       /* TOS 1.4  */
 #define EXE_XBASE   7                                       /* TOS 3.01 */
+#define XEXE_INIT   101                                     /* MAG!X      */
+#define XEXE_TERM   102                                     /* MAG!X      */
+#define XEXE_XBASE  107                                     /* Mag!X 2.10 */
+#define XEXE_EXACC  108                                     /* Mag!X 2.10 */
 
 
 /* GEMDOS (MiNT) Fopen modes */
@@ -266,28 +213,6 @@ typedef struct          /* used by Pexec */
 } COMMAND;
 
 
-typedef struct			/* Header for executable files */
-{
-	WORD branch;		/* always == 0x601a */
-	LONG tlen;		/* length of TEXT segment */
-	LONG dlen;		/* length of DATA segment */
-	LONG blen;		/* length of BSS segment */
-	LONG slen;		/* length of symbol table */
-	LONG res1;		/* unused, must be zero */
-	LONG flags;		/* different flags */
-	WORD reloflag;		/* if not zero, neither relocate nor clear BSS */
-} PH;
-
-#define PH_MAGIC	0x601a					/* value of PH.branch */
-#define PHFLAG_DONT_CLEAR_HEAP	0x00000001	/* PH.flags */
-#define PHFLAG_LOAD_TO_FASTRAM	0x00000002	/* PH.flags */
-#define PHFLAG_MALLOC_FROM_FASTRAM	0x00000004	/* PH.flags */
-#define PHFLAG_MINIMAL_RAM		0x00000008	/* PH.flags (MagiC 5.20) */
-#define PHFLAG_MEMPROT			0x000000f0	/* PH.flags (MiNT) */
-#define PHFLAG_SHARED_TEXT		0x00000800	/* PH.flags (MiNT) */
-#define PHFLAG_TPA_SIZE			0xf0000000	/* PH.flags */
-
-
 typedef struct          /* used by Initmouse */
 {
         char    topmode;
@@ -315,74 +240,6 @@ typedef struct {
 	long		key;
 	long		value;
 } COOKIE;
-
-/* Sconfig(2) -> */
-
-#ifndef _DOSVARS
-#define _DOSVARS
-typedef struct
-   {
-   char      *in_dos;                 /* Adresse der DOS- Semaphore */
-   int       *dos_time;               /* Adresse der DOS- Zeit      */
-   int       *dos_date;               /* Adresse des DOS- Datums    */
-   long      res1;                    /*                            */
-   long      res2;                    /*                            */
-   long      res3;                    /* ist 0L                     */
-   void      *act_pd;                 /* Laufendes Programm         */
-   long      res4;                    /*                            */
-   int       res5;                    /*                            */
-   void      *res6;                   /*                            */
-   void      *res7;                   /* interne DOS- Speicherliste */
-   void      (*resv_intmem)();        /* DOS- Speicher erweitern    */
-   long      (*etv_critic)();         /* etv_critic des GEMDOS      */
-   char *    ((*err_to_str)(char e)); /* Umrechnung Code->Klartext  */
-   long      res8;                    /*                            */
-   long      res9;                    /*                            */
-   long      res10;                   /*                            */
-   } DOSVARS;
-#endif
-
-/* os_magic -> */
-
-#ifndef _AESVARS
-#define _AESVARS
-typedef struct
-     {
-     long magic;                   /* muž $87654321 sein              */
-     void *membot;                 /* Ende der AES- Variablen         */
-     void *aes_start;              /* Startadresse                    */
-     long magic2;                  /* ist 'MAGX'                      */
-     long date;                    /* Erstelldatum ttmmjjjj           */
-     void (*chgres)(int res, int txt);  /* Aufl”sung „ndern           */
-     long (**shel_vector)(void);   /* residentes Desktop              */
-     char *aes_bootdrv;            /* von hieraus wurde gebootet      */
-     int  *vdi_device;             /* vom AES benutzter VDI-Treiber   */
-     void *reservd1;
-     void *reservd2;
-     void *reservd3;
-     int  version;                 /* z.B. $0201 ist V2.1             */
-     int  release;                 /* 0=alpha..3=release              */
-     } AESVARS;
-#endif
-
-/* Cookie MagX --> */
-
-#ifndef _MAGX_COOKIE
-#define _MAGX_COOKIE
-typedef struct
-     {
-     long    config_status;
-     DOSVARS *dosvars;
-     AESVARS *aesvars;
-     void *res1;
-     void *hddrv_functions;
-     long status_bits;             /* MagiC 3 ab 24.5.95         */
-     } MAGX_COOKIE;
-#endif
-
-/* Bits for <status_bits> in MAGX_COOKIE (read only!) */
-
-#define MGXSTB_TSKMAN_ACTIVE  1    /* MagiC task manager is currently active */
 
 /****** Tos *************************************************************/
 

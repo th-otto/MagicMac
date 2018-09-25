@@ -6,6 +6,7 @@
 *********************************************************************/
 
 #include <mgx_dos.h>
+#include <toserror.h>
 #include <vdi.h>
 #include "k.h"
 #include <stdlib.h>

@@ -443,17 +443,6 @@ typedef struct orect
 #define TEXT_TRANSPARENT	0
 #define TEXT_OPAQUE		1
 
-/* TEDINFO.te_colour: */
-
-typedef struct
-{
-     unsigned framecol    :  4;
-     unsigned textcol     :  4;
-     unsigned textmode    :  1;
-     unsigned fillpattern :  3;
-     unsigned interiorcol :  4;
-} bfcolspec;
-
 /* Object structures */
 
 typedef struct
@@ -464,10 +453,7 @@ typedef struct
      WORD     te_font;          /* font                         */
      WORD     te_junk1;         /* junk int                     */
      WORD     te_just;          /* justification: left, right...*/
-     union {
-     WORD     	te_color;        /* color information            */
-     bfcolspec te_colspec;
-     } te_ucolor;
+     WORD     te_color;        /* color information            */
      WORD     te_junk2;         /* junk int                     */
      WORD     te_thickness;     /* border thickness             */
      WORD     te_txtlen;        /* text string length           */

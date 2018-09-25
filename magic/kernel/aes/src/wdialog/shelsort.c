@@ -27,19 +27,18 @@
 
 #include <string.h>
 
-static void longxchg(char *s1, char *s2, long count)
-#pragma warn -par
+static void longxchg(char *s1, char *s2, size_t count)
 {
 	long tmp;
 
+	(void)count;
 	tmp = *( (long *) s1);
 	*( (long *) s1) = *( (long *) s2);
 	*( (long *) s2) = tmp;
 }
-#pragma warn +par
 
 
-static void memxchg(char *s1, char *s2, long count)
+static void memxchg(char *s1, char *s2, size_t count)
 {
 	register char c;
 
@@ -54,14 +53,13 @@ static void memxchg(char *s1, char *s2, long count)
 }
 
 
-void shelsort(char *base, long count, long size,
-		    int (*compar)(void *s1, void *s2, void *udata),
-		    void *udata)
+void shelsort(char *base, size_t count, size_t size,
+		    int (*compar)(void *s1, void *s2, void *udata), void *udata)
 {
 	register int (*vgl)(void *s1, void *s2, void *udata) = compar;
 	register char *j;
 	register long k2,k,i;
-	register void (*xchg)(char *s1, char *s2, long count) = memxchg;
+	register void (*xchg)(char *s1, char *s2, size_t count) = memxchg;
 
 
 

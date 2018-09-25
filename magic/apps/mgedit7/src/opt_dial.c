@@ -63,12 +63,12 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 			localprefs.fontname;
 		tree[OPTIONS_TCOLOUR].ob_spec.tedinfo->te_ptext
 				= adr_colour[localprefs.tcolour+1].ob_spec.tedinfo->te_ptext;
-		tree[OPTIONS_TCOLOUR].ob_spec.tedinfo->te_ucolor.te_color
-				= adr_colour[localprefs.tcolour+1].ob_spec.tedinfo->te_ucolor.te_color;
+		tree[OPTIONS_TCOLOUR].ob_spec.tedinfo->te_color
+				= adr_colour[localprefs.tcolour+1].ob_spec.tedinfo->te_color;
 		tree[OPTIONS_BCOLOUR].ob_spec.tedinfo->te_ptext
 				= adr_colour[localprefs.bcolour+1].ob_spec.tedinfo->te_ptext;
-		tree[OPTIONS_BCOLOUR].ob_spec.tedinfo->te_ucolor.te_color
-				= adr_colour[localprefs.bcolour+1].ob_spec.tedinfo->te_ucolor.te_color;
+		tree[OPTIONS_BCOLOUR].ob_spec.tedinfo->te_color
+				= adr_colour[localprefs.bcolour+1].ob_spec.tedinfo->te_color;
 		itoa(localprefs.tabwidth,
 			tree[OPTIONS_TABWIDTH].ob_spec.tedinfo->te_ptext,
 			10);
@@ -138,8 +138,8 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 			{
 			tree[exitbutton].ob_spec.tedinfo->te_ptext
 				= adr_colour[obj].ob_spec.tedinfo->te_ptext;
-			tree[exitbutton].ob_spec.tedinfo->te_ucolor.te_color
-				= adr_colour[obj].ob_spec.tedinfo->te_ucolor.te_color;
+			tree[exitbutton].ob_spec.tedinfo->te_color
+				= adr_colour[obj].ob_spec.tedinfo->te_color;
 			localprefs.tcolour = obj-1;
 			goto ende;
 			}
@@ -156,8 +156,8 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 			{
 			tree[exitbutton].ob_spec.tedinfo->te_ptext
 				= adr_colour[obj].ob_spec.tedinfo->te_ptext;
-			tree[exitbutton].ob_spec.tedinfo->te_ucolor.te_color
-				= adr_colour[obj].ob_spec.tedinfo->te_ucolor.te_color;
+			tree[exitbutton].ob_spec.tedinfo->te_color
+				= adr_colour[obj].ob_spec.tedinfo->te_color;
 			localprefs.bcolour = obj-1;
 			goto ende;
 			}

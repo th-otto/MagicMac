@@ -23,7 +23,6 @@
 #define	min( A,B ) ( (A)<(B) ? (A) : (B) )
 
 extern	WORD	vdi_handle;
-extern WORD rc_intersect( GRECT *p1, GRECT *p2 );
 
 static MFDB *fill;
 
@@ -136,7 +135,7 @@ int kachel_init( char *path, WORD max_pen )
 		return(-1);
 	xp_raster = magic_rcfix.xp_rasterC;
 
-	err = load_IMG( path, &w, &h, &line_width, &planes, &palette, &pal_entries,
+	err = load_IMG( (BYTE *)path, &w, &h, &line_width, &planes, &palette, &pal_entries,
 					&img );
 	if	(err < 0)
 		return(-2);		/* Fehler beim Laden */

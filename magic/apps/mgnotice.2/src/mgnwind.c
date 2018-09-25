@@ -379,8 +379,7 @@ long open_notice_wind( unsigned char *notice, int id,
 	w->id_code = id;
 	w->selected = FALSE;
 	w->bcolour = colour;
-	w->tcolour = adr_colour[colour+1].ob_spec.tedinfo->
-					te_ucolor.te_colspec.textcol;
+	w->tcolour = COLSPEC_GET_TEXTCOL(adr_colour[colour+1].ob_spec.tedinfo->te_color);
 	w->fontH = fontH;
 	w->fontID = fontID;
 	w->fontprop = font_is_prop;

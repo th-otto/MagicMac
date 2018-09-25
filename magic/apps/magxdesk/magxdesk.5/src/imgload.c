@@ -3,9 +3,12 @@
 	Kommentare ab: Spalte 60											*Spalte 60*
 */
 
-#include	<MGX_DOS.H>
-#include	<STDDEF.H>
-#include	<STRING.H>
+#include <portab.h>
+#include	<tos.h>
+#include	<stddef.h>
+#include	<string.h>
+#include <toserror.h>
+#include <mint/dcntl.h>
 
 #include "imgload.h"
 
@@ -21,7 +24,7 @@ typedef struct
 	WORD	h;
 } IMGHDR;
 
-static LONG open_img( BYTE *name );
+static LONG open_img( char *name );
 static WORD close_img( void );
 static void unpack_line( UBYTE *des );
 static void fill_img_buf( void );
@@ -65,7 +68,7 @@ LONG load_IMG( BYTE *name, WORD *w, WORD *h,
 
 
 	*img = NULL;
-	retcode = open_img( name );
+	retcode = open_img( (char *)name );
 	if	(retcode < 0)
 		return(retcode);
 
@@ -147,7 +150,7 @@ LONG load_IMG( BYTE *name, WORD *w, WORD *h,
 	close_img();
 
 	*img = des;
-	return( E_OK );
+	return(E_OK);
 }
 
 /*----------------------------------------------------------------------------------------*/ 
@@ -155,7 +158,7 @@ LONG load_IMG( BYTE *name, WORD *w, WORD *h,
 /* Funktionsresultat:	1: alles in Ordung 0: Fehler													*/
 /* name:						Dateiname																			*/
 /*----------------------------------------------------------------------------------------*/ 
-static LONG open_img( BYTE *path )
+static LONG open_img( char *path )
 {
 	XATTR xa;
 	LONG retcode;
@@ -167,7 +170,7 @@ static LONG open_img( BYTE *path )
 	fd = (WORD) retcode;
 	retcode = Fcntl(fd, (long) &xa, FSTAT);
 	if	(!retcode)
-		d_len = xa.size;
+		d_len = xa.st_size;
 	else	goto err;
 
 	external_buf = Malloc( d_len );	/* Puffer anfordern */

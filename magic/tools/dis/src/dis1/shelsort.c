@@ -3,7 +3,7 @@
 *                          SHELSORT.O		8.1.89
 *                          ==========
 *
-*         letzte Modifikation:
+*         letzte Modifikation:			29.10.95
 *
 * MODUL fÅr Shellsort- Algorithmus.
 * Syntax wie bei QSORT.
@@ -18,6 +18,9 @@
 * 3) FÅr long oder void * wird eine besonders schnelle Vertauschung
 *    von Elementen durchgefÅhrt
 *
+* NEU:	<udata> wird an die Vergleichsfunktion Åbergeben, um
+*		z.B. Sortiermodi zu ermîglichen.
+*
 * Verbesserungsmîglichkeit: assembleroptimierte memxchg- Funktion
 *
 *******************************************************************/
@@ -25,15 +28,14 @@
 #include <string.h>
 
 static void longxchg(char *s1, char *s2, size_t count)
-#pragma warn -par
 {
 	long tmp;
 
+	(void)count;
 	tmp = *( (long *) s1);
 	*( (long *) s1) = *( (long *) s2);
 	*( (long *) s2) = tmp;
 }
-#pragma warn +par
 
 
 static void memxchg(char *s1, char *s2, size_t count)
@@ -52,9 +54,9 @@ static void memxchg(char *s1, char *s2, size_t count)
 
 
 void shelsort(char *base, size_t count, size_t size,
-		    int (*compar)(void *s1, void *s2))
+		    int (*compar)(void *s1, void *s2, void *udata), void *udata)
 {
-	register int (*vgl)(void *s1, void *s2) = compar;
+	register int (*vgl)(void *s1, void *s2, void *udata) = compar;
 	register char *j;
 	register long k2,k,i;
 	register void (*xchg)(char *s1, char *s2, size_t count) = memxchg;
@@ -71,7 +73,7 @@ void shelsort(char *base, size_t count, size_t size,
 		for	(i = k; i < count; i += size)
 			{
 			j = base + i - k;
-			while((j >= base) && ((*vgl)(j,j+k)) > 0)
+			while((j >= base) && ((*vgl)(j,j+k, udata)) > 0)
 				{
 				(*xchg)(j, j + k, size);
 				j -= k;

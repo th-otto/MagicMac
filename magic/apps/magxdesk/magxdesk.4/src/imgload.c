@@ -21,7 +21,7 @@ typedef struct
 	WORD	h;
 } IMGHDR;
 
-static LONG open_img( BYTE *name );
+static LONG open_img( char *name );
 static WORD close_img( void );
 static void unpack_line( UBYTE *des );
 static void fill_img_buf( void );
@@ -155,7 +155,7 @@ LONG load_IMG( BYTE *name, WORD *w, WORD *h,
 /* Funktionsresultat:	1: alles in Ordung 0: Fehler													*/
 /* name:						Dateiname																			*/
 /*----------------------------------------------------------------------------------------*/ 
-static LONG open_img( BYTE *path )
+static LONG open_img( char *path )
 {
 	XATTR xa;
 	LONG retcode;

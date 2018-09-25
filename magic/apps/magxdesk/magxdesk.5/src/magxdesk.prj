@@ -15,11 +15,12 @@ DWINDOWS	(k.h,magxdesk.h)	[-P -W-stv]
 PATTERN	(pattern.h)
 FILES	(k.h,magxdesk.h)	[-P]			; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
 ALLG		(k.h)
-IMGLOAD	(imgload.h)
-KACHEL	(kachel.h,imgload.h)
+IMGLOAD
+KACHEL	(kachel.h)
 SPEC		(k.h)						; TOS- SPEZIFISCHES
-SHELSORT.O
+..\..\..\..\kernel\aes\src\wdialog\shelsort.c
+..\..\..\..\lib\mylibs\src\ll.s			; long long lib
+
 pcstdlib.lib   ; standard lib
 pctoslib.lib   ; TOS lib
 pcgemlib.lib	; GEM lib
-ll.o			; long long lib

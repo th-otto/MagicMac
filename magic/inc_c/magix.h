@@ -14,135 +14,25 @@
 /************************************************************************/
 
 typedef struct {
-   int  ph_branch;        /* 0x00: muž 0x601a sein!! */
-   long ph_tlen;          /* 0x02: L„nge  des TEXT - Segments */
-   long ph_dlen;          /* 0x06: L„nge  des DATA - Segments */
-   long ph_blen;          /* 0x0a: L„nge  des BSS  - Segments */
-   long ph_slen;          /* 0x0e: L„nge  der Symboltabelle   */
-   long ph_res1;          /* 0x12: muž 0 sein!! */
-   long ph_res2;          /* 0x16: muž 0 sein!! */
-   int  ph_flag;          /* 0x1a: != 0 => nicht reloz., nicht BSS l”schen */
+   int  ph_branch;        /* 0x00: always == 0x601a */
+   long ph_tlen;          /* 0x02: length of TEXT segment */
+   long ph_dlen;          /* 0x06: length of DATA segment */
+   long ph_blen;          /* 0x0a: length of BSS segment */
+   long ph_slen;          /* 0x0e: length of symbol table   */
+   long ph_res1;          /* 0x12: unused, must be zero */
+   long ph_res2;          /* 0x16: different flags */
+   int  ph_flag;          /* 0x1a: if not zero, neither relocate nor clear BSS */
 } PH;
 
-/* AbsHeader, Programmkopf fr absolut gelinkte Dateien (ALN)              */
-/***************************************************************************/
+#define PH_MAGIC	0x601a					/* value of PH.branch */
+#define PHFLAG_DONT_CLEAR_HEAP	0x00000001	/* PH.flags */
+#define PHFLAG_LOAD_TO_FASTRAM	0x00000002	/* PH.flags */
+#define PHFLAG_MALLOC_FROM_FASTRAM	0x00000004	/* PH.flags */
+#define PHFLAG_MINIMAL_RAM		0x00000008	/* PH.flags (MagiC 5.20) */
+#define PHFLAG_MEMPROT			0x000000f0	/* PH.flags (MiNT) */
+#define PHFLAG_SHARED_TEXT		0x00000800	/* PH.flags (MiNT) */
+#define PHFLAG_TPA_SIZE			0xf0000000	/* PH.flags */
 
-typedef struct {
-  int  ph_branch;        /* 0x00: muž 0x601b sein!! */
-  long ph_tlen;          /* 0x02: L„nge  des TEXT - Segments */
-  long ph_dlen;          /* 0x06: L„nge  des DATA - Segments */
-  long ph_blen;          /* 0x0a: L„nge  des BSS  - Segments */
-  long ph_slen;          /* 0x0e: L„nge  der Symboltabelle   */
-  long ph_res1;          /* 0x12: muž 0 sein!! */
-  long ph_tbase;         /* 0x16: Ladeadresse (TEXT) */
-  int  ph_flag;          /* 0x1a: ist 0xffff */
-  long ph_dbase;         /* 0x1c: Ladeadresse (DATA) */
-  long ph_bbase;         /* 0x20: Adresse des BSS */
-} AH;
-
-/* new GEMDOS- Calls */
-
-#define Sconfig(a,b)    gemdos(0x33, (int) (a), (long) (b)) /* KAOS 1.2 */
-/* extern long Sconfig(int mode, long value); */
-#define Fshrink(a)      Fwrite(a, 0L, (void *) -1L)         /* KAOS 1.2 */
-#define Mgrow(a,b)      Mshrink(a,b)                        /* KAOS 1.2 */
-#define Mblavail(a)     Mshrink(a,-1L)                      /* KAOS 1.2 */
-
-/* Sconfig - Modes */
-
-#define SC_GET   0                                          /* KAOS 1.2 */
-#define SC_SET   1                                          /* KAOS 1.2 */
-#define SC_VARS  2                                          /* KAOS 1.4 */
-#define SC_OWN   3                                          /* KAOS 1.4 */
-
-/* Sconfig Bits */
-
-#define SCB_PTHCK   0x001                                   /* KAOS 1.2 */
-#define SCB_DSKCH   0x002                                   /* KAOS 1.2 */
-#define SCB_BREAK   0x004                                   /* KAOS 1.2 */
-#define SCB_NCTLC   0x008                                   /* KAOS 1.2 */
-#define SCB_NFAST   0x010                                   /* KAOS 1.2 */
-#define SCB_CMPTB   0x020                                   /* KAOS 1.4 */
-#define SCB_NSMRT   0x040                                   /* KAOS 1.4 */
-#define SCB_NGRSH   0x080                                   /* KAOS 1.4 */
-#define SCB_NHALT   0x100                                   /* KAOS 1.4 */
-#define SCB_RESVD   0x200                                   /* KAOS 1.4 */
-#define SCB_PULLM   0x400                                   /* KAOS 1.4 */
-
-/* Sconfig(2) -> */
-
-typedef struct
-   {
-   char      *in_dos;                 /* Adresse der DOS- Semaphore */
-   int       *dos_time;               /* Adresse der DOS- Zeit      */
-   int       *dos_date;               /* Adresse des DOS- Datums    */
-   long      dos_stack;               /* ist NULL seit Mag!X 2.00   */
-   long      pgm_superst;             /* Benutzerpgm.- Sup.stack    */
-   void      **memlist;               /* Adresse der 3 MD- Listen   */
-   void      *act_pd;                 /* Laufendes Programm         */
-   void      *fcbx;                   /* Dateien                    */
-   int       fcbn;                    /* L„nge von fcbx[]           */
-   void      *dmdx;                   /* DMDs                       */
-   void      *imbx;                   /* interne DOS- Speicherliste */
-   void      (*resv_intmem)();        /* DOS- Speicher erweitern    */
-   long      (*etv_critic)();         /* etv_critic des GEMDOS      */
-   char *    ((*err_to_str)(char e)); /* Umrechnung Code->Klartext  */
-   void *    xaes_appls;
-   void *    mem_root;
-   void *    ur_pd;
-   } DOSVARS;
-
-/* Memory Control Block */
-
-typedef struct
-     {
-     long mcb_magic;                    /* 'ANDR' oder 'KROM' (letzter)    */
-     long mcb_len;                      /* Nettol„nge                      */
-     long mcb_owner;                    /* PD *                            */
-     long mcb_prev;                     /* vorh. Block oder NULL           */
-     char mcb_data[0];
-     } MCB;
-
-/* GEMDOS- Device- Handles */
-
-#define HDL_CON -1                                          /* TOS */
-#define HDL_AUX -2                                          /* TOS */
-#define HDL_PRN -3                                          /* TOS */
-#define HDL_NUL -4                                          /* KAOS 1.2 */
-
-/* GEMDOS- Standard- Handles */
-
-#define STDIN   0                                           /* TOS */
-#define STDOUT  1                                           /* TOS */
-#define STDAUX  2                                           /* TOS */
-#define STDPRN  3                                           /* TOS */
-#define STDERR  4                                           /* TOS */
-#define STDXTRA 5                                           /* TOS */
-
-/* GEMDOS Error Codes */
-
-#define EBREAK -68L /* user break (^C)                         KAOS 1.2 */
-#define EXCPT  -69L /* 68000- exception ("bombs")              KAOS 1.2 */
-#define EPTHOV -70L /* path overflow                           MAG!X    */
-
-/* GEMDOS Pexec Modes */
-
-#define EXE_LDEX    0                                       /* TOS */
-#define EXE_LD      3                                       /* TOS */
-#define EXE_EX      4                                       /* TOS */
-#define EXE_BASE    5                                       /* TOS */
-#define EXE_EXFR    6                                       /* TOS 1.04   */
-#define EXE_XBASE   7                                       /* TOS 3.01   */
-#define XEXE_INIT   101                                     /* MAG!X      */
-#define XEXE_TERM   102                                     /* MAG!X      */
-#define XEXE_XBASE  107                                     /* Mag!X 2.10 */
-#define XEXE_EXACC  108                                     /* Mag!X 2.10 */
-
-/* GEMDOS Fseek Modes */
-
-#define SEEK_SET    0                                       /* TOS */
-#define SEEK_CUR    1                                       /* TOS */
-#define SEEK_END    2                                       /* TOS */
 
 /* Kernel evnt_sem Modes (Mag!X 2.1) */
 

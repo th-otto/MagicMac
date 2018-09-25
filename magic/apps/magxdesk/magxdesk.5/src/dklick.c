@@ -9,6 +9,7 @@
 *********************************************************************/
 
 #include <mgx_dos.h>
+#include <toserror.h>
 #include "k.h"
 #include <string.h>
 #include <vdi.h>

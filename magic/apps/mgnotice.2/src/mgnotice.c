@@ -537,7 +537,7 @@ static void change_colour( WINDOW *w )
 		{
 		w->bcolour = obj-1;
 		w->tcolour =
-			adr_colour[obj].ob_spec.tedinfo->te_ucolor.te_colspec.textcol;
+			COLSPEC_GET_TEXTCOL(adr_colour[obj].ob_spec.tedinfo->te_color);
 		if	(!(w->flags & WFLAG_ICONIFIED))
 			{
 			tcolour = (w->bcolour < ncolours) ? w->tcolour : WHITE;

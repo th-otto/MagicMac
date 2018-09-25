@@ -6,6 +6,7 @@
 
 #include <vdi.h>
 #include <mgx_dos.h>
+#include <toserror.h>
 #include <string.h>
 #include <stdlib.h>
 #include "pattern.h"
