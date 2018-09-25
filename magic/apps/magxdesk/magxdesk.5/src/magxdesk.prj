@@ -1,0 +1,25 @@
+MAGXDESK.APP
+.C[-I..\..\..\..\inc_c]
+.L[-S=2048]
+=
+cstartv.o
+;MINSTART.S							; minimaler Startup-Code
+MAGXDESK	(k.h,magxdesk.h)	[-P -W-stv]	; RAHMENPROGRAMM, REDRAWS
+DMENU	(k.h,magxdesk.h)	[-P -W-stv]	; Menue
+DEFAULTS	(k.h,magxdesk.h)	[-P -W-stv]	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
+DKLICK	(k.h,magxdesk.h)	[-P -W-stv]	; MAUSAKTIONEN (™FFNEN)
+DIALOGS	(k.h,magxdesk.h,dlg_info.h)	[-P -W-stv]	; DIALOGE
+DLG_INFO	(k.h,magxdesk.h,dlg_info.h)	[-P -W-stv]	; Datei-Info
+KLICK	(k.h,magxdesk.h)	[-P -W-stv]  	; MAUSAKTIONEN
+DWINDOWS	(k.h,magxdesk.h)	[-P -W-stv]
+PATTERN	(pattern.h)
+FILES	(k.h,magxdesk.h)	[-P]			; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
+ALLG		(k.h)
+IMGLOAD	(imgload.h)
+KACHEL	(kachel.h,imgload.h)
+SPEC		(k.h)						; TOS- SPEZIFISCHES
+SHELSORT.O
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib	; GEM lib
+ll.o			; long long lib
