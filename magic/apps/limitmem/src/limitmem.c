@@ -12,8 +12,9 @@
 *********************************************************************/
 
 #include <tos.h>
-#include <magix.h>
 #include <tosdefs.h>
+#include <ph.h>
+#include <mint/sysvars.h>
 #include <stdlib.h>
 #include <string.h>
 #include <country.h>
