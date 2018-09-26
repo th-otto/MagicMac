@@ -17,7 +17,7 @@
  * Number of Trees:          4
  * Number of Userblks:       0
  * Number of Images:         1
- * Total file size:          3066
+ * Total file size:          3202
  */
 
 #undef RSC_NAME
@@ -96,25 +96,25 @@
 #define COL_15            16 /* BOXTEXT in tree T_COLOUR */ /* max len 0 */
 
 #define ALRT_ERROPENWIND   0 /* Alert string */
-/* [2][Could not open a window.][Cancel] */
+/* [2][Ouverture de fenˆtre |impossible.][Abbruch] */
 
 #define STR_OPTIONTITLE    1 /* Free string */
-/* Preferences */
+/* Pr‚r‚glages */
 
 #define STR_LOADFILE       2 /* Free string */
-/* Load file... */
+/* Charger fichier... */
 
 #define STR_SAVEFILE       3 /* Free string */
-/* Save file... */
+/* Sauver fichier... */
 
 #define STR_SAVEBLOCK      4 /* Free string */
-/* Save block... */
+/* Sauver bloc... */
 
 #define ALRT_SAVEFILE      5 /* Alert string */
-/* [2][File %s|was modified. Save?][Yes|No|Cancel] */
+/* [2][Le fichier %s|a ‚t‚ modifi‚. Le sauver ?][Oui|Non|Abandon] */
 
 #define STR_NONAME         6 /* Free string */
-/* noname */
+/* Sans nom */
 
 
 

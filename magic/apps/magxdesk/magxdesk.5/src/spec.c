@@ -59,7 +59,7 @@ void get_syshdr( void )
 *
 ****************************************************************/
 
-/*
+#if 0
 int change_res(int dev, int txt)
 {
 	if	(!aesvars)
@@ -74,7 +74,7 @@ int change_res(int dev, int txt)
 	aesvars->chgres(dev, txt);
 	return(1);
 }
-*/
+#endif
 
 
 /*********************************************************************

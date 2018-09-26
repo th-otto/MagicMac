@@ -74,7 +74,7 @@ int main( void )
 	/* SharedLib laden */
 	/* --------------- */
 
-	err = Slbopen("EDITOBJC.SLB", NULL, 1L, &slb, &slbexec, 0L);
+	err = Slbopen("editobjc.slb", NULL, 1L, &slb, &slbexec);
 	if	(err < 0)
 		Pterm((WORD) err);
 

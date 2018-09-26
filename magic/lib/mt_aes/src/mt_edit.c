@@ -155,7 +155,7 @@ WORD mt_edit_get_format( OBJECT *tree, WORD obj,
 	return(d.intout[0]);
 }
 
-WORD mt_edit_get_colour( OBJECT *tree, WORD obj,
+WORD mt_edit_get_color( OBJECT *tree, WORD obj,
 					WORD *tcolour, WORD *bcolour,
 					WORD *global )
 {
@@ -314,7 +314,7 @@ void mt_edit_set_format( OBJECT *tree, WORD obj,
 	__aes( &d, c, global );
 }
 
-void mt_edit_set_colour( OBJECT *tree, WORD obj,
+void mt_edit_set_color( OBJECT *tree, WORD obj,
 					WORD tcolour, WORD bcolour,
 					WORD *global )
 {

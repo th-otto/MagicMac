@@ -67,8 +67,7 @@ extern int update_window(WINDOW *w, GRECT *g);
 
 extern void subobj_wdraw(void *d, int obj, int startob, int depth);
 extern void options_dial_init_rsc( void );
-extern WORD cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
-				WORD clicks, void *data );
+extern WORD cdecl hdl_options(struct HNDL_OBJ_args);
 extern void prefs_were_changed( void );
 extern int ncolours;
 extern OBJECT *adr_options;

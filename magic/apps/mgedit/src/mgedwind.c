@@ -9,9 +9,11 @@
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
+#include <mint/dcntl.h>
 #include "gemut_mt.h"
 #include "globals.h"
 #include "mgedit.h"
+#include "toserror.h"
 
 /****************************************************************
 *
@@ -143,7 +145,7 @@ WINDOW *open_new_window( char *path )
 	w->out.g_w = 640;
 	w->out.g_h = scrg.g_h-16;
 
-	w->handle = wind_create(EDITOR_W_KIND, &scrg);
+	w->handle = wind_create_grect(EDITOR_W_KIND, &scrg);
 	if	(w->handle < 0)
 		{
 		ret = ENSMEM;
@@ -184,10 +186,10 @@ WINDOW *open_new_window( char *path )
 		w->path[0] = '\0';
 		strcpy(w->title, Rgetstring(STR_NONAME, NULL));
 		itoa(wnr+1, w->title+strlen(w->title), 10);
-		xa.size = 0L;
+		xa.st_size = 0L;
 		}
 
-	w->bufsize = xa.size + prefs.bufsize;
+	w->bufsize = xa.st_size + prefs.bufsize;
 	w->buf = Malloc(w->bufsize);
 	if	(!w->buf)
 		{
@@ -197,17 +199,17 @@ WINDOW *open_new_window( char *path )
 
 	if	(file)
 		{
-		ret = Fread(file, xa.size, w->buf);
+		ret = Fread(file, xa.st_size, w->buf);
 		Fclose(file);
 		file = 0;
-		if	(ret != xa.size)
+		if	(ret != xa.st_size)
 			{
 			ret = ERROR;
 			goto fehler;
 			}
 		}
 
-	w->buf[xa.size] = '\0';
+	w->buf[xa.st_size] = '\0';
 
 	w->xedit = edit_create();
 	if	(!w->xedit)
@@ -223,7 +225,7 @@ WINDOW *open_new_window( char *path )
 	edit_set_buf( &w->tree, EDITFELD,	w->buf, w->bufsize );
 	edit_set_font( &w->tree, EDITFELD,
 				w->fontID, w->fontH, FALSE, !w->fontprop);
-	edit_set_colour( &w->tree, EDITFELD,
+	edit_set_color( &w->tree, EDITFELD,
 				w->tcolour, w->bcolour);
 	edit_set_format( &w->tree, EDITFELD,
 				w->tabwidth, FALSE);
@@ -248,7 +250,7 @@ WINDOW *open_new_window( char *path )
 		}
 	else	{
 		*pw = w;
-		wind_open(w->handle, &(w->out));
+		wind_open_grect(w->handle, &(w->out));
 		wind_get_grect(w->handle, WF_WORKXYWH, &(w->in));
 		*((GRECT *) &(w->tree.ob_x)) = w->in;
 		edit_open( &w->tree, EDITFELD );
@@ -353,7 +355,7 @@ static void fulled(WINDOW *w)
 
 	if	((out->g_x == full.g_x) && (out->g_y == full.g_y) &&
 		 (out->g_w == full.g_w) && (out->g_h == full.g_h)) {
-		graf_shrinkbox(&prev, &full);
+		graf_shrinkbox_grect(&prev, &full);
 		newg = &prev;
 		}
 
@@ -362,7 +364,7 @@ static void fulled(WINDOW *w)
 	/* ------------------------------------------------ */
 
 	else {
-		graf_growbox(out, &full);
+		graf_growbox_grect(out, &full);
 		newg = &full;
 		}
 

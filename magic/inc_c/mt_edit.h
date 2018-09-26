@@ -9,13 +9,13 @@ extern WORD mt_edit_cursor(OBJECT *tree, WORD obj, WORD whdl, WORD show, WORD *g
 extern WORD mt_edit_evnt(OBJECT *tree, WORD obj, WORD whdl,	EVNT *ev, LONG *errc, WORD *global);
 extern WORD mt_edit_get_buf( OBJECT *tree, WORD obj, char **buf, LONG *buflen, LONG *txtlen, WORD *global );
 extern WORD mt_edit_get_format( OBJECT *tree, WORD obj, WORD *tabwidth, WORD *autowrap, WORD *global );
-extern WORD mt_edit_get_colour( OBJECT *tree, WORD obj, WORD *tcolour, WORD *bcolour, WORD *global );
+extern WORD mt_edit_get_color( OBJECT *tree, WORD obj, WORD *tcolour, WORD *bcolour, WORD *global );
 extern WORD mt_edit_get_cursor( OBJECT *tree, WORD obj, char **cursorpos, WORD *global );
 extern WORD mt_edit_get_font( OBJECT *tree, WORD obj,	WORD *fontID, WORD *fontH, WORD *fontPix, WORD *mono, WORD *global );
 extern void mt_edit_set_buf( OBJECT *tree, WORD obj, char *buf, LONG buflen, WORD *global );
 extern void mt_edit_set_format( OBJECT *tree, WORD obj, WORD tabwidth, WORD autowrap, WORD *global );
 extern void mt_edit_set_font( OBJECT *tree, WORD obj, WORD fontID, WORD fontH, WORD fontPix, WORD mono, WORD *global );
-extern void mt_edit_set_colour( OBJECT *tree, WORD obj, WORD tcolour, WORD bcolour, WORD *global );
+extern void mt_edit_set_color( OBJECT *tree, WORD obj, WORD tcolour, WORD bcolour, WORD *global );
 extern void mt_edit_set_cursor( OBJECT *tree, WORD obj, char *cursorpos, WORD *global );
 extern WORD mt_edit_resized( OBJECT *tree, WORD obj, WORD *oldrh, WORD *newrh, WORD *global );
 extern WORD mt_edit_get_dirty( OBJECT *tree, WORD obj,	WORD *global );
@@ -38,7 +38,7 @@ extern WORD mt_edit_scroll( OBJECT *tree, WORD obj, WORD whdl, LONG yscroll, WOR
 #define edit_get_format(a,b,c,d) mt_edit_get_format(a,b,c,d,NULL)
 #define edit_set_font(a,b,c,d,e,f) mt_edit_set_font(a,b,c,d,e,f,NULL)
 #define edit_get_font(a,b,c,d,e,f) mt_edit_get_font(a,b,c,d,e,f,NULL)
-#define edit_set_colour(a,b,c,d) mt_edit_set_colour(a,b,c,d,NULL)
+#define edit_set_color(a,b,c,d) mt_edit_set_color(a,b,c,d,NULL)
 #define edit_resized(a,b,c,d) mt_edit_resized(a,b,c,d,NULL)
 #define edit_get_dirty(a,b) mt_edit_get_dirty(a,b,NULL)
 #define edit_set_dirty(a,b,c) mt_edit_set_dirty(a,b,c,NULL)

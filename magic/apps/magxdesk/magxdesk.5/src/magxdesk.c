@@ -1269,7 +1269,7 @@ void shutdown( int dev, int txt )
 		strcpy(shutdown_prg, desk_path);
 		if	(dev >= 0)
 			strcat(shutdown_prg, "chgres.prg");
-/*
+#if 0
 			{
 #if			COUNTRY==FRG
 			if	(1 != form_alert(1, "[2][Aufl”sungswechsel ?][ OK | Abbruch ]"))
@@ -1283,7 +1283,7 @@ void shutdown( int dev, int txt )
 		strcat(tail+1, " ");
 		itoa(txt, tail+1+strlen(tail+1), 10);
 		tail[0] = (char) strlen(tail+1);
-*/
+#endif
 		else	strcat(shutdown_prg, "shutdown.prg");
 
 		if	(status.save_on_exit)

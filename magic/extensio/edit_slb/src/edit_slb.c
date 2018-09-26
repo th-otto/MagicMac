@@ -34,7 +34,7 @@
 *	216		edit_get(OBJECT *tree, WORD obj, WORD subcode, ... );
 *				0: edit_get_buf: buf,buflen,curr_tlen
 *				1: edit_get_format: tabsize,autowrap
-*				2: edit_get_colour: tcolour,bcolour
+*				2: edit_get_color: tcolour,bcolour
 *				3: edit_get_font: fontID,fontH,fontmono
 *				4: edit_get_cursor: (char *) ptr
 *				5: edit_get_positions: ptr, xscroll, cx, cy
@@ -48,7 +48,7 @@
 *	217		edit_set(OBJECT *tree, WORD obj, WORD subcode, ... );
 *			  0: edit_set_buf: buf,buflen
 *			  1: edit_set_format: tabsize,autowrap
-*			  2: edit_set_colour: tcolour,bcolour
+*			  2: edit_set_color: tcolour,bcolour
 *			  3: edit_set_font: fontID,fontH,fontPix,fontmono
 *			  4: edit_set_cursor: whdl, (char *) ptr
 *			  5: edit_set_positions: ptr, xscroll, cx, cy

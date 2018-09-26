@@ -15,10 +15,6 @@
 #define AV_OPENWIND		0x4720
 #define AV_XOPENWIND	0x4740
 
-#ifdef S_IFMT
-extern long Dxreaddir(int len, long dirhandle,
-			char *buf, XATTR *xattr, long *xr);
-#endif
 extern void print_values(char *s, int n, int values[]);
 extern int scan_values(char **s, int n, int values[]);
 extern void Mrsrc_load( char *fname );

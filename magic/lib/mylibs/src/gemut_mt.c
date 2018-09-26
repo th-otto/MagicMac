@@ -34,7 +34,6 @@
 
 int	vdi_handle;
 int	work_out[57], work_in[12];	 /* VDI- Felder fÅr v_opnvwk() */
-extern WORD global[];			/* Haupt-Thread */
 
 
 /****************************************************************
