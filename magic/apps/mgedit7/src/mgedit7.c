@@ -22,6 +22,7 @@
 #include "mgedit.h"
 #include "gemut_mt.h"
 #include "mm7.h"
+#include "toserror.h"
 #if DEBUG
 #include <stdio.h>
 #endif
@@ -54,7 +55,7 @@ void *d_options = NULL;
 void saveas_file_close( void );
 typedef enum { fxopen, fxsaveas } fslx_modet;
 static fslx_modet fslx_mode;
-static FSLX_DIALOG fslx_dialog = NULL;
+static XFSL_DIALOG *fslx_dialog;
 static WORD fslx_whdl;
 static char fslx_path[258];
 static char fslx_fname[66];
@@ -641,7 +642,7 @@ void prefs_were_changed( void )
 				{
 				w->tcolour = prefs.tcolour;
 				w->bcolour = prefs.bcolour;
-				edit_set_colour( &w->tree, EDITFELD,
+				edit_set_color( &w->tree, EDITFELD,
 					w->tcolour, w->bcolour);
 				}
 
@@ -923,7 +924,7 @@ int main( int argc, char *argv[] )
 	/* --------------- */
 
 	Pdomain(1);
-	err = Slbopen("EDITOBJC.SLB", NULL, 6L, &slb, &slbexec, 0L);
+	err = Slbopen("editobjc.slb", NULL, 6L, &slb, &slbexec);
 	if	(err < 0)
 		Pterm((WORD) err);
 
@@ -979,11 +980,14 @@ int main( int argc, char *argv[] )
 			  2,			/* Doppelklicks erkennen 	*/
 			  1,			/* nur linke Maustaste		*/
 			  1,			/* linke Maustaste gedrckt	*/
-			  0,NULL,		/* kein 1. Rechteck			*/
-			  0,NULL,		/* kein 2. Rechteck			*/
+			  0,0,0,0,0,		/* kein 1. Rechteck			*/
+			  0,0,0,0,0,		/* kein 2. Rechteck			*/
 			  w_ev.msg,
 			  0L,	/* ms */
-			  (EVNTDATA*) &(w_ev.mx),
+			  &w_ev.mx,
+			  &w_ev.my,
+			  &w_ev.mbutton,
+			  &w_ev.kstate,
 			  &w_ev.key,
 			  &w_ev.mclicks
 			  );

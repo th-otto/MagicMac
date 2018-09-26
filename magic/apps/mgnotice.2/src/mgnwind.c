@@ -412,7 +412,7 @@ long open_notice_wind( unsigned char *notice, int id,
 	edit_set_font( &w->tree, EDITFELD,
 				w->fontID, w->fontH, FALSE, !w->fontprop);
 	tcolour = (w->bcolour < ncolours) ? w->tcolour : WHITE;
-	edit_set_colour( &w->tree, EDITFELD,
+	edit_set_color( &w->tree, EDITFELD,
 				tcolour, w->bcolour);
 
 	*wp = w;

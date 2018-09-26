@@ -541,7 +541,7 @@ static void change_colour( WINDOW *w )
 		if	(!(w->flags & WFLAG_ICONIFIED))
 			{
 			tcolour = (w->bcolour < ncolours) ? w->tcolour : WHITE;
-			edit_set_colour( &w->tree, EDITFELD,
+			edit_set_color( &w->tree, EDITFELD,
 				tcolour, w->bcolour);
 			update_window(w);
 			}
@@ -930,7 +930,7 @@ int main( void )
 	/* --------------- */
 
 	Pdomain(1);
-	err = Slbopen("EDITOBJC.SLB", NULL, 9L, &slb, &slbexec, 0L);
+	err = Slbopen("editobjc.slb", NULL, 9L, &slb, &slbexec);
 	if	(err < 0)
 		Pterm((WORD) err);
 

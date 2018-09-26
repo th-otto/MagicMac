@@ -6,9 +6,9 @@
  *	- Dateiauswahl */
 #include <stddef.h>#include <stdlib.h>#include <string.h>#include <mgx_dos.h>
 #include <mt_aes.h>
-#include "MM7.H"#include "MGMC_API.H"
-#include "MEN_XCMD.H"
-#include "NAV_XCMD.H"
+#include "mm7.h"#include "mgmc_api.h"
+#include "men_xcmd.h"
+#include "nav_xcmd.h"
 
 static MgMcCookie *gMgMcCookie;static XCMDMgrRec *xcmd;static XCMDHdl men_hdl = -1;		/* fÅr Men XCMD */
 static XCMDHdl nav_hdl = -1;		/* fÅr Nav XCMD */
@@ -263,7 +263,7 @@ LONG MgMc7DoMouseClick(int mx, int my, int *menu, int *entry)
 			SwitchToMacOSParm swparm;
 
 			/* Warte auf Loslassen der Maustaste */
-			evnt_button(1, 3, 0, &evb);
+			evnt_button(1, 3, 0, &evb.x, &evb.y, &evb.bstate, &evb.kstate);
 			/* Auf MacOS umschalten */
 /*			Cconws("Schalte auf MacOS um\r\n");	*/
 			swparm.x = mx;
