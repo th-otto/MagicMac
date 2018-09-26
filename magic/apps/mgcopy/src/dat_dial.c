@@ -15,12 +15,6 @@
 #include "globals.h"
 
 
-#define TRUE   1
-#define FALSE  0
-#define EOS    '\0'
-#ifndef NULL
-#define NULL        ( ( void * ) 0L )
-#endif
 #define USA	0
 #define FRG	1
 
@@ -84,8 +78,7 @@ void close_dat_dialog( void )
 *
 *********************************************************************/
 
-#pragma warn -par
-WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void *data )
+WORD cdecl hdl_dat(struct HNDL_OBJ_args args)
 {
 	static int is_8_3;
 	OBJECT *tree;
@@ -96,9 +89,9 @@ WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void 
 	/* ------------------------------------ */
 
 	tree = adr_dat;
-	fd = (FILEDESCR *) wdlg_get_udata(d);
+	fd = (FILEDESCR *) wdlg_get_udata(args.dialog);
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		filetype ftype;
 		char *titel;
@@ -109,7 +102,7 @@ WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void 
 			return(0);
 
 		fd -> answ = WAITING;
-		d_dat = d;
+		d_dat = args.dialog;
 
 		ob_dsel(adr_dat, EX_OK);
 		ob_dsel(adr_dat, EX_AB);
@@ -166,7 +159,7 @@ WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void 
 				(ftype == ORDINARYFILE) ? STR_FILE : STR_ALIAS,
 				NULL));
 			}
-		strcat(titel, Rgetstring((clicks) ? STR_GIVENAME : STR_EXISTS,
+		strcat(titel, Rgetstring((args.clicks) ? STR_GIVENAME : STR_EXISTS,
 							NULL));
 
 		if	(is_8_3)
@@ -179,7 +172,7 @@ WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void 
 	/* 2. Fall: Nachricht mit Code >= 1040 empfangen */
 	/* --------------------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
 		return(1);		/* weiter */
 		}
@@ -187,29 +180,29 @@ WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void 
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		fd -> answ = CANCEL;
 		close_dialog:
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)	/* unbekannte Unterfunktion */
+	if	(args.obj < 0)	/* unbekannte Unterfunktion */
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == EX_AB)			/* Abbruch */
+	if	(args.obj == EX_AB)			/* Abbruch */
 		{
 		fd -> answ = CANCEL;
 		goto close_dialog;
 		}
 
-	if	(exitbutton == EX_OK)			/* OK */
+	if	(args.obj == EX_OK)			/* OK */
 		{
 		if	(!*neu)
 			goto ende;			/* Name ungltig */
@@ -220,8 +213,8 @@ WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void 
 		goto close_dialog;
 		}
 
-	if	((exitbutton == EX_SKIP) ||
-		 (exitbutton == EX_USE))			/* šberspringen */
+	if	((args.obj == EX_SKIP) ||
+		 (args.obj == EX_USE))			/* šberspringen */
 		{
 		fd -> answ = SKIP;
 		goto close_dialog;
@@ -230,7 +223,7 @@ WORD cdecl hdl_dat( DIALOG *d, EVNT *events, WORD exitbutton, WORD clicks, void 
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	subobj_wdraw(d, exitbutton, exitbutton, 0);
+	ob_dsel(tree, args.obj);
+	subobj_wdraw(args.dialog, args.obj, args.obj, 0);
 	return(1);		/* weiter */
 }

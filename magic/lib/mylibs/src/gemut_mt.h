@@ -21,7 +21,6 @@ extern int scan_values(char **s, int n, int values[]);
 extern void Mrsrc_load( char *fname, WORD *global );
 extern void objc_grect(OBJECT *tree, int objn, GRECT *g);
 extern void subobj_draw(OBJECT *tree, int obj, int start, int depth);
-extern int rc_intersect(GRECT *p1, GRECT *p2);
 extern void  Mgraf_mouse(int type);
 extern void objs_hide(OBJECT *tree, ...);
 extern void objs_unhide(OBJECT *tree, ...);

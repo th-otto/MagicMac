@@ -47,5 +47,5 @@ extern void close_beg_dialog( void );
 extern void close_dat_dialog( void );
 extern void ackn_cancel( void );
 extern void subobj_wdraw(void *d, int obj, int startob, int depth);
-extern LONG cdecl action_thread( ACTIONPARAMETER *par );
+extern LONG cdecl action_thread( void *par );
 extern void terminate_dialog( void **dialog, GRECT *pref_g );

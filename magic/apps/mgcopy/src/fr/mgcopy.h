@@ -17,7 +17,7 @@
  * Number of Trees:          4
  * Number of Userblks:       0
  * Number of Images:         0
- * Total file size:          5122
+ * Total file size:          5284
  */
 
 #undef RSC_NAME
@@ -85,85 +85,85 @@
 #define WORK_EXP          10 /* BOXCHAR in tree T_WORKING */
 
 #define ALRT_TOOBUSY       0 /* Alert string */
-/* [3][MGCOPY:|Queue full.][Cancel] */
+/* [3][MGCOPY:|File d'attente pleine.][Abandon] */
 
 #define ALRT_ERRARG        1 /* Alert string */
-/* [3][MGCOPY:|Wrong parameters!][Cancel] */
+/* [3][MGCOPY:|Erreur Ö la transmission de|paramätre !][Abandon] */
 
 #define ALRT_INSUFFSPACE   2 /* Alert string */
-/* [2][Not enough space on|destination drive!][OK|Cancel] */
+/* [2][Trop peu de place sur le|lecteur de destination!][OK|Abandon] */
 
 #define ALRT_FILE_RDONLY   3 /* Alert string */
-/* [2][File|%c:%s|is write protected][Skip|OK|Cancel] */
+/* [2][Le fichier|%c:%s|est protÇgÇ en Çcriture][Sauter|OK|Abandon] */
 
 #define ALRT_STOPPROCESS   4 /* Alert string */
-/* [1][Stop operation?][Yes| No ] */
+/* [1][Interrompre le processus ?][OUI| NON ] */
 
 #define ALRT_DISKFULL      5 /* Alert string */
-/* [3][Destination disk full!][Cancel] */
+/* [3][Lecteur de destination plein!][Abandon] */
 
 #define ALRT_ERROPENWIND   6 /* Alert string */
-/* [2][Can't open window!][Cancel] */
+/* [2][La fenàtre ne peut àtre|ouverte !][Abandon] */
 
 #define STR_MAINTITLE      7 /* Free string */
-/*  File Operations  */
+/*  Fichiers  */
 
 #define STR_DELETEFILES    8 /* Free string */
-/* Deleting Files */
+/* Effacer fichiers */
 
 #define STR_COPYFILES      9 /* Free string */
-/* Copying Files */
+/* Copier fichiers */
 
 #define STR_ALIASFILES    10 /* Free string */
-/* Creating Alias */
+/* CrÇer alias */
 
 #define STR_MOVEFILES     11 /* Free string */
-/* Moving Files */
+/* DÇplacer fichiers */
 
 #define STR_FILE          12 /* Free string */
-/* File */
+/* Fichier */
 
 #define STR_ALIAS         13 /* Free string */
 /* Alias */
 
 #define STR_FOLDER        14 /* Free string */
-/* Folder */
+/* Dossier */
 
 #define STR_EXISTS        15 /* Free string */
-/*  already exists */
+/*  existe dÇjÖ */
 
 #define STR_GIVENAME      16 /* Free string */
-/*  rename */
+/*  renommer */
 
 #define STR_NAMECONFLICT  17 /* Free string */
-/*  Name Conflict  */
+/*  Conflit de nom  */
 
 #define STR_RENAME        18 /* Free string */
-/*  Rename  */
+/*  Renommer  */
 
 #define STR_DEL_FILE      19 /* Free string */
-/* deleting File */
+/* Effacer fichier */
 
 #define STR_DEL_FOLDER    20 /* Free string */
-/* deleting Folder */
+/* Effacer dossier */
 
 #define STR_MOVE_FILE     21 /* Free string */
-/* moving File */
+/* DÇplacer fichier */
 
 #define STR_READ_FILE     22 /* Free string */
-/* reading File */
+/* Lire fichier */
 
 #define STR_WRITE_FILE    23 /* Free string */
-/* writing File */
+/* êcrire fichier */
 
 #define STR_CREATE_FOLDR  24 /* Free string */
-/* creating Folder */
+/* CrÇer dossier */
 
 #define ALRT_INVAL_COPY   25 /* Alert string */
-/* [3][Illegal copy command!][Cancel] */
+/* [3][Instruction de copie|non valable !][Abandon] */
 
 #define ALRT_REPL_W_ALIA  26 /* Alert string */
-/* [2][Replace File|%c:%s|with Alias ?][OK|Cancel] */
+/* [2][Remplacer le fichier|%c:%s|par un alias?][OK|Abandon] */
 
 
 

@@ -12,11 +12,14 @@
 #include <mt_aes.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <mint/dcntl.h>
 #include "mgcopy.h"
 #include "cpfiles.h"
 #include "gemut_mt.h"
 #include "globals.h"
 #include "dat_dial.h"
+#include "toserror.h"
 
 #define FLP_BSIZE	32768L
 #define ESKIP		-1000	/* Fehlercode bei "öberspringen" */
@@ -150,7 +153,7 @@ long test_readonly(char *path, char *fname, XATTR *xa)
 	char buf[MAX_PATHLEN+2];
 
 
-	if	(!((xa->attr) & FA_READONLY))
+	if	(!((xa->st_attr) & FA_READONLY))
 		return(1L);		/* OK */
 	ret = Rxform_alert(3, ALRT_FILE_RDONLY, path[0],
 					fname, NULL);
@@ -165,7 +168,7 @@ long test_readonly(char *path, char *fname, XATTR *xa)
 errcommand = "Fattrib";
 #endif
 
-	return(Fattrib(buf, 1, (xa->attr) & ~FA_READONLY));
+	return(Fattrib(buf, 1, (xa->st_attr) & ~FA_READONLY));
 }
 
 
@@ -240,11 +243,14 @@ static int dial_datexi(char *path, char *fname, filetype ftype,
 				  2,			/* Doppelklicks erkennen 	*/
 				  1,			/* nur linke Maustaste		*/
 				  1,			/* linke Maustaste gedrÅckt	*/
-				  0,NULL,		/* kein 1. Rechteck			*/
-				  0,NULL,		/* kein 2. Rechteck			*/
+				  0,0,0,0,0,		/* kein 1. Rechteck			*/
+				  0,0,0,0,0,		/* kein 2. Rechteck			*/
 				  w_ev.msg,
 				  0L,	/* ms */
-				  (EVNTDATA*) &(w_ev.mx),
+				  &w_ev.mx,
+				  &w_ev.my,
+				  &w_ev.mbutton,
+				  &w_ev.kstate,
 				  &w_ev.key,
 				  &w_ev.mclicks
 				  );
@@ -292,8 +298,8 @@ static int dial_datexi(char *path, char *fname, filetype ftype,
 static long pathinfo(char *path, long *free_clusters,
 		long *cluster_size)
 {
-	DISKINFO di;
-	DTA dta;
+	_DISKINFO di;
+	_DTA dta;
 	long errcode;
 	int drv;
 
@@ -488,10 +494,9 @@ errcommand = "Fxattr";
 
 	if	(doserr == E_OK && old_file && (copy_mode == BACKUP))
 		{
-		if	( ((unsigned) old_file->mdate  >
-			   (unsigned) new_file->mdate) ||
-			 (((unsigned) old_file->mdate == (unsigned) new_file->mdate) &&
-			    ((unsigned) old_file->mtime > (unsigned) new_file->mtime))
+		if	( (old_file->st_mtim.u.d.date > new_file->st_mtim.u.d.date) ||
+			 ((old_file->st_mtim.u.d.date == new_file->st_mtim.u.d.date) &&
+			    (old_file->st_mtim.u.d.time > new_file->st_mtim.u.d.time))
 			)
 		doserr = EFILNF;	/* Ñltere Datei: Åberbraten */
 		}
@@ -525,9 +530,9 @@ long GFcreate(char *path, char *fname, XATTR *file)
 	char query = (copy_mode != OVERWRITE);
 
 
-	attr = file->attr;				/* Attribute der Quelldatei */
+	attr = file->st_attr;				/* Attribute der Quelldatei */
 	attr &= ~F_RDONLY;				/* ReadOnly nicht Åbernehmen */
-	newfile.mode = S_IFREG;			/* initialisieren */
+	newfile.st_mode = S_IFREG;			/* initialisieren */
 
 	do	{
 		strcpy(all, path);
@@ -574,7 +579,7 @@ errcommand = "Fcreate";
 		/* --------------------------------------- */
 
 		else {
-			if	((newfile.mode & S_IFMT) == S_IFLNK)
+			if	((newfile.st_mode & S_IFMT) == S_IFLNK)
 				Fdelete(all);		/* existierenden Symlink lîschen */
 		 again:
 			doserr = Fcreate(all, attr);
@@ -647,10 +652,10 @@ long GFsymlink(char *buf, char *path, char *fname, XATTR *xa)
 
 	if	(xa)
 		{
-		mutime.actime = xa->atime;
-		mutime.acdate = xa->adate;
-		mutime.modtime = xa->mtime;
-		mutime.moddate = xa->mdate;
+		mutime.actime = xa->st_atim.u.d.time;
+		mutime.acdate = xa->st_atim.u.d.date;
+		mutime.modtime = xa->st_mtim.u.d.time;
+		mutime.moddate = xa->st_mtim.u.d.date;
 		}
 
 	do	{
@@ -710,7 +715,7 @@ errcommand = "Fxattr";
 					/* Symlink ersetzt regulÑre Datei: nachfragen! */
 					/* ------------------------------------------- */
 
-					if	(((xa.mode & S_IFMT) == S_IFREG))
+					if	(((xa.st_mode & S_IFMT) == S_IFREG))
 						{
 						if	(1 == Rxform_alert(2, ALRT_REPL_W_ALIA,
 									path[0], fname, NULL))
@@ -721,7 +726,7 @@ errcommand = "Fxattr";
 					/* Symlink ersetzt Symlink: ÅberbÅgeln! */
 					/* ------------------------------------ */
 
-					if	((xa.mode & S_IFMT) == S_IFLNK)
+					if	((xa.st_mode & S_IFMT) == S_IFLNK)
 						doserr = E_OK;
 
 					if	(!doserr)
@@ -805,7 +810,7 @@ long GFrename(char *path, char *fname,
 	/* Ggf. Abbruch oder Åberspringen		*/
 	/* ------------------------------------ */
 
-	old_ftype = ((xa->mode & S_IFMT) == S_IFDIR) ?
+	old_ftype = ((xa->st_mode & S_IFMT) == S_IFDIR) ?
 				FOLDER : ORDINARYFILE;
 
 	doserr = test_readonly(path, fname, xa);
@@ -840,7 +845,7 @@ Cconws("EACCDN ");
 			doserr = Fxattr(1, alld, &newfile);		/* keine Aliase auflîsen */
 			if	(doserr)
 				return(EACCDN);		/* anderer Schutz? */
-			new_ftype = ((newfile.mode & S_IFMT) == S_IFDIR) ?
+			new_ftype = ((newfile.st_mode & S_IFMT) == S_IFDIR) ?
 						FOLDER : ORDINARYFILE;
 			/* Ordner soll auf Datei verschoben werden	*/
 			/* oder umgekehrt.						*/
@@ -920,7 +925,7 @@ do_dial_datexi:
 		return(doserr);
 
 	if	(!doserr)
-		down_cnt(3, NULL, NULL, xa->size);
+		down_cnt(3, NULL, NULL, xa->st_size);
 
 	err_file = alls;
 	return(err_alert(doserr));
@@ -992,12 +997,12 @@ long GFcopy(char *path, char *fname,
 
 	/* Symlinks extra kopieren */
 
-	if	((xa->mode & S_IFMT) == S_IFLNK)
+	if	((xa->st_mode & S_IFMT) == S_IFLNK)
 		return(GFcopy_symlink(path, fname, new_name, xa, zpath));
 
 	/* Andere als regular files nicht kopieren */
 
-	if	((xa->mode & S_IFMT) != S_IFREG)
+	if	((xa->st_mode & S_IFMT) != S_IFREG)
 		return(err_alert(EACCDN));
 
 	/* Speicher holen, Quellpfad zusammenstellen */
@@ -1090,7 +1095,7 @@ errcommand = "Fread";
 			if	(doserr <= E_OK)	/* < 0: Fehler oder Abbruch */
 				{				/* = 0: öberspringen 	   */
 				if	(!doserr)
-					down_cnt(3, NULL, NULL, xa->size);
+					down_cnt(3, NULL, NULL, xa->st_size);
 				break;
 				}
 			dhdl = (int) doserr;
@@ -1132,7 +1137,7 @@ errcommand = "Fwrite";
 		Fclose(shdl);
 	if	(dhdl > 0)
 		{
-		Fdatime((DOSTIME *) &(xa->mtime), dhdl, RMODE_WR);
+		Fdatime((_DOSTIME *) &(xa->st_mtime), dhdl, RMODE_WR);
 		Fclose(dhdl);
 		}
 	if	((dhdl > 0) && (doserr != E_OK) &&
@@ -1188,7 +1193,7 @@ errcommand = "Dcreate";
 			if	(doserr2)
 				return(doserr);		/* anderer Schutz? */
 			/* Ordner ex. schon. Ggf einfach benutzen */
-			new_ftype = ((newfile.mode & S_IFMT) == S_IFDIR) ?
+			new_ftype = ((newfile.st_mode & S_IFMT) == S_IFDIR) ?
 						FOLDER : ORDINARYFILE;
 			if	((new_ftype == FOLDER) &&
 				 ((copy_mode == BACKUP) || (copy_mode == OVERWRITE))
@@ -1310,7 +1315,7 @@ errcommand = "Dxreaddir";
 				continue;
 			}
 
-		if	((xa.mode & S_IFMT) == S_IFDIR)
+		if	((xa.st_mode & S_IFMT) == S_IFDIR)
 			{
 			_folders++;
 			strcpy(endp, fname+4);
@@ -1321,21 +1326,21 @@ errcommand = "Dxreaddir";
 				continue;
 			}
 		else {
-			if	(xa.attr & (F_HIDDEN | F_SYSTEM))
+			if	(xa.st_attr & (F_HIDDEN | F_SYSTEM))
 				{
 				_hfiles++;
-				_hbytes += xa.size;
+				_hbytes += xa.st_size;
 				}
 			else {
 				_nfiles++;
-				_nbytes += xa.size;
+				_nbytes += xa.st_size;
 				}
-			netto_size_src += xa.size;
-			size_src += xa.blksize * xa.nblocks;
+			netto_size_src += xa.st_size;
+			size_src += xa.st_blksize * xa.st_blocks;
 			if	(cluster_size_dst)
 				{
-				n_clu_dst += xa.size/cluster_size_dst;
-				if	(xa.size % cluster_size_dst)
+				n_clu_dst += xa.st_size/cluster_size_dst;
+				if	(xa.st_size % cluster_size_dst)
 					n_clu_dst++;	/* auf ganze Cluster aufrunden */
 				}
 			}
@@ -1437,17 +1442,17 @@ errcommand = "Fxattr";
 
 			if	(err)
 				return(err);
-			if	((xa.mode & S_IFMT) == S_IFLNK)
+			if	((xa.st_mode & S_IFMT) == S_IFLNK)
 				*flen = -2;
 			else
-			if	((xa.mode & S_IFMT) == S_IFDIR)
+			if	((xa.st_mode & S_IFMT) == S_IFDIR)
 				{
 				*flen = -1;
 				*lastc = '\\';
 				}
 			else
-			if	((xa.mode & S_IFMT) == S_IFREG)
-				*flen = xa.size;
+			if	((xa.st_mode & S_IFMT) == S_IFREG)
+				*flen = xa.st_size;
 			else	*flen = -3;	/* irgendein special file */
 			}
 		}
@@ -1609,7 +1614,7 @@ static long after_delete(char *path, char *fname, XATTR *xa)
 	long doserr;
 
 
-	if	(((xa->mode) & S_IFMT) == S_IFDIR)
+	if	(((xa->st_mode) & S_IFMT) == S_IFDIR)
 		{
 		doserr = GDdelete(path, fname);
 		down_cnt(1, NULL, NULL, 1024L);
@@ -1618,7 +1623,7 @@ static long after_delete(char *path, char *fname, XATTR *xa)
 		doserr = test_readonly(path, fname, xa);
 		if	(doserr > E_OK)
 			doserr = GFdelete(path, fname);
-		down_cnt(0, NULL, NULL, xa->size);
+		down_cnt(0, NULL, NULL, xa->st_size);
 		}
 	return(doserr);
 }
@@ -1681,7 +1686,7 @@ static long before_cpmv(char *path, char *fname, XATTR *xa)
 	/* Verzeichnis */
 	/* ----------- */
 
-	if	(((xa->mode) & S_IFMT) == S_IFDIR)
+	if	(((xa->st_mode) & S_IFMT) == S_IFDIR)
 		{
 		doserr = GDcreate(_zielpath, fname);
 		strcat(_zielpath, fname);
@@ -1711,7 +1716,7 @@ static long before_cpmv(char *path, char *fname, XATTR *xa)
 	if	(copy_mode == RENAME)
 		{
 		ret = dial_datexi(_zielpath, new_name,
-				((xa->mode & S_IFMT) == S_IFLNK) ?
+				((xa->st_mode & S_IFMT) == S_IFLNK) ?
 						ALIAS : ORDINARYFILE, TRUE);
 		if	(ret == 0)		/* öberspringen */
 			return(E_OK);
@@ -1776,7 +1781,7 @@ static long after_cpmv(char *path, char *fname, XATTR *xa)
 
 	if	(qbreak())
 		return(EBREAK);
-	if	(((xa->mode) & S_IFMT) != S_IFDIR)
+	if	(((xa->st_mode) & S_IFMT) != S_IFDIR)
 		return(E_OK);
 	if	(_move_flag)
 		doserr = GDdelete(path, fname);
@@ -1850,7 +1855,7 @@ errcommand = "Fxattr";
 				}
 			if	(!doserr)
 				{
-				down_cnt(1, NULL, NULL, xa.size);
+				down_cnt(1, NULL, NULL, xa.st_size);
 				move_flag = FALSE;	/* kein Ddelete() */
 				}
 			else	{
@@ -2058,14 +2063,15 @@ long delete(int argc, char *argv[])
 *
 *********************************************************************/
 
-LONG cdecl action_thread( ACTIONPARAMETER *par )
+LONG cdecl action_thread(void *_par)
 {
+	ACTIONPARAMETER *par = (ACTIONPARAMETER *)_par;
 	WORD myglobal[15];
 	long err;
 
 	/* wir braten das global-Feld der Haupt-APPL nicht Åber */
 
-     if   (MT_appl_init(myglobal) < 0)
+     if   (mt_appl_init(myglobal) < 0)
           Pterm(-1);
 
 	copy_mode = par->mode;

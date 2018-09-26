@@ -40,6 +40,7 @@
 #include "beg_dial.h"
 #include "dat_dial.h"
 #include "globals.h"
+#include "toserror.h"
 
 #define MAX_PENDING_TASKS	10
 #define DEBUG 0
@@ -101,11 +102,14 @@ int callback_ever( void )
 			  2,			/* Doppelklicks erkennen 	*/
 			  1,			/* nur linke Maustaste		*/
 			  1,			/* linke Maustaste gedrÅckt	*/
-			  0,NULL,		/* kein 1. Rechteck			*/
-			  0,NULL,		/* kein 2. Rechteck			*/
+			  0,0,0,0,0,		/* kein 1. Rechteck			*/
+			  0,0,0,0,0,		/* kein 2. Rechteck			*/
 			  w_ev.msg,
 			  0L,	/* ms */
-			  (EVNTDATA*) &(w_ev.mx),
+			  &w_ev.mx,
+			  &w_ev.my,
+			  &w_ev.mbutton,
+			  &w_ev.kstate,
 			  &w_ev.key,
 			  &w_ev.mclicks
 			  );

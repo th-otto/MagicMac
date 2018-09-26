@@ -165,29 +165,7 @@ void subobj_draw(OBJECT *tree, int obj, int start, int depth)
 	GRECT g;
 
 	objc_grect(tree, obj, &g);
-	objc_draw (tree, start, depth, &g);
-}
-
-
-/****************************************************************
-*
-* Bestimmt die Schnittmenge zwischen zwei Rechtecken
-*
-****************************************************************/
-
-int rc_intersect(GRECT *p1, GRECT *p2)
-{
-	int	tx, ty, tw, th;
-
-	tw = MIN(p2->g_x + p2->g_w, p1->g_x + p1->g_w);
-	th = MIN(p2->g_y + p2->g_h, p1->g_y + p1->g_h);
-	tx = MAX(p2->g_x, p1->g_x);
-	ty = MAX(p2->g_y, p1->g_y);
-	p2->g_x = tx;
-	p2->g_y = ty;
-	p2->g_w = tw - tx;
-	p2->g_h = th - ty;
-	return( (tw > tx) && (th > ty) );
+	objc_draw_grect(tree, start, depth, &g);
 }
 
 
@@ -390,7 +368,7 @@ void open_work(void)
 
 void Mrsrc_load( char *fname, WORD *global )
 {
-	if	(!MT_rsrc_load(fname, global))
+	if	(!mt_rsrc_load(fname, global))
 		{
 		form_xerr(EFILNF, fname);
 		appl_exit();
@@ -560,7 +538,7 @@ char *Rgetstring( WORD string_id, WORD *global )
 {
 	char *alert;
 
-	MT_rsrc_gaddr(R_STRING, string_id, &alert, global);
+	mt_rsrc_gaddr(R_STRING, string_id, &alert, global);
 	return(alert);
 }
 
@@ -638,10 +616,10 @@ int do_dialog(OBJECT *dialog)
 	flyinf = NULL;
 	p_flyinf = &flyinf;
 	form_center_grect(dialog, &gc);
-	form_xdial(FMD_START, NULL, &gc, p_flyinf);
-	objc_draw(dialog, ROOT, MAX_DEPTH, &gc);
+	form_xdial_grect(FMD_START, NULL, &gc, p_flyinf);
+	objc_draw_grect(dialog, ROOT, MAX_DEPTH, &gc);
 	exitbutton = 0x7f & form_xdo(dialog, 0, &dummy, NULL, flyinf);
-	form_xdial(FMD_FINISH, NULL, &gc, p_flyinf);
+	form_xdial_grect(FMD_FINISH, NULL, &gc, p_flyinf);
 	ob_dsel(dialog, exitbutton);
 	return(exitbutton);
 }
@@ -659,8 +637,8 @@ int do_exdialog(OBJECT *dialog,
 	flyinf = NULL;
 	p_flyinf = &flyinf;
 	form_center_grect(dialog, &gc);
-	form_xdial(FMD_START, NULL, &gc, p_flyinf);
-	objc_draw(dialog, ROOT, MAX_DEPTH, &gc);
+	form_xdial_grect(FMD_START, NULL, &gc, p_flyinf);
+	objc_draw_grect(dialog, ROOT, MAX_DEPTH, &gc);
 	for	(;;)
 		{
 		exitbutton = 0x7f & form_xdo(dialog, 0, &dummy, NULL, flyinf);
@@ -669,7 +647,7 @@ int do_exdialog(OBJECT *dialog,
 			break;
 /*		objc_draw(dialog, exitbutton, 1, cx, cy, cw, ch);	*/
 		}
-	form_xdial(FMD_FINISH, NULL, &gc, p_flyinf);
+	form_xdial_grect(FMD_FINISH, NULL, &gc, p_flyinf);
 	if	(was_redraw != NULL)
 		*was_redraw = (flyinf == NULL);	/* RÅckgabe: Bildschirm zerstîrt */
 	return(exitbutton);

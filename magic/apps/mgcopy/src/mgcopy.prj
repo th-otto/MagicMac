@@ -1,16 +1,16 @@
 mgcopy.app
+.C[-I..\..\..\inc_c]
+.C[-I..\..\..\lib\mylibs\src\]
+.C[-K-]
 .L[-S=$1000]   ; Stackgr”že 4k (der thread hat mehr)
 =              ; list of modules follows...
-tcnstart.o     ; startup code
+cstartv.o     ; startup code
 mgcopy        	(mgcopy.h,globals.h)
 cpfiles       	(cpfiles.h,globals.h)
 beg_dial		(mgcopy.h,beg_dial.h,globals.h)
 dat_dial		(mgcopy.h,dat_dial.h,globals.h)
-c:\pc\mylibs\gemut_mt.o
+..\..\..\lib\mylibs\src\gemut_mt.c
 
 pcstdlib.lib   ; standard lib
-mt_dos.lib
 pctoslib.lib
-mt_aes.lib
-;	magxlib.lib
-;	pcgemlib.lib
+pcgemlib.lib

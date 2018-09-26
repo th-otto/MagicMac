@@ -21,6 +21,7 @@
 #include "beg_dial.h"
 #include "cpfiles.h"
 #include "globals.h"
+#include "toserror.h"
 
 #define OUTPUT_FNAME_LEN	30
 
@@ -385,7 +386,7 @@ void beg_dial_action( int argc, char *argv[],
 		param.dstpath = dstpath;
 		param.mode = mode;
 
-		thi.proc = (void *) action_thread;
+		thi.proc = action_thread;
 		thi.user_stack = NULL;
 		thi.stacksize = 0x4000L;		/* 16k Userstack */
 		thi.mode = 0;
@@ -420,9 +421,7 @@ void beg_dial_action( int argc, char *argv[],
 *
 *********************************************************************/
 
-#pragma warn -par
-WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
-				WORD clicks, void *data )
+WORD	cdecl hdl_beg(struct HNDL_OBJ_args args)
 {
 	long kbytes;
 	OBJECT *tree;
@@ -433,12 +432,12 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 
 	tree = adr_beg;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_beg)			/* Dialog ist schon ge”ffnet ! */
 			return(0);
 
-		switch(clicks)			/* action */
+		switch(args.clicks)			/* action */
 			{
 			case 'D': objs_hide(tree, CPMVD_MD, 0);
 					break;
@@ -464,7 +463,7 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 
 		ultoa(n_dat, (adr_beg+CPMVDL_D)->ob_spec.free_string, 10);
 		ultoa(n_ord, (adr_beg+CPMVDL_O)->ob_spec.free_string, 10);
-		if	(clicks == 'D')
+		if	(args.clicks == 'D')
 			kbytes = (used_src+1023L)/1024L;
 		else	{
 			if	(clsize_dst & 1023L)	/* nicht durch 1024 teilbar */
@@ -495,7 +494,7 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 		adr_beg[CPMVD_AB].ob_state &= ~DISABLED;
 		(adr_beg+CPMVDL_T)->ob_spec.free_string = titel;
 
-		d_beg = d;
+		d_beg = args.dialog;
 		is_iconified = FALSE;
 		return(1);
 		}
@@ -503,15 +502,15 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 2. Fall: Nachricht mit Code >= 1040 empfangen */
 	/* --------------------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
-		switch(events->msg[0])
+		switch(args.events->msg[0])
 			{
 			 case WM_ALLICONIFY:
 	
 			 case WM_ICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_iconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
 	 							" MGCOPY ",
 	 							adr_beg_iconified, 1);
 			 	is_iconified = TRUE;
@@ -520,7 +519,7 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 	
 			 case WM_UNICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_uniconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
 		 							Rgetstring(STR_MAINTITLE,
 		 									NULL),
 		 							adr_beg);
@@ -535,7 +534,7 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 
 		if	(run_status == DLG_RUNNING)	/* Aktion l„uft ! */
@@ -546,23 +545,23 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)	/* unbekannte Unterfunktion */
+	if	(args.obj < 0)	/* unbekannte Unterfunktion */
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == CPMVD_AB)			/* Abbruch */
+	if	(args.obj == CPMVD_AB)			/* Abbruch */
 		{
 		if	(run_status == DLG_WAITING)	/* keine Aktion l„uft */
 			goto close_dialog;
 		goto ende;		/* ignorieren ?!!??? */
 		}
 
-	if	(exitbutton == CPMVD_OK)			/* OK */
+	if	(args.obj == CPMVD_OK)			/* OK */
 		{
 		if	(selected(adr_beg, CPMVD_KB))
 			copy_mode = CONFIRM;
@@ -586,13 +585,12 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	subobj_wdraw(d, exitbutton, exitbutton, 0);
+	ob_dsel(tree, args.obj);
+	subobj_wdraw(args.dialog, args.obj, args.obj, 0);
 	return(1);		/* weiter */
 }
 
 
-#pragma warn +par
 /*********************************************************************
 *
 * Behandelt die Exit- Objekte des Fortschrittsdialogs
@@ -609,9 +607,7 @@ WORD	cdecl hdl_beg( DIALOG *d, EVNT *events, WORD exitbutton,
 *
 *********************************************************************/
 
-#pragma warn -par
-WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
-				WORD clicks, void *data )
+WORD	cdecl hdl_work(struct HNDL_OBJ_args args)
 {
 	OBJECT *tree;
 
@@ -621,7 +617,7 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 
 	tree = adr_working;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_working)		/* Dialog ist schon ge”ffnet ! */
 			return(0);
@@ -635,7 +631,7 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 		ob_dsel(tree, WORK_STOP);
 		tree[WORK_STOP].ob_state &= ~DISABLED;
 
-		d_working = d;
+		d_working = args.dialog;
 		working_is_iconified = FALSE;
 		return(1);
 		}
@@ -643,15 +639,15 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 2. Fall: Nachricht mit Code >= 1040 empfangen */
 	/* --------------------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
-		switch(events->msg[0])
+		switch(args.events->msg[0])
 			{
 			 case WM_ALLICONIFY:
 	
 			 case WM_ICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_iconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
 	 							" MGCOPY ",
 	 							adr_beg_iconified, 1);
 			 	working_is_iconified = TRUE;
@@ -660,7 +656,7 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 	
 			 case WM_UNICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_uniconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
 		 							titel,
 		 							adr_working);
 			 	working_is_iconified = FALSE;
@@ -674,12 +670,12 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 
 		if	(run_status == DLG_RUNNING)	/* Aktion l„uft ! */
 			{
-			exitbutton = WORK_STOP;
+			args.obj = WORK_STOP;
 			goto do_abbruch;
 			}
 
@@ -688,18 +684,18 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)	/* unbekannte Unterfunktion */
+	if	(args.obj < 0)	/* unbekannte Unterfunktion */
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == WORK_EXP)			/* erweiterter Modus */
+	if	(args.obj == WORK_EXP)			/* erweiterter Modus */
 		{
-		int handle = wdlg_get_handle(d);
+		int handle = wdlg_get_handle(args.dialog);
 		GRECT g;
 		int ydiff = 3*gl_hhbox;
 		char c;
@@ -729,7 +725,7 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 		goto ende;	/* deselektieren */
 		}
 
-	if	(exitbutton == WORK_STOP)		/* Abbruch */
+	if	(args.obj == WORK_STOP)		/* Abbruch */
 		{
 		if	(run_status == DLG_WAITING)	/* keine Aktion l„uft */
 			{
@@ -757,9 +753,8 @@ WORD	cdecl hdl_work( DIALOG *d, EVNT *events, WORD exitbutton,
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
+	ob_dsel(tree, args.obj);
 	ende2:
-	subobj_wdraw(d, exitbutton, exitbutton, 0);
+	subobj_wdraw(args.dialog, args.obj, args.obj, 0);
 	return(1);		/* weiter */
 }
-#pragma warn +par
