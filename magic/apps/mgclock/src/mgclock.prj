@@ -1,0 +1,13 @@
+mgclock.prg
+.C[-I..\..\..\inc_c]
+.C[-8-]
+.C[-K-]
+.L[-S=$4000]
+=
+cstart0.O      ; startup code
+
+mgclock.c
+
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib   ; AES and VDI lib
