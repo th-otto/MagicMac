@@ -1,7 +1,3 @@
-#define NULL        ( ( void * ) 0L )
-#define TRUE   1
-#define FALSE  0
-#define EOS    '\0'
 
 #define MAXDIM 16
 #define ANZMAT 10                   /* Anzahl der Matrizen */

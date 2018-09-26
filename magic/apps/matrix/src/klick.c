@@ -380,8 +380,8 @@ void oeffne_fenster(int icon_nr)
 		graf_growbox((adr_icons+icon_nr)->ob_x,     (adr_icons+icon_nr)->ob_y,
 				   (adr_icons+icon_nr)->ob_width, (adr_icons+icon_nr)->ob_height,
 				   fenster[i].g_x,fenster[i].g_y,fenster[i].g_w,fenster[i].g_h);
-		wind_set(fensterh[i],WF_NAME,name+5*(icon_nr-A_MATRIX));
-		wind_open(fensterh[i],fenster[i].g_x,fenster[i].g_y,fenster[i].g_w,fenster[i].g_h);
+		wind_set_str(fensterh[i],WF_NAME,name+5*(icon_nr-A_MATRIX));
+		wind_open_grect(fensterh[i],&fenster[i]);
 		sxfenster[i] = syfenster[i] = 0;
 		gr_schieber(i);
 		}

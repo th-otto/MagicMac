@@ -91,7 +91,7 @@ void edfenstername(void)
 	*s++ = ' ';
 	*s++ = EOS;
 	*s 	= EOS;
-	wind_set(fensterh[0],WF_NAME,edname);
+	wind_set_str(fensterh[0],WF_NAME,edname);
 }
 
 
@@ -513,7 +513,6 @@ void drucke(int taste)
 			break;
 
 		case ESC:		/* Esc */
-			escape:
 			clr_edbuf();
 			neues_zeichen:
 			is_edit = TRUE;

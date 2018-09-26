@@ -19,7 +19,7 @@ void topped(int whdl)
 
 	if	((fensternr = hdl_to_fnr(whdl)) >= 0)
 		{
-		wind_set(whdl,WF_TOP);
+		wind_set_int(whdl,WF_TOP,0);
 		matrixnr = mfenster[fensternr];
 		if	(neu_format[matrixnr])
 			m_update(matrixnr, -1, 0.0);
@@ -135,7 +135,7 @@ void anzahl(int n, int *nr, int *x, int *y, int *ax, int *ay)
 
 void pos_schieber(int n, int ebene, int diff)
 {
-	wind_set(fensterh[n],(ebene) ? WF_HSLIDE : WF_VSLIDE,
+	wind_set_int(fensterh[n],(ebene) ? WF_HSLIDE : WF_VSLIDE,
 		    (1000 * ((ebene) ? sxfenster[n] : syfenster[n])) / diff);
 	redraw(fensterh[n],scr_x,scr_y,scr_w,scr_h);
 }
@@ -190,8 +190,8 @@ void gr_schieber(int n)
 	schieb_hoch  = (1000 * ay)/mtx[nr].ydim;
 	if	(schieb_breit > 1000) schieb_breit = 1000;
 	if	(schieb_hoch  > 1000) schieb_hoch	= 1000;
-	wind_set(fensterh[n],WF_HSLSIZE,schieb_breit);
-	wind_set(fensterh[n],WF_VSLSIZE,schieb_hoch);
+	wind_set_int(fensterh[n],WF_HSLSIZE,schieb_breit);
+	wind_set_int(fensterh[n],WF_VSLSIZE,schieb_hoch);
 
 	ax = mtx[nr].xdim - ax;	  /* um soviele Positionen kann geshiftet werden */
 	ay = mtx[nr].ydim - ay;	  /* es k”nnen auch ax oder ay negativ sein */
@@ -203,8 +203,8 @@ void gr_schieber(int n)
 		ax = (1000 * sxfenster[n]) / ax;
 	if	(ay != 0)
 		ay = (1000 * syfenster[n]) / ay;
-	wind_set(fensterh[n],WF_HSLIDE,ax);
-	wind_set(fensterh[n],WF_VSLIDE,ay);
+	wind_set_int(fensterh[n],WF_HSLIDE,ax);
+	wind_set_int(fensterh[n],WF_VSLIDE,ay);
 }
 
 
@@ -255,7 +255,7 @@ void siz_moved(int whdl, GRECT *g)
 		return;					/* keine Žnderung */
 	x = sxfenster[n];
 	y = syfenster[n];
-	if	(wind_set(whdl, WF_CURRXYWH, *g))
+	if	(wind_set_grect(whdl, WF_CURRXYWH, g))
 		{
 		w = fenster[n].g_w;
 		h = fenster[n].g_h;

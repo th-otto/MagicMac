@@ -83,7 +83,10 @@ void main()
 	for  (;;)
 		{
 		ev_mwich = evnt_multi(MU_KEYBD+MU_BUTTON+MU_MESAG,
-						  2, 3, 1, 0,0,0,0,0,0,0,0,0,0,message,0,0,
+						  2, 3, 1,
+						  0,0,0,0,0,
+						  0,0,0,0,0,message,
+						  0L,
 						  &ev_mmox, &ev_mmoy, &ev_mmobutton,
 						  &ev_mmokstate, &ev_mkreturn, &ev_mbreturn);
 
@@ -147,28 +150,6 @@ void main()
 
 		wind_update(END_UPDATE);
 		} /* END FOREVER */
-}
-
-
-/****************************************************************
-*
-* Bestimmt die Schnittmenge zwischen zwei Rechtecken
-*
-****************************************************************/
-
-int rc_intersect(GRECT *p1, GRECT *p2)
-{
-	int	tx, ty, tw, th;
-
-	tw = MIN(p2->g_x + p2->g_w, p1->g_x + p1->g_w);
-	th = MIN(p2->g_y + p2->g_h, p1->g_y + p1->g_h);
-	tx = MAX(p2->g_x, p1->g_x);
-	ty = MAX(p2->g_y, p1->g_y);
-	p2->g_x = tx;
-	p2->g_y = ty;
-	p2->g_w = tw - tx;
-	p2->g_h = th - ty;
-	return( (tw > tx) && (th > ty) );
 }
 
 
@@ -551,7 +532,6 @@ char *dtoa(double z, int vorkomma, int nachkomma, int breite)
 
 	if	(breite < 0)
 		{
-		ovfl:
 		ausg[0] = '?';
 		ausg[1] = EOS;
 		return(ausg);
@@ -622,7 +602,7 @@ void close_work(void)
 {
 	register int i;
 
-	wind_set(SCREEN, WF_NEWDESK, NULL, 0);	/* Desktop- Hintergrund */
+	wind_set_ptr_int(SCREEN, WF_NEWDESK, NULL, 0);	/* Desktop- Hintergrund */
 	for (i = 0; i < ANZFENSTER; i++)
 		if	(fensterh[i] > 0)         /* wenn Fenster existiert... */
 			{
@@ -732,7 +712,7 @@ void anfang(void)
 	/* Icons malen und installieren */
 	/* ---------------------------- */
 
-	wind_set(SCREEN, WF_NEWDESK, adr_icons, 0);
+	wind_set_ptr_int(SCREEN, WF_NEWDESK, adr_icons, 0);
 	scr_grect.g_x = scr_x;
 	scr_grect.g_y = scr_y;
 	scr_grect.g_w = scr_w;

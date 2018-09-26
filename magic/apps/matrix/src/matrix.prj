@@ -1,15 +1,17 @@
-MATRIX.PRG
+matrix.prg
+.C[-I..\..\..\inc_c]
+.C[-8-]
+.C[-K-]
 .L[-S=$4000]
 =
-TCSTART.O      ; startup code
+CSTARTv.O      ; startup code
 SHELL	(m.h, matrix.h, msg.c, menus.c, klick.c) [-W-stv]	; RAHMENPROGRAMM, REDRAWS
 EDIT		(M.H)		; EDITIERFENSTER
 M		(M.H) [-W-stv]	; MATHEMATIK- ROUTINEN
 ARITH	(M.H) [-W-stv]	; AUSWERTUNG ARITHMETISCHER AUSDRšCKE
 DATEI				; DATEIVERWALTUNG
-tcfltlib.lib   ; floating point lib
-tcstdlib.lib   ; standard lib
-tcextlib.lib   ; extended lib
-tctoslib.lib   ; TOS lib
-tcgemlib.lib   ; AES and VDI lib
-
+pcfltlib.lib   ; floating point lib
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib   ; AES and VDI lib

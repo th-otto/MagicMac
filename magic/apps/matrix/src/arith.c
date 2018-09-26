@@ -11,6 +11,7 @@
 *********************************************************************/
 
 
+#include <aes.h>
 #include "m.h"
 #include <ctype.h>
 #include <stdlib.h>

@@ -3,9 +3,6 @@
 #include <string.h>
 #include <stddef.h>
 
-#define  FALSE  0
-#define  TRUE	 1
-
 
 static char path[80] = "\0", filename[20];
 
