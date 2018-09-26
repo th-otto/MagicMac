@@ -16,7 +16,7 @@
 #if DEBUG
 #include <stdio.h>
 #endif
-#include <mgx_dos.h>
+#include <tos.h>
 #include <vdi.h>
 #include "imgload.h"
 #include "load_img.h"

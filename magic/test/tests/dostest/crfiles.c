@@ -1,4 +1,4 @@
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdlib.h>
 #include <stdio.h>
 

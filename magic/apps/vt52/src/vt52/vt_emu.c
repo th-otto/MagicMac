@@ -7,15 +7,15 @@
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
 /* #include <PORTAB.H> */
-#include <TOS.H>
-#include <VDI.H>
-#include <MT_AES.H>
-#include <STDDEF.H>
-#include <STDLIB.H>
+#include <tos.h>
+#include <vdi.h>
+#include <aes.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 /* #include "types2b.H" */
-#include "WSTRUCT.H"
-#include "WLIB.H"
+#include "wstruct.h"
+#include "wlib.h"
 
 /*----------------------------------------------------------------------------------------*/
 /* Defines																											*/

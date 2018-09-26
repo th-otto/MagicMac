@@ -29,13 +29,13 @@ int main( int argc, char *argv[] )
 	printf("\r\nRckgabe: %ld\n", ret);
 	if	(ret >= 0)
 		{
-		if	(ret & 0x40     ) Cconws("Symlink ");
-		if	(ret & F_ARCHIVE) Cconws("Archiv ");
-		if	(ret & F_SUBDIR ) Cconws("Subdir ");
-		if	(ret & F_VOLUME ) Cconws("Label ");
-		if	(ret & F_SYSTEM ) Cconws("System ");
-		if	(ret & F_HIDDEN ) Cconws("Hidden ");
-		if	(ret & F_RDONLY ) Cconws("Rdonly ");
+		if	(ret & FA_SYMLINK) Cconws("Symlink ");
+		if	(ret & FA_ARCHIVE) Cconws("Archiv ");
+		if	(ret & FA_SUBDIR ) Cconws("Subdir ");
+		if	(ret & FA_VOLUME ) Cconws("Label ");
+		if	(ret & FA_SYSTEM ) Cconws("System ");
+		if	(ret & FA_HIDDEN ) Cconws("Hidden ");
+		if	(ret & FA_RDONLY ) Cconws("Rdonly ");
 		Cconws("\r\n");
 		ret = 0;
 		}

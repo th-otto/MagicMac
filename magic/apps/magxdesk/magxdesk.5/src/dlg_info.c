@@ -5,7 +5,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <toserror.h>
 #include "k.h"
 #include <stdlib.h>
@@ -574,10 +574,10 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		bytes[1] = ifd->f.filesize;
 
 		ob_dsel(tree, FI_SETDA);
-		ob_sel_dsel(tree, FI_RDONL, (ifd->f.attrib) & F_RDONLY);
-		ob_sel_dsel(tree, FI_SYSTE, (ifd->f.attrib) & F_SYSTEM);
-		ob_sel_dsel(tree, FI_HIDDE, (ifd->f.attrib) & F_HIDDEN);
-		ob_sel_dsel(tree, FI_ARCHI, (ifd->f.attrib) & F_ARCHIVE);
+		ob_sel_dsel(tree, FI_RDONL, (ifd->f.attrib) & FA_RDONLY);
+		ob_sel_dsel(tree, FI_SYSTE, (ifd->f.attrib) & FA_SYSTEM);
+		ob_sel_dsel(tree, FI_HIDDE, (ifd->f.attrib) & FA_HIDDEN);
+		ob_sel_dsel(tree, FI_ARCHI, (ifd->f.attrib) & FA_ARCHIVE);
 		}
 
 	print_ull(bytes, (tree+FI_SIZE)->ob_spec.free_string);
@@ -610,10 +610,10 @@ static long exit_info_file_tree(INFO_FILE_DATA *ifd)
 
 	if	(!ifd->isfolder)
 		{
-		neuattr  = selected(ifd->tree, FI_RDONL) * F_RDONLY;
-		neuattr += selected(ifd->tree, FI_SYSTE) * F_SYSTEM;
-		neuattr += selected(ifd->tree, FI_HIDDE) * F_HIDDEN;
-		neuattr += selected(ifd->tree, FI_ARCHI) * F_ARCHIVE;
+		neuattr  = selected(ifd->tree, FI_RDONL) * FA_RDONLY;
+		neuattr += selected(ifd->tree, FI_SYSTE) * FA_SYSTEM;
+		neuattr += selected(ifd->tree, FI_HIDDE) * FA_HIDDEN;
+		neuattr += selected(ifd->tree, FI_ARCHI) * FA_ARCHIVE;
 		}
 	
 	Mgraf_mouse(HOURGLASS);
@@ -626,7 +626,7 @@ static long exit_info_file_tree(INFO_FILE_DATA *ifd)
 		{
 		int hdl;
 
-		err = Fopen(ifd->path, RMODE_WR);
+		err = Fopen(ifd->path, O_WRONLY);
 		if	(err >= E_OK)
 			{
 			hdl = (int) err;
@@ -685,8 +685,8 @@ static long exit_info_file_tree(INFO_FILE_DATA *ifd)
 		char flag;
 		char	neupath[256+2];
 
-		flag = ( (!ifd->isfolder) && (neuattr & F_RDONLY) &&
-				!(ifd->f.attrib & F_RDONLY));
+		flag = ( (!ifd->isfolder) && (neuattr & FA_RDONLY) &&
+				!(ifd->f.attrib & FA_RDONLY));
 		if	(flag)
 			{
 			err = Fattrib(ifd->path, TRUE, (int) ifd->f.attrib);

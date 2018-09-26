@@ -119,7 +119,7 @@ char *argv[];
 			}
 		}
 
-     if   (0L > (retcode = Fopen(fname1,RMODE_RD)))
+     if   (0L > (retcode = Fopen(fname1,O_RDONLY)))
      	{
           screen("FC : Kann nicht ”ffnen : ");
           screen(fname1);
@@ -128,7 +128,7 @@ char *argv[];
           }
      file1 = (int) retcode;
 
-     if   (0L > (retcode = Fopen(fname2,RMODE_RD))) {
+     if   (0L > (retcode = Fopen(fname2,O_RDONLY))) {
           Fclose(file1);
           screen("FC : Kann nicht ”ffnen : ");
           screen(fname2);

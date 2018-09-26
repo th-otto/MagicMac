@@ -46,8 +46,8 @@
 *
 ****************************************************************/
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include "mgformat.h"
@@ -155,7 +155,7 @@ long read_dname(int lw, char *name)
      Fsetdta(&dta);
      path[0] = lw + 'A';
      strcpy(path+1, ":\\*.*");
-     doserr = Fsfirst(path, F_VOLUME);
+     doserr = Fsfirst(path, FA_VOLUME);
      if   (doserr != E_OK)
           *name = EOS;
      else strcpy(name, dta.d_fname);
@@ -389,7 +389,7 @@ long label(int lw, char *name)
           diskname[3] = '\xe5';
           diskname[4] = EOS;
           }
-     retcode = Fcreate(diskname, F_VOLUME);
+     retcode = Fcreate(diskname, FA_VOLUME);
      if   (retcode >= E_OK)
           retcode = Fclose((int) retcode);
      return(retcode);

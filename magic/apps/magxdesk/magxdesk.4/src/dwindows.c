@@ -5,7 +5,7 @@
 *********************************************************************/
 
 #include <vdi.h>
-#include <mgx_dos.h>
+#include <tos.h>
 #include <string.h>
 #include <stdlib.h>
 #include "pattern.h"
@@ -173,13 +173,13 @@ static int cmp_mydtas(MYDTA **ff1, MYDTA **ff2)
 		return(((f2->flags)&1 - ((f1->flags)&1)));
 	if	(status.sorttyp == M_SNICHT)
 		return(f1->number - f2->number);
-	if	(f1->attrib & F_SUBDIR)
+	if	(f1->attrib & FA_SUBDIR)
 		{
-		if	(!(f2->attrib & F_SUBDIR))
+		if	(!(f2->attrib & FA_SUBDIR))
 			return(-1);
 		else goto name;
 		}
-	if	(f2->attrib & F_SUBDIR)
+	if	(f2->attrib & FA_SUBDIR)
 		return(1);
 	switch(status.sorttyp)
 		{
@@ -226,7 +226,7 @@ static void sort_mydtas( WINDOW *w )
 	for	(dtas = files, i = 0; i < anzahl; i++)
 		{
 		mdta = *dtas++;
-		match = ((mdta->attrib & F_SUBDIR) ||
+		match = ((mdta->attrib & FA_SUBDIR) ||
 			 (pattern_match(w->maske, mdta->filename)));
 		if	(match)
 			{
@@ -413,7 +413,7 @@ static void set_info( WINDOW *mywindow )
 
 		}
 	else {
-		if	(0 == ((sfile -> attrib) & F_SUBDIR))
+		if	(0 == ((sfile -> attrib) & FA_SUBDIR))
 			{
 			if	(size < 100000L)
 				*s++ = ' ';
@@ -440,15 +440,15 @@ static void set_info( WINDOW *mywindow )
 		if	(i == PGMT_NOEXE)
 			i = (NULL != dfile_to_app(sfile->filename));
 		else i = TRUE;
-		if	(i || ((sfile -> attrib) & (F_RDONLY+F_HIDDEN+F_SYSTEM+F_ARCHIVE)))
+		if	(i || ((sfile -> attrib) & (FA_RDONLY+FA_HIDDEN+FA_SYSTEM+FA_ARCHIVE)))
 			strcat(s, " | ");
-		if	((sfile -> attrib) & F_RDONLY)
+		if	((sfile -> attrib) & FA_RDONLY)
 			strcat(s, "R");
-		if	((sfile -> attrib) & F_SYSTEM)
+		if	((sfile -> attrib) & FA_SYSTEM)
 			strcat(s, "S");
-		if	((sfile -> attrib) & F_HIDDEN)
+		if	((sfile -> attrib) & FA_HIDDEN)
 			strcat(s, "H");
-		if	((sfile -> attrib) & F_ARCHIVE)
+		if	((sfile -> attrib) & FA_ARCHIVE)
 			strcat(s, "A");
 		if	(i)
 			strcat(s, "E");		/* executable */
@@ -602,7 +602,7 @@ static void set_wind_icons( WINDOW *mywindow )
 		ziele = *z;
 		ziele -> flags = 0;					/* Datei */
 
-		if	((ziele -> attrib) & F_SUBDIR)
+		if	((ziele -> attrib) & FA_SUBDIR)
 			{
 			strcpy(epath, ziele->filename);
 			strcat(epath, "\\");	/* Ordner -> abs. Pfad */
@@ -804,7 +804,7 @@ static long read_wind( WINDOW *w, int free_flag)
 		/* ------------------------------------ */
 
 		strcpy(path, w->path);
-		err = Dopendir(path, DOPEN_NORMAL);
+		err = Dopendir(path, 0);
 		if	(err < E_OK)
 			continue;
 		dirhandle = err;
@@ -921,7 +921,7 @@ static long read_wind( WINDOW *w, int free_flag)
 			/* versteckte Dateien... */
 
 			if	((!status.show_all) &&
-				 (xa.attr & (F_HIDDEN | F_SYSTEM))
+				 (xa.attr & (FA_HIDDEN | FA_SYSTEM))
 				)
 				continue;		/* verst. Dateien! */
 

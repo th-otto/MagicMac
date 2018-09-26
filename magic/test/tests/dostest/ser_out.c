@@ -1,4 +1,4 @@
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
 	/* Serielle Schnittstelle ”ffnen */
 
-	err = Fopen("u:\\dev\\aux", RMODE_WR);
+	err = Fopen("u:\\dev\\aux", O_WRONLY);
 	if	(err < 0)
 	{
 		Cconws("Fehler beim ™ffnen von AUX\r\n");
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	/* Datei fr Ausgabe ”ffnen */
 
 	filename = argv[1];
-	err = Fopen(filename, RMODE_RD);
+	err = Fopen(filename, O_RDONLY);
 	if	(err < 0)
 	{
 		Cconws("Fehler beim ™ffnen der auszugebenden Datei\r\n");

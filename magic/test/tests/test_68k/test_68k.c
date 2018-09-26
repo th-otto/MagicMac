@@ -1,6 +1,6 @@
 /* Test des 68k-Emulators */
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdio.h>
 #include "ass68k.h"
 

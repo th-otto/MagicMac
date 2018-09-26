@@ -5,7 +5,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <toserror.h>
 #include "k.h"
 #include <string.h>
@@ -168,7 +168,7 @@ static long _walk_path( void )
 		return(EBREAK);
 	dirlen = 0;
 
-	errcode = Dopendir(_path, DOPEN_NORMAL);
+	errcode = Dopendir(_path, 0);
 	if	(errcode < E_OK)
 		goto err2;
 
@@ -211,7 +211,7 @@ static long _walk_path( void )
 				}
 			}
 		else {
-			if	(xa.st_attr & (F_HIDDEN | F_SYSTEM))
+			if	(xa.st_attr & (FA_HIDDEN | FA_SYSTEM))
 				{
 				_hfiles++;
 				_hbytes += xa.st_size;

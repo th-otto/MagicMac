@@ -171,7 +171,7 @@ char *argv[];
                }
           flength =  dta.d_length;     /* Dateil„nge ermitteln */
           makepath(path, argname, dta.d_fname);   /* Pfad und Name zusammensetzen */
-          if   (0L > (retcode = Fopen(path, RMODE_RD))) {        /* Datei ”ffnen */
+          if   (0L > (retcode = Fopen(path, O_RDONLY))) {        /* Datei ”ffnen */
                cerrws("Cannot open ");
                cerrws(path);
                goto newline;

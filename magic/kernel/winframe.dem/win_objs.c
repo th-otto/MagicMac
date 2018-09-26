@@ -6,7 +6,7 @@
 */
 
 #include <tos.h>
-#include <mt_aes.h>
+#include <aes.h>
 #include <string.h>
 #include "globals.h"
 #include "win_objs.h"

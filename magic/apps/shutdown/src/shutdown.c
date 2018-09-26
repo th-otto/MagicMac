@@ -36,8 +36,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <ctype.h>
 #include <country.h>
 
@@ -302,7 +302,7 @@ void load_defaults( void )
 	if	(!shel_find(path))
 		return;
 
-	hdl = (int) Fopen(path, RMODE_RD);
+	hdl = (int) Fopen(path, O_RDONLY);
 	if	(hdl <= 0)
 		return;
 	unappl = 0;

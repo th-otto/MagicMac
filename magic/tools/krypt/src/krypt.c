@@ -10,7 +10,7 @@
 *
 */
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <string.h>
 
 #define MAGIC	"BrKrypXt"
@@ -60,7 +60,7 @@ static int loadfile(char *fname, long *flen, char **buf)
 
 	/* Quelldatei ”ffnen */
 
-	retcode = Fopen(fname, OF_RDONLY);
+	retcode = Fopen(fname, O_RDONLY);
 	if	(retcode < 0)
 	{
 		error:
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 
 	/* Ausgabedatei schreiben */
 
-	retcode = Fopen(argv[2], OF_WRONLY+OF_CREAT+OF_EXCL);
+	retcode = Fopen(argv[2], O_WRONLY+_REALO_CREAT+_REALO_EXCL);
 	if	(retcode < 0)
 	{
 		error:

@@ -9,11 +9,11 @@
 
 #define DEBUG 0
 
-#include <mgx_dos.h>
+#include <tos.h>
 #if DEBUG
 #include <stdio.h>
 #endif
-#include <mt_aes.h>
+#include <aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include "gemut_mt.h"

@@ -5,8 +5,8 @@
 *
 */
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -687,7 +687,7 @@ long get_inf( void )
 		return(ENSMEM);
 		}
 
-	ret = Fopen(fname, RMODE_RD);
+	ret = Fopen(fname, O_RDONLY);
 	if	(ret < E_OK)
 		{
 		err_open:

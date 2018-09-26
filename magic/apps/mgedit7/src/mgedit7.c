@@ -13,12 +13,13 @@
 
 #define DEBUG 0
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include <wdlgfslx.h>
 #include "mgedit.h"
 #include "gemut_mt.h"
 #include "mm7.h"
@@ -135,7 +136,7 @@ void read_inf( void )
 
 	if	((s) || (shel_find(infpath)))
 		{
-		hdl = (int) Fopen(infpath, RMODE_RD);
+		hdl = (int) Fopen(infpath, O_RDONLY);
 		if	(hdl < 0)
 			return;
 		len = Fread(hdl, 511L, buf);

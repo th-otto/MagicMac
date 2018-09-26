@@ -51,17 +51,17 @@ long MFcreate( char *name )
 		{
 		if	(!strcmp(fname, preserve[i]))
 			{
-	          doserr = Fattrib(name, RMODE_RD, 0);
+	          doserr = Fattrib(name, 0, 0);
 	          if	(doserr >= 0L)
 				return(E_OK);			/* berspringen!!! */
 			}
 		}
 
 	callback(writing, name);
-/*
+#if 0
      if   (!global)
           {
-          doserr = Fattrib(name, RMODE_RD, 0);
+          doserr = Fattrib(name, 0, 0);
           if   (doserr >= 0L)
                {
 #if		COUNTRY==FRG
@@ -78,7 +78,7 @@ long MFcreate( char *name )
                global = 1;
                }
           }
-*/
+#endif
      doserr = Fcreate(name, 0);
      if   (doserr < 0L)
           {
@@ -148,7 +148,7 @@ long GFcopy(char *path, char *name, char *dstpath)
           if   (shdl < 0)
                {
 			callback(reading, qpath);
-               doserr = Fopen(qpath, RMODE_RD);
+               doserr = Fopen(qpath, O_RDONLY);
                if   (((int) doserr) == -4)   /* NUL: */
                     doserr = EACCDN;
                if   (doserr < E_OK)
@@ -202,7 +202,7 @@ long GFcopy(char *path, char *name, char *dstpath)
           Fclose(shdl);
      if   (dhdl > 0)
           {
-          Fdatime((DOSTIME *) &(mydta.d_time), dhdl, RMODE_WR);
+          Fdatime((DOSTIME *) &(mydta.d_time), dhdl, 1);
           Fclose(dhdl);
           }
      if   (dhdl > 0 && doserr != E_OK && doserr != EWRPRO && doserr != EDRVNR)
@@ -282,7 +282,7 @@ static long before_cpmv(char *path, DTA *file)
 	char all[128];
 
 
-	if	((file->d_attrib) & F_SUBDIR)
+	if	((file->d_attrib) & FA_SUBDIR)
 		{
 		doserr = GDcreate(_zielpath, file->d_fname);
 		strcat(_zielpath, file->d_fname);
@@ -318,7 +318,7 @@ static long after_cpmv(char *path, DTA *file)
 	register char *endp = path + strlen(path);
 
 
-	if	(!(file->d_attrib & F_SUBDIR))
+	if	(!(file->d_attrib & FA_SUBDIR))
 		return(E_OK);
 	doserr = E_OK;
 
@@ -376,7 +376,7 @@ static long _walk_path( void )
 				return(errcode);
 			}
 
-		if	(dta.d_attrib & F_SUBDIR)
+		if	(dta.d_attrib & FA_SUBDIR)
 			{
 			strcpy(endp, dta.d_fname);
 			strcat(endp, "\\");

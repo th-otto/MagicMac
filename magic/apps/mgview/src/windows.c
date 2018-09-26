@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <tos.h>
-#include <mt_aes.h>
+#include <aes.h>
 #include <vdi.h>
 #include "gemut_mt.h"
 #include "windows.h"

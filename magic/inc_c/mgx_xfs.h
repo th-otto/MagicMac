@@ -284,15 +284,6 @@ typedef struct {
      ULONG     max_nsec;                /* max. Anzahl Sektoren */
 } MX_DOSLIMITS;
 
-/* Standardhandles */
-
-#define   STDIN     0
-#define   STDOUT    1
-#define   STDAUX    2
-#define   STDPRN    3
-#define   STDHDL4   4
-#define   STDHDL5   5
-
 /* Schreib-/Lesemodi fÅr Fgetchar und Fputchar */
 
 #define   CMODE_RAW      0
@@ -312,27 +303,6 @@ typedef struct {
 #define   OM_WDENY       32
 #define   OM_NOCHECK     64
 
-
-/* Open- Modus von Dateien ( -> MiNT) */
-
-#define   O_RWMODE       3
-#define   O_RDONLY       0
-#define   O_WRONLY       1
-#define   O_RDWR         2
-#define   O_EXEC         3
-
-#define   O_APPEND       8
-
-#define   O_SHMODE       0x70
-#define   O_COMPAT       0
-#define   O_DENYRW       0x10
-#define   O_DENYW        0x20
-#define   O_DENYR        0x30
-#define   O_DENYNONE     0x40
-
-#define   O_CREAT        0x200
-#define   O_TRUNC        0x400
-#define   O_EXCL         0x800
 
 /* unterstÅtzte Dcntl- Modi (Mag!X- spezifisch!) */
 #define   KER_GETINFO    0x0100
@@ -357,27 +327,3 @@ typedef struct {
 #define   SHMGETBLK      0x4d00
 #define   SHMSETBLK      0x4d01
 #define   PBASEADDR      0x5002
-
-/* Modi und Codes fÅr Dpathconf() (-> MiNT) */
-
-#define   DP_MAXREQ      (-1)
-#define   DP_IOPEN       0
-#define   DP_MAXLINKS    1
-#define   DP_PATHMAX     2
-#define   DP_NAMEMAX     3
-#define   DP_ATOMIC      4
-#define   DP_TRUNC       5
-#define    DP_NOTRUNC    0
-#define    DP_AUTOTRUNC  1
-#define    DP_DOSTRUNC   2
-#define   DP_CASE        6
-#define    DP_CASESENS   0
-#define    DP_CASECONV   1
-#define    DP_CASEINSENS 2
-
-/* FÅr Psemaphore, die Modi 0/1 werden z.Zt. nicht unterstÅtzt */
-
-#define   PSEM_CRGET     0
-#define   PSEM_DESTROY   1
-#define   PSEM_GET       2
-#define   PSEM_RELEASE   3

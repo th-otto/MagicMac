@@ -1,6 +1,6 @@
 /* Umlenken von STDERR */
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdio.h>
 
 int main()

@@ -35,13 +35,13 @@ int main( int argc, char *argv[] )
 		if	(ret >= 0)
 			{
 			attr = mydta.d_attrib;
-			if	(attr & 0x40     ) Cconws("Symlink ");
-			if	(attr & F_ARCHIVE) Cconws("Archiv ");
-			if	(attr & F_SUBDIR ) Cconws("Subdir ");
-			if	(attr & F_VOLUME ) Cconws("Label ");
-			if	(attr & F_SYSTEM ) Cconws("System ");
-			if	(attr & F_HIDDEN ) Cconws("Hidden ");
-			if	(attr & F_RDONLY ) Cconws("Rdonly ");
+			if	(attr & FA_SYMLINK) Cconws("Symlink ");
+			if	(attr & FA_ARCHIVE) Cconws("Archiv ");
+			if	(attr & FA_SUBDIR ) Cconws("Subdir ");
+			if	(attr & FA_VOLUME ) Cconws("Label ");
+			if	(attr & FA_SYSTEM ) Cconws("System ");
+			if	(attr & FA_HIDDEN ) Cconws("Hidden ");
+			if	(attr & FA_RDONLY ) Cconws("Rdonly ");
 			Cconws(mydta.d_fname);
 			Cconws(" ");
 			Cconws("\r\n");

@@ -15,7 +15,7 @@
 #define DEBUG 0
 
 #include <mgx_dos.h>
-#include <mt_aes.h>
+#include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>

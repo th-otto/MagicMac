@@ -1,6 +1,6 @@
 /* * Demo-Programm zum Gebrauch der "Men XCMD" * */
-#include <stdio.h>#include <stddef.h>#include <stdlib.h>#include <string.h>#include <mgx_dos.h>
-#include <mt_aes.h>#include "MGMC_API.H"
+#include <stdio.h>#include <stddef.h>#include <stdlib.h>#include <string.h>#include <tos.h>
+#include <aes.h>#include "MGMC_API.H"
 #include "MEN_XCMD.H"
 #include "MAC_MENU.H"
 MgMcCookie *gMgMcCookie;int apid;
@@ -40,7 +40,14 @@ static OBJECT o =
 	0,	/* w */
 	0	/* h */
 };
-/*********************************************************************
+/* Cookie structure */
+
+typedef struct {
+	long		key;
+	long		value;
+} COOKIE;
+
+/*********************************************************************
 *
 * Ermittelt einen Cookie
 *

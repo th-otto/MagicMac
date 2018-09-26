@@ -1,5 +1,5 @@
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #define USE_SHUTDOWNPRG 1
 
 

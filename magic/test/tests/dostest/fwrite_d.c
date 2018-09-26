@@ -1,6 +1,6 @@
 /* Umlenken der BIOS-Kan„le */
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdio.h>
 #include <stdlib.h>
 

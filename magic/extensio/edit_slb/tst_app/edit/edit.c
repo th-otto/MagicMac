@@ -11,8 +11,8 @@
 *
 ****************************************************************/
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
@@ -415,7 +415,7 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 				s = get_name(path);
 				strcpy(s, fname);
 
-				ret = Fopen(path, RMODE_RD);
+				ret = Fopen(path, O_RDONLY);
 				if	(ret > 0)
 					{
 					file = (int) ret;

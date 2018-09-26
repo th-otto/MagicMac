@@ -1206,11 +1206,11 @@ static long read_dir( FSEL_DIALOG *fsd )
 
      if   (fsd->flags & DOSMODE)
           {
-          anzahl = DOPEN_COMPAT;
+          anzahl = 1;
           offs = 0;
           }
      else {
-          anzahl = DOPEN_NORMAL;
+          anzahl = 0;
           offs = 4;                /* inode überlesen */
           }
      err = Dopendir(path, anzahl);
@@ -1309,7 +1309,7 @@ static long read_dir( FSEL_DIALOG *fsd )
 
 /*
           if   ((!status.show_all) &&
-                (xa.attr & (F_HIDDEN | F_SYSTEM))
+                (xa.attr & (FA_HIDDEN | FA_SYSTEM))
                )
                continue;      /* verst. Dateien! */
 */

@@ -7,7 +7,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include "k.h"
 #include <vdi.h>
 #include <limits.h>
@@ -397,7 +397,7 @@ void main()
 						s = "U:\\PIPE\\DRAGDROP.AA";
 						s[17] = ((char *) (message+7))[0];
 						s[18] = ((char *) (message+7))[1];
-						i = (int) Fopen(s, RMODE_WR);
+						i = (int) Fopen(s, O_WRONLY);
 						if	(i >= 0)
 							{
 							s[17] = DD_NAK;
@@ -946,7 +946,7 @@ int cdecl draw_userdef(PARMBLK *p)
 		vs_clip(vdi_handle, TRUE, pxy);
 		}
 	fname = m -> filename;
-	isdir = ((m -> attrib) & F_SUBDIR);
+	isdir = ((m -> attrib) & FA_SUBDIR);
 	isparentdir = (isdir) && (!strcmp(fname, ".."));
 	isalias = (int) m->is_alias;
 	if	(isalias != last_cursive)
@@ -1494,7 +1494,7 @@ void anfang(void)
 	SHELTAIL *sht;
 
 
-	Pdomain(PDOM_MINT);
+	Pdomain(1);
 
 	for	(i = 0; i < ANZDRIVES; i++)
 		dirty_drives[i] = FALSE;

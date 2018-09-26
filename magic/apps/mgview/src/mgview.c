@@ -16,8 +16,8 @@
 *
 ****************************************************************/
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
 						s = "U:\\PIPE\\DRAGDROP.AA";
 						s[17] = ((char *) (w_ev.msg+7))[0];
 						s[18] = ((char *) (w_ev.msg+7))[1];
-						i = (int) Fopen(s, RMODE_WR);
+						i = (int) Fopen(s, O_WRONLY);
 						if	(i >= 0)
 							{
 							s[17] = DD_NAK;

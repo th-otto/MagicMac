@@ -26,7 +26,7 @@
 *******************************************************************/
 
 #include <aes.h>
-#include <mgx_dos.h>
+#include <tos.h>
 #include <string.h>
 #include <stdlib.h>
 #include "instmagc.h"
@@ -142,7 +142,7 @@ void main()
 	/* inf- Datei laden */
 	/* ---------------- */
 
-	file = (int) Fopen("instmagx.inf", RMODE_RD);
+	file = (int) Fopen("instmagx.inf", O_RDONLY);
 	if	(file > 0)
 		{
 		cnt = Fread(file, 1000L, buf);
@@ -549,7 +549,7 @@ int load_inf( void )
 	long flen;
 
 
-	file = (int) Fopen(inf_name, RMODE_RD);
+	file = (int) Fopen(inf_name, O_RDONLY);
 	if	(file < 0)
 		return(0);
 	flen = Fread(file, INFBUFLEN-1, infbuf);
@@ -608,7 +608,7 @@ int create_inf( void )
 	/* MAGX.INF von Diskette lesen */
 	/* --------------------------- */
 
-	file = (int) Fopen("MAGX_2\\MAGX.INF", RMODE_RD);
+	file = (int) Fopen("MAGX_2\\MAGX.INF", O_RDONLY);
 	if	(file < 0)
 		return(0);
 	flen = Fread(file, BUFLEN-1, buf);
@@ -739,7 +739,7 @@ int create_ram(void)
      /* ------------------------------------ */
 
 	callback(reading, "MAGIC.RAM");
-	file = (int) Fopen("MAGX_2\\MAGIC.RAM", RMODE_RD);
+	file = (int) Fopen("MAGX_2\\MAGIC.RAM", O_RDONLY);
 	if	(file < 0)
 		return(0);
 	flen = Fread(file, BUFLEN, buf);
@@ -806,7 +806,7 @@ int  create_rsc( void )
 
 
 	callback(reading, "MAGXDESK.RSC");
-     file = (int) Fopen("MAGX_2\\MAGXDESK.RSC", RMODE_RD);
+     file = (int) Fopen("MAGX_2\\MAGXDESK.RSC", O_RDONLY);
      if   (file < 0)
           return(0);
      flen = Fread(file, BUFLEN, buf);

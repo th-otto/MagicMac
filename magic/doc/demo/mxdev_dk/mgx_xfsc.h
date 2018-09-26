@@ -191,15 +191,6 @@ typedef struct _mx_xfs {
      long      (*xfs_dcntl)();
 } MX_XFS;
 
-/* Standardhandles */
-
-#define   STDIN     0
-#define   STDOUT    1
-#define   STDAUX    2
-#define   STDPRN    3
-#define   STDHDL4   4
-#define   STDHDL5   5
-
 /* Schreib-/Lesemodi fÅr Fgetchar und Fputchar */
 
 #define   CMODE_RAW      0

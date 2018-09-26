@@ -33,7 +33,7 @@ int create_ram(char *src, char *dst)
      /* MAGIC.RAM modifizieren und erstellen */
      /* ------------------------------------ */
 
-     file = (int) Fopen(src, RMODE_RD);
+     file = (int) Fopen(src, O_RDONLY);
      if   (file < 0)
           return(-1);
      flen = Fread(file, 300000L, buf);

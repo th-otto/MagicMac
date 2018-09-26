@@ -31,8 +31,8 @@
 *
 ****************************************************************/
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include "mgcopy.h"
@@ -243,7 +243,7 @@ void read_inf( char *fname )
 
 	if	((s) || (shel_find(infpath)))
 		{
-		hdl = (int) Fopen(infpath, RMODE_RD);
+		hdl = (int) Fopen(infpath, O_RDONLY);
 		if	(hdl < 0)
 			return;
 		len = Fread(hdl, 511L, buf);

@@ -4,8 +4,8 @@
 *
 */
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
@@ -172,7 +172,7 @@ WINDOW *open_new_window( char *path )
 		{
 		strcpy(w->path, path);
 		strcpy(w->title, path);
-		ret = Fopen(path, RMODE_RD);
+		ret = Fopen(path, O_RDONLY);
 		if	(ret < 0)
 			goto fehler;
 

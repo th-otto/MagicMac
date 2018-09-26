@@ -400,7 +400,7 @@ void read_inf( char *fname, GRECT *gwin )
 
 	if	((s) || (shel_find(infpath)))
 		{
-		hdl = (int) Fopen(infpath, RMODE_RD);
+		hdl = (int) Fopen(infpath, O_RDONLY);
 		if	(hdl < 0)
 			return;
 		len = Fread(hdl, 511L, buf);

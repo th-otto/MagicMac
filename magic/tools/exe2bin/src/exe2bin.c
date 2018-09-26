@@ -124,7 +124,7 @@ int exe2bin(char *program)
      /* Datei ”ffnen          */
      /* --------------------- */
 
-	err = Fopen(program, RMODE_RW);
+	err = Fopen(program, O_RDWR);
 	if	(err == EACCDN)
 		{
 		screen(" ==> Zugriff verweigert!\r\n");
@@ -178,11 +178,11 @@ int exe2bin(char *program)
 		if   (offsetof(PH, ph_res2) != Fseek(offsetof(PH, ph_res2), prg_file, 0))
 		     return(-1);
 		header.ph_res2 |= 1;
-		if	(Fdatime(&timedate, prg_file, RMODE_RD))
+		if	(Fdatime(&timedate, prg_file, O_RDONLY))
 			return(-1);
 		if   (4L != Fwrite(prg_file, 4L, &header.ph_res2))
 			return(-1);
-		if	(Fdatime(&timedate, prg_file, RMODE_WR))
+		if	(Fdatime(&timedate, prg_file, 1))
 			return(-1);
 		screen(" Fastload- Flag gesetzt\r\n");
           }

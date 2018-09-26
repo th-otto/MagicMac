@@ -1,5 +1,12 @@
-/* * Demo-Programm zum Gebrauch der "Nav XCMD" * */#include <stddef.h>#include <stdlib.h>#include <string.h>#include <mgx_dos.h>#include "MGMC_API.H"#include "NAV_XCMD.H"
-/*********************************************************************
+/* * Demo-Programm zum Gebrauch der "Nav XCMD" * */#include <stddef.h>#include <stdlib.h>#include <string.h>#include <tos.h>#include "MGMC_API.H"#include "NAV_XCMD.H"
+/* Cookie structure */
+
+typedef struct {
+	long		key;
+	long		value;
+} COOKIE;
+
+/*********************************************************************
 *
 * Ermittelt einen Cookie
 *

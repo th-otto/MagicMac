@@ -73,7 +73,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <mgx_dos.h>
+#include <tos.h>
 
 #define DEBUG 0
 
@@ -203,7 +203,7 @@ static long ainf_save( void )
 
 	/* DAT modifizieren */
 
-	ret = Fopen(datname, RMODE_RW);
+	ret = Fopen(datname, O_RDWR);
 	if	(ret >= 0)
 		{
 		f = (int) ret;
@@ -237,7 +237,7 @@ static long ainf_open( void )
 	int f;
 
 
-	ret = Fopen(infname, RMODE_RD);
+	ret = Fopen(infname, O_RDONLY);
 	if	(ret < 0)
 		return(ret);
 	f = (int) ret;

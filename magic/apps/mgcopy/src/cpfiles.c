@@ -8,8 +8,8 @@
 
 #define DEBUG 0
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -531,7 +531,9 @@ long GFcreate(char *path, char *fname, XATTR *file)
 
 
 	attr = file->st_attr;				/* Attribute der Quelldatei */
-	attr &= ~F_RDONLY;				/* ReadOnly nicht Åbernehmen */
+#if 0
+	attr &= ~FA_RDONLY;				/* ReadOnly nicht Åbernehmen */
+#endif
 	newfile.st_mode = S_IFREG;			/* initialisieren */
 
 	do	{
@@ -1047,7 +1049,7 @@ long GFcopy(char *path, char *fname,
 			down_cnt(2, read_file_s, alls, 0L);
 			if	(shdl < 0)
 				{
-				doserr = Fopen(alls, RMODE_RD);
+				doserr = Fopen(alls, O_RDONLY);
 
 #if DEBUG
 errcommand = "Fopen";
@@ -1137,7 +1139,7 @@ errcommand = "Fwrite";
 		Fclose(shdl);
 	if	(dhdl > 0)
 		{
-		Fdatime((_DOSTIME *) &(xa->st_mtime), dhdl, RMODE_WR);
+		Fdatime((_DOSTIME *) &(xa->st_mtime), dhdl, 1);
 		Fclose(dhdl);
 		}
 	if	((dhdl > 0) && (doserr != E_OK) &&
@@ -1276,7 +1278,7 @@ static long _walk_path( void )
 		return(EBREAK);
 	dirlen = 0;
 
-	dirhandle = Dopendir(_path, DOPEN_NORMAL);	/* Modus mit langen Namen */
+	dirhandle = Dopendir(_path, 0);	/* Modus mit langen Namen */
 
 #if DEBUG
 errcommand = "Dopendir";
@@ -1326,7 +1328,7 @@ errcommand = "Dxreaddir";
 				continue;
 			}
 		else {
-			if	(xa.st_attr & (F_HIDDEN | F_SYSTEM))
+			if	(xa.st_attr & (FA_HIDDEN | FA_SYSTEM))
 				{
 				_hfiles++;
 				_hbytes += xa.st_size;

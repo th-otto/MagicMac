@@ -92,7 +92,7 @@ long show_file(char *path)
 
 	if	(NULL == (buf = Malloc(bsize)))
 		doserr = ENSMEM;
-	else doserr = Fopen(path, RMODE_RD);
+	else doserr = Fopen(path, O_RDONLY);
 
 	if	(doserr >= E_OK)
 		{

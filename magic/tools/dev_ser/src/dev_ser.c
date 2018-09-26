@@ -18,7 +18,7 @@
 
 
 #include <string.h>
-#include <mgx_dos.h>
+#include <tos.h>
 
 typedef void APPL;
 typedef void PD;
@@ -130,8 +130,12 @@ typedef struct _mx_dfs {
 #define   DFS_INSTDFS    0x1200
 #define   DEV_M_INSTALL  0xcd00
 
-/* zus„tzliche Attributbits */
-#define	FA_SYMLINK	64
+/* Cookie structure */
+
+typedef struct {
+	long		key;
+	long		value;
+} COOKIE;
 
 struct MgMxCookieData{	long	mgmx_magic;		/* ist "MgMx" */	long	mgmx_version;		/* Versionsnummer */	long	mgmx_len;			/* Strukturl„nge */	long	mgmx_xcmd;		/* PPC-Bibliotheken laden und verwalten */	long mgmx_xcmd_exec;	/* PPC-Aufruf aus PPC-Bibliothek */
 	void *mgmx_sysx;};

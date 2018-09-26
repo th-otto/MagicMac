@@ -5,7 +5,7 @@
 *
 */
 
-#include <mt_aes.h>
+#include <aes.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <vdi.h>

@@ -6,7 +6,7 @@
 
 #define  PGM_I_VERSION	1
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include "k.h"
 #include <stdlib.h>
 #include <string.h>
@@ -255,7 +255,7 @@ void load_app_icons( void )
 	init_app_icons();		/* Standard-Icons */
 	strcpy(path, desk_path);
 	strcat(path, "applicat.dat");
-	fd = (int) Fopen(path, RMODE_RD);
+	fd = (int) Fopen(path, O_RDONLY);
 	if	(fd < 0)
 		return;			/* Datei nicht gefunden */
 	retcode = Fcntl(fd, (long) &xa, FSTAT);
@@ -1535,7 +1535,7 @@ void save_status(int is_inf)
 
 	if	(is_inf)
 		{
-		doserr = Fopen(inf_name, RMODE_RW);
+		doserr = Fopen(inf_name, O_RDWR);
 		handle = (int) doserr;
 		if	(doserr == EFILNF)
 			{
@@ -1645,7 +1645,7 @@ void reload_status(int drv)
 		goto err;
 		}
 
-	doserr = Fopen(inf_name, RMODE_RD);
+	doserr = Fopen(inf_name, O_RDONLY);
 	if	(doserr == EFILNF)
 		{
 		if	(1 != Rxform_alert(2, ALRT_NO_INF_AT_X,

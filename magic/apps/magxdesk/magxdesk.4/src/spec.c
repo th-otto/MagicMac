@@ -5,7 +5,7 @@
 *********************************************************************/
 
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include "k.h"
 #include <vdi.h>
 #include <string.h>

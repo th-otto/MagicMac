@@ -77,8 +77,8 @@
 *
 ****************************************************************/
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
@@ -164,7 +164,7 @@ int main( int argc, char *argv[] )
 	WORD intin2;
 
 
-	Pdomain(PDOM_MINT);
+	Pdomain(1);
 	if   ((ap_id = appl_init()) < 0)
 		Pterm(-1);
 	Mrsrc_load("applicat.rsc", NULL);

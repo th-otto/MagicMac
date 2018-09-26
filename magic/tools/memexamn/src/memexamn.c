@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
 	if	(*name)
 		{
-		file = (int) Fopen(name, RMODE_RD);
+		file = (int) Fopen(name, O_RDONLY);
 		if	(file < 0)
 			return(file);
 		flen = Fseek(0L, file, SEEK_END);

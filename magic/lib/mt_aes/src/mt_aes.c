@@ -153,7 +153,7 @@
 *
 ****************************************************************/
 
-#include	"mt_aes.h"
+#include	"aes.h"
 
 #define	__aes( d, ctrldata, global ) _mt_aes( d, ctrldata, global )
 

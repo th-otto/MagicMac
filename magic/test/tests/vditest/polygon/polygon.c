@@ -4,9 +4,9 @@
 *
 */
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdio.h>
-#include <mt_aes.h>
+#include <aes.h>
 #include <vdi.h>
 
 

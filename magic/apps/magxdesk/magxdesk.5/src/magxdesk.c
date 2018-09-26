@@ -7,7 +7,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include "k.h"
 #include <vdi.h>
 #include <limits.h>
@@ -323,7 +323,8 @@ void main()
 							8192;	/* AV_STARTED */
 						(*(char **)(w_ev.msg+6)) = "MAGXDESK";
 						appl_write(client, 16, w_ev.msg);
-						break;/*
+						break;
+/*
 					case AV_EXIT:
 						break;
 */
@@ -334,7 +335,8 @@ void main()
 						w_ev.mwhich &= ~MU_MESAG;	/* bearbeitet */
 						goto do_key;
 
-					case AV_WHAT_IZIT:						client = w_ev.msg[1];
+					case AV_WHAT_IZIT:
+						client = w_ev.msg[1];
 						w = whdl2window(wind_find(w_ev.msg[3],
 											w_ev.msg[4]));
 						if	(w)
@@ -352,10 +354,14 @@ void main()
 							w_ev.msg[1] = ap_id;
 							w_ev.msg[2] =
 							w_ev.msg[7] = 0;
-							w_ev.msg[3] = ap_id;							(*(char **)(w_ev.msg+5)) = NULL;
+							w_ev.msg[3] = ap_id;
+							(*(char **)(w_ev.msg+5)) = NULL;
 							appl_write(client, 16, w_ev.msg);
-							}						break;
-					case AV_DRAG_ON_WINDOW:						client = w_ev.msg[1];
+							}
+						break;
+
+					case AV_DRAG_ON_WINDOW:
+						client = w_ev.msg[1];
 						w_ev.msg[0] = VA_DRAG_COMPLETE;
 						w_ev.msg[1] = ap_id;
 						w_ev.msg[2] =
@@ -365,7 +371,8 @@ void main()
 						w_ev.msg[6] =
 						w_ev.msg[7] = 0;
 						appl_write(client, 16, w_ev.msg);
-						break;
+						break;
+
 					case AV_STARTED:
 						Mfree((*(char **)(w_ev.msg+3))-1);
 						break;
@@ -414,7 +421,7 @@ void main()
 						s = "U:\\PIPE\\DRAGDROP.AA";
 						s[17] = ((char *) (w_ev.msg+7))[0];
 						s[18] = ((char *) (w_ev.msg+7))[1];
-						i = (int) Fopen(s, RMODE_WR);
+						i = (int) Fopen(s, O_WRONLY);
 						if	(i >= 0)
 							{
 							s[17] = DD_NAK;
@@ -963,7 +970,7 @@ int cdecl draw_userdef(PARMBLK *p)
 		vs_clip(vdi_handle, TRUE, pxy);
 		}
 	fname = m -> filename;
-	isdir = ((m -> attrib) & F_SUBDIR);
+	isdir = ((m -> attrib) & FA_SUBDIR);
 	isparentdir = (isdir) && (!strcmp(fname, ".."));
 	isalias = (int) m->is_alias;
 	if	(isalias != last_cursive)
@@ -1510,7 +1517,7 @@ void anfang(void)
 	SHELTAIL *sht;
 
 
-	Pdomain(PDOM_MINT);
+	Pdomain(1);
 
 	for	(i = 0; i < ANZDRIVES; i++)
 		dirty_drives[i] = FALSE;

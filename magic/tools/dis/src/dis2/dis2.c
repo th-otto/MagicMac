@@ -151,7 +151,7 @@ void main (int argc, char *argv[])
 
 	makepath(path, argname, dtabuf.d_fname);  /* Pfad und Name zusammensetzen */
 	if   (!ismem) {
-		if   (0L > (retcode = Fopen(path, RMODE_RD))) {        /* Datei ”ffnen */
+		if   (0L > (retcode = Fopen(path, O_RDONLY))) {        /* Datei ”ffnen */
 			cerrws("Cannot open ");
 			cerrws(path);
 			goto newline;
@@ -465,7 +465,7 @@ int load_lbl(char *name)
      register int  handle, errcode;
 
 
-     if   (0L > (retcode = Fopen(name, RMODE_RD))) {
+     if   (0L > (retcode = Fopen(name, O_RDONLY))) {
           errcode = 1;         /* Datei nicht vorhanden */
           error:
           lbl_tab = (long *) Malloc(8L);
@@ -527,7 +527,7 @@ int load_rlo(char *name, DTA *dtabuf)
           return(errcode);
           }
 
-     if   (0L > (retcode = Fopen(name, RMODE_RD))) {
+     if   (0L > (retcode = Fopen(name, O_RDONLY))) {
           errcode = 2;         /* Datei kann nicht ge”ffnet werden */
           goto error;
           }

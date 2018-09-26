@@ -1,4 +1,4 @@
-#include <mgx_dos.h>
+#include <tos.h>
 
 #define FILENAME	"C:\\GEMSYS\\GEMSCRAP\\test.txt"
 #define FATHER_MSG	"Das stammt vom Vaterprozež\r\n"

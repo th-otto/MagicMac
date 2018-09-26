@@ -6,7 +6,7 @@
         All Rights Reserved.
 */
 
-#include  <mt_aes.h>
+#include  <aes.h>
 
 #define init_mt_aesi() sys_set_getdisp( &aes_dispatcher, NULL )
 

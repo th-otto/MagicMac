@@ -14,7 +14,7 @@
 #define DEBUG 0
 
 #include <tos.h>
-#include <mt_aes.h>
+#include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
@@ -214,7 +214,7 @@ void read_inf( void )
 
 	if	((s) || (shel_find(infpath)))
 		{
-		hdl = (int) Fopen(infpath, RMODE_RD);
+		hdl = (int) Fopen(infpath, O_RDONLY);
 		if	(hdl < 0)
 			return;
 		len = Fread(hdl, 511L, buf);
@@ -431,7 +431,7 @@ static void read_all_notices( char *path )
 			{
 			strcpy(pname, dta.d_fname);
 			id = atoi(pname);
-			handle = (int) Fopen(p, RMODE_RD);
+			handle = (int) Fopen(p, O_RDONLY);
 			if	(handle > 0)
 				{
 				data = Malloc(dta.d_length+1);

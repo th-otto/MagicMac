@@ -4,7 +4,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <toserror.h>
 #include "k.h"
 #include <stdlib.h>
@@ -12,6 +12,7 @@
 #include <vdi.h>
 #include <sys/stat.h>
 #include "pattern.h"
+#include <wdlgfslx.h>
 
 
 static POPINFO pop_kategorie;

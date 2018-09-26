@@ -7,8 +7,8 @@
 
 #include <stddef.h>
 #include <string.h>
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <vdi.h>
 #include "globals.h"
 #include "windows.h"
@@ -493,7 +493,7 @@ void open_textwind( char *path )
 	/* Datei einlesen */
 	/* -------------- */
 
-	err = Fopen(path, RMODE_RD);
+	err = Fopen(path, O_RDONLY);
 	if	(err < E_OK)
 		{
 		err2:

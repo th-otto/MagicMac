@@ -57,7 +57,7 @@ WORD main( WORD argc, char *argv[] )
 		{
 		Cconws("Datei: ");
 		Cconws(*argv);
-		err = Fopen(*argv, RMODE_RW);	/* zum Lesen+Schreiben ”ffnen */
+		err = Fopen(*argv, O_RDWR);	/* zum Lesen+Schreiben ”ffnen */
 		f = (WORD) err;	/* Datei-Handle */
 		err = Fread(f, sizeof(PH), &ph);
 		if	((err != sizeof(PH)) || (ph.ph_branch != 0x601a))

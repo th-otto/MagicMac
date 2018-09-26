@@ -10,12 +10,12 @@
 /*	30.08.95																											*/
 /*																														*/
 /*----------------------------------------------------------------------------------------*/
-#include	<Types2B.h>
-#include	<PORTAB.H>
-#include	<STDDEF.H>
+#include <types2b.h>
+#include <portab.h>
+#include <stddef.h>
 
-#include	<TOS.H>
-#include <LIST.H>
+#include <tos.h>
+#include <list.h>
 
 #define	NEXT( ptr, offset )	( * (void **) ((uint8 *) ptr + offset ))
 

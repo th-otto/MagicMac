@@ -1,3 +1,6 @@
+#include <wdlgwdlg.h>
+#include <wdlgedit.h>
+
 #define NWINDOWS 64
 
 #define WFLAG_ICONIFIED	1

@@ -6,7 +6,7 @@
 *********************************************************************/
 
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -18,6 +18,13 @@ typedef unsigned char UINT8;
 
 XCMD_CMD *pXCMD_CMD;
 XCMD_EXEC *pXCMD_EXEC;
+
+/* Cookie structure */
+
+typedef struct {
+	long		key;
+	long		value;
+} COOKIE;
 
 /*********************************************************************
 *

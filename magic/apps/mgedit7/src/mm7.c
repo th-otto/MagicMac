@@ -4,11 +4,18 @@
  *	- MenÅs
  *	- Hintergrund
  *	- Dateiauswahl */
-#include <stddef.h>#include <stdlib.h>#include <string.h>#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <stddef.h>#include <stdlib.h>#include <string.h>#include <tos.h>
+#include <aes.h>
 #include "mm7.h"#include "mgmc_api.h"
 #include "men_xcmd.h"
 #include "nav_xcmd.h"
+
+/* Cookie structure */
+
+typedef struct {
+	long		key;
+	long		value;
+} COOKIE;
 
 static MgMcCookie *gMgMcCookie;static XCMDMgrRec *xcmd;static XCMDHdl men_hdl = -1;		/* fÅr Men XCMD */
 static XCMDHdl nav_hdl = -1;		/* fÅr Nav XCMD */

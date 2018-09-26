@@ -127,7 +127,7 @@ void	save_conf_to_inf( void )
 	av = *((AESVARS2 **)(_GemParBlk.global+11));
 	infpath[0] += *(av->aes_bootdrv);
 	infpath2[0] += *(av->aes_bootdrv);
-	errc = Fopen(infpath, RMODE_RW);
+	errc = Fopen(infpath, O_RDWR);
 	if	((errc == EFILNF) || (errc == EPTHNF) || (errc == EDRIVE))
 		{
 		Rform_alert(1, ALRT_NO_INF);

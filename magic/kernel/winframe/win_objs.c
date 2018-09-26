@@ -6,7 +6,7 @@
 */
 
 #include <tos.h>
-#include <mt_aes.h>
+#include <aes.h>
 #include <vdi.h>
 #if DEBUG
 #include <stdio.h>

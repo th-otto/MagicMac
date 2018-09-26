@@ -4,7 +4,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include "k.h"
 #include <stdlib.h>
 #include <string.h>
@@ -413,10 +413,10 @@ static int info_file(char *path, int drv, MYDTA *f, int weiter)
 	strcat((adr_datinf+FI_SIZE)->ob_spec.free_string, " Bytes");
 
 	ob_dsel(adr_datinf, FI_SETDA);
-	ob_sel_dsel(adr_datinf, FI_RDONL, (f->attrib) & F_RDONLY);
-	ob_sel_dsel(adr_datinf, FI_SYSTE, (f->attrib) & F_SYSTEM);
-	ob_sel_dsel(adr_datinf, FI_HIDDE, (f->attrib) & F_HIDDEN);
-	ob_sel_dsel(adr_datinf, FI_ARCHI, (f->attrib) & F_ARCHIVE);
+	ob_sel_dsel(adr_datinf, FI_RDONL, (f->attrib) & FA_RDONLY);
+	ob_sel_dsel(adr_datinf, FI_SYSTE, (f->attrib) & FA_SYSTEM);
+	ob_sel_dsel(adr_datinf, FI_HIDDE, (f->attrib) & FA_HIDDEN);
+	ob_sel_dsel(adr_datinf, FI_ARCHI, (f->attrib) & FA_ARCHIVE);
 
 	ret = do_dialog(adr_datinf);
 	if	(ret == FI_CAN)
@@ -431,10 +431,10 @@ static int info_file(char *path, int drv, MYDTA *f, int weiter)
 		strcpy(neuname,s);
 		}
 
-	neuattr  = selected(adr_datinf, FI_RDONL) * F_RDONLY;
-	neuattr += selected(adr_datinf, FI_SYSTE) * F_SYSTEM;
-	neuattr += selected(adr_datinf, FI_HIDDE) * F_HIDDEN;
-	neuattr += selected(adr_datinf, FI_ARCHI) * F_ARCHIVE;
+	neuattr  = selected(adr_datinf, FI_RDONL) * FA_RDONLY;
+	neuattr += selected(adr_datinf, FI_SYSTE) * FA_SYSTEM;
+	neuattr += selected(adr_datinf, FI_HIDDE) * FA_HIDDEN;
+	neuattr += selected(adr_datinf, FI_ARCHI) * FA_ARCHIVE;
 	
 	Mgraf_mouse(HOURGLASS);
 	err = 0x1234L;
@@ -442,7 +442,7 @@ static int info_file(char *path, int drv, MYDTA *f, int weiter)
 		{
 		int hdl;
 
-		err = Fopen(path, RMODE_WR);
+		err = Fopen(path, O_WRONLY);
 		if	(err >= E_OK)
 			{
 			hdl = (int) err;
@@ -465,7 +465,7 @@ static int info_file(char *path, int drv, MYDTA *f, int weiter)
 		char flag;
 		char	neupath[256+2];
 
-		flag = (neuattr & F_RDONLY && !(f->attrib & F_RDONLY));
+		flag = (neuattr & FA_RDONLY && !(f->attrib & FA_RDONLY));
 		if	(flag)
 			{
 			err = Fattrib(path, TRUE, (int) f->attrib);

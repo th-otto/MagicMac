@@ -6,7 +6,7 @@
 
 #define DEBUG	0
 
-#include <mt_aes.h>
+#include <aes.h>
 #include "magxdesk.h"
 #include "\pc\source\deskutil\applicat\appldata.h"
 
@@ -320,6 +320,13 @@ typedef struct
 	int		fontH;		/* Zeichenhîhe fÅr Fenster */
 	int		font_is_prop;	/* Flag fÅr Proportionalfont */
 } DEFAULTS;
+
+/* Cookie structure */
+
+typedef struct {
+	long		key;
+	long		value;
+} COOKIE;
 
 extern DEFAULTS status;
 extern char *desk_col;

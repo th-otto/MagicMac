@@ -5,8 +5,8 @@
 *
 */
 
-#include <mgx_dos.h>
-#include <mt_aes.h>
+#include <tos.h>
+#include <aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include "appl.h"

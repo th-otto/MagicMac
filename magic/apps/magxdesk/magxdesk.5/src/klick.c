@@ -5,7 +5,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <toserror.h>
 #include <vdi.h>
 #include "k.h"
@@ -926,7 +926,7 @@ int obj_to_path(WINDOW *w, int obj, char *path, MYDTA **f)
 			file = w->pmydta[obj-1];
 			if	(f)
 				*f = file;
-			if	((file -> attrib) & F_SUBDIR)
+			if	((file -> attrib) & FA_SUBDIR)
 				ispath = 1;
 			if	(ispath && !strcmp(file->filename, ".."))
 				{

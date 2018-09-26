@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 		return(1);
 		}
 
-	file = (int) Fopen(argv[1], RMODE_RW);
+	file = (int) Fopen(argv[1], O_RDWR);
 	if	(file < 0)
 		return(file);
 
@@ -193,7 +193,7 @@ long modify(long limit)
 	/* magische Daten erstellen und speichern */
 	/* -------------------------------------- */
 
-	if	(Fdatime(&timedate, file, RMODE_RD))
+	if	(Fdatime(&timedate, file, O_RDONLY))
 		return(-1);
 	if	(limit == -1L)
 		{
@@ -216,7 +216,7 @@ long modify(long limit)
 			));
 		prtkb(magics[1]);
 		}
-	if	(Fdatime(&timedate, file, RMODE_WR))
+	if	(Fdatime(&timedate, file, 1))
 		return(-1);
 
      return(0);

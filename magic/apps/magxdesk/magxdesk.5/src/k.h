@@ -6,15 +6,12 @@
 
 #define DEBUG	0
 
-#include <mt_aes.h>
+#include <aes.h>
+#include <wdlgwdlg.h>
 #include "magxdesk.h"
 #include "..\..\..\applicat\src\appldata.h"
 #include "av.h"
 
-#define EOS    '\0'
-#ifndef NULL
-#define NULL        ( ( void * ) 0L )
-#endif
 #define MIN(a,b) ((a < b) ? a : b)
 #define MAX(a,b) ((a > b) ? a : b)
 #define ABS(X) ((X>0) ? X : -X)
@@ -22,6 +19,14 @@
 #define MIN_FNAMLEN		8
 #define USA	0
 #define FRG	1
+
+/* Cookie structure */
+
+typedef struct {
+	long		key;
+	long		value;
+} COOKIE;
+
 
 /* FÅr Kommandozeilen */
 

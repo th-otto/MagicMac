@@ -61,7 +61,7 @@
 
 #include <tos.h>
 #include <tosdefs.h>
-#include "mt_aes.h"
+#include <aes.h>
 #include <vdi.h>
 #include "editob.h"
 

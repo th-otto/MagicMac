@@ -104,7 +104,7 @@ void split(char *quelle, char *ziel1, char *ziel2)
 	/* Datei ”ffnen          */
 	/* --------------------- */
 
-	if   (0L > (err = Fopen(quelle, RMODE_RD)))
+	if   (0L > (err = Fopen(quelle, O_RDONLY)))
 		Pterm((int) err);
 	file = (int) err;
 	length = Fseek(0L, file, 2);

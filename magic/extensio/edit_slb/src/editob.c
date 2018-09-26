@@ -11,8 +11,8 @@
 #define TEMPLATES 0
 #define DEBUG 0
 
-#include <mgx_dos.h>
-#include ".\mt_aes.h"
+#include <tos.h>
+#include <aes.h>
 #include <vdi.h>
 #if DEBUG
 #include <stdio.h>

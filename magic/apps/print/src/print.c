@@ -171,7 +171,7 @@ char dateiname[];
 	register char *string;
 
 
-	if   (0L > (retcode = Fopen(dateiname,RMODE_RD))) {
+	if   (0L > (retcode = Fopen(dateiname,O_RDONLY))) {
 		screen("PRINT: ");
 		screen(dateiname);
 		screen(" nicht gefunden\r\n");

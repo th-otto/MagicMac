@@ -3,14 +3,14 @@
 	Kommentare ab: Spalte 60											*Spalte 60*
 */
 
-#include	<Types2B.h>
-#include	<stddef.h>														/* wird fÅr offsetof() benîtigt */
-#include	<VDI.H>
+#include <types2b.h>
+#include <stddef.h>														/* wird fÅr offsetof() benîtigt */
+#include <vdi.h>
 
 #ifndef	__VDICOL__
 #define	__VDICOL__
 
-#include	<PRSETTNG.H>													/* PRN_SETTINGS-Struktur */
+#include <wdlgpdlg.h>													/* PRN_SETTINGS-Struktur */
 
 #ifndef	__COLORMAP__
 

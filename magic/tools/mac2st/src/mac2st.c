@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 		return(-1);
 		}
 
-	hdl = (int) Fopen(argv[1], RMODE_RD);
+	hdl = (int) Fopen(argv[1], O_RDONLY);
 	if	(hdl < 0)
 		return(hdl);	
 

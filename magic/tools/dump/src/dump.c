@@ -183,14 +183,14 @@ void dump(char *s)
 			buffersize = 16;
 			}
 		else {
-			retcode = Fopen(s, RMODE_RD);
+			retcode = Fopen(s, O_RDONLY);
 			if	(retcode < 0)
 				goto erro;
 			}
 		}
 	else
 	if	((retcode = Fsfirst(s, 0)) < 0 ||
-		 (retcode = Fopen(s, RMODE_RD)) < 0)
+		 (retcode = Fopen(s, O_RDONLY)) < 0)
 		{
 		erro:
 		cerrws("DUMP: Kann nicht ”ffnen: ");

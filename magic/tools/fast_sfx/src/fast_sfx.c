@@ -6,7 +6,7 @@
 *
 */
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <string.h>
 
 static LONG fast_sfx( char *path );
@@ -47,7 +47,7 @@ static LONG fast_sfx( char *path )
 	Cconws("Bearbeite ");
 	Cconws(path);
 	Cconws("\r\n");
-	doserr = Fopen(path, RMODE_RW);
+	doserr = Fopen(path, O_RDWR);
 	if	(doserr < 0)
 		return(doserr);
 	h = (WORD) doserr;

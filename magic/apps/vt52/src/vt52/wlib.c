@@ -7,22 +7,22 @@
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
 #include "types2b.h"
-#include <MGX_DOS.H> 
-#include	<MT_AES.H>
-#include <VDI.H>
-#include	"VDICOL.H"														/* VDI-Farbfunktionen */
-#include	<STRING.H>
-#include	<STDDEF.H>
-#include <STDLIB.H>
+#include <tos.h> 
+#include <aes.h>
+#include <vdi.h>
+#include "vdicol.h"				/* VDI-Farbfunktionen */
+#include <string.h>
+#include <stddef.h>
+#include <stdlib.h>
 
 
 /*----------------------------------------------------------------------------------------*/
 /* Lokale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
-#include "WSTRUCT.H"														/*	Fensterstuktur */
-#include "WLIB.H"															/*	Funktionsprototypen */
+#include "wstruct.h"			/*	Fensterstuktur */
+#include "wlib.h"															/*	Funktionsprototypen */
 
-#include	"LIST.H"
+#include "list.h"
 
 /*----------------------------------------------------------------------------------------*/
 /* Defines                                                                                */

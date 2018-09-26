@@ -108,7 +108,7 @@
 #define HOME                        0x4700
 #define SHFT_HOME                   0x4737
 #define UNDO                        0x6100
-#define ESC					 0x011b
+#define ESC							0x011b
 #define TAB                         0x0f09
 #define HELP                        0x6200
 #define F1                          0x3b00

@@ -7,20 +7,20 @@
 /*----------------------------------------------------------------------------------------*/
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
-#include <MGX_DOS.H>
-#include <VDI.H>
-#include	<MT_AES.H>
-#include	<STDIO.H>
-#include	<STDDEF.H>
-#include <STRING.H>
-#include	<STDLIB.H>
-#include	<SCANCODE.H>
-#include	<DRAGDROP.H>
+#include <tos.h>
+#include <vdi.h>
+#include <aes.h>
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+#include <stdlib.h>
+#include <scancode.h>
+#include <dragdrop.h>
 
-#include "WSTRUCT.H"
-#include "WLIB.H"
+#include "wstruct.h"
+#include "wlib.h"
 
-#include "AESMACRO.H"
+#include "aesmacro.h"
 
 typedef struct {
 	void *next;

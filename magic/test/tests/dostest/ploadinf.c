@@ -1,4 +1,4 @@
-#include <mgx_dos.h>
+#include <tos.h>
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	plf.fnamelen = 128;
 	plf.fname = fname;
 	plf.cmdlin = cmdlin;
-	err = Fopen(argv[1], RMODE_RD);
+	err = Fopen(argv[1], O_RDONLY);
 	if	(err < 0)
 		{
 		printf("Fopen => %ld\n", err);

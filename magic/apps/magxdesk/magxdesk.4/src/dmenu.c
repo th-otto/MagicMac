@@ -4,7 +4,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include "k.h"
 #include <stdlib.h>
 #include <string.h>

@@ -9,6 +9,7 @@
 *******************************************************/
 
 #include <tos.h>
+#include <aes.h>
 #include <mt_aes.h>
 #include <vdi.h>
 #include <tosdefs.h>
@@ -16,6 +17,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdarg.h>
+#include <toserror.h>
 #include "gemut_mt.h"
 
 #define MIN(a,b) ((a < b) ? a : b)

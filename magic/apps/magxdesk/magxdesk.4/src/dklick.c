@@ -8,7 +8,7 @@
 *
 *********************************************************************/
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include "k.h"
 #include <string.h>
 #include <vdi.h>
@@ -1357,7 +1357,7 @@ int starten(char *path, char *tail, int config, APPLICATION *ap,
 	/* ---------------------------------------------- */
 
 	err_file = program;
-	doserr = Fattrib(program, RMODE_RD, 0);
+	doserr = Fattrib(program, 0, 0);
 	if	(doserr < E_OK)
 		{
 		err_alert(doserr);
