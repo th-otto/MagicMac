@@ -1,0 +1,4 @@
+..\bin\mcmd.tos
+.S[-I..\..\..\inc_as]
+=
+mcmd.s

@@ -1,10 +1,5 @@
-KAOS           EQU  1
-BOOT           EQU  1
-MAGIX          EQU  1
-ACC            EQU  0
-
      SUPER
-     INCLUDE "OSBIND.INC"
+     INCLUDE "osbind.inc"
 
 
 
@@ -35,6 +30,79 @@ SP_PARGV  EQU  PARGV-4
 SP_BATCH  EQU  BATCH-4
 
 
+
+     OFFSET    0
+
+environment:   DS.B      $3ff
+env_ende:      DS.B      1
+
+               DS.B      3000
+stack:         DS.L      1
+c_sysbase:     DS.L      1              * Merker fÅr "_sysbase"
+c_phystop:     DS.L      1              * Merker fÅr "phystop"
+query_flag:    DS.W      1
+treelevel      EQU       query_flag     * Zum Durchsuchen des Dir- Baums
+errlv2         EQU       query_flag     * letzter Errorlevel
+t_flag         EQU       query_flag     * Touch- Flag fÅr COPY
+dir_zeilen:    DS.W      1              * Bei DIR
+schluessel     EQU       dir_zeilen     * Bei SORT
+
+w_flag:        DS.B      1              * Bei DIR
+r_flag         EQU       w_flag         * Bei SORT
+p_flag:        DS.B      1              * Bei DIR
+c_flag         EQU       p_flag         * Bei SORT
+q_flag:        DS.B      1              * Bei DIR
+attrplus       EQU       q_flag         * Bei ATTRIB
+s_flag:        DS.B      1              * Bei DIR
+attrminus      EQU       s_flag         * Bei ATTRIB
+
+     IFEQ MAGIX
+etvcritic_alt: DS.L      1
+     ENDIF
+
+config_alt:    DS.L      1
+
+normal_no:     DS.W      1
+ausgabepuffer  EQU       normal_no      * fÅr TOS- Korrektur
+hid_sys_no:    DS.W      1
+subdir_no:     DS.W      1
+normal_len:    DS.L      1
+hid_sys_len:   DS.L      1
+puffer_adr:    DS.L      1              * Bei DIR
+zeiger_adr     EQU       hid_sys_len    * Bei DIR
+
+jmp_env:       DS.L      4
+
+ IFF      KAOS
+laststring:    DS.B      130            * UNDO- Puffer
+home_ypos:     DS.W      1              * FÅr Editor
+ ENDC
+ IF       ACC
+screenbuf:     DS.L      ZEILEN*20
+pnt_of_boot:   DS.L      1
+ap_id:         DS.W      1
+isxaes:        DS.W      1         ; Flag fÅr "XAES"
+menu_id:       DS.W      1
+whdl:          DS.W      1
+xdesk:         DS.W      1
+ydesk:         DS.W      1
+wdesk:         DS.W      1
+hdesk:         DS.W      1
+control:       DS.W      5
+global:        DS.W      15
+intin:         DS.W      16
+intout:        DS.W      16
+addrin:        DS.L      2
+addrout:       DS.L      1
+ev_mgpbuff:    DS.W      8
+alt_ssp:       DS.L      1
+evnt_ret:      DS.L      20        * oberste Langworte des ssp hier sichern
+     ENDC
+
+bsslen:
+
+
+	text
 
 
 _base     EQU  *-$100
@@ -71,7 +139,7 @@ _base     EQU  *-$100
 
  IF       ACC
 
- INCLUDE  "AESBIND.INC"
+ INCLUDE  "aesbind.inc"
 
 ZEILEN    EQU  19                  * soviele Bildschirmzeilen retten
 
@@ -7053,76 +7121,6 @@ pgmname:  DC.B      '  CMD',0
 ************ BEGINN DES BSS ***********
 
 d:
-     OFFSET    0
-
-environment:   DS.B      $3ff
-env_ende:      DS.B      1
-
-               DS.B      3000
-stack:         DS.L      1
-c_sysbase:     DS.L      1              * Merker fÅr "_sysbase"
-c_phystop:     DS.L      1              * Merker fÅr "phystop"
-query_flag:    DS.W      1
-treelevel      EQU       query_flag     * Zum Durchsuchen des Dir- Baums
-errlv2         EQU       query_flag     * letzter Errorlevel
-t_flag         EQU       query_flag     * Touch- Flag fÅr COPY
-dir_zeilen:    DS.W      1              * Bei DIR
-schluessel     EQU       dir_zeilen     * Bei SORT
-
-w_flag:        DS.B      1              * Bei DIR
-r_flag         EQU       w_flag         * Bei SORT
-p_flag:        DS.B      1              * Bei DIR
-c_flag         EQU       p_flag         * Bei SORT
-q_flag:        DS.B      1              * Bei DIR
-attrplus       EQU       q_flag         * Bei ATTRIB
-s_flag:        DS.B      1              * Bei DIR
-attrminus      EQU       s_flag         * Bei ATTRIB
-
-     IFEQ MAGIX
-etvcritic_alt: DS.L      1
-     ENDIF
-
-config_alt:    DS.L      1
-
-normal_no:     DS.W      1
-ausgabepuffer  EQU       normal_no      * fÅr TOS- Korrektur
-hid_sys_no:    DS.W      1
-subdir_no:     DS.W      1
-normal_len:    DS.L      1
-hid_sys_len:   DS.L      1
-puffer_adr:    DS.L      1              * Bei DIR
-zeiger_adr     EQU       hid_sys_len    * Bei DIR
-
-jmp_env:       DS.L      4
-
- IFF      KAOS
-laststring:    DS.B      130            * UNDO- Puffer
-home_ypos:     DS.W      1              * FÅr Editor
- ENDC
- IF       ACC
-screenbuf:     DS.L      ZEILEN*20
-pnt_of_boot:   DS.L      1
-ap_id:         DS.W      1
-isxaes:        DS.W      1         ; Flag fÅr "XAES"
-menu_id:       DS.W      1
-whdl:          DS.W      1
-xdesk:         DS.W      1
-ydesk:         DS.W      1
-wdesk:         DS.W      1
-hdesk:         DS.W      1
-control:       DS.W      5
-global:        DS.W      15
-intin:         DS.W      16
-intout:        DS.W      16
-addrin:        DS.L      2
-addrout:       DS.L      1
-ev_mgpbuff:    DS.W      8
-alt_ssp:       DS.L      1
-evnt_ret:      DS.L      20        * oberste Langworte des ssp hier sichern
-     ENDC
-
-bsslen:
-
         BSS
 
      DS.B  bsslen
