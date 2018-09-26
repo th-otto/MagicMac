@@ -1,0 +1,4 @@
+..\bin\de\magxconf.acc
+.S[-I..\..\..\inc_as]
+=
+magxcode.s

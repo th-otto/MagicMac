@@ -7,10 +7,6 @@
 *
 **********************************************************************
 
-FRANKR	EQU 1
-DEUTSCH	EQU 0
-US		EQU 0
-
 
 _base		EQU	*-$100
 NUM_OBS		EQU	18
@@ -20,9 +16,32 @@ OB_ABBRUCH	EQU	5
 OB_SICHERN	EQU	4
 
 
-	INCLUDE "OSBIND.INC"
-	INCLUDE "AESBIND.INC"
-	INCLUDE "MAGIX.INC"
+	INCLUDE "osbind.inc"
+	INCLUDE "aesbind.inc"
+	INCLUDE "magix.inc"
+
+	OFFSET	0
+
+is_acc:		DS.B 	1
+is_kaos:		DS.B 	1
+	EVEN
+ap_id:		DS.W 	1
+menu_id:		DS.W 	1
+xdesk:		DS.W 	1
+ydesk:		DS.W 	1
+wdesk:		DS.W 	1
+hdesk:		DS.W 	1
+flyinf:		DS.L		1
+control:		DS.W 	5
+global:		DS.W 	15
+intin:		DS.W 	16
+intout:		DS.W 	16
+addrin:		DS.L 	2
+addrout:		DS.L 	1
+ev_mgpbuff:	DS.W 	8
+bsslen:
+
+  text
 
  bra.b	init
 
@@ -100,7 +119,8 @@ init_acc:
  move.w	d0,intin(a6)			; schon fÅr menu_register
  tst.b	is_kaos(a6)
  beq.b	again				; kein KAOS: nicht anmelden
- move.l	#appname,addrin(a6)
+ lea.l	appname(pc),a0
+ move.l	a0,addrin(a6)
  M_menu_register
  bmi 	exit
  move.w	d0,menu_id(a6)
@@ -216,7 +236,8 @@ getsv_end:
 
 rsc_init:
  moveq	#NUM_OBS-1,d7
- move.l	#rs_object,addrin(a6)
+ lea.l	rs_object(pc),a0
+ move.l	a0,addrin(a6)
 rsci_loop:
  move.w	d7,intin(a6)
  M_rsrc_obfix
@@ -390,7 +411,8 @@ do_dialog:
  move.l	4(a5),(a0)
  M_objc_draw
 
- move.l	#scantab,addrin+4(a6)
+ lea.l	scantab(pc),a0
+ move.l	a0,addrin+4(a6)
  move.l	d+flyinf(pc),addrin+8(a6)
  M_form_xdo
 
@@ -459,7 +481,8 @@ _form_dial:
  move.l	(a5),(a0)+
  move.l	4(a5),(a0)+
  move.l	addrin(a6),-(sp)
- move.l	#d+flyinf,addrin(a6)
+ lea.l	flyinf(a6),a0
+ move.l	a0,addrin(a6)
  M_form_xdial
  move.l	(sp)+,addrin(a6)
  clr.l	addrin+4(a6)
@@ -472,7 +495,7 @@ _form_dial:
 *
 *	   DATA
 
-	IFNE DEUTSCH
+	ifne GERMAN
 bit4:	DC.B "Fastload:",0
 bit5:   	DC.B "KompatibilitÑt:",0
 bit6:   	DC.B "Smart Redraw:",0
@@ -485,8 +508,8 @@ s_sicher: DC.B "Sichern",0
 s_abbr:	DC.B "Abbruch",0
 s_but:	DC.B "Ein",0
 s_ver:	DC.B "MagiC 00.00‡ vom ??.??.????",0
-	ENDC
-	IFNE US
+	endc
+	ifne ENGLISH
 bit4:	DC.B "Fastload:",0
 bit5:	DC.B "Compatibility to TOS:",0
 bit6:	DC.B "Smart Redraw:",0
@@ -499,8 +522,8 @@ s_sicher: DC.B "Save",0
 s_abbr:	DC.B "Cancel",0
 s_but:	DC.B "On",0
 s_ver:	DC.B "MagiC 00.00‡     ??.??.????",0
-	ENDC
-	IFNE FRANKR
+	endc
+	ifne FRENCH
 bit4:	DC.B "Fastload:",0
 bit5:	DC.B "CompatibilitÇ:",0
 bit6:	DC.B "Smart Redraw:",0
@@ -513,7 +536,7 @@ s_sicher: DC.B "Sauver",0
 s_abbr:	DC.B "Abandon",0
 s_but:	DC.B "On",0
 s_ver:	DC.B "MagiC 00.00‡  du ??.??.????",0
-	ENDC
+	endc
 
 	EVEN
 
@@ -524,11 +547,11 @@ rs_object:
 
  DC.W	2,-1,-1,G_BUTTON,NONE,OUTLINED+SHADOWED 	;  1: Titelzeile
  DC.L	s_title
-	IFNE	FRANKR
+	ifne	FRENCH
  DC.W	4,1,32,1
-	ELSE
+	else
  DC.W	5,1,30,1
-	ENDIF
+	endif
 
  DC.W	3,-1,-1,G_STRING,NONE,DISABLED			;  2: Version
  DC.L	s_ver
@@ -638,27 +661,6 @@ pgmname:	DC.B 	'MAGXCONF.ACC',0
 ************ BEGINN DES BSS ***********
 
 d:
-	OFFSET	0
-
-is_acc:		DS.B 	1
-is_kaos:		DS.B 	1
-	EVEN
-ap_id:		DS.W 	1
-menu_id:		DS.W 	1
-xdesk:		DS.W 	1
-ydesk:		DS.W 	1
-wdesk:		DS.W 	1
-hdesk:		DS.W 	1
-flyinf:		DS.L		1
-control:		DS.W 	5
-global:		DS.W 	15
-intin:		DS.W 	16
-intout:		DS.W 	16
-addrin:		DS.L 	2
-addrout:		DS.L 	1
-ev_mgpbuff:	DS.W 	8
-bsslen:
-
 	   BSS
 
 	DS.B  bsslen

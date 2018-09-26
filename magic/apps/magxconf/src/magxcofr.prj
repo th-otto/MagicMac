@@ -1,0 +1,4 @@
+..\bin\fr\magxconf.acc
+.S[-I..\..\..\inc_as]
+=
+magxcofr.s

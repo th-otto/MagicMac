@@ -20,12 +20,14 @@ stamp-*
 .deps
 .dirstamp
 xcuserdata
+aaa.cfg
 *.a
 *.o
 *.lib
 *.pdb
 *.prg
 *.app
+*.acc
 *.ttp
 *.tos
 *.mode1v3
