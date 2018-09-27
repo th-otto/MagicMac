@@ -1,0 +1,17 @@
+matrix.prg
+.C[-I..\..\inc_c]
+.C[-8-]
+.C[-K-]
+.L[-S=$4000]
+=
+cstartv.o      ; startup code
+shell.c	(m.h, matrix.h, msg.c, menus.c, klick.c) [-W-stv]	; RAHMENPROGRAMM, REDRAWS
+edit.c		(M.H)		; EDITIERFENSTER
+m.c		(M.H) [-W-stv]	; MATHEMATIK- ROUTINEN
+arith.c	(M.H) [-W-stv]	; AUSWERTUNG ARITHMETISCHER AUSDRšCKE
+datei.c				; DATEIVERWALTUNG
+
+pcfltlib.lib   ; floating point lib
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib   ; AES and VDI lib
