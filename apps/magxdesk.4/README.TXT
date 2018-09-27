@@ -16,5 +16,7 @@ Instead of being monolithical, it uses various auxiliary programs:
 - MCMD for command lines
 - VT52 for text based programs
 
-There is version 4 and version 5 of this application, version 5 is the lastest one which is also used for MagiC 6 and in all emulators.
-The application is localised in German, French and English
+This is version 4 of the application, version 5 is the lastest one which
+is also used for MagiC 6 and in all emulators. The application is
+localised in German, French and English
+

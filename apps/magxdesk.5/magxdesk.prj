@@ -1,5 +1,5 @@
 MAGXDESK.APP
-.C[-I..\..\..\..\inc_c]
+.C[-I..\..\inc_c]
 .L[-S=2048]
 =
 cstartv.o
@@ -18,8 +18,8 @@ ALLG		(k.h)
 IMGLOAD
 KACHEL	(kachel.h)
 SPEC		(k.h)						; TOS- SPEZIFISCHES
-..\..\..\..\kernel\aes\src\wdialog\shelsort.c
-..\..\..\..\lib\mylibs\src\ll.s			; long long lib
+..\..\kernel\aes\src\wdialog\shelsort.c
+..\..\lib\mylibs\src\ll.s			; long long lib
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib   ; TOS lib

@@ -9,7 +9,7 @@
 #include <aes.h>
 #include <wdlgwdlg.h>
 #include "magxdesk.h"
-#include "..\..\..\applicat\src\appldata.h"
+#include "..\applicat\src\appldata.h"
 #include "av.h"
 
 #define MIN(a,b) ((a < b) ? a : b)
