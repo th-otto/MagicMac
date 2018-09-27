@@ -1,11 +1,15 @@
 vfatconf.prg
+.C[-I..\..\inc_c]
+.C[-I..\..\lib\mylibs\src]
+.C[-8-]
+.C[-K-]
+.C[-P-]
 .L[-S=$1000]   ; Stackgr”že auf 4 KByte setzen
 =              ; list of modules follows...
-tcnstart.o     ; startup code
-vfatconf       (vfatconf.h)
-c:\pc\mylibs\gemutils		(c:\pc\mylibs\gemutils.h)
+cstartv.o     ; startup code
+vfatconf.c     (vfatconf.h)
+..\..\lib\mylibs\src\gemutils.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib
-magxlib.lib
 pcgemlib.lib

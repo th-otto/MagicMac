@@ -14,10 +14,10 @@
 #include <aes.h>
 #include <portab.h>
 #include <tos.h>
-#include <magx.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tosdefs.h>
+#include <mint/dcntl.h>
+#include "toserror.h"
 #include "vfatconf.h"
 #include "gemutils.h"
 
@@ -145,15 +145,15 @@ void	save_conf_to_inf( void )
 	errc = Fcntl(handle, (long) &xa, FSTAT);
 	if	(errc)
 		goto err;
-	buf = Malloc(xa.size+1);		/* Platz fÅr EOS! */
+	buf = Malloc(xa.st_size+1);		/* Platz fÅr EOS! */
 	if	(!buf)
 		{
 		Rform_alert(1, ALRT_MEMERR);
 		goto err2;
 		}
-	buf[xa.size] = '\0';
+	buf[xa.st_size] = '\0';
 
-	errc = Fread(handle, xa.size, buf);
+	errc = Fread(handle, xa.st_size, buf);
 	if	(errc < E_OK)
 		goto err;
 	Fclose(handle);
@@ -310,7 +310,7 @@ static void init_conf( void )
 	for	(i = 0, bit = 1L; i <= 'Z'-'A'; i++,bit <<= 1)
 		{
 		stat[1] = i;
-		ret = Dcntl(KER_DRVSTAT, "U:\\", (long) stat);
+		ret = Dcntl(MX_KER_DRVSTAT, "U:\\", (long) stat);
 		if	(ret > 0L)		/* gemountet */
 			{
 			path[0] = i+'A';
