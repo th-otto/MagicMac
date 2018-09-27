@@ -1,0 +1,12 @@
+print.ttp
+.C[-8-]
+.C[-K-]
+.C[-P-]
+.L[-S=$4000]
+=
+cstartv.O      ; startup code
+
+print.c
+
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib

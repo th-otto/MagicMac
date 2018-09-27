@@ -18,14 +18,11 @@
 *
 *********************************************************************/
 
+#include <portab.h>
 #include <tos.h>
-#include <tosdefs.h>
 #include <string.h>
 
 
-#define TRUE   1
-#define FALSE  0
-#define EOS    '\0'
 #define ESC    '\33'
 #define FF     '\14'
 #define CTRL_C '\3'
@@ -39,9 +36,9 @@ int	compressed 	= FALSE;
 int  double_width 	= FALSE;
 
 
-int	drucke(char *dateiname);
-void screen(char *string);
-void print(char *string);
+int	drucke(const char *dateiname);
+void screen(const char *string);
+void print(const char *string);
 void toterm(void);
 
 
@@ -162,8 +159,7 @@ char *argv[];
 *
 *********************************************************************/
 
-int drucke(dateiname)
-char dateiname[];
+int drucke(const char *dateiname)
 {
 	         long retcode;
 	         int  handle;
@@ -337,10 +333,9 @@ char dateiname[];
 *
 *********************************************************************/
 
-void screen(string)
-char *string;
+void screen(const char *string)
 {
-     Fwrite(HDL_CON,(long) strlen(string), string);
+     Fwrite(-1,(long) strlen(string), string);
 }
 
 
@@ -350,8 +345,7 @@ char *string;
 *
 *********************************************************************/
 
-void print(string)
-char *string;
+void print(const char *string)
 {
      while(*string)
           Cprnout(*string++);
@@ -364,17 +358,17 @@ char *string;
 *
 *********************************************************************/
 
-void toterm()
+void toterm(void)
 {
      char c;
 
      do   {
-          if   (Bconstat(CON)) { /* Wenn Taste gedrÅckt */
-               while(Bconstat(CON))
-                    if   (CTRL_C == (0xff & Bconin(CON)))
+          if   (Bconstat(2)) { /* Wenn Taste gedrÅckt */
+               while(Bconstat(2))
+                    if   (CTRL_C == (0xff & Bconin(2)))
                          Pterm0();
                screen("Abbruch (j/n) ? ");
-               Bconout(5, c = Bconin(CON));
+               Bconout(5, c = Bconin(2));
                if   (toupper(c) == 'J')
                     Pterm0();
                screen("\r\n");
