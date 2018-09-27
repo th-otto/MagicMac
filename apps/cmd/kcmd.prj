@@ -1,0 +1,4 @@
+kcmd.tos
+.S[-I..\..\inc_as]
+=
+kcmd.s
