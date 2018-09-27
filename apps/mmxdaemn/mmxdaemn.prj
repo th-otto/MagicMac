@@ -1,0 +1,13 @@
+mmxdaemn.prg
+.C[-8-]
+.C[-K-]
+.C[-P-]
+.C[-I..\..\inc_c]
+.L[-S=$1000]   ; Stackgr”že 4k
+=
+cstart0.o     ; startup code
+mmxdaemn.c       (mmxdaemn.h, mmx_xcmd.h)
+
+pcstdlib.lib   ; standard lib
+pctoslib.lib
+pcgemlib.lib

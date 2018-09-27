@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "mmxdaemn.h"
+#include "toserror.h"
 #include "av.h"
 #if DEBUG
 #include <stdio.h>
@@ -170,7 +171,7 @@ static void SendMnSelected(void)
 /**************** HAUPTPROGRAMM ******************/
 /*************************************************/
 
-int main(void /*int argc, char *argv[]*/)
+int main(void)
 {
 	char buf[256];
 	EVNT w_ev;
@@ -202,11 +203,14 @@ int main(void /*int argc, char *argv[]*/)
 			  2,			/* Doppelklicks erkennen 	*/
 			  1,			/* nur linke Maustaste		*/
 			  1,			/* linke Maustaste gedrÅckt	*/
-			  0,NULL,		/* kein 1. Rechteck			*/
-			  0,NULL,		/* kein 2. Rechteck			*/
+			  0,0,0,0,0,		/* kein 1. Rechteck			*/
+			  0,0,0,0,0,		/* kein 2. Rechteck			*/
 			  w_ev.msg,
 			  POLL_INTERVAL,	/* ms */
-			  (EVNTDATA*) &(w_ev.mx),
+			  &w_ev.mx,
+			  &w_ev.my,
+			  &w_ev.mbutton,
+			  &w_ev.kstate,
 			  &w_ev.key,
 			  &w_ev.mclicks
 			  );
