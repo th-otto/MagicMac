@@ -10,6 +10,7 @@
 
 #include <tos.h>
 #include <aes.h>
+#include <mt_aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>

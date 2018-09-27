@@ -1,3 +1,5 @@
+#include <wdlgwdlg.h>
+
 extern void beg_dial_init_rsc( void );
 extern void set_dialog_title( int action );
 extern long beg_dial_prepare( int argc, char *argv[],

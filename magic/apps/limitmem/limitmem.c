@@ -14,10 +14,12 @@
 #include <tos.h>
 #include <tosdefs.h>
 #include <ph.h>
-#include <mint/sysvars.h>
 #include <stdlib.h>
 #include <string.h>
 #include <country.h>
+#include <toserror.h>
+#include <fcntl.h>
+#include <mint/sysvars.h>
 
 char *nat_str(char *s);
 
