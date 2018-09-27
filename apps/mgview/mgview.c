@@ -35,7 +35,6 @@ int	ap_id;
 int text_attrib[10];			 /* Default- Textattribute */
 GRECT scrg;
 void close_work     (void);
-WORD global[15];
 int nwindows = 0;				/* Anzahl ge”ffneter Fenster */
 
 
@@ -58,7 +57,7 @@ int main( int argc, char *argv[] )
 	/* Initialisierung */
 	/* --------------- */
 
-	if   ((ap_id = MT_appl_init(global)) < 0)
+	if   ((ap_id = appl_init()) < 0)
 		Pterm(-1);
 	graf_mouse(ARROW, NULL);
 	wind_get_grect(SCREEN, WF_WORKXYWH, &scrg);
@@ -68,15 +67,15 @@ int main( int argc, char *argv[] )
 	/* linksbndig, Zeichenzellenoberkante */
 	vst_alignment(vdi_handle, 0, 5, &dummy, &dummy);
 	vqt_attributes(vdi_handle, text_attrib);
-/*
+#if 0
 	vswr_mode(vdi_handle,MD_REPLACE);      /* Replace- Modus */
 	vsf_interior(vdi_handle,SOLID);        /* komplett ausfllen */
 	Cursconf(0,0);
 	if	(vq_gdos())
 		vst_load_fonts(vdi_handle, 0);
-*/
+#endif
 
-/*	Mrsrc_load("mgview.rsc", global);	*/
+/*	Mrsrc_load("mgview.rsc", NULL);	*/
 
 	/* Kommandozeile abarbeiten */
 	/* ------------------------ */
@@ -95,11 +94,14 @@ int main( int argc, char *argv[] )
 			  2,			/* Doppelklicks erkennen 	*/
 			  1,			/* nur linke Maustaste		*/
 			  1,			/* linke Maustaste gedrckt	*/
-			  0,NULL,		/* kein 1. Rechteck			*/
-			  0,NULL,		/* kein 2. Rechteck			*/
+			  0,0,0,0,0,		/* kein 1. Rechteck			*/
+			  0,0,0,0,0,		/* kein 2. Rechteck			*/
 			  w_ev.msg,
 			  0L,	/* ms */
-			  (EVNTDATA*) &(w_ev.mx),
+			  &w_ev.mx,
+			  &w_ev.my,
+			  &w_ev.mbutton,
+			  &w_ev.kstate,
 			  &w_ev.key,
 			  &w_ev.mclicks
 			  );
@@ -242,7 +244,7 @@ int main( int argc, char *argv[] )
 ende:
 
 	v_clsvwk(vdi_handle);
-/*	MT_rsrc_free(global);	*/
+/*	rsrc_free();	*/
 	appl_exit();
 	return(0);
 }

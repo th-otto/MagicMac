@@ -13,7 +13,6 @@
 #include <string.h>
 #include <portab.h>
 #include "kachel.h"
-#include <mint/dcntl.h>
 #include <wdlgfslx.h>
 
 

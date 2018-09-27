@@ -9,7 +9,6 @@
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
-#include <mint/dcntl.h>
 #include "gemut_mt.h"
 #include "globals.h"
 #include "mgedit.h"

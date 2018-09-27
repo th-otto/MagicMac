@@ -11,10 +11,11 @@
 #include <aes.h>
 #include <vdi.h>
 #include "globals.h"
+#include "toserror.h"
 #include "windows.h"
 #include "mgwind.h"
 
-extern void  *memchr2( const void *s, size_t len );
+extern const unsigned char *memchr2( const unsigned char *s, ssize_t len );
 
 #define	MAXWIDTH	272
 
@@ -34,10 +35,10 @@ extern void  *memchr2( const void *s, size_t len );
 *
 *****************************************************************/
 
-static long expand_line( unsigned char *text, long len, int tabsize,
+static long expand_line( const unsigned char *text, long len, int tabsize,
 					unsigned char *buf, long bufsize )
 {
-	unsigned char *end = text+len;
+	const unsigned char *end = text+len;
 	long newlen;
 	int ntabs;
 
@@ -95,11 +96,11 @@ static long expand_line( unsigned char *text, long len, int tabsize,
 *
 *****************************************************************/
 
-static void get_line_column_count( unsigned char *text, long len,
+static void get_line_column_count( const unsigned char *text, long len,
 				long *lc, long *cc, int tabsize )
 {
-	unsigned char *ende = text+len;
-	unsigned char *eol,*eol2;
+	const unsigned char *ende = text+len;
+	const unsigned char *eol,*eol2;
 	long w;			/* L„nge einer Zeile */
 
 
@@ -144,11 +145,11 @@ static void get_line_column_count( unsigned char *text, long len,
 *
 *****************************************************************/
 
-static void init_line_ptrs( unsigned char *text, long len,
-					unsigned char **lines )
+static void init_line_ptrs( const unsigned char *text, long len,
+					const unsigned char **lines )
 {
-	unsigned char *ende = text+len;
-	unsigned char *eol;
+	const unsigned char *ende = text+len;
+	const unsigned char *eol;
 
 
 	while(text < ende)
@@ -179,7 +180,7 @@ static unsigned char *get_line( WINDOW *w, long n, long *lw )
 {
 	unsigned char *line;
 	unsigned char *ende;
-	unsigned char *eol;
+	const unsigned char *eol;
 
 
 	if	(n >= w->vscroll.n)
@@ -214,7 +215,7 @@ static unsigned char *get_line( WINDOW *w, long n, long *lw )
 static void _my_snap( WINDOW *w )
 {
 	/* Innenbereich berechnen */
-	wind_calc(WC_WORK, MY_KIND, &(w->out), &(w->in));
+	wind_calc_grect(WC_WORK, MY_KIND, &(w->out), &(w->in));
 	/* x-Position auf 8er-Grenze */
 	w->in.g_x &= ~7;
 	/* Minimalgr”že */
@@ -226,7 +227,7 @@ static void _my_snap( WINDOW *w )
 	w->in.g_w -= w->in.g_w % w->hscroll.pixelsize;
 	w->in.g_h -= w->in.g_h % w->vscroll.pixelsize;
 	/* nochmal Auženbereich berechnen */
-	wind_calc(WC_BORDER, MY_KIND, &(w->in), &(w->out));
+	wind_calc_grect(WC_BORDER, MY_KIND, &(w->in), &(w->out));
 }
 
 
@@ -474,16 +475,16 @@ void open_textwind( char *path )
 	/* Fenster-Maximalgr”že berechnen */
 	/* ------------------------------ */
 
-	wind_calc(WC_WORK, MY_KIND, &scrg, &full);	/* Innenbereich */
+	wind_calc_grect(WC_WORK, MY_KIND, &scrg, &full);	/* Innenbereich */
 	/* x-Position auf 8er-Grenze */
 	full.g_x &= ~7;
 	/* Breite und H”he */
 	full.g_w -= full.g_w % text_attrib[8];
 	full.g_h -= full.g_h % text_attrib[9];
 	/* nochmal Auženbereich berechnen */
-	wind_calc(WC_BORDER, MY_KIND, &full, &full);
+	wind_calc_grect(WC_BORDER, MY_KIND, &full, &full);
 
-	w->handle = wind_create(MY_KIND, &full );
+	w->handle = wind_create_grect(MY_KIND, &full );
 	if	(w->handle <= 0)
 		{
 		Mfree(w);
@@ -511,16 +512,16 @@ void open_textwind( char *path )
 		goto err2;
 		}
 
-	w->user_fsize = xa.size;
-	w->user_file = Malloc(xa.size + 1);	/* Platz fr EOS */
+	w->user_fsize = xa.st_size;
+	w->user_file = Malloc(xa.st_size + 1);	/* Platz fr EOS */
 	if	(!w->user_file)
 		{
 		err = ENSMEM;
 		goto err3;
 		}
 
-	err = Fread(handle, xa.size, w->user_file);
-	if	(err != xa.size)
+	err = Fread(handle, xa.st_size, w->user_file);
+	if	(err != xa.st_size)
 		{
 		if	(err >= 0)
 			err = EREADF;
@@ -570,7 +571,7 @@ void open_textwind( char *path )
 	if	(err > scrg.g_h)
 		err = scrg.g_h;
 	w->in.g_h = (int) err;
-	wind_calc(WC_BORDER, MY_KIND, &(w->in),&(w->out));
+	wind_calc_grect(WC_BORDER, MY_KIND, &(w->in),&(w->out));
 
 	if	(w->out.g_y < scrg.g_y)
 		w->out.g_y = scrg.g_y;

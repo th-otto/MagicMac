@@ -8,7 +8,6 @@
 #include	<stddef.h>
 #include	<string.h>
 #include <toserror.h>
-#include <mint/dcntl.h>
 
 #include "imgload.h"
 
