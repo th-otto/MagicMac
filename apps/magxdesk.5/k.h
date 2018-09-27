@@ -9,7 +9,8 @@
 #include <aes.h>
 #include <wdlgwdlg.h>
 #include "magxdesk.h"
-#include "..\applicat\src\appldata.h"
+#include "country.h"
+#include "..\applicat\appldata.h"
 #include "av.h"
 
 #define MIN(a,b) ((a < b) ? a : b)
@@ -17,8 +18,6 @@
 #define ABS(X) ((X>0) ? X : -X)
 
 #define MIN_FNAMLEN		8
-#define USA	0
-#define FRG	1
 
 /* Cookie structure */
 

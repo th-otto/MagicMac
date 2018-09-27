@@ -32,11 +32,11 @@
 #include "ger\fselx.h"
 #include "..\wdialog\shelsort.h"
 
-#if       COUNTRY==FRG
+#if       COUNTRY==COUNTRY_DE
 #include "ger\fselrsrc.h"
-#elif     COUNTRY==USA
+#elif     COUNTRY==COUNTRY_US
 #include "us\fselrsrc.h"
-#elif     COUNTRY==FRA
+#elif     COUNTRY==COUNTRY_FR
 #include "fra\fselrsrc.h"
 #endif
 

@@ -8,7 +8,8 @@
 
 #include <aes.h>
 #include "magxdesk.h"
-#include "\pc\source\deskutil\applicat\appldata.h"
+#include "country.h"
+#include "..\applicat\appldata.h"
 
 #define TRUE   1
 #define FALSE  0
@@ -52,8 +53,6 @@
 #define SHOW8P3	1
 
 #define MIN_FNAMLEN		8
-#define USA	0
-#define FRG	1
 
 
 /* FÅr Kommandozeilen */

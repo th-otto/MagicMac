@@ -1,0 +1,26 @@
+applicat.app
+.C[-K-]
+.C[-P]
+.C[-I..\..\inc_c]
+.C[-I..\..\lib\mylibs\src]
+.L[-S=$2000]   ; Stackgrîûe auf 8 KByte setzen
+=              ; list of modules follows...
+cstartv.o     ; startup code mit ARGV und Quoting
+applicat.c       (applicat.h,appl.h)
+iconsel.c		(applicat.h,appl.h)
+
+ica_dial.c  (applicat.h,appl.h)      ; Icons fÅr APPs
+anw_dial.c  (applicat.h,appldata.h,appl.h)       ; Anwendung anmelden
+typ_dial.c  (applicat.h,appl.h)       ; Dateityp eintragen
+
+icp_dial.c  (applicat.h,appl.h)       ; Icons fÅr Ordner/Disks
+pth_dial.c  (applicat.h,appl.h)       ; Pfad-Disk eintragen
+
+spc_dial.c  (applicat.h,appl.h)       ; Icons fÅr Spezialobjekte
+
+inf.c       (appl.h,appldata.h)
+windows.c	(windows.h)
+..\..\lib\mylibs\src\gemut_mt.c
+pcstdlib.lib   ; standard lib
+pctoslib.lib
+pcgemlib.lib

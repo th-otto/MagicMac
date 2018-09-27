@@ -9,11 +9,9 @@
 #include <tos.h>
 #include <aes.h>
 #include <tosdefs.h>
+#include "country.h"
 #include <stdio.h>
 #include "xcopy.h"
-
-#define USA		0
-#define FRG		1
 
 #ifndef NULL
 #define NULL ((void *) 0)
@@ -64,11 +62,11 @@ long MFcreate( char *name )
           doserr = Fattrib(name, 0, 0);
           if   (doserr >= 0L)
                {
-#if		COUNTRY==FRG
+#if		COUNTRY==COUNTRY_DE
                strcpy(s, "[2][Datei existiert schon:|");
                strcat(s, name);
                strcat(s,"][Weiter|Abbruch]");
-#elif	COUNTRY==USA
+#elif	COUNTRY==COUNTRY_US
                strcpy(s, "[2][File already exists:|");
                strcat(s, name);
                strcat(s,"][Continue|Abort]");

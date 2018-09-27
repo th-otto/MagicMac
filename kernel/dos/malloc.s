@@ -10,14 +10,9 @@
  MEMLEN_OFFS   EQU  (4*NBLOCKS)
  DEBUG         EQU  0
 
- SUPER
+	include "country.inc"
 
-USA       EQU  0
-FRG       EQU  1
-FRA       EQU  2
-UK        EQU  3
-SPA       EQU  4
-ITA       EQU  5                   ; Country- Codes laut Atari Doku
+ SUPER
 
 fstrm_beg      EQU $49e            ; in Mag!X Beginn des TT-RAMs
 fstrm_top      EQU $5a4
@@ -265,11 +260,11 @@ memr_getkey:
  bsr      getkey
  cmpi.b   #'N',d0
  beq      mem_err_dump             ; nicht reparieren, System anhalten
- cmpi.b   #'J',d0                  ; FRG: "Ja"
+ cmpi.b   #'J',d0                  ; COUNTRY_DE: "Ja"
  beq.b    memr_do
- cmpi.b   #'O',d0                  ; FRA: "Oui"
+ cmpi.b   #'O',d0                  ; COUNTRY_FR: "Oui"
  beq.b    memr_do
- cmpi.b   #'Y',d0                  ; US/UK: "Yes"
+ cmpi.b   #'Y',d0                  ; COUNTRY_US/COUNTRY_UK: "Yes"
  bne.b    memr_getkey
 memr_do:
  jsr      putch
@@ -2119,7 +2114,7 @@ tmu_loop:
 tmu_ende:
  rts
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 
 mem_fatal_errs:
  DC.B     '*** FATALER FEHLER IN DER SPEICHERVERWALTUNG:',0
@@ -2138,7 +2133,7 @@ do_term_s:
  DC.B     $d,$a,$1b,'K',$a,'Programm wird terminiert',$d,$a,$1b,'K',$1b,'e',0
 
      ENDC
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 
 mem_fatal_errs:
  DC.B     '*** FATAL ERROR IN MEMORY MANAGEMENT:',0
@@ -2157,7 +2152,7 @@ do_term_s:
  DC.B     $d,$a,$1b,'K',$a,'Program will be terminated',$d,$a,$1b,'K',$1b,'e',0
 
      ENDC
-    IF  COUNTRY=FRA
+    IF  COUNTRY=COUNTRY_FR
 
 mem_fatal_errs:
  DC.B   '*** ERREUR FATALE DANS LA GESTION DE MEMOIR:',0

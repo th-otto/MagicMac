@@ -1,4 +1,6 @@
 mcmd.tos
+.C[-P-]
+.C[-K-]
 .S[-I..\..\inc_as]
 =
 mcmd.s

@@ -1562,7 +1562,7 @@ fs_tedinfo12:                      ; Fileselector: Dateiname 9
 
 fsel_tree_end:
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 fs_dflttit:    DC.B "OBJEKT-AUSWAHL",0
 fs_ok:         DC.B "OK",0
 fs_abbruch:    DC.B "ABBRUCH",0
@@ -1577,7 +1577,7 @@ diskinfo:      DC.B '[0][Informationen für Laufwerk %S:| |'
                DC.B '%L Bytes insgesamt|'
                DC.B '%L Bytes frei][  OK  ]',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 fs_dflttit:    DC.B "FILE SELECTOR",0
 fs_ok:         DC.B "OK",0
 fs_abbruch:    DC.B "CANCEL",0
@@ -1592,7 +1592,7 @@ diskinfo:      DC.B '[0][Information about drive %S:| |'
                DC.B '%L Bytes total|'
                DC.B '%L Bytes free][  OK  ]',0
      ENDIF
-     IF  COUNTRY=FRA
+     IF  COUNTRY=COUNTRY_FR
 fs_dflttit:    DC.B "CHOIX D'OBJET",0
 fs_ok:         DC.B "OK",0
 fs_abbruch:    DC.B "ABANDON",0

@@ -10,18 +10,11 @@
 *
 **********************************************************************
 
-USA		EQU	0
-FRG		EQU	1
-FRA		EQU	2
-UK		EQU	3
-SPA		EQU	4
-ITA		EQU	5				; Country- Codes laut Atari Doku
-
-
 TOSLEN    EQU  $30000
 
 
      INCLUDE "OSBIND.INC"
+	include "country.inc"
 
      TEXT
      SUPER
@@ -337,7 +330,7 @@ cpy_uloop:
 
      DATA
 
-	IF	COUNTRY=FRG
+	IF	COUNTRY=COUNTRY_DE
 name:          DC.B    '\kaos*.rom',0
 fehler:        DC.B    'KAOSBOOT: Falsche Ladeadresse (kein RAM vorhanden ?)',0
 titel:         DC.B    CR,LF,'KAOS¿- Bootprogramm, ½ 1990 Andreas Kromke',CR,LF,0
@@ -351,7 +344,7 @@ titel2_act:    DC.B    CR,LF,LF,'Leertaste:   resetfest machen und starten'
                DC.B       CR,LF,'Esc:         nur starten'
                DC.B       CR,LF,'^C:          nicht starten',CR,LF,LF,0
 	ENDIF
-	IF	COUNTRY=USA
+	IF	COUNTRY=COUNTRY_US
 name:          DC.B    '\kaos*.rom',0
 fehler:        DC.B    'KAOSBOOT: Invalid load address (no RAM there ?)',0
 titel:         DC.B    CR,LF,'KAOS¿ boot program, ½ 1990 Andreas Kromke',CR,LF,0

@@ -10,13 +10,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gemut_mt.h"
+#include "country.h"
 #include "mgcopy.h"
 #include "dat_dial.h"
 #include "globals.h"
 
-
-#define USA	0
-#define FRG	1
 
 static TEDINFO *t1,*t2;
 static XTED xt1,xt2;

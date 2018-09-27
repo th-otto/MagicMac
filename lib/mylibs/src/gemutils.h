@@ -1,15 +1,3 @@
-#define EOS    '\0'
-#ifndef NULL
-#define NULL        ( ( void * ) 0L )
-#endif
-#ifndef TRUE
-#define	TRUE	1
-#define	FALSE 0
-#endif
-
-#define USA	0
-#define FRG	1
-
 #define SCREEN      0
 #define VA_START		0x4711
 #define AV_OPENWIND		0x4720

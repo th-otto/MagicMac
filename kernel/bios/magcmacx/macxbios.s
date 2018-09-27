@@ -3292,17 +3292,17 @@ install_cookies:
 * _IDT-Cookie
 
  move.l   #'_IDT',(a5)+
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
  move.l   #$112e,(a5)+             ; 24h/DMY/'.'
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
  move.l   #$002f,(a5)+             ; 12h/MDY/'/'
      ENDIF
-     IF   COUNTRY=UK
+     IF   COUNTRY=COUNTRY_UK
 
  move.l   #$112d,(a5)+             ; 24h/DMY/'-'
      ENDIF
-     IF   COUNTRY=FRA
+     IF   COUNTRY=COUNTRY_FR
  move.l   #$112f,(a5)+             ; 24h/DMY/'/'
      ENDIF
 
@@ -3456,7 +3456,7 @@ bpw_ende:
 * DATA
 *
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -3470,7 +3470,7 @@ fatal_errs:
  DC.B     '*** SYSTEM ANGEHALTEN ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -3484,7 +3484,7 @@ fatal_errs:
  DC.B     '*** SYSTEM HALTED ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-     IF   COUNTRY=UK
+     IF   COUNTRY=COUNTRY_UK
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -3498,7 +3498,7 @@ fatal_errs:
  DC.B     '*** SYSTEM HALTED ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-    IF  COUNTRY=FRA
+    IF  COUNTRY=COUNTRY_FR
 os_corr_s:
  DC.B   $1b,'K',$d,$a
  DC.B   $1b,'K',$d,$a

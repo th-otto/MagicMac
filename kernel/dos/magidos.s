@@ -181,14 +181,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XREF ffind
      XREF crlf
 
-
-
-USA       EQU  0
-FRG       EQU  1
-FRA       EQU  2
-UK        EQU  3
-SPA       EQU  4
-ITA       EQU  5                   ; Country- Codes laut Atari Doku
+	include "country.inc"
 
 criticret      EQU $48a
 _hz_200        EQU $4ba
@@ -11477,7 +11470,7 @@ errstrs:
  DC.W    err_68s-errstrs,err_69s-errstrs,err_70s-errstrs
  DC.W    err_80s-errstrs
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 
 out_of_int_mem:
  DC.B     '*** KEIN INTERNER SPEICHER MEHR:',$1b,'K',$d,$a
@@ -11532,7 +11525,7 @@ diskerr_s1: DC.B  ' auf Laufwerk ',0
 diskerr_s2: DC.B  ':',$d,$a,'[A]bbruch, [W]iederholen, [I]gnorieren ? ',0
 
      ENDC
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 
 out_of_int_mem:
  DC.B     '*** OUT OF INTERNAL MEMORY:',$1b,'K',$d,$a
@@ -11587,7 +11580,7 @@ diskerr_s1: DC.B  ' at drive ',0
 diskerr_s2: DC.B  ':',$d,$a,'[A]bort, [R]etry, [I]gnore ? ',0
 
      ENDC
-    IF  COUNTRY=FRA
+    IF  COUNTRY=COUNTRY_FR
 
 out_of_int_mem:
  DC.B   '*** PLUS DE MÉMOIRE INTERNE:',$1b,'K',$d,$a

@@ -348,15 +348,15 @@ void load_defaults( void )
 			err:
 			strncpy(s, path, 59);
 			s[59] = EOS;
-			#if		COUNTRY==FRG
+			#if		COUNTRY==COUNTRY_DE
 			strcpy(t, "[3][SHUTDOWN:|Fehler in SHUTDOWN.INF. Zeile| |");
 			strcat(t, s);
 			strcat(t, "][Weiter]");
-			#elif	COUNTRY==USA
+			#elif	COUNTRY==COUNTRY_US
 			strcpy(t, "[3][SHUTDOWN:|Error in SHUTDOWN.INF. Line| |");
 			strcat(t, s);
 			strcat(t, "][Continue]");
-			#elif	COUNTRY==FRA
+			#elif	COUNTRY==COUNTRY_FR
 			strcpy(t, "[3][SHUTDOWN:|Erreur dans SHUTDOWN.INF. Ligne| |");
 			strcat(t, s);
 			strcat(t, "][Suite]");
@@ -634,15 +634,15 @@ int main(int argc, char *argv[])
 
 		if	(!shel_write(doex, isgr, isover, NULL, NULL))
 			{
-			#if		COUNTRY==FRG
+			#if		COUNTRY==COUNTRY_DE
 			form_alert(1, 	"[3][SHUTDOWN:| |"
 						"Prozeû ist gesperrt.]"
 						"[Abbruch]");
-			#elif	COUNTRY==USA
+			#elif	COUNTRY==COUNTRY_US
 			form_alert(1, 	"[3][SHUTDOWN:| |"
 						"Process ist currently locked.]"
 						"[Cancel]");
-			#elif	COUNTRY==FRA
+			#elif	COUNTRY==COUNTRY_FR
 			form_alert(1,  "[3][SHUTDOWN:| |"
 						"Processus bloquÇ.]"
 						"[Abandon]");
@@ -681,15 +681,15 @@ int main(int argc, char *argv[])
 
 			if	(ev & MU_TIMER)
 				{
-				#if		COUNTRY==FRG
+				#if		COUNTRY==COUNTRY_DE
 				form_alert(1, 	"[3][SHUTDOWN:| |"
 							"ZeitÅberschreitung.]"
 							"[Abbruch]");
-				#elif	COUNTRY==USA
+				#elif	COUNTRY==COUNTRY_US
 				form_alert(1, 	"[3][SHUTDOWN:| |"
 							"Timeout.]"
 							"[Cancel]");
-				#elif   COUNTRY==FRA
+				#elif   COUNTRY==COUNTRY_FR
 				form_alert(1,   "[3][SHUTDOWN:| |"
 							 "DÇbordement temps.]"
 							 "[Abandon]");
@@ -724,19 +724,19 @@ int main(int argc, char *argv[])
 				strcpy(apname, "<Unbekannt>");
 
 			sprintf(s,
-			#if		COUNTRY==FRG
+			#if		COUNTRY==COUNTRY_DE
 					"[3][SHUTDOWN:| |"
 					"Shutdown- Prozeû nicht mîglich.|"
 					"%s lieferte Fehlercode %d.]"
 					"[Abbruch]",
 					apname, buf[5]);
-			#elif	COUNTRY==USA
+			#elif	COUNTRY==COUNTRY_US
 					"[3][SHUTDOWN:| |"
 					"Shutdown process failed.|"
 					"%s has sent error code %d.]"
 					"[Cancel]",
 					apname, buf[5]);
-			#elif	COUNTRY==FRA
+			#elif	COUNTRY==COUNTRY_FR
 					"[3][SHUTDOWN:| |"
 					"Processus Shutdown impossible. |"
 					"%s retourne erreur %d.]"
@@ -781,17 +781,17 @@ int main(int argc, char *argv[])
 			for	(ev = 0; ev < nappl; ev++)
 				{
 				sprintf(s,
-				#if		COUNTRY==FRG
+				#if		COUNTRY==COUNTRY_DE
 						"[3][SHUTDOWN:| |"
 						"%s ist noch aktiv.|"
 						"Bitte manuell beenden!]"
 						"[Abbruch]",
-				#elif	COUNTRY==USA
+				#elif	COUNTRY==COUNTRY_US
 						"[3][SHUTDOWN:| |"
 						"%s is still running.|"
 						"Please terminate manually!]"
 						"[Cancel]",
-				#elif	COUNTRY==FRA
+				#elif	COUNTRY==COUNTRY_FR
 						"[3][SHUTDOWN:| |"
 						"%s encore actif.|"
 						"Quittez manuellement !]"
@@ -869,17 +869,17 @@ int main(int argc, char *argv[])
 
 			if	(bootmode == ask)
 				{
-				#if		COUNTRY==FRG
+				#if		COUNTRY==COUNTRY_DE
 				dev = form_alert(1, 	"[3][SHUTDOWN:| |"
 							"Shutdown war erfolgreich.|"
 							"Rechner jetzt abschalten!]"
 							"[Neustart|Kaltstart]");
-				#elif	COUNTRY==USA
+				#elif	COUNTRY==COUNTRY_US
 				dev = form_alert(1, 	"[3][SHUTDOWN:| |"
 							"Shutdown was successful.|"
 							"Shut off computer now!]"
 							"[Restart|Cold Boot]");
-				#elif	COUNTRY==FRA
+				#elif	COUNTRY==COUNTRY_FR
 				dev = form_alert(1,     "[3][SHUTDOWN:| |"
 							"Shutdown rÇussi.|"
 							"Eteignez l'ordinateur!]"

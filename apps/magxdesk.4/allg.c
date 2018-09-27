@@ -14,7 +14,7 @@
 #include "pattern.h"
 
 
-static char timesep = ':';	/* FRG => ':' */
+static char timesep = ':';	/* COUNTRY_DE => ':' */
 static char kilosep;
 static void (*date2str)(char *s, unsigned int date);
 

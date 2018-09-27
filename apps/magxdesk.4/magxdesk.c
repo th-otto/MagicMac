@@ -1254,10 +1254,10 @@ void shutdown( int dev, int txt )
 			strcat(shutdown_prg, "chgres.prg");
 /*
 			{
-#if			COUNTRY==FRG
+#if			COUNTRY==COUNTRY_DE
 			if	(1 != form_alert(1, "[2][Aufl”sungswechsel ?][ OK | Abbruch ]"))
 				return;
-#elif		COUNTRY==USA
+#elif		COUNTRY==COUNTRY_US
 			if	(1 != form_alert(1, "[2][Change resolution ?][ OK | Cancel ]"))
 				return;
 #endif

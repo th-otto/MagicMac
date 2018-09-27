@@ -29,15 +29,11 @@
 #include <tos.h>
 #include <string.h>
 #include <stdlib.h>
+#include "country.h"
 #include "instmagc.h"
 #include "xcopy.h"
 
 #define SCREEN      0
-#define TRUE        1
-#define FALSE       0
-#define EOS		'\0'
-#define USA		0
-#define FRG		1
 #define BUFLEN		400000L
 #define INFBUFLEN	65538L
 

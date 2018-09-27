@@ -127,11 +127,11 @@ extern WORD	is_magic;
 #include "listbox.h"
 #include "fnts.h"
 
-#if		COUNTRY==FRG
+#if		COUNTRY==COUNTRY_DE
 #include "ger\fnts_rsc.h"													/* Die Resource-Datei */
-#elif	COUNTRY==USA
+#elif	COUNTRY==COUNTRY_US
 #include "us\fnts_rsc.h"
-#elif	COUNTRY==FRA
+#elif	COUNTRY==COUNTRY_FR
 #include "fra\fnts_rsc.h"
 #endif
 

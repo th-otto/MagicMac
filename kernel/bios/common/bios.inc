@@ -22,21 +22,7 @@ ibuflow           EQU 10
 ibufhi            EQU 12
 
 ; Country- Codes laut Atari Doku
-USA       EQU  0
-FRG       EQU  1
-FRA       EQU  2
-UK        EQU  3
-SPA       EQU  4
-ITA       EQU  5
-SWE       EQU  6
-SWF       EQU  7
-SWG       EQU  8
-TUR       EQU  9
-FIN       EQU  10
-NOR       EQU  11
-DEN       EQU  12
-SAU       EQU  13
-HOL       EQU  14
+	include "country.inc"
 
 ;Funktionsnummern
 FLOPRD         EQU  8

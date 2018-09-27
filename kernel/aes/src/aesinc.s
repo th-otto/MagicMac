@@ -7,6 +7,7 @@
 
      INCLUDE "KERNEL.INC"
      INCLUDE "DOS.INC"
+	include "country.inc"
 
 
 MACOS_SUPPORT  EQU  1
@@ -17,14 +18,6 @@ N_WINOBJS EQU  16             ; Anzahl der Objekte
 __a_aes   EQU  $3300
 
 * AES für MagiX
-
-
-USA       EQU  0
-FRG       EQU  1
-FRA       EQU  2
-UK        EQU  3
-SPA       EQU  4
-ITA       EQU  5                   ; Country- Codes laut Atari Doku
 
 
 OUTSIDE   EQU  1

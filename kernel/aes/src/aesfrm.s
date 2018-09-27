@@ -1405,7 +1405,7 @@ gne_found:
  move.w   d6,d0
  bra.b    gned_ret
 
-     IF   COUNTRY=FRA
+     IF   COUNTRY=COUNTRY_FR
 gne_cq:
  DC.B     'FIN',0
  DC.B     'SORT'
@@ -3231,7 +3231,7 @@ dalt_skip:
  rts
 
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 al_ewrpro:     DC.B 2,'[1][Das Medium in Laufwerk %S:|ist schreibgeschützt.][Abbruch| Nochmal ]',0
 al_edrvnr:     DC.B 2,'[2][Laufwerk %S: antwortet nicht.|Bitte Laufwerk überprüfen oder|Medium einlegen!][Abbruch| Nochmal ]',0
 al_rwfault:    DC.B 2,'[1][Daten auf Diskette in Laufwerk|%S: eventuell defekt.][Abbruch| Nochmal ]',0
@@ -3242,7 +3242,7 @@ al_echgab:     DC.B 1,'[3][Bitte Diskette %S in|Laufwerk A: einlegen!][  OK  ]',
 al_aeserr:     DC.B '[3][Falscher AES-Aufruf %L.][Abbruch]',0
 al_sigerr:     DC.B '[3][System hat keinen freien Speicher mehr!][ Weiter ]',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 al_ewrpro:     DC.B 2,'[1][Disk in drive %S:|is write protected.][Cancel| Retry ]',0
 al_edrvnr:     DC.B 2,'[2][Drive %S: not connected.|Check drive|or insert disk!][Cancel| Retry ]',0
 al_rwfault:    DC.B 2,'[1][Data in drive|%S: may be damaged.][Cancel| Retry ]',0
@@ -3254,7 +3254,7 @@ al_aeserr:     DC.B '[3][AES call %L not implemented.][Cancel]',0
                ;    al_fserr:      DC.B '[1][Not enough memory for|file selector!][Cancel]',0
 al_sigerr:     DC.B '[3][System is out of memory!][Continue]',0
      ENDIF
-     IF  COUNTRY=FRA
+     IF  COUNTRY=COUNTRY_FR
 al_ewrpro:     DC.B 2,'[1][La disquette dans le lecteur %S:|est protégée en écriture.][Abandon| Répeter ]',0
 al_edrvnr:     DC.B 2,'[2][Lecteur %S: ne répond pas.|Vérifiez le lecteur ou|insérez une disquette !][Abandon| Répeter ]',0
 al_rwfault:    DC.B 2,'[1][Données sur disquette du lecteur|%S: éventuellement défectueuses.][Abandon | Répeter ]',0
@@ -3295,15 +3295,15 @@ fe_gemdos:
 * aus KAOSDESK, Fehlertexte aus GEMDOS
 *
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 pgm_s:    DC.B "Programm gab zurück :|",0
 err_s:    DC.B "| |(Fehler #%L)|][Abbruch]",0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 pgm_s:    DC.B "Program returned :|",0
 err_s:    DC.B "| |(Error #%L)|][Cancel]",0
      ENDIF
-    IF  COUNTRY=FRA
+    IF  COUNTRY=COUNTRY_FR
 pgm_s:    DC.B "Le programme a retourné :|",0
 err_s:    DC.B "| |(Erreur #%L)|][Abandon]",0
      ENDIF

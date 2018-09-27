@@ -143,24 +143,10 @@ DEBUG4    EQU  0
      INCLUDE "ERRNO.INC"
      INCLUDE "KERNEL.INC"
      INCLUDE "MILAN.INC"
-
+	include "country.inc"
+	
 ;----------------------------------------
 
-USA       EQU  0
-FRG       EQU  1
-FRA       EQU  2
-UK        EQU  3
-SPA       EQU  4
-ITA       EQU  5
-SWE       EQU  6
-SWF       EQU  7
-SWG       EQU  8
-TUR       EQU  9
-FIN       EQU  10
-NOR       EQU  11
-DEN       EQU  12
-SAU       EQU  13
-HOL       EQU  14                  ; Country- Codes laut Atari Doku
 
 D_DAY     EQU  01
 D_MONTH   EQU  7
@@ -472,16 +458,16 @@ inst_cook:
 * "soft"-Cookies (_IDT und MagX)
 *
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
  move.l   #$112e,d1                     ; 24h/DMY/'.'
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
  move.l   #$002f,d1                     ; 12h/MDY/'/'
      ENDIF
-     IF   COUNTRY=UK
+     IF   COUNTRY=COUNTRY_UK
  move.l   #$112d,d1                     ; 24h/DMY/'-'
      ENDIF
-     IF   COUNTRY=FRA
+     IF   COUNTRY=COUNTRY_FR
  move.l   #$112f,d1                     ; 24h/DMY/'/'
      ENDIF
 ;move.l   d1,d1                         ; Wert
@@ -2837,7 +2823,7 @@ ori_iorec_kb:
  DC.W     $40                      ; Low water mark
  DC.W     $c0                      ; High water mark
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -2852,7 +2838,7 @@ fatal_errs:
  DC.B     $1b,'K',0
  DC.B     0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -2866,7 +2852,7 @@ fatal_errs:
  DC.B     '*** SYSTEM HALTED ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-     IF   COUNTRY=UK
+     IF   COUNTRY=COUNTRY_UK
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -2880,7 +2866,7 @@ fatal_errs:
  DC.B     '*** SYSTEM HALTED ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-    IF  COUNTRY=FRA
+    IF  COUNTRY=COUNTRY_FR
 os_corr_s:
  DC.B   $1b,'K',$d,$a
  DC.B   $1b,'K',$d,$a

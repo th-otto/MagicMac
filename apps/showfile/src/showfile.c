@@ -122,13 +122,13 @@ long show_file(char *path)
 							long  fpos;
 
 							if	(!s)
-#if		COUNTRY==FRG
+#if		COUNTRY==COUNTRY_DE
 								str_conout("\r\n--Mehr-- "
 										 "\x1b" "e", 13);
-#elif	COUNTRY==USA
+#elif	COUNTRY==COUNTRY_US
 								str_conout("\r\n--More-- "
 										 "\x1b" "e", 13);
-#elif	COUNTRY==FRA
+#elif	COUNTRY==COUNTRY_FR
 								str_conout("\r\n--Plus-- "
 										 "\x1b" "e", 13);
 #endif

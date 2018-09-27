@@ -363,19 +363,4 @@ p_defdrv            EQU  55
 
 p_cmdlin            EQU  128
 
-USA      EQU   0           ; Verein.St.v.Amerika
-FRG      EQU   1           ; Deutschland
-FRA      EQU   2           ; Frankreich
-UK    EQU   3           ; England
-SPA      EQU   4           ; Spanien
-ITA      EQU   5           ; Italien
-SWE      EQU   6           ; Schweden
-SWF      EQU   7           ; Schweiz (franzîsisch)
-SWG      EQU   8           ; Schweiz (deutsch)
-TUR      EQU   9           ; TÅrkei
-FIN      EQU   10          ; Finnland
-NOR      EQU   11          ; Norwegen
-DEN      EQU   12          ; DÑnemark
-SAU      EQU   13          ; Saudi Arabien
-HOL      EQU   14          ; Niederlande
-
+	include "country.inc"

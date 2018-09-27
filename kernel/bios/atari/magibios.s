@@ -4105,7 +4105,7 @@ set_cpu_typ:
 * DATA
 *
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -4119,7 +4119,7 @@ fatal_errs:
  DC.B     '*** SYSTEM ANGEHALTEN ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -4133,7 +4133,7 @@ fatal_errs:
  DC.B     '*** SYSTEM HALTED ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-     IF   COUNTRY=UK
+     IF   COUNTRY=COUNTRY_UK
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
@@ -4147,7 +4147,7 @@ fatal_errs:
  DC.B     '*** SYSTEM HALTED ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
      ENDIF
-    IF  COUNTRY=FRA
+    IF  COUNTRY=COUNTRY_FR
 os_corr_s:
  DC.B   $1b,'K',$d,$a
  DC.B   $1b,'K',$d,$a

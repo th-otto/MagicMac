@@ -386,17 +386,17 @@ titel:
      ENDIF
 
 dont_install:
- DC.B     FRG,SWG,-1
+ DC.B     COUNTRY_DE,COUNTRY_SG,-1
  DC.B     'Shift-Shift: MagiC nicht installiert',CR,LF,0
- DC.B     FRA,-1
+ DC.B     COUNTRY_FR,COUNTRY_SF,-1
  DC.B     'Shift-Shift: MagiC pas installé',CR,LF,0
  DC.B     -1
  DC.B     'Shift-Shift: MagiC not installed',CR,LF,0
 
 press_key:
- DC.B     FRG,SWG,-1
+ DC.B     COUNTRY_DE,COUNTRY_SG,-1
  DC.B     LF,'Taste drücken!',CR,LF,0
- DC.B     FRA,-1
+ DC.B     COUNTRY_FR,COUNTRY_SF,-1
  DC.B     LF,'Appuyez sur une touche!',CR,LF,0
  DC.B     -1
  DC.B     LF,'Press any key!',CR,LF,0

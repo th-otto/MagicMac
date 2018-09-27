@@ -1646,13 +1646,13 @@ chgr_noxptab:
 * puffer an.
 *
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 inf_errs:      DC.B $d,$a,'Fehler in MAGX.INF ',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 inf_errs:      DC.B $d,$a,'Error in MAGX.INF ',0
      ENDIF
-     IF  COUNTRY=FRA
+     IF  COUNTRY=COUNTRY_FR
 inf_errs:      DC.B $d,$a,'Erreur dans MAGX.INF ',0
      ENDIF
 /*
@@ -3791,7 +3791,7 @@ sapp_end:
  rts
 
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 aktaus_s: DC.B '  -------- ausblenden',0
 allaus_s: DC.B '  andere   ausblenden',0
 allein_s: DC.B '  alle     einblenden',0
@@ -3813,7 +3813,7 @@ bytes_s:  DC.B '  %L kBytes frei',0
 fsel_ldp: DC.B 'Programm parallel ausführen:',0
 fsel_ldo: DC.B 'Programm ausführen:',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 aktaus_s: DC.B '  xxxxxxxx hide',0
 allaus_s: DC.B '  others   hide',0
 allein_s: DC.B '  all      unhide',0
@@ -3824,7 +3824,7 @@ bytes_s:  DC.B '  %L kBytes free',0
 fsel_ldp: DC.B 'run program simultaneously:',0
 fsel_ldo: DC.B 'run program:',0
      ENDIF
-     IF   COUNTRY=FRA
+     IF   COUNTRY=COUNTRY_FR
 aktaus_s: DC.B '  -------- -> masquer',0
 allaus_s: DC.B '  Autres   -> masquer',0
 allein_s: DC.B '  Réafficher tout    ',0
@@ -7882,19 +7882,19 @@ fatal_err:
 _fatal_err:
  jmp      halt_system              ; ins BIOS
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 fatal_errs:    DC.B      '*** FATALER FEHLER IM AES:',0
 fatal_win_mems:DC.B      '*** ZUWENIG SPEICHER IN FENSTERVERWALTUNG:',0
 fatal_wins:    DC.B      '*** FATALER FEHLER IN FENSTERVERWALTUNG:',0
 fatal_stack_s: DC.B      '*** ÜBERLAUF DES SYSTEMSTAPELS:',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 fatal_errs:    DC.B      '*** FATAL ERROR IN AES:',0
 fatal_win_mems:DC.B      '*** INSUFFICIENT MEMORY IN WINDOW MANAGER:',0
 fatal_wins:    DC.B      '*** FATAL ERROR IN WINDOW MANAGER:',0
 fatal_stack_s: DC.B      '*** SYSTEM STACK OVERFLOW:',0
      ENDIF
-     IF   COUNTRY=FRA
+     IF   COUNTRY=COUNTRY_FR
 fatal_errs:    DC.B      "*** ERREUR FATALE DANS L'AES:",0
 fatal_win_mems:DC.B      '*** ZUWENIG SPEICHER IN FENSTERVERWALTUNG:',0
 fatal_wins:    DC.B      '*** FATALER FEHLER IN FENSTERVERWALTUNG:',0
@@ -10934,13 +10934,13 @@ prtstr:
 *  Druckt die Zeichen in a0[] nach Device 2 (CON) und wartet
 *
 
-     IF   COUNTRY=FRG
+     IF   COUNTRY=COUNTRY_DE
 waitkeys: DC.B $1b,'e',$d,$a,'Taste drücken : ',0
      ENDIF
-     IF   COUNTRY=USA
+     IF   COUNTRY=COUNTRY_US
 waitkeys: DC.B $1b,'e',$d,$a,'press any key : ',0
      ENDIF
-     IF   COUNTRY=FRA
+     IF   COUNTRY=COUNTRY_FR
 waitkeys: DC.B $1b,'e',$d,$a,'Appuyez sur une touche : ',0
      ENDIF
      EVEN
