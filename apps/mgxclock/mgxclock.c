@@ -60,45 +60,44 @@ void main()
 	graf_handle(&hwchar, &hhchar, &dummy, &hhbox);
 	y = (hhbox-hhchar) >> 1;
 	wind_get(0, WF_WORKXYWH, &dummy, &dummy, &scrw, &dummy);
-	i = 0;
+	i = 19;
 	mode = 3;
-	goto begin;
 
-	while(1)
-		{
+	for (;;)
+	{
 		i++;
 		if	(i == 20)
-			{
-			mode = 1;
-			begin:
+		{
+			if (mode != 3)
+				mode = 1;
 			sec = secpos[mode];
 			tp = timepos[mode];
 			ln = len[mode];
 			x  = scrw - (ln+RIGHTOFFSET) * hwchar;
 			datetime[sec] = 1;
 
-			}
+		}
 
 		if	(i & 1)
-			{
+		{
 			if	(sec >= 0 && datetime[sec] & 1)
-				{
+			{
 				if	(mode > 1)
 					date_to_str(datetime, Tgetdate());
 				if	(tp > 0)
 					datetime[tp - 1] = datetime[tp - 2] = ' ';
 				time_to_str(datetime+tp, Tgettime());
 				datetime[ln] = '\0';
-				}
+			}
 			else	datetime[sec] += 1;
 			v_gtext(vdi_handle, x, y, datetime);
-			}
+		}
 
-		evnt_timer(500, 0);		/* 0,5s warten */
+		evnt_timer(500);		/* 0,5s warten */
 
 		Dcntl(KER_SETWBACK, "", WBACK_SYNC);
 
-		}
+	}
 }
 
 

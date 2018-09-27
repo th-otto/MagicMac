@@ -9,12 +9,12 @@ const char *memchr2(const char *s, ssize_t len)
 	for (;;)
 	{
 		if (--len < 0)
-			return NULL;
+			break;
 		c = *s++;
 		if ((c -= LF) == 0)
-			break;
+			return --s;
 		if ((c -= 3) == 0)
-			break;
+			return --s;
 	}
-	return --s;
+	return NULL;
 }

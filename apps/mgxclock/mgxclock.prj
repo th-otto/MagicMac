@@ -1,4 +1,4 @@
-mgclock.prg
+mgxclock.prg
 .C[-8-]
 .C[-K-]
 .C[-P-]
@@ -6,7 +6,7 @@ mgclock.prg
 =
 cstart0.O      ; startup code
 
-mgclock.c
+mgxclock.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib   ; TOS lib
