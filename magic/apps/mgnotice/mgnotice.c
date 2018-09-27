@@ -19,6 +19,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <tosdefs.h>
+#include <toserror.h>
+#include <wdlgfslx.h>
 #include "windows.h"
 #include "globals.h"
 #include "mgnotice.h"
@@ -59,7 +61,7 @@ WINDOW *windows[NWINDOWS];
 *
 ****************************************************************/
 
-/*
+#if 0
 void top_all_my_windows( void )
 {
 	int *wlist;
@@ -72,7 +74,7 @@ void top_all_my_windows( void )
 
 	/* Fenster-Handle-Liste ermitteln */
 
-	wind_get_ptr(0, WF_M_WINDLIST, & (void *) wlist);
+	wind_get_ptr(0, WF_M_WINDLIST, &wlist);
 
 	/* Alle Fenster durchgehen */
 
@@ -94,7 +96,8 @@ void top_all_my_windows( void )
 		}
 	wind_update(END_UPDATE);
 }
-*/
+#endif
+
 
 
 /****************************************************************
@@ -104,7 +107,7 @@ void top_all_my_windows( void )
 *
 ****************************************************************/
 
-/*
+#if 0
 void bottom_all_my_windows( void )
 {
 	int *wlist,*list;
@@ -117,7 +120,7 @@ void bottom_all_my_windows( void )
 
 	/* Fenster-Handle-Liste ermitteln */
 
-	wind_get_ptr(0, WF_M_WINDLIST, & (void *) wlist);
+	wind_get_ptr(0, WF_M_WINDLIST, &wlist);
 
 	/* Alle Fenster rckw„rts durchgehen */
 
@@ -145,7 +148,7 @@ void bottom_all_my_windows( void )
 		}
 	wind_update(END_UPDATE);
 }
-*/
+#endif
 
 
 /****************************************************************
@@ -502,7 +505,7 @@ static void read_all_notices( char *path )
 					xy[1] += scrg.g_y;
 
 					memcpy(data, s, strlen(s)+1);
-					Mshrink(0, data, strlen((char *) data)+1);
+					Mshrink(data, strlen((char *) data)+1);
 					w = NULL;
 					errcode = open_notice_wind(data,
 								id,
@@ -1031,11 +1034,14 @@ int main( void )
 			  2,			/* Doppelklicks erkennen 	*/
 			  1,			/* nur linke Maustaste		*/
 			  1,			/* linke Maustaste gedrckt	*/
-			  0,NULL,		/* kein 1. Rechteck			*/
-			  0,NULL,		/* kein 2. Rechteck			*/
+			  0,0,0,0,0,		/* kein 1. Rechteck			*/
+			  0,0,0,0,0,		/* kein 2. Rechteck			*/
 			  w_ev.msg,
 			  0L,	/* ms */
-			  (EVNTDATA*) &(w_ev.mx),
+			  &w_ev.mx,
+			  &w_ev.my,
+			  &w_ev.mbutton,
+			  &w_ev.kstate,
 			  &w_ev.key,
 			  &w_ev.mclicks
 			  );
@@ -1068,23 +1074,27 @@ int main( void )
 		/* -------------- */
 
 		if	(d_input && !wdlg_evnt(d_input, &w_ev))
-			{
-			wdlg_close(d_input);
+		{
+			_WORD dummy;
+			
+			wdlg_close(d_input, &dummy, &dummy);
 			wdlg_delete(d_input);
 			d_input = NULL;
 			/* Fensterposition merken */
 			prefs.edit_win.g_x = adr_input->ob_x;
 			prefs.edit_win.g_y = adr_input->ob_y;
-			}
+		}
 		if	(d_options && !wdlg_evnt(d_options, &w_ev))
-			{
-			wdlg_close(d_options);
+		{
+			_WORD dummy;
+			
+			wdlg_close(d_options, &dummy, &dummy);
 			wdlg_delete(d_options);
 			d_options = NULL;
 			/* Fensterposition merken */
 			prefs.prefs_win.g_x = adr_options->ob_x;
 			prefs.prefs_win.g_y = adr_options->ob_y;
-			}
+		}
 
 		/* Tastatur */
 		/* -------- */

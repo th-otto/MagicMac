@@ -7,11 +7,11 @@
 
 #define DEBUG 0
 
-#include	<PORTAB.H>
-#include <AES.H>
-#include <TOS.H>
-#include <STRING.H>
-#include	<STDARG.H>
+#include <portab.h>
+#include <aes.h>
+#include <tos.h>
+#include <string.h>
+#include <stdarg.h>
 
 #define WF_ICONIFY       26                                 /* AES 4.1     */
 #define WF_UNICONIFY     27                                 /* AES 4.1     */
@@ -57,6 +57,9 @@ extern WORD cdecl form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WO
 #define	objc_find( tree, obj, depth, x, y ) \
 			_objc_find( tree, obj, depth, (((LONG) x ) << 16 ) | y )
 
+#define	form_center( tree, rect ) \
+			_form_center( tree, rect )
+
 #define	form_wkeybd( tree, obj, obnext, key, obnew, keynext, whandle ) \
 			form_wkeybd( tree, obj, &(key), obnew, whandle )
 
@@ -96,7 +99,7 @@ extern WORD cdecl form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WO
 			objc_draw( tree, obj, depth, (clip)->g_x, (clip)->g_y, (clip)->g_w, (clip)->g_h )
 
 extern WORD	aes_flags;
-#include	"OBJCSYSV.H"
+#include "objcsysv.h"
 #endif
 
 #include "wdialog.h"

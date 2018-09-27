@@ -206,7 +206,7 @@ static void fulled(WINDOW *w)
 
 	if	((out->g_x == full.g_x) && (out->g_y == full.g_y) &&
 		 (out->g_w == full.g_w) && (out->g_h == full.g_h)) {
-		graf_shrinkbox(&prev, &full);
+		graf_shrinkbox_grect(&prev, &full);
 		newg = &prev;
 		}
 
@@ -215,7 +215,7 @@ static void fulled(WINDOW *w)
 	/* ------------------------------------------------ */
 
 	else {
-		graf_growbox(out, &full);
+		graf_growbox_grect(out, &full);
 		newg = &full;
 		}
 
@@ -325,7 +325,7 @@ static void moved(WINDOW *w, GRECT *g)
 static void opened(WINDOW *w)
 {
 	w->snap(w);
-	wind_open(w->handle, &(w->out));
+	wind_open_grect(w->handle, &w->out);
 	wind_get_grect(w->handle, WF_WORKXYWH, &(w->in));
 	w->arrange(w);
 }

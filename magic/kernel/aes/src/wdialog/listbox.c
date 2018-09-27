@@ -6,10 +6,10 @@
 */
 
 
-#include	<PORTAB.H>
-#include	<TOS.H>
-#include	<AES.H>
-#include	<VDI.H>
+#include <portab.h>
+#include <tos.h>
+#include <aes.h>
+#include <vdi.h>
 
 #define	CALL_MAGIC_KERNEL	1
 
@@ -28,8 +28,8 @@ typedef struct
 #define	evnt_timer( low, high ) \
 			_evnt_timer( low )
 
-#define	wind_get( handle, field, a, b, c, d ) \
-			_wind_get( handle, field, (WORD *) a )
+#define	wind_get_grect( handle, field, g ) \
+			_wind_get_grect( handle, field, g )
 			
 #define	Malloc( size )	((void *) malloc( size ))
 
@@ -44,7 +44,7 @@ extern WORD appl_yield( void );
 extern int cdecl _evnt_multi( WORD mtypes, MGRECT *mm1, MGRECT *mm2, LONG ms, LONG but, WORD *mbuf, WORD *out );
 extern void _objc_draw( OBJECT *tree, WORD startob, WORD depth );
 extern void _objc_change( OBJECT *tree, WORD objnr, WORD newstate, WORD draw );
-extern WORD _wind_get( WORD whdl, WORD code, WORD *g );
+extern WORD _wind_get_grect( WORD whdl, WORD code, GRECT *g );
 
 #else
 
@@ -53,8 +53,8 @@ extern WORD _wind_get( WORD whdl, WORD code, WORD *g );
 
 #endif
 
-#include	"WDIALOG.H"
-#include	"LISTBOX.H"
+#include "wdialog.h"
+#include "listbox.h"
 
 /*----------------------------------------------------------------------------------------*/ 
 /* extern aus WDINTRFC.S																						*/
@@ -2104,7 +2104,7 @@ static WORD	is_visible( LIST_BOX *box, GRECT *r )
 	
 	wind_update( BEG_UPDATE );											/* Rechteckliste sperren */
 
-	wind_get( 0, WF_WORKXYWH, &w0.g_x, &w0.g_y, &w0.g_w, &w0.g_h );	/* Gr”že des Desktops */
+	wind_get_grect( 0, WF_WORKXYWH, &w0 );	/* Gr”že des Desktops */
 
 	if ( box->dialog )													/* Fensterdialog? */
 	{
@@ -2113,7 +2113,7 @@ static WORD	is_visible( LIST_BOX *box, GRECT *r )
 		
 		handle = wdlg_get_handle( box->dialog );
 		
-		wind_get( handle, WF_FIRSTXYWH, &w.g_x, &w.g_y, &w.g_w, &w.g_h );	/* erstes Redraw-Rechteck */
+		wind_get_grect( handle, WF_FIRSTXYWH, &w );	/* erstes Redraw-Rechteck */
 	
 		do
 		{
@@ -2125,7 +2125,7 @@ static WORD	is_visible( LIST_BOX *box, GRECT *r )
 					return( 1 );
 				}
 			}
-			wind_get( handle, WF_NEXTXYWH, &w.g_x, &w.g_y , &w.g_w, &w.g_h );	/* n„chstes Redraw-Rechteck */
+			wind_get_grect( handle, WF_NEXTXYWH, &w );	/* n„chstes Redraw-Rechteck */
 
 		} while ( w.g_w > 0 );											/* alle Rechtecke abgearbeitet? */
 

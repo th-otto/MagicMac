@@ -3,11 +3,11 @@
 	Kommentare ab: Spalte 60											*Spalte 60*
 */
 
-#include	<PORTAB.H>
-#include	<MATH.H>
-#include	<AES.H>
+#include <portab.h>
+#include <math.h>
+#include <aes.h>
 
-#include	"OBJ_TOOL.H"
+#include "obj_tool.h"
 
 #if 0																			/* damit der Linker diese Funktionen nicht einbindet */
 

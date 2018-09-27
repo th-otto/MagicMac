@@ -36,9 +36,7 @@ void options_dial_init_rsc( void )
 *
 *********************************************************************/
 
-#pragma warn -par
-WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
-				WORD clicks, void *data )
+WORD	cdecl hdl_options(struct HNDL_OBJ_args args)
 {
 	OBJECT *tree;
 	int obj;
@@ -52,7 +50,7 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 
 	tree = adr_options;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_options)			/* Dialog ist schon ge”ffnet ! */
 			return(0);
@@ -76,16 +74,16 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 2. Fall: Nachricht mit Code >= 1040 empfangen */
 	/* --------------------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
-		switch(events->msg[0])
+		switch(args.events->msg[0])
 			{
-/*
+#if 0
 			 case WM_ALLICONIFY:
 	
 			 case WM_ICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_iconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
 	 							" MGCOPY ",
 	 							adr_beg_iconified, 1);
 			 	is_iconified = TRUE;
@@ -94,13 +92,13 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 	
 			 case WM_UNICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_uniconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
 		 							Rgetstring(STR_MAINTITLE, global),
 		 							adr_beg);
 			 	is_iconified = FALSE;
 			 	wind_update(END_UPDATE);
 				break;
-*/	
+#endif
 			}
 		return(1);		/* weiter */
 		}
@@ -108,32 +106,32 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		close_dialog:
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)	/* unbekannte Unterfunktion */
+	if	(args.obj < 0)	/* unbekannte Unterfunktion */
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == OPTIONS_COLOUR)
+	if	(args.obj == OPTIONS_COLOUR)
 		{
-		adr_colour->ob_x = tree->ob_x+tree[exitbutton].ob_x;
-		adr_colour->ob_y = tree->ob_y+tree[exitbutton].ob_y;
+		adr_colour->ob_x = tree->ob_x+tree[args.obj].ob_x;
+		adr_colour->ob_y = tree->ob_y+tree[args.obj].ob_y;
 		adr_colour->ob_y -= adr_colour[localprefs.colour+1].ob_y;
 		obj = form_popup(adr_colour,0,0);
 		if	(obj > 0)
 			{
-			tree[exitbutton].ob_spec.tedinfo->te_ptext
+			tree[args.obj].ob_spec.tedinfo->te_ptext
 				= adr_colour[obj].ob_spec.tedinfo->te_ptext;
-			tree[exitbutton].ob_spec.tedinfo->te_color
+			tree[args.obj].ob_spec.tedinfo->te_color
 				= adr_colour[obj].ob_spec.tedinfo->te_color;
 			localprefs.colour = obj-1;
 			goto ende;
@@ -141,8 +139,8 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 
 		}
 
-	if	((exitbutton == OPTIONS_FONTNAME) ||
-		 (exitbutton == OPTIONS_FONTSIZE))
+	if	((args.obj == OPTIONS_FONTNAME) ||
+		 (args.obj == OPTIONS_FONTSIZE))
 		{
 		id = localprefs.fontID;
 		pt = (((long) localprefs.fontH)<<16L);
@@ -155,24 +153,24 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 			itoa(localprefs.fontH,
 				tree[OPTIONS_FONTSIZE].ob_spec.tedinfo->te_ptext,
 				10);
-			subobj_wdraw(d, OPTIONS_FONTNAME, OPTIONS_FONTNAME, 0);
-			subobj_wdraw(d, OPTIONS_FONTSIZE, OPTIONS_FONTSIZE, 0);
+			subobj_wdraw(args.dialog, OPTIONS_FONTNAME, OPTIONS_FONTNAME, 0);
+			subobj_wdraw(args.dialog, OPTIONS_FONTSIZE, OPTIONS_FONTSIZE, 0);
 			}
 		}
 
-	if	(exitbutton == OPTIONS_SAVE)
+	if	(args.obj == OPTIONS_SAVE)
 		{
 		prefs = localprefs;
 		save_options();
 		goto ende;
 		}
 
-	if	(exitbutton == OPTIONS_CANCEL)		/* Abbruch */
+	if	(args.obj == OPTIONS_CANCEL)		/* Abbruch */
 		{
 		goto close_dialog;
 		}
 
-	if	(exitbutton == OPTIONS_OK)			/* OK */
+	if	(args.obj == OPTIONS_OK)			/* OK */
 		{
 		prefs = localprefs;
 		return(0);
@@ -181,8 +179,7 @@ WORD	cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	subobj_wdraw(d, exitbutton, exitbutton, 0);
+	ob_dsel(tree, args.obj);
+	subobj_wdraw(args.dialog, args.obj, args.obj, 0);
 	return(1);		/* weiter */
 }
-#pragma warn +par

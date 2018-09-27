@@ -43,9 +43,9 @@ typedef struct _window
 	WINDSCROLLINFO	vscroll;
 	WINDSCROLLINFO hscroll;
 	/* hier Benutzerdaten */
-/*
+#if 0
 	long		user_fsize;		/* Dateil„nge */
-*/
+#endif
 	int		id_code;			/* eindeutige Nummer */
 	int		selected;			/* Fenster selektiert ? */
 	int		position_dirty;	/* muž noch gespeichert werden */
@@ -57,10 +57,10 @@ typedef struct _window
 	int		user_charH;
 	int		user_bcolour;		/* Hintergrundfarbe */
 	int		user_tcolour;		/* Textfarbe */
-/*
+#if 0
 	unsigned char **user_lines;	/* Zeiger auf Zeilenanf„nge */
 	int		user_tabsize;		/* Tabulatorl„nge */
-*/
+#endif
 } WINDOW;
 
 typedef union _wmesag 

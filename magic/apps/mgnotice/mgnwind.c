@@ -11,9 +11,9 @@
 #include <tosdefs.h>
 #include <string.h>
 #include <stdlib.h>
-/* #include <stdio.h> */
 #include <magx.h>
 #include "gemut_mt.h"
+#include "toserror.h"
 #include "portab.h"
 #include "windows.h"
 #include "globals.h"
@@ -26,14 +26,16 @@ WINDOW *selected_window = NULL;
 *
 *******************************************************************/
 
-#pragma warn -par
 static void key_fnames( WINDOW *w, int kstate, int key )
 {
-/*
+	UNUSED(w);
+	UNUSED(kstate);
+	UNUSED(key);
+#if 0
 	if	((key == 0x1011) ||		/* ^Q */
 		 (key == 0x1615))		/* ^U */
 		exit_immed = TRUE;
-*/
+#endif
 }
 
 
@@ -82,7 +84,9 @@ static void button_notice_wind( WINDOW *w, int kstate,
 {
 	EVNTDATA ev;
 
-
+	UNUSED(x);
+	UNUSED(y);
+	
 	if	(nclicks > 1)
 		{
 		create_notice(w);
@@ -95,7 +99,7 @@ static void button_notice_wind( WINDOW *w, int kstate,
 		{
 		graf_dragbox(w->out.g_w, w->out.g_h,
 					w->out.g_x, w->out.g_y,
-					&scrg,
+					scrg.g_x, scrg.g_y, scrg.g_w, scrg.g_h,
 					&w->out.g_x, &w->out.g_y);
 		w->moved(w, &w->out);
 		return;
@@ -127,14 +131,13 @@ static void button_notice_wind( WINDOW *w, int kstate,
 				select_window(w);
 				}
 
-/*
+#if 0
 			wind_set(-1, WF_TOP, -1);	/* Men nach oben! */
-*/
+#endif
 			return;
 			}
 		}
 }
-#pragma warn +par
 
 
 /*******************************************************************
@@ -332,7 +335,7 @@ static void get_line_column_count(
 *		sein.
 *
 ****************************************************************/
-/*
+#if 0
 static void snap_notice_wind( WINDOW *w )
 {
 	/* Innenbereich berechnen */
@@ -350,7 +353,7 @@ static void snap_notice_wind( WINDOW *w )
 	/* nochmal Auženbereich berechnen */
 	wind_calc(WC_BORDER, NOTICE_W_KIND, &(w->in), &(w->out));
 }
-*/
+#endif
 
 
 /****************************************************************
@@ -621,7 +624,7 @@ void calc_size_notice_wind( WINDOW *w )
 
 	/* Auženbereich berechnen */
 
-	wind_calc(WC_BORDER, NOTICE_W_KIND, &(w->in),&(w->out));
+	wind_calc_grect(WC_BORDER, NOTICE_W_KIND, &w->in, &w->out);
 
 	if	(w->out.g_y < scrg.g_y)
 		w->out.g_y = scrg.g_y;
@@ -718,7 +721,7 @@ long open_notice_wind( unsigned char *notice, int id,
 	w = Malloc(sizeof(WINDOW));
 	if	(!w)
 		return(ENSMEM);
-	w->handle = wind_create(NOTICE_W_KIND, &scrg);	/* keine Fensterelemente */
+	w->handle = wind_create_grect(NOTICE_W_KIND, &scrg);	/* keine Fensterelemente */
 	if	(w->handle < 0)
 		{
 		Mfree(w);

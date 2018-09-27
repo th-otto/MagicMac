@@ -208,6 +208,9 @@ extern WORD lbox_sbvis( void *lbox, WORD new);
 #define   form_xdial( flag, little, big, flyinf ) \
                frm_xdial( flag, little, big, flyinf )
 
+#define   form_center( tree, rect ) \
+               _form_center( tree, rect )
+
 #define   form_popup( tree, xy ) \
                _form_popup( tree, xy )
 

@@ -1,15 +1,18 @@
 mgnotice.app
+.C[-I..\..\inc_c]
+.C[-I..\..\lib\mylibs\src]
+.C[-K-]
+.C[-P-]
 .L[-S=$1000]   ; Stackgrîûe 4k
 =
-tcnstart.o     ; startup code
+cstartv.o     ; startup code
 mgnotice       (mgnotice.h,globals.h,windows.h)
 new_dial		(mgnotice.h,globals.h)
 opt_dial		(mgnotice.h,globals.h)
 windows		(windows.h)
 mgnwind		(globals.h,windows.h)
-c:\pc\mylibs\gemut_m2.o
+..\..\lib\mylibs\src\gemut_mt.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib
-mt_aes.lib	; fÅr AES
 pcgemlib.lib	; fÅr VDI

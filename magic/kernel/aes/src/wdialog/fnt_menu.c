@@ -9,15 +9,14 @@
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/ 
 #include <country.h>
-#include <PORTAB.H>
-#include	<AES.H>
-#include <VDI.H>
-#include <TOS.H> 
+#include <portab.h>
+#include <aes.h>
+#include <vdi.h>
+#include <tos.h> 
 
 #define	CALL_MAGIC_KERNEL	1
 
 #if	CALL_MAGIC_KERNEL
-#pragma warn -par
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Makros und Funktionsdefinitionen fÅr Aufrufe an den MagiC-Kernel								*/
@@ -40,6 +39,7 @@ extern void _rsrc_rcfix( void *global, RSHDR *rsc );
 
 extern WORD _evnt_timer( LONG clicks_50hz );
 extern void _objc_draw(OBJECT *tree, WORD startob, WORD depth);
+extern void _form_center(OBJECT *ob, GRECT *out );
 extern void frm_xdial(WORD flag, GRECT *little, GRECT *big,
 					void **flyinf);
 extern WORD form_xdo( OBJECT *tree, WORD startob, WORD *endob,
@@ -58,6 +58,9 @@ extern WORD form_xdo( OBJECT *tree, WORD startob, WORD *endob,
 #define	form_xdial( flag, little, big, flyinf ) \
 			frm_xdial( flag, little, big, flyinf )
 
+#define	form_center( tree, rect ) \
+			_form_center( tree, rect )
+
 #define	evnt_timer( low, high ) \
 			_evnt_timer( low )
 
@@ -66,10 +69,10 @@ extern WORD form_xdo( OBJECT *tree, WORD startob, WORD *endob,
 #include "shelsort.h"
 #else
 
-#include	<STDIO.H>
-#include	<STDDEF.H>
-#include <STRING.H>
-#include	<STDLIB.H>
+#include <stdio.h>
+#include <stddef.h>
+#include <string.h>
+#include <stdlib.h>
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Makros fÅr die Pure C-GEMLIB																				*/
@@ -105,31 +108,31 @@ extern void _rsrc_rcfix( void *global, RSHDR *rsc );
 static void	*_malloc( LONG size );
 static void	_mfree( void *addr );
 
-#include	"OBJCSYSV.H"
+#include "objcsysv.h"
 
 WORD		errno;															/* fÅr Pure C, u.a. wegen malloc() */
 extern WORD	aes_flags;
 extern WORD	is_magic;
 #endif
 
-#include	"VDI_BIND.H"
-#include	"VDI_BIND.C"
+#include "vdi_bind.h"
+#include "vdi_bind.c"
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Lokale Includes																								*/
 /*----------------------------------------------------------------------------------------*/ 
-#include	"OBJ_tool.h"
+#include "obj_tool.h"
 #include "ger\FONTSLCT.H"
-#include	"WDIALOG.H"
-#include	"LISTBOX.H"
-#include	"FNTS.H"
+#include "wdialog.h"
+#include "listbox.h"
+#include "fnts.h"
 
 #if		COUNTRY==FRG
-#include	"ger\FNTS_RSC.H"													/* Die Resource-Datei */
+#include "ger\fnts_rsc.h"													/* Die Resource-Datei */
 #elif	COUNTRY==USA
-#include "us\FNTS_RSC.H"
+#include "us\fnts_rsc.h"
 #elif	COUNTRY==FRA
-#include "fra\FNTS_RSC.H"
+#include "fra\fnts_rsc.h"
 #endif
 
 typedef struct
@@ -316,7 +319,7 @@ WORD	cdecl	do_slct_font( DIALOG *d, EVNT *events, int objnr, int clicks, void *d
 /*----------------------------------------------------------------------------------------*/ 
 /* Objektmanipulation																							*/
 /*----------------------------------------------------------------------------------------*/ 
-#include	"OBJMACRO.H"
+#include "objmacro.h"
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Fontselektor initialisieren und Zeiger auf Struktur zurÅckliefern								*/
@@ -2999,4 +3002,4 @@ WORD	cdecl check_box( PARMBLK *parmblock )
 /* Routinen aus OBJ_TOOL.C einbinden																		*/
 /*----------------------------------------------------------------------------------------*/ 
 
-#include	"OBJ_TOOL.C"
+#include "obj_tool.c"

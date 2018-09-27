@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gemut_mt.h"
+#include "toserror.h"
 #include "windows.h"
 #include "globals.h"
 #include "mgnotice.h"
@@ -49,9 +50,7 @@ void input_dial_init_rsc( void )
 *
 *********************************************************************/
 
-#pragma warn -par
-WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
-				WORD clicks, void *data )
+WORD cdecl hdl_input(struct HNDL_OBJ_args args)
 {
 	OBJECT *tree;
 	WINDOW *newwin;
@@ -67,7 +66,7 @@ WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
 
 	tree = adr_input;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_input)			/* Dialog ist schon ge”ffnet ! */
 			return(0);
@@ -81,14 +80,14 @@ WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
 		ob_dsel(tree, INPUT_OK);
 		ob_dsel(tree, INPUT_CANCEL);
 
-		id_code = clicks;		/* Fenster-Code */
+		id_code = args.clicks;		/* Fenster-Code */
 
 		for	(s = mem, i = 0; i < LINES; i++)
 			{
 			*s = EOS;
-			if	(data)
+			if	(args.data)
 				{
-				t = get_line((unsigned char *) data, i, &l);
+				t = get_line((unsigned char *) args.data, i, &l);
 				if	(t)
 					memcpy(s, t, l);
 				s[l] = EOS;
@@ -106,16 +105,16 @@ WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 2. Fall: Nachricht mit Code >= 1040 empfangen */
 	/* --------------------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
-		switch(events->msg[0])
+		switch(args.events->msg[0])
 			{
-/*
+#if 0
 			 case WM_ALLICONIFY:
 	
 			 case WM_ICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_iconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
 	 							" MGCOPY ",
 	 							adr_beg_iconified, 1);
 			 	is_iconified = TRUE;
@@ -124,13 +123,13 @@ WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
 	
 			 case WM_UNICONIFY:
 			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_uniconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
 		 							Rgetstring(STR_MAINTITLE, global),
 		 							adr_beg);
 			 	is_iconified = FALSE;
 			 	wind_update(END_UPDATE);
 				break;
-*/	
+#endif
 			}
 		return(1);		/* weiter */
 		}
@@ -138,28 +137,28 @@ WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		close_dialog:
 		Mfree(mem);
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)	/* unbekannte Unterfunktion */
+	if	(args.obj < 0)	/* unbekannte Unterfunktion */
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == INPUT_CANCEL)		/* Abbruch */
+	if	(args.obj == INPUT_CANCEL)		/* Abbruch */
 		{
 		goto close_dialog;
 		}
 
-	if	(exitbutton == INPUT_OK)			/* OK */
+	if	(args.obj == INPUT_OK)			/* OK */
 		{
 		/* Speicherbedarf ermitteln und Zeilen komprimieren */
 		for	(s = t = u = mem, i = 0; i < LINES; i++)
@@ -175,7 +174,7 @@ WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
 				u = t;
 			}
 		*u++ = '\0';
-		Mshrink(0, mem, u-mem);
+		Mshrink(mem, u-mem);
 
 		if	(id_code < 0)
 			{
@@ -209,8 +208,7 @@ WORD	cdecl hdl_input( DIALOG *d, EVNT *events, WORD exitbutton,
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	subobj_wdraw(d, exitbutton, exitbutton, 0);
+	ob_dsel(tree, args.obj);
+	subobj_wdraw(args.dialog, args.obj, args.obj, 0);
 	return(1);		/* weiter */
 }
-#pragma warn +par
