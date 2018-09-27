@@ -6,22 +6,15 @@
 
 #include <aes.h>
 #include <tos.h>
-#include <magx.h>
 
 
 
 #define	SIGFREEZE		100
-#define	SIGIGN		1L
+#define	SIGIGN		((__mint_sighandler_t)1L)
 
-/* shel_write modes for parameter "doex" */
 
-#define SHW_NOEXEC       0
-#define SHW_EXEC         1
-#define SHW_SHUTDOWN     4                                  /* AES 3.3     */
-#define SHW_INFRECGN     9                                  /* AES 4.0     */
-#define SHW_AESSEND      10                                 /* AES 4.0     */
 
-int main()
+int main(void)
 {
 	int ev;
 	int buf[16];
@@ -38,27 +31,31 @@ int main()
 	/* Writeback aktivieren */
 	/* -------------------- */
 
-	if	(gemdos((int) SCONFIG, (int) SC_WBACK, (int) SCWB_SET) < 0L)
+	/*
+	 * Sconfig 2nd Parameter is a long, except for SC_WBACK,
+	 * which expects a short only
+	 */
+	if	(Sconfig(SC_WBACK, ((long)SCWB_SET << 16) | SCWB_SET) < 0L)
 		return(-1);
 
 	/* Einfrieren einfach verhindern */
 	/* ----------------------------- */
 
-	if	(Psignal(SIGFREEZE, (void *) SIGIGN))
+	if	(Psignal(SIGFREEZE, SIGIGN))
 		return(-2);
 
 	for	(;;)
-		{
+	{
 		/* evnt_timer(500, 0);	*/	/* 0,5s warten */
 
 		/* MagiC 3.0: evnt_xmesag mit Timeout in 50Hz- Schritten */
 		ev = appl_read(-2, 25, buf);
 		if	(ev & MU_MESAG)
-			{
+		{
 			if	(buf[0] == AP_TERM)
 				return(0);		/* Ende */
-			}
-
-		Ssync();
 		}
+
+		Sync();
+	}
 }

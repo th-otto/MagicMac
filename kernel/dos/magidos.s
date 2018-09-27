@@ -11361,9 +11361,9 @@ dos_fx:
 dos_fx2:
  DC.W     D_Syield-dos_fx2         ; 0xff
  DC.W     D_Fpipe-dos_fx2          ; 0x100
- DC.W     ill_func-dos_fx2
- DC.W     ill_func-dos_fx2
- DC.W     ill_func-dos_fx2
+ DC.W     ill_func-dos_fx2	; Ffchown
+ DC.W     ill_func-dos_fx2	; Ffchmod
+ DC.W     ill_func-dos_fx2	; Fsync
  DC.W     D_Fcntl-dos_fx2          ; 0x104
  DC.W     D_Finstat-dos_fx2        ; 0x105
  DC.W     D_Foutstat-dos_fx2       ; 0x106
@@ -11424,8 +11424,8 @@ dos_fx2:
  DC.W     D_Tmalarm-dos_fx2        ; 0x13d
  DC.W     D_Psigintr-dos_fx2       ; 0x13e
  DC.W     D_Suptime-dos_fx2        ; 0x13f
- DC.W     ill_func-dos_fx2         ; 0x140
- DC.W     ill_func-dos_fx2         ; 0x141
+ DC.W     ill_func-dos_fx2         ; 0x140 ; Ptrace
+ DC.W     ill_func-dos_fx2         ; 0x141 ; Mvalidate
  DC.W     D_Dxreaddir-dos_fx2      ; 0x142
  DC.W     D_Pseteuid-dos_fx2       ; 0x143
  DC.W     D_Psetegid-dos_fx2       ; 0x144
@@ -11434,10 +11434,10 @@ dos_fx2:
  DC.W     D_Pgetgroups-dos_fx2     ; 0x147
  DC.W     D_Psetgroups-dos_fx2     ; 0x148
  DC.W     D_Tsetitimer-dos_fx2     ; 0x149
- DC.W     ill_func-dos_fx2         ; 0x14A
- DC.W     ill_func-dos_fx2         ; 0x14B
- DC.W     ill_func-dos_fx2         ; 0x14C
- DC.W     ill_func-dos_fx2         ; 0x14D
+ DC.W     ill_func-dos_fx2         ; 0x14A ; Dchroot
+ DC.W     ill_func-dos_fx2         ; 0x14B ; Fstat64
+ DC.W     ill_func-dos_fx2         ; 0x14C ; Fseek64
+ DC.W     ill_func-dos_fx2         ; 0x14D ; Dsetkey
  DC.W     Psetreuid-dos_fx2        ; 0x14E
  DC.W     Psetregid-dos_fx2        ; 0x14F
  DC.W     Ssync-dos_fx2            ; 0x150

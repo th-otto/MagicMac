@@ -1,0 +1,14 @@
+wbdaemon.prg
+.C[-I..\..\inc_c]
+.C[-8-]
+.C[-K-]
+.C[-P-]
+.L[-S=$4000]
+=
+cstart0.O      ; startup code
+
+wbdaemon.c
+
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib   ; AES and VDI lib
