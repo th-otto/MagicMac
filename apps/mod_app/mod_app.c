@@ -74,6 +74,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <tos.h>
+#include "toserror.h"
 
 #define DEBUG 0
 
@@ -106,7 +107,7 @@ char *name_to_section( char *s, char *name)
 	*s++ = '[';
 	for	(i = 0; i < 8; i++)
 		{
-		if	(*name == '.' || *name == EOS)
+		if	(*name == '.' || *name == '\0')
 			break;
 		*s++ = toupper(*name++);
 		}
@@ -490,7 +491,7 @@ long do_mode_id( char *pgmname, char *ftyp, char *rscname, int iconnr)
 	if	(strlen(ftyp) > 32)
 		return(1);
 	s = name_to_section(section, pgmname);
-	*s = EOS;
+	*s = '\0';
 	namelen = s - section;
 
 	strcpy(ins_data, ftyp);

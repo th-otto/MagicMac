@@ -1,0 +1,13 @@
+mod_app.ttp
+.C[-8-]
+.C[-K-]
+.C[-P-]
+.C[-I..\..\inc_c]
+.L[-S=$4000]
+=
+cstartv.O      ; startup code
+
+mod_app.c
+
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
