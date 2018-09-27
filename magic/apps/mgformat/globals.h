@@ -1,3 +1,5 @@
+#include <wdlgwdlg.h>
+
 typedef struct
 {
 	int		tmpdrv;		/* 0..25 */
@@ -34,13 +36,13 @@ extern long err_alert(long e);
 extern WORD global[];
 extern int open_format_options( void );
 extern int start_format( void *param );
-extern void MYsubobj_wdraw(void *d, int obj, int n, char *s);
+extern void MYsubobj_wdraw(DIALOG *d, int obj, int n, char *s);
 extern int send_message(int message[8]);
 extern int send_message_break( int whdl );
 
-extern void *d_cpydsk;
-extern void *d_format;
-extern void *d_fmtopt;
+extern DIALOG *d_cpydsk;
+extern DIALOG *d_format;
+extern DIALOG *d_fmtopt;
 extern int fmt_id;
 extern OBJECT *adr_iconified;
 extern int gl_hhchar;
@@ -48,3 +50,10 @@ extern int gl_hhchar;
 extern LONG cdecl format_thread( struct fmt_parameter *par );
 
 extern void write_inf( void );
+
+extern void	fmt_dial_init_rsc( int src_dev, int init, int only );
+extern WORD	cdecl hdl_format( struct HNDL_OBJ_args );
+extern void	cpy_dial_init_rsc( int src_dev, int dst_dev );
+extern WORD	cdecl hdl_cpydsk( struct HNDL_OBJ_args );
+extern WORD	cdecl hdl_fmtopt( struct HNDL_OBJ_args );
+

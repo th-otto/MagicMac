@@ -7,6 +7,7 @@
 
 #include <tos.h>
 #include <aes.h>
+#include <mt_aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include <country.h>
@@ -14,13 +15,6 @@
 #include "gemut_mt.h"
 #include "globals.h"
 
-
-#define TRUE   1
-#define FALSE  0
-#define EOS    '\0'
-#ifndef NULL
-#define NULL        ( ( void * ) 0L )
-#endif
 
 int tmpdrv;
 OBJECT *adr_format;
@@ -38,7 +32,7 @@ static struct fmt_parameter fmt_parameter;
 *
 ****************************************************************/
 
-void MYsubobj_wdraw(void *d, int obj, int n, char *s)
+void MYsubobj_wdraw(DIALOG *d, int obj, int n, char *s)
 {
 	char *z;
 	OBJECT *tree;
@@ -68,8 +62,8 @@ void fmt_dial_init_rsc( int devno, int init, int only )
 	src_dev = devno;
 
 	tmpdrv = prefs.tmpdrv;		/* -> CPY_DIAL */
-	MT_rsrc_gaddr(0, T_FORMAT, &adr_format, global);
-	MT_rsrc_gaddr(0, T_FMTOPT, &adr_fmtopt, global);
+	mt_rsrc_gaddr(0, T_FORMAT, &adr_format, global);
+	mt_rsrc_gaddr(0, T_FMTOPT, &adr_fmtopt, global);
 	/* Laufwerkbuchstaben einsetzen */
 	drv_to_str(((adr_format+FORMAT_T)->ob_spec.tedinfo)->te_ptmplt, src_dev+'A');
 	/* Diskname frs Formatieren auf "" setzen 	*/
@@ -103,7 +97,7 @@ void fmt_dial_init_rsc( int devno, int init, int only )
 }
 
 
-static void up_cnt( void *d, int n )
+static void up_cnt( DIALOG *d, int n )
 {
 	MYsubobj_wdraw(d, FORMT_DT, n, NULL);
 }
@@ -195,11 +189,8 @@ int send_message_break( int whdl )
 *
 *********************************************************************/
 
-#pragma warn -par
 
-
-WORD cdecl hdl_fmtopt( DIALOG *d, EVNT *events, WORD exitbutton,
-					WORD clicks, void *data )
+WORD cdecl hdl_fmtopt(struct HNDL_OBJ_args args)
 {
 	static char _inter,_spurver,_seitenver,_clsize;
 	int	tmplw;
@@ -214,11 +205,11 @@ WORD cdecl hdl_fmtopt( DIALOG *d, EVNT *events, WORD exitbutton,
 
 	tree = adr_fmtopt;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_fmtopt)			/* Dialog ist schon ge”ffnet ! */
 			return(0);
-		d_fmtopt = d;
+		d_fmtopt = args.dialog;
 
 		r = (adr_fmtopt+INT_NUM)->ob_spec.free_string;
 		ultoa(prefs.interlv, r, 10);
@@ -236,19 +227,19 @@ WORD cdecl hdl_fmtopt( DIALOG *d, EVNT *events, WORD exitbutton,
 	/* 2. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		d_fmtopt = NULL;
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)
+	if	(args.obj < 0)
 		return(1);
 
 	/* 3. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
 	inter = (tree + INT_NUM)->ob_spec.free_string;
@@ -260,41 +251,41 @@ WORD cdecl hdl_fmtopt( DIALOG *d, EVNT *events, WORD exitbutton,
 	_seitenver = atoi(seitv);
 	_clsize	 = atoi(clust);
 	obj = 0;
-	if	(exitbutton == INT_MINU || exitbutton == INT_PLUS)
+	if	(args.obj == INT_MINU || args.obj == INT_PLUS)
 		{
 		obj = INT_NUM;
 		r = &_inter;
-		i = (exitbutton == INT_MINU) ? -1 : 1;
+		i = (args.obj == INT_MINU) ? -1 : 1;
 		}
-	if	(exitbutton == SPV_MINU || exitbutton == SPV_PLUS)
+	if	(args.obj == SPV_MINU || args.obj == SPV_PLUS)
 		{
 		obj = SPV_NUM;
 		r = &_spurver;
-		i = (exitbutton == SPV_MINU) ? -1 : 1;
+		i = (args.obj == SPV_MINU) ? -1 : 1;
 		}
-	if	(exitbutton == SEV_MINU || exitbutton == SEV_PLUS)
+	if	(args.obj == SEV_MINU || args.obj == SEV_PLUS)
 		{
 		obj = SEV_NUM;
 		r = &_seitenver;
-		i = (exitbutton == SEV_MINU) ? -1 : 1;
+		i = (args.obj == SEV_MINU) ? -1 : 1;
 		}
-	if	(exitbutton == CLU_MINU || exitbutton == CLU_PLUS)
+	if	(args.obj == CLU_MINU || args.obj == CLU_PLUS)
 		{
 		obj = CLU_NUM;
 		r = &_clsize;
-		i = (exitbutton == CLU_MINU) ? -(_clsize >> 1) : _clsize;
+		i = (args.obj == CLU_MINU) ? -(_clsize >> 1) : _clsize;
 		}
 	if	(obj)
 		{
 		if	(*r + i >= 0 && *r + i <= 99)
 			{
 			*r += i;
-			MYsubobj_wdraw(d, obj, *r, NULL);
+			MYsubobj_wdraw(args.dialog, obj, *r, NULL);
 			}
 		return(1);		/* weitermachen */
 		}
 
-	if	((exitbutton == FMOPT_OK) || (exitbutton == FMOPT_SV))
+	if	((args.obj == FMOPT_OK) || (args.obj == FMOPT_SV))
 		{
 		tmplw = ((adr_fmtopt+FMOPT_TM)->ob_spec.tedinfo)->te_ptext[0];
 		if	(tmplw == 0 || tmplw == '@')
@@ -304,8 +295,8 @@ WORD cdecl hdl_fmtopt( DIALOG *d, EVNT *events, WORD exitbutton,
 			if	(0 == (Drvmap() & (1 << tmplw)))
 				{
 				Rform_alert(1, AL_TMPINV, global);
-				ob_dsel(tree, exitbutton);
-				MYsubobj_wdraw(d, exitbutton,  -1, NULL);
+				ob_dsel(tree, args.obj);
+				MYsubobj_wdraw(args.dialog, args.obj,  -1, NULL);
 				return(1);
 				}
 			}
@@ -316,13 +307,13 @@ WORD cdecl hdl_fmtopt( DIALOG *d, EVNT *events, WORD exitbutton,
 		prefs.clustsize	= _clsize;
 		prefs.tmpdrv		= tmpdrv = tmplw;
 
-		if	(exitbutton == FMOPT_SV)
+		if	(args.obj == FMOPT_SV)
 			write_inf();
 		}
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	MYsubobj_wdraw(d, exitbutton,  -1, NULL);
+	ob_dsel(tree, args.obj);
+	MYsubobj_wdraw(args.dialog, args.obj,  -1, NULL);
 	return(0);		/* Ende */
 }
 
@@ -382,8 +373,7 @@ int open_format_options( void )
 *
 *********************************************************************/
 
-WORD	cdecl hdl_format( void *d, EVNT *events,
-				WORD exitbutton, WORD clicks, void *data )
+WORD	cdecl hdl_format(struct HNDL_OBJ_args args)
 {
 	OBJECT *tree;
 	char *t,*s;
@@ -397,7 +387,7 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 
 	tree = adr_format;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_format)			/* Dialog ist schon ge”ffnet ! */
 			return(0);
@@ -424,28 +414,28 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 		ultoa(prefs.sectors, s, 10);
 		objs_hide(adr_format, FORMT_H1, FORMT_DT, 0);
 
-		d_format = d;
+		d_format = args.dialog;
 		return(1);
 		}
 
 	/* 2. Fall: Fensternachricht empfangen */
 	/* ----------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
-		switch(events->msg[0])
+		switch(args.events->msg[0])
 			{
 			 case WM_ALLICONIFY:
 	
 			 case WM_ICONIFY:
-			 	wdlg_set_iconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
 			 							" MGFORMAT ",
 			 							adr_iconified, 1);
 			 	is_iconified = TRUE;
 			 	break;
 	
 			 case WM_UNICONIFY:
-			 	wdlg_set_uniconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
 			 							"DISKFORMAT",
 			 							adr_format);
 			 	is_iconified = FALSE;
@@ -457,12 +447,12 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 
 					if	(wind_update(BEG_UPDATE | 0x100))
 						{
-						up_cnt(d, events->msg[4]);
+						up_cnt(args.dialog, args.events->msg[4]);
 						wind_update(END_UPDATE);
 						}
 					break;
 			case 1041:
-					if	(events->msg[4] == 0)
+					if	(args.events->msg[4] == 0)
 						Rform_alert(1, AL_COMPLETE, global);
 
 					goto abbruch;
@@ -473,8 +463,8 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 					objs_hide(tree, FORMT_H1, FORMT_DT, 0);
 					if	(!is_iconified)
 						{
-						MYsubobj_wdraw(d, FORMT_H1, -1, NULL);
-						MYsubobj_wdraw(d, FORMT_DT, -1, NULL);
+						MYsubobj_wdraw(args.dialog, FORMT_H1, -1, NULL);
+						MYsubobj_wdraw(args.dialog, FORMT_DT, -1, NULL);
 						}
 					if	(selected(tree, FORMT_OK) || selected(tree, FORMT_IN))	/* Formatieren aktiv */
 						{
@@ -482,12 +472,12 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 						ob_dsel(tree, FORMT_IN);
 						(tree+FORMT_IN)->ob_state &= ~DISABLED;
 						if	(!is_iconified)
-							MYsubobj_wdraw(d, FORMT_IN,  -1, NULL);
+							MYsubobj_wdraw(args.dialog, FORMT_IN,  -1, NULL);
 						if	(!((adr_format + FORMT_R1)->ob_state & DISABLED))
 							{
 							(tree+FORMT_OK)->ob_state &= ~DISABLED;
 							if	(!is_iconified)
-								MYsubobj_wdraw(d, FORMT_OK,  -1, NULL);
+								MYsubobj_wdraw(args.dialog, FORMT_OK,  -1, NULL);
 							}
 						}
 					wind_update(END_UPDATE);
@@ -499,24 +489,24 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		close_dialog:
 		d_format = NULL;
-		send_message_break(wdlg_get_handle( d ));
+		send_message_break(wdlg_get_handle( args.dialog ));
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)
+	if	(args.obj < 0)
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == FORMT_EX)
+	if	(args.obj == FORMT_EX)
 		{
 		open_format_options();
 		goto ende;
@@ -527,7 +517,7 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 	prefs.tracks  = atoi(t);
 	prefs.sectors = atoi(s);
 	obj = 0;
-	if	((exitbutton == FORMT_DD) || (exitbutton == FORMT_HD))
+	if	((args.obj == FORMT_DD) || (args.obj == FORMT_HD))
 		{
 		int dummy;
 
@@ -535,33 +525,33 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 		if	(selected(tree, FORMT_S1))
 			form_button(tree, FORMT_S2, 1, &dummy);
 		prefs.tracks  = 80;
-		prefs.sectors = (exitbutton == FORMT_HD) ? 18 : 9;
+		prefs.sectors = (args.obj == FORMT_HD) ? 18 : 9;
 		if	(!is_iconified)
 			{
-			MYsubobj_wdraw(d, TRK_NUM,  prefs.tracks, NULL);
-			MYsubobj_wdraw(d, SEC_NUM, prefs.sectors, NULL);
+			MYsubobj_wdraw(args.dialog, TRK_NUM,  prefs.tracks, NULL);
+			MYsubobj_wdraw(args.dialog, SEC_NUM, prefs.sectors, NULL);
 			}
 		goto ende;
 		}
-	if	(exitbutton == TRK_PLUS)
+	if	(args.obj == TRK_PLUS)
 		{
 		obj = TRK_NUM;
 		r = &prefs.tracks;
 		i = 1;
 		}
-	if	(exitbutton == TRK_MINU)
+	if	(args.obj == TRK_MINU)
 		{
 		obj = TRK_NUM;
 		r = &prefs.tracks;
 		i = -1;
 		}
-	if	(exitbutton == SEC_MINU)
+	if	(args.obj == SEC_MINU)
 		{
 		obj = SEC_NUM;
 		r = &prefs.sectors;
 		i = -1;
 		}
-	if	(exitbutton == SEC_PLUS)
+	if	(args.obj == SEC_PLUS)
 		{
 		obj = SEC_NUM;
 		r = &prefs.sectors;
@@ -572,17 +562,17 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 		if	(*r + i >= 5 && *r + i <= 99)
 			{
 			*r += i;
-			MYsubobj_wdraw(d, obj, *r, NULL);
+			MYsubobj_wdraw(args.dialog, obj, *r, NULL);
 			}
 		return(1);
 		}
 
 	prefs.sides   = (selected(tree, FORMT_S1)) ? 1 : 2;
-	if	(exitbutton == FORMT_AB)		/* Abbruch */
+	if	(args.obj == FORMT_AB)		/* Abbruch */
 		{
 		if	(selected(tree, FORMT_OK) || selected(tree, FORMT_IN))		/* Formatieren aktiv */
 			{
-			send_message_break(wdlg_get_handle( d ));	/* Formatieren abbrechen */
+			send_message_break(wdlg_get_handle( args.dialog ));	/* Formatieren abbrechen */
 			goto ende;
 			}
 		goto close_dialog;				/* Ende */
@@ -595,27 +585,26 @@ WORD	cdecl hdl_format( void *d, EVNT *events,
 	fname_ext(dname, fmt_parameter.diskname);
 	objs_unhide(tree, FORMT_H1, FORMT_DT, 0);
 	if	(!is_iconified)
-		MYsubobj_wdraw(d, FORMT_H1, -1, NULL);
+		MYsubobj_wdraw(args.dialog, FORMT_H1, -1, NULL);
 
 	fmt_parameter.action = action_format;
 	fmt_parameter.apid = ap_id;
-	fmt_parameter.whdl = wdlg_get_handle( d );
+	fmt_parameter.whdl = wdlg_get_handle( args.dialog );
 	fmt_parameter.device = src_dev;
-	fmt_parameter.do_logical = (exitbutton == FORMT_IN);
+	fmt_parameter.do_logical = (args.obj == FORMT_IN);
 	start_format(&fmt_parameter);
 
 	(tree+FORMT_OK)->ob_state |= DISABLED;
 	(tree+FORMT_IN)->ob_state |= DISABLED;
 	if	(!is_iconified)
 		{
-		MYsubobj_wdraw(d, FORMT_OK,  -1, NULL);
-		MYsubobj_wdraw(d, FORMT_IN,  -1, NULL);
+		MYsubobj_wdraw(args.dialog, FORMT_OK,  -1, NULL);
+		MYsubobj_wdraw(args.dialog, FORMT_IN,  -1, NULL);
 		}
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	MYsubobj_wdraw(d, exitbutton,  -1, NULL);
+	ob_dsel(tree, args.obj);
+	MYsubobj_wdraw(args.dialog, args.obj,  -1, NULL);
 	return(1);		/* weiter */
 }
-#pragma warn +par

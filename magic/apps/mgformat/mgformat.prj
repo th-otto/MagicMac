@@ -1,0 +1,17 @@
+mgformat.prg
+.C[-I..\..\inc_c]
+.C[-I..\..\lib\mylibs\src\]
+.C[-K-]
+.C[-P-]
+.L[-S=$400]
+=              ; list of modules follows...
+cstartv.o      ; startup code
+mgformat.c [-W-stv]
+fmt_dial.c
+cpy_dial.c
+format.c		; Thread
+..\..\lib\mylibs\src\gemut_mt.c
+
+pcstdlib.lib   ; standard lib
+pcgemlib.lib
+pctoslib.lib

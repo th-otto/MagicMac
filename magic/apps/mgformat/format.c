@@ -48,8 +48,10 @@
 
 #include <tos.h>
 #include <aes.h>
+#include <mt_aes.h>
 #include <string.h>
 #include <stdlib.h>
+#include "toserror.h"
 #include "mgformat.h"
 #include "gemut_mt.h"
 #include "globals.h"
@@ -61,16 +63,9 @@
 #include <stdio.h>
 #endif
 
-#define TRUE   1
-#define FALSE  0
-#define EOS    '\0'
 #define MIN(a,b) ((a < b) ? a : b)
-#ifndef NULL
-#define NULL        ( ( void * ) 0L )
-#endif
 
 
-#pragma warn -stv
 
 static int  ap_id;
 
@@ -87,7 +82,7 @@ LONG cdecl format_thread( struct fmt_parameter *par )
 
 	/* wir braten das global-Feld der Haupt-APPL nicht ber */
 
-     if   ((ap_id = MT_appl_init(myglobal)) < 0)
+     if   ((ap_id = mt_appl_init(myglobal)) < 0)
           Pterm(-1);
 
     	if	(par->action == action_format)	/* Formatieren */
@@ -693,7 +688,7 @@ long format(int dst_apid, int whdl, int dev, int is_logic,
 
 	doserr = init_disk(dev);
 
-/*
+#if 0
 	Hier war vorher eine manuelle Initialisierung:
 
 	bpb = Getbpb(dev);
@@ -709,7 +704,7 @@ long format(int dst_apid, int whdl, int dev, int is_logic,
 	doserr = Rwabs(3, buf, 1, 1, dev);      /* FAT 1 */
 	if	(doserr == E_OK)
 		doserr = Rwabs(3, buf, 1, bpb->fsiz + 1, dev);
-*/
+#endif
 
 	err:
 

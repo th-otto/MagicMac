@@ -19,20 +19,16 @@
 
 #include <tos.h>
 #include <aes.h>
+#include <mt_aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include <tosdefs.h>
 #include "mgformat.h"
 #include "gemut_mt.h"
+#include "toserror.h"
 #include "globals.h"
 
 
-#define TRUE   1
-#define FALSE  0
-#define EOS    '\0'
-#ifndef NULL
-#define NULL        ( ( void * ) 0L )
-#endif
 #define MIN(a,b) ((a < b) ? a : b)
 #define MAX(a,b) ((a > b) ? a : b)
 #define ABS(X) ((X>0) ? X : -X)
@@ -44,17 +40,11 @@ enum actioncode {FORMAT, INIT, COPY, BOTH};
 extern OBJECT *adr_format;
 extern OBJECT *adr_cpydsk;
 extern OBJECT *adr_fmtopt;
-extern void	fmt_dial_init_rsc( int src_dev, int init, int only );
-extern WORD	cdecl hdl_format( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
-extern void	cpy_dial_init_rsc( int src_dev, int dst_dev );
-extern WORD	cdecl hdl_cpydsk( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
-extern WORD	cdecl hdl_fmtopt( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
-
 /* DIALOG-Strukturen */
 
-void *d_cpydsk = NULL;
-void *d_format = NULL;
-void *d_fmtopt = NULL;
+DIALOG *d_cpydsk;
+DIALOG *d_format;
+DIALOG *d_fmtopt;
 
 FMT_DEFAULTS prefs;
 
@@ -342,6 +332,7 @@ int main( int argc, char *argv[] )
 	action = BOTH;
 	src_dev = dst_dev = -1;
 
+	(void)argc;
 	for	(argv++; *argv; argv++)		/* argv[argc] ist NULL */
 		{
 		arg = *argv;
@@ -370,13 +361,13 @@ int main( int argc, char *argv[] )
 	if	(dst_dev == -1)
 		dst_dev = 0;
 
-	if   ((ap_id = MT_appl_init(global)) < 0)
+	if ((ap_id = mt_appl_init(global)) < 0)
 		Pterm(-1);
 	graf_handle(&gl_hwchar, &gl_hhchar, &gl_hwbox, &gl_hhbox);
 	wind_get_grect(SCREEN, WF_WORKXYWH, &scrg);
 	Mrsrc_load("mgformat.rsc", global);
 
-	MT_rsrc_gaddr(0, T_ICONIF, &adr_iconified, global);
+	mt_rsrc_gaddr(0, T_ICONIF, &adr_iconified, global);
 	adr_iconified[1].ob_width  = 72;
 	adr_iconified[1].ob_height = (adr_iconified[1].ob_spec.iconblk->ib_hicon)+8;
 
@@ -432,34 +423,37 @@ int main( int argc, char *argv[] )
 			goto fehler;
 		}
 
-	while(1)
-		{
+	for (;;)
+	{
 		w_ev.mwhich = evnt_multi(MU_KEYBD+MU_BUTTON+MU_MESAG,
 					  2,			/* Doppelklicks erkennen 	*/
 					  1,			/* nur linke Maustaste		*/
 					  1,			/* linke Maustaste gedrckt	*/
-					  0,NULL,		/* kein 1. Rechteck			*/
-					  0,NULL,		/* kein 2. Rechteck			*/
+					  0,0,0,0,0,		/* kein 1. Rechteck			*/
+					  0,0,0,0,0,		/* kein 2. Rechteck			*/
 					  w_ev.msg,
 					  0L,	/* ms */
-					  (EVNTDATA*) &(w_ev.mx),
+					  &w_ev.mx,
+					  &w_ev.my,
+					  &w_ev.mbutton,
+					  &w_ev.kstate,
 					  &w_ev.key,
 					  &w_ev.mclicks
 					  );
 
 		if	(d_fmtopt && !wdlg_evnt(d_fmtopt, &w_ev))
-			{
+		{
 			wdlg_close(d_fmtopt, NULL, NULL);
 			wdlg_delete(d_fmtopt);
 			d_fmtopt = NULL;
-			}
+		}
 		if	(d_format && !wdlg_evnt(d_format, &w_ev))
 			break;
 		if	(d_cpydsk && !wdlg_evnt(d_cpydsk, &w_ev))
 			break;
 
 		if	(w_ev.mwhich & MU_MESAG)
-			{
+		{
 			if	(w_ev.msg[0] == AP_TERM)
 				break;
 			if	(w_ev.msg[0] == THR_EXIT)
@@ -467,29 +461,25 @@ int main( int argc, char *argv[] )
 				fmt_id = -1;
 				}
 			if	(w_ev.msg[0] >= 1040)
-				{
+			{
+				struct HNDL_OBJ_args args;
+				
+				args.events = &w_ev;
+				args.obj = HNDL_MESG;
+				args.clicks = 0;
+				args.data = w_ev.msg;
 				if	(d_format && w_ev.msg[3] == whdl_format)
-					{
-					hdl_format(
-							d_format,
-							&w_ev,
-							HNDL_MESG,
-							0,
-							w_ev.msg);
-					}
-				else
-				if	(d_cpydsk && w_ev.msg[3] == whdl_diskcopy)
-					{
-					hdl_cpydsk(
-							d_cpydsk,
-							&w_ev,
-							HNDL_MESG,
-							0,
-							w_ev.msg);
-					}
+				{
+					args.dialog = d_format;
+					hdl_format(args);
+				} else if (d_cpydsk && w_ev.msg[3] == whdl_diskcopy)
+				{
+					args.dialog = d_cpydsk;
+					hdl_cpydsk(args);
 				}
 			}
-		} /* END FOREVER */
+		}
+	}
 
 	fehler:
 	appl_exit();

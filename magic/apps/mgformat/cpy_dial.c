@@ -7,6 +7,7 @@
 
 #include <tos.h>
 #include <aes.h>
+#include <mt_aes.h>
 #include <string.h>
 #include <stdlib.h>
 #include <country.h>
@@ -14,13 +15,6 @@
 #include "gemut_mt.h"
 #include "globals.h"
 
-
-#define TRUE   1
-#define FALSE  0
-#define EOS    '\0'
-#ifndef NULL
-#define NULL        ( ( void * ) 0L )
-#endif
 
 OBJECT *adr_cpydsk;
 static int is_iconified = FALSE;
@@ -38,7 +32,7 @@ void cpy_dial_init_rsc( int src_dev, int dst_dev )
 	extern int gl_hhchar;
 
 
-	MT_rsrc_gaddr(0, T_CPYDSK, &adr_cpydsk, global);
+	mt_rsrc_gaddr(0, T_CPYDSK, &adr_cpydsk, global);
 	(adr_cpydsk+CPYDS_R1)->ob_y -= gl_hhchar >> 1;
 	*((adr_cpydsk + CPYDS_QU)->ob_spec.free_string) = src_dev + 'A';
 	*((adr_cpydsk + CPYDS_ZI)->ob_spec.free_string) = dst_dev + 'A';
@@ -61,21 +55,18 @@ void cpy_dial_init_rsc( int src_dev, int dst_dev )
 *
 *********************************************************************/
 
-static void fmt_feedb(void *d, char *action, int n)
+static void fmt_feedb(DIALOG *d, char *action, int n)
 {
 	MYsubobj_wdraw(d, CPYDS_DO, -1, action);
 	MYsubobj_wdraw(d, CPYDS_DT,  n, NULL);
 }
 
-#pragma warn -par
 
-WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
-				WORD exitbutton, WORD clicks, void *data )
+WORD	cdecl hdl_cpydsk(struct HNDL_OBJ_args args)
 {
 	OBJECT *tree;
 	char newlw[2];
 	int	source_drv, dest_drv;
-	extern int disk_type(int drvnr);
 
 
 	/* 1. Fall: Dialog soll ge”ffnet werden */
@@ -83,7 +74,7 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 
 	tree = adr_cpydsk;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_cpydsk)			/* Dialog ist schon ge”ffnet ! */
 			return(0);			/* create verweigern */
@@ -91,30 +82,30 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 		objs_hide(adr_cpydsk, CPYDS_SI, CPYDS_TR, CPYDS_SC, CPYDS_DO, CPYDS_DT,
 					  CPYDS_H1, CPYDS_H2, CPYDS_H3, CPYDS_H4,  0);
 
-		d_cpydsk = d;
+		d_cpydsk = args.dialog;
 		return(1);
 		}
 
 	/* 2. Fall: Fensternachricht empfangen */
 	/* ----------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
-		switch(events->msg[0])
+		switch(args.events->msg[0])
 			{
 			int action;
 
 			 case WM_ALLICONIFY:
 	
 			 case WM_ICONIFY:
-			 	wdlg_set_iconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
 			 							" MGFORMAT ",
 			 							adr_iconified, 1);
 			 	is_iconified = TRUE;
 			 	break;
 	
 			 case WM_UNICONIFY:
-			 	wdlg_set_uniconify(d, (GRECT *) (events->msg+4),
+			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
 			 							"DISKCOPY",
 			 							adr_cpydsk);
 			 	is_iconified = FALSE;
@@ -124,18 +115,18 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 					if	(is_iconified)
 						break;
 
-					if	(events->msg[5])
-						action = (events->msg[5] == 1) ? STR_WRITE : STR_FORMAT;
+					if	(args.events->msg[5])
+						action = (args.events->msg[5] == 1) ? STR_WRITE : STR_FORMAT;
 					else action = STR_READ;
 					if	(wind_update(BEG_UPDATE | 0x100))
 						{
-						fmt_feedb(d, Rgetstring(action, global),
-								events->msg[4]);
+						fmt_feedb(args.dialog, Rgetstring(action, global),
+								args.events->msg[4]);
 						wind_update(END_UPDATE);
 						}
 					break;
 			case 1041:
-					if	(events->msg[4] == 0)
+					if	(args.events->msg[4] == 0)
 						Rform_alert(1, AL_DISKCP_COMPL, global);
 					goto abbruch;
 			case 1042:
@@ -146,15 +137,15 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 						           CPYDS_H1, CPYDS_H2, CPYDS_H3, CPYDS_H4,  0);
 					if	(!is_iconified)
 						{
-						MYsubobj_wdraw(d, CPYDS_SI, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_TR, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_SC, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_DO, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_DT, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_H1, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_H2, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_H3, -1, NULL);
-						MYsubobj_wdraw(d, CPYDS_H4, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_SI, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_TR, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_SC, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_DO, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_DT, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_H1, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_H2, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_H3, -1, NULL);
+						MYsubobj_wdraw(args.dialog, CPYDS_H4, -1, NULL);
 						}
 
 					if	(selected(tree, CPYDS_OK))	/* Kopieren aktiv */
@@ -163,7 +154,7 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 						(tree+CPYDS_OK)->ob_state &= ~DISABLED;
 
 						if	(!is_iconified)
-							MYsubobj_wdraw(d, CPYDS_OK,  -1, NULL);
+							MYsubobj_wdraw(args.dialog, CPYDS_OK,  -1, NULL);
 						}
 					wind_update(END_UPDATE);
 					break;
@@ -172,9 +163,9 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 						break;
 
 					wind_update(BEG_UPDATE);
-					MYsubobj_wdraw(d, CPYDS_SI, events->msg[4], NULL);
-					MYsubobj_wdraw(d, CPYDS_TR, events->msg[5], NULL);
-					MYsubobj_wdraw(d, CPYDS_SC, events->msg[6], NULL);
+					MYsubobj_wdraw(args.dialog, CPYDS_SI, args.events->msg[4], NULL);
+					MYsubobj_wdraw(args.dialog, CPYDS_TR, args.events->msg[5], NULL);
+					MYsubobj_wdraw(args.dialog, CPYDS_SC, args.events->msg[6], NULL);
 					wind_update(END_UPDATE);
 
 					break;
@@ -185,34 +176,34 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		close_dialog:
 		d_cpydsk = NULL;
-		send_message_break(wdlg_get_handle( d ));
+		send_message_break(wdlg_get_handle( args.dialog ));
 		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)
+	if	(args.obj < 0)
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == CPYDS_EX)
+	if	(args.obj == CPYDS_EX)
 		{
 		open_format_options();
 		goto ende;
 		}
 
-	if	(exitbutton == CPYDS_AB)			/* Abbruch */
+	if	(args.obj == CPYDS_AB)			/* Abbruch */
 		{
 		if	(selected(tree, CPYDS_OK))		/* Kopieren aktiv */
 			{
-			send_message_break(wdlg_get_handle( d ));	/* Aktion abbrechen */
+			send_message_break(wdlg_get_handle( args.dialog ));	/* Aktion abbrechen */
 			goto ende;
 			}
 		goto close_dialog;
@@ -221,7 +212,7 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 	source_drv = *((tree + CPYDS_QU)->ob_spec.free_string) - 'A';
 	dest_drv   = *((tree + CPYDS_ZI)->ob_spec.free_string) - 'A';
 
-	if	(exitbutton == CPYDS_ZI)			/* Ziel- Laufwerk */
+	if	(args.obj == CPYDS_ZI)			/* Ziel- Laufwerk */
 		{
 		lw_anzeig:
 
@@ -233,11 +224,11 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 
 		newlw[0] = dest_drv + 'A';
 		newlw[1] = EOS;
-		MYsubobj_wdraw(d, exitbutton, -1, newlw);
+		MYsubobj_wdraw(args.dialog, args.obj, -1, newlw);
 		return(1);
 		}
 		
-	if	(exitbutton == CPYDS_QU)			/* Quell- Laufwerk */
+	if	(args.obj == CPYDS_QU)			/* Quell- Laufwerk */
 		{
 		dest_drv = source_drv;
 		goto lw_anzeig;
@@ -248,28 +239,27 @@ WORD	cdecl hdl_cpydsk( void *d, EVNT *events,
 
 	if	(!is_iconified)
 		{
-		MYsubobj_wdraw(d, CPYDS_H1, -1, NULL);
-		MYsubobj_wdraw(d, CPYDS_H2, -1, NULL);
-		MYsubobj_wdraw(d, CPYDS_H3, -1, NULL);
-		MYsubobj_wdraw(d, CPYDS_H4, -1, NULL);
+		MYsubobj_wdraw(args.dialog, CPYDS_H1, -1, NULL);
+		MYsubobj_wdraw(args.dialog, CPYDS_H2, -1, NULL);
+		MYsubobj_wdraw(args.dialog, CPYDS_H3, -1, NULL);
+		MYsubobj_wdraw(args.dialog, CPYDS_H4, -1, NULL);
 		}
 
 	fmt_parameter.action = action_copydisk;
 	fmt_parameter.apid = ap_id;
 	fmt_parameter.do_format = selected(tree, CPYDS_FM);
-	fmt_parameter.whdl = wdlg_get_handle( d );
+	fmt_parameter.whdl = wdlg_get_handle( args.dialog );
 	fmt_parameter.src_dev = source_drv;
 	fmt_parameter.dst_dev = dest_drv;
 	start_format(&fmt_parameter);
 
 	(tree+CPYDS_OK)->ob_state |= DISABLED;
 	if	(!is_iconified)
-		MYsubobj_wdraw(d, CPYDS_OK,  -1, NULL);
+		MYsubobj_wdraw(args.dialog, CPYDS_OK,  -1, NULL);
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	MYsubobj_wdraw(d, exitbutton,  -1, NULL);
+	ob_dsel(tree, args.obj);
+	MYsubobj_wdraw(args.dialog, args.obj,  -1, NULL);
 	return(1);		/* weiter */
 }
-#pragma warn +par
