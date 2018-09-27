@@ -116,10 +116,10 @@ static void button_fnames( WINDOW *w, int kstate,
 		{
 		if	(!mstat)	/* wieder losgelassen! */
 			{
-			wind_set(w->handle, WF_TOP);
-/*
+			wind_set_int(w->handle, WF_TOP, 0);
+#if 0
 			wind_set(-1, WF_TOP, -1);	/* Men nach oben! */
-*/
+#endif
 			return;
 			}
 		}
@@ -244,7 +244,7 @@ int open_fnames( void )
 
 	if	(mywindow)		/* schon ge”ffnet */
 		{
-		wind_set(WF_TOP, mywindow->handle);
+		wind_set_int(WF_TOP, mywindow->handle, 0);
 		return(0);	/* OK */
 		}
 	w = new_window();
@@ -304,7 +304,7 @@ int open_fnames( void )
 	fnamewindow.key = key_fnames;
 	fnamewindow.close = close_fnames;
 	*w = mywindow = &fnamewindow;
-	wind_set(fnamewindow.handle, WF_NAME, Rgetstring(STR_WINTITLE));
+	wind_set_str(fnamewindow.handle, WF_NAME, Rgetstring(STR_WINTITLE));
 	wind_set(fnamewindow.handle, WF_BEVENT, 0x0001, 0, 0, 0 );
 	fnamewindow.open(&fnamewindow);
 	return(0);
@@ -319,8 +319,7 @@ int open_fnames( void )
 
 void srch_finished( void )
 {
-	wind_set(fnamewindow.handle, WF_NAME,
-		Rgetstring(STR_WINTITLE) + 2);
+	wind_set_str(fnamewindow.handle, WF_NAME, Rgetstring(STR_WINTITLE) + 2);
 }
 
 

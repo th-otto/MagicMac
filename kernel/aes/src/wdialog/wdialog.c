@@ -31,7 +31,7 @@
 /*----------------------------------------------------------------------------------------*/ 
 
 extern LONG malloc(LONG size);
-extern WORD grects_intersect( GRECT *p1, GRECT *p2 );
+extern WORD grects_intersect( const GRECT *p1, GRECT *p2 );
 extern void set_clip_grect(GRECT *g);
 
 extern void _objc_draw(OBJECT *tree, WORD startob, WORD depth);

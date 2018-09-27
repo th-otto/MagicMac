@@ -254,7 +254,7 @@ void window_calc_hslider(WINDOW *w)
 	else hsize = 1000L;
 	if	(hsize > 1000L)
 		hsize = 1000L;
-	wind_set(w->handle, WF_HSLSIZE, (int) hsize);
+	wind_set_int(w->handle, WF_HSLSIZE, (int) hsize);
 
 	if	(w->max_hshift > 0)
 		hpos = (1000L * w->hshift) / w->max_hshift;
@@ -263,7 +263,7 @@ void window_calc_hslider(WINDOW *w)
 		hpos = 1000L;
 	if	(hpos < 1)
 		hpos = 1;
-	wind_set(w->handle, WF_HSLIDE, (int) hpos);
+	wind_set_int(w->handle, WF_HSLIDE, (int) hpos);
 }
 
 
@@ -317,7 +317,7 @@ void window_calc_vslider(WINDOW *w)
 	else vsize = 1000L;
 	if	(vsize > 1000L)
 		vsize = 1000L;
-	wind_set(w->handle, WF_VSLSIZE, (int) vsize);
+	wind_set_int(w->handle, WF_VSLSIZE, (int) vsize);
 
 	if	(w->max_vshift > 0)
 		vpos = (1000L * w->vshift) / w->max_vshift;
@@ -326,7 +326,7 @@ void window_calc_vslider(WINDOW *w)
 		vpos = 1000L;
 	if	(vpos < 1)
 		vpos = 1;
-	wind_set(w->handle, WF_VSLIDE, (int) vpos);
+	wind_set_int(w->handle, WF_VSLIDE, (int) vpos);
 }
 
 
@@ -841,7 +841,7 @@ static void _message_obj_window(WINDOW *w, int kstate, int message[16])
 			redraw_window(w, (GRECT *) (message+4));
 			break;
 		case WM_TOPPED:
-			wind_set(w->handle, WF_TOP);
+			wind_set_int(w->handle, WF_TOP, 0);
 			break;
 		case WM_CLOSED:
 			w->close(w, kstate);

@@ -204,27 +204,6 @@ WINDOW *create_window( WORD kind,
 }
 
 /*----------------------------------------------------------------------------------------*/
-/* šberlappung von p1 und p2 berprfen																	*/
-/* Funktionsresultat:	bei šberlappung einen Wert ungleich 0, andernfalls 0;					*/
-/*								die Struktur *p2 enth„lt dann die Schnittfl„che							*/
-/* p1, p2:					Zeiger auf die zu vergleichenden GRECTs									*/
-/*----------------------------------------------------------------------------------------*/
-WORD rc_intersect( GRECT *p1, GRECT *p2 )
-{
-	WORD tx, ty, tw, th;
-
-	tw = min( p2->g_x + p2->g_w, p1->g_x + p1->g_w );
-	th = min( p2->g_y + p2->g_h, p1->g_y + p1->g_h );
-	tx = max( p2->g_x, p1->g_x );
-	ty = max( p2->g_y, p1->g_y );
-	p2->g_x = tx;
-	p2->g_y = ty;
-	p2->g_w = tw - tx;
-	p2->g_h = th - ty;
-	return(( tw > tx ) && ( th > ty ));
-}
-
-/*----------------------------------------------------------------------------------------*/
 /* Redraw eines Fensters																						*/
 /* Funktionsergebnis:	-																						*/
 /* handle:				  	Fensterhandle																		*/

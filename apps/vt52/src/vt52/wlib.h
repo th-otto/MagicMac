@@ -10,7 +10,6 @@ WINDOW	*create_window( WORD kind, GRECT *border,
 		OBJECT *iconfied_tree );
 void	set_slpos( WINDOW *window );
 void	set_slsize( WINDOW *window );
-WORD	rc_intersect( GRECT *p1, GRECT *p2 );
 void	redraw_window( WORD handle, GRECT *area );
 void	delete_window( WORD handle );
 void	move_window( WORD handle, GRECT *area );

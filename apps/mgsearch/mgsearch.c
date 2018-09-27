@@ -25,7 +25,7 @@
 #include <magx.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tosdefs.h>
+#include "toserror.h"
 #include "windows.h"
 #include "mgsearch.h"
 #include "search.h"
@@ -88,7 +88,7 @@ int callback_ever( void )
 				  0,0,0,0,0,	/* kein 1. Rechteck			*/
 				  0,0,0,0,0,	/* kein 2. Rechteck			*/
 				  message,
-				  0,0,	/* ms */
+				  0,	/* ms */
 				  &xclick, &yclick,
 				  &button, &kstate,
 				  &keycode, &nclicks

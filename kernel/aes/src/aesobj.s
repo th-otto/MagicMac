@@ -503,9 +503,9 @@ opw_setdev:
 *
 
 _objc_sysvar:
- cmpi.w   #10,d1
+ cmpi.w   #10,d1					; MX_ENABLE3D
  beq.b    obs_10                   ; Spezialfunktion für MagiC
- cmpi.w   #11,d1
+ cmpi.w   #11,d1					; MX_MENUCOL
  beq.b    obs_11                   ; Spezialfunktion für MagiC
  tst.w    d0                       ; mode == set ?
  bne.b    obs_err                  ; ja, ist immer Fehler

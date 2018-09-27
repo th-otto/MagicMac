@@ -384,7 +384,7 @@ static WORD xy_in_grect( WORD x, WORD y, GRECT *g )
 *
 ****************************************************************/
 
-static WORD rc_intersect(GRECT *p1, GRECT *p2)
+static WORD rc_intersect(const GRECT *p1, GRECT *p2)
 {
 	WORD	tx, ty, tw, th;
 

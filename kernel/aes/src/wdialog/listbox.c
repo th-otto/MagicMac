@@ -65,7 +65,7 @@ extern WORD	set_item( LIST_BOX *box, LBOX_ITEM *item, WORD index, GRECT *rect );
 /*----------------------------------------------------------------------------------------*/ 
 /* extern aus WDIALOG.C																							*/
 /*----------------------------------------------------------------------------------------*/ 
-extern WORD	rc_intersect( GRECT *p1, GRECT *p2 );
+extern WORD	rc_intersect( const GRECT *p1, GRECT *p2 );
 
 /*----------------------------------------------------------------------------------------*/ 
 /* interne Funktionen																							*/

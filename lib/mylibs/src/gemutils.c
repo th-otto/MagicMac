@@ -11,11 +11,11 @@
 #include <aes.h>
 #include <vdi.h>
 #include <tos.h>
-#include <tosdefs.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdarg.h>
+#include "toserror.h"
 #include <magx.h>
 #include "gemutils.h"
 
@@ -47,7 +47,7 @@ int top_whdl( void )
 {
 	int whdl;
 
-	if	(!wind_get(0, WF_TOP, &whdl))
+	if	(!wind_get_int(0, WF_TOP, &whdl))
 		return(-1);
 	if	(whdl < 0)
 		return(-1);
@@ -161,28 +161,6 @@ void subobj_draw(OBJECT *tree, int obj, int start, int depth)
 
 	objc_grect(tree, obj, &g);
 	objc_draw (tree, start, depth, g.g_x, g.g_y, g.g_w, g.g_h);
-}
-
-
-/****************************************************************
-*
-* Bestimmt die Schnittmenge zwischen zwei Rechtecken
-*
-****************************************************************/
-
-int rc_intersect(GRECT *p1, GRECT *p2)
-{
-	int	tx, ty, tw, th;
-
-	tw = MIN(p2->g_x + p2->g_w, p1->g_x + p1->g_w);
-	th = MIN(p2->g_y + p2->g_h, p1->g_y + p1->g_h);
-	tx = MAX(p2->g_x, p1->g_x);
-	ty = MAX(p2->g_y, p1->g_y);
-	p2->g_x = tx;
-	p2->g_y = ty;
-	p2->g_w = tw - tx;
-	p2->g_h = th - ty;
-	return( (tw > tx) && (th > ty) );
 }
 
 
@@ -666,36 +644,17 @@ int do_exdialog(OBJECT *dialog,
 	for	(;;)
 		{
 		exitbutton = 0x7f & form_xdo(dialog, 0, &dummy, NULL, flyinf);
-/*		ob_dsel(dialog, exitbutton);	*/
+#if 0
+		ob_dsel(dialog, exitbutton);
+#endif
 		if	((*check)(dialog, exitbutton))
 			break;
-/*		objc_draw(dialog, exitbutton, 1, cx, cy, cw, ch);	*/
+#if 0
+		objc_draw(dialog, exitbutton, 1, cx, cy, cw, ch);
+#endif
 		}
 	form_xdial(FMD_FINISH, 0,0,0,0,cx, cy, cw, ch, p_flyinf);
 	if	(was_redraw != NULL)
 		*was_redraw = (flyinf == NULL);	/* RÅckgabe: Bildschirm zerstîrt */
 	return(exitbutton);
-}
-
-
-/****************************************************************
-*
-* Fehlende AES-Funktionen
-*
-****************************************************************/
-
-extern void _aes(int dummy, long code);
-
-WORD	objc_sysvar( WORD ob_smode, WORD ob_swhich,
-				WORD ob_sival1, WORD ob_sival2,
-				WORD *ob_soval1, WORD *ob_soval2 )
-{
-	_GemParBlk.intin[0] = ob_smode;
-	_GemParBlk.intin[1] = ob_swhich;
-	_GemParBlk.intin[2] = ob_sival1;
-	_GemParBlk.intin[3] = ob_sival2;
-	_aes(0, 0x30040000L);
-	*ob_soval1 = _GemParBlk.intout[1];
-	*ob_soval2 = _GemParBlk.intout[2];
-	return(_GemParBlk.intout[0]);
 }

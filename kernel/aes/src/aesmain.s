@@ -11208,7 +11208,7 @@ gig_ende:
 
 **********************************************************************
 *
-* PUREC WORD grects_intersect( GRECT *srcg, GRECT *dstg)
+* PUREC WORD grects_intersect( const GRECT *srcg, GRECT *dstg)
 *
 * EQ/NE int grects_intersect(a0 = GRECT *srcg, a1 = GRECT *dstg)
 *

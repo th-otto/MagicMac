@@ -108,7 +108,7 @@ extern WORD menu_modify( OBJECT *tree, WORD objnr, WORD statemask,
 				WORD active, WORD do_draw, WORD not_disabled);
 void graf_mouse( WORD typ, void *data);
 WORD graf_slidebox( OBJECT *tree, WORD parent, WORD objnr, WORD is_vertikal);
-WORD grects_intersect( GRECT *srcg, GRECT *dstg);
+WORD grects_intersect( const GRECT *srcg, GRECT *dstg);
 WORD xy_in_grect( WORD x, WORD y, GRECT *g );
 void drawbox( WORD wmode, WORD colour, WORD aes_patt, GRECT *g);
 cdecl WORD xp_rasterC( LONG words, LONG len, WORD planes,

@@ -29,7 +29,7 @@ extern void strcpy(char *dst, char *src);
 extern void memcpy(void *dst, void *src, UWORD len);
 extern void putch(char c);
 extern LONG malloc(LONG size);
-extern WORD grects_intersect( GRECT *p1, GRECT *p2 );
+extern WORD grects_intersect( const GRECT *p1, GRECT *p2 );
 
 extern void set_clip_grect(GRECT *g);
 extern void drawbox( WORD wmode, WORD colour, WORD aes_patt,

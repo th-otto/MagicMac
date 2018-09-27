@@ -352,7 +352,6 @@ extern int	do_exdialog(OBJECT *dialog,
 			 int (*check)(OBJECT *dialog, int exitbutton),
 			 int *was_redraw);
 extern int 	find_obj(OBJECT *tree, int x, int y);
-extern int	rc_intersect(GRECT *p1, GRECT *p2);
 extern int 	in_grect(int x, int y, GRECT *g);
 extern int	selected(OBJECT *tree, int which);
 extern void	subobj_draw(OBJECT *tree, int obj, int n, char *s);

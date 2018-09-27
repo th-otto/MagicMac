@@ -20,7 +20,6 @@ extern int scan_values(char **s, int n, int values[]);
 extern void Mrsrc_load( char *fname );
 extern void objc_grect(OBJECT *tree, int objn, GRECT *g);
 extern void subobj_draw(OBJECT *tree, int obj, int start, int depth);
-extern int rc_intersect(GRECT *p1, GRECT *p2);
 extern void  Mgraf_mouse(int type);
 extern void objs_hide(OBJECT *tree, ...);
 extern void objs_unhide(OBJECT *tree, ...);
@@ -53,7 +52,3 @@ extern int do_dialog(OBJECT *dialog);
 extern int do_exdialog(OBJECT *dialog,
 			 int (*check)(OBJECT *dialog, int exitbutton),
 			 int *was_redraw);
-
-extern WORD objc_sysvar( WORD ob_smode, WORD ob_swhich,
-				WORD ob_sival1, WORD ob_sival2,
-				WORD *ob_soval1, WORD *ob_soval2 );

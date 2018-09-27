@@ -287,7 +287,7 @@ extern LONG cdecl slb_fn3( PD *pd, LONG fn, WORD nargs,
 *
 ****************************************************************/
 
-static int rc_intersect(GRECT *p1, GRECT *p2)
+static int rc_intersect(const GRECT *p1, GRECT *p2)
 {
 	int	tx, ty, tw, th;
 

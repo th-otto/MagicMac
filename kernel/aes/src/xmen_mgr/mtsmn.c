@@ -346,7 +346,7 @@ extern void _graf_mkstate( EVNTDATA *ev );
 extern WORD appl_yield( void );
 extern LONG smalloc( ULONG size);
 extern void smfree( void *memblk );
-extern WORD grects_intersect( GRECT *srcg, GRECT *dstg);
+extern WORD grects_intersect( const GRECT *srcg, GRECT *dstg);
 extern WORD xy_in_grect( WORD x, WORD y, GRECT *g );
 extern attachS *mn_at_get( OBJECT *ob, void *app );
 extern void fast_save_scr( GRECT *g );

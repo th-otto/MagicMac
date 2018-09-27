@@ -23,7 +23,6 @@
 #define	min( A,B ) ( (A)<(B) ? (A) : (B) )
 
 extern	WORD	vdi_handle;
-extern WORD rc_intersect( GRECT *p1, GRECT *p2 );
 
 static MFDB *fill;
 

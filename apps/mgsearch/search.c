@@ -12,10 +12,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <tosdefs.h>
-#include <portab.h>
+#include <sys/stat.h>
+#include "toserror.h"
 #include <magx.h>
 #include "gemutils.h"
-#include "c:\pc\source\magxdesk.3\pattern.h"
+#include "..\magxdesk.5\pattern.h"
 
 static char _path[512];	/* fÅr Rekursion */
 static int depth;
@@ -86,7 +87,7 @@ static long _filesearch( void )
 		/* Auf Verzeichnis prÅfen, Rekursion */
 		/* --------------------------------- */
 
-		if	((xa.mode & S_IFMT) == 0040000)
+		if	((xa.st_mode & S_IFMT) == 0040000)
 			{
 			old = _path + strlen(_path);
 			strcpy(old, fname+4);
@@ -106,16 +107,16 @@ static long _filesearch( void )
 				{
 
 				if	((_min_date != -1) &&
-					(xa.mdate <= _min_date))
+					(xa.st_mtim.u.d.date <= _min_date))
 					continue;
 				if	((_max_date != -1) &&
-					(xa.mdate >= _max_date))
+					(xa.st_mtim.u.d.date >= _max_date))
 					continue;
 				if	((_min_len != -1L) &&
-					(xa.size <= _min_len))
+					(xa.st_size <= _min_len))
 					continue;
 				if	((_max_len != -1L) &&
-					(xa.size >= _max_len))
+					(xa.st_size >= _max_len))
 					continue;
 
 				_callback_match(_path, fname+4);
