@@ -1,23 +1,23 @@
 MAGXDESK.APP
 .C[-I..\..\inc_c]
+.C[-P]
 .L[-S=2048]
 =
 cstartv.o
-;MINSTART.S							; minimaler Startup-Code
-MAGXDESK	(k.h,magxdesk.h)	[-P -W-stv]	; RAHMENPROGRAMM, REDRAWS
-DMENU	(k.h,magxdesk.h)	[-P -W-stv]	; Menue
-DEFAULTS	(k.h,magxdesk.h)	[-P -W-stv]	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
-DKLICK	(k.h,magxdesk.h)	[-P -W-stv]	; MAUSAKTIONEN (™FFNEN)
-DIALOGS	(k.h,magxdesk.h,dlg_info.h)	[-P -W-stv]	; DIALOGE
-DLG_INFO	(k.h,magxdesk.h,dlg_info.h)	[-P -W-stv]	; Datei-Info
-KLICK	(k.h,magxdesk.h)	[-P -W-stv]  	; MAUSAKTIONEN
-DWINDOWS	(k.h,magxdesk.h)	[-P -W-stv]
-PATTERN	(pattern.h)
-FILES	(k.h,magxdesk.h)	[-P]			; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
-ALLG		(k.h)
-IMGLOAD
-KACHEL	(kachel.h)
-SPEC		(k.h)						; TOS- SPEZIFISCHES
+magxdesk.c	(k.h,magxdesk.h)	; RAHMENPROGRAMM, REDRAWS
+dmenu.c		(k.h,magxdesk.h)	; Menue
+defaults.c	(k.h,magxdesk.h)	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
+dklick.c	(k.h,magxdesk.h)	; MAUSAKTIONEN (™FFNEN)
+dialogs.c	(k.h,magxdesk.h,dlg_info.h)	; DIALOGE
+dlg_info.c	(k.h,magxdesk.h,dlg_info.h)	; Datei-Info
+klick.c		(k.h,magxdesk.h)	 	; MAUSAKTIONEN
+dwindows.c	(k.h,magxdesk.h)
+pattern.c	(pattern.h)
+files.c		(k.h,magxdesk.h)	; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
+allg.c		(k.h)
+imgload.c
+kachel.c	(kachel.h)
+spec.c		(k.h)						; TOS- SPEZIFISCHES
 ..\..\kernel\aes\src\wdialog\shelsort.c
 ..\..\lib\mylibs\src\ll.s			; long long lib
 

@@ -2963,7 +2963,7 @@ static void MY_keyed( WINDOW *w, int kstate, int key )
 						goto control_h;
 					len = (int) strlen(w->sel_maske);
 					if	(!len)
-						break;
+						goto control_h;
 					if	(len > 2)
 						{
 						w->sel_maske[len-2] = '*';
