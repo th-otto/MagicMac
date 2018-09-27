@@ -20,8 +20,10 @@
 #include <stdlib.h>
 #include "windows.h"
 #include "globals.h"
+#include "toserror.h"
 #include "mgnotice.h"
 #include "gemut_mt.h"
+#include <wdlgfslx.h>
 #if DEBUG
 #include <stdio.h>
 #endif
@@ -399,7 +401,7 @@ static void read_all_notices( char *path )
 						xywh[1] = scrg.g_h - 8;
 
 					memcpy(data, s, strlen(s)+1);
-					Mshrink(0, data, strlen((char *) data)+1);
+					Mshrink(data, strlen((char *) data)+1);
 					w = NULL;
 					errcode = open_notice_wind(data,
 								id,
@@ -851,12 +853,12 @@ int do_key( EVNT *w_ev, WINDOW *w )
 			menu = MT_FILE;
 			entry = M_NEW;
 			break;
-/*
+#if 0
 		case 0x180f:	/* ^O */
 			menu = MT_FILE;
 			entry = M_OPEN;
 			break;
-*/
+#endif
 		case 0x2004:	/* ^D */
 			menu = MT_FILE;
 			entry = M_DELETE;
@@ -1000,11 +1002,14 @@ int main( void )
 			  2,			/* Doppelklicks erkennen 	*/
 			  1,			/* nur linke Maustaste		*/
 			  1,			/* linke Maustaste gedrÅckt	*/
-			  0,NULL,		/* kein 1. Rechteck			*/
-			  0,NULL,		/* kein 2. Rechteck			*/
+			  0,0,0,0,0,		/* kein 1. Rechteck			*/
+			  0,0,0,0,0,		/* kein 2. Rechteck			*/
 			  w_ev.msg,
 			  0L,	/* ms */
-			  (EVNTDATA*) &(w_ev.mx),
+			  &w_ev.mx,
+			  &w_ev.my,
+			  &w_ev.mbutton,
+			  &w_ev.kstate,
 			  &w_ev.key,
 			  &w_ev.mclicks
 			  );

@@ -13,12 +13,6 @@
 #include "gemutils.h"
 #include "windows.h"
 
-#ifndef WM_ICONIFY
-#define WM_ICONIFY       34                                 /* AES 4.1     */
-#define WM_UNICONIFY     35                                 /* AES 4.1     */
-#define WM_ALLICONIFY    36                                 /* AES 4.1     */
-#endif
-
 WINDOW *windows[NWINDOWS];
 
 

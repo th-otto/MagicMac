@@ -1,10 +1,11 @@
+#include <wdlgwdlg.h>
+
 #define NOTICE_MEM	512		/* Bytes pro Notiz */
 #define EDITFELD 0			/* Objekt #0 ist G_EDIT */
 
 extern void subobj_wdraw(void *d, int obj, int startob, int depth);
 extern void options_dial_init_rsc( void );
-extern WORD cdecl hdl_options( DIALOG *d, EVNT *events, WORD exitbutton,
-				WORD clicks, void *data );
+extern WORD cdecl hdl_options(struct HNDL_OBJ_args);
 
 extern int ncolours;
 extern WINDOW *selected_window;

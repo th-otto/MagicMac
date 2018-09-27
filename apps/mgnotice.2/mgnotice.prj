@@ -6,9 +6,8 @@ mgnotice.app
 .L[-S=$1000]   ; Stackgr”že 4k
 =
 cstartv.o     ; startup code
-mgnotice.c       (mgnotice.h,globals.h,windows.h)
-new_dial.c		(mgnotice.h,globals.h)
-opt_dial.c		(mgnotice.h,globals.h)
+mgnotice.c     (mgnotice.h,globals.h,windows.h)
+opt_dial.c	(mgnotice.h,globals.h)
 windows.c		(windows.h)
 mgnwind.c		(globals.h,windows.h)
 ..\..\lib\mylibs\src\gemut_mt.c

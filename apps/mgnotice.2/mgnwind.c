@@ -15,6 +15,7 @@
 #include <stdio.h>
 #endif
 #include <stdlib.h>
+#include "toserror.h"
 #include "gemut_mt.h"
 #include "portab.h"
 #include "windows.h"
@@ -70,7 +71,7 @@ void calc_size_notice_wind( WINDOW *w )
 
 	/* Auženbereich berechnen */
 
-	wind_calc(WC_BORDER, NOTICE_W_KIND, &(w->in),&(w->out));
+	wind_calc_grect(WC_BORDER, NOTICE_W_KIND, &(w->in),&(w->out));
 }
 
 
@@ -168,14 +169,14 @@ static void MY_buttoned( WINDOW *w, int nclicks, EVNTDATA *ev )
 			graf_rubbox(w->in.g_x, w->in.g_y,
 						16, w->charH,
 						&w->in.g_w, &w->in.g_h);
-			wind_calc(WC_BORDER, NOTICE_W_KIND, &(w->in),&(w->out));
+			wind_calc_grect(WC_BORDER, NOTICE_W_KIND, &(w->in),&(w->out));
 			w->sized(w, &w->out);
 			}
 		else	{
 		/* Ansonsten wird das Fenster verschoben	*/
 			graf_dragbox(w->out.g_w, w->out.g_h,
 						w->out.g_x, w->out.g_y,
-						&scrg,
+						scrg.g_x, scrg.g_y, scrg.g_w, scrg.g_h,
 						&w->out.g_x, &w->out.g_y);
 			w->moved(w, &w->out);
 			}
@@ -214,15 +215,15 @@ static void MY_buttoned( WINDOW *w, int nclicks, EVNTDATA *ev )
 			/* Fenster selektieren */
 			/* ------------------- */
 
-/*
+#if 0
 			if	(!w->selected)
 				{
 				select_window(w);
 				}
-*/
-/*
+#endif
+#if 0
 			wind_set(-1, WF_TOP, -1);	/* Men nach oben! */
-*/
+#endif
 			return;
 			}
 		}
@@ -365,7 +366,7 @@ long open_notice_wind( unsigned char *notice, int id,
 	w = Malloc(sizeof(WINDOW));
 	if	(!w)
 		return(ENSMEM);
-	w->handle = wind_create(NOTICE_W_KIND, &scrg);	/* keine Fensterelemente */
+	w->handle = wind_create_grect(NOTICE_W_KIND, &scrg);	/* keine Fensterelemente */
 	if	(w->handle < 0)
 		{
 		fehler:

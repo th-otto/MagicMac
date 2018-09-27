@@ -13,12 +13,6 @@
 #include "gemut_mt.h"
 #include "windows.h"
 
-#ifndef WM_ICONIFY
-#define WM_ICONIFY       34                                 /* AES 4.1     */
-#define WM_UNICONIFY     35                                 /* AES 4.1     */
-#define WM_ALLICONIFY    36                                 /* AES 4.1     */
-#endif
-
 extern WINDOW *windows[NWINDOWS];
 extern GRECT scrg;
 
@@ -137,7 +131,7 @@ static void fulled(WINDOW *w)
 
 	if	((out->g_x == full.g_x) && (out->g_y == full.g_y) &&
 		 (out->g_w == full.g_w) && (out->g_h == full.g_h)) {
-		graf_shrinkbox(&prev, &full);
+		graf_shrinkbox_grect(&prev, &full);
 		newg = &prev;
 		}
 
@@ -146,7 +140,7 @@ static void fulled(WINDOW *w)
 	/* ------------------------------------------------ */
 
 	else {
-		graf_growbox(out, &full);
+		graf_growbox_grect(out, &full);
 		newg = &full;
 		}
 
@@ -180,7 +174,7 @@ static void _message_obj_window(WINDOW *w, int kstate, int message[16])
 		case WM_FULLED:
 			w->fulled(w);
 			break;
-/*
+#if 0
 		case WM_ARROWED:
 			w->arrowed(w, message[4]);
 			break;
@@ -190,7 +184,7 @@ static void _message_obj_window(WINDOW *w, int kstate, int message[16])
 		case WM_VSLID:
 			w->vslid(w, message[4]);
 			break;
-*/
+#endif
 		case WM_SIZED:
 			w->sized(w, (GRECT *) (message+4));
 			break;
@@ -249,7 +243,7 @@ static int arrange (WINDOW *w)
 
 static void opened(WINDOW *w)
 {
-	wind_open(w->handle, &(w->out));
+	wind_open_grect(w->handle, &(w->out));
 	wind_get_grect(w->handle, WF_WORKXYWH, &(w->in));
 	w->arrange(w);
 }

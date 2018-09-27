@@ -1,4 +1,5 @@
 #include "wglobals.h"
+#include <wdlgedit.h>
 
 #define WFLAG_ICONIFIED	1
 
