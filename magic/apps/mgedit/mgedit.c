@@ -21,8 +21,8 @@
 #include "globals.h"
 #include <wdlgfslx.h>
 #include "mgedit.h"
-#include "gemut_mt.h"
 #include "mm7.h"
+#include "gemut_mt.h"
 #include "toserror.h"
 #if DEBUG
 #include <stdio.h>
@@ -53,7 +53,6 @@ void *d_options = NULL;
 
 /* Dateiauswahl-Dialog */
 
-void saveas_file_close( void );
 typedef enum { fxopen, fxsaveas } fslx_modet;
 static fslx_modet fslx_mode;
 static XFSL_DIALOG *fslx_dialog;
@@ -450,15 +449,36 @@ int save_window( WINDOW *w, char *path,
 
 /****************************************************************
 *
+* Das Dateiauswahl-Fenster wurde mit OK verlassen.
+* Speichert ein Fenster per Dateiauswahl in eine Datei
+*
+****************************************************************/
+
+void saveas_file_close( void )
+{
+	if	(fslx_button)
+		{
+		strcat(fslx_path, fslx_fname);
+		save_window( fslx_saveas_w, fslx_path,
+				fslx_bsel, fslx_esel );
+		}
+	if	(fslx_saveas_w)
+		{
+		fslx_saveas_w->save_active = FALSE;
+		fslx_saveas_w = NULL;
+		}
+}
+
+
+/****************************************************************
+*
 * ôffnet den Fensterdialog "Datei speichern als..."
 *
 ****************************************************************/
 
-void saveas_file_open( WINDOW *w )
+static void saveas_file_open( WINDOW *w )
 {
 	char *s;
-
-
 
 	edit_get_sel(&w->tree, EDITFELD, &fslx_bsel, &fslx_esel);
 	strcpy(fslx_path, w->path);
@@ -470,6 +490,7 @@ void saveas_file_open( WINDOW *w )
 	*s = EOS;
 
 	fslx_mode = fxsaveas;
+#ifdef MM7
 	{
 	char *dp;
 	LONG ret;
@@ -495,32 +516,25 @@ void saveas_file_open( WINDOW *w )
 		}
 	else	fslx_button = 0;	/* Abbruch */
 	}
+#else
+	fslx_dialog = fslx_open(
+				Rgetstring((fslx_bsel) ? STR_SAVEBLOCK : STR_SAVEFILE,
+					NULL),
+				-1,-1,
+				&fslx_whdl,
+				fslx_path, 256,
+				fslx_fname, 64,
+				NULL,
+				0L,
+				NULL,
+				SORTDEFAULT,
+				0);
+#endif
 	fslx_saveas_w = w;
 	w->save_active = TRUE;
+#ifdef MM7
 	saveas_file_close();
-}
-
-
-/****************************************************************
-*
-* Das Dateiauswahl-Fenster wurde mit OK verlassen.
-* Speichert ein Fenster per Dateiauswahl in eine Datei
-*
-****************************************************************/
-
-void saveas_file_close( void )
-{
-	if	(fslx_button)
-		{
-		strcat(fslx_path, fslx_fname);
-		save_window( fslx_saveas_w, fslx_path,
-				fslx_bsel, fslx_esel );
-		}
-	if	(fslx_saveas_w)
-		{
-		fslx_saveas_w->save_active = FALSE;
-		fslx_saveas_w = NULL;
-		}
+#endif
 }
 
 
@@ -552,16 +566,17 @@ int close_file( WINDOW *w )
 		{
 		if	(terminate)
 			{
-/*
-			menu_ienable( adr_menu, MT_DESK, TRUE );
-			menu_ienable( adr_menu, MT_FILE, TRUE );
-			menu_ienable( adr_menu, MT_OPTIONS, TRUE );
-			menu_bar(adr_menu, TRUE);
-*/
+#ifdef MM7
 			MgMc7EnableItem(1,0);
 			MgMc7EnableItem(2,0);
 			MgMc7EnableItem(3,0);
 			MgMc7DrawMenuBar();
+#else
+			menu_ienable( adr_menu, MT_DESK, TRUE );
+			menu_ienable( adr_menu, MT_FILE, TRUE );
+			menu_ienable( adr_menu, MT_OPTIONS, TRUE );
+			menu_bar(adr_menu, TRUE);
+#endif
 
 			terminate = FALSE;
 			}
@@ -731,8 +746,8 @@ static int do_menu( int title, int entry, WINDOW *w)
 	if	(state & DISABLED)
 		return(0);	/* Eintrag ungÅltig */
 	if	(!(state & SELECTED))
-		{
-	/*	menu_tnormal(adr_menu, title, 0);	*/
+	{
+#ifdef MM7
 		switch(title)
 			{
 			case MT_DESK: MgMc7MenuHilite(1);break;
@@ -740,7 +755,10 @@ static int do_menu( int title, int entry, WINDOW *w)
 			case MT_OPTIONS: MgMc7MenuHilite(3);break;
 			}
 		adr_menu[title].ob_state |= SELECTED;
-		}
+#else
+		menu_tnormal(adr_menu, title, 0);
+#endif
+	}
 
 	switch( entry )
 		{
@@ -759,10 +777,11 @@ static int do_menu( int title, int entry, WINDOW *w)
 				wind_set(fslx_whdl,
 						WF_TOP, 0, 0, 0, 0);
 				}
-			else	{
+			else
+			{
 				fslx_mode = fxopen;
 				fslx_path[0] = fslx_fname[0] = EOS;
-
+#ifdef MM7
 				{
 				char *dp;
 				LONG ret;
@@ -789,7 +808,20 @@ static int do_menu( int title, int entry, WINDOW *w)
 				else	fslx_button = 0;	/* Abbruch */
 				}
 				open_file_close();
-				}
+#else
+				fslx_dialog = fslx_open(
+							Rgetstring(STR_LOADFILE,NULL),
+							-1,-1,
+							&fslx_whdl,
+							fslx_path, 256,
+							fslx_fname, 64,
+							NULL,
+							0L,
+							NULL,
+							SORTDEFAULT,
+							0);
+#endif
+			}
 			break;
 		case MEN_CLOSE:
 			if	(w)
@@ -825,8 +857,11 @@ static int do_menu( int title, int entry, WINDOW *w)
 			open_options();
 			break;
 		}
-/*	menu_tnormal(adr_menu, title, 1);	*/
+#ifdef MM7
 	MgMc7MenuHilite(0);
+#else
+	menu_tnormal(adr_menu, title, 1);
+#endif
 	return(ret);
 }
 
@@ -959,6 +994,7 @@ int main( int argc, char *argv[] )
 
 	options_dial_init_rsc();
 
+#ifdef MM7
 	err = MgMc7Init();		/* Mac-Funktionen */
 	if	(err)
 		return((int) err);
@@ -966,6 +1002,9 @@ int main( int argc, char *argv[] )
 	err = MgMc7InitMenuBar("MgEdit.rsrc", 128, adr_menu);
 	if	(err)
 		return((int) err);
+#else
+	menu_bar(adr_menu, TRUE);
+#endif
 
 	/* Alle Åbergebenen Dateien îffnen */
 	/* ------------------------------- */
@@ -1042,6 +1081,7 @@ int main( int argc, char *argv[] )
 			if	(do_key(&w_ev, w))
 				goto ende;
 
+#ifdef MM7
 		/* Mac-Funktionen */
 		/* -------------- */
 
@@ -1095,6 +1135,7 @@ int main( int argc, char *argv[] )
 					goto ende;
 				}
 			}
+#endif
 		
 		/* Editorfenster */
 		/* ------------- */
@@ -1143,17 +1184,17 @@ int main( int argc, char *argv[] )
 				ende:
 				if	(!terminate)
 					{
-/*
-					menu_ienable( adr_menu, MT_DESK, FALSE );
-					menu_ienable( adr_menu, MT_FILE, FALSE );
-					menu_ienable( adr_menu, MT_OPTIONS, FALSE );
-					menu_bar(adr_menu, TRUE);
-*/
+#ifdef MM7
 					MgMc7DisableItem(1,0);
 					MgMc7DisableItem(2,0);
 					MgMc7DisableItem(3,0);
 					MgMc7DrawMenuBar();
-
+#else
+					menu_ienable( adr_menu, MT_DESK, FALSE );
+					menu_ienable( adr_menu, MT_FILE, FALSE );
+					menu_ienable( adr_menu, MT_OPTIONS, FALSE );
+					menu_bar(adr_menu, TRUE);
+#endif
 					if	(fslx_dialog && (fslx_mode == fxopen))
 						{
 						fslx_close(fslx_dialog);
@@ -1243,7 +1284,9 @@ int main( int argc, char *argv[] )
 		Slbclose( slb );
 	if	(update)
 		wind_update(END_UPDATE);
+#ifdef MM7
 	MgMc7Exit();	/* Mac-Funktionen */
+#endif
 	appl_exit();
 	return(0);
 }

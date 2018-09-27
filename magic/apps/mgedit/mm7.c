@@ -1,12 +1,20 @@
-/* * Schnittstelle zur Spezialversion von MagiCMac
- * (Åber "Men XCMD" und "Nav XCMD". *
+/*
+ * Schnittstelle zur Spezialversion von MagiCMac
+ * (Åber "Men XCMD" und "Nav XCMD".
+ *
  * bietet:
  *	- MenÅs
  *	- Hintergrund
- *	- Dateiauswahl */
-#include <stddef.h>#include <stdlib.h>#include <string.h>#include <tos.h>
+ *	- Dateiauswahl
+ */
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tos.h>
 #include <aes.h>
-#include "mm7.h"#include "mgmc_api.h"
+#include "mm7.h"
+#include "mgmc_api.h"
 #include "men_xcmd.h"
 #include "nav_xcmd.h"
 
@@ -17,7 +25,9 @@ typedef struct {
 	long		value;
 } COOKIE;
 
-static MgMcCookie *gMgMcCookie;static XCMDMgrRec *xcmd;static XCMDHdl men_hdl = -1;		/* fÅr Men XCMD */
+static MgMcCookie *gMgMcCookie;
+static XCMDMgrRec *xcmd;
+static XCMDHdl men_hdl = -1;		/* fÅr Men XCMD */
 static XCMDHdl nav_hdl = -1;		/* fÅr Nav XCMD */
 static USERBLK userblk_macmenu;
 static WORD mbar_h;
@@ -51,7 +61,8 @@ static OBJECT o =
 	0,	/* w */
 	0	/* h */
 };
-/*********************************************************************
+
+/*********************************************************************
 *
 * Ermittelt einen Cookie
 *
@@ -88,27 +99,38 @@ static int cdecl draw_bg( PARMBLK *p )
 * Installiert den Desktop-Hintergrund.
 *
 *********************************************************************/
-LONG MgMc7Init (void){
-	COOKIE *cookie;	GRECT desk_g;
+
+LONG MgMc7Init (void)
+{
+	COOKIE *cookie;
+	GRECT desk_g;
 
 
 
 	if	(gMgMcCookie)
 		return(-2);	/* schon initialisiert */
 
-	cookie = getcookie('MgMc');	if	(!cookie)
-		return(-1);
+	cookie = getcookie('MgMc');
+	if	(!cookie)
+		return(-1);
+
 	/* Schnittstellen */
 
-	gMgMcCookie = (MgMcCookie *) cookie->value;	xcmd = gMgMcCookie->xcmdMgrPtr;	if	(!xcmd)
+	gMgMcCookie = (MgMcCookie *) cookie->value;
+	xcmd = gMgMcCookie->xcmdMgrPtr;
+	if	(!xcmd)
 		{
 		err:
 		gMgMcCookie = NULL;
 		return(-1);
-		}	men_hdl = xcmd->open("Men XCMD");	if	((long) men_hdl < 0)
+		}
+	men_hdl = xcmd->open("Men XCMD");
+	if	((long) men_hdl < 0)
 		goto err;			/* Men XCMD ist nicht installiert */
-	nav_hdl = xcmd->open("Nav XCMD");	if	((long) nav_hdl < 0)
-		goto err;			/* Nav XCMD ist nicht installiert */
+	nav_hdl = xcmd->open("Nav XCMD");
+	if	((long) nav_hdl < 0)
+		goto err;			/* Nav XCMD ist nicht installiert */
+
 	wind_get_grect(0, WF_WORKXYWH, &desk_g);
 	mbar_h = desk_g.g_y;
 
@@ -121,14 +143,18 @@ static int cdecl draw_bg( PARMBLK *p )
 	wind_update(BEG_UPDATE);
 	objc_wdraw(&bg, 0, 1, &desk_g, 0);
 	wind_update(END_UPDATE);
-	return(0);}
+	return(0);
+}
+
 
 /*********************************************************************
 *
 * Exitialisierung der Bibliothek.
 *
 *********************************************************************/
-LONG MgMc7Exit (void){
+
+LONG MgMc7Exit (void)
+{
 	if	(!gMgMcCookie)
 		return(-1);	/* nicht initialisiert */
 
@@ -138,7 +164,8 @@ static int cdecl draw_bg( PARMBLK *p )
 		xcmd->close(men_hdl);
 	if	(nav_hdl >= 0)
 		xcmd->close(nav_hdl);
-	return(0);}
+	return(0);
+}
 
 
 /*********************************************************************
@@ -146,7 +173,9 @@ static int cdecl draw_bg( PARMBLK *p )
 * MenÅ anmelden.
 *
 *********************************************************************/
-LONG MgMc7InitMenuBar( char *fname, short rscno, OBJECT *tree ){
+
+LONG MgMc7InitMenuBar( char *fname, short rscno, OBJECT *tree )
+{
 	OpenMenuParm mparm;
 	OBJECT *ob;
 	long ret;
@@ -176,7 +205,8 @@ static int cdecl draw_bg( PARMBLK *p )
 		}
 
 	mparm.rsc_filename = fname;
-	mparm.rsc_mbar_rscno = rscno;	ret = xcmd->call (men_hdl, xcmdOpenMenu, &mparm);
+	mparm.rsc_mbar_rscno = rscno;
+	ret = xcmd->call (men_hdl, xcmdOpenMenu, &mparm);
 
 	if	(ret)
 		return(ret);
@@ -191,7 +221,9 @@ static int cdecl draw_bg( PARMBLK *p )
 * MenÅ zeichnen.
 *
 *********************************************************************/
-LONG MgMc7DrawMenuBar( void ){
+
+LONG MgMc7DrawMenuBar( void )
+{
 	return(xcmd->call (men_hdl, xcmdDrawMenu, NULL));
 }
 
@@ -210,7 +242,8 @@ LONG MgMc7NavGetFile( char *buf, int buflen )
 	NGetFileParm gparm;
 
 	gparm.buflen = buflen;
-	gparm.buf = (char *) buf;	return(xcmd->call (nav_hdl, xcmdGetFile, &gparm));
+	gparm.buf = (char *) buf;
+	return(xcmd->call (nav_hdl, xcmdGetFile, &gparm));
 }
 
 
@@ -229,7 +262,8 @@ LONG MgMc7NavPutFile( char *buf, int buflen )
 
 
 	pparm.buflen = buflen;
-	pparm.buf = (char *) buf;	return(xcmd->call (nav_hdl, xcmdPutFile, &pparm));
+	pparm.buf = (char *) buf;
+	return(xcmd->call (nav_hdl, xcmdPutFile, &pparm));
 }
 
 
@@ -278,7 +312,8 @@ LONG MgMc7DoMouseClick(int mx, int my, int *menu, int *entry)
 			xcmd->call( men_hdl, xcmdSwitchToMacOS, &swparm);
 /*
 			byte = 2;
-			gMgMcCookie->configKernel (5, &byte);*/
+			gMgMcCookie->configKernel (5, &byte);
+*/
 			return(2);	/* Hintergrund verarbeitet */
 			}
 		}
