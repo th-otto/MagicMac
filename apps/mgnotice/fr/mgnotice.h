@@ -17,7 +17,7 @@
  * Number of Trees:          5
  * Number of Userblks:       0
  * Number of Images:         1
- * Total file size:          3882
+ * Total file size:          3850
  */
 
 #undef RSC_NAME
@@ -103,16 +103,16 @@
 #define OPTIONS_SAVE       9 /* BUTTON in tree T_OPTIONS */
 
 #define ALRT_ERROPENWIND   0 /* Alert string */
-/* [2][Fenster kann nicht ge”ffnet werden][Abbruch] */
+/* [2][Impossible d'ouvrir la fenˆtre!][Abandon] */
 
 #define STR_CREATENOTICE   1 /* Free string */
-/* Notiz eingeben */
+/* Entrer notice */
 
 #define STR_OPTIONTITLE    2 /* Free string */
-/* Voreinstellungen */
+/* R‚glages */
 
 #define STR_CHANGENOTICE   3 /* Free string */
-/* Notiz „ndern */
+/* Modifier notice */
 
 
 
