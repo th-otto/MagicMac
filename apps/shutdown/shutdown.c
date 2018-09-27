@@ -33,24 +33,23 @@
 *
 *****************************************************************/
 
+#include <portab.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <tos.h>
 #include <aes.h>
 #include <ctype.h>
-#include <country.h>
+#include <sys/stat.h>
+#include "country.h"
+#include "toserror.h"
 
 #define DEBUG 0
 
-#define EOS '\0'
-#ifndef TRUE
-#define TRUE	1
-#define FALSE	0
-#endif
-#ifndef NULL
-#define NULL ((char *) 0)
-#endif
+#define HDL_CON -1
+#define HDL_AUX -2
+#define HDL_PRN -3
+#define HDL_NUL -4		   /* KAOS extension */
 
 
 /* definiere Default-Timeout-Zeit in Millisekunden */
@@ -91,22 +90,6 @@ APPLSPEC uncrit[UNAPPL];
 
 
 
-/*********************************************************************
-*
-* Dxreaddir()
-*
-* Beim Fxattr werden Symlinks nicht verfolgt.
-* <xr> enthÑlt nach dem Aufruf den Fehlercode von Fxattr.
-*
-*********************************************************************/
-
-long Dxreaddir(int len, long dirhandle,
-			char *buf, XATTR *xattr, long *xr)
-{
-	return(gemdos(0x142, len, dirhandle, buf, xattr, xr));
-}
-
-
 /****************************************************************
 *
 * FÅhrt alle Programme in <path> aus.
@@ -136,7 +119,7 @@ static void exec_pgm_path( char *path )
 
 		if	(ret || err_xr)
 			continue;
-		if	((xa.mode & S_IFMT) == S_IFLNK)
+		if	((xa.st_mode & S_IFMT) == S_IFLNK)
 			{
 			strcpy(p, path);
 			strcat(p, fname+4);
@@ -144,7 +127,7 @@ static void exec_pgm_path( char *path )
 			if	(err_xr)
 				continue;
 			}
-		if	((xa.mode & S_IFMT) != S_IFREG)
+		if	((xa.st_mode & S_IFMT) != S_IFREG)
 			continue;
 		s = strrchr(fname+4, '.');
 		if	(!s)
@@ -153,7 +136,7 @@ static void exec_pgm_path( char *path )
 			{
 			strcpy(p, path);
 			strcat(p, fname+4);
-			Pexec(EXE_LDEX, p, "\0", NULL);
+			Pexec(0, p, "\0", NULL);
 			}
 		}
 	while(!ret && !err_xr);
@@ -194,13 +177,13 @@ static void shutdown_devices( char *path )
 			continue;
 		strcpy(p, path);
 		strcat(p, fname+4);
-		if	((xa.mode & S_IFMT) == S_IFLNK)
+		if	((xa.st_mode & S_IFMT) == S_IFLNK)
 			{
 			err_xr = Fxattr(0, p, &xa);	/* folge SymLink */
 			if	(err_xr)
 				continue;
 			}
-		if	((xa.mode & S_IFMT) != S_IFCHR)	/* Devices! */
+		if	((xa.st_mode & S_IFMT) != S_IFCHR)	/* Devices! */
 			continue;
 		Fdelete(p);
 /*
@@ -668,11 +651,14 @@ int main(int argc, char *argv[])
 		do	{
 			ev = evnt_multi( (timeout) ? MU_MESAG+MU_TIMER : MU_MESAG,
 							0,0,0,				/* keine Mausklicks */
-							0,NULL,				/* kein 1. Rechteck */
-							0,NULL,				/* kein 2. Rechteck */
+							0,0,0,0,0,				/* kein 1. Rechteck */
+							0,0,0,0,0,				/* kein 2. Rechteck */
 							buf,
 							timeout,
-							&evd,
+							&evd.x,
+							&evd.y,
+							&evd.bstate,
+							&evd.kstate,
 							&dummy,				/* keine Tasten */
 							&dummy);				/* keine Klicks */
 	

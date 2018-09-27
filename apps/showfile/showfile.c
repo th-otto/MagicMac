@@ -6,13 +6,11 @@
 *
 *********************************************************************/
 
+#include <portab.h>
 #include <tos.h>
-#include <tosdefs.h>
+#include <toserror.h>
 #include <country.h>
 
-#define TRUE 1
-#define FALSE 0
-#define NULL ((char *) 0)
 
 /* Keybord states */
 
@@ -45,8 +43,8 @@ unsigned char waitkey( void )
 
 	while(TRUE)
 		{
-		if	(Bconstat(CON))
-			return((unsigned char) Bconin(CON));
+		if	(Bconstat(2))
+			return((unsigned char) Bconin(2));
 /*		vq_mouse(vdi_handle, &st, &dummy, &dummy); */
 st = 0;
 
@@ -62,10 +60,10 @@ st = 0;
 		}
 }
 
-void str_conout(char *s, int len)
+void str_conout(const char *s, int len)
 {
 	while(len--)
-		Bconout(CON, *s++);
+		Bconout(2, *s++);
 }
 
 void init_vt52( void )
@@ -112,7 +110,7 @@ long show_file(char *path)
 					while(Kbshift(-1) & (K_LSHIFT | K_RSHIFT))
 						mode = TRUE;
 					c = buf[lbytes];
-					s = (int) Bconstat(CON);
+					s = (int) Bconstat(2);
 					if	(s || (!mode && c == '\n'))
 						{
 						mode = FALSE;
@@ -185,7 +183,7 @@ long show_file(char *path)
 
 					if	(c == 0x1c || c == 0x1d || c == 0x1e)
 						c = ' ';
-					Bconout(CON, c);
+					Bconout(2, c);
 					}
 				}
 			}

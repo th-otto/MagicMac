@@ -1,4 +1,5 @@
-print.ttp
+showfile.ttp
+.C[-I..\..\inc_c]
 .C[-8-]
 .C[-K-]
 .C[-P-]
@@ -6,7 +7,7 @@ print.ttp
 =
 cstartv.o      ; startup code
 
-print.c
+showfile.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib   ; TOS lib
