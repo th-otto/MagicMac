@@ -6,11 +6,9 @@
 /*----------------------------------------------------------------------------------------*/
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
-#include "types2b.h"
 #include <tos.h> 
 #include <aes.h>
 #include <vdi.h>
-#include "vdicol.h"				/* VDI-Farbfunktionen */
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -107,20 +105,20 @@ WINDOW	*get_window_list( void )
 WINDOW *create_window( WORD kind,
 					GRECT *border,
 					WORD *handle,
-					int8 *name,
-					int8 *iconified_name,
+					char *name,
+					char *iconified_name,
 					OBJECT *iconified_tree )
 {
 	WINDOW	*new = 0L;
 
-	*handle = wind_create( kind, border );
+	*handle = wind_create_grect( kind, border );
 
 	if( *handle >= 0 )
 	{
 		GRECT	workarea;
-		uint32	size;
+		uint32_t	size;
 				
-		wind_calc( WC_WORK, kind, border, &workarea );
+		wind_calc_grect( WC_WORK, kind, border, &workarea );
 		
 		if ( name )															/* Fensternamen vorhanden? */
 		{
@@ -143,13 +141,13 @@ WINDOW *create_window( WORD kind,
 		new->workarea = workarea;										/* Fensterinnenfl„che */
 		if ( name )															/* Fensternamen vorhanden? */
 		{
-			new->name = ((int8 *) new ) + sizeof( WINDOW );
+			new->name = ((char *) new ) + sizeof( WINDOW );
 			strcpy( new->name, name );
 			wind_set_str( new->handle, WF_NAME, new->name );
 
 			if ( iconified_name )
 			{
-				new->iconified_name = (int8 *) new + size - 16;
+				new->iconified_name = (char *) new + size - 16;
 				strncpy( new->iconified_name, iconified_name, 15 );
 				new->iconified_name[15] = 0;
 			}
@@ -317,7 +315,7 @@ void	move_window( WORD handle, GRECT *area )
 		
 		wind_get_grect( 0, WF_WORKXYWH, &desk );					/* Gr”že des Hintergrunds erfragen */
 
-		wind_calc( WC_WORK, kind, area, &window->workarea );
+		wind_calc_grect( WC_WORK, kind, area, &window->workarea );
 
 		if ( window->wflags.snap_x )				
 		{
@@ -335,7 +333,7 @@ void	move_window( WORD handle, GRECT *area )
 			WWORK.g_y -= WWORK.g_y % window->snap_dy;
 		}
 
-		wind_calc( WC_BORDER, kind, &window->workarea, &window->border );
+		wind_calc_grect( WC_BORDER, kind, &window->workarea, &window->border );
 		wind_set_grect( handle, WF_CURRXYWH, &window->border );
 		if	(window->wflags.iconified)
 			{
@@ -383,7 +381,7 @@ void	arr_window( WORD handle, WORD command )
 /* window:					Zeiger auf Fensterstruktur														*/
 /*	dy:						Anzahl der Zeilen																	*/
 /*----------------------------------------------------------------------------------------*/
-void	up_window( WINDOW *window, int32 dy )
+void	up_window( WINDOW *window, int32_t dy )
 {
 	if ( window->y > 0 )													/* Slider schon oben? */
 	{
@@ -408,7 +406,7 @@ void	up_window( WINDOW *window, int32 dy )
 /* window:					Zeiger auf Fensterstruktur														*/
 /*	dy:						Anzahl der Zeilen																	*/
 /*----------------------------------------------------------------------------------------*/
-void	dn_window( WINDOW *window, int32 dy )
+void	dn_window( WINDOW *window, int32_t dy )
 {
 	if (( window->y + window->workarea.g_h ) < window->h )	/* Slider bereits unten? */
 	{
@@ -432,7 +430,7 @@ void	dn_window( WINDOW *window, int32 dy )
 /* window:					Zeiger auf Fensterstruktur														*/
 /*	dx:						Anzahl der Spalten																*/
 /*----------------------------------------------------------------------------------------*/
-void	lf_window( WINDOW *window, int32 dx )
+void	lf_window( WINDOW *window, int32_t dx )
 {
 	if ( window->x > 0 )													/* Slider schon linnks? */
 	{
@@ -457,7 +455,7 @@ void	lf_window( WINDOW *window, int32 dx )
 /* window:					Zeiger auf Fensterstruktur														*/
 /*	dx:						Anzahl der Spalten																*/
 /*----------------------------------------------------------------------------------------*/
-void	rt_window( WINDOW *window, int32 dx )
+void	rt_window( WINDOW *window, int32_t dx )
 {
 	if (( window->x + window->workarea.g_w ) < window->w ) 	/* Slider bereits rechts? */
 	{
@@ -493,7 +491,7 @@ void	hlsid_window( WORD handle, WORD hslid )
 	window = search_struct( handle );
 	if ( window )
 	{
-		int32	old_x;
+		int32_t	old_x;
 
 		old_x = window->x;
 
@@ -531,7 +529,7 @@ void	vslid_window( WORD handle, WORD vslid )
 	window = search_struct( handle );
 	if ( window )
 	{
-		int32	old_y;
+		int32_t	old_y;
 		
 		old_y = window->y;
 		
@@ -702,7 +700,7 @@ void	size_window( WORD handle, GRECT *size )
 
 	if ( window )
 	{
-		boolean	full_redraw;
+		int full_redraw;
 		
 		full_redraw = FALSE;
 		
@@ -714,7 +712,7 @@ void	size_window( WORD handle, GRECT *size )
 		wind_get_grect( 0, WF_WORKXYWH, &desk );					/* Gr”že des Hintergrunds erfragen */
 
 		window->border = *size;											/* Gr”že von Fensteraužen und -Innenfl„che bestimmen */
-		wind_calc( WC_WORK, window->kind, &window->border, &window->workarea );
+		wind_calc_grect( WC_WORK, window->kind, &window->border, &window->workarea );
 	
 		if ( window->wflags.snap_x )									/* x-Koordinate snappen? */
 		{
@@ -788,7 +786,7 @@ void	size_window( WORD handle, GRECT *size )
 			}
 		}
 
-		wind_calc( WC_BORDER, window->kind, &window->workarea, &window->border );
+		wind_calc_grect( WC_BORDER, window->kind, &window->workarea, &window->border );
 		wind_set_grect( handle, WF_CURRXYWH, &window->border );
 		
 		set_slsize( window );											/* Slidergr”že setzen */
@@ -859,9 +857,9 @@ void	set_slsize( WINDOW *window )
 		old_size = window->hslsize;
 
 		if (( WWORK.g_w + window->x ) > window->w )				/* Fenster breiter als der sichtbare Inhalt? */
-			window->hslsize = (WORD) ((int32) WWORK.g_w * 1000 / ( WWORK.g_w + window->x ));
+			window->hslsize = (WORD) ((int32_t) WWORK.g_w * 1000 / ( WWORK.g_w + window->x ));
 		else
-			window->hslsize = (WORD) ((int32) window->workarea.g_w * 1000 / window->w );
+			window->hslsize = (WORD) ((int32_t) window->workarea.g_w * 1000 / window->w );
 		
 		if ( window->hslsize == 0 )
 			window->hslsize = -1;
@@ -879,9 +877,9 @@ void	set_slsize( WINDOW *window )
 		old_size = window->vslsize;
 
 		if (( WWORK.g_h + window->y ) > window->h )				/* Fenster h”her als der sichtbare Inhalt? */
-			window->vslsize = (WORD) ((int32) WWORK.g_h * 1000 / ( WWORK.g_h + window->y ));
+			window->vslsize = (WORD) ((int32_t) WWORK.g_h * 1000 / ( WWORK.g_h + window->y ));
 		else
-			window->vslsize = (WORD) ((int32) window->workarea.g_h * 1000 / window->h );
+			window->vslsize = (WORD) ((int32_t) window->workarea.g_h * 1000 / window->h );
 		
 		if ( window->vslsize == 0 )
 			window->vslsize = -1;
@@ -918,7 +916,7 @@ void	full_window( WORD handle, WORD max_width, WORD max_height )
 		else
 		{
 			wind_get_grect( 0, WF_WORKXYWH, &desk );				/* Gr”že des Desktops */
-			wind_calc( WC_WORK, window->kind, &desk, &desk );	/* Gr”že der Fensterinnenfl„che */
+			wind_calc_grect( WC_WORK, window->kind, &desk, &desk );	/* Gr”že der Fensterinnenfl„che */
 			
 			area = desk;
 
@@ -927,8 +925,8 @@ void	full_window( WORD handle, WORD max_width, WORD max_height )
 
 			if ( window->wflags.limit_wsize )						/*	Fenstergr”že begrenzt? */
 			{
-				int32	max_w;
-				int32	max_h;
+				int32_t	max_w;
+				int32_t	max_h;
 
 				if ( window->limit_w )									/* sichtbare Breite zus„tzlich begrenzt? */
 					max_w = window->limit_w;
@@ -966,7 +964,7 @@ void	full_window( WORD handle, WORD max_width, WORD max_height )
 			if ( area.g_y < desk.g_y )
 				area.g_y = desk.g_y;
 			
-			wind_calc( WC_BORDER, window->kind, &area, &area );
+			wind_calc_grect( WC_BORDER, window->kind, &area, &area );
 			size_window( handle, &area );
 			window->wflags.fuller = 1;
 		}
@@ -1002,11 +1000,11 @@ void	iconify_window( WORD handle, GRECT *size )
 			wind_get_grect( window->handle, WF_CURRXYWH, &area ); 
 			size = &area;
 	
-			wind_open( window->handle, &area );
+			wind_open_grect( window->handle, &area );
 		}
 		else
 		{
-			graf_shrinkbox( size , &window->border );
+			graf_shrinkbox_grect( size , &window->border );
 			wind_set_grect( window->handle, WF_ICONIFY, size );
 		}
 	
@@ -1049,7 +1047,7 @@ void	uniconify_window( WORD handle, GRECT *size )
 		if (( size == 0L ) || ( size->g_w < 1 ) || ( size->g_h < 1 ))
 			size = &window->saved_border;
 
-		graf_growbox( &window->border, size );
+		graf_growbox_grect( &window->border, size );
 		wind_set_grect( window->handle, WF_UNICONIFY, size );
 		window->border = *size;
 		wind_get_grect( window->handle, WF_WORKXYWH, &window->workarea );

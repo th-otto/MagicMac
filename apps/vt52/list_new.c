@@ -10,14 +10,14 @@
 /*	30.08.95																											*/
 /*																														*/
 /*----------------------------------------------------------------------------------------*/
-#include <types2b.h>
 #include <portab.h>
 #include <stddef.h>
 
 #include <tos.h>
+#include <vdi.h>
 #include <list.h>
 
-#define	NEXT( ptr, offset )	( * (void **) ((uint8 *) ptr + offset ))
+#define	NEXT( ptr, offset )	( * (void **) ((char *) ptr + offset ))
 
 /*----------------------------------------------------------------------------------------*/
 /* Eintrag aus der verketteten Liste entfernen															*/
@@ -25,11 +25,11 @@
 /*	root:						Zeiger auf den Zeiger auf den ersten Eintrag								*/
 /* entry:					Zeiger auf den Eintrag															*/
 /*----------------------------------------------------------------------------------------*/
-int16	list_remove( void **root, void *entry, int32 offset )
+int	list_remove( void **root, void *entry, int32_t offset )
 {
 	void	*search;
 
-	search = (void *) ((uint8 *) root - offset );				/* virtueller Anfangseintrag */
+	search = (void *) ((char *) root - offset );				/* virtueller Anfangseintrag */
 
 	while ( NEXT( search, offset ))									/* Nachfolger vorhanden? */
 	{
@@ -54,7 +54,7 @@ int16	list_remove( void **root, void *entry, int32 offset )
 /*	root:						Zeiger auf den Zeiger auf den ersten Eintrag								*/
 /* entry:					Zeiger auf den Eintrag															*/
 /*----------------------------------------------------------------------------------------*/
-void	list_insert( void **root, void *entry, int32 offset )
+void	list_insert( void **root, void *entry, int32_t offset )
 {
 	NEXT( entry, offset ) = *root;
 	*root = entry;
@@ -66,11 +66,11 @@ void	list_insert( void **root, void *entry, int32 offset )
 /*	root:						Zeiger auf den Zeiger auf den ersten Eintrag								*/
 /* entry:					Zeiger auf den Eintrag															*/
 /*----------------------------------------------------------------------------------------*/
-void	list_append( void **root, void *entry, int32 offset )
+void	list_append( void **root, void *entry, int32_t offset )
 {
 	void	*append;
 
-	append = (void *) ((uint8 *) root - offset );				/* virtueller Anfangseintrag */
+	append = (void *) ((char *) root - offset );				/* virtueller Anfangseintrag */
 
 	while ( NEXT( append, offset ))									/* Nachfolger vorhanden? */
 		append = NEXT( append, offset );								/* Zeiger auf den Nachfolger */
@@ -85,7 +85,7 @@ void	list_append( void **root, void *entry, int32 offset )
 /*	what:						zu suchender Wert																	*/
 /*	cmp_entries:			Vergleichsfunktion																*/
 /*----------------------------------------------------------------------------------------*/
-void	*list_search( void *root, int32 what, int32 offset, int16 (*cmp_entries)( int32 what, void *entry ))
+void	*list_search( void *root, int32_t what, int32_t offset, int (*cmp_entries)( int32_t what, void *entry ))
 {
 	void	*search;
 	
@@ -107,7 +107,7 @@ void	*list_search( void *root, int32 what, int32 offset, int16 (*cmp_entries)( i
 /*	root:						Zeiger auf den Zeiger auf den ersten Eintrag								*/
 /*	index:					Index des Eintrags (0 bis ...)												*/
 /*----------------------------------------------------------------------------------------*/
-void	*list_search_nth( void *root, int32 index, int32 offset )
+void	*list_search_nth( void *root, int32_t index, int32_t offset )
 {
 	while ( root )
 	{
@@ -127,9 +127,9 @@ void	*list_search_nth( void *root, int32 index, int32 offset )
 /*	root:						Zeiger auf den Zeiger auf den ersten Eintrag								*/
 /*	search:					Zeiger auf den zu suchenden Eintrag											*/
 /*----------------------------------------------------------------------------------------*/
-int32	list_get_index( void *root, void *search, int32 offset )
+int32_t	list_get_index( void *root, void *search, int32_t offset )
 {
-	int32	index;
+	int32_t	index;
 	
 	index = 0;
 	
@@ -149,9 +149,9 @@ int32	list_get_index( void *root, void *search, int32 offset )
 /* Funktionsresultat:	Anzahl der Eintr„ge																*/
 /*	root:						Zeiger auf den ersten Eintrag													*/
 /*----------------------------------------------------------------------------------------*/
-int32	list_count( void *root, int32 offset )
+int32_t	list_count( void *root, int32_t offset )
 {
-	int32	count;
+	int32_t	count;
 	
 	count = 0;
 	

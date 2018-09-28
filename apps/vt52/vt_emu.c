@@ -6,14 +6,13 @@
 /*----------------------------------------------------------------------------------------*/
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
-/* #include <PORTAB.H> */
+
 #include <tos.h>
 #include <vdi.h>
 #include <aes.h>
 #include <stddef.h>
 #include <stdlib.h>
 
-/* #include "types2b.H" */
 #include "wstruct.h"
 #include "wlib.h"
 
@@ -40,8 +39,8 @@ typedef struct
 /*----------------------------------------------------------------------------------------*/
 /* Lokale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
-#include "VTSTRUCT.H"
-#include "VT_EMU.H"
+#include "vtstruct.h"
+#include "vt_emu.h"
 
 extern	GRECT	mouse_xy;
 extern	WORD	move_flag;

@@ -6,7 +6,7 @@ WORD	reset_wlib( void );
 WINDOW	*get_window_list( void );
 WINDOW	*search_struct( WORD handle );
 WINDOW	*create_window( WORD kind, GRECT *border,
-		WORD *handle, int8 *name, int8 *iconified_name,
+		WORD *handle, char *name, char *iconified_name,
 		OBJECT *iconfied_tree );
 void	set_slpos( WINDOW *window );
 void	set_slsize( WINDOW *window );
@@ -14,10 +14,10 @@ void	redraw_window( WORD handle, GRECT *area );
 void	delete_window( WORD handle );
 void	move_window( WORD handle, GRECT *area );
 void	arr_window( WORD handle, WORD command );
-void	up_window( WINDOW *window, int32 dy );
-void	dn_window( WINDOW *window, int32 dy );
-void	lf_window( WINDOW *window, int32 dx );
-void	rt_window( WINDOW *window, int32 dx );
+void	up_window( WINDOW *window, int32_t dy );
+void	dn_window( WINDOW *window, int32_t dy );
+void	lf_window( WINDOW *window, int32_t dx );
+void	rt_window( WINDOW *window, int32_t dx );
 void	hlsid_window( WORD handle, WORD hslid );
 void	vslid_window( WORD handle, WORD vslid );
 void	size_window( WORD handle, GRECT *size );

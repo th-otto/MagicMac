@@ -14,8 +14,9 @@
 
 #define	DD_TIMEOUT	4000												/* Timeout in ms */
 
-#define	DD_NUMEXTS	8													/* Anzahl der Formate */
-#define	DD_EXTSIZE	32													/* L„nge des Formatfelds */
+#define DD_NUMEXTS	8			/* Number of formats */
+#define DD_EXTLEN   4
+#define DD_EXTSIZE	(DD_NUMEXTS * DD_EXTLEN)
 
 
 #define	DD_NAMEMAX	128												/* maximale L„nge eines Formatnamens */
@@ -24,7 +25,7 @@
 
 WORD	ddcreate( WORD	app_id, WORD rcvr_id, WORD window, WORD mx, WORD my, WORD kbstate, ULONG format[8], void **oldpipesig );
 WORD	ddstry( WORD handle, ULONG format, BYTE *name, LONG size );
-WORD	ddopen( BYTE *pipe, ULONG *format, void **oldpipesig );
-void	ddclose( WORD handle, void *oldpipesig );
+WORD	ddopen( BYTE *pipe, ULONG *format, __mint_sighandler_t *oldpipesig );
+void	ddclose( WORD handle, __mint_sighandler_t oldpipesig );
 WORD	ddrtry( WORD handle, BYTE *name, ULONG *format, LONG *size );
 WORD	ddreply( WORD handle, WORD msg );

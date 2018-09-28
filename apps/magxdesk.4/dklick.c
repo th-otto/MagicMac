@@ -651,14 +651,14 @@ int drag_and_drop(int whdl, int kbsh, int mx, int my)
 
 	add_param(".", &nxt_xarg, &xarg_free, TRUE);
 
-/*	oldpipesig = Psignal(SIGPIPE, SIG_IGN); */
+/*	oldpipesig = Psignal(__MINT_SIGPIPE, __MINT_SIG_IGN); */
 
 	fd = ddcreate(client_id, whdl, mx, my, kbsh, nxt_xarg);
 
 	if	(fd < 0)
 		{
 		Mfree(xarg);
-/*		(void)Psignal(SIGPIPE, oldpipesig); */
+/*		(void)Psignal(__MINT_SIGPIPE, oldpipesig); */
 		if	(fd == -1)
 			Rform_alert(1, ALRT_DD_FAILURE);
 		return(-1);
@@ -678,7 +678,7 @@ int drag_and_drop(int whdl, int kbsh, int mx, int my)
 		}
 	Mfree(xarg);
 	Fclose(fd);
-/*	(void)Psignal(SIGPIPE, oldpipesig); */
+/*	(void)Psignal(__MINT_SIGPIPE, oldpipesig); */
 	return(0);
 }
 

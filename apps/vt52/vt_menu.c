@@ -14,13 +14,16 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
-#include <scancode.h>
-#include <dragdrop.h>
+#include <wdlgfslx.h>
+#include <mint/sysvars.h>
+#include "toserror.h"
+#include "scancode.h"
+#include "dragdrop.h"
 
 #include "wstruct.h"
 #include "wlib.h"
 
-#include "aesmacro.h"
+#undef APPL
 
 typedef struct {
 	void *next;
@@ -50,9 +53,9 @@ typedef struct
 /*----------------------------------------------------------------------------------------*/
 /* Lokale Includes																								*/
 /*----------------------------------------------------------------------------------------*/
-#include "VT52.H"
-#include "VTSTRUCT.H"
-#include "VT_EMU.H"
+#include "de/vt52.h"
+#include "vtstruct.h"
+#include "vt_emu.h"
 
 /*----------------------------------------------------------------------------------------*/
 /* Defines                                                                                */
@@ -165,7 +168,6 @@ WORD  	app_id,
 			aes_handle,
 			pwchar, phchar,
 			pwbox, phbox;
-WORD		*aes_global;
 
 RSHDR		*rsh;
 BYTE		**fstring_addr;
@@ -210,7 +212,7 @@ WORD		columns,
 WORD		font_id,
 			cpoint;
 
-int8		home[128];
+char		home[128];
 BYTE		path[128];
 BYTE		inf_name[128];
 BYTE		scrp_path[128];
@@ -322,15 +324,15 @@ WORD	do_dialog( OBJECT *dialog )
 	form_center_grect( dialog, &size );
 	
 	/* Bildbereich reservieren */
-	form_xdial( FMD_START, &size, &size, &flyinf );
+	form_xdial_grect( FMD_START, &size, &size, &flyinf );
 
 	/* Dialog zeichnen */
-	objc_draw( dialog, ROOT, MAX_DEPTH, &size );
+	objc_draw_grect( dialog, ROOT, MAX_DEPTH, &size );
 	
 	/* Dialog abarbeiten */
 	selected = form_xdo( dialog, ROOT, &lastcrsr, scantab, flyinf ) & 0x7fff;	/* Nummer des Ausgangsobjekts */
 	 
-	form_xdial( FMD_FINISH, &size, &size, &flyinf );
+	form_xdial_grect( FMD_FINISH, &size, &size, &flyinf );
 
 	wind_update( END_MCTRL );	/* Maus freigeben */
 	wind_update( END_UPDATE );	/* Bildschirm freigeben */
@@ -704,7 +706,7 @@ void	menu_font( void )
 			window->limit_w = ( tscreen->columns + 1 ) * tscreen->char_width;	/* maximal sichtbare Breite	*/
 			window->limit_h = ( tscreen->visible_rows + 1 ) * tscreen->char_height;	/* maximal sichtbare H”he	*/
 
-			wind_calc( WC_BORDER, WELEMENTS, &WWORK, &WBORDER );
+			wind_calc_grect( WC_BORDER, WELEMENTS, &WWORK, &WBORDER );
 
 			size_window( window->handle, &WBORDER );	/* Fenster verschieben und Gr”že ver„ndern	*/
 			
@@ -743,7 +745,7 @@ void	menu_tosende( void )
 	/* Die Objekte TERM_FG, TERM_BG und TERM_QUIT mssen direkt aufeinander folgen	*/
 	dialog[term_opt + TERM_FG].ob_state |= SELECTED;
 
-	if ( do_dialog( dialog ) == TERM_OK )
+	if ( do_dialog( dialog ) == VT52_TERM_OK )
 	{
 		if ( dialog[TERM_CLOSE].ob_state & SELECTED )
 			close_term = 1;
@@ -786,7 +788,7 @@ void	receive_dragdrop( WORD *mbuf )
 	if (( window ) && !(window->wflags.iconified))		/* Fenster vorhanden?	*/
 	{
 		WORD	handle;
-		void	*oldsig;
+		__mint_sighandler_t oldsig;
 		BYTE	*pipe = "U:\\PIPE\\DRAGDROP.AA";
 		ULONG	data_types[8] = { 'ARGS',
 										'.TXT',
@@ -1124,7 +1126,7 @@ WINDOW	*open_tos_window( BYTE *fname, TSCREEN *tscreen )
 		if ( win.g_h <= mborder.g_h )
 			mborder.g_h = win.g_h;
 
-		wind_calc( WC_WORK, WELEMENTS, &mborder, &mwork );
+		wind_calc_grect( WC_WORK, WELEMENTS, &mborder, &mwork );
 
 		if ( mwork.g_w > tscreen->char_width * columns )
 			mwork.g_w = tscreen->char_width * columns;
@@ -1136,7 +1138,7 @@ WINDOW	*open_tos_window( BYTE *fname, TSCREEN *tscreen )
 
 		mwork.g_h -= mwork.g_h % tscreen->char_height;
 
-		wind_calc( WC_BORDER, WELEMENTS, &mwork, &mborder );
+		wind_calc_grect( WC_BORDER, WELEMENTS, &mwork, &mborder );
 
 		strcpy( title, " " );
 		strcat( title, fname );
@@ -1174,7 +1176,7 @@ WINDOW	*open_tos_window( BYTE *fname, TSCREEN *tscreen )
 				vslid_window( window->handle, 0 );
 	
 			set_slsize( window );					/* Slidergr”žen berechnen	*/
-			wind_open( handle, &WBORDER );
+			wind_open_grect( handle, &WBORDER );
 		}
 		else
 			form_alert( 1, fstring_addr[NOWINDOWS] );
@@ -1768,7 +1770,7 @@ void	hdle_mesag( WORD *mbuf )
 
 	while ( mbuf[2] > 0 )
 	{
-		int16	read;
+		_WORD read;
 		
 		read = 16;
 		if ( read > mbuf[2] )
@@ -1791,11 +1793,14 @@ void	event_loop( void )
 
 		evnt = evnt_multi( MU_KEYBD | MU_BUTTON | MU_MESAG | MU_TIMER,
 								 2, 1, 1,
-								 0, 0L,
-								 0, 0L,
+								 0, 0, 0, 0, 0,
+								 0, 0, 0, 0, 0,
 								 buf,
 								 utime,
-								 &mouse,
+								 &mouse.x,
+								 &mouse.y,
+								 &mouse.bstate,
+								 &mouse.kstate,
 								 &keycode, &mclicks );
 
 		mousex = mouse.x;
@@ -2048,7 +2053,7 @@ void	std_settings( void )
 {
 	WORD	/*i,*/
 			drive;
-	int8	*env;
+	char *env;
 	
 	columns = 80;
 	rows = 25;
@@ -2144,7 +2149,7 @@ void	load_inf( void )
 	LONG	len;
 	LONG	line_len;
 	LONG	parse_len;
-	int32	err;
+	int32_t	err;
 	
 	old_dta = Fgetdta();
 	Fsetdta( &dta );
@@ -2570,12 +2575,11 @@ WORD	close_all( void )
 /*----------------------------------------------------------------------------------------*/
 /* Hauptprogramm																									*/
 /*----------------------------------------------------------------------------------------*/
-main( WORD argc, BYTE *argv[] )
+int main(int argc, char *argv[])
 {
    WORD	ret_code = -1;
 
    app_id = appl_init();
-	aes_global = _GemParBlk.global;
    if( app_id != -1 )
    {
 		aes_handle = graf_handle( &pwchar, &phchar, &pwbox, &phbox );
@@ -2584,7 +2588,7 @@ main( WORD argc, BYTE *argv[] )
 
       if( vdi_handle != 0 )
       {
-			if( rsrc_load( "VT52.RSC" ) )
+			if( rsrc_load( "vt52.rsc" ) )
 			{
 				vst_load_fonts( vdi_handle, 0 );
 				init_wlib( app_id );

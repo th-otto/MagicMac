@@ -19,13 +19,13 @@ WORD	get_entry_index( LIST_ENTRY *root, LIST_ENTRY *search );
 WORD	count_list_entries( LIST_ENTRY *root );
 #endif
 
-int16	list_remove( void **root, void *entry, int32 offset );
-void	list_insert( void **root, void *entry, int32 offset );
-void	list_append( void **root, void *entry, int32 offset );
-void	*list_search( void *root, int32 what, int32 offset, int16 (*cmp_entries)( int32 what, void *entry ));
-void	*list_search_nth( void *root, int32 index, int32 offset );
-int32	list_get_index( void *root, void *search, int32 offset );
-int32	list_count( void *root, int32 offset );
+int	list_remove( void **root, void *entry, int32_t offset );
+void	list_insert( void **root, void *entry, int32_t offset );
+void	list_append( void **root, void *entry, int32_t offset );
+void	*list_search( void *root, int32_t what, int32_t offset, int (*cmp_entries)( int32_t what, void *entry ));
+void	*list_search_nth( void *root, int32_t index, int32_t offset );
+int32_t	list_get_index( void *root, void *search, int32_t offset );
+int32_t	list_count( void *root, int32_t offset );
 
 
 #define	append_list_entry( root, entry )	list_append(( void **) root, (void *) entry, 0 )

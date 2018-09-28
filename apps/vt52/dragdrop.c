@@ -3,11 +3,13 @@
 	Kommentare ab: Spalte 60											*Spalte 60*
 */
 
-#include	<PORTAB.H>
-#include	<TOS.H>
-#include	<AES.H>
+#include <portab.h>
+#include <signal.h>
+#include <tos.h>
+#include <aes.h>
 #include <string.h>
-#include "DRAGDROP.H"
+#include "dragdrop.h"
+#include "toserror.h"
 
 /*----------------------------------------------------------------------------------------*/
 /* Drag & Drop - Pipe îffnen (fÅr den Sender)															*/
@@ -76,7 +78,7 @@ WORD	ddcreate( WORD	app_id, WORD rcvr_id, WORD window, WORD mx, WORD my, WORD kb
 			{
 				if ( Fread( handle, DD_EXTSIZE, format ) == DD_EXTSIZE )	/* unterstÅtzte Formate lesen */
 				{
-					*oldpipesig = Psignal( SIGPIPE, (void *) SIG_IGN );	/* Dispatcher ausklinken */
+					*oldpipesig = Psignal( __MINT_SIGPIPE, __MINT_SIG_IGN );	/* Dispatcher ausklinken */
 					return( handle );
 				}
 			}
@@ -131,9 +133,9 @@ WORD	ddstry( WORD handle, ULONG format, BYTE *name, LONG size )
 /*	handle:					Handle der Pipe																	*/
 /* oldpipesig:				Zeiger auf den alten Signalhandler											*/
 /*----------------------------------------------------------------------------------------*/
-void	ddclose( WORD handle, void *oldpipesig )
+void	ddclose( WORD handle, __mint_sighandler_t oldpipesig )
 {
-	Psignal( SIGPIPE, oldpipesig );									/* wieder alten Dispatcher eintragen */
+	Psignal( __MINT_SIGPIPE, oldpipesig );									/* wieder alten Dispatcher eintragen */
 	Fclose( handle );														/* Pipe schlieûen */
 }
 
@@ -144,7 +146,7 @@ void	ddclose( WORD handle, void *oldpipesig )
 /* format:					Zeiger auf Array mit unterstÅtzten Datenformaten						*/
 /* oldpipesig:				Zeiger auf den Zeiger auf den alten Signalhandler						*/
 /*----------------------------------------------------------------------------------------*/
-WORD	ddopen( BYTE *pipe, ULONG format[8], void **oldpipesig )
+WORD	ddopen( BYTE *pipe, ULONG format[8], __mint_sighandler_t *oldpipesig )
 {
 	WORD	handle;
 	BYTE	reply;
@@ -155,7 +157,7 @@ WORD	ddopen( BYTE *pipe, ULONG format[8], void **oldpipesig )
 
 	reply = DD_OK;															/* Programm unterstÅtzt Drag & Drop	*/
 
-	*oldpipesig = Psignal( SIGPIPE, (void *) SIG_IGN );		/* Signal ignorieren	*/
+	*oldpipesig = Psignal( __MINT_SIGPIPE, __MINT_SIG_IGN );		/* Signal ignorieren	*/
 
 	if ( Fwrite( handle, 1, &reply ) == 1 )
 	{

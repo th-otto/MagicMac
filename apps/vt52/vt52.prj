@@ -1,0 +1,27 @@
+vt52.prg
+.C[-I..\..\inc_c]
+.C[-P-]
+.C[-K-]
+.C[-M-]
+.L[-S=8192]
+=
+cstartv.o
+vt_emu.c (wstruct.h,wlib.h,vtstruct.h,vt_emu.h)
+vt_sem.s
+vt_bios.s
+vt_xbios.s
+vt_bell.s
+;vt_cook.s
+vt_vdi.s
+vt_aes.s
+vt_eterm.s
+vt_move.s
+vt_menu.c (vtstruct.h,vt_emu.h,vtsys.h,wlib.h,wstruct.h)
+
+dragdrop.c               
+wlib.c (wstruct.h,list.h)
+list_new.c (list.h)
+
+pctoslib.lib
+pcstdlib.lib
+pcgemlib.lib
