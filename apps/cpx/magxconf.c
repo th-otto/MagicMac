@@ -24,9 +24,8 @@ struct save_vars save_vars = { 0 };
 
 #include "magxconf.rsh"
 
-long config;
-OBJECT *maintree;
-XCPB *global_xcpb;
+static long config;
+static XCPB *global_xcpb;
 
 
 
@@ -45,57 +44,59 @@ static char *format_number(unsigned long value, int digits, char *str)
 }
 
 
-static void get_config(long *config)
+static void get_config(void)
 {
 	long conf = Sconfig(SC_GETCONF, 0l);
+	OBJECT *tree = rs_trindex[MAIN];
 	
 	if (conf & SCB_NFAST)
-		rs_object[CF_FASTLOAD].ob_state &= ~OS_SELECTED;
+		tree[CF_FASTLOAD].ob_state &= ~OS_SELECTED;
 	else
-		rs_object[CF_FASTLOAD].ob_state |= OS_SELECTED;
+		tree[CF_FASTLOAD].ob_state |= OS_SELECTED;
 	if (conf & SCB_CMPTB)
-		rs_object[CF_TOSCOMPAT].ob_state |= OS_SELECTED;
+		tree[CF_TOSCOMPAT].ob_state |= OS_SELECTED;
 	else
-		rs_object[CF_TOSCOMPAT].ob_state &= ~OS_SELECTED;
+		tree[CF_TOSCOMPAT].ob_state &= ~OS_SELECTED;
 	if (conf & SCB_NSMRT)
-		rs_object[CF_SMARTREDRAW].ob_state &= ~OS_SELECTED;
+		tree[CF_SMARTREDRAW].ob_state &= ~OS_SELECTED;
 	else
-		rs_object[CF_SMARTREDRAW].ob_state |= OS_SELECTED;
+		tree[CF_SMARTREDRAW].ob_state |= OS_SELECTED;
 	if (conf & SCB_NGRSH)
-		rs_object[CF_GROWBOX].ob_state &= ~OS_SELECTED;
+		tree[CF_GROWBOX].ob_state &= ~OS_SELECTED;
 	else
-		rs_object[CF_GROWBOX].ob_state |= OS_SELECTED;
+		tree[CF_GROWBOX].ob_state |= OS_SELECTED;
 	if (conf & SCB_PULLM)
-		rs_object[CF_PULLDOWN].ob_state |= OS_SELECTED;
+		tree[CF_PULLDOWN].ob_state |= OS_SELECTED;
 	else
-		rs_object[CF_PULLDOWN].ob_state &= ~OS_SELECTED;
+		tree[CF_PULLDOWN].ob_state &= ~OS_SELECTED;
 	if (conf & SCB_FLPAR)
-		rs_object[CF_FLOPPY_DMA].ob_state |= OS_SELECTED;
+		tree[CF_FLOPPY_DMA].ob_state |= OS_SELECTED;
 	else
-		rs_object[CF_FLOPPY_DMA].ob_state &= ~OS_SELECTED;
-	*config = conf;
+		tree[CF_FLOPPY_DMA].ob_state &= ~OS_SELECTED;
+	config = conf;
 }
 
 
-static void set_config(long *config)
+static void set_config(void)
 {
 	long conf = 0;
+	OBJECT *tree = rs_trindex[MAIN];
 	
-	if (!(rs_object[CF_FASTLOAD].ob_state & OS_SELECTED))
+	if (!(tree[CF_FASTLOAD].ob_state & OS_SELECTED))
 		conf = SCB_NFAST;
-	if (rs_object[CF_TOSCOMPAT].ob_state & OS_SELECTED)
+	if (tree[CF_TOSCOMPAT].ob_state & OS_SELECTED)
 		conf |= SCB_CMPTB;
-	if (!(rs_object[CF_SMARTREDRAW].ob_state & OS_SELECTED))
+	if (!(tree[CF_SMARTREDRAW].ob_state & OS_SELECTED))
 		conf |= SCB_NSMRT;
-	if (!(rs_object[CF_GROWBOX].ob_state & OS_SELECTED))
+	if (!(tree[CF_GROWBOX].ob_state & OS_SELECTED))
 		conf |= SCB_NGRSH;
-	if (rs_object[CF_PULLDOWN].ob_state & OS_SELECTED)
+	if (tree[CF_PULLDOWN].ob_state & OS_SELECTED)
 		conf |= SCB_PULLM;
-	if (rs_object[CF_FLOPPY_DMA].ob_state & OS_SELECTED)
+	if (tree[CF_FLOPPY_DMA].ob_state & OS_SELECTED)
 		conf |= SCB_FLPAR;
-	*config &= ~SCONFIG_MASK;
-	*config |= conf;
-	Sconfig(SC_SETCONF, *config);
+	config &= ~SCONFIG_MASK;
+	config |= conf;
+	Sconfig(SC_SETCONF, config);
 }
 
 
@@ -166,28 +167,29 @@ static _WORD handle_msg(_WORD obj, _WORD *msg)
 {
 	_WORD ret = 0;
 	struct save_vars vars;
+	OBJECT *tree = rs_trindex[MAIN];
 	
 	if (obj != -1)
 		obj &= 0x7fff;
 	switch (obj)
 	{
 	case OK:
-		rs_object[OK].ob_state &= ~OS_SELECTED;
+		tree[OK].ob_state &= ~OS_SELECTED;
 		ret = 1;
 		break;
 	case CANCEL:
-		rs_object[CANCEL].ob_state &= ~OS_SELECTED;
+		tree[CANCEL].ob_state &= ~OS_SELECTED;
 		ret = 1;
 		break;
 	case SAVE:
 		if (global_xcpb->XGen_Alert(CPX_SAVE_DEFAULTS) != 0)
 		{
-			set_config(&config);
+			set_config();
 			vars.config = config & SCONFIG_MASK;
 			global_xcpb->CPX_Save(&vars, sizeof(vars));
 		}
-		rs_object[SAVE].ob_state &= ~OS_SELECTED;
-		draw_obj(maintree, SAVE);
+		tree[SAVE].ob_state &= ~OS_SELECTED;
+		draw_obj(tree, SAVE);
 		break;
 	case -1:
 		switch (msg[0])
@@ -196,7 +198,7 @@ static _WORD handle_msg(_WORD obj, _WORD *msg)
 			ret = 1;
 			break;
 		case WM_CLOSED:
-			set_config(&config);
+			set_config();
 			ret = 1;
 			break;
 		}
@@ -210,14 +212,15 @@ static BOOLEAN cdecl cpx_call(GRECT *work)
 	_WORD msg[8];
 	_WORD obj;
 	_WORD ret;
+	OBJECT *tree = rs_trindex[MAIN];
 	
-	rs_object[ROOT].ob_x = work->g_x;
-	rs_object[ROOT].ob_y = work->g_y;
-	get_config(&config);
-	draw_obj(maintree, ROOT);
+	tree[ROOT].ob_x = work->g_x;
+	tree[ROOT].ob_y = work->g_y;
+	get_config();
+	draw_obj(tree, ROOT);
 	do
 	{
-		obj = global_xcpb->Xform_do(rs_object, ROOT, msg);
+		obj = global_xcpb->Xform_do(tree, ROOT, msg);
 		ret = handle_msg(obj, msg);
 	} while (ret == 0);
 	return 0;
@@ -279,13 +282,17 @@ CPXINFO *cdecl cpx_init(XCPB *xcpb)
 	{
 		_WORD i;
 		char *str;
+		OBJECT *tree;
 		
+		tree = rs_object;
 		for (i = 0; i < NUM_OBS; i++)
-			global_xcpb->rsh_obfix(rs_object, i);
-		maintree = rs_trindex[MAIN];
-		str = maintree[VERSION].ob_spec.free_string;
+			global_xcpb->rsh_obfix(tree, i);
+		tree = rs_trindex[MAIN];
+		str = tree[VERSION].ob_spec.free_string;
 		str = format_number(aesvars->date, 8, str + strlen(str) - 1);
-		str -= 6;
+		while (*str != '0')
+			str--;
+		str++;
 		if (aesvars->release < 3)
 		{
 			/* -> 0xe0 = alpha, 0xe1 = beta */
