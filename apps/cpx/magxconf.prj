@@ -1,0 +1,17 @@
+magxconf.cp
+
+.C[-K-]
+.C[-P-]
+.C[-A-]
+.C[-G-]
+.L[-S=0]
+
+=
+cpxstart.s         ; startup code
+
+magxconf.c
+
+aesctrl.s
+mt_aes.c
+pcstdlib.lib
+pctoslib.lib
