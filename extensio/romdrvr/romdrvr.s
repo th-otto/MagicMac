@@ -34,7 +34,7 @@
 MODULBASE   EQU  $fa0000
 
 
-     INCLUDE "OSBIND.INC"
+     INCLUDE "osbind.inc"
 
      TEXT
      SUPER

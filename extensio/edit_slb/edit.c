@@ -13,6 +13,9 @@
 
 #include <tos.h>
 #include <aes.h>
+#include <mt_aes.h>
+#include <wdlgwdlg.h>
+#include <wdlgedit.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
@@ -23,17 +26,14 @@
 #define NULL        ( ( void * ) 0L )
 #endif
 
-#define TRUE   1
-#define FALSE  0
 #define EOS    '\0'
 #define ABS(X) ((X>0) ? X : -X)
 
 
 OBJECT *adr_dialog;
-DIALOG *d_dialog;
-WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
-				WORD exitbutton, WORD clicks, void *data );
+_WORD __CDECL hdl_dialog(struct HNDL_OBJ_args args);
 
+DIALOG *d_dialog;
 int	gl_hhbox, gl_hwbox, gl_hhchar, gl_hwchar;
 int	ap_id;
 int aes_handle;		/* Screen-Workstation des AES */
@@ -119,17 +119,20 @@ int main( void )
 					  2,			/* Doppelklicks erkennen 	*/
 					  1,			/* nur linke Maustaste		*/
 					  1,			/* linke Maustaste gedrÅckt	*/
-					  0,NULL,		/* kein 1. Rechteck			*/
-					  0,NULL,		/* kein 2. Rechteck			*/
+					  0,0,0,0,0,		/* kein 1. Rechteck			*/
+					  0,0,0,0,0,		/* kein 2. Rechteck			*/
 					  w_ev.msg,
 					  0L,	/* ms */
-					  (EVNTDATA*) &(w_ev.mx),
+					  &w_ev.mx,
+					  &w_ev.my,
+					  &w_ev.mbutton,
+					  &w_ev.kstate,
 					  &w_ev.key,
 					  &w_ev.mclicks
 					  );
 
 		edit_evnt( adr_dialog, EDITFELD, whdl_dialog,
-					&w_ev );
+					&w_ev, &err );
 
 		if	(d_dialog && !wdlg_evnt(d_dialog, &w_ev))
 			{
@@ -349,10 +352,7 @@ int dial_font( long *id, long *pt, int *mono, char *name )
 *
 *********************************************************************/
 
-#pragma warn -par
-
-WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
-				WORD exitbutton, WORD clicks, void *data )
+WORD	cdecl hdl_dialog(struct HNDL_OBJ_args args)
 {
 	OBJECT *tree;
 
@@ -362,19 +362,19 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 
 	tree = adr_dialog;
 
-	if	(exitbutton == HNDL_INIT)
+	if	(args.obj == HNDL_INIT)
 		{
 		if	(d_dialog)			/* Dialog ist schon geîffnet ! */
 			return(0);			/* create verweigern */
 
-		d_dialog = d;
+		d_dialog = args.dialog;
 		return(1);
 		}
 
 	/* 2. Fall: Fensternachricht empfangen */
 	/* ----------------------------------- */
 
-	if	(exitbutton == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
 		{
 		return(1);		/* weiter */
 		}
@@ -382,22 +382,22 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(exitbutton == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
+	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		close_dialog:
 		return(0);		/* ...dann schlieûen wir ihn auch */
 		}
 
-	if	(exitbutton < 0)
+	if	(args.obj < 0)
 		return(1);
 
 	/* 4. Fall: Exitbutton wurde betÑtigt */
 	/* ---------------------------------- */
 
-	if	(clicks != 1)
+	if	(args.clicks != 1)
 		goto ende;
 
-	if	(exitbutton == LOAD)			/* Datei laden */
+	if	(args.obj == LOAD)			/* Datei laden */
 		{
 		long ret;
 		int ret2,file;
@@ -424,27 +424,27 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 					if	(ret < 0)
 						goto errf;
 
-					nbuf = Malloc(xa.size+1);
+					nbuf = Malloc(xa.st_size+1);
 					if	(!nbuf)
 						goto errf;
 
-					ret = Fread(file, xa.size, nbuf);
-					if	(ret != xa.size)
+					ret = Fread(file, xa.st_size, nbuf);
+					if	(ret != xa.st_size)
 						{
 						Mfree(nbuf);
 						goto errf;
 						}
 
-					nbuf[xa.size] = '\0';
+					nbuf[xa.st_size] = '\0';
 					edit_close( adr_dialog, EDITFELD );
 					if	(buf)
 						Mfree(buf);
 					buf = nbuf;
 					edit_set_buf(adr_dialog, EDITFELD,
-								(char *) buf, xa.size);
+								(char *) buf, xa.st_size);
 
 					edit_open( adr_dialog, EDITFELD );
-					subobj_wdraw(d, EDITFELD, EDITFELD, 1);
+					subobj_wdraw(args.dialog, EDITFELD, EDITFELD, 1);
 					errf:
 					Fclose(file);
 					}
@@ -453,7 +453,7 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 		goto ende;
 		}
 
-	if	(exitbutton == SAVEAS)			/* Datei sichern */
+	if	(args.obj == SAVEAS)			/* Datei sichern */
 		{
 		long ret;
 		int ret2,file;
@@ -486,7 +486,7 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 		goto ende;
 		}
 
-	if	(exitbutton == AUTOWRAP)		/* Autom. Zeilenumbruch */
+	if	(args.obj == AUTOWRAP)		/* Autom. Zeilenumbruch */
 		{
 		WORD autowrap;
 
@@ -496,33 +496,33 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 				adr_dialog[EDITFELD].ob_width : 0;
 		edit_set_format(adr_dialog, EDITFELD, -1, autowrap);
 		edit_open( adr_dialog, EDITFELD);
-		subobj_wdraw(d, EDITFELD, EDITFELD, 1);
+		subobj_wdraw(args.dialog, EDITFELD, EDITFELD, 1);
 		return(1);
 		}
 
-	if	(exitbutton == FONT)				/* Zeichensatz */
+	if	(args.obj == FONT)				/* Zeichensatz */
 		{
 		long id,pt;
-		WORD fid,fpt;
+		WORD fid,fpt,pix;
 		WORD mono;
 
 		edit_get_font(adr_dialog, EDITFELD,
-						&fid, &fpt, &mono);
+						&fid, &fpt, &pix, &mono);
 		id = fid;
 		pt = (((long) fpt)<<16L);
 		if	(dial_font(&id, &pt, &mono, NULL))
 			{
 			edit_close( adr_dialog, EDITFELD );
 
-			edit_set_font(adr_dialog, EDITFELD, (WORD) id, (WORD) (pt>>16L), mono);
+			edit_set_font(adr_dialog, EDITFELD, (WORD) id, (WORD) (pt>>16L), FALSE, mono);
 
 			edit_open( adr_dialog, EDITFELD );
-			subobj_wdraw(d, EDITFELD, EDITFELD, 1);
+			subobj_wdraw(args.dialog, EDITFELD, EDITFELD, 1);
 			}
 		goto ende;
 		}
 
-	if	(exitbutton == ENDE)				/* Abbruch */
+	if	(args.obj == ENDE)				/* Abbruch */
 		{
 		goto close_dialog;
 		}
@@ -530,8 +530,7 @@ WORD	cdecl hdl_dialog( DIALOG *d, EVNT *events,
 	return(1);
 
 	ende:
-	ob_dsel(tree, exitbutton);
-	subobj_wdraw(d, exitbutton, exitbutton, 1);
+	ob_dsel(tree, args.obj);
+	subobj_wdraw(args.dialog, args.obj, args.obj, 1);
 	return(1);		/* weiter */
 }
-#pragma warn +par

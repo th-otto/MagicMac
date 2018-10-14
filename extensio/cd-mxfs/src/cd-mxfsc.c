@@ -12,10 +12,11 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <sys/stat.h>
 #include "cd-mxfs.h"
 #include "cdfs.h"
-#include <dosix/sys/metados.h>
-#include <dosix/sys/macfs.h>
+#include "metados.h"
+#include "macfs.h"
 
 #include "spin.h"
 
@@ -325,7 +326,11 @@ WORD main (void)
 
 			if (mi1.mi_info->mi_magic == '_MET' &&
 				mi1.mi_info->mi_version >= 0x270)
-				mi1.mi_info->mi_log2phys[i] = mydrives[i]->metadevice;
+			{
+				/* WTF: messing with MetaDOS memory */
+				char *log2phys = (char *)mi1.mi_info->mi_log2phys;
+				log2phys[i] = mydrives[i]->metadevice;
+			}
 			
 			strcpy (buff, "u:\\dev\\dsk.cmtx");
 			buff[14] = tolower (mydrives[i]->metadevice);
@@ -1147,7 +1152,7 @@ static LONG cdecl	xfs_attrib( MX_DD *dd, char *name, WORD mode,
 	ret = xfs_xattr( dd, name, &xa, 0);
 	if	(ret)
 		return(ret);
-	return(xa.attr & 0xff);
+	return(xa.st_attr & 0xff);
 }
 
 

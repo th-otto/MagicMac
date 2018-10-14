@@ -21,6 +21,8 @@
 #include "editob.h"
 #include "globals.h"
 
+#define E_OK 0
+
 /* GEMDOS (MiNT) Fopen modes */
 
 #define   MO_RDONLY       0
@@ -462,7 +464,7 @@ static WORD extent( unsigned char *s, LONG len, WORD mono,
 		}
 	*l = c;
 	return(offs);
-/*
+#if 0
 	unsigned char c;
 	register unsigned char *s2;
 	int out[8];
@@ -476,7 +478,7 @@ static WORD extent( unsigned char *s, LONG len, WORD mono,
 	vqt_extent(vdi_handle, (char *) s, out);
 	*s2 = c;
 	return(out[2] - out[0]/* + 1*/);
-*/
+#endif
 }
 
 
@@ -845,18 +847,18 @@ static int get_selgrects( XEDITINFO *xi, GRECT *obj_g, GRECT *g,
 		return(0);		/* Bereich unsichtbar */
 
 	ng = 1;	/* nur ein GRECT */
-/*
+#if 0
 	if	(xi->mono)
 		xp = bc * xi->charW;
 	else	{
 		if	(bc)
-*/
+#endif
 			xp = extent(xi->lines[bl].line, bc, xi->mono, xi->charW,
 						xi->tabwidth );
-/*
+#if 0
 		else xp = 0;	/* Zeilenanfang! */
 		}
-*/
+#endif
 	g->g_x = obj_g->g_x + xp - xi->xscroll;
 	g->g_y = obj_g->g_y + bl * xi->charH;
 	if	(bl == el)
@@ -3077,17 +3079,17 @@ cursor2:
 			ret = Fcntl(hdl, (long) (&xa), FSTAT);
 			if	(ret >= 0)
 				{
-				nbuf = Malloc(xa.size+1);
+				nbuf = Malloc(xa.st_size+1);
 				if	(nbuf)
 					{
-					ret = Fread(hdl, xa.size, nbuf);
-					if	(ret == xa.size)
+					ret = Fread(hdl, xa.st_size, nbuf);
+					if	(ret == xa.st_size)
 						{
 						s = li->line+xi->ccurs_x;
 						if	(ins_range(tree, obj, &obj_g, whdl, xi,
-							nbuf, xa.size, li))
+							nbuf, xa.st_size, li))
 							vscroll_to(tree, obj, &obj_g, whdl, xi,
-							s + xa.size);
+							s + xa.st_size);
 						else	*errcode = EDITERR_BUFFER_FULL;
 						}
 					Mfree(nbuf);
@@ -3329,11 +3331,11 @@ static WORD button_xeditob( OBJECT *tree, WORD obj, WORD whdl,
 				mwhich = evnt_multi(
 						mwhich,
 						1,1,0,		/* linke Mtaste loslassen */
-						1,&mg,		/* Mauspos. verlassen */
-						0,NULL,		/* kein 2. Mausrechteck */
+						1,mg.g_x,mg.g_y,mg.g_w,mg.g_h,		/* Mauspos. verlassen */
+						0,0,0,0,0,		/* kein 2. Mausrechteck */
 						NULL,		/* keine Message */
 						timer,		/* Autoscroll-Timer */
-						&ev2,
+						&ev2.x, &ev2.y, &ev2.bstate, &ev2.kstate,
 						&dummy,		/* kreturn */
 						&dummy		/* breturn */
 						);

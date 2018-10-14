@@ -1,4 +1,4 @@
-EDITOBJC.SLB
+editobjc.slb
 .L[-S=256]	; minimaler Stack
 =
 edithead.s      ; startup code for SLBs
@@ -9,6 +9,4 @@ memchar2.s
 pcstdlib.lib   ; standard lib
 pcextlib.lib   ; extended lib
 pctoslib.lib   ; TOS lib
-mt_aes.lib
 pcgemlib.lib	; fÅr VDI
-

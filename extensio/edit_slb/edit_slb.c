@@ -60,7 +60,6 @@
 */
 
 #include <tos.h>
-#include <tosdefs.h>
 #include <aes.h>
 #include <vdi.h>
 #include "editob.h"
@@ -69,6 +68,9 @@
 #define NULL        ( ( void * ) 0L )
 #endif
 #pragma warn -par
+
+#define ERROR -1
+#define E_OK 0
 
 typedef void *PD;
 
@@ -81,7 +83,7 @@ int work_out[57],work_in [12];	 /* VDI- Felder fr v_opnvwk() */
 
 void *sys_set_editob( WORD cdecl (*editob)( PARMBLK *pb) )
 {
-	PARMDATA d;
+	MX_PARMDATA d;
 	static WORD	c[] = { 0, 1, 0, 1 };
 
 	d.intin[0] = 4;	/* Subcode 4: Edit-Objekt definieren */
@@ -91,7 +93,7 @@ void *sys_set_editob( WORD cdecl (*editob)( PARMBLK *pb) )
 }
 void *sys_set_getfn( WORD fn )
 {
-	PARMDATA d;
+	MX_PARMDATA d;
 	static WORD	c[] = { 0, 2, 0, 0 };
 
 	d.intin[0] = 1;	/* Subcode 1: AES-Funktion ermitteln */
@@ -101,7 +103,7 @@ void *sys_set_getfn( WORD fn )
 }
 WORD sys_set_setfn( WORD fn, void *f )
 {
-	PARMDATA d;
+	MX_PARMDATA d;
 	static WORD	c[] = { 0, 2, 1, 1 };
 
 	d.intin[0] = 2;	/* Subcode 2: AES-Funktion „ndern */
@@ -149,7 +151,7 @@ static void fn217( AESPB *pb )	/* edit_set() */
 			break;
 		case 3:
 			fontPix = FALSE;
-			if	(pb->contrl[1] > 5)
+			if	(pb->control[1] > 5)
 				fontPix = pb->intin[5];
 			ret = edit_set_font(xi,
 							pb->intin[2],
@@ -223,7 +225,7 @@ static void fn216( AESPB *pb )	/* edit_get() */
 			pb->intout[1] = xi->fontID;
 			pb->intout[2] = xi->fontH;
 			pb->intout[3] = xi->mono;
-			if	(pb->contrl[2] > 4)
+			if	(pb->control[2] > 4)
 				pb->intout[4] = xi->fontPix;
 			break;
 		case 4:
@@ -270,7 +272,7 @@ static void fn215( AESPB *pb )
 						((EVNT *) pb->addrin[1]),
 						(XEDITINFO *) ob->ob_spec.index,
 						&errcode );
-	if	(pb->contrl[2] >= 3)
+	if	(pb->control[2] >= 3)
 		*((LONG *) (pb->intout+1)) = errcode;
 }
 static void fn214( AESPB *pb )

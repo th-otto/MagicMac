@@ -8,8 +8,8 @@
 **
 */
 
-     INCLUDE "MGX_XFS.INC"
-     INCLUDE "MGX_DEVD.INC"
+     INCLUDE "mgx_xfs.inc"
+     INCLUDE "mgx_devd.inc"
 
 
 /*

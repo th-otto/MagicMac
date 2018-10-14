@@ -27,11 +27,12 @@ typedef struct
 	unsigned long reserved[123];
 } CD_DISC_INFO;
 
+#ifndef _MINT_OSTRUCT_H
 typedef struct
 {
 	unsigned short	mi_version;	/* 0x230 == '02.30' */
 	long 			mi_magic;	/* == '_MET' */
-	char 			*mi_log2phys;	/* maps DOS-IDs to MetaDOS XBIOS device numbers */
+	const char 		*mi_log2phys;	/* maps DOS-IDs to MetaDOS XBIOS device numbers */
 
 	/* introduced with version 0x271 */
 	unsigned int 	mi_handles;	/* max. number of open files, 0 == no limit */
@@ -44,6 +45,7 @@ typedef struct
 	long 			reserved;
 	META_INFO_2		*mi_info;
 } META_INFO_1;
+#endif
 
 typedef struct
 {

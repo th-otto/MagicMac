@@ -2,7 +2,10 @@
 
 #define EDITERR_BUFFER_FULL	-200L
 
+
 /* Struktur fÅr ein erweitertes EDIT-Feld */
+#define __EDITOBJC_IMPLEMENTATION
+
 
 typedef struct {
 
@@ -53,6 +56,8 @@ typedef struct {
 	/* Infos fÅr Selektion */
 	unsigned char *bsel,*esel;	/* selektierter Bereich */
 } XEDITINFO;
+
+#include <mt_aes.h>
 
 extern WORD cdecl xeditob_userdef( PARMBLK *pb );
 extern XEDITINFO *edit_create( void );
