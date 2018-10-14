@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <tos.h>
-#include <tosdefs.h>
 
 #define   KER_INTMAVAIL  0x0102
 #define	KER_INTGARBC	0x0103

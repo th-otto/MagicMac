@@ -1,0 +1,15 @@
+showfree.tos
+
+.C[-K-]
+.C[-P-]
+.C[-A-]
+.C[-G-]
+.L[-S=0]
+
+=
+cstartv.o
+
+showfree.c
+
+pcstdlib.lib
+pctoslib.lib
