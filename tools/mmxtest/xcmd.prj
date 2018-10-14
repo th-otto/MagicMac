@@ -1,0 +1,15 @@
+xcmd.ttp
+
+.C[-K-]
+.C[-P-]
+.C[-A-]
+.C[-G-]
+.L[-S=0]
+
+=
+cstartv.o
+
+xcmd.c
+
+pcstdlib.lib
+pctoslib.lib
