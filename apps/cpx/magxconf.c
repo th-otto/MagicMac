@@ -248,6 +248,7 @@ CPXINFO *cdecl cpx_init(XCPB *xcpb)
 	
 	global_xcpb = xcpb;
 	global_xcpb->getcookie(0x4D616758L, (long *)&magx);
+	mt_appl_init(NULL);
 	if (magx == 0 && !global_xcpb->booting)
 	{
 		mt_form_alert(1, "[1][MagiC ist nicht installiert!][ Abbruch ]", NULL);
@@ -290,9 +291,8 @@ CPXINFO *cdecl cpx_init(XCPB *xcpb)
 		tree = rs_trindex[MAIN];
 		str = tree[VERSION].ob_spec.free_string;
 		str = format_number(aesvars->date, 8, str + strlen(str) - 1);
-		while (*str != '0')
+		while (str[-1] != '0')
 			str--;
-		str++;
 		if (aesvars->release < 3)
 		{
 			/* -> 0xe0 = alpha, 0xe1 = beta */
