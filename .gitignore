@@ -30,6 +30,7 @@ aaa.cfg
 *.acc
 *.ttp
 *.tos
+*.slb
 *.mode1v3
 *.pbxuser
 .directory

@@ -1,0 +1,15 @@
+crashdmp.tos
+
+.C[-K-]
+.C[-P-]
+.C[-A-]
+.C[-G-]
+.L[-S=0]
+
+=
+cstartv.o
+
+crashdmp.c
+
+pcstdlib.lib
+pctoslib.lib

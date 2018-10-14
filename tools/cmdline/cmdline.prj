@@ -1,0 +1,16 @@
+cmddline.prg
+
+.C[-K-]
+.C[-P-]
+.C[-A-]
+.C[-G-]
+.L[-S=0]
+
+=
+cstartv.o
+
+cmdline.c
+
+pcstdlib.lib
+pctoslib.lib
+pcgemlib.lib

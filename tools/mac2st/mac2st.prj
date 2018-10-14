@@ -1,0 +1,9 @@
+mac2st.ttp    ; name of executable pgm is topmost window
+.C[-I..\..\inc_c]
+.S[-I..\..\inc_as]
+=              ; list of modules follows...
+cstartv.o     ; startup code (mit ParameterÅbergabe)
+mac2st.c
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib

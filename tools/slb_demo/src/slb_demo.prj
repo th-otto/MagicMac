@@ -1,7 +1,0 @@
-slb_demo.slb
-.L[-S=256]	; minimaler Stack
-=
-libhead.s      ; startup code for SLBs
-slb_demo.c (slb.h)
-pctoslib.lib
-pcstdlib.lib

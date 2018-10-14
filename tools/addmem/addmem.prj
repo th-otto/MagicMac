@@ -1,0 +1,10 @@
+addmem.prg
+.S[-I..\..\inc_as]
+.C[-K-]
+.C[-P-]
+.C[-A-]
+.C[-G-]
+.L[-S=0]
+
+=
+addmem.s

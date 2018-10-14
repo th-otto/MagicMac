@@ -92,6 +92,8 @@ typedef struct {
 
 /* os_magic -> */
 
+#ifndef _AESVARS
+#define _AESVARS
 typedef struct
      {
      /* Dies ist die Variable, auf die das Cookie und auch der   */
@@ -161,3 +163,4 @@ typedef struct
      APPL **keyb_app;              /* tastaturbesitzende Appl.   */
      long dummy;
      } AESVARS;
+#endif

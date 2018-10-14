@@ -1,0 +1,8 @@
+memde.prg    ; name of executable pgm is topmost window
+.C[-I..\..\inc_c]
+.S[-I..\..\inc_as]
+=              ; list of modules follows...
+memde.s
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib

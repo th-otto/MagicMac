@@ -1,7 +1,0 @@
-PH_BIT3.TTP
-=
-pcmxstrt.o    ; fÅr lange Dateinamen
-ph_bit3.c
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib

@@ -1,0 +1,10 @@
+dis2.ttp
+.C[-I..\..\inc_c]
+=
+cstartv.o
+dis2.c
+dis.c
+disass.c
+pcstdlib.lib   ; standard lib
+pcextlib.lib   ; extended lib
+pctoslib.lib   ; TOS lib

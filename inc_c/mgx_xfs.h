@@ -137,6 +137,8 @@ typedef struct _mx_dmd {
 
 #ifndef S_IFMT
 
+#if !defined(__XATTR) && !defined(__KERNEL__) && !defined(__KERNEL_MODULE__)
+#define __XATTR
 typedef struct xattr {
      unsigned short mode;
 /* file types */
@@ -180,7 +182,7 @@ typedef struct xattr {
      short     reserved2;
      long reserved3[2];
 } XATTR;
-
+#endif
 #endif
 
 typedef struct _mx_xfs {
@@ -319,7 +321,9 @@ typedef struct {
 /* # define FUTIME       0x4603 */
 
 /* unterstÅtzte Fcntl- Modi */
-#define   FSTAT          0x4600
+#ifndef FSTAT
+#define   FSTAT          (('F'<< 8) | 0)
+#endif
 #define   FIONREAD       0x4601
 #define   FIONWRITE      0x4602
 #define   FUTIME         0x4603

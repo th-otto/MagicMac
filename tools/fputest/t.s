@@ -1,7 +1,7 @@
      MC68881
      SUPER
 
-     INCLUDE   "OSBIND.INC"
+     INCLUDE   "osbind.inc"
 
  clr.l    -(sp)
  gemdos   Super
