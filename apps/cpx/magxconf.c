@@ -2,7 +2,10 @@
 #include <mt_aes.h>
 #include <vdi.h>
 #include <string.h>
+#include <stddef.h>
 #include "cpxdata.h"
+#include "cpxhead.h"
+#include "country.h"
 
 #undef SC_GETCONF
 #undef SC_SETCONF
@@ -25,7 +28,7 @@ struct save_vars save_vars = { 0 };
 #include "magxconf.rsh"
 
 static long config;
-static XCPB *global_xcpb;
+static XCPB *xcpb;
 
 
 
@@ -154,11 +157,11 @@ static void draw_obj(OBJECT *tree, _WORD index)
 	GRECT *r;
 	
 	fix_obj(tree, index, &gr, 1);
-	r = global_xcpb->GetFirstRect(&gr);
+	r = xcpb->GetFirstRect(&gr);
 	while (r)
 	{
 		mt_objc_draw_grect(tree, index, MAX_DEPTH, r, NULL);
-		r = global_xcpb->GetNextRect();
+		r = xcpb->GetNextRect();
 	}
 }
 
@@ -182,11 +185,11 @@ static _WORD handle_msg(_WORD obj, _WORD *msg)
 		ret = 1;
 		break;
 	case SAVE:
-		if (global_xcpb->XGen_Alert(CPX_SAVE_DEFAULTS) != 0)
+		if (xcpb->XGen_Alert(CPX_SAVE_DEFAULTS) != 0)
 		{
 			set_config();
 			vars.config = config & SCONFIG_MASK;
-			global_xcpb->CPX_Save(&vars, sizeof(vars));
+			xcpb->CPX_Save(&vars, sizeof(vars));
 		}
 		tree[SAVE].ob_state &= ~OS_SELECTED;
 		draw_obj(tree, SAVE);
@@ -220,7 +223,7 @@ static BOOLEAN cdecl cpx_call(GRECT *work)
 	draw_obj(tree, ROOT);
 	do
 	{
-		obj = global_xcpb->Xform_do(tree, ROOT, msg);
+		obj = xcpb->Xform_do(tree, ROOT, msg);
 		ret = handle_msg(obj, msg);
 	} while (ret == 0);
 	return 0;
@@ -240,18 +243,124 @@ CPXINFO cpxinfo = {
 	0
 };
 
+static _WORD al_no_magic;
+static _WORD al_not_active;
 
-CPXINFO *cdecl cpx_init(XCPB *xcpb)
+static void set_texts(_WORD country)
+{
+	OBJECT *tree = rs_trindex[MAIN];
+	const _WORD *p;
+	
+	static const _WORD trans_en[] = {
+		CPXTITLE_EN,
+		CF_VERSION_EN,
+		CF_FASTLOAD_EN,
+		CF_TOSCOMPAT_EN,
+		CF_SMARTREDRAW_EN,
+		CF_GROWBOX_EN,
+		CF_FLOPPY_DMA_EN,
+		CF_PULLDOWN_EN,
+		SAVE_EN,
+		OK_EN,
+		CANCEL_EN,
+		AL_NO_MAGIC_EN,
+		AL_NOT_ACTIVE_EN
+	};
+	static const _WORD trans_de[] = {
+		CPXTITLE_DE,
+		CF_VERSION_DE,
+		CF_FASTLOAD_DE,
+		CF_TOSCOMPAT_DE,
+		CF_SMARTREDRAW_DE,
+		CF_GROWBOX_DE,
+		CF_FLOPPY_DMA_DE,
+		CF_PULLDOWN_DE,
+		SAVE_DE,
+		OK_DE,
+		CANCEL_DE,
+		AL_NO_MAGIC_DE,
+		AL_NOT_ACTIVE_DE
+	};
+	static const _WORD trans_fr[] = {
+		CPXTITLE_FR,
+		CF_VERSION_FR,
+		CF_FASTLOAD_FR,
+		CF_TOSCOMPAT_FR,
+		CF_SMARTREDRAW_FR,
+		CF_GROWBOX_FR,
+		CF_FLOPPY_DMA_FR,
+		CF_PULLDOWN_FR,
+		SAVE_FR,
+		OK_FR,
+		CANCEL_FR,
+		AL_NO_MAGIC_FR,
+		AL_NOT_ACTIVE_FR
+	};
+	
+	switch (country)
+	{
+	default:
+		/* Default case is USA/UK */
+		p = trans_en;
+		break;
+	case COUNTRY_DE:
+		p = trans_de;
+		break;
+	case COUNTRY_FR:
+		p = trans_fr;
+		break;
+	case COUNTRY_UK:
+		p = trans_en;
+		break;
+#if 0
+	case COUNTRY_ES:
+		p = trans_es;
+		break;
+	case COUNTRY_IT:
+		p = trans_it;
+		break;
+	case COUNTRY_SE:
+		p = trans_sv;
+		break;
+#endif
+	}
+
+	{
+		char *buffer = xcpb->Get_Buffer();
+		char *title = buffer - (offsetof(CPXHEAD, buffer) - offsetof(CPXHEAD, title_txt));
+		strcpy(title, rs_frstr[p[0]]);
+	}
+
+#define XString(obj,string) tree[obj].ob_spec.free_string = rs_frstr[string]
+	XString(VERSION, p[1]);
+	XString(CF_FASTLOAD, p[2]);
+	XString(CF_TOSCOMPAT, p[3]);
+	XString(CF_SMARTREDRAW, p[4]);
+	XString(CF_GROWBOX, p[5]);
+	XString(CF_FLOPPY_DMA, p[6]);
+	XString(CF_PULLDOWN, p[7]);
+	XString(SAVE, p[8]);
+	XString(OK, p[9]);
+	XString(CANCEL, p[10]);
+#undef XString
+
+	al_no_magic = p[11];
+	al_not_active = p[12];
+}
+
+
+CPXINFO *cdecl cpx_init(XCPB *Xcpb)
 {
 	MAGX_COOKIE *magx = 0;
 	AESVARS *aesvars;
 	
-	global_xcpb = xcpb;
-	global_xcpb->getcookie(0x4D616758L, (long *)&magx);
+	xcpb = Xcpb;
+	xcpb->getcookie(0x4D616758L, (long *)&magx);
 	mt_appl_init(NULL);
-	if (magx == 0 && !global_xcpb->booting)
+	set_texts(xcpb->Country_Code);
+	if (magx == 0 && !xcpb->booting)
 	{
-		mt_form_alert(1, "[1][MagiC ist nicht installiert!][ Abbruch ]", NULL);
+		mt_form_alert(1, rs_frstr[al_no_magic], NULL);
 		return NULL;
 	}
 	if (magx == 0)
@@ -259,16 +368,16 @@ CPXINFO *cdecl cpx_init(XCPB *xcpb)
 		return (CPXINFO *)1;
 	}
 	aesvars = magx->aesvars;
-	if (aesvars == NULL && !global_xcpb->booting)
+	if (aesvars == NULL && !xcpb->booting)
 	{
-		mt_form_alert(1, "[1][MagiC-AES ist nicht aktiv!][ Abbruch ]", NULL);
+		mt_form_alert(1, rs_frstr[al_not_active], NULL);
 		return NULL;
 	}
 	
 	if (aesvars == NULL)
 		return (CPXINFO *)1;
 
-	if (global_xcpb->booting)
+	if (xcpb->booting)
 	{
 		config = Sconfig(SC_GETCONF, 0l);
 		config &= ~SCONFIG_MASK;
@@ -279,7 +388,7 @@ CPXINFO *cdecl cpx_init(XCPB *xcpb)
 
 	config = Sconfig(SC_GETCONF, 0l);
 
-	if (!global_xcpb->SkipRshFix)
+	if (!xcpb->SkipRshFix)
 	{
 		_WORD i;
 		char *str;
@@ -287,18 +396,25 @@ CPXINFO *cdecl cpx_init(XCPB *xcpb)
 		
 		tree = rs_object;
 		for (i = 0; i < NUM_OBS; i++)
-			global_xcpb->rsh_obfix(tree, i);
+			xcpb->rsh_obfix(tree, i);
 		tree = rs_trindex[MAIN];
 		str = tree[VERSION].ob_spec.free_string;
-		str = format_number(aesvars->date, 8, str + strlen(str) - 1);
-		while (str[-1] != '0')
+		str += strlen(str);
+		while (str[-1] == ' ')
 			str--;
+		str = format_number(aesvars->date, 8, str);
+		while (*--str != '\340')
+			;
 		if (aesvars->release < 3)
 		{
 			/* -> 0xe0 = alpha, 0xe1 = beta */
 			*str = 0xe0 + aesvars->release;
+		} else
+		{
+			*str = ' ';
 		}
-		format_number(aesvars->version, 3, str);
+		format_number(aesvars->version, 4, str);
+		str = tree[VERSION].ob_spec.free_string;
 	}
 	
 	return &cpxinfo;

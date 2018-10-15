@@ -303,13 +303,13 @@ extern _VOID *hfix_objs(RSHDR *_hdr, OBJECT *_ob, _WORD _num_objs);
 #undef NUM_OBS
 #undef NUM_TREE
 #undef NUM_UD
-#define NUM_STRINGS 10
+#define NUM_STRINGS 49
 #define NUM_BB		0
 #define NUM_IB		0
 #define NUM_CIB     0
 #define NUM_CIC     0
 #define NUM_TI		0
-#define NUM_FRSTR	0
+#define NUM_FRSTR	39
 #define NUM_FRIMG	0
 #define NUM_OBS     13
 #define NUM_TREE	1
@@ -317,7 +317,7 @@ extern _VOID *hfix_objs(RSHDR *_hdr, OBJECT *_ob, _WORD _num_objs);
 #endif
 
 
-static char magxconf_string_0[] = " MagiC 0.00  vom 00.00.0000 ";
+static char magxconf_string_0[] = " MagiC 00.00\340 vom 00.00.0000 ";
 static char magxconf_string_1[] = "Fastload";
 static char magxconf_string_2[] = "TOS-Kompatibilit\204t";
 static char magxconf_string_3[] = "Smart Redraw";
@@ -327,6 +327,88 @@ static char magxconf_string_6[] = "Pull-Down-Men\201s";
 static char magxconf_string_7[] = "Sichern";
 static char magxconf_string_8[] = "OK";
 static char magxconf_string_9[] = "Abbruch";
+static char magxconf_string_10[] = "MagiC-Config.";
+static char magxconf_string_11[] = " MagiC 00.00\340 of 00.00.0000 ";
+static char magxconf_string_12[] = "Fastload";
+static char magxconf_string_13[] = "TOS-Compatibility";
+static char magxconf_string_14[] = "Smart Redraw";
+static char magxconf_string_15[] = "Grow- and Shrinkboxes";
+static char magxconf_string_16[] = "Background-DMA";
+static char magxconf_string_17[] = "Pull-Down-Menus";
+static char magxconf_string_18[] = "Save";
+static char magxconf_string_19[] = "OK";
+static char magxconf_string_20[] = "Abort";
+static char magxconf_string_21[] = "[1][   Magic is not installed!   ][Abort]";
+static char magxconf_string_22[] = "[1][MagiC-AES is not active!][ Abort ]";
+static char magxconf_string_23[] = "MagiC-Konfig.";
+static char magxconf_string_24[] = " MagiC 00.00\340 vom 00.00.0000 ";
+static char magxconf_string_25[] = "Fastload";
+static char magxconf_string_26[] = "TOS-Kompatibilit\204t";
+static char magxconf_string_27[] = "Smart Redraw";
+static char magxconf_string_28[] = "Grow- und Shrinkboxen";
+static char magxconf_string_29[] = "Floppy-Hintergrund-DMA";
+static char magxconf_string_30[] = "Pull-Down-Men\201s";
+static char magxconf_string_31[] = "Sichern";
+static char magxconf_string_32[] = "OK";
+static char magxconf_string_33[] = "Abbruch";
+static char magxconf_string_34[] = "[1][MagiC ist nicht installiert!][ Abbruch ]";
+static char magxconf_string_35[] = "[1][MagiC-AES ist nicht aktiv!][ Abbruch ]";
+static char magxconf_string_36[] = "MagiC-Config.";
+static char magxconf_string_37[] = " MagiC 00.00\340 du 00.00.0000 ";
+static char magxconf_string_38[] = "Fastload";
+static char magxconf_string_39[] = "TOS-Compatibilit\202";
+static char magxconf_string_40[] = "Smart Redraw";
+static char magxconf_string_41[] = "Bo\214tes Grow/Shrink";
+static char magxconf_string_42[] = "Background-DMA";
+static char magxconf_string_43[] = "Pull-Down-Menus";
+static char magxconf_string_44[] = "Sauver";
+static char magxconf_string_45[] = "OK";
+static char magxconf_string_46[] = "Abandon";
+static char magxconf_string_47[] = "[1][   Magic is not installed!   ][Abort]";
+static char magxconf_string_48[] = "[1][MagiC-AES is not active!][ Abort ]";
+
+
+static char *rs_frstr[NUM_FRSTR] = {
+	magxconf_string_10,
+	magxconf_string_11,
+	magxconf_string_12,
+	magxconf_string_13,
+	magxconf_string_14,
+	magxconf_string_15,
+	magxconf_string_16,
+	magxconf_string_17,
+	magxconf_string_18,
+	magxconf_string_19,
+	magxconf_string_20,
+	magxconf_string_21,
+	magxconf_string_22,
+	magxconf_string_23,
+	magxconf_string_24,
+	magxconf_string_25,
+	magxconf_string_26,
+	magxconf_string_27,
+	magxconf_string_28,
+	magxconf_string_29,
+	magxconf_string_30,
+	magxconf_string_31,
+	magxconf_string_32,
+	magxconf_string_33,
+	magxconf_string_34,
+	magxconf_string_35,
+	magxconf_string_36,
+	magxconf_string_37,
+	magxconf_string_38,
+	magxconf_string_39,
+	magxconf_string_40,
+	magxconf_string_41,
+	magxconf_string_42,
+	magxconf_string_43,
+	magxconf_string_44,
+	magxconf_string_45,
+	magxconf_string_46,
+	magxconf_string_47,
+	magxconf_string_48
+};
 
 
 static OBJECT rs_object[NUM_OBS] = {
@@ -334,12 +416,12 @@ static OBJECT rs_object[NUM_OBS] = {
 
 	{ -1, 1, 12, G_BOX, OF_FL3DBAK, OS_NORMAL, C_UNION(0xFF1000L), 0,0, 32,11 },
 	{ 8, 2, 7, G_BUTTON, OF_FL3DBAK, 0xFE40, C_UNION(magxconf_string_0), 1,1024, 286,1032 }, /* VERSION */
-	{ 3, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_1), 2,2049, 11,1 }, /* CF_FASTLOAD */
-	{ 4, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_2), 2,2050, 21,1 }, /* CF_TOSCOMPAT */
-	{ 5, -1, -1, G_BUTTON, 0x241, 0x8640, C_UNION(magxconf_string_3), 2,2051, 15,1 }, /* CF_SMARTREDRAW */
-	{ 6, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_4), 2,2052, 24,1 }, /* CF_GROWBOX */
-	{ 7, -1, -1, G_BUTTON, 0x241, 0x8740, C_UNION(magxconf_string_5), 2,2053, 25,1 }, /* CF_FLOPPY_DMA */
-	{ 1, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_6), 2,2054, 18,1 }, /* CF_PULLDOWN */
+	{ 3, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_1), 2,2049, 27,1 }, /* CF_FASTLOAD */
+	{ 4, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_2), 2,2050, 27,1 }, /* CF_TOSCOMPAT */
+	{ 5, -1, -1, G_BUTTON, 0x241, 0x8640, C_UNION(magxconf_string_3), 2,2051, 27,1 }, /* CF_SMARTREDRAW */
+	{ 6, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_4), 2,2052, 27,1 }, /* CF_GROWBOX */
+	{ 7, -1, -1, G_BUTTON, 0x241, 0x8740, C_UNION(magxconf_string_5), 2,2053, 27,1 }, /* CF_FLOPPY_DMA */
+	{ 1, -1, -1, G_BUTTON, 0x241, 0x8040, C_UNION(magxconf_string_6), 2,2054, 27,1 }, /* CF_PULLDOWN */
 	{ 9, -1, -1, G_IBOX, OF_FL3DIND, OS_SELECTED, C_UNION(0x10100L), 0,3592, 32,512 },
 	{ 10, -1, -1, G_IBOX, OF_FL3DIND, OS_SELECTED, C_UNION(0x10100L), 1034,3848, 512,258 },
 	{ 11, -1, -1, G_BUTTON, 0x605, OS_WHITEBAK, C_UNION(magxconf_string_7), 513,1801, 8,257 }, /* SAVE */
@@ -546,20 +628,20 @@ _WORD magxconf_rsc_free()
 #endif /* RSC_NAMED_FUNCTIONS */
 
 #else /* !RSC_STATIC_FILE */
-int rs_numstrings = 10;
-int rs_numfrstr = 0;
+_WORD rs_numstrings = 49;
+_WORD rs_numfrstr = 39;
 
-int rs_nuser = 0;
-int rs_numimages = 0;
-int rs_numbb = 0;
-int rs_numfrimg = 0;
-int rs_numib = 0;
-int rs_numcib = 0;
-int rs_numti = 0;
-int rs_numobs = 13;
-int rs_numtree = 1;
+_WORD rs_nuser = 0;
+_WORD rs_numimages = 0;
+_WORD rs_numbb = 0;
+_WORD rs_numfrimg = 0;
+_WORD rs_numib = 0;
+_WORD rs_numcib = 0;
+_WORD rs_numti = 0;
+_WORD rs_numobs = 13;
+_WORD rs_numtree = 1;
 
 char rs_name[] = "magxconf.rsc";
 
-int _rsc_format = 2; /* RSC_FORM_SOURCE2 */
+_WORD _rsc_format = 2; /* RSC_FORM_SOURCE2 */
 #endif /* RSC_STATIC_FILE */
