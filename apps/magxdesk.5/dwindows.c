@@ -2131,25 +2131,23 @@ static void upd_disk(int lw, int free_flag)
 	if	(free_flag)
 		dinfo[lw].b_clsiz = 0L;	  /* ungltig machen */
 	for	(i = 1,pw = fenster+1; i <= ANZFENSTER; i++,pw++)
-		{
+	{
 		w = *pw;
 		if	((!w) ||
 				(w->flags & WFLAG_ICONIFIED) ||
 			 (w->real_drive != lw))
 			continue;
 
-		if	(read_wind(w, free_flag))
-			{
-			w->closed(w,0);
-			break;
-			}
-		sort_mydtas(w);
-		calc_obj_look(w, TRUE);
-		wind_set_str(w->handle, WF_INFO, w->info);
-		re_arrange(w);
-		upd_wind(w);
-		dirty_win = TRUE;	/* Fensterliste ge„ndert */
+		if (read_wind(w, free_flag) == E_OK)
+		{
+			sort_mydtas(w);
+			calc_obj_look(w, TRUE);
+			wind_set_str(w->handle, WF_INFO, w->info);
+			re_arrange(w);
+			upd_wind(w);
+			dirty_win = TRUE;	/* Fensterliste ge„ndert */
 		}
+	}
 }
 
 
