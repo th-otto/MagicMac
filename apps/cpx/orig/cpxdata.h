@@ -42,20 +42,20 @@ typedef struct {
                              int visible, int direction, int min_size );
      
 /*  32 */     void  cdecl (*Sl_x)( OBJECT *tree, int base, int slider, int value,
-                          int num_min, int num_max, void (*foo)() );
+                          int num_min, int num_max, void cdecl (*foo)(void) );
                     
 /*  36 */     void  cdecl (*Sl_y)( OBJECT *tree, int base, int slider, int value,
-                          int num_min, int num_max, void (*foo)() );
+                          int num_min, int num_max, void cdecl (*foo)(void) );
                     
 /*  40 */     void  cdecl (*Sl_arrow)( OBJECT *tree, int base, int slider, int obj,
                               int inc, int min, int max, int *numvar,
-                              int direction, void (*foo)() );
+                              int direction, void cdecl (*foo)(void) );
                         
 /*  44 */     void  cdecl (*Sl_dragx)( OBJECT *tree, int base, int slider, int min,
-     			      int max, int *numvar, void (*foo)() );
+     			      int max, int *numvar, void cdecl (*foo)(void) );
                         
 /*  48 */     void  cdecl (*Sl_dragy)( OBJECT *tree, int base, int slider, int min,
-                              int max, int *numvar, void (*foo)() );
+                              int max, int *numvar, void cdecl (*foo)(void) );
      
 /*  52 */     WORD    cdecl (*Xform_do)( OBJECT *tree, WORD start_field, WORD puntmsg[] );
 /*  56 */     GRECT   *cdecl (*GetFirstRect)( GRECT *prect );
@@ -179,7 +179,7 @@ typedef struct {
 
 #define VERTICAL	0
 #define HORIZONTAL	1
-#define NULLFUNC	( void(*)())0L
+#define NULLFUNC	((void cdecl(*)(void))0)
 
 #define SAVE_DEFAULTS	0
 #define MEM_ERR		1

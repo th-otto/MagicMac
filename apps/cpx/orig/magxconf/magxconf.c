@@ -2,7 +2,7 @@
 #include <mt_aes.h>
 #include <vdi.h>
 #include <string.h>
-#include "cpxdata.h"
+#include "../cpxdata.h"
 
 #undef SC_GETCONF
 #undef SC_SETCONF
@@ -19,6 +19,7 @@ struct save_vars {
 	long config;
 };
 
+/* must be first item in data segment; written by CPX_Save */
 struct save_vars save_vars = { 0 };
 
 static BOOLEAN cdecl cpx_call(GRECT *work);
@@ -284,6 +285,7 @@ static _WORD handle_msg(_WORD obj, _WORD *msg)
 			ret = 1;
 			break;
 		}
+		break;
 	}
 	return ret;
 }
