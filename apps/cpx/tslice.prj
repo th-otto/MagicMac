@@ -1,4 +1,5 @@
 tslice.cp
+.C[-I..\..\inc_c]
 .C[-K-]
 .C[-P-]
 .C[-A-]

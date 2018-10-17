@@ -265,6 +265,7 @@ _WORD mt_form_alert(_WORD fo_adefbttn, const char *fo_astring, _WORD *global_aes
 	return aes_params.intout[0];
 }
 
+
 WORD mt_graf_mouse(WORD gr_monumber, const MFORM *gr_mofaddr, WORD *global_aes)
 {
 	MT_PARMDATA aes_params;
