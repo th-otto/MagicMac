@@ -11,7 +11,7 @@ A_GER.BAT
 MAGICMAC
 	build batch files for MagicMac
 
-MAGICMAC
+MAGCMACX
 	build batch files for MagicMacX
 
 MILAN

@@ -1,0 +1,50 @@
+MagicMacX.OS
+.C[-I..\..\inc_c]
+.S[-I..\..\inc_as]
+.S[-I..\bios\common]
+
+.S[-DCOUNTRY=1]
+.C[-DCOUNTRY=1]
+
+.S[-DMMY_YIELD=1]
+.S[-DDEMO=0]
+.C[-P]
+=
+..\bios\magcmacx\macxbios.s
+..\allg\read_inf.s
+..\vdi\bin\math.o ; no source yet
+..\allg\std.s
+..\ser_my.s
+..\dos\magidos.s
+..\dos\malloc.s
+..\dos\xfs_vdos.s
+..\dos\vfat_s.o
+..\dos\vfat.c
+..\dos\dfs_u.s
+..\dos\dev_bios.s
+..\dos\dev_pipe.s
+..\dos\dev_mem.s
+..\dos\dfs_fat.s
+..\bios\magcmacx\macxfs.s
+..\vdi\bin\mxvdiknp.o ; no source yet
+..\vdi\bin\drivers.o ; no source yet
+..\vdi\bin\filediv.o ; no source yet
+..\vdi\bin\init_res.o ; no source yet
+..\vdi\bin\string.o ; no source yet
+..\vdi\bin\tos.o ; no source yet
+..\aes\aesmain.s
+..\aes\aesevt.s
+..\aes\aesfrm.s
+..\aes\aesobj.s
+..\aes\aeswin.s
+..\aes\aesmen.s
+..\aes\aesgraf.s
+..\aes\aesrsc.s
+..\aes\wdialog\wdialog.c
+..\aes\wdialog\listbox.c
+..\aes\wdialog\fnt_menu.c
+..\aes\wdialog\shelsort.c
+..\aes\wdialog\wdintrfs.s
+..\aes\fsel\fsel.c
+..\aes\xmen_mgr\mtsmn.c
+..\ende.s
