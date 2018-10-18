@@ -33,7 +33,7 @@ MagicMacX.OS
 ..\vdi\filediv.c
 ..\vdi\bin\init_res.o ; no source yet
 ..\vdi\bin\string.o ; no source yet
-..\vdi\bin\tos.o ; no source yet
+..\vdi\tos.s
 ..\aes\aesmain.s
 ..\aes\aesevt.s
 ..\aes\aesfrm.s
