@@ -1,13 +1,13 @@
 /*
 *
-* Dieses Modul enthält den Ressouce-Manager des AES
+* Dieses Modul enthaelt den Ressouce-Manager des AES
 *
 * Die Routinen, die der Aufrufkonvention von PureC entsprechen,
 * sind mit "PUREC" gekennzeichnet.
 *
 */
 
-     INCLUDE "AESINC.S"
+     INCLUDE "aesinc.s"
         TEXT
         SUPER
 
@@ -33,9 +33,9 @@
 
 * von STD
 
-     XREF      memcpy
+     XREF      vmemcpy
      XREF      strlen
-     XREF      malloc
+     XREF      mmalloc
      XREF      mfree
 
 
@@ -46,7 +46,7 @@
 * Eingabe: Lobyte von *i: Anzahl Zeicheneinheiten (unsigned)
 *          Hibyte von *i: Pixel- Offset (signed)
 *
-* erhöht a0 um 2, komplementiert d0
+* erhoeht a0 um 2, komplementiert d0
 *
 
 __rsrc_obfix:
@@ -56,10 +56,10 @@ __rsrc_obfix:
  beq.b    rsof_l1
  cmp.w    #80,d1
  bne.b    rsof_l1
-* Horizontal, Lobyte ist 80, gib scr_w zurück
+* Horizontal, Lobyte ist 80, gib scr_w zurueck
  move.w   scr_w,d1
  bra.b    rsof_l3
-* Multipliziere Lobyte mit Zeichengröße
+* Multipliziere Lobyte mit Zeichengroesse
 rsof_l1:
  move.w   big_hchar,d2
  tst.b    d0
@@ -71,7 +71,7 @@ rsof_l3:
  move.b   (a0),d2                  ; Hibyte
  ext.w    d2                       ; Vorzeichenerweiterung
  add.w    d2,d1
- move.w   d1,(a0)+                 ; Rückgabe
+ move.w   d1,(a0)+                 ; Rueckgabe
  not.b    d0
  rts
 
@@ -97,14 +97,14 @@ rsrc_obfix:
 *
 * long rsrc_gaddr(a0 = int *global, d0 = int type, d1 = int index)
 *
-* Rückgabe -1L bedeutet Fehler
+* Rueckgabe -1L bedeutet Fehler
 *
 
 rsrc_gaddr:
  subq.w   #1,d0
  bcs.b    rg_tree                  ; war 0, also R_TREE
  cmpi.w   #15,d0
- bhi.b    rg_err                   ; ungültiger Code
+ bhi.b    rg_err                   ; ungueltiger Code
  add.w    d0,d0
  move.w   rg_tab(pc,d0.w),d0
  move.w   d0,-(sp)                 ; merken
@@ -112,9 +112,9 @@ rsrc_gaddr:
  lsr.w    #8,d0                    ; Hibyte ist typ
 
  move.b   struct_len_tab(pc,d0.w),d2
- ext.w    d2                       ; Länge eines Objekts
- mulu     d1,d2                    ; index * Länge -> offset
- add.w    d0,d0                    ; für int- Zugriff
+ ext.w    d2                       ; Laenge eines Objekts
+ mulu     d1,d2                    ; index * Laenge -> offset
+ add.w    d0,d0                    ; fuer int- Zugriff
  move.l   $e(a0),a0                ; Zeiger auf eine Ressource- Datei
  moveq    #0,d1                    ; unsigned
  move.w   0(a0,d0.w),d1            ; Feldelement holen (rel.Untertabadr.)
@@ -131,9 +131,9 @@ rg_deref:
  move.l   (a0),d0
  rts
 rg_tree:
- lsl.w    #2,d1                    ; Für Langwortzugriff
+ lsl.w    #2,d1                    ; Fuer Langwortzugriff
  movea.l  $a(a0),a0                ; ap_ptree
- move.l   0(a0,d1.w),d0            ; Adresse zurückgeben
+ move.l   0(a0,d1.w),d0            ; Adresse zurueckgeben
  rts
 rg_err:
  moveq    #-1,d0
@@ -166,7 +166,7 @@ rg_tab:
 *
 * int set_abs_adr(a0 = int global[], d0 = int stype, d1 = int index)
 *
-* Rückgabe 0, wenn Eintrag -1L
+* Rueckgabe 0, wenn Eintrag -1L
 *
 
 set_abs_adr:
@@ -185,16 +185,16 @@ set_abs_adr:
 * int rel_to_abs_adr( a0 = int global[], a1 = OBJECT **tree)
 *
 * rechnet in der Objektbaumtabelle relative Adressen in absolute um
-* Rückgabe 0, wenn Eintrag -1L
+* Rueckgabe 0, wenn Eintrag -1L
 *
 
 rel_to_abs_adr:
  move.l   (a1),d0                  ; Adresse (rel. zum Dateianfang)
- addq.l   #1,d0                    ; ungültig ?
- beq.b    r2aa_ende                ; ungültig, return(0)
+ addq.l   #1,d0                    ; ungueltig ?
+ beq.b    r2aa_ende                ; ungueltig, return(0)
  subq.l   #1,d0                    ; korrigieren
  add.l    $e(a0),d0                ; Dateianfang addieren
- move.l   d0,(a1)                  ; zurückgeben
+ move.l   d0,(a1)                  ; zurueckgeben
  moveq    #1,d0                    ; ok
 r2aa_ende:
  rts
@@ -243,18 +243,18 @@ rscsad_err:
 * int rsrc_load(a0 = int *global, a1 = char *pathname)
 *
 * <global> ist das Feld der aufrufenden Applikation
-* Rückgabe 0 bei Fehler
-* Lädt Datei und setzt absolute Adressen ein
+* Rueckgabe 0 bei Fehler
+* Laedt Datei und setzt absolute Adressen ein
 * Setzt Felder des global
 *
-* MagiX 3.0: Lädt auch erweitertes Dateiformat von MultiTOS.
+* MagiX 3.0: Laedt auch erweitertes Dateiformat von MultiTOS.
 *
 
 rsrc_load:
  movem.l  d6/d7/a4/a5,-(sp)
- suba.w   #128,sp                  ; Platz für 128 Bytes
+ suba.w   #128,sp                  ; Platz fuer 128 Bytes
 
- moveq    #-1,d6                   ; Handle ungültig
+ moveq    #-1,d6                   ; Handle ungueltig
  suba.l   a4,a4                    ; noch kein Speicher alloziert
  move.l   a0,a5                    ; a5 = global[]
 ;move.l   a1,a1
@@ -264,10 +264,10 @@ strloop15:
  bne.b    strloop15
 
  lea      (sp),a0
- jsr      shel_find                ; Resourcedatei suchen, d1.l = Dateilänge
+ jsr      shel_find                ; Resourcedatei suchen, d1.l = Dateilaenge
  tst.w    d0
- beq      rsld_ende                ; nicht gefunden, Rückgabe 0
- move.l   d1,d7                    ; Dateilänge
+ beq      rsld_ende                ; nicht gefunden, Rueckgabe 0
+ move.l   d1,d7                    ; Dateilaenge
 
  move.l   sp,a0
  clr.w    -(sp)
@@ -289,18 +289,18 @@ strloop15:
  lea      12(sp),sp
  cmpi.l   #$24,d0                  ; Header komplett eingelesen ?
  bne      rsld_err                 ; nein, Fehler
-* Unterscheidung für erweitertes Format (MultiTOS)
+* Unterscheidung fuer erweitertes Format (MultiTOS)
  cmpi.w   #4,rsh_vrsn(sp)          ; erweitertes Format ?
- beq.b    rsld_newform             ; ja, ganze Datei laden (d7 ist Länge)
+ beq.b    rsld_newform             ; ja, ganze Datei laden (d7 ist Laenge)
  moveq    #0,d7
- move.w   rsh_rssize(sp),d7        ; rsh_rssize (Länge der Datei)
+ move.w   rsh_rssize(sp),d7        ; rsh_rssize (Laenge der Datei)
 * Speicher allozieren
 rsld_newform:
  move.l   d7,d0
- jsr      malloc                   ; Speicher für Resource holen
- beq.b    rsld_err                 ; Zuwenig Speicher, schließen und Ende
+ jsr      mmalloc                   ; Speicher fuer Resource holen
+ beq.b    rsld_err                 ; Zuwenig Speicher, schliessen und Ende
  move.l   d0,a4                    ; a4 = Dateiadresse
-* Dateizeiger zurückstellen
+* Dateizeiger zurueckstellen
  clr.w    -(sp)                    ; mode: ab Anfang
  move.w   d6,-(sp)                 ; handle
  clr.l    -(sp)                    ; offset 0
@@ -338,7 +338,7 @@ rsld_ende:
  addq.l   #4,sp
 rsld_nohdl:
  move.l   a4,d0
- beq.b    rsld_nomem               ; Speicherbl. ungültig  => nicht freigeben
+ beq.b    rsld_nomem               ; Speicherbl. ungueltig  => nicht freigeben
  tst.w    (sp)
  bne.b    rsld_nomem               ; rsrc_load erfolgreich => nicht freigeben
  move.l   a4,a0
@@ -362,11 +362,11 @@ rsld_nomem:
 sort_cicons:
  movem.l  a3/a4,-(sp)
  move.w   nplanes,d2
- suba.l   a2,a2               ; noch kein günstigstes Icon
+ suba.l   a2,a2               ; noch kein guenstigstes Icon
  moveq    #1,d0               ; benutze 1 Plane (monochrom)
  lea      cib_mainlist-ci_next_res(a0),a1
 srtic_loop:
- lea      ci_next_res(a1),a3  ; Vorgänger zum Aushängen
+ lea      ci_next_res(a1),a3  ; Vorgaenger zum Aushaengen
  move.l   (a3),d1             ; CICONBLK *
  beq.b    srtic_set
  move.l   d1,a1
@@ -375,14 +375,14 @@ srtic_loop:
  cmp.w    ci_num_planes(a1),d0
  bcc.b    srtic_loop          ; gemerktes CICON ist besser, mehr Planes
  move.l   a1,a2               ; CICON ist besser, merken
- move.l   a3,a4               ; Vorgänger merken
+ move.l   a3,a4               ; Vorgaenger merken
  move.w   ci_num_planes(a2),d0
  bra.b    srtic_loop
 srtic_set:
  move.l   a2,d0               ; CICON gefunden ?
- beq.b    srtic_noprev        ; nein, nichts aushängen
- move.l   ci_next_res(a2),(a4)               ; CICON aushängen
- move.l   cib_mainlist(a0),ci_next_res(a2)   ; und neu einhängen
+ beq.b    srtic_noprev        ; nein, nichts aushaengen
+ move.l   ci_next_res(a2),(a4)               ; CICON aushaengen
+ move.l   cib_mainlist(a0),ci_next_res(a2)   ; und neu einhaengen
 srtic_noprev:
  move.l   a2,cib_mainlist(a0)     ; merken
  movem.l  (sp)+,a3/a4
@@ -395,17 +395,17 @@ srtic_noprev:
 *                    a1 = void *data, d1 = int save_flg)
 *
 * save_flg:    FALSE     normale Funktion
-*              TRUE      keine 12 Bytes Text, unnötige Icondaten
-*                        entfernen (andere Auflösungen)
+*              TRUE      keine 12 Bytes Text, unnoetige Icondaten
+*                        entfernen (andere Aufloesungen)
 *
-* Rückgabe: Zeiger auf das erste freie Byte (beim Komprimieren)
+* Rueckgabe: Zeiger auf das erste freie Byte (beim Komprimieren)
 *
 
 init_colicons:
  movem.l  d4-d7/a4-a6,-(sp)
  move.l   a0,a6
  move.l   a1,a5                    ; Quelladresse
- move.l   a1,a4                    ; Zieladresse, fürs Komprimieren
+ move.l   a1,a4                    ; Zieladresse, fuers Komprimieren
  move.w   d0,d7
  move.w   d1,d4                    ; Flag save_flg
 incol_endci:
@@ -413,8 +413,8 @@ incol_endci:
  bcs      incol_ende
 ; Zeiger auf CICONBLK setzen
  move.l   a5,(a6)                  ; Zeiger auf CICONBLK
-; ICONBLK für Monochrom-Icon, d5 := Anzahl Bytes pro Bitblock
- moveq    #15,d5                   ; fürs Runden auf 16 Pixel
+; ICONBLK fuer Monochrom-Icon, d5 := Anzahl Bytes pro Bitblock
+ moveq    #15,d5                   ; fuers Runden auf 16 Pixel
  add.w    ib_wicon(a5),d5          ; Breite in Pixeln
  lsr.w    #4,d5                    ; /16 => WORDs pro Zeile
  add.w    d5,d5                    ; in Bytes umrechnen
@@ -435,17 +435,17 @@ incol_notxt:
 ; Zeiger auf verkettete Liste der CICONs
  move.l   (a2),d6                  ; d6 = Anzahl Alternativicons
  clr.l    (a2)
-; Daten für Monochrom-Icon überspringen
+; Daten fuer Monochrom-Icon ueberspringen
  move.l   a1,a5                    ; hinter Text
 
-; einzelne Farbicons bearbeiten, <d6> Stück
+; einzelne Farbicons bearbeiten, <d6> Stueck
 incol_cicloop:
  subq.w   #1,d6
  bcs.b    incol_endcic
 ; a5 zeigt auf ein CICON, a2 auf Verweis
  move.l   a5,(a2)                  ; Verkettung ...
  lea      ci_next_res(a5),a2       ; ... einrichten
- clr.l    (a2)                     ; ... und abschließen
+ clr.l    (a2)                     ; ... und abschliessen
  lea      ci_sizeof(a5),a1         ; Daten
  move.l   a1,ci_col_data(a5)
  move.w   ci_num_planes(a5),d0
@@ -461,19 +461,19 @@ incol_cicloop:
  adda.w   d5,a1
 incol_noseldata:
  move.l   a1,a5
- bra      incol_cicloop            ; nächstes CICON
+ bra      incol_cicloop            ; naechstes CICON
 incol_endcic:
  move.l   (a6),a0                  ; bearbeitetes CICONBLK
- tst.l    cib_mainlist(a0)         ; sind überhaupt CICONs da ?
+ tst.l    cib_mainlist(a0)         ; sind ueberhaupt CICONs da ?
  bne.b    incol_sortc
  subq.l   #1,cib_mainlist(a0)      ; nein, auf -1L setzen
  bra.b    incol_no_sortc
 incol_sortc:
- bsr      sort_cicons              ; der Auflösung entsprechendes nach vorn
+ bsr      sort_cicons              ; der Aufloesung entsprechendes nach vorn
 incol_no_sortc:
 
 ;
-; CICONBLK und Daten umkopieren, wenn nötig
+; CICONBLK und Daten umkopieren, wenn noetig
 ;
 
  tst.w    d4
@@ -487,7 +487,7 @@ incol_no_sortc:
  move.l   d6,d0
  move.l   (a6),a1                  ; Quelladresse
  move.l   a4,a0                    ; Zieladresse
- jsr      memcpy
+ jsr      vmemcpy
  move.l   (a6),d0
  sub.l    a4,d0                    ; soviel Bytes gespart
  sub.l    d0,ib_pdata(a4)
@@ -499,9 +499,9 @@ incol_no_compress2:
  ble.b    incol_mo                 ; nein
  move.l   d0,a1
 
-; d0 = Bytes für Farbicon
+; d0 = Bytes fuer Farbicon
  move.w   ci_num_planes(a1),d0
- mulu     d5,d0                    ; Bytes für Daten berechnen
+ mulu     d5,d0                    ; Bytes fuer Daten berechnen
  tst.l    ci_sel_data(a1)
  beq.b    incol_noseldata3
  add.l    d0,d0                    ; sel. Daten
@@ -518,7 +518,7 @@ incol_no_cicp:
 ;move.l   a0,a0                    ; Zieladresse
 ;move.w   d0,d0                    ; Bytes
  move.l   d0,-(sp)                 ; merken
- jsr      memcpy
+ jsr      vmemcpy
  lea      0(a4,d6.l),a0            ; Zeiger hinter Mono-Daten...
  move.l   cib_mainlist(a4),d0      ; alte Pos.
  sub.l    a0,d0                    ; - neue Pos.
@@ -536,7 +536,7 @@ incol_mo:
  adda.l   d6,a4                    ; Zeiger hinter Mono-Daten
 incol_no_compress:
  addq.l   #4,a6
- bra      incol_endci              ; nächstes CICONBLK
+ bra      incol_endci              ; naechstes CICONBLK
 incol_ende:
  move.l   a4,d0
  movem.l  (sp)+,d4-d7/a4-a6
@@ -554,7 +554,7 @@ xp_rasterC:
  movem.l  d3-d7/a2-a6,-(sp)
  lea      44(sp),a2
  move.l   (a2)+,d0                 ; Worte/Ebene
- move.l   (a2)+,d1                 ; Länge Ebene
+ move.l   (a2)+,d1                 ; Laenge Ebene
  move.w   (a2)+,d2                 ; Planes Quelle
  move.l   (a2)+,a0                 ; Quelle
  move.l   (a2),a1                  ; Ziel
@@ -580,9 +580,9 @@ _rsrc_rcfix:
 * void rsc_init(a0 = global[], a1 = RSHDR *rsc)
 *
 * Initialisiert die Resourcedatei, die im Speicher liegt und auf die
-* <rsc> zeigt. <len> ist die Dateilänge einschließlich Header.
-* Initialisieren bedeutet hier, daß alle relativen Adressen in absolute
-* umgerechnet werden und Längen von TEDINFO- Strings eingesetzt werden
+* <rsc> zeigt. <len> ist die Dateilaenge einschliesslich Header.
+* Initialisieren bedeutet hier, dass alle relativen Adressen in absolute
+* umgerechnet werden und Laengen von TEDINFO- Strings eingesetzt werden
 *
 * MagiC 3: Spezialfunktion, wenn (a1) == 'MagC' ist
 *          int 4(a1)     Unterfunktionsnummer
@@ -595,7 +595,7 @@ _rsrc_rcfix:
 *           function 1   Adresse der Funktion xp_raster ermitteln
 *                        6(a1)     ->xp_mode
 *                        8(a1)     Zeiger auf die Funktion
-*                        12(a1)    Zeiger auf ein Binding für 'C'
+*                        12(a1)    Zeiger auf ein Binding fuer 'C'
 *
 
 rsc_init:
@@ -633,7 +633,7 @@ _rsc_init:
  moveq    #-1,d4                   ; keine Farbicons
 
  move.l   a4,$e(a5)                ; Anfangsadresse nach ap_pmem
- move.w   rsh_rssize(a4),$12(a5)   ; Länge nach ap_lmem (erweit. Format ?)
+ move.w   rsh_rssize(a4),$12(a5)   ; Laenge nach ap_lmem (erweit. Format ?)
 
  moveq    #0,d0
  move.w   rsh_trindex(a4),d0
@@ -641,11 +641,11 @@ _rsc_init:
  move.l   d0,$a(a5)                ; ap_ptree setzen
 
 *
-* Objektbäume initialisieren
+* Objektbaeume initialisieren
 *
 
  move.l   d0,a3                    ; a3 = Position der Objektbaumtabelle
- move.w   rsh_ntree(a4),d7         ; d7 = Anzahl der Objektbäume
+ move.w   rsh_ntree(a4),d7         ; d7 = Anzahl der Objektbaeume
  bra.b    rsci_nxttree
 rsci_looptree:
  move.l   a3,a1                    ; Zeiger auf Objektbaum
@@ -668,7 +668,7 @@ rsci_nxttree:
  move.w   rsh_rssize(a4),d0        ; unsigned int => long
  add.l    d0,a3
  move.l   a3,d4                    ; merken
- addq.l   #4,a3                    ; Dateilänge überspringen
+ addq.l   #4,a3                    ; Dateilaenge ueberspringen
 rsci_exloop:
  move.l   a3,a1
  tst.l    (a3)+                     ; Tabellenende ?
@@ -682,13 +682,13 @@ rsci_exend:
 * CICONs initialisieren
 *
 
- move.l   d4,a3                    ; a3 zurück
+ move.l   d4,a3                    ; a3 zurueck
  move.l   4(a3),d0
  ble      rsci_noex                ; keine Farbicons
 
  move.l   d0,a1
  move.l   d0,a0                    ; a0 = Tabelle CICONBLKs
- move.l   a0,d4                    ; merken für später
+ move.l   a0,d4                    ; merken fuer spaeter
  moveq    #0,d0                    ; d0 = Anzahl CICONs
 rsci_cntci:
  tst.l    (a1)+
@@ -727,7 +727,7 @@ rit_loop2:
  bsr      set_abs_adr
  move.w   (a6)+,d1                 ; te_ptext,te_ptmplt,-1
  bmi.b    rit_nxt_ted              ; Listenende
- tst.w    d0                       ; gültig ?
+ tst.w    d0                       ; gueltig ?
  beq.b    rit_inval                ; Adresse war -1L
  move.l   0(a3,d1.w),a0
  jsr      strlen
@@ -769,7 +769,7 @@ rcin_l1:
  beq.b    ri_endloop
  cmpi.w   #$d,d7
  bhi.b    ri_loop
- subq.l   #2,a3     ; für R_IBPMASK R_IBPDATA R_IBPTEXT dieselbe Anzahl
+ subq.l   #2,a3     ; fuer R_IBPMASK R_IBPDATA R_IBPTEXT dieselbe Anzahl
  bra.b    ri_loop
 ri_endloop:
 
@@ -802,7 +802,7 @@ rsci_loopobj:
 ; CICONBLK eintragen
  move.l   ob_spec(a3),a0           ; index
  add.w    a0,a0
- add.w    a0,a0                    ; für LONG-Zugriff
+ add.w    a0,a0                    ; fuer LONG-Zugriff
  add.l    d4,a0                    ; Tabelle der CICONBLKs
  move.l   (a0),ob_spec(a3)         ; Zeiger einsetzen
  bra.b    rsci_nxtobj

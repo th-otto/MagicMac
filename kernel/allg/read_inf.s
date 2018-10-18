@@ -4,8 +4,8 @@
 *
 *
 
-	INCLUDE "DOS.INC"
-	INCLUDE "ERRNO.INC"
+	INCLUDE "dos.inc"
+	INCLUDE "errno.inc"
 
 	XDEF	read_inf
 	XDEF	rinf_sec
@@ -32,7 +32,7 @@
 
 DEBUG	EQU	0
 
-	INCLUDE "DEBUG.INC"
+	INCLUDE "debug.inc"
 	IFNE	DEBUG
 	SUPER
 	ENDIF

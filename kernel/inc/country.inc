@@ -1,3 +1,4 @@
+; Country- Codes laut Atari Doku
 COUNTRY_US      EQU   0           ; USA
 COUNTRY_DE      EQU   1           ; Germany
 COUNTRY_FR      EQU   2           ; France

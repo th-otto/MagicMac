@@ -6,6 +6,8 @@ typedef struct
 			y2;
 }VRECT;
 
+#ifndef __XFNT_INFO
+#define __XFNT_INFO
 typedef struct
 {
 	LONG	size;					/* LÑnge der Struktur, muû vor vqt_xfntinfo() gesetzt werden */
@@ -21,6 +23,7 @@ typedef struct
 	WORD	pt_cnt;				/* Anzahl der Punkthîhen fÅr vst_point(), z.B. 10 */
 	WORD	pt_sizes[64];		/* verfÅgbare Punkthîhen, z.B. { 8, 9, 10, 11, 12, 14, 18, 24, 36, 48 } */
 } XFNT_INFO;
+#endif
 
 WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, UWORD *font_format, UWORD *flags );
 WORD	vqt_xfntinfo( WORD handle, WORD flags, WORD id, WORD index, XFNT_INFO *info );

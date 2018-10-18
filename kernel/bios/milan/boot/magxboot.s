@@ -22,8 +22,8 @@ fstrm_beg EQU  $49e           ; ___md
 os_chksum EQU  $486           ; trp14ret
 
 
-     INCLUDE "OSBIND.INC"
-     INCLUDE "MILAN.INC"
+     INCLUDE "osbind.inc"
+     INCLUDE "milan.inc"
 
      TEXT
      SUPER

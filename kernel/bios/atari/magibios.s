@@ -44,7 +44,7 @@ DEBUG3    EQU  0
 
      IFNE HADES
 XFS95     EQU  0
-     INCLUDE "HADES.INC"
+     INCLUDE "hades.inc"
      ELSE
 XFS95     EQU  1
      ENDIF
@@ -60,10 +60,8 @@ XFS95     EQU  1
      EXPORT      altcode_asc         ; nach XAES
      EXPORT      iorec_kb            ; nach DOS,XAES
      EXPORT      ctrl_status         ; nach DOS
-     EXPORT      cpu_typ             ; nach DOS,AES
      EXPORT      is_fpu              ; nach XAES
      EXPORT      halt_system         ; nach DOS,AES
-     EXPORT      xaes_area           ; nach XAES
      XDEF      p_mgxinf            ; nach XAES
      EXPORT      machine_type        ; nach VDI,DOS
      EXPORT      config_status       ; nach DOS und AES
@@ -78,15 +76,6 @@ XFS95     EQU  1
      EXPORT      dos_macfn           ; nach DOS
 
      XDEF           p_vt52              ; neues VT52 nach DOS
-     EXPORT      p_vt52_winlst       ; nach DOS
-     EXPORT      p_vt_interior_off   ; nach DOS
-     EXPORT      p_vt_columns_off    ; nach DOS
-     EXPORT      p_vt_rows_off       ; nach DOS
-     EXPORT      p_vt_visible_off    ; nach DOS
-     EXPORT      p_vt_x_off          ; nach DOS
-     EXPORT      p_vt_y_off          ; nach DOS
-     EXPORT      p_vt_sout           ; nach DOS
-     EXPORT      p_vt_cin            ; nach DOS
      EXPORT      warm_boot           ; nach AES
      EXPORT      warmbvec,coldbvec   ; nach AES
      EXPORT      ideparm             ; nach IDE.C
@@ -175,13 +164,14 @@ XFS95     EQU  1
      IMPORT    _lmul
 
 ;----------------------------------------
-     INCLUDE "LOWMEM.INC"
-     INCLUDE "BIOS.INC"
-     INCLUDE "DOS.INC"
-     INCLUDE "ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "HARDWARE.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "lowmem.inc"
+	 include "country.inc"
+     INCLUDE "bios.inc"
+     INCLUDE "dos.inc"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "hardware.inc"
+     INCLUDE "debug.inc"
 
 ;----------------------------------------
 MSys           equ  0                   ;Mac-Systemfunktionen unter MagiC-Mac
@@ -258,39 +248,7 @@ BUS_ERR           EQU 8
 ;
 ; BIOS- Variablen:
 
-deflt_env           EQU  $840           /* char deflt_env[40]         */
-ext_scsidrivr       EQU  $868           ; (L) Init-Zeiger auf SE-SCSI-Treiber
-                                        ; belegt die unteren vier Bytes
-                                        ; der savptr_area!
-;
-; saveptr_area bleibt aus Kompatiblitätsgründen (Matrix Grafiksoft.) bestehen,
-; wird aber von (X)Bios nicht benutzt
-savptr_area         EQU  $93a           /* int  savptr_area[105],ende */
-
-jmpcode             EQU  $93a           /* int  jmpcode[3]            */
-ram_syshdr          EQU  $940           /* SYSHDR ram_syshdr          */
-
-* ## unbenutzt. Ab <clear_area> werden beim Warmstart 64 kB gelöscht
-*               im Original- TOS ab $980
-
-xaes_area           EQU  $980           /* long xaes_area[3]          */
-/* p_vt52_winlst zeigt auf das Array WINDOW *app_window[128].         */
-/* Ist unter der Applikationsnummer id ein TOS-Programm im VT52 am    */
-/* Laufen, so zeigt app_window[id] auf die zugehörige Fensterstruktur */
-/* Andernfalls enthält app_window[id] NULL.                           */
-/* Die nachfolgenden Variablen werden im VT52.PRG in der Funktion     */
-/* <void set_vec()> initialisiert.                                    */
-p_vt52_winlst       EQU $98c            /* WINDOW   **p_vt52_winlst;  */
-p_vt_interior_off   EQU $990            /* Offset zur Variable INTERIOR interior  */
-p_vt_columns_off    EQU $992            /* Offset zur Variable WORD columns       */
-p_vt_rows_off       EQU $994            /* Offset zur Variable WORD rows */
-p_vt_visible_off    EQU $996            /* Offset zur Variable WORD visible_rows  */
-p_vt_x_off          EQU $998            /* Offset zur Variable WORD x */
-p_vt_y_off          EQU $99a            /* Offset zur Variable WORD y */
-p_vt_sout           EQU $99c            /* Adresse der cooked_str_to_con-Routine */
-p_vt_cin            EQU $9a0            /* Adresse der c_in_cooked-Routine */
-
-clear_area          EQU  $9a4           /* war vorher auf $98c        */
+clear_area          EQU $9a4            /* war vorher auf $98c        */
 
      OFFSET clear_area
 
@@ -1145,8 +1103,8 @@ boot_no_dma:
 * AES starten
 * Auflösungswechsel
 
-     INCLUDE "AUTO.S"
-     INCLUDE "PUNTAES.S"
+     INCLUDE "auto.s"
+     INCLUDE "puntaes.s"
 
 
 
@@ -1163,15 +1121,15 @@ dos_macfn:
  rts
 
 ;-----------------------------------------------------------------------
-     INCLUDE "SCSI.S"
+     INCLUDE "scsi.s"
      IFNE HADES
-     INCLUDE "HAD_FDC.S"
+     INCLUDE "had_fdc.s"
      ELSE
-     INCLUDE "FDC.S"
+     INCLUDE "fdc.s"
      ENDIF
-     INCLUDE "DRIVE.S"
+     INCLUDE "drive.s"
 ;-----------------------------------------------------------------------
-     INCLUDE "DSP.S"
+     INCLUDE "dsp.s"
 ;-----------------------------------------------------------------------
 
 **********************************************************************
@@ -2138,7 +2096,7 @@ exc63:    move.b    #63,-(sp)
 
 exc:
      IFNE HADES
-     INCLUDE "HAD_EXC.S"
+     INCLUDE "had_exc.s"
      ELSE
  move.b   (sp)+,proc_pc            ; Vektornummer
  movem.l  d0/d1/d2/d3/d4/d5/d6/d7/a0/a1/a2/a3/a4/a5/a6/sp,proc_regs
@@ -3971,10 +3929,10 @@ ead08d1:  movea.l d0,a0
 
 
 
-     INCLUDE "SERIAL.S"
-     INCLUDE "CLOCK.S"
-     INCLUDE "VIDEO.S"
-     INCLUDE "KEYB.S"
+     INCLUDE "serial.s"
+     INCLUDE "clock.s"
+     INCLUDE "video.s"
+     INCLUDE "keyb.s"
 
 
 
@@ -4093,9 +4051,9 @@ set_cpu_typ:
      ENDIF
 
      IFNE HADES
-     INCLUDE "HAD_COOK.S"
+     INCLUDE "had_cook.s"
      ELSE
-     INCLUDE "COOK.S"
+     INCLUDE "cook.s"
      ENDIF
 
 
@@ -4307,7 +4265,7 @@ pmmu_tc:
                          ; 12..15: TIA = 4
                          ;  8..11: TIB = 4
                          ;  4.. 7: TIC = 4
-                         ;  0.. 3: TID = 0   (3stufige Tabelle)
+                         ;  0.. 3: TID = 5   (3stufige Tabelle)
 
 * PMMU: tt0
 * jedes zweite (!) 16MB-Segment vom Beginn des TT-RAMS an wird
@@ -4340,8 +4298,8 @@ pmmu_tt1:
 
 
      IFNE    HADES
-     INCLUDE "HAD_SCSI.S"
-     INCLUDE "UNIM_INT.S"
+     INCLUDE "had_scsi.s"
+     INCLUDE "unim_int.s"
      ENDIF
      
      END

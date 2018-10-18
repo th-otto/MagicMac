@@ -8,9 +8,11 @@
 #include <tos.h>
 #include <tosdefs.h>
 #include <magx.h>
+#include "pd.h"
 #include "mgx_xfs.h"
 #include "mgx_dfs.h"
 #include "vfat_imp.h"
+#include "toserror.h"
 
 #define   MAXFOLDERNAME  64
 
@@ -295,7 +297,9 @@ static UWORD map_Unicode_ascii[] =
      0x00a1,173,         /* 173:   "exclamdown"        */
      0x00a2,155,         /* 155:   "cent"              */
      0x00a3,156,         /* 156:   "sterling"          */
-/*   0x00a4,             /* 8:     "currency"          */   */
+#if 0
+     0x00a4,             /* 8:     "currency"          */
+#endif
      0x00a5,157,         /* 157:   "yen"               */
      0x00a7,221,         /* 221:   "section"           */
      0x00a8,185,         /* 185:   "dieresis"          */
@@ -343,7 +347,9 @@ static UWORD map_Unicode_ascii[] =
      0x00d4,201,         /* 201:   "Ocircumflex"       */
      0x00d5,184,         /* 184:   "Otilde"            */
      0x00d6,153,         /* 153:   "Odieresis"         */
-/*   0x00d7,             /* 6:     "multiply"          */   */
+#if 0
+     0x00d7,             /* 6:     "multiply"          */
+#endif
      0x00d8,178,         /* 178:   "Oslash"            */
      0x00d9,205,         /* 205:   "Ugrave"            */
      0x00da,206,         /* 206:   "Uacute"            */
@@ -414,13 +420,21 @@ static UWORD map_Unicode_ascii[] =
 
      0x2122,191,         /* 191:   "trademark"         */
      0x2126,234,         /* 234:   "Omega"             */
-/*   0x2190,             /* 15:    "arrowleft"         */   */
+#if 0
+     0x2190,             /* 15:    "arrowleft"         */
+#endif
      0x2190,220,         /* 220:   "arrowleft"         */
-/*   0x2191,             /* 12:    "arrowup"           */   */
+#if 0
+     0x2191,             /* 12:    "arrowup"           */
+#endif
      0x2191,217,         /* 217:   "arrowup"           */
-/*   0x2192,             /* 14:    "arrowright"        */   */
+#if 0
+     0x2192,             /* 14:    "arrowright"        */
+#endif
      0x2192,219,         /* 219:   "arrowright"        */
-/*   0x2193,             /* 13:    "arrowdown"         */   */
+#if 0
+     0x2193,             /* 13:    "arrowdown"         */
+#endif
      0x2193,218,         /* 218:   "arrowdown"         */
 
      0x2206,127,         /* 127:   "Delta"             */
@@ -428,7 +442,9 @@ static UWORD map_Unicode_ascii[] =
      0x220f,239,         /* 239:   "product"           */
      0x2211,228,         /* 228:   "summation"         */
      0x221a,251,         /* 251:   "radical"           */
-/*   0x221e,             /* 7:     "infinity"          */   */
+#if 0
+     0x221e,             /* 7:     "infinity"          */
+#endif
      0x221e,223,         /* 223:   "infinity"          */
      0x222b,236,         /* 236:   "integral"          */
      0x2248,247,         /* 247:   "approxequal"       */
@@ -440,14 +456,16 @@ static UWORD map_Unicode_ascii[] =
      0x2320,244,         /* 244:   "integraltp"        */
      0x2321,245,         /* 245:   "integralbt"        */
 
-/*   0x25b2,             /* 1:     "triagup"           */   */
-/*   0x25ba,             /* 3:     "triagrt"           */   */
-/*   0x25bc,             /* 2:     "triagdn"           */   */
-/*   0x25c4,             /* 4:     "triaglf"           */   */
-/*   0x25cf              /* 31:    "circle"            */   */
+#if 0
+     0x25b2,             /* 1:     "triagup"           */
+     0x25ba,             /* 3:     "triagrt"           */
+     0x25bc,             /* 2:     "triagdn"           */
+     0x25c4,             /* 4:     "triaglf"           */
+     0x25cf              /* 31:    "circle"            */
 
-/*   0x266a,             /* 11:    "musicalnote"       */   */
-/*   0x266b,             /* 10:    "musicalnotedbl"    */   */
+     0x266a,             /* 11:    "musicalnote"       */
+     0x266b,             /* 10:    "musicalnotedbl"    */
+#endif
 };
 
 
@@ -654,7 +672,7 @@ static LONG _vf_readdir(MX_DOSFD *fd,
                /* Rückwärts reinkopieren */
                /* ---------------------- */
 
-               memcpy(nxt_longname - len, ltmpname, len);
+               vmemcpy(nxt_longname - len, ltmpname, len);
                nxt_longname -= len;
                longcount--;
                }
@@ -713,7 +731,7 @@ static LONG _vf_readdir(MX_DOSFD *fd,
                len = (int) (strlen(nxt_longname)) + 1;
                if   (len > lbuflen)
                     return(ERANGE);
-               strcpy(lbuf, nxt_longname);
+               vstrcpy(lbuf, nxt_longname);
                }
           else {         /* habe keinen langen Namen */
                if   (!shortbuf)    /* will keinen kurzen */

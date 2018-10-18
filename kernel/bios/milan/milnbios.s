@@ -25,11 +25,9 @@ DEBUG4    EQU  0
      EXPORT    altcode_asc         ; nach XAES
      EXPORT    iorec_kb            ; nach DOS,XAES
      EXPORT    ctrl_status         ; nach DOS
-     EXPORT    cpu_typ             ; nach DOS,AES
      EXPORT    cpu020              ; nach MATH
      EXPORT    is_fpu              ; nach XAES
      EXPORT    halt_system         ; nach DOS,AES
-     EXPORT    xaes_area           ; nach XAES
      XDEF      p_mgxinf            ; nach XAES
      EXPORT    machine_type        ; nach VDI,DOS
      EXPORT    config_status       ; nach DOS und AES
@@ -45,15 +43,6 @@ DEBUG4    EQU  0
 
      EXPORT    milan               ; nach MILAN.S
      XDEF      p_vt52              ; neues VT52 nach DOS
-     EXPORT    p_vt52_winlst       ; nach DOS
-     EXPORT    p_vt_interior_off   ; nach DOS
-     EXPORT    p_vt_columns_off    ; nach DOS
-     EXPORT    p_vt_rows_off       ; nach DOS
-     EXPORT    p_vt_visible_off    ; nach DOS
-     EXPORT    p_vt_x_off          ; nach DOS
-     EXPORT    p_vt_y_off          ; nach DOS
-     EXPORT    p_vt_sout           ; nach DOS
-     EXPORT    p_vt_cin            ; nach DOS
      EXPORT    warm_boot           ; nach AES
      EXPORT    warmbvec,coldbvec   ; nach AES
      EXPORT    putch
@@ -139,10 +128,10 @@ DEBUG4    EQU  0
 
 ;----------------------------------------
 
-     INCLUDE "DOS.INC"
-     INCLUDE "ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "MILAN.INC"
+     INCLUDE "dos.inc"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "milan.inc"
 	include "country.inc"
 	
 ;----------------------------------------
@@ -209,45 +198,14 @@ fbpb_sizeof:
 ; "Öffentliche Variablen"
 ;
 
-     INCLUDE "BIOS.INC"
-     INCLUDE "LOWMEM.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "bios.inc"
+     INCLUDE "lowmem.inc"
+     INCLUDE "debug.inc"
 
 ;--------------------------------------------------------------
 ;
 ; BIOS- Variablen:
 
-deflt_env           EQU  $840           /* char deflt_env[40]         */
-ext_scsidrivr       EQU  $868           ; (L) Init-Zeiger auf SE-SCSI-Treiber
-                                        ; belegt die unteren vier Bytes
-                                        ; der savptr_area!
-;
-; saveptr_area bleibt aus Kompatiblitätsgründen (Matrix Grafiksoft.) bestehen,
-; wird aber von (X)Bios nicht benutzt
-savptr_area         EQU  $93a           /* int  savptr_area[105],ende */
-
-jmpcode             EQU  $93a           /* int  jmpcode[3]            */
-ram_syshdr          EQU  $940           /* SYSHDR ram_syshdr          */
-
-* ## unbenutzt. Ab <clear_area> werden beim Warmstart 64 kB gelöscht
-*               im Original- TOS ab $980
-
-xaes_area           EQU  $980           /* long xaes_area[3]          */
-/* p_vt52_winlst zeigt auf das Array WINDOW *app_window[128].         */
-/* Ist unter der Applikationsnummer id ein TOS-Programm im VT52 am    */
-/* Laufen, so zeigt app_window[id] auf die zugehörige Fensterstruktur */
-/* Andernfalls enthält app_window[id] NULL.                           */
-/* Die nachfolgenden Variablen werden im VT52.PRG in der Funktion     */
-/* <void set_vec()> initialisiert.                                    */
-p_vt52_winlst       EQU $98c            /* WINDOW   **p_vt52_winlst;  */
-p_vt_interior_off   EQU $990            /* Offset zur Variable INTERIOR interior  */
-p_vt_columns_off    EQU $992            /* Offset zur Variable WORD columns       */
-p_vt_rows_off       EQU $994            /* Offset zur Variable WORD rows */
-p_vt_visible_off    EQU $996            /* Offset zur Variable WORD visible_rows  */
-p_vt_x_off          EQU $998            /* Offset zur Variable WORD x */
-p_vt_y_off          EQU $99a            /* Offset zur Variable WORD y */
-p_vt_sout           EQU $99c            /* Adresse der cooked_str_to_con-Routine */
-p_vt_cin            EQU $9a0            /* Adresse der c_in_cooked-Routine */
 milan               EQU  $9a4      ; Zeiger auf Übergabestruktur
 
 clear_area          EQU  $9a8
@@ -827,12 +785,12 @@ boot_no_dma:
 * AES starten
 * Auflösungswechsel
 
-     INCLUDE "AUTO.S"
+     INCLUDE "auto.s"
 
 cold_boot:
  jmp      coldboot
 
-     INCLUDE "PUNTAES.S"
+     INCLUDE "puntaes.s"
 
 
 
@@ -2495,7 +2453,7 @@ handle_key:
 ;   eori.w   #$300,sr          ;von IPL 5 auf 6 zurück
    rts
 
-     INCLUDE "HANDLKEY.S"
+     INCLUDE "handlkey.s"
 
 
 Logbase:

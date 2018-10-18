@@ -125,4 +125,6 @@ typedef struct _mx_dfs {
 #define   DEV_M_INSTALL  0xcd00
 
 /* zus„tzliche Attributbits */
-#define	FA_SYMLINK	64
+#ifndef FA_SYMLINK
+#define	FA_SYMLINK	0x40
+#endif

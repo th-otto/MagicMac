@@ -13,8 +13,11 @@
 #include <aes.h>
 #include <vdi.h>
 #include <tos.h> 
+#include "std.h"
 
 #define	CALL_MAGIC_KERNEL	1
+
+#include "ker_bind.h"
 
 #if	CALL_MAGIC_KERNEL
 
@@ -22,28 +25,7 @@
 /* Makros und Funktionsdefinitionen fr Aufrufe an den MagiC-Kernel								*/
 /*----------------------------------------------------------------------------------------*/ 
 
-extern WORD enable_3d;
-extern LONG strlen(const char *string);
-extern WORD strcmp(char *s1, char *s2);
-extern void strcpy(char *dst, char *src);
-extern void memcpy(void *dst, void *src, UWORD len);
-extern void putch(char c);
-extern LONG malloc(LONG size);
-extern WORD grects_intersect( const GRECT *p1, GRECT *p2 );
-
-extern void set_clip_grect(GRECT *g);
-extern void drawbox( WORD wmode, WORD colour, WORD aes_patt,
-		GRECT *g);
-
-extern void _rsrc_rcfix( void *global, RSHDR *rsc );
-
-extern WORD _evnt_timer( LONG clicks_50hz );
-extern void _objc_draw(OBJECT *tree, WORD startob, WORD depth);
-extern void _form_center(OBJECT *ob, GRECT *out );
-extern void frm_xdial(WORD flag, GRECT *little, GRECT *big,
-					void **flyinf);
-extern WORD form_xdo( OBJECT *tree, WORD startob, WORD *endob,
-				void *keytab, void *fi );
+extern int enable_3d;
 
 #define	is_3d_look \
 			(enable_3d)
@@ -58,13 +40,13 @@ extern WORD form_xdo( OBJECT *tree, WORD startob, WORD *endob,
 #define	form_xdial( flag, little, big, flyinf ) \
 			frm_xdial( flag, little, big, flyinf )
 
-#define	form_center( tree, rect ) \
-			_form_center( tree, rect )
+#define	form_center_grect( tree, rect ) \
+			_form_center_grect( tree, rect )
 
 #define	evnt_timer( low, high ) \
 			_evnt_timer( low )
 
-#define	Malloc( size )	((void *) malloc( size ))
+#define	Malloc( size )	((void *) mmalloc( size ))
 
 #include "shelsort.h"
 #else
@@ -844,13 +826,13 @@ WORD	fnts_get_name( FNT_DIALOG *fnt_dialog, LONG id, BYTE *full_name, BYTE *fami
 	if ( font )
 	{
 		if ( full_name )
-			strcpy( full_name, font->full_name );
+			vstrcpy( full_name, font->full_name );
 
 		if ( family_name )
-			strcpy( family_name, font->family_name );
+			vstrcpy( family_name, font->family_name );
 
 		if ( style_name )
-			strcpy( style_name, font->style_name );
+			vstrcpy( style_name, font->style_name );
 
 		return( 1 );
 	}
@@ -921,6 +903,7 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 {
 	OBJECT	*tree;
 	
+	(void)id;
 	if ( pt > ( 1000L << 16 ))											/* gr”žer als 1000 Punkte? */
 		pt = 1000L << 16;
 	if ( pt < 65536L )													/* kleiner als 1 Punkt? */
@@ -1448,8 +1431,8 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 				info->size = sizeof( XFNT_INFO );
 				vqt_xfntinfo( vdi_handle, 0x2ff, tmp->id, 0, info );
 			
-				strcpy( tmp->family_name, info->family_name );	/* Name der Fontfamilie */
-				strcpy( tmp->style_name, info->style_name );		/* Name des Stils */
+				vstrcpy( tmp->family_name, info->family_name );	/* Name der Fontfamilie */
+				vstrcpy( tmp->style_name, info->style_name );		/* Name des Stils */
  
  				tmp->npts = info->pt_cnt;								/* Anzahl der vordefinierten Punktgr”žen */
  				for ( j = 0; j < info->pt_cnt; j++ )
@@ -1462,9 +1445,9 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 							
 				vqt_fontheader( vdi_handle, buf, path );
 
-				memcpy( tmp->family_name, buf + FH_SFACN, 16 );	/* Name der Fontfamilie */
+				vmemcpy( tmp->family_name, buf + FH_SFACN, 16 );	/* Name der Fontfamilie */
 				tmp->family_name[16] = 0;
-				memcpy( tmp->style_name, buf + FH_FNTFM, 14 );	/* Name des Stils */
+				vmemcpy( tmp->style_name, buf + FH_FNTFM, 14 );	/* Name des Stils */
 				tmp->style_name[14] = 0;
 
 				if ( buf[FH_CLFGS] & 2 )								/* „quidistant?	*/
@@ -1475,8 +1458,8 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 		else																	/* Bitmap-Font */
 		{
 			tmp->outline = 0;
-			strcpy( tmp->family_name, tmp->full_name );			/* Familienname ist gleich dem Fontnamen */
-			strcpy( tmp->style_name, "   -" );						/* kein Stilname */
+			vstrcpy( tmp->family_name, tmp->full_name );			/* Familienname ist gleich dem Fontnamen */
+			vstrcpy( tmp->style_name, "   -" );						/* kein Stilname */
 		}
 		
 		if ( tmp->npts == 0 )											/* sind die Punkth”hen noch nicht bekannt? */
@@ -1528,13 +1511,13 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 			font->outline = tmp->outline;								/* Vektorfont-Flag */
 			
 			font->full_name = (BYTE *) (font + 1);
-			strcpy( font->full_name, tmp->full_name );			/* vollst„ndiger Name */
+			vstrcpy( font->full_name, tmp->full_name );			/* vollst„ndiger Name */
 
 			font->family_name = font->full_name + name_len;
-			strcpy( font->family_name, tmp->family_name );		/* Familienname */
+			vstrcpy( font->family_name, tmp->family_name );		/* Familienname */
 
 			font->style_name = font->family_name + family_len;
-			strcpy( font->style_name, tmp->style_name );			/* Stilname */
+			vstrcpy( font->style_name, tmp->style_name );			/* Stilname */
 
 			font->pts = font->style_name + style_len;
 			for ( j = 0; j < tmp->npts; j++ )						/* Punkth”hen kopieren */
@@ -1807,9 +1790,9 @@ static RSHDR	*copy_rsrc( RSHDR *rsc, LONG len )
 		WORD	dummy_global[15];
 
 #if CALL_MAGIC_KERNEL
-		memcpy( new, rsc, (UWORD) len );								/* Resource kopieren */
+		vmemcpy( new, rsc, (UWORD) len );								/* Resource kopieren */
 #else
-		memcpy( new, rsc, len );										/* Resource kopieren */
+		vmemcpy( new, rsc, len );										/* Resource kopieren */
 #endif
 		_rsrc_rcfix( dummy_global, new );							/* Resource anpassen */
 	}
@@ -2558,6 +2541,8 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 	WORD		old_cnt;
 	WORD		old_top;
 
+	(void) obj_index;
+	(void) box;
 	fnt_dialog = (FNT_DIALOG *) user_data;
 
 	if (( item->selected == 0 )|| ( item->selected == last_state ))	/* Deselektion ignorieren */
@@ -2568,7 +2553,7 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 	style = lbox_get_slct_item( fnt_dialog->fnt_style );		/* bisher angew„hlten Stil ermitteln */
 
 	if ( style )															/* gefunden? */
-		strcpy( last_style, ((FNT *) style->data )->style_name );
+		vstrcpy( last_style, ((FNT *) style->data )->style_name );
 	else
 		last_style[0] = 0;
 		
@@ -2630,6 +2615,8 @@ void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_
 	FNT	*font;
 	FNT_DIALOG	*fnt_dialog;
 
+	(void) obj_index;
+	(void) box;
 	fnt_dialog = (FNT_DIALOG *) user_data;
 
 	if (( item->selected == 0 ) || ( item->selected == last_state ))	/* Deselektion ignorieren */
@@ -2705,6 +2692,7 @@ void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_d
 	WORD		edit_obj;
 	WORD	index;
 	
+	(void) obj_index;
 	if ( item && (( item->selected == 0 ) || ( item->selected == last_state )))	/* Deselektion ignorieren */
 		return;
 
@@ -2759,6 +2747,10 @@ WORD	cdecl	set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD inde
 	BYTE	*str;
 	BYTE	*ptext;
 
+	(void)first;
+	(void)rect;
+	(void)user_data;
+	(void)box;
 	ptext = tree[index].ob_spec.tedinfo->te_ptext;				/* Zeiger auf String des GTEXT-Objekts */
 
 	if ( item )
@@ -2798,6 +2790,7 @@ WORD	cdecl	do_slct_font( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, vo
 {
 	FNT_DIALOG	*fnt_dialog;
 	
+	(void)events;
 	if ( obj < 0 )															/* Nachricht? */
 	{
 		if ( obj == HNDL_CLSD )											/* Dialog geschlossen? */

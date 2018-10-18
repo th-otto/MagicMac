@@ -4,14 +4,14 @@
 * WINDOW MANAGER
 *
 
-     INCLUDE "AESINC.S"
+     INCLUDE "aesinc.s"
         TEXT
 
      XREF      config_status       ; DOS
 
      XREF      _objc_draw
      XREF      _objc_change
-     XREF      min,max,memcpy,leerstring,clrmem,fatal_w1,fatal_w2
+     XREF      min,max,vmemcpy,leerstring,clrmem,fatal_w1,fatal_w2
      XREF      grects_intersect,grects_union
      XREF      set_clip_grect,get_clip_grect,xy_in_grect
      XREF      mouse_off,mouse_on
@@ -53,6 +53,7 @@
      XDEF      wind_find
      XDEF      _wind_calc
      XDEF      _wind_get
+     XDEF      _wind_get_grect
      XDEF      _wind_set
      XDEF      _wind_create
      XDEF      _wind_open
@@ -77,7 +78,7 @@
      XDEF      _wbm_obfind,_wbm_sstr,_wbm_sattr
 
 
-WINDXMINUS     EQU  1         ; Fenster dürfen links herausragen.
+WINDXMINUS     EQU  1         ; Fenster duerfen links herausragen.
 
 /* Fensterrahmen-Elemente */
 
@@ -99,7 +100,7 @@ O_HSLIDE       EQU  14  /* BOX in Baum T_WINDOW */
 O_ICONIFIER    EQU  15  /* USERDEF in Baum T_WINDOW */
 
 
-whdl_to_wnd:                       ; ändert nur d0/a0
+whdl_to_wnd:                       ; aendert nur d0/a0
  cmp.w    nwindows,d0
  bcc.b    w2w_err
  move.l   windx,a0
@@ -121,14 +122,14 @@ w2w_err:
 * WINDOW *__wind_create( a0 = WINDOW *w, a1 = APPL *ap, d0 = int whdl,
 *                        d1 = int kind)
 *
-* ändert nicht a2
+* aendert nicht a2
 *
 
 __wind_create:
  move.w   d0,w_whdl(a0)
- move.w   d1,w_kind(a0)            ; alle Bits gnadenlos übernehmen
+ move.w   d1,w_kind(a0)            ; alle Bits gnadenlos uebernehmen
  move.l   a1,w_owner(a0)
- clr.w    w_attr(a0)               ; alle Attribute löschen
+ clr.w    w_attr(a0)               ; alle Attribute loeschen
  clr.w    w_state(a0)
  clr.w    w_vslide(a0)
  clr.w    w_hslide(a0)
@@ -145,7 +146,7 @@ __wind_create:
 *
 * void get_hwout(a0 = GRECT *dst, d0 = int whdl)
 *
-* Ermittelt Umriß des Fensters, d.h. CURRXYWH mit Schatten
+* Ermittelt Umriss des Fensters, d.h. CURRXYWH mit Schatten
 *
 
 get_hwout:
@@ -212,7 +213,7 @@ _objc_wdraw:
 * void objc_wdraw( a0 = OBJECT *tree, d0 = WORD startob, d1 = WORD depth,
 *                        a1 = GRECT *g, d2 = WORD whdl)
 *
-* Wie objc_draw(), berücksichtigt aber die Fenster-Rechteckliste des
+* Wie objc_draw(), beruecksichtigt aber die Fenster-Rechteckliste des
 * angegebenen Fensters.
 * Wenn <tree> == windowbox, wird _NICHT_ mit WORKXYWH geschnitten.
 * Wenn whdl < 0: Wie objc_draw()
@@ -234,7 +235,7 @@ __objc_wdraw:
 
  move.w   d2,d0                    ; whdl
  bsr      whdl_to_wnd
- beq.b    obw_err                  ; Fenster ungültig
+ beq.b    obw_err                  ; Fenster ungueltig
  move.l   w_wg(a0),a4
 
  move.l   a5,d0                    ; GRECT angegeben?
@@ -266,7 +267,7 @@ obw_no_clip:
 obw_weiter:
  bra.b    obw_next_wg
 
-* Schleife für jedes Rechteck der Rechteckliste
+* Schleife fuer jedes Rechteck der Rechteckliste
 
 obw_loop:
  move.l   8(a4),-(sp)
@@ -332,7 +333,7 @@ w0d_draw:
 *
 * void wind_draw_whole( d0 = int whdl )
 *
-* Erstellt den Objektbaum für <whdl> und zeichnet ihn komplett.
+* Erstellt den Objektbaum fuer <whdl> und zeichnet ihn komplett.
 *
 
 wind_draw_whole:
@@ -347,7 +348,7 @@ wind_draw_whole:
 * void wind_draw( d0 = int whdl, d1 = int startobj,
 *                   a0 = GRECT *clipg )
 *
-* Erstellt den Objektbaum für <whdl> und zeichnet ihn.
+* Erstellt den Objektbaum fuer <whdl> und zeichnet ihn.
 * <clipg> kann NULL sein.
 *
 
@@ -401,7 +402,7 @@ wdr_both:
 
 _wtedinfo:
  DC.L     leerstring
- DC.L     0,0                      ; TEDINFO für NAME/INFO
+ DC.L     0,0                      ; TEDINFO fuer NAME/INFO
  DC.W     3                        ; te_font IBM
  DC.W     1                        ; te_resvd
  DC.W     0                        ; te_just TE_LEFT
@@ -435,12 +436,12 @@ _wbc_l1:
  clr.l    ob_x(a0)                 ; Default: x=y=0
  move.w   gr_hwbox,ob_width(a0)    ; Default: w=gr_hwbox
  move.w   gr_hhbox,ob_height(a0)   ; Default: h=gr_hhbox
- lea      24(a0),a0                ; nächstes OBJECT
+ lea      24(a0),a0                ; naechstes OBJECT
  dbra     d0,_wbc_loop
 
  move.l   d2,a2                    ; w
 
-* Höhe der INFO Zeile
+* Hoehe der INFO Zeile
 
  move.w   inw_height,w_tree+O_INFO*24+ob_height(a2)
 
@@ -496,29 +497,29 @@ __wbm_sk_slider:
 
  btst     d5,d6                    ; uparrow bzw. lfarrow
  beq.b    _wsks_no_upar_lfar
- move.w   d4,d1                    ; Objekt für uparrow/lfarrow
+ move.w   d4,d1                    ; Objekt fuer uparrow/lfarrow
  moveq    #0,d0                    ; parent
  move.l   a6,a0
  bsr      objc_add
 
 _wsks_no_upar_lfar:
- addq.w   #1,d5                    ; nächstes Bit
- addq.w   #1,d4                    ; nächstes OBJECT
+ addq.w   #1,d5                    ; naechstes Bit
+ addq.w   #1,d4                    ; naechstes OBJECT
  btst     d5,d6
  beq.b    _wsks_no_dnar_rtar
- move.w   d4,d1                    ; Objekt für dnarrow/rtarrow
+ move.w   d4,d1                    ; Objekt fuer dnarrow/rtarrow
  moveq    #0,d0                    ; parent
  move.l   a6,a0
  bsr      objc_add
 
 _wsks_no_dnar_rtar:
- addq.w   #1,d4                    ; nächstes OBJECT (scroll)
- move.w   d4,d1                    ; Objekt für vscroll/hscroll
+ addq.w   #1,d4                    ; naechstes OBJECT (scroll)
+ move.w   d4,d1                    ; Objekt fuer vscroll/hscroll
  moveq    #0,d0                    ; parent
  move.l   a6,a0
  bsr      objc_add
 
- addq.w   #1,d5                    ; nächstes Bit (H/VSLIDE)
+ addq.w   #1,d5                    ; naechstes Bit (H/VSLIDE)
  btst     d5,d6
  beq.b    _wsks_no_slide
 
@@ -537,7 +538,7 @@ _wsks_no_slide:
 *
 * long _minimal_size(a0 = WINDOW *w)
 *
-* gibt in d0 die Minimalgröße (w/h) eines Fensters zurück.
+* gibt in d0 die Minimalgroesse (w/h) eines Fensters zurueck.
 *
 
 _minimal_size:
@@ -551,7 +552,7 @@ minsize_notop:
  move.w   w_kind(a0),d2
  btst     #INFO_B,d2
  beq.b    minsize_noinfo           ; nein
- add.w    inw_height,d0            ; ja, Höhe addieren
+ add.w    inw_height,d0            ; ja, Hoehe addieren
  subq.w   #1,d0
 minsize_noinfo:
  btst     #UPARROW_B,d2
@@ -562,7 +563,7 @@ minsize_noup:
  beq.b    minsize_nodn
  add.w    d1,d0
 minsize_nodn:
- move.w   d0,-(sp)                 ; Minimalhöhe
+ move.w   d0,-(sp)                 ; Minimalhoehe
 
  move.w   gr_hwbox,d1
  move.w   d1,d0                    ; rechter Rand immer!
@@ -587,7 +588,7 @@ minsize_nocl:
 minsize_no_iconifier:
  and.w    #7,d2
  beq.b    minsize_nobk
- add.w    d1,d0                    ; Backdrop berücksichtigen
+ add.w    d1,d0                    ; Backdrop beruecksichtigen
 minsize_nobk:
  cmp.w    (sp),d0
  ble.b    minsize_ok2
@@ -611,7 +612,7 @@ _wbm_skind:
  movem.l  d3/d4/d6/a4/a6,-(sp)
  move.l   a0,a4                         ; a4 = WINDOW *
  bsr      _minimal_size
- move.l   d0,w_min_g+g_w(a4)            ; Minimalgröße initialisieren
+ move.l   d0,w_min_g+g_w(a4)            ; Minimalgroesse initialisieren
  lea      w_tree(a0),a6
  move.w   w_kind(a0),d6
  btst     #WSTAT_ICONIFIED_B,w_state+1(a4)
@@ -619,13 +620,13 @@ _wbm_skind:
  move.w   #NAME+MOVER,d6                ; Ikonifiziert: Nur Balken
 _wbsk_no_ic:
 
-; erst die ganze Verkettung lösen
+; erst die ganze Verkettung loesen
 
  moveq    #N_WINOBJS,d0
  move.l   a6,a0
  bsr      kill_tree_structure
 
-; nur die unveränderlichen Objektpositionen hier setzen
+; nur die unveraenderlichen Objektpositionen hier setzen
 
  move.w   gr_hwbox,d3
  subq.w   #1,d3
@@ -677,7 +678,7 @@ _wbsk_nofull:
  move.l   a6,a0
  bsr      objc_add                      ; Iconifier
 
-* links von der Fullbox bzw. vom Iconifier führen wir die Drop- Box ein:
+* links von der Fullbox bzw. vom Iconifier fuehren wir die Drop- Box ein:
 
 _wbsk_noicon:
  btst     #2,look_flags+1               ; expliziter Backdrop-Button ?
@@ -774,12 +775,12 @@ _wbsk_no_lfa:
 * 5. rechts unterer Teil
 * ======================
 
-* Der Sizer bzw. das leere Feld wird nur dann benötigt, wenn er
+* Der Sizer bzw. das leere Feld wird nur dann benoetigt, wenn er
 * explizit verlangt wurde oder wenn sowohl rechte als auch untere
 * Randelemente angefordert wurden
 
 _wbsk_no_bottom:
- moveq    #6,d1                         ; Zeichen für SIZER
+ moveq    #6,d1                         ; Zeichen fuer SIZER
  btst     #SIZER_B,d6                   ; SIZER explizit verlangt ?
  bne.b    _wbsk_size                    ; ja, Objekt setzen
  move.w   d6,d0
@@ -806,7 +807,7 @@ _wbsk_no_rightbottom:
 * void _wbm_sattr( a0 = WINDOW *w, d0 = WORD chbits )
 *
 * Fensterstruktur initialisieren (Default-Callback-Funktion).
-* Wird aufgerufen, wenn das Attribut sich geändert hat, d.h. wenn
+* Wird aufgerufen, wenn das Attribut sich geaendert hat, d.h. wenn
 * das Fenster z.B. aktiv oder inaktiv geworden ist.
 *
 
@@ -822,7 +823,7 @@ _wbm_sattr:
 
  btst     #WSTAT_ACTIVE_B,w_state+1(a4)
  sne      d1
- andi.w   #2,d1                         ; d1 = 0 oder 2 (für int- Offset)
+ andi.w   #2,d1                         ; d1 = 0 oder 2 (fuer int- Offset)
 
  lea      dcol_closer,a1
  move.w   0(a1,d1.w),w_tree+O_CLOSER*24+ob_spec+2(a4)
@@ -901,7 +902,7 @@ _wbsa_s4:
 *
 * Fensterstruktur initialisieren (Default-Callback-Funktion).
 * Wird aufgerufen, wenn die Sliderobjekte neu zu berechnen sind,
-* d.h. bei Änderung und Skalierung des Fensters.
+* d.h. bei Aenderung und Skalierung des Fensters.
 * Wird nur aufgerufen, wenn ein ensprechender VSLIDE/HSLIDE
 * angemeldet ist.
 *
@@ -930,29 +931,29 @@ _wbm_sslid:
  move.w   gr_hhbox,d1
 _wbsl_hor1:
 
-* Minimalgröße bestimmen
+* Minimalgroesse bestimmen
 
- move.w   ob_width(a1),d2          ; Breite/Höhe des Scrollers
+ move.w   ob_width(a1),d2          ; Breite/Hoehe des Scrollers
  cmp.w    d1,d2
- bge.b    _wbsl_enough             ; Scrollergröße >= Slidergröße
+ bge.b    _wbsl_enough             ; Scrollergroesse >= Slidergroesse
  moveq    #0,d1
  tst.w    d2
- bmi.b    _wbsl_enough             ; Scrollergröße negativ!
+ bmi.b    _wbsl_enough             ; Scrollergroesse negativ!
  move.w   d2,d1
 
-* gewünschte Größe
+* gewuenschte Groesse
 
 _wbsl_enough:
- move.w   d1,ob_width+24(a1)       ; zulässige Minimalgröße setzen
+ move.w   d1,ob_width+24(a1)       ; zulaessige Minimalgroesse setzen
  move.w   (a0),d1                  ; hslsize/vslsize
  addq.w   #1,d1
  beq.b    _wbsl_little             ; ganz klein, ist schon eingestellt
 
  subq.w   #1,d1
- move.w   d2,d0                    ; Breite/Höhe von scroll
- bsr      __sslid                  ; ändert nur d0
+ move.w   d2,d0                    ; Breite/Hoehe von scroll
+ bsr      __sslid                  ; aendert nur d0
 ;move.w   d0,d0
- cmp.w    ob_width+24(a1),d0       ; minimale Breite/Höhe von slide
+ cmp.w    ob_width+24(a1),d0       ; minimale Breite/Hoehe von slide
  ble.b    _wbsl_little
  move.w   d0,ob_width+24(a1)
 _wbsl_little:
@@ -960,7 +961,7 @@ _wbsl_little:
  move.w   (a0),d0                  ; w_hslide/w_vslide
  move.w   ob_width(a1),d1
  sub.w    ob_width+24(a1),d1
- bsr      __sslid                  ; ändert nur d0
+ bsr      __sslid                  ; aendert nur d0
  move.w   d0,ob_x+24(a1)
  rts
 
@@ -971,8 +972,8 @@ _wbsl_little:
 *
 * Fensterstruktur initialisieren (Default-Callback-Funktion),
 *
-* Wird aufgerufen, wenn die Zeichenkette für INFO oder NAME
-* geändert wurde.
+* Wird aufgerufen, wenn die Zeichenkette fuer INFO oder NAME
+* geaendert wurde.
 *
 
 _wbm_sstr:
@@ -988,7 +989,7 @@ _wbm_sstr:
 * Fensterstruktur initialisieren (Default-Callback-Funktion),
 * wird aufgerufen bei set_wind_xywh() und wind_set(WF_KIND).
 *
-* Berechnet w_work und modifiziert die Größen der Fensterobjekte.
+* Berechnet w_work und modifiziert die Groessen der Fensterobjekte.
 *
 
 _wbm_ssize:
@@ -1016,10 +1017,10 @@ _wbss_no_ic:
 * Objektbaum skalieren
 
  move.l   w_curr(a4),w_tree+ob_x(a4)    ; neue Position setzen
- move.l   w_curr+g_w(a4),d0             ; neue Größe
- cmp.l    w_tree+ob_width(a4),d0        ; == alte Größe?
- beq      _wbss_ende                    ; ja, keine Modifikation nötig
- move.l   d0,w_tree+ob_width(a4)        ; neue Größe setzen
+ move.l   w_curr+g_w(a4),d0             ; neue Groesse
+ cmp.l    w_tree+ob_width(a4),d0        ; == alte Groesse?
+ beq      _wbss_ende                    ; ja, keine Modifikation noetig
+ move.l   d0,w_tree+ob_width(a4)        ; neue Groesse setzen
 
  move.w   gr_hwbox,d3
  move.w   gr_hhbox,d4
@@ -1082,7 +1083,7 @@ _wbss_nofull:
  sub.w    d3,w_tree+O_BDROP*24+ob_x(a4)      ; Backdrop nach links
  sub.w    d3,w_tree+O_NAME*24+ob_width(a4)   ; NAME Breite anpassen
 
-* links von der Fullbox bzw. vom Iconifier führen wir die Drop- Box ein:
+* links von der Fullbox bzw. vom Iconifier fuehren wir die Drop- Box ein:
 
 _wbss_noicon:
  btst     #2,look_flags+1                    ; expliziter Backdrop-Button ?
@@ -1118,34 +1119,34 @@ _wbss_right:
  move.w   w_work+g_y(a4),d1
  sub.w    w_curr+g_y(a4),d1
  subq.w   #1,d1                    ; Pos. von uparrow/Slider
- move.w   w_work+g_h(a4),d0        ; Länge des Sliders
+ move.w   w_work+g_h(a4),d0        ; Laenge des Sliders
  addq.w   #2,d0                    ;  oben und unten 1 Pixel Rand
 
  btst     #6,d6
  beq.b    _wbss_no_upar
  move.w   d1,w_tree+O_UP*24+ob_y(a4)
  add.w    d4,d1                    ; Slider tiefersetzen
- sub.w    d4,d0                    ; Höhe für uparrow abziehen
+ sub.w    d4,d0                    ; Hoehe fuer uparrow abziehen
 _wbss_no_upar:
  btst     #7,d6
  beq.b    _wbss_no_dnar
- sub.w    d4,d0                    ; Höhe für dnarrow abziehen
+ sub.w    d4,d0                    ; Hoehe fuer dnarrow abziehen
 _wbss_no_dnar:
  move.w   d6,d2
  andi.w   #HSLIDE+RTARROW+LFARROW,d2    ; unterer Rand ?
- bne.b    _wbss_no_sizecorner           ; ja, schon berücksichtigt
+ bne.b    _wbss_no_sizecorner           ; ja, schon beruecksichtigt
  btst     #5,d6                         ; SIZER ?
  beq.b    _wbss_no_sizecorner           ; nein
- sub.w    d4,d0                         ; Höhe für Sizer abziehen
+ sub.w    d4,d0                         ; Hoehe fuer Sizer abziehen
 _wbss_no_sizecorner:
  move.w   d1,w_tree+O_VSCROLL*24+ob_y(a4)         ; y    von vscroll
- move.w   d0,w_tree+O_VSCROLL*24+ob_height(a4)    ; Höhe von vscroll
+ move.w   d0,w_tree+O_VSCROLL*24+ob_height(a4)    ; Hoehe von vscroll
  add.w    d1,d0
  subq.w   #1,d0
  move.w   d0,w_tree+8*24+ob_y(a4)       ; y    von dnarrow
 
  addq.w   #1,d4
- move.w   d4,w_tree+10*24+ob_height(a4) ; Minimalgröße des Sliders
+ move.w   d4,w_tree+10*24+ob_height(a4) ; Minimalgroesse des Sliders
 
  moveq    #1,d0                    ; vertikal
  move.l   a4,a0                    ; WINDOW *
@@ -1175,13 +1176,13 @@ _wbss_isbottom:
 
  btst     #9,d6
  beq.b    _wbss_no_lfar
- sub.w    d3,d0                    ; Breite für lfarrow abziehen
+ sub.w    d3,d0                    ; Breite fuer lfarrow abziehen
  move.w   d1,w_tree+11*24+ob_x(a4) ; lfarrow
  add.w    d3,d1                    ; Slider rechtersetzen
 _wbss_no_lfar:
  btst     #10,d6
  beq.b    _wbss_no_rtar
- sub.w    d3,d0                    ; Breite für rtarrow abziehen
+ sub.w    d3,d0                    ; Breite fuer rtarrow abziehen
 _wbss_no_rtar:
  move.w   d1,w_tree+13*24+ob_x(a4)      ; x      von hscroll
  move.w   d0,w_tree+13*24+ob_width(a4)  ; Breite von hscroll
@@ -1190,7 +1191,7 @@ _wbss_no_rtar:
  move.w   d0,w_tree+12*24+ob_x(a4)      ; x    von rtarrow
 
  addq.w   #1,d3
- move.w   d3,w_tree+14*24+ob_width(a4)  ; Minimalgröße des Sliders
+ move.w   d3,w_tree+14*24+ob_width(a4)  ; Minimalgroesse des Sliders
 
  moveq    #0,d0                    ; horizontal
  move.l   a4,a0                    ; WINDOW *
@@ -1199,7 +1200,7 @@ _wbss_no_rtar:
 * 5. rechts unterer Teil
 * ======================
 
-* Der Sizer bzw. das leere Feld wird nur dann benötigt, wenn er
+* Der Sizer bzw. das leere Feld wird nur dann benoetigt, wenn er
 * explizit verlangt wurde oder wenn sowohl rechte als auch untere
 * Randelemente angefordert wurden
 
@@ -1215,12 +1216,12 @@ _wbss_ende:
 *
 * void send_rdrmsg( d0 = int handle, a0 = GRECT *g )
 *
-* Schneidet <g> vorher mit dem Bildschirm, <g> wird zerstört.
+* Schneidet <g> vorher mit dem Bildschirm, <g> wird zerstoert.
 *
 
 send_rdrmsg:
  movem.l  d7/a4,-(sp)
- suba.w   #16,sp                   ; Platz für 2 GRECTs
+ suba.w   #16,sp                   ; Platz fuer 2 GRECTs
  move.w   d0,d7
  move.l   (a0)+,(sp)
  move.l   (a0),4(sp)               ; GRECT kopieren
@@ -1245,7 +1246,7 @@ send_redraw_message:
 _srd:
  move.w   d7,d0
  bsr      whdl_to_wnd
- beq.b    end_rdr                  ; ungültig???
+ beq.b    end_rdr                  ; ungueltig???
  movea.l  a0,a4
 
  lea      (sp),a1
@@ -1284,7 +1285,7 @@ end_rdr:
 *                   a1 = GRECT *work, a2 = GRECT *ret)
 *
 * Holt ein in <work> sichtbares Rechteck aus der Rechteckliste des
-* Fensters <w> und gibt es in <ret> zurück
+* Fensters <w> und gibt es in <ret> zurueck
 *
 
 get_visb_wg:
@@ -1296,18 +1297,18 @@ get_visb_wg:
 gvw_loop:
  move.l   wg_grect+g_x(a5),g_x(a2)
  move.l   wg_grect+g_w(a5),g_w(a2) ; GRECT kopieren
- movea.l  (a5),a5                  ; nächstes WGRECT
+ movea.l  (a5),a5                  ; naechstes WGRECT
  move.l   a5,w_nextwg(a4)          ; w_nextwg setzen
 
  move.l   a2,a1                    ; <ret> mit
  move.l   a6,a0                    ;  <work> schneiden
- jsr      grects_intersect         ; ändert nicht a2
+ jsr      grects_intersect         ; aendert nicht a2
 
  bne.b    gvw_ende                 ; Schnitt nicht leer, Ende
 gvw_next:
  move.l   a5,d0                    ; Ende der Liste ?
  bne.b    gvw_loop                 ; nein, weiter
- move.l   d0,g_w(a2)               ; g_w und g_h löschen
+ move.l   d0,g_w(a2)               ; g_w und g_h loeschen
 gvw_ende:
  movem.l  (sp)+,a6/a5/a4
  rts
@@ -1317,8 +1318,8 @@ gvw_ende:
 *
 * int get_wgs_union( a0 = WGRECT *wglist, a1 = GRECT *g )
 *
-* Vereinigt alle WGs der Liste im Rückgabe- GRECT <g>
-* Daß die Liste nicht leer ist, muß vorher geprüft werden
+* Vereinigt alle WGs der Liste im Rueckgabe- GRECT <g>
+* Dass die Liste nicht leer ist, muss vorher geprueft werden
 *
 
 get_wgs_union:
@@ -1359,21 +1360,21 @@ init_windows:
  andi.w   #4,d0                    ; Bit 2 isolieren
  lsr.w    #2,d0                    ; Bit 2 => Bit 0
  or.w     d0,wsg_flags             ; globale Fenster-Flags
- move.w   gr_hhbox,wbm_hshade      ; Höhe für ge-shade-te Fenster
+ move.w   gr_hhbox,wbm_hshade      ; Hoehe fuer ge-shade-te Fenster
  tst.w    inw_height
  bne.b    iw_inwhset
- move.w   gr_hhbox,inw_height      ; Höhe der INFO-Zeile
+ move.w   gr_hhbox,inw_height      ; Hoehe der INFO-Zeile
 iw_inwhset:
-* Fenstertabelle löschen
+* Fenstertabelle loeschen
  move.l   windx,a0
- addq.l   #4,a0                    ; alle außer Fenster #0 löschen
+ addq.l   #4,a0                    ; alle ausser Fenster #0 loeschen
  moveq    #0,d0
  move.w   nwindows,d0
  subq.w   #1,d0
  add.w    d0,d0
  add.w    d0,d0
- jsr      clrmem                   ; iocpbuf löschen
-* alle NWGS WGRECTs in die freelist hängen
+ jsr      clrmem                   ; iocpbuf loeschen
+* alle NWGS WGRECTs in die freelist haengen
  lea      wg_freelist,a1
  clr.l    (a1)
  move.l   wgrects,a0
@@ -1394,7 +1395,7 @@ iw_wgloop:
 * Fenster 0 initialisieren
 
 *
-* Desktop-Muster: Farbe ungültig => Muster 4 einsetzen
+* Desktop-Muster: Farbe ungueltig => Muster 4 einsetzen
 *
 
  cmpi.w   #1,nplanes                    ; Monochrom ?
@@ -1406,7 +1407,7 @@ iw_wgloop:
  move.b   #$41,shelw_startpic+ob_spec+3 ; nein, auf grau setzen
 iniw_sw:
 
-* WGRECT- Liste für Fenster 0 initialisieren
+* WGRECT- Liste fuer Fenster 0 initialisieren
  jsr      alloc_wgrect
  move.l   windx,a1
  move.l   (a1),a1                  ; Fenster #0
@@ -1446,7 +1447,7 @@ iniw_sw:
  clr.w    whdlx                    ; leere Fensterliste
  clr.l    desktree                 ; kein angemeldetes Desktop
 
-; Tabelle der 3D-Flags für die Fensterelemente initialisieren
+; Tabelle der 3D-Flags fuer die Fensterelemente initialisieren
 
  lea      f3d_box,a0
  lea      windowbox_3dflags(pc),a1
@@ -1455,15 +1456,15 @@ inw_3dloop:
  move.b   (a1)+,(a0)+
  dbra     d1,inw_3dloop
 
-; Tabelle der Farben/Muster für die Fensterelemente initialisieren
+; Tabelle der Farben/Muster fuer die Fensterelemente initialisieren
 
  lea      dcol_box,a0
  lea      windowbox_specs+2(pc),a1 ; jeweils Loword von ob_spec
  moveq    #N_WINOBJS-1,d1
 inw_sloop:
  move.w   (a1),d0
- move.w   d0,(a0)+                 ; für inaktives Fenster
- move.w   d0,(a0)+                 ; genauso wie für aktives
+ move.w   d0,(a0)+                 ; fuer inaktives Fenster
+ move.w   d0,(a0)+                 ; genauso wie fuer aktives
  addq.l   #4,a1
  dbra     d1,inw_sloop
 
@@ -1481,14 +1482,14 @@ iw_linien:
  tst.w    enable_3d
  beq.b    inw_no_3d
 
-* Modifikation für 3D-Fenster
-* dcol = $abcdefgh, dabei $abcd für inaktive Fenster, $efgh für aktive
+* Modifikation fuer 3D-Fenster
+* dcol = $abcdefgh, dabei $abcd fuer inaktive Fenster, $efgh fuer aktive
 *         h = Innenfarbe
-*         g = Muster (0..7), höchstes Bit: Text deckend (1), transp (0)
+*         g = Muster (0..7), hoechstes Bit: Text deckend (1), transp (0)
 *         f = Textfarbe
 *         e = Rahmenfarbe
 
- move.l   #$19001180,dcol_name     ; Innenfarbe immer weiß (wg. 3D)
+ move.l   #$19001180,dcol_name     ; Innenfarbe immer weiss (wg. 3D)
                                    ; Muster immer hohl (wg. 3D)
                                    ; inaktiv: Text transparent
                                    ; aktiv: Text deckend, d.h. Linien sichtbar
@@ -1498,11 +1499,11 @@ iw_linien:
  move.l   #$11481179,d0
  move.l   d0,dcol_hsld             ; horiz. Scroll-Hintergrund
  move.l   d0,dcol_vsld             ; vert. Scroll-Hintergrund
- move.w   #$1900,d0                ; graue Schrift für inaktive Buttons
- move.w   d0,dcol_closer           /* Schließknopf */
+ move.w   #$1900,d0                ; graue Schrift fuer inaktive Buttons
+ move.w   d0,dcol_closer           /* Schliessknopf */
  move.w   d0,dcol_bdrop            /* Backdrop-Button      (wie W_FULLER)  */
  move.w   d0,dcol_fuller           /* Maximalknopf               W_FULLER  */
- move.w   d0,dcol_sizer            /* Größenknopf                W_SIZER   */
+ move.w   d0,dcol_sizer            /* Groessenknopf                W_SIZER   */
  move.w   d0,dcol_arup             /* Pfeil hoch                 W_UPARROW */
  move.w   d0,dcol_ardwn            /* Pfeil runter               W_DNARROW */
  move.w   d0,dcol_arlft            /* Pfeil links                W_LFARROW */
@@ -1511,16 +1512,16 @@ iw_linien:
 inw_no_3d:
  rts
 
-* ob_type's für die N_WINOBJS Fensterelemente
+* ob_types fuer die N_WINOBJS Fensterelemente
 
 windowbox_types:
  DC.B     G_IBOX         ;  0: umfassende Box
- DC.B     G_BOXCHAR      ;  1: Schließfeld
+ DC.B     G_BOXCHAR      ;  1: Schliessfeld
  DC.B     G_WINTITLE     ;    G_BOXTEXT      ;  2: Titelbalken
  DC.B     G_BOXCHAR      ;  3: Drop- Button (!)
- DC.B     G_BOXCHAR      ;  4: Maximalgrößenfeld
+ DC.B     G_BOXCHAR      ;  4: Maximalgroessenfeld
  DC.B     G_BOXTEXT      ;  5: Infozeile
- DC.B     G_BOXCHAR      ;  6: Größenfeld
+ DC.B     G_BOXCHAR      ;  6: Groessenfeld
  DC.B     G_BOXCHAR      ;  7: Pfeil hoch
  DC.B     G_BOXCHAR      ;  8: Pfeil runter
  DC.B     G_BOX          ;  9: vertikaler Scrollhintergrund
@@ -1532,7 +1533,7 @@ windowbox_types:
  DC.B     G_BOXCHAR      ; 15: Iconifier (AES 4.1)
  EVEN
 
-* ob_spec's für die N_WINOBJS Fensterelemente
+* ob_specs fuer die N_WINOBJS Fensterelemente
 *          ||       Zeichen
 *            ||     Rahmendicke
 *              |    Rahmenfarbe
@@ -1541,7 +1542,7 @@ windowbox_types:
 *                 | Innenfarbe
 windowbox_specs:
  DC.L     $00011100      ;  0: Rahmen 1
- DC.L     $05021100      ;  1: Rahmen 1, Zeichen für Closebox
+ DC.L     $05021100      ;  1: Rahmen 1, Zeichen fuer Closebox
  DC.L     0              ;  2: TEDINFO (NAME)
  DC.L     $1f021100      ;  3: Drop- Button, Zeichen $1f
  DC.L     $07021100      ;  4: Fullbutton
@@ -1580,7 +1581,7 @@ windowbox_3dflags:
 *
 * int wind_s3d( a0 = WINDOW *w, d0 = int is3d )
 *
-* Schaltet ein Fenster von 2D auf 3D und zurück
+* Schaltet ein Fenster von 2D auf 3D und zurueck
 *
 
 wind_s3d:
@@ -1596,7 +1597,7 @@ wins3d_n3d:
  addq.w   #1,d1
  cmpi.w   #N_WINOBJS,d1
  bcs.b    wins3d_loop
- st.b     (a2)                ; mit -1 abschließen
+ st.b     (a2)                ; mit -1 abschliessen
 
  lea      w_tree(a0),a1
  lea      (sp),a0
@@ -1609,7 +1610,7 @@ wins3d_n3d:
 *
 * int chg_3d( a0 = char *objs, a1 = OBJECT *tree, d0 = int is3d )
 *
-* Schaltet einen Dialog von 2D auf 3D und zurück
+* Schaltet einen Dialog von 2D auf 3D und zurueck
 *
 
 chg_3d:
@@ -1631,7 +1632,7 @@ ws3d_loop:
  ori.w    #FL3DACT,ob_flags(a1,d1.w)
  bra.b    ws3d_both
 ws3d_2d:
- andi.w   #!FL3DACT,ob_flags(a1,d1.w)   ; 3D löschen
+ andi.w   #!FL3DACT,ob_flags(a1,d1.w)   ; 3D loeschen
 ws3d_both:
  cmpi.w   #G_WINTITLE,ob_type(a1,d1.w)
  beq.b    ws3d_tedi
@@ -1678,7 +1679,7 @@ _wcr_found:
 
 * WINDOW-Struktur allozieren.
 
- move.l   wsizeof,d0               ; Speicherblockgröße
+ move.l   wsizeof,d0               ; Speicherblockgroesse
  jsr      smalloc
  beq.b    _wcr_err
 
@@ -1694,12 +1695,12 @@ _wcr_found:
  move.w   d6,d0                    ; whdl
  move.l   act_appl,a1
  move.l   (a5),a0
- bsr      __wind_create            ; gibt WINDOW * zurück, a2 unverändert
+ bsr      __wind_create            ; gibt WINDOW * zurueck, a2 unveraendert
 
  clr.l    w_wg(a0)                 ; leere Rechteckliste!
  clr.l    w_nextwg(a0)
 
- clr.l    w_min_g+g_x(a0)          ; Minimalgröße
+ clr.l    w_min_g+g_x(a0)          ; Minimalgroesse
  move.l   gr_hwbox,w_min_g+g_w(a0)
 
  lea      w_curr(a0),a0
@@ -1716,11 +1717,11 @@ _wcr_found:
 
  move.l   (a5),a0
  move.l   wbm_create,a1
- jsr      (a1)                     ; Callback für Initialisierung
+ jsr      (a1)                     ; Callback fuer Initialisierung
 
  move.l   (a5),a0
  move.l   wbm_skind,a1
- jsr      (a1)                     ; Callback für Initialisierung
+ jsr      (a1)                     ; Callback fuer Initialisierung
 
  move.w   d6,d0                    ; whdl
 _wcr_ende:
@@ -1734,7 +1735,7 @@ _wcr_ende:
 *
 * int wind_delete(d0 = int whdl)
 *
-* Achtung: Jetzt Rückgabewert 0 bei ungültigem Handle
+* Achtung: Jetzt Rueckgabewert 0 bei ungueltigem Handle
 *
 
 wind_delete:
@@ -1743,10 +1744,10 @@ wind_delete:
  bsr      whdl_to_wnd
  beq.b    wdl_err
  move.l   act_appl,a1
- cmpa.l   w_owner(a0),a1           ; gehört uns ?
+ cmpa.l   w_owner(a0),a1           ; gehoert uns ?
  bne.b    wdl_err
  btst     #WSTAT_OPENED_B,w_state+1(a0)
- bne.b    wdl_err                  ; ja, nicht löschen
+ bne.b    wdl_err                  ; ja, nicht loeschen
  move.l   windx,a1
  move.w   w_whdl(a0),d0
  add.w    d0,d0
@@ -1778,7 +1779,7 @@ wind_skind:
 
  move.w   w_kind(a4),d7                 ; d7 = alter Typ
  cmp.w    d7,d0                         ; wie neuer?
- beq      wsk_ende                      ; ja, nicht ändern
+ beq      wsk_ende                      ; ja, nicht aendern
  move.w   d0,w_kind(a4)                 ; neuen Fenstertyp setzen
 
 ; alten Arbeitsbereich sichern
@@ -1809,25 +1810,25 @@ wind_skind:
  jsr      mouse_off
 
  move.l   w_work+g_x(a4),d0
- cmp.l    g_x(sp),d0                    ; Pos. des Arbeitsbereichs geändert?
+ cmp.l    g_x(sp),d0                    ; Pos. des Arbeitsbereichs geaendert?
  bne.b    wsk_all                       ; ja, alles neu
 
  move.l   w_work+g_w(a4),d0
- cmp.l    g_w(sp),d0                    ; Größe des Arbeitsbereichs geändert?
+ cmp.l    g_w(sp),d0                    ; Groesse des Arbeitsbereichs geaendert?
  beq.b    wsk_complframe                ; nein, Rahmen komplett neu
 
- move.w   w_work+g_h(a4),d0             ; neue Höhe
+ move.w   w_work+g_h(a4),d0             ; neue Hoehe
  sub.w    g_h(sp),d0
- beq.b    wsk_sameh                     ; Höhe unverändert
+ beq.b    wsk_sameh                     ; Hoehe unveraendert
 
-* Höhe hat sich geändert
+* Hoehe hat sich geaendert
 
  bmi.b    wsk_hsmaller
 
-* Höhe hat sich vergrößert
+* Hoehe hat sich vergroessert
 
  move.w   d0,g_h(sp)
- move.w   g_h(sp),d0                    ; alte Höhe
+ move.w   g_h(sp),d0                    ; alte Hoehe
  add.w    d0,g_y(sp)
 wsk_msg:
  lea      (sp),a0
@@ -1835,7 +1836,7 @@ wsk_msg:
  bsr      send_redraw_message
  bra.b    wsk_mende
 
-* Höhe hat sich verkleinert
+* Hoehe hat sich verkleinert
 
 wsk_hsmaller:
  neg.w    d0
@@ -1849,14 +1850,14 @@ wsk_frame:
  bsr      wind_draw                     ; Rahmen
  bra.b    wsk_mende
 
-* Breite hat sich geändert
+* Breite hat sich geaendert
 
 wsk_sameh:
  move.w   w_work+g_w(a4),d0             ; neue Breite
  sub.w    g_w(sp),d0
  bmi.b    wsk_wsmaller
 
-* Breite hat sich vergrößert
+* Breite hat sich vergroessert
 
  move.w   d0,g_w(sp)
  move.w   g_w(sp),d0                    ; alte Breite
@@ -1907,15 +1908,15 @@ wsk_ende:
 *
 
 dcol_codes:
- DC.B     0    ;W_BOX:         umschließende Box
+ DC.B     0    ;W_BOX:         umschliessende Box
  DC.B     -1   ;W_TITLE:
- DC.B     4*1  ;W_CLOSER:      Schließfeld
+ DC.B     4*1  ;W_CLOSER:      Schliessfeld
  DC.B     4*2  ;W_NAME         Titelzeile
- DC.B     4*4  ;W_FULLER       Maximalgrößenknopf
+ DC.B     4*4  ;W_FULLER       Maximalgroessenknopf
  DC.B     4*5  ;W_INFO         Infozeile
  DC.B     -1   ;W_DATA
  DC.B     -1   ;W_WORK
- DC.B     4*6  ;W_SIZER        Größenknopf
+ DC.B     4*6  ;W_SIZER        Groessenknopf
  DC.B     -1   ;W_VBAR
  DC.B     4*7  ;W_UPARROW      Pfeil nach oben
  DC.B     4*8  ;W_DNARROW      Pfeil nach unten
@@ -1932,8 +1933,8 @@ dcol_codes:
 
 calc_dcol:
  cmpi.w   #20,d1
- bhi.b    dcdc_err                 ; ungültiger Wert
- move.b   dcol_codes(pc,d1.w),d0   ; umrechnen für Objektnummer Mag!X
+ bhi.b    dcdc_err                 ; ungueltiger Wert
+ move.b   dcol_codes(pc,d1.w),d0   ; umrechnen fuer Objektnummer Mag!X
  bmi.b    dcdc_err                 ; gibt es in Mag!X nicht
  ext.w    d0
  rts
@@ -1949,14 +1950,15 @@ dcdc_err:
 * int _wind_get(d0 = int whdl, d1 = int code,
 *               d2 = int code2, a0 = int *g)
 *
-* Rückgabewert 0 bei ungültigem Handle
+* Rueckgabewert 0 bei ungueltigem Handle
 *
-* 11.2.96:     d2 für intin[2], für WF_DCOLOR benötigt
+* 11.2.96:     d2 fuer intin[2], fuer WF_DCOLOR benoetigt
 *
 
 _wind_get:
+_wind_get_grect:
  movem.l  d7/a2/a3/a5,-(sp)
- subq.l   #8,sp                    ; Platz für ein GRECT
+ subq.l   #8,sp                    ; Platz fuer ein GRECT
  movea.l  a0,a5
 
  cmpi.w   #WF_TOP,d1
@@ -1973,8 +1975,8 @@ _wind_get:
  beq      wg_list
 
  move.w   d0,d7
- bsr      whdl_to_wnd              ; ändert nur d0/a0
- beq      wg_err                   ; ungültiges Handle
+ bsr      whdl_to_wnd              ; aendert nur d0/a0
+ beq      wg_err                   ; ungueltiges Handle
  movea.l  a0,a3
 
  cmpi.w   #WF_FIRSTXYWH,d1
@@ -2003,7 +2005,7 @@ _wind_get:
  bhi      wg_err
  move.b   wg_offs(pc,d1.w),d0
  ext.w    d0
- beq      wg_err                   ; ungültig
+ beq      wg_err                   ; ungueltig
  bmi      wg_xywh                  ; GRECTs holen
  move.w   0(a3,d0.w),(a5)          ; einen int aus WINDOW holen
  bra      wg_endsw
@@ -2022,7 +2024,7 @@ wg_xywh:
  beq      wg_endsw                 ; PREVXYWH ist immer korrekt
  move.w   w_oldheight(a3),d2
  sub.w    w_curr+g_h(a3),d2
- add.w    d2,2(a5)                 ; Höhe, als ob nicht ge-shaded
+ add.w    d2,2(a5)                 ; Hoehe, als ob nicht ge-shaded
  bra      wg_endsw
 
 wg_offs:
@@ -2032,7 +2034,7 @@ wg_offs:
      EVEN
 
 wg_name:
- move.l   w_name(a3),(a5)          ; Zeiger auf Name zurückgeben
+ move.l   w_name(a3),(a5)          ; Zeiger auf Name zurueckgeben
  bra      wg_endsw
 
 wg_iconify:
@@ -2042,9 +2044,9 @@ wg_iconify:
  move.w   d0,(a5)+
  subq.l   #8,sp
  lea      (sp),a0
- bsr      find_icon_pos            ; Größe eines ikonifizierten Fensters
+ bsr      find_icon_pos            ; Groesse eines ikonifizierten Fensters
  addq.l   #4,sp                    ; x/y ignorieren
- move.l   (sp)+,(a5)               ; w/h zurückgeben
+ move.l   (sp)+,(a5)               ; w/h zurueckgeben
  bra      wg_endsw
 
 wg_uniconify:
@@ -2073,34 +2075,34 @@ wg_own:
  btst     #WSTAT_OPENED_B,w_state+1(a3)
  sne      d0
  andi.w   #1,d0
- move.w   d0,(a5)+                 ; 1, falls geöffnet
- moveq    #-1,d1                   ; ungültiges Handle
- move.l   d1,(a5)                  ; Fenster darüber ungültig
+ move.w   d0,(a5)+                 ; 1, falls geoeffnet
+ moveq    #-1,d1                   ; ungueltiges Handle
+ move.l   d1,(a5)                  ; Fenster darueber ungueltig
  lea      whdlx,a0
 wgo_loop:
  move.w   (a0)+,d0
- bmi.b    wgo_loop                 ; eingefrorene Fenster überlesen
+ bmi.b    wgo_loop                 ; eingefrorene Fenster ueberlesen
  cmp.w    d0,d7
  beq.b    wgo_fnd                  ; gefunden
- move.w   d0,d1                    ; gültiges Handle
+ move.w   d0,d1                    ; gueltiges Handle
  bne.b    wgo_loop                 ; noch nicht das Listenende
  bra      wg_endsw                 ; nicht gefunden
 wgo_fnd:
- move.w   d1,(a5)+                 ; Fenster über unserem
+ move.w   d1,(a5)+                 ; Fenster ueber unserem
  tst.w    d7
  beq      wg_endsw                 ; Wir sind Fenster 0
 wgo_loop2:
  move.w   (a0)+,d0
- bmi.b    wgo_loop2                ; ungültige Fenster überlesen
+ bmi.b    wgo_loop2                ; ungueltige Fenster ueberlesen
  move.w   d0,(a5)                  ; Fenster unter unserem
  bra      wg_endsw
 
 * case WF_BOTTOM
-*    liefere letztes gültiges Fenster vor SCREEN
+*    liefere letztes gueltiges Fenster vor SCREEN
 *
 *    ab 27.12.96 (MagiC 5.05):
 *         liefere in intout[2] weitere Informationen:
-*         intin[2] enthält die ap_id, deren Fensterliste
+*         intin[2] enthaelt die ap_id, deren Fensterliste
 *         erfragt wird.
 
 wg_bottom:
@@ -2108,15 +2110,15 @@ wg_bottom:
  moveq    #-1,d1                   ; noch kein Fenster gefunden
 wgb_loop:
  tst.w    (a0)+
- bmi.b    wgb_loop                 ; eingefrorene Fenster überlesen
+ bmi.b    wgb_loop                 ; eingefrorene Fenster ueberlesen
  beq      wgb_endloop              ; Listenende
- move.w   -2(a0),d1                ; gültiges Fenster
+ move.w   -2(a0),d1                ; gueltiges Fenster
  bra.b    wgb_loop
 wgb_endloop:
  move.w   d1,(a5)+
 ; MagiC:
  cmpi.w   #NAPPS,d2
- bcc      wg_endsw                 ; ap_id ungültig
+ bcc      wg_endsw                 ; ap_id ungueltig
  add.w    d2,d2
  add.w    d2,d2
  lea      applx,a0
@@ -2130,7 +2132,7 @@ wgb_endloop:
 * case WF_INFOXYWH
 
 wg_infoxywh:
- tst.w    w_tree+O_INFO*24+ob_next(a3)       ; INFO gültig ?
+ tst.w    w_tree+O_INFO*24+ob_next(a3)       ; INFO gueltig ?
  bmi.b    wg_infoinv                         ; nein!
  move.l   w_tree+O_INFO*24+ob_x(a3),(a5)+    ; x/y
  move.l   w_tree+O_INFO*24+ob_width(a3),(a5) ; w/h
@@ -2150,34 +2152,34 @@ wg_minxywh:
 * case WF_M_WINDLIST
 
 wg_list:
- move.l   #whdlx,(a5)              ; unter KAOS nur temporär gültig
-                                   ; unter MAGIX immer gültig
+ move.l   #whdlx,(a5)              ; unter KAOS nur temporaer gueltig
+                                   ; unter MAGIX immer gueltig
  bra      wg_endsw
 
 wg_top:
  move.w   topwhdl,d0
  beq.b    wgt_desk                 ; ist 0
  addq.w   #1,d0
- beq.b    wgt_desk                 ; war -1, also ungültig, gib 0 zurück
+ beq.b    wgt_desk                 ; war -1, also ungueltig, gib 0 zurueck
  subq.w   #1,d0
 wgt_desk:
  move.w   d0,(a5)+                 ; Handle des obersten Fensters
- move.w   #-1,(a5)                 ; ap_id erstmal ungültig
+ move.w   #-1,(a5)                 ; ap_id erstmal ungueltig
  bsr      whdl_to_wnd
  beq.b    wg_winv
  move.l   w_owner(a0),a0
  move.w   ap_id(a0),(a5)+          ; ap_id des obersten Fensters
 wg_winv:
- move.w   #-1,(a5)                 ; Handle darunter erstmal ungültig
+ move.w   #-1,(a5)                 ; Handle darunter erstmal ungueltig
  tst.w    d0
- beq      wg_endsw                 ; Hintergrund hat kein nächstes Fenster
+ beq      wg_endsw                 ; Hintergrund hat kein naechstes Fenster
 
-* Hack für alte Programme:
+* Hack fuer alte Programme:
 /*
- cmpa.l   act_appl,a0              ; oberstes Fenster gehört mir
+ cmpa.l   act_appl,a0              ; oberstes Fenster gehoert mir
  beq.b    wgt_ok
- move.w   -4(a5),2(a5)             ; wi_gw3 bekommt tatsächlichen Wert
- move.w   #XE_OTHWHDL,-4(a5)       ; gehört mir nicht => return(XE_OTHWHDL)
+ move.w   -4(a5),2(a5)             ; wi_gw3 bekommt tatsaechlichen Wert
+ move.w   #XE_OTHWHDL,-4(a5)       ; gehoert mir nicht => return(XE_OTHWHDL)
 wgt_ok:
 * end-of-hack
 */
@@ -2186,7 +2188,7 @@ wgt_ok:
 wgt_loop:
  move.w   (a0)+,d0
  bmi.b    wgt_loop                 ; eingefrorene Fenster
- move.w   d0,(a5)                  ; nächstes Fenster
+ move.w   d0,(a5)                  ; naechstes Fenster
  bra.b    wg_endsw
 
 * FIRSTXYWH
@@ -2202,10 +2204,10 @@ wg_first:
 wg_next:
  move.l   w_work(a3),(sp)
  move.l   w_work+4(a3),4(sp)
- move.l   w_nextwg(a3),d0          ; nächstes Rechteck
+ move.l   w_nextwg(a3),d0          ; naechstes Rechteck
 
 wg_fstnxt:
- move.l   a5,a2                    ; Rückgabe- GRECT
+ move.l   a5,a2                    ; Rueckgabe- GRECT
  lea      (sp),a1                  ; Arbeitsbereich
 ;move.l   d0,d0                    ; WGRECT
  move.l   a3,a0                    ; WINDOW *w
@@ -2226,7 +2228,7 @@ wg_dcolor:
  lsr.w    #2,d0
  lea      f3d_box,a0
  add.w    d0,a0
- move.w   #$0100,d1                ; nur kFore3D unterstützt
+ move.w   #$0100,d1                ; nur kFore3D unterstuetzt
  move.b   (a0),d1
  move.w   d1,(a5)
  bra.b    wg_endsw
@@ -2252,7 +2254,7 @@ wg_ende:
  movem.l  (sp)+,a5/a3/a2/d7
  rts
 wg_err:
- clr.l    (a5)+                    ; gib 4 Nullen zurück
+ clr.l    (a5)+                    ; gib 4 Nullen zurueck
  clr.l    (a5)
  moveq    #0,d0
  bra.b    wg_ende
@@ -2265,9 +2267,9 @@ wg_err:
 * int _wind_set(d0 = int whdl, d1 = int opcode, a0 = int koor[4])
 *
 * 5.10.95:     wind_set(-1, WF_TOP, -1);
-*               bringt eigenes Menü und Hintergrund nach oben.
+*               bringt eigenes Menue und Hintergrund nach oben.
 *              wind_set(-1, WF_TOP, ap_id);
-*               bringt Menü und Hintergrund anderer APP nach oben
+*               bringt Menue und Hintergrund anderer APP nach oben
 *
 
 _wind_set:
@@ -2290,7 +2292,7 @@ _wind_set:
  ble      ws_err
 top_menu:
  move.l   d2,a0
- jsr      set_app                  ; Menü und Hintergrund nach oben
+ jsr      set_app                  ; Menue und Hintergrund nach oben
  bsr      all_untop                ; oberstes Fenster deakt. falls andere APP
  moveq    #1,d0                    ; kein Fehler
  bra      ws_ende
@@ -2319,7 +2321,7 @@ ws_normal:
  cmpi.w   #WF_SHADE,d0
  beq      ws_shade
  cmp.w    #WF_UNICONIFYXYWH,d0
- bhi      ws_err2                  ; ungültige Unterfunktion
+ bhi      ws_err2                  ; ungueltige Unterfunktion
 ws_jmplist:
  add.w    d0,d0
  move.w   ws_jmptab(pc,d0.w),d0
@@ -2346,10 +2348,10 @@ ws_jmptab:
  DC.W     ws_err2-ws_jmptab
  DC.W     ws_endsw-ws_jmptab            ; 18 = WF_TATTRB    (dummy)
  DC.W     ws_siztop-ws_jmptab           ; 19 = WF_SIZTOP/WF_DCOLOR
- DC.W     ws_err2-ws_jmptab             ; 20 = ungültig (get: WF_OWNER)
- DC.W     ws_err2-ws_jmptab             ; 21 = ungültig
- DC.W     ws_err2-ws_jmptab             ; 22 = ungültig
- DC.W     ws_err2-ws_jmptab             ; 23 = ungültig
+ DC.W     ws_err2-ws_jmptab             ; 20 = ungueltig (get: WF_OWNER)
+ DC.W     ws_err2-ws_jmptab             ; 21 = ungueltig
+ DC.W     ws_err2-ws_jmptab             ; 22 = ungueltig
+ DC.W     ws_err2-ws_jmptab             ; 23 = ungueltig
  DC.W     ws_bevent-ws_jmptab           ; 24 = WF_BEVENT
  DC.W     ws_back-ws_jmptab             ; 25 = WF_BOTTOM
  DC.W     ws_iconify-ws_jmptab          ; 26 = WF_ICONIFY
@@ -2408,8 +2410,8 @@ ws_back:
  move.w   d7,d0
  bsr      wind_rearrange
 
- bclr     #WSTAT_QUIET_B,w_state+1(a4)       ; WM_UNTOPPED ermöglichen
- bra      ws_set_app               ; MagiC 5.05: Menü umschalten
+ bclr     #WSTAT_QUIET_B,w_state+1(a4)       ; WM_UNTOPPED ermoeglichen
+ bra      ws_set_app               ; MagiC 5.05: Menue umschalten
 ;bra      ws_endsw
 
 * case 2 = WF_NAME
@@ -2417,14 +2419,14 @@ ws_back:
 ws_name:
  btst     #NAME_B,w_kind+1(a4)
  beq      ws_err2
- moveq    #O_NAME,d6               ; Fensterobjekt für NAME (G_BOXTEXT)
+ moveq    #O_NAME,d6               ; Fensterobjekt fuer NAME (G_BOXTEXT)
  moveq    #w_name,d0
 
 ws_naminf:
  move.l   (a5),0(a4,d0.w)
  move.l   a4,a0
  move.l   wbm_sstr,a2
- jsr      (a2)                     ; Callback für "geändert"
+ jsr      (a2)                     ; Callback fuer "geaendert"
 
  btst     #WSTAT_OPENED_B,w_state+1(a4)
  beq.b    ws_nami_nodr             ; nein, nicht zeichnen
@@ -2435,11 +2437,11 @@ ws_naminf:
  cmpi.w   #-1,ob_next(a0,d0.w)     ; Objekt nicht eingelinkt ?
  beq.b    ws_nami_nodr             ; nicht eingelinkt, nicht zeichnen
 
- subq.l   #8,sp                    ; Platz für ein GRECT
+ subq.l   #8,sp                    ; Platz fuer ein GRECT
  move.l   sp,a1                    ; GRECT *g
  move.w   d6,d0                    ; obj
 ;lea      w_tree(a4),a0            ; tree
- jsr      obj_to_g                 ; Objektausmaße berechnen
+ jsr      obj_to_g                 ; Objektausmasse berechnen
 
 ;suba.l   a0,a0                    ; alles neu
  move.l   sp,a0                    ; GRECT
@@ -2456,20 +2458,20 @@ ws_nami_nodr:
 ws_info:
  btst     #INFO_B,w_kind+1(a4)
  beq      ws_err2
- moveq    #O_INFO,d6               ; Fensterobjekt für INFO (G_TEXT)
+ moveq    #O_INFO,d6               ; Fensterobjekt fuer INFO (G_TEXT)
  moveq    #w_info,d0
  bra.b    ws_naminf
 
 * case 19 = WF_SIZTOP/WF_DCOLOR
 
 * koor[0]      Fensterobjektnummer
-* koor[1]      Farben für aktives Fenster
-* koor[2]      Farben für inaktives Fenster
+* koor[1]      Farben fuer aktives Fenster
+* koor[2]      Farben fuer inaktives Fenster
 
 ws_siztop:
  move.w   d7,d0
  bne      ws_sizetop               ; Handle > 0: WF_SIZETOP
-; Bei Handle 0 muß es WF_DCOLOR sein
+; Bei Handle 0 muss es WF_DCOLOR sein
  move.w   (a5),d1
  bsr      calc_dcol
  bmi      ws_endsw                 ; gibt es in Mag!X nicht
@@ -2489,21 +2491,21 @@ ws_s_old:
 ws_s_old2:
  move.w   6(a5),d0                 ; 3D-Flags
  cmpi.w   #-1,d0
- beq.b    ws_s_old3                ; nein, nicht ändern
+ beq.b    ws_s_old3                ; nein, nicht aendern
  andi.w   #$f00,d0                 ; eine der Masken gesetzt ?
- beq.b    ws_s_old3                ; nein, nicht ändern
+ beq.b    ws_s_old3                ; nein, nicht aendern
  lsr.w    #2,d1                    ; Langwortindex => Byteindex
  move.w   d1,-(sp)
  lea      f3d_box,a0
  adda.w   (sp)+,a0
  move.w   6(a5),d0
  andi.w   #3,d0                    ; 3D-Flag isolieren
- move.b   d0,(a0)                  ; Flag ändern
+ move.b   d0,(a0)                  ; Flag aendern
 ws_s_old3:
- cmpi.w   #W_FULLER,(a5)           ; Fuller geändert ?
+ cmpi.w   #W_FULLER,(a5)           ; Fuller geaendert ?
  bne      ws_endsw                 ; nein
- move.l   dcol_fuller,dcol_bdrop   ; für Backdrop-Button
- move.l   dcol_fuller,dcol_iconify ; für Iconifier
+ move.l   dcol_fuller,dcol_bdrop   ; fuer Backdrop-Button
+ move.l   dcol_fuller,dcol_iconify ; fuer Iconifier
  bra      ws_endsw
 ; sonst WF_SIZETOP
 ws_sizetop:
@@ -2526,9 +2528,9 @@ ws_curr:
 ;bne.b    ws_no_csh                ; ja, OK
  move.w   w_oldheight(a4),d2
  sub.w    w_curr+g_h(a4),d2
- add.w    d2,w_prev+g_h(a4)        ; Höhe, als ob nicht ge-shaded
+ add.w    d2,w_prev+g_h(a4)        ; Hoehe, als ob nicht ge-shaded
  move.w   g_h(a5),w_oldheight(a4)
- move.w   wbm_hshade,g_h(a5)       ; Höhe immer minimal!
+ move.w   wbm_hshade,g_h(a5)       ; Hoehe immer minimal!
 ws_no_csh:
  move.l   a5,a1
  move.l   a4,a0                    ; WINDOW *
@@ -2564,7 +2566,7 @@ ws_stack:
  beq      ws_back                  ; Sonderfall
  bmi      ws_top                   ; Sonderfall
  bsr      wind_stack_getpos
- bmi      ws_err2                  ; Fenster ist nicht geöffnet!
+ bmi      ws_err2                  ; Fenster ist nicht geoeffnet!
  addq.w   #1,d0                    ; wir wollen eins drunter
  move.w   d0,d1                    ; neue Stapelposition
  move.l   a4,a0
@@ -2577,14 +2579,14 @@ ws_stack:
 ws_topall:
  move.w   (a5),d0
  cmpi.w   #NAPPS,d0
- bcc      ws_err2                  ; ap_id ungültig
+ bcc      ws_err2                  ; ap_id ungueltig
  add.w    d0,d0
  add.w    d0,d0                    ; *4
  lea      applx,a0
  move.l   0(a0,d0.w),d6
- ble      ws_err2                  ; ap_id ungültig
+ ble      ws_err2                  ; ap_id ungueltig
 ws_topall_d6:
- clr.w    -(sp)                    ; Zähler
+ clr.w    -(sp)                    ; Zaehler
  clr.w    -(sp)                    ; letztes behandeltes Fenster
 ws_topall_loop:
  move.l   d6,a0
@@ -2612,12 +2614,12 @@ ws_bottomall:
  lea      whdlx,a2
  moveq    #-2,d6                   ; Fensterpositionen
 wsba_loop1:
- addq.l   #1,d6                    ; Fensterpositionen mitzählen
+ addq.l   #1,d6                    ; Fensterpositionen mitzaehlen
  tst.w    (a2)+
  bne.b    wsba_loop1
  subq.l   #2,a2                    ; a2 auf DESKWINDOW (0)
 wsba_loop2:
- cmpa.l   #whdlx,a2                ; schon über Tabellenbeginn?
+ cmpa.l   #whdlx,a2                ; schon ueber Tabellenbeginn?
  bls.b    wsba_endloop2            ; ja, Ende
  move.w   -(a2),d0                 ; vorheriges WinHandle
  bmi.b    wsba_loop2               ; eingefrorenes Fenster
@@ -2633,16 +2635,16 @@ wsba_loop2:
  bne.b    wsba_no_top              ; nicht nach hinten
  move.w   whdlx,d0
  cmp.w    (a2),d0                  ; sind wir schon oben?
- beq.b    wsba_no_totop            ; ja, Menüzeilenumschaltung verhindern
+ beq.b    wsba_no_totop            ; ja, Menuezeilenumschaltung verhindern
 wsba_no_top:
  move.w   (a2),d0                  ; WindowHandle
  bsr      wind_rearrange           ; umsortieren
 wsba_no_totop:
- move.l   (sp)+,a2                 ; a2 zurück
+ move.l   (sp)+,a2                 ; a2 zurueck
  subq.l   #1,d6
  bra.b    wsba_loop2
 wsba_endloop2:
- bra      ws_set_app               ; MagiC 5.05: Menü umschalten
+ bra      ws_set_app               ; MagiC 5.05: Menue umschalten
 ;bra      ws_endsw
 
 * case 10 = WF_TOP
@@ -2657,16 +2659,16 @@ ws_top:
  cmpa.l   timer_cnt,a0
  bcs.b    ws_t_clr                 ; mehr als eine halbe Sekunde her
 
-* verzögertes Backdrop
+* verzoegertes Backdrop
 
  move.w   bdrop_hdl,d0             ; dies soll ganz nach hinten
  clr.w    bdrop_thdl               ; Backdrop- Vorgang canceln
 
  move.l   a4,a0
  moveq    #-1,d1                   ; Fenster nach hinten
- bsr      wind_rearrange           ; stattdessen Backdrop ausführen
+ bsr      wind_rearrange           ; stattdessen Backdrop ausfuehren
 
- bra.b    ws_set_app               ; MagiC 3.01: Menü umschalten
+ bra.b    ws_set_app               ; MagiC 3.01: Menue umschalten
 
 ws_t_clr:
  clr.w    bdrop_thdl               ; Backdrop- Vorgang canceln
@@ -2678,7 +2680,7 @@ ws_t_clr:
  cmpa.l   timer_cnt,a0
  bcs.b    ws_t_clr2                ; mehr als eine halbe Sekunde her
 
-* verzögertes TopAll
+* verzoegertes TopAll
 
  clr.w    topall_thdl              ; TopAll- Vorgang canceln
  move.l   w_owner(a4),d6
@@ -2693,14 +2695,14 @@ ws_t_clr2:
  move.w   d7,d0
  bsr      wind_rearrange
 
- bclr     #WSTAT_QUIET_B,w_state+1(a4)       ; WM_ONTOP ermöglichen
+ bclr     #WSTAT_QUIET_B,w_state+1(a4)       ; WM_ONTOP ermoeglichen
 ws_set_app:
  move.l   topwind_app,a0
- jsr      set_app                  ; MagiC 5.05: Menü umschalten
+ jsr      set_app                  ; MagiC 5.05: Menue umschalten
 
  bra      ws_endsw
 
-* case 13 = Redraw aussschalten bzw. einschalten und ausführen
+* case 13 = Redraw aussschalten bzw. einschalten und ausfuehren
 * Achtung: unter MAGIX nicht mehr vorhanden, Redraw jedoch erlaubt
 
 ws_resvd:
@@ -2731,7 +2733,7 @@ wsnd_off:
 * case 16 = WF_VSLSIZE
 
 ws_slide:
- move.w   (a5),d1                  ; neue Größe/Position
+ move.w   (a5),d1                  ; neue Groesse/Position
  bge.b    ws_sll1
  moveq    #-1,d1                   ; nicht kleiner als -1
 ws_sll1:
@@ -2756,26 +2758,26 @@ ws_sl2:
 * WF_HSLSIZEE
  lea      w_hslsize(a4),a0
 ws_sl_hori:
- moveq    #O_HSCROLL,d6            ; übergeordnetes Objekt
+ moveq    #O_HSCROLL,d6            ; uebergeordnetes Objekt
  moveq    #0,d0                    ; horizontal
  bra.b    ws_slend
 ws_sl3:
 * WF_VSLSIZE
  lea      w_vslsize(a4),a0
 ws_sl_verti:
- moveq    #O_VSCROLL,d6            ; übergeordnetes Objekt
+ moveq    #O_VSCROLL,d6            ; uebergeordnetes Objekt
  moveq    #1,d0                    ; vertikal
 ws_slend:
  btst     #6,config_status+3.w
  bne.b    ws_nosmart               ; Smart Redraw OFF
  cmp.w    (a0),d1
- beq.b    ws_endsw                 ; Wert hat sich nicht geändert
+ beq.b    ws_endsw                 ; Wert hat sich nicht geaendert
 ws_nosmart:
  move.w   d1,(a0)                  ; Wert setzen
 ;move.w   d0,d0                    ; Flag "vertikal"
  move.l   a4,a0                    ; WINDOW *
  move.l   wbm_sslid,a1
- jsr      (a1)                     ; Fensterrahmen ändern
+ jsr      (a1)                     ; Fensterrahmen aendern
 
  btst     #WSTAT_OPENED_B,w_state+1(a4)
  beq.b    ws_sl_nodr               ; nein, nicht zeichnen
@@ -2817,13 +2819,13 @@ wind_find:
  move.l   windx,a1
 wf_loop:
  move.w   (a2),d0                  ; Fenster- Handle
- bmi.b    wf_invalid               ; ungültiges Handle
- bsr      whdl_to_wnd              ;  ändert nur d0/a0
+ bmi.b    wf_invalid               ; ungueltiges Handle
+ bsr      whdl_to_wnd              ;  aendert nur d0/a0
  beq.b    wf_invalid               ; ???
  lea      w_curr(a0),a0            ; Fenster- Rechteck
 ;move.w   d1,d1
  move.w   d7,d0
- jsr      xy_in_grect              ; ändert nur d2
+ jsr      xy_in_grect              ; aendert nur d2
  bne.b    wf_found
 wf_invalid:
  tst.w    (a2)+                    ; war schon Fenster 0 ?
@@ -2842,8 +2844,8 @@ wf_ende:
 *
 * void _wbm_calc( d0 = WORD kind, a0 = WORD *border)
 *
-* Callback für wind_calc().
-* Gibt zu einem Fenstertyp den Rahmen zurück, und zwar:
+* Callback fuer wind_calc().
+* Gibt zu einem Fenstertyp den Rahmen zurueck, und zwar:
 *
 *    border[0]      linken Rahmen
 *    border[1]      oberen Rahmen
@@ -2873,7 +2875,7 @@ _wbmb_no_top:
  move.w   inw_height,d2
  subq.w   #1,d2                    ; d2 = gr_hhbox-1
  add.w    d2,2(a0)                 ; oberer Rand += gr_hhbox-1
- move.l   a1,d2                    ; d2 zurück
+ move.l   a1,d2                    ; d2 zurueck
 _wbmb_no_info:
  move.w   d0,d1
  andi.w   #VSLIDE+DNARROW+UPARROW,d1
@@ -2905,8 +2907,8 @@ _wbmb_no_bot:
 * int _wind_calc(d0 = int type,  d1 = int kind,
 *               a0 = GRECT *in, a1 = GRECT *out)
 *
-* type = 0 (WC_BORDER)   errechne Außenmaße
-* type = 1 (WC_WORK)     errechne Innenmaße
+* type = 0 (WC_BORDER)   errechne Aussenmasse
+* type = 1 (WC_WORK)     errechne Innenmasse
 *
 
 _wind_calc:
@@ -2964,7 +2966,7 @@ _wcalc_ende:
 *
 * void _wbm_obfind( d0 = int x, d1 = int y, a0 = WINDOW *w)
 *
-* Callback für wind_was_clicked().
+* Callback fuer wind_was_clicked().
 *
 
 _wbm_obfind:
@@ -2987,7 +2989,7 @@ find_icon_pos:
  subq.l   #8,sp
  move.l   a0,a6
 
- clr.l    (a0)+               ; GRECT mit je 72 Pixel außen
+ clr.l    (a0)+               ; GRECT mit je 72 Pixel aussen
  move.l   #$00480048,(a0)
 
 /*
@@ -2996,7 +2998,7 @@ find_icon_pos:
  clr.l    -(sp)               ; GRECT mit je 72 Pixel innen
  lea      (sp),a0
  moveq    #NAME,d1
- moveq    #0,d0               ; (WC_BORDER)   errechne Außenmaße
+ moveq    #0,d0               ; (WC_BORDER)   errechne Aussenmasse
  bsr      _wind_calc
  addq.l   #8,sp
 */
@@ -3017,12 +3019,12 @@ fip_hloop:
  beq.b    fip_ende            ; ???
  btst     #WSTAT_ICONIFIED_B,w_state+1(a0)
  beq.b    fip_hloop           ; Fenster nicht ikonifiziert
- lea      w_curr(a0),a0       ; Fensterausmaße
+ lea      w_curr(a0),a0       ; Fensterausmasse
  move.l   g_x(a6),(sp)
  move.l   g_w(a6),g_w(sp)
  lea      (sp),a1
  jsr      grects_intersect    ; liegt da das Fenster ?
- beq.b    fip_hloop           ; nein, nächstes Fenster
+ beq.b    fip_hloop           ; nein, naechstes Fenster
 * der Platz ist schon belegt
  move.w   g_w(a6),d0
  add.w    d0,g_x(a6)          ; einen Platz weiter nach rechts
@@ -3032,9 +3034,9 @@ fip_hloop:
  move.w   g_h(a6),d0
  sub.w    d0,g_y(a6)          ; einen Platz weiter nach oben
  move.w   g_y(a6),d1
- cmp.w    desk_g+g_y,d1       ; über Bildschirm ?
+ cmp.w    desk_g+g_y,d1       ; ueber Bildschirm ?
  bcc.b    fip_yloop           ; nein, weitermachen
-* alle Plätze belegt
+* alle Plaetze belegt
  move.l   desk_g+g_x,g_x(a6)  ; Default: links oben
 fip_ende:
  addq.l   #8,sp
@@ -3044,8 +3046,8 @@ fip_ende:
 
 **********************************************************************
 *
-* Callback für gr_xslidbx.
-* Auch verwendet für neue Fenster-Vergrößerung und Verschieben
+* Callback fuer gr_xslidbx.
+* Auch verwendet fuer neue Fenster-Vergroesserung und Verschieben
 *
 * Eingabe:
 *    d0   int Sliderpos 0..1000 bei WM_V/HSLID
@@ -3057,14 +3059,14 @@ fip_ende:
 *              int  dst_apid
 *              int  msgcode
 *
-* Rückgabe:
+* Rueckgabe:
 *    d0   TRUE, wenn weitermachen
 *
 
 windslid_callback:
  movem.l  d3/d7/a6/a5,-(sp)
  move.l   a0,a6                    ; Parameter nach a6
- move.l   d0,d7                    ; geänderte Daten nach d7
+ move.l   d0,d7                    ; geaenderte Daten nach d7
  move.w   8(a0),d0                 ; whdl
  bsr      whdl_to_wnd
  beq      wwsl_break               ; ???
@@ -3089,7 +3091,7 @@ wwsl_unblock:
  btst     #WSTAT_OPENED_B,w_state+1(a5)
  beq.b    wwsl_nicht_weiter        ; nein!!!
 
- addq.l   #4,a6                    ; Funktionsadresse überspringen
+ addq.l   #4,a6                    ; Funktionsadresse ueberspringen
  move.l   (a6)+,a1                 ; Daten
  cmpi.w   #WM_MOVED,4(a6)
  beq.b    wwsl_mover
@@ -3097,11 +3099,11 @@ wwsl_unblock:
  beq.b    wwsl_sizer
  move.w   d7,(a1)                  ; Scrollpos. eintragen
  bra.b    wwsl_all
-* für WM_SIZED
+* fuer WM_SIZED
 wwsl_sizer:
  move.l   d7,g_w(a1)
  bra.b    wwsl_all
-* für WM_MOVED
+* fuer WM_MOVED
 wwsl_mover:
  move.l   d7,(a1)
 wwsl_all:
@@ -3115,7 +3117,7 @@ wwsl_all:
 wwsl_apy_loop:
  btst     #0,gr_mkmstate+1
  beq.b    wwsl_nicht_weiter
- btst     #WSTAT_OPENED_B,w_state+1(a5)      ; Fenster noch geöffnet
+ btst     #WSTAT_OPENED_B,w_state+1(a5)      ; Fenster noch geoeffnet
  beq.b    wwsl_wait_rel            ; nein!!!
  jsr      appl_yield
  dbra     d3,wwsl_apy_loop
@@ -3133,11 +3135,11 @@ wwc_endslloop:
  jsr      update_1                 ; Applikation wieder sperren
  move.l   (sp)+,a0
 ; move.l  applx+4,a1
-; cmpa.l  mouse_app,a1             ; Maus-Applikation inzwischen geändert?
-; bne.b   wwsl_mchanged            ; ja, nicht zurücksetzen
- jsr      set_mouse_app            ; ja, zurücksetzen
+; cmpa.l  mouse_app,a1             ; Maus-Applikation inzwischen geaendert?
+; bne.b   wwsl_mchanged            ; ja, nicht zuruecksetzen
+ jsr      set_mouse_app            ; ja, zuruecksetzen
 ; wwsl_mchanged:
- move.w   (sp)+,upd_blockage       ; Update-Counter zurück
+ move.w   (sp)+,upd_blockage       ; Update-Counter zurueck
  tst.w    d7                       ; weitermachen?
  bne.b    wwsl_weiter              ; ja!
 wwsl_break:
@@ -3173,7 +3175,7 @@ wind_graf_watchbox:
  lea      2(sp),a1                 ; GRECT *
  move.w   d7,d0
  move.l   a5,a0
- jsr      obj_to_g                 ; Objektausmaße nach GRECT 2(sp)
+ jsr      obj_to_g                 ; Objektausmasse nach GRECT 2(sp)
 
 * Zeiger auf Objekte bestimmen
 
@@ -3193,7 +3195,7 @@ gwb_loop:
  move.l   a5,a0                    ; tree
  bsr      objc_wdraw
 
- eori.w   #1,(sp)                  ; in/out- Flag für MGRECT toggeln
+ eori.w   #1,(sp)                  ; in/out- Flag fuer MGRECT toggeln
 
  move.l   sp,a0
  bsr      evnt_rel_mm              ; warte auf Mausbewegung und Loslassen der linken Taste
@@ -3201,8 +3203,8 @@ gwb_loop:
 
  move.w   d7,d0
  mulu     #24,d0
- bclr.b   #SELECTED_B,ob_state+1(a3) ; testen und löschen
- beq.b    gwb_normal3              ; war schon gelöscht
+ bclr.b   #SELECTED_B,ob_state+1(a3) ; testen und loeschen
+ beq.b    gwb_normal3              ; war schon geloescht
 
  move.w   d5,d2                    ; whdl
  lea      2(sp),a1                 ; &g
@@ -3228,8 +3230,8 @@ gwb_normal3:
 * Wird nur von screnmgr_button aufgerufen
 *
 * a3           WINDOW *
-* -8(a6)       GRECT     für CURRXYWH
-* -$10(a6)     GRECT     (temporär)
+* -8(a6)       GRECT     fuer CURRXYWH
+* -$10(a6)     GRECT     (temporaer)
 *
 
 wind_was_clicked:
@@ -3246,8 +3248,8 @@ wind_was_clicked:
  seq      -$12(a6)                 ; merken
  beq.b    wwc_dialog               ; ja
 *
-* Ein Mausklick auf ein nicht aktives Fenster ist ausgeführt worden
-* Wenn die Maustaste nicht mehr gedrückt ist, wird das Fenster nach oben
+* Ein Mausklick auf ein nicht aktives Fenster ist ausgefuehrt worden
+* Wenn die Maustaste nicht mehr gedrueckt ist, wird das Fenster nach oben
 * gebracht und ggf. vorher noch die "aktive" Applikation umgeschaltet.
 * Dasselbe passiert, wenn nicht auf den Rahmen geklickt wurde.
 *
@@ -3258,7 +3260,7 @@ wind_was_clicked:
  beq.b    wwc_dialog               ; nicht im Arbeitsbereich
 
 * nicht aktives Fenster, Klick in den Arbeitsbereich.
-* Doppelklick: iconifizierte Fenster wieder öffnen.
+* Doppelklick: iconifizierte Fenster wieder oeffnen.
 
 wwc_unicon:
  cmpi.w   #2,10(a5)                ; Doppelklick ?
@@ -3270,17 +3272,17 @@ wwc_unicon:
  move.l   w_unic+4(a3),-8+4(a6)
  btst     #WSTAT_SHADED_B,w_state+1(a3)
  beq      wwc_endsw                ; nein, normal
- move.w   w_oldheight(a3),-8+g_h(a6)    ; Höhe türken
+ move.w   w_oldheight(a3),-8+g_h(a6)    ; Hoehe tuerken
  bra      wwc_endsw
 
 *
 * Das Fenster soll per Mausklick nach oben gebracht werden.
-* Applikation umschalten, wenn möglich
+* Applikation umschalten, wenn moeglich
 *
 wwc_topit:
  move.l   w_owner(a3),a0
  cmp.l    topwind_app,a0
- beq      wwc_topped               ; hat sich nicht geändert
+ beq      wwc_topped               ; hat sich nicht geaendert
  jsr      set_app
  bra      wwc_topped
 
@@ -3306,7 +3308,7 @@ wwc_dialog:
 ;bne.b    wwc_l1                   ; ja, normal
  move.w   w_oldheight(a3),d2
  sub.w    w_curr+g_h(a3),d2
- add.w    d2,-8+g_h(a6)            ; Höhe, als ob nicht ge-shaded
+ add.w    d2,-8+g_h(a6)            ; Hoehe, als ob nicht ge-shaded
 wwc_l1:
 
 
@@ -3348,16 +3350,16 @@ wwc_drop:
 
 wwc_do_drop:
  btst     #5,w_kind(a3)            ; BACKDROP ? (Bit 13)
- bne      wwc_send_drop            ; ja, nicht selbst ausführen
+ bne      wwc_send_drop            ; ja, nicht selbst ausfuehren
  btst     #2,7(a5)                 ; K_CTRL ?
  bne.b    wwc_bottomall            ; ja
  cmp.w    topwhdl,d7               ; bin ich oberstes Fenster
  bne.b    wwc_bnt                  ; nein, einfach nach hinten klappen
  move.w   d7,bdrop_hdl             ; dieses Fenster nach hinten
- move.l   timer_cnt,bdrop_timer    ; Zähler für den Fall "timeout"
-; nächstes Fenster ermitteln
+ move.l   timer_cnt,bdrop_timer    ; Zaehler fuer den Fall "timeout"
+; naechstes Fenster ermitteln
  lea      whdlx+2,a1
- move.w   scr_h,d1                 ; y > scr_h heißt "ausgeblendet"
+ move.w   scr_h,d1                 ; y > scr_h heisst "ausgeblendet"
 wwc_bloop:
  move.w   (a1)+,d0
  bmi.b    wwc_bloop                ; unsichtbares Fenster
@@ -3371,7 +3373,7 @@ wwc_bloop:
  move.w   d0,bdrop_thdl            ; dieses wird getopped
  move.w   d0,d7
  move.l   a0,a3                    ; WINDOW *
- bra      wwc_topped               ; TOPPED -> nächstes Fenster
+ bra      wwc_topped               ; TOPPED -> naechstes Fenster
 wwc_bottomall:
  clr.l    -(sp)
  clr.w    -(sp)
@@ -3402,8 +3404,8 @@ wwc_nodrop:
  beq.b    wwc_noall                ; nein
  moveq    #WM_ALLICONIFY,d5        ; Ctrl: alle Fenster ikonifizieren
 wwc_noall:
- lea      -8(a6),a0                ; GRECT für Icon
- bsr      find_icon_pos            ; Setze GRECT für ikonifiziertes Fenster
+ lea      -8(a6),a0                ; GRECT fuer Icon
+ bsr      find_icon_pos            ; Setze GRECT fuer ikonifiziertes Fenster
  bra      wwc_endsw
 
 * FULLER/CLOSER
@@ -3471,9 +3473,9 @@ wwc_n1:
      IF   WINDXMINUS
  move.w   -8+g_w(a6),d0            ; Fensterbreite
  neg.w    d0
- move.w   d0,g_x(a4)               ; Fenster dürfen links herausragen
+ move.w   d0,g_x(a4)               ; Fenster duerfen links herausragen
      ELSE
- clr.w    g_x(a4)                  ; Fenster dürfen links nicht herausragen
+ clr.w    g_x(a4)                  ; Fenster duerfen links nicht herausragen
      ENDIF
  move.w   gr_hhbox,g_y(a4)
  move.w   g_x(a4),d0
@@ -3485,15 +3487,15 @@ wwc_n1:
  move.w   d0,g_w(a4)               ; komische Berechnung
  move.w   #$2710,g_h(a4)           ; dezimal 10000
 
- btst     #6,look_flags+1          ; Online-Vergrößerung per Default aus ?
+ btst     #6,look_flags+1          ; Online-Vergroesserung per Default aus ?
  beq.b    wwc_6_off2
- btst     #1,5(a5)                 ; rechte Mtaste gedrückt ?
+ btst     #1,5(a5)                 ; rechte Mtaste gedrueckt ?
  bne.b    wwc_new_mover
  btst     #2,7(a5)                 ; K_CTRL ?
  bne.b    wwc_new_mover
  bra      wwc_old_mover
 wwc_6_off2:
- btst     #1,5(a5)                 ; rechte Mtaste gedrückt ?
+ btst     #1,5(a5)                 ; rechte Mtaste gedrueckt ?
  bne      wwc_old_mover
  btst     #2,7(a5)                 ; K_CTRL ?
  bne      wwc_old_mover
@@ -3504,7 +3506,7 @@ wwc_new_mover:
  moveq    #4,d0                    ; flat hand
  jsr      graf_mouse
 
-; verhindern, daß das Fenster inzwischen geschlossen wird.
+; verhindern, dass das Fenster inzwischen geschlossen wird.
  bset     #WSTAT_LOCKED_B,w_state+1(a3)      ; locked !!!
  move.w   #WM_MOVED,-(sp)          ; msgcode
  move.l   w_owner(a3),a2
@@ -3544,15 +3546,15 @@ wwc_size:
  btst     #SIZER_B,d1
  beq      wwc_endsw                ; nein, nichts tun
 
- btst     #6,look_flags+1          ; Online-Vergrößerung per Default aus ?
+ btst     #6,look_flags+1          ; Online-Vergroesserung per Default aus ?
  beq.b    wwc_6_off
- btst     #1,5(a5)                 ; rechte Mtaste gedrückt ?
+ btst     #1,5(a5)                 ; rechte Mtaste gedrueckt ?
  bne.b    wwc_new_sizer
  btst     #2,7(a5)                 ; K_CTRL ?
  bne.b    wwc_new_sizer
  bra      wwc_old_sizer
 wwc_6_off:
- btst     #1,5(a5)                 ; rechte Mtaste gedrückt ?
+ btst     #1,5(a5)                 ; rechte Mtaste gedrueckt ?
  bne      wwc_old_sizer
  btst     #2,7(a5)                 ; K_CTRL ?
  bne      wwc_old_sizer
@@ -3567,8 +3569,8 @@ wwc_new_sizer:
 
  bset     #WSTAT_LOCKED_B,w_state+1(a3)      ; locked !!!
 
- move.l   w_min_g+g_w(a3),-(sp)    ; Minimalbreite/-höhe
- move.l   g_w-8(a6),-(sp)          ; alte Fenstergröße (w/h)
+ move.l   w_min_g+g_w(a3),-(sp)    ; Minimalbreite/-hoehe
+ move.l   g_w-8(a6),-(sp)          ; alte Fenstergroesse (w/h)
  move.l   (a5),-(sp)               ; aktuelle Mausposition
 
 * Schleife
@@ -3599,16 +3601,16 @@ wwc_nsize_ok:
  swap     d4                       ; neue Breite ins Hiword
  move.w   gr_mkmy,d0               ; aktuelle Mausposition
  sub.w    2(a5),d0                 ; - alte Mausposition
- add.w    6(sp),d0                 ; auf Höhe addieren
- cmp.w    10(sp),d0                ; kleiner als minimale Höhe ?
+ add.w    6(sp),d0                 ; auf Hoehe addieren
+ cmp.w    10(sp),d0                ; kleiner als minimale Hoehe ?
  bge.b    wwc_nh_ok
  move.w   10(sp),d0
 wwc_nh_ok:
- move.w   d0,d4                    ; neue Höhe ins Loword
- cmp.l    g_w-8(a6),d4             ; haben sich Breite oder Höhe geändert ?
+ move.w   d0,d4                    ; neue Hoehe ins Loword
+ cmp.l    g_w-8(a6),d4             ; haben sich Breite oder Hoehe geaendert ?
  beq.b    wwc_nsize_loop           ; nein, weiter warten
 
-;move.l   d4,g_w-8(a6)             ; neue Breite und Höhe: erledigt callback
+;move.l   d4,g_w-8(a6)             ; neue Breite und Hoehe: erledigt callback
 
  move.w   #WM_SIZED,-(sp)          ; msgcode
  move.l   w_owner(a3),a2
@@ -3660,17 +3662,17 @@ wwcs_ok:
  move.w   g_y(a4),d0
  add.w    g_h(a4),d0
  bne.b    wwcs_lok1
- subq.w   #1,g_h(a4)               ; untere Linien waren übereinander!
+ subq.w   #1,g_h(a4)               ; untere Linien waren uebereinander!
 wwcs_lok1:
  move.w   g_x(a4),d0
  add.w    g_w(a4),d0
  bne.b    wwcs_lok2
- subq.w   #1,g_w(a4)               ; rechte Linien waren übereinander!
+ subq.w   #1,g_w(a4)               ; rechte Linien waren uebereinander!
 wwcs_lok2:
 
  move.l   w_min_g+g_w(a3),-(sp)
- move.l   a4,-(sp)                 ; Offsets für inneres Rechteck
- pea      -8(a6)                   ; äußeres Anfangsrechteck
+ move.l   a4,-(sp)                 ; Offsets fuer inneres Rechteck
+ pea      -8(a6)                   ; aeusseres Anfangsrechteck
  move.l   (a5),-(sp)               ; x/y
  bsr      size_wind
  adda.w   #16,sp
@@ -3758,7 +3760,7 @@ _wwc_ar_noc:
  beq.b    _wwc_ar_noc2             ; nein
  move.l   d0,a1
  subq.w   #1,g_x(a1)
- subq.w   #1,g_y(a1)               ; Kind zurücksetzen
+ subq.w   #1,g_y(a1)               ; Kind zuruecksetzen
 _wwc_ar_noc2:
 
 _wwc_arrow:
@@ -3793,9 +3795,9 @@ wwc_apy_loop:
  dbra     d3,wwc_apy_loop
 
  moveq    #0,d0
- move.w   dclick_clicks,d0         ; Verzögerung: Ein Doppelklick
+ move.w   dclick_clicks,d0         ; Verzoegerung: Ein Doppelklick
  jsr      wait_n_clicks            ; Zeitschleife
-* wiederhole, solange linke Maustaste gedrückt
+* wiederhole, solange linke Maustaste gedrueckt
 wwc_nodelay:
  btst     #0,gr_mkmstate+1
  bne      wwc_arloop
@@ -3809,7 +3811,7 @@ wwc_endarloop:
  beq.b    wwc_noardraw
  cmpi.w   #14,d6
  beq.b    wwc_noardraw
-* Wenn sich das Fenster geändert hat, nicht neu zeichnen
+* Wenn sich das Fenster geaendert hat, nicht neu zeichnen
 ;cmp.w    topwhdl,d7               ; Fenster noch oberstes ?
 ;bne.b    wwc_noardraw             ; nein, Scrollpfeil nicht neu
 
@@ -3822,7 +3824,7 @@ wwc_endarloop:
 
 wwc_noardraw:
  move.l   a4,a0
- jsr      set_mouse_app            ; zurücksetzen
+ jsr      set_mouse_app            ; zuruecksetzen
  jsr      update_1                 ; Applikation wieder sperren
  bra      wwc_ende
 
@@ -3847,13 +3849,13 @@ wwc_slid:
 
  btst     #5,look_flags+1          ; Online-Scrolling per Default aus ?
  beq.b    wwc_5_off
- btst     #1,5(a5)                 ; rechte Mtaste gedrückt ?
+ btst     #1,5(a5)                 ; rechte Mtaste gedrueckt ?
  bne.b    wwc_new_slider
  btst     #2,7(a5)                 ; K_CTRL ?
  bne.b    wwc_new_slider
  bra.b    wwc_old_slider
 wwc_5_off:
- btst     #1,5(a5)                 ; rechte Mtaste gedrückt ?
+ btst     #1,5(a5)                 ; rechte Mtaste gedrueckt ?
  bne.b    wwc_old_slider
  btst     #2,7(a5)                 ; K_CTRL ?
  bne.b    wwc_old_slider
@@ -3966,12 +3968,12 @@ wwc_obtab:
 *
 *   8(a6) <mx>      Mausposition bei Event
 *  $a(a6) <my>      Mausposition bei Event
-*  $c(a6) <outg>    äußeres Anfangs- Rechteck, Rückgabe des Endrechtecks
-* $10(a6) <ing>     Offsets für inneres Rechteck
-* $14(a6) <minw>    minimale Breite für äußeres Rechteck
-* $16(a6) <minh>    minimale Höhe   für äußeres Rechteck
+*  $c(a6) <outg>    aeusseres Anfangs- Rechteck, Rueckgabe des Endrechtecks
+* $10(a6) <ing>     Offsets fuer inneres Rechteck
+* $14(a6) <minw>    minimale Breite fuer aeusseres Rechteck
+* $16(a6) <minh>    minimale Hoehe   fuer aeusseres Rechteck
 *
-* -8(a6)            äußeres GRECT
+* -8(a6)            aeusseres GRECT
 *
 
 size_wind:
@@ -4006,21 +4008,21 @@ w_ok:
  swap     d6                       ; neue Breite ins Hiword
  move.w   gr_mkmy,d0               ; aktuelle Mausposition
  sub.w    $a(a6),d0                ; - alte Mausposition
- add.w    g_h(a3),d0               ; auf Höhe addieren
- cmp.w    $16(a6),d0               ; kleiner als minimale Höhe ?
+ add.w    g_h(a3),d0               ; auf Hoehe addieren
+ cmp.w    $16(a6),d0               ; kleiner als minimale Hoehe ?
  bge.b    h_ok
  move.w   $16(a6),d0
 h_ok:
- move.w   d0,d6                    ; neue Höhe ins Loword
- cmp.l    g_w(a5),d6               ; haben sich Breite oder Höhe geändert ?
+ move.w   d0,d6                    ; neue Hoehe ins Loword
+ cmp.l    g_w(a5),d6               ; haben sich Breite oder Hoehe geaendert ?
  beq.b    size_nochange
 
  addq.l   #1,g_w(a5)               ; war vorher -1 ?
- beq.b    size_noclr               ; ja, nichts zu löschen
+ beq.b    size_noclr               ; ja, nichts zu loeschen
  subq.l   #1,g_w(a5)
- jsr      _drawgrect               ; altes Rechteck löschen
+ jsr      _drawgrect               ; altes Rechteck loeschen
 size_noclr:
- move.l   d6,g_w(a5)               ; neue Breite und Höhe
+ move.l   d6,g_w(a5)               ; neue Breite und Hoehe
  jsr      _drawgrect               ; neues Rechteck malen (a5,a4,d7)
 
 size_nochange:
@@ -4032,11 +4034,11 @@ size_nochange:
  move.l   sp,a0
  bsr      evnt_rel_mm         ; warte auf Loslassen der Taste oder Mausbewegung
  adda.w   #10,sp
- beq.b    size_weiter              ; Maustaste noch gedrückt, weiter
+ beq.b    size_weiter              ; Maustaste noch gedrueckt, weiter
 
- jsr      _drawgrect               ; Rechteck löschen (a5,a4,d7)
- move.w   g_w(a5),g_w(a3)          ; *lw zurückgeben
- move.w   g_h(a5),g_h(a3)          ; *lh zurückgeben
+ jsr      _drawgrect               ; Rechteck loeschen (a5,a4,d7)
+ move.w   g_w(a5),g_w(a3)          ; *lw zurueckgeben
+ move.w   g_h(a5),g_h(a3)          ; *lh zurueckgeben
  jsr      mctrl_0
  movem.l  (sp)+,a5/a3/d7/d6
  unlk     a6
@@ -4047,7 +4049,7 @@ size_nochange:
 *
 * a0/d0 = WGRECT *alloc_wgrect( void )
 *
-* ändert nur d0/a0
+* aendert nur d0/a0
 *
 
 alloc_wgrect:
@@ -4073,7 +4075,7 @@ __cwo:
  add.w    4+g_h(a1),d1             ; unterer Rand des wg
  jsr      min
  sub.w    -4(a0),d0                ; y abziehen
- move.w   d0,(a0)                  ; Höhe
+ move.w   d0,(a0)                  ; Hoehe
  rts
 
 
@@ -4083,11 +4085,11 @@ __cwo:
 *                              a1 = WGRECT *wg,
 *                              a2 = WGRECT *prev_wg)
 *
-* zerschneidet <wg>, das (womöglich) von <cutter> überdeckt wird,
-* in mehrere WGRECTS, diese werden in die Liste eingehängt.
+* zerschneidet <wg>, das (womoeglich) von <cutter> ueberdeckt wird,
+* in mehrere WGRECTS, diese werden in die Liste eingehaengt.
 * Wenn neue WGRECTs erstellt wurden, gib Zeiger auf deren letzten
-* zurück, der damit neuer Vorgänger von <wg> geworden ist;
-* andernfalls gib NULL zurück.
+* zurueck, der damit neuer Vorgaenger von <wg> geworden ist;
+* andernfalls gib NULL zurueck.
 *
 
 calc_wgrect_overlaps:
@@ -4105,11 +4107,11 @@ calc_wgrect_overlaps:
  move.w   4+g_y(a1),d0
  add.w    4+g_h(a1),d0
  cmp.w    g_y(a5),d0
- ble      cwgo_ret0                ; <wg> liegt vollst. über <cutter>
+ ble      cwgo_ret0                ; <wg> liegt vollst. ueber <cutter>
  move.w   g_y(a5),d0
  add.w    g_h(a5),d0
  cmp.w    4+g_y(a1),d0
- ble      cwgo_ret0                ; <cutter> liegt vollst. über <wg>
+ ble      cwgo_ret0                ; <cutter> liegt vollst. ueber <wg>
 
 *
 * Der obere Rand wird berechnet
@@ -4119,12 +4121,12 @@ calc_wgrect_overlaps:
  sub.w    4+g_y(a1),d2
  ble.b    cwo_n_oben               ; der obere Rand schneidet nicht
 
- bsr      alloc_wgrect             ; a0 = neues WGRECT, ändert nur d0/a0
- move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhängen
+ bsr      alloc_wgrect             ; a0 = neues WGRECT, aendert nur d0/a0
+ move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhaengen
  movea.l  a0,a2                    ; und wird neues prev_wg
  move.l   a1,(a0)+                 ; wg als Nachfolger eintragen
- move.l   4+g_x(a1),(a0)+          ; x,y übernehmen
- move.w   4+g_w(a1),(a0)+          ; w übernehmen
+ move.l   4+g_x(a1),(a0)+          ; x,y uebernehmen
+ move.w   4+g_w(a1),(a0)+          ; w uebernehmen
  move.w   d2,(a0)
 cwo_n_oben:
 
@@ -4136,11 +4138,11 @@ cwo_n_oben:
  sub.w    4+g_x(a1),d2
  ble.b    cwo_n_links              ; der linke Rand schneidet nicht
 
- bsr      alloc_wgrect             ; a0 = neues WGRECT, ändert nur d0/a0
- move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhängen
+ bsr      alloc_wgrect             ; a0 = neues WGRECT, aendert nur d0/a0
+ move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhaengen
  movea.l  a0,a2                    ; und wird neues prev_wg
  move.l   a1,(a0)+                 ; wg als Nachfolger eintragen
- move.w   4+g_x(a1),(a0)+          ; x übernehmen
+ move.w   4+g_x(a1),(a0)+          ; x uebernehmen
  bsr      __cwo                    ; y/w/h berechnen
 cwo_n_links:
 
@@ -4154,8 +4156,8 @@ cwo_n_links:
  sub.w    g_w(a5),d2
  ble.b    cwo_n_rechts             ; der rechte Rand schneidet nicht
 
- bsr      alloc_wgrect             ; a0 = neues WGRECT, ändert nur d0/a0
- move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhängen
+ bsr      alloc_wgrect             ; a0 = neues WGRECT, aendert nur d0/a0
+ move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhaengen
  movea.l  a0,a2                    ; und wird neues prev_wg
  move.l   a1,(a0)+                 ; wg als Nachfolger eintragen
  move.w   g_x(a5),d0
@@ -4174,19 +4176,19 @@ cwo_n_rechts:
  sub.w    g_h(a5),d2
  ble.b    cwo_n_unten              ; der untere Rand schneidet nicht
 
- bsr      alloc_wgrect             ; a0 = neues WGRECT, ändert nur d0/a0
- move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhängen
+ bsr      alloc_wgrect             ; a0 = neues WGRECT, aendert nur d0/a0
+ move.l   a0,(a2)                  ; neues WGRECT an prev_wg anhaengen
  movea.l  a0,a2                    ; und wird neues prev_wg
  move.l   a1,(a0)+                 ; wg als Nachfolger eintragen
- move.w   4+g_x(a1),(a0)+          ; x übernehmen
+ move.w   4+g_x(a1),(a0)+          ; x uebernehmen
  move.w   g_y(a5),d0
  add.w    g_h(a5),d0
  move.w   d0,(a0)+                 ; y = c.y+c.h
- move.w   4+g_w(a1),(a0)+          ; w übernehmen
+ move.w   4+g_w(a1),(a0)+          ; w uebernehmen
  move.w   d2,(a0)
 cwo_n_unten:
 
- move.l   (a1),(a2)                ; unser WGRECT aushängen
+ move.l   (a1),(a2)                ; unser WGRECT aushaengen
  move.l   wg_freelist,(a1)
  move.l   a1,wg_freelist       ; und freigeben
  move.l   a2,d0
@@ -4204,9 +4206,9 @@ cwgo_ret0:
 * void calc_wind_overlaps( d0 = int whdl, a0 = GRECT *cutter )
 *
 * Wird von set_wind_wgrect bei der Reorganisation
-* der Fensterrechtecklisten aufgerufen, und zwar für alle Fenster,
+* der Fensterrechtecklisten aufgerufen, und zwar fuer alle Fenster,
 * die UNTER dem Fenster von set_wind_wgrect liegen.
-* cutter ist der Umriß des Fensters, das set_wind_wgrect bearbeitet.
+* cutter ist der Umriss des Fensters, das set_wind_wgrect bearbeitet.
 *
 * Aufrufschema:
 *  Die Fenster seien geordnet: oberstes=3,2,1,0=unterstes
@@ -4237,20 +4239,20 @@ calc_wind_overlaps:
  lea      w_wg(a5),a3              ; Zeiger auf unsere Rechteckliste
  bra.b    cwio_next
 cwio_loop:
- move.l   a3,a2                    ; Vorgänger in der Liste
+ move.l   a3,a2                    ; Vorgaenger in der Liste
  move.l   a4,a1                    ; bearbeitetes WGRECT
  move.l   a6,a0                    ; hiervon wird <a2> "zerschnitten"
  bsr      calc_wgrect_overlaps
  movea.l  d0,a3
- move.l   a3,d0                    ; neuer Vorgänger, d.h. neue WGRECTs
-                                   ;  eingehängt ?
+ move.l   a3,d0                    ; neuer Vorgaenger, d.h. neue WGRECTs
+                                   ;  eingehaengt ?
  beq.b    cwio_weiter              ; nein, normal weiter
- bset     #WSTAT_COVERED_B,w_state+1(a5)     ; "überdeckt"
+ bset     #WSTAT_COVERED_B,w_state+1(a5)     ; "ueberdeckt"
  bra.b    cwio_next
 cwio_weiter:
  movea.l  a4,a3
 cwio_next:
- movea.l  (a3),a4                  ; nächstes WGRECT
+ movea.l  (a3),a4                  ; naechstes WGRECT
  move.l   a4,d0                    ; Listenende ?
  bne.b    cwio_loop                ; nein, weiter
 cwio_ende:
@@ -4270,19 +4272,19 @@ cwio_ende:
 * Fenster.
 *
 * Die Rechteckliste ist bereits von build_new_wgs freigegeben.
-* a0[] enthält die tiefer liegenden Fenster EINSCHLIEßLICH d0
+* a0[] enthaelt die tiefer liegenden Fenster EINSCHLIESSLICH d0
 *
 
 set_wind_wgrect:
  movem.l  a4/a5,-(sp)
  move.w   d0,d1
  move.l   a0,a4
- bsr      whdl_to_wnd              ; ändert nur d0/a0
+ bsr      whdl_to_wnd              ; aendert nur d0/a0
  beq      swg_ende                 ; ???
  movea.l  a0,a2
 
 * Initialisiere tmp_grect mit unserem Fenster und durchlaufe alle
-* tieferliegenden (von uns überdeckten) Fenster
+* tieferliegenden (von uns ueberdeckten) Fenster
 
  lea      w_curr(a2),a0
  addq.l   #g_w,a0
@@ -4291,10 +4293,10 @@ set_wind_wgrect:
  tst.w    (a0)+
  beq.b    swg_ende                 ; Rechteck ist leer, Ende
 
-* Initialisiere unsere Rechteckliste mit dem Gesamt- Fensterumriß,
+* Initialisiere unsere Rechteckliste mit dem Gesamt- Fensterumriss,
 * also mit einem Rechteck
 
- bsr      alloc_wgrect             ; ändert nur d0/a0
+ bsr      alloc_wgrect             ; aendert nur d0/a0
  move.l   a0,w_wg(a2)              ; in unsere Liste
  clr.l    (a0)+                    ; kein Nachfolger
  move.l   a0,a5                    ; GRECT merken
@@ -4304,11 +4306,11 @@ set_wind_wgrect:
  beq.b    swg_ende                 ; Window #0, fertig
 
  addq.l   #2,a4                    ; Liste der tiefer liegenden Fenster
-                                   ; uns überspringen
+                                   ; uns ueberspringen
 swg_calcloop:
  move.l   a5,a0                    ; cut- Rechteck
  move.w   (a4),d0                  ; whdl
- bmi.b    swg_inv                  ; Fenster ungültig (eingefroren)
+ bmi.b    swg_inv                  ; Fenster ungueltig (eingefroren)
  bsr      calc_wind_overlaps
 swg_inv:
  tst.w    (a4)+                    ; war das Fenster 0 ?
@@ -4323,7 +4325,7 @@ swg_ende:
 *
 * a0 = WINDOW *wgfree( a0 = WINDOW *w )
 *
-* Gibt die Rechteckliste für das Fenster frei.
+* Gibt die Rechteckliste fuer das Fenster frei.
 *
 
 wgfree:
@@ -4336,7 +4338,7 @@ wgf_wgloop:
 wgf_nxtwg:
  tst.l    (a1)
  bne.b    wgf_wgloop
- move.l   wg_freelist,(a1)         ; hänge die freelist hinter unsere Liste
+ move.l   wg_freelist,(a1)         ; haenge die freelist hinter unsere Liste
  move.l   d0,wg_freelist           ; und unsere in die freelist
  clr.l    w_wg(a0)                 ; leere Rechteckliste
 wgf_ende:
@@ -4347,7 +4349,7 @@ wgf_ende:
 *
 * void build_new_wgs( d0 = int newtop )
 *
-* Baut neue Rechtecklisten für die Fenster und schaltet ggf. die
+* Baut neue Rechtecklisten fuer die Fenster und schaltet ggf. die
 * Applikation des obersten Fensters um.
 *
 
@@ -4357,41 +4359,41 @@ build_new_wgs:
  lea      whdlx,a5
 
 *
-* Fensterliste so trimmen, daß nach Möglichkeit kein ungültiges
+* Fensterliste so trimmen, dass nach Moeglichkeit kein ungueltiges
 * Fenster oben liegt
 *
 
  move.w   (a5),d0                  ; oberstes Fenster
- bge      bnw_wgfreeloop           ; ist gültig!
+ bge      bnw_wgfreeloop           ; ist gueltig!
 bnw_trmloop:
  addq.l   #2,a5
  move.w   (a5),d2
- bmi.b    bnw_trmloop              ; immer noch ungültig
+ bmi.b    bnw_trmloop              ; immer noch ungueltig
  beq.b    bnw_ok1                  ; Listenende
  lea      whdlx,a1                 ; src
  lea      whdlx+2,a0               ; dst
  move.l   a5,d0
  sub.l    a1,d0
- jsr      memcpy                   ; ungültige nach hinten
- move.w   d2,whdlx                 ; gültiges nach vorn
+ jsr      vmemcpy                   ; ungueltige nach hinten
+ move.w   d2,whdlx                 ; gueltiges nach vorn
 
 *
 * Rechtecklisten aller Fenster erneuern
 *
 
-* Zunächst alle Rechtecklisten freigeben
+* Zunaechst alle Rechtecklisten freigeben
 
 bnw_ok1:
  lea      whdlx,a5
 bnw_wgfreeloop:
  move.w   (a5),d0                  ; whdl
- bclr     #15,d0                   ; auch ungültige Handles behandeln!
+ bclr     #15,d0                   ; auch ungueltige Handles behandeln!
  bsr      whdl_to_wnd
  beq.b    bnw_nextwin
 ;move.l   a0,a0
  bsr      wgfree
 bnw_nextwin:
- bclr     #WSTAT_COVERED_B,w_state+1(a0)     ; "nicht überdeckt"
+ bclr     #WSTAT_COVERED_B,w_state+1(a0)     ; "nicht ueberdeckt"
 
  tst.w    (a5)+                    ; war dies das Fenster 0 ?
  bne.b    bnw_wgfreeloop           ; nein, weiter
@@ -4401,7 +4403,7 @@ bnw_nextwin:
 
 bnw_swgloop:
  move.w   -(a5),d0
- bmi.b    bnw_sw_inv               ; Fenster ungültig
+ bmi.b    bnw_sw_inv               ; Fenster ungueltig
  move.l   a5,a0                    ; Fensterliste (selbst und alle tieferen)
  bsr      set_wind_wgrect
 bnw_sw_inv:
@@ -4427,7 +4429,7 @@ win_inactive:
  ble.b    _wun_ende
  bsr      whdl_to_wnd
  beq.b    _wun_ende
- bclr     #WSTAT_ACTIVE_B,w_state+1(a0)      ; ACTIVE löschen
+ bclr     #WSTAT_ACTIVE_B,w_state+1(a0)      ; ACTIVE loeschen
  move.l   wbm_sattr,a1
  moveq    #WSTAT_ACTIVE,d0
 ;move.l   a0,a0
@@ -4447,8 +4449,8 @@ set_new_top:
  move.l   d6,-(sp)
  move.w   topwhdl,d6               ;    altes oberstes Fenster
  move.w   whdlx,d0                 ;    neues oberstes Fenster
- bge.b    snt_new_valid            ;     ist gültig
- moveq    #0,d0                    ;     ist ungültig => Hintergrund nehmen
+ bge.b    snt_new_valid            ;     ist gueltig
+ moveq    #0,d0                    ;     ist ungueltig => Hintergrund nehmen
 snt_new_valid:
  cmp.w    d6,d0                    ; == altes oberstes Fenster ?
  bne.b    snt_changed              ; nein
@@ -4514,11 +4516,11 @@ send_all_redraws:
 * _do_redraw(a0 = int whdls[], a1 = GRECT *g, d0 = int flag, d1 = int num)
 *
 * alle Fenster, deren Handles in der Liste <whdls> liegen, werden
-* nacheinander gezeichnet, maximal werden <num> Stück gezeichnet.
-* Die Liste ist außerdem durch 0 abgeschlossen.
+* nacheinander gezeichnet, maximal werden <num> Stueck gezeichnet.
+* Die Liste ist ausserdem durch 0 abgeschlossen.
 * Es wird nur der Ausschnitt <g> gezeichnet, der mit dem Bildschirm ge-
 * schnitten wird.
-* Für das oberste Fenster <topwhdl> wird NICHT der Rahmen gezeichnet,
+* Fuer das oberste Fenster <topwhdl> wird NICHT der Rahmen gezeichnet,
 * wenn nicht <flag> != 0 ist.
 *
 
@@ -4542,10 +4544,10 @@ _do_redraw:
 * do-Schleife:
 do_loop:
  subq.w   #1,d5
- bcs.b    end_loop                 ; Schluß
- move.w   (a4)+,d6                 ; nächstes Fenster
- beq.b    end_loop                 ; Schluß
- bmi.b    do_loop                  ; ungültig
+ bcs.b    end_loop                 ; Schluss
+ move.w   (a4)+,d6                 ; naechstes Fenster
+ beq.b    end_loop                 ; Schluss
+ bmi.b    do_loop                  ; ungueltig
  tst.w    d7
  bne.b    doch_rahmen
  cmp.w    topwhdl,d6
@@ -4573,7 +4575,7 @@ nix_redraw:
 *
 * Liefert die Liste aller Fenster von oben (letztes Kind) nach unten
 * (erstes Kind) ab <firstwhdl>.
-* Die Liste beginnt also mit unserem Fenster und enthält alle darunter
+* Die Liste beginnt also mit unserem Fenster und enthaelt alle darunter
 * liegenden, sie wird durch 0 abgeschlossen
 *
 
@@ -4597,27 +4599,27 @@ gwh_ende:
 *
 * int _wind_open(d0 = int whdl, a0 = GRECT *g)
 *
-* Achtung: Jetzt Rückgabewert 0 bei ungültigem Handle
+* Achtung: Jetzt Rueckgabewert 0 bei ungueltigem Handle
 *
 
 _wind_open:
  movem.l  a2/a4/a5/d7,-(sp)
- subq.l   #8,sp                    ; Platz für GRECT
+ subq.l   #8,sp                    ; Platz fuer GRECT
  tst.w    d0
- beq      wop_err                  ; Fenster #0 nicht öffnen!
+ beq      wop_err                  ; Fenster #0 nicht oeffnen!
  move.w   d0,d7                    ; d7 = whdl
  move.l   a0,a5                    ; a5 = g
  bsr      whdl_to_wnd
  beq      wop_err
  move.l   a0,a4                    ; a4 = WINDOW *
  bset     #WSTAT_OPENED_B,w_state+1(a4)
- bne      wop_err                  ; war schon geöffnet
+ bne      wop_err                  ; war schon geoeffnet
 
 * Sonderfall g = {-1,-1,-1,-1}
 
  moveq    #-1,d0
- cmp.l    g_w(a5),d0               ; w/h = -1 übergeben ?
- bne.b    wop_g                    ; nein, übergebenes GRECT nehmen
+ cmp.l    g_w(a5),d0               ; w/h = -1 uebergeben ?
+ bne.b    wop_g                    ; nein, uebergebenes GRECT nehmen
  move.l   sp,a0
  bsr      find_icon_pos            ; ja, Default-Werte nehmen
  move.l   sp,a5
@@ -4625,18 +4627,18 @@ _wind_open:
 wop_g:
 * Beginn des Bildschirmaufbaus
  jsr      update_1
-* Verhindere, daß WM_ONTOP kommt
+* Verhindere, dass WM_ONTOP kommt
  bset     #WSTAT_QUIET_B,w_state+1(a4)
 * setze d7 als oberstes Fenster
  moveq    #0,d1                    ; oberste Position
  move.w   d7,d0
  bsr      _wind_to_stackpos
-* Größe setzen:
+* Groesse setzen:
  btst     #WSTAT_SHADED_B,w_state+1(a4)
  beq.b    wop_notsh
-* Größe setzen: shaded
- move.w   g_h(a5),w_oldheight(a4)  ; Höhe für unge-shade-tes Fenster
- move.w   wbm_hshade,-(sp)         ; minimale Höhe
+* Groesse setzen: shaded
+ move.w   g_h(a5),w_oldheight(a4)  ; Hoehe fuer unge-shade-tes Fenster
+ move.w   wbm_hshade,-(sp)         ; minimale Hoehe
  move.w   g_w(a5),-(sp)
  move.l   g_x(a5),-(sp)
  move.l   sp,a1
@@ -4646,22 +4648,22 @@ wop_g:
  bsr      set_windxywh
  addq.l   #8,sp
  bra.b    wop_shunsh
-* Größe setzen: nicht shaded
+* Groesse setzen: nicht shaded
 wop_notsh:
  move.l   a5,a1
  move.l   a4,a0                    ; WINDOW *
  moveq    #1,d1                    ; neues oberstes
  move.w   d7,d0
  bsr      set_windxywh
-* Größe für PREVXYWH setzen
+* Groesse fuer PREVXYWH setzen
 wop_shunsh:
  lea      w_prev(a4),a0
  move.l   (a5)+,(a0)+
  move.l   (a5),(a0)
-* Menüleiste ggf. umschalten
+* Menueleiste ggf. umschalten
  move.l   w_owner(a4),a0
  jsr      set_app
-* Ermögliche wieder WM_ONTOP
+* Ermoegliche wieder WM_ONTOP
  bclr     #WSTAT_QUIET_B,w_state+1(a4)
 * Ende des Bildschirmaufbaus
  jsr      update_0
@@ -4692,7 +4694,7 @@ _wcl_loop:
  lea      -2(a1),a0                ; Ziel
  move.l   #whdlx+2*MAX_NWIND,d0
  sub.l    a1,d0
- jmp      memcpy                   ; Rest aufrücken
+ jmp      vmemcpy                   ; Rest aufruecken
 fatal_err_3:
  jmp      fatal_w2
 
@@ -4703,7 +4705,7 @@ fatal_err_3:
 *
 * int wind_close(d0 = int whdl)
 *
-* Achtung: Jetzt Rückgabewert 0 bei ungültigem Handle
+* Achtung: Jetzt Rueckgabewert 0 bei ungueltigem Handle
 *
 
 SIZE      SET  -8
@@ -4713,21 +4715,21 @@ wind_close:
  link     a6,#WTAB
  movem.l  d7/a2/a4,-(sp)
  tst.w    d0
- beq      wcl_err                  ; Fenster #0 nicht schließen!
+ beq      wcl_err                  ; Fenster #0 nicht schliessen!
  move.w   d0,d7                    ; d7 = whdl
  bsr      whdl_to_wnd
  beq      wcl_err
  move.l   a0,a4                    ; a4 = WINDOW *
 
  move.l   act_appl,a1
- cmpa.l   w_owner(a4),a1           ; gehört uns ?
+ cmpa.l   w_owner(a4),a1           ; gehoert uns ?
  bne      wcl_err                  ; nein, Fehler
 
  bclr     #WSTAT_OPENED_B,w_state+1(a4)
- beq      wcl_err                  ; war nicht geöffnet
+ beq      wcl_err                  ; war nicht geoeffnet
 
 * testen, ob das Fenster ge-locked ist, d.h. ob gerade Echtzeit-
-* Scrolling/Verschieben/Vergrößern durchgeführt wird.
+* Scrolling/Verschieben/Vergroessern durchgefuehrt wird.
 
  btst     #WSTAT_LOCKED_B,w_state+1(a4)      ; locked ?
  beq.b    wcl_not_locked           ; nein, weiter
@@ -4747,19 +4749,19 @@ wcl_wait_lock_loop:
  tst.w    (sp)                     ; wir hatten wind_update?
  beq.b    wcl_no_1                 ; nein
  jsr      update_1                 ; Kontrolle wiederholen
- move.w   (sp),upd_blockage        ; Update-Counter zurück
+ move.w   (sp),upd_blockage        ; Update-Counter zurueck
 wcl_no_1:
  addq.l   #2,sp
 
 wcl_not_locked:
 
-* aktuelle Größe nach -8(a6)[]
+* aktuelle Groesse nach -8(a6)[]
 
  move.l   w_overall(a4),SIZE(a6)
  move.l   w_overall+g_w(a4),SIZE+g_w(a6)     ; CURRXYWH+Schatten nach -8(a6)[]
 
 * CURRXYWH und WORKXYWH auf Null setzen
-* Bit für "shaded" löschen
+* Bit fuer "shaded" loeschen
 
  clr.l    w_curr(a4)
  clr.l    w_curr+g_w(a4)
@@ -4778,18 +4780,18 @@ wcl_not_locked:
  bsr      _wind_close              ; Fenster aus der Liste entfernen
  moveq    #0,d0                    ; oberstes Fenster nicht erneuern
  bsr      build_new_wgs            ; Rechtecklisten erneuern
-* Wenn Fenster oberstes Fenster war, oberstes ungültig machen
+* Wenn Fenster oberstes Fenster war, oberstes ungueltig machen
  cmp.w    topwhdl,d7
  bne.b    wcl_weiter               ; keine Umschaltung
  move.w   #-1,topwhdl
-* Wenn nächstes Fenster unseres, in den Vordergrund bringen
+* Wenn naechstes Fenster unseres, in den Vordergrund bringen
  move.w   whdlx,d1                 ; d1 = neues oberstes Fenster
- ble      wcl_newtop               ; ungültig
+ ble      wcl_newtop               ; ungueltig
  move.w   d1,d0
  bsr      whdl_to_wnd              ; a0 = WINDOW *
  beq.b    wcl_notop                ; ???
  move.l   act_appl,a1
- cmpa.l   w_owner(a0),a1           ; gehört uns ?
+ cmpa.l   w_owner(a0),a1           ; gehoert uns ?
  bne      wcl_notop                ; nein, kein oberstes Fenster!
 wcl_newtop:
  bsr      set_new_top              ; oberstes Fenster aktivieren
@@ -4801,9 +4803,9 @@ wcl_notop:
  bsr      top_my_window            ; unser oberstes bekommt WM_TOPPED
  move.l   (sp)+,a0
  bne.b    wcl_weiter               ; ok, Nachricht wurde verschickt
- cmpa.l   menu_app,a0              ; sind wir menübesitzend ?
+ cmpa.l   menu_app,a0              ; sind wir menuebesitzend ?
  beq.b    wcl_weiter               ; ja, alle Fenster deaktiviert lassen
-* Letztes Fenster einer nicht-menübesitzenden APP wurde geschlossen
+* Letztes Fenster einer nicht-menuebesitzenden APP wurde geschlossen
  jsr      gbest_wnd_app
  jsr      make_app_main
 wcl_weiter:
@@ -4838,7 +4840,7 @@ wcl_err:
 
 wind_iconify:
  movem.l  d7/a4,-(sp)
- subq.l   #8,sp                    ; Platz für GRECT
+ subq.l   #8,sp                    ; Platz fuer GRECT
  move.l   a0,a4                    ; a4 = WINDOW *
  move.w   d0,d7                    ; d7 = whdl
  btst     #WSTAT_ICONIFIED_B,w_state+1(a4)
@@ -4848,20 +4850,20 @@ wind_iconify:
 
 ;move.l   a1,a1
  moveq    #-1,d0
- cmp.l    g_w(a1),d0               ; w/h = -1 übergeben ?
- bne.b    wico_icg                 ; nein, übergebenes GRECT nehmen
+ cmp.l    g_w(a1),d0               ; w/h = -1 uebergeben ?
+ bne.b    wico_icg                 ; nein, uebergebenes GRECT nehmen
  move.l   sp,a0
  bsr      find_icon_pos            ; ja, Default-Werte nehmen
  move.l   sp,a1
 wico_icg:
-; erst hier ikonifizieren, damit <find_icon_pos> es nicht berücksichtigt
+; erst hier ikonifizieren, damit <find_icon_pos> es nicht beruecksichtigt
  bset     #WSTAT_ICONIFIED_B,w_state+1(a4)
 
  btst     #WSTAT_SHADED_B,w_state+1(a4)
  beq.b    wico_no_uicsh                      ; nein, OK
- move.w   w_oldheight(a4),w_unic+g_h(a4)     ; ja, tats. Höhe merken
- move.w   g_h(a1),w_oldheight(a4)            ; un-shade-Höhe merken
- move.w   wbm_hshade,g_h(a1)                 ; Höhe minimal
+ move.w   w_oldheight(a4),w_unic+g_h(a4)     ; ja, tats. Hoehe merken
+ move.w   g_h(a1),w_oldheight(a4)            ; un-shade-Hoehe merken
+ move.w   wbm_hshade,g_h(a1)                 ; Hoehe minimal
 wico_no_uicsh:
 
  move.l   a1,-(sp)
@@ -4899,8 +4901,8 @@ wind_uniconify:
  beq.b    wuico_err                ; war nicht ikonifiziert
  btst     #WSTAT_SHADED_B,w_state+1(a0)
  beq.b    wuico_no_uicsh           ; nein, OK
- move.w   g_h(a1),w_oldheight(a0)  ; un-shade-Höhe merken
- move.w   wbm_hshade,g_h(a1)       ; Höhe immer minimal!
+ move.w   g_h(a1),w_oldheight(a0)  ; un-shade-Hoehe merken
+ move.w   wbm_hshade,g_h(a1)       ; Hoehe immer minimal!
 wuico_no_uicsh:
  movem.l  d0/a0/a1,-(sp)
  move.l   wbm_sattr,a1
@@ -4911,7 +4913,7 @@ wuico_no_uicsh:
 
  move.w   d0,-(sp)                 ; whdl retten
 
-;lea      (a1),a1                  ; alte Größe
+;lea      (a1),a1                  ; alte Groesse
 ;move.l   a0,a0                    ; WINDOW *
  moveq    #0,d1                    ; kein neues oberstes
 ;move.w   d0,d0
@@ -4945,14 +4947,14 @@ wind_shade:
 ;move.l   a0,a0
  jsr      (a1)
 
- btst     #WSTAT_OPENED_B,w_state+1(a4)      ; geöffnet?
+ btst     #WSTAT_OPENED_B,w_state+1(a4)      ; geoeffnet?
  beq.b    wshd_ok                  ; nein, nur Bit setzen
 ;btst     #1,w_tattr(a4)           ; ICONIFIED?
 ;bne.b    wshd_err                 ; ja, nicht erlaubt!!!
- move.w   w_curr+g_h(a4),w_oldheight(a4)     ; alte Höhe retten
- move.w   wbm_hshade,-(sp)         ; neue Höhe: minimal
+ move.w   w_curr+g_h(a4),w_oldheight(a4)     ; alte Hoehe retten
+ move.w   wbm_hshade,-(sp)         ; neue Hoehe: minimal
  move.w   w_curr+g_w(a4),-(sp)
- move.l   w_curr+g_x(a4),-(sp)     ; x/y/w unverändert
+ move.l   w_curr+g_x(a4),-(sp)     ; x/y/w unveraendert
  move.l   sp,a1
  move.l   a4,a0                    ; WINDOW *
  moveq    #0,d1                    ; kein neues oberstes
@@ -4979,20 +4981,20 @@ wind_unshade:
  move.w   d0,d7                    ; d7 = whdl
  move.l   a0,a4                    ; a4 = WINDOW *
  bclr     #WSTAT_SHADED_B,w_state+1(a4)
- beq.b    wshu_err                 ; war schon gelöscht
+ beq.b    wshu_err                 ; war schon geloescht
 
  move.l   wbm_sattr,a1
  moveq    #WSTAT_SHADED,d0
 ;move.l   a0,a0
  jsr      (a1)
 
- btst     #WSTAT_OPENED_B,w_state+1(a4)      ; geöffnet?
- beq.b    wshu_ok                  ; nein, nur Bit löschen
+ btst     #WSTAT_OPENED_B,w_state+1(a4)      ; geoeffnet?
+ beq.b    wshu_ok                  ; nein, nur Bit loeschen
 ;btst     #1,w_tattr(a4)           ; ICONIFIED?
 ;bne.b    wshu_err                 ; ja, nicht erlaubt!!!
- move.w   w_oldheight(a4),-(sp)    ; neue Höhe: gerettete Höhe
+ move.w   w_oldheight(a4),-(sp)    ; neue Hoehe: gerettete Hoehe
  move.w   w_curr+g_w(a4),-(sp)
- move.l   w_curr+g_x(a4),-(sp)     ; x/y/w unverändert
+ move.l   w_curr+g_x(a4),-(sp)     ; x/y/w unveraendert
  move.l   sp,a1
  move.l   a4,a0                    ; WINDOW *
  moveq    #0,d1                    ; kein neues oberstes
@@ -5014,20 +5016,20 @@ wshu_err:
 * void all_untop( void )
 *
 * Deaktiviert das oberste Fenster, falls vorhanden und nicht zur
-* Menüleiste gehörig
+* Menueleiste gehoerig
 *
 
 all_untop:
  move.w   topwhdl,d0               ; altes oberstes Fenster
- ble      alut_ende                ; ist sowieso ungültig
+ ble      alut_ende                ; ist sowieso ungueltig
  bsr      whdl_to_wnd
  beq.b    alut_ende                ; ???
  move.l   w_owner(a0),a0
  cmp.l    menu_app,a0
- beq      alut_ende                ; oberstes Fenster ist das des Menüs
+ beq      alut_ende                ; oberstes Fenster ist das des Menues
  jsr      update_1
  move.w   topwhdl,d0
- move.w   #-1,topwhdl              ; oberstes ungültig machen
+ move.w   #-1,topwhdl              ; oberstes ungueltig machen
  move.w   d0,-(sp)
  bsr      win_inactive             ; oberstes inaktiv machen
  move.w   (sp),d0
@@ -5045,7 +5047,7 @@ alut_ende:
 * MI/PL d0/a0 = wind_stack_getpos(d0 = int whdl)
 *
 * Ermittelt die Position des Fensters <whdl> im Fensterstapel
-* Rückgabe -1, wenn das Fenster nicht geöffnet ist.
+* Rueckgabe -1, wenn das Fenster nicht geoeffnet ist.
 *
 
 wind_stack_getpos:
@@ -5084,8 +5086,8 @@ _wind_to_stackpos:
  add.w    d1,a1                    ; von
  move.l   a1,-(sp)
  lea      2(a1),a0                 ; nach
- jsr      memcpy                   ; alle Handles einen nach hinten
-; dann einfügen
+ jsr      vmemcpy                   ; alle Handles einen nach hinten
+; dann einfuegen
  move.l   (sp)+,a0
  move.w   (sp)+,(a0)
  rts
@@ -5096,7 +5098,7 @@ _wind_to_stackpos:
 * void wind_rearrange(d0 = int whdl, d1 = int newpos, a0 = WINDOW *w)
 *
 * d0 und a0 beschreiben dasselbe Fenster, nur aus Geschwindigkeits-
-* gründen. d0 ist < nwindos und >= 0.
+* gruenden. d0 ist < nwindos und >= 0.
 * d1 ist die neue Fensterposition im Fensterstapel. d1=0 entspricht
 * WF_TOP, d1=-1 entspricht WF_BOTTOM.
 *
@@ -5114,7 +5116,7 @@ wind_rearrange:
  move.w   d1,d4                    ; d4 = neue Fensterstapelpos.
 * Beginn des Bildschirmaufbaus
  jsr      update_1
-* neue und aktuelle Position im Stack ermitteln (Gültigkeit prüfen)
+* neue und aktuelle Position im Stack ermitteln (Gueltigkeit pruefen)
  lea      whdlx,a0
  moveq    #-1,d5                   ; unser Fenster noch nicht gefunden
  moveq    #-1,d0
@@ -5127,23 +5129,23 @@ wrear_nof:
  tst.w    (a0)+
  bne.b    wrear_loop1
  tst.w    d5                       ; d5 = momentane Fensterstapelpos.
- bmi      end_rearr                ; Fenster ungültig
+ bmi      end_rearr                ; Fenster ungueltig
  cmp.w    d0,d4
  bcs.b    wrear_npos_ok
- move.w   d0,d4                    ; Maximum für neue Stapelpos. einsetzen
+ move.w   d0,d4                    ; Maximum fuer neue Stapelpos. einsetzen
  subq.w   #1,d4
 wrear_npos_ok:
- cmp.w    d5,d4                    ; Fensterstapelpos. ändern ?
+ cmp.w    d5,d4                    ; Fensterstapelpos. aendern ?
  bne.b    wrear_newpos             ; ja
  tst.w    d4                       ; Fenster toppen?
  bne      end_rearr                ; nein, Ende
 
 ;
 ; Sonderfall: Fenster wurde getoppt, das schon oben, aber nicht
-; aktiviert ist. Fenster aktivieren und ggf. Menüleiste umschalten.
+; aktiviert ist. Fenster aktivieren und ggf. Menueleiste umschalten.
 ;
 
- bsr      set_new_top              ; Fenster aktiveren, ggf. Menüleiste
+ bsr      set_new_top              ; Fenster aktiveren, ggf. Menueleiste
 
  move.w   w_curr+g_y(a4),d0
  cmp.w    scr_h,d0
@@ -5166,10 +5168,10 @@ wrear_newpos:
 *
 * 1. Fall: Fenster wurde nach oben gesetzt, d4 < d5
 *
-;  Wenn unser Fenster in der Liste nach oben wandert, müssen alle
+;  Wenn unser Fenster in der Liste nach oben wandert, muessen alle
 ;  Fenster zwischen (neuer+1) und (alter Stapelposition)
-;  vereinigt werden und für deren Vereinigungsrechteck ein Redraw unseres
-;  Fensters veranlaßt werden.
+;  vereinigt werden und fuer deren Vereinigungsrechteck ein Redraw unseres
+;  Fensters veranlasst werden.
 ;
 
 * Fenster ggf. un-hide
@@ -5186,9 +5188,9 @@ wrear_no_unh2:
  bsr      _wind_close              ; uns erstmal entfernen
  move.w   d4,d1                    ; neue Fensterstapelpos.
  move.w   d7,d0
- bsr      _wind_to_stackpos        ; unser Fenster wieder einfügen
+ bsr      _wind_to_stackpos        ; unser Fenster wieder einfuegen
 
-* GRECT für unser Fenster:
+* GRECT fuer unser Fenster:
 * 1. Fall: Fenster wurde getoppt
 *          Dann wird der Fensterrahmen sowieso neu gezeichnet, d.h.
 *          wir betrachten nur den Arbeitsbereich unseres Fensters.
@@ -5243,7 +5245,7 @@ rearr_loop3:
 rearr_copy_gr:
  move.l   (a0)+,(a1)+
  move.l   (a0),(a1)
- moveq    #1,d6                    ; merken, daß Schnitt nicht leer
+ moveq    #1,d6                    ; merken, dass Schnitt nicht leer
  bra.b    rearr_loop3
 
 rearr_end_loop3:
@@ -5252,19 +5254,19 @@ rearr_end_loop3:
  seq      d0
  ext.w    d0                       ; ggf. aktives Fenster umschalten
  bsr      build_new_wgs            ; Rechteckliste, Fensterrahmen
- tst.w    d6                       ; Redraw nötig ?
+ tst.w    d6                       ; Redraw noetig ?
  beq      end_rearr                ; nein
 
  tst.w    d4                       ; neue Position oben?
  beq.b    rearr_onlywork           ; ja, Fensterrand ist schon gezeichnet
  move.l   a5,a0
  move.w   d7,d0
- bsr      wind_redraw              ; Fensterrahmen + Message für Innenbereich
+ bsr      wind_redraw              ; Fensterrahmen + Message fuer Innenbereich
  bra      end_rearr
 rearr_onlywork:
  move.l   a5,a0
  move.w   d7,d0
- bsr      send_rdrmsg              ; nur Message für Innenbereich
+ bsr      send_rdrmsg              ; nur Message fuer Innenbereich
  bra      end_rearr
 
 *
@@ -5272,29 +5274,29 @@ rearr_onlywork:
 *
 ;  Wenn unser Fenster in der Liste nach unten wandert, bekommen alle
 ;  Fenster zwischen (alter Stapelposition) und (neuer Stapelposition-1)
-;  einen Redraw mit der Größe unseres Fensters.
+;  einen Redraw mit der Groesse unseres Fensters.
 ;
 
 rearr_down:
- lea      SIZE(a6),a0              ; Größe nach -8(a6)[]
+ lea      SIZE(a6),a0              ; Groesse nach -8(a6)[]
  move.w   d7,d0
  bsr      get_hwout                ; CURRXYWH mit Schatten
 
-* Suche das nächste Fenster, das nach oben kommen soll.
+* Suche das naechste Fenster, das nach oben kommen soll.
 * 1.9.96: Das darf kein ausgeblendetes sein
 
  tst.w    d5                       ; war vorher oberstes Fenster ?
  bne      rearr_notopbot           ; nein
 
- move.w   scr_h,d2                 ; y > scr_h heißt "ausgeblendet"
- lea      whdlx+2,a1               ; a1 auf das nächste Fenster
+ move.w   scr_h,d2                 ; y > scr_h heisst "ausgeblendet"
+ lea      whdlx+2,a1               ; a1 auf das naechste Fenster
  moveq    #0,d1
 rearr_whloop:
  addq.w   #1,d1
  cmp.w    d4,d1
- bhi      end_rearr                ; kein geeignetes Fenster über unserem
+ bhi      end_rearr                ; kein geeignetes Fenster ueber unserem
  move.w   (a1)+,d0                 ; unter unserem nur noch Fenster 0 ?
- bmi.b    rearr_whloop             ; gehört eingefrorener APP
+ bmi.b    rearr_whloop             ; gehoert eingefrorener APP
  beq      end_rearr                ; ja, wir sind schon unterstes
  bsr      whdl_to_wnd
  beq.b    rearr_whloop             ; ???
@@ -5302,7 +5304,7 @@ rearr_whloop:
  bls.b    rearr_whloop             ; ja, weitersuchen
  move.w   -(a1),d0                 ; neues oberes Fenster merken
 rearr_hloop2:
- move.w   -(a1),d1                 ; darüberliegendes Fenster
+ move.w   -(a1),d1                 ; darueberliegendes Fenster
  cmp.w    d1,d7                    ; bin schon oben ?
  beq.b    rearr_setvalid           ; ja!
  move.w   d1,2(a1)                 ; umkopieren
@@ -5310,7 +5312,7 @@ rearr_hloop2:
 rearr_setvalid:
  move.w   d0,2(a1)                 ; das kommt nach vorn
 
-* aktuelle Größe nach -8(a6)[]
+* aktuelle Groesse nach -8(a6)[]
 
 rearr_notopbot:
 
@@ -5319,10 +5321,10 @@ rearr_notopbot:
  bsr      _wind_close              ; uns erstmal entfernen
  move.w   d4,d1                    ; neue Fensterstapelpos.
  move.w   d7,d0
- bsr      _wind_to_stackpos        ; unser Fenster wieder einfügen
+ bsr      _wind_to_stackpos        ; unser Fenster wieder einfuegen
 
 * Rechtecklisten erneuern
- tst.w    topwhdl                  ; war aktives Fenster gültig?
+ tst.w    topwhdl                  ; war aktives Fenster gueltig?
  sge      d0                       ; ja => ggf. umschalten, sonst nicht (!)
  ext.w    d0
  bsr      build_new_wgs
@@ -5403,7 +5405,7 @@ wind_redraw:
 *
 * wird nur von set_windxywh() aufgerufen
 *
-* <whdl> ist oberstes Fenster und wurde nicht in der Größe verändert,
+* <whdl> ist oberstes Fenster und wurde nicht in der Groesse veraendert,
 * sondern nur verschoben.
 * Diese Routine macht alle Redraws des Fensters, nicht die des
 * Hintergrunds
@@ -5420,7 +5422,7 @@ topwind_move:
  move.l   w_overall+g_w(a0),g_w(sp)     ; CURRXYWH mit Schatten
 
  lea      8(sp),a0                 ; 8(sp): Blit-Bereich
- move.w   d6,(a0)+                 ; zunächst Quell-Position
+ move.w   d6,(a0)+                 ; zunaechst Quell-Position
  move.w   d5,(a0)+
  move.l   g_w(sp),(a0)
  lea      8(sp),a1
@@ -5455,11 +5457,11 @@ tpm_noblit:
  move.w   8+g_y(sp),d0             ; y geblittet (Ziel)
  sub.w    g_y(sp),d0               ; - y (Fenster, neu)
  ble.b    tpm_redr1                ; OK
- add.w    d0,8+g_h(sp)             ; geblitteten Bereich vergrößern
+ add.w    d0,8+g_h(sp)             ; geblitteten Bereich vergroessern
  move.w   g_y(sp),d1               ; zu zeichnen: y
- add.w    d0,d1                    ; + zu zeichnen: Höhe
+ add.w    d0,d1                    ; + zu zeichnen: Hoehe
  cmp.w    desk_g+g_y,d1
- ble.b    tpm_redr1                ; => außerhalb des Bildschirms
+ ble.b    tpm_redr1                ; => ausserhalb des Bildschirms
  move.w   d0,-(sp)                 ; h
  move.w   8+2+g_w(sp),-(sp)        ; w (geblittet)
 
@@ -5482,10 +5484,10 @@ tpm_redr1:
  sub.w    g_x(sp),d0               ; - x (Fenster, neu)
  ble.b    tpm_redr2                ; OK
 
- add.w    d0,8+g_w(sp)             ; geblitteten Bereich vergrößern
+ add.w    d0,8+g_w(sp)             ; geblitteten Bereich vergroessern
  move.w   g_x(sp),d1               ; zu zeichnen: x
  add.w    d0,d1                    ; + zu zeichnen: Breite
- ble.b    tpm_redr2                ; => außerhalb des Bildschirms
+ ble.b    tpm_redr2                ; => ausserhalb des Bildschirms
  move.w   8+g_h(sp),-(sp)          ; h (geblittet)
  move.w   d0,-(sp)                 ; w
  move.l   4+g_x(sp),-(sp)          ; x/y
@@ -5495,13 +5497,13 @@ tpm_redr1:
  addq.l   #8,sp
 
 tpm_redr2:
- move.w   g_w(sp),d6               ; nötige Breite
+ move.w   g_w(sp),d6               ; noetige Breite
  sub.w    8+g_w(sp),d6             ; - kopierte Breite
- move.w   g_h(sp),d5               ; nötige Höhe
- sub.w    8+g_h(sp),d5             ; - kopierte Höhe
+ move.w   g_h(sp),d5               ; noetige Hoehe
+ sub.w    8+g_h(sp),d5             ; - kopierte Hoehe
  bgt.b    tp_redr
  tst.w    d6
- ble      tpm_end                  ; volle Höhe und Breite kopiert
+ ble      tpm_end                  ; volle Hoehe und Breite kopiert
 
 * rechten Rest neumalen
 
@@ -5511,9 +5513,9 @@ tp_redr:
  move.w   g_x(sp),d0
  add.w    8+g_w(sp),d0             ; x + kopierte Breite
  cmp.w    scr_w,d0
- bcc.b    tp_redr2                 ; außerhalb des Bildschirms
+ bcc.b    tp_redr2                 ; ausserhalb des Bildschirms
  move.w   g_h(sp),-(sp)            ; h
- move.w   d6,-(sp)                 ; w: nötige - kopierte Breite
+ move.w   d6,-(sp)                 ; w: noetige - kopierte Breite
  move.w   g_y+4(sp),-(sp)          ; y
  move.w   d0,-(sp)                 ; x + kopierte Breite
  lea      (sp),a0
@@ -5527,12 +5529,12 @@ tp_redr2:
  tst.w    d5
  ble      tpm_end
  move.w   g_y(sp),d0
- add.w    8+g_h(sp),d0             ; y + kopierte Höhe
+ add.w    8+g_h(sp),d0             ; y + kopierte Hoehe
  cmp.w    scr_h,d0
- bcc.b    tpm_end                  ; außerhalb des Bildschirms
- move.w   d5,-(sp)                 ; h: nötige - kopierte Höhe
- move.w   8+2+g_w(sp),-(sp)        ; nötige Breite
- move.w   d0,-(sp)                 ; y + kopierte Höhe
+ bcc.b    tpm_end                  ; ausserhalb des Bildschirms
+ move.w   d5,-(sp)                 ; h: noetige - kopierte Hoehe
+ move.w   8+2+g_w(sp),-(sp)        ; noetige Breite
+ move.w   d0,-(sp)                 ; y + kopierte Hoehe
  move.w   g_x+6(sp),-(sp)          ; x
  lea      (sp),a0
  move.w   d7,d0
@@ -5549,14 +5551,14 @@ tpm_end:
 *
 * set_windxywh(d0 = int whdl, d1 = newtop,
 *              a0 = WINDOW *w, a1 = GRECT *g_neu)
-* Setzt Position und Größe eines Fensters
+* Setzt Position und Groesse eines Fensters
 *
 * int     d7             : whdl
 * int     d6             : altes oberstes Fenster
-*                        : Flag für "bei alter Position kein Redraw"
+*                        : Flag fuer "bei alter Position kein Redraw"
 * GRECT   *a5            : neues      CURRXYWH
 * GRECT   *a4            : bisheriges CURRXYWH
-* int     a3[8]          ; Arbeitsfeld für GRECT oder 8 Window- Handles
+* int     a3[8]          ; Arbeitsfeld fuer GRECT oder 8 Window- Handles
 *
 
 OLDSIZE   SET  -8
@@ -5577,7 +5579,7 @@ set_windxywh:
  move.l   w_curr(a0),(a4)          ; altes Rechteck nach OLDSIZE(a6)
  move.l   w_curr+g_w(a0),g_w(a4)
 
- move.l   w_overall(a0),OLDALL(a6) ; alter Umriß nach OLDALL(a6)
+ move.l   w_overall(a0),OLDALL(a6) ; alter Umriss nach OLDALL(a6)
  move.l   w_overall+g_w(a0),OLDALL+g_w(a6)
 
  move.l   w_work(a0),8(a3)         ; altes WORKXYWH merken
@@ -5587,7 +5589,7 @@ set_windxywh:
  move.l   g_w(a5),g_w(a3)
 
  move.l   (a5),w_curr(a0)          ; neue Position setzen
- move.l   g_w(a5),w_curr+g_w(a0)   ; neue Größe setzen
+ move.l   g_w(a5),w_curr+g_w(a0)   ; neue Groesse setzen
 
 ;move.l   a0,a0                    ; WINDOW *
  move.l   wbm_ssize,a1
@@ -5616,25 +5618,25 @@ swxy_weiter:
  move.l   a5,a0
  move.w   d7,d0
  bsr      send_rdrmsg
- bra      sub_redr                 ; alte Größe war sowieso 0
+ bra      sub_redr                 ; alte Groesse war sowieso 0
 
 * Fenster ist und war oberes.
 no_to_top:
  btst     #WSTAT_COVERED_B,d5
- bne      no_top                   ; Fenster war vorher überdeckt
+ bne      no_top                   ; Fenster war vorher ueberdeckt
  move.l   d4,a0
  move.w   w_state(a0),d5
  btst     #WSTAT_COVERED_B,d5
- bne      no_top                   ; Fenster ist jetzt überdeckt
-* Fenster war und ist nicht überdeckt
+ bne      no_top                   ; Fenster ist jetzt ueberdeckt
+* Fenster war und ist nicht ueberdeckt
  move.l   g_w(a4),d0
  cmp.l    g_w(a5),d0
- bne.b    no_top                   ; Größe hat sich geändert
+ bne.b    no_top                   ; Groesse hat sich geaendert
  move.l   g_x(a4),d0
  cmp.l    g_x(a5),d0
- beq      setg_end                 ; Position und Größe gleich
+ beq      setg_end                 ; Position und Groesse gleich
 
-* Fenster ist und war oberes, die Größe hat sich nicht geändert
+* Fenster ist und war oberes, die Groesse hat sich nicht geaendert
 * Also ist das obere Fenster verschoben worden
 
  move.l   a4,a1                    ; OLDSIZE
@@ -5644,18 +5646,18 @@ no_to_top:
  bra      sub_redr
 
 no_top:
- cmp.w    topwhdl,d6               ; hat sich oberstes geändert ?
+ cmp.w    topwhdl,d6               ; hat sich oberstes geaendert ?
  bne      kein_rahmen2             ; ja, Rahmen schon gezeichnet
 
 * Fenster ist weder altes noch neues oberstes. Rahmen zeichnen, wenn sich
-* Größe oder Position geändert haben
+* Groesse oder Position geaendert haben
 
  move.l   g_x(a4),d0
  cmp.l    g_x(a5),d0
  bne.b    rahmen
  move.l   g_w(a4),d0
  cmp.l    g_w(a5),d0
- beq      setg_end                 ; Position und Größe gleich => Ende
+ beq      setg_end                 ; Position und Groesse gleich => Ende
 rahmen:
  move.w   d7,d0
  jsr      wind_draw_whole
@@ -5666,22 +5668,22 @@ kein_rahmen2:
  cmp.l    g_x(a5),d0
  bne      no_sizer
 
-* Es wurde nur die Größe verändert, bei gleicher Position
+* Es wurde nur die Groesse veraendert, bei gleicher Position
 * Maximal werden 2 Redraws verschickt
 
  move.l   g_w(a5),d0
  cmp.l    g_w(a4),d0
- beq      setg_end                 ; Position und Größe gleich => Ende
+ beq      setg_end                 ; Position und Groesse gleich => Ende
  move.w   g_w(a5),d0
  cmp.w    g_w(a4),d0
- shi      d1                       ; d1 = nach rechts vergrößert
+ shi      d1                       ; d1 = nach rechts vergroessert
  move.w   g_h(a5),d0
  cmp.w    g_h(a4),d0
- shi      d2                       ; d2 = nach unten vergrößert
+ shi      d2                       ; d2 = nach unten vergroessert
  move.b   d1,d0
  or.b     d2,d0
  beq      sub_redr                 ; nur verkleinert oder gleich geblieben
- cmp.b    d1,d2                    ; ganz vergrößert
+ cmp.b    d1,d2                    ; ganz vergroessert
  seq      d6                       ; ja, kein Hintergrund
 
  move.l   (a5),(a3)
@@ -5691,7 +5693,7 @@ kein_rahmen2:
 
  tst.b    d1
  beq.b    nicht_rechts
-* Fenster ist nach rechts vergrößert worden
+* Fenster ist nach rechts vergroessert worden
  move.l   8(a3),(a3)               ; y_work_alt
  move.w   8+g_w(a3),d0
  add.w    d0,g_x(a3)               ; x_work_alt + w_work_alt
@@ -5706,7 +5708,7 @@ kein_rahmen2:
  bsr      send_rdrmsg
 
  move.w   (sp)+,d2
-* Fenster ist nach unten vergrößert worden
+* Fenster ist nach unten vergroessert worden
 nicht_rechts:
  tst.b    d2
  beq      sub_redr
@@ -5723,19 +5725,19 @@ no_sizer:
  jsr      send_rdrmsg
 
  tst.b    d6
- bne      setg_end                 ; nach unten und rechts vergrößert
+ bne      setg_end                 ; nach unten und rechts vergroessert
 
-* der riesengroße Redraw
+* der riesengrosse Redraw
 sub_redr:
  tst.l    g_w(a4)
  beq.b    setg_end                 ; altes Rechteck war w=h=0
- lea      OLDALL(a6),a0            ; Fensterumriß (inkl. Schatten)
+ lea      OLDALL(a6),a0            ; Fensterumriss (inkl. Schatten)
  jsr      wind0_draw
- move.l   a3,a0                    ; Platz für nwindows Fenster
+ move.l   a3,a0                    ; Platz fuer nwindows Fenster
  move.w   d7,d0
  bsr      get_wind_hierar          ; Liste aller unteren Fenster
  move.l   a3,a0
- cmp.w    (a0)+,d7                 ; unseres überspringen
+ cmp.w    (a0)+,d7                 ; unseres ueberspringen
  bne.b    setg_end                 ; Fehler
  lea      OLDALL(a6),a1            ; Redraw- Bereich
  moveq    #-1,d1                   ; keine Anzahlbegrenzung
@@ -5788,17 +5790,17 @@ w_u_ende:
 *
 * int get_next_window( d0 = int whdl, a0 = APPL *ap )
 *
-* ermittelt das nächste Fenster der Applikation <ap>, welches unter
+* ermittelt das naechste Fenster der Applikation <ap>, welches unter
 * dem Fenster <whdl> liegt.
 * Bei <whdl> == 0 ermittle oberstes Fenster der Applikation.
 *            == -1 ermittle unterstes Fenster der Applikation.
-* Rückgabe 0, wenn keins vorhanden.
+* Rueckgabe 0, wenn keins vorhanden.
 *
 
 get_next_window:
  move.l   a0,a2                    ; a2 = app
  move.w   d0,d2
- clr.w    -(sp)                    ; Rückgabe: 0 per Default
+ clr.w    -(sp)                    ; Rueckgabe: 0 per Default
  lea      whdlx,a1
 gnw_next:
  move.w   (a1)+,d0
@@ -5808,8 +5810,8 @@ gnw_next:
  ble.b    gnw_weiter
  cmp.w    d0,d2                    ; Fenster gefunden
  bne.b    gnw_next                 ; nein
- moveq    #0,d2                    ; unser nächstes!
- bra.b    gnw_next                 ; dieses noch überspringen
+ moveq    #0,d2                    ; unser naechstes!
+ bra.b    gnw_next                 ; dieses noch ueberspringen
 gnw_weiter:
  bsr      whdl_to_wnd
  beq.b    gnw_next                 ; ???
@@ -5828,9 +5830,9 @@ gnw_ende:
 * EQ/NE top_my_window( a0 = APPL *ap )
 *
 * Schickt ein WM_TOPPED an das oberste Fenster der Applikation <ap>.
-* Rückgabe 1, falls Nachricht verschickt wurde.
+* Rueckgabe 1, falls Nachricht verschickt wurde.
 *
-* MagiC 5.10: Den verzögerten TopAll einleiten, d.h. bei Ausführung
+* MagiC 5.10: Den verzoegerten TopAll einleiten, d.h. bei Ausfuehrung
 * werden _alle_ Fenster der Applikation getoppt
 *
 
@@ -5843,8 +5845,8 @@ top_my_window:
 ;cmp.w    topwhdl,d0               ; Fenster schon aktiv ?
 ;beq.b    tmw_ok                   ; ja, nichts tun
 
- move.w   d0,topall_thdl           ; verzögertes TopAll
- move.l   timer_cnt,topall_timer   ; Zähler für den Fall "timeout"
+ move.w   d0,topall_thdl           ; verzoegertes TopAll
+ move.l   timer_cnt,topall_timer   ; Zaehler fuer den Fall "timeout"
 
  move.l   sp,a0                    ; Daten: 4 Dummyworte
  move.w   d0,d2                    ; whdl

@@ -12,6 +12,7 @@
 #include <tos.h>
 #include <string.h>
 #include <stdarg.h>
+#include "std.h"
 
 #define WF_ICONIFY       26                                 /* AES 4.1     */
 #define WF_UNICONIFY     27                                 /* AES 4.1     */
@@ -30,14 +31,13 @@
 /* Makros und Funktionsdefinitionen fÅr Aufrufe an den MagiC-Kernel								*/
 /*----------------------------------------------------------------------------------------*/ 
 
-extern LONG malloc(LONG size);
 extern WORD grects_intersect( const GRECT *p1, GRECT *p2 );
 extern void set_clip_grect(GRECT *g);
 
 extern void _objc_draw(OBJECT *tree, WORD startob, WORD depth);
 extern WORD _objc_edit(OBJECT *tree, WORD objnr, WORD c, WORD *didx, WORD kind, GRECT *g );
 extern WORD _objc_find( OBJECT *tree, WORD startob, WORD depth, LONG xy );
-extern void _form_center(OBJECT *ob, GRECT *out );
+extern void _form_center_grect(OBJECT *ob, GRECT *out );
 extern WORD _wind_create( WORD typ, GRECT *full );
 extern WORD _wind_open(WORD whdl, GRECT *g);
 extern WORD _wind_calc( WORD type,  WORD kind, GRECT *in, GRECT *out);
@@ -45,7 +45,7 @@ extern WORD _wind_get(WORD whdl, WORD code, WORD *g );
 extern WORD _wind_set(WORD whdl, WORD opcode, WORD koor[4]);
 extern WORD form_wbutton(OBJECT *tree, WORD objnr, WORD clicks,
 					WORD *nxt_edit, WORD whandle);
-extern WORD cdecl form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WORD whandle);
+extern WORD cdecl _form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WORD whandle);
 
 #define	objc_draw( tree, obj, depth, clip ) \
 			set_clip_grect( clip ), \
@@ -57,11 +57,11 @@ extern WORD cdecl form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WO
 #define	objc_find( tree, obj, depth, x, y ) \
 			_objc_find( tree, obj, depth, (((LONG) x ) << 16 ) | y )
 
-#define	form_center( tree, rect ) \
-			_form_center( tree, rect )
+#define	form_center_grect( tree, rect ) \
+			_form_center_grect( tree, rect )
 
 #define	form_wkeybd( tree, obj, obnext, key, obnew, keynext, whandle ) \
-			form_wkeybd( tree, obj, &(key), obnew, whandle )
+			_form_wkeybd( tree, obj, &(key), obnew, whandle )
 
 #define	wind_calc( type, kind, in, out ) \
 			_wind_calc( type, kind, in, out )
@@ -72,7 +72,7 @@ extern WORD cdecl form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WO
 #define	wind_open( handle, rect ) \
 			_wind_open( handle, rect )
 
-#define	Malloc( size )	((void *) malloc( size ))
+#define	Malloc( size )	((void *) mmalloc( size ))
 
 #define rc_intersect(a,b)	grects_intersect(a,b)
 
@@ -118,7 +118,7 @@ static WORD	wdlg_button( DIALOG *d, EVNT *events, WORD clicks, WORD mx, WORD my,
 static WORD	wdlg_key( DIALOG *d, EVNT *events );
 static WORD	wdlg_mesag( DIALOG *d, EVNT *events );
 static void	get_obj_GRECT( OBJECT *tree, WORD obj, GRECT *rect );
-WORD	rc_intersect( GRECT *p1, GRECT *p2 );
+WORD	rc_intersect( const GRECT *p1, GRECT *p2 );
 
 
 /*----------------------------------------------------------------------------------------*/ 
@@ -181,7 +181,7 @@ WORD	wdlg_open( DIALOG *d, BYTE *title, WORD kind, WORD x, WORD y, WORD code, vo
 	dialog_tree[0].ob_state &= ~OUTLINED;							/* evtl. vorhandenen Outline-Effekt ausblenden */
 	dialog_tree[0].ob_spec.obspec.framesize = 0;
 
-	_form_center_grect( dialog_tree, &work );								/* Dialog zentrieren */
+	form_center_grect( dialog_tree, &work );								/* Dialog zentrieren */
 
 	if	((x != -1) || (y != -1))										/* Dialog nicht zentriert? */
 	{
@@ -426,7 +426,7 @@ static void	get_obj_GRECT( OBJECT *tree, WORD obj, GRECT *rect )
 	save_x = tree[obj].ob_x;											/* Objektkoordinaten sichern */		
 	save_y = tree[obj].ob_y;
 	
-	_form_center_grect( tree + obj, rect );									/* Objekt zentrieren */
+	form_center_grect( tree + obj, rect );									/* Objekt zentrieren */
 	objc_offset( tree + obj, 0, &x, &y );							/* Objektkoordinaten ohne RÑnder */
 	
 	tree[obj].ob_x = save_x;											/* Objektkoordinaten restaurieren */

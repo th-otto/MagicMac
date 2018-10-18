@@ -21,16 +21,17 @@
 #include <aes.h>
 #undef fsel_exinput
 #include <vdi.h>
+#include <tos.h>
 #include <mgx_dos.h>
 #include <string.h>
-#include <tosdefs.h>
+#include <toserror.h>
 #define form_xdo    ____dummy2
-#define APPL   ____dummy3
 /* #include <magx.h> */
 #undef form_xdo
-#undef APPL
 #include "ger\fselx.h"
 #include "..\wdialog\shelsort.h"
+#include "std.h"
+#include <sys/stat.h>
 
 #if       COUNTRY==COUNTRY_DE
 #include "ger\fselrsrc.h"
@@ -45,22 +46,12 @@
 
 /* Kram, der in AES.H fehlt */
 
+#ifndef FL3DBAK
 #define FL3DBAK      0x0400   /* 3D Background                AES 4.0      */
+#endif
+#ifndef FL3DMASK
 #define FL3DMASK     0x0600
-
-typedef struct {
-     char scancode;
-     char nclicks;
-     int  objnr;
-     } SCANX;
-
-typedef struct {
-     SCANX *unsh;
-     SCANX *shift;
-     SCANX *ctrl;
-     SCANX *alt;
-     void  *resvd;
-     } XDO_INF;
+#endif
 
 typedef struct _xted {
      char      *xte_ptmplt;
@@ -150,19 +141,6 @@ typedef struct _xted {
 #define   lbox_set_bentries \
                lbox_sbentries 
 
-typedef struct
-{
-     WORD mwhich;
-     WORD mx;
-     WORD my;
-     WORD mbutton;
-     WORD kstate;
-     WORD key;
-     WORD mclicks;
-     WORD reserved[9];
-     WORD msg[16];
-} EVNT;
-
 typedef   void *DIALOG;
 typedef   WORD (cdecl *HNDL_OBJ)( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
 
@@ -209,7 +187,7 @@ extern WORD lbox_sbvis( void *lbox, WORD new);
                frm_xdial( flag, little, big, flyinf )
 
 #define   form_center( tree, rect ) \
-               _form_center( tree, rect )
+               _form_center_grect( tree, rect )
 
 #define   form_popup( tree, xy ) \
                _form_popup( tree, xy )
@@ -229,6 +207,7 @@ extern WORD lbox_sbvis( void *lbox, WORD new);
 
 #define   Dopendir  dopendir
 
+#undef Dclosedir
 #define   Dclosedir dclosedir
 
 #define   Dxreaddir dxreaddir
@@ -365,12 +344,9 @@ extern char fslx_exts[FIXED_PATTLEN];
 extern (*fslx_d2s)(char *s, WORD mode);      /* DOS-Datum -> Zeichenkette */
 extern int big_wchar, big_hchar;
 extern int enable_3d;
-extern char toupper( unsigned char c );
 extern char altcode_asc( WORD key );
 extern char *fn_name( char *path );
 extern GRECT desk_g;     /* Bildschirm ohne Menüleiste */
-extern void ext_8_3(char *dst_name, char *src_int_name);
-extern void int_8_3(char *dst_int_name, char *src_name);
 
 
 /*********************************************************************
@@ -539,7 +515,7 @@ static char *insert_pattern(char *newpattern, char *patterns,
           }
 
      if   ((oldlen) && (oldlen != newlen))
-          memcpy(pos+newlen, s, ende-s);
+          vmemcpy(pos+newlen, s, (UWORD)(ende-s));
 
 
      if   (!newlen)
@@ -549,7 +525,7 @@ static char *insert_pattern(char *newpattern, char *patterns,
           else return(NULL);
           }
      else {
-          memcpy(pos, newpattern, newlen);
+          vmemcpy(pos, newpattern, newlen);
           return(pos);
           }
 }
@@ -797,7 +773,7 @@ static char * do_popup( OBJECT *parent_tree, int objnr,
      /* Speicher allozieren */
      /* ------------------- */
 
-     tree = Malloc(sizeof(OBJECT) * (anzahl+anzahl+1));
+     tree = (OBJECT *)Malloc(sizeof(OBJECT) * (anzahl+anzahl+1));
      if   (!tree)
           return(NULL);
 
@@ -942,7 +918,7 @@ static void abbrev_path_wo_drv(char *dst, char *src, int len )
 
      if   ((l = (int) strlen(src)) < len)
           {
-          strcpy(dst, src);
+          vstrcpy(dst, src);
           return;
           }
      
@@ -954,8 +930,8 @@ static void abbrev_path_wo_drv(char *dst, char *src, int len )
      *dst++ = '.';
      *dst++ = '.';
      if   (!(*t) || !(t[1]))
-          strcpy(dst, u);
-     else strcpy(dst, t);
+          vstrcpy(dst, u);
+     else vstrcpy(dst, t);
 }
 
 
@@ -990,13 +966,13 @@ static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
 {
      RSHDR *new;
 
-     new = Malloc( len );
+     new = (RSHDR *)Malloc( len );
      
      if   ( new )
           {
           int dummyglobal[15];
 
-          memcpy( new, rsc, (UWORD) len );   /* Resource kopieren */
+          vmemcpy( new, rsc, (UWORD) len );   /* Resource kopieren */
           _rsrc_rcfix( dummyglobal, new );   /* Resource beim AES anmelden */
           }
      else form_xerr(ENSMEM, NULL);
@@ -1198,11 +1174,11 @@ static long read_dir( FSEL_DIALOG *fsd )
      if   (memblksize < 512L)
           return(ENSMEM);               /* nix zu wollen */
 #pragma warn -pia
-     if   (!(fsd->memblk = Malloc(memblksize)))
+     if   (!(fsd->memblk = (char *)Malloc(memblksize)))
 #pragma warn .pia
           return(ENSMEM);
 
-     strcpy(path, fsd->path);
+     vstrcpy(path, fsd->path);
 
      /* Verzeichnis öffnen (Automounter!) */
      /* --------------------------------- */
@@ -1276,10 +1252,10 @@ static long read_dir( FSEL_DIALOG *fsd )
                     {
                     char *newblk;
 
-                    newblk = Malloc(newsize);
+                    newblk = (char *)Malloc(newsize);
                     if   (!newblk)
                          break;    /* Fehler */
-                    memcpy(newblk, fsd->memblk, ziele - fsd->memblk);
+                    vmemcpy(newblk, fsd->memblk, (UWORD)(ziele - fsd->memblk));
                     limit = newblk + (limit - fsd->memblk);
                     ziele = newblk + (ziele - fsd->memblk);
                     Mfree(fsd->memblk);
@@ -1296,7 +1272,9 @@ static long read_dir( FSEL_DIALOG *fsd )
           if   (err == ERANGE)
                {
                err = err_xr = E_OK;
-/*             was_long_names = TRUE;   */
+#if 0
+             was_long_names = TRUE;
+#endif
                continue;
                }
 
@@ -1310,21 +1288,21 @@ static long read_dir( FSEL_DIALOG *fsd )
                )
                continue;
 
-/*
+#if 0
           if   ((!status.show_all) &&
                 (xa.attr & (FA_HIDDEN | FA_SYSTEM))
                )
                continue;      /* verst. Dateien! */
-*/
+#endif
           /* ggf. Symlink behandeln */
 
           if   ((!(fsd->flags & NFOLLOWSLKS)) &&
-                    (xa.mode & S_IFMT) == S_IFLNK)
+                    (xa.st_mode & S_IFMT) == S_IFLNK)
                {
                XATTR xa2;
 
                mdta->is_alias = TRUE;
-               strcpy(epath, mdta->name);
+               vstrcpy(epath, mdta->name);
                err = Fxattr(0, path, &xa2);
                if   (!err)
                     xa = xa2;
@@ -1345,7 +1323,7 @@ static long read_dir( FSEL_DIALOG *fsd )
           /* Pattern-Matching */
           /* ---------------- */
 
-          if   ((xa.mode & S_IFMT) != S_IFDIR)
+          if   ((xa.st_mode & S_IFMT) != S_IFDIR)
                {
                if   (!multi_pattern_match(fsd->pattern, mdta->name))
                     continue;
@@ -1353,10 +1331,10 @@ static long read_dir( FSEL_DIALOG *fsd )
 
           mdta->sel      = FALSE;
           mdta->number = anzahl;
-          mdta->time = xa.mtime;   /* Modif.zeit */
-          mdta->date = xa.mdate;
-          mdta->size = xa.size;
-          mdta->mode = xa.mode;
+          mdta->time = xa.st_mtim.u.d.time;   /* Modif.zeit */
+          mdta->date = xa.st_mtim.u.d.date;
+          mdta->size = xa.st_size;
+          mdta->mode = xa.st_mode;
           anzahl++;
           ziele += sizeof(FILEINFO)+strlen(mdta->name)+1;
           if   (((long) ziele) & 1)
@@ -1366,13 +1344,13 @@ static long read_dir( FSEL_DIALOG *fsd )
 
      Dclosedir(dirhandle);
 
-/*
+#if 0
      if   (was_long_names)
           {
           form_alert(1,"[1][Das Verzeichnis enthält überlange|"
                          "Dateinamen.][  OK  ]");
           }
-*/
+#endif
 
      if   (err == E_OK)
           fsd->too_many_files = TRUE;
@@ -1582,7 +1560,7 @@ static void update_dir(FSEL_DIALOG *fsd )
           {
           if   (retcode == EPTHNF)
                fsd->path[3] = EOS;      /* -> root */
-          else strcpy(fsd->path, "U:\\");
+          else vstrcpy(fsd->path, "U:\\");
           update_path(fsd);
           read_dir(fsd);
           }
@@ -1764,7 +1742,7 @@ static void fi2str( FSEL_DIALOG *fsd, FILEINFO *fi, char *buf )
           t += 3;
           }
      else {
-          strcpy(s, fname);
+          vstrcpy(s, fname);
           t += fsd->max_name;
           }
 
@@ -1861,10 +1839,14 @@ static WORD cdecl set_item( void *box, OBJECT *tree,
           if   (item->selected)
                {
                dob->ob_state |= SELECTED;
-/*             dob->ob_state &= ~WHITEBAK;   */
+#if 0
+             dob->ob_state &= ~WHITEBAK;
+#endif
                }
           else {
-/*             dob->ob_state |= WHITEBAK;    */
+#if 0
+             dob->ob_state |= WHITEBAK;
+#endif
                }
 
           if   (enable_3d)
@@ -1887,24 +1869,27 @@ static WORD cdecl set_item( void *box, OBJECT *tree,
 
      dob->ob_x = (4-offset) * big_wchar;
      dob->ob_width = tree[index].ob_width + (offset-4) * big_wchar;
-/*
+#if 0
      dob->ob_width = (NAMLEN+1+offset) * big_wchar;
-*/
-/*
+#endif
+#if 0
 hexl((long) dob->ob_width);
 putstr("  \r");
-*/
-/*
+#endif
+#if 0
+
      if   (fsd->dialog)
           dob->ob_width += 2;
-*/
+#endif
      if   (item)
           {
           if   (item->selected)
                dob->ob_state |= SELECTED;
           if   (dob->ob_type == G_STRING)
                fi2str(fsd, fi, dob->ob_spec.free_string);
-/*        buf[NAMLEN+1+offset] = EOS;   */
+#if 0
+        buf[NAMLEN+1+offset] = EOS;
+#endif
           }
      else dob->ob_flags |= HIDETREE;
 
@@ -2107,7 +2092,7 @@ static FSEL_DIALOG *fsel_dialog_init(
      OBJECT *dob1,*dob2;
 
 
-     fsd = Malloc(sizeof(FSEL_DIALOG)+
+     fsd = (FSEL_DIALOG *)Malloc(sizeof(FSEL_DIALOG)+
                pathlen+fnamelen+fnamelen);
      if   (fsd)
           {
@@ -2232,7 +2217,7 @@ static FSEL_DIALOG *fsel_dialog_init(
                fsd->files = NULL;
                update_sort(fsd);
 
-               strcpy(fsd->path, path);
+               vstrcpy(fsd->path, path);
                fsd->filter = filter;
                fsd->patterns = patterns;
                fsd->paths = paths;
@@ -2435,7 +2420,7 @@ static void do_autolocate( FSEL_DIALOG *fsd )
      name = fsd->fname;
      if   (strcmp(name, fsd->old_fname))
           {
-          strcpy(fsd->old_fname, name);
+          vstrcpy(fsd->old_fname, name);
           selected_index = lbox_get_slct_idx(fsd->lbox);
 
           new_selected_index = -1;
@@ -2443,7 +2428,7 @@ static void do_autolocate( FSEL_DIALOG *fsd )
                {
                if   (fsd->flags & DOSMODE)
                     ext_8_3(patt, name);
-               else strcpy(patt, name);
+               else vstrcpy(patt, name);
                strcat(patt, "*");
                for  (fi = fsd->files[0],i=0; (fi); fi=fi->next,i++)
                     {
@@ -2642,7 +2627,7 @@ static int do_key(FSEL_DIALOG *fsd, WORD key, WORD kstate)
                {
                chg_sel( fsd, TRUE, selected_index,
                          new_selected_index, offs );
-               strcpy(fsd->old_fname, fsd->fname);
+               vstrcpy(fsd->old_fname, fsd->fname);
                }
           }
 
@@ -2668,7 +2653,7 @@ static void objc_visgrect(OBJECT *tree, int objn, GRECT *g)
           {
           x = o->ob_x;
           y = o->ob_y;
-          form_center_grect(o, g);
+          _form_center_grect(o, g);
           g->g_x += nx - o->ob_x;
           g->g_y += ny - o->ob_y;
           o->ob_x = x;
@@ -2960,7 +2945,7 @@ static int do_button(FSEL_DIALOG *fsd, int exitbutton,
           s = do_popup(tree, FS_PATH, fsd->paths, NULL, NULL);
           if   (s)
                {
-               strcpy(fsd->path, s);
+               vstrcpy(fsd->path, s);
                update_path(fsd);
                update_dir(fsd);
                }
@@ -3168,19 +3153,19 @@ static void give_return(
           if   (sort_mode)
                *sort_mode = ((FSEL_DIALOG *)fsd)->sort_mode;
      
-          strcpy(path, fsd->path);
+          vstrcpy(path, fsd->path);
 
           *nfiles = first_selfile( (FSEL_DIALOG *) fsd );
           if   (*nfiles)
                {
-               strcpy(fname, fsd->next_selfile->name);
+               vstrcpy(fname, fsd->next_selfile->name);
                next_selfile(fsd);
                *nfiles--;
                }
           else {
                if   (fsd->flags & DOSMODE)
                     ext_8_3(fname, fsd->fname);
-               else strcpy(fname, fsd->fname);
+               else vstrcpy(fname, fsd->fname);
                }
           }
 }
@@ -3256,7 +3241,7 @@ void *fslx_do( char *title,
 
      /* Pfad: Defaults einsetzen */
      trim_path(path, pathbuf);
-     strcpy(path, pathbuf);
+     vstrcpy(path, pathbuf);
 
      /* Sortiermodus: Defaults einsetzen */
      if   (!sort_mode)
@@ -3286,7 +3271,7 @@ void *fslx_do( char *title,
      xxdoinf.xdoinf.resvd = autoloc_callback;
      xxdoinf.fsd = fsd;
 
-     form_center_grect(tree, &c);
+     _form_center_grect(tree, &c);
 
      wind_update(BEG_MCTRL);
      graf_mouse(ARROW, NULL);
@@ -3298,7 +3283,7 @@ void *fslx_do( char *title,
      do_autolocate(fsd);
      do   {
           fsel_redraw( fsd );
-          strcpy(fsd->old_fname, fsd->fname);
+          vstrcpy(fsd->old_fname, fsd->fname);
           exitbutton = form_xdo(tree, fsd->editob, &fsd->editob,
                     &xxdoinf.xdoinf, flyinf);
 
@@ -3387,7 +3372,7 @@ void * fslx_open(
 
      /* Pfad: Defaults einsetzen */
      trim_path(path, pathbuf);
-     strcpy(path, pathbuf);
+     vstrcpy(path, pathbuf);
 
      /* Sortiermodus: Defaults einsetzen */
      if   (sort_mode < 0)
@@ -3464,7 +3449,7 @@ WORD fslx_evnt(
                /* ----------------------------------------- */
 
                waskey = TRUE;
-               strcpy(((FSEL_DIALOG *) fsd)->old_fname,
+               vstrcpy(((FSEL_DIALOG *) fsd)->old_fname,
                     ((FSEL_DIALOG *) fsd)->fname);
                }
           }
@@ -3494,7 +3479,7 @@ WORD fslx_getnxtfile( void *fsd, char *fname )
 {
      if   (((FSEL_DIALOG *)fsd)->next_selfile)
           {
-          strcpy(fname, ((FSEL_DIALOG *)fsd)->next_selfile->name);
+          vstrcpy(fname, ((FSEL_DIALOG *)fsd)->next_selfile->name);
           next_selfile(((FSEL_DIALOG *)fsd));
           return(1);
           }
@@ -3545,7 +3530,7 @@ WORD cdecl fsel_exinput(
 
 
      s = fn_name(path);
-     strcpy(patterns, s);
+     vstrcpy(patterns, s);
      rett = *s;
      *s = EOS;
      trim_path(path, pathbuf);
@@ -3595,12 +3580,12 @@ WORD cdecl fsel_exinput(
           {
           if   (*button)
                {
-               strcpy(path, pathbuf);
+               vstrcpy(path, pathbuf);
                if   ((pattern[0] == '*') && (!pattern[1]))
                     strcat(path, "*.*");
                else strcat(path, pattern);
 /*             if   (longnames)
-                    strcpy(fname, fnambuf);
+                    vstrcpy(fname, fnambuf);
                else nameto_8_3(fnambuf, fname);   */
                }
           fslx_close( fsd );

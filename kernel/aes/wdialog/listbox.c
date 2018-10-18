@@ -10,8 +10,11 @@
 #include <tos.h>
 #include <aes.h>
 #include <vdi.h>
+#include "std.h"
 
 #define	CALL_MAGIC_KERNEL	1
+
+#include "ker_bind.h"
 
 #if	CALL_MAGIC_KERNEL
 
@@ -19,32 +22,15 @@
 /* Makros und Funktionsdefinitionen fÅr Aufrufe an den MagiC-Kernel								*/
 /*----------------------------------------------------------------------------------------*/ 
 
-typedef struct
-{
-	WORD	flag;
-	GRECT	g;
-} MGRECT;
-
 #define	evnt_timer( low, high ) \
 			_evnt_timer( low )
 
 #define	wind_get_grect( handle, field, g ) \
 			_wind_get_grect( handle, field, g )
 			
-#define	Malloc( size )	((void *) malloc( size ))
+#define	Malloc( size )	((void *) mmalloc( size ))
 
 #define rc_intersect(a,b)	grects_intersect(a,b)
-
-extern LONG malloc( LONG size );
-extern void _graf_mkstate( WORD data[4] );
-extern void set_clip_grect( GRECT *g );
-extern void cdecl blitcopy_rectangle( WORD src_x, WORD src_y, WORD dst_x, WORD dst_y, WORD w, WORD h );
-extern WORD _evnt_timer( LONG clicks_50hz );
-extern WORD appl_yield( void );
-extern int cdecl _evnt_multi( WORD mtypes, MGRECT *mm1, MGRECT *mm2, LONG ms, LONG but, WORD *mbuf, WORD *out );
-extern void _objc_draw( OBJECT *tree, WORD startob, WORD depth );
-extern void _objc_change( OBJECT *tree, WORD objnr, WORD newstate, WORD draw );
-extern WORD _wind_get_grect( WORD whdl, WORD code, GRECT *g );
 
 #else
 
@@ -2165,6 +2151,7 @@ static void	set_dial_clip( WORD handle, OBJECT *dial, WORD obj )
 
  	vs_clip( handle, 1, (WORD *) &r );
 #else
+	(void)handle;
 	set_clip_grect( &r );
 #endif
 }

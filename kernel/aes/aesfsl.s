@@ -2,7 +2,7 @@
 * Alte Dateiauswahl
 *
 
-     INCLUDE "AESINC.S"
+     INCLUDE "aesinc.s"
      TEXT
 
      XREF      get_clip_grect
@@ -28,15 +28,16 @@
      XREF      graf_slidebox
 
      XREF      chg_3d
-     XREF      Memavail,malloc,mfree,dgetdrv,fsetdta,extract_name
-     XREF      strcpy,strcmp
-     XREF      memcpy
+     XREF      Memavail,mmalloc,mfree,dgetdrv,fsetdta,extract_name
+     XREF      vstrcpy,vstrcmp
+     XREF      vmemcpy
      XREF      toupper
      XREF      _sprintf
 
      XDEF      fsel_exinput
 
-al_fserr:      DC.B '[1][Zuwenig Speicher für|Dateiauswahl!][ABBRUCH]',0
+; COUNTRY TODO
+al_fserr:      DC.B '[1][Zuwenig Speicher f',$81,'r|Dateiauswahl!][ABBRUCH]',0
      EVEN
 
 **********************************************************************
@@ -98,9 +99,9 @@ fsel_exinput:
  jsr      update_1
 
  movea.l  $10(a6),a0
- clr.w    (a0)                     ; per Default Rückgabe 0
+ clr.w    (a0)                     ; per Default Rueckgabe 0
 
- move.l   #fsel_tree_end-fsel_tree,d6   ; benötigter Speicher für Box
+ move.l   #fsel_tree_end-fsel_tree,d6   ; benoetigter Speicher fuer Box
 
  jsr      Memavail
  move.l   #1024*16+120,d1          ; 1024 Dateien + Strings
@@ -109,16 +110,16 @@ fsel_exinput:
  bcs.b    fsx_1024
  move.l   d1,d0                    ; maximal 16k holen!
 fsx_1024:
- move.l   d0,d1                    ; Restspeichergröße nach d1
- subi.l   #120,d1                  ; - 100 für Pfade usw.
- sub.l    d6,d1                    ; - Speicher für Box selbst
+ move.l   d0,d1                    ; Restspeichergroesse nach d1
+ subi.l   #120,d1                  ; - 100 fuer Pfade usw.
+ sub.l    d6,d1                    ; - Speicher fuer Box selbst
  asr.l    #4,d1                    ; / 16 = Anzahl ladbarer Dateien
                                    ; ist "int" wegen <= 1024
  cmpi.w   #9,d1
  bge.b    fsx_neg                  ; d1 kann hier negativ sein !
-* weniger für 9 Dateien: Fehler
+* weniger fuer 9 Dateien: Fehler
 fsx_memerr:
- lea      al_fserr(pc),a0          ; "Zuwenig Speicher für den Dialog"
+ lea      al_fserr(pc),a0          ; "Zuwenig Speicher fuer den Dialog"
  moveq    #1,d0
  bsr      form_alert
  clr.w    d0
@@ -127,21 +128,21 @@ fsx_memerr:
 fsx_neg:
  move.w   d1,d7                    ; fsel_maxfiles merken
 ;move.l   d0,d0
- jsr      malloc                   ; Speicher holen
+ jsr      mmalloc                   ; Speicher holen
  beq      fsx_memerr
  move.l   d0,a4                    ; Adresse nach a4
- add.l    d6,a4                    ; Platz für Objektbaum und TEDINFOs
+ add.l    d6,a4                    ; Platz fuer Objektbaum und TEDINFOs
  move.w   d7,(a4)                  ; fsel_maxfiles merken
  lea      120(a4),a4               ; a4 auf Datenbereich
 
  move.l   d0,a5                    ; Baumadresse
 
-* Baum für Dialogbox erzeugen
+* Baum fuer Dialogbox erzeugen
 
  move.w   d6,d0
  lea      fsel_tree(pc),a1
  move.l   a5,a0
- jsr      memcpy
+ jsr      vmemcpy
 
 * 3D/2D
  move.w   #1,fs_tedinfo3-fsel_tree+te_thickness(a5)
@@ -201,7 +202,7 @@ fsx_default_title:
  move.l   a1,te_ptext(a0)               ; direkt setzen
 ;move.l   a1,a1
  move.l   $c(a6),a0                     ; char *name
- bsr      fname_to_ptext                ; ins interne Format übertragen
+ bsr      fname_to_ptext                ; ins interne Format uebertragen
 
 * Laufwerkbuttons initialisieren
 
@@ -234,15 +235,15 @@ fsx_initbut:
 
  move.l   8(a6),a1
  lea      -100(a4),a0
- bsr      strcat_to                ; und für die Ausgabe wieder ketten
- clr.b    -100(a4)                 ; zunächst kein Muster ausgeben
+ bsr      strcat_to                ; und fuer die Ausgabe wieder ketten
+ clr.b    -100(a4)                 ; zunaechst kein Muster ausgeben
 
  lea      -8(a6),a0
  jsr      set_clip_grect           ; Clipping auf Box
 
 ;clr.w    FS_SLID*24+ob_y(a5)                ; Scrollbalken nach oben
 ;move.w   FS_SCRL*24+ob_height(a5),FS_SLID*24+ob_height(a5)
-                                             ; Scrollbalkenhöhe maximal
+                                             ; Scrollbalkenhoehe maximal
 
 ;ori.b    #$80,FS_WFILS*24+ob_flags+1(a5)    ; Fensterinhalt HIDDEN
 ;ori.b    #$80,FS_PATH*24+ob_flags+1(a5)     ; Pfad HIDDEN
@@ -265,7 +266,7 @@ fsx_initbut:
  bra      fsx_c_path
 
 *
-*  die große Schleife
+*  die grosse Schleife
 *
 
 fsel_mainloop:
@@ -286,7 +287,7 @@ fsel_jmptab:
  DC.W     fsx_c_path-fsel_jmptab     ; Objekt 3 (Pfad)
  DC.W     fsx_endsw-fsel_jmptab
  DC.W     fsx_endsw-fsel_jmptab
- DC.W     fsx_c_close-fsel_jmptab    ; Objekt 6 (Schließfeld)
+ DC.W     fsx_c_close-fsel_jmptab    ; Objekt 6 (Schliessfeld)
  DC.W     fsx_c_path-fsel_jmptab
  DC.W     fsx_endsw-fsel_jmptab
  DC.W     fsx_c_drv-fsel_jmptab      ; Objekt 9 (Laufwerk A:)
@@ -373,7 +374,7 @@ fscx_l1:
  moveq    #0,d0
 fsx_sok2:
  cmp.w    d0,d6
- beq      fsx_endsw                ; keine Änderung
+ beq      fsx_endsw                ; keine Aenderung
  move.w   d0,d6                    ; neuen Wert setzen
 
  move.w   d7,d1
@@ -402,18 +403,18 @@ fsx_c_close:
  addq.l   #3,a0
  tst.b    (a0)
  beq      fsx_endsw                ; ist schon Root
- clr.b    (a0)                     ; zurück zur Root
+ clr.b    (a0)                     ; zurueck zur Root
  bra.b    fsx_readall              ; und neu ausgeben
 
 fsx_no_toroot:
- subq.l   #1,a0                    ; a0 auf abschließenden '\'
+ subq.l   #1,a0                    ; a0 auf abschliessenden '\\'
 
  move.l   8(a6),a1
- addq.l   #2,a1                    ; "X:" überlesen
+ addq.l   #2,a1                    ; "X:" ueberlesen
 fsx_cloop:
  cmpa.l   a1,a0
  bcs      fsx_ecloop
- cmpi.b   #'\',-(a0)
+ cmpi.b   #92,-(a0)
  bne.b    fsx_cloop
  clr.b    1(a0)
 fsx_ecloop:
@@ -436,7 +437,7 @@ fsx_readall:
  move.l   a5,a0
  bsr      fsel_readfiles
  clr.w    d6                       ; Scrollpos 0
- clr.w    d5                       ; maxscroll zunächst auf 0
+ clr.w    d5                       ; maxscroll zunaechst auf 0
  move.w   d0,d7                    ; Anzahl gelesener Dateien
 
  subi.w   #9,d0
@@ -511,19 +512,19 @@ fsx_noinfo:
  addi.b   #'A',d0
  cmp.b    (a0),d0
  beq      fsx_endsw                ; selbes Laufwerk
- move.b   d0,(a0)                  ; Laufwerkbuchstabe ändern
+ move.b   d0,(a0)                  ; Laufwerkbuchstabe aendern
 
  lea      -100(a4),a1              ; Muster hierhin retten
 ;move.l   a0,a0
  bsr      complete_path
 
  movea.l  8(a6),a0                 ; Standardpfad angeben:
- addq.l   #2,a0                    ;  "X:" überspringen
+ addq.l   #2,a0                    ;  "X:" ueberspringen
  lea      -100(a4),a1
 fsx_drvcloop:
  move.b   (a1)+,(a0)+              ; Muster dahinterkopieren
  bne.b    fsx_drvcloop
- bra      fsx_c_path               ; wie, wenn Pfad geändert
+ bra      fsx_c_path               ; wie, wenn Pfad geaendert
 
 * case 26:
 *  .
@@ -545,16 +546,16 @@ fsx_c_file:
  bsr      complete_path
 
  move.l   a0,a1
- lea      1(a3),a0                 ; '\7' überspringen
- bsr      ptext_to_fname           ; Verzeichnis anhängen
+ lea      1(a3),a0                 ; '\7' ueberspringen
+ bsr      ptext_to_fname           ; Verzeichnis anhaengen
 
  move.l   8(a6),a0
 fsx_cdloop:
  tst.b    (a0)+
  bne.b    fsx_cdloop
  subq.l   #1,a0
- move.b   #'\',(a0)+
- clr.b    (a0)                     ; "\" anhängen
+ move.b   #92,(a0)+
+ clr.b    (a0)                     ; "\\" anhaengen
 
  bra      fsx_readall
 
@@ -562,7 +563,7 @@ fsx_file:
  cmpi.b   #' ',(a3)+               ; Datei ?
  bne.b    fsx_endsw                ; nein, unbekannt
  tst.b    (a3)                     ; Dateiname ?
- beq.b    fsx_endsw                ; ungültig!
+ beq.b    fsx_endsw                ; ungueltig!
 
  move.w   d0,-(sp)
  moveq    #1,d2
@@ -620,9 +621,9 @@ fsx_endsw:
  and.w    #$7fff,d0
  subq.w   #FS_PATH,d1              ; war der Cursor in der oberen Zeile ?
  bne.b    fsx_no_curpath           ; nein
- cmpi.w   #FS_OK,d0                ; ist OK angewählt worden ?
+ cmpi.w   #FS_OK,d0                ; ist OK angewaehlt worden ?
  bne.b    fsx_no_curpath
-* OK angewählt nach Pfadänderung
+* OK angewaehlt nach Pfadaenderung
  moveq    #1,d2                    ; der OK- Button wird deselektiert
  moveq    #0,d1
  moveq    #FS_OK,d0
@@ -647,7 +648,7 @@ fsel_exit:
  cmpi.w   #FS_OK,d3                ; OK ?
  seq      d0
  andi.w   #1,d0
- move.w   d0,(a0)                  ; Rückgabe 1 oder 0
+ move.w   d0,(a0)                  ; Rueckgabe 1 oder 0
 
  lea      -$18(a6),a2              ; FlyDials
  lea      -8(a6),a1
@@ -746,9 +747,9 @@ cmp_setdrv:
  addi.b   #'A',(a5)+
  move.b   #':',(a5)+
 
- cmpi.b   #'\',(a3)
+ cmpi.b   #92,(a3)
  beq.b    cmp_root
- clr.b    (a5)                     ; ggf. aktuellen Pfad einfügen
+ clr.b    (a5)                     ; ggf. aktuellen Pfad einfuegen
  addq.w   #1,d0
  move.w   d0,-(sp)
  move.l   a5,-(sp)
@@ -759,16 +760,16 @@ cmp_loop2:
  tst.b    (a5)+
  bne.b    cmp_loop2
  subq.l   #1,a5
- cmpi.b   #'\',-1(a5)
+ cmpi.b   #92,-1(a5)
  beq.b    cmp_root
- move.b   #'\',(a5)+
+ move.b   #92,(a5)+
 cmp_root:
  move.b   (a3)+,(a5)+
  bne.b    cmp_root
  subq.l   #1,a5
- cmpi.b   #'\',-1(a5)
+ cmpi.b   #92,-1(a5)
  beq.b    cmp_slash
- move.b   #'\',(a5)+
+ move.b   #92,(a5)+
  clr.b    (a5)
 cmp_slash:
  move.l   a5,a0                    ; Ende des Pfades
@@ -845,7 +846,7 @@ nti_eos:
 * long fsel_readfiles(a0 = OBJECT *tree, a1 = char *path,
 *                     a2 = void *mem )
 *
-* Rückgabe: Anzahl gelesener Einträge (0 bei Fehler)
+* Rueckgabe: Anzahl gelesener Eintraege (0 bei Fehler)
 * zeigt ab Mag!X 1.12 Fehler-Alerts an
 *
 
@@ -860,7 +861,7 @@ fsel_readfiles:
  moveq    #2,d0
  jsr      graf_mouse               ; Maus als Biene
 
-* 9 Strings à 16 Bytes auf " " setzen
+* 9 Strings a 16 Bytes auf " " setzen
 
  moveq    #9-1,d1
  move.l   a4,a0
@@ -880,7 +881,7 @@ fsr_eloop:
  move.b   #'*',(a1)+
  move.b   #'.',(a1)+
  move.b   #'*',(a1)+
- clr.b    (a1)                     ; und "*.*" anhängen
+ clr.b    (a1)                     ; und "*.*" anhaengen
 
  lea      (sp),a0
  jsr      fsetdta                  ; DTA setzen
@@ -892,10 +893,10 @@ fsr_eloop:
  move.w   #$4e,-(sp)
  trap     #1                       ; gemdos Fsfirst
  addq.l   #8,sp
-; der folgende Code ist für Mag!X 1.12 geändert
+; der folgende Code ist fuer Mag!X 1.12 geaendert
  cmp.w    #$ffde,d0                ; EPTHNF ?
  bne      fsr_nxtfile              ; nein, normale Fehlerbehandlung
-* Sonderbehandlung für: Fsfirst->EPTHNF
+* Sonderbehandlung fuer: Fsfirst->EPTHNF
  tst.b    3(a6)                    ; schon Root ?
  beq      fsr_nxtfile              ; ja, nix zu machen
  clr.b    3(a6)                    ; zur Root
@@ -915,7 +916,7 @@ fsr_readloop:
 fsr_sub:
  move.w   d7,d0
  lsl.w    #4,d0
- move.b   #7,0(a4,d0.w)            ; Zeichen für Subdir
+ move.b   #7,0(a4,d0.w)            ; Zeichen fuer Subdir
  bra.b    fsr_l2
 * kein Subdir
 fsr_l1:
@@ -923,7 +924,7 @@ fsr_l1:
  lea      -100(a4),a0              ; Muster, etwa "*.PRG"
  bsr      fname_match              ; Dateien werden gematcht
 
- beq.b    fsr_skip                 ; paßt nicht zum Muster
+ beq.b    fsr_skip                 ; passt nicht zum Muster
  move.w   d7,d0
  lsl.w    #4,d0
  move.b   #' ',0(a4,d0.w)          ; Dateien beginnen mit ' '
@@ -941,7 +942,7 @@ fsr_skip:
  trap     #1                       ; gemdos Fsnext
  addq.l   #2,sp
 
-* Nächste Datei. d0 enthält letzten Fehlercode
+* Naechste Datei. d0 enthaelt letzten Fehlercode
 
 fsr_nxtfile:
  ext.l    d0                       ; Fehler beim letzen Fsfirst/next ?
@@ -967,12 +968,12 @@ fsr_okay:
  bsr      sort_files
 fsr_draw:
 
-* d7.l ist jetzt 0 oder enthält die Anzahl der Dateien
+* d7.l ist jetzt 0 oder enthaelt die Anzahl der Dateien
 
  lea      -100(a4),a1
  move.l   a3,a0
 fsr_cat:
- move.b   (a1)+,(a0)+              ; unser Muster wieder dahinterhängen
+ move.b   (a1)+,(a0)+              ; unser Muster wieder dahinterhaengen
  bne.b    fsr_cat
 
  moveq    #FS_PATH,d0              ; Pfad neumalen
@@ -983,7 +984,7 @@ fsr_cat:
  move.l   a5,a0
  jsr      _objc_draw
 
- move.w   FS_SCRL*24+ob_height(a5),d0   ; Höhe des Scrollfelds
+ move.w   FS_SCRL*24+ob_height(a5),d0   ; Hoehe des Scrollfelds
  cmpi.w   #9,d7
  bls.b    fsr_l4                   ; <= 9 Dateien
  muls     #9,d0
@@ -991,7 +992,7 @@ fsr_cat:
  divu     d7,d0
 fsr_l4:
  clr.w    FS_SLID*24+ob_y(a5)           ; Scrollbalken nach oben
- move.w   d0,FS_SLID*24+ob_height(a5)   ; Höhe des Scrollbalkens
+ move.w   d0,FS_SLID*24+ob_height(a5)   ; Hoehe des Scrollbalkens
 
 * Laufwerkbuttons bearbeiten
 
@@ -1042,7 +1043,7 @@ fsx_nxtdrv:
 * int fname_match( a0 = char *patt, a1 = char *fname )
 *
 * patt ist etwa "*.PRG,*.APP"
-* Rückgabe 1, wenn paßt
+* Rueckgabe 1, wenn passt
 *
 
 fname_match:
@@ -1051,13 +1052,13 @@ fname_match:
  move.l   a1,a2                    ; fname merken
 fnm_nxt_patt:
  bsr      _fname_match
- bne.b    fnm_ende                 ; paßt !
+ bne.b    fnm_ende                 ; passt !
 fnm_loop:
  tst.b    (a3)
  beq.b    fnm_ende
  cmpi.b   #',',(a3)+               ; suche Komma oder EOS
  bne.b    fnm_loop
- move.l   a3,a0                    ; a0 hinter Komma, nächstes Muster
+ move.l   a3,a0                    ; a0 hinter Komma, naechstes Muster
  move.l   a2,a1
  bra.b    fnm_nxt_patt
 fnm_ende:
@@ -1191,9 +1192,9 @@ fs_show_9_files:
  move.l   a0,a5                    ; tree
  move.l   a1,a4                    ; mem
 
- move.w   FS_SCRL*24+ob_height(a5),d0   ; Scrollfeldhöhe
+ move.w   FS_SCRL*24+ob_height(a5),d0   ; Scrollfeldhoehe
  mulu     d7,d0                    ; * Nr. der ersten angezeigten Datei
- tst.w    d1                       ; Anzahl Dateien überhaupt
+ tst.w    d1                       ; Anzahl Dateien ueberhaupt
  beq.b    fssw_l1                  ; ist 0
  ext.l    d0
  divu     d1,d0
@@ -1208,12 +1209,12 @@ fssw_l1:
  lea      FS_FILE1*24(a5),a3       ; erstes Dateinamenfeld
  lsl.w    #4,d7
  add.w    d7,a4                    ; erster anzuzeigender Dateiname
- moveq    #9-1,d7                  ; Zähler
+ moveq    #9-1,d7                  ; Zaehler
 
 * immer genau 9 Felder bearbeiten
 
 fssw_l2:
- clr.w    ob_state(a3)             ; Status löschen
+ clr.w    ob_state(a3)             ; Status loeschen
  move.l   ob_spec(a3),a0           ; TEDINFO *
  move.l   a4,te_ptext(a0)
 
@@ -1306,7 +1307,7 @@ fsel_tree:
  DC.L     fs_laufwerk
  DC.W     $071a,5,9,1
 
- DC.W     7,-1,-1                  ;  6: Schließfeld
+ DC.W     7,-1,-1                  ;  6: Schliessfeld
  DC.W     G_BOXCHAR,FL3DACT+TOUCHEXIT,0
  DC.L     $5011100
  DC.W     3,6,0x0a01,$0301
@@ -1316,7 +1317,7 @@ fsel_tree:
  DC.L     fs_tedinfo3-fsel_tree
  DC.W     $0904,6,$0413,$0301
 
- DC.W     25,9,24                  ;  8: Vater für Laufwerkbuttons
+ DC.W     25,9,24                  ;  8: Vater fuer Laufwerkbuttons
  DC.W     G_IBOX,0,0
  DC.L     0
  DC.W     27,0x0106,10,8
@@ -1461,10 +1462,10 @@ fsel_tree:
  DC.L     $00011111
  DC.W     $ff16,$0109,$0e01,$0207
 
- DC.W     36,-1,-1                 ; 37: weißer Scrollbalken
+ DC.W     36,-1,-1                 ; 37: weisser Scrollbalken
  DC.W     G_BOX,FL3DACT+TOUCHEXIT,0
  DC.L     $00011100
- DC.W     0,0,$0e01,$0207          ; Balken ganz oben, volle Höhe
+ DC.W     0,0,$0e01,$0207          ; Balken ganz oben, volle Hoehe
 
  DC.W     39,-1,-1                 ; 38: Pfeil nach oben
  DC.W     G_BOXCHAR,FL3DACT+TOUCHEXIT,0
@@ -1494,7 +1495,7 @@ fs_tedinfo1:                       ; Fileselector- Pfad
  DC.L     fs_string6               ; "x"
  DC.W     3,1,0,$1180,0,-2,38,38
 
-fs_tedinfo2:                       ; Fileselector: ausgewählter Dateiname
+fs_tedinfo2:                       ; Fileselector: ausgewaehlter Dateiname
  DC.L     0                        ; Text hier einklinken
  DC.L     fs_string9               ; "AUSWAHL: ________.___"
  DC.L     fs_string10              ; "F"
@@ -1573,7 +1574,7 @@ fs_string6:    DC.B "x",0
 fs_string9:    DC.B "AUSWAHL: ________.___",0
 fs_string10:   DC.B "F",0
 fs_string16:   DC.B "_ ________.___",0
-diskinfo:      DC.B '[0][Informationen für Laufwerk %S:| |'
+diskinfo:      DC.B '[0][Informationen f',$81,'r Laufwerk %S:| |'
                DC.B '%L Bytes insgesamt|'
                DC.B '%L Bytes frei][  OK  ]',0
      ENDIF

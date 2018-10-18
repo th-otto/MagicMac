@@ -79,7 +79,7 @@ LONG cdecl slb_init( void )
 	if	(name)
 		name++;
 	else	name = path;
-	strcpy(name, "winframe.rsc");
+	vstrcpy(name, "winframe.rsc");
 	if	(!rsrc_load(path))
 		{
 		form_xerr(EFILNF, "winframe.rsc");
@@ -110,7 +110,7 @@ LONG cdecl slb_init( void )
 	if	(!sys_set_winframe_manager(&old_wfh, &new_wfh,
 					&settings))
 		{
-		form_xerr(ERROR, "WINFRAME.SLB");
+		form_xerr(ERROR, "winframe.slb");
 		return(ERROR);
 		}
 

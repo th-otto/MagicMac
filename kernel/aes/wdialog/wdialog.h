@@ -29,6 +29,8 @@
 
 #endif
 
+#ifndef __EVNT
+#define __EVNT
 typedef struct
 {
 	WORD	mwhich;
@@ -41,6 +43,7 @@ typedef struct
 	WORD	reserved[9];
 	WORD	msg[16];
 } EVNT;
+#endif
 
 typedef	WORD	(cdecl *HNDL_OBJ)( struct _dialog *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
 

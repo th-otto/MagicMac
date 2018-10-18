@@ -5,25 +5,19 @@
 
 DEBUG     EQU  16
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "STRUCTS.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "VTSYS.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "structs.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "vtsys.inc"
+     INCLUDE "basepage.inc"
+	 include "country.inc"
+     INCLUDE "bios.inc"
      SUPER
 
 
 * vom BIOS
 
      XREF      p_vt52              ; neue Methode
-     XREF      p_vt52_winlst     
-     XREF      p_vt_interior_off
-     XREF      p_vt_columns_off
-     XREF      p_vt_rows_off
-     XREF      p_vt_visible_off
-     XREF      p_vt_x_off
-     XREF      p_vt_y_off
-     XREF      p_vt_sout
-     XREF      p_vt_cin
      XREF      iorec_kb            ; Tastaturpuffer
      XREF      ctrl_status
      XREF      config_status
@@ -53,6 +47,8 @@ v_cel_mx  EQU -$2c
 v_cel_my  EQU -$2a
 v_cur_cx  EQU -$1c
 v_cur_cy  EQU -$1a
+
+	TEXT
 
 _con_devdrv:
  DC.L     bios_ddev_open

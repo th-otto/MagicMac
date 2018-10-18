@@ -82,10 +82,8 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XDEF      altcode_asc         ; nach XAES
      XDEF      iorec_kb            ; nach DOS,XAES
      XDEF      ctrl_status         ; nach DOS
-     XDEF      cpu_typ             ; nach DOS,AES
      XDEF      is_fpu              ; nach XAES
      XDEF      halt_system         ; nach DOS,AES
-     XDEF      xaes_area           ; nach XAES
      XDEF      p_mgxinf            ; nach XAES
      XDEF      machine_type        ; nach VDI,DOS
      XDEF      config_status       ; nach DOS und AES
@@ -100,15 +98,6 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XDEF      dos_macfn           ; nach DOS
 
      XDEF      p_vt52              ; neues VT52 nach DOS
-     XDEF      p_vt52_winlst       ; nach DOS
-     XDEF      p_vt_interior_off   ; nach DOS
-     XDEF      p_vt_columns_off    ; nach DOS
-     XDEF      p_vt_rows_off       ; nach DOS
-     XDEF      p_vt_visible_off    ; nach DOS
-     XDEF      p_vt_x_off          ; nach DOS
-     XDEF      p_vt_y_off          ; nach DOS
-     XDEF      p_vt_sout           ; nach DOS
-     XDEF      p_vt_cin            ; nach DOS
      XDEF      warm_boot           ; nach AES
      XDEF      warmbvec,coldbvec   ; nach AES
      XDEF      prn_wrts            ; -> DEV_BIOS
@@ -185,13 +174,14 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XREF      vt52_init           ; VDI: VT52 initialisieren
 
 
-     INCLUDE "LOWMEM.INC"
-     INCLUDE "BIOS.INC"
-     INCLUDE "DOS.INC"
-     INCLUDE "ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "MAC_KER.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "lowmem.inc"
+	 include "country.inc"
+     INCLUDE "bios.inc"
+     INCLUDE "dos.inc"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "mac_ker.inc"
+     INCLUDE "debug.inc"
 
 
 D_DAY     EQU  9
@@ -204,36 +194,9 @@ NCOOKIES  EQU  21
      TEXT
 
 
-* BIOS- Variablen:
-
-deflt_env           EQU  $840           /* char deflt_env[40]         */
+;--------------------------------------------------------------
 ;
-; saveptr_area bleibt aus Kompatiblitätsgründen (Matrix Grafiksoft.) bestehen,
-; wird aber von (X)Bios nicht benutzt
-savptr_area         EQU  $93a           /* int  savptr_area[105],ende */
-
-jmpcode             EQU  $93a           /* int  jmpcode[3]            */
-ram_syshdr          EQU  $940           /* SYSHDR ram_syshdr          */
-
-* ## unbenutzt. Ab <clear_area> werden beim Warmstart 64 kB gelöscht
-*               im Original- TOS ab $980
-
-xaes_area           EQU  $980           /* long xaes_area[3]          */
-/* p_vt52_winlst zeigt auf das Array WINDOW *app_window[128].         */
-/* Ist unter der Applikationsnummer id ein TOS-Programm im VT52 am    */
-/* Laufen, so zeigt app_window[id] auf die zugehörige Fensterstruktur */
-/* Andernfalls enthält app_window[id] NULL.                           */
-/* Die nachfolgenden Variablen werden im VT52.PRG in der Funktion     */
-/* <void set_vec()> initialisiert.                                    */
-p_vt52_winlst       EQU $98c            /* WINDOW   **p_vt52_winlst;  */
-p_vt_interior_off   EQU $990            /* Offset zur Variable INTERIOR interior  */
-p_vt_columns_off    EQU $992            /* Offset zur Variable WORD columns       */
-p_vt_rows_off       EQU $994            /* Offset zur Variable WORD rows */
-p_vt_visible_off    EQU $996            /* Offset zur Variable WORD visible_rows  */
-p_vt_x_off          EQU $998            /* Offset zur Variable WORD x */
-p_vt_y_off          EQU $99a            /* Offset zur Variable WORD y */
-p_vt_sout           EQU $99c            /* Adresse der cooked_str_to_con-Routine */
-p_vt_cin            EQU $9a0            /* Adresse der c_in_cooked-Routine */
+; BIOS- Variablen:
 
 clear_area          EQU $9a4            /* war vorher auf $98c        */
 
@@ -715,10 +678,10 @@ _cpyloop3:
 * AES starten
 * Auflösungswechsel
 
-     INCLUDE "AUTO.S"
+     INCLUDE "auto.s"
 
 
-     INCLUDE "PUNTAES.S"
+     INCLUDE "puntaes.s"
 
 
 **********************************************************************
@@ -943,7 +906,7 @@ Drvmap:
  rte
 
 
-     INCLUDE "PROTOBT.S"
+     INCLUDE "protobt.s"
 
 
 **********************************************************************
@@ -2365,7 +2328,7 @@ my_tasksw2:
  jmp      appl_yield
 
 
-     INCLUDE "PRIV_EXC.S"
+     INCLUDE "priv_exc.s"
 
 
 **********************************************************************
@@ -2758,7 +2721,7 @@ handle_key:
 ;   eori.w   #$300,sr          ;von IPL 5 auf 6 zurück
    rts
 
-     INCLUDE "HANDLKEY.S"
+     INCLUDE "handlkey.s"
 
 **********************************************************************
 *

@@ -422,11 +422,11 @@ void wbm_create( WININFO *wi )
 	/* Objektbaum kopieren */
 	/* ------------------- */
 
-	memcpy(wi->tree, adr_window, N_OBJS*sizeof(OBJECT));
-	memcpy(&(wi->ted_name),
+	vmemcpy(wi->tree, adr_window, N_OBJS*sizeof(OBJECT));
+	vmemcpy(&(wi->ted_name),
 			adr_window[O_NAME].ob_spec.tedinfo,
 			sizeof(TEDINFO));
-	memcpy(&(wi->ted_info),
+	vmemcpy(&(wi->ted_info),
 			adr_window[O_INFO].ob_spec.tedinfo,
 			sizeof(TEDINFO));
 

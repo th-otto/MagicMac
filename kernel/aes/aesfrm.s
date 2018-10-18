@@ -3,7 +3,7 @@
 * FORM-Manager
 *
 
-     INCLUDE "AESINC.S"
+     INCLUDE "aesinc.s"
      TEXT
 
      XDEF      form_alert
@@ -13,7 +13,7 @@
      XDEF      form_xdo,_form_xdo
      XDEF      form_do
      XDEF      _form_button,form_button,form_wbutton
-     XDEF      form_wkeybd
+     XDEF      _form_wkeybd
      XDEF      form_error
      XDEF      frm_xdial
      XDEF      __fm_xdial
@@ -41,7 +41,7 @@
      XREF      mouse_immed,reset_mouse
      XREF      beg_mctrl,end_mctrl,update_0,update_1
      XREF      mctrl_0,mctrl_1
-     XREF      max,memcpy,toupper,_sprintf
+     XREF      max,vmemcpy,toupper,_sprintf
      XREF      wait_but_released,evnt_button,_evnt_multi
      XREF      flush_keybuf
      XREF      _objc_find,set_ob_xywh,calc_obsize,_objc_edit,parentob,ob_modes
@@ -70,26 +70,26 @@
 *                   d0 = int firstob, d1 = int maxlen,
 *                   d2 = int maxstrs)
 *
-* a0 : gibt String hinter den gescannten Bereich zurück
+* a0 : gibt String hinter den gescannten Bereich zurueck
 * d0 : Anzahl Strings
-* d1 : maximale Länge
+* d1 : maximale Laenge
 *
 
 _scan_alrts:
  movem.l  d7/d6/d5/d3,-(sp)
- move.w   d1,d5                    ; maximale Stringlänge
+ move.w   d1,d5                    ; maximale Stringlaenge
  move.w   d0,d7                    ; d7 ist Objektnummer
- moveq    #0,d1                    ; maximale Länge
+ moveq    #0,d1                    ; maximale Laenge
  moveq    #0,d3                    ; Anzahl Strings
  move.b   (a0)+,d0
  beq      _sca_ende                ; Fehler!
 ;cmpi.b   #'[',d0
-;bne.b    _sca_ende                ; wegen Tempus nicht überprüft
+;bne.b    _sca_ende                ; wegen Tempus nicht ueberprueft
 _sca_next_string:
  move.w   d7,d6
  muls     #24,d6
  move.l   ob_spec(a1,d6.l),a2      ; a2 ist Zielstring
- moveq    #0,d6                    ; d6 ist Länge
+ moveq    #0,d6                    ; d6 ist Laenge
 _sca_copy:
  move.b   (a0)+,d0
  beq.b    _sca_eos
@@ -99,7 +99,7 @@ _sca_copy:
  beq.b    _sca_steuer
 _sca_set:
  cmp.w    d5,d6
- bcc.b    _sca_copy                ; Überlauf
+ bcc.b    _sca_copy                ; Ueberlauf
  move.b   d0,(a2)+
  addq.w   #1,d6
  bra.b    _sca_copy
@@ -144,11 +144,11 @@ _sca_ende:
 *  $14(a6)          max_b
 *
 * -$24(a6)          Breite des Icons (immer 4)
-* -$22(a6)          Höhe   des Icons (immer 4)
-* -$20(a6)          GRECT für Textzeilen
-* -$18(a6)          GRECT für Buttons
-* -$10(a6)          GRECT für Icon
-*   -8(a6)          GRECT für die Alertbox
+* -$22(a6)          Hoehe   des Icons (immer 4)
+* -$20(a6)          GRECT fuer Textzeilen
+* -$18(a6)          GRECT fuer Buttons
+* -$10(a6)          GRECT fuer Icon
+*   -8(a6)          GRECT fuer die Alertbox
 *
 
 init_alrt_tree:
@@ -161,8 +161,8 @@ init_alrt_tree:
 * des Buttons ist je ein halbes Zeichen Rand links und rechts
 * Zwischen je zwei Buttons sind 2 Zeichen Platz
 * d6 wird die erforderliche Breite des Alerts in Zeicheneinheiten
- addq.w   #1,$14(a6)               ; 1 auf maximale Buttonlänge addieren
-                                   ;   für den Rand im Button selbst
+ addq.w   #1,$14(a6)               ; 1 auf maximale Buttonlaenge addieren
+                                   ;   fuer den Rand im Button selbst
  move.w   $14(a6),d7               ; d6 = max_buttons
  mulu     $12(a6),d7               ;      * anz_buttons
  move.w   d7,d4
@@ -177,21 +177,21 @@ iat_wide1:
  move.w   d4,d1
  jsr      max
  move.w   d0,d6                    ; d6 = max(d4, max_t)
-* mindestens die Höhe einer Textzeile
-* d5 wird die erforderliche Höhe
+* mindestens die Hoehe einer Textzeile
+* d5 wird die erforderliche Hoehe
  moveq    #1,d0
  move.w   $e(a6),d1
  addq.w   #1,d1                    ; oberste Zeile bleibt frei
  jsr      max
  move.w   d0,d5
 * -8(a6) wird das GRECT
- lea      -8(a6),a0                ; GRECT für Hauptbox
+ lea      -8(a6),a0                ; GRECT fuer Hauptbox
  clr.l    (a0)+                    ; x,y = 0
  move.w   d6,(a0)                  ; Breite
- addq.w   #4,(a0)+                 ; + 2 (Rand für links) + 2 (rechts)
- move.w   d5,(a0)                  ; Höhe
+ addq.w   #4,(a0)+                 ; + 2 (Rand fuer links) + 2 (rechts)
+ move.w   d5,(a0)                  ; Hoehe
 
- lea      -$20(a6),a0              ; GRECT für Textzeilen
+ lea      -$20(a6),a0              ; GRECT fuer Textzeilen
  move.l   #$20001,(a0)+            ; x = 2 Zeichen, y = 1 Zeichen
  move.w   $10(a6),(a0)+            ; w = max_t
  move.w   #1,(a0)                  ; h = 1
@@ -199,9 +199,9 @@ iat_wide1:
  tst.w    $c(a6)
  beq.b    iart_l1
 
-* Icon ist gewünscht
+* Icon ist gewuenscht
 
- lea      -$10(a6),a0              ; GRECT für Icon
+ lea      -$10(a6),a0              ; GRECT fuer Icon
  move.l   #$20001,(a0)+            ; x=2,y=1
  move.w   -$22(a6),(a0)+           ; w=4
  move.w   -$24(a6),(a0)            ; h=4
@@ -211,35 +211,35 @@ iat_wide1:
  add.w    d0,-$20(a6)              ; Textposition nach rechts
  cmpi.w   #42,d7
  bhi.b    iat_wide2
- add.w    d0,-4(a6)                ; Gesamt- GRECT um Iconbreite+2 erhöhen
+ add.w    d0,-4(a6)                ; Gesamt- GRECT um Iconbreite+2 erhoehen
 iat_wide2:
  move.w   -$24(a6),d0
  addq.w   #1,d0
  move.w   -2(a6),d1
  jsr      max
- move.w   d0,-2(a6)                ; Höhe nur ggf. erhöhen
+ move.w   d0,-2(a6)                ; Hoehe nur ggf. erhoehen
 
 iart_l1:
- addq.w   #3,-2(a6)                ; Höhe nochmals um 3 erhöhen, und zwar
-                                   ; für Buttons und Rand über/unter Buttons
+ addq.w   #3,-2(a6)                ; Hoehe nochmals um 3 erhoehen, und zwar
+                                   ; fuer Buttons und Rand ueber/unter Buttons
  move.w   -4(a6),d1                ; Gesamtbreite
  sub.w    d4,d1                    ; Breite der Buttonzeile abziehen
                                    ; es bleibt der Rand links und rechts
  lsr.w    #1,d1                    ; durch 2 teilen
 
- lea      -$18(a6),a0              ; GRECT für Buttons
+ lea      -$18(a6),a0              ; GRECT fuer Buttons
  move.w   d1,(a0)+                 ; x = Rand links/rechts
  move.w   -2(a6),(a0)
- subq.w   #2,(a0)+                 ; y = Gesamthöhe - 2
+ subq.w   #2,(a0)+                 ; y = Gesamthoehe - 2
  move.w   $14(a6),(a0)+            ; w = max_b
  move.w   #$0101,(a0)              ; h = 1 Zeichen + 1 Pixel
 
  lea      -8(a6),a1
  moveq    #0,d0
  move.l   a5,a0
- jsr      set_ob_xywh              ; GRECT für Hauptobjekt setzen
+ jsr      set_ob_xywh              ; GRECT fuer Hauptobjekt setzen
 
-* für die Objekte 0..9 jeweils ob_head, ob_tail, ob_next löschen
+* fuer die Objekte 0..9 jeweils ob_head, ob_tail, ob_next loeschen
 
  moveq    #10,d0
  move.l   a5,a0
@@ -247,11 +247,11 @@ iart_l1:
 
  tst.w    $c(a6)
  beq.b    iart_l2
-* ein Icon ist erwünscht
+* ein Icon ist erwuenscht
  lea      -$10(a6),a1
  moveq    #1,d0
  move.l   a5,a0
- jsr      set_ob_xywh              ; GRECT für Icon setzen
+ jsr      set_ob_xywh              ; GRECT fuer Icon setzen
 
  moveq    #1,d1
  moveq    #0,d0
@@ -264,13 +264,13 @@ iart_l2:
  bra.b    iart_l4
 iart_l3:
 
- lea      -$20(a6),a1              ; GRECT für Textzeile
+ lea      -$20(a6),a1              ; GRECT fuer Textzeile
  move.w   d6,d0
  addq.w   #2,d0                    ; ab Objekt 2
  move.l   a5,a0
  jsr      set_ob_xywh
 
- addq.w   #1,-$1e(a6)              ; GRECT.y erhöhen
+ addq.w   #1,-$1e(a6)              ; GRECT.y erhoehen
 
  move.w   d6,d1
  addq.w   #2,d1
@@ -280,7 +280,7 @@ iart_l3:
 
  addq.w   #1,d6
 iart_l4:
- cmp.w    $e(a6),d6                ; nächste Textzeile
+ cmp.w    $e(a6),d6                ; naechste Textzeile
  blt.b    iart_l3
 
 * Buttons einbauen
@@ -296,7 +296,7 @@ iart_l5:
  move.w   #SELECTABLE+EXIT+FL3DACT,ob_flags(a0)
  clr.w    $a(a0)
 
- lea      -$18(a6),a1              ; GRECT für Buttons
+ lea      -$18(a6),a1              ; GRECT fuer Buttons
  move.w   d6,d0
  addq.w   #7,d0
  move.l   a5,a0
@@ -336,7 +336,7 @@ iart_l6:
 *                        a1 = int objx[] )
 *
 * Zeichnet Unterobjekte, jeweils ab Wurzel.
-* Das Unterobjekt muß auf Stufe #1 liegen
+* Das Unterobjekt muss auf Stufe #1 liegen
 *
 
 draw_n_objects:
@@ -350,7 +350,7 @@ draw_n_objects:
  bra.b    dno_start
 dno_loop:
  move.w   (a4)+,d0                 ; Objektnummer ?
- beq.b    dno_start                ; ungültig
+ beq.b    dno_start                ; ungueltig
 ; GRECT des Objekts bestimmen
  mulu     #24,d0
  lea      ob_x(a5,d0.w),a0
@@ -367,11 +367,11 @@ dno_loop:
  moveq    #0,d0                    ; ab Objekt 0
  move.l   a5,a0
  jsr      _objc_draw               ; Box ausgeben
-; nächstes Objekt
+; naechstes Objekt
 dno_start:
  dbra     d7,dno_loop
  lea      (sp),a0
- jsr      set_clip_grect           ; Clipping zurück
+ jsr      set_clip_grect           ; Clipping zurueck
  adda.w   #16,sp
  movem.l  (sp)+,a5/a4/d7
  rts
@@ -385,7 +385,7 @@ dno_start:
 *
 * Die Box darf nicht links oder oberhalb des Bildschirms liegen, sie
 * wird in diesem Fall umgesetzt.
-* Sind x und y Null, wird die Position nicht beeinflußt.
+* Sind x und y Null, wird die Position nicht beeinflusst.
 *
 
 _form_popup:
@@ -408,27 +408,27 @@ _form_popup:
 *
 * Die Box darf nicht links oder oberhalb des Bildschirms liegen, sie
 * wird in diesem Fall umgesetzt.
-* Sind x und y Null, wird die Position nicht beeinflußt.
+* Sind x und y Null, wird die Position nicht beeinflusst.
 *
 *    8(a6)     : void *param
-*    12(a6)    : int nlines        tatsächliche Anzahl Zeilen
-*    14(a6)    : int *retscrl      zur Rückgabe der Scrollposition
+*    12(a6)    : int nlines        tatsaechliche Anzahl Zeilen
+*    14(a6)    : int *retscrl      zur Rueckgabe der Scrollposition
 *
 *      d7      : int  ob,     aktuelle Objektnummer
 *      d6      : int  obo,    vorherige Objektnummer
-*      d5      : char valid,  Flag für "aktuelle Objektnummer gültig"
-*      d4      : char valido, Flag für "vorherige Objektnummer gültig"
+*      d5      : char valid,  Flag fuer "aktuelle Objektnummer gueltig"
+*      d4      : char valido, Flag fuer "vorherige Objektnummer gueltig"
 *      d3      : int bstat,   erwarteter Maustastenstatus
 * -52(a6)      : int fixedb,  Flag "festen Puffer verwenden"
 * -50(a6)      : void *sbuf,  geretteter Bildschirminhalt
-* -46(a6)      : int lheight, Höhe einer Zeile (für Scrolling)
+* -46(a6)      : int lheight, Hoehe einer Zeile (fuer Scrolling)
 * -44(a6)      : int yblpix,  soviele Pixel sind immer zu blitten
 * -42(a6)      : int maxscrl, soviel kann ich scrollen
 * -40(a6)      : int scrlpos, akt. Scrollposition
 * -36(a6)      : int first
 * -38(a6)      : int last     Scrollobjektnummern
 * -34(a6)      : init_objs,   Routine zum Scrollen
-* -30(a6)      : int out[6],  Rückgabe von _evnt_multi
+* -30(a6)      : int out[6],  Rueckgabe von _evnt_multi
 *                -30(a6)      x
 *                -28(a6)      y
 *                -26(a6)      bstate
@@ -436,7 +436,7 @@ _form_popup:
 *                -22(a6)      key
 *                -20(a6)      nclicks
 *  -18(a6)     : MGRECT mg
-*   -8(a6)     : GRECT out,   Außenmaße des Menüs einschl. Rand usw.
+*   -8(a6)     : GRECT out,   Aussenmasse des Menues einschl. Rand usw.
 *
 
 xfrm_popup:
@@ -445,7 +445,7 @@ xfrm_popup:
 
  move.l   a0,a5                    ; a5 = OBJECT *
 
-; Initialialisierung fürs Scrolling
+; Initialialisierung fuers Scrolling
 
  clr.w    -52(a6)                  ; default: keinen festen Puffer verwenden
  move.l   a1,-34(a6)               ; Scrollroutine
@@ -461,7 +461,7 @@ xfrm_popup:
  subq.w   #3,d2                    ; soviele Zeilen sind immer zu blitten
  move.w   -36(a6),d1               ; erstes Scrollobjekt
  mulu     #24,d1
- move.w   ob_height(a5,d1.w),-46(a6)    ; Höhe einer Zeile
+ move.w   ob_height(a5,d1.w),-46(a6)    ; Hoehe einer Zeile
  mulu     -46(a6),d2               ; soviele Pixel sind immer zu blitten
  move.w   d2,-44(a6)
 
@@ -470,11 +470,11 @@ xfrm_popup:
  move.w   16(a6),-52(a6)           ; Flag "festen Puffer verwenden"
 xf_noscrli:
 
-; Ende der Initialisierung fürs Scrolling
+; Ende der Initialisierung fuers Scrolling
 
  move.w   gr_mkmstate,d3           ; Maustastenstatus
  andi.w   #1,d3                    ; nur linke Taste
- eori.w   #1,d3                    ; warte auf Änderung dieser Taste
+ eori.w   #1,d3                    ; warte auf Aenderung dieser Taste
 
  lea      -8(a6),a4
  lea      -18(a6),a3               ; MGRECT
@@ -497,14 +497,14 @@ xf_nokoor:
  move.w   desk_g+g_x,d0
  sub.w    (a4),d0                  ; x
  ble.b    xf_noxn
-* x ist kleiner als Null. Box linksbündig machen
+* x ist kleiner als Null. Box linksbuendig machen
  add.w    d0,(a4)
  add.w    d0,ob_x(a5)
 xf_noxn:
  move.w   desk_g+g_y,d0
  sub.w    g_y(a4),d0               ; y
  ble.b    xf_noyn
-* y ist kleiner als der Bildschirm. Box topbündig machen
+* y ist kleiner als der Bildschirm. Box topbuendig machen
  add.w    d0,g_y(a4)
  add.w    d0,ob_y(a5)
 xf_noyn:
@@ -530,7 +530,7 @@ xf_noyp:
  moveq    #0,d0                    ; kein check and set
  jsr      beg_mctrl                ; Bildschirm sperren
 
- move.l   a4,a0                    ; Dialoggröße
+ move.l   a4,a0                    ; Dialoggroesse
  tst.w    -52(a6)                  ; fester Puffer ?
  beq.b    xf_no_fixb1              ; nein
  jsr      fast_save_scr
@@ -570,34 +570,34 @@ xf_no_scrl1:
 * "Dialog"
 
 ; bsr     wait_but_released
- moveq    #-1,d7                   ; vorheriges ungültig
+ moveq    #-1,d7                   ; vorheriges ungueltig
 
 **
 *
-* Die große Schleife
+* Die grosse Schleife
 *
 **
 
 xf_loop:
  move.w   d5,d4
  move.w   d7,d6
- bgt.b    xf_wait_exit             ; über Eintrag, warten auf Verlassen
+ bgt.b    xf_wait_exit             ; ueber Eintrag, warten auf Verlassen
 
-* Wir schweben über einem ungültigen Eintrag und warten darauf, daß wir
-* in das Menü hineinkommen
+* Wir schweben ueber einem ungueltigen Eintrag und warten darauf, dass wir
+* in das Menue hineinkommen
 
  moveq    #0,d1                    ; warten auf Betreten
  moveq    #0,d0                    ; objnr 0
  bra.b    xf_wait
 
-* Wir schweben über einem gültigen Eintrag und warten auf Verlassen
-* dieses Eintrags oder des Menüs
+* Wir schweben ueber einem gueltigen Eintrag und warten auf Verlassen
+* dieses Eintrags oder des Menues
 
 xf_wait_exit:
  moveq    #1,d1                    ; warten auf Verlassen
  move.w   d7,d0                    ; objnr d7
 
-* beide Fälle:
+* beide Faelle:
 
 xf_wait:
  move.l   a3,a1                    ; MGRECT *mg
@@ -605,31 +605,31 @@ xf_wait:
  bsr      objc2mgrect
 
  pea      -30(a6)                  ; Ausgabearray
- clr.l    -(sp)                    ; mbuf (für mesag)
-;move.l   #$10101,-(sp)            ; st=1(gedrückt),msk=1(linke),n=1
+ clr.l    -(sp)                    ; mbuf (fuer mesag)
+;move.l   #$10101,-(sp)            ; st=1(gedrueckt),msk=1(linke),n=1
  move.l   #$10100,d0
  or.w     d3,d0                    ; erwarteten Maustatus dazumischen
  move.l   d0,-(sp)
- pea      250                      ; 250 ms (für Autoscroll-Timer)
+ pea      250                      ; 250 ms (fuer Autoscroll-Timer)
  clr.l    -(sp)                    ; GRECT *mm2
  move.l   a3,-(sp)                 ; GRECT *mm1
  move.w   #6,-(sp)                 ; mtypes = MU_BUTTON+MU_M1
 ; Autoscrolling ?
- tst.l    -34(a6)                  ; Menü scrollbar ?
+ tst.l    -34(a6)                  ; Menue scrollbar ?
  beq.b    xf_no_scrl2              ; nein
- cmp.w    -36(a6),d7               ; Maus über erstem Scrollobjekt ?
+ cmp.w    -36(a6),d7               ; Maus ueber erstem Scrollobjekt ?
  bne.b    xf_sweiter               ; nein
- tst.w    -40(a6)                  ; Menü schon ganz nach oben gescrollt ?
+ tst.w    -40(a6)                  ; Menue schon ganz nach oben gescrollt ?
  beq.b    xf_no_scrl2              ; ja
  bra.b    xf_scrl                  ; nein, kann noch scrollen
 xf_sweiter:
- cmp.w    -38(a6),d7               ; Maus über letztem Scrollobjekt ?
+ cmp.w    -38(a6),d7               ; Maus ueber letztem Scrollobjekt ?
  bne.b    xf_no_scrl2              ; nein
  move.w   -40(a6),d0               ; soviel habe ich gescrollt
  cmp.w    -42(a6),d0               ; soviel kann ich noch scrollen
  bge.b    xf_no_scrl2              ; habe schon nach unten gescrollt
 xf_scrl:
-; Warte auf Timer fürs Scrolling
+; Warte auf Timer fuers Scrolling
  ori.w    #EV_TIM,(sp)
 xf_no_scrl2:
  jsr      _evnt_multi
@@ -637,7 +637,7 @@ xf_no_scrl2:
  btst     #EVB_TIM,d0              ; Timer vom Autoscrolling ?
  beq      xf_didnotscroll
 
-* TIMER ist eingetroffen. Wir müssen scrollen
+* TIMER ist eingetroffen. Wir muessen scrollen
 * wir zeichnen maximal 3 Objekte neu, Objektnummern auf den Stack.
 * Wenn nicht zeichnen, objnr = 0
 
@@ -645,7 +645,7 @@ xf_scroll_now:
  move.w   d0,-(sp)
  clr.l    -(sp)                    ; zwei Objekte zum Neuzeichnen
  move.w   -42(a6),d1               ; soviel kann ich scrollen
- cmp.w    -38(a6),d7               ; Maus über letztem Scrollobjekt ?
+ cmp.w    -38(a6),d7               ; Maus ueber letztem Scrollobjekt ?
  beq.b    xf_runter                ; ja
 
 ; ## 1. ##
@@ -691,8 +691,8 @@ xf_beide:
  jsr      (a2)                     ; initialisieren
  lea      12(sp),sp
 ; Scrolling (Bitblt)
- move.w   -44(a6),-(sp)            ; h: ((visob-3) * Höhe eines Objekts)
- move.w   ob_width(a5),-(sp)       ; w: Breite des Menüs
+ move.w   -44(a6),-(sp)            ; h: ((visob-3) * Hoehe eines Objekts)
+ move.w   ob_width(a5),-(sp)       ; w: Breite des Menues
  move.w   -36(a6),d0
  addq.w   #1,d0
  mulu     #24,d0
@@ -700,7 +700,7 @@ xf_beide:
  add.w    ob_y(a5),d0              ; + y-Pos des parent
  move.w   d0,d1
  add.w    -46(a6),d1               ; y-Pos von firstob+2
- cmp.w    -36(a6),d7               ; Maus über erstem Scrollobjekt ?
+ cmp.w    -36(a6),d7               ; Maus ueber erstem Scrollobjekt ?
  bne.b    xf_hoch1                 ; ja
 ; war Scrollpfeil nach unten
  exg      d0,d1
@@ -716,10 +716,10 @@ xf_hoch1:
   * auf dem Stack
 
  lea      (sp),a1                  ; Tabelle
- moveq    #3,d0                    ; Tabellenlänge
+ moveq    #3,d0                    ; Tabellenlaenge
  move.l   a5,a0
  bsr      draw_n_objects           ; Objekte zeichnen
- addq.l   #6,sp                    ; Stack aufräumen
+ addq.l   #6,sp                    ; Stack aufraeumen
  move.w   (sp)+,d0 
 
 * Ende der Scrollbehandlung
@@ -746,7 +746,7 @@ xf_didnotscroll:
  btst     #3,ob_state+1(a5,d0.l)   ; DISABLED ?
  seq.b    d5                       ; nein, ok
 xf_abled:
- cmp.w    d6,d7                    ; Position geändert ?
+ cmp.w    d6,d7                    ; Position geaendert ?
  beq.b    xf_nochg
  tst.w    d6
  bmi.b    xf_noold
@@ -769,8 +769,8 @@ xf_nochg:
  bra      xf_loop
 
 *
-* Die Maustaste ist gedrückt (bzw. losgelassen) worden.
-* Wenn der Mauszeiger über einem Scrollpfeil war, wird
+* Die Maustaste ist gedrueckt (bzw. losgelassen) worden.
+* Wenn der Mauszeiger ueber einem Scrollpfeil war, wird
 * gescrollt, ansonsten die Schleife beendet.
 *
 
@@ -778,17 +778,17 @@ xf_button:
  tst.w    d7
  bsr      wait_but_released
 
- tst.l    -34(a6)                  ; Menü scrollbar ?
+ tst.l    -34(a6)                  ; Menue scrollbar ?
  beq.b    xf_endloop               ; nein
- cmp.w    -36(a6),d7               ; Maus über erstem Scrollobjekt ?
+ cmp.w    -36(a6),d7               ; Maus ueber erstem Scrollobjekt ?
  bne.b    xf_bweiter               ; nein
- tst.w    -40(a6)                  ; Menü schon ganz nach oben gescrollt ?
+ tst.w    -40(a6)                  ; Menue schon ganz nach oben gescrollt ?
  beq.b    xf_endloop               ; ja
 xf_scrlnw:
  moveq    #0,d0
  bra      xf_scroll_now            ; nein, kann noch scrollen
 xf_bweiter:
- cmp.w    -38(a6),d7               ; Maus über letztem Scrollobjekt ?
+ cmp.w    -38(a6),d7               ; Maus ueber letztem Scrollobjekt ?
  bne.b    xf_endloop               ; nein
  move.w   -40(a6),d0               ; soviel habe ich gescrollt
  cmp.w    -42(a6),d0               ; soviel kann ich noch scrollen
@@ -811,18 +811,18 @@ xf_no_fixb4:
  moveq    #0,d0                    ; kein check and set
  jsr      end_mctrl                ; Bildschirm freigeben
 
- moveq    #-1,d0                   ; Rückgabewert erstmal ungültig
- tst.w    d7                       ; gültig
- bmi.b    xf_ende                  ; außerhalb
- tst.b    d5                       ; gültig ?
+ moveq    #-1,d0                   ; Rueckgabewert erstmal ungueltig
+ tst.w    d7                       ; gueltig
+ bmi.b    xf_ende                  ; ausserhalb
+ tst.b    d5                       ; gueltig ?
  beq.b    xf_ende                  ; nein
- move.w   d7,d0                    ; Rückgabewert
+ move.w   d7,d0                    ; Rueckgabewert
  muls     #24,d7
  bclr     #0,ob_state+1(a5,d7.l)   ; deselektieren
- tst.l    -34(a6)                  ; Menü scrollbar ?
+ tst.l    -34(a6)                  ; Menue scrollbar ?
  beq.b    xf_ende                  ; nein
  move.l   14(a6),a0
- move.w   -40(a6),(a0)             ; Scrollpos zurückgeben
+ move.w   -40(a6),(a0)             ; Scrollpos zurueckgeben
 xf_ende:
  movem.l  (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5
  unlk     a6
@@ -851,17 +851,17 @@ __set_under:
 alrt_under_chloop:
  move.b   (a0)+,d0                 ; Zeichen d0 unterstreichen?
  beq.b    alrt_under_end           ; keins mehr da
- cmpi.b   #' ',d0                  ; Leerzeichen überspringen
+ cmpi.b   #' ',d0                  ; Leerzeichen ueberspringen
  beq.b    alrt_under_chloop
- jsr      toupper                  ; in Großschrift wandeln
-* Prüfe Zeichen d0 auf Kollision mit den vorherigen Buttons
+ jsr      toupper                  ; in Grossschrift wandeln
+* Pruefe Zeichen d0 auf Kollision mit den vorherigen Buttons
  lea      UNDER_CH(a6),a1
 alrt_used_loop:
  move.b   (a1)+,d1
  beq.b    alrt_set_under           ; Listenende erreicht
  cmp.b    d1,d0                    ; Zeichen schon verwendet?
  bne.b    alrt_used_loop           ; nein, weitersuchen
- bra.b    alrt_under_chloop        ; schon verwendet, nächstes Zeichen
+ bra.b    alrt_under_chloop        ; schon verwendet, naechstes Zeichen
 * Unterstrich setzen
 alrt_set_under:
  move.b   d0,-(a1)                 ; Zeichen merken
@@ -875,15 +875,15 @@ alrt_under_end:
  rts
 
 
-UNDER_CH  SET  -4                  ; char[4]: Zeichen für Alt-<ch>
+UNDER_CH  SET  -4                  ; char[4]: Zeichen fuer Alt-<ch>
 ICON_NR   SET  UNDER_CH-2          ; int,   Iconnummer
 LINE_CNT  SET  ICON_NR-2           ; int,   Anzahl Textzeilen
 LINE_WID  SET  LINE_CNT-2          ; int,   maximale Textzeilenbreite
 BUTT_CNT  SET  LINE_WID-2          ; int,   Anzahl Buttons
 BUTT_WID  SET  BUTT_CNT-2          ; int,   maximale Buttonbreite
-FLYINF    SET  BUTT_WID-4          ; void*  für Flydials
+FLYINF    SET  BUTT_WID-4          ; void*  fuer Flydials
 SVD_GRECT SET  FLYINF-8            ; GRECT, geretteter Bildschirmbereich
-DLG_GRECT SET  SVD_GRECT-8         ; GRECT, Dialogboxgröße
+DLG_GRECT SET  SVD_GRECT-8         ; GRECT, Dialogboxgroesse
 SVD_CLIP  SET  DLG_GRECT-8         ; GRECT, geretteter Clippingbereich
 TREE      SET  SVD_CLIP-240-270    ; 24 Objekte+5 Textzeilen+3 Buttons
 
@@ -902,15 +902,15 @@ form_alert:
  move.w   #alert_tree_end-alert_tree,d0
  move.l   a5,a0
  lea      alert_tree(pc),a1
- jsr      memcpy
+ jsr      vmemcpy
 
- move.b   #1,ob_spec+1(a5)         ; Außenrand normalerweise 1
+ move.b   #1,ob_spec+1(a5)         ; Aussenrand normalerweise 1
  tst.w    enable_3d
  beq.b    alrt_2d
- addq.b   #1,ob_spec+1(a5)         ; Außenrand 2, wenn 3D
+ addq.b   #1,ob_spec+1(a5)         ; Aussenrand 2, wenn 3D
 alrt_2d:
  moveq    #8-1,d1                  ; 5 Strings + 3 Buttons
- lea      48(a5),a1                ; BOX und Icon überspringen
+ lea      48(a5),a1                ; BOX und Icon ueberspringen
 alrt_relo_loop:
  move.l   a5,d0
  add.l    d0,ob_spec(a1)           ; relozieren
@@ -983,16 +983,16 @@ alrt_under_loop:
  mulu     #24,d0
  lea      0(a5,d0.l),a4            ; a4 = aktuell untersuchter Button
  btst.b   #WHITEBAK_B,ob_state+1(a4)    ; schon Unterstrich gesetzt ?
- bne.b    alrt_under_nextbut       ; ja, nächster Button
+ bne.b    alrt_under_nextbut       ; ja, naechster Button
  bsr      __set_under              ; Unterstrich festlegen
 alrt_under_nextbut:
- addq.w   #1,d7                    ; nächster Button
- cmp.w    BUTT_CNT(a6),d7          ; gültig ?
+ addq.w   #1,d7                    ; naechster Button
+ cmp.w    BUTT_CNT(a6),d7          ; gueltig ?
  bcs.b    alrt_under_loop
 
 * Icon setzen
 
- move.w   ICON_NR(a6),d0           ; Icon erwünscht ?
+ move.w   ICON_NR(a6),d0           ; Icon erwuenscht ?
  beq.b    alrt_no_icon             ; nein
  subq.w   #1,d0
  mulu     #14,d0                   ; sizeof(BITBLK)
@@ -1012,7 +1012,7 @@ alrt_obfix_loop:
  cmp.w    #10,d7
  bcs.b    alrt_obfix_loop
 
- move.l   #$200020,24+ob_width(a5) ; Breite/Höhe des Icons = 32 Pixel
+ move.l   #$200020,24+ob_width(a5) ; Breite/Hoehe des Icons = 32 Pixel
 
  lea      DLG_GRECT(a6),a1         ; hier kommt das GRECT hin
  move.l   a5,a0
@@ -1026,13 +1026,13 @@ alrt_obfix_loop:
  lea      SVD_CLIP(a6),a0
  jsr      get_clip_grect           ; aktuellen Clippingbereich retten
 
- lea      FLYINF(a6),a2            ; Für den etv_critic per Malloc holen
+ lea      FLYINF(a6),a2            ; Fuer den etv_critic per Malloc holen
  tst.b    no_switch                ; bin ich im etv_critic ?
  bne.b    fa_critic                ; ja, Puffer per Malloc !
  move.l   #scrbuf,(a2)
  lea      -1,a2                    ; internen Puffer verwenden
 fa_critic:
- lea      SVD_GRECT(a6),a1         ; Dialoggröße
+ lea      SVD_GRECT(a6),a1         ; Dialoggroesse
  moveq    #0,d0
  bsr      __fm_xdial               ; schneidet automatisch mit Schirm
 
@@ -1058,10 +1058,10 @@ fa_ok1:
 ;suba.l   a1,a1
  move.l   a5,a0
  moveq    #0,d0
- bsr      _form_xdo                ; Dialog ausführen
+ bsr      _form_xdo                ; Dialog ausfuehren
 
  move.w   d0,d7
- and.w    #$7fff,d7                ; Rückgabe merken, Doppelklickbit löschen
+ and.w    #$7fff,d7                ; Rueckgabe merken, Doppelklickbit loeschen
 
  bsr      reset_mouse              ; Hide- Counter wieder in Ordnung bringen
  move.w   #259,d0                  ; M_RESTORE
@@ -1081,12 +1081,12 @@ fa_nocritic:
  bsr      __fm_xdial
 
  lea      SVD_CLIP(a6),a0
- jsr      set_clip_grect           ; geretteten Clippingbereich zurück
+ jsr      set_clip_grect           ; geretteten Clippingbereich zurueck
 
  jsr      update_0                 ; Bildschirm freigeben
 
  move.w   d7,d0
- subq.w   #6,d0                    ; Buttonnummer zurückgeben
+ subq.w   #6,d0                    ; Buttonnummer zurueckgeben
  movem.l  (sp)+,d7/d6/a5/a4
  unlk     a6
  rts
@@ -1148,7 +1148,7 @@ alert_tree:
  DC.W     8,-1,-1                  ; 7: Button 1
  DC.W     G_BUTTON,6+FL3DACT,0
  DC.L     alert_tree_end-alert_tree+205
- DC.W     3,9,20,$0101             ; eine Zeichenhöhe plus ein Pixel
+ DC.W     3,9,20,$0101             ; eine Zeichenhoehe plus ein Pixel
 
  DC.W     9,-1,-1                  ; 8: Button 2
  DC.W     G_BUTTON,6+FL3DACT,0
@@ -1165,7 +1165,7 @@ alert_tree_end:
 bitblk_note:
  DC.L     image_note     ; Imagedaten
  DC.W     4              ; Breite 4 Bytes
- DC.W     32             ; Höhe 32 Pixel
+ DC.W     32             ; Hoehe 32 Pixel
  DC.W     0              ; x
  DC.W     0              ; y
  DC.W     LRED
@@ -1307,7 +1307,7 @@ get_next_edit:
  move.w   d0,d7                    ; d7 = objnr
  moveq    #8,d5                    ; nach EDITABLE suchen
  moveq    #0,d6                    ; ab Objekt 0
- moveq    #1,d3                    ; Richtung: per Default vorwärts
+ moveq    #1,d3                    ; Richtung: per Default vorwaerts
  move.w   d1,d0
  beq.b    gned_c0
  subq.w   #1,d0
@@ -1364,24 +1364,24 @@ gned_cn:
  btst     #DISABLED_B,ob_state+1(a1)
  bne.b    gne_next                 ; disabled, weiter
  lea      gne_helps(pc),a5
- adda.w   d5,a5                    ; Offset für Help/Undo
+ adda.w   d5,a5                    ; Offset fuer Help/Undo
  moveq    #5-1,d2                  ; 5 Strings
 gne_str:
  move.l   ob_spec(a1),a2           ; Zeiger auf den Text
 gne_space:
  cmpi.b   #' ',(a2)+
- beq.b    gne_space                ; Leerstellen überlesen
+ beq.b    gne_space                ; Leerstellen ueberlesen
  subq.l   #1,a2
  moveq    #4-1,d1                  ; 4 Zeichen
  move.l   a5,-(sp)
 gne_c:
  move.b   (a2)+,d0
- jsr      toupper                  ; zerstört nur d0
+ jsr      toupper                  ; zerstoert nur d0
  cmp.b    (a5)+,d0
  dbne     d1,gne_c
  move.l   (sp)+,a5
  beq.b    gne_found                ; gefunden !!
- addq.l   #4,a5                    ; nein, nächste Vergleichszeichenkette
+ addq.l   #4,a5                    ; nein, naechste Vergleichszeichenkette
  dbra     d2,gne_str
  bra.b    gne_next
 
@@ -1397,7 +1397,7 @@ gne_nextob:
  tst.w    d6                       ; vor dem ersten Objekt ?
  bge.b    gned_cn                  ; nein, weiter
 gne_notfound:
- move.w   d7,d0                    ; nix gefunden, akt. Obj. zurückgeben
+ move.w   d7,d0                    ; nix gefunden, akt. Obj. zurueckgeben
 gned_ret:
  movem.l  (sp)+,a5/d7/d6/d5/d4/d3
  rts
@@ -1436,7 +1436,7 @@ gne_cq:
 
 gne_undos:
  DC.B     'ABBR'
- DC.B     'ZURÜ'
+ DC.B     'ZUR',$9a
  DC.B     'CANC'
  DC.B     'ABOR'
  DC.B     'abor'
@@ -1457,16 +1457,16 @@ gne_helps:
 *
 * Eingabe: 4(sp) = tree, 8(sp) = objnr, $a(sp) = &c, $e(sp) = whandle
 * Ausgabe: $a(sp) = &c, $e(sp) = &nxtob
-* Rückgabe == 0 gdw. Exitbutton mit Return angewählt
+* Rueckgabe == 0 gdw. Exitbutton mit Return angewaehlt
 *
-* Mag!X 2.00: Mit <objnr> = $8765 wird in *c zurückgegeben, ob mit
-*             Alt-Taste ein Objekt angewählt wurde.
+* Mag!X 2.00: Mit <objnr> = $8765 wird in *c zurueckgegeben, ob mit
+*             Alt-Taste ein Objekt angewaehlt wurde.
 *
 * MagiC 5.10: Ist <whandle != -1>, wird der Redraw aufs Fenster
-*             beschränkt
+*             beschraenkt
 *
 
-form_wkeybd:
+_form_wkeybd:
  lea      4(sp),a0
  movem.l  d6/d7/a2/a4/a5/a6,-(sp)
  move.l   (a0)+,a6                 ; a6 = tree
@@ -1525,11 +1525,11 @@ fkb_again:
 ;move.w   d1,d1
  move.w   d7,d0                    ; objnr
  move.l   a6,a0                    ; tree
- bsr      get_next_edit            ; nächsten Editstring suchen
+ bsr      get_next_edit            ; naechsten Editstring suchen
  move.w   (sp)+,d1
  move.w   (sp)+,d2                 ; Shiftstatus
  beq.b    no_shift
- cmp.w    d7,d0                    ; objnr hat sich geändert ?
+ cmp.w    d7,d0                    ; objnr hat sich geaendert ?
  beq.b    no_shift                 ; nein, fertig
  move.w   d0,d7                    ; merken
  bra.b    fkb_again                ; nochmal Cursorbewegung
@@ -1540,7 +1540,7 @@ no_shift:
  tst.w    d0                       ; Undo,Help oder ^Q erfolgreich ?
  beq      no_end                   ; nein, einfach ignorieren
 fkb_no_sfn:
- clr.w    (a5)                     ; Zeichen löschen, da verarbeitet
+ clr.w    (a5)                     ; Zeichen loeschen, da verarbeitet
  move.w   d0,(a4)                  ; *nxtob
  beq.b    no_end                   ; kein Defaultbutton oder nxtob
  subq.w   #2,d1
@@ -1609,11 +1609,11 @@ form_wbutton:
 * d0/d1 = _form_button(a0 = OBJECT *tree, d0 = int objnr,
 *                        d1 = int clicks, d2 = int winhdl)
 *
-* Rückgabe d0 = 0, wenn Dialog abgeschlossen (TOUCH(EXIT))
-*          d1 = nächstes OBJECT
+* Rueckgabe d0 = 0, wenn Dialog abgeschlossen (TOUCH(EXIT))
+*          d1 = naechstes OBJECT
 *
 * 11.12.96:    Per <windhdl> ist Hintergrundbedienung eines Dialogs
-*              möglich. Bei <winhdl> == -1 alte Funktion.
+*              moeglich. Bei <winhdl> == -1 alte Funktion.
 *
 
 _form_button:
@@ -1659,7 +1659,7 @@ fb_loop1:
  muls     #24,d0
 
  btst     #4,ob_flags+1(a5,d0.l)   ; RBUTTON ?
- beq.b    frbt_nxtchld             ; nein, nächstes Kind
+ beq.b    frbt_nxtchld             ; nein, naechstes Kind
 
  move.w   ob_state(a5,d0.l),d1
  cmp.w    d5,d6
@@ -1683,7 +1683,7 @@ frb_chg:
 frbt_nxtchld:
  move.w   d5,d0
  muls     #24,d0
- move.w   ob_next(a5,d0.l),d5      ; nächstes Kind
+ move.w   ob_next(a5,d0.l),d5      ; naechstes Kind
 fb_begloop:
  tst.w    d5
  bmi      fb_weiter                ; Fehler
@@ -1727,7 +1727,7 @@ fb_no_rbutton:
  move.w   d0,(a0)
  bra.b    fb_swb_ok
 fb_swb_1:
- addq.w   #1,-(a0)                 ; 1 Klick: erhöhen
+ addq.w   #1,-(a0)                 ; 1 Klick: erhoehen
  cmp.w    (a0),d0
  bcc.b    fb_swb_ok
  clr.w    (a0)
@@ -1740,14 +1740,14 @@ fb_no_swb:
  bne.b    fb_no_pop
 */
 
-* POPUP-MENÜ
+* POPUP-MENUe
 
 fb_popup:
  move.l   a5,a0
  move.w   d6,d0
  bsr      _objc_offset
  move.l   ob_spec(a4),a1
- move.l   (a1)+,a0                 ; Menübaum
+ move.l   (a1)+,a0                 ; Menuebaum
  move.w   (a1),d2                  ; num
  mulu     #24,d2
  lea      ob_state+1(a0,d2.l),a1
@@ -1766,11 +1766,11 @@ fb_popup:
  move.l   (sp)+,a0
  move.l   (sp)+,ob_x(a0)           ; x/y restaurieren
  move.l   (sp)+,a1
- bclr     #2,(a1)                  ; das CHECKED löschen
- tst.w    d0                       ; Rückgabewert von form_popup
- ble.b    fb_pop_swb_draw          ; ungültig
+ bclr     #2,(a1)                  ; das CHECKED loeschen
+ tst.w    d0                       ; Rueckgabewert von form_popup
+ ble.b    fb_pop_swb_draw          ; ungueltig
  move.l   ob_spec(a4),a0
- move.w   d0,4(a0)                 ; gültig, umsetzen
+ move.w   d0,4(a0)                 ; gueltig, umsetzen
 fb_pop_swb_draw:
  bclr     #0,ob_state+1(a4)        ; nicht SELECTED
 
@@ -1786,7 +1786,7 @@ fb_no_pop:
  eori.w   #1,d3                    ; ja, SELECTED toggeln
 
 *
-* In beiden Fällen
+* In beiden Faellen
 *
 
 fb_weiter:
@@ -1796,7 +1796,7 @@ fb_weiter:
  and.w    #9,d0
  beq.b    frbt_noaction            ; weder SELECTABLE noch EDITABLE
 
- subq.l   #8,sp                    ; Platz für 4 ints
+ subq.l   #8,sp                    ; Platz fuer 4 ints
  lea      (sp),a0
  move.l   #$10100,d0               ; clk=1,msk=1,state=0
  bsr      evnt_button
@@ -1830,7 +1830,7 @@ frbt_ende:
 
 frbt_nodouble:
  addq.l   #4,sp
- move.w   d6,d1                    ; nächstes OBJECT
+ move.w   d6,d1                    ; naechstes OBJECT
 ;move.w   d0,d0                    ; Null, wenn Dialog abgeschlossen
  movem.l  (sp)+,a5/a4/d7/d6/d5/d4/d3
  rts
@@ -1878,7 +1878,7 @@ asco_di:
 ;move.l   te_ptext(a1),a1
 ;asco_txt:
  move.b   0(a1,d0.w),d0            ; unterstrichenes Zeichen
- jsr      toupper                  ; Zeichen in Großschrift
+ jsr      toupper                  ; Zeichen in Grossschrift
  cmp.b    d0,d2                    ; gefunden ?
  bne.b    asco_next
 ; MagiC 5.10: falls irgendein parent HIDETREE hat, Objekt ignorieren
@@ -1888,7 +1888,7 @@ asco_good_loop:
  beq.b    asco_is_good             ; ja, d1 ist OK
 ;move.w   d0,d0
 ;move.l   a0,a0
- jsr      parentob                 ; parent ermitteln, ändert nur d1/d2
+ jsr      parentob                 ; parent ermitteln, aendert nur d1/d2
  move.w   d0,d1
  mulu     #24,d0
  btst     #7,ob_flags+1(a0,d0.w)   ; HIDETREE ?
@@ -1900,7 +1900,7 @@ asco_is_good:
  move.w   d1,d0
  rts                               ; gefunden !
 asco_next:
- addq.w   #1,d1                    ; nächste Objektnummer
+ addq.w   #1,d1                    ; naechste Objektnummer
  btst     #5,ob_flags+1(a2)        ; LASTOB ?
  lea      24(a2),a2
  beq      asco_loop                ; nein, weiter
@@ -1929,7 +1929,7 @@ form_xdo:
 
 ***************************************
 *
-* Callback für form_xdo
+* Callback fuer form_xdo
 *
 
 __fdo_callback:
@@ -1947,7 +1947,7 @@ __fdo_callback:
  move.l   d1,a2
  jsr      (a2)                     ; int xdo_callback( ... )
  adda.w   #12,sp
- move.w   (sp)+,d6                 ; aktuelles Editobjekt zurück
+ move.w   (sp)+,d6                 ; aktuelles Editobjekt zurueck
 _fdocb_ende:
  rts
 
@@ -1966,7 +1966,7 @@ form_do:
 * d0/d1 _form_xdo( a0 = OBJECT *tree, d0 = int startob,
 *                   a1 = XDO_INF *xdo_inf,  a2 = FLYINF *fi )
 *
-* -$20(a6)     GRECT für FlyDial
+* -$20(a6)     GRECT fuer FlyDial
 * -$18(a6)     MFDB *mfdb
 * -$14(a6)     int  last_curpos
 * -$12(a6)     int  x
@@ -1978,15 +1978,15 @@ form_do:
 *
 *  -6(a6)      int  curpos
 *
-* <xdo_inf> ist NULL oder zeigt auf 4 Tabellen, die jeweils Einträge
+* <xdo_inf> ist NULL oder zeigt auf 4 Tabellen, die jeweils Eintraege
 *          der Form haben: char scancode (0 = Tabellenende)
 *                          char nclicks
 *                          int  objnr
-*          die Tabellen sind für unshift/shift/ctrl/alt
+*          die Tabellen sind fuer unshift/shift/ctrl/alt
 *
 *         Es folgt NULL oder der Zeiger auf eine Callback-
-*         Funktion, die undokumentiert war und deshalb für MagiC 4.0
-*         geändert wird:
+*         Funktion, die undokumentiert war und deshalb fuer MagiC 4.0
+*         geaendert wird:
 *
 *         void xdo_callback(WORD events, OBJECT *tree,
 *                             WORD *evt_data, XDO_INF *info,
@@ -2011,11 +2011,11 @@ _form_xdo:
  move.l   -$18(a6),d0
  beq.b    fdo_no_corner            ; keine FlyDials
  moveq    #-1,d0
- jsr      smalloc                  ; verfügbare Bytes
+ jsr      smalloc                  ; verfuegbare Bytes
  move.l   -$18(a6),a0              ; a0 = altes GRECT
  move.w   8+fd_wdwidth(a0),d1      ; Breite in Worten
  mulu     8+fd_nplanes(a0),d1      ; * Planes
- mulu     8+fd_h(a0),d1            ; * Höhe
+ mulu     8+fd_h(a0),d1            ; * Hoehe
  add.l    d1,d1                    ; in Bytes umrechnen
  cmp.l    d1,d0                    ; d0 kann negativ sein!
  blt.b    fdo_no_corner            ; zuwenig Speicher
@@ -2033,8 +2033,8 @@ fdo_2d:
  bsr      draw_2dcorner            ; umgeknickte Ecke zeichnen
 
 fdo_no_corner:
- moveq    #-1,d3                   ; Mausklick- Cursorpos ungültig
- move.w   d3,-$14(a6)              ; letztes Editfeld ungültig
+ moveq    #-1,d3                   ; Mausklick- Cursorpos ungueltig
+ move.w   d3,-$14(a6)              ; letztes Editfeld ungueltig
  tst.w    d7
  bgt.b    fdo_startob              ; startob definitiv angegeben (>0)
 
@@ -2047,7 +2047,7 @@ fdo_no_corner:
  move.w   d0,d7
 
 fdo_startob:
- clr.w    d6                       ; vorheriges Editfeld ungültig
+ clr.w    d6                       ; vorheriges Editfeld ungueltig
  moveq    #1,d5
 
 *
@@ -2060,7 +2060,7 @@ fdo_loop:
  cmp.w    d7,d6                    ; neues Editfeld ?
  beq.b    fdo_no_new_edit          ; nein
  move.w   d7,d6                    ; altes := neues
- clr.w    d7                       ; neues := ungültig
+ clr.w    d7                       ; neues := ungueltig
 
 * neues Editfeld initialisieren und Cursor ein
 
@@ -2077,7 +2077,7 @@ fdo_no_new_edit:
 * pre-Callback
 *
 
- suba.l   a1,a1                    ; keine Rückgabewerte von _evnt_multi !
+ suba.l   a1,a1                    ; keine Rueckgabewerte von _evnt_multi !
  moveq    #0,d0                    ; keine Events
  bsr      __fdo_callback
 
@@ -2085,9 +2085,9 @@ fdo_no_new_edit:
 * Event
 *
 
- pea      -$12(a6)                 ; Platz für Rückgabewerte
+ pea      -$12(a6)                 ; Platz fuer Rueckgabewerte
  clr.l    -(sp)                    ; kein Messagepuffer
- move.l   #$020101,-(sp)           ; state (1, also gedrückt), mask, clicks (=2)
+ move.l   #$020101,-(sp)           ; state (1, also gedrueckt), mask, clicks (=2)
  clr.l    -(sp)                    ; (kein tcount)
  clr.l    -(sp)                    ; (kein mm2)
  clr.l    -(sp)                    ; (kein mm1)
@@ -2103,7 +2103,7 @@ fdo_no_new_edit:
  bsr      __fdo_callback
 
  move.w   d0,d4
- moveq    #-1,d3                   ; x zunächst ungültig
+ moveq    #-1,d3                   ; x zunaechst ungueltig
  btst     #EVB_KEY,d4
  beq      fdo_no_keybd
 
@@ -2117,19 +2117,19 @@ fdo_no_new_edit:
 *
 
  move.w   -$c(a6),d0               ; Tastaturstatus
- move.l   8(a4),a0                 ; Tabelle für CTRL
+ move.l   8(a4),a0                 ; Tabelle fuer CTRL
  btst     #2,d0                    ; K_CTRL
  bne.b    fdo_ksrch                ; ja, Tabelle durchsuchen
- move.l   12(a4),a0                ; Tabelle für ALT
+ move.l   12(a4),a0                ; Tabelle fuer ALT
  btst     #3,d0                    ; K_ALT ?
  bne.b    fdo_ksrch                ; ja, Tabelle durchsuchen
- move.l   4(a4),a0                 ; Tabelle für SHIFT
+ move.l   4(a4),a0                 ; Tabelle fuer SHIFT
  andi.w   #3,d0
  bne.b    fdo_ksrch                ; ja, Tabelle durchsuchen
  move.l   (a4),a0                  ; unshift
 fdo_ksrch:
  move.l   a0,d0
- beq.b    fdo_nokbtab              ; Tabelle ungültig
+ beq.b    fdo_nokbtab              ; Tabelle ungueltig
  move.w   -$a(a6),d0               ; Zeichen
  lsr.w    #8,d0                    ; Scancode ins Lobyte
 
@@ -2178,7 +2178,7 @@ fdo_fk:
  pea      -$a(a6)                  ; Zeichen
  move.w   d6,-(sp)                 ; objnr
  move.l   a5,-(sp)                 ; tree
- bsr      form_wkeybd
+ bsr      _form_wkeybd
  adda.w   #$10,sp
 
  move.w   (sp)+,d7
@@ -2208,22 +2208,22 @@ fdo_no_keybd:
  jsr      _objc_find
 
  move.w   d0,d7                    ; d7 = angeklicktes Objekt
- addq.w   #1,d0                    ; gültig ?
+ addq.w   #1,d0                    ; gueltig ?
  bne.b    fdo_validob              ; ja
 
  move.w   #7,-(sp)                 ; Pling
  move.l   #$30002,-(sp)            ; Bconout(CON)
  trap     #13                      ; bios
  addq.l   #6,sp
- clr.w    d7                       ; Objekt ungültig
+ clr.w    d7                       ; Objekt ungueltig
  bra      fdo_no_but
 
 fdo_validob:
  cmpi.w   #1,-8(a6)                ; nclicks
  bne.b    fdo_nofly                ; nicht ein Klick
- btst     #1,gr_mkmstate+1         ; rechte Maustaste gedrückt ?
+ btst     #1,gr_mkmstate+1         ; rechte Maustaste gedrueckt ?
  bne.b    fdo_myfly                ; ja, meine Fliegroutine
- btst     #3,gr_mkkstate+1         ; ALT gedrückt ?
+ btst     #3,gr_mkkstate+1         ; ALT gedrueckt ?
  bne.b    fdo_myfly                ; ja, meine Fliegroutine
 
 * Flydial per linker Maustaste
@@ -2249,8 +2249,8 @@ fdo_validob:
 
 * Flydial per rechter Maustaste
 fdo_myfly:
- moveq    #0,d7                    ; Objekt ungültig machen
- btst     #0,gr_mkmstate+1         ; linke Maustaste noch gedrückt ?
+ moveq    #0,d7                    ; Objekt ungueltig machen
+ btst     #0,gr_mkmstate+1         ; linke Maustaste noch gedrueckt ?
  beq.b    fdo_no_but               ; nein, nichts tun
  move.l   -$18(a6),d0
  beq.b    fdo_no_but               ; keine FlyDials
@@ -2274,18 +2274,18 @@ fdo_nofly:
  btst     #EVB_KEY,d4
  bne.b    fdo_no_but
 
-* Editfeld wurde angeklickt, keine Taste betätigt
+* Editfeld wurde angeklickt, keine Taste betaetigt
 
- move.w   -$12(a6),d3              ; x des Klicks ist gültig
+ move.w   -$12(a6),d3              ; x des Klicks ist gueltig
 
 fdo_no_but:
  tst.w    d5                       ; Dialog beendet ?
  beq.b    fdo_cur_off              ; ja, Cursor aus
- tst.w    d7                       ; neues Editfeld gültig
+ tst.w    d7                       ; neues Editfeld gueltig
  beq.b    fdo_no_cur_off           ; nein
  tst.w    d3
  bpl.b    fdo_cur_off              ; Cursor positionieren (aus und wieder an)
- cmp.w    d7,d6                    ; hat sich geändert ?
+ cmp.w    d7,d6                    ; hat sich geaendert ?
  beq.b    fdo_no_cur_off           ; nein, Cursor lassen
 fdo_cur_off:
 
@@ -2413,7 +2413,7 @@ draw_2dcorner:
  move.l   -16(a1),(a1)
  subq.w   #3,(a1)+
  subq.w   #3,(a1)+
-* zwei weiße Linien
+* zwei weisse Linien
  move.l   -28(a1),(a1)
  addq.w   #1,(a1)+
  addq.w   #1,(a1)+
@@ -2423,7 +2423,7 @@ draw_2dcorner:
  move.l   -28(a1),(a1)
  subq.w   #1,(a1)+
  subq.w   #1,(a1)+
-* noch zwei weiße Linien
+* noch zwei weisse Linien
  move.l   -12(a1),(a1)
  addq.w   #1,(a1)+
  addq.w   #2,a1
@@ -2458,12 +2458,12 @@ draw_2dcorner:
 *
 * void flydial( a0 = OBJECT *tree, a1 = FLYINF *fi )
 *
-*     a4       MFDB *    für Hintergrund (= a6+8)
-*     a6       GRECT *   für Hintergrund
+*     a4       MFDB *    fuer Hintergrund (= a6+8)
+*     a6       GRECT *   fuer Hintergrund
 *   (sp)       GRECT
-*  8(sp)       MFDB      für Dialogbox
+*  8(sp)       MFDB      fuer Dialogbox
 * 28(sp)       WGRECT *  neue Grects    } bilden zusammen die alte Box
-* 32(sp)       GRECT     Überschneidung }
+* 32(sp)       GRECT     Ueberschneidung }
 * 40(sp)       int[41]   gerettete Mausdaten
 *
 
@@ -2481,23 +2481,23 @@ flydial:
  move.l   a0,a5                    ; a5 = OBJECT *tree
  move.l   a1,a6                    ; a6 = altes GRECT
  lea      8(a1),a4                 ; a4 = mfdb
- btst     #1,gr_mkmstate+1         ; rechte Maustaste gedrückt ?
+ btst     #1,gr_mkmstate+1         ; rechte Maustaste gedrueckt ?
  bne.b    fly_r                    ; ja
- btst     #3,gr_mkkstate+1         ; ALT gedrückt ?
+ btst     #3,gr_mkkstate+1         ; ALT gedrueckt ?
 fly_r:
  sne      d5                       ; merken
 
-* testen, ob unser Rechteck vollständig im Bildschirm liegt
+* testen, ob unser Rechteck vollstaendig im Bildschirm liegt
 
  move.l   a6,a1
  bsr      grect_in_scr             ; liegt <a6> in desk_g ?
- beq      fly_ende                 ; Box außerhalb!
+ beq      fly_ende                 ; Box ausserhalb!
 
 * Puffer allozieren
 
  move.w   fd_wdwidth(a4),d0        ; Breite in Worten
  mulu     fd_nplanes(a4),d0        ; * Planes
- mulu     fd_h(a4),d0              ; * Höhe
+ mulu     fd_h(a4),d0              ; * Hoehe
  add.l    d0,d0                    ; in Bytes umrechnen
  jsr      smalloc
  lea      MFDB_BOX(sp),a0
@@ -2527,12 +2527,12 @@ fly_sv_loop:
  tst.b    d5
  beq.b    fly_noright
 
-* Operation bei gedrückter rechter Maustaste
- lea      MFDB_BOX(sp),a1          ; MFDB für Box
- lea      (a6),a0                  ; GRECT für Box
+* Operation bei gedrueckter rechter Maustaste
+ lea      MFDB_BOX(sp),a1          ; MFDB fuer Box
+ lea      (a6),a0                  ; GRECT fuer Box
  moveq    #0,d0                    ; nach (0,0) des mfdb
  bsr      scr_to_mfdb              ; Dialogbox retten
- move.l   a4,a1                    ; MFDB für Hintergrund
+ move.l   a4,a1                    ; MFDB fuer Hintergrund
  move.l   a6,a0                    ; altes GRECT
  moveq    #0,d0                    ; kein Offset
  bsr      mfdb_to_scr              ; Hintergrund restaurieren
@@ -2549,8 +2549,8 @@ fly_sv_loop:
  move.w   GRECTNEU+g_y(sp),d7      ;   x_neu
  sub.w    g_y(a6),d7               ; - x_alt
  add.w    d7,ob_y(a5)
- move.l   a4,a1                    ; MFDB für Hintergrund
- lea      GRECTNEU(sp),a0          ; GRECT für Box
+ move.l   a4,a1                    ; MFDB fuer Hintergrund
+ lea      GRECTNEU(sp),a0          ; GRECT fuer Box
  moveq    #0,d0                    ; nach (0,0) des mfdb
  bsr      scr_to_mfdb              ; neuen Hintergrund retten
  bra      fly_drawbox
@@ -2562,7 +2562,7 @@ fly_noright:
  move.l   a6,a0
  bsr      graf_dragbox
  cmp.l    (a6),d0
- beq      fly_free                 ; Position nicht geändert
+ beq      fly_free                 ; Position nicht geaendert
 
  move.l   d0,GRECTNEU(sp)          ; neue Position x/y
  move.l   g_w(a6),GRECTNEU+g_w(sp) ; neue Position w/h
@@ -2576,8 +2576,8 @@ fly_noright:
 
 * 1. Box nach Box-MFDB
 
- lea      MFDB_BOX(sp),a1          ; MFDB für Box
- lea      (a6),a0                  ; GRECT für Box
+ lea      MFDB_BOX(sp),a1          ; MFDB fuer Box
+ lea      (a6),a0                  ; GRECT fuer Box
  moveq    #0,d0                    ; nach (0,0) des mfdb
  bsr      scr_to_mfdb
 
@@ -2621,7 +2621,7 @@ fly_nxt1:
  move.l   GRECTNEU+g_w(sp),g_w(a1)
  move.l   a6,a0                    ; scrg
  bsr      grects_intersect
- beq      fly_no_inter             ; überschneiden sich nicht
+ beq      fly_no_inter             ; ueberschneiden sich nicht
 
  lea      GRECTINT(sp),a0
  move.w   g_x(a6),d0
@@ -2688,7 +2688,7 @@ fly_drawbox:
 
 fly_free:
  move.l   MFDB_BOX+fd_addr(sp),a0
- jsr      smfree                   ; Speicher für Box wieder freigeben
+ jsr      smfree                   ; Speicher fuer Box wieder freigeben
 
  move.w   #260,d0
  bsr      graf_mouse               ; previous form
@@ -2716,10 +2716,10 @@ fly_ende:
 *
 * Rettet einen Bildschirmausschnitt in einen zu allozierenden
 * Puffer. Schreibt bei Erfolg die Adresse des Puffers nach <*pbuf>.
-* Der Puffer enthält erst das GRECT, dann den MFDB und schließlich
+* Der Puffer enthaelt erst das GRECT, dann den MFDB und schliesslich
 * die Daten.
 *
-* Gibt 0 bei Fehler, 1 bei OK zurück
+* Gibt 0 bei Fehler, 1 bei OK zurueck
 *
 * Ist <pbuf> = -1, wird der feste Bildschirmpuffer verwendet.
 *
@@ -2732,31 +2732,31 @@ scrg_sav:
  jsr      set_full_clip
  move.l   (sp)+,a2
 
- moveq    #15,d0                   ; fürs Aufrunden
+ moveq    #15,d0                   ; fuers Aufrunden
  add.w    g_w(a2),d0               ; Breite in Pixeln
  lsr.w    #4,d0                    ; in Worte umrechnen (aufrunden)
  move.w   d0,d7                    ; Breite in Worten merken
  mulu     nplanes,d0               ; * planes (< 32767 hoffentlich)
- mulu     g_h(a2),d0               ; * Höhe
+ mulu     g_h(a2),d0               ; * Hoehe
  add.l    d0,d0                    ; in Bytes umrechnen
  add.l    #8+20,d0                 ; + sizeof(GRECT) + sizeof(MFDB)
  cmpa.l   #-1,a5                   ; festen Puffer verwenden?
  bne.b    ssav_no_intern2          ; nein
- clr.w    scrbuf+g_w               ; zunächst auf ungültig (w = 0).
+ clr.w    scrbuf+g_w               ; zunaechst auf ungueltig (w = 0).
  cmp.l    screenbuf_len,d0
  bhi      ssav_err                 ; fester Puffer zu klein
  lea      scrbuf,a0
  move.l   (a2)+,(a0)+
  move.l   (a2),(a0)+               ; GRECT kopieren
  move.l   a0,a1                    ; a1 = MFDB *
- addq.l   #4,a0                    ; fd_addr nicht ändern
+ addq.l   #4,a0                    ; fd_addr nicht aendern
  bra.b    ssav_both_2
 ssav_no_intern2:
  jsr      smalloc
  ble.b    ssav_err                 ; zuwenig Speicher, return(0)
 
  move.l   d0,a0                    ; -> GRECT,MFDB,mem
- move.l   a0,(a5)                  ; für die Rückgabe merken
+ move.l   a0,(a5)                  ; fuer die Rueckgabe merken
  move.l   (a2)+,(a0)+
  move.l   (a2),(a0)+               ; GRECT kopieren
 
@@ -2786,7 +2786,7 @@ ssav_err:
 *
 * PUREC void scrg_rst(a0 = void **pbuf )
 *
-* Holt den Bildschirminhalt zurück. Ist <pbuf> = -1, wird der feste
+* Holt den Bildschirminhalt zurueck. Ist <pbuf> = -1, wird der feste
 * Bildschirmpuffer verwendet, ansonsten ist *pbuf der Puffer. Wenn
 * *pbuf = NULL ist, war beim Allozieren ein Fehler aufgetreten
 *
@@ -2799,7 +2799,7 @@ scrg_rst:
  cmpa.l   #-1,a0
  bne.b    ssrst_no_intern
  lea      scrbuf,a0                ; interner Puffer
- tst.w    g_w(a0)                  ; gültig (w != 0)?
+ tst.w    g_w(a0)                  ; gueltig (w != 0)?
  beq.b    ssrst_ende               ; nein, Fehler
  clr.l    -(sp)                    ; nichts freigeben
  bra.b    ssrst_both
@@ -2839,9 +2839,9 @@ fast_save_scr:
  andi.w   #15,d2
  add.w    d2,d1                    ; w korrigieren
  add.w    #15,d1
- and.w    #!15,d1                  ; w auf nächste obere  Wortgrenze
+ and.w    #!15,d1                  ; w auf naechste obere  Wortgrenze
  move.l   d1,-(sp)
- andi.w   #!15,d0                  ; x auf nächste untere Wortgrenze
+ andi.w   #!15,d0                  ; x auf naechste untere Wortgrenze
  move.w   d0,-(sp)
  moveq    #0,d0
  lea      (sp),a0
@@ -2906,7 +2906,7 @@ __fm_xdial:
 * FMD_FINISH
  move.l   a5,d0
  beq      fmd_finish
- bmi      fmd_xfinish              ; -1 übergeben
+ bmi      fmd_xfinish              ; -1 uebergeben
  move.l   (a5),d0
  bgt      fmd_xfinish
 fmd_finish:
@@ -2949,7 +2949,7 @@ fmd_xstart:
 
 fmd_no_intern:
  bsr      grect_in_scr             ; liegt <a4> in desk_g ?
- beq.b    fmd_m1                   ; nein, Box zu groß
+ beq.b    fmd_m1                   ; nein, Box zu gross
  move.l   a5,a1
  move.l   a4,a0                    ; GRECT
  bsr      scrg_sav
@@ -3043,10 +3043,10 @@ grect_to_orect:
 *
 * long gem_etvc(int errcode, int drv)
 *
-* etc_critic des AES
+* etv_critic des AES
 *
 * Achtung: ruft ggf. (act_appl ist im Textmodus) den DOS- Manager auf.
-* ungültige Fehlercodes werden jetzt sinnvoll behandelt
+* ungueltige Fehlercodes werden jetzt sinnvoll behandelt
 * (vorher Absturz)
 * Eigenen Stack etvc_stk entfernt, weil der auf dem Mac zu klein war.
 *
@@ -3054,7 +3054,7 @@ grect_to_orect:
 etvc_tab:
  DC.W     0
  DC.W     al_ewritf-etvc_tab       ; E_OK
- DC.W     -1             ;    "Ihr Ausgabegerät empfängt keine Daten."
+ DC.W     -1             ;    "Ihr Ausgabegeraet empfaengt keine Daten."
  DC.W     al_ewritf-etvc_tab       ; ERROR
  DC.W     -2             ;    "Laufwerk %S antwortet nicht..."
  DC.W     al_edrvnr-etvc_tab       ; EDRVNR
@@ -3078,7 +3078,7 @@ etvc_tab:
  DC.W     al_rwfault-etvc_tab      ; EREADF
  DC.W     -12
  DC.W     al_rwfault-etvc_tab      ; EGENRL
- DC.W     -13            ;    "Diskette in Laufwerk %S ist schreibgeschützt"
+ DC.W     -13            ;    "Diskette in Laufwerk %S ist schreibgeschuetzt"
  DC.W     al_ewrpro-etvc_tab       ; EWRPRO
  DC.W     -14
  DC.W     al_ereadf-etvc_tab       ; E_CHNG
@@ -3102,7 +3102,7 @@ gem_etvc:
  cmpi.l   #'XMSG',(a2)+            ; erweiterter Fehlercode ?
  bne.b    getvc_nox                ; nein
  move.w   (a2)+,d0                 ; Fehlercode durch erweiterten ersetzen
- cmpi.l   #'XMSG',(a2)+            ; Fehlertext übergeben?
+ cmpi.l   #'XMSG',(a2)+            ; Fehlertext uebergeben?
  bne.b    getvc_nox                ; nein
  move.l   (a2),a1                  ; Default-Text durch erweiterten ersetzen
 getvc_nox:
@@ -3121,7 +3121,7 @@ getvc_loop:
 ; a1 zeigt jetzt auf den Alert-String
 
 getvc_weiter:
- move.w   d0,-(sp)                 ; ursprünglichen Fehlercode retten
+ move.w   d0,-(sp)                 ; urspruenglichen Fehlercode retten
 
 ; Taskwechsel verhindern
 
@@ -3148,7 +3148,7 @@ getvc_weiter:
  move.l   mctrl_mnrett,-(sp)
  move.l   mctrl_btrett,-(sp)
  move.l   mctrl_btrett+4,-(sp)     ; letzte Einstellung sichern
- clr.w    beg_mctrl_cnt            ; alles bereit machen für Umschaltung
+ clr.w    beg_mctrl_cnt            ; alles bereit machen fuer Umschaltung
 
  addi.b   #'A',d1
  lsl.w    #8,d1                    ; Laufwerbuchstabe "X",EOS
@@ -3156,7 +3156,7 @@ getvc_weiter:
  move.l   sp,-(sp)                 ; String "X"
  moveq    #0,d1
  move.b   (a1)+,d1                 ; Defaultbutton
- move.l   sp,a0                    ; Parameter für _sprintf()
+ move.l   sp,a0                    ; Parameter fuer _sprintf()
 
  bsr      do_aes_alert
  addq.l   #6,sp
@@ -3183,7 +3183,7 @@ getvc_l1:
  move.l   (sp)+,-(a0)
  move.w   (sp)+,-(a0)              ; upd_blockage vom Stack wieder runter
  sf       no_switch
- move.w   (sp)+,d1                 ; ursprünglichen Fehlercode nach d1
+ move.w   (sp)+,d1                 ; urspruenglichen Fehlercode nach d1
  ext.l    d1
  tst.w    d7
  beq.b    gevc_ret_d1
@@ -3207,17 +3207,17 @@ etvc_dos:
 
 do_aes_alert:
  move.l   a5,-(sp)
- suba.w   #256,sp                  ; Platz für Alertstring
+ suba.w   #256,sp                  ; Platz fuer Alertstring
 
  move.w   d1,-(sp)
 
  move.l   a1,a5
 
  move.l   a0,d0                    ; Pointer angegeben ?
- beq.b    dalt_skip                ; nein, überspringen
+ beq.b    dalt_skip                ; nein, ueberspringen
  move.l   d0,-(sp)                 ; Zeiger auf int oder long usw.
  move.l   a5,-(sp)                 ; Alertstring
- lea      10(sp),a5                ; Platz für 256 Bytes
+ lea      10(sp),a5                ; Platz fuer 256 Bytes
  pea      (a5)                     ; Zieladresse
  jsr      _sprintf
  adda.w   #12,sp
@@ -3232,11 +3232,11 @@ dalt_skip:
 
 
      IF   COUNTRY=COUNTRY_DE
-al_ewrpro:     DC.B 2,'[1][Das Medium in Laufwerk %S:|ist schreibgeschützt.][Abbruch| Nochmal ]',0
-al_edrvnr:     DC.B 2,'[2][Laufwerk %S: antwortet nicht.|Bitte Laufwerk überprüfen oder|Medium einlegen!][Abbruch| Nochmal ]',0
+al_ewrpro:     DC.B 2,'[1][Das Medium in Laufwerk %S:|ist schreibgeschuetzt.][Abbruch| Nochmal ]',0
+al_edrvnr:     DC.B 2,'[2][Laufwerk %S: antwortet nicht.|Bitte Laufwerk ueberpruefen oder|Medium einlegen!][Abbruch| Nochmal ]',0
 al_rwfault:    DC.B 2,'[1][Daten auf Diskette in Laufwerk|%S: eventuell defekt.][Abbruch| Nochmal ]',0
 al_ereadf:     DC.B 1,'[2][Lesefehler auf Laufwerk %S:.][Abbruch| Nochmal ]',0
-al_ewritf:     DC.B 2,'[1][Ihr Ausgabegerät empfängt|keine Daten.][Abbruch| Nochmal ]',0
+al_ewritf:     DC.B 2,'[1][Ihr Ausgabeger',$84,'t empf',$84,'ngt|keine Daten.][Abbruch| Nochmal ]',0
 al_echgab:     DC.B 1,'[3][Bitte Diskette %S in|Laufwerk A: einlegen!][  OK  ]',0
 
 al_aeserr:     DC.B '[3][Falscher AES-Aufruf %L.][Abbruch]',0
@@ -3255,16 +3255,16 @@ al_aeserr:     DC.B '[3][AES call %L not implemented.][Cancel]',0
 al_sigerr:     DC.B '[3][System is out of memory!][Continue]',0
      ENDIF
      IF  COUNTRY=COUNTRY_FR
-al_ewrpro:     DC.B 2,'[1][La disquette dans le lecteur %S:|est protégée en écriture.][Abandon| Répeter ]',0
-al_edrvnr:     DC.B 2,'[2][Lecteur %S: ne répond pas.|Vérifiez le lecteur ou|insérez une disquette !][Abandon| Répeter ]',0
-al_rwfault:    DC.B 2,'[1][Données sur disquette du lecteur|%S: éventuellement défectueuses.][Abandon | Répeter ]',0
-al_ereadf:     DC.B 1,'[2][Erreur de lecture sur lecteur %S:.][Abandon| Répeter ]',0
-al_ewritf:     DC.B 2,'[1][Votre périphique de sortie ne|reçoit pas de données.][Abandon| Répeter ]',0
-al_echgab:     DC.B 1,'[3][Svp, insérez disquette %S |dans le lecteur A: !][  OK  ]',0
+al_ewrpro:     DC.B 2,'[1][La disquette dans le lecteur %S:|est prot',$82,'g',$82,'e en ',$82,'criture.][Abandon| R',$82,'peter ]',0
+al_edrvnr:     DC.B 2,'[2][Lecteur %S: ne r',$82,'pond pas.|V',$82,'rifiez le lecteur ou|ins',$82,'rez une disquette !][Abandon| R',$82,'peter ]',0
+al_rwfault:    DC.B 2,'[1][Donn',$82,'es sur disquette du lecteur|%S: ',$82,'ventuellement d',$82,'fectueuses.][Abandon | R',$82,'peter ]',0
+al_ereadf:     DC.B 1,'[2][Erreur de lecture sur lecteur %S:.][Abandon| R',$82,'peter ]',0
+al_ewritf:     DC.B 2,'[1][Votre p',$82,'riphique de sortie ne|re',$87,'oit pas de donn',$82,'es.][Abandon| R',$82,'peter ]',0
+al_echgab:     DC.B 1,'[3][Svp, ins',$82,'rez disquette %S |dans le lecteur A: !][  OK  ]',0
 
-al_aeserr:     DC.B '[3][Appel AES %L erroné.][Abandon]',0
-               ;    al_fserr:      DC.B '[1][Mémoire insuffisante pour|sélection de fichiersl!][Abandon]',0
-al_sigerr:     DC.B '[3][Le système n''a plus de mémoire libre!][ Suite ]',0
+al_aeserr:     DC.B '[3][Appel AES %L erron',$82,'.][Abandon]',0
+               ;    al_fserr:      DC.B '[1][M',$82,'moire insuffisante pour|s',$82,'lection de fichiersl!][Abandon]',0
+al_sigerr:     DC.B '[3][Le syst',$8a,'me n''a plus de m',$82,'moire libre!][ Suite ]',0
      ENDIF
      EVEN
 
@@ -3284,7 +3284,7 @@ form_error:
 fe_gemdos:
  suba.l   a0,a0                    ; kein Dateiname
  bsr      form_xerr
- moveq    #0,d0                    ; Rückgabe immer 0
+ moveq    #0,d0                    ; Rueckgabe immer 0
  rts
 
 
@@ -3296,7 +3296,7 @@ fe_gemdos:
 *
 
      IF   COUNTRY=COUNTRY_DE
-pgm_s:    DC.B "Programm gab zurück :|",0
+pgm_s:    DC.B "Programm gab zur",$81,"ck :|",0
 err_s:    DC.B "| |(Fehler #%L)|][Abbruch]",0
      ENDIF
      IF   COUNTRY=COUNTRY_US
@@ -3304,7 +3304,7 @@ pgm_s:    DC.B "Program returned :|",0
 err_s:    DC.B "| |(Error #%L)|][Cancel]",0
      ENDIF
     IF  COUNTRY=COUNTRY_FR
-pgm_s:    DC.B "Le programme a retourné :|",0
+pgm_s:    DC.B "Le programme a retourn",$82," :|",0
 err_s:    DC.B "| |(Erreur #%L)|][Abandon]",0
      ENDIF
      EVEN

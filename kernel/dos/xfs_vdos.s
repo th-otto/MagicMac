@@ -17,10 +17,11 @@ FINDLABL       EQU  4
 
 DEBUG     EQU  2
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "STRUCTS.INC"
-     INCLUDE "DEBUG.INC"
-     INCLUDE "KERNEL.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "structs.inc"
+     INCLUDE "debug.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "basepage.inc"
 
      SUPER
 
@@ -72,6 +73,8 @@ DEBUG     EQU  2
      XREF      vf_ffree
      XREF      vf_crnam
      XREF      vf_rlabel
+
+	TEXT
 
 dosxfs:
  DC.B     'VDOS_XFS'               ; Name

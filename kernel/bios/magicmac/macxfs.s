@@ -12,10 +12,10 @@
 **
 */
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "MGX_XFS.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "MAC_KER.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "mgx_xfs.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "mac_ker.inc"
 
 BACKGR_DMA     EQU  1
 EVNT_IO        EQU  1

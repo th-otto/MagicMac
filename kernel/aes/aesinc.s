@@ -1,12 +1,12 @@
 **********************************************************************
 *
-* INCLUDES für Mag!X- AES
+* INCLUDES fuer Mag!X- AES
 *
 **********************************************************************
 
 
-     INCLUDE "KERNEL.INC"
-     INCLUDE "DOS.INC"
+     INCLUDE "kernel.inc"
+     INCLUDE "dos.inc"
 	include "country.inc"
 
 
@@ -17,11 +17,11 @@ N_WINOBJS EQU  16             ; Anzahl der Objekte
 
 __a_aes   EQU  $3300
 
-* AES für MagiX
+* AES fuer MagiX
 
 
 OUTSIDE   EQU  1
-NVDI      EQU  1                   ; NVDI- Unterstützung
+NVDI      EQU  1                   ; NVDI- Unterstuetzung
 MAXDEPTH  EQU  8
      IFNE DEMO
 NAPPS     EQU  6
@@ -32,11 +32,11 @@ NACCS     EQU  6                   ; Gesamtanzahl der ACCs (menuregs)
 NPOPAPPS  EQU  16                  ; Anzahl APPs im Popup
 MIN_NWIND EQU  16                  ; Gesamtanzahl der Windows einschl. 0
 MAX_NWIND EQU  64
-SHLBFLEN  EQU  8192                ; Mindestlänge des shel_put/get Puffers
-RNGBFLEN  EQU  32                  ; Länge des Interrupt- Ringpuffers
+SHLBFLEN  EQU  8192                ; Mindestlaenge des shel_put/get Puffers
+RNGBFLEN  EQU  32                  ; Laenge des Interrupt- Ringpuffers
 
 XE_INVWHDL     EQU  -1             ; Fenster nicht offen bzw. nicht existent
-XE_OTHWHDL     EQU  -2             ; Fenster gehört anderer Applikation
+XE_OTHWHDL     EQU  -2             ; Fenster gehoert anderer Applikation
 
 * Listbox
 
@@ -62,14 +62,14 @@ LBOX_SET_BSLIDER    EQU  5
 LBOX_SET_BENTRS     EQU  6
 LBOX_BSCROLL_TO     EQU  7
 
-* WORKSTATION- Tabelle für NVDI:
+* WORKSTATION- Tabelle fuer NVDI:
 
-NVDI_device_id      EQU 10         ;Gerätenummer - 1
+NVDI_device_id      EQU 10         ;Geraetenummer - 1
 NVDI_colors         EQU 20
 NVDI_wr_mode        EQU 60         ;Grafikmodus - 1 (!!!!!!!!!!)
 
 ;Begrenzung der Grafikkommandos
-NVDI_clip_flag      EQU 50         ;Flag für Clipping
+NVDI_clip_flag      EQU 50         ;Flag fuer Clipping
 NVDI_clip_xmin      EQU 52         ;Minimum - x
 NVDI_clip_ymin      EQU 54         ;Minimum - y
 NVDI_clip_xmax      EQU 56         ;Maximum - x
@@ -89,10 +89,10 @@ NVDI_l_styles       EQU 82         ;Linienmuster
 NVDI_l_sdstyle      EQU 94         ;selbstdefinierter Linienstil
 
 ;Musterdarstellung
-NVDI_f_color        EQU 190        ;Füllfarbe
-NVDI_f_interior     EQU 192        ;Fülltyp
+NVDI_f_color        EQU 190        ;Fuellfarbe
+NVDI_f_interior     EQU 192        ;Fuelltyp
 NVDI_f_style        EQU 194        ;Musterindex
-NVDI_f_pointer      EQU 198        ;Zeiger aufs aktuelle Füllmuster
+NVDI_f_pointer      EQU 198        ;Zeiger aufs aktuelle Fuellmuster
 
 ;negative LineA
 V_CUR_AD            EQU  -$22      ; Cursoradresse ??!!??
@@ -102,11 +102,6 @@ V_CUR_XY            EQU  -$1c      ; int[2], Cursorposition
 
 K_CTRL              EQU  4         ; Bit 2
 K_ALT               EQU  8         ; Bit 3
-
-;Systemvariablen
-etv_term            EQU  $408
-_v_bas_ad           EQU  $44e
-_drvbits            EQU  $4c2
 
 * OBJECT
 
@@ -228,7 +223,7 @@ w_full:        DS.W 4
 w_work:        DS.W 4
 w_overall:     DS.W 4              /* w_curr+Schatten */
 w_unic:        DS.W 4
-w_min_g:       DS.W 4              ; Minimalgröße
+w_min_g:       DS.W 4              ; Minimalgroesse
 w_oldheight:   DS.W 1
 w_hslide:      DS.W 1
 w_vslide:      DS.W 1
@@ -238,17 +233,17 @@ w_wg:          DS.L 1
 w_nextwg:      DS.L 1
 w_whdl:        DS.W 1
 w_tree:        DS.B N_WINOBJS*24
-w_ted1:        DS.B te_sizeof      ; TEDINFO für NAME
-w_ted2:        DS.B te_sizeof      ; TEDINFO für INFO
+w_ted1:        DS.B te_sizeof      ; TEDINFO fuer NAME
+w_ted2:        DS.B te_sizeof      ; TEDINFO fuer INFO
 w_sizeof:
 
      OFFSET
 
 fontID:        DS.W 1              /* Font-ID (Default ist 1)              */
-fontH:         DS.W 1              /* Netto-Zeichenhöhe für vst_height     */
-fontmono:      DS.W 1              /* Flag für "monospaced"                */
+fontH:         DS.W 1              /* Netto-Zeichenhoehe fuer vst_height     */
+fontmono:      DS.W 1              /* Flag fuer "monospaced"                */
 fontcharW:     DS.W 1              /* Zeichenbreite bei mono               */
-fontcharH:     DS.W 1              /* Zeichenhöhe (brutto)                 */
+fontcharH:     DS.W 1              /* Zeichenhoehe (brutto)                 */
 fontUpos:      DS.W 1              /* Position des Unterstrichs            */
 finfo_sizeof:
 
@@ -259,18 +254,18 @@ wg_grect:      DS.W 4
 wg_sizeof:
 
 
-; für menu_attach:
+; fuer menu_attach:
 
      OFFSET
 
 atpop_tree:    DS.L 1         ; Objektbaum des Popups
-atpop_menu:    DS.W 1         ; Objekt, das die Menüeinträge enthält
-atpop_item:    DS.W 1         ; erster Menüeintrag
-atpop_scroll:  DS.W 1         ; 0 bzw. Objekt, ab dem das Menü scrollt
-atpop_refcnt:  DS.W 1         ; Referenzzähler für Popup-Liste
+atpop_menu:    DS.W 1         ; Objekt, das die Menueeintraege enthaelt
+atpop_item:    DS.W 1         ; erster Menueeintrag
+atpop_scroll:  DS.W 1         ; 0 bzw. Objekt, ab dem das Menue scrollt
+atpop_refcnt:  DS.W 1         ; Referenzzaehler fuer Popup-Liste
 atpop_sizeof:
 
-; für menu_settings:
+; fuer menu_settings:
 
      OFFSET
 
@@ -324,11 +319,11 @@ ICONIFIER_B    EQU  14
 
 /* w_state */
 
-WSTAT_OPENED_B      EQU  0              /* Fenster geöffnet */
-WSTAT_COVERED_B     EQU  1              /* Fenster überdeckt */
+WSTAT_OPENED_B      EQU  0              /* Fenster geoeffnet */
+WSTAT_COVERED_B     EQU  1              /* Fenster ueberdeckt */
 WSTAT_ACTIVE        EQU  4              /* Fenster aktiv */
 WSTAT_ACTIVE_B      EQU  2
-WSTAT_LOCKED_B      EQU  3              /* gegen Schließen gesperrt */
+WSTAT_LOCKED_B      EQU  3              /* gegen Schliessen gesperrt */
 WSTAT_QUIET_B       EQU  4              /* (intern verwendet) */
 WSTAT_ICONIFIED     EQU  32             /* ikonifiziert */
 WSTAT_ICONIFIED_B   EQU  5
@@ -399,8 +394,8 @@ WM_MOVED       EQU  28
 WM_NEWTOP      EQU  29
 WM_UNTOPPED    EQU  30
 WM_ONTOP       EQU  31
-;WM_BACKDROPPED EQU  31            ; inkompatibel und überholt
-;SM_SPECIAL     EQU  32            ; überholt
+;WM_BACKDROPPED EQU  31            ; inkompatibel und ueberholt
+;SM_SPECIAL     EQU  32            ; ueberholt
 WM_BOTTOMED    EQU  33             ; AES 4.1
 WM_ICONIFY     EQU  34             ; AES 4.1
 WM_UNICONIFY   EQU  35             ; AES 4.1
@@ -421,7 +416,7 @@ FNT_CHANGED    EQU  83             ; (hier nicht benutzt, aber merken!)
 THR_EXIT       EQU  88             ; MagiC 4.5
 PA_EXIT        EQU  89             ; MagiC 3
 CH_EXIT        EQU  90             ; laut Doku 80, aber MultiTOS hat 90
-;WM_M_BDROPPED EQU  100            ; überholt (=> WM_BOTTOMED)
+;WM_M_BDROPPED EQU  100            ; ueberholt (=> WM_BOTTOMED)
 SM_M_SPECIAL   EQU  101            ; Meldung an SCRENMGR
 WM_SHADED      EQU  $5758          ; WINX 2.3x
 WM_UNSHADED    EQU  $5759          ; WINX 2.3x
@@ -518,7 +513,7 @@ G_ICON         EQU  31
 G_TITLE        EQU  32
 G_CICON        EQU  33             ; (Sicherheitsabstand)
 G_SWBUTTON     EQU  34             ; Switchbutton
-G_POPUP        EQU  35             ; Popup- Menü
+G_POPUP        EQU  35             ; Popup- Menue
 G_WINTITLE     EQU  36             ; Fenstertitel
 G_EDIT         EQU  37             ; MagiC 5.20: Editor
 G_SHORTCUT     EQU  38             ; G_STRING mit Tastatur-Shortcut
@@ -574,7 +569,7 @@ TE_RIGHT       EQU  1
 TE_CNTR        EQU  2
 TE_SPECIAL     EQU  3              ; MagiC 6
 
-; für rsrc_gaddr()
+; fuer rsrc_gaddr()
 
 R_TREE         EQU  0
 R_OBJECT       EQU  1
@@ -610,8 +605,8 @@ EV_RESVD       EQU  $8000
 
 /* AES- Variablen */
 
-TMPLEN         SET  24*(NAPPS+9)   ; Platz für NAPPS+9 Objekte
-TMPLEN2        SET  24*10+5*41+3*21; Platz für einen Alert
+TMPLEN         SET  24*(NAPPS+9)   ; Platz fuer NAPPS+9 Objekte
+TMPLEN2        SET  24*10+5*41+3*21; Platz fuer einen Alert
      IF   TMPLEN2>TMPLEN
 TMPLEN         SET  TMPLEN2
      ENDC
@@ -619,7 +614,7 @@ TMPLEN         SET  TMPLEN2
 
      OFFSET __a_aes
 
-*  für Events
+*  fuer Events
 
 mcl_timer:     DS.W 1              /* int  mcl_timer                       */
 mcl_bstate:    DS.W 1              /* int  mcl_bstate                      */
@@ -639,13 +634,13 @@ gr_mkmx:       DS.W 1              /* int  gr_mkmx                         */
 gr_mkmy:       DS.W 1              /* int  gr_mkmy                         */
 gr_evbstate:   DS.W 1              /* int  : bstate bei Event              */
 
-* Für die VDI- Bibliothek
+* Fuer die VDI- Bibliothek
 
 nvdi_workstn:  DS.L 1              /* int    *nvdi_workstn                 */
 nvdi_patterns: DS.L 1              /* int    *(nvdi_patterns[16])          */
 
-vintin_len:    DS.W 1              /* Länge der Zeichenkette in vintin[]   */
-vintin_dirty:  DS.W 1              /* Zeichenkette enthält Steuerzeichen   */
+vintin_len:    DS.W 1              /* Laenge der Zeichenkette in vintin[]   */
+vintin_dirty:  DS.W 1              /* Zeichenkette enthaelt Steuerzeichen   */
 vdipb:         DS.L 5              /* long   vdipb[5]                      */
                                    /*        vdipb[0]->vcontrl             */
                                    /*        vdipb[1]->vintin              */
@@ -665,26 +660,26 @@ wclip:         DS.W 1
 hclip:         DS.W 1
 
 vdi_device:    DS.W 1              /* int    vdi_device                    */
-dflt_xdv:      DS.W 1              /* zusätzlicher Falcon-Modus            */
+dflt_xdv:      DS.W 1              /* zusaetzlicher Falcon-Modus            */
 
-/* Infos für RSC-Umrechnung und Objektgrößen */
+/* Infos fuer RSC-Umrechnung und Objektgroessen */
 
 big_wchar:     DS.W 1
 big_hchar:     DS.W 1
 
-/* Infos für Fensterrahmen */
+/* Infos fuer Fensterrahmen */
 
 gr_hwbox:      DS.W 1              /* int    gr_hwbox                      */
 gr_hhbox:      DS.W 1              /* int    gr_hhbox                      */
 
-/* Infos für Zeichensätze */
+/* Infos fuer Zeichensaetze */
 
-finfo_sys:     DS.B finfo_sizeof   /* für großen System-Zeichensatz        */
-finfo_big:     DS.B finfo_sizeof   /* für großen AES-Zeichensatz (IBM)     */
-finfo_sml:     DS.B finfo_sizeof   /* für kleinen AES-Zeichensatz (SMALL)  */
-isfsm_big:     DS.W 1              /* Rückgabewert für appl_getinfo(0)     */
-isfsm_sml:     DS.W 1              /* Rückgabewert für appl_getinfo(1)     */
-dummyvws:      DS.W 1              /* Dummy-VDI-Workstation für alte Pgme. */
+finfo_sys:     DS.B finfo_sizeof   /* fuer grossen System-Zeichensatz        */
+finfo_big:     DS.B finfo_sizeof   /* fuer grossen AES-Zeichensatz (IBM)     */
+finfo_sml:     DS.B finfo_sizeof   /* fuer kleinen AES-Zeichensatz (SMALL)  */
+isfsm_big:     DS.W 1              /* Rueckgabewert fuer appl_getinfo(0)     */
+isfsm_sml:     DS.W 1              /* Rueckgabewert fuer appl_getinfo(1)     */
+dummyvws:      DS.W 1              /* Dummy-VDI-Workstation fuer alte Pgme. */
 
 curr_wmode:    DS.W 1              /* int    curr_wmode                    */
 curr_style:    DS.W 1              /* int    curr_style                    */
@@ -698,8 +693,8 @@ curr_pcolor:   DS.W 1              /* int   curr_pcolor                    */
 curr_scrmode:  DS.W 1              /* int : 0=Text 1=Grafik                */
 
 menubar_grect: DS.W 4              /* GRECT  menubar_grect                 */
-desk_g:        DS.W 4              /* Bildschirm ohne Menüleiste           */
-full_g:        DS.W 2              /* Bildschirm mit Menüleiste            */
+desk_g:        DS.W 4              /* Bildschirm ohne Menueleiste           */
+full_g:        DS.W 2              /* Bildschirm mit Menueleiste            */
 scr_w:         DS.W 1              /* int    scr_w                         */
 scr_h:         DS.W 1              /* int    scr_h                         */
 
@@ -717,7 +712,7 @@ screenbuf_len: DS.L 1              /* long   screenbuf_len                 */
 
 * Interrupt- Variablen
 
-was_warmboot:  DS.W 1              /* int:  muß Ctrl-Alt-Del verarbeiten   */
+was_warmboot:  DS.W 1              /* int:  muss Ctrl-Alt-Del verarbeiten   */
 old_warmbvec:  DS.L 1              /* long: alter Vektor oder NULL         */
 old_trap2:     DS.L 1              /* long: alter Trap #2 Vektor           */
 old_timer_int: DS.L 1              /* long   old_timer_int                 */
@@ -726,12 +721,12 @@ old_but_int:   DS.L 1              /* long   old_but_int                   */
 int_mx:        DS.W 1              /* Interrupt-Mauspos X                  */
 int_my:        DS.W 1              /* Interrupt-Mauspos Y                  */
 int_butstate:  DS.W 1              /* int, vom Interrupt gesetzter Status  */
-int_but_dirty: DS.W 1              /* int: Ringpuffer-Überlauf             */
-alrm_cntup:    DS.L 1              /* long, zählt bei Dekrem. countdown    */
+int_but_dirty: DS.W 1              /* int: Ringpuffer-Ueberlauf             */
+alrm_cntup:    DS.L 1              /* long, zaehlt bei Dekrem. countdown    */
 alrm_cntdown:  DS.L 1              /* long */
-timer_cntup:   DS.L 1              /* long, zählt bei Dekrem. countdown    */
+timer_cntup:   DS.L 1              /* long, zaehlt bei Dekrem. countdown    */
 timer_cntdown: DS.L 1              /* long */
-timer_cnt:     DS.L 1              /* long, zählt jeden Aufruf             */
+timer_cnt:     DS.L 1              /* long, zaehlt jeden Aufruf             */
 iocpbuf_cnt:   DS.W 1              /* Anzahl Ereignisse im Festpuffer      */
 ringbuf_cnt:   DS.W 1              /* Anzahl Ereignisse im Ringpuffer      */
 ringbuf_head:  DS.W 1              /* int    ringbuf_head                  */
@@ -741,7 +736,7 @@ iocpbuf:       DS.B NAPPS          /* IOcomplete- Flags                    */
                EVEN
 
 
-* Für den Kernel und Applicationmanager
+* Fuer den Kernel und Applicationmanager
 
 inaes:         DS.B 1              /* char: Kernel sperren                 */
 no_switch:     DS.B 1              /* char: Taskwechsel verbieten          */
@@ -760,15 +755,15 @@ desktree:      DS.L 1              /* OBJECT *desktree                     */
 desktree_1stob:DS.W 1              /* int    desktree_1stob                */
 pop_list:      DS.L 1              /* popupS *poplist                      */
 
-scmgr_mm:      DS.W 5              /* MGRECT des Menübalkens               */
+scmgr_mm:      DS.W 5              /* MGRECT des Menuebalkens               */
 menu_grect:    DS.W 4              /* GRECT  menu_grect                    */
 no_of_menuregs:DS.W 1              /* int, Anzahl der registrierten ACCs   */
 reg_entries:   DS.L 6              /* char *reg_entries[6]                 */
 reg_apidx:     DS.W 6              /* int  reg_apidx[6]                    */
                                    /*        -1: freier Eintrag            */
-scmgr_wakeup:  DS.W 1              /* int: Zähler für SCRENMGR             */
+scmgr_wakeup:  DS.W 1              /* int: Zaehler fuer SCRENMGR             */
 button_grect:  DS.W 4              /* GRECT (etwa WORKXYWH von topwind)    */
-moff_cnt:      DS.W 1              /* int : Zähler für Mausabschaltung     */
+moff_cnt:      DS.W 1              /* int : Zaehler fuer Mausabschaltung     */
 
 upd_blockage:  DS.B bl_sizeof      /* BLOCKAGE                             */
 beg_mctrl_cnt: DS.W 1              /* int    beg_mctrl_cnt                 */
@@ -777,7 +772,7 @@ mctrl_mnrett:  DS.L 1              /* long   mctrl_mnrett                  */
 mctrl_btrett:  DS.W 4              /* GRECT  mctrl_btrett                  */
 mctrl_karett:  DS.L 1              /* long   mctrl_karett                  */
 
-aptr_flag:     DS.W 1              /* int  : appl_trecord läuft            */
+aptr_flag:     DS.W 1              /* int  : appl_trecord laeuft            */
 aptr_count:    DS.W 1              /* int    aptr_count                    */
 aptp_dirtyint: DS.W 1              /* int    aptp_dirtyint                 */
 aptr_buf:      DS.L 1              /* Zeiger -> Eventpuffer (je 8 Bytes)   */
@@ -785,7 +780,7 @@ aptr_buf:      DS.L 1              /* Zeiger -> Eventpuffer (je 8 Bytes)   */
 dclick_clicks: DS.W 1              /* int    dclick_clicks                 */
 dclick_val:    DS.W 1              /* int  (0..4)                          */
 
-* Für Timeslice
+* Fuer Timeslice
 
 pe_un_susp:    DS.W 1
 pe_unsuspcnt:  DS.W 1
@@ -798,25 +793,25 @@ serno_isok:    DS.B 1              /* char   serno_isok                    */
 _basepage:     DS.L 1              /* long   _basepage                     */
 mdraw_int_adr: DS.L 1              /* long   mdraw_int_adr                 */
 
-* Struktur für Übergabe an GEMDOS
+* Struktur fuer Uebergabe an GEMDOS
 
 dos_magic:     DS.L 1              /* 'XAES'                               */
 act_appl:      DS.L 1              /* APPL *                               */
-ap_pd_offs:    DS.W 1              /* Offset für ap_pd                     */
+ap_pd_offs:    DS.W 1              /* Offset fuer ap_pd                     */
 appln:         DS.W 1              /* Anzahl der APPLs                     */
-maxappln:      DS.W 1              /* Tabellenlänge                        */
+maxappln:      DS.W 1              /* Tabellenlaenge                        */
 applx:         DS.L NAPPS          /* APPL *applx[NAPPS]                   */
 
-* Für den Window- Manager
+* Fuer den Window- Manager
 
 wg_freelist:   DS.L 1              /* long wg_freelist                     */
 nwindows:      DS.W 1              /* Anzahl Fenster                       */
 topwhdl:       DS.W 1              /* int: Handle des obersten Fensters    */
 whdlx:         DS.W MAX_NWIND      /* Liste der Fenster von oben ab        */
 windx:         DS.L 1              /* WINDOW *windx                        */
-wsizeof:       DS.L 1              /* Speicherblockgröße für Fenster       */
-wbm_hshade:    DS.W 1              /* Höhe des ge-shade-ten Fensters       */
-wbm_create:    DS.L 1              /* Callback für wind_create()           */
+wsizeof:       DS.L 1              /* Speicherblockgroesse fuer Fenster       */
+wbm_hshade:    DS.W 1              /* Hoehe des ge-shade-ten Fensters       */
+wbm_create:    DS.L 1              /* Callback fuer wind_create()           */
 wbm_skind:     DS.L 1              /* Callback f. wind_create(),wind_set() */
 wbm_ssize:     DS.L 1              /* Callback f. wind_set()               */
 wbm_sslid:     DS.L 1              /* Callback f. wind_set()               */
@@ -826,14 +821,14 @@ wbm_calc:      DS.L 1              /* Callback f. wind_calc()              */
 wbm_obfind:    DS.L 1              /* Callback f. SCRENMGR                 */
 wbm_endvars:
 
-/* Farben/Ränder für Fensterobjekte */
+/* Farben/Raender fuer Fensterobjekte */
 dcol_box:      DS.W 2              /* umfassende Box             W_BOX     */
-dcol_closer:   DS.W 2              /* Schließbox                 W_CLOSER  */
+dcol_closer:   DS.W 2              /* Schliessbox                 W_CLOSER  */
 dcol_name:     DS.W 2              /* Titelzeile                 W_NAME    */
 dcol_bdrop:    DS.W 2              /* Backdrop-Button      (wie W_FULLER)  */
 dcol_fuller:   DS.W 2              /* Maximalknopf               W_FULLER  */
 dcol_info:     DS.W 2              /* Infozeile                  W_INFO    */
-dcol_sizer:    DS.W 2              /* Größenknopf                W_SIZER   */
+dcol_sizer:    DS.W 2              /* Groessenknopf                W_SIZER   */
 dcol_arup:     DS.W 2              /* Pfeil hoch                 W_UPARROW */
 dcol_ardwn:    DS.W 2              /* Pfeil runter               W_DNARROW */
 dcol_vsld:     DS.W 2              /* Hintergrund vert. Balken   W_VSLIDE  */
@@ -844,14 +839,14 @@ dcol_hsld:     DS.W 2              /* Hintergrund horiz. Balken  W_HSLIDE  */
 dcol_hbar:     DS.W 2              /* horizontaler Balken        W_HELEV   */
 dcol_iconify:  DS.W 2              /* Iconifier (wie W_FULLER)             */
 
-/* 3D-Flags für Fensterobjekte */
+/* 3D-Flags fuer Fensterobjekte */
 f3d_box:       DS.B 1              /* umfassende Box             W_BOX     */
-f3d_closer:    DS.B 1              /* Schließbox                 W_CLOSER  */
+f3d_closer:    DS.B 1              /* Schliessbox                 W_CLOSER  */
 f3d_name:      DS.B 1              /* Titelzeile                 W_NAME    */
 f3d_bdrop:     DS.B 1              /* Backdrop-Button      (wie W_FULLER)  */
 f3d_fuller:    DS.B 1              /* Maximalknopf               W_FULLER  */
 f3d_info:      DS.B 1              /* Infozeile                  W_INFO    */
-f3d_sizer:     DS.B 1              /* Größenknopf                W_SIZER   */
+f3d_sizer:     DS.B 1              /* Groessenknopf                W_SIZER   */
 f3d_arup:      DS.B 1              /* Pfeil hoch                 W_UPARROW */
 f3d_ardwn:     DS.B 1              /* Pfeil runter               W_DNARROW */
 f3d_vsld:      DS.B 1              /* Hintergrund vert. Balken   W_VSLIDE  */
@@ -863,24 +858,24 @@ f3d_hbar:      DS.B 1              /* horizontaler Balken        W_HELEV   */
 f3d_iconify:   DS.B 1              /* Iconifier (wie W_FULLER)             */
      EVEN
 
-tedinfo1:      DS.B $1c            /* TEDINFO ($1c Bytes)  für NAME        */
-tedinfo2:      DS.B $1c            /* TEDINFO ($1c Bytes)  für INFO        */
+tedinfo1:      DS.B $1c            /* TEDINFO ($1c Bytes)  fuer NAME        */
+tedinfo2:      DS.B $1c            /* TEDINFO ($1c Bytes)  fuer INFO        */
 
 /* globale Fenster-Einstellungen => WINFRAME */
 
 wsg_flags:     DS.W 1              /* Bit 0: kein Bdrop-Button             */
-inw_height:    DS.W 1              /* Höhe der INFO-Zeile                  */
+inw_height:    DS.W 1              /* Hoehe der INFO-Zeile                  */
 pfinfo_inw:    DS.L 1              /* Zeiger auf finfo_inw                 */
-finfo_inw:     DS.B finfo_sizeof   /* für INFO-Zeile im Fenster            */
+finfo_inw:     DS.B finfo_sizeof   /* fuer INFO-Zeile im Fenster            */
 
-* für den variablen AES-Dispatcher (ab V5.20)
+* fuer den variablen AES-Dispatcher (ab V5.20)
 
-fn_rellen:     DS.W 1              /* max. Funktionsnummer +1 für interne,
+fn_rellen:     DS.W 1              /* max. Funktionsnummer +1 fuer interne,
                                       relative AES- Sprungtabelle          */
 fn_abstab:     DS.L 1              /* Sprungtabelle mit abs. Adressen      */
-fn_abslen:     DS.W 1              /* Tabellenlänge                        */
+fn_abslen:     DS.W 1              /* Tabellenlaenge                        */
 fn_getinfo:    DS.L 1              /* zum Einklinken                       */
-fn_editor:     DS.L 1              /* für Objekttyp G_EDIT                 */
+fn_editor:     DS.L 1              /* fuer Objekttyp G_EDIT                 */
 
 * Tabellen
 
@@ -896,7 +891,7 @@ shel_buf_len:  DS.W 1              /* int    shel_buf_len                  */
 shel_buf:      DS.L 1              /* char   *shel_buf                     */
 
 p_fsel:        DS.L 1              /* long: Fileselect- Vektor             */
-fslx_sortmode: DS.W 1              /* Sortiermodus für Dateiauswahl        */
+fslx_sortmode: DS.W 1              /* Sortiermodus fuer Dateiauswahl        */
 fslx_flags:    DS.W 1              /* ... globale Flags                    */
 fslx_exts:     DS.B 256            /* selbstdef. Datentypen                */
 fslx_d2s:      DS.L 1              /* void (*date2str)(WORD date, char *s) */
@@ -906,22 +901,22 @@ old_etvc:      DS.L 1              /* long: alter etv_critic- Vektor       */
 dflt_etvt:     DS.L 1              /* long: alter etv_term- Vektor         */
 shelw_startpic:DS.B 2*24+28        /* OBJECT [2], TEDINFO                  */
 
-/* Für den Backdrop-Button */
+/* Fuer den Backdrop-Button */
 
 bdrop_thdl:    DS.W 1              /* int:  zu toppendes Fenster           */
 bdrop_hdl:     DS.W 1              /* int:  zu droppendes Fenster          */
 bdrop_timer:   DS.L 1              /* long: timer_cnt beim Aufruf          */
 
-/* Für Applikationsumschaltung per TOPALL */
+/* Fuer Applikationsumschaltung per TOPALL */
 
 topall_thdl:   DS.W 1              /* int:  zu toppendes Fenster           */
 topall_timer:  DS.L 1              /* long: timer_cnt beim Aufruf          */
 
 termprog:      DS.B 80             /* Pfad des TOS-in-Fenster-Programms    */
 shutdown_id:   DS.W 1              /* ap_id des shutdown- Initiators       */
-shutdown_dev:  DS.W 1              /* für Auflösungswechsel */
-shutdown_xdv:  DS.W 1              /* Falcon-Auflösung */
-shutdown_txt:  DS.W 1              /* für Auflösungswechsel */
+shutdown_dev:  DS.W 1              /* fuer Aufloesungswechsel */
+shutdown_xdv:  DS.W 1              /* Falcon-Aufloesung */
+shutdown_txt:  DS.W 1              /* fuer Aufloesungswechsel */
 look_flags:    DS.W 1              /* Bestimmen den Geschmack              */
                                    /*  Bit 0: Position des Logos           */
                                    /*  Bit 1: 3D-Effekte ausschalten       */
@@ -930,10 +925,10 @@ look_flags:    DS.W 1              /* Bestimmen den Geschmack              */
                                    /*  Bit 4: Fenstertitelname nicht 3D    */
                                    /*  Bit 5: Onlinescrolling nur mit Ctrl */
                                    /*  Bit 6: Online move/size mit Ctrl    */
-                                   /*  Bit 7: 3D-Menüs                     */
+                                   /*  Bit 7: 3D-Menues                     */
 hotkey_sem:    DS.B 1              /* char: Alt-Ctrl-... verarbeiten       */
      EVEN
-vmn_set:       DS.B mns_sizeof     /* für menu_settings */
+vmn_set:       DS.B mns_sizeof     /* fuer menu_settings */
 
      EVEN
 
@@ -981,71 +976,75 @@ EXCPT     EQU -69             * KAOS
 EPTHOV    EQU -70             * MAGIX
 
 
-/*
-/*   Struktur WGRECT                                                       */
-/*   Länge: $c Bytes                                                       */
+/***************************************************************************/
+/*  Struktur WGRECT                                                        */
+/*  Laenge: $c Bytes                                                       */
 /***************************************************************************/
 
-typedef struct {
-     WGRECT    *wg_nextwg;    /* 0x00: Nächstes WGRECT in Liste            */
-     GRECT     wg_grect;      /* 0x04: WGRECT- Daten                       */
-} WGRECT;
+;typedef struct {
+;    WGRECT    *wg_nextwg;    /* 0x00: Naechstes WGRECT in Liste            */
+;    GRECT     wg_grect;      /* 0x04: WGRECT- Daten                       */
+;} WGRECT;
 
 
+/***************************************************************************/
 /*   Struktur EVPARM                                                       */
-/*   Länge: 8 Bytes                                                        */
+/*   Laenge: 8 Bytes                                                       */
 /***************************************************************************/
 
-typedef struct {
-     int       evp_id         /* 0x00: Empfänger- Applikation              */
-     int       evp_len;       /* 0x02: Länge der Nachricht in Bytes        */
-     int       *evp_bufp;     /* 0x04: Zeiger auf Nachrichtenbytes         */
-} EVPARM;
+;typedef struct {
+;     int       evp_id         /* 0x00: Empfaenger- Applikation              */
+;     int       evp_len;       /* 0x02: Laenge der Nachricht in Bytes        */
+;     int       *evp_bufp;     /* 0x04: Zeiger auf Nachrichtenbytes         */
+;} EVPARM;
 
 
+/***************************************************************************/
 /*   Struktur BLOCKAGE                                                     */
-/*   Länge: $a Bytes                                                       */
+/*   Laenge: $a Bytes                                                       */
 /***************************************************************************/
 
-typedef struct {
-     int       bl_cnt;        /* 0x00: Anzahl der BEG_UPDATEs              */
-     APPL      *bl_app;       /* 0x02: sperrende Applikation oder NULL     */
-     APPL      *bl_waiting;   /* 0x06: wartende Applikationen              */
-     PD        *bl_pd;
-     long      bl_name;
-     BLOCKAGE  *bl_next;
-} BLOCKAGE;
+;typedef struct {
+;     int       bl_cnt;        /* 0x00: Anzahl der BEG_UPDATEs              */
+;     APPL      *bl_app;       /* 0x02: sperrende Applikation oder NULL     */
+;     APPL      *bl_waiting;   /* 0x06: wartende Applikationen              */
+;     PD        *bl_pd;
+;     long      bl_name;
+;     BLOCKAGE  *bl_next;
+;} BLOCKAGE;
 
 
+/***************************************************************************/
 /*   Struktur MGRECT                                                       */
-/*   Länge: $a Bytes                                                       */
+/*   Laenge: $a Bytes                                                       */
 /***************************************************************************/
 
-typedef struct {
-     int       mg_flag;       /* 0x00: 0=betreten 1=verlasssen             */
-     GRECT     mg_grect;      /* 0x02: Mausrechteck                        */
-} MGRECT;
+;typedef struct {
+;     int       mg_flag;       /* 0x00: 0=betreten 1=verlasssen             */
+;     GRECT     mg_grect;      /* 0x02: Mausrechteck                        */
+;} MGRECT;
 
 
+/***************************************************************************/
 /*   Struktur KOORD                                                        */
-/*   Länge: 4 Bytes                                                        */
+/*   Laenge: 4 Bytes                                                        */
 /***************************************************************************/
 
-typedef struct {
-     int       k_x;           /* 0x00:                                     */
-     int       k_y;           /* 0x02:                                     */
-} KOORD;
+;typedef struct {
+;     int       k_x;           /* 0x00:                                     */
+;     int       k_y;           /* 0x02:                                     */
+;} KOORD;
 
 
+/***************************************************************************/
 /*   Bitfeld EVBUTTON                                                      */
-/*   Länge: 4 Bytes                                                        */
+/*   Laenge: 4 Bytes                                                        */
 /***************************************************************************/
 
-typedef struct {
-     unsigned  bt_stat : 8;   /*  0.. 7: auslösender Status                */
-     unsigned  bt_msk  : 8;   /*  8..15: berücksichtigte Maustasten        */
-     unsigned  bt_n    : 8;   /* 16..23: n-fach Klick                      */
-     unsigned  bt_flag : 8;   /* 24..31: TRUE, wenn Match invertieren      */
-} EVBUTTON;
-*/
+;typedef struct {
+;     unsigned  bt_stat : 8;   /*  0.. 7: ausloesender Status                */
+;     unsigned  bt_msk  : 8;   /*  8..15: beruecksichtigte Maustasten        */
+;     unsigned  bt_n    : 8;   /* 16..23: n-fach Klick                      */
+;     unsigned  bt_flag : 8;   /* 24..31: TRUE, wenn Match invertieren      */
+;} EVBUTTON;
 

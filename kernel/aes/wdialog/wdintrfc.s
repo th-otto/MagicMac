@@ -3,9 +3,9 @@
 						EXPORT	slct_item
 						EXPORT	set_item
 
-						INCLUDE	"WDIALOG.I"
-						INCLUDE	"LISTBOX.I"
-						INCLUDE	"FNTS.I"
+						INCLUDE	"wdialog.i"
+						INCLUDE	"listbox.i"
+						INCLUDE	"fnts.i"
 						
 						TEXT
 

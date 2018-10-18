@@ -9,7 +9,7 @@
 */
 
 
-	XDEF memcpy
+	XDEF vmemcpy
 	XDEF memmove
 	XDEF	fast_clrmem
 	XDEF	toupper
@@ -18,7 +18,7 @@
 	XDEF strchr
 	XDEF	strrchr
 	XDEF	strcmp
-	XDEF	strcpy
+	XDEF	vstrcpy
 	XDEF strcat
 	XDEF strncpy
 	XDEF	_ltoa
@@ -28,7 +28,7 @@
 	XDEF	fn_name
 	XDEF	ffind
 
-	XDEF malloc
+	XDEF mmalloc
 	XDEF mfree
 	XDEF mshrink
 	XDEF	smalloc,smfree,smshrink
@@ -218,14 +218,14 @@ fclr_ende:
 
 **********************************************************************
 *
-* PUREC void memcpy(void *dst, void *src, UWORD len)
+* PUREC void vmemcpy(void *dst, void *src, UWORD len)
 *
-* void memcpy(a0 = void *dst, a1 = void *src, d0 = unsigned int len
+* void vmemcpy(a0 = void *dst, a1 = void *src, d0 = unsigned int len
 *
 * ändert nur d1/a0/a1
 *
 
-memcpy:
+vmemcpy:
  moveq	#0,d1
  move.w	d0,d1
  beq.b	mcp_end
@@ -252,7 +252,7 @@ mcp_end:
 *
 * PUREC void memmove(void *dst, void *src, LONG len)
 *
-* void memcpy(a0 = void *dst, a1 = void *src, d0 = unsigned long len
+* void memmove(a0 = void *dst, a1 = void *src, d0 = unsigned long len
 *
 
 memmove:
@@ -450,12 +450,12 @@ sonder_s:
 
 **********************************************************************
 *
-* PUREC WORD strcpy(char *dst, char *src)
+* PUREC WORD vstrcpy(char *dst, char *src)
 *
 
-strcpy:
+vstrcpy:
  move.b	(a1)+,(a0)+
- bne.b	strcpy
+ bne.b	vstrcpy
  rts
 
 
@@ -496,10 +496,10 @@ stricmp:
  moveq	#0,d0
 stricmp_loop:
  move.b	(a0),d0
- bsr.b	toupper
+ bsr	toupper
  move.b	d0,d1
  move.b	(a1)+,d0
- bsr.b	toupper
+ bsr	toupper
  cmp.b	d0,d1
  bne.b	stricmp_endloop
  tst.b	(a0)+
@@ -536,7 +536,7 @@ str1:
 
 **********************************************************************
 *
-* PUREC char * strchr(const char *string, char c)
+* PUREC char * strchr(const char *string, int c)
 *
 * a0 = char * strchr(a0 = char *string, d0 = char c)
 *
@@ -1163,22 +1163,23 @@ smfree:
 
 **********************************************************************
 *
-* PUREC LONG malloc( ULONG size)
+* PUREC LONG mmalloc( ULONG size)
 *
-* EQ/NE void *malloc(d0 = unsigned long size)
+* EQ/NE void *mmalloc(d0 = unsigned long size)
 *
 * Die Rückgabeadresse und Größe ist immer gerade, weil GEMDOS
 * darauf achtet.
 * Setzt das Z- Flag, falls zuwenig Speicher
 *
 
-malloc:
+mmalloc:
 ;move.l	a2,-(sp)
  move.l	d0,-(sp)
  move.w	#$48,-(sp)
  trap	#1				; gemdos Malloc
  addq.w	#6,sp
 ;move.l	(sp)+,a2
+ move.l d0,a0
  tst.l	d0
  rts
 

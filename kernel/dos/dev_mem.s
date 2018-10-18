@@ -9,9 +9,10 @@
 
 DEBUG     EQU  16
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "STRUCTS.INC"
-     INCLUDE "KERNEL.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "structs.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "basepage.inc"
 
      XDEF memblk_drv
      XDEF shm_drv,shm_create
@@ -20,7 +21,7 @@ DEBUG     EQU  16
 
      XREF Memshare,Memunsh
      XREF act_pd
-     XREF memcpy
+     XREF vmemcpy
      XREF strlen
 /*
      XREF PDkill,srch_process
@@ -47,6 +48,8 @@ PBASEADDR      EQU  $5002          ; *arg = Basepage
 ;PTRACESTEP    EQU  $500a
 PLOADINFO      EQU  $500c          ; Fülle (struct ploadinfo *) arg
 
+
+	TEXT
 
 
 memblk_drv:
@@ -103,7 +106,15 @@ proc_drv:
 * O_TRUNC wird bei Pseudodateien ignoriert
 *
 
-memblk_open  EQU  shm_close
+;memblk_open  EQU  shm_close
+
+
+**********************************************************************
+*
+* long shm_read(a0 = FD *f, a1 = char *buf, d0 = long count)
+*
+; shm_read  EQU  memblk_read
+
 
 
 **********************************************************************
@@ -118,6 +129,7 @@ memblk_open  EQU  shm_close
 abs_read:
  suba.l   a2,a2
  bra.b    _memblk_read
+shm_read:
 memblk_read:
  move.l   fd_xdata(a0),a2
 _memblk_read:
@@ -130,7 +142,7 @@ _memblk_read:
  move.l   a2,a1                    ; src
 ;move.w   d0,d0
  move.w   d0,-(sp)
- jsr      memcpy
+ jsr      vmemcpy
  moveq    #0,d0
  move.w   (sp)+,d0                 ; auf Word verkleinern
  rts
@@ -150,6 +162,8 @@ mbr_ptr:
 abs_write:
  moveq    #0,d2
  bra.b    _memblk_write
+shm_write:
+proc_write:
 memblk_write:
  move.l   fd_xdata(a0),d2
 _memblk_write:
@@ -169,7 +183,7 @@ mbw_weiter:
 ;move.l   a1,a1                    ; src
 ;move.w   d0,d0
  move.w   d0,-(sp)
- jsr      memcpy
+ jsr      vmemcpy
  moveq    #0,d0
  move.w   (sp)+,d0                 ; auf Word verkleinern
 mbw_ende:
@@ -182,6 +196,7 @@ mbw_ende:
 * long memblk_lseek(a0 = FD *f,  d0 = long where, d1 = int mode)
 *
 
+shm_lseek:
 memblk_lseek:
  move.l   fd_multi1(a0),a2
  tst.w    d1                       ; mode
@@ -252,8 +267,7 @@ shm_create:
 * O_TRUNC wird bei Pseudodateien ignoriert
 *
 
-shm_open  EQU  shm_close
-
+shm_open:
 
 **********************************************************************
 *
@@ -264,6 +278,7 @@ shm_open  EQU  shm_close
 * Ich finde das dämlich, aber was hilft's ?
 *
 
+memblk_open:
 shm_close:
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
  rts
@@ -271,18 +286,10 @@ shm_close:
 
 **********************************************************************
 *
-* long shm_read(a0 = FD *f, a1 = char *buf, d0 = long count)
-*
-
-shm_read  EQU  memblk_read
-
-
-**********************************************************************
-*
 * long shm_write(a0 = FD *f, a1 = char *buf, d0 = long count)
 *
 
-shm_write EQU  memblk_write
+;shm_write EQU  memblk_write
 
 
 **********************************************************************
@@ -290,7 +297,7 @@ shm_write EQU  memblk_write
 * long shm_lseek(a0 = FD *f,  d0 = long where, d1 = int mode)
 *
 
-shm_lseek EQU  memblk_lseek
+;shm_lseek EQU  memblk_lseek
 
 
 **********************************************************************
@@ -379,6 +386,7 @@ shm_delete:
 * shared memory ist immer lese- und schreibbereit
 *
 
+proc_stat:
 shm_stat:
  moveq    #1,d0
  move.l   a1,d1
@@ -416,6 +424,7 @@ proc_create:
 * O_TRUNC wird bei Pseudodateien ignoriert
 *
 
+proc_close:
 proc_open:
  moveq    #-1,d0
  move.l   fd_multi1(a0),a2
@@ -429,7 +438,7 @@ proc_open:
 * long proc_close(a0 = FD *f)
 *
 
-proc_close     EQU  proc_open
+;proc_close     EQU  proc_open
 
 
 **********************************************************************
@@ -452,7 +461,7 @@ proc_read:
 * Man kann gnadenlos auf jeden Speicher zugreifen.
 *
 
-proc_write     EQU  memblk_write
+;proc_write     EQU  memblk_write
 
 
 **********************************************************************
@@ -501,7 +510,7 @@ proc_ioctl:
  lea      pr_cmdlin(a6),a1
  move.l   2(a5),a0
  move.w   #128,d0                  ; immer die ganzen 128 Bytes
- jsr      memcpy                   ; Kommandozeile kopieren
+ jsr      vmemcpy                   ; Kommandozeile kopieren
  lea      pr_fname(a6),a0
  jsr      strlen
  addq.l   #1,d0                    ; für EOS
@@ -509,7 +518,7 @@ proc_ioctl:
  bhi.b    pio_err3                 ; Überlauf
  move.l   6(a5),a0
  lea      pr_fname(a6),a1
- jsr      memcpy                   ; Pfad kopieren
+ jsr      vmemcpy                   ; Pfad kopieren
  bra.b    pio_ok
 pio_err4:
  moveq    #ERROR,d0
@@ -605,5 +614,5 @@ prdel_eaccdn:
 * proc ist wie shared memory ist immer lese- und schreibbereit
 *
 
-proc_stat EQU  shm_stat
+;proc_stat EQU  shm_stat
 

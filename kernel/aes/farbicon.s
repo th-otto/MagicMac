@@ -1,6 +1,6 @@
-;Standardformat ins geräteabhängige Format wandeln
-;Tabulatorgröße: 3
-;Anmerkung: .b statt .s verwenden wg. MAS, 8 relevante Zeichen für Labels
+;Standardformat ins geraeteabhaengige Format wandeln
+;Tabulatorgroesse: 3
+;Anmerkung: .b statt .s verwenden wg. MAS, 8 relevante Zeichen fuer Labels
 ;06.04.95:  Am Ende von ip_4_to_8 fehlte das moveq #1,d0, daher wurde
 ;           manchmal das farbige und manchmal das sw-Icon gezeichnet
 
@@ -28,12 +28,12 @@
 
 p_cookies            EQU   $05a0                ;Zeiger auf den Cookie-Jar
 
-;Standardformat in geräteabhängiges Format wandeln
+;Standardformat in geraeteabhaengiges Format wandeln
 ;Vorgaben:
-;Register d0-d7/a0-a6 können verändert werden
+;Register d0-d7/a0-a6 koennen veraendert werden
 ;Eingaben:
 ;d0.l Anzahl der zu wandelnden Worte (pro Ebene)
-;d1.l Länge einer Ebene in Bytes
+;d1.l Laenge einer Ebene in Bytes
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;a0.l Quellraster im Standardformat
 ;a1.l Zielraster
@@ -43,7 +43,7 @@ xp_raster:        move.l   d0,d4
                   subq.l   #1,d4                ;Anzahl  der Worte - 1
                   move.l   d1,d6
                   add.l    d6,d6
-                  add.l    d6,d6                ;Länge von 4 Quellebenen in Bytes
+                  add.l    d6,d6                ;Laenge von 4 Quellebenen in Bytes
 
                   movea.l  a1,a4                ;Zeiger auf das Zielraster
                   lea      (a0,d1.l),a1         ;Zeiger auf Quellebene 1
@@ -57,7 +57,7 @@ xp_raster:        move.l   d0,d4
 ;Eingaben:
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -119,7 +119,7 @@ ip_4_to_4:        move.w   (a0)+,(a4)+
 ;Eingaben:
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -199,7 +199,7 @@ ip_4_to_8:        move.w   (a0)+,d0             ;Quellebene 0
 ;8 Ebenen im Standardformat zu 8 Ebenen mit Interleaved Planes wandeln
 ;Eingaben:
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -225,7 +225,7 @@ ip_8_to_8:        move.w   (a0)+,(a4)+
 ;Eingaben:
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -263,7 +263,7 @@ pp_2_to_4_exp:    moveq    #0,d6
 pp_2_to_4_nibble: btst     #0,d5                ;oberes oder unteres Nibble?
                   beq.b    pp_2_to_4_or
                   lsl.w    #4,d6
-                  move.b   d6,(a4)              ;oberes Nibble setzen und unteres löschen
+                  move.b   d6,(a4)              ;oberes Nibble setzen und unteres loeschen
                   bra.b    pp_2_to_4_next
 pp_2_to_4_or:     or.b     d6,(a4)+             ;unteres Nibble setzen und ein Byte weiter
 pp_2_to_4_next:   dbra     d5,pp_2_to_4_exp
@@ -301,7 +301,7 @@ pp_4_to_4_exp:    moveq    #0,d6
                   btst     #0,d5                ;oberes oder unteres Nibble?
                   beq.b    pp_4_to_4_or
                   lsl.l    #4,d6
-                  move.b   d6,(a4)              ;oberes Nibble setzen und unteres löschen
+                  move.b   d6,(a4)              ;oberes Nibble setzen und unteres loeschen
                   bra.b    pp_4_to_4_next
 pp_4_to_4_or:     or.b     d6,(a4)+             ;unteres Nibble setzen und ein Byte weiter
 pp_4_to_4_next:   dbra     d5,pp_4_to_4_exp
@@ -315,7 +315,7 @@ pp_4_to_4_next:   dbra     d5,pp_4_to_4_exp
 ;Eingaben:
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -399,7 +399,7 @@ pp_4_to_8_byte:   move.b   d6,(a4)+
 ;8 Ebenen im Standardformat zu 8 Bit mit Packed Pixels wandeln
 ;Eingaben:
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -457,7 +457,7 @@ pp_8_to_8_exp:    swap     d5
 ;Eingaben:
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -465,7 +465,7 @@ pp_8_to_8_exp:    swap     d5
 ;a4.l Zeiger auf das Zielraster
 ;Ausgaben:
 ;d0.w 0: Raster kann nicht gewandelt werden 1: Raster wurde gewandelt
-xp_pp_16:         movea.l  xp_tab,a5            ;Zeiger auf Expandiertabelle mit 256 Einträgen
+xp_pp_16:         movea.l  xp_tab,a5            ;Zeiger auf Expandiertabelle mit 256 Eintraegen
                   subq.w   #2,d2                ;Quellraster mit 2 Ebenen?
                   beq.b    pp_2_to_16
                   subq.w   #2,d2                ;Quellraster mit 4 Ebenen?
@@ -546,7 +546,7 @@ pp_4_to_16_word:  add.w    d6,d6
 ;8 Ebenen im Standardformat zu 16 Bit mit Packed Pixels wandeln
 ;Eingaben:
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -606,7 +606,7 @@ pp_8_to_16_exp:   swap     d5
 ;Eingaben:
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -615,7 +615,7 @@ pp_8_to_16_exp:   swap     d5
 ;a5.l Zeiger auf die Expandiertabelle
 ;Ausgaben:
 ;d0.w 0: Raster kann nicht gewandelt werden 1: Raster wurde gewandelt
-xp_pp_24:         movea.l  xp_tab,a5            ;Zeiger auf Expandiertabelle mit 256 Einträgen
+xp_pp_24:         movea.l  xp_tab,a5            ;Zeiger auf Expandiertabelle mit 256 Eintraegen
                   subq.w   #2,d2                ;Quellraster mit 2 Ebenen?
                   beq.b    pp_2_to_24
                   subq.w   #2,d2                ;Quellraster mit 4 Ebenen?
@@ -704,7 +704,7 @@ pp_4_to_24_bbb:   add.w    d6,d6
 ;8 Ebenen im Standardformat zu 24 Bit mit Packed Pixels wandeln
 ;Eingaben:
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -768,7 +768,7 @@ pp_8_to_24_exp:   swap     d5
 ;Eingaben:
 ;d2.w Anzahl der Ebenen des Quellrasters
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -776,7 +776,7 @@ pp_8_to_24_exp:   swap     d5
 ;a4.l Zeiger auf das Zielraster
 ;Ausgaben:
 ;d0.w 0: Raster kann nicht gewandelt werden 1: Raster wurde gewandelt
-xp_pp_32:         movea.l  xp_tab,a5            ;Zeiger auf Expandiertabelle mit 256 Einträgen
+xp_pp_32:         movea.l  xp_tab,a5            ;Zeiger auf Expandiertabelle mit 256 Eintraegen
                   subq.w   #2,d2                ;Quellraster mit 2 Ebenen?
                   beq.b    pp_2_to_32
                   subq.w   #2,d2                ;Quellraster mit 4 Ebenen?
@@ -859,7 +859,7 @@ pp_4_to_32_long:  add.w    d6,d6
 ;8 Ebenen im Standardformat zu 32 Bit mit Packed Pixels wandeln
 ;Eingaben:
 ;d4.l Anzahl der Worte - 1
-;d6.l Länge von 4 Quellebenen in Bytes
+;d6.l Laenge von 4 Quellebenen in Bytes
 ;a0.l Zeiger auf Quellebene 0
 ;a1.l Zeiger auf Quellebene 1
 ;a2.l Zeiger auf Quellebene 2
@@ -923,7 +923,7 @@ xp_unknown:       moveq    #0,d0                ;Raster ist nicht wandelbar
 
 ;EdDI-Cookie suchen
 ;Vorgaben:
-;Register d0-d2/a0-a1 können verändert werden
+;Register d0-d2/a0-a1 koennen veraendert werden
 ;Eingaben:
 ;-
 ;Ausgaben:
@@ -941,7 +941,7 @@ search_EdDI_err:  moveq    #0,d0                ;Cookie nicht gefunden
 
 ;Cookie suchen
 ;Vorgaben:
-;Register d0-d2/a0 werden verändert
+;Register d0-d2/a0 werden veraendert
 ;Eingaben:
 ;d0.l Cookie-ID
 ;Ausgaben:

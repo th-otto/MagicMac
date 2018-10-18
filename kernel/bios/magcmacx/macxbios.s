@@ -72,11 +72,9 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XDEF      altcode_asc         ; nach XAES
      XDEF      iorec_kb            ; nach DOS,XAES
      XDEF      ctrl_status         ; nach DOS
-     XDEF      cpu_typ             ; nach DOS,AES
      XDEF      is_fpu              ; nach XAES
      XDEF      halt_system         ; nach DOS,AES
      XDEF      bios_ptr            ; nach DOS
-     XDEF      xaes_area           ; nach XAES
      XDEF      p_mgxinf            ; nach XAES
      XDEF      machine_type        ; nach VDI,DOS
      XDEF      config_status       ; nach DOS und AES
@@ -91,15 +89,6 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XDEF      dos_macfn           ; nach DOS
 
      XDEF      p_vt52              ; neues VT52 nach DOS
-     XDEF      p_vt52_winlst       ; nach DOS
-     XDEF      p_vt_interior_off   ; nach DOS
-     XDEF      p_vt_columns_off    ; nach DOS
-     XDEF      p_vt_rows_off       ; nach DOS
-     XDEF      p_vt_visible_off    ; nach DOS
-     XDEF      p_vt_x_off          ; nach DOS
-     XDEF      p_vt_y_off          ; nach DOS
-     XDEF      p_vt_sout           ; nach DOS
-     XDEF      p_vt_cin            ; nach DOS
      XDEF      warm_boot           ; nach AES
      XDEF      warmbvec,coldbvec   ; nach AES
      XDEF      prn_wrts            ; -> DEV_BIOS
@@ -107,6 +96,8 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      IFNE FALCON
      XDEF      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
+
+	 XDEF cpu020             ; nach MATH
 
 * Import aus STD
 
@@ -180,13 +171,14 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XREF      vt52_init           ; VDI: VT52 initialisieren
 
 
-     INCLUDE "LOWMEM.INC"
-     INCLUDE "BIOS.INC"
-     INCLUDE "DOS.INC"
-     INCLUDE "ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "MACXKER.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "lowmem.inc"
+	 include "country.inc"
+     INCLUDE "bios.inc"
+     INCLUDE "dos.inc"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "macxker.inc"
+     INCLUDE "debug.inc"
 
 
 D_DAY     EQU  29
@@ -195,42 +187,16 @@ D_YEAR    EQU  2003
 D_BCD     EQU  $12292003           ; mmttjj
 
 NCOOKIES  EQU  21
+NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 
 N_KEYTBL       EQU  10             ; 10 Tastaturtabellen
 
      TEXT
 
 
-* BIOS- Variablen:
-
-deflt_env           EQU  $840           /* char deflt_env[40]         */
+;--------------------------------------------------------------
 ;
-; saveptr_area bleibt aus Kompatiblitätsgründen (Matrix Grafiksoft.) bestehen,
-; wird aber von (X)Bios nicht benutzt
-savptr_area         EQU  $93a           /* int  savptr_area[105],ende */
-
-jmpcode             EQU  $93a           /* int  jmpcode[3]            */
-ram_syshdr          EQU  $940           /* SYSHDR ram_syshdr          */
-
-* ## unbenutzt. Ab <clear_area> werden beim Warmstart 64 kB gelöscht
-*               im Original- TOS ab $980
-
-xaes_area           EQU  $980           /* long xaes_area[3]          */
-/* p_vt52_winlst zeigt auf das Array WINDOW *app_window[128].         */
-/* Ist unter der Applikationsnummer id ein TOS-Programm im VT52 am    */
-/* Laufen, so zeigt app_window[id] auf die zugehörige Fensterstruktur */
-/* Andernfalls enthält app_window[id] NULL.                           */
-/* Die nachfolgenden Variablen werden im VT52.PRG in der Funktion     */
-/* <void set_vec()> initialisiert.                                    */
-p_vt52_winlst       EQU $98c            /* WINDOW   **p_vt52_winlst;  */
-p_vt_interior_off   EQU $990            /* Offset zur Variable INTERIOR interior  */
-p_vt_columns_off    EQU $992            /* Offset zur Variable WORD columns       */
-p_vt_rows_off       EQU $994            /* Offset zur Variable WORD rows */
-p_vt_visible_off    EQU $996            /* Offset zur Variable WORD visible_rows  */
-p_vt_x_off          EQU $998            /* Offset zur Variable WORD x */
-p_vt_y_off          EQU $99a            /* Offset zur Variable WORD y */
-p_vt_sout           EQU $99c            /* Adresse der cooked_str_to_con-Routine */
-p_vt_cin            EQU $9a0            /* Adresse der c_in_cooked-Routine */
+; BIOS- Variablen:
 
 clear_area          EQU $9a4            /* war vorher auf $98c        */
 
@@ -334,8 +300,8 @@ app0:               DS.L 1              /* APP #0 und Default- Superstack  */
 pgm_superst:        DS.L 1              /* Default- Superstack             */
 p_mgxinf:
 pgm_userst:         DS.L 1
-dflt_maptable:      DS.L 4*6            /* für 4 Einträge à 24 Bytes       */
-intern_maptab:      DS.L 4*6           ;interne MapTab. Enthält die Adressen
+dflt_maptable:      DS.L NSERIAL*6     /* für 4 Einträge à 24 Bytes       */
+intern_maptab:      DS.L NSERIAL*6           ;interne MapTab. Enthält die Adressen
                                        ;der seriellen Mag!X-Biosroutinen
 ;
 ; Anschließend eine Kopie der Gerätevektoren.
@@ -360,6 +326,7 @@ log_fd:             DS.L 1              /* DateiHandle für Bootlog */
 log_fd_pd:          DS.L 1              /* Prozeßdeskriptor für Handle */
 log_oldconout:      DS.L 1              /* Alter Vektor für Bootlog */
 p_vt52:             DS.L 1              /* für VT52.PRG */
+cpu020:             DS.W 1         /* nach MATH */
 __e_bios:
 
 
@@ -836,10 +803,10 @@ _cpyloop3:
 * AES starten
 * Auflösungswechsel
 
-     INCLUDE "AUTO.S"
+     INCLUDE "auto.s"
 
 
-     INCLUDE "PUNTAES.S"
+     INCLUDE "puntaes.s"
 
 
 **********************************************************************
@@ -926,7 +893,7 @@ xcmdexec_macfn:
  rts
 
 
-     INCLUDE "DRIVE.S"             ; Dummy-Routinen
+     INCLUDE "drive.s"             ; Dummy-Routinen
 
 
 **********************************************************************
@@ -1104,7 +1071,7 @@ Drvmap:
  move.l   _drvbits,d0
  rte
 
-     INCLUDE "PROTOBT.S"
+     INCLUDE "protobt.s"
 
 **********************************************************************
 *
@@ -1955,8 +1922,8 @@ crsh_loop:
  move.l   a1,_sysbase
  rts
 jmpop:
-long_zero EQU *+2
- jmp      0.l
+ dc.w $4ef9
+long_zero: dc.l 0
 braop:
  bra.b    jmpop
 
@@ -2235,7 +2202,7 @@ init_bconmap:
 
  lea      dflt_maptable,a0
  lea     intern_maptab,a1
- moveq   #23,d0
+ moveq   #(NSERIAL*6)-1,d0
 ins_internmap:                ;Maptab der Mag!X-eigenen Routinen erstellen
  move.l  (a0)+,(a1)+
  dbra    d0,ins_internmap
@@ -2558,7 +2525,7 @@ nix_hz:
  rte
 
 
-     INCLUDE "PRIV_EXC.S"
+     INCLUDE "priv_exc.s"
 
 
 **********************************************************************
@@ -3066,7 +3033,7 @@ handle_key:
 ;   eori.w   #$300,sr          ;von IPL 5 auf 6 zurück
 ;   rts
 
-     INCLUDE "HANDLKEY.S"
+     INCLUDE "handlkey.s"
 
 **********************************************************************
 *
@@ -3234,8 +3201,14 @@ install_cookies:
  move.l   a5,_p_cookies            ; Pointer setzen
 * _CPU Cookie, Loword enthält den <cpu_typ>
  move.l   #'_CPU',(a5)+
- clr.w    (a5)+
- move.w   cpu_typ,(a5)+
+ moveq    #0,d1
+ move.w   MSysX+MacSysX_cpu(pc),d1
+ move.l   d1,(a5)+                 ; und CPU eintragen
+ clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik möglich?
+ cmpi.b   #20,d0
+ bcs      scpu_typ
+ addq.w   #1,cpu020                     ; mindestens 020-Prozessor
+scpu_typ:
 
 * FPU bestimmen
 

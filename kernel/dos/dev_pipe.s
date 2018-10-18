@@ -6,8 +6,8 @@
 
 DEBUG     EQU  16
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "STRUCTS.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "structs.inc"
 
      XDEF upipe_drv,bipipe_drv
      XDEF upipe_create,bipipe_create
@@ -19,7 +19,7 @@ DEBUG     EQU  16
      XREF act_pd
      XREF appl_IOcomplete
      XREF evnt_IO
-     XREF memcpy
+     XREF vmemcpy
      XREF ncopy_from
 
 
@@ -212,7 +212,7 @@ pr_ok:
  lea      pipe_data(a6),a0         ; Ziel
  lea      pipe_data(a6,d0.w),a1    ; nächste Daten
  move.w   pipe_len(a6),d0          ; Restdaten verschieben
- jsr      memcpy
+ jsr      vmemcpy
 pr_ok2:
  move.l   (sp)+,d0
  add.l    d0,a5                    ; Pufferposition weiter
@@ -295,6 +295,7 @@ prw_ende:
 * Liefert E_OK auf Pseudo-TTYs, sonst 0.
 *
 
+bipipe_seek:
 upipe_seek:
  moveq    #EACCDN,d0
  move.l   fd_multi1(a0),a0
@@ -592,7 +593,7 @@ bipipe_write:
 * long bipipe_seek(a0 = FD *f,  d0 = long where, d1 = int mode)
 *
 
-bipipe_seek   EQU  upipe_seek
+;bipipe_seek   EQU  upipe_seek
 
 
 **********************************************************************

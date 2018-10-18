@@ -1,24 +1,26 @@
 MagicMacX.OS
 .C[-I..\..\inc_c]
-.S[-I..\..\inc_as]
-.S[-I..\bios\common]
+.C[-I..\inc]
+.S[-I..\inc]
 
 .S[-DCOUNTRY=1]
 .C[-DCOUNTRY=1]
 
-.S[-DMMY_YIELD=1]
+.C[-A-]
+.C[-K-]
+.S[-DMMX_YIELD=1]
 .S[-DDEMO=0]
 .C[-P]
 =
 ..\bios\magcmacx\macxbios.s
 ..\allg\read_inf.s
-..\vdi\bin\math.o ; no source yet
+..\vdi\math.s
 ..\allg\std.s
 ..\ser_my.s
 ..\dos\magidos.s
 ..\dos\malloc.s
 ..\dos\xfs_vdos.s
-..\dos\vfat_s.o
+..\dos\vfat_s.s
 ..\dos\vfat.c
 ..\dos\dfs_u.s
 ..\dos\dev_bios.s
@@ -40,11 +42,12 @@ MagicMacX.OS
 ..\aes\aesmen.s
 ..\aes\aesgraf.s
 ..\aes\aesrsc.s
+..\aes\farbic.c
 ..\aes\wdialog\wdialog.c
 ..\aes\wdialog\listbox.c
 ..\aes\wdialog\fnt_menu.c
 ..\aes\wdialog\shelsort.c
-..\aes\wdialog\wdintrfs.s
+..\aes\wdialog\wdintrfc.s
 ..\aes\fsel\fsel.c
 ..\aes\xmen_mgr\mtsmn.c
 ..\ende.s

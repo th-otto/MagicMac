@@ -24,10 +24,12 @@ DOSMEMSIZ      EQU  150            ; 150 IMBs für DOS reservieren
                                    ; MagiC < 6: 70 IMBs
 NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
 
-     INCLUDE "..\ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "STRUCTS.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "structs.inc"
+     INCLUDE "debug.inc"
+     INCLUDE "basepage.inc"
+     INCLUDE "lowmem.inc"
 
      XDEF  dos_init
      XDEF  act_pd
@@ -43,7 +45,6 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF  swap_paths         ; an XAES
      XDEF  env_clr_int
      XDEF  srch_process       ; an XAES
-     XDEF  p_procid           ; an XAES
      XDEF  match_pid          ; an XAES (für Pwaitpid())
      XDEF  proc_info          ; => DOS_XFS
      XDEF  dmdx               ; => MAC_XFS
@@ -117,10 +118,9 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XREF  getcookie           ; Cookie suchen
      XREF  bios2devcode        ; BIOS-Device => devcode (32 Bit)
      XREF  bios_rawdrvr        ; raw-Driver aus dem BIOS
-     XREF  memcpy              ; a0=dst,a1=src,d0=int len
+     XREF  vmemcpy             ; a0=dst,a1=src,d0=int len
      XREF  chk_rtclock         ; Prüft, ob MegaST- Uhr da ist
      XREF  read_rtclock        ; MegaST- Uhr auslesen
-     XREF  cpu_typ
      XREF  machine_type
      XREF  halt_system
      XREF  Bmalloc
@@ -132,7 +132,6 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
 
 * Importe aus dem AES
 
-     XREF  act_appl
      XREF  keyb_app
      XREF  appl_break
      XREF  appl_yield
@@ -183,10 +182,6 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
 
 	include "country.inc"
 
-criticret      EQU $48a
-_hz_200        EQU $4ba
-_drvbits       EQU $4c2
-phystop        EQU $42e
 
 
 
@@ -284,9 +279,6 @@ imb_sizeof:
      SUPER
      MC68020
 
-_bootdev       EQU $446
-themd          EQU $48e
-
 
 *    OFFSET $29f0
      OFFSET __a_dos
@@ -299,6 +291,7 @@ dos_date:      DS.W 1              ; Wort mit Datum im DOS- Format
 xaes_appls:    DS.L 1              ; hier hängt sich XAES ein
 mem_root:      DS.L 16             ; 16 Speicherlisten (ST-RAM, TT-RAM, ...)
                DS.L 16             ; Endadressen für vorherige Blöcke
+_mifl_unused:
 undo_buf:      DS.B 320            ; für Zeileneditor
      EVEN
 
@@ -344,7 +337,6 @@ udrv_procdir:  DS.L 1
 ur_pd:         DS.B 256            ; Ur-PD
 __e_dos:
 
-_mifl_unused   EQU  undo_buf       ; Dummy
 
 
      TEXT
@@ -736,7 +728,7 @@ os_init:
  addq.l   #8,sp
  move.l   d0,otimer
  clr.l    criticret           ; MagiC 6.01: Semaphore für Handler
- pea      etv_critic(pc)
+ pea      etv_critic_vec(pc)
  move.w   #$101,-(sp)
  move.w   #5,-(sp)
  trap     #$d                 ; bios Setexc
@@ -6747,7 +6739,7 @@ env_set:
  move.l   (sp),a1             ; src
  lea      0(a1,d2.w),a0       ; dst
 ;move.w   d0,d0
- jsr      memcpy              ; Environment verschieben
+ jsr      vmemcpy              ; Environment verschieben
 
  movem.l  (sp)+,a0/a1/a2
 sev_loop1:
@@ -7034,7 +7026,7 @@ create_basepage:
  move.l   d4,a0
  lea      pr_cmdlin(a0),a0
  move.w   #128,d0
- jsr      memcpy                        ; genau 128 Bytes Basepage
+ jsr      vmemcpy                        ; genau 128 Bytes Basepage
  move.l   ARG0(a6),d0
  beq.b    crb_no_prfname                ; kein Pfad
  move.l   d0,a1                         ; von
@@ -8572,7 +8564,7 @@ errt_notfound:
 * (aus KCMD)
 *
 
-etv_critic:
+etv_critic_vec:
  st       criticret                ; MagiC 6.01: Semaphore setzen
  moveq    #$d,d0
  bsr      Bputch
@@ -9124,7 +9116,7 @@ _stf_go:
  suba.l   d0,sp               ; Platz dafür schaffen
  move.l   sp,a0               ; dst
  lea      256+8(a5),a1        ; src
- jsr      memcpy              ; Supervisorstack kopieren
+ jsr      vmemcpy              ; Supervisorstack kopieren
  move.l   #256,d0
  move.l   a5,a0
  bsr      Mshrink             ; Platz für geerbten Stack wieder freigeben
@@ -9139,7 +9131,7 @@ _stf_go:
  move.l   p_procdata(a5),a0
  lea      pr_sigdata(a0),a0        ; Ziel
  move.l   #32*sa_sizeof,d0    ; Länge
- jsr      memcpy
+ jsr      vmemcpy
 _stf_e1:
 ; neuen Prozeß starten
  moveq    #0,d0               ; P(v)fork() liefert 0 für das Kind
@@ -9242,12 +9234,12 @@ fork_nosave:
  move.l   act_appl,a1
  lea      (sp),a1             ; src
  lea      256+8(a6),a0        ; dst
- jsr      memcpy              ; Supervisor-Stack kopieren
+ jsr      vmemcpy              ; Supervisor-Stack kopieren
 * Diverse Felder der Basepage kopieren
  move.l   a5,a1               ; src
  move.l   a6,a0               ; dst
  moveq    #p_dta,d0           ; len
- jsr      memcpy              ; lowpa,hitpa,tbase,tlen,dbase,dlen,bbase,blen
+ jsr      vmemcpy              ; lowpa,hitpa,tbase,tlen,dbase,dlen,bbase,blen
  move.l   p_env(a5),p_env(a6)
  move.l   p_tbase(a5),256(a6)
  btst     #0,p_flags(a5)      ; MiNT-Domain?
@@ -9323,7 +9315,7 @@ dpex_200:
  lea      pr_fname(a0),a0
  lea      pr_fname(a1),a1
  move.w   #pr_bconmap-pr_fname,d0
- jsr      memcpy
+ jsr      vmemcpy
  suba.l   a1,a1                    ; kein limit
  move.l   p_procdata(a6),a0
  jsr      Mxfree                   ; neues p_procdata freigeben
@@ -9333,7 +9325,7 @@ dpex_200:
  lea      p_parent(a4),a1          ; kopieren ab p_parent
  lea      p_parent(a6),a0
  move.w   #p_cmdlin-p_parent,d0    ; kopieren bis p_cmdlin
- jsr      memcpy
+ jsr      vmemcpy
  move.l   (sp)+,p_env(a6)          ; neues Env zurück
 * neue Basepage, neues Env, altes PROCDATA gehören neuem Prozeß
  move.l   a6,a0                    ; neuer PD
@@ -9836,21 +9828,11 @@ dosvars:
  DC.L     dmdx                ; $22: DMDs
  DC.L     imbx                ; $26: interner DOS- Speicher
  DC.L     resv_intmem         ; $2a: Adresse der Speichererweiterungsroutine
- DC.L     etv_critic          ; $2e: Adresse des Event-Critic-Managers
+ DC.L     etv_critic_vec      ; $2e: Adresse des Event-Critic-Managers
  DC.L     err_to_str          ; $32: Adresse der Fehler->Klartext Routine
  DC.L     xaes_appls          ; $36: hier darf sich XAES einhängen
  DC.L     mem_root            ; $3a: MAGIX- Speicherlisten
  DC.L     ur_pd               ; $3e: Ur- Prozeß
-
-* Struktur für Übergabe an GEMDOS:
-
-;dos_magic:    DS.L 1              /* 'XAES'                               */
-;act_appl:     DS.L 1              /* APPL *                               */
-;ap_pd_offs:   DS.W 1              /* Offset für ap_pd                     */
-;appln:        DS.W 1              /* Anzahl der APPLs                     */
-;maxappln:     DS.W 1              /* Tabellenlänge                        */
-;applx:        DS.L NAPPS          /* APPL *applx[16]                      */
-
 
 **********************************************************************
 *

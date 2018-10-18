@@ -1,7 +1,7 @@
 * Modul mit VDI-Funktionen und OBJECT- Funktionen
 
-     INCLUDE "AESINC.S"
-     INCLUDE "FARBICON.S"
+     INCLUDE "aesinc.s"
+     INCLUDE "farbicon.s"
         TEXT
 
 
@@ -30,6 +30,7 @@
      XDEF      _objc_offset,objc_offset
      XDEF      _objc_edit,objc_wedit
      XDEF      _form_center
+     XDEF      _form_center_grect
 
      XDEF      obj_to_g
      XDEF      calc_obsize
@@ -49,7 +50,7 @@
      XDEF      set_full_clip
      XDEF      set_ob_xywh
      XDEF      get_ob_xywh
-     XDEF      v_clswk             ; => AESMAIN, MAC_BIOS (für Shutdown)
+     XDEF      v_clswk             ; => AESMAIN, MAC_BIOS (fuer Shutdown)
      XDEF      init_vdi
      XDEF      vq_gdos
      XDEF      v_pline
@@ -106,7 +107,7 @@ vq_gdos:
 * void vq_scrninfo( a0 = int *work_out )
 *
 * gibt es nur bei NVDI oder anderen erweiterten VDIs
-* für Farbicons verwendet
+* fuer Farbicons verwendet
 *
 
 vq_scrninfo:
@@ -121,11 +122,11 @@ vq_scrninfo:
 **********************************************************************
 *
 * void vst_effects( d0 = int effects )
-* für Farbicons verwendet
+* fuer Farbicons verwendet
 *
 
 vst_effects:
- move.w   d0,vintin                ; Bitmuster für Effekte
+ move.w   d0,vintin                ; Bitmuster fuer Effekte
  move.l   #$6A000001,d0            ; 106: vst_effects
  bra      vdi_quick
 
@@ -133,7 +134,7 @@ vst_effects:
 **********************************************************************
 *
 * void vq_color( d0 = int index, d1 = int setflag )
-* für Farbicons verwendet
+* fuer Farbicons verwendet
 *
 
 vq_color:
@@ -158,7 +159,7 @@ v_clswk:
  move.w   d0,vcontrl+12
  move.l   #$65000000,d0            ; close virtual workstation
  bsr      vdi_quick
- move.w   (sp)+,vcontrl+12         ; handle zurück
+ move.w   (sp)+,vcontrl+12         ; handle zurueck
 vclw_weiter:
  move.l   #$02000000,d0            ; close workstation
  bra      vdi_quick
@@ -218,7 +219,7 @@ vdi_quick:
 *
 * init_vdi( void )
 *
-* Öffnet Workstation, setzt Mausinterrupts
+* Oeffnet Workstation, setzt Mausinterrupts
 *
 
 init_vdi:
@@ -226,17 +227,17 @@ init_vdi:
  bsr      open_wstn
  jsr      init_vdivars
 
- move.l   #$00000005,vintin        ; linksbündig, Zeichenzellenoberkante
+ move.l   #$00000005,vintin        ; linksbuendig, Zeichenzellenoberkante
  move.l   #$27000002,d0            ; vst_alignment
  bsr      vdi_quick
 
  clr.w    dummyvws
- tst.w    finfo_big+fontmono       ; großer Zeichenssatz proportional?
+ tst.w    finfo_big+fontmono       ; grosser Zeichensatz proportional?
  bne.b    initvdi_nodummy          ; nein, keine Dummy-WS
 
-* Dummy-Ws für dämliche MyDials
+* Dummy-Ws fuer daemliche MyDials
 
- suba.w   #2*128,sp                ; Platz für work_out[] (dummy)
+ suba.w   #2*128,sp                ; Platz fuer work_out[] (dummy)
  lea      vintin+2,a0              ; ab vintin[1]
  moveq    #8,d0                    ; vintin[1..9] = 1
 initvdi_loop1:
@@ -250,7 +251,7 @@ initvdi_loop1:
  bsr      vdi_quick
  move.l   #vintout,vdipb+12        ; intout restaurieren
  move.w   vcontrl+12,dummyvws      ; Dummy-WS merken
- move.w   (sp)+,vcontrl+12         ; handle zurück
+ move.w   (sp)+,vcontrl+12         ; handle zurueck
  adda.w   #2*128,sp
 
 
@@ -277,7 +278,7 @@ initvdi_ptr:
 
 set_scrmode:
  lea      curr_scrmode,a1          ; Adresse des alten Werts
- cmp.w    (a1),d0                  ; Modus ändern
+ cmp.w    (a1),d0                  ; Modus aendern
  beq.b    sscr_ret                ; nein, nichts tun
  move.w   d0,(a1)                  ; neuen Modus sichern
  beq.b    sscr_l1                ; neuer ist Textmodus
@@ -296,7 +297,7 @@ sscr_ret:
  rts
 sscr_l1:
  moveq    #3,d0                    ; Enter alpha mode
- bsr.b    v_escape                 ; Bildschirm löschen und Cursor ein
+ bsr.b    v_escape                 ; Bildschirm loeschen und Cursor ein
  move.l   old_but_int,vcontrl+14   ; Zusatzcode contrl[7]
  move.l   #$7d000000,d0            ; Exchange button change vector
  bsr      vdi_quick                ; vex_butv
@@ -305,7 +306,7 @@ sscr_l1:
  bra      vdi_quick                ; vex_motv
 
 v_escape:
- move.w   d0,vcontrl+10            ; Id für Unter- Opcode
+ move.w   d0,vcontrl+10            ; Id fuer Unter- Opcode
  move.l   #$05000000,d0            ; v_escape
  bra      vdi_quick
 
@@ -380,17 +381,17 @@ mouse_ende:
 *
 * void open_wstn( void )
 *
-* Öffnet die Workstation.
+* Oeffnet die Workstation.
 *
 * Achtung: Setzt jetzt auch <ptsin> auf vptsin[]
-*          <ptsin> darf nicht mehr geändert werden!
+*          <ptsin> darf nicht mehr geaendert werden!
 *
 * Achtung: Hier wird contrl[6] mit der Workstation initialisiert
-*          und darf nicht mehr geändert werden
+*          und darf nicht mehr geaendert werden
 *
-* Achtung: Unterstützung von NVDI
+* Achtung: Unterstuetzung von NVDI
 *
-* 11.11.95:    dflt_xdv für den Falcon ergänzt
+* 11.11.95:    dflt_xdv fuer den Falcon ergaenzt
 *
 
 open_wstn:
@@ -403,7 +404,7 @@ open_wstn:
  clr.l    (a1)+
  clr.l    (a1)+
  clr.l    (a1)+
- clr.l    (a1)                     ; contrl[0..11] löschen (Hibytes!)
+ clr.l    (a1)                     ; contrl[0..11] loeschen (Hibytes!)
 * intin einsetzen und initialisieren
  lea      vintin,a1
  move.l   a1,(a0)+                 ; vdipb[1] = work_in          (intin)
@@ -414,7 +415,7 @@ owst_loop:
  dbf      d0,owst_loop
  move.w   #2,(a1)+                 ; RC- Koordinaten
 
-; für NVDI:
+; fuer NVDI:
  move.l   #'XRES',(a1)+
  move.w   dflt_xdv,(a1)
 
@@ -429,9 +430,9 @@ owst_loop:
  move.l   #vptsout,vdipb+16
  tst.w    vcontrl+12               ; wstn_handle
  bne.b    opw_ok                   ; handle != 0, OK
- subq.w   #1,vdi_device            ; war das Gerät bereits 1 ?
+ subq.w   #1,vdi_device            ; war das Geraet bereits 1 ?
  beq      fatal_err                ; ja, System anhalten
- move.w   #1,vdi_device            ; Gerät auf 1 setzen
+ move.w   #1,vdi_device            ; Geraet auf 1 setzen
  bra      open_wstn                ; und nochmal versuchen
 opw_ok:
  lea      nvdi_workstn,a2
@@ -444,11 +445,11 @@ opw_ok:
  bne.b    no_nvdi
  move.l   (a0),a0                  ; &nvdi_struc
  addq.l   #8,a0                    ; &nvdi_struc.nvdi_wk
- move.l   (a0)+,a1                 ; a1 = Workstationpointer für NVDI
- move.l   a1,(a2)+                 ; Workstationpointer für NVDI
- move.l   (a0),(a2)                ; Füllmuster für NVDI
- move.w   NVDI_device_id(a1),d0    ; Geräte- Id - 1
- addq.w   #1,d0                    ; auf Geräte- Id umrechnen
+ move.l   (a0)+,a1                 ; a1 = Workstationpointer fuer NVDI
+ move.l   a1,(a2)+                 ; Workstationpointer fuer NVDI
+ move.l   (a0),(a2)                ; Fuellmuster fuer NVDI
+ move.w   NVDI_device_id(a1),d0    ; Geraete- Id - 1
+ addq.w   #1,d0                    ; auf Geraete- Id umrechnen
  bra.b    opw_setdev               ; und als vdi_device setzen
 
 no_nvdi:
@@ -499,14 +500,14 @@ opw_setdev:
 * AD3DVALUE    6
 *
 * MX_ENABLE3D  10
-* MX_MENUCOL   11        Menüfarbe ab MagiC 6
+* MX_MENUCOL   11        Menuefarbe ab MagiC 6
 *
 
 _objc_sysvar:
  cmpi.w   #10,d1					; MX_ENABLE3D
- beq.b    obs_10                   ; Spezialfunktion für MagiC
+ beq.b    obs_10                   ; Spezialfunktion fuer MagiC
  cmpi.w   #11,d1					; MX_MENUCOL
- beq.b    obs_11                   ; Spezialfunktion für MagiC
+ beq.b    obs_11                   ; Spezialfunktion fuer MagiC
  tst.w    d0                       ; mode == set ?
  bne.b    obs_err                  ; ja, ist immer Fehler
  subq.w   #1,d1
@@ -523,18 +524,18 @@ obs_err:
  rts
 
 obs_11:
- tst.w    d0                       ; Wert ändern?
+ tst.w    d0                       ; Wert aendern?
  bne.b    obs_err                  ; nicht erlaubt
  tst.w    enable_3d                ; 3D-Objekte aktiviert?
- beq.b    obs_11_white             ; nein, Menü ist weiß
- btst     #7,look_flags+1          ; 3D-Menüs aktiviert?
+ beq.b    obs_11_white             ; nein, Menue ist weiss
+ btst     #7,look_flags+1          ; 3D-Menues aktiviert?
  beq.b    obs_11_white             ; nein
- tst.w    finfo_big+fontmono       ; großer Zeichensatz äquidistant?
- bne.b    obs_11_white             ; ja, Menü ist weiß
- moveq    #8,d1                    ; Menü ist hellgrau
+ tst.w    finfo_big+fontmono       ; grosser Zeichensatz aequidistant?
+ bne.b    obs_11_white             ; ja, Menue ist weiss
+ moveq    #8,d1                    ; Menue ist hellgrau
  bra.b    obs_ok2
 obs_11_white:
- moveq    #WHITE,d1                ; Menü ist weiß
+ moveq    #WHITE,d1                ; Menue ist weiss
 obs_ok2:
  swap     d1
  bra.b    obs_ok
@@ -548,7 +549,7 @@ obs_10:
  move.w   d2,d0                    ; neuer Wert
  beq.b    obs_setok                ; 3D deaktivieren, OK
  cmpi.w   #4,nplanes
- bcc.b    obs_setok                ; genügend Planes
+ bcc.b    obs_setok                ; genuegend Planes
  move.l   d1,-(sp)
  clr.w    enable_3d
 ; moveq   #0,d0
@@ -567,8 +568,8 @@ obs_ok:
 
 
 obst:
- DC.L     $00010001                ; LK3IND: eindrücken und Farbänderung
- DC.L     $00010000                ; LK3DACT: nur eindrücken
+ DC.L     $00010001                ; LK3IND: eindruecken und Farbaenderung
+ DC.L     $00010000                ; LK3DACT: nur eindruecken
  DC.L     $00080000                ; INDBUTCOL: Farbe 8 (hellgrau)
  DC.L     $00080000                ; ACTBUTCOL: Farbe 8 (hellgrau)
  DC.L     $00080000                ; BACKGRCOL: Farbe 8 (hellgrau)
@@ -587,7 +588,7 @@ v_pline:
  clr.l    (a1)
  lea      vdipb,a1
  move.l   a1,d1
- move.l   a0,8(a1)                 ; vdipb+8 ändern
+ move.l   a0,8(a1)                 ; vdipb+8 aendern
  moveq    #$73,d0
  trap     #2
  move.l   #vptsin,vdipb+8          ; vdipb+8 restaurieren
@@ -653,7 +654,7 @@ vsl_width:
 **********************************************************************
 **********************************************************************
 *
-* Zeichenroutinen, übergeordnete VDI- Routinen
+* Zeichenroutinen, uebergeordnete VDI- Routinen
 *
 
 
@@ -677,12 +678,12 @@ drawbox:
 
  movem.l  d6/d7/a0,-(sp)
  move.w   a1,d6                    ; d6 = color
- move.w   d2,d7                    ; #^# VDI zerstört manchmal d2
+ move.w   d2,d7                    ; #^# VDI zerstoert manchmal d2
 ;move.w   d2,d2                    ; d2 = aes_patt
 * Schreibmodus
 ;move.w   d0,d0
  bsr      set_wmode
-* Füllfarbe
+* Fuellfarbe
  lea      curr_fcolor,a0
  cmp.w    (a0),d6
  beq.b    drab_nocol
@@ -695,7 +696,7 @@ drawbox:
  moveq    #$73,d0
  trap     #2
 drab_nocol:
-* Fülltyp
+* Fuelltyp
  moveq    #0,d6                    ; bei IP_HOLLOW d6 = 0 (leer)
  tst.w    d7                       ; patt, IP_HOLLOW ?
  beq.b    drab_filltype
@@ -722,7 +723,7 @@ drab_nostyle:
  beq.b    drab_nopatt
  move.w   d7,(a0)
  move.w   d7,vintin
- move.l   #$18000001,d0            ; set fill style index (Füllmuster)
+ move.l   #$18000001,d0            ; set fill style index (Fuellmuster)
  lea      vcontrl,a1
  movep.l  d0,1(a1)
  move.l   #vdipb,d1
@@ -742,12 +743,12 @@ drab_nvdi:
  move.l   d1,a2                    ; a2 = WORKSTATION
  subq.w   #1,d0
  move.w   d0,NVDI_wr_mode(a2)      ; Schreibmodus setzen
- move.w   a1,d0                    ; Füllfarbe
- cmp.w    NVDI_colors(a2),d0       ; im zulässigen Bereich ?
+ move.w   a1,d0                    ; Fuellfarbe
+ cmp.w    NVDI_colors(a2),d0       ; im zulaessigen Bereich ?
  bls.b    drab_nvdi_ok             ; ja
- moveq    #1,d0                    ; zu groß, setze Schwarz
+ moveq    #1,d0                    ; zu gross, setze Schwarz
 drab_nvdi_ok:
- move.w   d0,NVDI_f_color(a2)      ; Füllfarbe setzen
+ move.w   d0,NVDI_f_color(a2)      ; Fuellfarbe setzen
  move.l   nvdi_patterns,a1         ; a1 = Zeiger auf Muster
  moveq    #0,d0                    ; FIS_HOLLOW
  move.w   d2,NVDI_f_style(a2)      ; Musterindex setzen (aes_pattern)
@@ -757,10 +758,10 @@ drab_nvdi_ok:
  cmpi.w   #7,d2                    ; IP_SOLID ?
  beq.b    drab_setpatt
  moveq    #2,d0                    ; FIS_PATTERN
- lsl.w    #5,d2                    ; * 32 für Musterzugriff (d1 >= 1)
+ lsl.w    #5,d2                    ; * 32 fuer Musterzugriff (d1 >= 1)
  add.w    d2,a1                    ; auf Tabelle addieren
 drab_setpatt:
- move.w   d0,NVDI_f_interior(a2)   ; Fülltyp setzen
+ move.w   d0,NVDI_f_interior(a2)   ; Fuelltyp setzen
  move.l   a1,NVDI_f_pointer(a2)
 drab_draw:
  lea      vptsin,a1
@@ -801,12 +802,12 @@ move.l    wclip,$388
 * der Text stets zentriert, horizontal je nach <just>.
 * Wenn <width> vorgegeben ist, wird es verwendet.
 *
-* Wenn der Text vertikal nicht paßt, wird er trotzdem nicht verkürzt.
-* Wenn der Text horizontal nicht paßt, wird er verkürzt.
+* Wenn der Text vertikal nicht passt, wird er trotzdem nicht verkuerzt.
+* Wenn der Text horizontal nicht passt, wird er verkuerzt.
 *
 * Die Funktion modifiziert ggf. die Anzahl der darstellbaren Zeichen
 * in vintin_len.
-* Rückgabe: in <outg> x,y,w,h für den justierten Text.
+* Rueckgabe: in <outg> x,y,w,h fuer den justierten Text.
 *
 
 tjust:
@@ -821,21 +822,21 @@ tjust:
 
 * vertikaler Randausgleich
 
- move.l   g_x(a6),g_x(a5)     ; x und y zunächst kopieren
- move.w   fontcharH(a4),d0    ; Texthöhe
- move.w   g_h(a6),d1          ; Eingabehöhe (Objekthöhe)
- sub.w    d1,d0               ; Zeichenhöhe - Objekthöhe
+ move.l   g_x(a6),g_x(a5)     ; x und y zunaechst kopieren
+ move.w   fontcharH(a4),d0    ; Texthoehe
+ move.w   g_h(a6),d1          ; Eingabehoehe (Objekthoehe)
+ sub.w    d1,d0               ; Zeichenhoehe - Objekthoehe
  bgt.b    tju_hori            ; Zeichen zu hoch, nicht zentrieren
- neg.w    d0                  ; Objekthöhe - Zeichenhöhe
+ neg.w    d0                  ; Objekthoehe - Zeichenhoehe
  addq.w   #1,d0
  lsr.w    #1,d0
  add.w    d0,g_y(a5)          ; vertikaler Randausgleich
- move.w   fontcharH(a4),d1    ; Ausgabehöhe <= Objekthöhe
+ move.w   fontcharH(a4),d1    ; Ausgabehoehe <= Objekthoehe
 
 * horizontaler Randausgleich
 
 tju_hori:
- move.w   d1,g_h(a5)          ; Ausgabe-Höhe
+ move.w   d1,g_h(a5)          ; Ausgabe-Hoehe
  move.w   d6,d0
  bne.b    tju_is_hori
  move.w   vintin_len,d0
@@ -844,12 +845,12 @@ tju_hori:
 tju_is_hori:
  move.w   d0,d2
  sub.w    g_w(a6),d2
- ble.b    tju_fits            ; paßt
- subq.w   #1,vintin_len       ; nein, verkürzen
+ ble.b    tju_fits            ; passt
+ subq.w   #1,vintin_len       ; nein, verkuerzen
  bne.b    tju_hori            ; Schleife
 
 tju_fits:
- move.w   d0,g_w(a5)          ; tats. Breite zurückgeben
+ move.w   d0,g_w(a5)          ; tats. Breite zurueckgeben
  tst.b    d7
  beq.b    tju_end             ; TE_LEFT
  neg.w    d2                  ; d2 = freie Breite
@@ -874,11 +875,11 @@ tju_end:
 * EQ/NE int str_to_ints(a0 = char *source)
 *
 * kopiert die "char"- Zeichenkette ins txvintin- Feld und gibt die
-* Länge zurück (max. 256). Schreibt die Länge auch nach vintin_len.
-* Für VDI- Aufrufe
+* Laenge zurueck (max. 256). Schreibt die Laenge auch nach vintin_len.
+* Fuer VDI- Aufrufe
 *
 * Merkt im Feld "vintin_dirty", ob Steuerzeichen dabei sind. Die
-* Steuerzeichen müssen später im Systemzeichensatz ausgegeben werden.
+* Steuerzeichen muessen spaeter im Systemzeichensatz ausgegeben werden.
 *
 
 str_to_ints:
@@ -899,7 +900,7 @@ s2i_cont:
 s2i_ende:
  subq.l   #1,a0                    ; das ()+ korrigieren
  sub.l    d0,a0                    ; Stringanfang abziehen
- move.l   a0,d0                    ; Differenz zurückgeben
+ move.l   a0,d0                    ; Differenz zurueckgeben
  move.w   d0,vintin_len
  rts
 
@@ -908,7 +909,7 @@ s2i_ende:
 *
 * EQ/NE int lstr2int(a0 = char *source, d0 = WORD len)
 *
-* Wie "str_to_ints", aber die Länge wird vorgegeben
+* Wie "str_to_ints", aber die Laenge wird vorgegeben
 *
 
 lstr2int:
@@ -937,7 +938,7 @@ ls2i_ende:
 *
 * PUREC void fs_rtxt( a0 = char *text, a1 = GRECT *rahmen )
 *
-* rechtsbündige Text-Ausgabe für die Dateiauswahl.
+* rechtsbuendige Text-Ausgabe fuer die Dateiauswahl.
 *
 
 fs_rtxt:
@@ -947,8 +948,8 @@ fs_rtxt:
  bsr      set_wmode
  lea      finfo_big,a0
  bsr      _setfont
-;rechtsbündig, Zeichenzellenoberkante
- move.l   #$00020005,vintin        ; rechtsbündig, Zeichenzellenoberkante
+;rechtsbuendig, Zeichenzellenoberkante
+ move.l   #$00020005,vintin        ; rechtsbuendig, Zeichenzellenoberkante
  move.l   #$27000002,d0            ; vst_alignment
  bsr      vdi_quick
  movem.l  (sp)+,a0/a1
@@ -957,8 +958,8 @@ fs_rtxt:
  beq.b    rs_rnix
  bsr      gtext
 rs_rnix:
-;wieder linksbündig, Zeichenzellenoberkante
- move.l   #$00000005,vintin        ; linksbündig, Zeichenzellenoberkante
+;wieder linksbuendig, Zeichenzellenoberkante
+ move.l   #$00000005,vintin        ; linksbuendig, Zeichenzellenoberkante
  move.l   #$27000002,d0            ; vst_alignment
  bsr      vdi_quick
  move.l   (sp)+,a2
@@ -969,7 +970,7 @@ rs_rnix:
 *
 * PUREC void fs_effct( d0 = WORD texteffects )
 *
-* Text-Ausgabe für die Dateiauswahl.
+* Text-Ausgabe fuer die Dateiauswahl.
 *
 
 fs_effct:
@@ -980,7 +981,7 @@ fs_effct:
 *
 * PUREC void fs_txt( a0 = char *text, a1 = GRECT *rahmen )
 *
-* Text-Ausgabe für die Dateiauswahl.
+* Text-Ausgabe fuer die Dateiauswahl.
 *
 
 fs_txt:
@@ -1023,7 +1024,7 @@ draw_text:
  move.l   xclip,g_x(sp)
  move.l   wclip,g_w(sp)
  move.l   a6,a0
- bsr      set_iclip                ; Clipping-Rechteck einschränken
+ bsr      set_iclip                ; Clipping-Rechteck einschraenken
 
  beq      dtx_ende                 ; Clipping-Rechteck ist leer!
 
@@ -1035,8 +1036,8 @@ draw_text:
  bsr      tjust                    ; setzt den Font und justiert
 
 *
-* Im Fall Deckend/Linksbündig/Zeichen<Objekthöhe müssen wir
-* eine weiße Box unterlegen.
+* Im Fall Deckend/Linksbuendig/Zeichen<Objekthoehe muessen wir
+* eine weisse Box unterlegen.
 *
 
  cmpi.w   #TRANSPARENT,d7          ; Text transparent ?
@@ -1046,10 +1047,10 @@ draw_text:
  tst.w    fontmono(a0)             ; Font mono ?
  beq.b    dtx_ttr_prop             ; nein, Sonderbehandlung
 
-* äquidist. Zeichensatz. Box, wenn Zeichensatz zu klein
+* aequidist. Zeichensatz. Box, wenn Zeichensatz zu klein
 
  move.w   big_hchar,d1
- move.w   big_wchar,d0             ; w/h für Resource-Einheit (8*16)
+ move.w   big_wchar,d0             ; w/h fuer Resource-Einheit (8*16)
  cmpa.l   #finfo_big,a0
  beq.b    dtx_big2
  moveq    #6,d0
@@ -1057,9 +1058,9 @@ draw_text:
 dtx_big2:
  cmp.w    fontcharH(a0),d1         ; Zeichensatz zu klein?
  bls.b    dtx_no_ttr               ; nein, keine Box
- cmp.w    g_h(a6),d1               ; urspr. Höhe wie Objekthöhe ?
+ cmp.w    g_h(a6),d1               ; urspr. Hoehe wie Objekthoehe ?
  bne.b    dtx_no_ttr               ; nein, keine Box
- move.w   d1,-(sp)                 ; Höhe: Objekthöhe = eine RSC-Einheit
+ move.w   d1,-(sp)                 ; Hoehe: Objekthoehe = eine RSC-Einheit
  mulu     vintin_len,d0
  move.w   d0,-(sp)                 ; Breite = Anzahl Zeichen * Zeichenbreite
  move.w   g_y(a6),-(sp)            ; y: obere Kante des Objekts
@@ -1072,7 +1073,7 @@ dtx_ttr_prop:
  move.l   vptsin+g_w,-(sp)
  move.l   vptsin+g_x,-(sp)
  move.w   big_hchar,d1
- move.w   big_wchar,d0             ; w/h für Resource-Einheit (8*16)
+ move.w   big_wchar,d0             ; w/h fuer Resource-Einheit (8*16)
  cmpa.l   #finfo_big,a0
  beq.b    dtx_big
  moveq    #6,d0
@@ -1080,9 +1081,9 @@ dtx_ttr_prop:
 dtx_big:
  mulu     vintin_len,d0
  move.w   d0,g_w(sp)               ; Breite nach festem Font richten
- cmp.w    g_h(a6),d1               ; urspr. Höhe wie Objekthöhe ?
- bne.b    dtx_no_chgh              ; nein, nicht ändern
- move.w   d1,g_h(sp)               ; Höhe wie Objekthöhe
+ cmp.w    g_h(a6),d1               ; urspr. Hoehe wie Objekthoehe ?
+ bne.b    dtx_no_chgh              ; nein, nicht aendern
+ move.w   d1,g_h(sp)               ; Hoehe wie Objekthoehe
  move.w   g_y(a6),g_y(sp)          ; y-Pos. wie Objekt
 dtx_no_chgh:
  move.l   sp,a0                    ; GRECT *
@@ -1137,7 +1138,7 @@ draw_cicon:
  move.l   a3,a4                    ; verdunkeln mit Maske
  move.l   ci_sel_data(a2),d2
  beq.b    dcic_nosel1              ; keine Daten, nur verdunkeln
-; Spezialdaten für sel. Icon
+; Spezialdaten fuer sel. Icon
  move.l   ci_sel_mask(a2),a3       ; a3: Maske
  move.l   d2,a6                    ; a6: Daten
 dcic_nodark:
@@ -1153,10 +1154,10 @@ dcic_nosel1:
 *                  a6 = int *data, d7 = int numplanes)
 *
 * a5      CICONBLK *
-* a6      Icondaten (ggf. für selektiertes Icon)
+* a6      Icondaten (ggf. fuer selektiertes Icon)
 * d7      num_planes
 * d6      ob_state
-* d5      Flag "Hintergrund nicht zeichnen
+* d5      Flag Hintergrund nicht zeichnen
 *
 * ab 29.4.95:       (ob_state & SHADOWED) => Spezialfunktionen
 *                             & Bit 15    => kursive Schrift
@@ -1175,7 +1176,7 @@ _draw_cicon:
  move.w   d0,d6                    ; state merken
 
 *
-* GRECTs für Icon und Text kopieren und Offset berechnen
+* GRECTs fuer Icon und Text kopieren und Offset berechnen
 *
 
  move.l   sp,a1
@@ -1210,7 +1211,7 @@ _draw_cicon:
  add.w    d1,(a0)        ; pxyarray[7]: dstx+h-1
 
 *
-* allgemeine Einträge der MFDBs erstellen (ohne fd_addr)
+* allgemeine Eintraege der MFDBs erstellen (ohne fd_addr)
 * vcontrl[7,8] setzen
 * Hier die Schleife, wenn Raster nicht gewandelt werden konnte
 *
@@ -1221,11 +1222,11 @@ dcic_err_col:
  move.l   a0,(a1)+                 ; contrl[7..8] = MFDB *src
  addq.l   #fd_w,a0
  move.l   ib_wicon(a5),(a0)+       ; fd_w = Breite in Pixeln (Vielf. von 16)
-                                   ; fd_h = Höhe in Pixeln
+                                   ; fd_h = Hoehe in Pixeln
  move.w   ib_wicon(a5),d1
  lsr.w    #4,d1                    ;         Pixel in WORDs umrechnen
  move.w   d1,(a0)+                 ; fd_wdwidth
- clr.w    (a0)+                    ; fd_stand = FALSE (gerätespezifisch)
+ clr.w    (a0)+                    ; fd_stand = FALSE (geraetespezifisch)
  move.w   #1,(a0)                  ; fd_nplanes = 1 (Monochrom)
 
  lea      MFDBDST(sp),a0
@@ -1264,7 +1265,7 @@ dcic_noback:
 mcic_normal:
  btst     #WHITEBAK_B,d0
  beq.b    mcic_maske
- tst.w    d3                       ; Hintergrundfarbe weiß ?
+ tst.w    d3                       ; Hintergrundfarbe weiss ?
  beq.b    mcic_icon                ; ja, bei WHITEBAK weglassen
 mcic_maske:
  move.l   a3,MFDBSRC(sp)           ; fd_addr = Maske
@@ -1285,7 +1286,7 @@ mcic_maske:
 *
 
 mcic_icon:
-* MFDBs vervollständigen
+* MFDBs vervollstaendigen
  move.l   a6,MFDBSRC(sp)           ; fd_addr = Icondaten (ib_pdata)
 * Bitblt
  lea      vintin,a2
@@ -1315,11 +1316,11 @@ dcic_color:
 dcic_normal:
  btst     #WHITEBAK_B,d0
  beq.b    dcic_nowhb
- tst.w    d3                       ; Hintergrundfarbe für Text weiß ?
+ tst.w    d3                       ; Hintergrundfarbe fuer Text weiss ?
  bne.b    dcic_dotxt               ; nein, zeichnen
  sf       d5                       ; ja, nicht zeichnen
 dcic_dotxt:
- tst.w    vintin+2                 ; Hintergrundfarbe weiß ?
+ tst.w    vintin+2                 ; Hintergrundfarbe weiss ?
  beq.b    dcic_replace             ; ja, bei WHITEBAK weglassen
 dcic_nowhb:
  move.l   a3,MFDBSRC(sp)           ; fd_addr = Maske
@@ -1356,7 +1357,7 @@ dcic_icon:
  lsr.w    #4,d0                    ; Worte pro Zeile
  mulu     ib_hicon(a5),d0          ; zu wandelnde Worte pro Ebene
  move.l   d0,d1
- add.l    d1,d1                    ; Länge einer Ebene in Bytes
+ add.l    d1,d1                    ; Laenge einer Ebene in Bytes
  move.w   d7,d2                    ; Anz. Ebenen des Quellrasters
  move.l   a6,a0                    ; Quelle im Standardformat
  move.l   scrbuf_mfdb+fd_addr,a1   ; Zielraster
@@ -1364,22 +1365,22 @@ dcic_icon:
  movem.l  (sp)+,d3/d4/d6/a3-a5
  tst.w    d0                       ; konnte wandeln ?
  bne.b    dcic_ok                  ; ja
-* Fehler beim Wandeln, monochrom zeigen, Pointer löschen!!!
- clr.l    cib_mainlist(a5)         ; fürs nächste Mal!
+* Fehler beim Wandeln, monochrom zeigen, Pointer loeschen!!!
+ clr.l    cib_mainlist(a5)         ; fuers naechste Mal!
  move.l   ib_pdata(a5),a6          ; a6: Daten
  move.l   ib_pmask(a5),a3          ; a3: Maske
  moveq    #1,d7                    ; 1 Plane
  move.w   d6,d0                    ; ob_state restaurieren
  bra      dcic_err_col
 
-* MFDBs vervollständigen
+* MFDBs vervollstaendigen
 dcic_dummy:
  move.l   a6,MFDBSRC(sp)                     ; fd_addr = Icondaten (original)
  bra.b    dcic_both_ok
 dcic_ok:
  move.l   scrbuf_mfdb+fd_addr,MFDBSRC(sp)    ; fd_addr = Icondaten (gewandelt)
 dcic_both_ok:
- move.w   nplanes,MFDBSRC+fd_nplanes(sp)     ; akt. Auflösung
+ move.w   nplanes,MFDBSRC+fd_nplanes(sp)     ; akt. Aufloesung
 * Bitblt
  lea      vcontrl,a1
  move.l   #$6d040001,d0            ; copy raster, opaque
@@ -1398,7 +1399,7 @@ dcic_both_ok:
  move.l   scrbuf_mfdb+fd_addr,a1   ; Zielraster
  move.w   MFDBSRC+fd_h(sp),d0           ; d0 = Anzahl Zeilen
  move.w   MFDBSRC+fd_wdwidth(sp),d2     ; d2 = Anzahl Worte pro Zeile
- subq.w   #1,d2                         ; für dbra
+ subq.w   #1,d2                         ; fuer dbra
  ble.b    dcic_text                     ; Fehler ??
  move.w   #$5555,d7                     ; d7 = Maskierung
  bra.b    dcic_nxtline
@@ -1499,7 +1500,7 @@ __dit:
  moveq    #7,d2                    ; Pattern: IP_SOLID
  move.w   d3,d1                    ; color:   Hintergrundfarbe
  moveq    #REPLACE,d0
- bsr      drawbox                  ; Box für den Text ausgeben
+ bsr      drawbox                  ; Box fuer den Text ausgeben
  lea      PTSIN+4(sp),a0
  move.l   a0,vdipb+8
 __dit_no:
@@ -1510,7 +1511,7 @@ __dit_no:
 *
 * WORD EQ/NE set_iclip( a0 = GRECT *new_g )
 *
-* Schränkt den bereits eingestellten Clipping-Bereich weiter ein.
+* Schraenkt den bereits eingestellten Clipping-Bereich weiter ein.
 *
 
 set_iclip:
@@ -1535,7 +1536,7 @@ sicl_nix:
 *
 * void set_full_clip( void )
 *
-* ändert d0/d1/a0/a1
+* aendert d0/d1/a0/a1
 *
 
 set_full_clip:
@@ -1658,7 +1659,7 @@ stwmod_pcolor:
  move.l   d2,a0
  subq.w   #1,d0
  move.w   d0,NVDI_wr_mode(a0)
- cmp.w    NVDI_colors(a0),d1       ; Farbe im zulässigen Bereich ?
+ cmp.w    NVDI_colors(a0),d1       ; Farbe im zulaessigen Bereich ?
  bls.b    swpc_nvdi_ok             ; ja
  moveq    #1,d1                    ; nein, setze Schwarz
 swpc_nvdi_ok:
@@ -1669,7 +1670,7 @@ swpc_no_nvdi:
      ENDIF
 
  lea      curr_pcolor,a0
- cmp.w    (a0),d1                  ; Polylinefarbe geändert ?
+ cmp.w    (a0),d1                  ; Polylinefarbe geaendert ?
  beq.b    set_wmode
  move.w   d0,-(sp)                 ; d0 retten
  move.w   d1,(a0)
@@ -1700,7 +1701,7 @@ stwmod_tcolor:
  move.l   d2,a0
  subq.w   #1,d0
  move.w   d0,NVDI_wr_mode(a0)
- cmp.w    NVDI_colors(a0),d1       ; Farbe im zulässigen Bereich ?
+ cmp.w    NVDI_colors(a0),d1       ; Farbe im zulaessigen Bereich ?
  bls.b    swtc_nvdi_ok             ; ja
  moveq    #1,d1                    ; nein, setze Schwarz
 swtc_nvdi_ok:
@@ -1711,7 +1712,7 @@ swtc_no_nvdi:
      ENDIF
 
  lea      curr_tcolor,a0
- cmp.w    (a0),d1                  ; Textfarbe geändert ?
+ cmp.w    (a0),d1                  ; Textfarbe geaendert ?
  beq.b    set_wmode
  move.w   d0,-(sp)                 ; d0 retten
  move.w   d1,(a0)
@@ -1734,7 +1735,7 @@ swtc_no_nvdi:
 
 set_wmode:
  lea      curr_wmode,a0
- cmp.w    (a0),d0                  ; Schreibmodus geändert ?
+ cmp.w    (a0),d0                  ; Schreibmodus geaendert ?
  beq.b    swp_nomode               ; nein, kein VDI- Aufruf
  move.w   d0,(a0)
  move.w   d0,vintin
@@ -1757,7 +1758,7 @@ swp_nomode:
 * Die Maus ist bereits von _objc_draw() bzw. _objc_change()
 * ausgeschaltet worden.
 *
-* width < 0 (außen): male im Abstand -1,-2,-3,...,-width
+* width < 0 (aussen): male im Abstand -1,-2,-3,...,-width
 * width > 0 (innen): male im Abstand  0, 1, 2,...,width-1
 *
 * Ist der Rahmen breiter als 1, wird ein schwarzer Rand gezeichnet.
@@ -1768,11 +1769,11 @@ zeichne_3drahmen:
  move.l   a0,a5                    ; grect
  move.w   d1,d4                    ; selected/shadowed
  move.l   4(a5),-(sp)
- move.l   (a5),-(sp)               ; grect für 3D-Schatten
+ move.l   (a5),-(sp)               ; grect fuer 3D-Schatten
  move.w   d0,d7
  move.w   d7,d6
  bgt.b    z3dr_n3d1
-; Rahmen außen
+; Rahmen aussen
  addq.w   #1,d0
  beq.b    z3dr_3d
  exg      d6,d0
@@ -1817,7 +1818,7 @@ z3dr_3d:
  moveq    #BLACK,d1
  bsr      strplc_pcolor
  move.l   4(a5),-(sp)
- move.l   (a5),-(sp)               ; grect für 3D-Schatten
+ move.l   (a5),-(sp)               ; grect fuer 3D-Schatten
  tst.w    d7                       ; Rahmen innen ?
  bge.b    z3dr_ni3d                ; ja, ignorieren
  add.w    d7,g_x(sp)
@@ -1846,7 +1847,7 @@ z3dr_ende:
 * Die Maus ist bereits von _objc_draw() bzw. _objc_change()
 * ausgeschaltet worden.
 *
-* width < 0 (außen): male im Abstand -1,-2,-3,...,-width
+* width < 0 (aussen): male im Abstand -1,-2,-3,...,-width
 * width > 0 (innen): male im Abstand  0, 1, 2,...,width-1
 *
 * Zeichnet nur den 3D-Effekt
@@ -1932,7 +1933,7 @@ z3d_ns3d:
 * Die Maus ist bereits von _objc_draw() bzw. _objc_change()
 * ausgeschaltet worden.
 *
-* width < 0 (außen): male im Abstand -1,-2,-3,...,-width
+* width < 0 (aussen): male im Abstand -1,-2,-3,...,-width
 * width > 0 (innen): male im Abstand  0, 1, 2,...,width-1
 *
 
@@ -1959,13 +1960,13 @@ zeichne_3d_lo:
  lea      vcontrl,a1
  move.l   #$06030000,d1            ; v_pline, 3 Paare
  movep.l  d1,1(a1)
- move.l   #vdipb,d1                ; ab hier darf sich d1 nicht mehr ändern
+ move.l   #vdipb,d1                ; ab hier darf sich d1 nicht mehr aendern
 
  tst.w    d7
  bgt.b    z3dlo_innen              ; Rand innen
 
 * 1. Fall:
-* Rand < 0, also außen
+* Rand < 0, also aussen
 
 z3dlo_aloop:
  move.l   a5,a1
@@ -2018,7 +2019,7 @@ z3dlo_innen:
 * Die Maus ist bereits von _objc_draw() bzw. _objc_change()
 * ausgeschaltet worden.
 *
-* width < 0 (außen): male im Abstand -1,-2,-3,...,-width
+* width < 0 (aussen): male im Abstand -1,-2,-3,...,-width
 * width > 0 (innen): male im Abstand  0, 1, 2,...,width-1
 *
 
@@ -2047,13 +2048,13 @@ zeichne_3d_ru:
  lea      vcontrl,a1
  move.l   #$06030000,d1            ; v_pline, 3 Paare
  movep.l  d1,1(a1)
- move.l   #vdipb,d1                ; ab hier darf sich d1 nicht mehr ändern
+ move.l   #vdipb,d1                ; ab hier darf sich d1 nicht mehr aendern
 
  tst.w    d7
  bgt.b    z3dru_innen              ; Rand innen
 
 * 1. Fall:
-* Rand < 0, also außen
+* Rand < 0, also aussen
 
 z3dru_aloop:
  move.l   a5,a1
@@ -2134,27 +2135,27 @@ grect_to_ptsin:
 * Die Maus ist bereits von _objc_draw() bzw. _objc_change()
 * ausgeschaltet worden.
 *
-* width < 0 (außen): male im Abstand -1,-2,-3,...,-width
+* width < 0 (aussen): male im Abstand -1,-2,-3,...,-width
 * width > 0 (innen): male im Abstand  0, 1, 2,...,width-1
 *
 
 zeichne_rahmen:
  movem.l  a5/d7,-(sp)
 ;move.l   a0,a0                    ; GRECT
- move.w   d0,d7                    ; weil VDI manchmal d2 zerstört #^#
+ move.w   d0,d7                    ; weil VDI manchmal d2 zerstoert #^#
  bsr.b    grect_to_ptsin
 
  lea      vcontrl,a1
  move.l   #$06050000,d1            ; v_pline, 5 Paare
  movep.l  d1,1(a1)
- move.l   #vdipb,d1                ; ab hier darf sich d1 nicht mehr ändern
+ move.l   #vdipb,d1                ; ab hier darf sich d1 nicht mehr aendern
 
  lea      vptsin,a5                ; a5 = vptsin
  tst.w    d7
  bgt.b    zr_innen                 ; Rand innen
 
 * 1. Fall:
-* Rand < 0, also außen
+* Rand < 0, also aussen
 
 zra_loop:
  move.l   a5,a1
@@ -2212,12 +2213,12 @@ zr_innen:
 *
 * data: Zeiger auf Bitmusterdaten
 * wb:   Breite des Bilds in Bytes
-* hl:   Höhe des Bild in Pixeln
+* hl:   Hoehe des Bild in Pixeln
 *
 * Ist <data> == NULL, werden <wb> und <hl> ignoriert und der MFDB
 * des Bildschirms eingesetzt
 *
-* ändert nicht a2
+* aendert nicht a2
 *
 
 bitblk_to_mfdb:
@@ -2232,7 +2233,7 @@ bitblk_to_mfdb:
  addq.w   #1,(a0)+                 ; mfdb->fd_h = Pixel/Bildschirm vertikal
  lsr.w    #4,d0                    ; /16 wegen Worte / Bildschirmzeile
  move.w   d0,(a0)+                 ; mfdb->fd_wdwidth
- clr.w    (a0)+                    ; geräteabhängiges Format
+ clr.w    (a0)+                    ; geraeteabhaengiges Format
  move.w   nplanes,(a0)             ; mfdb->fd_nplanes = nplanes
  rts
 * data != NULL
@@ -2240,10 +2241,10 @@ mtmf_l1:
 ;                                  ; wb (Breite in Bytes)
  lsl.w    #3,d0                    ; *8
  move.w   d0,(a0)+                 ; ergibt Breite in Pixeln
- move.w   d1,(a0)+                 ; hl (Höhe in Pixeln)
+ move.w   d1,(a0)+                 ; hl (Hoehe in Pixeln)
  lsr.w    #4,d0                    ; Breite in Pixeln / 16
  move.w   d0,(a0)+                 ; ergibt Breite in Words
- clr.w    (a0)+                    ; gerätespezifisches Format
+ clr.w    (a0)+                    ; geraetespezifisches Format
  move.w   #1,(a0)                  ; eine Ebene !
  rts
 
@@ -2254,7 +2255,7 @@ mtmf_l1:
 *                  int *dstdata, int dstx, int dsty, int dstwb,
 *                  int w, int h, int mode, int color0, int color1)
 *
-* srcdata:     Zeiger auf Bitmusterdaten für Quelle
+* srcdata:     Zeiger auf Bitmusterdaten fuer Quelle
 * srcx,srcy:   Position des Quell- BITBLKs
 * srcwb:       Breite des Quell- BITBLKs in Bytes
 *
@@ -2262,8 +2263,8 @@ mtmf_l1:
 * dstx,dsty:   Position des Ziel- BITBLKs
 * dstwb:       Breite des Ziel- BITBLKs in Bytes
 *
-* w,h:         Breite/Höhe des zu kopierenden BITBLKs in Pixeln
-* mode:        Schreib- (bei transparent) bzw. Verknüpfungsmodus (bei opaque)
+* w,h:         Breite/Hoehe des zu kopierenden BITBLKs in Pixeln
+* mode:        Schreib- (bei transparent) bzw. Verknuepfungsmodus (bei opaque)
 * color0:      Farbe der gesetzten Punkte (-1: opaque, sonst transparent)
 * color1:      Farbe der nicht gesetzten Punkte
 *
@@ -2271,10 +2272,10 @@ mtmf_l1:
 draw_bitblk:
  movem.l  d3/d4/a3/a4/a5,-(sp)
  lea      $18(sp),a3               ; Anfang der Parameterliste
- lea      mfdb1,a4                 ; MFDB für Quelle
- lea      mfdb2,a5                 ; MFDB für Ziel
+ lea      mfdb1,a4                 ; MFDB fuer Quelle
+ lea      mfdb2,a5                 ; MFDB fuer Ziel
  move.w   $16(a3),d3               ; h (Breite in Pixeln)
-* MFDB für Quelle erstellen, d4 = srcx,srcy
+* MFDB fuer Quelle erstellen, d4 = srcx,srcy
  move.w   d3,d1                    ; h
  movea.l  (a3)+,a1                 ; a0 = srcdata
  move.l   (a3)+,d4                 ; d4 = x,y
@@ -2284,7 +2285,7 @@ draw_bitblk:
  bsr.b    bitblk_to_mfdb
 * Maus ausschalten
  jsr      mouse_off
-* MFDB für Ziel erstellen, d3 = dstx,dsty
+* MFDB fuer Ziel erstellen, d3 = dstx,dsty
  move.w   d3,d1                    ; h
  movea.l  (a3)+,a1
  move.l   (a3)+,d3                 ; dstx,dsty
@@ -2359,17 +2360,17 @@ blitcopy_rectangle:
 *
 * int calc_quadr( d0 = int height )
 *
-* Gibt die Breite eines Rechtecks zurück, das die Höhe <height>
-* hat und auf dem Bildschirm möglichst quadratisch aussieht.
-* ändert nur d0/d1/d2
+* Gibt die Breite eines Rechtecks zurueck, das die Hoehe <height>
+* hat und auf dem Bildschirm moeglichst quadratisch aussieht.
+* aendert nur d0/d1/d2
 *
 
 calc_quadr:
- muls     work_out+8,d0            ; * work_out[4] = Höhe eines Pixels in µm
- move.w   work_out+6,d2            ; work_out[3], Breite eines Pixels in µm
- divs     d2,d0                    ;  / Breite eines Pixels in µm
+ muls     work_out+8,d0            ; * work_out[4] = Hoehe eines Pixels in mm
+ move.w   work_out+6,d2            ; work_out[3], Breite eines Pixels in mm
+ divs     d2,d0                    ;  / Breite eines Pixels in mm
  move.l   d0,d1
- swap     d1                       ; d1 = Rest (Sonderbehandlung für TT)
+ swap     d1                       ; d1 = Rest (Sonderbehandlung fuer TT)
  add.w    d1,d1
  cmp.w    d2,d1
  bcs.b    cq_nicht_aufrunden
@@ -2391,7 +2392,7 @@ init_font:
  bsr      vdi_1
  move.l   (sp)+,a0
  tst.w    vintout
- bne.b    ifo_arefonts             ; zusätzliche Fonts gefunden
+ bne.b    ifo_arefonts             ; zusaetzliche Fonts gefunden
 ifo_standardfont:
  move.w   #1,fontID(a0)
  move.w   #1,fontmono(a0)
@@ -2424,12 +2425,12 @@ ifo_arefonts:
 *
 * void init_vdivars( void )
 *
-* Bestimmt u.a. die Zeichensätze
+* Bestimmt u.a. die Zeichensaetze
 *
 
 init_vdivars:
  movem.l  d3/d4/d6/a3/a6,-(sp)
- subq.l   #4,sp                    ; Platz für zwei Dummy-WORDs
+ subq.l   #4,sp                    ; Platz fuer zwei Dummy-WORDs
 
  moveq    #-1,d0
  move.w   d0,curr_pcolor
@@ -2441,7 +2442,7 @@ init_vdivars:
  move.w   d0,curr_patt
  move.w   d0,curr_style
 
-* Bildschirmbreite, -höhe und Clipping
+* Bildschirmbreite, -hoehe und Clipping
 
  clr.w    xclip
  clr.w    yclip
@@ -2454,11 +2455,11 @@ init_vdivars:
  move.w   (a3)+,d4
  addq.w   #1,d4                    ; d4 := work_out[1] + 1
  move.w   d4,hclip                 ; hclip =
- move.w   d4,scr_h                 ; scr_h = Bildschirmhöhe
+ move.w   d4,scr_h                 ; scr_h = Bildschirmhoehe
 
 * nplanes bestimmen
 
- suba.w   #114,sp                  ; Platz für 57 ints
+ suba.w   #114,sp                  ; Platz fuer 57 ints
  move.l   sp,vdipb+12              ; intout
  lea      90(sp),a0
  move.l   a0,vdipb+16              ; ptsout
@@ -2481,20 +2482,20 @@ ivdi_loop_cont:
  move.w   d1,nplanes
 */
 
-* Textbreiten und -höhen bestimmen
+* Textbreiten und -hoehen bestimmen
 
-* großer Systemfont (für Pfeile usw. benötigt):
+* grosser Systemfont (fuer Pfeile usw. benoetigt):
 
  move.w   #1,finfo_sys+fontID      ; Systemfont
- move.l   #$26000000,d0            ; aktuelle Zeichenhöhe ermitteln
+ move.l   #$26000000,d0            ; aktuelle Zeichenhoehe ermitteln
  bsr      vdi_quick                ; vqt_attributes()
  move.w   vptsout+2,finfo_sys+fontH
  lea      finfo_sys,a0
  bsr      init_font
 
-* großer Font:
+* grosser Font:
 
- tst.w    finfo_big+fontH          ; Texthöhe für große Zeichen festgelegt ?
+ tst.w    finfo_big+fontH          ; Texthoehe fuer grosse Zeichen festgelegt ?
  bne.b    ivv_setbig               ; ja, verwenden
  move.w   finfo_sys+fontH,finfo_big+fontH
 ivv_setbig:
@@ -2503,14 +2504,14 @@ ivv_setbig:
  cmpi.w   #1,finfo_big+fontID
  sne      d0
  andi.w   #1,d0
- move.w   d0,isfsm_big             ; für appl_getinfo(0)
+ move.w   d0,isfsm_big             ; fuer appl_getinfo(0)
 
- tst.w    big_wchar                ; Objektgrößen gesetzt ?
- bne.b    ivv_now                  ; ja, übernehmen
+ tst.w    big_wchar                ; Objektgroessen gesetzt ?
+ bne.b    ivv_now                  ; ja, uebernehmen
  move.w   finfo_big+fontcharW,big_wchar
 ivv_now:
- tst.w    big_hchar                ; Objekthöhe gesetzt ?
- bne.b    ivv_noh                  ; ja, übernehmen
+ tst.w    big_hchar                ; Objekthoehe gesetzt ?
+ bne.b    ivv_noh                  ; ja, uebernehmen
  move.w   finfo_big+fontcharH,big_hchar
 ivv_noh:
 
@@ -2518,14 +2519,14 @@ ivv_noh:
 
  tst.w    finfo_sml+fontH
  bne.b    ivv_setsml
- move.w   $58(a3),finfo_sml+fontH  ; geringstmögliche Zeichenhöhe
+ move.w   $58(a3),finfo_sml+fontH  ; geringstmoegliche Zeichenhoehe
 ivv_setsml:
  lea      finfo_sml,a0
  bsr      init_font
  cmpi.w   #1,finfo_sml+fontID
  sne      d0
  andi.w   #1,d0
- move.w   d0,isfsm_sml             ; für appl_getinfo(1)
+ move.w   d0,isfsm_sml             ; fuer appl_getinfo(1)
 
 * INFO-Zeilen Font
 
@@ -2534,7 +2535,7 @@ ivv_setsml:
  move.w   finfo_big+fontID,finfo_inw+fontID
  move.w   finfo_big+fontmono,finfo_inw+fontmono
 ivv_setinw2:
- tst.w    finfo_inw+fontH          ; Texthöhe festgelegt ?
+ tst.w    finfo_inw+fontH          ; Texthoehe festgelegt ?
  bne.b    ivv_setinw               ; ja, verwenden
  move.w   finfo_big+fontH,finfo_inw+fontH
 ivv_setinw:
@@ -2548,7 +2549,7 @@ ivv_setinw:
  move.w   d6,gr_hhbox              ; gr_hhbox := big_hchar + 3
  move.w   d6,d0
  bsr      calc_quadr
- move.w   d0,gr_hwbox              ;  = Anzahl Pixel für gleiche Breite
+ move.w   d0,gr_hwbox              ;  = Anzahl Pixel fuer gleiche Breite
 
 * Verschiedenes
 
@@ -2577,7 +2578,7 @@ ivv_setinw:
  move.l   4(a1),a1
  cmpi.w   #$0116,(a1)         ; Version >= 0x116?
  bcs.b    ivv_nomacos
- move.w   140(a1),d6          ; Menü-Höhe aus dem MacOS übernehmen
+ move.w   140(a1),d6          ; Menue-Hoehe aus dem MacOS uebernehmen
 ivv_nomacos:
 
      ENDIF
@@ -2604,14 +2605,14 @@ ivv_nomacos:
 * FINFO *setfont( d0 = WORD font )
 * FINFO *_setfont( a0 = FINFO *fi )
 *
-* font ist IBM oder SMALL. Sonst: nicht verändern
+* font ist IBM oder SMALL. Sonst: nicht veraendern
 * liefert eine FONTINFO-Struktur
 *
-* DARF AUF KEINEN FALL txvintin[] verändern (hier liegen die Zeichen)
+* DARF AUF KEINEN FALL txvintin[] veraendern (hier liegen die Zeichen)
 *
 
 setfont:
- lea      finfo_big,a0             ; großer Font
+ lea      finfo_big,a0             ; grosser Font
  cmpi.w   #IBM,d0                  ; font == IBM ?
  beq.b    _setfont                 ; ja
  lea      finfo_sml,a0             ; kleiner Font
@@ -2621,7 +2622,7 @@ setfont:
  rts
 _setfont:
  lea      curr_finfo,a1
- cmpa.l   (a1),a0                  ; aktueller = gewünschter Font ?
+ cmpa.l   (a1),a0                  ; aktueller = gewuenschter Font ?
  beq.b    sf_ende                  ; ja
  move.l   a0,(a1)
  move.l   a0,-(sp)                 ; a0 retten
@@ -2633,11 +2634,11 @@ _setfont:
  beq.b    sf_sheight
  move.w   d1,curr_fid
  move.l   #$15000000,d0            ; vst_font
- move.w   d1,d0                    ; Font für AES (i.a. 1)
+ move.w   d1,d0                    ; Font fuer AES (i.a. 1)
  bsr      vdi_1
  move.l   (sp),a0
 
-; Font-Höhe setzen
+; Font-Hoehe setzen
 
 sf_sheight:
  moveq    #0,d0                    ; ptsin[0] = 0
@@ -2662,12 +2663,12 @@ gtext:
 
      IFNE FONTPROP
 
- tst.b    vintin_dirty             ; Zeichenkette enthält Steuerzeichen?
+ tst.b    vintin_dirty             ; Zeichenkette enthaelt Steuerzeichen?
  beq      gt_ok                    ; nein
  move.l   curr_finfo,a0
  tst.w    fontmono(a0)             ; "monospaced"
  bne      gt_ok                    ; ja, einfach ausgeben
- cmpa.l   #finfo_big,a0            ; großer Zeichensatz?
+ cmpa.l   #finfo_big,a0            ; grosser Zeichensatz?
  bne      gt_ok                    ; nein
 
  movem.l  a3/a4/a5/a6/d6,-(sp)
@@ -2702,7 +2703,7 @@ gt_endl1:
 
  move.l   a5,vdipb+4               ; vintin auf Beginn des Teil-Strings
  move.l   #$08010000,d0            ; v_gtext
- move.b   d6,d0                    ; Länge von intin setzen
+ move.b   d6,d0                    ; Laenge von intin setzen
  lea      vcontrl,a1
  movep.l  d0,1(a1)
  move.l   #vdipb,d1
@@ -2735,13 +2736,13 @@ gt_endl2:
 
  move.l   vptsin,-(sp)
  move.l   a4,a0
- bsr      _setfont                 ; großen Font setzen
+ bsr      _setfont                 ; grossen Font setzen
  move.l   (sp)+,vptsin
 
  move.l   a5,vdipb+4               ; vintin auf Beginn des Teil-Strings
 
  move.l   #$08010000,d0            ; v_gtext
- move.b   d6,d0                    ; Länge von intin setzen
+ move.b   d6,d0                    ; Laenge von intin setzen
  lea      vcontrl,a1
  movep.l  d0,1(a1)
  move.l   #vdipb,d1
@@ -2761,7 +2762,7 @@ gt_nix_normal:
 
 gt_ende:
  move.l   a4,a0
- bsr      _setfont                 ; sicherstellen: großen Font setzen
+ bsr      _setfont                 ; sicherstellen: grossen Font setzen
  movem.l  (sp)+,a3/a4/a5/a6/d6
  rts
 
@@ -2770,7 +2771,7 @@ gt_ok:
      ENDIF
 
  move.l   #$08010000,d0            ; v_gtext
- move.b   vintin_len+1,d0          ; Länge von intin setzen
+ move.b   vintin_len+1,d0          ; Laenge von intin setzen
  lea      vcontrl,a1
  movep.l  d0,1(a1)
  move.l   #vdipb,d1
@@ -2785,7 +2786,7 @@ gt_ok:
 *
 * PUREC WORD fs_xtnt( a0 = char *s )
 *
-* Für die Dateiauswahl
+* Fuer die Dateiauswahl
 *
 
 fs_xtnt:
@@ -2812,8 +2813,8 @@ fs_x_mono:
 *
 * WORD extent( d0 = WORD textlen )
 *
-* Berechnet die Länge einer Zeichenkette in Pixeln. Die Zeichenkette
-* muß bereits per "str_to_ints()" in txvintin[] vorliegen.
+* Berechnet die Laenge einer Zeichenkette in Pixeln. Die Zeichenkette
+* muss bereits per "str_to_ints()" in txvintin[] vorliegen.
 * Die Zeichenkette darf maximal 256 Zeichen lang sein.
 *
 
@@ -2824,9 +2825,9 @@ extent:
 
  tst.w    fontmono(a0)             ; "monospaced"
  bne      extn_mono                ; ja, einfach multiplizieren
- tst.b    vintin_dirty             ; Zeichenkette enthält Steuerzeichen?
+ tst.b    vintin_dirty             ; Zeichenkette enthaelt Steuerzeichen?
  beq      _ex_ok                   ; nein
- cmpa.l   #finfo_big,a0            ; großer Zeichensatz?
+ cmpa.l   #finfo_big,a0            ; grosser Zeichensatz?
  bne      _ex_ok                   ; nein
 
 * komplizierter Fall
@@ -2881,12 +2882,12 @@ extnd_endl2:
 ; Gib Block von echten Zeichen aus
 
  move.l   a4,a0
- bsr      _setfont                 ; großen Font setzen
+ bsr      _setfont                 ; grossen Font setzen
 
  move.l   a5,vdipb+4               ; vintin auf Beginn des Teil-Strings
 
  move.l   #$74000000,d0            ; vqt_extent
- move.b   d6,d0                    ; Länge von intin
+ move.b   d6,d0                    ; Laenge von intin
  bsr      vdi_quick
  move.l   #vintin,vdipb+4          ; vintin restaurieren
 
@@ -2901,7 +2902,7 @@ extnd_nix_normal:
 
 extnd_ende:
  move.l   a4,a0
- bsr      _setfont                 ; sicherstellen: großen Font setzen
+ bsr      _setfont                 ; sicherstellen: grossen Font setzen
  move.w   d7,d0
  movem.l  (sp)+,a3/a4/a5/a6/d6/d7
  rts
@@ -2911,7 +2912,7 @@ extnd_ende:
 _ex_ok:
  move.l   #txvintin,vdipb+4        ; vintin auf Text setzen
  move.l   #$74000000,d1            ; vqt_extent
- move.b   d0,d1                    ; Länge von intin
+ move.b   d0,d1                    ; Laenge von intin
  move.l   d1,d0
  bsr      vdi_quick
  move.l   #vintin,vdipb+4          ; vintin restaurieren
@@ -2933,12 +2934,12 @@ extn_mono:
 *
 * Pixelposition in Zeichenposition umrechnen.
 *
-* Die Zeichenkette muß bereits per "str_to_ints()" in vintin[]
+* Die Zeichenkette muss bereits per "str_to_ints()" in vintin[]
 * vorliegen, der Font mit setfont() gesetzt sein.
 * Die Zeichenkette darf maximal 256 Zeichen lang sein.
 *
-* Da es hierzu keine VDI-Funktion gibt, muß man mit Hilfe
-* von vqt_extend() und binärer Suche schachteln.
+* Da es hierzu keine VDI-Funktion gibt, muss man mit Hilfe
+* von vqt_extend() und binaerer Suche schachteln.
 *
 
 r_extent:
@@ -2951,7 +2952,7 @@ r_extent:
 
 ; 1. Fall: Font ist "mono", einfach dividieren
 
- moveq    #0,d1               ; Hiword löschen
+ moveq    #0,d1               ; Hiword loeschen
  move.w   d0,d1               ; unsigned
  divu     fontcharW(a0),d1
  move.w   d1,d0
@@ -3011,13 +3012,13 @@ rx_ende:
 *
 * void v_drawgrect(a0 = GRECT *g)
 *
-* zeichnet ein ganzes Rechteck (etwa für xgrf_2box oder graf_rubberbox)
+* zeichnet ein ganzes Rechteck (etwa fuer xgrf_2box oder graf_rubberbox)
 *
 
 v_drawgrect:
 ;move.l   a0,a0
  bsr      grect_to_ptsin
- moveq    #4,d0                    ; 4 Punkte (zunächst nur 3 Linien)
+ moveq    #4,d0                    ; 4 Punkte (zunaechst nur 3 Linien)
  bsr      v_draw_dashed_line
  lea      vptsin+4,a0              ; 2. Paar (rechte obere Ecke)
  move.l   8(a0),(a0)+              ; 4. Paar (lu) nach 2. Paar (ro)
@@ -3030,7 +3031,7 @@ v_drawgrect:
 *
 * void v_drawedges(a0 = GRECT *g)
 *
-* zeichnet nur die Ecken des Rechtecks (etwa für xgrf_2box)
+* zeichnet nur die Ecken des Rechtecks (etwa fuer xgrf_2box)
 *
 
 v_drawedges:
@@ -3081,7 +3082,7 @@ v_drawedges:
 *
 * void v_draw_dashed_line(d0 = int n)
 *
-* Malt <n-1> Linien mit Linientyp $5555 und setzt anschließend den
+* Malt <n-1> Linien mit Linientyp $5555 und setzt anschliessend den
 * Linientyp wieder auf $ffff (durchgezogen)
 *
 
@@ -3122,18 +3123,18 @@ vddl_l4:
 
      ENDIF
 
-* Linienstil ohne NVDI ändern
+* Linienstil ohne NVDI aendern
 
  swap     d0
  move.w   #$7100,d0                ; set user-defined linestyle
  swap     d0
- bsr      vdi_1                    ; vsl_udsty(d0), ändert a1/d0/d1
+ bsr      vdi_1                    ; vsl_udsty(d0), aendert a1/d0/d1
 
      IFNE NVDI
 
  bra.b    vddl_both
 
-* Linienstil mit NVDI ändern
+* Linienstil mit NVDI aendern
 
 vddl_nvdi:
  move.w   d0,NVDI_l_sdstyle(a5)
@@ -3150,7 +3151,7 @@ vddl_both:
  move.l   #vdipb,d1
  moveq    #$73,d0
  trap     #2
- addq.l   #4,vdipb+8               ; ptsin weiterzählen
+ addq.l   #4,vdipb+8               ; ptsin weiterzaehlen
  dbra     d7,vddl_l1             ; alle Linien
  move.l   #vptsin,vdipb+8          ; ptsin restaurieren
 
@@ -3161,7 +3162,7 @@ vddl_both:
 
      ENDIF
 
-* Linienstil ohne NVDI ändern
+* Linienstil ohne NVDI aendern
 
  move.l   #$7100ffff,d0            ; set user-defined linestyle
  bsr      vdi_1                    ; vsl_udsty(-1)
@@ -3171,7 +3172,7 @@ vvdl_ende:
 
      IFNE NVDI
 
-* Linienstil mit NVDI ändern
+* Linienstil mit NVDI aendern
 
 vddl_nvdi_2:
  move.w   #$ffff,NVDI_l_sdstyle(a5)
@@ -3200,24 +3201,25 @@ vddl_nvdi_2:
 *
 
 * zentriert erst das OBJECT und berechnet dann die wahren
-* Ausmaße in <out>
+* Ausmasse in <out>
 *
 
 _form_center:
+_form_center_grect:
  move.w   scr_w,d0                 ; ganze Breite
  sub.w    ob_width(a0),d0          ; - Objektbreite gibt Rand links+rechts
  asr.w    #1,d0                    ; /2 gibt Rand links
  move.w   d0,ob_x(a0)
 
- move.w   scr_h,d0                 ; ganze Höhe
- add.w    gr_hhbox,d0              ; +Menüleiste
- sub.w    ob_height(a0),d0         ; - Objekthöhe gibt Rand oben+unten
+ move.w   scr_h,d0                 ; ganze Hoehe
+ add.w    gr_hhbox,d0              ; +Menueleiste
+ sub.w    ob_height(a0),d0         ; - Objekthoehe gibt Rand oben+unten
  asr.w    #1,d0                    ; /2
  move.w   d0,ob_y(a0)
 
 ;move.l   a1,a1
 ;move.l   a0,a0
-;jmp      calc_obsize              ; wahre Größe berechnen
+;jmp      calc_obsize              ; wahre Groesse berechnen
 
 
 **********************************************************************
@@ -3226,8 +3228,8 @@ _form_center:
 *
 * void calc_obsize(a0 = OBJECT *tree, a1 = GRECT *size )
 *
-* Berechnet das "wahre" Rechteck für die Objektgröße, also
-* einschließlich Rand und Schatten
+* Berechnet das "wahre" Rechteck fuer die Objektgroesse, also
+* einschliesslich Rand und Schatten
 *
 
 calc_obsize:
@@ -3238,11 +3240,11 @@ calc_obsize:
  move.l   ob_width(a5),4(a4)
  moveq    #0,d0                    ; Objekt 0
  move.l   a5,a0
- bsr      unpack_objc              ; ändert nicht a2
+ bsr      unpack_objc              ; aendert nicht a2
  move.w   d0,d1                    ; Rand
  btst     #4,ob_state+1(a5)        ; OUTLINED ?
  beq.b    cobs_nooutl
- moveq    #-3,d0                   ; OUTLINED bringt Rand 3 außen
+ moveq    #-3,d0                   ; OUTLINED bringt Rand 3 aussen
 cobs_nooutl:
  tst.w    d0
  bge.b    cobs_in                  ; nur innerer Rand
@@ -3251,14 +3253,14 @@ cobs_nooutl:
  add.w    d0,(a0)+                 ; y verkleinern
  neg.w    d0
  add.w    d0,d0
- add.w    d0,(a0)+                 ; w vergrößern
- add.w    d0,(a0)                  ; h vergrößern
+ add.w    d0,(a0)+                 ; w vergroessern
+ add.w    d0,(a0)                  ; h vergroessern
 cobs_in:
  btst     #SHADOWED_B,ob_state+1(a5)
  beq.b    cobs_noshad
  tst.w    d1
  bge.b    cobs_shadout
- neg.w    d1                       ; Betrag bilden, da Schatten immer außen
+ neg.w    d1                       ; Betrag bilden, da Schatten immer aussen
 cobs_shadout:
  add.w    d1,d1                    ; immer doppelte Schattenbreite
  add.w    d1,g_w(a4)
@@ -3272,14 +3274,14 @@ cobs_noshad:
 *
 * int srch_tmplt_c(a0 = char *tmplt, d0 = int a, d1 = char c)
 *
-* Sucht in <tmplt> nach dem Zeichen <c> und erhöht <a> für jedes
-* überlesene '_'
+* Sucht in <tmplt> nach dem Zeichen <c> und erhoeht <a> fuer jedes
+* ueberlesene '_'
 *
 
 srtc_loop:
  cmpi.b   #'_',(a0)+               ; Eingabefeld ?
  bne.b    srtc_l2                  ; nein, weiter
- addq.w   #1,d0                    ; Schablonenzeichen mitzählen
+ addq.w   #1,d0                    ; Schablonenzeichen mitzaehlen
 srtc_l2:
 srch_tmplt_c:
  move.b   (a0),d2                  ; d1 = Zeichen aus der Schablone
@@ -3287,7 +3289,7 @@ srch_tmplt_c:
  cmp.b    d1,d2                    ; ist es unser Zeichen ?
  bne.b    srtc_loop                ; nein, suchen
 srtc_ret:
-;move.w   d0,d0                    ; Position zurückgeben
+;move.w   d0,d0                    ; Position zurueckgeben
  rts
 
 
@@ -3330,10 +3332,10 @@ insc_l2:
 *
 * txtpos_to_tmpltpos(a0 = TEDINFO *tedinfo, d0 = int ptxtpos)
 *
-* <ptxtpos> ist die Position des Cursors bezüglich des reinen
-* Textstrings. Die davor liegenden Schablonenzeichen müssen für die
-* Position im Mischstring/Schablone mitgezählt werden.
-* Es wird vermieden, daß der Cursor auf einem Schablonenzeichen
+* <ptxtpos> ist die Position des Cursors bezueglich des reinen
+* Textstrings. Die davor liegenden Schablonenzeichen muessen fuer die
+* Position im Mischstring/Schablone mitgezaehlt werden.
+* Es wird vermieden, dass der Cursor auf einem Schablonenzeichen
 * steht.
 *
 
@@ -3350,7 +3352,7 @@ txtp2tmpp_ok:
 txtt_l1:
  cmpi.b   #'_',(a0)+               ; Eingabefeld ?
  bne.b    txtt_l2                  ; nein, weiter
- subq.w   #1,d1                    ; Platz für ein Zeichen gefunden
+ subq.w   #1,d1                    ; Platz fuer ein Zeichen gefunden
 txtt_l2:
  addq.w   #1,d0                    ; Stringposition
 txtt_l3:
@@ -3358,9 +3360,9 @@ txtt_l3:
                                    ;  ihren Platz auf '_' gefunden haben
  bgt.b    txtt_l1                  ; ja, weiter
 
-* d0/a0 zeigt hinter das letzte der <ptxtpos> Zeichen, und zwar bezüglich
+* d0/a0 zeigt hinter das letzte der <ptxtpos> Zeichen, und zwar bezueglich
 * des Mischstrings und der Schablone
-* verhindere, daß der Cursor auf einem Schablonenzeichen steht
+* verhindere, dass der Cursor auf einem Schablonenzeichen steht
 
  bra.b    txtt_l5
 txtt_l4:
@@ -3398,7 +3400,7 @@ txtt_ret:
 *                        a2 = void *retvals )
 *
 * Berechnet die x-Position des Cursors (in Pixeln) relativ zum
-* Objekt-Anfang. Rückgabe -1 bei Fehler (Cursor zu weit links).
+* Objekt-Anfang. Rueckgabe -1 bei Fehler (Cursor zu weit links).
 *
 * <pos> ist die absolute Cursorposition relativ zum Mischstring
 * und der Schablone
@@ -3406,12 +3408,12 @@ txtt_ret:
 * retvals:     +0   x-Position des Eingabe-Bereichs rel. zum Obj.
 *              +2   y-Pos. des ...
 *              +4   Breite des Eingabe-Bereichs in Pixeln
-*              +6   Höhe
+*              +6   Hoehe
 *
 
 objc_cur_calc:
  movem.l  a6/a5/a4/a3/d7/d6/d3,-(sp)
- suba.w   #20,sp              ; 20 Bytes: Platz für Rückgabewerte calc_ftext
+ suba.w   #20,sp              ; 20 Bytes: Platz fuer Rueckgabewerte calc_ftext
  mulu     #24,d0
  lea      0(a0,d0.l),a5       ; a5 = OBJECT *ob
  move.l   a1,a3               ; a3 = TEDINFO *te
@@ -3421,7 +3423,7 @@ objc_cur_calc:
 ; Objekt-Rechteck ermitteln
 
  clr.l    g_x(sp)                  ; x = y = 0
- move.l   ob_width(a5),g_w(sp)     ; w/h vom Objekt übernehmen
+ move.l   ob_width(a5),g_w(sp)     ; w/h vom Objekt uebernehmen
 
 ; Font umschalten und ermitteln
 
@@ -3432,7 +3434,7 @@ objc_cur_calc:
 ; Schablone ermitteln
 ; wenn Proportionalfont: Misch-String erzeugen
 
- moveq    #-1,d3                   ; d3 = Länge der Schablone (Auto)
+ moveq    #-1,d3                   ; d3 = Laenge der Schablone (Auto)
  moveq    #0,d7
  move.b   te_just(a3),d7           ; Scroll-Offset
  move.l   te_ptmplt(a3),d0         ; Scrollbares TEDINFO ?
@@ -3441,7 +3443,7 @@ objc_cur_calc:
 ; scrollendes Eingabefeld
 
  move.l   te_pvalid(a3),a0
- move.w   xte_vislen(a0),d3        ; sichtbare Länge
+ move.w   xte_vislen(a0),d3        ; sichtbare Laenge
  move.l   xte_ptmplt(a0),d0        ; Schablone
  move.w   xte_scroll(a0),d7
 
@@ -3458,7 +3460,7 @@ occ_no_xscroll:
  move.l   (a3),a0                  ; text
  lea      popup_tmp,a2             ; dest (Mischstring)
  bsr      txt_tmplt_to_merge       ; formatieren
- move.l   (sp)+,a0                 ; Schablone zurück
+ move.l   (sp)+,a0                 ; Schablone zurueck
 
 ; Justieren
 
@@ -3466,7 +3468,7 @@ occ_just:
  move.l   sp,a2                    ; data
  move.l   a3,a1                    ; TEDINFO
 ;move.l   a0,a0                    ; a0 = Schablone
- move.w   d3,d0                    ; Länge der Schablone
+ move.w   d3,d0                    ; Laenge der Schablone
  bsr      calc_ftext               ; Zeichenpositionen berechnen
 
 ; Cursorposition von Zeichen in Pixel
@@ -3480,8 +3482,8 @@ occ_just:
  tst.w    fontmono(a4)
  bne.b    occ_mono1
  lea      popup_tmp,a0             ; Misch-String
- add.w    8(sp),a0                 ; + Länge des Anfangs
- move.w   12(sp),d0                ; Länge des Eingabefelds
+ add.w    8(sp),a0                 ; + Laenge des Anfangs
+ move.w   12(sp),d0                ; Laenge des Eingabefelds
  clr.b    0(a0,d0.w)               ; EOS setzen
  add.w    d7,a0                    ; Scroll-Offset
  bsr      str_to_ints
@@ -3498,10 +3500,10 @@ occ_isz:
  move.w   g_x(sp),(a6)+            ; Beginn des Eingabe-Bereichs
  move.w   g_y(sp),(a6)+
  move.w   14(sp),(a6)+             ; Breite des Eingabe-Bereichs in Pixeln
- move.w   g_h(sp),d1               ; Höhe des Eingabe-Bereichs in Pixeln
- cmp.w    ob_height(a5),d1         ; größer als das Objekt selbst?
- bls.b    occ_seth                 ; nein, Texthöhe nehmen
- move.w   ob_height(a5),d1         ; auf Objekthöhe stutzen
+ move.w   g_h(sp),d1               ; Hoehe des Eingabe-Bereichs in Pixeln
+ cmp.w    ob_height(a5),d1         ; groesser als das Objekt selbst?
+ bls.b    occ_seth                 ; nein, Texthoehe nehmen
+ move.w   ob_height(a5),d1         ; auf Objekthoehe stutzen
 occ_seth:
  move.w   d1,(a6)
 occ_ende:
@@ -3520,15 +3522,15 @@ occ_ende:
 *
 * <pos> ist die absolute Cursorposition relativ zum Mischstring
 * und der Schablone
-* <clip> ist i.a. NULL, nur für Window- Redraw
+* <clip> ist i.a. NULL, nur fuer Window- Redraw
 *
 * <nchars> == 0: normale Funktion, Cursor malen (XOR)
 *          != 0: <nchars> Zeichen unter und rechts vom Cursor
 *                zeichnen (etwa bei BS oder DEL)
 *
-* Hiword enthält das Fensterhandle
+* Hiword enthaelt das Fensterhandle
 *
-* XGEM: arbeitet auch für kleine Fonts
+* XGEM: arbeitet auch fuer kleine Fonts
 *       arbeitet auch in Fenstern
 *
 
@@ -3539,7 +3541,7 @@ __cursor:
 
 objc_cur_draw:
  movem.l  a6/a5/a3/d7/d6/d5/d4/d3,-(sp)
- suba.w   #18,sp              ;  8 Bytes: GRECT für Objekt
+ suba.w   #18,sp              ;  8 Bytes: GRECT fuer Objekt
                               ;  8 Bytes: gerettetes Clipping
                               ;  2 Bytes: Flag: gescrollt
  move.l   a2,a6               ; a6 = GRECT *clip
@@ -3656,15 +3658,15 @@ ocd_cbo:
 ocd_case0:
  move.w   #1,g_w(sp)
  bsr      set_xor_black
-* der Cursor ragt ein wenig über das Zeichen (3 Pixel oben und unten)
- moveq    #3,d0                    ; großer Cursor
+* der Cursor ragt ein wenig ueber das Zeichen (3 Pixel oben und unten)
+ moveq    #3,d0                    ; grosser Cursor
  cmpi.w   #3,te_font(a3)
  beq.b    ocd_big2
  moveq    #2,d0                    ; kleiner Cursor
 ocd_big2:
  sub.w    d0,g_y(sp)               ; y um 3 verkleinern
  add.w    d0,d0
- add.w    d0,g_h(sp)               ; h um 6 vergrößern
+ add.w    d0,g_h(sp)               ; h um 6 vergroessern
 
 * endif
 
@@ -3693,7 +3695,7 @@ ocd_cursor:
  subq.w   #1,(sp)                  ;       y+h-1
  move.w   g_x(a2),-(sp)            ; nach: x
  move.l   g_x(a2),-(sp)            ; von:  x,y
- move.l   sp,a0                    ; zu übergebende Daten
+ move.l   sp,a0                    ; zu uebergebende Daten
 
  pea      __cursor(pc)             ; function
  move.w   d4,d2                    ; whdl
@@ -3797,20 +3799,20 @@ match_true:
 *
 * int is_valid(a0 = char *c, d0 = char mask)
 *
-* Prüft das Zeichen <*c>, ob es zu <mask> ('9','A','N',...) paßt.
-* Wandelt ggf. <*c> in Großschrift um
+* Prueft das Zeichen <*c>, ob es zu <mask> ('9','A','N',...) passt.
+* Wandelt ggf. <*c> in Grossschrift um
 *
 
 is_valid:
  move.b   d0,d1                    ; d1 = mask
  cmpi.b   #'X',d1
- beq      ret_valid                ; 'X' paßt immer
+ beq      ret_valid                ; 'X' passt immer
  move.l   a0,a1
  move.b   (a1),d0                  ; d0 = *c
  cmpi.b   #'x',d1
  bne.b    switch
  jsr      toupper
- move.b   d0,(a1)                  ; 'x' wandelt in Großschrift um
+ move.b   d0,(a1)                  ; 'x' wandelt in Grossschrift um
  bra      ret_valid
 switch:
  lea      masks(pc),a0
@@ -3825,7 +3827,7 @@ isv_loop:
  cmpi.w   #7,d1
  bhi.b    not_upper                ; bei 'a','n','m' keine Umwandlung
  jsr      toupper
- move.b   d0,(a1)                  ; in Großschrift wandeln
+ move.b   d0,(a1)                  ; in Grossschrift wandeln
 not_upper:
 
  add.w    d1,d1
@@ -3854,17 +3856,17 @@ valid_s:
  DC.L     valid_f
  DC.L     valid_a
  DC.L     valid_n
- DC.L     valid_m   ; Mac-Dateinamen (alles außer ':' und '\' und '\'')
+ DC.L     valid_m   ; Mac-Dateinamen (alles ausser ':' und '\' und '\'')
 
 valid_9:  DC.B	"0..9",0
-valid_A:  DC.B	"A..Z ÇÄÅÉÆÖÜÑŒØĲÀÃÕßא..ץ",0
-valid_N:  DC.B	"0..9A..Z ÇÄÅÉÆÖÜÑŒØĲÀÃÕßא..ץ",0
-valid_P:  DC.B	"0..9a..zA..Z\?*:._Ç..",$ff,0
-valid_p:  DC.B	"0..9a..zA..Z\:_Ç..",$ff,0
-valid_F:  DC.B	"a..z0..9A..Z-:?*_Ç..",$ff,0     ; '-' !
-valid_f:  DC.B	"a..z0..9A..Z-_:Ç..",$ff,0       ; ':' und '-' !!
-valid_a:  DC.B	"a..zA..Z Ç..",$ff,0
-valid_n:  DC.B	"0..9a..zA..Z Ç..",$ff,0
+valid_A:  DC.B	"A..Z ",$80,$8e,$8f,$90,$92,$99,$9a,$a5,$b5,$b2,$c1,$b6,$b7,$b8,$9e,$c2,"..",$dc,0
+valid_N:  DC.B	"0..9A..Z ",$80,$8e,$8f,$90,$92,$99,$9a,$a5,$b5,$b2,$c1,$b6,$b7,$b8,$9e,$c2,"..",$dc,0
+valid_P:  DC.B	"0..9a..zA..Z\?*:._",$80,"..",$ff,0
+valid_p:  DC.B	"0..9a..zA..Z\:_",$80,"..",$ff,0
+valid_F:  DC.B	"a..z0..9A..Z-:?*_",$80,"..",$ff,0     ; '-' !
+valid_f:  DC.B	"a..z0..9A..Z-_:",$80,"..",$ff,0       ; ':' und '-' !!
+valid_a:  DC.B	"a..zA..Z ",$80,"..",$ff,0
+valid_n:  DC.B	"0..9a..zA..Z ",$80,"..",$ff,0
 valid_m:  DC.B	" ..&(..9;..[]..",$ff,0
      EVEN
 
@@ -3874,12 +3876,12 @@ valid_m:  DC.B	" ..&(..9;..[]..",$ff,0
 * d0/d1 = get_curpos_txtend(a0 = TEDINFO *tedinfo, d0 = int pos,
 *                        a6 = char *curr_ptext)
 *
-* Eingabe: d0 enthält die Cursorposition relativ zum Textfeld,
+* Eingabe: d0 enthaelt die Cursorposition relativ zum Textfeld,
 *          d.h. ohne Schablonenzeichen.
-* Ausgabe: d0 enthält die (physikalische) Cursorposition relativ
+* Ausgabe: d0 enthaelt die (physikalische) Cursorposition relativ
 
 *           zum Mischstring und der Schablone
-*          d1 enthält die Länge des Textfeldes relativ zum
+*          d1 enthaelt die Laenge des Textfeldes relativ zum
 *           Mischstring und der Schablone, d.h. d1 zeigt dann hinter
 *           das letzte Textzeichen im Mischstring
 *
@@ -3910,7 +3912,7 @@ get_curpos_txtend:
 *
 
 separator_s:
- DC.B     " !../:..?[\]{|}~÷≈°•·",0
+ DC.B     " !../:..?[\]{|}~",$f6,$f7,$f8,$f9,$fa,0
 
 c_is_sep:
  move.l   a0,-(sp)
@@ -3926,21 +3928,21 @@ c_is_sep:
 *               d1 = int x, d2 = WORD kind, a1 = int *didx )
 *
 * Eingabe:
-*  kind:       Hiword enthält ggf. ein WindowHandle
+*  kind:       Hiword enthaelt ggf. ein WindowHandle
 *  x:          Pixelposition des Cursors (z.B. von einem Mausklick)
 *  x < 0:      Cursor auf Defaultposition
 *
-* Rückgabe:
+* Rueckgabe:
 *  *didx:      Cursorposition in Zeichen relativ zu te_ptext
 *
-* Diese Funktion wird für objc_edit(ED_CRSR) aufgerufen und
-* ist ein erweiterter Ersatz für objc_edit(ED_INIT).
-* Ändert nicht a2.
+* Diese Funktion wird fuer objc_edit(ED_CRSR) aufgerufen und
+* ist ein erweiterter Ersatz fuer objc_edit(ED_INIT).
+* Aendert nicht a2.
 *
 
 objc_crsr:
  movem.l  a2/a3/a5/a6/d7/d6/d4,-(sp)
- suba.w   #26,sp                   ; 0: Platz für Rückgabe von calc_ftext
+ suba.w   #26,sp                   ; 0: Platz fuer Rueckgabe von calc_ftext
                                    ; 20: xte_scroll
                                    ; 22: didx
  moveq    #0,d4
@@ -3949,7 +3951,7 @@ objc_crsr:
 
  move.l   a0,a5                    ; a5 = OBJECT *tree
  move.w   d0,d6                    ; d6 = WORD objnr
- move.l   a1,22(sp)                ; 22(sp) = WORD *didx  (Rückgabe)
+ move.l   a1,22(sp)                ; 22(sp) = WORD *didx  (Rueckgabe)
 
  mulu     #24,d0
  move.l   ob_spec(a0,d0.l),a3      ; a3 = TEDINFO *
@@ -3962,7 +3964,7 @@ objc_crsr:
  move.l   sp,a1                    ; GRECT
  move.w   d6,d0                    ; objnr
 ;move.l   a0,a0                    ; tree
- jsr      obj_to_g                 ; Objektausmaße nach GRECT
+ jsr      obj_to_g                 ; Objektausmasse nach GRECT
 
  moveq    #0,d1
  move.b   te_just(a3),d1           ; Scroll-Offset
@@ -3997,7 +3999,7 @@ ocr_noscrl:
  move.w   te_font(a3),d0
  bsr      setfont
 
-; Wenn Prop.Font, muß der Misch-String berechnet werden
+; Wenn Prop.Font, muss der Misch-String berechnet werden
 
  move.w   12(sp),vintin_len        ; Breite des Eingabefelds (!)
  tst.w    fontmono(a0)
@@ -4018,11 +4020,11 @@ ocr_no_merge:
  move.w   d7,d0                    ; x 
  bsr      r_extent
  move.w   d0,d7                    ; d7 = Zeichenposition bzgl. Schablone
- add.w    20(sp),d7                ; xte_scroll ergänzen
- add.w    8(sp),d7                 ; Anzahl Zeichen des Anfangs ergänzen
+ add.w    20(sp),d7                ; xte_scroll ergaenzen
+ add.w    8(sp),d7                 ; Anzahl Zeichen des Anfangs ergaenzen
 
  move.l   a6,a0                    ; Stringanfang
- lea      0(a0,d7.w),a1            ; gewünschte Pos.
+ lea      0(a0,d7.w),a1            ; gewuenschte Pos.
  moveq    #0,d0
 ocr_loop:
  cmp.l    a0,a1
@@ -4047,9 +4049,9 @@ ocr_dfltpos:
  bsr      scroll_tedinfo
 
  move.l   te_ptext(a3),a0          ; ptext
- jsr      strlen                   ; d0 = Stringlänge
+ jsr      strlen                   ; d0 = Stringlaenge
  move.l   te_pvalid(a3),a0         ; XTED
- cmp.w    xte_vislen(a0),d0        ; Stringlänge <= sichtbare Länge ?
+ cmp.w    xte_vislen(a0),d0        ; Stringlaenge <= sichtbare Laenge ?
  bls.b    ocr_setcurpos            ; ja, OK
  moveq    #0,d0                    ; Cursor an Textanfang !!!
  bra.b    ocr_setcurpos
@@ -4109,33 +4111,33 @@ ichr_l1:
 
  move.b   (a0),d0                  ; Valid- Zeichen ('A','9',...)
  lea      1(sp),a0
- bsr      is_valid                 ; prüfen, ggf. umwandeln
+ bsr      is_valid                 ; pruefen, ggf. umwandeln
 
  tst.w    d0
- beq.b    ichr_l2                  ; Zeichen ungültig
-* Zeichen gültig
+ beq.b    ichr_l2                  ; Zeichen ungueltig
+* Zeichen gueltig
  move.b   1(sp),d0                 ; Zeichen
  btst.b   #1,config_status+3.w     ; inp_ovwrmode ?
  beq.b    is_ins
-* Überschreibmodus
+* Ueberschreibmodus
  move.l   a6,a0                    ; curr_ptext
  adda.w   (a4),a0
  tst.b    (a0)
- beq.b    is_ins                   ; am String- Ende wie "Einfügen"
+ beq.b    is_ins                   ; am String- Ende wie "Einfuegen"
  move.b   d0,(a0)                  ; sonst Zeichen speichern
  bra.b    no_ins
 is_ins:
- move.w   te_txtlen(a3),d2         ; Maximallänge
+ move.w   te_txtlen(a3),d2         ; Maximallaenge
 ;move.w   d0,d0                    ; Zeichen
- move.w   (a4),d1                  ; Einfügeposition
+ move.w   (a4),d1                  ; Einfuegeposition
  move.l   a6,a0                    ; curr_ptext
  bsr      insert_char
 no_ins:
  addq.w   #1,(a4)                  ; Cursor einen nach rechts
- sf       d5                       ; muß rechts von Cursor neu zeichnen
+ sf       d5                       ; muss rechts von Cursor neu zeichnen
  bra.b    inptc_ende
 
-* Zeichen ungültig. Gibt es ein passendes Schablonenzeichen rechts davon ?
+* Zeichen ungueltig. Gibt es ein passendes Schablonenzeichen rechts davon ?
 
 ichr_l2:
  tst.w    d4                       ; war Cursor nach links gelaufen ?
@@ -4157,14 +4159,14 @@ inptc_ok:
 
  move.w   te_txtlen(a3),d1
  subq.w   #2,d1
- cmp.w    d0,d1                    ; neue Pos (d0) >= Maximallänge ?
- ble.b    inptc_ende               ; übers Ziel hinaus
+ cmp.w    d0,d1                    ; neue Pos (d0) >= Maximallaenge ?
+ ble.b    inptc_ende               ; uebers Ziel hinaus
  move.l   a6,a0                    ; curr_ptext
  adda.w   (a4),a0
  move.w   d0,-(sp)                 ; d0 retten
 
 ;move.l   a0,a0
- moveq    #' ',d1                  ; mit ' ' füllen
+ moveq    #' ',d1                  ; mit ' ' fuellen
 ;move.w   d0,d0                    ; Pos des gefundenen Schablonenzeichens
  sub.w    (a4),d0                  ; Cursorpos. abziehen
  jsr      fillmem
@@ -4174,7 +4176,7 @@ inptc_ok:
  adda.w   d0,a0
  clr.b    (a0)
  move.w   d0,(a4)
- sf       d5                       ; muß neu zeichnen
+ sf       d5                       ; muss neu zeichnen
 inptc_ende:
  move.w   (sp)+,d0
  rts
@@ -4270,7 +4272,7 @@ scrlte_draw_all:
  moveq    #0,d6               ; alle neue zeichnen, da nix geblittet
 scrlte_weiter:
 * Mischen und malen
-* soviele müssen gezeichnet werden, wie Offset ist.
+* soviele muessen gezeichnet werden, wie Offset ist.
 * maximal Anzahl sichtbarer Zeichen
  moveq    #0,d2
  move.w   xte_vislen(a6),d2        ; Gesamtbreite
@@ -4315,7 +4317,7 @@ make_cursor_visible:
  bcc.b    mkvi_noscroll2           ; Cursor >= Anfang sichtbarer Bereich, OK
 
 * Der Cursor ist links vom sichtbaren Bereich der Schablone. Wir
-* müssen die Schablone nach rechts scrollen, so daß der Cursor wieder
+* muessen die Schablone nach rechts scrollen, so dass der Cursor wieder
 * sichtbar wird.
 
  move.w   d0,d1                    ; neue Scrollposition
@@ -4332,7 +4334,7 @@ mkvi_noscroll2:
  bls.b    mkvi_ende                ; nein, weiter
  
 * Der Cursor ist rechts vom sichtbaren Bereich der Schablone. Wir
-* müssen die Schablone nach links scrollen, so daß der Cursor wieder
+* muessen die Schablone nach links scrollen, so dass der Cursor wieder
 * sichtbar wird.
 
  move.w   d0,d1                    ; neue Scrollposition = Cursorpos. ...
@@ -4372,12 +4374,12 @@ objc_wedit:
 * int _objc_edit(a0 = OBJECT *tree, d0 = int objnr,
 *               d1 = int c, a1 = int *didx, d2 = int kind, GRECT *g)
 *
-* <didx> hält die Cursor-Position relativ zu te_ptext, d.h. ohne
-* Berücksichtigung der Schablone.
+* <didx> haelt die Cursor-Position relativ zu te_ptext, d.h. ohne
+* Beruecksichtigung der Schablone.
 * Der Parameter <g> wird nur bei Modus 101 verwendet
 *
 * d2 = ED_START (0)      dummy
-*      ED_CRSR  (100)    erweiterter Ersatz für ED_INIT
+*      ED_CRSR  (100)    erweiterter Ersatz fuer ED_INIT
 *      ED_INIT  (1)
 *      ED_CHAR  (2)
 *      ED_END   (3)
@@ -4386,9 +4388,9 @@ objc_wedit:
 * *didx ist Ein- und Ausgabefeld (Position des eingegebenen Zeichens
 *
 * Neu ab Mag!X 2.00:
-*  Für die Fenster-Dialogroutine kann im Hiword von d2 ein
-*  Fenster-Handle übergeben werden, auf das die Ausgabe ge-clipped wird.
-*  Modus 102 für Fenster-Redraw
+*  Fuer die Fenster-Dialogroutine kann im Hiword von d2 ein
+*  Fenster-Handle uebergeben werden, auf das die Ausgabe ge-clipped wird.
+*  Modus 102 fuer Fenster-Redraw
 *
 * a5           OBJECT    *tree
 * a4           int       *didx     (x-Pos des Cursors rel. zu ptext)
@@ -4396,11 +4398,11 @@ objc_wedit:
 * d7           int       abs_txt   phys. Textendposition
 * d3           int       abs_cur   phys. Cursorposition
 * d6           int       objnr
-* d5           char      nodraw    Flag für "muß nicht neu zeichnen"
+* d5           char      nodraw    Flag fuer "muss nicht neu zeichnen"
 * d4           int       flag
 *
 *    -6(a6)    int       flags     ob_flags unseres Objekts
-* [-$22(a6)]   int       v_len     Länge von pvalid
+* [-$22(a6)]   int       v_len     Laenge von pvalid
 *  -$24(a6)    int       flag
 *  -$26(a6)    int       cur_pos   abs. Position des Cursors
 *  -$28(a6)    int       end_pos   abs. Position des letzten ptext- Zeichens
@@ -4409,21 +4411,21 @@ objc_wedit:
 *
 * te_ptext     char *    reiner Text
 * te_ptmplt    char *    Schablone, Eingabebereich '_'
-* te_pvalid    char *    gültige Zeichen, Länge wie Text
+* te_pvalid    char *    gueltige Zeichen, Laenge wie Text
 * te_font      int       IBM oder SMALL
 * te_just      int       TE_LEFT, TE_RIGHT, TE_CNTR
-*                             ab 11.10.97: Hiword enthält Scroll-Offset
+*                             ab 11.10.97: Hiword enthaelt Scroll-Offset
 * te_color     int       Farbe, Modus usw.
 * te_thickness int       Dicke des Randes
-* te_txtlen    int       Maximallänge des Texts
-* te_tmplen    int       Länge der Schablone (unbenutzt)
+* te_txtlen    int       Maximallaenge des Texts
+* te_tmplen    int       Laenge der Schablone (unbenutzt)
 *
 *
 * 8.7.95:
-*    valid auf Länge von txtlen bringen, nicht auf tmplen
+*    valid auf Laenge von txtlen bringen, nicht auf tmplen
 *
 * MagiC 3:
-*    Eingabefelder können scrollen. Die Schablone scrollt mit.
+*    Eingabefelder koennen scrollen. Die Schablone scrollt mit.
 *    Dabei:
 *         te_ptmplt == NULL
 *         te_pvalid zeigt auf Struktur:
@@ -4431,7 +4433,7 @@ objc_wedit:
 *              char *pvalid;       /* Valid-Zeichen */
 *              int  vislen;        /* sichtbare Breite der Schablone */
 *              int  scroll;        /* Scrollpos (0..te_txlen-te_tmplen-1) */
-*         Die tatsächliche Breite des Eingabefelds ist
+*         Die tatsaechliche Breite des Eingabefelds ist
 *              te_txtlen
 *
 * 8.9.95:
@@ -4448,13 +4450,13 @@ _objc_edit:
  move.l   8(sp),a2                 ; GRECT *g
  cmpi.b   #103,d2
  bne.b    obed_weiter
- moveq    #3,d2                    ; wie Modus 3, aber a2 ist gültig
+ moveq    #3,d2                    ; wie Modus 3, aber a2 ist gueltig
  bra.b    obed_weiter2
 obed_weiter:
- suba.l   a2,a2                    ; a2 ist ungültig
+ suba.l   a2,a2                    ; a2 ist ungueltig
 obed_weiter2:
  movem.l  d3/d4/d5/d6/d7/a3/a4/a5/a6,-(sp)
- suba.w   #258+258+258,sp          ; max. Länge des Textfelds+valid+scrap
+ suba.w   #258+258+258,sp          ; max. Laenge des Textfelds+valid+scrap
  move.l   sp,a6                    ; a6 = curr_ptext
 
  move.l   a2,-(sp)
@@ -4515,19 +4517,19 @@ strloop20:
  bne.b    strloop20
 
  subq.l   #1,a0                    ; a0 auf das EOS
- adda.w   te_txtlen(a3),a2         ; a2 auf gewünschtes EOS von curr_pvalid
+ adda.w   te_txtlen(a3),a2         ; a2 auf gewuenschtes EOS von curr_pvalid
  bra.b    obed_begloop
 
 ; Falls "pvalid" zu kurz ist, wird das letzte Zeichen solange kopiert, bis
-; "pvalid" die Länge "txtlen" hat
-; "pvalid" darf nicht leer sein, sonst gibt's Müll
+; "pvalid" die Laenge "txtlen" hat
+; "pvalid" darf nicht leer sein, sonst gibt es Muell
 
 obed_loop:
- move.b   -2(a1),(a0)+             ; letztes Zeichen vervielfältigen
+ move.b   -2(a1),(a0)+             ; letztes Zeichen vervielfaeltigen
 obed_begloop:
  cmpa.l   a2,a0                    ; Ende erreicht ?
  bcs.b    obed_loop                ; nein, weiter
- clr.b    (a0)                     ; pvalid durch EOS abschließen
+ clr.b    (a0)                     ; pvalid durch EOS abschliessen
 
 **
 *
@@ -4549,9 +4551,9 @@ obed_ed_init:
  move.l   a5,a0                    ; tree
  bsr      scroll_tedinfo
  move.l   a6,a0                    ; ptext
- jsr      strlen                   ; d0 = Stringlänge
+ jsr      strlen                   ; d0 = Stringlaenge
  move.l   te_pvalid(a3),a0         ; XTED
- cmp.w    xte_vislen(a0),d0        ; Stringlänge <= sichtbare Länge ?
+ cmp.w    xte_vislen(a0),d0        ; Stringlaenge <= sichtbare Laenge ?
  bls.b    ed_setcurpos             ; ja, OK
  moveq    #0,d0                    ; Cursor an Textanfang !!!
  bra.b    ed_setcurpos
@@ -4565,7 +4567,7 @@ ed_setcurpos:
 * case 2 (ED_CHAR)
 
 obed_ed_char:
- st       d5                       ; Text muß nicht neu gezeichnet werden
+ st       d5                       ; Text muss nicht neu gezeichnet werden
 
  move.l   a3,a0                    ; tedinfo
 ;move.l   a6,a6
@@ -4620,7 +4622,7 @@ objc_tab:
 *
 
 ins_mode:
- bclr.b   #1,config_status+3.w     ; Überschreibmodus aus
+ bclr.b   #1,config_status+3.w     ; Ueberschreibmodus aus
  bra      endswitch
 
 *
@@ -4628,7 +4630,7 @@ ins_mode:
 *
 
 ovwr_mode:
- bset.b   #1,config_status+3.w     ; Überschreibmodus ein
+ bset.b   #1,config_status+3.w     ; Ueberschreibmodus ein
  bra      endswitch
 
 *
@@ -4646,8 +4648,8 @@ backspace:
 *
 
 escape:
- clr.b    (a0)                     ; Text löschen
- sf       d5                       ; Text muß neu gezeichnet werden
+ clr.b    (a0)                     ; Text loeschen
+ sf       d5                       ; Text muss neu gezeichnet werden
 
 *
 * case $4700 (Home)
@@ -4676,7 +4678,7 @@ del:
 dlc_loop:
  move.b   1(a0),(a0)+
  bne.b    dlc_loop                 ; String umkopieren
- sf       d5                       ; Text muß neu gezeichnet werden
+ sf       d5                       ; Text muss neu gezeichnet werden
  bra      endswitch
 
 *
@@ -4689,7 +4691,7 @@ del_to_eol:
  tst.b    (a0)
  beq      endswitch
  clr.b    (a0)
- sf       d5                       ; Text muß neu gezeichnet werden
+ sf       d5                       ; Text muss neu gezeichnet werden
  bra      endswitch
 
 *
@@ -4707,7 +4709,7 @@ curleft:
 *
 
 wordleft:
-* überspringe Blanks
+* ueberspringe Blanks
 wl_loop:
  move.w   (a4),d0
  beq.b    wl_loop2                 ; bin schon am Anfang
@@ -4715,7 +4717,7 @@ wl_loop:
  move.b   -1(a0,d0.w),d0           ; Zeichen unter Cursor
  bsr      c_is_sep                 ; ist Wort- Trenner ?
  bne.b    wl_loop                  ; ja
-* überspringe Zeichen
+* ueberspringe Zeichen
 wl_loop2:
  move.w   (a4),d0
  beq      wl_endloop               ; Cursor steht am Anfang!
@@ -4733,9 +4735,9 @@ wl_endloop:
 
 wordright:
  jsr      strlen
- move.w   d0,d4                    ; Stringlänge
+ move.w   d0,d4                    ; Stringlaenge
  move.l   a6,a0                    ; Text
-* überspringe Zeichen
+* ueberspringe Zeichen
 wr_loop:
  move.w   (a4),d0
  move.b   0(a0,d0.w),d0            ; Zeichen unter Cursor
@@ -4745,7 +4747,7 @@ wr_loop:
  cmp.w    (a4),d4
  bcc.b    wr_loop                  ; Beginn noch nicht erreicht
  subq.w   #1,(a4)
-* überspringe Blanks
+* ueberspringe Blanks
 wr_loop2:
  move.w   (a4),d0
  move.b   0(a0,d0.w),d0            ; Zeichen unter Cursor
@@ -4764,7 +4766,7 @@ wr_endloop:
 
 ganzrechts:
  jsr      strlen
- move.w   d0,(a4)                  ; letztmögliche Position
+ move.w   d0,(a4)                  ; letztmoegliche Position
  bra      endswitch
 
 *
@@ -4788,7 +4790,7 @@ ed_cut:
  beq      endswitch
  move.l   a6,a0
  jsr      scrp_cpy                 ; nach SCRAP.TXT schreiben
- clr.b    (a6)                     ; String löschen
+ clr.b    (a6)                     ; String loeschen
  clr.w    (a4)                     ; Cursor nach links
  sf.b     d5                       ; neu zeichnen
  bra      endswitch
@@ -4842,7 +4844,7 @@ strloop9:
  move.b   (a1)+,(a0)+              ; Text in den Userbereich kopieren
  bne.b    strloop9
 
-* Testen, ob bei scrollbarem Editfeld der Cursor außerhalb
+* Testen, ob bei scrollbarem Editfeld der Cursor ausserhalb
 * des sichtbaren Bereichs liegt. Wenn ja, scrollen.
 
 /*
@@ -4853,7 +4855,7 @@ strloop9:
  bsr      make_cursor_visible
 */
 
- tst.b    d5                       ; Text muß neu gezeichnet werden ?
+ tst.b    d5                       ; Text muss neu gezeichnet werden ?
  bne.b    obed_draw_cursor         ; nein
 
 * Mischen und malen (ab Cursor)
@@ -4893,7 +4895,7 @@ ed_noscroll4:
  swap     d2                       ; Handle ins Hiword
  move.w   d0,d2                    ; Anz. Zeichen rechts vom Cursor
  move.w   d3,d1                    ; pos (alte Cursorpos.)
-                                   ; d.h. Cursor an alter Position löschen
+                                   ; d.h. Cursor an alter Position loeschen
  move.w   d6,d0                    ; objnr
  move.l   a3,a1                    ; tedinfo
  move.l   a5,a0                    ; tree
@@ -4945,8 +4947,8 @@ edit_ende:
 * void txt_tmplt_to_merge(d0 = char just, a0 = char *txt,
 *                         a1 = char *tmplt, a2 = char *dest)
 *
-* Mischt für F(BOX)TEXT Schablone und Text
-* Die Länge von <tmplt> bestimmt die Länge von <dest>
+* Mischt fuer F(BOX)TEXT Schablone und Text
+* Die Laenge von <tmplt> bestimmt die Laenge von <dest>
 *
 
 txt_tmplt_to_merge:
@@ -5033,16 +5035,16 @@ do_userdef:
 *   a0    = OBJECT *tree
 *   d0    = int ob
 *
-* Rückgabe: Rahmendicke in d0
+* Rueckgabe: Rahmendicke in d0
 *           ob_type-20  in d1 (negativ bei Fehler)
 *           OBJECT *    in a0
 *           ob_spec     in a1
 *
-* ändert nicht a2
+* aendert nicht a2
 *
 
 unpack_objc:
- moveq    #0,d2                    ; Hiword löschen
+ moveq    #0,d2                    ; Hiword loeschen
  move.w   d0,d2                    ; Objektnummer
  lsl.l    #3,d2
  add.l    d2,a0
@@ -5094,27 +5096,27 @@ unpk_l2:
  btst     #15,ob_state(a0)
  bne      unpk_endsw               ; WHITEBAK => bei Sonderbuttons kein Rand
 unpk_flg:
- moveq    #-1,d0                   ; Rahmen: 1 Pixel außerhalb des Objekts
+ moveq    #-1,d0                   ; Rahmen: 1 Pixel ausserhalb des Objekts
  btst     #2,d2                    ; EXIT ?
  beq.b    unpk_noex
- subq.w   #1,d0                    ; 2 Pixel außerhalb des Objekts
+ subq.w   #1,d0                    ; 2 Pixel ausserhalb des Objekts
 unpk_noex:
  btst     #1,d2                    ; DEFAULT ?
  beq.b    unpk_endsw
- subq.w   #1,d0                    ; 3 Pixel außerhalb des Objekts
+ subq.w   #1,d0                    ; 3 Pixel ausserhalb des Objekts
 
 unpk_endsw:
 ;move.l   a1,a1
 ;move.l   a0,a0
 ;move.w   d1,d1
-;move.w   d0,d0                    ; Rahmendicke zurück
+;move.w   d0,d0                    ; Rahmendicke zurueck
  rts
 unpk_err:
  moveq    #0,d0
- moveq    #-1,d1                   ; ungültiger Objekttyp
+ moveq    #-1,d1                   ; ungueltiger Objekttyp
  bra.b    unpk_endsw
 
-* Rahmendicken für Objekte: 0=0,1=1,-1=TEDINFO holen,-2=ob_spec holen,
+* Rahmendicken fuer Objekte: 0=0,1=1,-1=TEDINFO holen,-2=ob_spec holen,
 * -3 = Flags holen
 
 ob_modes:
@@ -5156,7 +5158,7 @@ ob_modes:
 * $18(a6) = maxdepth
 *
 * Bei jedem Eintritt in eine neue Ebene wird <pgm> aufgerufen, und zwar
-* mit den absoluten x- und y- Werten. Es wird angenommen, daß das
+* mit den absoluten x- und y- Werten. Es wird angenommen, dass das
 * Wurzelobjekt bei offsx und offsy auf dem Bildschirm liegt.
 * Es werden maximal <maxdepth> Objekte der Nummern <firstobjnr> bis
 * <lastobjnr> durchlaufen.
@@ -5176,14 +5178,14 @@ walk_obj_tree:
  move.w   (a0)+,XTAB(a6)           ; offsx
  move.w   (a0)+,YTAB(a6)           ; offsy
  move.w   (a0),d4
- add.w    d4,d4                    ; maxdepth für int- Zugriff
- moveq    #2,d6                    ; Zähler auf 1 (für int- Zugriff)
+ add.w    d4,d4                    ; maxdepth fuer int- Zugriff
+ moveq    #2,d6                    ; Zaehler auf 1 (fuer int- Zugriff)
 * Durchlaufe Schleife, bis letztes Element erreicht
 walk_loop:
  cmp.w    d5,d7                    ; aktuelles == letztes Element ?
  beq      walk_end                 ; ja, Ende
 
- moveq    #0,d0                    ; Hiword löschen
+ moveq    #0,d0                    ; Hiword loeschen
  move.w   d7,d0
  lsl.l    #3,d0
  move.l   a5,a4
@@ -5196,13 +5198,13 @@ walk_loop_tiny:
  move.w   (a0)+,d0                 ; ykoor[d6-1]
  add.w    ob_y(a4),d0
  move.w   d0,(a0)                  ; ykoor[d6]
- move.w   d0,-(sp)                 ; y als Parameter übergeben
+ move.w   d0,-(sp)                 ; y als Parameter uebergeben
 
  lea      XTAB-2(a6,d6.w),a0
  move.w   (a0)+,d0                 ; xkoor[d6-1]
  add.w    ob_x(a4),d0
  move.w   d0,(a0)                  ; xkoor[d6]
- move.w   d0,-(sp)                 ; x als Parameter übergeben
+ move.w   d0,-(sp)                 ; x als Parameter uebergeben
 
  move.w   d7,-(sp)                 ; aktuelle Objektnummer
  move.l   a5,-(sp)                 ; tree
@@ -5222,7 +5224,7 @@ walk_loop_tiny:
 
 * Eine Ebene weiter gehen
 
- addq.w   #2,d6                    ; Zähler erhöhen (2 wegen int- Zugriff)
+ addq.w   #2,d6                    ; Zaehler erhoehen (2 wegen int- Zugriff)
  move.w   d1,d7                    ; erstes Kind betrachten
  bra      walk_loop                ; -> loop
 
@@ -5234,7 +5236,7 @@ walk_loop2:
  move.w   ob_next(a4),d7           ; d7 = ob_next
  cmp.w    d5,d7                    ; Endobjekt erreicht ?
  beq.b    walk_end                 ; ja, Ende
- moveq    #0,d0                    ; Hiword löschen
+ moveq    #0,d0                    ; Hiword loeschen
  move.w   d7,d0
  lsl.l    #3,d0
  move.l   a5,a4
@@ -5242,12 +5244,12 @@ walk_loop2:
  add.l    d0,a4
  add.l    d0,a4                    ; OBJECT aktualisieren
  cmp.w    ob_tail(a4),d1           ; akt. Objekt == ob_tail(ob_next) ?
- bne      walk_loop_tiny           ; nein, nächstes Objekt
+ bne      walk_loop_tiny           ; nein, naechstes Objekt
 
-* Ende der Ebene erreicht, eine Stufe zurückgehen
+* Ende der Ebene erreicht, eine Stufe zurueckgehen
 
- subq.w   #2,d6                    ; Zähler dekrementieren (wegen int)
- bgt.b    walk_loop2               ; Objekt überspringen (schon bearbeitet)
+ subq.w   #2,d6                    ; Zaehler dekrementieren (wegen int)
+ bgt.b    walk_loop2               ; Objekt ueberspringen (schon bearbeitet)
 walk_end:
  movem.l  (sp)+,d4/d5/d6/d7/a5/a4/a3
  unlk     a6
@@ -5259,10 +5261,10 @@ walk_end:
 *
 * int parentob(a0 = OBJECT *tree, d0 = int startob)
 *
-* Rückgabe : bleibt hängen, wenn Objekt bereits Wurzelobjekt ist
+* Rueckgabe : bleibt haengen, wenn Objekt bereits Wurzelobjekt ist
 * sonst    : Nummer des Elterobjekts
 *
-* verändert d2,d1
+* veraendert d2,d1
 *
 
 parentob:
@@ -5270,7 +5272,7 @@ parentob:
  muls     #24,d2
 parob_loop:
  move.w   d0,d1                    ; d1 = vorheriges Objekt
- move.w   0(a0,d2.l),d0            ; d0 = nächstes Objekt
+ move.w   0(a0,d2.l),d0            ; d0 = naechstes Objekt
  move.w   d0,d2
  muls     #24,d2
  cmp.w    ob_tail(a0,d2.l),d1      ; tail ist vorheriges ?
@@ -5283,16 +5285,16 @@ parob_ende:
 *
 * void split_menu_entry(a0 = char *me)
 *
-* Zerlegt einen Menü-Eintrag
+* Zerlegt einen Menue-Eintrag
 *
-* => a0 =      Zeiger auf rechtsbündigen Teilstring oder NULL
-* => d0 = WORD Anzahl rechtsbündiger Leerzeichen
+* => a0 =      Zeiger auf rechtsbuendigen Teilstring oder NULL
+* => d0 = WORD Anzahl rechtsbuendiger Leerzeichen
 *
 
 split_menu_entry:
  moveq    #' ',d1
 sme_loop0:
- cmp.b    (a0)+,d1            ; führende Leerzeichen überlesen
+ cmp.b    (a0)+,d1            ; fuehrende Leerzeichen ueberlesen
  beq.b    sme_loop0
  subq.l   #1,a0
  move.l   a0,a1
@@ -5302,7 +5304,7 @@ sme_loop1:
  subq.l   #1,a1               ; a1 zeigt jetzt aufs EOS
  moveq    #-1,d0
 sme_loop2:
- addq.w   #1,d0               ; Anzahl Leerzeichen mitzählen
+ addq.w   #1,d0               ; Anzahl Leerzeichen mitzaehlen
  cmpa.l   a0,a1
  bls.b    sme_err
  cmp.b    -(a1),d1
@@ -5311,20 +5313,20 @@ sme_loop3:
  cmpa.l   a0,a1
  bls.b    sme_err
  cmp.b    -(a1),d1
- bne.b    sme_loop3           ; gültige Zeichen
+ bne.b    sme_loop3           ; gueltige Zeichen
  addq.l   #1,a1
  move.b   (a1),d1
- cmpi.b   #'^',d1             ; für Ctrl
+ cmpi.b   #'^',d1             ; fuer Ctrl
  beq.b    sme_ok
- cmpi.b   #7,d1               ; für Alt (Maximalgrößenfeld)
+ cmpi.b   #7,d1               ; fuer Alt (Maximalgroessenfeld)
  beq.b    sme_ok
- cmpi.b   #1,d1               ; für Shift (Pfeil hoch)
+ cmpi.b   #1,d1               ; fuer Shift (Pfeil hoch)
  beq.b    sme_ok
- cmpi.b   #3,d1               ; für Submenü (Pfeil rechts)
+ cmpi.b   #3,d1               ; fuer Submenue (Pfeil rechts)
  beq.b    sme_ok
  cmpi.b   #' ',-2(a1)         ; mind. zwei Leerzeichen ?
  bne.b    sme_err
- andi.b   #$5f,d1             ; Großschrift
+ andi.b   #$5f,d1             ; Grossschrift
  cmpi.b   #'I',d1             ; INSERT ?
  beq.b    sme_ok
  cmpi.b   #'D',d1             ; DELETE
@@ -5360,7 +5362,7 @@ sme_ok:
 * void stw_title( a0 = OBJECT *ob )
 *
 * Legt die Breite eines Objekts vom Typ G_TITLE fest.
-* Wird beim Einschalten eines Menüs aufgerufen
+* Wird beim Einschalten eines Menues aufgerufen
 *
 
 stw_title:
@@ -5373,7 +5375,7 @@ stw_title:
  beq.b    stwt_no_indir            ; nein
  move.l   (a0),a0
 stwt_no_indir:
-; führende Leerstellen entfernen
+; fuehrende Leerstellen entfernen
  moveq    #' ',d1
 stwt_loop1:
  cmp.b    (a0)+,d1
@@ -5410,7 +5412,7 @@ stwt_ende:
 * void calc_ftext(a0 = char *tmplt, d0 = WORD len, a1 = TEDINFO *te,
 *                   a2 = void *data)
 *
-* Berechnet die Positionen und Ausmaße der drei Komponenten eines
+* Berechnet die Positionen und Ausmasse der drei Komponenten eines
 * F(BOX)TEXT-Objekts:
 *
 * - Fester Bestandteil der Schablone (Anfang)
@@ -5422,7 +5424,7 @@ stwt_ende:
 *                                   ganze Schablonenbreite
 *              GRECT data.g        Objektposition (x,y,w,h)
 *              tmplt               Eingabe-Schablone
-* Ausgabe:     GRECT data.g   0    Ausmaße des Textes (x,y,w,h)
+* Ausgabe:     GRECT data.g   0    Ausmasse des Textes (x,y,w,h)
 *              WORD n1        8    Anzahl Zeichen des Anfangs
 *              WORD w1        10   Breite des Anfangs in Pixeln
 *              WORD n2        12   Anzahl Zeichen des Eingabefelds
@@ -5443,7 +5445,7 @@ calc_ftext:
  move.w   d0,d6                    ; ganze Objektbreite
 
 cft_is:
- move.w   big_wchar,d3             ; Zeichenbreite groß
+ move.w   big_wchar,d3             ; Zeichenbreite gross
  move.w   te_font(a3),d0
  cmpi.w   #IBM,d0
  beq.b    cft_ibm
@@ -5494,11 +5496,11 @@ cft_loop2:
 cft_el2:
  move.l   a0,a1
  suba.l   a2,a1
- move.w   a1,12(a4)                ; Länge des Eingabefeldes
+ move.w   a1,12(a4)                ; Laenge des Eingabefeldes
 
 ;move.l   a0,a0
  jsr      strlen
- move.w   d0,16(a4)                ; Länge des rechten Schablonenteils
+ move.w   d0,16(a4)                ; Laenge des rechten Schablonenteils
  move.w   d6,d1                    ; sichtbare Gesamtbreite
  sub.w    8(a4),d1                 ; - Anzahl Zeichen des Anfangs
  sub.w    d0,d1                    ; - Anzahl Zeichen des Endes
@@ -5547,13 +5549,13 @@ sptc_repl:
  move.w   d0,(a0)                  ; Rahmenfarbe (Bits 12..15)
  rts
 
-* Daten für runde Buttons
+* Daten fuer runde Buttons
 * 2D-Modus (schwarz)
 
 rbut_g:
  DC.W     0                        ; 1 Plane
  DC.W     REPLACE
- DC.W     14                       ; Höhe 14 Pixel
+ DC.W     14                       ; Hoehe 14 Pixel
  DC.W     16                       ; Breite 16 Pixel
  DC.W     BLACK                    ; Farbe
  DC.W     %0000011110000000
@@ -5588,7 +5590,7 @@ rbut_gs:
 rbut_m:
  DC.W     0                        ; 1 Plane
  DC.W     REPLACE
- DC.W     7                        ; Höhe 7 Pixel
+ DC.W     7                        ; Hoehe 7 Pixel
  DC.W     16                       ; Breite 16 Pixel
  DC.W     BLACK                    ; Farbe
  DC.W     %0000111111000000
@@ -5609,7 +5611,7 @@ rbut_ms:
 rbut_k:
  DC.W     0                        ; 1 Plane
  DC.W     REPLACE
- DC.W     7                        ; Höhe 7 Pixel
+ DC.W     7                        ; Hoehe 7 Pixel
  DC.W     8                        ; Breite 8 Pixel
  DC.W     BLACK                    ; Farbe
  DC.W     %0011100000000000
@@ -5628,7 +5630,7 @@ rbut_ks:
  DC.W     %0100010000000000
  DC.W     %0011100000000000
 
-* 3D- Icon (s=schwarz/h=hellgrau/g=dklgrau/w=weiß)
+* 3D- Icon (s=schwarz/h=hellgrau/g=dklgrau/w=weiss)
 
 * deselektiert:
 *           00000gggg0000000
@@ -5667,7 +5669,7 @@ rbut_ks:
 rbut_3d:
  DC.W     3                        ; 4 Planes
  DC.W     TRANSPARENT
- DC.W     14                       ; Höhe 14 Pixel
+ DC.W     14                       ; Hoehe 14 Pixel
  DC.W     16                       ; Breite 16 Pixel
  DC.W     BLACK                    ; Farbe
  DC.W     %0000000000000000
@@ -5811,7 +5813,7 @@ _obd_rbutton:
  move.w   work_out+6,d2
  add.w    d2,d2                    ; 2 * Pixelbreite
  cmp.w    work_out+8,d2
- bls.b    _obdr_rbt                ; 2 * Pixelbreite <= Pixelhöhe
+ bls.b    _obdr_rbt                ; 2 * Pixelbreite <= Pixelhoehe
  lea      rbut_k(pc),a5
  cmpi.w   #16,gr_hhbox
  bcs.b    _obdr_rbt
@@ -5823,15 +5825,15 @@ _obdr_rbt:
 
  move.w   (a5)+,d7                 ; d7 = Anz. Planes - 1
  move.w   (a5)+,d3                 ; d3 = Schreibmodus
- move.w   (a5)+,d5                 ; d5 = Höhe in Pixeln
+ move.w   (a5)+,d5                 ; d5 = Hoehe in Pixeln
  move.w   (a5)+,d4                 ; d4 = Breite in Pixeln
 _obdr_rloop:
  clr.w    -(sp)
  move.w   (a5)+,-(sp)              ; Farbe
  move.w   d3,-(sp)                 ; Schreibmodus
- move.w   d5,-(sp)                 ; Höhe in Pixelzeilen
+ move.w   d5,-(sp)                 ; Hoehe in Pixelzeilen
  move.w   d4,-(sp)                 ; Breite in Pixeln
- subq.l   #2,sp                    ; Dummy für Zielbreite (autom. Bildsch.)
+ subq.l   #2,sp                    ; Dummy fuer Zielbreite (autom. Bildsch.)
  move.l   (a4),-(sp)               ; Zielposition:  ob_x,ob_y ohne Rand
  move.w   g_h(a4),d2
  sub.w    d5,d2
@@ -5845,7 +5847,7 @@ _obdr_3dnth2:
  move.l   a5,a1
  btst     #0,d6                    ; SELECTED ?
  beq.b    _obdr_3dtns2
-; ausgefüllt bei Selektierung
+; ausgefuellt bei Selektierung
  add.w    d5,a1
  add.w    d5,a1
 _obdr_3dtns2:
@@ -5905,16 +5907,16 @@ _obd_crossbutton:
  move.w   d0,-(sp)                 ; d0 merken
  move.w   d1,-(sp)                 ; 3D-Flag merken
 
-; Box berechnen (muß quadratisch sein)
+; Box berechnen (muss quadratisch sein)
 
  move.w   big_hchar,d0
  subq.w   #2,d0
  btst     #0,d0
  bne.b    dcr_odd
- addq.w   #1,d0                    ; Höhe muß ungerade sein!
+ addq.w   #1,d0                    ; Hoehe muss ungerade sein!
 dcr_odd:
  move.w   d0,-(sp)                 ; h
- bsr      calc_quadr               ; erhält a0
+ bsr      calc_quadr               ; erhaelt a0
  move.w   d0,-(sp)                 ; w
  move.l   g_x(a0),-(sp)            ; x,y
  move.w   g_h(a0),d0
@@ -6024,7 +6026,7 @@ _obdc_cross:
  bne.b    _obdc_sel
  moveq    #WHITE,d1
 _obdc_sel:
- ; Kreuzchen weiß bzw. schwarz je nach Selektierung
+ ; Kreuzchen weiss bzw. schwarz je nach Selektierung
 */
  move.l   sp,a0
  moveq    #REPLACE,d0              ; Schreibmodus
@@ -6060,7 +6062,7 @@ _obdc_tns:
 * -$14(a6):    unbenutzt
 * -$13(a6):    char   is_3d_background
 * -$10(a6):    int    is3dact      3D, SELECTED durch Text verschieben
-* -$e(a6):     char   is3d         überhaupt 3D
+* -$e(a6):     char   is3d         ueberhaupt 3D
 * -$d(a6):     char   is_3d_indicator
 * -$c(a6):     int    objnr
 * -$a(a6):     int    icolor (Innenfarbe bei TEDINFO oder G_?BOX???)
@@ -6136,55 +6138,55 @@ __objc_draw:
 
  sf.b     -$13(a6)                 ; kein 3D-Background-Objekt
  clr.l    -$10(a6)
-;clr.b    -$e(a6)                  ; kein Offset für 3D, kein 3D
+;clr.b    -$e(a6)                  ; kein Offset fuer 3D, kein 3D
 
 ;clr.b    -$d(a6)                  ; kein Indicator
  tst.w    enable_3d
  beq.b    _obdrw_no33d             ; zuwenig Planes
- btst     #9+16,d4                 ; Bit für Indicator oder Activator
+ btst     #9+16,d4                 ; Bit fuer Indicator oder Activator
  beq.b    _obdrw_no33d1
  btst     #10+16,d4                ; Activator ?
  seq.b    -$d(a6)                  ; wenn Bit == 0 => Indicator
  beq.b    _obdrw_is33d             ; nein
- addq.w   #1,-$10(a6)              ; Activator, Offset für Text
+ addq.w   #1,-$10(a6)              ; Activator, Offset fuer Text
  bra.b    _obdrw_is33d
 _obdrw_no33d1:
- btst     #10+16,d4                ; Bit für Background
+ btst     #10+16,d4                ; Bit fuer Background
  beq.b    _obdrw_no33d             ; ist 0
  st.b     -$13(a6)
 _obdrw_is33d:
- st.b     -$e(a6)                  ; ist überhaupt 3D
+ st.b     -$e(a6)                  ; ist ueberhaupt 3D
 _obdrw_no33d:
  move.l   a1,d0
  addq.l   #1,d0
  beq      _odr_ende                ; -> ende
  move.l   a1,a3                    ; a3 = ob_spec
  move.w   d1,d3                    ; type
- bmi      _odr_ende                ; Objektnummer ungültig
+ bmi      _odr_ende                ; Objektnummer ungueltig
  tst.w    wclip
  beq.b    _obdrw_noclip            ; kein Clipping -> _obdrw_noclip
  tst.w    hclip
  beq.b    _obdrw_noclip            ; kein Clipping -> _obdrw_noclip
 
-* Schnitt mit Clippingbereich überprüfen
-* Objekte mit OUTLINED haben immer einen Rand von 3 Pixeln außerhalb
+* Schnitt mit Clippingbereich ueberpruefen
+* Objekte mit OUTLINED haben immer einen Rand von 3 Pixeln ausserhalb
 * Rahmen > 0 (innen): Rahmen mit -3 multiplizieren
-* Rahmen < 0 (außen): Rahmen mit 3  multiplizieren
-* Der Rahmen sieht so immer aus wie außen (Sicherheitsabstand!)
+* Rahmen < 0 (aussen): Rahmen mit 3  multiplizieren
+* Der Rahmen sieht so immer aus wie aussen (Sicherheitsabstand!)
 
  move.l   g_x(a5),g_x(a4)          ; grect nach -$30(a6) kopieren
  move.l   g_w(a5),g_w(a4)
  moveq    #-3,d0
  btst     #OUTLINED_B,d4
- bne.b    obdrw_l1                 ; ja, Rahmen außen (-3)
+ bne.b    obdrw_l1                 ; ja, Rahmen aussen (-3)
  move.w   d7,d0                    ; Rahmendicke
  beq.b    _obdrw_keinrahmen
  add.w    d7,d0
  add.w    d7,d0
- ble.b    obdrw_l1                 ; Rahmen *3 außen
- neg.w    d0                       ; Rahmen *3 nach außen stülpen
+ ble.b    obdrw_l1                 ; Rahmen *3 aussen
+ neg.w    d0                       ; Rahmen *3 nach aussen stuelpen
 obdrw_l1:
- move.l   a4,a0                    ; inneres bzw. äußeres Rechteck
+ move.l   a4,a0                    ; inneres bzw. aeusseres Rechteck
 
  add.w    d0,(a0)+                 ; g.g_x += offs
  add.w    d0,(a0)+                 ; g.g_y += offs
@@ -6197,14 +6199,14 @@ _obdrw_keinrahmen:
  bsr      in_clip                  ; im Clipping- Bereich ?
  beq      _odr_ende                ; nicht im Clipping- Bereich -> ende
 
-* Ende der Schnittüberprüfung mit Clippingbereich
+* Ende der Schnittueberpruefung mit Clippingbereich
 
 _obdrw_noclip:
  cmpi.w   #8,d3                    ; 8+20 == G_STRING
  beq      _odr_string              ; G_STRING -> _odr_string
  move.w   d7,d0                    ; Rahmen
  bge.b    obdrw_l2                 ; >= 0 (innen)
- moveq    #0,d0                    ; Rahmen außen
+ moveq    #0,d0                    ; Rahmen aussen
 obdrw_l2:
  move.w   d0,-$1e(a6)              ; -$1e(a6) = Dicke des inneren Rahmens
  move.l   #$10001,-6(a6)           ; wmode = REPLACE
@@ -6250,7 +6252,7 @@ _obdrw_tedi_nobox:
  clr.w    -$36(a6)                 ; G_(F)TEXT: keine Umrahmung zeichnen
  bra      _obdrw_nobox
 
-* d0 enthält immer noch das Modusbyte
+* d0 enthaelt immer noch das Modusbyte
 
 _obdrw_notedinfo:
  addq.b   #3,d0
@@ -6293,7 +6295,7 @@ _obdrw_boxtxt:
  tst.b    -$e(a6)                  ; 3D ?
  beq      _obdrw_rahmen
 
-; Farbe weiß in 3D => grau
+; Farbe weiss in 3D => grau
 
  tst.l    -$a(a6)                  ; WHITE und IP_HOLLOW ?
  bne.b    _obdrw_nowhite
@@ -6313,12 +6315,12 @@ _obdrw_nowhite:
  btst     #OUTLINED_B,d4
  beq      _odr_noroot
 
-* Sonderbehandlung für Objekt mit Rahmen 2 Pixel innen
+* Sonderbehandlung fuer Objekt mit Rahmen 2 Pixel innen
 * und OUTLINED (d.h. das Wurzelobjekt) in 3D
 
  move.l   4(a5),-(sp)
- move.l   (a5),-(sp)               ; grect für 3D-Schatten
- addq.w   #1,-$1e(a6)              ; inneren Rahmen vergrößern (schwarze Linie)
+ move.l   (a5),-(sp)               ; grect fuer 3D-Schatten
+ addq.w   #1,-$1e(a6)              ; inneren Rahmen vergroessern (schwarze Linie)
  bclr     #OUTLINED_B,d4
  moveq    #9,d1                    ; dunkelgrau
  bsr      strplc_pcolor
@@ -6373,7 +6375,7 @@ _obdrw_nowhite:
  addq.l   #8,sp
  bra      _obdrw_keinrahm
 
-* üblicher 3D-Rahmen:
+* ueblicher 3D-Rahmen:
 
 _odr_noroot:
  move.l   a5,a0                    ; grect
@@ -6424,7 +6426,7 @@ _obdrw_nobox:
  beq.b    _odr_txtnind             ; nein
 ; Indicator: SELECTED: Textfarbe wechseln
  move.w   -4(a6),d1                ; textcolor
-;andi.w   #15,d1                   ; unnötig
+;andi.w   #15,d1                   ; unnoetig
  move.b   _odr_chgcol(pc,d1.w),d1
  ext.w    d1
  move.w   d1,-4(a6)                ; Textfarbe umsetzen
@@ -6436,7 +6438,7 @@ _odr_txtnind:
  move.w   d3,d0
  add.w    d0,d0
  move.w   _obdrw_jmptab(pc,d0.w),d0
- jmp      _obdrw_jmptab(pc,d0.w)        ; der große switch()
+ jmp      _obdrw_jmptab(pc,d0.w)        ; der grosse switch()
 
 _odr_chgcol:
  DC.B     1                             ; 0 <-> 1
@@ -6518,7 +6520,7 @@ _odr_ftext:
  beq.b    _odr_ftxt_kompl          ; nein, komplizierte Ausgabe
 _odr_ft_simple:
 
-* Der einfache Fall: nicht scrollend, 2D und äquidistanter Font
+* Der einfache Fall: nicht scrollend, 2D und aequidistanter Font
 
  lea      popup_tmp,a2             ; dest (Mischstring)
  move.l   d0,a1                    ; Schablone
@@ -6531,7 +6533,7 @@ _odr_ft_simple:
 * Der komplizierte Fall
 
 _odr_ftxt_kompl:
- suba.w   #30,sp                   ; 0: Platz für Rückgabewerte
+ suba.w   #30,sp                   ; 0: Platz fuer Rueckgabewerte
                                    ; 20: Scroll-Offset
                                    ; 22: gerettetes Clipping-Rechteck
  moveq    #-1,d3                   ; d3 = ganze Objektbreite
@@ -6543,7 +6545,7 @@ _odr_ftxt_kompl:
  move.l   te_pvalid(a3),a0
  move.l   xte_ptmplt(a0),d5        ; d5 = Schablone
  move.w   xte_scroll(a0),20(sp)    ; Scroll-Offset
- move.w   xte_vislen(a0),d3        ; d3 = sichtbare Länge
+ move.w   xte_vislen(a0),d3        ; d3 = sichtbare Laenge
 ; nicht scrollendes Eingabefeld
 _odr_ftxt_noscr:
  lea      popup_tmp,a2             ; dest (Mischstring)
@@ -6561,18 +6563,18 @@ _odr_ftxt_noscr:
  bsr      __calc_innergrect
 
  move.l   -$30+g_x(a6),g_x(sp)
- move.l   -$30+g_w(a6),g_w(sp)     ; GRECT, auch Rückgabe
+ move.l   -$30+g_w(a6),g_w(sp)     ; GRECT, auch Rueckgabe
 
  move.l   sp,a2                    ; data
  move.l   a3,a1                    ; TEDINFO
  move.l   d5,a0                    ; tmplt
- move.w   d3,d0                    ; Länge der Schablone oder -1 (alles)
+ move.w   d3,d0                    ; Laenge der Schablone oder -1 (alles)
  bsr      calc_ftext               ; Zeichenpositionen berechnen
 
  move.l   xclip,22+g_x(sp)
  move.l   wclip,22+g_w(sp)         ; altes Clipping-Rechteck retten
  lea      (sp),a0
- bsr      set_iclip                ; Clipping-Rechteck für Textausgabe
+ bsr      set_iclip                ; Clipping-Rechteck fuer Textausgabe
 
  beq      _obdt_after_rcl          ; leeres Clipping-Rechteck (kein Text!)
 
@@ -6620,16 +6622,16 @@ _odr_ftxt_zero1:
  bsr      gtext
 
 ; Eingabefeld ausgeben (i.a. replace!)
-; Wenn REPLACE und Vektorfont: Weißes Rechteck unterlegen
+; Wenn REPLACE und Vektorfont: Weisses Rechteck unterlegen
 
 _odr_ftxt_zero2:
- move.w   12(sp),d0                ; Länge Eingabefeld
+ move.w   12(sp),d0                ; Laenge Eingabefeld
  beq      _odr_ftxt_zero3          ; kein Eingabefeld
  move.w   -6(a6),d0
  move.w   -4(a6),d1                ; textcolor
  bsr      stwmod_tcolor
 ; Eingabefeld-String bestimmen
-; Bei einfacher Schablone & Rand & nicht rechtsbündig: nur Text ausgeben
+; Bei einfacher Schablone & Rand & nicht rechtsbuendig: nur Text ausgeben
  move.l   curr_finfo,a0
  tst.w    fontmono(a0)             ; "monospaced"
  bne.b    _odr_ftxt_un             ; ja, Unterstriche ausgeben
@@ -6661,8 +6663,8 @@ _odr_ftxt_no_un:
 
 _odr_ftxt_un:
  lea      popup_tmp,a0             ; Misch-String
- add.w    8(sp),a0                 ; + Länge des Anfangs
- move.w   12(sp),d0                ; Länge des Eingabefelds
+ add.w    8(sp),a0                 ; + Laenge des Anfangs
+ move.w   12(sp),d0                ; Laenge des Eingabefelds
  clr.b    0(a0,d0.w)               ; EOS setzen
 _odr_ftxt_wun:
  add.w    20(sp),a0                ; + Scroll-Offset
@@ -6776,9 +6778,9 @@ _odr_s1:
  move.b   te_just+1(a3),d0         ; te_just
  cmpi.b   #TE_SPECIAL,d0
  bne.b    _odr_tx_no3
- moveq    #TE_LEFT,d0              ; erster Teil linksbündig
+ moveq    #TE_LEFT,d0              ; erster Teil linksbuendig
 ; te_just = 3.
-; Suche nach "||" und gib Teil rechts-, Teil linksbündig aus.
+; Suche nach "||" und gib Teil rechts-, Teil linksbuendig aus.
  moveq    #'|',d1
  move.l   a1,a0
 _odr_tx_l1:
@@ -6788,8 +6790,8 @@ _odr_tx_l1:
  bne.b    _odr_tx_l1
  cmp.b    (a0),d1
  bne.b    _odr_tx_l1
-; erster Teil linksbündig
-; aber erst testen, ob der ganze Text paßt
+; erster Teil linksbuendig
+; aber erst testen, ob der ganze Text passt
 
  movem.l  d0/a0/a1,-(sp)
  move.l   a1,a0
@@ -6815,7 +6817,7 @@ _odr_tx_l1:
  bgt.b    _odr_tx_ende
  addq.l   #1,a1
 
-; zweiter Teil rechtsbündig
+; zweiter Teil rechtsbuendig
  moveq    #TE_RIGHT,d0
 
 _odr_tx_no3:
@@ -6830,12 +6832,12 @@ _odr_tx_ende:
 
 _odr_wintitle:
 
-* leading und trailing blank entfernen und String-Länge ermitteln
+* leading und trailing blank entfernen und String-Laenge ermitteln
 
  move.l   (a3),a0                  ; te_ptext
  cmpi.b   #' ',(a0)                ; Beginnt mit Leerzeichen ?
  bne.b    _odrw_wtns               ; nein
- addq.l   #1,a0                    ; führendes Leerzeichen entfernen
+ addq.l   #1,a0                    ; fuehrendes Leerzeichen entfernen
 _odrw_wtns:
  jsr      str_to_ints              ; String ins txvintin[]-Feld => d0 = strlen
  beq.b    _odrw_wt_l1              ; kein Zeichen
@@ -6865,7 +6867,7 @@ _odrw_wt_l1:
 
 * if (ist 2D)
 
- tst.w    vintin_len               ; ist überhaupt Text ?
+ tst.w    vintin_len               ; ist ueberhaupt Text ?
  beq      _odr_wtl                 ; nein
  tst.b    -$e(a6)                  ; 3D ?
  bne.b    _odr_wt3d
@@ -6893,11 +6895,11 @@ _odr_wt1:
  btst.b   #4,look_flags+1          ; Name 3D ?
  bne.b    _odr_wtnon3d
 
-* Ausgabe 3D-Titelname (weiß und tcolour)
+* Ausgabe 3D-Titelname (weiss und tcolour)
 
- moveq    #WHITE,d1                ; Text zuerst weiß für 3D-Effekt
+ moveq    #WHITE,d1                ; Text zuerst weiss fuer 3D-Effekt
  moveq    #TRANSPARENT,d0
- bsr      stwmod_tcolor            ; zerstört u.U. vintin[0]
+ bsr      stwmod_tcolor            ; zerstoert u.U. vintin[0]
 
  move.l   g_x(a4),vptsin           ; x,y
  bsr      gtext
@@ -6911,7 +6913,7 @@ _odr_wt1:
  subq.w   #1,vptsin+2              ; y
  bsr      gtext
 
- addq.w   #1,g_w(a4)               ; Textbreite (!) erhöhen wg. 3D
+ addq.w   #1,g_w(a4)               ; Textbreite (!) erhoehen wg. 3D
  bra.b    _odr_wt_txt
 
 * Ausgabe 2D-Titelname
@@ -6926,17 +6928,17 @@ _odr_wtnon3d:
  bsr      gtext
 
 *
-* Korrektur zur Simulation führender und abschließender Leerzeichen
+* Korrektur zur Simulation fuehrender und abschliessender Leerzeichen
 * Nur, falls Text da ist
 *
 
 _odr_wt_txt:
  sub.w    d3,g_x(a4)               ; "Text" nach links ...
  add.w    d3,g_w(a4)
- add.w    d3,g_w(a4)               ; ... und Breite erhöhen
+ add.w    d3,g_w(a4)               ; ... und Breite erhoehen
 
 *
-* Beide Fälle: Linien
+* Beide Faelle: Linien
 *
 
 _odr_wtl:
@@ -6947,8 +6949,8 @@ _odr_wtl:
  move.w   g_w(a5),d0               ; Breite des Objekts
  sub.w    g_w(a4),d0               ; - Breite des Texts
  subi.w   #8+4,d0                  ; - innerer Rand - 2*4 Pixel
- blt      _odr_txt_end             ; kein Platz für Linien
- move.w   g_h(a5),d3               ; Objekthöhe
+ blt      _odr_txt_end             ; kein Platz fuer Linien
+ move.w   g_h(a5),d3               ; Objekthoehe
  subq.w   #4,d3                    ; - innerer Rand
                                    ; norm.weise 15 Pixel
  divu     #5,d3                    ; Anzahl Linien
@@ -6963,7 +6965,7 @@ _odr_wtl:
 _odr_wtn5:
  addq.w   #4,(sp)                  ; y2 = ob_y+5
  move.w   g_x(a4),-(sp)            ; x2
- tst.w    g_h(a4)                  ; ist überhaupt Text ?
+ tst.w    g_h(a4)                  ; ist ueberhaupt Text ?
  beq.b    _odr_wtn6                ; nein
  subq.w   #1,(sp)
 _odr_wtn6:
@@ -7038,11 +7040,11 @@ _odr_image:
  clr.w    -(sp)
  move.w   bi_color(a3),-(sp)
  move.w   #TRANSPARENT,-(sp)
- move.w   bi_hl(a3),-(sp)          ; Höhe in Pixelzeilen
+ move.w   bi_hl(a3),-(sp)          ; Hoehe in Pixelzeilen
  move.w   bi_wb(a3),d0             ; Bytes ...
  lsl.w    #3,d0                    ; ... in Pixel umrechnen
  move.w   d0,-(sp)                 ; Breite in Pixeln
- subq.l   #2,sp                    ; Dummy für Zielbreite (autom. Bildsch.)
+ subq.l   #2,sp                    ; Dummy fuer Zielbreite (autom. Bildsch.)
  move.l   (a5),-(sp)               ; Zielposition:  ob_x,ob_y
  clr.l    -(sp)                    ; Ziel: Bildschirm
  move.w   bi_wb(a3),-(sp)          ; Quellbreite
@@ -7056,13 +7058,13 @@ _odr_image:
 
 _odr_cicon:
  tst.l    cib_mainlist(a3)         ; Zeigt auf ICONBLK, gefolgt von <mainlist>.
- ble.b    _odr_icon                ; muß monochrom ausgeben
+ ble.b    _odr_icon                ; muss monochrom ausgeben
  move.l   a3,a0                    ; ICONBLK *ob_spec
  move.l   (a5),d1                  ; x,y Offset
  move.w   d4,d0                    ; ob_state
  bsr      draw_cicon               ; Colour-Icon ausgeben
 
- andi.w   #$fffe,d4                ; SELECTED ist schon berücksichtigt
+ andi.w   #$fffe,d4                ; SELECTED ist schon beruecksichtigt
  bra      _odr_endsw
 
 * case G_ICON:
@@ -7073,7 +7075,7 @@ _odr_icon:
  move.w   d4,d0                    ; ob_state
  bsr      draw_icon                ; Icon ausgeben
 
- andi.w   #$fffe,d4                ; SELECTED ist schon berücksichtigt
+ andi.w   #$fffe,d4                ; SELECTED ist schon beruecksichtigt
  bra      _odr_endsw
 
 * case G_EDIT:
@@ -7114,7 +7116,7 @@ _odr_popup:
  move.l   (a3)+,a0                 ; OBJECT *menutree
  move.w   (a3),d0                  ; int objnr
  mulu     #24,d0
- move.l   ob_spec(a0,d0.l),a3      ; Teilstring des Menüs nehmen
+ move.l   ob_spec(a0,d0.l),a3      ; Teilstring des Menues nehmen
 ;bra      _obdrw_swb4              ; wie G_BUTTON
  bra      _odr_string              ; wie G_STRING
 
@@ -7195,7 +7197,7 @@ _odr_grp_3d:
  move.l   #vdipb,d1
  moveq    #$73,d0
  trap     #2
-; weiß links oben
+; weiss links oben
  moveq    #WHITE,d1
  bsr      strplc_pcolor            ; Polylinefarbe setzen
  lea      vptsin+2,a1
@@ -7210,7 +7212,7 @@ _odr_grp_3d:
  move.l   #vdipb,d1
  moveq    #$73,d0
  trap     #2
-; weiß rechts unten
+; weiss rechts unten
  lea      vptsin,a1
  move.l   (sp)+,(a1)+              ; Ecke lu
  move.l   8(a1),(a1)+              ; Ecke ru
@@ -7246,7 +7248,7 @@ _odr_grp_3d:
  move.l   #vdipb,d1
  moveq    #$73,d0
  trap     #2
-; weiß rechts oben (2 Punkte)
+; weiss rechts oben (2 Punkte)
  moveq    #WHITE,d1
  bsr      strplc_pcolor            ; Polylinefarbe setzen
 
@@ -7268,7 +7270,7 @@ _odr_gsptext:
 
  move.w   g_x(a5),d0               ; x
  add.w    big_wchar,d0             ; Offset
-;add.w    big_wchar,d0             ; führendes Leerzeichen
+;add.w    big_wchar,d0             ; fuehrendes Leerzeichen
  move.w   d0,vptsin
  move.w   g_y(a5),vptsin+2
  bsr      gtext
@@ -7332,7 +7334,7 @@ _odr_swbutton:
  beq.b    _obdrw_swb2
 _obdrw_swb1:
  move.b   (a0)+,d1
- beq      _odr_endsw               ; plötzliches String- Ende
+ beq      _odr_endsw               ; ploetzliches String- Ende
  cmpi.b   #'|',d1
  bne.b    _obdrw_swb1
  subq.w   #1,d0
@@ -7378,9 +7380,9 @@ _odr_shortcut:
  bsr      _set_transptc
 
  moveq    #IBM,d0
- bsr      setfont                  ; a0 = großer Zeichensatz
+ bsr      setfont                  ; a0 = grosser Zeichensatz
 
-; Rechteck für Text, dabei ggf. 2 Zeichen für linken Rand berücksichtigen
+; Rechteck fuer Text, dabei ggf. 2 Zeichen fuer linken Rand beruecksichtigen
 
  move.l   g_x(a5),g_x(a4)
  move.l   g_w(a5),g_w(a4)
@@ -7396,8 +7398,8 @@ _odr_shortcut:
  sub.w    d0,g_w(a4)
 _odr_sc1:
  tst.w    fontmono(a0)
- bne.b    _odr_ssimple             ; äquidistant
- bra.b    _odr_str_men             ; Menü
+ bne.b    _odr_ssimple             ; aequidistant
+ bra.b    _odr_str_men             ; Menue
 
 *
 * case G_STRING:
@@ -7408,9 +7410,9 @@ _odr_string:
  bsr      _set_transptc
 
  moveq    #IBM,d0
- bsr      setfont                  ; a0 = großer Zeichensatz
+ bsr      setfont                  ; a0 = grosser Zeichensatz
 
-; Rechteck für Text, dabei ggf. 2 Zeichen für linken Rand berücksichtigen
+; Rechteck fuer Text, dabei ggf. 2 Zeichen fuer linken Rand beruecksichtigen
 
  move.l   g_x(a5),g_x(a4)
  move.l   g_w(a5),g_w(a4)
@@ -7426,22 +7428,22 @@ _odr_string:
  sub.w    d0,g_w(a4)
 _odr_st1:
  tst.w    fontmono(a0)
- bne.b    _odr_ssimple             ; äquidistant
+ bne.b    _odr_ssimple             ; aequidistant
 
-; proportionaler Zeichensatz: Menüs gesondert behandeln
+; proportionaler Zeichensatz: Menues gesondert behandeln
 
  moveq    #SUBMENU_B+16,d0
- btst.l   d0,d3                    ; Submenü-Eintrag?
+ btst.l   d0,d3                    ; Submenue-Eintrag?
  bne.b    _odr_str_men             ; ja (hat rechts einen Pfeil!)
  move.l   -$34(a6),a1              ; tree
- cmpa.l   menutree,a1              ; ist gerade gezeichneter Menübaum ?
+ cmpa.l   menutree,a1              ; ist gerade gezeichneter Menuebaum ?
  beq.b    _odr_str_men             ; ja
- cmpa.l   mctrl_mnrett,a1          ; ist gerade gezeichneter Menübaum ?
+ cmpa.l   mctrl_mnrett,a1          ; ist gerade gezeichneter Menuebaum ?
  beq.b    _odr_str_men             ; ja
  cmpa.l   #popup_tmp,a1            ; ist MagiC-Popup ?
  beq.b    _odr_str_men             ; ja
 
-; äquidistanter Zeichensatz: Ausgabe
+; aequidistanter Zeichensatz: Ausgabe
 
 _odr_ssimple: 
  move.l   a3,a0                    ; ob_spec
@@ -7450,7 +7452,7 @@ _odr_ssimple:
  move.w   g_x(a4),d1
  bra      _odr_snoh
 
-; Menü-Eintrag und Proportionalfont
+; Menue-Eintrag und Proportionalfont
 
 _odr_str_men:
  move.b   (a3),d0
@@ -7491,20 +7493,20 @@ _odr_tr_endloop:
 _odr_str_no_trenn:
  move.l   a3,a0
  bsr      split_menu_entry
- move.l   a0,d5                    ; Zeiger auf rechtsbündigen Teilstring
+ move.l   a0,d5                    ; Zeiger auf rechtsbuendigen Teilstring
  beq.b    _odr_me_svi              ; ist leer!
 
- move.w   d0,-(sp)                 ; Anzahl rechtsbündiger Leerzeichen
+ move.w   d0,-(sp)                 ; Anzahl rechtsbuendiger Leerzeichen
 
-; rechtsbündigen Teil-String zeichnen
+; rechtsbuendigen Teil-String zeichnen
 
 ;move.l   d5,a0
  bsr      str_to_ints
  sub.w    (sp)+,d0
  move.w   d0,vintin_len            ; rechtsb. Leerzeichen wegnehmen
  move.l   d5,d1
- sub.l    a3,d1                    ; d1 = Länge des Anfangs-Strings
- add.w    d0,d1                    ; + Länge des End-Strings - Leerzeichen
+ sub.l    a3,d1                    ; d1 = Laenge des Anfangs-Strings
+ add.w    d0,d1                    ; + Laenge des End-Strings - Leerzeichen
  mulu     big_wchar,d1
  move.w   d1,g_w(a4)
  
@@ -7516,7 +7518,7 @@ _odr_str_no_trenn:
  bsr      tjust
  bsr      gtext
 
-; linksbündigen Teil-String ins txvintin[]-Feld
+; linksbuendigen Teil-String ins txvintin[]-Feld
 
  move.l   d5,a0                    ; Beginn des rechtsb. Teils
 _odr_me_loop:
@@ -7527,14 +7529,14 @@ _odr_me_loop:
  addq.l   #1,a0
 _odr_me_endloop:
  move.l   a0,d0
- sub.l    a3,d0                    ; Länge der Zeichenkette
+ sub.l    a3,d0                    ; Laenge der Zeichenkette
  move.l   a3,a0                    ; Anfang der Zeichenkette
  bsr      lstr2int                 ; ins vintin[]-Feld
  beq      _odr_tstact              ; Text ist leer
  move.w   g_x(a4),d1
  bra.b    _odr_snoh
 
-; kein Tastaturkürzel: ganzen Teil ins txvintin-Feld
+; kein Tastaturkuerzel: ganzen Teil ins txvintin-Feld
 
 _odr_me_svi:
  move.l   a3,a0                    ; ob_spec
@@ -7558,7 +7560,7 @@ _odr_gtitle:
 
  move.l   a3,a0                    ; ob_spec
 _odr_gt_loop:
- cmpi.b   #' ',(a0)+               ; Leerzeichen überlesen
+ cmpi.b   #' ',(a0)+               ; Leerzeichen ueberlesen
  beq.b    _odr_gt_loop
  subq.l   #1,a0
 
@@ -7567,7 +7569,7 @@ _odr_gt_loop:
  beq      _odr_tstact              ; Text ist leer
 
  move.w   g_x(a5),d1
- add.w    big_wchar,d1             ; dafür links Rand lassen
+ add.w    big_wchar,d1             ; dafuer links Rand lassen
  bra.b    _odr_snoh
 
 * einfacher String
@@ -7580,13 +7582,13 @@ _odr_string2:
  moveq    #IBM,d0
  bsr      setfont
 
- move.w   g_x(a5),d1               ; xpos = x  (d5 wird nicht mehr benötigt)
- subq.w   #6,d3                    ; G_BUTTON, d3 wird nicht mehr benötigt)
+ move.w   g_x(a5),d1               ; xpos = x  (d5 wird nicht mehr benoetigt)
+ subq.w   #6,d3                    ; G_BUTTON, d3 wird nicht mehr benoetigt)
  bne.b    _odr_snoh                ; nein
 
 * G_BUTTON: horizontal zentrieren
 
- move.w   vintin_len,d0            ; Textlänge
+ move.w   vintin_len,d0            ; Textlaenge
  bsr      extent
  move.w   g_w(a5),d1
  sub.w    d0,d1
@@ -7599,7 +7601,7 @@ _odr_snoh:
  swap     d1                       ; x ins Hiword
 
  move.w   g_h(a5),d0
- sub.w    finfo_big+fontcharH,d0   ; - Zeichenhöhe
+ sub.w    finfo_big+fontcharH,d0   ; - Zeichenhoehe
  bgt.b    _odr_snohok
  moveq    #0,d0
 _odr_snohok:
@@ -7621,8 +7623,8 @@ _odr_snohok:
 _obdrw_s3:
  move.l   d1,vptsin                ; x,y
  bsr      gtext
- move.l   (sp)+,d1                 ; x,y zurück
-* auf Unterstrich prüfen
+ move.l   (sp)+,d1                 ; x,y zurueck
+* auf Unterstrich pruefen
  bclr     #6,d4                    ; WHITEBAK ?
  beq      _odr_endsw               ; nein
 
@@ -7635,7 +7637,7 @@ _obdrw_unterstr:
  cmpi.b   #-1,d0
  bne.b    _obdrw_no_allu           ; nicht alles unterstreichen
 
-; alles unterstreichen. Im Fall 3D oben weiß, unten dklgrau.
+; alles unterstreichen. Im Fall 3D oben weiss, unten dklgrau.
 
  move.w   g_h(a5),d1
  add.w    g_y(a5),d1
@@ -7655,7 +7657,7 @@ _obdrw_unterstr:
  bsr      draw_line
  subq.w   #1,2(sp)
  subq.w   #1,6(sp)
- moveq    #WHITE,d1                ; oberer ist weiß
+ moveq    #WHITE,d1                ; oberer ist weiss
  bra.b    _obdrw_dl2
 
 ; nur einen Buchstaben unterstreichen.
@@ -7664,7 +7666,7 @@ _obdrw_unterstr:
 _obdrw_no_allu:
  andi.w   #$0f,d0                  ; nur 4 Bits (27.6.99)
  cmp.w    vintin_len,d0
- bcc.b    _obdrw_no_under          ; außerhalb der Zeichenkette
+ bcc.b    _obdrw_no_under          ; ausserhalb der Zeichenkette
 
  add.w    finfo_big+fontUpos,d1
  move.w   d1,-(sp)                 ; y2
@@ -7677,9 +7679,9 @@ _obdrw_no_allu:
  move.w   d1,d5                    ; x
  move.w   d0,d3                    ; charpos retten
 
-; für prop. Font
+; fuer prop. Font
 
-;move.w   d0,d0                    ; Textlänge
+;move.w   d0,d0                    ; Textlaenge
  bsr      extent                   ; Pos. des Unterstrichs
  add.w    d5,d0
  subq.w   #1,d0
@@ -7692,7 +7694,7 @@ _obdrw_no_allu:
  move.w   d0,4(sp)                 ; x2
  bra.b    _obdrw_dl
 
-; für mono Font
+; fuer mono Font
 
 _odr_un_mono:
  mulu     big_wchar,d0
@@ -7712,7 +7714,7 @@ _obdrw_no_under:
 
 *
 * Jetzt nur noch das Statuswort auswerten
-* wir benötigen noch d4/d7/a5
+* wir benoetigen noch d4/d7/a5
 *
 
 _odr_endsw:
@@ -7746,7 +7748,7 @@ _odr_endsw:
  addq.l   #8,sp
 
 obdrw_l3:
- tst.w    d4                       ; state außer OUTLINED
+ tst.w    d4                       ; state ausser OUTLINED
  beq      _odr_ende                ; nix
  move.w   d7,d0
  ble.b    obdrw_l4
@@ -7814,10 +7816,10 @@ obdrw_l6:
  moveq    #TRANSPARENT,d0
  bsr      stwmod_tcolor
 
- moveq    #IBM,d0                  ; große Zeichen
+ moveq    #IBM,d0                  ; grosse Zeichen
  bsr      setfont
 
- move.w   #8,txvintin              ; Das Häkchen
+ move.w   #8,txvintin              ; Das Haekchen
  move.w   #1,vintin_len            ; 1 Zeichen
  st       vintin_dirty             ; Steuerzeichen!
  move.l   g_x(a5),vptsin
@@ -7952,7 +7954,7 @@ objcd_all:
 *                    a3 = void (*pgm(OBJECT *tree, int objnr, int x, int y)),
 *                    d2 = {int offsx, int offsy}, d5 = int maxdepth)
 *
-* Spezialfall von "walk_obj_tree", nur für das Zeichnen von Objekten
+* Spezialfall von "walk_obj_tree", nur fuer das Zeichnen von Objekten
 *
 
 draw_obj_tree:
@@ -7962,14 +7964,14 @@ draw_obj_tree:
  swap     d2
  move.w   d2,XTAB(a6)              ; offsx
 
- add.w    d5,d5                    ; maxdepth für int- Zugriff
- moveq    #2,d3                    ; Zähler auf 1 (für int- Zugriff)
+ add.w    d5,d5                    ; maxdepth fuer int- Zugriff
+ moveq    #2,d3                    ; Zaehler auf 1 (fuer int- Zugriff)
 * Durchlaufe Schleife, bis letztes Element erreicht
 walk_loop:
  cmp.w    d7,d6                    ; aktuelles == letztes Element ?
  beq      walk_end                 ; ja, Ende
 
- moveq    #0,d0                    ; Hiword löschen
+ moveq    #0,d0                    ; Hiword loeschen
  move.w   d6,d0
  lsl.l    #3,d0
  move.l   a5,a4
@@ -8008,7 +8010,7 @@ walk_loop_tiny:
 
 * Eine Ebene weiter gehen
 
- addq.w   #2,d3                    ; Zähler erhöhen (2 wegen int- Zugriff)
+ addq.w   #2,d3                    ; Zaehler erhoehen (2 wegen int- Zugriff)
  move.w   d1,d6                    ; erstes Kind betrachten
  bra      walk_loop                ; -> loop
 
@@ -8020,7 +8022,7 @@ walk_loop2:
  move.w   ob_next(a4),d6           ; d6 = ob_next
  cmp.w    d7,d6                    ; Endobjekt erreicht ?
  beq.b    walk_end                 ; ja, Ende
- moveq    #0,d0                    ; Hiword löschen
+ moveq    #0,d0                    ; Hiword loeschen
  move.w   d6,d0
  lsl.l    #3,d0
  move.l   a5,a4
@@ -8028,16 +8030,16 @@ walk_loop2:
  add.l    d0,a4
  add.l    d0,a4                    ; OBJECT aktualisieren
  cmp.w    ob_tail(a4),d1           ; akt. Objekt == ob_tail(ob_next) ?
- bne      walk_loop_tiny           ; nein, nächstes Objekt
+ bne      walk_loop_tiny           ; nein, naechstes Objekt
 
-* Ende der Ebene erreicht, eine Stufe zurückgehen
+* Ende der Ebene erreicht, eine Stufe zurueckgehen
 
- subq.w   #2,d3                    ; Zähler dekrementieren (wegen int)
- bgt.b    walk_loop2               ; Objekt überspringen (schon bearbeitet)
+ subq.w   #2,d3                    ; Zaehler dekrementieren (wegen int)
+ bgt.b    walk_loop2               ; Objekt ueberspringen (schon bearbeitet)
 walk_end:
  movem.l  (sp)+,d3/d5/d6/d7/a5/a4/a3/a2
  unlk     a6
- bra      mouse_on                 ; ändert nicht a2
+ bra      mouse_on                 ; aendert nicht a2
 
 
 **********************************************************************
@@ -8081,7 +8083,7 @@ obfn_l1:
 ;move.w   d0,d0
  move.l   a5,a0
  jsr      obj_to_g                 ; GRECT des parent
-                                   ; ändert nicht a2
+                                   ; aendert nicht a2
 
 * endif
 
@@ -8090,7 +8092,7 @@ obf_loop:
  move.w   d6,d0                    ; objnr
  move.l   a5,a0                    ; tree
  bsr      get_ob_xywh              ; relatives GRECT nach sp
-                                   ; ändert nicht a2
+                                   ; aendert nicht a2
  move.w   (a4),d0
  add.w    d0,(sp)                  ; x des parent addieren
  move.w   g_y(a4),d0
@@ -8103,12 +8105,12 @@ obf_loop:
  move.w   d4,d1
  move.w   d3,d0
  jsr      xy_in_grect              ; liegen wir drin ?
-                                   ; ändert nicht a2
+                                   ; aendert nicht a2
 
  beq.b    obfn_l2                  ; nein, isnich
  btst     #7,ob_flags+1(a1)        ; HIDETREE ?
  bne.b    obfn_l2                  ; ja,   isnich
-* (x,y) paßt
+* (x,y) passt
  move.w   d6,d7                    ; gefundene Objektnummer merken
  move.w   d6,d1
  muls     #24,d1
@@ -8121,24 +8123,24 @@ obf_loop:
 * von aktuellem OBJECT zum letzen Kind
  subq.w   #1,d0
  move.w   d0,d6                    ; letztes Kind suchen
- subq.w   #1,d5                    ; depth herunterzählen
+ subq.w   #1,d5                    ; depth herunterzaehlen
  move.l   (sp),(a4)                ; (x,y) des parent initialisieren
  bra.b    obf_loop                 ; weitersuchen
 
-* paßt nicht
+* passt nicht
 
 obfn_l2:
  move.w   d7,d0
  addq.w   #1,d0                    ; noch nichts gefunden
- beq.b    obf_ende                 ; ja, parent paßte auch schon nicht
+ beq.b    obf_ende                 ; ja, parent passte auch schon nicht
 
- move.w   d6,d1                    ; suche Vorgänger von d1 unter den Kindern
+ move.w   d6,d1                    ; suche Vorgaenger von d1 unter den Kindern
  move.w   d7,d0                    ;  von d7
  move.l   a5,a0                    ; tree
  bsr      pred_objc
 
- move.w   d0,d6                    ; d6 = Vorgänger
- addq.w   #1,d0                    ; ist ungültig ?
+ move.w   d0,d6                    ; d6 = Vorgaenger
+ addq.w   #1,d0                    ; ist ungueltig ?
  bne      obf_loop                 ; nein, weiter
 obf_ende:
  move.w   d7,d0
@@ -8213,7 +8215,7 @@ objc_delete:
  bne.b    obdl_l1                  ; nein
 * Wir sind erstes und letztes Kind
  moveq    #-1,d4                   ; ob_next ist NIL
- move.w   d4,(a4)                  ; ob_tail des Parent löschen
+ move.w   d4,(a4)                  ; ob_tail des Parent loeschen
 obdl_l1:
  move.w   d4,(a0)                  ; unser Nachfolger als ob_head
  bra.b    obdl_ret                 ; Ende
@@ -8221,12 +8223,12 @@ obdl_l1:
 * Wir sind nicht erstes Kind
 
 obdl_l2:
- move.w   d7,d1                    ; Vorgänger von objnr suchen
+ move.w   d7,d1                    ; Vorgaenger von objnr suchen
  move.w   d5,d0                    ; in der Kinderliste von d5
  move.l   a5,a0                    ; tree
  bsr      pred_objc
 
- move.w   d0,d1                    ; d1 ist der Vorgänger
+ move.w   d0,d1                    ; d1 ist der Vorgaenger
  muls     #24,d0
  move.w   d4,0(a5,d0.l)            ; unser Nachfolger als ob_next
  cmp.w    (a4),d7                  ; sind wir letztes Kind
@@ -8242,7 +8244,7 @@ obdl_ret:
 *
 * void objc_order(a0 = OBJECT *tree, d0 = int objnr, d1 = int pos)
 *
-* hängt das Objekt <objnr> in der Liste der Kinder seines parent,
+* haengt das Objekt <objnr> in der Liste der Kinder seines parent,
 * d.h. in der Liste seiner Geschwister an eine andere Position, z.B.:
 *  <pos> =  0: Wir werden erstes  Kind, d.h. unterstes!
 *  <pos> = -1: Wir werden letztes Kind, d.h. oberstes!
@@ -8343,7 +8345,7 @@ _objc_change:
  moveq    #20,d5                   ; Objekttyp wieder korrigieren
  add.w    d1,d5
  move.l   a1,a3                    ; ob_spec
- cmp.l    #-1,a3                   ; ob_spec ungültig ?
+ cmp.l    #-1,a3                   ; ob_spec ungueltig ?
  beq      obc_ende                 ; ja, nix tun
  move.l   ob_flags(a0),d0
 ;move.w   ob_state(a0),d0          ; alter Status
@@ -8365,7 +8367,7 @@ _objc_change:
  jsr      mouse_off                ; Maus abschalten
  tst.w    d7                       ; rahmen
  bge.b    obch_l1                  ; ist innen
- clr.w    d7                       ; äußeren löschen
+ clr.w    d7                       ; aeusseren loeschen
 obch_l1:
  cmpi.w   #G_USERDEF,d5
  bne.b    obch_l2
@@ -8386,10 +8388,10 @@ obch_l1:
 
 obch_l2:
  move.w   d3,d0                    ; currstate
- eor.w    d4,d0                    ; prevstate, Änderungen
+ eor.w    d4,d0                    ; prevstate, Aenderungen
  and.w    #1,d0                    ; bei SELECTED ?
  beq      obchg_draw               ; nein, ganz zeichnen
-* SELECTED hat sich geändert
+* SELECTED hat sich geaendert
  cmpi.w   #G_ICON,d5
  beq      obchg_draw
  cmpi.w   #G_CICON,d5
@@ -8483,7 +8485,7 @@ obc_ende:
 *
 * void obj_to_g(a0 = OBJECT *tree, d0 = int objnr, a1 = GRECT *g)
 *
-* ändert nicht a2
+* aendert nicht a2
 *
 
 obj_to_g:
@@ -8502,7 +8504,7 @@ obj_to_g:
 *
 * void get_ob_xywh(a0 = OBJECT *tree, d0 = int objnr, a1 = GRECT *g)
 *
-* ändert nicht a2
+* aendert nicht a2
 *
 
 get_ob_xywh:
@@ -8543,7 +8545,7 @@ objc_offset:
 *
 * d0/d1 = _objc_offset(a0 = OBJECT *tree, d0 = int objnr)
 *
-* ändert nur d0/d1/d2
+* aendert nur d0/d1/d2
 *
 
 _objc_offset:
@@ -8575,10 +8577,10 @@ offs_ende:
 *
 * pred_objc(a0 = OBJECT *tree, d0 = int parent, d1 = int objnr)
 *
-* Liefert den Vorgänger von Objekt <objnr> in der Kinderliste von
+* Liefert den Vorgaenger von Objekt <objnr> in der Kinderliste von
 * <parent>
 *
-* ändert nicht a2
+* aendert nicht a2
 *
 
 pred_objc:
@@ -8590,10 +8592,10 @@ pred_objc:
 prdo_loop:
  move.w   d0,d2
  muls     #24,d2
- move.w   ob_next(a0,d2.l),d2      ; d2 = nächstes Kind
+ move.w   ob_next(a0,d2.l),d2      ; d2 = naechstes Kind
  cmp.w    d1,d2                    ; Ende erreicht ?
- beq.b    prdo_ret                 ; ja, Vorgänger von <d1> zurückgeben
- move.w   d2,d0                    ; nächstes Kind
+ beq.b    prdo_ret                 ; ja, Vorgaenger von <d1> zurueckgeben
+ move.w   d2,d0                    ; naechstes Kind
  bra.b    prdo_loop
 prdo_ret_m1:
  moveq    #-1,d0

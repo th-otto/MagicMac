@@ -8,7 +8,7 @@
      XDEF lpt_dev_stat
      XDEF handle_busy
 
-	INCLUDE "d:\xkaos\docs3\mgx_xfs.inc"
+	INCLUDE "mgx_xfs.inc"
 
      TEXT
 

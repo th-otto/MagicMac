@@ -7,10 +7,10 @@
 **
 */
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "MGX_XFS.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "MACXKER.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "mgx_xfs.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "macxker.inc"
 
      XDEF mxfs_init
 
@@ -22,7 +22,7 @@
      XREF pe_slice
      XREF appl_begcritic,appl_endcritic ; ändert d2/a2
      XREF Mappl_IOcomplete              ; von AESEVT
-     XREF memcpy                        ; von STD
+     XREF vmemcpy                       ; von STD
 
 
 
@@ -222,7 +222,7 @@ mxfs_init:
  move.l   d0,a0                    ; dst
  lea      mxfs(pc),a1              ; src
  move.w   #mxfs_len-mxfs,d0
- jsr      memcpy
+ jsr      vmemcpy
 
 ; Kopie anmelden
 ;pea      mxfs(pc)                 ; Adresse der Kopie liegt schon auf Stack

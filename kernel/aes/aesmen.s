@@ -4,7 +4,9 @@
 * MENU MANAGER (+ Desktophintergrund)
 *
 
-     INCLUDE "AESINC.S"
+     INCLUDE "aesinc.s"
+     INCLUDE "basepage.inc"
+     
         TEXT
 
 XMENU     EQU  1
@@ -61,7 +63,7 @@ XMENU     EQU  1
 
 * von STD
 
-     XREF      malloc
+     XREF      mmalloc
      XREF      mfree
 
 * von MTSMN
@@ -97,9 +99,9 @@ objc2mgrect:
 *
 * statemask    = SELECTED oder CHECKED oder DISABLED
 * active       = TRUE:  state setzen
-*                FALSE: state löschen
+*                FALSE: state loeschen
 * not_disabled = TRUE: wenn Objekt DISABLED ist, return(0)
-* do_draw      = 1: malen, wenn es das aktive Menü ist
+* do_draw      = 1: malen, wenn es das aktive Menue ist
 *              = 2: immer malen
 *              = 0: nicht malen
 *
@@ -110,7 +112,7 @@ menu_modify:
  move.l   a0,-(sp)                 ; tree
  muls     #24,d0
  move.w   ob_state(a0,d0.l),d0     ; d0 = aktueller Status
- tst.b    7+10(sp)                 ; DISABLED prüfen ?
+ tst.b    7+10(sp)                 ; DISABLED pruefen ?
  beq.b    mmo_go                   ; nein
  btst     #3,d0                    ; DISABLED ?
  beq.b    mmo_go                   ; nein
@@ -123,18 +125,18 @@ mmo_go:
  bra.b    mmod_l2
 mmod_l1:
  not.w    d1
- and.w    d1,d0                    ; deaktivieren => statemask löschen
+ and.w    d1,d0                    ; deaktivieren => statemask loeschen
 mmod_l2:
  move.w   d0,6(sp)                 ; newstate eintragen
  move.w   4+10(sp),d0              ; do_redraw ?
  beq.b    mmo_nodraw
  subq.w   #2,d0
  beq.b    mmo_draw                 ; immer zeichnen
- cmpa.l   menutree,a0              ; Menü wird gerade angezeigt ?
+ cmpa.l   menutree,a0              ; Menue wird gerade angezeigt ?
  beq.b    mmo_draw                 ; ja, zeichnen
- tst.w    beg_mctrl_cnt            ; läuft ein BEG_MCTRL ?
+ tst.w    beg_mctrl_cnt            ; laeuft ein BEG_MCTRL ?
  beq.b    mmo_nodraw               ; nein, nicht zeichnen
- cmpa.l   mctrl_mnrett,a0          ; ist gefrorenes Menü ?
+ cmpa.l   mctrl_mnrett,a0          ; ist gefrorenes Menue ?
  bne.b    mmo_nodraw               ; nein
 mmo_draw:
  jsr      set_full_clip            ; Clipping ausschalten
@@ -165,7 +167,7 @@ sel_dsel_menu:
  cmp.w    d1,d0
  beq.b    sdsm_l1
  move.w   #1,-(sp)                 ; wenn DISABLED, nix tun
- move.w   #1,-(sp)                 ; neu zeichnen, wenn aktives Menü
+ move.w   #1,-(sp)                 ; neu zeichnen, wenn aktives Menue
 ;move.w   d2,d2                    ; active
  moveq    #1,d1                    ; SELECTED
 ;move.w   d0,d0                    ; objnr
@@ -184,7 +186,7 @@ sdsm_l1:
 *
 
 sav_rst_menu:
- subq.l   #8,sp                    ; Platz für ein GRECT
+ subq.l   #8,sp                    ; Platz fuer ein GRECT
  lea      (sp),a1
 ;move.w   d0,d0
 ;move.l   a0,a0
@@ -210,48 +212,48 @@ srmn_l2:
 *
 * int do_menu( void *retvals)
 *
-* Rückgabe 0, wenn Menü abgebrochen, d.h. nichts angewählt,
+* Rueckgabe 0, wenn Menue abgebrochen, d.h. nichts angewaehlt,
 * sonst != 0
 *
-* Rückgabewerte:
+* Rueckgabewerte:
 *    retvals        int       titel
-*    retvals+2      int       Menüeintrag
-*    retvals+4      OBJECT *  Objektbaum (ggf. Submenü)
-*    retvals+8      int       Parentobjekt des Menüs
+*    retvals+2      int       Menueeintrag
+*    retvals+4      OBJECT *  Objektbaum (ggf. Submenue)
+*    retvals+8      int       Parentobjekt des Menues
 *
-* Aufbau eines Menüs:
-*    Objekt 0       IBOX      umfaßt Bildschirm und Menüleiste
-*    Objekt 1       BOX       weiße Box, Menüleiste
-*    Objekt 2       IBOX      Parent für alle Menütitel
-*    Objekt 3...n   TITLE     Menütitel
-*    Objekt n+1     IBOX      Bildschirm ohne Menüleiste, Parent für Menüs
+* Aufbau eines Menues:
+*    Objekt 0       IBOX      umfasst Bildschirm und Menueleiste
+*    Objekt 1       BOX       weisse Box, Menueleiste
+*    Objekt 2       IBOX      Parent fuer alle Menuetitel
+*    Objekt 3...n   TITLE     Menuetitel
+*    Objekt n+1     IBOX      Bildschirm ohne Menueleiste, Parent fuer Menues
 *
 *
-* d3           : int pentry,  vorheriger Menüeintrag
-* d4           : int pmenu,   vorheriges Dropdownmenü
-* d5           : int entry,   Objektnummer des Menüeintrags
-* d6           : int menu,    Objektnummer des heruntergefallenen Menüs
+* d3           : int pentry,  vorheriger Menueeintrag
+* d4           : int pmenu,   vorheriges Dropdownmenue
+* d5           : int entry,   Objektnummer des Menueeintrags
+* d6           : int menu,    Objektnummer des heruntergefallenen Menues
 *
-* -$38(a6)     : int dsacc,   Ungültig gemachte ACC- Einträge
-* -$36(a6)     : int tstate,  ob_state des Menütitels
-* -$34(a6)     : int out[6],  Rückgabe von _evnt_multi
+* -$38(a6)     : int dsacc,   Ungueltig gemachte ACC- Eintraege
+* -$36(a6)     : int tstate,  ob_state des Menuetitels
+* -$34(a6)     : int out[6],  Rueckgabe von _evnt_multi
 *                -$34(a6)     x
 *                -$32(a6)     y
 *                -$30(a6)     bstate
 *                -$2e(a6)     kstate
 *                -$2c(a6)     key
 *                -$2a(a6)     nclicks
-* -$28(a6)     : int ob2,     Objektnummer für erstes Mausrechteck
+* -$28(a6)     : int ob2,     Objektnummer fuer erstes Mausrechteck
 * -$26(a6)     : int fn,      Funktionscode 1..4
 * -$24(a6)     : MGRECT mm2,  zweites Mausrechteck
 * -$1a(a6)     : MGRECT mm1,  erstes Mausrechteck
 * -$10(a6)     : int evts,    eingetroffene EVENTs
-*  -$e(ap)     : int ptit,    vorheriger Menütitel
-*  -$c(a6)     : int flag1,   mg_flag für mm1
-*  -$a(a6)     : int tit,     Menütitel
+*  -$e(ap)     : int ptit,    vorheriger Menuetitel
+*  -$c(a6)     : int flag1,   mg_flag fuer mm1
+*  -$a(a6)     : int tit,     Menuetitel
 *   -8(a6)     : int ende,    Schleifenkontrolle, Abbruch, wenn != 0
-*   -6(a6)     : int mtypes,  Eventtypen für _evnt_multi
-*   -4(a6)     : long but,    Buttonstatus für _evnt_multi
+*   -6(a6)     : int mtypes,  Eventtypen fuer _evnt_multi
+*   -4(a6)     : long but,    Buttonstatus fuer _evnt_multi
 *
 
 do_menu:
@@ -265,19 +267,19 @@ _dmn:
      ENDIF
  link     a6,#-$38
  movem.l  d3/d4/d5/d6/a5,-(sp)
- move.l   #$10101,-4(a6)           ; st=1(gedrückt),msk=1(linke),n=1
+ move.l   #$10101,-4(a6)           ; st=1(gedrueckt),msk=1(linke),n=1
  move.w   gr_mkmstate,d0
  andi.w   #1,d0
  eor.w    d0,-2(a6)
- move.l   menutree,a5              ; a5 ist das zu zeigende Menü
+ move.l   menutree,a5              ; a5 ist das zu zeigende Menue
  move.l   a5,a0
  bsr      modify_acc_menu
  move.w   d0,-$38(a6)
- clr.w    -$26(a6)                 ; zunächst Unterfunktion 0
+ clr.w    -$26(a6)                 ; zunaechst Unterfunktion 0
  clr.w    -8(a6)                   ; Schleife noch nicht beenden
- moveq    #-1,d5                   ; Eintrag ungültig
- moveq    #-1,d6                   ; Dropdown-Menü ungültig
- move.w   d6,-$a(a6)               ; Menütitel ungültig
+ moveq    #-1,d5                   ; Eintrag ungueltig
+ moveq    #-1,d6                   ; Dropdown-Menue ungueltig
+ move.w   d6,-$a(a6)               ; Menuetitel ungueltig
 /*
  jsr      save_mouse               ; Mausdaten retten
 */
@@ -298,19 +300,19 @@ domn_l1:
 
 
 * case 0:
-* Der Mauszeiger befindet sich innerhalb der Menüleiste.
-* Wir warten auf das Berühren eines Menütitels oder daß der
-* Menübalken verlassen wird.
+* Der Mauszeiger befindet sich innerhalb der Menueleiste.
+* Wir warten auf das Beruehren eines Menuetitels oder dass der
+* Menuebalken verlassen wird.
 
 
 dmn_case_0:
 * mm1 festlegen
- move.w   #2,-$28(a6)              ; Objekt 2, alle Menütitel
+ move.w   #2,-$28(a6)              ; Objekt 2, alle Menuetitel
  clr.w    -$c(a6)                  ; Bei mm1 warten auf Betreten
 * mm2 initialisieren
  ori.w    #8,-6(a6)                ; mtypes |= MU_M2
  moveq    #1,d1                    ; Warten auf Verlassen
- moveq    #1,d0                    ; Objektnummer 1 (Menübalken)
+ moveq    #1,d0                    ; Objektnummer 1 (Menuebalken)
  lea      -$24(a6),a1              ; MGRECT
  move.l   a5,a0                    ; Objektbaum
  bsr      objc2mgrect
@@ -319,29 +321,29 @@ dmn_case_0:
 
 
 * case 1:
-* Ein heruntergefallenes Menü ziert den Bildschirm, und der Mauszeiger
-* schwebt noch über dem Menütitel
-* wir warten darauf, daß der Menütitel verlassen wird
+* Ein heruntergefallenes Menue ziert den Bildschirm, und der Mauszeiger
+* schwebt noch ueber dem Menuetitel
+* wir warten darauf, dass der Menuetitel verlassen wird
 
 
 dmn_case_1:
- move.w   -$a(a6),-$28(a6)         ; Menütitel für mm1
+ move.w   -$a(a6),-$28(a6)         ; Menuetitel fuer mm1
  bra.b    dmn_endswitch
 
 * case 3:
-* Ein heruntergefallenes Menü ziert den Bildschirm, aber der Mauszeiger
-* befindet sich außerhalb dieses Menüs.
-* Wir warten darauf, daß das Menü betreten wird oder ein anderer Menütitel
-* berührt wird
+* Ein heruntergefallenes Menue ziert den Bildschirm, aber der Mauszeiger
+* befindet sich ausserhalb dieses Menues.
+* Wir warten darauf, dass das Menue betreten wird oder ein anderer Menuetitel
+* beruehrt wird
 
 dmn_case_3:
 * mm1 festlegen
- move.w   #2,-$28(a6)              ; Objekt 2, alle Menütitel
+ move.w   #2,-$28(a6)              ; Objekt 2, alle Menuetitel
  clr.w    -$c(a6)                  ; Bei mm1 warten auf Betreten
 * mm2 festlegen
  ori.w    #8,-6(a6)                ; mtypes |= MU_M2
  moveq    #0,d1                    ; warten auf Betreten
- move.w   d6,d0                    ; Objektnummer d6, Dropdown- Menü
+ move.w   d6,d0                    ; Objektnummer d6, Dropdown- Menue
  lea      -$24(a6),a1              ; MGRECT
  move.l   a5,a0
  bsr      objc2mgrect
@@ -350,21 +352,21 @@ dmn_case_3:
 
 
 * case 2:
-* Der Mauszeiger schwebt über einem Eintrag
-* wir warten darauf, daß der Menüeintrag verlassen wird oder daß die
-* linke Maustaste sich ändert
+* Der Mauszeiger schwebt ueber einem Eintrag
+* wir warten darauf, dass der Menueeintrag verlassen wird oder dass die
+* linke Maustaste sich aendert
 
 
 dmn_case_2:
 * mm1 festlegen
- move.w   d5,-$28(a6)              ; Objektnummer von mm1: entry (Menüeintrag)
+ move.w   d5,-$28(a6)              ; Objektnummer von mm1: entry (Menueeintrag)
  move.w   gr_mkmstate,d0           ; Maustastenstatus
- and.w    #1,d0                    ; linke Maustaste gedrückt ?
+ and.w    #1,d0                    ; linke Maustaste gedrueckt ?
  beq.b    domn_l2                  ; nein
  move.l   #$10100,d0               ; warten auf Loslassen
  bra.b    domn_l3
 domn_l2:
- move.l   #$10101,d0               ; warten auf Drücken
+ move.l   #$10101,d0               ; warten auf Druecken
 domn_l3:
  move.l   d0,-4(a6)
 
@@ -380,9 +382,9 @@ dmn_endswitch:
  bsr      objc2mgrect
 
  pea      -$34(a6)                 ; Ausgabearray
- clr.l    -(sp)                    ; mbuf (für mesag)
+ clr.l    -(sp)                    ; mbuf (fuer mesag)
  move.l   -4(a6),-(sp)             ; but
- clr.l    -(sp)                    ; ms (für timer)
+ clr.l    -(sp)                    ; ms (fuer timer)
  pea      -$24(a6)                 ; GRECT *mm2
  pea      -$1a(a6)                 ; GRECT *mm1
  move.w   -6(a6),-(sp)             ; mtypes
@@ -403,30 +405,30 @@ domn_l4:
 domn_l5:
  tst.w    -8(a6)                   ; Prozedur beenden ?
  bne      domn_l15                 ; ja
- move.w   -$a(a6),-$e(a6)          ; aktuellen Menütitel retten
- move.w   d5,d3                    ; Menüeintrag nach d3
+ move.w   -$a(a6),-$e(a6)          ; aktuellen Menuetitel retten
+ move.w   d5,d3                    ; Menueeintrag nach d3
  move.w   d6,d4
 
  move.l   -$34(a6),d2              ; x,y (Mausposition bei Event)
  moveq    #1,d1                    ; eine Ebene
- moveq    #2,d0                    ; ab Objekt 2 (alle Menütitel)
+ moveq    #2,d0                    ; ab Objekt 2 (alle Menuetitel)
  move.l   a5,a0
  jsr      _objc_find
 
- cmpi.w   #-1,d0                   ; gültig ?
+ cmpi.w   #-1,d0                   ; gueltig ?
  beq.b    domn_l6                  ; nein
- move.w   d0,-$a(a6)               ; gefundenen (?) Menütitel
+ move.w   d0,-$a(a6)               ; gefundenen (?) Menuetitel
  movea.l  a5,a0
  muls     #$18,d0
  move.w   ob_state(a0,d0.l),-$36(a6)    ; seinen ob_state merken
  cmpi.w   #8,-$36(a6)              ; DISABLED ?
- beq.b    domn_l6                  ; ja, ungültig
+ beq.b    domn_l6                  ; ja, ungueltig
  moveq    #-1,d5
  move.w   #1,-$26(a6)              ; Funktionscode 1
  bra.b    domn_l10
 domn_l6:
- move.w   -$e(a6),-$a(a6)          ; war ungültig, vorherigen wieder einsetzen
- cmp.w    #$ffff,d4                ; Menü heruntergefallen, Objnr gültig ?
+ move.w   -$e(a6),-$a(a6)          ; war ungueltig, vorherigen wieder einsetzen
+ cmp.w    #$ffff,d4                ; Menue heruntergefallen, Objnr gueltig ?
  beq.b    domn_l9                  ; nein
 
  move.l   -$34(a6),d2              ; x,y (Mausposition bei Event)
@@ -435,20 +437,20 @@ domn_l6:
  move.l   a5,a0
  jsr      _objc_find
 
- move.w   d0,d5                    ; d5 = Menüeintrag
- cmp.w    #$ffff,d5                ; gültig ?
+ move.w   d0,d5                    ; d5 = Menueeintrag
+ cmp.w    #$ffff,d5                ; gueltig ?
  beq.b    domn_l7                  ; nein
  moveq    #2,d0                    ; ja, Funktionscode 2
  bra.b    domn_l8
 domn_l7:
- moveq    #3,d0                    ; Menüeintrag ungültig, Funktionscode 3
+ moveq    #3,d0                    ; Menueeintrag ungueltig, Funktionscode 3
 domn_l8:
  move.w   d0,-$26(a6)              ; neuen Funktionscode merken
  bra.b    domn_l10
-* Es ist kein heruntergefallenes Menü aktiv
+* Es ist kein heruntergefallenes Menue aktiv
 domn_l9:
  clr.w    -$26(a6)                 ; Funktionscode 0
- cmpi.w   #8,-$36(a6)              ; Menütitel DISABLED ?
+ cmpi.w   #8,-$36(a6)              ; Menuetitel DISABLED ?
  beq.b    domn_l10                 ; ja
  move.w   #1,-8(a6)                ; nein, Prozedur beenden
 domn_l10:
@@ -472,18 +474,18 @@ domn_l10:
 
 domn_l11:
  moveq    #1,d2                    ; selektieren
- move.w   -$e(a6),d1               ; vorheriger Menütitel
- move.w   -$a(a6),d0               ; aktueller Menütitel
+ move.w   -$e(a6),d1               ; vorheriger Menuetitel
+ move.w   -$a(a6),d0               ; aktueller Menuetitel
  move.l   a5,a0
  bsr      sel_dsel_menu
  tst.w    d0                       ; wurde aktiviert ?
  beq.b    domn_l14                 ; nein, weiter
 
- move.w   ob_tail(a5),d0           ; enthält Boxen für die Menüs
+ move.w   ob_tail(a5),d0           ; enthaelt Boxen fuer die Menues
  muls     #$18,d0
- move.w   ob_head(a5,d0.l),d6      ; d6 = erstes Menü
+ move.w   ob_head(a5,d0.l),d6      ; d6 = erstes Menue
  move.w   -$a(a6),d1
- subq.w   #3,d1                    ; d1 = 0(linkes Menü),1(nächstes) usw.
+ subq.w   #3,d1                    ; d1 = 0(linkes Menue),1(naechstes) usw.
  bra.b    domn_l13
 domn_l12:
  muls     #$18,d6
@@ -533,18 +535,18 @@ domn_l15:
  addq.w   #4,sp
  tst.w    d0
  beq.b    domn_l16
- movea.l  8(a6),a0                 ; Rückgabewerte
+ movea.l  8(a6),a0                 ; Rueckgabewerte
  move.w   -$a(a6),(a0)+            ; int      Titel-Objekt
- move.w   d5,(a0)+                 ; int      Menü-Eintrag
+ move.w   d5,(a0)+                 ; int      Menue-Eintrag
 * erweiterte Werte laut AES 3.3
- move.l   a5,(a0)+                 ; OBJECT * Menübaum
+ move.l   a5,(a0)+                 ; OBJECT * Menuebaum
  move.w   d6,(a0)                  ; int      menu_parent
 
  move.w   #1,-$c(a6)
  bra.b    domn_l17
 domn_l16:
  move.w   #1,-(sp)                 ; wenn DISABLED, nix tun
- move.w   #1,-(sp)                 ; neu zeichnen, wenn aktives Menü
+ move.w   #1,-(sp)                 ; neu zeichnen, wenn aktives Menue
  moveq    #0,d2                    ; deaktivieren
  moveq    #1,d1                    ; SELECTED
  move.w   -$a(a6),d0               ; objnr
@@ -577,7 +579,7 @@ menu_draw:
  moveq    #8,d1
  moveq    #1,d0
  move.l   (sp),a0
- jsr      _objc_draw               ; Menü ausgeben, ab Objekt 1
+ jsr      _objc_draw               ; Menue ausgeben, ab Objekt 1
 
  moveq    #1,d1                    ; BLACK
  jsr      strplc_pcolor            ; Linienfarbe setzen
@@ -589,13 +591,13 @@ menu_draw:
  move.w   menubar_grect+g_h,-(sp)  ; war gr_hhbox
  subq.w   #1,(sp)
  clr.w    -(sp)
- jsr      draw_line                ; Linie unter die Menüleiste setzen
+ jsr      draw_line                ; Linie unter die Menueleiste setzen
  addq.l   #8,sp
 
- move.l   (sp)+,a0                 ; Menübaum
+ move.l   (sp)+,a0                 ; Menuebaum
      IF   MACOS_SUPPORT
  cmpi.w   #G_IBOX,24+ob_type(a0)
- beq.b    mdr_ende                 ; kein MagiC-Logo ins Mac-Menü
+ beq.b    mdr_ende                 ; kein MagiC-Logo ins Mac-Menue
      ENDIF
  cmpi.w   #16,menubar_grect+g_h    ; war gr_hhbox
  bcs.b    mdr_ende                 ; Zeichensatz zu klein
@@ -603,14 +605,14 @@ menu_draw:
  clr.w    -(sp)
  move.w   #BLACK,-(sp)             ; Farbe
  move.w   #TRANSPARENT,-(sp)
- move.w   (a1)+,-(sp)              ; Höhe in Pixelzeilen
+ move.w   (a1)+,-(sp)              ; Hoehe in Pixelzeilen
  move.w   (a1)+,-(sp)              ; Breite in Pixeln
- subq.l   #2,sp                    ; Dummy für Zielbreite (autom. Bildsch.)
+ subq.l   #2,sp                    ; Dummy fuer Zielbreite (autom. Bildsch.)
  move.w   ob_y(a0),-(sp)           ; y - Position ganz oben
  move.w   ob_x(a0),d0
  btst     #0,look_flags+1
- bne.b    mdr_leftjust             ; Icon auf Wunsch linksbündig
- add.w    scr_w,d0                 ; Breite des Menüs ( statt ob_width(a0) )
+ bne.b    mdr_leftjust             ; Icon auf Wunsch linksbuendig
+ add.w    scr_w,d0                 ; Breite des Menues ( statt ob_width(a0) )
  sub.w    4(sp),d0                 ; Breite des Icons abziehen
 mdr_leftjust:
  move.w   d0,-(sp)                 ; Zielposition: rechter Rand
@@ -625,7 +627,7 @@ mdr_ende:
 
 
 magxlogo_s:
- DC.W     16                       ; Höhe 14 Pixel
+ DC.W     16                       ; Hoehe 14 Pixel
  DC.W     16                       ; Breite 16 Pixel
  DC.W     %0000000000000000
  DC.W     %0000001111100000
@@ -649,67 +651,67 @@ magxlogo_s:
 *
 * void menu_on(a0 = APPL *ap, a1 = OBJECT *tree)
 *
-* Aufbau eines Menüs:
-*    Objekt 0       IBOX      umfaßt Bildschirm und Menüleiste
-*     Objekt 1      BOX       weiße Box, Menüleiste
-*     Objekt 2      IBOX      Parent für alle Menütitel
-*      Objekt 3...n TITLE     Menütitel
-*     Objekt n+1    IBOX      Bildschirm ohne Menüleiste, Parent für Menüs
+* Aufbau eines Menues:
+*    Objekt 0       IBOX      umfasst Bildschirm und Menueleiste
+*     Objekt 1      BOX       weisse Box, Menueleiste
+*     Objekt 2      IBOX      Parent fuer alle Menuetitel
+*      Objekt 3...n TITLE     Menuetitel
+*     Objekt n+1    IBOX      Bildschirm ohne Menueleiste, Parent fuer Menues
 *
 
 _add:
- addq.w   #1,d5                    ; nächstes Objekt
+ addq.w   #1,d5                    ; naechstes Objekt
 _add2:
  move.w   d5,d1
- move.w   d7,d0                    ; wird Kind des ersten Menüs
+ move.w   d7,d0                    ; wird Kind des ersten Menues
  move.l   a5,a0                    ; Baumadresse
  bra      objc_add
 
 menu_on:
  move.l   a1,d0
- beq      menu_new                 ; Menü aus, ggf. neues suchen
+ beq      menu_new                 ; Menue aus, ggf. neues suchen
  movem.l  d4/d5/d6/d7/a4/a5/a6,-(sp)
  move.l   a1,a5                    ; a5 = tree
  move.l   a0,a4                    ; a4 = app
 
  jsr      update_1
 
-* Menü einschalten
+* Menue einschalten
 
  move.l   a5,ap_menutree(a4)       ; in APPL eintragen
- cmpa.l   menu_app,a4              ; ist es schon das aktuelle Menü ?
+ cmpa.l   menu_app,a4              ; ist es schon das aktuelle Menue ?
  beq.b    mon__ismine              ; ja, bin schon aktiv
 
-* Menü neu eingeschaltet. Auf mich umschalten
+* Menue neu eingeschaltet. Auf mich umschalten
 
- move.l   a4,menu_app              ; Eigner des Menüs umsetzen
+ move.l   a4,menu_app              ; Eigner des Menues umsetzen
  move.l   a4,a0
  jsr      set_desktop              ; und Hintergrund mit umschalten
 mon__ismine:
- move.l   a5,menutree              ; Menübaum merken
+ move.l   a5,menutree              ; Menuebaum merken
 
-* Proportional-Systemfont: Menütitel neu ausrichten
+* Proportional-Systemfont: Menuetitel neu ausrichten
 
  tst.w    finfo_big+fontmono
  bne      mon_fontmono
  btst     #7,look_flags+1
  beq.b    mon_2d1
- ori.w    #FL3DBAK,24+ob_flags(a5) ; Objekt 1: Menüleiste
+ ori.w    #FL3DBAK,24+ob_flags(a5) ; Objekt 1: Menueleiste
 mon_2d1:
- move.w   2*24+ob_head(a5),d0      ; erster Menütitel
+ move.w   2*24+ob_head(a5),d0      ; erster Menuetitel
  move.w   2*24+ob_x(a5),d7         ; abs. Pos. des ersten Titels
- bmi      mon_fontmono             ; keine Menütitel
- move.w   ob_tail(a5),d1           ; rechter Teil (Menüs)
+ bmi      mon_fontmono             ; keine Menuetitel
+ move.w   ob_tail(a5),d1           ; rechter Teil (Menues)
  mulu     #24,d1
- move.w   ob_head(a5,d1.l),d1      ; erstes Menü
+ move.w   ob_head(a5,d1.l),d1      ; erstes Menue
  moveq    #0,d5                    ; Pos. des ersten Titels
 mon_title_loop:
  mulu     #24,d0
  lea      0(a5,d0.l),a4            ; a4 = OBJECT *
- move.w   d5,ob_x(a4)              ; x-Pos für Menütitel
+ move.w   d5,ob_x(a4)              ; x-Pos fuer Menuetitel
  mulu     #24,d1
  lea      0(a5,d1.l),a6
- move.w   d5,ob_x(a6)              ; Position auch für Menü
+ move.w   d5,ob_x(a6)              ; Position auch fuer Menue
  add.w    d7,ob_x(a6)
  btst     #7,look_flags+1
  beq.b    mon_2d
@@ -718,53 +720,53 @@ mon_2d:
  move.l   a4,a0                    ; OBJECT *
  jsr      stw_title                ; Breite setzen
  add.w    ob_width(a4),d5          ; Breite addieren
- move.w   ob_next(a6),d1           ; nächtes Menü
- move.w   ob_next(a4),d0           ; nächter Titel
+ move.w   ob_next(a6),d1           ; naechtes Menue
+ move.w   ob_next(a4),d0           ; naechter Titel
  cmpi.w   #2,d0                    ; ist der Parent ?
  bne.b    mon_title_loop           ; nein
  move.w   d5,2*24+ob_width(a5)     ; Breite des Parent setzen
 
-* erstes Menü modifizieren: Accessories eintragen
+* erstes Menue modifizieren: Accessories eintragen
 
 mon_fontmono:
  lea      menu_grect,a1
  moveq    #2,d0
  move.l   a5,a0
- jsr      obj_to_g                 ; Objekt 2 ist Menüzeile
+ jsr      obj_to_g                 ; Objekt 2 ist Menuezeile
 
- move.w   ob_tail(a5),d1           ; rechter Teil (Menüs)
+ move.w   ob_tail(a5),d1           ; rechter Teil (Menues)
  muls     #24,d1
- move.w   ob_head(a5,d1.l),d7      ; erstes Menü
+ move.w   ob_head(a5,d1.l),d7      ; erstes Menue
 
  move.w   d7,d1
  muls     #24,d1
- move.l   #-1,ob_head(a5,d1.l)     ; ob_head und ob_tail des ersten Menüs
+ move.l   #-1,ob_head(a5,d1.l)     ; ob_head und ob_tail des ersten Menues
 
  move.w   d7,d5
- bsr      _add                     ; "über ..."
+ bsr      _add                     ; "ueber ..."
 
  move.w   d7,d1
  muls     #24,d1
- lea      ob_height(a5,d1.l),a0    ; Höhe des ACC- Menüs
+ lea      ob_height(a5,d1.l),a0    ; Hoehe des ACC- Menues
 
  move.w   big_hchar,d4
- move.w   d4,(a0)                  ; Gesamthöhe
+ move.w   d4,(a0)                  ; Gesamthoehe
  move.w   no_of_menuregs,d0        ; Eingetragene ACCs ?
  beq.b    mon_endloop              ; nein, nur diese eine Zeile
 
- addq.w   #2,d0                    ; 2 Zeilen über den ACCs
- mulu     (a0),d0                  ; Höhe = big_hchar * (2+no_of_menuregs)
+ addq.w   #2,d0                    ; 2 Zeilen ueber den ACCs
+ mulu     (a0),d0                  ; Hoehe = big_hchar * (2+no_of_menuregs)
  move.w   d0,(a0)
 
  bsr      _add                     ; "-------"
 
  add.w    d4,d4                    ; y-Position aufrechnen, beginnend bei 2
- lea      reg_entries,a4           ; Strings für die ACCs
+ lea      reg_entries,a4           ; Strings fuer die ACCs
  moveq    #NACCS-1,d6
 mon_loop:
- addq.w   #1,d5                    ; nächstes Objekt
+ addq.w   #1,d5                    ; naechstes Objekt
  tst.l    (a4)                     ; freier Eintrag ?
- beq.b    mon_noset                ; ja, überspringen
+ beq.b    mon_noset                ; ja, ueberspringen
 
  bsr      _add2
 
@@ -772,8 +774,8 @@ mon_loop:
  muls     #24,d1
  move.w   d4,ob_y(a5,d1.l)
  add.w    big_hchar,d4
- move.w   ob_type(a5,d1.l),d0      ; Objekttyp des Menüeintrags
- cmpi.b   #G_STRING,d0             ; Nur solche ändern, die Strings sind!
+ move.w   ob_type(a5,d1.l),d0      ; Objekttyp des Menueeintrags
+ cmpi.b   #G_STRING,d0             ; Nur solche aendern, die Strings sind!
  beq.b    mon_setacc
  cmpi.b   #G_BUTTON,d0
  beq.b    mon_setacc
@@ -782,13 +784,13 @@ mon_loop:
 mon_setacc:
  move.l   (a4),ob_spec(a5,d1.l)    ; String eintragen
 mon_noset:
- addq.l   #4,a4                    ; nächstes ACC
+ addq.l   #4,a4                    ; naechstes ACC
 mon_nxtob:
  dbra     d6,mon_loop
 
 mon_endloop:
  move.l   a5,a0
- bsr      menu_draw                ; Menü zeichnen
+ bsr      menu_draw                ; Menue zeichnen
  lea      menu_grect,a0
  bsr      scmgr_reinit
 
@@ -807,9 +809,9 @@ mon__ende:
 menu_new:
  moveq    #1,d0                    ; neues suchen
 menu_off:
- clr.l    ap_menutree(a0)          ; Menü "aus"tragen
+ clr.l    ap_menutree(a0)          ; Menue "aus"tragen
  tst.l    menutree
- beq.b    moff_ende                ; war sowieso kein Menü aktiv
+ beq.b    moff_ende                ; war sowieso kein Menue aktiv
 _menu_off:
  cmp.l    menu_app,a0              ; ist meines gerade aktiv ?
  bne.b    moff_ende                ; nein
@@ -818,7 +820,7 @@ _menu_off:
  jsr      update_1                 ; jetzt wird es kritisch...
  movem.l  (sp)+,a0/d0
 
-* Aktives Menü wurde abgeschaltet. Hat die Applikation einen Desktop ?
+* Aktives Menue wurde abgeschaltet. Hat die Applikation einen Desktop ?
  move.l   ap_desktree(a0),d1
  bgt.b    mo_off                   ; ja, keine Umschaltung
  tst.w    d0                       ; andere APP suchen ?
@@ -840,8 +842,8 @@ moff_ende:
 *
 * void scmgr_reinit( a0 = GRECT *scmgr_grect )
 *
-* Gewährt dem screnmgr einen dummy- Durchlauf, um sich mit neuen
-* Daten in den _evnt_multi zu hängen.
+* Gewaehrt dem screnmgr einen dummy- Durchlauf, um sich mit neuen
+* Daten in den _evnt_multi zu haengen.
 *
 
 scmgr_reinit:
@@ -854,7 +856,7 @@ _scmgr_reinit:
  move.l   applx+4,a0               ; SCRENMGR
  tst.b    ap_status(a0)            ; schon "ready"
  beq.b    sci_apy                  ; ja
- addq.w   #1,scmgr_wakeup          ; Klick nicht berücksichtigen
+ addq.w   #1,scmgr_wakeup          ; Klick nicht beruecksichtigen
 
  moveq    #1,d1                    ; ein Klick
  moveq    #1,d0                    ; linke Maustaste
@@ -868,34 +870,34 @@ sci_apy:
 *
 * d0 = long modify_acc_menu( a0 = OBJECT *menu )
 *
-* DISABLE-d Menüeinträge eingefrorener ACCs
-* gibt Bitmuster geänderter Menüeinträge zurück
+* DISABLE-d Menueeintraege eingefrorener ACCs
+* gibt Bitmuster geaenderter Menueeintraege zurueck
 *
 
 modify_acc_menu:
  move.l   a6,-(sp)
- move.w   ob_tail(a0),d0           ; rechter Teil (Menüs)
+ move.w   ob_tail(a0),d0           ; rechter Teil (Menues)
  muls     #24,d0
- move.w   ob_head(a0,d0.l),d0      ; erstes Menü
- addq.w   #2,d0                    ; G_BOX,"über ..." und "------"
+ move.w   ob_head(a0,d0.l),d0      ; erstes Menue
+ addq.w   #2,d0                    ; G_BOX,"ueber ..." und "------"
  muls     #24,d0
  add.l    d0,a0
- moveq    #NACCS,d1                ; Tabellenlänge
+ moveq    #NACCS,d1                ; Tabellenlaenge
  lea      reg_apidx,a1
  lea      reg_entries,a6
  moveq    #0,d0
  bra.b    mom_nxtob
 mom_loop:
  move.w   (a1)+,a2                      ; reg_apidx[i]
- tst.l    (a6)+                         ; Eintrag gültig ?
+ tst.l    (a6)+                         ; Eintrag gueltig ?
  beq.b    mom_nxtob                     ; nein, Nullzeiger
  add.w    a2,a2
  add.w    a2,a2
- btst     #DISABLED_B,ob_state+1(a0)    ; schon ungültig ?
+ btst     #DISABLED_B,ob_state+1(a0)    ; schon ungueltig ?
  bne.b    mom_nxtob                     ; ja
- tst.l    applx(a2)                     ; zugehörige APPL
- bgt.b    mom_nxtob                     ; ist gültig
- bset     #DISABLED_B,ob_state+1(a0)    ; ungültig machen
+ tst.l    applx(a2)                     ; zugehoerige APPL
+ bgt.b    mom_nxtob                     ; ist gueltig
+ bset     #DISABLED_B,ob_state+1(a0)    ; ungueltig machen
  bset     d1,d0                         ; und vermerken
 mom_nxtob:
  lea      24(a0),a0
@@ -908,7 +910,7 @@ mom_nxtob:
 *
 * void restore_acc_menu( a0 = OBJECT *menu, d0 = int bitvec )
 *
-* Un- DISABLE-d Menüeinträge eingefrorener ACCs
+* Un- DISABLE-d Menueeintraege eingefrorener ACCs
 *
 * d0: Bit 0:   ACC #5 disabled
 *         1:   ACC #4 disabled
@@ -917,18 +919,18 @@ mom_nxtob:
 *
 
 restore_acc_menu:
- move.w   ob_tail(a0),d1           ; rechter Teil (Menüs)
+ move.w   ob_tail(a0),d1           ; rechter Teil (Menues)
  muls     #24,d1
- move.w   ob_head(a0,d1.l),d1      ; erstes Menü
- addq.w   #2,d1                    ; G_BOX,"über ..." und "------"
+ move.w   ob_head(a0,d1.l),d1      ; erstes Menue
+ addq.w   #2,d1                    ; G_BOX,"ueber ..." und "------"
  muls     #24,d1
  add.l    d1,a0
- moveq    #NACCS,d1                ; Tabellenlänge
+ moveq    #NACCS,d1                ; Tabellenlaenge
  bra.b    ram_nxtob
 ram_loop:
  btst     d1,d0                    ; wieder enablen ?
  beq.b    ram_nxtob                ; nein
- bclr     #DISABLED_B,ob_state+1(a0)    ; gültig machen
+ bclr     #DISABLED_B,ob_state+1(a0)    ; gueltig machen
 ram_nxtob:
  lea      24(a0),a0
  dbra     d1,ram_loop
@@ -1005,7 +1007,7 @@ desk_off:
  bne.b    ndoff_ende               ; nein, Ende
  bra.b    ndoff_off                ; ja, Hintergrund abmelden
 ndoff_is_main:
- tst.l    ap_menutree(a0)          ; hat Menü
+ tst.l    ap_menutree(a0)          ; hat Menue
  bgt.b    ndoff_off                ; ja
  jsr      any_app                  ; nein, suche irgendeine APP
  beq.b    ndoff_ende               ; ja, gefunden
@@ -1074,7 +1076,7 @@ menu_register:
  move.w   d0,d1                    ; d1 = ap_id
  bmi.b    mnrg_setname
 
-* Nur ACCs dürfen menu_register machen
+* Nur ACCs duerfen menu_register machen
 
  move.w   d0,a1
  add.w    a1,a1
@@ -1083,10 +1085,10 @@ menu_register:
  ble.b    mnrg_weiteracc           ; ???
  move.l   d2,a2
  move.l   ap_pd(a2),d2             ; PD
- ble.b    mnrg_weiteracc           ; PD ungültig (SCRENMGR)
+ ble.b    mnrg_weiteracc           ; PD ungueltig (SCRENMGR)
  move.l   d2,a1
  tst.l    p_parent(a1)
- bne.b    mnrg_err                 ; Parent gültig (kein ACC)
+ bne.b    mnrg_err                 ; Parent gueltig (kein ACC)
 
 * freien Slot suchen
 
@@ -1098,7 +1100,7 @@ mnrg_weiteracc:
 mnrg_srchnxt:
  tst.l    (a2)                     ; freier Slot ?
  beq.b    mnrg_set                 ; ja, sofort besetzen
- addq.l   #2,a1                    ; nächsten...
+ addq.l   #2,a1                    ; naechsten...
  addq.l   #4,a2                    ; ...Slot
  addq.w   #1,d0                    ; ...betrachten
 mnrg_srch:
@@ -1111,7 +1113,7 @@ mnrg_err:
 mnrg_set:
  addq.w   #1,no_of_menuregs
  move.w   d1,(a1)                  ; ap_id merken
- move.l   a0,(a2)                  ; Menüeintrag merken
+ move.l   a0,(a2)                  ; Menueeintrag merken
  move.w   d0,-(sp)
  bsr      reg_unreg_modify
  move.w   (sp)+,d0
@@ -1120,7 +1122,7 @@ mnrg_set:
 
 **********************************************************************
 *
-* Die Applikation ändert ihren eigenen Namen
+* Die Applikation aendert ihren eigenen Namen
 *
 
 mnrg_setname:
@@ -1142,7 +1144,7 @@ strloop6:
 *
 * int menu_unregister(d0 = int menu_id)
 *
-* menu_id == -1: alle menu_id's der act_appl löschen
+* menu_id == -1: alle menu_ids der act_appl loeschen
 *
 
 menu_unregister:
@@ -1161,11 +1163,11 @@ menu_unregister:
  bra.b    munrg_srch
 munrg_srchnxt:
  tst.l    (a0)
- beq.b    munrg_weiter             ; ungültig
+ beq.b    munrg_weiter             ; ungueltig
  cmp.w    (a1),d1
  bne.b    munrg_weiter             ; nicht meine
- move.w   #-1,(a1)                 ; ungültig machen
- clr.l    (a0)                     ; auch ungültig machen
+ move.w   #-1,(a1)                 ; ungueltig machen
+ clr.l    (a0)                     ; auch ungueltig machen
  subq.w   #1,no_of_menuregs
  st       d2
 munrg_weiter:
@@ -1183,15 +1185,15 @@ munrg_err:
 * 2. Fall: menu_id ist angegeben
 munrg_mid:
  cmpi.w   #NACCS,d1
- bcc.b    munrg_err                ; ungültig, nicht 0..5
+ bcc.b    munrg_err                ; ungueltig, nicht 0..5
  move.w   d1,a0
- add.w    a0,a0                    ; für Wortzugriff
+ add.w    a0,a0                    ; fuer Wortzugriff
  lea      reg_apidx,a1
  move.w   #-1,0(a1,a0.w)
- add.w    a0,a0                    ; für Langwortzugriff
+ add.w    a0,a0                    ; fuer Langwortzugriff
  add.l    #reg_entries,a0
  tst.l    (a0)
- beq.b    munrg_err                ; ist schon ungültig
+ beq.b    munrg_err                ; ist schon ungueltig
  clr.l    (a0)
  subq.w   #1,no_of_menuregs
 munrg_modify:
@@ -1369,11 +1371,11 @@ xmenu_export:
 *      the starting menu item and the scroll field status. Attaching
 *      a NULLPTR structure will remove the submenu associated with
 *      the menu item. There can be a maximum of 64 associations per
-*      process.  Bit 11 of the object's ObFlag will be set if a
+*      process.  Bit 11 of the objects ObFlag will be set if a
 *      submenu is actually attached.
 *
 *   2  Remove a submenu associated with a menu item.  me_mdata should
-*      be set to NULLPTR. Bit 11 of the object's ObFlag will be
+*      be set to NULLPTR. Bit 11 of the objects ObFlag will be
 *      cleared.
 *
 
@@ -1409,7 +1411,7 @@ menat_no0:
  subq.w   #1,d0
  bne      menat_no1
 menat1:
-; erstmal das Submenü ermitteln
+; erstmal das Submenue ermitteln
  move.l   act_appl,a1
  move.l   a6,a0
  bsr      mn_at_get
@@ -1417,21 +1419,21 @@ menat1:
 ; Es ist eins da. Entfernen.
  bclr     #3,ob_flags(a6)          ; SUBMENU_B
  clr.b    ob_type(a6)
- subq.w   #1,atpop_refcnt(a0)      ; Referenzzähler dekrementieren
+ subq.w   #1,atpop_refcnt(a0)      ; Referenzzaehler dekrementieren
  move.l   ob_spec(a6),a0           ; char *
 menat1_loop1:
  move.b   (a0)+,d0
  beq.b    menat1_set               ; EOS
  cmpi.b   #3,d0                    ; Pfeil nach rechts
  bne.b    menat1_loop1
- cmpi.b   #' ',(a0)                ; nächstes Zeichen Leerstelle?
+ cmpi.b   #' ',(a0)                ; naechstes Zeichen Leerstelle?
  bne.b    menat1_loop1
- tst.b    1(a1)                    ; übernächstes Zeichen EOS ?
+ tst.b    1(a1)                    ; uebernaechstes Zeichen EOS ?
  bne.b    menat1_loop1
  move.b   #' ',-1(a0)              ; Pfeil entfernen
-; neues Menü setzen
+; neues Menue setzen
 menat1_set:
- move.l   a5,d0                    ; neues Menü ?
+ move.l   a5,d0                    ; neues Menue ?
  beq      menat_ok                 ; nein, Ende, OK
  cmpi.b   #G_STRING,ob_type+1(a6)
  bne      menat_err
@@ -1439,7 +1441,7 @@ menat1_set:
  move.l   ap_attached(a0),d0
  bne.b    menat1_weiter
  move.l   #64*atpop_sizeof,d0
- jsr      malloc                   ; Speicher allozieren
+ jsr      mmalloc                   ; Speicher allozieren
  beq      menat_err                ; zuwenig Speicher
  move.l   act_appl,a0
  move.l   d0,ap_attached(a0)
@@ -1478,22 +1480,22 @@ menat1_next:
  move.l   (a5)+,(a1)+              ; mn_menu -> atpop_menu
                                    ; mn_item -> atpop_item
  move.w   (a5),(a1)                ; mn_scroll -> atpop_scroll
-; Submenü ggf. grau machen
+; Submenue ggf. grau machen
  btst     #7,look_flags+1
  beq.b    menat_2d
- move.w   4(a0),d0                 ; mn_menu (parent für Submenü)
+ move.w   4(a0),d0                 ; mn_menu (parent fuer Submenue)
  mulu     #24,d0
  add.l    (a0),d0                  ; mn_tree
  move.l   d0,a1
  ori.w    #FL3DBAK,ob_flags(a1)
 menat_2d:
-; Referenzzähler erhöhen
+; Referenzzaehler erhoehen
 menat1_found:
  addq.w   #1,atpop_refcnt(a0)
 ; Code ermitteln: d0
  sub.l    d2,a0                    ; Tabellenanfang abziehen
  move.l   a0,d0
- divu     #atpop_sizeof,d0         ; durch Elementlänge teilen
+ divu     #atpop_sizeof,d0         ; durch Elementlaenge teilen
 ; Objekt modifizieren
  bset     #3,ob_flags(a6)          ; SUBMENU_B
  add.b    #128,d0
@@ -1516,7 +1518,7 @@ menat1_loop4:
 menat_no1:
  subq.w   #1,d0
  bne.b    menat_err
- suba.l   a5,a5                    ; kein neues Menü
+ suba.l   a5,a5                    ; kein neues Menue
  bra      menat1                   ; sonst wie Modus 1
 
 menat_ok:
@@ -1535,8 +1537,8 @@ menat_ende:
 *
 * EQ/NE d0/a0 ATPOP *mn_at_get( a0 = OBJECT *ob, a1 = APPL *ap )
 *
-* Gibt einen Zeiger auf die Submenu-Informationen zum Menüeintrag
-* (tree, object) zurück.
+* Gibt einen Zeiger auf die Submenu-Informationen zum Menueeintrag
+* (tree, object) zurueck.
 *
 
 mn_at_get:
@@ -1544,22 +1546,22 @@ mn_at_get:
  bne.b    menatg_err
  btst     #3,ob_flags(a0)          ; SUBMENU_B
  beq.b    menatg_err
-; MultiTOS prüft hier noch, ob der Pfeil im String eingetragen ist.
+; MultiTOS prueft hier noch, ob der Pfeil im String eingetragen ist.
 ; Das schenken wir uns aber hier...
  moveq    #0,d0
  move.b   ob_type(a0),d0           ; Hibyte von ob_type
  subi.b   #128,d0
  bcs.b    menatg_err
  cmpi.b   #64,d0
- bcc.b    menatg_err               ; ... muß zwischen 128 und 192 liegen
-; d0 enthält jetzt die Attached-Menu-ID zwischen 0 und 63
+ bcc.b    menatg_err               ; ... muss zwischen 128 und 192 liegen
+; d0 enthaelt jetzt die Attached-Menu-ID zwischen 0 und 63
  move.l   ap_attached(a1),d1
  beq.b    menatg_err               ; keine Attached-Popup-Liste vorhanden
  mulu     #atpop_sizeof,d0
  add.l    d0,d1
  move.l   d1,a0
- tst.w    atpop_refcnt(a0)         ; Eintrag überhaupt belegt?
- bne.b    menatg_ende              ; ja, Zeiger auf Tabelleneintrag zurück
+ tst.w    atpop_refcnt(a0)         ; Eintrag ueberhaupt belegt?
+ bne.b    menatg_ende              ; ja, Zeiger auf Tabelleneintrag zurueck
 menatg_err:
  suba.l   a0,a0                    ; Fehler
 menatg_ende:
@@ -1594,7 +1596,7 @@ menu_istart:
  move.l   act_appl,a1
  move.l   (sp),a0
  bsr      mn_at_get                ; ATPOP ermitteln
- beq.b    meni_err                 ; da hängt keins dran!
+ beq.b    meni_err                 ; da haengt keins dran!
 ; a0 zeigt nun auf das ATPOP
  subq.w   #1,6(sp)
  bcs.b    meni_0                   ; nur Info holen
@@ -1612,7 +1614,7 @@ meni_ok1:
  bcc.b    meni_ok2
  move.w   ob_head(a1),d0
 meni_ok2:
- move.w   d0,atpop_item(a0)        ; Wert ändern
+ move.w   d0,atpop_item(a0)        ; Wert aendern
  bra.b    meni_ende
 
 ; 0: holen
@@ -1662,14 +1664,14 @@ si1:
 
  move.w   (a0)+,d0            ; Height
  bmi.b    si2
- cmpi.w   #5,d0               ; Höhe mindestens 5
+ cmpi.w   #5,d0               ; Hoehe mindestens 5
  bcc.b    si3
  moveq    #5,d0
 si3:
  move.w   big_hchar,d1
  lsr.w    #1,d1
  neg.w    d1
- add.w    desk_g+g_h,d1       ; Bildschirm ohne Menü
+ add.w    desk_g+g_h,d1       ; Bildschirm ohne Menue
  subq.w   #1,d1
  divu     big_hchar,d1        ; (h-hchar/2-1)/hchar
  cmp.w    d1,d0

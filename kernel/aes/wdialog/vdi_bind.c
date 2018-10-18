@@ -14,9 +14,6 @@ typedef struct
 
 static void	init_vdi_pb( VDIPB *pb, VDI_SMALL *p );
 static void	vdi_str_to_c( UWORD *src, UBYTE *des, WORD len );
-static WORD	c_str_to_vdi( UBYTE *src, UWORD *des );
-static WORD	set_color( WORD opcode, WORD handle, WORD color_index );
-static void	vdi_text( WORD opcode, WORD handle, WORD x, WORD y, BYTE *string );
 
 /* VDI-String in einen C-String umwandeln */
 static void	vdi_str_to_c( UWORD *src, UBYTE *des, WORD len )
@@ -30,7 +27,7 @@ static void	vdi_str_to_c( UWORD *src, UBYTE *des, WORD len )
 }
 
 /* C-String in einen VDI-String umwandeln */
-static WORD	c_str_to_vdi( UBYTE *src, UWORD *des )
+static WORD	c_str_to_vdi( const UBYTE *src, UWORD *des )
 {
 	WORD	len;
 
@@ -50,7 +47,7 @@ static WORD	c_str_to_vdi( UBYTE *src, UWORD *des )
 /*----------------------------------------------------------------------------------------*/ 
 static void	init_vdi_pb( VDIPB *pb, VDI_SMALL *p )
 {
-	pb->contrl = p->contrl;
+	pb->control = p->contrl;
 	pb->intin = p->intin;
 	pb->ptsin = p->ptsin;
 	pb->intout = p->intout;
@@ -132,7 +129,7 @@ static WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, UWORD *font_forma
 	WORD	intout[48];
 	WORD	ptsout[16];
 
-	pb.contrl = contrl;
+	pb.control = contrl;
 	pb.intin = intin;
 	pb.ptsin = ptsin;
 	pb.intout = intout;
@@ -170,6 +167,48 @@ static WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, UWORD *font_forma
 	return( intout[0] );													/* Font-ID */
 }
 
+/*----------------------------------------------------------------------------------------*/ 
+/* Fontnamen und Gr”ženinformationn zurckliefern														*/
+/* Funktionsergebnis:	Font-ID																				*/
+/*	handle:					VDI-Handle																			*/
+/*	flags:					angeforderte Informationen														*/
+/*	id:						Font-ID oder 0																		*/
+/* index:					Index des Fonts (1 - Anzahl) oder 0											*/
+/*	info:						Strukur fr die Rckgabewerte													*/
+/*----------------------------------------------------------------------------------------*/ 
+WORD vqt_xfntinfo( WORD handle, WORD flags, WORD id, WORD index, XFNT_INFO *info )
+{
+	VDIPB pb;
+	WORD	contrl[12];
+	WORD	intin[16];
+	WORD	ptsin[16];
+	WORD	intout[16];
+	WORD	ptsout[16];
+
+	pb.control = contrl;
+	pb.intin = intin;
+	pb.ptsin = ptsin;
+	pb.intout = intout;
+	pb.ptsout = ptsout;
+
+	info->size = (LONG) sizeof( XFNT_INFO );
+
+	intin[0] = flags;
+	intin[1] = id;
+	intin[2] = index;
+	*(XFNT_INFO **)&intin[3] = info;
+
+	contrl[0] = 229;
+	contrl[1] = 0;
+	contrl[3] = 5;
+	contrl[5] = 0;
+	contrl[6] = handle;
+
+	vdi( &pb );
+
+	return( intout[1] );
+}
+
 #if	CALL_MAGIC_KERNEL
 
 static WORD	set_color( WORD opcode, WORD handle, WORD color_index )
@@ -191,7 +230,7 @@ static WORD	set_color( WORD opcode, WORD handle, WORD color_index )
 	return( p.intout[0] );
 }
 
-static void	vdi_text( WORD opcode, WORD handle, WORD x, WORD y, BYTE *string )
+static void	vdi_text( WORD opcode, WORD handle, WORD x, WORD y, const char *string )
 {
 	VDIPB pb;
 	WORD	contrl[12];
@@ -200,7 +239,7 @@ static void	vdi_text( WORD opcode, WORD handle, WORD x, WORD y, BYTE *string )
 	WORD	intout[16];
 	WORD	ptsout[16];
 
-	pb.contrl = contrl;
+	pb.control = contrl;
 	pb.intin = intin;
 	pb.ptsin = ptsin;
 	pb.intout = intout;
@@ -211,7 +250,7 @@ static void	vdi_text( WORD opcode, WORD handle, WORD x, WORD y, BYTE *string )
 
 	contrl[0] = opcode;
 	contrl[1] = 1;
-	contrl[3] = c_str_to_vdi( (UBYTE *) string, (UWORD *) intin );
+	contrl[3] = c_str_to_vdi( (const UBYTE *) string, (UWORD *) intin );
 	contrl[6] = handle;
 
 	vdi( &pb );
@@ -437,7 +476,7 @@ static void	vr_recfl( WORD handle, WORD *rect )
 /*	y:							y-Koordinate																		*/
 /*	string:					Zeiger auf die Zeichenkette													*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	v_gtext( WORD handle, WORD x, WORD y, BYTE *string )
+void	v_gtext( WORD handle, WORD x, WORD y, const char *string )
 {
 	vdi_text( 8, handle, x, y, string );
 }
@@ -657,7 +696,7 @@ static void	vqt_fontheader( WORD handle, BYTE *buffer, BYTE *tdf_name )
 	WORD	ptsin[2];														/* Dummy */
 	WORD	ptsout[2];														/* Dummy */
 
-	pb.contrl = contrl;
+	pb.control = contrl;
 	pb.intin = intin;
 	pb.ptsin = ptsin;
 	pb.intout = intout;
@@ -713,7 +752,7 @@ static void	vst_kern( WORD handle, WORD track_mode, WORD pair_mode, WORD *tracks
 /*	y:							y-Koordinate																		*/
 /*	string:					Zeiger auf die Zeichenkette													*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	v_ftext( WORD handle, WORD x, WORD y, BYTE *string )
+void	v_ftext( WORD handle, WORD x, WORD y, const char *string )
 {
 	vdi_text( 241, handle, x, y, string );
 }

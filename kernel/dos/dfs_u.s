@@ -8,10 +8,11 @@
 
 DEBUG     EQU  8
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "STRUCTS.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "structs.inc"
+     INCLUDE "debug.inc"
+     INCLUDE "basepage.inc"
 
 DRIVE_U        EQU  'U'-'A'        ; für "MiNT"
 UROOT_LEN      EQU  64             ; soviele Einträge
@@ -63,6 +64,8 @@ FT_DEVICE2     EQU  8              ; Device mit Extradaten
      XREF      _midi_devdrv
      XREF      _con_devdrv
      XREF      _nul_devdrv
+
+	TEXT
 
 dfs_u_drv:
  DC.B     'DFS_U   '          ; 8 Bytes für den Namen

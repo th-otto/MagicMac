@@ -15,10 +15,10 @@
 DEBUG     EQU  8
 NOWRITE   EQU  0
 
-     INCLUDE "ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "STRUCTS.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "structs.inc"
+     INCLUDE "debug.inc"
 
      SUPER
 
@@ -1460,18 +1460,6 @@ str1:
 
 **********************************************************************
 *
-* long dfs_fat_fdelete( a0 = DD *d, a1 = DIR *dir, d0 = long dirpos )
-*
-* Rückgabe: Fehlercode.
-* symbolische Links werden nicht verfolgt, d.h. der Link als
-* solcher wird gelöscht.
-*
-
-dfs_fat_fdelete     EQU  dosf_delete
-
-
-**********************************************************************
-*
 * long dfs_fat_fxattr( a0 = DD *d, a1 = DIR *dir,
 *                      d0 = int mode, d1 = XATTR *xattr )
 *
@@ -2232,6 +2220,17 @@ dosf_fput:
  moveq    #0,d0
  rts
 
+
+**********************************************************************
+*
+* long dfs_fat_fdelete( a0 = DD *d, a1 = DIR *dir, d0 = long dirpos )
+*
+* Rückgabe: Fehlercode.
+* symbolische Links werden nicht verfolgt, d.h. der Link als
+* solcher wird gelöscht.
+*
+
+dfs_fat_fdelete:
 
 *********************************************************************
 *

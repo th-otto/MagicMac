@@ -11,9 +11,9 @@ XDEF      vf_d2i
 XDEF      p_extfd
 XDEF      vf_chksum
 
-     INCLUDE "..\ERRNO.INC"
-     INCLUDE "..\KERNEL.INC"
-     INCLUDE "STRUCTS.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "structs.inc"
 
 **********************************************************************
 *

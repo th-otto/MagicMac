@@ -31,6 +31,7 @@ aaa.cfg
 *.ttp
 *.tos
 *.slb
+*.os
 *.mode1v3
 *.pbxuser
 .directory

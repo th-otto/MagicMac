@@ -2,15 +2,13 @@
 /* (Entspricht MultiTOS Feb. 1993) */
 
 #include <portab.h>
+#include <tos.h>
+#include "std.h"
 #define DEBUG8
 
 #define   imax( i1, i2)  ((i1 > i2) ? i1 : i2)
 #define   imin( i1, i2)  ((i1 < i2) ? i1 : i2)
 
-
-#define FALSE 0
-#define TRUE  1
-#define NULL   ((void *) 0)
 
 #define SPECIAL_ACCMENU  0
 
@@ -326,9 +324,6 @@ static char smn_uptext[] = "  \x01";
 static char smn_dntext[] = "  \x02";
 
 /* importierte Funktionen aus dem Kernel */
-
-extern void strcpy(char *dst, char *src);
-extern WORD strcmp(char *s1, char *s2);
 
 extern WORD wind_update( WORD mode );
 extern void obj_to_g( OBJECT *tree, WORD objnr, GRECT *g);
@@ -1347,7 +1342,7 @@ static int smn_ismstate( int reqmstate, EVNT_MULTI_DATA *mkb)
 *
 **********/
 
-/*
+#if 0
 static void smn_mouse( int saveit)
 {
   if (saveit) {
@@ -1358,7 +1353,8 @@ static void smn_mouse( int saveit)
     scr_gr_mouse( 0x103, NULL);
   };
 } /* smn_mouse */
-*/
+#endif
+
 
 void smn_moblk( OBJECT *tree, MOBLK2 *mob, int obj, int out)
 {
@@ -1594,10 +1590,12 @@ DEBUGSTR("enter smn_mgr ");
      titletree = retval->tree;          /* aktuelles Menü */
      menutree = titletree;
      smn_reqmstate = 0x1;
-/*   wind_update(BEG_MCTRL);  */
-/*
+#if 0
+	wind_update(BEG_MCTRL);
+#endif
+#if 0
      smn_mouse( TRUE);                  /* Mauszeiger retten und ARROW */
-*/
+#endif
 
      /* Objekt 2 ist Parent für alle Menütitel, dessen Ausmaße */
      /* werden in smn_mgrmrect gemerkt */
@@ -2351,9 +2349,9 @@ static void smn_trudinsert( popupS *popup)
           ob->ob_state = NORMAL;
           /* Inhalt retten */
           s = ob->ob_spec.free_string;
-          strcpy( popup->pu_shtext, s );
+          vstrcpy( popup->pu_shtext, s );
           /* Pfeil nach oben einsetzen */
-          strcpy( s, smn_uptext );
+          vstrcpy( s, smn_uptext );
           }
 
      item = popup->pu_stail;
@@ -2366,9 +2364,9 @@ static void smn_trudinsert( popupS *popup)
                ob->ob_flags = LASTOB;
           /* Inhalt retten */
           s = ob->ob_spec.free_string;
-          strcpy( popup->pu_sttext, s );
+          vstrcpy( popup->pu_sttext, s );
           /* Pfeil nach unten einsetzen */
-          strcpy( s, smn_dntext );
+          vstrcpy( s, smn_dntext );
           }
 }
 
@@ -2388,7 +2386,7 @@ static void smn_truddelete( popupS *popup)
      if   (item != popup->pu_head)
           {
           ob = popup->pu_tree+item;
-          strcpy( ob->ob_spec.free_string, popup->pu_shtext );
+          vstrcpy( ob->ob_spec.free_string, popup->pu_shtext );
           ob->ob_state = popup->pu_shstate;
           }
 
@@ -2397,7 +2395,7 @@ static void smn_truddelete( popupS *popup)
           {
           ob = popup->pu_tree+item;
           ob->ob_flags = NONE;
-          strcpy( ob->ob_spec.free_string, popup->pu_sttext );
+          vstrcpy( ob->ob_spec.free_string, popup->pu_sttext );
           ob->ob_state = popup->pu_ststate;
           }
 }

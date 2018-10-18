@@ -6,34 +6,6 @@
 */
 
 
-/* STD */
-/* --- */
-
-char *ltoa( LONG l, char *s);
-LONG strlen(const char *string);
-WORD strcmp(char *s1, char *s2);
-WORD stricmp(const char *s1, const char *s2 );
-void strcpy(char *dst, char *src);
-char *strchr(char *s, char c );
-char *strrchr(char *s, char c );
-void ext_8_3(char *dst_name, char *src_int_name);
-void int_8_3(char *dst_int_name, char *src_name);
-void memcpy(void *dst, void *src, UWORD len);
-LONG smalloc( ULONG size);
-void smfree( void *memblk );
-LONG malloc( ULONG size);
-LONG mfree( void *memblk );
-LONG mshrink( void *memblk, ULONG size);
-WORD dgetdrv( void );
-LONG dopendir( char *path, WORD tosflag );
-LONG dclosedir( LONG dirhandle );
-LONG dxreaddir( WORD len, LONG dirhandle, char *buf,
-			XATTR *xattr, LONG *xr );
-LONG drvmap( void );
-LONG fxattr( WORD mode, char *path, XATTR *xattr );
-LONG dgetpath( char *buf, WORD drv );
-LONG dpathconf(char *path, WORD which);
-
 /* MATH */
 /* ---- */
 
@@ -90,13 +62,13 @@ WORD _evnt_timer(LONG clicks_50hz);	/* d0 = clicks_50hz */
 WORD cdecl _evnt_multi(WORD mtypes, MGRECT *mm1, MGRECT *mm2, LONG ms,
 					LONG but, WORD mbuf[8], EVNT_MULTI_DATA *ev);
 
-WORD cdecl form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WORD whandle);
+WORD cdecl _form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WORD whandle);
 WORD _form_popup( OBJECT *ob,  LONG xy );
 WORD form_xdo( OBJECT *tree, WORD startob, WORD *endob,
 				void *keytab, FLYINF *fi );
 void frm_xdial(WORD flag, GRECT *little, GRECT *big,
 					void **flyinf);
-LONG form_xerr(LONG err, char *file);
+WORD form_xerr(LONG err, const char *file);
 WORD form_button(OBJECT *tree, WORD objnr, WORD clicks,
 					WORD *nxt_edit);
 WORD form_wbutton(OBJECT *tree, WORD objnr, WORD clicks,
@@ -115,7 +87,7 @@ cdecl WORD xp_rasterC( LONG words, LONG len, WORD planes,
 					void *src, void *des );
 
 
-void _form_center(OBJECT *ob, GRECT *out);
+void _form_center_grect(OBJECT *ob, GRECT *out);
 void calc_obsize( OBJECT *tree, GRECT *size );
 WORD _objc_edit(OBJECT *tree, WORD objnr,
 			 WORD c, WORD *didx, WORD kind, GRECT *g);

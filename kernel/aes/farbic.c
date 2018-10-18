@@ -6,6 +6,8 @@
 */
 
 #include <PORTAB.H>
+#include <tos.h>
+#include "std.h"
 
 /*
 
@@ -21,8 +23,6 @@
 /*----------------------------------------------------------------------------------------*/ 
 /* extern aus dem AES                                                                                                                  */
 /*----------------------------------------------------------------------------------------*/ 
-extern    void *malloc( LONG len );                    /* aus AESMAIN */
-extern    void mfree( void *blk );                     /* aus AESMAIN */
 extern    WORD vintout[];                              /* intout für VDI-Aufrufe */
 extern    void *xp_tab;
 extern    void (*xp_ptr)( void );
@@ -89,7 +89,7 @@ WORD xp_init( WORD planes )
           
           len = ( planes + 15 ) / 8;              /* Bytes pro Farbe */
           len *= 256;                             /* Platz für 256 Farben lassen */
-          xp_tab = malloc( len );                 /* Speicher für Expandiertabelle */
+          xp_tab = (void *)mmalloc( len );                 /* Speicher für Expandiertabelle */
      }
      /*
      else

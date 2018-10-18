@@ -4,7 +4,7 @@
 
 Setprt_inq     EQU $0021ffff       ; xbios Setprt(-1)
 
-     INCLUDE "OSBIND.INC"
+     INCLUDE "osbind.inc"
 
      TEXT
 

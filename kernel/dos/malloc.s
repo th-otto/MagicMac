@@ -18,10 +18,11 @@ fstrm_beg      EQU $49e            ; in Mag!X Beginn des TT-RAMs
 fstrm_top      EQU $5a4
 _memtop        EQU $436
 
-     INCLUDE "..\ERRNO.INC"
-     INCLUDE "KERNEL.INC"
-     INCLUDE "STRUCTS.INC"
-     INCLUDE "DEBUG.INC"
+     INCLUDE "errno.inc"
+     INCLUDE "kernel.inc"
+     INCLUDE "structs.inc"
+     INCLUDE "debug.inc"
+     INCLUDE "basepage.inc"
 
      XDEF mc_init
      XDEF Mxalloc

@@ -5,7 +5,10 @@
 *
 *
 
-     INCLUDE "AESINC.S"
+     INCLUDE "aesinc.s"
+     INCLUDE "basepage.inc"
+     INCLUDE "lowmem.inc"
+
         TEXT
         SUPER
         MC68881
@@ -19,11 +22,10 @@
      XDEF      evnt_mIO            ; nach DOS,BIOS usw.
      XDEF      evnt_emIO           ; nach DOS,BIOS usw.
      XDEF      evnt_sem            ; nach DOS,BIOS usw.
-     XDEF      evnt_pid,hap_pid    ; nach DOS (für Pwaitpid())
-     XDEF      evnt_fork,hap_fork  ; nach DOS (für P(v)fork())
+     XDEF      evnt_pid,hap_pid    ; nach DOS (fuer Pwaitpid())
+     XDEF      evnt_fork,hap_fork  ; nach DOS (fuer P(v)fork())
      XDEF      appl_IOcomplete     ; nach DOS,BIOS usw.
      XDEF      Mappl_IOcomplete    ; nach MACXFS
-     XDEF      act_appl            ; nach DOS,BIOS usw.
      XDEF      keyb_app            ; nach DOS,BIOS usw.
 
      XREF      pe_slice,pe_timer   ; von BIOS
@@ -35,13 +37,13 @@
      XREF      Mchgown             ; vom DOS
      XREF      srch_process        ; vom DOS
      XREF      bufl_wback          ; vom DOS
-     XREF      match_pid           ; vom DOS (für Pwaitpid())
+     XREF      match_pid           ; vom DOS (fuer Pwaitpid())
      XREF      appl_break
      XREF      funselect           ; DOS
      XREF      kbshift             ; vom BIOS
      IF   MMX_YIELD
      XREF      MSysX
-     INCLUDE   "..\MACXBIOS\MACXKER.INC"
+     INCLUDE   "..\bios\magcmacx\macxker.inc"
      ENDIF
 
      XREF      fatal_stack         ; von AESMAIN
@@ -50,7 +52,7 @@
      XREF      whdl_to_wnd         ; von AESWIN
      XREF      aes_dispatcher,_set_topwind_app,appl_info,set_mouse_app
      XREF      grects_union,grects_intersect,xy_in_grect
-     XREF      _lmul,_ldiv,memcpy
+     XREF      _lmul,_ldiv,vmemcpy
      XREF      dsetdrv_path
      XREF      vdi_quick
 
@@ -101,7 +103,7 @@ MC68060   EQU  0
 flush_msgbuf:
  move.w   ap_len(a0),d0
  beq.b    fmb_ende
- lea      popup_tmp,a0             ; Platz für mind. 256 Bytes
+ lea      popup_tmp,a0             ; Platz fuer mind. 256 Bytes
  bra      appl_read
 fmb_ende:
  rts
@@ -131,10 +133,10 @@ appl_exit:
 _appl_exit:
  moveq    #20-1,d1                 ; GEM 2.0: 3 Aufrufe
 _ap_y:
- bsr      appl_yield               ; ändert nur d0/a0
+ bsr      appl_yield               ; aendert nur d0/a0
  dbra     d1,_ap_y
                                    ; erst beenden, wenn alle anderen Programme
- bsr      update_1                 ;  die Menüs entsperrt haben
+ bsr      update_1                 ;  die Menues entsperrt haben
  bra      update_0
 
 
@@ -142,11 +144,11 @@ _ap_y:
 *
 * d0.l = long ctrl_timeslice( d0.lo = int ticks, d0.hi = int count )
 *
-* Hiermit (über Cookie-Ptr, Offset $64 aufgerufen) kann man die
+* Hiermit (ueber Cookie-Ptr, Offset $64 aufgerufen) kann man die
 * Zeitscheibensteuerung aktivieren und Zeitscheibe sowie
-* Hintergrund- Priorität festlegen.
+* Hintergrund- Prioritaet festlegen.
 * Ist d0 = -1L, wird der gesamte Mechanismus deaktiviert.
-* Ist ein Wert < -2, wird er nicht beeinflußt.
+* Ist ein Wert < -2, wird er nicht beeinflusst.
 *
 
 ctrl_timeslice:
@@ -171,7 +173,7 @@ ctt_weiter2:
 *********************************************************************
 *
 * Programm hat Rechenzeit verbraucht.
-* zerstört sr (d.h. ccr)
+* zerstoert sr (d.h. ccr)
 *
 
 appl_suspend:
@@ -183,11 +185,11 @@ appl_suspend:
 *********************************************************************
 *
 * Neuer Kernel
-* zerstört sr (d.h. ccr)
+* zerstoert sr (d.h. ccr)
 *
 * gesicherte Register auf dem Stack:
 *
-*    pc                            ; 64: Rücksprungadresse
+*    pc                            ; 64: Ruecksprungadresse
 *    d0-d2/a0-a4                   ; 32: long regs1[8];
 *   [                              ;  wenn FPU existiert:
 *    FPU-Status                    ; char fpu_st[4 ~ 218]   (je nach Status)
@@ -221,7 +223,7 @@ ad_no_unsus:
  movea.l  (a4),a3                  ; aktuelle Applikation nach a3
  move.l   (a3),(a4)                ; die aktuelle Applikation ausklinken
  move.b   ap_status(a3),d0
- beq.b    ad_isready               ; ist ready, nach hinten hängen
+ beq.b    ad_isready               ; ist ready, nach hinten haengen
  subq.b   #1,d0                    ; ap_status == APSTAT_WAITING ?
  beq.b    ad_iswaiting             ; ja
  subq.b   #1,d0                    ; ap_status == APSTAT_SUSPENDED ?
@@ -235,8 +237,8 @@ ad_no_unsus:
 ad_iswaiting:
  move.w   ap_rbits(a3),d0          ; erwartete Events
  and.w    ap_hbits(a3),d0          ; eingetroffene Events
- bne.b    ad_isready               ; Übereinstimmung!
-* Hänge a3 an den Anfang der NOTREADY- Liste
+ bne.b    ad_isready               ; Uebereinstimmung!
+* Haenge a3 an den Anfang der NOTREADY- Liste
  move.l   notready_list,(a3)
  move.l   a3,notready_list
  bra.b    ad__kernel
@@ -246,7 +248,7 @@ ad_isready:
 ad_loop2:
  bsr      ap_to_lastready
 
-* hier springt appl_term ein, da ein Kontext zurückgeholt werden muß,
+* hier springt appl_term ein, da ein Kontext zurueckgeholt werden muss,
 * aber keiner gerettet werden darf
 
 ad__kernel:
@@ -254,7 +256,7 @@ ad__kernel:
 ad_loop:
  bsr      check_kb
 
- tst.l    (a4)                     ; lauffähige Programme
+ tst.l    (a4)                     ; lauffaehige Programme
  bne.b    ad_newready              ; ist nicht leer
  tst.l    suspend_list             ; angehaltene Programme
  bne.b    ad_newsuspend
@@ -267,7 +269,7 @@ ad_loop:
  MACPPC
  bra.b    ad_loop
      ELSE
- beq.b    ad_loop                  ; nein, zurück in die Schleife
+ beq.b    ad_loop                  ; nein, zurueck in die Schleife
  bra.b    ad__kernel
      ENDIF
 ad_newsuspend:
@@ -291,7 +293,7 @@ ad_switch:
  beq.b    ad_return                ; ja, kein Kontextwechsel
  tst.b    no_switch
  beq.b    ad_chgcntxt              ; kein Kontextwechsel erlaubt!
- move.l   (a0),(a4)                ; unerwünschte APPL ausklinken
+ move.l   (a0),(a4)                ; unerwuenschte APPL ausklinken
  bra      ad_loop2                 ; kein Kontextwechsel erlaubt!
 ad_chgcntxt:
 ; alten Kontext retten
@@ -311,7 +313,7 @@ ad_chgcntxt:
  beq.b    ad_no_fpu                     ; NULL
  fmovem.x fp0-fp7,-(sp)                 ; Datenregister
  fmovem.l fpcr/fpsr/fpiar,-(sp)         ; Statusregister
- move.w   #-1,-(sp)                     ; Flag für "FPU komplett gesichert"
+ move.w   #-1,-(sp)                     ; Flag fuer "FPU komplett gesichert"
 
 
 ad_no_fpu:
@@ -321,13 +323,13 @@ ad_no_fpu:
  lea      ap_ssp(a3),a1
  move.l   sp,(a1)+                      ; ap_ssp
  move.l   (a1),d1
- beq.b    ad_no_old                     ; ist kein Prozeß!
+ beq.b    ad_no_old                     ; ist kein Prozess!
  move.l   act_pd,(a1)+                  ; ap_pd
  move.l   etv_term,(a1)                 ; ap_etvterm
 ad_no_old:
 
 
-; neuen Kontext zurück
+; neuen Kontext zurueck
      IFNE OUTSIDE
  move.w   SUPERSTACKLEN+ap_stack(a0),d0      ; erzwingt Einlagern eines Blocks
      ENDIF
@@ -335,7 +337,7 @@ ad_no_old:
  move.l   (a1)+,sp                      ; ap_ssp
 
  move.l   (a1)+,d1                      ; ap_pd
- beq.b    ad_nopd                       ; ist kein Prozeß!
+ beq.b    ad_nopd                       ; ist kein Prozess!
  move.l   d1,act_pd
  move.l   (a1),etv_term                 ; ap_etvterm
 ad_nopd:
@@ -348,7 +350,7 @@ ad_nopd:
  beq.b    ad_return
  tst.b    (sp)
  beq.b    ad_fp_null                    ; war Status NULL
- addq.l   #2,sp                         ; Flag überspringen
+ addq.l   #2,sp                         ; Flag ueberspringen
  fmovem.l (sp)+,fpcr/fpsr/fpiar         ; Statusregister
  fmovem.x (sp)+,fp0-fp7                 ; Datenregister
 
@@ -358,7 +360,7 @@ ad_fp_null:
 
 ad_return:
  movem.l  (sp)+,d0/d1/d2/a0/a1/a2/a3/a4
- move.w   pe_slice,pe_timer             ; ### prä-emptiv ###
+ move.w   pe_slice,pe_timer             ; ### prae-emptiv ###
  sf       inaes
 ad_locked:
  rts
@@ -402,7 +404,7 @@ trap_yield:
  tst.l    iocpbuf_cnt              ; sind inzw. Ereignisse eingetroffen ?
  bne.b    exec_yield               ; ja, Kernel aufrufen
  movem.l  d1/d2/a1,-(sp)
- bsr      check_kb                 ; Tastatur pollen, ändert nicht a2
+ bsr      check_kb                 ; Tastatur pollen, aendert nicht a2
  movem.l  (sp)+,d1/d2/a1
  tst.l    iocpbuf_cnt              ; sind jetzt Ereignisse eingetroffen ?
  bne.b    exec_yield               ; ja, Kernel aufrufen
@@ -421,7 +423,7 @@ trap_aesfn:
 exec_yield:
  bsr      appl_yield
 
-* Kontext zurück und auf User zurückschalten
+* Kontext zurueck und auf User zurueckschalten
 
  clr.w    d0
  rte
@@ -432,7 +434,7 @@ exec_yield:
 * event_happened(a0 = APPL *ap, d0 = int evtyp)
 *
 * EVENT(s) <evtyp> ist/sind eingetroffen
-* Trägt <ev> in ap_hbits ein und prüft Status der Applikation
+* Traegt <ev> in ap_hbits ein und prueft Status der Applikation
 *
 
 event_happened:
@@ -464,7 +466,7 @@ evh_ende:
 *
 * stp_thr(a0 = APPL *ap)
 *
-* Hält eine Applikation an.
+* Haelt eine Applikation an.
 *
 
 stp_thr:
@@ -500,9 +502,9 @@ stp_ap_weiter2:
  lea      suspend_list,a1
 stp_ap_unlist:
 ;move.l   a0,a0
- bsr      rmv_lstelm               ; ausklinken, verändert nur d0/a1
+ bsr      rmv_lstelm               ; ausklinken, veraendert nur d0/a1
 
-; Status in APSTAT_STOPPED ändern
+; Status in APSTAT_STOPPED aendern
  
 stp_ap_newstate:
  move.b   #APSTAT_STOPPED,ap_status(a0)
@@ -513,7 +515,7 @@ stp_ap_newstate:
 *
 * cnt_thr(a0 = APPL *ap)
 *
-* Läßt eine Applikation weiterlaufen, die auf ein Signal wartet.
+* Laesst eine Applikation weiterlaufen, die auf ein Signal wartet.
 *
 
 cnt_thr:
@@ -543,7 +545,7 @@ _rstrt_ende:
 *
 * void app2ready(a0 = APPL *ap)
 *
-* Stellt sicher, daß eine Applikation weiterläuft, i.a. damit
+* Stellt sicher, dass eine Applikation weiterlaeuft, i.a. damit
 * sie terminieren kann.
 *
 
@@ -578,19 +580,19 @@ wind_mctrl:
  beq.b    end_mctrl
 
 beg_mctrl:
- move.b   #1,d0                    ; Hibyte unverändert
+ move.b   #1,d0                    ; Hibyte unveraendert
  bsr      wind_update
  beq      begm_ende                ; Fehler bei "check and set"
  tst.w    beg_mctrl_cnt            ; schon gesetzt ?
  beq.b    begm_set_new             ; nein, setzen
  move.l   act_appl,a0
  cmpa.l   topwind_app,a0           ; bin ich auch Eigner ?
- beq.b    begm_increment           ; ja, nur Zähler erhöhen
- bra.b    begm_set_again           ; workaround für Echtzeitscrolling
+ beq.b    begm_increment           ; ja, nur Zaehler erhoehen
+ bra.b    begm_set_again           ; workaround fuer Echtzeitscrolling
 
 begm_set_new:
- move.l   menutree,mctrl_mnrett    ; Menübaum retten
- clr.l    menutree                 ; und ungültig machen
+ move.l   menutree,mctrl_mnrett    ; Menuebaum retten
+ clr.l    menutree                 ; und ungueltig machen
  lea      mctrl_btrett,a0          ; Innenbereich des obersten Fensters...
  lea      button_grect,a1          ; ...retten
  move.l   (a1)+,(a0)+
@@ -598,7 +600,7 @@ begm_set_new:
  move.l   keyb_app,mctrl_karett
 
 begm_set_again:
- lea      full_g,a1                ; mir gehört der ganze Bildschirm
+ lea      full_g,a1                ; mir gehoert der ganze Bildschirm
  move.l   act_appl,a0
  jsr      _set_topwind_app
  move.l   act_appl,a0
@@ -635,8 +637,8 @@ _end_mctrl:
 * void Mappl_IOcomplete(a0 = APPL *ap, a1 = void *zeropage)
 *
 * wie appl_IOcomplete, aber kann im Mac-Interrupt aufgerufen werden.
-* Dazu muß ein Zeiger auf die unteren 32k des Atari-Speichers
-* übergeben werden.
+* Dazu muss ein Zeiger auf die unteren 32k des Atari-Speichers
+* uebergeben werden.
 *
 
 Mappl_IOcomplete:
@@ -677,13 +679,13 @@ aioc_err:
 *
 * int write_evnt_to_ringbuf(void (*pgm)(long code), long code)
 *
-* Wird im Interrupt aufgerufen. Ändert d0/d1/a0
+* Wird im Interrupt aufgerufen. aendert d0/d1/a0
 * Schreibt die Adresse einer Routine und einen Code in den
-* Event- Ringpuffer, falls genügend Platz da ist.
-* Anhand der Behandlungsroutine <pgm> kann man später unterscheiden, ob
-* es sich um einen Tastaturcode, Mauskoordinaten oder einen Timerzähler
+* Event- Ringpuffer, falls genuegend Platz da ist.
+* Anhand der Behandlungsroutine <pgm> kann man spaeter unterscheiden, ob
+* es sich um einen Tastaturcode, Mauskoordinaten oder einen Timerzaehler
 * handelt.
-* Rückgabe 0, wenn Puffer voll (32 Einträge)
+* Rueckgabe 0, wenn Puffer voll (32 Eintraege)
 *
 * Tastatur:     code == int  taste;int shiftstatus
 * Timer:        code == long timer_cntup (Clicks seit Start des letzten Countdowns)
@@ -694,20 +696,20 @@ aioc_err:
 write_evnt_to_ringbuf:
  move     sr,d1
  ori.w    #$700,sr
- cmpi.w   #RNGBFLEN,ringbuf_cnt    ; Ringpuffer mehr als 32 Einträge ?
+ cmpi.w   #RNGBFLEN,ringbuf_cnt    ; Ringpuffer mehr als 32 Eintraege ?
  bcc.b    we2r_overflow            ; ja, Puffer voll
  lea      ringbuf,a0               ; Ringpuffer
  move.w   ringbuf_tail,d0          ; Pufferoffset
- lsl.w    #3,d0                    ; für Einträge mit 2 Langworten
+ lsl.w    #3,d0                    ; fuer Eintraege mit 2 Langworten
  add.w    d0,a0
- addq.w   #1,ringbuf_tail          ; Pufferoffset erhöhen
+ addq.w   #1,ringbuf_tail          ; Pufferoffset erhoehen
  cmpi.w   #RNGBFLEN,ringbuf_tail   ; Ende erreicht ?
  bne.b    we2r_cycle               ; nein
  clr.w    ringbuf_tail             ; zyklisch weiter
 we2r_cycle:
  move.l   4(sp),(a0)+              ; Behandlungsroutine
  move.l   8(sp),(a0)               ; Code
- addq.w   #1,ringbuf_cnt           ; Füllzähler erhöhen
+ addq.w   #1,ringbuf_cnt           ; Fuellzaehler erhoehen
  moveq    #1,d0
  move     d1,sr
  rts
@@ -721,18 +723,18 @@ we2r_overflow:
 *
 * void ap_to_lastready(a0 = APPL *ap)
 *
-* Hängt <ap> an das Ende der durch act_appl vorgegebenen Liste
+* Haengt <ap> an das Ende der durch act_appl vorgegebenen Liste
 *
 
 ap_to_lastready:
  sf.b     ap_status(a0)            ; ap_status = ready
- lea      act_appl,a2              ; Vorgänger
+ lea      act_appl,a2              ; Vorgaenger
 _ap_to_last:
  movea.l  (a2),a1                  ; zu testende Applikation
  bra.b    a2l_next
 a2l_loop:
  movea.l  a1,a2
- movea.l  (a2),a1                  ; Nächste APP
+ movea.l  (a2),a1                  ; Naechste APP
 a2l_next:
  move.l   a1,d0                    ; Ende der Liste ?
  bne.b    a2l_loop                 ; noch nicht erreicht
@@ -755,7 +757,7 @@ refr_loop:
  addq.w   #1,(a0)
  cmpi.w   #RNGBFLEN-1,d0
  bne.b    refr_nowrap
- clr.w    (a0)                     ; Zyklisch erhöhen
+ clr.w    (a0)                     ; Zyklisch erhoehen
 refr_nowrap:
  lea      ringbuf,a1               ; Ringpuffer
  lsl.w    #3,d0                    ; wegen 2 Langwort- Zugriff
@@ -764,18 +766,18 @@ refr_nowrap:
  move.l   (a1),-(sp)               ; Daten
  move.w   d1,sr                    ; enable_interrupt (erst HIER!!!)
 
- tst.w    aptr_flag                ; appl_trecord läuft ?
+ tst.w    aptr_flag                ; appl_trecord laeuft ?
  bne      refr_aptr                ; ja
 refr_exec:
  jsr      (a0)                     ; Behandlungsroutine aufrufen
  addq.l   #4,sp
 
-* nächster Event
+* naechster Event
 
 read_evnts_from_ringbuf:
  move.w   sr,d1
  ori.w    #$700,sr                 ; die einzig korrekte Methode
- tst.w    ringbuf_cnt              ; solange noch Einträge drin sind...
+ tst.w    ringbuf_cnt              ; solange noch Eintraege drin sind...
  bne      refr_loop                ; weitermachen
  tst.w    iocpbuf_cnt
  beq.b    refr_ende
@@ -793,7 +795,7 @@ refr_loop2:
  clr.b    -1(a5)
 
  move.l   a0,d0
- ble.b    refr_nxt2                ; ungültig oder eingefroren
+ ble.b    refr_nxt2                ; ungueltig oder eingefroren
 ;move.l   a0,a0
  move.w   #EV_IO,d0
  bsr      event_happened
@@ -811,19 +813,19 @@ refr_nxt2:
  tst.w    was_warmboot
  beq.b    refr_spec_nxt
  clr.w    was_warmboot
- jsr      enab_warmb                    ; Nächstes Mal Reset machen
+ jsr      enab_warmb                    ; Naechstes Mal Reset machen
  move.w   d1,sr
  bra.b    init_shutdown
 
-* Maustaste nach Ringpufferüberlauf "nachholen"
+* Maustaste nach Ringpufferueberlauf "nachholen"
 
 refr_spec_nxt:
- tst.w    int_but_dirty                 ; war Überlauf des Ringpuffers ?
+ tst.w    int_but_dirty                 ; war Ueberlauf des Ringpuffers ?
  beq.b    refr_ende                     ; nein
  clr.w    int_but_dirty
- move.w   int_butstate,d0               ; gültiger Zustand
- move.w   #-1,int_butstate              ; gespeicherter Wert ist ungültig!
- bsr      but_int                       ; Neudrücken der Maustaste simulieren
+ move.w   int_butstate,d0               ; gueltiger Zustand
+ move.w   #-1,int_butstate              ; gespeicherter Wert ist ungueltig!
+ bsr      but_int                       ; Neudruecken der Maustaste simulieren
 refr_ende:
  move.w   d1,sr
  rts
@@ -837,7 +839,7 @@ refr_ende:
 * halber eine AP_TERM-Nachricht.
 * Weiterhin bekommt die Applikation #0 eine AP_TERM-Nachricht.
 * Als Initiator des "shutdown" wird die ap_id -1 angegeben, weil es
-* per Ctrl-Alt-Del ausgelöst wurde. Die Applikation #0 sollte den
+* per Ctrl-Alt-Del ausgeloest wurde. Die Applikation #0 sollte den
 * Prozess SHUTDOWN starten, der alles weitere erledigt.
 *
 
@@ -856,10 +858,10 @@ inisd_send:
  moveq    #AP_TERM,d0
  moveq    #-1,d2
  clr.l    -(sp)                    ; buf[6,7] = 0
- move.w   d0,-(sp)                 ; buf[5] = Grund für AP_TERM: shutdown
+ move.w   d0,-(sp)                 ; buf[5] = Grund fuer AP_TERM: shutdown
  clr.w    -(sp)                    ; buf[4] = 0
  move.w   d2,-(sp)                 ; buf[3]: Initiator unbekannt (System)
- clr.w    -(sp)                    ; buf[2] = 0 (keine Überlänge)
+ clr.w    -(sp)                    ; buf[2] = 0 (keine Ueberlaenge)
  move.w   d2,-(sp)                 ; buf[1]: Absender unbekannt (System)
  move.w   d0,-(sp)                 ; buf[0] = Nachrichtennummer
 
@@ -886,11 +888,11 @@ refr_notim:
  moveq    #8,d0
  move.l   sp,a1
  move.l   aptr_buf,a0
- jsr      memcpy                   ; Puffereintrag nach (aptr_buf) kopieren
+ jsr      vmemcpy                   ; Puffereintrag nach (aptr_buf) kopieren
  move.l   (sp)+,a0
 
- addq.l   #8,aptr_buf              ; Zeiger erhöhen
- subq.w   #1,aptr_count            ; Anzahl der freien Einträger dekrementieren
+ addq.l   #8,aptr_buf              ; Zeiger erhoehen
+ subq.w   #1,aptr_count            ; Anzahl der freien Eintraeger dekrementieren
  move.w   aptr_count,aptr_flag     ; weitermachen, wenn != 0
  bra      refr_exec
 
@@ -899,7 +901,7 @@ refr_notim:
 *
 * void check_kb( void )
 *
-* Pollt die Tastatur, ändert d0/d1/d2/a0/a1
+* Pollt die Tastatur, aendert d0/d1/d2/a0/a1
 * Wird nicht im Interrupt aufgerufen, darf aber jetzt in MAGIX
 *
 
@@ -908,7 +910,7 @@ check_kb:
  ori.w    #$700,sr
  move.b   kbshift,d1
      IF   MACOS_SUPPORT
- andi.w   #$2f,d1                  ; Command berücksichtigen
+ andi.w   #$2f,d1                  ; Command beruecksichtigen
      ELSE
  andi.w   #$f,d1
      ENDIF
@@ -923,7 +925,7 @@ check_kb:
  move.w   6(a0),d2                 ; head
  addq.w   #4,d2
  move.l   (a0)+,a1                 ; Pufferzeiger
- cmp.w    (a0)+,d2                 ; head mit Puffergröße vergleichen
+ cmp.w    (a0)+,d2                 ; head mit Puffergroesse vergleichen
  bcs.b    ckb_noturn
  moveq    #0,d2                    ; Pufferzeiger auf Pufferbeginn
 ckb_noturn:
@@ -938,8 +940,8 @@ ckb_noturn:
 * CTRL-ALT-ESC
  move.w   d2,(a0)                  ; Taste entfernen
  move.w   (sp)+,sr
- bsr      appl_info                ; Aktion, ändert nicht a2
- bra      check_kb                 ; wieder zurück
+ bsr      appl_info                ; Aktion, aendert nicht a2
+ bra      check_kb                 ; wieder zurueck
 
 ckb_no_esc:
  cmpi.b   #$60,1(a1)
@@ -963,7 +965,7 @@ ckb_nxtca3:
  cmpi.b   #$47,1(a1)
  bne.b    ckb_nxtca4
 * CTRL-ALT-Clr
- moveq    #0,d1                    ; Spezialfunktion #0: Aufräumen
+ moveq    #0,d1                    ; Spezialfunktion #0: Aufraeumen
  bra.b    ckb_send_spec
 ckb_nxtca4:
  cmpi.b   #9,3(a1)                 ; ja, war Tab ?
@@ -980,7 +982,7 @@ ckb_send_spec:
  pea      handle_spec(pc)          ; Tastaturbehandlungsroutine
  bsr      write_evnt_to_ringbuf
  addq.l   #8,sp
- bra      check_kb                 ; wieder zurück
+ bra      check_kb                 ; wieder zurueck
 
 * ENDE DER SONDERBEHANDLUNG
 
@@ -1112,9 +1114,9 @@ ha_end:
 *
 * Die Applikation <act_appl> tritt in eine kritische Phase ein,
 * d.h. sie darf nicht terminiert werden.
-* Der ap_critic- Zähler wird erhöht.
+* Der ap_critic- Zaehler wird erhoeht.
 *
-* ändert nur a2/d2
+* aendert nur a2/d2
 *
 
 appl_begcritic:
@@ -1132,14 +1134,14 @@ apbc_end:
 *
 * Die Applikation <act_appl> tritt aus einer kritische Phase aus,
 * d.h. sie darf wieder terminiert werden, wenn der ap_critic-
-* Zähler 0 ist.
+* Zaehler 0 ist.
 * Wenn zwischenzeitlich eine Terminierung des Prozesses verlangt
-* worden ist, wird sie hier durchgeführt.
+* worden ist, wird sie hier durchgefuehrt.
 *
 * Wenn zwischenzeitlich ein Anhalten der Applikation verlangt
-* worden ist, wird sie hier durchgeführt.
+* worden ist, wird sie hier durchgefuehrt.
 *
-* ändert nur a2/d2
+* aendert nur a2/d2
 *
 
 appl_endcritic:
@@ -1191,7 +1193,7 @@ apec_end:
 *    -> -1     Semaphore war schon von mir gesetzt
 *    -> -2     Semaphore zwischenzeitlich entfernt
 *
-* 2  SEM_TEST  Eigner der Semaphore zurückgeben (ggf. NULL)
+* 2  SEM_TEST  Eigner der Semaphore zurueckgeben (ggf. NULL)
 *              a0 = Zeiger auf Semaphore
 *    -> >0     Eigner
 *    ->  0     nicht benutzt
@@ -1215,12 +1217,12 @@ apec_end:
 * 6  SEM_DEL   Semaphore entfernen
 *              a0 = Zeiger auf Semaphore
 *    ->   0    OK
-*    ->  -1    Semaphore nicht gültig
+*    ->  -1    Semaphore nicht gueltig
 *
-* 7  SEM_FALL  alle Semaphoren für appl freigeben
+* 7  SEM_FALL  alle Semaphoren fuer appl freigeben
 *              a0 = APPL *
 *
-* 8  SEM_FPD   alle Semaphoren für <pd> freigeben
+* 8  SEM_FPD   alle Semaphoren fuer <pd> freigeben
 *              a0 = PD *
 *
 
@@ -1246,7 +1248,7 @@ evstab:
 * case 0 (SEM_FREE):
 
 evs_free:
- cmpa.l   bl_app(a0),a1       ; bin ich überhaupt Eigner ?
+ cmpa.l   bl_app(a0),a1       ; bin ich ueberhaupt Eigner ?
  bne      evs_err             ; nein, Fehler
  bsr      free_semaphore      ; Semaphore freigeben
  moveq    #0,d0
@@ -1260,7 +1262,7 @@ evs_set:
  cmpa.l   d2,a1               ; bin ich schon Eigner ?
  beq      evs_err             ; ja, Fehler
  move.l   bl_waiting(a0),ap_nxtsem(a1)
- move.l   a1,bl_waiting(a0)   ; vorn einhängen
+ move.l   a1,bl_waiting(a0)   ; vorn einhaengen
  move.l   a0,ap_semaph(a1)    ; zur Info
 
  move.l   d1,d0               ; mit TimeOut ?
@@ -1283,9 +1285,9 @@ evs_notim:
  bsr      appl_wait
  move.l   act_appl,a0
 evs_tstdel:
- tst.l    ap_semaph(a0)       ; Semaphore noch gültig ?
+ tst.l    ap_semaph(a0)       ; Semaphore noch gueltig ?
  bne.b    evs_ok              ; ja!
- moveq    #-2,d0              ; Semaphore zwischenzeitlich gelöscht
+ moveq    #-2,d0              ; Semaphore zwischenzeitlich geloescht
  rts
 evs_s1:
  move.l   a1,bl_app(a0)
@@ -1341,7 +1343,7 @@ evc_eloop:
  clr.l    bl_next(a0)
  clr.l    bl_app(a0)
  clr.l    bl_waiting(a0)
- clr.w    bl_cnt(a0)          ; nur für _SCR von Bedeutung
+ clr.w    bl_cnt(a0)          ; nur fuer _SCR von Bedeutung
  move.l   a0,bl_next(a1)
  rts
 
@@ -1349,7 +1351,7 @@ evc_eloop:
 
 evs_del:
  move.l   bl_app(a0),d2
- beq.b    evd_weiter          ; unbenutzt, kann gelöscht werden
+ beq.b    evd_weiter          ; unbenutzt, kann geloescht werden
  cmpa.l   d2,a1               ; bin ich Eigner ?
  bne      evs_err             ; nein, Fehler
 evd_weiter:
@@ -1379,7 +1381,7 @@ evsp_loop:
  beq.b    evsp_nxt            ; nein
  cmpa.l   bl_pd(a6),a5        ; unser PD ?
  bne.b    evsp_nxt            ; nein
- clr.w    bl_cnt(a6)          ; Verschachtelungszähler auf 0 (wind_update!)
+ clr.w    bl_cnt(a6)          ; Verschachtelungszaehler auf 0 (wind_update!)
  move.l   a6,a0
  bsr      free_semaphore      ; Semaphore freigeben
 evsp_nxt:
@@ -1421,7 +1423,7 @@ evs_err:
 * BEG_MCTRL    3
 *
 * "check and set" mode per (n || 0x100)
-* Rückgabe: 0 (Bildschirm nicht bekommen, bei BEG_UPDATE||0x100
+* Rueckgabe: 0 (Bildschirm nicht bekommen, bei BEG_UPDATE||0x100
 *           1 sonst
 *
 
@@ -1445,17 +1447,17 @@ _wind_update:
  move.w   d0,d1                    ; Hibyte merken
  move.l   act_appl,a1
 ;lea      upd_blockage,a0
- bsr      _beg_update              ; verändert nur d0
+ bsr      _beg_update              ; veraendert nur d0
 ;                                  ; sind wir die sperrende Applikation ?
  bne.b    wu_ende                  ; ja, alles ok, d.h. return(1)
  andi.w   #$100,d1
  bne.b    wu_err                   ; wir haben nicht die Kontrolle
                                    ; wir werden VORNE in die Liste der
                                    ; auf die Update- Semaphore wartenden
-                                   ; APPLs gehängt
+                                   ; APPLs gehaengt
 ;lea      upd_blockage,a0
  move.l   bl_waiting(a0),ap_nxtsem(a1)
- move.l   a1,bl_waiting(a0)        ; einhängen
+ move.l   a1,bl_waiting(a0)        ; einhaengen
  move.l   a0,ap_semaph(a1)         ; zur Info
  moveq    #EV_SEM,d0
 ;move.l   a1,a1
@@ -1472,18 +1474,18 @@ wu_err:
 *
 * EQ/NE int _beg_update(a0 = BLOCKAGE *b, a1 = APPL *act_appl)
 *
-* Gibt eine 1 zurück, wenn wir die sperrende Applikation sind, ansonsten
+* Gibt eine 1 zurueck, wenn wir die sperrende Applikation sind, ansonsten
 * eine 0 (wenn wir gesperrt sind).
-* Verändert nur d0
+* Veraendert nur d0
 *
 
 _beg_update:
- addq.w   #1,(a0)                  ; Zähler inkrementieren
+ addq.w   #1,(a0)                  ; Zaehler inkrementieren
  cmp.l    bl_app(a0),a1            ; ist es unsere Semaphore ?
  beq.b    _begu_ok                 ; ja, return(1)
- cmpi.w   #1,(a0)                  ; nein, war Zähler vorher 0 ?
+ cmpi.w   #1,(a0)                  ; nein, war Zaehler vorher 0 ?
  beq.b    _begu_set                ; ja, unsere Applikation setzen, return(1)
- subq.w   #1,(a0)                  ; Zähler wieder dekrementieren
+ subq.w   #1,(a0)                  ; Zaehler wieder dekrementieren
  moveq    #0,d0                    ; return(0)
  rts
 _begu_set:
@@ -1502,13 +1504,13 @@ _begu_ok:
 *           APPL    *ap
 *           APPL    *ap_waiting
 *
-* für wind_update(END_UPDATE)
+* fuer wind_update(END_UPDATE)
 *
 
 end_update:
- tst.w    (a0)                     ; Zähler auf 0 oder kleiner
+ tst.w    (a0)                     ; Zaehler auf 0 oder kleiner
  ble.b    eupd_err                 ; ja, Fehler
- subq.w   #1,(a0)                  ; Zähler dekrementieren
+ subq.w   #1,(a0)                  ; Zaehler dekrementieren
  bne.b    eupd_ok                  ; noch nicht 0
  bsr      free_semaphore
  bsr      appl_yield
@@ -1516,7 +1518,7 @@ eupd_ok:
  moveq    #1,d0                    ; kein Fehler
  rts
 eupd_err:
- moveq    #0,d0                    ; Fehler, Zähler schon 0
+ moveq    #0,d0                    ; Fehler, Zaehler schon 0
  rts
 
 
@@ -1524,19 +1526,19 @@ eupd_err:
 *
 * void free_semaphore(a0 = BLOCKAGE *b)
 *
-* gibt eine Semaphore frei und erhebt die am längsten darauf wartende
+* gibt eine Semaphore frei und erhebt die am laengsten darauf wartende
 * Applikation in den Ready- Zustand.
-* Es wird KEIN Taskwechsel durchgeführt.
+* Es wird KEIN Taskwechsel durchgefuehrt.
 *
 
 free_semaphore:
  lea      bl_waiting(a0),a2
  move.l   (a2),d0
  beq.b    fsem_free                ; keine Applikation
- move.l   d0,a1                    ; die zuletzt hängengebliebene APPL liegt
+ move.l   d0,a1                    ; die zuletzt haengengebliebene APPL liegt
                                    ; VORN in der Doppelliste, daher die
                                    ; letzte APPL freigeben, das ist die, die
-                                   ; am längsten wartet (MagiX!!)
+                                   ; am laengsten wartet (MagiX!!)
 fsem_loop:
  move.l   ap_nxtsem(a1),d0
  beq.b    fsem_makeready
@@ -1544,16 +1546,16 @@ fsem_loop:
  move.l   d0,a1
  bra.b    fsem_loop
 fsem_makeready:
- clr.l    (a2)                     ; letzte APP aushängen
+ clr.l    (a2)                     ; letzte APP aushaengen
  move.l   a1,bl_app(a0)            ; ev_appl umsetzen
  move.l   ap_pd(a1),bl_pd(a0)      ; !neu!
- move.w   #1,(a0)                  ; Zähler auf 1
+ move.w   #1,(a0)                  ; Zaehler auf 1
 
  moveq    #EV_SEM,d0               ; eingetroffen
  move.l   a1,a0
  bra      event_happened           ; gesperrte APPL freigeben
 fsem_free:
- clr.l    bl_app(a0)               ; keine zugehörige Applikation
+ clr.l    bl_app(a0)               ; keine zugehoerige Applikation
  rts
 
 
@@ -1561,11 +1563,11 @@ fsem_free:
 *
 * void destroy_semaphore(a0 = BLOCKAGE *b)
 *
-* gibt eine Semaphore völlig frei und erhebt alle wartenden
-* Applikationen in den Ready- Zustand. Die Einträge ap_semaph werden
-* gelöscht, um zu signalisieren, daß die Semaphore ungültig ist.
-* Nur Psemaphore kümmert sich um den Rückgabewert.
-* Es wird KEIN Taskwechsel durchgeführt.
+* gibt eine Semaphore voellig frei und erhebt alle wartenden
+* Applikationen in den Ready- Zustand. Die Eintraege ap_semaph werden
+* geloescht, um zu signalisieren, dass die Semaphore ungueltig ist.
+* Nur Psemaphore kuemmert sich um den Rueckgabewert.
+* Es wird KEIN Taskwechsel durchgefuehrt.
 *
 
 destroy_semaphore:
@@ -1592,15 +1594,15 @@ dsem_nxt:
 *
 
 read_keybuf:
- subq.w   #1,ap_kbcnt(a0)          ; Füllzähler dekrementieren
+ subq.w   #1,ap_kbcnt(a0)          ; Fuellzaehler dekrementieren
  lea      ap_kbhead(a0),a1
  move.w   (a1),d0                  ; Leseposition
- addq.w   #1,(a1)                  ; kb_head erhöhen
+ addq.w   #1,(a1)                  ; kb_head erhoehen
  cmpi.w   #8,(a1)
  bne.b    rkb_nowrap
- clr.w    (a1)                     ; zyklisch erhöhen
+ clr.w    (a1)                     ; zyklisch erhoehen
 rkb_nowrap:
- add.w    d0,d0                    ; für int
+ add.w    d0,d0                    ; fuer int
  move.w   ap_kbbuf(a0,d0.w),d0     ; Zeichen holen
  rts
 
@@ -1662,21 +1664,21 @@ write_key:
  bcc.b    wrky_ende                ; ja, Ende
  lea      ap_kbtail(a0),a1
  move.w   (a1),d1                  ; kb_tail
- add.w    d1,d1                    ; * 2 für Wortzugriff
+ add.w    d1,d1                    ; * 2 fuer Wortzugriff
  move.w   d0,ap_kbbuf(a0,d1.w)     ; Taste eintragen
- addq.w   #1,(a1)                  ; kb_tail erhöhen
+ addq.w   #1,(a1)                  ; kb_tail erhoehen
  cmpi.w   #8,(a1)                  ; zyklisch ?
  bne.b    wrky_nowrap
  clr.w    (a1)                     ; ja, zyklisch inkrementieren
 wrky_nowrap:
- addq.w   #1,ap_kbcnt(a0)          ; Anzahl Zeichen im Puffer erhöht
+ addq.w   #1,ap_kbcnt(a0)          ; Anzahl Zeichen im Puffer erhoeht
  btst     #EVB_KEY,ap_rbits+1(a0)  ; warte auf Zeichen ?
  beq.b    wrky_ende                ; nein
  btst     #EVB_KEY,ap_hbits+1(a0)  ; schon eingetroffen ?
  bne.b    wrky_ende                ; ja
 ;move.l   a0,a0
  moveq    #EV_KEY,d0
- bra      event_happened           ; Status prüfen
+ bra      event_happened           ; Status pruefen
 wrky_ende:
  rts
 
@@ -1695,21 +1697,21 @@ handle_but:
  beq      hdb_send                 ; ja
 
  move.w   gr_mkmstate,d0           ; bisheriger Zustand der Maustasten
- not.w    d0                       ; alte Bits löschen
+ not.w    d0                       ; alte Bits loeschen
  and.w    4(sp),d0                 ; nur neue Maustasten behalten
- beq      hdb_send                 ; keine Maustaste wurde niedergedrückt
+ beq      hdb_send                 ; keine Maustaste wurde niedergedrueckt
 
 /*
 ;alte Version:
- cmpi.w   #1,4(sp)                 ; nur linke Taste gedrückt ?
+ cmpi.w   #1,4(sp)                 ; nur linke Taste gedrueckt ?
  bne      hdb_send                 ; nein
- tst.w    gr_mkmstate              ; war vorher keine Taste gedrückt ?
+ tst.w    gr_mkmstate              ; war vorher keine Taste gedrueckt ?
  bne      hdb_send                 ; doch
 */
 
 * Nicht der Screenmanager bekommt den Klick
-* Der Status wechselte von "keine Maustaste gedrückt" nach
-* "linke Maustaste gedrückt"
+* Der Status wechselte von "keine Maustaste gedrueckt" nach
+* "linke Maustaste gedrueckt"
 
 * Mausklick ins oberste Fenster ?
 
@@ -1720,16 +1722,16 @@ handle_but:
  beq.b    hdb_notop                ; nein, weiter
  move.l   topwind_app,a0           ; Applikation des obersten Fensters
  move.l   a0,d0
- bne      hdb_send                 ; ist gültig
+ bne      hdb_send                 ; ist gueltig
 
-* Mausklick in der Menüzeile ?
+* Mausklick in der Menuezeile ?
 
 hdb_notop:
      IF   MACOS_SUPPORT
  lea      menubar_grect,a0
  move.w   gr_mkmy,d1
  move.w   gr_mkmx,d0
- jsr      xy_in_grect              ; Maus in der Menüzeile ?
+ jsr      xy_in_grect              ; Maus in der Menuezeile ?
  beq      hdb_mennor               ; nein
  move.l   menutree,d0
  beq      hdb_scrnm                ; Klick an SCRENMGR
@@ -1737,13 +1739,13 @@ hdb_notop:
  cmpi.w   #G_IBOX,24+ob_type(a0)
  bne      hdb_scrnm                ; Klick an SCRENMGR
  move.l   menu_app,a0
- bra      hdb_send                 ; Mac-Menü: Klick an Applikation
+ bra      hdb_send                 ; Mac-Menue: Klick an Applikation
 hdb_mennor:
      ELSE
  lea      menubar_grect,a0
  move.w   gr_mkmy,d1
  move.w   gr_mkmx,d0
- jsr      xy_in_grect              ; Maus in der Menüzeile ?
+ jsr      xy_in_grect              ; Maus in der Menuezeile ?
  bne      hdb_scrnm                ; ja, Klick an SCRENMGR
      ENDIF
 
@@ -1787,7 +1789,7 @@ hdb_nol:
  move.w   gr_mkmx,d0
  jsr      xy_in_grect              ; Mausklick in den Arbeitsbereich ?
 
- move.l   (sp)+,a0                 ; WINDOW zurück
+ move.l   (sp)+,a0                 ; WINDOW zurueck
  bne.b    hdb_send_owner           ; Mausklick an besitzende Applikation
 
 * Kein Klick in den Arbeitsbereich.
@@ -1795,7 +1797,7 @@ hdb_nol:
 
  btst     #WATTR_INFOEVENT_B,w_attr+1(a0)
  beq.b    hdb_scrnm
- tst.w    w_tree+O_INFO*24+ob_next(a0)  ; INFO gültig ?
+ tst.w    w_tree+O_INFO*24+ob_next(a0)  ; INFO gueltig ?
  bmi.b    hdb_scrnm                     ; nein!
  move.l   a0,-(sp)                 ; WINDOW merken
 
@@ -1812,7 +1814,7 @@ hdb_nol:
  jsr      xy_in_grect              ; Mausklick in den INFO-Bereich ?
 
  addq.l   #8,sp
- move.l   (sp)+,a0                 ; WINDOW zurück
+ move.l   (sp)+,a0                 ; WINDOW zurueck
  bne.b    hdb_send_owner           ; Mausklick an besitzende Applikation
 
 * Der Screenmanager bekommt den Klick
@@ -1843,7 +1845,7 @@ hdb_send:
 *
 * bstate_match(int bstate, long but)
 *
-* Prüft einen Mauszustand anhand eines Buttoncodes
+* Prueft einen Mauszustand anhand eines Buttoncodes
 *
 * but: Bits 31..24: 0:normal 1:Match invertieren
 *      Bits 23..16: Anzahl Klicks
@@ -1903,7 +1905,7 @@ send_click:
  move.w   d0,ap_evbut+2(a0)        ; mask und state setzen
  cmpi.b   #1,ap_evbut+1(a0)        ; wurde auf Mehrfachklicks gewartet ?
  bls.b    sc_nom                   ; nein
- subq.w   #1,mcl_in_events         ; ja, Zähler dekrementieren
+ subq.w   #1,mcl_in_events         ; ja, Zaehler dekrementieren
 sc_nom:
  cmp.b    ap_evbut+1(a0),d1
  bhi.b    sc_ok
@@ -1938,7 +1940,7 @@ handle_mov:
  neg.w    d1                       ; Absolutwert der Differenz
 hm_pl1:
  subq.w   #2,d1
- bhi.b    hm_dcl_clr               ; Maus um > 2 bewegt => Doppelklick löschen
+ bhi.b    hm_dcl_clr               ; Maus um > 2 bewegt => Doppelklick loeschen
  move.w   gr_mkmy,d1               ; Y alt
  sub.w    2(sp),d1                 ; - Y aktuell
  bge.b    hm_pl2
@@ -1947,7 +1949,7 @@ hm_pl2:
  subq.w   #2,d1
  bls.b    hm_dcl_ok
 hm_dcl_clr:
-;move.w   d0,d0                    ; mcl_timer, Doppelklick löschen
+;move.w   d0,d0                    ; mcl_timer, Doppelklick loeschen
  jsr      mclick_countdown
 hm_dcl_ok:
  move.l   (sp)+,gr_mkmx            ; Int -> AES-Variablen
@@ -1978,28 +1980,28 @@ hm_dcl_ok:
 
 
 hm_no_aptp:
- tst.w    gr_mkmstate              ; Maustaste gedrückt ?
+ tst.w    gr_mkmstate              ; Maustaste gedrueckt ?
  bne.b    hm_send                  ; ja,  weiter
  tst.w    beg_mctrl_cnt            ; Umschaltung gesperrt ?
  bne.b    hm_send                  ; ja,  weiter
-* keine Maustaste gedrückt
- tst.l    menutree                 ; Menü angemeldet ?
+* keine Maustaste gedrueckt
+ tst.l    menutree                 ; Menue angemeldet ?
  beq.b    hm_send                  ; nein, weiter
  btst     #2,config_status+2.w     ; Bit 10, pulldown menus
  bne.b    hm_send                  ; ja, weiter
      IF   MACOS_SUPPORT
  move.l   menutree,a0
  cmpi.w   #G_IBOX,24+ob_type(a0)
- beq.b    hm_send                  ; Mac-Menü!
+ beq.b    hm_send                  ; Mac-Menue!
      ENDIF
  lea      scmgr_mm+2,a0
  move.w   gr_mkmy,d1
  move.w   gr_mkmx,d0
  jsr      xy_in_grect
- cmp.w    scmgr_mm,d0              ; gewünschtes Ergebnis ?
+ cmp.w    scmgr_mm,d0              ; gewuenschtes Ergebnis ?
  beq.b    hm_send                  ; nein
  move.l   applx+4,a0
- bsr      set_mouse_app            ; SCRENMGR übernimmt Mauskontrolle
+ bsr      set_mouse_app            ; SCRENMGR uebernimmt Mauskontrolle
 hm_send:
 
  move.w   gr_mkmy,d1
@@ -2115,7 +2117,7 @@ rw_ap_buf:
  lea      ap_buf(a5),a3            ; ap_buf
  adda.w   ap_len(a5),a3            ; ap_buf+ap_len
  move.l   a3,a0                    ; Ziel = Ende des Puffers
- jsr      memcpy                   ; ändert nicht d2 !
+ jsr      vmemcpy                   ; aendert nicht d2 !
 * a3 = Zeiger auf unsere kopierte Nachricht
  subq.b   #2,d2                    ; Nachricht verschmelzen ?
  beq.b    scan_msgs                ; ja!
@@ -2141,13 +2143,13 @@ scan_msgs:
 scan_loop:
  lea      ap_buf(a5,d6.w),a4       ; a4 auf Message
  move.w   (a4),d0                  ; d0 = Nachrichtencode
- cmp.w    (a3),d0                  ;  stimmt mit neuer Nachricht überein?
- bne      rwap_l2                  ;   nein, nächste Nachricht
+ cmp.w    (a3),d0                  ;  stimmt mit neuer Nachricht ueberein?
+ bne      rwap_l2                  ;   nein, naechste Nachricht
  cmpi.w   #WM_REDRAW,d0
  beq.b    rab_redraw
 
 * WM_ARROWED, WM_HSLID, WM_VSLID, WM_ONTOP
-* alte Nachricht einfach überschreiben und Ende
+* alte Nachricht einfach ueberschreiben und Ende
 rab_overwr:
  move.l   (a3)+,(a4)+
  move.l   (a3)+,(a4)+
@@ -2161,20 +2163,20 @@ rab_redraw:
  cmp.w    6(a4),d0
  bne.b    rwap_l2
 * WM_REDRAW und Handles identisch (dasselbe Fenster):
-* Message merken und Anzahl mitzählen
+* Message merken und Anzahl mitzaehlen
  cmpi.w   #2,d5
  bge.b    scanloop_end
  move.w   d5,d0
  add.w    d0,d0
- add.w    d0,d0                    ; für Langwortzugriff
+ add.w    d0,d0                    ; fuer Langwortzugriff
  lea      (sp),a0
  move.l   a4,0(a0,d0.w)            ; REDRAW- Message merken
- addq.w   #1,d5                    ; Zähler erhöhen
+ addq.w   #1,d5                    ; Zaehler erhoehen
 
-* d6 zeigt auf die nächste Nachricht
+* d6 zeigt auf die naechste Nachricht
 rwap_l2:
  moveq    #$10,d0
- cmpi.w   #$ffff,4(a4)             ; Überlänge == -1 ?
+ cmpi.w   #$ffff,4(a4)             ; Ueberlaenge == -1 ?
  beq.b    rwap_l3
  add.w    4(a4),d0
 rwap_l3:
@@ -2184,10 +2186,10 @@ rwap_l1:
  bcs.b    scan_loop                ; noch nicht Puffer- Ende
 
 scanloop_end:
- tst.w    d5                       ; zusätzliche GRECTS ?
+ tst.w    d5                       ; zusaetzliche GRECTS ?
  beq.b    rwap_wr_ready            ; nein, ok
 
-* Wir haben schon Redraw- Rechtecke. Prüfen, ob verschmelzen usw.
+* Wir haben schon Redraw- Rechtecke. Pruefen, ob verschmelzen usw.
 
  lea      (sp),a4
  cmpi.w   #2,d5
@@ -2207,7 +2209,7 @@ scanloop_end:
  jsr      grects_union
 
  moveq    #$10,d0
- add.l    (a4),d0                  ; d0 aufs Ende der zu löschenden Msg.
+ add.l    (a4),d0                  ; d0 aufs Ende der zu loeschenden Msg.
  move.w   ap_len(a5),d1
  lea      ap_buf(a5,d1.w),a0
  move.l   a0,d1                    ; d1 aufs Ende des Puffers
@@ -2216,38 +2218,38 @@ scanloop_end:
  move.l   d0,a1                    ; Quelle
  move.w   d1,d0                    ; Anzahl Bytes
  move.l   (a4),a0
- jsr      memcpy
+ jsr      vmemcpy
 cfertig:
  moveq    #-$10,d7                 ; Puffer um 16 verkleinert
  bra.b    rwap_wr_ready
 
 * Wir haben erst ein Rechteck, also insgesamt jetzt 2
-* Wenn sie sich nicht überlappen, sind wir fertig
+* Wenn sie sich nicht ueberlappen, sind wir fertig
 rwap_weiter:
- addq.l   #8,(a4)                  ; Offset fürs GRECT in der Message
- addq.l   #8,a3                    ; Offset fürs GRECT in der neuen Message
+ addq.l   #8,(a4)                  ; Offset fuers GRECT in der Message
+ addq.l   #8,a3                    ; Offset fuers GRECT in der neuen Message
  btst     #6,config_status+3.w
  bne.b    rwap_nosmart             ; Smart Redraw OFF
 
  lea      8(sp),a0
  move.l   a0,a1
  move.l   (a3),(a0)+
- move.l   4(a3),(a0)               ; neues Rechteck in temporären Puffer
+ move.l   4(a3),(a0)               ; neues Rechteck in temporaeren Puffer
  move.l   (a4),a0
  jsr      grects_intersect
 
  tst.w    d0
  beq.b    rwap_wr_ready                  ; kein Schnitt => fertig
-* wir haben zwei Rechtecke, die sich überlappen, also verschmelzen
+* wir haben zwei Rechtecke, die sich ueberlappen, also verschmelzen
 rwap_nosmart:
  move.l   (a4),a1
  move.l   a3,a0
  jsr      grects_union
 
- moveq    #0,d7                    ; Pufferlänge nicht verändert
+ moveq    #0,d7                    ; Pufferlaenge nicht veraendert
 
 rwap_wr_ready:
- add.w    d7,ap_len(a5)            ; Pufferoffset erhöhen
+ add.w    d7,ap_len(a5)            ; Pufferoffset erhoehen
  bra.b    rwap_end
 
 * lesen vom Pufferanfang
@@ -2255,7 +2257,7 @@ rwap_read:
  move.w   d7,d0
  lea      ap_buf(a5),a1
  move.l   a3,a0
- jsr      memcpy
+ jsr      vmemcpy
 
  sub.w    d7,ap_len(a5)
  move.w   ap_len(a5),d0
@@ -2264,7 +2266,7 @@ rwap_read:
 ;move.w   d0,d0
  lea      ap_buf(a5,d7.w),a1       ; Quelle
  lea      ap_buf(a5),a0            ; Ziel
- jsr      memcpy
+ jsr      vmemcpy
 
 rwap_end:
  adda.w   #16,sp
@@ -2276,31 +2278,31 @@ rwap_end:
 **********************************************************************
 **********************************************************************
 *
-* Interruptroutinen, die in den Vektoren des VDI hängen
+* Interruptroutinen, die in den Vektoren des VDI haengen
 *
 
 * Mausbutton- Interrupt
 
 but_int:
  movem.l  d0/d1/d2/a0/a1/a2,-(sp)
- cmp.w    int_butstate,d0          ; Hat sich Zustand geändert ?
+ cmp.w    int_butstate,d0          ; Hat sich Zustand geaendert ?
  beq.b    but_int_ignore           ; nein, Ende
  tst.w    mcl_timer                ; warte ich auf einen (n+1)-ten Klick ?
  beq.b    but_int_1st              ; nein
  cmp.w    mcl_bstate,d0            ; gleicher Status wie beim 1. Klick ?
  bne.b    but_int_store            ; nein, vergessen
- addq.w   #1,mcl_count             ; Zähler für Mehrfachklicks erhöhen
- addq.w   #3,mcl_timer             ; Zeitintervall für weitere Klicks erhöhen
- bra.b    but_int_store            ; Klick noch nicht übermitteln
+ addq.w   #1,mcl_count             ; Zaehler fuer Mehrfachklicks erhoehen
+ addq.w   #3,mcl_timer             ; Zeitintervall fuer weitere Klicks erhoehen
+ bra.b    but_int_store            ; Klick noch nicht uebermitteln
 * Vorher kam kein Klick, dies ist kein 2ter eines vorherigen Klick
 but_int_1st:
  tst.w    mcl_in_events            ; warte ich auf mehrfach- Klicks ?
  beq.b    but_int_send1            ; nein
- tst.w    d0                       ; ist überhaupt geklickt worden ?
+ tst.w    d0                       ; ist ueberhaupt geklickt worden ?
  beq.b    but_int_send1            ; nein
- move.w   #1,mcl_count             ; Zähler für Mehrfachklicks auf 1
+ move.w   #1,mcl_count             ; Zaehler fuer Mehrfachklicks auf 1
  move.w   d0,mcl_bstate            ; Status des Mehrfachklicks
- move.w   dclick_clicks,mcl_timer  ; Zeitintervall für weitere Klicks
+ move.w   dclick_clicks,mcl_timer  ; Zeitintervall fuer weitere Klicks
  bra.b    but_int_store            ; schicke noch keinen Klick
 * schicke einen Einfachklick
 but_int_send1:
@@ -2310,12 +2312,12 @@ but_int_send1:
  pea      handle_but(pc)
  jsr      write_evnt_to_ringbuf
  addq.l   #8,sp
- tst.w    d0                       ; Überlauf des Ringpuffers ?
+ tst.w    d0                       ; Ueberlauf des Ringpuffers ?
  bne.b    but_int_ok               ; nein, OK
- tst.w    int_but_dirty            ; Überlauf schon gemerkt ?
+ tst.w    int_but_dirty            ; Ueberlauf schon gemerkt ?
  bne.b    but_int_ok               ; ja!
- st.b     int_but_dirty            ; merken, daß Maustastenstatus kaputt
- addq.w   #1,iocpbuf_cnt           ; merken, daß was passiert ist
+ st.b     int_but_dirty            ; merken, dass Maustastenstatus kaputt
+ addq.w   #1,iocpbuf_cnt           ; merken, dass was passiert ist
 but_int_ok:
  move.w   (sp)+,d0
 but_int_store:
@@ -2350,7 +2352,7 @@ draw_int:
 *
 * Erledigt die Timer-Ereignisse.
 * Erledigt den Doppelklick.
-* MagiC 3.0: Überprüfung auf Stacküberlauf der act_appl
+* MagiC 3.0: Ueberpruefung auf Stackueberlauf der act_appl
 *
 
 timer_int:
@@ -2373,7 +2375,7 @@ ti_int_n:
  addq.l   #8,sp
  tst.w    d0                            ; Puffer voll ?
  bne.b    ti_int_weiter                 ; nein
- addq.l   #1,timer_cntdown              ; Ereignis verzögern
+ addq.l   #1,timer_cntdown              ; Ereignis verzoegern
 ti_int_weiter:
 
  tst.l    alrm_cntdown
@@ -2387,7 +2389,7 @@ ti_int_weiter:
  addq.l   #8,sp
  tst.w    d0                            ; Puffer voll ?
  bne.b    ti_int_weiter2                ; nein
- addq.l   #1,alrm_cntdown               ; Ereignis verzögern
+ addq.l   #1,alrm_cntdown               ; Ereignis verzoegern
 ti_int_weiter2:
 
  moveq    #1,d0
@@ -2405,7 +2407,7 @@ err_stkovl:
 *
 
 mclick_countdown:
- tst.w    mcl_timer                ; Läuft Doppelklick ?
+ tst.w    mcl_timer                ; Laeuft Doppelklick ?
  beq.b    mccd_ende                ; nein
  sub.w    d0,mcl_timer             ; Countdown
  bne.b    mccd_ende                ; noch nicht 0
@@ -2414,7 +2416,7 @@ mclick_countdown:
  pea      handle_but(pc)
  jsr      write_evnt_to_ringbuf    ; in den Ringpuffer schreiben
  addq.l   #8,sp
- move.w   int_butstate,d0          ; gegenwärtiger Zustand
+ move.w   int_butstate,d0          ; gegenwaertiger Zustand
  cmp.w    mcl_bstate,d0            ; wie zu Beginn des Doppelklicks ?
  beq.b    mccd_ende                ; ja
  move.w   #1,-(sp)                 ; Einfachklick
@@ -2430,12 +2432,12 @@ mccd_ende:
 *
 * void warmb_hdl( void )
 *
-* Handler für Ctrl-Alt-Del
+* Handler fuer Ctrl-Alt-Del
 *
 
 warmb_hdl:
  st       was_warmboot
- addq.w   #1,iocpbuf_cnt           ; merken, daß was passiert ist
+ addq.w   #1,iocpbuf_cnt           ; merken, dass was passiert ist
  rts
 
 
@@ -2563,7 +2565,7 @@ aptr_loop1:
  moveq    #100,d0
  bsr      _evnt_timer              ; 0.1 s warten
 aptr_loop_cont1:
- tst.w    aptr_flag                ; muß noch gelesen werden ?
+ tst.w    aptr_flag                ; muss noch gelesen werden ?
  bne.b    aptr_loop1               ; ja
 
  move.w   sr,d1
@@ -2572,12 +2574,12 @@ aptr_loop_cont1:
  clr.w    aptr_count               ; Counter auf 0
  move.l   aptr_buf,d6              ; mem
  sub.l    a5,d6                    ; minus Anfangswert
- divs     #8,d6                    ; Anzahl Einträge
- clr.l    aptr_buf                 ; mem löschen
+ divs     #8,d6                    ; Anzahl Eintraege
+ clr.l    aptr_buf                 ; mem loeschen
  move.w   d1,sr                    ; enable_interrupt
 
-* alle Einträge durchlaufen
-* Achtung: läuft nicht mit handle_spec !
+* alle Eintraege durchlaufen
+* Achtung: laeuft nicht mit handle_spec !
 
  clr.w    d5
  bra.b    aptr_loop_cont2
@@ -2597,8 +2599,8 @@ aptr_l2:
  moveq    #1,d4                    ; war Buttonereignis
 aptr_l3:
  move.l   d4,(a5)                  ; Code statt Behandlungsroutine
- addq.l   #8,a5                    ; Pointer erhöhen
- addq.w   #1,d5                    ; Zähler erhöhen
+ addq.l   #8,a5                    ; Pointer erhoehen
+ addq.w   #1,d5                    ; Zaehler erhoehen
 aptr_loop_cont2:
  cmp.w    d6,d5
  blt.b    aptr_loop2
@@ -2611,7 +2613,7 @@ aptr_loop_cont2:
 *
 * void get_ev_xy_bkstate(a0 = int *out)
 *
-* ändert nur a0
+* aendert nur a0
 *
 
 get_ev_xy_bkstate:
@@ -2636,7 +2638,7 @@ gexy_n0:
 *
 
 appl_wait:
- move.l   d0,ap_hbits(a1)          ; ap_hbits werden gelöscht
+ move.l   d0,ap_hbits(a1)          ; ap_hbits werden geloescht
  move.b   #APSTAT_WAITING,ap_status(a1)
  bsr      appl_yield
  clr.w    ap_rbits(a1)             ; ich warte nicht mehr
@@ -2670,7 +2672,7 @@ evk_wait:
 *      Bits  8..15: mask
 *      Bits  0..7:  state
 *
-* Rückgabe: Anzahl der aufgetretenen Klicks
+* Rueckgabe: Anzahl der aufgetretenen Klicks
 *           ret[0] = x
 *           ret[1] = y
 *           ret[2] = bstate bei Event
@@ -2708,9 +2710,9 @@ evb_nomulti:
 ;move.l   a1,a1
  bsr      appl_wait
  move.l   a3,a0
- bsr      get_ev_xy_bkstate        ; ändert nur a0
- moveq    #0,d0                    ; Hibyte löschen
- move.b   ap_evbut+3(a1),d0        ; Auslösender Zustand
+ bsr      get_ev_xy_bkstate        ; aendert nur a0
+ moveq    #0,d0                    ; Hibyte loeschen
+ move.b   ap_evbut+3(a1),d0        ; Ausloesender Zustand
  move.w   d0,4(a3)                 ; Hiword (Button) nach out[2]
  move.b   ap_evbut+1(a1),d0        ; Anzahl Klicks
  movem.l  (sp)+,a3/d7
@@ -2721,12 +2723,12 @@ evb_nomulti:
 *
 * int evnt_mouse(a0 = int in[], a1 = int ret[])
 *
-* Eingabe:  in[0]  = flag für Betreten (0) oder Verlassen (1)
+* Eingabe:  in[0]  = flag fuer Betreten (0) oder Verlassen (1)
 *           in[1]  = x
 *           in[2]  = y
 *           in[3]  = w
 *           in[4]  = h
-* Rückgabe: ???
+* Rueckgabe: ???
 *           out[0] = x
 *           out[1] = y                       (wie bei
 *           out[2] = bstate bei Event         evnt_button)
@@ -2742,7 +2744,7 @@ evnt_mouse:
  move.w   gr_mkmy,d1
  move.w   gr_mkmx,d0
  jsr      xy_in_grect              ; gerade eingetroffen ?
- cmp.w    (a4),d0                  ; gewünschtes Ergebnis
+ cmp.w    (a4),d0                  ; gewuenschtes Ergebnis
  bne.b    evm_ende                 ; ja
 * Das Mausrechteck ist nicht gerade aktiv
  move.l   act_appl,a1
@@ -2801,10 +2803,10 @@ evmx_ok:
 *
 * LONG evnt_fork( a0 = PD *waitforchild )
 *
-* MagiC 6.10: Für P(v)fork()
+* MagiC 6.10: Fuer P(v)fork()
 *
 * Nachdem wir aus dem Wartezustand aufgeweckt worden sind, finden
-* wir in ap_evparm die PID des terminierten bzw. überladenen
+* wir in ap_evparm die PID des terminierten bzw. ueberladenen
 * Kindprozesses vor, durch dessen Pterm() bzw. Pexec(200) wir
 * aufgeweckt worden sind.
 *
@@ -2823,22 +2825,22 @@ evnt_fork:
 *
 * void hap_fork( PD *pd )
 *
-* Ein Ereignis "Prozeß ist terminiert" bzw. "Prozeß wurde überladen"
+* Ein Ereignis "Prozess ist terminiert" bzw. "Prozess wurde ueberladen"
 * ist eingetroffen. Wecke ggf. den parent auf, wenn er auf
 * ein P(v)fork() wartet.
 *
 
 hap_fork:
- move.l   a0,a1                    ; a1 = terminierter bzw. überladener PD
+ move.l   a0,a1                    ; a1 = terminierter bzw. ueberladener PD
  move.l   p_parent(a1),d1          ; parent (PD *)
  beq.b    hpfrk_ok                 ; Habe keinen Parent
  move.l   d1,a0                    ; a0 = parent (ggf. wartender PD)
  move.l   p_app(a1),d0             ; APP, die mich gestartet hat
                                    ;  (ist immer == act_appl)
- beq.b    hpfrk_ok                 ; ist ungültig (??)
+ beq.b    hpfrk_ok                 ; ist ungueltig (??)
  move.l   d0,a2                    ; a2 = APP des terminierten PD
  move.w   ap_parent(a2),d0         ; sein parent-APP
- bmi.b    hpfrk_ok                 ; ?!? parent-APP ist ungültig
+ bmi.b    hpfrk_ok                 ; ?!? parent-APP ist ungueltig
  add.w    d0,d0
  add.w    d0,d0
  lea      applx,a2
@@ -2865,12 +2867,12 @@ hpfrk_ok:
 *
 * void * evnt_pid( WORD pid )
 *
-* MagiC 5.04: Für Pwaitpid()
+* MagiC 5.04: Fuer Pwaitpid()
 *
 * Terminierte Kinder sind hier schon vom DOS gesucht und nicht
-* gefunden worden. Es ist auch schon sichergestellt, daß wir noch
-* Kinder haben, auf die wir warten. Wir müssen also in den
-* Wartezustand übergehen.
+* gefunden worden. Es ist auch schon sichergestellt, dass wir noch
+* Kinder haben, auf die wir warten. Wir muessen also in den
+* Wartezustand uebergehen.
 * Nachdem wir aus dem Wartezustand aufgeweckt worden sind, finden
 * wir in ap_evparm den Zeiger auf den procx-Eintrag des Kinds vor, durch
 * dessen Beendigung wir aufgeweckt worden sind.
@@ -2891,11 +2893,11 @@ evnt_pid:
 *
 * int hap_pid( PD *pd )
 *
-* Ein Ereignis "Prozeß ist terminiert" ist eingetroffen. D.h. der
-* Prozeß <pd> ist terminiert. Wecke ggf. den parent auf.
+* Ein Ereignis "Prozess ist terminiert" ist eingetroffen. D.h. der
+* Prozess <pd> ist terminiert. Wecke ggf. den parent auf.
 *
-* Rückgabe:    0    Der Prozeß darf entfernt werden.
-*              1    Der Prozeß muß zum Zombie werden.
+* Rueckgabe:    0    Der Prozess darf entfernt werden.
+*              1    Der Prozess muss zum Zombie werden.
 *
 
 hap_pid:
@@ -2905,10 +2907,10 @@ hap_pid:
  move.l   d1,a0                    ; a0 = parent (ggf. wartender PD)
  move.l   p_app(a1),d0             ; APP, die mich gestartet hat
                                    ;  (ist immer == act_appl)
- beq.b    hpid_ok                  ; ist ungültig (??)
+ beq.b    hpid_ok                  ; ist ungueltig (??)
  move.l   d0,a2                    ; a2 = APP des terminierten PD
  move.w   ap_parent(a2),d0         ; sein parent-APP
- bmi.b    hpid_ok                  ; ?!? parent-APP ist ungültig
+ bmi.b    hpid_ok                  ; ?!? parent-APP ist ungueltig
  add.w    d0,d0
  add.w    d0,d0
  lea      applx,a2
@@ -2922,8 +2924,8 @@ hap_pid:
  bne.b    hpid_zombie              ; ja, nicht nochmal aufwecken
 ;move.l   a1,a1                    ; wir (child)
 ;move.l   a0,a0                    ; parent
- move.w   ap_evparm(a2),d0         ; Suchkriterium für Pwaitpid()
- jsr      match_pid                ; -> DOS, ändert nur d0/d1
+ move.w   ap_evparm(a2),d0         ; Suchkriterium fuer Pwaitpid()
+ jsr      match_pid                ; -> DOS, aendert nur d0/d1
  tst.w    d0                       ; wartet auf uns ?
  beq.b    hpid_zombie              ; nein
 ; Parent aufwecken
@@ -2932,10 +2934,10 @@ hap_pid:
  move.l   a2,a0
  bsr      event_happened           ; Applikation aufwecken
 hpid_zombie:
- moveq    #1,d0                    ; Prozeß darf nicht entfernt werden
+ moveq    #1,d0                    ; Prozess darf nicht entfernt werden
  rts
 hpid_ok:
- moveq    #0,d0                    ; Prozeß darf entfernt werden
+ moveq    #0,d0                    ; Prozess darf entfernt werden
  rts
 
 
@@ -2955,7 +2957,7 @@ evnt_mesag:
 * int appl_read(d0 = int size, a0 = char *buf)
 *
 * Es wird IMMER (!) von der aktuellen Applikation gelesen
-* GEM ist in anderen Fällen immer abgestürzt
+* GEM ist in anderen Faellen immer abgestuerzt
 *
 
 appl_read:
@@ -2985,18 +2987,18 @@ ar_ok:
 *
 * int appl_write(d0 = int size, a0 = char *buf, d1 = int dst_id)
 *
-* Achtung: schreibt nur, wenn Puffer genügend Platz hat.
-* Rückgabe 0, wenn Puffer voll oder dst_id ungültig
+* Achtung: schreibt nur, wenn Puffer genuegend Platz hat.
+* Rueckgabe 0, wenn Puffer voll oder dst_id ungueltig
 *
-* üblicher Inhalt:
+* ueblicher Inhalt:
 *
 *    buf[0] = Nachrichtentyp
 *    buf[1] = id des Senders
-*    buf[2] = Überlänge (immer 0)
+*    buf[2] = Ueberlaenge (immer 0)
 *    buf[3] = i1 (etwa whdl)
 *    buf[4,5,6,7] frei
 *
-* Erweiterung für MagiC 3 ab 15.4.95:
+* Erweiterung fuer MagiC 3 ab 15.4.95:
 *
 *  dst_id = -2:
 *    => a0 zeigt auf folgende Struktur:
@@ -3004,7 +3006,7 @@ ar_ok:
 *    int dst_apid                  ; Ziel-App
 *    int unique_flag               ; Nachrichtentyp verschmelzen
 *    void *attached_mem            ; wenn != NULL:
-*                                  ; Speicherblock anhängen, Adresse
+*                                  ; Speicherblock anhaengen, Adresse
 *                                  ; wird in buf[6,7] eingetragen, der Eigner
 *                                  ; wird die Ziel-App
 *    int *msg                      ; eigentliche Nachricht
@@ -3041,8 +3043,8 @@ aw_write:
  ble.b    aw_err                   ; ap_id unbelegt oder eingefroren
  move.l   d1,a5                    ; a5 := dst_ap
 
- move.w   #ap_buflen,d1            ; Puffer- Gesamtlänge (MAGIX: 256 Bytes)
- sub.w    ap_len(a5),d1            ; d0 = freie Pufferlänge
+ move.w   #ap_buflen,d1            ; Puffer- Gesamtlaenge (MAGIX: 256 Bytes)
+ sub.w    ap_len(a5),d1            ; d0 = freie Pufferlaenge
  cmp.w    d0,d1                    ; freier Platz < msglen ?
  bcs      aw_full                  ; Zielpuffer voll!
 
@@ -3051,7 +3053,7 @@ aw_write:
  move.l   a2,d1                    ; "attached memory" ?
  beq.b    aw_no_atmem              ; nein!
  move.l   ap_pd(a5),d1
- ble.b    aw_err                   ; Zielapp ist kein Prozeß !
+ ble.b    aw_err                   ; Zielapp ist kein Prozess !
  movem.l  a2/a0/d0/d2,-(sp)
  move.l   d1,a1                    ; Neuer Eigner
  move.l   a2,a0                    ; memadr
@@ -3100,7 +3102,7 @@ aw_err:
 * void wait_timer( d0 = long ms )
 *
 * act_appl soll auf Timerereignis <ms> warten.
-* ap_rbits oder ap_status werden noch nicht beeinflußt.
+* ap_rbits oder ap_status werden noch nicht beeinflusst.
 *
 
 wait_timer:
@@ -3112,39 +3114,39 @@ wait_timer:
 wt_no_0:
  move.w   sr,d2
  ori.w    #$700,sr                 ; disable_interrupt
- tst.l    timer_cntdown            ; läuft schon ein Countdown ?
+ tst.l    timer_cntdown            ; laeuft schon ein Countdown ?
  beq.b    wt_no_cd                 ; nein
  cmp.l    timer_cntdown,d0
  bhi.b    wt_sort                  ; Vorzeichenfehler korrigiert
  move.l   d0,timer_cntdown         ; unser Countdown wird vorher eintreffen
  bra.b    wt_sort
-* Es läuft noch kein Countdown. Einfach Timer setzen
+* Es laeuft noch kein Countdown. Einfach Timer setzen
 wt_no_cd:
  move.l   d0,timer_cntdown
  clr.l    timer_cntup
-* Timer EVENT in die Liste timer_evlist einhängen.
-* ap_ms enthält jeweils den Tickoffset zum vorangegangenen Timerevent
+* Timer EVENT in die Liste timer_evlist einhaengen.
+* ap_ms enthaelt jeweils den Tickoffset zum vorangegangenen Timerevent
 wt_sort:
  lea      timer_evlist,a2          ; Liste aller laufenden Timer
- movea.l  (a2),a1                  ; a1 auf nächste APPL
+ movea.l  (a2),a1                  ; a1 auf naechste APPL
  move.l   a1,d1                    ; Listenende ?
  beq.b    wt_endloop               ; ja, Liste ist leer
- move.l   4(a1),d1                 ; ap_ms für erstes Listenelement
- sub.l    timer_cntup,d1           ; solange muß er noch warten
+ move.l   4(a1),d1                 ; ap_ms fuer erstes Listenelement
+ sub.l    timer_cntup,d1           ; solange muss er noch warten
  bra.b    wt_cmp
 
 wt_loop:
  move.l   4(a1),d1
 wt_cmp:
  cmp.l    d1,d0                    ; ap_ms
- ble.b    wt_endloop               ; unser trifft früher ein
+ ble.b    wt_endloop               ; unser trifft frueher ein
  sub.l    d1,d0                    ; trifft vorher ein, Zeit abziehen
- movea.l  a1,a2                    ; a2 wird Vorgänger
- movea.l  (a2),a1                  ; a1 auf nächsten EVENT
+ movea.l  a1,a2                    ; a2 wird Vorgaenger
+ movea.l  (a2),a1                  ; a1 auf naechsten EVENT
  move.l   a1,d1                    ; Listenende ?
  bne.b    wt_loop                  ; nein, weiter
 wt_endloop:
- move.l   a0,(a2)                  ; Vorgänger auf uns
+ move.l   a0,(a2)                  ; Vorgaenger auf uns
  move.l   d0,4(a0)                 ; ap_ms setzen
  move.l   a1,(a0)                  ; Nachfolger
  beq.b    wt_ende                  ; nein
@@ -3182,7 +3184,7 @@ apal_get:
  lea      alrm_evlist,a1           ; Liste aller laufenden Alarme
  lea      ap_nxtalrm(a0),a0
 apal_loop:
- movea.l  (a1),a1                  ; a1 auf nächste APPL
+ movea.l  (a1),a1                  ; a1 auf naechste APPL
  move.l   a1,d1                    ; Listenende ?
  beq.b    apal_endloop             ; ja (kann eigentlich nicht sein)
  add.l    4(a1),d0                 ; ap_ms aufsummieren
@@ -3213,39 +3215,39 @@ wait_alrm:
 wa_no_0:
  move.w   sr,d2
  ori.w    #$700,sr                 ; disable_interrupt
- tst.l    alrm_cntdown             ; läuft schon ein Countdown ?
+ tst.l    alrm_cntdown             ; laeuft schon ein Countdown ?
  beq.b    wa_no_cd                 ; nein
  cmp.l    alrm_cntdown,d0
  bhi.b    wa_sort                  ; Vorzeichenfehler korrigiert
  move.l   d0,alrm_cntdown          ; unser Countdown wird vorher eintreffen
  bra.b    wa_sort
-* Es läuft noch kein Countdown. Einfach Timer setzen
+* Es laeuft noch kein Countdown. Einfach Timer setzen
 wa_no_cd:
  move.l   d0,alrm_cntdown
  clr.l    alrm_cntup
-* Alarm EVENT in die Liste alrm_evlist einhängen.
-* ap_alrmms enthält jeweils den Tickoffset zum vorangegangenen Timerevent
+* Alarm EVENT in die Liste alrm_evlist einhaengen.
+* ap_alrmms enthaelt jeweils den Tickoffset zum vorangegangenen Timerevent
 wa_sort:
  lea      alrm_evlist,a2           ; Liste aller laufenden Alarme
- movea.l  (a2),a1                  ; a1 auf nächste APPL
+ movea.l  (a2),a1                  ; a1 auf naechste APPL
  move.l   a1,d1                    ; Listenende ?
  beq.b    wa_endloop               ; ja, Liste ist leer
- move.l   4(a1),d1                 ; ap_ms für erstes Listenelement
- sub.l    alrm_cntup,d1            ; solange muß er noch warten
+ move.l   4(a1),d1                 ; ap_ms fuer erstes Listenelement
+ sub.l    alrm_cntup,d1            ; solange muss er noch warten
  bra.b    wa_cmp
 
 wa_loop:
  move.l   4(a1),d1
 wa_cmp:
  cmp.l    d1,d0                    ; ap_ms
- ble.b    wa_endloop               ; unser trifft früher ein
+ ble.b    wa_endloop               ; unser trifft frueher ein
  sub.l    d1,d0                    ; trifft vorher ein, Zeit abziehen
- movea.l  a1,a2                    ; a2 wird Vorgänger
- movea.l  (a2),a1                  ; a1 auf nächsten EVENT
+ movea.l  a1,a2                    ; a2 wird Vorgaenger
+ movea.l  (a2),a1                  ; a1 auf naechsten EVENT
  move.l   a1,d1                    ; Listenende ?
  bne.b    wa_loop                  ; nein, weiter
 wa_endloop:
- move.l   a0,(a2)                  ; Vorgänger auf uns
+ move.l   a0,(a2)                  ; Vorgaenger auf uns
  move.l   d0,4(a0)                 ; ap_alrmms setzen
  move.l   a1,(a0)                  ; Nachfolger
  beq.b    wa_ende                  ; nein
@@ -3378,15 +3380,15 @@ _rmv_ap_io:
  move.l   a0,-(sp)
  jsr      funselect                ; Interrupts deaktivieren
  move.l   (sp)+,a0
-;bra      evnt_emIO                ; eingetroffene löschen
+;bra      evnt_emIO                ; eingetroffene loeschen
 
 
 **********************************************************************
 *
 * void evnt_emIO( a0 = APPL *ap )
 *
-* ggf. ausstehendes IOcomplete löschen.
-* Muß nach der unselect- Prozedur aufgerufen werden, wenn kein
+* ggf. ausstehendes IOcomplete loeschen.
+* Muss nach der unselect- Prozedur aufgerufen werden, wenn kein
 * IOcomplete mehr eintreffen kann.
 *
 
@@ -3401,7 +3403,7 @@ evnt_emIO:
 * long evnt_IO( d0 = long timeout_clicks, a0 = long *unsel )
 *
 * wartet auf EINEN Interrupt.
-* Rückgabe: Das, was die Interruptroutine in *unsel reingeschrieben
+* Rueckgabe: Das, was die Interruptroutine in *unsel reingeschrieben
 *           hat, das unselect wird hier erledigt.
 *
 
@@ -3426,7 +3428,7 @@ evio_notim:
 
  move.w   d0,-(sp)                 ; rbits merken
  bsr      appl_wait
- move.w   (sp)+,d0                 ; rbits zurück
+ move.w   (sp)+,d0                 ; rbits zurueck
 
  move.l   a5,a0
  bsr      _rmv_ap_timer
@@ -3438,21 +3440,21 @@ evio_notim:
 * Timeout eingetroffen, Interrupt abmelden
 
  move.l   (a6),d0
- ble.b    evio_ende                ; Rückgabewert des Interrupts: Fehler
+ ble.b    evio_ende                ; Rueckgabewert des Interrupts: Fehler
  move.l   d0,a2
  subq.l   #1,d0
- beq.b    evio_ende                ; Rückgabewert des Interrupts: OK
+ beq.b    evio_ende                ; Rueckgabewert des Interrupts: OK
 
  move.l   a5,a1                    ; APPL *
  move.l   a6,a0                    ; void *unsel
  jsr      (a2)                     ; Interrupt abmelden
 
-* ggf. ausstehendes IOcomplete löschen
+* ggf. ausstehendes IOcomplete loeschen
 
  move.w   ap_id(a5),a0
  clr.b    iocpbuf(a0)
 
-* Rückgabewert des Interrupts liefern
+* Rueckgabewert des Interrupts liefern
 evio_ende:
  move.l   (a6),d0
  movem.l  (sp)+,a5/a6
@@ -3465,7 +3467,7 @@ evio_ende:
 *                d1 = int cnt )
 *
 * wartet auf MEHRERE Interrupts.
-* Das unselect muß vom Aufrufer erledigt werden.
+* Das unselect muss vom Aufrufer erledigt werden.
 *
 
 evnt_mIO:
@@ -3512,8 +3514,8 @@ _evnt_timer:
 *
 * int match_mkmxy_mgrect(a0 = MGRECT *mm)
 *
-* Prüft nach, ob (gr_mkmx,gr_mkmy) je nach mg_flag innerhalb bzw.
-* außerhalb von mg_grect liegen.
+* Prueft nach, ob (gr_mkmx,gr_mkmy) je nach mg_flag innerhalb bzw.
+* ausserhalb von mg_grect liegen.
 * Setzt das Z-Flag.
 *
 
@@ -3521,12 +3523,12 @@ match_mkmxy_mgrect:
  movea.l  a0,a1
  move.l   act_appl,d0
  cmp.l    mouse_app,d0
- bne.b    mxyg_n                ; paßt nicht
+ bne.b    mxyg_n                ; passt nicht
 
  lea      2(a1),a0                 ; GRECT
  move.w   gr_mkmy,d1
  move.w   gr_mkmx,d0
- jsr      xy_in_grect              ; paßt ?
+ jsr      xy_in_grect              ; passt ?
 
  cmp.w    (a1),d0
  beq.b    mxyg_n
@@ -3542,8 +3544,8 @@ mxyg_n:
 * long rmv_lstelm( a0 = void *elem, a1 = void *liste )
 *
 * Klinkt <a0> aus Liste <a1> aus
-* Verändert nur d0/a1
-* Rückgabe d0 == NULL: nicht gefunden
+* Veraendert nur d0/a1
+* Rueckgabe d0 == NULL: nicht gefunden
 * sonst:   d0 == a0
 *
 
@@ -3613,7 +3615,7 @@ evm_l1:
  move.w   prev_mkmstate,-(sp)
  jsr      bstate_match
  addq.l   #6,sp
- tst.w    d0                       ; Mausklick paßt ?
+ tst.w    d0                       ; Mausklick passt ?
  beq.b    evm_l2                   ; nein
  move.w   prev_mkmstate,gr_evbstate
  or.w     #EV_BUT,d6               ; MU_BUTTON eingetroffen
@@ -3624,7 +3626,7 @@ evm_l2:
  move.w   gr_mkmstate,-(sp)
  jsr      bstate_match
  addq.l   #6,sp
- tst.w    d0                       ; Mausklick paßt ?
+ tst.w    d0                       ; Mausklick passt ?
  beq.b    evm_l3                   ; nein
  move.w   gr_mkmstate,gr_evbstate
  or.w     #EV_BUT,d6               ; MU_BUTTON eingetroffen
@@ -3727,7 +3729,7 @@ emu_nomul1:
  beq.b    emu_nomul
  tst.w    mcl_in_events
  beq.b    emu_nomul
- subq.w   #1,mcl_in_events         ; Zähler dekrementieren, da verarbeitet
+ subq.w   #1,mcl_in_events         ; Zaehler dekrementieren, da verarbeitet
 emu_nomul:
  move.w   d7,d0
  move.l   a5,a0
@@ -3752,10 +3754,10 @@ evm_l14:
 evm_l15:
  btst     #EVB_BUT,d6              ; MU_BUTTON eingetroffen ?
  beq.b    evm_l16                  ; nein
- moveq    #0,d0                    ; Hibyte löschen
+ moveq    #0,d0                    ; Hibyte loeschen
  move.b   ap_evbut+1(a5),d0        ; Anzahl Klicks
  move.w   d0,$a(a3)
- move.b   ap_evbut+3(a5),d0        ; Auslösender Zustand
+ move.b   ap_evbut+3(a5),d0        ; Ausloesender Zustand
  move.w   d0,4(a3)                 ; Hiword (Button) nach out[2]
 evm_l16:
  move.w   d6,d0
@@ -3774,12 +3776,12 @@ evm_l16:
 *
 
 send_msg:
- suba.w   #16,sp                   ; Platz für 8 ints
+ suba.w   #16,sp                   ; Platz fuer 8 ints
  move.l   sp,a1
  move.w   d0,(a1)+                 ; buf[0] = Nachrichtentyp
  movea.l  act_appl,a2
  move.w   ap_id(a2),(a1)+          ; buf[1] = id des Senders
- clr.w    (a1)+                    ; buf[2] = Überlänge
+ clr.w    (a1)+                    ; buf[2] = Ueberlaenge
  move.w   d2,(a1)+                 ; buf[3] = i1 (etwa whdl)
  move.l   (a0)+,(a1)+              ; buf[4,5,6,7]
  move.l   (a0),(a1)

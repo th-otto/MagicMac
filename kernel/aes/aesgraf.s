@@ -1,4 +1,4 @@
-     INCLUDE "AESINC.S"
+     INCLUDE "aesinc.s"
         TEXT
 
      XREF      config_status       ; vom DOS
@@ -101,7 +101,7 @@ grh2_loop:
 *   8(sp): xstep
 *  $a(sp): ystep
 *  $c(sp) - $20(sp): gerettete Register d5-d7/a4-a6
-* $24(sp): Rücksprungadresse
+* $24(sp): Ruecksprungadresse
 * $28(sp): GRECT *anf
 * $2c(sp): GRECT *end
 *
@@ -113,7 +113,7 @@ graf_growbox:
  bsr.b    grfhelper2
  move.l   (a6),-(sp)               ; cx,cy        (nach)
  move.l   (a4)+,-(sp)              ; anfx, anfy   (von)
- move.l   (a4),-(sp)               ; anfw, anfh   (Breite, Höhe)
+ move.l   (a4),-(sp)               ; anfw, anfh   (Breite, Hoehe)
  jsr      graf_movebox
  jsr      mouse_off
  moveq    #1,d7                    ; zweimal durchlaufen wegen XOR
@@ -144,7 +144,7 @@ graf_shrinkbox:
  btst     #7,config_status+3.w
  bne.b    no_shrinkbox
  movem.l  d2/d3/d4/d5/d6/d7/a4/a5/a6,-(sp)
- bsr.b    grfhelper2
+ bsr      grfhelper2
  jsr      mouse_off
  moveq    #1,d7
 grsr_l1:
@@ -193,14 +193,14 @@ xg2_edges:
  addq.l   #8,a0
  move.w   (a0)+,d7                 ; d7 = xstep
  move.w   (a0)+,d6                 ; d6 = ystep
- move.w   (a0)+,d4                 ; sizing: gesetzt, falls Größe sich ändert
+ move.w   (a0)+,d4                 ; sizing: gesetzt, falls Groesse sich aendert
 xgrt_l1:
  move.l   a5,a0                    ; &x,y,w,h
  jsr      (a4)                     ; Da geht die Post ab!
  move.l   a5,a0                    ; &x,y,w,h
  sub.w    d7,(a0)+                 ; x -= xstep
  sub.w    d6,(a0)+                 ; y -= ystep
- tst.w    d4                       ; flag2 (Rechteckausmaße auch ändern ?)
+ tst.w    d4                       ; flag2 (Rechteckausmasse auch aendern ?)
  beq.b    xgrt_loop_cont           ; nein, weiter
  move.w   d7,d0
  add.w    d0,d0
@@ -209,7 +209,7 @@ xgrt_l1:
  add.w    d0,d0
  add.w    d0,(a0)+                 ; h += 2*ystep
 xgrt_loop_cont:
- dbf      d5,xgrt_l1               ; cnt-1 Durchläufe
+ dbf      d5,xgrt_l1               ; cnt-1 Durchlaeufe
  movem.l  (sp)+,a5/a4/d7/d6/d5/d4
  rts
 
@@ -320,7 +320,7 @@ graf_watchbox:
 *                   int windowhandle )
 *
 * Wie <graf_watchbox>, aber in <windowhandle> kann ein Fenster
-* übergeben werden, dessen Rechteckliste beim Redraw verwendet wird.
+* uebergeben werden, dessen Rechteckliste beim Redraw verwendet wird.
 * ggf. <windowhandle == -1>, dann kein Fenster.
 *
 
@@ -342,7 +342,7 @@ graf_wwatchbox:
  lea      2(sp),a1                 ; GRECT *
  move.w   d7,d0
  move.l   a5,a0
- jsr      obj_to_g                 ; Objektausmaße nach GRECT 2(sp)
+ jsr      obj_to_g                 ; Objektausmasse nach GRECT 2(sp)
 
 gwb_loop:
  swap     d6                       ; instate/outstate vertauschen, bei
@@ -355,7 +355,7 @@ gwb_loop:
  jsr      objc_wchange
 
 gwb_both:
- eori.w   #1,(sp)                  ; in/out- Flag für MGRECT toggeln
+ eori.w   #1,(sp)                  ; in/out- Flag fuer MGRECT toggeln
 
  move.l   sp,a0
  bsr      evnt_rel_mm              ; warte auf Mausbewegung und Loslassen der linken Taste
@@ -375,7 +375,7 @@ gwb_both:
 *
 * Wartet auf Loslassen der linken Maustaste sowie auf das Mausereignis
 * <mm>
-* Rückgabe 0, wenn Maustaste losgelassen
+* Rueckgabe 0, wenn Maustaste losgelassen
 *
 
 evnt_rel_mm:
@@ -389,7 +389,7 @@ evnt_rel_mm:
  move.w   #6,-(sp)                 ; MU_BUTTON + MU_M1
  jsr      _evnt_multi
  adda.w   #$26,sp
- btst     #1,d0                    ; Rückgabe NE, wenn Taste losgelassen
+ btst     #1,d0                    ; Rueckgabe NE, wenn Taste losgelassen
  rts
 
 
@@ -408,8 +408,8 @@ _drawgrect:
  jsr      v_drawgrect              ; malen
  tst.w    d7
  beq.b    drgr_mouse               ; kein zweites Rechteck
- subq.l   #8,sp                    ; Platz für GRECT
- lea      (sp),a0                  ; Platz für 4 ints
+ subq.l   #8,sp                    ; Platz fuer GRECT
+ lea      (sp),a0                  ; Platz fuer 4 ints
  moveq    #3,d1
 drgr_loop:
  move.w   (a4)+,d0
@@ -430,8 +430,8 @@ drgr_mouse:
 * int draw_2grects(a0 = GRECT *g1, d0 = {int x, int y})
 *
 * Malt das Rechteck, wartet auf Verlassen der Position x,y oder auf
-* Loslassen der Maustaste und löscht das Rechteck wieder.
-* Gibt Status der linken Maustaste zurück (0, wenn losgelassen).
+* Loslassen der Maustaste und loescht das Rechteck wieder.
+* Gibt Status der linken Maustaste zurueck (0, wenn losgelassen).
 *
 
 draw_2grects:
@@ -452,7 +452,7 @@ draw_2grects:
  seq      d6
  ext.w    d6                       ; Taste losgelassen ?
  jsr      set_xor_black
- bsr.b    _drawgrect               ; Rechteck wieder löschen
+ bsr.b    _drawgrect               ; Rechteck wieder loeschen
  move.w   d6,d0
  movem.l  (sp)+,a5/d7/d6/d5
  rts
@@ -486,7 +486,7 @@ graf_rbox:
 * d0.l = graf_rubberbox(d0 = {int x, int y}, d1 = int minw,
 *                       d2 = int minh)
 *
-* Rückgabe: d0.l = {intw, int h}
+* Rueckgabe: d0.l = {intw, int h}
 *
 
 graf_rubberbox:
@@ -530,7 +530,7 @@ rub_m2:
  jsr      mctrl_0
 
  addq.l   #4,sp
- move.l   (sp)+,d0                 ; w und h zurück
+ move.l   (sp)+,d0                 ; w und h zurueck
 
  move.w   (sp)+,d6
  move.w   (sp)+,d7
@@ -542,8 +542,8 @@ rub_m2:
 * long graf_dragbox(a0 = GRECT *boxg, a1 = GRECT *outg,
 *                   d0 = void *callback_data )
 *
-* Achtung:  der AES- Dispatcher muß das erste GRECT umdrehen!
-* Rückgabe: d0 = {int x, int y}
+* Achtung:  der AES- Dispatcher muss das erste GRECT umdrehen!
+* Rueckgabe: d0 = {int x, int y}
 *
 *  0(sp)  gr_mkmx
 *  2(sp)  gr_mkmy
@@ -556,7 +556,7 @@ rub_m2:
 *              callback_data ist Zeiger auf:
 *                   long      Adresse einer Funktion
 *                             Parameter ist callback_data selbst,
-*                              werden in a0 übergeben. Rückgabe in d0
+*                              werden in a0 uebergeben. Rueckgabe in d0
 *                              FALSE, wenn beendet wird.
 *
 
@@ -568,7 +568,7 @@ graf_dragbox:
  move.l   a1,a5                    ; a5 = outg
  lea      4(sp),a2
  move.l   (a0)+,(a2)+              ; linke obere Ecke der laufenden Box
- move.l   (a0)+,(a2)+              ; Breite und Höhe der laufenden Box
+ move.l   (a0)+,(a2)+              ; Breite und Hoehe der laufenden Box
  move.w   gr_mkmx,d0
  sub.w    4+g_x(sp),d0
  move.w   d0,(a2)+
@@ -593,7 +593,7 @@ gdb_loop:
  move.w   d1,4+g_y(sp)
 
  lea      4(sp),a1                 ; inneres GRECT
- move.l   a5,a0                    ; äußeres GRECT
+ move.l   a5,a0                    ; aeusseres GRECT
 
  move.w   (a0),d0
  cmp.w    (a1),d0
@@ -676,7 +676,7 @@ gdrb_ende:
 * int graf_slidebox(a0 = OBJECT *tree, d0 = int parent,
 *                   d1 = int objnr, d2 = int is_vertikal)
 *
-* Rückgabe: 0..1000
+* Rueckgabe: 0..1000
 *
 
 graf_slidebox:
@@ -684,7 +684,7 @@ graf_slidebox:
  clr.l    -(sp)                    ; kein Callback
  bsr.b    gr_xslidbx
  addq.l   #4,sp
- move.l   (sp)+,a2                 ; a2 zurück
+ move.l   (sp)+,a2                 ; a2 zurueck
  rts
  
 
@@ -694,7 +694,7 @@ graf_slidebox:
 *                   d1 = int objnr, d2 = int is_vertikal,
 *                   void *callback_data)
 *
-* Rückgabe:    d0 = 0..1000
+* Rueckgabe:    d0 = 0..1000
 *
 
 gr_xslidbx:
@@ -717,7 +717,7 @@ gr_xslidbx:
  move.l   (sp)+,a0                 ; tree
  jsr      get_ob_xywh              ; 0(fp) = relatives GRECT des objnr
 
- lea      8(a2),a1                 ; äußeres Rechteck
+ lea      8(a2),a1                 ; aeusseres Rechteck
  move.l   a2,a0                    ; inneres Rechteck
 
  move.w   (a1),d0
@@ -741,7 +741,7 @@ grxs_noc:
  beq.b    grxs_l1
  addq.l   #2,a2                    ; y statt x und h statt w
 grxs_l1:
- move.w   8+g_w(a2),d0             ; äußeres w bzw. h
+ move.w   8+g_w(a2),d0             ; aeusseres w bzw. h
  sub.w    g_w(a2),d0               ; - inneres   w bzw. h
  beq.b    grxs_ret
  move.w   (a2),d2                  ; finales x bzw. y
@@ -755,7 +755,7 @@ grxs_ret:
 
 
 * Rechnet Objektpos. in 0..1000 um und macht Callback
-* d0 -> Rückgabe von graf_dragbox
+* d0 -> Rueckgabe von graf_dragbox
 * a0 -> long gr_xcallback
 *       int  is_vertikal
 *         usw. (Stack von gr_xslidbx)
@@ -768,7 +768,7 @@ gr_xcallback:
  beq.b    gxc_v
  addq.l   #2,a2                    ; y statt x und h statt w
 gxc_v:
- move.w   8+g_w(a2),d0             ; äußeres w bzw. h
+ move.w   8+g_w(a2),d0             ; aeusseres w bzw. h
  sub.w    g_w(a2),d0               ; - inneres   w bzw. h
  beq.b    gxc_e
  move.w   (a2),d2                  ; finales x bzw. y

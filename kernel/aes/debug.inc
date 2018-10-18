@@ -1,4 +1,4 @@
-; Diese Datei enthält die Debugging- Makros
+; Diese Datei enthaelt die Debugging- Makros
 ; Es gibt verschiedene Debugging- Level:
 ;
 ; Level 0:     Bootphasen- Kommentare
