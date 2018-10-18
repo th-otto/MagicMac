@@ -26,3 +26,26 @@ LONG drvmap( void );
 LONG fxattr( WORD mode, char *path, XATTR *xattr );
 LONG dgetpath( char *buf, WORD drv );
 LONG dpathconf(char *path, WORD which);
+
+
+/*
+ * from string.s
+ */
+/* like bzero() */
+void clear_mem(void *p, size_t size);
+/* like memset */
+void fill_mem(void *p, int c, size_t size);
+/* like memcpy */
+void copy_mem(void *dst, void *src, size_t size);
+/* like strcat() */
+void strgcat(char *dst, const char *src);
+/* like strlen() */
+size_t strglen(const char *str);
+/* like strcmp() */
+int strgcmp(const char *s1, const char *s2);
+/* like strupr() */
+void strgupr(char *str);
+/* like ultoa() */
+char *intstrg(char *str, unsigned long val);
+/* like atoul() */
+unsigned long strgint(const char *str);

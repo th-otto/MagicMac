@@ -32,7 +32,7 @@ MagicMacX.OS
 ..\vdi\bin\drivers.o ; no source yet
 ..\vdi\filediv.c
 ..\vdi\bin\init_res.o ; no source yet
-..\vdi\bin\string.o ; no source yet
+..\vdi\string.s
 ..\vdi\tos.s
 ..\aes\aesmain.s
 ..\aes\aesevt.s
