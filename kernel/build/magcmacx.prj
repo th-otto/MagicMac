@@ -30,7 +30,7 @@ MagicMacX.OS
 ..\bios\magcmacx\macxfs.s
 ..\vdi\bin\mxvdiknp.o ; no source yet
 ..\vdi\bin\drivers.o ; no source yet
-..\vdi\bin\filediv.o ; no source yet
+..\vdi\filediv.c
 ..\vdi\bin\init_res.o ; no source yet
 ..\vdi\bin\string.o ; no source yet
 ..\vdi\bin\tos.o ; no source yet
