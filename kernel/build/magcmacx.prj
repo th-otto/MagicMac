@@ -31,7 +31,7 @@ MagicMacX.OS
 ..\vdi\bin\mxvdiknp.o ; no source yet
 ..\vdi\bin\drivers.o ; no source yet
 ..\vdi\filediv.c
-..\vdi\bin\init_res.o ; no source yet
+..\vdi\init_res.c [-G]
 ..\vdi\string.s
 ..\vdi\tos.s
 ..\aes\aesmain.s

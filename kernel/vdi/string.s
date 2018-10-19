@@ -94,12 +94,15 @@ copy_sb_2:
 	bpl.s	copy_sb_1
 	rts
 
+	ifne 0
+; memcpy that works for even addresses and even size only
+; not used actually
 copy_me_:
 	move.l	d0,d1
 	asr.l	#2,d1
 	bcc.s	copy_ma_2
 	move.w	(a0)+,(a1)+
-	bra.s	copy_ma_2
+	bra.s	copy_ma_2 ; BUG: jumps to bpl
 
 copy_ma_1:
 	move.l	(a0)+,(a1)+
@@ -107,6 +110,7 @@ copy_ma_1:
 copy_ma_2:
 	bpl.s	copy_ma_1
 	rts
+	endc
 
 strgcat:
 strcat: ; not exported!

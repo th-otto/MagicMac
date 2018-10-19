@@ -1,5 +1,10 @@
-	XDEF	cpu020,_uldiv,_ulmod,_ulmul,_ldiv,_lmul
-	XREF	cpu020
+	XDEF	_uldiv
+	XDEF	_ulmod
+	XDEF	_ulmul
+	XDEF	_ldiv
+	XDEF	_lmul
+
+cpu020 equ $19ea ; from mxvdiknl.o FIXME
 	
 	mc68020
 

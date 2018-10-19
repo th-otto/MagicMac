@@ -8,3427 +8,925 @@
 ; ph_absflag = 0x0000
 ; CP/M relocation bytes = 0x0000a24c
 
+	XDEF	OSC_ptr
+	XDEF	nvdi_str
+	XDEF	vt_seq_e
+	XDEF	vt_seq_f
+	XDEF	closed
+	XDEF	OSC_count
+	XDEF	vdi_entr
+	XDEF	wk_tab
+	XDEF	load_fil
+	XDEF	clear_cp
+	XDEF	clear_bi
+	XDEF	vdi_init
+	XDEF	vdi_blin
+	XDEF	int_linea
+	XDEF	vdi_cono
+	XDEF	vdi_curs
+	XDEF	Blitmode
+	XDEF	init_mon
+	XDEF	wk_init
+	XDEF	vdi_rawo
+	XDEF	gdos_pat
+	XDEF	transfor
+	XDEF	__a_vdi
+	XDEF	vt52_ini
+	XDEF	__e_vdi
+
+	XREF	strgcat
+	XREF	strgcpy
+	XREF	delete_b
+	XREF	load_prg
+	XREF	load_ATA
+	XREF	load_MAC
+	XREF	unload_N
+	XREF	load_NOD
+	XREF	clear_mem
+	XREF	load_fil
+	XREF	MSys
+	XREF	create_b
+	XREF	Mfree_sys
+	XREF	init_NOD
+	XREF	Malloc_sys
+	XREF	Mshrink_sys
+
+	XREF	cpu020
+
+BehneError equ $78
+
+VERSION equ $0313
+YEAR    equ $1998
+
+	TEXT
+	
 sys_font:
-[00000000] 0003 0000                 ori.b     #$00,d3
-[00000004] 148c                      move.l    b4,(a2) ; apollo only
-sys_font:
-[00000006] 0000 115a                 ori.b     #$5A,d0
+		   dc.w  3
+		   dc.l $0000148c
+	       dc.l dat_table_10
 sf_image:
-[0000000a] 0000 0000                 ori.b     #$00,d0
+           dc.l 0
 sfb_imag:
-[0000000e] 0000 0000                 ori.b     #$00,d0
-linea_fo:
-[00000012] 0000 0026                 ori.b     #$26,d0
-[00000016] 0000 0700                 ori.b     #$00,d0
-[0000001a] 0000 215a                 ori.b     #$5A,d0
-[0000001e] 0000 0000                 ori.b     #$00,d0
-[00000022] 0000 0000                 ori.b     #$00,d0
-header_0:
-[00000026] 0001 0008                 ori.b     #$08,d1
-[0000002a] 3678 3620                 movea.w   ($00003620).w,a3
-[0000002e] 7379                      ???
-[00000030] 7374                      ???
-[00000032] 656d                      bcs.s     $000000A1
-[00000034] 2066                      movea.l   -(a6),a0
-[00000036] 6f6e                      ble.s     $000000A6
-[00000038] 7400                      moveq.l   #0,d2
-[0000003a] 0000 0000                 ori.b     #$00,d0
-[0000003e] 0000 0000                 ori.b     #$00,d0
-[00000042] 0000 0000                 ori.b     #$00,d0
-[00000046] 0000 0000                 ori.b     #$00,d0
-[0000004a] 0000 00ff                 ori.b     #$FF,d0
-[0000004e] 0004 0004                 ori.b     #$04,d4
-[00000052] 0003 0001                 ori.b     #$01,d3
-[00000056] 0001 0005                 ori.b     #$05,d1
-[0000005a] 0006 0000                 ori.b     #$00,d6
-[0000005e] 0003 0001                 ori.b     #$01,d3
-[00000062] 0001 5555                 ori.b     #$55,d1
-[00000066] aaaa 000c 0000            mac.w     a4.l,d0.l,0,0(a2),d5,acc0
-[0000006c] 0000 0000                 ori.b     #$00,d0
-[00000070] 007e 0000                 ori.w     #N_OFFSCR,???
-[00000074] 0280 00c0 0006            andi.l    #$00C00006,d0
-[0000007a] 0000 0000                 ori.b     #$00,d0
-off_tabl:
-[0000007e] 0000 0006                 ori.b     #$06,d0
-[00000082] 000c 0012                 ori.b     #$12,a4 ; apollo only
-[00000086] 0018 001e                 ori.b     #$1E,(a0)+
-[0000008a] 0024 002a                 ori.b     #$2A,-(a4)
-[0000008e] 0030 0036 003c            ori.b     #$36,60(a0,d0.w)
-[00000094] 0042 0048                 ori.w     #off_tabl,d2
-[00000098] 004e 0054                 ori.w     #next_fon,a6 ; apollo only
-[0000009c] 005a 0060                 ori.w     #_nvdi_co,(a2)+
-[000000a0] 0066 006c                 ori.w     #t_ades,-(a6)
-[000000a4] 0072 0078 007e            ori.w     #_nvdi_re,126(a2,d0.w)
-[000000aa] 0084 008a 0090            ori.l     #$008A0090,d4
-[000000b0] 0096 009c 00a2            ori.l     #$009C00A2,(a6)
-[000000b6] 00a8 00ae 00b4 00ba       ori.l     #$00AE00B4,186(a0)
-[000000be] 00c0                      bitrev.l  d0 ; ColdFire isa_c only
-[000000c0] 00c6                      bitrev.l  d6 ; ColdFire isa_c only
-[000000c2] 00cc                      dc.w      $00CC ; illegal
-[000000c4] 00d2 00d8                 cmp2.b    (a2),d0 ; 68020+ only
-[000000c8] 00de                      dc.w      $00DE ; illegal
-[000000ca] 00e4                      dc.w      $00E4 ; illegal
-[000000cc] 00ea 00f0 00f6            cmp2.b    246(a2),d0 ; 68020+ only
-[000000d2] 00fc 0102 0108            cmp2.b    #$08,d0 ; 68020+ only
-[000000d8] 010e 0114                 movep.w   276(a6),d0
-[000000dc] 011a                      btst      d0,(a2)+
-[000000de] 0120                      btst      d0,-(a0)
-[000000e0] 0126                      btst      d0,-(a6)
-[000000e2] 012c 0132                 btst      d0,306(a4)
-[000000e6] 0138 013e                 btst      d0,($0000013E).w
-[000000ea] 0144                      bchg      d0,d4
-[000000ec] 014a 0150                 movep.l   336(a2),d0
-[000000f0] 0156                      bchg      d0,(a6)
-[000000f2] 015c                      bchg      d0,(a4)+
-[000000f4] 0162                      bchg      d0,-(a2)
-[000000f6] 0168 016e                 bchg      d0,366(a0)
-[000000fa] 0174 017a 0180 0186 018c  bchg      d0,([$01800186,a4],$018C) ; 68020+ only
-[00000104] 0192                      bclr      d0,(a2)
-[00000106] 0198                      bclr      d0,(a0)+
-[00000108] 019e                      bclr      d0,(a6)+
-[0000010a] 01a4                      bclr      d0,-(a4)
-[0000010c] 01aa 01b0                 bclr      d0,432(a2)
-[00000110] 01b6 01bc 01c2 01c8       bclr      d0,([$01C201C8,za6],d0.w) ; 68020+ only; reserved OD=0
-[00000118] 01ce 01d4                 movep.l   d0,468(a6)
-[0000011c] 01da                      bset      d0,(a2)+
-[0000011e] 01e0                      bset      d0,-(a0)
-[00000120] 01e6                      bset      d0,-(a6)
-[00000122] 01ec 01f2                 bset      d0,498(a4)
-[00000126] 01f8 01fe                 bset      d0,($000001FE).w
-[0000012a] 0204 020a                 andi.b    #$0A,d4
-[0000012e] 0210 0216                 andi.b    #$16,(a0)
-[00000132] 021c 0222                 andi.b    #$22,(a4)+
-[00000136] 0228 022e 0234            andi.b    #$2E,564(a0)
-[0000013c] 023a 0240 0246            andi.b    #$40,$00000384(pc) ; apollo only
-[00000142] 024c 0252                 andi.w    #$0252,a4 ; apollo only
-[00000146] 0258 025e                 andi.w    #$025E,(a0)+
-[0000014a] 0264 026a                 andi.w    #$026A,-(a4)
-[0000014e] 0270 0276 027c            andi.w    #$0276,124(a0,d0.w*2) ; 68020+ only
-[00000154] 0282 0288 028e            andi.l    #$0288028E,d2
-[0000015a] 0294 029a 02a0            andi.l    #$029A02A0,(a4)
-[00000160] 02a6 02ac 02b2            andi.l    #$02AC02B2,-(a6)
-[00000166] 02b8 02be 02c4 02ca       andi.l    #$02BE02C4,($000002CA).w
-[0000016e] 02d0 02d6                 cmp2.w    (a0),d0 ; 68020+ only
-[00000172] 02dc                      dc.w      $02DC ; illegal
-[00000174] 02e2                      dc.w      $02E2 ; illegal
-[00000176] 02e8 02ee 02f4            cmp2.w    756(a0),d0 ; 68020+ only
-[0000017c] 02fa 0300 0306            cmp2.w    $00000484(pc),d0 ; 68020+ only
-[00000182] 030c 0312                 movep.w   786(a4),d1
-[00000186] 0318                      btst      d1,(a0)+
-[00000188] 031e                      btst      d1,(a6)+
-[0000018a] 0324                      btst      d1,-(a4)
-[0000018c] 032a 0330                 btst      d1,816(a2)
-[00000190] 0336 033c 0342 0348       btst      d1,([$03420348,a6],d0.w*2) ; 68020+ only; reserved OD=0
-[00000198] 034e 0354                 movep.l   852(a6),d1
-[0000019c] 035a                      bchg      d1,(a2)+
-[0000019e] 0360                      bchg      d1,-(a0)
-[000001a0] 0366                      bchg      d1,-(a6)
-[000001a2] 036c 0372                 bchg      d1,882(a4)
-[000001a6] 0378 037e                 bchg      d1,($0000037E).w
-[000001aa] 0384                      bclr      d1,d4
-[000001ac] 038a 0390                 movep.w   d1,912(a2)
-[000001b0] 0396                      bclr      d1,(a6)
-[000001b2] 039c                      bclr      d1,(a4)+
-[000001b4] 03a2                      bclr      d1,-(a2)
-[000001b6] 03a8 03ae                 bclr      d1,942(a0)
-[000001ba] 03b4 03ba 03c0 03c6 03cc  bclr      d1,([$03C003C6,za4,d0.w*2],$03CC) ; 68020+ only
-[000001c4] 03d2                      bset      d1,(a2)
-[000001c6] 03d8                      bset      d1,(a0)+
-[000001c8] 03de                      bset      d1,(a6)+
-[000001ca] 03e4                      bset      d1,-(a4)
-[000001cc] 03ea 03f0                 bset      d1,1008(a2)
-[000001d0] 03f6 03fc 0402 0408       bset      d1,([$04020408,za6],zd0.w*2) ; 68020+ only; reserved OD=0
-[000001d8] 040e 0414                 subi.b    #$14,a6 ; apollo only
-[000001dc] 041a 0420                 subi.b    #$20,(a2)+
-[000001e0] 0426 042c                 subi.b    #$2C,-(a6)
-[000001e4] 0432 0438 043e            subi.b    #$38,62(a2,d0.w*4) ; 68020+ only
-[000001ea] 0444 044a                 subi.w    #$044A,d4
-[000001ee] 0450 0456                 subi.w    #vbl_queu,(a0)
-[000001f2] 045c 0462                 subi.w    #$0462,(a4)+
-[000001f6] 0468 046e 0474            subi.w    #$046E,1140(a0)
-[000001fc] 047a 0480 0486            subi.w    #$0480,$00000684(pc) ; apollo only
-[00000202] 048c 0492 0498            subi.l    #$04920498,a4 ; apollo only
-[00000208] 049e 04a4 04aa            subi.l    #$04A404AA,(a6)+
-[0000020e] 04b0 04b6 04bc 04c2       subi.l    #$04B604BC,-62(a0,d0.w*4) ; 68020+ only
-[00000216] 04c8                      dc.w      $04C8 ; illegal
-[00000218] 04ce                      dc.w      $04CE ; illegal
-[0000021a] 04d4 04da                 cmp2.l    (a4),d0 ; 68020+ only
-[0000021e] 04e0                      dc.w      $04E0 ; illegal
-[00000220] 04e6                      dc.w      $04E6 ; illegal
-[00000222] 04ec 04f2 04f8            cmp2.l    1272(a4),d0 ; 68020+ only
-[00000228] 04fe 0504                 cmp2.l    ???,d0 ; 68020+ only
-[0000022c] 050a 0510                 movep.w   1296(a2),d2
-[00000230] 0516                      btst      d2,(a6)
-[00000232] 051c                      btst      d2,(a4)+
-[00000234] 0522                      btst      d2,-(a2)
-[00000236] 0528 052e                 btst      d2,1326(a0)
-[0000023a] 0534 053a 0540 0546 054c  btst      d2,([$05400546,a4,d0.w*4],$054C) ; 68020+ only
-[00000244] 0552                      bchg      d2,(a2)
-[00000246] 0558                      bchg      d2,(a0)+
-[00000248] 055e                      bchg      d2,(a6)+
-[0000024a] 0564                      bchg      d2,-(a4)
-[0000024c] 056a 0570                 bchg      d2,1392(a2)
-[00000250] 0576 057c 0582 0588       bchg      d2,([$05820588,a6],zd0.w*4) ; 68020+ only; reserved OD=0
-[00000258] 058e 0594                 movep.w   d2,1428(a6)
-[0000025c] 059a                      bclr      d2,(a2)+
-[0000025e] 05a0                      bclr      d2,-(a0)
-[00000260] 05a6                      bclr      d2,-(a6)
-[00000262] 05ac 05b2                 bclr      d2,1458(a4)
-[00000266] 05b8 05be                 bclr      d2,($000005BE).w
-[0000026a] 05c4                      bset      d2,d4
-[0000026c] 05ca 05d0                 movep.l   d2,1488(a2)
-[00000270] 05d6                      bset      d2,(a6)
-[00000272] 05dc                      bset      d2,(a4)+
-[00000274] 05e2                      bset      d2,-(a2)
-[00000276] 05e8 05ee                 bset      d2,1518(a0)
-[0000027a] 05f4 05fa 0600 0082 0421  bset      d2,([$06000082,za4,zd0.w*4],$0421) ; 68020+ only
-[00000284] cfb6 0de3 04e3 8150 f987  and.l     d7,([$04E3,za6,zd0.l*4],$8150F987) ; 68020+ only
-[0000028e] bcc3                      cmpa.w    d3,a6
-[00000290] cc3e                      and.b     ???,d6
-[00000292] 73e0                      ???
-[00000294] 381f                      move.w    (a7)+,d4
-[00000296] 847c 00cd                 or.w      #$00CD,d2
-[0000029a] 947b 260c                 sub.w     $000002A8(pc,d2.w*8),d2 ; 68020+ only
-[0000029e] 3184 8800                 move.w    d4,0(a0,a0.l)
-[000002a2] 0006 704f                 ori.b     #$4F,d6
-[000002a6] 3c33 c73e 71c3 0c18 061c  move.w    ([$71C30C18,a3],a4.w*8,$061C),d6 ; 68020+ only
-[000002b0] 71cf                      ???
-[000002b2] 1ef3 ef9e 89c0            move.b    ([za3],a6.l*8,$89C0),(a7)+ ; 68020+ only
-[000002b8] 9242                      sub.w     d2,d1
-[000002ba] 289c                      move.l    (a4)+,(a4)
-[000002bc] f1cf                      dc.w      $F1CF ; illegal
-[000002be] 1efa 28a2                 move.b    $00002B62(pc),(a7)+
-[000002c2] 8a2f 9ec1                 or.b      -24895(a7),d5
-[000002c6] e200                      asr.b     #1,d0
-[000002c8] 6008                      bra.s     $000002D2
-[000002ca] 0008 0180                 ori.b     #$80,a0 ; apollo only
-[000002ce] 8001                      or.b      d1,d0
-[000002d0] 2060                      movea.l   -(a0),a0
-[000002d2] 0000 0000                 ori.b     #$00,d0
-[000002d6] 0020 0000                 ori.b     #$00,-(a0)
-[000002da] 0000 0e31                 ori.b     #$31,d0
-[000002de] c400                      and.b     d0,d2
-[000002e0] 7941                      ???
-[000002e2] 0851 0200                 bchg      #512,(a1)
-[000002e6] 2144 1421                 move.l    d4,5153(a0)
-[000002ea] 0888 2007                 bclr      #8199,a0
-[000002ee] 8851                      or.w      (a1),d4
-[000002f0] 0210 5228                 andi.b    #$28,(a0)
-[000002f4] 841a                      or.b      (a2)+,d2
-[000002f6] 2706                      move.l    d6,-(a3)
-[000002f8] 1041                      movea.l   d1,b0 ; apollo only
-[000002fa] 04f1 e71c 6000            cmp2.l    0(a1,d6.w),a6 ; 68020+ only
-[00000300] 30c0                      move.w    d0,(a0)+
-[00000302] c36c 69a3                 and.w     d1,27043(a4)
-[00000306] 4201                      clr.b     d1
-[00000308] e41a                      ror.b     #2,d2
-[0000030a] 6941                      bvs.s     $0000034D
-[0000030c] 0869 e7bd 4ba9            bchg      #-6211,19369(a1)
-[00000312] bc7b ff1c                 cmp.w     ([pc],a7.l*8),d6 ; 68020+ only; reserved OD=0
-[00000316] 7bfc                      ???
-[00000318] 1ef3 0d8e f9bf            move.b    ([za3],d0.l*4,$F9BF),(a7)+ ; 68020+ only; reserved BD=0
-[0000031e] b6f9 cd5e 3be0            cmpa.w    $CD5E3BE0,a3
-[00000324] 3ed8                      move.w    (a0)+,(a7)+
-[00000326] c000                      and.b     d0,d0
-[00000328] 01cf c0f8                 movep.l   d0,-16136(a7)
-[0000032c] e000                      asr.b     #8,d0
-[0000032e] 71c7                      ???
-[00000330] 0c18 838c                 cmpi.b    #$8C,(a0)+
-[00000334] 7886                      moveq.l   #-122,d4
-[00000336] 060c c21a                 addi.b    #$1A,a4 ; apollo only
-[0000033a] 30c0                      move.w    d0,(a0)+
-[0000033c] 0071 c73e 01c2 0662       ori.w     #$C73E,([za1],$0662) ; 68020+ only; reserved BD=0
-[00000344] af2a 1a17                 move.l    6679(a2),accext23
-[00000348] 8682                      or.l      d2,d3
-[0000034a] 0150                      bchg      d0,(a0)
-[0000034c] c880                      and.l     d0,d4
-[0000034e] 84c2                      divu.w    d2,d2
-[00000350] 0c02 5367                 cmpi.b    #$67,d2
-[00000354] 203f                      move.l    ???,d0
-[00000356] 42fe                      move.w    ccr,???
-[00000358] 00cd                      dc.w      $00CD ; illegal
-[0000035a] bea3                      cmp.l     -(a3),d7
-[0000035c] 4d0c                      chk.l     a4,d6 ; 68020+ only
-[0000035e] 60c3                      bra.s     $00000323
-[00000360] 0800 000c                 btst      #12,d0
-[00000364] 98c0                      suba.w    d0,a4
-[00000366] 8252                      or.w      (a2),d1
-[00000368] 0802 8a23                 btst      #-30173,d2
-[0000036c] 0c31 e326 8a28            cmpi.b    #$26,40(a1,a0.l*2) ; 68020+ only
-[00000372] a08a 0820                 mac.l     a2,d0,0,acc1
-[00000376] 8880                      or.l      d0,d4
-[00000378] 9443                      sub.w     d3,d2
-[0000037a] 6ca2                      bge.s     $0000031E
-[0000037c] 8a28 a022                 or.b      -24542(a0),d5
-[00000380] 28a2                      move.l    -(a2),(a4)
-[00000382] 5221                      addq.b    #1,-(a1)
-[00000384] 1860                      movea.l   -(a0),b4 ; apollo only
-[00000386] 6700 61cf                 beq       $00006557
-[0000038a] 1c79 c21e b181            movea.l   $C21EB181,b6 ; apollo only
-[00000390] 2421                      move.l    -(a1),d2
-[00000392] 4f1c                      chk.l     (a4)+,d7 ; 68020+ only
-[00000394] f1e7                      dc.w      $F1E7 ; illegal
-[00000396] 0e72 28a2 4a27            min.w     b2,39(a2,d4.l*2) ; apollo only
-[0000039c] 8c30 ce88                 or.b      -120(a0,a4.l*8),d6 ; 68020+ only
-[000003a0] 8002                      or.b      d2,d0
-[000003a2] 1400                      move.b    d0,d2
-[000003a4] 801e                      or.b      (a6)+,d0
-[000003a6] 5002                      addq.b    #8,d2
-[000003a8] 0050 8700                 ori.w     #$8700,(a0)
-[000003ac] fbca 1400                 wdebug    a2
-[000003b0] 8508                      sbcd.b    -(a0),-(a2)
-[000003b2] 01c0                      bset      d0,d0
-[000003b4] 0e23 6888                 add.b     b6,-(a3) ; apollo only
-[000003b8] 2082                      move.l    d2,(a0)
-[000003ba] 0800 00a2                 btst      #162,d0
-[000003be] 0000 30c0                 ori.b     #$C0,d0
-[000003c2] 06f6 b2c4 8c72            callm     #$B2C4,114(a6,a0.l*4) ; 68020+ only
-[000003c8] c22c b002                 and.b     -20478(a4),d1
-[000003cc] 1ceb 38d7                 move.b    14551(a3),(a6)+
-[000003d0] 012d 8c08                 btst      d0,-29688(a5)
-[000003d4] 618c                      bsr.s     $00000362
-[000003d6] 31bd 861b                 move.w    ???,27(a0,a0.w*8) ; 68020+ only
-[000003da] e7c6                      rol.w     d6
-[000003dc] d9b9 b618 6d56            add.l     d4,$B6186D56
-[000003e2] 186f e6d8                 movea.l   -6440(a7),b4 ; apollo only
-[000003e6] a216 6b66                 msac.l    d6,d6,<<1,(a6)&,d1,acc1
-[000003ea] fe61 c6be                 nfS??     -(a1)
-[000003ee] 736d                      ???
-[000003f0] 9a21                      sub.b     -(a1),d5
-[000003f2] c412                      and.b     (a2),d2
-[000003f4] 03e1                      bset      d1,-(a1)
-[000003f6] 9810                      sub.b     (a0),d4
-[000003f8] c02c 49e0                 and.b     18912(a4),d0
-[000003fc] 0768 6300                 bchg      d3,25344(a0)
-[00000400] 0362                      bchg      d1,-(a2)
-[00000402] 3bdf                      move.w    (a7)+,???
-[00000404] 6e1c                      bgt.s     $00000422
-[00000406] b297                      cmp.l     (a7),d1
-[00000408] 84de                      divu.w    (a6)+,d2
-[0000040a] e150                      roxl.w    #8,d0
-[0000040c] c88f                      and.l     a7,d4 ; apollo only
-[0000040e] bec3                      cmpa.w    d3,a7
-[00000410] ef8e                      lsl.l     #7,d6
-[00000412] 7320                      ???
-[00000414] b760                      eor.w     d3,-(a0)
-[00000416] 62b2                      bhi.s     $000003CA
-[00000418] 00c9                      dc.w      $00C9 ; illegal
-[0000041a] 1470 8618                 movea.l   24(a0,a0.w*8),b2 ; 68020+ only
-[0000041e] 60c7                      bra.s     $000003E7
-[00000420] be01                      cmp.b     d1,d7
-[00000422] e018                      ror.b     #8,d0
-[00000424] a847 1c93                 masac.l   d7,a4,??,acc2,acc0
-[00000428] cf04                      abcd.b    d4,d7
-[0000042a] 71e0                      ???
-[0000042c] 0060 018c                 ori.w     #$018C,-(a0)
-[00000430] bbef 208b                 cmpa.l    8331(a7),a5
-[00000434] cf26                      and.b     d7,-(a6)
-[00000436] f880 9842                 lpB??.w   $FFFF9C7A
-[0000043a] aaa2 f22f                 mac.w     a7.l,a7.l,<<1,-(a2)&,d5,acc0
-[0000043e] 1c22                      move.b    -(a2),d6
-[00000440] 28aa 2142                 move.l    8514(a2),(a4)
-[00000444] 1830 6d80                 move.b    (d6.l*4),d4 ; 68020+ only; reserved BD=0
-[00000448] 3028 a08b                 move.w    -24437(a0),d0
-[0000044c] e7a2                      asl.l     d3,d2
-[0000044e] c881                      and.l     d1,d4
-[00000450] 3823                      move.w    -(a3),d4
-[00000452] e8a2                      asr.l     d4,d2
-[00000454] 8a24                      or.b      -(a4),d5
-[00000456] 9822                      sub.b     -(a2),d4
-[00000458] 28aa 3221                 move.l    12833(a2),(a4)
-[0000045c] 1830 6b9c                 move.b    ([],d6.l*2),d4 ; 68020+ only; reserved OD=0
-[00000460] 8227                      or.b      -(a7),d1
-[00000462] 1c71 c720 71c7            movea.l   ($71C7,a1,a4.w*8),b6 ; 68020+ only
-[00000468] 1821                      move.b    -(a1),d4
-[0000046a] 889c                      or.l      (a4)+,d4
-[0000046c] 80ef 9c71                 divu.w    -25487(a7),d0
-[00000470] c8a2                      and.l     -(a2),d4
-[00000472] 8a28 9871                 or.b      -26511(a0),d5
-[00000476] cf1e                      and.b     d7,(a6)+
-[00000478] 7187                      ???
-[0000047a] 22f1 2fa2 61e7 b6cc       move.l    ([$61E7,za1,d2.l*8],$B6CC),(a1)+ ; 68020+ only
-[00000482] cd9b                      and.l     d6,(a3)+
-[00000484] 71c5                      ???
-[00000486] 96ba e71c                 sub.l     $FFFFEBA4(pc),d3
-[0000048a] 7000                      moveq.l   #0,d0
-[0000048c] 08ea db55 4927            bset      #-9387,18727(a2)
-[00000492] 0c18 6d8c                 cmpi.b    #$8C,(a0)+
-[00000496] 19bd 8618                 move.b    ???,24(a4,a0.w*8) ; 68020+ only
-[0000049a] 6646                      bne.s     $000004E2
-[0000049c] d9bd                      add.l     d4,???
-[0000049e] 9cd8                      suba.w    (a0)+,a6
-[000004a0] 6f56                      ble.s     $000004F8
-[000004a2] 1866                      movea.l   -(a6),b4 ; apollo only
-[000004a4] f671                      dc.w      $F671 ; illegal
-[000004a6] c72d d3c6                 and.b     d3,-11322(a5)
-[000004aa] 5433 668c                 addq.b    #2,-116(a3,d6.w*8) ; 68020+ only
-[000004ae] abed                      dc.w      $ABED ; illegal
-[000004b0] 9c72 a792 7886            sub.w     ([za2,a2.w*8],$7886),d6 ; 68020+ only
-[000004b6] 0630 cf80 30c3            addi.b    #$80,-61(a0,d3.w)
-[000004bc] 0468 c100 008d            subi.w    #$C100,141(a0)
-[000004c2] 8662                      or.w      -(a2),d3
-[000004c4] acaa e2df dc93            mac.w     a7.u,a6.u,<<1,-9069(a2),d6,acc2
-[000004ca] a358                      mov3q.l   #1,(a0)+
-[000004cc] d9cc                      adda.l    a4,a4
-[000004ce] 06d8 698c                 callm     #$698C,(a0)+ ; 68020 only
-[000004d2] dbef a440                 adda.l    -23488(a7),a5
-[000004d6] 2172 00c0 3e29            move.l    -64(a2,d0.w),15913(a0)
-[000004dc] 6e80                      bgt.s     $0000045E
-[000004de] 60c3                      bra.s     $000004A3
-[000004e0] 0830 0330 c848            btst      #816,72(a0,a4.l)
-[000004e6] 02f8 2888 8823            chk2.w    ($FFFF8823).w,d2 ; 68020+ only
-[000004ec] 0c31 e30c b228            cmpi.b    #$0C,40(a1,a3.w*2) ; 68020+ only
-[000004f2] a08a 0822                 mac.l     a2,d0,0,acc1
-[000004f6] 8888                      or.l      a0,d4 ; apollo only
-[000004f8] 9442                      sub.w     d2,d2
-[000004fa] 29a2 822a                 move.l    -(a2),42(a4,a0.w*2) ; 68020+ only
-[000004fe] 0222 2536                 andi.b    #$36,-(a2)
-[00000502] 5084                      addq.l    #8,d4
-[00000504] 1818                      move.b    (a0)+,d4
-[00000506] 6000 03e8                 bra       $000008F0
-[0000050a] a08a 021e                 mac.w     a2.l,d0.l,<<1,acc3
-[0000050e] 8881                      or.l      d1,d4
-[00000510] 2422                      move.l    -(a2),d2
-[00000512] a8a2 8a24                 mac.l     d4,a0,<<1,-(a2)&,d4,acc0
-[00000516] 0622 252a                 addi.b    #$2A,-(a2)
-[0000051a] 31e2 0c30                 move.w    -(a2),($00000C30).w
-[0000051e] c132 822f                 and.b     d0,47(a2,a0.w*2) ; 68020+ only
-[00000522] 8208                      or.b      a0,d1 ; apollo only
-[00000524] 20a0                      move.l    -(a0),(a0)
-[00000526] fbef 8820 8fa2            wdebug    -28766(a7)
-[0000052c] f38a                      dc.w      $F38A ; illegal
-[0000052e] 228a                      move.l    a2,(a1)
-[00000530] 28a2                      move.l    -(a2),(a4)
-[00000532] 7a28                      moveq.l   #40,d5
-[00000534] 8e20                      or.b      -(a0),d7
-[00000536] 8888                      or.l      a0,d4 ; apollo only
-[00000538] 0888 a289                 bclr      #-23927,a0
-[0000053c] a79c                      move.l    acc3,a4
-[0000053e] 6100 8b14                 bsr       $FFFF9054
-[00000542] c6f6 0a26                 mulu.w    38(a6,d0.l*2),d3 ; 68020+ only
-[00000546] 9aa2                      sub.l     -(a2),d5
-[00000548] c8a2                      and.l     -(a2),d4
-[0000054a] 8800                      or.b      d0,d4
-[0000054c] 086a f8c0 4bad            bchg      #-1856,19373(a2)
-[00000552] 8c38 6d8c                 or.b      ($00006D8C).w,d6
-[00000556] 19bd 8018                 move.b    ???,24(a4,a0.w)
-[0000055a] 6646                      bne.s     $000005A2
-[0000055c] d9b1 8ed0                 add.l     d4,-48(a1,a0.l*8) ; 68020+ only
-[00000560] 6c56                      bge.s     $000005B8
-[00000562] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000564] c631 cdad d366            and.b     ([$D366,za1],a4.l*4),d3 ; 68020+ only
-[0000056a] 1463                      movea.l   -(a3),b2 ; apollo only
-[0000056c] 668c                      bne.s     $000004FA
-[0000056e] ab65                      mov3q.l   #5,-(a5)
-[00000570] 36aa a412                 move.w    -23534(a2),(a3)
-[00000574] 0000 0030                 ori.b     #$30,d0
-[00000578] c01a                      and.b     (a2)+,d0
-[0000057a] 0003 3469                 ori.b     #$69,d3
-[0000057e] e700                      asl.b     #3,d0
-[00000580] 0087 0421 c9b6            ori.l     #$0421C9B6,d7
-[00000586] 4210                      clr.b     (a0)
-[00000588] 3c18                      move.w    (a0)+,d6
-[0000058a] e75c                      rol.w     #3,d4
-[0000058c] d9cc                      adda.l    a4,a4
-[0000058e] 06f8 6d8c d867            callm     #$6D8C,($FFFFD867).w ; 68020 only
-[00000594] 3c71 eede                 movea.w   -34(a1,a6.l*8),a6 ; 68020+ only
-[00000598] 0000 14f2                 ori.b     #$F2,d0
-[0000059c] 6d00 3184                 blt       $00003722
-[000005a0] 8830 0320 704f            or.b      ($704F,a0,d0.w*2),d4 ; 68020+ only
-[000005a6] bc13                      cmp.b     (a3),d6
-[000005a8] c708                      abcd.b    -(a0),-(a3)
-[000005aa] 71c3                      ???
-[000005ac] 0418 0600                 subi.b    #$00,(a0)+
-[000005b0] 822f 1ef3                 or.b      7923(a7),d1
-[000005b4] e81e                      ror.b     #4,d6
-[000005b6] 89c7                      divs.w    d7,d4
-[000005b8] 127a 289c                 movea.l   $00002E56(pc),b1 ; apollo only
-[000005bc] 81c9                      divs.w    a1,d0 ; apollo only
-[000005be] bc21                      cmp.b     -(a1),d6
-[000005c0] e222                      asr.b     d1,d2
-[000005c2] 888f                      or.l      a7,d4 ; apollo only
-[000005c4] 9e09                      sub.b     a1,d7
-[000005c6] e000                      asr.b     #8,d0
-[000005c8] 01ef 1c79                 bset      d0,7289(a7)
-[000005cc] c202                      and.b     d2,d1
-[000005ce] 89c1                      divs.w    d1,d4
-[000005d0] 2272 289c                 movea.l   -100(a2,d2.l),a1
-[000005d4] f1e4                      dc.w      $F1E4 ; illegal
-[000005d6] 1c11                      move.b    (a1),d6
-[000005d8] e236                      roxr.b    d1,d6
-[000005da] 4827                      nbcd      -(a7)
-[000005dc] 8e31 c03e                 or.b      62(a1,a4.w),d7
-[000005e0] 7a28                      moveq.l   #40,d5
-[000005e2] 3efb ef9e 8208            move.w    ([zpc],a6.l*8,$8208),(a7)+ ; 68020+ only
-[000005e8] 0820 88be                 btst      #-30530,-(a0)
-[000005ec] 81eb a28a                 divs.w    -23926(a3),d0
-[000005f0] 28a2                      move.l    -(a2),(a4)
-[000005f2] 09c7                      bset      d4,d7
-[000005f4] 8479 cf08 f888            or.w      $CF08F888,d2
-[000005fa] a289 6000                 mac.w     a1.l,d1.l,0,acc1
-[000005fe] c900                      abcd.b    d0,d4
-[00000600] 863c c36c                 or.b      #$6C,d3
-[00000604] fa24 8c79 efbe            cp5GEN    #$EFBE,-(a4)
-[0000060a] 8800                      or.b      d0,d4
-[0000060c] 082b 1a40 482c            btst      #6720,18476(a3)
-[00000612] be68 6d8c                 cmp.w     28044(a0),d7
-[00000616] 19bf 80f1                 move.b    ???,-15(a4,a0.w)
-[0000061a] e6de                      ror.w     (a6)+
-[0000061c] 73ff                      ???
-[0000061e] bec0                      cmpa.w    d0,a7
-[00000620] 6ff6                      ble.s     $00000618
-[00000622] 1867                      movea.l   -(a7),b4 ; apollo only
-[00000624] c632 889a                 and.b     -102(a2,a0.l),d3
-[00000628] 6bc6                      bmi.s     $000005F0
-[0000062a] 14c1                      move.b    d1,(a2)+
-[0000062c] c7cc                      muls.w    a4,d3 ; apollo only
-[0000062e] 71cd                      ???
-[00000630] b671 c392 7be7            cmp.w     ([za1,a4.w*2],$7BE7),d3 ; 68020+ only
-[00000636] 9e30 822c                 sub.b     44(a0,a0.w*2),d7 ; 68020+ only
-[0000063a] 0000 1c00                 ori.b     #$00,d0
-[0000063e] 0000 0082                 ori.b     #$82,d0
-[00000642] 0000 0000                 ori.b     #$00,d0
-[00000646] 01e3                      bset      d0,-(a3)
-[00000648] 1810                      move.b    (a0),d4
-[0000064a] b64c                      cmp.w     a4,d3
-[0000064c] f9cf                      dc.w      $F9CF ; illegal
-[0000064e] be1b                      cmp.b     (a3)+,d7
-[00000650] ef8c                      lsl.l     #7,d4
-[00000652] f860 0758                 lpS??     -(a0)
-[00000656] ac00 00c0                 mac.w     d0.u,d6.u,0,acc0
-[0000065a] 0020 0680                 ori.b     #$80,-(a0)
-[0000065e] 0000 0060                 ori.b     #$60,d0
-[00000662] 0000 0000                 ori.b     #$00,d0
-[00000666] 0000 0000                 ori.b     #$00,d0
-[0000066a] 0000 0800                 ori.b     #$00,d0
-[0000066e] 000c 7800                 ori.b     #$00,a4 ; apollo only
-[00000672] 0000 0000                 ori.b     #$00,d0
-[00000676] 0000 0000                 ori.b     #$00,d0
-[0000067a] 0000 0060                 ori.b     #$60,d0
-[0000067e] 0000 0000                 ori.b     #$00,d0
-[00000682] 0000 0000                 ori.b     #$00,d0
-[00000686] 003e 0000                 ori.b     #$00,???
-[0000068a] 0000 003c                 ori.b     #$3C,d0
-[0000068e] 000e 0000                 ori.b     #$00,a6 ; apollo only
-[00000692] 0000 8020                 ori.b     #$20,d0
-[00000696] 0000 0000                 ori.b     #$00,d0
-[0000069a] 03c0                      bset      d1,d0
-[0000069c] 0030 0000 c1e7 1e79 e7b8  ori.b     #$00,([$1E79],$E7B871C7) ; 68020+ only; reserved OD=3
-[000006a6] 71c7
-[000006a8] 1c71 c022                 movea.l   34(a1,a4.w),b6 ; apollo only
-[000006ac] f800 1c71 c79e            lpGEN     #$C79E,d0
-[000006b2] f000 0000                 pmove.l   d0,???
-[000006b6] 8830 79c7 1e89 2fbe       or.b      ([],$1E892FBE),d4 ; 68020+ only; reserved BD=0; reserved OD=3
-[000006be] 7000                      moveq.l   #0,d0
-[000006c0] 0f04                      btst      d7,d4
-[000006c2] c000                      and.b     d0,d0
-[000006c4] 79cb                      ???
-[000006c6] 1000                      move.b    d0,d0
-[000006c8] 08a2 7000                 bclr      #28672,-(a2)
-[000006cc] 0029 e780 10c0            ori.b     #$80,4288(a1)
-[000006d2] 0000 0000                 ori.b     #$00,d0
-[000006d6] 0000 0000                 ori.b     #$00,d0
-[000006da] 0000 0000                 ori.b     #$00,d0
-[000006de] 00c0                      bitrev.l  d0 ; ColdFire isa_c only
-[000006e0] 0000 0000                 ori.b     #$00,d0
-[000006e4] 0001 8000                 ori.b     #$00,d1
-[000006e8] 0306                      btst      d1,d6
-[000006ea] 00f8 0c08 7000            chk2.b    ($00007000).w,d0 ; 68020+ only
-[000006f0] 1cc0                      move.b    d0,(a6)+
-[000006f2] 8000                      or.b      d0,d0
-[000006f4] 0000 0033                 ori.b     #$33,d0
-[000006f8] 0000 0000                 ori.b     #$00,d0
-[000006fc] 0800 0000                 btst      #0,d0
-header_0:
-[00000700] 0001 0009                 ori.b     #$09,d1
-[00000704] 3878 3820                 movea.w   ($00003820).w,a4
-[00000708] 7379                      ???
-[0000070a] 7374                      ???
-[0000070c] 656d                      bcs.s     $0000077B
-[0000070e] 2066                      movea.l   -(a6),a0
-[00000710] 6f6e                      ble.s     $00000780
-[00000712] 7400                      moveq.l   #0,d2
-[00000714] 0000 0000                 ori.b     #$00,d0
-[00000718] 0000 0000                 ori.b     #$00,d0
-[0000071c] 0000 0000                 ori.b     #$00,d0
-[00000720] 0000 0000                 ori.b     #$00,d0
-[00000724] 0000 00ff                 ori.b     #$FF,d0
-[00000728] 0006 0006                 ori.b     #$06,d6
-[0000072c] 0004 0001                 ori.b     #$01,d4
-[00000730] 0001 0007                 ori.b     #$07,d1
-[00000734] 0008 0001                 ori.b     #$01,a0 ; apollo only
-[00000738] 0003 0001                 ori.b     #$01,d3
-[0000073c] 0001 5555                 ori.b     #$55,d1
-[00000740] 5555                      subq.w    #2,(a5)
-[00000742] 000d 0000                 ori.b     #$00,a5 ; apollo only
-[00000746] 0000 0000                 ori.b     #$00,d0
-[0000074a] 0758                      bchg      d3,(a0)+
-[0000074c] 0000 095a                 ori.b     #$5A,d0
-[00000750] 0100                      btst      d0,d0
-[00000752] 0008 0000                 ori.b     #$00,a0 ; apollo only
-[00000756] 153c 0000                 move.b    #$00,-(a2)
-[0000075a] 0008 0010                 ori.b     #$10,a0 ; apollo only
-[0000075e] 0018 0020                 ori.b     #$20,(a0)+
-[00000762] 0028 0030 0038            ori.b     #$30,56(a0)
-[00000768] 0040 0048                 ori.w     #off_tabl,d0
-[0000076c] 0050 0058                 ori.w     #_nvdi_mo,(a0)
-[00000770] 0060 0068                 ori.w     #VSF_PERI,-(a0)
-[00000774] 0070 0078 0080            ori.w     #_nvdi_re,-128(a0,d0.w)
-[0000077a] 0088 0090 0098            ori.l     #$00900098,a0 ; apollo only
-[00000780] 00a0 00a8 00b0            ori.l     #$00A800B0,-(a0)
-[00000786] 00b8 00c0 00c8 00d0       ori.l     #$00C000C8,($000000D0).w
-[0000078e] 00d8                      dc.w      $00D8 ; illegal
-[00000790] 00e0                      dc.w      $00E0 ; illegal
-[00000792] 00e8 00f0 00f8            cmp2.b    248(a0),d0 ; 68020+ only
-[00000798] 0100                      btst      d0,d0
-[0000079a] 0108 0110                 movep.w   272(a0),d0
-[0000079e] 0118                      btst      d0,(a0)+
-[000007a0] 0120                      btst      d0,-(a0)
-[000007a2] 0128 0130                 btst      d0,304(a0)
-[000007a6] 0138 0140                 btst      d0,($00000140).w
-[000007aa] 0148 0150                 movep.l   336(a0),d0
-[000007ae] 0158                      bchg      d0,(a0)+
-[000007b0] 0160                      bchg      d0,-(a0)
-[000007b2] 0168 0170                 bchg      d0,368(a0)
-[000007b6] 0178 0180                 bchg      d0,($00000180).w
-[000007ba] 0188 0190                 movep.w   d0,400(a0)
-[000007be] 0198                      bclr      d0,(a0)+
-[000007c0] 01a0                      bclr      d0,-(a0)
-[000007c2] 01a8 01b0                 bclr      d0,432(a0)
-[000007c6] 01b8 01c0                 bclr      d0,($000001C0).w
-[000007ca] 01c8 01d0                 movep.l   d0,464(a0)
-[000007ce] 01d8                      bset      d0,(a0)+
-[000007d0] 01e0                      bset      d0,-(a0)
-[000007d2] 01e8 01f0                 bset      d0,496(a0)
-[000007d6] 01f8 0200                 bset      d0,($00000200).w
-[000007da] 0208 0210                 andi.b    #$10,a0 ; apollo only
-[000007de] 0218 0220                 andi.b    #$20,(a0)+
-[000007e2] 0228 0230 0238            andi.b    #$30,568(a0)
-[000007e8] 0240 0248                 andi.w    #p_escape,d0
-[000007ec] 0250 0258                 andi.w    #f_saddr,(a0)
-[000007f0] 0260 0268                 andi.w    #$0268,-(a0)
-[000007f4] 0270 0278 0280            andi.w    #$0278,-128(a0,d0.w*2) ; 68020+ only
-[000007fa] 0288 0290 0298            andi.l    #$02900298,a0 ; apollo only
-[00000800] 02a0 02a8 02b0            andi.l    #$02A802B0,-(a0)
-[00000806] 02b8 02c0 02c8 02d0       andi.l    #$02C002C8,($000002D0).w
-[0000080e] 02d8                      dc.w      $02D8 ; illegal
-[00000810] 02e0                      dc.w      $02E0 ; illegal
-[00000812] 02e8 02f0 02f8            cmp2.w    760(a0),d0 ; 68020+ only
-[00000818] 0300                      btst      d1,d0
-[0000081a] 0308 0310                 movep.w   784(a0),d1
-[0000081e] 0318                      btst      d1,(a0)+
-[00000820] 0320                      btst      d1,-(a0)
-[00000822] 0328 0330                 btst      d1,816(a0)
-[00000826] 0338 0340                 btst      d1,($00000340).w
-[0000082a] 0348 0350                 movep.l   848(a0),d1
-[0000082e] 0358                      bchg      d1,(a0)+
-[00000830] 0360                      bchg      d1,-(a0)
-[00000832] 0368 0370                 bchg      d1,880(a0)
-[00000836] 0378 0380                 bchg      d1,($00000380).w
-[0000083a] 0388 0390                 movep.w   d1,912(a0)
-[0000083e] 0398                      bclr      d1,(a0)+
-[00000840] 03a0                      bclr      d1,-(a0)
-[00000842] 03a8 03b0                 bclr      d1,944(a0)
-[00000846] 03b8 03c0                 bclr      d1,($000003C0).w
-[0000084a] 03c8 03d0                 movep.l   d1,976(a0)
-[0000084e] 03d8                      bset      d1,(a0)+
-[00000850] 03e0                      bset      d1,-(a0)
-[00000852] 03e8 03f0                 bset      d1,1008(a0)
-[00000856] 03f8 0400                 bset      d1,($00000400).w
-[0000085a] 0408 0410                 subi.b    #$10,a0 ; apollo only
-[0000085e] 0418 0420                 subi.b    #$20,(a0)+
-[00000862] 0428 0430 0438            subi.b    #$30,1080(a0)
-[00000868] 0440 0448                 subi.w    #$0448,d0
-[0000086c] 0450 0458                 subi.w    #$0458,(a0)
-[00000870] 0460 0468                 subi.w    #$0468,-(a0)
-[00000874] 0470 0478 0480            subi.w    #$0478,-128(a0,d0.w*4) ; 68020+ only
-[0000087a] 0488 0490 0498            subi.l    #$04900498,a0 ; apollo only
-[00000880] 04a0 04a8 04b0            subi.l    #$04A804B0,-(a0)
-[00000886] 04b8 04c0 04c8 04d0       subi.l    #$04C004C8,($000004D0).w
-[0000088e] 04d8                      dc.w      $04D8 ; illegal
-[00000890] 04e0                      dc.w      $04E0 ; illegal
-[00000892] 04e8 04f0 04f8            cmp2.l    1272(a0),d0 ; 68020+ only
-[00000898] 0500                      btst      d2,d0
-[0000089a] 0508 0510                 movep.w   1296(a0),d2
-[0000089e] 0518                      btst      d2,(a0)+
-[000008a0] 0520                      btst      d2,-(a0)
-[000008a2] 0528 0530                 btst      d2,1328(a0)
-[000008a6] 0538 0540                 btst      d2,($00000540).w
-[000008aa] 0548 0550                 movep.l   1360(a0),d2
-[000008ae] 0558                      bchg      d2,(a0)+
-[000008b0] 0560                      bchg      d2,-(a0)
-[000008b2] 0568 0570                 bchg      d2,1392(a0)
-[000008b6] 0578 0580                 bchg      d2,($00000580).w
-[000008ba] 0588 0590                 movep.w   d2,1424(a0)
-[000008be] 0598                      bclr      d2,(a0)+
-[000008c0] 05a0                      bclr      d2,-(a0)
-[000008c2] 05a8 05b0                 bclr      d2,1456(a0)
-[000008c6] 05b8 05c0                 bclr      d2,($000005C0).w
-[000008ca] 05c8 05d0                 movep.l   d2,1488(a0)
-[000008ce] 05d8                      bset      d2,(a0)+
-[000008d0] 05e0                      bset      d2,-(a0)
-[000008d2] 05e8 05f0                 bset      d2,1520(a0)
-[000008d6] 05f8 0600                 bset      d2,($00000600).w
-[000008da] 0608 0610                 addi.b    #$10,a0 ; apollo only
-[000008de] 0618 0620                 addi.b    #$20,(a0)+
-[000008e2] 0628 0630 0638            addi.b    #$30,1592(a0)
-[000008e8] 0640 0648                 addi.w    #$0648,d0
-[000008ec] 0650 0658                 addi.w    #$0658,(a0)
-[000008f0] 0660 0668                 addi.w    #$0668,-(a0)
-[000008f4] 0670 0678 0680            addi.w    #$0678,-128(a0,d0.w*8) ; 68020+ only
-[000008fa] 0688 0690 0698            addi.l    #$06900698,a0 ; apollo only
-[00000900] 06a0 06a8 06b0            addi.l    #$06A806B0,-(a0)
-[00000906] 06b8 06c0 06c8 06d0       addi.l    #$06C006C8,($000006D0).w
-[0000090e] 06d8 06e0                 callm     #$06E0,(a0)+ ; 68020 only
-[00000912] 06e8 06f0 06f8            callm     #$06F0,1784(a0) ; 68020 only
-[00000918] 0700                      btst      d3,d0
-[0000091a] 0708 0710                 movep.w   1808(a0),d3
-[0000091e] 0718                      btst      d3,(a0)+
-[00000920] 0720                      btst      d3,-(a0)
-[00000922] 0728 0730                 btst      d3,1840(a0)
-[00000926] 0738 0740                 btst      d3,($00000740).w
-[0000092a] 0748 0750                 movep.l   1872(a0),d3
-[0000092e] 0758                      bchg      d3,(a0)+
-[00000930] 0760                      bchg      d3,-(a0)
-[00000932] 0768 0770                 bchg      d3,1904(a0)
-[00000936] 0778 0780                 bchg      d3,($00000780).w
-[0000093a] 0788 0790                 movep.w   d3,1936(a0)
-[0000093e] 0798                      bclr      d3,(a0)+
-[00000940] 07a0                      bclr      d3,-(a0)
-[00000942] 07a8 07b0                 bclr      d3,1968(a0)
-[00000946] 07b8 07c0                 bclr      d3,($000007C0).w
-[0000094a] 07c8 07d0                 movep.l   d3,2000(a0)
-[0000094e] 07d8                      bset      d3,(a0)+
-[00000950] 07e0                      bset      d3,-(a0)
-[00000952] 07e8 07f0                 bset      d3,2032(a0)
-[00000956] 07f8 0800                 bset      d3,($00000800).w
-dat_tabl:
-[0000095a] 0018 3c18                 ori.b     #$18,(a0)+
-[0000095e] 183c ffe7                 move.b    #$E7,d4
-[00000962] 017e                      bchg      d0,???
-[00000964] 1818                      move.b    (a0)+,d4
-[00000966] f0f0 05a0 7c06            pb??.l    $05A0856E
-[0000096c] 7c7c                      moveq.l   #124,d6
-[0000096e] c67c 7c7c                 and.w     #$7C7C,d3
-[00000972] 7c7c                      moveq.l   #124,d6
-[00000974] 0078 07f0 11fc            ori.w     #$07F0,($000011FC).w
-[0000097a] 0018 6600                 ori.b     #$00,(a0)+
-[0000097e] 1800                      move.b    d0,d4
-[00000980] 3818                      move.w    (a0)+,d4
-[00000982] 0e70 0000 0000            moves.w   0(a0,d0.w),d0
-[00000988] 0002 3c18                 ori.b     #$18,d2
-[0000098c] 3c7e                      movea.w   ???,a6
-[0000098e] 0c7e 3c7e                 cmpi.w    #$3C7E,???
-[00000992] 3c3c 0000                 move.w    #N_OFFSCR,d6
-[00000996] 0600 603c                 addi.b    #$3C,d0
-[0000099a] 3c18                      move.w    (a0)+,d6
-[0000099c] 7c3c                      moveq.l   #60,d6
-[0000099e] 787e                      moveq.l   #126,d4
-[000009a0] 7e3e                      moveq.l   #62,d7
-[000009a2] 663c                      bne.s     $000009E0
-[000009a4] 0666 60c6                 addi.w    #$60C6,-(a6)
-[000009a8] 663c                      bne.s     $000009E6
-[000009aa] 7c3c                      moveq.l   #60,d6
-[000009ac] 7c3c                      moveq.l   #60,d6
-[000009ae] 7e66                      moveq.l   #102,d7
-[000009b0] 66c6                      bne.s     $00000978
-[000009b2] 6666                      bne.s     $00000A1A
-[000009b4] 7e1e                      moveq.l   #30,d7
-[000009b6] 4078 1000                 negx.w    ($00001000).w
-[000009ba] 0000 6000                 ori.b     #$00,d0
-[000009be] 0600 1c00                 addi.b    #$00,d0
-[000009c2] 6018                      bra.s     $000009DC
-[000009c4] 1860                      movea.l   -(a0),b4 ; apollo only
-[000009c6] 3800                      move.w    d0,d4
-[000009c8] 0000 0000                 ori.b     #$00,d0
-[000009cc] 0000 0000                 ori.b     #$00,d0
-[000009d0] 0000 0000                 ori.b     #$00,d0
-[000009d4] 000e 1870                 ori.b     #$70,a6 ; apollo only
-[000009d8] 0000 0066                 ori.b     #$66,d0
-[000009dc] 0c18 6630                 cmpi.b    #$30,(a0)+
-[000009e0] 1800                      move.b    d0,d4
-[000009e2] 1866                      movea.l   -(a6),b4 ; apollo only
-[000009e4] 3066                      movea.w   -(a6),a0
-[000009e6] 1860                      movea.l   -(a0),b4 ; apollo only
-[000009e8] 6618                      bne.s     $00000A02
-[000009ea] 0c00 3f18                 cmpi.b    #$18,d0
-[000009ee] 6630                      bne.s     $00000A20
-[000009f0] 1830 6666                 move.b    102(a0,d6.w*8),d4 ; 68020+ only
-[000009f4] 6618                      bne.s     $00000A0E
-[000009f6] 1c66                      movea.l   -(a6),b6 ; apollo only
-[000009f8] 1c1e                      move.b    (a6)+,d6
-[000009fa] 0c0c 0c0c                 cmpi.b    #$0C,a4 ; apollo only
-[000009fe] 3434 0000                 move.w    0(a4,d0.w),d2
-[00000a02] 0000 00c6                 ori.b     #$C6,d0
-[00000a06] c600                      and.b     d0,d3
-[00000a08] 1bd8                      move.b    (a0)+,???
-[00000a0a] 3434 0200                 move.w    0(a4,d0.w*2),d2 ; 68020+ only
-[00000a0e] 007f 3034                 ori.w     #$3034,???
-[00000a12] 3466                      movea.w   -(a6),a2
-[00000a14] 0c00 7a7e                 cmpi.b    #$7E,d0
-[00000a18] 7ef1                      moveq.l   #-15,d7
-[00000a1a] 66f6                      bne.s     $00000A12
-[00000a1c] 0000 0000                 ori.b     #$00,d0
-[00000a20] 0000 0000                 ori.b     #$00,d0
-[00000a24] 6000 0060                 bra.w     $00000A86
-[00000a28] 0000 0000                 ori.b     #$00,d0
-[00000a2c] 0000 0000                 ori.b     #$00,d0
-[00000a30] 0000 0000                 ori.b     #$00,d0
-[00000a34] 0000 000e                 ori.b     #$0E,d0
-[00000a38] 0066 001c                 ori.w     #DRVR_wk_,-(a6)
-[00000a3c] 0000 fe00                 ori.b     #$00,d0
-[00000a40] 0000 3c00                 ori.b     #$00,d0
-[00000a44] 001c 0c00                 ori.b     #$00,(a4)+
-[00000a48] 3e3c 0018                 move.w    #VSF_STYL,d7
-[00000a4c] 300c                      move.w    a4,d0
-[00000a4e] 0018 1800                 ori.b     #$00,(a0)+
-[00000a52] 3838 0000                 move.w    (sys_font).w,d4
-[00000a56] 3838 7800                 move.w    ($00007800).w,d4
-[00000a5a] 003c 241c                 ori.b     #$1C,ccr
-[00000a5e] 3899                      move.w    (a1)+,(a4)
-[00000a60] ffc3                      dc.w      $FFC3 ; illegal
-[00000a62] 03c3                      bset      d1,d3
-[00000a64] 3c1c                      move.w    (a4)+,d6
-[00000a66] c0c0                      mulu.w    d0,d0
-[00000a68] 05a0                      bclr      d2,-(a0)
-[00000a6a] c606                      and.b     d6,d3
-[00000a6c] 0606 c6c0                 addi.b    #$C0,d6
-[00000a70] c006                      and.b     d6,d0
-[00000a72] c6c6                      mulu.w    d6,d3
-[00000a74] 0060 0ff8                 ori.w     #$0FF8,-(a0)
-[00000a78] 0bfc                      bset      d5,# ; illegal
-[00000a7a] 0018 666c                 ori.b     #$6C,(a0)+
-[00000a7e] 3e66                      movea.w   -(a6),a7
-[00000a80] 6c18                      bge.s     $00000A9A
-[00000a82] 1c38 6618                 move.b    ($00006618).w,d6
-[00000a86] 0000 0006                 ori.b     #$06,d0
-[00000a8a] 6638                      bne.s     $00000AC4
-[00000a8c] 660c                      bne.s     $00000A9A
-[00000a8e] 1c60                      movea.l   -(a0),b6 ; apollo only
-[00000a90] 6006                      bra.s     $00000A98
-[00000a92] 6666                      bne.s     $00000AFA
-[00000a94] 1818                      move.b    (a0)+,d4
-[00000a96] 0c00 3066                 cmpi.b    #$66,d0
-[00000a9a] 663c                      bne.s     $00000AD8
-[00000a9c] 6666                      bne.s     $00000B04
-[00000a9e] 6c60                      bge.s     $00000B00
-[00000aa0] 6060                      bra.s     $00000B02
-[00000aa2] 6618                      bne.s     $00000ABC
-[00000aa4] 066c 60ee 7666            addi.w    #$60EE,30310(a4)
-[00000aaa] 6666                      bne.s     $00000B12
-[00000aac] 6666                      bne.s     $00000B14
-[00000aae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000ab0] 66c6                      bne.s     $00000A78
-[00000ab2] 6666                      bne.s     $00000B1A
-[00000ab4] 0618 6018                 addi.b    #$18,(a0)+
-[00000ab8] 3800                      move.w    d0,d4
-[00000aba] c000                      and.b     d0,d0
-[00000abc] 6000 0600                 bra       $000010BE
-[00000ac0] 3000                      move.w    d0,d0
-[00000ac2] 6000 0060                 bra.w     $00000B24
-[00000ac6] 1800                      move.b    d0,d4
-[00000ac8] 0000 0000                 ori.b     #$00,d0
-[00000acc] 0000 1800                 ori.b     #$00,d0
-[00000ad0] 0000 0000                 ori.b     #$00,d0
-[00000ad4] 0018 1818                 ori.b     #$18,(a0)+
-[00000ad8] 6018                      bra.s     $00000AF2
-[00000ada] 3c00                      move.w    d0,d6
-[00000adc] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000ade] 0018 1800                 ori.b     #$00,(a0)+
-[00000ae2] 6600 1800                 bne       $000022E4
-[00000ae6] 6630                      bne.s     $00000B18
-[00000ae8] 0000 1800                 ori.b     #$00,d0
-[00000aec] 7866                      moveq.l   #102,d4
-[00000aee] 0018 6618                 ori.b     #$18,(a0)+
-[00000af2] 0000 0018                 ori.b     #$18,d0
-[00000af6] 3a66                      movea.w   -(a6),a5
-[00000af8] 3630 1818                 move.w    24(a0,d1.l),d3
-[00000afc] 1818                      move.b    (a0)+,d4
-[00000afe] 5858                      addq.w    #4,(a0)+
-[00000b00] 3c3c 1800                 move.w    #$1800,d6
-[00000b04] 00cc                      dc.w      $00CC ; illegal
-[00000b06] cc18                      and.b     (a0)+,d6
-[00000b08] 366c 5858                 movea.w   22616(a4),a3
-[00000b0c] 3c02                      move.w    d2,d6
-[00000b0e] 00d8                      dc.w      $00D8 ; illegal
-[00000b10] 1858                      movea.l   (a0)+,b4 ; apollo only
-[00000b12] 5800                      addq.b    #4,d0
-[00000b14] 1810                      move.b    (a0),d4
-[00000b16] cac3                      mulu.w    d3,d5
-[00000b18] c35b                      and.w     d1,(a3)+
-[00000b1a] 0066 667c                 ori.w     #$667C,-(a6)
-[00000b1e] 1e7e                      movea.l   ???,b7 ; apollo only
-[00000b20] 7c1c                      moveq.l   #28,d6
-[00000b22] 1e7e                      movea.l   ???,b7 ; apollo only
-[00000b24] 6e3c                      bgt.s     $00000B62
-[00000b26] 3e7e                      movea.w   ???,a7
-[00000b28] 6c1c                      bge.s     $00000B46
-[00000b2a] 3e36 7e66                 move.w    102(a6,d7.l*8),d7 ; 68020+ only
-[00000b2e] 3e78 d67c                 movea.w   ($FFFFD67C).w,a7
-[00000b32] 1c3e                      move.b    ???,d6
-[00000b34] fe7e 361b                 pmull.q   ???,d3,e14
-[00000b38] 10f7 0036                 move.b    54(a7,d0.w),(a0)+
-[00000b3c] fe00 661e                 unpack1632.qd0,d6
-[00000b40] 0000 183c                 ori.b     #$3C,d0
-[00000b44] 3c36 1810                 move.w    16(a6,d1.l),d6
-[00000b48] 7066                      moveq.l   #102,d0
-[00000b4a] 7e18                      moveq.l   #24,d7
-[00000b4c] 1818                      move.b    (a0)+,d4
-[00000b4e] 0e18 1832                 ???.b     d1,(a0)+ ; apollo only
-[00000b52] 6c7c                      bge.s     $00000BD0
-[00000b54] 0000 6c6c                 ori.b     #$6C,d0
-[00000b58] 0cfe 0066                 cas.w     d6,d1,??? ; 68020+ only
-[00000b5c] 24f6 6fc3 fe99 06d3       move.l    ([za6,zd6.l*8],$FE9906D3),(a2)+ ; 68020+ only; reserved BD=0
-[00000b64] 3c16                      move.w    (a6),d6
-[00000b66] fedf 05a0 c606            nfB??.l   $05A0D16E
-[00000b6c] 0606 c6c0                 addi.b    #$C0,d6
-[00000b70] c006                      and.b     d6,d0
-[00000b72] c6c6                      mulu.w    d6,d3
-[00000b74] 3c78 1fec                 movea.w   ($00001FEC).w,a6
-[00000b78] 0dff                      bset      d6,???
-[00000b7a] 0018 66fe                 ori.b     #$FE,(a0)+
-[00000b7e] 606c                      bra.s     $00000BEC
-[00000b80] 3818                      move.w    (a0)+,d4
-[00000b82] 1818                      move.b    (a0)+,d4
-[00000b84] 3c18                      move.w    (a0)+,d6
-[00000b86] 0000 000c                 ori.b     #$0C,d0
-[00000b8a] 6e18                      bgt.s     $00000BA4
-[00000b8c] 0618 3c7c                 addi.b    #$7C,(a0)+
-[00000b90] 600c                      bra.s     $00000B9E
-[00000b92] 6666                      bne.s     $00000BFA
-[00000b94] 1818                      move.b    (a0)+,d4
-[00000b96] 187e                      movea.l   ???,b4 ; apollo only
-[00000b98] 1806                      move.b    d6,d4
-[00000b9a] 6e66                      bgt.s     $00000C02
-[00000b9c] 6660                      bne.s     $00000BFE
-[00000b9e] 6660                      bne.s     $00000C00
-[00000ba0] 6060                      bra.s     $00000C02
-[00000ba2] 6618                      bne.s     $00000BBC
-[00000ba4] 0678 60fe 7e66            addi.w    #$60FE,(cptb_lr).w
-[00000baa] 6666                      bne.s     $00000C12
-[00000bac] 6660                      bne.s     $00000C0E
-[00000bae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000bb0] 66c6                      bne.s     $00000B78
-[00000bb2] 3c66                      movea.w   -(a6),a6
-[00000bb4] 0c18 3018                 cmpi.b    #$18,(a0)+
-[00000bb8] 6c00 603c                 bge       $00006BF6
-[00000bbc] 7c3c                      moveq.l   #60,d6
-[00000bbe] 3e3c 7c3e                 move.w    #$7C3E,d7
-[00000bc2] 7c38                      moveq.l   #56,d6
-[00000bc4] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000bc6] 18ec 7c3c                 move.b    31804(a4),(a4)+
-[00000bca] 7c3e                      moveq.l   #62,d6
-[00000bcc] 7c3e                      moveq.l   #62,d6
-[00000bce] 7e66                      moveq.l   #102,d7
-[00000bd0] 66c6                      bne.s     $00000B98
-[00000bd2] 6666                      bne.s     $00000C3A
-[00000bd4] 7e18                      moveq.l   #24,d7
-[00000bd6] 1818                      move.b    (a0)+,d4
-[00000bd8] f218 6600                 fmove.s   fp4,(a0)+
-[00000bdc] 0000 3c00                 ori.b     #$00,d0
-[00000be0] 003c 003c                 ori.b     #$3C,ccr
-[00000be4] 0000 0000                 ori.b     #$00,d0
-[00000be8] 1818                      move.b    (a0)+,d4
-[00000bea] 7e7e                      moveq.l   #126,d7
-[00000bec] d800                      add.b     d0,d4
-[00000bee] 0000 0000                 ori.b     #$00,d0
-[00000bf2] 663c                      bne.s     $00000C30
-[00000bf4] 663c                      bne.s     $00000C32
-[00000bf6] 303c 667c                 move.w    #$667C,d0
-[00000bfa] 0000 0000                 ori.b     #$00,d0
-[00000bfe] 0000 0666                 ori.b     #$66,d0
-[00000c02] 0000 00d8                 ori.b     #$D8,d0
-[00000c06] d800                      add.b     d0,d4
-[00000c08] 6c36                      bge.s     $00000C40
-[00000c0a] 0000 663c                 ori.b     #$3C,d0
-[00000c0e] 7ed8                      moveq.l   #-40,d7
-[00000c10] 0000 3c00                 ori.b     #$00,d0
-[00000c14] 3038 cabd                 move.w    ($FFFFCABD).w,d0
-[00000c18] bd5f                      eor.w     d6,(a7)+
-[00000c1a] e666                      asr.w     d3,d6
-[00000c1c] 760c                      moveq.l   #12,d3
-[00000c1e] 060c 060c                 addi.b    #$0C,a4 ; apollo only
-[00000c22] 0c36 660c 0606            cmpi.b    #$0C,6(a6,d0.w*8) ; 68020+ only
-[00000c28] 3e0c                      move.w    a4,d7
-[00000c2a] 3636 6666                 move.w    102(a6,d6.w*8),d3 ; 68020+ only
-[00000c2e] 060c d66c                 addi.b    #$6C,a4 ; apollo only
-[00000c32] 0c06 6666                 cmpi.b    #$66,d6
-[00000c36] 363c 3899                 move.w    #$3899,d3
-[00000c3a] 7666                      moveq.l   #102,d3
-[00000c3c] 66fe                      bne.s     $00000C3C
-[00000c3e] 3038 6c7e                 move.w    (vs_clip_).w,d0
-[00000c42] 3c66                      movea.w   -(a6),a6
-[00000c44] 6678                      bne.s     $00000CBE
-[00000c46] 387c 6066                 movea.w   #$6066,a4
-[00000c4a] 007e 0c30                 ori.w     #$0C30,???
-[00000c4e] 1b18                      move.b    (a0)+,-(a5)
-[00000c50] 004c 3838                 ori.w     #$3838,a4 ; apollo only
-[00000c54] 000f 6c18                 ori.b     #$18,a7 ; apollo only
-[00000c58] 3800                      move.w    d0,d4
-[00000c5a] 00c3                      bitrev.l  d3 ; ColdFire isa_c only
-[00000c5c] e783                      asl.l     #3,d3
-[00000c5e] c1e7                      muls.w    -(a7),d0
-[00000c60] fc3c 8cd3 3c10            cp6GEN    #$3C10,# ; illegal
-[00000c66] d8db                      adda.w    (a3)+,a4
-[00000c68] 0db0 0000                 bclr      d6,0(a0,d0.w)
-[00000c6c] 7c7c                      moveq.l   #124,d6
-[00000c6e] 7c7c                      moveq.l   #124,d6
-[00000c70] 7c00                      moveq.l   #0,d6
-[00000c72] 7c7c                      moveq.l   #124,d6
-[00000c74] 0660 1804                 addi.w    #$1804,-(a0)
-[00000c78] 06e1 0018                 callm     #VSF_STYL,-(a1) ; 68020 only
-[00000c7c] 006c 3c18 7000            ori.w     #$3C18,28672(a4)
-[00000c82] 1818                      move.b    (a0)+,d4
-[00000c84] ff7e                      dc.w      $FF7E ; illegal
-[00000c86] 007e 0018                 ori.w     #VSF_STYL,???
-[00000c8a] 7618                      moveq.l   #24,d3
-[00000c8c] 0c0c 6c06                 cmpi.b    #$06,a4 ; apollo only
-[00000c90] 7c18                      moveq.l   #24,d6
-[00000c92] 3c3e                      move.w    ???,d6
-[00000c94] 0000 3000                 ori.b     #$00,d0
-[00000c98] 0c0c 6a66                 cmpi.b    #$66,a4 ; apollo only
-[00000c9c] 7c60                      moveq.l   #96,d6
-[00000c9e] 667c                      bne.s     $00000D1C
-[00000ca0] 7c6e                      moveq.l   #110,d6
-[00000ca2] 7e18                      moveq.l   #24,d7
-[00000ca4] 0670 60d6 7e66            addi.w    #$60D6,102(a0,d7.l*8) ; 68020+ only
-[00000caa] 7c66                      moveq.l   #102,d6
-[00000cac] 7c3c                      moveq.l   #60,d6
-[00000cae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000cb0] 66d6                      bne.s     $00000C88
-[00000cb2] 183c 1818                 move.b    #$18,d4
-[00000cb6] 1818                      move.b    (a0)+,d4
-[00000cb8] c600                      and.b     d0,d3
-[00000cba] 3006                      move.w    d6,d0
-[00000cbc] 6660                      bne.s     $00000D1E
-[00000cbe] 6666                      bne.s     $00000D26
-[00000cc0] 3066                      movea.w   -(a6),a0
-[00000cc2] 6618                      bne.s     $00000CDC
-[00000cc4] 186c 18fe                 movea.l   6398(a4),b4 ; apollo only
-[00000cc8] 6666                      bne.s     $00000D30
-[00000cca] 6666                      bne.s     $00000D32
-[00000ccc] 6660                      bne.s     $00000D2E
-[00000cce] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000cd0] 66c6                      bne.s     $00000C98
-[00000cd2] 3c66                      movea.w   -(a6),a6
-[00000cd4] 0c30 180c 9e34            cmpi.b    #$0C,52(a0,a1.l*8) ; 68020+ only
-[00000cda] 6066                      bra.s     $00000D42
-[00000cdc] 3c3c 063c                 move.w    #$063C,d6
-[00000ce0] 3c60                      movea.w   -(a0),a6
-[00000ce2] 3c66                      movea.w   -(a6),a6
-[00000ce4] 3c38 3838                 move.w    ($00003838).w,d6
-[00000ce8] 3c3c 601b                 move.w    #$601B,d6
-[00000cec] de3c 3c3c                 add.b     #$3C,d7
-[00000cf0] 6666                      bne.s     $00000D58
-[00000cf2] 6666                      bne.s     $00000D5A
-[00000cf4] 6660                      bne.s     $00000D56
-[00000cf6] 7c18                      moveq.l   #24,d6
-[00000cf8] 7c30                      moveq.l   #48,d6
-[00000cfa] 3c38 3c66                 move.w    ($00003C66).w,d6
-[00000cfe] 7c66                      moveq.l   #102,d6
-[00000d00] 3e66                      movea.w   -(a6),a7
-[00000d02] 183e                      move.b    ???,d4
-[00000d04] 7c36                      moveq.l   #54,d6
-[00000d06] 3618                      move.w    (a0)+,d3
-[00000d08] d81b                      add.b     (a3)+,d4
-[00000d0a] 3c3c 6e6e                 move.w    #$6E6E,d6
-[00000d0e] dbde                      adda.l    (a6)+,a5
-[00000d10] 1818                      move.b    (a0)+,d4
-[00000d12] 6600 0010                 bne.w     $00000D24
-[00000d16] cab1 a555                 and.l     ([a1],za2.w*4),d5 ; 68020+ only; reserved OD=1
-[00000d1a] 6666                      bne.s     $00000D82
-[00000d1c] 3c0c                      move.w    a4,d6
-[00000d1e] 0e0c 660c                 ???.b     a4,d6 ; apollo only
-[00000d22] 0636 660c 0606            addi.b    #$0C,6(a6,d0.w*8) ; 68020+ only
-[00000d28] 660c                      bne.s     $00000D36
-[00000d2a] 3636 763c                 move.w    60(a6,d7.w*8),d3 ; 68020+ only
-[00000d2e] 360c                      move.w    a4,d3
-[00000d30] d66c 0c06                 add.w     3078(a4),d3
-[00000d34] 6676                      bne.s     $00000DAC
-[00000d36] 1c66                      movea.l   -(a6),b6 ; apollo only
-[00000d38] 6c99                      bge.s     $00000CD3
-[00000d3a] dc7c 626c                 add.w     #$626C,d6
-[00000d3e] 186c 6c18                 movea.l   27672(a4),b4 ; apollo only
-[00000d42] 667e                      bne.s     $00000DC2
-[00000d44] 66dc                      bne.s     $00000D22
-[00000d46] 54d6                      scc       (a6)
-[00000d48] 7e66                      moveq.l   #102,d7
-[00000d4a] 7e18                      moveq.l   #24,d7
-[00000d4c] 1818                      move.b    (a0)+,d4
-[00000d4e] 1b18                      move.b    (a0)+,-(a5)
-[00000d50] 7e00                      moveq.l   #0,d7
-[00000d52] 0000 0018                 ori.b     #$18,d0
-[00000d56] 6c30                      bge.s     $00000D88
-[00000d58] 0c00 00e7                 cmpi.b    #$E7,d0
-[00000d5c] c383                      cmp.l     b3,d1 ; apollo only
-[00000d5e] c1c3                      muls.w    d3,d0
-[00000d60] f999                      dc.w      $F999 ; illegal
-[00000d62] d8db                      adda.w    (a3)+,a4
-[00000d64] 7e10                      moveq.l   #16,d7
-[00000d66] deff                      adda.w    ???,a7
-[00000d68] 0db0 c606                 bclr      d6,6(a0,a4.w*8) ; 68020+ only
-[00000d6c] c006                      and.b     d6,d0
-[00000d6e] 0606 c606                 addi.b    #$06,d6
-[00000d72] c606                      and.b     d6,d3
-[00000d74] 7e7e                      moveq.l   #126,d7
-[00000d76] 1804                      move.b    d4,d4
-[00000d78] 07e1                      bset      d3,-(a1)
-[00000d7a] 0018 006c                 ori.b     #$6C,(a0)+
-[00000d7e] 0630 de00 1818            addi.b    #$00,24(a0,d1.l)
-[00000d84] 3c18                      move.w    (a0)+,d6
-[00000d86] 0000 0030                 ori.b     #$30,d0
-[00000d8a] 6618                      bne.s     $00000DA4
-[00000d8c] 1806                      move.b    d6,d4
-[00000d8e] 7e06                      moveq.l   #6,d7
-[00000d90] 6630                      bne.s     $00000DC2
-[00000d92] 6606                      bne.s     $00000D9A
-[00000d94] 1818                      move.b    (a0)+,d4
-[00000d96] 1800                      move.b    d0,d4
-[00000d98] 1818                      move.b    (a0)+,d4
-[00000d9a] 6e7e                      bgt.s     $00000E1A
-[00000d9c] 6660                      bne.s     $00000DFE
-[00000d9e] 6660                      bne.s     $00000E00
-[00000da0] 6066                      bra.s     $00000E08
-[00000da2] 6618                      bne.s     $00000DBC
-[00000da4] 0678 60c6 6e66            addi.w    #$60C6,(textp_it).w
-[00000daa] 6076                      bra.s     $00000E22
-[00000dac] 6c06                      bge.s     $00000DB4
-[00000dae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000db0] 66fe                      bne.s     $00000DB0
-[00000db2] 3c18                      move.w    (a0)+,d6
-[00000db4] 3018                      move.w    (a0)+,d0
-[00000db6] 0c18 0000                 cmpi.b    #$00,(a0)+
-[00000dba] 003e 6660                 ori.b     #$60,???
-[00000dbe] 667e                      bne.s     $00000E3E
-[00000dc0] 3066                      movea.w   -(a6),a0
-[00000dc2] 6618                      bne.s     $00000DDC
-[00000dc4] 1878 18d6                 movea.l   ($000018D6).w,b4 ; apollo only
-[00000dc8] 6666                      bne.s     $00000E30
-[00000dca] 6666                      bne.s     $00000E32
-[00000dcc] 603c                      bra.s     $00000E0A
-[00000dce] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000dd0] 66d6                      bne.s     $00000DA8
-[00000dd2] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000dd4] 1818                      move.b    (a0)+,d4
-[00000dd6] 1818                      move.b    (a0)+,d4
-[00000dd8] 0c34 6666 7e06            cmpi.b    #$66,6(a4,d7.l*8) ; 68020+ only
-[00000dde] 3e06                      move.w    d6,d7
-[00000de0] 0660 7e7e                 addi.w    #$7E7E,-(a0)
-[00000de4] 7e18                      moveq.l   #24,d7
-[00000de6] 1818                      move.b    (a0)+,d4
-[00000de8] 6666                      bne.s     $00000E50
-[00000dea] 7c7f                      moveq.l   #127,d6
-[00000dec] f866 6666                 lpS??     -(a6)
-[00000df0] 6666                      bne.s     $00000E58
-[00000df2] 6666                      bne.s     $00000E5A
-[00000df4] 6660                      bne.s     $00000E56
-[00000df6] 303c 6630                 move.w    #$6630,d0
-[00000dfa] 0618 6666                 addi.b    #$66,(a0)+
-[00000dfe] 6676                      bne.s     $00000E76
-[00000e00] 6666                      bne.s     $00000E68
-[00000e02] 3030 0c6b                 move.w    107(a0,d0.l*4),d0 ; 68020+ only
-[00000e06] 6e18                      bgt.s     $00000E20
-[00000e08] 6c36                      bge.s     $00000E40
-[00000e0a] 0666 7676                 addi.w    #$7676,-(a6)
-[00000e0e] dfd8                      adda.l    (a0)+,a7
-[00000e10] 3c3c 6600                 move.w    #$6600,d6
-[00000e14] 0010 7ab1                 ori.b     #$B1,(a0)
-[00000e18] b951                      eor.w     d4,(a1)
-[00000e1a] 6666                      bne.s     $00000E82
-[00000e1c] 6e0c                      bgt.s     $00000E2A
-[00000e1e] 1e0c                      move.l    b4,d7 ; apollo only
-[00000e20] 660c                      bne.s     $00000E2E
-[00000e22] 0636 6600 0606            addi.b    #$00,6(a6,d0.w*8) ; 68020+ only
-[00000e28] 660c                      bne.s     $00000E36
-[00000e2a] 3636 060e                 move.w    14(a6,d0.w*8),d3 ; 68020+ only
-[00000e2e] 360c                      move.w    a4,d3
-[00000e30] d66c 0c06                 add.w     3078(a4),d3
-[00000e34] 6606                      bne.s     $00000E3C
-[00000e36] 0c66 c6ef                 cmpi.w    #$C6EF,-(a6)
-[00000e3a] c866                      and.w     -(a6),d4
-[00000e3c] 606c                      bra.s     $00000EAA
-[00000e3e] 306c 6c18                 movea.w   27672(a4),a0
-[00000e42] 6666                      bne.s     $00000EAA
-[00000e44] 66cc                      bne.s     $00000E12
-[00000e46] 54d6                      scc       (a6)
-[00000e48] 6066                      bra.s     $00000EB0
-[00000e4a] 0018 300c                 ori.b     #$0C,(a0)+
-[00000e4e] 18d8                      move.b    (a0)+,(a4)+
-[00000e50] 0032 0000 18d8            ori.b     #$00,-40(a2,d1.l)
-[00000e56] 6c7c                      bge.s     $00000ED4
-[00000e58] 7800                      moveq.l   #0,d4
-[00000e5a] 0024 66f6                 ori.b     #$F6,-(a4)
-[00000e5e] 6f99                      ble.s     $00000DF9
-[00000e60] f3c3                      dc.w      $F3C3 ; illegal
-[00000e62] 70c3                      moveq.l   #-61,d0
-[00000e64] 1070 181e                 movea.l   30(a0,d1.l),b0 ; apollo only
-[00000e68] 1998 c606                 move.b    (a0)+,6(a4,a4.w*8) ; 68020+ only
-[00000e6c] c006                      and.b     d6,d0
-[00000e6e] 0606 c606                 addi.b    #$06,d6
-[00000e72] c606                      and.b     d6,d3
-[00000e74] 6618                      bne.s     $00000E8E
-[00000e76] 1004                      move.b    d4,d0
-[00000e78] 2e21                      move.l    -(a1),d7
-[00000e7a] 0000 00fe                 ori.b     #$FE,d0
-[00000e7e] 7c66                      moveq.l   #102,d6
-[00000e80] cc00                      and.b     d0,d6
-[00000e82] 1c38 6618                 move.b    ($00006618).w,d6
-[00000e86] 3000                      move.w    d0,d0
-[00000e88] 1860                      movea.l   -(a0),b4 ; apollo only
-[00000e8a] 6618                      bne.s     $00000EA4
-[00000e8c] 3066                      movea.w   -(a6),a0
-[00000e8e] 0c66 6630                 cmpi.w    #$6630,-(a6)
-[00000e92] 660c                      bne.s     $00000EA0
-[00000e94] 1818                      move.b    (a0)+,d4
-[00000e96] 0c7e 3000                 cmpi.w    #$3000,???
-[00000e9a] 6066                      bra.s     $00000F02
-[00000e9c] 6666                      bne.s     $00000F04
-[00000e9e] 6c60                      bge.s     $00000F00
-[00000ea0] 6066                      bra.s     $00000F08
-[00000ea2] 6618                      bne.s     $00000EBC
-[00000ea4] 666c                      bne.s     $00000F12
-[00000ea6] 60c6                      bra.s     $00000E6E
-[00000ea8] 6666                      bne.s     $00000F10
-[00000eaa] 606c                      bra.s     $00000F18
-[00000eac] 6666                      bne.s     $00000F14
-[00000eae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000eb0] 3cee 6618                 move.w    26136(a6),(a6)+
-[00000eb4] 6018                      bra.s     $00000ECE
-[00000eb6] 0618 0000                 addi.b    #$00,(a0)+
-[00000eba] 0066 6660                 ori.w     #$6660,-(a6)
-[00000ebe] 6660                      bne.s     $00000F20
-[00000ec0] 303e                      move.w    ???,d0
-[00000ec2] 6618                      bne.s     $00000EDC
-[00000ec4] 186c 18c6                 movea.l   6342(a4),b4 ; apollo only
-[00000ec8] 6666                      bne.s     $00000F30
-[00000eca] 6666                      bne.s     $00000F32
-[00000ecc] 6006                      bra.s     $00000ED4
-[00000ece] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000ed0] 3c7c 3c3e                 movea.w   #$3C3E,a6
-[00000ed4] 3018                      move.w    (a0)+,d0
-[00000ed6] 1818                      move.b    (a0)+,d4
-[00000ed8] 0062 3c66                 ori.w     #$3C66,-(a2)
-[00000edc] 607e                      bra.s     $00000F5C
-[00000ede] 667e                      bne.s     $00000F5E
-[00000ee0] 7e3c                      moveq.l   #60,d7
-[00000ee2] 6060                      bra.s     $00000F44
-[00000ee4] 6018                      bra.s     $00000EFE
-[00000ee6] 1818                      move.b    (a0)+,d4
-[00000ee8] 7e7e                      moveq.l   #126,d7
-[00000eea] 60d8                      bra.s     $00000EC4
-[00000eec] d866                      add.w     -(a6),d4
-[00000eee] 6666                      bne.s     $00000F56
-[00000ef0] 6666                      bne.s     $00000F58
-[00000ef2] 3e66                      movea.w   -(a6),a7
-[00000ef4] 663c                      bne.s     $00000F32
-[00000ef6] 3018                      move.w    (a0)+,d0
-[00000ef8] 6630                      bne.s     $00000F2A
-[00000efa] 7e18                      moveq.l   #24,d7
-[00000efc] 6666                      bne.s     $00000F64
-[00000efe] 666e                      bne.s     $00000F6E
-[00000f00] 3e3c 6030                 move.w    #$6030,d7
-[00000f04] 0cc3 d618                 cas.w     d0,d0,d3 ; 68020+ only
-[00000f08] 366c 7e66                 movea.w   32358(a4),a3
-[00000f0c] 6666                      bne.s     $00000F74
-[00000f0e] d8d8                      adda.w    (a0)+,a4
-[00000f10] 6666                      bne.s     $00000F78
-[00000f12] 6600 0010                 bne.w     $00000F24
-[00000f16] 0abd ad00 f6f6            eori.l    #$AD00F6F6,???
-[00000f1c] 667e                      bne.s     $00000F9C
-[00000f1e] 360c                      move.w    a4,d3
-[00000f20] 660c                      bne.s     $00000F2E
-[00000f22] 0636 7e00 3e0e            addi.b    #$00,14(a6,d3.l*8) ; 68020+ only
-[00000f28] 6e3c                      bgt.s     $00000F66
-[00000f2a] 1c7e                      movea.l   ???,b6 ; apollo only
-[00000f2c] 7e7e                      moveq.l   #126,d7
-[00000f2e] 340c                      move.w    a4,d2
-[00000f30] feec 0c06 7e06            packuswb.qe8,e20,32262(a4)
-[00000f36] 0c3c 8266                 cmpi.b    #$66,ccr
-[00000f3a] dc66                      add.w     -(a6),d6
-[00000f3c] 606c                      bra.s     $00000FAA
-[00000f3e] 666c                      bne.s     $00000FAC
-[00000f40] 6c18                      bge.s     $00000F5A
-[00000f42] 3c66                      movea.w   -(a6),a6
-[00000f44] 24ec 38d6                 move.l    14550(a4),(a2)+
-[00000f48] 7066                      moveq.l   #102,d0
-[00000f4a] 7e00                      moveq.l   #0,d7
-[00000f4c] 0000 18d8                 ori.b     #$D8,d0
-[00000f50] 184c                      movea.l   b4,b4 ; apollo only
-[00000f52] 0000 1870                 ori.b     #$70,d0
-[00000f56] 0000 0000                 ori.b     #$00,d0
-[00000f5a] 0024 3c1c                 ori.b     #$1C,-(a4)
-[00000f5e] 383c e7e7                 move.w    #$E7E7,d4
-[00000f62] 20c3                      move.l    d3,(a0)+
-[00000f64] 38f0 181b                 move.w    27(a0,d1.l),(a4)+
-[00000f68] 799e                      ???
-[00000f6a] 7c06                      moveq.l   #6,d6
-[00000f6c] 7c7c                      moveq.l   #124,d6
-[00000f6e] 067c 7c06                 addi.w    #$7C06,sr
-[00000f72] 7c7c                      moveq.l   #124,d6
-[00000f74] 3c1e                      move.w    (a6)+,d6
-[00000f76] 1e3c 393f                 move.b    #$3F,d7
-[00000f7a] 0018 006c                 ori.b     #$6C,(a0)+
-[00000f7e] 1846                      movea.l   d6,b4 ; apollo only
-[00000f80] 7600                      moveq.l   #0,d3
-[00000f82] 0e70 0000 3000            moves.w   0(a0,d3.w),d0
-[00000f88] 1840                      movea.l   d0,b4 ; apollo only
-[00000f8a] 3c7e                      movea.w   ???,a6
-[00000f8c] 7e3c                      moveq.l   #60,d7
-[00000f8e] 0c3c 3c30                 cmpi.b    #$30,ccr
-[00000f92] 3c38 0030                 move.w    ($00000030).w,d6
-[00000f96] 0600 6018                 addi.b    #$18,d0
-[00000f9a] 3e66                      movea.w   -(a6),a7
-[00000f9c] 7c3c                      moveq.l   #60,d6
-[00000f9e] 787e                      moveq.l   #126,d4
-[00000fa0] 603e                      bra.s     $00000FE0
-[00000fa2] 663c                      bne.s     $00000FE0
-[00000fa4] 3c66                      movea.w   -(a6),a6
-[00000fa6] 7ec6                      moveq.l   #-58,d7
-[00000fa8] 663c                      bne.s     $00000FE6
-[00000faa] 6036                      bra.s     $00000FE2
-[00000fac] 663c                      bne.s     $00000FEA
-[00000fae] 183e                      move.b    ???,d4
-[00000fb0] 18c6                      move.b    d6,(a4)+
-[00000fb2] 6618                      bne.s     $00000FCC
-[00000fb4] 7e1e                      moveq.l   #30,d7
-[00000fb6] 0278 00fe 003e            andi.w    #t_bitmap,($0000003E).w
-[00000fbc] 7c3c                      moveq.l   #60,d6
-[00000fbe] 3e3c 3006                 move.w    #$3006,d7
-[00000fc2] 663c                      bne.s     $00001000
-[00000fc4] 1866                      movea.l   -(a6),b4 ; apollo only
-[00000fc6] 3cc6                      move.w    d6,(a6)+
-[00000fc8] 663c                      bne.s     $00001006
-[00000fca] 7c3e                      moveq.l   #62,d6
-[00000fcc] 607c                      bra.s     $0000104A
-[00000fce] 0e3e 186c                 ???.b     d1,??? ; apollo only
-[00000fd2] 6606                      bne.s     $00000FDA
-[00000fd4] 7e0e                      moveq.l   #14,d7
-[00000fd6] 1870 007e                 movea.l   126(a0,d0.w),b4 ; apollo only
-[00000fda] 083e 3c3e                 btst      #15422,???
-[00000fde] 3e3e                      move.w    ???,d7
-[00000fe0] 3e08                      move.w    a0,d7
-[00000fe2] 3c3c 3c3c                 move.w    #$3C3C,d6
-[00000fe6] 3c3c 6666                 move.w    #$6666,d6
-[00000fea] 7e7e                      moveq.l   #126,d7
-[00000fec] df3c 3c3c                 add.b     d7,#$3C ; illegal
-[00000ff0] 3e3e                      move.w    ???,d7
-[00000ff2] 063c 3e18                 addi.b    #$18,ccr
-[00000ff6] 7e18                      moveq.l   #24,d7
-[00000ff8] 7c60                      moveq.l   #96,d6
-[00000ffa] 3e3c 3c3e                 move.w    #$3C3E,d7
-[00000ffe] 6666                      bne.s     $00001066
-[00001000] 0000 6630                 ori.b     #$30,d0
-[00001004] 0c86 9f18 1bd8            cmpi.l    #$9F181BD8,d6
-[0000100a] 3e3c 3c3c                 move.w    #$3C3C,d7
-[0000100e] 7e7f                      moveq.l   #127,d7
-[00001010] 7e7e                      moveq.l   #126,d7
-[00001012] 6600 0000                 bne.w     $00001014
-[00001016] 0ac3 c300                 cas.b     d0,d4,d3 ; 68020+ only
-[0000101a] 0606 0000                 addi.b    #$00,d6
-[0000101e] 0000 0000                 ori.b     #$00,d0
-[00001022] 0000 0000                 ori.b     #$00,d0
-[00001026] 0000 0000                 ori.b     #$00,d0
-[0000102a] 0000 0000                 ori.b     #$00,d0
-[0000102e] 3000                      move.w    d0,d0
-[00001030] 0000 0c06                 ori.b     #$06,d0
-[00001034] 0006 0cd8                 ori.b     #$D8,d6
-[00001038] 0000 767c                 ori.b     #$7C,d0
-[0000103c] 606c                      bra.s     $000010AA
-[0000103e] fe38 7f18 183c            pmul88.q  ($0000183C).w,d7,e7
-[00001044] 6678                      bne.s     $000010BE
-[00001046] 307c 3e66                 movea.w   #$3E66,a0
-[0000104a] 007e 7e7e                 ori.w     #$7E7E,???
-[0000104e] 1870 1800                 movea.l   0(a0,d1.l),b4 ; apollo only
-[00001052] 0000 0030                 ori.b     #$30,d0
-[00001056] 0000 0000                 ori.b     #$00,d0
-[0000105a] 003c 1818                 ori.b     #$18,ccr
-[0000105e] 1800                      move.b    d0,d4
-[00001060] 0000 007e                 ori.b     #$7E,d0
-[00001064] 1060                      movea.l   -(a0),b0 ; apollo only
-[00001066] 0000 718e                 ori.b     #$8E,d0
-[0000106a] 0000 0000                 ori.b     #$00,d0
-[0000106e] 0000 0000                 ori.b     #$00,d0
-[00001072] 0000 0000                 ori.b     #$00,d0
-[00001076] 1754 3800                 move.b    (a4),14336(a3)
-[0000107a] 0000 0000                 ori.b     #$00,d0
-[0000107e] 0000 0000                 ori.b     #$00,d0
-[00001082] 0000 0000                 ori.b     #$00,d0
-[00001086] 6000 0000                 bra.w     $00001088
-[0000108a] 0000 0000                 ori.b     #$00,d0
-[0000108e] 0000 0000                 ori.b     #$00,d0
-[00001092] 0000 0000                 ori.b     #$00,d0
-[00001096] 0000 0000                 ori.b     #$00,d0
-[0000109a] 0000 0000                 ori.b     #$00,d0
-[0000109e] 0000 0000                 ori.b     #$00,d0
-[000010a2] 0000 0000                 ori.b     #$00,d0
-[000010a6] 0000 0000                 ori.b     #$00,d0
-[000010aa] 0000 0000                 ori.b     #$00,d0
-[000010ae] 0000 0000                 ori.b     #$00,d0
-[000010b2] 0000 0000                 ori.b     #$00,d0
-[000010b6] 0000 0000                 ori.b     #$00,d0
-[000010ba] 0000 0000                 ori.b     #$00,d0
-[000010be] 0000 007c                 ori.b     #$7C,d0
-[000010c2] 0000 7000                 ori.b     #$00,d0
-[000010c6] 0000 0000                 ori.b     #$00,d0
-[000010ca] 6006                      bra.s     $000010D2
-[000010cc] 0000 0000                 ori.b     #$00,d0
-[000010d0] 0000 007c                 ori.b     #$7C,d0
-[000010d4] 0000 1800                 ori.b     #$00,d0
-[000010d8] 0000 3800                 ori.b     #$00,d0
-[000010dc] 0000 0000                 ori.b     #$00,d0
-[000010e0] 0018 0000                 ori.b     #$00,(a0)+
-[000010e4] 0000 0000                 ori.b     #$00,d0
-[000010e8] 0000 0000                 ori.b     #$00,d0
-[000010ec] 0000 0000                 ori.b     #$00,d0
-[000010f0] 0000 7c00                 ori.b     #$00,d0
-[000010f4] 0018 0000                 ori.b     #$00,(a0)+
-[000010f8] 6000 0000                 bra.w     $000010FA
-[000010fc] 0000 0000                 ori.b     #$00,d0
-[00001100] 3c3c 3c00                 move.w    #$3C00,d6
-[00001104] 000f 0618                 ori.b     #$18,a7 ; apollo only
-[00001108] 0000 0000                 ori.b     #$00,d0
-[0000110c] 4040                      negx.w    d0
-[0000110e] 0000 6666                 ori.b     #$66,d0
-[00001112] 3c00                      move.w    d0,d6
-[00001114] 0000 0a7e                 ori.b     #$7E,d0
-[00001118] 7e00                      moveq.l   #0,d7
-[0000111a] 1c1c                      move.b    (a4)+,d6
-[0000111c] 0000 0000                 ori.b     #$00,d0
-[00001120] 0000 0000                 ori.b     #$00,d0
-[00001124] 0000 0000                 ori.b     #$00,d0
-[00001128] 0000 0000                 ori.b     #$00,d0
-[0000112c] 0000 0000                 ori.b     #$00,d0
-[00001130] 0000 0000                 ori.b     #$00,d0
-[00001134] 0000 0070                 ori.b     #$70,d0
-[00001138] 0000 0060                 ori.b     #$60,d0
-[0000113c] f848 0000 c010            lpDB??    d0,$FFFFD150
-[00001142] 3c00                      move.w    d0,d6
-[00001144] 0000 6010                 ori.b     #$10,d0
-[00001148] 0000 0000                 ori.b     #$00,d0
-[0000114c] 0000 1800                 ori.b     #$00,d0
-[00001150] 0000 0000                 ori.b     #$00,d0
-[00001154] 0000 0000                 ori.b     #$00,d0
-[00001158] 0000 0000                 ori.b     #$00,d0
-[0000115c] 0000 0000                 ori.b     #$00,d0
-[00001160] 0000 0000                 ori.b     #$00,d0
-[00001164] 0000 0000                 ori.b     #$00,d0
-[00001168] 0000 0000                 ori.b     #$00,d0
-[0000116c] 0000 0000                 ori.b     #$00,d0
-[00001170] 0000 0000                 ori.b     #$00,d0
-[00001174] 0000 0000                 ori.b     #$00,d0
-[00001178] 1100                      move.b    d0,-(a0)
-[0000117a] 0000 0000                 ori.b     #$00,d0
-[0000117e] 1800                      move.b    d0,d4
-[00001180] 3800                      move.w    d0,d4
-[00001182] 0000 0000                 ori.b     #$00,d0
-[00001186] 0000 0000                 ori.b     #$00,d0
-[0000118a] 0000 0000                 ori.b     #$00,d0
-[0000118e] 0000 0000                 ori.b     #$00,d0
-[00001192] 0000 0000                 ori.b     #$00,d0
-[00001196] 0000 0000                 ori.b     #$00,d0
-[0000119a] 0000 0000                 ori.b     #$00,d0
-[0000119e] 0000 0000                 ori.b     #$00,d0
-[000011a2] 0000 0000                 ori.b     #$00,d0
-[000011a6] 0000 0000                 ori.b     #$00,d0
-[000011aa] 0000 0000                 ori.b     #$00,d0
-[000011ae] 0000 0000                 ori.b     #$00,d0
-[000011b2] 0000 0000                 ori.b     #$00,d0
-[000011b6] 0000 0000                 ori.b     #$00,d0
-[000011ba] 4000                      negx.b    d0
-[000011bc] 0000 0000                 ori.b     #$00,d0
-[000011c0] 0000 0000                 ori.b     #$00,d0
-[000011c4] 0000 0000                 ori.b     #$00,d0
-[000011c8] 0000 0000                 ori.b     #$00,d0
-[000011cc] 0000 0000                 ori.b     #$00,d0
-[000011d0] 0000 0000                 ori.b     #$00,d0
-[000011d4] 0000 0000                 ori.b     #$00,d0
-[000011d8] 0000 0000                 ori.b     #$00,d0
-[000011dc] 0000 0000                 ori.b     #$00,d0
-[000011e0] 0000 0000                 ori.b     #$00,d0
-[000011e4] 0000 0000                 ori.b     #$00,d0
-[000011e8] 003c 0600                 ori.b     #$00,ccr
-[000011ec] 0000 0000                 ori.b     #$00,d0
-[000011f0] 0000 0000                 ori.b     #$00,d0
-[000011f4] 0000 0000                 ori.b     #$00,d0
-[000011f8] 0000 0000                 ori.b     #$00,d0
-[000011fc] 0000 0000                 ori.b     #$00,d0
-[00001200] 0000 0000                 ori.b     #$00,d0
-[00001204] 0000 0000                 ori.b     #$00,d0
-[00001208] 0000 0000                 ori.b     #$00,d0
-[0000120c] 0000 0000                 ori.b     #$00,d0
-[00001210] 6032                      bra.s     $00001244
-[00001212] 3200                      move.w    d0,d1
-[00001214] 0000 0000                 ori.b     #$00,d0
-[00001218] 00f1 00f6 0000            cmp2.b    0(a1,d0.w),d0 ; 68020+ only
-[0000121e] 0000 0000                 ori.b     #$00,d0
-[00001222] 0000 0000                 ori.b     #$00,d0
-[00001226] 0060 0000                 ori.w     #N_OFFSCR,-(a0)
-[0000122a] 0000 0000                 ori.b     #$00,d0
-[0000122e] 0000 0000                 ori.b     #$00,d0
-[00001232] 0000 0000                 ori.b     #$00,d0
-[00001236] 0000 0000                 ori.b     #$00,d0
-[0000123a] 0000 0000                 ori.b     #$00,d0
-[0000123e] 0000 0000                 ori.b     #$00,d0
-[00001242] 0000 0000                 ori.b     #$00,d0
-[00001246] 0000 0000                 ori.b     #$00,d0
-[0000124a] 0000 0000                 ori.b     #$00,d0
-[0000124e] 0018 0000                 ori.b     #$00,(a0)+
-[00001252] 0000 0000                 ori.b     #$00,d0
-[00001256] 0000 0000                 ori.b     #$00,d0
-[0000125a] 0000 0000                 ori.b     #$00,d0
-[0000125e] 0000 0000                 ori.b     #$00,d0
-[00001262] 0000 0000                 ori.b     #$00,d0
-[00001266] 0000 05a0                 ori.b     #$A0,d0
-[0000126a] 7c00                      moveq.l   #0,d6
-[0000126c] 7c7c                      moveq.l   #124,d6
-[0000126e] 007c 7c7c                 ori.w     #$7C7C,sr
-[00001272] 7c7c                      moveq.l   #124,d6
-[00001274] 0000 0000                 ori.b     #$00,d0
-[00001278] 0b00                      btst      d5,d0
-[0000127a] 0000 0000                 ori.b     #$00,d0
-[0000127e] 1800                      move.b    d0,d4
-[00001280] 7c00                      moveq.l   #0,d6
-[00001282] 0000 0000                 ori.b     #$00,d0
-[00001286] 0000 0000                 ori.b     #$00,d0
-[0000128a] 0000 0000                 ori.b     #$00,d0
-[0000128e] 0000 0000                 ori.b     #$00,d0
-[00001292] 0000 0000                 ori.b     #$00,d0
-[00001296] 0000 0000                 ori.b     #$00,d0
-[0000129a] 0000 0000                 ori.b     #$00,d0
-[0000129e] 0000 0000                 ori.b     #$00,d0
-[000012a2] 0000 0000                 ori.b     #$00,d0
-[000012a6] 0000 0000                 ori.b     #$00,d0
-[000012aa] 0000 0000                 ori.b     #$00,d0
-[000012ae] 0000 0000                 ori.b     #$00,d0
-[000012b2] 0000 0000                 ori.b     #$00,d0
-[000012b6] 0000 1000                 ori.b     #$00,d0
-[000012ba] 6000 0000                 bra.w     $000012BC
-[000012be] 0000 0000                 ori.b     #$00,d0
-[000012c2] 0000 0000                 ori.b     #$00,d0
-[000012c6] 0000 0000                 ori.b     #$00,d0
-[000012ca] 0000 0000                 ori.b     #$00,d0
-[000012ce] 0000 0000                 ori.b     #$00,d0
-[000012d2] 0000 000e                 ori.b     #$0E,d0
-[000012d6] 18e0                      move.b    -(a0),(a4)+
-[000012d8] 0000 0000                 ori.b     #$00,d0
-[000012dc] 0618 0060                 addi.b    #$60,(a0)+
-[000012e0] 1c00                      move.b    d0,d6
-[000012e2] 1800                      move.b    d0,d4
-[000012e4] 6000 1860                 bra       $00002B46
-[000012e8] 6666                      bne.s     $00001350
-[000012ea] 0c00 3e18                 cmpi.b    #$18,d0
-[000012ee] 0060 1860                 ori.w     #$1860,-(a0)
-[000012f2] 0066 6600                 ori.w     #$6600,-(a6)
-[000012f6] 0e00 0000                 moves.b   d0,d0
-[000012fa] 0606 0606                 addi.b    #$06,d6
-[000012fe] 3232 0000                 move.w    0(a2,d0.w),d1
-[00001302] 0000 0060                 ori.b     #$60,d0
-[00001306] 6000 0000                 bra.w     $00001308
-[0000130a] 3232 0100                 move.w    (a2,d0.w),d1 ; 68020+ only; reserved BD=0
-[0000130e] 0000 307a                 ori.b     #$7A,d0
-[00001312] 7a66                      moveq.l   #102,d5
-[00001314] 0610 0000                 addi.b    #$00,(a0)
-[00001318] 005b 66f6                 ori.w     #$66F6,(a3)+
-[0000131c] 0000 0000                 ori.b     #$00,d0
-[00001320] 0000 0000                 ori.b     #$00,d0
-[00001324] 0000 0060                 ori.b     #$60,d0
-[00001328] 0000 0000                 ori.b     #$00,d0
-[0000132c] 0000 0000                 ori.b     #$00,d0
-[00001330] 0000 0000                 ori.b     #$00,d0
-[00001334] 0000 0000                 ori.b     #$00,d0
-[00001338] 0000 0000                 ori.b     #$00,d0
-[0000133c] 0000 0000                 ori.b     #$00,d0
-[00001340] 0000 7c00                 ori.b     #$00,d0
-[00001344] 001e 0e00                 ori.b     #$00,(a6)+
-[00001348] 0000 0000                 ori.b     #$00,d0
-[0000134c] 0000 0018                 ori.b     #$18,d0
-[00001350] 0000 3838                 ori.b     #$38,d0
-[00001354] 0000 0000                 ori.b     #$00,d0
-[00001358] 00fe 0000                 cmp2.b    ???,d0 ; 68020+ only
-[0000135c] 0030 0c7c feee            ori.b     #$7C,-18(a0,a7.l*8) ; 68020+ only
-[00001362] 0100                      btst      d0,d0
-[00001364] 0008 7838                 ori.b     #$38,a0 ; apollo only
-[00001368] 05a0                      bclr      d2,-(a0)
-[0000136a] ba02                      cmp.b     d2,d5
-[0000136c] 3a3a 82b8                 move.w    $FFFF9626(pc),d5
-[00001370] b8ba baba                 cmp.l     $FFFFCE2C(pc),d4
-[00001374] 0078 0000 0dfc            ori.w     #N_OFFSCR,($00000DFC).w
-[0000137a] 0018 6666                 ori.b     #$66,(a0)+
-[0000137e] 3e66                      movea.w   -(a6),a7
-[00001380] 6c18                      bge.s     $0000139A
-[00001382] 0660 6600                 addi.w    #$6600,-(a0)
-[00001386] 0000 0006                 ori.b     #$06,d0
-[0000138a] 3c18                      move.w    (a0)+,d6
-[0000138c] 3c7e                      movea.w   ???,a6
-[0000138e] 0c7e 1c7e                 cmpi.w    #$1C7E,???
-[00001392] 3c3c 0000                 move.w    #N_OFFSCR,d6
-[00001396] 0000 003c                 ori.b     #$3C,d0
-[0000139a] 3818                      move.w    (a0)+,d4
-[0000139c] 7c3c                      moveq.l   #60,d6
-[0000139e] 787e                      moveq.l   #126,d4
-[000013a0] 7e3e                      moveq.l   #62,d7
-[000013a2] 667e                      bne.s     $00001422
-[000013a4] 06cc                      rtm       a4 ; 68020 only
-[000013a6] 60c6                      bra.s     $0000136E
-[000013a8] 663c                      bne.s     $000013E6
-[000013aa] 7c3c                      moveq.l   #60,d6
-[000013ac] f83e 7e66 66c6            lpGEN     #$66C6,???
-[000013b2] 6666                      bne.s     $0000141A
-[000013b4] 7e1e                      moveq.l   #30,d7
-[000013b6] 6078                      bra.s     $00001430
-[000013b8] 1000                      move.b    d0,d0
-[000013ba] 7000                      moveq.l   #0,d0
-[000013bc] 6000 0600                 bra       $000019BE
-[000013c0] 0e00 6018                 ???.b     d0,d6 ; apollo only
-[000013c4] 0cc0 3800                 cas.w     d0,d0,d0 ; 68020+ only
-[000013c8] 0000 0000                 ori.b     #$00,d0
-[000013cc] 0000 0000                 ori.b     #$00,d0
-[000013d0] 0000 0000                 ori.b     #$00,d0
-[000013d4] 0018 1830                 ori.b     #$30,(a0)+
-[000013d8] 0000 3c66                 ori.b     #$66,d0
-[000013dc] 0c3c 6630                 cmpi.b    #$30,ccr
-[000013e0] 3600                      move.w    d0,d3
-[000013e2] 3c66                      movea.w   -(a6),a6
-[000013e4] 3066                      movea.w   -(a6),a0
-[000013e6] 3c30 663c                 move.w    60(a0,d6.w*8),d6 ; 68020+ only
-[000013ea] 1800                      move.b    d0,d4
-[000013ec] 7e3c                      moveq.l   #60,d7
-[000013ee] 6630                      bne.s     $00001420
-[000013f0] 3c30 6666                 move.w    102(a0,d6.w*8),d6 ; 68020+ only
-[000013f4] 6618                      bne.s     $0000140E
-[000013f6] 1e66                      movea.l   -(a6),b7 ; apollo only
-[000013f8] 1c0e                      move.l    b6,d6 ; apollo only
-[000013fa] 0c0c 0c0c                 cmpi.b    #$0C,a4 ; apollo only
-[000013fe] 7a7a                      moveq.l   #122,d5
-[00001400] 0000 1800                 ori.b     #$00,d0
-[00001404] 0020 2000                 ori.b     #$00,-(a0)
-[00001408] 0000 7a7a                 ori.b     #$7A,d0
-[0000140c] 3d00                      move.w    d0,-(a6)
-[0000140e] 007e 184c                 ori.w     #$184C,???
-[00001412] 4c66 0c7c                 divs.l    -(a6),a4:d0 ; apollo only
-[00001416] 7a7c                      moveq.l   #124,d5
-[00001418] 7c5f                      moveq.l   #95,d6
-[0000141a] 6666                      bne.s     $00001482
-[0000141c] 667c                      bne.s     $0000149A
-[0000141e] 1e7e                      movea.l   ???,b7 ; apollo only
-[00001420] 7e38                      moveq.l   #56,d7
-[00001422] 1e7e                      movea.l   ???,b7 ; apollo only
-[00001424] 6e3c                      bgt.s     $00001462
-[00001426] 3c7e                      movea.w   ???,a6
-[00001428] 6c1c                      bge.s     $00001446
-[0000142a] fe36 7e6e 3e7c d67e       nfGEN     #$3E7C,126(a6,a5.w*8) ; 68020+ only
-[00001432] 387e                      movea.w   ???,a4
-[00001434] 7e7e                      moveq.l   #126,d7
-[00001436] 6e1c                      bgt.s     $00001454
-[00001438] 0000 0018                 ori.b     #$18,d0
-[0000143c] fe00 fe00 0000            nfGEN     #N_OFFSCR,d0
-[00001442] 103c 383e                 move.b    #$3E,d0
-[00001446] 1e10                      move.b    (a0),d7
-[00001448] 3e7c 0000                 movea.w   #N_OFFSCR,a7
-[0000144c] 6006                      bra.s     $00001454
-[0000144e] 0e18 0000                 moves.b   (a0)+,d0
-[00001452] 6c7c                      bge.s     $000014D0
-[00001454] 0000 3030                 ori.b     #$30,d0
-[00001458] 78fe                      moveq.l   #-2,d4
-[0000145a] 0018 3c38                 ori.b     #$38,(a0)+
-[0000145e] 1c38 fec6                 move.b    ($FFFFFEC6).w,d6
-[00001462] 013c                      btst      d0,#
-[00001464] 000e 4040                 ori.b     #$40,a6 ; apollo only
-[00001468] 05a0                      bclr      d2,-(a0)
-[0000146a] c606                      and.b     d6,d3
-[0000146c] 0606 c6c0                 addi.b    #$C0,d6
-[00001470] c0c6                      mulu.w    d6,d0
-[00001472] c6c6                      mulu.w    d6,d3
-[00001474] 0040 0000                 ori.w     #N_OFFSCR,d0
-[00001478] 06fc 0018                 callm     #VSF_STYL,# ; illegal
-[0000147c] 6666                      bne.s     $000014E4
-[0000147e] 7e66                      moveq.l   #102,d7
-[00001480] 6c18                      bge.s     $0000149A
-[00001482] 0c30 6618 0000            cmpi.b    #$18,0(a0,d0.w)
-[00001488] 0006 7e18                 ori.b     #$18,d6
-[0000148c] 7e7e                      moveq.l   #126,d7
-[0000148e] 0c7e 3c7e                 cmpi.w    #$3C7E,???
-[00001492] 7e7e                      moveq.l   #126,d7
-[00001494] 0000 0e00                 ori.b     #$00,d0
-[00001498] e07e                      ror.w     d0,d6
-[0000149a] 7c3c                      moveq.l   #60,d6
-[0000149c] 7e7e                      moveq.l   #126,d7
-[0000149e] 7c7e                      moveq.l   #126,d6
-[000014a0] 7e7e                      moveq.l   #126,d7
-[000014a2] 667e                      bne.s     $00001522
-[000014a4] 06cc                      rtm       a4 ; 68020 only
-[000014a6] 60c6                      bra.s     $0000146E
-[000014a8] 667e                      bne.s     $00001528
-[000014aa] 7e7e                      moveq.l   #126,d7
-[000014ac] fc7e 7e66                 cp6TRAP??
-[000014b0] 66c6                      bne.s     $00001478
-[000014b2] 6666                      bne.s     $0000151A
-[000014b4] 7e1e                      moveq.l   #30,d7
-[000014b6] 6078                      bra.s     $00001530
-[000014b8] 3800                      move.w    d0,d4
-[000014ba] 3800                      move.w    d0,d4
-[000014bc] 6000 0600                 bra       $00001ABE
-[000014c0] 1e00                      move.b    d0,d7
-[000014c2] 6018                      bra.s     $000014DC
-[000014c4] 0cc0 3800                 cas.w     d0,d0,d0 ; 68020+ only
-[000014c8] 0000 0000                 ori.b     #$00,d0
-[000014cc] 0000 1800                 ori.b     #$00,d0
-[000014d0] 0000 0000                 ori.b     #$00,d0
-[000014d4] 0018 1830                 ori.b     #$30,(a0)+
-[000014d8] 0000 7e66                 ori.b     #$66,d0
-[000014dc] 1866                      movea.l   -(a6),b4 ; apollo only
-[000014de] 6618                      bne.s     $000014F8
-[000014e0] 1c00                      move.b    d0,d6
-[000014e2] 6666                      bne.s     $0000154A
-[000014e4] 1866                      movea.l   -(a6),b4 ; apollo only
-[000014e6] 6618                      bne.s     $00001500
-[000014e8] 1818                      move.b    (a0)+,d4
-[000014ea] 7e00                      moveq.l   #0,d7
-[000014ec] f866 6618                 lpS??     -(a6)
-[000014f0] 6618                      bne.s     $0000150A
-[000014f2] 6600 0018                 bne.w     $0000150C
-[000014f6] 3866                      movea.w   -(a6),a4
-[000014f8] 3e1e                      move.w    (a6)+,d7
-[000014fa] 1818                      move.b    (a0)+,d4
-[000014fc] 1818                      move.b    (a0)+,d4
-[000014fe] 4c4c 0000                 divul.l   a4,d0:d0 ; apollo only
-[00001502] 1800                      move.b    d0,d4
-[00001504] 0020 2018                 ori.b     #$18,-(a0)
-[00001508] 0000 4c4c                 ori.b     #$4C,d0
-[0000150c] 7e00                      moveq.l   #0,d7
-[0000150e] 00fe 0000                 cmp2.b    ???,d0 ; 68020+ only
-[00001512] 0000 1810                 ori.b     #$10,d0
-[00001516] cac6                      mulu.w    d6,d5
-[00001518] c655                      and.w     (a5),d3
-[0000151a] 0066 767c                 ori.w     #$767C,-(a6)
-[0000151e] 1e7e                      movea.l   ???,b7 ; apollo only
-[00001520] 7e38                      moveq.l   #56,d7
-[00001522] 1e7e                      movea.l   ???,b7 ; apollo only
-[00001524] 6e3c                      bgt.s     $00001562
-[00001526] 3e7e                      movea.w   ???,a7
-[00001528] 6e1c                      bgt.s     $00001546
-[0000152a] fe36 7e6e 3e7e d67e       nfGEN     #$3E7E,126(a6,a5.w*8) ; 68020+ only
-[00001532] 387e                      movea.w   ???,a4
-[00001534] 3e7e                      movea.w   ???,a7
-[00001536] 6e36                      bgt.s     $0000156E
-[00001538] 0000 003c                 ori.b     #$3C,d0
-[0000153c] 7e00                      moveq.l   #0,d7
-[0000153e] fe00 0002                 transhi.q d0-d3,d0:d1
-[00001542] 107e                      movea.l   ???,b0 ; apollo only
-[00001544] 6c20                      bge.s     $00001566
-[00001546] 1010                      move.b    (a0),d0
-[00001548] 7efe                      moveq.l   #-2,d7
-[0000154a] 0018 700e                 ori.b     #$0E,(a0)+
-[0000154e] 1918                      move.b    (a0)+,-(a4)
-[00001550] 1802                      move.b    d2,d4
-[00001552] 447c 0000                 neg.w     #N_OFFSCR ; illegal
-[00001556] 7848                      moveq.l   #72,d4
-[00001558] 1800                      move.b    d0,d4
-[0000155a] 003c 242c                 ori.b     #$2C,ccr
-[0000155e] 34ba fed6                 move.w    $00001436(pc),(a2)
-[00001562] 0366                      bchg      d1,-(a6)
-[00001564] 180f                      move.l    b7,d4 ; apollo only
-[00001566] 7040                      moveq.l   #64,d0
-[00001568] 05a0                      bclr      d2,-(a0)
-[0000156a] c606                      and.b     d6,d3
-[0000156c] 0606 c6c0                 addi.b    #$C0,d6
-[00001570] c0c6                      mulu.w    d6,d0
-[00001572] c6c6                      mulu.w    d6,d3
-[00001574] 0070 0000 07fc 0018 66ff  ori.w     #N_OFFSCR,([$001866FF],zd0.w*8) ; 68020+ only; reserved OD=0
-[0000157e] 606c                      bra.s     $000015EC
-[00001580] 3818                      move.w    (a0)+,d4
-[00001582] 1c38 3c18                 move.b    ($00003C18).w,d6
-[00001586] 0000 0006                 ori.b     #$06,d0
-[0000158a] 6638                      bne.s     $000015C4
-[0000158c] 660c                      bne.s     $0000159A
-[0000158e] 1c60                      movea.l   -(a0),b6 ; apollo only
-[00001590] 7006                      moveq.l   #6,d0
-[00001592] 6666                      bne.s     $000015FA
-[00001594] 1818                      move.b    (a0)+,d4
-[00001596] 1c7e                      movea.l   ???,b6 ; apollo only
-[00001598] 7066                      moveq.l   #102,d0
-[0000159a] e67e                      ror.w     d3,d6
-[0000159c] 6666                      bne.s     $00001604
-[0000159e] 6e60                      bgt.s     $00001600
-[000015a0] 6060                      bra.s     $00001602
-[000015a2] 6618                      bne.s     $000015BC
-[000015a4] 06d8 60ee                 callm     #$60EE,(a0)+ ; 68020 only
-[000015a8] 6666                      bne.s     $00001610
-[000015aa] 6666                      bne.s     $00001612
-[000015ac] cc60                      and.w     -(a0),d6
-[000015ae] 1866                      movea.l   -(a6),b4 ; apollo only
-[000015b0] 66c6                      bne.s     $00001578
-[000015b2] 6666                      bne.s     $0000161A
-[000015b4] 0c18 6018                 cmpi.b    #$18,(a0)+
-[000015b8] 3800                      move.w    d0,d4
-[000015ba] 1c00                      move.b    d0,d6
-[000015bc] 6000 0600                 bra       $00001BBE
-[000015c0] 1800                      move.b    d0,d4
-[000015c2] 6000 00c0                 bra       $00001684
-[000015c6] 1800                      move.b    d0,d4
-[000015c8] 0000 0000                 ori.b     #$00,d0
-[000015cc] 0000 1800                 ori.b     #$00,d0
-[000015d0] 0000 0000                 ori.b     #$00,d0
-[000015d4] 0018 1830                 ori.b     #$30,(a0)+
-[000015d8] 0000 6600                 ori.b     #$00,d0
-[000015dc] 0000 0000                 ori.b     #$00,d0
-[000015e0] 0000 0000                 ori.b     #$00,d0
-[000015e4] 0000 0000                 ori.b     #$00,d0
-[000015e8] 3c3c 7e00                 move.w    #$7E00,d6
-[000015ec] d800                      add.b     d0,d4
-[000015ee] 0000 0000                 ori.b     #$00,d0
-[000015f2] 003c 663c                 ori.b     #$3C,ccr
-[000015f6] 3066                      movea.w   -(a6),a0
-[000015f8] 6618                      bne.s     $00001612
-[000015fa] 0000 0000                 ori.b     #$00,d0
-[000015fe] 0000 3c3c                 ori.b     #$3C,d0
-[00001602] 0000 0023                 ori.b     #$23,d0
-[00001606] 2318                      move.l    (a0)+,-(a1)
-[00001608] 0000 0000                 ori.b     #$00,d0
-[0000160c] 6601                      bne.s     $0000160F
-[0000160e] 00d8                      dc.w      $00D8 ; illegal
-[00001610] 3c3c 3c00                 move.w    #$3C00,d6
-[00001614] 0010 ca82                 ori.b     #$82,(a0)
-[00001618] 8251                      or.w      (a1),d1
-[0000161a] e666                      asr.w     d3,d6
-[0000161c] 760c                      moveq.l   #12,d3
-[0000161e] 060c 0618                 addi.b    #$18,a4 ; apollo only
-[00001622] 0466 660c                 subi.w    #$660C,-(a6)
-[00001626] 0606 3e0c                 addi.b    #$0C,d6
-[0000162a] fe36 6666 3e06 d666       nfGEN     #$3E06,102(a6,a5.w*8) ; 68020+ only
-[00001632] 1806                      move.b    d6,d4
-[00001634] 3666                      movea.w   -(a6),a3
-[00001636] 6632                      bne.s     $0000166A
-[00001638] 0066 6266                 ori.w     #$6266,-(a6)
-[0000163c] 6202                      bhi.s     $00001640
-[0000163e] 601e                      bra.s     $0000165E
-[00001640] 007e 7c66                 ori.w     #$7C66,???
-[00001644] c630 7c7c                 and.b     124(a0,d7.l*4),d3 ; 68020+ only
-[00001648] e0c6                      asr.w     d6
-[0000164a] 7e18                      moveq.l   #24,d7
-[0000164c] 381c                      move.w    (a4)+,d4
-[0000164e] 1b18                      move.b    (a0)+,-(a5)
-[00001650] 183e                      move.b    ???,d4
-[00001652] 6c7c                      bge.s     $000016D0
-[00001654] 0000 4818                 ori.b     #$18,d0
-[00001658] 3000                      move.w    d0,d0
-[0000165a] 0066 24e6                 ori.w     #$24E6,-(a6)
-[0000165e] 6792                      beq.s     $000015F2
-[00001660] fc92 03c3                 cp6B??.w  $00001A25
-[00001664] 3c09                      move.w    a1,d6
-[00001666] 4040                      negx.w    d0
-[00001668] 0db0 c606                 bclr      d6,6(a0,a4.w*8) ; 68020+ only
-[0000166c] 0606 c6c0                 addi.b    #$C0,d6
-[00001670] c0c6                      mulu.w    d6,d0
-[00001672] c6c6                      mulu.w    d6,d3
-[00001674] 7c40                      moveq.l   #64,d6
-[00001676] 0000 2eff                 ori.b     #$FF,d0
-[0000167a] 0018 66ff                 ori.b     #$FF,(a0)+
-[0000167e] 600c                      bra.s     $0000168C
-[00001680] 3818                      move.w    (a0)+,d4
-[00001682] 1818                      move.b    (a0)+,d4
-[00001684] 3c18                      move.w    (a0)+,d6
-[00001686] 0000 000c                 ori.b     #$0C,d0
-[0000168a] 6638                      bne.s     $000016C4
-[0000168c] 660c                      bne.s     $0000169A
-[0000168e] 1c60                      movea.l   -(a0),b6 ; apollo only
-[00001690] 6006                      bra.s     $00001698
-[00001692] 6666                      bne.s     $000016FA
-[00001694] 1818                      move.b    (a0)+,d4
-[00001696] 387e                      movea.w   ???,a4
-[00001698] 3866                      movea.w   -(a6),a4
-[0000169a] c266                      and.w     -(a6),d1
-[0000169c] 6666                      bne.s     $00001704
-[0000169e] 6660                      bne.s     $00001700
-[000016a0] 6060                      bra.s     $00001702
-[000016a2] 6618                      bne.s     $000016BC
-[000016a4] 06d8 60ee                 callm     #$60EE,(a0)+ ; 68020 only
-[000016a8] 7666                      moveq.l   #102,d3
-[000016aa] 6666                      bne.s     $00001712
-[000016ac] cc60                      and.w     -(a0),d6
-[000016ae] 1866                      movea.l   -(a6),b4 ; apollo only
-[000016b0] 66c6                      bne.s     $00001678
-[000016b2] 3c66                      movea.w   -(a6),a6
-[000016b4] 0c18 3018                 cmpi.b    #$18,(a0)+
-[000016b8] 6c00 0c3c                 bge       $000022F6
-[000016bc] 7c3c                      moveq.l   #60,d6
-[000016be] 3e3c 183e                 move.w    #$183E,d7
-[000016c2] 7c38                      moveq.l   #56,d6
-[000016c4] 0ccc 186c                 cas.w     d4,d1,a4 ; 68020+ only
-[000016c8] 3c3c 7c3e                 move.w    #$7C3E,d6
-[000016cc] 7c3e                      moveq.l   #62,d6
-[000016ce] 7e66                      moveq.l   #102,d7
-[000016d0] 66c6                      bne.s     $00001698
-[000016d2] 6666                      bne.s     $0000173A
-[000016d4] 7e18                      moveq.l   #24,d7
-[000016d6] 1830 6218                 move.b    24(a0,d6.w*2),d4 ; 68020+ only
-[000016da] 6666                      bne.s     $00001742
-[000016dc] 3c3c 3c3c                 move.w    #$3C3C,d6
-[000016e0] 3c3c 3c3c                 move.w    #$3C3C,d6
-[000016e4] 3c38 3838                 move.w    ($00003838).w,d6
-[000016e8] 7e7e                      moveq.l   #126,d7
-[000016ea] 6076                      bra.s     $00001762
-[000016ec] d83c 3c3c                 add.b     #$3C,d4
-[000016f0] 6666                      bne.s     $00001758
-[000016f2] 667e                      bne.s     $00001772
-[000016f4] 667e                      bne.s     $00001774
-[000016f6] 3066                      movea.w   -(a6),a0
-[000016f8] 6618                      bne.s     $00001712
-[000016fa] 3c38 3c66                 move.w    ($00003C66).w,d6
-[000016fe] 3c66                      movea.w   -(a6),a6
-[00001700] 3e7e                      movea.w   ???,a7
-[00001702] 1800                      move.b    d0,d4
-[00001704] 0026 2600                 ori.b     #$00,-(a6)
-[00001708] 0000 3c3c                 ori.b     #$3C,d0
-[0000170c] 663d                      bne.s     $0000174B
-[0000170e] 7ed8                      moveq.l   #-40,d7
-[00001710] 7e7e                      moveq.l   #126,d7
-[00001712] 7e00                      moveq.l   #0,d7
-[00001714] 0010 caba                 ori.b     #$BA,(a0)
-[00001718] ba00                      cmp.b     d0,d5
-[0000171a] 6666                      bne.s     $00001782
-[0000171c] 3e0c                      move.w    a4,d7
-[0000171e] 060c 6618                 addi.b    #$18,a4 ; apollo only
-[00001722] 0c66 660c                 cmpi.w    #$660C,-(a6)
-[00001726] 0606 360c                 addi.b    #$0C,d6
-[0000172a] c636 6636                 and.b     54(a6,d6.w*8),d3 ; 68020+ only
-[0000172e] 0606 d666                 addi.b    #$66,d6
-[00001732] 1806                      move.b    d6,d4
-[00001734] 3666                      movea.w   -(a6),a3
-[00001736] 7618                      moveq.l   #24,d3
-[00001738] 10f7 f666                 move.b    102(a7,a7.w*8),(a0)+ ; 68020+ only
-[0000173c] 607e                      bra.s     $000017BC
-[0000173e] 3038 66fc                 move.w    ($000066FC).w,d0
-[00001742] c642                      and.w     d2,d3
-[00001744] c618                      and.b     (a0)+,d3
-[00001746] d6d6                      adda.w    (a6),a3
-[00001748] c0c6                      mulu.w    d6,d0
-[0000174a] 7e18                      moveq.l   #24,d7
-[0000174c] 1c38 1b18                 move.b    ($00001B18).w,d6
-[00001750] 007c 3838                 ori.w     #$3838,sr
-[00001754] 001f 4830                 ori.b     #$30,(a7)+
-[00001758] 1800                      move.b    d0,d4
-[0000175a] 00c3                      bitrev.l  d3 ; ColdFire isa_c only
-[0000175c] 2483                      move.l    d3,(a2)
-[0000175e] c1d6                      muls.w    (a6),d0
-[00001760] fcba 0691                 cp6B??.w  $00001DF3
-[00001764] 3c08                      move.w    a0,d6
-[00001766] 4038 0db0                 negx.b    ($00000DB0).w
-[0000176a] 8202                      or.b      d2,d1
-[0000176c] 3a3a bab8                 move.w    $FFFFD226(pc),d5
-[00001770] b882                      cmp.l     d2,d4
-[00001772] baba 7e78                 cmp.l     vtc_bg(pc),d5
-[00001776] 0000 39e1                 ori.b     #$E1,d0
-[0000177a] 0018 6666                 ori.b     #$66,(a0)+
-[0000177e] 7c18                      moveq.l   #24,d6
-[00001780] 7018                      moveq.l   #24,d0
-[00001782] 1818                      move.b    (a0)+,d4
-[00001784] ff7e                      dc.w      $FF7E ; illegal
-[00001786] 007e 000c                 ori.w     #_nvdi_fi,???
-[0000178a] 6618                      bne.s     $000017A4
-[0000178c] 0c18 3c7c                 cmpi.b    #$7C,(a0)+
-[00001790] 600c                      bra.s     $0000179E
-[00001792] 3c7e                      movea.w   ???,a6
-[00001794] 1818                      move.b    (a0)+,d4
-[00001796] 7000                      moveq.l   #0,d0
-[00001798] 1c0c                      move.l    b4,d6 ; apollo only
-[0000179a] da66                      add.w     -(a6),d5
-[0000179c] 7e60                      moveq.l   #96,d7
-[0000179e] 667c                      bne.s     $0000181C
-[000017a0] 7c6e                      moveq.l   #110,d6
-[000017a2] 7e18                      moveq.l   #24,d7
-[000017a4] 06f0 60fe 7666            callm     #$60FE,102(a0,d7.w*8) ; 68020+ only
-[000017aa] 6666                      bne.s     $00001812
-[000017ac] cc70 1866                 and.w     102(a0,d1.l),d6
-[000017b0] 66c6                      bne.s     $00001778
-[000017b2] 3c3c 1818                 move.w    #$1818,d6
-[000017b6] 3018                      move.w    (a0)+,d0
-[000017b8] 6c00 043e                 bge       $00001BF8
-[000017bc] 7e7c                      moveq.l   #124,d7
-[000017be] 7e7e                      moveq.l   #126,d7
-[000017c0] 7e7e                      moveq.l   #126,d7
-[000017c2] 7e38                      moveq.l   #56,d7
-[000017c4] 0cdc 18fe                 cas.w     d6,d3,(a4)+ ; 68020+ only
-[000017c8] 7e7e                      moveq.l   #126,d7
-[000017ca] 7e7e                      moveq.l   #126,d7
-[000017cc] 7e7e                      moveq.l   #126,d7
-[000017ce] 7e66                      moveq.l   #102,d7
-[000017d0] 66c6                      bne.s     $00001798
-[000017d2] 6666                      bne.s     $0000183A
-[000017d4] 7e38                      moveq.l   #56,d7
-[000017d6] 1838 f218                 move.b    ($FFFFF218).w,d4
-[000017da] 6066                      bra.s     $00001842
-[000017dc] 7e3e                      moveq.l   #62,d7
-[000017de] 3e3e                      move.w    ???,d7
-[000017e0] 3e7c 7e7e                 movea.w   #$7E7E,a7
-[000017e4] 7e38                      moveq.l   #56,d7
-[000017e6] 3838 6666                 move.w    ($00006666).w,d4
-[000017ea] 607f                      bra.s     $0000186B
-[000017ec] de7e                      add.w     ???,d7
-[000017ee] 7e7e                      moveq.l   #126,d7
-[000017f0] 6666                      bne.s     $00001858
-[000017f2] 6666                      bne.s     $0000185A
-[000017f4] 6666                      bne.s     $0000185C
-[000017f6] 307e                      movea.w   ???,a0
-[000017f8] 6618                      bne.s     $00001812
-[000017fa] 3e38 7e66                 move.w    (cptb_lr).w,d7
-[000017fe] 7e66                      moveq.l   #102,d7
-[00001800] 0666 1800                 addi.w    #$1800,-(a6)
-[00001804] 002c 2c18 1ab0            ori.b     #$18,6832(a4)
-[0000180a] 3e7e                      movea.w   ???,a7
-[0000180c] 6e7e                      bgt.s     $0000188C
-[0000180e] ffde                      dc.w      $FFDE ; illegal
-[00001810] 6666                      bne.s     $00001878
-[00001812] 6600 0010                 bne.w     $00001824
-[00001816] caa2                      and.l     -(a2),d5
-[00001818] aa00 6666                 mac.w     d0.u,d5.l,>>1,acc0
-[0000181c] 3c0c                      move.w    a4,d6
-[0000181e] 0e0c 6618                 ???.b     a4,d6 ; apollo only
-[00001822] 0c66 6600                 cmpi.w    #$6600,-(a6)
-[00001826] 0606 660c                 addi.b    #$0C,d6
-[0000182a] c636 763e                 and.b     62(a6,d7.w*8),d3 ; 68020+ only
-[0000182e] 0606 f666                 addi.b    #$66,d6
-[00001832] 1806                      move.b    d6,d4
-[00001834] 3676 3e3c                 movea.w   60(a6,d3.l*8),a3 ; 68020+ only
-[00001838] 1099                      move.b    (a1)+,(a0)
-[0000183a] dc66                      add.w     -(a6),d6
-[0000183c] 60fc                      bra.s     $0000183A
-[0000183e] 186c 6690                 movea.l   26256(a4),b4 ; apollo only
-[00001842] 8242                      or.w      d2,d1
-[00001844] c63c 9292                 and.b     #$92,d3
-[00001848] c0c6                      mulu.w    d6,d0
-[0000184a] 007e 0e70                 ori.w     #$0E70,???
-[0000184e] 1818                      move.b    (a0)+,d4
-[00001850] 7e40                      moveq.l   #64,d7
-[00001852] 0000 0010                 ori.b     #$10,d0
-[00001856] 4860                      pea.l     -(a0)
-[00001858] 4800                      nbcd      d0
-[0000185a] 0081 e783 c1c6            ori.l     #$E783C1C6,d1
-[00001860] f838 0691 3c08 0000       lpGEN     #$3C08,(sys_font).w
-[00001868] 1db8 0000 7c7c            move.b    (sys_font).w,124(a6,d7.l*4) ; 68020+ only
-[0000186e] 7c7c                      moveq.l   #124,d6
-[00001870] 7c00                      moveq.l   #0,d6
-[00001872] 7c7c                      moveq.l   #124,d6
-[00001874] 0600 0000                 addi.b    #$00,d0
-[00001878] 38e1                      move.w    -(a1),(a4)+
-[0000187a] 0018 6666                 ori.b     #$66,(a0)+
-[0000187e] 3e18                      move.w    (a0)+,d7
-[00001880] 7018                      moveq.l   #24,d0
-[00001882] 1818                      move.b    (a0)+,d4
-[00001884] ff7e                      dc.w      $FF7E ; illegal
-[00001886] 007e 0018                 ori.w     #VSF_STYL,???
-[0000188a] 6e18                      bgt.s     $000018A4
-[0000188c] 0c18 3c7e                 cmpi.b    #$7E,(a0)+
-[00001890] 7c0c                      moveq.l   #12,d6
-[00001892] 3c3e                      move.w    ???,d6
-[00001894] 1818                      move.b    (a0)+,d4
-[00001896] e000                      asr.b     #8,d0
-[00001898] 0e0c d666                 and.b     a4,a5 ; apollo only
-[0000189c] 7c60                      moveq.l   #96,d6
-[0000189e] 667c                      bne.s     $0000191C
-[000018a0] 7c6e                      moveq.l   #110,d6
-[000018a2] 7e18                      moveq.l   #24,d7
-[000018a4] 06f0 60d6 7e66            callm     #$60D6,102(a0,d7.l*8) ; 68020+ only
-[000018aa] 6666                      bne.s     $00001912
-[000018ac] fc38 1866 66d6 183c       cp6GEN    #$66D6,($0000183C).w
-[000018b4] 1818                      move.b    (a0)+,d4
-[000018b6] 1818                      move.b    (a0)+,d4
-[000018b8] c600                      and.b     d0,d3
-[000018ba] 0006 6660                 ori.b     #$60,d6
-[000018be] 6666                      bne.s     $00001926
-[000018c0] 7e66                      moveq.l   #102,d7
-[000018c2] 6618                      bne.s     $000018DC
-[000018c4] 0cf8 18fe 6666            cas.w     d6,d3,($00006666).w ; 68020+ only
-[000018ca] 6666                      bne.s     $00001932
-[000018cc] 6660                      bne.s     $0000192E
-[000018ce] 1866                      movea.l   -(a6),b4 ; apollo only
-[000018d0] 66d6                      bne.s     $000018A8
-[000018d2] 3c66                      movea.w   -(a6),a6
-[000018d4] 0cf0 181e be3c            cas.w     d6,d0,60(a0,a3.l*8) ; 68020+ only
-[000018da] 6066                      bra.s     $00001942
-[000018dc] 6606                      bne.s     $000018E4
-[000018de] 0606 0660                 addi.b    #$60,d6
-[000018e2] 6666                      bne.s     $0000194A
-[000018e4] 6618                      bne.s     $000018FE
-[000018e6] 1818                      move.b    (a0)+,d4
-[000018e8] 6666                      bne.s     $00001950
-[000018ea] 7c1b                      moveq.l   #27,d6
-[000018ec] de66                      add.w     -(a6),d7
-[000018ee] 6666                      bne.s     $00001956
-[000018f0] 6666                      bne.s     $00001958
-[000018f2] 6666                      bne.s     $0000195A
-[000018f4] 6660                      bne.s     $00001956
-[000018f6] 303c 7c7e                 move.w    #$7C7E,d0
-[000018fa] 0618 6666                 addi.b    #$66,(a0)+
-[000018fe] 6676                      bne.s     $00001976
-[00001900] 3e66                      movea.w   -(a6),a7
-[00001902] 1800                      move.b    d0,d4
-[00001904] 0018 1818                 ori.b     #$18,(a0)+
-[00001908] 36d8                      move.w    (a0)+,(a3)+
-[0000190a] 0666 6e66                 addi.w    #$6E66,-(a6)
-[0000190e] dbde                      adda.l    (a6)+,a5
-[00001910] 6666                      bne.s     $00001978
-[00001912] 6600 0010                 bne.w     $00001924
-[00001916] caa2                      and.l     -(a2),d5
-[00001918] b200                      cmp.b     d0,d1
-[0000191a] 6666                      bne.s     $00001982
-[0000191c] 3c0c                      move.w    a4,d6
-[0000191e] 1e0c                      move.l    b4,d7 ; apollo only
-[00001920] 6618                      bne.s     $0000193A
-[00001922] 0c66 6600                 cmpi.w    #$6600,-(a6)
-[00001926] 060e 660c                 addi.b    #$0C,a6 ; apollo only
-[0000192a] c636 7618                 and.b     24(a6,d7.w*8),d3 ; 68020+ only
-[0000192e] 3606                      move.w    d6,d3
-[00001930] f666                      dc.w      $F666 ; illegal
-[00001932] 1806                      move.b    d6,d4
-[00001934] 3676 0e66                 movea.w   102(a6,d0.l*8),a3 ; 68020+ only
-[00001938] 3899                      move.w    (a1)+,(a4)
-[0000193a] 887c 60a8                 or.w      #$60A8,d4
-[0000193e] 0cc6 6630                 cas.w     d0,d0,d6 ; 68020+ only
-[00001942] 827e                      or.w      ???,d1
-[00001944] c666                      and.w     -(a6),d3
-[00001946] 9292                      sub.l     (a2),d1
-[00001948] fcc6 7e7e 1c38            cp6B??.l  $7E7E3582
-[0000194e] 1818                      move.b    (a0)+,d4
-[00001950] 7e02                      moveq.l   #2,d7
-[00001952] 0000 00d0                 ori.b     #$D0,d0
-[00001956] 4878 3000                 pea.l     ($00003000).w
-[0000195a] 00e7                      dc.w      $00E7 ; illegal
-[0000195c] 81e6                      divs.w    -(a6),d0
-[0000195e] 67d6                      beq.s     $00001936
-[00001960] faba 8c9d                 cp5B??.w  $FFFFA5FF
-[00001964] 3c78 1e1c                 movea.w   ($00001E1C).w,a6
-[00001968] 399c 8202                 move.w    (a4)+,2(a4,a0.w*2) ; 68020+ only
-[0000196c] b83a 3a3a                 cmp.b     $000053A8(pc),d4
-[00001970] ba02                      cmp.b     d2,d5
-[00001972] ba3a 060e                 cmp.b     $00001F82(pc),d5
-[00001976] 07f0 00e1                 bset      d3,-31(a0,d0.w)
-[0000197a] 0018 00ff                 ori.b     #$FF,(a0)+
-[0000197e] 0630 de00 1818            addi.b    #$00,24(a0,d1.l)
-[00001984] 3c18                      move.w    (a0)+,d6
-[00001986] 0000 0018                 ori.b     #$18,d0
-[0000198a] 7618                      moveq.l   #24,d3
-[0000198c] 180c                      move.l    b4,d4 ; apollo only
-[0000198e] 6c06                      bge.s     $00001996
-[00001990] 7e18                      moveq.l   #24,d7
-[00001992] 6606                      bne.s     $0000199A
-[00001994] 0000 707e                 ori.b     #$7E,d0
-[00001998] 1c18                      move.b    (a0)+,d6
-[0000199a] d67e                      add.w     ???,d3
-[0000199c] 6660                      bne.s     $000019FE
-[0000199e] 6660                      bne.s     $00001A00
-[000019a0] 6066                      bra.s     $00001A08
-[000019a2] 6618                      bne.s     $000019BC
-[000019a4] 06d8 60d6                 callm     #$60D6,(a0)+ ; 68020 only
-[000019a8] 7e66                      moveq.l   #102,d7
-[000019aa] 7e66                      moveq.l   #102,d7
-[000019ac] f81c 1866 66d6            lpGEN     #$66D6,(a4)+
-[000019b2] 1818                      move.b    (a0)+,d4
-[000019b4] 3018                      move.w    (a0)+,d0
-[000019b6] 1818                      move.b    (a0)+,d4
-[000019b8] c600                      and.b     d0,d3
-[000019ba] 003e 6660                 ori.b     #$60,???
-[000019be] 6666                      bne.s     $00001A26
-[000019c0] 1866                      movea.l   -(a6),b4 ; apollo only
-[000019c2] 6618                      bne.s     $000019DC
-[000019c4] 0cf0 18d6 6666            cas.w     d6,d3,102(a0,d6.w*8) ; 68020+ only
-[000019ca] 6666                      bne.s     $00001A32
-[000019cc] 6070                      bra.s     $00001A3E
-[000019ce] 1866                      movea.l   -(a6),b4 ; apollo only
-[000019d0] 66d6                      bne.s     $000019A8
-[000019d2] 3c66                      movea.w   -(a6),a6
-[000019d4] 18f0 181e                 move.b    30(a0,d1.l),(a4)+
-[000019d8] 9c24                      sub.b     -(a4),d6
-[000019da] 6066                      bra.s     $00001A42
-[000019dc] 663e                      bne.s     $00001A1C
-[000019de] 3e3e                      move.w    ???,d7
-[000019e0] 3e60                      movea.w   -(a0),a7
-[000019e2] 6666                      bne.s     $00001A4A
-[000019e4] 6618                      bne.s     $000019FE
-[000019e6] 1818                      move.b    (a0)+,d4
-[000019e8] 7e7e                      moveq.l   #126,d7
-[000019ea] 7c7b                      moveq.l   #123,d6
-[000019ec] f866 6666                 lpS??     -(a6)
-[000019f0] 6666                      bne.s     $00001A58
-[000019f2] 6666                      bne.s     $00001A5A
-[000019f4] 6660                      bne.s     $00001A56
-[000019f6] fe18 6618                 pmul88.q  (a0)+,d6,d6
-[000019fa] 3e18                      move.w    (a0)+,d7
-[000019fc] 6666                      bne.s     $00001A64
-[000019fe] 667e                      bne.s     $00001A7E
-[00001a00] 7e66                      moveq.l   #102,d7
-[00001a02] 3000                      move.w    d0,d0
-[00001a04] 0030 3218 6c6c            ori.b     #$18,108(a0,d6.l*4) ; 68020+ only
-[00001a0a] 3e66                      movea.w   -(a6),a7
-[00001a0c] 766e                      moveq.l   #110,d3
-[00001a0e] dbd8                      adda.l    (a0)+,a5
-[00001a10] 7e7e                      moveq.l   #126,d7
-[00001a12] 6600 0000                 bne.w     $00001A14
-[00001a16] 7aa2                      moveq.l   #-94,d5
-[00001a18] ba00                      cmp.b     d0,d5
-[00001a1a] 6666                      bne.s     $00001A82
-[00001a1c] 6e0c                      bgt.s     $00001A2A
-[00001a1e] 360c                      move.w    a4,d3
-[00001a20] 6618                      bne.s     $00001A3A
-[00001a22] 0c66 6600                 cmpi.w    #$6600,-(a6)
-[00001a26] 061c 660c                 addi.b    #$0C,(a4)+
-[00001a2a] c636 061c                 and.b     28(a6,d0.w*8),d3 ; 68020+ only
-[00001a2e] 3606                      move.w    d6,d3
-[00001a30] c666                      and.w     -(a6),d3
-[00001a32] 1806                      move.b    d6,d4
-[00001a34] 3606                      move.w    d6,d3
-[00001a36] 0666 38ef                 addi.w    #$38EF,-(a6)
-[00001a3a] 8866                      or.w      -(a6),d4
-[00001a3c] 6028                      bra.s     $00001A66
-[00001a3e] 0cc6 6630                 cas.w     d0,d0,d6 ; 68020+ only
-[00001a42] 8242                      or.w      d2,d1
-[00001a44] 6c42                      bge.s     $00001A88
-[00001a46] 9292                      sub.l     (a2),d1
-[00001a48] fcc6 7e18 381c            cp6B??.l  $7E185266
-[00001a4e] 1818                      move.b    (a0)+,d4
-[00001a50] 003e 0000                 ori.b     #$00,???
-[00001a54] 00d0 0000                 cmp2.b    (a0),d0 ; 68020+ only
-[00001a58] 0000 0024                 ori.b     #$24,d0
-[00001a5c] c32c 3492                 and.b     d1,13458(a4)
-[00001a60] f292 8c81                 fbgt.w    $FFFFA6E3
-[00001a64] 3cf8 1012                 move.w    ($00001012).w,(a6)+
-[00001a68] 799e                      ???
-[00001a6a] c606                      and.b     d6,d3
-[00001a6c] c006                      and.b     d6,d0
-[00001a6e] 0606 c606                 addi.b    #$06,d6
-[00001a72] c606                      and.b     d6,d3
-[00001a74] 7e10                      moveq.l   #16,d7
-[00001a76] 0ff8 00e1                 bset      d7,($000000E1).w
-[00001a7a] 0018 00ff                 ori.b     #$FF,(a0)+
-[00001a7e] 0636 de00 1818            addi.b    #$00,24(a6,d1.l)
-[00001a84] 3c18                      move.w    (a0)+,d6
-[00001a86] 0000 0030                 ori.b     #$30,d0
-[00001a8a] 6618                      bne.s     $00001AA4
-[00001a8c] 180c                      move.l    b4,d4 ; apollo only
-[00001a8e] 6c06                      bge.s     $00001A96
-[00001a90] 6618                      bne.s     $00001AAA
-[00001a92] 6606                      bne.s     $00001A9A
-[00001a94] 0000 387e                 ori.b     #$7E,d0
-[00001a98] 3818                      move.w    (a0)+,d4
-[00001a9a] dc7e                      add.w     ???,d6
-[00001a9c] 6660                      bne.s     $00001AFE
-[00001a9e] 6660                      bne.s     $00001B00
-[00001aa0] 6066                      bra.s     $00001B08
-[00001aa2] 6618                      bne.s     $00001ABC
-[00001aa4] 06d8 60c6                 callm     #$60C6,(a0)+ ; 68020 only
-[00001aa8] 6e66                      bgt.s     $00001B10
-[00001aaa] 7c66                      moveq.l   #102,d6
-[00001aac] d80e                      add.b     a6,d4
-[00001aae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001ab0] 66fe                      bne.s     $00001AB0
-[00001ab2] 3c18                      move.w    (a0)+,d6
-[00001ab4] 3018                      move.w    (a0)+,d0
-[00001ab6] 0c18 0000                 cmpi.b    #$00,(a0)+
-[00001aba] 007e 6660                 ori.w     #$6660,???
-[00001abe] 667e                      bne.s     $00001B3E
-[00001ac0] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001ac2] 6618                      bne.s     $00001ADC
-[00001ac4] 0cf8 18d6 6666            cas.w     d6,d3,($00006666).w ; 68020+ only
-[00001aca] 6666                      bne.s     $00001B32
-[00001acc] 603c                      bra.s     $00001B0A
-[00001ace] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001ad0] 66fe                      bne.s     $00001AD0
-[00001ad2] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001ad4] 1838 1838                 move.b    ($00001838).w,d4
-[00001ad8] 0066 6066                 ori.w     #$6066,-(a6)
-[00001adc] 7e7e                      moveq.l   #126,d7
-[00001ade] 7e7e                      moveq.l   #126,d7
-[00001ae0] 7e60                      moveq.l   #96,d7
-[00001ae2] 7e7e                      moveq.l   #126,d7
-[00001ae4] 7e18                      moveq.l   #24,d7
-[00001ae6] 1818                      move.b    (a0)+,d4
-[00001ae8] 7e7e                      moveq.l   #126,d7
-[00001aea] 60ff f866 6666            bra.l     $F8668152 ; 68020+ only
-[00001af0] 6666                      bne.s     $00001B58
-[00001af2] 6666                      bne.s     $00001B5A
-[00001af4] 6666                      bne.s     $00001B5C
-[00001af6] 307e                      movea.w   ???,a0
-[00001af8] 6618                      bne.s     $00001B12
-[00001afa] 7e18                      moveq.l   #24,d7
-[00001afc] 6666                      bne.s     $00001B64
-[00001afe] 667e                      bne.s     $00001B7E
-[00001b00] 6666                      bne.s     $00001B68
-[00001b02] 307e                      movea.w   ???,a0
-[00001b04] 7e6e                      moveq.l   #110,d7
-[00001b06] 6618                      bne.s     $00001B20
-[00001b08] d836 7e66                 add.b     102(a6,d7.l*8),d4 ; 68020+ only
-[00001b0c] 767e                      moveq.l   #126,d3
-[00001b0e] dfd8                      adda.l    (a0)+,a7
-[00001b10] 7e7e                      moveq.l   #126,d7
-[00001b12] 6600 0000                 bne.w     $00001B14
-[00001b16] 0aba aa00 6666 6e0c       eori.l    #$AA006666,$00008924(pc) ; apollo only
-[00001b1e] 360c                      move.w    a4,d3
-[00001b20] 6618                      bne.s     $00001B3A
-[00001b22] 0c66 6600                 cmpi.w    #$6600,-(a6)
-[00001b26] 0630 6e0c c636            addi.b    #$0C,54(a0,a4.w*8) ; 68020+ only
-[00001b2c] 7e0e                      moveq.l   #14,d7
-[00001b2e] 3606                      move.w    d6,d3
-[00001b30] c666                      and.w     -(a6),d3
-[00001b32] 1806                      move.b    d6,d4
-[00001b34] 3606                      move.w    d6,d3
-[00001b36] 063c 6c66                 addi.b    #$66,ccr
-[00001b3a] dc66                      add.w     -(a6),d6
-[00001b3c] 6028                      bra.s     $00001B66
-[00001b3e] 18c6                      move.b    d6,(a4)+
-[00001b40] 6630                      bne.s     $00001B72
-[00001b42] 8242                      or.w      d2,d1
-[00001b44] 2842                      movea.l   d2,a4
-[00001b46] 9292                      sub.l     (a2),d1
-[00001b48] c0c6                      mulu.w    d6,d0
-[00001b4a] 0018 700e                 ori.b     #$0E,(a0)+
-[00001b4e] 1818                      move.b    (a0)+,d4
-[00001b50] 187c 0000                 movea.l   #$00,b4 ; apollo only
-[00001b54] 1850                      movea.l   (a0),b4 ; apollo only
-[00001b56] 0000 0000                 ori.b     #$00,d0
-[00001b5a] 0024 6638                 ori.b     #$38,-(a4)
-[00001b5e] 1cba f6d6                 move.b    $00001236(pc),(a6)
-[00001b62] d8c3                      adda.w    d3,a4
-[00001b64] 7e70                      moveq.l   #112,d7
-[00001b66] 1c1c                      move.b    (a4)+,d6
-[00001b68] 718e                      ???
-[00001b6a] c606                      and.b     d6,d3
-[00001b6c] c006                      and.b     d6,d0
-[00001b6e] 0606 c606                 addi.b    #$06,d6
-[00001b72] c606                      and.b     d6,d3
-[00001b74] 660c                      bne.s     $00001B82
-[00001b76] 1fec 0021                 move.b    33(a4),???
-[00001b7a] 0000 0066                 ori.b     #$66,d0
-[00001b7e] 7e66                      moveq.l   #102,d7
-[00001b80] cc00                      and.b     d0,d6
-[00001b82] 1818                      move.b    (a0)+,d4
-[00001b84] 6618                      bne.s     $00001B9E
-[00001b86] 1800                      move.b    d0,d4
-[00001b88] 1830 6618                 move.b    24(a0,d6.w*8),d4 ; 68020+ only
-[00001b8c] 3066                      movea.w   -(a6),a0
-[00001b8e] 7e06                      moveq.l   #6,d7
-[00001b90] 6630                      bne.s     $00001BC2
-[00001b92] 6606                      bne.s     $00001B9A
-[00001b94] 1818                      move.b    (a0)+,d4
-[00001b96] 1c00                      move.b    d0,d6
-[00001b98] 7018                      moveq.l   #24,d0
-[00001b9a] c066                      and.w     -(a6),d0
-[00001b9c] 6666                      bne.s     $00001C04
-[00001b9e] 6660                      bne.s     $00001C00
-[00001ba0] 6066                      bra.s     $00001C08
-[00001ba2] 6618                      bne.s     $00001BBC
-[00001ba4] 66cc                      bne.s     $00001B72
-[00001ba6] 60c6                      bra.s     $00001B6E
-[00001ba8] 6e66                      bgt.s     $00001C10
-[00001baa] 6066                      bra.s     $00001C12
-[00001bac] cc06                      and.b     d6,d6
-[00001bae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001bb0] 3cfe                      move.w    ???,(a6)+
-[00001bb2] 3c18                      move.w    (a0)+,d6
-[00001bb4] 6018                      bra.s     $00001BCE
-[00001bb6] 0c18 0000                 cmpi.b    #$00,(a0)+
-[00001bba] 0066 6660                 ori.w     #$6660,-(a6)
-[00001bbe] 6660                      bne.s     $00001C20
-[00001bc0] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001bc2] 6618                      bne.s     $00001BDC
-[00001bc4] 0cd8 18d6                 cas.w     d6,d3,(a0)+ ; 68020+ only
-[00001bc8] 6666                      bne.s     $00001C30
-[00001bca] 6666                      bne.s     $00001C32
-[00001bcc] 600e                      bra.s     $00001BDC
-[00001bce] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001bd0] 3cfe                      move.w    ???,(a6)+
-[00001bd2] 3c66                      movea.w   -(a6),a6
-[00001bd4] 3018                      move.w    (a0)+,d0
-[00001bd6] 1830 0042                 move.b    66(a0,d0.w),d4
-[00001bda] 6666                      bne.s     $00001C42
-[00001bdc] 6066                      bra.s     $00001C44
-[00001bde] 6666                      bne.s     $00001C46
-[00001be0] 6660                      bne.s     $00001C42
-[00001be2] 6060                      bra.s     $00001C44
-[00001be4] 6018                      bra.s     $00001BFE
-[00001be6] 1818                      move.b    (a0)+,d4
-[00001be8] 6666                      bne.s     $00001C50
-[00001bea] 60d8                      bra.s     $00001BC4
-[00001bec] d866                      add.w     -(a6),d4
-[00001bee] 6666                      bne.s     $00001C56
-[00001bf0] 6666                      bne.s     $00001C58
-[00001bf2] 6666                      bne.s     $00001C5A
-[00001bf4] 667e                      bne.s     $00001C74
-[00001bf6] 3018                      move.w    (a0)+,d0
-[00001bf8] 6618                      bne.s     $00001C12
-[00001bfa] 6618                      bne.s     $00001C14
-[00001bfc] 6666                      bne.s     $00001C64
-[00001bfe] 666e                      bne.s     $00001C6E
-[00001c00] 6666                      bne.s     $00001C68
-[00001c02] 667e                      bne.s     $00001C82
-[00001c04] 7ed3                      moveq.l   #-45,d7
-[00001c06] ce18                      and.b     (a0)+,d7
-[00001c08] 6c6c                      bge.s     $00001C76
-[00001c0a] 6666                      bne.s     $00001C72
-[00001c0c] 6676                      bne.s     $00001C84
-[00001c0e] d8d8                      adda.w    (a0)+,a4
-[00001c10] 6666                      bne.s     $00001C78
-[00001c12] 6600 0000                 bne.w     $00001C14
-[00001c16] 0a82 8200 6666            eori.l    #$82006666,d2
-[00001c1c] 667e                      bne.s     $00001C9C
-[00001c1e] 360c                      move.w    a4,d3
-[00001c20] 6618                      bne.s     $00001C3A
-[00001c22] 0c66 7e00                 cmpi.w    #$7E00,-(a6)
-[00001c26] 3e30 6e7c                 move.w    124(a0,d6.l*8),d7 ; 68020+ only
-[00001c2a] fe7e 7e7e                 nfTRAP??
-[00001c2e] 3606                      move.w    d6,d3
-[00001c30] fee6 1806                 packuswb.qe9,e16,-(a6)
-[00001c34] 3e06                      move.w    d6,d7
-[00001c36] 0618 6c00                 addi.b    #$00,(a0)+
-[00001c3a] f666                      dc.w      $F666 ; illegal
-[00001c3c] 6028                      bra.s     $00001C66
-[00001c3e] 30c6                      move.w    d6,(a0)+
-[00001c40] 6630                      bne.s     $00001C72
-[00001c42] c666                      and.w     -(a6),d3
-[00001c44] aa66 d6d6                 mac.w     d6.u,a5.u,>>1,-(a6),a5,acc3
-[00001c48] c0c6                      mulu.w    d6,d0
-[00001c4a] 7e18                      moveq.l   #24,d7
-[00001c4c] 6006                      bra.s     $00001C54
-[00001c4e] 18d8                      move.b    (a0)+,(a4)+
-[00001c50] 1840                      movea.l   d0,b4 ; apollo only
-[00001c52] 0000 3c70                 ori.b     #$70,d0
-[00001c56] 0000 0000                 ori.b     #$00,d0
-[00001c5a] 0024 3c30                 ori.b     #$30,-(a4)
-[00001c5e] 0c38 e6c6 5866            cmpi.b    #$C6,($00005866).w
-[00001c64] ff00 1014                 paddusb.q e8,d1,d0
-[00001c68] 718e                      ???
-[00001c6a] c606                      and.b     d6,d3
-[00001c6c] c006                      and.b     d6,d0
-[00001c6e] 0606 c606                 addi.b    #$06,d6
-[00001c72] c606                      and.b     d6,d3
-[00001c74] 6602                      bne.s     $00001C78
-[00001c76] 1804                      move.b    d4,d4
-[00001c78] 0021 0000                 ori.b     #$00,-(a1)
-[00001c7c] 0066 7c66                 ori.w     #$7C66,-(a6)
-[00001c80] cc00                      and.b     d0,d6
-[00001c82] 1c38 6600                 move.b    ($00006600).w,d6
-[00001c86] 1800                      move.b    d0,d4
-[00001c88] 1860                      movea.l   -(a0),b4 ; apollo only
-[00001c8a] 6618                      bne.s     $00001CA4
-[00001c8c] 3066                      movea.w   -(a6),a0
-[00001c8e] 7e66                      moveq.l   #102,d7
-[00001c90] 6630                      bne.s     $00001CC2
-[00001c92] 660e                      bne.s     $00001CA2
-[00001c94] 1818                      move.b    (a0)+,d4
-[00001c96] 0e00 e000                 moves.b   d0,a6
-[00001c9a] e266                      asr.w     d1,d6
-[00001c9c] 6666                      bne.s     $00001D04
-[00001c9e] 6e60                      bgt.s     $00001D00
-[00001ca0] 6066                      bra.s     $00001D08
-[00001ca2] 6618                      bne.s     $00001CBC
-[00001ca4] 66cc                      bne.s     $00001C72
-[00001ca6] 60c6                      bra.s     $00001C6E
-[00001ca8] 6666                      bne.s     $00001D10
-[00001caa] 606a                      bra.s     $00001D16
-[00001cac] cc06                      and.b     d6,d6
-[00001cae] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001cb0] 3cee 6618                 move.w    26136(a6),(a6)+
-[00001cb4] 6018                      bra.s     $00001CCE
-[00001cb6] 0618 0000                 addi.b    #$00,(a0)+
-[00001cba] 0066 6660                 ori.w     #$6660,-(a6)
-[00001cbe] 6660                      bne.s     $00001D20
-[00001cc0] 187e                      movea.l   ???,b4 ; apollo only
-[00001cc2] 6618                      bne.s     $00001CDC
-[00001cc4] 0ccc 18c6                 cas.w     d6,d3,a4 ; 68020+ only
-[00001cc8] 6666                      bne.s     $00001D30
-[00001cca] 6666                      bne.s     $00001D32
-[00001ccc] 6006                      bra.s     $00001CD4
-[00001cce] 1866                      movea.l   -(a6),b4 ; apollo only
-[00001cd0] 3cee 3c7e                 move.w    15486(a6),(a6)+
-[00001cd4] 3018                      move.w    (a0)+,d0
-[00001cd6] 1830 00c3                 move.b    -61(a0,d0.w),d4
-[00001cda] 6666                      bne.s     $00001D42
-[00001cdc] 6066                      bra.s     $00001D44
-[00001cde] 6666                      bne.s     $00001D46
-[00001ce0] 6660                      bne.s     $00001D42
-[00001ce2] 6060                      bra.s     $00001D44
-[00001ce4] 6018                      bra.s     $00001CFE
-[00001ce6] 1818                      move.b    (a0)+,d4
-[00001ce8] 6666                      bne.s     $00001D50
-[00001cea] 60d8                      bra.s     $00001CC4
-[00001cec] d866                      add.w     -(a6),d4
-[00001cee] 6666                      bne.s     $00001D56
-[00001cf0] 6666                      bne.s     $00001D58
-[00001cf2] 7e66                      moveq.l   #102,d7
-[00001cf4] 663c                      bne.s     $00001D32
-[00001cf6] 3018                      move.w    (a0)+,d0
-[00001cf8] 6618                      bne.s     $00001D12
-[00001cfa] 6618                      bne.s     $00001D14
-[00001cfc] 6666                      bne.s     $00001D64
-[00001cfe] 6666                      bne.s     $00001D66
-[00001d00] 7e7e                      moveq.l   #126,d7
-[00001d02] 6660                      bne.s     $00001D64
-[00001d04] 0606 1a18                 addi.b    #$18,d6
-[00001d08] 36d8                      move.w    (a0)+,(a3)+
-[00001d0a] 6666                      bne.s     $00001D72
-[00001d0c] 6666                      bne.s     $00001D74
-[00001d0e] d8d8                      adda.w    (a0)+,a4
-[00001d10] 6666                      bne.s     $00001D78
-[00001d12] 6600 0000                 bne.w     $00001D14
-[00001d16] 0ac6 c600                 cas.b     d0,d0,d6 ; 68020+ only
-[00001d1a] 66f6                      bne.s     $00001D12
-[00001d1c] 627e                      bhi.s     $00001D9C
-[00001d1e] 360c                      move.w    a4,d3
-[00001d20] 6618                      bne.s     $00001D3A
-[00001d22] 0466 7e00                 subi.w    #$7E00,-(a6)
-[00001d26] 3c30 6e7c                 move.w    124(a0,d6.l*8),d6 ; 68020+ only
-[00001d2a] 7c7e                      moveq.l   #126,d6
-[00001d2c] 7e7e                      moveq.l   #126,d7
-[00001d2e] 3606                      move.w    d6,d3
-[00001d30] fee6 1806                 packuswb.qe9,e16,-(a6)
-[00001d34] 3e06                      move.w    d6,d7
-[00001d36] 064c c600                 addi.w    #$C600,a4 ; apollo only
-[00001d3a] 627c                      bhi.s     $00001DB8
-[00001d3c] 6028                      bra.s     $00001D66
-[00001d3e] 606c                      bra.s     $00001DAC
-[00001d40] 7f20                      ???
-[00001d42] 7c7e                      moveq.l   #126,d6
-[00001d44] ee7e                      ror.w     d7,d6
-[00001d46] 7c7c                      moveq.l   #124,d6
-[00001d48] e0c6                      asr.w     d6
-[00001d4a] 7e00                      moveq.l   #0,d7
-[00001d4c] 0000 18d8                 ori.b     #$D8,d0
-[00001d50] 0000 0000                 ori.b     #$00,d0
-[00001d54] 3c20                      move.w    -(a0),d6
-[00001d56] 0000 0000                 ori.b     #$00,d0
-[00001d5a] 003c 1800                 ori.b     #$00,ccr
-[00001d5e] 007c eeee                 ori.w     #$EEEE,sr
-[00001d62] 703c                      moveq.l   #60,d0
-[00001d64] 1000                      move.b    d0,d0
-[00001d66] 1012                      move.b    (a2),d0
-[00001d68] 6186                      bsr.s     $00001CF0
-[00001d6a] ba02                      cmp.b     d2,d5
-[00001d6c] b83a 023a                 cmp.b     $00001FA8(pc),d4
-[00001d70] ba02                      cmp.b     d2,d5
-[00001d72] ba3a 7e1c                 cmp.b     $00009B90(pc),d5
-[00001d76] 1804                      move.b    d4,d4
-[00001d78] 003f 0018                 ori.b     #$18,???
-[00001d7c] 0000 1800                 ori.b     #$00,d0
-[00001d80] fe00 0c30                 pminsb.q  d0,d0,e4
-[00001d84] 0000 1800                 ori.b     #$00,d0
-[00001d88] 1860                      movea.l   -(a0),b4 ; apollo only
-[00001d8a] 7e7e                      moveq.l   #126,d7
-[00001d8c] 7e7e                      moveq.l   #126,d7
-[00001d8e] 0c7e 7e30                 cmpi.w    #$7E30,???
-[00001d92] 7e3c                      moveq.l   #60,d7
-[00001d94] 1818                      move.b    (a0)+,d4
-[00001d96] 0000 0018                 ori.b     #$18,d0
-[00001d9a] 7e66                      moveq.l   #102,d7
-[00001d9c] 7e7e                      moveq.l   #126,d7
-[00001d9e] 7c7e                      moveq.l   #126,d6
-[00001da0] 607e                      bra.s     $00001E20
-[00001da2] 667e                      bne.s     $00001E22
-[00001da4] 7ec6                      moveq.l   #-58,d7
-[00001da6] 7ec6                      moveq.l   #-58,d7
-[00001da8] 667e                      bne.s     $00001E28
-[00001daa] 607c                      bra.s     $00001E28
-[00001dac] c67e                      and.w     ???,d3
-[00001dae] 187e                      movea.l   ???,b4 ; apollo only
-[00001db0] 18c6                      move.b    d6,(a4)+
-[00001db2] 6618                      bne.s     $00001DCC
-[00001db4] 7e1e                      moveq.l   #30,d7
-[00001db6] 0678 00fe 007e            addi.w    #t_bitmap,(off_tabl).w
-[00001dbc] 7e7e                      moveq.l   #126,d7
-[00001dbe] 7e7e                      moveq.l   #126,d7
-[00001dc0] 183e                      move.b    ???,d4
-[00001dc2] 663c                      bne.s     $00001E00
-[00001dc4] 0cce 3cc6                 cas.w     d6,d3,a6 ; 68020+ only
-[00001dc8] 667e                      bne.s     $00001E48
-[00001dca] 7e7e                      moveq.l   #126,d7
-[00001dcc] 607e                      bra.s     $00001E4C
-[00001dce] 1e7e                      movea.l   ???,b7 ; apollo only
-[00001dd0] 18c6                      move.b    d6,(a4)+
-[00001dd2] 663e                      bne.s     $00001E12
-[00001dd4] 7e18                      moveq.l   #24,d7
-[00001dd6] 1830 00ff                 move.b    -1(a0,d0.w),d4
-[00001dda] 7e7e                      moveq.l   #126,d7
-[00001ddc] 7e7e                      moveq.l   #126,d7
-[00001dde] 7e7e                      moveq.l   #126,d7
-[00001de0] 7e7e                      moveq.l   #126,d7
-[00001de2] 7e7e                      moveq.l   #126,d7
-[00001de4] 7e3c                      moveq.l   #60,d7
-[00001de6] 3c3c 6666                 move.w    #$6666,d6
-[00001dea] 7eff                      moveq.l   #-1,d7
-[00001dec] de7e                      add.w     ???,d7
-[00001dee] 7e7e                      moveq.l   #126,d7
-[00001df0] 7e7e                      moveq.l   #126,d7
-[00001df2] 3e7e                      movea.w   ???,a7
-[00001df4] 7e18                      moveq.l   #24,d7
-[00001df6] 7f18                      ???
-[00001df8] 7e18                      moveq.l   #24,d7
-[00001dfa] 7e3c                      moveq.l   #60,d7
-[00001dfc] 7e7e                      moveq.l   #126,d7
-[00001dfe] 6666                      bne.s     $00001E66
-[00001e00] 3e3c 7e60                 move.w    #$7E60,d7
-[00001e04] 060c 3218                 addi.b    #$18,a4 ; apollo only
-[00001e08] 1ab0 7e7e                 move.b    126(a0,d7.l*8),(a5) ; 68020+ only
-[00001e0c] 7e7e                      moveq.l   #126,d7
-[00001e0e] fffe                      dc.w      $FFFE ; illegal
-[00001e10] 6666                      bne.s     $00001E78
-[00001e12] 7e00                      moveq.l   #0,d7
-[00001e14] 0000 0a7c                 ori.b     #$7C,d0
-[00001e18] 7c00                      moveq.l   #0,d6
-[00001e1a] f6f6                      dc.w      $F6F6 ; illegal
-[00001e1c] 0000 0000                 ori.b     #$00,d0
-[00001e20] 0000 0000                 ori.b     #$00,d0
-[00001e24] 0000 0000                 ori.b     #$00,d0
-[00001e28] 0000 0000                 ori.b     #$00,d0
-[00001e2c] 0000 3000                 ori.b     #$00,d0
-[00001e30] 0000 1806                 ori.b     #$06,d0
-[00001e34] 0006 066c                 ori.b     #$6C,d6
-[00001e38] c600                      and.b     d0,d3
-[00001e3a] 006c 6000 fe38            ori.w     #$6000,-456(a4)
-[00001e40] 5d00                      subq.b    #6,d0
-[00001e42] 103c 6c3c                 move.b    #$3C,d0
-[00001e46] 1010                      move.b    (a0),d0
-[00001e48] 7ec6                      moveq.l   #-58,d7
-[00001e4a] 007e 7e7e                 ori.w     #$7E7E,???
-[00001e4e] 1898                      move.b    (a0)+,(a4)
-[00001e50] 0000 0000                 ori.b     #$00,d0
-[00001e54] 1800                      move.b    d0,d4
-[00001e56] 0000 0000                 ori.b     #$00,d0
-[00001e5a] 0000 0000                 ori.b     #$00,d0
-[00001e5e] 0000 0000                 ori.b     #$00,d0
-[00001e62] 3000                      move.w    d0,d0
-[00001e64] 3800                      move.w    d0,d4
-[00001e66] 0000 4182                 ori.b     #$82,d0
-[00001e6a] 7c00                      moveq.l   #0,d6
-[00001e6c] 7c7c                      moveq.l   #124,d6
-[00001e6e] 007c 7c00                 ori.w     #$7C00,sr
-[00001e72] 7c7c                      moveq.l   #124,d6
-[00001e74] 3c00                      move.w    d0,d6
-[00001e76] 1004                      move.b    d4,d0
-[00001e78] 0000 0018                 ori.b     #$18,d0
-[00001e7c] 0000 1800                 ori.b     #$00,d0
-[00001e80] 7600                      moveq.l   #0,d3
-[00001e82] 0660 0000                 addi.w    #N_OFFSCR,-(a0)
-[00001e86] 1800                      move.b    d0,d4
-[00001e88] 1860                      movea.l   -(a0),b4 ; apollo only
-[00001e8a] 3c7e                      movea.w   ???,a6
-[00001e8c] 7e3c                      moveq.l   #60,d7
-[00001e8e] 0c3c 3c30                 cmpi.b    #$30,ccr
-[00001e92] 3c38 1818                 move.w    ($00001818).w,d6
-[00001e96] 0000 0018                 ori.b     #$18,d0
-[00001e9a] 3c66                      movea.w   -(a6),a6
-[00001e9c] 7c3c                      moveq.l   #60,d6
-[00001e9e] 787e                      moveq.l   #126,d4
-[00001ea0] 603c                      bra.s     $00001EDE
-[00001ea2] 667e                      bne.s     $00001F22
-[00001ea4] 3cc6                      move.w    d6,(a6)+
-[00001ea6] 7ec6                      moveq.l   #-58,d7
-[00001ea8] 663c                      bne.s     $00001EE6
-[00001eaa] 6036                      bra.s     $00001EE2
-[00001eac] c67c 183c                 and.w     #$183C,d3
-[00001eb0] 1882                      move.b    d2,(a4)
-[00001eb2] 6618                      bne.s     $00001ECC
-[00001eb4] 7e1e                      moveq.l   #30,d7
-[00001eb6] 0678 00fe 003e            addi.w    #t_bitmap,($0000003E).w
-[00001ebc] 7c3e                      moveq.l   #62,d6
-[00001ebe] 3e3e                      move.w    ???,d7
-[00001ec0] 1806                      move.b    d6,d4
-[00001ec2] 663c                      bne.s     $00001F00
-[00001ec4] 0cc6 3cc6                 cas.w     d6,d3,d6 ; 68020+ only
-[00001ec8] 663c                      bne.s     $00001F06
-[00001eca] 7c3e                      moveq.l   #62,d6
-[00001ecc] 607c                      bra.s     $00001F4A
-[00001ece] 0e3e 1882                 min.b     b1,??? ; apollo only
-[00001ed2] 6606                      bne.s     $00001EDA
-[00001ed4] 7e18                      moveq.l   #24,d7
-[00001ed6] 1830 0000                 move.b    0(a0,d0.w),d4
-[00001eda] 3c3e                      move.w    ???,d6
-[00001edc] 3e3e                      move.w    ???,d7
-[00001ede] 3e3e                      move.w    ???,d7
-[00001ee0] 3e3e                      move.w    ???,d7
-[00001ee2] 3e3e                      move.w    ???,d7
-[00001ee4] 3e3c 3c3c                 move.w    #$3C3C,d7
-[00001ee8] 6666                      bne.s     $00001F50
-[00001eea] 7e7f                      moveq.l   #127,d7
-[00001eec] de3c 3c3c                 add.b     #$3C,d7
-[00001ef0] 3e3e                      move.w    ???,d7
-[00001ef2] 063c 3c18                 addi.b    #$18,ccr
-[00001ef6] ff18                      dc.w      $FF18 ; illegal
-[00001ef8] 7c70                      moveq.l   #112,d6
-[00001efa] 3e3c 3c3e                 move.w    #$3C3E,d7
-[00001efe] 6666                      bne.s     $00001F66
-[00001f00] 0000 3c60                 ori.b     #$60,d0
-[00001f04] 0618 3f18                 addi.b    #$18,(a0)+
-[00001f08] 0000 3e3c                 ori.b     #$3C,d0
-[00001f0c] bcbc 7f7e 6666            cmp.l     #$7F7E6666,d6
-[00001f12] 3c00                      move.w    d0,d6
-[00001f14] 0000 0a00                 ori.b     #$00,d0
-[00001f18] 0000 0e0e                 ori.b     #$0E,d0
-[00001f1c] 0000 0000                 ori.b     #$00,d0
-[00001f20] 0000 0000                 ori.b     #$00,d0
-[00001f24] 0000 0000                 ori.b     #$00,d0
-[00001f28] 0000 0000                 ori.b     #$00,d0
-[00001f2c] 0000 3000                 ori.b     #$00,d0
-[00001f30] 0000 1806                 ori.b     #$06,d0
-[00001f34] 0006 0638                 ori.b     #$38,d6
-[00001f38] 0000 0060                 ori.b     #$60,d0
-[00001f3c] f000                      dc.w      $F000 ; illegal
-[00001f3e] fe00 c000 1000            nfGEN     #GRAYMODE,d0
-[00001f44] 0000 f010                 ori.b     #$10,d0
-[00001f48] 3ec6                      move.w    d6,(a7)+
-[00001f4a] 007e 7e7e                 ori.w     #$7E7E,???
-[00001f4e] 1870 0000                 movea.l   0(a0,d0.w),b4 ; apollo only
-[00001f52] 0000 0000                 ori.b     #$00,d0
-[00001f56] 0000 0000                 ori.b     #$00,d0
-[00001f5a] 0000 0000                 ori.b     #$00,d0
-[00001f5e] 0000 0000                 ori.b     #$00,d0
-[00001f62] 2000                      move.l    d0,d0
-[00001f64] 1000                      move.b    d0,d0
-[00001f66] 0000 0000                 ori.b     #$00,d0
-[00001f6a] 0000 0000                 ori.b     #$00,d0
-[00001f6e] 0000 0000                 ori.b     #$00,d0
-[00001f72] 0000 0000                 ori.b     #$00,d0
-[00001f76] 1e3c 0000                 move.b    #$00,d7
-[00001f7a] 0000 0000                 ori.b     #$00,d0
-[00001f7e] 0000 0000                 ori.b     #$00,d0
-[00001f82] 0000 0000                 ori.b     #$00,d0
-[00001f86] 3000                      move.w    d0,d0
-[00001f88] 0000 0000                 ori.b     #$00,d0
-[00001f8c] 0000 0000                 ori.b     #$00,d0
-[00001f90] 0000 0000                 ori.b     #$00,d0
-[00001f94] 0030 0000 0000            ori.b     #$00,0(a0,d0.w)
-[00001f9a] 0000 0000                 ori.b     #$00,d0
-[00001f9e] 0000 0000                 ori.b     #$00,d0
-[00001fa2] 0000 0000                 ori.b     #$00,d0
-[00001fa6] 0000 0000                 ori.b     #$00,d0
-[00001faa] 0000 0000                 ori.b     #$00,d0
-[00001fae] 0000 0000                 ori.b     #$00,d0
-[00001fb2] 0000 0000                 ori.b     #$00,d0
-[00001fb6] 0000 0000                 ori.b     #$00,d0
-[00001fba] 0000 0000                 ori.b     #$00,d0
-[00001fbe] 0000 007e                 ori.b     #$7E,d0
-[00001fc2] 0000 7c00                 ori.b     #$00,d0
-[00001fc6] 0000 0000                 ori.b     #$00,d0
-[00001fca] 6006                      bra.s     $00001FD2
-[00001fcc] 0000 0000                 ori.b     #$00,d0
-[00001fd0] 0000 007e                 ori.b     #$7E,d0
-[00001fd4] 000e 18e0                 ori.b     #$E0,a6 ; apollo only
-[00001fd8] 0000 0c00                 ori.b     #$00,d0
-[00001fdc] 0000 0000                 ori.b     #$00,d0
-[00001fe0] 000c 0000                 ori.b     #$00,a4 ; apollo only
-[00001fe4] 0000 0000                 ori.b     #$00,d0
-[00001fe8] 0000 0000                 ori.b     #$00,d0
-[00001fec] 0000 0000                 ori.b     #$00,d0
-[00001ff0] 0000 7e00                 ori.b     #$00,d0
-[00001ff4] 0000 0000                 ori.b     #$00,d0
-[00001ff8] 6060                      bra.s     $0000205A
-[00001ffa] 0000 0000                 ori.b     #$00,d0
-[00001ffe] 0000 7e7e                 ori.b     #$7E,d0
-[00002002] 0000 001f                 ori.b     #$1F,d0
-[00002006] 0218 0000                 andi.b    #$00,(a0)+
-[0000200a] 0000 8080                 ori.b     #$80,d0
-[0000200e] 0000 0000                 ori.b     #$00,d0
-[00002012] 0000 0000                 ori.b     #$00,d0
-[00002016] 0000 0000                 ori.b     #$00,d0
-[0000201a] 3c7c 0000                 movea.w   #N_OFFSCR,a6
-[0000201e] 0000 0000                 ori.b     #$00,d0
-[00002022] 0000 0000                 ori.b     #$00,d0
-[00002026] 0000 0000                 ori.b     #$00,d0
-[0000202a] 0000 0000                 ori.b     #$00,d0
-[0000202e] 3000                      move.w    d0,d0
-[00002030] 0000 0000                 ori.b     #$00,d0
-[00002034] 0000 0000                 ori.b     #$00,d0
-[00002038] 0000 0040                 ori.b     #$40,d0
-[0000203c] 0000 0000                 ori.b     #$00,d0
-[00002040] 8000                      or.b      d0,d0
-[00002042] 7c00                      moveq.l   #0,d6
-[00002044] 0000 e000                 ori.b     #$00,d0
-[00002048] 0000 0000                 ori.b     #$00,d0
-[0000204c] 0000 1800                 ori.b     #$00,d0
-[00002050] 0000 0000                 ori.b     #$00,d0
-[00002054] 0000 0000                 ori.b     #$00,d0
-[00002058] 0000 0000                 ori.b     #$00,d0
-[0000205c] 0000 0000                 ori.b     #$00,d0
-[00002060] 0000 0000                 ori.b     #$00,d0
-[00002064] 0000 0000                 ori.b     #$00,d0
-[00002068] 0000 0000                 ori.b     #$00,d0
-[0000206c] 0000 0000                 ori.b     #$00,d0
-[00002070] 0000 0000                 ori.b     #$00,d0
-[00002074] 0000 1754                 ori.b     #$54,d0
-[00002078] 0000 0000                 ori.b     #$00,d0
-[0000207c] 0000 0000                 ori.b     #$00,d0
-[00002080] 0000 0000                 ori.b     #$00,d0
-[00002084] 0000 2000                 ori.b     #$00,d0
-[00002088] 0000 0000                 ori.b     #$00,d0
-[0000208c] 0000 0000                 ori.b     #$00,d0
-[00002090] 0000 0000                 ori.b     #$00,d0
-[00002094] 0020 0000                 ori.b     #$00,-(a0)
-[00002098] 0000 0000                 ori.b     #$00,d0
-[0000209c] 0000 0000                 ori.b     #$00,d0
-[000020a0] 0000 0000                 ori.b     #$00,d0
-[000020a4] 0000 0000                 ori.b     #$00,d0
-[000020a8] 0000 0000                 ori.b     #$00,d0
-[000020ac] 0000 0000                 ori.b     #$00,d0
-[000020b0] 0000 0000                 ori.b     #$00,d0
-[000020b4] 0000 0000                 ori.b     #$00,d0
-[000020b8] 0000 0000                 ori.b     #$00,d0
-[000020bc] 0000 0000                 ori.b     #$00,d0
-[000020c0] 007c 0000                 ori.w     #N_OFFSCR,sr
-[000020c4] 7800                      moveq.l   #0,d4
-[000020c6] 0000 0000                 ori.b     #$00,d0
-[000020ca] 6006                      bra.s     $000020D2
-[000020cc] 0000 0000                 ori.b     #$00,d0
-[000020d0] 0000 007c                 ori.b     #$7C,d0
-[000020d4] 0000 0000                 ori.b     #$00,d0
-[000020d8] 0000 3800                 ori.b     #$00,d0
-[000020dc] 0000 0000                 ori.b     #$00,d0
-[000020e0] 0038 0000 0000            ori.b     #$00,(sys_font).w
-[000020e6] 0000 0000                 ori.b     #$00,d0
-[000020ea] 0000 0000                 ori.b     #$00,d0
-[000020ee] 0000 0000                 ori.b     #$00,d0
-[000020f2] 7c00                      moveq.l   #0,d6
-[000020f4] 0000 0000                 ori.b     #$00,d0
-[000020f8] 6000 0000                 bra.w     $000020FA
-[000020fc] 0000 0000                 ori.b     #$00,d0
-[00002100] 0000 0000                 ori.b     #$00,d0
-[00002104] 0000 0000                 ori.b     #$00,d0
-[00002108] 0000 0000                 ori.b     #$00,d0
-[0000210c] 0000 0000                 ori.b     #$00,d0
-[00002110] 0000 0000                 ori.b     #$00,d0
-[00002114] 0000 0000                 ori.b     #$00,d0
-[00002118] 0000 3878                 ori.b     #$78,d0
-[0000211c] 0000 0000                 ori.b     #$00,d0
-[00002120] 0000 0000                 ori.b     #$00,d0
-[00002124] 0000 0000                 ori.b     #$00,d0
-[00002128] 0000 0000                 ori.b     #$00,d0
-[0000212c] 0000 0000                 ori.b     #$00,d0
-[00002130] 0000 0000                 ori.b     #$00,d0
-[00002134] 0000 0000                 ori.b     #$00,d0
-[00002138] 0000 0000                 ori.b     #$00,d0
-[0000213c] 0000 0000                 ori.b     #$00,d0
-[00002140] 0000 0000                 ori.b     #$00,d0
-[00002144] 0000 0000                 ori.b     #$00,d0
-[00002148] 0000 0000                 ori.b     #$00,d0
-[0000214c] 0000 1800                 ori.b     #$00,d0
-[00002150] 0000 0000                 ori.b     #$00,d0
-[00002154] 0000 0000                 ori.b     #$00,d0
-[00002158] 0000 0001                 ori.b     #$01,d0
-[0000215c] 000a 3878                 ori.b     #$78,a2 ; apollo only
-[00002160] 3136 2073                 move.w    115(a6,d2.w),-(a0)
-[00002164] 7973                      ???
-[00002166] 7465                      moveq.l   #101,d2
-[00002168] 6d20                      blt.s     $0000218A
-[0000216a] 666f                      bne.s     $000021DB
-[0000216c] 6e74                      bgt.s     $000021E2
-[0000216e] 0000 0000                 ori.b     #$00,d0
-[00002172] 0000 0000                 ori.b     #$00,d0
-[00002176] 0000 0000                 ori.b     #$00,d0
-[0000217a] 0000 0000                 ori.b     #$00,d0
-[0000217e] 0000 00ff                 ori.b     #$FF,d0
-[00002182] 000d 000b                 ori.b     #$0B,a5 ; apollo only
-[00002186] 0008 0002                 ori.b     #$02,a0 ; apollo only
-[0000218a] 0002 0007                 ori.b     #$07,d2
-[0000218e] 0008 0001                 ori.b     #$01,a0 ; apollo only
-[00002192] 0007 0001                 ori.b     #$01,d7
-[00002196] 0001 5555                 ori.b     #$55,d1
-[0000219a] 5555                      subq.w    #2,(a5)
-[0000219c] 000c 0000                 ori.b     #$00,a4 ; apollo only
-[000021a0] 0000 0000                 ori.b     #$00,d0
-[000021a4] 0758                      bchg      d3,(a0)+
-[000021a6] 0000 115a                 ori.b     #$5A,d0
-[000021aa] 0100                      btst      d0,d0
-[000021ac] 0010 0000                 ori.b     #$00,(a0)
-[000021b0] 0000 0000                 ori.b     #$00,d0
-[000021b4] 9dae 0000                 sub.l     d6,0(a6)
-[000021b8] 0000 ffff                 ori.b     #$FF,d0
-[000021bc] ffff 00ff 0102 0406       vperm     #$01020406,e23,e8,e8
-[000021c4] 0305                      btst      d1,d5
-[000021c6] 0708 090a                 movep.w   2314(a0),d3
-[000021ca] 0c0e 0b0d                 cmpi.b    #$0D,a6 ; apollo only
-[000021ce] 1011                      move.b    (a1),d0
-[000021d0] 1213                      move.b    (a3),d1
-[000021d2] 1415                      move.b    (a5),d2
-[000021d4] 1617                      move.b    (a7),d3
-[000021d6] 1819                      move.b    (a1)+,d4
-[000021d8] 1a1b                      move.b    (a3)+,d5
-[000021da] 1c1d                      move.b    (a5)+,d6
-[000021dc] 1e1f                      move.b    (a7)+,d7
-[000021de] 2021                      move.l    -(a1),d0
-[000021e0] 2223                      move.l    -(a3),d1
-[000021e2] 2425                      move.l    -(a5),d2
-[000021e4] 2627                      move.l    -(a7),d3
-[000021e6] 2829 2a2b                 move.l    10795(a1),d4
-[000021ea] 2c2d 2e2f                 move.l    11823(a5),d6
-[000021ee] 3031 3233                 move.w    51(a1,d3.w*2),d0 ; 68020+ only
-[000021f2] 3435 3637                 move.w    55(a5,d3.w*8),d2 ; 68020+ only
-[000021f6] 3839 3a3b 3c3d            move.w    $3A3B3C3D,d4
-[000021fc] 3e3f                      move.w    ???,d7
-[000021fe] 4041                      negx.w    d1
-[00002200] 4243                      clr.w     d3
-[00002202] 4445                      neg.w     d5
-[00002204] 4647                      not.w     d7
-[00002206] 4849                      bkpt      #1
-[00002208] 4a4b                      tst.w     a3
-[0000220a] 4c4d 4e4f                 divs.l    a5,a7:d4 ; apollo only
-[0000220e] 5051                      addq.w    #8,(a1)
-[00002210] 5253                      addq.w    #1,(a3)
-[00002212] 5455                      addq.w    #2,(a5)
-[00002214] 5657                      addq.w    #3,(a7)
-[00002216] 5859                      addq.w    #4,(a1)+
-[00002218] 5a5b                      addq.w    #5,(a3)+
-[0000221a] 5c5d                      addq.w    #6,(a5)+
-[0000221c] 5e5f                      addq.w    #7,(a7)+
-[0000221e] 6061                      bra.s     $00002281
-[00002220] 6263                      bhi.s     $00002285
-[00002222] 6465                      bcc.s     $00002289
-[00002224] 6667                      bne.s     $0000228D
-[00002226] 6869                      bvc.s     $00002291
-[00002228] 6a6b                      bpl.s     $00002295
-[0000222a] 6c6d                      bge.s     $00002299
-[0000222c] 6e6f                      bgt.s     $0000229D
-[0000222e] 7071                      moveq.l   #113,d0
-[00002230] 7273                      moveq.l   #115,d1
-[00002232] 7475                      moveq.l   #117,d2
-[00002234] 7677                      moveq.l   #119,d3
-[00002236] 7879                      moveq.l   #121,d4
-[00002238] 7a7b                      moveq.l   #123,d5
-[0000223a] 7c7d                      moveq.l   #125,d6
-[0000223c] 7e7f                      moveq.l   #127,d7
-[0000223e] 8081                      or.l      d1,d0
-[00002240] 8283                      or.l      d3,d1
-[00002242] 8485                      or.l      d5,d2
-[00002244] 8687                      or.l      d7,d3
-[00002246] 8889                      or.l      a1,d4 ; apollo only
-[00002248] 8a8b                      or.l      a3,d5 ; apollo only
-[0000224a] 8c8d                      or.l      a5,d6 ; apollo only
-[0000224c] 8e8f                      or.l      a7,d7 ; apollo only
-[0000224e] 9091                      sub.l     (a1),d0
-[00002250] 9293                      sub.l     (a3),d1
-[00002252] 9495                      sub.l     (a5),d2
-[00002254] 9697                      sub.l     (a7),d3
-[00002256] 9899                      sub.l     (a1)+,d4
-[00002258] 9a9b                      sub.l     (a3)+,d5
-[0000225a] 9c9d                      sub.l     (a5)+,d6
-[0000225c] 9e9f                      sub.l     (a7)+,d7
-[0000225e] a0a1 a2a3                 mac.w     d3.l,a2.u,<<1,-(a1)&,d0,acc0
-[00002262] a4a5 a6a7                 mac.w     d7.l,a2.u,>>1,-(a5)&,d2,acc0
-[00002266] a8a9 aaab acad            mac.l     a3,a2,<<1,-21331(a1)&,d4,acc0
-[0000226c] aeaf b0b1 b2b3            mac.w     d1.l,a3.u,0,-19789(a7)&,d7,acc2
-[00002272] b4b5 b6b7                 cmp.l     -73(a5,a3.w*8),d2 ; 68020+ only
-[00002276] b8b9 babb bcbd            cmp.l     $BABBBCBD,d4
-[0000227c] bebf                      cmp.l     ???,d7
-[0000227e] c0c1                      mulu.w    d1,d0
-[00002280] c2c3                      mulu.w    d3,d1
-[00002282] c4c5                      mulu.w    d5,d2
-[00002284] c6c7                      mulu.w    d7,d3
-[00002286] c8c9                      mulu.w    a1,d4
-[00002288] cacb                      mulu.w    a3,d5
-[0000228a] cccd                      mulu.w    a5,d6
-[0000228c] cecf                      mulu.w    a7,d7
-[0000228e] d0d1                      adda.w    (a1),a0
-[00002290] d2d3                      adda.w    (a3),a1
-[00002292] d4d5                      adda.w    (a5),a2
-[00002294] d6d7                      adda.w    (a7),a3
-[00002296] d8d9                      adda.w    (a1)+,a4
-[00002298] dadb                      adda.w    (a3)+,a5
-[0000229a] dcdd                      adda.w    (a5)+,a6
-[0000229c] dedf                      adda.w    (a7)+,a7
-[0000229e] e0e1                      asr.w     -(a1)
-[000022a0] e2e3                      lsr.w     -(a3)
-[000022a2] e4e5                      roxr.w    -(a5)
-[000022a4] e6e7                      ror.w     -(a7)
-[000022a6] e8e9 eaeb eced            bftst     -4883(a1){d?:d?} ; 68020+ only
-[000022ac] eeef f0f1 f2f3            bfset     -3341(a7){3:d?} ; 68020+ only
-[000022b2] f4f5                      cpushp    bc,(a5)
-[000022b4] f6f7                      dc.w      $F6F7 ; illegal
-[000022b6] f8f9 fafb fcfd            lpB??.l   $FAFC1FB5
-[000022bc] fe0f 0002                 transhi.q e7-e10,d0:d1
-[000022c0] 0306                      btst      d1,d6
-[000022c2] 0407 0508                 subi.b    #$08,d7
-[000022c6] 090a 0b0e                 movep.w   2830(a2),d4
-[000022ca] 0c0f 0dff                 cmpi.b    #$FF,a7 ; apollo only
-[000022ce] 1011                      move.b    (a1),d0
-[000022d0] 1213                      move.b    (a3),d1
-[000022d2] 1415                      move.b    (a5),d2
-[000022d4] 1617                      move.b    (a7),d3
-[000022d6] 1819                      move.b    (a1)+,d4
-[000022d8] 1a1b                      move.b    (a3)+,d5
-[000022da] 1c1d                      move.b    (a5)+,d6
-[000022dc] 1e1f                      move.b    (a7)+,d7
-[000022de] 2021                      move.l    -(a1),d0
-[000022e0] 2223                      move.l    -(a3),d1
-[000022e2] 2425                      move.l    -(a5),d2
-[000022e4] 2627                      move.l    -(a7),d3
-[000022e6] 2829 2a2b                 move.l    10795(a1),d4
-[000022ea] 2c2d 2e2f                 move.l    11823(a5),d6
-[000022ee] 3031 3233                 move.w    51(a1,d3.w*2),d0 ; 68020+ only
-[000022f2] 3435 3637                 move.w    55(a5,d3.w*8),d2 ; 68020+ only
-[000022f6] 3839 3a3b 3c3d            move.w    $3A3B3C3D,d4
-[000022fc] 3e3f                      move.w    ???,d7
-[000022fe] 4041                      negx.w    d1
-[00002300] 4243                      clr.w     d3
-[00002302] 4445                      neg.w     d5
-[00002304] 4647                      not.w     d7
-[00002306] 4849                      bkpt      #1
-[00002308] 4a4b                      tst.w     a3
-[0000230a] 4c4d 4e4f                 divs.l    a5,a7:d4 ; apollo only
-[0000230e] 5051                      addq.w    #8,(a1)
-[00002310] 5253                      addq.w    #1,(a3)
-[00002312] 5455                      addq.w    #2,(a5)
-[00002314] 5657                      addq.w    #3,(a7)
-[00002316] 5859                      addq.w    #4,(a1)+
-[00002318] 5a5b                      addq.w    #5,(a3)+
-[0000231a] 5c5d                      addq.w    #6,(a5)+
-[0000231c] 5e5f                      addq.w    #7,(a7)+
-[0000231e] 6061                      bra.s     $00002381
-[00002320] 6263                      bhi.s     $00002385
-[00002322] 6465                      bcc.s     $00002389
-[00002324] 6667                      bne.s     $0000238D
-[00002326] 6869                      bvc.s     $00002391
-[00002328] 6a6b                      bpl.s     $00002395
-[0000232a] 6c6d                      bge.s     $00002399
-[0000232c] 6e6f                      bgt.s     $0000239D
-[0000232e] 7071                      moveq.l   #113,d0
-[00002330] 7273                      moveq.l   #115,d1
-[00002332] 7475                      moveq.l   #117,d2
-[00002334] 7677                      moveq.l   #119,d3
-[00002336] 7879                      moveq.l   #121,d4
-[00002338] 7a7b                      moveq.l   #123,d5
-[0000233a] 7c7d                      moveq.l   #125,d6
-[0000233c] 7e7f                      moveq.l   #127,d7
-[0000233e] 8081                      or.l      d1,d0
-[00002340] 8283                      or.l      d3,d1
-[00002342] 8485                      or.l      d5,d2
-[00002344] 8687                      or.l      d7,d3
-[00002346] 8889                      or.l      a1,d4 ; apollo only
-[00002348] 8a8b                      or.l      a3,d5 ; apollo only
-[0000234a] 8c8d                      or.l      a5,d6 ; apollo only
-[0000234c] 8e8f                      or.l      a7,d7 ; apollo only
-[0000234e] 9091                      sub.l     (a1),d0
-[00002350] 9293                      sub.l     (a3),d1
-[00002352] 9495                      sub.l     (a5),d2
-[00002354] 9697                      sub.l     (a7),d3
-[00002356] 9899                      sub.l     (a1)+,d4
-[00002358] 9a9b                      sub.l     (a3)+,d5
-[0000235a] 9c9d                      sub.l     (a5)+,d6
-[0000235c] 9e9f                      sub.l     (a7)+,d7
-[0000235e] a0a1 a2a3                 mac.w     d3.l,a2.u,<<1,-(a1)&,d0,acc0
-[00002362] a4a5 a6a7                 mac.w     d7.l,a2.u,>>1,-(a5)&,d2,acc0
-[00002366] a8a9 aaab acad            mac.l     a3,a2,<<1,-21331(a1)&,d4,acc0
-[0000236c] aeaf b0b1 b2b3            mac.w     d1.l,a3.u,0,-19789(a7)&,d7,acc2
-[00002372] b4b5 b6b7                 cmp.l     -73(a5,a3.w*8),d2 ; 68020+ only
-[00002376] b8b9 babb bcbd            cmp.l     $BABBBCBD,d4
-[0000237c] bebf                      cmp.l     ???,d7
-[0000237e] c0c1                      mulu.w    d1,d0
-[00002380] c2c3                      mulu.w    d3,d1
-[00002382] c4c5                      mulu.w    d5,d2
-[00002384] c6c7                      mulu.w    d7,d3
-[00002386] c8c9                      mulu.w    a1,d4
-[00002388] cacb                      mulu.w    a3,d5
-[0000238a] cccd                      mulu.w    a5,d6
-[0000238c] cecf                      mulu.w    a7,d7
-[0000238e] d0d1                      adda.w    (a1),a0
-[00002390] d2d3                      adda.w    (a3),a1
-[00002392] d4d5                      adda.w    (a5),a2
-[00002394] d6d7                      adda.w    (a7),a3
-[00002396] d8d9                      adda.w    (a1)+,a4
-[00002398] dadb                      adda.w    (a3)+,a5
-[0000239a] dcdd                      adda.w    (a5)+,a6
-[0000239c] dedf                      adda.w    (a7)+,a7
-[0000239e] e0e1                      asr.w     -(a1)
-[000023a0] e2e3                      lsr.w     -(a3)
-[000023a2] e4e5                      roxr.w    -(a5)
-[000023a4] e6e7                      ror.w     -(a7)
-[000023a6] e8e9 eaeb eced            bftst     -4883(a1){d?:d?} ; 68020+ only
-[000023ac] eeef f0f1 f2f3            bfset     -3341(a7){3:d?} ; 68020+ only
-[000023b2] f4f5                      cpushp    bc,(a5)
-[000023b4] f6f7                      dc.w      $F6F7 ; illegal
-[000023b6] f8f9 fafb fcfd            lpB??.l   $FAFC20B5
-[000023bc] fe01 0000 0000            nfGEN     #N_OFFSCR,d1
-[000023c2] 0000 0000                 ori.b     #$00,d0
-[000023c6] 0000 0000                 ori.b     #$00,d0
-[000023ca] 0000 0000                 ori.b     #$00,d0
-[000023ce] 0000 0000                 ori.b     #$00,d0
-[000023d2] 0000 0000                 ori.b     #$00,d0
-[000023d6] 0000 0000                 ori.b     #$00,d0
-[000023da] 0000 0000                 ori.b     #$00,d0
+           dc.l 0
+linea_fonts:
+	dc.l	header_08
+	dc.l	header_09
+	dc.l	header_10
+	dc.l	0
+	dc.l	0
+header_08:
+	dc.w 1
+	dc.w 8
+	dc.b	'6x6 system font',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dc.w	0,255 ; first_ade,last_ade
+	dc.w	4,4,3,1,1 ; top,ascent,half,descent,bottom
+	dc.w	5,6 ; char_width,,cell_width
+	dc.w	0,3 ; left_offset,right_offset
+	dc.w	1,1 ; thicken,ul_size
+	dc.w	$5555 ; lighten
+	dc.w	$aaaa ; skew
+	dc.w	$000c ; flags
+	dc.l    0
+	dc.l	off_table_08
+	dc.l	dat_table_08
+	dc.w	(256*6)/8 ; form_width
+	dc.w	6 ; form_height
+	dc.l	0 ; next_font
+off_table_08:
+	dc.w	$0000,$0006,$000C,$0012,$0018,$001E,$0024,$002A
+	dc.w	$0030,$0036,$003C,$0042,$0048,$004E,$0054,$005A
+	dc.w	$0060,$0066,$006C,$0072,$0078,$007E,$0084,$008A
+	dc.w	$0090,$0096,$009C,$00A2,$00A8,$00AE,$00B4,$00BA
+	dc.w	$00C0,$00C6,$00CC,$00D2,$00D8,$00DE,$00E4,$00EA
+	dc.w	$00F0,$00F6,$00FC,$0102,$0108,$010E,$0114,$011A
+	dc.w	$0120,$0126,$012C,$0132,$0138,$013E,$0144,$014A
+	dc.w	$0150,$0156,$015C,$0162,$0168,$016E,$0174,$017A
+	dc.w	$0180,$0186,$018C,$0192,$0198,$019E,$01A4,$01AA
+	dc.w	$01B0,$01B6,$01BC,$01C2,$01C8,$01CE,$01D4,$01DA
+	dc.w	$01E0,$01E6,$01EC,$01F2,$01F8,$01FE,$0204,$020A
+	dc.w	$0210,$0216,$021C,$0222,$0228,$022E,$0234,$023A
+	dc.w	$0240,$0246,$024C,$0252,$0258,$025E,$0264,$026A
+	dc.w	$0270,$0276,$027C,$0282,$0288,$028E,$0294,$029A
+	dc.w	$02A0,$02A6,$02AC,$02B2,$02B8,$02BE,$02C4,$02CA
+	dc.w	$02D0,$02D6,$02DC,$02E2,$02E8,$02EE,$02F4,$02FA
+	dc.w	$0300,$0306,$030C,$0312,$0318,$031E,$0324,$032A
+	dc.w	$0330,$0336,$033C,$0342,$0348,$034E,$0354,$035A
+	dc.w	$0360,$0366,$036C,$0372,$0378,$037E,$0384,$038A
+	dc.w	$0390,$0396,$039C,$03A2,$03A8,$03AE,$03B4,$03BA
+	dc.w	$03C0,$03C6,$03CC,$03D2,$03D8,$03DE,$03E4,$03EA
+	dc.w	$03F0,$03F6,$03FC,$0402,$0408,$040E,$0414,$041A
+	dc.w	$0420,$0426,$042C,$0432,$0438,$043E,$0444,$044A
+	dc.w	$0450,$0456,$045C,$0462,$0468,$046E,$0474,$047A
+	dc.w	$0480,$0486,$048C,$0492,$0498,$049E,$04A4,$04AA
+	dc.w	$04B0,$04B6,$04BC,$04C2,$04C8,$04CE,$04D4,$04DA
+	dc.w	$04E0,$04E6,$04EC,$04F2,$04F8,$04FE,$0504,$050A
+	dc.w	$0510,$0516,$051C,$0522,$0528,$052E,$0534,$053A
+	dc.w	$0540,$0546,$054C,$0552,$0558,$055E,$0564,$056A
+	dc.w	$0570,$0576,$057C,$0582,$0588,$058E,$0594,$059A
+	dc.w	$05A0,$05A6,$05AC,$05B2,$05B8,$05BE,$05C4,$05CA
+	dc.w	$05D0,$05D6,$05DC,$05E2,$05E8,$05EE,$05F4,$05FA
+	dc.w	$0600
+dat_table_08:
+	dc.w	$0082,$0421,$CFB6,$0DE3,$04E3,$8150,$F987,$BCC3
+	dc.w	$CC3E,$73E0,$381F,$847C,$00CD,$947B,$260C,$3184
+	dc.w	$8800,$0006,$704F,$3C33,$C73E,$71C3,$0C18,$061C
+	dc.w	$71CF,$1EF3,$EF9E,$89C0,$9242,$289C,$F1CF,$1EFA
+	dc.w	$28A2,$8A2F,$9EC1,$E200,$6008,$0008,$0180,$8001
+	dc.w	$2060,$0000,$0000,$0020,$0000,$0000,$0E31,$C400
+	dc.w	$7941,$0851,$0200,$2144,$1421,$0888,$2007,$8851
+	dc.w	$0210,$5228,$841A,$2706,$1041,$04F1,$E71C,$6000
+	dc.w	$30C0,$C36C,$69A3,$4201,$E41A,$6941,$0869,$E7BD
+	dc.w	$4BA9,$BC7B,$FF1C,$7BFC,$1EF3,$0D8E,$F9BF,$B6F9
+	dc.w	$CD5E,$3BE0,$3ED8,$C000,$01CF,$C0F8,$E000,$71C7
+	dc.w	$0C18,$838C,$7886,$060C,$C21A,$30C0,$0071,$C73E
+	dc.w	$01C2,$0662,$AF2A,$1A17,$8682,$0150,$C880,$84C2
+	dc.w	$0C02,$5367,$203F,$42FE,$00CD,$BEA3,$4D0C,$60C3
+	dc.w	$0800,$000C,$98C0,$8252,$0802,$8A23,$0C31,$E326
+	dc.w	$8A28,$A08A,$0820,$8880,$9443,$6CA2,$8A28,$A022
+	dc.w	$28A2,$5221,$1860,$6700,$61CF,$1C79,$C21E,$B181
+	dc.w	$2421,$4F1C,$F1E7,$0E72,$28A2,$4A27,$8C30,$CE88
+	dc.w	$8002,$1400,$801E,$5002,$0050,$8700,$FBCA,$1400
+	dc.w	$8508,$01C0,$0E23,$6888,$2082,$0800,$00A2,$0000
+	dc.w	$30C0,$06F6,$B2C4,$8C72,$C22C,$B002,$1CEB,$38D7
+	dc.w	$012D,$8C08,$618C,$31BD,$861B,$E7C6,$D9B9,$B618
+	dc.w	$6D56,$186F,$E6D8,$A216,$6B66,$FE61,$C6BE,$736D
+	dc.w	$9A21,$C412,$03E1,$9810,$C02C,$49E0,$0768,$6300
+	dc.w	$0362,$3BDF,$6E1C,$B297,$84DE,$E150,$C88F,$BEC3
+	dc.w	$EF8E,$7320,$B760,$62B2,$00C9,$1470,$8618,$60C7
+	dc.w	$BE01,$E018,$A847,$1C93,$CF04,$71E0,$0060,$018C
+	dc.w	$BBEF,$208B,$CF26,$F880,$9842,$AAA2,$F22F,$1C22
+	dc.w	$28AA,$2142,$1830,$6D80,$3028,$A08B,$E7A2,$C881
+	dc.w	$3823,$E8A2,$8A24,$9822,$28AA,$3221,$1830,$6B9C
+	dc.w	$8227,$1C71,$C720,$71C7,$1821,$889C,$80EF,$9C71
+	dc.w	$C8A2,$8A28,$9871,$CF1E,$7187,$22F1,$2FA2,$61E7
+	dc.w	$B6CC,$CD9B,$71C5,$96BA,$E71C,$7000,$08EA,$DB55
+	dc.w	$4927,$0C18,$6D8C,$19BD,$8618,$6646,$D9BD,$9CD8
+	dc.w	$6F56,$1866,$F671,$C72D,$D3C6,$5433,$668C,$ABED
+	dc.w	$9C72,$A792,$7886,$0630,$CF80,$30C3,$0468,$C100
+	dc.w	$008D,$8662,$ACAA,$E2DF,$DC93,$A358,$D9CC,$06D8
+	dc.w	$698C,$DBEF,$A440,$2172,$00C0,$3E29,$6E80,$60C3
+	dc.w	$0830,$0330,$C848,$02F8,$2888,$8823,$0C31,$E30C
+	dc.w	$B228,$A08A,$0822,$8888,$9442,$29A2,$822A,$0222
+	dc.w	$2536,$5084,$1818,$6000,$03E8,$A08A,$021E,$8881
+	dc.w	$2422,$A8A2,$8A24,$0622,$252A,$31E2,$0C30,$C132
+	dc.w	$822F,$8208,$20A0,$FBEF,$8820,$8FA2,$F38A,$228A
+	dc.w	$28A2,$7A28,$8E20,$8888,$0888,$A289,$A79C,$6100
+	dc.w	$8B14,$C6F6,$0A26,$9AA2,$C8A2,$8800,$086A,$F8C0
+	dc.w	$4BAD,$8C38,$6D8C,$19BD,$8018,$6646,$D9B1,$8ED0
+	dc.w	$6C56,$1866,$C631,$CDAD,$D366,$1463,$668C,$AB65
+	dc.w	$36AA,$A412,$0000,$0030,$C01A,$0003,$3469,$E700
+	dc.w	$0087,$0421,$C9B6,$4210,$3C18,$E75C,$D9CC,$06F8
+	dc.w	$6D8C,$D867,$3C71,$EEDE,$0000,$14F2,$6D00,$3184
+	dc.w	$8830,$0320,$704F,$BC13,$C708,$71C3,$0418,$0600
+	dc.w	$822F,$1EF3,$E81E,$89C7,$127A,$289C,$81C9,$BC21
+	dc.w	$E222,$888F,$9E09,$E000,$01EF,$1C79,$C202,$89C1
+	dc.w	$2272,$289C,$F1E4,$1C11,$E236,$4827,$8E31,$C03E
+	dc.w	$7A28,$3EFB,$EF9E,$8208,$0820,$88BE,$81EB,$A28A
+	dc.w	$28A2,$09C7,$8479,$CF08,$F888,$A289,$6000,$C900
+	dc.w	$863C,$C36C,$FA24,$8C79,$EFBE,$8800,$082B,$1A40
+	dc.w	$482C,$BE68,$6D8C,$19BF,$80F1,$E6DE,$73FF,$BEC0
+	dc.w	$6FF6,$1867,$C632,$889A,$6BC6,$14C1,$C7CC,$71CD
+	dc.w	$B671,$C392,$7BE7,$9E30,$822C,$0000,$1C00,$0000
+	dc.w	$0082,$0000,$0000,$01E3,$1810,$B64C,$F9CF,$BE1B
+	dc.w	$EF8C,$F860,$0758,$AC00,$00C0,$0020,$0680,$0000
+	dc.w	$0060,$0000,$0000,$0000,$0000,$0000,$0800,$000C
+	dc.w	$7800,$0000,$0000,$0000,$0000,$0000,$0060,$0000
+	dc.w	$0000,$0000,$0000,$003E,$0000,$0000,$003C,$000E
+	dc.w	$0000,$0000,$8020,$0000,$0000,$03C0,$0030,$0000
+	dc.w	$C1E7,$1E79,$E7B8,$71C7,$1C71,$C022,$F800,$1C71
+	dc.w	$C79E,$F000,$0000,$8830,$79C7,$1E89,$2FBE,$7000
+	dc.w	$0F04,$C000,$79CB,$1000,$08A2,$7000,$0029,$E780
+	dc.w	$10C0,$0000,$0000,$0000,$0000,$0000,$0000,$00C0
+	dc.w	$0000,$0000,$0001,$8000,$0306,$00F8,$0C08,$7000
+	dc.w	$1CC0,$8000,$0000,$0033,$0000,$0000,$0800,$0000
+
+header_09:
+	dc.w 1
+	dc.w 9
+	dc.b	'6x8 system font',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dc.w	0,255 ; first_ade,last_ade
+	dc.w	6,6,4,1,1 ; top,ascent,half,descent,bottom
+	dc.w	7,8 ; char_width,,cell_width
+	dc.w	1,3 ; left_offset,right_offset
+	dc.w	1,1 ; thicken,ul_size
+	dc.w	$5555 ; lighten
+	dc.w	$5555 ; skew
+	dc.w	$000d ; flags
+	dc.l    0
+	dc.l	off_table_09
+	dc.l	dat_table_09
+	dc.w	(256*8)/8 ; form_width
+	dc.w	8 ; form_height
+	dc.l	ram_header_09 ; next_font
+off_table_09:
+off_table_10:
+	dc.w	$0000,$0008,$0010,$0018,$0020,$0028,$0030,$0038
+	dc.w	$0040,$0048,$0050,$0058,$0060,$0068,$0070,$0078
+	dc.w	$0080,$0088,$0090,$0098,$00A0,$00A8,$00B0,$00B8
+	dc.w	$00C0,$00C8,$00D0,$00D8,$00E0,$00E8,$00F0,$00F8
+	dc.w	$0100,$0108,$0110,$0118,$0120,$0128,$0130,$0138
+	dc.w	$0140,$0148,$0150,$0158,$0160,$0168,$0170,$0178
+	dc.w	$0180,$0188,$0190,$0198,$01A0,$01A8,$01B0,$01B8
+	dc.w	$01C0,$01C8,$01D0,$01D8,$01E0,$01E8,$01F0,$01F8
+	dc.w	$0200,$0208,$0210,$0218,$0220,$0228,$0230,$0238
+	dc.w	$0240,$0248,$0250,$0258,$0260,$0268,$0270,$0278
+	dc.w	$0280,$0288,$0290,$0298,$02A0,$02A8,$02B0,$02B8
+	dc.w	$02C0,$02C8,$02D0,$02D8,$02E0,$02E8,$02F0,$02F8
+	dc.w	$0300,$0308,$0310,$0318,$0320,$0328,$0330,$0338
+	dc.w	$0340,$0348,$0350,$0358,$0360,$0368,$0370,$0378
+	dc.w	$0380,$0388,$0390,$0398,$03A0,$03A8,$03B0,$03B8
+	dc.w	$03C0,$03C8,$03D0,$03D8,$03E0,$03E8,$03F0,$03F8
+	dc.w	$0400,$0408,$0410,$0418,$0420,$0428,$0430,$0438
+	dc.w	$0440,$0448,$0450,$0458,$0460,$0468,$0470,$0478
+	dc.w	$0480,$0488,$0490,$0498,$04A0,$04A8,$04B0,$04B8
+	dc.w	$04C0,$04C8,$04D0,$04D8,$04E0,$04E8,$04F0,$04F8
+	dc.w	$0500,$0508,$0510,$0518,$0520,$0528,$0530,$0538
+	dc.w	$0540,$0548,$0550,$0558,$0560,$0568,$0570,$0578
+	dc.w	$0580,$0588,$0590,$0598,$05A0,$05A8,$05B0,$05B8
+	dc.w	$05C0,$05C8,$05D0,$05D8,$05E0,$05E8,$05F0,$05F8
+	dc.w	$0600,$0608,$0610,$0618,$0620,$0628,$0630,$0638
+	dc.w	$0640,$0648,$0650,$0658,$0660,$0668,$0670,$0678
+	dc.w	$0680,$0688,$0690,$0698,$06A0,$06A8,$06B0,$06B8
+	dc.w	$06C0,$06C8,$06D0,$06D8,$06E0,$06E8,$06F0,$06F8
+	dc.w	$0700,$0708,$0710,$0718,$0720,$0728,$0730,$0738
+	dc.w	$0740,$0748,$0750,$0758,$0760,$0768,$0770,$0778
+	dc.w	$0780,$0788,$0790,$0798,$07A0,$07A8,$07B0,$07B8
+	dc.w	$07C0,$07C8,$07D0,$07D8,$07E0,$07E8,$07F0,$07F8
+	dc.w	$0800
+
+dat_table_09:
+	dc.w	$0018,$3C18,$183C,$FFE7,$017E,$1818,$F0F0,$05A0
+	dc.w	$7C06,$7C7C,$C67C,$7C7C,$7C7C,$0078,$07F0,$11FC
+	dc.w	$0018,$6600,$1800,$3818,$0E70,$0000,$0000,$0002
+	dc.w	$3C18,$3C7E,$0C7E,$3C7E,$3C3C,$0000,$0600,$603C
+	dc.w	$3C18,$7C3C,$787E,$7E3E,$663C,$0666,$60C6,$663C
+	dc.w	$7C3C,$7C3C,$7E66,$66C6,$6666,$7E1E,$4078,$1000
+	dc.w	$0000,$6000,$0600,$1C00,$6018,$1860,$3800,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$000E,$1870,$0000
+	dc.w	$0066,$0C18,$6630,$1800,$1866,$3066,$1860,$6618
+	dc.w	$0C00,$3F18,$6630,$1830,$6666,$6618,$1C66,$1C1E
+	dc.w	$0C0C,$0C0C,$3434,$0000,$0000,$00C6,$C600,$1BD8
+	dc.w	$3434,$0200,$007F,$3034,$3466,$0C00,$7A7E,$7EF1
+	dc.w	$66F6,$0000,$0000,$0000,$0000,$6000,$0060,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$000E,$0066
+	dc.w	$001C,$0000,$FE00,$0000,$3C00,$001C,$0C00,$3E3C
+	dc.w	$0018,$300C,$0018,$1800,$3838,$0000,$3838,$7800
+	dc.w	$003C,$241C,$3899,$FFC3,$03C3,$3C1C,$C0C0,$05A0
+	dc.w	$C606,$0606,$C6C0,$C006,$C6C6,$0060,$0FF8,$0BFC
+	dc.w	$0018,$666C,$3E66,$6C18,$1C38,$6618,$0000,$0006
+	dc.w	$6638,$660C,$1C60,$6006,$6666,$1818,$0C00,$3066
+	dc.w	$663C,$6666,$6C60,$6060,$6618,$066C,$60EE,$7666
+	dc.w	$6666,$6666,$1866,$66C6,$6666,$0618,$6018,$3800
+	dc.w	$C000,$6000,$0600,$3000,$6000,$0060,$1800,$0000
+	dc.w	$0000,$0000,$1800,$0000,$0000,$0018,$1818,$6018
+	dc.w	$3C00,$1866,$0018,$1800,$6600,$1800,$6630,$0000
+	dc.w	$1800,$7866,$0018,$6618,$0000,$0018,$3A66,$3630
+	dc.w	$1818,$1818,$5858,$3C3C,$1800,$00CC,$CC18,$366C
+	dc.w	$5858,$3C02,$00D8,$1858,$5800,$1810,$CAC3,$C35B
+	dc.w	$0066,$667C,$1E7E,$7C1C,$1E7E,$6E3C,$3E7E,$6C1C
+	dc.w	$3E36,$7E66,$3E78,$D67C,$1C3E,$FE7E,$361B,$10F7
+	dc.w	$0036,$FE00,$661E,$0000,$183C,$3C36,$1810,$7066
+	dc.w	$7E18,$1818,$0E18,$1832,$6C7C,$0000,$6C6C,$0CFE
+	dc.w	$0066,$24F6,$6FC3,$FE99,$06D3,$3C16,$FEDF,$05A0
+	dc.w	$C606,$0606,$C6C0,$C006,$C6C6,$3C78,$1FEC,$0DFF
+	dc.w	$0018,$66FE,$606C,$3818,$1818,$3C18,$0000,$000C
+	dc.w	$6E18,$0618,$3C7C,$600C,$6666,$1818,$187E,$1806
+	dc.w	$6E66,$6660,$6660,$6060,$6618,$0678,$60FE,$7E66
+	dc.w	$6666,$6660,$1866,$66C6,$3C66,$0C18,$3018,$6C00
+	dc.w	$603C,$7C3C,$3E3C,$7C3E,$7C38,$1866,$18EC,$7C3C
+	dc.w	$7C3E,$7C3E,$7E66,$66C6,$6666,$7E18,$1818,$F218
+	dc.w	$6600,$0000,$3C00,$003C,$003C,$0000,$0000,$1818
+	dc.w	$7E7E,$D800,$0000,$0000,$663C,$663C,$303C,$667C
+	dc.w	$0000,$0000,$0000,$0666,$0000,$00D8,$D800,$6C36
+	dc.w	$0000,$663C,$7ED8,$0000,$3C00,$3038,$CABD,$BD5F
+	dc.w	$E666,$760C,$060C,$060C,$0C36,$660C,$0606,$3E0C
+	dc.w	$3636,$6666,$060C,$D66C,$0C06,$6666,$363C,$3899
+	dc.w	$7666,$66FE,$3038,$6C7E,$3C66,$6678,$387C,$6066
+	dc.w	$007E,$0C30,$1B18,$004C,$3838,$000F,$6C18,$3800
+	dc.w	$00C3,$E783,$C1E7,$FC3C,$8CD3,$3C10,$D8DB,$0DB0
+	dc.w	$0000,$7C7C,$7C7C,$7C00,$7C7C,$0660,$1804,$06E1
+	dc.w	$0018,$006C,$3C18,$7000,$1818,$FF7E,$007E,$0018
+	dc.w	$7618,$0C0C,$6C06,$7C18,$3C3E,$0000,$3000,$0C0C
+	dc.w	$6A66,$7C60,$667C,$7C6E,$7E18,$0670,$60D6,$7E66
+	dc.w	$7C66,$7C3C,$1866,$66D6,$183C,$1818,$1818,$C600
+	dc.w	$3006,$6660,$6666,$3066,$6618,$186C,$18FE,$6666
+	dc.w	$6666,$6660,$1866,$66C6,$3C66,$0C30,$180C,$9E34
+	dc.w	$6066,$3C3C,$063C,$3C60,$3C66,$3C38,$3838,$3C3C
+	dc.w	$601B,$DE3C,$3C3C,$6666,$6666,$6660,$7C18,$7C30
+	dc.w	$3C38,$3C66,$7C66,$3E66,$183E,$7C36,$3618,$D81B
+	dc.w	$3C3C,$6E6E,$DBDE,$1818,$6600,$0010,$CAB1,$A555
+	dc.w	$6666,$3C0C,$0E0C,$660C,$0636,$660C,$0606,$660C
+	dc.w	$3636,$763C,$360C,$D66C,$0C06,$6676,$1C66,$6C99
+	dc.w	$DC7C,$626C,$186C,$6C18,$667E,$66DC,$54D6,$7E66
+	dc.w	$7E18,$1818,$1B18,$7E00,$0000,$0018,$6C30,$0C00
+	dc.w	$00E7,$C383,$C1C3,$F999,$D8DB,$7E10,$DEFF,$0DB0
+	dc.w	$C606,$C006,$0606,$C606,$C606,$7E7E,$1804,$07E1
+	dc.w	$0018,$006C,$0630,$DE00,$1818,$3C18,$0000,$0030
+	dc.w	$6618,$1806,$7E06,$6630,$6606,$1818,$1800,$1818
+	dc.w	$6E7E,$6660,$6660,$6066,$6618,$0678,$60C6,$6E66
+	dc.w	$6076,$6C06,$1866,$66FE,$3C18,$3018,$0C18,$0000
+	dc.w	$003E,$6660,$667E,$3066,$6618,$1878,$18D6,$6666
+	dc.w	$6666,$603C,$1866,$66D6,$1866,$1818,$1818,$0C34
+	dc.w	$6666,$7E06,$3E06,$0660,$7E7E,$7E18,$1818,$6666
+	dc.w	$7C7F,$F866,$6666,$6666,$6666,$6660,$303C,$6630
+	dc.w	$0618,$6666,$6676,$6666,$3030,$0C6B,$6E18,$6C36
+	dc.w	$0666,$7676,$DFD8,$3C3C,$6600,$0010,$7AB1,$B951
+	dc.w	$6666,$6E0C,$1E0C,$660C,$0636,$6600,$0606,$660C
+	dc.w	$3636,$060E,$360C,$D66C,$0C06,$6606,$0C66,$C6EF
+	dc.w	$C866,$606C,$306C,$6C18,$6666,$66CC,$54D6,$6066
+	dc.w	$0018,$300C,$18D8,$0032,$0000,$18D8,$6C7C,$7800
+	dc.w	$0024,$66F6,$6F99,$F3C3,$70C3,$1070,$181E,$1998
+	dc.w	$C606,$C006,$0606,$C606,$C606,$6618,$1004,$2E21
+	dc.w	$0000,$00FE,$7C66,$CC00,$1C38,$6618,$3000,$1860
+	dc.w	$6618,$3066,$0C66,$6630,$660C,$1818,$0C7E,$3000
+	dc.w	$6066,$6666,$6C60,$6066,$6618,$666C,$60C6,$6666
+	dc.w	$606C,$6666,$1866,$3CEE,$6618,$6018,$0618,$0000
+	dc.w	$0066,$6660,$6660,$303E,$6618,$186C,$18C6,$6666
+	dc.w	$6666,$6006,$1866,$3C7C,$3C3E,$3018,$1818,$0062
+	dc.w	$3C66,$607E,$667E,$7E3C,$6060,$6018,$1818,$7E7E
+	dc.w	$60D8,$D866,$6666,$6666,$3E66,$663C,$3018,$6630
+	dc.w	$7E18,$6666,$666E,$3E3C,$6030,$0CC3,$D618,$366C
+	dc.w	$7E66,$6666,$D8D8,$6666,$6600,$0010,$0ABD,$AD00
+	dc.w	$F6F6,$667E,$360C,$660C,$0636,$7E00,$3E0E,$6E3C
+	dc.w	$1C7E,$7E7E,$340C,$FEEC,$0C06,$7E06,$0C3C,$8266
+	dc.w	$DC66,$606C,$666C,$6C18,$3C66,$24EC,$38D6,$7066
+	dc.w	$7E00,$0000,$18D8,$184C,$0000,$1870,$0000,$0000
+	dc.w	$0024,$3C1C,$383C,$E7E7,$20C3,$38F0,$181B,$799E
+	dc.w	$7C06,$7C7C,$067C,$7C06,$7C7C,$3C1E,$1E3C,$393F
+	dc.w	$0018,$006C,$1846,$7600,$0E70,$0000,$3000,$1840
+	dc.w	$3C7E,$7E3C,$0C3C,$3C30,$3C38,$0030,$0600,$6018
+	dc.w	$3E66,$7C3C,$787E,$603E,$663C,$3C66,$7EC6,$663C
+	dc.w	$6036,$663C,$183E,$18C6,$6618,$7E1E,$0278,$00FE
+	dc.w	$003E,$7C3C,$3E3C,$3006,$663C,$1866,$3CC6,$663C
+	dc.w	$7C3E,$607C,$0E3E,$186C,$6606,$7E0E,$1870,$007E
+	dc.w	$083E,$3C3E,$3E3E,$3E08,$3C3C,$3C3C,$3C3C,$6666
+	dc.w	$7E7E,$DF3C,$3C3C,$3E3E,$063C,$3E18,$7E18,$7C60
+	dc.w	$3E3C,$3C3E,$6666,$0000,$6630,$0C86,$9F18,$1BD8
+	dc.w	$3E3C,$3C3C,$7E7F,$7E7E,$6600,$0000,$0AC3,$C300
+	dc.w	$0606,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$3000,$0000,$0C06,$0006,$0CD8,$0000
+	dc.w	$767C,$606C,$FE38,$7F18,$183C,$6678,$307C,$3E66
+	dc.w	$007E,$7E7E,$1870,$1800,$0000,$0030,$0000,$0000
+	dc.w	$003C,$1818,$1800,$0000,$007E,$1060,$0000,$718E
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$1754,$3800
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$6000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$007C,$0000,$7000,$0000,$0000
+	dc.w	$6006,$0000,$0000,$0000,$007C,$0000,$1800,$0000
+	dc.w	$3800,$0000,$0000,$0018,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$7C00,$0018,$0000,$6000
+	dc.w	$0000,$0000,$0000,$3C3C,$3C00,$000F,$0618,$0000
+	dc.w	$0000,$4040,$0000,$6666,$3C00,$0000,$0A7E,$7E00
+	dc.w	$1C1C,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0070,$0000
+	dc.w	$0060,$F848,$0000,$C010,$3C00,$0000,$6010,$0000
+	dc.w	$0000,$0000,$1800,$0000,$0000,$0000,$0000,$0000
+
+dat_table_10:
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$1100
+	dc.w	$0000,$0000,$1800,$3800,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$4000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$003C
+	dc.w	$0600,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$6032,$3200,$0000,$0000,$00F1
+	dc.w	$00F6,$0000,$0000,$0000,$0000,$0000,$0060,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0018,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$05A0
+	dc.w	$7C00,$7C7C,$007C,$7C7C,$7C7C,$0000,$0000,$0B00
+	dc.w	$0000,$0000,$1800,$7C00,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$1000
+	dc.w	$6000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$000E,$18E0,$0000
+	dc.w	$0000,$0618,$0060,$1C00,$1800,$6000,$1860,$6666
+	dc.w	$0C00,$3E18,$0060,$1860,$0066,$6600,$0E00,$0000
+	dc.w	$0606,$0606,$3232,$0000,$0000,$0060,$6000,$0000
+	dc.w	$3232,$0100,$0000,$307A,$7A66,$0610,$0000,$005B
+	dc.w	$66F6,$0000,$0000,$0000,$0000,$0000,$0060,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$7C00,$001E,$0E00,$0000
+	dc.w	$0000,$0000,$0018,$0000,$3838,$0000,$0000,$00FE
+	dc.w	$0000,$0030,$0C7C,$FEEE,$0100,$0008,$7838,$05A0
+	dc.w	$BA02,$3A3A,$82B8,$B8BA,$BABA,$0078,$0000,$0DFC
+	dc.w	$0018,$6666,$3E66,$6C18,$0660,$6600,$0000,$0006
+	dc.w	$3C18,$3C7E,$0C7E,$1C7E,$3C3C,$0000,$0000,$003C
+	dc.w	$3818,$7C3C,$787E,$7E3E,$667E,$06CC,$60C6,$663C
+	dc.w	$7C3C,$F83E,$7E66,$66C6,$6666,$7E1E,$6078,$1000
+	dc.w	$7000,$6000,$0600,$0E00,$6018,$0CC0,$3800,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0018,$1830,$0000
+	dc.w	$3C66,$0C3C,$6630,$3600,$3C66,$3066,$3C30,$663C
+	dc.w	$1800,$7E3C,$6630,$3C30,$6666,$6618,$1E66,$1C0E
+	dc.w	$0C0C,$0C0C,$7A7A,$0000,$1800,$0020,$2000,$0000
+	dc.w	$7A7A,$3D00,$007E,$184C,$4C66,$0C7C,$7A7C,$7C5F
+	dc.w	$6666,$667C,$1E7E,$7E38,$1E7E,$6E3C,$3C7E,$6C1C
+	dc.w	$FE36,$7E6E,$3E7C,$D67E,$387E,$7E7E,$6E1C,$0000
+	dc.w	$0018,$FE00,$FE00,$0000,$103C,$383E,$1E10,$3E7C
+	dc.w	$0000,$6006,$0E18,$0000,$6C7C,$0000,$3030,$78FE
+	dc.w	$0018,$3C38,$1C38,$FEC6,$013C,$000E,$4040,$05A0
+	dc.w	$C606,$0606,$C6C0,$C0C6,$C6C6,$0040,$0000,$06FC
+	dc.w	$0018,$6666,$7E66,$6C18,$0C30,$6618,$0000,$0006
+	dc.w	$7E18,$7E7E,$0C7E,$3C7E,$7E7E,$0000,$0E00,$E07E
+	dc.w	$7C3C,$7E7E,$7C7E,$7E7E,$667E,$06CC,$60C6,$667E
+	dc.w	$7E7E,$FC7E,$7E66,$66C6,$6666,$7E1E,$6078,$3800
+	dc.w	$3800,$6000,$0600,$1E00,$6018,$0CC0,$3800,$0000
+	dc.w	$0000,$0000,$1800,$0000,$0000,$0018,$1830,$0000
+	dc.w	$7E66,$1866,$6618,$1C00,$6666,$1866,$6618,$1818
+	dc.w	$7E00,$F866,$6618,$6618,$6600,$0018,$3866,$3E1E
+	dc.w	$1818,$1818,$4C4C,$0000,$1800,$0020,$2018,$0000
+	dc.w	$4C4C,$7E00,$00FE,$0000,$0000,$1810,$CAC6,$C655
+	dc.w	$0066,$767C,$1E7E,$7E38,$1E7E,$6E3C,$3E7E,$6E1C
+	dc.w	$FE36,$7E6E,$3E7E,$D67E,$387E,$3E7E,$6E36,$0000
+	dc.w	$003C,$7E00,$FE00,$0002,$107E,$6C20,$1010,$7EFE
+	dc.w	$0018,$700E,$1918,$1802,$447C,$0000,$7848,$1800
+	dc.w	$003C,$242C,$34BA,$FED6,$0366,$180F,$7040,$05A0
+	dc.w	$C606,$0606,$C6C0,$C0C6,$C6C6,$0070,$0000,$07FC
+	dc.w	$0018,$66FF,$606C,$3818,$1C38,$3C18,$0000,$0006
+	dc.w	$6638,$660C,$1C60,$7006,$6666,$1818,$1C7E,$7066
+	dc.w	$E67E,$6666,$6E60,$6060,$6618,$06D8,$60EE,$6666
+	dc.w	$6666,$CC60,$1866,$66C6,$6666,$0C18,$6018,$3800
+	dc.w	$1C00,$6000,$0600,$1800,$6000,$00C0,$1800,$0000
+	dc.w	$0000,$0000,$1800,$0000,$0000,$0018,$1830,$0000
+	dc.w	$6600,$0000,$0000,$0000,$0000,$0000,$0000,$3C3C
+	dc.w	$7E00,$D800,$0000,$0000,$003C,$663C,$3066,$6618
+	dc.w	$0000,$0000,$0000,$3C3C,$0000,$0023,$2318,$0000
+	dc.w	$0000,$6601,$00D8,$3C3C,$3C00,$0010,$CA82,$8251
+	dc.w	$E666,$760C,$060C,$0618,$0466,$660C,$0606,$3E0C
+	dc.w	$FE36,$6666,$3E06,$D666,$1806,$3666,$6632,$0066
+	dc.w	$6266,$6202,$601E,$007E,$7C66,$C630,$7C7C,$E0C6
+	dc.w	$7E18,$381C,$1B18,$183E,$6C7C,$0000,$4818,$3000
+	dc.w	$0066,$24E6,$6792,$FC92,$03C3,$3C09,$4040,$0DB0
+	dc.w	$C606,$0606,$C6C0,$C0C6,$C6C6,$7C40,$0000,$2EFF
+	dc.w	$0018,$66FF,$600C,$3818,$1818,$3C18,$0000,$000C
+	dc.w	$6638,$660C,$1C60,$6006,$6666,$1818,$387E,$3866
+	dc.w	$C266,$6666,$6660,$6060,$6618,$06D8,$60EE,$7666
+	dc.w	$6666,$CC60,$1866,$66C6,$3C66,$0C18,$3018,$6C00
+	dc.w	$0C3C,$7C3C,$3E3C,$183E,$7C38,$0CCC,$186C,$3C3C
+	dc.w	$7C3E,$7C3E,$7E66,$66C6,$6666,$7E18,$1830,$6218
+	dc.w	$6666,$3C3C,$3C3C,$3C3C,$3C3C,$3C38,$3838,$7E7E
+	dc.w	$6076,$D83C,$3C3C,$6666,$667E,$667E,$3066,$6618
+	dc.w	$3C38,$3C66,$3C66,$3E7E,$1800,$0026,$2600,$0000
+	dc.w	$3C3C,$663D,$7ED8,$7E7E,$7E00,$0010,$CABA,$BA00
+	dc.w	$6666,$3E0C,$060C,$6618,$0C66,$660C,$0606,$360C
+	dc.w	$C636,$6636,$0606,$D666,$1806,$3666,$7618,$10F7
+	dc.w	$F666,$607E,$3038,$66FC,$C642,$C618,$D6D6,$C0C6
+	dc.w	$7E18,$1C38,$1B18,$007C,$3838,$001F,$4830,$1800
+	dc.w	$00C3,$2483,$C1D6,$FCBA,$0691,$3C08,$4038,$0DB0
+	dc.w	$8202,$3A3A,$BAB8,$B882,$BABA,$7E78,$0000,$39E1
+	dc.w	$0018,$6666,$7C18,$7018,$1818,$FF7E,$007E,$000C
+	dc.w	$6618,$0C18,$3C7C,$600C,$3C7E,$1818,$7000,$1C0C
+	dc.w	$DA66,$7E60,$667C,$7C6E,$7E18,$06F0,$60FE,$7666
+	dc.w	$6666,$CC70,$1866,$66C6,$3C3C,$1818,$3018,$6C00
+	dc.w	$043E,$7E7C,$7E7E,$7E7E,$7E38,$0CDC,$18FE,$7E7E
+	dc.w	$7E7E,$7E7E,$7E66,$66C6,$6666,$7E38,$1838,$F218
+	dc.w	$6066,$7E3E,$3E3E,$3E7C,$7E7E,$7E38,$3838,$6666
+	dc.w	$607F,$DE7E,$7E7E,$6666,$6666,$6666,$307E,$6618
+	dc.w	$3E38,$7E66,$7E66,$0666,$1800,$002C,$2C18,$1AB0
+	dc.w	$3E7E,$6E7E,$FFDE,$6666,$6600,$0010,$CAA2,$AA00
+	dc.w	$6666,$3C0C,$0E0C,$6618,$0C66,$6600,$0606,$660C
+	dc.w	$C636,$763E,$0606,$F666,$1806,$3676,$3E3C,$1099
+	dc.w	$DC66,$60FC,$186C,$6690,$8242,$C63C,$9292,$C0C6
+	dc.w	$007E,$0E70,$1818,$7E40,$0000,$0010,$4860,$4800
+	dc.w	$0081,$E783,$C1C6,$F838,$0691,$3C08,$0000,$1DB8
+	dc.w	$0000,$7C7C,$7C7C,$7C00,$7C7C,$0600,$0000,$38E1
+	dc.w	$0018,$6666,$3E18,$7018,$1818,$FF7E,$007E,$0018
+	dc.w	$6E18,$0C18,$3C7E,$7C0C,$3C3E,$1818,$E000,$0E0C
+	dc.w	$D666,$7C60,$667C,$7C6E,$7E18,$06F0,$60D6,$7E66
+	dc.w	$6666,$FC38,$1866,$66D6,$183C,$1818,$1818,$C600
+	dc.w	$0006,$6660,$6666,$7E66,$6618,$0CF8,$18FE,$6666
+	dc.w	$6666,$6660,$1866,$66D6,$3C66,$0CF0,$181E,$BE3C
+	dc.w	$6066,$6606,$0606,$0660,$6666,$6618,$1818,$6666
+	dc.w	$7C1B,$DE66,$6666,$6666,$6666,$6660,$303C,$7C7E
+	dc.w	$0618,$6666,$6676,$3E66,$1800,$0018,$1818,$36D8
+	dc.w	$0666,$6E66,$DBDE,$6666,$6600,$0010,$CAA2,$B200
+	dc.w	$6666,$3C0C,$1E0C,$6618,$0C66,$6600,$060E,$660C
+	dc.w	$C636,$7618,$3606,$F666,$1806,$3676,$0E66,$3899
+	dc.w	$887C,$60A8,$0CC6,$6630,$827E,$C666,$9292,$FCC6
+	dc.w	$7E7E,$1C38,$1818,$7E02,$0000,$00D0,$4878,$3000
+	dc.w	$00E7,$81E6,$67D6,$FABA,$8C9D,$3C78,$1E1C,$399C
+	dc.w	$8202,$B83A,$3A3A,$BA02,$BA3A,$060E,$07F0,$00E1
+	dc.w	$0018,$00FF,$0630,$DE00,$1818,$3C18,$0000,$0018
+	dc.w	$7618,$180C,$6C06,$7E18,$6606,$0000,$707E,$1C18
+	dc.w	$D67E,$6660,$6660,$6066,$6618,$06D8,$60D6,$7E66
+	dc.w	$7E66,$F81C,$1866,$66D6,$1818,$3018,$1818,$C600
+	dc.w	$003E,$6660,$6666,$1866,$6618,$0CF0,$18D6,$6666
+	dc.w	$6666,$6070,$1866,$66D6,$3C66,$18F0,$181E,$9C24
+	dc.w	$6066,$663E,$3E3E,$3E60,$6666,$6618,$1818,$7E7E
+	dc.w	$7C7B,$F866,$6666,$6666,$6666,$6660,$FE18,$6618
+	dc.w	$3E18,$6666,$667E,$7E66,$3000,$0030,$3218,$6C6C
+	dc.w	$3E66,$766E,$DBD8,$7E7E,$6600,$0000,$7AA2,$BA00
+	dc.w	$6666,$6E0C,$360C,$6618,$0C66,$6600,$061C,$660C
+	dc.w	$C636,$061C,$3606,$C666,$1806,$3606,$0666,$38EF
+	dc.w	$8866,$6028,$0CC6,$6630,$8242,$6C42,$9292,$FCC6
+	dc.w	$7E18,$381C,$1818,$003E,$0000,$00D0,$0000,$0000
+	dc.w	$0024,$C32C,$3492,$F292,$8C81,$3CF8,$1012,$799E
+	dc.w	$C606,$C006,$0606,$C606,$C606,$7E10,$0FF8,$00E1
+	dc.w	$0018,$00FF,$0636,$DE00,$1818,$3C18,$0000,$0030
+	dc.w	$6618,$180C,$6C06,$6618,$6606,$0000,$387E,$3818
+	dc.w	$DC7E,$6660,$6660,$6066,$6618,$06D8,$60C6,$6E66
+	dc.w	$7C66,$D80E,$1866,$66FE,$3C18,$3018,$0C18,$0000
+	dc.w	$007E,$6660,$667E,$1866,$6618,$0CF8,$18D6,$6666
+	dc.w	$6666,$603C,$1866,$66FE,$1866,$1838,$1838,$0066
+	dc.w	$6066,$7E7E,$7E7E,$7E60,$7E7E,$7E18,$1818,$7E7E
+	dc.w	$60FF,$F866,$6666,$6666,$6666,$6666,$307E,$6618
+	dc.w	$7E18,$6666,$667E,$6666,$307E,$7E6E,$6618,$D836
+	dc.w	$7E66,$767E,$DFD8,$7E7E,$6600,$0000,$0ABA,$AA00
+	dc.w	$6666,$6E0C,$360C,$6618,$0C66,$6600,$0630,$6E0C
+	dc.w	$C636,$7E0E,$3606,$C666,$1806,$3606,$063C,$6C66
+	dc.w	$DC66,$6028,$18C6,$6630,$8242,$2842,$9292,$C0C6
+	dc.w	$0018,$700E,$1818,$187C,$0000,$1850,$0000,$0000
+	dc.w	$0024,$6638,$1CBA,$F6D6,$D8C3,$7E70,$1C1C,$718E
+	dc.w	$C606,$C006,$0606,$C606,$C606,$660C,$1FEC,$0021
+	dc.w	$0000,$0066,$7E66,$CC00,$1818,$6618,$1800,$1830
+	dc.w	$6618,$3066,$7E06,$6630,$6606,$1818,$1C00,$7018
+	dc.w	$C066,$6666,$6660,$6066,$6618,$66CC,$60C6,$6E66
+	dc.w	$6066,$CC06,$1866,$3CFE,$3C18,$6018,$0C18,$0000
+	dc.w	$0066,$6660,$6660,$1866,$6618,$0CD8,$18D6,$6666
+	dc.w	$6666,$600E,$1866,$3CFE,$3C66,$3018,$1830,$0042
+	dc.w	$6666,$6066,$6666,$6660,$6060,$6018,$1818,$6666
+	dc.w	$60D8,$D866,$6666,$6666,$6666,$667E,$3018,$6618
+	dc.w	$6618,$6666,$666E,$6666,$667E,$7ED3,$CE18,$6C6C
+	dc.w	$6666,$6676,$D8D8,$6666,$6600,$0000,$0A82,$8200
+	dc.w	$6666,$667E,$360C,$6618,$0C66,$7E00,$3E30,$6E7C
+	dc.w	$FE7E,$7E7E,$3606,$FEE6,$1806,$3E06,$0618,$6C00
+	dc.w	$F666,$6028,$30C6,$6630,$C666,$AA66,$D6D6,$C0C6
+	dc.w	$7E18,$6006,$18D8,$1840,$0000,$3C70,$0000,$0000
+	dc.w	$0024,$3C30,$0C38,$E6C6,$5866,$FF00,$1014,$718E
+	dc.w	$C606,$C006,$0606,$C606,$C606,$6602,$1804,$0021
+	dc.w	$0000,$0066,$7C66,$CC00,$1C38,$6600,$1800,$1860
+	dc.w	$6618,$3066,$7E66,$6630,$660E,$1818,$0E00,$E000
+	dc.w	$E266,$6666,$6E60,$6066,$6618,$66CC,$60C6,$6666
+	dc.w	$606A,$CC06,$1866,$3CEE,$6618,$6018,$0618,$0000
+	dc.w	$0066,$6660,$6660,$187E,$6618,$0CCC,$18C6,$6666
+	dc.w	$6666,$6006,$1866,$3CEE,$3C7E,$3018,$1830,$00C3
+	dc.w	$6666,$6066,$6666,$6660,$6060,$6018,$1818,$6666
+	dc.w	$60D8,$D866,$6666,$6666,$7E66,$663C,$3018,$6618
+	dc.w	$6618,$6666,$6666,$7E7E,$6660,$0606,$1A18,$36D8
+	dc.w	$6666,$6666,$D8D8,$6666,$6600,$0000,$0AC6,$C600
+	dc.w	$66F6,$627E,$360C,$6618,$0466,$7E00,$3C30,$6E7C
+	dc.w	$7C7E,$7E7E,$3606,$FEE6,$1806,$3E06,$064C,$C600
+	dc.w	$627C,$6028,$606C,$7F20,$7C7E,$EE7E,$7C7C,$E0C6
+	dc.w	$7E00,$0000,$18D8,$0000,$0000,$3C20,$0000,$0000
+	dc.w	$003C,$1800,$007C,$EEEE,$703C,$1000,$1012,$6186
+	dc.w	$BA02,$B83A,$023A,$BA02,$BA3A,$7E1C,$1804,$003F
+	dc.w	$0018,$0000,$1800,$FE00,$0C30,$0000,$1800,$1860
+	dc.w	$7E7E,$7E7E,$0C7E,$7E30,$7E3C,$1818,$0000,$0018
+	dc.w	$7E66,$7E7E,$7C7E,$607E,$667E,$7EC6,$7EC6,$667E
+	dc.w	$607C,$C67E,$187E,$18C6,$6618,$7E1E,$0678,$00FE
+	dc.w	$007E,$7E7E,$7E7E,$183E,$663C,$0CCE,$3CC6,$667E
+	dc.w	$7E7E,$607E,$1E7E,$18C6,$663E,$7E18,$1830,$00FF
+	dc.w	$7E7E,$7E7E,$7E7E,$7E7E,$7E7E,$7E3C,$3C3C,$6666
+	dc.w	$7EFF,$DE7E,$7E7E,$7E7E,$3E7E,$7E18,$7F18,$7E18
+	dc.w	$7E3C,$7E7E,$6666,$3E3C,$7E60,$060C,$3218,$1AB0
+	dc.w	$7E7E,$7E7E,$FFFE,$6666,$7E00,$0000,$0A7C,$7C00
+	dc.w	$F6F6,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$3000,$0000,$1806,$0006,$066C,$C600
+	dc.w	$006C,$6000,$FE38,$5D00,$103C,$6C3C,$1010,$7EC6
+	dc.w	$007E,$7E7E,$1898,$0000,$0000,$1800,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$3000,$3800,$0000,$4182
+	dc.w	$7C00,$7C7C,$007C,$7C00,$7C7C,$3C00,$1004,$0000
+	dc.w	$0018,$0000,$1800,$7600,$0660,$0000,$1800,$1860
+	dc.w	$3C7E,$7E3C,$0C3C,$3C30,$3C38,$1818,$0000,$0018
+	dc.w	$3C66,$7C3C,$787E,$603C,$667E,$3CC6,$7EC6,$663C
+	dc.w	$6036,$C67C,$183C,$1882,$6618,$7E1E,$0678,$00FE
+	dc.w	$003E,$7C3E,$3E3E,$1806,$663C,$0CC6,$3CC6,$663C
+	dc.w	$7C3E,$607C,$0E3E,$1882,$6606,$7E18,$1830,$0000
+	dc.w	$3C3E,$3E3E,$3E3E,$3E3E,$3E3E,$3E3C,$3C3C,$6666
+	dc.w	$7E7F,$DE3C,$3C3C,$3E3E,$063C,$3C18,$FF18,$7C70
+	dc.w	$3E3C,$3C3E,$6666,$0000,$3C60,$0618,$3F18,$0000
+	dc.w	$3E3C,$BCBC,$7F7E,$6666,$3C00,$0000,$0A00,$0000
+	dc.w	$0E0E,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$3000,$0000,$1806,$0006,$0638,$0000
+	dc.w	$0060,$F000,$FE00,$C000,$1000,$0000,$F010,$3EC6
+	dc.w	$007E,$7E7E,$1870,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$2000,$1000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$1E3C,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$3000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0030,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$007E,$0000,$7C00,$0000,$0000
+	dc.w	$6006,$0000,$0000,$0000,$007E,$000E,$18E0,$0000
+	dc.w	$0C00,$0000,$0000,$000C,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$7E00,$0000,$0000,$6060
+	dc.w	$0000,$0000,$0000,$7E7E,$0000,$001F,$0218,$0000
+	dc.w	$0000,$8080,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$3C7C,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$3000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0040,$0000,$0000,$8000,$7C00,$0000,$E000,$0000
+	dc.w	$0000,$0000,$1800,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$1754,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$2000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0020,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$007C,$0000,$7800,$0000,$0000
+	dc.w	$6006,$0000,$0000,$0000,$007C,$0000,$0000,$0000
+	dc.w	$3800,$0000,$0000,$0038,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$7C00,$0000,$0000,$6000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$3878,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$1800,$0000,$0000,$0000,$0000,$0000
+
+header_10:
+	dc.w 1
+	dc.w 10
+	dc.b	'8x16 system font',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dc.w	0,255 ; first_ade,last_ade
+	dc.w	13,11,8,2,2 ; top,ascent,half,descent,bottom
+	dc.w	7,8 ; char_width,,cell_width
+	dc.w	1,7 ; left_offset,right_offset
+	dc.w	1,1 ; thicken,ul_size
+	dc.w	$5555 ; lighten
+	dc.w	$5555 ; skew
+	dc.w	$000c ; flags
+	dc.l    0
+	dc.l	off_table_10
+	dc.l	dat_table_10
+	dc.w	(256*8)/8 ; form_width
+	dc.w	16 ; form_height
+	dc.l	0 ; next_font
+
+closed:
+	dc.l	handle_e
+
+	dc.w	$0000,$0000,$FFFF,$FFFF
+color_ma:
+	dc.b	$00,$FF,$01,$02,$04,$06,$03,$05
+	dc.b	$07,$08,$09,$0A,$0C,$0E,$0B,$0D
+	dc.b	$10,$11,$12,$13,$14,$15,$16,$17
+	dc.b	$18,$19,$1A,$1B,$1C,$1D,$1E,$1F
+	dc.b	$20,$21,$22,$23,$24,$25,$26,$27
+	dc.b	$28,$29,$2A,$2B,$2C,$2D,$2E,$2F
+	dc.b    $30,$31,$32,$33,$34,$35,$36,$37
+	dc.b    $38,$39,$3A,$3B,$3C,$3D,$3E,$3F
+	dc.b    $40,$41,$42,$43,$44,$45,$46,$47
+	dc.b    $48,$49,$4A,$4B,$4C,$4D,$4E,$4F
+	dc.b    $50,$51,$52,$53,$54,$55,$56,$57
+	dc.b    $58,$59,$5A,$5B,$5C,$5D,$5E,$5F
+	dc.b    $60,$61,$62,$63,$64,$65,$66,$67
+	dc.b    $68,$69,$6A,$6B,$6C,$6D,$6E,$6F
+	dc.b    $70,$71,$72,$73,$74,$75,$76,$77
+	dc.b    $78,$79,$7A,$7B,$7C,$7D,$7E,$7F
+	dc.b	$80,$81,$82,$83,$84,$85,$86,$87
+	dc.b	$88,$89,$8A,$8B,$8C,$8D,$8E,$8F
+	dc.b	$90,$91,$92,$93,$94,$95,$96,$97
+	dc.b	$98,$99,$9A,$9B,$9C,$9D,$9E,$9F
+	dc.b	$A0,$A1,$A2,$A3,$A4,$A5,$A6,$A7
+	dc.b	$A8,$A9,$AA,$AB,$AC,$AD,$AE,$AF
+	dc.b	$B0,$B1,$B2,$B3,$B4,$B5,$B6,$B7
+	dc.b	$B8,$B9,$BA,$BB,$BC,$BD,$BE,$BF
+	dc.b	$C0,$C1,$C2,$C3,$C4,$C5,$C6,$C7
+	dc.b	$C8,$C9,$CA,$CB,$CC,$CD,$CE,$CF
+	dc.b	$D0,$D1,$D2,$D3,$D4,$D5,$D6,$D7
+	dc.b	$D8,$D9,$DA,$DB,$DC,$DD,$DE,$DF
+	dc.b	$E0,$E1,$E2,$E3,$E4,$E5,$E6,$E7
+	dc.b	$E8,$E9,$EA,$EB,$EC,$ED,$EE,$EF
+	dc.b	$F0,$F1,$F2,$F3,$F4,$F5,$F6,$F7
+	dc.b	$F8,$F9,$FA,$FB,$FC,$FD,$FE,$0F
+color_re:
+	dc.b	$00,$02,$03,$06,$04,$07,$05,$08
+	dc.b	$09,$0A,$0B,$0E,$0C,$0F,$0D,$FF
+	dc.b	$10,$11,$12,$13,$14,$15,$16,$17
+	dc.b	$18,$19,$1A,$1B,$1C,$1D,$1E,$1F
+	dc.b	$20,$21,$22,$23,$24,$25,$26,$27
+	dc.b    $28,$29,$2A,$2B,$2C,$2D,$2E,$2F
+	dc.b    $30,$31,$32,$33,$34,$35,$36,$37
+	dc.b    $38,$39,$3A,$3B,$3C,$3D,$3E,$3F
+	dc.b    $40,$41,$42,$43,$44,$45,$46,$47
+	dc.b    $48,$49,$4A,$4B,$4C,$4D,$4E,$4F
+	dc.b    $50,$51,$52,$53,$54,$55,$56,$57
+	dc.b    $58,$59,$5A,$5B,$5C,$5D,$5E,$5F
+	dc.b    $60,$61,$62,$63,$64,$65,$66,$67
+	dc.b    $68,$69,$6A,$6B,$6C,$6D,$6E,$6F
+	dc.b    $70,$71,$72,$73,$74,$75,$76,$77
+	dc.b    $78,$79,$7A,$7B,$7C,$7D,$7E,$7F
+	dc.b	$80,$81,$82,$83,$84,$85,$86,$87
+	dc.b	$88,$89,$8A,$8B,$8C,$8D,$8E,$8F
+	dc.b	$90,$91,$92,$93,$94,$95,$96,$97
+	dc.b	$98,$99,$9A,$9B,$9C,$9D,$9E,$9F
+	dc.b	$A0,$A1,$A2,$A3,$A4,$A5,$A6,$A7
+	dc.b	$A8,$A9,$AA,$AB,$AC,$AD,$AE,$AF
+	dc.b	$B0,$B1,$B2,$B3,$B4,$B5,$B6,$B7
+	dc.b	$B8,$B9,$BA,$BB,$BC,$BD,$BE,$BF
+	dc.b	$C0,$C1,$C2,$C3,$C4,$C5,$C6,$C7
+	dc.b	$C8,$C9,$CA,$CB,$CC,$CD,$CE,$CF
+	dc.b	$D0,$D1,$D2,$D3,$D4,$D5,$D6,$D7
+	dc.b	$D8,$D9,$DA,$DB,$DC,$DD,$DE,$DF
+	dc.b	$E0,$E1,$E2,$E3,$E4,$E5,$E6,$E7
+	dc.b	$E8,$E9,$EA,$EB,$EC,$ED,$EE,$EF
+	dc.b	$F0,$F1,$F2,$F3,$F4,$F5,$F6,$F7
+	dc.b	$F8,$F9,$FA,$FB,$FC,$FD,$FE,$01
+
+fill0:
+	dc.w	$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
 fill1:
-[000023de] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
-[000023e6] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
-[000023ee] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
-[000023f6] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
 fill2_1:
-[000023fe] 0000 4444                 ori.b     #$44,d0
-[00002402] 0000 1111                 ori.b     #$11,d0
-[00002406] 0000 4444                 ori.b     #$44,d0
-[0000240a] 0000 1111                 ori.b     #$11,d0
-[0000240e] 0000 4444                 ori.b     #$44,d0
-[00002412] 0000 1111                 ori.b     #$11,d0
-[00002416] 0000 4444                 ori.b     #$44,d0
-[0000241a] 0000 1111                 ori.b     #$11,d0
+	dc.w	$0000,$4444,$0000,$1111
+	dc.w	$0000,$4444,$0000,$1111
+	dc.w	$0000,$4444,$0000,$1111
+	dc.w	$0000,$4444,$0000,$1111
 fill2_2:
-[0000241e] 0000 5555                 ori.b     #$55,d0
-[00002422] 0000 5555                 ori.b     #$55,d0
-[00002426] 0000 5555                 ori.b     #$55,d0
-[0000242a] 0000 5555                 ori.b     #$55,d0
-[0000242e] 0000 5555                 ori.b     #$55,d0
-[00002432] 0000 5555                 ori.b     #$55,d0
-[00002436] 0000 5555                 ori.b     #$55,d0
-[0000243a] 0000 5555                 ori.b     #$55,d0
+	dc.w	$0000,$5555,$0000,$5555
+	dc.w	$0000,$5555,$0000,$5555
+	dc.w	$0000,$5555,$0000,$5555
+	dc.w	$0000,$5555,$0000,$5555
 fill2_3:
-[0000243e] 8888                      or.l      a0,d4 ; apollo only
-[00002440] 5555                      subq.w    #2,(a5)
-[00002442] 2222                      move.l    -(a2),d1
-[00002444] 5555                      subq.w    #2,(a5)
-[00002446] 8888                      or.l      a0,d4 ; apollo only
-[00002448] 5555                      subq.w    #2,(a5)
-[0000244a] 2222                      move.l    -(a2),d1
-[0000244c] 5555                      subq.w    #2,(a5)
-[0000244e] 8888                      or.l      a0,d4 ; apollo only
-[00002450] 5555                      subq.w    #2,(a5)
-[00002452] 2222                      move.l    -(a2),d1
-[00002454] 5555                      subq.w    #2,(a5)
-[00002456] 8888                      or.l      a0,d4 ; apollo only
-[00002458] 5555                      subq.w    #2,(a5)
-[0000245a] 2222                      move.l    -(a2),d1
-[0000245c] 5555                      subq.w    #2,(a5)
+	dc.w	$8888,$5555,$2222,$5555
+	dc.w	$8888,$5555,$2222,$5555
+	dc.w	$8888,$5555,$2222,$5555
+	dc.w	$8888,$5555,$2222,$5555
 fill2_4:
-[0000245e] aaaa 5555 aaaa            msac.w    d5.u,d5.l,??,-21846(a2),d5,acc2
-[00002464] 5555                      subq.w    #2,(a5)
-[00002466] aaaa 5555 aaaa            msac.w    d5.u,d5.l,??,-21846(a2),d5,acc2
-[0000246c] 5555                      subq.w    #2,(a5)
-[0000246e] aaaa 5555 aaaa            msac.w    d5.u,d5.l,??,-21846(a2),d5,acc2
-[00002474] 5555                      subq.w    #2,(a5)
-[00002476] aaaa 5555 aaaa            msac.w    d5.u,d5.l,??,-21846(a2),d5,acc2
-[0000247c] 5555                      subq.w    #2,(a5)
+	dc.w	$AAAA,$5555,$AAAA,$5555
+	dc.w	$AAAA,$5555,$AAAA,$5555
+	dc.w	$AAAA,$5555,$AAAA,$5555
+	dc.w	$AAAA,$5555,$AAAA,$5555
 fill2_5:
-[0000247e] aaaa dddd aaaa            msac.l    a5,a5,??,-21846(a2),d5,acc2
-[00002484] 7777                      ???
-[00002486] aaaa dddd aaaa            msac.l    a5,a5,??,-21846(a2),d5,acc2
-[0000248c] 7777                      ???
-[0000248e] aaaa dddd aaaa            msac.l    a5,a5,??,-21846(a2),d5,acc2
-[00002494] 7777                      ???
-[00002496] aaaa dddd aaaa            msac.l    a5,a5,??,-21846(a2),d5,acc2
-[0000249c] 7777                      ???
+	dc.w	$AAAA,$DDDD,$AAAA,$7777
+	dc.w	$AAAA,$DDDD,$AAAA,$7777
+	dc.w	$AAAA,$DDDD,$AAAA,$7777
+	dc.w	$AAAA,$DDDD,$AAAA,$7777
 fill2_6:
-[0000249e] aaaa ffff aaaa            msac.l    a7,a7,>>1,-21846(a2)&,d5,acc2
-[000024a4] ffff aaaa ffff aaaa       vperm     #$FFFFAAAA,e18,e18,e18
-[000024ac] ffff aaaa ffff aaaa       vperm     #$FFFFAAAA,e18,e18,e18
-[000024b4] ffff aaaa ffff aaaa       vperm     #$FFFFAAAA,e18,e18,e18
-[000024bc] ffff eeee ffff bbbb       vperm     #$FFFFBBBB,e22,e22,e22
-[000024c4] ffff eeee ffff bbbb       vperm     #$FFFFBBBB,e22,e22,e22
-[000024cc] ffff eeee ffff bbbb       vperm     #$FFFFBBBB,e22,e22,e22
-[000024d4] ffff eeee ffff bbbb       vperm     #$FFFFBBBB,e22,e22,e22
-[000024dc] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
-[000024e4] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
-[000024ec] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
-[000024f4] ffff ffff ffff ffff       vperm     #$FFFFFFFF,e23,e23,e23
-[000024fc] ffff ffff 8080 8080       vperm     #$80808080,e23,e23,e23
-[00002504] 8080                      or.l      d0,d0
-[00002506] ffff 0808 0808 0808       vperm     #$08080808,e16,e8,e16
-[0000250e] ffff 8080 8080 8080       vperm     #$80808080,e8,e16,e8
-[00002516] ffff 0808 0808 0808       vperm     #$08080808,e16,e8,e16
+	dc.w	$AAAA,$FFFF,$AAAA,$FFFF
+	dc.w	$AAAA,$FFFF,$AAAA,$FFFF
+	dc.w	$AAAA,$FFFF,$AAAA,$FFFF
+	dc.w	$AAAA,$FFFF,$AAAA,$FFFF
+fill2_7:
+	dc.w	$EEEE,$FFFF,$BBBB,$FFFF
+	dc.w	$EEEE,$FFFF,$BBBB,$FFFF
+	dc.w	$EEEE,$FFFF,$BBBB,$FFFF
+	dc.w	$EEEE,$FFFF,$BBBB,$FFFF
+fill2_8:
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+	dc.w	$FFFF,$FFFF,$FFFF,$FFFF
+fill2_9:
+	dc.w	$FFFF,$8080,$8080,$8080
+	dc.w	$FFFF,$0808,$0808,$0808
+	dc.w	$FFFF,$8080,$8080,$8080
+	dc.w	$FFFF,$0808,$0808,$0808
 fill2_10:
-[0000251e] 2020                      move.l    -(a0),d0
-[00002520] 4040                      negx.w    d0
-[00002522] 8080                      or.l      d0,d0
-[00002524] 4141                      lea.l     d1,b0 ; apollo only
-[00002526] 2222                      move.l    -(a2),d1
-[00002528] 1414                      move.b    (a4),d2
-[0000252a] 0808 1010                 btst      #4112,a0
-[0000252e] 2020                      move.l    -(a0),d0
-[00002530] 4040                      negx.w    d0
-[00002532] 8080                      or.l      d0,d0
-[00002534] 4141                      lea.l     d1,b0 ; apollo only
-[00002536] 2222                      move.l    -(a2),d1
-[00002538] 1414                      move.b    (a4),d2
-[0000253a] 0808 1010                 btst      #4112,a0
+	dc.w	$2020,$4040,$8080,$4141
+	dc.w	$2222,$1414,$0808,$1010
+	dc.w	$2020,$4040,$8080,$4141
+	dc.w	$2222,$1414,$0808,$1010
 fill2_11:
-[0000253e] 0000 0000                 ori.b     #$00,d0
-[00002542] 1010                      move.b    (a0),d0
-[00002544] 2828 0000                 move.l    0(a0),d4
-[00002548] 0000 0101                 ori.b     #$01,d0
-[0000254c] 8282                      or.l      d2,d1
-[0000254e] 0000 0000                 ori.b     #$00,d0
-[00002552] 1010                      move.b    (a0),d0
-[00002554] 2828 0000                 move.l    0(a0),d4
-[00002558] 0000 0101                 ori.b     #$01,d0
-[0000255c] 8282                      or.l      d2,d1
+	dc.w	$0000,$0000,$1010,$2828
+	dc.w	$0000,$0000,$0101,$8282
+	dc.w	$0000,$0000,$1010,$2828
+	dc.w	$0000,$0000,$0101,$8282
 fill2_12:
-[0000255e] 0202 0202                 andi.b    #$02,d2
-[00002562] aaaa 5050 2020            mac.w     d0.u,d5.l,0,8224(a2),d5,acc2
-[00002568] 2020                      move.l    -(a0),d0
-[0000256a] aaaa 0505 0202            msac.w    d5.l,d0.l,??,514(a2),d5,acc0
-[00002570] 0202 aaaa                 andi.b    #$AA,d2
-[00002574] 5050                      addq.w    #8,(a0)
-[00002576] 2020                      move.l    -(a0),d0
-[00002578] 2020                      move.l    -(a0),d0
-[0000257a] aaaa 0505 4040            msac.w    d5.l,d0.l,??,16448(a2),d5,acc0
-[00002580] 8080                      or.l      d0,d0
-[00002582] 0000 0808                 ori.b     #$08,d0
-[00002586] 0404 0202                 subi.b    #$02,d4
-[0000258a] 0000 2020                 ori.b     #$20,d0
-[0000258e] 4040                      negx.w    d0
-[00002590] 8080                      or.l      d0,d0
-[00002592] 0000 0808                 ori.b     #$08,d0
-[00002596] 0404 0202                 subi.b    #$02,d4
-[0000259a] 0000 2020                 ori.b     #$20,d0
+	dc.w	$0202,$0202,$AAAA,$5050
+	dc.w	$2020,$2020,$AAAA,$0505
+	dc.w	$0202,$0202,$AAAA,$5050
+	dc.w	$2020,$2020,$AAAA,$0505
+fill2_13:
+	dc.w	$4040,$8080,$0000,$0808
+	dc.w	$0404,$0202,$0000,$2020
+	dc.w	$4040,$8080,$0000,$0808
+	dc.w	$0404,$0202,$0000,$2020
 fill2_14:
-[0000259e] 6606                      bne.s     $000025A6
-[000025a0] c6c6                      mulu.w    d6,d3
-[000025a2] d8d8                      adda.w    (a0)+,a4
-[000025a4] 1818                      move.b    (a0)+,d4
-[000025a6] 8181 8db1                 unpk      d1,d0,#$8DB1
-[000025aa] 0c33 6000 6606            cmpi.b    #$00,6(a3,d6.w*8) ; 68020+ only
-[000025b0] c6c6                      mulu.w    d6,d3
-[000025b2] d8d8                      adda.w    (a0)+,a4
-[000025b4] 1818                      move.b    (a0)+,d4
-[000025b6] 8181 8db1                 unpk      d1,d0,#$8DB1
-[000025ba] 0c33 6000 0000            cmpi.b    #$00,0(a3,d0.w)
-[000025c0] 0000 0400                 ori.b     #$00,d0
-[000025c4] 0000 0010                 ori.b     #$10,d0
-[000025c8] 0000 8000                 ori.b     #$00,d0
-[000025cc] 0000 0000                 ori.b     #$00,d0
-[000025d0] 0000 0400                 ori.b     #$00,d0
-[000025d4] 0000 0010                 ori.b     #$10,d0
-[000025d8] 0000 8000                 ori.b     #$00,d0
-[000025dc] 0000 f8f8                 ori.b     #$F8,d0
-[000025e0] 6c6c                      bge.s     $0000264E
-[000025e2] c6c6                      mulu.w    d6,d3
-[000025e4] 8f8f 1f1f                 unpk      -a7,-a7,#$1F1F
-[000025e8] 3636 6363 f1f1 f8f8 6c6c  move.w    ([$F1F1,a6,zd6.w*2],$F8F86C6C),d3 ; 68020+ only
-[000025f2] c6c6                      mulu.w    d6,d3
-[000025f4] 8f8f 1f1f                 unpk      -a7,-a7,#$1F1F
-[000025f8] 3636 6363 f1f1 aaaa 0000  move.w    ([$F1F1,a6,zd6.w*2],$AAAA0000),d3 ; 68020+ only
-[00002602] 8888                      or.l      a0,d4 ; apollo only
-[00002604] 1414                      move.b    (a4),d2
-[00002606] 2222                      move.l    -(a2),d1
-[00002608] 4141                      lea.l     d1,b0 ; apollo only
-[0000260a] 8888                      or.l      a0,d4 ; apollo only
-[0000260c] 0000 aaaa                 ori.b     #$AA,d0
-[00002610] 0000 8888                 ori.b     #$88,d0
-[00002614] 1414                      move.b    (a4),d2
-[00002616] 2222                      move.l    -(a2),d1
-[00002618] 4141                      lea.l     d1,b0 ; apollo only
-[0000261a] 8888                      or.l      a0,d4 ; apollo only
-[0000261c] 0000 0808                 ori.b     #$08,d0
-[00002620] 0000 aaaa                 ori.b     #$AA,d0
-[00002624] 0000 0808                 ori.b     #$08,d0
-[00002628] 0000 8888                 ori.b     #$88,d0
-[0000262c] 0000 0808                 ori.b     #$08,d0
-[00002630] 0000 aaaa                 ori.b     #$AA,d0
-[00002634] 0000 0808                 ori.b     #$08,d0
-[00002638] 0000 8888                 ori.b     #$88,d0
-[0000263c] 0000 7777                 ori.b     #$77,d0
-[00002640] 9898                      sub.l     (a0)+,d4
-[00002642] f8f8 f8f8 7777            lpB??.l   $F8F89DBB
-[00002648] 8989 8f8f                 unpk      -a1,-a4,#$8F8F
-[0000264c] 8f8f 7777                 unpk      -a7,-a7,#$7777
-[00002650] 9898                      sub.l     (a0)+,d4
-[00002652] f8f8 f8f8 7777            lpB??.l   $F8F89DCB
-[00002658] 8989 8f8f                 unpk      -a1,-a4,#$8F8F
-[0000265c] 8f8f 8080                 unpk      -a7,-a7,#$8080
-[00002660] 8080                      or.l      d0,d0
-[00002662] 4141                      lea.l     d1,b0 ; apollo only
-[00002664] 3e3e                      move.w    ???,d7
-[00002666] 0808 0808                 btst      #2056,a0
-[0000266a] 1414                      move.b    (a4),d2
-[0000266c] e3e3                      lsl.w     -(a3)
-[0000266e] 8080                      or.l      d0,d0
-[00002670] 8080                      or.l      d0,d0
-[00002672] 4141                      lea.l     d1,b0 ; apollo only
-[00002674] 3e3e                      move.w    ???,d7
-[00002676] 0808 0808                 btst      #2056,a0
-[0000267a] 1414                      move.b    (a4),d2
-[0000267c] e3e3                      lsl.w     -(a3)
+	dc.w	$6606,$C6C6,$D8D8,$1818
+	dc.w	$8181,$8DB1,$0C33,$6000
+	dc.w	$6606,$C6C6,$D8D8,$1818
+	dc.w	$8181,$8DB1,$0C33,$6000
+fill2_15:
+	dc.w	$0000,$0000,$0400,$0000
+	dc.w	$0010,$0000,$8000,$0000
+	dc.w	$0000,$0000,$0400,$0000
+	dc.w	$0010,$0000,$8000,$0000
+fill2_16:
+	dc.w	$F8F8,$6C6C,$C6C6,$8F8F
+	dc.w	$1F1F,$3636,$6363,$F1F1
+	dc.w	$F8F8,$6C6C,$C6C6,$8F8F
+	dc.w	$1F1F,$3636,$6363,$F1F1
+fill2_17:
+	dc.w	$AAAA,$0000,$8888,$1414
+	dc.w	$2222,$4141,$8888,$0000
+	dc.w	$AAAA,$0000,$8888,$1414
+	dc.w	$2222,$4141,$8888,$0000
+fill2_18:
+	dc.w	$0808,$0000,$AAAA,$0000
+	dc.w	$0808,$0000,$8888,$0000
+	dc.w	$0808,$0000,$AAAA,$0000
+	dc.w	$0808,$0000,$8888,$0000
+fill2_19:
+	dc.w	$7777,$9898,$F8F8,$F8F8
+	dc.w	$7777,$8989,$8F8F,$8F8F
+	dc.w	$7777,$9898,$F8F8,$F8F8
+	dc.w	$7777,$8989,$8F8F,$8F8F
+fill2_20:
+	dc.w	$8080,$8080,$4141,$3E3E
+	dc.w	$0808,$0808,$1414,$E3E3
+	dc.w	$8080,$8080,$4141,$3E3E
+	dc.w	$0808,$0808,$1414,$E3E3
 fill2_21:
-[0000267e] 8181 4242                 unpk      d1,d0,#$4242
-[00002682] 2424                      move.l    -(a4),d2
-[00002684] 1818                      move.b    (a0)+,d4
-[00002686] 0606 0101                 addi.b    #$01,d6
-[0000268a] 8080                      or.l      d0,d0
-[0000268c] 8080                      or.l      d0,d0
-[0000268e] 8181 4242                 unpk      d1,d0,#$4242
-[00002692] 2424                      move.l    -(a4),d2
-[00002694] 1818                      move.b    (a0)+,d4
-[00002696] 0606 0101                 addi.b    #$01,d6
-[0000269a] 8080                      or.l      d0,d0
-[0000269c] 8080                      or.l      d0,d0
+	dc.w	$8181,$4242,$2424,$1818
+	dc.w	$0606,$0101,$8080,$8080
+	dc.w	$8181,$4242,$2424,$1818
+	dc.w	$0606,$0101,$8080,$8080
 fill2_22:
-[0000269e] f0f0 f0f0 f0f0            pb??.l    $F0F11790
-[000026a4] f0f0 0f0f 0f0f            pb??.l    $0F0F35B5
-[000026aa] 0f0f 0f0f                 movep.w   3855(a7),d7
-[000026ae] f0f0 f0f0 f0f0            pb??.l    $F0F117A0
-[000026b4] f0f0 0f0f 0f0f            pb??.l    $0F0F35C5
-[000026ba] 0f0f 0f0f                 movep.w   3855(a7),d7
+	dc.w	$F0F0,$F0F0,$F0F0,$F0F0
+	dc.w	$0F0F,$0F0F,$0F0F,$0F0F
+	dc.w	$F0F0,$F0F0,$F0F0,$F0F0
+	dc.w	$0F0F,$0F0F,$0F0F,$0F0F
 fill2_23:
-[000026be] 0808 1c1c                 btst      #7196,a0
-[000026c2] 3e3e                      move.w    ???,d7
-[000026c4] 7f7f                      ???
-[000026c6] ffff 7f7f 3e3e 1c1c       vperm     #$3E3E1C1C,e23,e15,e23
-[000026ce] 0808 1c1c                 btst      #7196,a0
-[000026d2] 3e3e                      move.w    ???,d7
-[000026d4] 7f7f                      ???
-[000026d6] ffff 7f7f 3e3e 1c1c       vperm     #$3E3E1C1C,e23,e15,e23
-fill_2_2:
-[000026de] 1111                      move.b    (a1),-(a0)
-[000026e0] 2222                      move.l    -(a2),d1
-[000026e2] 4444                      neg.w     d4
-[000026e4] ffff 8888 4444 2222       vperm     #$44442222,e16,e16,e16
-[000026ec] ffff 1111 2222 4444       vperm     #$22224444,e9,e9,e9
-[000026f4] ffff 8888 4444 2222       vperm     #$44442222,e16,e16,e16
-[000026fc] ffff 0101 0202 0404       vperm     #$02020404,e9,e8,e9
-[00002704] 0808 1010                 btst      #4112,a0
-[00002708] 2020                      move.l    -(a0),d0
-[0000270a] 4040                      negx.w    d0
-[0000270c] 8080                      or.l      d0,d0
-[0000270e] 0101                      btst      d0,d1
-[00002710] 0202 0404                 andi.b    #$04,d2
-[00002714] 0808 1010                 btst      #4112,a0
-[00002718] 2020                      move.l    -(a0),d0
-[0000271a] 4040                      negx.w    d0
-[0000271c] 8080                      or.l      d0,d0
+	dc.w	$0808,$1C1C,$3E3E,$7F7F
+	dc.w	$FFFF,$7F7F,$3E3E,$1C1C
+	dc.w	$0808,$1C1C,$3E3E,$7F7F
+	dc.w	$FFFF,$7F7F,$3E3E,$1C1C
+fill2_24:
+	dc.w	$1111,$2222,$4444,$FFFF
+	dc.w	$8888,$4444,$2222,$FFFF
+	dc.w	$1111,$2222,$4444,$FFFF
+	dc.w	$8888,$4444,$2222,$FFFF
+fill3_1:
+	dc.w	$0101,$0202,$0404,$0808
+	dc.w	$1010,$2020,$4040,$8080
+	dc.w	$0101,$0202,$0404,$0808
+	dc.w	$1010,$2020,$4040,$8080
 fill3_2:
-[0000271e] 6060                      bra.s     $00002780
-[00002720] c0c0                      mulu.w    d0,d0
-[00002722] 8181 0303                 unpk      d1,d0,#$0303
-[00002726] 0606 0c0c                 addi.b    #$0C,d6
-[0000272a] 1818                      move.b    (a0)+,d4
-[0000272c] 3030 6060                 move.w    96(a0,d6.w),d0
-[00002730] c0c0                      mulu.w    d0,d0
-[00002732] 8181 0303                 unpk      d1,d0,#$0303
-[00002736] 0606 0c0c                 addi.b    #$0C,d6
-[0000273a] 1818                      move.b    (a0)+,d4
-[0000273c] 3030 4242                 move.w    66(a0,d4.w*2),d0 ; 68020+ only
-[00002740] 8181 8181                 unpk      d1,d0,#$8181
-[00002744] 4242                      clr.w     d2
-[00002746] 2424                      move.l    -(a4),d2
-[00002748] 1818                      move.b    (a0)+,d4
-[0000274a] 1818                      move.b    (a0)+,d4
-[0000274c] 2424                      move.l    -(a4),d2
-[0000274e] 4242                      clr.w     d2
-[00002750] 8181 8181                 unpk      d1,d0,#$8181
-[00002754] 4242                      clr.w     d2
-[00002756] 2424                      move.l    -(a4),d2
-[00002758] 1818                      move.b    (a0)+,d4
-[0000275a] 1818                      move.b    (a0)+,d4
-[0000275c] 2424                      move.l    -(a4),d2
+	dc.w	$6060,$C0C0,$8181,$0303
+	dc.w	$0606,$0C0C,$1818,$3030
+	dc.w	$6060,$C0C0,$8181,$0303
+	dc.w	$0606,$0C0C,$1818,$3030
+fill3_3:
+	dc.w	$4242,$8181,$8181,$4242
+	dc.w	$2424,$1818,$1818,$2424
+	dc.w	$4242,$8181,$8181,$4242
+	dc.w	$2424,$1818,$1818,$2424
 fill3_4:
-[0000275e] 8080                      or.l      d0,d0
-[00002760] 8080                      or.l      d0,d0
-[00002762] 8080                      or.l      d0,d0
-[00002764] 8080                      or.l      d0,d0
-[00002766] 8080                      or.l      d0,d0
-[00002768] 8080                      or.l      d0,d0
-[0000276a] 8080                      or.l      d0,d0
-[0000276c] 8080                      or.l      d0,d0
-[0000276e] 8080                      or.l      d0,d0
-[00002770] 8080                      or.l      d0,d0
-[00002772] 8080                      or.l      d0,d0
-[00002774] 8080                      or.l      d0,d0
-[00002776] 8080                      or.l      d0,d0
-[00002778] 8080                      or.l      d0,d0
-[0000277a] 8080                      or.l      d0,d0
-[0000277c] 8080                      or.l      d0,d0
+	dc.w	$8080,$8080,$8080,$8080
+	dc.w	$8080,$8080,$8080,$8080
+	dc.w	$8080,$8080,$8080,$8080
+	dc.w	$8080,$8080,$8080,$8080
 fill3_5:
-[0000277e] ffff 0000 0000 0000       vperm     #$00000000,e8,e8,e8
-[00002786] 0000 0000                 ori.b     #$00,d0
-[0000278a] 0000 0000                 ori.b     #$00,d0
-[0000278e] ffff 0000 0000 0000       vperm     #$00000000,e8,e8,e8
-[00002796] 0000 0000                 ori.b     #$00,d0
-[0000279a] 0000 0000                 ori.b     #$00,d0
+	dc.w	$FFFF,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
+	dc.w	$FFFF,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
 fill3_6:
-[0000279e] ffff 8080 8080 8080       vperm     #$80808080,e8,e16,e8
-[000027a6] 8080                      or.l      d0,d0
-[000027a8] 8080                      or.l      d0,d0
-[000027aa] 8080                      or.l      d0,d0
-[000027ac] 8080                      or.l      d0,d0
-[000027ae] ffff 8080 8080 8080       vperm     #$80808080,e8,e16,e8
-[000027b6] 8080                      or.l      d0,d0
-[000027b8] 8080                      or.l      d0,d0
-[000027ba] 8080                      or.l      d0,d0
-[000027bc] 8080                      or.l      d0,d0
+	dc.w	$FFFF,$8080,$8080,$8080
+	dc.w	$8080,$8080,$8080,$8080
+	dc.w	$FFFF,$8080,$8080,$8080
+	dc.w	$8080,$8080,$8080,$8080
 fill3_7:
-[000027be] 0001 0002                 ori.b     #$02,d1
-[000027c2] 0004 0008                 ori.b     #$08,d4
-[000027c6] 0010 0020                 ori.b     #$20,(a0)
-[000027ca] 0040 0080                 ori.w     #_nvdi_re,d0
-[000027ce] 0100                      btst      d0,d0
-[000027d0] 0200 0400                 andi.b    #$00,d0
-[000027d4] 0800 1000                 btst      #4096,d0
-[000027d8] 2000                      move.l    d0,d0
-[000027da] 4000                      negx.b    d0
-[000027dc] 8000                      or.b      d0,d0
+	dc.w	$0001,$0002,$0004,$0008
+	dc.w	$0010,$0020,$0040,$0080
+	dc.w	$0100,$0200,$0400,$0800
+	dc.w	$1000,$2000,$4000,$8000
 fill3_8:
-[000027de] 8003                      or.b      d3,d0
-[000027e0] 0007 000e                 ori.b     #$0E,d7
-[000027e4] 001c 0038                 ori.b     #$38,(a4)+
-[000027e8] 0070 00e0 01c0            ori.w     #f_splane,() ; 68020+ only; reserved BD=0
-[000027ee] 0380                      bclr      d1,d0
-[000027f0] 0700                      btst      d3,d0
-[000027f2] 0e00 1c00                 moves.b   d1,d0
-[000027f6] 3800                      move.w    d0,d4
-[000027f8] 7000                      moveq.l   #0,d0
-[000027fa] e000                      asr.b     #8,d0
-[000027fc] c001                      and.b     d1,d0
+	dc.w	$8003,$0007,$000E,$001C
+	dc.w	$0038,$0070,$00E0,$01C0
+	dc.w	$0380,$0700,$0E00,$1C00
+	dc.w	$3800,$7000,$E000,$C001
 fill3_9:
-[000027fe] 8001                      or.b      d1,d0
-[00002800] 4002                      negx.b    d2
-[00002802] 2004                      move.l    d4,d0
-[00002804] 1008                      move.l    b0,d0 ; apollo only
-[00002806] 0810 0420                 btst      #1056,(a0)
-[0000280a] 0240 0180                 andi.w    #t_yadd,d0
-[0000280e] 0180                      bclr      d0,d0
-[00002810] 0240 0420                 andi.w    #$0420,d0
-[00002814] 0810 1008                 btst      #4104,(a0)
-[00002818] 2004                      move.l    d4,d0
-[0000281a] 4002                      negx.b    d2
-[0000281c] 8001                      or.b      d1,d0
+	dc.w	$8001,$4002,$2004,$1008
+	dc.w	$0810,$0420,$0240,$0180
+	dc.w	$0180,$0240,$0420,$0810
+	dc.w	$1008,$2004,$4002,$8001
 fill3_10:
-[0000281e] 8000                      or.b      d0,d0
-[00002820] 8000                      or.b      d0,d0
-[00002822] 8000                      or.b      d0,d0
-[00002824] 8000                      or.b      d0,d0
-[00002826] 8000                      or.b      d0,d0
-[00002828] 8000                      or.b      d0,d0
-[0000282a] 8000                      or.b      d0,d0
-[0000282c] 8000                      or.b      d0,d0
-[0000282e] 8000                      or.b      d0,d0
-[00002830] 8000                      or.b      d0,d0
-[00002832] 8000                      or.b      d0,d0
-[00002834] 8000                      or.b      d0,d0
-[00002836] 8000                      or.b      d0,d0
-[00002838] 8000                      or.b      d0,d0
-[0000283a] 8000                      or.b      d0,d0
-[0000283c] 8000                      or.b      d0,d0
+	dc.w	$8000,$8000,$8000,$8000
+	dc.w	$8000,$8000,$8000,$8000
+	dc.w	$8000,$8000,$8000,$8000
+	dc.w	$8000,$8000,$8000,$8000
 fill3_11:
-[0000283e] ffff 0000 0000 0000       vperm     #$00000000,e8,e8,e8
-[00002846] 0000 0000                 ori.b     #$00,d0
-[0000284a] 0000 0000                 ori.b     #$00,d0
-[0000284e] 0000 0000                 ori.b     #$00,d0
-[00002852] 0000 0000                 ori.b     #$00,d0
-[00002856] 0000 0000                 ori.b     #$00,d0
-[0000285a] 0000 0000                 ori.b     #$00,d0
+	dc.w	$FFFF,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
 fill3_12:
-[0000285e] ffff 8080 8080 8080       vperm     #$80808080,e8,e16,e8
-[00002866] 8080                      or.l      d0,d0
-[00002868] 8080                      or.l      d0,d0
-[0000286a] 8080                      or.l      d0,d0
-[0000286c] 8080                      or.l      d0,d0
-[0000286e] ffff 8080 8080 8080       vperm     #$80808080,e8,e16,e8
-[00002876] 8080                      or.l      d0,d0
-[00002878] 8080                      or.l      d0,d0
-[0000287a] 8080                      or.l      d0,d0
-[0000287c] 8080                      or.l      d0,d0
+	dc.w	$FFFF,$8080,$8080,$8080
+	dc.w	$8080,$8080,$8080,$8080
+	dc.w	$FFFF,$8080,$8080,$8080
+	dc.w	$8080,$8080,$8080,$8080
 fill4_1:
-[0000287e] 0000 05a0                 ori.b     #$A0,d0
-[00002882] 05a0                      bclr      d2,-(a0)
-[00002884] 05a0                      bclr      d2,-(a0)
-[00002886] 05a0                      bclr      d2,-(a0)
-[00002888] 0db0 0db0 1db8 399c       bclr      d6,($1DB8399C,d0.l*4) ; 68020+ only
-[00002890] 799e                      ???
-[00002892] 718e                      ???
-[00002894] 718e                      ???
-[00002896] 6186                      bsr.s     fill3_10
-[00002898] 4182                      chk.w     d2,d0
-[0000289a] 0000 0000                 ori.b     #$00,d0
+	dc.w	$0000,$05A0,$05A0,$05A0
+	dc.w	$05A0,$0DB0,$0DB0,$1DB8
+	dc.w	$399C,$799E,$718E,$718E
+	dc.w	$6186,$4182,$0000,$0000
 sin:
 [0000289e] 7fff                      ???
 [000028a0] 7ffa                      ???
@@ -4014,54 +1512,34 @@ sin:
 [00002ee8] 0b28 08ee                 btst      d5,2286(a0)
 [00002eec] 06b3 0478 023c 0000       addi.l    #$0478023C,0(a3,d0.w)
 m_dot:
-[00002ef4] 0001 0000                 ori.b     #$00,d1
-[00002ef8] 0000 0000                 ori.b     #$00,d0
-[00002efc] 0000 0000                 ori.b     #$00,d0
-[00002f00] 0000 0000                 ori.b     #$00,d0
+	dc.w	$0001,$0000,$0000,$0000
+	dc.w	$0000,$0000,$0000,$0000
 m_plus:
-[00002f04] 0002 0000                 ori.b     #$00,d2
-[00002f08] 7fff                      ???
-[00002f0a] 7fff                      ???
-[00002f0c] 7fff                      ???
-[00002f0e] 0000 7fff                 ori.b     #$FF,d0
-[00002f12] ffff 0000 7fff ffff       vperm     #$7FFFFFFF,e8,e8,e8
-[00002f1a] 7fff                      ???
-m_asteri:
-[00002f1c] 0004 0000                 ori.b     #$00,d4
-[00002f20] 7fff                      ???
-[00002f22] 7fff                      ???
-[00002f24] 7fff                      ???
-[00002f26] 0000 7fff                 ori.b     #$FF,d0
-[00002f2a] ffff 1999 1999 e665       vperm     #$1999E665,e17,e9,e17
-[00002f32] e665                      asr.w     d3,d5
-[00002f34] 0000 7fff                 ori.b     #$FF,d0
-[00002f38] ffff 7fff e665 1999       vperm     #$E6651999,e23,e15,e23
-[00002f40] 1999 e665                 move.b    (a1)+,101(a4,a6.w*8) ; 68020+ only
+	dc.w	$0002,$0000,$7FFF,$7FFF
+	dc.w	$7FFF,$0000,$7FFF,$FFFF
+	dc.w	$0000,$7FFF,$FFFF,$7FFF
+m_asterisk:
+	dc.w	$0004,$0000,$7FFF,$7FFF
+	dc.w	$7FFF,$0000,$7FFF,$FFFF
+	dc.w	$1999,$1999,$E665,$E665
+	dc.w	$0000,$7FFF,$FFFF,$7FFF
+	dc.w	$E665,$1999,$1999,$E665
 m_square:
-[00002f44] 0004 0000                 ori.b     #$00,d4
-[00002f48] 7fff                      ???
-[00002f4a] 7fff                      ???
-[00002f4c] 0000 0000                 ori.b     #$00,d0
-[00002f50] ffff 0000 0000 ffff       vperm     #$0000FFFF,e8,e8,e8
-[00002f58] ffff ffff 0000 0000       vperm     #$00000000,e23,e23,e23
-[00002f60] 0000 ffff                 ori.b     #$FF,d0
-[00002f64] ffff 0000 ffff ffff       vperm     #$FFFFFFFF,e8,e8,e8
+	dc.w	$0004,$0000,$7FFF,$7FFF
+	dc.w	$0000,$0000,$FFFF,$0000
+	dc.w	$0000,$FFFF,$FFFF,$FFFF
+	dc.w	$0000,$0000,$0000,$FFFF
+	dc.w	$FFFF,$0000,$FFFF,$FFFF
 m_cross:
-[00002f6c] 0002 0000                 ori.b     #$00,d2
-[00002f70] 7fff                      ???
-[00002f72] 7fff                      ???
-[00002f74] ffff 0000 0000 ffff       vperm     #$0000FFFF,e8,e8,e8
-[00002f7c] 0000 0000                 ori.b     #$00,d0
-[00002f80] ffff ffff 0004 9ab0       vperm     #$00049AB0,e23,e23,e23
-[00002f88] 7fff                      ???
-[00002f8a] 5014                      addq.b    #8,(a4)
-[00002f8c] 0000 5014                 ori.b     #$14,d0
-[00002f90] 7fff                      ???
-[00002f92] 0096 7fff 0096            ori.l     #$7FFF0096,(a6)
-[00002f98] ffff 5014 ffff 5014       vperm     #$FFFF5014,e12,e13,e8
-[00002fa0] 7fff                      ???
-[00002fa2] a028 7fff a028            msac.l    a7,d7,>>1,-24536(a0)&,d0,acc3
-[00002fa8] 0000 5014                 ori.b     #$14,d0
+	dc.w	$0002,$0000,$7FFF,$7FFF
+	dc.w	$FFFF,$0000,$0000,$FFFF
+	dc.w	$0000,$0000,$FFFF,$FFFF
+m_diamon:
+	dc.w	$0004,$9AB0,$7FFF,$5014
+	dc.w	$0000,$5014,$7FFF,$0096
+	dc.w	$7FFF,$0096,$FFFF,$5014
+	dc.w	$FFFF,$5014,$7FFF,$A028
+	dc.w	$7FFF,$A028,$0000,$5014
 work_out:
 [00002fac] 0000 0000                 ori.b     #$00,d0
 [00002fb0] 0000 0000                 ori.b     #$00,d0
@@ -4092,7 +1570,7 @@ work_out:
 [00003014] 0000 0001                 ori.b     #$01,d0
 [00003018] 0001 0535                 ori.b     #$35,d1
 [0000301c] 03e7                      bset      d1,-(a7)
-extnd_ou:
+extnd_out:
 [0000301e] 0004 0000                 ori.b     #$00,d4
 [00003022] 001f 0000                 ori.b     #$00,(a7)+
 [00003026] 0000 0001                 ori.b     #$01,d0
@@ -4122,50 +1600,54 @@ extnd_ou:
 [00003086] 0000 0000                 ori.b     #$00,d0
 [0000308a] 0000 0000                 ori.b     #$00,d0
 [0000308e] 0000 0000                 ori.b     #$00,d0
-[00003092] 0000 0313                 ori.b     #$13,d0
-[00003096] 0602 1998                 addi.b    #$98,d2
-[0000309a] 0000 0000                 ori.b     #$00,d0
-[0000309e] 0000 0000                 ori.b     #$00,d0
-[000030a2] 23be 0000                 move.l    ???,0(a1,d0.w)
-[000030a6] 173c 0000                 move.b    #$00,-(a3)
-[000030aa] 167e                      movea.l   ???,b3 ; apollo only
-[000030ac] 0000 0000                 ori.b     #$00,d0
-[000030b0] 0000 0000                 ori.b     #$00,d0
-[000030b4] 0000 148c                 ori.b     #$8C,d0
-[000030b8] 0000 0000                 ori.b     #$00,d0
-[000030bc] 0000 195c                 ori.b     #$5C,d0
-[000030c0] 0000 2fac                 ori.b     #$AC,d0
-[000030c4] 0000 301e                 ori.b     #$1E,d0
-[000030c8] 0080 0083 0000            ori.l     #$00830000,d0
-[000030ce] 0000 0000                 ori.b     #$00,d0
-[000030d2] 9e2c 0000                 sub.b     0(a4),d7
-[000030d6] 893a 0000                 or.b      d4,$000030D8(pc) ; apollo only
-[000030da] 0000 0000                 ori.b     #$00,d0
-[000030de] 1948 0000                 move.l    b0,0(a4) ; apollo only
-[000030e2] 0000 0000                 ori.b     #$00,d0
-[000030e6] 1964 0000                 move.b    -(a4),0(a4)
-[000030ea] 0000 0000                 ori.b     #$00,d0
-[000030ee] 0000 0000                 ori.b     #$00,d0
-[000030f2] 0000 0000                 ori.b     #$00,d0
-[000030f6] 0000 0000                 ori.b     #$00,d0
-[000030fa] 0000 0000                 ori.b     #$00,d0
-[000030fe] 0000 0000                 ori.b     #$00,d0
-[00003102] 0000 0000                 ori.b     #$00,d0
-[00003106] 38d2                      move.w    (a2),(a4)+
-[00003108] 0000 3846                 ori.b     #$46,d0
-[0000310c] 0000 38ec                 ori.b     #$EC,d0
-[00003110] 0000 390e                 ori.b     #$0E,d0
-[00003114] 0000 3910                 ori.b     #$10,d0
-[00003118] 0000 0000                 ori.b     #$00,d0
-[0000311c] 0000 0000                 ori.b     #$00,d0
-[00003120] 0000 0000                 ori.b     #$00,d0
-[00003124] 0000 0000                 ori.b     #$00,d0
-[00003128] 0000 0000                 ori.b     #$00,d0
-[0000312c] 0000 0000                 ori.b     #$00,d0
-[00003130] 0000 0000                 ori.b     #$00,d0
-[00003134] 0000 0000                 ori.b     #$00,d0
-[00003138] 0000 0000                 ori.b     #$00,d0
-[0000313c] 0000 0000                 ori.b     #$00,d0
+[00003092] 0000 
+nvdi_str:
+[00003094] 0313                      dc.w VERSION
+[00003096] 06021998                  dc.l $06021998
+[0000309a] 0000                      dc.w 0
+                                     dc.w 0
+[0000309e] 0000                      dc.w 0
+[000030a0] 000023be                  dc.l fill0
+[000030a4] 0000173c                  dc.l $0000173c
+[000030a8] 0000167e                  dc.l $0000167e
+[000030ac] 00000000                  dc.l 0
+[000030b0] 00000000                  dc.l 0
+[000030b4] 0000148c                  dc.l $0000148c
+[000030b8] 00000000                  dc.l sys_font
+[000030bc] 0000195c                  dc.l $0000195c
+[000030c0] 0000 2fac                 dc.l work_out
+[000030c4] 0000 301e                 dc.l extnd_out
+[000030c8] 0080 0083 0000            dc.w $0080,$0083,0,0
+[000030d0] 0000                      dc.l vdi_tab
+[000030d4] 0000 893a                 dc.l linea_tab
+[000030d8] 0000  0000                dc.l 0
+[000030dc] 0000 1948                 dc.l $00001948
+[000030e0] 0000 0000                 dc.l 0
+[000030e4] 0000 1964                 dc.l $00001964
+[000030e8] 0000 0000                 dc.l 0
+[000030ec] 0000 0000                 dc.l 0
+[000030f0] 0000 0000                 dc.l 0
+[000030f4] 0000 0000                 dc.l 0
+[000030f8] 0000 0000                 dc.l 0
+[000030fc] 0000 0000                 dc.l 0
+[00003100] 0000 0000                 dc.l 0
+[00003104] 0000 38d2                 dc.l search_c
+[00003108] 0000 3846                 dc.l init_cookie0
+[0000310c] 0000 38ec                 dc.l reset_co
+[00003110] 0000 390e                 dc.l init_vir
+[00003114] 0000 3910                 dc.l reset_vi
+[00003118] 0000 0000                 dc.l Malloc_s
+[0000311c] 0000 0000                 dc.l Mfree_sy
+[00003120] 0000 0000                 dc.l 0
+[00003124] 0000 0000                 dc.l 0
+[00003128] 0000 0000                 dc.l load_fil
+[0000312c] 0000 0000                 dc.l load_prg
+[00003130] 0000 0000                 dc.l load_NOD
+[00003134] 0000 0000                 dc.l unload_N
+[00003138] 0000 0000                 dc.l init_NOD
+[0000313c] 0000 0000                 dc.l 0
+nvdi_str_end:
+
 change_v:
 [00003140] 48e7 c080                 movem.l   d0-d1/a0,-(a7)
 [00003144] 72ff                      moveq.l   #-1,d1
@@ -4220,65 +1702,65 @@ init_gdo:
 [000031ce] 4e75                      rts
 MallocA:
 [000031d0] 48e7 60e0                 movem.l   d1-d2/a0-a2,-(a7)
-[000031d4] 6100 0000                 bsr.w     Malloc_s
+[000031d4] 6100 0000                 bsr.w     Malloc_sys
 [000031d8] 4cdf 0706                 movem.l   (a7)+,d1-d2/a0-a2
 [000031dc] 4e75                      rts
-Mshrink:
+Mshrink: ; not exported!
 [000031de] 48e7 60e0                 movem.l   d1-d2/a0-a2,-(a7)
 [000031e2] 2040                      movea.l   d0,a0
 [000031e4] 2001                      move.l    d1,d0
-[000031e6] 6100 0000                 bsr.w     Mshrink_
+[000031e6] 6100 0000                 bsr.w     Mshrink_sys
 [000031ea] 4cdf 0706                 movem.l   (a7)+,d1-d2/a0-a2
 [000031ee] 4e75                      rts
-Mfree:
+Mfree: ; not exported!
 [000031f0] 48e7 60e0                 movem.l   d1-d2/a0-a2,-(a7)
 [000031f4] 2040                      movea.l   d0,a0
-[000031f6] 6100 0000                 bsr.w     Mfree_sy
+[000031f6] 6100 0000                 bsr.w     Mfree_sys
 [000031fa] 4cdf 0706                 movem.l   (a7)+,d1-d2/a0-a2
 [000031fe] 4e75                      rts
 clear_cp:
 [00003200] 3038 19de                 move.w    ($000019DE).w,d0
-[00003204] b07c 0028                 cmp.w     #_nvdi_co,d0
-[00003208] 6d0c                      blt.s     clear_cp
+[00003204] b07c 0028                 cmp.w     #40,d0
+[00003208] 6d0c                      blt.s     clear_cp_020
 [0000320a] 40e7                      move.w    sr,-(a7)
-[0000320c] 007c 0700                 ori.w     #SHFTMODE,sr
-[00003210] f4f8                      cpusha    bc
+[0000320c] 007c 0700                 ori.w     #$0700,sr
+[00003210] f4f8                      dc.w $f4f8 ; cpusha    bc
 [00003212] 46df                      move.w    (a7)+,sr
 [00003214] 4e75                      rts
-clear_cp:
-[00003216] 0c40 0014                 cmpi.w    #_dy_sign,d0
-[0000321a] 6d1a                      blt.s     clear_cp
+clear_cp_020:
+[00003216] 0c40 0014                 cmpi.w    #20,d0
+[0000321a] 6d1a                      blt.s     clear_cp_end
 [0000321c] 40e7                      move.w    sr,-(a7)
 [0000321e] 2f00                      move.l    d0,-(a7)
-[00003220] 007c 0700                 ori.w     #SHFTMODE,sr
+[00003220] 007c 0700                 ori.w     #$0700,sr
 [00003224] 4e7a 0002                 movec     cacr,d0 ; 68020+ only
 [00003228] 80bc 0000 0808            or.l      #$00000808,d0
 [0000322e] 4e7b 0002                 movec     d0,cacr ; 68020+ only
 [00003232] 201f                      move.l    (a7)+,d0
 [00003234] 46df                      move.w    (a7)+,sr
-clear_cp:
+clear_cp_end:
 [00003236] 4e75                      rts
 vdi_blin:
 [00003238] 2f08                      move.l    a0,-(a7)
 [0000323a] 6100 05e0                 bsr       copy_nvd
 [0000323e] 21c8 1a44                 move.l    a0,($00001A44).w
-[00003242] 31fc 0001 167c            move.w    #FREE_MB,($0000167C).w
+[00003242] 31fc 0001 167c            move.w    #1,($0000167C).w
 [00003248] 41f8 1948                 lea.l     ($00001948).w,a0
 [0000324c] 20fc 0000 1f16            move.l    #V_HID_CN,(a0)+
 [00003252] 20fc 0000 93d2            move.l    #vbl_curs,(a0)+
 [00003258] 20fc 0000 04a8            move.l    #con_stat,(a0)+
 [0000325e] 20fc 0000 94f4            move.l    #vt_con,(a0)+
-[00003264] 20fc 0000 94fa            move.l    #vt_rawco,(a0)+
+[00003264] 20fc 0000 94fa            move.l    #vt_rawcon,(a0)+
 [0000326a] 21fc 0000 94f4 04a8       move.l    #vt_con,($000004A8).w
 [00003272] 41f8 1970                 lea.l     ($00001970).w,a0
-[00003276] 20fc 0000 3c56            move.l    #dummy_rt,(a0)+
-[0000327c] 20fc 0000 3c56            move.l    #dummy_rt,(a0)+
+[00003276] 20fc 0000 3c56            move.l    #dummy_rte,(a0)+
+[0000327c] 20fc 0000 3c56            move.l    #dummy_rte,(a0)+
 [00003282] 41f8 1978                 lea.l     ($00001978).w,a0
-[00003286] 20fc 0000 3c56            move.l    #dummy_rt,(a0)+
-[0000328c] 20fc 0000 3c56            move.l    #dummy_rt,(a0)+
+[00003286] 20fc 0000 3c56            move.l    #dummy_rte,(a0)+
+[0000328c] 20fc 0000 3c56            move.l    #dummy_rte,(a0)+
 [00003292] 41f8 1964                 lea.l     ($00001964).w,a0
 [00003296] 20fc 0000 1200            move.l    #__a_vdi,(a0)+
-[0000329c] 20fc 0000 8eb0            move.l    #draw_spr,(a0)+
+[0000329c] 20fc 0000 8eb0            move.l    #draw_sprite0,(a0)+
 [000032a2] 20fc 0000 8df6            move.l    #undraw_s,(a0)+
 [000032a8] 6100 0536                 bsr       init_fon
 [000032ac] 41f8 16fe                 lea.l     ($000016FE).w,a0
@@ -4296,14 +1778,14 @@ vdi_blin:
 chk_blit:
 [000032cc] 48e7 40c0                 movem.l   d1/a0-a1,-(a7)
 [000032d0] 40c1                      move.w    sr,d1
-[000032d2] 007c 0700                 ori.w     #SHFTMODE,sr
+[000032d2] 007c 0700                 ori.w     #$0700,sr
 [000032d6] 204f                      movea.l   a7,a0
 [000032d8] 2278 0008                 movea.l   ($00000008).w,a1
-[000032dc] 21fc 0000 32ec 0008       move.l    #bus_err_,($00000008).w
+[000032dc] 21fc 0000 32ec 0008       move.l    #bus_err_blit,($00000008).w
 [000032e4] 7000                      moveq.l   #0,d0
 [000032e6] 4a78 8a00                 tst.w     ($FFFF8A00).w
 [000032ea] 7002                      moveq.l   #2,d0
-bus_err_:
+bus_err_blit:
 [000032ec] 21c9 0008                 move.l    a1,($00000008).w
 [000032f0] 2e48                      movea.l   a0,a7
 [000032f2] 46c1                      move.w    d1,sr
@@ -4312,8 +1794,9 @@ bus_err_:
 rez_bps_:
 [000032fa] 0001 0002                 ori.b     #$02,d1
 [000032fe] 0004 0008                 ori.b     #$08,d4
-[00003302] 0010 48e7                 ori.b     #$E7,(a0)
-[00003306] e000                      asr.b     #8,d0
+[00003302] 0010 
+create_f:
+[00003304] 48e7                      movem.l   d0-d2,-(a7)
 [00003308] 3038 19d8                 move.w    ($000019D8).w,d0
 [0000330c] 41f8 171e                 lea.l     ($0000171E).w,a0
 [00003310] 7207                      moveq.l   #7,d1
@@ -4438,10 +1921,10 @@ init_vt5:
 [0000346a] 3038 2064                 move.w    ($00002064).w,d0
 [0000346e] 3238 206c                 move.w    ($0000206C).w,d1
 [00003472] 3438 206e                 move.w    ($0000206E).w,d2
-[00003476] 43f9 0000 0700            lea.l     header_0,a1
+[00003476] 43f9 0000 0700            lea.l     header_09,a1
 [0000347c] 0c41 0140                 cmpi.w    #SCROLL_L,d1
 [00003480] 6d06                      blt.s     init_vt5
-[00003482] 43f9 0000 215a            lea.l     header_1,a1
+[00003482] 43f9 0000 215a            lea.l     header_10,a1
 init_vt5:
 [00003488] 21e9 004c 205a            move.l    76(a1),($0000205A).w
 [0000348e] 21e9 0048 2066            move.l    72(a1),($00002066).w
@@ -4456,7 +1939,7 @@ init_vt5:
 [000034b2] c4c3                      mulu.w    d3,d2
 [000034b4] 48b8 0007 2044            movem.w   d0-d2,($00002044).w
 [000034ba] 21fc 0000 00ff 204a       move.l    #VQT_CACH,($0000204A).w
-[000034c2] 31fc 0001 1f16            move.w    #FREE_MB,($00001F16).w
+[000034c2] 31fc 0001 1f16            move.w    #1,($00001F16).w
 [000034c8] 31fc 0100 206a            move.w    #t_bitmap,($0000206A).w
 [000034ce] 31fc 1e1e 2058            move.w    #REQ_COL,($00002058).w
 [000034d4] 21f8 044e 204e            move.l    ($0000044E).w,($0000204E).w
@@ -4464,82 +1947,33 @@ init_vt5:
 [000034de] 4278 2052                 clr.w     ($00002052).w
 [000034e2] 4cdf 070f                 movem.l   (a7)+,d0-d3/a0-a2
 [000034e6] 4e75                      rts
-no_offsc:
-[000034e8] 4f66                      lea.l     -(a6),b7 ; apollo only
-[000034ea] 6673                      bne.s     $0000355F
-[000034ec] 6372                      bls.s     $00003560
-[000034ee] 6565                      bcs.s     $00003555
-[000034f0] 6e2d                      bgt.s     $0000351F
-[000034f2] 5472 6569 6265            addq.w    #2,([$6265,a2,zd6.w*4]) ; 68020+ only
-[000034f8] 7220                      moveq.l   #32,d1
-[000034fa] 6e69                      bgt.s     $00003565
-[000034fc] 6368                      bls.s     $00003566
-[000034fe] 7420                      moveq.l   #32,d2
-[00003500] 6765                      beq.s     $00003567
-[00003502] 6675                      bne.s     $00003579
-[00003504] 6e64                      bgt.s     $0000356A
-[00003506] 656e                      bcs.s     $00003576
-[00003508] 2e0d                      move.l    a5,d7
-[0000350a] 0a4d 434d                 eori.w    #$434D,a5 ; apollo only
-[0000350e] 4420                      neg.b     -(a0)
-[00003510] 7769                      ???
-[00003512] 7264                      moveq.l   #100,d1
-[00003514] 2067                      movea.l   -(a7),a0
-[00003516] 6573                      bcs.s     $0000358B
-[00003518] 7461                      moveq.l   #97,d2
-[0000351a] 7274                      moveq.l   #116,d1
-[0000351c] 6574                      bcs.s     $00003592
-[0000351e] 2e2e 2e0d                 move.l    11789(a6),d7
-[00003522] 0a00 4269                 eori.b    #$69,d0
-[00003526] 6c64                      bge.s     $0000358C
-[00003528] 7363                      ???
-[0000352a] 6869                      bvc.s     $00003595
-[0000352c] 726d                      moveq.l   #109,d1
-[0000352e] 2d54 7265                 move.l    (a4),29285(a6)
-[00003532] 6962                      bvs.s     $00003596
-[00003534] 6572                      bcs.s     $000035A8
-[00003536] 206e 6963                 movea.l   26979(a6),a0
-[0000353a] 6874                      bvc.s     $000035B0
-[0000353c] 2067                      movea.l   -(a7),a0
-[0000353e] 6566                      bcs.s     $000035A6
-[00003540] 756e                      ???
-[00003542] 6465                      bcc.s     $000035A9
-[00003544] 6e2e                      bgt.s     $00003574
-[00003546] 0d0a 4d43                 movep.w   19779(a2),d6
-[0000354a] 4d44                      lea.l     d4,b6 ; apollo only
-[0000354c] 2077 6972 6420 6765 7374  movea.l   ([$64206765,a7],$7374),a0 ; 68020+ only
-[00003556] 6172                      bsr.s     $000035CA
-[00003558] 7465                      moveq.l   #101,d2
-[0000355a] 742e                      moveq.l   #46,d2
-[0000355c] 2e2e 0d0a                 move.l    3338(a6),d7
-[00003560] 0000 4745                 ori.b     #$45,d0
-[00003564] 4d44                      lea.l     d4,b6 ; apollo only
-[00003566] 4553                      lea.l     (a3),b2 ; apollo only
-[00003568] 4b5c                      lea.l     (a4)+,b5 ; apollo only
-[0000356a] 4d43                      lea.l     d3,b6 ; apollo only
-[0000356c] 4d44                      lea.l     d4,b6 ; apollo only
-[0000356e] 2e54                      movea.l   (a4),a7
-[00003570] 4f53                      lea.l     (a3),b7 ; apollo only
-[00003572] 0053 7973                 ori.w     #$7973,(a3)
-[00003576] 7465                      moveq.l   #101,d2
-[00003578] 6d20                      blt.s     $0000359A
-[0000357a] 7769                      ???
-[0000357c] 7264                      moveq.l   #100,d1
-[0000357e] 2061                      movea.l   -(a1),a0
-[00003580] 6e67                      bgt.s     $000035E9
-[00003582] 6568                      bcs.s     $000035EC
-[00003584] 616c                      bsr.s     $000035F2
-[00003586] 7465                      moveq.l   #101,d2
-[00003588] 6e2e                      bgt.s     $000035B8
-[0000358a] 0d0a 0000                 movep.w   0(a2),d6
+no_offscreen:
+	dc.b	'Offscreen-Treiber nicht gefunden.',$0D
+	dc.b	$0A,'MCMD wird gestartet...',$0D
+	dc.b	$0A,$00
+no_screen:
+	dc.b	'Bildschirm-Treiber nicht gefunden.',$0D,$0A
+	dc.b	'MCMD wird gestartet...',$0D,$0A
+	dc.b	$00
+empty_cmd:
+	dc.b	$00
+mcmd_path:
+	dc.b	'GEMDESK\MCMD.TOS'
+X3572:
+	dc.b	$00
+system_halted:
+	dc.b	'System wird angehalten.',$0D,$0A
+	dc.b	$00,$00
+
 Cconws:
-[0000358e] 48e7 60e0                 movem.l   d1-d2/a0-a2,-(a7)
-[00003592] 2f08                      move.l    a0,-(a7)
-[00003594] 3f3c 0009                 move.w    #SCREEN9,-(a7)
-[00003598] 4e41                      trap      #1
-[0000359a] 5c8f                      addq.l    #6,a7
-[0000359c] 4cdf 0706                 movem.l   (a7)+,d1-d2/a0-a2
-[000035a0] 4e75                      rts
+	movem.l	d1-d2/a0-a2,-(a7)
+	move.l	a0,-(a7)
+	move.w	#$0009,-(a7)
+	trap	#1
+	addq.l	#6,a7
+	movem.l	(a7)+,d1-d2/a0-a2
+	rts
+
 vdi_init:
 [000035a2] 48e7 e0f2                 movem.l   d0-d2/a0-a3/a6,-(a7)
 [000035a6] 6100 02f2                 bsr       search_c
@@ -4550,32 +1984,32 @@ vdi_init:
 [000035ba] 665e                      bne.s     vdi_init
 [000035bc] 4ab8 1a44                 tst.l     ($00001A44).w
 [000035c0] 664e                      bne.s     load_NOD
-[000035c2] 41fa ff24                 lea.l     no_offsc(pc),a0
+[000035c2] 41fa ff24                 lea.l     no_offscreen(pc),a0
 [000035c6] 4eb9 0000 358e            jsr       Cconws
 [000035cc] 4fef ff80                 lea.l     -128(a7),a7
 [000035d0] 204f                      movea.l   a7,a0
 [000035d2] 43f8 167e                 lea.l     ($0000167E).w,a1
 [000035d6] 4eb9 0000 0000            jsr       strgcpy
 [000035dc] 204f                      movea.l   a7,a0
-[000035de] 43fa ff82                 lea.l     mcmd_pat(pc),a1
+[000035de] 43fa ff82                 lea.l     mcmd_path(pc),a1
 [000035e2] 4eb9 0000 0000            jsr       strgcat
 [000035e8] 204f                      movea.l   a7,a0
 [000035ea] 42a7                      clr.l     -(a7)
-[000035ec] 487a ff73                 pea.l     empty_cm(pc)
+[000035ec] 487a ff73                 pea.l     empty_cmd(pc)
 [000035f0] 2f08                      move.l    a0,-(a7)
 [000035f2] 4267                      clr.w     -(a7)
 [000035f4] 3f3c 004b                 move.w    #PEXEC,-(a7)
 [000035f8] 4e41                      trap      #1
 [000035fa] 4fef 0010                 lea.l     16(a7),a7
 [000035fe] 4fef 0080                 lea.l     128(a7),a7
-[00003602] 41fa ff6f                 lea.l     system_h(pc),a0
+[00003602] 41fa ff6f                 lea.l     system_halted(pc),a0
 [00003606] 4eb9 0000 358e            jsr       Cconws
 vdi_init:
 [0000360c] 4e71                      nop
 [0000360e] 60fc                      bra.s     vdi_init
 load_NOD:
 [00003610] 70ff                      moveq.l   #-1,d0
-[00003612] 2079 0000 0078            movea.l   MSys+$00000078,a0
+[00003612] 2079 0000 0078            movea.l   MSys+BehneError,a0
 [00003618] 4ed0                      jmp       (a0)
 vdi_init:
 [0000361a] 6100 01c4                 bsr       init_fon
@@ -4586,7 +2020,7 @@ vdi_init:
 [0000362e] 6100 3130                 bsr       wk_defau
 [00003632] 2c78 1940                 movea.l   ($00001940).w,a6
 [00003636] 6100 3128                 bsr       wk_defau
-[0000363a] 6100 01fa                 bsr       init_coo
+[0000363a] 6100 01fa                 bsr       init_cookie
 [0000363e] 4278 167c                 clr.w     ($0000167C).w
 [00003642] 4cdf 4f07                 movem.l   (a7)+,d0-d2/a0-a3/a6
 [00003646] 4e75                      rts
@@ -4604,25 +2038,25 @@ load_scr:
 [0000366a] 6100 0000                 bsr.w     load_ATA
 [0000366e] 2008                      move.l    a0,d0
 [00003670] 6668                      bne.s     load_scr
-[00003672] 41fa feb0                 lea.l     no_scree(pc),a0
+[00003672] 41fa feb0                 lea.l     no_screen(pc),a0
 [00003676] 4eb9 0000 358e            jsr       Cconws
 [0000367c] 4fef ff80                 lea.l     -128(a7),a7
 [00003680] 204f                      movea.l   a7,a0
 [00003682] 43f8 167e                 lea.l     ($0000167E).w,a1
 [00003686] 4eb9 0000 0000            jsr       strgcpy
 [0000368c] 204f                      movea.l   a7,a0
-[0000368e] 43fa fed2                 lea.l     mcmd_pat(pc),a1
+[0000368e] 43fa fed2                 lea.l     mcmd_path(pc),a1
 [00003692] 4eb9 0000 0000            jsr       strgcat
 [00003698] 204f                      movea.l   a7,a0
 [0000369a] 42a7                      clr.l     -(a7)
-[0000369c] 487a fec3                 pea.l     empty_cm(pc)
+[0000369c] 487a fec3                 pea.l     empty_cmd(pc)
 [000036a0] 2f08                      move.l    a0,-(a7)
 [000036a2] 4267                      clr.w     -(a7)
 [000036a4] 3f3c 004b                 move.w    #PEXEC,-(a7)
 [000036a8] 4e41                      trap      #1
 [000036aa] 4fef 0010                 lea.l     16(a7),a7
 [000036ae] 4fef 0080                 lea.l     128(a7),a7
-[000036b2] 41fa febf                 lea.l     system_h(pc),a0
+[000036b2] 41fa febf                 lea.l     system_halted(pc),a0
 [000036b6] 4eb9 0000 358e            jsr       Cconws
 load_scr:
 [000036bc] 4e71                      nop
@@ -4634,13 +2068,13 @@ load_scr:
 [000036cc] 2008                      move.l    a0,d0
 [000036ce] 660a                      bne.s     load_scr
 [000036d0] 70ff                      moveq.l   #-1,d0
-[000036d2] 2079 0000 0078            movea.l   MSys+$00000078,a0
+[000036d2] 2079 0000 0078            movea.l   MSys+BehneError,a0
 [000036d8] 4ed0                      jmp       (a0)
 load_scr:
 [000036da] 47f8 16fe                 lea.l     ($000016FE).w,a3
 [000036de] 2748 000c                 move.l    a0,12(a3)
 [000036e2] 2468 0010                 movea.l   16(a0),a2
-[000036e6] 41f8 1980                 lea.l     ($00001980).w,a0
+[000036e6] 41f8 1980                 lea.l     (nvdi_strx).w,a0
 [000036ea] 224b                      movea.l   a3,a1
 [000036ec] 4e92                      jsr       (a2)
 [000036ee] 2740 0010                 move.l    d0,16(a3)
@@ -4650,14 +2084,14 @@ load_scr:
 [000036fa] 4afc                      illegal
 load_scr:
 [000036fc] 70ff                      moveq.l   #-1,d0
-[000036fe] 2079 0000 0078            movea.l   MSys+$00000078,a0
+[000036fe] 2079 0000 0078            movea.l   MSys+BehneError,a0
 [00003704] 4ed0                      jmp       (a0)
 load_scr:
 [00003706] 4cdf 0707                 movem.l   (a7)+,d0-d2/a0-a2
 [0000370a] 4e75                      rts
 unload_s:
 [0000370c] 48e7 e0e0                 movem.l   d0-d2/a0-a2,-(a7)
-[00003710] 41f8 1980                 lea.l     ($00001980).w,a0
+[00003710] 41f8 1980                 lea.l     (nvdi_strx).w,a0
 [00003714] 43f8 16fe                 lea.l     ($000016FE).w,a1
 [00003718] 2029 000c                 move.l    12(a1),d0
 [0000371c] 671e                      beq.s     unload_s
@@ -4669,24 +2103,24 @@ unload_s:
 [0000372c] 43f8 16fe                 lea.l     ($000016FE).w,a1
 [00003730] 2069 000c                 movea.l   12(a1),a0
 [00003734] 42a9 000c                 clr.l     12(a1)
-[00003738] 6100 0000                 bsr.w     Mfree_sy
+[00003738] 6100 0000                 bsr.w     Mfree_sys
 unload_s:
 [0000373c] 4cdf 0707                 movem.l   (a7)+,d0-d2/a0-a2
 [00003740] 4e75                      rts
 init_vdi:
 [00003742] 203c 0000 0a58            move.l    #$00000A58,d0
-[00003748] 6100 0000                 bsr.w     Malloc_s
+[00003748] 6100 0000                 bsr.w     Malloc_sys
 [0000374c] 21c8 193c                 move.l    a0,($0000193C).w
 [00003750] 203c 0000 0a58            move.l    #$00000A58,d0
 [00003756] 6100 0000                 bsr.w     clear_me
 [0000375a] 203c 0000 0a58            move.l    #$00000A58,d0
-[00003760] 6100 0000                 bsr.w     Malloc_s
+[00003760] 6100 0000                 bsr.w     Malloc_sys
 [00003764] 21c8 1940                 move.l    a0,($00001940).w
 [00003768] 21c8 1988                 move.l    a0,($00001988).w
 [0000376c] 203c 0000 0a58            move.l    #$00000A58,d0
 [00003772] 6100 0000                 bsr.w     clear_me
 [00003776] 203c 0000 4000            move.l    #FAST_MB_,d0
-[0000377c] 6100 0000                 bsr.w     Malloc_s
+[0000377c] 6100 0000                 bsr.w     Malloc_sys
 [00003780] 21c8 1678                 move.l    a0,($00001678).w
 [00003784] 303c 007f                 move.w    #$007F,d0
 [00003788] 43f8 1738                 lea.l     ($00001738).w,a1
@@ -4714,7 +2148,7 @@ init_fon:
 [000037e0] 48e7 e0e0                 movem.l   d0-d2/a0-a2,-(a7)
 [000037e4] 7202                      moveq.l   #2,d1
 [000037e6] 43f8 148c                 lea.l     ($0000148C).w,a1
-[000037ea] 45fa c826                 lea.l     linea_fo(pc),a2
+[000037ea] 45fa c826                 lea.l     linea_fonts(pc),a2
 init_fon:
 [000037ee] 201a                      move.l    (a2)+,d0
 [000037f0] 2040                      movea.l   d0,a0
@@ -4737,18 +2171,18 @@ copy_nvd:
 [0000381c] 48e7 80c0                 movem.l   d0/a0-a1,-(a7)
 [00003820] 7055                      moveq.l   #85,d0
 [00003822] 41fa f870                 lea.l     nvdi_str(pc),a0
-[00003826] 43f8 1980                 lea.l     ($00001980).w,a1
+[00003826] 43f8 1980                 lea.l     (nvdi_strx).w,a1
 copy_nvd:
 [0000382a] 32d8                      move.w    (a0)+,(a1)+
 [0000382c] 51c8 fffc                 dbf       d0,copy_nvd
 [00003830] 4cdf 0301                 movem.l   (a7)+,d0/a0-a1
 [00003834] 4e75                      rts
-init_coo:
+init_cookie:
 [00003836] 203c 4d46 4d56            move.l    #$4D464D56,d0
-[0000383c] 223c 0000 3912            move.l    #MFMV_coo,d1
-[00003842] 6102                      bsr.s     init_coo
+[0000383c] 223c 0000 3912            move.l    #MFMV_cookie,d1
+[00003842] 6102                      bsr.s     init_cookie0
 [00003844] 4e75                      rts
-init_coo:
+init_cookie0:
 [00003846] 48e7 c000                 movem.l   d0-d1,-(a7)
 [0000384a] 2038 05a0                 move.l    ($000005A0).w,d0
 [0000384e] 6746                      beq.s     cookie_e
@@ -4800,7 +2234,7 @@ search_c:
 [000038a8] 927c 0014                 sub.w     #_dy_sign,d1
 [000038ac] 5ac1                      spl       d1
 [000038ae] 4881                      ext.w     d1
-[000038b0] 31c1 19ea                 move.w    d1,($000019EA).w
+[000038b0] 31c1 19ea                 move.w    d1,(cpu020).w
 [000038b4] 203c 5f56 444f            move.l    #$5F56444F,d0
 [000038ba] 6100 0016                 bsr.w     search_c
 [000038be] 21c1 19e0                 move.l    d1,($000019E0).w
@@ -4844,12 +2278,11 @@ init_vir:
 [0000390e] 4e75                      rts
 reset_vi:
 [00003910] 4e75                      rts
-MFMV_coo:
-[00003912] 4d46                      lea.l     d6,b6 ; apollo only
-[00003914] 4d56                      lea.l     (a6),b6 ; apollo only
-[00003916] 0000 1980                 ori.b     #$80,d0
+MFMV_cookie:
+[00003912] 4d46                      dc.b 'MFMV'
+[00003916] 0000 1980                 dc.l      nvdi_strx
 [0000391a] 0000 1a44                 ori.b     #$44,d0
-eddi_dis:
+eddi_dispatch:
 [0000391e] 4a40                      tst.w     d0
 [00003920] 620e                      bhi.s     eddi_err
 [00003922] d040                      add.w     d0,d0
@@ -4857,7 +2290,9 @@ eddi_dis:
 [00003928] 4ebb 0004                 jsr       eddi_tab(pc,d0.w)
 [0000392c] 4e75                      rts
 eddi_tab:
-[0000392e] 0006 70ff                 ori.b     #$FF,d6
+[0000392e] 0006						 dc.w eddi_ver-eddi_tab
+eddi_err:
+[00003930] 70ff                      moveq #-1,d0
 [00003932] 4e75                      rts
 eddi_ver:
 [00003934] 303c 0100                 move.w    #t_bitmap,d0
@@ -4891,7 +2326,7 @@ tst_indx:
 [00003976] 286e 021c                 movea.l   540(a6),a4
 [0000397a] 4e94                      jsr       (a4)
 [0000397c] 2b40 0002                 move.l    d0,2(a5)
-[00003980] 3abc 0001                 move.w    #FREE_MB,(a5)
+[00003980] 3abc 0001                 move.w    #1,(a5)
 [00003984] 600c                      bra.s     scan_onc
 indx_pos:
 [00003986] 286e 0230                 movea.l   560(a6),a4
@@ -5099,7 +2534,7 @@ lbl576:
 [00003bc6] 6602                      bne.s     lbl60A
 [00003bc8] 6146                      bsr.s     fillabor
 lbl60A:
-[00003bca] 34bc 0001                 move.w    #FREE_MB,(a2)
+[00003bca] 34bc 0001                 move.w    #1,(a2)
 [00003bce] 4240                      clr.w     d0
 [00003bd0] 4e75                      rts
 lbl618:
@@ -5119,7 +2554,7 @@ lbl646:
 [00003bec] 5645                      addq.w    #3,d5
 [00003bee] 0c45 0780                 cmpi.w    #$0780,d5
 [00003bf2] 6f0e                      ble.s     lbl690
-[00003bf4] 3b7c 0001 0014            move.w    #FREE_MB,20(a5)
+[00003bf4] 3b7c 0001 0014            move.w    #1,20(a5)
 [00003bfa] 544f                      addq.w    #2,a7
 [00003bfc] 4240                      clr.w     d0
 [00003bfe] 4e75                      rts
@@ -5166,11 +2601,11 @@ scanline:
 [00003c52] 4ed4                      jmp       (a4)
 dummy:
 [00003c54] 4e75                      rts
-dummy_rt:
+dummy_rte:
 [00003c56] 4e73                      rte
 vq_extnd:
 [00003c58] 2250                      movea.l   (a0),a1
-[00003c5a] 0c69 0001 000a            cmpi.w    #FREE_MB,10(a1)
+[00003c5a] 0c69 0001 000a            cmpi.w    #1,opcode2(a1)
 [00003c60] 660a                      bne.s     vq_extnd
 [00003c62] 2268 0004                 movea.l   4(a0),a1
 [00003c66] 0c51 0002                 cmpi.w    #n_ptsin,(a1)
@@ -5200,8 +2635,8 @@ vq_extnd:
 vq_scrni:
 [00003ca4] 2f0a                      move.l    a2,-(a7)
 [00003ca6] 2250                      movea.l   (a0),a1
-[00003ca8] 337c 0110 0008            move.w    #$0110,8(a1)
-[00003cae] 4269 0004                 clr.w     4(a1)
+[00003ca8] 337c 0110 0008            move.w    #$0110,n_intout(a1)
+[00003cae] 4269 0004                 clr.w     n_ptsout(a1)
 [00003cb2] 2068 000c                 movea.l   12(a0),a0
 [00003cb6] 202e 0190                 move.l    400(a6),d0
 [00003cba] 6708                      beq.s     vq_scrni
@@ -5289,10 +2724,10 @@ vqt_attr:
 [00003d9a] 22ee 0096                 move.l    150(a6),(a1)+
 [00003d9e] 22ae 009a                 move.l    154(a6),(a1)
 [00003da2] 4e75                      rts
-vqt_exte:
+vqt_extend:
 [00003da4] 48e7 7020                 movem.l   d1-d3/a2,-(a7)
 [00003da8] 2258                      movea.l   (a0)+,a1
-[00003daa] 3029 0006                 move.w    6(a1),d0
+[00003daa] 3029 0006                 move.w    n_intin(a1),d0
 [00003dae] 2250                      movea.l   (a0),a1
 [00003db0] 2068 000c                 movea.l   12(a0),a0
 [00003db4] 7200                      moveq.l   #0,d1
@@ -5310,13 +2745,13 @@ vqt_exte:
 [00003dd4] 48e7 0e00                 movem.l   d4-d6,-(a7)
 [00003dd8] 3a2e 009c                 move.w    156(a6),d5
 [00003ddc] 3c2e 0120                 move.w    288(a6),d6
-vqt_ext_:
+vqt_ext_1:
 [00003de0] 3219                      move.w    (a1)+,d1
 [00003de2] 926e 006a                 sub.w     106(a6),d1
 [00003de6] b26e 006c                 cmp.w     108(a6),d1
 [00003dea] 6304                      bls.s     vqt_ext_
 [00003dec] 322e 0070                 move.w    112(a6),d1
-vqt_ext_:
+vqt_ext_2:
 [00003df0] d241                      add.w     d1,d1
 [00003df2] 3832 1002                 move.w    2(a2,d1.w),d4
 [00003df6] 9872 1000                 sub.w     0(a2,d1.w),d4
@@ -5324,51 +2759,50 @@ vqt_ext_:
 [00003dfc] 88c6                      divu.w    d6,d4
 [00003dfe] d444                      add.w     d4,d2
 [00003e00] 5443                      addq.w    #2,d3
-vqt_ext_:
+vqt_ext_3:
 [00003e02] 51c8 ffdc                 dbf       d0,vqt_ext_
 [00003e06] 4cdf 0070                 movem.l   (a7)+,d4-d6
 [00003e0a] 6028                      bra.s     vqt_ext_
-vqt_ext_:
+vqt_ext_4:
 [00003e0c] 3219                      move.w    (a1)+,d1
 [00003e0e] 926e 006a                 sub.w     106(a6),d1
 [00003e12] b26e 006c                 cmp.w     108(a6),d1
 [00003e16] 6304                      bls.s     vqt_ext_
 [00003e18] 322e 0070                 move.w    112(a6),d1
-vqt_ext_:
+vqt_ext_5:
 [00003e1c] d241                      add.w     d1,d1
 [00003e1e] d472 1002                 add.w     2(a2,d1.w),d2
 [00003e22] 9472 1000                 sub.w     0(a2,d1.w),d2
 [00003e26] 5443                      addq.w    #2,d3
-vqt_ext_:
+vqt_ext_6:
 [00003e28] 51c8 ffe2                 dbf       d0,vqt_ext_
 [00003e2c] 4a2e 0073                 tst.b     115(a6)
 [00003e30] 6702                      beq.s     vqt_ext_
 [00003e32] d442                      add.w     d2,d2
-vqt_ext_:
+vqt_ext_7:
 [00003e34] 322e 009c                 move.w    156(a6),d1
 [00003e38] 302e 00ac                 move.w    172(a6),d0
 [00003e3c] 0800 0004                 btst      #4,d0
 [00003e40] 6704                      beq.s     vqt_ext_
 [00003e42] d443                      add.w     d3,d2
 [00003e44] 5441                      addq.w    #2,d1
-vqt_ext_:
+vqt_ext_8:
 [00003e46] 0800 0002                 btst      #2,d0
 [00003e4a] 6704                      beq.s     vqt_ext_
 [00003e4c] d46e 008e                 add.w     142(a6),d2
-vqt_ext_:
+vqt_ext_9:
 [00003e50] 0800 0000                 btst      #0,d0
 [00003e54] 6708                      beq.s     vqt_ext_
 [00003e56] e24b                      lsr.w     #1,d3
 [00003e58] c6ee 0090                 mulu.w    144(a6),d3
 [00003e5c] d443                      add.w     d3,d2
-vqt_ext_:
+vqt_ext_10:
 [00003e5e] 7000                      moveq.l   #0,d0
 [00003e60] 4842                      swap      d2
 [00003e62] 4242                      clr.w     d2
 [00003e64] 4842                      swap      d2
 [00003e66] 362e 00a8                 move.w    168(a6),d3
-[00003e6a] 6610                      bne.s     vqt_ext9
-vqt_ext0:
+[00003e6a] 6610                      bne.s     vqt_ext_11
 [00003e6c] 20c0                      move.l    d0,(a0)+
 [00003e6e] 30c2                      move.w    d2,(a0)+
 [00003e70] 20c2                      move.l    d2,(a0)+
@@ -5376,9 +2810,9 @@ vqt_ext0:
 [00003e74] 20c1                      move.l    d1,(a0)+
 [00003e76] 4cdf 040e                 movem.l   (a7)+,d1-d3/a2
 [00003e7a] 4e75                      rts
-vqt_ext9:
+vqt_ext_11:
 [00003e7c] 5343                      subq.w    #1,d3
-[00003e7e] 6610                      bne.s     vqt_ext1
+[00003e7e] 6610                      bne.s     vqt_ext_12
 [00003e80] 30c1                      move.w    d1,(a0)+
 [00003e82] 20c1                      move.l    d1,(a0)+
 [00003e84] 30c2                      move.w    d2,(a0)+
@@ -5386,9 +2820,9 @@ vqt_ext9:
 [00003e88] 20c0                      move.l    d0,(a0)+
 [00003e8a] 4cdf 040e                 movem.l   (a7)+,d1-d3/a2
 [00003e8e] 4e75                      rts
-vqt_ext1:
+vqt_ext_12:
 [00003e90] 5343                      subq.w    #1,d3
-[00003e92] 6612                      bne.s     vqt_ext2
+[00003e92] 6612                      bne.s     vqt_ext_13
 [00003e94] 30c2                      move.w    d2,(a0)+
 [00003e96] 30c1                      move.w    d1,(a0)+
 [00003e98] 20c1                      move.l    d1,(a0)+
@@ -5397,7 +2831,7 @@ vqt_ext1:
 [00003e9e] 30c0                      move.w    d0,(a0)+
 [00003ea0] 4cdf 040e                 movem.l   (a7)+,d1-d3/a2
 [00003ea4] 4e75                      rts
-vqt_ext2:
+vqt_ext_13:
 [00003ea6] 20c2                      move.l    d2,(a0)+
 [00003ea8] 20c0                      move.l    d0,(a0)+
 [00003eaa] 30c1                      move.w    d1,(a0)+
@@ -5554,7 +2988,7 @@ vsin_mod:
 [00004012] 2208                      move.l    a0,d1
 [00004014] 4e75                      rts
 vsin_mod:
-[00004016] 32bc 0001                 move.w    #FREE_MB,(a1)
+[00004016] 32bc 0001                 move.w    #1,(a1)
 [0000401a] 01ae 001e                 bclr      d0,30(a6)
 vsin_mod:
 [0000401e] 2208                      move.l    a0,d1
@@ -5585,7 +3019,7 @@ v_loc_sa:
 [0000405a] 673a                      beq.s     vrq_loca
 vsm_loca:
 [0000405c] 40c0                      move.w    sr,d0
-[0000405e] 007c 0700                 ori.w     #SHFTMODE,sr
+[0000405e] 007c 0700                 ori.w     #$0700,sr
 [00004062] 22b8 1e16                 move.l    ($00001E16).w,(a1)
 [00004066] 30b8 1e1c                 move.w    ($00001E1C).w,(a0)
 [0000406a] 0650 001f                 addi.w    #N_META,(a0)
@@ -5593,11 +3027,11 @@ vsm_loca:
 [00004070] 2250                      movea.l   (a0),a1
 [00004072] 4a78 1e1c                 tst.w     ($00001E1C).w
 [00004076] 6706                      beq.s     vsm_move
-[00004078] 337c 0001 0008            move.w    #FREE_MB,8(a1)
+[00004078] 337c 0001 0008            move.w    #1,n_intout(a1)
 vsm_move:
 [0000407e] 0838 0005 1f14            btst      #5,($00001F14).w
 [00004084] 6706                      beq.s     vsm_l_ex
-[00004086] 337c 0001 0004            move.w    #FREE_MB,4(a1)
+[00004086] 337c 0001 0004            move.w    #1,n_ptsout(a1)
 vsm_l_ex:
 [0000408c] 0238 0003 1f14            andi.b    #$03,($00001F14).w
 [00004092] 46c0                      move.w    d0,sr
@@ -5640,7 +3074,7 @@ vsm_choi:
 [000040e6] 4e75                      rts
 v_status:
 [000040e8] 3f3c 0002                 move.w    #n_ptsin,-(a7)
-[000040ec] 3f3c 0001                 move.w    #FREE_MB,-(a7)
+[000040ec] 3f3c 0001                 move.w    #1,-(a7)
 [000040f0] 4e4d                      trap      #13
 [000040f2] 588f                      addq.l    #4,a7
 [000040f4] 4e75                      rts
@@ -5702,10 +3136,10 @@ vrq_str_:
 vsc_form:
 [00004172] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [00004176] 4cd0 1e00                 movem.l   (a0),a1-a4
-[0000417a] 4a69 0006                 tst.w     6(a1)
+[0000417a] 4a69 0006                 tst.w     n_intin(a1)
 [0000417e] 664c                      bne.s     vsc_form
-vsc_form:
-[00004180] 337c 0025 0008            move.w    #V_PAGE_S,8(a1)
+vsc_form1:
+[00004180] 337c 0025 0008            move.w    #37,n_intout(a1)
 [00004186] 41f8 1d18                 lea.l     ($00001D18).w,a0
 [0000418a] 224c                      movea.l   a4,a1
 [0000418c] 4c98 001f                 movem.w   (a0)+,d0-d4
@@ -5722,20 +3156,20 @@ vsc_form:
 [000041c0] 48a9 00aa 0038            movem.w   d1/d3/d5/d7,56(a1)
 [000041c6] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
 [000041ca] 4e75                      rts
-vsc_form:
+vsc_form2:
 [000041cc] 3a2e 0014                 move.w    20(a6),d5
-vsc_form:
+vsc_form3:
 [000041d0] 5238 1f1d                 addq.b    #1,($00001F1D).w
 [000041d4] 4c9a 001f                 movem.w   (a2)+,d0-d4
-vsc_form:
+vsc_form4:
 [000041d8] b645                      cmp.w     d5,d3
 [000041da] 6302                      bls.s     vsc_form
 [000041dc] 7601                      moveq.l   #1,d3
-vsc_form:
+vsc_form5:
 [000041de] b845                      cmp.w     d5,d4
 [000041e0] 6302                      bls.s     vsc_form
 [000041e2] 7801                      moveq.l   #1,d4
-vsc_form:
+vsc_form6:
 [000041e4] 7a0f                      moveq.l   #15,d5
 [000041e6] c045                      and.w     d5,d0
 [000041e8] c245                      and.w     d5,d1
@@ -5754,7 +3188,7 @@ vsc_form:
 [00004220] 4c9b 00aa                 movem.w   (a3)+,d1/d3/d5/d7
 [00004224] 48b8 00ff 1d52            movem.w   d0-d7,($00001D52).w
 [0000422a] 40c0                      move.w    sr,d0
-[0000422c] 007c 0700                 ori.w     #SHFTMODE,sr
+[0000422c] 007c 0700                 ori.w     #$0700,sr
 [00004230] 21f8 1e16 1f18            move.l    ($00001E16).w,($00001F18).w
 [00004236] 4238 1f1c                 clr.b     ($00001F1C).w
 [0000423a] 46c0                      move.w    d0,sr
@@ -5765,9 +3199,9 @@ vex_timv:
 [00004246] 2250                      movea.l   (a0),a1
 [00004248] 2068 000c                 movea.l   12(a0),a0
 [0000424c] 40c0                      move.w    sr,d0
-[0000424e] 007c 0700                 ori.w     #SHFTMODE,sr
-[00004252] 2378 202e 0012            move.l    ($0000202E).w,18(a1)
-[00004258] 21e9 000e 202e            move.l    14(a1),($0000202E).w
+[0000424e] 007c 0700                 ori.w     #$0700,sr
+[00004252] 2378 202e 0012            move.l    ($0000202E).w,d_addr(a1)
+[00004258] 21e9 000e 202e            move.l    s_addr(a1),($0000202E).w
 [0000425e] 46c0                      move.w    d0,sr
 [00004260] 30b8 0442                 move.w    ($00000442).w,(a0)
 [00004264] 4e75                      rts
@@ -5779,20 +3213,20 @@ v_show_c:
 [00004272] 660c                      bne.s     v_show_c
 [00004274] 4a78 1e1a                 tst.w     ($00001E1A).w
 [00004278] 6740                      beq.s     v_show_c
-[0000427a] 31fc 0001 1e1a            move.w    #FREE_MB,($00001E1A).w
+[0000427a] 31fc 0001 1e1a            move.w    #1,($00001E1A).w
 v_show_c:
-[00004280] 0c78 0001 1e1a            cmpi.w    #FREE_MB,($00001E1A).w
+[00004280] 0c78 0001 1e1a            cmpi.w    #1,($00001E1A).w
 [00004286] 6e28                      bgt.s     v_show_c
 [00004288] 6d2c                      blt.s     v_show_c
 [0000428a] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [0000428e] 40c2                      move.w    sr,d2
-[00004290] 007c 0700                 ori.w     #SHFTMODE,sr
+[00004290] 007c 0700                 ori.w     #$0700,sr
 [00004294] 4cb8 0003 1e16            movem.w   ($00001E16).w,d0-d1
 [0000429a] 4238 1f1c                 clr.b     ($00001F1C).w
 [0000429e] 46c2                      move.w    d2,sr
 [000042a0] 41f8 1d18                 lea.l     ($00001D18).w,a0
 [000042a4] 2478 1964                 movea.l   ($00001964).w,a2
-[000042a8] 6100 4c00                 bsr       draw_spr
+[000042a8] 6100 4c00                 bsr       draw_sprite ; 8eaa
 [000042ac] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
 v_show_c:
 [000042b0] 5378 1e1a                 subq.w    #1,($00001E1A).w
@@ -5807,7 +3241,7 @@ v_hide_c:
 [000042c2] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [000042c6] 45f8 1e1a                 lea.l     ($00001E1A).w,a2
 [000042ca] 5252                      addq.w    #1,(a2)
-[000042cc] 0c52 0001                 cmpi.w    #FREE_MB,(a2)
+[000042cc] 0c52 0001                 cmpi.w    #1,(a2)
 [000042d0] 6608                      bne.s     v_hide_c
 [000042d2] 2478 1964                 movea.l   ($00001964).w,a2
 [000042d6] 6100 4b18                 bsr       undraw_s
@@ -5818,25 +3252,25 @@ v_hide_c:
 vq_mouse:
 [000042e0] 4ce8 0300 000c            movem.l   12(a0),a0-a1
 [000042e6] 40c0                      move.w    sr,d0
-[000042e8] 007c 0700                 ori.w     #SHFTMODE,sr
+[000042e8] 007c 0700                 ori.w     #$0700,sr
 [000042ec] 22b8 1e16                 move.l    ($00001E16).w,(a1)
 [000042f0] 30b8 1e1c                 move.w    ($00001E1C).w,(a0)
 [000042f4] 46c0                      move.w    d0,sr
 [000042f6] 4e75                      rts
 vex_butv:
 [000042f8] 2250                      movea.l   (a0),a1
-[000042fa] 2378 2036 0012            move.l    ($00002036).w,18(a1)
-[00004300] 21e9 000e 2036            move.l    14(a1),($00002036).w
+[000042fa] 2378 2036 0012            move.l    ($00002036).w,d_addr(a1)
+[00004300] 21e9 000e 2036            move.l    s_addr(a1),($00002036).w
 [00004306] 4e75                      rts
 vex_motv:
 [00004308] 2250                      movea.l   (a0),a1
-[0000430a] 2378 203e 0012            move.l    ($0000203E).w,18(a1)
-[00004310] 21e9 000e 203e            move.l    14(a1),($0000203E).w
+[0000430a] 2378 203e 0012            move.l    ($0000203E).w,d_addr(a1)
+[00004310] 21e9 000e 203e            move.l    s_addr(a1),($0000203E).w
 [00004316] 4e75                      rts
 vex_curv:
 [00004318] 2250                      movea.l   (a0),a1
-[0000431a] 2378 203a 0012            move.l    ($0000203A).w,18(a1)
-[00004320] 21e9 000e 203a            move.l    14(a1),($0000203A).w
+[0000431a] 2378 203a 0012            move.l    ($0000203A).w,d_addr(a1)
+[00004320] 21e9 000e 203a            move.l    s_addr(a1),($0000203A).w
 [00004326] 4e75                      rts
 vq_key_s:
 [00004328] 2268 000c                 movea.l   12(a0),a1
@@ -5849,11 +3283,11 @@ vro_cpyf:
 [00004338] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [0000433c] 4cd0 0e00                 movem.l   (a0),a1-a3
 [00004340] 3012                      move.w    (a2),d0
-[00004342] b07c 000f                 cmp.w     #PALETTE,d0
+[00004342] b07c 000f                 cmp.w     #15,d0
 [00004346] 6200 018e                 bhi       vro_cpyf
 [0000434a] 3d40 01ee                 move.w    d0,494(a6)
 vro_cpyf:
-[0000434e] 4ce9 3000 000e            movem.l   14(a1),a4-a5
+[0000434e] 4ce9 3000 000e            movem.l   s_addr(a1),a4-a5
 [00004354] 4c93 00ff                 movem.w   (a3),d0-d7
 vro_sx:
 [00004358] b440                      cmp.w     d0,d2
@@ -6024,7 +3458,7 @@ vrt_cpyf:
 vrt_cpyf:
 [0000451a] 3d40 01ea                 move.w    d0,490(a6)
 [0000451e] 3d41 01ec                 move.w    d1,492(a6)
-[00004522] 4ce9 3000 000e            movem.l   14(a1),a4-a5
+[00004522] 4ce9 3000 000e            movem.l   s_addr(a1),a4-a5
 [00004528] 4c93 00ff                 movem.w   (a3),d0-d7
 vrt_sx:
 [0000452c] b440                      cmp.w     d0,d2
@@ -6159,7 +3593,7 @@ vrt_cpyf:
 vr_trnfm:
 [00004686] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [0000468a] 2250                      movea.l   (a0),a1
-[0000468c] 4ce9 0300 000e            movem.l   14(a1),a0-a1
+[0000468c] 4ce9 0300 000e            movem.l   s_addr(a1),a0-a1
 [00004692] 246e 0220                 movea.l   544(a6),a2
 [00004696] 4e92                      jsr       (a2)
 [00004698] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
@@ -6172,7 +3606,7 @@ v_get_pi:
 [000046ac] 3218                      move.w    (a0)+,d1
 [000046ae] 206e 021c                 movea.l   540(a6),a0
 [000046b2] 4e90                      jsr       (a0)
-[000046b4] 0c6e 000f 01b4            cmpi.w    #PALETTE,436(a6)
+[000046b4] 0c6e 000f 01b4            cmpi.w    #15,436(a6)
 [000046ba] 6e10                      bgt.s     v_get_pi
 [000046bc] 34c0                      move.w    d0,(a2)+
 [000046be] 206e 0234                 movea.l   564(a6),a0
@@ -6261,7 +3695,7 @@ vsl_widt:
 [00004768] 5340                      subq.w    #1,d0
 [0000476a] 0c40 0062                 cmpi.w    #V_META_E,d0
 [0000476e] 620c                      bhi.s     vsl_widt
-[00004770] 807c 0001                 or.w      #FREE_MB,d0
+[00004770] 807c 0001                 or.w      #1,d0
 vsl_widt:
 [00004774] 3080                      move.w    d0,(a0)
 [00004776] 3d40 0048                 move.w    d0,72(a6)
@@ -6330,17 +3764,17 @@ vsm_type:
 [00004806] 2208                      move.l    a0,d1
 [00004808] 4e75                      rts
 marker_a:
-[0000480a] 0000 2ef4                 ori.b     #$F4,d0
-[0000480e] 0000 2f04                 ori.b     #$04,d0
-[00004812] 0000 2f1c                 ori.b     #$1C,d0
-[00004816] 0000 2f44                 ori.b     #$44,d0
-[0000481a] 0000 2f6c                 ori.b     #$6C,d0
-[0000481e] 0000 2f84                 ori.b     #$84,d0
+[0000480a] 0000 2ef4                 dc.l      m_dot
+[0000480e] 0000 2f04                 dc.l      m_plus
+[00004812] 0000 2f1c                 dc.l      m_asterisk
+[00004816] 0000 2f44                 dc.l      m_square
+[0000481a] 0000 2f6c                 dc.l      m_cross
+[0000481e] 0000 2f84                 dc.l      m_diamond
 vsm_heig:
 [00004822] 2268 0008                 movea.l   8(a0),a1
 [00004826] 2211                      move.l    (a1),d1
 [00004828] 5341                      subq.w    #1,d1
-[0000482a] 827c 0001                 or.w      #FREE_MB,d1
+[0000482a] 827c 0001                 or.w      #1,d1
 [0000482e] 6e02                      bgt.s     vsm_heig
 [00004830] 7201                      moveq.l   #1,d1
 vsm_heig:
@@ -6530,7 +3964,7 @@ vst_h_th:
 [00004a20] 6602                      bne.s     vst_h_th
 [00004a22] 7400                      moveq.l   #0,d2
 vst_h_th:
-[00004a24] b47c 000f                 cmp.w     #PALETTE,d2
+[00004a24] b47c 000f                 cmp.w     #15,d2
 [00004a28] 6f02                      ble.s     vst_h_ul
 [00004a2a] 740f                      moveq.l   #15,d2
 vst_h_ul:
@@ -6682,7 +4116,7 @@ vst_font:
 [00004b92] 6768                      beq.s     vst_font
 [00004b94] 48e7 7f20                 movem.l   d1-d7/a2,-(a7)
 [00004b98] 41f8 148c                 lea.l     ($0000148C).w,a0
-[00004b9c] b07c 0001                 cmp.w     #FREE_MB,d0
+[00004b9c] b07c 0001                 cmp.w     #1,d0
 [00004ba0] 671c                      beq.s     vst_font
 [00004ba2] 222e 0100                 move.l    256(a6),d1
 [00004ba6] 6702                      beq.s     vst_font
@@ -6802,50 +4236,58 @@ vsf_int_:
 [00004cbc] 30ae 00e0                 move.w    224(a6),(a0)
 [00004cc0] 212e 00dc                 move.l    220(a6),-(a0)
 [00004cc4] 4e75                      rts
-vsf_styl:
+vsf_style:
 [00004cc6] 2268 0004                 movea.l   4(a0),a1
 [00004cca] 2068 000c                 movea.l   12(a0),a0
 [00004cce] 302e 00c0                 move.w    192(a6),d0
-[00004cd2] 103b 0006                 move.b    vsf_styl(pc,d0.w),d0
-[00004cd6] 4efb 0002                 jmp       vsf_styl(pc,d0.w)
-vsf_styl:
-[00004cda] 0606 1032                 addi.b    #$32,d6
-[00004cde] 0600 3011                 addi.b    #$11,d0
+[00004cd2] 103b 0006                 move.b    vsf_style_tab(pc,d0.w),d0
+[00004cd6] 4efb 0002                 jmp       vsf_style_tab(pc,d0.w)
+vsf_style_tab:
+[00004cda] 0606 1032                 dc.b vsf_sty_0-vsf_style_tab
+                                     dc.b vsf_sty_1-vsf_style_tab
+                                     dc.b vsf_sty_2-vsf_style_tab
+                                     dc.b vsf_sty_3-vsf_style_tab
+                                     dc.b vsf_sty_4-vsf_style_tab
+                                     dc.b 0
+vsf_sty_0:
+vsf_sty_1:
+vsf_sty_4:
+[00004ce0] 3011                      move.w    (a1),d0
 [00004ce2] 3080                      move.w    d0,(a0)
 [00004ce4] 3d40 00c2                 move.w    d0,194(a6)
 [00004ce8] 4e75                      rts
-vsf_sty_:
+vsf_sty_2:
 [00004cea] 3011                      move.w    (a1),d0
-vsf_sty_:
+vsf_sty_2_1:
 [00004cec] 3080                      move.w    d0,(a0)
 [00004cee] 3d40 00c2                 move.w    d0,194(a6)
 [00004cf2] 5340                      subq.w    #1,d0
 [00004cf4] 0c40 0017                 cmpi.w    #VSF_INTE,d0
-[00004cf8] 620e                      bhi.s     vsf_sty_
+[00004cf8] 620e                      bhi.s     vsf_sty_2_2
 [00004cfa] 206e 00d4                 movea.l   212(a6),a0
 [00004cfe] eb48                      lsl.w     #5,d0
 [00004d00] d0c0                      adda.w    d0,a0
 [00004d02] 2d48 00c6                 move.l    a0,198(a6)
 [00004d06] 4e75                      rts
-vsf_sty_:
+vsf_sty_2_2:
 [00004d08] 7001                      moveq.l   #1,d0
-[00004d0a] 60e0                      bra.s     vsf_sty_
-vsf_sty_:
+[00004d0a] 60e0                      bra.s     vsf_sty_2_1
+vsf_sty_3:
 [00004d0c] 3011                      move.w    (a1),d0
-vsf_sty_:
+vsf_sty_3_1:
 [00004d0e] 3080                      move.w    d0,(a0)
 [00004d10] 3d40 00c2                 move.w    d0,194(a6)
 [00004d14] 5340                      subq.w    #1,d0
-[00004d16] 0c40 0015                 cmpi.w    #V_OUTPUT,d0
-[00004d1a] 620e                      bhi.s     vsf_sty_
+[00004d16] 0c40 0015                 cmpi.w    #21,d0
+[00004d1a] 620e                      bhi.s     vsf_sty_3_2
 [00004d1c] 206e 00d8                 movea.l   216(a6),a0
 [00004d20] eb48                      lsl.w     #5,d0
 [00004d22] d0c0                      adda.w    d0,a0
 [00004d24] 2d48 00c6                 move.l    a0,198(a6)
 [00004d28] 4e75                      rts
-vsf_sty_:
+vsf_sty_3_2:
 [00004d2a] 7001                      moveq.l   #1,d0
-[00004d2c] 60e0                      bra.s     vsf_sty_
+[00004d2c] 60e0                      bra.s     vsf_sty_3_1
 vsf_colo:
 [00004d2e] 2268 0004                 movea.l   4(a0),a1
 [00004d32] 2068 000c                 movea.l   12(a0),a0
@@ -6869,7 +4311,7 @@ vsf_peri:
 vsf_udpa:
 [00004d5c] 2f0a                      move.l    a2,-(a7)
 [00004d5e] 2250                      movea.l   (a0),a1
-[00004d60] 3029 0006                 move.w    6(a1),d0
+[00004d60] 3029 0006                 move.w    n_intin(a1),d0
 [00004d64] 2068 0004                 movea.l   4(a0),a0
 [00004d68] 226e 00dc                 movea.l   220(a6),a1
 [00004d6c] 246e 0224                 movea.l   548(a6),a2
@@ -6984,7 +4426,7 @@ small_li:
 [00004e84] 4cdf 0cfe                 movem.l   (a7)+,d1-d7/a2-a3
 [00004e88] 4e75                      rts
 fat_line:
-[00004e8a] 0c6e 0001 0048            cmpi.w    #FREE_MB,72(a6)
+[00004e8a] 0c6e 0001 0048            cmpi.w    #1,72(a6)
 [00004e90] 67e4                      beq.s     small_li
 [00004e92] 48e7 1e38                 movem.l   d3-d6/a2-a4,-(a7)
 [00004e96] 5540                      subq.w    #2,d0
@@ -6999,7 +4441,7 @@ fat_line:
 [00004eae] 264f                      movea.l   a7,a3
 [00004eb0] 3c2e 0048                 move.w    72(a6),d6
 [00004eb4] 3806                      move.w    d6,d4
-[00004eb6] 0c6e 0001 0016            cmpi.w    #FREE_MB,22(a6)
+[00004eb6] 0c6e 0001 0016            cmpi.w    #1,22(a6)
 [00004ebc] 6608                      bne.s     _fat_STM
 [00004ebe] 3a04                      move.w    d4,d5
 [00004ec0] e244                      asr.w     #1,d4
@@ -7079,7 +4521,7 @@ conv_pix:
 [00004f70] 2280                      move.l    d0,(a1)
 [00004f72] 4e75                      rts
 _pix2q_T:
-[00004f74] b07c 0001                 cmp.w     #FREE_MB,d0
+[00004f74] b07c 0001                 cmp.w     #1,d0
 [00004f78] 660e                      bne.s     exit_pix
 [00004f7a] 3018                      move.w    (a0)+,d0
 [00004f7c] d040                      add.w     d0,d0
@@ -7108,7 +4550,7 @@ conv_q2p:
 [00004faa] 2280                      move.l    d0,(a1)
 [00004fac] 4e75                      rts
 _q2pix_T:
-[00004fae] b07c 0001                 cmp.w     #FREE_MB,d0
+[00004fae] b07c 0001                 cmp.w     #1,d0
 [00004fb2] 661a                      bne.s     exit_q2p
 [00004fb4] 3018                      move.w    (a0)+,d0
 [00004fb6] e240                      asr.w     #1,d0
@@ -7257,7 +4699,7 @@ exit_str:
 [000050d6] 4cdf 0cf8                 movem.l   (a7)+,d3-d7/a2-a3
 [000050da] 4e75                      rts
 _strtfm_:
-[000050dc] b07c 0001                 cmp.w     #FREE_MB,d0
+[000050dc] b07c 0001                 cmp.w     #1,d0
 [000050e0] 66f4                      bne.s     exit_str
 [000050e2] 3003                      move.w    d3,d0
 [000050e4] 6100 0196                 bsr       tstlin_f
@@ -7265,7 +4707,7 @@ _strtfm_:
 [000050ec] 322b 0010                 move.w    16(a3),d1
 [000050f0] 6100 ff74                 bsr       hypot
 [000050f4] 342e 0048                 move.w    72(a6),d2
-[000050f8] b47c 0001                 cmp.w     #FREE_MB,d2
+[000050f8] b47c 0001                 cmp.w     #1,d2
 [000050fc] 6e04                      bgt.s     _strtfm_
 [000050fe] 7409                      moveq.l   #9,d2
 [00005100] 600e                      bra.s     _strtfm_
@@ -7361,7 +4803,7 @@ exit_end:
 [000051ca] 4cdf 0cf8                 movem.l   (a7)+,d3-d7/a2-a3
 [000051ce] 4e75                      rts
 _endfm_A:
-[000051d0] b07c 0001                 cmp.w     #FREE_MB,d0
+[000051d0] b07c 0001                 cmp.w     #1,d0
 [000051d4] 66f4                      bne.s     exit_end
 [000051d6] 3029 000c                 move.w    12(a1),d0
 [000051da] 6100 0108                 bsr       tstlin_b
@@ -7369,7 +4811,7 @@ _endfm_A:
 [000051e2] 322b 0010                 move.w    16(a3),d1
 [000051e6] 6100 fe7e                 bsr       hypot
 [000051ea] 342e 0048                 move.w    72(a6),d2
-[000051ee] b47c 0001                 cmp.w     #FREE_MB,d2
+[000051ee] b47c 0001                 cmp.w     #1,d2
 [000051f2] 6e04                      bgt.s     _endfm_T
 [000051f4] 7409                      moveq.l   #9,d2
 [000051f6] 600e                      bra.s     _endfm_c
@@ -7526,9 +4968,9 @@ exit_bk:
 [0000533e] 4cdf 00f8                 movem.l   (a7)+,d3-d7
 [00005342] 4e75                      rts
 v_pline_:
-[00005344] 4a69 0006                 tst.w     6(a1)
+[00005344] 4a69 0006                 tst.w     n_intin(a1)
 [00005348] 6700 fa92                 beq       v_pline_
-[0000534c] 0c69 000d 000a            cmpi.w    #V_BEZ_ON,10(a1)
+[0000534c] 0c69 000d 000a            cmpi.w    #1,opcode2(a1)
 [00005352] 6700 00de                 beq       v_bez
 [00005356] 4a6e 003e                 tst.w     62(a6)
 [0000535a] 6600 00d6                 bne       v_bez
@@ -7537,7 +4979,7 @@ v_pline:
 [00005362] 2250                      movea.l   (a0),a1
 [00005364] 010e 004b                 movep.w   75(a6),d0
 [00005368] d06e 0048                 add.w     72(a6),d0
-[0000536c] d069 0006                 add.w     6(a1),d0
+[0000536c] d069 0006                 add.w     n_intin(a1),d0
 [00005370] 5340                      subq.w    #1,d0
 [00005372] 66d0                      bne.s     v_pline_
 v_pline_:
@@ -7639,7 +5081,7 @@ v_bez_lo:
 [00005468] 5242                      addq.w    #1,d2
 [0000546a] 360d                      move.w    a5,d3
 [0000546c] 7001                      moveq.l   #1,d0
-[0000546e] c67c 0001                 and.w     #FREE_MB,d3
+[0000546e] c67c 0001                 and.w     #1,d3
 [00005472] 6702                      beq.s     v_bezarr
 [00005474] 70ff                      moveq.l   #-1,d0
 v_bezarr:
@@ -7676,7 +5118,7 @@ v_bez_li:
 [000054be] 6170                      bsr.s     bez_line
 [000054c0] 3d7c 0002 004a            move.w    #n_ptsin,74(a6)
 v_bez_be:
-[000054c6] c67c 0001                 and.w     #FREE_MB,d3
+[000054c6] c67c 0001                 and.w     #1,d3
 [000054ca] 674a                      beq.s     v_bez_ne
 [000054cc] 5747                      subq.w    #3,d7
 [000054ce] 6d4c                      blt.s     v_bez_ex
@@ -7835,7 +5277,7 @@ calc_bez:
 [00005664] 2009                      move.l    a1,d0
 [00005666] 909f                      sub.l     (a7)+,d0
 [00005668] e448                      lsr.w     #2,d0
-[0000566a] b07c 0001                 cmp.w     #FREE_MB,d0
+[0000566a] b07c 0001                 cmp.w     #1,d0
 [0000566e] 6e06                      bgt.s     call_bez
 [00005670] 22e9 fffc                 move.l    -4(a1),(a1)+
 [00005674] 5240                      addq.w    #1,d0
@@ -8010,7 +5452,7 @@ v_fillpi:
 [000057f2] 3f2e 00ca                 move.w    202(a6),-(a7)
 [000057f6] 2f2e 00c6                 move.l    198(a6),-(a7)
 [000057fa] 3d6e 0046 00be            move.w    70(a6),190(a6)
-[00005800] 3d7c 0001 00c0            move.w    #FREE_MB,192(a6)
+[00005800] 3d7c 0001 00c0            move.w    #1,192(a6)
 [00005806] 426e 00ca                 clr.w     202(a6)
 [0000580a] 2d6e 00d0 00c6            move.l    208(a6),198(a6)
 [00005810] 6100 2cac                 bsr       fellipse
@@ -8043,9 +5485,9 @@ v_fillli:
 [00005870] 4e75                      rts
 v_fillar:
 [00005872] 2250                      movea.l   (a0),a1
-[00005874] 4a69 0006                 tst.w     6(a1)
+[00005874] 4a69 0006                 tst.w     n_intin(a1)
 [00005878] 6712                      beq.s     v_fillar
-[0000587a] 0c69 000d 000a            cmpi.w    #V_BEZ_ON,10(a1)
+[0000587a] 0c69 000d 000a            cmpi.w    #1,opcode2(a1)
 [00005880] 6700 0230                 beq       v_bez_fi
 [00005884] 4a6e 003e                 tst.w     62(a6)
 [00005888] 6600 0228                 bne       v_bez_fi
@@ -8056,7 +5498,7 @@ v_fillar:
 [00005898] 3029 0002                 move.w    2(a1),d0
 [0000589c] 5340                      subq.w    #1,d0
 [0000589e] 6f00 0114                 ble       fpoly_ex
-[000058a2] 0c40 0001                 cmpi.w    #FREE_MB,d0
+[000058a2] 0c40 0001                 cmpi.w    #1,d0
 [000058a6] 6700 01e0                 beq       v_fae_li
 [000058aa] 0c40 0003                 cmpi.w    #BPS8,d0
 [000058ae] 6700 0184                 beq       v_fae_bo
@@ -8310,7 +5752,7 @@ v_bezf_m:
 [00005ae2] 6f0c                      ble.s     v_bezf_s
 [00005ae4] 2e00                      move.l    d0,d7
 [00005ae6] 9ebc 0000 0400            sub.l     #MAX_PTS,d7
-[00005aec] 8efc 0009                 divu.w    #SCREEN9,d7
+[00005aec] 8efc 0009                 divu.w    #9,d7
 v_bezf_s:
 [00005af0] 3f2e 0040                 move.w    64(a6),-(a7)
 [00005af4] 2868 0008                 movea.l   8(a0),a4
@@ -8685,8 +6127,8 @@ gdos_fli:
 [00005e26] 20ca                      move.l    a2,(a0)+
 [00005e28] 20ca                      move.l    a2,(a0)+
 [00005e2a] 32bc 0072                 move.w    #VR_RECFL,(a1)
-[00005e2e] 337c 0002 0002            move.w    #n_ptsin,2(a1)
-[00005e34] 4269 0006                 clr.w     6(a1)
+[00005e2e] 337c 0002 0002            move.w    #2,n_ptsin(a1)
+[00005e34] 4269 0006                 clr.w     n_intin(a1)
 [00005e38] 336e 0008 000c            move.w    8(a6),12(a1)
 [00005e3e] 34c0                      move.w    d0,(a2)+
 [00005e40] 34c1                      move.w    d1,(a2)+
@@ -8694,10 +6136,10 @@ gdos_fli:
 [00005e44] 34c1                      move.w    d1,(a2)+
 [00005e46] 220f                      move.l    a7,d1
 [00005e48] 206e 0004                 movea.l   4(a6),a0
-[00005e4c] 0c6e 0009 000a            cmpi.w    #SCREEN9,10(a6)
+[00005e4c] 0c6e 0009 000a            cmpi.w    #9,10(a6)
 [00005e52] 6310                      bls.s     gdos_fli
 [00005e54] 32bc 000b                 move.w    #V_GDP,(a1)
-[00005e58] 337c 0001 000a            move.w    #FREE_MB,10(a1)
+[00005e58] 337c 0001 000a            move.w    #1,opcode2(a1)
 [00005e5e] 5262                      addq.w    #1,-(a2)
 [00005e60] 536a fffc                 subq.w    #1,-4(a2)
 gdos_fli:
@@ -8719,7 +6161,7 @@ gperimet:
 [00005e8c] 20ca                      move.l    a2,(a0)+
 [00005e8e] 32fc 0068                 move.w    #VSF_PERI,(a1)+
 [00005e92] 4299                      clr.l     (a1)+
-[00005e94] 32bc 0001                 move.w    #FREE_MB,(a1)
+[00005e94] 32bc 0001                 move.w    #1,(a1)
 [00005e98] 336e 0008 0006            move.w    8(a6),6(a1)
 [00005e9e] 206e 0004                 movea.l   4(a6),a0
 [00005ea2] 4e90                      jsr       (a0)
@@ -8739,9 +6181,9 @@ gdos_get:
 [00005ec8] 20ca                      move.l    a2,(a0)+
 [00005eca] 45ea 0020                 lea.l     32(a2),a2
 [00005ece] 208a                      move.l    a2,(a0)
-[00005ed0] 32bc 0023                 move.w    #VQL_ATTR,(a1)
-[00005ed4] 4269 0002                 clr.w     2(a1)
-[00005ed8] 4269 0006                 clr.w     6(a1)
+[00005ed0] 32bc 0023                 move.w    #45,(a1)
+[00005ed4] 4269 0002                 clr.w     n_ptsin(a1)
+[00005ed8] 4269 0006                 clr.w     n_intin(a1)
 [00005edc] 336e 0008 000c            move.w    8(a6),12(a1)
 [00005ee2] 206e 0004                 movea.l   4(a6),a0
 [00005ee6] 4e90                      jsr       (a0)
@@ -8775,13 +6217,13 @@ gdos_lin:
 [00005f40] 302f 0056                 move.w    86(a7),d0
 [00005f44] 3d40 00be                 move.w    d0,190(a6)
 [00005f48] 36bc 0011                 move.w    #VSL_COLO,(a3)
-[00005f4c] 377c 0001 0006            move.w    #FREE_MB,6(a3)
+[00005f4c] 377c 0001 0006            move.w    #1,6(a3)
 [00005f52] 3880                      move.w    d0,(a4)
 [00005f54] 220f                      move.l    a7,d1
 [00005f56] 206e 0004                 movea.l   4(a6),a0
 [00005f5a] 4e90                      jsr       (a0)
-[00005f5c] 36bc 000f                 move.w    #PALETTE,(a3)
-[00005f60] 38bc 0001                 move.w    #FREE_MB,(a4)
+[00005f5c] 36bc 000f                 move.w    #15,(a3)
+[00005f60] 38bc 0001                 move.w    #1,(a4)
 [00005f64] 220f                      move.l    a7,d1
 [00005f66] 206e 0004                 movea.l   4(a6),a0
 [00005f6a] 4e90                      jsr       (a0)
@@ -8792,9 +6234,9 @@ gdos_lin:
 [00005f7a] 206e 0004                 movea.l   4(a6),a0
 [00005f7e] 4e90                      jsr       (a0)
 [00005f80] 36bc 0010                 move.w    #AESVARS_,(a3)
-[00005f84] 377c 0001 0002            move.w    #FREE_MB,2(a3)
+[00005f84] 377c 0001 0002            move.w    #1,2(a3)
 [00005f8a] 426b 0006                 clr.w     6(a3)
-[00005f8e] 38bc 0001                 move.w    #FREE_MB,(a4)
+[00005f8e] 38bc 0001                 move.w    #1,(a4)
 [00005f92] 220f                      move.l    a7,d1
 [00005f94] 206e 0004                 movea.l   4(a6),a0
 [00005f98] 4e90                      jsr       (a0)
@@ -8816,7 +6258,7 @@ gdos_set:
 [00005fc4] 208a                      move.l    a2,(a0)
 [00005fc6] 376e 0008 000c            move.w    8(a6),12(a3)
 [00005fcc] 36bc 0010                 move.w    #AESVARS_,(a3)
-[00005fd0] 377c 0001 0002            move.w    #FREE_MB,2(a3)
+[00005fd0] 377c 0001 0002            move.w    #1,2(a3)
 [00005fd6] 426b 0006                 clr.w     6(a3)
 [00005fda] 38ae 0048                 move.w    72(a6),(a4)
 [00005fde] 220f                      move.l    a7,d1
@@ -8830,12 +6272,12 @@ gdos_set:
 [00005ffa] 206e 0004                 movea.l   4(a6),a0
 [00005ffe] 4e90                      jsr       (a0)
 [00006000] 36bc 0011                 move.w    #VSL_COLO,(a3)
-[00006004] 377c 0001 0006            move.w    #FREE_MB,6(a3)
+[00006004] 377c 0001 0006            move.w    #1,6(a3)
 [0000600a] 38ae 0046                 move.w    70(a6),(a4)
 [0000600e] 220f                      move.l    a7,d1
 [00006010] 206e 0004                 movea.l   4(a6),a0
 [00006014] 4e90                      jsr       (a0)
-[00006016] 36bc 000f                 move.w    #PALETTE,(a3)
+[00006016] 36bc 000f                 move.w    #15,(a3)
 [0000601a] 38ae 0050                 move.w    80(a6),(a4)
 [0000601e] 220f                      move.l    a7,d1
 [00006020] 206e 0004                 movea.l   4(a6),a0
@@ -8859,7 +6301,7 @@ vr_recfl:
 v_gdp:
 [0000605a] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [0000605e] 4cd0 0e00                 movem.l   (a0),a1-a3
-[00006062] 3029 000a                 move.w    10(a1),d0
+[00006062] 3029 000a                 move.w    opcode2(a1),d0
 [00006066] 5340                      subq.w    #1,d0
 [00006068] 0c40 000c                 cmpi.w    #_nvdi_fi,d0
 [0000606c] 620a                      bhi.s     v_gdp_er
@@ -9035,12 +6477,12 @@ vpfl_ex:
 v_justif:
 [0000622a] 4a9a                      tst.l     (a2)+
 [0000622c] 6614                      bne.s     v_justif
-[0000622e] 5569 0006                 subq.w    #2,6(a1)
+[0000622e] 5569 0006                 subq.w    #2,n_intin(a1)
 [00006232] 2f09                      move.l    a1,-(a7)
 [00006234] 286e 0244                 movea.l   580(a6),a4
 [00006238] 4e94                      jsr       (a4)
 [0000623a] 225f                      movea.l   (a7)+,a1
-[0000623c] 5469 0006                 addq.w    #2,6(a1)
+[0000623c] 5469 0006                 addq.w    #2,n_intin(a1)
 [00006240] 4e75                      rts
 v_justif:
 [00006242] 6000 1f62                 bra       text_jus
@@ -9055,7 +6497,7 @@ v_bez_oo:
 v_bez_on:
 [00006258] 3d7c 0005 0040            move.w    #SETEXC,64(a6)
 [0000625e] 30bc 0007                 move.w    #STC_BIT,(a0)
-[00006262] 3d7c 0001 003e            move.w    #FREE_MB,62(a6)
+[00006262] 3d7c 0001 003e            move.w    #1,62(a6)
 [00006268] 4e75                      rts
 set_xbio:
 [0000626a] b67c 0004                 cmp.w     #V_UPDWK,d3
@@ -9137,7 +6579,7 @@ open_nvd:
 [00006330] 7801                      moveq.l   #1,d4
 [00006332] 3d43 000a                 move.w    d3,10(a6)
 [00006336] 3d44 0008                 move.w    d4,8(a6)
-[0000633a] 3344 000c                 move.w    d4,12(a1)
+[0000633a] 3344 000c                 move.w    d4,handle(a1)
 [0000633e] 526b 000a                 addq.w    #1,10(a3)
 [00006342] 3744 0018                 move.w    d4,24(a3)
 [00006346] 6100 0238                 bsr       init_fon
@@ -9165,7 +6607,7 @@ v_opnwk:
 [00006394] 6100 011c                 bsr       get_reso
 [00006398] 3612                      move.w    (a2),d3
 [0000639a] 5343                      subq.w    #1,d3
-[0000639c] 0c43 0009                 cmpi.w    #SCREEN9,d3
+[0000639c] 0c43 0009                 cmpi.w    #9,d3
 [000063a0] 6200 008c                 bhi       opnwk_er
 [000063a4] 47f8 16fe                 lea.l     ($000016FE).w,a3
 [000063a8] 4a6b 000a                 tst.w     10(a3)
@@ -9185,17 +6627,17 @@ v_opnwk:
 [000063d2] 20fc 0000 1200            move.l    #__a_vdi,(a0)+
 [000063d8] 20fc 0000 1418            move.l    #$00001418,(a0)+
 [000063de] 20fc 0000 1430            move.l    #$00001430,(a0)+
-[000063e4] 32bc 0015                 move.w    #V_OUTPUT,(a1)
-[000063e8] 337c 0001 0006            move.w    #FREE_MB,6(a1)
-[000063ee] 4269 0002                 clr.w     2(a1)
-[000063f2] 337c 0001 000c            move.w    #FREE_MB,12(a1)
-[000063f8] 34bc 0001                 move.w    #FREE_MB,(a2)
+[000063e4] 32bc 0015                 move.w    #21,(a1) ; ???
+[000063e8] 337c 0001 0006            move.w    #1,n_intin(a1)
+[000063ee] 4269 0002                 clr.w     n_ptsin(a1)
+[000063f2] 337c 0001 000c            move.w    #1,handle(a1)
+[000063f8] 34bc 0001                 move.w    #1,(a2)
 [000063fc] 7073                      moveq.l   #115,d0
 [000063fe] 4e42                      trap      #2
 v_opnwk_:
 [00006400] 203c 4564 4449            move.l    #$45644449,d0
-[00006406] 223c 0000 391e            move.l    #eddi_dis,d1
-[0000640c] 6100 d438                 bsr       init_coo
+[00006406] 223c 0000 391e            move.l    #eddi_dispatch,d1
+[0000640c] 6100 d438                 bsr       init_cookie0
 opn_hand:
 [00006410] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
 [00006414] 4e75                      rts
@@ -9211,7 +6653,7 @@ opnwk_er:
 [0000642e] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
 [00006432] 2041                      movea.l   d1,a0
 [00006434] 2250                      movea.l   (a0),a1
-[00006436] 4269 000c                 clr.w     12(a1)
+[00006436] 4269 000c                 clr.w     handle(a1)
 [0000643a] 4e75                      rts
 alloc_wk:
 [0000643c] 7800                      moveq.l   #0,d4
@@ -9252,7 +6694,7 @@ opnwk_cl:
 [00006490] 3d43 000a                 move.w    d3,10(a6)
 [00006494] 3d44 0008                 move.w    d4,8(a6)
 alloc_wk:
-[00006498] 3344 000c                 move.w    d4,12(a1)
+[00006498] 3344 000c                 move.w    d4,handle(a1)
 [0000649c] 4e75                      rts
 free_wk:
 [0000649e] e548                      lsl.w     #2,d0
@@ -9355,7 +6797,7 @@ init_fon:
 [00006592] 20ca                      move.l    a2,(a0)+
 [00006594] 4298                      clr.l     (a0)+
 [00006596] 4298                      clr.l     (a0)+
-[00006598] 31fc 0001 1eb8            move.w    #FREE_MB,($00001EB8).w
+[00006598] 31fc 0001 1eb8            move.w    #1,($00001EB8).w
 [0000659e] 21ca 1ea4                 move.l    a2,($00001EA4).w
 [000065a2] 21ea 004c 205a            move.l    76(a2),($0000205A).w
 [000065a8] 7008                      moveq.l   #8,d0
@@ -9394,7 +6836,7 @@ init_res:
 init_int:
 [0000660c] 48e7 fffe                 movem.l   d0-d7/a0-a6,-(a7)
 [00006610] 40e7                      move.w    sr,-(a7)
-[00006612] 007c 0700                 ori.w     #SHFTMODE,sr
+[00006612] 007c 0700                 ori.w     #$0700,sr
 [00006616] 303c 0100                 move.w    #t_bitmap,d0
 [0000661a] 41fa 2bb2                 lea.l     sys_time(pc),a0
 [0000661e] 43f8 15f0                 lea.l     ($000015F0).w,a1
@@ -9473,9 +6915,9 @@ mouse_fo:
 [00006720] 31fc 2000 20e0            move.w    #$2000,($000020E0).w
 [00006726] 21fc 0000 23be 209e       move.l    #fill0,($0000209E).w
 [0000672e] 4278 20a2                 clr.w     ($000020A2).w
-[00006732] 31fc 0001 1f16            move.w    #FREE_MB,($00001F16).w
+[00006732] 31fc 0001 1f16            move.w    #1,($00001F16).w
 [00006738] 4278 20a4                 clr.w     ($000020A4).w
-[0000673c] 0c78 0008 2070            cmpi.w    #fd_wdwid,($00002070).w
+[0000673c] 0c78 0008 2070            cmpi.w    #8,($00002070).w
 [00006742] 6d08                      blt.s     init_la_
 [00006744] 42b8 26c6                 clr.l     ($000026C6).w
 [00006748] 42b8 26ca                 clr.l     ($000026CA).w
@@ -9517,7 +6959,7 @@ wk_array:
 [000067c4] 2d6e 0010 0038            move.l    16(a6),56(a6)
 [000067ca] 426e 003c                 clr.w     60(a6)
 [000067ce] 41ee 0048                 lea.l     72(a6),a0
-[000067d2] 3d7c 0001 0048            move.w    #FREE_MB,72(a6)
+[000067d2] 3d7c 0001 0048            move.w    #1,72(a6)
 [000067d8] 42ae 004a                 clr.l     74(a6)
 [000067dc] 42ae 004e                 clr.l     78(a6)
 [000067e0] 41ee 0052                 lea.l     82(a6),a0
@@ -9527,7 +6969,7 @@ wk_array:
 [000067f6] 30fc ffff                 move.w    #$FFFF,(a0)+
 [000067fa] 42ae 00ac                 clr.l     172(a6)
 [000067fe] 42ae 0078                 clr.l     120(a6)
-[00006802] 3d7c 0001 00fa            move.w    #FREE_MB,250(a6)
+[00006802] 3d7c 0001 00fa            move.w    #1,250(a6)
 [00006808] 2d7c 0000 148c 010e       move.l    #$0000148C,270(a6)
 [00006810] 2d78 1678 0020            move.l    ($00001678).w,32(a6)
 [00006816] 2d7c 0000 4000 0024       move.l    #FAST_MB_,36(a6)
@@ -9541,7 +6983,7 @@ wk_array:
 [0000683e] 426e 013c                 clr.w     316(a6)
 [00006842] 42ae 013e                 clr.l     318(a6)
 [00006846] 3d7c 00ff 006c            move.w    #VQT_CACH,108(a6)
-[0000684c] 3d7c 0001 00c4            move.w    #FREE_MB,196(a6)
+[0000684c] 3d7c 0001 00c4            move.w    #1,196(a6)
 [00006852] 41ee 0258                 lea.l     600(a6),a0
 [00006856] 2d48 00dc                 move.l    a0,220(a6)
 [0000685a] 426e 00e0                 clr.w     224(a6)
@@ -9554,7 +6996,7 @@ wk_array:
 init_wk_:
 [00006886] 20d9                      move.l    (a1)+,(a0)+
 [00006888] 51c8 fffc                 dbf       d0,init_wk_
-[0000688c] 3d7c 0009 00ec            move.w    #SCREEN9,236(a6)
+[0000688c] 3d7c 0009 00ec            move.w    #9,236(a6)
 [00006892] 2d7c 0000 7002 0244       move.l    #text,580(a6)
 [0000689a] 2d7c 0000 91de 0248       move.l    #v_escape,584(a6)
 [000068a2] 4cd7 0307                 movem.l   (a7),d0-d2/a0-a1
@@ -9620,36 +7062,36 @@ cldrvr:
 v_opnvwk:
 [00006958] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [0000695c] 4cd0 3e00                 movem.l   (a0),a1-a5
-[00006960] 0c69 0001 000a            cmpi.w    #FREE_MB,10(a1)
-[00006966] 6608                      bne.s     v_opnvwk
-[00006968] 0c69 0014 0006            cmpi.w    #_dy_sign,6(a1)
+[00006960] 0c69 0001 000a            cmpi.w    #1,opcode2(a1)
+[00006966] 6608                      bne.s     v_opnvwk1
+[00006968] 0c69 0014 0006            cmpi.w    #20,n_intin(a1)
 [0000696e] 6740                      beq.s     v_opnbm
-v_opnvwk:
+v_opnvwk1:
 [00006970] 362e 000a                 move.w    10(a6),d3
 [00006974] 266e 0190                 movea.l   400(a6),a3
 [00006978] 3e2e 0008                 move.w    8(a6),d7
 [0000697c] 6100 fabe                 bsr       alloc_wk
 [00006980] 4a44                      tst.w     d4
-[00006982] 671a                      beq.s     v_opnvwk
+[00006982] 671a                      beq.s     v_opnvwk3
 [00006984] 48e7 00c0                 movem.l   a0-a1,-(a7)
 [00006988] 204b                      movea.l   a3,a0
 [0000698a] 226b 0014                 movea.l   20(a3),a1
 [0000698e] 6100 fdd0                 bsr       wk_defau
 [00006992] 4cdf 0300                 movem.l   (a7)+,a0-a1
 [00006996] 526b 000a                 addq.w    #1,10(a3)
-v_opnvwk:
+v_opnvwk2:
 [0000699a] 6100 fb48                 bsr       opnwk_io
-v_opnvwk:
+v_opnvwk3:
 [0000699e] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
 [000069a2] 4e75                      rts
-v_opnvwk:
+v_opnvwk4:
 [000069a4] 3004                      move.w    d4,d0
 [000069a6] 6100 faf6                 bsr       free_wk
 [000069aa] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
 [000069ae] 4e75                      rts
 v_opnbm:
 [000069b0] 2f0a                      move.l    a2,-(a7)
-[000069b2] 2f29 000e                 move.l    14(a1),-(a7)
+[000069b2] 2f29 000e                 move.l    s_addr(a1),-(a7)
 [000069b6] 224e                      movea.l   a6,a1
 [000069b8] 206e 0190                 movea.l   400(a6),a0
 [000069bc] 4eb9 0000 0000            jsr       create_b
@@ -9660,7 +7102,7 @@ v_opnbm:
 [000069ca] 2057                      movea.l   (a7),a0
 [000069cc] 2208                      move.l    a0,d1
 [000069ce] 4cd0 3e00                 movem.l   (a0),a1-a5
-[000069d2] 336e 0008 000c            move.w    8(a6),12(a1)
+[000069d2] 336e 0008 000c            move.w    8(a6),handle(a1)
 [000069d8] 6100 fb4c                 bsr       v_opnwk_
 [000069dc] 246e 0194                 movea.l   404(a6),a2
 [000069e0] 246a 0004                 movea.l   4(a2),a2
@@ -9673,7 +7115,7 @@ v_opnbm:
 v_opnbm_:
 [000069f4] 2057                      movea.l   (a7),a0
 [000069f6] 2250                      movea.l   (a0),a1
-[000069f8] 4269 000c                 clr.w     12(a1)
+[000069f8] 4269 000c                 clr.w     handle(a1)
 [000069fc] 4cdf 3cfe                 movem.l   (a7)+,d1-d7/a2-a5
 [00006a00] 4e75                      rts
 clear_bi:
@@ -9695,7 +7137,7 @@ v_clswk_:
 v_clswk:
 [00006a2a] 48e7 7020                 movem.l   d1-d3/a2,-(a7)
 [00006a2e] 2250                      movea.l   (a0),a1
-[00006a30] 3029 000c                 move.w    12(a1),d0
+[00006a30] 3029 000c                 move.w    handle(a1),d0
 [00006a34] 6778                      beq.s     v_clswk_
 [00006a36] 246e 0190                 movea.l   400(a6),a2
 [00006a3a] 240a                      move.l    a2,d2
@@ -9730,7 +7172,7 @@ v_clswk_:
 [00006a8e] 426a 000a                 clr.w     10(a2)
 [00006a92] 226a 000c                 movea.l   12(a2),a1
 [00006a96] 2269 001c                 movea.l   28(a1),a1
-[00006a9a] 41f8 1980                 lea.l     ($00001980).w,a0
+[00006a9a] 41f8 1980                 lea.l     (nvdi_strx).w,a0
 [00006a9e] 4e91                      jsr       (a1)
 [00006aa0] 6100 007c                 bsr.w     reset_in
 [00006aa4] 203c 4564 4449            move.l    #$45644449,d0
@@ -9743,9 +7185,9 @@ call_cls:
 v_clsvwk:
 [00006ab6] 48e7 6020                 movem.l   d1-d2/a2,-(a7)
 [00006aba] 2250                      movea.l   (a0),a1
-[00006abc] 3029 000c                 move.w    12(a1),d0
+[00006abc] 3029 000c                 move.w    handle(a1),d0
 [00006ac0] 6726                      beq.s     v_clsvwk
-[00006ac2] b07c 0001                 cmp.w     #FREE_MB,d0
+[00006ac2] b07c 0001                 cmp.w     #1,d0
 [00006ac6] 6746                      beq.s     v_clsvwk
 [00006ac8] 4aae 01ae                 tst.l     430(a6)
 [00006acc] 6620                      bne.s     v_clsbm
@@ -9753,7 +7195,7 @@ v_clsvwk:
 v_clsvwk:
 [00006ad2] 226a 000c                 movea.l   12(a2),a1
 [00006ad6] 2269 001c                 movea.l   28(a1),a1
-[00006ada] 41f8 1980                 lea.l     ($00001980).w,a0
+[00006ada] 41f8 1980                 lea.l     (nvdi_strx).w,a0
 [00006ade] 4e91                      jsr       (a1)
 [00006ae0] 536a 000a                 subq.w    #1,10(a2)
 [00006ae4] 6100 f9b8                 bsr       free_wk
@@ -9764,7 +7206,7 @@ v_clsbm:
 [00006aee] 226e 0194                 movea.l   404(a6),a1
 [00006af2] 2269 0004                 movea.l   4(a1),a1
 [00006af6] 2269 001c                 movea.l   28(a1),a1
-[00006afa] 41f8 1980                 lea.l     ($00001980).w,a0
+[00006afa] 41f8 1980                 lea.l     (nvdi_strx).w,a0
 [00006afe] 4e91                      jsr       (a1)
 [00006b00] 204e                      movea.l   a6,a0
 [00006b02] 4eb9 0000 0000            jsr       delete_b
@@ -9772,7 +7214,7 @@ v_clsbm:
 [00006b0c] 4e75                      rts
 v_clsvwk:
 [00006b0e] 4cdf 0406                 movem.l   (a7)+,d1-d2/a2
-[00006b12] b07c 0001                 cmp.w     #FREE_MB,d0
+[00006b12] b07c 0001                 cmp.w     #1,d0
 [00006b16] 6704                      beq.s     v_clsvwk
 [00006b18] 6000 ff10                 bra       v_clswk
 v_clsvwk:
@@ -9780,7 +7222,7 @@ v_clsvwk:
 reset_in:
 [00006b1e] 48e7 e0e0                 movem.l   d0-d2/a0-a2,-(a7)
 [00006b22] 40e7                      move.w    sr,-(a7)
-[00006b24] 007c 0700                 ori.w     #SHFTMODE,sr
+[00006b24] 007c 0700                 ori.w     #$0700,sr
 [00006b28] 21f8 15f0 0400            move.l    ($000015F0).w,($00000400).w
 [00006b2e] 41f8 202e                 lea.l     ($0000202E).w,a0
 [00006b32] 4298                      clr.l     (a0)+
@@ -10279,7 +7721,7 @@ textp_it:
 [00006ffc] 4c9f 0060                 movem.w   (a7)+,d5-d6
 [00007000] 60aa                      bra.s     text_par
 text:
-[00007002] 3c29 0006                 move.w    6(a1),d6
+[00007002] 3c29 0006                 move.w    n_intin(a1),d6
 [00007006] 6f72                      ble.s     text_exi
 [00007008] 5346                      subq.w    #1,d6
 [0000700a] 42ae 0124                 clr.l     292(a6)
@@ -10952,7 +8394,7 @@ text_buf:
 [0000777c] 5247                      addq.w    #1,d7
 [0000777e] 4a6e 00a8                 tst.w     168(a6)
 [00007782] 6708                      beq.s     text_buf
-[00007784] 0647 000f                 addi.w    #PALETTE,d7
+[00007784] 0647 000f                 addi.w    #15,d7
 [00007788] 0247 fff0                 andi.w    #$FFF0,d7
 text_buf:
 [0000778c] cec4                      mulu.w    d4,d7
@@ -11605,7 +9047,7 @@ copy_to_:
 [00007d18] 660e                      bne.s     cptb_no_
 [00007d1a] 4a40                      tst.w     d0
 [00007d1c] 6700 01a2                 beq       cptb_byt
-[00007d20] b07c 0008                 cmp.w     #fd_wdwid,d0
+[00007d20] b07c 0008                 cmp.w     #8,d0
 [00007d24] 6700 0198                 beq       cptb_byt
 cptb_no_:
 [00007d28] 9042                      sub.w     d2,d0
@@ -11631,7 +9073,7 @@ cptb_no_:
 [00007d54] 4a40                      tst.w     d0
 [00007d56] 671e                      beq.s     cptb_mul
 [00007d58] 6d0c                      blt.s     cptbm_r
-[00007d5a] 0c40 0008                 cmpi.w    #fd_wdwid,d0
+[00007d5a] 0c40 0008                 cmpi.w    #8,d0
 [00007d5e] 6f5e                      ble.s     cptb_mul
 [00007d60] 5340                      subq.w    #1,d0
 [00007d62] bf40                      eor.w     d7,d0
@@ -11639,7 +9081,7 @@ cptb_no_:
 cptbm_r:
 [00007d66] 4440                      neg.w     d0
 [00007d68] 5588                      subq.l    #2,a0
-[00007d6a] 0c40 0008                 cmpi.w    #fd_wdwid,d0
+[00007d6a] 0c40 0008                 cmpi.w    #8,d0
 [00007d6e] 6f24                      ble.s     cptb_mul
 [00007d70] 5340                      subq.w    #1,d0
 [00007d72] bf40                      eor.w     d7,d0
@@ -11711,7 +9153,7 @@ cptb_1wo:
 [00007df4] 4a40                      tst.w     d0
 [00007df6] 671e                      beq.s     cptb_wor
 [00007df8] 6d0c                      blt.s     cptb_wr
-[00007dfa] 0c40 0008                 cmpi.w    #fd_wdwid,d0
+[00007dfa] 0c40 0008                 cmpi.w    #8,d0
 [00007dfe] 6f38                      ble.s     cptb_wor
 [00007e00] 5340                      subq.w    #1,d0
 [00007e02] bf40                      eor.w     d7,d0
@@ -11719,7 +9161,7 @@ cptb_1wo:
 cptb_wr:
 [00007e06] 4440                      neg.w     d0
 [00007e08] 5588                      subq.l    #2,a0
-[00007e0a] 0c40 0008                 cmpi.w    #fd_wdwid,d0
+[00007e0a] 0c40 0008                 cmpi.w    #8,d0
 [00007e0e] 6f16                      ble.s     cptb_wor
 [00007e10] 5340                      subq.w    #1,d0
 [00007e12] bf40                      eor.w     d7,d0
@@ -11759,7 +9201,7 @@ cptb_1lo:
 [00007e54] 4a40                      tst.w     d0
 [00007e56] 671e                      beq.s     cptb_lon
 [00007e58] 6d0c                      blt.s     cptb_lr
-[00007e5a] 0c40 0008                 cmpi.w    #fd_wdwid,d0
+[00007e5a] 0c40 0008                 cmpi.w    #8,d0
 [00007e5e] 6f42                      ble.s     cptb_lon
 [00007e60] 5340                      subq.w    #1,d0
 [00007e62] bf40                      eor.w     d7,d0
@@ -11767,7 +9209,7 @@ cptb_1lo:
 cptb_lr:
 [00007e66] 4440                      neg.w     d0
 [00007e68] 5588                      subq.l    #2,a0
-[00007e6a] 0c40 0008                 cmpi.w    #fd_wdwid,d0
+[00007e6a] 0c40 0008                 cmpi.w    #8,d0
 [00007e6e] 6f16                      ble.s     cptb_lon
 [00007e70] 5340                      subq.w    #1,d0
 [00007e72] bf40                      eor.w     d7,d0
@@ -11907,7 +9349,7 @@ grow_cha:
 [00007f94] 660a                      bne.s     grow_cha
 [00007f96] 4a40                      tst.w     d0
 [00007f98] 67be                      beq.s     grow_byt
-[00007f9a] b07c 0008                 cmp.w     #fd_wdwid,d0
+[00007f9a] b07c 0008                 cmp.w     #8,d0
 [00007f9e] 67b6                      beq.s     grow_byt
 grow_cha:
 [00007fa0] 3602                      move.w    d2,d3
@@ -12180,7 +9622,7 @@ shrink_e:
 [000081a2] 205f                      movea.l   (a7)+,a0
 [000081a4] 4e75                      rts
 text_jus:
-[000081a6] 3c29 0006                 move.w    6(a1),d6
+[000081a6] 3c29 0006                 move.w    n_intin(a1),d6
 [000081aa] 5746                      subq.w    #3,d6
 [000081ac] bc7c 7ffc                 cmp.w     #$7FFC,d6
 [000081b0] 6200 eec8                 bhi       text_exi
@@ -12369,7 +9811,7 @@ ellipse_:
 [00008382] 6e14                      bgt.s     ellipse_
 [00008384] 5844                      addq.w    #4,d4
 [00008386] 0244 fffc                 andi.w    #$FFFC,d4
-[0000838a] 347c 0008                 movea.w   #fd_wdwid,a2
+[0000838a] 347c 0008                 movea.w   #8,a2
 [0000838e] d844                      add.w     d4,d4
 [00008390] d0c4                      adda.w    d4,a0
 [00008392] e64c                      lsr.w     #3,d4
@@ -12554,9 +9996,9 @@ fe_exit:
 fec:
 [00008524] 4a42                      tst.w     d2
 [00008526] 6762                      beq.s     fec_smal
-[00008528] b47c 0001                 cmp.w     #FREE_MB,d2
+[00008528] b47c 0001                 cmp.w     #1,d2
 [0000852c] 676c                      beq.s     fec_smal
-[0000852e] b67c 0001                 cmp.w     #FREE_MB,d3
+[0000852e] b67c 0001                 cmp.w     #1,d3
 [00008532] 6700 008a                 beq       fec_smal
 [00008536] 48e7 ff80                 movem.l   d0-d7/a0,-(a7)
 [0000853a] 4240                      clr.w     d0
@@ -12623,7 +10065,7 @@ fec_smal:
 [000085aa] 4258                      clr.w     (a0)+
 [000085ac] 51cb fffc                 dbf       d3,fec_smal
 fec_smal:
-[000085b0] 30fc 0001                 move.w    #FREE_MB,(a0)+
+[000085b0] 30fc 0001                 move.w    #1,(a0)+
 [000085b4] 51c8 fffa                 dbf       d0,fec_smal
 [000085b8] 4cdf 0109                 movem.l   (a7)+,d0/d3/a0
 [000085bc] 4e75                      rts
@@ -12648,12 +10090,12 @@ rby1y2:
 rbtestx:
 [000085de] 3802                      move.w    d2,d4
 [000085e0] 9840                      sub.w     d0,d4
-[000085e2] 0c44 000f                 cmpi.w    #PALETTE,d4
+[000085e2] 0c44 000f                 cmpi.w    #15,d4
 [000085e6] 6f0a                      ble.s     rbsmall
 rbtesty:
 [000085e8] 3803                      move.w    d3,d4
 [000085ea] 9841                      sub.w     d1,d4
-[000085ec] 0c44 000f                 cmpi.w    #PALETTE,d4
+[000085ec] 0c44 000f                 cmpi.w    #15,d4
 [000085f0] 6e50                      bgt.s     rbnormal
 rbsmall:
 [000085f2] 5744                      subq.w    #3,d4
@@ -12756,12 +10198,12 @@ frby1y2:
 frbtestx:
 [000086b0] 3802                      move.w    d2,d4
 [000086b2] 9840                      sub.w     d0,d4
-[000086b4] 0c44 000f                 cmpi.w    #PALETTE,d4
+[000086b4] 0c44 000f                 cmpi.w    #15,d4
 [000086b8] 6f0a                      ble.s     frbsmall
 frbtesty:
 [000086ba] 3803                      move.w    d3,d4
 [000086bc] 9841                      sub.w     d1,d4
-[000086be] 0c44 000f                 cmpi.w    #PALETTE,d4
+[000086be] 0c44 000f                 cmpi.w    #15,d4
 [000086c2] 6e24                      bgt.s     frbnorma
 frbsmall:
 [000086c4] 5744                      subq.w    #3,d4
@@ -12954,7 +10396,7 @@ vclip_c_:
 [00008840] 3e19                      move.w    (a1)+,d7
 [00008842] 3403                      move.w    d3,d2
 [00008844] 9441                      sub.w     d1,d2
-[00008846] 0242 000f                 andi.w    #PALETTE,d2
+[00008846] 0242 000f                 andi.w    #15,d2
 [0000884a] e47e                      ror.w     d2,d6
 [0000884c] 226e 0200                 movea.l   512(a6),a1
 [00008850] 4ed1                      jmp       (a1)
@@ -13073,25 +10515,26 @@ line_cli:
 [00008936] 4ed1                      jmp       (a1)
 a_dummy:
 [00008938] 4e75                      rts
-linea_ta:
-[0000893a] 0000 89b6                 ori.b     #$B6,d0
-[0000893e] 0000 8a90                 ori.b     #$90,d0
-[00008942] 0000 8aae                 ori.b     #$AE,d0
-[00008946] 0000 8ac6                 ori.b     #$C6,d0
-[0000894a] 0000 8b0a                 ori.b     #$0A,d0
-[0000894e] 0000 8b2e                 ori.b     #$2E,d0
-[00008952] 0000 8938                 ori.b     #$38,d0
-[00008956] 0000 8b52                 ori.b     #$52,d0
-[0000895a] 0000 8c28                 ori.b     #$28,d0
-[0000895e] 0000 8db2                 ori.b     #$B2,d0
-[00008962] 0000 8dc8                 ori.b     #$C8,d0
-[00008966] 0000 8dde                 ori.b     #$DE,d0
-[0000896a] 0000 8df0                 ori.b     #$F0,d0
-[0000896e] 0000 8eaa                 ori.b     #$AA,d0
-[00008972] 0000 90b8                 ori.b     #$B8,d0
+linea_tab:
+	dc.l	linea_in
+	dc.l	put_pixe
+	dc.l	get_pixe
+	dc.l	linea_li
+	dc.l	linea_hl
+	dc.l	linea_re
+	dc.l	a_dummy
+	dc.l	linea_bi
+	dc.l	linea_te
+	dc.l	show_mou
+	dc.l	hide_mou
+	dc.l	transfor
+	dc.l	undraw_s
+	dc.l	draw_sprite ; 8eaa
+	dc.l	linea_cp
 linea_a0:
-[00008976] 0000 8938                 ori.b     #$38,d0
-int_line:
+	dc.l	a_dummy
+int_linea:
+linea_di:
 [0000897a] 226f 0002                 movea.l   2(a7),a1
 [0000897e] 3419                      move.w    (a1)+,d2
 [00008980] 2f49 0002                 move.l    a1,2(a7)
@@ -13118,8 +10561,8 @@ planes_c:
 linea_in:
 [000089b6] 41f8 2070                 lea.l     ($00002070).w,a0
 [000089ba] 2008                      move.l    a0,d0
-[000089bc] 43f9 0000 0012            lea.l     linea_fo,a1
-[000089c2] 45fa ff76                 lea.l     linea_ta(pc),a2
+[000089bc] 43f9 0000 0012            lea.l     linea_fonts,a1
+[000089c2] 45fa ff76                 lea.l     linea_tab(pc),a2
 [000089c6] 4e75                      rts
 set_lcli:
 [000089c8] 43ee 0034                 lea.l     52(a6),a1
@@ -13297,13 +10740,13 @@ linea_bl:
 [00008bb0] 3e2d 0008                 move.w    8(a5),d7
 [00008bb4] 3d46 01ea                 move.w    d6,490(a6)
 [00008bb8] 3d47 01ec                 move.w    d7,492(a6)
-[00008bbc] cc7c 0001                 and.w     #FREE_MB,d6
-[00008bc0] ce7c 0001                 and.w     #FREE_MB,d7
+[00008bbc] cc7c 0001                 and.w     #1,d6
+[00008bc0] ce7c 0001                 and.w     #1,d7
 [00008bc4] dc46                      add.w     d6,d6
 [00008bc6] dc47                      add.w     d7,d6
 [00008bc8] 1e35 600a                 move.b    10(a5,d6.w),d7
 [00008bcc] 3d47 01ee                 move.w    d7,494(a6)
-[00008bd0] 0c6d 0001 0004            cmpi.w    #FREE_MB,4(a5)
+[00008bd0] 0c6d 0001 0004            cmpi.w    #1,4(a5)
 [00008bd6] 6608                      bne.s     linea_bi
 [00008bd8] 2078 1730                 movea.l   ($00001730).w,a0
 [00008bdc] 4e90                      jsr       (a0)
@@ -13350,7 +10793,7 @@ linea_te:
 [00008c52] 720f                      moveq.l   #15,d1
 [00008c54] c26e 0014                 and.w     20(a6),d1
 [00008c58] c041                      and.w     d1,d0
-[00008c5a] 3d7c 0001 0064            move.w    #FREE_MB,100(a6)
+[00008c5a] 3d7c 0001 0064            move.w    #1,100(a6)
 [00008c60] b240                      cmp.w     d0,d1
 [00008c62] 6706                      beq.s     atext_in
 [00008c64] 1d70 0000 0064            move.b    0(a0,d0.w),100(a6)
@@ -13374,7 +10817,7 @@ atext_in:
 [00008cac] 6702                      beq.s     atext_th
 [00008cae] 7000                      moveq.l   #0,d0
 atext_th:
-[00008cb0] b07c 000f                 cmp.w     #PALETTE,d0
+[00008cb0] b07c 000f                 cmp.w     #15,d0
 [00008cb4] 6302                      bls.s     atext_th
 [00008cb6] 700f                      moveq.l   #15,d0
 atext_th:
@@ -13454,7 +10897,7 @@ atext_ro:
 atext_ro:
 [00008d96] d978 20be                 add.w     d4,($000020BE).w
 atext_ca:
-[00008d9a] 337c 0001 0006            move.w    #FREE_MB,6(a1)
+[00008d9a] 337c 0001 0006            move.w    #1,6(a1)
 [00008da0] 4252                      clr.w     (a2)
 [00008da2] 4893 000c                 movem.w   d2-d3,(a3)
 [00008da6] 6100 e25a                 bsr       text
@@ -13492,7 +10935,7 @@ undraw_s:
 undraw_s:
 [00008df6] 341a                      move.w    (a2)+,d2
 [00008df8] 5342                      subq.w    #1,d2
-[00008dfa] 6b4e                      bmi.s     undraw_e
+[00008dfa] 6b4e                      bmi.s     undraw_error
 [00008dfc] 0c78 001e 19de            cmpi.w    #METAFILE,($000019DE).w
 [00008e02] 6614                      bne.s     undraw_s
 [00008e04] 0838 0000 19d7            btst      #0,($000019D7).w
@@ -13503,23 +10946,32 @@ undraw_s:
 undraw_s:
 [00008e18] 225a                      movea.l   (a2)+,a1
 [00008e1a] 0892 0000                 bclr      #0,(a2)
-[00008e1e] 672a                      beq.s     undraw_e
+[00008e1e] 672a                      beq.s     undraw_error
 [00008e20] 3678 206e                 movea.w   ($0000206E).w,a3
 [00008e24] 548a                      addq.l    #2,a2
 [00008e26] 3038 2070                 move.w    ($00002070).w,d0
 [00008e2a] 7200                      moveq.l   #0,d1
-[00008e2c] 123b 000b                 move.b    $00008E39(pc,d0.w),d1
+[00008e2c] 123b 000b                 move.b    undraw_tab-1(pc,d0.w),d1
 [00008e30] d040                      add.w     d0,d0
 [00008e32] d040                      add.w     d0,d0
 [00008e34] 96c0                      suba.w    d0,a3
-[00008e36] 4efb 1002                 jmp       undraw_t(pc,d1.w)
-undraw_t:
-[00008e3a] 0812 101e                 btst      #4126,(a2)
+[00008e36] 4efb 1002                 jmp       undraw_tab(pc,d1.w)
+undraw_tab:
+[00008e3a] 0812 101e                 dc.b undraw_1-undraw_tab
+                                     dc.b undraw_2-undraw_tab
+                                     dc.b undraw_error-undraw_tab
+                                     dc.b undraw_4-undraw_tab
+                                     dc.b undraw_error-undraw_tab
+                                     dc.b undraw_error-undraw_tab
+                                     dc.b undraw_error-undraw_tab
+                                     dc.b undraw_8-undraw_tab
 [00008e3e] 1010                      move.b    (a0),d0
-[00008e40] 102e 22da                 move.b    8922(a6),d0
+[00008e40] 102e
+undraw_1:
+[00008e42] 22da                      move.l    (a2)+,(a1)+
 [00008e44] d2cb                      adda.w    a3,a1
 [00008e46] 51ca fffa                 dbf       d2,undraw_1
-undraw_e:
+undraw_error:
 [00008e4a] 4e75                      rts
 undraw_2:
 [00008e4c] 22da                      move.l    (a2)+,(a1)+
@@ -13561,10 +11013,10 @@ vbl_mous:
 [00008e9e] 245f                      movea.l   (a7)+,a2
 [00008ea0] 4cb8 0003 1f18            movem.w   ($00001F18).w,d0-d1
 [00008ea6] 41f8 1d18                 lea.l     ($00001D18).w,a0
-draw_spr:
+draw_sprite:
 [00008eaa] 2f38 1968                 move.l    ($00001968).w,-(a7)
 [00008eae] 4e75                      rts
-draw_spr:
+draw_sprite0:
 [00008eb0] 2f0e                      move.l    a6,-(a7)
 [00008eb2] 3f28 0006                 move.w    6(a0),-(a7)
 [00008eb6] 3f28 0008                 move.w    8(a0),-(a7)
@@ -13578,7 +11030,7 @@ vdi_form:
 [00008ec8] 9050                      sub.w     (a0),d0
 [00008eca] 650e                      bcs.s     Xko_lt_i
 [00008ecc] 3638 1dbc                 move.w    ($00001DBC).w,d3
-[00008ed0] 0443 000f                 subi.w    #PALETTE,d3
+[00008ed0] 0443 000f                 subi.w    #15,d3
 [00008ed4] b043                      cmp.w     d3,d0
 [00008ed6] 620a                      bhi.s     X_am_rRa
 [00008ed8] 600a                      bra.s     get_yhot
@@ -13593,7 +11045,7 @@ get_yhot:
 [00008ee8] 41e8 000a                 lea.l     10(a0),a0
 [00008eec] 6510                      bcs.s     Y_am_oRa
 [00008eee] 3638 1dbe                 move.w    ($00001DBE).w,d3
-[00008ef2] 0443 000f                 subi.w    #PALETTE,d3
+[00008ef2] 0443 000f                 subi.w    #15,d3
 [00008ef6] b243                      cmp.w     d3,d1
 [00008ef8] 6212                      bhi.s     Y_am_uRa
 [00008efa] 7a10                      moveq.l   #16,d5
@@ -13611,56 +11063,56 @@ Y_am_uRa:
 [00008f12] 5245                      addq.w    #1,d5
 hole_Koo:
 [00008f14] 6100 0182                 bsr       calc_add
-[00008f18] 0240 000f                 andi.w    #PALETTE,d0
-[00008f1c] 47fa 0130                 lea.l     draw_spr(pc),a3
+[00008f18] 0240 000f                 andi.w    #15,d0
+[00008f1c] 47fa 0130                 lea.l     draw_sprite15(pc),a3 ; 904e
 [00008f20] 3c00                      move.w    d0,d6
-[00008f22] 0c46 0008                 cmpi.w    #fd_wdwid,d6
+[00008f22] 0c46 0008                 cmpi.w    #8,d6
 [00008f26] 650a                      bcs.s     load_drr
-[00008f28] 47fa 0116                 lea.l     draw_spr(pc),a3
-[00008f2c] 3c3c 0010                 move.w    #AESVARS_,d6
+[00008f28] 47fa 0116                 lea.l     draw_sprite14(pc),a3 ; 9040
+[00008f2c] 3c3c 0010                 move.w    #16,d6
 [00008f30] 9c40                      sub.w     d0,d6
 load_drr:
-[00008f32] 2a7b 204a                 movea.l   draw_spr(pc,d2.w),a5
-[00008f36] 2c7b 2052                 movea.l   draw_spr(pc,d2.w),a6
+[00008f32] 2a7b 204a                 movea.l   draw_sprite2(pc,d2.w),a5 ; 8f7e
+[00008f36] 2c7b 2052                 movea.l   draw_sprite3(pc,d2.w),a6 ; 8f8a
 [00008f3a] 3e38 2070                 move.w    ($00002070).w,d7
 [00008f3e] 3607                      move.w    d7,d3
 [00008f40] d643                      add.w     d3,d3
 [00008f42] 48c3                      ext.l     d3
 [00008f44] 3838 206e                 move.w    ($0000206E).w,d4
 [00008f48] 0c78 001e 19de            cmpi.w    #METAFILE,($000019DE).w
-[00008f4e] 6614                      bne.s     draw_spr
+[00008f4e] 6614                      bne.s     draw_sprite1
 [00008f50] 0838 0000 19d7            btst      #0,($000019D7).w
-[00008f56] 670c                      beq.s     draw_spr
+[00008f56] 670c                      beq.s     draw_sprite1
 [00008f58] 4e7a 0002                 movec     cacr,d0 ; 68020+ only
 [00008f5c] 08c0 000b                 bset      #11,d0
 [00008f60] 4e7b 0002                 movec     d0,cacr ; 68020+ only
-draw_spr:
+draw_sprite1:
 [00008f64] 34c5                      move.w    d5,(a2)+
 [00008f66] 24c9                      move.l    a1,(a2)+
-[00008f68] bdfc 0000 9020            cmpa.l    #draw_spr,a6
+[00008f68] bdfc 0000 9020            cmpa.l    #draw_sprite12,a6
 [00008f6e] 6604                      bne.s     draw_x_o
 [00008f70] 97aa fffc                 sub.l     d3,-4(a2)
 draw_x_o:
-[00008f74] 34fc 0300                 move.w    #SHFTMODE,(a2)+
+[00008f74] 34fc 0300                 move.w    #$0700,(a2)+
 [00008f78] 5345                      subq.w    #1,d5
-[00008f7a] 6a40                      bpl.s     draw_spr
-[00008f7c] 6042                      bra.s     draw_spr
-draw_spr:
-[00008f7e] 0000 8ff8                 ori.b     #$F8,d0
-[00008f82] 0000 9016                 ori.b     #$16,d0
-[00008f86] 0000 9034                 ori.b     #$34,d0
-draw_spr:
-[00008f8a] 0000 8fe6                 ori.b     #$E6,d0
-[00008f8e] 0000 9008                 ori.b     #$08,d0
-[00008f92] 0000 9020                 ori.b     #$20,d0
-draw_spr:
+[00008f7a] 6a40                      bpl.s     draw_sprite5
+[00008f7c] 6042                      bra.s     draw_sprite6
+draw_sprite2:
+[00008f7e] 0000 8ff8                 dc.l draw_sprite9
+[00008f82] 0000 9016                 dc.l draw_sprite11
+[00008f86] 0000 9034                 dc.l draw_sprite13
+draw_sprite3:
+[00008f8a] 0000 8fe6                 dc.l draw_sprite8
+[00008f8e] 0000 9008                 dc.l draw_sprite10
+[00008f92] 0000 9020                 dc.l draw_sprite12
+draw_sprite4:
 [00008f96] 4240                      clr.w     d0
 [00008f98] e2ef 0002                 lsr.w     2(a7)
 [00008f9c] d140                      addx.w    d0,d0
 [00008f9e] e2ef 0004                 lsr.w     4(a7)
 [00008fa2] e750                      roxl.w    #3,d0
 [00008fa4] d057                      add.w     (a7),d0
-[00008fa6] 287b 001e                 movea.l   draw_spr(pc,d0.w),a4
+[00008fa6] 287b 001e                 movea.l   draw_sprite7(pc,d0.w),a4 ; 8fc6
 [00008faa] 3f05                      move.w    d5,-(a7)
 [00008fac] 48e7 00e0                 movem.l   a0-a2,-(a7)
 [00008fb0] 4e96                      jsr       (a6)
@@ -13668,22 +11120,22 @@ draw_spr:
 [00008fb6] 3a1f                      move.w    (a7)+,d5
 [00008fb8] 5489                      addq.l    #2,a1
 [00008fba] 548a                      addq.l    #2,a2
-draw_spr:
-[00008fbc] 51cf ffd8                 dbf       d7,draw_spr
-draw_spr:
+draw_sprite5:
+[00008fbc] 51cf ffd8                 dbf       d7,draw_sprite4
+draw_sprite6:
 [00008fc0] 5c8f                      addq.l    #6,a7
 [00008fc2] 2c5f                      movea.l   (a7)+,a6
 [00008fc4] 4e75                      rts
-draw_spr:
-[00008fc6] 0000 905e                 ori.b     #$5E,d0
-[00008fca] 0000 9066                 ori.b     #$66,d0
-[00008fce] 0000 906e                 ori.b     #$6E,d0
-[00008fd2] 0000 9076                 ori.b     #$76,d0
-[00008fd6] 0000 907c                 ori.b     #$7C,d0
-[00008fda] 0000 9084                 ori.b     #$84,d0
-[00008fde] 0000 908a                 ori.b     #$8A,d0
-[00008fe2] 0000 9092                 ori.b     #$92,d0
-draw_spr:
+draw_sprite7:
+[00008fc6] 0000 905e                 dc.l draw_sprite16
+[00008fca] 0000 9066                 dc.l draw_sprite17
+[00008fce] 0000 906e                 dc.l draw_sprite18
+[00008fd2] 0000 9076                 dc.l draw_sprite19
+[00008fd6] 0000 907c                 dc.l draw_sprite20
+[00008fda] 0000 9084                 dc.l draw_sprite21
+[00008fde] 0000 908a                 dc.l draw_sprite22
+[00008fe2] 0000 9092                 dc.l draw_sprite23
+draw_sprite8:
 [00008fe6] 3411                      move.w    (a1),d2
 [00008fe8] 3482                      move.w    d2,(a2)
 [00008fea] d4c3                      adda.w    d3,a2
@@ -13692,26 +11144,26 @@ draw_spr:
 [00008ff2] 3482                      move.w    d2,(a2)
 [00008ff4] d4c3                      adda.w    d3,a2
 [00008ff6] 4ed3                      jmp       (a3)
-draw_spr:
+draw_sprite9:
 [00008ff8] 3382 3000                 move.w    d2,0(a1,d3.w)
 [00008ffc] 4842                      swap      d2
 [00008ffe] 3282                      move.w    d2,(a1)
 [00009000] d2c4                      adda.w    d4,a1
-[00009002] 51cd ffe2                 dbf       d5,draw_spr
+[00009002] 51cd ffe2                 dbf       d5,draw_sprite8
 [00009006] 4e75                      rts
-draw_spr:
+draw_sprite10:
 [00009008] 3411                      move.w    (a1),d2
 [0000900a] 3482                      move.w    d2,(a2)
 [0000900c] d4c3                      adda.w    d3,a2
 [0000900e] 34b1 3000                 move.w    0(a1,d3.w),(a2)
 [00009012] d4c3                      adda.w    d3,a2
 [00009014] 4ed3                      jmp       (a3)
-draw_spr:
+draw_sprite11:
 [00009016] 3282                      move.w    d2,(a1)
 [00009018] d2c4                      adda.w    d4,a1
-[0000901a] 51cd ffec                 dbf       d5,draw_spr
+[0000901a] 51cd ffec                 dbf       d5,draw_sprite10
 [0000901e] 4e75                      rts
-draw_spr:
+draw_sprite12:
 [00009020] 3411                      move.w    (a1),d2
 [00009022] 4443                      neg.w     d3
 [00009024] 34b1 3000                 move.w    0(a1,d3.w),(a2)
@@ -13721,13 +11173,13 @@ draw_spr:
 [0000902e] d4c3                      adda.w    d3,a2
 [00009030] 4842                      swap      d2
 [00009032] 4ed3                      jmp       (a3)
-draw_spr:
+draw_sprite13:
 [00009034] 4842                      swap      d2
 [00009036] 3282                      move.w    d2,(a1)
 [00009038] d2c4                      adda.w    d4,a1
-[0000903a] 51cd ffe4                 dbf       d5,draw_spr
+[0000903a] 51cd ffe4                 dbf       d5,draw_sprite12
 [0000903e] 4e75                      rts
-draw_spr:
+draw_sprite14:
 [00009040] 7000                      moveq.l   #0,d0
 [00009042] 7200                      moveq.l   #0,d1
 [00009044] 3018                      move.w    (a0)+,d0
@@ -13735,7 +11187,7 @@ draw_spr:
 [00009048] edb8                      rol.l     d6,d0
 [0000904a] edb9                      rol.l     d6,d1
 [0000904c] 4ed4                      jmp       (a4)
-draw_spr:
+draw_sprite15:
 [0000904e] 2018                      move.l    (a0)+,d0
 [00009050] 3200                      move.w    d0,d1
 [00009052] 4841                      swap      d1
@@ -13744,40 +11196,40 @@ draw_spr:
 [00009058] ecb8                      ror.l     d6,d0
 [0000905a] ecb9                      ror.l     d6,d1
 [0000905c] 4ed4                      jmp       (a4)
-draw_spr:
+draw_sprite16:
 [0000905e] 8081                      or.l      d1,d0
 [00009060] 4680                      not.l     d0
 [00009062] c480                      and.l     d0,d2
 [00009064] 4ed5                      jmp       (a5)
-draw_spr:
+draw_sprite17:
 [00009066] 8480                      or.l      d0,d2
 [00009068] 4681                      not.l     d1
 [0000906a] c481                      and.l     d1,d2
 [0000906c] 4ed5                      jmp       (a5)
-draw_spr:
+draw_sprite18:
 [0000906e] 4680                      not.l     d0
 [00009070] c480                      and.l     d0,d2
 [00009072] 8481                      or.l      d1,d2
 [00009074] 4ed5                      jmp       (a5)
-draw_spr:
+draw_sprite19:
 [00009076] 8480                      or.l      d0,d2
 [00009078] 8481                      or.l      d1,d2
 [0000907a] 4ed5                      jmp       (a5)
-draw_spr:
+draw_sprite20:
 [0000907c] b382                      eor.l     d1,d2
 [0000907e] 4680                      not.l     d0
 [00009080] c480                      and.l     d0,d2
 [00009082] 4ed5                      jmp       (a5)
-draw_spr:
+draw_sprite21:
 [00009084] 8480                      or.l      d0,d2
 [00009086] b382                      eor.l     d1,d2
 [00009088] 4ed5                      jmp       (a5)
-draw_spr:
+draw_sprite22:
 [0000908a] 4680                      not.l     d0
 [0000908c] c480                      and.l     d0,d2
 [0000908e] b382                      eor.l     d1,d2
 [00009090] 4ed5                      jmp       (a5)
-draw_spr:
+draw_sprite23:
 [00009092] b182                      eor.l     d0,d2
 [00009094] 8481                      or.l      d1,d2
 [00009096] 4ed5                      jmp       (a5)
@@ -13815,7 +11267,7 @@ linea_cf:
 mouse_in:
 [000090ee] 40e7                      move.w    sr,-(a7)
 [000090f0] 48e7 f0c0                 movem.l   d0-d3/a0-a1,-(a7)
-[000090f4] 007c 0700                 ori.w     #SHFTMODE,sr
+[000090f4] 007c 0700                 ori.w     #$0700,sr
 [000090f8] 4e71                      nop ; was andi.w    #$FDFF,sr
 [000090fa] 4e71                      nop
 mouse_in:
@@ -13903,7 +11355,7 @@ clip_mou:
 [000091b4] 4e75                      rts
 user_cur:
 [000091b6] 40e7                      move.w    sr,-(a7)
-[000091b8] 007c 0700                 ori.w     #SHFTMODE,sr
+[000091b8] 007c 0700                 ori.w     #$0700,sr
 [000091bc] 31c0 1f18                 move.w    d0,($00001F18).w
 [000091c0] 31c1 1f1a                 move.w    d1,($00001F1A).w
 [000091c4] 08f8 0000 1f1c            bset      #0,($00001F1C).w
@@ -13920,8 +11372,8 @@ v_escape:
 [000091de] 4a6e 01b2                 tst.w     434(a6)
 [000091e2] 6638                      bne.s     v_escape
 [000091e4] 2250                      movea.l   (a0),a1
-[000091e6] 3029 000a                 move.w    10(a1),d0
-[000091ea] b07c 0013                 cmp.w     #V_RMCUR,d0
+[000091e6] 3029 000a                 move.w    opcode2(a1),d0
+[000091ea] b07c 0013                 cmp.w     #19,d0
 [000091ee] 622c                      bhi.s     v_escape
 [000091f0] 48e7 7f3c                 movem.l   d1-d7/a2-a5,-(a7)
 [000091f4] 4ce8 3c00 0004            movem.l   4(a0),a2-a5
@@ -13964,7 +11416,7 @@ v_enter_:
 [00009274] 21f8 1954 04a8            move.l    ($00001954).w,($000004A8).w
 [0000927a] 4eb9 0000 9d34            jsr       clear_sc
 [00009280] 08b8 0001 206a            bclr      #1,($0000206A).w
-[00009286] 31fc 0001 1f16            move.w    #FREE_MB,($00001F16).w
+[00009286] 31fc 0001 1f16            move.w    #1,($00001F16).w
 [0000928c] 6000 0126                 bra       cursor_o
 v_curadd:
 [00009290] 321d                      move.w    (a5)+,d1
@@ -13991,7 +11443,7 @@ v_curtex:
 [000092be] 51c9 fffa                 dbf       d1,v_curtex
 [000092c2] 4219                      clr.b     (a1)+
 [000092c4] 2f08                      move.l    a0,-(a7)
-[000092c6] 3f3c 0009                 move.w    #SCREEN9,-(a7)
+[000092c6] 3f3c 0009                 move.w    #9,-(a7)
 [000092ca] 4e41                      trap      #1
 [000092cc] 5c8f                      addq.l    #6,a7
 v_curtex:
@@ -14004,8 +11456,8 @@ vq_curad:
 [000092d8] 317c 0002 0008            move.w    #n_ptsin,8(a0)
 [000092de] 4e75                      rts
 vq_tabst:
-[000092e0] 38bc 0001                 move.w    #FREE_MB,(a4)
-[000092e4] 317c 0001 0008            move.w    #FREE_MB,8(a0)
+[000092e0] 38bc 0001                 move.w    #1,(a4)
+[000092e4] 317c 0001 0008            move.w    #1,8(a0)
 [000092ea] 4e75                      rts
 v_dspcur:
 [000092ec] 4e75                      rts
@@ -14020,7 +11472,7 @@ Blitmode:
 [000092fc] 41f8 19d6                 lea.l     ($000019D6).w,a0
 [00009300] 0828 0001 0001            btst      #1,1(a0)
 [00009306] 670a                      beq.s     Blitmode
-[00009308] c07c 0001                 and.w     #FREE_MB,d0
+[00009308] c07c 0001                 and.w     #1,d0
 [0000930c] 0250 fffe                 andi.w    #$FFFE,(a0)
 [00009310] 8150                      or.w      d0,(a0)
 Blitmode:
@@ -14028,12 +11480,12 @@ Blitmode:
 [00009316] 4e73                      rte
 vdi_curs:
 [00009318] 4a78 1f16                 tst.w     ($00001F16).w
-[0000931c] 6610                      bne.s     vbl_curs
+[0000931c] 6610                      bne.s     vdi_curs1
 [0000931e] 5338 2059                 subq.b    #1,($00002059).w
-[00009322] 660a                      bne.s     vbl_curs
+[00009322] 660a                      bne.s     vdi_curs1
 [00009324] 11f8 2058 2059            move.b    ($00002058).w,($00002059).w
 [0000932a] 2f38 194c                 move.l    ($0000194C).w,-(a7)
-vbl_curs:
+vdi_curs1:
 [0000932e] 4e75                      rts
 rawcon:
 [00009330] 41ef 0006                 lea.l     6(a7),a0
@@ -14083,14 +11535,14 @@ set_curs:
 [0000939c] 6016                      bra.s     cursor_o
 cursor_o:
 [0000939e] 5278 1f16                 addq.w    #1,($00001F16).w
-[000093a2] 0c78 0001 1f16            cmpi.w    #FREE_MB,($00001F16).w
+[000093a2] 0c78 0001 1f16            cmpi.w    #1,($00001F16).w
 [000093a8] 6608                      bne.s     cursor_o
 [000093aa] 08b8 0001 206a            bclr      #1,($0000206A).w
 [000093b0] 663a                      bne.s     cursor
 cursor_o:
 [000093b2] 4e75                      rts
 cursor_o:
-[000093b4] 0c78 0001 1f16            cmpi.w    #FREE_MB,($00001F16).w
+[000093b4] 0c78 0001 1f16            cmpi.w    #1,($00001F16).w
 [000093ba] 6514                      bcs.s     cursor_o
 [000093bc] 620e                      bhi.s     cursor_o
 [000093be] 11f8 2058 2059            move.b    ($00002058).w,($00002059).w
@@ -14212,7 +11664,7 @@ vt_c_tab:
 vt_con:
 [000094f4] 0c41 0020                 cmpi.w    #DRVR_opn,d1
 [000094f8] 6dc6                      blt.s     vt_contr
-vt_rawco:
+vt_rawcon:
 [000094fa] 2f03                      move.l    d3,-(a7)
 [000094fc] 3038 2042                 move.w    ($00002042).w,d0
 [00009500] 5340                      subq.w    #1,d0
@@ -14400,14 +11852,14 @@ vt_seq_J:
 [000096fe] 3e02                      move.w    d2,d7
 [00009700] cef8 2042                 mulu.w    ($00002042).w,d7
 [00009704] 5347                      subq.w    #1,d7
-[00009706] 6000 02e6                 bra       clear_li
+[00009706] 6000 02e6                 bra       clear_line2 ; 99ee
 vt_seq_J:
 [0000970a] 4e75                      rts
 vt_seq_K:
 [0000970c] 6100 fc90                 bsr       cursor_o
 [00009710] 3438 2044                 move.w    ($00002044).w,d2
 [00009714] 9440                      sub.w     d0,d2
-[00009716] 6100 0638                 bsr       clear_li
+[00009716] 6100 0638                 bsr       clear_line5 ; 9d50
 [0000971a] 6000 fc98                 bra       cursor_o
 vt_seq_L:
 [0000971e] 487a fc94                 pea.l     cursor_o(pc)
@@ -14430,7 +11882,7 @@ vt_seq_L:
 [00009754] 6100 0218                 bsr       scroll_d
 vt_seq_L:
 [00009758] 2278 204e                 movea.l   ($0000204E).w,a1
-[0000975c] 6000 028a                 bra       clear_li
+[0000975c] 6000 028a                 bra       clear_line1 ; 99e8
 vt_seq_M:
 [00009760] 487a fc52                 pea.l     cursor_o(pc)
 [00009764] 6100 fc38                 bsr       cursor_o
@@ -14438,7 +11890,7 @@ vt_seq_M:
 [0000976c] 48e7 3f7e                 movem.l   d2-d7/a1-a6,-(a7)
 [00009770] 3e38 2046                 move.w    ($00002046).w,d7
 [00009774] 9e41                      sub.w     d1,d7
-[00009776] 6700 0270                 beq       clear_li
+[00009776] 6700 0270                 beq       clear_line1 ; 99e8
 [0000977a] 3c38 2048                 move.w    ($00002048).w,d6
 [0000977e] 41f1 6000                 lea.l     0(a1,d6.w),a0
 [00009782] cec6                      mulu.w    d6,d7
@@ -14495,13 +11947,13 @@ vt_seq_d:
 [00009818] 5347                      subq.w    #1,d7
 [0000981a] 2278 044e                 movea.l   ($0000044E).w,a1
 [0000981e] d2f8 2052                 adda.w    ($00002052).w,a1
-[00009822] 6000 01ca                 bra       clear_li
+[00009822] 6000 01ca                 bra       clear_line2 ; 99ee
 vt_seq_d:
 [00009826] 4e75                      rts
 vt_seq_e:
 [00009828] 4a78 1f16                 tst.w     ($00001F16).w
 [0000982c] 670a                      beq.s     vt_seq_e
-[0000982e] 31fc 0001 1f16            move.w    #FREE_MB,($00001F16).w
+[0000982e] 31fc 0001 1f16            move.w    #1,($00001F16).w
 [00009834] 6000 fb7e                 bra       cursor_o
 vt_seq_e:
 [00009838] 4e75                      rts
@@ -14521,7 +11973,7 @@ vt_seq_k:
 vt_seq_l:
 [00009864] 6100 fb38                 bsr       cursor_o
 [00009868] 6100 fc2c                 bsr       set_x0
-[0000986c] 6100 0176                 bsr       clear_li
+[0000986c] 6100 0176                 bsr       clear_line ; 99e4
 [00009870] 6000 fb42                 bra       cursor_o
 vt_seq_o:
 [00009874] 3400                      move.w    d0,d2
@@ -14531,7 +11983,7 @@ vt_seq_o:
 [0000987e] d2f8 2052                 adda.w    ($00002052).w,a1
 [00009882] c2f8 2048                 mulu.w    ($00002048).w,d1
 [00009886] d3c1                      adda.l    d1,a1
-[00009888] 6000 04c6                 bra       clear_li
+[00009888] 6000 04c6                 bra       clear_line5 ; 9d50
 vt_seq_o:
 [0000988c] 4e75                      rts
 vt_seq_p:
@@ -14557,7 +12009,7 @@ scroll_u:
 [000098c6] 8efc 0140                 divu.w    #SCROLL_L,d7
 [000098ca] 5347                      subq.w    #1,d7
 scroll_u:
-[000098cc] 487a 011a                 pea.l     clear_li(pc)
+[000098cc] 487a 011a                 pea.l     clear_line1(pc) ; 99e8
 scroll_u:
 [000098d0] 4cd8 7c7c                 movem.l   (a0)+,d2-d6/a2-a6
 [000098d4] 48d1 7c7c                 movem.l   d2-d6/a2-a6,(a1)
@@ -14602,7 +12054,7 @@ scroll_d:
 [00009962] 610e                      bsr.s     scroll_d
 [00009964] 2278 044e                 movea.l   ($0000044E).w,a1
 [00009968] d2f8 2052                 adda.w    ($00002052).w,a1
-[0000996c] 607a                      bra.s     clear_li
+[0000996c] 607a                      bra.s     clear_line1 ; 99e8
 scroll_d:
 [0000996e] 41e8 ffd8                 lea.l     -40(a0),a0
 scroll_d:
@@ -14636,32 +12088,32 @@ scroll_d:
 [000099dc] 3320                      move.w    -(a0),-(a1)
 [000099de] 51cf fffc                 dbf       d7,scroll_d
 [000099e2] 4e75                      rts
-clear_li:
+clear_line:
 [000099e4] 48e7 3f7e                 movem.l   d2-d7/a1-a6,-(a7)
-clear_li:
+clear_line1:
 [000099e8] 3e38 2042                 move.w    ($00002042).w,d7
 [000099ec] 5347                      subq.w    #1,d7
-clear_li:
+clear_line2:
 [000099ee] 3a38 2044                 move.w    ($00002044).w,d5
 [000099f2] 5245                      addq.w    #1,d5
 [000099f4] 3c38 204a                 move.w    ($0000204A).w,d6
 [000099f8] 3478 206e                 movea.w   ($0000206E).w,a2
 [000099fc] 3438 2070                 move.w    ($00002070).w,d2
-[00009a00] b47c 0008                 cmp.w     #fd_wdwid,d2
-[00009a04] 6e00 0308                 bgt       clear_li
+[00009a00] b47c 0008                 cmp.w     #8,d2
+[00009a04] 6e00 0308                 bgt       clear_line4 ; 9d0e
 [00009a08] d442                      add.w     d2,d2
-[00009a0a] 343b 2006                 move.w    clear_ta(pc,d2.w),d2
-[00009a0e] 4efb 2002                 jmp       clear_ta(pc,d2.w)
-clear_ta:
-[00009a12] 015a                      dc.w $015a   ; clear_li-clear_ta
-[00009a14] 0012                      dc.w $0012   ; clear_mo-clear_ta
-[00009a16] 0160                      dc.w $0160   ; clear_co-clear_ta
-[00009a18] 015a                      dc.w $015a   ; clear_li-clear_ta
-[00009a1a] 029e                      dc.w $029e   ; clear_co-clear_ta
-[00009a1c] 015a                      dc.w $015a   ; clear_li-clear_ta
-[00009a1e] 015a                      dc.w $015a   ; clear_li-clear_ta
-[00009a20] 015a                      dc.w $015a   ; clear_li-clear_ta
-[00009a22] 02be                      dc.w $02be   ; clear_co-clear_ta
+[00009a0a] 343b 2006                 move.w    clear_tab(pc,d2.w),d2
+[00009a0e] 4efb 2002                 jmp       clear_tab(pc,d2.w)
+clear_tab:
+[00009a12] 015a                      dc.w clear_line3-clear_tab ; 9b6c
+[00009a14] 0012                      dc.w clear_mo-clear_tab
+[00009a16] 0160                      dc.w clear_co-clear_tab
+[00009a18] 015a                      dc.w clear_line3-clear_tab ; 9b6c
+[00009a1a] 029e                      dc.w clear_co-clear_tab
+[00009a1c] 015a                      dc.w clear_line3-clear_tab ; 9b6c
+[00009a1e] 015a                      dc.w clear_line3-clear_tab ; 9b6c
+[00009a20] 015a                      dc.w clear_line3-clear_tab ; 9b6c
+[00009a22] 02be                      dc.w clear_co-clear_tab
 clear_mo:
 [00009a24] 7400                      moveq.l   #0,d2
 [00009a26] e24e                      lsr.w     #1,d6
@@ -14824,7 +12276,7 @@ clear_sc:
 [00009b62] 51ce fefe                 dbf       d6,clear_sc
 [00009b66] d2ca                      adda.w    a2,a1
 [00009b68] 51cf fef0                 dbf       d7,clear_sc
-clear_li:
+clear_line3:
 [00009b6c] 4cdf 7efc                 movem.l   (a7)+,d2-d7/a1-a6
 [00009b70] 4e75                      rts
 clear_co:
@@ -15033,7 +12485,7 @@ clear_co:
 [00009d06] 5245                      addq.w    #1,d5
 [00009d08] e74d                      lsl.w     #3,d5
 [00009d0a] 6000 fe7a                 bra       clear_re
-clear_li:
+clear_line4:
 [00009d0e] 5247                      addq.w    #1,d7
 [00009d10] cef8 206e                 mulu.w    ($0000206E).w,d7
 [00009d14] ea8f                      lsr.l     #5,d7
@@ -15060,8 +12512,8 @@ clear_sc:
 [00009d42] 5347                      subq.w    #1,d7
 [00009d44] 2278 044e                 movea.l   ($0000044E).w,a1
 [00009d48] d2f8 2052                 adda.w    ($00002052).w,a1
-[00009d4c] 6000 fca0                 bra       clear_li
-clear_li:
+[00009d4c] 6000 fca0                 bra       clear_line2 ; 99ee
+clear_line5:
 [00009d50] 48e7 1e18                 movem.l   d3-d6/a3-a4,-(a7)
 [00009d54] 3838 204a                 move.w    ($0000204A).w,d4
 [00009d58] 3a38 2070                 move.w    ($00002070).w,d5
@@ -15093,38 +12545,35 @@ clear_lp:
 [00009d90] 51ce ffd2                 dbf       d6,clear_lp
 [00009d94] 4cdf 1878                 movem.l   (a7)+,d3-d6/a3-a4
 [00009d98] 4e75                      rts
-opcode_e:
+opcode_err0:
 [00009d9a] 487a 0088                 pea.l     vdi_exit(pc)
-opcode_e:
+opcode_error:
 [00009d9e] 2241                      movea.l   d1,a1
 [00009da0] 2251                      movea.l   (a1),a1
-opcode_e:
 [00009da2] 3011                      move.w    (a1),d0
-opcode_e:
-[00009da4] 4269 0008                 clr.w     8(a1)
-[00009da8] 4269 0004                 clr.w     4(a1)
+[00009da4] 4269 0008                 clr.w     n_intout(a1)
+[00009da8] 4269 0004                 clr.w     n_ptsout(a1)
 [00009dac] 4e75                      rts
-handle_e:
+handle_error:
 [00009dae] 3011                      move.w    (a1),d0
 [00009db0] 5340                      subq.w    #1,d0
 [00009db2] 6708                      beq.s     handle_0
 [00009db4] 0440 0063                 subi.w    #VM_COORD,d0
 [00009db8] 6702                      beq.s     handle_0
-handle_e:
 [00009dba] 4e71                      nop
 handle_0:
 [00009dbc] 2c78 193c                 movea.l   ($0000193C).w,a6
-[00009dc0] 4269 000c                 clr.w     12(a1)
+[00009dc0] 4269 000c                 clr.w     handle(a1)
 [00009dc4] 7000                      moveq.l   #0,d0
 [00009dc6] 6026                      bra.s     handle_f
-vdi_entr:
+vdi_entry:
 [00009dc8] 48e7 00c2                 movem.l   a0-a1/a6,-(a7)
 [00009dcc] 2041                      movea.l   d1,a0
 [00009dce] 2250                      movea.l   (a0),a1
-[00009dd0] 3029 000c                 move.w    12(a1),d0
-[00009dd4] 67d8                      beq.s     handle_e
-[00009dd6] b07c 0080                 cmp.w     #_nvdi_re,d0
-[00009dda] 62d2                      bhi.s     handle_e
+[00009dd0] 3029 000c                 move.w    handle(a1),d0
+[00009dd4] 67d8                      beq.s     handle_error
+[00009dd6] b07c 0080                 cmp.w     #MAX_HANDLES,d0
+[00009dda] 62d2                      bhi.s     handle_error
 [00009ddc] 5340                      subq.w    #1,d0
 [00009dde] d040                      add.w     d0,d0
 [00009de0] d040                      add.w     d0,d0
@@ -15137,21 +12586,21 @@ handle_f:
 [00009df0] 2250                      movea.l   (a0),a1
 [00009df2] 3011                      move.w    (a1),d0
 [00009df4] b07c 0083                 cmp.w     #VQT_FONT,d0
-[00009df8] 62a0                      bhi.s     opcode_e
+[00009df8] 62a0                      bhi.s     opcode_err0
 [00009dfa] b07c 0027                 cmp.w     #VST_ALIG,d0
-[00009dfe] 6208                      bhi.s     vdi_disp
+[00009dfe] 6208                      bhi.s     vdi_dispatch
 [00009e00] e748                      lsl.w     #3,d0
 [00009e02] 41fb 0028                 lea.l     vdi_tab(pc,d0.w),a0
-[00009e06] 600e                      bra.s     vdi_disp
-vdi_disp:
-[00009e08] 907c 0064                 sub.w     #t_color,d0
-[00009e0c] 6b8c                      bmi.s     opcode_e
+[00009e06] 600e                      bra.s     vdi_dispatch1
+vdi_dispatch:
+[00009e08] 907c 0064                 sub.w     #100,d0
+[00009e0c] 6b8c                      bmi.s     opcode_err0
 [00009e0e] e748                      lsl.w     #3,d0
 [00009e10] 41fa 033a                 lea.l     vdi_tab1(pc),a0
 [00009e14] d0c0                      adda.w    d0,a0
-vdi_disp:
-[00009e16] 3358 0004                 move.w    (a0)+,4(a1)
-[00009e1a] 3358 0008                 move.w    (a0)+,8(a1)
+vdi_dispatch1:
+[00009e16] 3358 0004                 move.w    (a0)+,n_ptsout(a1)
+[00009e1a] 3358 0008                 move.w    (a0)+,n_intout(a1)
 [00009e1e] 2250                      movea.l   (a0),a1
 [00009e20] 2041                      movea.l   d1,a0
 [00009e22] 4e91                      jsr       (a1)
@@ -15160,271 +12609,274 @@ vdi_exit:
 [00009e28] 7000                      moveq.l   #0,d0
 [00009e2a] 4e75                      rts
 vdi_tab:
-[00009e2c] 0000 0000                 ori.b     #$00,d0
-[00009e30] 0000 9d9e                 ori.b     #$9E,d0
-[00009e34] 0006 002d                 ori.b     #$2D,d6
-[00009e38] 0000 638c                 ori.b     #$8C,d0
-[00009e3c] 0000 0000                 ori.b     #$00,d0
-[00009e40] 0000 6a2a                 ori.b     #$2A,d0
-[00009e44] 0000 0000                 ori.b     #$00,d0
-[00009e48] 0000 6b56                 ori.b     #$56,d0
-[00009e4c] 0000 0000                 ori.b     #$00,d0
-[00009e50] 0000 6ba6                 ori.b     #$A6,d0
-[00009e54] 0000 0000                 ori.b     #$00,d0
-[00009e58] 0000 91d8                 ori.b     #$D8,d0
-[00009e5c] 0000 0000                 ori.b     #$00,d0
-[00009e60] 0000 5362                 ori.b     #$62,d0
-[00009e64] 0000 0000                 ori.b     #$00,d0
-[00009e68] 0000 5718                 ori.b     #$18,d0
-[00009e6c] 0000 0000                 ori.b     #$00,d0
-[00009e70] 0000 57d6                 ori.b     #$D6,d0
-[00009e74] 0000 0000                 ori.b     #$00,d0
-[00009e78] 0000 5872                 ori.b     #$72,d0
-[00009e7c] 0000 0000                 ori.b     #$00,d0
-[00009e80] 0000 5aa4                 ori.b     #$A4,d0
-[00009e84] 0000 0000                 ori.b     #$00,d0
-[00009e88] 0000 605a                 ori.b     #$5A,d0
-[00009e8c] 0002 0000                 ori.b     #$00,d2
-[00009e90] 0000 4940                 ori.b     #$40,d0
-[00009e94] 0000 0001                 ori.b     #$01,d0
-[00009e98] 0000 4b52                 ori.b     #$52,d0
-[00009e9c] 0000 0000                 ori.b     #$00,d0
-[00009ea0] 0000 46f2                 ori.b     #$F2,d0
-[00009ea4] 0000 0001                 ori.b     #$01,d0
-[00009ea8] 0000 4738                 ori.b     #$38,d0
-[00009eac] 0001 0000                 ori.b     #$00,d1
-[00009eb0] 0000 475e                 ori.b     #$5E,d0
-[00009eb4] 0000 0001                 ori.b     #$01,d0
-[00009eb8] 0000 4788                 ori.b     #$88,d0
-[00009ebc] 0000 0001                 ori.b     #$01,d0
-[00009ec0] 0000 47c6                 ori.b     #$C6,d0
-[00009ec4] 0001 0000                 ori.b     #$00,d1
-[00009ec8] 0000 4822                 ori.b     #$22,d0
-[00009ecc] 0000 0001                 ori.b     #$01,d0
-[00009ed0] 0000 486c                 ori.b     #$6C,d0
-[00009ed4] 0000 0001                 ori.b     #$01,d0
-[00009ed8] 0000 4b82                 ori.b     #$82,d0
-[00009edc] 0000 0001                 ori.b     #$01,d0
-[00009ee0] 0000 4bfe                 ori.b     #$FE,d0
-[00009ee4] 0000 0001                 ori.b     #$01,d0
-[00009ee8] 0000 4c64                 ori.b     #$64,d0
-[00009eec] 0000 0001                 ori.b     #$01,d0
-[00009ef0] 0000 4cc6                 ori.b     #$C6,d0
-[00009ef4] 0000 0001                 ori.b     #$01,d0
-[00009ef8] 0000 4d2e                 ori.b     #$2E,d0
-[00009efc] 0000 0004                 ori.b     #$04,d0
-[00009f00] 0000 3cd6                 ori.b     #$D6,d0
-[00009f04] 0000 0000                 ori.b     #$00,d0
-[00009f08] 0000 3f5a                 ori.b     #$5A,d0
-[00009f0c] 0000 0000                 ori.b     #$00,d0
-[00009f10] 0000 4022                 ori.b     #$22,d0
-[00009f14] 0000 0002                 ori.b     #$02,d0
-[00009f18] 0000 40a8                 ori.b     #$A8,d0
-[00009f1c] 0000 0001                 ori.b     #$01,d0
-[00009f20] 0000 40aa                 ori.b     #$AA,d0
-[00009f24] 0000 0000                 ori.b     #$00,d0
-[00009f28] 0000 410c                 ori.b     #$0C,d0
-[00009f2c] 0000 0001                 ori.b     #$01,d0
-[00009f30] 0000 46d6                 ori.b     #$D6,d0
-[00009f34] 0000 0001                 ori.b     #$01,d0
-[00009f38] 0000 3ff0                 ori.b     #$F0,d0
-[00009f3c] 0000 0000                 ori.b     #$00,d0
-[00009f40] 0000 9d9e                 ori.b     #$9E,d0
-[00009f44] 0001 0005                 ori.b     #$05,d1
-[00009f48] 0000 3d0a                 ori.b     #$0A,d0
-[00009f4c] 0001 0003                 ori.b     #$03,d1
-[00009f50] 0000 3d2e                 ori.b     #$2E,d0
-[00009f54] 0000 0005                 ori.b     #$05,d0
-[00009f58] 0000 3d52                 ori.b     #$52,d0
-[00009f5c] 0002 0006                 ori.b     #$06,d2
-[00009f60] 0000 3d70                 ori.b     #$70,d0
-[00009f64] 0000 0002                 ori.b     #$02,d0
-[00009f68] 0000 4c2e                 ori.b     #$2E,d0
-[00009f6c] 0000 0000                 ori.b     #$00,d0
-[00009f70] 0000 9d9e                 ori.b     #$9E,d0
-[00009f74] 0000 0000                 ori.b     #$00,d0
-[00009f78] 0000 9d9e                 ori.b     #$9E,d0
-[00009f7c] 0000 0000                 ori.b     #$00,d0
-[00009f80] 0000 9d9e                 ori.b     #$9E,d0
-[00009f84] 0000 0000                 ori.b     #$00,d0
-[00009f88] 0000 9d9e                 ori.b     #$9E,d0
-[00009f8c] 0000 0000                 ori.b     #$00,d0
-[00009f90] 0000 9d9e                 ori.b     #$9E,d0
-[00009f94] 0000 0000                 ori.b     #$00,d0
-[00009f98] 0000 9d9e                 ori.b     #$9E,d0
-[00009f9c] 0000 0000                 ori.b     #$00,d0
-[00009fa0] 0000 9d9e                 ori.b     #$9E,d0
-[00009fa4] 0000 0000                 ori.b     #$00,d0
-[00009fa8] 0000 9d9e                 ori.b     #$9E,d0
-[00009fac] 0000 0000                 ori.b     #$00,d0
-[00009fb0] 0000 9d9e                 ori.b     #$9E,d0
-[00009fb4] 0000 0000                 ori.b     #$00,d0
-[00009fb8] 0000 9d9e                 ori.b     #$9E,d0
-[00009fbc] 0000 0000                 ori.b     #$00,d0
-[00009fc0] 0000 9d9e                 ori.b     #$9E,d0
-[00009fc4] 0000 0000                 ori.b     #$00,d0
-[00009fc8] 0000 9d9e                 ori.b     #$9E,d0
-[00009fcc] 0000 0000                 ori.b     #$00,d0
-[00009fd0] 0000 9d9e                 ori.b     #$9E,d0
-[00009fd4] 0000 0000                 ori.b     #$00,d0
-[00009fd8] 0000 9d9e                 ori.b     #$9E,d0
-[00009fdc] 0000 0000                 ori.b     #$00,d0
-[00009fe0] 0000 9d9e                 ori.b     #$9E,d0
-[00009fe4] 0000 0000                 ori.b     #$00,d0
-[00009fe8] 0000 9d9e                 ori.b     #$9E,d0
-[00009fec] 0000 0000                 ori.b     #$00,d0
-[00009ff0] 0000 9d9e                 ori.b     #$9E,d0
-[00009ff4] 0000 0000                 ori.b     #$00,d0
-[00009ff8] 0000 9d9e                 ori.b     #$9E,d0
-[00009ffc] 0000 0000                 ori.b     #$00,d0
-[0000a000] 0000 9d9e                 ori.b     #$9E,d0
-[0000a004] 0000 0000                 ori.b     #$00,d0
-[0000a008] 0000 9d9e                 ori.b     #$9E,d0
-[0000a00c] 0000 0000                 ori.b     #$00,d0
-[0000a010] 0000 9d9e                 ori.b     #$9E,d0
-[0000a014] 0000 0000                 ori.b     #$00,d0
-[0000a018] 0000 9d9e                 ori.b     #$9E,d0
-[0000a01c] 0000 0000                 ori.b     #$00,d0
-[0000a020] 0000 9d9e                 ori.b     #$9E,d0
-[0000a024] 0000 0000                 ori.b     #$00,d0
-[0000a028] 0000 9d9e                 ori.b     #$9E,d0
-[0000a02c] 0000 0000                 ori.b     #$00,d0
-[0000a030] 0000 9d9e                 ori.b     #$9E,d0
-[0000a034] 0000 0000                 ori.b     #$00,d0
-[0000a038] 0000 9d9e                 ori.b     #$9E,d0
-[0000a03c] 0000 0000                 ori.b     #$00,d0
-[0000a040] 0000 9d9e                 ori.b     #$9E,d0
-[0000a044] 0000 0000                 ori.b     #$00,d0
-[0000a048] 0000 9d9e                 ori.b     #$9E,d0
-[0000a04c] 0000 0000                 ori.b     #$00,d0
-[0000a050] 0000 9d9e                 ori.b     #$9E,d0
-[0000a054] 0000 0000                 ori.b     #$00,d0
-[0000a058] 0000 9d9e                 ori.b     #$9E,d0
-[0000a05c] 0000 0000                 ori.b     #$00,d0
-[0000a060] 0000 9d9e                 ori.b     #$9E,d0
-[0000a064] 0000 0000                 ori.b     #$00,d0
-[0000a068] 0000 9d9e                 ori.b     #$9E,d0
-[0000a06c] 0000 0000                 ori.b     #$00,d0
-[0000a070] 0000 9d9e                 ori.b     #$9E,d0
-[0000a074] 0000 0000                 ori.b     #$00,d0
-[0000a078] 0000 9d9e                 ori.b     #$9E,d0
-[0000a07c] 0000 0000                 ori.b     #$00,d0
-[0000a080] 0000 9d9e                 ori.b     #$9E,d0
-[0000a084] 0000 0000                 ori.b     #$00,d0
-[0000a088] 0000 9d9e                 ori.b     #$9E,d0
-[0000a08c] 0000 0000                 ori.b     #$00,d0
-[0000a090] 0000 9d9e                 ori.b     #$9E,d0
-[0000a094] 0000 0000                 ori.b     #$00,d0
-[0000a098] 0000 9d9e                 ori.b     #$9E,d0
-[0000a09c] 0000 0000                 ori.b     #$00,d0
-[0000a0a0] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0a4] 0000 0000                 ori.b     #$00,d0
-[0000a0a8] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0ac] 0000 0000                 ori.b     #$00,d0
-[0000a0b0] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0b4] 0000 0000                 ori.b     #$00,d0
-[0000a0b8] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0bc] 0000 0000                 ori.b     #$00,d0
-[0000a0c0] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0c4] 0000 0000                 ori.b     #$00,d0
-[0000a0c8] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0cc] 0000 0000                 ori.b     #$00,d0
-[0000a0d0] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0d4] 0000 0000                 ori.b     #$00,d0
-[0000a0d8] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0dc] 0000 0000                 ori.b     #$00,d0
-[0000a0e0] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0e4] 0000 0000                 ori.b     #$00,d0
-[0000a0e8] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0ec] 0000 0000                 ori.b     #$00,d0
-[0000a0f0] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0f4] 0000 0000                 ori.b     #$00,d0
-[0000a0f8] 0000 9d9e                 ori.b     #$9E,d0
-[0000a0fc] 0000 0000                 ori.b     #$00,d0
-[0000a100] 0000 9d9e                 ori.b     #$9E,d0
-[0000a104] 0000 0000                 ori.b     #$00,d0
-[0000a108] 0000 9d9e                 ori.b     #$9E,d0
-[0000a10c] 0000 0000                 ori.b     #$00,d0
-[0000a110] 0000 9d9e                 ori.b     #$9E,d0
-[0000a114] 0000 0000                 ori.b     #$00,d0
-[0000a118] 0000 9d9e                 ori.b     #$9E,d0
-[0000a11c] 0000 0000                 ori.b     #$00,d0
-[0000a120] 0000 9d9e                 ori.b     #$9E,d0
-[0000a124] 0000 0000                 ori.b     #$00,d0
-[0000a128] 0000 9d9e                 ori.b     #$9E,d0
-[0000a12c] 0000 0000                 ori.b     #$00,d0
-[0000a130] 0000 9d9e                 ori.b     #$9E,d0
-[0000a134] 0000 0000                 ori.b     #$00,d0
-[0000a138] 0000 9d9e                 ori.b     #$9E,d0
-[0000a13c] 0000 0000                 ori.b     #$00,d0
-[0000a140] 0000 9d9e                 ori.b     #$9E,d0
-[0000a144] 0000 0000                 ori.b     #$00,d0
-[0000a148] 0000 9d9e                 ori.b     #$9E,d0
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	6,45
+	dc.l	v_opnwk
+	dc.w	0,0
+	dc.l	v_clswk
+	dc.w	0,0
+	dc.l	v_clrwk
+	dc.w	0,0
+	dc.l	v_updwk
+	dc.w	0,0
+	dc.l	v_escape
+	dc.w	0,0
+	dc.l	v_pline
+	dc.w	0,0
+	dc.l	v_pmarke
+	dc.w	0,0
+	dc.l	v_gtext
+	dc.w	0,0
+	dc.l	v_fillar
+	dc.w	0,0
+	dc.l	v_cellar
+	dc.w	0,0
+	dc.l	v_gdp
+	dc.w	2,0
+	dc.l	vst_heig
+	dc.w	0,1
+	dc.l	vst_rota
+	dc.w	0,0
+	dc.l	vs_color
+	dc.w	0,1
+	dc.l	vsl_type
+	dc.w	1,0
+	dc.l	vsl_widt
+	dc.w	0,1
+	dc.l	vsl_colo
+	dc.w	0,1
+	dc.l	vsm_type
+	dc.w	1,0
+	dc.l	vsm_heig
+	dc.w	0,1
+	dc.l	vsm_colo
+	dc.w	0,1
+	dc.l	vst_font
+	dc.w	0,1
+	dc.l	vst_colo
+	dc.w	0,1
+	dc.l	vsf_inte
+	dc.w	0,1
+	dc.l	vsf_style
+	dc.w	0,1
+	dc.l	vsf_colo
+	dc.w	0,4
+	dc.l	vq_color
+	dc.w	0,0
+	dc.l	vq_cella
+	dc.w	0,0
+	dc.l	v_locato
+	dc.w	0,2
+	dc.l	v_valuat
+	dc.w	0,1
+	dc.l	v_choice
+	dc.w	0,0
+	dc.l	v_string
+	dc.w	0,1
+	dc.l	vswr_mod
+	dc.w	0,1
+	dc.l	vsin_mod
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	1,5
+	dc.l	vql_attr
+	dc.w	1,3
+	dc.l	vqm_attr
+	dc.w	0,5
+	dc.l	vqf_attr
+	dc.w	2,6
+	dc.l	vqt_attr
+	dc.w	0,2
+	dc.l	vst_alig
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
+	dc.w	0,0
+	dc.l	opcode_error
 vdi_tab1:
-[0000a14c] 0006 002d                 ori.b     #$2D,d6
-[0000a150] 0000 6958                 ori.b     #$58,d0
-[0000a154] 0000 0000                 ori.b     #$00,d0
-[0000a158] 0000 6ab6                 ori.b     #$B6,d0
-[0000a15c] 0006 002d                 ori.b     #$2D,d6
-[0000a160] 0000 3c58                 ori.b     #$58,d0
-[0000a164] 0000 0000                 ori.b     #$00,d0
-[0000a168] 0000 6030                 ori.b     #$30,d0
-[0000a16c] 0000 0001                 ori.b     #$01,d0
-[0000a170] 0000 4d4a                 ori.b     #$4A,d0
-[0000a174] 0000 0002                 ori.b     #$02,d0
-[0000a178] 0000 469e                 ori.b     #$9E,d0
-[0000a17c] 0000 0001                 ori.b     #$01,d0
-[0000a180] 0000 4c1a                 ori.b     #$1A,d0
-[0000a184] 0002 0001                 ori.b     #$01,d2
-[0000a188] 0000 4ab0                 ori.b     #$B0,d0
-[0000a18c] 0000 0000                 ori.b     #$00,d0
-[0000a190] 0000 47a4                 ori.b     #$A4,d0
-[0000a194] 0000 0000                 ori.b     #$00,d0
-[0000a198] 0000 4338                 ori.b     #$38,d0
-[0000a19c] 0000 0000                 ori.b     #$00,d0
-[0000a1a0] 0000 4686                 ori.b     #$86,d0
-[0000a1a4] 0000 0000                 ori.b     #$00,d0
-[0000a1a8] 0000 4172                 ori.b     #$72,d0
-[0000a1ac] 0000 0000                 ori.b     #$00,d0
-[0000a1b0] 0000 4d5c                 ori.b     #$5C,d0
-[0000a1b4] 0000 0000                 ori.b     #$00,d0
-[0000a1b8] 0000 4754                 ori.b     #$54,d0
-[0000a1bc] 0000 0000                 ori.b     #$00,d0
-[0000a1c0] 0000 6042                 ori.b     #$42,d0
-[0000a1c4] 0000 0001                 ori.b     #$01,d0
-[0000a1c8] 0000 3f5c                 ori.b     #$5C,d0
-[0000a1cc] 0004 0000                 ori.b     #$00,d4
-[0000a1d0] 0000 3da4                 ori.b     #$A4,d0
-[0000a1d4] 0003 0001                 ori.b     #$01,d3
-[0000a1d8] 0000 3eb6                 ori.b     #$B6,d0
-[0000a1dc] 0000 0001                 ori.b     #$01,d0
-[0000a1e0] 0000 4246                 ori.b     #$46,d0
-[0000a1e4] 0000 0001                 ori.b     #$01,d0
-[0000a1e8] 0000 6ba8                 ori.b     #$A8,d0
-[0000a1ec] 0000 0000                 ori.b     #$00,d0
-[0000a1f0] 0000 6c1e                 ori.b     #$1E,d0
-[0000a1f4] 0000 0000                 ori.b     #$00,d0
-[0000a1f8] 0000 44f0                 ori.b     #$F0,d0
-[0000a1fc] 0000 0000                 ori.b     #$00,d0
-[0000a200] 0000 4266                 ori.b     #$66,d0
-[0000a204] 0000 0000                 ori.b     #$00,d0
-[0000a208] 0000 42bc                 ori.b     #$BC,d0
-[0000a20c] 0001 0001                 ori.b     #$01,d1
-[0000a210] 0000 42e0                 ori.b     #$E0,d0
-[0000a214] 0000 0000                 ori.b     #$00,d0
-[0000a218] 0000 42f8                 ori.b     #$F8,d0
-[0000a21c] 0000 0000                 ori.b     #$00,d0
-[0000a220] 0000 4308                 ori.b     #$08,d0
-[0000a224] 0000 0000                 ori.b     #$00,d0
-[0000a228] 0000 4318                 ori.b     #$18,d0
-[0000a22c] 0000 0001                 ori.b     #$01,d0
-[0000a230] 0000 4328                 ori.b     #$28,d0
-[0000a234] 0000 0000                 ori.b     #$00,d0
-[0000a238] 0000 6c48                 ori.b     #$48,d0
-[0000a23c] 0000 0021                 ori.b     #$21,d0
-[0000a240] 0000 3f04                 ori.b     #$04,d0
-[0000a244] 0005 0002                 ori.b     #$02,d5
-[0000a248] 0000 3f7e                 ori.b     #$7E,d0
+	dc.w	6,45
+	dc.l	v_opnvwk
+	dc.w	0,0
+	dc.l	v_clsvwk
+	dc.w	6,45
+	dc.l	vq_extnd
+	dc.w	0,0
+	dc.l	v_contou
+	dc.w	0,1
+	dc.l	vsf_peri
+	dc.w	0,2
+	dc.l	v_get_pi
+	dc.w	0,1
+	dc.l	vst_effe
+	dc.w	2,1
+	dc.l	vst_poin
+	dc.w	0,0
+	dc.l	vsl_ends
+	dc.w	0,0
+	dc.l	vro_cpyf
+	dc.w	0,0
+	dc.l	vr_trnfm
+	dc.w	0,0
+	dc.l	vsc_form
+	dc.w	0,0
+	dc.l	vsf_udpa
+	dc.w	0,0
+	dc.l	vsl_udst
+	dc.w	0,0
+	dc.l	vr_recfl
+	dc.w	0,1
+	dc.l	vqin_mod
+	dc.w	4,0
+	dc.l	vqt_exte
+	dc.w	3,1
+	dc.l	vqt_widt
+	dc.w	0,1
+	dc.l	vex_timv
+	dc.w	0,1
+	dc.l	vst_load
+	dc.w	0,0
+	dc.l	vst_unlo
+	dc.w	0,0
+	dc.l	vrt_cpyf
+	dc.w	0,0
+	dc.l	v_show_c
+	dc.w	0,0
+	dc.l	v_hide_c
+	dc.w	1,1
+	dc.l	vq_mouse
+	dc.w	0,0
+	dc.l	vex_butv
+	dc.w	0,0
+	dc.l	vex_motv
+	dc.w	0,0
+	dc.l	vex_curv
+	dc.w	0,1
+	dc.l	vq_key_s
+	dc.w	0,0
+	dc.l	vs_clip
+	dc.w	0,33
+	dc.l	vqt_name
+	dc.w	5,2
+	dc.l	vqt_font
+
+; end: 0000a24c
+
 ;
          u ORGANISA
          u MP_used
@@ -15474,7 +12926,6 @@ vdi_tab1:
          u PM_vRes
          u sizeof_M
          u MP_lf_mb
-0000001c C MSys
          u MacSys_p
          u DRIVER_f
          u PM_pixel
@@ -15485,34 +12936,19 @@ vdi_tab1:
          u PM_cmpSi
          u PM_plane
          u MacSys_t
-00000029 C Malloc_s
          u PM_pmTab
-0000002a C Mfree_sy
-0000002b C Mshrink_
          u MacSys_g
          u DRIVER_f
          u PM_pmRes
          u MacSys_b
          u DRIVER_f
-00000032 C create_b
-00000033 C delete_b
          u MacSys_s
-00000035 C init_NOD
-00000036 C load_NOD
          u MP_fu_mb
          u sizeof_D
-00000037 C unload_N
          u MacSys_c
-00000038 C load_prg
-00000039 C load_fil
-0000003b C load_MAC
          u XFI_fami
-0000003c C load_ATA
          u MacSys_d
-0000003e C clear_me
-00000040 C strgcpy
          u MacSys_p
-00000041 C strgcat
          u MacSys_p
          u MacSys_p
          u MacSys_p
@@ -15560,18 +12996,14 @@ vdi_tab1:
          u nvdi_poo
          u buffer_p
          u system_b
-0000167e C gdos_pat
          u screen_d
          u vt52_fal
-00001726 C OSC_ptr
          u OFFSCREE
-0000172a C OSC_coun
          u OFFSCREE
          u mono_DRV
          u mono_bit
          u mono_exp
          u wk_tab0
-0000173c C wk_tab
          u linea_wk
          u aes_wk_p
          u bconout_
@@ -15586,7 +13018,6 @@ vdi_tab1:
          u color_re
          u mouse_ta
          u mouse_bu
-         u draw_spr
          u undraw_s
          u call_old
          u xbios_ta
@@ -15595,7 +13026,6 @@ vdi_tab1:
          u gemdos_t
          u gemdos_v
          u nvdi_ver
-00001980 C nvdi_str
          u nvdi_dat
          u nvdi_con
          u nvdi_con
@@ -15628,7 +13058,6 @@ vdi_tab1:
          u video
          u nvdi_coo
          u first_de
-000019ea C cpu020
          u magix
          u mint
          u n_search
@@ -15659,13 +13088,11 @@ vdi_tab1:
 00000000 a _nvdi_ve
 00000000 a COL40
 00000000 a nxt_ptsi
-00000000 a LANGUAGE
 00000000 a TV
 00000000 a _call_ol
 00000000 a T_DEF_FO
 00000000 a WHITE
 00000000 a fd_addr
-00000000 a GERMAN
 00000000 a MALLOC_d
 00000000 a ST_RAM_o
 00000000 a pb_contr
@@ -15721,9 +13148,7 @@ vdi_tab1:
 00000001 a V_OPNWK
 00000001 a T_LIGHT_
 00000001 a STE_VIDE
-00000001 a ENGLISH
 00000001 a BPS2
-00000001 a FREE_MB
 00000001 a T_BOLD
 00000001 a CURSOR_S
 00000001 a ST_MID
@@ -15750,7 +13175,6 @@ vdi_tab1:
 00000002 a T_LIGHT
 00000002 a CON
 00000002 a DRVR_mag
-00000002 a FRENCH
 00000002 a V_CLSWK
 00000002 a MALLOC_m
 00000002 a ST_RAM_p
@@ -15779,7 +13203,6 @@ vdi_tab1:
 00000002 a T_ITALIC
 00000003 a MALLOC_a
 00000003 a EX_OR
-00000003 a M_ASTERI
 00000003 a V_CLRWK
 00000003 a FONT_SYS
 00000003 a BCONOUT
@@ -15849,7 +13272,6 @@ vdi_tab1:
 00000006 a fd_h
 00000006 a v_2c
 00000006 a TICKCAL
-00000006 a M_DIAMON
 00000006 a y_start
 00000007 a STC_BIT
 00000007 a L_USER_D
@@ -15872,12 +13294,10 @@ vdi_tab1:
 00000008 a x_end
 00000008 a wk_handl
 00000008 a v_2e
-00000008 a fd_wdwid
 00000009 a CCONWS
 00000009 a font_sta
 00000009 a driver_s
 00000009 a TAB
-00000009 a SCREEN9
 0000000a a M68010
 0000000a a font_use
 0000000a a V_JUSTIF
@@ -15930,7 +13350,6 @@ vdi_tab1:
 0000000f a VQ_CURAD
 0000000f a VSL_TYPE
 0000000f a SAMPLE_B
-0000000f a PALETTE
 00000010 a VSL_WIDT
 00000010 a DRVR_ini
 00000010 a driver_w
@@ -15999,7 +13418,6 @@ vdi_tab1:
 00000018 a _nvdi_dr
 00000018 a S_NXLN
 00000018 a v_3e
-00000018 a VSF_STYL
 00000019 a DGETDRV
 00000019 a VSF_COLO
 00000019 a V_ALPHA_
@@ -16146,10 +13564,8 @@ vdi_tab1:
 00000048 a l_width
 00000048 a _nvdi_bi
 00000048 a AESVARS_
-00000049 a MFREE
 0000004a a DRVR_res
 0000004a a l_start
-0000004a a MSHRINK
 0000004b a PEXEC
 0000004c a _nvdi_xb
 0000004c a AESVARS_
@@ -16246,7 +13662,7 @@ vdi_tab1:
 0000007c a VQ_MOUSE
 0000007d a VEX_BUTV
 0000007e a t_half
-00000080 a MAX_HAND
+00000080 a MAX_HANDLES
 00000080 a STMODES
 00000080 a _nvdi_re
 00000080 a t_descen
@@ -16414,7 +13830,6 @@ vdi_tab1:
 00000258 a f_saddr
 00000258 a WK_LENGT
 00000290 a MIN_VERS
-00000300 a SHFTMODE
 00000313 a VERSION
 000003e7 a M_HEIGHT
 00000400 a etv_time
@@ -16440,11 +13855,9 @@ vdi_tab1:
 0000059e a longfram
 000005a0 a p_cookie
 000005ac a bell_hoo
-00000700 a SHFTMODE
 000007d0 a V_ESCAPE
 00001000 a GRAYMODE
 00001200 A __a_vdi
-00001998 a YEAR
 00001ce6 a CUR_FONT
 00001d18 a M_POS_HX
 00001d1a a M_POS_HY
@@ -16639,90 +14052,20 @@ ffffffff a NOT_ENOU
 ffffffff a V_SET_AP
 ffffffff a ST_MIDRE
 ffffffff a NO_NVDI_
-00000000 t sys_font
 00000000 t no_font_
-00000002 t sys_font
-00000006 t sys_font
 0000000a t sf_image
 0000000e t sfb_imag
-00000012 t linea_fo
-00000026 t header_0
-0000007e t off_tabl
-00000280 t dat_tabl
-00000700 t header_0
-00000758 t off_tabl
-00000758 t off_tabl
-0000095a t dat_tabl
-0000115a t dat_tabl
-0000215a t header_1
-000021b2 T closed
+00000012 t linea_fonts
 000021be t color_ma
 000022be t color_re
-000023be t fill0
-000023de t fill1
-000023fe t fill2_1
-0000241e t fill2_2
-0000243e t fill2_3
-0000245e t fill2_4
-0000247e t fill2_5
-0000249e t fill2_6
-000024be t fill2_7
-000024de t fill2_8
-000024fe t fill2_9
-0000251e t fill2_10
-0000253e t fill2_11
-0000255e t fill2_12
-0000257e t fill2_13
-0000259e t fill2_14
-000025be t fill2_15
-000025de t fill2_16
-000025fe t fill2_17
-0000261e t fill2_18
-0000263e t fill2_19
-0000265e t fill2_20
-0000267e t fill2_21
-0000269e t fill2_22
-000026be t fill2_23
-000026de t fill_2_2
-000026fe t fill3_1
-0000271e t fill3_2
-0000273e t fill3_3
-0000275e t fill3_4
-0000277e t fill3_5
-0000279e t fill3_6
-000027be t fill3_7
-000027de t fill3_8
-000027fe t fill3_9
-0000281e t fill3_10
-0000283e t fill3_11
-0000285e t fill3_12
-0000287e t fill4_1
-0000289e t sin
-00002952 t cos
-00002ef4 t m_dot
-00002f04 t m_plus
-00002f1c t m_asteri
-00002f44 t m_square
-00002f6c t m_cross
-00002f84 t m_diamon
-00002fac t work_out
-0000301e t extnd_ou
-00003094 t nvdi_str
 00003140 t change_v
-00003140 t nvdi_str
 00003154 t change_s
 0000315c t setexc
 00003174 t init_gdo
 000031d0 t MallocA
-000031de t Mshrink
-000031f0 t Mfree
-00003200 T clear_cp
-00003216 t clear_cp
-00003236 t clear_cp
 00003238 T vdi_blin
 000032c8 t vdi_blin
 000032cc t chk_blit
-000032ec t bus_err_
 000032fa t rez_bps_
 00003304 t create_f
 0000332e t falcon_h
@@ -16740,12 +14083,6 @@ ffffffff a NO_NVDI_
 00003460 t vt52_ini
 00003466 t init_vt5
 00003488 t init_vt5
-000034e8 t no_offsc
-00003524 t no_scree
-00003561 t empty_cm
-00003562 t mcmd_pat
-00003573 t system_h
-0000358e t Cconws
 000035a2 T vdi_init
 0000360c t vdi_init
 00003610 t load_NOD
@@ -16768,8 +14105,6 @@ ffffffff a NO_NVDI_
 00003810 t copy_hea
 0000381c t copy_nvd
 0000382a t copy_nvd
-00003836 t init_coo
-00003846 t init_coo
 00003850 t cookie_j
 00003856 t cookie_s
 0000385e t cookie_e
@@ -16788,10 +14123,8 @@ ffffffff a NO_NVDI_
 0000390c t reset_ck
 0000390e t init_vir
 00003910 t reset_vi
-00003912 t MFMV_coo
 0000391e t eddi_dis
 0000392e t eddi_tab
-00003930 t eddi_err
 00003934 t eddi_ver
 0000393a t v_contou
 00003942 t seedfill
@@ -16836,7 +14169,6 @@ ffffffff a NO_NVDI_
 00003c34 t contour_
 00003c38 t scanline
 00003c54 t dummy
-00003c56 t dummy_rt
 00003c58 t vq_extnd
 00003c6c t vq_extnd
 00003c88 t vq_extnd
@@ -16855,20 +14187,6 @@ ffffffff a NO_NVDI_
 00003d70 t vqt_attr
 00003d8c t vqt_attr
 00003da4 t vqt_exte
-00003de0 t vqt_ext_
-00003df0 t vqt_ext_
-00003e02 t vqt_ext_
-00003e0c t vqt_ext_
-00003e1c t vqt_ext_
-00003e28 t vqt_ext_
-00003e34 t vqt_ext_
-00003e46 t vqt_ext_
-00003e50 t vqt_ext_
-00003e5e t vqt_ext_
-00003e6c t vqt_ext0
-00003e7c t vqt_ext9
-00003e90 t vqt_ext1
-00003ea6 t vqt_ext2
 00003eb6 t vqt_widt
 00003ed6 t vqt_widt
 00003ef8 t vqt_widt
@@ -17069,17 +14387,6 @@ ffffffff a NO_NVDI_
 00004c98 t vsf_int_
 00004caa t vsf_int_
 00004cbc t vsf_int_
-00004cc6 t vsf_styl
-00004cda t vsf_styl
-00004ce0 t vsf_sty_
-00004ce0 t vsf_sty_
-00004ce0 t vsf_sty_
-00004cea t vsf_sty_
-00004cec t vsf_sty_
-00004d08 t vsf_sty_
-00004d0c t vsf_sty_
-00004d0e t vsf_sty_
-00004d2a t vsf_sty_
 00004d2e t vsf_colo
 00004d3e t vsf_colo
 00004d46 t vsf_colo
@@ -17863,10 +15170,6 @@ ffffffff a NO_NVDI_
 0000890c t line_cli
 0000892c t line_cli
 00008938 t a_dummy
-0000893a t linea_ta
-00008976 t linea_a0
-0000897a t linea_di
-0000897a T int_line
 000089a0 t linea_ge
 000089b2 t linea_ex
 000089b4 t planes_c
@@ -17915,16 +15218,12 @@ ffffffff a NO_NVDI_
 00008df0 t undraw_s
 00008df6 t undraw_s
 00008e18 t undraw_s
-00008e3a t undraw_t
 00008e42 t undraw_1
-00008e4a t undraw_e
 00008e4c t undraw_2
 00008e58 t undraw_4
 00008e68 t undraw_8
 00008e7e t vbl_mous
 00008e80 t vbl_mous
-00008eaa t draw_spr
-00008eb0 t draw_spr
 00008ec4 t vdi_form
 00008eda t Xko_lt_i
 00008ee2 t X_am_rRa
@@ -17933,30 +15232,6 @@ ffffffff a NO_NVDI_
 00008f0c t Y_am_uRa
 00008f14 t hole_Koo
 00008f32 t load_drr
-00008f64 t draw_spr
-00008f74 t draw_x_o
-00008f7e t draw_spr
-00008f8a t draw_spr
-00008f96 t draw_spr
-00008fbc t draw_spr
-00008fc0 t draw_spr
-00008fc6 t draw_spr
-00008fe6 t draw_spr
-00008ff8 t draw_spr
-00009008 t draw_spr
-00009016 t draw_spr
-00009020 t draw_spr
-00009034 t draw_spr
-00009040 t draw_spr
-0000904e t draw_spr
-0000905e t draw_spr
-00009066 t draw_spr
-0000906e t draw_spr
-00009076 t draw_spr
-0000907c t draw_spr
-00009084 t draw_spr
-0000908a t draw_spr
-00009092 t draw_spr
 00009098 t calc_add
 000090b8 t linea_cp
 000090ea t linea_cf
@@ -17993,8 +15268,6 @@ ffffffff a NO_NVDI_
 000092ee t v_hardco
 000092f8 T Blitmode
 00009312 t Blitmode
-00009318 T vdi_curs
-0000932e t vbl_curs
 00009330 t rawcon
 00009330 T vdi_rawo
 00009340 t bconout
@@ -18027,11 +15300,8 @@ ffffffff a NO_NVDI_
 000094a8 t set_x0_e
 000094aa t set_x0_a
 000094b6 t vt_esc
-000094c0 t vt_contr
 000094e4 t vt_c_exi
 000094f2 t vt_c_tab
-000094f4 t vt_con
-000094fa t vt_rawco
 00009530 t vtc_char
 00009548 t vtc_char
 00009554 t vtc_char
@@ -18104,16 +15374,11 @@ ffffffff a NO_NVDI_
 0000996e t scroll_d
 00009972 t scroll_d
 000099dc t scroll_d
-000099e4 t clear_li
-000099e8 t clear_li
-000099ee t clear_li
-00009a12 t clear_ta
 00009a24 t clear_mo
 00009a4a t clear_mo
 00009a5a t clear_sc
 00009a5e t clear_sc
 00009a62 t clear_sc
-00009b6c t clear_li
 00009b72 t clear_co
 00009b80 t clear_re
 00009b82 t clear_re
@@ -18122,281 +15387,25 @@ ffffffff a NO_NVDI_
 00009ba0 t clear_sc
 00009cb0 t clear_co
 00009cd0 t clear_co
-00009d0e t clear_li
 00009d1a t clear_un
 00009d34 t clear_sc
-00009d50 t clear_li
 00009d64 t clear_lp
 00009d74 t clear_lp
 00009d8a t clear_lp
-00009d9a t opcode_e
-00009d9e t opcode_e
-00009da2 t opcode_e
-00009da4 t opcode_e
-00009dae t handle_e
-00009dae t handle_e
-00009dba t handle_e
-00009dbc t handle_0
-00009dc8 T vdi_entr
-00009dc8 t vdi_disp
+00009dc8 T vdi_entry
 00009dee t handle_f
-00009e08 t vdi_disp
-00009e16 t vdi_disp
+00009e08 t vdi_dispatch
+00009e16 t vdi_dispatch1
 00009e24 t vdi_exit
-00009e2c t vdi_tab
-0000a14c t vdi_tab1
-00000000 b ende
-;
-; CP/M Relocations:
-; $00000006 text
-; $00000012 text
-; $00000016 text
-; $0000001a text
-; $0000006e text
-; $00000072 text
-; $00000748 text
-; $0000074c text
-; $000021a2 text
-; $000021a6 text
-; $000021b2 text
-; $000030a0 text
-; $000030b8 text
-; $000030c0 text
-; $000030c4 text
-; $000030d0 text
-; $000030d4 text
-; $00003104 text
-; $00003108 text
-; $0000310c text
-; $00003110 text
-; $00003114 text
-; $00003254 text
-; $00003260 text
-; $00003266 text
-; $0000326c text
-; $00003278 text
-; $0000327e text
-; $00003288 text
-; $0000328e text
-; $0000329e text
-; $000032a4 text
-; $000032de text
-; $00003478 text
-; $00003484 text
-; $000035c8 text
-; $00003608 text
-; $00003678 text
-; $000036b8 text
-; $00003792 text
-; $000037a6 text
-; $000037ac text
-; $000037c8 text
-; $0000383e text
-; $0000393c text
-; $00003a08 text
-; $00003bba text
-; $0000480a text
-; $0000480e text
-; $00004812 text
-; $00004816 text
-; $0000481a text
-; $0000481e text
-; $00006380 text
-; $00006408 text
-; $00006424 text
-; $00006446 text
-; $000064a6 text
-; $00006628 text
-; $00006636 text
-; $0000663e text
-; $00006646 text
-; $00006682 text
-; $00006728 text
-; $00006766 text
-; $00006860 text
-; $00006868 text
-; $00006870 text
-; $00006878 text
-; $00006880 text
-; $00006894 text
-; $0000689c text
-; $00006a68 text
-; $00008348 text
-; $00008416 text
-; $0000893a text
-; $0000893e text
-; $00008942 text
-; $00008946 text
-; $0000894a text
-; $0000894e text
-; $00008952 text
-; $00008956 text
-; $0000895a text
-; $0000895e text
-; $00008962 text
-; $00008966 text
-; $0000896a text
-; $0000896e text
-; $00008972 text
-; $00008976 text
-; $000089be text
-; $00008a2c text
-; $00008c4a text
-; $00008f6a text
-; $00008f7e text
-; $00008f82 text
-; $00008f86 text
-; $00008f8a text
-; $00008f8e text
-; $00008f92 text
-; $00008fc6 text
-; $00008fca text
-; $00008fce text
-; $00008fd2 text
-; $00008fd6 text
-; $00008fda text
-; $00008fde text
-; $00008fe2 text
-; $0000927c text
-; $000094b8 text
-; $000094ce text
-; $00009610 text
-; $00009790 text
-; $000097a2 text
-; $000097b8 text
-; $000097c4 text
-; $000097dc text
-; $000097e6 text
-; $000097fe text
-; $00009e30 text
-; $00009e38 text
-; $00009e40 text
-; $00009e48 text
-; $00009e50 text
-; $00009e58 text
-; $00009e60 text
-; $00009e68 text
-; $00009e70 text
-; $00009e78 text
-; $00009e80 text
-; $00009e88 text
-; $00009e90 text
-; $00009e98 text
-; $00009ea0 text
-; $00009ea8 text
-; $00009eb0 text
-; $00009eb8 text
-; $00009ec0 text
-; $00009ec8 text
-; $00009ed0 text
-; $00009ed8 text
-; $00009ee0 text
-; $00009ee8 text
-; $00009ef0 text
-; $00009ef8 text
-; $00009f00 text
-; $00009f08 text
-; $00009f10 text
-; $00009f18 text
-; $00009f20 text
-; $00009f28 text
-; $00009f30 text
-; $00009f38 text
-; $00009f40 text
-; $00009f48 text
-; $00009f50 text
-; $00009f58 text
-; $00009f60 text
-; $00009f68 text
-; $00009f70 text
-; $00009f78 text
-; $00009f80 text
-; $00009f88 text
-; $00009f90 text
-; $00009f98 text
-; $00009fa0 text
-; $00009fa8 text
-; $00009fb0 text
-; $00009fb8 text
-; $00009fc0 text
-; $00009fc8 text
-; $00009fd0 text
-; $00009fd8 text
-; $00009fe0 text
-; $00009fe8 text
-; $00009ff0 text
-; $00009ff8 text
-; $0000a000 text
-; $0000a008 text
-; $0000a010 text
-; $0000a018 text
-; $0000a020 text
-; $0000a028 text
-; $0000a030 text
-; $0000a038 text
-; $0000a040 text
-; $0000a048 text
-; $0000a050 text
-; $0000a058 text
-; $0000a060 text
-; $0000a068 text
-; $0000a070 text
-; $0000a078 text
-; $0000a080 text
-; $0000a088 text
-; $0000a090 text
-; $0000a098 text
-; $0000a0a0 text
-; $0000a0a8 text
-; $0000a0b0 text
-; $0000a0b8 text
-; $0000a0c0 text
-; $0000a0c8 text
-; $0000a0d0 text
-; $0000a0d8 text
-; $0000a0e0 text
-; $0000a0e8 text
-; $0000a0f0 text
-; $0000a0f8 text
-; $0000a100 text
-; $0000a108 text
-; $0000a110 text
-; $0000a118 text
-; $0000a120 text
-; $0000a128 text
-; $0000a130 text
-; $0000a138 text
-; $0000a140 text
-; $0000a148 text
-; $0000a150 text
-; $0000a158 text
-; $0000a160 text
-; $0000a168 text
-; $0000a170 text
-; $0000a178 text
-; $0000a180 text
-; $0000a188 text
-; $0000a190 text
-; $0000a198 text
-; $0000a1a0 text
-; $0000a1a8 text
-; $0000a1b0 text
-; $0000a1b8 text
-; $0000a1c0 text
-; $0000a1c8 text
-; $0000a1d0 text
-; $0000a1d8 text
-; $0000a1e0 text
-; $0000a1e8 text
-; $0000a1f0 text
-; $0000a1f8 text
-; $0000a200 text
-; $0000a208 text
-; $0000a210 text
-; $0000a218 text
-; $0000a220 text
-; $0000a228 text
-; $0000a230 text
-; $0000a238 text
-; $0000a240 text
-; $0000a248 text
+
+
+
+0000148c: 
+0000153c: ram_header_08
+0000167e: gdos_pat
+00001726: OSC_ptr
+0000172a: OSC_count
+0000173c: VWK *wk_tab[128]
+00001948:
+00001980: nvdi_str
+000019ea: cpu020

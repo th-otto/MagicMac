@@ -97,8 +97,6 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XDEF      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
 
-	 XDEF cpu020             ; nach MATH
-
 * Import aus STD
 
      XREF      putch,putstr,getch
@@ -190,6 +188,8 @@ NCOOKIES  EQU  21
 NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 
 N_KEYTBL       EQU  10             ; 10 Tastaturtabellen
+
+cpu020 equ $19ea ; from mxvdiknl.o FIXME
 
      TEXT
 
@@ -326,7 +326,6 @@ log_fd:             DS.L 1              /* DateiHandle für Bootlog */
 log_fd_pd:          DS.L 1              /* Prozeßdeskriptor für Handle */
 log_oldconout:      DS.L 1              /* Alter Vektor für Bootlog */
 p_vt52:             DS.L 1              /* für VT52.PRG */
-cpu020:             DS.W 1         /* nach MATH */
 __e_bios:
 
 
