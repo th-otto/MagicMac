@@ -1,29 +1,30 @@
 #include <portab.h>
 #include <tos.h>
+#include <vdi.h>
 #include "std.h"
+#include "drivers.h"
 #include "nvdi.h"
 #include "init_res.h"
-#include "drivers.h"
 
 
-unsigned char *load_MAC_driver(VWK *vwk, const char *driver_dir)
+DRV_SYS *load_MAC_driver(MXVDI_PIXMAP *pixmap, const char *driver_dir)
 {
 	char fnamebuf[128];
 	
 	strgcpy(fnamebuf, driver_dir);
-	switch (vwk->v_planes)
+	switch (pixmap->pixelSize)
 	{
 	case 1:
 		strgcat(fnamebuf, "MFM2.SYS");
 		break;
 	case 2:
-		if (vwk->form_id == FORM_ID_INTERLEAVED)
+		if (pixmap->planeBytes == 2)
 			strgcat(fnamebuf, "MFM4IP.SYS");
 		else
 			strgcat(fnamebuf, "MFM4.SYS");
 		break;
 	case 4:
-		if (vwk->form_id == FORM_ID_INTERLEAVED)
+		if (pixmap->planeBytes == 2)
 			strgcat(fnamebuf, "MFM16IP.SYS");
 		else
 			strgcat(fnamebuf, "MFM16.SYS");
@@ -42,11 +43,10 @@ unsigned char *load_MAC_driver(VWK *vwk, const char *driver_dir)
 }
 
 
-unsigned char *load_ATARI_driver(WORD type, WORD subtype, const char *driver_dir, VWK *vwk)
+DRV_SYS *load_ATARI_driver(WORD type, WORD subtype, const char *driver_dir)
 {
 	char fnamebuf[128];
 	
-	(void)vwk;
 	strgcpy(fnamebuf, driver_dir);
 	switch (type)
 	{

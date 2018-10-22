@@ -36,7 +36,7 @@ void clear_mem(void *p, size_t size);
 /* like memset */
 void fill_mem(void *p, int c, size_t size);
 /* like memcpy */
-void copy_mem(void *dst, void *src, size_t size);
+void copy_mem(size_t size, void *src, void *dst);
 /* like strcpy() */
 void strgcpy(char *dst, const char *src);
 /* like strcat() */

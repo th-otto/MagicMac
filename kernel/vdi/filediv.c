@@ -3,17 +3,17 @@
 #include "filediv.h"
 
 
-char *load_file(const char *filename, long *size)
+unsigned char *load_file(const char *filename, long *size)
 {
 	DTA *olddta;
 	DTA dta;
-	char *buf = NULL;
+	unsigned char *buf = NULL;
 	
 	olddta = Fgetdta();
 	Fsetdta(&dta);
 	if (Fsfirst(filename, FA_CHANGED|FA_RDONLY|FA_HIDDEN|FA_SYSTEM) == 0)
 	{
-		buf = Malloc_sys(dta.d_length);
+		buf = (unsigned char *)Malloc_sys(dta.d_length);
 		if (buf != NULL)
 		{
 			*size = read_file(filename, buf, 0, dta.d_length);
@@ -29,7 +29,7 @@ char *load_file(const char *filename, long *size)
 }
 
 
-long read_file(const char *filename, char *buf, long offset, long size)
+long read_file(const char *filename, void *buf, long offset, long size)
 {
 	long fd;
 	long retsize = 0;
