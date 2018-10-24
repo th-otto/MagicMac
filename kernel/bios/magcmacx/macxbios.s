@@ -142,7 +142,6 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XREF      appl_IOcomplete     ; XAES
      XREF      evnt_IO             ; XAES
      XREF      evnt_sem            ; XAES
-     XREF      act_appl            ; XAES
      XREF      endofvars           ; AES: Ende aller Variablen
      XREF      _ende               ; AES: Ende des Betriebssystems
      XREF      gem_magics          ; AES: Parameterblock
@@ -190,6 +189,7 @@ NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 N_KEYTBL       EQU  10             ; 10 Tastaturtabellen
 
 cpu020 equ $19ea ; from mxvdiknl.o FIXME
+act_appl equ $3982 ; from AES FIXME
 
      TEXT
 

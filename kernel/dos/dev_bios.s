@@ -25,6 +25,7 @@ DEBUG     EQU  16
 
 * vom DOS
 
+act_appl equ $3982 ; from AES FIXME
      XREF      get_act_appl
      XREF      act_pd
      XREF      Pterm

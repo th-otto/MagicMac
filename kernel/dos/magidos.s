@@ -89,6 +89,8 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF iniddev2
      XDEF deleddev
 
+act_appl equ $3982 ; from AES FIXME
+
 * aus MALLOC
 
      XREF mc_init

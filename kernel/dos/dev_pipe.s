@@ -15,13 +15,13 @@ DEBUG     EQU  16
 
      XREF __fseek,_fwrite
      XREF Mfree,Mxalloc
-     XREF act_appl
      XREF act_pd
      XREF appl_IOcomplete
      XREF evnt_IO
      XREF vmemcpy
      XREF ncopy_from
 
+act_appl equ $3982 ; from AES FIXME
 
      OFFSET
 

@@ -48,6 +48,7 @@ DEBUG     EQU  2
 
 * vom AES
 
+act_appl equ $3982 ; from AES FIXME
      XREF      appl_begcritic
      XREF      appl_endcritic
 
