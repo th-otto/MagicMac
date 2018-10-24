@@ -343,58 +343,66 @@ __e_bios:
 **********************************************************************
 
 MSysX:
- DC.L     'MagC'
- DC.L     MacSysX_sizeof      ; MacSys_len
- DC.L     syshdr              ; Adresse des Atari-Syshdr
- DC.L     tab_unshift         ; 5*128 Bytes für Tastaturtabellen
- DC.L     mem_root
- DC.L     act_pd
- DC.L     act_appl
- DC.L     0                   ; MacSys_verAtari
+ DC.L     'MagC'              ;                                   000
+ DC.L     MacSysX_sizeof      ; MacSys_len                        004
+ DC.L     syshdr              ; Adresse des Atari-Syshdr          008
+ DC.L     tab_unshift         ; 5*128 Bytes für Tastaturtabellen 00c
+ DC.L     mem_root            ;                                   010
+ DC.L     act_pd              ;                                   014
+ DC.L     act_appl            ;                                   018
+ DC.L     0                   ; MacSys_verAtari                   01c
 
- DC.L     0                   ; MacSys_verMac
- DC.W     0                   ; CPU (30=68030, 40=68040)
- DC.W     0                   ; FPU-Typ
- DCB.L    PTRLEN,0            ; MacSys_Init
- DCB.L    PTRLEN,0            ; MacSys_BiosInit
- DCB.L    PTRLEN,0            ; MacSys_VdiInit
- DC.L     0                   ; MacSys_pixmap
- DC.L     0                   ; MacSysX_pMMXCookie
- DCB.L    PTRLEN,0            ; MacSysX_Xcmd
- DC.L     0                   ; MacSys_PPCAddr
- DC.L     0                   ; MacSys_VideoAddr
- DCB.L    PTRLEN,0            ; MacSys_Exec68k
- DC.L     0                   ; MacSys_gettime
- DC.L     0                   ; MacSys_settime
- DC.L     0                   ; MacSysX_Setpalette
- DC.L     0                   ; MacSysX_Setcolor
- DC.L     0                   ; MacSysX_VsetRGB
- DC.L     0                   ; MacSysX_VgetRGB
- DC.L     0                   ; MacSys_syshalt
- DC.L     0                   ; MacSys_syserr
- DC.L     0                   ; MacSys_coldboot
- DC.L     0                   ; MacSys_exit
- DC.L     0                   ; MacSys_debugout
- DC.L     0                   ; MacSys_error
- DC.L     0                   ; prt_cos
- DC.L     0                   ; prt_cin
- DC.L     0                   ; prt_cout
- DC.L     0                   ; MacSys_prn_wrts
- DC.L     0                   ; ser_rsconf
- DC.L     0                   ; MacSys_seris
- DC.L     0                   ; MacSys_seros
- DC.L     0                   ; MacSys_serin
- DC.L     0                   ; MacSys_serout
- DCB.L    PTRLEN,0            ; MacSys_GetKbOrMous
- DC.L     0                   ; MacSys_dos_macfn
- DC.L     0                   ; MacSys_xfs_version
- DC.L     0                   ; MacSys_xfs_flags
- DCB.L    PTRLEN,0            ; MacSys_xfs
- DCB.L    PTRLEN,0            ; MacSys_xfs_dev
- DCB.L    PTRLEN,0            ; MacSys_drv2devcode
- DCB.L    PTRLEN,0            ; MacSys_rawdrvr
- DCB.L    PTRLEN,0            ; MacSys_Daemon
- DC.L     0                   ; MacSys_Yield
+ DC.L     0                   ; MacSys_verMac                     020
+ DC.W     0                   ; CPU (30=68030, 40=68040)          024
+ DC.W     0                   ; FPU-Typ                           026
+ DCB.L    PTRLEN,0            ; MacSys_Init                       028
+ DCB.L    PTRLEN,0            ; MacSys_BiosInit                   038
+ DCB.L    PTRLEN,0            ; MacSys_VdiInit                    048
+ DC.L     0                   ; MacSys_pixmap                     058
+ DC.L     0                   ; MacSysX_pMMXCookie                05c
+ DCB.L    PTRLEN,0            ; MacSysX_Xcmd                      060
+ DC.L     0                   ; MacSys_PPCAddr                    070
+ DC.L     0                   ; MacSys_VideoAddr                  074
+ DCB.L    PTRLEN,0            ; MacSys_Exec68k                    078
+ DC.L     0                   ; MacSys_gettime                    088
+ DC.L     0                   ; MacSys_settime                    08c
+ DC.L     0                   ; MacSysX_Setpalette                090
+ DC.L     0                   ; MacSysX_Setcolor                  094
+ DC.L     0                   ; MacSysX_VsetRGB                   098
+ DC.L     0                   ; MacSysX_VgetRGB                   09c
+ DC.L     0                   ; MacSys_syshalt                    0a0
+ DC.L     0                   ; MacSys_syserr                     0a4
+ DC.L     0                   ; MacSys_coldboot                   0a8
+ DC.L     0                   ; MacSys_exit                       0ac
+ DC.L     0                   ; MacSys_debugout                   0b0
+ DC.L     0                   ; MacSys_error                      0b4
+ DC.L     0                   ; prtos                             0b8
+ DC.L     0                   ; prtin                             0bc
+ DC.L     0                   ; prtout                            0c0
+ DC.L     0                   ; MacSys_prn_wrts                   0c4
+ DC.L     0                   ; serconf                           0c8
+ DC.L     0                   ; MacSys_seris                      0cc
+ DC.L     0                   ; MacSys_seros                      0d0
+ DC.L     0                   ; MacSys_serin                      0d4
+ DC.L     0                   ; MacSys_serout                     0d8
+ ifeq BINEXACT /* missing fields in released kernels */
+ DC.L     0                   ; SerOpen                           0dc
+ DC.L     0                   ; SerClose                          0e0
+ DC.L     0                   ; SerRead                           0e4
+ DC.L     0                   ; SerWrite                          0e8
+ DC.L     0                   ; SerStat                           0ec
+ DC.L     0                   ; SerIoctl                          0f0
+ endc
+ DCB.L    PTRLEN,0            ; MacSys_GetKbOrMous                0f4
+ DC.L     0                   ; MacSys_dos_macfn                  104
+ DC.L     0                   ; MacSys_xfs_version                108
+ DC.L     0                   ; MacSys_xfs_flags                  10c
+ DCB.L    PTRLEN,0            ; MacSys_xfs                        110
+ DCB.L    PTRLEN,0            ; MacSys_xfs_dev                    120
+ DCB.L    PTRLEN,0            ; MacSys_drv2devcode                130
+ DCB.L    PTRLEN,0            ; MacSys_rawdrvr                    140
+ DCB.L    PTRLEN,0            ; MacSys_Daemon                     150
+ DC.L     0                   ; MacSys_Yield                      160
 
 **********************************************************************
 *
