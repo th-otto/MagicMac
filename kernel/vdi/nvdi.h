@@ -39,16 +39,21 @@ struct bitmap_format {
 	short res3;
 };
 
+typedef struct _vwk VWK;
+
 struct v_unknown {
 	/*   0 */ void *unknown1;
 	/*   4 */ short unknown3;
 	/*   6 */ short unknown4;
 	/*   8 */ short unknown5;
-	/*  10 */ short unknown6;
+	/*  10 */ short device_refcount;
 	/*  12 */ struct _drv_sys *device_addr;
+	/*  16 */ long unknown6;
+	/*  20 */ VWK *device_wk;
+	/*  22 */ short device_handle;
 };
 
-typedef struct _vwk {
+struct _vwk {
 	/*   0 */ void *vdi_disp;
 	/*   4 */ void *disp_addr;
 	/*   8 */ short wk_handle;
@@ -241,7 +246,7 @@ typedef struct _vwk {
 	short res104[4];
 	/* 596 */ void *wk_owner;
 	/* 600 WK_LENGTH */
-} VWK;
+};
 
 #define FORM_ID_STANDARD    0
 #define FORM_ID_PIXPACKED   1

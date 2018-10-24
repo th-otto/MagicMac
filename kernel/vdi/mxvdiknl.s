@@ -961,7 +961,7 @@ dat_table_08:
 header_09:
 	dc.w 1
 	dc.w 9
-	dc.b	'6x8 system font',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	dc.b	'8x8 system font',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	dc.w	0,255 ; first_ade,last_ade
 	dc.w	6,6,4,1,1 ; top,ascent,half,descent,bottom
 	dc.w	7,8 ; char_width,,cell_width
@@ -975,7 +975,7 @@ header_09:
 	dc.l	dat_table_09
 	dc.w	(256*8)/8 ; form_width
 	dc.w	8 ; form_height
-	dc.l	font_header ; next_font
+	dc.l	font_header+2*sizeof_FONTHDR ; next_font
 off_table_09:
 off_table_10:
 	dc.w	$0000,$0008,$0010,$0018,$0020,$0028,$0030,$0038
@@ -2983,7 +2983,7 @@ vq_scrninfo:
 		movea.l   (a0),a1
 		move.w    #$0110,n_intout(a1)
 		clr.w     n_ptsout(a1)
-		movea.l   pb_ptsout(a0),a0
+		movea.l   pb_intout(a0),a0
 		move.l    device_drv(a6),d0
 		beq.s     vq_scrninfo1
 		movea.l   d0,a2
@@ -2999,7 +2999,7 @@ vq_scrninfo3:
 		movea.l   (a7)+,a2
 		rts
 vq_color:
-		movea.l   pb_ptsout(a0),a1
+		movea.l   pb_intout(a0),a1
 		movea.l   pb_intin(a0),a0
 		move.w    (a0)+,d0
 		cmp.w     colors(a6),d0
@@ -3483,7 +3483,7 @@ vsc_form:
 		movem.l   d1-d7/a2-a5,-(a7)
 		movem.l   (a0),a1-a4
 		tst.w     n_intin(a1)
-		bne.s     vsc_form
+		bne.s     vsc_form2
 vsc_form1:
 		move.w    #37,n_intout(a1)
 		lea.l     (M_POS_HX).w,a0
@@ -3509,11 +3509,11 @@ vsc_form3:
 		movem.w   (a2)+,d0-d4
 vsc_form4:
 		cmp.w     d5,d3
-		bls.s     vsc_form
+		bls.s     vsc_form5
 		moveq.l   #1,d3
 vsc_form5:
 		cmp.w     d5,d4
-		bls.s     vsc_form
+		bls.s     vsc_form6
 		moveq.l   #1,d4
 vsc_form6:
 		moveq.l   #15,d5
@@ -4357,7 +4357,7 @@ vst_h_er:
 		move.l    t_width(a6),(a1)+
 		move.l    t_cwidth(a6),(a1)+
 		rts
-vst_point:
+vst_point0:
 		tst.w     d0
 		ble.s     vst_point2
 		movem.l   pb_intout(a0),a0-a1
@@ -4365,11 +4365,11 @@ vst_point:
 		move.l    t_width(a6),(a1)+
 		move.l    t_cwidth(a6),(a1)+
 		rts
-vst_point1:
+vst_point:
 		movea.l   pb_intin(a0),a1
 		move.w    (a1),d0
 		cmp.w     t_point_size(a6),d0
-		beq.s     vst_point
+		beq.s     vst_point0
 vst_point2:
 		movem.l   d1-d7/a2,-(a7)
 		movea.l   d1,a2
@@ -5321,7 +5321,7 @@ exit_bk:
 v_pline_2:
 		tst.w     n_intin(a1)
 		beq       v_pline_1
-		cmpi.w    #1,opcode2(a1)
+		cmpi.w    #13,opcode2(a1)
 		beq       v_bez
 		tst.w     bez_on(a6)
 		bne       v_bez
@@ -5827,7 +5827,7 @@ v_fillline:
 		movea.l   a0,a3
 		move.w    d0,d4
 		subq.w    #1,d4
-		bsr.s     v_fillarray
+		bsr.s     v_fillarray3
 		movem.l   (a7)+,d1-d7/a2-a5
 		move.l    (a7)+,f_pointer(a6)
 		move.w    (a7)+,f_planes(a6)
@@ -5838,7 +5838,7 @@ v_fillarray:
 		movea.l   (a0),a1
 		tst.w     n_intin(a1)
 		beq.s     v_fillarray1
-		cmpi.w    #1,opcode2(a1)
+		cmpi.w    #13,opcode2(a1)
 		beq       v_bez_fi
 		tst.w     bez_on(a6)
 		bne       v_bez_fi
@@ -6532,7 +6532,7 @@ gdos_get:
 		move.l    a2,(a0)+
 		lea.l     32(a2),a2
 		move.l    a2,(a0)
-		move.w    #45,(a1)
+		move.w    #35,(a1) ; vql_attributes
 		clr.w     n_ptsin(a1)
 		clr.w     n_intin(a1)
 		move.w    wk_handle(a6),handle(a1)
@@ -6939,7 +6939,7 @@ open_nvdi:
 		move.w    d3,v_device_id(a6)
 		move.w    d4,wk_handle(a6)
 		move.w    d4,handle(a1)
-		addq.w    #1,driver_refcount(a3)
+		addq.w    #1,device_refcount(a3)
 		move.w    d4,device_handle(a3)
 		bsr       init_font_nvdi
 		bsr       init_res
@@ -7356,7 +7356,7 @@ init_wk_:
 		move.l    a1,bitmap_drv(a6)
 		move.l    a0,d0
 		beq.s     wkdef_of
-		movea.l   DRIVER_A(a0),a0
+		movea.l   device_addr(a0),a0
 		move.l    DRVR_colors(a0),bitmap_colors(a6)
 		move.w    DRVR_planes(a0),bitmap_planes(a6)
 		move.w    DRVR_format(a0),bitmap_format(a6)
@@ -8220,7 +8220,7 @@ text_cl90_5:
 		tst.w     d6
 		beq.s     text_cl90_8
 		move.w    t_add_len(a6),d7
-		beq.s     text_cl90_8
+		beq.s     text_cl90_7
 		ext.l     d7
 		move.w    t_space_(a6),d0
 		bmi.s     text_cl90_6
@@ -8754,7 +8754,7 @@ text_buf2:
 		btst      #4,t_effects+1(a6)
 		bne.s     text_buf3
 		tst.w     t_rotation(a6)
-		beq.s     text_buf3
+		beq.s     text_buf4
 text_buf3:
 		lsr.l     #1,d4
 text_buf4:
@@ -8767,7 +8767,7 @@ text_buf4:
 		movea.l   buffer_a(a6),a0
 		movea.w   a3,a2
 		move.w    t_effects(a6),d7
-		beq.s     text_out1
+		beq.s     text_out2
 text_bol:
 		btst      #0,d7
 		beq.s     text_und
@@ -9393,7 +9393,7 @@ copy_to_:
 		cmp.w     #7,d4
 		bne.s     cptb_no_
 		tst.w     d0
-		beq       cptb_byt1
+		beq       cptb_byt2
 		cmp.w     #8,d0
 		beq       cptb_byt1
 cptb_no_:
@@ -9498,7 +9498,7 @@ cptb_1wo:
 		move.w    d2,d3
 		not.w     d3
 		tst.w     d0
-		beq.s     cptb_wor2
+		beq.s     cptb_wor1
 		blt.s     cptb_wr
 		cmpi.w    #8,d0
 		ble.s     cptb_wor3
@@ -10085,7 +10085,7 @@ fellipse3:
 		move.w    d0,d4
 		addq.w    #1,d4
 		bmi.s     fellipse4
-		bsr       v_fillarray
+		bsr       v_fillarray3
 fellipse4:
 		move.l    (a7)+,buffer_a(a6)
 		move.l    (a7)+,buffer_l(a6)
@@ -10847,7 +10847,7 @@ line_clip8:
 		cmp.w     (a1)+,d3
 		bgt.s     line_exit
 		cmp.w     clip_ymin(a6),d3
-		bge.s     line_clip8
+		bge.s     line_clip9
 		sub.w     clip_ymin(a6),d3
 		neg.w     d3
 		mulu.w    d4,d3
@@ -11049,7 +11049,7 @@ linea_hline:
 linea_rect:
 		move.l    a6,-(a7)
 		movea.l   (linea_wk).w,a6
-		bsr       set_lclip
+		bsr       set_lclip2
 		bsr       get_line
 		move.w    d0,f_color(a6)
 		bsr       get_line2
@@ -11131,7 +11131,7 @@ linea_text_blt:
 		move.l    a6,-(a7)
 		lea.l     -130(a7),a7
 		movea.l   (linea_wk).w,a6
-		bsr       set_lclip
+		bsr       set_lclip2
 		movea.l   a7,a1
 		lea.l     32(a1),a2
 		lea.l     2(a2),a3
@@ -11277,7 +11277,7 @@ transform_mouse1:
 		move.w    (DEV_TAB+26).w,d5
 		subq.w    #1,d5
 		lea.l     -44(a7),a7
-		bra       vsc_form
+		bra       vsc_form3
 undraw_sprite:
 		move.l    (undraw_spr).w,-(a7)
 		rts
@@ -11440,7 +11440,7 @@ draw_sprite1:
 		bne.s     draw_x_o
 		sub.l     d3,-4(a2)
 draw_x_o:
-		move.w    #$0700,(a2)+
+		move.w    #$0300,(a2)+
 		subq.w    #1,d5
 		bpl.s     draw_sprite5
 		bra.s     draw_sprite6
@@ -11685,7 +11685,7 @@ clip_mouse:
 		bra.s     clip_mouse2
 clip_mouse1:
 		cmp.w     (V_REZ_HZ).w,d0
-		blt.s     clip_mouse3
+		blt.s     clip_mouse2
 		move.w    (V_REZ_HZ).w,d0
 		subq.w    #1,d0
 clip_mouse2:
@@ -12197,7 +12197,7 @@ v_curleft:
 vt_seq_E:
 		bsr       cursor_off
 		bsr       clear_screen
-		bra.s     vt_seq_H
+		bra.s     vt_seq_H1
 vt_seq_H:
 v_curhome:
 		bsr       cursor_off
@@ -12434,7 +12434,7 @@ scroll_down:
 		lea.l     40(a0,d6.w),a1
 		divu.w    #320,d7
 		subq.w    #1,d7
-		bsr.s     scroll_down1
+		bsr.s     scroll_down2
 		movea.l   (v_bas_ad).w,a1
 		adda.w    (V_CUR_OF).w,a1
 		bra.s     clear_line1 ; 99e8
@@ -13003,7 +13003,7 @@ vdi_tab:
 	dc.w	0,0
 	dc.l	v_updwk
 	dc.w	0,0
-	dc.l	v_escape
+	dc.l	v_escape_call
 	dc.w	0,0
 	dc.l	v_pline
 	dc.w	0,0
