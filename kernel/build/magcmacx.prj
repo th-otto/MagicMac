@@ -28,7 +28,7 @@ MagicMacX.OS
 ..\dos\dev_mem.s
 ..\dos\dfs_fat.s
 ..\bios\magcmacx\macxfs.s
-..\vdi\bin\mxvdiknp.o ; no source yet
+..\vdi\mxvdiknl.s
 ..\vdi\drivers.c [-G]
 ..\vdi\filediv.c
 ..\vdi\init_res.c [-G]

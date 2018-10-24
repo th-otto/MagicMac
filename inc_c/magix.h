@@ -161,6 +161,10 @@ typedef struct
      APPL **topwind_app;           /* App. des obersten Fensters */
      APPL **mouse_app;             /* menÅbesitzende Applikation */
      APPL **keyb_app;              /* tastaturbesitzende Appl.   */
+     APPL **suspend_list;
+     short install_drv;
+     char kernel_path[16];
+     void *xp_mode;
      long dummy;
      } AESVARS;
 #endif

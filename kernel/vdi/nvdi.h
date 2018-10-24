@@ -10,22 +10,22 @@ typedef struct
 	/*  0 */ uint8_t *baseAddr;		/* pointer to pixels */
 	/*  4 */ uint16_t rowBytes;		/* offset to next line */
 	/* Rect bounds; */		/* encloses bitmap */
-	/*  6 */ uint16_t bounds_top;			/* oberste Zeile */
-	/*  8 */ uint16_t bounds_left;			/* erste Spalte */
-	/* 10 */ uint16_t bounds_bottom;			/* unterste Zeile */
-	/* 12 */ uint16_t bounds_right;			/* letzte Spalte */
-	/* 14 */ uint16_t pmVersion;		/* pixMap version number */
+	/*  6 */ uint16_t bounds_top;	/* oberste Zeile */
+	/*  8 */ uint16_t bounds_left;	/* erste Spalte */
+	/* 10 */ uint16_t bounds_bottom;	/* unterste Zeile */
+	/* 12 */ uint16_t bounds_right;	/* letzte Spalte */
+	/* 14 */ uint16_t pmVersion;	/* pixMap version number */
 	/* 16 */ uint16_t packType;		/* defines packing format */
 	/* 18 */ uint32_t packSize;		/* length of pixel data */
 	/* 22 */ int32_t hRes;			/* horiz. resolution (ppi), in fact of type "Fixed" */
 	/* 26 */ int32_t vRes;			/* vert. resolution (ppi), in fact of type "Fixed" */
-	/* 30 */ uint16_t pixelType;		/* defines pixel type */
-	/* 32 */ uint16_t pixelSize;		/* # bits in pixel */
+	/* 30 */ uint16_t pixelType;	/* defines pixel type */
+	/* 32 */ uint16_t pixelSize;	/* # bits in pixel */
 	/* 34 */ uint16_t cmpCount;		/* # components in pixel */
 	/* 36 */ uint16_t cmpSize;		/* # bits per component */
-	/* 38 */ uint32_t planeBytes;		/* offset to next plane */
+	/* 38 */ uint32_t planeBytes;	/* offset to next plane */
 	/* 42 */ uint8_t *pmTable;		/* color map for this pixMap (definiert CtabHandle), in fact of type CTabHandle */
-	/* 46 */ uint32_t pmReserved;		/* for future use. MUST BE 0 */
+	/* 46 */ uint32_t pmReserved;	/* for future use. MUST BE 0 */
 	/* 50 */
 } MXVDI_PIXMAP;
 
@@ -49,7 +49,7 @@ struct v_unknown {
 };
 
 typedef struct _vwk {
-	/*   0 */ void *unknown1;
+	/*   0 */ void *vdi_disp;
 	/*   4 */ void *disp_addr;
 	/*   8 */ short wk_handle;
 	/*  10 */ short v_device_id;
@@ -67,10 +67,8 @@ typedef struct _vwk {
 	          char pad1;
 	/*  32 */ void *buffer_a;
 	/*  36 */ long buffer_l;
-	/*  40 */ short unknown17;
-	/*  42 */ short unknown18;
-	/*  44 */ short unknown19;
-	/*  46 */ short unknown20;
+	/*  40 */ long bez_buff;
+	/*  44 */ long bez_buf_;
 	/*  48 */ short unknown21;
 	/*  50 */ short clip_flag;
 	/*  52 */ short clip_xmin;
@@ -256,6 +254,52 @@ typedef struct {
 	/*   8 */ VWK *nvdi_wk;
 	/*  12 */ short *fill0;
 	/*  16 */ VWK *wk_tab;
+	/*  20 */ char *gdos_path;
+	/*  24 */ long x1;
+	/*  28 */ long x2;
+	/*  32 */ void *font_header;
+	/*  36 */ void *sys_font;
+	/*  40 */ void *color_map;
+	/*  44 */ short *work_out;
+	/*  48 */ short *extnd_out;
+	/*  52 */ short w1;
+	/*  54 */ short w2;
+	/*  56 */ short w3;
+	/*  58 */ short w4;
+	/*  60 */ void *vdi_tab;
+	/*  64 */ void *linea_tab;
+	/*  68 */ void *gem_tab;
+	/*  72 */ void **cursor_cnt;
+	/*  76 */ long x4;
+	/*  80 */ void *mouse_buf;
+	/*  84 */ char c1[2];
+	/*  86 */ short blitter;
+	/*  88 */ short modecode;
+	/*  90 */ short resolution;
+	/*  92 */ short nvdi_cookie_cpu;
+	/*  94 */ short nvdi_cpu_type;
+	/*  96 */ long nvdi_cookie_vdo;
+	/* 100 */ long nvdi_cookie_mch;
+	/* 104 */ short first_de;
+	/* 106 */ short cpu020;
+	/* 108 */ short magix;
+	/* 110 */ short mint;
+	/* 112 */ void *search_cookie;
+	/* 116 */ void *init_cookie;
+	/* 120 */ void *reset_cookie;
+	/* 124 */ void *init_virt;
+	/* 128 */ void *reset_virt;
+	/* 132 */ void *Malloc_sys;
+	/* 136 */ void *Mfree_sys;
+	/* 140 */ long x5;
+	/* 144 */ long x6;
+	/* 148 */ void *load_file;
+	/* 152 */ void *load_prg;
+	/* 156 */ void *load_NOD;
+	/* 160 */ void *unload_NOD;
+	/* 164 */ void *init_NOD;
+	/* 168 */ long x7;
+	/* 172 */
 } NVDI_STRUCT;
 
 extern NVDI_STRUCT nvdi_struct;

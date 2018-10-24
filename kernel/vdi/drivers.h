@@ -16,7 +16,7 @@ struct _drv_sys {
 	/* 12 */ unsigned short headersize;
 	/* 14 */ unsigned short type; /* 0 for *.OSD, 1 for *.SYS */
 	/* 16 */ long (*init)(NVDI_STRUCT *nvdi);
-	/* 20 */ void *res1;
+	/* 20 */ void (*exit)(NVDI_STRUCT *nvdi);
 	/* 24 */ void (*wk_create)(NVDI_STRUCT *nvdi);
 	/* 28 */ void (*wk_delete)(NVDI_STRUCT *nvdi);
 	/* 32 */ void (*open)(void);
