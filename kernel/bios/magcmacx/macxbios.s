@@ -99,7 +99,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
 
 * Import aus STD
 
-     XREF      putch,putstr,getch
+     XREF      putch,putstr,getch,str_to_con
      IMPORT    date2str            ; void date2str( a0 = char *s, d0 = WORD date)
      IF   DEBUG
      XREF hexl,crlf
