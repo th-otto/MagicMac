@@ -59,14 +59,17 @@
 
 * aus MAGIDOS
 
-	XREF	act_pd
 	XREF	datemode			; fuer date2str
 
 
 	INCLUDE	"dos.inc"
 	INCLUDE	"errno.inc"
+	INCLUDE	"kernel.inc"
+	INCLUDE	"..\dos\magicdos.inc"
 
 dev_vecs		EQU $51e		/* long dev_vecs[8*4]		*/
+
+	TEXT
 
 **********************************************************************
 *
@@ -496,10 +499,10 @@ stricmp:
  moveq	#0,d0
 stricmp_loop:
  move.b	(a0),d0
- bsr	toupper
+ bsr.s	toupper
  move.b	d0,d1
  move.b	(a1)+,d0
- bsr	toupper
+ bsr.s	toupper
  cmp.b	d0,d1
  bne.b	stricmp_endloop
  tst.b	(a0)+
@@ -1118,7 +1121,7 @@ fnn_ende:
 
 smalloc:
  move.l	a2,-(sp)
- move.l	act_pd,a1
+ move.l	act_pd.l,a1
  move.w	#$2003,d1			; Bit 13: nolimit
  jsr		Mxalloc			; ->MALLOC
  move.l	d0,a0			; wg. PureC
@@ -1179,7 +1182,9 @@ mmalloc:
  trap	#1				; gemdos Malloc
  addq.w	#6,sp
 ;move.l	(sp)+,a2
+ IFEQ BINEXACT
  move.l d0,a0
+ ENDC
  tst.l	d0
  rts
 

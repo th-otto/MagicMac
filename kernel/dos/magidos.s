@@ -5,7 +5,6 @@
 *********************************
 
 
-__a_dos        EQU  $2900
  DEBUG         EQU  0
 
  DEBUG_FN      EQU  0
@@ -16,7 +15,6 @@ __a_dos        EQU  $2900
 
 
 DRIVE_U        EQU  'U'-'A'        ; fuer "MiNT"
-N_STDPATHS     EQU  40             ; Anzahl der Standardpfade
 N_PROCS        EQU  256            ; Anzahl Prozesse
 N_HDLX         EQU  75             ; Anzahl globaler Handles
 FDSIZE         EQU  94
@@ -32,15 +30,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      INCLUDE "lowmem.inc"
 
      XDEF  dos_init
-     XDEF  act_pd
-     XDEF  _mifl_unused       ; hier Dummy (undo_buf)
-     XDEF  dos_date
-     XDEF  dos_time
-     XDEF  bufl_timer         ; an BIOS (fuer writeback)
-     XDEF  bufl_wback         ; PD * (wenn writeback aktiviert)
-     XDEF  dlockx
      XDEF  mem_root           ; an XAES,MALLOC
-     XDEF  __a_dos
      XDEF  __e_dos
      XDEF  swap_paths         ; an XAES
      XDEF  env_clr_int
@@ -64,24 +54,12 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
 
      XDEF  bufl,bufl_size
 
-     XDEF  fat12_sem          ; an DFS_FAT
-     XDEF  udrv_shmdir
-     XDEF  udrv_devdir
-     XDEF  udrv_pipedir
-     XDEF  udrv_procdir
-     XDEF  udrv_drvs
-     XDEF  udrv_root
-
-     XDEF  dfs_list
-     XDEF  dfs_longnames      ; an READ_INF und XFS_VDOS
-
      XDEF  DMD_rdevinit
      XDEF  getxhdi
      XDEF  Pterm,PDkill
      XDEF  get_act_appl
      XDEF  undo_buf
 
-     XDEF ur_pd               ; an MALLOC
      XDEF getkey,dump         ; an MALLOC
 
      XDEF asgndevh            ; an READ_INF
@@ -182,7 +160,7 @@ act_appl equ $3982 ; from AES FIXME
      XREF ffind
      XREF crlf
 
-	include "country.inc"
+	INCLUDE "country.inc"
 
 
 
@@ -276,68 +254,11 @@ imb_sizeof:
      FAIL
      ENDIF
 
-     TEXT
+     INCLUDE "magicdos.inc"
 
      SUPER
      MC68020
 
-
-*    OFFSET $29f0
-     OFFSET __a_dos
-
-otimer:        DS.L 1              ; alte etv_timer Routine
-otrap2:        DS.L 1              ; alte Trap #2- Routine
-last_ms:       DS.W 1              ; ms seit letztem Stellen der Uhr
-dos_time:      DS.W 1              ; Zeit im DOS- Format
-dos_date:      DS.W 1              ; Wort mit Datum im DOS- Format
-xaes_appls:    DS.L 1              ; hier haengt sich XAES ein
-mem_root:      DS.L 16             ; 16 Speicherlisten (ST-RAM, TT-RAM, ...)
-               DS.L 16             ; Endadressen fuer vorherige Bloecke
-_mifl_unused:
-undo_buf:      DS.B 320            ; fuer Zeileneditor
-     EVEN
-
-imbx:          DS.L 1              ; Zeiger auf IMB- Kette
-
-dev_fds:       DS.L -MIN_FHANDLE   ; FDs fuer Handles -4/-3/-2/-1
-
-dskchg_drvs:   DS.L 1              ; Bitvektor der zu wechselnden Disks
-dskchg_sem:    DS.B bl_sizeof      ; Semaphore fuer den Diskwechsel
-pexec_sem:     DS.B bl_sizeof      ; Sempahore fuer Pexec
-fat12_sem:     DS.B bl_sizeof      ; Sempahore fuer 12-Bit-FAT
-
-bufl:          DS.L 2              ; neue Mag!X- Sektor-Pufferlisten
-bufl_size:     DS.L 1              ; Groesse der installierten Puffer
-bufl_timer:    DS.L LASTDRIVE+1    ; fuer Writeback (letzter Zugriff)
-bufl_wback:    DS.L 1              ; PD *, initiiert writeback
-p_doslimits:   DS.L 1              ; Zeiger auf DOSLIMIT-Struktur
-
-act_pd:        DS.L 1              ; aktueller PD
-pathx:         DS.L N_STDPATHS     ; Tabelle der 40 Standard- DDs
-pathcntx:      DS.B N_STDPATHS     ; Referenzzaehler fuer pathx
-dmdx:          DS.L LASTDRIVE+1    ; Tabelle der DMDs
-dlockx:        DS.L LASTDRIVE+1    ; Laufwerk- Sperren
-nxt_procid:    DS.W 1              ; naechste freie Prozess-ID
-procx:         DS.L 1              ; Tabelle der Prozesse
-xfs_list:      DS.L 1              ; Tabelle der Dateisysteme
-lslb_list:     DS.L 1              ; Liste der geladenen SharedLibs
-
-/* Variablen fuers DOS-XFS */
-
-dfs_list:      DS.L 1              ; Tabelle der DOS- Dateisysteme
-dfs_longnames: DS.L 1              ; Bitvektor drv <-> lange Dateinamen
-
-/* Variablen fuers Laufwerk U: */
-
-udrv_drvs:     DS.L 1              ; eingetragene Laufwerk A,B,..
-udrv_root:     DS.L 1
-udrv_shmdir:   DS.L 1
-udrv_devdir:   DS.L 1
-udrv_pipedir:  DS.L 1
-udrv_procdir:  DS.L 1
-
-ur_pd:         DS.B 256            ; Ur-PD
-__e_dos:
 
 
 
@@ -446,7 +367,7 @@ dosi_nfs:
 
 ; fuer den Hddriver muessen alle Geraete und Handles definiert werden
 
- bsr      iniddev1
+ bsr.s      iniddev1
  bsr      iniddev2
  rts
 
@@ -574,7 +495,7 @@ dosi_dmloop:
  move.l   -(a4),a0
  move.l   (a5),d0                       ; schon geoeffnet?
  bne.b    dosi_savedm                   ; ja!
- bsr      open_device
+ bsr.s      open_device
  bgt.b    dosi_savedm                   ; FD ist in Ordnung
  moveq    #0,d0                         ; FD ist ungueltig
 dosi_savedm:
@@ -605,7 +526,7 @@ asgndevh:
  lea      dev_fds+16,a1
  pea      0(a1,d0.w)
 ;move.l   a0,a0
- bsr      open_device
+ bsr.s      open_device
  move.l   (sp)+,a0
  bmi.b    asdh_ende                ; Fehler
  move.l   d0,(a0)                  ; abspeichern
@@ -1092,7 +1013,7 @@ D_Crawio:
  moveq    #STDOUT,d0
  cmpi.w   #$00ff,(a0)
  bne      _cconout_raw        ; d0 = Handle, (a0).w = char
- bsr      D_Cconis
+ bsr.s      D_Cconis
  tst.l    d0
  bne.b    D_Crawcin
  rts
@@ -1233,7 +1154,7 @@ gxh_err:
 
 xhdi_rawdrvr:
  movem.l  d0/d1,-(sp)
- bsr      getxhdi
+ bsr.s    getxhdi
  beq.b    rxh_err             ; Cookie nicht gefunden
  move.l   d0,a1               ; a1 = Funktionszeiger
  movem.l  (sp)+,d0/d1
@@ -1275,7 +1196,7 @@ DMD_rdevinit:
  movem.l  a5/a6,-(sp)
  move.l   a0,a5               ; DMD merken
  clr.l    d_driver(a5)        ; kein Treiber
- bsr      getxhdi
+ bsr.s    getxhdi
  beq.b    dxh_err             ; Cookie nicht gefunden
  move.l   d0,a6               ; Wert des Cookies
  clr.l    -(sp)               ; kein BPB
@@ -1445,7 +1366,7 @@ dfr_again:
 dfr_weiter:
  moveq    #0,d1                    ; automount
 ;move.w   d0,d0
- bsr      d_chkdrv
+ bsr.s    d_chkdrv
  tst.l    d0
  blt.b    dfr_ende                 ; Fehlercode woertlich weiterreichen
  tst.b    d7                       ; Pfadhandle ?
@@ -2014,7 +1935,7 @@ pcpl_next2:
  clr.b    (a6)
 pcpl_defpath:
  move.l   a5,a0
- jsr      strlen
+ bsr      strlen
  addq.l   #1,d0               ; EOS
  sub.w    d0,d7
  bcs.b    pcpl_erange
@@ -2296,7 +2217,7 @@ _Fopen:
  move.l   a0,a3                    ; a3 = pathname
  move.w   d1,d6                    ; d6 = attrib
 ;move.w   d0,d0                    ; MiNT- omode
- bsr      mintmode2omode
+ bsr.s      mintmode2omode
  move.w   d0,d7                    ; d7 = omode
 
  bsr      new_hdl
@@ -3316,7 +3237,7 @@ D_Fseek:
  move.l   a6,-(sp)
  move.l   a0,a6
  move.w   4(a6),d0                 ; hdl
- bsr      hdl_to_FD                ; hdl->FD
+ bsr.s    hdl_to_FD                ; hdl->FD
  ble      fsk_eihndl
  move.l   d0,a0
  move.l   (a6),d0                  ; offs
@@ -3443,12 +3364,12 @@ D_Fforce:
  move.l   a0,a6
 * ermittle neues Handle
  move.w   2(a6),d0
- bsr      hdl_to_FD
+ bsr.s    hdl_to_FD
  bmi      ffor_ende
  move.l   d0,a3                    ; FD merken
 * ermittle altes Handle
  move.w   (a6),d0
- bsr      hdl_to_FD
+ bsr.s    hdl_to_FD
  bmi.b    ffor_ende                ; ungueltig
  move.l   a0,a4                    ; Zeiger auf (FD *) merken
 * schliesse altes Handle
@@ -4260,7 +4181,7 @@ fct_eihndl:
  bra.b    fct_err
 fct0_ok:
  move.l   a1,-(sp)
- bsr      _new_hdl
+ bsr.s    _new_hdl
  move.l   (sp)+,a1
  bmi.b    fct_err                  ; kein Handle mehr frei
  move.l   a1,(a0)                  ; neues Handle belegen
@@ -4958,7 +4879,7 @@ wpid_loop1:
 ;move.l   a1,a1                    ; child
 ;move.l   a0,a0                    ; PD *
  move.w   d7,d0                    ; Suchkriterium
- bsr      match_pid
+ bsr.s    match_pid
  tst.w    d0
  beq.b    wpid_nxtloop
 
@@ -5394,7 +5315,7 @@ pkill_kill:
 pkill_kill2:
  move.w   d7,d0                    ; sig
 ;move.l   a0,a0                    ; PD
- bsr      _pkill
+ bsr.s    _pkill
 
 ; naechster Tabelleneintrag
 
@@ -5814,7 +5735,7 @@ D_Pnice:
  move.l   act_pd,a1
  move.w   p_procid(a1),-(sp)
  move.l   sp,a0
- bsr      D_Prenice
+ bsr.s    D_Prenice
  addq.l   #4,sp
  rts
 
@@ -6198,7 +6119,7 @@ ptm_noap:
  move.w   8(a6),p_dta(a0)          ; Rueckgabewert in Basepage merken!
  move.w   10(a6),d0                ; Speicher freigeben
 ;move.l   a0,a0
- bsr      PDkill
+ bsr.s    PDkill
 
 ptm_sigrestart:
  move.l   act_pd,a0
@@ -6290,7 +6211,7 @@ pdk_no_sigchld:
 * Zombie-Kinder entfernen
  suba.l   a1,a1                    ; new_pd
  move.l   a5,a0                    ; old_pd
- bsr      adjust_parents
+ bsr.s    adjust_parents
 * Threads entfernen
  move.l   act_appl.l,d0
  beq.b    pk_no_aes
@@ -7104,7 +7025,7 @@ crb_env_given:
  move.l   ARG0(a6),a0              ; kompletter Pfad
  jsr      fn_name                  ; Dateinamen extrahieren...
  move.l   a0,a4                    ; ...und Zeiger merken (a4)
- jsr      strlen                   ; davon die Laenge
+ bsr      strlen                   ; davon die Laenge
  add.l    d0,(sp)                  ; ...zum Environment addieren
 
  move.l   ARG0(a6),a1              ; arg0
@@ -7474,11 +7395,11 @@ pxc_no_slice:
 *
 
 flush_cpu_cache:
- cmpi.w   #40,cpu_typ
+ cmpi.w   #40,cpu_typ.l
  bcc.b    fcc_040
- cmpi.w   #20,cpu_typ
+ cmpi.w   #20,cpu_typ.l
  beq.b    fcc_020
- cmpi.w   #30,cpu_typ
+ cmpi.w   #30,cpu_typ.l
  bne.b    fcc_noflush
 fcc_020:
 * fuer den 020/030 die Caches loeschen
@@ -8015,8 +7936,11 @@ pxc_ensmem:
  bra.b    pxc_ende
 pxc_einvfn:
  moveq    #EINVFN,d0
- bra.b    pxc_ende
-
+; bra.b    pxc_ende
+ IFNE BINEXACT
+ nop
+ ENDC
+ 
 pxc_ende:
  tst.l    d7
  ble.b    pxc__ende
@@ -8757,7 +8681,7 @@ intm_nextimb:
  move.l   a0,d0
  bne.b    intm_imb_loop
 
- bsr      collect_IMB
+ bsr.s    collect_IMB
  tst.l    d0                       ; war erfolgreich ?
  bne.b    int_malloc               ; ja!
  bra      intmem_err
@@ -10658,7 +10582,7 @@ sbo_ok3:
  move.l   slb_open(a4),a0          ; fn
  move.l   20(a6),d1                ; zusaetzlicher Parameter (MagiC 6)
  move.l   act_pd,d0
- bsr      Slbexec2
+ bsr.s    Slbexec2
  tst.l    d0
  bge.b    sbo_ok4
 
@@ -10889,7 +10813,7 @@ D_Slbclose:
  cmpa.l   #-1,a0
  bne.b    slbclose
  move.l   a1,a0
- bsr      slb_close_all            ; alle SLBs schliessen
+ bsr.s    slb_close_all            ; alle SLBs schliessen
  moveq    #0,d0
  rts
 slbclose:
@@ -10900,7 +10824,7 @@ slbclose:
 
  move.l   a6,d2
  move.l   a5,a0
- bsr      lslb_pdsearch
+ bsr.s    lslb_pdsearch
  move.l   a0,d0
  beq.b    slc_err                  ; PD nicht gefunden
  move.l   a0,a3                    ; Zeiger merken

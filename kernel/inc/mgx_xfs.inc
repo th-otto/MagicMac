@@ -257,8 +257,6 @@ SHMGETBLK      EQU  $4d00
 SHMSETBLK      EQU  $4d01
 PBASEADDR      EQU  $5002
 
-LASTDRIVE      EQU  'Z'-'A'   ; hoechste Laufwerknummer
-
 /* Modi und Codes fuer Dpathconf() */
 
 DP_MAXREQ      EQU  -1

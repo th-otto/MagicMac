@@ -3550,7 +3550,8 @@ WORD cdecl fsel_exinput(
           }
 
 
-#define act_appl ((APPL *)0x39a2)
+#define act_appl ((APPL *)0x39a2) /* FIXME */
+#define act_pd ((PD *)0x2ba8) /* FIXME */
      longnames = ((act_pd->p_res2) & 1) || (act_appl->ap_id == 1);
 
      if   (longnames)

@@ -16,6 +16,7 @@
      INCLUDE "mgx_xfs.inc"
      INCLUDE "kernel.inc"
      INCLUDE "mac_ker.inc"
+     INCLUDE "..\dos\magicdos.inc"
 
 BACKGR_DMA     EQU  1
 EVNT_IO        EQU  1
@@ -28,7 +29,6 @@ _hz_200        EQU $4ba
      XREF drv2devcode,bios_rawdrvr
      XREF MSys
      XREF Mac_xfsx                      ; von MAC_BIOS
-     XREF dmdx
      XREF pe_slice
      XREF appl_begcritic,appl_endcritic ; aendert d2/a2
      XREF Mappl_IOcomplete              ; von AESEVT

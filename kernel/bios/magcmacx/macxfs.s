@@ -11,6 +11,7 @@
      INCLUDE "mgx_xfs.inc"
      INCLUDE "kernel.inc"
      INCLUDE "macxker.inc"
+     INCLUDE "..\dos\magicdos.inc"
 
      XDEF mxfs_init
 
@@ -18,7 +19,6 @@
      XREF drv2devcode,bios_rawdrvr
      XREF MSysX
      XREF Mac_xfsx                      ; von MAGXBIOS
-     XREF dmdx
      XREF pe_slice
      XREF appl_begcritic,appl_endcritic ; aendert d2/a2
      XREF Mappl_IOcomplete              ; von AESEVT

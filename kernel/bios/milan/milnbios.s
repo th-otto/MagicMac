@@ -51,15 +51,7 @@ DEBUG4    EQU  0
 ;Import vom DOS
 
      IMPORT    dos_init            ; DOS
-     IMPORT    act_pd              ; DOS
-     IMPORT    bufl_timer          ; DOS (fuer writeback)
      IMPORT    secb_ext            ; DOS
-     IMPORT    _mifl_unused        ; DOS
-     IMPORT    dos_date            ; DOS
-     IMPORT    dos_time            ; DOS
-     IMPORT    dlockx              ; DOS
-     IMPORT    __a_dos             ; DOS: Beginn der Variablen
-     IMPORT    __e_dos             ; DOS: Ende der Variablen
      XREF      iniddev1
      XREF      iniddev2
      XREF      deleddev
@@ -133,6 +125,7 @@ DEBUG4    EQU  0
      INCLUDE "kernel.inc"
      INCLUDE "milan.inc"
 	include "country.inc"
+	 INCLUDE "..\dos\magicdos.inc"
 	
 ;----------------------------------------
 

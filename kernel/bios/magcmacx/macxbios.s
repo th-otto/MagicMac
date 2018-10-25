@@ -122,18 +122,10 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 * Import vom DOS
 
      XREF      dos_init            ; DOS
-     XREF      act_pd              ; DOS
-     XREF      bufl_timer          ; DOS (fuer writeback)
      XREF      secb_ext            ; DOS
-     XREF      _mifl_unused        ; DOS
-     XREF      dos_date            ; DOS
-     XREF      dos_time            ; DOS
-     XREF      dlockx              ; DOS
-     XREF      __e_dos             ; DOS: Ende der Variablen
      XREF      iniddev1
      XREF      iniddev2
      XREF      deleddev
-     XREF      mem_root
 
 * Import vom AES
 
@@ -176,7 +168,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      INCLUDE "kernel.inc"
      INCLUDE "macxker.inc"
      INCLUDE "debug.inc"
-
+	 INCLUDE "..\dos\magicdos.inc"
 
 D_DAY     EQU  29
 D_MONTH   EQU  12
@@ -511,7 +503,7 @@ bot_ver_ok:
 bot_ok1:
 * BIOS- Variablenbereich loeschen
  lea      clear_area,a0
- lea      __e_dos,a1
+ lea      __e_dos.l,a1
  moveq    #0,d0
 bot_vclear:
  move.l   d0,(a0)+
@@ -1048,7 +1040,7 @@ IRwabs:
  move.l   a1,4(sp)            ; merken fuer DOS- Writeback
  move.l   dlockx(a1),d3
  beq.b    rwabs_ok
- cmp.l    act_pd,d3
+ cmp.l    act_pd.l,d3
  bne.b    rwabs_elocked
 rwabs_ok:
  clr.l    bufl_timer(a1)      ; fuer DOS- Writeback (als in Arbeit markieren)
@@ -2593,9 +2585,9 @@ read_rtclock:
 
 init_dosclock:
  bsr      _Gettime
- move.w   d0,dos_time
+ move.w   d0,dos_time.l
  swap     d0
- move.w   d0,dos_date
+ move.w   d0,dos_date.l
  rts
 
 
@@ -3208,6 +3200,10 @@ install_cookies:
  move.l   a5,_p_cookies            ; Pointer setzen
 * _CPU Cookie, Loword enthaelt den <cpu_typ>
  move.l   #'_CPU',(a5)+
+ IFNE BINEXACT
+ clr.w    (a5)+
+ move.w   cpu_typ,(a5)+
+ ELSE
  moveq    #0,d1
  move.w   MSysX+MacSysX_cpu(pc),d1
  move.l   d1,(a5)+                 ; und CPU eintragen
@@ -3216,6 +3212,7 @@ install_cookies:
  bcs      scpu_typ
  addq.w   #1,cpu020                     ; mindestens 020-Prozessor
 scpu_typ:
+ ENDC
 
 * FPU bestimmen
 

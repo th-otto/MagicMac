@@ -8,6 +8,7 @@
      INCLUDE "aesinc.s"
      INCLUDE "basepage.inc"
      INCLUDE "lowmem.inc"
+     INCLUDE "..\dos\magicdos.inc"
 
         TEXT
         SUPER
@@ -33,10 +34,8 @@
      XREF      iorec_kb            ; vom BIOS
      XREF      is_fpu              ; vom BIOS
      XREF      config_status       ; vom DOS
-     XREF      act_pd              ; vom DOS
      XREF      Mchgown             ; vom DOS
      XREF      srch_process        ; vom DOS
-     XREF      bufl_wback          ; vom DOS
      XREF      match_pid           ; vom DOS (fuer Pwaitpid())
      XREF      appl_break
      XREF      funselect           ; DOS
@@ -324,7 +323,7 @@ ad_no_fpu:
  move.l   sp,(a1)+                      ; ap_ssp
  move.l   (a1),d1
  beq.b    ad_no_old                     ; ist kein Prozess!
- move.l   act_pd,(a1)+                  ; ap_pd
+ move.l   act_pd.l,(a1)+                  ; ap_pd
  move.l   etv_term,(a1)                 ; ap_etvterm
 ad_no_old:
 
@@ -338,7 +337,7 @@ ad_no_old:
 
  move.l   (a1)+,d1                      ; ap_pd
  beq.b    ad_nopd                       ; ist kein Prozess!
- move.l   d1,act_pd
+ move.l   d1,act_pd.l
  move.l   (a1),etv_term                 ; ap_etvterm
 ad_nopd:
  move.l   (sp)+,a1
@@ -1161,7 +1160,7 @@ appl_endcritic:
  beq.b    apec_end
 * Signale behandeln
  movem.l  d0-d1/a0-a1,-(sp)
- move.l   act_pd,a0
+ move.l   act_pd.l,a0
  jsr      do_signals
  movem.l  (sp)+,d0-d1/a0-a1
  rts

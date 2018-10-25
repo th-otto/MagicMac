@@ -523,7 +523,6 @@ FIONWRITE      EQU  $4602
 FTRUNCATE      EQU  $4604
 F_SETLK        EQU  6
 
-LASTDRIVE      EQU  'Z'-'A'        ; hoechste Laufwerknummer
 
 BIOS_CON       EQU  2
 Bconstat       EQU  1

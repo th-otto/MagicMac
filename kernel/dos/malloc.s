@@ -23,6 +23,7 @@ _memtop        EQU $436
      INCLUDE "structs.inc"
      INCLUDE "debug.inc"
      INCLUDE "basepage.inc"
+	 INCLUDE "magicdos.inc"
 
      XDEF mc_init
      XDEF Mxalloc
@@ -50,8 +51,6 @@ _memtop        EQU $436
 
 * von MAGIDOS
 
-     XREF mem_root
-     XREF ur_pd
      XREF str_to_con
      XREF getkey,dump
      XREF Pterm
@@ -661,7 +660,7 @@ sra_isnxt:
  tst.l    mcb_owner(a6)
  bne.b    sra_next                 ; Block belegt
  move.l   a6,a0
- bsr      sra_blen                 ; Blocklaenge ermitteln
+ bsr.s    sra_blen                 ; Blocklaenge ermitteln
  cmp.l    d0,d6
  bcc      sra_next
  move.l   d0,d6
@@ -1169,7 +1168,7 @@ msh_weiter:
  move.l   #'ANDR',(a1)+            ; Vorgaenger kann nicht letzter sein
  move.l   d7,(a1)+                 ; neue Laenge
  move.l   d2,(a0)+                 ; Laenge des neuen Blocks
- move.l   act_pd,(a0)+             ; neuer Block gehoert zunaechst uns
+ move.l   act_pd.l,(a0)+             ; neuer Block gehoert zunaechst uns
  move.l   a6,(a0)+                 ; mcb_prev einsetzen
  move.l   a3,a1                    ; PD
 ;move.l   a0,a0
@@ -1484,7 +1483,7 @@ expand_sharelist:
  beq      expsh_err                ; ???
 
 ;move.l   a6,a0
- bsr      get_n_shb
+ bsr.s    get_n_shb
  add.l    d0,d7                    ; + Anzahl "shared blocks"
 
  move.l   d1,d6                    ; Aktuelle Laenge der "shared block table"

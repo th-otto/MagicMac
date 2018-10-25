@@ -13,6 +13,7 @@ DEBUG     EQU  16
      INCLUDE "structs.inc"
      INCLUDE "kernel.inc"
      INCLUDE "basepage.inc"
+     INCLUDE "magicdos.inc"
 
      XDEF memblk_drv
      XDEF shm_drv,shm_create
@@ -20,13 +21,8 @@ DEBUG     EQU  16
 
 
      XREF Memshare,Memunsh
-     XREF act_pd
      XREF vmemcpy
      XREF strlen
-/*
-     XREF PDkill,srch_process
-     XREF send_msg            ; vom AES (AESEVT.S)
-*/
 
 
 ; unterstuetzte Fcntl- Modi:
@@ -326,7 +322,7 @@ shm_set:
 
  movem.l  a0/a1,-(sp)
  move.l   a1,a0                    ; memblk
- move.l   act_pd,a1                ; PROC
+ move.l   act_pd.l,a1                ; PROC
  jsr      Memshare                 ; -> d0 ist Laenge oder Fehlercode
  movem.l  (sp)+,a0/a1
  tst.l    d0

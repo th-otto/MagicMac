@@ -22,6 +22,7 @@ DEBUG     EQU  2
      INCLUDE "debug.inc"
      INCLUDE "kernel.inc"
      INCLUDE "basepage.inc"
+	 INCLUDE "magicdos.inc"
 
      SUPER
 
@@ -55,14 +56,10 @@ act_appl equ $3982 ; from AES FIXME
 * vom DOS
 
      XREF      dfs_u_drv
-     XREF      dfs_list
-     XREF      dos_date
-     XREF      dos_time
      XREF      toupper
      XREF      str_to_con
      XREF      int_malloc,int_mfree
      XREF      _fread,_fwrite,__fseek
-     XREF      act_pd
      XREF      proc_info
      XREF      dfs_longnames
 
@@ -307,7 +304,7 @@ dxfs_drv_close:
  beq.b    drvclo_nr                ; ???
 ;move.w   d7,d7                    ; global
  move.l   d0,a0
- bsr      free_all_FDs
+ bsr.s    free_all_FDs
  bmi.b    drvclo_ende              ; Fehler
 ; dann nachsehen, ob das DFS das Laufwerk schliessen kann
 drvclo_nr:
@@ -335,7 +332,7 @@ drvclo_free:
  beq.b    drvclo_ende
 ;moveq    #1,d7                    ; freigeben
  move.l   d0,a0
- bsr      free_all_FDs
+ bsr.s    free_all_FDs
 drvclo_ende:
  movem.l  (sp)+,a5/d7
  rts
@@ -363,7 +360,7 @@ free_all_FDs:
 frdd_nochild:
  move.l   fd_next(a0),-(sp)
 ;move.l   a0,a0
- bsr      free_FDs                 ; FDs selbst freigeben
+ bsr.s    free_FDs                 ; FDs selbst freigeben
  move.l   (sp)+,a0
  bmi.b    frdd_ende                ; Fehler
  move.l   a0,d0
@@ -614,7 +611,7 @@ pthdd_eaccdn:
 
 dxfs_DD2name:
 * erst Domain ermitteln (wg. langer Namen)
- move.l   act_pd,a2
+ move.l   act_pd.l,a2
  move.b   p_flags(a2),d2
  andi.w   #1,d2                    ; Bit 0: Domain MiNT (1) oder TOS (0)
 * Rekursionsbeginn: erst Parent in den Puffer
@@ -933,10 +930,10 @@ fop_no_conv:
 
 * Zeit und Datum einsetzen
 
- move.w   dos_time,d0
+ move.w   dos_time.l,d0
  ror.w    #8,d0
  move.w   d0,(a0)+                 ; dir_time
- move.w   dos_date,d0
+ move.w   dos_date.l,d0
  ror.w    #8,d0
  move.w   d0,(a0)+                 ; dir_date
 
@@ -1027,7 +1024,7 @@ fop_open_proto:
 
 * FD initialisieren
 
- move.l   act_pd,fd_owner(a3)
+ move.l   act_pd.l,fd_owner(a3)
  move.w   d7,fd_mode(a3)
 
 *
@@ -1262,7 +1259,7 @@ fren_nosame:
  move.b   dir_attr(a6),d7
  btst     #FAB_READONLY,d7
  beq.b    fren_no_ro               ; nicht schreibgeschuetzt
- move.l   act_pd,a0
+ move.l   act_pd.l,a0
  btst     #0,p_flags(a0)           ; MiNT-Domain?
  beq      fren_eaccdn              ; nein, Zugriff verweigern
 fren_no_ro:
@@ -1608,7 +1605,7 @@ fxa_isdir:
 ;move.l   a1,a1                    ; DIR *
  move.w   d7,d1                    ; mode
  move.l   a5,d0                    ; XATTR *
- bsr      _xattr
+ bsr.s    _xattr
 
 fxa_close:
  cmpi.l   #E_CHNG,d0               ; Diskwechsel ?
@@ -1939,10 +1936,10 @@ ncf_loop:
  move.l   (a0)+,(a1)+
  dbra     d0,ncf_loop
 * Zeit und Datum: aktuelle nehmen
- move.w   dos_time,d0
+ move.w   dos_time.l,d0
  ror.w    #8,d0
  move.w   d0,dir_time(sp)
- move.w   dos_date,d0
+ move.w   dos_date.l,d0
  ror.w    #8,d0
  move.w   d0,dir_date(sp)
 * Startcluster aus FD holen (ist normalerweise 0, da Datei leer)
@@ -2721,7 +2718,7 @@ _ddel_nolong:
  move.l   d5,d0                    ; pos
 ;move.l   a1,a1                    ; DIR *
  move.l   a4,a0                    ; FD *
- bsr      _fdelete
+ bsr.s    _fdelete
 _ddel_ende:
  movem.l  (sp)+,a4/d5/d7
  rts
@@ -2828,7 +2825,7 @@ _fdelete:
 _fdel_again:
  move.l   a4,a0
  move.l   d5,d0
- bsr      file_is_open
+ bsr.s    file_is_open
  beq.b    _fdel_del                ; Datei ist nicht geoeffnet, OK
  btst     #5,(config_status+3).w
  beq.b    _fdel_eaccdn             ; Datei geoeffnet => return(EACCDN)
@@ -2915,7 +2912,7 @@ dfcl_amproto:
  movea.l  fd_parent(a0),a1
  lea      fd_children(a1),a1
  moveq    #fd_next,d0
- bsr      unlist                        ; in der Liste der Geschwister
+ bsr.s    unlist                        ; in der Liste der Geschwister
  move.l   fd_next(a0),(a1)              ;  aus Liste ausklinken
  move.l   fd_longname(a0),d0
  beq.b    dfcl_ende
@@ -3303,7 +3300,7 @@ gDD_nxtchild:
 ;move.l   a6,a6                    ; DIR *
 ;move.l   d5,d5                    ; dirpos
 ;move.l   a4,a4                    ; DD *
- bsr      DIR2protoFD
+ bsr.s    DIR2protoFD
 
  move.l   24(sp),a1                ; void **link
  move.l   a0,(a1)                  ; ggf. Link eintragen
@@ -3495,7 +3492,7 @@ drss_all:
  move.l   (sp)+,a0
  lea      (sp),a1
  moveq    #0,d1                    ; ab Anfang
- bsr      _dir_srch
+ bsr.s    _dir_srch
  adda.w   #12,sp
  subi.l   #32,d1                   ; dirpos korrigieren
  moveq    #-1,d2                   ; kein langer Name
@@ -3737,7 +3734,7 @@ _opf_nxt:
 
 opd_a0:
  move.w   d0,fd_mode(a0)
- move.l   act_pd,fd_owner(a0)
+ move.l   act_pd.l,fd_owner(a0)
  clr.l    fd_fpos(a0)
  move.l   a0,-(sp)
  move.l   fd_ddev(a0),a2
@@ -4124,10 +4121,10 @@ dosdev_read:
 dosdev_write:
  move.l   fd_multi1(a0),a2
  bset     #0,fd_dirch(a2)          ; "dirty"- Flag setzen
- move.w   dos_time,d1
+ move.w   dos_time.l,d1
  ror.w    #8,d1
  move.w   d1,fd_time(a2)
- move.w   dos_date,d1
+ move.w   dos_date.l,d1
  ror.w    #8,d1
  move.w   d1,fd_date(a2)
 dvw_dir:

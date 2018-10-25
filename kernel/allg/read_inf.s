@@ -223,7 +223,7 @@ rinf_loop:
  tst.b	(a0)
  beq.b 	risc_null
  move.l	a2,a1				; gesuchtes Token
- bsr		scan_tok				; gefunden ?
+ bsr.s		scan_tok				; gefunden ?
  beq.b	rinf_srch_seceol		; nein
 rinf_srch_seceol2:
  tst.b	(a0)
@@ -265,7 +265,7 @@ rinft_loop:
  beq.b	rinft_null			; ja, nichts gefunden
  move.l	a0,d2				; Zeiger auf Zeilenanfang merken
  move.l	a2,a1				; gesuchtes Token
- bsr		scan_tok				; gefunden ?
+ bsr.s		scan_tok				; gefunden ?
  beq.b	rinft_srch_seceol		; nein
  move.l	d2,a0				; Zeiger auf Zeilenanfang zurueck
 rinft_ende:
@@ -321,12 +321,12 @@ rinf_vfat:
  move.l	a0,d0
  beq.b	rivf_ende				; keine INF-Datei
  lea		vfat_tok(pc),a1
- bsr		rinf_sec
+ bsr.s		rinf_sec
  tst.l	d0
  beq.b	rivf_ende				; section fehlt
 ;move.l	d0,a0
  lea		vfat_tok2(pc),a1
- bsr		scan_tok
+ bsr.s		scan_tok
  beq.b	rivf_ende				; token ungueltig
  move.l	a0,a6
  moveq	#0,d7				; noch keine Laufwerke
@@ -463,7 +463,7 @@ rinf_log:
  lea		log_tok(pc),a1
  move.l	a1,d1
  lea		(sp),a1
- bsr		rinf_pth
+ bsr.s		rinf_pth
  tst.b	(sp)
  beq.b	rlog_ende				; keine Datei angegeben
 
@@ -924,11 +924,11 @@ rinf_dvh:
  move.l	a0,-(sp)
  lea		con_tok(pc),a1
  moveq	#-1,d0
- bsr		_rinf_dvh				; fuer Handle -1 (CON)
+ bsr.s		_rinf_dvh				; fuer Handle -1 (CON)
  move.l	(sp),a0
  lea		aux_tok(pc),a1
  moveq	#-2,d0
- bsr		_rinf_dvh				; fuer Handle -2 (AUX)
+ bsr.s		_rinf_dvh				; fuer Handle -2 (AUX)
  move.l	(sp)+,a0
  lea		prn_tok(pc),a1
  moveq	#-3,d0

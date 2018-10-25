@@ -8,14 +8,15 @@ DEBUG     EQU  16
 
      INCLUDE "errno.inc"
      INCLUDE "structs.inc"
-
+     INCLUDE "kernel.inc"
+     INCLUDE "magicdos.inc"
+     
      XDEF upipe_drv,bipipe_drv
      XDEF upipe_create,bipipe_create
 
 
      XREF __fseek,_fwrite
      XREF Mfree,Mxalloc
-     XREF act_pd
      XREF appl_IOcomplete
      XREF evnt_IO
      XREF vmemcpy
@@ -84,7 +85,7 @@ upipe_create:
  move.l   a5,-(sp)
  move.l   a0,a5
  move.l   #upipe_sizeof,d0
- move.l   act_pd,a1
+ move.l   act_pd.l,a1
  move.w   #$4002,d1                ; dontfree || STRAM_PREFERRED
  jsr      Mxalloc
  moveq    #ENSMEM,d1
@@ -93,7 +94,7 @@ upipe_create:
  beq      ucr_ende                 ; return(ENSMEM)
  move.l   d1,a0
  move.l   a0,dir_xdata(a5)
- move.l   act_pd,(a0)+             ; upipe_owner
+ move.l   act_pd.l,(a0)+             ; upipe_owner
  clr.l    (a0)+                    ; refcnt/flag
  clr.w    (a0)+                    ; pipe_len
  clr.l    (a0)+                    ; pipe_waiting
@@ -463,7 +464,7 @@ bipipe_create:
  move.l   a5,-(sp)
  move.l   a0,a5
  move.l   #bipipe_sizeof,d0
- move.l   act_pd,a1
+ move.l   act_pd.l,a1
  move.w   #$4002,d1                ; dontfree || STRAM_PREFERRED
  jsr      Mxalloc
  moveq    #ENSMEM,d1
@@ -472,7 +473,7 @@ bipipe_create:
  beq      bicr_ende                ; return(ENSMEM)
  move.l   d1,a0
  move.l   a0,dir_xdata(a5)
- move.l   act_pd,(a0)+             ; bipipe_owner
+ move.l   act_pd.l,(a0)+             ; bipipe_owner
  clr.w    (a0)+                    ; bipipe_refcnt
  move.w   #O_HEAD,(a0)+            ; bipipe_flag
 

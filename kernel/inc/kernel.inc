@@ -1,5 +1,4 @@
 
-     XREF act_pd
      XREF appl_yield
      XREF appl_begcritic
      XREF appl_endcritic

@@ -68,7 +68,7 @@ bot_no_coo:
  bmi.b	bot_nolog
  move.l	dev_vecs+$68,log_oldconout	; alten Bconout-Vektor merken
  move.l	#bconout_log,dev_vecs+$68; Vektor umsetzen
- move.l	act_pd,log_fd_pd			; PD fuer Handle merken
+ move.l	act_pd.l,log_fd_pd			; PD fuer Handle merken
 bot_nolog:
 
 * Jetzt (ab MagiC 6) Startbild laden
@@ -227,14 +227,14 @@ bot_was_inf:
 bconout_log:
  tst.b	criticret				; Handler aktiv?
  bne.b	bcl_critic			; ja!
- move.l	act_pd,-(sp)			; alten Prozesszeiger merken
- move.l	log_fd_pd,act_pd		; Prozesszeiger fuer Handle setzen
+ move.l	act_pd.l,-(sp)			; alten Prozesszeiger merken
+ move.l	log_fd_pd,act_pd.l		; Prozesszeiger fuer Handle setzen
  pea		11(sp)
  pea		1
  move.w	log_fd+2,-(sp)			; Lobyte ist Handle (prozesslokal!)
  gemdos	Fwrite
  adda.w	#12,sp
- move.l	(sp)+,act_pd			; alten Prozesszeiger restaurieren
+ move.l	(sp)+,act_pd.l			; alten Prozesszeiger restaurieren
  rts
 bcl_critic:
  move.l	log_oldconout,-(sp)		; springe ueber alten Vektor

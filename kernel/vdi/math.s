@@ -37,7 +37,7 @@ lbl100:
 	rts
 
 _lmul:
-	tst.w	cpu020
+	tst.w	cpu020.l
 	beq.s	_lmul_68000
 	muls.l	d1,d0
 	rts
@@ -82,7 +82,7 @@ _lmul_ex:
 	rts
 
 _ldiv:
-	tst.w	cpu020
+	tst.w	cpu020.l
 	beq.s	_ldiv_68000
 	divsl.l	d1,d1:d0
 	rts
@@ -160,13 +160,13 @@ uldiv3233:
 	rts
 
 _uldiv:
-	tst.w	cpu020
+	tst.w	cpu020.l
 	beq.s	uldiv
 	divul.l	d1,d1:d0
 	rts
 
 _ulmod:
-	tst.w	cpu020
+	tst.w	cpu020.l
 	beq.s	ulmod_68
 	divul.l	d1,d1:d0
 	move.l	d1,d0

@@ -12,6 +12,7 @@ DEBUG     EQU  16
      INCLUDE "basepage.inc"
 	 include "country.inc"
      INCLUDE "bios.inc"
+     INCLUDE "magicdos.inc"
      SUPER
 
 
@@ -27,10 +28,8 @@ DEBUG     EQU  16
 
 act_appl equ $3982 ; from AES FIXME
      XREF      get_act_appl
-     XREF      act_pd
      XREF      Pterm
      XREF      str_to_con
-     XREF      undo_buf
 
 * Exportieren
 
@@ -1332,7 +1331,7 @@ f_taste:
  clr.w    d0
 f0:
  add.w    #'0',d0                  ; F10 ist F0
- move.l   act_pd,a0
+ move.l   act_pd.l,a0
  move.l   p_env(a0),a0             ; p_env
  bra.b    f3
 f1:

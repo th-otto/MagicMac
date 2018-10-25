@@ -16,6 +16,7 @@ DEBUG     EQU  0
      INCLUDE "basepage.inc"
      INCLUDE "bios.inc"
      INCLUDE "lowmem.inc"
+	 INCLUDE "..\dos\magicdos.inc"
 
         TEXT
         SUPER
@@ -64,14 +65,11 @@ DEBUG     EQU  0
 
 * von DOS
 
-     XREF      dos_date
      XREF      config_status
      XREF      env_end
      XREF      pd_used_mem
-     XREF      act_pd
      XREF      swap_paths
      XREF      srch_process
-     XREF      dos_time
      XREF      env_clr_int
      XREF      Mxalloc,Mxfree,Mchgown
      IF   DEBUG
@@ -2643,7 +2641,7 @@ sigreturn:
  cmpi.w   #2,ap_type(a5)           ; bin ich Signalhandler ?
  bne      sigr_eaccdn              ; nein, Fehler
  move.l   a5,a4                    ; act_appl merken
- move.l   act_pd,a0
+ move.l   act_pd.l,a0
  move.l   p_app(a0),a6             ; Hauptthread, hier laufen wir weiter!
  move.w   sr,-(sp)
  ori.w    #$700,sr
@@ -2693,7 +2691,7 @@ sigr_no_act:
 
 * alte Signalmaske restaurieren. a0 ist der erste Handler.
 
- move.l   act_pd,a1
+ move.l   act_pd.l,a1
  move.l   p_procdata(a1),a1
  move.l   ap_oldsigmask(a0),pr_sigmask(a1)
 
@@ -2716,7 +2714,7 @@ sigr_no_act:
  move.l   a1,d0
  sub.l    sp,d0                    ; - Akt.Adr => verbrauchter Stack
  move.l   sp,a1                    ; Quelladresse
- move.l   act_pd,a0
+ move.l   act_pd.l,a0
  move.l   p_ssp(a0),a0             ; ssp des Main Thread
  sub.l    d0,a0                    ; - verbrauchter Teil
  move.l   a0,-(sp)                 ; Ende des neuen Stacks
@@ -2790,7 +2788,7 @@ create_thread:
  movea.l  d0,a5
 
  lea      auto_tail_s(pc),a1       ; Name ist "\0\0AUTO"
- move.l   act_pd,d1                ; Basepage
+ move.l   act_pd.l,d1                ; Basepage
  lea      start_thread(pc),a2      ; Startcode
  move.l   sust_len.w,d0            ; Stacklaenge (WORD !!)
  move.l   a5,a0                    ; APPL *
@@ -2895,7 +2893,7 @@ la_no_load:
  jsr      fn_name
  move.l   a0,(sp)                  ; ggf. Pfad abspalten
 la_x01_nn:
- move.l   act_pd,-(sp)             ; Von hier wird geerbt
+ move.l   act_pd.l,-(sp)             ; Von hier wird geerbt
  move.l   a3,-(sp)                 ; neuer Prozess
  clr.l    -(sp)
  move.w   #301,-(sp)               ; XXEXE_INIT
@@ -8180,7 +8178,7 @@ ap_create:
  trap     #1
  lea      12(sp),sp
 
- move.l   act_pd,-(sp)             ; Von hier wird geerbt
+ move.l   act_pd.l,-(sp)             ; Von hier wird geerbt
  move.l   a3,-(sp)                 ; neuer Prozess
  clr.l    -(sp)                    ; kein Dateiname
  move.l   #$4b0065,-(sp)           ; Pexec (XEXE_INIT), vererben
@@ -8748,7 +8746,7 @@ shw_exit_thread:
  move.l   act_appl.l,a0
  cmpi.w   #1,ap_type(a0)
  bne.b    set_err                  ; ich bin kein Thread
- move.l   act_pd,a1
+ move.l   act_pd.l,a1
  cmpa.l   p_app(a1),a0             ; main thread ?
  beq.b    set_err                  ; ja, muss erst Pterm machen!
  move.l   d1,d7                    ; Rueckgabewert
@@ -9616,7 +9614,7 @@ start_signal:
 * Fuer die User-Funktion den ssp des Main Thread verwenden
 restart_signal:
 /*
- move.l   act_pd,a0
+ move.l   act_pd.l,a0
  move.l   p_app(a0),a0
 ;move.l   ap_ssp(a0),sp            ; ssp des Main Thread !!!
 */
@@ -9668,7 +9666,7 @@ end_signal:
 *
 
 no_further_sigs:
- move.l   act_pd,a5
+ move.l   act_pd.l,a5
  move.l   p_app(a5),a1             ; mein Haupt-Thread
  move.l   ap_sigthr(a6),a4         ; Vorgaenger
  clr.l    ap_sigthr(a1)
@@ -10408,7 +10406,7 @@ pgml_tnext:
  dbra     d1,pgml_tloop
 
 pgml_endtloop:
- move.l   d0,act_pd                ; neuen PD setzen, notfalls NULL (?)
+ move.l   d0,act_pd.l                ; neuen PD setzen, notfalls NULL (?)
 
  move.w   d7,d1                    ; exitcode
  move.w   ap_id(a6),d0

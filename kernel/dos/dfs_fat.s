@@ -19,6 +19,7 @@ NOWRITE   EQU  0
      INCLUDE "kernel.inc"
      INCLUDE "structs.inc"
      INCLUDE "debug.inc"
+	 INCLUDE "magicdos.inc"
 
      SUPER
 
@@ -38,7 +39,6 @@ SECBUFN2       EQU  2         ; 2 Sektoren fuer Daten puffern
      XREF config_status       ; von BIOS
      XREF Bmalloc             ; vom BIOS
 
-     XREF fat12_sem
      XREF diskchange
      XREF _dir_srch
      XREF reopen_FD
@@ -47,13 +47,11 @@ SECBUFN2       EQU  2         ; 2 Sektoren fuer Daten puffern
      XREF filename_match
      XREF init_DTA
      XREF DMD_rdevinit
-     XREF dos_time,dos_date
 
 * von MAGIDOS
 
      XREF getxhdi
 
-     XREF bufl,bufl_size,bufl_wback
      XREF str_to_con
      XREF resv_intmem,resvb_intmem,int_mblocks
 
@@ -2986,10 +2984,10 @@ fsh_end1:
  clr.l    fd_Lstcl(a5)
 fsh_no0:
  bset     #0,fd_dirch(a5)          ; Dirty- Flag setzen fuer FD geaendert
- move.w   dos_time,d1
+ move.w   dos_time.l,d1
  ror.w    #8,d1
  move.w   d1,fd_time(a5)
- move.w   dos_date,d1
+ move.w   dos_date.l,d1
  ror.w    #8,d1
  move.w   d1,fd_date(a5)
 /*
@@ -3793,7 +3791,7 @@ write_sector:
 *
 ws_weiter:
  move.l   act_appl.l,(a0)            ; Semaphore belegen
- move.l   act_pd,bl_pd-bl_app(a0)  ; !neu!
+ move.l   act_pd.l,bl_pd-bl_app(a0)  ; !neu!
 *
 * Puffer zurueckschreiben
 *

@@ -128,14 +128,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 * Import vom DOS
 
      XREF      dos_init            ; DOS
-     XREF      act_pd              ; DOS
-     XREF      bufl_timer          ; DOS (fuer writeback)
      XREF      secb_ext            ; DOS
-     XREF      _mifl_unused        ; DOS
-     XREF      dos_date            ; DOS
-     XREF      dos_time            ; DOS
-     XREF      dlockx              ; DOS
-     XREF      __e_dos             ; DOS: Ende der Variablen
      XREF      iniddev1
      XREF      iniddev2
      XREF      deleddev
@@ -182,6 +175,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      INCLUDE "kernel.inc"
      INCLUDE "mac_ker.inc"
      INCLUDE "debug.inc"
+	 INCLUDE "..\dos\magicdos.inc"
 
 
 D_DAY     EQU  9

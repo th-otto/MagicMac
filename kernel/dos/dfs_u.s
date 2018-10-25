@@ -13,6 +13,7 @@ DEBUG     EQU  8
      INCLUDE "structs.inc"
      INCLUDE "debug.inc"
      INCLUDE "basepage.inc"
+     INCLUDE "magicdos.inc"
 
 DRIVE_U        EQU  'U'-'A'        ; fuer "MiNT"
 UROOT_LEN      EQU  64             ; soviele Eintraege
@@ -43,12 +44,6 @@ FT_DEVICE2     EQU  8              ; Device mit Extradaten
      XREF rcnv_8_3
      XREF filename_match
      XREF init_DTA
-     XREF udrv_shmdir
-     XREF udrv_devdir
-     XREF udrv_pipedir
-     XREF udrv_procdir
-     XREF udrv_drvs
-     XREF udrv_root
      XREF pd_used_mem         ; von MAGIDOS
      XREF total_mem           ; von MAGIDOS
 
@@ -657,7 +652,7 @@ _fcre_symlink:
  addq.l   #4,d0
  bclr     #0,d0
  move.w   d0,-(sp)
- move.l   act_pd,a1
+ move.l   act_pd.l,a1
  move.w   #$4002,d1           ; dontfree, ST-RAM preferred
  jsr      Mxalloc
  move.w   (sp)+,d2
