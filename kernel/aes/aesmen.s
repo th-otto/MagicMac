@@ -1154,7 +1154,7 @@ menu_unregister:
 
 * 1. Fall: aktuelle Applikation ist angegeben
 
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
  move.w   ap_id(a0),d1             ; ap_id der aktuellen Applikation
  sf       d2                       ; merken, wenn sich etwas getan hat
  lea      reg_apidx,a1
@@ -1258,7 +1258,7 @@ menp_ok:
  clr.l    -(sp)
  clr.l    -(sp)
  clr.l    -(sp)
- move.l   act_appl,-(sp)           ; app
+ move.l   act_appl.l,-(sp)           ; app
 ;move.l   a1,a1                    ; resmdesc
 ;move.l   a0,a0                    ; a1 = mdesc
 ;move.w   d1,d1                    ; d1 = ypos
@@ -1393,7 +1393,7 @@ menu_attach:
 ; Modus 0:
 ;
 
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  move.l   a6,a0
  bsr      mn_at_get
  beq      menat_err                ; Fehler, return(0)
@@ -1412,7 +1412,7 @@ menat_no0:
  bne      menat_no1
 menat1:
 ; erstmal das Submenue ermitteln
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  move.l   a6,a0
  bsr      mn_at_get
  beq.b    menat1_set               ; ist keins da, neues eintragen
@@ -1437,13 +1437,13 @@ menat1_set:
  beq      menat_ok                 ; nein, Ende, OK
  cmpi.b   #G_STRING,ob_type+1(a6)
  bne      menat_err
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
  move.l   ap_attached(a0),d0
  bne.b    menat1_weiter
  move.l   #64*atpop_sizeof,d0
  jsr      mmalloc                   ; Speicher allozieren
  beq      menat_err                ; zuwenig Speicher
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
  move.l   d0,ap_attached(a0)
  move.l   d0,a0
  moveq    #64-1,d1
@@ -1593,7 +1593,7 @@ menu_istart:
  move.w   d2,-(sp)
  mulu     #24,d1
  pea      0(a0,d1.l)               ; OBJECT * merken
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  move.l   (sp),a0
  bsr      mn_at_get                ; ATPOP ermitteln
  beq.b    meni_err                 ; da haengt keins dran!

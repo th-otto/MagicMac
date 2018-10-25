@@ -87,7 +87,7 @@ pua_1:
 * case 0:
 pua_0:
 	IFNE	MACINTOSH
- tst.l	act_appl
+ tst.l	act_appl.l
  beq.b	pua0_noaes
  jsr		v_clswk				; Auf dem Mac das VDI schliessen
 pua0_noaes:

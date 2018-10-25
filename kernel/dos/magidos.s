@@ -6129,7 +6129,7 @@ Pterm:
  move.l   act_pd,a1
  move.l   p_app(a1),d2             ; Parent-Thread
  beq.b    pterm_pterm              ; ist ungueltig, terminieren!
- cmp.l    act_appl,d2              ; habe ich ueberhaupt Pexec-t ?
+ cmp.l    act_appl.l,d2              ; habe ich ueberhaupt Pexec-t ?
  beq.b    pterm_pterm              ; Ja!
 
 * Ich bin ein Thread, der den aktuellen Prozess nicht gestartet hat.
@@ -6190,7 +6190,7 @@ ptm_no_prg:
 
 ptm_noacc:
  move.l   d0,act_pd
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq.b    ptm_noap
  move.l   d0,a1
  move.l   act_pd,ap_pd(a1)         ; in Applikationsstruktur eintragen
@@ -6292,7 +6292,7 @@ pdk_no_sigchld:
  move.l   a5,a0                    ; old_pd
  bsr      adjust_parents
 * Threads entfernen
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq.b    pk_no_aes
  move.l   a5,a0
  jsr      pkill_threads            ; alle Threads ausser aktueller APP killen
@@ -7408,7 +7408,7 @@ pxc_startacc:
 
 * MagiC 4.5: startende APPL (Thread) und ssp merken!
 
- move.l   act_appl,p_app(a5)
+ move.l   act_appl.l,p_app(a5)
  move.l   sp,p_ssp(a5)
 
 * Supervisorstack aufbauen (vom aktuellen Prozess geerbt) !
@@ -7447,7 +7447,7 @@ pxc_noacc:
 
 * Prozess umschalten
  move.l   a5,act_pd
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq.b    pxc_noap
  move.l   d0,a0
  move.l   a5,ap_pd(a0)             ; in Applikationsstruktur eintragen
@@ -9174,7 +9174,7 @@ _pfork:
  tst.w    d0
  beq.b    fork_nosave
  clr.l    -(sp)
- move.l   act_appl,-(sp)
+ move.l   act_appl.l,-(sp)
  lea      (sp),a1             ; Ausnahmeliste
  move.l   a5,a0               ; alter Prozess
  bsr      Pmemsave
@@ -9200,7 +9200,7 @@ fork_nosave:
  move.l   p_procdata(a0),a0
  bset     #1,pr_flags+1(a0)
 * Speicherbedarf fuer Kopie des Supervisor-Stacks berechnen
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq      fork_einvfn         ; kein MT
  move.l   d0,a0
  lea      ap_stack(a0),a0     ; Beginn des Stacks ...
@@ -9233,7 +9233,7 @@ fork_nosave:
  move.l   a5,p_parent(a6)     ; wichtig (!)
 * Supervisor-Stack kopieren
  move.l   d7,d0               ; Stack-Groesse
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  lea      (sp),a1             ; src
  lea      256+8(a6),a0        ; dst
  jsr      vmemcpy              ; Supervisor-Stack kopieren
@@ -9333,7 +9333,7 @@ dpex_200:
  move.l   a6,a0                    ; neuer PD
  bsr      chg_bp_owner
 * Eigner der APPL, ap_env und ap_xtail aendern, falls sie altem Prozess gehoert
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq.b    dpex_no_appl             ; ??
  move.l   d0,a5                    ; a5 = APPL *
  move.l   a5,a0                    ; memadr
@@ -9364,7 +9364,7 @@ dpex_no_appl:
  move.l   a4,a0                    ; old_pd
  bsr      adjust_parents
 * Threads entfernen
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq.b    dpex200_no_aes
  move.l   act_pd,a0
  jsr      pkill_threads            ; alle Threads ausser aktueller APP killen
@@ -9867,7 +9867,7 @@ sysc_tab:
 *
 
 D_Syield:
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq.b    syi_err
  jsr      appl_yield
 syi_err:
@@ -10333,7 +10333,7 @@ frp_nxtpth:
  move.w   d_drive(a4),d5           ; dieses Laufwerk freigeben
 frp_no_drv:
 
- move.l   act_appl,a3
+ move.l   act_appl.l,a3
 ;move.w   d5,d5
  movea.l  act_pd,a0                ; PD *
  bsr.b    free_stdpaths
@@ -11169,7 +11169,7 @@ dosclock_to_xbios:
 *
 
 D_Tmalarm:
- move.l   act_appl,d0
+ move.l   act_appl.l,d0
  beq      ill_func            ; AES nicht gestartet
  move.l   (a0),d0
  jmp      appl_alrm

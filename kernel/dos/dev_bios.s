@@ -165,7 +165,7 @@ con_write:
  beq.b    fasts_vtold
  move.l   d1,a2
  move.l   vt_sout_cooked(a2),a2
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
 ;move.l   a5,a1
 ;move.l   d7,d0
  jsr      (a2)
@@ -238,7 +238,7 @@ con_getc:
 
  move.l   d1,a2                    ; VTSYS
  move.l   vt_cin_cooked(a2),a2
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
  jsr      (a2)
  tst.l    d0
  bge      cgc_afterget             ; OK
@@ -515,7 +515,7 @@ vtw_novt:
 get_termdata:
  move.l   p_vt52.w,d0              ; neue Methode?
  beq.b    gtrd_old                 ; nein, alte
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
  move.l   d0,a2
  move.l   vt_getVDIESC(a2),a2
  jsr      (a2)

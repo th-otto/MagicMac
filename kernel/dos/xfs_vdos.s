@@ -3006,7 +3006,7 @@ ffl_loop:
  cmpi.l   #EACCDN,d0
  bne      ffl_ende                 ; schwerer Fehler
 * Der Zugriff ist momentan blockiert
- tst.l    act_appl                 ; AES aktiv ?
+ tst.l    act_appl.l               ; AES aktiv ?
  ble      ffl_ende                 ; nein, Fehler
  cmp.l    _hz_200,d7               ; Timeout ?
  bcs      ffl_ende

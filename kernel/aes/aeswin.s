@@ -1422,7 +1422,7 @@ iniw_sw:
 
  moveq    #0,d1                    ; Typ 0
  moveq    #0,d0                    ; Handle 0
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  move.l   windx,a0
  move.l   (a0),a0
  bsr      __wind_create            ; => a0 = WINDOW *
@@ -1693,7 +1693,7 @@ _wcr_found:
 
  move.w   d7,d1                    ; kind
  move.w   d6,d0                    ; whdl
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  move.l   (a5),a0
  bsr      __wind_create            ; gibt WINDOW * zurueck, a2 unveraendert
 
@@ -1743,7 +1743,7 @@ wind_delete:
  beq.b    wdl_err                  ; !!!
  bsr      whdl_to_wnd
  beq.b    wdl_err
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  cmpa.l   w_owner(a0),a1           ; gehoert uns ?
  bne.b    wdl_err
  btst     #WSTAT_OPENED_B,w_state+1(a0)
@@ -2176,7 +2176,7 @@ wg_winv:
 
 * Hack fuer alte Programme:
 /*
- cmpa.l   act_appl,a0              ; oberstes Fenster gehoert mir
+ cmpa.l   act_appl.l,a0              ; oberstes Fenster gehoert mir
  beq.b    wgt_ok
  move.w   -4(a5),2(a5)             ; wi_gw3 bekommt tatsaechlichen Wert
  move.w   #XE_OTHWHDL,-4(a5)       ; gehoert mir nicht => return(XE_OTHWHDL)
@@ -2280,7 +2280,7 @@ _wind_set:
  bne      ws_err
  addq.w   #1,d0
  bne      ws_err
- move.l   act_appl,d2
+ move.l   act_appl.l,d2
  move.w   (a0),d1
  bmi.b    top_menu
  cmpi.w   #NAPPS,d1
@@ -2717,7 +2717,7 @@ ws_resvd:
 * case 14 = WF_NEWDESK
 
 ws_newdesk:
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
  move.l   (a5)+,d0                 ; OBJECT *tree
  beq.b    wsnd_off
  move.w   (a5),d1                  ; int    firstob
@@ -4721,7 +4721,7 @@ wind_close:
  beq      wcl_err
  move.l   a0,a4                    ; a4 = WINDOW *
 
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  cmpa.l   w_owner(a4),a1           ; gehoert uns ?
  bne      wcl_err                  ; nein, Fehler
 
@@ -4736,7 +4736,7 @@ wind_close:
 
  clr.w    -(sp)
  move.l   upd_blockage+bl_app,a0
- cmpa.l   act_appl,a0              ; blockieren wir?
+ cmpa.l   act_appl.l,a0              ; blockieren wir?
  bne.b    wcl_wait_lock_loop       ; nein
  move.w   upd_blockage,(sp)        ; Update-Counter retten
  beq.b    wcl_wait_lock_loop       ; war Null
@@ -4790,7 +4790,7 @@ wcl_not_locked:
  move.w   d1,d0
  bsr      whdl_to_wnd              ; a0 = WINDOW *
  beq.b    wcl_notop                ; ???
- move.l   act_appl,a1
+ move.l   act_appl.l,a1
  cmpa.l   w_owner(a0),a1           ; gehoert uns ?
  bne      wcl_notop                ; nein, kein oberstes Fenster!
 wcl_newtop:

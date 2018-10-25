@@ -3091,7 +3091,7 @@ etvc_tab:
  DC.W     1    ; Tabellen-Ende
 
 gem_etvc:
- move.l   act_appl,a0
+ move.l   act_appl.l,a0
  tst.w    ap_wasgr(a0)             ; Grafikmodus ?
  beq      etvc_dos                 ; nein, alten (DOS-) etv-critic aufrufen
  lea      4(sp),a2
@@ -3134,7 +3134,7 @@ getvc_weiter:
  move.w   (a0),-(sp)
  move.w   #1,(a0)+                 ; bl_cnt = 1
  move.l   (a0),-(sp)
- move.l   act_appl,(a0)+           ; bl_app = act_appl
+ move.l   act_appl.l,(a0)+           ; bl_app = act_appl
  move.l   (a0),-(sp)
  clr.l    (a0)                     ; upd_blockage auf den Stack
  move.l   a0,-(sp)

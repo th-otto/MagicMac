@@ -3792,7 +3792,7 @@ write_sector:
 * stattfinden.
 *
 ws_weiter:
- move.l   act_appl,(a0)            ; Semaphore belegen
+ move.l   act_appl.l,(a0)            ; Semaphore belegen
  move.l   act_pd,bl_pd-bl_app(a0)  ; !neu!
 *
 * Puffer zurueckschreiben

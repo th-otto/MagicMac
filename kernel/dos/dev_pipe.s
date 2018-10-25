@@ -188,7 +188,7 @@ pr_loop:
 ; warte darauf, dass wieder Daten kommen
  move.l   a6,-(sp)                 ; PIPE *
  pea      pipe_unsel(pc)           ; unsel()
- move.l   act_appl,pipe_waiting(a6)     ; ich bin es, der wartet
+ move.l   act_appl.l,pipe_waiting(a6)     ; ich bin es, der wartet
  move.l   sp,pipe_waitunsl(a6)          ; fuer unselect
  move.l   sp,a0
  moveq    #0,d0                    ; ewig warten
@@ -252,7 +252,7 @@ pw_loop:
 ; warte darauf, dass wieder Daten frei werden
  move.l   a6,-(sp)                 ; PIPE *
  pea      pipe_unsel(pc)           ; unsel()
- move.l   act_appl,pipe_waiting(a6)     ; ich bin es, der wartet
+ move.l   act_appl.l,pipe_waiting(a6)     ; ich bin es, der wartet
  move.l   sp,pipe_waitunsl(a6)          ; fuer unselect
  move.l   sp,a0
  moveq    #0,d0                    ; ewig warten
