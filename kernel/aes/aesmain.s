@@ -471,17 +471,17 @@ aes_start:
 * 2 APPLs initialisieren
 
  clr.w    appln                    ; noch keine APPL
- clr.l    act_appl.l
+ clr.l    act_appl
  clr.l    topwind_app
  move.w   #NAPPS,maxappln          ; Tabellenlaenge
 
  lea      iocpbuf,a0
  move.w   #NAPPS,d0
- jsr      clrmem                   ; iocpbuf loeschen
+ bsr      clrmem                   ; iocpbuf loeschen
 
  lea      applx,a0
  move.w   #4*NAPPS,d0
- jsr      clrmem                   ; alle NAPPS Pointer loeschen
+ bsr      clrmem                   ; alle NAPPS Pointer loeschen
 
  move.l   _basepage,d1             ; Basepage des AES
  suba.l   a2,a2                    ; kein Usercode
@@ -511,7 +511,7 @@ aes_start:
  clr.w    no_of_menuregs
  lea      reg_entries,a0
  moveq    #4*NACCS,d0
- jsr      clrmem                   ; alle ACC-Menueeintraege loeschen
+ bsr      clrmem                   ; alle ACC-Menueeintraege loeschen
 
  clr.w    scmgr_wakeup
 
@@ -567,7 +567,7 @@ aes_start:
 
  moveq    #1,d1
  moveq    #3,d0
- jsr      evnt_dclicks
+ bsr      evnt_dclicks
 
 * 3D- Objekte erlauben je nach Modus
 
@@ -643,15 +643,15 @@ saes_nokaos:
  clr.l    p_mgxinf
  jsr      mfree
 saes_no_inf:
- jsr      load_all_accs
- jsr      load_all_apps
- jsr      graph_mode
+ bsr      load_all_accs
+ bsr      load_all_apps
+ bsr      graph_mode
 
 *
 * START!!!
 *
 
- move.l   #gem_magics,config_status+8.w
+ move.l   #gem_magics,(config_status+8).w
  move.w   #400,d7
 saes_yloop:
  jsr      _appl_exit
@@ -659,11 +659,11 @@ saes_yloop:
 
 * ggf. Autoexec- Programm im eigenen (!) Pfad starten
 
- move.l   act_appl.l,a4
+ move.l   act_appl,a4
  tst.w    ap_doex(a4)              ; Programm automatisch starten ?
  beq.b    saes_noautoex            ; nein, sofort in die Hauptschleife
  lea      ap_cmd(a4),a0
- jsr      dsetdrv_path             ; Pfad und Laufwerk setzen
+ bsr      dsetdrv_path             ; Pfad und Laufwerk setzen
 
 *
 * Jetzt geht es los mit Applikation #0
@@ -701,7 +701,7 @@ saes_nokaosex:
 
 ; keine Applikation mehr (Boot-Mode)
 
- clr.l    act_appl.l
+ clr.l    act_appl
 
 ; Vektoren fuer
 ;    etv_critic
@@ -720,7 +720,7 @@ saes_nokaosex:
  jsr      vdi_quick                ; vex_timv
  moveq    #0,d0
  jsr      set_scrmode              ; Textmodus, Mausinterrupts ausschalten
- bsr      restore_trap2
+ bsr.s    restore_trap2
  move.w   (sp)+,sr                 ; enable_interrupt
 
 ; Farbicon-Farbtabelle freigeben
@@ -814,7 +814,7 @@ title_tree:
 init_FPU:
  tst.b    is_fpu
  beq.b    if_no_fpu
- cmpi.w   #60,cpu_typ
+ cmpi.w   #60,(cpu_typ).l
  bcs.b    if_sml
  clr.l    -(sp)
  clr.l    -(sp)
@@ -841,7 +841,7 @@ init_ap_startadr:
 * FPU- Nullframe erzeugen
  tst.b    is_fpu
  beq.b    ias_no_fpu
- cmpi.w   #60,cpu_typ
+ cmpi.w   #60,(cpu_typ).l
  bcs.b    ias_sml
  clr.l    32(a1)                   ; der 060 hat 12 Bytes Stackframe
  clr.l    36(a1)
@@ -883,7 +883,7 @@ init_APPL:
 
  move.w   #ap_stack,d0
  move.l   a5,a0
- jsr      clrmem                   ; APPL loeschen
+ bsr      clrmem                   ; APPL loeschen
 srk_err3:
  movem.l  (sp)+,d0/d1
 
@@ -902,7 +902,7 @@ srk_err3:
 * FPU-Status
  tst.b    is_fpu
  beq.b    iapl_no_fpu
- cmpi.w   #60,cpu_typ
+ cmpi.w   #60,(cpu_typ).l
  bcs.b    iapl_sml
  lea      -12(a1),a1               ; NULL-Stackframe fuer 060 (12 Bytes)
  bra.b    iapl_no_fpu
@@ -928,7 +928,7 @@ iapl_fnd:
  move.w   d0,-(sp)
  move.l   #-1,ap_parent(a5)
 ;move.w   #-1,ap_parent2(a5)
- move.l   act_appl.l,d0
+ move.l   act_appl,d0
  ble.b    iapl_no_parent
  move.l   d0,a0
  move.w   ap_id(a0),ap_parent(a5)  ; ap_id des parent merken!
@@ -956,7 +956,7 @@ iapl_mloop:
 
  move.l   a4,a1
  move.l   a5,a0
- jsr      set_apname
+ bsr      set_apname
 
  move.l   a3,d0
  beq.b    iapl_norun               ; keine Startadresse
@@ -1106,25 +1106,25 @@ putch:
 
 
 _appl_info:
- move.l   act_appl.l,-(sp)
- move.l   applx+4,act_appl.l         ; wegen Speicherzuteilung!
+ move.l   act_appl,-(sp)
+ move.l   applx+4,act_appl         ; wegen Speicherzuteilung!
  movem.l  d7/a3/a4/a5,-(sp)
  move.w   d0,-(sp)
  moveq    #$1b,d0
- bsr      putch
+ bsr.s      putch
  moveq    #'Y',d0
- bsr      putch
+ bsr.s    putch
  moveq    #33,d0
  add.w    (sp),d0
- bsr      putch                    ; y
+ bsr.s    putch                    ; y
  moveq    #32,d0
- bsr      putch                    ; x
+ bsr.s    putch                    ; x
  cmp.w    (sp),d4                  ; Cursor- Pos. ?
  bne.b    _api_no_blk              ; nein
  moveq    #$1b,d0
- bsr      putch
+ bsr.s    putch
  moveq    #'p',d0                  ; Invers ein
- bsr      putch
+ bsr.s    putch
 _api_no_blk:
  move.w   (sp)+,d0
  move.b   0(a6,d0.w),d0            ; Nr. -> ap_id
@@ -1148,22 +1148,22 @@ _api_no_blk:
  moveq    #'0',d0
  add.w    d7,d0
 _api_l1:
- bsr      putch
+ bsr.s    putch
  swap     d7
  moveq    #'0',d0
  add.w    d7,d0
- bsr      putch
+ bsr.s    putch
 
 * eine Leerstelle
 
  moveq    #' ',d0
- bsr      putch
+ bsr.s    putch
 
 * Name
 
  lea      ap_name(a5),a0
  clr.b    ap_name+8(a5)
- jsr      prtstr
+ bsr      prtstr
  move.b   #' ',ap_name+8(a5)
 
 * eine Leerstelle
@@ -1174,7 +1174,7 @@ _api_l1:
 * Status
 
  moveq    #5,d0
- cmpa.l   act_appl.l,a5
+ cmpa.l   act_appl,a5
  beq.b    _api_st                  ; running
  moveq    #6,d0
  tst.l    (a3)
@@ -1186,7 +1186,7 @@ _api_st:
  mulu     #6,d0
  lea      status_s(pc),a0
  add.w    d0,a0
- jsr      prtstr
+ bsr      prtstr
 
 * eine Leerstelle
 
@@ -1224,19 +1224,19 @@ _api_nxtev:
  cmpa.l   menu_app,a5
  bne.b    _api_no_mn
  lea      in1_s(pc),a0
- jsr      prtstr
+ bsr      prtstr
  addq.w   #5,d7
 _api_no_mn:
  cmpa.l   mouse_app,a5
  bne.b    _api_no_mo
  lea      in2_s(pc),a0
- jsr      prtstr
+ bsr      prtstr
  addq.w   #6,d7
 _api_no_mo:
  cmpa.l   keyb_app,a5
  bne.b    _api_no_ke
  lea      in3_s(pc),a0
- jsr      prtstr
+ bsr      prtstr
  addq.w   #4,d7
 _api_no_ke:
  lea      upd_blockage,a0
@@ -1245,7 +1245,7 @@ _api_no_ke:
  cmpa.l   (a0),a5
  bne.b    _api_no_sc
  lea      in4_s(pc),a0
- jsr      prtstr
+ bsr      prtstr
  addq.w   #4,d7
 _api_no_sc:
  subi.w   #19,d7
@@ -1284,10 +1284,10 @@ _api_usloop:
 _api_usnxt:
  dbra     d7,_api_usloop
  lea      (sp),a0
- jsr      prtstr
+ bsr      prtstr
  adda.w   #30,sp
  movem.l  (sp)+,d7/a3/a4/a5
- move.l   (sp)+,act_appl.l
+ move.l   (sp)+,act_appl
  rts
 
 
@@ -1306,15 +1306,15 @@ appl_info:
  jsr      mouse_off
 
  lea      (sp),a2
- move.l   act_appl.l,a5
- move.l   applx+4,act_appl.l         ; wegen Speicherzuteilung!
+ move.l   act_appl,a5
+ move.l   applx+4,act_appl         ; wegen Speicherzuteilung!
  lea      full_g,a1
  moveq    #0,d0                    ; FMD_START
  jsr      __fm_xdial
 
  lea      info_init_s(pc),a0
- jsr      prtstr
- move.l   a5,act_appl.l
+ bsr      prtstr
+ move.l   a5,act_appl
 
  move.l   menu_app,d0
  bgt.b    api_is_men               ; nimm menuebesitzende Applikation
@@ -1365,12 +1365,12 @@ api_shownxt:
 *********************
 
 api_cin:
- move.l   act_appl.l,-(sp)
- move.l   applx+4,act_appl.l         ; wegen Speicherzuteilung!
+ move.l   act_appl,-(sp)
+ move.l   applx+4,act_appl         ; wegen Speicherzuteilung!
  move.l   #$20002,-(sp)
  trap     #13                      ; bios Bconin
  addq.w   #4,sp
- move.l   (sp)+,act_appl.l
+ move.l   (sp)+,act_appl
  cmpi.b   #$1b,d0
  beq.b    api_cin
  move.b   0(a6,d4.w),d1
@@ -1473,7 +1473,7 @@ api_y1:
  bmi.b    api_d3                   ; schon eingefroren
  move.l   a2,-(sp)
  move.l   a2,a0
- jsr      _appl_freeze
+ bsr      _appl_freeze
  move.l   (sp)+,a2
 api_d3:
  move.b   #APSTAT_ZOMBIE,ap_status(a2)
@@ -1615,7 +1615,7 @@ api_notidy:
      MC68020
 
 change_resolution:
- lea      xaes_area,a0
+ lea      (xaes_area).l,a0
  move.l   #'XAES',(a0)+            ; magic merken
  move.w   d0,(a0)+                 ; VDI- Geraetenummer beim Neustart
  move.w   d1,(a0)+                 ; Fonthoehe
@@ -1699,7 +1699,7 @@ _sk_sk:
 read_magix_inf:
  movem.l  d6/d7/a3/a4/a5/a6,-(sp)
  subq.l   #4,sp
- move.l   act_appl.l,a3              ; sollte immer Applikation #0 sein
+ move.l   act_appl,a3              ; sollte immer Applikation #0 sein
 * Defaultdaten:
 
 ;clr.w    ap_doex(a3)              ; unnoetig, da schon von init_APPL geloescht
@@ -2094,7 +2094,7 @@ rmi_err:
  bra.b    rmi_err
 rmi_err_ende:
  lea      inf_errs(pc),a0
- jsr      wait                     ; Fehlermeldung
+ bsr      wait                     ; Fehlermeldung
  moveq    #0,d6                    ; kein Environment
  suba.l   a6,a6                    ; keine Daten
 
@@ -2162,7 +2162,7 @@ rmi_is_buf:
  trap     #1                       ; gemdos Mshrink
  lea      12(sp),sp
 
- lea      xaes_area,a0
+ lea      (xaes_area).l,a0
  cmpi.l   #'XAES',(a0)
  bne.b    rmi_nowarm
  clr.l    (a0)+                    ; "verwendet"
@@ -2587,7 +2587,7 @@ dosig_doaction:
  lea      start_signal(pc),a2      ; Startcode
  move.l   sust_len.w,d0            ; Stacklaenge (WORD !!)
  move.l   a5,a0                    ; APPL *
- jsr      init_APPL
+ bsr      init_APPL
 
  move.w   ap_id(a6),d1             ; von
  move.w   ap_id(a5),d0             ; nach
@@ -2598,7 +2598,7 @@ dosig_doaction:
  move.l   a5,ap_sigthr(a0)         ; aktiver Signalhandler
 
  move.l   usp,a1
- cmpa.l   act_appl.l,a6              ; sind wir selbst der Vorgaenger
+ cmpa.l   act_appl,a6              ; sind wir selbst der Vorgaenger
  beq.b    dosig_self               ; ja, nimm unseren usp
  move.l   ap_ssp(a6),a1
  move.l   (a1),a1                  ; geretteter usp
@@ -2637,7 +2637,7 @@ do_sigs_ende:
 
 sigreturn:
  movem.l  a4/a5/a6,-(sp)
- move.l   act_appl.l,a5
+ move.l   act_appl,a5
  cmpi.w   #2,ap_type(a5)           ; bin ich Signalhandler ?
  bne      sigr_eaccdn              ; nein, Fehler
  move.l   a5,a4                    ; act_appl merken
@@ -2664,9 +2664,9 @@ sigr_loop:
 
 * ggf. aus Liste act_appl entfernen
 
- cmpa.l   act_appl.l,a5
+ cmpa.l   act_appl,a5
  bne.b    sigr_no_act
- move.l   ap_next(a5),act_appl.l
+ move.l   ap_next(a5),act_appl
 sigr_no_act:
 
 * Struktur freigeben. Hier wird unser aktueller ssp freigegeben!
@@ -2724,10 +2724,10 @@ sigr_no_act:
 * Wir setzen einfach den act_appl um
 
  move.l   a6,a0
- lea      act_appl.l,a1
+ lea      act_appl,a1
  jsr      rmv_lstelm               ; neue APPL a6 aus Liste act_appl entfernen
- move.l   act_appl.l,ap_next(a6)
- move.l   a6,act_appl.l              ; neue vorn wieder einsetzen
+ move.l   act_appl,ap_next(a6)
+ move.l   a6,act_appl              ; neue vorn wieder einsetzen
  clr.l    ap_sigthr(a6)            ; Signalbehandlung beendet
 
  sf       inaes
@@ -2750,7 +2750,7 @@ sigr_eaccdn:
 *
 
 wait_signals:
- move.l   act_appl.l,a0              ; wir sind es, die warten
+ move.l   act_appl,a0              ; wir sind es, die warten
  move.b   #1,ap_stpsig(a0)         ; wir halten an (nicht wg. Signalhandler)
  jsr      stp_thr                  ; aus allen Listen entfernen
  jmp      appl_yield               ; warten
@@ -2792,7 +2792,7 @@ create_thread:
  lea      start_thread(pc),a2      ; Startcode
  move.l   sust_len.w,d0            ; Stacklaenge (WORD !!)
  move.l   a5,a0                    ; APPL *
- jsr      init_APPL
+ bsr      init_APPL
 
  move.w   #1,ap_type(a5)           ; Typ: Thread
 
@@ -2918,7 +2918,7 @@ la_is_procname:
  move.l   d5,a2                    ; Startcode
  move.l   sust_len.w,d0            ; Stacklaenge (WORD !!)
  move.l   a5,a0                    ; APPL *
- jsr      init_APPL
+ bsr      init_APPL
 
  clr.l    -(sp)                    ; keine erweiterten Parameter
  move.l   a5,a2                    ; APPL
@@ -2927,7 +2927,7 @@ la_is_procname:
  moveq    #0,d2                    ; isover = egal
  moveq    #1,d1                    ; isgr = TRUE
  moveq    #0,d0                    ; doex = false
- jsr      _shel_write              ; => ap_id
+ bsr      _shel_write              ; => ap_id
  addq.l   #4,sp
 la_ende:
  movem.l  (sp)+,a3/a4/a5/a6/d7/d6/d5
@@ -2979,7 +2979,7 @@ ex_1x_go:
  beq.b    ex100_err                     ; Fehler
 
  move.w   d0,-(sp)
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   ap_id(a0),d1                  ; src
 ;move.w   d0,d0                         ; dst
  bsr      vt52_inherit                  ; VT52-Fenster vererben
@@ -3116,12 +3116,12 @@ load_all_accs:
 
  move.l   applx+4,a0               ; screnmgr
  lea      ap_cmd(a0),a0            ; Pfad fuer ACCs
- jsr      dsetdrv_path
+ bsr      dsetdrv_path
  tst.l    d0
  bne      laac_ende                ; Pfad nicht vorhanden
 
  lea      (sp),a0
- jsr      fsetdta
+ bsr      fsetdta
 
  clr.w    -(sp)                    ; nur normale Dateien
  move.l   applx+4,a0               ; screnmgr
@@ -3180,7 +3180,7 @@ laap_loop:
  subq.l   #1,a0
  move.l   a0,-(sp)                 ; Zeiger auf EOS merken
  lea      app1_s(pc),a1
- bsr      _load_all_apps           ; *.APP laden
+ bsr.s    _load_all_apps           ; *.APP laden
  move.l   (sp)+,a0
  clr.b    (a0)                     ; EOS restaurieren
  lea      app2_s(pc),a1            ; *.PRG laden
@@ -3197,12 +3197,12 @@ _load_all_apps:
 
  move.l   applx+4,a0               ; screnmgr
  lea      ap_tail(a0),a0
- jsr      dsetdrv_path
+ bsr      dsetdrv_path
  tst.l    d0
  bne      lap_ende                 ; Pfad nicht vorhanden
 
  lea      -$2c(a6),a0
- jsr      fsetdta
+ bsr      fsetdta
 
  clr.w    -(sp)                    ; nur normale Dateien
  move.l   applx+4,a0               ; screnmgr
@@ -3218,7 +3218,7 @@ lap_loop:
  lea      -$e(a6),a0               ; char *fname (ohne Pfad)
  moveq    #1,d1                    ; isgr
  moveq    #1,d0                    ; doex
- jsr      ap_create
+ bsr      ap_create
  addq.l   #4,sp
 
  move.w   #$4f,-(sp)
@@ -3286,7 +3286,7 @@ _set_app:
  jsr      set_desktop
  move.l   (sp)+,a0
  moveq    #0,d0
- jsr      appl_unhide
+ bsr      appl_unhide
 _stap_ende:
  moveq    #0,d0
  rts
@@ -3360,7 +3360,7 @@ fsap_loop2:
 fsap_par2:
  moveq    #1,d1                    ; isgr
  moveq    #1,d0                    ; doex
- jsr      shel_write
+ bsr      shel_write
 
  tst.w    d0
  bne.b    fsap_ende
@@ -3414,7 +3414,7 @@ any_app:
 *
 
 make_best_main:
- jsr      gbest_app
+ bsr      gbest_app
  bne.b    make_app_main
  moveq    #1,d0                    ; hat kein Menue/Hintergrund
  rts
@@ -3431,7 +3431,7 @@ make_app_main:
  bsr      set_app                  ; ... Menue nach oben
  move.l   (sp)+,a0
  moveq    #0,d0
- jsr      appl_unhide              ; sichtbar machen
+ bsr      appl_unhide              ; sichtbar machen
  jsr      all_untop                ; ... oberstes Fenster ggf. deaktivieren
  moveq    #0,d0
  rts
@@ -3482,10 +3482,10 @@ hide_keyb_app:
  move.l   d0,a0
  move.l   a0,-(sp)
  moveq    #0,d0                    ; nur aktive ausblenden
- jsr      appl_hide
+ bsr      appl_hide
  move.l   (sp)+,a0                 ; die will ich gerade nicht
 ; andere APP kommt nach oben
- bsr      make_best_main
+ bsr.s    make_best_main
 /*
  move.l   a0,-(sp)
  jsr      set_app
@@ -3686,7 +3686,7 @@ sapp_cpyt:
  bne.b    sapp_cpyt
 sapp_noa:
  moveq    #-2,d0                   ; testen
- jsr      appl_unhide
+ bsr      appl_unhide
  beq.b    sapp_nou
  clr.w    -4*24+ob_state(a3)
 sapp_nou:
@@ -3972,7 +3972,7 @@ act_ok1:
 
 act_loop3:
  jsr      appl_yield
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  tst.w    ap_kbcnt(a0)
  beq.b    act_nix
 ;move.l   a0,a0
@@ -4055,7 +4055,7 @@ screnmgr_button:
  lea      menu_grect,a0
 ;move.w   d1,d1                    ; y
 ;move.w   d0,d0                    ; x
- jsr      xy_in_grect              ; Ist der Mauszeiger im empfindl. Bereich ?
+ bsr      xy_in_grect              ; Ist der Mauszeiger im empfindl. Bereich ?
  bne      scbt_ende                ; ja, Ende
 scbt_select:
  move.l   (a6),d0
@@ -4100,7 +4100,7 @@ screnmgr_mouse:
  lea      menu_grect,a0
  move.w   6(sp),d1
  move.w   4(sp),d0
- jsr      xy_in_grect              ; Ist der Mauszeiger im empfindl. Bereich ?
+ bsr      xy_in_grect              ; Ist der Mauszeiger im empfindl. Bereich ?
  beq      scmm_ende2               ; nein, Ende
 
  move.l   d7,-(sp)
@@ -4240,7 +4240,7 @@ screnmgr:
 
 * Endlosschleife
 scrmg_mainloop:
- jsr      set_topwind_app          ; Applikation, der oberstes Fenster
+ bsr      set_topwind_app          ; Applikation, der oberstes Fenster
                                    ;  gehoert, bekommt Tasten und Klicks
  pea      (sp)                     ; Platz fuer Rueckgabewerte
  pea      12+4(sp)                 ; Messagepuffer: 12(sp)
@@ -4260,7 +4260,7 @@ scrmg_mainloop:
 scrmg_mennor:
      ENDIF
 
- btst     #2,config_status+2.w     ; Bit 10
+ btst     #2,(config_status+2).w     ; Bit 10
  beq.b    scrmg_m1
  move.w   #EV_KEY+EV_BUT+EV_MSG,(sp)
 scrmg_m1:
@@ -4433,9 +4433,9 @@ scrmg_nomsg:
 
 scrmg_nobut:
 * Mausereignis (Menue beruehrt)
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  bsr      set_mouse_app            ; !!
- btst     #2,config_status+2.w     ; Bit 10
+ btst     #2,(config_status+2).w     ; Bit 10
  beq.b    scrmg_noclick            ; nein, normale Funktion
  btst     #EVB_BUT,d7              ; linke Maustaste gedrueckt ?
  beq.b    scrmg_next               ; nein, keine Aktion
@@ -4470,7 +4470,7 @@ appl_getinfo:
 ; Unterfunktion 0 oder 1 (Zeichensaetze)
 ; Sonderbehandlung fuer unwillige Programme
 
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  btst     #0,ap_flags+3(a1)
  beq.b    apgi_weiter
  tst.w    d0
@@ -5159,7 +5159,7 @@ dsp_appl_init:
 * appl_init(a0 = int global[], a1 = int intout[])
 
 appl_init:
- movea.l  act_appl.l,a2
+ movea.l  act_appl,a2
  move.w   ap_id(a2),(a1)
  move.w   #$0399,(a0)+             ; global[0]     (ap_version) = 4.00
  move.w   #NAPPS-1,(a0)+           ; global[1]     (ap_count)
@@ -5203,7 +5203,7 @@ dsp_appl_read:
  rts
 dar_m1:
 ; Sonderbehandlung fuer MultiTOS: ap_id == -1 => nicht warten
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  tst.w    ap_len(a0)               ; liegen Daten an ?
  bne.b    dar_old                  ; ja, lesen
 dar_err:
@@ -5230,7 +5230,7 @@ dsp_appl_write:
 
 dsp_appl_find:
  move.l   (a5),a0                  ; ap_fname
- jsr      appl_find
+ bsr      appl_find
  move.w   d0,(a4)
  rts                               ; d0 zurueckgeben
 
@@ -5267,7 +5267,7 @@ dsp_appl_yield:
 * case $12 = appl_search           ; erst ab MultiTOS
 
 dsp_appl_search:
- move.l   act_appl.l,a2
+ move.l   act_appl,a2
  lea      ap_srchflg(a2),a2        ; Marker fuer 1st/next
  lea      (a4),a1                  ; &ap_sreturn,&ap_stype,&ap_sid
  move.l   (a5),a0                  ; addrin[0] = ap_sname
@@ -5357,14 +5357,14 @@ dsp_evnt_multi:
 dsp_evnt_dclicks:
  move.w   (a3)+,d0
  move.w   (a3),d1
- jsr      evnt_dclicks
+ bsr      evnt_dclicks
  move.w   d0,(a4)
  rts                               ; d0 zurueckgeben
 
 * case $1e (30) = menu_bar
 
 dsp_menu_bar:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  tst.w    (a3)                     ; intin[0]
  bmi.b    dsp_menu_inq             ; MultiTOS
  bne.b    dsp_menu_on_inst
@@ -5497,7 +5497,7 @@ dsp_menu_popup:
 dsp_menu_click:
  tst.w    6(a1)                    ; contrl[3] = Anzahl addrin
  bne.b    dsp_menu_attach          ; menu_attach
- btst     #2,config_status+2.w     ; Bit 10
+ btst     #2,(config_status+2).w     ; Bit 10
  sne      d0
  andi.w   #1,d0                    ; alter Wert
 
@@ -5506,11 +5506,11 @@ dsp_menu_click:
  beq.b    dmc_get                  ; nein, alten zurueck
  tst.w    d1
  bne.b    dmc_on
- bclr     #2,config_status+2.w     ; Bit 10
+ bclr     #2,(config_status+2).w     ; Bit 10
 
  bra.b    dmc_get
 dmc_on:
- bset     #2,config_status+2.w     ; Bit 10
+ bset     #2,(config_status+2).w     ; Bit 10
 dmc_get:
  move.w   d0,(a4)                  ; Rueckgabewert
  jmp      _scmgr_reinit
@@ -5566,7 +5566,7 @@ dsp_objc_delete:
 * case $2a = objc_draw
 
 dsp_objc_draw:
- move.l   act_appl.l,a0              ; aufrufende Applikation
+ move.l   act_appl,a0              ; aufrufende Applikation
  move.l   (a5),d0                  ; tree
  cmp.l    ap_desktree(a0),d0
  bne.b    dod_nodesk               ; nicht mein Hintergrund
@@ -5644,7 +5644,7 @@ dsp_objc_edit:
 
 dsp_objc_change:
  move.w   #1,(a4)                  ; kein Fehler
- move.l   act_appl.l,a0              ; aufrufende Applikation
+ move.l   act_appl,a0              ; aufrufende Applikation
  move.l   (a5),d0                  ; tree
  cmp.l    ap_desktree(a0),d0
  bne.b    doc_nodesk               ; nicht mein Hintergrund
@@ -5934,7 +5934,7 @@ dsp_graf_slidebox:
 * case $4d = graf_handle
 
 dsp_graf_handle:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  btst     #0,ap_flags+3(a0)
  beq.b    dsgh_ok
  move.w   dummyvws,d0
@@ -5980,7 +5980,7 @@ _graf_mkstate:
 
 dsp_scrp_read:
  move.l   (a5),a0
- jsr      scrp_read
+ bsr      scrp_read
  move.w   d0,(a4)
  rts
 
@@ -5995,7 +5995,7 @@ dsp_scrp_write:
 * case $52 = scrp_clear
 
 dsp_scrp_clear:
- jsr      scrp_clear
+ bsr      scrp_clear
  move.w   d0,(a4)
  rts
 
@@ -6173,7 +6173,7 @@ dsp_rsrc_rcfix:
 dsp_shel_read:
  move.l   (a5)+,a0
  move.l   (a5),a1
- jsr      shel_read
+ bsr      shel_read
  move.w   d0,(a4)
  rts                               ; d0 zurueckgeben
 
@@ -6185,7 +6185,7 @@ dsp_shel_write:
  move.w   (a3)+,d0                 ; doex
  move.w   (a3)+,d1                 ; isgr
  move.w   (a3),d2                  ; isover
- jsr      shel_write
+ bsr      shel_write
  move.w   d0,(a4)
  rts                               ; d0 zurueckgeben
 
@@ -6194,7 +6194,7 @@ dsp_shel_write:
 dsp_shel_get:
  move.w   (a3),d0
  move.l   (a5),a0
- jsr      shel_get
+ bsr      shel_get
  move.w   d0,(a4)
  rts                               ; d0 zurueckgeben
 
@@ -6203,7 +6203,7 @@ dsp_shel_get:
 dsp_shel_put:
  move.w   (a3),d0
  move.l   (a5),a0
- jsr      shel_put
+ bsr      shel_put
  move.w   d0,(a4)
  rts                               ; d0 zurueckgeben
 
@@ -6211,7 +6211,7 @@ dsp_shel_put:
 
 dsp_shel_find:
  move.l   (a5),a0
- jsr      shel_find
+ bsr      shel_find
  move.w   d0,(a4)
  rts                               ; d0 zurueckgeben
 
@@ -6219,7 +6219,7 @@ dsp_shel_find:
 
 dsp_shel_envrn:
  move.l   4(a5),a0                 ; gesuchte Variable
- jsr      shel_envrn
+ bsr      shel_envrn
  move.l   (a5),a1
  move.l   a0,(a1)
  move.w   d0,(a4)
@@ -7240,7 +7240,7 @@ graf_mouse:
  rts
 _graf_mouse:
  bclr     #15,d0                   ; MultiTOS- Feature ist hier unnoetig
- move.l   act_appl.l,d1
+ move.l   act_appl,d1
  bgt.b    gm_apok
  move.l   applx+4,d1               ; act_appl ungueltig: SCRENMGR nehmen
 gm_apok:
@@ -7796,7 +7796,7 @@ appf_err:
  moveq    #0,d0
  rts
 appf_act_id:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   ap_id(a0),d0             ; ap_id der aktuellen Applikation
  rts
 appf_norm:
@@ -8073,7 +8073,7 @@ scc_ok:
 
 shel_read:
  move.l   a1,-(sp)
- move.l   act_appl.l,a2
+ move.l   act_appl,a2
  move.w   #$80,d0
  lea      ap_cmd(a2),a1
 ;move.l   a0,a0
@@ -8190,7 +8190,7 @@ ap_create:
  lea      leerstring,a1            ; Name
  move.l   sust_len.w,d0            ; Stacklaenge (WORD)
  move.l   a5,a0                    ; APPL,WDG,CONTEXT
- jsr      init_APPL
+ bsr      init_APPL
  move.l   a5,a2
  movem.l  (sp)+,d0/d1/d2/a0/a1/a3/a5
  bra      _shel_write
@@ -8372,7 +8372,7 @@ vt52_uninherit:
 ;move.w   d0,d0                    ; apid
  jmp      (a0)
 uninh_old:
- move.l   p_vt52_winlst,d2         ; VT52 aktiv ?
+ move.l   (p_vt52_winlst).l,d2         ; VT52 aktiv ?
  beq.b    uninh_ende               ; nein
  move.l   d2,a0
  add.w    d0,d0
@@ -8406,7 +8406,7 @@ inh_ok:
  move.w   (sp)+,d0
  bra.b    inh_both
 inh_old:
- move.l   p_vt52_winlst,d2         ; VT52 aktiv ?
+ move.l   (p_vt52_winlst).l,d2         ; VT52 aktiv ?
  beq.b    inh_ende                 ; nein
  move.l   d2,a0
  move.w   d0,d2
@@ -8581,7 +8581,7 @@ shw_noshut:
  move.l   (a2)+,a1
  movem.w  (a2),d0-d2               ; alte Parameter wiederholen
  move.w   #$4701,d1                ; aber Grafikmodus und verzoegern !
- bsr      shw_isgem                ; Rekursion, Programm starten
+ bsr.s      shw_isgem                ; Rekursion, Programm starten
 ; ich schicke die ap_id an den VT52
  move.w   (sp)+,d1                 ; dst_apid (VT52)
  lea      14(sp),sp                ; Stack zuruecksetzen
@@ -8658,7 +8658,7 @@ shw_noispar:
  tst.w    d1
  sne.b    d1
  andi.w   #1,d1                    ; isgr auf {0,1} beschraenken
- move.l   act_appl.l,a2
+ move.l   act_appl,a2
  move.l   a6,a0
  bsr      _shel_write
  moveq    #1,d0
@@ -8716,7 +8716,7 @@ shct_ok:
 * 0: VT52-Fenster vererben
 
 shct_0:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   ap_id(a0),d1
 ;move.w   d0,d0
  bsr      vt52_inherit             ; Fenster vererben.
@@ -8743,7 +8743,7 @@ shct_ende:
 
 shw_exit_thread:
  move.l   a0,d1                    ; cmd ist exitcode
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  cmpi.w   #1,ap_type(a0)
  bne.b    set_err                  ; ich bin kein Thread
  move.l   act_pd.l,a1
@@ -8773,7 +8773,7 @@ shw_kill_thread:
  ble.b    skt_err                  ; ap_id ungueltig
  cmpi.w   #1,ap_type(a0)           ; als Thread gestartet ?
  bne.b    skt_err                  ; nein!
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.w   ap_id(a1),d1
  cmp.w    ap_parent(a0),d1
  bne.b    skt_err                  ; bin nicht parent
@@ -8802,7 +8802,7 @@ vtg_nix_s:
 
 get_vt52_id:
  lea      vt52_s(pc),a0
- jsr      appl_find                ; ist VT52- Emulator geladen ?
+ bsr      appl_find                ; ist VT52- Emulator geladen ?
  bgt.b    gvt_ok                   ; ap_id gefunden
  moveq    #-1,d0
  tst.b    termprog
@@ -9000,7 +9000,7 @@ ah_wnd_nxt:
 *
 
 psig_freeze:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.l   a0,d1                    ; act_appl gueltig ?
  ble.b    psf_err                  ; nein!
  move.l   ap_sigfreeze(a0),d1
@@ -9021,7 +9021,7 @@ psf_err:
 *
 
 _appl_freeze:
- lea      act_appl.l,a1              ; "ready"
+ lea      act_appl,a1              ; "ready"
  move.b   ap_status(a0),d0
  beq.b    af_is_ready
  lea      suspend_list,a1
@@ -9143,7 +9143,7 @@ af_err:
 *
 
 freeze_all_apps:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  cmpi.w   #1,ap_id(a0)
  bhi      fa_err                   ; das duerfen nur APP #0, APP #1
  move.l   a5,-(sp)
@@ -9207,7 +9207,7 @@ au_no_desk:
  lea      suspend_list,a2
  subq.b   #1,d0
  beq.b    au_is_nready             ; APSTAT_SUSPENDED
- lea      act_appl.l,a2              ; "ready" oder "zombie"
+ lea      act_appl,a2              ; "ready" oder "zombie"
  sf.b     ap_status(a6)            ; "zombie" -> "ready"
 
 au_is_nready:
@@ -9310,7 +9310,7 @@ text_mode:
 
 male_startbild:
  suba.w   #20+8,sp                 ; GRECT+Programmname
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  tst.w    ap_wasgr(a1)
  beq.b    mstr_nopic               ; TOS- Programm, kein Titelbild
  tst.w    ap_id(a1)
@@ -9346,7 +9346,7 @@ mstr_nxtchr:
  lea      shelw_startpic,a0
  bsr      _objc_draw
  moveq    #2,d0                    ; Biene
- jsr      graf_mouse               ; Maus als Biene
+ bsr      graf_mouse               ; Maus als Biene
 
 mstr_nopic:
  adda.w   #8+20,sp
@@ -9453,7 +9453,7 @@ shel_find:
  clr.l    -(sp)                    ; Ende-Zeichen
  clr.l    -(sp)                    ; default: kein PATH
  lea      pathvars(pc),a0
- bsr      shel_envrn
+ bsr.s    shel_envrn
  beq.b    shf_npath                ;
  move.l   a0,(sp)                  ; (sp) = Zeiger auf Pfadkette ohne "PATH="
 shf_npath:
@@ -9462,7 +9462,7 @@ shf_npath:
 
  clr.l    -(sp)                    ; Ende-Zeichen
  clr.l    -(sp)                    ; default: kein Pfad
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  lea      ap_cmd(a0),a1            ; a1 = Kommandozeile
  move.l   a1,a0
  move.l   a1,-(sp)
@@ -9511,7 +9511,7 @@ shf_ende:
 
 start_thread:
  bsr      wait_vt52                ; Falls neues Fenster zu oeffnen ist
- movea.l  act_appl.l,a6
+ movea.l  act_appl,a6
  andi.w   #$dfff,sr                ; Usermode
  move.l   ap_tail(a6),-(sp)        ; Parameter
  move.l   ap_cmd(a6),a0            ; Startadresse
@@ -9523,7 +9523,7 @@ start_thread:
  trap     #2
 
 end_thread:
- movea.l  act_appl.l,a6              ; zur Sicherheit
+ movea.l  act_appl,a6              ; zur Sicherheit
 
 * Events aufraeumen
 
@@ -9582,7 +9582,7 @@ pgml_term_thread:
 
  move.w   sr,-(sp)
  ori.w    #$700,sr
- move.l   (a6),act_appl.l            ; ap_next
+ move.l   (a6),act_appl            ; ap_next
  move.l   a6,a0
  bsr      appl_kill_struct
  move.l   a6,a0
@@ -9602,7 +9602,7 @@ pgml_term_thread:
 *
 
 start_signal:
- movea.l  act_appl.l,a6
+ movea.l  act_appl,a6
  move.l   sp,ap_tail+4(a6)         ; fuer den longjmp meinen ssp retten
  move.l   ap_sigthr(a6),a0         ; Vorgaenger (schlaeft jetzt)
  move.l   ap_ssp(a0),a0
@@ -9716,9 +9716,9 @@ endsig_pd_invalid:
 start_acc:
  suba.l   a0,a0
  move.l   a0,usp                   ; usp = NULL (->Kontext des ACC)
- movea.l  act_appl.l,a6
+ movea.l  act_appl,a6
  lea      ap_cmd(a6),a0
- jsr      dsetdrv_path
+ bsr      dsetdrv_path
  clr.l    -(sp)                    ; kein Environment
  move.l   ap_pd(a6),-(sp)          ; PD
  clr.l    -(sp)                    ; kein Name
@@ -9749,7 +9749,7 @@ start_acc:
 *
 
 start_parall_proc:
- movea.l  act_appl.l,a6
+ movea.l  act_appl,a6
  clr.l    -(sp)                    ; dummy
  move.l   ap_pd(a6),-(sp)          ; PD
  clr.l    -(sp)                    ; dummy
@@ -9786,7 +9786,7 @@ start_parall_proc:
 *
 
 inform_aes_recgn:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   d1,ap_recogn(a0)         ; Bitvektor fuer verstandene Codes
  moveq    #1,d0
  rts
@@ -9863,10 +9863,10 @@ cshut_tnext:
  move.w   d2,d6                    ; status merken
  move.l   sp,a0
 ;move.l   d2,d2                    ; shutdown erfolgreich bzw. nicht
- bsr      send_shutcompl
+ bsr.s    send_shutcompl
  tst.w    d6                       ; erfolgreich ?
  bne.b    cshut_ende2              ; ja
- bsr      disa_warmb               ; nein, Shutdown-Modus deaktivieren
+ bsr.s    disa_warmb               ; nein, Shutdown-Modus deaktivieren
 cshut_ende2:
  addq.l   #8,sp
 cshut_ende:
@@ -9914,12 +9914,12 @@ send_aes_msg:
  bmi.b    saem_ende                ; nein
  clr.l    -(sp)                    ; buf[6,7]
  move.w   2(a0),-(sp)              ; buf[5] = Fehlercode
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.w   ap_id(a1),-(sp)          ; buf[4] = ap_id des "Stoerers"
 
  move.l   sp,a0
  moveq    #0,d2                    ; Fehler !
- bsr      send_shutcompl
+ bsr.s    send_shutcompl
  addq.l   #8,sp
 
 saem_ende:
@@ -9939,7 +9939,7 @@ saem_ende:
 *
 
 broadcast2:
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.w   ap_id(a1),d0
 broadcast:
  movem.l  a5/d7,-(sp)
@@ -10021,7 +10021,7 @@ shutdown_res:
 
 ; Shutdown abbrechen
 shut_cancel:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   ap_id(a0),d0
  cmp.w    shutdown_id,d0
  bne.b    shut_err                 ; Fehler, bin nicht Initiator
@@ -10047,7 +10047,7 @@ shutdown:
 shut_startw:
  moveq    #-1,d1
 shut_start:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   ap_id(a0),d0
  lea      shutdown_id,a1
  tst.w    (a1)                     ; shutdown schon aktiv ?
@@ -10071,7 +10071,7 @@ shut_onld:
  clr.w    -(sp)                    ; buf[4]
  move.w   shutdown_id,-(sp)        ; buf[3]: egal (ap_id des Initiators)
  clr.w    -(sp)                    ; buf[2]: Ueberlaenge
- movea.l  act_appl.l,a2
+ movea.l  act_appl,a2
  move.w   ap_id(a2),-(sp)          ; buf[1] = id des Senders
  move.w   #AP_TERM,-(sp)           ; buf[0] = Nachrichtentyp
  move.l   sp,a0
@@ -10089,7 +10089,7 @@ shut_onld:
 *
 
 appl_break:
- move.l   act_appl.l,a6
+ move.l   act_appl,a6
  moveq    #EBREAK,d7
  move.l   ap_pd(a6),a0
  move.l   a0,d0
@@ -10128,7 +10128,7 @@ wait_vt52:
  move.l   timer_cnt,d1
  add.l    #50*10,d1                ; warte max. 10 s
 wvt_loop:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  cmpi.b   #$47,ap_isgr(a0)         ; Programm vom VT52 gebremst ?
  bne.b    wvt_ok
  jsr      appl_yield
@@ -10163,7 +10163,7 @@ pgml_3:
  rts
 
 pgm_loader:
- movea.l  act_appl.l,a6              ; a6 = zugehoerige APPL
+ movea.l  act_appl,a6              ; a6 = zugehoerige APPL
  movea.l  ap_pd(a6),a5             ; a5 = zugehoeriger PD
  move.w   curr_scrmode,ap_wasgr(a6)
  moveq    #0,d7                    ; kein letzter Fehler
@@ -10176,7 +10176,7 @@ pgm_loader:
 pgml_loop:
  clr.w    ap_recogn(a6)            ; verstandene Nachrichten: keine
 
- jsr      init_FPU
+ bsr      init_FPU
 
                                    ; erst weiter, wenn alle anderen Programme
  bsr      update_1                 ;  die Menues entsperrt haben
@@ -10238,7 +10238,7 @@ pgml_1:
  addq.l   #8,sp
  lea      desktop_s(pc),a1
  move.l   a6,a0
- jsr      set_apname               ; "MAGXDESK.APP" als Applikationsname
+ bsr      set_apname               ; "MAGXDESK.APP" als Applikationsname
  lea      desktop_s(pc),a0
  bsr      male_startbild
  move.l   shel_vector,a0
@@ -10257,7 +10257,7 @@ pgml_name:
  move.l   a0,-(sp)                 ; Name merken
  move.l   a0,a1
  move.l   a6,a0
- jsr      set_apname
+ bsr      set_apname
 
  move.l   ap_memlimit(a6),-(sp)
  move.w   #LIM_MEMHEAP,-(sp)
@@ -10317,7 +10317,7 @@ pgml_afterexec:
  move.l   d0,-(sp)
 ;move.l   a6,a6
  bsr      appl_kill_events
- jsr      init_FPU
+ bsr      init_FPU
  move.l   (sp)+,d0                 ; Rueckgabewert der Applikation
 
  tst.w    d0
@@ -10348,7 +10348,7 @@ eapl_wasshut:
  bsr      disa_warmb
 eapl_noshut:
 ;move.w   d0,d0
- jsr      check_shutdown           ; ggf. SHUT_COMPLETED verschicken
+ bsr      check_shutdown           ; ggf. SHUT_COMPLETED verschicken
 
  tst.w    ap_id(a6)
  beq      pgml_loop                ; APPL #0 bricht nie ab
@@ -10386,7 +10386,7 @@ pgml_tidy_tos:
  move.w   #1,ap_isgr(a6)
  bsr      switch_gr_txt            ; ggf. auf Grafik zurueckschalten...
 pgml_tidy:
- jsr      tidy_up                  ; ... und Bildschirm aufraeumen
+ bsr      tidy_up                  ; ... und Bildschirm aufraeumen
 
 pgml_notidy:
  move.l   applx,a0
@@ -10410,7 +10410,7 @@ pgml_endtloop:
 
  move.w   d7,d1                    ; exitcode
  move.w   ap_id(a6),d0
- jsr      exit_APPL                ; CH_EXIT verschicken
+ bsr      exit_APPL                ; CH_EXIT verschicken
 
  move.l   a5,-(sp)
  clr.l    -(sp)
@@ -10420,15 +10420,15 @@ pgml_endtloop:
 
  move.w   sr,d1
  ori.w    #$700,sr
- move.l   (a6),act_appl.l            ; ap_next
+ move.l   (a6),act_appl            ; ap_next
  move.l   a6,a0
- bsr      appl_kill_struct
+ bsr.s    appl_kill_struct
  move.w   d1,sr
 
 
 _pgml_term_thread:
  sf.b     no_switch
- lea      act_appl.l,a4              ; wichtig!!
+ lea      act_appl,a4              ; wichtig!!
  suba.l   a3,a3                    ; wichtig!!
  jmp      ad__kernel               ; ^^^
 
@@ -10509,7 +10509,7 @@ pgml_no_serr:
  beq.b    eapl_noxmen
  move.l   xmenu_info,a2
  move.l   20(a2),a2
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   ap_id(a0),-(sp)
  jsr      (a2)
  addq.l   #2,sp
@@ -10679,7 +10679,7 @@ kill_thread:
  moveq    #1,d0                    ; ist kritisch
  rts
 scapi_nocritic:
- cmpa.l   act_appl.l,a0              ; laufe ich gerade ?
+ cmpa.l   act_appl,a0              ; laufe ich gerade ?
  beq      appl_break               ; ja, ich beende mich
  move.l   a0,-(sp)
  move.l   #appl_break,d0
@@ -10709,7 +10709,7 @@ kat_loop:
 kith_loop:
  move.l   (a6)+,d0
  ble.b    kith_nxt                 ; leer oder eingefroren
- cmp.l    act_appl.l,d0
+ cmp.l    act_appl,d0
  beq.b    kith_nxt                 ; aktuelle Applikation
  move.l   d0,a4
  cmpa.l   ap_pd(a4),a5             ; unser Prozess ?
@@ -10759,7 +10759,7 @@ kith_ende:
 *
 
 pgm_err:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  tst.w    ap_type(a0)              ; main thread ?
  bne.b    pge_ende                 ; nein!
  tst.w    ap_wasgr(a0)
@@ -10768,7 +10768,7 @@ pgm_err:
  movem.l  d0/a0,-(sp)
  tst.l    d0
  bne      pge_wait
- btst     #0,config_status+2.w
+ btst     #0,(config_status+2).w
  bne.b    pge_nowait
 pge_wait:
  bsr      waitkey
@@ -10800,7 +10800,7 @@ pge_ende:
 
 switch_gr_txt:
 
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.l   a0,-(sp)
  tst.w    ap_doex(a0)
  bne.b    sgt_user
@@ -10874,7 +10874,7 @@ d_desktop:
  trap     #1                       ; Dsetpath
  addq.l   #6,sp
  clr.l    -(sp)                    ; akt. Env.
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  pea      ap_tail(a0)              ; Kommandozeile
  pea      desktop_s(pc)            ; "MAGXDESK.APP"
  move.l   #$4b0000,-(sp)
@@ -10885,7 +10885,7 @@ d_desktop:
 * kein Programm gefunden
  moveq    #0,d0                    ; Overlay
 
- jsr      fsel_app                 ; Programm auswaehlen
+ bsr      fsel_app                 ; Programm auswaehlen
  moveq    #0,d0                    ; kein Fehler
 d_d_ok:
  rts
@@ -10945,7 +10945,7 @@ waitkeys: DC.B $1b,'e',$d,$a,'Appuyez sur une touche : ',0
 waitkey:
  lea      waitkeys(pc),a0
 wait:
- bsr      prtstr
+ bsr.s    prtstr
 _wait:
  move.w   #2,-(sp)
  move.w   #1,-(sp)
@@ -11059,7 +11059,7 @@ wn_nomctrl:
 
 wind_new:
  movem.l  d7/a4/a5,-(sp)
- move.l   act_appl.l,a4
+ move.l   act_appl,a4
 * menu_unregister
  moveq    #-1,d0
  jsr      menu_unregister
@@ -11132,9 +11132,9 @@ wn_noupdate:
  jsr      evnt_sem
 * Maus einschalten
  clr.w    ap_mhidecnt(a4)          ; lokalen Zaehler loeschen
- jsr      reset_mouse              ; globalen Zaehler neu synchronisieren
+ bsr      reset_mouse              ; globalen Zaehler neu synchronisieren
  moveq    #0,d0                    ; Mauszeiger: Pfeil
- jsr      graf_mouse
+ bsr      graf_mouse
 * Nachrichten wegwerfen
  move.l   a4,a0
  jsr      flush_msgbuf
@@ -11189,7 +11189,7 @@ grect_in_grect:
  move.w   (a1)+,d0
 
  move.w   (a1)+,d1
- bsr      xy_in_grect
+ bsr.s    xy_in_grect
  movem.l  (sp)+,a0/a1
  beq      gig_ende
  move.w   (a1)+,d0
@@ -11387,7 +11387,7 @@ gbest_wnd_app:
 *
 
  lea      _tst_nohide(pc),a2
- bsr      _srch_wnd
+ bsr.s    _srch_wnd
  bne      gb_found2
  suba.l   a0,a0
 
@@ -11399,7 +11399,7 @@ gbest_app:
 *
 
  lea      _tst_do_unmark(pc),a2
- bsr      _srch_app
+ bsr.s    _srch_app
 
 *
 * 1.: Suche oberstes nichtverstecktes Fenster, dessen Eigner Menue hat
@@ -11407,7 +11407,7 @@ gbest_app:
 *
 
  lea      _tst_nohide_menu(pc),a2
- bsr      _srch_wnd
+ bsr.s    _srch_wnd
  bne      gb_found
 
 *
@@ -11416,7 +11416,7 @@ gbest_app:
 *
 
  lea      _tst_noha_menu(pc),a2
- bsr      _srch_app
+ bsr.s    _srch_app
  bne      gb_found
 
 *
@@ -11424,7 +11424,7 @@ gbest_app:
 *
 
  lea      _tst_menu(pc),a2
- bsr      _srch_app
+ bsr.s    _srch_app
  bne      gb_found
 
 *
@@ -11432,7 +11432,7 @@ gbest_app:
 *
 
  lea      _tst_nohide(pc),a2
- bsr      _srch_wnd
+ bsr.s    _srch_wnd
  bne      gb_found2
 
 *
@@ -11440,7 +11440,7 @@ gbest_app:
 *
 
  lea      _tnm_ok2(pc),a2
- bsr      _srch_wnd
+ bsr.s    _srch_wnd
  bne      gb_found2
 
 *
@@ -11448,7 +11448,7 @@ gbest_app:
 *
 
  lea      _tnm_ok(pc),a2
- bsr      _srch_app
+ bsr.s    _srch_app
  bne      gb_found2
 
 *

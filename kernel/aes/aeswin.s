@@ -2768,7 +2768,7 @@ ws_sl_verti:
  moveq    #O_VSCROLL,d6            ; uebergeordnetes Objekt
  moveq    #1,d0                    ; vertikal
 ws_slend:
- btst     #6,config_status+3.w
+ btst     #6,(config_status+3).w
  bne.b    ws_nosmart               ; Smart Redraw OFF
  cmp.w    (a0),d1
  beq.b    ws_endsw                 ; Wert hat sich nicht geaendert
@@ -5688,7 +5688,7 @@ kein_rahmen2:
 
  move.l   (a5),(a3)
  move.l   g_w(a3),g_w(a3)          ; CURRXYWH neu nach a3[]
- btst     #6,config_status+3.w
+ btst     #6,(config_status+3).w
  bne.b    no_sizer                 ; Smart Redraw OFF
 
  tst.b    d1

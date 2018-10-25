@@ -141,10 +141,10 @@ dxfs_init:
 ;     lea      init(pc),a0
 ;     jsr      str_to_con
 
- move.l   #dfs_u_drv,dfs_list
+ move.l   #dfs_u_drv,(dfs_list).l
  clr.l    dfs_longnames.w               ; keine langen Dateinamen
  move.l   a5,-(sp)
- move.l   dfs_list,a5
+ move.l   (dfs_list).l,a5
  bra.b    dosi_nfs
 dosi_nloop:
  move.l   dfs_init(a5),a0
@@ -249,7 +249,7 @@ dxfs_drv_open:
  andi.w   #1,d0
  move.w   d0,d_flags(a5)
 
- move.l   dfs_list,a4
+ move.l   (dfs_list).l,a4
  bra.b    ddo_nfs
 ddo_nloop:
  move.l   dfs_drv_open(a4),a1
@@ -2614,8 +2614,8 @@ dc_open:
  move.w   #OM_RPERM+OM_WPERM+OM_WDENY,d2       ; DD zum Schreiben oeffnen
  bra      _dxfs_fopen
 dc_inst:
- move.l   dfs_list,dfs_next(a2)    ; DFS einbinden
- move.l   a2,dfs_list
+ move.l   (dfs_list).l,dfs_next(a2)    ; DFS einbinden
+ move.l   a2,(dfs_list).l
 dc_info:
  move.l   #dosxfs_kernel,d0
  rts

@@ -117,7 +117,7 @@ fmb_ende:
 *
 
 appl_exit:
- movea.l  act_appl.l,a0
+ movea.l  act_appl,a0
  bsr      flush_msgbuf
 ;bra      _appl_exit
 
@@ -1986,7 +1986,7 @@ hm_no_aptp:
 * keine Maustaste gedrueckt
  tst.l    menutree                 ; Menue angemeldet ?
  beq.b    hm_send                  ; nein, weiter
- btst     #2,config_status+2.w     ; Bit 10, pulldown menus
+ btst     #2,(config_status+2).w     ; Bit 10, pulldown menus
  bne.b    hm_send                  ; ja, weiter
      IF   MACOS_SUPPORT
  move.l   menutree,a0
@@ -2227,7 +2227,7 @@ cfertig:
 rwap_weiter:
  addq.l   #8,(a4)                  ; Offset fuers GRECT in der Message
  addq.l   #8,a3                    ; Offset fuers GRECT in der neuen Message
- btst     #6,config_status+3.w
+ btst     #6,(config_status+3).w
  bne.b    rwap_nosmart             ; Smart Redraw OFF
 
  lea      8(sp),a0

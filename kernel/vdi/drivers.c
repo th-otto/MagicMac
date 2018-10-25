@@ -176,7 +176,7 @@ DRV_SYS *load_prg(const char *filename)
 						long relocsize;
 
 						Fseek(ph.ph_slen, (short)fd, SEEK_CUR);
-						clear_mem((char *)sys + memsize, ph.ph_blen);
+						clear_mem(ph.ph_blen, (char *)sys + memsize);
 						relocs = (unsigned char *)sys + tpa_size;
 						relocsize = -28 + dta.d_length - ph.ph_tlen - ph.ph_dlen - ph.ph_slen;
 						if (Fread((short)fd, relocsize, relocs) == relocsize)
@@ -363,7 +363,7 @@ VWK *create_wk(long size)
 			vwk = (VWK *)Malloc_sys(size);
 			if (vwk != NULL)
 			{
-				clear_mem(vwk, size);
+				clear_mem(size, vwk);
 				vwk->wk_handle = i;
 				wk_tab[i - 1] = vwk;
 			}

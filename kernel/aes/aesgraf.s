@@ -107,7 +107,7 @@ grh2_loop:
 *
 
 graf_growbox:
- btst     #7,config_status+3.w
+ btst     #7,(config_status+3).w
  bne.b    no_growbox
  movem.l  d2/d3/d4/d5/d6/d7/a4/a5/a6,-(sp)
  bsr.b    grfhelper2
@@ -141,7 +141,7 @@ no_growbox:
 *
 
 graf_shrinkbox:
- btst     #7,config_status+3.w
+ btst     #7,(config_status+3).w
  bne.b    no_shrinkbox
  movem.l  d2/d3/d4/d5/d6/d7/a4/a5/a6,-(sp)
  bsr      grfhelper2

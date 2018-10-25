@@ -94,7 +94,7 @@ copy_sb_2:
 	bpl.s	copy_sb_1
 	rts
 
-	ifne 0
+	ifne BINEXACT
 ; memcpy that works for even addresses and even size only
 ; not used actually
 copy_me_:

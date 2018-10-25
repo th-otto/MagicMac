@@ -23,7 +23,7 @@ MagicMacX.OS
 ..\dos\malloc.s
 ..\dos\xfs_vdos.s
 ..\dos\vfat_s.s
-..\dos\vfat.c
+..\dos\vfat.c [-G-]
 ..\dos\dfs_u.s
 ..\dos\dev_bios.s
 ..\dos\dev_pipe.s

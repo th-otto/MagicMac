@@ -476,7 +476,7 @@ mxfs_path2DD:
  move.l   (sp),a2
  cmp.w    d_drive(a2),d2           ; haben wir das Laufwerk gewechselt?
  beq.b    p2d_samedrv              ; nein
- lea      dmdx,a2
+ lea      dmdx.l,a2
  add.w    d2,d2
  add.w    d2,d2
  add.w    d2,a2

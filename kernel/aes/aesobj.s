@@ -4117,7 +4117,7 @@ ichr_l1:
  beq.b    ichr_l2                  ; Zeichen ungueltig
 * Zeichen gueltig
  move.b   1(sp),d0                 ; Zeichen
- btst.b   #1,config_status+3.w     ; inp_ovwrmode ?
+ btst.b   #1,(config_status+3).w     ; inp_ovwrmode ?
  beq.b    is_ins
 * Ueberschreibmodus
  move.l   a6,a0                    ; curr_ptext
@@ -4622,7 +4622,7 @@ objc_tab:
 *
 
 ins_mode:
- bclr.b   #1,config_status+3.w     ; Ueberschreibmodus aus
+ bclr.b   #1,(config_status+3).w     ; Ueberschreibmodus aus
  bra      endswitch
 
 *
@@ -4630,7 +4630,7 @@ ins_mode:
 *
 
 ovwr_mode:
- bset.b   #1,config_status+3.w     ; Ueberschreibmodus ein
+ bset.b   #1,(config_status+3).w     ; Ueberschreibmodus ein
  bra      endswitch
 
 *

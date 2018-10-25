@@ -32,7 +32,7 @@ LONG dpathconf(char *path, WORD which);
  * from string.s
  */
 /* like bzero() */
-void clear_mem(void *p, size_t size);
+void clear_mem(size_t size, void *p);
 /* like memset */
 void fill_mem(void *p, int c, size_t size);
 /* like memcpy */

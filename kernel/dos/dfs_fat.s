@@ -335,7 +335,12 @@ di_nxtb:
 
  addq.l   #4,a6                         ; naechste Liste
  moveq    #SECBUFN2-1,d7
+ IFNE BINEXACT
+ dc.w     $bdfc
+ dc.l     bufl+4
+ ELSE
  cmpa.l   #(bufl+4).w,a6
+ ENDC
  bls.b    di_nxtl
  movem.l  (sp)+,a6/d7/d6
  rts
@@ -424,7 +429,12 @@ sync_nxt:
  move.l   a4,d0
  bne.b    sync_nxtbcb
  subq.l   #4,a3
+ IFNE BINEXACT
+ dc.w $b7fc
+ dc.l bufl
+ ELSE
  cmpa.l   #bufl.w,a3
+ ENDC
  bcc.b    sync_nxtlst
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
@@ -1818,7 +1828,12 @@ sinv_nxt:
 sinv_nxtbuf:
  bne      sinv_loop
  addq.l   #4,a0
+ IFNE BINEXACT
+ dc.w     $b1fc
+ dc.l     bufl+4
+ ELSE
  cmpa.l   #(bufl+4).w,a0
+ ENDC
  bls      sinv_newlist
  moveq    #0,d0                    ; kein Fehler
  rts
@@ -1858,7 +1873,12 @@ suu_nxtbuf:
  bne      suu_loop
 
  addq.l   #4,a5
+ IFNE BINEXACT
+ dc.w $bbfc
+ dc.l     bufl+4
+ ELSE
  cmpa.l   #(bufl+4).w,a5
+ ENDC
  bls      suu_newlist
  jsr      appl_endcritic           ; aendert nur d2/a2
  move.l   (sp)+,a5
@@ -2460,7 +2480,7 @@ dosf_not:
 *
 
 dosf_close:
- move.l   bufl_wback,d0       ; writeback aktiviert ?
+ move.l   bufl_wback.l,d0       ; writeback aktiviert ?
  bne      _fcl_nix            ; nein, return(E_OK)
  movem.l  a3/a4,-(sp)
  jsr      appl_begcritic      ; aendert nur d2/a2
@@ -2493,7 +2513,12 @@ _fclo_l1:
  move.l   a4,d0
  bne.b    _fclo_nxtbcb
  subq.l   #4,a3
+ IFNE BINEXACT
+ dc.w $b7fc
+ dc.l bufl
+ ELSE
  cmpa.l   #bufl.w,a3
+ ENDC
  bcc.b    _fclo_nxtlst
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
@@ -3093,7 +3118,7 @@ fex_fat12:
 * Reservierung freier Cluster einer 12-Bit-FAT
 * muss ueber Semaphore laufen
 
- lea      fat12_sem,a0
+ lea      fat12_sem.l,a0
  moveq    #0,d1                    ; kein TimeOut
  moveq    #SEM_SET,d0
  jsr      evnt_sem
@@ -3128,7 +3153,7 @@ fex_ok:
 * Fehler, Semaphore freigeben
 fex_ende12:
  move.l   d0,-(sp)
- lea      fat12_sem,a0
+ lea      fat12_sem.l,a0
  moveq    #SEM_FREE,d0
  jsr      evnt_sem                 ; Fehercode von evnt_sem ignorieren
  move.l   (sp)+,d0
@@ -3142,7 +3167,7 @@ fex_found12:
  bsr      FAT_write
  bmi      fex_ende12               ; Lesefehler
 
- lea      fat12_sem,a0
+ lea      fat12_sem.l,a0
  moveq    #SEM_FREE,d0
  jsr      evnt_sem                 ; Fehlercode von evnt_sem ignorieren
 
@@ -4038,8 +4063,8 @@ rs_read:
 * belegen.
 
 rs_ok:
- move.l   act_appl,xb_sem+bl_app(a6)    ; Sektor belegen
- move.l   act_pd,xb_sem+bl_pd(a6)       ; !neu!
+ move.l   act_appl.l,xb_sem+bl_app(a6)    ; Sektor belegen
+ move.l   act_pd.l,xb_sem+bl_pd(a6)       ; !neu!
 
 rs_read2:
  move.w   d7,xb_drv(a6)

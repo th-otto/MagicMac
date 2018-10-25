@@ -2574,7 +2574,11 @@ Fsfirst:
 fsf_rdlabel:
 ; Label per sfirst lesen. Datum/Uhrzeit ist leider nicht lesbar.
  lea      dta_drive(a1),a1
+ IFNE BINEXACT
+ dc.w $12fc,$ffff
+ ELSE
  move.b   #-1,(a1)+                ; dta_drive
+ ENDC
  move.b   #8,(a1)+                 ; dta_attr
  clr.l    (a1)+                    ; dta_time,dta_date (schade...)
  clr.l    (a1)+                    ; dta_len
@@ -10163,7 +10167,11 @@ fsp_hdlvalid:
  bne.b    fsp_nxtlp2               ; ist > 0, nicht aendern
  tst.w    d5                       ; Diskwechsel ?
  bge.b    fsp_set_root             ; ja, auf root setzen
+ IFNE BINEXACT
+ dc.w $137c,$ffff,$ffff
+ ELSE
  move.b   #-1,-1(a1)               ; nein, auf -1 setzen
+ ENDC
  bra.b    fsp_nxtlp2
 fsp_set_root:
  clr.b    -1(a1)                   ; Zaehler 0 => Pfadhandle im PD loeschen

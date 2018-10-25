@@ -103,9 +103,9 @@ fsu_init:
 
 ; Root allozieren
 
- move.l   #(dir_sizeof*UROOT_LEN)+2,d0  ; n Eintraege + EOF- Zeichen
+ move.l   #((dir_sizeof*UROOT_LEN)+2),d0  ; n Eintraege + EOF- Zeichen
  jsr      Bmalloc                       ; aendert nicht d0
- move.l   a0,udrv_root
+ move.l   a0,(udrv_root).l
  move.l   a0,a5
  movem.l  a0/d0,-(sp)
 ;lea      (a0),a0
@@ -125,7 +125,7 @@ dosi_loop2:
  jsr      conv_8_3
  addq.l   #6,a4
 
- move.l   #(dir_sizeof*32)+2,d0         ; 32 Eintraege + EOF- Zeichen
+ move.l   #((dir_sizeof*32)+2).l,d0         ; 32 Eintraege + EOF- Zeichen
  jsr      Bmalloc                       ; aendert nicht d0
 
  movem.l  a0/d0,-(sp)
@@ -151,7 +151,7 @@ dosi_loop2:
 ;clr.b    (a5)                          ; EOF- Zeichen !!!
 
  bset     #DRIVE_U-16,_drvbits+1        ; Laufwerk U: anmelden
- clr.l    udrv_drvs                     ; noch keine Laufwerke gelinkt
+ clr.l    (udrv_drvs).l                 ; noch keine Laufwerke gelinkt
  movem.l  (sp)+,d7/a5/a4
  rts
 
@@ -204,7 +204,7 @@ gul_err:
 *
 
 _get_link:
- move.l   udrv_root,a0
+ move.l   (udrv_root).l,a0
  move.w   d0,d2                    ; d2.w = drv
  bmi.b    _gl_free                 ; suche freien Platz
  addi.b   #'A',d0
@@ -328,7 +328,7 @@ drv_open:
  move.l   d0,a1
  move.l   a0,fd_dmd(a1)
  move.w   #dir_sizeof*(LASTDRIVE+5),fd_len+2(a1)  ; Dateilaenge
- move.l   udrv_root,fd_xdata(a1)                ; Zeiger auf Daten
+ move.l   (udrv_root).l,fd_xdata(a1)                ; Zeiger auf Daten
  move.l   #memblk_drv,fd_ddev(a1)
  move.w   #FT_MEMBLK,fd_xftype(a1)
  move.b   #$10,fd_attr(a1)
@@ -336,7 +336,7 @@ fsu_chkdrv:
      DEB  'Auf dem Laufwerk Dateisystem DFS_U testen'
 * Laufwerke als Unterverzeichnisse eintragen
  move.l   _drvbits,d2
- move.l   udrv_drvs,d1
+ move.l   (udrv_drvs).l,d1
  eor.l    d2,d1
  beq.b    do_ok                    ; schon alle eingetragen
  moveq    #0,d0
@@ -364,7 +364,7 @@ startdd_loopn_u:
  addq.w   #1,d0
  cmpi.w   #LASTDRIVE,d0
  bls      startdd_loop_u
- move.l   d2,udrv_drvs             ; aktualisieren
+ move.l   d2,(udrv_drvs).l             ; aktualisieren
 do_ok:
  moveq    #0,d0
  rts
@@ -390,7 +390,7 @@ drv_close:
 
 fsu_dfree:
  move.l   fd_xdata(a0),a2
- cmpa.l   udrv_procdir,a2
+ cmpa.l   (udrv_procdir).l,a2
  beq.b    dfr_proc
  clr.l    (a1)+
  clr.l    (a1)+
@@ -556,7 +556,7 @@ fsu_fcreate:
  beq      _fcre_symlink
  move.l   fd_xdata(a0),a2          ; Startadresse des Verzeichnisses
  move.w   #-1,dir_stcl(a1)         ; als Pseudodatei markieren
- cmpa.l   udrv_shmdir,a2
+ cmpa.l   (udrv_shmdir).l,a2
  bne.b    _fcre_pweiter
 
 * Sonderbehandlung fuer U:\SHM
@@ -567,7 +567,7 @@ fsu_fcreate:
  jmp      shm_create               ; -> Fehlercode
 
 _fcre_pweiter:
- cmpa.l   udrv_devdir,a2
+ cmpa.l   (udrv_devdir).l,a2
  bne.b    _fcre_pweiter2
 
 * Sonderbehandlung fuer U:\DEV
@@ -613,7 +613,7 @@ _fcre_devi_no0:
 
 
 _fcre_pweiter2:
- cmpa.l   udrv_procdir,a2
+ cmpa.l   (udrv_procdir).l,a2
  bne.b    _fcre_pweiter3
 
 * Sonderbehandlung fuer U:\PROC
@@ -627,7 +627,7 @@ _fcre_crproc:
 
 * Sonderbehandlung fuer U:\PIPE
 _fcre_pweiter3:
- cmpa.l   udrv_pipedir,a2
+ cmpa.l   (udrv_pipedir).l,a2
  bne.b    _fcre_ewrpro             ; Root ist schreibgeschuetzt !
 
  tst.w    d0                       ; cmd == 0 (einfach Datei erstellen) ?
@@ -773,16 +773,22 @@ fxa_fd_isdir:
  move.l   d1,a2               ; ja, nimm ihren xftype
 fxa_dd:
  move.w   #32,xattr_dev(a6)
- cmpa.l   udrv_devdir,a2
+ cmpa.l   (udrv_devdir).l,a2
  beq.b    fxa_dev             ;  dev: 32
  addq.w   #1,xattr_dev(a6)
- cmpa.l   udrv_pipedir,a2
+ cmpa.l   (udrv_pipedir).l,a2
  beq.b    fxa_dev             ; pipe: 33
  addq.w   #1,xattr_dev(a6)
- cmpa.l   udrv_procdir,a2
+ cmpa.l   (udrv_procdir).l,a2
  beq.b    fxa_dev             ; proc: 34
  addq.w   #1,xattr_dev(a6)
- cmpa.l   #udrv_shmdir,a2
+ IFNE BINEXACT
+ ; BUG: cmpa.l   #(udrv_shmdir).l,a2
+ dc.w  $b5fc
+ dc.l udrv_shmdir
+ ELSE
+ cmpa.l   (udrv_shmdir).l,a2
+ ENDC
  beq.b    fxa_dev             ; shm: 35
  move.w   #'U'-'A',xattr_dev(a6)   ; root
 fxa_dev:

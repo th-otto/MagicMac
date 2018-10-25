@@ -1046,7 +1046,7 @@ inp_clr:
 inp9:
  cmpi.l   #$610000,d0              ; K_UNDO
  bne.b    inp30
- lea      undo_buf,a4              ; Undo- Puffer wie F-Taste
+ lea      (undo_buf).l,a4              ; Undo- Puffer wie F-Taste
  bra      inp_mainloop
 
 inp30:
@@ -1054,14 +1054,19 @@ inp30:
  bne.b    inp35
  move.l   -4(a6),d1
  bne.b    inp31
- lea      undo_buf,a0
+ lea      (undo_buf).l,a0
  bra.b    inp33
 inp31:
  move.l   d1,a0                    ; letzte Eingabe
 inp32:
  tst.b    (a0)+
  bne.b    inp32                    ; naechsten String suchen
- cmpa.l   #undo_buf+319,a0
+ IFNE BINEXACT
+ dc.w $b1fc
+ dc.l     undo_buf+319
+ ELSE
+ cmpa.l   #(undo_buf+319).w,a0
+ ENDC
  bcc.b    inp10                    ; bin am Ende, nichts tun
 inp33:
  tst.b    (a0)
@@ -1078,13 +1083,18 @@ inp35:
  move.l   d1,a0                    ; letzter Undo
 inp37:
  subq.l   #1,a0
- cmpa.l   #undo_buf,a0
+ IFNE BINEXACT
+ dc.w $b1fc
+ dc.l   undo_buf
+ ELSE
+ cmpa.l   #(undo_buf).w,a0
+ ENDC
  bcs.b    inp38
  tst.b    -1(a0)
  bne.b    inp37
  bra.b    inp33
 inp38:
- lea      undo_buf,a0
+ lea      (undo_buf).l,a0
  bra.b    inp33
 
 inp10:
@@ -1122,7 +1132,7 @@ inp90:
  move.w   d6,d0
  subq.w   #1,d0
  bcs.b    inp100                   ; 0 Zeichen
- lea      undo_buf,a0
+ lea      (undo_buf).l,a0
  cmpi.w   #318,d0
  bls.b    inp92
  move.w   #318,d0                  ; maximal 319 Zeichen
@@ -1130,7 +1140,7 @@ inp92:
 * Rest des Undo- Puffers nach hinten
  move.w   d0,d1
  addq.w   #2,d1                    ; Platz fuer neuen String
- lea      undo_buf+320,a1          ; Ziel
+ lea      (undo_buf+320).l,a1          ; Ziel
  move.l   a1,a2
  sub.w    d1,a2                    ; Quelle
  move.w   #319,d2
