@@ -2,10 +2,10 @@
 
 ; Aus Hades-TOS-Source:
 
-; Nur für 68060!
+; Nur fuer 68060!
 
 
-; unimplemented integer instruction handler (für movep,mulx.l,divx.l)
+; unimplemented integer instruction handler (fuer movep,mulx.l,divx.l)
 
 x060_real_fline:
 UIIADR:

@@ -6,7 +6,7 @@ AES/
 	MagiC kernel sources (AES)
 
 ALLG
-	common routines used by MagiC kernel ("common" == „allgemein“ in German)
+	common routines used by MagiC kernel ("common" == "allgemein" in German)
 
 BIOS/
 	MagiC kernel sources (BIOS) for different platforms
@@ -21,7 +21,7 @@ DOS/
 	MagiC kernel sources (DOS)
 
 ENDE.S
-	This file is linked as last file when building the kernel ("end" == „Ende“ in German)
+	This file is linked as last file when building the kernel ("end" == "Ende" in German)
 
 INC/
 	common definitions (include files)

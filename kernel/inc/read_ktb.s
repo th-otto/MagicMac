@@ -17,9 +17,9 @@ keytbl_fname:
 read_keytbl:
  movem.l	a6/d7,-(sp)
 
-; Datei zum Lesen öffnen
+; Datei zum Lesen oeffnen
 
- clr.w	-(sp)				; Öffnen zum Lesen
+ clr.w	-(sp)				; Oeffnen zum Lesen
  pea		keytbl_fname(pc)		; Pfad
  move.w	#$3d,-(sp)			; Fopen
  trap	#1
@@ -35,7 +35,7 @@ read_keytbl:
  trap	#1
  addq.l	#8,sp
  tst.l	d0
- beq.b	rdkt_close			; nicht genügend Speicher
+ beq.b	rdkt_close			; nicht genuegend Speicher
  move.l	d0,a6
 
 ; Datei einlesen
@@ -47,13 +47,13 @@ read_keytbl:
  trap	#1
  adda.w	#12,sp
  sub.l	#FSIZE_KEYTBL,d0
- bne.b	rdkt_free				; Dateilänge zu kurz
+ bne.b	rdkt_free				; Dateilaenge zu kurz
 
 ; Tabellen aktivieren
 
  move.l	a6,a0
  lea		(N_KEYTBL*4)(a6),a1
- moveq	#N_KEYTBL-1,d0			; Zähler
+ moveq	#N_KEYTBL-1,d0			; Zaehler
 rdkt_loop:
  move.l	a1,(a0)+
  lea		128(a1),a1
@@ -70,7 +70,7 @@ rdkt_free:
  trap	#1
  addq.l	#6,sp
 
-; Datei schließen
+; Datei schliessen
 
 rdkt_close:
  move.w	d7,-(sp)

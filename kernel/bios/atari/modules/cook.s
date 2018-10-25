@@ -19,7 +19,7 @@ install_cookies:
  lea      cookies,a5               ; Adresse der Cookies
  move.l   sp,a2                    ; Stackpointer retten
  move.l   a5,_p_cookies            ; Pointer setzen
-* _CPU Cookie, Loword enthält den <cpu_typ>
+* _CPU Cookie, Loword enthaelt den <cpu_typ>
  move.l   #'_CPU',(a5)+
  clr.w    (a5)+
  move.w   cpu_typ,(a5)+
@@ -39,8 +39,8 @@ install_cookies:
 *  7 = Atari Register FPU + mit Sicherheit 68882 LineF FPU
 *  8 = 68040 internal LineF FPU
 *  9 = Atari Register FPU + 68040 internal LineF FPU
-* Das Loword ist für eine spätere eventuelle
-* softwaremäßige LineF- Emulation reserviert und derzeit immer 0
+* Das Loword ist fuer eine spaetere eventuelle
+* softwaremaessige LineF- Emulation reserviert und derzeit immer 0
 
  moveq    #0,d1
 * Test auf (Atari) FPU
@@ -54,7 +54,7 @@ _noafpu:
  movea.l  $2c,a1                   ; LineF retten
  move.l   #_nolfpu,$2c             ; bei LineF Trap gehts dahin
 ;move.l   #_nolfpu,$34             ; TOS 2.05
- fsave    -(sp)                    ; und noch testen, was für eine FPU
+ fsave    -(sp)                    ; und noch testen, was fuer eine FPU
  move.w   (sp),d0                  ; Version Bytes ($18=881,$38=882,$40=68040)
  cmp.b    #$18,d0                  ; 68881 ?
  beq.b    _is881
@@ -143,7 +143,7 @@ icook_l1:
 
  addq.w   #2,d0                    ; ging gut, also DMA Sound
 
-;Falcon? Dann Bits für neue Soundhardware setzen
+;Falcon? Dann Bits fuer neue Soundhardware setzen
 
  cmp.b    #4,machine_type
  bne.b    tst_tt_snd
@@ -164,9 +164,9 @@ _nodmasound:
  move.l   #'_SND',(a5)+
  move.l   d0,(a5)+                 ; und _SND eintragen
 
-* _SWI eintragen (nur bei STe und höher)
+* _SWI eintragen (nur bei STe und hoeher)
 * machine_type: 0=ST, 1=STE, 2=MegaSTE, 3=TT
- sf.b     hd_flag                  ; keine HD-Unterstützung
+ sf.b     hd_flag                  ; keine HD-Unterstuetzung
  tst.b    machine_type             ; ST ?
  beq.b    cok_nosw                 ; ja, kein _SWI
  move.l   #'_SWI',(a5)+
@@ -176,10 +176,10 @@ _nodmasound:
 * _FDC
  btst     #6,d0                    ; HD-Laufwerk da ?
  bne.b    icook_l2                ; nein
-;move.b   #8,$1820                 ; TOS 3.06: Fastload für A: aktivieren
+;move.b   #8,$1820                 ; TOS 3.06: Fastload fuer A: aktivieren
  move.l   #'_FDC',(a5)+
  move.l   #$1415443,(a5)+          ; '\1ATC'
- st.b     hd_flag                  ; HD-Unterstützung ein
+ st.b     hd_flag                  ; HD-Unterstuetzung ein
 icook_l2:
 
 cok_nosw:
@@ -208,6 +208,6 @@ cok_nosw:
 
 * Endmarkierung
  clr.l    (a5)+
- move.l   #NCOOKIES,(a5)           ; Platz für insgesamt 20+1 Cookies
+ move.l   #NCOOKIES,(a5)           ; Platz fuer insgesamt 20+1 Cookies
  move.l   (sp)+,a5
  rts

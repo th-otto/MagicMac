@@ -2,13 +2,13 @@
 *
 *             WINFRAME                             26.12.97
 *             ========
-*                                 letzte énderung:
+*                                 letzte Aenderung:
 *
 * geschrieben mit Pure C V1.1
 * Projektdatei: WINFRAME.PRJ
 *
-* Alternativer Window-Frame-Manager fÅr MagiC 6
-* Das Programm ist als SharedLib ausgefÅhrt.
+* Alternativer Window-Frame-Manager fuer MagiC 6
+* Das Programm ist als SharedLib ausgefuehrt.
 *
 ****************************************************************/
 
@@ -35,7 +35,7 @@ int	ncolours;
 GRECT scrg;
 int aes_handle;		/* Screen-Workstation des AES */
 int vdi_handle;
-int	work_out[57], work_in[12];	 /* VDI- Felder fÅr v_opnvwk() */
+int	work_out[57], work_in[12];	 /* VDI- Felder fuer v_opnvwk() */
 OBJECT *adr_window;
 
 static void open_work(void);
@@ -166,9 +166,9 @@ LONG cdecl slb_init( void )
 
 /*****************************************************************
 *
-* Bibliothek aufrÑumen.
-* Wir dÅrfen kein appl_exit() machen, weil wir keine
-* ap_id haben. rsrc_free() dagegen wÑre erlaubt, weil die
+* Bibliothek aufraeumen.
+* Wir duerfen kein appl_exit() machen, weil wir keine
+* ap_id haben. rsrc_free() dagegen waere erlaubt, weil die
 * RSC-Strukturen im global-Feld liegen.
 *
 *****************************************************************/
@@ -188,7 +188,7 @@ extern void cdecl slb_exit( void )
 
 /*****************************************************************
 *
-* Bibliothek îffnen
+* Bibliothek oeffnen
 *
 *****************************************************************/
 
@@ -201,7 +201,7 @@ extern LONG cdecl slb_open( PD *pd )
 
 /*****************************************************************
 *
-* Bibliothek schlieûen
+* Bibliothek schliessen
 *
 *****************************************************************/
 

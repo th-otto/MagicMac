@@ -5,7 +5,7 @@
 *
 * long bios_rawdrvr( d0 = int opcode, d1 = long devcode, ... )
 *
-* Führt gerätespezifische Aktionen aus.
+* Fuehrt geraetespezifische Aktionen aus.
 *
 * d0 = 0: Medium auswerfen.
 *
@@ -23,7 +23,7 @@ bios_rawdrvr:
 * long bios2devcode( d0 = int biosdev )
 *
 * Rechnet ein BIOS-Device in einen devcode um (major/minor)
-* Rückgabe 0, wenn Fehler
+* Rueckgabe 0, wenn Fehler
 * wird vom DOS aufgerufen
 *
 
@@ -89,7 +89,7 @@ dmarw:
  bhi      dmarw_scsi          ; ja, SCSI  => Quelltext "SCSI.S"
 
  lea      5(sp),a0            ; sector (devno+hibyte)
- subq.l   #6,sp               ; Platz für 6 Bytes
+ subq.l   #6,sp               ; Platz fuer 6 Bytes
  lsl.b    #5,d1               ; Targetnummer in Bits 7,6,5
  addq.b   #8,d1
  add.b    d0,d1
@@ -99,7 +99,7 @@ dmarw:
  move.b   (a0)+,(a1)+         ; Byte 1: devno+secno(hi)
  move.b   (a0)+,(a1)+         ; Byte 2: secno(mid)
  move.b   (a0)+,(a1)+         ; Byte 3: secno(lo)
- addq.l   #1,a0               ; count(hi) überspringen
+ addq.l   #1,a0               ; count(hi) ueberspringen
  move.b   (a0)+,(a1)+         ; Byte 4: count
  clr.b    (a1)                ; Byte 5: 0
 
@@ -116,17 +116,17 @@ dmarw_del1:
  bcc.b    dmarw_del1          ; letzter Zugriff noch zu kurz her
  lea      $ffff8604,a1        ; a1 = Daten
  lea      2(a1),a2            ; a2 = Kontrolle
- addq.l   #1,a0               ; buf, erstes Byte überspringen
+ addq.l   #1,a0               ; buf, erstes Byte ueberspringen
  move.b   (a0)+,d1            ; buf(hi)
  move.b   (a0)+,d2            ; buf(mid)
-;Achtung: Bytes müssen in der Reihenfolge LOW, MID, HIGH geschrieben werden
+;Achtung: Bytes muessen in der Reihenfolge LOW, MID, HIGH geschrieben werden
 ; (in Mag!X 1.10/1.11 fehlerhaft!!)
  move.b   (a0)+,$ffff860d     ; buf(lo)
  move.b   d2,$ffff860b        ; buf(mid)
  move.b   d1,$ffff8609        ; buf(hi)
 
-* FIFO- Puffer durch Klappern des rw- Bits löschen
-* zunächst DMA mit FDC, sector count register
+* FIFO- Puffer durch Klappern des rw- Bits loeschen
+* zunaechst DMA mit FDC, sector count register
  tst.b    d0
  bne.b    dmarw_w1            ; war "DMAwrite"
 
@@ -158,12 +158,12 @@ dmarw_r1:
 dmarw_r2:
  move.b   #$88,d1             ; Bits 0..7 des Status: ACSI- Registerzugriff
  move.w   d1,(a2)
- move.b   #$8a,d1             ; Bits 0..7 des Status: CMD- Phase für ACSI
+ move.b   #$8a,d1             ; Bits 0..7 des Status: CMD- Phase fuer ACSI
  lea      (sp),a0             ; DMA- Daten
- moveq    #4,d2               ; zunächst 5 Bytes senden
+ moveq    #4,d2               ; zunaechst 5 Bytes senden
 dmarw_loop:
  swap     d1
- move.b   (a0)+,d1            ; DMA- Byte ins Hiword (für ffff8604)
+ move.b   (a0)+,d1            ; DMA- Byte ins Hiword (fuer ffff8604)
  swap     d1
  move.l   d1,(a1)             ; und abschicken
  moveq    #20,d0              ; 20/200s
@@ -181,7 +181,7 @@ dmarw_loop:
  bsr.b    wait_acsi
  bmi.b    dmarw_err           ; timeout
 
- bsr      cache_invalid       ; Daten- und Befehls-Cache löschen
+ bsr      cache_invalid       ; Daten- und Befehls-Cache loeschen
 
 acsi_st:
  move.w   d1,(a2)             ; d1 -> DMA Mode
@@ -207,9 +207,9 @@ dmarw_ende:
  addq.l   #6,sp
  rts
 
-* wartet darauf, daß Bit 5 von fffffa01 (gpip) low wird, d.h. Abschluß des
-* Datenaustauschs über ACSI
-* Rückgabe 0=ok, -1=timeout
+* wartet darauf, dass Bit 5 von fffffa01 (gpip) low wird, d.h. Abschluss des
+* Datenaustauschs ueber ACSI
+* Rueckgabe 0=ok, -1=timeout
 
 wait_acsi:
  move.l  d0,-(sp)
@@ -242,7 +242,7 @@ teste_fa01:
  rts
 
 ;-------------------------------------------------------
-;Binding für IDE-Routinen in IDE.C
+;Binding fuer IDE-Routinen in IDE.C
 ;
 ;Es fehlt:
 ;- Kapselung mit ACSI-Semaphore (in Bootphase unkritisch),
@@ -319,21 +319,21 @@ dskboot_end:
 ;
 ; void dmaboot( void )
 ;
-; zerstört Register d0/d1/d2/d4/d5/d6/d7/a5/a6
+; zerstoert Register d0/d1/d2/d4/d5/d6/d7/a5/a6
 ; Achtung: d4 ist das Target (0..15), das an den Plattentreiber
-; übergeben wird.
+; uebergeben wird.
 ;------------------------------------------------------
      IFNE   DEBUG
 ini_ides: DC.B 'Initialisiere IDE',$d,$a,0
 ini_ss:   DC.B 'Initialisiere SCSI',$d,$a,0
-bt_ides:  DC.B 'IDE-Gerät',$d,$a,0
+bt_ides:  DC.B 'IDE-Ger',$84,'t',$d,$a,0
 bt_fscs:  DC.B 'Falcon-SCSI',13,10,0
 bt_scs:   DC.B 'SCSI (5380)',13,10,0
 bt_acs:   DC.B 'ACSI',$d,$a,0
 rdbs_s:   DC.B 'Lese Bootsektor',13,10,0
-prf_ss:   DC.B 'Berechne Prüfsumme',$d,$a,0
-prf_oks:  DC.B 'Prüfsumme OK',13,10,0
-prf_bads: DC.B 'Prüfsumme fehlerhaft',$d,$a,0
+prf_ss:   DC.B 'Berechne Pr',$81,'fsumme',$d,$a,0
+prf_oks:  DC.B 'Pr',$81,'fsumme OK',13,10,0
+prf_bads: DC.B 'Pr',$81,'fsumme fehlerhaft',$d,$a,0
 strt_ss:  DC.B 'Starte Bootprogramm',$d,$a,0
 bt_ok:    DC.B 'Bootprogramm war OK',$d,$a,0
 bt_can:   DC.B 'Bootprogramm schlug fehl!',$d,$a,0
@@ -343,16 +343,16 @@ bt_can:   DC.B 'Bootprogramm schlug fehl!',$d,$a,0
 dmaboot:
 ;IDE
  movea.l  8.w,a0                   ; Falcon/ST/Hades/Medusa mit IDE-Platte?
- movea.l  sp,a1                    ; Stack für dma_noide
+ movea.l  sp,a1                    ; Stack fuer dma_noide
  move.l   #dma_noide,8.w           ; Busfehlervektor setzen
 
  tst.b    IDE_StatReg2             ; Dieses Register kann gelesen werden,
-                                   ;   ohne daß IR-Bits sich verändern
- move.l   a0,8.w                   ; Busfehlervektor zurücksetzen
+                                   ;   ohne dass IR-Bits sich veraendern
+ move.l   a0,8.w                   ; Busfehlervektor zuruecksetzen
 
  moveq    #16,d0                   ; dev
- move.l   _dskbufp,a0              ; zeigt auf 4 kB großen Puffer
- lea      2048(a0),a0              ; Platz für IDE-Daten
+ move.l   _dskbufp,a0              ; zeigt auf 4 kB grossen Puffer
+ lea      2048(a0),a0              ; Platz fuer IDE-Daten
  jsr      IDEIdentify              ; IDEIdentify (dev, &ide_daten)
 
 IFNE DEBUG
@@ -362,7 +362,7 @@ ENDIF
 
  moveq    #16,d0                   ; dev
  move.l   _dskbufp,a0
- lea      2048(a0),a0              ; Platz für IDE-Daten
+ lea      2048(a0),a0              ; Platz fuer IDE-Daten
  jsr      IDEInitDrive             ; IDEInitDrive (dev, &ide_daten)
 
 IFNE DEBUG
@@ -373,17 +373,17 @@ ENDIF
  moveq    #16,d4                   ; dev
  bsr      dmrd_boot
  tst.w    d0
- bne      db_scsidev               ; Fehler, nächstes dev testen
+ bne      db_scsidev               ; Fehler, naechstes dev testen
 
- bsr      dmab_exec                ; Bootsektor eingelesen, Prüfsumme OK,
-                                   ;  versuche Bootsektor auszuführen
+ bsr      dmab_exec                ; Bootsektor eingelesen, Pruefsumme OK,
+                                   ;  versuche Bootsektor auszufuehren
  tst.w    d0
- bne      db_scsidev               ; Fehler, nächstes dev testen
+ bne      db_scsidev               ; Fehler, naechstes dev testen
  rts
 
 dma_noide:
- movea.l  a1,sp                    ; Stack zurück
- move.l   a0,8.w                   ; Busfehlervektor zurück
+ movea.l  a1,sp                    ; Stack zurueck
+ move.l   a0,8.w                   ; Busfehlervektor zurueck
      
 ;SCSI
 db_scsidev:
@@ -391,7 +391,7 @@ db_scsidev:
  movea.l  sp,a1
  move.l   #dma_noscsi,8.w          ; Busfehlervektor setzen
  move.b   $ffff8781.w,d0           ; Busfehlertest mit scsi_data-Register
- move.l   a0,8.w                   ; Busfehlervektor zurücksetzen
+ move.l   a0,8.w                   ; Busfehlervektor zuruecksetzen
 
 IFNE DEBUG
  lea      ini_ss(pc),a0
@@ -414,8 +414,8 @@ ENDIF
  bra.b    db_sc                    ; SCSI-dev abtesten
      
 dma_noscsi:
- movea.l  a1,sp                    ; Stack zurück
- move.l   a0,8.w                   ; Busfehlervektor zurück
+ movea.l  a1,sp                    ; Stack zurueck
+ move.l   a0,8.w                   ; Busfehlervektor zurueck
 
  cmpi.b   #4,machine_type          ; Keine echter SCSI-Chip. Vielleicht Falcon?
  bne.b    dmab_acsi                ; nein, dann ACSI ...
@@ -433,12 +433,12 @@ db_sc_loop:
  bsr      dmrd_boot
  move.l   (sp)+,a0
  tst.w    d0
- bne.b    db_sc_loop               ; Fehler, nächstes dev probieren
- bsr.b    dmab_exec                ; Lesen geklappt, Prüfsumme OK,
-                                   ;  versuche Bootsektor auszuführen
+ bne.b    db_sc_loop               ; Fehler, naechstes dev probieren
+ bsr.b    dmab_exec                ; Lesen geklappt, Pruefsumme OK,
+                                   ;  versuche Bootsektor auszufuehren
  tst.w    d0
- bne.b    db_sc_loop               ; Fehler beim Ausführen des Bootsektors
- rts                               ; Bootsektor ausgeführt, alles ok
+ bne.b    db_sc_loop               ; Fehler beim Ausfuehren des Bootsektors
+ rts                               ; Bootsektor ausgefuehrt, alles ok
 
 ;ACSI
 dmab_acsi:
@@ -457,11 +457,11 @@ db_ac_loop:
  bsr      dmrd_boot
  move.l   (sp)+,a0
  tst.w    d0
- bne.b    db_ac_loop               ; Fehler, nächstes dev probieren
- bsr.b    dmab_exec                ; Lesen geklappt, Prüfsumme OK,
-                                   ;   versuche Bootsektor auszuführen
+ bne.b    db_ac_loop               ; Fehler, naechstes dev probieren
+ bsr.b    dmab_exec                ; Lesen geklappt, Pruefsumme OK,
+                                   ;   versuche Bootsektor auszufuehren
  tst.w    d0
- bne.b    db_ac_loop               ; Fehler beim Ausführen des Bootsektors
+ bne.b    db_ac_loop               ; Fehler beim Ausfuehren des Bootsektors
      
 dmab_ende:
  rts
@@ -469,20 +469,20 @@ dmab_ende:
 
 ;-------------------------------------------
 ;
-;Bootsektor ausführen
+;Bootsektor ausfuehren
 ;
 ;Register a0 bleibt erhalten
 ;
 dmab_exec:     
  move.l   hdv_rw,-(sp)
  movea.l  _dskbufp,a0
- move.l   #'DMAr',d3               ; Kennung für Platte: habe DMAread/write
- moveq    #0,d5                    ; ST: von erster bootfähiger Partition booten
+ move.l   #'DMAr',d3               ; Kennung fuer Platte: habe DMAread/write
+ moveq    #0,d5                    ; ST: von erster bootfaehiger Partition booten
  cmpi.b   #3,machine_type
  bne.b    dmab_no_scu              ; nur der TT hat eine SCU
  move.b   $ffff8e09,d1             ; SCU_1
  and.w    #$f8,d1
- bne.b    dmab_set_flag            ; Wert aus SCU übernehmen
+ bne.b    dmab_set_flag            ; Wert aus SCU uebernehmen
  move.l   a0,-(sp)                 ; a0 retten
  subq.l   #2,sp
  pea      (sp)
@@ -491,7 +491,7 @@ dmab_exec:
  bsr      _NVMaccess
  adda.w   #$a,sp
  move.w   (sp)+,d1                 ; RTC-Daten nach d1
- move.l   (sp)+,a0                 ; a0 zurück
+ move.l   (sp)+,a0                 ; a0 zurueck
  tst.w    d0                       ; Fehler ?
  bne.b    dmab_no_scu              ; ja
 
@@ -500,13 +500,13 @@ dmab_set_flag:
 
 dmab_no_scu:
      IFNE DEBUG
- move.l   a0,-(sp)                 ; enthält den hdv_rw!
+ move.l   a0,-(sp)                 ; enthaelt den hdv_rw!
  lea      strt_ss(pc),a0
  bsr      putstr
  move.l   (sp)+,a0
      ENDIF
 
- move.w   d4,d7                    ; TOS 3.06: Gerätenummer
+ move.w   d4,d7                    ; TOS 3.06: Geraetenummer
  lsl.w    #5,d7                    ; TOS 3.06: (Kompat. zu TOS 1.0 ?)
  jsr      (a0)
  move.l   (sp)+,a0
@@ -514,7 +514,7 @@ dmab_no_scu:
  moveq    #0,d0
  cmpa.l   hdv_rw,a0
  bne      db_exe_ende              ; Treiber installiert
- moveq    #-1,d0                   ; Treiber nicht installiert, nächstes dev
+ moveq    #-1,d0                   ; Treiber nicht installiert, naechstes dev
                                    ;  Alvar hatte diesen Befehl
                                    ;  auskommentiert !!??!! (=> d0 = ?)
      IFNE DEBUG
@@ -539,7 +539,7 @@ db_exe_ende:
 
 ;-----------------------------------------------------------
 ;
-;Bootsektor von Platte lesen, Prüfsumme bilden
+;Bootsektor von Platte lesen, Pruefsumme bilden
 ;
 ;IN
 ;    d4.w: dev
@@ -560,12 +560,12 @@ dmrd_loop:
  bsr      _DMAread
  lea      12(sp),sp
  tst.l    d0
- beq.b    dmrd_prf                 ; Lesen hat geklappt, Prüfsumme bilden
+ beq.b    dmrd_prf                 ; Lesen hat geklappt, Pruefsumme bilden
  dbra     d6,dmrd_loop
  moveq    #-1,d0                   ; Fehler aufgetreten
  rts
      
-dmrd_prf:                          ; Lesen hat geklappt, Prüfsumme bilden
+dmrd_prf:                          ; Lesen hat geklappt, Pruefsumme bilden
      IFNE DEBUG
  lea      prf_ss(pc),a0
  bsr      putstr
@@ -587,11 +587,11 @@ dmrd_pbad:
  rts
      ELSE
  movea.l  _dskbufp,a0
- bra      prfsum                   ; d0.w == 0, wenn Prüfsumme ok
+ bra      prfsum                   ; d0.w == 0, wenn Pruefsumme ok
      ENDIF
 
 ;
-;Abzutestende Geräte
+;Abzutestende Geraete
 dbd_scsi: dc.w 8, 9,10,11,12,13,14,15,-1
 dbd_acsi: dc.w 0, 1, 2, 3, 4, 5, 6, 7,-1
 
@@ -609,13 +609,13 @@ critical_error:
 
 *********************************************************************
 *
-* Der Zugriff bei Rwabs ist bei gesetztem LOCK nur für den
-* sperrenden Prozeß erlaubt
+* Der Zugriff bei Rwabs ist bei gesetztem LOCK nur fuer den
+* sperrenden Prozess erlaubt
 *
 
 IRwabs:
  movem.l  d3-d7/a3-a6,-(sp)
- subq.l   #4,sp                    ; Platz für Zeiger
+ subq.l   #4,sp                    ; Platz fuer Zeiger
  lea      12(a0),a0
  move.l   (a0),-(sp)               ; lrecno
  move.l   -(a0),d0                 ; recno/dev
@@ -623,13 +623,13 @@ IRwabs:
  move.w   d0,a1
  add.w    a1,a1
  add.w    a1,a1
- move.l   a1,4(sp)                 ; merken für DOS- Writeback
+ move.l   a1,4(sp)                 ; merken fuer DOS- Writeback
  move.l   dlockx(a1),d3
  beq.b    rwabs_ok
  cmp.l    act_pd,d3
  bne.b    rwabs_elocked
 rwabs_ok:
- clr.l    bufl_timer(a1)           ; für DOS- Writeback (als in Arbeit markieren)
+ clr.l    bufl_timer(a1)           ; fuer DOS- Writeback (als in Arbeit markieren)
  move.l   d0,-(sp)                 ; recno/dev
  move.l   -(a0),-(sp)              ; count/buf.lo
  move.l   -(a0),-(sp)              ; buf.hi/rwflag
@@ -638,7 +638,7 @@ rwabs_ok:
  lea      16(sp),sp
 rwabs_ende:
  move.l   (sp)+,a1
- move.l   _hz_200,bufl_timer(a1)   ; für DOS- Writeback
+ move.l   _hz_200,bufl_timer(a1)   ; fuer DOS- Writeback
  movem.l  (sp)+,d3-d7/a3-a6
  rte
      
@@ -701,7 +701,7 @@ flp_hdv_init:
 
  move.l   #$52,maxacctim           ; 0,4sec
  clr.w    _nflops
- clr.w    mediach_statx            ; 2*char, für A: und B: kein Diskwechsel
+ clr.w    mediach_statx            ; 2*char, fuer A: und B: kein Diskwechsel
  clr.w    current_disk             ; Disk A: liegt in Drive A:
  clr.w    d7                       ; mit Laufwerk A: beginnen
 fhi_loop:
@@ -716,7 +716,7 @@ fhi_loop:
  lea      $10(sp),sp
  tst.w    d0
  bne.b    fhi_nxt
- addq.w   #1,_nflops               ; noch eine Floppy gültig
+ addq.w   #1,_nflops               ; noch eine Floppy gueltig
  ori.w    #3,_drvbits+2            ; A: und B:
 fhi_nxt:
  addq.w   #1,d7
@@ -763,7 +763,7 @@ fbpb_read:
  bra      fbpb_err                 ; Ignorieren wird nicht zugelassen
 fbpb_read_ok:
 
-* Hier wird der "öffentliche" BiosParameterBlock berechnet
+* Hier wird der "",$94,"ffentliche" BiosParameterBlock berechnet
 
  move.l   a5,a2
 
@@ -784,7 +784,7 @@ fbpb_read_ok:
  bsr      intel16
  lsl.w    #5,d0                    ; *32 Bytes/Eintrag
  ext.l    d0
- divu     (a5),d0                  ; /b_recsiz (Sektorgröße)
+ divu     (a5),d0                  ; /b_recsiz (Sektorgroesse)
  move.w   d0,(a2)+                 ; b_rdlen eintragen, Rest ignorieren   (6)
 
  moveq    #$16,d0
@@ -794,8 +794,8 @@ fbpb_read_ok:
  addq.w   #1,d0
  move.w   d0,(a2)+                 ; b_fatrec = b_fsiz + 1               (10)
 
- add.w    6(a5),d0                 ; + b_rdlen  (Länge Root)
- add.w    8(a5),d0                 ; + b_fsiz   (Länge der 2. FAT)
+ add.w    6(a5),d0                 ; + b_rdlen  (Laenge Root)
+ add.w    8(a5),d0                 ; + b_fsiz   (Laenge der 2. FAT)
  move.w   d0,(a2)+                 ; = b_datrec (Anfang des Datenbereichs)
 
  moveq    #$13,d0                  ; NSECTS
@@ -811,15 +811,15 @@ fbpb_read_ok:
  move.w   d0,(a2)+                 ; Bit 0: FAT- Typ 12 Bit
                                    ; Bit 1: nur eine FAT
 
-* Es folgt der "nichtöffentliche" Teil
+* Es folgt der "nicht",$94,"ffentliche" Teil
 
- addq.l   #2,a2                    ; $12(a5) zunächst überspringen
+ addq.l   #2,a2                    ; $12(a5) zunaechst ueberspringen
 
  moveq    #$1a,d0                  ; NSIDES
  bsr      intel16
  move.w   d0,(a2)+                 ; $14(a5) = NSIDES
 
- addq.l   #2,a2                    ; $16(a5) zunächst überspringen
+ addq.l   #2,a2                    ; $16(a5) zunaechst ueberspringen
 
  moveq    #$18,d0
  bsr      intel16
@@ -839,10 +839,10 @@ fbpb_read_ok:
  move.w   d0,(a2)+                 ; $1a(a5) = NHID
 
  move.l   8(a6),d0                 ; serial
- clr.b    d0                       ; nur 24 Bit (unnötig, aber sicherheitsh.)
+ clr.b    d0                       ; nur 24 Bit (unnoetig, aber sicherheitsh.)
  move.l   d0,(a2)+
 
-; eingefügt 12.10.97:
+; eingefuegt 12.10.97:
 
  move.b   $27(a6),d0
  lsl.w    #8,d0
@@ -853,7 +853,7 @@ fbpb_read_ok:
  move.b   $2a(a6),d0
  move.l   d0,(a2)                  ; MS-Seriennummer im BPB
 
-; Ende der Einfügung
+; Ende der Einfuegung
 
 * Mediach- Status berechnen
 
@@ -863,7 +863,7 @@ fbpb_read_ok:
  moveq    #1,d0
 fbpb_setmed:
  move.b   d0,mediach_statx(a4)
- move.l   a5,d0                    ; BPB zurückgeben
+ move.l   a5,d0                    ; BPB zurueckgeben
 fbpb_ende:
  movem.l  (sp)+,a6/a5/a4
  rts
@@ -876,7 +876,7 @@ fbpb_err:
 *
 * int intel16( d0+a6 = char intelword[2] )
 *
-* a6 muß _dskbufp sein
+* a6 muss _dskbufp sein
 *
 
 intel16:
@@ -893,7 +893,7 @@ intel16:
 *
 
 flp_mediach:
- move.w   4(sp),d1                 ; Gerätenummer (0 oder 1)
+ move.w   4(sp),d1                 ; Geraetenummer (0 oder 1)
  moveq    #EUNDEV,d0
  cmpi.w   #2,d1
  bcc.b    flpmediach_end                ; Nummer >= 2
@@ -961,7 +961,7 @@ tstmediach_l1:
  cmp.l    #$10000,d5               ; Retry ?
  beq.b    tstmediach_loop                ; ja
  move.l   d5,d0
- bmi.b    tstmc_ende               ; Fehlercode zurückgeben
+ bmi.b    tstmc_ende               ; Fehlercode zurueckgeben
  move.l   _dskbufp,a0
  move.l   8(a0),d1
  clr.b    d1                       ; Seriennummer im Diskpuffer
@@ -971,7 +971,7 @@ tstmediach_l1:
  cmp.l    d1,d2
  bne.b    tstmc_ende               ; ungleich => return(2L)
 
-; eingefügt 12.10.97:
+; eingefuegt 12.10.97:
 
  move.b   $27(a0),d1
  lsl.w    #8,d1
@@ -983,12 +983,12 @@ tstmediach_l1:
  cmp.l    $20(a5),d1               ; MS-Seriennummer im BPB
  bne.b    tstmc_ende               ; ungleich => return(2L)
 
-; Ende der Einfügung
+; Ende der Einfuegung
 
  movea.w  d6,a0
  move.b   wpstat(a0),wplatch(a0)   ; kopiere Schreibschutzstatus (?)
  bne.b    tstmc_ok
- clr.b    mediach_statx(a0)        ; lösche Mediach-Flag
+ clr.b    mediach_statx(a0)        ; loesche Mediach-Flag
 tstmc_ok:
  moveq    #0,d0
 tstmc_ende:
@@ -1067,7 +1067,7 @@ _flp_rwabs:
  mulu     #fbpb_sizeof,d1
  add.w    d1,a5                    ; a5 zeigt auf den BPB
      IFNE HADES
- sf       d7                       ; beim Hades auch ungerade möglich
+ sf       d7                       ; beim Hades auch ungerade moeglich
      ELSE
  move.l   a3,d0
  btst     #0,d0
@@ -1119,7 +1119,7 @@ _flprwabs_l4:
 * Sektornummer von [0..SPT-1] ins Intervall [1..SPT]
 _flprwabs_l5:
  addq.w   #1,d6
- swap     d6                       ; d6 zurückdrehen, Sektor ins Hiword
+ swap     d6                       ; d6 zurueckdrehen, Sektor ins Hiword
 
 * Critical- Error- Retry- Schleife
 
@@ -1206,7 +1206,7 @@ _rwabs_critic:
  bsr      critical_error           ; Abbruch,Wiederholen,Ignorieren ?
  addq.l   #4,sp
  tst.l    d0
- bmi      _rwabs_ende              ; Abbruch, Fehlercode zurückgeben
+ bmi      _rwabs_ende              ; Abbruch, Fehlercode zurueckgeben
  cmp.l    #$10000,d0
  bne.b    _rwabs_ok                ; Ignorieren, weitermachen
 * Der Benutzer forderte: "NOCHMAL"
@@ -1220,7 +1220,7 @@ _rwabs_critic:
  moveq    #E_CHNG,d0
  bra      _rwabs_ende
 
-* Endlich ist die Operation ausgeführt worden
+* Endlich ist die Operation ausgefuehrt worden
 
 _rwabs_ok:
  moveq    #0,d0
@@ -1326,15 +1326,15 @@ _Protobt:
  tst.w    (a1)                     ; isexec
  bge.b    proto_w1                 ; wird hiermit festgelegt
 * execflag soll bleiben, also merken
- clr.w    (a1)                     ; per Default nicht ausführbar
+ clr.w    (a1)                     ; per Default nicht ausfuehrbar
  move.l   a2,a0
  bsr      prfsum                   ; liefert ZERO, falls = $1234
  lea      8(sp),a0                 ; a0 restaurieren
- bne.b    proto_w1                 ; nicht ausführbar, ok
- st       (a1)                     ; ausführbar
+ bne.b    proto_w1                 ; nicht ausfuehrbar, ok
+ st       (a1)                     ; ausfuehrbar
 proto_w1:
  move.l   (a0)+,d0                 ; serial
- blt.b    proto_noser              ; nicht ändern
+ blt.b    proto_noser              ; nicht aendern
  cmp.l    #$ffffff,d0
  ble.b    proto_w2                 ; angegeben
  bsr      _Random
@@ -1345,13 +1345,13 @@ proto_w2:
  move.b   -3(a0),10(a2)            ; 3 Bytes kopieren
 proto_noser:
  move.w   (a0)+,d0                 ; Disktyp
- blt.b    proto_notyp              ; < 0, nicht ändern
+ blt.b    proto_notyp              ; < 0, nicht aendern
  cmpi.w   #4,d0                    ; 4 ist HD !
  bls.b    proto_ok                 ; <= 3, ok
- moveq    #3,d0                    ; Falscher Disktyp => 3 wählen
+ moveq    #3,d0                    ; Falscher Disktyp => 3 waehlen
 proto_ok:
  lea      proto_data(pc),a1
- mulu     #$13,d0                  ; Länge der Tabellenelemente
+ mulu     #$13,d0                  ; Laenge der Tabellenelemente
  add.w    d0,a1                    ; Quelle
  lea      $b(a2),a0                ; Ziel
  moveq    #$13-1,d1
@@ -1359,14 +1359,14 @@ proto_loop:
  move.b   (a1)+,(a0)+
  dbra     d1,proto_loop            ; Bootsektordaten kopieren
 proto_notyp:
- move.l   a2,a0                    ; Sektorprüfsumme
+ move.l   a2,a0                    ; Sektorpruefsumme
  move.w   #255-1,d1                ; der ersten 255 Worte
  bsr      prfsum2                  ; schon $1234 subtrahiert
  neg.w    d0
  move.w   d0,(a0)                  ; letztes Wort, damit Summe $1234 stimmt
- tst.w    $e(sp)                   ; soll Bootsektor ausführbar sein ?
+ tst.w    $e(sp)                   ; soll Bootsektor ausfuehrbar sein ?
  bne.b    proto_ende               ; ja, Ende
- addq.w   #1,(a0)                  ; nein, Summe erhöhen
+ addq.w   #1,(a0)                  ; nein, Summe erhoehen
 proto_ende:
  moveq    #0,d0                    ; trotz "void" geben wir E_OK
  rts
@@ -1389,14 +1389,14 @@ prfsum_loop:
  rts
 
 
-proto_data:  /* Daten für Protobt */
+proto_data:  /* Daten fuer Protobt */
 
 /* Disktyp 0: Einseitig, LD (180k) */
  DC.B     $00,$02   ; BPS     = 512     Bytes/Sektor
  DC.B     $01       ; SPC     = 1       Sektor/Cluster
  DC.B     $01,$00   ; RES     = 1       reservierter Sektor
  DC.B     $02       ; NFATS   = 2       FATs
- DC.B     $40,$00   ; NDIRS   = 64      Einträge im Wurzelverzeichnis
+ DC.B     $40,$00   ; NDIRS   = 64      Eintraege im Wurzelverzeichnis
  DC.B     $68,$01   ; NSECTS  = 360     Sektoren gesamt
  DC.B     $fc       ; MEDIA   = $fc     Media Byte
  DC.B     $02,$00   ; SPF     = 2       Sektoren/FAT

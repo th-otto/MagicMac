@@ -5,23 +5,23 @@
 *
 *         letzte Modifikation:			29.10.95
 *
-* MODUL fÅr Shellsort- Algorithmus.
+* MODUL fuer Shellsort- Algorithmus.
 * Syntax wie bei QSORT.
 * Der Algorithmus ist NICHT rekursiv, funktioniert daher
 *  auch bei kleinem Stack.
-* Der Algorithmus ist bestmîglich optimiert, indem:
+* Der Algorithmus ist bestmoeglich optimiert, indem:
 *
-* 1) AUSSCHLIEûLICH register- Variablen benutzt werden
+* 1) AUSSCHLIESSLICH register- Variablen benutzt werden
 * 2) nicht mit Indizes, sondern mit Zeigern gerechnet wird,
-*	damit alle Multiplikationen auûerhalb der inneren Schleifen
-*	ausgefÅhrt werden
-* 3) FÅr long oder void * wird eine besonders schnelle Vertauschung
-*    von Elementen durchgefÅhrt
+*	damit alle Multiplikationen ausserhalb der inneren Schleifen
+*	ausgefuehrt werden
+* 3) Fuer long oder void * wird eine besonders schnelle Vertauschung
+*    von Elementen durchgefuehrt
 *
-* NEU:	<udata> wird an die Vergleichsfunktion Åbergeben, um
-*		z.B. Sortiermodi zu ermîglichen.
+* NEU:	<udata> wird an die Vergleichsfunktion uebergeben, um
+*		z.B. Sortiermodi zu ermoeglichen.
 *
-* Verbesserungsmîglichkeit: assembleroptimierte memxchg- Funktion
+* Verbesserungsmoeglichkeit: assembleroptimierte memxchg- Funktion
 *
 *******************************************************************/
 
@@ -63,13 +63,13 @@ void shelsort(char *base, size_t count, size_t size,
 
 
 
-	k2 = count / 2;				/* k2 = ElementzÑhler */
+	k2 = count / 2;				/* k2 = Elementzaehler */
 	count *= size;					/* count: max-Byte */
 	if	(0 == (((long) base) & 1) && size == 4L)
 		xchg = longxchg;
 	while(k2 > 0)
 		{
-		k = k2 * size;				/* k = BytezÑhler */
+		k = k2 * size;				/* k = Bytezaehler */
 		for	(i = k; i < count; i += size)
 			{
 			j = base + i - k;

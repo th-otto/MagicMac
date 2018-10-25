@@ -1,7 +1,7 @@
 /*
 *
 * Alle Funktionen des MagiC-Kernels, die von
-* PureC aus aufgerufen werden können
+* PureC aus aufgerufen werden koennen
 *
 */
 

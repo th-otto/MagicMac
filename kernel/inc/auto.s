@@ -4,7 +4,7 @@
 ;trap	#$d					; bios Kbshift
 ;addq.l	#4,sp
 ;btst	#2,d0				; CTRL ?
-;bne.b	no_autop				; ja, AUTO nicht ausführen
+;bne.b	no_autop				; ja, AUTO nicht ausfuehren
 
 * Jetzt (ab MagiC 5.01) die magx.inf laden und auswerten
 
@@ -28,25 +28,25 @@
  tst.l	d0
  beq.b	bot_no_coo
  cmpi.l	#NCOOKIES,d0
- bcs.b	bot_no_coo			; Mindestgröße
+ bcs.b	bot_no_coo			; Mindestgroesse
 	DEB	'ja, neue Cookies anlegen!'
  move.l	d0,-(sp)				; Anzahl merken
  lsl.l	#3,d0				; * 8 wg. 2 LONGs pro Eintrag
  move.l	d0,-(sp)
  gemdos	Malloc
  addq.l	#6,sp
- move.l	(sp)+,d1				; Anzahl zurück
+ move.l	(sp)+,d1				; Anzahl zurueck
  tst.l	d0
- beq.b 	bot_no_coo			; nicht genügend Speicher
+ beq.b 	bot_no_coo			; nicht genuegend Speicher
  move.l	_p_cookies,a0
  move.l	d0,a1
 bot_coo_cp_loop:
- move.l	(a0)+,(a1)+			; Cookie-Schlüssel kopieren
+ move.l	(a0)+,(a1)+			; Cookie-Schluessel kopieren
  beq.b	bot_coo_cp_ende		; Ende-Zeichen
  move.l	(a0)+,(a1)+
  bra.b	bot_coo_cp_loop
 bot_coo_cp_ende:
- move.l	d1,(a1)+				; neue Länge eintragen
+ move.l	d1,(a1)+				; neue Laenge eintragen
  move.l	d0,a0				; Anfang
  lsl.l	#3,d1				; Anzahl * 8
  add.l	d1,a0				; Block-Ende
@@ -59,16 +59,16 @@ bot_coo_ende:
  move.l	d0,_p_cookies			; Zeiger umsetzen
 bot_no_coo:
 
-* Jetzt (ab MagiC 6) log-Datei öffnen
+* Jetzt (ab MagiC 6) log-Datei oeffnen
 
-	DEB	'BOOT.LOG öffnen?'
+	DEB	'BOOT.LOG �ffnen?'
  move.l	p_mgxinf,a0
- jsr		rinf_log				; Log-Datei öffnen
+ jsr		rinf_log				; Log-Datei oeffnen
  move.l	d0,log_fd
  bmi.b	bot_nolog
  move.l	dev_vecs+$68,log_oldconout	; alten Bconout-Vektor merken
  move.l	#bconout_log,dev_vecs+$68; Vektor umsetzen
- move.l	act_pd,log_fd_pd			; PD für Handle merken
+ move.l	act_pd,log_fd_pd			; PD fuer Handle merken
 bot_nolog:
 
 * Jetzt (ab MagiC 6) Startbild laden
@@ -83,13 +83,13 @@ bot_nolog:
  jsr		rinf_img				; Startbild anzeigen
 no_eddi:
 
-* Jetzt alle Geräte wieder löschen (waren nur für Hddriver)
+* Jetzt alle Geraete wieder loeschen (waren nur fuer Hddriver)
 
  jsr		deleddev
 
 * Jetzt XTENSION-Ordner, dann AUTO-Ordner
 
-	DEB	'Gerätetreiber (DEV) laden'
+	DEB	'Ger�tetreiber (DEV) laden'
  lea 	devdir_s(pc),a5
  lea 	devpgm_s(pc),a6
  bsr 	auto_programs			; \GEMSYS\MAGIC\XTENSION\*.DEV
@@ -97,35 +97,35 @@ no_eddi:
  lea 	xfsdir_s(pc),a5
  lea 	xfspgm_s(pc),a6
  bsr 	auto_programs			; \GEMSYS\MAGIC\XTENSION\*.XFS
-	DEB	'BIOS-Gerätedateien aus MAGX.INF konfigurieren'
+	DEB	'BIOS-Ger�tedateien aus MAGX.INF konfigurieren'
  move.l	p_mgxinf,a0
  jsr		rinf_bdev
-	DEB	'Restliche Gerätedateien initialisieren'
+	DEB	'Restliche Ger�tedateien initialisieren'
  jsr		iniddev1
-	DEB	'Geräte-Handles aus MAGX.INF zuweisen'
+	DEB	'Ger�te-Handles aus MAGX.INF zuweisen'
  move.l	p_mgxinf,a0
  jsr		rinf_dvh
 	DEB	'Restliche Handles des DOS initialisieren'
  jsr		iniddev2
-	DEB	'AUTOEXEC.BAT ausführen'
+	DEB	'AUTOEXEC.BAT ausf�hren'
  lea 	autoexec_s(pc),a6
  bsr 	autoexec				; \AUTO\AUTOEXEC.BAT
- tst.w	d0					; ausgeführt ?
+ tst.w	d0					; ausgefuehrt ?
  beq.b	no_autop				; ja, OK
-	DEB	'kein AUTOEXEC.BAT => AUTO-Ordner ausführen'
+	DEB	'kein AUTOEXEC.BAT => AUTO-Ordner ausf�hren'
  lea 	autodir_s(pc),a5
  lea 	autopgm_s(pc),a6
  bsr 	auto_programs			; \AUTO\*.PRG
 no_autop:
 
-* Boot-Log schließen
+* Boot-Log schliessen
 
-	DEB	'BOOT.LOG schließen'
+	DEB	'BOOT.LOG schlie�en'
  move.l	log_fd,d0
  bmi.b	bot_nolog2
  move.l	dev_vecs+$68,a1
  cmpa.l	#bconout_log,a1
- bne.b	bot_logchg			; Achtung: Vektor geändert!
+ bne.b	bot_logchg			; Achtung: Vektor geaendert!
  move.l	log_oldconout,dev_vecs+$68	; Vektor restaurieren
 bot_logchg:
  move.w	d0,-(sp)
@@ -168,11 +168,11 @@ bot_nodcr:
  move.b	d0,(a5)
 
 
-* Diese Schleife wird beim Auflösungswechsel
+* Diese Schleife wird beim Aufloesungswechsel
 * durchlaufen
 
 resolut_change_loop:
-	DEB	'AES ausführen'
+	DEB	'AES ausf�hren'
 	IFNE	MILANCOMP
 * CPU-Cache einschalten
  move.w	#1,-(sp)				; enable
@@ -189,7 +189,7 @@ resolut_change_loop:
 	ENDIF
 
  pea 	deflt_env
- pea 	aessys_s(pc)			; Prozeßname
+ pea 	aessys_s(pc)			; Prozessname
  pea 	4					; Bit 2, d.h. Malloc vom TT-RAM
  move.w	#107,-(sp)			; Basepage erstellen (+prgflags+name)
  move.w	#$4b,-(sp)
@@ -212,53 +212,53 @@ bot_cmd:
  jsr		read_inf				; INF-Datei neu lesen
  move.l	d0,p_mgxinf
 bot_was_inf:
- bra		resolut_change_loop		; war Auflösungswechsel
+ bra		resolut_change_loop		; war Aufloesungswechsel
 
 ;jmp 	sys_start 			; bei Programmende: Reset
 
 
 **********************************************************************
 *
-* Bconout(CON) Handler für Boot-Log-Datei
+* Bconout(CON) Handler fuer Boot-Log-Datei
 *
-* MagiC 6.01: Semaphore für etv_critic berücksichtigen
+* MagiC 6.01: Semaphore fuer etv_critic beruecksichtigen
 *
 
 bconout_log:
  tst.b	criticret				; Handler aktiv?
  bne.b	bcl_critic			; ja!
- move.l	act_pd,-(sp)			; alten Prozeßzeiger merken
- move.l	log_fd_pd,act_pd		; Prozeßzeiger für Handle setzen
+ move.l	act_pd,-(sp)			; alten Prozesszeiger merken
+ move.l	log_fd_pd,act_pd		; Prozesszeiger fuer Handle setzen
  pea		11(sp)
  pea		1
- move.w	log_fd+2,-(sp)			; Lobyte ist Handle (prozeßlokal!)
+ move.w	log_fd+2,-(sp)			; Lobyte ist Handle (prozesslokal!)
  gemdos	Fwrite
  adda.w	#12,sp
- move.l	(sp)+,act_pd			; alten Prozeßzeiger restaurieren
+ move.l	(sp)+,act_pd			; alten Prozesszeiger restaurieren
  rts
 bcl_critic:
- move.l	log_oldconout,-(sp)		; springe über alten Vektor
+ move.l	log_oldconout,-(sp)		; springe ueber alten Vektor
  rts
 
 
 autoexec_s:
- DC.B	'\AUTO\AUTOEXEC.BAT',0
+ DC.B	$5c,'AUTO',$5c,'AUTOEXEC.BAT',0
 autodir_s:
- DC.B	'\AUTO\'
+ DC.B	$5c,'AUTO',$5c
 autopgm_s:
  DC.B	'*.PRG',0
 xfsdir_s:
- DC.B	'\GEMSYS\MAGIC\XTENSION\'
+ DC.B	$5c,'GEMSYS',$5c,'MAGIC',$5c,'XTENSION',$5c
 xfspgm_s:
  DC.B	'*.XFS',0
 devdir_s:
- DC.B	'\GEMSYS\MAGIC\XTENSION\'
+ DC.B	$5c,'GEMSYS',$5c,'MAGIC',$5c,'XTENSION',$5c
 devpgm_s:
  DC.B	'*.DEV',0
 aessys_s:
  DC.B	'AESSYS',0
 environment_pattern:
- DC.B	'PATH=;#:\',0,0,-1
+ DC.B	'PATH=;#:',$5c,0,0,-1
 cmdname:
  DC.B	'COMMAND.PRG',0
 
@@ -282,7 +282,7 @@ set_bootdrive:
  move.l	_drvbits,d0			; eingetragene Laufwerke
  move.w	_bootdev,d1			; von hier booten
  btst	d1,d0				; Bootlaufwerk eingetragen ?
- bne.b	stbd_ok				; ja, ausführen
+ bne.b	stbd_ok				; ja, ausfuehren
  tst.w	d1					; Bootdevice ist schon A:
  beq.b	stbd_ok				; ja, nichts tun
  clr.w	_bootdev				; Bootdevice auf A:
@@ -302,10 +302,10 @@ stbd_ok:
 *
 * long autoexec( a6 = char *pgmname )
 *
-* Prüft, ob im Verzeichnis <path> eine Datei AUTOEXEC.BAT liegt, und
-* führt sie ggf. aus.
-* Rückgabe 0: AUTOEXEC.BAT ausgeführt
-*		 1: nicht ausgeführt
+* Prueft, ob im Verzeichnis <path> eine Datei AUTOEXEC.BAT liegt, und
+* fuehrt sie ggf. aus.
+* Rueckgabe 0: AUTOEXEC.BAT ausgefuehrt
+*		 1: nicht ausgefuehrt
 *
 * Aufbau der Datei AUTOEXEC.BAT:
 *	zeile = Leerzeile
@@ -320,9 +320,9 @@ BUF		SET	XATTR+xattr_sizeof
 OFFS 	SET	BUF+128
 
 	IF	DEBUG3
-__s1: DC.B	'AUTOEXEC.BAT geöffnet',13,10,0
+__s1: DC.B	'AUTOEXEC.BAT ge',$94,'ffnet',13,10,0
 __s2: DC.B	'Fcntl(FSTAT) erfolgreich',13,10,0
-__s3: DC.B	'Speicher für AUTOEXEC.BAT alloziert',13,10,0
+__s3: DC.B	'Speicher f',$81,'r AUTOEXEC.BAT alloziert',13,10,0
 __s4: DC.B	'AUTOEXEC.BAT geladen',13,10,0
 __s5: DC.B	'starte _',0
 __s6: DC.B	'_',13,10,0
@@ -331,9 +331,9 @@ __s6: DC.B	'_',13,10,0
 
 autoexec:
  movem.l	a3/a4/d7,-(sp)
- lea 	-OFFS(sp),sp			; Platz für Programmnamen und DTA
-; Datei zum Lesen öffnen
- clr.w	-(sp)				; Öffnen zum Lesen
+ lea 	-OFFS(sp),sp			; Platz fuer Programmnamen und DTA
+; Datei zum Lesen oeffnen
+ clr.w	-(sp)				; Oeffnen zum Lesen
  move.l	a6,-(sp)				; Pfad
  move.w	#$3d,-(sp)			; Fopen
  trap	#1
@@ -344,7 +344,7 @@ autoexec:
  lea 	__s1(pc),a0
  jsr 	putstr
 	ENDIF
-; per FSTAT Länge ermitteln
+; per FSTAT Laenge ermitteln
  move.w	#FSTAT,-(sp)
  pea 	XATTR+2(sp)
  move.w	d7,-(sp)				; handle
@@ -359,12 +359,12 @@ autoexec:
 	ENDIF
 ; Speicher allozieren
  move.l	XATTR+xattr_size(sp),-(sp)
- addq.l	#2,(sp)				; 2 Bytes mehr, Platz für EOF
+ addq.l	#2,(sp)				; 2 Bytes mehr, Platz fuer EOF
  move.w	#$48,-(sp)			; Malloc
  trap	#1
  addq.l	#6,sp
  tst.l	d0
- beq 	autoe_close			; nicht genügend Speicher
+ beq 	autoe_close			; nicht genuegend Speicher
  move.l	d0,a4
 	IF	DEBUG3
  lea 	__s3(pc),a0
@@ -389,13 +389,13 @@ autoexec:
 * Pfad kopieren
 
  lea 	BUF(sp),a0
- moveq	#5,d0				; strlen("\AUTO\")-1
+ moveq	#5,d0				; strlen("\\AUTO\\")-1
 autoe_rploop:
  move.b	(a6)+,(a0)+
  dbra	d0,autoe_rploop
  move.l	a0,a5
 
-* Schleife zum Ausführen
+* Schleife zum Ausfuehren
 
 autoe_lloop:
  tst.b	(a3)
@@ -416,13 +416,13 @@ autoe_ploope1:
  subq.l	#1,a3				; EOS gelesen, Zeiger auf EOS
  bra.b	autoe_ploopen
 autoe_ploope2:
- move.b	(a3)+,d0				; irgendwas, überlesen bis LF
+ move.b	(a3)+,d0				; irgendwas, ueberlesen bis LF
  beq.b	autoe_ploope1
  cmpi.b	#$a,d0
  bne.b	autoe_ploope2
 autoe_ploopen:
  clr.b	(a0)
-; Prüfen, ob absoluter Pfad
+; Pruefen, ob absoluter Pfad
 	IF	DEBUG3
  lea 	__s5(pc),a0
  jsr 	putstr
@@ -436,13 +436,13 @@ autoe_ploopen:
  move.l	a5,a0
  cmpi.b	#':',1(a5)			; absoluter Pfad ?
  beq.b	autoe_abs 			; ja
- lea 	BUF(sp),a0			; nein, Pfad davorhängen!
+ lea 	BUF(sp),a0			; nein, Pfad davorhaengen!
 autoe_abs:
  pea 	nullstring(pc)
  pea 	nullstring(pc)
  pea 	(a0)
  move.l	#$4b0000,-(sp) 		; Laden und Starten
- trap	#1					; Programm ausführen
+ trap	#1					; Programm ausfuehren
  lea 	16(sp),sp
  bra 	autoe_lloop
 
@@ -467,8 +467,8 @@ autoe_err:
 *
 * void auto_programs( a5 = char *path, a6 = char *pgmtyp )
 *
-* führt den AUTO- Ordner aus		(\AUTO\*.PRG)
-* führt den XTENSION- Ordner aus	(\GEMSYS\MAGIC\XTENSION\*.DEV)
+* fuehrt den AUTO- Ordner aus		(\AUTO\*.PRG)
+* fuehrt den XTENSION- Ordner aus	(\GEMSYS\MAGIC\XTENSION\*.DEV)
 *							(\GEMSYS\MAGIC\XTENSION\*.XFS)
 *
 
@@ -477,7 +477,7 @@ BUF		SET	DTA+dta_sizeof
 OFFS 	SET	BUF+128
 
 auto_programs:
- lea 	-OFFS(sp),sp			; Platz für Programmnamen und DTA
+ lea 	-OFFS(sp),sp			; Platz fuer Programmnamen und DTA
  move.w	#7,-(sp)				; alle Dateitypen
  move.l	a5,-(sp)				; Pfad
  move.w	#$4e,-(sp)			; Fsfirst
@@ -499,13 +499,13 @@ autop_cploop:
  bne.b	autop_cploop
  lea 	DTA+dta_name(sp),a0
 autop_catloop:
- move.b	(a0)+,(a1)+			; Dateinamen anhängen
+ move.b	(a0)+,(a1)+			; Dateinamen anhaengen
  bne.b	autop_catloop
  pea 	nullstring(pc)
  pea 	nullstring(pc)
  pea 	BUF+8(sp) 			; auto_pgmname
  move.l	#$4b0000,-(sp) 		; Laden und Starten
- trap	#1					; Programm ausführen
+ trap	#1					; Programm ausfuehren
  lea 	16-8(sp),sp			; 6 Dummybytes auf Stack
 ;clr.w	-(sp)
 ;clr.l	-(sp)				; dummies

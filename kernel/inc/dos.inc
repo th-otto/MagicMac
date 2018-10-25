@@ -103,11 +103,11 @@ O_COMPAT       EQU  0         /* compatibility mode */
 O_DENYRW       EQU  $10       /* deny both read and write access */
 O_DENYW        EQU  $20       /* deny write access to others */
 O_DENYR        EQU  $30       /* deny read access to others */
-O_DENYNONE     EQU  $40       /* don't deny any access to others */
+O_DENYNONE     EQU  $40       /* do not deny any access to others */
 
-O_NOINHERIT    EQU  $80       /* children can't access via this file descriptor */
-O_NDELAY       EQU  $100      /* don't block for i/o on this file */
-O_CREAT        EQU  $200      /* create file if it doesn't exist */
+O_NOINHERIT    EQU  $80       /* children cannot access via this file descriptor */
+O_NDELAY       EQU  $100      /* do not block for i/o on this file */
+O_CREAT        EQU  $200      /* create file if it does not exist */
 O_TRUNC        EQU  $400      /* truncate file to 0 bytes if it does exist */
 O_EXCL         EQU  $800      /* fail open if file exists */
 O_TTY          EQU  $2000     /* file is a terminal */
@@ -132,7 +132,7 @@ dta_drive:     DS.B      1    /* 0x14: Laufwerk (0..31)                    */
 dta_attr:      DS.B      1    /* 0x15: gefundenes Attribut                 */
 dta_time:      DS.W      1    /* 0x16: gefundene Zeit                      */
 dta_date:      DS.W      1    /* 0x18: gefundenes Datum                    */
-dta_len:       DS.L      1    /* 0x1a: gefundene Länge                     */
+dta_len:       DS.L      1    /* 0x1a: gefundene Laenge                     */
 dta_name:      DS.B      14   /* 0x1e: gefundener Dateiname                */
 dta_sizeof:
 

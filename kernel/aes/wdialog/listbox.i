@@ -7,7 +7,7 @@ LBOX_tree:			DS.L	1												;	OBJECT		*tree;
 																				;	
 LBOX_items:			DS.L	1												;	LBOX_ITEM	*items;			/* Zeiger auf die Liste der Elemente */
 LBOX_visible_a:	DS.W	1												;	WORD			visible_a;
-LBOX_obj_index:	DS.L	1												;	WORD			*obj_index;		/* Liste der Objekt-Indizes fÅr die EintrÑge */
+LBOX_obj_index:	DS.L	1												;	WORD			*obj_index;		/* Liste der Objekt-Indizes fuer die Eintraege */
 																				;
 LBOX_parent_box:	DS.W	1												;	WORD			parent_box;		/* Objektnummer des Hintergrundrechtecks der Box */
 LBOX_button1:		DS.W	1												;	WORD			button1;			/* Objektnummer des Scroll-Up/Left-Buttons */

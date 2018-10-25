@@ -1,10 +1,10 @@
 **********************************************************************
 *
-* Dieses Modul enthält die Dateitreiber für Speicherblöcke, d.h.
+* Dieses Modul enthaelt die Dateitreiber fuer Speicherbloecke, d.h.
 *
 *  FT_MEMBLK        virtuelle Verzeichnisse
 *  FT_SHM           shared memory
-*  FT_PROCESS       Prozeß
+*  FT_PROCESS       Prozess
 *
 
 DEBUG     EQU  16
@@ -29,15 +29,15 @@ DEBUG     EQU  16
 */
 
 
-; unterstützte Fcntl- Modi:
+; unterstuetzte Fcntl- Modi:
 
 SHMGETBLK      EQU  $4d00
 SHMSETBLK      EQU  $4d01
 
 ;PPROCADDR     EQU  $5001          ; *arg = ProcessControlStructure
 PBASEADDR      EQU  $5002          ; *arg = Basepage
-;PCTXTSIZE     EQU  $5003          ; *arg = Länge der ProcessContextStructure
-                                   ;        (2 Stück liegen vor der
+;PCTXTSIZE     EQU  $5003          ; *arg = Laenge der ProcessContextStructure
+                                   ;        (2 Stueck liegen vor der
                                    ;         ProcessControlStructure)
 ;PSETFLAGS     EQU  $5004          ; Malloc-Modus = arg
 ;PGETFLAGS     EQU  $5005          ; *arg = Malloc-Modus
@@ -46,7 +46,7 @@ PBASEADDR      EQU  $5002          ; *arg = Basepage
 ;PTRACEGO      EQU  $5008
 ;PTRACEFLOW    EQU  $5009
 ;PTRACESTEP    EQU  $500a
-PLOADINFO      EQU  $500c          ; Fülle (struct ploadinfo *) arg
+PLOADINFO      EQU  $500c          ; Fuelle (struct ploadinfo *) arg
 
 
 	TEXT
@@ -99,7 +99,7 @@ proc_drv:
 *
 * long memblk_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
@@ -121,7 +121,7 @@ proc_drv:
 *
 * long memblk_read(a0 = FD *f, a1 = char *buf, d0 = long count)
 *
-* Da es ein Verzeichnis ist, muß die Funktion berücksichtigt werden,
+* Da es ein Verzeichnis ist, muss die Funktion beruecksichtigt werden,
 * die bei a1 == NULL die Pufferadresse liefert.
 * d0 wird als "int" behandelt!
 *
@@ -135,9 +135,9 @@ memblk_read:
 _memblk_read:
  exg      a1,a0                    ; a0 = Zielpuffer oder NULL
  add.l    fd_fpos(a1),a2           ; a2 ist Lese/Schreibposition
- add.l    d0,fd_fpos(a1)           ; fseek schon ausführen
+ add.l    d0,fd_fpos(a1)           ; fseek schon ausfuehren
  move.l   a0,d2
- beq.b    mbr_ptr                  ; Pufferadresse zurückgeben
+ beq.b    mbr_ptr                  ; Pufferadresse zurueckgeben
 ;move.l   a0,a0                    ; dst
  move.l   a2,a1                    ; src
 ;move.w   d0,d0
@@ -167,18 +167,18 @@ proc_write:
 memblk_write:
  move.l   fd_xdata(a0),d2
 _memblk_write:
-; Schreibzugriff auf Blockgröße einschränken
+; Schreibzugriff auf Blockgroesse einschraenken
  move.l   fd_multi1(a0),a2
  move.l   fd_len(a2),d1
  sub.l    fd_fpos(a0),d1
  cmp.l    d1,d0
  ble.b    mbw_weiter
- move.l   d1,d0                    ; nicht über Dateiende schreiben!
+ move.l   d1,d0                    ; nicht ueber Dateiende schreiben!
 mbw_weiter:
  tst.l    d0
  ble.b    mbw_ende
  add.l    fd_fpos(a0),d2           ; d2 ist Lese/Schreibposition
- add.l    d0,fd_fpos(a0)           ; fseek schon ausführen
+ add.l    d0,fd_fpos(a0)           ; fseek schon ausfuehren
  move.l   d2,a0                    ; dst
 ;move.l   a1,a1                    ; src
 ;move.w   d0,d0
@@ -248,7 +248,7 @@ memblk_delete:
 *
 * Im Gegensatz zu Pipes usw. wird beim Fcreate nur der Verzeichnis-
 * eintrag erzeugt, kein Speicher alloziert.
-* Die Länge der Datei ist 0.
+* Die Laenge der Datei ist 0.
 *
 
 shm_create:
@@ -260,7 +260,7 @@ shm_create:
 *
 * long shm_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
@@ -273,9 +273,9 @@ shm_open:
 *
 * long shm_close(a0 = FD *f)
 *
-* Laut MTOS- Doku muß die Applikation selbst den Speicher freigeben,
+* Laut MTOS- Doku muss die Applikation selbst den Speicher freigeben,
 * deshalb passiert hier nichts.
-* Ich finde das dämlich, aber was hilft's ?
+* Ich finde das daemlich, aber was hilft es ?
 *
 
 memblk_open:
@@ -327,7 +327,7 @@ shm_set:
  movem.l  a0/a1,-(sp)
  move.l   a1,a0                    ; memblk
  move.l   act_pd,a1                ; PROC
- jsr      Memshare                 ; -> d0 ist Länge oder Fehlercode
+ jsr      Memshare                 ; -> d0 ist Laenge oder Fehlercode
  movem.l  (sp)+,a0/a1
  tst.l    d0
  bmi.b    shm_rts                  ; EIMBA ?
@@ -370,7 +370,7 @@ shmf_fionwrite:
 *
 * long shm_delete( a1 = DIR *dir )
 *
-* MagiC 6.10: Der Speicherblock-Referenzzähler wird dekrementiert.
+* MagiC 6.10: Der Speicherblock-Referenzzaehler wird dekrementiert.
 *
 
 shm_delete:
@@ -400,7 +400,7 @@ shs_ende:
 *
 * long proc_create(a0 = DIR *d, a1 = long arg)
 *
-* Die Länge der Datei ist 0, aber wird beim Fsnext/first korrigiert.
+* Die Laenge der Datei ist 0, aber wird beim Fsnext/first korrigiert.
 *
 
 proc_create:
@@ -414,10 +414,10 @@ proc_create:
 *
 * long proc_open(a0 = FD *f)
 *
-* fd_xdata ist bereits eingetragen. Da die Länge hier 0 war, muß die
-* korrekte Länge eingetragen werden.
+* fd_xdata ist bereits eingetragen. Da die Laenge hier 0 war, muss die
+* korrekte Laenge eingetragen werden.
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
@@ -428,7 +428,7 @@ proc_close:
 proc_open:
  moveq    #-1,d0
  move.l   fd_multi1(a0),a2
- move.l   d0,fd_len(a2)            ; Dateilänge unendlich
+ move.l   d0,fd_len(a2)            ; Dateilaenge unendlich
  moveq    #0,d0                    ; kein Fehler
  rts
 
@@ -502,9 +502,9 @@ proc_ioctl:
  bne.b    pio_err
  move.l   fd_xdata(a0),a0          ; Basepage
  move.l   p_procdata(a0),d0
- beq.b    pio_err2                 ; PROCDATA ungültig
+ beq.b    pio_err2                 ; PROCDATA ungueltig
  move.l   d0,a6                    ; a6 = PROCDATA *
- tst.b    pr_fname(a6)             ; Dateiname gültig?
+ tst.b    pr_fname(a6)             ; Dateiname gueltig?
  beq.b    pio_err4                 ; nein, Fehler
  move.l   a1,a5                    ; a5 = PLOADINFO *
  lea      pr_cmdlin(a6),a1
@@ -513,9 +513,9 @@ proc_ioctl:
  jsr      vmemcpy                   ; Kommandozeile kopieren
  lea      pr_fname(a6),a0
  jsr      strlen
- addq.l   #1,d0                    ; für EOS
+ addq.l   #1,d0                    ; fuer EOS
  cmp.w    (a5),d0
- bhi.b    pio_err3                 ; Überlauf
+ bhi.b    pio_err3                 ; Ueberlauf
  move.l   6(a5),a0
  lea      pr_fname(a6),a1
  jsr      vmemcpy                   ; Pfad kopieren
@@ -548,8 +548,8 @@ pio_end:
 
 proc_delete:
  move.l   dir_xdata(a1),a0         ; Basepage
- move.w   p_procid(a0),d0          ; pid gültig ?
- ble.b    prdel_ende               ; nein, einfach löschen
+ move.w   p_procid(a0),d0          ; pid gueltig ?
+ ble.b    prdel_ende               ; nein, einfach loeschen
 
  move.w   #SIGTERM,-(sp)
  move.w   d0,-(sp)                 ; pid
@@ -559,7 +559,7 @@ proc_delete:
 
  tst.l    d0
  bmi.b    prdel_rts                ; irgendein Fehler
- moveq    #1,d0                    ; ignorieren, d.h. noch nix löschen!
+ moveq    #1,d0                    ; ignorieren, d.h. noch nix loeschen!
 prdel_rts:
  rts
 
@@ -570,8 +570,8 @@ prdel_rts:
 ;move.l   a0,a0
  bsr      srch_process
  bmi.b    prdel_eaccdn             ; kein AES aktiv
- tst.l    d1                       ; Prozeß wartet auf Kind- Terminierung ?
- bne.b    prdel_kill               ; ja, Prozeß einfach killen
+ tst.l    d1                       ; Prozess wartet auf Kind- Terminierung ?
+ bne.b    prdel_kill               ; ja, Prozess einfach killen
 
  subq.l   #8,sp
  move.l   sp,a0
@@ -592,9 +592,9 @@ prdel_kill:
  move.l   p_context(a1),p_context(a0)
  move.l   p_reg(a1),p_reg(a0)           ; normaler Kontext
  move.l   p_res3(a1),p_res3(a0)
- move.l   p_res3+4(a1),p_res3+4(a0)     ; Kontext für ACC- Terminierung
+ move.l   p_res3+4(a1),p_res3+4(a0)     ; Kontext fuer ACC- Terminierung
  moveq    #1,d0                         ; Speicher freigeben
- move.l   a1,a0                         ; Prozeß löschen
+ move.l   a1,a0                         ; Prozess loeschen
  bsr      PDkill
 */
 

@@ -1,6 +1,6 @@
 /*
 *
-* Dieses Modul enthält allgemeine Routinen von MagiC, die von
+* Dieses Modul enthaelt allgemeine Routinen von MagiC, die von
 * von mehreren anderen Modulen verwendet werden.
 *
 * Die Routinen, die der Aufrufkonvention von PureC entsprechen,
@@ -60,7 +60,7 @@
 * aus MAGIDOS
 
 	XREF	act_pd
-	XREF	datemode			; für date2str
+	XREF	datemode			; fuer date2str
 
 
 	INCLUDE	"dos.inc"
@@ -136,7 +136,7 @@ hexw:
  move.w	d0,d7
  moveq	#4-1,d6				; 4 Hex- Stellen
 hexw_loop:
- rol.w	#4,d7				; höchstes Nibble in die unteren 4 Bit
+ rol.w	#4,d7				; hoechstes Nibble in die unteren 4 Bit
  move.w	d7,d0
  bsr.b	_hex
  dbra	d6,hexw_loop
@@ -222,7 +222,7 @@ fclr_ende:
 *
 * void vmemcpy(a0 = void *dst, a1 = void *src, d0 = unsigned int len
 *
-* ändert nur d1/a0/a1
+* aendert nur d1/a0/a1
 *
 
 vmemcpy:
@@ -419,7 +419,7 @@ mmov_2BE:
 *
 * char toupper(d0 = char c)
 *
-*  verändert nur d0!
+*  veraendert nur d0!
 *
 
 toupper:
@@ -444,8 +444,8 @@ toup_ende:
  rts
 
 sonder_s:
- DC.B	'äöüéàåçæñãõøœĳ',0
- DC.B	'ÄÖÜÉÀÅÇÆÑÃÕØŒĲ',0
+ DC.B	'',$84,'',$94,'',$81,'',$82,'',$85,'',$86,'',$87,'',$91,'',$a4,'',$b0,'',$b1,'',$b3,'',$b4,'',$c0,'',0
+ DC.B	'',$8e,'',$99,'',$9a,'',$90,'',$b6,'',$8f,'',$80,'',$92,'',$a5,'',$b7,'',$b8,'',$b2,'',$b5,'',$c1,'',0
 
 
 **********************************************************************
@@ -465,7 +465,7 @@ vstrcpy:
 *
 * int strcmp(a0 = char *s1, a1 = char *s2)
 *
-* ändert nur a0/a1
+* aendert nur a0/a1
 *
 
 strcmp:
@@ -520,7 +520,7 @@ stricmp_ende:
 *
 * long strlen(a0 = char *string)
 *
-* ändert a1/a0/d0
+* aendert a1/a0/d0
 *
 
 strlen:
@@ -540,7 +540,7 @@ str1:
 *
 * a0 = char * strchr(a0 = char *string, d0 = char c)
 *
-* ändert nur a0
+* aendert nur a0
 *
 
 strchr:
@@ -559,7 +559,7 @@ strchr_ende:
 *
 * a0 = char * strrchr(a0 = char *string, d0 = char c)
 *
-* ändert a1/a0
+* aendert a1/a0
 *
 
 strrchr:
@@ -579,7 +579,7 @@ strr_not:
 *
 * PUREC void strcat( char *dst, char *src )
 *
-* ändert nur a0/a1
+* aendert nur a0/a1
 *
 
 strcat:
@@ -614,7 +614,7 @@ strncpy_ende:
 * PUREC char *_ltoa( LONG l, char *s )
 *
 * Wandelt eine Zahl in eine Zeichenkette um und gibt den Zeiger
-* auf EOS zurück.
+* auf EOS zurueck.
 *
 
 _ltoa:
@@ -646,7 +646,7 @@ lta_loop1:
 lta_endloop1:
  subq.w	#1,d5			; Zahl war 0 ?
  bge.b	lta_loop2			; nein, 
- move.b	#'0',(a6)+		; nur Null übergeben
+ move.b	#'0',(a6)+		; nur Null uebergeben
  bra.b	lta_ende
 lta_loop2:
  move.b	0(sp,d5.w),(a6)+
@@ -667,8 +667,8 @@ lta_ende:
 *	tt.mm.jj
 *	 .. (usw.) ..
 *
-* datemode[0] enthält den Code 0=MTJ 1=TMJ 2=JMT 3=JTM
-* datemode[1] enthält das Trennzeichen
+* datemode[0] enthaelt den Code 0=MTJ 1=TMJ 2=JMT 3=JTM
+* datemode[1] enthaelt das Trennzeichen
 *
 
 date2str:
@@ -723,7 +723,7 @@ d2s_2:
 * Modus TMJ
 
 d2s_1:
- moveq	#0,d2			; Hiword löschen
+ moveq	#0,d2			; Hiword loeschen
  move.w	d0,d2
  andi.w	#31,d2			; d2 = Tag
  lsr.w	#5,d0
@@ -734,7 +734,7 @@ d2s_1:
  add.b	d1,d2
  move.b	d2,(a0)+			; Tag
  move.b	(datemode+1).w,(a0)+	; Trennzeichen
- moveq	#0,d2			; Hiword löschen
+ moveq	#0,d2			; Hiword loeschen
  move.w	d0,d2
  andi.w	#15,d2			; d2 = Monat
  lsr.w	#4,d0
@@ -746,10 +746,10 @@ d2s_1:
  move.b	d2,(a0)+			; Monat
  move.b	(datemode+1).w,(a0)+	; Trennzeichen
  addi.w	#80,d0
- andi.l	#$0000ffff,d0		; Hiword löschen
+ andi.l	#$0000ffff,d0		; Hiword loeschen
  divu	#100,d0
  clr.w	d0
- swap	d0				; Jahrhunderte löschen, nur 0..99
+ swap	d0				; Jahrhunderte loeschen, nur 0..99
  divu	#10,d0
  add.b	d1,d0
  move.b	d0,(a0)+			; Jahr*10
@@ -788,7 +788,7 @@ _spr_perc:
  addq.l	#1,a4
  cmpi.b	#'%',(a4) 			; zweites %
  beq.b	_spr_cpy
- move.b	(a4)+,d0				; nächstes Zeichen nach %
+ move.b	(a4)+,d0				; naechstes Zeichen nach %
  cmp.b	#'L',d0
  bne.b	_spr_w1
 * %L einsetzen
@@ -868,7 +868,7 @@ e83_ende:
 * void int_8_3(a0 = char *dst_int_name, a1 = char *src_name)
 *
 * Wandelt einen "normalen" Dateinamen mit '.' in die interne
-* Form 8+3 für ein 8+3 Eingabefeld um.
+* Form 8+3 fuer ein 8+3 Eingabefeld um.
 *
 
 int_8_3:
@@ -923,11 +923,11 @@ mkf_cp:
  subq.l	#1,a1				; a1 auf EOS oder ';'
  cmp.l	a0,d1				; Pfad leer?
  beq.b	mkf_err				; ja, nichts liefern
- cmpi.b	#'\',-1(a0)
+ cmpi.b	#$5c,-1(a0)
  beq.b	mkf_cat
  cmpi.b	#':',-1(a0)
  beq.b	mkf_cat
- move.b	#'\',(a0)+
+ move.b	#$5c,(a0)+
 mkf_cat:
  move.b	(a2)+,(a0)+
  bne.b	mkf_cat
@@ -944,7 +944,7 @@ mkf_err:
 *
 * Sucht eine Datei.
 *
-* Bit 0:	suche die Datei wörtlich, wenn ein Pfad	angegeben wurde.
+* Bit 0:	suche die Datei woertlich, wenn ein Pfad	angegeben wurde.
 * Bit 1:	suche in den angegebenen Suchpfaden, deren Liste durch NULL
 *		abgeschlossen wurde.
 * Bit 2:	suche im aktuellen Verzeichnis
@@ -953,8 +953,8 @@ mkf_err:
 *
 * Wenn die Datei gefunden wurde, wird in a0 der gefundene Pfad
 * eingetragen und <xa> initialisiert.
-* <xa> wird in jedem Fall zerstört.
-* Rückgabe: EFILNF oder E_OK.
+* <xa> wird in jedem Fall zerstoert.
+* Rueckgabe: EFILNF oder E_OK.
 *
 
 ffind:
@@ -972,7 +972,7 @@ ffind:
  tst.b	(a3)
  beq		ffi_efilnf		; leerer Name wird nie gefunden
 
-* Datei wörtlich suchen, wenn ein Pfad angegeben wurde
+* Datei woertlich suchen, wenn ein Pfad angegeben wurde
 
  btst	#0,d7
  beq.b	ffi_2			; weiter
@@ -1008,7 +1008,7 @@ ffi_2loop:
  tst.l	d0
  beq 	ffi_ok_cp			; gefunden
 
- bra.b	ffi_2loop			; nächster Suchpfad
+ bra.b	ffi_2loop			; naechster Suchpfad
 
 * Suche im aktuellen Verzeichnis
 
@@ -1042,7 +1042,7 @@ ffi_4_loop2:
  move.l	a1,a5			; Zeiger auf ';' oder EOS
 
  tst.b	(sp)				; leerer Name?
- beq.b	ffi_4_nxt			; ja, überspringen
+ beq.b	ffi_4_nxt			; ja, ueberspringen
 
  move.l	d5,-(sp)			; xa
  pea		4(sp)			; path
@@ -1054,8 +1054,8 @@ ffi_4_loop2:
 
 ffi_4_nxt:
  tst.b	(a5)+
- bne.b	ffi_4_loop2		; nächster Pfad in Liste
- bra.b	ffi_4loop			; nächster Suchpfad
+ bne.b	ffi_4_loop2		; naechster Pfad in Liste
+ bra.b	ffi_4loop			; naechster Suchpfad
 
 * ENDE
 
@@ -1065,7 +1065,7 @@ ffi_efilnf:
 ffi_ok_cp:
  move.l	sp,a0
 ffi_okloop:
- move.b	(a0)+,(a6)+		; lokalen Pfadpuffer zurückgeben
+ move.b	(a0)+,(a6)+		; lokalen Pfadpuffer zurueckgeben
  bne.b	ffi_okloop
 ffi_ok:
  moveq	#E_OK,d0
@@ -1082,9 +1082,9 @@ ffi_ende:
 * a0/d0 = char *fn_name(a0 = char *path)
 *
 * ermittelt zu einem kompletten Pfadnamen den reinen Dateinamen
-* und gibt ihn in a0 und d0 zurück.
+* und gibt ihn in a0 und d0 zurueck.
 *
-* verändert nicht a2
+* veraendert nicht a2
 *
 
 fn_name:
@@ -1096,7 +1096,7 @@ fnn_loop2:
  move.b	-(a0),d0
  cmpa.l	a1,a0
  bcs.b	fnn_ende
- cmp.b	#'\',d0
+ cmp.b	#$5c,d0
  beq.b	fnn_ende
  cmp.b	#':',d0
  bne.b	fnn_loop2
@@ -1167,7 +1167,7 @@ smfree:
 *
 * EQ/NE void *mmalloc(d0 = unsigned long size)
 *
-* Die Rückgabeadresse und Größe ist immer gerade, weil GEMDOS
+* Die Rueckgabeadresse und Groesse ist immer gerade, weil GEMDOS
 * darauf achtet.
 * Setzt das Z- Flag, falls zuwenig Speicher
 *

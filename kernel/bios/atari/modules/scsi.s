@@ -5,28 +5,28 @@
 * Interruptsteuerung:
 *
 * SCSI-DMA-Busfehler: Eingang I5 des TT-MFP
-* 1. aer für Bit 5 muß 0 sein, d.h. Interrupt wird ausgelöst beim
-*    Übergang von 1 auf 0
-* Polling über Bit 5 von gpip
+* 1. aer fuer Bit 5 muss 0 sein, d.h. Interrupt wird ausgeloest beim
+*    Uebergang von 1 auf 0
+* Polling ueber Bit 5 von gpip
 * Interrupt #7 des TT-MFP (Adresse $15c)
 
 * SCSI: Eingang I7 des TT-MFP
-* 1. aer für Bit 7 muß 1 sein, d.h. Interrupt wird ausgelöst beim
-*    Übergang von 0 auf 1
-* Polling über Bit 7 von gpip
+* 1. aer fuer Bit 7 muss 1 sein, d.h. Interrupt wird ausgeloest beim
+*    Uebergang von 0 auf 1
+* Polling ueber Bit 7 von gpip
 * Interrupt #15 des TT-MFP (Adresse $17c)
 
-* Während der Übertragung muß offenbar im Betriebsartenregister
+* Waehrend der Uebertragung muss offenbar im Betriebsartenregister
 * $fff785 des ncr 5380 das Bit 3 (enable process interrupt)
 * gesetzt sein.
 
 
 **********************************************************************
 *
-* Interruptroutine für TT-MFP, Interruptkanal #7 = I/O-Port 5
+* Interruptroutine fuer TT-MFP, Interruptkanal #7 = I/O-Port 5
 * (SCSI-DMA Busfehler)
 *
-* Rückgabewert -2
+* Rueckgabewert -2
 *
 
 int_scsidma:
@@ -43,16 +43,16 @@ int_scsidma:
  jsr      appl_IOcomplete               ; wartende APP aufwecken
  movem.l  (sp)+,d0-d2/a0-a2
 incrdma_ende:
- move.b   #$7f,isrb+$80                 ; service- Bit löschen (TT-MFP)
+ move.b   #$7f,isrb+$80                 ; service- Bit loeschen (TT-MFP)
  rte
 
 
 **********************************************************************
 *
-* Interruptroutine für TT-MFP, Interruptkanal #15 = I/O-Port 7
+* Interruptroutine fuer TT-MFP, Interruptkanal #15 = I/O-Port 7
 * (SCSI)
 *
-* Rückgabewert 0
+* Rueckgabewert 0
 *
 
 int_ncr:
@@ -68,7 +68,7 @@ int_ncr:
  jsr      appl_IOcomplete               ; wartende APP aufwecken
  movem.l  (sp)+,d0-d2/a0-a2
 incr_ende:
- move.b   #$7f,isra+$80                 ; service- Bit löschen (TT-MFP)
+ move.b   #$7f,isra+$80                 ; service- Bit loeschen (TT-MFP)
  rte
 
 
@@ -77,7 +77,7 @@ incr_ende:
 * void incrdma_unsel( a0 = long *unselect, a1 = APPL *ap );
 *
 * Deaktiviert den Interrupt wieder, wenn er nicht eingetroffen ist.
-* (Rückgabewert -1)
+* (Rueckgabewert -1)
 *
 
 incrdma_unsel:
@@ -91,11 +91,11 @@ incrdma_unsel:
 *
 * long wait_NCR( d0 = long ticks_200hz )
 *
-* RÜckgabe:    0    OK
+* RUeckgabe:    0    OK
 *             -2    Busfehler
 *             -1    TimeOut
 *
-* kein Register außer d0 wird verändert
+* kein Register ausser d0 wird veraendert
 *
 
 wait_NCR:
@@ -103,12 +103,12 @@ wait_NCR:
  rts
 _wait_NCR:
  movem.l  d1-d2/a0-a2,-(sp)
- tst.w    pe_slice            ; präemptiv ?
+ tst.w    pe_slice            ; praeemptiv ?
  bmi.b    wncr_no_yield       ; nein, busy waiting
  move.l   act_appl,d2
- ble.b    wncr_no_yield       ; aktuelle Applikation ungültig
+ ble.b    wncr_no_yield       ; aktuelle Applikation ungueltig
 
-* neue Routine über evnt_IO und MFP- Interrupt
+* neue Routine ueber evnt_IO und MFP- Interrupt
 
  lsr.l    #2,d0               ; AES: 50Hz statt 200Hz
 wncr_neu:
@@ -133,7 +133,7 @@ wncr_ende:
  movem.l  (sp)+,d1-d2/a0-a2
  rts
 
-* alte Routine mit busy waiting über _hz_200
+* alte Routine mit busy waiting ueber _hz_200
 
 wncr_no_yield:
  add.l    _hz_200,d0
@@ -162,13 +162,13 @@ wncr_err:
 *
 * Sperre den NCR-SCSI
 *
-* kein Register außer d0 wird verändert
+* kein Register ausser d0 wird veraendert
 *
 * und gib ihn wieder frei.
 *
-* Kein Register wird verändert
+* Kein Register wird veraendert
 *
-* Für die Zeit, in der AES noch nicht initialisiert ist, kann evnt_sem
+* Fuer die Zeit, in der AES noch nicht initialisiert ist, kann evnt_sem
 * nicht sperren, weil act_appl immer NULL ist.
 *
 
@@ -239,8 +239,8 @@ dmarw_l1:
  bsr      _dmawrite_scsi
 
 ttdmarw_ende:
- bsr      cache_invalid       ; Verändert KEINE Register!
- tst.w    d0                  ; Rückgabecode ist OK oder Fehler ?
+ bsr      cache_invalid       ; Veraendert KEINE Register!
+ tst.w    d0                  ; Rueckgabecode ist OK oder Fehler ?
  ble.b    dmarw_l2           ; ja, Code weiterreichen
 * es ist ein Fehlercode > 0 aufgetreten
  moveq    #EREADF,d0
@@ -255,9 +255,9 @@ _dmaread_scsi:
  move.l   a0,-(sp)            ; buf
  andi.w   #7,d0               ; dev von 8..15 auf 0..7
  bsr.b    scsi_cmd            ; Kommando dmacbuf[] schreiben
- movea.l  (sp)+,a0            ; buf zurück
+ movea.l  (sp)+,a0            ; buf zurueck
  tst.w    d0                  ; Fehler ?
- bmi.b    dmarw_end           ; ja, Code zurückgeben
+ bmi.b    dmarw_end           ; ja, Code zurueckgeben
  movea.l  a0,a1               ; a1 = buf
  movea.w  #$8781,a2           ; a2 = &scsi_data_register
  move.b   #1,$ffff8787        ; target command register
@@ -309,7 +309,7 @@ dmarw_l5:
 scsi_cmd:
  move.l   d2,-(sp)            ; ist 6
  bsr      get_initiator_id_bit     ; UWE
- move.w   d1,-(sp)                 ; UWE: Bit für Initiator-ID
+ move.w   d1,-(sp)                 ; UWE: Bit fuer Initiator-ID
  move.w   d0,-(sp)            ; Target
  bsr.b    scsi_begin
  addq.w   #4,sp
@@ -318,7 +318,7 @@ scsi_cmd:
  bmi.b    scsicmd_end           ; Fehler, Fehlercode weiterreichen
  move.b   #2,$ffff8787        ; Target command register
  move.b   #1,$ffff8783        ; initiator command register
- lea      _scsi_cmdbuf,a1     ; Zu übertragende Kommandos
+ lea      _scsi_cmdbuf,a1     ; Zu uebertragende Kommandos
  subq.w   #1,d2               ; wegen dbf
  bsr      vbl_165ms
 scsicmd_loop:
@@ -326,7 +326,7 @@ scsicmd_loop:
  bsr      scsi_byte           ; und ausgeben
  tst.w    d0                  ; ok ?
  bmi.b    scsicmd_end           ; Fehler
- dbf      d2,scsicmd_loop        ; nächstes Byte
+ dbf      d2,scsicmd_loop        ; naechstes Byte
  moveq    #0,d0               ; kein Fehler
 scsicmd_end:
  rts
@@ -336,12 +336,12 @@ scsicmd_end:
 *
 * int scsi_begin( int target, int initiatorID )
 *
-* Beginnt die Unterhaltung mit dem Target, Rückgabe -1 bei Timeout
+* Beginnt die Unterhaltung mit dem Target, Rueckgabe -1 bei Timeout
 * wird nur von scsi_cmd aufgerufen
 *
 
 scsi_begin:
- bsr      vbl_165ms           ; d1 = vbl-Zähler + 165ms, a0 = &_hz_200
+ bsr      vbl_165ms           ; d1 = vbl-Zaehler + 165ms, a0 = &_hz_200
 scsibeg_loop1:
  btst     #6,$ffff8789        ; SCSI control register
  beq.b    scsibeg_l1           ; in Ordnung
@@ -372,7 +372,7 @@ scsibeg_l2:
 scsibeg_l3:
  clr.w    d0                  ; kein Fehler
 scsibeg_end:
- move.b   #0,$ffff8783        ; initiator command register löschen
+ move.b   #0,$ffff8783        ; initiator command register loeschen
  rts
 
 
@@ -383,14 +383,14 @@ scsi_dmarw_ende:
  bsr.b    scsi_wait_ready
  bmi.b    scsidmarwe_end           ; Timeout
  moveq    #0,d0
- move.b   $ffff8781,d0        ; SCSI data register enthält Fehlercode
+ move.b   $ffff8781,d0        ; SCSI data register enthaelt Fehlercode
  bsr      vbl_165ms
  move.l   d0,-(sp)            ; Wert retten
  bsr.b    scsi_wait_busy
  tst.w    d0                  ; ok ?
  beq.b    scsidmarwe_l1       ; ja
 scsidmarwe_loop:
- addq.l   #4,sp               ; Timeout: -1 zurückgeben
+ addq.l   #4,sp               ; Timeout: -1 zurueckgeben
  bra.b    scsidmarwe_end
 scsidmarwe_l1:
  bsr.b    vbl_165ms
@@ -400,7 +400,7 @@ scsidmarwe_l1:
  bsr.b    scsi_wait_busy
  tst.w    d0
  bmi.b    scsidmarwe_loop           ; Timeout
- move.l   (sp)+,d0            ; OK, RÜckgabewert nach d0
+ move.l   (sp)+,d0            ; OK, RUeckgabewert nach d0
 scsidmarwe_end:
  rts
 
@@ -432,7 +432,7 @@ scsiwaitrdy_l1:
 * int scsi_wait_busy( d1 = long timeout_ticks, a0 = long *timer )
 *
 * a0 == &_hz_200
-* wartet, bis SCSI beschäftigt ist oder Timeout
+* wartet, bis SCSI beschaeftigt ist oder Timeout
 *
 
 scsi_wait_busy:
@@ -455,7 +455,7 @@ scsiwaitbsy_end:
 *
 * int scsi_byte( d0 = char b )
 *
-* Verarbeitet ein Kommandobyte, RÜckgabe negativ bei Fehler
+* Verarbeitet ein Kommandobyte, RUeckgabe negativ bei Fehler
 *
 
 scsi_byte:
@@ -510,7 +510,7 @@ vbl_1s:
 dmarw_fscsi:
  move.b   d0,-(sp)
 
-;Hier müßte < bsr    acsi_begin    > hin
+;Hier muesste < bsr    acsi_begin    > hin
 
  moveq    #8,d1               ;Lesen
  move.b   (sp)+,_scsi_wrflag
@@ -537,7 +537,7 @@ _fscsi_wr:
  bsr      fscsi_wr            ; FSCSI-Write
 
 cache_flush:                  ; Cache-Flush beim 030
- bsr      cache_invalid       ; ändert keine Register
+ bsr      cache_invalid       ; aendert keine Register
  tst.w    d0
  ble.s    rwfcsi_end
  moveq    #EREADF,d0
@@ -646,7 +646,7 @@ fscsi_wr_exit:
 fscsi_cmd:
  movem.l  d1/d2/a0,-(sp)
  bsr      get_initiator_id_bit     ; UWE
- move.w   d1,-(sp)                 ; UWE: Bit für Initiator-ID
+ move.w   d1,-(sp)                 ; UWE: Bit fuer Initiator-ID
  move.w   d0,-(sp)            ;Target
  bsr.s    fscsi_begin
  addq.l   #4,sp
@@ -667,7 +667,7 @@ cmdfcsi_loop:
  bsr      fscsi_byte               ;und ausgeben
  tst.w    d0                       ;ok?
  bmi.s    fsc_cmd_exit
- dbf      d2,cmdfcsi_loop        ;dann nächstes Byte
+ dbf      d2,cmdfcsi_loop        ;dann naechstes Byte
  moveq    #0,d0
  
 fsc_cmd_exit:
@@ -676,7 +676,7 @@ fsc_cmd_exit:
 ;
 ; int fscsi_begin( int target, int initiatorID )
 ;
-; Beginnt die Unterhaltung mit dem Target, Rückgabe -1 bei Timeout
+; Beginnt die Unterhaltung mit dem Target, Rueckgabe -1 bei Timeout
 ; wird nur von fscsi_cmd aufgerufen
 fscsi_begin:
  bsr      vbl_165ms
@@ -732,7 +732,7 @@ begfcsi_l3:
  clr.w    d0                            ;ok
 begfcsi_l4:
  move.w   #$89,$ffff8606.w
- move.w   #0,$ffff8604.w      ;initiator command register löschen
+ move.w   #0,$ffff8604.w      ;initiator command register loeschen
  rts
 
 ;
@@ -746,7 +746,7 @@ fscsi_dmarw_ende:
  bmi.s    endfcsi_l2                ;Timeout
 
  move.w   #$88,$ffff8606.w
- move.w   $ffff8604.w,d0      ;SCSI data register enthält Fehlercode
+ move.w   $ffff8604.w,d0      ;SCSI data register enthaelt Fehlercode
  andi.w   #$ff,d0
  move.l   d0,-(sp)
  bsr      vbl_165ms
@@ -796,7 +796,7 @@ wtrdyfcsi_end:
 ; int fscsi_wait_busy( d1 = long timeout_ticks, a0 = long *timer )
 ;
 ; a0 == &_hz_200
-; wartet, bis SCSI beschäftigt ist oder Timeout
+; wartet, bis SCSI beschaeftigt ist oder Timeout
 ;
 fscsi_wait_busy:
  move.w   #$89,$ffff8606.w
@@ -813,7 +813,7 @@ fscsi_wait_busy:
 ;
 ; int fscsi_byte( d0 = char b )
 ;
-; Verarbeitet ein Kommandobyte, RÜckgabe negativ bei Fehler
+; Verarbeitet ein Kommandobyte, RUeckgabe negativ bei Fehler
 ;
 fscsi_byte:
  move.w   d0,-(sp)
@@ -836,14 +836,14 @@ vbl_1505ms:
 
 ;
 ; UWE:
-; Bit für SCSI Initiator-ID aus NVRAM auslesen und nach D1
+; Bit fuer SCSI Initiator-ID aus NVRAM auslesen und nach D1
 ;
 ; d1 = WORD get_initiator_id_bit ( void )
-; Ändert nicht d0
+; Aendert nicht d0
 ;
 ; Falls aus irgendeinem Grund keine Initiator-Identifizierung
 ; (kein NVRAM oder Initiator-Identifizierung nicht eingeschaltet)
-; mit 0 in D1 zurückkehren -> kein ID-Bit gesetzt
+; mit 0 in D1 zurueckkehren -> kein ID-Bit gesetzt
 ;
 
 get_initiator_id_bit:
@@ -859,11 +859,11 @@ get_initiator_id_bit:
  tst.l    d0
  bmi.b    no_init_id          ; kein NVRAM (ist ein ST)
  move.b   (sp),d0             ; das gesuchte Byte
- bpl.b    no_init_id          ; ungültig
+ bpl.b    no_init_id          ; ungueltig
  andi.w   #%00000111,d0       ; SCSI-ID isolieren
  moveq    #1,d1
  lsl.w    d0,d1               ; SCSI-ID in ID-Bit umrechnen
 no_init_id:
  addq.l   #2,sp
- move.w   (sp)+,d0            ; d0 zurück
+ move.w   (sp)+,d0            ; d0 zurueck
  rts

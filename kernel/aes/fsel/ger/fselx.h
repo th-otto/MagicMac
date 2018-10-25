@@ -1,4 +1,4 @@
-/* Resource Datei Indizes fÅr FSELX */
+/* Resource Datei Indizes fuer FSELX */
 
 #define FSEL             0   /* Formular/Dialog */
 #define POS_BOX          1   /* IBOX in Baum FSEL */

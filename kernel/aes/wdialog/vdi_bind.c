@@ -36,7 +36,7 @@ static WORD	c_str_to_vdi( const UBYTE *src, UWORD *des )
 	while (( *des++ = *src++ ) != 0 )
 		len++;
 
-	return( len );															/* LÑnge des Strings ohne Null-Byte */
+	return( len );															/* Laenge des Strings ohne Null-Byte */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
@@ -74,9 +74,9 @@ void	rect_sort( VRECT *rect )
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Schnittmenge von rect1 und rect2 bestimmen															*/
-/* Bei rect1 und rect2 muû x1 <= x2 und y1 <= y2 sein!												*/
+/* Bei rect1 und rect2 muss x1 <= x2 und y1 <= y2 sein!												*/
 /* Funktionsresultat:	0: kein Schnitt 1: Rechtecke schneiden sich								*/
-/*								die Struktur *p2 enthÑlt dann die SchnittflÑche							*/
+/*								die Struktur *p2 enthaelt dann die Schnittflaeche							*/
 /*	rect1:					erstes Rechteck																	*/
 /*	rect2:					zweites Rechteck																	*/
 /*	dst:						Zeiger auf das Schnitt-Rechteck												*/
@@ -103,20 +103,20 @@ WORD rect_intersect( VRECT *rect1, VRECT *rect2, VRECT *dst )
 	else
 		dst->y2 = rect2->y2;
 
-	if ( dst->x1 > dst->x2 )											/* horizontal keine öberschneidung? */
+	if ( dst->x1 > dst->x2 )											/* horizontal keine ueberschneidung? */
 		return( 0 );
-	if ( dst->y1 > dst->y2 )											/* vertikal keine öberschneidung? */
+	if ( dst->y1 > dst->y2 )											/* vertikal keine ueberschneidung? */
 		return( 0 );
 		
 	return( 1 );															/* Rechtecke schneiden sich */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fontnamen und -art zurÅckliefern																			*/
+/* Fontnamen und -art zurueckliefern																			*/
 /* Funktionsergebnis:	Font-ID																				*/
 /*	handle:					VDI-Handle																			*/
 /* index:					Index des Fonts (1 - Anzahl)													*/
-/*	name:						String fÅr Fontnamen																*/
+/*	name:						String fuer Fontnamen																*/
 /*	font_format:			Fontformat																			*/
 /*	flags:					...																					*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -148,11 +148,11 @@ static WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, UWORD *font_forma
 
 	vdi_str_to_c( (UWORD *)&intout[1], (UBYTE *) name, 31 );	/* den Namen in einen C-String umwandeln */
 
-	if ( contrl[4] <= 34 )												/* wird das Fontformat nicht zurÅckgeliefert? */
+	if ( contrl[4] <= 34 )												/* wird das Fontformat nicht zurueckgeliefert? */
 	{
 		*flags = 0;
 		*font_format = 0;
-		if ( contrl[4] == 33 )											/* wird auch der Fonttyp nicht zurÅckgeliefert? */
+		if ( contrl[4] == 33 )											/* wird auch der Fonttyp nicht zurueckgeliefert? */
 			name[32] = 0;													/* dann ist es ein Bitmap-Font */
 		else
 			name[32] = (BYTE) intout[33];								/* Fonttyp */
@@ -168,13 +168,13 @@ static WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, UWORD *font_forma
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fontnamen und Grîûeninformationn zurÅckliefern														*/
+/* Fontnamen und Groesseninformationn zurueckliefern														*/
 /* Funktionsergebnis:	Font-ID																				*/
 /*	handle:					VDI-Handle																			*/
 /*	flags:					angeforderte Informationen														*/
 /*	id:						Font-ID oder 0																		*/
 /* index:					Index des Fonts (1 - Anzahl) oder 0											*/
-/*	info:						Strukur fÅr die RÅckgabewerte													*/
+/*	info:						Strukur fuer die Rueckgabewerte													*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD vqt_xfntinfo( WORD handle, WORD flags, WORD id, WORD index, XFNT_INFO *info )
 {
@@ -258,9 +258,9 @@ static void	vdi_text( WORD opcode, WORD handle, WORD x, WORD y, const char *stri
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Fonts laden																										*/
-/* Funktionsergebnis:	Anzahl der zusÑtzlichen Fonts													*/
+/* Funktionsergebnis:	Anzahl der zusaetzlichen Fonts													*/
 /*	handle:					VDI-Handle																			*/
-/*	select:					muû 0 sein																			*/
+/*	select:					muss 0 sein																			*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	vst_load_fonts( WORD handle, WORD select )
 {
@@ -285,7 +285,7 @@ static WORD	vst_load_fonts( WORD handle, WORD select )
 /* Fonts entfernen																								*/
 /* Funktionsergebnis:	-																						*/
 /*	handle:					VDI-Handle																			*/
-/*	select:					muû 0 sein																			*/
+/*	select:					muss 0 sein																			*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	vst_unload_fonts( WORD handle, WORD select )
 {
@@ -305,11 +305,11 @@ static void	vst_unload_fonts( WORD handle, WORD select )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* ZusÑtzliche GerÑteinformationen erfragen																*/
+/* Zusaetzliche Geraeteinformationen erfragen																*/
 /* Funktionsergebnis:	-																						*/
 /*	handle:					VDI-Handle																			*/
 /*	flag:						Art der Information																*/
-/* work_out:				Feld fÅr Informationen															*/
+/* work_out:				Feld fuer Informationen															*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	vq_extnd( WORD handle, WORD flag, WORD *work_out )
 {
@@ -334,7 +334,7 @@ static void	vq_extnd( WORD handle, WORD flag, WORD *work_out )
 /* Clipping-Rechteck setzen																					*/
 /* Funktionsergebnis:	-																						*/
 /*	handle:					VDI-Handle																			*/
-/*	clip_flag:				Flag fÅr Clipping aus/an														*/
+/*	clip_flag:				Flag fuer Clipping aus/an														*/
 /*	area:						Clipping-Rechteck																	*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	vs_clip( WORD handle, WORD clip_flag, WORD *area )
@@ -403,7 +403,7 @@ static void	v_pline( WORD handle, WORD count, WORD *pxy )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Farbe fÅr Linien setzen																						*/
+/* Farbe fuer Linien setzen																						*/
 /* Funktionsergebnis:	eingestelte Farbe																	*/
 /*	handle:					VDI-Handle																			*/
 /*	color_index:			einzustellende Farbe																*/
@@ -414,7 +414,7 @@ static WORD	vsl_color( WORD handle, WORD color_index )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Typ fÅr Linien setzen																						*/
+/* Typ fuer Linien setzen																						*/
 /* Funktionsergebnis:	eingestelte Farbe																	*/
 /*	handle:					VDI-Handle																			*/
 /*	color_index:			einzustellende Farbe																*/
@@ -425,7 +425,7 @@ static WORD	vsl_type( WORD handle, WORD style )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Farbe fÅr gefÅllte FlÑchen setzen																		*/
+/* Farbe fuer gefuellte Flaechen setzen																		*/
 /* Funktionsergebnis:	eingestelte Farbe																	*/
 /*	handle:					VDI-Handle																			*/
 /*	color_index:			einzustellende Farbe																*/
@@ -436,7 +436,7 @@ static WORD	vsf_color( WORD handle, WORD color_index )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Muster fÅr gefÅllte FlÑchen setzen																						*/
+/* Muster fuer gefuellte Flaechen setzen																						*/
 /* Funktionsergebnis:	eingestellter Stil																	*/
 /*	handle:					VDI-Handle																			*/
 /*	color_index:			einzustellende Farbe																*/
@@ -482,7 +482,7 @@ void	v_gtext( WORD handle, WORD x, WORD y, const char *string )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Font fÅr Textausgabe setzen																				*/
+/* Font fuer Textausgabe setzen																				*/
 /* Funktionsergebnis:	ID des eingestellten Fonts														*/
 /*	handle:					VDI-Handle																			*/
 /*	font:						ID des einzustellenden Fonts													*/
@@ -507,7 +507,7 @@ static WORD	vst_font( WORD handle, WORD font )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Farbe fÅr Text setzen																						*/
+/* Farbe fuer Text setzen																						*/
 /* Funktionsergebnis:	eingestelte Farbe																	*/
 /*	handle:					VDI-Handle																			*/
 /*	color_index:			einzustellende Farbe																*/
@@ -548,7 +548,7 @@ static void	vst_alignment( WORD handle, WORD hor_in, WORD vert_in, WORD *hor_out
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Effekte fÅr Textausgabe einstellen																		*/
+/* Effekte fuer Textausgabe einstellen																		*/
 /* Funktionsergebnis:	eingestellte Effekte																*/
 /*	handle:					VDI-Handle																			*/
 /*	effect:					einzustellende Effekte															*/
@@ -573,14 +573,14 @@ static WORD	vst_effects( WORD handle, WORD effect )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Texthîhe in pt einstellen																					*/
-/* Funktionsergebnis:	eingestellte Hîhe																	*/
+/* Texthoehe in pt einstellen																					*/
+/* Funktionsergebnis:	eingestellte Hoehe																	*/
 /*	handle:					VDI-Handle																			*/
-/*	point:					einzustellende Hîhe																*/
+/*	point:					einzustellende Hoehe																*/
 /*	char_width:				eingestellte Zeichenbreite														*/
-/*	char_height:			eingestellte Zeichenhîhe														*/
+/*	char_height:			eingestellte Zeichenhoehe														*/
 /*	cell_width:				eingestellte Zeichenzellenbreite												*/
-/*	cell_height:			eingestellte Zeichenzellenhîhe												*/
+/*	cell_height:			eingestellte Zeichenzellenhoehe												*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD vst_point( WORD handle, WORD point, WORD *char_width, WORD *char_height, WORD *cell_width, WORD *cell_height )
 {
@@ -609,7 +609,7 @@ static WORD vst_point( WORD handle, WORD point, WORD *char_width, WORD *char_hei
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Zeichenbreite und RÑnder zurÅckliefern																	*/
+/* Zeichenbreite und Raender zurueckliefern																	*/
 /* Funktionsergebnis:	Index des Zeichens																*/
 /*	handle:					VDI-Handle																			*/
 /*	index:					Index des Zeichens																*/
@@ -639,14 +639,14 @@ static WORD	vqt_width( WORD handle, WORD index, WORD *cell_width, WORD *left_del
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fontinformationen Åber Grîûe liefern																	*/
+/* Fontinformationen ueber Groesse liefern																	*/
 /* Funktionsergebnis:	-																						*/
 /*	handle:					VDI-Handle																			*/
 /*	minADE:					niedrigster Zeichenindex														*/
-/*	maxADE:					hîchster Zeichenindex															*/
-/*	distances:				AbstÑnde																				*/
+/*	maxADE:					hoechster Zeichenindex															*/
+/*	distances:				Abstaende																				*/
 /*	effects:					Verbreiterungen durch Effekte													*/
-/*	maxwidth:				grîûte Zeichenbreite																*/
+/*	maxwidth:				groesste Zeichenbreite																*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	vqt_fontinfo( WORD handle, WORD *minADE, WORD *maxADE, WORD *distances, WORD *maxwidth, WORD *effects )
 {
@@ -681,11 +681,11 @@ static void	vqt_fontinfo( WORD handle, WORD *minADE, WORD *maxADE, WORD *distanc
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speedo-Fontheader zurÅckliefern																			*/
+/* Speedo-Fontheader zurueckliefern																			*/
 /* Funktionsergebnis:	-																						*/
 /*	handle:					VDI-Handle																			*/
-/*	buffer:					Zeiger auf einen Buffer fÅr den Fontheader								*/
-/*	tdf_name:				Zeiger auf einen String fÅr den TDF-Namen									*/
+/*	buffer:					Zeiger auf einen Buffer fuer den Fontheader								*/
+/*	tdf_name:				Zeiger auf einen String fuer den TDF-Namen									*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	vqt_fontheader( WORD handle, BYTE *buffer, BYTE *tdf_name )
 {
@@ -702,7 +702,7 @@ static void	vqt_fontheader( WORD handle, BYTE *buffer, BYTE *tdf_name )
 	pb.intout = intout;
 	pb.ptsout = ptsout;
 
-	*((char **) intin) = buffer;										/* Buffer fÅr den Fontheader */
+	*((char **) intin) = buffer;										/* Buffer fuer den Fontheader */
 
 	contrl[0] = 232;
 	contrl[1] = 0;
@@ -715,7 +715,7 @@ static void	vqt_fontheader( WORD handle, BYTE *buffer, BYTE *tdf_name )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Kerning fÅr Vektortext setzen																				*/
+/* Kerning fuer Vektortext setzen																				*/
 /* Funktionsergebnis:	-																						*/
 /*	handle:					VDI-Handle																			*/
 /*	track_mode:				einzustellendes Track-Kerning													*/
@@ -758,14 +758,14 @@ void	v_ftext( WORD handle, WORD x, WORD y, const char *string )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Texthîhe in 1/65536 pt einstellen																		*/
-/* Funktionsergebnis:	eingestellte Hîhe																	*/
+/* Texthoehe in 1/65536 pt einstellen																		*/
+/* Funktionsergebnis:	eingestellte Hoehe																	*/
 /*	handle:					VDI-Handle																			*/
-/*	height:					einzustellende Hîhe																*/
+/*	height:					einzustellende Hoehe																*/
 /*	char_width:				eingestellte Zeichenbreite														*/
-/*	char_height:			eingestellte Zeichenhîhe														*/
+/*	char_height:			eingestellte Zeichenhoehe														*/
 /*	cell_width:				eingestellte Zeichenzellenbreite												*/
-/*	cell_height:			eingestellte Zeichenzellenhîhe												*/
+/*	cell_height:			eingestellte Zeichenzellenhoehe												*/
 /*----------------------------------------------------------------------------------------*/ 
 static fix31	vst_arbpt32( WORD handle, fix31 height, WORD *char_width, WORD *char_height, WORD *cell_width, WORD *cell_height )
 {
@@ -799,9 +799,9 @@ static fix31	vst_arbpt32( WORD handle, fix31 height, WORD *char_width, WORD *cha
 /*	handle:					VDI-Handle																			*/
 /*	width:					einzustellende Breite															*/
 /*	char_width:				eingestellte Zeichenbreite														*/
-/*	char_height:			eingestellte Zeichenhîhe														*/
+/*	char_height:			eingestellte Zeichenhoehe														*/
 /*	cell_width:				eingestellte Zeichenzellenbreite												*/
-/*	cell_height:			eingestellte Zeichenzellenhîhe												*/
+/*	cell_height:			eingestellte Zeichenzellenhoehe												*/
 /*----------------------------------------------------------------------------------------*/ 
 static fix31	vst_setsize32( WORD handle, fix31 width, WORD *char_width, WORD *char_height, WORD *cell_width, WORD *cell_height )
 {

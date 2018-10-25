@@ -1,8 +1,8 @@
 **********************************************************************
 *
 * Installation der Cookies auf dem Hades.
-* Ich übernehme hier Alvars Quelltext nur für den Hades
-* und behalte meinen eigenen für Atari.
+* Ich uebernehme hier Alvars Quelltext nur fuer den Hades
+* und behalte meinen eigenen fuer Atari.
 *
 * Installiert werden:
 *
@@ -21,7 +21,7 @@ install_cookies:
  lea      cookies,a5               ; Adresse der Cookies
  move.l   sp,a2                    ; Stackpointer retten
  move.l   a5,_p_cookies            ; Pointer setzen
-* _CPU Cookie, Loword enthält den <cpu_typ>
+* _CPU Cookie, Loword enthaelt den <cpu_typ>
  move.l   #'_CPU',(a5)+
  clr.w    (a5)+
  move.w   cpu_typ,(a5)+
@@ -41,8 +41,8 @@ install_cookies:
 *  7 = Atari Register FPU + mit Sicherheit 68882 LineF FPU
 *  8 = 68040 internal LineF FPU
 *  9 = Atari Register FPU + 68040 internal LineF FPU
-* Das Loword ist für eine spätere eventuelle
-* softwaremäßige LineF- Emulation reserviert und derzeit immer 0
+* Das Loword ist fuer eine spaetere eventuelle
+* softwaremaessige LineF- Emulation reserviert und derzeit immer 0
 
 
 
@@ -60,13 +60,13 @@ install_cookies:
 ; schlichtweg wegoptimiert und danach immer noch einen NULL-Frame liefert
 ; allerdings nicht (Puh, DAS zu finden hat mich 2 Tage und ich weiss nicht
 ; wie viele gebrannte Eproms gekostet (wann bekommt die Medusa endlich
-; Static-Rams statt EPROMs ...), denn wenn ich's als externes
+; Static-Rams statt EPROMs ...), denn wenn ich es als externes
 ; Programm probiert habe, hatte die FPU ja schon was getan und antwortete
 ; auch auf ein FNOP mit dem erwarteten IDLE-Frame. Beim Booten stand im
 ; FPU-cookie aber natuerlich immer nur 2 (LineF-FPU Typ unbekannt)). Jetzt
 ; wird statt FNOP einfach ein FTST.X FP0 verwendet - und siehe da - es geht ...
 
-;(fa_10.11.94)(1_12_94):einigie änderungen
+;(fa_10.11.94)(1_12_94):einigie aenderungen
 
 ;         dc.l $F2004000      ; fmove.l d0,fp0
 ;         dc.w $F327               ; fsave   -(sp)
@@ -76,7 +76,7 @@ install_cookies:
 ************ /Ende HADES-Doku/
 
 
-; ===> FPU-Abfrage geändert; ist nun ähnlich zum Hades-TOS
+; ===> FPU-Abfrage geaendert; ist nun aehnlich zum Hades-TOS
 
 
  moveq    #0,d1
@@ -177,7 +177,7 @@ _nolfpu:                           ; keine LineF FPU
 ; Bit     2    SCSI-Karte
 ; Bit   3       Atari DMA
 ; Bit 4-11     reserviert
-; Bit 12-15    reserviert für Video Hardware
+; Bit 12-15    reserviert fuer Video Hardware
 ;         Bit 12 = ET4000 am ISA Bus 
 ;         Bit 13 = Viedeokarte am VME Bus
 ;         Bit 14 = PCI-Bus Graphikkarte 
@@ -220,7 +220,7 @@ gkset: move.l  d0,(a5)+       ;Hade setzen
  move.l   #'_SND',(a5)+
  move.l   d0,(a5)+                 ; und _SND eintragen
 
-* _SWI eintragen (nur bei STe und höher)
+* _SWI eintragen (nur bei STe und hoeher)
 * machine_type: 0=ST, 1=STE, 2=MegaSTE, 3=TT
  move.l   #'_FDC',(a5)+
  move.l   #'hade',(a5)+
@@ -259,6 +259,6 @@ cok_nosw:
 
 * Endmarkierung
  clr.l    (a5)+
- move.l   #NCOOKIES,(a5)           ; Platz für insgesamt 20+1 Cookies
+ move.l   #NCOOKIES,(a5)           ; Platz fuer insgesamt 20+1 Cookies
  move.l   (sp)+,a5
  rts

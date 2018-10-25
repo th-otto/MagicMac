@@ -69,18 +69,18 @@ getr_st:
 *
 Setscreen:
  move.l   (a0)+,d0                 ; *log
- bmi.b    setscr_l1                ; log. Adr. nicht ändern
+ bmi.b    setscr_l1                ; log. Adr. nicht aendern
  move.l   d0,_v_bas_ad
 setscr_l1:
  move.l   (a0)+,d0                 ; *phys
- bmi.b    setscr_l2                ; phys. Adr. nicht ändern
+ bmi.b    setscr_l2                ; phys. Adr. nicht aendern
  move.b   d0,$ffff820d             ; STe
  lsr.l    #8,d0                    ; Hi- und Mid-Byte ins Low-Word
  suba.l   a1,a1
  movep.w  d0,-$7dff(a1)            ; $ffff8201 und $ffff8203 schreiben
 setscr_l2:
  move.w   (a0)+,d0                 ; res
- bmi.b    setscr_rte               ; Auflösung nicht ändern
+ bmi.b    setscr_rte               ; Aufloesung nicht aendern
  cmpi.b    #4,machine_type         ;Falcon?
  bne.s     setsc_tt
  bsr       setres_falcon
@@ -92,50 +92,50 @@ setsc_tt:
  bcs.b    setsc_st
  move.b   $ffff8262,d0             ; TT-Shiftermodus
  and.b    #$f8,d0                  ; TT-spez. Bits holen
- or.b     sshiftmd,d0              ; mit gewünschter Auflösung verbinden
- move.b   d0,$ffff8262             ; TT-Auflösung umsetzen
+ or.b     sshiftmd,d0              ; mit gewuenschter Aufloesung verbinden
+ move.b   d0,$ffff8262             ; TT-Aufloesung umsetzen
  bra.b    setsc_both
 setsc_st:
  move.b   sshiftmd,$ffff8260
 setsc_both:
  clr.w    vblsem                   ; VBlank-Handler deaktiviert
- move.w   modecode.w,d0            ; Moduswort für Falcon
+ move.w   modecode.w,d0            ; Moduswort fuer Falcon
  jsr      vt52_init                ; sichert alle benutzten Register
  move.w   #1,vblsem                ; VBlank-Handler aktiviert
 setscr_rte:
  rte
 
 setres_flc_cmp:
-     DC.W STMODES+COL40+BPS4 ;niedrige ST-Auflösung
-     DC.W STMODES+COL80+BPS2 ;mittlere ST-Auflösung
-     DC.W STMODES+COL80+BPS1 ;hohe ST-Auflösung
-     DC.W 0                        ;Falcon-Auflösungen
-     DC.W COL80+BPS4               ;mittlere TT-Auflösung
+     DC.W STMODES+COL40+BPS4 ;niedrige ST-Aufloesung
+     DC.W STMODES+COL80+BPS2 ;mittlere ST-Aufloesung
+     DC.W STMODES+COL80+BPS1 ;hohe ST-Aufloesung
+     DC.W 0                        ;Falcon-Aufloesungen
+     DC.W COL80+BPS4               ;mittlere TT-Aufloesung
      DC.W COL80+BPS1               ;nicht definiert -> 640*480 monochrom
-     DC.W COL80+BPS1               ;hohe TT-Auflösung -> 640*480 monochrom
-     DC.W COL40+BPS8               ;niedrige TT-Auflösung
+     DC.W COL80+BPS1               ;hohe TT-Aufloesung -> 640*480 monochrom
+     DC.W COL40+BPS8               ;niedrige TT-Aufloesung
 
-;Auflösung für Falcon setzen
+;Aufloesung fuer Falcon setzen
 ;Eingaben:
-;d0.w Auflösung
+;d0.w Aufloesung
 ;a0.l Zeiger auf modecode
 ;Ausgaben:
 ;-
 setres_falcon:      movem.l   d0-d2/a0-a2,-(sp)
 
-                              cmp.w     #TT_LOW,d0          ;ungültige Modusnummer
+                              cmp.w     #TT_LOW,d0          ;ungueltige Modusnummer
                               bhi.s     setres_falcon_exit
                               move.b    d0,sshiftmd.w
                               cmp.w          #FALCONMDS,d0
                               bls.s          setres_mode
                               move.b    #FALCONMDS,sshiftmd.w
 setres_mode:        add.w     d0,d0
-                              move.w    setres_flc_cmp(pc,d0.w),d1 ;Falcon-Auflösungen?
+                              move.w    setres_flc_cmp(pc,d0.w),d1 ;Falcon-Aufloesungen?
                               bne.s     setres_checkmode
-                              move.w    (a0),d1             ;modecode für Falcon-Auflösungen
-setres_checkmode:   bsr       Checkmode      ;Modus in d1 überprüfen
+                              move.w    (a0),d1             ;modecode fuer Falcon-Aufloesungen
+setres_checkmode:   bsr       Checkmode      ;Modus in d1 ueberpruefen
                               move.w    d1,d0
-                              bsr       falcon_vsize   ;Größe für Modus in d0 ausgeben
+                              bsr       falcon_vsize   ;Groesse fuer Modus in d0 ausgeben
                               bsr       ScrnMalloc          ;Bildschirmspeicher allozieren
 
                               tst.l     d0                  ;Fehler?
@@ -144,11 +144,11 @@ setres_checkmode:   bsr       Checkmode      ;Modus in d1 überprüfen
                               move.l    d0,-(sp)
                               move.b    1(sp),$ffff8201.w ;Video Base High
                               move.b    2(sp),$ffff8203.w ;Video Base Mid
-                              move.b    3(sp),$ffff820d.w ;Video Base Low, für STE/TT/FALCON
+                              move.b    3(sp),$ffff820d.w ;Video Base Low, fuer STE/TT/FALCON
                               addq.l    #4,sp
 
                               move.w    d1,d0
-                              bsr       falcon_vmode        ;Auflösung setzen
+                              bsr       falcon_vmode        ;Aufloesung setzen
 
 setres_falcon_exit:movem.l (sp)+,d0-d2/a0-a2
                               btst      #STC_BIT,modecode+1
@@ -161,9 +161,9 @@ setres_falcon_ret:rts
 
 ;Bildschirmspeicher allozieren
 ;Vorgaben:
-;Register d0 wird verändert
+;Register d0 wird veraendert
 ;Eingaben:
-;d0.l Länge des Speichers
+;d0.l Laenge des Speichers
 ;Ausgaben:
 ;d0.l Adresse des Speichers
 ScrnMalloc:         movem.l   d1-d2/a0-a2,-(sp)
@@ -174,9 +174,9 @@ ScrnMalloc:         movem.l   d1-d2/a0-a2,-(sp)
                               movem.l   (sp)+,d1-d2/a0-a2
                               rts
 
-;modecode überprüfen
+;modecode ueberpruefen
 ;Vorgaben:
-;Register d1 wird verändert
+;Register d1 wird veraendert
 ;Eingaben:
 ;d1.w modecode
 ;Ausgaben:
@@ -198,7 +198,7 @@ checkmode_vga:      cmp.w     #2,d0                         ;VGA-Monitor?
                               bne.s     checkmode_tv
                               or.w      #VGA,d1                       ;VGA-Bit setzen
 
-checkmode_vga_st: btst        #STC_BIT,d1              ;ST-Kompatibilität?
+checkmode_vga_st: btst        #STC_BIT,d1              ;ST-Kompatibilitaet?
                               beq.s     checkmode_exit
                               bset      #VTF_BIT,d1              ;Double-Scan
                               moveq     #7,d0
@@ -211,7 +211,7 @@ checkmode_tv:       btst      #VGA_BIT,d1              ;VGA-Monitor?
                               beq.s     checkmode_tv_st
                               eori.w    #VERTFLAG+VGA,d1         ;kein VGA-Monitor, evtl. Interlace
 
-checkmode_tv_st:    btst      #STC_BIT,d1              ;ST-Kompatibilität?
+checkmode_tv_st:    btst      #STC_BIT,d1              ;ST-Kompatibilitaet?
                               beq.s     checkmode_exit
                               bclr      #VTF_BIT,d1              ;kein Interlace
                               moveq     #7,d0
@@ -247,13 +247,13 @@ Setcolor:
  and.w    #$777,d0       ; RGB
 setc_ste:
  tst.w    (a0)           ; val
- bmi.b    setc_rte      ; alten Farbwert zurückgeben
+ bmi.b    setc_rte      ; alten Farbwert zurueckgeben
  move.w   (a0),(a1)      ; color setzen
 setc_rte:
  rte
 
 
-;Tabulatorgröße:  3
+;Tabulatorgroesse:  3
 ;Kommentare:                                                ;ab Spalte 60
 
 ;Bomben ausgeben
@@ -263,10 +263,10 @@ setc_rte:
 ;-
 __printbombs:
  move.b   sshiftmd,d7
- and.w    #7,d7          ; auf STE/TT/Falcon Auflösungen 0 bis 7 zulassen
+ and.w    #7,d7          ; auf STE/TT/Falcon Aufloesungen 0 bis 7 zulassen
  tst.b    machine_type
  bne.b    prbo_ste
- and.w    #3,d7          ; beim ST nur Auflösungen 0 bis 2
+ and.w    #3,d7          ; beim ST nur Aufloesungen 0 bis 2
 prbo_ste:
  moveq    #0,d0
  suba.l   a0,a0
@@ -297,8 +297,8 @@ prbo_copy:
  move.w   (a1),(a2)+
  dbf      d5,prbo_copy
  dbf      d2,prbo_planes
- addq.w   #2,a1                    ; nächste Bombenzeile
- adda.w   prbo_restab2(pc,d7.w),a0 ; nächste Bildschirmzeile
+ addq.w   #2,a1                    ; naechste Bombenzeile
+ adda.w   prbo_restab2(pc,d7.w),a0 ; naechste Bildschirmzeile
  dbf      d6,prbo_bloop
 
  moveq    #29,d7                   ; TOS 2.05: warten
@@ -312,7 +312,7 @@ prbo_restab1:
  DC.W     1
  DC.W     0
  DC.W     0
- DC.W     3                        ; TT- Auflösungen:
+ DC.W     3                        ; TT- Aufloesungen:
  DC.W     0
  DC.W     0
  DC.W     7
@@ -321,7 +321,7 @@ prbo_restab2:
  DC.W     $a0
  DC.W     $a0
  DC.W     $50
- DC.W     0                        ; TT- Auflösungen
+ DC.W     0                        ; TT- Aufloesungen
  DC.W     $140
  DC.W     0
  DC.W     $a0
@@ -360,15 +360,15 @@ Esetshift:
  moveq    #0,d0
  cmpi.b   #3,machine_type
  bne.b    exit_Esetshift
- bsr      _Vsync              ; zerstört d0
+ bsr      _Vsync              ; zerstoert d0
  moveq    #0,d0
  move.w   $ffff8262,-(sp)     ; alten TT-Shiftermodus/Bank retten
  move.w   (a0),$ffff8262      ; TT-Shiftermodus/Bank setzen
  move.b   $ffff8262,d0        ; neuen Wert holen
- and.w    #7,d0               ; Auflösung extrahieren
+ and.w    #7,d0               ; Aufloesung extrahieren
  move.b   d0,sshiftmd
  clr.w    vblsem              ; VBL deaktivieren
- move.w   modecode.w,d0                 ;Moduswort für Falcon
+ move.w   modecode.w,d0                 ;Moduswort fuer Falcon
  jsr      vt52_init           ; sichert alle benutzten Register
  move.w   #1,vblsem           ; VBL aktivieren
  move.w   (sp)+,d0            ; alter Wert
@@ -400,9 +400,9 @@ Esetbank:
  bne.b    exit_Esetbank
  move.w   $ffff8262,d0        ; TT-Shiftermodus/Bank
  and.w    #$f,d0              ; Banknummer extrahieren
- move.w   (a0),d1             ; ändern ?
- bmi.b    exit_Esetbank       ; nein, nur Wert zurückgeben
- move.b   d1,$ffff8263        ; Bank ändern
+ move.w   (a0),d1             ; aendern ?
+ bmi.b    exit_Esetbank       ; nein, nur Wert zurueckgeben
+ move.b   d1,$ffff8263        ; Bank aendern
 exit_Esetbank:
  rte
 
@@ -418,13 +418,13 @@ Esetcolor:
  bne.b    exit_Esetcolor
  lea      $ffff8400,a1        ; TT-Palette
  move.w   (a0)+,d0            ; num (0..255)
- add.w    d0,d0               ; für Wortzugriff
+ add.w    d0,d0               ; fuer Wortzugriff
  adda.w   d0,a1
  move.w   (a1),d0             ; alten Wert holen
- and.w    #$fff,d0            ; je 4 Bits für RGB extrahieren
+ and.w    #$fff,d0            ; je 4 Bits fuer RGB extrahieren
  move.w   (a0),d1             ; neuer Wert
- bmi.b    exit_Esetcolor      ; nicht ändern
- move.w   d1,(a1)             ; ändern
+ bmi.b    exit_Esetcolor      ; nicht aendern
+ move.w   d1,(a1)             ; aendern
 exit_Esetcolor:
  rte
 
@@ -442,7 +442,7 @@ Esetpalette:
  movea.w  d0,a1
  adda.w   a1,a1
  sub.w    #$100,d0
- neg.w    d0                  ; d0 = Einträge hinter einschl. <num>
+ neg.w    d0                  ; d0 = Eintraege hinter einschl. <num>
  move.w   (a0)+,d1            ; count
  cmp.w    d0,d1
  ble.b    esetpl_l1           ; ist ok
@@ -503,7 +503,7 @@ Esetgray:
  cmpi.b   #3,machine_type
  bne.b    exit_Esetgray
  move.b   $ffff8262,d1        ; TT-Shiftmode
- bclr     #4,d1               ; gray_mode in d1 löschen
+ bclr     #4,d1               ; gray_mode in d1 loeschen
  sne      d0
  andi.l   #1,d0               ; d1 = 1, falls Bit 4 gesetzt war
  tst.w    (a0)
@@ -544,13 +544,13 @@ exit_Esetsmear:
 
 ;Vsetmode() (XBIOS 88)
 ;Vorgaben:
-;Register d0-d2/a0-a2 können verändert werden
+;Register d0-d2/a0-a2 koennen veraendert werden
 ;Eingaben:
 ;a0.l Zeiger auf die Parameter
 ;Ausgaben:
 ;d0.w modecode
 Vsetmode:           move.w    modecode.w,-(sp)
-                              move.w    (a0),d0                       ;Modus nur zurückliefern?
+                              move.w    (a0),d0                       ;Modus nur zurueckliefern?
                               bmi.s          Vsetmode_exit
                               bsr.s          falcon_vmode
 Vsetmode_exit:      move.w    (sp)+,d0                      ;alter modecode
@@ -579,7 +579,7 @@ falcon_comp:        add.w          d1,d1
                               movea.l   0(a0,d1.w),a0
                               moveq          #7,d1
                               and.w          d0,d1
-                              cmp.w          #BPS4,d1                      ;ungültige Bittiefe?
+                              cmp.w          #BPS4,d1                      ;ungueltige Bittiefe?
                               bhi.s          Vsetmode_exit
                               add.w          d1,d1
                               add.w          d1,d1
@@ -588,20 +588,20 @@ falcon_comp:        add.w          d1,d1
                               
 falcon_vmode_nc:    movea.l   mon_mode_tab(pc,d1.w),a0
                               
-                              bsr       check_modecode           ;modecode überprüfen
+                              bsr       check_modecode           ;modecode ueberpruefen
                               
                               moveq          #COL80,d1
-                              and.w          d0,d1                              ;Bit für Spaltenanzahl (Bit 3)
+                              and.w          d0,d1                              ;Bit fuer Spaltenanzahl (Bit 3)
                               lsr.w          #1,d1                              ;/8*4
                               move.l    0(a0,d1.w),d2            ;Tabelle mit Zeigern auf Registerdaten
                               beq.s          Vsetmode_exit
                               movea.l   d2,a0
                               moveq          #7,d1
                               and.w          d0,d1                              ;Bittiefe
-                              cmp.w          #BPS16,d1                ;ungültige Bittiefe?
+                              cmp.w          #BPS16,d1                ;ungueltige Bittiefe?
                               bhi.s          Vsetmode_exit
                               moveq          #OVERSCAN,d2
-                              and.w          d0,d2                              ;Bit für Overscan (Bit 6)
+                              and.w          d0,d2                              ;Bit fuer Overscan (Bit 6)
                               lsr.w          #OVS_BIT,d2
                               add.w          d1,d1
                               add.w          d2,d1
@@ -695,16 +695,16 @@ sync_scr_loop:      cmp.l    _frclock.w,d1
                   movem.l     (sp)+,d0-d1
                               rts
 ;-----------------------------------------------
-;Video-Modus für Falcon setzen
+;Video-Modus fuer Falcon setzen
 ;Vorgaben:
-;Register d0-d2/a0-a2 können verändert werden
+;Register d0-d2/a0-a2 koennen veraendert werden
 ;Eingaben:
 ;d0.w modecode (es wird nur Bit 8 - VERTFLAG - getestet und evtl in VCO gesetzt) 
 ;a0.l Zeiger auf die Registerdaten
 ;Ausgaben:
 ;-
 falcon_set_mode:    clr.w     HSCROLL.w           ;keine bitweise Verschiebung
-                              clr.w     LINE_OFFSET.w       ;keine zusätzlichen Worte pro Zeile
+                              clr.w     LINE_OFFSET.w       ;keine zusaetzlichen Worte pro Zeile
 
                               cmp.w          #VGA_MON,monitor.w  ;bei VGA-Monitor Doublescan einschalten
                               bne.s          falcon_set_rgb
@@ -731,7 +731,7 @@ falcon_set_mode:    clr.w     HSCROLL.w           ;keine bitweise Verschiebung
 falcon_set_st:      move.w    (a0)+,d1
                               cmp.w          #-1,d1
                               beq.s          falcon_set_vco
-                              clr.w          SP_SHIFT.w               ;bei Kompatibilitätsmodi auf 0 setzen
+                              clr.w          SP_SHIFT.w               ;bei Kompatibilitaetsmodi auf 0 setzen
                               move.w    d1,ST_SHIFT.w
 falcon_set_vco:     move.w    (a0)+,d1
                               btst      #8,d0                         ;Doublescan?
@@ -780,7 +780,7 @@ falcon_set_vdei:    move.w    d1,VDE.w
 falcon_set_sti:     move.w    (a0)+,d1
                               cmp.w          #-1,d1
                               beq.s          falcon_set_vcoi
-                              clr.w          SP_SHIFT.w               ;bei Kompatibilitätsmodi auf 0 setzen
+                              clr.w          SP_SHIFT.w               ;bei Kompatibilitaetsmodi auf 0 setzen
                               move.w    d1,ST_SHIFT.w
 falcon_set_vcoi:    move.w    (a0)+,d1
                               btst      #8,d0                         ;Interlace?
@@ -801,7 +801,7 @@ falc_set_vxx:
 
 check_modecode:     movem.l   d1-d2/a0-a2,-(sp)
 
-                              and.w          #$01ff,d0           ;alle ungültigen Bits ausmaskieren
+                              and.w          #$01ff,d0           ;alle ungueltigen Bits ausmaskieren
 
                               moveq          #NUMCOLS,d1
                               and.w          d0,d1                         ;2 Farben?
@@ -844,7 +844,7 @@ check_mode_vga:     cmp.w          #VGA_MON,d1              ;VGA-Monitor?
 check_mode_exit:    movem.l   (sp)+,d1-d2/a0-a2
                               rts
                               
-;Jeder Modus enthält die folgende Registerreihenfolge (insgesamt 20 Einträge)
+;Jeder Modus enthaelt die folgende Registerreihenfolge (insgesamt 20 Eintraege)
 ;VFT
 ;VSS
 ;VBB
@@ -966,11 +966,11 @@ VgetSize:           move.w    (a0),d0             ;modecode
 
 rez_bps_tab:        DC.W 1,2,4,8,16
 
-;Größe einer Auflösung berechnen
+;Groesse einer Aufloesung berechnen
 ;Eingaben:
 ;d0.w modecode
 ;Ausgaben:
-;d0.l Länge des Bildschirmspeichers in Bytes
+;d0.l Laenge des Bildschirmspeichers in Bytes
 falcon_vsize:       movem.l   d1-d3,-(sp)
                               moveq     #7,d1
                               and.w     d0,d1               ;Farbtiefe
@@ -986,7 +986,7 @@ flc_hor_over:       btst      #OVS_BIT,d0    ;Overscan?
                               mulu      #12,d3
                               divu      #10,d3              ;Overscan-Faktor 1.2
 
-flc_st_mode:        btst      #STC_BIT,d0    ;ST-Kompatibilität?
+flc_st_mode:        btst      #STC_BIT,d0    ;ST-Kompatibilitaet?
                               beq.s     flc_vga_mode
                               move.w    #200,d2             ;200 Zeilen in Farbe
                               moveq     #7,d1
@@ -1010,7 +1010,7 @@ flc_ver_over:       btst      #OVS_BIT,d0    ;Overscan?
                               beq.s     flc_vsize_exit
                               muls      #12,d2
                               divs      #10,d2              ;Overscan-Faktor 1.2
-flc_vsize_exit:     mulu      d2,d3                    ;Größe des Bildschirmspeichers in Bytes
+flc_vsize_exit:     mulu      d2,d3                    ;Groesse des Bildschirmspeichers in Bytes
                               move.l    d3,d0
                               movem.l   (sp)+,d1-d3
                               rts
@@ -1033,7 +1033,7 @@ VsetRGB:                 movea.l   palette_ptr.w,a1
                               subq.w    #1,d1
                               bmi.s          VsetRGB_exit
 
-                              cmp.w          #100,HHT.w               ;Kompatibilitätsmodus?
+                              cmp.w          #100,HHT.w               ;Kompatibilitaetsmodus?
                               blo.s          VsetRGB_comp
 
                               move     sr,-(sp)                  ;sr sichern
@@ -1063,7 +1063,7 @@ VsetRGB_loop:       move.l    (a0)+,(a1)+
                               
 VsetRGB_exit:       rte
 
-;VsetRGB() für Modi, die auf den ST-Shifter zugreifen
+;VsetRGB() fuer Modi, die auf den ST-Shifter zugreifen
 ;d0.w index
 ;d1.w count - 1
 ;a0.l array
@@ -1089,7 +1089,7 @@ VsetRGB_cloop:      move.l    (a0)+,d0
                               lsl.w          #4,d2
 
                               clr.w          d0
-                              rol.l          #4,d0                         ;die obersten 4 Bits des Grün-Anteils
+                              rol.l          #4,d0                         ;die obersten 4 Bits des Gruen-Anteils
                               or.b      VsetRGB_conv(pc,d0.w),d2
                               lsl.w          #4,d2
 

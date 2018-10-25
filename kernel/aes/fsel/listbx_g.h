@@ -3,10 +3,10 @@ typedef  WORD  (cdecl *SET_ITEM)( void *box, OBJECT *tree, struct _lbox_item *it
 
 typedef struct _lbox_item
 {
-   struct _lbox_item *next;   /* Zeiger auf den nächsten Eintrag in der Liste */
+   struct _lbox_item *next;   /* Zeiger auf den naechsten Eintrag in der Liste */
    WORD  selected;            /* gibt an, ob das Objekt selektiert ist */
 
-   WORD  data1;               /* Daten für das Programm... */
+   WORD  data1;               /* Daten fuer das Programm... */
    void  *data2;
    void  *data3;
 
@@ -16,7 +16,7 @@ typedef struct _lbox_item
 #define  LBOX_AUTO   2        /* Auto-Scrolling */
 #define  LBOX_AUTOSLCT  4     /* automatische Darstellung beim Auto-Scrolling */
 #define  LBOX_REAL   8        /* Real-Time-Slider */
-#define  LBOX_SNGL   16       /* nur ein anwählbarer Eintrag */
+#define  LBOX_SNGL   16       /* nur ein anwaehlbarer Eintrag */
 #define  LBOX_SHFT   32       /* Mehrfachselektionen mit Shift */
 #define  LBOX_TOGGLE 64       /* Status eines Eintrags bei Selektion wechseln */
 #define  LBOX_2SLDRS 128      /* Listbox hat einen hor. und einen vertikalen Slider */

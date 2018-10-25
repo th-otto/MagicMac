@@ -39,8 +39,8 @@ _memtop        EQU $436
      XDEF total_mem       ; an DFS_U
      XDEF mshare
      XDEF mfork
-     XDEF Memshare,Memunsh         ; an DEV_MEM für F_SETSHMBLK
-     XDEF Pmemsave,Pmemrestore     ; an MAGIDOS für Pfork()
+     XDEF Memshare,Memunsh         ; an DEV_MEM fuer F_SETSHMBLK
+     XDEF Pmemsave,Pmemrestore     ; an MAGIDOS fuer Pfork()
 
 * Importe aus dem BIOS
 
@@ -67,17 +67,17 @@ _memtop        EQU $436
      OFFSET
 
 mcb_magic:     DS.L      1    /* 0x00: 'ANDR' oder 'KROM' (letzter)        */
-mcb_len:       DS.L      1    /* 0x04: Nettolänge                          */
+mcb_len:       DS.L      1    /* 0x04: Nettolaenge                          */
 mcb_owner:     DS.L      1    /* 0x08: PD *                                */
 mcb_prev:      DS.L      1    /* 0x0c: vorh. Block oder NULL               */
 mcb_data:
 
      OFFSET
 
-md_link:       DS.L      1    /* 0x00: Zeiger auf nächsten Block           */
+md_link:       DS.L      1    /* 0x00: Zeiger auf naechsten Block           */
 md_start:      DS.L      1    /* 0x04: Zeiger auf Speicherblock            */
-md_len:        DS.L      1    /* 0x08: Länge des Speicherblocks            */
-md_own:        DS.L      1    /* 0x0c: Prozeß (1 = "unbenutzt")            */
+md_len:        DS.L      1    /* 0x08: Laenge des Speicherblocks            */
+md_own:        DS.L      1    /* 0x0c: Prozess (1 = "unbenutzt")            */
 
      TEXT
 
@@ -85,7 +85,7 @@ md_own:        DS.L      1    /* 0x0c: Prozeß (1 = "unbenutzt")            */
 *
 * mc_init()
 *  Initialisierung der Speicherverwaltung, Ur- PD einrichten.
-*  Puffer für zeichenorientierten I/O initialisieren.
+*  Puffer fuer zeichenorientierten I/O initialisieren.
 *  Wird von os_init nach einem Reset aufgerufen.
 *
 
@@ -97,12 +97,12 @@ mc_init:
 * MemoryParameterBlock initialisieren (bios Getmpb)
  lea      mem_root.w,a0
  lea      MEMLEN_OFFS(a0),a1
- jsr      fast_clrmem              ; 16 Zeiger löschen
+ jsr      fast_clrmem              ; 16 Zeiger loeschen
 
      DEB  'Getmpb() aufrufen'
 
  subq.l   #8,sp
- clr.l    -(sp)                    ; Platz für drei Zeiger
+ clr.l    -(sp)                    ; Platz fuer drei Zeiger
  pea      (sp)
  clr.w    -(sp)
  trap     #$d
@@ -115,18 +115,18 @@ mci_loop:
  clr.l    (a1)
  move.l   md_start(a0),a2          ; a2 = Startadresse
      DEBL 'Block beginnt bei ',a2
- move.l   md_len(a0),d2            ; d2 = Länge
-     DEBL 'Block hat Länge ',d2
+ move.l   md_len(a0),d2            ; d2 = Laenge
+     DEBL 'Block hat L�nge ',d2
 
-* Korrektur für Langwortgrenze
+* Korrektur fuer Langwortgrenze
 
  move.l   a2,d0
  btst     #1,d0                    ; Adresse long-aligned ?
  beq.b    mci_is_4                 ; ja, OK
  addq.l   #2,a2                    ; nein, Startadresse 2 Bytes nach hinten
- subq.l   #2,d2                    ; und Länge verkleinern
+ subq.l   #2,d2                    ; und Laenge verkleinern
 mci_is_4:
- andi.w   #$fffc,d2                ; Länge auf long-aligned
+ andi.w   #$fffc,d2                ; Laenge auf long-aligned
 
  cmp.l    d1,d2                    ; Brutto->Netto
  bls.b    mci_nxt_md               ; Block zu klein
@@ -140,20 +140,20 @@ mci_is_4:
 */
  sub.l    d1,d2
  move.l   #'KROM',(a2)+            ; mcb_magic: kein weiterer Block
- move.l   d2,(a2)+                 ; mcb_len  : Nettolänge
+ move.l   d2,(a2)+                 ; mcb_len  : Nettolaenge
  move.l   md_own(a0),(a2)+         ; mcb_owner: vom MD kopieren
  clr.l    (a2)                     ; mcb_prev : kein vorheriger Block
 mci_nxt_md:
- addq.l   #4,a1                    ; nächste Liste
+ addq.l   #4,a1                    ; naechste Liste
  cmpa.l   #(mem_root+4).w,a1
  bne.b    mci_no_end_st
  move.l   #-1,(a1)+                ; mem_root+4 ist immer -1L
 mci_no_end_st:
  clr.l    (a1)                     ; schon mal Listenende markieren
- move.l   md_link(a0),a0           ; nächster MD
+ move.l   md_link(a0),a0           ; naechster MD
  move.l   a0,d0
  bne      mci_loop
-* MCB für Bildschirmspeicher beim Falcon
+* MCB fuer Bildschirmspeicher beim Falcon
      IFNE FALCON
  move.l   scrbuf_adr,d0
  beq.b    mci_no_scrbuf
@@ -166,7 +166,7 @@ mci_no_end_st:
  move.l   d0,a0
  moveq    #mcb_data,d0
  move.l   mem_root.w,a1
- sub.l    d0,mcb_len(a1)           ; Block verkleinern, Platz für MD
+ sub.l    d0,mcb_len(a1)           ; Block verkleinern, Platz fuer MD
  sub.l    d0,a0
  move.l   mcb_magic(a1),mcb_magic(a0)   ; neuer Block ist letzter
  move.l   #'ANDR',mcb_magic(a1)         ; alter Block ist nicht letzter
@@ -229,7 +229,7 @@ meme_loop:
 * a0 = MCB *last_block( a0 = MCB *list )
 *
 * ermittelt in den letzten Block der Liste.
-* zerstört kein Register, ändert nur a0
+* zerstoert kein Register, aendert nur a0
 *
 
 last_block:
@@ -237,8 +237,8 @@ last_block:
  beq.b    lb_ende                  ; gefunden
  cmpi.l   #'ANDR',(a0)+
  bne      mem_err_4
- add.l    (a0)+,a0                 ; Nettolänge addieren
- addq.l   #8,a0                    ; 2 Pointer überspringen
+ add.l    (a0)+,a0                 ; Nettolaenge addieren
+ addq.l   #8,a0                    ; 2 Pointer ueberspringen
  bra.b    last_block
 lb_ende:
  rts
@@ -250,7 +250,7 @@ lb_ende:
 *
 * Gibt eine Fehlerbeschreibung aus und repariert ggf. die
 * Speicherverwaltung, indem der "unbekannte" Speicher als
-* <owner> gehörig markiert wird.
+* <owner> gehoerig markiert wird.
 *
 
 mem_repair:
@@ -297,8 +297,8 @@ memr_memloop:
 memr_next:
  move.l   a0,d0                    ; d0 ist vorheriger Block
  addq.l   #4,a0                    ; a0 zeigt auf len
- adda.l   (a0)+,a0                 ; nächster Block
- addq.l   #8,a0                    ; mcb_owner, mcb_prev überspringen
+ adda.l   (a0)+,a0                 ; naechster Block
+ addq.l   #8,a0                    ; mcb_owner, mcb_prev ueberspringen
  bra      memr_memloop
 
 memr_repair:
@@ -306,7 +306,7 @@ memr_repair:
  move.l   #'KROM',d1
  move.l   a0,a2
  move.l   d1,(a2)+                 ; als letzten MCB
- clr.l    (a2)+                    ; Länge zunächst 0
+ clr.l    (a2)+                    ; Laenge zunaechst 0
  move.l   4(sp),(a2)+              ; mcb_owner
  move.l   d0,(a2)+                 ; mcb_prev
  move.l   a2,a1
@@ -321,14 +321,14 @@ memr_reploop:
  bne.b    memr_reploop
 ; a0 ist der kaputte Block
 ; a2 zeigt hinter den kaputten Block
-; a1 ist der nächste Block, dessen mcb_magic gültig ist
+; a1 ist der naechste Block, dessen mcb_magic gueltig ist
 memr_doit2:
  move.l   d0,(a0)                  ; #'ANDR', kaputter Block nicht letzter
  move.l   a0,mcb_prev(a1)          ; falls mehr als ein Block kaputt!
 memr_doit:
  sub.l    a2,a1                    ; a2 war Beginn des freien Speichers
  bcs.b    memr_ende                ; Fehler (?)
- move.l   a1,mcb_len(a0)           ; Länge eintragen
+ move.l   a1,mcb_len(a0)           ; Laenge eintragen
 memr_ende:
  rts
 
@@ -363,7 +363,7 @@ meme_nodmp:
  lea      do_term_s(pc),a0
  bsr      str_to_con
  moveq    #1,d1                    ; Speicher freigeben
- moveq    #-1,d0                   ; RÜckgabecode
+ moveq    #-1,d0                   ; RUeckgabecode
  bra      Pterm
 
 
@@ -372,12 +372,12 @@ meme_nodmp:
 * EQ/NE a0 = d0 = MCB *_malloc(d0 = long amount, d1 = int limitflag,
 *                        a0 = MCB *list, a1 = PD *pd)
 *
-*  Rückgabe d0 = 0L, wenn kein passender Block da, sonst a0 = MCB *
+*  Rueckgabe d0 = 0L, wenn kein passender Block da, sonst a0 = MCB *
 *  "First fit"- Strategie
 *
 * Abfrage/Modifikation von p_mem(a1) nur dann, wenn <limitflag> = 1.
 *
-* ändert nicht a1/d1
+* aendert nicht a1/d1
 *
 
 _malloc:
@@ -385,10 +385,10 @@ _malloc:
  move.l   (a0),d1
  beq      _mal_nix                 ; Liste ist leer
 
- tst.w    (sp)                     ; Beschränkung ?
- beq.b    _mal_weiter              ; nein, Speicher nicht beschränken
+ tst.w    (sp)                     ; Beschraenkung ?
+ beq.b    _mal_weiter              ; nein, Speicher nicht beschraenken
  cmp.l    p_mem(a1),d0
- bhi.b    _mal_nix                 ; Beschränkung schlägt zu
+ bhi.b    _mal_nix                 ; Beschraenkung schlaegt zu
 _mal_weiter:
 
  move.l   d1,a0
@@ -398,14 +398,14 @@ _mal_loop:
  tst.l    (a0)
  bne.b    _mal_used                ; Block ist belegt
  cmp.l    d0,d2
- bcc      _mal_found               ; Block ist groß genug
+ bcc      _mal_found               ; Block ist gross genug
 _mal_used:
  cmpi.l   #'KROM',d1
  beq      _mal_nix
  cmpi.l   #'ANDR',d1
  bne      mem_err_8
 _mal_next:
- lea      8(a0,d2.l),a0            ; nächster Block
+ lea      8(a0,d2.l),a0            ; naechster Block
  bra      _mal_loop
 _mal_nix:
  suba.l   a0,a0
@@ -418,15 +418,15 @@ _mal_found:
  sub.l    #16,d2                   ; mehr als 16 Bytes abspalten ?
  bls.b    _mal_ende                ; nein, lohnt sich nicht
  move.l   #'ANDR',(a0)             ; alter ist nicht letzter
- move.l   d0,mcb_len(a0)           ; neue Länge
+ move.l   d0,mcb_len(a0)           ; neue Laenge
  lea      mcb_data(a0,d0.l),a2     ; a2 = neuer Block
  move.l   a2,-(sp)
  move.l   d1,(a2)+                 ; magic kopieren
- move.l   d2,(a2)+                 ; Länge des abgespaltenen
+ move.l   d2,(a2)+                 ; Laenge des abgespaltenen
  clr.l    (a2)+                    ; neuer Block ist frei
  move.l   a0,(a2)+                 ; Zeiger auf vorherigen Block
  cmpi.l   #'ANDR',d1
- bne.b    _mal_nonext              ; folgt kein nächster Block
+ bne.b    _mal_nonext              ; folgt kein naechster Block
  move.l   (sp),mcb_prev(a2,d2.l)   ; Zeiger auf dessen vorherigen
 _mal_nonext:
  addq.l   #4,sp
@@ -437,7 +437,7 @@ _mal_ende:
  bmi.b    _mal_end
  moveq    #mcb_data,d0
  add.l    mcb_len(a0),d0
- sub.l    d0,p_mem(a1)             ; Bruttogröße des Blocks abziehen
+ sub.l    d0,p_mem(a1)             ; Bruttogroesse des Blocks abziehen
  bcc.b    _mal_end
  clr.l    p_mem(a1)                ; nicht unter 0 treiben
 _mal_end:
@@ -451,8 +451,8 @@ _mal_end:
 *
 * EQ/NE a0 = d0 = MCB *_malloc_last(d0 = long amount, a0 = MCB *list)
 *
-*  Rückgabe d0 = 0L, wenn kein passender Block da, sonst a0 = MCB *
-*  "Last fit"- Strategie (für Allozierung des Bildschirmspeichers).
+*  Rueckgabe d0 = 0L, wenn kein passender Block da, sonst a0 = MCB *
+*  "Last fit"- Strategie (fuer Allozierung des Bildschirmspeichers).
 *  Keine Speicherbegrenzung.
 *
 
@@ -469,14 +469,14 @@ _mll_loop:
  bne.b    _mll_used                ; Block ist belegt
  cmp.l    d0,d2
  bcs.b    _mll_used
- move.l   a0,a1                    ; Block ist groß genug
+ move.l   a0,a1                    ; Block ist gross genug
 _mll_used:
  cmpi.l   #'KROM',d1
  beq      _mll_nix
  cmpi.l   #'ANDR',d1
  bne      mem_err_8
 _mll_next:
- lea      8(a0,d2.l),a0            ; nächster Block
+ lea      8(a0,d2.l),a0            ; naechster Block
  bra      _mll_loop
 _mll_nix:
  move.l   a1,d1                    ; wurde ein Block gefunden ?
@@ -487,8 +487,8 @@ _mll_nix:
 _mll_found:
  move.l   a1,a0
  subq.l   #8,a0                    ; hier beginnt der Block
- move.l   mcb_len(a0),d2           ; Nettolänge des Blocks
- sub.l    d0,d2                    ; Gewünschte Blocklänge
+ move.l   mcb_len(a0),d2           ; Nettolaenge des Blocks
+ sub.l    d0,d2                    ; Gewuenschte Blocklaenge
  sub.l    #16,d2                   ; mehr als 16 Bytes abspalten ?
  bls.b    _mll_set                 ; nein, lohnt sich nicht, allozieren
  move.l   d2,mcb_len(a0)           ; Block verkleinern
@@ -543,7 +543,7 @@ mxavail_w2:
  move.l   d1,d0
 mxavail_ende:
  btst     #5,(sp)                  ; nolimit ?
- bne.b    mxavail_rts              ; kein, kein p_mem prüfen
+ bne.b    mxavail_rts              ; kein, kein p_mem pruefen
  cmp.l    p_mem(a1),d0
  bls.b    mxavail_rts
  move.l   p_mem(a1),d0
@@ -565,7 +565,7 @@ mxav_tt_loop:
  bsr.b    _Memavail
  addq.l   #4,a5
  cmp.l    d0,d7
- bhi.b    mxav_tt_loop             ; nächste Liste
+ bhi.b    mxav_tt_loop             ; naechste Liste
  move.l   d0,d7
  bra.b    mxav_tt_loop
 mxav_ende:
@@ -580,7 +580,7 @@ mxav_rts:
 * long _Memavail( a0 = MCB *list)
 * long mxavail_st( void )
 *
-* ändert nicht a1
+* aendert nicht a1
 *
 
 mxavail_st:
@@ -610,7 +610,7 @@ mavl_isnxt:
  bcc      mavl_next
  move.l   d2,d0
 mavl_next:
- lea      4(a0,d2.l),a0            ; nächster Block
+ lea      4(a0,d2.l),a0            ; naechster Block
  bra      mavl_loop
 mavl_ende:
  rts
@@ -622,7 +622,7 @@ mavl_ende:
 *
 * long Srealloc( long size)
 *
-* size == -1L: maximal mögliche Größe ermitteln
+* size == -1L: maximal moegliche Groesse ermitteln
 * sonst:       alten Block freigeben, neuen allozieren
 *
 * => NULL      Fehler
@@ -631,13 +631,13 @@ mavl_ende:
 
 Srealloc:
  movem.l  a6/d7/d6,-(sp)
- move.l   d0,d7                    ; d7 = neue Länge
+ move.l   d0,d7                    ; d7 = neue Laenge
  addq.l   #1,d0
  beq.b    sra_nom1
  addi.l   #259,d7
  andi.w   #$fffc,d7                ; Langwortgrenze
 sra_nom1:
-; zunächst prüfen, ob genügend Speicher frei ist
+; zunaechst pruefen, ob genuegend Speicher frei ist
  lea      mem_root.w,a6
  moveq    #0,d6                    ; bisheriges Maximum
  move.l   (a6),d1
@@ -652,7 +652,7 @@ sra_loop:
  tst.l    mcb_owner(a6)
  bne.b    sra_endloop              ; Block belegt
  move.l   a6,a0
- bsr      sra_blen                 ; Blocklänge ermitteln
+ bsr      sra_blen                 ; Blocklaenge ermitteln
  cmp.l    d0,d6
  bcc      sra_endloop
  move.l   d0,d6
@@ -661,13 +661,13 @@ sra_isnxt:
  tst.l    mcb_owner(a6)
  bne.b    sra_next                 ; Block belegt
  move.l   a6,a0
- bsr      sra_blen                 ; Blocklänge ermitteln
+ bsr      sra_blen                 ; Blocklaenge ermitteln
  cmp.l    d0,d6
  bcc      sra_next
  move.l   d0,d6
 sra_next:
  add.l    mcb_len(a6),a6
- lea      mcb_data(a6),a6          ; nächster Block
+ lea      mcb_data(a6),a6          ; naechster Block
  bra      sra_loop
 sra_endloop:
  cmp.l    scrbuf_len,d6
@@ -679,10 +679,10 @@ sra_w1:
  subi.l   #256,d0
  cmpi.l   #-1,d7
  beq      sra_ende
-; nachsehen, ob genügend Speicher frei ist
+; nachsehen, ob genuegend Speicher frei ist
  moveq    #0,d0
  cmp.l    d6,d7
- bhi      sra_ende                 ; nicht genügend frei
+ bhi      sra_ende                 ; nicht genuegend frei
 ; alten Block einfach freigeben
  suba.l   a1,a1                    ; kein PD
  move.l   scrbuf_adr,a0
@@ -704,7 +704,7 @@ sra_ende:
  rts
 
 *
-* Ermittle Blockgröße des freien Blocks <a0>, inklusive ggf. davor oder da-
+* Ermittle Blockgroesse des freien Blocks <a0>, inklusive ggf. davor oder da-
 * hinter liegender Bildschirmspeicher
 *
 
@@ -716,24 +716,24 @@ sra_blen:
  bne.b    srab_weiter              ; kein Bildschirmspeicher davor
 ; Bildschirmspeicher liegt davor
  add.l    mcb_len(a2),d0           ; Bildschirmspeicher addieren
- addi.l   #mcb_data,d0             ; ein MCB fällt weg
+ addi.l   #mcb_data,d0             ; ein MCB faellt weg
  tst.l    mcb_prev(a2)             ; davor noch ein Block ?
  beq.b    srab_ende                ; nein
  move.l   mcb_prev(a2),a2
  tst.l    mcb_owner(a2)            ; dieser frei ?
  bne.b    srab_ende                ; nein
- add.l    mcb_len(a2),d0           ; Blocklänge addieren
- addi.l   #mcb_data,d0             ; ein weiterer MCB fällt weg
+ add.l    mcb_len(a2),d0           ; Blocklaenge addieren
+ addi.l   #mcb_data,d0             ; ein weiterer MCB faellt weg
  rts
 srab_weiter:
  cmpi.l   #'KROM',mcb_magic(a0)    ; letzter Block ?
  beq.b    srab_ende                ; ja, Ende
- lea      mcb_data(a0,d0.l),a0     ; nächster Block
+ lea      mcb_data(a0,d0.l),a0     ; naechster Block
  cmp.l    a0,a2                    ; ist Bildschirmspeicher ?
  bne.b    srab_ende                ; nein
 ; Bildschirmspeicher liegt dahinter
  add.l    mcb_len(a2),d0           ; Bildschirmspeicher addieren
- addi.l   #mcb_data,d0             ; ein MCB fällt weg
+ addi.l   #mcb_data,d0             ; ein MCB faellt weg
  cmpi.l   #'ANDR',mcb_magic(a2)    ; folgt weiterer Block ?
  bne.b    srab_ende                ; nein
  add.l    mcb_len(a2),a2
@@ -741,7 +741,7 @@ srab_weiter:
  tst.l    mcb_owner(a2)
  bne.b    srab_ende
  add.l    mcb_len(a2),d0
- addi.l   #mcb_data,d0             ; ein MCB fällt weg
+ addi.l   #mcb_data,d0             ; ein MCB faellt weg
 srab_ende:
  rts
      ENDIF
@@ -754,14 +754,14 @@ srab_ende:
 
 Maddalt:
  add.l    d0,a0                    ; a0 = Blockende
- sub.l    #16,d0                   ; d0 = Netto-Blocklänge
+ sub.l    #16,d0                   ; d0 = Netto-Blocklaenge
  bcs      mada_err                 ; Block kleiner als 16 Bytes
  btst     #0,d0
- bne      mada_err                 ; Blocklänge ungerade
+ bne      mada_err                 ; Blocklaenge ungerade
 
-* 1. Versuch: Blöcke verschmelzen
+* 1. Versuch: Bloecke verschmelzen
 
- lea      (mem_root+8).w,a1        ; TT-RAM-Blöcke (mem_root+4 ist -1L)
+ lea      (mem_root+8).w,a1        ; TT-RAM-Bloecke (mem_root+4 ist -1L)
 mada_loop:
  tst.l    (a1)
  beq.b    mada_neu                 ; Listendende, neue Liste erstellen
@@ -771,13 +771,13 @@ mada_loop:
 
 ; neuen Block vorn einklinken
  move.l   d1,(a1)                  ; neuen Blockanfang setzen
- move.l   d1,mcb_prev(a0)          ; vor nächsten setzen
+ move.l   d1,mcb_prev(a0)          ; vor naechsten setzen
  move.l   d1,a1
  move.l   #'ANDR',(a1)+            ; mcb_magic: kein weiterer Block
- move.l   d0,(a1)+                 ; mcb_len  : Nettolänge
+ move.l   d0,(a1)+                 ; mcb_len  : Nettolaenge
  clr.l    (a1)+                    ; mcb_owner: unbenutzt
  clr.l    (a1)                     ; mcb_prev : kein vorheriger Block
- tst.l    mcb_owner(a0)            ; nächster Block frei ?
+ tst.l    mcb_owner(a0)            ; naechster Block frei ?
  bne.b    mada_ende                ; nein, Ende
  lea      -12(a1),a1
  bra.b    mada_melt
@@ -795,11 +795,11 @@ mada_weiter:
  move.l   a0,mem_top-mem_root(a1)  ; neues Blockende setzen
 */
  move.l   (a1),a0                  ; alter Blockanfang
- bsr      last_block               ; letzten Block ermitteln (ändert nur a0)
+ bsr      last_block               ; letzten Block ermitteln (aendert nur a0)
  move.l   #'ANDR',(a0)             ; nicht mehr letzter Block
  move.l   d1,a1
  move.l   #'KROM',(a1)+
- move.l   d0,(a1)+                 ; Nettolänge
+ move.l   d0,(a1)+                 ; Nettolaenge
  clr.l    (a1)+                    ; kein owner
  move.l   a0,(a1)                  ; vorheriger Block
  tst.l    mcb_owner(a0)
@@ -826,7 +826,7 @@ mada_neu:
  move.l   a0,mem_top-mem_root(a1)  ;    ebenso das Speicherende
 */
  move.l   #'KROM',(a2)+            ; mcb_magic: kein weiterer Block
- move.l   d0,(a2)+                 ; mcb_len  : Nettolänge
+ move.l   d0,(a2)+                 ; mcb_len  : Nettolaenge
  clr.l    (a2)+                    ; mcb_owner: unbenutzt
 
  clr.l    (a2)                     ; mcb_prev : kein vorheriger Block
@@ -869,15 +869,15 @@ Mxalloc:
  beq.b    mxal_st_tt
 * Modus 3: TT,ST
  move.l   d0,-(sp)
- bsr.b    mxalloc_tt               ; zunächst TT, ändert nicht a1
+ bsr.b    mxalloc_tt               ; zunaechst TT, aendert nicht a1
  move.l   (sp)+,a2
  bne.b    mxal_rts                 ; gefunden
- move.l   a2,d0                    ; d0 zurück
+ move.l   a2,d0                    ; d0 zurueck
  bra      mxalloc_st
 mxal_st_tt:
 * Modus 2: ST,TT
  move.l   d0,-(sp)
- bsr.b    mxalloc_st               ; zunächst ST, ändert nicht a1
+ bsr.b    mxalloc_st               ; zunaechst ST, aendert nicht a1
  move.l   (sp)+,a2
  bne.b    mxal_rts
  move.l   a2,d0
@@ -894,15 +894,15 @@ mxal_tt_loop:
 ;move.l   a1,a1                    ; PD *
  move.l   a5,a0
  move.l   d7,d0
- bsr.b    _Malloc                  ; ändert nicht a1/d1
+ bsr.b    _Malloc                  ; aendert nicht a1/d1
  addq.l   #4,a5
- beq.b    mxal_tt_loop             ; nächste Liste
+ beq.b    mxal_tt_loop             ; naechste Liste
 mxal_ende:
  movem.l  (sp)+,d7/a5
 mxal_rts:
  rts
 
-* ändern nicht a1
+* aendern nicht a1
 
 mxalloc_st:
  lea      mem_root.w,a0
@@ -912,13 +912,13 @@ _Malloc:
  seq      d1
  ext.w    d1                       ; limitflag
 ;move.l   a1,a1                    ; PD
- bsr      _malloc                  ; ändert nicht a1/d1
+ bsr      _malloc                  ; aendert nicht a1/d1
  move.w   (sp)+,d2
  tst.l    d0
  beq.b    _Mal_ende                ; NULL- Pointer
  btst     #14,d2                   ; Bit 14: "dontfree"
  beq.b    _Mal_ok
- bset     #7,mcb_owner(a0)         ; don't free !!!
+ bset     #7,mcb_owner(a0)         ; do not free !!!
 _Mal_ok:
  lea      mcb_data(a0),a0          ; Speicheradresse
  move.l   a0,d0
@@ -978,19 +978,19 @@ mfree_free:
  move.l   pr_memlist(a1),d0
  beq.b    mfree_eimba              ; keine memlist ???
  move.l   d0,a1
- move.l   (a1)+,d2                 ; Länge der Liste
+ move.l   (a1)+,d2                 ; Laenge der Liste
  lea      mcb_data(a0),a2
 mfree_shm_loop:
  subq.l   #1,d2
  bcs.b    mfree_eimba              ; Block nicht gefunden
  cmpa.l   (a1)+,a2
- bne.b    mfree_shm_loop           ; nächster Block
+ bne.b    mfree_shm_loop           ; naechster Block
  clr.l    -(a1)                    ; Block austragen
- subq.l   #1,mcb_owner(a0)         ; Referenzzähler verkleinern
+ subq.l   #1,mcb_owner(a0)         ; Referenzzaehler verkleinern
  bne.b    mfree_ret0               ; ist noch nicht 0
  move.l   (sp),mcb_owner(a0)       ; PD ist jetzt exklusiver Eigner
 
-* Block tatsächlich freigeben
+* Block tatsaechlich freigeben
 
 mfree_no_shm:
  move.l   (a0)+,d1                 ; d1 = magic
@@ -1011,21 +1011,21 @@ mfree_ok:
  move.l   d0,a1                    ; PD
  add.l    #mcb_data,d2
  add.l    d2,p_mem(a1)             ; Speicher zum Limit addieren
- bcc.b    mfree_no_ovl             ; kein Überlauf
- move.l   #$ffffffff,p_mem(a1)     ; Überlauf: Maximum setzen
+ bcc.b    mfree_no_ovl             ; kein Ueberlauf
+ move.l   #$ffffffff,p_mem(a1)     ; Ueberlauf: Maximum setzen
 
 mfree_no_ovl:
  subq.l   #8,a0                    ; a0 wieder auf Blockanfang
-* ggf. mit Vorgänger verschmelzen
+* ggf. mit Vorgaenger verschmelzen
  move.l   mcb_prev(a0),d0
  beq.b    mfree_no_prev
- move.l   d0,a1                    ; a1 = Vorgänger
+ move.l   d0,a1                    ; a1 = Vorgaenger
  tst.l    mcb_owner(a1)
- bne.b    mfree_no_prev            ; Vorgänger ist belegt
+ bne.b    mfree_no_prev            ; Vorgaenger ist belegt
  move.l   a2,-(sp)                 ; Nachfolger merken
- move.l   a1,-(sp)                 ; Vorgänger merken
+ move.l   a1,-(sp)                 ; Vorgaenger merken
  bsr.b    melt_mcbs
- move.l   (sp)+,a0                 ; Vorgänger ist jetzt aktueller
+ move.l   (sp)+,a0                 ; Vorgaenger ist jetzt aktueller
  move.l   (sp)+,a2
 mfree_no_prev:
 * ggf. mit Nachfolger verschmelzen
@@ -1051,24 +1051,24 @@ mfree_ende:
 *
 * void melt_mcbs(a0 = MCB *blk, a1 = MCB *prev_blk)
 *
-* <blk> und <prev_blk> sind freie Blöcke, die übereinander liegen
-* Die beiden Blöcke werden verschmolzen
-* Gibt Nachfolger von <blk> zurück
+* <blk> und <prev_blk> sind freie Bloecke, die uebereinander liegen
+* Die beiden Bloecke werden verschmolzen
+* Gibt Nachfolger von <blk> zurueck
 *
 
 melt_mcbs:
  move.l   (a0),d1                  ; d1 = magic
- clr.l    (a0)+                    ; magic sicherheitshalber löschen
+ clr.l    (a0)+                    ; magic sicherheitshalber loeschen
  moveq    #mcb_data,d2
  add.l    (a0)+,d2                 ; d2 = len (Brutto)
  cmpi.l   #'KROM',d1
  beq.b    ml_no_nxt
  cmpi.l   #'ANDR',d1
  bne      mem_err_8
- move.l   a1,mcb_prev-8(a0,d2.l)   ; Rückw.zeiger im nächsten Block umsetzen
+ move.l   a1,mcb_prev-8(a0,d2.l)   ; Rueckw.zeiger im naechsten Block umsetzen
 ml_no_nxt:
- move.l   d1,(a1)+                 ; magic in Vorgänger kopieren
- add.l    d2,(a1)                  ; Länge auf unteren Block addieren
+ move.l   d1,(a1)+                 ; magic in Vorgaenger kopieren
+ add.l    d2,(a1)                  ; Laenge auf unteren Block addieren
  rts
 
 
@@ -1076,15 +1076,15 @@ ml_no_nxt:
 *
 * long Mxshrink(a0 = char *memblock, d0 = long size, a1 = PD *pd)
 *
-* Im wesentlichen aus KAOS 1.2, also gegenüber TOS 1.4 noch folgendes:
-*  - Es kann ein Block vergrößert werden (wie in MS-DOS) !!
-*  - Wird -1L als Größe übergeben, wird die größtmögliche Größe
-*    des Speicherblocks zurückgegeben.
-*  - Bei neuer Größe 0L, bringt TOS 1.4 den Block sowohl in die freelist
-*    als auch in die alloc-list, was tödlich ist und daher nicht
-*    übernommen wurde.
-* Neu gegenüber KAOS 1.2:
-*  - Bei neuer Größe 0L einfach Block freigeben
+* Im wesentlichen aus KAOS 1.2, also gegenueber TOS 1.4 noch folgendes:
+*  - Es kann ein Block vergroessert werden (wie in MS-DOS) !!
+*  - Wird -1L als Groesse uebergeben, wird die groesstmoegliche Groesse
+*    des Speicherblocks zurueckgegeben.
+*  - Bei neuer Groesse 0L, bringt TOS 1.4 den Block sowohl in die freelist
+*    als auch in die alloc-list, was toedlich ist und daher nicht
+*    uebernommen wurde.
+* Neu gegenueber KAOS 1.2:
+*  - Bei neuer Groesse 0L einfach Block freigeben
 *
 * a1 = 0:      kein Limit
 *
@@ -1093,14 +1093,14 @@ Mxshrink:
 
      DEB  'Mxshrink'
 
- tst.l    d0                       ; auf 0 Bytes verkürzen ?
+ tst.l    d0                       ; auf 0 Bytes verkuerzen ?
  beq      Mxfree                   ; ja, einfach freigeben
  movem.l  d6/d7/a3/a5/a6,-(sp)
- move.l   d0,d7                    ; d7 = neue Blocklänge
+ move.l   d0,d7                    ; d7 = neue Blocklaenge
  move.l   a1,a3                    ; PD
  lea      -mcb_data(a0),a6         ; a6 = MCB *
  cmpa.l   #$ff000000,a6
- bhi      msh_eimba                ; für TT
+ bhi      msh_eimba                ; fuer TT
 ;cmp.l    _memtop,a6
 ;bhi      msh_eimba                ; return(EIMBA)
  move.l   (a6)+,d1                 ; d1 = mcb_magic
@@ -1115,11 +1115,11 @@ Mxshrink:
  cmpi.l   #'ANDR',d1
  move.l   a6,a0
  bne      mem_err
- lea      mcb_data(a6,d2.l),a5     ; a5 = nächster MCB
+ lea      mcb_data(a6,d2.l),a5     ; a5 = naechster MCB
  tst.l    mcb_owner(a5)
  bne.b    msh_ok1                  ; Nachfolger belegt
  add.l    #mcb_data,d6
- add.l    mcb_len(a5),d6           ; d6 = maximale mögliche Größe
+ add.l    mcb_len(a5),d6           ; d6 = maximale moegliche Groesse
 msh_ok1:
  addq.l   #1,d7
  beq      msh_avail
@@ -1127,25 +1127,25 @@ msh_ok1:
  andi.w   #$fffc,d7                ; Langwortgrenze!
 
  cmp.l    d2,d7
- beq      msh_ok                   ; keine Veränderung
+ beq      msh_ok                   ; keine Veraenderung
  bcs.b    msh_shrink               ; Blockverkleinerung
  btst     #5,(config_status+3).w
- bne      msh_egsbf                ; im TOS- Modus Blockvergrößerung nicht
+ bne      msh_egsbf                ; im TOS- Modus Blockvergroesserung nicht
                                    ; erlaubt
 
-* Blockvergrößerung (nur unter KAOS)
+* Blockvergroesserung (nur unter KAOS)
 
  cmp.l    d6,d7
  bhi      msh_egsbf                ; Nachfolgerblock zu klein
 
-* Die bisherige Größe + neue Größe ist groß genug für die Anforderung
-* Die Blöcke werden verschmolzen (der freie in a5[] mit dem in a6[])
+* Die bisherige Groesse + neue Groesse ist gross genug fuer die Anforderung
+* Die Bloecke werden verschmolzen (der freie in a5[] mit dem in a6[])
 
  move.l   a3,d0                    ; limit ?
- beq.b    msh_scrnmgr              ; nein, Speicher nicht beschränken
+ beq.b    msh_scrnmgr              ; nein, Speicher nicht beschraenken
  tst.l    p_mem(a3)
- bge      msh_egsbf                ; nur Blockvergrößerung, wenn Speicher
-                                   ; unbeschränkt
+ bge      msh_egsbf                ; nur Blockvergroesserung, wenn Speicher
+                                   ; unbeschraenkt
 
 msh_scrnmgr:
  move.l   a6,a1
@@ -1162,14 +1162,14 @@ msh_shrink:
  lea      mcb_data(a6,d7.l),a0     ; Beginn eines neuen Blocks
  move.l   a5,d0
  beq      msh_weiter               ; Nachfolger existiert nicht
- move.l   a0,mcb_prev(a5)          ; neuen Block als Vorgänger einsetzen
+ move.l   a0,mcb_prev(a5)          ; neuen Block als Vorgaenger einsetzen
 msh_weiter:
  move.l   a6,a1
- move.l   (a6),(a0)+               ; magic vom Vorgänger kopieren
- move.l   #'ANDR',(a1)+            ; Vorgänger kann nicht letzter sein
- move.l   d7,(a1)+                 ; neue Länge
- move.l   d2,(a0)+                 ; Länge des neuen Blocks
- move.l   act_pd,(a0)+             ; neuer Block gehört zunächst uns
+ move.l   (a6),(a0)+               ; magic vom Vorgaenger kopieren
+ move.l   #'ANDR',(a1)+            ; Vorgaenger kann nicht letzter sein
+ move.l   d7,(a1)+                 ; neue Laenge
+ move.l   d2,(a0)+                 ; Laenge des neuen Blocks
+ move.l   act_pd,(a0)+             ; neuer Block gehoert zunaechst uns
  move.l   a6,(a0)+                 ; mcb_prev einsetzen
  move.l   a3,a1                    ; PD
 ;move.l   a0,a0
@@ -1191,11 +1191,11 @@ msh_ok:
  bra.b    msh_ende
 
 msh_avail:
- move.l   a3,d0                    ; Speicher beschränken ?
- beq.b    msh_ende2                ; nein, Speicher nicht beschränken
+ move.l   a3,d0                    ; Speicher beschraenken ?
+ beq.b    msh_ende2                ; nein, Speicher nicht beschraenken
  tst.l    p_mem(a3)
  bmi.b    msh_ende2
- move.l   mcb_len(a6),d6           ; Block darf nicht vergrößert werden
+ move.l   mcb_len(a6),d6           ; Block darf nicht vergroessert werden
 msh_ende2:
  move.l   d6,d0
  bra.b    msh_ende
@@ -1215,20 +1215,20 @@ Mgetlen:
 *
 * long Mzombie(a0 = PD *process, a1 = PD *new_owner)
 *
-*  Ändert den Eigentümer der Basepage des Prozesses <process>. Neuer
-*  Eigentümer wird <new_owner> (der ur_pd). Der Block wird auf
-*  128 Bytes verkürzt.
+*  Aendert den Eigentuemer der Basepage des Prozesses <process>. Neuer
+*  Eigentuemer wird <new_owner> (der ur_pd). Der Block wird auf
+*  128 Bytes verkuerzt.
 *
 *  Wenn die Basepage "exklusiv" ist, wird <new_owner> einfach der
 *  neue Eigner. Wenn die Basepage "shared" ist, wird sie
 *  aus der Liste von <process> ausgetragen, aber nicht freigegeben.
-*  Der Referenzzähler ist dann quasi "eine Nummer zu groß".
+*  Der Referenzzaehler ist dann quasi "eine Nummer zu gro",$9e,"".
 *
 
 Mzombie:
  cmpi.l   #$0fff,mcb_owner-mcb_data(a0) ; kann es ein shared block sein ?
  bcc.b    mzombie_no_shm                ; nein, ist nicht
- addq.l   #1,mcb_owner-mcb_data(a0)     ; Referenzzähler erhöhen (!)
+ addq.l   #1,mcb_owner-mcb_data(a0)     ; Referenzzaehler erhoehen (!)
  movem.l  a0/a1,-(sp)
  move.l   a0,a1                         ; PD
 ;move.l   a0,a0                         ; memblk
@@ -1249,13 +1249,13 @@ mzombie_both:
 * void Mfzombie(a0 = PD *process, a1 = PD *new_pd)
 *
 *  Gibt einen mit <Mzombie()> manipulierten Block frei.
-*  <new_pd> ist der Urprozeß, dem der Block gehört.
+*  <new_pd> ist der Urprozess, dem der Block gehoert.
 *
 
 Mfzombie:
  cmpi.l   #$0fff,mcb_owner-mcb_data(a0) ; kann es ein shared block sein ?
  bcc.b    mfzombie_no_shm               ; nein, ist nicht
- subq.l   #1,mcb_owner-mcb_data(a0)     ; Referenzzähler verkleinern
+ subq.l   #1,mcb_owner-mcb_data(a0)     ; Referenzzaehler verkleinern
  bne.b    mfzombie_ende                 ; noch nicht Null
  move.l   a1,mcb_owner-mcb_data(a0)     ; ist Null, als exklusiv setzen
 mfzombie_no_shm:
@@ -1270,9 +1270,9 @@ mfzombie_ende:
 *
 * long Mchgown(a0 = void *memadr, a1 = PD *process)
 *
-*  Ändert Eigentümer des Speicherblocks ab (Benutzer-) adresse <memadr>
+*  Aendert Eigentuemer des Speicherblocks ab (Benutzer-) adresse <memadr>
 *  <process> == -1  :    Nur Eigner ermitteln
-*               -2  :    Block -> dontfree, liefere Nettolänge
+*               -2  :    Block -> dontfree, liefere Nettolaenge
 *
 
 Mchgown:
@@ -1284,20 +1284,20 @@ Mchgown:
  cmpi.l   #'KROM',d1
  bne.b    chgo_ende                ; return(EIMBA)
 chgo_ok:
- move.l   (a0)+,d1                 ; Länge
+ move.l   (a0)+,d1                 ; Laenge
  tst.l    (a0)
  beq      chgo_ende                ; return(EIMBA)
  cmpa.l   #-2,a1
  beq.b    chgo_setshm
  move.l   (a0),d0                  ; alter Eigner
  cmpa.l   #-1,a1
- beq.b    chgo_ende                ; PD ist -1L, Eigner zurückgeben
+ beq.b    chgo_ende                ; PD ist -1L, Eigner zurueckgeben
  move.l   a1,(a0)
  moveq    #0,d0                    ; ok
 chgo_ende:
  rts
 chgo_setshm:
- bset     #7,(a0)                  ; don't free
+ bset     #7,(a0)                  ; do not free
  move.l   d1,d0
  rts
 
@@ -1306,17 +1306,17 @@ chgo_setshm:
 *
 * d0 = long pd_used_mem( a0 = PD *pd )
 *
-* Gibt zurück, wieviel Speicher vom Prozeß <pd> belegt wird.
+* Gibt zurueck, wieviel Speicher vom Prozess <pd> belegt wird.
 * Wenn <pd> == NULL, wird der freie Speicher berechnet.
-* Rückgabe 0L, falls Prozeß nicht existiert.
-* Blöcke mit "dontfree"-Bit werden nicht berücksichtigt.
+* Rueckgabe 0L, falls Prozess nicht existiert.
+* Bloecke mit "dontfree"-Bit werden nicht beruecksichtigt.
 *
 * Berechnet exklusive und shared blocks
 *
 
 pd_used_mem:
  move.l   a0,-(sp)
- bsr.b    get_n_excl               ; erst exklusive Blöcke
+ bsr.b    get_n_excl               ; erst exklusive Bloecke
  move.l   (sp)+,a0
  move.l   a0,d1
  beq.b    pdusm_ende               ; freier Speicher
@@ -1326,14 +1326,14 @@ pd_used_mem:
  move.l   pr_memlist(a0),d1
  beq.b    pdusm_ende               ; keine shared blocks
  move.l   d1,a0
- move.l   (a0)+,d2                 ; Tabellenlänge
+ move.l   (a0)+,d2                 ; Tabellenlaenge
 pdusm_loop:
  subq.l   #1,d2
  bcs.b    pdusm_ende
  move.l   (a0)+,d1
  beq.b    pdusm_loop               ; freier Eintrag
  move.l   d1,a1
- add.l    mcb_len-mcb_data(a1),d0  ; gültiger Eintrag
+ add.l    mcb_len-mcb_data(a1),d0  ; gueltiger Eintrag
  bra.b    pdusm_loop
 pdusm_ende:
  rts
@@ -1343,24 +1343,24 @@ pdusm_ende:
 *
 * d0/d1 = long get_n_excl( a0 = PD *pd )
 *
-* Gibt zurück, wieviel Speicher vom Prozeß <pd> belegt wird.
+* Gibt zurueck, wieviel Speicher vom Prozess <pd> belegt wird.
 * Wenn <pd> == NULL, wird der freie Speicher berechnet.
-* Rückgabe 0L, falls Prozeß nicht existiert.
-* Blöcke mit "dontfree"-Bit werden nicht berücksichtigt.
+* Rueckgabe 0L, falls Prozess nicht existiert.
+* Bloecke mit "dontfree"-Bit werden nicht beruecksichtigt.
 *
-* Neu:    d1.l gibt die Anzahl der Blöcke zurück, die von einem
-*         Prozeß belegt werden.
+* Neu:    d1.l gibt die Anzahl der Bloecke zurueck, die von einem
+*         Prozess belegt werden.
 *
 
 get_n_excl:
  move.l   a0,a1
  lea      mem_root.w,a2            ; Tabelle der Speicherlisten
  moveq    #0,d0                    ; belegter Speicher
- clr.l    -(sp)                    ; Anzahl Blöcke
+ clr.l    -(sp)                    ; Anzahl Bloecke
 pmu_2_loop:
  move.l   (a2)+,d1
  beq      pmu__ende                ; Tabellenende
- bmi.b    pmu_2_loop               ; ungültiger Eintrag
+ bmi.b    pmu_2_loop               ; ungueltiger Eintrag
  move.l   d1,a0
 pmu__loop:
  move.l   (a0)+,d1                 ; d1 = magic
@@ -1370,20 +1370,20 @@ pmu__loop:
  cmpi.l   #'KROM',d1
  bne      mem_err_12               ; Speicherfehler!
  cmp.l    (a0),a1                  ; unser Block (bzw. leer bei SCRENMGR) ?
- bne      pmu_2_loop               ; nein, nächste Liste
+ bne      pmu_2_loop               ; nein, naechste Liste
  add.l    d2,d0
  addq.l   #1,(sp)
- bra      pmu_2_loop               ; nächste Liste
+ bra      pmu_2_loop               ; naechste Liste
 pmu__isnxt:
  cmp.l    (a0)+,a1
  bne.b    pmu__next                ; Block nicht unserer
  add.l    d2,d0
  addq.l   #1,(sp)
 pmu__next:
- lea      4(a0,d2.l),a0            ; nächster Block
+ lea      4(a0,d2.l),a0            ; naechster Block
  bra      pmu__loop
 pmu__ende:
- move.l   (sp)+,d1                 ; Anzahl Blöcke
+ move.l   (sp)+,d1                 ; Anzahl Bloecke
  rts
 
 
@@ -1391,9 +1391,9 @@ pmu__ende:
 *
 * void excl2shared( a0 = PD *pd, a1 = void **list )
 *
-* Wandelt alle exklusiven Blöcke des Prozesses um und trägt sie in
-* die Tabelle <list> ein, die groß genug sein muß.
-* Blöcke mit "dontfree"-Bit werden nicht berücksichtigt.
+* Wandelt alle exklusiven Bloecke des Prozesses um und traegt sie in
+* die Tabelle <list> ein, die gross genug sein muss.
+* Bloecke mit "dontfree"-Bit werden nicht beruecksichtigt.
 *
 
 excl2shared:
@@ -1404,7 +1404,7 @@ excl2shared:
 e2s_2_loop:
  move.l   (a2)+,d1
  beq      e2s__ende                ; Tabellenende
- bmi.b    e2s_2_loop               ; ungültiger Eintrag
+ bmi.b    e2s_2_loop               ; ungueltiger Eintrag
  move.l   d1,a0
 e2s__loop:
  move.l   (a0)+,d1                 ; d1 = magic
@@ -1414,20 +1414,20 @@ e2s__loop:
 ;cmpi.l   #'KROM',d1
 ;bne      mem_err_12               ; Speicherfehler!
  cmp.l    (a0),a1                  ; unser Block (bzw. leer bei SCRENMGR) ?
- bne      e2s_2_loop               ; nein, nächste Liste
+ bne      e2s_2_loop               ; nein, naechste Liste
  move.l   #1,(a0)                  ; als Eigner "1" eintragen
- addq.l   #8,a0                    ; owner und prev überspringen
+ addq.l   #8,a0                    ; owner und prev ueberspringen
  move.l   a0,(a3)+                 ; Block merken
- bra      e2s_2_loop               ; nächste Liste
+ bra      e2s_2_loop               ; naechste Liste
 e2s__isnxt:
  cmp.l    (a0),a1
  bne.b    e2s__next                ; Block nicht unserer
  move.l   #1,(a0)                  ; als Eigner "1" eintragen
- addq.l   #8,a0                    ; owner und prev überspringen
+ addq.l   #8,a0                    ; owner und prev ueberspringen
  move.l   a0,(a3)+                 ; Block merken
  subq.l   #8,a0
 e2s__next:
- lea      8(a0,d2.l),a0            ; nächster Block
+ lea      8(a0,d2.l),a0            ; naechster Block
  bra      e2s__loop
 e2s__ende:
  move.l   (sp)+,a3
@@ -1438,9 +1438,9 @@ e2s__ende:
 *
 * long get_n_shb( a0 = PD *pd )
 *
-* Zählt die Anzahl der "shared blocks" eines Prozesses.
+* Zaehlt die Anzahl der "shared blocks" eines Prozesses.
 * -> d0   Anzahl der shared blocks
-*    d1   aktuelle Länge der shared block table
+*    d1   aktuelle Laenge der shared block table
 *
 
 get_n_shb:
@@ -1451,14 +1451,14 @@ get_n_shb:
  move.l   pr_memlist(a1),d1
  beq.b    gnshb_ende               ; keine shared blocks, d1 = 0
  move.l   d1,a1
- move.l   (a1)+,d1                 ; Tabellenlänge
+ move.l   (a1)+,d1                 ; Tabellenlaenge
  move.l   d1,d2
 gnshb_loop:
  subq.l   #1,d2
  bcs.b    gnshb_ende
  tst.l    (a1)+
  beq.b    gnshb_loop               ; freier Eintrag
- addq.l   #1,d0                    ; gültiger Eintrag
+ addq.l   #1,d0                    ; gueltiger Eintrag
  bra.b    gnshb_loop
 gnshb_ende:
  rts
@@ -1468,9 +1468,9 @@ gnshb_ende:
 *
 * void **expand_sharelist( a0 = PD *pd, d0 = LONG num)
 *
-* Schafft Platz für mindestens <num> neue Einträge in der
+* Schafft Platz fuer mindestens <num> neue Eintraege in der
 * "shared memory list" des Prozesses <PD>.
-* Rückgabe ENSMEM bzw. Zeiger auf mindestens <num> freie Zeiger,
+* Rueckgabe ENSMEM bzw. Zeiger auf mindestens <num> freie Zeiger,
 * der Speicher ist nicht initialisiert.
 *
 
@@ -1487,39 +1487,39 @@ expand_sharelist:
  bsr      get_n_shb
  add.l    d0,d7                    ; + Anzahl "shared blocks"
 
- move.l   d1,d6                    ; Aktuelle Länge der "shared block table"
+ move.l   d1,d6                    ; Aktuelle Laenge der "shared block table"
  cmp.l    d7,d6
  bcc.b    expsh_enough             ; Tabelle ist lang genug
 
-* Tabelle ist zu kurz. Wir müssen umsortieren
+* Tabelle ist zu kurz. Wir muessen umsortieren
 
  move.l   d7,d0
- addq.l   #1,d0                    ; + Eintrag für Länge
+ addq.l   #1,d0                    ; + Eintrag fuer Laenge
  add.l    d0,d0
- add.l    d0,d0                    ; * 4 für LONGs
+ add.l    d0,d0                    ; * 4 fuer LONGs
 
  move.l   a6,a1                    ; PD
  move.w   #$6002,d1                ; ST_PREF/nolimit/dontfree
  bsr      Mxalloc
  tst.l    d0
- beq.b    expsh_err                ; nicht genügend Speicher
+ beq.b    expsh_err                ; nicht genuegend Speicher
  move.l   d0,a5                    ; a5 = neue Liste
 
  move.l   a5,a3
- move.l   d7,(a3)+                 ; Länge eintragen, a3 = akt. Zeiger
+ move.l   d7,(a3)+                 ; Laenge eintragen, a3 = akt. Zeiger
  move.l   pr_memlist(a4),d0
  beq.b    expsh_no_copy            ; keine alte Tabelle
 
 * die alte shared memory block list umkopieren und freigeben
 
  move.l   d0,a0                    ; alte Liste
- move.l   (a0)+,d2                 ; Tabellenlänge
+ move.l   (a0)+,d2                 ; Tabellenlaenge
 expsh_loop1:
  subq.l   #1,d2
  bcs.b    expsh_endloop1
  move.l   (a0)+,d0
  beq.b    expsh_loop1              ; freier Eintrag
- move.l   d0,(a3)+                 ; gültiger Eintrag
+ move.l   d0,(a3)+                 ; gueltiger Eintrag
  bra.b    expsh_loop1
 expsh_endloop1:
  suba.l   a1,a1
@@ -1538,7 +1538,7 @@ expsh_no_copy:
 expsh_enough:
  move.l   pr_memlist(a4),a5
  move.l   a5,a3
- move.l   (a3)+,d2                 ; Tabellenlänge
+ move.l   (a3)+,d2                 ; Tabellenlaenge
  move.l   d2,d0
  add.l    d0,d0
  add.l    d0,d0
@@ -1547,18 +1547,18 @@ expsh_loop2:
  subq.l   #1,d2
  bcs.b    expsh_ok
  move.l   (a3)+,d0
- bne.b    expsh_loop2              ; gültiger Eintrag
+ bne.b    expsh_loop2              ; gueltiger Eintrag
 expsh_loop3:
  cmpa.l   a3,a1
  bcs.b    expsh_ende2              ; a1 < a3
- tst.l    (a1)                     ; gültiger Eintrag hinten ?
+ tst.l    (a1)                     ; gueltiger Eintrag hinten ?
  bne.b    expsh_move               ; ja, umkopieren
  subq.l   #4,a1                    ; nach vorn suchen
  bra.b    expsh_loop3
 expsh_move:
- move.l   (a1),-4(a3)              ; gültigen Eintrag kopieren
- clr.l    (a1)                     ; Quelle löschen
- subq.l   #4,a1                    ; a1 läuft rückwärts
+ move.l   (a1),-4(a3)              ; gueltigen Eintrag kopieren
+ clr.l    (a1)                     ; Quelle loeschen
+ subq.l   #4,a1                    ; a1 laeuft rueckwaerts
  bra.b    expsh_loop2
 expsh_ende2:
  subq.l   #4,a3
@@ -1576,19 +1576,19 @@ expsh_ende:
 *
 * long mshare( a0 = PD *pd )
 *
-* Wandelt alle exklusiv belegten Blöcke des Prozesses um in
+* Wandelt alle exklusiv belegten Bloecke des Prozesses um in
 * "shared blocks".
 *
 
 mshare:
  move.l   a0,-(sp)
 
-* Ermittle die notwendige Länge der "shared" Liste
+* Ermittle die notwendige Laenge der "shared" Liste
 
 ;move.l   a0,a0                    ; PD
  bsr      get_n_excl
- move.l   d1,d0                    ; d0 = Anzahl Speicherblöcke
- beq.b    mshare_ok                ; keine exklusiven Blöcke
+ move.l   d1,d0                    ; d0 = Anzahl Speicherbloecke
+ beq.b    mshare_ok                ; keine exklusiven Bloecke
 
 ;move.l   d0,d0
  move.l   (sp),a0
@@ -1596,7 +1596,7 @@ mshare:
  tst.l    d0
  bmi.b    mshare_ende
 
- move.l   d0,a1                    ; Ziel: Platz für <d7> Einträge
+ move.l   d0,a1                    ; Ziel: Platz fuer <d7> Eintraege
  move.l   (sp),a0                  ; PD
  bsr      excl2shared              ; umwandeln
 
@@ -1611,12 +1611,12 @@ mshare_ende:
 *
 * long Memshare( a0 = void *memblk, a1 = PD *pd )
 *
-* Wandelt einen von Prozeß <pd> belegten Speicherblock <memblk> um
-* in einen "shared block" mit Referenzzähler 2 bzw. inkrementiert
-* den Referenzzähler, wenn der Block bereits "shared" ist.
-* Gibt die Blocklänge oder einen Fehlercode zurück.
+* Wandelt einen von Prozess <pd> belegten Speicherblock <memblk> um
+* in einen "shared block" mit Referenzzaehler 2 bzw. inkrementiert
+* den Referenzzaehler, wenn der Block bereits "shared" ist.
+* Gibt die Blocklaenge oder einen Fehlercode zurueck.
 *
-* Wird für F_SETSHMBLK benötigt.
+* Wird fuer F_SETSHMBLK benoetigt.
 *
 
 Memshare:
@@ -1640,14 +1640,14 @@ Memshare:
  move.l   pr_memlist(a1),d0
  beq.b    memsh_eimba              ; keine memlist ???
  move.l   d0,a1
- move.l   (a1)+,d2                 ; Länge der Liste
+ move.l   (a1)+,d2                 ; Laenge der Liste
  lea      mcb_data(a0),a2
 memsh_shm_loop:
  subq.l   #1,d2
  bcs.b    memsh_eimba              ; Block nicht gefunden
  cmpa.l   (a1)+,a2
- bne.b    memsh_shm_loop           ; nächster Block
- addq.l   #1,mcb_owner(a0)         ; Referenzzähler vergrößern
+ bne.b    memsh_shm_loop           ; naechster Block
+ addq.l   #1,mcb_owner(a0)         ; Referenzzaehler vergroessern
  bra.b    memsh_ok
 
 * Block war exklusiv
@@ -1667,7 +1667,7 @@ memsh_magic_ok:
  bmi.b    memsh_ende               ; Fehler!
  move.l   d0,a0                    ; freier Platz
  move.l   a5,(a0)                       ; Block eintragen!
- move.l   #2,mcb_owner-mcb_data(a5)     ; Referenzzähler 2
+ move.l   #2,mcb_owner-mcb_data(a5)     ; Referenzzaehler 2
 memsh_ok:
  move.l   mcb_len-mcb_data(a5),d0
  bra.b    memsh_ende
@@ -1682,10 +1682,10 @@ memsh_ende:
 *
 * long Memunsh( a0 = void *memblk )
 *
-* Dekrementiert den von Memshare() inkrementierten Referenzzähler
+* Dekrementiert den von Memshare() inkrementierten Referenzzaehler
 * des Blocks und gibt ihn ggf. frei.
 *
-* Wird für F_SETSHMBLK benötigt.
+* Wird fuer F_SETSHMBLK benoetigt.
 *
 
 Memunsh:
@@ -1713,8 +1713,8 @@ munsh_ok:
 *
 * long mfork( a0 = PD *src_pd, a1 = PD *dst_pd )
 *
-* Kopiert die "shared block list" für den neuen Prozeß und
-* inkrementiert die Referenzzähler
+* Kopiert die "shared block list" fuer den neuen Prozess und
+* inkrementiert die Referenzzaehler
 *
 
 mfork:
@@ -1731,35 +1731,35 @@ mfork:
 
  move.l   p_procdata(a5),d0        ; procdata
  beq.b    mfork_ok                 ; ???
- move.l   d0,a3                    ; a3 = procdata für neuen Prozeß
+ move.l   d0,a3                    ; a3 = procdata fuer neuen Prozess
 
- move.l   (a4),d0                  ; Länge der alten Tabelle
- addq.l   #1,d0                    ; + Eintrag für Länge
+ move.l   (a4),d0                  ; Laenge der alten Tabelle
+ addq.l   #1,d0                    ; + Eintrag fuer Laenge
  add.l    d0,d0
- add.l    d0,d0                    ; * 4 für LONGs
+ add.l    d0,d0                    ; * 4 fuer LONGs
 
-* Speicher für neue Tabelle anfordern
+* Speicher fuer neue Tabelle anfordern
 
- move.l   a5,a1                    ; Eigner ist der neue Prozeß
+ move.l   a5,a1                    ; Eigner ist der neue Prozess
  move.w   #$6002,d1                ; ST_PREF/nolimit/dontfree
  bsr      Mxalloc
  tst.l    d0
- beq.b    mfork_err                ; nicht genügend Speicher
- move.l   d0,pr_memlist(a3)        ; für neuen Prozeß
+ beq.b    mfork_err                ; nicht genuegend Speicher
+ move.l   d0,pr_memlist(a3)        ; fuer neuen Prozess
  move.l   d0,a3                    ; a3 = neue Liste
 
-* Liste kopieren und Referenzzähler erhöhen
+* Liste kopieren und Referenzzaehler erhoehen
 * Null-Elemente mit kopieren!!!
 
- move.l   (a4)+,d2                 ; Länge
- move.l   d2,(a3)+                 ;  einfach übernehmen
+ move.l   (a4)+,d2                 ; Laenge
+ move.l   d2,(a3)+                 ;  einfach uebernehmen
 mfork_loop:
  subq.l   #1,d2
  bcs.b    mforkloop_ende
  move.l   (a4)+,d0
  move.l   d0,a1
- beq.b    mfork_invblk             ; ungültiger Eintrag
- addq.l   #1,mcb_owner-mcb_data(a1)     ; Ref.zähler erhöhen
+ beq.b    mfork_invblk             ; ungueltiger Eintrag
+ addq.l   #1,mcb_owner-mcb_data(a1)     ; Ref.zaehler erhoehen
 mfork_invblk:
  move.l   a1,(a3)+
  bra.b    mfork_loop
@@ -1780,8 +1780,8 @@ mfork_ende:
 *
 * void Pfree(a0 = PD *process)
 *
-* gibt den Speicher zu einem Prozeß frei
-* (benötigt für Freigabe von Gerätetreibern)
+* gibt den Speicher zu einem Prozess frei
+* (benoetigt fuer Freigabe von Geraetetreibern)
 *
 
 Pfree:
@@ -1800,12 +1800,12 @@ Pfree:
  beq.b    pf_noshm
  move.l   d0,a4                    ; a4 = memlist
  move.l   a4,a3
- move.l   (a3)+,d7                 ; Länge
+ move.l   (a3)+,d7                 ; Laenge
 pf_shmloop:
  subq.l   #1,d7
  bcs.b    pf_shmloop_ende
  move.l   (a3)+,d0
- beq.b    pf_shmloop                    ; ungültiger Eintrag
+ beq.b    pf_shmloop                    ; ungueltiger Eintrag
  move.l   d0,a0
  subq.l   #1,mcb_owner-mcb_data(a0)
  bne.b    pf_shmloop                    ; noch nicht freigeben
@@ -1819,7 +1819,7 @@ pf_shmloop_ende:
  move.l   a4,a0
  bsr      Mxfree                   ; pr_memlist freigeben
  move.l   p_procdata(a5),a0
- clr.l    pr_memlist(a0)           ; sicherheitshalber Zeiger löschen
+ clr.l    pr_memlist(a0)           ; sicherheitshalber Zeiger loeschen
 
 * exclusive memory blocks freigeben
 
@@ -1829,14 +1829,14 @@ pf_no_procdata:
  lea      mem_root,a4              ; Tabelle der Speicherlisten
 pf_memloop2:
  move.l   (a4)+,d1                 ; Speicherliste
- bmi      pf_memloop2              ; ungültig
+ bmi      pf_memloop2              ; ungueltig
  beq      pf_ende                  ; ist leer, Tabellenende
  move.l   d1,a0
 pf_memloop:
  move.l   (a0)+,d1                 ; d1 = magic
  move.l   (a0)+,d2                 ; d2 = len
  move.l   (a0)+,d0                 ; d0 = owner
- addq.l   #4,a0                    ; mcb_prev überspringen
+ addq.l   #4,a0                    ; mcb_prev ueberspringen
  cmpi.l   #'ANDR',d1
  beq.b    pf_isnxt
  cmpi.l   #'KROM',d1
@@ -1844,7 +1844,7 @@ pf_memloop:
  suba.w   #12,a0
 pf_do_repair:
  move.l   a0,-(sp)                 ; Adresse des MCB auf Stack UND in a0
- move.l   a5,-(sp)                 ; owner für verwaiste Blöcke
+ move.l   a5,-(sp)                 ; owner fuer verwaiste Bloecke
  bsr      mem_repair               ; Versuch, zu reparieren
  addq.l   #8,sp
  subq.l   #4,a4
@@ -1855,13 +1855,13 @@ pf_krom:
  suba.l   a1,a1
 ;move.l   a0,a0
  bsr      Mxfree                   ; Freigabe des letzten Blocks
- bra      pf_memloop2              ; nächste Liste
+ bra      pf_memloop2              ; naechste Liste
 pf_isnxt:
  cmp.l    d0,a5
  bne.b    pf_next
 ; Sicherheits- Check
  move.l   a0,a1
- add.l    d2,a1                    ; a1 = nächster Block
+ add.l    d2,a1                    ; a1 = naechster Block
  cmpi.l   #'ANDR',(a1)
  beq.b    pf_do_free
  cmpi.l   #'KROM',(a1)
@@ -1875,7 +1875,7 @@ pf_do_free:
  subq.l   #4,a4                    ; Liste nochmal durchlaufen
  bra      pf_memloop2
 pf_next:
- add.l    d2,a0                    ; nächster Block
+ add.l    d2,a0                    ; naechster Block
  bra      pf_memloop
 pf_ende:
  movem.l  (sp)+,a3/a4/a5/d7
@@ -1889,20 +1889,20 @@ pf_ende:
 *
 * void *Pmemsave(a0 = PD *proc, a1 = void *excl_list[])
 *
-* Legt für jeden Speicherblock des Prozesses <proc> eine Kopie an,
+* Legt fuer jeden Speicherblock des Prozesses <proc> eine Kopie an,
 * verkettet diese Kopien miteinander und gibt den Zeiger auf den
-* ersten kopierten Block zurück.
-* Die durch excl_list[] angegebenen Blöcke (Liste durch NULL
+* ersten kopierten Block zurueck.
+* Die durch excl_list[] angegebenen Bloecke (Liste durch NULL
 * abgeschlossen) werden nicht kopiert.
 *
-* wird für Pfork() benötigt.
+* wird fuer Pfork() benoetigt.
 *
 
      OFFSET                        ; Struktur "saved memory block"
 
 svmb_link:     DS.L 1              ; Verkettungszeiger
 svmb_adr:      DS.L 1              ; Anfangsadresse des ger. Blocks
-svmb_len:      DS.L 1              ; Länge des ger. Blocks
+svmb_len:      DS.L 1              ; Laenge des ger. Blocks
 svmb_data:                         ; Daten
 
      TEXT
@@ -1918,13 +1918,13 @@ _mems_loop:
  rts
 _mems_doit:
  moveq    #svmb_data,d0
- add.l    mcb_len-mcb_data(a5),d0  ; Blocklänge
+ add.l    mcb_len-mcb_data(a5),d0  ; Blocklaenge
  moveq    #2,d1                    ; ST preferred
  lea      ur_pd,a1                 ; PD
  bsr      Mxalloc
  tst.l    d0
  bne.b    _mems_ok
-* zuwenig Speicher. Bisherige Blöcke wieder freigeben
+* zuwenig Speicher. Bisherige Bloecke wieder freigeben
 _mems_freeloop:
  move.l   a3,d0
  beq.b    _mems_reterr
@@ -1941,7 +1941,7 @@ _mems_ok:
  move.l   a3,(a0)+                 ; svmb_link, einklinken
  move.l   d0,a3
  move.l   a5,(a0)+                 ; svmb_adr, Adresse
- move.l   mcb_len-mcb_data(a5),d0  ; Blocklänge
+ move.l   mcb_len-mcb_data(a5),d0  ; Blocklaenge
  move.l   d0,(a0)+                 ; svmb_len
  move.l   a5,a1                    ; Quelle
  jsr      memmove                  ; Block kopieren
@@ -1954,19 +1954,19 @@ Pmemsave:
  move.l   a1,a6                    ; a6 = excl_list
  suba.l   a3,a3                    ; noch keine Liste
 
-* zunächst die "exclusive blocks"
+* zunaechst die "exclusive blocks"
 
  lea      mem_root,a4              ; Tabelle der Speicherlisten
 pms_memloop2:
  move.l   (a4)+,d1                 ; Speicherliste
- bmi      pms_memloop2             ; ungültig
+ bmi      pms_memloop2             ; ungueltig
  beq      pms_end_exclloop         ; ist leer, Tabellenende
  move.l   d1,a5
 pms_memloop:
  move.l   (a5)+,d1                 ; d1 = magic
  move.l   (a5)+,d7                 ; d7 = len
  move.l   (a5)+,d0                 ; d0 = owner
- addq.l   #4,a5                    ; mcb_prev überspringen
+ addq.l   #4,a5                    ; mcb_prev ueberspringen
  cmpi.l   #'ANDR',d1
  beq.b    pms_isnxt
  cmpi.l   #'KROM',d1
@@ -1974,7 +1974,7 @@ pms_memloop:
  suba.w   #12,a5
 pms_do_repair:
  move.l   a5,-(sp)                 ; Adresse des MCB auf Stack UND in a5
- move.l   d6,-(sp)                 ; owner für verwaiste Blöcke
+ move.l   d6,-(sp)                 ; owner fuer verwaiste Bloecke
  bsr      mem_repair               ; Versuch, zu reparieren
  addq.l   #8,sp
  subq.l   #4,a4
@@ -1986,13 +1986,13 @@ pms_krom:
  bsr      _memsave                 ; Block sichern
  bmi.b    pms_end                  ; Fehler
 
- bra      pms_memloop2             ; nächste Liste
+ bra      pms_memloop2             ; naechste Liste
 pms_isnxt:
  cmp.l    d0,d6
  bne.b    pms_next
 ; Sicherheits- Check
  move.l   a5,a1
- add.l    d7,a1                    ; a1 = nächster Block
+ add.l    d7,a1                    ; a1 = naechster Block
  cmpi.l   #'ANDR',(a1)
  beq.b    pms_do_free
  cmpi.l   #'KROM',(a1)
@@ -2005,7 +2005,7 @@ pms_do_free:
  bmi.b    pms_end
 
 pms_next:
- add.l    d7,a5                    ; nächster Block
+ add.l    d7,a5                    ; naechster Block
  bra      pms_memloop
 pms_end_exclloop:
 
@@ -2018,12 +2018,12 @@ pms_end_exclloop:
  move.l   pr_memlist(a0),d0
  beq.b    pms_ok                   ; keine shared blocks
  move.l   d0,a4                    ; a4 = memlist
- move.l   (a4)+,d7                 ; Länge
+ move.l   (a4)+,d7                 ; Laenge
 pms_shmloop:
  subq.l   #1,d7
  bcs.b    pms_ok
  move.l   (a4)+,d0
- beq.b    pms_shmloop              ; ungültiger Eintrag
+ beq.b    pms_shmloop              ; ungueltiger Eintrag
  move.l   d0,a0
 
  bsr      _memsave                 ; Block sichern
@@ -2032,7 +2032,7 @@ pms_shmloop:
 
 pms_ok:
 
-* schließlich Block-Eigner ändern
+* schliesslich Block-Eigner aendern
 
  move.l   a3,a0
 pms_ownloop:
@@ -2054,10 +2054,10 @@ pms_end:
 * void Pmemrestore(a0 = void *saved_mem_list,
 *                   a1 = PD *proc, d0 = int copy)
 *
-* Gegenstück zu Pmemsave. Kopiert die Daten zurück und gibt die
+* Gegenstueck zu Pmemsave. Kopiert die Daten zurueck und gibt die
 * Liste frei.
 *
-* wird für Pfork() benötigt.
+* wird fuer Pfork() benoetigt.
 *
 
 Pmemrestore:
@@ -2077,7 +2077,7 @@ pmr_loop:
  beq.b    pmr_free            ; nein, nur freigeben
  cmp.l    mcb_len-mcb_data(a0),d0  ; Block verkleinert?
  bls.b    pmr_copy
- move.l   mcb_len-mcb_data(a0),d0  ; neue Größe nehmen
+ move.l   mcb_len-mcb_data(a0),d0  ; neue Groesse nehmen
 pmr_copy:
  jsr      memmove
 pmr_free:
@@ -2094,8 +2094,8 @@ pmr_ende:
 *
 * long total_mem( void )
 *
-* Gibt zurück, wieviel Speicher dem Malloc-Mechanismus insgesamt
-* zur Verfügung steht
+* Gibt zurueck, wieviel Speicher dem Malloc-Mechanismus insgesamt
+* zur Verfuegung steht
 *
 
 total_mem:
@@ -2104,7 +2104,7 @@ total_mem:
 tmu_loop:
  move.l   (a2)+,d1
  beq.b    tmu_ende                 ; Tabellenende
- bmi.b    tmu_loop                 ; ungültiger Eintrag
+ bmi.b    tmu_loop                 ; ungueltiger Eintrag
  move.l   MEMLEN_OFFS-4(a2),a0
 /*
  move.l   mem_top-mem_root-4(a2),a0
@@ -2120,7 +2120,7 @@ tmu_ende:
 mem_fatal_errs:
  DC.B     '*** FATALER FEHLER IN DER SPEICHERVERWALTUNG:',0
 mem_err_s:
- DC.B     '*** SPEICHERBLOCK DURCH BENUTZERPROGRAMM ZERSTÖRT:',$1b,'K'
+ DC.B     '*** SPEICHERBLOCK DURCH BENUTZERPROGRAMM ZERST',$99,'RT:',$1b,'K'
  DC.B     $d,$a,$1b,'K',$a,0
 adrmcb_s:
  DC.B     'Adresse des MCB: $',$1b,'K',0
@@ -2158,18 +2158,18 @@ do_term_s:
 mem_fatal_errs:
  DC.B   '*** ERREUR FATALE DANS LA GESTION DE MEMOIR:',0
 mem_err_s:
- DC.B   '*** BLOC MÉMOIRE DÉTRUIT PAR PROGRAMME UTILISATEUR:',$1b,'K'
+ DC.B   '*** BLOC M',$90,'MOIRE D',$90,'TRUIT PAR PROGRAMME UTILISATEUR:',$1b,'K'
  DC.B   $d,$a,$1b,'K',$a,0
 adrmcb_s:
  DC.B   'Adresse du MCB: $',$1b,'K',0
 datmcb_s:
- DC.B   'Données  du MCB: ',$1b,'K',0
+ DC.B   'Donn',$82,'es  du MCB: ',$1b,'K',0
 do_dump_s:
- DC.B   $d,$a,$1b,'K',$a,'Relève du système sur disque: ',$1b,'K',$1b,'e',0
+ DC.B   $d,$a,$1b,'K',$a,'Rel',$8a,'ve du syst',$8a,'me sur disque: ',$1b,'K',$1b,'e',0
 do_repair_s:
- DC.B   $d,$a,$1b,'K',$a,'Essai de réparer (o/n) ? ',$1b,'K',$1b,'e',0; TPAK o=oui/ n=non
+ DC.B   $d,$a,$1b,'K',$a,'Essai de r',$82,'parer (o/n) ? ',$1b,'K',$1b,'e',0; TPAK o=oui/ n=non
 do_term_s:
- DC.B   $d,$a,$1b,'K',$a,'Le programme sera terminé',$d,$a,$1b,'K',$1b,'e',0
+ DC.B   $d,$a,$1b,'K',$a,'Le programme sera termin',$82,'',$d,$a,$1b,'K',$1b,'e',0
 
     ENDC
 

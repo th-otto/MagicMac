@@ -24,7 +24,7 @@
 
 
 /*----------------------------------------------------------*/
-/* Tabelle für die Umsetzung von ASCII zu Unicode           */
+/* Tabelle fuer die Umsetzung von ASCII zu Unicode           */
 /*----------------------------------------------------------*/
 static UWORD map_ascii_Unicode[256] = 
 {
@@ -289,8 +289,8 @@ static UWORD map_ascii_Unicode[256] =
 };
 
 /*----------------------------------------------------------*/
-/* Tabelle für die Umsetzung Unicode in ASCII               */
-/* (außer den Zeichen von 0x0020 bis 0x007e                 */
+/* Tabelle fuer die Umsetzung Unicode in ASCII               */
+/* (ausser den Zeichen von 0x0020 bis 0x007e                 */
 /*----------------------------------------------------------*/
 static UWORD map_Unicode_ascii[] = 
 {
@@ -495,7 +495,7 @@ static void unic2ibm(char **ptr, unsigned char *unicode, WORD len)
                if   (!wchar || (wchar == 0xffff))
                     goto ende;
 
-               /* binäre Suche nach <wchar> in der Tabelle  */
+               /* binaere Suche nach <wchar> in der Tabelle  */
                /* map_Unicode_ascii[]                       */
                /* ----------------------------------------- */
 
@@ -522,7 +522,7 @@ static void unic2ibm(char **ptr, unsigned char *unicode, WORD len)
                     }
                while((low != high) && (nnitems < nitems));
 
-               c = '¶';
+               c = 0xbc;
                found:
                ;
                }
@@ -569,15 +569,15 @@ static void ibm2unic(char **ptr, unsigned char *unicode, WORD len)
 * Allgemeine Routine zum Durchsuchen eines Verzeichnisses.
 *
 * Eingabe:     fd        Verzeichnis
-*              lbuf      für langen Namen oder NULL
-*              lbuflen   Max. Länge des langen Namens
-*              shortbuf  für kurzen Namen oder NULL
+*              lbuf      fuer langen Namen oder NULL
+*              lbuflen   Max. Laenge des langen Namens
+*              shortbuf  fuer kurzen Namen oder NULL
 *              fmode     Gibt an, welche Dateien gefunden werden:
 *
 *                   FINDDIR   nur Verzeichnisse
 *                   FINDXDIR  Verzeichnisse und Symlinks
 *                   FINDNDIR  keine Verzeichnisse
-*                   FINDALL   alles außer Labels
+*                   FINDALL   alles ausser Labels
 *                   FINDLABL  nur Labels.
 *
 * Ausgabe:     lbuf[]    langer Name bzw. kurzer, wenn es keinen
@@ -602,7 +602,7 @@ static LONG _vf_readdir(MX_DOSFD *fd,
      char *nxt_longname;      /* Zeiger auf freien Platz */
      char *nxt_ltmpname;
      int longcount;           /* Eintragnummer 1..15 */
-     char act_chksum;         /* Checksumme für langen Namen */
+     char act_chksum;         /* Checksumme fuer langen Namen */
      int reldirnr;
      char c;
      int len;
@@ -625,8 +625,8 @@ static LONG _vf_readdir(MX_DOSFD *fd,
           c = dir->name[0];
           if   (!c)                     /* Verzeichnisende */
                return(E_OK);
-          if   (c == '\xe5')            /* gelöschte Datei */
-               continue;                /* überlesen */
+          if   (c == '\xe5')            /* geloeschte Datei */
+               continue;                /* ueberlesen */
 
           if   (dir->attr == 0x0f)      /* lange Namen! */
                {
@@ -654,7 +654,7 @@ static LONG _vf_readdir(MX_DOSFD *fd,
                          }
                     }
 
-               /* Stückweise UNICODE-Brocken => String */
+               /* Stueckweise UNICODE-Brocken => String */
                /* ------------------------------------ */
 
                nxt_ltmpname = ltmpname;
@@ -663,13 +663,13 @@ static LONG _vf_readdir(MX_DOSFD *fd,
                unic2ibm(&nxt_ltmpname, ((LDIR *) dir)->name3, 2);
                len = (int) strlen(ltmpname);
 
-               /* Überlauf testen */
+               /* Ueberlauf testen */
                /* --------------- */
 
                if   (nxt_longname - len < longname)
                     return(EINTRN);     /* ??? */
 
-               /* Rückwärts reinkopieren */
+               /* Rueckwaerts reinkopieren */
                /* ---------------------- */
 
                vmemcpy(nxt_longname - len, ltmpname, len);
@@ -754,9 +754,9 @@ static LONG _vf_readdir(MX_DOSFD *fd,
 /*******************************************************************
 *
 * Durchsucht ein Verzeichnis nach einem Dateinamen.
-* <fd> ist bereits geöffnet.
+* <fd> ist bereits geoeffnet.
 *
-* Verwendet für
+* Verwendet fuer
 *
 *    Fopen
 *    Fdelete
@@ -800,7 +800,7 @@ LONG vf_dirsrch( MX_DOSFD *fd, char *fname, WORD fmode,
                }
 
           /* Hier brauchen wir den Sonderfall, der in u:\proc    */
-          /* eine Datei des Typs <pgmname.nnn> löscht.           */
+          /* eine Datei des Typs <pgmname.nnn> loescht.           */
           /* --------------------------------------------------- */
 
           if   ((*fname == '*') && (fname[1] == '.'))
@@ -828,9 +828,9 @@ LONG vf_dirsrch( MX_DOSFD *fd, char *fname, WORD fmode,
 /*******************************************************************
 *
 * Durchsucht ein Verzeichnis nach einem Disknamen.
-* <fd> ist bereits geöffnet.
+* <fd> ist bereits geoeffnet.
 *
-* Verwendet für
+* Verwendet fuer
 *
 *    Dreadlabel
 *
@@ -864,7 +864,7 @@ LONG vf_rlabel( MX_DOSFD *fd, char *buf, WORD buflen )
 * long dxfs_dreaddir( a0 = FD *d, d0 = int len, a1 = char *buf,
 *                     d1 = XATTR *xattr, d2 = long *xr )
 *
-* FÜr Dreaddir (xattr = NULL) und Dxreaddir
+* FUer Dreaddir (xattr = NULL) und Dxreaddir
 *
 ********************************************************************/
 
@@ -908,14 +908,14 @@ LONG vf_readdir(MX_DOSFD *fd, WORD buflen, char *buf,
 
 /*******************************************************************
 *
-* Öffnet ein Unterverzeichnis.
+* Oeffnet ein Unterverzeichnis.
 *
-* <len> ist die Länge des untersuchten Pfadelements
+* <len> ist die Laenge des untersuchten Pfadelements
 *
 * Geht einen Verzeichnislevel weiter.
 * verwendet in <path2DD>.
 *
-* Gibt einen Fehlercode, ELINK, oder einen DD_FD zurück.
+* Gibt einen Fehlercode, ELINK, oder einen DD_FD zurueck.
 *
 ********************************************************************/
 
@@ -931,7 +931,7 @@ LONG vf_path2DD( MX_DOSFD *fd, char *path, WORD len, void **link )
      DIR *dir;
 
 
-     /* Pfadelement umkopieren und durch EOS abschließen */
+     /* Pfadelement umkopieren und durch EOS abschliessen */
      /* ------------------------------------------------ */
 
      if   (len > 64)
@@ -940,7 +940,7 @@ LONG vf_path2DD( MX_DOSFD *fd, char *path, WORD len, void **link )
           *s++ = *path++;
      *s = '\0';
 
-     /* Erst die Liste der geöffneten Verzeichnisse durchsuchen */
+     /* Erst die Liste der geoeffneten Verzeichnisse durchsuchen */
      /* ------------------------------------------------------- */
 
      f = fd->fd_children;
@@ -969,7 +969,7 @@ LONG vf_path2DD( MX_DOSFD *fd, char *path, WORD len, void **link )
      if   (ret < E_OK)
           goto err;
 
-     fd = (MX_DOSFD *) ret;        /* Verzeichnis geöffnet! */
+     fd = (MX_DOSFD *) ret;        /* Verzeichnis geoeffnet! */
 
      for  (;;)
           {
@@ -1021,7 +1021,7 @@ LONG vf_crnam( MX_DOSFD *fd, DIR *newdir, char *longname )
 
 
      if   ((fd->fd_fpos) & 0x1fL)
-          return(EINTRN);               /* Abfrage für Ben */
+          return(EINTRN);               /* Abfrage fuer Ben */
 
      /* Langen Namen schreiben */
      /* ---------------------- */
@@ -1080,18 +1080,18 @@ LONG vf_crnam( MX_DOSFD *fd, DIR *newdir, char *longname )
 
 /*******************************************************************
 *
-* Leeren Eintrag im Verzeichnis suchen. Es muß genügend Platz
-* für den Namen <name> vorhanden sein.
+* Leeren Eintrag im Verzeichnis suchen. Es muss genuegend Platz
+* fuer den Namen <name> vorhanden sein.
 * Ggf. wird das Verzeichnis auch erweitert.
 *
 * Falls <specialpos> >= 0 ist, ist der an dieser Stelle befindliche
-* Haupteintrag als gelöscht zu betrachten (für Frename im selben
+* Haupteintrag als geloescht zu betrachten (fuer Frename im selben
 * Verzeichnis). Bzw. falls <specialfirstpos> >= 0 ist, sind alle
-* Einträge zwischen diesem und dem Haupteintrag als gelöscht zu
-* betrachten, d.h. nur dann, wenn die Anzahl der DIR-Einträge mit
-* den neu benötigten identisch ist.
+* Eintraege zwischen diesem und dem Haupteintrag als geloescht zu
+* betrachten, d.h. nur dann, wenn die Anzahl der DIR-Eintraege mit
+* den neu benoetigten identisch ist.
 * Die letzte Klausel kann jetzt entfallen, nachdem die
-* xfs_rename() überlappende Bereiche berücksichtigt.
+* xfs_rename() ueberlappende Bereiche beruecksichtigt.
 * In jedem Fall ist der alte Haupteintrag bei der Berechnung des
 * Alias zu ignorieren.
 *
@@ -1099,10 +1099,10 @@ LONG vf_crnam( MX_DOSFD *fd, DIR *newdir, char *longname )
 * Strategie verfolgt:
 *
 * Dabei wird der Name <newdir->name> ggf. modifiziert, damit ein
-* eindeutiger Kurzname (MS-Jargon: "Alias") gefunden wird. Dazu muß
+* eindeutiger Kurzname (MS-Jargon: "Alias") gefunden wird. Dazu muss
 * das Verzeichnis in jedem Fall bis zum Ende durchsucht werden.
 *
-* Gibt eine freie Position oder einen Fehlercode zurück.
+* Gibt eine freie Position oder einen Fehlercode zurueck.
 *
 ********************************************************************/
 
@@ -1111,9 +1111,9 @@ LONG vf_ffree( LONG specialpos, LONG specialfirstpos,
                char **longname, LONG *firstdirpos )
 {
      LONG doserr;
-     LONG gap_pos;            /* Anf.pos einer Lücke */
+     LONG gap_pos;            /* Anf.pos einer Luecke */
      LONG actpos;
-     int  gap_len;            /* Länge einer Lücke in #(DIR) */
+     int  gap_len;            /* Laenge einer Luecke in #(DIR) */
      DIR *dir;
      char shortname[14];      /* Zwischenspeicher */
      char c;
@@ -1132,7 +1132,7 @@ LONG vf_ffree( LONG specialpos, LONG specialfirstpos,
      if   (doserr < E_OK)
           return(doserr);          /* Fehler */
 
-     /* Erst müssen wir den Platzbedarf des neuen */
+     /* Erst muessen wir den Platzbedarf des neuen */
      /* Dateinamens ermitteln.                    */
      /* ----------------------------------------- */
 
@@ -1160,7 +1160,7 @@ LONG vf_ffree( LONG specialpos, LONG specialfirstpos,
                }
           }
 
-     /* Berechne bei Frename die alte Anzahl von benötigten Einträgen */
+     /* Berechne bei Frename die alte Anzahl von benoetigten Eintraegen */
      /* ------------------------------------------------------------- */
 
      if   (specialpos >= 0)
@@ -1203,7 +1203,7 @@ LONG vf_ffree( LONG specialpos, LONG specialfirstpos,
           c = dir->name[0];
 
           /* 2. Fall: Verzeichnis-Endmarke.       */
-          /*          Schaffe genügend Platz.     */
+          /*          Schaffe genuegend Platz.     */
           /* ------------------------------------ */
 
           if   (!c)                     /* Verzeichnisende */
@@ -1228,10 +1228,10 @@ LONG vf_ffree( LONG specialpos, LONG specialfirstpos,
                break;
                }
 
-          /* 3. Fall: Lücke, d.h. gelöschte Datei oder "special position" */
+          /* 3. Fall: Luecke, d.h. geloeschte Datei oder "special position" */
           /* ------------------------------------------------------------ */
 
-          if   ((c == '\xe5') ||             /* gelöschte Datei */
+          if   ((c == '\xe5') ||             /* geloeschte Datei */
                 ((actpos <= specialpos) && (actpos >= specialfirstpos)))
                {
 
@@ -1302,7 +1302,7 @@ LONG vf_ffree( LONG specialpos, LONG specialfirstpos,
                                    }
                               /* Zahl ist ok */
                               if   (number >= 1600)
-                                   goto weiter2;  /* Überlauf */
+                                   goto weiter2;  /* Ueberlauf */
                               used[number>>3] |= (1 << (number & 7));
                               goto weiter;   /* belegt */
                               }

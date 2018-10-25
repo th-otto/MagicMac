@@ -46,14 +46,14 @@ savptr_area         EQU  $93a           /* int  savptr_area[105],ende */
 jmpcode             EQU  $93a           /* int  jmpcode[3]            */
 ram_syshdr          EQU  $940           /* SYSHDR ram_syshdr          */
 
-* ## unbenutzt. Ab <clear_area> werden beim Warmstart 64 kB gelöscht
+* ## unbenutzt. Ab <clear_area> werden beim Warmstart 64 kB geloescht
 *               im Original- TOS ab $980
 
 xaes_area           EQU  $980           /* long xaes_area[3]          */
 /* p_vt52_winlst zeigt auf das Array WINDOW *app_window[128].         */
 /* Ist unter der Applikationsnummer id ein TOS-Programm im VT52 am    */
-/* Laufen, so zeigt app_window[id] auf die zugehörige Fensterstruktur */
-/* Andernfalls enthält app_window[id] NULL.                           */
+/* Laufen, so zeigt app_window[id] auf die zugehoerige Fensterstruktur */
+/* Andernfalls enthaelt app_window[id] NULL.                           */
 /* Die nachfolgenden Variablen werden im VT52.PRG in der Funktion     */
 /* <void set_vec()> initialisiert.                                    */
 p_vt52_winlst       EQU $98c            /* WINDOW   **p_vt52_winlst;  */

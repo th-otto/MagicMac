@@ -2,13 +2,13 @@
 *
 *             WINFRAME                             1.7.98
 *             ========
-*                                 letzte énderung:
+*                                 letzte Aenderung:
 *
 * geschrieben mit Pure C V1.1
 * Projektdatei: WINFRAME.PRJ
 *
-* Alternativer Window-Frame-Manager (Beispiel) fÅr MagiC 6.
-* Das Programm ist als SharedLib ausgefÅhrt.
+* Alternativer Window-Frame-Manager (Beispiel) fuer MagiC 6.
+* Das Programm ist als SharedLib ausgefuehrt.
 *
 ****************************************************************/
 
@@ -94,7 +94,7 @@ LONG cdecl slb_init( void )
 
 	new_wfh.version = old_wfh.version = 2;
 	new_wfh.wsizeof = sizeof(WININFO);
-	new_wfh.whshade = 18;	/* Hîhe des ge-shade-ten Fensters */
+	new_wfh.whshade = 18;	/* Hoehe des ge-shade-ten Fensters */
 	new_wfh.wbm_create = wbm_create;
 	new_wfh.wbm_skind = wbm_skind;
 	new_wfh.wbm_ssize = wbm_ssize;
@@ -122,9 +122,9 @@ LONG cdecl slb_init( void )
 
 /*****************************************************************
 *
-* Bibliothek aufrÑumen.
-* Wir dÅrfen kein appl_exit() machen, weil wir keine
-* ap_id haben. rsrc_free() dagegen wÑre erlaubt, weil die
+* Bibliothek aufraeumen.
+* Wir duerfen kein appl_exit() machen, weil wir keine
+* ap_id haben. rsrc_free() dagegen waere erlaubt, weil die
 * RSC-Strukturen im global-Feld liegen.
 *
 *****************************************************************/
@@ -143,7 +143,7 @@ extern void cdecl slb_exit( void )
 
 /*****************************************************************
 *
-* Bibliothek îffnen
+* Bibliothek oeffnen
 *
 *****************************************************************/
 
@@ -156,7 +156,7 @@ extern LONG cdecl slb_open( PD *pd )
 
 /*****************************************************************
 *
-* Bibliothek schlieûen
+* Bibliothek schliessen
 *
 *****************************************************************/
 

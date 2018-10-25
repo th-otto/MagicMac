@@ -1,5 +1,5 @@
 ;
-; BIOS für MagiC-Milan
+; BIOS fuer MagiC-Milan
 ;
 ; Tabulatorbreite: 5
 ;
@@ -52,7 +52,7 @@ DEBUG4    EQU  0
 
      IMPORT    dos_init            ; DOS
      IMPORT    act_pd              ; DOS
-     IMPORT    bufl_timer          ; DOS (für writeback)
+     IMPORT    bufl_timer          ; DOS (fuer writeback)
      IMPORT    secb_ext            ; DOS
      IMPORT    _mifl_unused        ; DOS
      IMPORT    dos_date            ; DOS
@@ -157,7 +157,7 @@ dta_drive:     DS.B      1    /* 0x14: Laufwerk (0..31)                    */
 dta_attr:      DS.B      1    /* 0x15: gefundenes Attribut                 */
 dta_time:      DS.W      1    /* 0x16: gefundene Zeit                      */
 dta_date:      DS.W      1    /* 0x18: gefundenes Datum                    */
-dta_len:       DS.L      1    /* 0x1a: gefundene Länge                     */
+dta_len:       DS.L      1    /* 0x1a: gefundene Laenge                     */
 dta_name:      DS.B      14   /* 0x1e: gefundener Dateiname                */
 dta_sizeof:
 
@@ -195,7 +195,7 @@ fbpb_sizeof:
 ;
 ;---------------------------------------------------------------
 ;
-; "Öffentliche Variablen"
+; "",$99,"ffentliche Variablen"
 ;
 
      INCLUDE "bios.inc"
@@ -206,7 +206,7 @@ fbpb_sizeof:
 ;
 ; BIOS- Variablen:
 
-milan               EQU  $9a4      ; Zeiger auf Übergabestruktur
+milan               EQU  $9a4      ; Zeiger auf Uebergabestruktur
 
 clear_area          EQU  $9a8
 
@@ -229,11 +229,11 @@ kbdvecs:            DS.L 9              /*   0: midivec               */
 kbshift:            DS.B 1              /* char kbshift               */
 keyrepeat:          DS.B 3              /* char keyrepeat[3]          */
                                         /* keyrepeat[0]: Scancode     */
-                                        /* keyrepeat[1]: Verzög       */
+                                        /* keyrepeat[1]: Verzoeg       */
                                         /* keyrepeat[2]: unben.       */
 altgr_status:       DS.B 1              /* char altgr_status          */
      IF   ALT_NUMKEY
-alt_numkey:         DS.B 1              /* Für Alt-Num0..Num9         */
+alt_numkey:         DS.B 1              /* Fuer Alt-Num0..Num9         */
      ENDIF
      EVEN
 key_delay:          DS.B 1              /* char                       */
@@ -262,7 +262,7 @@ config_status:      DS.L 1
                     DS.L 1              /* 12: hier -> vdi_tidy           */
 hddf_vector:        DS.L 1              /* 16: -> hddriver_functions      */
 status_bits:        DS.L 1              /* 20: Bit 0: APP-Manager ist aktiv */
-pkill_vector:       DS.L  1             /* 24: VERKETTEN: z.B. für DSP   */
+pkill_vector:       DS.L  1             /* 24: VERKETTEN: z.B. fuer DSP   */
 
 cookies:            DS.L NCOOKIES*2     /* long cookies[17][2]        */
 bconmap_struct:     DS.L 1              /* long *maptab               */
@@ -271,9 +271,9 @@ bconmap_struct:     DS.L 1              /* long *maptab               */
 p_rsconf:           DS.L 1              /* Pointer auf Rsconf (device 1)   */
 p_iorec:            DS.L 1              /* Pointer auf iorec (device 1)    */
 scrbuf_adr:         DS.L 1              /* Startadresse (netto, ohne MCB)  */
-scrbuf_len:         DS.L 1              /* tatsächliche Länge              */
-pe_slice:           DS.W 1              /* für XAES (Zeitscheibe)          */
-pe_timer:           DS.W 1              /* für XAES (Zeitscheibe)          */
+scrbuf_len:         DS.L 1              /* tatsaechliche Laenge              */
+pe_slice:           DS.W 1              /* fuer XAES (Zeitscheibe)          */
+pe_timer:           DS.W 1              /* fuer XAES (Zeitscheibe)          */
 first_sem:
 dummy_sem:          DS.B bl_sizeof      /* Dummy- Semaphore                */
 app0:               DS.L 1              /* APP #0 und Default- Superstack  */
@@ -281,38 +281,38 @@ pgm_superst:        DS.L 1              /* Default- Superstack             */
 p_mgxinf:                               /* nicht glchztg. mit pgm_userst   */
 pgm_userst:         DS.L 1
 
-;dflt_maptable:     DS.L 4*6            /* für 4 Einträge à 24 Bytes       */
-intern_maptab:      DS.L NSERIAL*6      ;interne MapTab. Enthält die Adressen
+;dflt_maptable:     DS.L 4*6            /* fuer 4 Eintraege � 24 Bytes       */
+intern_maptab:      DS.L NSERIAL*6      ;interne MapTab. Enthaelt die Adressen
                                         ;der seriellen Mag!X-Biosroutinen
 ;
-; Anschließend eine Kopie der Gerätevektoren.
-; Ist der Eintrag 0, so ist eine externe Routine eingehängt, andernfalls ist
+; Anschliessend eine Kopie der Geraetevektoren.
+; Ist der Eintrag 0, so ist eine externe Routine eingehaengt, andernfalls ist
 ; die Adresse der Mag!X-Biosroutine eingetragen.
 ; Derzeit nur benutzt, um bei umgemappter serieller Schnittstelle (1) zwischen
 ; Mag!X- und externen Routinen zu unterscheiden - eventuell in Zukunft aber
-; auch für andere Devices nützlich, die sich an die Registerkonventionen des
+; auch fuer andere Devices nuetzlich, die sich an die Registerkonventionen des
 ; neuen (X)Bios-Dispatchers halten.
 mbiosvecs:
 Bconstatvec:        DS.L 8
 Bconinvec:          DS.L 8
 Bcostatvec:         DS.L 8
 Bconoutvec:         DS.L 8
-                    DS.W 1         /* Länge der folgenden Tabelle */
+                    DS.W 1         /* Laenge der folgenden Tabelle */
 hddrv_tab:          DS.L 6
-warmbvec:           DS.L 1         /* Sprungadr. für Ctrl-Alt-Del     */
-coldbvec:           DS.L 1         /* Sprungadr. für Ctrl-Alt-Rsh-Del */
+warmbvec:           DS.L 1         /* Sprungadr. fuer Ctrl-Alt-Del     */
+coldbvec:           DS.L 1         /* Sprungadr. fuer Ctrl-Alt-Rsh-Del */
 sust_len:           DS.L 1         ;Supervisorstack pro Applikation
-datemode:           DS.W 1         ;für date2str (->STD.S)
-log_fd:             DS.L 1              /* DateiHandle für Bootlog */
-log_fd_pd:          DS.L 1              /* Prozeßdeskriptor für Handle */
-log_oldconout:      DS.L 1              /* Alter Vektor für Bootlog */
-p_vt52:             DS.L 1              /* für VT52.PRG */
+datemode:           DS.W 1         ;fuer date2str (->STD.S)
+log_fd:             DS.L 1              /* DateiHandle fuer Bootlog */
+log_fd_pd:          DS.L 1              /* Prozessdeskriptor fuer Handle */
+log_oldconout:      DS.L 1              /* Alter Vektor fuer Bootlog */
+p_vt52:             DS.L 1              /* fuer VT52.PRG */
 magic_pc:           DS.L 1
 cpu020:             DS.W 1         /* nach MATH */
 __e_bios:
 
 IF __e_bios > $1199
-"Überlauf der Bios-Variablen"
+"",$9a,"berlauf der Bios-Variablen"
 ENDIF
 
 
@@ -320,7 +320,7 @@ ENDIF
 
 
 _start:
-; nur für PASM
+; nur fuer PASM
 
         MC68030
         MC68881
@@ -350,7 +350,7 @@ syshdr:
 
 *
 * Die CPU braucht nicht initialisiert zu werden.
-* Das übernimmt das Milan-TOS. Wir setzen nur
+* Das uebernimmt das Milan-TOS. Wir setzen nur
 * den Supervisorstack.
 *
 
@@ -363,16 +363,16 @@ sys_start:
      ENDIF
 
  lea      endofvars,sp             ; Hier Stack setzen wegen ggf. Exception
- jsr      imilan                   ; Übergabestruktur bestimmen
+ jsr      imilan                   ; Uebergabestruktur bestimmen
  jsr      icpu                     ; dummy
 
-* BIOS- Variablenbereich löschen
+* BIOS- Variablenbereich loeschen
 
  lea      clear_area,a0
  lea      __e_bios,a1
  jsr      fast_clrmem
 
-* DOS- Variablenbereich löschen
+* DOS- Variablenbereich loeschen
 
  lea      __a_dos,a0
  lea      __e_dos,a1
@@ -380,7 +380,7 @@ sys_start:
 
  clr.l    p_vt52_winlst            ; damit DOS nicht verwirrt wird
 
- lea      config_status,a0         ; config-Status-Block löschen
+ lea      config_status,a0         ; config-Status-Block loeschen
  moveq    #7-1,d0
 ccfl_loop:
  clr.l    (a0)+
@@ -395,7 +395,7 @@ ccfl_loop:
  sne      is_fpu
  move.w   #6,stack_offset
  jsr      get_cpu_typ
- clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik möglich?
+ clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik moeglich?
  cmpi.b   #20,d0
  bcs.b    scpu_typ
  addq.w   #1,cpu020                     ; mindestens 020-Prozessor
@@ -437,7 +437,7 @@ inst_cook:
 
 *
 * Beginn der TPA setzen
-* Wir gehen davon aus, daß MagiC vorn im Speicher
+* Wir gehen davon aus, dass MagiC vorn im Speicher
 * liegt und die TPA dahinter beginnt.
 *
 
@@ -448,7 +448,7 @@ inst_cook:
  move.l   d0,exec_os
  DEBL     'end_os = ',d0
  movea.l  syshdr+os_magic(pc),a0        ; Zeiger auf GEM- Parameterblock
- cmpi.l   #$87654321,(a0)+              ; gültig ?
+ cmpi.l   #$87654321,(a0)+              ; gueltig ?
  bne.b    bot_no_aes                    ; nein
 ;move.l   (a0)+,end_os                  ; Ende der AES-Variablen ist egal
  addq.l   #4,a0
@@ -456,25 +456,25 @@ inst_cook:
 bot_no_aes:
 
 *
-* Installation einiger Exceptionvektoren für Disk und Ausgabe
+* Installation einiger Exceptionvektoren fuer Disk und Ausgabe
 *
 
  jsr      ihdv                          ; hdv_xxx initialisieren
  DEB      'Hdv-Vektoren initialisiert'
 
  jsr      get_odevv
- move.l   2*32(a0),prv_lsto             ; Bcostat für Gerät 0
- move.l   3*32(a0),prv_lst              ; Bconout für Gerät 0
- move.l   2*32+4(a0),prv_auxo           ; Bcostat für Gerät 1
- move.l   3*32+4(a0),prv_aux            ; Bconout für Gerät 1
+ move.l   2*32(a0),prv_lsto             ; Bcostat fuer Geraet 0
+ move.l   3*32(a0),prv_lst              ; Bconout fuer Geraet 0
+ move.l   2*32+4(a0),prv_auxo           ; Bcostat fuer Geraet 1
+ move.l   3*32+4(a0),prv_aux            ; Bconout fuer Geraet 1
  move.l   #do_hardcopy,scr_dump         ; MagiC 3.0: Dummy-Routine
  move.l   #do_hardcopy,prtblk_vec       ; MagiC 3.0: Dummy-Routine
  DEB      'Hardcopy initialisiert'
 
 *
 * Initialisierung des FRB sowie end_os und _membot
-* Irgendwo ist noch ein böser Fehler: Wenn _membot
-*  nicht vergrößert wird (4k sind zuwenig), stürzt
+* Irgendwo ist noch ein boeser Fehler: Wenn _membot
+*  nicht vergroessert wird (4k sind zuwenig), stuerzt
 *  die Dateiauswahl (!) ab.
 *
 
@@ -489,8 +489,8 @@ bot_no_aes:
  DEB      'FRB-Puffer angelegt'
 bot_no_frb:
  move.l   end_os,d0
-; add.l   #$2000,d0                ; 8k (??!!??) nötig, sonst Crash
-; move.l  d0,end_os                ; nicht nötig, aber 3.06 will es so
+; add.l   #$2000,d0                ; 8k (??!!??) noetig, sonst Crash
+; move.l  d0,end_os                ; nicht noetig, aber 3.06 will es so
  move.l   d0,_membot
  DEBL     '_membot = ',d0
 
@@ -506,7 +506,7 @@ bot_no_frb:
  clr.l    act_appl                 ; single task
 
 *
-* Funktionen für Plattentreiber
+* Funktionen fuer Plattentreiber
 *
 
  jsr      ibkgdma                  ; ACSI/FDC-Semaphoren usw.
@@ -520,10 +520,10 @@ bot_no_frb:
  move.l   #savptr_area,savptr
  move.l   #dummyfn,swv_vec
  clr.l    _drvbits
- clr.l    _shell_p                 ; !!! wird jetzt gelöscht
+ clr.l    _shell_p                 ; !!! wird jetzt geloescht
  jsr      isndhooks                ; bell_hook,kcl_hook initialisieren
- move.l   #warm_boot,warmbvec      ; Sprungvektor für Ctrl-Alt-Del
- move.l   #coldboot,coldbvec       ; Sprungvektor für Ctrl-Alt-Rshift-Del
+ move.l   #warm_boot,warmbvec      ; Sprungvektor fuer Ctrl-Alt-Del
+ move.l   #coldboot,coldbvec       ; Sprungvektor fuer Ctrl-Alt-Rshift-Del
 
 * RAM- syshdr erstellen (wozu ?)
 
@@ -567,7 +567,7 @@ bot_loop2:
  move.l   a3,$88.w                 ; Trap #2   (Dummy)
  move.l   #int_vbl,$70             ; VBL
 
-* etv_timer und etv_term auf RTS, VBL- Queue löschen
+* etv_timer und etv_term auf RTS, VBL- Queue loeschen
 
  move.l   a4,etv_timer
 ;move.l   #bios_critic,etv_critic  ; wird vom DOS erledigt
@@ -582,7 +582,7 @@ bot_loop3:
 
 * Devicevektoren initialisieren
 
- jsr      get_odevv                ; ROM-Gerätevektoren ermitteln => a0
+ jsr      get_odevv                ; ROM-Geraetevektoren ermitteln => a0
  lea      dev_vecs,a1
  lea      mbiosvecs,a2
  moveq    #$1f,d0
@@ -594,9 +594,9 @@ bot_loop4:
  move.l   #bconin_con,mbiosvecs+$28     ; Bconin(2)
  move.l   #bconstat_con,dev_vecs+$8     ; Bconstat(2)
  move.l   #bconstat_con,mbiosvecs+$8    ; Bconstat(2)
- DEB      'Gerätevektoren initialisiert'
+ DEB      'Ger�tevektoren initialisiert'
 
-* MFP und Vektoren initialisieren, Interrupts für 200Hz und IKBD
+* MFP und Vektoren initialisieren, Interrupts fuer 200Hz und IKBD
 
  jsr      iperiph
  DEB      'Peripherie initialisiert'
@@ -645,7 +645,7 @@ _cpyloop3:
  bsr      _Bioskeys                ; 9 Standard-Tastaturtabellen (GER)
  DEB      'Tastatur initialisiert'
 
-; Auflösung setzen (MagiX)
+; Aufloesung setzen (MagiX)
 
  jsr      ivideo2
 
@@ -672,11 +672,11 @@ _cpyloop3:
  DEB      'DOS initialisiert'
  move.l   milan,a6
  move.l   milh_meminfo(a6),a6
- move.w   (a6)+,d7                 ; Tabellenlänge
+ move.w   (a6)+,d7                 ; Tabellenlaenge
  subq.w   #1,d7                    ; ST-RAM schon erledigt
  bra.b    addmem_nxt
 addmem_loop:
- move.l   4(a6),-(sp)              ; Blocklänge
+ move.l   4(a6),-(sp)              ; Blocklaenge
  move.l   (a6),-(sp)               ; Blockadresse
  move.w   #$14,-(sp)
  trap     #1                       ; gemdos Maddalt
@@ -688,7 +688,7 @@ addmem_nxt:
 
 * Supervisorstack anlegen
 
- move.l   #SUPERSTACKLEN,sust_len  ; Größe des Supervisorstacks pro App
+ move.l   #SUPERSTACKLEN,sust_len  ; Groesse des Supervisorstacks pro App
  move.w   #3,-(sp)                 ; lieber FastRAM
  lea      ap_stack,a0
  add.l    sust_len,a0
@@ -699,7 +699,7 @@ addmem_nxt:
  tst.l    d0
  beq      fatal_err
  move.l   d0,app0
- add.l    (sp)+,d0                 ; Stacklänge addieren
+ add.l    (sp)+,d0                 ; Stacklaenge addieren
  addq.l   #2,sp
  move.l   d0,pgm_superst
  move.l   d0,a0                    ; neu
@@ -715,7 +715,7 @@ addmem_nxt:
  tst.l    d0
  beq      fatal_err
  move.l   d0,pgm_userst            ; merken
- add.l    (sp)+,d0                 ; Stacklänge addieren
+ add.l    (sp)+,d0                 ; Stacklaenge addieren
  addq.l   #2,sp
  move.l   d0,a0
  move.l   a0,usp
@@ -733,7 +733,7 @@ addmem_nxt:
 * Falcon-Sound initialisieren
 *
 
-; entfällt
+; entfaellt
 
 *
 * Bootroutinen (nach wie vor gilt: sp == endofvars)
@@ -743,24 +743,24 @@ addmem_nxt:
  DEB      'SCSI.RAM initialisiert'
  move.l   hdv_rw,-(sp)
  bsr      dskboot                  ; von Floppy booten
- DEB      'dskboot ausgeführt'
+ DEB      'dskboot ausgef�hrt'
  bsr      apkgboot                 ; Flash-PKGs starten
- DEB      'apkgboot ausgeführt'
+ DEB      'apkgboot ausgef�hrt'
  move.l   (sp)+,a0
  cmpa.l   hdv_rw,a0
  bne.b    boot_no_dma              ; hat schon von Floppy gebootet
 
  bsr      dmaboot                  ; von SCSI und ACSI booten
- DEB      'dmaboot ausgeführt'
+ DEB      'dmaboot ausgef�hrt'
  jsr      secb_ext                 ; (Sektorpufferliste!)
  DEB      'Sektorpuffer erweitert'
 
 boot_no_dma:
- bsr      exec_respgms             ; residente Programme ausführen
- DEB      'residente Programme ausgeführt'
+ bsr      exec_respgms             ; residente Programme ausfuehren
+ DEB      'residente Programme ausgef�hrt'
 
 *
-* VDI nach DMA-Boot initialisieren (muß Treiber laden)
+* VDI nach DMA-Boot initialisieren (muss Treiber laden)
 *
 
  jsr      ivdi2
@@ -783,7 +783,7 @@ boot_no_dma:
 * VFAT, Tastaturtabellen, Log-Datei, Startbild
 * XTENSION, AUTO
 * AES starten
-* Auflösungswechsel
+* Aufloesungswechsel
 
      INCLUDE "auto.s"
 
@@ -810,7 +810,7 @@ dos_macfn:
 *
 * long bios_rawdrvr( d0 = int opcode, d1 = long devcode, ... )
 *
-* Führt gerätespezifische Aktionen aus.
+* Fuehrt geraetespezifische Aktionen aus.
 *
 * d0 = 0: Medium auswerfen.
 *
@@ -828,7 +828,7 @@ bios_rawdrvr:
 * long bios2devcode( d0 = int biosdev )
 *
 * Rechnet ein BIOS-Device in einen devcode um (major/minor)
-* Rückgabe 0, wenn Fehler
+* Rueckgabe 0, wenn Fehler
 * wird vom DOS aufgerufen
 *
 
@@ -846,13 +846,13 @@ b2dc_err:
 
 *********************************************************************
 *
-* Der Zugriff bei Rwabs ist bei gesetztem LOCK nur für den
-* sperrenden Prozeß erlaubt
+* Der Zugriff bei Rwabs ist bei gesetztem LOCK nur fuer den
+* sperrenden Prozess erlaubt
 *
 
 IRwabs:
  movem.l  d3-d7/a3-a6,-(sp)
- subq.l   #4,sp                    ; Platz für Zeiger
+ subq.l   #4,sp                    ; Platz fuer Zeiger
  lea      12(a0),a0
  move.l   (a0),-(sp)               ; lrecno
  move.l   -(a0),d0                 ; recno/dev
@@ -860,13 +860,13 @@ IRwabs:
  move.w   d0,a1
  add.w    a1,a1
  add.w    a1,a1
- move.l   a1,4(sp)                 ; merken für DOS- Writeback
+ move.l   a1,4(sp)                 ; merken fuer DOS- Writeback
  move.l   dlockx(a1),d3
  beq.b    rwabs_ok
  cmp.l    act_pd,d3
  bne.b    rwabs_elocked
 rwabs_ok:
- clr.l    bufl_timer(a1)      ; für DOS-Writeback (als in Arbeit markieren)
+ clr.l    bufl_timer(a1)      ; fuer DOS-Writeback (als in Arbeit markieren)
  move.l   d0,-(sp)            ; recno/dev
  move.l   -(a0),-(sp)         ; count/buf.lo
  move.l   -(a0),-(sp)         ; buf.hi/rwflag
@@ -875,7 +875,7 @@ rwabs_ok:
  lea      16(sp),sp
 rwabs_ende:
  move.l   (sp)+,a1
- move.l   _hz_200,bufl_timer(a1)   ; für DOS- Writeback
+ move.l   _hz_200,bufl_timer(a1)   ; fuer DOS- Writeback
  movem.l  (sp)+,d3-d7/a3-a6
  rte
      
@@ -913,7 +913,7 @@ dskb_ende:
 
 **********************************************************************
 *
-* Führt einen Warmstart aus
+* Fuehrt einen Warmstart aus
 *
 * beim 68020/30 werden die Caches abgeschaltet
 *
@@ -937,7 +937,7 @@ warmb_00:
  btst     #0,d0
  bne      sys_start
  move.l   d0,a0
- lea      warmb_00(pc),a6          ;Rücksprungadresse
+ lea      warmb_00(pc),a6          ;Ruecksprungadresse
  jmp      (a0)
  bra      sys_start
      ENDIF
@@ -950,7 +950,7 @@ warmb_00:
 *
 
 try_ext_scsidrvr:
-;Test auf SCSI-RAM. Setze Busfehlervektor für den Fall, daß die
+;Test auf SCSI-RAM. Setze Busfehlervektor fuer den Fall, dass die
 ; Systemvariable $868 Schrott enthalten sollte.
  movea.l  8.w,a0
  movea.l  sp,a1
@@ -961,17 +961,17 @@ try_ext_scsidrvr:
  move.l   d0,a2
  cmp.l    #'SCSI',(a2)             ;SCSI.RAM-Magic vorhanden?
  bne.b    no_scsiram
- cmpa.l   4(a2),a2                 ;Dieser Pointer muß aufs SCSI-Magic zeigen
+ cmpa.l   4(a2),a2                 ;Dieser Pointer muss aufs SCSI-Magic zeigen
  bne.b    no_scsiram
 
  movea.l  a1,sp
- move.l   a0,8.w                   ;Busfehlervektor zurück
+ move.l   a0,8.w                   ;Busfehlervektor zurueck
  jsr      8(a2)                    ;Init des SCSI.RAM aufrufen (zerlegt Reg. ...)
  bra.b    try_dskboot
 
 no_scsiram:
  movea.l  a1,sp
- move.l   a0,8.w                   ;Busfehlervektor zurück
+ move.l   a0,8.w                   ;Busfehlervektor zurueck
 ;
 try_dskboot:
  rts
@@ -1001,7 +1001,7 @@ ret0:
 *
 
 dummynopfn:
- nop        ;Eingefügt wegen jsr 4(a2) in Bconout()!
+ nop        ;Eingefuegt wegen jsr 4(a2) in Bconout()!
  nop
 dummyfn:
  rts
@@ -1026,7 +1026,7 @@ Rsconf:
 
 **********************************************************************
 *
-* TRAP- Einsprünge für den 680x0
+* TRAP- Einspruenge fuer den 680x0
 *
 xbios_tab:
  DC.W     45
@@ -1094,7 +1094,7 @@ bios_tab:
 
 ;
 ; Der neue (X)Bios-Dispatcher sichert, wenn notwendig, die Register auf dem
-; ssp => Um dies Stackbelastung möglichst wenig zu halten, sollten kurze
+; ssp => Um dies Stackbelastung moeglichst wenig zu halten, sollten kurze
 ; Unterroutinen (4-20 Bytes) expandiert werden.
 XBiosDisp:
    lea      xbios_tab(pc),a1
@@ -1153,7 +1153,7 @@ _biossave:
 
 Supexec:
    move.l   (a0),a0
-   movem.l  d3-d7/a3-a6,-(sp) ;aus Kompatibilitätsgründen sichern
+   movem.l  d3-d7/a3-a6,-(sp) ;aus Kompatibilitaetsgruenden sichern
    jsr      (a0)
    movem.l  (sp)+,d3-d7/a3-a6
    rte
@@ -1193,14 +1193,14 @@ Bcostat:
 
 calc_Bvec:
    move.w   (a0)+,d0          ;Device
-   cmp.w    #5,d0             ;ST-Gerät ?
+   cmp.w    #5,d0             ;ST-Geraet ?
    bls.b    Bdev_st           ;ja, normale Routine
 
-   subq.w   #6,d0             ;Offset für erweiterte serielle Schnittstellen
-   cmp.w    bconmap_struct+4,d0 ;Anzahl zusätzlicher Schnittstellen
-   bcc      ret0_rte          ;überschritten, return(0L) (kein Fehler??!!??)
+   subq.w   #6,d0             ;Offset fuer erweiterte serielle Schnittstellen
+   cmp.w    bconmap_struct+4,d0 ;Anzahl zusaetzlicher Schnittstellen
+   bcc      ret0_rte          ;ueberschritten, return(0L) (kein Fehler??!!??)
 
-   lea      intern_maptab,a2  ;max 4 * 6 Einträge auf die seriellen-Routinen
+   lea      intern_maptab,a2  ;max 4 * 6 Eintraege auf die seriellen-Routinen
    movea.l  bconmap_struct,a1
    lsl.w    #3,d0             ;*24...
    adda.w   d0,a1
@@ -1212,7 +1212,7 @@ calc_Bvec:
    movea.l  (a1),a1           ;Adresse ermitteln...
    movea.l  (a2),a2
    cmpa.l   a1,a2             ;id. ?
-   bne.b    Bvec_changed      ;andere Routine eingehängt !
+   bne.b    Bvec_changed      ;andere Routine eingehaengt !
    jsr      (a2)
    rte
 
@@ -1222,7 +1222,7 @@ Bdev_st:
    movea.l  0(a1,d0.w),a1     ;Bios-Vektor
    movea.l  0(a2,d0.w),a2     ;Adr. der Orginalroutine
    cmpa.l   a1,a2             ;id. ?
-   bne.b    Bvec_changed      ;andere Routine eingehängt !
+   bne.b    Bvec_changed      ;andere Routine eingehaengt !
    jsr      (a2)              ;in die eigene Routine
    rte
 
@@ -1245,14 +1245,14 @@ Bconout:
    lea      Bconoutvec,a2
 
    move.w   (a0)+,d0          ;Device
-   cmp.w    #5,d0             ;ST-Gerät ?
+   cmp.w    #5,d0             ;ST-Geraet ?
    bls.b    dev_st            ;ja, normale Routine
 
-   subq.w   #6,d0             ;Offset für erweiterte serielle Schnittstellen
-   cmp.w    bconmap_struct+4,d0 ;Anzahl zusätzlicher Schnittstellen
-   bcc      ret0_rte          ;überschritten, return(0L) (kein Fehler??!!??)
+   subq.w   #6,d0             ;Offset fuer erweiterte serielle Schnittstellen
+   cmp.w    bconmap_struct+4,d0 ;Anzahl zusaetzlicher Schnittstellen
+   bcc      ret0_rte          ;ueberschritten, return(0L) (kein Fehler??!!??)
 
-   lea      intern_maptab,a2  ;max 4 * 6 Einträge auf die seriellen-Routinen
+   lea      intern_maptab,a2  ;max 4 * 6 Eintraege auf die seriellen-Routinen
    moveq    #12,d1            ;Tabellen-Offset
    movea.l  bconmap_struct,a1
    lsl.w    #3,d0
@@ -1265,8 +1265,8 @@ Bconout:
    movea.l  (a1),a1           ;Adresse der Routine ermitteln...
    movea.l  (a2),a2
    cmpa.l   a1,a2             ;id. ?
-   bne.b    Bovec_changed     ;andere Routine eingehängt !
-   jsr      4(a2)             ; "lea 6(sp),a0" überspringen
+   bne.b    Bovec_changed     ;andere Routine eingehaengt !
+   jsr      4(a2)             ; "lea 6(sp),a0" ueberspringen
    rte
 
 dev_st:
@@ -1275,8 +1275,8 @@ dev_st:
    movea.l  0(a1,d0.w),a1     ; Bios-Vektor
    movea.l  0(a2,d0.w),a2     ; Adr. der Orginalroutine
    cmpa.l   a1,a2             ; id. ?
-   bne.b    Bovec_changed     ; andere Routine eingehängt !
-   jsr      4(a2)             ; "lea 6(sp),a0" überspringen
+   bne.b    Bovec_changed     ; andere Routine eingehaengt !
+   jsr      4(a2)             ; "lea 6(sp),a0" ueberspringen
                               ; in die eigene Routine
 
    rte
@@ -1297,7 +1297,7 @@ ret0_rte:
 
 **********************************************************************
 *
-* Bconstat für Gerät 2 (CON) machen wir
+* Bconstat fuer Geraet 2 (CON) machen wir
 * selber
 *
 
@@ -1312,13 +1312,13 @@ bconstat_con:
 
 **********************************************************************
 *
-* Bconin für Gerät 2 (CON) machen wir
+* Bconin fuer Geraet 2 (CON) machen wir
 * selber
 *
 
 bconin_con:
  lea      iorec_kb,a0              ; IKBD-Iorec
- moveq    #4,d2                    ; Größe eines Arrayelementes
+ moveq    #4,d2                    ; Groesse eines Arrayelementes
 _bconin:
  lea      8(a0),a1                 ; *Tail
  move.w   (a1),d1                  ; Tail-Index
@@ -1331,10 +1331,10 @@ _bconin:
  cmp.w    (a1),d1                  ; Tail-Index
  beq.b    bin_again                ; jetzt ist das Zeichen weg! (Fehler!)
 ; Das Zeichen ist immer noch da
- add.w    d2,d1                    ; Head-Index erhöhen
+ add.w    d2,d1                    ; Head-Index erhoehen
  movea.l  (a0)+,a1                 ; Pufferzeiger
 
- cmp.w    (a0)+,d1                 ; mit Puffergröße vergleichen
+ cmp.w    (a0)+,d1                 ; mit Puffergroesse vergleichen
  bcs.b    bin_l1
  moveq    #0,d1                    ; Pufferzeiger auf Pufferbeginn
 bin_l1:
@@ -1361,11 +1361,11 @@ bin_again:
 *
 * void Getmpb( MPB *mpb )
 *
-* Hier wird nur das "ST-RAM" eingerichtet. Die weiteren Blöcke
-* werden manuell über Maddalt hinzugefügt.
-* Das ST-RAM läuft einfach von _membot bis _memtop. Beide Variablen
+* Hier wird nur das "ST-RAM" eingerichtet. Die weiteren Bloecke
+* werden manuell ueber Maddalt hinzugefuegt.
+* Das ST-RAM laeuft einfach von _membot bis _memtop. Beide Variablen
 * werden vom Ladeprogramm gesetzt, wobei _memtop eigentlich schon
-* vorher gültig sein muß. _membot zeigt hinter das geladene
+* vorher gueltig sein muss. _membot zeigt hinter das geladene
 * MAGIC.RAM.
 *
 
@@ -1373,13 +1373,13 @@ Getmpb:
  movea.l  (a0),a0                  ; Tabelle, in die die drei Zeiger kommen
  lea      themd,a1
  move.l   a1,(a0)+                 ; themd in die freelist
- clr.l    (a0)+                    ; alloclist löschen
+ clr.l    (a0)+                    ; alloclist loeschen
  move.l   a1,(a0)                  ; themd als roving pointer
  clr.l    (a1)+                    ; Listenende
  move.l   _membot,(a1)+            ; Startadresse _membot
  move.l   _memtop,d0
  sub.l    _membot,d0
- move.l   d0,(a1)+                 ; Länge
+ move.l   d0,(a1)+                 ; Laenge
  clr.l    (a1)                     ; kein owner
  rte
 
@@ -1389,10 +1389,10 @@ Getmpb:
 * long Bmaddalt( void )
 *
 * 25.9.96:     Wird bei DOS Maddalt() aufgerufen, um ggf. einen FRB
-*              anzulegen. Rückgabe ENSMEM, falls dies nicht geht.
+*              anzulegen. Rueckgabe ENSMEM, falls dies nicht geht.
 *              Legt keinen (!) Cookie _FRB an.
 *
-* MagiC 6:     Legt Cookie an, falls genügend Platz im Jar
+* MagiC 6:     Legt Cookie an, falls genuegend Platz im Jar
 *
 * Milan: Der Cookie wird immer schon beim Booten angelegt.
 *
@@ -1417,7 +1417,7 @@ Setexc:
      IF   0
  movea.w  (a0)+,a1                 ; nr
  add.w    a1,a1
- add.w    a1,a1                    ; mal 4 für Langwortzugriff
+ add.w    a1,a1                    ; mal 4 fuer Langwortzugriff
  move.l   (a1),d0                  ; bisheriger Vektor
  move.l   (a0),d1                  ; -1 oder neuer Wert
  bmi.b    sxc_ende
@@ -1488,7 +1488,7 @@ Tickcal:
 * void *Bmalloc( d0 = long amount )
 *
 * Achtung: darf nur vor dos_init() aufgerufen werden.
-* ändert nicht d0
+* aendert nicht d0
 *
 
 Bmalloc:
@@ -1501,7 +1501,7 @@ Bmalloc:
 *
 * void fatal_err( void )
 *
-* Ein fataler Fehler führt zum Anhalten des Systems
+* Ein fataler Fehler fuehrt zum Anhalten des Systems
 *
 
 fatal_err:
@@ -1559,7 +1559,7 @@ putch:
 *
 * Wir brauchen hier nur einen gemeinsamen Exceptionvektor, denn
 * wir haben mindestens einen 030, der die Vektornummer sichert.
-* Der Inhalt von proc_pc wird dabei dämlich gesetzt, denn die obersten
+* Der Inhalt von proc_pc wird dabei daemlich gesetzt, denn die obersten
 * 8 Bit werden durch die Vektornummer ersetzt.
 *
 
@@ -1583,7 +1583,7 @@ pb_loop:
  move.l   act_pd,a4
  jsr      bombs
  move.l   #savptr_area,savptr
-* Betriebssystem überprüfen
+* Betriebssystem ueberpruefen
  lea      _start,a0
  lea      _ende,a1
  moveq    #0,d0
@@ -1596,10 +1596,10 @@ os_chkloop:
  lea      os_corr_s(pc),a0
  bsr      putstr
  jsr      get_odevv
- move.l   32+2*4(a0),a2            ; Bconin Gerät 2
+ move.l   32+2*4(a0),a2            ; Bconin Geraet 2
  jsr      (a2)
 os_chk_ok:
-* Prozeß beenden
+* Prozess beenden
  move.w   #-1,-(sp)
  btst.b   #5,config_status+3       ; KAOS oder TOS ?
  bne.b    pb_tos
@@ -1626,13 +1626,13 @@ Prtblk:
  move.l   (a0),d0
  beq.b    prb_spec
  move.l   prtblk_vec,a1
- jmp      (a1)                     ; ab geht's
+ jmp      (a1)                     ; ab geht es
 prb_spec:
  addq.l   #4,a0
  move.w   (a0)+,d0                 ; int subfn
  bne.b    prb_err
 * Unterfunktion 0: Prtblk einklinken
- move.l   prtblk_vec,d0            ; alte Routine zurückgeben
+ move.l   prtblk_vec,d0            ; alte Routine zurueckgeben
  move.l   (a0),prtblk_vec
  rte
 prb_err:
@@ -1655,7 +1655,7 @@ _Scrdmp:
  move.l   a0,d0                    ; Hardcopy installiert ?
  beq.b    _scrd_err                ; nein !
  jsr      (a0)
-* MagiC 3.0: DUMMY-ROUTINE FÜR HARDCOPY
+* MagiC 3.0: DUMMY-ROUTINE FUeR HARDCOPY
 do_hardcopy:
 _scrd_err:
  move.w   #-1,_dumpflg
@@ -1666,7 +1666,7 @@ _scrd_err:
 *
 * void exec_respgms( void )
 *
-* Führt resetfeste Programme aus
+* Fuehrt resetfeste Programme aus
 *
 
 exec_respgms:
@@ -1711,7 +1711,7 @@ create_ram_syshdr:
 crsh_loop:
  move.b   0(a0,d0.w),0(a1,d0.w)
  dbf      d0,crsh_loop
- move.w   jmpop(pc),-6(a1)              ; Opcode für "jmp"
+ move.w   jmpop(pc),-6(a1)              ; Opcode fuer "jmp"
  move.l   4(a1),-4(a1)                  ;                  os_start
  move.w   braop(pc),(a1)                ; Branch auf "jmp os_start"
  move.w   $1e(a1),$1c(a1)               ; gendatg->palmode ??
@@ -1729,7 +1729,7 @@ braop:
 *
 * long Random( void )
 *
-* verändert d0/d1/d2
+* veraendert d0/d1/d2
 *
 Random:
  bsr.b   _Random
@@ -1756,7 +1756,7 @@ _ran_lok:
 *
 * EQ/NE d0 = long getcookie( d0 = long val )
 *
-* Rückgabe:         d0 = 0    nicht gefunden
+* Rueckgabe:         d0 = 0    nicht gefunden
 *                   sonst     d1.l = Wert des Cookies, a0 = Zeiger
 *
 
@@ -1782,7 +1782,7 @@ search_ck_err:
 *
 * EQ/NE d0 = long putcookie( d0 = long key, d1 = long val )
 *
-* Rückgabe:         d0 = 0    Cookie geändert
+* Rueckgabe:         d0 = 0    Cookie geaendert
 *                   d0 = 1    Cookie installiert
 *                   d0 = -1   Cookie Jar voll
 *
@@ -1796,10 +1796,10 @@ pco_loop:
  beq.b    pco_endloop              ; Tabellenende
  cmp.l    d0,d2                    ; gefunden?
  beq.b    pco_found
- addq.l   #4,a0                    ; Daten überspringen
+ addq.l   #4,a0                    ; Daten ueberspringen
  bra.b    pco_loop
 pco_found:
- move.l   d1,(a0)                  ; Cookie geändert
+ move.l   d1,(a0)                  ; Cookie geaendert
  moveq    #0,d0
  rts
 pco_endloop:
@@ -1842,15 +1842,15 @@ _Bconmap:
  move.l   #bconmap_struct,d0
  cmp.w    #-2,d1              ; struct bconmap holen ?
  beq      _bmp_ende           ; ja, ende
- moveq    #0,d0               ; Rückgabe: Fehler
+ moveq    #0,d0               ; Rueckgabe: Fehler
  subq.w   #6,d1               ; Nummer um Offset 6 dekrementieren
  bmi      _bmp_ende           ; Wert war < 6, return(0)
- cmp.w    bconmap_struct+4,d1 ; Tabellenlänge
- bcc      _bmp_ende           ; Wert war >= Tabellenlänge, return(0)
+ cmp.w    bconmap_struct+4,d1 ; Tabellenlaenge
+ bcc      _bmp_ende           ; Wert war >= Tabellenlaenge, return(0)
  move.w   sr,-(sp)
  ori.w    #$700,sr            ; im TOS 2.05 vergessen!
 * aktuellen Port in maptab retten (wozu, er kommt doch daher ?)
- move.w   bconmap_struct+6,d0 ; aktueller Port, diesen zurückgeben
+ move.w   bconmap_struct+6,d0 ; aktueller Port, diesen zurueckgeben
  move.w   d0,d1               ; aktueller Port
 
  subq.w   #6,d1               ; Offset abziehen
@@ -1865,8 +1865,8 @@ _Bconmap:
  move.l   dev_vecs+$24,(a0)+  ; Bconin(1)
  move.l   dev_vecs+$44,(a0)+  ; Bcostat(a1)
  move.l   dev_vecs+$64,(a0)+  ; Bconout(1)
- move.l   p_rsconf,(a0)+      ; Rsconf für dev 1
- move.l   p_iorec,(a0)+       ; iorec  für dev 1
+ move.l   p_rsconf,(a0)+      ; Rsconf fuer dev 1
+ move.l   p_iorec,(a0)+       ; iorec  fuer dev 1
 * neuen Port einsetzen
  move.w   4+2(sp),d1
  move.w   d1,bconmap_struct+6 ; umsetzen
@@ -1924,7 +1924,7 @@ _bmp_ende:
 *
 * void init_bconmap( void )
 *
-* Geräte:
+* Geraete:
 *
 *    ST:  Mega STE:  TT: Falcon:
 * ------------------------------------------------------------------
@@ -1933,7 +1933,7 @@ _bmp_ende:
 *                    8             TTMFP                 (Serial 1)   ser2
 *            8       9     8       SCC Kanal A           (Serial 2)   scca
 *
-* Der Milan unterstützt 5 serielle Schnittstellen.
+* Der Milan unterstuetzt 5 serielle Schnittstellen.
 * Hier ist eine Sicherheitsabfrage: Mehr als NSERIAL Schnittstellen
 * werden ignoriert.
 *
@@ -1959,7 +1959,7 @@ ins_internmap:                ;Maptab der Mag!X-eigenen Routinen erstellen
 ;lea      dflt_maptable,a0
  move.l   bconmap_struct,a0
  move.w   sr,-(sp)
- ori.w    #$700,sr            ;in Gerätevektoren eintragen...
+ ori.w    #$700,sr            ;in Geraetevektoren eintragen...
  move.l   (a0)+,dev_vecs+4    ; Bconstat(1)
  move.l   (a0)+,dev_vecs+$24  ; Bconin(1)
  move.l   (a0)+,dev_vecs+$44  ; Bcostat(1)
@@ -1992,7 +1992,7 @@ pling_ende:
 *
 
 Iorec:
- move.l   p_iorec,a1               ; für aux
+ move.l   p_iorec,a1               ; fuer aux
  move.w   (a0),d1
  beq.b    iorec_ok                 ; 0
  lea      iorec_kb,a1
@@ -2116,7 +2116,7 @@ _go_milan:
  move.l   milan,a2
  move.l   milh_xbios_fnx(a2),a2
  move.l   2(a2,d0.l),a2
- jmp      (a2)                     ; für MIDI und andere
+ jmp      (a2)                     ; fuer MIDI und andere
 
 
 **********************************************************************
@@ -2166,10 +2166,10 @@ Kbrate:
  lea      key_delay,a1
  move.w   (a1),d0                  ; altes delay/repeat
  move.w   (a0)+,d1                 ; neues delay
- bmi.b    kbr_ende                 ; ist -1, keine Änderung
+ bmi.b    kbr_ende                 ; ist -1, keine Aenderung
  move.b   d1,(a1)+                 ; neues delay setzen
  move.w   (a0),d1                  ; neues repeat
- bmi.b    kbr_ende                 ; ist -1, keine Änderung
+ bmi.b    kbr_ende                 ; ist -1, keine Aenderung
  move.b   d1,(a1)                  ; neues repeat setzen
 kbr_ende:
  rte
@@ -2182,8 +2182,8 @@ kbr_ende:
 
 Keytbl:
  lea      keytblx,a1               ; Zeiger auf KEYTAB-Struktur
- move.l   a1,d0                    ; Rückgabewert
- moveq    #3-1,d2                  ; Zähler für 3 Durchläufe
+ move.l   a1,d0                    ; Rueckgabewert
+ moveq    #3-1,d2                  ; Zaehler fuer 3 Durchlaeufe
 ktbl_loop:
  move.l   (a0)+,d1
  bmi.b    ktbl_noset
@@ -2198,7 +2198,7 @@ ktbl_noset:
 * EQ/NE char altcode_asc( char c )
 *
 * Wandelt einen Scan-/Ascii- Code einer ALT-Buchstabenkombination um
-* in ein ASCII-Zeichen (in Großbuchstaben).
+* in ein ASCII-Zeichen (in Grossbuchstaben).
 * Bsp.: Code $1e00 (Alt-A) ==> 'A'
 *            $7800 (Alt-1) ==> '1'
 *
@@ -2209,7 +2209,7 @@ altcode_asc:
  lsr.w    #8,d0                    ; Scancode ins Loword
  cmpi.w   #$78,d0
  bcs.b    ala_nonum
-* Sonderbehandlung für Alt-1 bis Alt-'
+* Sonderbehandlung fuer Alt-1 bis Alt-apostrophe
  cmpi.w   #$83,d0
  bhi.b    ala_nix
  subi.w   #$76,d0                  ; Umrechnung
@@ -2226,10 +2226,10 @@ ala_nix:
 *
 * long (!) Bioskeys( void )
 *
-* Setzt 6 statt 3 Tabellen. Für die MF- Tastatur werden für die ersten
+* Setzt 6 statt 3 Tabellen. Fuer die MF- Tastatur werden fuer die ersten
 * drei Tabellen andere genommen.
 * Der AltGr- Status liegt immer hinter den 6 Tabellenzeigern.
-* Gibt Adressen der Tastaturbehandlungsroutine zurück.
+* Gibt Adressen der Tastaturbehandlungsroutine zurueck.
 *
 Bioskeys:
  bsr.b   _Bioskeys
@@ -2238,7 +2238,7 @@ Bioskeys:
 _Bioskeys:
  move.l   default_keytblxp,a1      ; Tabelle der 9 Default-Zeiger
  lea      keytblx,a0               ; aktive Zeiger
- moveq    #9-1,d0                  ; Zähler
+ moveq    #9-1,d0                  ; Zaehler
 _bioskeys_loop:
  move.l   (a1)+,(a0)+
  dbra     d0,_bioskeys_loop
@@ -2259,15 +2259,15 @@ keybd_struct:
 * void int_vbl( void )
 *
 * Bearbeitet den VBL- Interrupt
-* TOS 3.06 bearbeitet zunächst die VBL-Queue
+* TOS 3.06 bearbeitet zunaechst die VBL-Queue
 *
 
 int_vbl:
- addq.l   #1,_frclock              ; Anzahl aller VBLs mitzählen
+ addq.l   #1,_frclock              ; Anzahl aller VBLs mitzaehlen
  subq.w   #1,vblsem                ; VBL gesperrt ?
  bmi      ivbl_locked              ; ja, ende
  movem.l  d0/d1/d2/d3/d4/d5/d6/d7/a0/a1/a2/a3/a4/a5/a6,-(sp)
- addq.l   #1,_vbclock              ; Anzahl aller VBL-Routinen mitzählen
+ addq.l   #1,_vbclock              ; Anzahl aller VBL-Routinen mitzaehlen
 
  move.l   milan,a2
  move.l   milh_vblhook(a2),a2
@@ -2317,21 +2317,21 @@ int_hz200:
  btst     #1,conterm               ; Tastenwiederh. eingeschaltet ?
  beq.b    i200_nokey               ; nein
  lea      keyrepeat,a0
- move.b   (a0)+,d0                 ; Scancode, Taste gedrückt ?
+ move.b   (a0)+,d0                 ; Scancode, Taste gedrueckt ?
  beq.b    i200_nokey               ; nein
- subq.b   #1,(a0)                  ; Zähler für Verzögerung dekrementieren
+ subq.b   #1,(a0)                  ; Zaehler fuer Verzoegerung dekrementieren
  bne.b    i200_nokey               ; ist nicht 0
- move.b   key_reprate,(a0)         ; Zähler neu laden
+ move.b   key_reprate,(a0)         ; Zaehler neu laden
  lea      iorec_kb,a0              ; Taste <d0> in Tastaturpuffer ...
  bsr      keyrep_entry             ; ... eintragen
 i200_nokey:
  move.w   _timer_ms,-(sp)
  movea.l  etv_timer,a0
- jsr      (a0)                     ; Userinterruptroutinen ausführen
+ jsr      (a0)                     ; Userinterruptroutinen ausfuehren
  addq.w   #2,sp
  movem.l  (sp)+,d0-d7/a0-a6
 i200_yield:
-* Interrupt bestätigen
+* Interrupt bestaetigen
  move.l   a2,-(sp)
  move.l   milan,a2
  move.l   milh_exit_hz200(a2),a2
@@ -2339,7 +2339,7 @@ i200_yield:
  move.l   (sp)+,a2
 /*
  ATARI:
- bclr     #5,isrb                  ; (Timer C) Interrupt-Service-Bit löschen
+ bclr     #5,isrb                  ; (Timer C) Interrupt-Service-Bit loeschen
 ;move.b   #$df,isrb           ; TOS 2.05
 */
  tst.w    pe_slice
@@ -2357,11 +2357,11 @@ nix_hz:
 
 **********************************************************************
 *
-* "Interrupt" für MIDI und Keyboard (MFP- Interrupt 6).
+* "Interrupt" fuer MIDI und Keyboard (MFP- Interrupt 6).
 *
-* Der Interrupt wird hier nur simuliert, und zwar folgendermaßen:
+* Der Interrupt wird hier nur simuliert, und zwar folgendermassen:
 *
-*         (sp) = 'Miln':      Daten sind gültig
+*         (sp) = 'Miln':      Daten sind gueltig
 * dann:   4(sp) = 0:          MIDI
 *         4(sp) = 1:          Tastatur
 *                                  5(sp) = Atari-Scancode
@@ -2450,7 +2450,7 @@ iks_err:
 handle_key:
 ;   eori.w   #$300,sr          ;von IPL 6 auf 5 setzen
    bsr.b    _handlekey
-;   eori.w   #$300,sr          ;von IPL 5 auf 6 zurück
+;   eori.w   #$300,sr          ;von IPL 5 auf 6 zurueck
    rts
 
      INCLUDE "handlkey.s"
@@ -2648,7 +2648,7 @@ ead08d1:  movea.l d0,a0
 *
 
 *
-* Tabelle der Default-Tastaturtabellen (GER) für MF-2
+* Tabelle der Default-Tastaturtabellen (GER) fuer MF-2
 *
 
 default_keytblx:
@@ -2663,8 +2663,8 @@ default_keytblx:
  DC.L     tab_alt
 
 U2B  EQU  '^'       ; statt ~ ($7e, Atari-Tastatur)
-S2B  EQU  '°'       ; statt | ($7c, Atari-Tastatur)
-S29  EQU  '´'       ; statt ^ ($5e, Atari-Tastatur)
+S2B  EQU  '',$f8,''       ; statt | ($7c, Atari-Tastatur)
+S29  EQU  '',$ba,''       ; statt ^ ($5e, Atari-Tastatur)
 
 tab_unshift:
  DC.B     $00,$1b,$31,$32,$33,$34,$35,$36,$37,$38,$39,$30,$9e,$27,$08,$09
@@ -2704,7 +2704,7 @@ tab_alt:
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 tab_shalt:
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
- DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,'\',$00,$00,$00,$00,$00
+ DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$5c,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,'{','}',$00,$00,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
@@ -2775,7 +2775,7 @@ tab_shaltgr:
 
 ori_iorec_kb:
  DC.L     iorec_kb_buf             ; Pufferadresse
- DC.W     $0100                    ; Größe 256 Bytes = 64 Langworte
+ DC.W     $0100                    ; Groesse 256 Bytes = 64 Langworte
  DC.W     0                        ; Head Index
  DC.W     0                        ; Tail Index
  DC.W     $40                      ; Low water mark
@@ -2785,7 +2785,7 @@ ori_iorec_kb:
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
- DC.B     '*** SYSTEM ÜBERSCHRIEBEN ***',$1b,'K',$d,$a
+ DC.B     '*** SYSTEM ',$9a,'BERSCHRIEBEN ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
 fatal_bios_errs:
  DC.B     '*** FATALER FEHLER BEIM BOOTEN:',0
@@ -2835,7 +2835,7 @@ fatal_bios_errs:
 fatal_errs:
  DC.B   $1b,'K',$d,$a
  DC.B   $1b,'K',$d,$a
- DC.B   '*** SYSTEME STOPPÉ ***',$1b,'K',$d,$a
+ DC.B   '*** SYSTEME STOPP',$90,' ***',$1b,'K',$d,$a
  DC.B   $1b,'K',0
     ENDIF
 

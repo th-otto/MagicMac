@@ -28,7 +28,7 @@
 #if	CALL_MAGIC_KERNEL
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Makros und Funktionsdefinitionen fÅr Aufrufe an den MagiC-Kernel								*/
+/* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel								*/
 /*----------------------------------------------------------------------------------------*/ 
 
 extern WORD grects_intersect( const GRECT *p1, GRECT *p2 );
@@ -79,7 +79,7 @@ extern WORD cdecl _form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, W
 #else
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Makros fÅr die Pure C-GEMLIB																				*/
+/* Makros fuer die Pure C-GEMLIB																				*/
 /*----------------------------------------------------------------------------------------*/ 
 
 #define	wind_calc( type, kind, in, out ) \
@@ -122,7 +122,7 @@ WORD	rc_intersect( const GRECT *p1, GRECT *p2 );
 
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr Fensterdialog anfordern																	*/
+/* Speicher fuer Fensterdialog anfordern																	*/
 /* Funktionsergebnis:	Zeiger auf die Dialog-Struktur oder 0L										*/
 /*	handle_exit:			Zeiger auf Dialog-Service-Routine											*/
 /*	tree:						Zeiger auf den Objektbaum														*/
@@ -156,15 +156,15 @@ DIALOG	*wdlg_create( HNDL_OBJ handle_exit, OBJECT *tree, void *user_data, WORD c
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fensterdialog îffnen																							*/
+/* Fensterdialog oeffnen																							*/
 /* Funktionsergebnis:	Handle des Fensters oder 0 (Fehler)											*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*	title:					Zeiger auf Fenstertitel oder 0L												*/
 /* kind:						Fensterkomponenten																*/
-/*	x:							x-Koordinate des Fensters (oder -1 fÅr zentriert)						*/
-/*	y:							y-Koordinate des Fensters (oder -1 fÅr zentriert)						*/
-/*	code:						wird handle_exit() in <clicks> Åbergeben									*/
-/*	data:						wird handle_exit() in <data> Åbergeben										*/
+/*	x:							x-Koordinate des Fensters (oder -1 fuer zentriert)						*/
+/*	y:							y-Koordinate des Fensters (oder -1 fuer zentriert)						*/
+/*	code:						wird handle_exit() in <clicks> uebergeben									*/
+/*	data:						wird handle_exit() in <data> uebergeben										*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	wdlg_open( DIALOG *d, BYTE *title, WORD kind, WORD x, WORD y, WORD code, void *data )
 {
@@ -194,7 +194,7 @@ WORD	wdlg_open( DIALOG *d, BYTE *title, WORD kind, WORD x, WORD y, WORD code, vo
 
 	d->kind = kind;														/* Fensterattribute */ 
 	border = &d->border;
-	wind_calc( WC_BORDER, kind, &work, border );					/* Fensterausmaûe berechnen */
+	wind_calc( WC_BORDER, kind, &work, border );					/* Fensterausmasse berechnen */
 
 #if	CALL_MAGIC_KERNEL == 0
 	wind_get( 0, WF_WORKXYWH, &back.g_x, &back.g_y, &back.g_w, &back.g_h );	/* Arbeitsbereich des Desktops */
@@ -205,22 +205,22 @@ WORD	wdlg_open( DIALOG *d, BYTE *title, WORD kind, WORD x, WORD y, WORD code, vo
 	if ( border->g_x < back.g_x )										/* Fenster zu weit links? */
 	{
 		border->g_x = back.g_x;
-		wind_calc( WC_WORK, kind, border, ( &work ));			/* Grîûe des Arbeitsbereichs berechnen */
+		wind_calc( WC_WORK, kind, border, ( &work ));			/* Groesse des Arbeitsbereichs berechnen */
 		dialog_tree->ob_x = work.g_x;
 	}
 
 	if ( border->g_y < back.g_y )										/* Fenster zu weit oben? */
 	{
 		border->g_y = back.g_y;
-		wind_calc( WC_WORK, kind, border, ( &work ));			/* Grîûe des Arbeitsbereichs berechnen */
+		wind_calc( WC_WORK, kind, border, ( &work ));			/* Groesse des Arbeitsbereichs berechnen */
 		dialog_tree->ob_y = work.g_y;
 	}
 
 	d->whdl = wind_create( kind, border );
 
-	if	( d->whdl < 0 )													/* lÑût sich das Fenster nicht îffnen? */
+	if	( d->whdl < 0 )													/* laesst sich das Fenster nicht oeffnen? */
 		{
-		d->tree[0].ob_state = d->root_ob_state;		/* ob_state und ob_spec wieder zurÅcksetzen */
+		d->tree[0].ob_state = d->root_ob_state;		/* ob_state und ob_spec wieder zuruecksetzen */
 		d->tree[0].ob_spec = d->root_ob_spec;
 		return( 0 );
 		}
@@ -246,20 +246,20 @@ WORD	wdlg_open( DIALOG *d, BYTE *title, WORD kind, WORD x, WORD y, WORD code, vo
 		_wind_set( d->whdl, WF_NAME, (WORD *) &title );
 #endif
 
-	wind_open( d->whdl, border );										/* Fenster îffnen */
+	wind_open( d->whdl, border );										/* Fenster oeffnen */
 	set_1st_edit( d );													/* Eingabefeld setzen */
 
 	hndl_exit( d, 0L, HNDL_OPEN, code, data );
 
-	return( d->whdl );													/* Handle zurÅckliefern */
+	return( d->whdl );													/* Handle zurueckliefern */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fensterdialog schlieûen und Speicher freigeben														*/
+/* Fensterdialog schliessen und Speicher freigeben														*/
 /* Funktionsergebnis:	1																						*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
-/*	x:							x-Koordinate des Dialogs wird zurÅckgeliefert							*/
-/*	y:							y-Koordinate des Dialogs wird zurÅckgeliefert							*/
+/*	x:							x-Koordinate des Dialogs wird zurueckgeliefert							*/
+/*	y:							y-Koordinate des Dialogs wird zurueckgeliefert							*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	wdlg_close( DIALOG *d, WORD *x, WORD *y )
 {
@@ -269,22 +269,22 @@ WORD	wdlg_close( DIALOG *d, WORD *x, WORD *y )
 		*y = d->rect.g_y;
 	}
 	
-	d->tree[0].ob_state = d->root_ob_state;						/* ob_state und ob_spec wieder zurÅcksetzen */
+	d->tree[0].ob_state = d->root_ob_state;						/* ob_state und ob_spec wieder zuruecksetzen */
 	d->tree[0].ob_spec = d->root_ob_spec;
 	
-	wind_close( d->whdl );												/* Fenster schlieûen */
+	wind_close( d->whdl );												/* Fenster schliessen */
 	wind_delete( d->whdl );												/* Handle freigeben */
 	return( 1 );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Verwaltungsspeicher fÅr Fensterdialog freigeben														*/
+/* Verwaltungsspeicher fuer Fensterdialog freigeben														*/
 /* Funktionsergebnis:	1																						*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	wdlg_delete( DIALOG *d )
 {
-	Mfree( d );																/* Speicher fÅr Dialog-Struktur freigeben */
+	Mfree( d );																/* Speicher fuer Dialog-Struktur freigeben */
 	return( 1 );
 }
 
@@ -314,11 +314,11 @@ WORD	wdlg_evnt( DIALOG *d, EVNT *events )
 			(events->msg[0] >= 20) &&
 			(events->msg[0] < 40))			/* Nachricht? */
 	{
-		if	( d->whdl == events->msg[3] )								/* Nachricht fÅr das Dialog-Fenster? */
+		if	( d->whdl == events->msg[3] )								/* Nachricht fuer das Dialog-Fenster? */
 		{
 			retcode = wdlg_mesag( d, events );
 
-			if ( retcode == 0 )											/* Dialog schlieûen? */
+			if ( retcode == 0 )											/* Dialog schliessen? */
 				return( 0 );
 		}
 	}
@@ -331,17 +331,17 @@ WORD	wdlg_evnt( DIALOG *d, EVNT *events )
 
 	if	( d->whdl == topw )												/* ist das Dialogfenster das oberste? */
 	{
-		if	( *mwhich & MU_KEYBD )										/* Taste betÑtigt? */
+		if	( *mwhich & MU_KEYBD )										/* Taste betaetigt? */
 			retcode = wdlg_key( d, events );
 	}
 	
 	if	(( d->whdl == topw ) || ( d->flags & WDLG_BKGD ))		/* im Vordergrund bzw. Hintergrundbedienung erlaubt? */ 
 	{
-		if	( *mwhich & MU_BUTTON )										/* Mausknopf betÑtigt? */
+		if	( *mwhich & MU_BUTTON )										/* Mausknopf betaetigt? */
 		{
 			if	( wind_find( events->mx, events->my ) == d->whdl )	/* Klick in das Dialog-Fenster? */
 			{
-				*mwhich &= ~MU_BUTTON;									/* Button-Bit lîschen */
+				*mwhich &= ~MU_BUTTON;									/* Button-Bit loeschen */
 				if ( wdlg_button( d, events, events->mclicks, events->mx, events->my, events->mbutton ) == 0 )
 					retcode = 0;
 			}
@@ -353,7 +353,7 @@ WORD	wdlg_evnt( DIALOG *d, EVNT *events )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Redraw des Dialogs Åber die Rechteckliste																*/
+/* Redraw des Dialogs ueber die Rechteckliste																*/
 /*	Funktionsresultat:	-																						*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*	rect:						maximales Redraw-Rechteck														*/
@@ -383,8 +383,8 @@ void	wdlg_redraw( DIALOG *d, GRECT *rect, WORD obj, WORD depth )
 				GRECT	root_rect;
 				GRECT	edit_rect;
 				
-				get_obj_GRECT( d->tree, obj, &root_rect );		/* Rechteck des Startobjekts mit RÑndern */
-				get_obj_GRECT( d->tree, d->act_editob, &edit_rect );	/* Rechteck des Edit-Objekts mit RÑndern */
+				get_obj_GRECT( d->tree, obj, &root_rect );		/* Rechteck des Startobjekts mit Raendern */
+				get_obj_GRECT( d->tree, d->act_editob, &edit_rect );	/* Rechteck des Edit-Objekts mit Raendern */
 				edit_rect.g_y -= 1;
 				edit_rect.g_h += 2;										/* 2 Pixel wegen des Cursors addieren */
 			
@@ -400,7 +400,7 @@ void	wdlg_redraw( DIALOG *d, GRECT *rect, WORD obj, WORD depth )
 			}
 		}
 #if	CALL_MAGIC_KERNEL == 0
-		wind_get( d->whdl, WF_NEXTXYWH, &w.g_x, &w.g_y , &w.g_w, &w.g_h );	/* nÑchstes Redraw-Rechteck */
+		wind_get( d->whdl, WF_NEXTXYWH, &w.g_x, &w.g_y , &w.g_w, &w.g_h );	/* naechstes Redraw-Rechteck */
 #else
 		_wind_get( d->whdl, WF_NEXTXYWH, (WORD *) &w );
 #endif
@@ -410,11 +410,11 @@ void	wdlg_redraw( DIALOG *d, GRECT *rect, WORD obj, WORD depth )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Das ein Objekt umgebenden GRECT (d.h. inklusive RÑndern) berechnen							*/
+/* Das ein Objekt umgebenden GRECT (d.h. inklusive Raendern) berechnen							*/
 /* Funktionsresultat:	-																						*/
 /*	tree:						Zeiger auf den Zeiger auf den Objektbaum									*/
 /*	obj:						Objektnummer																		*/
-/*	rect:						Zeiger auf GRECT fÅr Objektausmaûe											*/
+/*	rect:						Zeiger auf GRECT fuer Objektausmasse											*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	get_obj_GRECT( OBJECT *tree, WORD obj, GRECT *rect )
 {
@@ -427,26 +427,26 @@ static void	get_obj_GRECT( OBJECT *tree, WORD obj, GRECT *rect )
 	save_y = tree[obj].ob_y;
 	
 	form_center_grect( tree + obj, rect );									/* Objekt zentrieren */
-	objc_offset( tree + obj, 0, &x, &y );							/* Objektkoordinaten ohne RÑnder */
+	objc_offset( tree + obj, 0, &x, &y );							/* Objektkoordinaten ohne Raender */
 	
 	tree[obj].ob_x = save_x;											/* Objektkoordinaten restaurieren */
 	tree[obj].ob_y = save_y;
 
 	rect->g_x -= x;														/* Breite des Randes */
-	rect->g_y -= y;														/* Hîhe des Randes */
+	rect->g_y -= y;														/* Hoehe des Randes */
 
-	objc_offset( tree, obj, &x, &y );								/* Objektkoordinaten ohne RÑnder */
+	objc_offset( tree, obj, &x, &y );								/* Objektkoordinaten ohne Raender */
 
 	rect->g_x += x;
 	rect->g_y += y;
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Zeiger auf den Objektbaum zurÅckliefern																*/
+/* Zeiger auf den Objektbaum zurueckliefern																*/
 /* Funktionsresultat:	Nummer des Edit-Objekts	(0: kein Objekt aktiv)							*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*	tree:						Zeiger auf den Zeiger auf den Objektbaum									*/
-/*	r:							Zeiger auf GRECT fÅr Dialogausmaûe											*/
+/*	r:							Zeiger auf GRECT fuer Dialogausmasse											*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	wdlg_get_tree( DIALOG *d, OBJECT **tree, GRECT *r )
 {
@@ -456,7 +456,7 @@ WORD	wdlg_get_tree( DIALOG *d, OBJECT **tree, GRECT *r )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Nummer des aktiven Edit-Objekts zurÅckliefern														*/
+/* Nummer des aktiven Edit-Objekts zurueckliefern														*/
 /* Funktionsresultat:	Nummer des Edit-Objekts	(0: kein Objekt aktiv)							*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*	cursor:					Position des Cursors																*/
@@ -498,7 +498,7 @@ WORD	wdlg_set_edit( DIALOG *d, WORD obj )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Neuen Objektbaum fÅr ein Fenster setzen, Grîûe des Fensters evtl. verÑndern				*/
+/* Neuen Objektbaum fuer ein Fenster setzen, Groesse des Fensters evtl. veraendern				*/
 /* Funktionsresultat:	1																						*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*	tree:						Zeiger auf den neuen Objektbaum												*/
@@ -513,7 +513,7 @@ WORD	wdlg_set_tree( DIALOG *d, OBJECT *tree )
 	d->tree = tree;														/* Zeiger auf den neuen Baum */
 	d->act_editob = 0;
 
-	wdlg_set_size( d, (GRECT *) &tree->ob_x );					/* evtl. Grîûe Ñndern */
+	wdlg_set_size( d, (GRECT *) &tree->ob_x );					/* evtl. Groesse aendern */
 
 	wind_update( BEG_UPDATE );
 	wdlg_redraw( d, &d->rect, ROOT, MAX_DEPTH );					/* neuzeichnen */
@@ -525,10 +525,10 @@ WORD	wdlg_set_tree( DIALOG *d, OBJECT *tree )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fenstergrîûe und evtl. Position verÑndern																*/
+/* Fenstergroesse und evtl. Position veraendern																*/
 /* Funktionsresultat:	1																						*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
-/*	size:						GRECT mit neuen Dialogausmaûen (ArbeitsflÑche des Fensters)			*/
+/*	size:						GRECT mit neuen Dialogausmassen (Arbeitsflaeche des Fensters)			*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	wdlg_set_size( DIALOG *d, GRECT *size )
 {
@@ -543,20 +543,20 @@ WORD	wdlg_set_size( DIALOG *d, GRECT *size )
 		change = 1;
 	}
 
-	if (( size->g_w != d->rect.g_w ) || ( size->g_h != d->rect.g_h ))	/* andere Ausmaûe? */
+	if (( size->g_w != d->rect.g_w ) || ( size->g_h != d->rect.g_h ))	/* andere Ausmasse? */
 	{
 		d->rect.g_w = size->g_w;										/* neue Breite */
-		d->rect.g_h = size->g_h;										/* neue Hîhe */
+		d->rect.g_h = size->g_h;										/* neue Hoehe */
 		change = 1;
 	}
 	
-	if ( change )															/* énderungen? */
+	if ( change )															/* aenderungen? */
 	{
 		GRECT	*border;
 		
 		border = &d->border;
 
-		wind_calc( WC_BORDER, d->kind, ( &d->rect ), border );	/* Fensterausmaûe berechnen */
+		wind_calc( WC_BORDER, d->kind, ( &d->rect ), border );	/* Fensterausmasse berechnen */
 	
 #if	CALL_MAGIC_KERNEL == 0		
 		wind_set( d->whdl, WF_CURRXYWH, border->g_x, border->g_y, border->g_w, border->g_h );
@@ -583,7 +583,7 @@ WORD	wdlg_set_iconify( DIALOG *d, GRECT *g, char *title, OBJECT *tree, WORD obj 
 #if	CALL_MAGIC_KERNEL == 0		
 
 	wind_set( d->whdl, WF_ICONIFY, g->g_x, g->g_y, g->g_w, g->g_h );
-	d->border = *g;														/* FensterrÑnder */
+	d->border = *g;														/* Fensterraender */
 	wind_get( d->whdl, WF_WORKXYWH, &d->rect.g_x, &d->rect.g_y, &d->rect.g_w, &d->rect.g_h );
 
 	if	( title )															/* neuer Fenstertitel? */
@@ -591,7 +591,7 @@ WORD	wdlg_set_iconify( DIALOG *d, GRECT *g, char *title, OBJECT *tree, WORD obj 
 #else
 
 	_wind_set( d->whdl, WF_ICONIFY, (WORD *) g );
-	d->border = *g;														/* FensterrÑnder */
+	d->border = *g;														/* Fensterraender */
 	_wind_get( d->whdl, WF_WORKXYWH, (WORD *) &d->rect );
 
 	if	( title )															/* neuer Fenstertitel? */
@@ -640,7 +640,7 @@ WORD	wdlg_set_uniconify( DIALOG *d, GRECT *g, char *title, OBJECT *tree )
 #if	CALL_MAGIC_KERNEL == 0		
 
 	wind_set( d->whdl, WF_ICONIFY, g->g_x, g->g_y, g->g_w, g->g_h );
-	d->border = *g;														/* FensterrÑnder */
+	d->border = *g;														/* Fensterraender */
 	wind_get( d->whdl, WF_WORKXYWH, &d->rect.g_x, &d->rect.g_y, &d->rect.g_w, &d->rect.g_h );
 
 	if	( title )															/* neuer Fenstertitel? */
@@ -670,7 +670,7 @@ WORD	wdlg_set_uniconify( DIALOG *d, GRECT *g, char *title, OBJECT *tree )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Nummer des aktiven Edit-Objekts zurÅckliefern														*/
+/* Nummer des aktiven Edit-Objekts zurueckliefern														*/
 /* Funktionsresultat:	Zeiger auf Benutzerinformationen												*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -680,7 +680,7 @@ void	*wdlg_get_udata( DIALOG *d )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Handle des Dialog-Fensters zurÅckliefern																*/
+/* Handle des Dialog-Fensters zurueckliefern																*/
 /* Funktionsresultat:	Handle																				*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -691,7 +691,7 @@ WORD	wdlg_get_handle( DIALOG *d )
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Nachricht verarbeiten																						*/
-/* Funktionsresultat:	0: Dialog schlieûen 1: alles in Ordnung									*/
+/* Funktionsresultat:	0: Dialog schliessen 1: alles in Ordnung									*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*	msg:						Zeiger auf den Message-Buffer													*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -701,7 +701,7 @@ static WORD	wdlg_mesag( DIALOG *d, EVNT *events )
 	WORD	opcode;
 	
 	msg = events->msg;
-	events->mwhich &= ~MU_MESAG;			/* Nachrichten-Bit lîschen */
+	events->mwhich &= ~MU_MESAG;			/* Nachrichten-Bit loeschen */
 	
 	switch( msg[0] )
 	{
@@ -749,9 +749,9 @@ static WORD	wdlg_mesag( DIALOG *d, EVNT *events )
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Mausklick verarbeiten																						*/
-/* Funktionsresultat:	0: Dialog schlieûen 1: alles in Ordnung									*/
+/* Funktionsresultat:	0: Dialog schliessen 1: alles in Ordnung									*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
-/*	clicks:					Anzahl der Mausklicks (wenn 0, dann enthÑlt mx die Objektnummer)	*/
+/*	clicks:					Anzahl der Mausklicks (wenn 0, dann enthaelt mx die Objektnummer)	*/
 /*	mx:						x-Koordinate des Mauszeigers													*/
 /*	my:						y-Koordinate des Mauszeigers													*/
 /*	button:					Maustaste																			*/
@@ -787,16 +787,16 @@ static WORD	wdlg_button( DIALOG *d, EVNT *events, WORD clicks, WORD mx, WORD my,
 #endif
 
 #if CALL_MAGIC_KERNEL == 1
-	set_clip_grect( (GRECT *) &(d->tree->ob_x) );				/* Clipping-Rechteck fÅr form_button() setzen */
+	set_clip_grect( (GRECT *) &(d->tree->ob_x) );				/* Clipping-Rechteck fuer form_button() setzen */
 #endif
 
 	no_exit = form_wbutton( d->tree, obj, clicks, &edit, d->whdl );		/* Mausklick behandeln */
-	edit &= 0x7fff;														/* Doppelklickbit lîschen */
+	edit &= 0x7fff;														/* Doppelklickbit loeschen */
 
-	if	( no_exit == 0 )													/* wurde ein Exit-Objekt angewÑhlt? */			
+	if	( no_exit == 0 )													/* wurde ein Exit-Objekt angewaehlt? */			
 		return( hndl_exit( d, events, edit, clicks, d->user_data ));
 
-	if	( edit > 0 )														/* wurde ein Edit-Feld angewÑhlt? */
+	if	( edit > 0 )														/* wurde ein Edit-Feld angewaehlt? */
 	{
 		if	(( d->act_editob != edit ) || ( obj == edit ))		/* wurde das Edit-Feld gewechselt? */
 		{
@@ -842,7 +842,7 @@ ESC
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Tastendruck verarbeiten																						*/
-/* Funktionsresultat:	0: Dialog schlieûen 1: alles in Ordnung									*/
+/* Funktionsresultat:	0: Dialog schliessen 1: alles in Ordnung									*/
 /*	d:							Zeiger auf die Dialog-Struktur												*/
 /*	key:						Tastencode																			*/
 /*	kstate:					Zustand der Sondertasten														*/
@@ -858,7 +858,7 @@ static WORD	wdlg_key( DIALOG *d, EVNT *events )
 	kstate = events->kstate;
 	
 #if CALL_MAGIC_KERNEL
-	set_clip_grect( (GRECT *) &(d->tree->ob_x) );				/* Clipping-Rechteck fÅr form_keybd()/objc_edit() setzen */
+	set_clip_grect( (GRECT *) &(d->tree->ob_x) );				/* Clipping-Rechteck fuer form_keybd()/objc_edit() setzen */
 
 	if	(!(key & 0xff) && ( kstate == K_ALT ))	/* Kein ASCII, sondern Alt-Buchstabe? */
 #else
@@ -867,11 +867,11 @@ static WORD	wdlg_key( DIALOG *d, EVNT *events )
 	{
 		if	( form_wkeybd( d->tree, 0x8765, d->act_editob, key, &neu_editob, &key, d->whdl ))
 		{
-			events->mwhich &= ~MU_KEYBD;								/* Tastatur-Bit lîschen */
+			events->mwhich &= ~MU_KEYBD;								/* Tastatur-Bit loeschen */
 			return( wdlg_button( d, events, 0, neu_editob, 0, 1 ));
 		}
 		else																	/* Button mit entsprechendem Shortcut ist nicht vorhanden */
-			return( 1 );													/* Taste zurÅckliefern */
+			return( 1 );													/* Taste zurueckliefern */
 	}
 
 	no_exit = form_wkeybd( d->tree, d->act_editob, d->act_editob, key, &neu_editob, &key, d->whdl );
@@ -880,15 +880,15 @@ static WORD	wdlg_key( DIALOG *d, EVNT *events )
 	{
 		if ( d->act_editob > 0 )										/* ist ein Edit-Objekt aktiv? */
 		{
-			if ( hndl_exit( d, events, HNDL_EDIT, 0, &key ))	/* soll der Code eingefÅgt werden? */
+			if ( hndl_exit( d, events, HNDL_EDIT, 0, &key ))	/* soll der Code eingefuegt werden? */
 			{
 #if	CALL_MAGIC_KERNEL
-				objc_edit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR + (d->whdl<<8), 0L );	/* Zeichen einfÅgen */
+				objc_edit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR + (d->whdl<<8), 0L );	/* Zeichen einfuegen */
 #else
-				objc_edit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR, 0L );	/* Zeichen einfÅgen */
+				objc_edit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR, 0L );	/* Zeichen einfuegen */
 #endif
-				events->mwhich &= ~MU_KEYBD;							/* Tastatur-Bit lîschen */
-				hndl_exit( d, events, HNDL_EDDN, 0, &key );		/* Code wurde eingefÅgt... */
+				events->mwhich &= ~MU_KEYBD;							/* Tastatur-Bit loeschen */
+				hndl_exit( d, events, HNDL_EDDN, 0, &key );		/* Code wurde eingefuegt... */
 			}
 		}
 	}	
@@ -910,20 +910,20 @@ static WORD	wdlg_key( DIALOG *d, EVNT *events )
 #endif
 			d->act_editob = neu_editob;								/* Nummer des neuen Edit-Objekts */
 
-			events->mwhich &= ~MU_KEYBD;								/* Tastatur-Bit lîschen */
+			events->mwhich &= ~MU_KEYBD;								/* Tastatur-Bit loeschen */
 			hndl_exit( d, events, HNDL_EDCH, 0, &d->act_editob );	/* das Edit-Feld wurde gewechselt... */
 		}
 	}
 
-	if	( no_exit )															/* wurde kein Exit-Objekt angewÑhlt? */
+	if	( no_exit )															/* wurde kein Exit-Objekt angewaehlt? */
 		return( 1 );
 
-	events->mwhich &= ~MU_KEYBD;	/* Tastatur-Bit lîschen */
+	events->mwhich &= ~MU_KEYBD;	/* Tastatur-Bit loeschen */
 	return( hndl_exit( d, events, neu_editob, 1, d->user_data ));
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Handle des obersten Fenster zurÅckliefern																*/
+/* Handle des obersten Fenster zurueckliefern																*/
 /* Funktionsresultat:	Handle des Fanster oder -1 (kein Fenster der eigenen Applikation)	*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	top_whdl( void )
@@ -964,7 +964,7 @@ static WORD	set_1st_edit( DIALOG *d )
 
 	do
 	{
-		tree++;																/* nÑchstes Objekt */
+		tree++;																/* naechstes Objekt */
 
 		if	( tree->ob_flags & EDITABLE )								/* Edit-Feld? */
 		{
@@ -979,7 +979,7 @@ static WORD	set_1st_edit( DIALOG *d )
 		index++;
 	} while(( tree->ob_flags & LASTOB ) == 0 );
 
-	return( d->act_editob );											/* Objektnummer zurÅckliefern */
+	return( d->act_editob );											/* Objektnummer zurueckliefern */
 }
 
 #if	CALL_MAGIC_KERNEL == 0
@@ -988,9 +988,9 @@ static WORD	set_1st_edit( DIALOG *d )
 #define	min( A,B ) ( (A)<(B) ? (A) : (B) )
 
 /*----------------------------------------------------------------------------------------*/ 
-/* öberlappung von p1 und p2 ÅberprÅfen																	*/
-/* Funktionsresultat:	bei öberlappung einen Wert ungleich 0, andernfalls 0;					*/
-/*								die Struktur *p2 enthÑlt dann die SchnittflÑche							*/
+/* Ueberlappung von p1 und p2 ueberpruefen																	*/
+/* Funktionsresultat:	bei Ueberlappung einen Wert ungleich 0, andernfalls 0;					*/
+/*								die Struktur *p2 enthaelt dann die Schnittflaeche							*/
 /* p1, p2:					Zeiger auf die zu vergleichenden GRECTs									*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	rc_intersect( GRECT *p1, GRECT *p2 )

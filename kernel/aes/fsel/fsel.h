@@ -12,7 +12,7 @@
 #define SORTBYTYPE  3
 #define SORTBYNONE  4
 
-/* Flags für Dateiauswahl */
+/* Flags fuer Dateiauswahl */
 
 #define DOSMODE     1
 #define NFOLLOWSLKS 2

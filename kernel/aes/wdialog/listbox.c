@@ -19,7 +19,7 @@
 #if	CALL_MAGIC_KERNEL
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Makros und Funktionsdefinitionen fÅr Aufrufe an den MagiC-Kernel								*/
+/* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel								*/
 /*----------------------------------------------------------------------------------------*/ 
 
 #define	evnt_timer( low, high ) \
@@ -103,19 +103,19 @@ static void bscroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GREC
 
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr LIST_BOX anfordern und initialisieren													*/
+/* Speicher fuer LIST_BOX anfordern und initialisieren													*/
 /* Funktionsresultat:	Zeiger auf LIST_BOX-Struktur oder 0L										*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	slct:						Routine, die bei Objektauswahl angesprungen wird						*/
 /*	set:						Routine, die die Elemente der Liste setzt									*/
 /*	items:					Zeiger auf die Liste mit Elementen (LBOX_ITEM)							*/
-/*	visible_a				Anzahl der sichtbaren EintrÑge												*/
+/*	visible_a				Anzahl der sichtbaren Eintraege												*/
 /* first:					Index des ersten sichtbaren Elements										*/
 /*	ctrl_objs:				Feld mit Objektnummer von Slidern und den anderen Objekten			*/
 /*	objs:						Feld mit Objektnummern der Listbox-Elemente								*/
 /*	flags:					div. Flags, die u.a. festlegen, ob vert. oder hor. gescrollt wird	*/
-/*	pause_a:					Verzîgerung in ms fÅr die Scroll-Buttons									*/
-/*	user_data:				dieser Zeiger wird slct und set_item beim Aufruf Åbergeben			*/
+/*	pause_a:					Verzoegerung in ms fuer die Scroll-Buttons									*/
+/*	user_data:				dieser Zeiger wird slct und set_item beim Aufruf uebergeben			*/
 /* dialog:					Zeiger auf eine Fensterdialog-Struktur oder 0L							*/
 /*----------------------------------------------------------------------------------------*/ 
 LIST_BOX	*lbox_create( OBJECT *tree, SLCT_ITEM slct, SET_ITEM set, LBOX_ITEM *items, WORD visible_a, WORD first_a,
@@ -164,11 +164,11 @@ LIST_BOX	*lbox_create( OBJECT *tree, SLCT_ITEM slct, SET_ITEM set, LBOX_ITEM *it
 
 		box->obj_index = objs;											/* Feld mit Objektnummern der Box-Elemente */
 
-		box->visible_a = visible_a;									/* Anzahl der sichtbaren EintrÑge */
+		box->visible_a = visible_a;									/* Anzahl der sichtbaren Eintraege */
 
 		box->items = items;												/* Zeiger auf Elementliste */
 
-		box->pause_a = pause_a;											/* Verzîgerung fÅrs Scrolling */
+		box->pause_a = pause_a;											/* Verzoegerung fuers Scrolling */
 
 		box->slct = slct;													/* Zeiger auf Auswahlfunktion */
 		box->set_item = set;												/* Zeiger auf Setzfunktion */
@@ -183,7 +183,7 @@ LIST_BOX	*lbox_create( OBJECT *tree, SLCT_ITEM slct, SET_ITEM set, LBOX_ITEM *it
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr LIST_BOX freigeben																			*/
+/* Speicher fuer LIST_BOX freigeben																			*/
 /* Funktionsresultat:	0: Fehler 1: alles in Ordnung													*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -199,10 +199,10 @@ WORD	lbox_delete( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Abtesten, ob die Listbox betÑtigt wurde																*/
-/* Funktionsresultat:	angewÑhlte Objektnummer (oberstes Bit gelîscht, & 0x7fff), -1 ist das Default-Objekt			*/
+/* Abtesten, ob die Listbox betaetigt wurde																*/
+/* Funktionsresultat:	angewaehlte Objektnummer (oberstes Bit geloescht, & 0x7fff), -1 ist das Default-Objekt			*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
-/*	obj:						Nummer des ausgewÑhlten Objekts												*/
+/*	obj:						Nummer des ausgewaehlten Objekts												*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	lbox_do( LIST_BOX *box, WORD obj )
 {
@@ -246,7 +246,7 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 		
 		for( i = 0; i < box->visible_a; i++ )
 		{
-			if( obj == box->obj_index[i] )							/* wurde einer der EintrÑge angewÑhlt? */
+			if( obj == box->obj_index[i] )							/* wurde einer der Eintraege angewaehlt? */
 	 		{
 				LBOX_ITEM *selected;
 				
@@ -257,27 +257,27 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 					
 					last_state = selected->selected;					/* Status merken */
 					
-					if ( last_state == 0 )								/* Eintrag noch nicht angewÑhlt? */
+					if ( last_state == 0 )								/* Eintrag noch nicht angewaehlt? */
 					{
 						if ( box->flags & LBOX_SNGL )					/* keine Mehrfachselektion? */
 							deselect_list( box );						/* deselektieren */
 							
-						if (( box->flags & LBOX_SHFT ) && (( kstate & ( K_RSHIFT + K_LSHIFT )) == 0 ))	/* Shift nicht gedrÅckt? */
+						if (( box->flags & LBOX_SHFT ) && (( kstate & ( K_RSHIFT + K_LSHIFT )) == 0 ))	/* Shift nicht gedrueckt? */
 							deselect_list( box );						/* deselektieren */
 							
-						change_item_state( box, selected, obj, 1 );	/* angewÑhlten Eintrag selektieren */
+						change_item_state( box, selected, obj, 1 );	/* angewaehlten Eintrag selektieren */
 					}
-					else														/* Eintrag ist bereits angewÑhlt */
+					else														/* Eintrag ist bereits angewaehlt */
 					{
 						if ( dclick == 0 )								/* kein Doppelklick? */
 						{
 							if ( box->flags & LBOX_SHFT )				/* Shift-Taste beachten? */
 							{
 								if ( kstate & ( K_RSHIFT + K_LSHIFT ))
-									change_item_state( box, selected, obj, 0 );	/* angewÑhlten Eintrag deselektieren */
+									change_item_state( box, selected, obj, 0 );	/* angewaehlten Eintrag deselektieren */
 							}
 							else if ( box->flags & LBOX_TOGGLE )	/* Status toggeln? */
-								change_item_state( box, selected, obj, 0 );	/* angewÑhlten Eintrag deselektieren */
+								change_item_state( box, selected, obj, 0 );	/* angewaehlten Eintrag deselektieren */
 						}
 					}
 
@@ -286,12 +286,12 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 					if( dclick )											/* Doppelklick? */
 						return( -1 );
 
-					found = 1;												/* eines der Listbox-Objekte wurde ausgewÑhlt */
+					found = 1;												/* eines der Listbox-Objekte wurde ausgewaehlt */
 				}
 			}
 		}
 		
-		if ( found )														/* wurde eines der Listbox-Objekte ausgewÑhlt? */
+		if ( found )														/* wurde eines der Listbox-Objekte ausgewaehlt? */
 		{
 			WORD	mwhich;
 			WORD	buf[16];
@@ -347,7 +347,7 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 			wind_update( END_MCTRL );									/* Mauskontrolle freigeben */
 		}	
 			
-		if (( box->flags & LBOX_AUTO ) && ( mbutton == 1 ))	/* Auto-Scrolling und wird die Maustaste noch gedrÅckt? */
+		if (( box->flags & LBOX_AUTO ) && ( mbutton == 1 ))	/* Auto-Scrolling und wird die Maustaste noch gedrueckt? */
 		{
 			wind_update( BEG_MCTRL );									/* Mauskontrolle holen */
 			auto_scroll( box, obj );
@@ -379,7 +379,7 @@ WORD	lbox_cnt_items( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Zeiger auf LBOX_ITEMs zurÅckliefern																		*/
+/* Zeiger auf LBOX_ITEMs zurueckliefern																		*/
 /* Funktionsresultat:	Zeiger auf LBOX_ITEMs															*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -389,7 +389,7 @@ LBOX_ITEM	*lbox_get_items( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Zeiger auf Objektbaum zurÅckliefern																		*/
+/* Zeiger auf Objektbaum zurueckliefern																		*/
 /* Funktionsresultat:	Zeiger auf Objektbaum															*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -399,8 +399,8 @@ OBJECT	*lbox_get_tree( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Anzahl der sichtbaren EintrÑge zurÅckliefern															*/
-/* Funktionsresultat:	Hîhe																					*/
+/* Anzahl der sichtbaren Eintraege zurueckliefern															*/
+/* Funktionsresultat:	Hoehe																					*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	lbox_get_avis( LIST_BOX *box )
@@ -409,7 +409,7 @@ WORD	lbox_get_avis( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Zeiger auf benutzerdefinierte Daten zurÅckliefern													*/
+/* Zeiger auf benutzerdefinierte Daten zurueckliefern													*/
 /* Funktionsresultat:	Zeiger auf benutzerdefinierte Daten 										*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -419,7 +419,7 @@ void	*lbox_get_udata( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Index des ersten sichbaren Elements zurÅckliefern													*/
+/* Index des ersten sichbaren Elements zurueckliefern													*/
 /* Funktionsresultat:	Index des ersten sichbaren LBOX_ITEMS										*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -429,7 +429,7 @@ WORD	lbox_get_afirst( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* LBOX_ITEM mit Index n zurÅckliefern																		*/
+/* LBOX_ITEM mit Index n zurueckliefern																		*/
 /* Funktionsresultat:	Zeiger auf den Eintrag mit Index n											*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /* n:							index																					*/
@@ -449,7 +449,7 @@ LBOX_ITEM	*lbox_get_item( LIST_BOX *box, WORD n )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Index des ausgewÑhlten LBOX_ITEMs zurÅckliefern														*/
+/* Index des ausgewaehlten LBOX_ITEMs zurueckliefern														*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -472,7 +472,7 @@ WORD	lbox_get_slct_idx( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* AusgewÑhltes LBOX_ITEM zurÅckliefern																	*/
+/* Ausgewaehltes LBOX_ITEM zurueckliefern																	*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -492,7 +492,7 @@ LBOX_ITEM *lbox_get_slct_item( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Index eines LBOX_ITEMs zurÅckliefern																	*/
+/* Index eines LBOX_ITEMs zurueckliefern																	*/
 /* Funktionsresultat:	Index des Elements																*/
 /*	items:					Zeiger auf das erste LBOX_ITEM der List									*/
 /*	search:					Zeiger auf das gesuchte LBOX_ITEM											*/
@@ -506,7 +506,7 @@ WORD	lbox_get_idx( LBOX_ITEM *items, LBOX_ITEM *search )
 	while ( items )
 	{
 		if ( search == items )
-			return( index );												/* Index des Elements zurÅckliefern */
+			return( index );												/* Index des Elements zurueckliefern */
 		
 		index++;
 		items = items->next;
@@ -516,8 +516,8 @@ WORD	lbox_get_idx( LBOX_ITEM *items, LBOX_ITEM *search )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Anzahl der sichtbaren Einteilungen zurÅckliefern													*/
-/* Funktionsresultat:	Hîhe																					*/
+/* Anzahl der sichtbaren Einteilungen zurueckliefern													*/
+/* Funktionsresultat:	Hoehe																					*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	lbox_get_bvis( LIST_BOX *box )
@@ -526,7 +526,7 @@ WORD	lbox_get_bvis( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Anzahl der sichtbaren Einteilungen Ñndern										*/
+/* Anzahl der sichtbaren Einteilungen aendern										*/
 /* Funktionsresultat:	alter Wert													*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /* new_bvis:				neue Anzahl */
@@ -541,7 +541,7 @@ WORD	lbox_set_bvis( LIST_BOX *box, WORD new_bvis )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Anzahl der Elemente fÅr Slider B zurÅckliefern														*/
+/* Anzahl der Elemente fuer Slider B zurueckliefern														*/
 /* Funktionsresultat:	Anzahl der Elemente																*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -551,7 +551,7 @@ WORD	lbox_get_bentries( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Index des ersten sichbaren Elements fÅr Slider B zurÅckliefern									*/
+/* Index des ersten sichbaren Elements fuer Slider B zurueckliefern									*/
 /* Funktionsresultat:	Index des ersten sichbaren Elements											*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -565,7 +565,7 @@ WORD	lbox_get_bfirst( LIST_BOX *box )
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	first:					Index des ersten sichtbaren Elements										*/
-/*	rect:						Zeiger auf das Redraw-Rechteck oder 0L (keinen Redraw auslîsen)	*/
+/*	rect:						Zeiger auf das Redraw-Rechteck oder 0L (keinen Redraw ausloesen)	*/
 /*----------------------------------------------------------------------------------------*/ 
 void	lbox_set_asldr( LIST_BOX *box, WORD first, GRECT *rect )
 {
@@ -576,7 +576,7 @@ void	lbox_set_asldr( LIST_BOX *box, WORD first, GRECT *rect )
 	
 	number = lbox_cnt_items( box );									/* Anzahl der Elemente */
 
-	if ( first > number - box->visible_a )							/* zu groû? */
+	if ( first > number - box->visible_a )							/* zu gross? */
 		first = number - box->visible_a;
 
 	if ( first < 0 )														/* zu klein? */
@@ -610,7 +610,7 @@ void	lbox_set_items( LIST_BOX *box, LBOX_ITEM *items )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr alle EintrÑge in der Listbox freigeben												*/
+/* Speicher fuer alle Eintraege in der Listbox freigeben												*/
 /* Funktionsresultat:	1																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -620,7 +620,7 @@ void	lbox_free_items( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr alle EintrÑge in der Listbox freigeben												*/
+/* Speicher fuer alle Eintraege in der Listbox freigeben												*/
 /* Funktionsresultat:	1																						*/
 /* item:						Zeiger auf das erste LBOX_ITEM												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -632,7 +632,7 @@ void	lbox_free_list( LBOX_ITEM *item )
 		
 		next = item->next;
 		Mfree( item );														/* Speicher freigeben */
-		item = next;														/* nÑchstes Element */
+		item = next;														/* naechstes Element */
 	}
 }
 
@@ -641,8 +641,8 @@ void	lbox_free_list( LBOX_ITEM *item )
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	first:					Index des ersten sichtbaren Elements										*/
-/*	box_rect:				Redraw-Rechteck fÅr die Listbox oder 0L									*/
-/*	slider_rect:			Redraw-Rechteck fÅr den Slider oder 0L										*/
+/*	box_rect:				Redraw-Rechteck fuer die Listbox oder 0L									*/
+/*	slider_rect:			Redraw-Rechteck fuer den Slider oder 0L										*/
 /*----------------------------------------------------------------------------------------*/ 
 void	lbox_ascroll_to( LIST_BOX *box, WORD first, GRECT *box_rect, GRECT *slider_rect )
 {
@@ -650,7 +650,7 @@ void	lbox_ascroll_to( LIST_BOX *box, WORD first, GRECT *box_rect, GRECT *slider_
 	
 	cnt = lbox_cnt_items( box );
 	
-	if ( first > ( cnt - box->visible_a ))							/* zu groû? */
+	if ( first > ( cnt - box->visible_a ))							/* zu gross? */
 		first = cnt - box->visible_a;
 
 	if ( first < 0 )														/* zu klein? */
@@ -664,7 +664,7 @@ void	lbox_ascroll_to( LIST_BOX *box, WORD first, GRECT *box_rect, GRECT *slider_
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	first:					Index des ersten sichtbaren Elements										*/
-/*	rect:						Zeiger auf das Redraw-Rechteck oder 0L (keinen Redraw auslîsen)	*/
+/*	rect:						Zeiger auf das Redraw-Rechteck oder 0L (keinen Redraw ausloesen)	*/
 /*----------------------------------------------------------------------------------------*/ 
 void	lbox_set_bsldr( LIST_BOX *box, WORD first, GRECT *rect )
 {
@@ -702,7 +702,7 @@ void	lbox_set_bsldr( LIST_BOX *box, WORD first, GRECT *rect )
 /*----------------------------------------------------------------------------------------*/ 
 void	lbox_set_bentries( LIST_BOX *box, WORD entries )
 {
-	box->entries_b = entries;											/* neue Elementanzahl fÅr Slider B setzen */
+	box->entries_b = entries;											/* neue Elementanzahl fuer Slider B setzen */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
@@ -710,12 +710,12 @@ void	lbox_set_bentries( LIST_BOX *box, WORD entries )
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	first:					Index des ersten sichtbaren Elements										*/
-/*	box_rect:				Redraw-Rechteck fÅr die Listbox oder 0L									*/
-/*	slider_rect:			Redraw-Rechteck fÅr den Slider oder 0L										*/
+/*	box_rect:				Redraw-Rechteck fuer die Listbox oder 0L									*/
+/*	slider_rect:			Redraw-Rechteck fuer den Slider oder 0L										*/
 /*----------------------------------------------------------------------------------------*/ 
 void	lbox_bscroll_to( LIST_BOX *box, WORD first, GRECT *box_rect, GRECT *slider_rect )
 {
-	if ( first > ( box->entries_b - box->visible_b ))			/* zu groû? */
+	if ( first > ( box->entries_b - box->visible_b ))			/* zu gross? */
 		first = box->entries_b - box->visible_b;
 
 	if ( first < 0 )														/* zu klein? */
@@ -728,7 +728,7 @@ void	lbox_bscroll_to( LIST_BOX *box, WORD first, GRECT *box_rect, GRECT *slider_
 /* Alle Strings der Listbox besetzen																		*/
 /* Funktionsresultat:	-																						*/
 /* box:						Zeiger auf die Listbox															*/
-/* rect:						Zeiger auf GRECT fÅr Redraw oder 0L (keinen Redraw auslîsen)		*/
+/* rect:						Zeiger auf GRECT fuer Redraw oder 0L (keinen Redraw ausloesen)		*/
 /*----------------------------------------------------------------------------------------*/ 
 void	lbox_update( LIST_BOX *box, GRECT *rect )
 {
@@ -775,7 +775,7 @@ void	lbox_update( LIST_BOX *box, GRECT *rect )
 /* auf Scroll-Button reagieren																				*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
-/*	button:					Nummer des ausgewÑhlten Objekts												*/
+/*	button:					Nummer des ausgewaehlten Objekts												*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	do_scroll_button( LIST_BOX *box, WORD button )
 {
@@ -792,7 +792,7 @@ static void	do_scroll_button( LIST_BOX *box, WORD button )
 
 	pause = box->pause_a;
 	if ( pause < 200 )
-		pause = 200;														/* Anfangsverzîgerung auf 200ms einstellen */
+		pause = 200;														/* Anfangsverzoegerung auf 200ms einstellen */
 	
 	do 
 	{
@@ -833,9 +833,9 @@ static void	do_scroll_button( LIST_BOX *box, WORD button )
 				scroll_down( box );										/* nach unten scrollen */
 		}
 
-		evnt_timer( p, 0 );												/* Verzîgerung */
+		evnt_timer( p, 0 );												/* Verzoegerung */
 		mkstate( &d, &d, &mbutton, &d );
-	} while ( mbutton == 1 );											/* wird der Button noch gedrÅckt? */
+	} while ( mbutton == 1 );											/* wird der Button noch gedrueckt? */
 
 	obj_change( tree, rect, button, NORMAL );
 }
@@ -879,10 +879,10 @@ static void	do_slider_back( LIST_BOX *box, WORD mx, WORD my )
 	if ( first < 0 )														/* zu klein? */
 		first = 0;
 
-	if ( first > count - visible )									/* zu groû? */
+	if ( first > count - visible )									/* zu gross? */
 		first = count - visible;
 			
-	if ( first != box->first_a )										/* PositionsÑnderung? */
+	if ( first != box->first_a )										/* Positionsaenderung? */
 	{
 		GRECT	*rect;
 	
@@ -890,7 +890,7 @@ static void	do_slider_back( LIST_BOX *box, WORD mx, WORD my )
 	
 		lbox_set_asldr( box, first, rect );							/* Slider positionieren und zeichnen */
 		lbox_update( box, rect );										/* Listbox-Elemente zeichnen */
-		evnt_timer( box->pause_a, 0 );								/* Verzîgerung */ 
+		evnt_timer( box->pause_a, 0 );								/* Verzoegerung */ 
 	}
 }
 
@@ -929,10 +929,10 @@ static void	do_slider2_back( LIST_BOX *box, WORD mx, WORD my )
 	if ( first < 0 )														/* zu klein? */
 		first = 0;
 
-	if ( first > box->entries_b - box->visible_b )				/* zu groû? */
+	if ( first > box->entries_b - box->visible_b )				/* zu gross? */
 		first = box->entries_b - box->visible_b;
 			
-	if ( first != box->first_b )										/* PositionsÑnderung? */
+	if ( first != box->first_b )										/* Positionsaenderung? */
 	{
 		GRECT	*rect;
 	
@@ -940,7 +940,7 @@ static void	do_slider2_back( LIST_BOX *box, WORD mx, WORD my )
 	
 		lbox_set_bsldr( box, first, rect );							/* Slider positionieren und zeichnen */
 		lbox_update( box, rect );										/* Listbox-Elemente zeichnen */
-		evnt_timer( box->pause_b, 0 );								/* Verzîgerung */ 
+		evnt_timer( box->pause_b, 0 );								/* Verzoegerung */ 
 	}
 }
 
@@ -955,9 +955,9 @@ static void	do_slider( LIST_BOX *box, WORD mx, WORD my )
 {
 	WORD	count;
 	
-	count = lbox_cnt_items( box );									/* Anzahl der EintrÑge */
+	count = lbox_cnt_items( box );									/* Anzahl der Eintraege */
 	
-	if( count > box->visible_a )										/* genÅgend EintrÑge zum Scrollen vorhanden? */
+	if( count > box->visible_a )										/* genuegend Eintraege zum Scrollen vorhanden? */
 	{
 		OBJECT	*tree;
 		GRECT	*rect;
@@ -1002,7 +1002,7 @@ static void	do_slider( LIST_BOX *box, WORD mx, WORD my )
 			
 				appl_yield();
 				mkstate( &mx, &my, &mbutton, &kstate );
-			} while ( mbutton == 1 );									/* wird die Maustaste noch gedrÅckt? */
+			} while ( mbutton == 1 );									/* wird die Maustaste noch gedrueckt? */
 		}
 		else
 		{
@@ -1012,7 +1012,7 @@ static void	do_slider( LIST_BOX *box, WORD mx, WORD my )
 	 		pos = graf_slidebox( tree, box->back1, box->slider1, box->flags & LBOX_VERT );	/* Slider verschieben */
 			first = (WORD) ((LONG) ( count - box->visible_a ) * pos / 1000L );	/* Index des ersten sichbaren Elements */
 			
-			if ( first != box->first_a )								/* PositionsÑnderung? */
+			if ( first != box->first_a )								/* Positionsaenderung? */
 			{
 				lbox_set_asldr( box, first, rect );					/* Slider positionieren und zeichnen */
 				lbox_update( box, rect );								/* Listbox-Elemente zeichnen */
@@ -1041,7 +1041,7 @@ static void	real_aslider( LIST_BOX *box, WORD count, WORD xy, WORD ob_min, WORD 
 
 	xy -= ob_min;
 	
-	if ( xy < 0 )															/* Maus Åberhalb/links des Slider-Backgrounds? */
+	if ( xy < 0 )															/* Maus ueberhalb/links des Slider-Backgrounds? */
 		xy = 0;
 		
 	if ( xy > ob_max )													/* Maus unterhalb/rechts des Slider-Backgrounds? */
@@ -1058,12 +1058,12 @@ static void	real_aslider( LIST_BOX *box, WORD count, WORD xy, WORD ob_min, WORD 
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /* old:						bisher sichtbares erstes Element												*/
-/*	box_rect:				Redraw-Rechteck fÅr die Listbox												*/
-/*	slider_rect:			Redraw-Rechteck fÅr den Slider												*/
+/*	box_rect:				Redraw-Rechteck fuer die Listbox												*/
+/*	slider_rect:			Redraw-Rechteck fuer den Slider												*/
 /*----------------------------------------------------------------------------------------*/ 
 static void ascroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GRECT *slider_rect )
 {
-	if ( new != old )														/* PositionsÑnderung? */
+	if ( new != old )														/* Positionsaenderung? */
 	{
 		OBJECT	*tree;
 		GRECT	rect;
@@ -1072,11 +1072,11 @@ static void ascroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GREC
 
  		lbox_set_asldr( box, new, slider_rect );					/* Slider positionieren und zeichnen */
 
-		get_GRECT( tree, box->parent_box, &rect );				/* GRECT des Hintergrundobjekts berechnen (ohne zusÑtzliche RÑnder!) */
+		get_GRECT( tree, box->parent_box, &rect );				/* GRECT des Hintergrundobjekts berechnen (ohne zusaetzliche Raender!) */
 		
 		if ( box_rect && rc_intersect( box_rect, &rect ))		/* innerhalb des Redraw-Rechtecks? */
 		{
-			if ( is_visible( box, &rect ))							/* Listbox vollstÑndig sichtbar? */
+			if ( is_visible( box, &rect ))							/* Listbox vollstaendig sichtbar? */
 			{
 				WORD	x1;
 				WORD	y1;
@@ -1101,7 +1101,7 @@ static void ascroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GREC
 					move_area( tree, box->parent_box, x1, y1, x2, y2, w, h );	/* Bereich verschieben */
 		
 					if ( box->flags & LBOX_VERT )
-						rect.g_h -= h;										/* Hîhe des Redraw-Rechtecks verkleinern */
+						rect.g_h -= h;										/* Hoehe des Redraw-Rechtecks verkleinern */
 					else
 						rect.g_w -= w;										/* Breite des Redraw-Rechtecks verkleinern */
 				}
@@ -1123,7 +1123,7 @@ static void ascroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GREC
 					if ( box->flags & LBOX_VERT )
 					{
 						rect.g_y += h;										/* y-Koordinate des Redraw-Rechtecks verschieben */
-						rect.g_h -= h;										/* Hîhe des Redraw-Rechtecks verkleinern */
+						rect.g_h -= h;										/* Hoehe des Redraw-Rechtecks verkleinern */
 					}
 					else
 					{
@@ -1141,7 +1141,7 @@ static void ascroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GREC
 
 static void	do_slider_b( LIST_BOX *box, WORD mx, WORD my )
 {
-	if( box->entries_b > box->visible_b )							/* genÅgend EintrÑge zum Scrollen vorhanden? */
+	if( box->entries_b > box->visible_b )							/* genuegend Eintraege zum Scrollen vorhanden? */
 	{
 		OBJECT	*tree;
 		GRECT	*rect;
@@ -1186,7 +1186,7 @@ static void	do_slider_b( LIST_BOX *box, WORD mx, WORD my )
 			
 				appl_yield();
 				mkstate( &mx, &my, &mbutton, &kstate );
-			} while ( mbutton == 1 );									/* wird die Maustaste noch gedrÅckt? */
+			} while ( mbutton == 1 );									/* wird die Maustaste noch gedrueckt? */
 		}
 		else
 		{
@@ -1196,7 +1196,7 @@ static void	do_slider_b( LIST_BOX *box, WORD mx, WORD my )
 	 		pos = graf_slidebox( tree, box->back_h, box->slider_h, !( box->flags & LBOX_VERT ));	/* Slider verschieben */
 			first = (WORD) ((LONG) ( box->entries_b - box->visible_b ) * pos / 1000L );	/* Index des ersten sichbaren Elements */
 			
-			if ( first != box->first_b )								/* PositionsÑnderung? */
+			if ( first != box->first_b )								/* Positionsaenderung? */
 			{
 				lbox_set_bsldr( box, first, rect );					/* Slider positionieren und zeichnen */
 				lbox_update( box, rect );								/* Listbox-Elemente zeichnen */
@@ -1225,7 +1225,7 @@ static void	real_bslider( LIST_BOX *box, WORD count, WORD xy, WORD ob_min, WORD 
 
 	xy -= ob_min;
 	
-	if ( xy < 0 )															/* Maus Åberhalb/links des Slider-Backgrounds? */
+	if ( xy < 0 )															/* Maus ueberhalb/links des Slider-Backgrounds? */
 		xy = 0;
 		
 	if ( xy > ob_max )													/* Maus unterhalb/rechts des Slider-Backgrounds? */
@@ -1242,23 +1242,23 @@ static void	real_bslider( LIST_BOX *box, WORD count, WORD xy, WORD ob_min, WORD 
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /* old:						bisher sichtbares erstes Element												*/
-/*	box_rect:				Redraw-Rechteck fÅr die Listbox												*/
-/*	slider_rect:			Redraw-Rechteck fÅr den Slider												*/
+/*	box_rect:				Redraw-Rechteck fuer die Listbox												*/
+/*	slider_rect:			Redraw-Rechteck fuer den Slider												*/
 /*----------------------------------------------------------------------------------------*/ 
 static void bscroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GRECT *slider_rect )
 {
-	if ( new != old )														/* PositionsÑnderung? */
+	if ( new != old )														/* Positionsaenderung? */
 	{
 		OBJECT	*tree;
 		GRECT	rect;
 		
 		tree = box->tree;
 
-		get_GRECT( tree, box->parent_box, &rect );				/* GRECT des Hintergrundobjekts berechnen (ohne zusÑtzliche RÑnder!) */
+		get_GRECT( tree, box->parent_box, &rect );				/* GRECT des Hintergrundobjekts berechnen (ohne zusaetzliche Raender!) */
 		
 		if ( box_rect && rc_intersect( box_rect, &rect ))		/* innerhalb des Redraw-Rechtecks? */
 		{
-			if ( is_visible( box, &rect ))							/* Listbox vollstÑndig sichtbar? */
+			if ( is_visible( box, &rect ))							/* Listbox vollstaendig sichtbar? */
 			{
 				if ((( new < old ) && (( new + box->visible_b ) > old )) || (( new > old ) && (( new - box->visible_b ) < old )))
 				{
@@ -1319,10 +1319,10 @@ static void bscroll_to( LIST_BOX *box, WORD old, WORD new, GRECT *box_rect, GREC
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Ggf. automatisch scrollen, wenn erstes oder letztes Element ausgewÑhlt wurden				*/
+/* Ggf. automatisch scrollen, wenn erstes oder letztes Element ausgewaehlt wurden				*/
 /* Funktionsresultat:	0: kein Scrolling, 1: es wurde gescrollt									*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
-/*	obj:						Nummer des ausgewÑhlten Objekts												*/
+/*	obj:						Nummer des ausgewaehlten Objekts												*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	auto_scroll( LIST_BOX *box, WORD obj )
 {
@@ -1357,7 +1357,7 @@ static WORD	auto_scroll( LIST_BOX *box, WORD obj )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* nach oben scrollen, wenn die Maustaste Åber dem ersten Element gehalten wird				*/
+/* nach oben scrollen, wenn die Maustaste ueber dem ersten Element gehalten wird				*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	obj_y:					y-Koordinate des ersten Objekts												*/
@@ -1378,21 +1378,21 @@ static void	auto_scroll_up( LIST_BOX *box, WORD obj_y )
 	{
 		if ( box->first_a > 0 )											/* kann noch nach oben gescrollt werden? */
 		{
-			item = lbox_get_item( box, box->first_a - 1 );		/* Zeiger auf das Element Åber dem ersten sichtbaren */
+			item = lbox_get_item( box, box->first_a - 1 );		/* Zeiger auf das Element ueber dem ersten sichtbaren */
 			last_state = item->selected;								/* Status merken */
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
-				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrÅckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrÅckt? */
+				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
+				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 	
-			item->selected = !item->selected;						/* Element anwÑhlen */
+			item->selected = !item->selected;						/* Element anwaehlen */
 			scroll_up( box );												/* nach oben scrollen */
 
 			if ( box->flags & LBOX_AUTOSLCT )						/* auch beim Scrollen Service-Routine anspringen? */				
 				slct_item( box, item, box->obj_index[0], last_state );
 
-			do_scroll_pause( obj_y - my ); 							/* Verzîgerung je nach Abstand */
+			do_scroll_pause( obj_y - my ); 							/* Verzoegerung je nach Abstand */
 		}
 		else
 		{
@@ -1409,7 +1409,7 @@ static void	auto_scroll_up( LIST_BOX *box, WORD obj_y )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* nach links scrollen, wenn die Maustaste Åber dem ersten Element gehalten wird				*/
+/* nach links scrollen, wenn die Maustaste ueber dem ersten Element gehalten wird				*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	obj_x:					x-Koordinate des ersten Objekts												*/
@@ -1434,8 +1434,8 @@ static void	auto_scroll_left( LIST_BOX *box, WORD obj_x )
 			last_state = item->selected;								/* Status merken */
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
-				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrÅckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrÅckt? */
+				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
+				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 
 			item->selected = !item->selected;						/* Element selektieren */
@@ -1444,7 +1444,7 @@ static void	auto_scroll_left( LIST_BOX *box, WORD obj_x )
 			if ( box->flags & LBOX_AUTOSLCT )						/* auch beim Auto-Scrolling Service-Routine anspringen? */
 				slct_item( box, item, box->obj_index[0], last_state );
 
-			do_scroll_pause( obj_x - mx );							/* Verzîgerung je nach Abstand*/
+			do_scroll_pause( obj_x - mx );							/* Verzoegerung je nach Abstand*/
 		}
 		else
 		{
@@ -1461,7 +1461,7 @@ static void	auto_scroll_left( LIST_BOX *box, WORD obj_x )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* nach unten scrollen, wenn die Maustaste Åber dem letzten Element gehalten wird			*/
+/* nach unten scrollen, wenn die Maustaste ueber dem letzten Element gehalten wird			*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	obj_y:					y2-Koordinate des letzten Objekts (ob_y + ob_height - 1)				*/
@@ -1476,7 +1476,7 @@ static void	auto_scroll_down( LIST_BOX *box, WORD obj_y )
 	WORD	kstate;
 	WORD	count;
 
-	count = lbox_cnt_items( box );									/* Anzahl der EintrÑge */
+	count = lbox_cnt_items( box );									/* Anzahl der Eintraege */
 	item = 0L;
 
 	mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
@@ -1489,8 +1489,8 @@ static void	auto_scroll_down( LIST_BOX *box, WORD obj_y )
 			last_state = item->selected;								/* Status merken */
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
-				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrÅckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrÅckt? */
+				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
+				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 
 			item->selected = !item->selected;						/* Element selektieren */
@@ -1499,7 +1499,7 @@ static void	auto_scroll_down( LIST_BOX *box, WORD obj_y )
 			if ( box->flags & LBOX_AUTOSLCT )						/* auch beim Auto-Scrolling Service-Routine anspringen? */
 				slct_item( box, item, box->obj_index[box->visible_a - 1], last_state );
 
-			do_scroll_pause( my - obj_y );							/* Verzîgerung je nach Abstand */ 			
+			do_scroll_pause( my - obj_y );							/* Verzoegerung je nach Abstand */ 			
 		}
 		else
 		{
@@ -1516,7 +1516,7 @@ static void	auto_scroll_down( LIST_BOX *box, WORD obj_y )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* nach rechts scrollen, wenn die Maustaste Åber dem letzten Element gehalten wird			*/
+/* nach rechts scrollen, wenn die Maustaste ueber dem letzten Element gehalten wird			*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*	obj_x:					x2-Koordinate des letzten Objekts (ob_x + ob_width - 1)				*/
@@ -1532,7 +1532,7 @@ static void	auto_scroll_right( LIST_BOX *box, WORD obj_x )
 	WORD	count;
 
 	item = 0L;
-	count = lbox_cnt_items( box );									/* Anzahl der EintrÑge */
+	count = lbox_cnt_items( box );									/* Anzahl der Eintraege */
 	mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
 
 	while (( mx >= obj_x - 1 ) && ( mbutton == 1 ))
@@ -1543,8 +1543,8 @@ static void	auto_scroll_right( LIST_BOX *box, WORD obj_x )
 			last_state = item->selected;								/* Status merken */
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
-				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrÅckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrÅckt? */
+				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
+				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 
 			item->selected = !item->selected;						/* Element selektieren */
@@ -1553,7 +1553,7 @@ static void	auto_scroll_right( LIST_BOX *box, WORD obj_x )
 			if ( box->flags & LBOX_AUTOSLCT )						/* auch beim Auto-Scrolling Service-Routine anspringen? */				
 				slct_item( box, item, box->obj_index[box->visible_a - 1], last_state );
 
-			do_scroll_pause( mx - obj_x );							/* Verzîgerung je nach Abstand setzen */ 			
+			do_scroll_pause( mx - obj_x );							/* Verzoegerung je nach Abstand setzen */ 			
 		}
 		else
 		{
@@ -1570,7 +1570,7 @@ static void	auto_scroll_right( LIST_BOX *box, WORD obj_x )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Verzîgerung beim Auto-Scrolling je nach Abstand der Maus zum Objekt setzen					*/
+/* Verzoegerung beim Auto-Scrolling je nach Abstand der Maus zum Objekt setzen					*/
 /* Funktionsresultat:	-																						*/
 /*	offset:					Abstand der Maus vom Objekt (negativ: dann Vorzeichenwechsel)		*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -1596,11 +1596,11 @@ static void	do_scroll_pause( WORD offset )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Objektausmaûe des Slider setzen																			*/
+/* Objektausmasse des Slider setzen																			*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
-/*	number:					Anzahl der EintrÑge 																*/
-/*	wh:						Breite oder Hîhe des Slider-Hintergrunds									*/
+/*	number:					Anzahl der Eintraege 																*/
+/*	wh:						Breite oder Hoehe des Slider-Hintergrunds									*/
 /*	ob_xy:					Zeiger auf ob_x oder ob_y des Slider-Objekts								*/
 /*	ob_wh:					Zeiger auf ob_width oder ob_height des Slider-Objekts					*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -1619,7 +1619,7 @@ static void	set_slider_obj( WORD first, WORD number, WORD visible, WORD wh, WORD
 		slider_xy = (WORD) (( wh - slider_wh ) * (LONG) first / ( number - visible ));
 		
 		*ob_xy = slider_xy;												/* Slider-Position */
-		*ob_wh = slider_wh;												/* Breite/Hîhe des Sliders */
+		*ob_wh = slider_wh;												/* Breite/Hoehe des Sliders */
 	}
 	else
 	{
@@ -1871,7 +1871,7 @@ static void scroll_right( LIST_BOX *box )
 /*	x2:						x-Zielkoordinate																	*/
 /*	y2:						y-Zielkoordinate																	*/
 /*	w:							Breite des Bereichs in Pixeln													*/
-/*	h:							Hîhe des Bereichs in Pixeln													*/
+/*	h:							Hoehe des Bereichs in Pixeln													*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	ascroll( LIST_BOX *box, WORD first, WORD obj, WORD x1, WORD y1, WORD x2, WORD y2, WORD w, WORD h )
 {
@@ -1906,7 +1906,7 @@ static void	ascroll( LIST_BOX *box, WORD first, WORD obj, WORD x1, WORD y1, WORD
 /*	x2:						x-Zielkoordinate																	*/
 /*	y2:						y-Zielkoordinate																	*/
 /*	w:							Breite des Bereichs in Pixeln													*/
-/*	h:							Hîhe des Bereichs in Pixeln													*/
+/*	h:							Hoehe des Bereichs in Pixeln													*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	bscroll( LIST_BOX *box, WORD first, WORD x1, WORD y1, WORD x2, WORD y2, WORD w, WORD h )
 {
@@ -1973,7 +1973,7 @@ static void	bscroll( LIST_BOX *box, WORD first, WORD x1, WORD y1, WORD x2, WORD 
 /*	x2:						x-Zielkoordinate																	*/
 /*	y2:						y-Zielkoordinate																	*/
 /*	w:							Breite des Bereichs in Pixeln													*/
-/*	h:							Hîhe des Bereichs in Pixeln													*/
+/*	h:							Hoehe des Bereichs in Pixeln													*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	move_area( OBJECT *tree, WORD obj, WORD x1, WORD y1, WORD x2, WORD y2, WORD w, WORD h )
 {
@@ -2017,7 +2017,7 @@ static void	move_area( OBJECT *tree, WORD obj, WORD x1, WORD y1, WORD x2, WORD y
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* AngewÑhlte EintrÑge in der Listbox deselektieren													*/
+/* Angewaehlte Eintraege in der Listbox deselektieren													*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2050,7 +2050,7 @@ static void	deselect_list( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Status eines LBOX_ITEMS Ñndern und es zeichnen													*/
+/* Status eines LBOX_ITEMS aendern und es zeichnen													*/
 /* Funktionsresultat:	-																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur											*/
 /* item:						Zeiger auf den ersten Eintrag der Scroll-Liste							*/
@@ -2079,8 +2079,8 @@ static void	get_GRECT( OBJECT *tree, WORD obj, GRECT *r )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Untersuchen, ob ein Rechteck vollstÑndig sichtbar ist												*/
-/* Funktionsresultat:	0: (teilweise) verdeckt 1: vollstÑndig sichtbar							*/
+/* Untersuchen, ob ein Rechteck vollstaendig sichtbar ist												*/
+/* Funktionsresultat:	0: (teilweise) verdeckt 1: vollstaendig sichtbar							*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur											*/
 /*	r:							Zeiger auf das GRECT																*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2090,7 +2090,7 @@ static WORD	is_visible( LIST_BOX *box, GRECT *r )
 	
 	wind_update( BEG_UPDATE );											/* Rechteckliste sperren */
 
-	wind_get_grect( 0, WF_WORKXYWH, &w0 );	/* Grîûe des Desktops */
+	wind_get_grect( 0, WF_WORKXYWH, &w0 );	/* Groesse des Desktops */
 
 	if ( box->dialog )													/* Fensterdialog? */
 	{
@@ -2105,13 +2105,13 @@ static WORD	is_visible( LIST_BOX *box, GRECT *r )
 		{
 			if ( rc_intersect( &w0, &w ))								/* Fenster mit Desktop schneiden */
 			{
-				if ( is_b_in_a( &w, r ))								/* Rechteck vollstÑndig sichtbar? */
+				if ( is_b_in_a( &w, r ))								/* Rechteck vollstaendig sichtbar? */
 				{
 					wind_update( END_UPDATE );							/* Rechteckliste freigeben */
 					return( 1 );
 				}
 			}
-			wind_get_grect( handle, WF_NEXTXYWH, &w );	/* nÑchstes Redraw-Rechteck */
+			wind_get_grect( handle, WF_NEXTXYWH, &w );	/* naechstes Redraw-Rechteck */
 
 		} while ( w.g_w > 0 );											/* alle Rechtecke abgearbeitet? */
 
@@ -2123,7 +2123,7 @@ static WORD	is_visible( LIST_BOX *box, GRECT *r )
 	}
 	
 	wind_update( END_UPDATE );											/* Rechteckliste freigeben */
-	return( 0 );															/* nicht vollstÑndig sichtbar */
+	return( 0 );															/* nicht vollstaendig sichtbar */
 }
 
 static WORD	is_b_in_a( GRECT *a, GRECT *b )
@@ -2157,7 +2157,7 @@ static void	set_dial_clip( WORD handle, OBJECT *dial, WORD obj )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Objektstatus Ñndern und Objekt zeichnen																*/
+/* Objektstatus aendern und Objekt zeichnen																*/
 /* Funktionsresultat:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	rect:						begrenzendes Rechteck															*/

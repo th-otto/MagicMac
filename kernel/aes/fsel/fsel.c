@@ -7,7 +7,7 @@
 *
 * MagiC-Dateiauswahl.
 *
-* Änderungen:
+* Aenderungen:
 *
 *    15.11.97            umgestellt auf prop.Fonts
 *
@@ -61,7 +61,7 @@ typedef struct _xted {
 } XTED;
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Makros und Funktionsdefinitionen für Aufrufe an den MagiC-Kernel                       */
+/* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel                       */
 /*----------------------------------------------------------------------------------------*/ 
 
 #define   fslx_getnxtfile fslx_gnx
@@ -146,8 +146,8 @@ typedef   WORD (cdecl *HNDL_OBJ)( DIALOG *dialog, EVNT *events, WORD obj, WORD c
 
 #define   HNDL_INIT -1                            /* Dialog initialisieren */
 #define   HNDL_CLSD -3                            /* Dialogfenster wurde geschlossen */
-#define   HNDL_OPEN -5                            /* Dialog-Initialisierung abschließen (zweiter Aufruf am Ende von wdlg_init) */
-#define   HNDL_EDIT -6                            /* Zeichen für ein Edit-Feld überprüfen */
+#define   HNDL_OPEN -5                            /* Dialog-Initialisierung abschliessen (zweiter Aufruf am Ende von wdlg_init) */
+#define   HNDL_EDIT -6                            /* Zeichen fuer ein Edit-Feld ueberpruefen */
 #define   HNDL_EDDN -7                            /* Zeichen wurde ins Edit-Feld eingetragen */
 #define   HNDL_EDCH -8                            /* Edit-Feld wurde gewechselt */
 #define   HNDL_MOVE -9                            /* Dialog wurde verschoben */
@@ -226,7 +226,7 @@ extern WORD lbox_sbvis( void *lbox, WORD new);
 
 #define PATTOBJLEN  7
 #define NAMLEN      32
-/* Soviele Extraspalten für einen Dateinamen: */
+/* Soviele Extraspalten fuer einen Dateinamen: */
 #define NAMDATALEN  26
 #define NLINES      14
 #define MAXEXTLEN   32             /* so lang darf Extension sein */
@@ -234,7 +234,7 @@ extern WORD lbox_sbvis( void *lbox, WORD new);
 #define FIRSTMAXMEMBLK   0x20000L  /* Beginne mit 128k */
 #define NEXTMEMBLK       0x20000L  /* Steigere 128k */
 #define LASTMAXMEMBLK    0x200000L /* Ende mit 2M */
-#define MINFREEBLK  4096L          /* soviel muß noch frei sein */
+#define MINFREEBLK  4096L          /* soviel muss noch frei sein */
 
 #ifndef NULL
 #define NULL ((void *)0)
@@ -243,7 +243,7 @@ extern WORD lbox_sbvis( void *lbox, WORD new);
 
 typedef struct _fi
 {
-     struct _fi *next;             /* Verkettung für scrollbox */
+     struct _fi *next;             /* Verkettung fuer scrollbox */
      WORD      sel;                /* selektiert */
      UWORD     number;             /* Eingangsreihenfolge */
      UWORD     time;
@@ -251,7 +251,7 @@ typedef struct _fi
      ULONG     size;
      UWORD     mode;               /* von XATTR */
      char      is_alias;
-     char      dummy;              /* für name auf Wortgrenze */
+     char      dummy;              /* fuer name auf Wortgrenze */
      char      name[0];
 } FILEINFO;
 
@@ -265,19 +265,19 @@ typedef struct
      WORD whdl;               /* Handle des Fensters oder -1 */
 
      OBJECT *tree;            /* Zeiger auf den Objektbaum */
-     OBJECT *sort_popup;      /* Objektbaum für Sortiermodus */
+     OBJECT *sort_popup;      /* Objektbaum fuer Sortiermodus */
      int  sort_mode;
-     CICONBLK *folder_icon;   /* Farbicon für Ordner */
-     XTED xted;               /* Für scrollendes Eingabefeld */
-     XTED xted_ext;           /*  dito für Eingabe der Extension */
-     char input_ext[MAXEXTLEN+2];  /* Eingabepuffer für Ext. */
-     char abbr_path[MAXPATH+2];    /* abgekürzter Pfad */
+     CICONBLK *folder_icon;   /* Farbicon fuer Ordner */
+     XTED xted;               /* Fuer scrollendes Eingabefeld */
+     XTED xted_ext;           /*  dito fuer Eingabe der Extension */
+     char input_ext[MAXEXTLEN+2];  /* Eingabepuffer fuer Ext. */
+     char abbr_path[MAXPATH+2];    /* abgekuerzter Pfad */
 
      WORD editob;
-     WORD cursorpos;          /* für select_item() */
+     WORD cursorpos;          /* fuer select_item() */
 
      USERBLK userblk_clip_on;
-     GRECT tmpclip;           /* Altes GRECT für USERDEF */
+     GRECT tmpclip;           /* Altes GRECT fuer USERDEF */
      USERBLK userblk_clip_off;
      USERBLK userblk_text;    /* Textausgabe bei prop.Font */
 
@@ -289,22 +289,22 @@ typedef struct
 
      RSHDR *rshdr;            /* Zeiger auf den Resource-Header */
 
-     char *patterns;          /* Mögliche Muster */
+     char *patterns;          /* Moegliche Muster */
      WORD cdecl (*filter)
                (char *path,
                char *name,
                XATTR *xa);    /* statt Muster */
-     char *paths;             /* Mögliche Pfade */
+     char *paths;             /* Moegliche Pfade */
      char *pattern;           /* aktuelles Muster */
 
      char *memblk;            /* Block mit Verzeichnisdaten */
      FILEINFO **files;        /* Zeiger auf FILEINFOs */
-     FILEINFO *next_selfile;  /* für Rückgabe mehrerer Dateien */
-     FILEINFO *last_selected; /* für Dialogbehandlung */
-     FILEINFO *last_deselected;    /* für Dialogbehandlung */
+     FILEINFO *next_selfile;  /* fuer Rueckgabe mehrerer Dateien */
+     FILEINFO *last_selected; /* fuer Dialogbehandlung */
+     FILEINFO *last_deselected;    /* fuer Dialogbehandlung */
      int  nfiles;             /* Anzahl Dateien */
      int  flags;              /* versch. Flags */
-     int  max_name;           /* Längster Dateiname: Anzahl Zeichen */
+     int  max_name;           /* Laengster Dateiname: Anzahl Zeichen */
 
      WORD xtab_namelen;       /* Spaltenpositionen bei Prop.Fonts */
      WORD xtab_typelen;
@@ -315,11 +315,11 @@ typedef struct
 
      char dos_mode;           /* Dateinamen sind 8+3 */
      char too_many_files;     /* Flag "Zuviele Dateien" */
-     WORD button;             /* für Fenster-Dialogbehandlung */
-     WORD pathlen;            /* max. Pfadlänge inkl. EOS */
-     WORD fnamelen;           /* max. Dateinamenlänge inkl. EOS */
-     char *fname;             /* fürs Editfeld */
-     char *old_fname;         /* zum Testen auf Änderung */
+     WORD button;             /* fuer Fenster-Dialogbehandlung */
+     WORD pathlen;            /* max. Pfadlaenge inkl. EOS */
+     WORD fnamelen;           /* max. Dateinamenlaenge inkl. EOS */
+     char *fname;             /* fuers Editfeld */
+     char *old_fname;         /* zum Testen auf Aenderung */
      char path[0];            /* Aktueller Pfad */
 } FSEL_DIALOG;
 
@@ -334,7 +334,7 @@ static int objs[NLINES] =
 static void _resize_fs_tree( OBJECT *tree, WORD offset );
 
 /*
-     4.9.96: Feste Extensions, die demnächst in der INF-Datei
+     4.9.96: Feste Extensions, die demnaechst in der INF-Datei
      vorgegeben werden sollen.
 */
 
@@ -346,7 +346,7 @@ extern int big_wchar, big_hchar;
 extern int enable_3d;
 extern char altcode_asc( WORD key );
 extern char *fn_name( char *path );
-extern GRECT desk_g;     /* Bildschirm ohne Menüleiste */
+extern GRECT desk_g;     /* Bildschirm ohne Menueleiste */
 
 
 /*********************************************************************
@@ -406,9 +406,9 @@ static void init_xted(OBJECT *ob,
 *
 * Bearbeite durch EOS getrennte Zeichenketten.
 *
-* Rückgabe:    Anzahl der benötigten Bytes
+* Rueckgabe:    Anzahl der benoetigten Bytes
 *              *n = Anzahl der Zeichenketten
-*              *maxlen = Länge der längsten Zeichenkette
+*              *maxlen = Laenge der laengsten Zeichenkette
 *
 *********************************************************************/
 
@@ -432,7 +432,7 @@ static long exam_strings( char *strings, long *n, long *maxlen )
 *
 * Sucht eine Zeichenkette <newpattern> in zwei Listen <patterns1>
 * und <patterns2>. Gibt einen Zeiger auf das gefundene <pattern>
-* zurück oder NULL.
+* zurueck oder NULL.
 *
 *********************************************************************/
 
@@ -459,10 +459,10 @@ static char *srch_pattern( char *newpattern,
 
 /*********************************************************************
 *
-* Fügt eine Zeichenkette <newpattern> in eine Liste <patterns>
+* Fuegt eine Zeichenkette <newpattern> in eine Liste <patterns>
 * ein, und zwar an der Stelle <pos>. Ist <pos> == NULL, wird das
-* <newpattern> angehängt. Gibt einen Zeiger auf das eingefügte
-* pattern zurück.
+* <newpattern> angehaengt. Gibt einen Zeiger auf das eingefuegte
+* pattern zurueck.
 * <newpattern> kann auch leer sein.
 *
 *********************************************************************/
@@ -495,7 +495,7 @@ static char *insert_pattern(char *newpattern, char *patterns,
 
      if   (pos)
           {
-          /* Platz für neue Zeichenkette */
+          /* Platz fuer neue Zeichenkette */
           s = pos;
           while(*s)
                s++;
@@ -572,7 +572,7 @@ static void trim_path(char *spath, char *dpath)
 
 /*********************************************************************
 *
-* Wandelt eine Zeichenkette in Großschrift um.
+* Wandelt eine Zeichenkette in Grossschrift um.
 *
 *********************************************************************/
 
@@ -648,7 +648,7 @@ static void time_to_str(char *s, unsigned int time)
 /*********************************************************************
 *
 * Pattern-Match-Routine.
-* vollständige reguläre Ausdrücke mit Rekursion.
+* vollstaendige regulaere Ausdruecke mit Rekursion.
 *
 *********************************************************************/
 
@@ -689,7 +689,7 @@ static int pattern_match(char *pattern, char *fname)
 
      while((*pattern) == '*')
           pattern++;
-     return(!(*pattern));     /* OK, wenn nur '*'e übrig */
+     return(!(*pattern));     /* OK, wenn nur '*'e uebrig */
 }
 
 
@@ -723,15 +723,15 @@ static int multi_pattern_match(char *pattern, char *fname)
 
 /*********************************************************************
 *
-* Führt einen Popup-Dialog aus Zeichenketten durch.
-* Das Popup erscheint über dem Objekt parent_tree[objnr].
+* Fuehrt einen Popup-Dialog aus Zeichenketten durch.
+* Das Popup erscheint ueber dem Objekt parent_tree[objnr].
 * Die Zeichenketten sind durch EOS getrennt und durch EOS/EOS
 * abgeschlossen.
 * In <strings2> kann eine zweite Zeichenkettenliste oder NULL
-* übergeben werden.
+* uebergeben werden.
 *
-*    Rückgabe:      NULL  nix ausgewählt oder dasselbe nochmal
-*                   ausgewählt oder zuwenig Speicher
+*    Rueckgabe:      NULL  nix ausgewaehlt oder dasselbe nochmal
+*                   ausgewaehlt oder zuwenig Speicher
 *
 *********************************************************************/
 
@@ -785,7 +785,7 @@ static char * do_popup( OBJECT *parent_tree, int objnr,
      if   (maxwidth < actobj->ob_width)
           maxwidth = actobj->ob_width;
 
-     /* Objekt der weißen Hintergrundbox */
+     /* Objekt der weissen Hintergrundbox */
 
      o = tree;
      o -> ob_next = -1;
@@ -870,11 +870,11 @@ static char * do_popup( OBJECT *parent_tree, int objnr,
 
 /*********************************************************************
 *
-* Führt einen Popup-Dialog mit einem Objektbaum durch.
-* Das Popup erscheint über dem Objekt parent_tree[objnr].
+* Fuehrt einen Popup-Dialog mit einem Objektbaum durch.
+* Das Popup erscheint ueber dem Objekt parent_tree[objnr].
 *
-*    Rückgabe:      NULL  nix ausgewählt oder dasselbe nochmal
-*                   ausgewählt oder zuwenig Speicher
+*    Rueckgabe:      NULL  nix ausgewaehlt oder dasselbe nochmal
+*                   ausgewaehlt oder zuwenig Speicher
 *
 *********************************************************************/
 
@@ -901,13 +901,13 @@ static int do_tree_popup( OBJECT *parent_tree, int objnr,
 
 /*********************************************************************
 *
-* Kürzt einen Pfadnamen sinnvoll ab.
-* Der Pfad muß mit \ beginnen.
+* Kuerzt einen Pfadnamen sinnvoll ab.
+* Der Pfad muss mit \ beginnen.
 * Er wird, wenn er zu lang ist, auf
 *
 *    \...\lastdirs
 *
-* gekürzt.
+* gekuerzt.
 *
 *********************************************************************/
 
@@ -925,7 +925,7 @@ static void abbrev_path_wo_drv(char *dst, char *src, int len )
      u = t = src + l - len + 4;
      while((*t) && (*t != '\\'))
           t++;
-     *dst++ = *src++;    /* "\" */
+     *dst++ = *src++;    /* "\\" */
      *dst++ = '.';
      *dst++ = '.';
      *dst++ = '.';
@@ -936,7 +936,7 @@ static void abbrev_path_wo_drv(char *dst, char *src, int len )
 
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Handle des obersten Fenster zurückliefern                                                                            */
+/* Handle des obersten Fenster zurueckliefern                                                                            */
 /* Funktionsresultat:    Handle des Fanster oder -1 (kein Fenster der eigenen Applikation)     */
 /*----------------------------------------------------------------------------------------*/ 
 static WORD    top_whdl( void )
@@ -957,10 +957,10 @@ static WORD    top_whdl( void )
 
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher für Resource anfordern und es kopieren                                        */
+/* Speicher fuer Resource anfordern und es kopieren                                        */
 /* Funktionsergebnis:    Zeiger auf den Resource-Header oder 0L (Fehler)                  */
 /*   rsc:                          Zeiger auf das zu kopierende Resource                  */
-/*   len:                          Länge des Resource                                     */
+/*   len:                          Laenge des Resource                                     */
 /*----------------------------------------------------------------------------------------*/ 
 static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
 {
@@ -1180,7 +1180,7 @@ static long read_dir( FSEL_DIALOG *fsd )
 
      vstrcpy(path, fsd->path);
 
-     /* Verzeichnis öffnen (Automounter!) */
+     /* Verzeichnis oeffnen (Automounter!) */
      /* --------------------------------- */
 
      if   (fsd->flags & DOSMODE)
@@ -1190,7 +1190,7 @@ static long read_dir( FSEL_DIALOG *fsd )
           }
      else {
           anzahl = 0;
-          offs = 4;                /* inode überlesen */
+          offs = 4;                /* inode ueberlesen */
           }
      err = Dopendir(path, anzahl);
      if   (err < E_OK)
@@ -1201,7 +1201,7 @@ static long read_dir( FSEL_DIALOG *fsd )
           }
      dirhandle = err;
 
-     /* Dateinamenlänge usw. ermitteln */
+     /* Dateinamenlaenge usw. ermitteln */
      /* ------------------------------ */
 
      fsd->dos_mode = TRUE;
@@ -1227,7 +1227,7 @@ static long read_dir( FSEL_DIALOG *fsd )
      epath = path+strlen(path);    /* hier Dateiname ansetzen */
      ziele = fsd->memblk;
      limit = ziele + memblksize - maxmem_per_name;
-     /* Mono-Zeichensatz: Strings für den Text: */
+     /* Mono-Zeichensatz: Strings fuer den Text: */
      if   (finfo_big.fontmono)
           limit -= NLINES * (maxnamelen + NAMDATALEN + 1);
 
@@ -1244,7 +1244,7 @@ static long read_dir( FSEL_DIALOG *fsd )
                      (memblksize < FIRSTMAXMEMBLK))
                     break;
 
-               /* Versuche Blockvergrößerung */
+               /* Versuche Blockvergroesserung */
                /* -------------------------- */
 
                if   (Mshrink(0, fsd->memblk,
@@ -1347,7 +1347,7 @@ static long read_dir( FSEL_DIALOG *fsd )
 #if 0
      if   (was_long_names)
           {
-          form_alert(1,"[1][Das Verzeichnis enthält überlange|"
+          form_alert(1,"[1][Das Verzeichnis enth",$84,"lt ",$81,"berlange|"
                          "Dateinamen.][  OK  ]");
           }
 #endif
@@ -1368,10 +1368,10 @@ static long read_dir( FSEL_DIALOG *fsd )
 
      if   (fsd->dos_mode && (fslx_flags & SHOW8P3))
           fsd->max_name = 12;           /* 8.3 */
-     else fsd->max_name = 0;            /* längster Dateiname */
+     else fsd->max_name = 0;            /* laengster Dateiname */
      if   (!finfo_big.fontmono)
           {
-          /* Breite der Spalte "Dateiname" für Vektorfonts */
+          /* Breite der Spalte "Dateiname" fuer Vektorfonts */
           fsd->xtab_namelen = 20;
           fsd->xtab_typelen = 8;
           }
@@ -1451,7 +1451,7 @@ static long read_dir( FSEL_DIALOG *fsd )
 
 /***************************************************************
 *
-* Der Pfad hat sich geändert, und der Dialog wird
+* Der Pfad hat sich geaendert, und der Dialog wird
 * entsprechend modifiziert.
 *
 ****************************************************************/
@@ -1475,7 +1475,7 @@ static void update_path(FSEL_DIALOG *fsd )
 
 /***************************************************************
 *
-* Das Suchmuster hat sich geändert, und der Dialog wird
+* Das Suchmuster hat sich geaendert, und der Dialog wird
 * entsprechend modifiziert.
 *
 ****************************************************************/
@@ -1490,9 +1490,9 @@ static void update_pattern(FSEL_DIALOG *fsd )
 
 /***************************************************************
 *
-* Der Dateiname hat sich geändert, und der Dialog wird
+* Der Dateiname hat sich geaendert, und der Dialog wird
 * entsprechend modifiziert.
-* Falls sich der Cursor im Dateinamenfeld befunden hat, muß
+* Falls sich der Cursor im Dateinamenfeld befunden hat, muss
 * er vorher abgeschaltet werden.
 *
 ****************************************************************/
@@ -1517,7 +1517,7 @@ static void dest_pathme(FSEL_DIALOG *fsd, char *name )
 
 /***************************************************************
 *
-* Der Sortiermodus hat sich geändert, und der Dialog wird
+* Der Sortiermodus hat sich geaendert, und der Dialog wird
 * entsprechend modifiziert.
 *
 ****************************************************************/
@@ -1615,7 +1615,7 @@ static void change_drive( FSEL_DIALOG *fsd, char drvname )
 
 /***************************************************************
 *
-* Geht eine Ebene zurück
+* Geht eine Ebene zurueck
 *
 ****************************************************************/
 
@@ -1674,7 +1674,7 @@ static void goto_subdir( FSEL_DIALOG *fsd, FILEINFO *fi )
 /***************************************************************
 *
 * Rechnet Scrollbox-Indizes in Objektnummern um.
-* Rückgabe -1, wenn nicht sichtbar.
+* Rueckgabe -1, wenn nicht sichtbar.
 *
 ****************************************************************/
 
@@ -1693,7 +1693,7 @@ static int index2obj( FSEL_DIALOG *fsd, int index )
 *
 * Rechnet Unter-Objektnummern in Zeilennummern der sichtbaren
 * Zeilen um (0..13).
-* Rückgabe -1, wenn nicht gültig.
+* Rueckgabe -1, wenn nicht gueltig.
 *
 ****************************************************************/
 
@@ -1751,7 +1751,7 @@ static void fi2str( FSEL_DIALOG *fsd, FILEINFO *fi, char *buf )
      while(s < t)
           *s++ = ' ';
 
-     /* Größe */
+     /* Groesse */
      /* ----- */
 
      *s++ = ' ';
@@ -1793,7 +1793,7 @@ static void fi2str( FSEL_DIALOG *fsd, FILEINFO *fi, char *buf )
 
 /*********************************************************************
 *
-* Auswahl- und Setzroutinen für die Scrollbox
+* Auswahl- und Setzroutinen fuer die Scrollbox
 *
 *********************************************************************/
 
@@ -1900,7 +1900,7 @@ putstr("  \r");
 
 /***************************************************************
 *
-* Löscht die dirty-Flags
+* Loescht die dirty-Flags
 *
 ****************************************************************/
 
@@ -1939,7 +1939,7 @@ static void fsel_dialog_exit( FSEL_DIALOG *fsd )
 
 /***************************************************************
 *
-* USERBLK-Funktionen für Clipping und Textausgabe
+* USERBLK-Funktionen fuer Clipping und Textausgabe
 *
 ****************************************************************/
 
@@ -1970,7 +1970,7 @@ static int cdecl draw_fname( PARMBLK *p )
 
      line = obj2line( p->pb_obj, p->pb_tree );
      if   (line < 0)
-          return(0);               /* Zeile ungültig */
+          return(0);               /* Zeile ungueltig */
      fi = (FILEINFO *) lbox_get_item(fsd->lbox,
                     line+lbox_get_first(fsd->lbox));
 
@@ -2033,7 +2033,7 @@ static void korr_tree( OBJECT *tree, int is_wdialog )
      int hc2 = big_hchar >> 1;
 
 
-     tree->ob_width = fslx_dlw;    /* letzte Größe */
+     tree->ob_width = fslx_dlw;    /* letzte Groesse */
      tree[POS_BOX].ob_width = tree->ob_width;
      tree[NAM_LABEL].ob_y += hc2 + 4;
      tree[FPT_USER].ob_y += hc2 + 4;
@@ -2190,22 +2190,22 @@ static FSEL_DIALOG *fsel_dialog_init(
                          select_item,
                          set_item,
                          NULL,     /* Items */
-                         NLINES,   /* Anzahl sichtbarer Einträge */
+                         NLINES,   /* Anzahl sichtbarer Eintraege */
                          0,        /* erster sichtbarer Eintrag */
                          ctrl_objs,
                          objs,
                          (flags & GETMULTI) ?
                               (LBOX_VERT+LBOX_REAL+LBOX_SHFT+LBOX_2SLDRS+LBOX_AUTO):
                               (LBOX_VERT+LBOX_REAL+LBOX_SNGL+LBOX_SHFT+LBOX_2SLDRS+LBOX_AUTO),
-                         20,       /* Scrollverzögerung */
+                         20,       /* Scrollverzoegerung */
                          fsd,      /* user data */
                          NULL,     /* kein WDialog */
 /* hslider: */
                          tree[FS_BOX0].ob_width/big_wchar,
-                                   /* sichtbare Spalten für HSlider, inkl. Icon */
+                                   /* sichtbare Spalten fuer HSlider, inkl. Icon */
                          0,        /* H-Scrollposition */
                          NAMLEN,   /* Anzahl Spalten */
-                         20        /* Scrollverzögerung */
+                         20        /* Scrollverzoegerung */
                          );
                if   (!fsd->lbox)
                     {
@@ -2245,7 +2245,7 @@ static FSEL_DIALOG *fsel_dialog_init(
 
 /***************************************************************
 *
-* Zeichnet ein geändertes Objekt neu.
+* Zeichnet ein geaendertes Objekt neu.
 *
 ****************************************************************/
 
@@ -2274,7 +2274,7 @@ static void fsel_draw( FSEL_DIALOG *fsd, int obj )
 
 /***************************************************************
 *
-* Zeichnet geänderte Objekte neu.
+* Zeichnet geaenderte Objekte neu.
 *
 ****************************************************************/
 
@@ -2360,7 +2360,7 @@ static void chg_sel( FSEL_DIALOG *fsd,
 
 
      if   (selected_index == new_selected_index)
-          return;        /* keine Änderung */
+          return;        /* keine Aenderung */
      tree = fsd->tree;
 
      /* alten Index deselektieren */
@@ -2405,7 +2405,7 @@ static void chg_sel( FSEL_DIALOG *fsd,
 
 /***************************************************************
 *
-* Hauptroutine für Autolocator.
+* Hauptroutine fuer Autolocator.
 *
 ****************************************************************/
 
@@ -2448,9 +2448,9 @@ static void do_autolocate( FSEL_DIALOG *fsd )
 
 /***************************************************************
 *
-* Hauptroutine für Tastaturbedienung.
-* Wird VOR Bearbeitung der Events durchgeführt
-* Rückgabe 1, wenn Taste verarbeitet.
+* Hauptroutine fuer Tastaturbedienung.
+* Wird VOR Bearbeitung der Events durchgefuehrt
+* Rueckgabe 1, wenn Taste verarbeitet.
 *
 ****************************************************************/
 
@@ -2504,8 +2504,8 @@ static int do_key(FSEL_DIALOG *fsd, WORD key, WORD kstate)
                else
                     {
 
-                    /* Test, ob ändern oder anfügen */
-                    /* d.h. s = Einfügeposition */
+                    /* Test, ob aendern oder anfuegen */
+                    /* d.h. s = Einfuegeposition */
 
                     if   ((fsd->pattern >= fslx_exts) &&
                          (fsd->pattern < fslx_exts+FIXED_PATTLEN))
@@ -2688,7 +2688,7 @@ static void subobj_wdraw(DIALOG *d, int obj, int startob, int depth)
 
 /****************************************************************
 *
-* Größenanpassung für Dialogfenster
+* Groessenanpassung fuer Dialogfenster
 *
 ****************************************************************/
 
@@ -2738,7 +2738,7 @@ static void _resize_fs_tree( OBJECT *tree, WORD offset )
      pr2 = pr-tree[FS_BBOX].ob_x;
      for  (i = 0; i < NLINES; i++)
           {
-          index = objs[i];         /* Box, enthält Icon+Text */
+          index = objs[i];         /* Box, enthaelt Icon+Text */
           o = tree+index;
           o->ob_width = pr2;
           tree[o->ob_head].ob_width =    /* CLIP ON */
@@ -2794,7 +2794,7 @@ static void resize_fs_tree( FSEL_DIALOG *fsd, WORD newwidth )
           wdlg_set_edit(d, editob);     /* Cursor anmelden */
           }
 
-     /* umzusetzende Objekte an Originalposition löschen */
+     /* umzusetzende Objekte an Originalposition loeschen */
      for  (rp = repos_obj; *rp; rp++)
           subobj_wdraw(d, *rp, 0, 0);
 
@@ -2852,7 +2852,7 @@ static void resize_fs_tree( FSEL_DIALOG *fsd, WORD newwidth )
      for  (rp = repos_obj; *rp; rp++)
           subobj_wdraw(d, *rp, 0, 8);
 
-     /* Inneres neu zeichnen, wenn Scrolloffset verändert */
+     /* Inneres neu zeichnen, wenn Scrolloffset veraendert */
      newwidth -= oldwidth;
      if   ((h_scrolloffs) || (newwidth > 0))
           {
@@ -2873,7 +2873,7 @@ static void resize_fs_tree( FSEL_DIALOG *fsd, WORD newwidth )
 
 /***************************************************************
 *
-* Hauptroutine für Button-Aktionen
+* Hauptroutine fuer Button-Aktionen
 *
 ***************************************************************/
 
@@ -2925,7 +2925,7 @@ static int do_button(FSEL_DIALOG *fsd, int exitbutton,
                     goto_subdir(fsd, fsd->last_selected);
                     return(0);
                     }
-               else return(FS_OK); /* Datei zurückgeben */
+               else return(FS_OK); /* Datei zurueckgeben */
                }
           return(0);
           }
@@ -3078,8 +3078,8 @@ static int do_button(FSEL_DIALOG *fsd, int exitbutton,
 
 /***************************************************************
 *
-* Callback für Autolocator
-* Wird nur für die Dialog-Version verwendet. Wird zweimal
+* Callback fuer Autolocator
+* Wird nur fuer die Dialog-Version verwendet. Wird zweimal
 * aufgerufen: Einmal vor und einmal nach dem evnt_multi().
 *
 ****************************************************************/
@@ -3102,7 +3102,7 @@ static int autoloc_callback(WORD events, OBJECT *tree,
      fsd->editob = *editob;
      fsd->cursorpos = *cursorpos;
 
-     /* Post-Callback: evt_data enthält die Event-Daten von evnt_multi */
+     /* Post-Callback: evt_data enthaelt die Event-Daten von evnt_multi */
 
      if   (evt_data)
           {
@@ -3130,7 +3130,7 @@ static int autoloc_callback(WORD events, OBJECT *tree,
 
 /***************************************************************
 *
-* RÜckgabewerte setzen
+* RUeckgabewerte setzen
 *
 ***************************************************************/
 
@@ -3176,8 +3176,8 @@ static void give_return(
 * Hauptfunktion fslx_do()
 * =======================
 *
-* Die Eingabeargumente müssen, wenn sie von fsel_(ex)input()
-* kommen, noch gehörig korrigiert werden (Normalisierung des
+* Die Eingabeargumente muessen, wenn sie von fsel_(ex)input()
+* kommen, noch gehoerig korrigiert werden (Normalisierung des
 * Pfades, Dateimuster usw.).
 *
 * Eingabe:
@@ -3185,16 +3185,16 @@ static void give_return(
 *    title          Formulartitel, darf NULL sein.
 *    path           Pfadpuffer (Ein- und Ausgabe)
 *                   Pfad beginnt mit "X:\\" und endet mit "\\"
-*    pathlen        Länge des Pfadpuffers inkl. EOS
+*    pathlen        Laenge des Pfadpuffers inkl. EOS
 *    fname          Dateiname (Ein- und Ausgabe)
-*    fnamelen       Länge des Dateinamenspuffers inkl. EOS
+*    fnamelen       Laenge des Dateinamenspuffers inkl. EOS
 *    patterns       Durch EOS getrennte, durch EOS/EOS
-*                   abgeschlossene Liste von regul. Ausdrücken
-*                   Eine "oder"-Verknüpfung wird durch ein ','
+*                   abgeschlossene Liste von regul. Ausdruecken
+*                   Eine "oder"-Verknuepfung wird durch ein ','
 *                   angegeben, daher kann nicht nach einem ','
 *                   gesucht werden.
-*                   Die Liste muß (!) ein "*" enthalten.
-*    filter         Funktion, die für Dateien 1 oder 0 liefert
+*                   Die Liste muss (!) ein "*" enthalten.
+*    filter         Funktion, die fuer Dateien 1 oder 0 liefert
 *                   und regelt, ob die Datei in der Auswahlbox
 *                   sichtbar sein soll oder nicht.
 *    paths          Durch EOS getrennte, durch EOS/EOS
@@ -3203,14 +3203,14 @@ static void give_return(
 *
 * Ausgabe:
 *
-*    fname          ausgewählter Dateiname (wenn *button = 1)
-*    path           ausgewählter Pfad (wenn *button = 1)
-*    *button        Betätigter Button (0 oder 1)
+*    fname          ausgewaehlter Dateiname (wenn *button = 1)
+*    path           ausgewaehlter Pfad (wenn *button = 1)
+*    *button        Betaetigter Button (0 oder 1)
 *    *sort_mode     Sortiermodus
-*    *pattern       (Zeiger darf NULL sein) Gewähltes Muster
-*    *nfiles        Anzahl zusätzlicher Dateien
+*    *pattern       (Zeiger darf NULL sein) Gewaehltes Muster
+*    *nfiles        Anzahl zusaetzlicher Dateien
 *
-* Rückgabe:
+* Rueckgabe:
 *
 *    Zeiger         OK
 *    NULL           Fehler, zuwenig Speicher
@@ -3299,7 +3299,7 @@ void *fslx_do( char *title,
 /*   fsd->tree[exitbutton].ob_state &= ~SELECTED; */
      fsd->button = exitbutton;
 
-     /* Rückgabewerte */
+     /* Rueckgabewerte */
      /* ------------- */
 
      give_return((FSEL_DIALOG *) fsd,
@@ -3315,7 +3315,7 @@ void *fslx_do( char *title,
 
 /***************************************************************
 *
-* Funktionen für Dateiauswahl im Fenster
+* Funktionen fuer Dateiauswahl im Fenster
 * ======================================
 *
 ****************************************************************/
@@ -3432,7 +3432,7 @@ WORD fslx_evnt(
           if   (((FSEL_DIALOG *) fsd)->whdl == topw)
                {
 
-               /* Tasten, die ich an wdlg_evnt() vorbeimogeln muß */
+               /* Tasten, die ich an wdlg_evnt() vorbeimogeln muss */
                /* ----------------------------------------------- */
 
                ((FSEL_DIALOG *) fsd)->editob = wdlg_get_edit(((FSEL_DIALOG *) fsd)->dialog,
@@ -3444,8 +3444,8 @@ WORD fslx_evnt(
                     return(1);
                     }
 
-               /* Tasten, die möglichweise hinterher den    */
-               /* Autolocator auslösen können               */
+               /* Tasten, die moeglichweise hinterher den    */
+               /* Autolocator ausloesen koennen               */
                /* ----------------------------------------- */
 
                waskey = TRUE;
@@ -3458,7 +3458,7 @@ WORD fslx_evnt(
      if   (cont && waskey)
           do_autolocate(fsd);
 
-     /* Rückgabewerte */
+     /* Rueckgabewerte */
      /* ------------- */
 
      give_return((FSEL_DIALOG *) fsd,
@@ -3490,7 +3490,7 @@ WORD fslx_getnxtfile( void *fsd, char *fname )
 WORD fslx_close( void *fsd )
 {
      if   (((FSEL_DIALOG *)fsd)->dialog)
-          fslx_dlw = (((FSEL_DIALOG *)fsd)->tree)->ob_width;     /* letzte Größe merken */
+          fslx_dlw = (((FSEL_DIALOG *)fsd)->tree)->ob_width;     /* letzte Groesse merken */
      fsel_dialog_exit((FSEL_DIALOG *) fsd);
      return(1);
 }

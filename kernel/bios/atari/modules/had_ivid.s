@@ -1,6 +1,6 @@
 /*
 *
-* Video-Initialisierung für Hades
+* Video-Initialisierung fuer Hades
 *
 */
 
@@ -11,13 +11,13 @@ boot_init_video:
                 dc.w    _movec,_cacr            ;cache setzen
 
                 if vidmo=2
-                move.w #1999,d1                 ; 640x400 bits = 32000/16-1 byt löschen
+                move.w #1999,d1                 ; 640x400 bits = 32000/16-1 byt loeschen
                 else
                 move.w #9599,d1                 ;1280*960 bits = 153600/16-1
                 endif
                 
                 move.l  a0,$44e.w               ;screen adr setzen
-L0020:          clr.l   (a0)+                   ;screen löschen
+L0020:          clr.l   (a0)+                   ;screen loeschen
                 clr.l   (a0)+
                 clr.l   (a0)+
                 clr.l   (a0)+
@@ -50,9 +50,9 @@ pcim64t:        cmp.w   #$5847,pci_conf1+2
                 bne     isainit
 
 m64init:        lea     $7fe70000,a0           ;source emulator.bin mach64 pci
-m64init2:       lea     $300000,a1             ;dest (übersetzt mit org $300000)
+m64init2:       lea     $300000,a1             ;dest (uebersetzt mit org $300000)
                 move.l  a1,a2
-                move.w  #430,d0                ;länge(6824)/16
+                move.w  #430,d0                ;laenge(6824)/16
 m64copy:        move.l  (a0)+,(a1)+            ;copieren
                 move.l  (a0)+,(a1)+
                 move.l  (a0)+,(a1)+

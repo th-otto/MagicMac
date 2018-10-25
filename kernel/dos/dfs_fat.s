@@ -1,14 +1,14 @@
 **********************************************************************
 *
-* Dieses Modul enthält die Dateitreiber für DOS- Dateien
-* (für 32Bit Sektornummern und FAT32)
-* Das Wurzelverzeichnis muß sich bei FAT16 aber noch in den ersten
+* Dieses Modul enthaelt die Dateitreiber fuer DOS- Dateien
+* (fuer 32Bit Sektornummern und FAT32)
+* Das Wurzelverzeichnis muss sich bei FAT16 aber noch in den ersten
 * 65535 Sektoren befinden (ist immer so wg. b_datrec < 65536).
 *
 * Es gibt dabei zwei DOS- Dateitypen:
 *
 * - normale Dateien und Unterverzeichnisse
-* - Das Wurzelverzeichnis (nur für FAT12 und FAT16)
+* - Das Wurzelverzeichnis (nur fuer FAT12 und FAT16)
 *
 
 
@@ -23,9 +23,9 @@ NOWRITE   EQU  0
      SUPER
 
 
-SECBUFSIZE     EQU  512       ; zunächst 2048 Bytes reservieren
-SECBUFN1       EQU  2         ; 2 Sektoren für FAT puffern
-SECBUFN2       EQU  2         ; 2 Sektoren für Daten puffern
+SECBUFSIZE     EQU  512       ; zunaechst 2048 Bytes reservieren
+SECBUFN1       EQU  2         ; 2 Sektoren fuer FAT puffern
+SECBUFN2       EQU  2         ; 2 Sektoren fuer Daten puffern
 
 
 
@@ -81,27 +81,27 @@ bs_clu_size:   DS.B      1    /* Sektoren pro Cluster. M$ erlaubt jede */
                               /* 2er-Potenz von 1 bis 128 und empfiehlt dringend Bytes/Cluster <= 32kB */
 bs_sec_resvd:  DS.W      1    /* Anzahl reservierter Sektoren ab Partitionsanfang, */
                               /* darf nicht Null sein (Bootsektor!). Bei FAT12 und FAT16 */
-                              /* sollte der Wert 1 sein, für FAT32 32 */
+                              /* sollte der Wert 1 sein, fuer FAT32 32 */
 bs_nfats:      DS.B      1    /* Anzahl FATs. M$ empfiehlt 2 */
-bs_dir_entr:   DS.B      2    /* Anzahl Einträge (à 32 Bytes) für root, 0 bei FAT32 */
+bs_dir_entr:   DS.B      2    /* Anzahl Eintraege (� 32 Bytes) fuer root, 0 bei FAT32 */
 bs_nsectors:   DS.B      2    /* Anzahl Sektoren (reserviert+FAT+root+Data) bzw. 0, wenn > 65535 */
-bs_media:      DS.B      1    /* "media code": 0xf8 für Harddisk, 0xf0 für Wechselmedium */
-                              /* der Wert muß im Lowbyte von FAT[0] stehen */
-bs_fatlen:     DS.W      1    /* Sektoren für eine FAT. 0 für FAT32 (daran wird FAT32 erkannt) */
+bs_media:      DS.B      1    /* "media code": 0xf8 fuer Harddisk, 0xf0 fuer Wechselmedium */
+                              /* der Wert muss im Lowbyte von FAT[0] stehen */
+bs_fatlen:     DS.W      1    /* Sektoren fuer eine FAT. 0 fuer FAT32 (daran wird FAT32 erkannt) */
 bs_secs_track: DS.W      1    /* Sektoren pro Spur (nur historisch oder Floppy) */
-bs_heads:      DS.W      1    /* Anzahl Köpfe (historisch oder Floppy) */
+bs_heads:      DS.W      1    /* Anzahl Koepfe (historisch oder Floppy) */
 bs_hidden:     DS.L      1    /* Anzahl versteckter Sektoren VOR der Partition (normalerweise 0) */
 bs_total_sect: DS.L      1    /* Anzahl Sektoren (reserviert+FAT+root+Data), wenn bs_nsectors == 0 oder bei FAT32 */
 
 ; Ab hier unterscheiden sich FAT12/16 und FAT32
-; Hier die Felder für FAT32:
+; Hier die Felder fuer FAT32:
 
-bs_fatlen32:   DS.L      1    /* Anzahl Sektoren für eine FAT, wenn bs_fatlen == 0 */
+bs_fatlen32:   DS.L      1    /* Anzahl Sektoren fuer eine FAT, wenn bs_fatlen == 0 */
 bs_flags:      DS.W      1    /* Bit 0..3: aktive FAT, wenn Bit 7 == 1 */
                               /* Bit 4..6: reserviert */
-                              /* Bit 7: 0 für "FAT-Spiegelung", 1 für "nur eine aktive FAT" */
+                              /* Bit 7: 0 fuer "FAT-Spiegelung", 1 fuer "nur eine aktive FAT" */
                               /* Bit 8..15: reserviert */
-bs_version:    DS.B      2    /* Hi: "major filesystem version, Lo: "lower" */
+bs_version:    DS.B      2    /* Hi: major filesystem version, Lo: minor */
                               /* zur Zeit 0.0. Ein Treiber sollte neuere Versionen verweigern */
 bs_rootclust:  DS.L      1    /* Erster Cluster des Wurzelverzeichnisses, sollte */
                               /* normalerweise 2 sein */
@@ -112,11 +112,11 @@ bs_bckup_boot: DS.W      1    /* Sektornummer des Backup-Bootsektors (im reservi
                               /* Hinter dem Backup-Bootsektor liegt das Backup-FSInfo */
 bs_RESERVED2:  DS.B      12   /* reserviert, sollte 0 sein */
 bs_DrvNum:     DS.B      1    /* "drive number". 0x00 == floppy, 0x80 == HD */
-bs_Reserved1:  DS.B      1    /* für Windows NT reserviert, sollte 0 sein */
-bs_BootSig:    DS.B      1    /* 0x29 legt fest, daß die folgenden drei Felder gültig sind */
+bs_Reserved1:  DS.B      1    /* fuer Windows NT reserviert, sollte 0 sein */
+bs_BootSig:    DS.B      1    /* 0x29 legt fest, dass die folgenden drei Felder gueltig sind */
 bs_VolID:      DS.B      4    /* Seriennummer, die mit bs_VolLab zusammen zur Medienwechselerkennung verwendet wird */
                               /* ist i.a. Datum+Uhrzeit der Formatierung kombiniert */
-bs_VolLab:     DS.B      11   /* muß mit dem Disknamen im Wurzelverzeichnis identisch sein. */
+bs_VolLab:     DS.B      11   /* muss mit dem Disknamen im Wurzelverzeichnis identisch sein. */
                               /* Ist "NO NAME    ", wenn das Medium unbenannt ist
 bs_FilSysType: DS.B      8    /* "FAT32   ". Darf aber nicht zur Bestimmung des Typs verwendet werden */
 
@@ -137,9 +137,9 @@ bs_FilSysType: DS.B      8    /* "FAT32   ". Darf aber nicht zur Bestimmung des 
 ; FAT16: 0xfff7
 ; FAT32: 0x0ffffff7
 
-; FAT[0] enthält im LowByte das BPB_Media Byte, alle anderen Bits sind 1
+; FAT[0] enthaelt im LowByte das BPB_Media Byte, alle anderen Bits sind 1
 ; FAT[1] wird als EOC gesetzt, wobei bei FAT16 und FAT32 die oberen
-; 2 Bits als "dirty volume" verwendet werden dürfen, alle anderen Bits sind 1:
+; 2 Bits als "dirty volume" verwendet werden duerfen, alle anderen Bits sind 1:
 
 FAT16_ClnShutBitMask     EQU  $8000          ; 1 = clean, 0 = dirty
 FAT16_HrdErrBitMask      EQU  $4000          ; 1 = OK, 0 = I/O Fehler
@@ -155,13 +155,13 @@ FAT32_FSINFOTRLSIG  EQU $000055aa  ; 68k-Format
      OFFSET
 * FAT32 Info-Sektor (FSInfo-Struktur), drei 512-Byte-Sektoren
 
-FSI_LeadSig:        DS.L      1    /* 0x41615252, wenn gültig */
+FSI_LeadSig:        DS.L      1    /* 0x41615252, wenn gueltig */
 FSI_Reserved1:      DS.B      480  /* unbenutzt und 0 */
-FSI_StrucSig:       DS.L      1    /* 0x61417272, wenn folgende gültig */
+FSI_StrucSig:       DS.L      1    /* 0x61417272, wenn folgende gueltig */
 FSI_Free_Count:     DS.L      1    /* Anzahl freier Cluster oder -1, wenn unbekannt */
 FSI_Nxt_Free:       DS.L      1    /* Ab hier freie Cluster suchen oder -1, wenn unbekannt */
 FSI_Reserved2:      DS.B      12   /* unbenutzt und 0 */
-FSI_TrailSig:       DS.L      1    /* 0xaa550000, wenn gültig, für alle 3 Info-Sektoren */
+FSI_TrailSig:       DS.L      1    /* 0xaa550000, wenn gueltig, fuer alle 3 Info-Sektoren */
 
 ; falsche alte Info:
 ;FAT32_FSINFOSIG    EQU $72724161  ; 'aArr'
@@ -173,26 +173,26 @@ FSI_TrailSig:       DS.L      1    /* 0xaa550000, wenn gültig, für alle 3 Info
 
      OFFSET
 * BCB
-b_link:        DS.L      1    /* 0x00: Zeiger auf nächsten BCB             */
-b_bufdrv:      DS.W      1    /* 0x04: Laufwerknummer, -1 für ungültig     */
+b_link:        DS.L      1    /* 0x00: Zeiger auf naechsten BCB             */
+b_bufdrv:      DS.W      1    /* 0x04: Laufwerknummer, -1 fuer ungueltig     */
 b_buftyp:      DS.W      1    /* 0x06: FAT=0, DIR=1, DATA=2                */
 b_bufrec:      DS.W      1    /* 0x08: Sektornummer (GEMDOS- Code)         */
-b_dirty:       DS.W      1    /* 0x0a: Pufferinhalt geändert               */
+b_dirty:       DS.W      1    /* 0x0a: Pufferinhalt geaendert               */
 b_dmd:         DS.L      1    /* 0x0c: Zeiger auf DMD von b_bufdrv         */
 b_bufr:        DS.L      1    /* 0x10: Zeiger auf Sektorpuffer             */
 
      OFFSET
 
-xb_next:       DS.L      1    /* 0x00: Zeiger auf nächsten XBCB            */
+xb_next:       DS.L      1    /* 0x00: Zeiger auf naechsten XBCB            */
 xb_prev:       DS.L      1    /* 0x04: Zeiger auf vorherigen XBCB          */
 xb_first:      DS.L      1    /* 0x08: Zeiger auf den Anfang der Liste     */
-xb_drv:        DS.W      1    /* 0x0c: Laufwerknummer, -1 für ungültig     */
-xb_dirty:      DS.W      1    /* 0x0e: Pufferinhalt geändert               */
+xb_drv:        DS.W      1    /* 0x0c: Laufwerknummer, -1 fuer ungueltig     */
+xb_dirty:      DS.W      1    /* 0x0e: Pufferinhalt geaendert               */
 xb_secno:      DS.L      1    /* 0x10: Sektornummer (BIOS- Code)           */
 xb_secno2:     DS.L      1    /* 0x14: Kopie (z.B. FAT #1) oder 0          */
 xb_dmd:        DS.L      1    /* 0x18: Zeiger auf DMD von b_bufdrv         */
 xb_data:       DS.L      1    /* 0x1c: Zeiger auf Sektorpuffer             */
-xb_sem:        DS.B bl_sizeof /* 0x20: Veränderungs- Semaphore             */
+xb_sem:        DS.B bl_sizeof /* 0x20: Veraenderungs- Semaphore             */
 xb_sizeof:
 
 *
@@ -204,7 +204,7 @@ xb_sizeof:
 b_recsiz:      DS.W      1    /* 0x00: Bytes/Sektor                        */
 b_clsiz:       DS.W      1    /* 0x02: Sektoren/Cluster                    */
 b_clsizb:      DS.W      1    /* 0x04: Bytes pro Cluster                   */
-b_rdlen:       DS.W      1    /* 0x06: Sektoren für Root                   */
+b_rdlen:       DS.W      1    /* 0x06: Sektoren fuer Root                   */
 b_fsiz:        DS.W      1    /* 0x08: Sektoren pro FAT                    */
 b_fatrec:      DS.W      1    /* 0x0a: Sektornr. der 2. FAT                */
 b_datrec:      DS.W      1    /* 0x0c: Sektornr. des 1. Datenclusters      */
@@ -220,8 +220,8 @@ b_flags:       DS.W      8    /* 0x10: Bit 0/Flag 0 = FAT- Typ             */
 bx_recsiz:     DS.W      1    /* Bytes/Sektor                         */
 bx_clsiz:      DS.W      1    /* Sektoren/Cluster                     */
 bx_clsizb:     DS.W      1    /* Bytes pro Cluster                    */
-bx_rdlen:      DS.W      1    /* FAT12/16: Sektoren für Root          */
-bx_rdclust:    DS.L      1    /* FAT32: Startcluster für Root         */
+bx_rdlen:      DS.W      1    /* FAT12/16: Sektoren fuer Root          */
+bx_rdclust:    DS.L      1    /* FAT32: Startcluster fuer Root         */
 bx_fsiz:       DS.L      1    /* Sektoren pro FAT                     */
 bx_fat1rec:    DS.L      1    /* Sektornr. der 1. FAT                 */
 bx_fatrec:     DS.L      1    /* Sektornr. der aktiven (i.a.) 2. FAT  */
@@ -240,7 +240,7 @@ pun_pstart:    DS.L      16   /* 0x12: Physikalischer Partitionsanfang     */
 pun_cookie:    DS.L      1    /* 0x52: z.B. 'AHDI'                         */
 pun_cookiep:   DS.L      1    /* 0x56: Zeiger auf den Cookie               */
 pun_version:   DS.W      1    /* 0x5a: Versionsnummer                      */
-pun_msectsize: DS.W      1    /* 0x5e: Größe der installierten Puffer      */
+pun_msectsize: DS.W      1    /* 0x5e: Groesse der installierten Puffer      */
 
      TEXT
 
@@ -251,7 +251,7 @@ pun_ptr        EQU  $516
 
 dosf_drv:
  DC.L     dosf_open
- DC.L     dosf_close          ; immer Puffer zurückschreiben
+ DC.L     dosf_close          ; immer Puffer zurueckschreiben
  DC.L     dosf_read
  DC.L     dosf_write
  DC.L     dosf_stat
@@ -265,7 +265,7 @@ dosf_drv:
 
 dosroot_drv:
  DC.L     dosroot_open
- DC.L     dosf_close          ; immer Puffer zurückschreiben
+ DC.L     dosf_close          ; immer Puffer zurueckschreiben
  DC.L     dosroot_read
  DC.L     dosroot_write
  DC.L     0                   ; kein stat
@@ -279,13 +279,13 @@ dosroot_drv:
 
 
 dfs_fat_drv:
- DC.B     'DFS_FAT '          ; 8 Bytes für den Namen
- DC.L     0                   ; nächster Treiber
+ DC.B     'DFS_FAT '          ; 8 Bytes fuer den Namen
+ DC.L     0                   ; naechster Treiber
  DC.L     dosfs_init          ; Initialisierung
  DC.L     dfs_fat_sync        ; Synchronisation
  DC.L     drv_open            ; neues Laufwerk
  DC.L     drv_close           ; Laufwerk freigeben
- DC.L     dosfs_dfree         ; Für Dfree()
+ DC.L     dosfs_dfree         ; Fuer Dfree()
  DC.L     dosf_sfirst
  DC.L     dosf_snext
  DC.L     dfs_fat_ext_fd      ; erweitere Verzeichnis
@@ -319,14 +319,14 @@ dosfs_init:
 
  clr.l    _bufl
  clr.l    _bufl+4                       ; TOS- Listen werden nicht verwendet
- move.l   #SECBUFSIZE,bufl_size.w       ; Größe der installierten Puffer
+ move.l   #SECBUFSIZE,bufl_size.w       ; Groesse der installierten Puffer
  lea      bufl.w,a6
  moveq    #SECBUFN1-1,d7
 di_nxtl:
  clr.l    (a6)
 di_nxtb:
- moveq    #xb_sizeof,d0                 ; Länge eines XBCB
- add.l    bufl_size.w,d0                ; Länge eines Sektors
+ moveq    #xb_sizeof,d0                 ; Laenge eines XBCB
+ add.l    bufl_size.w,d0                ; Laenge eines Sektors
  jsr      Bmalloc                       ; Speicher vom BIOS holen
 
  move.l   a6,a2                         ; Liste
@@ -335,7 +335,7 @@ di_nxtb:
  bsr      install_secbuf                ; initialisieren & in Liste eintragen
  dbra     d7,di_nxtb
 
- addq.l   #4,a6                         ; nächste Liste
+ addq.l   #4,a6                         ; naechste Liste
  moveq    #SECBUFN2-1,d7
  cmpa.l   #(bufl+4).w,a6
  bls.b    di_nxtl
@@ -357,7 +357,7 @@ ncopy_to:
 * void ncopy_from(d0 = int n, a0 = char *source, a1 = char *dest)
 * kopiert n Bytes
 *
-* ändert nicht a2
+* aendert nicht a2
 *
 
 ncopy_from:
@@ -391,12 +391,12 @@ ncf_odd:
 *
 * void dfs_fat_sync( a0 = DMD *d )
 *
-* Schreibt alle Puffer zurück, die dem Laufwerk <d_drive(a0)> gehören
+* Schreibt alle Puffer zurueck, die dem Laufwerk <d_drive(a0)> gehoeren
 *
 
 dfs_fat_sync:
  movem.l  d7/a3/a4,-(sp)
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
 
  move.w   d_drive(a0),d7
  lea      (bufl+4).w,a3
@@ -415,7 +415,7 @@ sync_nxtbcb:
  tst.w    xb_dirty(a4)
  beq.b    sync_nowr
 
-* Nur zurückschreiben, wenn geändert
+* Nur zurueckschreiben, wenn geaendert
 
  move.l   a4,a0
  bsr      write_sector
@@ -430,11 +430,11 @@ sync_nxt:
  bcc.b    sync_nxtlst
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  movem.l  (sp)+,d7/a3/a4
  rts
 sync_err:
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  movem.l  (sp)+,d7/a3/a4
  bra      fatfs_diskerr
 
@@ -443,8 +443,8 @@ sync_err:
 *
 * BPB *check_xbpb( a0 = XBPB *b )
 *
-* Überprüfung der FAT-Länge.
-* Ändert nicht a0,a2
+* Ueberpruefung der FAT-Laenge.
+* Aendert nicht a0,a2
 *
 
 check_xbpb:
@@ -453,7 +453,7 @@ check_xbpb:
  move.l   bx_fsiz(a0),d0
  moveq    #0,d1
  move.w   bx_recsiz(a0),d1
- jsr      _ulmul                   ; Berechne Länge der FAT in Bytes
+ jsr      _ulmul                   ; Berechne Laenge der FAT in Bytes
 cbpb_loop:
  move.l   bx_numcl(a0),d1
  beq.b    cbpb_err                 ; keine Cluster ?
@@ -464,7 +464,7 @@ cbpb_loop:
  lsr.l    #1,d1                    ; * 0,5
 cbpb_f16:
  add.l    d1,d2                    ; Byte-Offset in FAT
- cmp.l    d0,d2                    ; < FAT-Länge
+ cmp.l    d0,d2                    ; < FAT-Laenge
  bcs.b    cbpb_ok                  ; ja, in Ordnung
  subq.l   #2,bx_numcl(a0)
  bcc.b    cbpb_loop
@@ -481,7 +481,7 @@ cbpb_ok:
 * EQ/MI d0/a0/a1 = char *rd_fsinfo( a0 = DMD *d )
 *
 * Liest den FSINFO-Sektor ein (falls vorhanden)
-* Rückgabe:    NULL      nicht vorhanden oder ungültig
+* Rueckgabe:    NULL      nicht vorhanden oder ungueltig
 *              < 0       Fehler
 *              > 0       Zeiger auf Sektor, a0 = XBCB *
 *
@@ -490,16 +490,16 @@ rd_fsinfo:
  move.l   d_infosec(a0),d0         ; secnr
  beq.b    rdfsi_ende               ; kein FSINFO-Sektor
  move.l   a0,a1
-; Sektor einlesen, noch nicht zum Ändern markieren
+; Sektor einlesen, noch nicht zum Aendern markieren
  clr.w    -(sp)                    ; will nur lesen
- lea      (bufl+4).w,a0            ; Tabelle für Datensektoren
+ lea      (bufl+4).w,a0            ; Tabelle fuer Datensektoren
  moveq    #0,d2                    ; kein Spiegelsektor
  move.l   d0,d1                    ; secnr
  move.w   d_drive(a1),d0
  bsr      read_sector
  addq.l   #2,sp
  bmi.b    rdfsi_ende               ; Lesefehler
-; testen, ob die Daten schon ungültig sind
+; testen, ob die Daten schon ungueltig sind
  move.l   d0,a1                    ; a1 = Sektorpuffer
  cmpi.l   #FAT32_FSINFOLEADSIG,FSI_LeadSig(a1)
  bne.b    rdfsi_inval
@@ -508,10 +508,10 @@ rd_fsinfo:
  cmpi.l   #FAT32_FSINFOTRLSIG,FSI_TrailSig(a1)
  bne.b    rdfsi_inval
 ;move.l   a0,a0                    ; XBCB *
- move.l   a1,d0                    ; gültig
+ move.l   a1,d0                    ; gueltig
  rts
 rdfsi_inval:
- moveq    #0,d0                    ; ungültig
+ moveq    #0,d0                    ; ungueltig
 rdfsi_ende:
  rts
 
@@ -521,7 +521,7 @@ rdfsi_ende:
 * LONG set_disk_dirty( a0 = DMD *d )
 *
 * Macht vor einem Schreibzugriff auf die FAT die Daten im Info-
-* Sektor (F32) ungültig.
+* Sektor (F32) ungueltig.
 *
 
 set_disk_dirty:
@@ -529,21 +529,21 @@ set_disk_dirty:
  bne.b    sdd_ok                   ; ja, Ende
  move.l   a5,-(sp)
  move.l   a0,a5
-; Sektor einlesen, noch nicht zum Ändern markieren
+; Sektor einlesen, noch nicht zum Aendern markieren
 ;move.l   a0,a0                    ; DMD
  bsr      rd_fsinfo
- beq.b    sdd_ok2                  ; ungültig
+ beq.b    sdd_ok2                  ; ungueltig
  bmi.b    sdd_ende                 ; Fehler
  moveq    #-1,d0
  cmp.l    FSI_Free_Count(a1),d0
  bne.b    sdd_set
  cmp.l    FSI_Nxt_Free(a1),d0
  beq.b    sdd_ok2
-; Sektor ändern (nicht verzögert)
+; Sektor aendern (nicht verzoegert)
 sdd_set:
  move.l   d0,FSI_Free_Count(a1)
  move.l   d0,FSI_Nxt_Free(a1)
- move.w   #1,xb_dirty(a0)          ; Puffer als geändert markieren
+ move.w   #1,xb_dirty(a0)          ; Puffer als geaendert markieren
 ;move.l   a0,a0                    ; XBCB
  bsr      write_sector
  bmi.b    sdd_ende
@@ -562,7 +562,7 @@ sdd_ok:
 *
 * LONG set_disk_clean( a0 = DMD *d )
 *
-* Macht vor einem "unmount" die Daten im Info-Sektor (F32) gültig.
+* Macht vor einem "unmount" die Daten im Info-Sektor (F32) gueltig.
 *
 
 set_disk_clean:
@@ -570,10 +570,10 @@ set_disk_clean:
  beq.b    sdc_ok                   ; nein, Ende
  move.l   a5,-(sp)
  move.l   a0,a5
-; Sektor einlesen, noch nicht zum Ändern markieren
+; Sektor einlesen, noch nicht zum Aendern markieren
 ;move.l   a0,a0                    ; DMD
  bsr      rd_fsinfo
- beq.b    sdc_ok2                  ; ungültig
+ beq.b    sdc_ok2                  ; ungueltig
  bmi.b    sdc_ende                 ; Fehler
 
  move.l   d_nfree_cl(a5),FSI_Free_Count(a1)
@@ -584,8 +584,8 @@ set_disk_clean:
  move.l   d1,d0
 sdc_putnf:
  move.l   d0,FSI_Nxt_Free(a1)
-; Sektor ändern (nicht verzögert)
- move.w   #1,xb_dirty(a0)          ; Puffer als geändert markieren
+; Sektor aendern (nicht verzoegert)
+ move.w   #1,xb_dirty(a0)          ; Puffer als geaendert markieren
 ;move.l   a0,a0                    ; XBCB
  bsr      write_sector
  bmi.b    sdc_ende
@@ -620,17 +620,17 @@ getxbpb:
  trap     #$d                      ; BIOS Getbpb()
  addq.w   #4,sp
  tst.l    d0
- bne      gxb_bpb                  ; BIOS kennt's => FAT12 oder FAT16
+ bne      gxb_bpb                  ; BIOS kennt es => FAT12 oder FAT16
 
-* XHDI ermitteln. Version muß >= 1.10 sein.
+* XHDI ermitteln. Version muss >= 1.10 sein.
 
- move.l   #512,d6                  ; Default-Sektorgröße 512 Bytes
+ move.l   #512,d6                  ; Default-Sektorgroesse 512 Bytes
 
- jsr      getxhdi                  ; Prüft schon Version >= $110
+ jsr      getxhdi                  ; Prueft schon Version >= $110
  beq.b    gxb_no_xhdi
  move.l   d0,a5                    ; a5 = XHDI *
 
-* Partition-ID prüfen
+* Partition-ID pruefen
 
  lea      (sp),a0
  pea      (a0)                     ; partID
@@ -652,7 +652,7 @@ getxbpb:
  bne      gxb_edrive
 gxb_part_ok:
 
-* Sektorgröße ermitteln
+* Sektorgroesse ermitteln
 
  lea      (sp),a0
  clr.w    -(sp)                    ; string len
@@ -665,7 +665,7 @@ gxb_part_ok:
  adda.w   #20,sp
  tst.l    d0
  bne      gxb_edrive
- move.l   (sp),d6                  ; d6 = Sektorgröße
+ move.l   (sp),d6                  ; d6 = Sektorgroesse
 
 * Bootsektor einlesen
 
@@ -746,7 +746,7 @@ gxb_enfdloop:
  dbra     d2,gxb_fdloop
  move.l   a2,(a0)+                 ; bx_fatrec (akt. FAT)
 
- add.l    d0,a2                    ; + bx_fsiz   (Länge der 2. FAT)
+ add.l    d0,a2                    ; + bx_fsiz   (Laenge der 2. FAT)
  move.l   a2,(a0)+                 ; bx_datrec (Anfang des Datenbereichs)
 
  move.w   bx_clsiz(a6),d0
@@ -775,7 +775,7 @@ gxb_nsecw:
 
  move.b   bs_nfats(sp),(a0)        ; bx_nfats (Anzahl FATs)
 
-; Sonderbehandlung für abgeschaltete FAT-Spiegelung
+; Sonderbehandlung fuer abgeschaltete FAT-Spiegelung
 
  move.b   bs_flags(sp),d0          ; Low-Word (intel!)
  btst.b   #7,d0
@@ -785,7 +785,7 @@ gxb_nsecw:
  bcc.b    gxb_edrive2              ; aktive FAT >= Anzahl FATs (?!?)
  move.b   #1,(a0)                  ; nur eine aktive FAT!
  move.l   bx_fsiz(a6),d1           ; Sektoren pro FAT
- jsr      _ulmul                   ; ändert nicht a0
+ jsr      _ulmul                   ; aendert nicht a0
  add.l    bx_fat1rec(a6),d0
  move.l   d0,bx_fatrec(a6)         ; aktive FAT
  
@@ -814,7 +814,7 @@ gxb_bpb:
  clr.l    (a1)+                    ; bx_rdclust := 0L
  clr.w    (a1)+                    ; bx_fsiz.hi := 0
  move.w   (a0)+,(a1)+              ; bx_fsiz.lo := b_fsiz
- clr.l    (a1)+                    ; bx_fat1rec := 0 (ungültig!)
+ clr.l    (a1)+                    ; bx_fat1rec := 0 (ungueltig!)
  clr.w    (a1)+                    ; bx_fatrec.hi := 0
  move.w   (a0)+,(a1)+              ; bx_fatrec.lo := b_fatrec
  clr.w    (a1)+                    ; bx_datrec.hi := 0
@@ -851,8 +851,8 @@ gxb_ende:
 * long drv_open( a0 = DMD *dmd )
 *
 * Ist d_dfs(a0) schon initialisiert, wird ein Diskwechsel
-* überprüft.
-* Wenn nicht, wird überprüft, ob auf Laufwerk d_drive(a0)
+* ueberprueft.
+* Wenn nicht, wird ueberprueft, ob auf Laufwerk d_drive(a0)
 * ein DOS- Dateisystem vorliegt.
 *
 
@@ -860,7 +860,7 @@ drv_open:
  tst.l    d_dfs(a0)                ; Laufwerk schon bekannt ?
  bne      dosf_chkdrv              ; ja, nur Diskwechsel testen
 
-;     DEB  'Versuchen, auf dem Laufwerk Dateisystem DFS_FAT zu öffnen'
+;     DEB  'Versuchen, auf dem Laufwerk Dateisystem DFS_FAT zu �ffnen'
 
  move.l   a5,-(sp)
  suba.w   #bx_sizeof,sp
@@ -871,26 +871,26 @@ drv_open:
  bsr      getxbpb
  bmi      do_ende                  ; Fehler
 
-;     DEB  'Laufwerk enthält DOS-FAT-Dateistruktur => öffnen'
+;     DEB  'Laufwerk enth�lt DOS-FAT-Dateistruktur => �ffnen'
 
 * Dateisystem eintragen
  move.l   #dfs_fat_drv,d_dfs(a5)        ; Dateisystem eintragen
  move.w   d_drive(a5),d_biosdev(a5)     ; BIOS-Device
-* Hier XHDI-Gerätenummern ermitteln
+* Hier XHDI-Geraetenummern ermitteln
  move.l   a5,a0
  jsr      DMD_rdevinit                  ; d_driver/d_devcode eintragen
-* Speicher für Root- DD_FD holen
+* Speicher fuer Root- DD_FD holen
  bsr      int_malloc
  move.l   d0,d_root(a5)                 ; Root in den DMD eintragen
 * den DMD initialisieren
 
- move.l   bx_fsiz(sp),d_fsiz(a5)        ; FAT- Größe in Sektoren
+ move.l   bx_fsiz(sp),d_fsiz(a5)        ; FAT- Groesse in Sektoren
  move.l   bx_fatrec(sp),d_fatrec(a5)    ; Sektornummer der aktiven FAT
  move.w   bx_clsiz(sp),d_clsiz(a5)      ; Sektoren pro Cluster
  move.w   bx_clsizb(sp),d_clsizb(a5)    ; Bytes pro Cluster
  move.w   bx_recsiz(sp),d_recsiz(a5)    ; Bytes pro Sektor
  move.l   bx_infosec(sp),d_infosec(a5)  ; Info-Sektor (F32)
- sf.b     d_dirty(a5)                   ; Medium unverändert
+ sf.b     d_dirty(a5)                   ; Medium unveraendert
 
  move.l   bx_numcl(sp),d0
  btst.b   #5,config_status+3.w
@@ -906,12 +906,12 @@ no_2cl:
  move.w   d0,d_lclsiz(a5)          ; 2er- Logarithmus von clsiz
  lea      f_masks(pc),a0
  add.w    d0,d0
- move.w   0(a0,d0.w),d_mclsiz(a5)  ; Bitmaske für clsiz
+ move.w   0(a0,d0.w),d_mclsiz(a5)  ; Bitmaske fuer clsiz
  move.w   bx_recsiz(sp),d0
  bsr      ilog2
  move.w   d0,d_lrecsiz(a5)         ; 2er- Logarithmus von recsiz
  add.w    d0,d0
- move.w   0(a0,d0.w),d_mrecsiz(a5) ; Bitmaske für recsiz
+ move.w   0(a0,d0.w),d_mrecsiz(a5) ; Bitmaske fuer recsiz
  move.w   bx_clsizb(sp),d0
  bsr      ilog2
  move.w   d0,d_lclsizb(a5)         ; 2er- Logarithmus von clsizb
@@ -923,37 +923,37 @@ no_2cl:
  clr.b    fd_name(a0)              ; Nullname
  move.b   #$10,fd_attr(a0)         ; Attribut: Subdir
 
- move.l   bx_rdclust(sp),fd_Lstcl(a0)   ; Startcluster: 0 bzw. gültig (FAT32)
+ move.l   bx_rdclust(sp),fd_Lstcl(a0)   ; Startcluster: 0 bzw. gueltig (FAT32)
  beq.b    dro_fixedroot
- move.l   #$7fffffff,fd_len(a0)    ; geöffnetes Subdir
+ move.l   #$7fffffff,fd_len(a0)    ; geoeffnetes Subdir
  move.l   #dosf_drv,fd_ddev(a0)
  bra.b    dro_bothroot
 
 dro_fixedroot:
  move.w   bx_rdlen(sp),d0
  mulu     bx_recsiz(sp),d0
- move.l   d0,fd_len(a0)            ; Dateilänge der Root in Bytes
+ move.l   d0,fd_len(a0)            ; Dateilaenge der Root in Bytes
  move.l   #dosroot_drv,fd_ddev(a0) ; DOSroot- Datei
 
-* Offset für DATA in DMD
+* Offset fuer DATA in DMD
 
 dro_bothroot:
  move.l   bx_datrec(sp),d0         ; Sektornummer des 1. Datenclusters
  moveq    #0,d1                    ; unsigned
  move.w   bx_clsiz(sp),d1
- add.l    d1,d1                    ; * 2 (1. gültiger Cluster ist 2)
+ add.l    d1,d1                    ; * 2 (1. gueltiger Cluster ist 2)
  sub.l    d1,d0                    ; vom 1. Datencluster abziehen
- move.l   d0,d_Ldoff(a5)           ; Sektornummeroffset für Daten
+ move.l   d0,d_Ldoff(a5)           ; Sektornummeroffset fuer Daten
 
 * FSINFO-Sektor einlesen und Daten ermitteln
 
- clr.l    d_1stfree_cl(a5)         ; Cache für freien Cl. (FAT16/FAT32)
+ clr.l    d_1stfree_cl(a5)         ; Cache fuer freien Cl. (FAT16/FAT32)
  moveq    #-1,d0
  move.l   d0,d_nfree_cl(a5)        ; Anzahl freier Cluster unbekannt
 
  move.l   a5,a0
  bsr      rd_fsinfo                ; Lesen
- ble.b    do_ok                    ; Fehler oder ungültig
+ ble.b    do_ok                    ; Fehler oder ungueltig
  move.l   FSI_Free_Count(a1),d_nfree_cl(a5)
  move.l   FSI_Nxt_Free(a1),d_1stfree_cl(a5)
 
@@ -977,7 +977,7 @@ dosf_chkdrv:
  subq.l   #1,d1
  beq.b    fatfs_checkit            ; Disk vielleicht gewechselt
  subq.l   #1,d1
- bne.b    dosfch_diskerr           ; anderer Rückgabewert (?)
+ bne.b    dosfch_diskerr           ; anderer Rueckgabewert (?)
  moveq    #E_CHNG,d0               ; 2 => E_CHNG
 dosfch_diskerr:
  move.w   d_drive(a0),d1
@@ -985,8 +985,8 @@ dosfch_diskerr:
 fatfs_checkit:
  move.l   a0,-(sp)
  move.w   d_drive(a0),d1           ; drv
- moveq    #1,d0                    ; Ausführungsmodus
- bsr      secb_inv                 ; Sektorpuffer ungültig machen
+ moveq    #1,d0                    ; Ausfuehrungsmodus
+ bsr      secb_inv                 ; Sektorpuffer ungueltig machen
  moveq    #2,d0                    ; Bestimme Nachfolger von Cluster #2
  move.l   (sp),a0                  ; DMD
  bsr      FAT_read                 ; physikalischen Lesezugriff erzwingen
@@ -1001,8 +1001,8 @@ dosf_ch_ok:
 *
 * long drv_close( a0 = DMD *dmd, d0 = int mode )
 *
-* mode == 0:   Frage, ob schließen erlaubt, ggf. schließen
-*         1:   Schließen erzwingen, muß E_OK liefern
+* mode == 0:   Frage, ob schliessen erlaubt, ggf. schliessen
+*         1:   Schliessen erzwingen, muss E_OK liefern
 *
 
 drv_close:
@@ -1021,7 +1021,7 @@ drvcl_ende:
 drvcl_force:
  move.w   d_drive(a0),d1
 ;move.w   d0,d0               ; Modus
- bra      secb_inv            ; Anfragen bzw. ungültig machen
+ bra      secb_inv            ; Anfragen bzw. ungueltig machen
 
 
 **********************************************************************
@@ -1029,7 +1029,7 @@ drvcl_force:
 * long dosf_sfirst( a0 = FD   *dd, a1 = DIR *d)
 *                   d0 = long pos, d1 = DTA *dta)
 *
-* Rückgabe:    d0 = E_OK
+* Rueckgabe:    d0 = E_OK
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -1073,7 +1073,7 @@ dosff_root:
 *
 * d0 = DIR *dosf_snext( a0 = DTA *dta, a1 = DMD *d )
 *
-* Rückgabe:    d0 = E_OK
+* Rueckgabe:    d0 = E_OK
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -1084,7 +1084,7 @@ dosf_snext:
  move.l   a0,a5                    ; a5 = DTA *
  move.l   a1,a4                    ; a4 = DMD *
 
- jsr      appl_begcritic           ; ändert nur a2/d2
+ jsr      appl_begcritic           ; aendert nur a2/d2
 
  tst.b    d_flag(a4)
  bmi.b    fsn_fat32
@@ -1093,8 +1093,8 @@ dosf_snext:
 
 
 * 1. Fall : FAT12 oder FAT16
-*           dta_dpos ist gültig
-*           dta_ccl und dta_clpos sind ungültig
+*           dta_dpos ist gueltig
+*           dta_ccl und dta_clpos sind ungueltig
 *           Wir suchen in der Root
 
  moveq    #OM_RPERM,d0
@@ -1121,20 +1121,20 @@ dosf_snext:
 
 
 * 2. Fall: FAT32
-*          dta_dpos enthält die Clusternummer (LONG)
-*          dta_ccl ist ungültig
-*          dta_clpos ist gültig
+*          dta_dpos enthaelt die Clusternummer (LONG)
+*          dta_ccl ist ungueltig
+*          dta_clpos ist gueltig
 *          Unterverzeichnis oder Root einer FAT32-Partition
-* Die Disk auf FAT- Ebene durchsuchen (ohne Hilfe von FDs o.ä.)
+* Die Disk auf FAT- Ebene durchsuchen (ohne Hilfe von FDs o.ae.)
 
 fsn_fat32:
  move.l   dta_dpos(a5),d6          ; aktueller Cluster
  bra.b    fsn_fat
 
-* 3. Fall: dta_dpos ist ungültig
-*          dta_ccl und dta_clpos sind gültig
+* 3. Fall: dta_dpos ist ungueltig
+*          dta_ccl und dta_clpos sind gueltig
 *          Unterverzeichnis
-* Die Disk auf FAT- Ebene durchsuchen (ohne Hilfe von FDs o.ä.)
+* Die Disk auf FAT- Ebene durchsuchen (ohne Hilfe von FDs o.ae.)
 
 fsn_subdir:
  moveq    #0,d6
@@ -1155,7 +1155,7 @@ fsn_secloop:
  bmi      fsn_err                  ; Lesefehler
  move.l   d0,d6                    ; das ist der Folgecluster
  cmpi.l   #-1,d6
- beq      fsn_notfound             ; dieser ist aber ungültig (EOF)
+ beq      fsn_notfound             ; dieser ist aber ungueltig (EOF)
 
 * einen Sektor einlesen
 
@@ -1168,9 +1168,9 @@ fsn_read_sector:
  moveq    #0,d2                    ; unsigned long
  move.w   d7,d2
  move.w   d_lrecsiz(a4),d0
- lsr.l    d0,d2                    ; ganze Sektoren vom Überhang ermitteln
+ lsr.l    d0,d2                    ; ganze Sektoren vom Ueberhang ermitteln
  add.l    d2,d1
- add.l    d_Ldoff(a4),d1           ; Offset für Datensektoren
+ add.l    d_Ldoff(a4),d1           ; Offset fuer Datensektoren
  moveq    #0,d2                    ; kein zweiter Sektor
  move.w   d_drive(a4),d0           ; drv
  bsr      read_sector
@@ -1186,10 +1186,10 @@ fsn_dirloop:
  beq.b    fsn_notfound             ; ja, nicht gefunden
  move.l   a3,a1
  lea      (a5),a0
- jsr      filename_match           ; paßt unsere Datei ?
+ jsr      filename_match           ; passt unsere Datei ?
  add.w    #$20,d7                  ; Offset schonmal weitersetzen
  tst.w    d0
- bne.b    fsn_found                ; Datei paßt
+ bne.b    fsn_found                ; Datei passt
  lea      32(a3),a3
  move.w   d7,d0                    ; Offset zum Clusteranfang
  and.w    d_mrecsiz(a4),d0         ; Offset zum Sektoranfang
@@ -1200,7 +1200,7 @@ fsn_dirloop:
 fsn_notfound:
  moveq    #ENMFIL,d0
 fsn_err:
- clr.b    (a5)                     ; Suchname ungültig
+ clr.b    (a5)                     ; Suchname ungueltig
  clr.b    dta_name(a5)             ; gefundener Name leer
  bra.b    fsn_ende
 
@@ -1228,7 +1228,7 @@ fsn_ok:
  moveq    #0,d0
 
 fsn_ende:
- jsr      appl_endcritic           ; ändert nur a2/d2
+ jsr      appl_endcritic           ; aendert nur a2/d2
 
  movem.l  (sp)+,d6/d7/a3/a4/a5
  rts
@@ -1238,12 +1238,12 @@ fsn_ende:
 *
 * long dfs_fat_ext_fd( a0 = DD_FD *f )
 *
-* erweitert das Verzeichnis und füllt den neuen Platz mit 0en.
+* erweitert das Verzeichnis und fuellt den neuen Platz mit 0en.
 * a0 ist garantiert ein Prototyp-FD, im "exclusive"-Modus.
 *
 
 dfs_fat_ext_fd:
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
 
  move.l   fd_dmd(a0),a1
  tst.b    d_flag(a1)
@@ -1267,7 +1267,7 @@ dext_f32:
 
 * Dateiposition restaurieren!
 
- move.l   fd_Lcsec(a0),d1          ; zu löschender Sektor
+ move.l   fd_Lcsec(a0),d1          ; zu loeschender Sektor
  move.w   (sp)+,fd_clpos(a0)
  move.l   (sp)+,fd_Lcsec(a0)
  move.l   (sp)+,fd_Lccl(a0)
@@ -1278,11 +1278,11 @@ dext_f32:
  bne      dext_eaccdn
 
  movem.l  d6/d7/a3/a4,-(sp)
- movea.l  a0,a4                    ; a4 = zugehöriger FD
- move.l   d1,d7                    ; d7 = zu löschender Sektor
- movea.l  fd_dmd(a4),a3            ; a3 = zugehöriger DMD
+ movea.l  a0,a4                    ; a4 = zugehoeriger FD
+ move.l   d1,d7                    ; d7 = zu loeschender Sektor
+ movea.l  fd_dmd(a4),a3            ; a3 = zugehoeriger DMD
 
-* Für 1..(Sektoren/Cluster)-1
+* Fuer 1..(Sektoren/Cluster)-1
 
  moveq    #1,d6
  bra.b    dext_secloop_next
@@ -1301,7 +1301,7 @@ dext_secloop:
 
  move.l   d0,a0                    ; Zeiger auf Sektorpuffer
 
-* Für jedes Byte/Sektor
+* Fuer jedes Byte/Sektor
 
  move.w   d_recsiz(a3),d1
  lsr.w    #2,d1                    ; in Langworte umrechnen
@@ -1315,7 +1315,7 @@ dext_secloop_next:
  cmp.w    d_clsiz(a3),d6
  bcs.b    dext_secloop
 
-* Für 0
+* Fuer 0
 
  move.w   #1,-(sp)                 ; will schreiben
  lea      (bufl+4).w,a0
@@ -1339,7 +1339,7 @@ dext_clrloop2_next:
 cldc_ende:
  movem.l  (sp)+,a4/a3/d6/d7
 dext_ende:
- jmp      appl_endcritic           ; ändert nur d2/a2
+ jmp      appl_endcritic           ; aendert nur d2/a2
 dext_eaccdn:
  moveq    #EACCDN,d0
  bra.b    dext_ende
@@ -1350,12 +1350,12 @@ dext_eaccdn:
 * long dfs_fat_fcreate( a0 = DD *d, a1 = DIR *dir,
 *                       d0 = int cmd, d1 = long arg )
 *
-* Rückgabe: d0.l = Fehlercode
+* Rueckgabe: d0.l = Fehlercode
 *
 * Erstellt eine Datei (oder Verzeichnis) per Dcntl oder Fcreate.
 * Ist cmd == 0, wurde nur Fcreate gemacht.
-* Es ist <dir> zu ändern und entsprechende Maßnahmen zu ergreifen,
-* ggf. ein Fehlercode zurückzugeben.
+* Es ist <dir> zu aendern und entsprechende Massnahmen zu ergreifen,
+* ggf. ein Fehlercode zurueckzugeben.
 *
 
 dfs_fat_fcreate:
@@ -1374,15 +1374,15 @@ _fcre_symlink:
  move.l   a1,a6               ; a6 = DIR *dir
  suba.w   #fd_sizeof,sp       ; FD allozieren
 
- jsr      appl_begcritic      ; ändert nur d2/a2
+ jsr      appl_begcritic      ; aendert nur d2/a2
 
  move.l   fd_dmd(a0),fd_dmd(sp)
  move.l   sp,fd_multi1(sp)
  clr.l    fd_Lccl(sp)
- clr.l    fd_Lstcl(sp)        ; Datei ist zunächst leer
+ clr.l    fd_Lstcl(sp)        ; Datei ist zunaechst leer
  moveq    #1,d0               ; writeflag
  move.l   sp,a0               ; FD *
- bsr      f_extend            ; einen Cluster für Datei allozieren
+ bsr      f_extend            ; einen Cluster fuer Datei allozieren
  bmi.b    _fcre_ende          ; Fehler !
 
  move.b   #$40,dir_attr(a6)   ; FA_SYMLINK (MagiC-Erfindung)
@@ -1401,7 +1401,7 @@ _fcre_symlink:
  lea      (bufl+4).w,a0            ; buflist
  move.w   d_lclsiz(a2),d0
  lsl.l    d0,d1                    ; Clusternummer umrechnen in Sektornummer
- add.l    d_Ldoff(a2),d1           ; Offset für Datensektoren
+ add.l    d_Ldoff(a2),d1           ; Offset fuer Datensektoren
  moveq    #0,d2                    ; kein zweiter Sektor
  move.w   d_drive(a2),d0           ; drv
  bsr      read_sector
@@ -1412,14 +1412,14 @@ _fcre_symlink:
  move.l   a3,a0
  bsr      strlen
  addq.l   #2,d0
- bclr     #0,d0                    ; d0 Länge (gerade) ohne Längenfeld
+ bclr     #0,d0                    ; d0 Laenge (gerade) ohne Laengenfeld
 
-; Prüfung auf Überlauf (Pfad länger als Sektorlänge)
+; Pruefung auf Ueberlauf (Pfad laenger als Sektorlaenge)
 
  move.l   fd_dmd(sp),a2
  moveq    #0,d1                    ; unsigned long
- move.w   d_recsiz(a2),d1          ; Sektorgröße in Bytes
- subq.l   #4,d1                    ; Sicherheitsabstand + Längenwort
+ move.w   d_recsiz(a2),d1          ; Sektorgroesse in Bytes
+ subq.l   #4,d1                    ; Sicherheitsabstand + Laengenwort
  cmp.l    d1,d0
  bhi.b    _fcre_erange
 
@@ -1428,14 +1428,14 @@ _fcre_symlink:
  ror.w    #8,d0
  swap     d0
  ror.w    #8,d0
- move.l   d0,dir_flen(a6)          ; Dateilänge ins DIR eintragen
+ move.l   d0,dir_flen(a6)          ; Dateilaenge ins DIR eintragen
 _fcre_loop:
  move.b   (a3)+,(a1)+
  bne.b    _fcre_loop
  moveq    #0,d0                    ; kein Fehler
 _fcre_ende:
 
- jsr      appl_endcritic      ; ändert nur d2/a2
+ jsr      appl_endcritic      ; aendert nur d2/a2
  adda.w   #fd_sizeof,sp
  movem.l  (sp)+,a3/a6
  rts
@@ -1465,8 +1465,8 @@ str1:
 * long dfs_fat_fxattr( a0 = DD *d, a1 = DIR *dir,
 *                      d0 = int mode, d1 = XATTR *xattr )
 *
-* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurück)
-*         1:   Folge nicht  (d.h. erstelle XATTR für den Link)
+* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurueck)
+*         1:   Folge nicht  (d.h. erstelle XATTR fuer den Link)
 *
 * a1 == NULL: Es ist ein FD (a0)
 *
@@ -1474,7 +1474,7 @@ str1:
 dfs_fat_fxattr:
  move.l   d1,a2                    ; a2 = XATTR *
  move.l   a1,d2                    ; DIR *
- beq.b    fxa_nodir                ; nein, FD in a0 übergeben
+ beq.b    fxa_nodir                ; nein, FD in a0 uebergeben
  move.w   d0,d2
  bsr      dfs_fat_dir2index
  move.l   d0,xattr_index(a2)
@@ -1492,10 +1492,10 @@ fxa_nodir:
  move.w   d_clsizb(a0),xattr_blksize+2(a2)
  move.l   xattr_size(a2),d1        ; xattr.size
  beq.b    fxa_ok
- cmpi.l   #$7fffffff,d1            ; geöffnetes Subdir ?
+ cmpi.l   #$7fffffff,d1            ; geoeffnetes Subdir ?
  bne.b    fxa_no_ovl
  moveq    #0,d1
- move.l   d1,xattr_size(a2)        ; geöffnete Subdir => Länge 0
+ move.l   d1,xattr_size(a2)        ; geoeffnete Subdir => Laenge 0
  bra.b    fxa_ok
 fxa_no_ovl:
  divu     xattr_blksize+2(a2),d1   ;   /xattr.blksize
@@ -1518,7 +1518,7 @@ fxa_ok:
 * Rechnet einen DIR- Eintrag in einen Index um. Der Index dient
 * lediglich zur eindeutigen Kennzeichnung einer Datei.
 *
-* Ändert KEIN Register außer d0.
+* Aendert KEIN Register ausser d0.
 *
 
 dfs_fat_dir2index:
@@ -1561,7 +1561,7 @@ frl_err:
 * ULONG dfs_fat_dir2stcl( a2 = DMD *dmd, a1 = DIR *dir )
 *
 * Holt aus einem Verzeichniseintrag den Startcluster.
-* ändert nur d0.
+* aendert nur d0.
 *
 
 dfs_fat_dir2stcl:
@@ -1593,9 +1593,9 @@ d2stcl_fall:
 * und ggf.
 *  fd_name, fd_xftype, fd_xdata usw.
 *
-* und ändert ggf. Daten
+* und aendert ggf. Daten
 *
-* Rückgabe:    0    OK
+* Rueckgabe:    0    OK
 *             ELINK, a0 ist Zeiger auf symbolischen Link
 *             <0    Fehlercode
 *
@@ -1608,18 +1608,18 @@ dfs_fat_dir2FD:
 
 ;move.l   a2,a2
 ;move.l   a1,a1
- bsr      dfs_fat_dir2stcl              ; ändert nur d0
+ bsr      dfs_fat_dir2stcl              ; aendert nur d0
  move.l   d0,fd_Lstcl(a0)
 
  moveq    #0,d0                         ; kein Fehler
  btst     #FAB_SUBDIR,dir_attr(a1)      ; Subdir ?
  bne.b    d2f_dir
 * kein SubDir
- move.l   dir_flen(a1),d0               ; Länge (intel)
+ move.l   dir_flen(a1),d0               ; Laenge (intel)
  ror.w    #8,d0
  swap     d0
  ror.w    #8,d0                         ; -> Motorola
- move.l   d0,fd_len(a0)                 ; FD- Länge eintragen
+ move.l   d0,fd_len(a0)                 ; FD- Laenge eintragen
  move.b   dir_attr(a1),fd_attr(a0)
  rts
 * SubDir
@@ -1683,16 +1683,16 @@ dfs_get_symlink:
 _dfs_get_symlink:
 
  move.l   a2,d0
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
  move.l   d0,a2
 
 ;move.l   a2,a2
 ;move.l   a1,a1
- bsr      dfs_fat_dir2stcl         ; ändert nur d0
+ bsr      dfs_fat_dir2stcl         ; aendert nur d0
 
  cmpi.l   #2,d0                    ; Startcluster >= 2 ?
  bcc.b    dgs_val                  ; ja, lesen!
- lea      inv_link_s(pc),a0        ; ungültiger Symlink
+ lea      inv_link_s(pc),a0        ; ungueltiger Symlink
  bra.b    dgs_ende2
 
 dgs_val:
@@ -1701,7 +1701,7 @@ dgs_val:
  move.l   d0,d1                    ; Clusternummer (ULONG)
  move.w   d_lclsiz(a2),d0
  lsl.l    d0,d1                    ; umrechnen in Sektornummer
- add.l    d_Ldoff(a2),d1           ; Offset für Datensektoren
+ add.l    d_Ldoff(a2),d1           ; Offset fuer Datensektoren
  moveq    #0,d2                    ; kein zweiter Sektor
  move.w   d_drive(a2),d0           ; drv
  bsr      read_sector
@@ -1712,14 +1712,14 @@ dgs_ende2:
  move.l   #ELINK,d0
 dgs_ende:
 
- jmp      appl_endcritic           ; ändert nur d2/a2
+ jmp      appl_endcritic           ; aendert nur d2/a2
 
 
 **********************************************************************
 *
 * void install_secbuf( a0 = BCBX *b, a1 = void *buf, a2 = BCBX *liste )
 *
-* initialisiert einen Sektorpuffer und hängt ihn in die Liste
+* initialisiert einen Sektorpuffer und haengt ihn in die Liste
 * Die Liste ist doppelt verkettet.
 *
 
@@ -1732,9 +1732,9 @@ install_secbuf:
  move.l   d0,xb_next(a0)
  move.l   a0,(a2)
  tst.l    d0
- beq.b    ins_weiter               ; gibt keinen nächsten Puffer
+ beq.b    ins_weiter               ; gibt keinen naechsten Puffer
  move.l   d0,a1
- move.l   a0,xb_prev(a1)           ; bin Vorgänger meines Nachfolgers
+ move.l   a0,xb_prev(a1)           ; bin Vorgaenger meines Nachfolgers
 ins_weiter:
  move.l   #'_SEC',d1
  lea      xb_sem(a0),a0
@@ -1747,24 +1747,24 @@ ins_weiter:
 * long fatfs_diskerr(d0 = long errcode, d1 = int drv)
 *
 * Das BIOS meldete einen Diskfehler, oder Mediach() lieferte eine "1"
-* für "Disk vielleicht gewechselt".
-* Diskpuffer ungültig machen.
+* fuer "Disk vielleicht gewechselt".
+* Diskpuffer ungueltig machen.
 *
-* errcode = E_CHNG:      Rückgabe E_CHNG, wenn Getbpb erfolgreich
+* errcode = E_CHNG:      Rueckgabe E_CHNG, wenn Getbpb erfolgreich
 *                        sonst    ERROR
 *
-* errcode sonst:         errcode zurückgeben
+* errcode sonst:         errcode zurueckgeben
 *
 
 fatfs_diskerr:
  move.l   d0,-(sp)                 ; errcode
  move.w   d1,-(sp)                 ; drv
 
-* Alle Diskpuffer für unsere Disk für ungültig erklären
+* Alle Diskpuffer fuer unsere Disk fuer ungueltig erklaeren
 * (d.h. nur die, die z.Zt. nicht gesperrt sind)
 
 ;move.w   d1,d1                    ; drv
- moveq    #1,d0                    ; Ausführungsmodus
+ moveq    #1,d0                    ; Ausfuehrungsmodus
  bsr.b    secb_inv
  move.w   (sp)+,d1
  move.l   (sp)+,d0
@@ -1783,8 +1783,8 @@ fatfd_ende:
 * mode == 0:   Anfragemodus. Falls ein Puffer unseres Laufwerks
 *              gesperrt oder "dirty" ist, => EACCDN
 *
-* mode == 1:   Ausführungsmodus. Alle nicht gesperrten Diskpuffer
-*              für unsere Disk für ungültig erklären
+* mode == 1:   Ausfuehrungsmodus. Alle nicht gesperrten Diskpuffer
+*              fuer unsere Disk fuer ungueltig erklaeren
 *
 
 secb_inv:
@@ -1803,16 +1803,16 @@ sinv_loop:
 ;Anfragemodus
  tst.l    xb_sem+bl_app(a1)        ; Sektor in Arbeit ?
  bne.b    sinv_eaccdn              ; ja, Fehler
- tst.w    xb_dirty(a1)             ; Sektor geändert ?
- beq.b    sinv_nxt                 ; nein, OK, nächster Sektor
+ tst.w    xb_dirty(a1)             ; Sektor geaendert ?
+ beq.b    sinv_nxt                 ; nein, OK, naechster Sektor
 sinv_eaccdn:
  moveq    #EACCDN,d0
  rts
 
-; Ausführungsmodus
+; Ausfuehrungsmodus
 sinv_exec:
  tst.l    xb_sem+bl_app(a1)        ; Sektor in Arbeit ?
- bne.b    sinv_nxt                 ; ja, nicht ungültig machen
+ bne.b    sinv_nxt                 ; ja, nicht ungueltig machen
  move.w   #-1,xb_drv(a1)
 
 sinv_nxt:
@@ -1833,7 +1833,7 @@ sinv_nxtbuf:
 
 secb_wait_unused:
  move.l   a5,-(sp)
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
 suu_again:
  lea      bufl.w,a5                  ; list
 suu_newlist:
@@ -1842,15 +1842,15 @@ suu_newlist:
 suu_loop:
  move.l   d2,a1
  tst.l    xb_sem+bl_app(a1)        ; Semaphore belegt ?
- bne.b    suu_wr                   ; ja, muß zurückschreiben
+ bne.b    suu_wr                   ; ja, muss zurueckschreiben
  tst.w    xb_drv(a1)
  bmi.b    suu_nxt                  ; Puffer unbenutzt
  tst.w    xb_dirty(a1)
- beq.b    suu_ok                   ; unverändert, nur ungültig machen
+ beq.b    suu_ok                   ; unveraendert, nur ungueltig machen
 suu_wr:
  move.l   a1,a0
  bsr      write_sector
- bra      suu_again                ; muß nochmal anfangen (Taskwechsel!)
+ bra      suu_again                ; muss nochmal anfangen (Taskwechsel!)
 
 suu_ok:
  move.w   #-1,xb_drv(a1)
@@ -1862,7 +1862,7 @@ suu_nxtbuf:
  addq.l   #4,a5
  cmpa.l   #(bufl+4).w,a5
  bls      suu_newlist
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  move.l   (sp)+,a5
  rts
 
@@ -1871,7 +1871,7 @@ suu_nxtbuf:
 *
 * void secb_ext( void )
 *
-* Testet, ob die Pufferliste _bufl erweitert wurde und hängt ggf.
+* Testet, ob die Pufferliste _bufl erweitert wurde und haengt ggf.
 * neue Puffer in die Liste bufl.
 *
 
@@ -1889,7 +1889,7 @@ se_nxt:
  bsr      _secb_ext
  move.l   d0,bufl_size.w
 se_ende:
-* Anzahl vorhandener Blöcke bestimmen
+* Anzahl vorhandener Bloecke bestimmen
  bsr      int_mblocks
  move.l   d0,a0
 * Anzahl angemeldeter Laufwerke bestimmen
@@ -1904,12 +1904,12 @@ se_bloop:
  and.l    d2,d1
  bra.b    se_bloop
 se_bend:
- mulu     #8,d0               ; mind. 8 Blöcke pro Laufwerk
+ mulu     #8,d0               ; mind. 8 Bloecke pro Laufwerk
  move.l   a0,d1
  sub.l    d1,d0
- ble.b    se_ende2            ; sind genügend Blöcke da!
+ ble.b    se_ende2            ; sind genuegend Bloecke da!
 ;move.w   d0,d0
- bsr      resvb_intmem        ; soviele Blöcke allozieren
+ bsr      resvb_intmem        ; soviele Bloecke allozieren
 se_ende2:
  rts
 
@@ -1920,18 +1920,18 @@ _secb_ext:
  move.l   a1,a6                    ; bufl+i
  move.l   bufl_size.w,d7
  move.l   pun_ptr,d0
- ble.b    sec_ende                 ; ungültiger Zeiger ?
+ ble.b    sec_ende                 ; ungueltiger Zeiger ?
  move.l   d0,a2
  moveq    #0,d0
- move.w   pun_msectsize(a2),d0     ; Sektorgröße
+ move.w   pun_msectsize(a2),d0     ; Sektorgroesse
  cmp.l    bufl_size.w,d0           ; sind die installierten kleiner ?
  bls.b    se_ok                    ; nein, kann meine behalten
- move.l   d0,d7                    ; neue Größe
+ move.l   d0,d7                    ; neue Groesse
 
-* bestehende Puffer müssen deinstalliert werden
+* bestehende Puffer muessen deinstalliert werden
 
  bsr      secb_wait_unused         ; warten, bis kein Puffer gesperrt ist
-* Die alten Puffer werden als interne Speicherblöcke recykelt
+* Die alten Puffer werden als interne Speicherbloecke recykelt
  move.l   (a6),d2
  bra.b    se_nxtbuf
 se_loop:
@@ -1945,7 +1945,7 @@ se_nxtbuf:
  clr.l    (a6)                     ; keine Puffer mehr
 se_ok:
 
-* neue Puffer müssen installiert werden
+* neue Puffer muessen installiert werden
  move.l   (a5),d2
  bra.b    se_nxtbuf2
 se_loop2:
@@ -1955,7 +1955,7 @@ se_loop2:
  cmpi.l   #20,d0                   ; mindestens 20 frei ?
  bcc.b    se_enough                ; ja, ok
  move.l   b_bufr(a4),a0            ; Pufferadresse
- move.l   d7,d0                    ; Pufferlänge
+ move.l   d7,d0                    ; Pufferlaenge
  bsr      resv_intmem              ; gesamten Puffer als interner Speicher
  bra.b    se_nxtnb
 
@@ -1982,7 +1982,7 @@ sec_ende:
 *
 * long dosroot_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
@@ -2031,7 +2031,7 @@ dosroot_write:
 *
 * long dosroot_read(a0 = FD *f, a1 = char *buf, d0 = long count)
 *
-* Ein Zugriff wird nie über eine Sektorgrenze hinaus stattfinden.
+* Ein Zugriff wird nie ueber eine Sektorgrenze hinaus stattfinden.
 *
 
 dosroot_read:
@@ -2045,21 +2045,21 @@ dosroot_rw:
  move.l   a2,a5                    ; Kopier-Routine
  move.l   d0,d7                    ; d7 = cnt
 
- jsr      appl_begcritic           ; ändert nur a2/d2
+ jsr      appl_begcritic           ; aendert nur a2/d2
 
  move.l   fd_dmd(a0),a2
  move.l   fd_fpos(a0),d1           ; Lese-/Schreibposition
  add.l    d1,d0                    ; d0 = cnt+pos
  move.l   fd_multi1(a0),a1         ; Prototyp-FD
  cmp.l    fd_len(a1),d0
- bhi      dor_eaccdn               ; über Dateiende hinaus!
+ bhi      dor_eaccdn               ; ueber Dateiende hinaus!
  move.l   d0,fd_fpos(a0)           ; neue Position schon merken
  move.w   d1,d6
  and.w    d_mrecsiz(a2),d6         ; d6 = Byte-Offset im Sektor
  move.w   d_lrecsiz(a2),d0
  lsr.l    d0,d1                    ; Sektor-Offset berechnen
  add.l    d_fatrec(a2),d1          ;  + Beginn 2. FAT
- add.l    d_fsiz(a2),d1            ;  + Länge der FAT  => Beginn root
+ add.l    d_fsiz(a2),d1            ;  + Laenge der FAT  => Beginn root
 * Sektor holen
  lea      (bufl+4).w,a0            ; 2. Pufferliste (DIR/DATA)
  moveq    #0,d2                    ; kein gespiegelter Sektor
@@ -2069,7 +2069,7 @@ dosroot_rw:
  bsr      read_sector
  bmi      dor_err                  ; Lesefehler
  move.l   a6,d1
- beq      dor_adr                  ; nur Adresse zurückgeben
+ beq      dor_adr                  ; nur Adresse zurueckgeben
 
  move.l   d0,a0                    ; Adresse des Sektors
  add.w    d6,a0                    ; + Offset
@@ -2083,7 +2083,7 @@ dor_adr:
  ext.l    d6
  add.l    d6,d0                    ; Sektor+Offset
 dor_err:
- jsr      appl_endcritic           ; ändert nur a2/d2
+ jsr      appl_endcritic           ; aendert nur a2/d2
 
  addq.l   #2,sp
  movem.l  (sp)+,d7/d6/a6/a5
@@ -2108,13 +2108,13 @@ dosf_read:
  sub.l    fd_fpos(a0),d1
  cmp.l    d1,d0
  ble.b    dr_weiter
- move.l   d1,d0                    ; nicht über Dateiende lesen!
+ move.l   d1,d0                    ; nicht ueber Dateiende lesen!
 dr_weiter:
  tst.l    d0
  ble.b    dr_ende
  pea      ncopy_from(pc)
 ;move.l   a1,a1                    ; Daten
-;move.l   d0,d0                    ; Länge
+;move.l   d0,d0                    ; Laenge
 ;move.l   a0,a0                    ; FD
  moveq    #0,d1                    ; lesen
  bsr      f_frw
@@ -2150,7 +2150,7 @@ dosf_write:
 *
 * long dosf_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
@@ -2159,7 +2159,7 @@ dosf_open:
  clr.l    fd_Lccl(a0)
  clr.l    fd_Lcsec(a0)
  clr.w    fd_clpos(a0)
- move.l   fd_multi1(a0),a1         ; Dateilänge nur im Prototyp-FD
+ move.l   fd_multi1(a0),a1         ; Dateilaenge nur im Prototyp-FD
  tst.l    fd_len(a1)               ; Datei schon leer ?
  beq.b    dosfo_ok                 ; ja, nix tun
  btst     #(BO_TRUNC-8),fd_mode(a0)
@@ -2182,7 +2182,7 @@ dosf_ioctl:
  cmpi.w   #FTRUNCATE,d0
  bne.b    ioc_einv
  tst.l    fd_parent(a0)
- beq.b    ioc_einv                 ; nicht für Root
+ beq.b    ioc_einv                 ; nicht fuer Root
  move.l   a0,-(sp)
  moveq    #0,d1                    ; absolute Position
  move.l   (a1),d0                  ; offset (indirekt!)
@@ -2227,9 +2227,9 @@ dosf_fput:
 *
 * long dfs_fat_fdelete( a0 = DD *d, a1 = DIR *dir, d0 = long dirpos )
 *
-* Rückgabe: Fehlercode.
+* Rueckgabe: Fehlercode.
 * symbolische Links werden nicht verfolgt, d.h. der Link als
-* solcher wird gelöscht.
+* solcher wird geloescht.
 *
 
 dfs_fat_fdelete:
@@ -2241,34 +2241,34 @@ dfs_fat_fdelete:
 
 dosf_delete:
  movem.l  d7/d6/a5,-(sp)
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
  move.l   fd_dmd(a0),a5
 
  move.l   a5,a2                    ; DMD
 ;move.l   a1,a1                    ; DIR
  bsr      dfs_fat_dir2stcl
  move.l   d0,d7                    ; d7 = Startcluster (ULONG)
- beq.b    _fdel_ende               ; ungültig (Datei leer)
+ beq.b    _fdel_ende               ; ungueltig (Datei leer)
 
  move.l   a5,a0
- bsr      set_disk_dirty           ; Info-Sektor- Daten ungültig machen
+ bsr      set_disk_dirty           ; Info-Sektor- Daten ungueltig machen
  bmi      _fdel_ende
 
  bra.b    _fdel_clear
-* Alle Cluster der Datei werden als gelöscht (0) markiert
+* Alle Cluster der Datei werden als geloescht (0) markiert
 _fdel_nxtcl:
  move.l   a5,a0                    ; DMD
  move.l   d6,d0                    ; cluster
  bsr      FAT_read
  bmi      _fdel_ende
- clr.l    d_1stfree_cl(a5)         ; Cache für freien Cluster löschen!!
+ clr.l    d_1stfree_cl(a5)         ; Cache fuer freien Cluster loeschen!!
  move.l   d0,d7
  move.l   a5,a0
  moveq    #0,d1
  move.l   d6,d0
  bsr      FAT_write
  bmi      _fdel_ende               ; Schreibfehler
- addq.l   #1,d_nfree_cl(a5)        ; Anzahl freier Cluster erhöht!
+ addq.l   #1,d_nfree_cl(a5)        ; Anzahl freier Cluster erhoeht!
  bne.b    _fdel_clear              ; war nicht -1
  subq.l   #1,d_nfree_cl(a5)        ; war -1, bleibt -1
 _fdel_clear:
@@ -2284,7 +2284,7 @@ _fdel_f12_16:
  bcs.b    _fdel_nxtcl
 _fdel_endcl:
 _fdel_ende:
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  movem.l  (sp)+,d6/d7/a5
  rts
 
@@ -2293,8 +2293,8 @@ _fdel_ende:
 *
 * long dosf_seek( a0 = FD *file, d0 = long offs, d1 = int smode)
 *
-* Normale Datei, ich muß mich um die Umrechnung von smode selbst
-* kümmern
+* Normale Datei, ich muss mich um die Umrechnung von smode selbst
+* kuemmern
 *
 
 dosf_seek:
@@ -2314,14 +2314,14 @@ fsk_beg:
  movem.l  d4/d5/d6/d7/a4/a5,-(sp)
 
  move.l   d2,a1
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
  move.l   a1,d2
 
  movea.l  a0,a5                    ; FD
  move.l   d0,d7                    ; pos
  bmi      dfsk_erange
 
-* Wenn Position > Dateilänge: Fehler
+* Wenn Position > Dateilaenge: Fehler
 
  cmp.l    d2,d7
  bgt      dfsk_erange
@@ -2335,7 +2335,7 @@ fsk_beg:
  clr.w    fd_clpos(a5)                  ; und Offset 0
  bra      dfsk_ende_ok
 
-* Wenn FD.cloffs == 0 oder FD.cloffs == Clustergröße: d2 = 1
+* Wenn FD.cloffs == 0 oder FD.cloffs == Clustergroesse: d2 = 1
 * sonst                                               d2 = 0
 
 dfsk_not0:
@@ -2343,7 +2343,7 @@ dfsk_not0:
  tst.w    fd_clpos(a5)
  beq.b    dfsk_clbegcheck_weiter
  move.w   fd_clpos(a5),d0
- cmp.w    d_clsizb(a4),d0               ; Clustergröße in Bytes
+ cmp.w    d_clsizb(a4),d0               ; Clustergroesse in Bytes
  beq.b    dfsk_clbegcheck_weiter
  moveq    #0,d2                         ; bin nicht an Clusteranfang/Ende
 dfsk_clbegcheck_weiter:
@@ -2362,9 +2362,9 @@ dfsk_clbegcheck_weiter:
  tst.l    fd_Lccl(a5)
  beq.b    dfsk_fromstart                ; Beginne bei Startcluster
  cmp.l    fd_fpos(a5),d7
- blt.b    dfsk_fromstart                ; rückwärts => ab Startcluster
+ blt.b    dfsk_fromstart                ; rueckwaerts => ab Startcluster
  move.l   fd_fpos(a5),d0                ; rel. Position in Bytes
- move.w   d_lclsizb(a4),d1              ; 2er Log. für Clustergröße in Bytes
+ move.w   d_lclsizb(a4),d1              ; 2er Log. fuer Clustergroesse in Bytes
  lsr.l    d1,d0                         ; => rel. Position in Clustern
  sub.l    d0,d6
  add.l    d2,d6                         ; d6 := Clusterdiff alt/neu
@@ -2407,12 +2407,12 @@ dfsk_clusterloop_next:
 dfsk_ende_ok:
  move.l   d5,fd_Lccl(a5)           ; rel. Clusternummer
  move.w   d_lclsiz(a4),d0
- lsl.l    d0,d5                    ;  * Clustergröße in Sektoren
+ lsl.l    d0,d5                    ;  * Clustergroesse in Sektoren
  move.l   d5,fd_Lcsec(a5)          ;  = Sektornummer
  move.l   d7,fd_fpos(a5)
  move.l   d7,d0
 dfsk_ende:
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  movem.l  (sp)+,a5/a4/d7/d6/d5/d4
 ;     DEB  '_fseek ENDE'
  rts
@@ -2465,9 +2465,9 @@ dosf_close:
  move.l   bufl_wback,d0       ; writeback aktiviert ?
  bne      _fcl_nix            ; nein, return(E_OK)
  movem.l  a3/a4,-(sp)
- jsr      appl_begcritic      ; ändert nur d2/a2
+ jsr      appl_begcritic      ; aendert nur d2/a2
 
-* Beide Pufferlisten werden vollständig zurückgeschrieben
+* Beide Pufferlisten werden vollstaendig zurueckgeschrieben
 * (auf allen Laufwerken !!)
 
  lea      (bufl+4).w,a3
@@ -2484,7 +2484,7 @@ _fclo_nxtbcb:
  tst.w    xb_dirty(a4)
  beq.b    _fclo_l2
 
-* Nur zurückschreiben, wenn geändert
+* Nur zurueckschreiben, wenn geaendert
 
  move.l   a4,a0
  bsr      write_sector
@@ -2500,7 +2500,7 @@ _fclo_l1:
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
 _fcl_ende:
- jsr      appl_endcritic      ; ändert nur d2/a2
+ jsr      appl_endcritic      ; aendert nur d2/a2
  movem.l  (sp)+,a3/a4
  rts
 _fcl_nix:
@@ -2516,13 +2516,13 @@ _fcl_nix:
 *  gelesen wurden.
 *  Wenn <flag> = TRUE, wird nicht nur der Dateizeiger, sondern
 *  auch die Pos. rel. zum Clusteranfang justiert.
-*  Wird über das Dateiende hinaus geschrieben (Lesen blockt _fread() ab),
-*  wird die Dateilänge erhöht und das "dirty"- Flag des FD gesetzt.
+*  Wird ueber das Dateiende hinaus geschrieben (Lesen blockt _fread() ab),
+*  wird die Dateilaenge erhoeht und das "dirty"- Flag des FD gesetzt.
 *
 
 adjust_fp:
  add.l    d0,fd_fpos(a0)           ; Dateizeiger weitersetzen
- tst.b    d1                       ; clpos ändern ?
+ tst.b    d1                       ; clpos aendern ?
  beq.b    adjfp_nocl               ; nein
  add.w    d0,fd_clpos(a0)
 adjfp_nocl:
@@ -2530,7 +2530,7 @@ adjfp_nocl:
  move.l   fd_multi1(a0),a1         ; fd_len aus dem Prototyp-FD !
  cmp.l    fd_len(a1),d0
  bls.b    adjfp_ende
-* Über Dateiende hinausgeschossen: Dateilänge entsprechend erhöhen
+* Ueber Dateiende hinausgeschossen: Dateilaenge entsprechend erhoehen
 * und "dirty"- Flag des FD setzen
  move.l   d0,fd_len(a1)
  bset     #0,fd_dirch(a1)
@@ -2551,11 +2551,11 @@ adjfp_ende:
 *
 *  f_frw() wird nur bei DOS- Dateien aufgerufen, andere Dateitypen
 *  wurden bereits abgefangen.
-*  f_frw() wird nicht für den FD der Root aufgerufen, d.h. alle
-*  Clusterangaben sind gültig und nicht Pseudo.
+*  f_frw() wird nicht fuer den FD der Root aufgerufen, d.h. alle
+*  Clusterangaben sind gueltig und nicht Pseudo.
 *
-*  Achtung: Es muß sichergestellt werden, daß die Daten nach
-*           Beendigung des Vorgangs noch zur Verfügung stehen,
+*  Achtung: Es muss sichergestellt werden, dass die Daten nach
+*           Beendigung des Vorgangs noch zur Verfuegung stehen,
 *           d.h. beim Freigeben der Semaphore darf keine andere
 *           Applikation Rechenzeit bekommen!
 *
@@ -2579,7 +2579,7 @@ f_frw:
  movem.l  d3-d7/a3-a5,-(sp)        ; C-Register retten
  subq.w   #4,sp                    ; Parameter-Platz
 
- jsr      appl_begcritic           ; ändert nur a2/d2
+ jsr      appl_begcritic           ; aendert nur a2/d2
 
  move.l   d0,d7                    ; Anzahl Bytes
  beq      frw_ende                 ; 0 Bytes, fertig
@@ -2606,7 +2606,7 @@ f_frw:
  moveq    #0,d3                    ; unsigned
  move.w   d_recsiz(a5),d3
  sub.w    d4,d3                    ; Byte-Rest im Sektor
- cmp.l    d7,d3                    ; mehr als nötig ?
+ cmp.l    d7,d3                    ; mehr als noetig ?
  bls      frw_min1                 ; nein
  move.l   d7,d3                    ; Minimum bestimmen
 
@@ -2626,13 +2626,13 @@ frw_min1:
  st       d1                       ; Update-Flag
  move.l   d3,d0                    ; bearbeitete Menge
  move.l   a4,a0
- bsr      adjust_fp                ; Dateiposition erhöhen
+ bsr      adjust_fp                ; Dateiposition erhoehen
 
  moveq    #0,d0                    ; unsigned
  move.w   d4,d0                    ; Byte-Offset im Sektor
  add.l    sysbuf(a6),d0            ; Position im Puffer
  move.l   a3,d1                    ; Puffer angegeben ?
- beq      frw_ende                 ; nein, Zeiger zurückgeben
+ beq      frw_ende                 ; nein, Zeiger zurueckgeben
 
  move.l   a3,a1                    ; -> Puffer
  move.l   d0,a0                    ; Quelle
@@ -2642,8 +2642,8 @@ frw_min1:
 
  sub.l    d3,d7                    ; Anzahl korrigieren
  beq      frw_finish               ; alles bearbeitet
- adda.l   d3,a3                    ; Puffer weiterzählen
- addq.l   #1,d5                    ; Sektor erhöhen
+ adda.l   d3,a3                    ; Puffer weiterzaehlen
+ addq.l   #1,d5                    ; Sektor erhoehen
 
 *
 * ENDE: Restbytes im Sektor
@@ -2670,7 +2670,7 @@ frw_off0:
  moveq    #0,d3                    ; unsigned
  move.w   d_clsiz(a5),d3           ; Sektoren/Cluster
  sub.w    d0,d3                    ; Restsektoren im Cluster
- cmp.l    d4,d3                    ; mehr als nötig ?
+ cmp.l    d4,d3                    ; mehr als noetig ?
  bls      frw_min2                 ; nein
  move.l   d4,d3                    ; Minimum nehmen
 
@@ -2689,14 +2689,14 @@ frw_min2:
  move.l   d3,d1                    ; Sektor-Anzahl
  move.w   d_lrecsiz(a5),d0
  lsl.l    d0,d1                    ; Byte-Anzahl berechnen
- adda.l   d1,a3                    ; Puffer erhöhen
+ adda.l   d1,a3                    ; Puffer erhoehen
  sub.l    d1,d7                    ; Anzahl korrigieren
  sub.l    d3,d4                    ; verbleibende Sektoren
 
  move.l   d1,d0                    ; Anzahl Bytes
  st       d1                       ; Update-Flag
  move.l   a4,a0
- bsr      adjust_fp                ; Dateiposition erhöhen
+ bsr      adjust_fp                ; Dateiposition erhoehen
 
 *
 * ENDE: Restsektoren im Cluster
@@ -2712,13 +2712,13 @@ frw_off1:
 * ganze Cluster
 *
 
- move.l   d3,ccount(a6)            ; Cluster-Zähler
+ move.l   d3,ccount(a6)            ; Cluster-Zaehler
  lsl.l    d0,d3                    ; Anzahl Sektoren darin
  sub.l    d3,d4                    ; verbleibende Sektoren
  move.l   d4,ssave(a6)             ; restliche Sektoren merken
 
  moveq    #0,d5                    ; Anzahl Bytes
- moveq    #0,d4                    ; Sektor-Zähler
+ moveq    #0,d4                    ; Sektor-Zaehler
  moveq    #0,d3                    ; Sektor-Nummer
 
 frw_newclu0:
@@ -2731,16 +2731,16 @@ frw_newclu0:
  bne.b    frw_not_cont             ; hat nicht geklappt (Disk voll)
 
  move.l   d4,d0                    ; Anzahl Sektoren
- add.l    d3,d0                    ; höchste Sektornummer
- cmp.l    fd_Lcsec(a4),d0          ; zusammenhängend ?
+ add.l    d3,d0                    ; hoechste Sektornummer
+ cmp.l    fd_Lcsec(a4),d0          ; zusammenhaengend ?
  bne.b    frw_not_cont             ; nein
 
 frw_cont:
  moveq    #0,d0                    ; unsigned
  move.w   d_clsiz(a5),d0
- add.l    d0,d4                    ; Zähler erhöhen
+ add.l    d0,d4                    ; Zaehler erhoehen
  move.w   d_clsizb(a5),d0          ; Bytes/Cluster
- add.l    d0,d5                    ; Anzahl Bytes erhöhen
+ add.l    d0,d5                    ; Anzahl Bytes erhoehen
  subq.l   #1,ccount(a6)            ; noch weiter ?
  bne      frw_newclu0              ; ja
 
@@ -2761,22 +2761,22 @@ frw_not_cont:
  sf       d1                       ; Update-Flag
  move.l   d5,d0                    ; Zuwachs
  move.l   a4,a0
- bsr      adjust_fp                ; Datei-Position erhöhen
+ bsr      adjust_fp                ; Datei-Position erhoehen
 
- adda.l   d5,a3                    ; Pufferzeiger erhöhen
+ adda.l   d5,a3                    ; Pufferzeiger erhoehen
  sub.l    d5,d7                    ; Anzahl korrigieren
 
 frw_no_sects:
  tst.w    state(a6)                ; Abbruch ?
  bne      frw_finish               ; ja
 
- move.l   fd_Lcsec(a4),d3          ; Sektornummer übernehmen
- moveq    #0,d4                    ; zurücksetzen
- moveq    #0,d5                    ; zurücksetzen
+ move.l   fd_Lcsec(a4),d3          ; Sektornummer uebernehmen
+ moveq    #0,d4                    ; zuruecksetzen
+ moveq    #0,d5                    ; zuruecksetzen
  tst.l    ccount(a6)               ; noch weiter ?
  bne      frw_cont                 ; ja
 
- move.l   ssave(a6),d4             ; Sektorzähler zurück
+ move.l   ssave(a6),d4             ; Sektorzaehler zurueck
 
 *
 * ENDE: ganze Cluster
@@ -2810,20 +2810,20 @@ frw_off2:
  move.w   d_lrecsiz(a5),d0
  move.l   d4,d1                    ; Anzahl Sektoren
  lsl.l    d0,d1                    ; Bytes darin
- adda.l   d1,a3                    ; Pufferzeiger erhöhen
+ adda.l   d1,a3                    ; Pufferzeiger erhoehen
  sub.l    d1,d7                    ; Anzahl korrigieren
 
  move.l   d1,d0                    ; Anzahl Bytes
  st       d1                       ; Update-Flag
  move.l   a4,a0
- bsr      adjust_fp                ; Datei-Position erhöhen
+ bsr      adjust_fp                ; Datei-Position erhoehen
 
 *
 * Ende: Restsektoren
 *
 
 frw_off3:
- tst.l    d7                       ; noch etwas übrig ?
+ tst.l    d7                       ; noch etwas uebrig ?
  beq      frw_finish               ; nein
 
 *
@@ -2864,9 +2864,9 @@ frw_off4:
  st       d1                       ; Update-Flag
  move.l   d7,d0                    ; Anzahl Bytes
  move.l   a4,a0
- bsr      adjust_fp                ; Dateiposition erhöhen
+ bsr      adjust_fp                ; Dateiposition erhoehen
 
- move.l   sysbuf(a6),d0            ; Puffer zurück
+ move.l   sysbuf(a6),d0            ; Puffer zurueck
  move.l   a3,d1                    ; Puffer angegeben ?
  beq      frw_ende                 ; nein
 
@@ -2881,7 +2881,7 @@ frw_finish:
  sub.l    startpos(a6),d0          ; - Startposition
 
 frw_ende:
- jsr      appl_endcritic           ; ändert nur a2/d2
+ jsr      appl_endcritic           ; aendert nur a2/d2
 
  addq.w   #4,sp                    ; Parameter-Platz
  tst.l    d0                       ; MI, wenn Fehler
@@ -2903,7 +2903,7 @@ frw_ende:
 
 Fshrink:
  movem.l  a4/a5/d7/d6,-(sp)
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
 
  moveq    #0,d0                    ; E_OK
  move.l   a0,a5                    ; FD
@@ -2911,20 +2911,20 @@ Fshrink:
  move.l   fd_fpos(a5),d1
  move.l   fd_multi1(a5),a1
  cmp.l    fd_len(a1),d1
- bcc      fsh_ende                 ; Länge ist bereits == akt. Pos.
+ bcc      fsh_ende                 ; Laenge ist bereits == akt. Pos.
  cmpa.l   a5,a1
- bne      fsh_eaccdn               ; Datei nochmal geöffnet !
+ bne      fsh_eaccdn               ; Datei nochmal geoeffnet !
  btst     #BOM_WPERM,fd_mode+1(a5)
  beq      fsh_eaccdn               ; keine Schreiberlaubnis
 
  move.l   a4,a0
- bsr      set_disk_dirty           ; Info-Sektor- Daten ungültig machen
+ bsr      set_disk_dirty           ; Info-Sektor- Daten ungueltig machen
  bmi      fsh_ende
 
  move.l   fd_Lccl(a5),d7           ; aktueller Cluster
  bne.b    fsh_not_st
 
-* aktueller Cluster = 0 => Am Dateianfang, alles löschen
+* aktueller Cluster = 0 => Am Dateianfang, alles loeschen
 
  move.l   fd_Lstcl(a5),d7          ; Anfangscluster
  bra.b    fsh_clear
@@ -2941,7 +2941,7 @@ fsh_not_st:
  move.l   d6,d0                    ; cluster
  bsr      FAT_read
  bmi      fsh_ende                 ; Lesefehler
- move.l   d0,d7                    ; Nachfolger ist erster zu löschender
+ move.l   d0,d7                    ; Nachfolger ist erster zu loeschender
  move.l   a4,a0
  moveq    #-1,d1
  move.l   d6,d0                    ; aktueller ist Dateiende
@@ -2949,7 +2949,7 @@ fsh_not_st:
  bmi      fsh_ende
  bra.b    fsh_clear
 
-* Alle Cluster der Datei werden als gelöscht (0) markiert
+* Alle Cluster der Datei werden als geloescht (0) markiert
 
 fsh_nxtcl:
  move.l   a4,a0                    ; DMD
@@ -2963,8 +2963,8 @@ fsh_nxtcl:
  bsr      FAT_write
  bmi      fsh_ende
 fsh_clear:
- clr.l    d_1stfree_cl(a4)         ; Cache für freien Cluster löschen!
- addq.l   #1,d_nfree_cl(a4)        ; Anzahl freier Cluster erhöht!
+ clr.l    d_1stfree_cl(a4)         ; Cache fuer freien Cluster loeschen!
+ addq.l   #1,d_nfree_cl(a4)        ; Anzahl freier Cluster erhoeht!
  bne.b    fsh_wasvalid             ; war nicht -1
  subq.l   #1,d_nfree_cl(a4)        ; war -1, bleibt -1
 fsh_wasvalid:
@@ -2981,11 +2981,11 @@ fsh_f12_16:
  bcs.b    fsh_nxtcl
 
 fsh_end1:
- move.l   fd_fpos(a5),fd_len(a5)   ; Dateilänge = Dateiposition
+ move.l   fd_fpos(a5),fd_len(a5)   ; Dateilaenge = Dateiposition
  bne.b    fsh_no0
  clr.l    fd_Lstcl(a5)
 fsh_no0:
- bset     #0,fd_dirch(a5)          ; Dirty- Flag setzen für FD geändert
+ bset     #0,fd_dirch(a5)          ; Dirty- Flag setzen fuer FD geaendert
  move.w   dos_time,d1
  ror.w    #8,d1
  move.w   d1,fd_time(a5)
@@ -3000,7 +3000,7 @@ fsh_no0:
  jsr      (a2)                     ; FD- Eintrag aktualisieren
 */
 fsh_ende:
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  movem.l  (sp)+,d7/d6/a5/a4
  rts
 fsh_eaccdn:
@@ -3012,13 +3012,13 @@ fsh_eaccdn:
 *
 * MI/PL long f_extend(a0 = FD *file, d0 = int writeflag)
 *
-*  Setzt den Dateipointer (falls möglich) auf den nächsten Cluster der
-*  Datei. Erweitert <file>, falls nötig und möglich.
-*  Rückgabe: -1 Fehler             EQ oder PL
+*  Setzt den Dateipointer (falls moeglich) auf den naechsten Cluster der
+*  Datei. Erweitert <file>, falls noetig und moeglich.
+*  Rueckgabe: -1 Fehler             EQ oder PL
 *            <0 BIOS- Fehler       MI
 *             0 ok                 EQ oder PL
 *
-* Die Sperrung mit appl_beg/endcritic muß VOR Aufruf dieser
+* Die Sperrung mit appl_beg/endcritic muss VOR Aufruf dieser
 * Funktion erfolgen!
 *
 
@@ -3060,17 +3060,17 @@ fex_both:
  bne      fex_seeknxt              ; nein, nur Dateizeiger korrigieren
 
 * 1. Fall: Aktueller Cluster ist bereits Dateiende. Da wir schreiben sollen,
-*          muß die Datei erweitert werden
+*          muss die Datei erweitert werden
 
  move.l   a4,a0
- bsr      set_disk_dirty           ; Info-Sektor- Daten ungültig machen
+ bsr      set_disk_dirty           ; Info-Sektor- Daten ungueltig machen
  bmi      fex_ende
 
  tst.b    d_flag(a4)               ; FAT- Typ
  beq.b    fex_fat12                ; 12 Bit, ab d6 suchen   (langsame Methode)
 
 * FAT- Typ 16-Bit oder 32-Bit
-* Es muß irgendein freier Cluster gesucht werden. Wenn d6=0 ist, ist
+* Es muss irgendein freier Cluster gesucht werden. Wenn d6=0 ist, ist
 * die Datei leer, und es wird ab Cluster 2 gesucht. Sonst ab d6
 
  move.l   d6,d0                    ; dies ist der letzte Cluster
@@ -3093,18 +3093,18 @@ fex_was_not_1st:
 fex_fat12:
 
 * Reservierung freier Cluster einer 12-Bit-FAT
-* muß über Semaphore laufen
+* muss ueber Semaphore laufen
 
  lea      fat12_sem,a0
  moveq    #0,d1                    ; kein TimeOut
  moveq    #SEM_SET,d0
  jsr      evnt_sem
  tst.l    d0
- bne      fex_ende                 ; -1: Reentranz/1: TimeOut (unmöglich)
+ bne      fex_ende                 ; -1: Reentranz/1: TimeOut (unmoeglich)
 
- move.l   d_numcl(a4),d3           ; d3 := größte Clusternummer + 1
+ move.l   d_numcl(a4),d3           ; d3 := groesste Clusternummer + 1
  move.l   d3,d7
- subq.l   #2,d7                    ; d7 enthält die Anzahl der Cluster
+ subq.l   #2,d7                    ; d7 enthaelt die Anzahl der Cluster
  move.l   d6,d5                    ; d5 ist die Clusternummer
  cmpi.l   #2,d5
  bcc.b    fex_ok
@@ -3152,7 +3152,7 @@ fex_found:
  move.l   d_nfree_cl(a4),d0
  addq.l   #1,d0
  beq.b    fex_nfree_invalid        ; Anzahl freier Cluster ist -1
- subq.l   #1,d_nfree_cl(a4)        ; merken, daß ein Cluster weniger frei ist
+ subq.l   #1,d_nfree_cl(a4)        ; merken, dass ein Cluster weniger frei ist
 fex_nfree_invalid:
  tst.l    d6
  beq.b    fex_firstcl
@@ -3168,13 +3168,13 @@ fex_firstcl:
  move.l   d5,fd_Lstcl(a6)
  bset     #0,fd_dirch(a6)
 
-* 2. Fall: lesen, oder Schreiben geht nicht über Dateiende hinaus
+* 2. Fall: lesen, oder Schreiben geht nicht ueber Dateiende hinaus
 *                 oder Datei gerade eben erweitert
 
 fex_seeknxt:
  cmpi.l   #-1,d5
  beq.b    fex_ende
-* Einfach alle Dateipositionsfelder auf nächsten Cluster (Anfang)
+* Einfach alle Dateipositionsfelder auf naechsten Cluster (Anfang)
  move.l   d5,fd_Lccl(a5)           ; Clusternummer
  move.w   d_lclsiz(a4),d0
  move.l   d5,d1                    ; unsigned
@@ -3195,9 +3195,9 @@ fex_eof:
 *
 * int ilog2(d0 = unsigned int i)
 *
-* Gibt log2(i) zurück (i ist 2er- Potenz)
+* Gibt log2(i) zurueck (i ist 2er- Potenz)
 *
-* ändert nur d0 und d1
+* aendert nur d0 und d1
 *
 
 ilog2:
@@ -3222,21 +3222,21 @@ f_masks:
 *
 * long dosfs_dfree( a0 = DD *d, a1 = long df[4] )
 *
-* a0 ist ein DD_FD, nicht geöffnet
+* a0 ist ein DD_FD, nicht geoeffnet
 *
 
 dosfs_dfree:
  movem.l  d4/d5/d7/a4/a5,-(sp)
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
 
  move.l   fd_dmd(a0),a4            ; a4 = DMD
  move.l   a1,a5                    ; a5 = long df[4]
 
  move.l   d_nfree_cl(a4),d5        ; Anzahl freier Cluster schon bestimmt?
- bge.b    dfr_setdi                ; ja, einfach zurückgeben
+ bge.b    dfr_setdi                ; ja, einfach zurueckgeben
 
  moveq    #0,d5
- move.l   d_numcl(a4),d4           ; d4 = Nr. des höchsten Clusters + 1
+ move.l   d_numcl(a4),d4           ; d4 = Nr. des hoechsten Clusters + 1
  tst.b    d_flag(a4)
  beq.b    dfr_FAT12
 
@@ -3271,7 +3271,7 @@ dfr_nextloop:
 * ENDIF
 
 dfr_endif:
- move.l   d5,d_nfree_cl(a4)        ; Cache für Anzahl freier Cluster
+ move.l   d5,d_nfree_cl(a4)        ; Cache fuer Anzahl freier Cluster
 
 dfr_setdi:
  move.l   d5,(a5)+                 ; Anzahl freier Cluster
@@ -3280,7 +3280,7 @@ dfr_setdi:
  bne.b    no_minus2
  subq.l   #2,d0                    ; Korrekturpatch
 no_minus2:
- move.l   d0,(a5)+                 ; Anzahl Cluster überhaupt
+ move.l   d0,(a5)+                 ; Anzahl Cluster ueberhaupt
  moveq    #0,d0
  move.w   d_recsiz(a4),d0          ; Bytes pro Sektor
  move.l   d0,(a5)+
@@ -3288,7 +3288,7 @@ no_minus2:
  move.l   d0,(a5)+
  moveq    #0,d0
 dfr_ende:
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  movem.l  (sp)+,d4/d5/d7/a4/a5
  rts
 
@@ -3299,7 +3299,7 @@ dfr_ende:
 *
 * NUR BEI 16-Bit FAT oder 32-Bit FAT!
 *
-* Gib Anzahl freier Cluster bis maxcl zurück
+* Gib Anzahl freier Cluster bis maxcl zurueck
 *
 * appl_beg/endcritic ist schon aufgerufen
 *
@@ -3308,7 +3308,7 @@ _dfree16_32:
  movem.l  d4-d7/a5,-(sp)
  move.l   d0,d7                    ; Anzahl Cluster
  movea.l  a0,a5                    ; -> DMD
- moveq    #0,d4                    ; Zähler auf 0
+ moveq    #0,d4                    ; Zaehler auf 0
  subq.l   #2,d7
  bcs.b    _df16_fin                ; keine (!)
  move.w   d_recsiz(a5),d5          ; Bytes/Sektor
@@ -3331,7 +3331,7 @@ _dfree16_32:
 _df32_loop:
  tst.l    (a0)+                    ; Eintrag frei ?
  bne.b    _df32_found1             ; nein
- addq.l   #1,d4                    ; Zähler erhöhen
+ addq.l   #1,d4                    ; Zaehler erhoehen
 _df32_found1:
  subq.l   #1,d7                    ; Cluster-Anzahl
  beq.b    _df16_fin                ; Ende erreicht
@@ -3346,7 +3346,7 @@ _df16_bloop:
 _df16_loop:
  tst.w    (a0)+                    ; Eintrag frei ?
  bne.b    _df16_found1             ; nein
- addq.l   #1,d4                    ; Zähler erhöhen
+ addq.l   #1,d4                    ; Zaehler erhoehen
 _df16_found1:
  subq.l   #1,d7                    ; Cluster-Anzahl
  beq.b    _df16_fin                ; Ende erreicht
@@ -3354,7 +3354,7 @@ _df16_found1:
  bcs.b    _df16_loop               ; nein
 
 _df16_nxtsec:
- addq.l   #1,d6                    ; nächster Sektor
+ addq.l   #1,d6                    ; naechster Sektor
  moveq    #0,d1                    ; Lesen
 ;move.l   a5,a5                    ; -> DMD
 ;move.l   d6,d6                    ; Sektor-Offset
@@ -3382,9 +3382,9 @@ _df16_ende:
 * Schnelle Routine zur Reservierung eines neuen Clusters.
 * NUR BEI 16-Bit oder 32-Bit FAT!
 *
-* Gib Nummer des ersten freien Clusters zurück, suche ab <firstcl>.
+* Gib Nummer des ersten freien Clusters zurueck, suche ab <firstcl>.
 * Reserviere ihn, indem -1 in die FAT geschrieben wird.
-* D.h. es wird ein neuer Cluster angefordert, der zunächst als
+* D.h. es wird ein neuer Cluster angefordert, der zunaechst als
 * Dateiende markiert wird.
 *
 * appl_beg/endcritic ist schon aufgerufen
@@ -3393,12 +3393,12 @@ _df16_ende:
 _newcl16_32:
  movem.l  d3-d7/a5,-(sp)
  movea.l  a0,a5                    ; -> DMD
- move.l   d_numcl(a5),d7           ; d7 := größte Clusternummer + 1
+ move.l   d_numcl(a5),d7           ; d7 := groesste Clusternummer + 1
  cmp.l    d7,d0                    ; Clusternummer zu hoch ?
  bcs.b    _nc16_noov               ; nein
  moveq    #0,d0                    ; wieder vorn anfangen
 _nc16_noov:
- subq.l   #2,d7                    ; d7 := größte Clusternummer - 1
+ subq.l   #2,d7                    ; d7 := groesste Clusternummer - 1
  bcs      _nc16_nofree             ; keine Cluster (!)
  move.w   d_recsiz(a5),d5          ; Bytes/Sektor
 
@@ -3452,13 +3452,13 @@ _nc16_3endif:
  beq.b    _nc16_fin                ; nein, gefunden
  subq.l   #1,d7                    ; Cluster-Anzahl
  beq.b    _nc16_nofree             ; Ende erreicht
- addq.l   #1,d4                    ; nächster Eintrag
- cmp.l    d_numcl(a5),d4           ; Überlauf ?
+ addq.l   #1,d4                    ; naechster Eintrag
+ cmp.l    d_numcl(a5),d4           ; Ueberlauf ?
  bcc.b    _nc16_beg                ; ja, wieder vorn anfangen
  cmpa.l   a1,a2                    ; Sektor-Ende ?
  bcs.b    _nc16_loop               ; nein
 
- addq.l   #1,d6                    ; nächster Sektor
+ addq.l   #1,d6                    ; naechster Sektor
  moveq    #0,d1                    ; Lesen
 ;move.l   a5,a5                    ; -> DMD
 ;move.l   d6,d6                    ; Sektor-Offset
@@ -3487,9 +3487,9 @@ _nc16_fin:
 _nc16_4fat16:
  move.w   d0,-(a2)                 ; Eintrag auf -1 setzen
 _nc16_4endif:
- st       xb_dirty(a0)             ; und dirty-Flag für Puffer setzen
+ st       xb_dirty(a0)             ; und dirty-Flag fuer Puffer setzen
  move.l   d4,d0                    ; Ergebnis
- moveq    #0,d1                    ; N-Flag löschen
+ moveq    #0,d1                    ; N-Flag loeschen
 _nc16_ende:
  movem.l  (sp)+,d3-d7/a5
  rts
@@ -3515,7 +3515,7 @@ _nc16_ende:
 *
 * Liest den angegebenen FAT- Sektor. Die Angabe <secnr> ist relativ
 * zum Anfang der FAT
-* Gibt Zeiger auf den Sektorpuffer oder Fehlercode zurück.
+* Gibt Zeiger auf den Sektorpuffer oder Fehlercode zurueck.
 *
 
 FAT_rw:
@@ -3562,7 +3562,7 @@ FAT_write:
  bgt.b    ftw_fat_16               ; ja
  beq.b    ftw_fat_12
  add.l    d1,d1
- add.l    d1,d1                    ; * 4 für 32-Bit FAT
+ add.l    d1,d1                    ; * 4 fuer 32-Bit FAT
  bra.b    ftw_fat_all
 ftw_fat_12:
  lsr.l    #1,d1                    ; * 0,5
@@ -3607,12 +3607,12 @@ ftw_odd1:
  rol.w    #4,d4                    ; zurechtschieben
  move.w   d4,d0
  lsr.w    #8,d0                    ; High-Byte
- andi.b   #$0f,(a0)                ; 4 Bit übernehmen
+ andi.b   #$0f,(a0)                ; 4 Bit uebernehmen
  or.b     d0,(a0)+                 ; 4 Bit einblenden
 ftw_second:
  cmp.w    d_mrecsiz(a5),d5         ; letzes Byte im Sektor ?
  bcs      ftw_in_buffer            ; nein
- addq.l   #1,d6                    ; nächster Sektor
+ addq.l   #1,d6                    ; naechster Sektor
  moveq    #1,d1                    ; schreiben
 ;move.l   a5,a5
 ;move.l   d6,d6                    ; Record
@@ -3622,7 +3622,7 @@ ftw_second:
 ftw_in_buffer:
  btst     #0,d7                    ; gerade Nummer ?
  bne      ftw_odd2                 ; nein
- move.b   (a0),d0                  ; Byte übernehmen
+ move.b   (a0),d0                  ; Byte uebernehmen
  and.b    #$f0,d0                  ; 4 Bit
  or.b     d0,d4                    ; einblenden
 ftw_odd2:
@@ -3638,11 +3638,11 @@ ftw_ende:
 *
 * PL/MI LONG FAT_read(d0 = ULONG cluster, a0 = DMD *drive)
 *
-* Gibt die Nummer des Folgeclusters zurück (also den entsprechenden
-* FAT- Eintrag). EOF-Einträge werden, unabhängig vom FAT-Typ, immer
-* als -1 zurückgegeben.
+* Gibt die Nummer des Folgeclusters zurueck (also den entsprechenden
+* FAT- Eintrag). EOF-Eintraege werden, unabhaengig vom FAT-Typ, immer
+* als -1 zurueckgegeben.
 *
-* Rückgabe MI, wenn Fehler.
+* Rueckgabe MI, wenn Fehler.
 *
 
 FAT_read:
@@ -3681,7 +3681,7 @@ ftr_fat_all:
  ror.w    #8,d0
  swap     d0
  ror.w    #8,d0                    ; Intel -> 68000
- andi.l   #$0fffffff,d0            ; oberste 4 Bit löschen(?!?)
+ andi.l   #$0fffffff,d0            ; oberste 4 Bit loeschen(?!?)
  cmpi.l   #$0ffffff8,d0
  bcs.b    ftr_ok
  bra.b    ftr_eof
@@ -3697,14 +3697,14 @@ ftr_rfat_12:
  cmp.w    d_mrecsiz(a5),d5         ; letztes Byte im Sektor ?
  bcs.b    ftr_in_buffer            ; nein
  move.w   d0,d5                    ; Wert retten
- addq.l   #1,d6                    ; nächster Record
+ addq.l   #1,d6                    ; naechster Record
  moveq    #0,d1                    ; Modus: Lesen
 ;move.l   a5,a5                    ; -> DMD
 ;move.l   d6,d6                    ; Sektor-Offset
  bsr      FAT_rw                   ; FAT einlesen
  bmi.b    ftr_ende                 ; return(MI)
  movea.l  d0,a0                    ; -> FAT
- move.w   d5,d0                    ; Wert zurück
+ move.w   d5,d0                    ; Wert zurueck
 ftr_in_buffer:
  lsl.w    #8,d0                    ; in High-Byte
  move.b   (a0),d0                  ; 2. FAT-Byte
@@ -3719,7 +3719,7 @@ ftr_even:
 ftr_eof:
  moveq    #-1,d0                   ; EOF melden
 ftr_ok:
- moveq    #0,d1                    ; N-Flag löschen
+ moveq    #0,d1                    ; N-Flag loeschen
 ftr_ende:
  movem.l  (sp)+,d5-d7/a5
 ;     DEBL 'FAT_read =>',d0
@@ -3737,27 +3737,27 @@ ftr_ende:
 *
 * EQ/MI long write_sector(a0 = XBCB *buf)
 *
-*  schreibt einen Sektor der Pufferliste zurück, falls dieser gültig
-*  ist und sich geändert hat.
-*  Im Gegensatz zu TOS wird nur dieser Sektor zurückgeschrieben
+*  schreibt einen Sektor der Pufferliste zurueck, falls dieser gueltig
+*  ist und sich geaendert hat.
+*  Im Gegensatz zu TOS wird nur dieser Sektor zurueckgeschrieben
 *  und nicht etwa alle anderen bei dieser Gelegenheit auch. Das
-*  Zurückschreiben aller Sektoren erfolgt sowieso bei dem Schließen
+*  Zurueckschreiben aller Sektoren erfolgt sowieso bei dem Schliessen
 *  einer Datei.
 *
 *  Ggf. Semaphorenbehandlung noch beschleunigen!
-*  Ggf. Frage, ob Puffer gültig, entfernen
-*  Ggf. noch Unterstützung von 32 Bit Sektornummern ergänzen
+*  Ggf. Frage, ob Puffer gueltig, entfernen
+*  Ggf. noch Unterstuetzung von 32 Bit Sektornummern ergaenzen
 *
 
 write_sector:
       DEB  'write_sector'
- tst.w    xb_dirty(a0)             ; Pufferinhalt geändert ?
+ tst.w    xb_dirty(a0)             ; Pufferinhalt geaendert ?
  beq      ws_ok                    ; nein
- tst.w    xb_drv(a0)               ; Puffer gültig
+ tst.w    xb_drv(a0)               ; Puffer gueltig
  bmi      ws_ok                    ; nein
  move.l   a6,-(sp)
 *
-* Semaphore setzen und damit den Sektor schützen
+* Semaphore setzen und damit den Sektor schuetzen
 *
  move.l   a0,a6
  lea      xb_sem+bl_app(a6),a0
@@ -3772,22 +3772,22 @@ write_sector:
  moveq    #SEM_SET,d0
  jsr      evnt_sem
  tst.l    d0
- bne      ws_err                   ; -1: Reentranz/1: TimeOut (unmöglich)
+ bne      ws_err                   ; -1: Reentranz/1: TimeOut (unmoeglich)
 *
 * Jetzt haben wir den Sektor, aber sein Inhalt kann sich schon
-* wieder geändert haben.
+* wieder geaendert haben.
 *
- tst.w    xb_dirty(a6)             ; Pufferinhalt geändert ?
+ tst.w    xb_dirty(a6)             ; Pufferinhalt geaendert ?
  beq      ws_ok2                   ; nein
- tst.w    xb_drv(a6)               ; Puffer gültig
+ tst.w    xb_drv(a6)               ; Puffer gueltig
  bmi      ws_ok2                   ; nein
 *
 * Es hat zwar ein Taskwechsel stattgefunden, aber der Puffer ist immer
-* noch gültig und geändert.
+* noch gueltig und geaendert.
 *
  bra      ws_wr
 *
-* Der Puffer war nicht belegt, wir können ihn einfach belegen
+* Der Puffer war nicht belegt, wir koennen ihn einfach belegen
 * und dann schreiben, beim Belegen kann kein Taskwechsel
 * stattfinden.
 *
@@ -3795,7 +3795,7 @@ ws_weiter:
  move.l   act_appl,(a0)            ; Semaphore belegen
  move.l   act_pd,bl_pd-bl_app(a0)  ; !neu!
 *
-* Puffer zurückschreiben
+* Puffer zurueckschreiben
 *
 ws_wr:
  move.l   xb_secno(a6),d0
@@ -3832,16 +3832,16 @@ ws_berr:
  lea      xb_sem(a6),a0
  moveq    #SEM_FREE,d0
  jsr      evnt_sem                 ; Fehercode von evnt_sem ignorieren
- move.l   (sp)+,d0                 ; Fehlercode zurück
+ move.l   (sp)+,d0                 ; Fehlercode zurueck
 
  move.w   xb_drv(a6),d1            ; Fehler-Laufwerk
- move.w   #-1,xb_drv(a6)           ; Puffer ungültig
+ move.w   #-1,xb_drv(a6)           ; Puffer ungueltig
  bsr      fatfs_diskerr
  tst.l    d0
  bra.b    ws_ende
 
 *
-* dirty- Flag löschen
+* dirty- Flag loeschen
 *
 ws_ok1:
  clr.w    xb_dirty(a6)
@@ -3853,7 +3853,7 @@ ws_ok2:
 ws_ok3:
  lea      xb_sem(a6),a0
  moveq    #SEM_FREE,d0
- jsr      evnt_sem                 ; Fehercode von evnt_sem zurückgeben
+ jsr      evnt_sem                 ; Fehercode von evnt_sem zurueckgeben
 ws_ende:
  move.l   (sp)+,a6
  rts
@@ -3876,11 +3876,11 @@ ws_ok:
 * -> a0 = Zeiger auf den XBCB
 *
 * Liest einen Sektor <secnr> von Laufwerk <drv> und gibt einen
-* Zeiger auf den gelesenen Sektor zurück.
-* in <secno2> wird eine Kopie des Sektors angegeben, etwa für eine
+* Zeiger auf den gelesenen Sektor zurueck.
+* in <secno2> wird eine Kopie des Sektors angegeben, etwa fuer eine
 * zweite FAT.
 *
-* Der Zeiger auf den XBCB wird zurückgegeben, damit ein Programm für
+* Der Zeiger auf den XBCB wird zurueckgegeben, damit ein Programm fuer
 * den FAT-Zugriff (Reservierung eines freien Clusters) ohne
 * Kontextwechsel einen Cluster reservieren kann.
 *
@@ -3915,7 +3915,7 @@ rs_loop:
  bne.b    rs_nxt                   ; anderer Sektor
 *
 * Wir haben einen passenden Sektor gefunden.
-* Wir müssen noch sicherstellen, daß der Sektor nicht
+* Wir muessen noch sicherstellen, dass der Sektor nicht
 * gesperrt ist und ggf. darauf warten.
 * Dazu einfach sperren und wieder freigeben.
 * Achtung: TOS macht hier ein Mediach(), das ich mir aber sparen will
@@ -3930,7 +3930,7 @@ rs_found:
  lea      xb_sem(a6),a0
  moveq    #SEM_FREE,d0
  jsr      evnt_sem                 ; Fehlercode von evnt_sem ignorieren
-* Der Sektorinhalt kann sich geändert haben
+* Der Sektorinhalt kann sich geaendert haben
  cmp.w    xb_drv(a6),d7
  bne      rs_again                 ; nochmal ganz von vorn
  cmp.l    xb_secno(a6),d6
@@ -3950,9 +3950,9 @@ rs_nxtbuf:
  bne.b    rs_read                  ; ja, belegen und benutzen
 *
 * weder passenden noch freien Sektor gefunden
-* schreibe den letzten der Liste zurück
+* schreibe den letzten der Liste zurueck
 *
- tst.w    xb_dirty(a6)             ; Pufferinhalt geändert ?
+ tst.w    xb_dirty(a6)             ; Pufferinhalt geaendert ?
  bne.b    rs_get                   ; ja, schreiben
  tst.l    xb_sem+bl_app(a6)        ; Sektor belegt ?
  beq      rs_ok                    ; nein
@@ -3962,13 +3962,13 @@ rs_nxtbuf:
  lea      xb_sem(a6),a0
  jsr      evnt_sem
 
-* der Puffer gehört jetzt uns, kann aber inzwischen "dirty" sein.
+* der Puffer gehoert jetzt uns, kann aber inzwischen "dirty" sein.
 
- tst.w    xb_dirty(a6)             ; Pufferinhalt geändert ?
+ tst.w    xb_dirty(a6)             ; Pufferinhalt geaendert ?
  bne.b    rs_free_get              ; ja, freigeben, schreiben, again
 
-* Der Puffer gehört uns, ist nicht "dirty".
-* Es kann aber sein, daß inzwischen
+* Der Puffer gehoert uns, ist nicht "dirty".
+* Es kann aber sein, dass inzwischen
 * unser Sektor woanders geladen wurde. Also nochmal die
 * Pufferliste durchsuchen
 
@@ -3986,7 +3986,7 @@ rs2_loop:
 * angefordert.
 * Erstmal Puffer a6 wieder freigeben, dabei kann kein
 * Taskwechsel stattfinden, und wir arbeiten jetzt mit
-* Puffer a1, der unseren Sektor enthält
+* Puffer a1, der unseren Sektor enthaelt
  lea      xb_sem(a6),a0
  move.l   a1,a6
  moveq    #SEM_FREE,d0
@@ -4005,8 +4005,8 @@ rs2_nxtbuf:
  bra      rs_read2
 
 *
-* Wir schreiben einen Puffer, der gültig und "dirty" ist,
-* zurück, um beim nächsten Durchlauf durch die Pufferliste
+* Wir schreiben einen Puffer, der gueltig und "dirty" ist,
+* zurueck, um beim naechsten Durchlauf durch die Pufferliste
 * bessere Karten zu haben.
 *
 
@@ -4035,8 +4035,8 @@ rs_get:
 rs_read:
  move.l   a1,a6
 
-* Der letzte Puffer der Liste ist nicht in Benutzung und außerdem
-* nicht verändert (kein "dirty"). Wir können ihn ohne Taskwechsel
+* Der letzte Puffer der Liste ist nicht in Benutzung und ausserdem
+* nicht veraendert (kein "dirty"). Wir koennen ihn ohne Taskwechsel
 * belegen.
 
 rs_ok:
@@ -4072,7 +4072,7 @@ rs_read_long:
  jsr      evnt_sem                 ; Fehlercode von evnt_sem ignorieren
  move.l   (sp)+,d0
  move.w   xb_drv(a6),d1
- move.w   #-1,xb_drv(a6)           ; ja, Puffer ungültig
+ move.w   #-1,xb_drv(a6)           ; ja, Puffer ungueltig
  bsr      fatfs_diskerr
  tst.l    d0
  bra      rs_ende
@@ -4092,30 +4092,30 @@ rs_ok3:
  jsr      evnt_sem                 ; Fehlercode von evnt_sem ignorieren
 rs_return:
 *
-* Der gefundene Sektor wird nach vorn in die Liste gehängt und
-* zurückgegeben. TOS spart sich diese Mühe.
+* Der gefundene Sektor wird nach vorn in die Liste gehaengt und
+* zurueckgegeben. TOS spart sich diese Muehe.
 *
- move.l   xb_prev(a6),d0           ; hat Vorgänger ?
+ move.l   xb_prev(a6),d0           ; hat Vorgaenger ?
  beq.b    rs_weiter                ; nein, bin schon vorn
- move.l   d0,a0                    ; a0 ist Vorgänger
+ move.l   d0,a0                    ; a0 ist Vorgaenger
  move.l   xb_next(a6),d0           ; hat Nachfolger ?
- move.l   d0,xb_next(a0)           ; aus Vorwärtsverkettung klinken
+ move.l   d0,xb_next(a0)           ; aus Vorwaertsverkettung klinken
  beq.b    rs_weiter2               ; nein, ich war ganz hinten
  move.l   d0,a0
- move.l   xb_prev(a6),xb_prev(a0)  ; aus Rückwärtsverkettung klinken
+ move.l   xb_prev(a6),xb_prev(a0)  ; aus Rueckwaertsverkettung klinken
 rs_weiter2:
  move.l   xb_first(a6),a0          ; die Liste
  move.l   (a0),a1                  ; a1 = bisheriges erstes Element
  move.l   a6,(a0)                  ; ich bin neues erstes Element
  move.l   a1,xb_next(a6)           ;  bisher. wird mein Nachfolger
- move.l   a6,xb_prev(a1)           ; und ich bin dessen Vorgänger
- clr.l    xb_prev(a6)              ; mein Vorgänger existiert nicht.
+ move.l   a6,xb_prev(a1)           ; und ich bin dessen Vorgaenger
+ clr.l    xb_prev(a6)              ; mein Vorgaenger existiert nicht.
 rs_weiter:
  move.w   24(sp),d0                ; to_write
  or.w     d0,xb_dirty(a6)          ; ggf. hier schon dirty setzen
  move.l   xb_data(a6),d0
 rs_ende:
- move.l   a6,a0                    ; Rückgabe des Puffers!!
+ move.l   a6,a0                    ; Rueckgabe des Puffers!!
  movem.l  (sp)+,a5/a6/d5/d6/d7
  rts
 
@@ -4126,7 +4126,7 @@ rs_ende:
 *                 a0 = char *puffer, a1 = XBCB *list, int rwflag )
 *
 * Liest/Schreibt eine Anzahl DATEN- Sektoren in einem Rutsch
-* <anzahl> muß WORD sein (wegen Rwabs)
+* <anzahl> muss WORD sein (wegen Rwabs)
 *
 
 mrw_sectors:
@@ -4153,19 +4153,19 @@ mrw_loop:
  cmp.l    d6,d0
  bcs.b    mrw_nxt                  ; liegt drunter
  cmp.l    d5,d0
- bcc.b    mrw_nxt                  ; liegt drüber
+ bcc.b    mrw_nxt                  ; liegt drueber
 *
 * Wir haben einen Sektor in unserem Bereich gefunden.
-* Der Sektor wird zurückgeschrieben und ist damit nicht mehr "dirty"
-* beim nächsten Durchgang wird er dann ungültig gemacht, weil er nicht
+* Der Sektor wird zurueckgeschrieben und ist damit nicht mehr "dirty"
+* beim naechsten Durchgang wird er dann ungueltig gemacht, weil er nicht
 * mehr dirty ist, es sei denn, er ist noch blockiert, dann geht es wieder
 * write_sector.
 *
  tst.w    xb_dirty(a6)
- bne.b    mrw_wr                   ; verändert, muß zurückschreiben
+ bne.b    mrw_wr                   ; veraendert, muss zurueckschreiben
  tst.l    xb_sem+bl_app(a6)        ; Semaphore belegt ?
- beq.b    mrw_ok                   ; nein, einfach nur ungültig machen
-* Der Sektor ist belegt, aber nicht verändert, wir warten auf
+ beq.b    mrw_ok                   ; nein, einfach nur ungueltig machen
+* Der Sektor ist belegt, aber nicht veraendert, wir warten auf
 * die Freigabe, d.h. belegen und geben gleich wieder frei
  lea      xb_sem(a6),a0
  moveq    #0,d1                    ; kein TimeOut
@@ -4178,7 +4178,7 @@ mrw_loop:
 mrw_wr:
  move.l   a6,a0
  bsr      write_sector
- bra      mrw_again                ; muß nochmal anfangen (Taskwechsel!)
+ bra      mrw_again                ; muss nochmal anfangen (Taskwechsel!)
 
 mrw_ok:
  move.w   #-1,xb_drv(a6)

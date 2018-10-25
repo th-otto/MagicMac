@@ -1,30 +1,30 @@
-* BIOS für MagiC MAC X
+* BIOS fuer MagiC MAC X
 * ********************
 
 *
-* Dieses Modul enthält die Atari-seitige Nachbildung des BIOS
+* Dieses Modul enthaelt die Atari-seitige Nachbildung des BIOS
 *
 * Die Mac-Seite emuliert einen 68020 ohne FPU und ohne PMMU.
 * Auf der MAC- Seite passiert vorher folgendes:
 *
 * - vbr und Prozessorcaches werden initialisiert.
 * - phystop, _v_bas_ad, _memtop werden initialisiert.
-* - Exceptionvektoren werden initialisiert, außer priv.viol. und div0
+* - Exceptionvektoren werden initialisiert, ausser priv.viol. und div0
 * - hdv_xxx werden initialisiert.
 * - Farbpalette wird gesetzt (ggf. bei Initialisierung des VDI ?)
 * - sshiftmd auf einen halbwegs sinnvollen Wert gesetzt
-* - end_os und exec_os im Variablenheader des BIOS und des AES ändern
+* - end_os und exec_os im Variablenheader des BIOS und des AES aendern
 *   (macht z.Zt. das MAGXBOOT, ggf. noch elegantere Methode suchen)
-* - cpu_typ ($59e) initialisieren auf 40(dez) für 68040 bzw. 30(dez)
-*   für 68030
-* - Alle Einträge der Übergabestruktur füllen
-*   Die Routinen für Drucker und AUX bekommen ihre Parameter immer über
-*   Register a0, das zeigt auf die Parameter auf dem Stack. Es dürfen keine
-*   Register außer d0-d2 und a0-a2 verändert werden.
-* - 200Hz- Interrupt einfüttern ($114)
-* - VBL einfüttern ($70)
-*   Die Vektoren müssen alle Register retten.
-* - Tastendrücke und Mausdaten in den MFP-Interrupt 6 einfüttern
+* - cpu_typ ($59e) initialisieren auf 40(dez) fuer 68040 bzw. 30(dez)
+*   fuer 68030
+* - Alle Eintraege der Uebergabestruktur fuellen
+*   Die Routinen fuer Drucker und AUX bekommen ihre Parameter immer ueber
+*   Register a0, das zeigt auf die Parameter auf dem Stack. Es duerfen keine
+*   Register ausser d0-d2 und a0-a2 veraendert werden.
+* - 200Hz- Interrupt einfuettern ($114)
+* - VBL einfuettern ($70)
+*   Die Vektoren muessen alle Register retten.
+* - Tastendruecke und Mausdaten in den MFP-Interrupt 6 einfuettern
 *   (Vektor bei $118)
 *
 * Der "Atari" macht folgendes:
@@ -33,7 +33,7 @@
 * - keine Cartridges
 * - kein Booten von Floppy oder DMA
 * - colorptr und screenpt werden ignoriert, Umschalten der Farbpalette
-*   ausschließlich über VDI
+*   ausschliesslich ueber VDI
 * - Physbase und Logbase liefern _v_bas_ad
 * - Getrez liefert sshiftmd
 * - im 200hz-Interrupt alle 2s die DOS-Uhrzeit vom MAC holen
@@ -50,13 +50,13 @@ DEBUG3    EQU  0
 ALTGR          EQU  $4c
 ALT_NUMKEY     EQU  1
 DEADKEYS       EQU  1
-COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
+COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 
-; 0x37 ist Scancode für Command (Apple)
-; 0x49 ist Scancode für PgUp
-; 0x51 ist Scancode für PgDn
-; 0x4c ist Scancode für AltGr
-; 0x4f ist Scancode für Ende
+; 0x37 ist Scancode fuer Command (Apple)
+; 0x49 ist Scancode fuer PgUp
+; 0x51 ist Scancode fuer PgDn
+; 0x4c ist Scancode fuer AltGr
+; 0x4f ist Scancode fuer Ende
 
      XDEF      _start
      XDEF      MSysX
@@ -123,7 +123,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
 
      XREF      dos_init            ; DOS
      XREF      act_pd              ; DOS
-     XREF      bufl_timer          ; DOS (für writeback)
+     XREF      bufl_timer          ; DOS (fuer writeback)
      XREF      secb_ext            ; DOS
      XREF      _mifl_unused        ; DOS
      XREF      dos_date            ; DOS
@@ -148,7 +148,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
 
 * Import von AESOBJ
 
-     XREF      v_clswk             ; für Shutdown
+     XREF      v_clswk             ; fuer Shutdown
 
 * Import vom MACXFS
 
@@ -163,7 +163,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste für Calamus-Unterstützung
      XREF      Blitmode            ; VDI
      XREF      vt_seq_e            ; VDI: Cursor ein
      XREF      vt_seq_f            ; VDI: Cursor aus
-     XREF      vdi_init            ; VDI: initialisieren (für MXVDI)
+     XREF      vdi_init            ; VDI: initialisieren (fuer MXVDI)
      XREF      vdi_blinit          ; VDI: Blitterstatus initialisieren (d0)
      XREF      vt52_init           ; VDI: VT52 initialisieren
 
@@ -203,8 +203,8 @@ clear_area          EQU $9a4            /* war vorher auf $98c        */
      OFFSET clear_area
 
 p_iorec_ser1:       DS.L 1              /* IOREC *p_iorec_ser1        */
-; IOREC:            DS.B $e             /*   0: IOREC für Eingabe     */
-;                   DS.B $e             /*  $e: IOREC für Ausgabe     */
+; IOREC:            DS.B $e             /*   0: IOREC fuer Eingabe     */
+;                   DS.B $e             /*  $e: IOREC fuer Ausgabe     */
 ;                   DS.B 1              /* $1c: aux_status_rcv        */
 ;                   DS.B 1              /* $1d: aux_status_tmt        */
 ;                   DS.B 1              /* $1e: aux_lock_rcv          */
@@ -235,18 +235,18 @@ pack_joy:           DS.B 3              /* char [3],$fe/$ff,joy0,joy1 */
 kbshift:            DS.B 1              /* char kbshift               */
 keyrepeat:          DS.B 3              /* char keyrepeat[3]          */
                                         /* keyrepeat[0]: Scancode     */
-                                        /* keyrepeat[1]: Verzög       */
+                                        /* keyrepeat[1]: Verzoeg       */
                                         /* keyrepeat[2]: unben.       */
 altgr_status:       DS.B 1              /* char altgr_status          */
      IF   ALT_NUMKEY
-alt_numkey:         DS.B 1              /* Für Alt-Num0..Num9         */
+alt_numkey:         DS.B 1              /* Fuer Alt-Num0..Num9         */
      ENDIF
      IF   DEADKEYS
-deadkey_asc:        DS.B 1              /* Für "dead keys"            */
-deadkey_scan:       DS.B 1              /* Für "dead keys"            */
-deadkey_kbsh:       DS.B 1              /* Für "dead keys"            */
+deadkey_asc:        DS.B 1              /* Fuer "dead keys"            */
+deadkey_scan:       DS.B 1              /* Fuer "dead keys"            */
+deadkey_kbsh:       DS.B 1              /* Fuer "dead keys"            */
      EVEN
-deadkey_subtab:     DS.L 1              /* Für "dead keys"            */
+deadkey_subtab:     DS.L 1              /* Fuer "dead keys"            */
      ENDIF
      EVEN
 key_delay:          DS.B 1              /* char                       */
@@ -279,7 +279,7 @@ config_status:      DS.L 1
                     DS.L 1              /* 12: hier -> vdi_tidy           */
                     DS.L 1              /* 16: -> hddriver_functions      */
 status_bits:        DS.L 1              /* 20: Bit 0: APP-Manager ist aktiv */
-pkill_vector:       DS.L 1              /* 24: VERKETTEN: z.B. für DSP     */
+pkill_vector:       DS.L 1              /* 24: VERKETTEN: z.B. fuer DSP     */
 
 cookies:            DS.L NCOOKIES*2     /* long cookies[17][2]        */
 bconmap_struct:     DS.L 1              /* long *maptab               */
@@ -287,29 +287,29 @@ bconmap_struct:     DS.L 1              /* long *maptab               */
                     DS.W 1              /* aktueller serieller Port (>= 6) */
 p_rsconf:           DS.L 1              /* Pointer auf Rsconf (device 1)   */
 p_iorec:            DS.L 1              /* Pointer auf iorec (device 1)    */
-ttram_md:           DS.L 4              /* MD für TTRAM-Block              */
+ttram_md:           DS.L 4              /* MD fuer TTRAM-Block              */
      IFNE FALCON
 scrbuf_adr:         DS.L 1              /* Startadresse (netto, ohne MCB)  */
-scrbuf_len:         DS.L 1              /* tatsächliche Länge              */
+scrbuf_len:         DS.L 1              /* tatsaechliche Laenge              */
      ENDIF
-pe_slice:           DS.W 1              /* für XAES (Zeitscheibe)          */
-pe_timer:           DS.W 1              /* für XAES (Zeitscheibe)          */
+pe_slice:           DS.W 1              /* fuer XAES (Zeitscheibe)          */
+pe_timer:           DS.W 1              /* fuer XAES (Zeitscheibe)          */
 first_sem:
 dummy_sem:          DS.B bl_sizeof      /* Dummy- Semaphore                */
 app0:               DS.L 1              /* APP #0 und Default- Superstack  */
 pgm_superst:        DS.L 1              /* Default- Superstack             */
 p_mgxinf:
 pgm_userst:         DS.L 1
-dflt_maptable:      DS.L NSERIAL*6     /* für 4 Einträge à 24 Bytes       */
-intern_maptab:      DS.L NSERIAL*6           ;interne MapTab. Enthält die Adressen
+dflt_maptable:      DS.L NSERIAL*6     /* fuer 4 Eintraege � 24 Bytes       */
+intern_maptab:      DS.L NSERIAL*6           ;interne MapTab. Enthaelt die Adressen
                                        ;der seriellen Mag!X-Biosroutinen
 ;
-; Anschließend eine Kopie der Gerätevektoren.
-; Ist der Eintrag 0, so ist eine externe Routine eingehängt, andernfalls ist
+; Anschliessend eine Kopie der Geraetevektoren.
+; Ist der Eintrag 0, so ist eine externe Routine eingehaengt, andernfalls ist
 ; die Adresse der Mag!X-Biosroutine eingetragen.
 ; Derzeit nur benutzt, um bei umgemappter serieller Schnittstelle (1) zwischen
 ; Mag!X- und externen Routinen zu unterscheiden - eventuell in Zukunft aber
-; auch für andere Devices nützlich, die sich an die Registerkonventionen des
+; auch fuer andere Devices nuetzlich, die sich an die Registerkonventionen des
 ; neuen (X)Bios-Dispatchers halten.
 mbiosvecs:
 Bconstatvec:        DS.L 8
@@ -318,14 +318,14 @@ Bcostatvec:         DS.L 8
 Bconoutvec:         DS.L 8
 do_gettime:         DS.W 1
 Mac_xfsx:           DS.L 1              /* ->Tabelle mit XFS-Daten         */
-warmbvec:           DS.L 1              /* Sprungadr. für Ctrl-Alt-Del     */
-coldbvec:           DS.L 1              /* Sprungadr. für Ctrl-Alt-Rsh-Del */
+warmbvec:           DS.L 1              /* Sprungadr. fuer Ctrl-Alt-Del     */
+coldbvec:           DS.L 1              /* Sprungadr. fuer Ctrl-Alt-Rsh-Del */
 sust_len:           DS.L 1              /* Supervisorstack pro Applikation */
-datemode:           DS.W 1         ;für date2str (->STD.S)
-log_fd:             DS.L 1              /* DateiHandle für Bootlog */
-log_fd_pd:          DS.L 1              /* Prozeßdeskriptor für Handle */
-log_oldconout:      DS.L 1              /* Alter Vektor für Bootlog */
-p_vt52:             DS.L 1              /* für VT52.PRG */
+datemode:           DS.W 1         ;fuer date2str (->STD.S)
+log_fd:             DS.L 1              /* DateiHandle fuer Bootlog */
+log_fd_pd:          DS.L 1              /* Prozessdeskriptor fuer Handle */
+log_oldconout:      DS.L 1              /* Alter Vektor fuer Bootlog */
+p_vt52:             DS.L 1              /* fuer VT52.PRG */
 __e_bios:
 
 
@@ -337,7 +337,7 @@ __e_bios:
 
 **********************************************************************
 *
-* Header für MagicMacX. Übergabestruktur zwischen
+* Header fuer MagicMacX. Uebergabestruktur zwischen
 * Atari und MacOS X
 *
 **********************************************************************
@@ -346,7 +346,7 @@ MSysX:
  DC.L     'MagC'              ;                                   000
  DC.L     MacSysX_sizeof      ; MacSys_len                        004
  DC.L     syshdr              ; Adresse des Atari-Syshdr          008
- DC.L     tab_unshift         ; 5*128 Bytes für Tastaturtabellen 00c
+ DC.L     tab_unshift         ; 5*128 Bytes fuer Tastaturtabellen 00c
  DC.L     mem_root            ;                                   010
  DC.L     act_pd              ;                                   014
  DC.L     act_appl            ;                                   018
@@ -406,15 +406,15 @@ MSysX:
 
 **********************************************************************
 *
-* Alter Header für MagicMac. Leider notwendig, weil die Behnes
-* ihr VDI nicht angepaßt haben.
+* Alter Header fuer MagicMac. Leider notwendig, weil die Behnes
+* ihr VDI nicht angepasst haben.
 *
 **********************************************************************
 
 MSys:
  DC.L     'MagC'              ; $00
  DC.L     syshdr              ; $04 Adresse des Atari-Syshdr
- DC.L     tab_unshift         ; $08 5*128 Bytes für Tastaturtabellen
+ DC.L     tab_unshift         ; $08 5*128 Bytes fuer Tastaturtabellen
  DC.L     0                   ; $0c Version
  DC.W     0                   ; $10 CPU (30=68030, 40=68040)
  DC.W     0                   ; $12 FPU-Typ
@@ -429,12 +429,12 @@ MSys:
  DC.L     0                   ; $34 MacSys_syshalt
  DC.L     0                   ; $38 MacSys_coldboot
  DC.L     0                   ; $3c MacSys_debugout
- DC.L     0                   ; $40 prt_cis  Für Drucker (Atari -> MAC)
+ DC.L     0                   ; $40 prt_cis  Fuer Drucker (Atari -> MAC)
  DC.L     0                   ; $44 prt_cos
  DC.L     0                   ; $48 prt_cin
  DC.L     0                   ; $4c prt_cout
  DC.L     0                   ; $50 ser_rsconf
- DC.L     0                   ; $54 ser_cis  FÜr ser1 (Atari -> MAC)
+ DC.L     0                   ; $54 ser_cis  FUer ser1 (Atari -> MAC)
  DC.L     0                   ; $58 ser_cos
  DC.L     0                   ; $5c ser_cin
  DC.L     0                   ; $60 ser_cout
@@ -443,7 +443,7 @@ MSys:
  DC.L     0                   ; $6c MacSys_set_physbase
  DC.L     0                   ; $70 MacSys_VsetRGB
  DC.L     0                   ; $74 MacSys_VgetRGB
- DC.L     BehneError          ; $78 MacSys_error. ###### FÜR BEHNES ######
+ DC.L     BehneError          ; $78 MacSys_error. ###### FUeR BEHNES ######
  DC.L     0                   ; MacSys_init
  DC.L     0                   ; MacSys_drv2devcode
  DC.L     0                   ; MacSys_rawdrvr
@@ -471,7 +471,7 @@ MSys:
 
 
 _start:
-; nur für PASM
+; nur fuer PASM
 ;
 
 syshdr:
@@ -506,10 +506,10 @@ bot_ver_ok:
 
  move.w   MSysX+MacSysX_fpu(pc),d0
  beq.b    bot_ok1                  ; keine FPU
- frestore long_zero                ; für 68882
+ frestore long_zero                ; fuer 68882
 
 bot_ok1:
-* BIOS- Variablenbereich löschen
+* BIOS- Variablenbereich loeschen
  lea      clear_area,a0
  lea      __e_dos,a1
  moveq    #0,d0
@@ -522,7 +522,7 @@ bot_vclear:
  bhi.b    bot_vclear
 
  clr.l    p_vt52_winlst            ; damit DOS nicht verwirrt wird
- lea      config_status,a0         ; config-Status-Block löschen
+ lea      config_status,a0         ; config-Status-Block loeschen
  moveq    #7-1,d0
 ccfl_loop:
  clr.l    (a0)+
@@ -543,14 +543,14 @@ inst_cook:
 * Beginn der TPA setzen (je nachdem, ob GEM enthalten ist)
 
  movea.l  syshdr+os_magic(pc),a0        ; Zeiger auf GEM- Parameterblock
- cmpi.l   #$87654321,(a0)+              ; gültig ?
+ cmpi.l   #$87654321,(a0)+              ; gueltig ?
  beq.b    bot_aestpa                    ; ja
  lea      syshdr+os_membot(pc),a0       ; TPA- Daten ohne AES
 bot_aestpa:
  move.l   (a0)+,end_os                  ; Ende der Variablen Adresse 0..
  move.l   (a0),exec_os
 
-* Installation einiger Exceptionvektoren für Disk und Ausgabe
+* Installation einiger Exceptionvektoren fuer Disk und Ausgabe
 
  move.l   #dummy_hdv_init,hdv_init
  move.l   #dummy_rwabs,hdv_rw
@@ -572,7 +572,7 @@ bot_aestpa:
  move.w   #3,seekrate
  move.w   #-1,_dumpflg
  move.w   #-1,pe_slice             ; Zeitscheibensteuerung abschalten
- clr.l    act_appl                 ; single task
+ clr.l    act_appl.l               ; single task
 
  move.l   #'_DMY',dummy_sem+bl_name  ; Dummy- Semaphore initialisieren
  clr.l    config_status+16         ; kein paralleler Plattentransfer
@@ -581,11 +581,11 @@ bot_aestpa:
  move.l   #savptr_area,savptr
  move.l   #dummyfn,swv_vec
 ; clr.l   _drvbits                 ; werden vom Emulator gesetzt
- clr.l    _shell_p                 ; !!! wird jetzt gelöscht
- move.l   #hdl_pling,bell_hook     ; Ton für ^G
+ clr.l    _shell_p                 ; !!! wird jetzt geloescht
+ move.l   #hdl_pling,bell_hook     ; Ton fuer ^G
  move.l   #hdl_klick,kcl_hook      ; Tastenklickroutine
- move.l   #warm_boot,warmbvec      ; Sprungvektor für Ctrl-Alt-Del
- move.l   #cold_boot,coldbvec      ; Sprungvektor für Ctrl-Alt-Rshift-Del
+ move.l   #warm_boot,warmbvec      ; Sprungvektor fuer Ctrl-Alt-Del
+ move.l   #cold_boot,coldbvec      ; Sprungvektor fuer Ctrl-Alt-Rshift-Del
 
 * RAM- syshdr erstellen (wozu ?)
 
@@ -595,7 +595,7 @@ bot_aestpa:
 
  lea      8,a0
  lea      print_bombs10(pc),a1
- moveq    #64-3,d0                 ; 0 und 1 unverändert, 2..63 auf Bomben
+ moveq    #64-3,d0                 ; 0 und 1 unveraendert, 2..63 auf Bomben
 bot_loop:
  move.l   a1,(a0)+
  adda.l   d1,a1
@@ -617,7 +617,7 @@ bot_loop:
  move.l   a3,$88                   ; Trap #2
  move.l   #int_linea,$28           ; LineA
 
-* etv_timer und etv_term auf RTS, VBL- Queue löschen
+* etv_timer und etv_term auf RTS, VBL- Queue loeschen
 
  lea      dummyfn(pc),a4
  move.l   a4,etv_timer
@@ -632,7 +632,7 @@ bot_loop3:
 
 * Devicevektoren initialisieren
 
- lea      ori_dev_vecs(pc),a0      ; ROM-Gerätevektoren
+ lea      ori_dev_vecs(pc),a0      ; ROM-Geraetevektoren
  lea      dev_vecs,a1
  lea      mbiosvecs,a2
  moveq    #$1f,d0
@@ -645,7 +645,7 @@ bot_loop4:
 
  move.w   #$1111,flg_50hz          ; jedes vierte Bit gesetzt
  move.w   #20,_timer_ms            ; 50Hz
- lea      int_hz_200(pc),a2        ; der 200Hz- Zähler ...
+ lea      int_hz_200(pc),a2        ; der 200Hz- Zaehler ...
  moveq    #5,d0                    ; ... wird MFP- Interrupt 5
  bsr      _mfpint
  moveq    #0,d0                    ; MFP, nicht SCC
@@ -704,7 +704,7 @@ _cpyloop3:
 
  move.l   MSysX+MacSysX_pixmap(pc),a0
  jsr      vdi_blinit               ; Blitterstatus des VDI initialisieren
-                                   ; (für Atari VDI)
+                                   ; (fuer Atari VDI)
  DEB      'VT52 initialisieren'
 
  jsr      vt52_init                ; VT52 initialisieren
@@ -729,7 +729,7 @@ _cpyloop3:
  bsr      Bmalloc
  move.l   a0,_dskbufp              ; _dskbufp = Malloc(4096L)
 
- move.l   #SUPERSTACKLEN,sust_len  ; Größe des Supervisorstacks pro App
+ move.l   #SUPERSTACKLEN,sust_len  ; Groesse des Supervisorstacks pro App
  bsr      dos_init
 
  jsr      mxfs_init                ; MAC-XFS initialisieren
@@ -744,7 +744,7 @@ _cpyloop3:
  tst.l    d0
  beq      fatal_err
  move.l   d0,app0
- add.l    (sp)+,d0                 ; Stacklänge addieren
+ add.l    (sp)+,d0                 ; Stacklaenge addieren
  addq.l   #2,sp
  move.l   d0,pgm_superst
  move.l   d0,a0                    ; neu
@@ -758,7 +758,7 @@ _cpyloop3:
  tst.l    d0
  beq      fatal_err
  move.l   d0,pgm_userst            ; merken
- add.l    (sp)+,d0                 ; Stacklänge addieren
+ add.l    (sp)+,d0                 ; Stacklaenge addieren
  addq.l   #2,sp
  move.l   d0,a0
  move.l   a0,usp
@@ -780,7 +780,7 @@ _cpyloop3:
 
 * Bootroutinen (nach wie vor gilt: sp == endofvars)
 
-;bsr      exec_respgms             ; residente Programme ausführen
+;bsr      exec_respgms             ; residente Programme ausfuehren
 
  DEB      'Von Platte booten'
 
@@ -808,7 +808,7 @@ _cpyloop3:
 * VFAT, Tastaturtabellen, Log-Datei, Startbild
 * XTENSION, AUTO
 * AES starten
-* Auflösungswechsel
+* Aufloesungswechsel
 
      INCLUDE "auto.s"
 
@@ -821,7 +821,7 @@ _cpyloop3:
 * long mmx_daemon( d0 = int cmd, a0 = void *params )
 *
 * ruft auf dem Macintosh spezielle Daemon-Funktionen auf.
-* Wird über den MgMx-Cookie aufgerufen.
+* Wird ueber den MgMx-Cookie aufgerufen.
 *
 
 mmx_daemon:
@@ -873,7 +873,7 @@ dos_macfn:
 * long xcmd_macfn( a0 = void *params )
 *
 * ruft auf dem Macintosh spezielle XCMD-Funktionen auf.
-* Wird über den MgMx-Cookie aufgerufen.
+* Wird ueber den MgMx-Cookie aufgerufen.
 *
 
 xcmd_macfn:
@@ -888,7 +888,7 @@ xcmd_macfn:
 * long xcmdexec_macfn( d0 = LONG SymPtr, a0 = void *params )
 *
 * ruft auf dem Macintosh spezielle XCMD-Funktionen auf.
-* Wird über den MgMx-Cookie aufgerufen.
+* Wird ueber den MgMx-Cookie aufgerufen.
 *
 
 xcmdexec_macfn:
@@ -1031,13 +1031,13 @@ critical_error:
 
 *********************************************************************
 *
-* Der Zugriff bei Rwabs ist bei gesetztem LOCK nur für den
-* sperrenden Prozeß erlaubt
+* Der Zugriff bei Rwabs ist bei gesetztem LOCK nur fuer den
+* sperrenden Prozess erlaubt
 *
 
 IRwabs:
  movem.l  d3-d7/a3-a6,-(sp)
- subq.l   #4,sp               ; Platz für Zeiger
+ subq.l   #4,sp               ; Platz fuer Zeiger
  lea      12(a0),a0
  move.l   (a0),-(sp)          ; lrecno
  move.l   -(a0),d0            ; recno/dev
@@ -1045,13 +1045,13 @@ IRwabs:
  move.w   d0,a1
  add.w    a1,a1
  add.w    a1,a1
- move.l   a1,4(sp)            ; merken für DOS- Writeback
+ move.l   a1,4(sp)            ; merken fuer DOS- Writeback
  move.l   dlockx(a1),d3
  beq.b    rwabs_ok
  cmp.l    act_pd,d3
  bne.b    rwabs_elocked
 rwabs_ok:
- clr.l    bufl_timer(a1)      ; für DOS- Writeback (als in Arbeit markieren)
+ clr.l    bufl_timer(a1)      ; fuer DOS- Writeback (als in Arbeit markieren)
  move.l   d0,-(sp)            ; recno/dev
  move.l   -(a0),-(sp)         ; count/buf.lo
  move.l   -(a0),-(sp)         ; buf.hi/rwflag
@@ -1060,7 +1060,7 @@ rwabs_ok:
  lea      16(sp),sp
 rwabs_ende:
  move.l   (sp)+,a1
- move.l   _hz_200,bufl_timer(a1)   ; für DOS- Writeback
+ move.l   _hz_200,bufl_timer(a1)   ; fuer DOS- Writeback
  movem.l  (sp)+,d3-d7/a3-a6
  rte
 rwabs_elocked:
@@ -1094,7 +1094,7 @@ ret0:
 *
 
 dummynopfn:
- nop        ;Eingefügt wegen jsr 4(a2) in Bconout()!
+ nop        ;Eingefuegt wegen jsr 4(a2) in Bconout()!
  nop
 dummyfn:
  rts
@@ -1124,15 +1124,15 @@ ihbl_ende:
 * void int_vbl( void )
 *
 * Bearbeitet den VBL- Interrupt
-* TOS 3.06 bearbeitet zunächst die VBL-Queue
+* TOS 3.06 bearbeitet zunaechst die VBL-Queue
 *
 
 int_vbl:
- addq.l   #1,_frclock              ; Anzahl aller VBLs mitzählen
+ addq.l   #1,_frclock              ; Anzahl aller VBLs mitzaehlen
  subq.w   #1,vblsem                ; VBL gesperrt ?
  bmi      ivbl_locked              ; ja, ende
  movem.l  d0/d1/d2/d3/d4/d5/d6/d7/a0/a1/a2/a3/a4/a5/a6,-(sp)
- addq.l   #1,_vbclock              ; Anzahl aller VBL-Routinen mitzählen
+ addq.l   #1,_vbclock              ; Anzahl aller VBL-Routinen mitzaehlen
 
  jsr      vdi_cursor               ; Cursorblinken
 
@@ -1192,8 +1192,8 @@ vsy_loop:
 *
 * Neu:
 *    Bei baud = -2, ctr = -2, ucr = -1, rsr = -1, tsr = -1, scr = -1
-*    wird der nächste Parameter abgefragt. Wenn er 'iocl' ist, dann
-*    folgen Bios-Gerätenummer, Kommando und Puffer (von Fcntl).
+*    wird der naechste Parameter abgefragt. Wenn er 'iocl' ist, dann
+*    folgen Bios-Geraetenummer, Kommando und Puffer (von Fcntl).
 *
 
 Rsconf:
@@ -1218,7 +1218,7 @@ Rsconf:
 
 **********************************************************************
 *
-* TRAP- Einsprünge für den 680x0
+* TRAP- Einspruenge fuer den 680x0
 *
 xbios_tab:
  DC.W     95
@@ -1336,7 +1336,7 @@ bios_tab:
 
 ;
 ; Der neue (X)Bios-Dispatcher sichert, wenn notwendig, die Register auf dem
-; ssp => Um dies Stackbelastung möglichst wenig zu halten, sollten kurze
+; ssp => Um dies Stackbelastung moeglichst wenig zu halten, sollten kurze
 ; Unterroutinen (4-20 Bytes) expandiert werden.
 XBiosDisp:
    lea      xbios_tab(pc),a1
@@ -1386,7 +1386,7 @@ _biossave:
 *
 Supexec:
    move.l   (a0),a0
-   movem.l  d3-d7/a3-a6,-(sp) ;aus Kompatibilitätsgründen sichern
+   movem.l  d3-d7/a3-a6,-(sp) ;aus Kompatibilitaetsgruenden sichern
    jsr      (a0)
    movem.l  (sp)+,d3-d7/a3-a6
    rte
@@ -1423,14 +1423,14 @@ Bcostat:
 
 calc_Bvec:
    move.w   (a0)+,d0          ;Device
-   cmp.w    #5,d0             ;ST-Gerät ?
+   cmp.w    #5,d0             ;ST-Geraet ?
    bls.b    Bdev_st           ;ja, normale Routine
 
-   subq.w   #6,d0             ;Offset für erweiterte serielle Schnittstellen
-   cmp.w    bconmap_struct+4,d0 ;Anzahl zusätzlicher Schnittstellen
-   bcc      ret0_rte          ;überschritten, return(0L) (kein Fehler??!!??)
+   subq.w   #6,d0             ;Offset fuer erweiterte serielle Schnittstellen
+   cmp.w    bconmap_struct+4,d0 ;Anzahl zusaetzlicher Schnittstellen
+   bcc      ret0_rte          ;ueberschritten, return(0L) (kein Fehler??!!??)
 
-   lea      intern_maptab,a2  ;max 4 * 6 Einträge auf die seriellen-Routinen
+   lea      intern_maptab,a2  ;max 4 * 6 Eintraege auf die seriellen-Routinen
    movea.l  bconmap_struct,a1
    lsl.w    #3,d0             ;*24...
    adda.w   d0,a1
@@ -1442,7 +1442,7 @@ calc_Bvec:
    movea.l  (a1),a1           ;Adresse ermitteln...
    movea.l  (a2),a2
    cmpa.l   a1,a2             ;id. ?
-   bne.b    Bvec_changed      ;andere Routine eingehängt !
+   bne.b    Bvec_changed      ;andere Routine eingehaengt !
    jsr      (a2)
    rte
 
@@ -1452,7 +1452,7 @@ Bdev_st:
    movea.l  0(a1,d0.w),a1     ;Bios-Vektor
    movea.l  0(a2,d0.w),a2     ;Adr. der Orginalroutine
    cmpa.l   a1,a2             ;id. ?
-   bne.b    Bvec_changed      ;andere Routine eingehängt !
+   bne.b    Bvec_changed      ;andere Routine eingehaengt !
    jsr      (a2)              ;in die eigene Routine
    rte
 
@@ -1474,14 +1474,14 @@ Bconout:
    lea      Bconoutvec,a2
 
    move.w   (a0)+,d0          ;Device
-   cmp.w    #5,d0             ;ST-Gerät ?
+   cmp.w    #5,d0             ;ST-Geraet ?
    bls.b    dev_st            ;ja, normale Routine
 
-   subq.w   #6,d0             ;Offset für erweiterte serielle Schnittstellen
-   cmp.w    bconmap_struct+4,d0 ;Anzahl zusätzlicher Schnittstellen
-   bcc      ret0_rte          ;überschritten, return(0L) (kein Fehler??!!??)
+   subq.w   #6,d0             ;Offset fuer erweiterte serielle Schnittstellen
+   cmp.w    bconmap_struct+4,d0 ;Anzahl zusaetzlicher Schnittstellen
+   bcc      ret0_rte          ;ueberschritten, return(0L) (kein Fehler??!!??)
 
-   lea      intern_maptab,a2  ;max 4 * 6 Einträge auf die seriellen-Routinen
+   lea      intern_maptab,a2  ;max 4 * 6 Eintraege auf die seriellen-Routinen
    moveq    #12,d1            ;Tabellen-Offset
    movea.l  bconmap_struct,a1
    lsl.w    #3,d0
@@ -1494,8 +1494,8 @@ Bconout:
    movea.l  (a1),a1           ;Adresse der Routine ermitteln...
    movea.l  (a2),a2
    cmpa.l   a1,a2             ;id. ?
-   bne.b    Bovec_changed     ;andere Routine eingehängt !
-   jsr      4(a2)             ; "lea 6(sp),a0" überspringen
+   bne.b    Bovec_changed     ;andere Routine eingehaengt !
+   jsr      4(a2)             ; "lea 6(sp),a0" ueberspringen
    rte
 
 dev_st:
@@ -1504,9 +1504,9 @@ dev_st:
    movea.l  0(a1,d0.w),a1     ; Bios-Vektor
    movea.l  0(a2,d0.w),a2     ; Adr. der Orginalroutine
    cmpa.l   a1,a2             ; id. ?
-   bne.b    Bovec_changed     ; andere Routine eingehängt !
+   bne.b    Bovec_changed     ; andere Routine eingehaengt !
    jsr      4(a2)             ; in die eigene Routine
-                              ; "lea 6(sp),a0" überspringen
+                              ; "lea 6(sp),a0" ueberspringen
 
    rte
 ;
@@ -1567,16 +1567,16 @@ Getmpb:
  movea.l  (a0),a0                  ; Tabelle, in die die drei Zeiger kommen
  lea      themd,a1
  move.l   a1,(a0)+                 ; themd in die freelist
- clr.l    (a0)+                    ; alloclist löschen
+ clr.l    (a0)+                    ; alloclist loeschen
  move.l   a1,(a0)                  ; themd als roving pointer
  clr.l    (a1)+                    ; Listenende
  move.l   _membot,(a1)+            ; Startadresse _membot
  move.l   _memtop,d0
  sub.l    _membot,d0
- move.l   d0,(a1)+                 ; Länge
+ move.l   d0,(a1)+                 ; Laenge
  clr.l    (a1)                     ; kein owner
-* ggf. zweiten MD für TT-RAM einrichten
- cmpi.l   #$1357bd13,fstrm_valid   ; TT-RAM gültig ?
+* ggf. zweiten MD fuer TT-RAM einrichten
+ cmpi.l   #$1357bd13,fstrm_valid   ; TT-RAM gueltig ?
  bne.b    gmp_ende            ; nein, Ende
  move.l   fstrm_beg,d0
  move.l   fstrm_top,d1
@@ -1586,7 +1586,7 @@ Getmpb:
  move.l   a1,themd            ; hineinketten
  clr.l    (a1)+               ; letzter MD
  move.l   d0,(a1)+            ; Startadresse
- move.l   d1,(a1)+            ; Länge
+ move.l   d1,(a1)+            ; Laenge
  clr.l    (a1)                ; unbenutzt
 gmp_ende:
  rte
@@ -1596,9 +1596,9 @@ gmp_ende:
 * long Bmaddalt( void )
 *
 * 25.9.96:     Wird bei DOS Maddalt() aufgerufen, um ggf. einen FRB
-*              anzulegen. Rückgabe ENSMEM, falls dies nicht geht.
+*              anzulegen. Rueckgabe ENSMEM, falls dies nicht geht.
 *              Legt keinen (!) Cookie _FRB an.
-*              Ist auf dem Mac überflüssig
+*              Ist auf dem Mac ueberfluessig
 
 Bmaddalt:
  moveq    #0,d0
@@ -1612,7 +1612,7 @@ Bmaddalt:
 Setexc:
  movea.w  (a0)+,a1                 ; nr
  add.w    a1,a1
- add.w    a1,a1                    ; mal 4 für Langwortzugriff
+ add.w    a1,a1                    ; mal 4 fuer Langwortzugriff
  move.l   (a1),d0                  ; bisheriger Vektor
  move.l   (a0),d1                  ; -1 oder neuer Wert
  bmi.b    sxc_ende
@@ -1635,7 +1635,7 @@ Tickcal:
 * void *Bmalloc( d0 = long amount )
 *
 * Achtung: darf nur vor dos_init() aufgerufen werden.
-* ändert nicht d0
+* aendert nicht d0
 *
 Bmalloc:
  move.l   _membot,a0
@@ -1676,7 +1676,7 @@ bios_ptr:
 *
 * void fatal_err( void )
 *
-* Ein fataler Fehler führt zum Anhalten des Systems
+* Ein fataler Fehler fuehrt zum Anhalten des Systems
 *
 
 fatal_err:
@@ -1698,7 +1698,7 @@ halt_system:
 *
 * void print_bombs10( void )
 *
-* Routine für 68010/20/30/40
+* Routine fuer 68010/20/30/40
 *
 
 print_bombs10:
@@ -1723,10 +1723,10 @@ pb_loop:
  dbf      d0,pb_loop
  move.l   #$12345678,proc_lives
  move.l   #savptr_area,savptr
-* Betriebssystem überprüfen
+* Betriebssystem ueberpruefen
  lea      _start,a0
  lea      _ende,a1
-; DEBL    'Prüfsummenberechnung von :',a0
+; DEBL    'Pr�fsummenberechnung von :',a0
 ; DEBL    '                     bis :',a1
  moveq    #0,d0
 os_chkloop:
@@ -1736,8 +1736,8 @@ os_chkloop:
  cmp.l    os_chksum,d0
  beq      os_chk_ok
 
-;    DEBL 'erwartete Prüfsumme ',os_chksum
-;    DEBL 'Falsche Prüfsumme ',d0
+;    DEBL 'erwartete Pr�fsumme ',os_chksum
+;    DEBL 'Falsche Pr�fsumme ',d0
 
  lea      os_corr_s(pc),a0
  jsr      putstr
@@ -1747,7 +1747,7 @@ os_chk_ok:
  lea      MSysX+MacSysX_syserr(pc),a0
  MACPPC
 
-* Prozeß beenden
+* Prozess beenden
  move.w   #-1,-(sp)
  btst.b   #5,config_status+3       ; KAOS oder TOS ?
  bne.b    pb_tos
@@ -1765,7 +1765,7 @@ pb_tos:
 *
 * long bios_rawdrvr( d0 = int opcode, d1 = long devcode, ... )
 *
-* Führt gerätespezifische Aktionen aus.
+* Fuehrt geraetespezifische Aktionen aus.
 *
 * d0 = 0: Medium auswerfen.
 *
@@ -1788,7 +1788,7 @@ bios_rawdrvr:
 * long drv2devcode( d0 = int biosdev )
 *
 * Rechnet ein BIOS-Device in einen devcode um (major/minor)
-* Rückgabe 0, wenn Fehler
+* Rueckgabe 0, wenn Fehler
 * wird vom DOS aufgerufen
 *
 
@@ -1814,13 +1814,13 @@ Prtblk:
  move.l   (a0),d0
  beq.b    prb_spec
  move.l   prtblk_vec,a1
- jmp      (a1)                     ; ab geht's
+ jmp      (a1)                     ; ab geht es
 prb_spec:
  addq.l   #4,a0
  move.w   (a0)+,d0                 ; int subfn
  bne.b    prb_err
 * Unterfunktion 0: Prtblk einklinken
- move.l   prtblk_vec,d0            ; alte Routine zurückgeben
+ move.l   prtblk_vec,d0            ; alte Routine zurueckgeben
  move.l   (a0),prtblk_vec
  rte
 prb_err:
@@ -1843,7 +1843,7 @@ _Scrdmp:
  move.l   a0,d0                    ; Hardcopy installiert ?
  beq.b    _scrd_err                ; nein !
  jsr      (a0)
-* MagiC 3.0: DUMMY-ROUTINE FÜR HARDCOPY
+* MagiC 3.0: DUMMY-ROUTINE FUeR HARDCOPY
 do_hardcopy:
 _scrd_err:
  move.w   #-1,_dumpflg
@@ -1922,7 +1922,7 @@ create_ram_syshdr:
 crsh_loop:
  move.b   0(a0,d0.w),0(a1,d0.w)
  dbf      d0,crsh_loop
- move.w   jmpop(pc),-6(a1)              ; Opcode für "jmp"
+ move.w   jmpop(pc),-6(a1)              ; Opcode fuer "jmp"
  move.l   4(a1),-4(a1)                  ;                  os_start
  move.w   braop(pc),(a1)                ; Branch auf "jmp os_start"
  move.w   $1e(a1),$1c(a1)               ; gendatg->palmode ??
@@ -1940,7 +1940,7 @@ braop:
 *
 * long Random( void )
 *
-* verändert d0/d1/d2
+* veraendert d0/d1/d2
 *
 Random:
  bsr.b   _Random
@@ -1967,7 +1967,7 @@ _ran_lok:
 *
 * EQ/NE d0 = long getcookie( d0 = long val )
 *
-* Rückgabe:         d0 = 0    nicht gefunden
+* Rueckgabe:         d0 = 0    nicht gefunden
 *                   sonst     d1.l = Wert des Cookies, a0 = Zeiger
 *
 
@@ -2060,7 +2060,7 @@ bin_to_bcd:
 *
 * 15.9.96:     Das Schicken des Einzelbytes $1c an den Tastaturchip
 *              wird simuliert. Es wird kbdvecvs.clockvec aufgerufen
-*              und die Uhrzeit übergeben.
+*              und die Uhrzeit uebergeben.
 *
 
 Ikbdws:
@@ -2105,15 +2105,15 @@ _Bconmap:
  move.l   #bconmap_struct,d0
  cmp.w    #-2,d1              ; struct bconmap holen ?
  beq      _bmp_ende           ; ja, ende
- moveq    #0,d0               ; Rückgabe: Fehler
+ moveq    #0,d0               ; Rueckgabe: Fehler
  subq.w   #6,d1               ; Nummer um Offset 6 dekrementieren
  bmi      _bmp_ende           ; Wert war < 6, return(0)
- cmp.w    bconmap_struct+4,d1 ; Tabellenlänge
- bcc      _bmp_ende           ; Wert war >= Tabellenlänge, return(0)
+ cmp.w    bconmap_struct+4,d1 ; Tabellenlaenge
+ bcc      _bmp_ende           ; Wert war >= Tabellenlaenge, return(0)
  move.w   sr,-(sp)
  ori.w    #$700,sr            ; im TOS 2.05 vergessen!
 * aktuellen Port in maptab retten (wozu, er kommt doch daher ?)
- move.w   bconmap_struct+6,d0 ; aktueller Port, diesen zurückgeben
+ move.w   bconmap_struct+6,d0 ; aktueller Port, diesen zurueckgeben
  move.w   d0,d1               ; aktueller Port
 
  subq.w   #6,d1               ; Offset abziehen
@@ -2128,8 +2128,8 @@ _Bconmap:
  move.l   dev_vecs+$24,(a0)+  ; Bconin(1)
  move.l   dev_vecs+$44,(a0)+  ; Bcostat(a1)
  move.l   dev_vecs+$64,(a0)+  ; Bconout(1)
- move.l   p_rsconf,(a0)+      ; Rsconf für dev 1
- move.l   p_iorec,(a0)+       ; iorec  für dev 1
+ move.l   p_rsconf,(a0)+      ; Rsconf fuer dev 1
+ move.l   p_iorec,(a0)+       ; iorec  fuer dev 1
 * neuen Port einsetzen
  move.w   4+2(sp),d1
  move.w   d1,bconmap_struct+6 ; umsetzen
@@ -2187,7 +2187,7 @@ _bmp_ende:
 *
 * void init_bconmap( void )
 *
-* Geräte:
+* Geraete:
 *
 *    ST:  Mega STE:  TT:
 * ------------------------------------------------------------------
@@ -2203,8 +2203,8 @@ init_bconmap:
  move.l   a0,(a1)+
  lea      maptab_data(pc),a2
  bsr      _bco_cpy            ; ser1 (ST-MFP)
- moveq    #1,d0               ; zunächst eine Schnittstelle
- move.w   d0,(a1)+            ; Länge festlegen
+ moveq    #1,d0               ; zunaechst eine Schnittstelle
+ move.w   d0,(a1)+            ; Laenge festlegen
  move.w   #6,(a1)             ; aktueller ist ST-kompatibler serieller Port
 
  lea      dflt_maptable,a0
@@ -2216,7 +2216,7 @@ ins_internmap:                ;Maptab der Mag!X-eigenen Routinen erstellen
 
  lea      dflt_maptable,a0
  move.w   sr,-(sp)
- ori.w    #$700,sr            ;in Gerätevektoren eintragen...
+ ori.w    #$700,sr            ;in Geraetevektoren eintragen...
  move.l   (a0)+,dev_vecs+4    ; Bconstat(1)
  move.l   (a0)+,dev_vecs+$24  ; Bconin(1)
  move.l   (a0)+,dev_vecs+$44  ; Bcostat(1)
@@ -2244,7 +2244,7 @@ maptab_data:
  DC.L bcostat_ser1       ; Bcostat
  DC.L bconout_ser1       ; Bconout
  DC.L rsconf_ser1        ; Rsconf
- DC.L p_iorec_ser1       ; iorec für ST-MFP
+ DC.L p_iorec_ser1       ; iorec fuer ST-MFP
 
 
 
@@ -2258,7 +2258,7 @@ bconstat_con:
 
 bconin_con:
  lea      iorec_kb,a0              ; IKBD-Iorec
- moveq    #4,d2                    ; Größe eines Arrayelementes
+ moveq    #4,d2                    ; Groesse eines Arrayelementes
 _bconin:
  lea      8(a0),a1                 ; *Tail
  move.w   (a1),d1                  ; Tail-Index
@@ -2271,9 +2271,9 @@ _bconin:
  cmp.w    (a1),d1                  ; Tail-Index
  beq.b    bin_again                ; jetzt ist das Zeichen weg! (Fehler!)
 * Das Zeichen ist immer noch da
- add.w    d2,d1                    ; Head-Index erhöhen
+ add.w    d2,d1                    ; Head-Index erhoehen
  movea.l  (a0)+,a1                 ; Pufferzeiger
- cmp.w    (a0)+,d1                 ; mit Puffergröße vergleichen
+ cmp.w    (a0)+,d1                 ; mit Puffergroesse vergleichen
  bcs.b    bin_l1
  moveq    #0,d1                    ; Pufferzeiger auf Pufferbeginn
 bin_l1:
@@ -2323,7 +2323,7 @@ hdl_klick:
 
 ori_iorec_kb:
  DC.L     iorec_kb_buf             ; Pufferadresse
- DC.W     $0100                    ; Größe 256 Bytes = 64 Langworte
+ DC.W     $0100                    ; Groesse 256 Bytes = 64 Langworte
  DC.W     0                        ; Head Index
  DC.W     0                        ; Tail Index
  DC.W     $40                      ; Low water mark
@@ -2348,7 +2348,7 @@ _mfpint:
  add.w    d0,a0
  add.w    d0,a0
  add.w    d0,a0
- add.w    d0,a0                    ; * 4 für Langwortzugriff
+ add.w    d0,a0                    ; * 4 fuer Langwortzugriff
  move.l   a2,(a0)                  ; Interrupt umsetzen
  rts
 
@@ -2396,7 +2396,7 @@ Esetsmear:
 *
 
 Iorec:
- move.l   p_iorec,a1               ; für aux
+ move.l   p_iorec,a1               ; fuer aux
  move.w   (a0),d1
  beq.b    iorec_ok                 ; 0
  lea      iorec_kb,a1
@@ -2453,9 +2453,9 @@ Dosound:
  lea      sound_data,a1
  move.l   (a1),d0                  ; laufendes Tonprogramm
  move.l   (a0),d1                  ; neues Tonprogramm
- bmi.b    dsnd_get                 ;  ist -1 => laufendes zurückgeben
+ bmi.b    dsnd_get                 ;  ist -1 => laufendes zurueckgeben
  move.l   d1,(a1)+                 ; neues setzen
- clr.b    (a1)                     ; Flag löschen
+ clr.b    (a1)                     ; Flag loeschen
 dsnd_get:
  rte
 
@@ -2505,17 +2505,17 @@ i200_noti:
  btst     #1,conterm               ; Tastenwiederh. eingeschaltet ?
  beq.b    i200_nokey               ; nein
  lea      keyrepeat,a0
- move.b   (a0)+,d0                 ; Scancode, Taste gedrückt ?
+ move.b   (a0)+,d0                 ; Scancode, Taste gedrueckt ?
  beq.b    i200_nokey               ; nein
- subq.b   #1,(a0)                  ; Zähler für Verzögerung dekrementieren
+ subq.b   #1,(a0)                  ; Zaehler fuer Verzoegerung dekrementieren
  bne.b    i200_nokey               ; ist nicht 0
- move.b   key_reprate,(a0)         ; Zähler neu laden
+ move.b   key_reprate,(a0)         ; Zaehler neu laden
  lea      iorec_kb,a0              ; Taste <d0> in Tastaturpuffer ...
  bsr      keyrep_entry             ; ... eintragen
 i200_nokey:
  move.w   _timer_ms,-(sp)
  movea.l  etv_timer,a0
- jsr      (a0)                     ; Userinterruptroutinen ausführen
+ jsr      (a0)                     ; Userinterruptroutinen ausfuehren
  addq.w   #2,sp
  movem.l  (sp)+,a6/a5/a4/a3/a2/a1/a0/d7/d6/d5/d4/d3/d2/d1/d0
 i200_yield:
@@ -2639,7 +2639,7 @@ Setscreen:
  move.l   (a0),d0                 ; *log
  moveq    #-1,d1
  cmp.l    d0,d1
- beq.b    setscr_nolog            ; log. Adr. nicht ändern
+ beq.b    setscr_nolog            ; log. Adr. nicht aendern
  move.l   d0,_v_bas_ad
 setscr_nolog:
  rte
@@ -2728,10 +2728,10 @@ Kbrate:
  lea      key_delay,a1
  move.w   (a1),d0                  ; altes delay/repeat
  move.w   (a0)+,d1                 ; neues delay
- bmi.b    kbr_ende                 ; ist -1, keine Änderung
+ bmi.b    kbr_ende                 ; ist -1, keine Aenderung
  move.b   d1,(a1)+                 ; neues delay setzen
  move.w   (a0),d1                  ; neues repeat
- bmi.b    kbr_ende                 ; ist -1, keine Änderung
+ bmi.b    kbr_ende                 ; ist -1, keine Aenderung
  move.b   d1,(a1)                  ; neues repeat setzen
 kbr_ende:
  rte
@@ -2744,8 +2744,8 @@ kbr_ende:
 
 Keytbl:
  lea      keytblx,a1               ; Zeiger auf KEYTAB-Struktur
- move.l   a1,d0                    ; Rückgabewert
- moveq    #3-1,d2                  ; Zähler für 3 Durchläufe
+ move.l   a1,d0                    ; Rueckgabewert
+ moveq    #3-1,d2                  ; Zaehler fuer 3 Durchlaeufe
 ktbl_loop:
  move.l   (a0)+,d1
  bmi.b    ktbl_noset
@@ -2761,7 +2761,7 @@ ktbl_noset:
 * EQ/NE char altcode_asc( char c )
 *
 * Wandelt einen Scan-/Ascii- Code einer ALT-Buchstabenkombination um
-* in ein ASCII-Zeichen (in Großbuchstaben).
+* in ein ASCII-Zeichen (in Grossbuchstaben).
 * Bsp.: Code $1e00 (Alt-A) ==> 'A'
 *            $7800 (Alt-1) ==> '1'
 *
@@ -2772,7 +2772,7 @@ altcode_asc:
  lsr.w    #8,d0                    ; Scancode ins Loword
  cmpi.w   #$78,d0
  bcs.b    ala_nonum
-* Sonderbehandlung für Alt-1 bis Alt-'
+* Sonderbehandlung fuer Alt-1 bis Alt-apostrophe
  cmpi.w   #$83,d0
  bhi.b    ala_nix
  subi.w   #$76,d0                  ; Umrechnung
@@ -2790,8 +2790,8 @@ ala_nix:
 * long (!) Bioskeys( void )
 *
 * Setzt im TOS nur 3 Tabellen.
-* In MagiC drei weitere (für AltGr)
-* IN MagiC ab 1.6.97 nochmals 3 weitere (für Alt)
+* In MagiC drei weitere (fuer AltGr)
+* IN MagiC ab 1.6.97 nochmals 3 weitere (fuer Alt)
 *
 
 Bioskeys:
@@ -2801,7 +2801,7 @@ Bioskeys:
 _Bioskeys:
  move.l   default_keytblxp,a1      ; Tabelle der <N_KEYTBL> Default-Zeiger
  lea      keytblx,a0               ; aktive Zeiger
- moveq    #N_KEYTBL-1,d0           ; Zähler
+ moveq    #N_KEYTBL-1,d0           ; Zaehler
 _bioskeys_loop:
  move.l   (a1)+,(a0)+
  dbra     d0,_bioskeys_loop
@@ -2824,11 +2824,11 @@ keybd_struct:
 
 **********************************************************************
 *
-* "Interrupt" für MIDI und Keyboard (MFP- Interrupt 6).
+* "Interrupt" fuer MIDI und Keyboard (MFP- Interrupt 6).
 *
-* Der Interrupt wird hier nur simuliert, und zwar folgendermaßen:
+* Der Interrupt wird hier nur simuliert, und zwar folgendermassen:
 *
-* d7 = 'MAGC': Daten sind gültig
+* d7 = 'MAGC': Daten sind gueltig
 *
 * dann:   d6 = 0:   MIDI
 *         d6 = 1:   Tastatur
@@ -2903,7 +2903,7 @@ ikbdsys:
 no_key:
    moveq    #0,d2                   ;nur Lobyte soll Daten enthalten
    move.b   d0,d2
-   subi.b   #$f6,d2                 ;d2 enthält Paketnummer 0..9
+   subi.b   #$f6,d2                 ;d2 enthaelt Paketnummer 0..9
 
    add.w    d2,d2
    move.w   pk_code_len(pc,d2.w),kbdvecs+$24 ;setze <ikbd_state> und <ikbd_cnt>
@@ -2940,7 +2940,7 @@ subr_dummy:
 ; 5=$fd: ???????
 ; 6=$fe: Joystick 0
 ; 7=$ff: Joystick 1
-pk_code_len:         ;in der Form: ikbd_state, Paket-Länge
+pk_code_len:         ;in der Form: ikbd_state, Paket-Laenge
  dc.b 1,7
  dc.b 2,5
  dc.b 3,2
@@ -2961,13 +2961,13 @@ pk_code_len:         ;in der Form: ikbd_state, Paket-Länge
 handle_package:
    cmpi.b   #6,d1
    bcc      handle_joy              ;Codes $fe/$ff
-   ext.w    d1                      ;muß für Indizierung auf .w gebracht werden
+   ext.w    d1                      ;muss fuer Indizierung auf .w gebracht werden
    add.w    d1,d1                   ;d1 = ikbd_state (1,2,3,4,5)
    add.w    d1,d1
    add.w    d1,d1                   ;* 8
    lea      hdlpckg_table-8(pc,d1.w),a2 ;ikbd_state auf 0..4 umrechnen
    movea.l  (a2)+,a0                ;Paketanfang
-   move.w   (a2)+,d1                ;Paketlänge
+   move.w   (a2)+,d1                ;Paketlaenge
    lea      0(a0,d1.w),a1           ;Paketende
    move.w   (a2),a2                 ;Sprungvektor rel. zu kbdvecs
    move.l   kbdvecs(a2),a2          ;Sprungvektor
@@ -2978,10 +2978,10 @@ handle_package:
    subq.b   #1,kbdvecs+$25          ;ikbd_cnt
    bne.b    hdlpckg_l1               ;noch nicht fertig
 hdlpckg_l2:
-                                    ;aus Komp.gründen bleibt d0 = (a1).b
+                                    ;aus Komp.gruenden bleibt d0 = (a1).b
    move.l   a0,-(sp)                ;Paketanfang als Parameter
 
-; übler Patch fürs VDI, das hier an der Interrupt-Maske herummanipuliert
+; uebler Patch fuers VDI, das hier an der Interrupt-Maske herummanipuliert
 
    cmpi.l   #$027cfdff,10(a2)
    bne.b    handpa_no_sr_mani
@@ -2998,7 +2998,7 @@ hdlpckg_l1:
 ;
 ; d0.b:  <ikbd_state>   (6=Joy0,7=Joy1)
 handle_joy:
-   ext.w    d1                      ;muß für Indizierung auf .w gebracht werden
+   ext.w    d1                      ;muss fuer Indizierung auf .w gebracht werden
    lea      pack_joy+1,a2
    move.b   d0,-6(a2,d1.w)          ;Wert merken (z.B. Bit 7 = Feuerknopf)
    movea.l  kbdvecs+$18,a2          ;joyvec
@@ -3037,7 +3037,7 @@ handle_key:
  bra.b    _handlekey
 ;   eori.w   #$300,sr          ;von IPL 6 auf 5 setzen
 ;   bsr.b    _handlekey
-;   eori.w   #$300,sr          ;von IPL 5 auf 6 zurück
+;   eori.w   #$300,sr          ;von IPL 5 auf 6 zurueck
 ;   rts
 
      INCLUDE "handlkey.s"
@@ -3045,7 +3045,7 @@ handle_key:
 **********************************************************************
 *
 * Wird aufgerufen, wenn das resvalid/resvector- Programm einen
-* Systemfehler provoziert hat. Führt einen Warmstart aus.
+* Systemfehler provoziert hat. Fuehrt einen Warmstart aus.
 *
 
 kill_resval:
@@ -3053,7 +3053,7 @@ kill_resval:
 
 **********************************************************************
 *
-* Führt einen Warmstart aus
+* Fuehrt einen Warmstart aus
 *
 * beim 68020/30 werden die Caches abgeschaltet
 *
@@ -3075,14 +3075,14 @@ warmb_00:
    btst     #0,d0
    bne      sys_start
    move.l   d0,a0
-   lea      warmb_00(pc),a6         ;Rücksprungadresse
+   lea      warmb_00(pc),a6         ;Ruecksprungadresse
    jmp      (a0)
    bra      sys_start
 
 
 **********************************************************************
 *
-* Führt einen Kaltstart aus
+* Fuehrt einen Kaltstart aus
 *
 
 cold_boot:
@@ -3145,7 +3145,7 @@ tab_alt:
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 tab_shalt:
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
- DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,'\',$00,$00,$00,$00,$00
+ DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$5c,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,'{','}',$00,$00,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
@@ -3158,7 +3158,7 @@ YYY  EQU  XXX       ; ist  nicht belegt
 
 tab_altgr:
 *       $0              $4              $8              $c
- DC.B  $00,YYY,$fc,$fd,$fe,$fb,$ae,$ee,$7b,'[',']',$7d,'\',$f4,YYY,YYY  * $0
+ DC.B  $00,YYY,$fc,$fd,$fe,$fb,$ae,$ee,$7b,'[',']',$7d,$5c,$f4,YYY,YYY  * $0
  DC.B  '@',$8a,$82,$00,$00,$97,$a3,$a1,$a2,$95,$b1,$7e,YYY,XXX,$a0,$85
  DC.B  $b0,$86,$a6,$00,$c0,$8d,$b3,$b4,$91,$f0,XXX,$f3,$98,$00,$87,$00  * $2
  DC.B  $00,$a4,$e6,$a9,$fa,$ff,XXX,$00,XXX,YYY,XXX,$c2,$c3,$c4,$c5,$c6
@@ -3179,10 +3179,10 @@ tab_shaltgr:
  DC.B  $00,$be,YYY,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
 tab_dead:
- DC.B     '´','`','^',0
- DC.B     'a','á','e','é','E','É','i','í','o','ó','u','ú',0
- DC.B     'a','à','A','À','e','è','i','ì','o','ò','u','ù',0
- DC.B     'a','â','e','ê','i','î','o','ô','u','û',0,0
+ DC.B     '',$ba,'','`','^',0
+ DC.B     'a','',$a0,'','e','',$82,'','E','',$90,'','i','',$a1,'','o','',$a2,'','u','',$a3,'',0
+ DC.B     'a','',$85,'','A','',$b6,'','e','',$8a,'','i','',$8d,'','o','',$95,'','u','',$97,'',0
+ DC.B     'a','',$83,'','e','',$88,'','i','',$8c,'','o','',$93,'','u','',$96,'',0,0
 
 **********************************************************************
 *
@@ -3206,12 +3206,12 @@ install_cookies:
  move.l   a5,-(sp)
  lea      cookies,a5               ; Adresse der Cookies
  move.l   a5,_p_cookies            ; Pointer setzen
-* _CPU Cookie, Loword enthält den <cpu_typ>
+* _CPU Cookie, Loword enthaelt den <cpu_typ>
  move.l   #'_CPU',(a5)+
  moveq    #0,d1
  move.w   MSysX+MacSysX_cpu(pc),d1
  move.l   d1,(a5)+                 ; und CPU eintragen
- clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik möglich?
+ clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik moeglich?
  cmpi.b   #20,d0
  bcs      scpu_typ
  addq.w   #1,cpu020                     ; mindestens 020-Prozessor
@@ -3232,8 +3232,8 @@ scpu_typ:
 *  7 = Atari Register FPU + mit Sicherheit 68882 LineF FPU
 *  8 = 68040 internal LineF FPU
 *  9 = Atari Register FPU + 68040 internal LineF FPU
-* Das Loword ist für eine spätere eventuelle
-* softwaremäßige LineF- Emulation reserviert und derzeit immer 0
+* Das Loword ist fuer eine spaetere eventuelle
+* softwaremaessige LineF- Emulation reserviert und derzeit immer 0
 
  moveq    #0,d1
  move.w   MSysX+MacSysX_fpu(pc),d1
@@ -3305,7 +3305,7 @@ scpu_typ:
 
 * Endmarkierung
  clr.l    (a5)+
- move.l   #NCOOKIES,(a5)           ; Platz für insgesamt 20+1 Cookies
+ move.l   #NCOOKIES,(a5)           ; Platz fuer insgesamt 20+1 Cookies
  move.l   (sp)+,a5
  rts
 
@@ -3377,15 +3377,15 @@ bcostat_prt:
 *
 * Wird vom DOS aufgerufen, gibt mehrere Zeichen auf die
 * parallele Schnittstelle aus.
-* Gibt die Anzahl der ausgegebenen Zeichen zurück.
+* Gibt die Anzahl der ausgegebenen Zeichen zurueck.
 *
 
 prn_wrts:
- cmpi.l   #bconout_prt,$57e        ; bconout für PRT
- bne.b    old_prn_wrts             ; hat sich geändert !!!
+ cmpi.l   #bconout_prt,$57e        ; bconout fuer PRT
+ bne.b    old_prn_wrts             ; hat sich geaendert !!!
  move.l   d0,-(sp)
  move.l   a0,-(sp)
- lea      (sp),a1                  ; Param: Zeiger auf Struktur (Adr/Länge)
+ lea      (sp),a1                  ; Param: Zeiger auf Struktur (Adr/Laenge)
  lea      MSysX+MacSysX_prn_wrts(pc),a0
  MACPPC
  addq.l   #8,sp
@@ -3396,7 +3396,7 @@ prn_wrts:
 *
 * long old_prn_wrts( a0 = char *buf, d0 = long count )
 *
-* Wie prn_wrts, geht aber über BIOS
+* Wie prn_wrts, geht aber ueber BIOS
 *
 
 old_prn_wrts:
@@ -3404,7 +3404,7 @@ old_prn_wrts:
  move.l   d0,-(sp)
  move.l   a0,a6                         ; a6 = Puffer
  moveq    #3,d6
- swap     d6                            ; Fcode Bconout/BIOS- Gerät
+ swap     d6                            ; Fcode Bconout/BIOS- Geraet
  move.l   d0,d7
  bra.b    bpw_nextloop
 bpw_loop:
@@ -3414,7 +3414,7 @@ bpw_loop:
  move.l   d6,-(sp)                      ; Bconout(dev, c)
  trap     #$d
  addq.l   #6,sp
- tst.w    d0                            ; bei PRN Status prüfen !
+ tst.w    d0                            ; bei PRN Status pruefen !
  bne.b    bpw_nextloop                  ; kein Fehler
 * Fehler, Timeout
  addq.l   #1,d7
@@ -3440,7 +3440,7 @@ bpw_ende:
 os_corr_s:
  DC.B     $1b,'K',$d,$a
  DC.B     $1b,'K',$d,$a
- DC.B     '*** SYSTEM ÜBERSCHRIEBEN ***',$1b,'K',$d,$a
+ DC.B     '*** SYSTEM ',$9a,'BERSCHRIEBEN ***',$1b,'K',$d,$a
  DC.B     $1b,'K',0
 fatal_bios_errs:
  DC.B     '*** FATALER FEHLER BEIM BOOTEN:',0
@@ -3489,18 +3489,18 @@ fatal_bios_errs:
 fatal_errs:
  DC.B   $1b,'K',$d,$a
  DC.B   $1b,'K',$d,$a
- DC.B   '*** SYSTEME STOPPÉ ***',$1b,'K',$d,$a
+ DC.B   '*** SYSTEME STOPP',$90,' ***',$1b,'K',$d,$a
  DC.B   $1b,'K',0
     ENDIF
 
      EVEN
 
 
-pling_data:  /* Ton für "pling" */
+pling_data:  /* Ton fuer "pling" */
  DC.B     $00,$34,$01,$00,$02,$00,$03,$00,$04,$00,$05,$00,$06,$00,$07,$fe
  DC.B     $08,$10,$09,$00,$0a,$00,$0b,$00,$0c,$10,$0d,$09,$ff,$00
 
-klick_data:  /* Ton für "klick" */
+klick_data:  /* Ton fuer "klick" */
  DC.B     $00,$3b,$01,$00,$02,$00,$03,$00,$04,$00,$05,$00,$06,$00,$07,$fe
  DC.B     $08,$10,$0d,$03,$0b,$80,$0c,$01,$ff,$00,$00
 

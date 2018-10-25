@@ -22,10 +22,10 @@ Kbrate:
  lea      key_delay,a1
  move.w   (a1),d0                  ; altes delay/repeat
  move.w   (a0)+,d1                 ; neues delay
- bmi.b    kbr_ende                 ; ist -1, keine Änderung
+ bmi.b    kbr_ende                 ; ist -1, keine Aenderung
  move.b   d1,(a1)+                 ; neues delay setzen
  move.w   (a0),d1                  ; neues repeat
- bmi.b    kbr_ende                 ; ist -1, keine Änderung
+ bmi.b    kbr_ende                 ; ist -1, keine Aenderung
  move.b   d1,(a1)                  ; neues repeat setzen
 kbr_ende:
  rte
@@ -38,8 +38,8 @@ kbr_ende:
 
 Keytbl:
  lea      keytblx,a1               ; Zeiger auf KEYTAB-Struktur
- move.l   a1,d0                    ; Rückgabewert
- moveq    #3-1,d2                  ; Zähler für 3 Durchläufe
+ move.l   a1,d0                    ; Rueckgabewert
+ moveq    #3-1,d2                  ; Zaehler fuer 3 Durchlaeufe
 ktbl_loop:
  move.l   (a0)+,d1
  bmi.b    ktbl_noset
@@ -54,7 +54,7 @@ ktbl_noset:
 * EQ/NE char altcode_asc( char c )
 *
 * Wandelt einen Scan-/Ascii- Code einer ALT-Buchstabenkombination um
-* in ein ASCII-Zeichen (in Großbuchstaben).
+* in ein ASCII-Zeichen (in Grossbuchstaben).
 * Bsp.: Code $1e00 (Alt-A) ==> 'A'
 *            $7800 (Alt-1) ==> '1'
 *
@@ -65,7 +65,7 @@ altcode_asc:
  lsr.w    #8,d0                    ; Scancode ins Loword
  cmpi.w   #$78,d0
  bcs.b    ala_nonum
-* Sonderbehandlung für Alt-1 bis Alt-'
+* Sonderbehandlung fuer Alt-1 bis Alt-apostrophe
  cmpi.w   #$83,d0
  bhi.b    ala_nix
  subi.w   #$76,d0                  ; Umrechnung
@@ -82,10 +82,10 @@ ala_nix:
 *
 * long (!) Bioskeys( void )
 *
-* Setzt 6 statt 3 Tabellen. Für die MF- Tastatur werden für die ersten
+* Setzt 6 statt 3 Tabellen. Fuer die MF- Tastatur werden fuer die ersten
 * drei Tabellen andere genommen.
 * Der AltGr- Status liegt immer hinter den 6 Tabellenzeigern.
-* Gibt Adressen der Tastaturbehandlungsroutine zurück.
+* Gibt Adressen der Tastaturbehandlungsroutine zurueck.
 *
 Bioskeys:
  bsr.b   _Bioskeys
@@ -94,7 +94,7 @@ Bioskeys:
 _Bioskeys:
  move.l   default_keytblxp,a1      ; Tabelle der 9 Default-Zeiger
  lea      keytblx,a0               ; aktive Zeiger
- moveq    #9-1,d0                  ; Zähler
+ moveq    #9-1,d0                  ; Zaehler
 _bioskeys_loop:
  move.l   (a1)+,(a0)+
  dbra     d0,_bioskeys_loop
@@ -138,7 +138,7 @@ keybd_struct:
 
 ;==============================================================
 ;
-; Interrupt für MIDI und Keyboard (MFP- Interrupt 6)
+; Interrupt fuer MIDI und Keyboard (MFP- Interrupt 6)
 ;
 ; Ruft <midisys> und <ikbdsys> auf. Rettet d0-d3/a0-a3
 ;
@@ -153,7 +153,7 @@ mik_loop:
  jsr      (a2)
  btst     #4,gpip                  ; steht noch ein Interrupt aus ?
  beq.b    mik_loop                ; ja, weiter
- bclr     #6,isrb                  ; IRQ Key/MIDI-ACIA Interrupt-Servcice-Bit löschen
+ bclr     #6,isrb                  ; IRQ Key/MIDI-ACIA Interrupt-Servcice-Bit loeschen
                                    ; TOS 2.05: move.b #$bf
  movem.l  (sp)+,a3/a2/a1/a0/d3/d2/d1/d0
  tst.b    kbdvecs+$24              ; ikbd_state
@@ -194,7 +194,7 @@ _midi_rcvbuf_empty:
    move.b   midi.w,d0               ;Daten von ACIA holen
    lea      iorec_midi,a0
    movea.l  kbdvecs+8,a1            ;vmiderr
-   jmp      (a1)                    ;Fehlerroutine ausführen
+   jmp      (a1)                    ;Fehlerroutine ausfuehren
 
 exit_midisys:
    rts
@@ -223,7 +223,7 @@ _ikbd_rcvbuf_empty:
    move.b   keybd.w,d0              ;ACIA Data Register
    lea      iorec_kb,a0
    movea.l  kbdvecs+4,a1            ;vkbderr
-   jmp      (a1)                    ;Fehlerroutine ausführen
+   jmp      (a1)                    ;Fehlerroutine ausfuehren
 
 exit_ikbdsys:
    rts
@@ -249,7 +249,7 @@ arcvint:
 no_key:
    moveq    #0,d2                   ;nur Lobyte soll Daten enthalten
    move.b   d0,d2
-   subi.b   #$f6,d2                 ;d2 enthält Paketnummer 0..9
+   subi.b   #$f6,d2                 ;d2 enthaelt Paketnummer 0..9
 
    add.w    d2,d2
    move.w   pk_code_len(pc,d2.w),kbdvecs+$24 ;setze <ikbd_state> und <ikbd_cnt>
@@ -286,7 +286,7 @@ subr_dummy:
 ; 5=$fd: ???????
 ; 6=$fe: Joystick 0
 ; 7=$ff: Joystick 1
-pk_code_len:         ;in der Form: ikbd_state, Paket-Länge
+pk_code_len:         ;in der Form: ikbd_state, Paket-Laenge
  dc.b 1,7
  dc.b 2,5
  dc.b 3,2
@@ -307,13 +307,13 @@ pk_code_len:         ;in der Form: ikbd_state, Paket-Länge
 handle_package:
    cmpi.b   #6,d1
    bcc      handle_joy              ;Codes $fe/$ff
-   ext.w    d1                      ;muß für Indizierung auf .w gebracht werden
+   ext.w    d1                      ;muss fuer Indizierung auf .w gebracht werden
    add.w    d1,d1                   ;d1 = ikbd_state (1,2,3,4,5)
    add.w    d1,d1
    add.w    d1,d1                   ;* 8
    lea      hdlpckg_table-8(pc,d1.w),a2 ;ikbd_state auf 0..4 umrechnen
    movea.l  (a2)+,a0                ;Paketanfang
-   move.w   (a2)+,d1                ;Paketlänge
+   move.w   (a2)+,d1                ;Paketlaenge
    lea      0(a0,d1.w),a1           ;Paketende
    move.w   (a2),a2                 ;Sprungvektor rel. zu kbdvecs
    move.l   kbdvecs(a2),a2          ;Sprungvektor
@@ -324,7 +324,7 @@ handle_package:
    subq.b   #1,kbdvecs+$25          ;ikbd_cnt
    bne.b    hdlpckg_l1               ;noch nicht fertig
 hdlpckg_l2:
-                                    ;aus Komp.gründen bleibt d0 = (a1).b
+                                    ;aus Komp.gruenden bleibt d0 = (a1).b
    move.l   a0,-(sp)                ;Paketanfang als Parameter
    jsr      (a2)
    addq.w   #4,sp
@@ -337,7 +337,7 @@ hdlpckg_l1:
 ;
 ; d0.b:  <ikbd_state>   (6=Joy0,7=Joy1)
 handle_joy:
-   ext.w    d1                      ;muß für Indizierung auf .w gebracht werden
+   ext.w    d1                      ;muss fuer Indizierung auf .w gebracht werden
    lea      pack_joy+1,a2
    move.b   d0,-6(a2,d1.w)          ;Wert merken (z.B. Bit 7 = Feuerknopf)
    movea.l  kbdvecs+$18,a2          ;joyvec
@@ -375,7 +375,7 @@ hdlpckg_table:
 handle_key:
    eori.w   #$300,sr          ;von IPL 6 auf 5 setzen
    bsr.b    _handlekey
-   eori.w   #$300,sr          ;von IPL 5 auf 6 zurück
+   eori.w   #$300,sr          ;von IPL 5 auf 6 zurueck
    rts
 
      INCLUDE   "handlkey.s"
@@ -407,7 +407,7 @@ midivc_end:
 **********************************************************************
 *
 * Wird aufgerufen, wenn das resvalid/resvector- Programm einen
-* Systemfehler provoziert hat. Führt einen Warmstart aus.
+* Systemfehler provoziert hat. Fuehrt einen Warmstart aus.
 *
 
 kill_resval:
@@ -415,7 +415,7 @@ kill_resval:
 
 **********************************************************************
 *
-* Führt einen Warmstart aus
+* Fuehrt einen Warmstart aus
 *
 * beim 68020/30 werden die Caches abgeschaltet
 *
@@ -426,9 +426,9 @@ warm_boot:
  bne.b    warmb_02                 ; nein
 
 wb_01send:
- move.b   #7,giselect.w            ; Register 7 auswählen
+ move.b   #7,giselect.w            ; Register 7 auswaehlen
  move.b   #$c0,giwrite.w           ; Auf Ausgang schalten
- move.b   #15,giselect.w           ; Register 15 wählen: Port B
+ move.b   #15,giselect.w           ; Register 15 waehlen: Port B
  move.b   #0,giwrite.w             ; Datenleitungen Centronics auf 0
  move.b   #14,giselect.w           ; Register 14
  move.b   #$27,giwrite.w           ; Floppy deselektieren,
@@ -450,23 +450,23 @@ warmb_00:
  reset                             ; beim Falcon kein Reset (Videomimik ...)
 
 warmb_03: 
- cmp.l    #$31415926,$00000426.w   ; resvalid gültig ?
+ cmp.l    #$31415926,$00000426.w   ; resvalid gueltig ?
  bne      syshdr_code                ; nein, Warmstart
  move.l   $42a.w,d0                ; resvector holen
- btst     #0,d0                    ; gültig ?
+ btst     #0,d0                    ; gueltig ?
  bne      syshdr_code                ; nein, Warmstart
  move.l   d0,a0
- lea      warmb_00(pc),a6          ; Rücksprungadresse von resvector
+ lea      warmb_00(pc),a6          ; Ruecksprungadresse von resvector
  jmp      (a0)                     ; resvector anspringen
  bra      syshdr_code
 
 
 **********************************************************************
 *
-* Führt einen Kaltstart aus
+* Fuehrt einen Kaltstart aus
 *
 * beim 68020/30 werden die Caches abgeschaltet
-* Spezielle Mimik für 040/060.
+* Spezielle Mimik fuer 040/060.
 *
 
 cold_boot:
@@ -508,10 +508,10 @@ coldb_20:
  cmpi.w   #30,cpu_typ
  bcs.b    coldb_00
 * ab 68030 MMU desaktivieren
-;pmove    long_zero(pc),tc         ; für 68030: disable translation
+;pmove    long_zero(pc),tc         ; fuer 68030: disable translation
 ;pmove    long_zero(pc),tt0
 ;pmove    long_zero(pc),tt1
- pmove    long_zero,tc             ; für 68030: disable translation
+ pmove    long_zero,tc             ; fuer 68030: disable translation
  pmove    long_zero,tt0
  pmove    long_zero,tt1
 coldb_00:
@@ -542,7 +542,7 @@ memkill_st:
  move.l   d0,d6
  move.l   d0,d7
 coldb_loop2:
- movem.l  d0/d1/d2/d3/d4/d5/d6/d7,(a0)  ; Speicher löschen bis Busfehler
+ movem.l  d0/d1/d2/d3/d4/d5/d6/d7,(a0)  ; Speicher loeschen bis Busfehler
  lea      $20(a0),a0
  bra.b    coldb_loop2
 coldb_busf:
@@ -607,7 +607,7 @@ tab_alt:
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 tab_shalt:
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
- DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,'\',$00,$00,$00,$00,$00
+ DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$5c,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,'{','}',$00,$00,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00

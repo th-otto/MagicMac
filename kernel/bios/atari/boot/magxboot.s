@@ -1,21 +1,21 @@
 **********************************************************************
 *
-* BOOTLADER FÜR Mag!X                             21.09.90
+* BOOTLADER FUeR Mag!X                             21.09.90
 * ===================
 *
 *                             erstellt            17.10.91
-*                             letzte Änderung     22.06.96
+*                             letzte Aenderung     22.06.96
 *
 * Liest die Datei "*.RAM", stellt das Ende des Mag!X- Datenbereiches
 *  fest und reloziert sie. Bei Vorhandensein von TT-RAM wird das
 *  System an dessen Anfang geladen.
 * Startet das Betriebssystem.
 * Alle Meldungen erfolgen je nach System in Deutsch oder Englisch.
-* Achtung: Die Flags "FLA" der PRG- Datei müssen gesetzt sein!!!
+* Achtung: Die Flags "FLA" der PRG- Datei muessen gesetzt sein!!!
 *
 **********************************************************************
 
-OUTSIDE   EQU  0              ; Programmlänge auf 32k-Pages
+OUTSIDE   EQU  0              ; Programmlaenge auf 32k-Pages
 RESIDENT  EQU  1              ; resetfest
 MODIFY    EQU  0              ; Modifikation nicht notwendig!
 
@@ -30,7 +30,7 @@ os_chksum EQU  $486           ; trp14ret
 
  movea.l  4(sp),a1
  lea      stack(pc),sp
- movea.w  #$100,a0                 ; Programmlänge + $100
+ movea.w  #$100,a0                 ; Programmlaenge + $100
  adda.l   $c(a1),a0
  adda.l   $14(a1),a0
  adda.l   $1c(a1),a0
@@ -42,7 +42,7 @@ os_chksum EQU  $486           ; trp14ret
  tst.l    d0                       ; KAOS liefert Fehlermeldung bei Mshrink()
  bmi      err
 
-* Nationalität bestimmen und Titelzeile ausgeben
+* Nationalitaet bestimmen und Titelzeile ausgeben
 
  clr.l    -(sp)
  gemdos   Super
@@ -66,7 +66,7 @@ cookie_mch:
 is_st:
 
  move.l   _sysbase,a0
- move.l   os_base(a0),a0           ; RAM- Kopie enthält kein os_palmode
+ move.l   os_base(a0),a0           ; RAM- Kopie enthaelt kein os_palmode
  move.w   os_palmode(a0),d0
  lsr.w    #1,d0
  move.w   d0,d4                    ; nationality
@@ -74,7 +74,7 @@ is_st:
  lea      titel(pc),a0
  bsr      cconws_country
 
-* auf Shift-Shift prüfen
+* auf Shift-Shift pruefen
 
  move.w   #-1,-(sp)
  bios     Kbshift
@@ -90,7 +90,7 @@ err2:
  gemdos   Cconin
  gemdos   Pterm0
 
-* Tatsächlich installieren
+* Tatsaechlich installieren
 * Ermitteln der Dateidaten
 
 do_install:
@@ -104,9 +104,9 @@ do_install:
  gemdos   Fgetdta
  addq.l   #2,sp
  move.l   d0,a0
- move.l   $1a(a0),d6               ; d6 = Dateilänge
+ move.l   $1a(a0),d6               ; d6 = Dateilaenge
 
-* Öffnen der Datei: Handle d7
+* Oeffnen der Datei: Handle d7
 
  clr.w    -(sp)
  pea      name(pc)
@@ -139,14 +139,14 @@ do_install:
  cmpi.w   #$601a,(a6)
  bne      err
 
-* prüfen, ob MagiX, und a5 auf Ladeadresse
+* pruefen, ob MagiX, und a5 auf Ladeadresse
 
  move.l   $1c+os_magic(a6),a0
  lea      $1c(a6,a0.l),a0
  cmpi.l   #$87654321,(a0)+
  bne      err
  move.l   (a0)+,a5                 ; Ende der Variablen
- addq.l   #4,a0                    ; aes_start überspringen
+ addq.l   #4,a0                    ; aes_start ueberspringen
  cmpi.l   #'MAGX',(a0)
  bne      err
  move.l   #$1000000,fstrm_beg
@@ -204,7 +204,7 @@ ver_st:
  move.l   ($14+$1c)(a6),a0
  lea      $1c(a6,a0.l),a0
  lea      $7a(a0),a0
- cmpi.l   #'____',(a0)             ; Sicherheitsfrage für alten Kernel
+ cmpi.l   #'____',(a0)             ; Sicherheitsfrage fuer alten Kernel
  bne.b    do_reloc
  addi.b   #'A',d0
  move.b   d0,(a0)+
@@ -217,10 +217,10 @@ namecpy_loop:
 * MagiX relozieren
 
 do_reloc:
- move.l   2(a6),d0                 ; Länge von TEXT
- add.l    6(a6),d0                 ; Länge von DATA
- move.l   d0,d5                    ; tatsächliche Länge von MagiX
- add.l    $e(a6),d0                ; Länge von SYM
+ move.l   2(a6),d0                 ; Laenge von TEXT
+ add.l    6(a6),d0                 ; Laenge von DATA
+ move.l   d0,d5                    ; tatsaechliche Laenge von MagiX
+ add.l    $e(a6),d0                ; Laenge von SYM
 
  lea      $1c(a6,d0.l),a3          ; Beginn der Relocation- Daten
  lea      0(a6,d6.l),a2            ; Dateiende
@@ -255,7 +255,7 @@ os_chkloop:
  move.l   d0,os_chksum
 
  ori.w    #$700,sr
-;move.l   d3,$88                   ; Zeichensatzadresse für MAGIXVDI
+;move.l   d3,$88                   ; Zeichensatzadresse fuer MAGIXVDI
  lea      toscopy(pc),a1           ; aktuelle Adresse der Startroutine
  lea      $600,a0                  ; neue Adresse der Startroutine
  move.w   #(err-toscopy)/4,d0
@@ -267,7 +267,7 @@ startcopy:
 toscopy:
  move.l   a5,a0
  lea      $1c(a6),a1
- move.l   d5,d0                    ; Länge
+ move.l   d5,d0                    ; Laenge
  lsr.l    #3,d0                    ; /8
  cmpa.l   a0,a1
  bhi      cpy_uloop
@@ -302,7 +302,7 @@ cpy_end:
      ENDIF
  bra.b    startit
 cpy_st:
- add.l    d5,os_membot(a5)         ; OS- Länge auf TPA- Beginn addieren
+ add.l    d5,os_membot(a5)         ; OS- Laenge auf TPA- Beginn addieren
      IFNE OUTSIDE
 * Beginn des ST-RAM hinter Mag!X auf 32k-Grenze
  move.l   os_membot(a5),d0
@@ -334,13 +334,13 @@ err:
 *
 * void cconws_country(a0 = char *s)
 *
-* in d4 steht die Nationalität
+* in d4 steht die Nationalitaet
 * Aufbau der Zeichenkette, auf die a0 zeigt:
-* char n1,n2,...,-1      Nationalitäten für erste Zeichenkette
+* char n1,n2,...,-1      Nationalitaeten fuer erste Zeichenkette
 * char s1[]              erste Zeichenkette
-* char n3,n4,...,-1      Nationalitäten für zweite Zeichenkette
+* char n3,n4,...,-1      Nationalitaeten fuer zweite Zeichenkette
 * char s2[]              zweite Zeichenkette
-* char -1                Abschluß
+* char -1                Abschluss
 * char defs[]            Defaultstring (i.a. englisch)
 *
 **********************************************************************
@@ -356,14 +356,14 @@ cconws:
 
 _chk_nat:
  move.b   (a0)+,d0
- bmi.b    _chk_ende                ; Abschlußbyte, Default verwenden
+ bmi.b    _chk_ende                ; Abschlussbyte, Default verwenden
 _chk_nxt:
- cmp.b    d0,d4                    ; unsere Nationalität ?
+ cmp.b    d0,d4                    ; unsere Nationalitaet ?
  beq.b    _chk_found
- move.b   (a0)+,d0                 ; nächste Nationalität
+ move.b   (a0)+,d0                 ; naechste Nationalitaet
  bge.b    _chk_nxt                 ; weiter vergleichen
 _chk_nxtstr:
- tst.b    (a0)+                    ; Zeichenkette überspringen
+ tst.b    (a0)+                    ; Zeichenkette ueberspringen
  bne.b    _chk_nxtstr
  moveq    #1,d0                    ; nicht gefunden
  rts
@@ -379,23 +379,23 @@ machine:
 titel:
  DC.B     -1
      IFNE OUTSIDE
- DC.B     CR,LF,'MagiC- BOOTER, © 1990-96 Andreas Kromke'
+ DC.B     CR,LF,'MagiC- BOOTER, ',$bd,' 1990-96 Andreas Kromke'
  DC.B     CR,LF,'Virtual Memory Version',CR,LF,0
      ELSE
- DC.B     CR,LF,'MagiC- BOOTER, © 1990-96 Andreas Kromke',CR,LF,0
+ DC.B     CR,LF,'MagiC- BOOTER, ',$bd,' 1990-96 Andreas Kromke',CR,LF,0
      ENDIF
 
 dont_install:
  DC.B     COUNTRY_DE,COUNTRY_SG,-1
  DC.B     'Shift-Shift: MagiC nicht installiert',CR,LF,0
  DC.B     COUNTRY_FR,COUNTRY_SF,-1
- DC.B     'Shift-Shift: MagiC pas installé',CR,LF,0
+ DC.B     'Shift-Shift: MagiC pas install',$82,'',CR,LF,0
  DC.B     -1
  DC.B     'Shift-Shift: MagiC not installed',CR,LF,0
 
 press_key:
  DC.B     COUNTRY_DE,COUNTRY_SG,-1
- DC.B     LF,'Taste drücken!',CR,LF,0
+ DC.B     LF,'Taste dr',$81,'cken!',CR,LF,0
  DC.B     COUNTRY_FR,COUNTRY_SF,-1
  DC.B     LF,'Appuyez sur une touche!',CR,LF,0
  DC.B     -1

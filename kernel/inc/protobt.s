@@ -21,15 +21,15 @@ _Protobt:
  tst.w    (a1)                     ; isexec
  bge.b    proto_w1                 ; wird hiermit festgelegt
 * execflag soll bleiben, also merken
- clr.w    (a1)                     ; per Default nicht ausführbar
+ clr.w    (a1)                     ; per Default nicht ausfuehrbar
  move.l   a2,a0
  bsr      prfsum                   ; liefert ZERO, falls = $1234
  lea      8(sp),a0                 ; a0 restaurieren
- bne.b    proto_w1                 ; nicht ausführbar, ok
- st       (a1)                     ; ausführbar
+ bne.b    proto_w1                 ; nicht ausfuehrbar, ok
+ st       (a1)                     ; ausfuehrbar
 proto_w1:
  move.l   (a0)+,d0                 ; serial
- blt.b    proto_noser              ; nicht ändern
+ blt.b    proto_noser              ; nicht aendern
  cmp.l    #$ffffff,d0
  ble.b    proto_w2                 ; angegeben
  bsr      _Random
@@ -40,13 +40,13 @@ proto_w2:
  move.b   -3(a0),10(a2)            ; 3 Bytes kopieren
 proto_noser:
  move.w   (a0)+,d0                 ; Disktyp
- blt.b    proto_notyp              ; < 0, nicht ändern
+ blt.b    proto_notyp              ; < 0, nicht aendern
  cmpi.w   #4,d0                    ; 4 ist HD !
  bls.b    proto_ok                 ; <= 3, ok
- moveq    #3,d0                    ; Falscher Disktyp => 3 wählen
+ moveq    #3,d0                    ; Falscher Disktyp => 3 waehlen
 proto_ok:
  lea      proto_data(pc),a1
- mulu     #$13,d0                  ; Länge der Tabellenelemente
+ mulu     #$13,d0                  ; Laenge der Tabellenelemente
  add.w    d0,a1                    ; Quelle
  lea      $b(a2),a0                ; Ziel
  moveq    #$13-1,d1
@@ -54,14 +54,14 @@ proto_loop:
  move.b   (a1)+,(a0)+
  dbra     d1,proto_loop            ; Bootsektordaten kopieren
 proto_notyp:
- move.l   a2,a0                    ; Sektorprüfsumme
+ move.l   a2,a0                    ; Sektorpruefsumme
  move.w   #255-1,d1                ; der ersten 255 Worte
  bsr      prfsum2                  ; schon $1234 subtrahiert
  neg.w    d0
  move.w   d0,(a0)                  ; letztes Wort, damit Summe $1234 stimmt
- tst.w    $e(sp)                   ; soll Bootsektor ausführbar sein ?
+ tst.w    $e(sp)                   ; soll Bootsektor ausfuehrbar sein ?
  bne.b    proto_ende               ; ja, Ende
- addq.w   #1,(a0)                  ; nein, Summe erhöhen
+ addq.w   #1,(a0)                  ; nein, Summe erhoehen
 proto_ende:
  moveq    #0,d0                    ; trotz "void" geben wir E_OK
  rts
@@ -84,14 +84,14 @@ prfsum_loop:
  rts
 
 
-proto_data:  /* Daten für Protobt */
+proto_data:  /* Daten fuer Protobt */
 
 /* Disktyp 0: Einseitig, LD (180k) */
  DC.B     $00,$02   ; BPS     = 512     Bytes/Sektor
  DC.B     $01       ; SPC     = 1       Sektor/Cluster
  DC.B     $01,$00   ; RES     = 1       reservierter Sektor
  DC.B     $02       ; NFATS   = 2       FATs
- DC.B     $40,$00   ; NDIRS   = 64      Einträge im Wurzelverzeichnis
+ DC.B     $40,$00   ; NDIRS   = 64      Eintraege im Wurzelverzeichnis
  DC.B     $68,$01   ; NSECTS  = 360     Sektoren gesamt
  DC.B     $fc       ; MEDIA   = $fc     Media Byte
  DC.B     $02,$00   ; SPF     = 2       Sektoren/FAT

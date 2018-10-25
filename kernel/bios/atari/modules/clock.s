@@ -15,14 +15,14 @@ get_clocktype:
 ; Mega-ST
 
  lea      $fffffc20,a0
-* die Alarmzeit wird nicht zerstört
+* die Alarmzeit wird nicht zerstoert
  bset     #0,$1b(a0)               ; Bank 1 beschreiben (ggf. Busfehler)
  movep.w  5(a0),d2                 ; rette alte Alarm-Minuten
  move.w   #$a05,d0                 ; beschreibe Alarm-Minuten
  movep.w  d0,5(a0)
  movep.w  5(a0),d1                 ; hole Alarm-Minuten
  movep.w  d2,5(a0)                 ; repariere Alarm-Minuten
- and.w    #$f0f,d1                 ; maskiere Müll weg
+ and.w    #$f0f,d1                 ; maskiere Muell weg
  cmp.w    d0,d1                    ; Chip enthielt den Testwert ?
  bne.b    gclt_ikbd                ; Nein: Uhr nicht aktiv, Fehler
  bclr.b   #0,27(a0)                ; selektiere wieder Bank 0
@@ -46,7 +46,7 @@ gclt_ende:
 
 **********************************************************************
 *
-* Rückgabe gesetztes Carry, wenn keine Uhr eingebaut ist.
+* Rueckgabe gesetztes Carry, wenn keine Uhr eingebaut ist.
 *
 
 chk_rtclock:
@@ -65,7 +65,7 @@ init_dosclock:
  move.w   syshdr+os_gendatg(pc),dos_date
  bsr      _Gettime
  addq.l   #1,d0
- beq.b    idcl_ikbd                ; Zeit -1 = ungültig -> IKBD probieren
+ beq.b    idcl_ikbd                ; Zeit -1 = ungueltig -> IKBD probieren
  subq.l   #1,d0
 inidc_set:
  move.w   d0,dos_time
@@ -85,7 +85,7 @@ idcl_ikbd:
 *
 * long read_rtclock( void )
 *
-* für DOS
+* fuer DOS
 *
 
 read_rtclock:
@@ -277,10 +277,10 @@ write_megaclock:
  clr.b    6(a1)
  move.b   #2,$1f(a0)
 
- ori.b    #9,$1b(a0)               ; Uhr an, Bank 1 anwählen
+ ori.b    #9,$1b(a0)               ; Uhr an, Bank 1 anwaehlen
  move.b   #1,$15(a0)               ; 24 Stunden-Modus
- move.b   d2,$17(a0)               ; Schaltjahrzähler setzen
- andi.b   #$fe,$1b(a0)             ; Uhr an, Bank 0 anwählen
+ move.b   d2,$17(a0)               ; Schaltjahrzaehler setzen
+ andi.b   #$fe,$1b(a0)             ; Uhr an, Bank 0 anwaehlen
 
  moveq    #$c,d0
  moveq    #1,d1
@@ -316,19 +316,19 @@ clockvec:
  addi.b   #100,d0                  ; Jahr 0..79 => 20..99
 clvec_under_2000:
  move.b   d0,d2
- asl.l    #4,d2                    ; 4 Bit für Monat
+ asl.l    #4,d2                    ; 4 Bit fuer Monat
  bsr.b    bcd_to_bin               ; Monat 1..12
  add.b    d0,d2
- asl.l    #5,d2                    ; 5 Bit für Tag
+ asl.l    #5,d2                    ; 5 Bit fuer Tag
  bsr.b    bcd_to_bin               ; Tag 0..31
  add.b    d0,d2
- asl.l    #5,d2                    ; 5 Bit für Stunde
+ asl.l    #5,d2                    ; 5 Bit fuer Stunde
  bsr.b    bcd_to_bin               ; Stunde 0..23
  add.b    d0,d2
- asl.l    #6,d2                    ; 6 Bit für Minute
+ asl.l    #6,d2                    ; 6 Bit fuer Minute
  bsr.b    bcd_to_bin               ; Minute 0..59
  add.b    d0,d2
- asl.l    #5,d2                    ; 5 Bit für 30*2 Sekunden
+ asl.l    #5,d2                    ; 5 Bit fuer 30*2 Sekunden
  bsr.b    bcd_to_bin               ; Sekunden 0..59
  lsr.b    #1,d0                    ; umrechnen in 2s-Takt
  add.b    d0,d2
@@ -383,7 +383,7 @@ rics_ende:
 
 write_ikbdclock:
  move.l   4(sp),d2
- subq.l   #6,sp                    ; Platz für 6 Bytes
+ subq.l   #6,sp                    ; Platz fuer 6 Bytes
  lea      6(sp),a0
  move.b   d2,d0
  andi.b   #$1f,d0
@@ -407,7 +407,7 @@ write_ikbdclock:
  bsr.b    bin_to_bcd               ; Monat
  lsr.l    #4,d2
  move.b   d2,d0
- andi.b   #$7f,d0                  ; 7 Bit für Jahr (0..127)
+ andi.b   #$7f,d0                  ; 7 Bit fuer Jahr (0..127)
  addi.b   #80,d0                   ; Jahr (80..207)
  cmpi.b   #100,d0
  bcs.b    wics_under_2000          ; Jahr 80..99
@@ -547,8 +547,8 @@ _NVMaccess:
 
 * op == 1 (WRITE)
  bsr.b    NVM_consistency
- tst.w    d0                  ; Daten und Parameter gültig ?
- bne.b    nvm_ende            ; nein, Fehler zurückgeben
+ tst.w    d0                  ; Daten und Parameter gueltig ?
+ bne.b    nvm_ende            ; nein, Fehler zurueckgeben
  movea.l  $a(sp),a0           ; buffer
  bra.b    nvmac_l2
 nvmac_l1:
@@ -575,7 +575,7 @@ nvmac_l3:
  movea.l  $a(sp),a0           ; buffer
  bra.b    nvmac_l5
 nvmac_l4:
- move.b   d1,(a1)             ; Register auswählen
+ move.b   d1,(a1)             ; Register auswaehlen
  move.b   (a2),(a0)+          ; auslesen
  addq.w   #1,d1
 nvmac_l5:
@@ -590,19 +590,19 @@ nvmac_l6:
  moveq    #$e,d1              ; ab Register 14
  moveq    #$31,d2             ; 50 Register (14..63) mit je 1 Byte
 nvmac_l7:
- move.b   d1,(a1)             ; Registernummer auswählen
+ move.b   d1,(a1)             ; Registernummer auswaehlen
  move.b   d0,(a2)             ; Register auf 0 setzen
- addq.w   #1,d1               ; nächstes Register
+ addq.w   #1,d1               ; naechstes Register
  dbf      d2,nvmac_l7
  move.b   #$3e,(a1)           ; Register 62
  move.b   #$ff,(a2)           ;  auf -1 setzen
- rts                          ; Rückgabewert ist 0L
+ rts                          ; Rueckgabewert ist 0L
 
 NVM_consistency:
  bsr.b    NVM_chksum
  move.b   d0,d1               ; Summe der Register 14..61
  moveq    #EGENRL,d0
- move.b   #$3f,(a1)           ; Register 63 enthält die Checksumme
+ move.b   #$3f,(a1)           ; Register 63 enthaelt die Checksumme
  cmp.b    (a2),d1             ; stimmt Checksumme ?
  bne.b    nvmac_l8           ; nein, return(EGENRL)
  not.b    d1                  ; Checksumme invertieren
@@ -642,6 +642,6 @@ NVM_chksum:
 nvmcs_loop:
  move.b   d1,(a1)             ; Register selektieren
  add.b    (a2),d0             ; Checksumme bilden
- addq.w   #1,d1               ; nächstes Register
+ addq.w   #1,d1               ; naechstes Register
  dbf      d2,nvmcs_loop
  rts

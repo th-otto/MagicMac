@@ -50,15 +50,15 @@ DEBUG     EQU  0
 
 *********************************************************************
 *
-* Diese Routine wird als zuerst ausgeführt.
-* Zeiger auf Übergabestruktur fürs Milan-ROM initialisieren.
+* Diese Routine wird als zuerst ausgefuehrt.
+* Zeiger auf Uebergabestruktur fuers Milan-ROM initialisieren.
 *
 
 imilan:
  lea      MILAN_ROM+osh_milan_magic,a0
  cmpi.l   #'Miln',(a0)+
  bne.b    imln_err
- move.l   (a0),milan.w        ; Zeiger auf Übergabestruktur merken
+ move.l   (a0),milan.w        ; Zeiger auf Uebergabestruktur merken
  rts
 imln_err:
  jmp      (a0)                ; Warmstart
@@ -66,7 +66,7 @@ imln_err:
 
 *********************************************************************
 *
-* Diese Routine wird als zweite ausgeführt.
+* Diese Routine wird als zweite ausgefuehrt.
 * sr,vbr,tc,tt0,tt1 initialisieren, CPU-Cache aus.
 *
 
@@ -103,7 +103,7 @@ iintmask:
 * int get_cpu_typ( void )
 *
 * Bestimmung des Prozessors:
-* Rückgabe 0,10,20,30,40,60
+* Rueckgabe 0,10,20,30,40,60
 *
 
 get_cpu_typ:
@@ -117,7 +117,7 @@ get_cpu_typ:
 * int get_fpu_typ( void )
 *
 * Bestimmung des Prozessors:
-* Rückgabe 0,10,20,30,40,60
+* Rueckgabe 0,10,20,30,40,60
 *
 
 get_fpu_typ:
@@ -131,7 +131,7 @@ get_fpu_typ:
 * void icookies( a0 = COOKIE *co, d0 = LONG ncookies )
 *
 * <ncookies> ist der Brutto-Platz in der Tabelle, d.h. sie hat
-* Platz für <ncookies-1> Cookies plus Ende-Kennung.
+* Platz fuer <ncookies-1> Cookies plus Ende-Kennung.
 *
 * Installiert alle maschinenspezifischen Cookies:
 *    _CPU
@@ -166,7 +166,7 @@ ivideo:
 **********************************************************************
 *
 * Video-System initialisieren (Phase 2)
-* Beim Atari wird hier die Auflösung gesetzt.
+* Beim Atari wird hier die Aufloesung gesetzt.
 * Ist beim Milan (noch) dummy.
 *
 
@@ -214,11 +214,11 @@ ihdv:
 *
 * void *get_odevv( void )
 *
-* Liefert Zeiger auf Gerätevektoren.
-* Die Routinen dürfen d0-d2/a0-a2 ändern und erhalten
+* Liefert Zeiger auf Geraetevektoren.
+* Die Routinen duerfen d0-d2/a0-a2 aendern und erhalten
 * ihre Parameter in (a0), 2(a0) usw.
 *
-* Der erste Assembler-Befehl jeder Routine muß lauten:
+* Der erste Assembler-Befehl jeder Routine muss lauten:
 *  lea 6(sp),a0
 *
 
@@ -230,7 +230,7 @@ get_odevv:
 
 *********************************************************************
 *
-* Semaphoren und Variablen für Hintergrund-DMA initialisieren.
+* Semaphoren und Variablen fuer Hintergrund-DMA initialisieren.
 *
 * Ist beim Milan (noch) dummy.
 *
@@ -241,12 +241,12 @@ ibkgdma:
 
 *********************************************************************
 *
-* Sound-Hooks für Klick und Pling initialisieren.
+* Sound-Hooks fuer Klick und Pling initialisieren.
 *
 
 isndhooks:
  move.l   milan,a0
- move.l   milh_hdl_pling(a0),bell_hook  ; Ton für ^G
+ move.l   milh_hdl_pling(a0),bell_hook  ; Ton fuer ^G
  move.l   milh_hdl_klick(a0),kcl_hook   ; Tastenklickroutine
  rts
 
@@ -254,7 +254,7 @@ isndhooks:
 *********************************************************************
 *
 * Interrupt-Vektoren (0..63) initialisieren, welche nicht zu
-* Bomben führen sollen.
+* Bomben fuehren sollen.
 * Beim Atari sind dies HBL und Line-A, 
 *
 
@@ -268,10 +268,10 @@ iexcvecs:
 *
 * void iperiph( void )
 *
-* Initialisiert die Hardware. Auf dem Atari wären das die
+* Initialisiert die Hardware. Auf dem Atari waeren das die
 * MFPs und ihre Vektoren.
 *
-* darf d0-d2/a0-a2 ändern
+* darf d0-d2/a0-a2 aendern
 *
 
 iperiph:
@@ -325,7 +325,7 @@ dmaboot:
 *
 * void apkgboot( void )
 *
-* Fürht die "PKGs im Flash" aus
+* Fuerht die "PKGs im Flash" aus
 *
 
 apkgboot:
@@ -336,7 +336,7 @@ apkgboot:
 
 **********************************************************************
 *
-* Führt einen Kaltstart aus
+* Fuehrt einen Kaltstart aus
 *
 
 coldboot:
@@ -351,7 +351,7 @@ coldboot:
 *
 * Initialisiert die BCONMAP-Struktur
 *
-* darf d0-d2/a0-a2 ändern
+* darf d0-d2/a0-a2 aendern
 *
 
 imaptab:
@@ -377,9 +377,9 @@ gethtime:
 * long prn_wrts( a0 = char *buf, d0 = long count )
 *
 * Gibt mehrere Zeichen auf die parallele Schnittstelle aus.
-* Gibt die Anzahl der ausgegebenen Zeichen zurück.
+* Gibt die Anzahl der ausgegebenen Zeichen zurueck.
 *
-* darf d0-d2/a0-a2 ändern
+* darf d0-d2/a0-a2 aendern
 *
 
 prn_wrts:
@@ -401,7 +401,7 @@ bombs:
 
 *********************************************************************
 *
-* VDI-Entry fürs DOS (!)
+* VDI-Entry fuers DOS (!)
 *
 
 vdi_entry:

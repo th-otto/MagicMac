@@ -22,7 +22,7 @@
 #if	CALL_MAGIC_KERNEL
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Makros und Funktionsdefinitionen fÅr Aufrufe an den MagiC-Kernel								*/
+/* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel								*/
 /*----------------------------------------------------------------------------------------*/ 
 
 extern int enable_3d;
@@ -57,7 +57,7 @@ extern int enable_3d;
 #include <stdlib.h>
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Makros fÅr die Pure C-GEMLIB																				*/
+/* Makros fuer die Pure C-GEMLIB																				*/
 /*----------------------------------------------------------------------------------------*/ 
 
 #define	is_3d_look \
@@ -92,7 +92,7 @@ static void	_mfree( void *addr );
 
 #include "objcsysv.h"
 
-WORD		errno;															/* fÅr Pure C, u.a. wegen malloc() */
+WORD		errno;															/* fuer Pure C, u.a. wegen malloc() */
 extern WORD	aes_flags;
 extern WORD	is_magic;
 #endif
@@ -136,7 +136,7 @@ typedef struct
 #define	FH_SFNTN 266													/* 32 Byte - Name des korrespondierenden Postscript-Fonts, z.B. "Century725BT-Italic" */
 #define	FH_SFACN 298													/* 16 Byte - Kurzname der Fontfamilie, z.B. "Century725 BT" */
 #define	FH_FNTFM 314													/* 14 Byte - Stil/Form, z.B. "Italic" */
-#define	FH_ITANG 328													/*  2 Byte - SchrÑgstellung in 1/256-Grad (bei italic-Schnitten), z.B 4480 (17,5 Grad) */
+#define	FH_ITANG 328													/*  2 Byte - Schraegstellung in 1/256-Grad (bei italic-Schnitten), z.B 4480 (17,5 Grad) */
 
 /*----------------------------------------------------------------------------------------*/ 
 /* konstante globale Variablen (DATA)																		*/
@@ -285,7 +285,7 @@ static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT
 static WORD	use_vqt_xfontinfo( void );
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Funktionen fÅr Userdefs, Listbox und Fensterdialog													*/
+/* Funktionen fuer Userdefs, Listbox und Fensterdialog													*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	cdecl sample_text( PARMBLK *parmblock );
 WORD	cdecl check_box( PARMBLK *parmblock );
@@ -304,14 +304,14 @@ WORD	cdecl	do_slct_font( DIALOG *d, EVNT *events, int objnr, int clicks, void *d
 #include "objmacro.h"
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fontselektor initialisieren und Zeiger auf Struktur zurÅckliefern								*/
+/* Fontselektor initialisieren und Zeiger auf Struktur zurueckliefern								*/
 /* Funktionsergebnis:	Zeiger auf Struktur																*/
 /*	vdi_handle:				Handle der zu benutzenden VDI-Workstation									*/
 /*	no_fonts:				Anzahl der System- und der nachgeladenen Fonts oder 0, wenn 		*/
 /*								vst_load_fonts() aufgerufen werden soll									*/
 /*	font_flags:				Flags, die charakterisieren, welche Fonts angezeigt werden sollen	*/
-/*	sample:					Zeiger auf Beispiel-String fÅr die Anzeige								*/
-/*	opt_button:				Zeiger auf String fÅr den Options-Button oder 0L						*/
+/*	sample:					Zeiger auf Beispiel-String fuer die Anzeige								*/
+/*	opt_button:				Zeiger auf String fuer den Options-Button oder 0L						*/
 /*----------------------------------------------------------------------------------------*/ 
 FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD dialog_flags, BYTE *sample, BYTE *opt_button )
 {
@@ -324,11 +324,11 @@ FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD d
 		vq_extnd( vdi_handle, 0, work_out );						/* vq_extnd() aufrufen, um die Anzahl der Systemfonts zu erfragen */
 		no_fonts = work_out[10];
 		
-		if ( vq_gdos())													/* kînnen Fonts geladen werden? */	
+		if ( vq_gdos())													/* koennen Fonts geladen werden? */	
 			no_fonts += vst_load_fonts( vdi_handle, 0 );			/* Fonts laden und ihre Anzahl erfragen */
 	}
 		
-	fnt_dialog = Malloc( sizeof( FNT_DIALOG ));					/* Speicher fÅr Strukturen und Fonttabelle anfordern */
+	fnt_dialog = Malloc( sizeof( FNT_DIALOG ));					/* Speicher fuer Strukturen und Fonttabelle anfordern */
 
 	if ( fnt_dialog )														/* alles in Ordnung? */
 	{
@@ -361,7 +361,7 @@ FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD d
 
 			tree = fnt_dialog->tree_addr[FONTSL];
 
-			if	( opt_button )												/* wird der Options-Button unterstÅtzt? */
+			if	( opt_button )												/* wird der Options-Button unterstuetzt? */
 			{
 				obj_ENABLED( tree, FOPTIONS );
 				tree[FOPTIONS].ob_spec.free_string = opt_button;	/* Text eintragen */
@@ -406,7 +406,7 @@ FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD d
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr Font-Strukturen und Resource zurÅckgeben												*/
+/* Speicher fuer Font-Strukturen und Resource zurueckgeben												*/
 /* Funktionsergebnis:	1																						*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	vdi_handle:				Handle der VDI-Workstation oder 0, wenn vst_unload_fonts() nicht	*/
@@ -423,7 +423,7 @@ WORD	fnts_delete( FNT_DIALOG *fnt_dialog, WORD vdi_handle )
 		FNT	*delete;
 
 		delete = font;
-		font = font->next;												/* Zeiger auf den nÑchsten Font */
+		font = font->next;												/* Zeiger auf den naechsten Font */
 		Mfree( delete );
 	}
 	
@@ -433,7 +433,7 @@ WORD	fnts_delete( FNT_DIALOG *fnt_dialog, WORD vdi_handle )
 
 	if ( vdi_handle )														/* soll vst_unload_fonts() aufgerufen werden? */
 	{
-		if ( vq_gdos())													/* kînnen Fonts entfernt werden? */	
+		if ( vq_gdos())													/* koennen Fonts entfernt werden? */	
 			vst_unload_fonts( vdi_handle, 0 );
 	}
 	
@@ -444,12 +444,12 @@ WORD	fnts_delete( FNT_DIALOG *fnt_dialog, WORD vdi_handle )
 /* Fontauswahl-Dialog anzeigen																				*/
 /* Funktionsergebnis:	Handle des Fensters oder 0 (Fehler)											*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
-/*	button_flags:			Flags fÅrs Aussehen des Dialogs												*/
+/*	button_flags:			Flags fuers Aussehen des Dialogs												*/
 /*	x:							x-Koordinate des Dialogs (oder -1)											*/
 /*	y:							y-Koordinate des Dialogs (oder -1)											*/
 /*	id:						ID des einzustellenden Fonts													*/
-/*	pt:						Hîhe in 1/65536 Punkten															*/
-/*	ratio:					VerhÑltnis Breite/Hîhe															*/
+/*	pt:						Hoehe in 1/65536 Punkten															*/
+/*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	fnts_open( FNT_DIALOG *fnt_dialog, WORD button_flags, WORD x, WORD y, LONG id, LONG pt, LONG ratio )
 {
@@ -475,28 +475,28 @@ WORD	fnts_open( FNT_DIALOG *fnt_dialog, WORD button_flags, WORD x, WORD y, LONG 
 				return( handle );
 			}
 			else
-				free_lboxes( fnt_dialog );								/* Speicher fÅr Listboxen und Listen freigeben */
+				free_lboxes( fnt_dialog );								/* Speicher fuer Listboxen und Listen freigeben */
 		}
-		wdlg_delete( fnt_dialog->dialog );							/* Fensterdialog lîschen */
+		wdlg_delete( fnt_dialog->dialog );							/* Fensterdialog loeschen */
 	}
 	return( 0 );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fontauswahl-Dialog schlieûen																				*/
+/* Fontauswahl-Dialog schliessen																				*/
 /* Funktionsergebnis:	1																						*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
-/*	x:							x-Koordinate des Dialogs wird zurÅckgeliefert							*/
-/*	y:							y-Koordinate des Dialogs wird zurÅckgeliefert							*/
+/*	x:							x-Koordinate des Dialogs wird zurueckgeliefert							*/
+/*	y:							y-Koordinate des Dialogs wird zurueckgeliefert							*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	fnts_close( FNT_DIALOG *fnt_dialog, WORD *x, WORD *y )
 {
 	if ( fnt_dialog->whdl )
 	{
-		wdlg_close( fnt_dialog->dialog, x, y );					/* Fensterdialog schlieûen */
+		wdlg_close( fnt_dialog->dialog, x, y );					/* Fensterdialog schliessen */
 		wdlg_delete( fnt_dialog->dialog );							/* Speicher freigeben */
 	
-		free_lboxes( fnt_dialog );										/* Speicher fÅr Listboxen und Listen freigeben */
+		free_lboxes( fnt_dialog );										/* Speicher fuer Listboxen und Listen freigeben */
 	
 		fnt_dialog->dialog = 0L;										/* Zeiger auf die Dialog-Struktur */
 		fnt_dialog->whdl = 0;											/* Handle des Fensters */
@@ -514,16 +514,16 @@ WORD	fnts_close( FNT_DIALOG *fnt_dialog, WORD *x, WORD *y )
 /* Fontauswahl-Dialog updaten, neuen Font anzeigen														*/
 /* Funktionsergebnis:	1: alles in Ordnung 0: Fehler													*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
-/*	button_flags:			Flags fÅrs Aussehen des Dialogs												*/
+/*	button_flags:			Flags fuers Aussehen des Dialogs												*/
 /*	id:						ID des einzustellenden Fonts													*/
-/*	pt:						Hîhe in 1/65536 Punkten															*/
-/*	ratio:					VerhÑltnis Breite/Hîhe															*/
+/*	pt:						Hoehe in 1/65536 Punkten															*/
+/*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	fnts_update( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio )
 {
 	if ( fnt_dialog->dialog )											/* konnte die Dialog-Struktur angelegt werden? */
 	{
-		free_lboxes( fnt_dialog );										/* Speicher fÅr Listboxen und Listen freigeben */
+		free_lboxes( fnt_dialog );										/* Speicher fuer Listboxen und Listen freigeben */
 
 		if ( init_dialog( fnt_dialog, button_flags, id, pt, ratio ))	/* konnte der Dialog initialisiert werden? */
 		{
@@ -536,49 +536,49 @@ WORD	fnts_update( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, L
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Event-Behandlung fÅr den Fontauswahl-Dialog															*/
-/* Funktionsergebnis:	0: ein Exit-Button wurde betÑtigt 1: nichts passiert					*/
+/* Event-Behandlung fuer den Fontauswahl-Dialog															*/
+/* Funktionsergebnis:	0: ein Exit-Button wurde betaetigt 1: nichts passiert					*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	events:					Zeiger auf EVNT-Struktur														*/
-/*	button:					angewÑhlter Button																*/
-/*	check_boxes:			Bitvektor fÅr Selektion der Checkboxen										*/
+/*	button:					angewaehlter Button																*/
+/*	check_boxes:			Bitvektor fuer Selektion der Checkboxen										*/
 /*	id:						ID des eingestellten Fonts														*/
-/*	pt:						Hîhe in 1/65536 Punkten															*/
-/*	ratio:					VerhÑltnis Breite/Hîhe															*/
+/*	pt:						Hoehe in 1/65536 Punkten															*/
+/*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	fnts_evnt( FNT_DIALOG *fnt_dialog, EVNT *events, WORD *button, WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio )
 {
 	WORD	cont;
 	
-	cont = wdlg_evnt( fnt_dialog->dialog, events );				/* Event fÅr den Fensterdialog behandeln */
+	cont = wdlg_evnt( fnt_dialog->dialog, events );				/* Event fuer den Fensterdialog behandeln */
 	
-	*button = fnt_dialog->button;										/* angewÑhlter Button */
-	*check_boxes = get_check_state( fnt_dialog->tree );		/* Bitvektor fÅr selektierte Check-Buttons */
+	*button = fnt_dialog->button;										/* angewaehlter Button */
+	*check_boxes = get_check_state( fnt_dialog->tree );		/* Bitvektor fuer selektierte Check-Buttons */
 	*id = fnt_dialog->id;												/* ID des eingestellten Fonts */
-	*pt = fnt_dialog->pt;												/* Hîhe in 1/65536 Punkten */
+	*pt = fnt_dialog->pt;												/* Hoehe in 1/65536 Punkten */
 	
 	if ( fnt_dialog->outline )											/* Vektorfont? */
-		*ratio = fnt_dialog->ratio;									/* VerhÑltnis Breite/Hîhe */
+		*ratio = fnt_dialog->ratio;									/* Verhaeltnis Breite/Hoehe */
 	else
-		*ratio = 0x10000L;												/* bei Bitmapfonts ist das VerhÑltnis immer 1 */
+		*ratio = 0x10000L;												/* bei Bitmapfonts ist das Verhaeltnis immer 1 */
 		
-	fnt_dialog->button = 0;												/* Button-Status lîschen */
+	fnt_dialog->button = 0;												/* Button-Status loeschen */
 	
 	return( cont );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fontdialog mit form_xdo() ausfÅhren																		*/
+/* Fontdialog mit form_xdo() ausfuehren																		*/
 /* Funktionsergebnis:	Nummer des Exit-Button (FNTS_CANCEL, usw.)								*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
-/*	button_flags:			Flags fÅrs Aussehen des Dialogs												*/
+/*	button_flags:			Flags fuers Aussehen des Dialogs												*/
 /*	id_in:					ID des einzustellenden Fonts													*/
-/*	pt_in:					Hîhe in 1/65536 Punkten															*/
-/*	ratio_in:				VerhÑltnis Breite/Hîhe															*/
-/*	check_boxes:			Bitvektor fÅr Selektion der Checkboxen										*/
+/*	pt_in:					Hoehe in 1/65536 Punkten															*/
+/*	ratio_in:				Verhaeltnis Breite/Hoehe															*/
+/*	check_boxes:			Bitvektor fuer Selektion der Checkboxen										*/
 /*	id:						ID des eingestellten Fonts														*/
-/*	pt:						Hîhe in 1/65536 Punkten															*/
-/*	ratio:					VerhÑltnis Breite/Hîhe															*/
+/*	pt:						Hoehe in 1/65536 Punkten															*/
+/*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in, LONG ratio_in, WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio )
 {
@@ -593,7 +593,7 @@ WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in,
 		move_hor_obj( tree, 1 );										/* alle Objekt um ein Pixel nach rechts schieben, damit */
 		tree[CHECK_NAME].ob_x += 1;									/* die Checkbox CHECK_NAME nicht direkt am Rand liegt */
 		tree[FSAMPLE].ob_y += 6;										/* den Beispieltext um 6 Pixel nach unten verschieben und um */
-		tree[FSAMPLE].ob_height -= 4;									/* 4 Pixel niedriger machen, damit er nicht die Flugecke Åberdeckt */
+		tree[FSAMPLE].ob_height -= 4;									/* 4 Pixel niedriger machen, damit er nicht die Flugecke ueberdeckt */
 		
 		wind_update( BEG_UPDATE );										/* Bildschirm sperren */
 		wind_update( BEG_MCTRL );										/* Mauskontrolle holen */
@@ -626,7 +626,7 @@ WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in,
 				obj = form_do( tree, 0 );								/* auf EXIT-Objekt warten */
 #endif			
 
-			if ( do_buttons( fnt_dialog, obj ) == 0 )				/* Dialog schlieûen? */
+			if ( do_buttons( fnt_dialog, obj ) == 0 )				/* Dialog schliessen? */
 				break;
 		}
 		
@@ -643,29 +643,29 @@ WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in,
 		wind_update( END_UPDATE );										/* Bildschirm freigeben */
 	
 		move_hor_obj( tree, -1 );										/* alle Objekt wieder in die */
-		tree[CHECK_NAME].ob_x -= 1;									/* Urpsrungsposition zurÅck- */
-		tree[FSAMPLE].ob_y -= 6;										/* bewegen, so daû es beim nÑchsten */
+		tree[CHECK_NAME].ob_x -= 1;									/* Urpsrungsposition zurueck- */
+		tree[FSAMPLE].ob_y -= 6;										/* bewegen, so dass es beim naechsten */
 		tree[FSAMPLE].ob_height += 4;									/* Aufruf keine Probleme gibt */
 
-		*check_boxes = get_check_state( fnt_dialog->tree );	/* Bitvektor fÅr selektierte Check-Buttons */
+		*check_boxes = get_check_state( fnt_dialog->tree );	/* Bitvektor fuer selektierte Check-Buttons */
 		*id = fnt_dialog->id;											/* ID des eingestellten Fonts */
-		*pt = fnt_dialog->pt;												/* Hîhe in 1/65536 Punkten */
+		*pt = fnt_dialog->pt;												/* Hoehe in 1/65536 Punkten */
 
 		if ( fnt_dialog->outline )										/* Vektorfont? */
-			*ratio = fnt_dialog->ratio;								/* VerhÑltnis Breite/Hîhe */
+			*ratio = fnt_dialog->ratio;								/* Verhaeltnis Breite/Hoehe */
 		else
-			*ratio = 0x10000L;											/* bei Bitmapfonts ist das VerhÑltnis immer 1 */
+			*ratio = 0x10000L;											/* bei Bitmapfonts ist das Verhaeltnis immer 1 */
 		
-		free_lboxes( fnt_dialog );										/* Speicher fÅr Listboxen und Listen freigeben */
+		free_lboxes( fnt_dialog );										/* Speicher fuer Listboxen und Listen freigeben */
 		
-		return( fnt_dialog->button );									/* angewÑhlter Button */
+		return( fnt_dialog->button );									/* angewaehlter Button */
 	}
 	else
 		return( 0 );														/* Fehler */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Programmeigene Fonts hinzufÅgen																			*/
+/* Programmeigene Fonts hinzufuegen																			*/
 /* Funktionsergebnis:	0: Fehler 1: alles in Ordnung													*/
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	user_fonts:				Zeiger auf programmeigene Fonts												*/
@@ -683,7 +683,7 @@ WORD	fnts_add( FNT_DIALOG *fnt_dialog, FNTS_ITEM *user_fonts )
 
 	font_tab = Malloc( no_fonts * sizeof(FNT *));				/* Zeiger auf Fonttabelle */
 
-	if ( font_tab )														/* genÅgend Speicher? */
+	if ( font_tab )														/* genuegend Speicher? */
 	{
 		FNT	**tmp;
 
@@ -692,14 +692,14 @@ WORD	fnts_add( FNT_DIALOG *fnt_dialog, FNTS_ITEM *user_fonts )
 		while ( vdi_fonts )
 		{
 			*tmp++ = vdi_fonts;											/* Zeiger in der Tabelle eintragen */
-			vdi_fonts = vdi_fonts->next;								/* Zeiger auf den nÑchsten Font */
+			vdi_fonts = vdi_fonts->next;								/* Zeiger auf den naechsten Font */
 		}
 	
 		while ( user_fonts )
 		{
 			*tmp++ = (FNT *) user_fonts;								/* Zeiger in der Tabelle eintragen */
 			user_fonts->reserved[0] = (LONG) user_fonts->next;	/* Zeiger sichern */
-			user_fonts = user_fonts->next;							/* Zeiger auf den nÑchsten programmeigenen Font */
+			user_fonts = user_fonts->next;							/* Zeiger auf den naechsten programmeigenen Font */
 		}
 		
 		sort_FNTs( font_tab, no_fonts );								/* Fonts sortieren und verketten */
@@ -737,7 +737,7 @@ void	fnts_remove( FNT_DIALOG *fnt_dialog )
 			
 			tmp = (FNTS_ITEM *) font;
 			
-			*fonts = font->next;											/* Font aus der Verkettung lîsen */
+			*fonts = font->next;											/* Font aus der Verkettung loesen */
 			tmp->next = (FNTS_ITEM *) tmp->reserved[0];			/* und alte Verkettung herstellen */
 		}
 		else
@@ -746,8 +746,8 @@ void	fnts_remove( FNT_DIALOG *fnt_dialog )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Anzahl der zu einer Familie gehîrigen Stile (Fonts) ermitteln									*/
-/* Funktionsergebnis:	Anzahl der zu einer Familie gehîrigen Stile (Fonts)					*/
+/* Anzahl der zu einer Familie gehoerigen Stile (Fonts) ermitteln									*/
+/* Funktionsergebnis:	Anzahl der zu einer Familie gehoerigen Stile (Fonts)					*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	id:						ID eines Fonts der Familie														*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -766,16 +766,16 @@ WORD	fnts_get_no_styles( FNT_DIALOG *fnt_dialog, LONG id )
 		while ( font )
 		{
 			if ( strcmp( family->family_name, font->family_name ) == 0 )	/* gleiche Familie? */
-				no_styles++;													/* Anzahl erhîhen */
+				no_styles++;													/* Anzahl erhoehen */
 
 			font = font->next;
 		}
 	}
-	return( no_styles );														/* Anzahl zurÅckliefern */
+	return( no_styles );														/* Anzahl zurueckliefern */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* ID eines Fonts zurÅckliefern, der zur gleichen Familie wie <id> gehîrt, und der der		*/
+/* ID eines Fonts zurueckliefern, der zur gleichen Familie wie <id> gehoert, und der der		*/
 /*	<index>-te Font der Familie ist.																			*/
 /*																														*/
 /* Funktionsergebnis:	ID des Fonts																		*/
@@ -800,7 +800,7 @@ LONG	fnts_get_style( FNT_DIALOG *fnt_dialog, LONG id, WORD index )
 				index--;
 				
 				if ( index == 0 )												/* Font gefunden? */
-					return( font->id );										/* ID zurÅckliefern */
+					return( font->id );										/* ID zurueckliefern */
 			}
 			font = font->next;
 		}
@@ -809,13 +809,13 @@ LONG	fnts_get_style( FNT_DIALOG *fnt_dialog, LONG id, WORD index )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Die Namen eines Fonts zurÅckliefern																		*/
+/* Die Namen eines Fonts zurueckliefern																		*/
 /* Funktionsergebnis:	0: Fehler 1: alles in Ordnung													*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	id:						ID des Fonts																		*/
-/*	full_name:				Zeiger auf String fÅr den vollstÑndigen Namen oder 0L					*/
-/*	family_name:			Zeiger auf String fÅr den Familiennamen oder 0L							*/
-/*	style_name:				Zeiger auf String fÅr Stilnamen oder 0L									*/
+/*	full_name:				Zeiger auf String fuer den vollstaendigen Namen oder 0L					*/
+/*	family_name:			Zeiger auf String fuer den Familiennamen oder 0L							*/
+/*	style_name:				Zeiger auf String fuer Stilnamen oder 0L									*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	fnts_get_name( FNT_DIALOG *fnt_dialog, LONG id, BYTE *full_name, BYTE *family_name, BYTE *style_name )
 {
@@ -841,12 +841,12 @@ WORD	fnts_get_name( FNT_DIALOG *fnt_dialog, LONG id, BYTE *full_name, BYTE *fami
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Index eines Fonts zurÅckliefern (z.B. fÅr vqt_name)												*/
+/* Index eines Fonts zurueckliefern (z.B. fuer vqt_name)												*/
 /* Funktionsergebnis:	0: Fehler > 0: Index des Fonts												*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	id:						ID des Fonts																		*/
-/*	mono:						Zeiger auf Flag fÅr Aquidistanz												*/
-/*	outline:					Zeiger auf Flag fÅr Vektorfont												*/
+/*	mono:						Zeiger auf Flag fuer Aquidistanz												*/
+/*	outline:					Zeiger auf Flag fuer Vektorfont												*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	fnts_get_info( FNT_DIALOG *fnt_dialog, LONG id, WORD *mono, WORD *outline )
 {
@@ -882,8 +882,8 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 /* Funktionsergebnis:	0: Fehler 1: alles in Ordnung													*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	id:						ID des Fonts																		*/
-/*	pt:						Hîhe in Punkten																	*/
-/*	ratio:					Breiten-Hîhen-VerhÑltnis														*/
+/*	pt:						Hoehe in Punkten																	*/
+/*	ratio:					Breiten-Hoehen-Verhaeltnis														*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	init_dialog( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio )
 {
@@ -904,7 +904,7 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 	OBJECT	*tree;
 	
 	(void)id;
-	if ( pt > ( 1000L << 16 ))											/* grîûer als 1000 Punkte? */
+	if ( pt > ( 1000L << 16 ))											/* groesser als 1000 Punkte? */
 		pt = 1000L << 16;
 	if ( pt < 65536L )													/* kleiner als 1 Punkt? */
 		pt = 65536L;
@@ -921,7 +921,7 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 	fnt_dialog->pt = pt;
 	fnt_dialog->ratio = ratio;
 
-	fnt_dialog->button = 0;												/* kein Button ausgewÑhlt */
+	fnt_dialog->button = 0;												/* kein Button ausgewaehlt */
 
 	tree = fnt_dialog->tree;
 	adapt_rsrc( tree, button_flags );								/* Dialog entsprechend <button_flags> anpassen */
@@ -931,16 +931,16 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 
 	if ( font->outline )													/* Vektorfont? */
 	{
-		obj_ENABLED( tree, CHECK_RATIO );							/* Checkbox fÅr B/H-VerhÑltnis disablen */
-		obj_TOUCHEXIT( tree, CHECK_RATIO );							/* Checkbox nicht anwÑhlbar */
-		obj_ENABLED( tree, F_BH );										/* FTEXT fÅr B/H-VerhÑltnis disablen */
+		obj_ENABLED( tree, CHECK_RATIO );							/* Checkbox fuer B/H-Verhaeltnis disablen */
+		obj_TOUCHEXIT( tree, CHECK_RATIO );							/* Checkbox nicht anwaehlbar */
+		obj_ENABLED( tree, F_BH );										/* FTEXT fuer B/H-Verhaeltnis disablen */
 		obj_EDITABLE( tree, F_BH );									/* FTEXT nicht editierbar */
 	}
 	else																		/* Bitmapfont */
 	{
-		obj_DISABLED( tree, CHECK_RATIO );							/* Checkbox fÅr B/H-VerhÑltnis disablen */
-		obj_NOT_TOUCHEXIT( tree, CHECK_RATIO );					/* Checkbox nicht anwÑhlbar */
-		obj_DISABLED( tree, F_BH );									/* FTEXT fÅr B/H-VerhÑltnis disablen */
+		obj_DISABLED( tree, CHECK_RATIO );							/* Checkbox fuer B/H-Verhaeltnis disablen */
+		obj_NOT_TOUCHEXIT( tree, CHECK_RATIO );					/* Checkbox nicht anwaehlbar */
+		obj_DISABLED( tree, F_BH );									/* FTEXT fuer B/H-Verhaeltnis disablen */
 		obj_NOT_EDITABLE( tree, F_BH );								/* FTEXT nicht editierbar */
 	}
 
@@ -954,7 +954,7 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 			LBOX_ITEM	*slct;
 			
 			sizes = lbox_get_items( fnt_dialog->fnt_size );	/* Zeiger auf die Liste holen */
-			pt = slct_closest_height( sizes, &slct, font, pt );	/* am nÑchsten liegende Hîhe suchen */
+			pt = slct_closest_height( sizes, &slct, font, pt );	/* am naechsten liegende Hoehe suchen */
 			lbox_update( fnt_dialog->fnt_size, 0L );				/* Objekte updaten; nicht zeichnen */
 		}
 		else
@@ -963,11 +963,11 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Listboxen fÅr den Fontdialog anlegen																	*/
-/* Funktionsergebnis:	Zeiger auf den ausgewÑhlten Font oder 0L (Fehler)						*/
+/* Listboxen fuer den Fontdialog anlegen																	*/
+/* Funktionsergebnis:	Zeiger auf den ausgewaehlten Font oder 0L (Fehler)						*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	id:						ID des Fonts																		*/
-/*	pt:						Hîhe in Punkten																	*/
+/*	pt:						Hoehe in Punkten																	*/
 /*----------------------------------------------------------------------------------------*/ 
 static FNT	*create_lboxes( FNT_DIALOG *fnt_dialog, LONG id, LONG pt )
 {
@@ -1016,7 +1016,7 @@ static FNT	*create_lboxes( FNT_DIALOG *fnt_dialog, LONG id, LONG pt )
 			
 			if ( lbox_style )												/* konnte die Listbox erzeugt werden? */
 			{
-				for ( index = 0, tmp = size_list; tmp && ( tmp->selected == 0 ); tmp = tmp->next )	/* Index der selektierten Grîûe ermitteln */
+				for ( index = 0, tmp = size_list; tmp && ( tmp->selected == 0 ); tmp = tmp->next )	/* Index der selektierten Groesse ermitteln */
 					index++;
 
 				if ( tmp == 0L )											/* nichts selektiert? */
@@ -1040,22 +1040,22 @@ static FNT	*create_lboxes( FNT_DIALOG *fnt_dialog, LONG id, LONG pt )
 			}
 			lbox_delete( lbox_name );
 		}
-		lbox_free_list( size_list );									/* Speicher fÅr die Punkt-Liste freigeben */
-		lbox_free_list( style_list );									/* Speicher fÅr die Stil-Liste freigeben */
-		lbox_free_list( name_list );									/* Speicher fÅr die Namens-Liste freigeben */
+		lbox_free_list( size_list );									/* Speicher fuer die Punkt-Liste freigeben */
+		lbox_free_list( style_list );									/* Speicher fuer die Stil-Liste freigeben */
+		lbox_free_list( name_list );									/* Speicher fuer die Namens-Liste freigeben */
 	}
 	return( 0L );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Listen fÅr die Listboxen bauen																			*/
-/* Funktionsergebnis:	Zeiger auf den ausgewÑhlten Font oder 0L (Fehler)						*/
+/* Listen fuer die Listboxen bauen																			*/
+/* Funktionsergebnis:	Zeiger auf den ausgewaehlten Font oder 0L (Fehler)						*/
 /*	font_list:				Zeiger auf die Font-Strukturen												*/
 /*	id:						ID des Fonts																		*/
-/*	pt:						Hîhe in Punkten																	*/
+/*	pt:						Hoehe in Punkten																	*/
 /*	font_names:				Adresse des Zeigers auf die Namensliste									*/
 /*	font_styles:			Adresse des Zeigers auf die Stilliste										*/
-/*	font_sizes:				Adresse des Zeigers auf die Hîhenliste										*/
+/*	font_sizes:				Adresse des Zeigers auf die Hoehenliste										*/
 /*----------------------------------------------------------------------------------------*/ 
 static FNT	*build_lists( FNT *font_list, LONG id, LONG pt, LBOX_ITEM **font_names, LBOX_ITEM **font_styles, LBOX_ITEM **font_sizes )
 {
@@ -1065,14 +1065,14 @@ static FNT	*build_lists( FNT *font_list, LONG id, LONG pt, LBOX_ITEM **font_name
 	
 	names = build_name_list( font_list, id, &family, &font );	/* Liste mit Namen der Fontfamilien aufbauen */
 	
-	if ( names )															/* genÅgend Speicher fÅr die Liste? */
+	if ( names )															/* genuegend Speicher fuer die Liste? */
 	{
 		LBOX_ITEM	*styles;
 		
 		if ( family == 0L )												/* konnte der Font gefunden werden? */
 		{
 			names->selected = 1;
-			family = (FNT *) names->data;								/* ersten Font der Liste auswÑhlen */
+			family = (FNT *) names->data;								/* ersten Font der Liste auswaehlen */
 			font = family;
 			id = font->id;
 		}
@@ -1084,32 +1084,32 @@ static FNT	*build_lists( FNT *font_list, LONG id, LONG pt, LBOX_ITEM **font_name
 			LBOX_ITEM	*sizes;
 			LBOX_ITEM	*slct;
 			
-			sizes = build_pt_list( font, pt, &slct );				/* Liste mit Punkthîhen aufbauen */
+			sizes = build_pt_list( font, pt, &slct );				/* Liste mit Punkthoehen aufbauen */
 		
 			if ( sizes )
 			{
 				*font_names = names;										/* Zeiger auf die Namensliste */
 				*font_styles = styles;									/* Zeiger auf die Stilliste */
-				*font_sizes = sizes;										/* Zeiger auf die Hîhenliste */
+				*font_sizes = sizes;										/* Zeiger auf die Hoehenliste */
 				return( font );											/* Zeiger auf den Font */
 			}
 			else
-				lbox_free_list( styles );								/* Speicher fÅr die Stil-Liste freigeben */
+				lbox_free_list( styles );								/* Speicher fuer die Stil-Liste freigeben */
 		}
 		else
-			lbox_free_list( names );									/* Speicher fÅr die Names-Liste freigeben */
+			lbox_free_list( names );									/* Speicher fuer die Names-Liste freigeben */
 	}
 	return( 0L );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Verkettete Liste mit Namen der Fontfamilien fÅr die Listbox erstellen						*/
+/* Verkettete Liste mit Namen der Fontfamilien fuer die Listbox erstellen						*/
 /* Funktionsergebnis:	Zeiger auf die Liste																*/
 /*	font:						Zeiger auf die Font-Struktur der ersten Familie							*/
-/* id:						ID des angewÑhlten Fonts														*/
+/* id:						ID des angewaehlten Fonts														*/
 /*	family_index:			Index des LBOX_ITEMs der aktuellen Familie								*/
-/*	family:					Zeiger auf die angewÑhlte Familie oder 0L wird zurÅckgeliefert		*/
-/*	fnt:						Zeiger auf den ausgewÑhlten Font oder 0L wird zurÅckgeliefert		*/
+/*	family:					Zeiger auf die angewaehlte Familie oder 0L wird zurueckgeliefert		*/
+/*	fnt:						Zeiger auf den ausgewaehlten Font oder 0L wird zurueckgeliefert		*/
 /*----------------------------------------------------------------------------------------*/ 
 static LBOX_ITEM	*build_name_list( FNT *font, LONG id, FNT **slct_family, FNT **slct_font )
 {
@@ -1131,14 +1131,14 @@ static LBOX_ITEM	*build_name_list( FNT *font, LONG id, FNT **slct_family, FNT **
 		
 		if (( family == 0L ) || strcmp( font->family_name, family->family_name ))	/* unterschiedliche Familie? */
 		{
-			family = font;													/* Zeiger auf ersten Font der nÑchsten Familie */
+			family = font;													/* Zeiger auf ersten Font der naechsten Familie */
 
-			item = Malloc( sizeof( LBOX_ITEM ));					/* Speicher fÅr LBOX_ITEM anfordern */
+			item = Malloc( sizeof( LBOX_ITEM ));					/* Speicher fuer LBOX_ITEM anfordern */
 			
 			if ( item )
 			{
 				*last = item;												/* mit dem vorhergehenden LBOX_ITEM verketten */
-				last = &item->next;										/* Adresse des nÑchsten Verkettungszeigers */
+				last = &item->next;										/* Adresse des naechsten Verkettungszeigers */
 				
 				item->next = 0L;
 				item->data = font;
@@ -1147,23 +1147,23 @@ static LBOX_ITEM	*build_name_list( FNT *font, LONG id, FNT **slct_family, FNT **
 			}
 		}
 		
-		if ( font->id == id )											/* ausgewÑhlter Font? */
+		if ( font->id == id )											/* ausgewaehlter Font? */
 		{
 			item->selected = 1;
 			*slct_family = family;
 			*slct_font = font;
 		}
 
-		font = font->next;												/* nÑchster Font */
+		font = font->next;												/* naechster Font */
 	}
-	return( name_list );													/* Zeiger auf die Liste zurÅckliefern */
+	return( name_list );													/* Zeiger auf die Liste zurueckliefern */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Verkettete Liste mit Namen der Fontstile fÅr die Listbox erstellen							*/
+/* Verkettete Liste mit Namen der Fontstile fuer die Listbox erstellen							*/
 /* Funktionsergebnis:	Zeiger auf die Liste																*/
 /*	family:					Zeiger auf die erste Font-Struktur der Familie							*/
-/* id:						ID des angewÑhlten Fonts														*/
+/* id:						ID des angewaehlten Fonts														*/
 /*----------------------------------------------------------------------------------------*/ 
 static LBOX_ITEM	*build_style_list( FNT *family, LONG id )
 {
@@ -1182,7 +1182,7 @@ static LBOX_ITEM	*build_style_list( FNT *family, LONG id )
 		
 		if ( strcmp( font->family_name, family->family_name ) == 0)	/* gleiche Familie? */
 		{
-			if (( item = Malloc( sizeof( LBOX_ITEM ))) != 0 )	/* Speicher fÅr LBOX_ITEM anfordern */
+			if (( item = Malloc( sizeof( LBOX_ITEM ))) != 0 )	/* Speicher fuer LBOX_ITEM anfordern */
 			{
 				*last = item;
 				last = &item->next;
@@ -1191,22 +1191,22 @@ static LBOX_ITEM	*build_style_list( FNT *family, LONG id )
 				item->data = font;
 				item->name = font->style_name;						/* Zeiger auf den Stil-Namen */
 	
-				if ( font->id == id )									/* handelt es sich um den angewÑhlten Font? */
+				if ( font->id == id )									/* handelt es sich um den angewaehlten Font? */
 					item->selected = 1;
 				else
 					item->selected = 0;
 			}
 		}
-		font = font->next;												/* nÑchster Font der Familie */
+		font = font->next;												/* naechster Font der Familie */
 	}
-	return( style_list );												/* Zeiger auf die Liste zurÅckliefern */
+	return( style_list );												/* Zeiger auf die Liste zurueckliefern */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Verkettete Liste mit Punkthîhen fÅr die Listbox erstellen										*/
+/* Verkettete Liste mit Punkthoehen fuer die Listbox erstellen										*/
 /* Funktionsergebnis:	Zeiger auf die Liste																*/
 /*	font:						Zeiger auf die Font-Struktur													*/
-/*	size:						eingestellte Punktgrîûe															*/
+/*	size:						eingestellte Punktgroesse															*/
 /*----------------------------------------------------------------------------------------*/ 
 static LBOX_ITEM	*build_pt_list( FNT *font, LONG size, LBOX_ITEM **selected )
 {
@@ -1222,21 +1222,21 @@ static LBOX_ITEM	*build_pt_list( FNT *font, LONG size, LBOX_ITEM **selected )
 	{
 		LBOX_ITEM	*item;
 		
-		if (( item = Malloc( sizeof( LBOX_ITEM ) + 6 )) != 0 )	/* Speicher fÅr LBOX_ITEM und fÅr String anfordern */
+		if (( item = Malloc( sizeof( LBOX_ITEM ) + 6 )) != 0 )	/* Speicher fuer LBOX_ITEM und fuer String anfordern */
 		{
 			BYTE	*str;
 			
-			str = (BYTE *) (item + 1);									/* Zeiger auf Platz fÅr den String */
-			fixed_to_str( str, 4, ((LONG) font->pts[i] ) << 16 );	/* Punkthîhe in String umwandeln */
+			str = (BYTE *) (item + 1);									/* Zeiger auf Platz fuer den String */
+			fixed_to_str( str, 4, ((LONG) font->pts[i] ) << 16 );	/* Punkthoehe in String umwandeln */
 
 			*last = item;
 			last = &item->next;
 			
 			item->next = 0L;
-			item->data = font;											/* Zeiger auf die zugehîrige Font-Struktur */
+			item->data = font;											/* Zeiger auf die zugehoerige Font-Struktur */
 			item->name = str;												/* Zeiger auf den String */
 
-			if (((LONG) font->pts[i] << 16 ) == size )			/* handelt es sich um die angewÑhlte Punktgrîûe? */
+			if (((LONG) font->pts[i] << 16 ) == size )			/* handelt es sich um die angewaehlte Punktgroesse? */
 			{
 				*selected = item;											/* Zeiger auf den selektierten Eintrag */
 				item->selected = 1;										/* Eintrag ist selektiert */
@@ -1245,11 +1245,11 @@ static LBOX_ITEM	*build_pt_list( FNT *font, LONG size, LBOX_ITEM **selected )
 				item->selected = 0;										/* Eintrag ist nicht selektiert */
 		}
 	}
-	return( font_sizes );												/* Zeiger auf die Liste zurÅckliefern */
+	return( font_sizes );												/* Zeiger auf die Liste zurueckliefern */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr Listboxen und Listen freigeben															*/
+/* Speicher fuer Listboxen und Listen freigeben															*/
 /* Funktionsresultat:	-																						*/
 /*	fnt_dialog:				Zeigehr auf die Dialog-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -1257,22 +1257,22 @@ static void	free_lboxes( FNT_DIALOG *fnt_dialog )
 {
 	if ( fnt_dialog->fnt_size )
 	{
-		lbox_free_items( fnt_dialog->fnt_size );					/* Speicher fÅr LBOX_ITEMs freigeben */
-		lbox_delete( fnt_dialog->fnt_size );						/* Speicher fÅr die Listbox-Struktur freigeben */
+		lbox_free_items( fnt_dialog->fnt_size );					/* Speicher fuer LBOX_ITEMs freigeben */
+		lbox_delete( fnt_dialog->fnt_size );						/* Speicher fuer die Listbox-Struktur freigeben */
 		fnt_dialog->fnt_size = 0L;
 	}
 		
 	if ( fnt_dialog->fnt_style )
 	{
-		lbox_free_items( fnt_dialog->fnt_style );				/* Speicher fÅr LBOX_ITEMs freigeben */
-		lbox_delete( fnt_dialog->fnt_style );						/* Speicher fÅr die Listbox-Struktur freigeben */
+		lbox_free_items( fnt_dialog->fnt_style );				/* Speicher fuer LBOX_ITEMs freigeben */
+		lbox_delete( fnt_dialog->fnt_style );						/* Speicher fuer die Listbox-Struktur freigeben */
 		fnt_dialog->fnt_style = 0L;
 	}
 	
 	if ( fnt_dialog->fnt_name )
 	{
-		lbox_free_items( fnt_dialog->fnt_name );					/* Speicher fÅr LBOX_ITEMs freigeben */
-		lbox_delete( fnt_dialog->fnt_name );						/* Speicher fÅr die Listbox-Struktur freigeben */
+		lbox_free_items( fnt_dialog->fnt_name );					/* Speicher fuer LBOX_ITEMs freigeben */
+		lbox_delete( fnt_dialog->fnt_name );						/* Speicher fuer die Listbox-Struktur freigeben */
 		fnt_dialog->fnt_name = 0L;
 	}
 }
@@ -1304,7 +1304,7 @@ static void	_mfree( void *addr )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr alle EintrÑge in der Listbox freigeben, Pure-C-Funktionen benutzen			*/
+/* Speicher fuer alle Eintraege in der Listbox freigeben, Pure-C-Funktionen benutzen			*/
 /* Funktionsresultat:	1																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -1314,7 +1314,7 @@ static void	free_items( LIST_BOX *box )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr alle EintrÑge in der Listbox freigeben, Pure-C-Funktionen benutzen			*/
+/* Speicher fuer alle Eintraege in der Listbox freigeben, Pure-C-Funktionen benutzen			*/
 /* Funktionsresultat:	1																						*/
 /* item:						Zeiger auf das erste LBOX_ITEM												*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -1326,14 +1326,14 @@ static void	free_list( LBOX_ITEM *item )
 		
 		next = item->next;
 		Mfree( item );														/* Speicher freigeben */
-		item = next;														/* nÑchstes Element */
+		item = next;														/* naechstes Element */
 	}
 }
 
 #endif
 
 /*----------------------------------------------------------------------------------------*/ 
-/* EintrÑge in einer Listbox anwaÑhlbar machen															*/
+/* Eintraege in einer Listbox anwaaehlbar machen															*/
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	objs:						Feld mit n Objektnummern der Listbox-Objekte								*/
@@ -1354,7 +1354,7 @@ static void	enable_lbox( OBJECT *tree, WORD objs[], WORD n )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* EintrÑge in einer Listbox nicht anwÑhlbar machen													*/
+/* Eintraege in einer Listbox nicht anwaehlbar machen													*/
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	objs:						Feld mit n Objektnummern der Listbox-Objekte								*/
@@ -1395,12 +1395,12 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 	len = sizeof( XFNT_INFO ) + sizeof( TMP_FNT ) + ( no_fonts * sizeof( FNT *));
 		
 	info = (XFNT_INFO *) Malloc( len );								/* Zeiger auf die XFNT-Info-Struktur */
-	tmp = (TMP_FNT *) ( info + 1 );									/* Zeiger auf temporÑre Font-Struktur */
+	tmp = (TMP_FNT *) ( info + 1 );									/* Zeiger auf temporaere Font-Struktur */
 	font_tab = (FNT **) ( tmp + 1 );									/* Zeiger auf Fonttabelle */
 	
 	font_cnt = 0;
 	
-	call_xfntinfo = use_vqt_xfontinfo();							/* Flag dafÅr, ob vqt_xfntinfo() aufgerufen werden soll */
+	call_xfntinfo = use_vqt_xfontinfo();							/* Flag dafuer, ob vqt_xfntinfo() aufgerufen werden soll */
 	
 	for ( i = 1; i <= no_fonts; i++ )	
 	{
@@ -1411,10 +1411,10 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 		UWORD	flags;
 		UWORD	font_format;
 		
-		tmp->npts = 0;														/* Anzahl der vorhandenen Punkthîhen initialisieren */
-		tmp->mono = 0;														/* équidistanz-Flag initialisieren */	
+		tmp->npts = 0;														/* Anzahl der vorhandenen Punkthoehen initialisieren */
+		tmp->mono = 0;														/* aequidistanz-Flag initialisieren */	
 
-		tmp->id = vqt_ext_name( vdi_handle, i, tmp->full_name, &font_format, &flags );	/* vollstÑndigen Namen und Typ erfragen */
+		tmp->id = vqt_ext_name( vdi_handle, i, tmp->full_name, &font_format, &flags );	/* vollstaendigen Namen und Typ erfragen */
 		tmp->id = vst_font( vdi_handle, tmp->id );				/* Font einstellen */
 
 		if ( tmp->full_name[32] )										/* Vektorfont? */
@@ -1425,7 +1425,7 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 			{
 				WORD	j;
 				
-				if ( flags & 0x0001 )									/* Ñquidistant? */
+				if ( flags & 0x0001 )									/* aequidistant? */
 					tmp->mono = 1;
 
 				info->size = sizeof( XFNT_INFO );
@@ -1434,7 +1434,7 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 				vstrcpy( tmp->family_name, info->family_name );	/* Name der Fontfamilie */
 				vstrcpy( tmp->style_name, info->style_name );		/* Name des Stils */
  
- 				tmp->npts = info->pt_cnt;								/* Anzahl der vordefinierten Punktgrîûen */
+ 				tmp->npts = info->pt_cnt;								/* Anzahl der vordefinierten Punktgroessen */
  				for ( j = 0; j < info->pt_cnt; j++ )
  					tmp->pts[j] = info->pt_sizes[j];
 			}
@@ -1450,7 +1450,7 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 				vmemcpy( tmp->style_name, buf + FH_FNTFM, 14 );	/* Name des Stils */
 				tmp->style_name[14] = 0;
 
-				if ( buf[FH_CLFGS] & 2 )								/* Ñquidistant?	*/
+				if ( buf[FH_CLFGS] & 2 )								/* aequidistant?	*/
 					tmp->mono = 1;
 			}
 		
@@ -1462,21 +1462,21 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 			vstrcpy( tmp->style_name, "   -" );						/* kein Stilname */
 		}
 		
-		if ( tmp->npts == 0 )											/* sind die Punkthîhen noch nicht bekannt? */
-			tmp->npts = get_pt_sizes( vdi_handle, tmp->pts );	/* Punkthîhen erfragen */
+		if ( tmp->npts == 0 )											/* sind die Punkthoehen noch nicht bekannt? */
+			tmp->npts = get_pt_sizes( vdi_handle, tmp->pts );	/* Punkthoehen erfragen */
 
 		if ( tmp->outline == 0 )										/* Bitmap-Font? */
-			tmp->mono = is_bitmap_mono( vdi_handle, tmp->pts[tmp->npts - 1] );	/* ermitteln, ob der Font Ñquidistant ist */
+			tmp->mono = is_bitmap_mono( vdi_handle, tmp->pts[tmp->npts - 1] );	/* ermitteln, ob der Font aequidistant ist */
 		
-		name_len = strlen( tmp->full_name ) + 1;					/* LÑnge des vollstÑndigen Namens inklusive Null-Byte */
-		family_len = strlen( tmp->family_name ) + 1;				/* LÑnge des Familienamens inklusive Null-Byte */
-		style_len = strlen( tmp->style_name ) + 1;				/* LÑnge des Stilamens inklusive Null-Byte */
+		name_len = strlen( tmp->full_name ) + 1;					/* Laenge des vollstaendigen Namens inklusive Null-Byte */
+		family_len = strlen( tmp->family_name ) + 1;				/* Laenge des Familienamens inklusive Null-Byte */
+		style_len = strlen( tmp->style_name ) + 1;				/* Laenge des Stilamens inklusive Null-Byte */
 
-		len = sizeof( FNT ) + name_len + family_len + style_len + tmp->npts;	/* fÅr die Struktur benîtigter Speicher */
+		len = sizeof( FNT ) + name_len + family_len + style_len + tmp->npts;	/* fuer die Struktur benoetigter Speicher */
 
-		if ( tmp->mono )													/* Font Ñquidistant? */
+		if ( tmp->mono )													/* Font aequidistant? */
 		{
-			if (( font_flags & FNTS_MONO ) == 0 )					/* keine Ñquidistanten Fonts anzeigen? */
+			if (( font_flags & FNTS_MONO ) == 0 )					/* keine aequidistanten Fonts anzeigen? */
 				continue;
 		}	
 		else																	/* Font proportional */
@@ -1506,12 +1506,12 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 			font->display = 0L;											/* keine Anzeige-Funktion, da VDI-Font */
 			font->id = tmp->id;											/* ID des Fonts */
 			font->index = i;												/* Index des Fonts */
-			font->npts = tmp->npts;										/* Anzahl der vorhandenen Punkthîhen */
-			font->mono = tmp->mono;										/* équidistanz-Flag */
+			font->npts = tmp->npts;										/* Anzahl der vorhandenen Punkthoehen */
+			font->mono = tmp->mono;										/* aequidistanz-Flag */
 			font->outline = tmp->outline;								/* Vektorfont-Flag */
 			
 			font->full_name = (BYTE *) (font + 1);
-			vstrcpy( font->full_name, tmp->full_name );			/* vollstÑndiger Name */
+			vstrcpy( font->full_name, tmp->full_name );			/* vollstaendiger Name */
 
 			font->family_name = font->full_name + name_len;
 			vstrcpy( font->family_name, tmp->family_name );		/* Familienname */
@@ -1520,11 +1520,11 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 			vstrcpy( font->style_name, tmp->style_name );			/* Stilname */
 
 			font->pts = font->style_name + style_len;
-			for ( j = 0; j < tmp->npts; j++ )						/* Punkthîhen kopieren */
+			for ( j = 0; j < tmp->npts; j++ )						/* Punkthoehen kopieren */
 				font->pts[j] = tmp->pts[j];
 
 			font_tab[font_cnt] = font;									/* Fontstruktur in Tabelle eintragen */
-			font_cnt++;														/* Anzahl der Fonts erhîhen */
+			font_cnt++;														/* Anzahl der Fonts erhoehen */
 		}
 	}
 
@@ -1538,9 +1538,9 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Punktgrîûen fÅr einen Bitmap-Font ermitteln															*/
-/* Funktionsergebnis:	Anzahl der Punkthîhen															*/
-/*	pts:						Zeiger auf ein Feld fÅr die Punkthîhen										*/
+/* Punktgroessen fuer einen Bitmap-Font ermitteln															*/
+/* Funktionsergebnis:	Anzahl der Punkthoehen															*/
+/*	pts:						Zeiger auf ein Feld fuer die Punkthoehen										*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts )
 {		
@@ -1549,21 +1549,21 @@ static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts )
 	WORD	pt;
 	WORD	npts;
 	
-	npts = 0;																/* Anzahl der Punkthîhen */
-	pt_last = 99 + 1;														/* grîûte Punkthîhe sind 99 pt */
+	npts = 0;																/* Anzahl der Punkthoehen */
+	pt_last = 99 + 1;														/* groesste Punkthoehe sind 99 pt */
 	
-	while ( pt_last > 1 )												/* schon alle Punkthîhen durchgegangen? */
+	while ( pt_last > 1 )												/* schon alle Punkthoehen durchgegangen? */
 	{
 		WORD	tmp;
 
 		pt = vst_point( vdi_handle, pt_last - 1, &tmp, &tmp, &tmp, &tmp );
-		if ( pt == pt_last )												/* lÑût sich keine kleinere Punkthîhe mehr einstellen? */
-			break;															/* nÑchsten Font */
+		if ( pt == pt_last )												/* laesst sich keine kleinere Punkthoehe mehr einstellen? */
+			break;															/* naechsten Font */
 				
 		pts[npts] = pt;
-		npts++;																/* Anzahl der Punkthîhen inkrementieren */
+		npts++;																/* Anzahl der Punkthoehen inkrementieren */
 
-		pt_last = pt;														/* letzte Punkthîhe merken */
+		pt_last = pt;														/* letzte Punkthoehe merken */
 	}
 		
 	for ( j = 0; j < (npts/2); j++ )									/* Reihenfolge umkehren... */
@@ -1575,13 +1575,13 @@ static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts )
 		pts[npts - j - 1] = point;
 	}
 	
-	return( npts );														/* Anzahl der Punkthîhen */
+	return( npts );														/* Anzahl der Punkthoehen */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* öberprÅfen, ob ein Bitmap-Font Ñquidistant ist														*/
-/* Funktionsergebnis:	0: Font ist proportional 1: Font ist Ñquidistant						*/
-/*	pt:						testweise einzustellende Punkthîhe											*/
+/* ueberpruefen, ob ein Bitmap-Font aequidistant ist														*/
+/* Funktionsergebnis:	0: Font ist proportional 1: Font ist aequidistant						*/
+/*	pt:						testweise einzustellende Punkthoehe											*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt )
 {
@@ -1591,14 +1591,14 @@ static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt )
 	WORD	first_width;
 	WORD	width;
 	
-	vst_point( vdi_handle, pt, d, d, d, d );						/* grîûte Punkthîhe einstellen */
+	vst_point( vdi_handle, pt, d, d, d, d );						/* groesste Punkthoehe einstellen */
 	vqt_fontinfo( vdi_handle, &first_ade, &last_ade, d, d, d );	/* Index des ersten und letzten Zeichens erfragen */
 	
 	vqt_width( vdi_handle, first_ade, &first_width, d, d );	/* Breite des ersten Zeichens */
 
 	do			
 	{
-		first_ade++;														/* nÑchstes Zeichen */
+		first_ade++;														/* naechstes Zeichen */
 		vqt_width( vdi_handle, first_ade, &width, d, d );
 		
 		if ( first_width != width )									/* verschiedene Breite? */
@@ -1606,19 +1606,19 @@ static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt )
 
 	} while ( first_ade <= last_ade );								/* schon alle Zeichen untersucht? */
 
-	return( 1 );															/* Font ist Ñquidistant */	
+	return( 1 );															/* Font ist aequidistant */	
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fonts mit Quicksort sortieren und anschlieûend verketten											*/
+/* Fonts mit Quicksort sortieren und anschliessend verketten											*/
 /* Funktionsergebnis:	-																						*/
 /*	fonts:					vorsortiertes Feld mit Zeigern auf die Font-Strukuren					*/
-/*	cnt:						Anzahl der Fonts (LÑnge von fonts)											*/
+/*	cnt:						Anzahl der Fonts (Laenge von fonts)											*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	sort_FNTs( FNT **fonts, WORD font_cnt )
 {
 #if CALL_MAGIC_KERNEL
-	shelsort( fonts, font_cnt, sizeof(FNT *), cmp_font_names, 0L );	/* Fonts sortieren, so daû die Familien aufeinander folgen */
+	shelsort( fonts, font_cnt, sizeof(FNT *), cmp_font_names, 0L );	/* Fonts sortieren, so dass die Familien aufeinander folgen */
 #else
 	qsort( fonts, font_cnt, sizeof(FNT *), cmp_font_names );	/* Fonts nach Familien aufeinander folgenden sortieren */
 #endif
@@ -1630,7 +1630,7 @@ static void	sort_FNTs( FNT **fonts, WORD font_cnt )
 		font = *fonts++;
 
 		if ( font_cnt > 1 )
-			font->next = *fonts;											/* Zeiger auf die nÑchste Font-Struktur */
+			font->next = *fonts;											/* Zeiger auf die naechste Font-Struktur */
 		else
 			font->next = 0L;												/* kein Nachfolger */
 
@@ -1669,7 +1669,7 @@ static WORD	cmp_font_names( FNT **a, FNT **b )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Zeiger auf die Struktur des Fonts mit der ID <id> zurÅckliefern								*/
+/* Zeiger auf die Struktur des Fonts mit der ID <id> zurueckliefern								*/
 /* Funktionsergebnis:	Zeiger auf die FNT-Struktur													*/
 /*	font:						Zeiger auf den ersten Font der Liste										*/
 /*	id:						ID des gesuchten Fonts															*/
@@ -1707,7 +1707,7 @@ static WORD	count_fonts( FNT *font )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Index erstes Element in der Listbox ÅberprÅfen (nach Wechsel des Inhalts)					*/
+/* Index erstes Element in der Listbox ueberpruefen (nach Wechsel des Inhalts)					*/
 /* Funktionsergebnis:	-																						*/
 /*	box:						Zeiger auf die Listbox															*/
 /*	last_top:				Index des bisher ersten sichtbaren Elements								*/
@@ -1720,7 +1720,7 @@ static void	set_top( LIST_BOX *box, WORD last_top, WORD last_cnt, GRECT *rect )
 	
 	cnt = lbox_cnt_items( box );										/* Anzahl der Elemente in der Listbox */
 	
-	if ( cnt <= lbox_get_visible( box ))							/* weniger Elemente als die Box EintrÑge hat? */
+	if ( cnt <= lbox_get_visible( box ))							/* weniger Elemente als die Box Eintraege hat? */
 		first = 0;															/* erstes Element ist auch das erste sichtbare */
 	else
 		first = (WORD) (((LONG) last_top ) * cnt / last_cnt );	/* erstes sichbares Element berechnen */
@@ -1730,12 +1730,12 @@ static void	set_top( LIST_BOX *box, WORD last_top, WORD last_cnt, GRECT *rect )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Die zu einer eingestellten Hîhe naheliegendste verfÅgbare Hîhe zurÅckliefern				*/
-/* Funktionsergebnis:	einstellbare Hîhe in 1/65536 Punkten										*/
-/*	item:						Zeiger auf die Liste der verfÅgbaren Punkthîhen							*/
-/*	slct:						Adresse des Zeigers auf den angewÑhlten Eintrag							*/
+/* Die zu einer eingestellten Hoehe naheliegendste verfuegbare Hoehe zurueckliefern				*/
+/* Funktionsergebnis:	einstellbare Hoehe in 1/65536 Punkten										*/
+/*	item:						Zeiger auf die Liste der verfuegbaren Punkthoehen							*/
+/*	slct:						Adresse des Zeigers auf den angewaehlten Eintrag							*/
 /*	font:						Zeiger auf die Font-Struktur													*/
-/*	pt:						eingestellte Hîhe																	*/
+/*	pt:						eingestellte Hoehe																	*/
 /*----------------------------------------------------------------------------------------*/ 
 static LONG	slct_closest_height( LBOX_ITEM *item, LBOX_ITEM **slct, FNT *font, LONG pt )
 {
@@ -1759,7 +1759,7 @@ static LONG	slct_closest_height( LBOX_ITEM *item, LBOX_ITEM **slct, FNT *font, L
 			
 		if ( tmp < diff )													/* Unterschied kleiner als bisher? */
 		{
-			set_pt = ((LONG) font->pts[i] ) << 16;					/* einstellbare Punkthîhe */
+			set_pt = ((LONG) font->pts[i] ) << 16;					/* einstellbare Punkthoehe */
 			diff = tmp;
 			size = item;
 		}
@@ -1768,16 +1768,16 @@ static LONG	slct_closest_height( LBOX_ITEM *item, LBOX_ITEM **slct, FNT *font, L
 	}
 	
 	size->selected = 1;													/* Element selektieren */
-	*slct = size;															/* Zeiger auf angewÑhlten Eintrag */
+	*slct = size;															/* Zeiger auf angewaehlten Eintrag */
 	
-	return( set_pt );														/* realisierbare Hîhe zurÅckliefern */
+	return( set_pt );														/* realisierbare Hoehe zurueckliefern */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Speicher fÅr Resource anfordern und es kopieren														*/
+/* Speicher fuer Resource anfordern und es kopieren														*/
 /* Funktionsergebnis:	Zeiger auf den Resource-Header oder 0L (Fehler)							*/
 /*	rsc:						Zeiger auf das zu kopierende Resource										*/
-/*	len:						LÑnge des Resource																*/
+/*	len:						Laenge des Resource																*/
 /*----------------------------------------------------------------------------------------*/ 
 static RSHDR	*copy_rsrc( RSHDR *rsc, LONG len )
 {
@@ -1800,7 +1800,7 @@ static RSHDR	*copy_rsrc( RSHDR *rsc, LONG len )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Resource und dazugehîrige Strukturen initialisieren												*/
+/* Resource und dazugehoerige Strukturen initialisieren												*/
 /* Funktionsergebnis:	-																						*/
 /*	rsh:						Zeiger auf den Resource-Header												*/
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
@@ -1814,7 +1814,7 @@ static void	init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags )
 
 	fnt_dialog->tree_addr = (OBJECT **)(((UBYTE *)rsh) + rsh->rsh_trindex);	/* Zeiger auf die Objektbaumtabelle holen */
 
-	fnt_dialog->tree_count = rsh->rsh_ntree;						/* und Anzahl der ObjektbÑume (von 1 ab gezÑhlt) bestimmen */
+	fnt_dialog->tree_count = rsh->rsh_ntree;						/* und Anzahl der Objektbaeume (von 1 ab gezaehlt) bestimmen */
 
 	fnt_dialog->fstring_addr = (BYTE **)((UBYTE *)rsh + rsh->rsh_frstr);
 
@@ -1846,11 +1846,11 @@ static void	init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags )
 	obj->ob_y += 4;														/* um 4 Pixel nach rechts verschieben */
 	
 	obj = tree + FPT_USER;
-	obj->ob_y += 4;														/* FTEXT fÅr Punkthîhe um 4 Pixel nach unten verschieben */
+	obj->ob_y += 4;														/* FTEXT fuer Punkthoehe um 4 Pixel nach unten verschieben */
 
 	obj = tree + F_BH;
 	obj->ob_x += 1;														/* um 1 Pixel nach rechts (wegen der Checkbox) */
-	obj->ob_y += 4;														/* FTEXT fÅr B/H um 4 Pixel nach unten verschieben */
+	obj->ob_y += 4;														/* FTEXT fuer B/H um 4 Pixel nach unten verschieben */
 
 	tree[FNAME_UP].ob_y -= 1;											/* Buttons der Slider um 1 Pixel nach oben bewegen */
 	tree[FNAME_DOWN].ob_y -= 1;
@@ -1860,17 +1860,17 @@ static void	init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags )
 	tree[FPT_DOWN].ob_y -= 1;
 
 	if (( dialog_flags & FNTS_3D ) == 0 )							/* kein 3D-Look */
-		no3d_rsrc( rsh, tree );											/* 3D-Flags lîschen und Objekte anpassen */
+		no3d_rsrc( rsh, tree );											/* 3D-Flags loeschen und Objekte anpassen */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Position und Ausmaûe einer Checkbox korrigieren														*/
+/* Position und Ausmasse einer Checkbox korrigieren														*/
 /* Funktionsergebnis:	-																						*/
 /*	obj:						Zeiger auf das Objekt															*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	make_check_box( OBJECT *obj, USERBLK *userblk )
 {
-	obj->ob_type = G_USERDEF;											/* Typ auf USERDEF Ñndern */
+	obj->ob_type = G_USERDEF;											/* Typ auf USERDEF aendern */
 	obj->ob_spec.userblk = userblk;
 	obj->ob_x += 3;
 	obj->ob_y += 3;
@@ -1879,7 +1879,7 @@ static void	make_check_box( OBJECT *obj, USERBLK *userblk )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* 3D-Flags lîschen und Objektgrîûen anpassen, wenn 3D-Look ausgeschaltet ist					*/
+/* 3D-Flags loeschen und Objektgroessen anpassen, wenn 3D-Look ausgeschaltet ist					*/
 /* Funktionsergebnis:	-																						*/
 /*	rsh:						Zeiger auf den Resource-Header												*/
 /*	tree:						Zeiger auf den Objektbaum														*/
@@ -1895,8 +1895,8 @@ static void	no3d_rsrc( RSHDR *rsh, OBJECT *tree )
 	
 	while ( i > 0 )
 	{
-		obj->ob_flags &= 0x00ff;										/* 3D-Flags lîschen */
-		obj++;																/* nÑchstes Objekt */
+		obj->ob_flags &= 0x00ff;										/* 3D-Flags loeschen */
+		obj++;																/* naechstes Objekt */
 		i--;
 	}
 
@@ -1924,14 +1924,14 @@ static void	no3d_rsrc( RSHDR *rsh, OBJECT *tree )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* FTEXT in FBOXTEXT umwandeln (wird beim Ausschalten des 3D-Looks nîtig)						*/
+/* FTEXT in FBOXTEXT umwandeln (wird beim Ausschalten des 3D-Looks noetig)						*/
 /* Funktionsergebnis:	-																						*/
 /*	obj:						Zeiger auf das Objekt															*/
 /*----------------------------------------------------------------------------------------*/ 
 static void FTEXT_to_FBOXTEXT( OBJECT *obj )
 {
-	obj->ob_type = G_FBOXTEXT;											/* Typ auf FBOXTEXT Ñndern */
-	obj->ob_spec.tedinfo->te_thickness = -1;						/* auûen 1 Pixel Rahmen */
+	obj->ob_type = G_FBOXTEXT;											/* Typ auf FBOXTEXT aendern */
+	obj->ob_spec.tedinfo->te_thickness = -1;						/* aussen 1 Pixel Rahmen */
 	obj->ob_x -= 1;
 	obj->ob_y -= 1;
 	obj->ob_width += 2;
@@ -1946,47 +1946,47 @@ static void FTEXT_to_FBOXTEXT( OBJECT *obj )
 /*----------------------------------------------------------------------------------------*/ 
 static void	adapt_rsrc( OBJECT *tree, WORD button_flags )
 {
-	if ( button_flags & FNTS_CHNAME )								/* Checkbox fÅr die Namens-Listbox sichtbar? */
+	if ( button_flags & FNTS_CHNAME )								/* Checkbox fuer die Namens-Listbox sichtbar? */
 		show_check_box( tree, CHECK_NAME );
 	else
 		hide_check_box( tree, CHECK_NAME );
 
-	if ( button_flags & FNTS_SNAME )									/* Checkbox fÅr die Namens-Listbox selektiert? */
+	if ( button_flags & FNTS_SNAME )									/* Checkbox fuer die Namens-Listbox selektiert? */
 		obj_SELECTED( tree, CHECK_NAME );
 	else
 		obj_DESELECTED( tree, CHECK_NAME );
 
-	if ( button_flags & FNTS_CHSTYLE )								/* Checkbox fÅr die Stil-Listbox sichtbar? */
+	if ( button_flags & FNTS_CHSTYLE )								/* Checkbox fuer die Stil-Listbox sichtbar? */
 		show_check_box( tree, CHECK_STYLE );
 	else
 		hide_check_box( tree, CHECK_STYLE );
 
-	if ( button_flags & FNTS_SSTYLE )								/* Checkbox fÅr die Stil-Listbox selektiert? */
+	if ( button_flags & FNTS_SSTYLE )								/* Checkbox fuer die Stil-Listbox selektiert? */
 		obj_SELECTED( tree, CHECK_STYLE );
 	else
 		obj_DESELECTED( tree, CHECK_STYLE );
 	
-	if ( button_flags & FNTS_CHSIZE )								/* Checkbox fÅr die Hîhen-Listbox sichtbar? */
+	if ( button_flags & FNTS_CHSIZE )								/* Checkbox fuer die Hoehen-Listbox sichtbar? */
 		show_check_box( tree, CHECK_SIZE );
 	else
 		hide_check_box( tree, CHECK_SIZE );
 
-	if ( button_flags & FNTS_SSIZE )									/* Checkbox fÅr die Hîhen-Listbox selektiert? */
+	if ( button_flags & FNTS_SSIZE )									/* Checkbox fuer die Hoehen-Listbox selektiert? */
 		obj_SELECTED( tree, CHECK_SIZE );
 	else
 		obj_DESELECTED( tree, CHECK_SIZE );
 	
-	if ( button_flags & FNTS_CHRATIO )								/* Checkbox fÅr das B/H-VerhÑltnis sichtbar? */
+	if ( button_flags & FNTS_CHRATIO )								/* Checkbox fuer das B/H-Verhaeltnis sichtbar? */
 		show_check_box( tree, CHECK_RATIO );
 	else
 		hide_check_box( tree, CHECK_RATIO );
 
-	if ( button_flags & FNTS_SRATIO )								/* Checkbox fÅr das B/H-VerhÑltnis selektiert? */
+	if ( button_flags & FNTS_SRATIO )								/* Checkbox fuer das B/H-Verhaeltnis selektiert? */
 		obj_SELECTED( tree, CHECK_RATIO );
 	else
 		obj_DESELECTED( tree, CHECK_RATIO );
 
-	if ( button_flags & FNTS_RATIO )									/* ist das B/H-VerhÑltnis einstellbar? */
+	if ( button_flags & FNTS_RATIO )									/* ist das B/H-Verhaeltnis einstellbar? */
 	{
 		obj_VISIBLE( tree, CHECK_RATIO );
 		obj_VISIBLE( tree, F_BH_STRING );
@@ -2001,31 +2001,31 @@ static void	adapt_rsrc( OBJECT *tree, WORD button_flags )
 		obj_NOT_EDITABLE( tree, F_BH );
 	}
 		
-	if ( button_flags & FNTS_BSET )									/* wird der "setzen"-Button unterstÅtzt? */
+	if ( button_flags & FNTS_BSET )									/* wird der "setzen"-Button unterstuetzt? */
 		obj_ENABLED( tree, FSET );
 	else
 		obj_DISABLED( tree, FSET );
 	
-	if ( button_flags & FNTS_BMARK )									/* wird der "markieren"-Button unterstÅtzt? */
+	if ( button_flags & FNTS_BMARK )									/* wird der "markieren"-Button unterstuetzt? */
 		obj_ENABLED( tree, FMARK );
 	else
 		obj_DISABLED( tree, FMARK );
 
-	if ( button_flags & FNTS_CHNAME )								/* Checkbox fÅr die Namens-Listbox sichtbar? */
+	if ( button_flags & FNTS_CHNAME )								/* Checkbox fuer die Namens-Listbox sichtbar? */
 		do_CHECK_NAME( tree );											/* die Namens-Listbox evtl. disablen */
 
-	if ( button_flags & FNTS_CHSTYLE )								/* Checkbox fÅr die Stil-Listbox sichtbar? */
+	if ( button_flags & FNTS_CHSTYLE )								/* Checkbox fuer die Stil-Listbox sichtbar? */
 		do_CHECK_STYLE( tree );											/* die Stil-Listbox evtl. disablen */
 
-	if ( button_flags & FNTS_CHSIZE )								/* Checkbox fÅr die Hîhen-Listbox sichtbar? */
-		do_CHECK_SIZE( tree );											/* die Hîhen-Listbox evtl. disablen */
+	if ( button_flags & FNTS_CHSIZE )								/* Checkbox fuer die Hoehen-Listbox sichtbar? */
+		do_CHECK_SIZE( tree );											/* die Hoehen-Listbox evtl. disablen */
 
-	if ( button_flags & FNTS_CHRATIO )								/* Checkbox fÅr das B/H-VerhÑltnis sichtbar? */
+	if ( button_flags & FNTS_CHRATIO )								/* Checkbox fuer das B/H-Verhaeltnis sichtbar? */
 		do_CHECK_RATIO( tree );											/* den B/H-FTEXT evtl. disablen */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Objekte im Dialog horizontal verschieben (nur bei umrandetem Root-Objekt nîtig)			*/
+/* Objekte im Dialog horizontal verschieben (nur bei umrandetem Root-Objekt noetig)			*/
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	offset:					Verschiebung (-1 oder +1)														*/
@@ -2076,11 +2076,11 @@ static void	set_edit_obj( FNT_DIALOG *fnt_dialog, WORD obj )
 	if ( fnt_dialog->dialog )											/* Fensterdialog? */
 		wdlg_set_edit( fnt_dialog->dialog, obj );
 	else																		/* normaler Dialog */
-		fnt_dialog->edit_obj = obj;									/* Nummer des neuen Edit-Objekts fÅr form_xdo() */
+		fnt_dialog->edit_obj = obj;									/* Nummer des neuen Edit-Objekts fuer form_xdo() */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Nummer des aktiven Edit-Objekts zurÅckliefern														*/
+/* Nummer des aktiven Edit-Objekts zurueckliefern														*/
 /* Funktionsresultat:	Nummer des Edit-Objekts	(0: kein Objekt aktiv)							*/
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2095,7 +2095,7 @@ static WORD	get_edit_obj( FNT_DIALOG *fnt_dialog )
 }
 	
 /*----------------------------------------------------------------------------------------*/ 
-/* Selektion eines Buttons lîschen und Button zeichnen												*/
+/* Selektion eines Buttons loeschen und Button zeichnen												*/
 /* Funktionsergebnis:	-																						*/
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	obj:						Objektnummer																		*/
@@ -2115,7 +2115,7 @@ static void	deselect_button( FNT_DIALOG *fnt_dialog, WORD obj )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Button sichtbar und anwÑhlbar machen (nicht zeichnen!)											*/
+/* Button sichtbar und anwaehlbar machen (nicht zeichnen!)											*/
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	obj:						Nummer des Objekts																*/
@@ -2127,7 +2127,7 @@ static void	show_check_box( OBJECT *tree, WORD obj )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Button verstecken und nicht anwÑhlbar machen	(nicht zeichnen!)									*/
+/* Button verstecken und nicht anwaehlbar machen	(nicht zeichnen!)									*/
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	obj:						Nummer des Objekts																*/
@@ -2140,8 +2140,8 @@ static void	hide_check_box( OBJECT *tree, WORD obj )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Bitvektor fÅr selektierte Checkboxen zurÅckliefern													*/
-/* Funktionsergebnis:	Bitvektor fÅr selektierte Checkboxen										*/
+/* Bitvektor fuer selektierte Checkboxen zurueckliefern													*/
+/* Funktionsergebnis:	Bitvektor fuer selektierte Checkboxen										*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	get_check_state( OBJECT *tree )
@@ -2156,7 +2156,7 @@ static WORD	get_check_state( OBJECT *tree )
 	if ( tree[CHECK_STYLE].ob_state & SELECTED )					/* Stil-Listbox aktiv? */
 		check_boxes |= FNTS_SSTYLE;
 		
-	if ( tree[CHECK_SIZE].ob_state & SELECTED )					/* Hîhen-Listbox aktiv? */
+	if ( tree[CHECK_SIZE].ob_state & SELECTED )					/* Hoehen-Listbox aktiv? */
 		check_boxes |= FNTS_SSIZE;
 
 	if ( tree[CHECK_RATIO].ob_state & SELECTED )					/* B/H-Einstellung aktiv? */
@@ -2167,7 +2167,7 @@ static WORD	get_check_state( OBJECT *tree )
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Exit-Objekte behandeln				 																		*/
-/* Funktionsergebnis:	0: Dialog schlieûen 1: weitermachen											*/
+/* Funktionsergebnis:	0: Dialog schliessen 1: weitermachen											*/
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	obj:						Nummer des Objekts																*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2193,19 +2193,19 @@ static WORD	do_buttons( FNT_DIALOG *fnt_dialog, WORD obj )
 
 	switch ( exit_obj )
 	{
-		case	CHECK_NAME:													/* Checkbox fÅr die Namens-Listbox? */
+		case	CHECK_NAME:													/* Checkbox fuer die Namens-Listbox? */
 		{
 			do_CHECK_NAME( tree );
 			redraw_obj( fnt_dialog, FNAME_BOX );
 			break;
 		}
-		case	CHECK_STYLE:												/* Checkbox fÅr die Stil-Listbox? */
+		case	CHECK_STYLE:												/* Checkbox fuer die Stil-Listbox? */
 		{
 			do_CHECK_STYLE( tree );
 			redraw_obj( fnt_dialog, FSTL_BOX );
 			break;
 		}
-		case	CHECK_SIZE:													/* Checkbox fÅr die Hîhen-Listbox? */
+		case	CHECK_SIZE:													/* Checkbox fuer die Hoehen-Listbox? */
 		{
 			do_CHECK_SIZE( tree );
 			set_edit_obj( fnt_dialog, 0 );							/* Edit-Objekt ausschalten */
@@ -2221,7 +2221,7 @@ static WORD	do_buttons( FNT_DIALOG *fnt_dialog, WORD obj )
 			redraw_obj( fnt_dialog, F_BH );
 			break;
 		}
-		case	FSAMPLE:														/* der Beispieltext wurde angewÑhlt... */
+		case	FSAMPLE:														/* der Beispieltext wurde angewaehlt... */
 		case	FSET:															/* "setzen"-Button */
 		{
 			LBOX_ITEM	*style;
@@ -2246,7 +2246,7 @@ static WORD	do_buttons( FNT_DIALOG *fnt_dialog, WORD obj )
 			if ( exit_obj == FSET )										/* wurde der "setzen"-Button angeklickt? */
 			{
 				deselect_button( fnt_dialog, FSET );
-				if (( tree[FSET].ob_state & DISABLED ) == 0 )	/* ist der Button anwÑhlbar? */
+				if (( tree[FSET].ob_state & DISABLED ) == 0 )	/* ist der Button anwaehlbar? */
 				{
 					fnt_dialog->button = FNTS_SET;
 					return( 0 );
@@ -2290,9 +2290,9 @@ static WORD	do_buttons( FNT_DIALOG *fnt_dialog, WORD obj )
 static void	do_CHECK_NAME( OBJECT *tree )
 {
 	if	( tree[CHECK_NAME].ob_state & SELECTED )					/* selektiert? */
-		enable_lbox( tree, fname_obj, NO_FNAMES );				/* Objekte der Listbox sind anwÑhlbar */
+		enable_lbox( tree, fname_obj, NO_FNAMES );				/* Objekte der Listbox sind anwaehlbar */
 	else
-		disable_lbox( tree, fname_obj, NO_FNAMES );				/* Objekte der Listbox sind nicht anwÑhlbar */
+		disable_lbox( tree, fname_obj, NO_FNAMES );				/* Objekte der Listbox sind nicht anwaehlbar */
 }					
 
 /*----------------------------------------------------------------------------------------*/ 
@@ -2303,13 +2303,13 @@ static void	do_CHECK_NAME( OBJECT *tree )
 static void	do_CHECK_STYLE( OBJECT *tree )
 {
 	if	( tree[CHECK_STYLE].ob_state & SELECTED )					/* selektiert? */
-		enable_lbox( tree, fstyle_obj, NO_FSTYLES );				/* Objekte der Listbox sind anwÑhlbar */
+		enable_lbox( tree, fstyle_obj, NO_FSTYLES );				/* Objekte der Listbox sind anwaehlbar */
 	else
-		disable_lbox( tree, fstyle_obj, NO_FSTYLES );			/* Objekte der Listbox sind nicht anwÑhlbar */
+		disable_lbox( tree, fstyle_obj, NO_FSTYLES );			/* Objekte der Listbox sind nicht anwaehlbar */
 }				
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Auf Selektionsstatus der Hîhen-Checkbox reagieren													*/
+/* Auf Selektionsstatus der Hoehen-Checkbox reagieren													*/
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2317,20 +2317,20 @@ static void	do_CHECK_SIZE( OBJECT *tree )
 {
 	if	( tree[CHECK_SIZE].ob_state & SELECTED )					/* selektiert? */
 	{
-		enable_lbox( tree, fsize_obj, NO_FSIZES );				/* Objekte der Listbox sind anwÑhlbar */
+		enable_lbox( tree, fsize_obj, NO_FSIZES );				/* Objekte der Listbox sind anwaehlbar */
 		obj_ENABLED( tree, FPT_USER );
 		obj_EDITABLE( tree, FPT_USER );								/* Eingaben zulassen */
 	}
 	else
 	{
-		disable_lbox( tree, fsize_obj, NO_FSIZES );				/* Objekte der Listbox sind nicht anwÑhlbar */
+		disable_lbox( tree, fsize_obj, NO_FSIZES );				/* Objekte der Listbox sind nicht anwaehlbar */
 		obj_DISABLED( tree, FPT_USER );
 		obj_NOT_EDITABLE( tree, FPT_USER );							/* Eingaben nicht zulassen */
 	}
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Auf Selektionsstatus der VerhÑltnis-Checkbox reagieren											*/
+/* Auf Selektionsstatus der Verhaeltnis-Checkbox reagieren											*/
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2349,8 +2349,8 @@ static void	do_CHECK_RATIO( OBJECT *tree )
 }					
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Zahl aus einen Edit-Feld als Festkommazahl zurÅckliefern											*/
-/* Funktionsergebnis:	0: keine fehlerhaften Zeichen 1: ungÅltige Zeichen in der Eingabe	*/
+/* Zahl aus einen Edit-Feld als Festkommazahl zurueckliefern											*/
+/* Funktionsergebnis:	0: keine fehlerhaften Zeichen 1: ungueltige Zeichen in der Eingabe	*/
 /*	obj:						Zeiger auf das Objekt															*/
 /*	old_value:				Adresse der Festkommazahl														*/
 /*	min:						Minimum																				*/
@@ -2371,7 +2371,7 @@ static WORD	get_fixed( OBJECT *obj, LONG *old_value, LONG min, LONG max )
 			err = 1 ;														/* Textobjekt neu zeichnen */
 		}
 
-		if ( a > max )														/* zu groû? */
+		if ( a > max )														/* zu gross? */
 		{
 			a = max;
 			err = 1;															/* Textobjekt neu zeichnen */
@@ -2384,7 +2384,7 @@ static WORD	get_fixed( OBJECT *obj, LONG *old_value, LONG min, LONG max )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* öberprÅfen, ob die gedrÅckte Taste im Edit-Feld zugelassen ist									*/
+/* ueberpruefen, ob die gedrueckte Taste im Edit-Feld zugelassen ist									*/
 /* Funktionsergebnis:	0: Taste ignorieren 1: Taste ist zugelassen								*/
 /*	ucode:					Tastencode																			*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2413,12 +2413,12 @@ static WORD	check_key( UWORD code )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Box mit innerem grauen Rand fÅr sample_text() bzw.check_box() zeichnen						*/
+/* Box mit innerem grauen Rand fuer sample_text() bzw.check_box() zeichnen						*/
 /* Funktionsresultat:	-																						*/
 /* parmblock:				Zeiger auf die Parameter-Block-Struktur									*/
 /*	vdi_handle:				VDI-Handle																			*/
-/*	rect:						Zeiger auf VRECT-Struktur fÅr die Objektausmaûe							*/
-/*	clip_rect:				Zeiger auf VRECT-Struktur fÅr das Clipping-Rechteck					*/
+/*	rect:						Zeiger auf VRECT-Struktur fuer die Objektausmasse							*/
+/*	clip_rect:				Zeiger auf VRECT-Struktur fuer das Clipping-Rechteck					*/
 /*	dialog_flags:			Aussehen des Dialogs																*/
 /*----------------------------------------------------------------------------------------*/ 
 static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT *clip_rect, WORD dialog_flags )
@@ -2429,7 +2429,7 @@ static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT
 	clip_rect->x2 += clip_rect->x1 - 1;
 	clip_rect->y2 += clip_rect->y1 - 1;
 
-	vs_clip( vdi_handle, 1, (WORD *) clip_rect );				/* Zeichenoperationen auf gegebenen Bereich beschrÑnken */
+	vs_clip( vdi_handle, 1, (WORD *) clip_rect );				/* Zeichenoperationen auf gegebenen Bereich beschraenken */
 	
 	*rect = *(VRECT *) &parmblock->pb_x;							/* Objekt-Rechteck... */
 	rect->x2 += rect->x1 - 1;
@@ -2452,14 +2452,14 @@ static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT
 	xy[9] = rect->y1;
 	v_pline( vdi_handle, 5, xy );										/* schwarzen Rahmen zeichnen */
 
-	vsf_interior( vdi_handle, FIS_SOLID );							/* vollflÑchig */
-	vsf_color( vdi_handle, 0 );										/* weiû */
+	vsf_interior( vdi_handle, FIS_SOLID );							/* vollflaechig */
+	vsf_color( vdi_handle, 0 );										/* weiss */
 	
 	xy[0] = rect->x1 + 1;
 	xy[1] = rect->y1 + 1;
 	xy[2] = rect->x2 - 1;
 	xy[3] = rect->y2 - 1;
-	vr_recfl( vdi_handle, xy );										/* weiûe Box zeichnen */
+	vr_recfl( vdi_handle, xy );										/* weisse Box zeichnen */
 
 	if ( dialog_flags & FNTS_3D )										/* 3D-Look? */
 	{
@@ -2480,7 +2480,7 @@ static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	use_vqt_xfontinfo( void )
 {
-	struct _nvdi_struct													/* verkÅrzte NVDI-Struktur */
+	struct _nvdi_struct													/* verkuerzte NVDI-Struktur */
 	{
 		WORD	version;
 		LONG	datum;
@@ -2516,18 +2516,18 @@ static WORD	use_vqt_xfontinfo( void )
 				else
 					return( 0 );											/* vqt_fontheader() benutzen */
 			}
-			search++;														/* nÑchster Cookie */
+			search++;														/* naechster Cookie */
 		}		
 	}
 	return( 0 );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Listbox: Ein Eintrag in der Familien-Listbox ist angewÑhlt worden								*/
+/* Listbox: Ein Eintrag in der Familien-Listbox ist angewaehlt worden								*/
 /* Funktionsergebnis:	-																						*/
 /*	box:						Zeiger auf die Listbox-Struktur												*/
 /*	tree:						Zeiger auf den Objektbaum des Dialogs										*/
-/*	item:						Zeiger auf den angewÑhlten Eintrag											*/
+/*	item:						Zeiger auf den angewaehlten Eintrag											*/
 /* user_data:				Zeiger auf FNT_DIALOG-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
 void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
@@ -2550,7 +2550,7 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 		
 	rect = (GRECT *) &tree->ob_x;										/* Dialog-Rechteck */
 
-	style = lbox_get_slct_item( fnt_dialog->fnt_style );		/* bisher angewÑhlten Stil ermitteln */
+	style = lbox_get_slct_item( fnt_dialog->fnt_style );		/* bisher angewaehlten Stil ermitteln */
 
 	if ( style )															/* gefunden? */
 		vstrcpy( last_style, ((FNT *) style->data )->style_name );
@@ -2559,7 +2559,7 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 		
 	old_top = lbox_get_first( fnt_dialog->fnt_style );
 	old_cnt = lbox_cnt_items( fnt_dialog->fnt_style );
-	lbox_free_items( fnt_dialog->fnt_style );					/* Speicher fÅr LBOX_ITEMs freigeben */
+	lbox_free_items( fnt_dialog->fnt_style );					/* Speicher fuer LBOX_ITEMs freigeben */
 
 	family = (FNT *) item->data;										/* erster Font der Familie */
 	
@@ -2579,7 +2579,7 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 		else
 			break;
 			
-		font = font->next;												/* nÑchster Font */
+		font = font->next;												/* naechster Font */
 	}
 
 	style = build_style_list( (FNT *) item->data, fnt_dialog->id );	/* Liste mit den Stilnamen aufbauen */
@@ -2588,9 +2588,9 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 
 	while ( style )
 	{
-		if ( style->selected )											/* angewÑhlter Eintrag? */
+		if ( style->selected )											/* angewaehlter Eintrag? */
 		{
-			slct_style( fnt_dialog->fnt_style, tree, style, user_data, 0, 0 );	/* Stil anwÑhlen */
+			slct_style( fnt_dialog->fnt_style, tree, style, user_data, 0, 0 );	/* Stil anwaehlen */
 			break;
 		}	
 		style = style->next;
@@ -2598,11 +2598,11 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Listbox: Ein Eintrag in der Stil-Listbox ist angewÑhlt worden									*/
+/* Listbox: Ein Eintrag in der Stil-Listbox ist angewaehlt worden									*/
 /* Funktionsergebnis:	-																						*/
 /*	box:						Zeiger auf die Listbox-Struktur												*/
 /*	tree:						Zeiger auf den Objektbaum des Dialogs										*/
-/*	item:						Zeiger auf den angewÑhlten Eintrag											*/
+/*	item:						Zeiger auf den angewaehlten Eintrag											*/
 /* user_data:				Zeiger auf FNT_DIALOG-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
 void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
@@ -2624,7 +2624,7 @@ void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_
 
 	rect = (GRECT *) &tree->ob_x;										/* Dialog-Rechteck */
 		
-	font = (FNT *) item->data;											/* angewÑhlter Font */
+	font = (FNT *) item->data;											/* angewaehlter Font */
 	fnt_dialog->id = font->id;											/* ID des Fonts */
 	fnt_dialog->mono = font->mono;
 	fnt_dialog->outline = font->outline;
@@ -2632,28 +2632,28 @@ void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_
 	
 	old_top = lbox_get_first( fnt_dialog->fnt_size );
 	old_cnt = lbox_cnt_items( fnt_dialog->fnt_size );
-	lbox_free_items( fnt_dialog->fnt_size );						/* Speicher fÅr LBOX_ITEMs freigeben */
+	lbox_free_items( fnt_dialog->fnt_size );						/* Speicher fuer LBOX_ITEMs freigeben */
 
-	size_list = build_pt_list( font, fnt_dialog->pt, &size );	/* Liste mit den Punktgrîûen aufbauen */
-	lbox_set_items( fnt_dialog->fnt_size, size_list );		/* Liste mit den Punktgrîûen aufbauen */
+	size_list = build_pt_list( font, fnt_dialog->pt, &size );	/* Liste mit den Punktgroessen aufbauen */
+	lbox_set_items( fnt_dialog->fnt_size, size_list );		/* Liste mit den Punktgroessen aufbauen */
 	
-	if ( size == 0L )														/* kein Eintrag mit der gesuchten Grîûe vorhanden? */
+	if ( size == 0L )														/* kein Eintrag mit der gesuchten Groesse vorhanden? */
 	{
 		if ( font->outline == 0 )										/* handelt es sich um einen Bitmap-Font? */
-			slct_closest_height( size_list, &size, font, fnt_dialog->pt );	/* am nÑchsten liegende Hîhe suchen */
+			slct_closest_height( size_list, &size, font, fnt_dialog->pt );	/* am naechsten liegende Hoehe suchen */
 	}	
 
 	if ( font->outline )													/* Vektorfont? */
 	{
-		if ( tree[CHECK_RATIO].ob_state & DISABLED )				/* ist die Checkbox fÅrs B/H-VerhÑltnis disabled? */
+		if ( tree[CHECK_RATIO].ob_state & DISABLED )				/* ist die Checkbox fuers B/H-Verhaeltnis disabled? */
 		{
 			obj_ENABLED( tree, CHECK_RATIO );						/* Checkbox enabled */
-			obj_TOUCHEXIT( tree, CHECK_RATIO );						/* Checkbox anwÑhlbar */
+			obj_TOUCHEXIT( tree, CHECK_RATIO );						/* Checkbox anwaehlbar */
 			redraw_obj( fnt_dialog, CHECK_RATIO );
 		
-			if	( tree[CHECK_RATIO].ob_state & SELECTED )			/* ist das B/H-VerhÑltnis verÑnderbar? */
+			if	( tree[CHECK_RATIO].ob_state & SELECTED )			/* ist das B/H-Verhaeltnis veraenderbar? */
 			{
-				obj_ENABLED( tree, F_BH );								/* FTEXT wieder anwÑhlbar */
+				obj_ENABLED( tree, F_BH );								/* FTEXT wieder anwaehlbar */
 				obj_EDITABLE( tree, F_BH );							/* FTEXT wieder editierbar */
 				redraw_obj( fnt_dialog, F_BH );
 			}
@@ -2661,9 +2661,9 @@ void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_
 	}
 	else																		/* Bitmap-Font */
 	{
-		obj_DISABLED( tree, CHECK_RATIO );							/* Check-Button fÅr B/H-VerhÑltnis disablen */
-		obj_NOT_TOUCHEXIT( tree, CHECK_RATIO );					/* Checkbox nicht anwÑhlbar */
-		obj_DISABLED( tree, F_BH );									/* FTEXT fÅr B/H-VerhÑltnis disablen */
+		obj_DISABLED( tree, CHECK_RATIO );							/* Check-Button fuer B/H-Verhaeltnis disablen */
+		obj_NOT_TOUCHEXIT( tree, CHECK_RATIO );					/* Checkbox nicht anwaehlbar */
+		obj_DISABLED( tree, F_BH );									/* FTEXT fuer B/H-Verhaeltnis disablen */
 		obj_NOT_EDITABLE( tree, F_BH );								/* FTEXT nicht editierbar */
 		
 		if ( get_edit_obj( fnt_dialog ) == F_BH )
@@ -2679,11 +2679,11 @@ void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Ein Eintrag in der Grîûen-Listbox ist angewÑhlt worden											*/
+/* Ein Eintrag in der Groessen-Listbox ist angewaehlt worden											*/
 /* Funktionsergebnis:	-																						*/
 /*	box:						Zeiger auf die Listbox-Struktur												*/
 /*	tree:						Zeiger auf den Objektbaum des Dialogs										*/
-/*	item:						Zeiger auf den angewÑhlten Eintrag											*/
+/*	item:						Zeiger auf den angewaehlten Eintrag											*/
 /* user_data:				Zeiger auf FNT_DIALOG-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
 void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
@@ -2703,7 +2703,7 @@ void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_d
 	if ( edit_obj == FPT_USER )										/* war bisher noch ein Cursor im Textedit-Feld? */
 		set_edit_obj( fnt_dialog, 0 );								/* Cursor ausschalten */
 
-	if ( item )																/* wurde eine Punkthîhe in der Listbox eingestellt? */
+	if ( item )																/* wurde eine Punkthoehe in der Listbox eingestellt? */
 		index = lbox_get_slct_idx( box );
 	else
 		index = -1;
@@ -2719,7 +2719,7 @@ void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_d
 
 		redraw_obj( fnt_dialog, FPT_USER );
 	}
-	else																		/* eine freie Punkthîhe wurde eingestellt */
+	else																		/* eine freie Punkthoehe wurde eingestellt */
 	{
 		obj_SELECTED( tree, FPT_USER );								/* selektieren */
 
@@ -2740,7 +2740,7 @@ void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_d
 /* item:						Zeiger auf den Eintrag															*/
 /* index:					Objektnummer																		*/
 /* user_data:				...																					*/
-/*	rect:						GRECT fÅr Selektion/Deselektion oder 0L (nicht verÑnderbar)			*/					
+/*	rect:						GRECT fuer Selektion/Deselektion oder 0L (nicht veraenderbar)			*/					
 /*----------------------------------------------------------------------------------------*/ 
 WORD	cdecl	set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD index, void *user_data, GRECT *rect, WORD first )
 {
@@ -2772,19 +2772,19 @@ WORD	cdecl	set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD inde
 		obj_DESELECTED( tree, index );
 
 	while ( *ptext )
-		*ptext++ = ' ';													/* Stringende mit Leerzeichen auffÅllen */	
+		*ptext++ = ' ';													/* Stringende mit Leerzeichen auffuellen */	
 
 	return( index );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Service-Routine fÅr Fensterdialog 																		*/
-/* Funktionsergebnis:	0: Dialog schlieûen 1: weitermachen											*/
+/* Service-Routine fuer Fensterdialog 																		*/
+/* Funktionsergebnis:	0: Dialog schliessen 1: weitermachen											*/
 /*	dialog:					Zeiger auf die Dialog-Struktur												*/
 /*	events:					Zeiger auf EVNT-Struktur oder 0L												*/
 /*	obj:						Nummer des Objekts oder Ereignisnummer										*/
 /*	clicks:					Anzahl der Mausklicks															*/
-/*	data:						Zeiger auf zusÑtzliche Daten													*/
+/*	data:						Zeiger auf zusaetzliche Daten													*/
 /*----------------------------------------------------------------------------------------*/ 
 WORD	cdecl	do_slct_font( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data )
 {
@@ -2799,14 +2799,14 @@ WORD	cdecl	do_slct_font( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, vo
 			fnt_dialog->button = FNTS_OK;
 			return( 0 );
 		}
-		if ( obj == HNDL_EDIT )											/* wurde ein Edit-Objekt angewÑhlt? */
+		if ( obj == HNDL_EDIT )											/* wurde ein Edit-Objekt angewaehlt? */
 		{
-			if ( check_key( *(UWORD *) data ))						/* Taste auf GÅltigkeit ÅberprÅfen */
-				return( 1 );												/* gÅltige Taste */
+			if ( check_key( *(UWORD *) data ))						/* Taste auf Gueltigkeit ueberpruefen */
+				return( 1 );												/* gueltige Taste */
 			else
 			{
 				bell();
-				return( 0 );												/* ungÅltige Taste */
+				return( 0 );												/* ungueltige Taste */
 			}
 		}
 	}
@@ -2824,7 +2824,7 @@ WORD	cdecl	do_slct_font( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, vo
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* USERDEF-Funktion fÅr den Beispieltext																	*/
+/* USERDEF-Funktion fuer den Beispieltext																	*/
 /* Funktionsresultat:	nicht aktualisierte Objektstati												*/
 /* parmblock:				Zeiger auf die Parameter-Block-Struktur									*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2855,7 +2855,7 @@ WORD	cdecl sample_text( PARMBLK *parmblock )
 		clip_rect.y2 = 0;
 		
 	}
-	vs_clip( vdi_handle, 1, (WORD *) &clip_rect );				/* Clipping-Rechteck fÅr den Text setzen */
+	vs_clip( vdi_handle, 1, (WORD *) &clip_rect );				/* Clipping-Rechteck fuer den Text setzen */
 	
 	if ( fnt_dialog->display )											/* kein VDI-Font? */
 	{
@@ -2882,20 +2882,20 @@ WORD	cdecl sample_text( PARMBLK *parmblock )
 			ULONG	w2;
 			LONG	width;
 
-			vst_arbpt32( vdi_handle, fnt_dialog->pt, &tmp, &tmp, &tmp, &tmp );	/* Hîhe einstellen */
+			vst_arbpt32( vdi_handle, fnt_dialog->pt, &tmp, &tmp, &tmp, &tmp );	/* Hoehe einstellen */
 
 			pt = fnt_dialog->pt;
 			ratio = fnt_dialog->ratio;
 
 			negative = 0;
 
-			if ( pt < 0 )													/* negative Hîhe? */
+			if ( pt < 0 )													/* negative Hoehe? */
 			{
 				pt = - pt;
 				negative ^= 1;
 			}
 						
-			if ( ratio < 0 )												/* negatives B/H-VerhÑltnis? */
+			if ( ratio < 0 )												/* negatives B/H-Verhaeltnis? */
 			{
 				ratio = - ratio;
 				negative ^= 1;
@@ -2913,14 +2913,14 @@ WORD	cdecl sample_text( PARMBLK *parmblock )
 
 			vst_setsize32( vdi_handle, width, &tmp, &tmp, &tmp, &tmp );
 
-			vst_skew( vdi_handle, 0 );									/* keine SchrÑgstellung */
+			vst_skew( vdi_handle, 0 );									/* keine Schraegstellung */
 			vst_kern( vdi_handle, 0, 1, &tmp	, &tmp );			/* Pair-Kerning einschalten */
 
 			v_ftext ( vdi_handle, rect.x1 + 1, rect.y2 - 5, fnt_dialog->sample_string );
 		}
 		else
 		{
-			vst_point( vdi_handle, (WORD) ( fnt_dialog->pt >> 16 ), &tmp, &tmp, &tmp, &tmp );	/* Hîhe einstellen */
+			vst_point( vdi_handle, (WORD) ( fnt_dialog->pt >> 16 ), &tmp, &tmp, &tmp, &tmp );	/* Hoehe einstellen */
 			v_gtext ( vdi_handle, rect.x1 + 1, rect.y2 - 5, fnt_dialog->sample_string );
 		}
 	}
@@ -2929,7 +2929,7 @@ WORD	cdecl sample_text( PARMBLK *parmblock )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* USERDEF-Funktion fÅr Checkbox																				*/
+/* USERDEF-Funktion fuer Checkbox																				*/
 /* Funktionsresultat:	nicht aktualisierte Objektstati												*/
 /* parmblock:				Zeiger auf die Parameter-Block-Struktur									*/
 /*----------------------------------------------------------------------------------------*/ 
@@ -2948,13 +2948,13 @@ WORD	cdecl check_box( PARMBLK *parmblock )
 
 	if ( parmblock->pb_currstate & SELECTED )
 	{
-		parmblock->pb_currstate &= ~SELECTED;						/* Bit lîschen */
+		parmblock->pb_currstate &= ~SELECTED;						/* Bit loeschen */
 
 		vsl_type( vdi_handle, 1 );										/* durchgehende Linie */
 
 		if ( fnt_dialog->dialog_flags & FNTS_3D )					/* 3D-Look? */
 		{
-			vsl_color( vdi_handle, 8 );								/* hellgrau - fÅr antialisende Linien neben dem Kreuz */
+			vsl_color( vdi_handle, 8 );								/* hellgrau - fuer antialisende Linien neben dem Kreuz */
 			xy[0] = rect.x1 + 3;
 			xy[1] = rect.y1 + 2;
 			xy[2] = rect.x2 - 2;
@@ -2976,7 +2976,7 @@ WORD	cdecl check_box( PARMBLK *parmblock )
 			v_pline( vdi_handle, 2, xy );
 		}
 		
-		vsl_color( vdi_handle, 1 );									/* schwarz - fÅr das Kreuz */
+		vsl_color( vdi_handle, 1 );									/* schwarz - fuer das Kreuz */
 		xy[0] = rect.x1 + 2;
 		xy[1] = rect.y1 + 2;
 		xy[2] = rect.x2 - 2;

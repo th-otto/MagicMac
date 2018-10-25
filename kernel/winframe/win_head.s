@@ -1,9 +1,9 @@
 /*
 *
-* Header fÅr eine "shared library"
+* Header fuer eine "shared library"
 * Wird statt des Start-Codes von PureC verwendet
 *
-* Es sollte _dringend_ sichergestellt werden, daû Bit 3
+* Es sollte _dringend_ sichergestellt werden, dass Bit 3
 * der Flags im Programmheader gesetzt ist, damit sich die
 * Bibliothek nicht den gesamten freien Speicher reserviert.
 *
@@ -28,8 +28,8 @@ DC.L		1				; Versionsnummer
 DC.L		0				; Flags, z.Zt. 0L
 DC.L		slb_init			; wird nach dem Laden aufgerufen
 DC.L		slb_exit			; wird vor dem Entfernen aufgerufen
-DC.L		slb_open			; wird beim ôffnen aufgerufen
-DC.L		slb_close			; wird beim Schlieûen aufgerufen
+DC.L		slb_open			; wird beim Oeffnen aufgerufen
+DC.L		slb_close			; wird beim Schliessen aufgerufen
 DC.L		0				; Zeiger auf Prozedurnamen (optional)
 DC.L		0,0,0,0,0,0,0,0	; unbenutzt, immer NULL
 DC.L		0				; Anzahl der Funktionen (keine!)

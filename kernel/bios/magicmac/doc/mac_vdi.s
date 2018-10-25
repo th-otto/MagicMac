@@ -1,4 +1,4 @@
-* VDI-Substitut für MagiX MAC
+* VDI-Substitut fuer MagiX MAC
 * ***************************
 
      XDEF      vdi_conout          ; VDI: Bconout(CON)
@@ -8,7 +8,7 @@
      XDEF      Blitmode            ; VDI
      XDEF      vt_seq_e            ; VDI: Cursor ein
      XDEF      vt_seq_f            ; VDI: Cursor aus
-     XDEF      vdi_init            ; VDI: initialisieren (für MXVDI)
+     XDEF      vdi_init            ; VDI: initialisieren (fuer MXVDI)
      XDEF      vdi_blinit          ; VDI: Blitterstatus initialisieren (d0)
      XDEF      vt52_init           ; VDI: VT52 initialisieren
      XDEF      __e_vdi             ; VDI: Ende der Variablen
@@ -62,7 +62,7 @@ vt52_init:
 *
 
 vdi_init:
- move.l   Mac_oltrap2,$88          ; Trap #2 zurück
+ move.l   Mac_oltrap2,$88          ; Trap #2 zurueck
  rts
 
      END

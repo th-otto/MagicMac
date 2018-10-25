@@ -9,7 +9,7 @@
 SUPERSTACKLEN  EQU  8192           ; Supervisorstack pro Applikation
 NDRVS          EQU  26             ; Anzahl logische Laufwerke
 MIN_OPEN       EQU  6              ; 0..MIN_OPEN-1 sind reserviert
-MAX_OPEN       EQU  32             ; Größte Handlenummer-1 (0..31)
+MAX_OPEN       EQU  32             ; Groesste Handlenummer-1 (0..31)
 MIN_FHANDLE    EQU  -4             ; kleinstes DateiHandle
 
      OFFSET
@@ -34,26 +34,26 @@ SEM_DEL        EQU  6
 SEM_FALL       EQU  7
 SEM_FPD        EQU  8
 
-/* Werte für p_status (ab MagiC 5.04) */
+/* Werte fuer p_status (ab MagiC 5.04) */
 
-PROCSTATE_MAGIC     EQU  0    ; Prozeß nach Terminierung entfernen (MagiC)
-PROCSTATE_MINT      EQU  1    ; Prozeß nach Terminierung halten, wenn der
+PROCSTATE_MAGIC     EQU  0    ; Prozess nach Terminierung entfernen (MagiC)
+PROCSTATE_MINT      EQU  1    ; Prozess nach Terminierung halten, wenn der
                               ; parent existiert (MiNT). Wird bei
                               ; Pexec(100,104,106) verwendet.
-PROCSTATE_ZOMBIE    EQU  2    ; Prozeß, der PROCSTATE_MINT war, ist
+PROCSTATE_ZOMBIE    EQU  2    ; Prozess, der PROCSTATE_MINT war, ist
                               ; terminiert, aber der Parent hat noch kein
                               ; Pwaitpid() gemacht. Die Basepage (128 Bytes)
-                              ; gehört dem Bootprozeß.
-                              ; p_dta.w enthält den Exit-Code
+                              ; gehoert dem Bootprozess.
+                              ; p_dta.w enthaelt den Exit-Code
 
      OFFSET
 
 sa_handler:    DS.L      1    /* 0x00: Signalhandler */
-sa_sigextra:   DS.L      1    /* 0x04: OR-Maske bei Ausführung des Signals */
+sa_sigextra:   DS.L      1    /* 0x04: OR-Maske bei Ausfuehrung des Signals */
 sa_flags:      DS.W      1
 sa_sizeof:
 
-/* erweiterte Prozeßdaten (PROCDATA) */
+/* erweiterte Prozessdaten (PROCDATA) */
      OFFSET
 
 fh_fd:         DS.L      1
@@ -62,7 +62,7 @@ fh_sizeof:
 
      OFFSET
 
-pr_magic:      DS.L      1    /* magischer Wert, ähnlich wie bei MiNT      */
+pr_magic:      DS.L      1    /* magischer Wert, aehnlich wie bei MiNT      */
 pr_ruid:       DS.W      1    /* "real user ID" */
 pr_rgid:       DS.W      1    /* "real group ID" */
 pr_euid:       DS.W      1    /* "effective user ID" */
@@ -76,18 +76,18 @@ pr_sigmask:    DS.L      1    /* Signalmaske                               */
 pr_sigdata:    DS.B      32*sa_sizeof
 pr_usrval:     DS.L      1    /* "User"-Wert (ab 9/96)                     */
 pr_memlist:    DS.L      1    /* Tabelle der "shared memory blocks"        */
-pr_fname:      DS.B      128  /* Pfad der zugehörigen PRG-Datei            */
-pr_cmdlin:     DS.B      128  /* Ursprüngliche Kommandozeile               */
+pr_fname:      DS.B      128  /* Pfad der zugehoerigen PRG-Datei            */
+pr_cmdlin:     DS.B      128  /* Urspruengliche Kommandozeile               */
 pr_flags:      DS.W      1    /* Bit 0: kein Eintrag in u:\proc            */
                               /* Bit 1: durch Pfork() erzeugt              */
-pr_procname:   DS.B      10   /* Prozeßname für u:\proc\ ohne Ext.         */
+pr_procname:   DS.B      10   /* Prozessname fuer u:\proc\ ohne Ext.         */
 pr_bconmap:    DS.W      1    /* z.Zt. unbenutzt                           */
 pr_hndm6:      DS.B      fh_sizeof /* Handle -6: unbenutzt */
 pr_hndm5:      DS.B      fh_sizeof /* Handle -5: unbenutzt */
-pr_hndm4:      DS.B      fh_sizeof /* Handle -4: standardmäßig NUL: */
-pr_hndm3:      DS.B      fh_sizeof /* Handle -3: standardmäßig PRN: */
-pr_hndm2:      DS.B      fh_sizeof /* Handle -2: standardmäßig AUX: */
-pr_hndm1:      DS.B      fh_sizeof /* Handle -1: standardmäßig CON: */
+pr_hndm4:      DS.B      fh_sizeof /* Handle -4: standardmaessig NUL: */
+pr_hndm3:      DS.B      fh_sizeof /* Handle -3: standardmaessig PRN: */
+pr_hndm2:      DS.B      fh_sizeof /* Handle -2: standardmaessig AUX: */
+pr_hndm1:      DS.B      fh_sizeof /* Handle -1: standardmaessig CON: */
 pr_handle:     DS.B      MAX_OPEN*fh_sizeof  /* Handles 0..31 */
 pr_sizeof:
 
@@ -99,49 +99,49 @@ ap_buflen EQU  $300           ; 768 Bytes Messagepuffer (= 48 Nachrichten)
 
 ap_next:       DS.L 1         ; Verkettungszeiger
 ap_id:         DS.W 1         ; Application-ID
-ap_parent:     DS.W 1         ; tatsächliche parent-ID
+ap_parent:     DS.W 1         ; tatsaechliche parent-ID
 ap_parent2:    DS.W 1         ; ggf. die ap_id des VT52, dorthin ->CH_EXIT
 ap_type:       DS.W 1         ; 0 = Main Thread/1 = Thread/2 = Signal Handler
-ap_oldsigmask: DS.L 1         ; Alte Signalmaske (für Signal-Handler)
+ap_oldsigmask: DS.L 1         ; Alte Signalmaske (fuer Signal-Handler)
 ap_sigthr:     DS.L 1         ; Haupt-Thread: Zeiger auf aktiven Signalhandler
                               ; Signalhandler: Zeiger auf vorherigen oder NULL
-ap_srchflg:    DS.W 1         ; für appl_search
-ap_menutree:   DS.L 1         ; Menübaum
-ap_attached:   DS.L 1         ; NULL oder Liste für menu_attach()
+ap_srchflg:    DS.W 1         ; fuer appl_search
+ap_menutree:   DS.L 1         ; Menuebaum
+ap_attached:   DS.L 1         ; NULL oder Liste fuer menu_attach()
 ap_desktree:   DS.L 1         ; Desktop-Hintergrund
 ap_1stob:      DS.W 1         ;  dazu erstes Objekt
 ap_dummy1:     DS.B 2         ; zwei Leerzeichen vor ap_name
 ap_name:       DS.B 8         ; Name (8 Zeichen mit trailing blanks)
 ap_dummy2:     DS.B 2         ; Leerstelle und ggf. Ausblendzeichen
-ap_dummy3:     DS.B 1         ; Nullbyte für EOS
+ap_dummy3:     DS.B 1         ; Nullbyte fuer EOS
 ap_status:     DS.B 1         ; APSTAT_...
 ap_hbits:      DS.W 1         ; eingetroffene Events
 ap_rbits:      DS.W 1         ; erwartete Events
 ap_evparm:     DS.L 1         ; Event-Daten, z.B. <pid> oder msg-Puffer
-ap_nxttim:     DS.L 1         ; Nächste auf Timer wartende APP
+ap_nxttim:     DS.L 1         ; Naechste auf Timer wartende APP
 ap_ms:         DS.L 1         ; Timer
-ap_nxtalrm:    DS.L 1         ; Nächste auf Alarm wartende APP
+ap_nxtalrm:    DS.L 1         ; Naechste auf Alarm wartende APP
 ap_alrmms:     DS.L 1         ; Alarm
 ap_isalarm:    DS.W 1         ; Flag
-ap_nxtsem:     DS.L 1         ; Nächste auf Semaphore wartende APP
+ap_nxtsem:     DS.L 1         ; Naechste auf Semaphore wartende APP
 ap_semaph:     DS.L 1         ; auf diese Semaphore warten wir
-ap_unselcnt:   DS.W 1         ; Länge der Tabelle ap_unselx
-ap_unselx:     DS.L 1         ; Tabelle für evnt_(m)IO
-ap_evbut:      DS.L 1         ; für evnt_button
-ap_mgrect1:    DS.L 1         ; für evnt_mouse
-ap_mgrect2:    DS.L 1         ; für evnt_mouse
-ap_kbbuf:      DS.W 8         ; Puffer für 8 Tasten
-ap_kbhead:     DS.W 1         ; Nächstes zu lesendes Zeichen
-ap_kbtail:     DS.W 1         ; Nächstes zu schreibendes Zeichen
+ap_unselcnt:   DS.W 1         ; Laenge der Tabelle ap_unselx
+ap_unselx:     DS.L 1         ; Tabelle fuer evnt_(m)IO
+ap_evbut:      DS.L 1         ; fuer evnt_button
+ap_mgrect1:    DS.L 1         ; fuer evnt_mouse
+ap_mgrect2:    DS.L 1         ; fuer evnt_mouse
+ap_kbbuf:      DS.W 8         ; Puffer fuer 8 Tasten
+ap_kbhead:     DS.W 1         ; Naechstes zu lesendes Zeichen
+ap_kbtail:     DS.W 1         ; Naechstes zu schreibendes Zeichen
 ap_kbcnt:      DS.W 1         ; Anzahl Zeichen im Puffer
-ap_len:        DS.W 1         ; Message- Pufferlänge
+ap_len:        DS.W 1         ; Message- Pufferlaenge
 ap_buf:        DS.B ap_buflen ; Message- Puffer (256 Bytes)
-ap_critic:     DS.W 1         ; Zähler für "kritische Phase"
+ap_critic:     DS.W 1         ; Zaehler fuer "kritische Phase"
 ap_crit_act:   DS.B 1         ; Bit 0: killed
                               ; Bit 1: stopped
                               ; Bit 2: Signale testen
 ap_stpsig:     DS.B 1         ; Flag "durch Signal gestoppt"
-ap_sigfreeze:  DS.L 1         ; Signalhandler für SIGFREEZE
+ap_sigfreeze:  DS.L 1         ; Signalhandler fuer SIGFREEZE
 ap_recogn:     DS.W 1         ; Bit 0: verstehe AP_TERM
 ap_flags:      DS.L 1         ; Bit 0: will keinen prop. AES-Zeichensatz
 ap_doex:       DS.W 1
@@ -151,7 +151,7 @@ ap_isover:     DS.W 1
 ap_ldpd:       DS.L 1         ; PD des Loader-Prozesses
 ap_env:        DS.L 1         ; Environment oder NULL
 ap_xtail:      DS.L 1         ; Erw. Kommandozeile (> 128 Bytes) od. NULL
-ap_thr_usp:    DS.L 1         ; usp für Threads
+ap_thr_usp:    DS.L 1         ; usp fuer Threads
 ap_memlimit:   DS.L 1
 ap_nice:       DS.L 1         ; z.Zt. unbenutzt
 ap_cmd:        DS.B 128       ; Programmpfad
@@ -165,10 +165,10 @@ ap_act_mouse:  DS.W 37
 ap_ssp:        DS.L 1
 ap_pd:         DS.L 1
 ap_etvterm:    DS.L 1
-ap_stkchk:     DS.L 1              ; magisches Wort für Stacküberprüfung
+ap_stkchk:     DS.L 1              ; magisches Wort fuer Stackueberpruefung
 ap_stack:
 
-/* Werte für ap_status */
+/* Werte fuer ap_status */
 
 APSTAT_READY        EQU  0
 APSTAT_WAITING      EQU  1
@@ -176,7 +176,7 @@ APSTAT_SUSPENDED    EQU  2
 APSTAT_ZOMBIE       EQU  3
 APSTAT_STOPPED      EQU  4
 
-/* Für Psignal */
+/* Fuer Psignal */
 
 SIGFREEZE      EQU  100
 SIG_DFL        EQU  0

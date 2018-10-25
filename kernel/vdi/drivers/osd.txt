@@ -1,30 +1,30 @@
 Hallo Andreas,
 
 anbei, der neue Drucksource und nochmal alle Screen- und OSD-Treiber.
-Eine kurze Auflistung, um die Benamung der Treiber zu erklÑren:
+Eine kurze Auflistung, um die Benamung der Treiber zu erkl√§ren:
 
-MFA*.SYS : Dies sind die Bildschirmtreiber fÅr ST/TT/Falcon/MagiC-PC
-MFM*.SYS : Dies sind die Bildschirmtreiber fÅr den MagiCMac
+MFA*.SYS : Dies sind die Bildschirmtreiber f√ºr ST/TT/Falcon/MagiC-PC
+MFM*.SYS : Dies sind die Bildschirmtreiber f√ºr den MagiCMac
 
 wobei die Ziffern/Buchstabenkombination hinter den ersten drei
 Buchstaben die Farbtiefe und das Schirmformat angibt.
 
 Beispiel:
 
-4IP : steht fÅr 4 Farben, interleaved plane (ST Mid)
+4IP : steht f√ºr 4 Farben, interleaved plane (ST Mid)
 
-MFA4IP.SYS ist also der 4-Farb-Treiber fÅr den ATARI
+MFA4IP.SYS ist also der 4-Farb-Treiber f√ºr den ATARI
 
-MFM4IP.SYS ist der 4-Farb-Treiber fÅr die ST-Mid-Emulation unter
+MFM4IP.SYS ist der 4-Farb-Treiber f√ºr die ST-Mid-Emulation unter
 MagiCMac (im Gegensatz zum ATARI-Treiber u.a. ohne Hardwarezugriffe auf
 Palettenbausteine, etc.)
 
 
 *.OSD sind die Offscreentreiber. Im Ordner \OSD\min-ATARI\ habe ich die
-Treiber gepackt, die auf jeden Fall der ATARI-Version beliegen MöSSEN.
+Treiber gepackt, die auf jeden Fall der ATARI-Version beliegen M√úSSEN.
 
-MagiCMac mÅssen alle OSD-Treiber aus dem \OSD-Ordner (_inkl._ derer aus
+MagiCMac m√ºssen alle OSD-Treiber aus dem \OSD-Ordner (_inkl._ derer aus
 dem \min-ATARI-Verzeichnis) beiliegen. Wenn es auf der ATARI-Disk noch
-paût, so sollten auch dort alle OSD-Treiber beiliegen.
+pa√üt, so sollten auch dort alle OSD-Treiber beiliegen.
 
-Gruû, Wilfried
+Gru√ü, Wilfried

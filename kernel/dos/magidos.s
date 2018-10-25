@@ -1,6 +1,6 @@
 *********************************
 *
-* MAGIDOS für MAGIX
+* MAGIDOS fuer MAGIX
 *
 *********************************
 
@@ -15,12 +15,12 @@ __a_dos        EQU  $2900
      ENDIF
 
 
-DRIVE_U        EQU  'U'-'A'        ; für "MiNT"
+DRIVE_U        EQU  'U'-'A'        ; fuer "MiNT"
 N_STDPATHS     EQU  40             ; Anzahl der Standardpfade
 N_PROCS        EQU  256            ; Anzahl Prozesse
 N_HDLX         EQU  75             ; Anzahl globaler Handles
 FDSIZE         EQU  94
-DOSMEMSIZ      EQU  150            ; 150 IMBs für DOS reservieren
+DOSMEMSIZ      EQU  150            ; 150 IMBs fuer DOS reservieren
                                    ; MagiC < 6: 70 IMBs
 NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
 
@@ -36,7 +36,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF  _mifl_unused       ; hier Dummy (undo_buf)
      XDEF  dos_date
      XDEF  dos_time
-     XDEF  bufl_timer         ; an BIOS (für writeback)
+     XDEF  bufl_timer         ; an BIOS (fuer writeback)
      XDEF  bufl_wback         ; PD * (wenn writeback aktiviert)
      XDEF  dlockx
      XDEF  mem_root           ; an XAES,MALLOC
@@ -45,7 +45,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF  swap_paths         ; an XAES
      XDEF  env_clr_int
      XDEF  srch_process       ; an XAES
-     XDEF  match_pid          ; an XAES (für Pwaitpid())
+     XDEF  match_pid          ; an XAES (fuer Pwaitpid())
      XDEF  proc_info          ; => DOS_XFS
      XDEF  dmdx               ; => MAC_XFS
      XDEF  funselect          ; an XAES
@@ -107,7 +107,7 @@ act_appl equ $3982 ; from AES FIXME
      XREF pd_used_mem
      XREF mshare
      XREF mfork
-     XREF Pmemsave,Pmemrestore     ; für Pfork()
+     XREF Pmemsave,Pmemrestore     ; fuer Pfork()
      IF   DEBUG
      XREF hexl,putstr,crlf
      ENDIF
@@ -116,12 +116,12 @@ act_appl equ $3982 ; from AES FIXME
 
      XREF  _start              ; Beginn des ROMs
      XREF  config_status
-     XREF  fast_clrmem         ; schnelle Speicherlösch- Routine
+     XREF  fast_clrmem         ; schnelle Speicherloesch- Routine
      XREF  getcookie           ; Cookie suchen
      XREF  bios2devcode        ; BIOS-Device => devcode (32 Bit)
      XREF  bios_rawdrvr        ; raw-Driver aus dem BIOS
      XREF  vmemcpy             ; a0=dst,a1=src,d0=int len
-     XREF  chk_rtclock         ; Prüft, ob MegaST- Uhr da ist
+     XREF  chk_rtclock         ; Prueft, ob MegaST- Uhr da ist
      XREF  read_rtclock        ; MegaST- Uhr auslesen
      XREF  machine_type
      XREF  halt_system
@@ -145,8 +145,8 @@ act_appl equ $3982 ; from AES FIXME
      XREF  evnt_emIO
      XREF  evnt_IO
      XREF  evnt_sem
-     XREF  evnt_pid,hap_pid             ; für Pwaitpid()
-     XREF  evnt_fork,hap_fork           ; für P(v)fork()
+     XREF  evnt_pid,hap_pid             ; fuer Pwaitpid()
+     XREF  evnt_fork,hap_fork           ; fuer P(v)fork()
      XREF  appl_IOcomplete
      XREF  psig_freeze
      XREF  toupper
@@ -189,7 +189,7 @@ act_appl equ $3982 ; from AES FIXME
 
 /*
 *
-* Header für "shared library".
+* Header fuer "shared library".
 * Liegt direkt hinter dem Programmheader.
 *
 */
@@ -202,8 +202,8 @@ slb_version:   DS.L      1    /* Versionsnummer                       */
 slb_flags:     DS.L      1    /* Flags, z.Zt. 0L                      */
 slb_init:      DS.L      1    /* wird nach dem Laden aufgerufen       */
 slb_exit:      DS.L      1    /* wird vor dem Entfernen aufgerufen    */
-slb_open:      DS.L      1    /* wird beim Öffnen aufgerufen          */
-slb_close:     DS.L      1    /* wird beim Schließen aufgerufen       */
+slb_open:      DS.L      1    /* wird beim Oeffnen aufgerufen          */
+slb_close:     DS.L      1    /* wird beim Schliessen aufgerufen       */
 slb_names:     DS.L      1    /* Zeiger auf Prozedurnamen (optional)  */
 slb_unused:    DS.L      8    /* (z.Zt. unbenutzt, immer NULL)        */
 slb_fnn:       DS.L      1    /* Anzahl der Funktionen                */
@@ -213,7 +213,7 @@ slb_sizeof:
 
 /*
 *
-* Struktur für eine geladene "shared library".
+* Struktur fuer eine geladene "shared library".
 *
 */
 
@@ -221,24 +221,24 @@ slb_sizeof:
 
 lslb_next:     DS.L      1    /* Verkettungszeiger                    */
 lslb_slb:      DS.L      1    /* Zeiger auf den Header                */
-lslb_refcnt:   DS.W      1    /* Referenzierungszähler                */
+lslb_refcnt:   DS.W      1    /* Referenzierungszaehler                */
 lslb_pdtab:    DS.L      NPDL /* Prozesse, die die Lib verwenden      */
 lslb_sizeof:
 
 /*
 *
-* Header für Programmdatei
+* Header fuer Programmdatei
 *
 */
      OFFSET
 
-ph_branch:     DS.W      1    /* 0x00: muß 0x601a sein!! */
-ph_tlen:       DS.L      1    /* 0x02: Länge  des TEXT - Segments */
-ph_dlen:       DS.L      1    /* 0x06: Länge  des DATA - Segments */
-ph_blen:       DS.L      1    /* 0x0a: Länge  des BSS  - Segments */
-ph_slen:       DS.L      1    /* 0x0e: Länge  der Symboltabelle   */
+ph_branch:     DS.W      1    /* 0x00: muss 0x601a sein!! */
+ph_tlen:       DS.L      1    /* 0x02: Laenge  des TEXT - Segments */
+ph_dlen:       DS.L      1    /* 0x06: Laenge  des DATA - Segments */
+ph_blen:       DS.L      1    /* 0x0a: Laenge  des BSS  - Segments */
+ph_slen:       DS.L      1    /* 0x0e: Laenge  der Symboltabelle   */
 ph_res1:       DS.L      1    /* 0x12: */
-ph_flags:      DS.L      1    /* 0x16:  Bit 0: Heap nicht löschen */
+ph_flags:      DS.L      1    /* 0x16:  Bit 0: Heap nicht loeschen */
                               /*        Bit 1: Laden ins FastRAM  */
                               /*        Bit 2: Malloc aus FastRAM */
                               /*        Bit 3: nur t+d+b+s (MagiC 5.20) */
@@ -263,7 +263,7 @@ ph_sizeof:
 
      OFFSET
 
-imb_link:      DS.L      1    /* 0x00: Zeiger auf nächsten Block           */
+imb_link:      DS.L      1    /* 0x00: Zeiger auf naechsten Block           */
 imb_used:      DS.B      1    /* 0x04: 0=unbenutzt  -1=DD/FD/DMD 1=MDs     */
 imb_switch:    DS.B      1    /* 0x05: unbenutzt                           */
 imb_data:      DS.B FDSIZE    /* 0x06: Datenbereich                        */
@@ -290,44 +290,44 @@ otrap2:        DS.L 1              ; alte Trap #2- Routine
 last_ms:       DS.W 1              ; ms seit letztem Stellen der Uhr
 dos_time:      DS.W 1              ; Zeit im DOS- Format
 dos_date:      DS.W 1              ; Wort mit Datum im DOS- Format
-xaes_appls:    DS.L 1              ; hier hängt sich XAES ein
+xaes_appls:    DS.L 1              ; hier haengt sich XAES ein
 mem_root:      DS.L 16             ; 16 Speicherlisten (ST-RAM, TT-RAM, ...)
-               DS.L 16             ; Endadressen für vorherige Blöcke
+               DS.L 16             ; Endadressen fuer vorherige Bloecke
 _mifl_unused:
-undo_buf:      DS.B 320            ; für Zeileneditor
+undo_buf:      DS.B 320            ; fuer Zeileneditor
      EVEN
 
 imbx:          DS.L 1              ; Zeiger auf IMB- Kette
 
-dev_fds:       DS.L -MIN_FHANDLE   ; FDs für Handles -4/-3/-2/-1
+dev_fds:       DS.L -MIN_FHANDLE   ; FDs fuer Handles -4/-3/-2/-1
 
 dskchg_drvs:   DS.L 1              ; Bitvektor der zu wechselnden Disks
-dskchg_sem:    DS.B bl_sizeof      ; Semaphore für den Diskwechsel
-pexec_sem:     DS.B bl_sizeof      ; Sempahore für Pexec
-fat12_sem:     DS.B bl_sizeof      ; Sempahore für 12-Bit-FAT
+dskchg_sem:    DS.B bl_sizeof      ; Semaphore fuer den Diskwechsel
+pexec_sem:     DS.B bl_sizeof      ; Sempahore fuer Pexec
+fat12_sem:     DS.B bl_sizeof      ; Sempahore fuer 12-Bit-FAT
 
 bufl:          DS.L 2              ; neue Mag!X- Sektor-Pufferlisten
-bufl_size:     DS.L 1              ; Größe der installierten Puffer
-bufl_timer:    DS.L LASTDRIVE+1    ; für Writeback (letzter Zugriff)
+bufl_size:     DS.L 1              ; Groesse der installierten Puffer
+bufl_timer:    DS.L LASTDRIVE+1    ; fuer Writeback (letzter Zugriff)
 bufl_wback:    DS.L 1              ; PD *, initiiert writeback
 p_doslimits:   DS.L 1              ; Zeiger auf DOSLIMIT-Struktur
 
 act_pd:        DS.L 1              ; aktueller PD
 pathx:         DS.L N_STDPATHS     ; Tabelle der 40 Standard- DDs
-pathcntx:      DS.B N_STDPATHS     ; Referenzzähler für pathx
+pathcntx:      DS.B N_STDPATHS     ; Referenzzaehler fuer pathx
 dmdx:          DS.L LASTDRIVE+1    ; Tabelle der DMDs
 dlockx:        DS.L LASTDRIVE+1    ; Laufwerk- Sperren
-nxt_procid:    DS.W 1              ; nächste freie Prozeß-ID
+nxt_procid:    DS.W 1              ; naechste freie Prozess-ID
 procx:         DS.L 1              ; Tabelle der Prozesse
 xfs_list:      DS.L 1              ; Tabelle der Dateisysteme
 lslb_list:     DS.L 1              ; Liste der geladenen SharedLibs
 
-/* Variablen fürs DOS-XFS */
+/* Variablen fuers DOS-XFS */
 
 dfs_list:      DS.L 1              ; Tabelle der DOS- Dateisysteme
 dfs_longnames: DS.L 1              ; Bitvektor drv <-> lange Dateinamen
 
-/* Variablen fürs Laufwerk U: */
+/* Variablen fuers Laufwerk U: */
 
 udrv_drvs:     DS.L 1              ; eingetragene Laufwerk A,B,..
 udrv_root:     DS.L 1
@@ -362,17 +362,17 @@ dos_init:
      DEBON
      DEB  'Initialisierung des DOS'
 
-* Prozeßtabelle initialisieren und löschen
+* Prozesstabelle initialisieren und loeschen
 
  clr.w    nxt_procid
- move.l   #N_PROCS*4,d0            ; N_PROC Einträge
+ move.l   #N_PROCS*4,d0            ; N_PROC Eintraege
  jsr      Bmalloc
  move.l   a0,procx
 ;move.l   a0,a0
  lea      N_PROCS*4(a0),a1
  jsr      fast_clrmem
 
-* Geräte-Handle-Tabelle löschen
+* Geraete-Handle-Tabelle loeschen
 
  lea      dev_fds,a0
  lea      16(a0),a1
@@ -384,8 +384,8 @@ dos_init:
  clr.l    imbx
  move.l   #(DOSMEMSIZ*imb_sizeof),d0
  jsr      Bmalloc
-;move.l   d0,d0                    ; Pufferlänge (80*70)
-;lea      a0,a0                    ; Platz für IMBs
+;move.l   d0,d0                    ; Pufferlaenge (80*70)
+;lea      a0,a0                    ; Platz fuer IMBs
  bsr      resv_intmem
 
 * Dateisysteme (XFSs) initialisieren
@@ -416,7 +416,7 @@ dosi_nfs:
  lea      pexec_sem,a0
  moveq    #SEM_CREATE,d0
  jsr      evnt_sem
- move.l   #'_F12',d1               ; für 12-Bit-FAT
+ move.l   #'_F12',d1               ; fuer 12-Bit-FAT
  lea      fat12_sem,a0
  moveq    #SEM_CREATE,d0
  jsr      evnt_sem
@@ -426,7 +426,7 @@ dosi_nfs:
      DEB  'Rest des DOS initialieren'
 
  clr.l    lslb_list                ; keine SharedLib geladen
- bsr      os_init                  ; Prozeß setzen
+ bsr      os_init                  ; Prozess setzen
 
  move.w   _bootdev,d0
  move.l   #dosvars,(config_status+4).w
@@ -437,14 +437,14 @@ dosi_nfs:
      ENDIF
 
  pea      -1
- clr.l    -(sp)                    ; BIOS-Gerät
+ clr.l    -(sp)                    ; BIOS-Geraet
  lea      (sp),a1
  lea      nul_name_s(pc),a0
  move.w   #MX_DEV_INSTALL2,d0
  bsr      Dcntl
  addq.l   #8,sp
 
-; für den Hddriver müssen alle Geräte und Handles definiert werden
+; fuer den Hddriver muessen alle Geraete und Handles definiert werden
 
  bsr      iniddev1
  bsr      iniddev2
@@ -455,15 +455,15 @@ dosi_nfs:
 *
 * d0 = LONG deleddev( void )
 *
-* Löscht alle Geräte und Handles wieder, nachdem Hddriver gelaufen
+* Loescht alle Geraete und Handles wieder, nachdem Hddriver gelaufen
 * ist, damit die magx.inf ausgewertet werden kann.
 *
 
 deleddev:
-     DEB  'Devices wieder löschen'
+     DEB  'Devices wieder l�schen'
  movem.l  a5/a6/d7,-(sp)
 
-; erst die Standard-Handles des Boot-Prozesses löschen
+; erst die Standard-Handles des Boot-Prozesses loeschen
 
  lea      ur_pd,a0
  move.l   p_procdata(a0),a0
@@ -472,13 +472,13 @@ deleddev:
  moveq    #-MIN_FHANDLE-1,d7
 ddv_loop:
  move.l   (a6),a0
- clr.l    (a6)+                         ; gleich löschen
+ clr.l    (a6)+                         ; gleich loeschen
  move.w   #1,fd_refcnt(a0)              ; damit freigeben wird
  move.l   fd_dev(a0),a2
  move.l   dev_close(a2),a2
  jsr      (a2)                          ; freigeben
- clr.l    (a5)+                         ; im Prozeß Handle ungültig
- addq.l   #2,a5                         ; fh_flag überspringen
+ clr.l    (a5)+                         ; im Prozess Handle ungueltig
+ addq.l   #2,a5                         ; fh_flag ueberspringen
  dbra     d7,ddv_loop
  clr.l    (a5)+                         ; Handle 0
  addq.l   #2,a5
@@ -492,7 +492,7 @@ ddv_loop:
  addq.l   #2,a5
  clr.l    (a5)                          ; Handle 5
 
-; Dann die Gerätedateien löschen
+; Dann die Geraetedateien loeschen
  pea      con_name_s(pc)
  lea      (sp),a0
  bsr      D_Fdelete
@@ -516,14 +516,14 @@ ddv_loop:
 *
 * d0 = LONG iniddev1( void )
 *
-* Initialisiert die Geräte, die noch nicht in der magx.inf
+* Initialisiert die Geraete, die noch nicht in der magx.inf
 * definiert wurden.
 *
 
 iniddev1:
      DEB  'Devices initialisieren'
  pea      100                      ; Spezial-AUX (nichtblockierend) 27.6.2002
- clr.l    -(sp)                    ; BIOS-Gerät
+ clr.l    -(sp)                    ; BIOS-Geraet
  lea      (sp),a1
  lea      auxnb_name_s(pc),a0
  move.w   #MX_DEV_INSTALL2,d0
@@ -531,7 +531,7 @@ iniddev1:
  addq.l   #8,sp
 
  pea      2                        ; CON
- clr.l    -(sp)                    ; BIOS-Gerät
+ clr.l    -(sp)                    ; BIOS-Geraet
  lea      (sp),a1
  lea      con_name_s(pc),a0
  move.w   #MX_DEV_INSTALL2,d0
@@ -539,7 +539,7 @@ iniddev1:
  addq.l   #8,sp
 
  pea      1                        ; AUX
- clr.l    -(sp)                    ; BIOS-Gerät
+ clr.l    -(sp)                    ; BIOS-Geraet
  lea      (sp),a1
  lea      aux_name_s(pc),a0
  move.w   #MX_DEV_INSTALL2,d0
@@ -547,7 +547,7 @@ iniddev1:
  addq.l   #8,sp
 
  pea      0                        ; PRN
- clr.l    -(sp)                    ; BIOS-Gerät
+ clr.l    -(sp)                    ; BIOS-Geraet
  lea      (sp),a1
  lea      prn_name_s(pc),a0
  move.w   #MX_DEV_INSTALL2,d0
@@ -560,29 +560,29 @@ iniddev1:
 *
 * d0 = LONG iniddev2( void )
 *
-* Initialisiert die Geräte-Handles, die noch nicht in der magx.inf
+* Initialisiert die Geraete-Handles, die noch nicht in der magx.inf
 * definiert wurden.
 *
 
 iniddev2:
-     DEB  'Gerätehandles -1..-4 erzeugen'
+     DEB  'Ger�tehandles -1..-4 erzeugen'
  movem.l  d7/a5/a4,-(sp)
  moveq    #3,d7
  lea      dev_fds,a5
  lea      u_devices+16(pc),a4           ; beginne mit NUL:
 dosi_dmloop:
  move.l   -(a4),a0
- move.l   (a5),d0                       ; schon geöffnet?
+ move.l   (a5),d0                       ; schon geoeffnet?
  bne.b    dosi_savedm                   ; ja!
  bsr      open_device
  bgt.b    dosi_savedm                   ; FD ist in Ordnung
- moveq    #0,d0                         ; FD ist ungültig
+ moveq    #0,d0                         ; FD ist ungueltig
 dosi_savedm:
  move.l   d0,(a5)+                      ; FD merken
  dbra     d7,dosi_dmloop
 
  move.l   act_pd,a0
- bsr      init_stdfiles                 ; STDXXX für Ur-Prozeß initialisieren
+ bsr      init_stdfiles                 ; STDXXX fuer Ur-Prozess initialisieren
 
  movem.l  (sp)+,d7/a5/a4
 
@@ -596,7 +596,7 @@ dosi_savedm:
 *
 * d0 = LONG asgndevh(d0 = WORD hdl, a0 = char *fname)
 *
-* Öffnet ein negatives Gerätehandle
+* Oeffnet ein negatives Geraetehandle
 *
 
 asgndevh:
@@ -617,19 +617,19 @@ asdh_ende:
 *
 * MI/PL d0 = FD *open_device(a0 = char *fname)
 *
-* Öffnet ein negatives Gerätehandle
+* Oeffnet ein negatives Geraetehandle
 *
 
 open_device:
  moveq    #O_RDWR,d0               ; Lesen und Schreiben
 ;move.l   a0,a0
- bsr      Fopen                    ; Gerät öffnen
+ bsr      Fopen                    ; Geraet oeffnen
  tst.l    d0
- bmi.b    opnd_ende                ; Fehler beim Öffnen
+ bmi.b    opnd_ende                ; Fehler beim Oeffnen
  bsr      hdl_to_FD
  bmi.b    opnd_ende
  move.l   d0,a1
- move.w   #-1,fd_refcnt(a1)        ; als unbegrenzt geöffnet markieren
+ move.w   #-1,fd_refcnt(a1)        ; als unbegrenzt geoeffnet markieren
  ori.w    #OM_NOCHECK,fd_mode(a1)  ; sharing
  clr.l    (a0)                     ; Handle wieder freigeben
  move.l   a1,d0
@@ -729,7 +729,7 @@ os_init:
  trap     #$d                 ; bios Setexc
  addq.l   #8,sp
  move.l   d0,otimer
- clr.l    criticret           ; MagiC 6.01: Semaphore für Handler
+ clr.l    criticret           ; MagiC 6.01: Semaphore fuer Handler
  pea      etv_critic_vec(pc)
  move.w   #$101,-(sp)
  move.w   #5,-(sp)
@@ -753,9 +753,9 @@ osinit_loop:
  move.l   a0,p_procdata(a1)
 ;move.l   a0,a0
  lea      pr_sizeof(a0),a1
- jsr      fast_clrmem              ; Block löschen
+ jsr      fast_clrmem              ; Block loeschen
  move.l   (sp)+,a1
-* Default- Handles für Standarddateien in den PD kopieren
+* Default- Handles fuer Standarddateien in den PD kopieren
 * (sind ab MagiC 6.20 nur dummies)
  lea      def_hdlx(pc),a0
  lea      p_devx(a1),a1
@@ -864,7 +864,7 @@ _xalloc:
 
 **********************************************************************
 *
-* Kernelfunktionen für das XFS
+* Kernelfunktionen fuer das XFS
 *
 
 ker_mxalloc:
@@ -887,15 +887,15 @@ ker_mfree:
 *
 * long Mshrink(a0 = char *memblock, d0 = long size)
 *
-* Im wesentlichen aus KAOS 1.2, also gegenüber TOS 1.4 noch folgendes:
-*  - Es kann ein Block vergrößert werden (wie in MS-DOS) !!
-*  - Wird -1L als Größe übergeben, wird die größtmögliche Größe
-*    des Speicherblocks zurückgegeben.
-*  - Bei neuer Größe 0L, bringt TOS 1.4 den Block sowohl in die freelist
-*    als auch in die alloc-list, was tödlich ist und daher nicht
-*    übernommen wurde.
-* Neu gegenüber KAOS 1.2:
-*  - Bei neuer Größe 0L einfach Block freigeben
+* Im wesentlichen aus KAOS 1.2, also gegenueber TOS 1.4 noch folgendes:
+*  - Es kann ein Block vergroessert werden (wie in MS-DOS) !!
+*  - Wird -1L als Groesse uebergeben, wird die groesstmoegliche Groesse
+*    des Speicherblocks zurueckgegeben.
+*  - Bei neuer Groesse 0L, bringt TOS 1.4 den Block sowohl in die freelist
+*    als auch in die alloc-list, was toedlich ist und daher nicht
+*    uebernommen wurde.
+* Neu gegenueber KAOS 1.2:
+*  - Bei neuer Groesse 0L einfach Block freigeben
 *
 
 D_Mshrink:
@@ -911,7 +911,7 @@ Mshrink:
 *
 * long Srealloc( long size)
 *
-* size == -1L: maximal mögliche Größe ermitteln
+* size == -1L: maximal moegliche Groesse ermitteln
 * sonst:       alten Block freigeben, neuen allozieren
 *
 * => NULL      Fehler
@@ -930,8 +930,8 @@ D_Srealloc:
 * long Mfree(a0 = char *memblock)
 *
 * Mfree(1L) => E_OK
-* Seit Mag!X 3.00 wird die Adresse überprüft, ob sie in einem der
-* Speicherblöcke liegt.
+* Seit Mag!X 3.00 wird die Adresse ueberprueft, ob sie in einem der
+* Speicherbloecke liegt.
 *
 
 D_Mfree:
@@ -954,8 +954,8 @@ Mfree:
 * long D_Cauxout(a0 => int c)
 * long D_Cprnout(a0 => int c)
 *
-* Diese Funktionen gingen bisher über Fwrite, gehen aber ab
-* Mag!X 3.00 wegen MiNT- Konvention über Fputchar().
+* Diese Funktionen gingen bisher ueber Fwrite, gehen aber ab
+* Mag!X 3.00 wegen MiNT- Konvention ueber Fputchar().
 * Dabei ist nach MiNT- Konvention nur Cconout() "cooked".
 * Das "int" wird auf "unsigned long" erweitert.
 *
@@ -990,11 +990,11 @@ _cconout:
 * long Cauxos()
 * long Cprnos()
 *
-* RÜckgabe: 0       nicht lese-/schreibbereit oder Fehler
+* RUeckgabe: 0       nicht lese-/schreibbereit oder Fehler
 *              -1   lesebereit
 *
-* Diese Funktionen gehen über Fin/outstat und sind daher "raw".
-* wegen TOS- Kompatibilität raw- Status
+* Diese Funktionen gehen ueber Fin/outstat und sind daher "raw".
+* wegen TOS- Kompatibilitaet raw- Status
 *
 
 D_Cconis:
@@ -1030,14 +1030,14 @@ __cis:
 *
 * Cconws( char *s )
 *
-* Gibt in Analogie zu Fwrite die Länge des Strings zurück.
+* Gibt in Analogie zu Fwrite die Laenge des Strings zurueck.
 * Dies entspricht dem Verhalten in MiNT.
 *
-* Die Funktion wird direkt auf Fwrite zurückgeführt und ist daher
+* Die Funktion wird direkt auf Fwrite zurueckgefuehrt und ist daher
 * "cooked" (falls der Dateitreiber dies kann)
 *
 * TOS 1.4 liefert 0L (ok) oder ERROR (eof), dies wird ab
-* Mag!X 3.00 nicht mehr unterstützt.
+* Mag!X 3.00 nicht mehr unterstuetzt.
 *
 
 D_Cconws:
@@ -1061,8 +1061,8 @@ D_Cconws:
  bsr      Fwrite
  move.l   (sp)+,d1                 ; d1 holen
 
- btst     #5,(config_status+3).w   ; Kompatibilität ?
- beq      cconws_end1              ; KAOS: Rückgabewert weiterreichen
+ btst     #5,(config_status+3).w   ; Kompatibilitaet ?
+ beq      cconws_end1              ; KAOS: Rueckgabewert weiterreichen
 * TOS 1.4 liefert 0L (ok) oder ERROR (eof)
  tst.l    d0
  bmi      cconws_end1              ; Fehler immer weiterreichen
@@ -1138,9 +1138,9 @@ _cin_char:
 * long Cconrs(char *buf)
 *
 * Eingabe:     buf[0]    Anzahl zu lesender Zeichen
-* Ausgabe:     buf[1]    tatsächlich gelesene Zeichen
+* Ausgabe:     buf[1]    tatsaechlich gelesene Zeichen
 *
-* Rückgabe:    E_OK oder Fehlercode
+* Rueckgabe:    E_OK oder Fehlercode
 *
 
 D_Cconrs:
@@ -1180,7 +1180,7 @@ crs_ende:
 *
 * DMD *drv_to_dmd( d0 = int drive )
 *
-* ändert nur a0
+* aendert nur a0
 *
 
 drv_to_dmd:
@@ -1204,7 +1204,7 @@ getxhdi:
  beq.b    gxh_err             ; Cookie nicht gefunden
  move.l   d1,a0               ; Wert des Cookies
  cmpi.l   #$27011992,-4(a0)   ; magischer Wert
- bne.b    gxh_err             ; ungültig
+ bne.b    gxh_err             ; ungueltig
 ; a1 ist jetzt der XHDI-Funktionszeiger
  move.l   a0,-(sp)
  clr.w    -(sp)
@@ -1212,7 +1212,7 @@ getxhdi:
  addq.l   #2,sp
  move.l   (sp)+,a0
  tst.l    d0
- bmi.b    gxh_err             ; Funktionsaufruf ungültig
+ bmi.b    gxh_err             ; Funktionsaufruf ungueltig
  cmpi.w   #$0110,d0
  bcs.b    gxh_err             ; Versionsnummer zu klein
  move.l   a0,d0
@@ -1226,7 +1226,7 @@ gxh_err:
 *
 * long xhdi_rawdrvr( d0 = int opcode, d1 = long devcode, ... )
 *
-* Führt gerätespezifische Aktionen aus.
+* Fuehrt geraetespezifische Aktionen aus.
 *
 * d0 = 0: Medium auswerfen.
 *
@@ -1239,7 +1239,7 @@ xhdi_rawdrvr:
  movem.l  (sp)+,d0/d1
  tst.w    d0
  bne.b    rxh_err2            ; falsche Funktionsnummer
- clr.w    -(sp)               ; kein Schlüssel
+ clr.w    -(sp)               ; kein Schluessel
  move.w   #1,-(sp)            ; auswerfen
  move.l   d1,-(sp)            ; major/minor
  move.w   #5,-(sp)
@@ -1265,8 +1265,8 @@ rxh_err2:
 * Initialisiert die Felder <d_driver> und <d_devcode> des DMD und
 * benutzt dazu das Feld <d_biosdev>
 *
-* Diese Funktion wird nicht vom Kernel, sondern vom XFS ausgeführt.
-* Es wird zunächst versucht, XHDI zu verwenden. Geht das schief, wird
+* Diese Funktion wird nicht vom Kernel, sondern vom XFS ausgefuehrt.
+* Es wird zunaechst versucht, XHDI zu verwenden. Geht das schief, wird
 * das BIOS aufgerufen (Mac !)
 *
 
@@ -1297,7 +1297,7 @@ dxh_err:
  move.w   d_biosdev(a5),d0
  jsr      bios2devcode        ; => BIOS (Mac!)
  move.l   d0,d_devcode(a5)
- beq.b    dxh_ende            ; ungültig
+ beq.b    dxh_ende            ; ungueltig
  move.l   #bios_rawdrvr,d_driver(a5)
 dxh_ende:
  movem.l  (sp)+,a5/a6
@@ -1308,7 +1308,7 @@ dxh_ende:
 **********************************************************************
 *
 * DMD * DMD_create(d0 = int drive)
-*  erstellt für <drive> einen DMD, falls dieser noch nicht
+*  erstellt fuer <drive> einen DMD, falls dieser noch nicht
 *  existiert.
 *
 
@@ -1328,7 +1328,7 @@ DMD_create:
  bmi      dc_ende
  bra      dc_valid
 dc_create:
-* Speicher für DMD holen
+* Speicher fuer DMD holen
  bsr      int_malloc
  movea.l  d0,a5                    ; a5 = DMD
 
@@ -1343,7 +1343,7 @@ dc_nloop:
  move.l   a5,a0                    ; DMD
  jsr      (a1)
  tst.l    d0
- beq      dc_valid                 ; alles OK, DMD gültig
+ beq      dc_valid                 ; alles OK, DMD gueltig
  move.l   xfs_next(a4),a4
 dc_nfs:
  move.l   a4,d0
@@ -1376,12 +1376,12 @@ dc_ende:
 *
 * DMD *d_chkdrv(d0 = unsigned int drive, d1 = int mode)
 *
-*  Prüft, ob <drive> vorhanden.
+*  Prueft, ob <drive> vorhanden.
 *
 *    mode == 0: meldet es ggf. an
 *    mode == 1: gibt nur DMD bzw. NULL bzw. Fehlercode
 *
-*  Rückgabe: negativ bei Fehler, sonst DMD
+*  Rueckgabe: negativ bei Fehler, sonst DMD
 *
 
 d_chkdrv:
@@ -1429,7 +1429,7 @@ dfr_again:
 
 * Laufwerkcode bestimmen
 
- moveq    #0,d7                    ; Pfadhandle ungültig (root)
+ moveq    #0,d7                    ; Pfadhandle ungueltig (root)
  subq.w   #1,d0
  bcc.b    dfr_weiter
 
@@ -1438,18 +1438,18 @@ dfr_again:
  movea.l  act_pd,a0
  clr.w    d0
  move.b   p_defdrv(a0),d0          ; aktuelles Laufwerk
- move.b   p_drvx(a0,d0.w),d7       ; zugehöriger Pfad
+ move.b   p_drvx(a0,d0.w),d7       ; zugehoeriger Pfad
 
-* Prüfen, ob Laufwerk existiert
+* Pruefen, ob Laufwerk existiert
 
 dfr_weiter:
  moveq    #0,d1                    ; automount
 ;move.w   d0,d0
  bsr      d_chkdrv
  tst.l    d0
- blt.b    dfr_ende                 ; Fehlercode wörtlich weiterreichen
+ blt.b    dfr_ende                 ; Fehlercode woertlich weiterreichen
  tst.b    d7                       ; Pfadhandle ?
- ble.b    dfr_root                 ; root (0) oder ungültig (-1)
+ ble.b    dfr_root                 ; root (0) oder ungueltig (-1)
 * aktueller Pfad
  add.w    d7,d7
  add.w    d7,d7
@@ -1485,23 +1485,23 @@ dfr_ende:
 *
 *  Eingabeparameter:
 *   path       : kompletter Pfadname
-*   flag  == 0 : gib DD des Verzeichnisses zurück, in dem die spezi-
+*   flag  == 0 : gib DD des Verzeichnisses zurueck, in dem die spezi-
 *                fizierte Datei liegt
 *         == 1 : die spezifizierte Datei ist ein Verzeichnis, gib
-*                deren DD zurück.
+*                deren DD zurueck.
 *  Ausgabeparameter:
 *   *fname     : zeigt auf den isolierten Dateinamen
-*  Rückgabe    : d0 = DD oder Fehlercode < 0
-*                d1 = TRUE, wenn Pfad für Laufwerk U: ist
+*  Rueckgabe    : d0 = DD oder Fehlercode < 0
+*                d1 = TRUE, wenn Pfad fuer Laufwerk U: ist
 *
 * Bricht bei mehr als 4 Rekursionen mit ELOOP ab.
-* Der zurückgegebene DD ist vom XFS ge-lock-t worden, d.h. der
-* Referenzzähler ist erhöht worden. Der DD muß wieder freigegeben
+* Der zurueckgegebene DD ist vom XFS ge-lock-t worden, d.h. der
+* Referenzzaehler ist erhoeht worden. Der DD muss wieder freigegeben
 * werden, wenn er nicht mehr verwendet wird.
 *
-* 2.12.95:     Der Anfangs-DD wird aus Sicherheitsgründen
+* 2.12.95:     Der Anfangs-DD wird aus Sicherheitsgruenden
 *              vor dem ersten Zugriff ge-lock-t, da Standardpfade
-*              nicht mehr geschützt werden.
+*              nicht mehr geschuetzt werden.
 *
 
 path_to_DD:
@@ -1513,7 +1513,7 @@ path_to_DD:
 _path_to_DD:
  movem.l  d4/d5/d6/d7/a3/a4/a6,-(sp)
  subq.w   #1,d2
- bcs      pthdd_eloop              ; maximale Rekursionstiefe überschritten
+ bcs      pthdd_eloop              ; maximale Rekursionstiefe ueberschritten
  move.w   d2,d5
 
  move.l   a0,a3                    ; a3 = pathname
@@ -1521,7 +1521,7 @@ _path_to_DD:
  move.l   a2,a4                    ; a4 = DD *relpath
  move.w   d0,d7                    ; d7 = flag
 
-* erstmal auf Gerätenamen prüfen
+* erstmal auf Geraetenamen pruefen
 
  cmpi.b   #':',3(a3)
  bne.b    pthdd_nodev
@@ -1556,7 +1556,7 @@ _path_to_DD:
 * d6 := Laufwerk, a1 := Pfad
 
 pthdd_nodev:
- clr.w    d6                       ; Hibyte löschen
+ clr.w    d6                       ; Hibyte loeschen
  move.b   (a3),d0
  beq.b    startdd_actdrv           ; Nullstring -> aktuelles Laufwerk
  cmpi.b   #':',1(a3)
@@ -1564,28 +1564,28 @@ pthdd_nodev:
  jsr      toupper
  move.b   d0,d6
  subi.b   #'A',d6
- addq.l   #2,a3                    ; Laufwerkangabe überspringen
+ addq.l   #2,a3                    ; Laufwerkangabe ueberspringen
  bra.b    startdd_bothdrv
 startdd_actdrv:
  move.l   a4,d0                    ; relativer Pfad ?
  beq.b    startdd_pddrv            ; nein, aus PD holen
 
-; relativer Pfad übergeben ( wo der Symlink liegt ).
-; Der Pfad enthält kein Laufwerk.
+; relativer Pfad uebergeben ( wo der Symlink liegt ).
+; Der Pfad enthaelt kein Laufwerk.
 ; Falls der Pfad mit \ beginnt,
 ; auf die Root des Laufwerks gehen, wo der Symlink liegt.
 
  move.l   dd_dmd(a4),a0
  move.w   d_drive(a0),d6
- cmpi.b   #'\',(a3)
+ cmpi.b   #$5c,(a3)
  bne.b    pthdd_begloop
  addq.l   #1,a3
  move.l   d_root(a0),a4
  bra.b    pthdd_begloop
 
-; entweder: kein relativer Pfad übergeben ( wo der Symlink liegt ), aktuelles
+; entweder: kein relativer Pfad uebergeben ( wo der Symlink liegt ), aktuelles
 ;              Laufwerk ermitteln.
-; oder:        relativer Pfad übergeben, aber der Pfad enthält ein Laufwerk.
+; oder:        relativer Pfad uebergeben, aber der Pfad enthaelt ein Laufwerk.
 ;              dann wird dieser relative Pfad ignoriert und das Laufwerk
 ;              ermittelt.
 ;
@@ -1603,7 +1603,7 @@ startdd_bothdrv:
  bmi      pthdd_err                ; Fehler
  movea.l  d0,a0                    ; a0 = DMD *
  move.l   d_root(a0),a4            ; Root ist Defaultpfad
- cmpi.b   #'\',(a3)+
+ cmpi.b   #$5c,(a3)+
  beq.b    pthdd_begloop            ; absoluter Pfad, beginne bei root
  subq.l   #1,a3                    ; beginne bei aktuellem Pfad
 
@@ -1611,7 +1611,7 @@ startdd_bothdrv:
  clr.w    d0
  move.b   p_drvx(a2,d6.w),d0
  beq.b    pthdd_begloop            ; kein anderer Defaultpfad
- bmi      pthdd_epthnf             ; Standardpfad ungültig
+ bmi      pthdd_epthnf             ; Standardpfad ungueltig
  add.w    d0,d0
  add.w    d0,d0
  lea      pathx,a2
@@ -1643,12 +1643,12 @@ pthdd_nounlock:
  cmpi.l   #ELINK,d0
  bne      pthdd_err                ; Fehler
 
-* Rückgabe d0 = ELINK: Link muß vom Kernel behandelt werden
+* Rueckgabe d0 = ELINK: Link muss vom Kernel behandelt werden
 
  move.l   a1,d0
  bne.b    pthdd_link               ; symbolischer Link!
 
-* Parent eines Wurzelverzeichnisses angewählt
+* Parent eines Wurzelverzeichnisses angewaehlt
 
  cmpi.w   #DRIVE_U,d6
  bne      pthdd_epthnf             ; nicht Laufwerk U:
@@ -1662,16 +1662,16 @@ pthdd_nounlock:
 
 * a1 der Pfadname eines Links
 * a0 ist der Pfad, in dem der Link liegt. Dieser Pfad ist ge-lock-t
-* Da die Adresse "flüchtig" ist, muß der Pfad auf den Stack
-* umkopiert werden. Der Zeiger auf den Link muß auf gerader Adresse
-* liegen und enthält zunächst 1 Wort für die Länge inkl. EOS, diese
-* Länge muß auch gerade sein.
+* Da die Adresse "fl",$81,"chtig" ist, muss der Pfad auf den Stack
+* umkopiert werden. Der Zeiger auf den Link muss auf gerader Adresse
+* liegen und enthaelt zunaechst 1 Wort fuer die Laenge inkl. EOS, diese
+* Laenge muss auch gerade sein.
 
 pthdd_link:
  move.l   d1,-(sp)                 ; Restpfad (char *) merken
  move.l   a0,a4                    ; aktuellen Pfad (DD *) merken
  move.l   sp,a3                    ; alten Stack merken
- move.w   (a1)+,d0                 ; Länge des Links inkl. EOS und gerade
+ move.w   (a1)+,d0                 ; Laenge des Links inkl. EOS und gerade
  suba.w   d0,sp
  lsr.w    #1,d0
  move.l   sp,a0
@@ -1685,7 +1685,7 @@ pthdd_linkcpy:
  moveq    #1,d0                    ; Pfad ist Directory
  move.l   a4,a2                    ; a2 = DD *reldir
  move.l   sp,a1                    ; a1 = dummy
- move.w   d5,d2                    ; Rekursionszähler
+ move.w   d5,d2                    ; Rekursionszaehler
  bsr      _path_to_DD              ; Rekursion
  move.l   a3,sp                    ; Stack restaurieren
  move.l   (sp)+,a3                 ; Restpfad
@@ -1711,7 +1711,7 @@ pthdd_err:
 pthdd_epthnf:
  moveq    #EPTHNF,d0
 pthdd_end:
- move.w   d6,d1                    ; RÜckgabe in d1: war Laufwerk U:
+ move.w   d6,d1                    ; RUeckgabe in d1: war Laufwerk U:
  movem.l  (sp)+,a6/a4/a3/d7/d6/d5/d4
 
 ;    DEBL 'path_to_DD => ',d0
@@ -1725,7 +1725,7 @@ pthdd_eloop:
 **********************************************************************
 *
 * Dsetpath(char *pathname)
-*  Setzt <pathname> als aktuellen Pfad für das in <pathname>
+*  Setzt <pathname> als aktuellen Pfad fuer das in <pathname>
 *  enthaltene Laufwerk.
 *
 
@@ -1754,8 +1754,8 @@ dsp_again:
  beq.b    dsp_u                         ; bei U: bleibe ich auf U:
  move.w   d_drive(a0),d6                ; sonst kann anderes Laufwerk sein!
 
-* Feststellen, ob einfach die Root des zugehörigen Laufwerks
-* angewählt wurde
+* Feststellen, ob einfach die Root des zugehoerigen Laufwerks
+* angewaehlt wurde
 
 dsp_u:
  cmp.w    d_drive(a0),d7                ; cross drive link ?
@@ -1767,14 +1767,14 @@ dsp_u:
  suba.l   a5,a5                         ; stattdessen Defaultpfad
 
 * a5 := DD des Pfades (oder NULL, wenn default)
-* a2 := Referenzzähler- Tabelle
-* a3 := Zeiger auf Ref. zähler des alten Pfad- Handles oder NULL
+* a2 := Referenzzaehler- Tabelle
+* a3 := Zeiger auf Ref. zaehler des alten Pfad- Handles oder NULL
 
 dsp_noroot:
  lea      pathcntx,a2
  suba.l   a3,a3
  move.b   p_drvx(a4,d6.w),d0            ; altes Pfadhandle
- ble.b    dsp_srchhdl                   ; ist ungültig bzw. root
+ ble.b    dsp_srchhdl                   ; ist ungueltig bzw. root
  ext.w    d0
  lea      0(a2,d0.w),a3
  add.w    d0,d0
@@ -1782,7 +1782,7 @@ dsp_noroot:
  lea      pathx,a6
  add.w    d0,a6                         ; alter Pfad
 
-* Prüfen, ob unser DD schon Defaultpfad eines anderen
+* Pruefen, ob unser DD schon Defaultpfad eines anderen
 * Prozesses ist
 
 dsp_srchhdl:
@@ -1797,7 +1797,7 @@ dsp_srchhdl:
  beq.b    dsp_ok
  subq.b   #1,(a3)
  move.l   (a6),a0
- bsr      unlock_dd                ; alter Pfad, kein Register verändert
+ bsr      unlock_dd                ; alter Pfad, kein Register veraendert
  bra.b    dsp_ok
 
 dsp_srchnew:
@@ -1821,7 +1821,7 @@ dsp_srchnew:
 * a1: Zeiger auf pathcntx- Eintrag
 * a0: Zeiger auf pathx-    Eintrag
 * d1: Pfadhandle
-* Der DD wird in die Tabelle für die DDs der Pfad- Handles eingetragen
+* Der DD wird in die Tabelle fuer die DDs der Pfad- Handles eingetragen
 * Das Pfadhandle wird in den PD eingetragen
 
 dsp_store:
@@ -1831,16 +1831,16 @@ dsp_store:
  move.l   a0,a2                    ; a0 retten
  move.l   (a6),a0
  bsr      unlock_dd                ; alten Pfad freigeben
- move.l   a2,a0                    ; a0 zurück
+ move.l   a2,a0                    ; a0 zurueck
 dsp_noold:
  addq.b   #1,(a1)
  move.l   a5,(a0)
 ;addq.w   #1,dd_refcnt(a5)         ; neuer Pfad (schon im XFS erledigt!)
- cmp.w    d6,d7                    ; für anderes Laufwerk geändert ?
+ cmp.w    d6,d7                    ; fuer anderes Laufwerk geaendert ?
  beq.b    dsp_ok                   ; nein
- cmp.b    p_defdrv(a4),d7          ; Pfad für Defaultlaufwerk angegeben ?
+ cmp.b    p_defdrv(a4),d7          ; Pfad fuer Defaultlaufwerk angegeben ?
  bne.b    dsp_ok                   ; nein !
- move.b   d6,p_defdrv(a4)          ; ja, Defaultlaufwerk ändern!
+ move.b   d6,p_defdrv(a4)          ; ja, Defaultlaufwerk aendern!
 dsp_ok:
  move.b   d1,p_drvx(a4,d6.w)
  moveq    #0,d0
@@ -1869,7 +1869,7 @@ D_Dgetcwd:
 *
 
 D_Dgetpath:
- move.w   #128,d1                  ; Pufferlänge
+ move.w   #128,d1                  ; Pufferlaenge
 _dgp:
  move.w   4(a0),d0
  move.l   (a0),a0
@@ -1879,7 +1879,7 @@ _dgp:
 *
 * LONG Dgetcwd(a0 = char *pathbuf, d0 = int drivecode, d1 = int buflen)
 *
-* 2.12.95:     EPTHNF, wenn Standardlaufwerk ungültig
+* 2.12.95:     EPTHNF, wenn Standardlaufwerk ungueltig
 *
 
 Dgetcwd:
@@ -1898,10 +1898,10 @@ dgp_again:
 dgp_drv:
  moveq    #0,d1                    ; automount
 ;move.w   d0,d0
- bsr      d_chkdrv                 ; Laufwerk überprüfen
- clr.b    (a5)                     ; per Default löschen
+ bsr      d_chkdrv                 ; Laufwerk ueberpruefen
+ clr.b    (a5)                     ; per Default loeschen
  tst.l    d0
- bmi.b    dgp_ende                 ; Fehlercode wörtlich weiterreichen
+ bmi.b    dgp_ende                 ; Fehlercode woertlich weiterreichen
 * bisher alles gut gegangen
  move.l   d0,a2                    ; a2 = DMD
  move.l   d_root(a2),a0            ; Default-DD: root
@@ -1910,7 +1910,7 @@ dgp_drv:
  moveq    #0,d1
  move.b   p_drvx(a1),d1            ; Pfadhandle holen
  beq.b    dgp_root
- bmi.b    dgp_epthnf               ; Standardpfad ungültig!
+ bmi.b    dgp_epthnf               ; Standardpfad ungueltig!
  add.w    d1,d1
  add.w    d1,d1
  lea      pathx,a1
@@ -1926,19 +1926,19 @@ dgp_root:
 
  move.l   a0,-(sp)                 ; DD merken
  move.l   a5,a0                    ; Ziel (Puffer)
- move.b   #'\',(a0)+               ; wichtig!
+ move.b   #$5c,(a0)+               ; wichtig!
  move.w   d_drive(a1),d0
  jsr      get_u_lnk
 
  move.l   a5,d1
  move.l   d0,a5
- sub.l    d1,d0                    ; Länge des Pfad-Anfangs
+ sub.l    d1,d0                    ; Laenge des Pfad-Anfangs
  sub.w    d0,d7
- move.l   (sp)+,a0                 ; DD zurück
+ move.l   (sp)+,a0                 ; DD zurueck
 /*
  moveq    #'A',d1
  add.w    d_drive(a1),d1
- move.b   #'\',(a5)+
+ move.b   #$5c,(a5)+
  move.b   d1,(a5)+
  clr.b    (a5)
 */
@@ -1948,7 +1948,7 @@ dgp_ok:
  move.l   xfs_DD2name(a2),a2
 ;move.l   a0,a0                    ; a0 = DD *
  move.l   a5,a1                    ; a1 = char *buf
- move.w   d7,d0                    ; Pufferlänge
+ move.w   d7,d0                    ; Pufferlaenge
  jsr      (a2)
 dgp_ende:
  cmpi.l   #E_CHNG,d0
@@ -1991,7 +1991,7 @@ pcpl_drv:
  move.b   d0,(a6)+
  move.b   d1,(a6)+
 pcpl_nxt:
- cmpi.b   #'\',(a5)
+ cmpi.b   #$5c,(a5)
  beq.b    pcpl_defpath
  move.w   d7,d1               ; buflen
  subi.w   #'A'-1,d0           ; drivecode (1 = A, ...)
@@ -2008,9 +2008,9 @@ pcpl_loop1:
  ble.b    pcpl_erange         ; kann eigentlich nicht sein
  bra.b    pcpl_loop1
 pcpl_next2:
- cmpi.b   #'\',-1(a6)
+ cmpi.b   #$5c,-1(a6)
  beq.b    pcpl_defpath
- move.b   #'\',(a6)+
+ move.b   #$5c,(a6)+
  clr.b    (a6)
 pcpl_defpath:
  move.l   a5,a0
@@ -2034,9 +2034,9 @@ pcpl_ende:
 *
 * long isdefault(a0 = DD *dd)
 *
-* Prüft, ob <dd> ein Standardpfad für irgendein Laufwerk ist.
+* Prueft, ob <dd> ein Standardpfad fuer irgendein Laufwerk ist.
 * Bei <dd> == NULL wird ein freies Pfadhandle gesucht.
-* Rückgabe EACCDN, wenn ja
+* Rueckgabe EACCDN, wenn ja
 *   (a0 = pathx- Eintrag, a1 = Pfadhandle- Eintrag, d1 = Pfadhandle)
 * sonst 0L
 * Das Z und N- Flag ist dann entsprechend gesetzt.
@@ -2108,7 +2108,7 @@ sfirst_symlink:
  movem.l  a6/a5,-(sp)
  move.l   sp,a6                    ; sp merken
  move.l   a1,a5                    ; a5 = DTA
- move.w   (a0)+,d0                 ; Länge des Links inkl. EOS und gerade
+ move.w   (a0)+,d0                 ; Laenge des Links inkl. EOS und gerade
  suba.w   d0,sp
  lsr.w    #1,d0
  move.l   sp,a2
@@ -2143,7 +2143,7 @@ sfs_ende:
 *
 * long Fpipe( int handles[2] )
 *
-* Erstellt eine unidirektionale Pipe und öffnet sie zweimal, und zwar
+* Erstellt eine unidirektionale Pipe und oeffnet sie zweimal, und zwar
 * zum Lesen in handles[0] und zum Schreiben in handles[1].
 * Als Name wird "sys$pipe.xxx" verwendet.
 *
@@ -2155,8 +2155,8 @@ D_Fpipe:
  move.l   #'.000',-(sp)                 ; "000\0"
  move.l   #'pipe',-(sp)
  move.l   #'sys$',-(sp)
- move.l   #'ipe\',-(sp)
- move.l   #'u:\p',-(sp)
+ move.l   #$6970655c,-(sp)
+ move.l   #$753a5c70,-(sp)
 fpip_loop:
  moveq    #1,d1                         ; Attribut: Bit 0 = unipipe
  move.w   #O_CREAT+O_WRONLY+O_DENYW+O_EXCL,d0     ; nur neue Dateien erstellen
@@ -2188,7 +2188,7 @@ fpip_ok:
  bge.b    fpip_ok2
  move.l   d0,-(sp)                      ; Fehlercode merken
  move.w   2(a5),d0
- bsr      Fclose                        ; erstes Handle wieder schließen
+ bsr      Fclose                        ; erstes Handle wieder schliessen
  move.l   (sp)+,d0
  bra.b    fpip_ende
 fpip_ok2:
@@ -2221,7 +2221,7 @@ fcre_wrlabel:
  bsr      Dwrlabel
  tst.l    d0
  bmi.b    fcre_ok
- move.l   #$0000fffc,d0            ; Handle für NUL: zurückgeben
+ move.l   #$0000fffc,d0            ; Handle fuer NUL: zurueckgeben
 fcre_ok:
  rts
 fcre_ebadrq:
@@ -2234,8 +2234,8 @@ fcre_ebadrq:
 * int mintmode2omode(d0 = int omode)
 *
 * Rechnet einen MiNT- Openmodus in die interne Mag!X- Konvention um.
-* Eine Verträglichkeit zwischen Modus d0 und Modus d1 wird
-* folgendermaßen getestet:
+* Eine Vertraeglichkeit zwischen Modus d0 und Modus d1 wird
+* folgendermassen getestet:
 *
 *    ror.b #4,d0
 *    and.b d0,d1
@@ -2246,7 +2246,7 @@ rwmodes_tab:
  DC.B     OM_RPERM            ; RDONLY: Erlaubnis, zu lesen
  DC.B     OM_WPERM            ; WRONLY: Erlaubnis, zu schreiben
  DC.B     OM_RPERM+OM_WPERM   ; RDWR  : Lesen und schreiben
- DC.B     OM_RPERM+OM_EXEC    ; EXEC  : Lesen und ausführen (->XFS)
+ DC.B     OM_RPERM+OM_EXEC    ; EXEC  : Lesen und ausfuehren (->XFS)
 shmodes_tab:
  DC.B     OM_WDENY            ; COMPAT
  DC.B     OM_RDENY+OM_WDENY   ; DENYRW
@@ -2264,7 +2264,7 @@ mintmode2omode:
  rts
 m2o_ok:
  andi.b   #O_APPEND+O_NOINHERIT,d0      ; Hibyte, O_APPEND und O_NOINHERIT
-                                        ; übernehmen
+                                        ; uebernehmen
  move.w   d2,d1
  andi.w   #O_RWMODE,d1
  or.b     rwmodes_tab(pc,d1.w),d0
@@ -2277,7 +2277,7 @@ m2o_ok:
 *
 * long Fopen(a0 = char *pathname, d0 = int omode)
 *
-* Datei suchen, Öffnen, ggf. symbolischen Link verfolgen.
+* Datei suchen, Oeffnen, ggf. symbolischen Link verfolgen.
 *
 **********************************************************************
 *
@@ -2311,7 +2311,7 @@ _Fopen:
 
 fop_tagain:
  suba.l   a4,a4                    ; kein aktuelles Verzeichnis
- moveq    #7,d3                    ; Zähler für Links
+ moveq    #7,d3                    ; Zaehler fuer Links
 
 fop_again:
 
@@ -2321,7 +2321,7 @@ fop_again:
  moveq    #0,d0
  lea      (sp),a1
  move.l   a3,a0
- moveq    #5,d2                    ; Zähler für Rekursion
+ moveq    #5,d2                    ; Zaehler fuer Rekursion
  move.l   a4,a2                    ; reldir
  bsr      _path_to_DD
  move.l   (sp)+,a1
@@ -2339,7 +2339,7 @@ fop_nounlock:
  move.l   d0,a0
  move.l   a0,a4
 
-* Die Datei wird über den Dateisystemtreiber geöffnet
+* Die Datei wird ueber den Dateisystemtreiber geoeffnet
 
  move.l   dd_dmd(a0),a2
  move.l   d_xfs(a2),a2
@@ -2350,7 +2350,7 @@ fop_nounlock:
  move.w   d6,d1                    ; d1 = attrib nur bei (omode & O_CREAT)
  jsr      (a2)
 
- tst.l    d0                       ; FD gültig ?
+ tst.l    d0                       ; FD gueltig ?
  bge      fop_ok                   ; ja !
  cmpi.l   #ELINK,d0                ; symbolischer Link ?
  bne.b    fop_ferr                 ; nein, Fehler
@@ -2358,7 +2358,7 @@ fop_nounlock:
 ; symbolischer Link
 
  move.w   (a0)+,d0
- beq.b    fop_eloop                ; Link ungültig
+ beq.b    fop_eloop                ; Link ungueltig
  cmpi.w   #256,d0
  bhi.b    fop_eloop                ; Link zu lang
  move.l   sp,a1
@@ -2369,14 +2369,14 @@ fop_lo:
 fop_endl:
  dbra     d0,fop_lo
  move.l   sp,a3
- dbra     d3,fop_again             ; Anzahl Links mitzählen!
+ dbra     d3,fop_again             ; Anzahl Links mitzaehlen!
 
 fop_eloop:
  moveq    #ELOOP,d0
  bra.b    fop_err
 
-* Rückgabe ist ein gültiger FD, Datei ist geöffnet, d.h. der
-* Dateitreiber ist schon geöffnet
+* Rueckgabe ist ein gueltiger FD, Datei ist geoeffnet, d.h. der
+* Dateitreiber ist schon geoeffnet
 
 fop_ok:
  move.l   a4,a0
@@ -2444,8 +2444,8 @@ D_Freadlink:
 * long Dcntl( d0 = int mode, a0 = char *name, a1 = void *info )
 *
 * mode =  DEV_INSTALL    0xde02    (Mag!X nimmt DEV_M_INSTALL)
-*         DEV_NEWBIOS    0xde01    (nicht unterstützt)
-*         DEV_NEWTTY     0xde00    (nicht unterstützt)
+*         DEV_NEWBIOS    0xde01    (nicht unterstuetzt)
+*         DEV_NEWTTY     0xde00    (nicht unterstuetzt)
 *         PROC_CREATE    0xcc00    (Mag!X 2.10)
 *         DEV_M_INSTALL  0xcd00    (Mag!X 2.10)
 *
@@ -2529,7 +2529,7 @@ dcnds_ende:
  rts
 
 *
-* Unterfunktion: Für einen Pfad den Namen des XFS ermitteln
+* Unterfunktion: Fuer einen Pfad den Namen des XFS ermitteln
 *
 
 dcntl_xfsname:
@@ -2540,7 +2540,7 @@ dcntl_xfsname:
 ;move.l   a0,a0                    ; Pfad
  bsr      path_to_DD
  addq.l   #4,sp
- move.l   (sp)+,a1                 ; a1 zurück
+ move.l   (sp)+,a1                 ; a1 zurueck
  tst.l    d0
  ble.b    xfsnam_ende              ; Fehler
  move.l   d0,a0
@@ -2551,7 +2551,7 @@ dcntl_xfsname:
  move.l   (a2),(a1)+
  clr.b    (a1)
 ;move.l   a0,a0
- bsr      unlock_dd                ; DD freigeben, ändert nicht d0
+ bsr      unlock_dd                ; DD freigeben, aendert nicht d0
 xfsnam_ende:
  rts
 
@@ -2572,7 +2572,7 @@ dcntl_eject:
  move.l   dd_dmd(a0),-(sp)         ; DMD merken
  bsr      unlock_dd                ; DD freigeben
  move.l   (sp),a0                  ; a0 ist jetzt der DMD
- bsr      Sunmount                 ; alle zugehörigen Dateisysteme unmount
+ bsr      Sunmount                 ; alle zugehoerigen Dateisysteme unmount
  tst.l    d0
  bne.b    eject_err                ; Fehler beim unmount
  move.l   (sp),a0
@@ -2591,7 +2591,7 @@ eject_ende:
 deflt_doslimits:
  DC.W     0         ; Versionsnummer der Struktur
  DC.W     26        ; maximale Zahl der DOS- Laufwerke
- DC.L     32768     ; maximale Sektorgröße auf BIOS- Ebene
+ DC.L     32768     ; maximale Sektorgroesse auf BIOS- Ebene
  DC.W     1         ; minimale Anzahl von FATs
  DC.W     2         ; maximale Anzahl von FATs
  DC.L     1         ; Sektoren/Cluster minimal
@@ -2619,7 +2619,7 @@ kernel:
  DC.L     appl_IOcomplete
  DC.L     evnt_sem
  DC.L     Pfree
- DC.W     FDSIZE              ; Länge eines internen Speicherblocks
+ DC.W     FDSIZE              ; Laenge eines internen Speicherblocks
  DC.L     int_malloc
  DC.L     int_mfree
  DC.L     resv_intmem
@@ -2658,14 +2658,14 @@ fsf_rdlabel:
  clr.l    (a1)+                    ; dta_time,dta_date (schade...)
  clr.l    (a1)+                    ; dta_len
  clr.b    (a1)                     ; Namen auf "" initialisieren
- moveq    #32,d1                   ; par2 (Pufferlänge)
+ moveq    #32,d1                   ; par2 (Pufferlaenge)
  sub.w    d1,sp                    ; Puffer 32 Zeichen
  move.l   sp,d0                    ; par1 (Puffer)
  move.l   a1,-(sp)                 ; DTA-Namenspuffer merken
 ;move.l   a0,a0                    ; Pfad
  moveq    #xfs_rlabel,d2
  bsr.b    Fxfunct
- move.l   (sp)+,a1                 ; Puffer zurück
+ move.l   (sp)+,a1                 ; Puffer zurueck
  tst.l    d0
  bne.b    fsfrdl_ende              ; Fehler
  move.l   sp,a0
@@ -2686,7 +2686,7 @@ fsrdl_loop2:
  move.b   (a0)+,(a1)+
  dbeq     d1,fsrdl_loop2
 fsfrdl_ende2:
- clr.b    (a1)                     ; ... und mit EOS abschließen
+ clr.b    (a1)                     ; ... und mit EOS abschliessen
 fsfrdl_ende:
  adda.w   #32,sp
  rts
@@ -2762,7 +2762,7 @@ _df3:
 * long Fxfunct( a0 = char pathname[],
 *               d0 = long par1, d1 = long par2, d2 = int function )
 *
-* Führt eine Funktion des Dateisystemtreibers aus. Verwendet für:
+* Fuehrt eine Funktion des Dateisystemtreibers aus. Verwendet fuer:
 *
 * Fsfirst
 * Dcntl
@@ -2787,7 +2787,7 @@ Fxfunct:
  move.l   a0,a3                    ; a3 = pathname
 
 fxf_tagain:
- moveq    #7,d5                    ; Zähler für Links
+ moveq    #7,d5                    ; Zaehler fuer Links
  suba.l   a4,a4                    ; relatives ist Defaultverzeichnis
 
 * Der DD des Pfades wird ermittelt
@@ -2797,7 +2797,7 @@ fxf_again:
  moveq    #0,d0
  lea      (sp),a1
  move.l   a3,a0
- moveq    #5,d2                    ; Zähler für Rekursion
+ moveq    #5,d2                    ; Zaehler fuer Rekursion
  move.l   a4,a2
  bsr      _path_to_DD
  move.l   (sp)+,a1
@@ -2819,7 +2819,7 @@ fxf_nounlock:
  move.l   a4,a0
  move.l   dd_dmd(a0),a2
  move.l   d_xfs(a2),a2
- move.l   (a2,d3.w),a2             ; Funktion auswählen
+ move.l   (a2,d3.w),a2             ; Funktion auswaehlen
  move.l   d6,d1                    ; Parameter #2
  move.l   d7,d0                    ; Parameter #1
 ;move.l   a1,a1                    ; a1 = name
@@ -2830,7 +2830,7 @@ fxf_nounlock:
 ; symbolischer Link
  cmpi.w   #xfs_sfirst,d3
  bne.b    fxf_nosf
-; Sonderbehandlung für Fsfirst
+; Sonderbehandlung fuer Fsfirst
  move.l   d7,a1                    ; a1 = DTA *d
 ;move.l   a0,a0                    ; a0 = char *link
  bsr      sfirst_symlink
@@ -2847,7 +2847,7 @@ fxf_lo:
 fxf_endl:
  dbra     d0,fxf_lo
  move.l   sp,a3
- dbra     d5,fxf_again             ; Anzahl Links mitzählen!
+ dbra     d5,fxf_again             ; Anzahl Links mitzaehlen!
 
 fxf_eloop:
  moveq    #ELOOP,d0
@@ -2872,7 +2872,7 @@ D_Dreadlabel:
  move.w   8(a0),a2
  move.l   4(a0),d0
  moveq    #xfs_rlabel,d2
- suba.l   a1,a1                    ; a1 = NULL dem XFS übergeben
+ suba.l   a1,a1                    ; a1 = NULL dem XFS uebergeben
  moveq    #0,d1                    ; aktuelle Verzeichnisse ignorieren
  bra      _dx
 
@@ -2932,7 +2932,7 @@ _dd:
 * Dxreaddir(int len, long dirhandle, char *buf, XATTR *xattr, long *xr)
 *
 * Beim Fxattr werden Symlinks nicht verfolgt.
-* <xr> enthält nach dem Aufruf den Fehlercode von Fxattr.
+* <xr> enthaelt nach dem Aufruf den Fehlercode von Fxattr.
 *
 
 D_Dxreaddir:
@@ -2971,12 +2971,12 @@ dptc_ende:
 *
 * 2.12.95:
 *    Hier wird jetzt etwas mehr Aufwand getrieben.
-*    Zunächst muß ein abschließender '\' entfernt werden.
+*    Zunaechst muss ein abschliessender backslash entfernt werden.
 *    Dann wird mit Fxattr ermittelt, ob es nicht ein
 *    Symlink ist, und dieser wird ggf. per Fdelete()
 *    entfernt.
 *    Ansonsten wird der DD des Pfades bestimmt und ggf.
-*    die Standardpfade aller zugehörigen Prozesse als ungültig
+*    die Standardpfade aller zugehoerigen Prozesse als ungueltig
 *    gesetzt.
 *
 
@@ -2985,19 +2985,19 @@ D_Ddelete:
  movem.l  a6/a5/a4/a3/d7/d6,-(sp)
  suba.w   #xattr_sizeof,sp
  move.l   a0,a3
-; trailing '\' entfernen
- suba.l   a6,a6                    ; kein trailing '\'
+; trailing backslash entfernen
+ suba.l   a6,a6                    ; kein trailing backslash
  tst.b    (a3)                     ; leerer Pfad ?
- beq.b    ddl_endloop              ; ja, kein '\'
+ beq.b    ddl_endloop              ; ja, kein backslash
  move.l   a3,a1
 ddl_loop:
  tst.b    (a1)+
  bne.b    ddl_loop
  subq.l   #2,a1
- cmpi.b   #'\',(a1)                ; letztes Zeichen ist '\' ?
+ cmpi.b   #$5c,(a1)                ; letztes Zeichen ist backslash ?
  bne.b    ddl_endloop              ; nein
- clr.b    (a1)                     ; '\' entfernen
- move.l   a1,a6                    ; und merken, daß '\' entfernt wurde
+ clr.b    (a1)                     ; backslash entfernen
+ move.l   a1,a6                    ; und merken, dass backslash entfernt wurde
 ddl_endloop:
 ; DD des parent ermitteln
 ddl_again:
@@ -3005,7 +3005,7 @@ ddl_again:
  moveq    #0,d0                    ; DD des parent
  lea      (sp),a1
  move.l   a3,a0
- moveq    #5,d2                    ; Zähler für Rekursion
+ moveq    #5,d2                    ; Zaehler fuer Rekursion
  suba.l   a2,a2                    ; Default-Reldir
  bsr      _path_to_DD
  move.l   (sp)+,a5                 ; Restpfad
@@ -3035,7 +3035,7 @@ ddl_again:
  bne      ddl_ende1                ; nein, return(EACCDN)
 
 ;
-; Es ist ein Symlink. Fdelete machen, um den Symlink zu löschen
+; Es ist ein Symlink. Fdelete machen, um den Symlink zu loeschen
 ;
 
  move.l   a4,a0
@@ -3063,22 +3063,22 @@ ddl_is_dir:
  bmi.b    ddl_ende1                ; Fehler!
  move.l   a4,a0
  bsr      cond_unlock_dd           ; Pfad, in dem DD gesucht wurde, freigeben
- move.l   d0,a4                    ; der zu löschende DD
-; auf Default-Verzeichnis prüfen
+ move.l   d0,a4                    ; der zu loeschende DD
+; auf Default-Verzeichnis pruefen
  suba.l   a5,a5                    ; kein Standardpfad
- moveq    #1,d6                    ; erlaubter Referenzzähler für DD
+ moveq    #1,d6                    ; erlaubter Referenzzaehler fuer DD
  move.l   a4,a0
  bsr      isdefault
  beq.b    ddl_no_std               ; ist kein Standardpfad
  move.l   a0,a5                    ; Zeiger auf Zeiger auf DD merken
- move.l   a1,d7                    ; Zeiger auf Referenzzähler
+ move.l   a1,d7                    ; Zeiger auf Referenzzaehler
 ; testen, ob Pfad noch anders als als Standardpfad verwendet wird.
- add.b    (a1),d6                  ; Referenzzähler für Standardpfad
+ add.b    (a1),d6                  ; Referenzzaehler fuer Standardpfad
 ddl_no_std:
  moveq    #EACCDN,d0
  cmp.w    dd_refcnt(a4),d6
- bcs.b    ddl_ende1                ; DD zusätzlich noch referenziert
-; Verzeichnis löschen
+ bcs.b    ddl_ende1                ; DD zusaetzlich noch referenziert
+; Verzeichnis loeschen
  move.l   a4,a0
  move.l   dd_dmd(a0),a2
  move.l   d_xfs(a2),a2
@@ -3086,18 +3086,18 @@ ddl_no_std:
 ;move.l   a0,a0                    ; a0 = DD
  jsr      (a2)
  tst.l    d0
- bmi.b    ddl_ende1                ; Fehler beim Löschen
-; Das Verzeichnis ist gelöscht
+ bmi.b    ddl_ende1                ; Fehler beim Loeschen
+; Das Verzeichnis ist geloescht
  move.l   a5,d1                    ; war Standardpfad ?
  beq.b    ddl_ende1                ; nein
-; Standardpfade ungültig machen
+; Standardpfade ungueltig machen
  cmpa.l   (a5),a4                  ; ist noch Standardpfad ?
  bne.b    ddl_ende1                ; nein (?!?)
  move.l   d7,a1
  moveq    #0,d1
- move.b   (a1),d1                  ; Referenzzähler
+ move.b   (a1),d1                  ; Referenzzaehler
  beq.b    ddl_ende1                ; ist schon auf 0 (?)
- clr.l    (a5)                     ; Standardpfad als ungültig markieren
+ clr.l    (a5)                     ; Standardpfad als ungueltig markieren
  sub.w    d1,dd_refcnt(a4)         ; runtersetzen
  bgt.b    ddl_ok1
  move.w   #1,dd_refcnt(a4)         ; kann eigentlich nicht sein!
@@ -3107,7 +3107,7 @@ ddl_ok1:
  moveq    #E_OK,d0
 
 ;
-; Ende, DD schließen.
+; Ende, DD schliessen.
 ;
 
 ddl_ende1:
@@ -3116,9 +3116,9 @@ ddl_ende1:
 ddl_ende:
  cmpi.l   #E_CHNG,d0
  beq      ddl_again
- move.l   a6,d1                    ; war trailing '\' ?
+ move.l   a6,d1                    ; war trailing backslash ?
  beq.b    ddl_ende2                ; nein
- move.b   #'\',(a6)                ; '\' wieder einsetzen
+ move.b   #$5c,(a6)                ; backslash wieder einsetzen
 ddl_ende2:
  adda.w   #xattr_sizeof,sp
  movem.l  (sp)+,d6/d7/a3/a4/a5/a6
@@ -3145,7 +3145,7 @@ _dx:
 *         a1 = long arg2, a2 = long arg3,
 *         d2 = int fn_offs)
 *
-* für Ddelete/Dpathconf/Dopendir/Dreadlabel/Dwritelabel
+* fuer Ddelete/Dpathconf/Dopendir/Dreadlabel/Dwritelabel
 *
 * Die aufgerufenen XFS-Routinen bekommen:
 *    in a0          DD *
@@ -3176,23 +3176,23 @@ dxfu_again:
  ble      dxfu_ende                ; Datei nicht gefunden
  movea.l  d0,a4
 
-* Nachsehen, ob ein Prozeß das Verzeichnis als aktuelles Verzeichnis
-* hat. Wenn ja, EACCDN zurückgeben.
+* Nachsehen, ob ein Prozess das Verzeichnis als aktuelles Verzeichnis
+* hat. Wenn ja, EACCDN zurueckgeben.
 
  tst.w    d6
  beq.b    dxfu_no_chk              ; kein Test, ist Open, nicht Delete
  btst.b   #5,(config_status+3).w
- bne.b    dxfu_no_chk              ; gefährlich !!!
+ bne.b    dxfu_no_chk              ; gefaehrlich !!!
 
  move.l   a4,a0
  bsr      isdefault
  bpl.b    dxfu_no_chk              ; OK
  move.l   a4,a0
- bsr      unlock_dd                ; ändert nicht d0
+ bsr      unlock_dd                ; aendert nicht d0
  bra.b    dxfu_ende                ; return(EACCDN)
 
-* Das Verzeichnis wird über den Dateisystemtreiber bearbeitet
-* Der DD braucht bei Ddelete nicht mehr freigegeben zu werden, das muß
+* Das Verzeichnis wird ueber den Dateisystemtreiber bearbeitet
+* Der DD braucht bei Ddelete nicht mehr freigegeben zu werden, das muss
 * das XFS machen
 
 dxfu_no_chk:
@@ -3208,7 +3208,7 @@ dxfu_no_chk:
  tst.w    d6                       ; Ddelete ?
  bne.b    dxfu_ende                ; ja, kein unlock
  move.l   a4,a0
- bsr      cond_unlock_dd           ; ändert nicht d0
+ bsr      cond_unlock_dd           ; aendert nicht d0
 
 dxfu_ende:
  cmpi.l   #E_CHNG,d0
@@ -3222,9 +3222,9 @@ dxfu_ende:
 * long Flink( char *fromdir, char *todir )
 *
 * erstelle "hard link".
-* eigentlich ähnlich wie Frename, nur daß der alte Verzeichnis-
-* eintrag nicht gelöscht wird. Außerdem darf <fromdir> ein symbolischer
-* Link sein, wobei dann die tatsächliche Datei, nicht etwa der Link
+* eigentlich aehnlich wie Frename, nur dass der alte Verzeichnis-
+* eintrag nicht geloescht wird. Ausserdem darf <fromdir> ein symbolischer
+* Link sein, wobei dann die tatsaechliche Datei, nicht etwa der Link
 * dupliziert wird. Oder ?
 *
 
@@ -3275,7 +3275,7 @@ fren_again:
  bmi      fren_fende               ; a4 freigeben und Ende
  move.l   d0,a3
 
-* Die Datei wird über den Dateisystemtreiber umbenannt
+* Die Datei wird ueber den Dateisystemtreiber umbenannt
 * Links werden nicht verfolgt, sondern es wird vom XFS- Treiber
 * der Link umbenannt
 
@@ -3359,24 +3359,24 @@ __fseek:
 **********************************************************************
 *
 * LE/GT FD *hdl_to_FD(d0 = int handle)
-*  Gibt zu einem Dateihandle den zugehörigen FD zurück.
-*  Rückgabe EIHNDL, wenn Fehler; dh. Datei nicht geöffnet
+*  Gibt zu einem Dateihandle den zugehoerigen FD zurueck.
+*  Rueckgabe EIHNDL, wenn Fehler; dh. Datei nicht geoeffnet
 *
-*  a0 enthält die Adresse des Eintrags in PROCDATA.
+*  a0 enthaelt die Adresse des Eintrags in PROCDATA.
 *
 
 hdl_to_FD:
  cmpi.w   #MIN_FHANDLE,d0
  blt.b    hdlx_err                 ; Handle kleiner als -4
  cmpi.w   #MAX_OPEN,d0
- bge.b    hdlx_err                 ; Handle größer als 32
+ bge.b    hdlx_err                 ; Handle groesser als 32
  move.l   act_pd,a0
  move.l   p_procdata(a0),a0
  lea      pr_handle(a0),a0
  muls     #fh_sizeof,d0
  add.l    d0,a0
  move.l   (a0),d0                  ; d0 = FD *
- beq.b    hdlx_err                 ; ungültig
+ beq.b    hdlx_err                 ; ungueltig
  rts
 hdlx_err:
  moveq    #EIHNDL,d0
@@ -3389,12 +3389,12 @@ hdlx_err:
 *
 * Legt eine Kopie des Standardhandles <stdhdl> an und erzeugt ein
 * neues Handle.
-* gibt (TOS- kompatibel) immer ein Handle > 5 zurück, nicht mehr,
-* wie in Mag!X 2.0, ein Gerätehandle < 0.
+* gibt (TOS- kompatibel) immer ein Handle > 5 zurueck, nicht mehr,
+* wie in Mag!X 2.0, ein Geraetehandle < 0.
 *
-* ab 2.7.95:   Fdup von neg. Handle möglich
+* ab 2.7.95:   Fdup von neg. Handle moeglich
 *
-* ab 18.4.99: MiNT-kompatibel, Fdup ist für jedes Handle möglich.
+* ab 18.4.99: MiNT-kompatibel, Fdup ist fuer jedes Handle moeglich.
 *
 
 D_Fdup:
@@ -3409,7 +3409,7 @@ D_Fdup:
  cmpi.w   #-1,fd_refcnt(a6)
  beq.b    fdup_ende
  addq.w   #1,fd_refcnt(a6)
-;move.l   d0,d0                    ; Handle zurückgeben
+;move.l   d0,d0                    ; Handle zurueckgeben
 fdup_ende:
  move.l   (sp)+,a6
  rts
@@ -3423,16 +3423,16 @@ fdup_ende:
 * $a(a6) : nstdhdl
 *  a5    : Zeiger auf Hdl- Eintrag von nstdhdl
 *  a4    : Zeiger auf PD- Eintrag von stdhdl
-*  d7    : FD oder Gerät des nstdhdl
-*  d2    : Rückgabewert 0L oder Fehlercode
+*  d7    : FD oder Geraet des nstdhdl
+*  d2    : Rueckgabewert 0L oder Fehlercode
 *
 * Unterschiede zur Original- Routine:
-*  - Im Falle, daß die std- Datei schon auf eine andere "echte"
+*  - Im Falle, dass die std- Datei schon auf eine andere "echte"
 *    Datei gelenkt ist, wird std erst geschlossen, damit der
-*    Referenzzähler für diese Datei wieder stimmt.
-*  - Es werden mehr Kontrollen durchgeführt (Handle > 80 usw.)
+*    Referenzzaehler fuer diese Datei wieder stimmt.
+*  - Es werden mehr Kontrollen durchgefuehrt (Handle > 80 usw.)
 *
-* ab 1.7.95:   Fforce auf neg. Handle (außer -4) möglich, wirkt
+* ab 1.7.95:   Fforce auf neg. Handle (ausser -4) moeglich, wirkt
 *              systemglobal
 *
 * 18.4.99: MiNT-kompatibel, jedes Handle kann umgelenkt werden.
@@ -3449,9 +3449,9 @@ D_Fforce:
 * ermittle altes Handle
  move.w   (a6),d0
  bsr      hdl_to_FD
- bmi.b    ffor_ende                ; ungültig
+ bmi.b    ffor_ende                ; ungueltig
  move.l   a0,a4                    ; Zeiger auf (FD *) merken
-* schließe altes Handle
+* schliesse altes Handle
  move.l   d0,a0
  move.l   fd_dev(a0),a2
  move.l   dev_close(a2),a2
@@ -3459,7 +3459,7 @@ D_Fforce:
  jsr      (a2)                     ; flush/ggf. freigeben
 * Handle umlenken
  move.l   a3,(a4)
-* Referenzzähler ggf. erhöhen
+* Referenzzaehler ggf. erhoehen
  cmpi.w   #-1,fd_refcnt(a3)        ; nur zur Sicherheit
  beq.b    ffor_dev
  addq.w   #1,fd_refcnt(a3)
@@ -3475,7 +3475,7 @@ ffor_ende:
 * long Fclose(d0 = int hdl)
 *
 * Fclose ruft praktisch direkt den Dateitreiber auf, der das
-* Herunterzählen des Referenzzählers besorgt und den FD schließlich
+* Herunterzaehlen des Referenzzaehlers besorgt und den FD schliesslich
 * auch freigibt
 *
 
@@ -3488,7 +3488,7 @@ Fclose:
 * Handle- Eintrag, FD ermitteln
 
  move.w   d0,d6
- bmi.b    fclo_eihndl              ; Gerätedateien (<0) nicht schließen.
+ bmi.b    fclo_eihndl              ; Geraetedateien (<0) nicht schliessen.
 ;move.w   d0,d0
  bsr      hdl_to_FD                ; => a0 = &FD
  bmi.b    fclo_ende                ; Fehler
@@ -3499,9 +3499,9 @@ Fclose:
  btst     #0,p_flags(a1)           ; MiNT-Domain?
  bne.b    fclo_nstd                ; ja, alle Handles gleich behandeln
 
-* stdxx- Dateien (0..5) werden geschlossen, indem die ursprüngliche
+* stdxx- Dateien (0..5) werden geschlossen, indem die urspruengliche
 * Definition wieder eingesetzt wird.
-* 2.6.99: Nur für die TOS-Domain!
+* 2.6.99: Nur fuer die TOS-Domain!
 
  lea      def_hdlx(pc),a2
  move.b   0(a2,d6.w),d0
@@ -3513,12 +3513,12 @@ Fclose:
  move.l   0(a1,d0.l),a1
  cmpi.w   #-1,fd_refcnt(a1)
  beq.b    fclo_dev
- addq.w   #1,fd_refcnt(a1)         ; Referenzzähler erhöhen
+ addq.w   #1,fd_refcnt(a1)         ; Referenzzaehler erhoehen
 fclo_dev:
- move.l   a1,(a0)                  ; Geräte- FD eintragen
+ move.l   a1,(a0)                  ; Geraete- FD eintragen
  bra.b    fclo_both
 
-* "Normale" Dateien einfach schließen
+* "Normale" Dateien einfach schliessen
 
 fclo_nstd:
  clr.l    (a0)                     ; Handle freigeben
@@ -3542,7 +3542,7 @@ fclo_eihndl:
 *
 * long Fread(d0 = int hdl, d1 = long count, a0 = char *buf)
 *
-* Unterschied zu DOS 0.19: Fängt das Lesen von 0 Bytes ab
+* Unterschied zu DOS 0.19: Faengt das Lesen von 0 Bytes ab
 *
 
 D_Fread:
@@ -3578,7 +3578,7 @@ fread_eihndl:
 *
 * long Fwrite(d0 = int hdl, d1 = long count, a0 = char *buf)
 *
-* Unterschied zu DOS 0.19: Fängt das Schreiben von 0 Bytes ab
+* Unterschied zu DOS 0.19: Faengt das Schreiben von 0 Bytes ab
 *                          Setzt sonst das dirty- Flag
 *
 
@@ -3630,7 +3630,7 @@ Fwrite:
 fwrite_notst:
  btst     #BO_APPEND,fd_mode+1(a0)
  beq.b    fwrite_go
-* Append führt der Kernel durch!
+* Append fuehrt der Kernel durch!
  movem.l  d0/a0,-(sp)
  move.l   fd_dev(a0),a2
  move.l   dev_seek(a2),a2
@@ -3707,7 +3707,7 @@ _fwrite:
 * mode & 0x0001:    cooked
 * mode & 0x0002:    echo mode
 *
-* Rückgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
+* Rueckgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
 *              0x0000FF1A bei EOF
 *
 
@@ -3724,7 +3724,7 @@ D_Fgetchar:
 *
 * mode & 0x0001:    cooked
 *
-* Rückgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
+* Rueckgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
 *
 
 D_Fputchar:
@@ -3751,9 +3751,9 @@ fpc_err:
 *
 * long D_Finstat( int handle )
 *
-* Gibt die Anzahl der Bytes zurück, die noch zu lesen sind, d.h. die
-* bei Geräten noch im Puffer liegen.
-* Wenn die Anzahl der Bytes nicht abgeschätzt werden kann, wird eine
+* Gibt die Anzahl der Bytes zurueck, die noch zu lesen sind, d.h. die
+* bei Geraeten noch im Puffer liegen.
+* Wenn die Anzahl der Bytes nicht abgeschaetzt werden kann, wird eine
 * 1 geliefert.
 *
 
@@ -3766,9 +3766,9 @@ D_Finstat:
 *
 * long D_Foutstat( int handle )
 *
-* Gibt die Anzahl der Bytes zurück, die noch zu schreiben sind, d.h.
-* die bei Geräten noch in den Puffer passen.
-* Wenn die Anzahl der Bytes nicht abgeschätzt werden kann, wird eine
+* Gibt die Anzahl der Bytes zurueck, die noch zu schreiben sind, d.h.
+* die bei Geraeten noch in den Puffer passen.
+* Wenn die Anzahl der Bytes nicht abgeschaetzt werden kann, wird eine
 * 1 geliefert.
 *
 
@@ -3778,13 +3778,13 @@ _dfstat:
  move.w   d1,-(sp)                 ; Modus merken
  move.w   (a0),d0                  ; Handle
  bsr      hdl_to_FD
- bmi.b    _dfst_err                ; ungültig
+ bmi.b    _dfst_err                ; ungueltig
  movea.l  d0,a0
  move.w   (sp),d0
  btst     d0,fd_mode+1(a0)         ; jeweilige Erlaubnis ?
  beq.b    _dfst_eaccdn             ; nein!
  move.l   a0,-(sp)                 ; FD merken
- subq.l   #4,sp                    ; Platz für 1 long
+ subq.l   #4,sp                    ; Platz fuer 1 long
  move.l   fd_dev(a0),a2
  move.l   sp,a1                    ; a1 = arg      (Typ: void *)
  move.w   #FIONREAD,d0             ; d0 = cmd
@@ -3793,9 +3793,9 @@ _dfstat:
  jsr      (a2)                     ; Fcntl(FIONREAD usw.)
  tst.l    d0
  bge.b    _dfst_ok                 ; hat funktioniert!
- addq.l   #4,sp                    ; nein, Rückgabewert ungültig
+ addq.l   #4,sp                    ; nein, Rueckgabewert ungueltig
  cmpi.l   #EINVFN,d0               ; nicht implementiert ?
- bne.b    _dfst_err2               ; nein, böser Fehler
+ bne.b    _dfst_err2               ; nein, boeser Fehler
 
 ; nicht implementiert, nimm Fstat
 
@@ -3808,7 +3808,7 @@ _dfstat:
  jmp      (a2)
 
 _dfst_ok:
- move.l   (sp)+,d0                 ; Rückgabewert: Anzahl Bytes
+ move.l   (sp)+,d0                 ; Rueckgabewert: Anzahl Bytes
 _dfst_err2:
  addq.l   #4,sp                    ; FD abbauen
 _dfst_err:
@@ -3826,26 +3826,26 @@ _dfst_eaccdn:
 *
 * Stellt den Ein-/Ausgabestatus einer Datei (bzw. eines Devices) fest.
 *
-* Grundsätzlich: Wenn a0 != NULL ist, wird der Rückgabewert auch nach
+* Grundsaetzlich: Wenn a0 != NULL ist, wird der Rueckgabewert auch nach
 * (a0) geschrieben.
 *
 * 1. Variante: Polling
 *    Eingabe:  a1 = NULL
-*    Rückgabe: 0         nicht bereit zum Lesen
+*    Rueckgabe: 0         nicht bereit zum Lesen
 *              1         bereit zum Lesen
 *              < 0       Fehlercode
-*              Rückgabe nach *unselect, falls Zeiger ungleich NULL
+*              Rueckgabe nach *unselect, falls Zeiger ungleich NULL
 *
 * 2. Variante: Waiting
 *    Eingabe:  a0 ist ein Zeiger, a1 kennzeichnet die Applikation
-*    Rückgabe: 1         bereit zum Lesen, App braucht nicht zu warten
-*                        *unselect wird nicht verändert
-*              0         Dateihandler ist nicht interruptfähig und muß
+*    Rueckgabe: 1         bereit zum Lesen, App braucht nicht zu warten
+*                        *unselect wird nicht veraendert
+*              0         Dateihandler ist nicht interruptfaehig und muss
 *                        ge-pollt werden.
-*                        *unselect wird nicht verändert
+*                        *unselect wird nicht veraendert
 *              2         Datei ist z.Zt. nicht lesebereit. Die aktuelle
-*                        Applikation (a1) wird als "Klient" für den Interrupt-
-*                        Handler eingetragen, das muß der Gerätetreiber
+*                        Applikation (a1) wird als "Klient" fuer den Interrupt-
+*                        Handler eingetragen, das muss der Geraetetreiber
 *                        erledigen (d.h. a0 und a1 merken und den Interrupt
 *                        aktivieren.
 *
@@ -3866,7 +3866,7 @@ _dfst_eaccdn:
 *                        Wenn der Interrupt eintrifft, wird anstelle der
 *                        unselect- Routine eine 1L (OK) oder <0 (Fehler)
 *                        eingetragen.
-*                        Die Interrupt- Routine muß die Kernelfunktion
+*                        Die Interrupt- Routine muss die Kernelfunktion
 *                        appl_IOcomplete aufrufen, Parameter ist ap_code
 *                        der aufzuweckenden Applikation.
 *                        Prototyp des Interrupt- Melders:
@@ -3892,7 +3892,7 @@ Fstat:
 * long fstat( a0 = FD *fd, d1 = int rwflag,
 *                a1 = void *unselect, a2 = long ap_code )
 *
-* Rückgabe: wie Fstat
+* Rueckgabe: wie Fstat
 *
 
 fstat:
@@ -3910,7 +3910,7 @@ fstat_eaccdn:
  moveq    #EACCDN,d0                    ; falscher Open- Modus
  bra.b    Frws_ende
 Frws_err:
- moveq    #EIHNDL,d0                    ; ungültiges Handle
+ moveq    #EIHNDL,d0                    ; ungueltiges Handle
 Frws_ende:
  move.l   (sp)+,d1                      ; void *unselect
  beq.b    Frws_e2
@@ -3926,7 +3926,7 @@ Frws_e2:
 *
 * setzt Bits, wenn Status ok
 * timeout gibt Millisekunden an, wenn 0, wird immer gewartet.
-* Rückgabe: Anzahl der gesetzten Bits von instat und outstat
+* Rueckgabe: Anzahl der gesetzten Bits von instat und outstat
 *
 * d7      int  timeout
 * a6      long *instat
@@ -3952,13 +3952,13 @@ D_Fselect:
  move.l   a6,d6
  beq.b    dfs_no_in
  move.l   (a6),d6                       ; instat
- clr.l    (a6)                          ; zunächst alle Bits löschen
+ clr.l    (a6)                          ; zunaechst alle Bits loeschen
 
 dfs_no_in:
  move.l   a5,d5
  beq.b    dfs_no_out
  move.l   (a5),d5                       ; outstat
- clr.l    (a5)                          ; zunächst alle Bits löschen
+ clr.l    (a5)                          ; zunaechst alle Bits loeschen
 dfs_no_out:
 
  moveq    #0,d4
@@ -3971,7 +3971,7 @@ dfs_again:
 
  moveq    #63,d3
 dfs_loop:
- subq.l   #4,a4                         ; Datenlangwort überspringen
+ subq.l   #4,a4                         ; Datenlangwort ueberspringen
  clr.l    -(a4)                         ; per Default nicht eingetroffen
  move.w   d3,d0
  andi.w   #31,d0                        ; d0 = Handle (0..31)
@@ -3995,24 +3995,24 @@ dfs_bstate:
  tst.l    d0
 * negativ: Fehler
  bmi      dfs_etidy                     ; EIHNDL, ggf. unselect
- beq.b    dfs_poll                      ; muß Polling machen
+ beq.b    dfs_poll                      ; muss Polling machen
  subq.l   #1,d0                         ; waiting ?
  bne.b    dfs_nloop                     ; ja, weiter
  addq.l   #1,d4                         ; Datei ist jetzt schon "ready"
  bra.b    dfs_nloop
 dfs_poll:
-* Null: bin nicht interruptfähig
+* Null: bin nicht interruptfaehig
  move.l   a3,d0                         ; schon im polling mode ?
  beq.b    dfs_nloop                     ; ja!
- bsr      dfs_tidy                      ; alle unselects durchführen
- suba.l   a3,a3                         ; APPL * löschen
+ bsr      dfs_tidy                      ; alle unselects durchfuehren
+ suba.l   a3,a3                         ; APPL * loeschen
 dfs_nloop:
  dbra     d3,dfs_loop
 
  tst.w    d4                            ; irgendwelche Bits gesetzt ?
  bne.b    dfs_ende                      ; ja!
 
- move.l   a3,d0                         ; alle Dateien interruptfähig ?
+ move.l   a3,d0                         ; alle Dateien interruptfaehig ?
  bne.b    dfs_wait
 
  jsr      appl_yield
@@ -4040,7 +4040,7 @@ dfs_wait:
  move.w   d7,d1
  divu     #20,d1                        ; ms -> 50Hz
  moveq    #0,d0
- move.w   d1,d0                         ; Hiword löschen
+ move.w   d1,d0                         ; Hiword loeschen
  swap     d1
  tst.w    d1                            ; Rest bei Division ?
  beq.b    dfs_ww
@@ -4053,19 +4053,19 @@ dfs_ww:
 dfs_ende:
 
 *
-* Zähle eingetroffene Ereignisse und setze Bits
+* Zaehle eingetroffene Ereignisse und setze Bits
 *
 
  lea      (sp),a0
  moveq    #64,d0
  move.l   a3,a1
- bsr.b    funselect                     ; unselect durchführen
+ bsr.b    funselect                     ; unselect durchfuehren
  move.l   d0,d4
 
  lea      8*64(sp),a4
  moveq    #63,d3
 dfs_endloop:
- subq.l   #4,a4                         ; Datenlangwort überspringen
+ subq.l   #4,a4                         ; Datenlangwort ueberspringen
  move.l   -(a4),d0
  ble.b    dfs_enext
  moveq    #0,d0
@@ -4104,9 +4104,9 @@ dfs_tidy:
 *
 * long funselect(a0 = long tab[num], a1 = APPL *ap, d0 = int num)
 *
-* macht unselect für die bisher erwarteten Ereignisse. Anschließend
+* macht unselect fuer die bisher erwarteten Ereignisse. Anschliessend
 * stehen nur noch 0 oder 1 oder Fehlercodes in der Tabelle.
-* Gibt die Anzahl der eingetroffenen Ereignisse zurück.
+* Gibt die Anzahl der eingetroffenen Ereignisse zurueck.
 *
 
 funselect:
@@ -4114,7 +4114,7 @@ funselect:
  move.l   a0,a6                         ; a6 = long *tab
  move.l   a1,a5                         ; a5 = APPL *
  move.w   d0,d6                         ; d6 = int num
- moveq    #0,d7                         ; Zähler für eingetroffene
+ moveq    #0,d7                         ; Zaehler fuer eingetroffene
  bra      funs_nxt
 funs_loop:
  move.l   (a6),d1
@@ -4137,7 +4137,7 @@ funs_nxt:
  move.l   a5,d0
  beq.b    funs_ende
  move.l   a5,a0
- jsr      evnt_emIO                     ; ggf. ausstehende Events löschen
+ jsr      evnt_emIO                     ; ggf. ausstehende Events loeschen
 funs_ende:
  move.l   d7,d0
  movem.l  (sp)+,a5/a6/d6/d7
@@ -4148,12 +4148,12 @@ funs_ende:
 *
 * long Fdatime(int buffer[2], int handle, int setflag)
 *
-* gegenüber DOS 0.19 völlig neu, alle Fehler beseitigt,
-*                    berücksichtigt sogar mehrfach geöffnete Dateien
+* gegenueber DOS 0.19 voellig neu, alle Fehler beseitigt,
+*                    beruecksichtigt sogar mehrfach geoeffnete Dateien
 *
 * stark optimiert. Abfrage auf identische Dateien korrigiert.
-* Bisher wurde im selben Verzeichnis geöffnete Dateien auch im Datum
-* geändert, wenn sie wie <handle> leer waren.
+* Bisher wurde im selben Verzeichnis geoeffnete Dateien auch im Datum
+* geaendert, wenn sie wie <handle> leer waren.
 *
 
 D_Fdatime:
@@ -4161,7 +4161,7 @@ D_Fdatime:
  move.l   a0,a5
  move.w   4(a5),d0
  bsr      hdl_to_FD
- bmi.b    fdat_err                 ; ungültig oder Device
+ bmi.b    fdat_err                 ; ungueltig oder Device
  movea.l  d0,a0
  move.l   fd_dev(a0),a2
  move.l   dev_datime(a2),a2
@@ -4179,7 +4179,7 @@ fdat_err:
 * long Flock(int handle, int mode, long start, long len)
 *
 * Ist eigentlich keine MiNT- Funktion, wird aber von MiNT
-* unterstützt
+* unterstuetzt
 *
 
 D_Flock:
@@ -4219,7 +4219,7 @@ flk_ok:
 *    F_SETLK   EQU  6
 *    F_SETLKW  EQU  7
 *
-* sollten alle Treiber unterstützen:
+* sollten alle Treiber unterstuetzen:
 *    FSTAT     EQU  $4600
 *    FIONREAD  EQU  $4601
 *    FIONWRITE EQU  $4602
@@ -4230,7 +4230,7 @@ D_Fcntl:
  move.l   a0,a5
  move.w   (a5)+,d0                 ; Handle
  bsr      hdl_to_FD
- bmi.b    fct_err                  ; ungültig oder Device
+ bmi.b    fct_err                  ; ungueltig oder Device
  movea.l  d0,a1                    ; a1 = FD
  move.w   4(a5),d0                 ; d0 = cmd
  beq.b    fct_0
@@ -4249,7 +4249,7 @@ fct_1:
  bra.b    fct_err
 * F_DUPFD (0)
 fct_0:
- moveq    #0,d0                    ; Hiword löschen
+ moveq    #0,d0                    ; Hiword loeschen
  move.w   2(a5),d0                 ; minimales Handle
  cmpi.w   #MIN_FHANDLE,d0
  blt.b    fct_eihndl               ; zu klein
@@ -4267,7 +4267,7 @@ fct0_ok:
  cmpi.w   #-1,fd_refcnt(a1)
  beq.b    fct0_0
  addq.w   #1,fd_refcnt(a1)
-;move.l   d0,d0                    ; Handle zurückgeben
+;move.l   d0,d0                    ; Handle zurueckgeben
 fct0_0:
  bra.b    fct_err
 * alle anderen
@@ -4288,7 +4288,7 @@ fct_err:
 *
 * void unlock_dd( a0 = DD *dir, d0 = long errcode )
 *
-* führt <unlock_dd> nur aus, wenn kein Diskwechsel war.
+* fuehrt <unlock_dd> nur aus, wenn kein Diskwechsel war.
 *
 
 cond_unlock_dd:
@@ -4303,9 +4303,9 @@ cond_unlock_dd:
 *
 * void unlock_dd( a0 = DD *dir )
 *
-* Der Referenzzähler eines DD wird dekrementiert. Wenn er 0 ist, wird
+* Der Referenzzaehler eines DD wird dekrementiert. Wenn er 0 ist, wird
 * das XFS aufgerufen, um den DD freizugeben.
-* verändert nicht d0/d1/d2/a0/a1/a2
+* veraendert nicht d0/d1/d2/a0/a1/a2
 *
 
 unlock_dd:
@@ -4325,8 +4325,8 @@ unldd_ok:
 *
 * d0/a0 new_hdl( void )
 *
-* gibt in d0 ein neues Handle für act_pd oder ENHNDL zurück
-* gibt in a0 einen Zeiger auf pr_handle+d0 zurück
+* gibt in d0 ein neues Handle fuer act_pd oder ENHNDL zurueck
+* gibt in a0 einen Zeiger auf pr_handle+d0 zurueck
 *
 * die Bits Z und N des ccr sind entsprechend gesetzt
 *
@@ -4372,7 +4372,7 @@ Fgetdta:
 *
 * long Fsetdta()
 *
-* Mag!X 2.00: liefert immer 0 für "kein Fehler"
+* Mag!X 2.00: liefert immer 0 fuer "kein Fehler"
 *
 
 D_Fsetdta:
@@ -4402,7 +4402,7 @@ Dsetdrv:
 *
 * long kill_locks( a0 =  PD *pd )
 *
-* entfernt alle Locks, die dem Prozeß gehören
+* entfernt alle Locks, die dem Prozess gehoeren
 *
 
 kill_locks:
@@ -4435,14 +4435,14 @@ D_Dlock:
  cmp.w    #LASTDRIVE,a0
  bhi      dlk_ende                 ; Laufwerknummer nicht 0..LASTDRIVE
  cmp.w    #DRIVE_U,a0
- beq      dlk_ende                 ; Laufwerk U: nicht gültig!
+ beq      dlk_ende                 ; Laufwerk U: nicht gueltig!
  add.w    a0,a0
  add.w    a0,a0
  lea      dlockx(a0),a0
  btst     #0,d2
  beq.b    dlk_unlock
 ; LOCK
- move.l   (a0),d0                  ; sperrender Prozeß
+ move.l   (a0),d0                  ; sperrender Prozess
  beq.b    dlk_weiter               ; nicht gesperrt
  cmp.l    act_pd,d0
 
@@ -4450,9 +4450,9 @@ D_Dlock:
 
  beq      dlk_ok                   ; wir haben selbst gesperrt: E_OK
 
-* 2. Fall: Anderer Prozeß hat gesperrt
+* 2. Fall: Anderer Prozess hat gesperrt
 
-* 2.1      Bit 1 von mode gelöscht: ELOCKED
+* 2.1      Bit 1 von mode geloescht: ELOCKED
 
  moveq    #ELOCKED,d0
  btst     #1,d2
@@ -4463,11 +4463,11 @@ D_Dlock:
  move.l   (a0),a0
  moveq    #0,d0
  move.w   p_procid(a0),d0
- bgt.b    dlk_ende                 ; proc_id gültig
- move.w   #N_PROCS+1,d0            ; ungültige id
+ bgt.b    dlk_ende                 ; proc_id gueltig
+ move.w   #N_PROCS+1,d0            ; ungueltige id
  rts
 
-* 3. Fall: nicht gesperrt. Teste Dateien und sperre, wenn möglich
+* 3. Fall: nicht gesperrt. Teste Dateien und sperre, wenn moeglich
 
 dlk_weiter:
  move.w   d1,d0
@@ -4479,12 +4479,12 @@ dlk_unlock:
  moveq    #ENSLOCK,d0
  move.l   (a0),a1
 
-* 4. Unlock: Gerät nicht oder nicht von mir ge-lock-t: ENSLOCK
+* 4. Unlock: Geraet nicht oder nicht von mir ge-lock-t: ENSLOCK
 
  cmpa.l   act_pd,a1
  bne      dlk_ende
 
-* 4. Unlock: Gerät von mir ge-lock-t: Diskwechsel schon passiert, E_OK
+* 4. Unlock: Geraet von mir ge-lock-t: Diskwechsel schon passiert, E_OK
 
  clr.l    (a0)
 
@@ -4525,7 +4525,7 @@ str1:
 **********************************************************************
 *
 * int strncmp(a0 = char *s1, a1 = char *s2, d0 = int n)
-* Kommt mit gesetztem/gelöschtem Z-Flag zurück
+* Kommt mit gesetztem/geloeschtem Z-Flag zurueck
 *
 
 strncmp:
@@ -4555,7 +4555,7 @@ snc_5:
 **********************************************************************
 **********************************************************************
 *
-* Prozeßverwaltung
+* Prozessverwaltung
 *
 **********************************************************************
 
@@ -4565,9 +4565,9 @@ snc_5:
 * d0 = proc_info( d0 = int code, a0 = PD *pd )
 *
 * Kernel-Funktion (zum Aufruf durch ein XFS).
-* Ermittelt Daten für den aktuellen Prozeß:
+* Ermittelt Daten fuer den aktuellen Prozess:
 *
-*    d0 = 0:   höchste verfügbare Unterfunktionsnummer
+*    d0 = 0:   hoechste verfuegbare Unterfunktionsnummer
 *         1:   Domain
 *         2:   Process-ID
 *
@@ -4602,10 +4602,10 @@ proci_maxval:
 * d0/d1 = pgetmemlim( a0 = PD *pd )
 *
 * d0 = So ist die aktuelle Einstellung des Limits
-* d1 = Wievel braucht der Prozeß momentan ?
+* d1 = Wievel braucht der Prozess momentan ?
 
 *
-* ändert nicht a0
+* aendert nicht a0
 *
 
 pgetmemlim:
@@ -4631,18 +4631,18 @@ psl3_unl:
 *
 * long Psetlimit( WORD limit, LONG val )
 *
-* Setzt/ermittelt für den aktuellen Prozeß eine Limitierung der
+* Setzt/ermittelt fuer den aktuellen Prozess eine Limitierung der
 * Prozessorzeit oder des Speichers.
 *
 * val   = 0: unbegrenzt
-*        -1: nur aktuellen Wert zurückgeben
+*        -1: nur aktuellen Wert zurueckgeben
 *     sonst: neuen Wert setzen
 *
 * limit = 1: get/set maximum CPU time for process (in milliseconds)
 *         2: get/set total maximum memory allowed for process
-*         3: get/set limit on Malloc'd memory for process
+*         3: get/set limit on Malloced memory for process
 *
-* RÜckgabewert: alter Wert bzw. EINVFN, wenn nicht unterstützt
+* RUeckgabewert: alter Wert bzw. EINVFN, wenn nicht unterstuetzt
 *
 * Modus 3 implementiert: 17.9.95
 *
@@ -4657,7 +4657,7 @@ D_Psetlimit:
  move.l   act_pd,a0
  bsr.b    pgetmemlim
  addq.l   #1,d7                    ; nur Wert holen ?
- beq.b    psl3_ret                 ; ja, akt. Wert zurückgeben
+ beq.b    psl3_ret                 ; ja, akt. Wert zurueckgeben
  moveq    #-1,d2
  subq.l   #1,d7                    ; 0 (unbegrenzt) ?
  beq.b    psl3_sunl                ; ja, als unbegrenzt setzen
@@ -4680,8 +4680,8 @@ pslim_einvfn:
 * long Psemaphore( int mode, long id, long timeout )
 *
 * <timeout> wird in ms angegeben.
-* <timeout> == -1L wartet für immer.
-* <timeout> == 0L kommt sofort zurück.
+* <timeout> == -1L wartet fuer immer.
+* <timeout> == 0L kommt sofort zurueck.
 *
 
 D_Psemaphore:
@@ -4711,7 +4711,7 @@ psem_crget:
  tst.l    d0                       ; existiert Semaphore schon ?
  bgt      psem_eaccdn              ; ja, return(EACCDN)
  move.l   d1,-(sp)
- bsr      int_malloc               ; Block für Semaphore anfordern
+ bsr      int_malloc               ; Block fuer Semaphore anfordern
  move.l   d0,a0
  move.l   #'sema',(a0)+
  move.l   #'phor',(a0)+            ; Magic reinschreiben!
@@ -4737,7 +4737,7 @@ psem_destroy:
  cmpi.l   #'phor',-(a0)
  bne.b    psem_eaccdn
  cmpi.l   #'sema',-(a0)
- bne.b    psem_eaccdn              ; ungültiges MAGIC
+ bne.b    psem_eaccdn              ; ungueltiges MAGIC
  move.l   a0,-(sp)
  addq.l   #8,a0
  moveq    #SEM_DEL,d0
@@ -4746,7 +4746,7 @@ psem_destroy:
  tst.l    d0
  bmi      psem_eaccdn              ; Fehler ?
  clr.l    (a0)
- clr.l    4(a0)                    ; magic löschen
+ clr.l    4(a0)                    ; magic loeschen
  bsr      int_mfree                ; und Block freigeben
  moveq    #0,d0
  rts
@@ -4762,15 +4762,15 @@ psem_get:
  tst.l    d0
  bmi      psem_erange              ; nicht gefunden
 ; umrechnen ms => 50Hz
- addq.l   #1,d1                    ; -1 übergeben, ewig warten ?
+ addq.l   #1,d1                    ; -1 uebergeben, ewig warten ?
  beq.b    psem_sw                  ; ja
- subq.l   #1,d1                    ; 0L übergeben, d.h. nicht warten ?
+ subq.l   #1,d1                    ; 0L uebergeben, d.h. nicht warten ?
  beq.b    psem_cset                ; ja
  moveq    #0,d2
  move.w   d1,d2
  divu     #20,d2                   ; ms -> 50Hz
  moveq    #0,d1
- move.w   d2,d1                    ; Hiword löschen
+ move.w   d2,d1                    ; Hiword loeschen
  swap     d2
  tst.w    d2                       ; Rest bei Division ?
  beq.b    psem_sw                  ; nein
@@ -4784,7 +4784,7 @@ psem__sw:
  beq.b    psem_rts                 ; OK
  bgt.b    psem_eaccdn              ; Timeout (1) => EACCDN
  cmpi.w   #-2,d0
- beq      psem_erange              ; zerstört (-2) => ERANGE
+ beq      psem_erange              ; zerstoert (-2) => ERANGE
  rts
 psem_eaccdn:
  moveq    #EACCDN,d0               ; 1L -> EACCDN Timout
@@ -4792,7 +4792,7 @@ psem_rts:
  rts
 
 psem_cset:
- moveq    #SEM_CSET,d0             ; sofort zurück, falls schon gesetzt!
+ moveq    #SEM_CSET,d0             ; sofort zurueck, falls schon gesetzt!
  bra.b    psem__sw
 
 psem_rel:
@@ -4811,24 +4811,24 @@ psem_rel:
 *
 * int/ PD * /APPL * srch_process( a0 = PD *pd, d0 = int pid )
 *
-* Gibt zu einer Basepage bzw. zu einer ProcessID die zugehörige APPL
-* in a0 und den zugehörigen PD in a1 zurück (falls vorhanden).
+* Gibt zu einer Basepage bzw. zu einer ProcessID die zugehoerige APPL
+* in a0 und den zugehoerigen PD in a1 zurueck (falls vorhanden).
 * d0 == -1     suche nach <pd>
 * a0 == NULL   suche nach <pid>
 *
-* RÜckgabe:
+* RUeckgabe:
 * d0      ap_id, falls gefunden, sonst -1
-* d1      Kindprozeß (PD) oder NULL
+* d1      Kindprozess (PD) oder NULL
 * a0      APPL *
 * a1      PD   *
 *
-* Berücksichtigt auch Threads und Signalhandler
+* Beruecksichtigt auch Threads und Signalhandler
 *
 
 srch_process:
  movem.l  d5/d6/d7/a6,-(sp)
  move.w   d0,d6                    ; pid
- beq      pdad_err                 ; pid 0 ist ungültig
+ beq      pdad_err                 ; pid 0 ist ungueltig
  move.l   a0,a6
  move.l   xaes_appls,d0            ; XAES ?
  beq.b    pdad_err                 ; nein
@@ -4836,9 +4836,9 @@ srch_process:
  cmpi.l   #'XAES',(a2)+            ; magische Kennung ?
  bne.b    pdad_err                 ; nein
  move.l   (a2)+,d0                 ; act_appl
- move.w   (a2)+,d5                 ; Offset für ap_pd
+ move.w   (a2)+,d5                 ; Offset fuer ap_pd
  addq.l   #2,a2                    ; Anzahl der APPLs unwichtig
- move.w   (a2)+,d7                 ; Tabellenlänge
+ move.w   (a2)+,d7                 ; Tabellenlaenge
  moveq    #0,d0
 
 pdad_applloop:
@@ -4847,18 +4847,18 @@ pdad_applloop:
  bclr     #31,d2                   ; eingefrorene APP auch behandeln!
  move.l   d2,a0                    ; APPL *
  move.l   0(a0,d5.w),a1            ; geretteter PD (=0?) der schlafenden APPL
- moveq    #0,d1                    ; kein Kindprozeß
+ moveq    #0,d1                    ; kein Kindprozess
  bra.b    pdad_nxtpd
 
 pdad_pdloop:
  cmpa.l   a1,a6
- beq.b    pdad_ende                ; gefunden, gib d0/a0/a1 zurück
+ beq.b    pdad_ende                ; gefunden, gib d0/a0/a1 zurueck
  cmp.w    p_procid(a1),d6
  beq.b    pdad_ende
- move.l   a1,d1                    ; d1 = Kindprozeß
+ move.l   a1,d1                    ; d1 = Kindprozess
 
- cmpi.l   #'_PRG',p_res3(a1)       ; paralleler Prozeß ?
- beq.b    pdad_nxtappl             ; ja, parent ist ungültig
+ cmpi.l   #'_PRG',p_res3(a1)       ; paralleler Prozess ?
+ beq.b    pdad_nxtappl             ; ja, parent ist ungueltig
 
  move.l   p_parent(a1),a1
 pdad_nxtpd:
@@ -4881,9 +4881,9 @@ pdad_ende:
 *
 * int match_pid( d0 = int srch_pid, a0 = PD *srch_pd, a1 = PD *child )
 *
-* ändert nur d0/d1
+* aendert nur d0/d1
 * Testet, ob <child> durch <srch_pid> spezifiziert wurde.
-* Rückgabe 1, wenn ja, sonst 0
+* Rueckgabe 1, wenn ja, sonst 0
 *
 
 match_pid:
@@ -4895,7 +4895,7 @@ match_pid:
  bra.b    mpid_ask
 ; pid == 0: gleiche pgrp gesucht
 mpid_p2:
- move.w   p_procgroup(a0),d1       ; unsere Prozeßgruppe
+ move.w   p_procgroup(a0),d1       ; unsere Prozessgruppe
  cmp.w    p_procgroup(a1),d1
 mpid_ask:
  beq.b    mpid_found
@@ -4905,7 +4905,7 @@ mpid_p3:
  cmpi.w   #-1,d0                   ; jedes Kind gesucht ?
 ; pid == -1: Jedes Kind
  beq.b    mpid_found               ; ja, gefunden
-; pid < -1: Prozeßgruppe
+; pid < -1: Prozessgruppe
  move.w   p_procgroup(a1),d1
  neg.w    d1
  cmp.w    d1,d0
@@ -4922,16 +4922,16 @@ mpid_found:
 * Wartet auf Beendigung oder Anhalten eines oder mehrerer Kinder.
 *
 * pid == -1:   Jedes Kind
-* pid == 0:    Jedes Kind mit gleicher Prozeßgruppe wie Aufrufer 
+* pid == 0:    Jedes Kind mit gleicher Prozessgruppe wie Aufrufer 
 * pid > 0:     Ein spezielles Kind <pid>
-* pid < -1:    Jedes Kind mit Prozeßgruppe <-pid>
+* pid < -1:    Jedes Kind mit Prozessgruppe <-pid>
 *
 * flag & 1:    Warten (0) oder nicht warten (1)
 * flag & 2:
 *
 * rusage:      Liefert unter MagiC nur Nullen
 *
-* Rückgabe:    (pid<<16)|exitcode
+* Rueckgabe:    (pid<<16)|exitcode
 *              EFILNF: keine Kinder da.
 *
 
@@ -4940,7 +4940,7 @@ D_Pwaitpid:
  move.w   (a0)+,d7                 ; d7 = pid
  move.l   a0,a4
 
-; suche Kindprozeß
+; suche Kindprozess
 
  move.l   procx,a5
  move.l   act_pd,a0
@@ -4949,11 +4949,11 @@ D_Pwaitpid:
 wpid_loop1:
  move.l   (a5)+,d1
  beq.b    wpid_nxtloop             ; Slot unbelegt
- move.l   d1,a1                    ; a1 = existierender Prozeß
+ move.l   d1,a1                    ; a1 = existierender Prozess
  cmpa.l   p_parent(a1),a0          ; ein Kind von uns ?
  bne.b    wpid_nxtloop             ; nein, weiter
 
-; Kindprozeß (a1) gefunden
+; Kindprozess (a1) gefunden
 
 ;move.l   a1,a1                    ; child
 ;move.l   a0,a0                    ; PD *
@@ -4962,13 +4962,13 @@ wpid_loop1:
  tst.w    d0
  beq.b    wpid_nxtloop
 
-; Kindprozeß paßt
+; Kindprozess passt
 
- moveq    #1,d6                    ; merken, daß passender existiert
+ moveq    #1,d6                    ; merken, dass passender existiert
  cmpi.w   #PROCSTATE_ZOMBIE,p_status(a1)     ; Kind terminiert ?
- beq.b    wpid_exit                          ; ja, a5 enthält das gesuchte
+ beq.b    wpid_exit                          ; ja, a5 enthaelt das gesuchte
 
-; nächster Tabelleneintrag
+; naechster Tabelleneintrag
 
 wpid_nxtloop:
  dbra     d5,wpid_loop1
@@ -4976,7 +4976,7 @@ wpid_nxtloop:
 ; Schleifenende. Sollen wir warten ?
 
  moveq    #EFILNF,d0
- tst.w    d6                       ; gibt es überhaupt passende Kinder ?
+ tst.w    d6                       ; gibt es ueberhaupt passende Kinder ?
  beq.b    wpid_ende                ; nein, es lohnt nicht zu warten
  moveq    #0,d0
  btst     #0,1(a4)                 ; warten ?
@@ -4989,7 +4989,7 @@ wpid_nxtloop:
  move.l   a0,a1
 
 ; Erfolg: a1 ist das gesuchte Kind
-; Gib Daten zurück und gib den PD frei
+; Gib Daten zurueck und gib den PD frei
 
 wpid_exit:
  move.l   2(a4),d0                 ; rusage ?
@@ -5056,9 +5056,9 @@ D_Pwait:
 *           SIG_IGN (1L):     Signal komplett ignorieren
 *           sonst:            Signalhandler aktivieren
 *
-* Wird zurückgeführt auf Psigaction(sig, {handler,0L,0},...)
+* Wird zurueckgefuehrt auf Psigaction(sig, {handler,0L,0},...)
 *
-* zusätzlich noch SIGFREEZE.
+* zusaetzlich noch SIGFREEZE.
 *
 
 D_Psignal:
@@ -5070,7 +5070,7 @@ D_Psignal:
  clr.l    -(sp)                    ; sigmask = 0
  move.l   d0,-(sp)                 ; neuer Handler
  suba.w   #10,sp
- pea      (sp)                     ; Platz für alte Daten
+ pea      (sp)                     ; Platz fuer alte Daten
  pea      10+4(sp)                 ; neue Daten
  move.w   d1,-(sp)                 ; sig
  move.l   sp,a0
@@ -5110,7 +5110,7 @@ D_Psigaction:
  bne.b    psigac_notst
 psigac_tst:
  tst.l    (a0)
- bne.b    psigac_eaccdn            ; SIGKILL und SIGSTOP nicht änderbar
+ bne.b    psigac_eaccdn            ; SIGKILL und SIGSTOP nicht aenderbar
 psigac_notst:
  move.l   a6,-(sp)
  move.l   act_pd,a6
@@ -5121,7 +5121,7 @@ psigac_notst:
  move.l   4(a0),d1                 ; oact
  beq.b    psigac_noold
 
-* alte Daten zurückgeben
+* alte Daten zurueckgeben
 
  move.l   d1,a2
  move.l   (a1)+,(a2)+              ; alter Handler
@@ -5142,7 +5142,7 @@ psigac_noold:
  move.l   d1,(a1)+                 ; neuer Handler
  subq.l   #1,d1                    ; SIG_IGN
  bne.b    psigac_noi
-; ggf. "pending signal" löschen
+; ggf. "pending signal" loeschen
  move.l   pr_sigpending(a6),d1
  bclr     d0,d1
  move.l   d1,pr_sigpending(a6)
@@ -5150,8 +5150,8 @@ psigac_noi:
  move.l   (a2)+,(a1)+              ; neue Maske
  move.w   (a2),d1                  ; neue Flags
  bclr     #0,1(a1)
- or.w     d1,(a1)                  ; nur Bit 0 ändern
-; zugeh. "signal mask bit" löschen, d.h. Signal "enablen"
+ or.w     d1,(a1)                  ; nur Bit 0 aendern
+; zugeh. "signal mask bit" loeschen, d.h. Signal "enablen"
  move.l   pr_sigmask(a6),d1
  bclr     d0,d1
  move.l   d1,pr_sigmask(a6)
@@ -5233,7 +5233,7 @@ D_Psigpending:
 *
 * long Pause( void )
 *
-* wie Psigpause, aber verändert nicht die Signalmaske.
+* wie Psigpause, aber veraendert nicht die Signalmaske.
 * MiNT testet hier _NICHT_, ob schon ein Signal anliegt.
 *
 
@@ -5260,8 +5260,8 @@ D_Psigpause:
 *
 * long sigpause( d0 = long mask, d1 = int setmask )
 *
-* Wenn <setmask> == TRUE, wird die Maske verändert.
-* für Pause() und Psigpause()
+* Wenn <setmask> == TRUE, wird die Maske veraendert.
+* fuer Pause() und Psigpause()
 *
 
 sigpause:
@@ -5287,7 +5287,7 @@ sigp_nomask:
  jsr      do_signals               ; Signale bearbeiten (=> AES)
  bra.b    sigp_ende
 
-; wir müssen auf Signale warten
+; wir muessen auf Signale warten
 
 sigp_wait:
  jsr      wait_signals             ; => AES
@@ -5297,7 +5297,7 @@ sigp_wait:
 sigp_ende:
  tst.w    d7                       ; alte Maske gerettet ?
  beq.b    sigp_nix2                ; nein
- move.l   (sp)+,pr_sigmask(a6)     ; Maske zurück
+ move.l   (sp)+,pr_sigmask(a6)     ; Maske zurueck
  move.l   act_pd,a0
  jsr      do_signals               ; Signale bearbeiten (=> AES)
 sigp_nix2:
@@ -5310,20 +5310,20 @@ sigp_nix2:
 *
 * long _pkill( a0 = PD *pd, d0 = WORD sig )
 *
-* Schickt Signal <sig> an Prozeß
+* Schickt Signal <sig> an Prozess
 *
 
 _pkill:
  tst.w    d0                       ; Signalnummer
  beq.b    _pkill_ende              ; SIGNULL nicht ausliefern
  cmpi.w   #30,d0
- bhi.b    _pkill_erange            ; Signalnummer ungültig
+ bhi.b    _pkill_erange            ; Signalnummer ungueltig
  move.l   p_procdata(a0),a2
 ; Signal ausliefern
  move.l   pr_sigpending(a2),d1
  bset.l   d0,d1
  move.l   d1,pr_sigpending(a2)
-; Testen, ob der Prozeß aktiv ist
+; Testen, ob der Prozess aktiv ist
 ;move.l   a0,a0                    ; PD *
  jsr      do_signals               ; Signale bearbeiten
 _pkill_ende:
@@ -5340,11 +5340,11 @@ _pkill_erange:
 *
 * Schickt Signal <sig> an:
 *
-*  pid > 0     Prozeß mit der angegebenen pid
-*  pid = 0     alle Prozesse der Prozeßgruppe des Aufrufers (inkl.)
+*  pid > 0     Prozess mit der angegebenen pid
+*  pid = 0     alle Prozesse der Prozessgruppe des Aufrufers (inkl.)
 *  pid < 0     an alle Prozesse mit der Gruppennummer (-pid).
 *
-* pid <= 0 berücksichtigt seit MagiC 6.01 vom 10.10.98
+* pid <= 0 beruecksichtigt seit MagiC 6.01 vom 10.10.98
 *
 
 D_Pkill:
@@ -5357,10 +5357,10 @@ Pkill:
  move.w   d0,d6                    ; d6 = pid
  bne.b    pkill_no0
  move.w   p_procgroup(a0),d6
- neg.w    d6                       ; pid = 0: aktuelle Prozeßgruppe
+ neg.w    d6                       ; pid = 0: aktuelle Prozessgruppe
 pkill_no0:
 
-; suche Prozeß
+; suche Prozess
 
  move.l   procx,a6
  move.w   #N_PROCS-1,d5
@@ -5369,7 +5369,7 @@ pkill_no0:
 pkill_loop1:
  move.l   (a6)+,d0
  beq.b    pkill_nxtloop            ; Slot unbelegt
- move.l   d0,a0                    ; a0 = existierender Prozeß
+ move.l   d0,a0                    ; a0 = existierender Prozess
  cmpi.w   #PROCSTATE_ZOMBIE,p_status(a0)
  beq.b    pkill_nxtloop            ; Zombie-Prozesse ignorieren
 
@@ -5384,19 +5384,19 @@ pkill_grp:
  cmp.w    p_procgroup(a0),d0
  bne.b    pkill_nxtloop
 
-; Prozeß mit der PID bzw. der Prozeßgruppen-Nummer gefunden
+; Prozess mit der PID bzw. der Prozessgruppen-Nummer gefunden
 pkill_kill:
- st       d4                       ; merken, daß einer gefunden
+ st       d4                       ; merken, dass einer gefunden
  cmpa.l   act_pd,a0                ; selbst killen?
  bne.b    pkill_kill2              ; nein
- st       d3                       ; merken, daß selbst gekillt
- bra.b    pkill_nxtloop            ; später nachholen
+ st       d3                       ; merken, dass selbst gekillt
+ bra.b    pkill_nxtloop            ; spaeter nachholen
 pkill_kill2:
  move.w   d7,d0                    ; sig
 ;move.l   a0,a0                    ; PD
  bsr      _pkill
 
-; nächster Tabelleneintrag
+; naechster Tabelleneintrag
 
 pkill_nxtloop:
  dbra     d5,pkill_loop1
@@ -5408,7 +5408,7 @@ pkill_nxtloop:
  beq.b    pkill_ende               ; nicht gefunden
  moveq    #ERANGE,d0
  cmpi.w   #30,d7
- bhi.b    pkill_ende               ; Signalnummer ungültig
+ bhi.b    pkill_ende               ; Signalnummer ungueltig
  moveq    #0,d0
  tst.b    d3
  beq.b    pkill_ende
@@ -5425,8 +5425,8 @@ pkill_ende:
 * long Pgetpid( void )
 * long Pgetppid( void )
 *
-* Gibt die Prozßnummer des aktuellen Prozesses bzw. des parent
-* zurück.
+* Gibt die Prozssnummer des aktuellen Prozesses bzw. des parent
+* zurueck.
 * Im Gegensatz zu MiNT kann eine -1 auftreten, dann existiert kein
 * parent.
 *
@@ -5451,7 +5451,7 @@ _getpid:
 *
 * LONG Pgetpgrp( void )
 *
-* Gibt die Prozßgruppennummer des aktuellen Prozesses zurück.
+* Gibt die Prozssgruppennummer des aktuellen Prozesses zurueck.
 *
 * ab MagiC 6.01 vom 9.10.98
 *
@@ -5467,9 +5467,9 @@ D_Pgetpgrp:
 *
 * LONG Psetpgrp( WORD pid, WORD newgroup )
 *
-* Ändert die Prozeßgruppennummer von Prozeß <pid> (bzw. des aktuellen
-* Prozesses, wenn <pid> = 0) bzw. gibt sie zurück (wenn <newgroup> < 0).
-* Wenn <newgroup> < 0 ist, wird die Prozeß-ID als Prozeßgruppennummer
+* Aendert die Prozessgruppennummer von Prozess <pid> (bzw. des aktuellen
+* Prozesses, wenn <pid> = 0) bzw. gibt sie zurueck (wenn <newgroup> < 0).
+* Wenn <newgroup> < 0 ist, wird die Prozess-ID als Prozessgruppennummer
 * verwendet.
 *
 * ab MagiC 6.01 vom 9.10.98
@@ -5478,13 +5478,13 @@ D_Pgetpgrp:
 D_Psetpgrp:
  move.w   (a0)+,d0                 ; pid
  bne.b    pspg_noact
- move.l   act_pd,a1                ; pid = 0: aktueller Prozeß
+ move.l   act_pd,a1                ; pid = 0: aktueller Prozess
  bra.b    pspg_weiter
 pspg_noact:
  move.l   a0,-(sp)
 ;move.w   d0,d0
  suba.l   a0,a0
- bsr      srch_process             ; Prozeß aus PID ermitteln => a1
+ bsr      srch_process             ; Prozess aus PID ermitteln => a1
  move.l   (sp)+,a0
  bmi.b    pspg_err
 pspg_weiter:
@@ -5497,10 +5497,10 @@ pspg_set:
  move.w   d0,p_procgroup(a1)       ; Gruppe setzen
  rts
 pspg_get:
- move.w   p_procgroup(a1),d0       ; newgrp < 0: Prozeßgruppe ermitteln
+ move.w   p_procgroup(a1),d0       ; newgrp < 0: Prozessgruppe ermitteln
  rts
 pspg_err:
- moveq    #EFILNF,d0               ; PID ungültig
+ moveq    #EFILNF,d0               ; PID ungueltig
  rts
 
 
@@ -5508,7 +5508,7 @@ pspg_err:
 *
 * long Pgetuid( void )
 *
-* Gibt die "real user ID" des Prozesses zurück.
+* Gibt die "real user ID" des Prozesses zurueck.
 *
 * Seit 30.12.99
 *
@@ -5527,7 +5527,7 @@ _getid:
 *
 * long Pgetgid( void )
 *
-* Gibt die "real group ID" des Prozesses zurück.
+* Gibt die "real group ID" des Prozesses zurueck.
 *
 * Seit 30.12.99
 *
@@ -5541,7 +5541,7 @@ D_Pgetgid:
 *
 * long Pgeteuid( void )
 *
-* Gibt die "effective user ID" des Prozesses zurück.
+* Gibt die "effective user ID" des Prozesses zurueck.
 *
 * Seit 30.12.99
 *
@@ -5555,7 +5555,7 @@ D_Pgeteuid:
 *
 * long Pgetegid( void )
 *
-* Gibt die "effective group ID" des Prozesses zurück.
+* Gibt die "effective group ID" des Prozesses zurueck.
 *
 * Seit 30.12.99
 *
@@ -5569,7 +5569,7 @@ D_Pgetegid:
 *
 * long Pgetauid( void )
 *
-* Gibt die "audit user ID" des Prozesses zurück.
+* Gibt die "audit user ID" des Prozesses zurueck.
 *
 * Seit 30.12.99
 *
@@ -5598,9 +5598,9 @@ _setid:
  move.w   pr_euid-pr_ruid(a1,d1.w),d0
  beq.b    setid_root               ; bin root, darf alles
  cmp.w    pr_ruid-pr_ruid(a1,d1.w),d0
- beq.b    setid_seteuid            ; gehöre demselben User
+ beq.b    setid_seteuid            ; gehoere demselben User
  cmp.w    pr_suid-pr_ruid(a1,d1.w),d0
- beq.b    setid_seteuid            ; gehörte demselben User (?)
+ beq.b    setid_seteuid            ; gehoerte demselben User (?)
  moveq    #EACCDN,d0
  rts
 setid_root:
@@ -5629,8 +5629,8 @@ D_Psetgid:
 *
 * LONG Psetreuid( WORD ruid, WORD euid )
 *
-* Setzt die "effective user ID" des Prozesses und läßt die
-* "real user ID" unverändert (?).
+* Setzt die "effective user ID" des Prozesses und laesst die
+* "real user ID" unveraendert (?).
 *
 * Seit 30.12.99
 *
@@ -5645,7 +5645,7 @@ _setreid:
  cmpi.w   #-1,d0
  beq.b    _setreid_noruid
  cmp.w    d2,d0
- beq.b    _setreid_noruid     ; unverändert
+ beq.b    _setreid_noruid     ; unveraendert
 
  ; ruid != -1
 
@@ -5661,7 +5661,7 @@ _setreid_noruid:
  cmpi.w   #-1,d0
  beq.b    _setreid_noeuid
  cmp.w    pr_euid-pr_ruid(a1,d1.w),d0
- beq.b    _setreid_noeuid     ; unverändert
+ beq.b    _setreid_noeuid     ; unveraendert
  cmp.w    d2,d0
  beq.b    _setreid_sete
  cmp.w    pr_suid-pr_ruid(a1,d1.w),d0
@@ -5696,8 +5696,8 @@ _setreid_err:
 *
 * LONG Psetregid( WORD rgid, WORD egid )
 *
-* Setzt die "effective group ID" des Prozesses und läßt die
-* "real group ID" unverändert (?).
+* Setzt die "effective group ID" des Prozesses und laesst die
+* "real group ID" unveraendert (?).
 *
 * Seit 30.12.99
 *
@@ -5725,7 +5725,7 @@ _seteid:
  jsr      (a1)
  tst.l    d0
  bne.b    seteuid_ende        ; EACCDN
- move.w   2(sp),d0            ; uid zurückgeben
+ move.w   2(sp),d0            ; uid zurueckgeben
 seteuid_ende:
  addq.l   #4,sp
  rts
@@ -5761,7 +5761,7 @@ D_Psetauid:
  bne.b    setauid_err              ; ist schon gesetzt
  moveq    #0,d0
  move.w   (a0),d0
- move.w   d0,pr_auid(a1)           ; umsetzen und zurückgeben
+ move.w   d0,pr_auid(a1)           ; umsetzen und zurueckgeben
  rts
 setauid_err:
  moveq    #EACCDN,d0
@@ -5779,12 +5779,12 @@ D_Prenice:
  move.w   (a0)+,d0                 ; pid
  move.l   a0,-(sp)
  suba.l   a0,a0
- bsr      srch_process             ; Prozeß aus PID ermitteln => a1
+ bsr      srch_process             ; Prozess aus PID ermitteln => a1
  move.l   (sp)+,a0
  bmi.b    prnic_err
  move.l   p_procdata(a1),a1
  moveq    #0,d0
- move.w   pr_pri(a1),d0            ; alte Priorität
+ move.w   pr_pri(a1),d0            ; alte Prioritaet
  add.w    (a0),d0                  ; delta addieren
  cmpi.w   #20,d0                   ; Resultat auf -20..20 begrenzen
  bgt.b    prnic_20
@@ -5795,10 +5795,10 @@ D_Prenice:
 prnic_20:
  moveq    #20,d0
 prnic_ok:
- move.w   d0,pr_pri(a1)            ; Priorität umsetzen
+ move.w   d0,pr_pri(a1)            ; Prioritaet umsetzen
  rts
 prnic_err:
- moveq    #EFILNF,d0               ; PID ungültig
+ moveq    #EFILNF,d0               ; PID ungueltig
  rts
 
 
@@ -5840,7 +5840,7 @@ D_Pdomain:
  move.w   (a0),d1             ; neuer Wert
  bmi.b    pdom_ende           ; ... ist negativ, nur alten liefern
  cmpi.w   #1,d1
- bhi.b    pdom_erange         ; ... ist ungültig, nicht 0 oder 1
+ bhi.b    pdom_erange         ; ... ist ungueltig, nicht 0 oder 1
  andi.b   #$fe,(a1)
  or.b     d1,(a1)             ; nur Bit 0 modifizieren
 pdom_ende:
@@ -5854,14 +5854,14 @@ pdom_erange:
 *
 * long Pumask( WORD mask )
 *
-* Setzt die Dateimodi-Maske für zu erstellende Dateien.
-* Gibt den alten Wert zurück.
+* Setzt die Dateimodi-Maske fuer zu erstellende Dateien.
+* Gibt den alten Wert zurueck.
 *
 
 D_Pumask:
  move.l   act_pd,a1
  moveq    #0,d0
- move.w   p_umask(a1),d0      ; alten Wert zurückgeben
+ move.w   p_umask(a1),d0      ; alten Wert zurueckgeben
  move.w   (a0),d1             ; neuer Wert
  andi.w   #$fff,d1            ; Dateimodi isolieren "sssrwxrwxrwx"
  move.w   d1,p_umask(a1)      ; neuen Wert setzen
@@ -5872,9 +5872,9 @@ D_Pumask:
 *
 * long Pusrval( LONG val )
 *
-* Setzt bzw. gibt zurück (wenn val == -1) einen benutzerdefinierten
+* Setzt bzw. gibt zurueck (wenn val == -1) einen benutzerdefinierten
 * Wert.
-* Gibt den alten Wert zurück.
+* Gibt den alten Wert zurueck.
 *
 
 D_Pusrval:
@@ -5894,8 +5894,8 @@ pusrval_ende:
 *
 * void fnam2pnam( a0 = char *fnam, a1 = char *pnam )
 *
-* Macht aus einem Datei- einen Prozeßnamen
-* ändert nicht a2
+* Macht aus einem Datei- einen Prozessnamen
+* aendert nicht a2
 *
 
 fnam2pnam:
@@ -5918,7 +5918,7 @@ f2p_endloop:
 *
 * void create_procname( a0 = PD * pd )
 *
-* vergibt eine Prozeßnummer und initialisiert, wenn nicht schon
+* vergibt eine Prozessnummer und initialisiert, wenn nicht schon
 *  getan, pd->procdata->pr_procname.
 * erstellt in u:\proc\ einen Dateinamen.
 *
@@ -5928,7 +5928,7 @@ create_procname:
  move.l   a0,a6                    ; a6 = pd
  suba.w   #40,sp
 
-; suche freien Prozeß-Slot
+; suche freien Prozess-Slot
 
  move.l   procx,a1
  move.w   #N_PROCS-1,d0
@@ -5960,11 +5960,11 @@ cpn_nxtloop3:
  dbra     d0,cpn_loop3
 
  move.w   d1,p_procid(a6)          ; ID eintragen
- move.w   d1,nxt_procid            ; und dort das nächste Mal weitersuchen
+ move.w   d1,nxt_procid            ; und dort das naechste Mal weitersuchen
 
 cpn_isprocid:
  move.l   a6,-(a1)                 ; Slot als belegt markieren
-; ermittle Prozeßnamen
+; ermittle Prozessnamen
  move.l   p_procdata(a6),a5        ; a5 = PROCDATA
  btst     #0,pr_flags+1(a5)        ; kein Eintrag in u:\proc ?
  bne.b    cpn_ende                 ; nein, Ende
@@ -5995,8 +5995,8 @@ cpn_crname:
  move.w   p_procid(a6),d1
  lea      (sp),a0
 ; Pseudo- Dateinamen zusammensetzen
- move.l   #'U:\P',(a0)+
- move.l   #'ROC\',(a0)+
+ move.l   #$553a5c50,(a0)+
+ move.l   #$524f435c,(a0)+
 cpn_loop2:
  move.b   (a5)+,(a0)+
  bne.b    cpn_loop2
@@ -6031,13 +6031,13 @@ cpn_ende:
 *
 * void delete_procname( a0 = PD * pd )
 *
-* löscht einen Prozeß aus der Tabelle procx[] und entfernt aus
-* in u:\proc\ den zugehörigen Dateinamen.
+* loescht einen Prozess aus der Tabelle procx[] und entfernt aus
+* in u:\proc\ den zugehoerigen Dateinamen.
 *
 
 delete_procname:
  suba.w   #40,sp
-; suche meinen Prozeß-Slot
+; suche meinen Prozess-Slot
  move.l   procx,a1
  move.w   #N_PROCS-1,d0
 dpn_loop1:
@@ -6045,15 +6045,15 @@ dpn_loop1:
  dbeq     d0,dpn_loop1
  bne.b    dpn_noslot               ; nicht eingetragen (?!?)
  clr.l    -(a1)
-; Prozeßnamen löschen
+; Prozessnamen loeschen
 dpn_noslot:
  moveq    #0,d1
  move.w   p_procid(a0),d1
  beq.b    dpn_ende
- clr.w    p_procid(a0)             ; wichtig, damit Fdelete nicht PDkill't
+ clr.w    p_procid(a0)             ; wichtig, damit Fdelete nicht PDkillt
  lea      (sp),a2
- move.l   #'U:\P',(a2)+
- move.l   #'ROC\',(a2)+
+ move.l   #$553a5c50,(a2)+
+ move.l   #$524f435c,(a2)+
  move.w   #$2a2e,(a2)+             ; erstelle Dateinamen *.nnn
  divu     #100,d1
  add.b    #'0',d1
@@ -6108,7 +6108,7 @@ D_Ptermres:
 
 Pterm0:
  moveq    #1,d1                    ; Speicher freigeben
- moveq    #0,d0                    ; Rückgabewert 0
+ moveq    #0,d0                    ; Rueckgabewert 0
  bra.b    Pterm
 
 
@@ -6128,24 +6128,24 @@ Pterm:
 
  move.l   act_pd,a1
  move.l   p_app(a1),d2             ; Parent-Thread
- beq.b    pterm_pterm              ; ist ungültig, terminieren!
- cmp.l    act_appl,d2              ; habe ich überhaupt Pexec-t ?
+ beq.b    pterm_pterm              ; ist ungueltig, terminieren!
+ cmp.l    act_appl,d2              ; habe ich ueberhaupt Pexec-t ?
  beq.b    pterm_pterm              ; Ja!
 
-* Ich bin ein Thread, der den aktuellen Prozeß nicht gestartet hat.
+* Ich bin ein Thread, der den aktuellen Prozess nicht gestartet hat.
 * Daher darf ich ihn auch nicht beenden.
-* Daher beende ich mich. RÜckgabewert ist immer EBREAK.
+* Daher beende ich mich. RUeckgabewert ist immer EBREAK.
 
  jmp      appl_break
 
 pterm_pterm:
  move.w   d1,-(sp)                 ; Speicher freigeben ?
  move.w   d0,-(sp)
- clr.l    -(sp)                    ; Dummy- RÜcksprungadresse
+ clr.l    -(sp)                    ; Dummy- RUecksprungadresse
 
- link     a6,#0                    ; für T. Tempelmann ("TT" ?), der sich
-                                   ;    offenbar selbst für den King of Atari
-                                   ;    hält, dazu ausersehen, Standards zu
+ link     a6,#0                    ; fuer T. Tempelmann ("TT" ?), der sich
+                                   ;    offenbar selbst fuer den King of Atari
+                                   ;    haelt, dazu ausersehen, Standards zu
                                    ;    deklarieren.
  moveq    #-1,d0
  move.l   d0,-(sp)
@@ -6153,10 +6153,10 @@ pterm_pterm:
  trap     #$d
  addq.w   #8,sp
  move.l   d0,a0
- jsr      (a0)                     ; springe über etv_term
+ jsr      (a0)                     ; springe ueber etv_term
  bsr      restore_time
 
-* das VDI aufräumen!
+* das VDI aufraeumen!
 
  move.l   (config_status+12).w,d0
  beq.b    ptm_no_v_tidy
@@ -6171,22 +6171,22 @@ ptm_no_v_tidy:
  cmpi.l   #'_PRG',p_res3(a0)
  bne.b    ptm_no_prg
 
-* paralleler Prozeß terminiert.
+* paralleler Prozess terminiert.
 
- move.l   p_res3+4(a0),p_context(a0)    ; ssp für Rücksprung setzen
- move.w   8(a6),p_dta(a0)               ; Rückgabewert in Basepage merken!
- bra.b    ptm_sigrestart                ; Prozeß noch nicht killen!
+ move.l   p_res3+4(a0),p_context(a0)    ; ssp fuer Ruecksprung setzen
+ move.w   8(a6),p_dta(a0)               ; Rueckgabewert in Basepage merken!
+ bra.b    ptm_sigrestart                ; Prozess noch nicht killen!
 
 ptm_no_prg:
- move.l   p_parent(a0),d0               ; parent gültig?
+ move.l   p_parent(a0),d0               ; parent gueltig?
  bne.b    ptm_noacc                     ; ja, kein ACC
 
-* Parent ungültig, d.h. ACC terminiert
+* Parent ungueltig, d.h. ACC terminiert
 
  cmpi.l   #'_ACC',p_res3(a0)
  bne      dos_fatal_err
- move.l   p_res3+4(a0),p_context(a0)    ; ssp für Rücksprung setzen
- bra.b    ptm_restart                   ; Prozeß noch nicht killen!
+ move.l   p_res3+4(a0),p_context(a0)    ; ssp fuer Ruecksprung setzen
+ bra.b    ptm_restart                   ; Prozess noch nicht killen!
 
 ptm_noacc:
  move.l   d0,act_pd
@@ -6195,7 +6195,7 @@ ptm_noacc:
  move.l   d0,a1
  move.l   act_pd,ap_pd(a1)         ; in Applikationsstruktur eintragen
 ptm_noap:
- move.w   8(a6),p_dta(a0)          ; Rückgabewert in Basepage merken!
+ move.w   8(a6),p_dta(a0)          ; Rueckgabewert in Basepage merken!
  move.w   10(a6),d0                ; Speicher freigeben
 ;move.l   a0,a0
  bsr      PDkill
@@ -6217,7 +6217,7 @@ ptm_restart:
 *
 * void adjust_parents( a0 = PD *old_process, a1 = PD *new_process )
 *
-* Ein Prozeß <old_process> wird durch einen neuen Prozeß
+* Ein Prozess <old_process> wird durch einen neuen Prozess
 * <new_process> ersetzt (OVERLAY) bzw. entfernt (new_process == NULL).
 * Von allen Prozessen wird der Parent-Zeiger (p_parent) entsprechend
 * korrigiert. Ggf. werden Zombie-Kinder entfernt (wenn new_process
@@ -6237,12 +6237,12 @@ adjp_loop1:
  move.l   d0,a3
  cmpa.l   p_parent(a3),a5          ; sind wir parent ?
  bne.b    adjp_nxt1                ; nein
- move.l   a6,p_parent(a3)          ; parent ändern (Kind wird ggf. Waise)
- bne.b    adjp_nxt1                ; neuer parent gültig
+ move.l   a6,p_parent(a3)          ; parent aendern (Kind wird ggf. Waise)
+ bne.b    adjp_nxt1                ; neuer parent gueltig
  cmpi.w   #PROCSTATE_ZOMBIE,p_status(a3)
  bne.b    adjp_nxt1
  move.l   a3,a0
- bsr      delete_procname          ; Prozeßnamen entfernen
+ bsr      delete_procname          ; Prozessnamen entfernen
  lea      ur_pd,a1                 ; neuer Eigner
  move.l   a3,a0
  bsr      Mfzombie                 ; PD freigeben
@@ -6256,12 +6256,12 @@ adjp_nxt1:
 *
 * void PDkill(a0 = PD *process, d0 = int freemem)
 *
-* entfernt einen Prozeß (FCBs, MDs, Pfadhandles).
-* Entfernt alle zugehörigen Threads außer der aktuellen Applikation.
-* Läßt den Speicher unangetastet, falls <freemem> = 0
+* entfernt einen Prozess (FCBs, MDs, Pfadhandles).
+* Entfernt alle zugehoerigen Threads ausser der aktuellen Applikation.
+* Laesst den Speicher unangetastet, falls <freemem> = 0
 *
-* MagiC 5.04:  Löscht den Prozeßnamen in u:\proc noch nicht und
-*              behält die Basepage in procx[], falls der Prozeß
+* MagiC 5.04:  Loescht den Prozessnamen in u:\proc noch nicht und
+*              behaelt die Basepage in procx[], falls der Prozess
 *              mit MiNT-Funktionen (Pexec(100/104/106)) erzeugt
 *              worden ist.
 *
@@ -6278,7 +6278,7 @@ PDkill:
  bsr      slb_close_all
 * SIGCHLD verschicken
  move.l   p_parent(a5),d0          ; unser Parent
- beq.b    pdk_no_sigchld           ; ... ist schon ungültig
+ beq.b    pdk_no_sigchld           ; ... ist schon ungueltig
  move.l   d0,a1
  move.w   p_procid(a1),d0          ; pid
  moveq    #SIGCHLD,d1
@@ -6295,9 +6295,9 @@ pdk_no_sigchld:
  move.l   act_appl,d0
  beq.b    pk_no_aes
  move.l   a5,a0
- jsr      pkill_threads            ; alle Threads außer aktueller APP killen
+ jsr      pkill_threads            ; alle Threads ausser aktueller APP killen
 pk_no_aes:
-* Sprung über config_status+24
+* Sprung ueber config_status+24
  move.l   (config_status+24).w,d0
  beq.b    pk_no_tidy
  move.l   d0,a2
@@ -6323,7 +6323,7 @@ pk_nowb:
  move.w   #PROCSTATE_ZOMBIE,p_status(a5)
  bra.b    pk_nokillpd
 pk_kill:
-* Prozeßnamen entfernen und aus procx[] entfernen
+* Prozessnamen entfernen und aus procx[] entfernen
  move.l   a5,a0
  bsr      delete_procname
 pk_nokillpd:
@@ -6331,9 +6331,9 @@ pk_nokillpd:
  move.l   a5,a0
  bsr      kill_locks
  
-* Alle Dateien schließen
+* Alle Dateien schliessen
 
- moveq    #MAX_OPEN-MIN_FHANDLE-1,d6    ; dbra- Zähler
+ moveq    #MAX_OPEN-MIN_FHANDLE-1,d6    ; dbra- Zaehler
  move.l   p_procdata(a5),a0
  lea      fh_sizeof*MIN_FHANDLE+pr_handle(a0),a4
 pk_fclose_loop:
@@ -6349,25 +6349,25 @@ pk_fclose_nxtloop:
  addq.l   #fh_sizeof,a4
  dbra     d6,pk_fclose_loop
 
-* Alle Pfadhandles löschen
+* Alle Pfadhandles loeschen
 
- moveq    #LASTDRIVE,d6            ; dbra- Zähler
+ moveq    #LASTDRIVE,d6            ; dbra- Zaehler
  lea      pathcntx,a4
 pkx_stdpthloop:
  move.b   p_drvx(a5,d6.w),d0
  ext.w    d0
- ble.b    pkx_nxtstdpth            ; root oder ungültig
- tst.b    0(a4,d0.w)               ; eigentlich nicht nötig
+ ble.b    pkx_nxtstdpth            ; root oder ungueltig
+ tst.b    0(a4,d0.w)               ; eigentlich nicht noetig
  beq.b    pkx_nxtstdpth
  subq.b   #1,0(a4,d0.w)
  move.w   d0,a0
  add.w    a0,a0
  add.w    a0,a0
  move.l   pathx(a0),a0
- subq.w   #1,dd_refcnt(a0)         ; Referenzzähler im DD ebenfalls dekrem.
+ subq.w   #1,dd_refcnt(a0)         ; Referenzzaehler im DD ebenfalls dekrem.
  bne.b    pkx_nxtstdpth            ; noch nicht auf 0
 
-;move.l   a0,a0                    ; Zeiger auf DD übergeben
+;move.l   a0,a0                    ; Zeiger auf DD uebergeben
  move.l   dd_dmd(a0),a2
  move.l   d_xfs(a2),a2
  move.l   xfs_freeDD(a2),a2
@@ -6391,7 +6391,7 @@ pkx_next:
  cmpa.l   #dmdx+4*LASTDRIVE,a4
  bls.b    pkx_loop
 
-* Alle zum Prozeß gehörigen Semaphoren freigeben
+* Alle zum Prozess gehoerigen Semaphoren freigeben
 
  move.l   a5,a0
  moveq    #SEM_FPD,d0
@@ -6399,22 +6399,22 @@ pkx_next:
 
 
  move.w   (sp)+,d0
- bne.b    pk_pfree                 ; Blöcke freigeben
+ bne.b    pk_pfree                 ; Bloecke freigeben
 
 /*
-* Speicherblöcke nicht freigeben, aber ggf. p_procdata löschen
+* Speicherbloecke nicht freigeben, aber ggf. p_procdata loeschen
 
  move.l   p_procdata(a5),d0
  beq.b    pk_ende                  ; ist schon leer
  move.l   d0,a0
  move.l   pr_memlist(a0),d0        ; shared memory?
  bne.b    pk_ende                  ; ja, darf PROCDATA nicht freigeben
- clr.l    p_procdata(a5)           ; muß Zeiger für späteres Pfree löschen,
+ clr.l    p_procdata(a5)           ; muss Zeiger fuer spaeteres Pfree loeschen,
                                    ; da Ptermres() PROCDATA freigibt
 */
  bra.b    pk_ende
 
-* Alle Speicherblöcke freigeben
+* Alle Speicherbloecke freigeben
 
 pk_pfree:
  move.l   a5,a0
@@ -6432,8 +6432,8 @@ pk_ende:
 *
 * void swap_paths( void )
 *
-* Pfadhandles zwischen aktuellem Prozeß und seinem parent vertauschen.
-* Benötigt vom AES für den Single mode.
+* Pfadhandles zwischen aktuellem Prozess und seinem parent vertauschen.
+* Benoetigt vom AES fuer den Single mode.
 *
 
 swap_paths:
@@ -6455,7 +6455,7 @@ swpth_loop:
 *
 * void init_stdfiles(a0 = PD *basepage)
 *
-* Setzt die Standarddateien für den Ur-Prozeß.
+* Setzt die Standarddateien fuer den Ur-Prozess.
 *
 
 init_stdfiles:
@@ -6492,12 +6492,12 @@ istdf_noinc:
 *
 * void init_pd(a0 = PD *basepage, a1 = PD *parent)
 *
-* Pfad- und Standard- Datei- Handles vom aktuellen Prozeß kopieren.
+* Pfad- und Standard- Datei- Handles vom aktuellen Prozess kopieren.
 * Signale vererben (PROCDATA).
-* Prozeßnamen in u:\proc erstellen.
+* Prozessnamen in u:\proc erstellen.
 *
-* 2.12.95:     Ungültige Standardpfade werden nicht mit kopiert.
-*              Der Prozeß landet automatisch in der root.
+* 2.12.95:     Ungueltige Standardpfade werden nicht mit kopiert.
+*              Der Prozess landet automatisch in der root.
 * 22.9.96:     Umask vererben.
 * 6.10.96:     procgroup vererben
 *
@@ -6505,13 +6505,13 @@ istdf_noinc:
 init_pd:
  movem.l  a5/a4/d7/d6,-(sp)
  move.w   p_umask(a1),p_umask(a0)            ; Umask vererben
- move.w   p_procgroup(a1),p_procgroup(a0)    ; Prozeßgruppe vererben
+ move.w   p_procgroup(a1),p_procgroup(a0)    ; Prozessgruppe vererben
  move.l   a1,a5                    ; von
  move.l   a0,a4                    ; nach
 
 * Dateihandles kopieren
 
- moveq    #MAX_OPEN-MIN_FHANDLE-1,d7    ; dbra- Zähler
+ moveq    #MAX_OPEN-MIN_FHANDLE-1,d7    ; dbra- Zaehler
  move.l   p_procdata(a5),a1
  lea      fh_sizeof*MIN_FHANDLE+pr_handle(a1),a1
  move.l   p_procdata(a4),a0
@@ -6543,33 +6543,33 @@ seth_hdlnxt:
 
 * Standard- Pfad- Handles kopieren
 
- moveq    #LASTDRIVE,d7            ; dbra- Zähler
+ moveq    #LASTDRIVE,d7            ; dbra- Zaehler
  lea      pathcntx,a0
  lea      pathx,a1
- moveq    #0,d0                    ; Hibyte löschen
+ moveq    #0,d0                    ; Hibyte loeschen
 seth_pthloop:
  move.b   p_drvx(a5,d7.w),d0
  bge.b    seth_valid
- moveq    #0,d0                    ; ungültig => root
+ moveq    #0,d0                    ; ungueltig => root
 seth_valid:
  move.b   d0,p_drvx(a4,d7.w)       ; Pfadhandle setzen
  beq.b    seth_pthnxt              ; Handle root
  ext.w    d0
- addq.b   #1,0(a0,d0.w)            ; Referenzzähler erhöhen
+ addq.b   #1,0(a0,d0.w)            ; Referenzzaehler erhoehen
  add.w    d0,d0
  add.w    d0,d0
  move.l   0(a1,d0.w),a2
- addq.w   #1,dd_refcnt(a2)         ; Referenzzähler im DD erhöhen
+ addq.w   #1,dd_refcnt(a2)         ; Referenzzaehler im DD erhoehen
 seth_pthnxt:
  dbra     d7,seth_pthloop
 * Standard- Laufwerk kopieren
  move.b   p_defdrv(a5),p_defdrv(a4)
 
-* PROCDATA von anderem Prozeß vererben
+* PROCDATA von anderem Prozess vererben
 * sigmask und sigpending sind 0, alle Signale mit SIG_IGN bleiben so,
 * alle anderen werden SIG_DFL
 * MiNT vererbt sigextra und sigflags bei den ignorierten Signalen,
-* das ergibt jedoch keinen Sinn und wird nicht so übernommen
+* das ergibt jedoch keinen Sinn und wird nicht so uebernommen
 *
 
  move.l   p_procdata(a5),a1        ; parent
@@ -6585,7 +6585,7 @@ seth_pthnxt:
 
  lea      pr_sigdata(a0),a0
  lea      pr_sigdata(a1),a1
- moveq    #32-1,d1                 ; Zähler
+ moveq    #32-1,d1                 ; Zaehler
 pxc_siginh_loop:
  move.l   (a1),d0                  ; handler
  subq.l   #SIG_IGN,d0
@@ -6595,9 +6595,9 @@ pxc_siginh_loop:
 pxc_sig_set0:
  lea      sa_sizeof(a0),a0
  lea      sa_sizeof(a1),a1
- dbra     d1,pxc_siginh_loop       ; nächstes Signal
+ dbra     d1,pxc_siginh_loop       ; naechstes Signal
 
-* Prozeßnamen erstellen
+* Prozessnamen erstellen
 
  move.l   a4,a0
  bsr      create_procname
@@ -6611,15 +6611,15 @@ pxc_sig_set0:
 * a0 = XDEF char *env_end( a0 = char *env )
 *
 * a0 hinter das letzte Nullbyte des Environments
-* d0 = Länge des Env
-* ändert nicht d1/d2
+* d0 = Laenge des Env
+* aendert nicht d1/d2
 *
 
 env_end:
  move.l   a0,a1
 eev_loop:
  tst.b    (a0)+
- bne.b    eev_loop                  ; Variable überlesen
+ bne.b    eev_loop                  ; Variable ueberlesen
  tst.b    (a0)
  bne.b    eev_loop
  addq.l   #1,a0
@@ -6634,10 +6634,10 @@ eev_loop:
 *
 * var ist etwa "_PNAM="
 *
-*  Prüft, ob die Variable <var> im environment existiert
-*  Rückgabe: Zeiger auf den WERT der Variablen (im Env.) oder NULL
-*  Rückgabe: a0 = Zeiger auf die Variable selbst
-*  Z-Flag korrekt beeinflußt
+*  Prueft, ob die Variable <var> im environment existiert
+*  Rueckgabe: Zeiger auf den WERT der Variablen (im Env.) oder NULL
+*  Rueckgabe: a0 = Zeiger auf die Variable selbst
+*  Z-Flag korrekt beeinflusst
 *
 
 env_get:
@@ -6655,13 +6655,13 @@ getenv_loop:
  bsr      strncmp
  bne.b    getenv_next
 * gefunden!
- move.l   a5,a0                    * Rückgabe: Variable
+ move.l   a5,a0                    * Rueckgabe: Variable
 getenv_4:
  tst.b    (a5)
  beq.b    getenv_90
  cmpi.b   #'=',(a5)+
  bne.b    getenv_4
- move.l   a5,d0                    * Rückgabe: Wert
+ move.l   a5,d0                    * Rueckgabe: Wert
  bra.b    getenv_end
 getenv_next:
  tst.b    (a5)+
@@ -6680,7 +6680,7 @@ getenv_end:
 *
 * void env_clr_int(a0 = char *env)
 *
-* Löscht die Variablen LINES,COLUMNS
+* Loescht die Variablen LINES,COLUMNS
 * Wird vom AES aufgerufen
 *
 
@@ -6701,7 +6701,7 @@ env_clr_int:
 env_clr:
  bsr.b    env_get
  beq.b    cev_ende
-; Variable überlesen
+; Variable ueberlesen
  move.l   a0,a1
 envset_8:
  tst.b    (a0)+
@@ -6711,7 +6711,7 @@ envset_10:
  move.b   (a0)+,(a1)+
  bne.b    envset_10
  tst.b    (a0)
- bne.b    envset_10   * Lasse Rest des Environments aufrücken
+ bne.b    envset_10   * Lasse Rest des Environments aufruecken
  clr.b    (a1)           * Am Ende wieder doppelte Null erzeugen
 cev_ende:
  rts
@@ -6734,9 +6734,9 @@ env_set:
  move.l   a2,a0
  bsr      strlen
  add.w    d0,d2
- addq.w   #1,d2               ; EOS ergänzen
+ addq.w   #1,d2               ; EOS ergaenzen
  move.l   (sp),a0
- bsr      env_end             ; d0 = Env.-Länge, ändert nicht d2
+ bsr      env_end             ; d0 = Env.-Laenge, aendert nicht d2
 
  move.l   (sp),a1             ; src
  lea      0(a1,d2.w),a0       ; dst
@@ -6759,13 +6759,13 @@ sev_loop2:
 * long cmd2arglen( a0 = void *cmdline, a1 = char *arg0 )
 *
 * Berechnet, wieviel Platz das Umsetzen der Kommandozeile als ARGV-
-* Parameter im Environment benötigt.
+* Parameter im Environment benoetigt.
 *
 
 cmd2arglen:
  cmpi.b   #$7f,(a0)                ; MTOS-ARGV-Konvention ?
  beq.b    c2a_argv                 ;  Environment nicht antasten
- cmpi.b   #$ff,(a0)                ; Zeile übergeben ?
+ cmpi.b   #$ff,(a0)                ; Zeile uebergeben ?
  bne.b    c2a_noargstr
  addq.l   #1,a0
  move.l   a1,a2
@@ -6774,12 +6774,12 @@ cmd2arglen:
  move.l   a2,a0
  bsr      strlen                   ; arg0
  add.l    d2,d0
- addq.l   #8,d0                    ; für abschließende Nullen und "ARGV=\0"
+ addq.l   #8,d0                    ; fuer abschliessende Nullen und "ARGV=\0"
  rts
 c2a_noargstr:
- cmpi.b   #$fe,(a0)+               ; argv[] direkt übergeben ?
+ cmpi.b   #$fe,(a0)+               ; argv[] direkt uebergeben ?
  bne.b    c2a_argv                 ; nein
- bra      env_end                  ; Länge des argv[] berechnen
+ bra      env_end                  ; Laenge des argv[] berechnen
 c2a_argv:
  moveq    #0,d0
  rts
@@ -6811,7 +6811,7 @@ cmd2argv:
  move.l   a2,a4
  cmpi.b   #$7f,(a0)                ; MTOS-ARGV-Konvention ?
  beq.b    c2v_ende                 ;  Environment nicht antasten
-* zunächst evtl. vorhandenes ARGV löschen
+* zunaechst evtl. vorhandenes ARGV loeschen
  lea      argv_s(pc),a1
  move.l   a6,a0
  bsr      env_get                  ; Position der vorhandenen Variablen
@@ -6823,7 +6823,7 @@ c2v_clr:
  clr.b    (a0)
  move.l   a0,a6
 
- cmpi.b   #$ff,(a5)                ; Zeile übergeben ?
+ cmpi.b   #$ff,(a5)                ; Zeile uebergeben ?
  bne.b    c2v_noargstr
  addq.l   #1,a5
 
@@ -6839,7 +6839,7 @@ c2v_l2:
  move.b   (a4)+,(a6)+              ; arg0
  bne.b    c2v_l2
 c2v_nxt2:
- bsr.b    _skip_spc                ; Leerzeichen überlesen
+ bsr.b    _skip_spc                ; Leerzeichen ueberlesen
 c2v_cloop:
  move.b   (a5)+,d0
  beq.b    c2v_eos
@@ -6864,7 +6864,7 @@ c2v_eos:
 *
 
 c2v_noargstr:
- cmpi.b   #$fe,(a5)+               ; argv[] direkt übergeben ?
+ cmpi.b   #$fe,(a5)+               ; argv[] direkt uebergeben ?
  bne.b    c2v_ende                 ; nein
 c2v_cploop:
  move.b   (a5)+,(a6)+              ; Variable kopieren
@@ -6904,7 +6904,7 @@ crenv_cploop:
 
 * Variable _PNAM entfernen
 
- lea      pnam_s(pc),a1            ; zu löschende Variable
+ lea      pnam_s(pc),a1            ; zu loeschende Variable
  move.l   a6,a0                    ; Environment
  bsr      env_clr
 
@@ -6928,7 +6928,7 @@ crenv_no_npnam:
 * LINES/COLUMNS einsetzen
 
  bsr      get_termdata             ; => d1 = mx,d2 = my
- subq.l   #8,sp                    ; Platz für String
+ subq.l   #8,sp                    ; Platz fuer String
  addq.w   #1,d1
  move.w   d1,-(sp)                 ; int cols
  clr.w    -(sp)
@@ -6943,7 +6943,7 @@ crenv_no_npnam:
  lea      lines_s(pc),a1           ; Variable
  move.l   a6,a0
  bsr      env_set                  ; LINES setzen
- addq.l   #4,8(sp)                 ; nächste Variable
+ addq.l   #4,8(sp)                 ; naechste Variable
  jsr      _sprintf
  lea      20(sp),a2
  lea      columns_s(pc),a1
@@ -6959,7 +6959,7 @@ crenv_isl:
  move.l   a4,a0                    ; Kommandozeile
  bsr      cmd2argv                 ; ggf. ARGV erstellen
 
-* Environment auf tatsächliche Länge schrumpfen
+* Environment auf tatsaechliche Laenge schrumpfen
 
  move.l   a6,a0
  bsr      env_end
@@ -6982,9 +6982,9 @@ crenv_isl:
 *                        PD *owner )
 *
 *  Parameter:
-* sem_flag:    Rückgabe, ob Pexec-Semaphore reserviert wurde.
+* sem_flag:    Rueckgabe, ob Pexec-Semaphore reserviert wurde.
 *
-* arg0:        Zeichenkette für arg[0] oder NULL
+* arg0:        Zeichenkette fuer arg[0] oder NULL
 * cmdline:     Kommandozeile
 * env:         Das zu setzende Environment
 * ph:          Programm-Header
@@ -7007,7 +7007,7 @@ create_basepage:
  suba.l   a5,a5                    ; pd_mem = NULL
 
 *
-* Speicher für PROCDATA allozieren und löschen
+* Speicher fuer PROCDATA allozieren und loeschen
 *
 
  move.l   act_pd,a1
@@ -7018,10 +7018,10 @@ create_basepage:
  beq      crb_ende
  move.l   d4,a0
  lea      pr_sizeof(a0),a1
- jsr      fast_clrmem              ; Block löschen
+ jsr      fast_clrmem              ; Block loeschen
 
 *
-* Daten in PROCDATA für PLOADINFO
+* Daten in PROCDATA fuer PLOADINFO
 *
 
  move.l   CMDLINE(a6),a1
@@ -7035,7 +7035,7 @@ create_basepage:
  move.l   d4,a0
  lea      pr_fname(a0),a0               ; nach
  move.w   #128,d0
- bsr      pathcmpl                      ; kopieren und vervollständigen
+ bsr      pathcmpl                      ; kopieren und vervollstaendigen
 ; tst.l   d0
 ; bge.b   crb_namok                     ; kein Fehler
 crb_no_prfname:
@@ -7043,7 +7043,7 @@ crb_no_prfname:
 ; clr.b   pr_fname(a0)
 ;crb_namok:
 
-* Benötigte Blockgröße berechnen: d5
+* Benoetigte Blockgroesse berechnen: d5
 * Wenn Bit 3 des Programmheaders gesetzt ist, darf BSS nicht leer sein,
 * sonst kann nicht reloziert werden
 
@@ -7053,13 +7053,13 @@ crb_no_prfname:
  btst     #3,d6                         ; Bit 3 des Programmheaders
  bne.b    crb_minmem                    ; gesetzt => nur Minimalblock
  move.b   d6,d5                         ; ph_flags
- andi.b   #$f0,d5                       ; 4 Bits isolieren (jedes für 128k)
+ andi.b   #$f0,d5                       ; 4 Bits isolieren (jedes fuer 128k)
  addi.w   #$10,d5                       ; nochmal 128k addieren
  swap     d5                            ; um 16 Bit shiften
  add.l    d5,d5                         ; jetzt um 17 Bit geshiftet
 crb_minmem:
  lea      ph_tlen(a0),a0
- add.l    #$100,d5                      ; Länge der Basepage
+ add.l    #$100,d5                      ; Laenge der Basepage
  add.l    (a0)+,d5                      ; +tlen
  add.l    (a0)+,d5                      ; +dlen
  add.l    (a0)+,d5                      ; +blen
@@ -7077,7 +7077,7 @@ crb_arg0_given:
  moveq    #SEM_SET,d0
  jsr      evnt_sem
  tst.l    d0
- seq      (a3)                     ; merken, daß Semaphore gesetzt
+ seq      (a3)                     ; merken, dass Semaphore gesetzt
 * Falls env == NULL, das des parent einsetzen
  move.l   ENV(a6),d0
  bne.b    crb_env_given
@@ -7090,11 +7090,11 @@ crb_env_given:
  addq.l   #1,d0
  beq      crb_illenv               ; Environment war -1L
 
-* Länge des Environments bestimmen und entsprechend Speicher holen
+* Laenge des Environments bestimmen und entsprechend Speicher holen
 
  bsr      env_end
 
-* d0 ist jetzt die Länge des Environments
+* d0 ist jetzt die Laenge des Environments
 
  addi.l   #7+10+12,d0              ;   strlen("_PNAM=")+1
                                    ; + strlen("LINES=xxx")+1
@@ -7104,7 +7104,7 @@ crb_env_given:
  move.l   ARG0(a6),a0              ; kompletter Pfad
  jsr      fn_name                  ; Dateinamen extrahieren...
  move.l   a0,a4                    ; ...und Zeiger merken (a4)
- jsr      strlen                   ; davon die Länge
+ jsr      strlen                   ; davon die Laenge
  add.l    d0,(sp)                  ; ...zum Environment addieren
 
  move.l   ARG0(a6),a1              ; arg0
@@ -7114,7 +7114,7 @@ crb_env_given:
 
  btst     #0,d0
  beq.b    crb_envevn
- addq.l   #1,d0                    ; gerade Länge erzwingen
+ addq.l   #1,d0                    ; gerade Laenge erzwingen
 crb_envevn:
  move.l   act_pd,a1
  move.w   #$2000,d1                ; nur ST-RAM, nolimit
@@ -7130,14 +7130,14 @@ crb_no_ttram:
 * Environment erstellen
 
  move.l   ARG0(a6),d1              ; arg0
- move.l   a4,a2                    ; Programmname für _PNAM
+ move.l   a4,a2                    ; Programmname fuer _PNAM
  move.l   d0,a1                    ; neues Environment
  move.l   ENV(a6),a0               ; Quelle (Environment)
  move.l   CMDLINE(a6),d0           ; Kommandozeile
  bsr      create_env
 
-* Größe freien Speichers feststellen
-* Fehler, wenn nicht genug für Basepage
+* Groesse freien Speichers feststellen
+* Fehler, wenn nicht genug fuer Basepage
 
 crb_illenv:
  move.l   d5,d0                         ; soviel Speicher minimal
@@ -7149,18 +7149,18 @@ crb_illenv:
  moveq    #-1,d0
  bsr      Mxalloc
  btst     #1,d6                         ; Laden aus FastRAM ?
- beq.b    crb_mxav                      ; nein, Prg muß im ST-RAM liegen
- move.l   d0,-(sp)                      ; Größe des ST-RAM merken
+ beq.b    crb_mxav                      ; nein, Prg muss im ST-RAM liegen
+ move.l   d0,-(sp)                      ; Groesse des ST-RAM merken
  move.l   act_pd,a1
  move.w   #$2001,d1                     ; nur TT-RAM, nolimit
 
  moveq    #-1,d0
  bsr      Mxalloc
- move.l   (sp)+,d1                      ; Größe TT-RAM vergl. mit Größe ST-RAM
+ move.l   (sp)+,d1                      ; Groesse TT-RAM vergl. mit Groesse ST-RAM
  cmp.l    d1,d0
- bcc.b    crb_mxav                      ; TT-RAM hat größeren Block, nehmen!
+ bcc.b    crb_mxav                      ; TT-RAM hat groesseren Block, nehmen!
 
-; checken, ob TT-RAM ausreicht für Heap ("TPA")
+; checken, ob TT-RAM ausreicht fuer Heap ("TPA")
 
  cmp.l    d5,d0
  bcc.b    crb_mxav                      ; reicht!
@@ -7186,7 +7186,7 @@ crb_freeenv1:
 crb_freeenv2:
  bra      crb_ende
 
-* Speicher für Programm holen (alles, was frei ist)
+* Speicher fuer Programm holen (alles, was frei ist)
 
 crb_enoughmem:
  move.l   act_pd,a1
@@ -7201,12 +7201,12 @@ crb_no_ttram2:
  beq      crb_freeenv              ; zuwenig MDs
  move.l   d0,a5                    ; a5 = neuer PD
 
-* Prozeß- Deskriptoren (owner) für beide MDs setzen
-* In Modus "Load+Exec" ist es der neue Prozeß, sonst der aktuelle
+* Prozess- Deskriptoren (owner) fuer beide MDs setzen
+* In Modus "Load+Exec" ist es der neue Prozess, sonst der aktuelle
 
  move.l   OWNER(a6),d0             ; Eigner
  bne.b    crb_old_owner            ; ist angegeben
- move.l   a5,d0                    ; ist neuer Prozeß
+ move.l   a5,d0                    ; ist neuer Prozess
 crb_old_owner:
  tst.l    d7
  beq.b    crb_noenv1
@@ -7237,7 +7237,7 @@ crb_noenv2:
  add.l    a5,d0
  move.l   d0,p_hitpa(a5)
  lea      p_tbase(a5),a0
- moveq    #61,d0                   ; dbra- Zähler
+ moveq    #61,d0                   ; dbra- Zaehler
 crb_clrloop:
  clr.l    (a0)+
  dbra     d0,crb_clrloop
@@ -7247,14 +7247,14 @@ crb_clrloop:
  lea      128(a5),a0
  move.l   a0,p_dta(a5)
 
-* zunächst Default- Standardhandles einsetzen
+* zunaechst Default- Standardhandles einsetzen
 
  lea      def_hdlx(pc),a0
  lea      p_devx(a5),a1
  move.l   (a0)+,(a1)+
  move.w   (a0),(a1)
 
-* präventiv hier schon einmal das Standardlaufwerk setzen
+* praeventiv hier schon einmal das Standardlaufwerk setzen
 
  move.l   act_pd,a0
  move.b   p_defdrv(a0),p_defdrv(a5)
@@ -7274,7 +7274,7 @@ crb_lim:
  move.l   d7,p_env(a5)
  move.l   d4,p_procdata(a5)
 
-* Kommandozeile in die Basepage kopieren und mit '\0' abschließen
+* Kommandozeile in die Basepage kopieren und mit '\0' abschliessen
 
  move.l   CMDLINE(a6),a1           ; Kommandozeile
  cmpi.b   #$fe,(a1)                ; Sonderbehandlung ?
@@ -7322,12 +7322,12 @@ crb_ende:
 * void chg_bp_owner( a0 = PD *bp )
 *
 * Eigner von Basepage und PROCDATA und Environment wird der
-* Prozeß selbst.
+* Prozess selbst.
 *
 
 chg_bp_owner:
  move.l   a0,-(sp)                 ; bp merken
- move.l   a0,a1                    ; neuer Eigentümer
+ move.l   a0,a1                    ; neuer Eigentuemer
 ;move.l   a0,a0                    ; Blockadresse
  bsr      Mchgown
  move.l   (sp),a1
@@ -7349,17 +7349,17 @@ cbpend:
 *
 * long load_PH( a0 = char *fname, a1 = PH *ph )
 *
-* Lädt den Programm-Header und gibt das geöffnete Handle zurück.
-* Negativer Rückgabewert: Fehler
+* Laedt den Programm-Header und gibt das geoeffnete Handle zurueck.
+* Negativer Rueckgabewert: Fehler
 *
 
 load_PH:
  move.l   a1,-(sp)
  moveq    #O_EXEC,d0
 ;move.l   a0,a0
- bsr      Fopen                    ; zum Lesen öffnen
+ bsr      Fopen                    ; zum Lesen oeffnen
  move.l   d0,-(sp)                 ; Handle retten
- bmi.b    lph_ende                 ; Fehler beim Öffnen
+ bmi.b    lph_ende                 ; Fehler beim Oeffnen
  move.l   4(sp),a0                 ; a0 = ph
  moveq    #ph_sizeof,d1
 ;move.w   d0,d0
@@ -7387,7 +7387,7 @@ lph_ende:
 *
 * void exec_PD( a0 = PD *pd )
 *
-* Startet den Prozeß
+* Startet den Prozess
 *
 
 exec_PD:
@@ -7411,8 +7411,8 @@ pxc_startacc:
  move.l   act_appl,p_app(a5)
  move.l   sp,p_ssp(a5)
 
-* Supervisorstack aufbauen (vom aktuellen Prozeß geerbt) !
-* Modus 106 nicht mehr unterstützt
+* Supervisorstack aufbauen (vom aktuellen Prozess geerbt) !
+* Modus 106 nicht mehr unterstuetzt
 
  tst.w    cpu_typ.w
  beq.b    pxc_00
@@ -7424,7 +7424,7 @@ pxc_00:
  clr.l    -(sp)
  clr.l    -(sp)
  clr.l    -(sp)                    ; d1/d2/a1/a2 sind alle 0
- pea      dt_ret(pc)               ; Rücksprungadresse im DOS
+ pea      dt_ret(pc)               ; Ruecksprungadresse im DOS
  clr.l    -(sp)                    ; a6
  move.l   p_dbase(a5),-(sp)        ; a5
  move.l   p_bbase(a5),-(sp)        ; a4
@@ -7440,12 +7440,12 @@ pxc_regloop:
  bne.b    pxc_noacc
 
 pxc_scnt:
- move.l   p_context(a5),p_res3+4(a5)    ; p_res3 ist p_context für Pterm
+ move.l   p_context(a5),p_res3+4(a5)    ; p_res3 ist p_context fuer Pterm
 
 pxc_noacc:
  move.l   sp,p_context(a5)
 
-* Prozeß umschalten
+* Prozess umschalten
  move.l   a5,act_pd
  move.l   act_appl,d0
  beq.b    pxc_noap
@@ -7453,8 +7453,8 @@ pxc_noacc:
  move.l   a5,ap_pd(a0)             ; in Applikationsstruktur eintragen
 pxc_noap:
 
-* Hier wird der neue Prozeß gestartet
-* wichtig: 2s Zeit, um den Mshrink durchzuführen
+* Hier wird der neue Prozess gestartet
+* wichtig: 2s Zeit, um den Mshrink durchzufuehren
 
  tst.w    pe_slice.w
  bmi.b    pxc_no_slice
@@ -7463,14 +7463,14 @@ pxc_no_slice:
  cmpi.l   #'_ACC',p_res3(a5)       ; Modus "ACC starten" ?
  beq      start_acc
 
- bra      start_proc               ; nein, Prozeß starten
+ bra      start_proc               ; nein, Prozess starten
 
 
 **********************************************************************
 *
 * void flush_cpu_cache( void )
 *
-* Löscht den CPU-Cache.
+* Loescht den CPU-Cache.
 *
 
 flush_cpu_cache:
@@ -7481,12 +7481,12 @@ flush_cpu_cache:
  cmpi.w   #30,cpu_typ
  bne.b    fcc_noflush
 fcc_020:
-* für den 020/030 die Caches löschen
+* fuer den 020/030 die Caches loeschen
  movec    cacr,d0
  or.l     #$808,d0            ; data+instr invalid
  movec    d0,cacr
  bra.b    fcc_noflush
-* für den 040 und 060 die Caches löschen (cpusha)
+* fuer den 040 und 060 die Caches loeschen (cpusha)
 fcc_040:
  DC.W     $f4f8
 fcc_noflush:
@@ -7499,49 +7499,49 @@ fcc_noflush:
 *
 * 8(a6)        :    int  mode
 * $a(a6)       :    char name[]
-* $e(a6)       :    char cmdline[], PD * neuer Prozeß
+* $e(a6)       :    char cmdline[], PD * neuer Prozess
 * $12(a6)      :    char env[]
 *
 * Standardmodi:
 *
 *  Modus   0:  EXE_LDEX
-*              Lädt und startet ein Programm 2(a4)
+*              Laedt und startet ein Programm 2(a4)
 *              mit Kommandozeile 6(a4) und Environment 10(a4)
 *  Modus   3:  EXE_LD
-*              Lädt ein Programm 2(a4)
+*              Laedt ein Programm 2(a4)
 *              mit Kommandozeile 6(a4) und Environment 10(a4)
-*              Rückgabe: Adresse der Basepage
+*              Rueckgabe: Adresse der Basepage
 *  Modus   4:  EXE_EX
 *              Startet ein Programm 6(a4)
 *  Modus   5:  EXE_BASE
 *              Erstellt einen PD
 *              mit Kommandozeile 6(a4) und Environment 10(a4)
 *  Modus   6:  EXE_EXFR
-*              wie Modus 4, aber PD und Env dem neuen Prozeß
+*              wie Modus 4, aber PD und Env dem neuen Prozess
 *  Modus   7:  EXE_XBASE
 *              wie Modus 5, aber statt name prgflags
 *
 * Multitasking- Erweiterungen:
 *
 *  Modus 100:  MEXE_LDEX           (wird vom AES erledigt)
-*              MiNT: Starte Prozeß parallel (sonst wie Modus 0)
+*              MiNT: Starte Prozess parallel (sonst wie Modus 0)
 *  Modus 101:  XEXE_INIT, dummy,child,parent
 *              Vererbt Pfad- und Dateihandles. Es wird aber kein
 *              PROCDATA erstellt, kein PID vergeben und kein Eintrag
 *              in u:\proc gemacht.
-*              (wird vom AES verwendet, für den Loader-Prozeß, der dann
+*              (wird vom AES verwendet, fuer den Loader-Prozess, der dann
 *               das Programm normal per Pexec(EXE_LDEX) startet)
 *  Modus 102:  XEXE_TERM
-*              Löscht einen Prozeß 6(a4)
+*              Loescht einen Prozess 6(a4)
 *              (wird vom AES verwendet)
 *  Modus 104:  MEXE_EX             (wird vom AES erledigt)
 *              MiNT: Startet ein Programm 6(a4) parallel im selben
-*              Adreßraum
+*              Adressraum
 *  Modus 106:  MEXE_EXFR           (wird vom AES erledigt)
 *              MiNT: Startet ein Programm 6(a4) parallel im eigenen
-*              Adreßraum
+*              Adressraum
 *  Modus 107:  XEXE_XBASE
-*              wie Modus 7, aber Prozeßname statt cmdline
+*              wie Modus 7, aber Prozessname statt cmdline
 *              (wird vom BIOS verwendet)
 *  Modus 108:  XEXE_EXACC
 *              Startet ein ACC. Es findet kein Kontextwechsel statt, es wird
@@ -7549,10 +7549,10 @@ fcc_noflush:
 *              Textsegments im Usermode mit a0 = NULL gestartet.
 *              (wird vom AES verwendet)
 *  Modus 200:  MEXE_LDEXOV         (wird von dpex_200 erledigt)
-*              Starte Prozeß als Overlay (sonst wie Modus 0).
-*              D.h. der neue Prozeß überschreibt den alten.
+*              Starte Prozess als Overlay (sonst wie Modus 0).
+*              D.h. der neue Prozess ueberschreibt den alten.
 *
-* FUNKTIONEN FÜR PARALLELE PEXEC-MODI (ab x.5.96):
+* FUNKTIONEN FUeR PARALLELE PEXEC-MODI (ab x.5.96):
 *
 *  Modus 301:  XXEXE_INIT, pinfo, child, parent, pname
 *              Vererbt Pfad, Dateihandles und die PINFO-Struktur.
@@ -7560,84 +7560,84 @@ fcc_noflush:
 *              Name des parent eingesetzt
 *              (wird vom AES verwendet, nicht dokumentieren!!!)
 *  Modus 401:  XXEXE_INITM, pinfo, child, parent, pname
-*              Wie 301, vererbt zusätzlich die Speicherblöcke (!)
+*              Wie 301, vererbt zusaetzlich die Speicherbloecke (!)
 *              (wird vom AES verwendet, nicht dokumentieren!!!)
 *  Modus 300:  XXEXE_EX, dummy, basepage, dummy
-*              Startet einen Prozeß, der bereits komplett initialisiert ist,
+*              Startet einen Prozess, der bereits komplett initialisiert ist,
 *              (d.h. Dateihandles und PINFO-Struktur werden nicht mehr
-*              verändert).
+*              veraendert).
 *              (wird vom AES verwendet, nicht dokumentieren!!!)
 *
-* WEGEN INKOMPATIBILITÄT ZU MINT ENTFERNT:
+* WEGEN INKOMPATIBILITAeT ZU MINT ENTFERNT:
 *
 *  Modus 106:  XEXE_EXFR
 *              Wie Modus 6, jedoch wird statt <env> der ssp des zu startenden
 *              Prozesses angegeben
 *
-*  unter XAES wird, außer bei Modus 106, der SSP vererbt!
+*  unter XAES wird, ausser bei Modus 106, der SSP vererbt!
 *
 * Neu ab MagiC 24.8.94:
-*  Unterstützung des ARGV-Prinzips. Ist die Kommandozeile zu lang, wird
-*  eine Länge von $7f eingetragen und die Argumente im Environment übergeben.
+*  Unterstuetzung des ARGV-Prinzips. Ist die Kommandozeile zu lang, wird
+*  eine Laenge von $7f eingetragen und die Argumente im Environment uebergeben.
 *  Dabei ist die letzte Variable "ARGV=\0p1\0p2\0...pn\0\0".
-*  Der Automatismus wird folgendermaßen unterstützt:
+*  Der Automatismus wird folgendermassen unterstuetzt:
 *
-*  - Wenn das Längenbyte der Kommandozeile < $7f ist, weiß das Programm
-*    nichts von ARGV. Wenn das Environment derartige Daten enthält, werden
+*  - Wenn das Laengenbyte der Kommandozeile < $7f ist, weiss das Programm
+*    nichts von ARGV. Wenn das Environment derartige Daten enthaelt, werden
 *    sie beim Kopieren entfernt.
-*  - Ist das Längenbyte $7f, arbeitet das Programm mit ARGV im Sinne von
+*  - Ist das Laengenbyte $7f, arbeitet das Programm mit ARGV im Sinne von
 *    MultiTOS. Das Environment wird nicht angetastet.
-*  - Ist das Längenbyte $ff, wird die Kommandozeile als nullterminierte
-*    Zeichenkette dahinter übergeben. Wenn die Zeile kürzer als 126 Zeichen
+*  - Ist das Laengenbyte $ff, wird die Kommandozeile als nullterminierte
+*    Zeichenkette dahinter uebergeben. Wenn die Zeile kuerzer als 126 Zeichen
 *    ist, werden die Leerzeichen durch EOS ersetzt, ein ARGV im Environment
-*    erzeugt und $7f als Länge der Kommandozeile eingetragen.
+*    erzeugt und $7f als Laenge der Kommandozeile eingetragen.
 *    Ansonsten wird keine Kommandozeile eingetragen und nur das ARGV
 *    erstellt.
-*  - Ist das Längenbyte $fe, folgt zunächst die Zeichenkette "ARGV=xxx",
-*    wobei "xxx" optional für die Kennzeichnung von leeren Argumenten
+*  - Ist das Laengenbyte $fe, folgt zunaechst die Zeichenkette "ARGV=xxx",
+*    wobei "xxx" optional fuer die Kennzeichnung von leeren Argumenten
 *    verwendet werden kann.
 *    Es folgt eine nullterminierte Reihe von Argumenten,
-*    die mit zwei Nullbytes abgeschlossen sind. Die Kommandozeilenlänge wird
+*    die mit zwei Nullbytes abgeschlossen sind. Die Kommandozeilenlaenge wird
 *    als $7f gesetzt und die Argumente ins Environment kopiert.
 *
 *
 * Diese Aktionen bzw. Pexec-Modi werden NICHT innerhalb von Pexec()
-* ausgeführt, sondern vorher abgefangen und entsprechend umgesetzt:
+* ausgefuehrt, sondern vorher abgefangen und entsprechend umgesetzt:
 *
 *
 *    ACC laden und starten:
 *
 *         Programm mit Pexec(EXE_LD) laden
 *         Basepage mit Mshrink bearbeiten
-*         Prozeß mit XEXE_EXACC starten
+*         Prozess mit XEXE_EXACC starten
 *
 *    Parallele Applikation per shel_write() starten:
 *
 *         Basepage per Pexec(EXE_BASE) erstellen, kein Env
 *         Eigner der Basepage wird das Programm selbst
-*         Prozeß mit XEXE_INIT initialisieren (Pfad-/Dateihandles)
-*          Der Ladeprozeß hat keine PROCDATA, keine pid und keinen
+*         Prozess mit XEXE_INIT initialisieren (Pfad-/Dateihandles)
+*          Der Ladeprozess hat keine PROCDATA, keine pid und keinen
 *          Eintrag in u:\proc\
-*         Prozeß einfach anspringen, lädt Programm per Pexec(EXE_LDEX)
-*         Ladeprozeß mit Pexec(XEXE_TERM) entfernen
+*         Prozess einfach anspringen, laedt Programm per Pexec(EXE_LDEX)
+*         Ladeprozess mit Pexec(XEXE_TERM) entfernen
 *
 *    Pexec(100 (MEXE_LDEX)):
 *
 *         Programm mit Pexec(EXE_LD) laden
-*         Prozeß mit Pexec(XXEXE_INIT) initialisieren
-*         Neuer Prozeß als Eigner von Basepage und Env
-*         Prozeß mit Pexec(XXEXE_EX) starten
+*         Prozess mit Pexec(XXEXE_INIT) initialisieren
+*         Neuer Prozess als Eigner von Basepage und Env
+*         Prozess mit Pexec(XXEXE_EX) starten
 *         
 *    Pexec(104 (MEXE_EX)):
 *
-*         Prozeß mit Pexec(XXEXE_MINIT) initialisieren
-*         Prozeß mit Pexec(XXEXE_EX) starten
+*         Prozess mit Pexec(XXEXE_MINIT) initialisieren
+*         Prozess mit Pexec(XXEXE_EX) starten
 *
 *    Pexec(106 (MEXE_EXFR)):
 *
-*         Prozeß mit Pexec(XXEXE_INIT) initialisieren
-*         Neuer Prozeß als Eigner von Basepage und Env
-*         Prozeß mit Pexec(XXEXE_EX) starten
+*         Prozess mit Pexec(XXEXE_INIT) initialisieren
+*         Neuer Prozess als Eigner von Basepage und Env
+*         Prozess mit Pexec(XXEXE_EX) starten
 *
 *    Pexec(200 (MEXE_LDEXOV)):
 *
@@ -7654,21 +7654,21 @@ Pexec:
      DEBL 'Pexec mit Modus ',(a0)
  link     a6,#STKOFFS
  movem.l  d7/a4/a5,-(sp)
- moveq    #0,d7                    ; Datei nicht geöffnet
+ moveq    #0,d7                    ; Datei nicht geoeffnet
  move.l   a0,a4
 
  clr.w    HAVE_SEM(a6)             ; noch keine Semaphore belegt
 
  lea      PH(a6),a0
  lea      ph_sizeof(a0),a1
- jsr      fast_clrmem              ; Längen und prgflags auf 0
+ jsr      fast_clrmem              ; Laengen und prgflags auf 0
 
 * switch(mode)
 
  lea      pxc_jmptab(pc),a0
 pxc_switchloop:
  move.w   (a0)+,d0
- bmi      pxc_einvfn               ; ungültiger Modus
+ bmi      pxc_einvfn               ; ungueltiger Modus
  move.w   (a0)+,d1                 ; Sprung-Offset
  cmp.w    (a4),d0                  ; mode
  bne.b    pxc_switchloop
@@ -7702,11 +7702,11 @@ pxc_mod0:
      DEBT 'Pexec(0) mit Datei ',2(a4)
  lea      PH(a6),a1
  move.l   2(a4),a0                 ; fname
- bsr      load_PH                  ; Öffnen und PH einlesen
+ bsr      load_PH                  ; Oeffnen und PH einlesen
  move.l   d0,d7
  ble      pxc_ende                 ; Lesefehler
 
- clr.l    -(sp)                    ; owner ist neuer Prozeß
+ clr.l    -(sp)                    ; owner ist neuer Prozess
  pea      PH(a6)
  move.l   10(a4),-(sp)             ; env
  move.l   6(a4),-(sp)
@@ -7756,7 +7756,7 @@ pxc_0f:
 pxc_mod3:
  lea      PH(a6),a1
  move.l   2(a4),a0                 ; fname
- bsr      load_PH                  ; Öffnen und PH einlesen
+ bsr      load_PH                  ; Oeffnen und PH einlesen
  move.l   d0,d7
  ble      pxc_ende                 ; Lesefehler
 
@@ -7767,7 +7767,7 @@ pxc_mod3:
  bset     #3,PH+ph_flags+3(a6)     ; minimaler Speicher
 pxm3_no_magic:
 
- move.l   act_pd,-(sp)             ; owner ist aktueller Prozeß
+ move.l   act_pd,-(sp)             ; owner ist aktueller Prozess
  pea      PH(a6)
  move.l   10(a4),-(sp)             ; env
  move.l   6(a4),-(sp)
@@ -7788,7 +7788,7 @@ pxm3_no_magic:
  tst.l    d0
  bmi      pxc_abort                ; Fehler
  move.l   a5,d0                    ; PD *
- bra      pxc_ende                 ; Basepage zurückgeben
+ bra      pxc_ende                 ; Basepage zurueckgeben
 
 *
 * case EXE_EX (4):
@@ -7816,7 +7816,7 @@ pxc_mod4:
 *
 
 pxc_mod5:
- move.l   act_pd,-(sp)             ; owner ist aktueller Prozeß
+ move.l   act_pd,-(sp)             ; owner ist aktueller Prozess
  pea      PH(a6)
  move.l   10(a4),-(sp)             ; env
  move.l   6(a4),-(sp)
@@ -7827,7 +7827,7 @@ pxc_mod5:
  tst.l    d0
  beq      pxc_ensmem
 ;move.l   d0,d0
- bra      pxc_ende                 ; Basepage zurückgeben
+ bra      pxc_ende                 ; Basepage zurueckgeben
 
 *
 * case EXE_EXFR (6):
@@ -7860,7 +7860,7 @@ pxc_mod6:
 pxc_mod7:
  move.l   2(a4),PH+ph_flags(a6)    ; prgflags statt name
 
- move.l   act_pd,-(sp)             ; owner ist aktueller Prozeß
+ move.l   act_pd,-(sp)             ; owner ist aktueller Prozess
  pea      PH(a6)
  move.l   10(a4),-(sp)             ; env
  move.l   6(a4),-(sp)              ; cmdline
@@ -7871,7 +7871,7 @@ pxc_mod7:
  tst.l    d0
  beq      pxc_ensmem
 ;move.l   d0,d0
- bra      pxc_ende                 ; Basepage zurückgeben
+ bra      pxc_ende                 ; Basepage zurueckgeben
 
 *
 * case XEXE_TERM (102):
@@ -7897,7 +7897,7 @@ pxc_mod102:
 pxc_mod107:
  move.l   2(a4),PH+ph_flags(a6)    ; prgflags statt name
 
- move.l   act_pd,-(sp)             ; owner ist aktueller Prozeß
+ move.l   act_pd,-(sp)             ; owner ist aktueller Prozess
  pea      PH(a6)
  move.l   10(a4),-(sp)             ; env
  pea      nulb_s(pc)               ; cmdline
@@ -7908,7 +7908,7 @@ pxc_mod107:
  tst.l    d0
  beq      pxc_ensmem
 ;move.l   d0,d0
- bra      pxc_ende                 ; Basepage zurückgeben
+ bra      pxc_ende                 ; Basepage zurueckgeben
 
 *
 * case XEXE_EXACC (108):
@@ -7965,7 +7965,7 @@ pxc_mod301:
  bne.b    pxc_isnam_x01            ; Name ist angegeben
  move.l   10(a4),a0
  move.l   p_procdata(a0),a0
- lea      pr_procname(a0),a0       ; Prozeßnamen nehmen
+ lea      pr_procname(a0),a0       ; Prozessnamen nehmen
 pxc_isnam_x01:
  move.l   6(a4),a1
  move.l   p_procdata(a1),a1
@@ -7977,7 +7977,7 @@ pxc_nonam_x01:
  bsr      init_pd
 
  cmpi.w   #401,(a4)
- beq.b    pxc_no_chown             ; bei Pexec(104) Eigner nicht ändern
+ beq.b    pxc_no_chown             ; bei Pexec(104) Eigner nicht aendern
  move.l   6(a4),a0                 ; Basepage child wird eigener Eigner
  bsr      chg_bp_owner
 pxc_no_chown:
@@ -8068,21 +8068,21 @@ pxc_abne:
 * Unterschiede zu DOS 0.19: Datei wird geschlossen bei EPLFMT
 *                                                      ENSMEM
 *                                                      COM- Format
-*                           Speicher wird auch bei COM- Format gelöscht!
+*                           Speicher wird auch bei COM- Format geloescht!
 *
 * Verbesserungen: - Abfrage auf ungerade Relocation- Adressen
-*                 - Sicherheitsabfragen bei SÄMTLICHEN Fread- Aufrufen
-*                 - Sichern und Schließen des Handles bei longjmp
+*                 - Sicherheitsabfragen bei SAeMTLICHEN Fread- Aufrufen
+*                 - Sichern und Schliessen des Handles bei longjmp
 *                 - Optimierungen
 *
 * unbenutzt: long -$c(a6),-8(a6),-4(a6)
 *
-* Für den residenten Monitor kann man über Handle
+* Fuer den residenten Monitor kann man ueber Handle
 * -1 den Monitor laden
 *
-* 17.9.95: In process->p_mem kann man die maximale Größe des Heap
-* übergeben, die alternativ auch hinter den Relocationdaten liegen
-* kann. Eine Länge von -1L ist der Normalwert und heißt "unlimitiert".
+* 17.9.95: In process->p_mem kann man die maximale Groesse des Heap
+* uebergeben, die alternativ auch hinter den Relocationdaten liegen
+* kann. Eine Laenge von -1L ist der Normalwert und heisst "unlimitiert".
 *
 
 pload:
@@ -8100,15 +8100,15 @@ pload:
  move.l   ph_tlen(a4),d0           ; TEXT
  add.l    ph_dlen(a4),d0           ; + DATA
  move.l   d0,d3
-* -$14(a6) = Länge der TPA ohne Basepage - textlen - datalen (Platz für BSS)
+* -$14(a6) = Laenge der TPA ohne Basepage - textlen - datalen (Platz fuer BSS)
  move.l   p_hitpa(a5),a0
  sub.l    p_lowtpa(a5),a0
  suba.w   #256,a0
  sub.l    d3,a0
  move.l   a0,-$14(a6)              ; kann negativ sein!
-* bsslen <= Länge der TPA ohne Basepage - textlen - datalen ?
+* bsslen <= Laenge der TPA ohne Basepage - textlen - datalen ?
  cmp.l    ph_blen(a4),a0
- blt      pld_ensmem               ; Kein Platz für BSS => return(ENSMEM)
+ blt      pld_ensmem               ; Kein Platz fuer BSS => return(ENSMEM)
 * a5 = Zeiger hinter Basepage = Beginn von TEXT
  lea      $100(a5),a5
 * a3 = Zeiger hinter Basepage + textlen + datalen,  also Beginn von BSS
@@ -8119,14 +8119,14 @@ pload:
  move.l   a5,p_tbase(a0)
  move.l   a5,p_dbase(a0)
  move.l   a5,p_bbase(a0)
- move.l   ph_tlen(a4),d0           ; Länge des TEXT
+ move.l   ph_tlen(a4),d0           ; Laenge des TEXT
  move.l   d0,p_tlen(a0)
  add.l    d0,p_dbase(a0)
  add.l    d0,p_bbase(a0)
- move.l   ph_dlen(a4),d0           ; Länge des DATA
+ move.l   ph_dlen(a4),d0           ; Laenge des DATA
  move.l   d0,p_dlen(a0)
  add.l    d0,p_bbase(a0)
- move.l   ph_blen(a4),p_blen(a0)   ; Länge des BSS
+ move.l   ph_blen(a4),p_blen(a0)   ; Laenge des BSS
 * TEXT und DATA lesen
 
      IFNE MONITOR
@@ -8169,13 +8169,13 @@ __mon_2:
 
 * Relozieren
 
-* Dateizeiger auf Beginn der Relozierdaten (SYM überspringen)
+* Dateizeiger auf Beginn der Relozierdaten (SYM ueberspringen)
 
      IFNE MONITOR
  tst.w    d4
  bge.b    __mon_6
  moveq    #ph_sizeof,d7            ; Header
- add.l    ph_slen(a4),d7           ; Länge der Symboltabelle
+ add.l    ph_slen(a4),d7           ; Laenge der Symboltabelle
  add.l    d3,d7
  lea      mon,a0
  move.b   0(a0,d7.l),-$18(a6)
@@ -8189,7 +8189,7 @@ __mon_6:
  clr.w    -(sp)                    ; ab Beginn
  move.w   d4,-(sp)                 ; Handle
  moveq    #ph_sizeof,d1            ; Header
- add.l    ph_slen(a4),d1           ; Länge der Symboltabelle
+ add.l    ph_slen(a4),d1           ; Laenge der Symboltabelle
  add.l    d3,d1
  move.l   d1,-(sp)                 ; pos
  move.l   sp,a0
@@ -8209,7 +8209,7 @@ __mon_7:
  clr.w    -(sp)                    ; ab Beginn
  move.w   d4,-(sp)                 ; Handle
  moveq    #ph_sizeof,d1            ; Header
- add.l    ph_slen(a4),d1           ; Länge der Symboltabelle
+ add.l    ph_slen(a4),d1           ; Laenge der Symboltabelle
  add.l    d3,d1
  move.l   d1,-(sp)                 ; pos
  move.l   sp,a0
@@ -8232,7 +8232,7 @@ __mon_7:
  bne      pld_eplfmt
  tst.l    -$18(a6)
  beq      pld_endrelo
-* DIE ERSTE RELOCATIONADRESSE IST != 0: ES MUß RELOZIERT WERDEN
+* DIE ERSTE RELOCATIONADRESSE IST != 0: ES MUss RELOZIERT WERDEN
  move.l   a5,d6
  add.l    -$18(a6),d6
  cmp.l    a5,d6
@@ -8246,14 +8246,14 @@ __mon_7:
  movea.l  d6,a1
  add.l    d0,(a1)
 
-* Schleife fürs Einlesen der Relocationbytes
+* Schleife fuers Einlesen der Relocationbytes
 
 pload_loop2:
  cmp.l    a5,d6
  bcs      pld_eplfmt
  cmp.l    a3,d6
  bhi      pld_eplfmt
-* Relocationdaten ins BSS und ins freie Segment laden (soviele wie möglich)
+* Relocationdaten ins BSS und ins freie Segment laden (soviele wie moeglich)
 
      IFNE MONITOR
  tst.w    d4
@@ -8288,7 +8288,7 @@ __mon_10:
  bmi      pld_clende
 * -$10(a6) = Anzahl geladener Relocationbytes
  move.l   d0,-$10(a6)
-* d5 ist Zähler
+* d5 ist Zaehler
  move.l   d0,d5
 * a2 ist laufender Zeiger
  movea.l  a3,a2
@@ -8300,7 +8300,7 @@ pload_loop:
  bne      pld_no_endrelo
 
 * Ein Nullbyte beendet die Relocationtabelle
-* Es folgt optional die Maximallänge des Heap
+* Es folgt optional die Maximallaenge des Heap
 
  cmpi.l   #9,d5
  bcs      pld_endrelo              ; keine Speicherdaten
@@ -8322,7 +8322,7 @@ pld_lim_loop:
 pld_no_endrelo:
  cmp.w    #1,d0
  bne.b    pload_l2
-* Ein 1 - Byte erhöht den Zähler um 254 Bytes
+* Ein 1 - Byte erhoeht den Zaehler um 254 Bytes
  add.l    #$fe,d6
  bra.b    pload_l3
 * Ansonsten wird eben reloziert
@@ -8333,7 +8333,7 @@ pload_l2:
  move.l   a5,d0
  movea.l  d6,a1
  add.l    d0,(a1)
-* nächstes Byte
+* naechstes Byte
 pload_l3:
  subq.l   #1,d5
 pload_l1:
@@ -8350,10 +8350,10 @@ pld_endrelo:
  move.l   8(a6),a0                 ; PD *
  move.l   p_mem(a0),d1
  addq.l   #1,d1
- beq      pld_unlimited            ; war -1 (unbeschränkt)
+ beq      pld_unlimited            ; war -1 (unbeschraenkt)
  subq.l   #1,d1
  move.l   p_hitpa(a0),d0
- sub.l    p_lowtpa(a0),d0          ; aktuelle Länge (BP+TEXT+DATA+BSS+HEAP)
+ sub.l    p_lowtpa(a0),d0          ; aktuelle Laenge (BP+TEXT+DATA+BSS+HEAP)
  move.l   p_tlen(a0),d2
  add.l    p_dlen(a0),d2
  add.l    p_blen(a0),d2
@@ -8363,27 +8363,27 @@ pld_endrelo:
  move.l   d1,p_mem(a0)
  bge.b    pld_unlimited            ; maxheap >= heap
  clr.l    p_mem(a0)                ; aller Speicher vergeben
- add.l    d1,d0                    ; aktuelle Länge reduzieren
+ add.l    d1,d0                    ; aktuelle Laenge reduzieren
  add.l    d1,p_hitpa(a0)           ; und in PD korrigieren
- add.l    d1,-$14(a6)              ; und zu löschenden Speicher verkleinern
+ add.l    d1,-$14(a6)              ; und zu loeschenden Speicher verkleinern
 ;move.l   d0,d0
  suba.l   a1,a1                    ; nolimit
 ;move.l   a0,a0
  bsr      Mxshrink
 
-* BSS und Heap löschen, Datei schließen
+* BSS und Heap loeschen, Datei schliessen
 
 pld_unlimited:
  move.l   ph_blen(a4),d0           ; bsslen
  btst     #0,ph_flags+3(a4)        ; Bit 0 von res2
- bne.b    pld_clr                  ; nur BSS löschen
- move.l   -$14(a6),d0              ; BSS und Heap löschen
+ bne.b    pld_clr                  ; nur BSS loeschen
+ move.l   -$14(a6),d0              ; BSS und Heap loeschen
 pld_clr:
  lea      0(a3,d0.l),a1
  move.l   a3,a0
  jsr      fast_clrmem
 
- bsr      flush_cpu_cache          ; CPU-Caches löschen
+ bsr      flush_cpu_cache          ; CPU-Caches loeschen
 
  moveq    #E_OK,d0
  bra.b    pld_clende
@@ -8439,7 +8439,7 @@ D_Maddalt:
  move.l   (a0)+,d1                 ; d1 = Blockadresse
  btst     #0,d1
  bne      mada_err                 ; Blockadresse ungerade!
- move.l   (a0),d0                  ; Blocklänge
+ move.l   (a0),d0                  ; Blocklaenge
  move.l   d1,a0                    ; Blockadresse
  jmp      Maddalt
 mada_err:
@@ -8534,7 +8534,7 @@ s2c_next:
 *
 * char *err_to_str(d0 = char err)
 *
-* Rückgabe: d0: Zeiger auf Fehlertext oder NULL
+* Rueckgabe: d0: Zeiger auf Fehlertext oder NULL
 *              a0: Zeiger auf Fehlertext oder Default- Fehlertext
 *
 
@@ -8560,7 +8560,7 @@ errt_notfound:
 **********************************************************************
 *
 * long etv_critic(int errno)
-*  Rückgabe (long):      Abbruch: errno
+*  Rueckgabe (long):      Abbruch: errno
 *                        Wiederh. $10000
 *                        Ignor.    0
 * (aus KCMD)
@@ -8601,7 +8601,7 @@ etvc_input:
  addq.l   #4,sp
  cmpi.b   #3,d0                    ; ^C ?
  bne.b    etvc_nocc
- sf       criticret                ; MagiC 6.01: Semaphore löschen
+ sf       criticret                ; MagiC 6.01: Semaphore loeschen
  jmp      dos_break
 etvc_nocc:
  cmpi.w   #EOTHER,4(sp)
@@ -8628,7 +8628,7 @@ etvc_now:
  bne.b    etvc_input
  moveq    #0,d1
 etvc_back:
- move.l   d1,-(sp)  * Rückgabewert auf Stapel retten
+ move.l   d1,-(sp)  * Rueckgabewert auf Stapel retten
  move.w   d0,-(sp)  * Eingegebenes Zeichen ausgeben
  move.w   #5,-(sp)  ; Device 5 (RAWCON)
  move.w   #3,-(sp)
@@ -8638,8 +8638,8 @@ etvc_back:
  bsr      Bputch
  moveq    #$a,d0
  bsr      Bputch
- move.l   (sp)+,d0  * Rückgabewert von Stapel
- sf       criticret                ; MagiC 6.01: Semaphore löschen
+ move.l   (sp)+,d0  * Rueckgabewert von Stapel
+ sf       criticret                ; MagiC 6.01: Semaphore loeschen
  rts
 
 
@@ -8647,7 +8647,7 @@ etvc_back:
 *
 * void resvb_intmem(d0 = int num)
 *
-* Alloziert und reserviert <num> Blöcke für internen Speicher.
+* Alloziert und reserviert <num> Bloecke fuer internen Speicher.
 *
 
 resvb_intmem:
@@ -8668,7 +8668,7 @@ resvb_intmem:
 * void resv_intmem(a0 = void *mem, d0 = long bytes)
 *
 * reserviert ab Adresse <mem> <bytes> Bytes als internen Speicher
-* Der Bereich wird in 70-Byte-Blöcke zersägt, die als frei markiert
+* Der Bereich wird in 70-Byte-Bloecke zersaegt, die als frei markiert
 * und in die imbx[] - Liste eingetragen werden
 *
 
@@ -8690,12 +8690,12 @@ resv_end:
 *
 * long collect_IMB( void )
 *
-* Sucht überall nach einem unbenutzten IMB und gibt 1 oder 0 zurück
+* Sucht ueberall nach einem unbenutzten IMB und gibt 1 oder 0 zurueck
 *
 
 collect_IMB:
  movem.l  d7/a5,-(sp)
-* a5 durchläuft alle Laufwerke (DMDs) von 0 bis LASTDRIVE
+* a5 durchlaeuft alle Laufwerke (DMDs) von 0 bis LASTDRIVE
  moveq    #0,d7                    ; noch nichts erreicht
  lea      dmdx,a5
 coli_loop:
@@ -8708,7 +8708,7 @@ coli_loop:
  move.l   d0,a2
  jsr      (a2)
  or.l     d0,d7
-* nächstes Laufwerk
+* naechstes Laufwerk
 coli_next:
  cmpa.l   #dmdx+4*LASTDRIVE,a5
  bls.b    coli_loop
@@ -8721,8 +8721,8 @@ coli_next:
 *
 * d0 = long int_mblocks()
 *
-* ermittelt die Zahl der Blöcke, die für den internen Speicher zur
-* Verfügung stehen.
+* ermittelt die Zahl der Bloecke, die fuer den internen Speicher zur
+* Verfuegung stehen.
 *
 
 int_mblocks:
@@ -8731,7 +8731,7 @@ int_mblocks:
  bra.b    intmb_nextimb
 intmb_imb_loop:
  addq.l   #1,d0
- movea.l  (a0),a0                  ; nächster IMB
+ movea.l  (a0),a0                  ; naechster IMB
 intmb_nextimb:
  move.l   a0,d1
  bne.b    intmb_imb_loop
@@ -8742,7 +8742,7 @@ intmb_nextimb:
 *
 * d0 = DMD/DD/FD  *int_malloc()
 *
-* gibt einen Zeiger auf einen freien FD/DD/DMD zurück (FDSIZE Bytes)
+* gibt einen Zeiger auf einen freien FD/DD/DMD zurueck (FDSIZE Bytes)
 * der neue Block wird komplett genullt.
 *
 
@@ -8752,7 +8752,7 @@ int_malloc:
 intm_imb_loop:
  tst.b    imb_used(a0)
  beq      intm_ende                ; Block frei
- movea.l  (a0),a0                  ; nächster IMB
+ movea.l  (a0),a0                  ; naechster IMB
 intm_nextimb:
  move.l   a0,d0
  bne.b    intm_imb_loop
@@ -8763,12 +8763,12 @@ intm_nextimb:
  bra      intmem_err
 
 intm_ende:
- st       imb_used(a0)             ; "für DD/FD/DMD benutzt"
+ st       imb_used(a0)             ; "f",$81,"r DD/FD/DMD benutzt"
  addq.l   #imb_data,a0
  move.l   a0,-(sp)                 ; Zeiger auf Datenbereich merken
  lea      FDSIZE(a0),a1
  jsr      fast_clrmem
- move.l   (sp)+,d0                 ; Zeiger auf Datenbereich zurück
+ move.l   (sp)+,d0                 ; Zeiger auf Datenbereich zurueck
  rts
 
 
@@ -8776,7 +8776,7 @@ intm_ende:
 *
 * a0 = IMB *int_pmalloc()
 *
-* gibt einen Zeiger auf einen freien FD/DD/DMD zurück
+* gibt einen Zeiger auf einen freien FD/DD/DMD zurueck
 *    (FDSIZE+imb_data Bytes)
 * Der Block wird aus der internen Speicherverwaltung entfernt.
 * Der neue Block wird NICHT genullt.
@@ -8825,7 +8825,7 @@ intg_ende:
 *
 * d0 = long  int_mavail(a1 = long n[2])
 *
-* gibt Anzahl der freien+belegten Blöcke zurück
+* gibt Anzahl der freien+belegten Bloecke zurueck
 *
 
 int_mavail:
@@ -8841,7 +8841,7 @@ inta_imb_loop:
 inta_used:
  addq.l   #1,4(a1)
 inta_both:
- movea.l  (a0),a0                  ; nächster IMB
+ movea.l  (a0),a0                  ; naechster IMB
 inta_nextimb:
  move.l   a0,d0
  bne.b    inta_imb_loop
@@ -8880,7 +8880,7 @@ int_mfree:
 *
 * d0 =     0: Pterm(0)
 * d0 = $0073: VDI
-* d0 =    -1: Zeiger auf VDI- Dispatcher zurückgeben (vq_driver)
+* d0 =    -1: Zeiger auf VDI- Dispatcher zurueckgeben (vq_driver)
 * sonst        : alten Vektor aufrufen
 *
 
@@ -8914,7 +8914,7 @@ dtrp2_l2:
 * dos_trap1(int old_sr) Parameter auf USP         * vom Usermode
 * dos_trap1(int old_sr, int *old_pc, ... )        * vom Supervisormode
 *
-* zerstört a0/d0, Super zerstört auch d1
+* zerstoert a0/d0, Super zerstoert auch d1
 *
 
 dos_trap1:
@@ -8928,7 +8928,7 @@ dos_trap1:
  bra.b    dt_fromany
 dt_fromusr:
  tst.w    pe_slice.w
- bmi.b    dt_fromany               ; präemptives Multitasking abgeschaltet
+ bmi.b    dt_fromany               ; praeemptives Multitasking abgeschaltet
  cmpi.w   #$4a,(a0)                ; Mshrink ?
  bne.b    dt_yield                 ; nein, normale Funktion
  move.w   pe_slice.w,pe_timer.w    ; Mshrink: Timer korrigieren, kein yield
@@ -8947,7 +8947,7 @@ hexw:
  move.w   d0,d7
  moveq    #4-1,d6                  ; 4 Hex- Stellen
 hexw_loop:
- rol.w    #4,d7                    ; höchstes Nibble in die unteren 4 Bit
+ rol.w    #4,d7                    ; hoechstes Nibble in die unteren 4 Bit
  move.w   d7,d0
  bsr.b    _hex
  dbra     d6,hexw_loop
@@ -8972,7 +8972,7 @@ gogogo:
  movem.l  (sp)+,d0-d3/a0-a2
      ENDIF
 
- movem.l  d1/d2/a1/a2,-(sp)        ; wegen Kompatibilität zu TOS
+ movem.l  d1/d2/a1/a2,-(sp)        ; wegen Kompatibilitaet zu TOS
 
  lea      dos_fx(pc),a1
  move.w   (a0)+,d0                 ; Funktionsnummer
@@ -9021,14 +9021,14 @@ dt_ret:
  movem.l  (sp)+,d1/d2/a1/a2
 leave_dos:
  tst.w    pe_slice.w
- bmi.b    dt_rte                   ; präemptives Multitasking abgeschaltet
+ bmi.b    dt_rte                   ; praeemptives Multitasking abgeschaltet
  tst.w    pe_timer.w               ; Timer ist abgelaufen ?
  bne.b    dt_rte
  btst     #5,(sp)
  bne      dt_rte                   ; aus Supervisormode nicht abfangen
  jsr      appl_suspend
 dt_rte:
- rte                               ; Rücksprung
+ rte                               ; Ruecksprung
 
 dt_mac_xtension:
  addi.w   #$ff,d0
@@ -9047,7 +9047,7 @@ dt_einvfn:
 *
 * long Super ( d0 = char is_sup, a0 = void *param )
 *
-* Super() zerstört d1 !!
+* Super() zerstoert d1 !!
 *
 
 Super:
@@ -9069,7 +9069,7 @@ super_0:
  beq      super_usr                ; vom Usermodus
  move.l   sp,usp
 super_usr:
- move.l   sp,d0                    ; alten ssp zurück
+ move.l   sp,d0                    ; alten ssp zurueck
  move.l   a0,sp
  bra      leave_dos
 
@@ -9086,13 +9086,13 @@ exc_to_a0:
  beq.b    eta_00
  move.l   8(sp),-(a0)
  move.l   4(sp),-(a0)              ; Vektoroffset/pc/sr umkopieren
- move.l   (sp),8(sp)               ; Rücksprungadresse
+ move.l   (sp),8(sp)               ; Ruecksprungadresse
  addq.l   #8,sp
  rts
 eta_00:
  move.l   6(sp),-(a0)              ; pc umkopieren
  move.w   4(sp),-(a0)              ; sr umkopieren
- move.l   (sp),6(sp)               ; Rücksprungadresse
+ move.l   (sp),6(sp)               ; Ruecksprungadresse
  addq.l   #6,sp
  rts
 
@@ -9101,9 +9101,9 @@ eta_00:
 *
 * void _start_fork ( void )
 *
-* Startadresse für ge-fork-ten Prozeß. Die Basepage hatte in
+* Startadresse fuer ge-fork-ten Prozess. Die Basepage hatte in
 * p_tbase einen Zeiger auf diese Prozedur.
-* Der neue Prozeß wird dummerweise zunächst im User-Mode
+* Der neue Prozess wird dummerweise zunaechst im User-Mode
 * gestartet.
 *
 
@@ -9114,14 +9114,14 @@ _start_fork:
 _stf_go:
  move.l   act_pd,a5
  move.l   256(a5),p_tbase(a5) ; tbase wieder korrigieren
- move.l   256+4(a5),d0        ; Länge des geerbten Supervisor-Stack
- suba.l   d0,sp               ; Platz dafür schaffen
+ move.l   256+4(a5),d0        ; Laenge des geerbten Supervisor-Stack
+ suba.l   d0,sp               ; Platz dafuer schaffen
  move.l   sp,a0               ; dst
  lea      256+8(a5),a1        ; src
  jsr      vmemcpy              ; Supervisorstack kopieren
  move.l   #256,d0
  move.l   a5,a0
- bsr      Mshrink             ; Platz für geerbten Stack wieder freigeben
+ bsr      Mshrink             ; Platz fuer geerbten Stack wieder freigeben
 ; Signalhandler vererben
  move.l   p_parent(a5),d0
  beq.b    _stf_e1
@@ -9132,11 +9132,11 @@ _stf_go:
  lea      pr_sigdata(a1),a1        ; Quelle
  move.l   p_procdata(a5),a0
  lea      pr_sigdata(a0),a0        ; Ziel
- move.l   #32*sa_sizeof,d0    ; Länge
+ move.l   #32*sa_sizeof,d0    ; Laenge
  jsr      vmemcpy
 _stf_e1:
-; neuen Prozeß starten
- moveq    #0,d0               ; P(v)fork() liefert 0 für das Kind
+; neuen Prozess starten
+ moveq    #0,d0               ; P(v)fork() liefert 0 fuer das Kind
  bra      fork_end            ; Kind starten
 
 
@@ -9144,15 +9144,15 @@ _stf_e1:
 *
 * long D_Pvfork ( void )
 *
-* legt eine Kopie des aktuellen Prozesses an. Hält den aufrufenden
-* Prozeß an.
+* legt eine Kopie des aktuellen Prozesses an. Haelt den aufrufenden
+* Prozess an.
 * Es werden nur die CPU-Register a3-a6/d3-d7/usp vererbt.
 *
 * Fork() erstellt eine neue Basepage, dahinter werden folgende
-* Daten kopiert, die beim Start des neuen Prozesses benötigt werden:
+* Daten kopiert, die beim Start des neuen Prozesses benoetigt werden:
 *
 * LONG tbase                  ; Beginn des Textsegments
-* LONG ssplen                 ; Länge des Supervisorstacks
+* LONG ssplen                 ; Laenge des Supervisorstacks
 * char sstack[?]              ; Supervisor-Stack
 *
 
@@ -9176,7 +9176,7 @@ _pfork:
  clr.l    -(sp)
  move.l   act_appl,-(sp)
  lea      (sp),a1             ; Ausnahmeliste
- move.l   a5,a0               ; alter Prozeß
+ move.l   a5,a0               ; alter Prozess
  bsr      Pmemsave
  addq.l   #8,sp
  tst.l    d0
@@ -9199,27 +9199,27 @@ fork_nosave:
  move.l   a6,a0
  move.l   p_procdata(a0),a0
  bset     #1,pr_flags+1(a0)
-* Speicherbedarf für Kopie des Supervisor-Stacks berechnen
+* Speicherbedarf fuer Kopie des Supervisor-Stacks berechnen
  move.l   act_appl,d0
  beq      fork_einvfn         ; kein MT
  move.l   d0,a0
  lea      ap_stack(a0),a0     ; Beginn des Stacks ...
- add.l    sust_len.w,a0       ; ... + Länge ergibt das Ende
+ add.l    sust_len.w,a0       ; ... + Laenge ergibt das Ende
 
 ;  move.l a0,$4a8
 ;  move.l sp,$4ac
 
- sub.l    sp,a0               ; so groß ist der aktuelle Stack
+ sub.l    sp,a0               ; so gross ist der aktuelle Stack
  move.l   a0,d7
- lea      256+8(a0),a0        ; + Platz für Basepage
-* Basepage enthält Kopie des Parent-Supervisor-Stacks
+ lea      256+8(a0),a0        ; + Platz fuer Basepage
+* Basepage enthaelt Kopie des Parent-Supervisor-Stacks
  move.l   a0,d0
  move.l   a6,a0
  bsr      Mshrink
  tst.l    d0
  bmi.b    fork_endfr          ; zuwenig Speicher!
-* Basepage gehört neuem Prozeß
- move.l   a6,a1               ; neuer Eigentümer
+* Basepage gehoert neuem Prozess
+ move.l   a6,a1               ; neuer Eigentuemer
  move.l   a6,a0               ; Blockadresse
  bsr      Mchgown
 * neuen Task mit neuer Basepage erstellen
@@ -9232,7 +9232,7 @@ fork_nosave:
  bmi.b    fork_endfr
  move.l   a5,p_parent(a6)     ; wichtig (!)
 * Supervisor-Stack kopieren
- move.l   d7,d0               ; Stack-Größe
+ move.l   d7,d0               ; Stack-Groesse
  move.l   act_appl,a1
  lea      (sp),a1             ; src
  lea      256+8(a6),a0        ; dst
@@ -9271,8 +9271,8 @@ fork_end:
  beq.b    fork_nomems         ; nein
  move.l   d0,d6
  bmi.b    fork_was_err
- beq.b    fork_nomems         ; ich bin der Kindprozeß
- moveq    #1,d0               ; war OK, zurückkopieren
+ beq.b    fork_nomems         ; ich bin der Kindprozess
+ moveq    #1,d0               ; war OK, zurueckkopieren
  bra.b    fork_was_both
 fork_was_err:
  moveq    #0,d0               ; nur freigeben
@@ -9309,10 +9309,10 @@ dpex_200:
  tst.l    d0
  bmi      dpex200_ende             ; Fehler beim Laden
  move.l   d0,a6                    ; a6 = neue Basepage
-* Einige Einträge in PROCDATA vom neuen Prozeß übernehmen:
+* Einige Eintraege in PROCDATA vom neuen Prozess uebernehmen:
 * pr_fname, pr_cmdlin, pr_flags, pr_procname
  move.l   p_procdata(a6),a1
- move.l   act_pd,a4                ; a4 := alter Prozeß
+ move.l   act_pd,a4                ; a4 := alter Prozess
  move.l   p_procdata(a4),a0
  lea      pr_fname(a0),a0
  lea      pr_fname(a1),a1
@@ -9321,26 +9321,26 @@ dpex_200:
  suba.l   a1,a1                    ; kein limit
  move.l   p_procdata(a6),a0
  jsr      Mxfree                   ; neues p_procdata freigeben
-* wichtige Einträge in der Basepage kopieren (außer p_env)
+* wichtige Eintraege in der Basepage kopieren (ausser p_env)
 * der Zeiger auf PROCDATA wird mitkopiert
  move.l   p_env(a6),-(sp)          ; neues Env. retten
  lea      p_parent(a4),a1          ; kopieren ab p_parent
  lea      p_parent(a6),a0
  move.w   #p_cmdlin-p_parent,d0    ; kopieren bis p_cmdlin
  jsr      vmemcpy
- move.l   (sp)+,p_env(a6)          ; neues Env zurück
-* neue Basepage, neues Env, altes PROCDATA gehören neuem Prozeß
+ move.l   (sp)+,p_env(a6)          ; neues Env zurueck
+* neue Basepage, neues Env, altes PROCDATA gehoeren neuem Prozess
  move.l   a6,a0                    ; neuer PD
  bsr      chg_bp_owner
-* Eigner der APPL, ap_env und ap_xtail ändern, falls sie altem Prozeß gehört
+* Eigner der APPL, ap_env und ap_xtail aendern, falls sie altem Prozess gehoert
  move.l   act_appl,d0
  beq.b    dpex_no_appl             ; ??
  move.l   d0,a5                    ; a5 = APPL *
  move.l   a5,a0                    ; memadr
  lea      -1,a1                    ; nur Eigner ermitteln
  bsr      Mchgown
- cmpa.l   d0,a4                    ; gehört APPL altem Prozeß ?
- bne.b    dpex_no_appl             ; nein, nicht ändern
+ cmpa.l   d0,a4                    ; gehoert APPL altem Prozess ?
+ bne.b    dpex_no_appl             ; nein, nicht aendern
  move.l   a5,a0                    ; memadr
  move.l   a6,a1                    ; neuer Eigner
  bsr      Mchgown                  ; Eigner der APPL umsetzen
@@ -9367,9 +9367,9 @@ dpex_no_appl:
  move.l   act_appl,d0
  beq.b    dpex200_no_aes
  move.l   act_pd,a0
- jsr      pkill_threads            ; alle Threads außer aktueller APP killen
+ jsr      pkill_threads            ; alle Threads ausser aktueller APP killen
 dpex200_no_aes:
-* Sprung über config_status+24
+* Sprung ueber config_status+24
  move.l   (config_status+24).w,d0
  beq.b    dpex200_no_tidy
  move.l   d0,a2
@@ -9379,10 +9379,10 @@ dpex200_no_tidy:
 * ggf. ge-fork-ten parent wieder aufwecken
  move.l   a4,a0
  jsr      hap_fork                 ; ggf. wartenden Parent aufwecken
-* Prozeßnamen aus procx[] und aus u:\proc entfernen
+* Prozessnamen aus procx[] und aus u:\proc entfernen
  move.l   a4,a0
  bsr      delete_procname
-* neuen Prozeßnamen eintragen
+* neuen Prozessnamen eintragen
  move.l   a6,a0
  bsr      create_procname
 * etv_term entfernen
@@ -9393,12 +9393,12 @@ dpex200_no_tidy:
 * LOCKs entfernen
  move.l   a4,a0
  bsr      kill_locks
-* Alle zum Prozeß gehörigen Semaphoren freigeben
+* Alle zum Prozess gehoerigen Semaphoren freigeben
  move.l   a4,a0
  moveq    #SEM_FPD,d0
  jsr      evnt_sem
-* Alle Speicherblöcke freigeben. Da PROCDATA von neuem
-* und alten Prozeß identisch sind, wird dabei die pr_memlist
+* Alle Speicherbloecke freigeben. Da PROCDATA von neuem
+* und alten Prozess identisch sind, wird dabei die pr_memlist
 * auf NULL gesetzt
  move.l   a4,a0
  bsr      Pfree
@@ -9424,7 +9424,7 @@ dpex_00:
  clr.l    -(sp)
  clr.l    -(sp)
  clr.l    -(sp)                    ; d1/d2/a1/a2 sind alle 0
- pea      dt_ret(pc)               ; Rücksprungadresse im DOS
+ pea      dt_ret(pc)               ; Ruecksprungadresse im DOS
  clr.l    -(sp)                    ; a6
  move.l   p_dbase(a6),-(sp)        ; a5
  move.l   p_bbase(a6),-(sp)        ; a4
@@ -9435,7 +9435,7 @@ dpex_regloop:
  move.l   a1,-(sp)                 ; usp  (bei ACC NULL)
  move.l   sp,p_context(a6)
  moveq    #0,d0
- bra      start_proc               ; Prozeß starten
+ bra      start_proc               ; Prozess starten
 dpex200_ende:
  movem.l  (sp)+,a6/a5/a4
 dpex_rts:
@@ -9450,8 +9450,8 @@ dpex_rts:
 *
 * 29.9.96:     p_status wird bei Erfolg auf PROCSTATE_MINT gesetzt,
 *              damit die Basepage bei der Terminierung nicht
-*              freigegeben wird und stattdessen der Prozeß in den
-*              ZOMBIE-Status übergeht.
+*              freigegeben wird und stattdessen der Prozess in den
+*              ZOMBIE-Status uebergeht.
 *
 
 dpex_10x:
@@ -9476,8 +9476,8 @@ dp100_err:
 *
 * long D_Pexec ( a0 = void *params )
 *
-* rettet den Kontext des aktuellen Prozesses, führt die DOS- Funktion
-* aus und startet den Prozeß wieder.
+* rettet den Kontext des aktuellen Prozesses, fuehrt die DOS- Funktion
+* aus und startet den Prozess wieder.
 * d1/d2/a1/a2 sind bereits gerettet.
 *
 
@@ -9497,20 +9497,20 @@ D_Pexec:
  move.l   act_pd,a1
  move.l   sp,p_context(a1)         ; ssp sichern
  lea      -$34(a0),a2
- move.l   a2,p_reg(a1)             ; wegen Kompatibilität zu TOS stehen
+ move.l   a2,p_reg(a1)             ; wegen Kompatibilitaet zu TOS stehen
                                    ; ab Offset $32 die Pexec- Parameter
-                                   ; a0 war schon um 2 erhöht, daher -$34
+                                   ; a0 war schon um 2 erhoeht, daher -$34
 ;move.l   a0,a0
  bsr      Pexec
-;bra      start_proc               ; aktuellen Prozeß starten
+;bra      start_proc               ; aktuellen Prozess starten
 
 
 **********************************************************************
 *
 * long start_proc ( d0 = long retcode )
 *
-* startet einen "schlafenden" (den aktuellen) Prozeß und gibt ihm
-* den Rückgabewert d0
+* startet einen "schlafenden" (den aktuellen) Prozess und gibt ihm
+* den Rueckgabewert d0
 *
 * proc.p_context->  long      usp;
 *                   long      d3_d7_a3_a6[9];
@@ -9525,19 +9525,19 @@ start_proc:
  move.l   act_pd,a0
  move.l   p_context(a0),sp
  move.l   (sp)+,a0
- move.l   a0,usp                   ; usp zurück
- movem.l  (sp)+,d3-d7/a3-a6        ; Register zurück
+ move.l   a0,usp                   ; usp zurueck
+ movem.l  (sp)+,d3-d7/a3-a6        ; Register zurueck
  suba.l   a0,a0                    ; GEMDOS startet mit a0=NULL !!!
                                    ; damit unterscheidet man, ob APP oder ACC
- rts                               ; pc zurück
+ rts                               ; pc zurueck
 
 
 **********************************************************************
 *
 * long start_acc ( d0 = long retcode )
 *
-* startet ein ACC (den aktuellen) Prozeß und gibt ihm
-* den Rückgabewert d0
+* startet ein ACC (den aktuellen) Prozess und gibt ihm
+* den Rueckgabewert d0
 *
 * proc.p_context->  long      usp;
 *                   long      d3_d7_a3_a6[9];
@@ -9553,8 +9553,8 @@ start_acc:
  move.l   p_context(a0),sp
  move.l   (sp)+,a1
  move.l   a1,usp                   ; (usp ist NULL bei ACCs)
- movem.l  (sp)+,d3-d7/a3-a6        ; Register zurück
- rts                               ; pc zurück
+ movem.l  (sp)+,d3-d7/a3-a6        ; Register zurueck
+ rts                               ; pc zurueck
 
 
 **********************************************************************
@@ -9593,7 +9593,7 @@ Ssync:
  moveq    #0,d7
 sync_loop:
  move.l   (a6)+,d0
- ble.b    sync_nxtloop        ; Dateisystem ungültig
+ ble.b    sync_nxtloop        ; Dateisystem ungueltig
  move.l   d0,a0
  tst.w    d_biosdev(a0)       ; BIOS-Laufwerk ?
  bmi.b    sync_sync           ; nein, immer synchronisieren
@@ -9637,9 +9637,9 @@ Sunmount:
  moveq    #0,d7
 sunm_loop:
  move.l   (a6)+,d0
- ble.b    sunm_nxtloop        ; Dateisystem ungültig
+ ble.b    sunm_nxtloop        ; Dateisystem ungueltig
  move.l   d0,a0
- move.l   d_devcode(a5),d0    ; devcode ungültig ?
+ move.l   d_devcode(a5),d0    ; devcode ungueltig ?
  beq.b    sunm_nur1           ; ja, nur ein Dateisystem unmounten
  cmp.l    d_devcode(a0),d0    ; selber devcode
  bne.b    sunm_nxtloop        ; nein
@@ -9709,24 +9709,24 @@ Sversion:
 *                        subfn == 1:    PD setzen
 *                        subfn == 2:    WB abschalten
 * fn == SC_INTMAVAIL(5): Internen Speicher erfragen
-* fn == SC_INTGARBC (6): garbage collection für internen Speicher
+* fn == SC_INTGARBC (6): garbage collection fuer internen Speicher
 *
 * sonst        : return(EINVFN)
 *
 * Bits des Status- Langworts:
 *
-*  Bit  0: Pfadüberprüfung ein
-*  Bit  1: ovwr_flag für DOS und AES (KAOS 1.2: Diskwechselsim. (Desktop) ein)
+*  Bit  0: Pfadueberpruefung ein
+*  Bit  1: ovwr_flag fuer DOS und AES (KAOS 1.2: Diskwechselsim. (Desktop) ein)
 *  Bit  2: Break ein
-*  Bit  3: ^C für zeichenorientierte E/A aus
+*  Bit  3: ^C fuer zeichenorientierte E/A aus
 *  Bit  4: Fastload aus
-*  Bit  5: Kompatibilität zu TOS 1.4 ein
+*  Bit  5: Kompatibilitaet zu TOS 1.4 ein
 *  Bit  6: ("Smart Redraw" aus)
 *  Bit  7: (Grow- und Shrinkboxen aus)
 *  Bit  8: (Halt nach TOS- Programmen)
 *  Bit  9: MF2- Tastaturtabellen
-*  Bit 10: Pulldown- Menüs
-*  Bit 11: Unterstützung des Elco- HD- Moduls (nur im KAOS)
+*  Bit 10: Pulldown- Menues
+*  Bit 11: Unterstuetzung des Elco- HD- Moduls (nur im KAOS)
 *
 
 D_Sconfig:
@@ -9826,15 +9826,15 @@ dosvars:
  DC.L     0
  DC.L     act_pd              ; $18: Laufendes Programm
  DC.L     0                   ; $1c: Dateien
- DC.W     0                   ; $20: Länge von fcbx[]
+ DC.W     0                   ; $20: Laenge von fcbx[]
  DC.L     dmdx                ; $22: DMDs
  DC.L     imbx                ; $26: interner DOS- Speicher
  DC.L     resv_intmem         ; $2a: Adresse der Speichererweiterungsroutine
  DC.L     etv_critic_vec      ; $2e: Adresse des Event-Critic-Managers
  DC.L     err_to_str          ; $32: Adresse der Fehler->Klartext Routine
- DC.L     xaes_appls          ; $36: hier darf sich XAES einhängen
+ DC.L     xaes_appls          ; $36: hier darf sich XAES einhaengen
  DC.L     mem_root            ; $3a: MAGIX- Speicherlisten
- DC.L     ur_pd               ; $3e: Ur- Prozeß
+ DC.L     ur_pd               ; $3e: Ur- Prozess
 
 **********************************************************************
 *
@@ -9855,10 +9855,10 @@ sysc_err:
  rts
 
 sysc_tab:
- DC.L     2              ; -1: max. Wert für Parameter: 2
- DC.L     -1             ;  0: max. Anzahl Speicherbereiche pro Prozeß
- DC.L     -1             ;  1: max. Länge der Kommandozeile bei Pexec
- DC.L     32             ;  2: Anz. offener Dateien pro Prozeß
+ DC.L     2              ; -1: max. Wert fuer Parameter: 2
+ DC.L     -1             ;  0: max. Anzahl Speicherbereiche pro Prozess
+ DC.L     -1             ;  1: max. Laenge der Kommandozeile bei Pexec
+ DC.L     32             ;  2: Anz. offener Dateien pro Prozess
  
 
 **********************************************************************
@@ -9879,7 +9879,7 @@ syi_err:
 **********************************************************************
 **********************************************************************
 *
-* Diskwechsel- Routinen (für XKAOS erweitert)
+* Diskwechsel- Routinen (fuer XKAOS erweitert)
 *
 **********************************************************************
 *
@@ -9887,16 +9887,16 @@ syi_err:
 *
 * Das Kind ist schon in den Brunnen gefallen. Der
 * XFS- Treiber gibt seine Dateien und Strukturen frei,
-* anschließend der Kernel.
+* anschliessend der Kernel.
 *
-* Wenn dieser Fehler z.B. beim Zurückschreiben von Puffern beim
+* Wenn dieser Fehler z.B. beim Zurueckschreiben von Puffern beim
 * Dlock passiert ist, gibt es hier eine Art Rekursion, die aber durch
 * die Semaphore abgefangen wird.
 * Entdecken mehrere Prozesse einen Diskfehler, werden sie mit Hilfe
 * der Semaphore serialisiert.
 *
-* Rückgabe: EDRIVE  Laufwerk ungültig
-*              E_CHNG    Laufwerk mit neuer Disk gültig
+* Rueckgabe: EDRIVE  Laufwerk ungueltig
+*              E_CHNG    Laufwerk mit neuer Disk gueltig
 *
 
 diskchange:
@@ -9910,14 +9910,14 @@ diskchange:
 ; Dlock testen
  tst.l    dlockx(a0)               ; Dlock gesetzt ?
  bne      derr_ok                  ; ja, nichts tun
- tst.l    (a4)                     ; Laufwerk gültig ?
+ tst.l    (a4)                     ; Laufwerk gueltig ?
  beq      derr_ok                  ; nein, nichts tun
 
  lea      dskchg_drvs,a6
 
  move.l   (a6),d0
  bset     d6,d0
- move.l   d0,(a6)                  ; Bit für "change request"
+ move.l   d0,(a6)                  ; Bit fuer "change request"
 
  lea      dskchg_sem,a0
  moveq    #0,d1                    ; kein TimeOut
@@ -9927,12 +9927,12 @@ diskchange:
  bne      derr_ok                  ; Fehler (Rekursion ???)
 
  move.l   (a6),d0
- btst     d6,d0                    ; "change request" schon gelöscht ?
- bne.b    derr_chg                 ; nein, Diskwechsel durchführen
+ btst     d6,d0                    ; "change request" schon geloescht ?
+ bne.b    derr_chg                 ; nein, Diskwechsel durchfuehren
 
 * Diskwechsel ist schon anderweitig bearbeitet
 
- tst.l    (a4)                     ; DMD gültig
+ tst.l    (a4)                     ; DMD gueltig
  bne.b    derr_no_chg              ; ja => E_CHNG
  moveq    #EDRIVE,d7
  bra.b    derr_no_chg              ; nein => EDRIVE
@@ -9976,7 +9976,7 @@ drvres_ok:
 drvres_ende:
  move.l   (a6),d1
  bclr     d6,d1
- move.l   d1,(a6)                  ; Bit für "change request" löschen
+ move.l   d1,(a6)                  ; Bit fuer "change request" loeschen
 
 derr_no_chg:
 
@@ -9994,16 +9994,16 @@ derr_ok:
 *
 * long _dlock(d0 = int drvnr)
 *
-* Prüft, ob der Kernel geöffnete Dateien kennt. Ggf. wird der
+* Prueft, ob der Kernel geoeffnete Dateien kennt. Ggf. wird der
 * Diskwechsel mit EACCDN verweigert.
 * Es kann auch der DMD = NULL sein.
-* Wenn nicht, wird der XFS- Treiber um Schließen des Laufwerks gebeten.
-* Wenn dieses Schließen ohne Fehler durchgeführt wurde, gibt der
+* Wenn nicht, wird der XFS- Treiber um Schliessen des Laufwerks gebeten.
+* Wenn dieses Schliessen ohne Fehler durchgefuehrt wurde, gibt der
 * Kernel seine Strukturen frei.
-* Damit kein anderer Prozeß mit Dlock dazwischenfunken kann, wird das
+* Damit kein anderer Prozess mit Dlock dazwischenfunken kann, wird das
 * gesperrt (per Dlock).
 *
-* (für Dlock und für Wechselplatten)
+* (fuer Dlock und fuer Wechselplatten)
 *
 
 _dlock:
@@ -10025,21 +10025,21 @@ _dlock:
  lea      dskchg_drvs,a6
  move.l   (a6),d0
  bset     d6,d0
- move.l   d0,(a6)                  ; Bit für "change request"
+ move.l   d0,(a6)                  ; Bit fuer "change request"
  lea      dskchg_sem,a0
  moveq    #0,d1                    ; kein TimeOut
  moveq    #SEM_SET,d0
  jsr      evnt_sem
 
- move.l   (a4),d0                  ; neuer DMD ungültig ?
+ move.l   (a4),d0                  ; neuer DMD ungueltig ?
  beq.b    _dl_ok0                  ; ja, Anfrage ok
 
-; DMD ist noch gültig, kann aber ausgetauscht worden sein!
-; Wir müssen den Diskwechsel durchführen
+; DMD ist noch gueltig, kann aber ausgetauscht worden sein!
+; Wir muessen den Diskwechsel durchfuehren
 
  move.l   d0,a0
  bsr      chk_ofls
- bmi.b    _dl_ende2                ; Kernel hat geöffnete Dateien
+ bmi.b    _dl_ende2                ; Kernel hat geoeffnete Dateien
 
  move.l   (a4),a0
  move.l   d_xfs(a0),a2
@@ -10073,7 +10073,7 @@ _dl_ok0:
 _dl_ende2:
  move.l   (a6),d1
  bclr     d6,d1
- move.l   d1,(a6)                  ; Bit für "change request" löschen
+ move.l   d1,(a6)                  ; Bit fuer "change request" loeschen
 _dl_ende:
  move.l   d0,-(sp)
  lea      dskchg_sem,a0
@@ -10095,7 +10095,7 @@ _dl_eaccdn:
 * NE/EQ long chk_ofls( a0 = LONG parm, a1 = void (*proc)() )
 *
 * Geht alle Dateien durch. Bei jeder Datei wird <proc> aufgerufen
-* und bei einem Rückgabewert ungleich 0 die Funktion beendet.
+* und bei einem Rueckgabewert ungleich 0 die Funktion beendet.
 *
 
 for_all_files:
@@ -10105,16 +10105,16 @@ for_all_files:
  move.l   a1,a3
  move.l   a0,d5
 faf_loop1:
- move.l   (a6)+,d0                      ; nächster Prozeß
+ move.l   (a6)+,d0                      ; naechster Prozess
  beq.b    faf_nxtloop1                  ; Slot unbelegt
- move.l   d0,a1                         ; a1 = existierender Prozeß
+ move.l   d0,a1                         ; a1 = existierender Prozess
 
- moveq    #MAX_OPEN+MIN_FHANDLE-1,d6    ; dbra- Zähler
+ moveq    #MAX_OPEN+MIN_FHANDLE-1,d6    ; dbra- Zaehler
  move.l   p_procdata(a1),a1
  lea      fh_sizeof*MIN_FHANDLE+pr_handle(a1),a4
 faf_loop2:
  move.l   (a4),d0                       ; FD
- beq.b    faf_nxtloop2                  ; ungültig
+ beq.b    faf_nxtloop2                  ; ungueltig
 
  move.l   a4,a0                         ; FD **
  move.l   d5,a1                         ; parm
@@ -10137,7 +10137,7 @@ faf_ende:
 *
 * NE/EQ long chk_ofls( a0 = DMD *drv )
 *
-* Gibt EACCDN zurück, wenn auf <drv> geöffnete Dateien sind,
+* Gibt EACCDN zurueck, wenn auf <drv> geoeffnete Dateien sind,
 * ansonsten E_OK.
 *
 
@@ -10161,7 +10161,7 @@ chk_ofls:
 *
 * void free_files(a0 = DMD *drive)
 *
-* Gibt alle FDs für die gewechselte Disk frei.
+* Gibt alle FDs fuer die gewechselte Disk frei.
 * Wird nur von dsk_chgd aufgerufen
 *
 
@@ -10169,7 +10169,7 @@ _free_files:
  move.l   (a0),a2
  cmpa.l   fd_dmd(a2),a1                 ; DMDs gleich ?
  bne.b    frf_no                        ; nein
- clr.l    (a0)                          ; Handle ungültig machen
+ clr.l    (a0)                          ; Handle ungueltig machen
 
  cmpi.w   #-1,fd_refcnt(a2)
  beq.b    frf_m1
@@ -10196,62 +10196,62 @@ free_files:
 *
 * void free_stdpaths(a0 = PD *pd, a3 = APPL *, d5 = int drv)
 *
-* alle ungültigen Pfadhandles für <pd>
+* alle ungueltigen Pfadhandles fuer <pd>
 * und alle parents freigeben
 * <pd> kann NULL sein
-* Für Threads bricht die Routine selbständig ab.
+* Fuer Threads bricht die Routine selbstaendig ab.
 *
 * wird nur von <free_pathx> aufgerufen
 *
 * d5 ist Laufwerk:
-*    Es war ein Diskwechsel, alle Pfadhandles > 0, die ungültig
+*    Es war ein Diskwechsel, alle Pfadhandles > 0, die ungueltig
 *    geworden sind, auf Null setzen, d.h. auf die root.
-*    Weiterhin alle ungültigen Pfadhandles (-1) auf die root
+*    Weiterhin alle ungueltigen Pfadhandles (-1) auf die root
 *    setzen.
 *
 * d5 == -1:
-*    Ein Standardverzeichnis ist gelöscht worden. Alle
-*    Pfadhandles >0, die ungültig geworden sind, auf -1
+*    Ein Standardverzeichnis ist geloescht worden. Alle
+*    Pfadhandles >0, die ungueltig geworden sind, auf -1
 *    setzen.
 *
 
 fsp_loop:
- move.l   p_app(a0),d0             ; gibt es zugehörigen Haupt-Thread ?
+ move.l   p_app(a0),d0             ; gibt es zugehoerigen Haupt-Thread ?
  beq.b    fsp_no_aes               ; nein, stammt aus Boot-Zeit vor dem AES
  cmpa.l   d0,a3                    ; Haupt-Thread ?
  bne.b    fsp_ende                 ; nein!
 fsp_no_aes:
- moveq    #0,d1                    ; Für jedes Laufwerk...
+ moveq    #0,d1                    ; Fuer jedes Laufwerk...
  lea      pathcntx,a2
- moveq    #0,d0                    ; Hibyte löschen
+ moveq    #0,d0                    ; Hibyte loeschen
  lea      p_drvx(a0),a1            ; a1 = Tabelle der Pfadhandles
 fsp_loop2:
  move.b   (a1)+,d0                 ; Pfadhandle (->WORD)
  beq.b    fsp_nxtlp2               ;  ist schon root
- bgt.b    fsp_hdlvalid             ; ist > 0, Test, ob gültig
-; Handle < 0, d.h. schon ungültig
+ bgt.b    fsp_hdlvalid             ; ist > 0, Test, ob gueltig
+; Handle < 0, d.h. schon ungueltig
  cmp.w    d1,d5                    ; unser Laufwerk ?
- bne.b    fsp_nxtlp2               ; nein, bleibt ungültig
+ bne.b    fsp_nxtlp2               ; nein, bleibt ungueltig
  bra.b    fsp_set_root             ; ja, auf root setzen
-; Handle > 0, also vielleicht gültig
+; Handle > 0, also vielleicht gueltig
 fsp_hdlvalid:
  tst.b    0(a2,d0.w)               ; pathcntx[pathhandle] ?
- bne.b    fsp_nxtlp2               ; ist > 0, nicht ändern
+ bne.b    fsp_nxtlp2               ; ist > 0, nicht aendern
  tst.w    d5                       ; Diskwechsel ?
  bge.b    fsp_set_root             ; ja, auf root setzen
  move.b   #-1,-1(a1)               ; nein, auf -1 setzen
  bra.b    fsp_nxtlp2
 fsp_set_root:
- clr.b    -1(a1)                   ; Zähler 0 => Pfadhandle im PD löschen
+ clr.b    -1(a1)                   ; Zaehler 0 => Pfadhandle im PD loeschen
 fsp_nxtlp2:
  addq.w   #1,d1
  cmpi.w   #LASTDRIVE,d1
  bls.b    fsp_loop2
 
- cmpi.l   #'_PRG',p_res3(a0)       ; paralleler Prozeß ?
- beq.b    fsp_ende                 ; ja, parent ist ungültig
+ cmpi.l   #'_PRG',p_res3(a0)       ; paralleler Prozess ?
+ beq.b    fsp_ende                 ; ja, parent ist ungueltig
 
- movea.l  p_parent(a0),a0          ; nächstes Programm
+ movea.l  p_parent(a0),a0          ; naechstes Programm
 free_stdpaths:
  move.l   a0,d1
  bne.b    fsp_loop
@@ -10267,49 +10267,49 @@ fsp_ende:
 *
 * 2.12.95:
 *    Diese Prozedur hat zwei Funktionen:
-*    a)   Funktion für Diskwechsel. <a0> enthält einen DMD.
+*    a)   Funktion fuer Diskwechsel. <a0> enthaelt einen DMD.
 *         Dabei werden alle Pfadhandles, die sich auf diesen
 *         gewechselten DMD beziehen, auf die root gesetzt, auch
-*         die ungültigen (!)
-*    b)   Funktion für Löschen von Standardpfaden. a0 == NULL.
-*         Alle temporär ungültigen Pfadhandles, d.h. solche,
-*         die auf einen temporär ungültigen Standardpfad zeigen, d.h.
+*         die ungueltigen (!)
+*    b)   Funktion fuer Loeschen von Standardpfaden. a0 == NULL.
+*         Alle temporaer ungueltigen Pfadhandles, d.h. solche,
+*         die auf einen temporaer ungueltigen Standardpfad zeigen, d.h.
 *         (pathcntx[hdl] != 0) und (pathx[hdl] = 0), werden
-*         ungültig gemacht, d.h auf -1 gesetzt.
+*         ungueltig gemacht, d.h auf -1 gesetzt.
 *
 
 free_pathx:
  movem.l  d5/d6/d7/a3/a4/a5/a6,-(sp)
  move.l   a0,a4                    ; a4 = DMD *
- lea      pathcntx+1,a6            ; Referenzzähler für pathx
+ lea      pathcntx+1,a6            ; Referenzzaehler fuer pathx
  lea      pathx+4,a5
- moveq    #N_STDPATHS-2,d6         ; dbra- Zähler
+ moveq    #N_STDPATHS-2,d6         ; dbra- Zaehler
 
 *
-* 1. Phase: <pathx> und <pathcntx> aufräumen
+* 1. Phase: <pathx> und <pathcntx> aufraeumen
 *
 
 next_p:
  moveq    #0,d0
- move.b   (a6),d0                  ; Referenzzähler, BYTE => UWORD
+ move.b   (a6),d0                  ; Referenzzaehler, BYTE => UWORD
  beq.b    frp_nxtpth               ; Pfadhandle unbenutzt
  move.l   a4,d1
  bne.b    frpthx_dmd
-* Funktion "Standardpfad ungültig"
- tst.l    (a5)                     ; temporär ungültig ?
+* Funktion "Standardpfad ung",$81,"ltig"
+ tst.l    (a5)                     ; temporaer ungueltig ?
  bne.b    frp_nxtpth               ; nein, nicht antasten
  bra.b    frp_stdpthinvalid        ; ja, freigeben
 * Funktion "Diskwechsel"
 frpthx_dmd:
  tst.l    (a5)
- beq.b    frp_nxtpth               ; Standard- DD ungültig (?)
+ beq.b    frp_nxtpth               ; Standard- DD ungueltig (?)
  movea.l  (a5),a0
  cmp.l    dd_dmd(a0),a4
  bne.b    frp_nxtpth               ; anderes Laufwerk
  sub.w    d0,dd_refcnt(a0)         ; DD um korrekte Zahl dereferenzieren
  bne.b    frp_nofdd
 
-;move.l   a0,a0                    ; Zeiger auf DD übergeben
+;move.l   a0,a0                    ; Zeiger auf DD uebergeben
  move.l   d_xfs(a4),a2
  move.l   xfs_freeDD(a2),a2
  jsr      (a2)                     ; DD freigeben
@@ -10324,7 +10324,7 @@ frp_nxtpth:
  dbra     d6,next_p
 
 *
-* 2. Phase: In den PDs p_drvx[] aufräumen
+* 2. Phase: In den PDs p_drvx[] aufraeumen
 *
 
  moveq    #-1,d5                   ; kein Laufwerk
@@ -10344,9 +10344,9 @@ frp_no_drv:
  cmpi.l   #'XAES',(a6)+            ; magische Kennung ?
  bne.b    frp_ende                 ; nein
  move.l   (a6)+,a5                 ; act_appl
- move.w   (a6)+,d6                 ; Offset für ap_pd
+ move.w   (a6)+,d6                 ; Offset fuer ap_pd
  addq.l   #2,a6                    ; Anzahl der APPLs unwichtig
- move.w   (a6)+,d7                 ; Tabellenlänge
+ move.w   (a6)+,d7                 ; Tabellenlaenge
  bra.b    frp_nxtappl
 frp_applloop:
  move.l   (a6)+,d0
@@ -10377,8 +10377,8 @@ frp_ende:
 *
 * LONG Slbx_fn( void *handle, LONG fn, ... )
 *
-* Wird vom Benutzerprogramm direkt über jsr angesprungen und im
-* User-Mode ausgeführt. <handle> ist der Zeiger auf die LSLB-Struktur.
+* Wird vom Benutzerprogramm direkt ueber jsr angesprungen und im
+* User-Mode ausgefuehrt. <handle> ist der Zeiger auf die LSLB-Struktur.
 *
 
 Slbx_fn:
@@ -10388,9 +10388,9 @@ Slbx_fn:
  cmp.l    slb_fnn(a0),d0           ; Anzahl vorhandener Funktionen
  bcc.b    slbx_einvfn              ; Fehler
  add.l    d0,d0
- add.l    d0,d0                    ; * 4 für Zeiger
+ add.l    d0,d0                    ; * 4 fuer Zeiger
  move.l   slb_fx(a0,d0.l),d0       ; Funktionszeiger
- beq.b    slbx_einvfn              ; ungültig
+ beq.b    slbx_einvfn              ; ungueltig
  move.l   d0,a0
  move.l   act_pd,4(sp)             ; act_pd statt handle
  jmp      (a0)                     ; ... und rein in die Funktion ...
@@ -10406,16 +10406,16 @@ slbx_einvfn:
 *                   void cdecl (**fn)(void *hdl, LONG fn, ...),
 *                   void *param )
 *
-* Öffnet eine "shared library".
+* Oeffnet eine "shared library".
 *
 * name         Name der Bibliothek inkl. Dateityp ".SLB".
 * path         darf NULL sein. Dort wird die Datei zuerst gesucht.
 *              sonst nur in "<bootdrv>:/gemsys/magic/xtension".
 * min_ver      ist die minimale Versionsnummer der Bibliothek, die
-*              benötigt wird.
+*              benoetigt wird.
 * param        MagiC 6: Parameter
 *
-* Rückgabe:
+* Rueckgabe:
 * <ret>        Versionsnummer oder Fehlercode (ERANGE, falls
 *              die Versionsnummer zu klein war, EFILNF, EPATH usw.)
 * handle       Deskriptor (tats. Zeiger auf Verwaltungstruktur)
@@ -10429,11 +10429,11 @@ slbx_einvfn:
 
 D_Slbopen:
  movem.l  a6/a5/a4/a3/d7,-(sp)
- suba.w   #xattr_sizeof+30+128,sp  ; 128 Bytes Platz für den gefundenen Pfad
-                                   ; 30 Bytes Platz für Default-Suchpfad
+ suba.w   #xattr_sizeof+30+128,sp  ; 128 Bytes Platz fuer den gefundenen Pfad
+                                   ; 30 Bytes Platz fuer Default-Suchpfad
  move.l   a0,a6                    ; Zeiger auf Parameter
 
-; zunächst prüfen wir, ob die Lib geladen ist
+; zunaechst pruefen wir, ob die Lib geladen ist
 
  move.l   lslb_list,a5
  bra.b    sbo_endloop1
@@ -10458,7 +10458,7 @@ sbo_endloop1:
 ; Bibliothek nicht gefunden.
 ; Pfad zusammenbauen und Datei suchen/laden
 
- clr.l    -(sp)                    ; Ende-Zeichen für Liste der Suchpfadlisten
+ clr.l    -(sp)                    ; Ende-Zeichen fuer Liste der Suchpfadlisten
 
 ; Environment-Variable SLBPATH
 
@@ -10547,7 +10547,7 @@ sbo_nloop:
  move.l   a3,a0
  bsr      chg_bp_owner
 
-; Speicher für LSLB holen
+; Speicher fuer LSLB holen
 
 sbo_no_env:
  move.l   a3,a1                    ; Eigner wird die Lib selbst
@@ -10583,11 +10583,11 @@ slb_n2loop:
 
 ; slbinit aufrufen
 
- move.l   20(a6),d0                ; zusätzlicher Parameter (MagiC 6)
+ move.l   20(a6),d0                ; zusaetzlicher Parameter (MagiC 6)
  move.l   slb_init(a4),a1
  move.l   a3,a0
  bsr      Slbexec                  ; Initialisierung im Supervisormodus
- move.l   d0,d7                    ; Rückgabewert vom Initialisieren
+ move.l   d0,d7                    ; Rueckgabewert vom Initialisieren
  bmi.b    sbo_free2
 
 ; Lib einklinken
@@ -10598,7 +10598,7 @@ slb_n2loop:
  clr.w    lslb_refcnt(a5)
  lea      lslb_pdtab(a5),a0
  lea      NPDL*4(a0),a1
- jsr      fast_clrmem              ; Tabelle der PDs löschen
+ jsr      fast_clrmem              ; Tabelle der PDs loeschen
  bra.b    sbo_ok                   ; gefunden!!!
 
 ; Bibliothek nicht OK.
@@ -10614,7 +10614,7 @@ sbo_free2:
  clr.l    -(sp)                    ; dummy
  move.w   #XEXE_TERM,-(sp)
  move.l   sp,a0
- bsr      Pexec                    ; Bibliothek löschen
+ bsr      Pexec                    ; Bibliothek loeschen
  lea      14(sp),sp
  move.l   d7,d0
  bra      sbo_ende
@@ -10631,7 +10631,7 @@ sbo_free:
 
 ; Bibliothek gefunden
 ; a5 ist Zeiger auf lslb, a4 ist Zeiger auf slb
-; Prüfen, ob schon geöffnet.
+; Pruefen, ob schon geoeffnet.
 ; Freien Platz suchen: a3
 
 sbo_ok:
@@ -10641,10 +10641,10 @@ sbo_ok:
 
  moveq    #EACCDN,d0
  move.l   a0,d1
- bne.b    sbo_ende                 ; Bibliothek schon geöffnet => Fehler
+ bne.b    sbo_ende                 ; Bibliothek schon geoeffnet => Fehler
  move.l   a1,a3                    ; freier Platz
 
-; Bibliothek ist noch nicht geöffnet. Öffnen.
+; Bibliothek ist noch nicht geoeffnet. Oeffnen.
 ; a3 ist Zeiger auf freien Eintrag oder NULL
 
  move.l   a3,d0
@@ -10656,14 +10656,14 @@ sbo_ok3:
 ; Aufruf im Usermode
 
  move.l   slb_open(a4),a0          ; fn
- move.l   20(a6),d1                ; zusätzlicher Parameter (MagiC 6)
+ move.l   20(a6),d1                ; zusaetzlicher Parameter (MagiC 6)
  move.l   act_pd,d0
  bsr      Slbexec2
  tst.l    d0
  bge.b    sbo_ok4
 
-; Fehler beim Öffnen.
-; Wenn Referenzzähler Null => Lib wegwerfen.
+; Fehler beim Oeffnen.
+; Wenn Referenzzaehler Null => Lib wegwerfen.
 
  tst.w    lslb_refcnt(a5)
  bne      sbo_ende
@@ -10671,16 +10671,16 @@ sbo_ok3:
  move.l   a5,a0
  bsr      Slbfree
  move.l   d7,d0
- bra.b    sbo_ende                 ; Fehler beim Öffnen
+ bra.b    sbo_ende                 ; Fehler beim Oeffnen
 sbo_ok4:
  move.l   act_pd,(a3)              ; PD eintragen
- addq.w   #1,lslb_refcnt(a5)       ; Referenzzähler erhöhen
+ addq.w   #1,lslb_refcnt(a5)       ; Referenzzaehler erhoehen
  lea      12(a6),a6
  move.l   (a6)+,a0                 ; void **handle
  move.l   a5,(a0)                  ; => Zeiger auf LSLB
  move.l   (a6)+,a0
  move.l   #Slbx_fn,(a0)            ; Funktionsaufruf
- move.l   slb_version(a4),d0       ; gib Versionsnummer zurück
+ move.l   slb_version(a4),d0       ; gib Versionsnummer zurueck
 
 sbo_ende:
  adda.w   #xattr_sizeof+128+30,sp
@@ -10692,11 +10692,11 @@ sbo_ende:
 *
 * long Slbexec2( a0 = long (*fn)(), d0 = long param, d1 = long param2 )
 *
-* Führt eine Funktion im Usermode aus, ohne den Kontext
-* zu ändern. Für slb_open und slb_close.
+* Fuehrt eine Funktion im Usermode aus, ohne den Kontext
+* zu aendern. Fuer slb_open und slb_close.
 *
 * MagiC 6:     Ist der usp NULL, wird der Aufruf im
-*              Supermode ausgeführt. 
+*              Supermode ausgefuehrt. 
 *
 
 Slbexec2:
@@ -10716,12 +10716,12 @@ sbx2_user:
  move.l   d0,-(sp)                 ; Parameter: pd
  jsr      (a0)                     ; Funktion aufrufen
  addq.l   #8,sp
- move.l   d0,d7                    ; Rückgabewert merken
+ move.l   d0,d7                    ; Rueckgabewert merken
  lea      sbx2_endinit(pc),a2
  move.w   #$ca,d0                  ; schnell in den Supermode
  trap     #2
 sbx2_endinit:
- move.l   a6,sp                    ; ssp zurück
+ move.l   a6,sp                    ; ssp zurueck
  move.l   d7,d0
  movem.l  (sp)+,a6/d7
  rts
@@ -10731,9 +10731,9 @@ sbx2_endinit:
 *
 * long Slbexec( a0 = PD *lslb, a1 = long (*fn)(), d0 = long param )
 *
-* Führt eine Funktion im Supervisormodus im Kontext der LSLB aus.
+* Fuehrt eine Funktion im Supervisormodus im Kontext der LSLB aus.
 *
-* MagiC 6: param wird übergeben
+* MagiC 6: param wird uebergeben
 *
 
 Slbexec:
@@ -10755,15 +10755,15 @@ Slbexec:
  move.l   a3,-(sp)                 ; eigener PD
  jsr      (a6)
  addq.l   #8,sp
- move.l   d0,d7                    ; Rückgabewert merken
+ move.l   d0,d7                    ; Rueckgabewert merken
  bra.b    sbx_endinit
 sbx_term:
  moveq    #EXCPT,d7
 sbx_endinit:
  move.l   act_pd,a0
- move.l   p_res3+4(a3),sp          ; ssp zurück
+ move.l   p_res3+4(a3),sp          ; ssp zurueck
  move.l   (sp)+,a0
- move.l   a0,usp                   ; usp zurück
+ move.l   a0,usp                   ; usp zurueck
  move.l   (sp)+,act_pd
 ;move.l   (sp)+,-(sp)
  move.l   #$50102,-(sp)            ; bios Setexc
@@ -10808,7 +10808,7 @@ sbf_found:
  clr.l    -(sp)                    ; dummy
  move.w   #XEXE_TERM,-(sp)
  move.l   sp,a0
- bsr      Pexec                    ; Bibliothek löschen
+ bsr      Pexec                    ; Bibliothek loeschen
  lea      14(sp),sp
 
 sbf_ende:
@@ -10853,7 +10853,7 @@ lspd_nix:
 *
 * void slb_close_all( PD *pd )
 *
-* Schließt alle "shared libraries", die von dem Prozeß geöffnet sind
+* Schliesst alle "shared libraries", die von dem Prozess geoeffnet sind
 *
 
 slb_close_all:
@@ -10878,9 +10878,9 @@ scla_nxt:
 * LONG Slbclose( void *handle )
 * LONG slbclose( a0 = LSLB *ls, a1 = PD *pd )
 *
-* Schließt eine "shared library".
+* Schliesst eine "shared library".
 *
-* MagiC 6: Zeiger -1 schließt ALLE Bibliotheken.
+* MagiC 6: Zeiger -1 schliesst ALLE Bibliotheken.
 *
 
 D_Slbclose:
@@ -10889,7 +10889,7 @@ D_Slbclose:
  cmpa.l   #-1,a0
  bne.b    slbclose
  move.l   a1,a0
- bsr      slb_close_all            ; alle SLBs schließen
+ bsr      slb_close_all            ; alle SLBs schliessen
  moveq    #0,d0
  rts
 slbclose:
@@ -10905,18 +10905,18 @@ slbclose:
  beq.b    slc_err                  ; PD nicht gefunden
  move.l   a0,a3                    ; Zeiger merken
 
-; Schließfunktion im Usermode aufrufen
+; Schliessfunktion im Usermode aufrufen
 
  move.l   slb_close(a4),a0         ; fn
  move.l   a6,d0
- bsr      Slbexec2                 ; Schließfunktion aufrufen
+ bsr      Slbexec2                 ; Schliessfunktion aufrufen
 
  clr.l    (a3)                     ; PD austragen
  subq.w   #1,lslb_refcnt(a5)
  bne.b    slc_ok
 
  move.l   a5,a0
- bsr      Slbfree                  ; Zähler auf Null => freigeben
+ bsr      Slbfree                  ; Zaehler auf Null => freigeben
 slc_ok:
  moveq    #E_OK,d0
  bra.b    slc_ende
@@ -10983,7 +10983,7 @@ D_Tsetdate:
  beq      setclock_err             ; Tag == 0
  cmp.w    #2,d0
  bne.b    dtsetd_l1
-* Sonderbehandlung für Februar
+* Sonderbehandlung fuer Februar
  andi.w   #$600,d2                 ; Jahr % 4
  bne.b    dtsetd_l1                ; kein Schaltjahr
 * Schaltjahr
@@ -11039,9 +11039,9 @@ setclock_err:
 * dos_etv_timer(unsigned int elapsed_ms)
 *
 * etv_timer -  Routine des GEMDOS
-* BIOS rettet vorher sämtliche Register, es dürfen also alle
+* BIOS rettet vorher saemtliche Register, es duerfen also alle
 * benutzt werden.
-* d2 = Maske für 5 Bits ($1f)
+* d2 = Maske fuer 5 Bits ($1f)
 * d7.hi = time
 * d7.lo = date
 *
@@ -11054,10 +11054,10 @@ dos_etv_timer:
  add.w    d0,(a0)                  ; auf last_ms addieren
  cmpi.w   #2000,(a0)               ; schon wieder 2s voll ?
  bcs      det_ende                 ; nein, Ende
- subi.w   #2000,(a0)               ; 2s in die Uhr übertragen
+ subi.w   #2000,(a0)               ; 2s in die Uhr uebertragen
  move.l   dos_time,d7
  swap     d7                       ; d7.lo ist jetzt dos_time
- addq.w   #1,d7                    ; Zeit erhöhen
+ addq.w   #1,d7                    ; Zeit erhoehen
  move.w   d7,d0
  and.w    d2,d0                    ; $1f, 2-Sekunden-Einheiten
  cmpi.w   #30,d0                   ; Eine Minute voll ?
@@ -11080,7 +11080,7 @@ dos_etv_timer:
  and.w    d2,d0                    ; $1f, Tag isolieren
  cmp.w    d2,d0                    ; $1f, Tag ist 31 ?
  beq.b    dosevtt_l1                ; ja, Monat weiterschalten
- addq.w   #1,d7                    ; Tag erhöhen
+ addq.w   #1,d7                    ; Tag erhoehen
  move.w   d7,d0
  and.w    d2,d0                    ; $1f, Tag holen
  cmp.w    #$28,d0                  ; Tag <= 28
@@ -11110,18 +11110,18 @@ dosevtt_l2:
  bls.b    det_wr                   ; kein Monatsende
 dosevtt_l1:
  andi.w   #$ffe0,d7                ; Tag auf 0
- addi.w   #$21,d7                  ; Monat weiterzählen
+ addi.w   #$21,d7                  ; Monat weiterzaehlen
  move.w   d7,d0
  and.w    #$1e0,d0                 ; Monat holen
  cmp.w    #$180,d0                 ; Monat > 12 ?
  bls.b    det_wr                   ; nein, ok
  andi.w   #$fe00,d7                ; Monat auf 0
- addi.w   #$221,d7                 ; Jahr weiterzählen
+ addi.w   #$221,d7                 ; Jahr weiterzaehlen
 det_wr:
  move.l   d7,dos_time              ; dos_time/dos_date schreiben
  bra.b    det_ende
 det_wr_time:
- move.w   d7,dos_time              ; nur Zeit hat sich geändert
+ move.w   d7,dos_time              ; nur Zeit hat sich geaendert
 det_ende:
  move.l   otimer,-(sp)
  rts
@@ -11216,7 +11216,7 @@ prn_name_s:
 nulb_s:
  DC.B     0
 xtpath:
- DC.B     ':\GEMSYS\MAGIC\XTENSION\',0
+ DC.B     ':',$5c,'GEMSYS',$5c,'MAGIC',$5c,'XTENSION',$5c,0
 
      EVEN
 
@@ -11474,28 +11474,28 @@ err_09s: DC.B  'Kein Papier',0
 err_10s: DC.B  'Schreibfehler',0
 err_11s: DC.B  'Lesefehler',0
 err_12s: DC.B  'Allgemeiner Fehler',0
-err_13s: DC.B  'Disk schreibgeschützt',0
+err_13s: DC.B  'Disk schreibgesch',$81,'tzt',0
 err_14s: DC.B  'Unerlaubter Diskwechsel',0
-err_15s: DC.B  'Unbekanntes Gerät',0
+err_15s: DC.B  'Unbekanntes Ger',$84,'t',0
 err_16s: DC.B  'Defekte Sektoren',0
 err_17s: DC.B  'Andere Disk einlegen!',0
 
-err_32s: DC.B  'Ungültige Funktionsnummer',0
+err_32s: DC.B  'Ung',$81,'ltige Funktionsnummer',0
 err_33s: DC.B  'Datei nicht gefunden',0
 err_34s: DC.B  'Pfad nicht gefunden',0
-err_35s: DC.B  'Zuviele geöffnete Dateien',0
+err_35s: DC.B  'Zuviele ge',$94,'ffnete Dateien',0
 err_36s: DC.B  'Zugriff verweigert',0
-err_37s: DC.B  'Ungültiges Handle',0
+err_37s: DC.B  'Ung',$81,'ltiges Handle',0
 err_39s: DC.B  'Zuwenig Speicher',0
-err_40s: DC.B  'Ungültiger Speicherblock',0
-err_46s: DC.B  'Ungültiges Laufwerk',0
+err_40s: DC.B  'Ung',$81,'ltiger Speicherblock',0
+err_46s: DC.B  'Ung',$81,'ltiges Laufwerk',0
 err_48s: DC.B  'Nicht dasselbe Laufwerk',0
 err_49s: DC.B  'Keine weiteren Dateien',0
-err_58s: DC.B  'Gerät gesperrt',0
+err_58s: DC.B  'Ger',$84,'t gesperrt',0
 err_59s: DC.B  'Unlock- Fehler',0
 err_64s: DC.B  'Falscher Bereich',0
 err_65s: DC.B  'Interner Fehler',0
-err_66s: DC.B  'Datei nicht ausführbar',0
+err_66s: DC.B  'Datei nicht ausf',$81,'hrbar',0
 err_67s: DC.B  'Mshrink- Fehler',0
 err_68s: DC.B  'Abbruch durch Benutzer',0         * KAOS
 err_69s: DC.B  '68000 Exception',0                * KAOS
@@ -11567,7 +11567,7 @@ diskerr_s2: DC.B  ':',$d,$a,'[A]bort, [R]etry, [I]gnore ? ',0
     IF  COUNTRY=COUNTRY_FR
 
 out_of_int_mem:
- DC.B   '*** PLUS DE MÉMOIRE INTERNE:',$1b,'K',$d,$a
+ DC.B   '*** PLUS DE M',$90,'MOIRE INTERNE:',$1b,'K',$d,$a
  DC.B   '*** UTILISER ADDMEM.PRG!',0
 dos_fatal_errs:
  DC.B   '*** ERREUR FATALE DANS GEMDOS:',0
@@ -11576,41 +11576,41 @@ err_1s:  DC.B   'Erreur grave',0
 err_02s: DC.B   'Lecteur non disponible',0
 err_03s: DC.B   'Commande inconnue',0
 err_04s: DC.B   'Erreur-CRC',0
-err_05s: DC.B   'Commande erronée',0
-err_06s: DC.B   'Piste non trouvée',0
+err_05s: DC.B   'Commande erron',$82,'e',0
+err_06s: DC.B   'Piste non trouv',$82,'e',0
 err_07s: DC.B   'Support inconnu',0
-err_08s: DC.B   'Secteur non trouvé',0
+err_08s: DC.B   'Secteur non trouv',$82,'',0
 err_09s: DC.B   'Pas de papier',0
-err_10s: DC.B   "Erreur d'écriture",0
+err_10s: DC.B   "Erreur d'",$82,"criture",0
 err_11s: DC.B   'Erreur de lecture',0
-err_12s: DC.B   'Erreur générale',0
-err_13s: DC.B   'Disque protégé en écriture',0
-err_14s: DC.B   'Échange de disque non autorisé',0
-err_15s: DC.B   'Périphérique inconnu',0
-err_16s: DC.B   'Secteurs défectueux',0
-err_17s: DC.B   'Insérer un autre disque!',0
+err_12s: DC.B   'Erreur g',$82,'n',$82,'rale',0
+err_13s: DC.B   'Disque prot',$82,'g',$82,' en ',$82,'criture',0
+err_14s: DC.B   '',$90,'change de disque non autoris',$82,'',0
+err_15s: DC.B   'P',$82,'riph',$82,'rique inconnu',0
+err_16s: DC.B   'Secteurs d',$82,'fectueux',0
+err_17s: DC.B   'Ins',$82,'rer un autre disque!',0
 
-err_32s: DC.B   'Numéro de fonction non valable',0
-err_33s: DC.B   'Fichier non trouvé',0
-err_34s: DC.B   'Chemin non trouvé',0
+err_32s: DC.B   'Num',$82,'ro de fonction non valable',0
+err_33s: DC.B   'Fichier non trouv',$82,'',0
+err_34s: DC.B   'Chemin non trouv',$82,'',0
 err_35s: DC.B   'Trop de fichiers ouverts',0
-err_36s: DC.B   'Accès refusé',0
+err_36s: DC.B   'Acc',$8a,'s refus',$82,'',0
 err_37s: DC.B   'Handle non valable',0
-err_39s: DC.B   'Mémoire insuffisante',0
-err_40s: DC.B   'Bloc de mémoire non valable',0
+err_39s: DC.B   'M',$82,'moire insuffisante',0
+err_40s: DC.B   'Bloc de m',$82,'moire non valable',0
 err_46s: DC.B   'Lecteur non valalble',0
-err_48s: DC.B   "Ce n'est pas le même lecteur",0
+err_48s: DC.B   "Ce n'est pas le m",$88,"me lecteur",0
 err_49s: DC.B   "Pas d'autres fichiers",0
-err_58s: DC.B   'Périphérique verrouillé',0
+err_58s: DC.B   'P',$82,'riph',$82,'rique verrouill',$82,'',0
 err_59s: DC.B   'Erreur-Unlock',0
-err_64s: DC.B   'Zone erronée',0
+err_64s: DC.B   'Zone erron',$82,'e',0
 err_65s: DC.B   'Erreur interne',0
-err_66s: DC.B   'Fichier non exécutable',0
+err_66s: DC.B   'Fichier non ex',$82,'cutable',0
 err_67s: DC.B   'Erreur-Mshrink',0
 err_68s: DC.B   "Abandon par l'utilisateur",0   * KAOS
 err_69s: DC.B   'Exception 68000',0             * KAOS
 err_70s: DC.B   'Chemin trop profond',0         * MAGIX
-err_80s: DC.B   'Alias trop imbriqués',0            * MINT
+err_80s: DC.B   'Alias trop imbriqu',$82,'s',0            * MINT
 toserrs: DC.B   'Erreur TOS',0
 
 

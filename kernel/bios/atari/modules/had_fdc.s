@@ -1,5 +1,5 @@
 **********************************************************************
-**************     Floppy- Treiber für Hades     *********************
+**************     Floppy- Treiber fuer Hades     *********************
 **************         anstelle von FDC.S        *********************
 **********************************************************************
 
@@ -17,11 +17,11 @@ boot_dsel_floppies:
 *
 * Interruptsteuerung:
 *
-* Alles geht über den Eingang I5 des ST-MFP, hat den Interrupt #7
+* Alles geht ueber den Eingang I5 des ST-MFP, hat den Interrupt #7
 * (aktiviert mit Bit 7 von ierb)
-* Polling über Bit 5 von gpip
-* 1. aer für Bit 5 muß 0 sein, d.h. Interrupt wird ausgelöst beim
-*    Übergang von 1 auf 0
+* Polling ueber Bit 5 von gpip
+* 1. aer fuer Bit 5 muss 0 sein, d.h. Interrupt wird ausgeloest beim
+*    Uebergang von 1 auf 0
 * 2. Interrupt _mfpint (7) aktivieren und Vektor setzen (Adr. $11c)
 *
 
@@ -29,9 +29,9 @@ boot_dsel_floppies:
 *
 * Sperre den FDC/ACSI-DMA
 * und gib ihn wieder frei.
-* Kein Register (außer d0 bei acsi_end) wird verändert
+* Kein Register (ausser d0 bei acsi_end) wird veraendert
 *
-* Für die Zeit, in der AES noch nicht initialisiert ist, kann evnt_sem
+* Fuer die Zeit, in der AES noch nicht initialisiert ist, kann evnt_sem
 * nicht sperren, weil act_appl immer NULL ist.
 *
 
@@ -88,7 +88,7 @@ _acsi_end:
 *
 * long cond_wait_ACSI( d0 = long ticks_200hz )
 *
-* RÜckgabe:    0    OK
+* RUeckgabe:    0    OK
 *             -1    TimeOut
 *             -2    Busfehler
 *
@@ -104,7 +104,7 @@ cond_wait_ACSI:
 *
 * long wait_ACSI( d0 = long ticks_200hz )
 *
-* RÜckgabe:    0    OK
+* RUeckgabe:    0    OK
 *             -1    TimeOut
 *             -2    Busfehler
 *
@@ -114,12 +114,12 @@ wait_ACSI:
  rts
 _wait_ACSI:
  movem.l  d1-d2/a0-a2,-(sp)
- tst.w    pe_slice            ; präemptiv ?
+ tst.w    pe_slice            ; praeemptiv ?
  bmi.b    wdma_no_yield       ; nein, busy waiting
  move.l   act_appl,d2
- ble.b    wdma_no_yield       ; aktuelle Applikation ungültig
+ ble.b    wdma_no_yield       ; aktuelle Applikation ungueltig
 
-* neue Routine über evnt_IO und MFP- Interrupt
+* neue Routine ueber evnt_IO und MFP- Interrupt
 
  lsr.l    #2,d0               ; AES: 50Hz statt 200Hz
 wdma_neu:
@@ -142,7 +142,7 @@ wdma_ende:
  movem.l  (sp)+,d1-d2/a0-a2
  rts
 
-* alte Routine mit busy waiting über _hz_200
+* alte Routine mit busy waiting ueber _hz_200
 
 wdma_no_yield:
  add.l    _hz_200,d0
@@ -163,10 +163,10 @@ wdma_ok:
 
 **********************************************************************
 *
-* Interruptroutine für MFP, Interruptkanal #7 = I/O-Port 5
+* Interruptroutine fuer MFP, Interruptkanal #7 = I/O-Port 5
 * (DMA/FDC busy)
 *
-* Rückgabewert 0 (OK)
+* Rueckgabewert 0 (OK)
 *
 
 int_mfp7:
@@ -182,7 +182,7 @@ int_mfp7:
  jsr      appl_IOcomplete               ; wartende APP aufwecken
  movem.l  (sp)+,d0-d2/a0-a2
 imfp7_ende:
- move.b   #$7f,isrb                     ; service- Bit löschen
+ move.b   #$7f,isrb                     ; service- Bit loeschen
  rte
 
 
@@ -191,7 +191,7 @@ imfp7_ende:
 * void int_mfp7_unsel( a0 = long *unselect, a1 = APPL *ap );
 *
 * Deaktiviert den Interrupt wieder, wenn er nicht eingetroffen ist
-* Rückgabewert -1 (Timeout)
+* Rueckgabewert -1 (Timeout)
 *
 
 int_mfp7_unsel:
@@ -221,7 +221,7 @@ flopini1: lea       wpstat.w,a0                             ;status auf diskette
                move.w    seekrate.w,dsb_seekrate(A1)
                move.w    #defhdinf,dsb_hdmode(a1)           ;dsb_hdmode auf default
 
-               move.w    #-256,dsb_track(A1)                ;*negativ, damit restore ausgeführt wird
+               move.w    #-256,dsb_track(A1)                ;*negativ, damit restore ausgefuehrt wird
                moveq     #-1,d0                                  ;def error
                bsr  floplock                                ;*incl. select0 und restore
                bne  flopfail                                ;*
@@ -241,10 +241,10 @@ flopini1: lea       wpstat.w,a0                             ;status auf diskette
                bra  flopok              ;*
 
 ;------------------------------------------------------------------------------
-;*********************** no_flops  keine Floppies vorhanden (Neu ggü. 2.06)     ***
+;*********************** no_flops  keine Floppies vorhanden (Neu ggue. 2.06)     ***
 no_flops: moveq     #-15,D0
                rts
-;****************************** floplock  Floppy Parameter übernehmen S.119     ***
+;****************************** floplock  Floppy Parameter uebernehmen S.119     ***
 ;hades
 
 floplock: 
@@ -276,7 +276,7 @@ flplock1: tst.w     dsb_track(A1)       ;dsb[devno].curtrack
           move.w    #-1,dsb_track(A1)
 end_err:    
               moveq #-1,d0              ;fehler
-            rts                             ;zurück
+            rts                             ;zurueck
 ;************************************* flopfail  Fehler     in Floppy Routine aufgetreten S.120     ---
 flopfail: 
           bsr  fdc_reset
@@ -415,7 +415,7 @@ wait_int1:  cmp.l   _hz_200.w,d6             ;zeit abgelaufen?
             beq     wait_int1                     ;nein nochmal->
 end_ok:   
                moveq     #0,d0                         ;kein fehler
-            rts                    ;zurück
+            rts                    ;zurueck
 ;-----------------------------------wait bis master status register valid
 wait_mast:     moveq     #48,d0              ; --     -- ED=6us HD=12us DD=24us
                cmp.b     #dd,dsb_hdmode+1(a1)     ;dd?
@@ -459,7 +459,7 @@ floppy_vbl:    tst.w     _nflops.w
                beq  vbl_rts
                tst.w     flock.w             ;aktiv?
                bne  vbl_rts             ;ja->
-;------------------------------------------ test auf diskettenwechsel über wp
+;------------------------------------------ test auf diskettenwechsel ueber wp
                move.l    _frclock.w,D1
                move.b    D1,D0
                and.b     #7,D0                   ;8. vbl ?
@@ -486,7 +486,7 @@ vbl3:          move.b    #$3c,d6
                bsr       sendcom
                moveq     #0,d3                                   ;1 byt holen
                bsr       holdata
-               btst #6,status_buffer.w                 ;H=Schreibgeschützt
+               btst #6,status_buffer.w                 ;H=Schreibgeschuetzt
           sne       (a0)                            ;wpstat setzen
           beq       vbl2                            ;nicht gewechselt resp. nicht wp
                move.w    #defhdinf,dsb_hdmode(a1)           ;dsb_hdmode auf default
@@ -497,7 +497,7 @@ vbl2:          move.w    wpstat.w,D0                   ;
           beq  vbl4                               ;nein
 ;------------------------------------------------- motor abstellen ?
                move.l    _hz_200.w,D0
-               cmp.l     flp_led_out.w,D0                   ; während Nachlaufzeit   ...
+               cmp.l     flp_led_out.w,D0                   ; waehrend Nachlaufzeit   ...
                bcs.s     vbl5                         ;nein nicht abstellen
 ;-------------------------------------------------
 vbl4:          move.b  #$0E,ldor             ;alle LW abschalten
@@ -536,20 +536,20 @@ seek_ver: move.w    #-6,_cerror.w
 *
 * Wird zu Beginn von _Floprd/wr/ver/fmt aufgerufen.
 * Managet den Diskwechsel A/B.
-* In Mag!X wird auch Bereichsüberprüfung vorgenommen, leider in
-* TOS 3.06 nur unvollkommen gelöst
+* In Mag!X wird auch Bereichsueberpruefung vorgenommen, leider in
+* TOS 3.06 nur unvollkommen geloest
 *
 
 change:
  move.w   _nflops,d1
- beq.b    _tstc_eundev             ; überhaupt kein Laufwerk da
- move.w   (a0),d0                  ; angewähltes Laufwerk
+ beq.b    _tstc_eundev             ; ueberhaupt kein Laufwerk da
+ move.w   (a0),d0                  ; angewaehltes Laufwerk
  cmpi.w   #1,d0
  bhi.b    _tstc_eundev             ; ist weder A: noch B:
  subq.w   #1,d1
  bne.b    _tstc_ok                 ; habe zwei Laufwerke
  cmp.w    current_disk,d0          ; habe nur ein Laufwerk
- beq.b    _tstc_a                  ; aber ich muß jetzt nicht wechseln
+ beq.b    _tstc_a                  ; aber ich muss jetzt nicht wechseln
  move.l   a0,-(sp)
  move.w   d0,-(sp)
  move.w   #$ffef,-(sp)             ; EOTHER
@@ -618,7 +618,7 @@ fdc_wrint1:    move.l    a0,cbuffer.w
                movem.l (sp)+,a0/d0-d1
                bclr #6,$fffffa91
                rte
-;------------------------------------------------- daten transfer per interrupt VOM fdc für verify
+;------------------------------------------------- daten transfer per interrupt VOM fdc fuer verify
 fdc_vrint:  bclr    #6,$fffffa89.w                  ;int off
                movem.l   a0/d0-d2,-(sp)                  ;register sichern
             move.l  cbuffer.w,a0
@@ -687,15 +687,15 @@ floprd1:    bsr     select0
 ;init int
 floprd2:  move.l    cbuffer.w,d5                    ;start sichern
                bset #4,$fffffa83.w                     ;int bei low to high
-               bclr #6,$fffffa8d.w                     ;interrupt pending löschen
-               bclr #6,$fffffa91.w                  ;in service löschen
+               bclr #6,$fffffa8d.w                     ;interrupt pending loeschen
+               bclr #6,$fffffa91.w                  ;in service loeschen
                bset #6,$fffffa95.w                  ;maske freigeben -> interrupt
                bset #6,$fffffa89.w                     ;int enable
 ;-----------------------------------------------------      
 
 ;---------------------------------------------------------
             moveq   #$46,d7                                 ;mfm read sectoren
-            sub.b   rwflag.w,d7                     ;$45 für write
+            sub.b   rwflag.w,d7                     ;$45 fuer write
                bsr  sendcom
             move.w  cside.w,d7                    ;seite
             move.w  d7,d1
@@ -740,7 +740,7 @@ floprd4:  bclr #6,$fffffa89.w                  ;int disable
                bne  floprd5                                 ;nein ->
 ;-------------------------------------------------
 floprd8:  move.w    #2,_rtrycnt.w                           ;3 versuch
-               addq.w    #1,csect.w                              ;nächster sector
+               addq.w    #1,csect.w                              ;naechster sector
                subq.w    #1,ccount.w                        ;anzahl -1
                bne  floprd2
                tst.b     rwflag+1.w                                   ;verify?
@@ -757,7 +757,7 @@ floprd5:  move.l    d5,cbuffer.w                            ;alter start
                bne       floprd9                                      ;nein->
                tst.b     rwflag.w                                ;read?
                bne       floprd9                                      ;nein->
-               tst.b     dsb_hdmode(a1)                               ;versuchszähler = 0
+               tst.b     dsb_hdmode(a1)                               ;versuchszaehler = 0
                beq       floprd9                               ;ja->
                subq.b    #1,dsb_hdmode(a1)                            ;1 versuche weniger
                move.w    #2,_rtrycnt.w                           ;retry wieder auf 2
@@ -784,7 +784,7 @@ floprd7:  subq.w    #1,_rtrycnt.w
                tst.w     verifyflag.w                            ;sectortest?
                bne       flopfail                                ;nein-> error end
                move.w    csect.w,(a3)+                        ;defekter sector eintragen
-               bra       floprd8                                      ;und nächster
+               bra       floprd8                                      ;und naechster
 ;************************************ errbits  Fehlernummer bestimmen S.114     ***
 errbits:  moveq     #-13,D1                       ;write protect
           btst #1,d0
@@ -895,31 +895,31 @@ fmtflp:
                move.w    20(A7),flpfmt_intlv.w               ;sectortabelle vorhanden?
                bmi  fmt31                           ;ja
 ;---------------------------------------------- sectorreihenfolge in tabelle erzeugen
-;d0 = anzahl sectoren. d1 = standort im buffer. d2 = interleave. d3 = schleifenzähler. d4 = momentane sectornummer.
+;d0 = anzahl sectoren. d1 = standort im buffer. d2 = interleave. d3 = schleifenzaehler. d4 = momentane sectornummer.
                moveq     #1,d4
                moveq     #0,d1                           ;1. tabellenplatz
                move.w    flpfmt_spt.w,d0                       ;anzahl sectoren
-               move.w    d0,d3                           ;nach d3 als zähler
-fmt24:         clr.b     0(a3,d3.w)                      ;sectortabelle löschen
+               move.w    d0,d3                           ;nach d3 als zaehler
+fmt24:         clr.b     0(a3,d3.w)                      ;sectortabelle loeschen
                dbf  d3,fmt24
                move.w    d0,d3
                move.w    flpfmt_intlv.w,d2
                subq.w    #2,d3                    ;-1 umlauf (resp. 2 wegen dbf)
                move.b    d4,(a3)                  ;1. sector
 fmt22:         add.w     d2,d1
-               cmp.w     d1,d0                           ;grösser oder gleich max
+               cmp.w     d1,d0                           ;groesser oder gleich max
                bge  fmt23                    ;nein->
                sub.w     d0,d1
-fmt23:         addq.w    #1,d4                           ;nächster sector
+fmt23:         addq.w    #1,d4                           ;naechster sector
 fmt26:         tst.b     0(a3,d1.w)               ;frei?
                beq  fmt25
                addq.w    #1,d1                    ;sonst next
                bra  fmt26
 fmt25:         move.b    d4,0(a3,d1.w)            ;eintragen
                dbf  d3,fmt22            ;next bis ende
-               moveq     #40,d3                   ;rest füllen
-fmt27:         addq.w    #1,d4                           ;nächste sectornummer
-               addq.w    #1,d1                           ;nächster platz
+               moveq     #40,d3                   ;rest fuellen
+fmt27:         addq.w    #1,d4                           ;naechste sectornummer
+               addq.w    #1,d1                           ;naechster platz
                move.b    d4,0(a3,d1.w)                   ;eintragen
                dbf  d3,fmt27
 ;-----------------------------------------------
@@ -944,8 +944,8 @@ fmt6:          move.w    #1,csect.w               ;startsector auf 1
 ;init int
             move.l  #fdc_format,$158.w       ;vector setzen
                bset #4,$fffffa83.w           ;int bei low to high
-               bclr #6,$fffffa8d.w           ;interrupt pending löschen
-               bclr #6,$fffffa91.w                  ;in service löschen
+               bclr #6,$fffffa8d.w           ;interrupt pending loeschen
+               bclr #6,$fffffa91.w                  ;in service loeschen
                bset #6,$fffffa95.w                  ;maske freigeben -> interrupt
                bset #6,$fffffa89.w           ;int enable
 ;-----------------------------------------------------      
@@ -978,13 +978,13 @@ fmt3:         bclr  #6,$fffffa89.w           ;int off
                move.b    status_buffer+1.w,d0          ;FDC Status register 1
                and.b     #$37,d0                         ;relevante bits
                bne.s     fmt5                     ;wenn nicht null dann error
-;------------------------------------------------- sectortest ausführen
+;------------------------------------------------- sectortest ausfuehren
 fmt8:         clr.w (a3)                ;keine def. sectoren
                tst.w     _fverify                 ;verfiy?
                beq  flopok                          ;nein->
             move.l  a3,cbuffer.w             ;bufferzeiger auf anfang
                move.w    #1,csect.w                     ;beginnen bei sector 1
-               move.w    flpfmt_spt.w,ccount.w                 ;alle sectoren prüfen
+               move.w    flpfmt_spt.w,ccount.w                 ;alle sectoren pruefen
                clr.w     verifyflag.w             ;sectortest
                move.w    #2,_rtrycnt.w            ;3 Versuche
                move.w    #1,rwflag.w                        ;read zum verify
@@ -999,7 +999,7 @@ fmt7:          subq.w    #1,_rtrycnt.w
                bpl  fmt6                ;nochmal versuchen
                bra       flopfail
                rts
-;------------------------------------------------------------ sectortabelle übertragen
+;------------------------------------------------------------ sectortabelle uebertragen
 fmt31:         move.w    flpfmt_spt.w,d0                       ;anzahl sectoren
                move.w    d0,d2
                move.l    cfiller.w,a0                    ;tabelle
@@ -1008,7 +1008,7 @@ fmt31:         move.w    flpfmt_spt.w,d0                       ;anzahl sectoren
 fmt32:         move.w    (a0)+,d1                        ;sectornr. als word holen
                move.b    d1,(a2)+                        ;und als byt speichern
                dbf  d0,fmt32                        ;wiederholen bis fertig
-               move.w    #40,d0                          ;rest füllen
+               move.w    #40,d0                          ;rest fuellen
 fmt33:         addq.w    #1,d2
                move.b    d2,(a2)+                        ;eintragen
                dbf  d0,fmt33                        ;bis fertig
@@ -1035,8 +1035,8 @@ form3:         move.b    ctrack+1.w,data_reg                ;track nummer
             bmi          form2                           ;error
                move.b    #2,data_reg                             ;512 byt sectoren
             dbf          d0,form1                        ;wiederholen bis fertig
-form2:         move.l    a0,cbuffer.w                    ;bufferregister zurück
-               movem.l   (sp)+,d0-d1/a0                     ;register zurück
+form2:         move.l    a0,cbuffer.w                    ;bufferregister zurueck
+               movem.l   (sp)+,d0-d1/a0                     ;register zurueck
                rte
 ;-----------------------------------------------------------------------
 formintwaitb:move.l #100000,d1                      ;timeout 50ms

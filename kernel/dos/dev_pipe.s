@@ -1,6 +1,6 @@
 **********************************************************************
 *
-* Dieses Modul enthält die Dateitreiber für uni- und
+* Dieses Modul enthaelt die Dateitreiber fuer uni- und
 * bidirektionale Pipes
 *
 
@@ -34,7 +34,7 @@ pipe_sizeof:
      OFFSET
 
 upipe_owner:   DS.L      1    /* 0x00: PD *, Eigner der Pipe               */
-upipe_refcnt:  DS.W      1    /* 0x02: Referenzzähler                      */
+upipe_refcnt:  DS.W      1    /* 0x02: Referenzzaehler                      */
 upipe_flag:    DS.W      1    ; Flag (unbenutzt)
 upipe_pipe:    DS.B      pipe_sizeof
 upipe_sizeof:
@@ -42,8 +42,8 @@ upipe_sizeof:
      OFFSET
 
 bipipe_owner:  DS.L      1    /* 0x00: PD *, Eigner der Pipe               */
-bipipe_refcnt: DS.W      1    /* 0x02: Referenzzähler                      */
-bipipe_flag:   DS.W      1    ; Flag (O_HEAD, wenn noch nicht geöffnet)
+bipipe_refcnt: DS.W      1    /* 0x02: Referenzzaehler                      */
+bipipe_flag:   DS.W      1    ; Flag (O_HEAD, wenn noch nicht geoeffnet)
 bipipe_crpipe: DS.B      pipe_sizeof                  /* creator -> client */
 bipipe_clpipe: DS.B      pipe_sizeof                  /* client -> creator */
 bipipe_sizeof:
@@ -97,7 +97,7 @@ upipe_create:
  clr.l    (a0)+                    ; refcnt/flag
  clr.w    (a0)+                    ; pipe_len
  clr.l    (a0)+                    ; pipe_waiting
- move.l   #$00080000,dir_flen(a5)  ; Dateilänge immer 2k (intel)
+ move.l   #$00080000,dir_flen(a5)  ; Dateilaenge immer 2k (intel)
  moveq    #0,d0
 ucr_ende:
  move.l   (sp)+,a5
@@ -108,7 +108,7 @@ ucr_ende:
 *
 * long upipe_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
@@ -117,9 +117,9 @@ ucr_ende:
 
 upipe_open:
  move.l   #2048,fd_len(a0)
- move.l   fd_multi1(a0),a0              ; sonst nur Refcnt erhöhen
+ move.l   fd_multi1(a0),a0              ; sonst nur Refcnt erhoehen
  move.l   fd_xdata(a0),a1               ; -> Daten
- addq.w   #1,upipe_refcnt(a1)           ; Referenzzähler erhöhen
+ addq.w   #1,upipe_refcnt(a1)           ; Referenzzaehler erhoehen
  moveq    #0,d0
  rts
 
@@ -138,19 +138,19 @@ upipe_close:
  bsr      pipe_wakeup              ; falls jemand noch wartet!
 _upipe_close:
  subq.w   #1,upipe_refcnt(a4)      ; == bipipe_refcnt
- bgt.b    upc_ok                   ; Referenzzähler noch nicht 0
+ bgt.b    upc_ok                   ; Referenzzaehler noch nicht 0
  move.l   a4,a0
  jsr      Mfree                    ; Pipe freigeben
- move.l   fd_parent(a5),a0         ; zugehöriges Verzeichnis
+ move.l   fd_parent(a5),a0         ; zugehoeriges Verzeichnis
  move.l   fd_xdata(a0),a0          ; Verzeichnisdaten
  add.l    fd_dirpos(a5),a0         ; meine Verzeichnisposition
- move.b   #$e5,(a0)                ; Datei als gelöscht markieren
+ move.b   #$e5,(a0)                ; Datei als geloescht markieren
 /*
-* Datei als gelöscht markieren
+* Datei als geloescht markieren
  move.l   fd_dirpos(a5),d0
  move.l   fd_parent(a5),a0
  jsr      __fseek
- move.w   #$e500,-(sp)             ; gelöschte Datei
+ move.w   #$e500,-(sp)             ; geloeschte Datei
  move.l   sp,a1
  moveq    #1,d0                    ; 1 Byte
  move.l   fd_parent(a5),a0         ; FD
@@ -183,13 +183,13 @@ pr_loop:
  moveq    #0,d2
  move.w   pipe_len(a6),d2          ; soviele Bytes sind schon drin
  bne.b    pr_ok1                   ; Pipe nicht leer
- cmpi.w   #1,(a4)                  ; Pipe überhaupt nochmal geöffnet ?
+ cmpi.w   #1,(a4)                  ; Pipe ueberhaupt nochmal geoeffnet ?
  bls      prw_ende                 ; nein, Ende
-; warte darauf, daß wieder Daten kommen
+; warte darauf, dass wieder Daten kommen
  move.l   a6,-(sp)                 ; PIPE *
  pea      pipe_unsel(pc)           ; unsel()
  move.l   act_appl,pipe_waiting(a6)     ; ich bin es, der wartet
- move.l   sp,pipe_waitunsl(a6)          ; für unselect
+ move.l   sp,pipe_waitunsl(a6)          ; fuer unselect
  move.l   sp,a0
  moveq    #0,d0                    ; ewig warten
  jsr      evnt_IO
@@ -206,17 +206,17 @@ pr_ok:
  move.l   d0,-(sp)
  jsr      ncopy_from               ; (a0)->(a1)
  move.l   (sp),d0
-; Daten aufrücken
+; Daten aufruecken
  sub.w    d0,pipe_len(a6)
- beq.b    pr_ok2                   ; Pipe leer, keine Daten aufrücken
+ beq.b    pr_ok2                   ; Pipe leer, keine Daten aufruecken
  lea      pipe_data(a6),a0         ; Ziel
- lea      pipe_data(a6,d0.w),a1    ; nächste Daten
+ lea      pipe_data(a6,d0.w),a1    ; naechste Daten
  move.w   pipe_len(a6),d0          ; Restdaten verschieben
  jsr      vmemcpy
 pr_ok2:
  move.l   (sp)+,d0
  add.l    d0,a5                    ; Pufferposition weiter
- sub.l    d0,d7                    ; count runterzählen
+ sub.l    d0,d7                    ; count runterzaehlen
 
 * evtl. wartende Applikationen aufwecken
 ;move.l   a6,a6
@@ -246,14 +246,14 @@ pw_loop:
  move.w   pipe_len(a6),d1          ; soviele Bytes sind drin
  sub.w    d1,d2                    ; soviele Bytes sind noch frei
  ext.l    d2
- bgt.b    pw_ok1                   ; Pipe noch nicht überfüllt
- cmpi.w   #1,(a4)                  ; Pipe überhaupt nochmal geöffnet ?
+ bgt.b    pw_ok1                   ; Pipe noch nicht ueberfuellt
+ cmpi.w   #1,(a4)                  ; Pipe ueberhaupt nochmal geoeffnet ?
  bls      prw_ende                 ; nein, Ende
-; warte darauf, daß wieder Daten frei werden
+; warte darauf, dass wieder Daten frei werden
  move.l   a6,-(sp)                 ; PIPE *
  pea      pipe_unsel(pc)           ; unsel()
  move.l   act_appl,pipe_waiting(a6)     ; ich bin es, der wartet
- move.l   sp,pipe_waitunsl(a6)          ; für unselect
+ move.l   sp,pipe_waitunsl(a6)          ; fuer unselect
  move.l   sp,a0
  moveq    #0,d0                    ; ewig warten
  jsr      evnt_IO
@@ -272,7 +272,7 @@ pw_ok:
  move.l   (sp)+,d0
  add.w    d0,pipe_len(a6)
  add.l    d0,a5                    ; Pufferposition weiter
- sub.l    d0,d7                    ; count runterzählen
+ sub.l    d0,d7                    ; count runterzaehlen
 
 * evtl. wartende Applikationen aufwecken
 ;move.l   a6,a6
@@ -378,10 +378,10 @@ pipe_stat:
 upipe_rstat:
  move.l   a0,d1                         ; Zeiger auf Pipe merken
  tst.w    (a0)+                         ; Daten da ?
- bne      us_ok                         ; ja, gib 1 zurück
+ bne      us_ok                         ; ja, gib 1 zurueck
 upipe_wait:
  move.l   a2,d0                         ; will Polling ?
- beq      us_ende2                      ; ja, gib 0 zurück
+ beq      us_ende2                      ; ja, gib 0 zurueck
 ; warte auf Lesen
  tst.l    (a0)                          ; wartet schon jemand ?
  bne      us_ende2                      ; ? kann eigentlich nicht sein ?
@@ -420,9 +420,9 @@ pipe_unsel:
 *
 * a0 = PIPE *bipipe_pipe(a0 = FD *fd, d0 = int rwflag );
 *
-* verändert nur a0
+* veraendert nur a0
 *
-* Gibt die zugehörige PIPE zurück.
+* Gibt die zugehoerige PIPE zurueck.
 *  der client liest vom creator
 *  der creator liest vom client
 *  der creator schreibt auf creator
@@ -452,11 +452,11 @@ bip_n1:
 *
 * MagiC 6.20:
 * Hier wird das Flag in <bipipe> auf O_HEAD gesetzt, was bedeutet,
-* daß die Pipe erstellt, aber noch nicht geöffnet wurde. Der erste,
-* der die Pipe öffnet (von Fcreate()) erhält das "creator"-Ende der
+* dass die Pipe erstellt, aber noch nicht geoeffnet wurde. Der erste,
+* der die Pipe oeffnet (von Fcreate()) erhaelt das "creator"-Ende der
 * Pipe. Alle weiteren Fopen()-Aufrufe erhalten das "client"-Ende.
 * Damit unterscheidet sich das Vorgehen von dem bis MagiC 6.10, wo
-* der erstellende Prozeß _immer_ die "creator"-Seite erhielt.
+* der erstellende Prozess _immer_ die "creator"-Seite erhielt.
 *
 
 bipipe_create:
@@ -479,9 +479,9 @@ bipipe_create:
  clr.w    (a0)+                    ; pipe_len
  clr.l    (a0)                     ; pipe_waiting
  lea      pipe_sizeof-2(a0),a0
- clr.w    (a0)+                    ; Länge für Client
- clr.l    (a0)                     ; wartend für Client
- move.l   #$00100000,dir_flen(a5)  ; Dateilänge immer 4k (intel)
+ clr.w    (a0)+                    ; Laenge fuer Client
+ clr.l    (a0)                     ; wartend fuer Client
+ move.l   #$00100000,dir_flen(a5)  ; Dateilaenge immer 4k (intel)
  moveq    #0,d0
 bicr_ende:
  move.l   (sp)+,a5
@@ -492,38 +492,38 @@ bicr_ende:
 *
 * long bipipe_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
 * Bidirektionale Pipes werden zweimal jeweils zum Lesen und
-* Schreiben geöffnet. O_TRUNC zeigt hier an, daß die Pipe über
-* Fcreate() geöffnet wird. Wenn nun ein zweites Fcreate kommt, wird
-* dies wegen OM_NOCHECK nicht vom DOS-XFS abgewiesen. Daher muß hier
+* Schreiben geoeffnet. O_TRUNC zeigt hier an, dass die Pipe ueber
+* Fcreate() geoeffnet wird. Wenn nun ein zweites Fcreate kommt, wird
+* dies wegen OM_NOCHECK nicht vom DOS-XFS abgewiesen. Daher muss hier
 * der Treiber mit EACCDN reagieren.
 *
 * MagiC 6.20:
-* bipipe_flag = O_HEAD zeigt an, daß die "creator"-Seite der Pipe
-* geöffnet wird. Das Flag wird in den FD kopiert und anschließend
-* gelöscht, damit nachfolgende Fopen()-Aufrufe die "client"-Seite
-* öffnen.
+* bipipe_flag = O_HEAD zeigt an, dass die "creator"-Seite der Pipe
+* geoeffnet wird. Das Flag wird in den FD kopiert und anschliessend
+* geloescht, damit nachfolgende Fopen()-Aufrufe die "client"-Seite
+* oeffnen.
 *
 
 bipipe_open:
  move.l   fd_multi1(a0),a1              ; Prototyp holen
  move.l   fd_xdata(a1),a1               ; -> Daten
- tst.w    bipipe_flag(a1)               ; schon geöffnet?
+ tst.w    bipipe_flag(a1)               ; schon geoeffnet?
  beq.b    bipop_client                  ; ja, jetzt "client"
- clr.w    bipipe_flag(a1)               ; nächster wird "client"
- ori.w    #O_HEAD,fd_mode(a0)           ; markieren, daß "creator"
+ clr.w    bipipe_flag(a1)               ; naechster wird "client"
+ ori.w    #O_HEAD,fd_mode(a0)           ; markieren, dass "creator"
  bra.b    bipop_both
 bipop_client:
  btst     #(BO_TRUNC-8),fd_mode(a0)     ; von Fcreate() ?
  bne.b    bipop_eaccdn                  ; ja, zweites Fcreate() => err
 bipop_both:
  move.l   #4096,fd_len(a0)
- ori.w    #OM_NOCHECK,fd_mode(a0)       ; Datei mehrmals öffnen erlaubt
- addq.w   #1,upipe_refcnt(a1)           ; Referenzzähler erhöhen
+ ori.w    #OM_NOCHECK,fd_mode(a0)       ; Datei mehrmals oeffnen erlaubt
+ addq.w   #1,upipe_refcnt(a1)           ; Referenzzaehler erhoehen
  moveq    #E_OK,d0
  rts
 bipop_eaccdn:
@@ -656,7 +656,7 @@ pipe_wakeup:
  move.l   pipe_waitunsl(a6),a1
  moveq    #1,d0                    ; eingetroffen
  move.l   d0,(a1)                  ; Zeiger auf unselect() durch OK ersetzen
-                                   ; in 4(a1) muß nochmal a6 liegen
+                                   ; in 4(a1) muss nochmal a6 liegen
  jmp      appl_IOcomplete          ; wartende Applikation aufwecken
 pr_ok3:
  rts

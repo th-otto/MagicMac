@@ -1,4 +1,4 @@
-* "Öffentliche" BIOS-Variablen"
+* "Public" BIOS-variables
 
 proc_lives     EQU $380
 proc_regs      EQU $384

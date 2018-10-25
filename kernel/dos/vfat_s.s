@@ -105,13 +105,13 @@ p_extfd:
 *
 * char vf_chksum( char dosname[11] )
 *
-* Berechnet die Prüfsumme eines 8+3-Namens im internen Format.
-* Die Prüfsumme steht in jedem zugehörigen LDIR-Eintrag.
+* Berechnet die Pruefsumme eines 8+3-Namens im internen Format.
+* Die Pruefsumme steht in jedem zugehoerigen LDIR-Eintrag.
 *
 
 vf_chksum:
  moveq    #0,d0          ; Checksum
- moveq    #11-1,d1       ; Zähler
+ moveq    #11-1,d1       ; Zaehler
 vfchk_loop:
  ror.b    #1,d0
  add.b    (a0)+,d0

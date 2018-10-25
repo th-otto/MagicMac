@@ -8,7 +8,7 @@
 #define RGT_WINOBJS (UPARROW+DNARROW+VSLIDE)
 #define BOT_WINOBJS (LFARROW+RTARROW+HSLIDE)
 
-/* WINDOW-Struktur fÅr MagiC-Kernel */
+/* WINDOW-Struktur fuer MagiC-Kernel */
 
 typedef struct {
 	WORD state;
@@ -21,16 +21,16 @@ typedef struct {
 	GRECT prev;
 	GRECT full;
 	GRECT work;
-	GRECT overall;			/* Umriû */
+	GRECT overall;			/* Umriss */
 	GRECT unic;
-	GRECT min;			/* Minimale Grîûe */
-	WORD	oldheight;		/* alte Hîhe vor Shading	*/
+	GRECT min;			/* Minimale Groesse */
+	WORD	oldheight;		/* alte Hoehe vor Shading	*/
 	WORD	hslide;		 	/* horizontale Schieberposition */
 	WORD vslide; 			/* vertikale Schieberposition */
-	WORD hslsize;			/* horizontale Schiebergrîûe */
-	WORD vslsize;			/* vertikale Schiebergrîûe */
+	WORD hslsize;			/* horizontale Schiebergroesse */
+	WORD vslsize;			/* vertikale Schiebergroesse */
 	void *wg;				/* Rechteckliste */
-	void *nextwg;			/* nÑchstes Rechteck der Liste */
+	void *nextwg;			/* naechstes Rechteck der Liste */
 	WORD	whdl;
 	OBJECT tree[N_OBJS];
 	USERBLK frame_userblk;
@@ -51,12 +51,12 @@ typedef struct {
 #define ICONIFIED 32
 #define SHADED 64
 
-/* öbergabe-Struktur zum Einklinken */
+/* Uebergabe-Struktur zum Einklinken */
 
 typedef struct {
 	WORD		version;		/* Versionsnummer der Struktur */
-	LONG		wsizeof;		/* Grîûe der WINDOW-Struktur */
-	WORD		whshade;		/* Hîhe eines ge-shade-ten Fensters */
+	LONG		wsizeof;		/* Groesse der WINDOW-Struktur */
+	WORD		whshade;		/* Hoehe eines ge-shade-ten Fensters */
 	void		(*wbm_create)( WININFO *w );
 	void		(*wbm_skind)( WININFO *w );
 	void		(*wbm_ssize)( WININFO *w );
@@ -67,7 +67,7 @@ typedef struct {
 	WORD		(*wbm_obfind)( WININFO *w, WORD x, WORD y );
 } WINFRAME_HANDLER;
 
-/* öbergabe-Struktur fÅr globale Fenster-Einstellungen */
+/* Uebergabe-Struktur fuer globale Fenster-Einstellungen */
 
 typedef struct {
 	WORD		flags;

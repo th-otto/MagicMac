@@ -1,7 +1,7 @@
 *
-* Dieses Modul enthält das Dateisystem (XFS) für alle DOS- kompatiblen
+* Dieses Modul enthaelt das Dateisystem (XFS) fuer alle DOS- kompatiblen
 * Dateisysteme (DFS).
-* Die meisten Funktionen werden von diesem XFS durchgeführt, für
+* Die meisten Funktionen werden von diesem XFS durchgefuehrt, fuer
 * Spezialfunktionen wird d_dfs des DMD verwendet
 *
 
@@ -79,7 +79,7 @@ act_appl equ $3982 ; from AES FIXME
 
 dosxfs:
  DC.B     'VDOS_XFS'               ; Name
- DC.L     0                        ; nächstes XFS
+ DC.L     0                        ; naechstes XFS
  DC.L     FS_KNOPARSE+FS_NOXBIT    ; Flags
  DC.L     dxfs_init
  DC.L     dxfs_sync
@@ -178,7 +178,7 @@ dxfs_sync:
 *
 * Ein Programm wird gerade terminiert. Das XFS kann alle von diesem
 * Programm belegten Ressourcen freigeben.
-* Alle Ressourcen, von dem der Kernel weiß (d.h. geöffnete Dateien)
+* Alle Ressourcen, von dem der Kernel weiss (d.h. geoeffnete Dateien)
 * sind bereits vom Kernel freigegeben worden.
 *
 
@@ -203,7 +203,7 @@ _dpt_nxt:
  bsr.b    _dxfs_pterm              ; Rekursion !
 dpt_nochildren:
 * Entsperre Prototyp-DD_FD
- cmp.l    fd_owner(a5),a4          ; gehört dem terminierenden Prozeß ?
+ cmp.l    fd_owner(a5),a4          ; gehoert dem terminierenden Prozess ?
  bne.b    dpt_other                ; nein
  move.l   a5,a0
  bsr      close_DD                 ; ja, freigeben
@@ -239,7 +239,7 @@ dxfs_drv_open:
      DEBON
  move.l   d_dfs(a0),d0
  bne      ddo_mediach              ; schon initialisiert
-     DEB  'Öffne neues DOSXFS- Laufwerk'
+     DEB  '�ffne neues DOSXFS- Laufwerk'
  movem.l  a4/a5,-(sp)
  move.l   a0,a5                    ; a5 = DMD *
 
@@ -259,7 +259,7 @@ ddo_nloop:
  move.l   a5,a0                    ; DMD
  jsr      (a1)
  tst.l    d0
- beq.b    ddo_valid                ; alles OK, DMD gültig
+ beq.b    ddo_valid                ; alles OK, DMD gueltig
  move.l   dfs_next(a4),a4
 ddo_nfs:
  move.l   a4,d0
@@ -269,7 +269,7 @@ ddo_nfs:
 ddo_valid:
  move.l   #dosxfs,d_xfs(a5)
  move.l   d_root(a5),a0
- move.l   #dosdev_drv,fd_dev(a0)   ; Gerätetreiber für FD der Root
+ move.l   #dosdev_drv,fd_dev(a0)   ; Geraetetreiber fuer FD der Root
  move.l   a0,fd_multi1(a0)         ; Root ist eigener Prototyp
 ddo_ende:
  movem.l  (sp)+,a4/a5
@@ -285,10 +285,10 @@ ddo_mediach:
 *
 * long dxfs_drv_close( a0 = DMD *dmd , d0 = int mode)
 *
-* mode == 0:   Frage, ob schließen erlaubt, ggf. schließen
-*         1:   Schließen erzwingen, muß E_OK liefern
+* mode == 0:   Frage, ob schliessen erlaubt, ggf. schliessen
+*         1:   Schliessen erzwingen, muss E_OK liefern
 *
-* Leitet das Schließen eines Laufwerks einfach
+* Leitet das Schliessen eines Laufwerks einfach
 * an den Untertreiber weiter
 *
 
@@ -302,26 +302,26 @@ dxfs_drv_close:
 * 1. Fragemodus
 *
 
-; zunächst die Strukturen des XFS prüfen
+; zunaechst die Strukturen des XFS pruefen
  move.l   d_root(a5),d0
  beq.b    drvclo_nr                ; ???
 ;move.w   d7,d7                    ; global
  move.l   d0,a0
  bsr      free_all_FDs
  bmi.b    drvclo_ende              ; Fehler
-; dann nachsehen, ob das DFS das Laufwerk schließen kann
+; dann nachsehen, ob das DFS das Laufwerk schliessen kann
 drvclo_nr:
  move.l   d_dfs(a5),a2
  move.l   dfs_drv_close(a2),a2
  move.l   a5,a0                    ; DMD *
  moveq    #0,d0                    ; Fragemodus
  jsr      (a2)
- tst.l    d0                       ; war Fragemodus, Schließen verweigert
+ tst.l    d0                       ; war Fragemodus, Schliessen verweigert
  bmi.b    drvclo_ende              ; Das DFS meldet z.B. Plattenbetrieb
  moveq    #1,d7
 
 *
-* 2. Ausführen
+* 2. Ausfuehren
 *
 
 drvclo_free:
@@ -348,7 +348,7 @@ drvclo_ende:
 * mode == 0:   Anfragemodus. Gibt EACCDN, falls noch Dateien offen
 *              sind.
 *
-* mode == 1:   Ausführungsmodus. Gibt alle Strukturen frei.
+* mode == 1:   Ausfuehrungsmodus. Gibt alle Strukturen frei.
 *              Greift keine Verkettungen an.
 *
 
@@ -379,13 +379,13 @@ frdd_ende:
 * <file> ist der Prototyp- FD einer Datei.
 *
 * mode == 0: Anfragemodus
-* mode == 1: Ausführungsmodus. FD und alle Kopien derselben Datei
-*            ("Clones") werden freigeben. Verändert keine Verkettungen.
+* mode == 1: Ausfuehrungsmodus. FD und alle Kopien derselben Datei
+*            ("Clones") werden freigeben. Veraendert keine Verkettungen.
 *
 
 free_FDs:
  tst.w    d7                       ; Anfragemodus ?
- bne.b    ffd_free                 ; nein, ausführen
+ bne.b    ffd_free                 ; nein, ausfuehren
  tst.l    fd_owner(a0)             ; FD belegt ?
  bne.b    ffd_eaccdn
  move.l   fd_multi(a0),a0
@@ -436,39 +436,39 @@ dxfs_dfree:
 *
 * Wandelt den Pfadnamen, der relativ zu <reldir> gegeben ist, in
 * einen DD_FD um. <pathname> ist immer ohne Laufwerk angegeben, aber
-* ggf. mit führendem '\'. Beginnt <pathname> mit '\', muß das XFS ab
+* ggf. mit fuehrendem '\\'. Beginnt <pathname> mit '\\', muss das XFS ab
 * der Root suchen.
 *
 * Der DD_FD ist immer der Prototyp- FD eines Verzeichnisses.
 *
 * mode == 0: pathname zeigt auf eine beliebige Datei. Gib den DD_FD
-*            zurück, in dem die Datei liegt.
+*            zurueck, in dem die Datei liegt.
 *            gib in a0 einen Zeiger auf den isolierten Dateinamen
-*            zurück.
+*            zurueck.
 *         1: pathname ist selbst ein Verzeichnis, gib dessen DD_FD
-*            zurück, a0 ist danach undefiniert.
+*            zurueck, a0 ist danach undefiniert.
 *
-* Rückgabe:
-*  d0 = FD des Pfades, der Referenzzähler ist entsprechend erhöht
-*  d1 = Rest- Dateiname ohne beginnenden '\'
+* Rueckgabe:
+*  d0 = FD des Pfades, der Referenzzaehler ist entsprechend erhoeht
+*  d1 = Rest- Dateiname ohne beginnenden '\\'
 * oder
 *  d0 = ELINK
-*  d1 = Restpfad ohne beginnenden '\'
+*  d1 = Restpfad ohne beginnenden '\\'
 *  a0 = FD des Pfades, in dem der symbolische Link liegt. Dies ist
-*       wichtig bei relativen Pfadangaben im Link. Der Referenzzähler des
-*       FD ist entsprechend erhöht
+*       wichtig bei relativen Pfadangaben im Link. Der Referenzzaehler des
+*       FD ist entsprechend erhoeht
 *  a1 = NULL
 *            Der Pfad stellt den Parent des Wurzelverzeichnisses
 *            dar, der Kernel kann, wenn das Laufwerk U: ist, auf
-*            U:\ zurückgehen.
-*  a1 = Pfad des symbolischen Links. Der Pfad enthält einen
-*            symbolischen Link, womöglich auf ein
-*            anderes Laufwerk. Der Kernel muß den Restpfad <a0>
+*            U:\ zurueckgehen.
+*  a1 = Pfad des symbolischen Links. Der Pfad enthaelt einen
+*            symbolischen Link, womoeglich auf ein
+*            anderes Laufwerk. Der Kernel muss den Restpfad <a0>
 *            relativ zum neuen DD_FD <a0> umwandeln.
-*            a1 zeigt auf ein Wort für die Zeichenkettenlänge
+*            a1 zeigt auf ein Wort fuer die Zeichenkettenlaenge
 *            (gerade Zahl auf gerader Adresse, inkl. EOS),
 *            danach folgt die Zeichenkette. Der Puffer kann
-*            flüchtig sein, der Kernel kopiert den Pfad um.
+*            fluechtig sein, der Kernel kopiert den Pfad um.
 *
 
 dxfs_path2DD:
@@ -476,15 +476,15 @@ dxfs_path2DD:
  movem.l  a4/a5/a3/d7/d6,-(sp)
  move.w   d0,d6                    ; d6 = mode
  move.l   a1,a3                    ; a3 = Pfad
- cmpi.b   #'\',(a3)                ; ab Root
+ cmpi.b   #$5c,(a3)                ; ab Root
  bne.b    dp2d_relpath             ; nein -> relativer Pfad
- addq.l   #1,a3                    ; '\' überspringen
+ addq.l   #1,a3                    ; backslash ueberspringen
  move.l   fd_dmd(a0),a0
  movea.l  d_root(a0),a0            ; absoluter Pfad: Root- FD
 dp2d_relpath:
  move.l   a0,a4                    ; Anfangspfad
 
- tst.l    fd_owner(a4)             ; geöffnet ?
+ tst.l    fd_owner(a4)             ; geoeffnet ?
  beq.b    pthdd_loop               ; nein, alles OK
  btst     #BOM_RDENY,fd_mode+1(a4) ; gesperrt ?
  bne      pthdd_eaccdn             ; ja, Fehler
@@ -493,32 +493,32 @@ dp2d_relpath:
 
 pthdd_loop:
 
- clr.w    d7                       ; Länge des Pfadelements nach d7
+ clr.w    d7                       ; Laenge des Pfadelements nach d7
  movea.l  a3,a0
  bra.b    pthdd_bsl
 pthdd_bslloop:
- cmpi.b   #'\',(a0)
+ cmpi.b   #$5c,(a0)
  beq.b    pthdd_bslfound
  addq.l   #1,a0
  addq.w   #1,d7
 pthdd_bsl:
  tst.b    (a0)
  bne.b    pthdd_bslloop
-* kein '\' gefunden, a3 zeigt auf letztes Pfadelement
+* kein backslash gefunden, a3 zeigt auf letztes Pfadelement
 * Sonderbehandlung, falls letztes Element == "." oder ".."
  tst.w    d6                       ; Pfad ist DD ?
  bne.b    pthdd_bslfound           ; ja, Pfadelement behandeln
  cmpi.b   #'.',(a3)                ; "." oder ".." ?
- bne      pthdd_ok                 ; nein, Dateiname (letztes Element) zurück
+ bne      pthdd_ok                 ; nein, Dateiname (letztes Element) zurueck
  tst.b    1(a3)
  beq.b    pthdd_bslfound           ; "."
  cmpi.b   #'.',1(a3)               ; ".." ?
- bne      pthdd_ok                 ; nein, Dateiname zurückgeben
-* '\' gefunden, oder <flag> == TRUE
+ bne      pthdd_ok                 ; nein, Dateiname zurueckgeben
+* backslash gefunden, oder <flag> == TRUE
 pthdd_bslfound:
  tst.w    d7
  beq      pthdd_nxtpth             ; \\ wie \.\ behandeln !!!
- move.b   (a0),d0                  ; '\' oder '\0'
+ move.b   (a0),d0                  ; '\\' oder '\0'
  move.l   a3,a0
  bsr      chk_specdir
  addq.w   #1,d0
@@ -527,7 +527,7 @@ pthdd_bslfound:
  neg.w    d0
  subq.w   #1,d0
 pthdd_ploop:
- movea.l  fd_parent(a4),a4         ; ".n." => n Schritte zurück
+ movea.l  fd_parent(a4),a4         ; ".n." => n Schritte zurueck
  move.l   a4,d1
  bgt.b    pthdd_parnor
 
@@ -546,14 +546,14 @@ pthdd_parnor:
 
 pthdd_nospec:
 
-* Wir müssen immer die langen Dateinamen berücksichtigen, weil
-* der DD_FD in fd_longname den langen Pfadnamen enthalten muß!
+* Wir muessen immer die langen Dateinamen beruecksichtigen, weil
+* der DD_FD in fd_longname den langen Pfadnamen enthalten muss!
 
      DEBT ' vf_path2DD mit Pfad ',a3
 
  clr.l    -(sp)
  pea      (sp)                     ; ggf. Zeiger auf Symlink
- move.w   d7,d0                    ; Länge des Pfadelements
+ move.w   d7,d0                    ; Laenge des Pfadelements
  move.l   a3,a1                    ; char *path
  move.l   a4,a0                    ; DD_FD *fd
  jsr      vf_path2DD
@@ -568,7 +568,7 @@ pthdd_nospec:
  bne.b    pthdd_ende               ; Fehler, gib Fehlercode != ELINK
  move.l   a0,a1                    ; ggf. Wert des Links
  lea      0(a3,d7.w),a0            ; ggf. Restpfad beim Link
- cmpi.b   #'\',(a0)+               ; gehe auf nächstes Pfadelement
+ cmpi.b   #$5c,(a0)+               ; gehe auf naechstes Pfadelement
  beq.b    pthdd_oksl
  subq.l   #1,a0
 pthdd_oksl:
@@ -585,7 +585,7 @@ pthdd_sdir:
 
 pthdd_nxtpth:
  add.w    d7,a3                    ; Restpfad weiterschalten
- tst.b    (a3)+                    ; Ende des Pfads ? ('\' überspringen)
+ tst.b    (a3)+                    ; Ende des Pfads ? (backslash ueberspringen)
  bne      pthdd_loop               ; ja, weiter
  subq.l   #1,a3
 pthdd_ok:
@@ -609,7 +609,7 @@ pthdd_eaccdn:
 *
 * <d> ist ein Prototyp-FD, der ein Verzeichnis darstellt, ein DD_FD.
 * Wandelt DD in einen Pfadnamen um
-* BUG: buflen wird nicht berücksichtigt
+* BUG: buflen wird nicht beruecksichtigt
 *
 
 dxfs_DD2name:
@@ -626,7 +626,7 @@ _dd2name:
  move.l   d1,a0                    ; DD
 ;move.w   d0,d0
  bsr.b    _dd2name
- move.b   #'\',(a1)+               ; mit '\' abschließen
+ move.b   #$5c,(a1)+               ; mit backslash abschliessen
 ;move.l   a1,a1                    ; neuer Puffer
  move.l   (sp)+,a0                 ; den DD selbst
 * dann das Verzeichnis selbst
@@ -662,7 +662,7 @@ _dgp_rts:
 * long dxfs_sfirst(a0 = DD_FD *d, a1 = char *name, d0 = DTA *dta,
 *                  d1 = int attrib)
 *
-* Rückgabe:    d0 = errcode
+* Rueckgabe:    d0 = errcode
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -681,7 +681,7 @@ dxfs_sfirst:
  move.b   d1,11(a5)                ; Suchattribut
  bsr      conv_8_3
 
-* DD öffnen
+* DD oeffnen
 
  moveq    #OM_RPERM,d0
  move.l   a4,a0
@@ -697,7 +697,7 @@ dxfs_sfirst:
  move.l   d0,a6                    ; a6 = DIR *
  move.l   d1,-(sp)                 ; pos merken
 
-* User- Bereich (Bytes $15...) füllen
+* User- Bereich (Bytes $15...) fuellen
 
  move.l   a5,a1               ; DTA *
  move.l   a6,a0               ; DIR *
@@ -710,7 +710,7 @@ dxfs_sfirst:
  move.l   d_dfs(a2),a2
  move.l   dfs_sfirst(a2),a2
  move.l   a5,d1                    ; d1 = DTA *
- move.l   (sp)+,d0                 ; d0 = nächste pos
+ move.l   (sp)+,d0                 ; d0 = naechste pos
  move.l   a6,a1                    ; a1 = DIR *
  move.l   a4,a0                    ; a0 = DD_FD *
  jsr      (a2)                     ; => errcode
@@ -729,7 +729,7 @@ fsf_close:
  cmpi.l   #ELINK,d0
  beq.b    fsf_ende
 fsf_err:
- clr.b    (a5)                     ; Fehler! DTA ungültig machen
+ clr.b    (a5)                     ; Fehler! DTA ungueltig machen
 fsf_ende:
  movem.l  (sp)+,a6/a5/a4
  rts
@@ -739,7 +739,7 @@ fsf_ende:
 *
 * long dxfs_snext(a0 = DTA *dta, a1 = DMD *d)
 *
-* Rückgabe:    d0 = errcode
+* Rueckgabe:    d0 = errcode
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -753,7 +753,7 @@ dxfs_snext:
  move.l   dfs_snext(a2),a2
 ;move.l   a1,a1                    ; a1 = DMD *
 ;move.l   a0,a0                    ; a0 = DTA *
- jmp      (a2)                     ; macht bereits init_DTA, löscht ggf. DTA
+ jmp      (a2)                     ; macht bereits init_DTA, loescht ggf. DTA
 fsn_enmfil:
  moveq    #ENMFIL,d0
  rts
@@ -765,29 +765,29 @@ fsn_enmfil:
 *                       d1 = int attrib, d2 = int dmode.cmd, a2 = long arg)
 *
 * d2.hi   cmd
-* d2.lo   open- Modus für den DD_FD (-1 = isopen)
+* d2.lo   open- Modus fuer den DD_FD (-1 = isopen)
 *
 **********************************************************************
 *
 * d0 = FD * dxfs_fopen(a0 = DD_FD *d, a1 = char *name, d0 = int omode,
 *                      d1 = int attrib )
 *
-* Öffnet und/oder erstellt Dateien, Öffnet den Dateitreiber.
+* Oeffnet und/oder erstellt Dateien, Oeffnet den Dateitreiber.
 * Der Open- Modus ist vom Kernel bereits in die interne
 * MagiX- Spezifikation konvertiert worden.
 *
 * Der Open- Modus O_TRUNC kann hier ignoriert werden, weil er vom
 * Dateitreiber (MDEV) ausgewertet wird.
-* Es ist hier angenommen, daß folgende Modi andere implizieren
+* Es ist hier angenommen, dass folgende Modi andere implizieren
 * sollten:
 *
 * O_TRUNC      => OM_WPERM
 * O_CREAT      => OM_WPERM
 * O_EXCL       => O_CREAT     => O_WPERM
 *
-* Eine Wiederholung im Fall E_CHNG wird vom Kernel übernommen.
+* Eine Wiederholung im Fall E_CHNG wird vom Kernel uebernommen.
 *
-* Rückgabe:
+* Rueckgabe:
 * d0 = ELINK: Datei ist symbolischer Link
 *             a0 ist der Dateiname des symbolischen Links
 *
@@ -796,7 +796,7 @@ fsn_enmfil:
 *
 
 dxfs_fopen:
-;moveq    #0,d2                    ; Hiword löschen, kein Dcntl
+;moveq    #0,d2                    ; Hiword loeschen, kein Dcntl
  moveq    #OM_RPERM,d2             ; nur Lesezugriff auf den DD
  btst     #BO_CREAT,d0
  bne.b    fop_dd_wr
@@ -823,17 +823,17 @@ _dxfs_fopen:
  swap     d3                       ; nur das Hiword
  move.l   a2,d4                    ; d4 = arg (bei Dcntl)
 
-* Verzeichnis öffnen
+* Verzeichnis oeffnen
 
  move.w   d2,d0
- bmi.b    fop_isopen               ; DD ist schon geöffnet!
+ bmi.b    fop_isopen               ; DD ist schon geoeffnet!
 ;move.l   a4,a0
  bsr      reopen_FD
  bmi      fop_ende                 ; Verzeichnis ist blockiert
  move.l   d0,a4                    ; a4 ist unser FD
 
 * Der Verzeichniseintrag wird ermittelt: a6
-* ggf. wird das Verzeichnis geöffnet gelassen
+* ggf. wird das Verzeichnis geoeffnet gelassen
 
 fop_isopen:
  moveq    #FINDALL,d0
@@ -848,16 +848,16 @@ fop_isopen:
 * Datei existiert. Zugriffskontrolle durch den Kernel
 * ###
 
-* Wenn das Flag O_EXCL gesetzt ist, wird das Öffnen
+* Wenn das Flag O_EXCL gesetzt ist, wird das Oeffnen
 * verboten (d.h. es werden im Zusammenhang mit O_CREAT nur neue Dateien
-* erzeugt, keine existierenden gelöscht).
+* erzeugt, keine existierenden geloescht).
 
  moveq    #BO_EXCL,d0
  btst     d0,d7
  bne      fop_eaccdn
 
-* Wenn Attribut SubDir, Öffnen nicht erlaubt!
-* Wenn Attribut ReadOnly, nur mit O_RDONLY zu öffnen erlaubt
+* Wenn Attribut SubDir, Oeffnen nicht erlaubt!
+* Wenn Attribut ReadOnly, nur mit O_RDONLY zu oeffnen erlaubt
 
  btst     #FAB_SUBDIR,dir_attr(a6) ; Subdir
  bne      fop_eaccdn
@@ -868,7 +868,7 @@ fop_rdonly:
  bne      fop_eaccdn               ; ja => Fehler
  btst     #FAB_SUBDIR,dir_attr(a6) ; Subdir ?
  beq      fop_open                 ; nein, OK
- btst     #BOM_EXEC,d7             ; Subdir und will ausführen ?
+ btst     #BOM_EXEC,d7             ; Subdir und will ausfuehren ?
  bne      fop_eaccdn               ; Fehler !
  bra      fop_open
 
@@ -878,7 +878,7 @@ fop_rdonly:
 
 fop_notexist:
  cmpi.l   #EFILNF,d0
- bne      fop_close                ; böser Fehler
+ bne      fop_close                ; boeser Fehler
 
 * Wenn das Flag O_CREAT gesetzt ist, wird die Datei erstellt
 
@@ -889,7 +889,7 @@ fop_notexist:
 /*
  move.l   d4,a6                    ; zu erstellendes DIR
  cmpi.w   #FILE_CREATE,d3
- beq.b    fop_no_conv              ; nix konvertieren, DIR unverändert
+ beq.b    fop_no_conv              ; nix konvertieren, DIR unveraendert
 */
  move.l   sp,a6                    ; DIR auf dem Stack
  move.l   a6,a1
@@ -903,7 +903,7 @@ fop_notexist:
  bsr      tst_name
  bne      fop_ebadrq
 
-* gelöschten oder leeren Directory- Eintrag suchen
+* geloeschten oder leeren Directory- Eintrag suchen
 * dabei ggf. den 8+3-Namen modifizieren
 
 fop_no_conv:
@@ -916,7 +916,7 @@ fop_no_conv:
  moveq    #-1,d0                   ; keine special position
  bsr      vf_ffree
  adda.w   #12,sp
- move.l   d0,d5                    ; d5 = dirpos für Haupteintrag
+ move.l   d0,d5                    ; d5 = dirpos fuer Haupteintrag
  bmi      fop_close                ; Fehler
 
 * Ein leerer Eintrag wurde gefunden: bei Pos. d5
@@ -924,7 +924,7 @@ fop_no_conv:
  cmpi.w   #FILE_CREATE,d3
  beq.b    fop_wr                   ; gleich schreiben
 
-* Restliche Einträge zunächst mit 0en initialisieren
+* Restliche Eintraege zunaechst mit 0en initialisieren
 
  lea      dir_xftype(sp),a0
  clr.w    (a0)+                    ; dir_xftype
@@ -940,12 +940,12 @@ fop_no_conv:
  ror.w    #8,d0
  move.w   d0,(a0)+                 ; dir_date
 
-* Anfangscluster und Länge auf 0
+* Anfangscluster und Laenge auf 0
 
  clr.w    (a0)+                    ; dir_stcl
  clr.l    (a0)                     ; dir_flen
 
-* Aufruf des DFS-Treibers für besondere Funktionen
+* Aufruf des DFS-Treibers fuer besondere Funktionen
 
  move.l   sp,a1                    ; DIR *
  move.l   a4,a0                    ; FD * des Verzeichnisses
@@ -980,7 +980,7 @@ fop_wr:
 
 * ###
 *
-* Datei öffnen
+* Datei oeffnen
 *
 * a6      = DIR   *direntry
 * d5      = long  dirpos
@@ -992,17 +992,17 @@ fop_wr:
 fop_open:
  moveq    #0,d0
  tst.w    d3
- bne      fop_close                ; Dcntl öffnet keine Datei, E_OK
+ bne      fop_close                ; Dcntl oeffnet keine Datei, E_OK
 
-* Testen, ob die Datei schon geöffnet ist
+* Testen, ob die Datei schon geoeffnet ist
 
  move.l   d5,d0
  move.l   a4,a0
  bsr      file_is_open
- beq.b    fop_open_proto           ; Datei war noch nicht geöffnet
+ beq.b    fop_open_proto           ; Datei war noch nicht geoeffnet
 
 *
-* Datei war schon geöffnet. Wir legen einen Clone an.
+* Datei war schon geoeffnet. Wir legen einen Clone an.
 *
 
  move.l   d0,a0                    ; FD
@@ -1013,11 +1013,11 @@ fop_open:
  bra.b    fop_ok
 
 *
-* Datei war noch nicht geöffnet. Prototyp- FD erstellen
+* Datei war noch nicht geoeffnet. Prototyp- FD erstellen
 *
 
 fop_open_proto:
- move.l   32(sp),d0                ; ggf. langer Name für SubDir
+ move.l   32(sp),d0                ; ggf. langer Name fuer SubDir
 ;move.l   d5,d5                    ; dirpos
 ;move.l   a6,a6                    ; DIR
 ;move.l   a4,a4                    ; DD_FD
@@ -1031,7 +1031,7 @@ fop_open_proto:
  move.w   d7,fd_mode(a3)
 
 *
-* Dateitreiber öffnen
+* Dateitreiber oeffnen
 *
 
  move.l   fd_ddev(a3),a2
@@ -1041,7 +1041,7 @@ fop_open_proto:
  tst.l    d0
  beq.b    fop_ok
 
-* Fehler beim Öffnen des Dateitreibers, FD einfach wieder
+* Fehler beim Oeffnen des Dateitreibers, FD einfach wieder
 * freigeben
 
  move.l   a3,a0
@@ -1056,8 +1056,8 @@ fop_ok:
 
 fop_close:
  swap     d3
- tst.w    d3                       ; FD war schon geöffnet ?
- bmi.b    fop_ende                 ; ja, nicht schließen
+ tst.w    d3                       ; FD war schon geoeffnet ?
+ bmi.b    fop_ende                 ; ja, nicht schliessen
  cmpi.l   #E_CHNG,d0               ; Diskwechsel ?
  beq.b    fop_ende                 ; ja, sofort abbrechen!!
  cmpi.l   #EDRIVE,d0               ; Diskwechsel ?
@@ -1066,7 +1066,7 @@ fop_close:
  move.l   d0,d7
 ; Fehlercode von close_DD durchreichen, wenn E_CHNG oder EDRIVE
  move.l   a4,a0
- bsr      close_DD                 ; nein, FD schließen
+ bsr      close_DD                 ; nein, FD schliessen
  move.l   a6,a0
  tst.l    d0
  beq.b    fop_cldd_ok              ; kein Fehler bei close_DD
@@ -1077,13 +1077,13 @@ fop_close:
  tst.l    d7                       ; war vorher Fehler ?
  bmi.b    fop_cldd_ok              ; ja, den weitergeben
  beq.b    fop_ende                 ; nein, neuen Fehler weitergeben
-; d7 >= 0, d.h. FD geöffnet
+; d7 >= 0, d.h. FD geoeffnet
 ; d0 < 0, d.h. Fehler bei close_DD
 ; => FD wieder freigeben
  move.l   d0,a3                    ; Fehlercode merken
  move.l   d7,a0
  bsr      free_FD                  ; FD wieder freigeben
- move.l   a3,d7                    ; Fehlercode zurück
+ move.l   a3,d7                    ; Fehlercode zurueck
 fop_cldd_ok:
  move.l   d7,d0
 fop_ende:
@@ -1105,19 +1105,19 @@ fop_efilnf:
 *
 * long _dxfs_fdelete(a0 = DD *d, a1 = char *name, d0 = int srchattr)
 *
-* Wird mit Suchattribut 8 für das Löschen eines Labels aufgerufen
+* Wird mit Suchattribut 8 fuer das Loeschen eines Labels aufgerufen
 *
 *********************************************************************
 *
 * long dxfs_fdelete(a0 = DD *d, a1 = char *name)
 *
-* Eine Wiederholung im Fall E_CHNG wird vom Kernel übernommen.
+* Eine Wiederholung im Fall E_CHNG wird vom Kernel uebernommen.
 *
-* Rückgabe:
+* Rueckgabe:
 * d0 = ELINK: Datei ist symbolischer Link
 *             a0 ist der Dateiname des symbolischen Links
 *
-* Es können keine SubDirs oder Labels gelöscht werden, da sie
+* Es koennen keine SubDirs oder Labels geloescht werden, da sie
 * per dir_srch nicht gefunden werden
 *
 
@@ -1148,7 +1148,7 @@ _dxfs_fdelete:
 fdel_nolong:
 
 * ###
-* Datei existiert. Löschen.
+* Datei existiert. Loeschen.
 * ###
 
 ;move.l   d0,d0                    ; long dirpos
@@ -1183,7 +1183,7 @@ fdel_ende3:
 *
 * (sp)    neuer DIR-Eintrag, 32 Bytes
 * 32(sp)  Zeiger auf langen neuen Namen oder NULL
-* 36(sp)  Pos. des ersten DIR-Eintrags für neuen Namen (freier Platz)
+* 36(sp)  Pos. des ersten DIR-Eintrags fuer neuen Namen (freier Platz)
 * 40(sp)  Pos. des ersten DIR-Eintrags der alten Datei (bzw. -1L)
 *
 
@@ -1200,13 +1200,13 @@ fren_fren:
  move.l   d0,d4                    ; d4 = char *oldname
  move.l   d1,a3                    ; a3 = char *newname
 
-* Prüfen, ob beide Pfade auf demselben Laufwerk liegen. Wenn nicht, ENSAME.
+* Pruefen, ob beide Pfade auf demselben Laufwerk liegen. Wenn nicht, ENSAME.
 
  move.l   fd_dmd(a4),d0            ; DMD von <olddir>
  cmp.l    fd_dmd(a5),d0            ; DMD von <newdir>
  bne      fren_ensame              ; die DMDs sind nicht dieselben
 
-* Beide DDs öffnen
+* Beide DDs oeffnen
 
  moveq    #OM_RPERM+OM_WPERM+OM_WDENY,d0
 ;move.l   a4,a0
@@ -1232,14 +1232,14 @@ fren_same:
 fren_nosame:
  move.l   d0,a5
 
-* Prüfen, ob neuer Name Nullname ist oder ':?*' enthält oder "." oder ".."
+* Pruefen, ob neuer Name Nullname ist oder ':?*' enthaelt oder "." oder ".."
 
  move.l   a3,a0
  bsr      tst_name
  bne      fren_eaccdn
 
-* Wir müssen ERST die alte Datei ermitteln, um im Fall
-* "selbes Verzeichnis" feststellen zu können, ob der Kurzname,
+* Wir muessen ERST die alte Datei ermitteln, um im Fall
+* "selbes Verzeichnis" feststellen zu koennen, ob der Kurzname,
 * d.h. der Haupteintrag, derselbe ist.
 
 * <alt> ermitteln
@@ -1257,11 +1257,11 @@ fren_nosame:
 * <alt> existiert, DIR * ist a6, dirpos ist d3
 *
 
-* Test auf schreibgeschützte Datei
+* Test auf schreibgeschuetzte Datei
 
  move.b   dir_attr(a6),d7
  btst     #FAB_READONLY,d7
- beq.b    fren_no_ro               ; nicht schreibgeschützt
+ beq.b    fren_no_ro               ; nicht schreibgeschuetzt
  move.l   act_pd,a0
  btst     #0,p_flags(a0)           ; MiNT-Domain?
  beq      fren_eaccdn              ; nein, Zugriff verweigern
@@ -1269,7 +1269,7 @@ fren_no_ro:
 
 * Wir testen hier, ob die zu verschiebende Datei ein Verzeichnis ist.
 * Wenn ja, testen wir, ob sie ein "parent" des Zielverzeichnisses ist.
-*  Wenn ja, ist der Verschiebevorgang ungültig.
+*  Wenn ja, ist der Verschiebevorgang ungueltig.
 
  btst     #FAB_SUBDIR,d7
  beq.b    fren_noinvalren
@@ -1287,7 +1287,7 @@ fren_tpa:
 fren_noinvalren:
 
 * Wir erzeugen hier schon den neuen Haupteintrag im Speicher, da
-* uns der Dateipuffer für die alte Datei gleich flöten geht.
+* uns der Dateipuffer fuer die alte Datei gleich floeten geht.
 
 * Neuen Namen ins interne Format wandeln, nach (sp)
 
@@ -1296,19 +1296,19 @@ fren_noinvalren:
  bsr      conv_8_3
  lea      dir_attr(sp),a0
  lea      dir_attr(a6),a1
- move.b   (a1)+,(a0)+              ; Außer Namen andere Daten übernehmen
+ move.b   (a1)+,(a0)+              ; Ausser Namen andere Daten uebernehmen
  move.l   (a1)+,(a0)+
  move.l   (a1)+,(a0)+
  move.l   (a1)+,(a0)+
  move.l   (a1)+,(a0)+
  move.l   (a1),(a0)
 
-* Prüfen, ob <neu> schon existiert.
-* Wenn ja, und es ist nicht dieselbe Datei, EACCDN zurückgeben.
+* Pruefen, ob <neu> schon existiert.
+* Wenn ja, und es ist nicht dieselbe Datei, EACCDN zurueckgeben.
 
  moveq    #0,d0                    ; Dateizeiger an den Anfang
  move.l   a5,a0                    ; DD *newdir
- bsr      __fseek                  ; nötig, da bei (newdir==olddir) verstellt!
+ bsr      __fseek                  ; noetig, da bei (newdir==olddir) verstellt!
  bmi      fren_ende
  moveq    #FINDALL,d0              ; keine Volumes suchen
  move.l   a3,a1                    ; neuer Name
@@ -1327,7 +1327,7 @@ fren_noinvalren:
 *
 * Entweder existiert die neue Datei noch nicht, oder sie
 * ist identisch mit der alten, d.h. es hat sich nur der
-* lange Name geändert.
+* lange Name geaendert.
 *
 
 * Suche freien Platz im neuen Verzeichnis, der den neuen Namen
@@ -1347,7 +1347,7 @@ fren_ok:
 fren_nospecpos:
  bsr      vf_ffree
  adda.w   #12,sp
- move.l   d0,d5                    ; d5 = dirpos für Haupteintrag
+ move.l   d0,d5                    ; d5 = dirpos fuer Haupteintrag
  bmi      fren_ende                ; Fehler
 
 * Dateizeiger des Verzeichnisses auf unseren Eintrag
@@ -1367,11 +1367,11 @@ fren_nospecpos:
  tst.l    d0
  bmi      fren_ende                ; Fehler beim Schreiben
 
-* ggf. bei geöffneten Dateien FD aktualisieren
+* ggf. bei geoeffneten Dateien FD aktualisieren
 
  move.l   d3,d0
  move.l   a4,a0                    ; olddir
- bsr      file_is_open             ; Datei geöffnet ?
+ bsr      file_is_open             ; Datei geoeffnet ?
  beq      fren_weiter              ; nein
 ; aus der Liste der Geschwister ausklinken
  movea.l  fd_parent(a0),a1
@@ -1428,7 +1428,7 @@ fren_weiter:
  beq      fren_del                 ; nein, nur umbenannt
 ; DD ermitteln
  clr.l    -(sp)
- pea      (sp)                     ; Platz für Symlink (dummy)
+ pea      (sp)                     ; Platz fuer Symlink (dummy)
  move.l   32+8(sp),-(sp)           ; char *longname
  move.l   d5,d0                    ; dirpos (Haupteintrag)
  lea      12(sp),a1                ; DIR *main_entry
@@ -1437,7 +1437,7 @@ fren_weiter:
  lea      12(sp),sp
  tst.l    d0
  bmi.b    fren_errpp               ; "halb" schiefgegangen (kritisch!)
-; DD öffnen (FD ermitteln)
+; DD oeffnen (FD ermitteln)
  move.l   d0,a0                    ; DD *
  moveq    #OM_RPERM+OM_WPERM+OM_WDENY,d0
  bsr      reopen_FD
@@ -1461,8 +1461,8 @@ fren_erppp:
  beq      fren_ende2               ; ja, sofort abbrechen!!
  bra.b    fren_closea6
 fren_weiter2:
-; Bis "dir_time" lesen (überprüfen, ob der Eintrag ".." ist)
- suba.l   a1,a1                    ; Pufferadresse zurückgeben
+; Bis "dir_time" lesen (ueberpruefen, ob der Eintrag ".." ist)
+ suba.l   a1,a1                    ; Pufferadresse zurueckgeben
  moveq    #dir_stcl_f32,d0         ; Nur bis dir_stcl_f32
  move.l   a6,a0
  bsr      _fread
@@ -1494,7 +1494,7 @@ fren_weiter2:
  bsr      _fwrite
  addq.l   #8,sp
  bmi.b    fren_erppp
-; FD schließen
+; FD schliessen
 fren_closea6:
  move.l   a6,a0
  bsr      close_DD
@@ -1502,8 +1502,8 @@ fren_closea6:
  bmi      fren_errpp               ; "halb" schiefgegangen (kritisch!)
 
 
-* Datei im alten Verzeichnis löschen
-* ggf. Überlappung mit neuem Namen berücksichtigen
+* Datei im alten Verzeichnis loeschen
+* ggf. Ueberlappung mit neuem Namen beruecksichtigen
 
 fren_del:
  move.l   40(sp),d1                ; erste Position des alten Namens
@@ -1513,16 +1513,16 @@ fren_dl:
  cmpa.l   a4,a5                    ; im selben Verzeichnis ?
  bne.b    fren_deldel              ; nein
  cmp.l    d5,d1                    ; alter 1.Eintrag > neuer letzter ?
- bhi.b    fren_deldel              ; ja, keine Überlappung
+ bhi.b    fren_deldel              ; ja, keine Ueberlappung
  move.l   36(sp),d0
  cmp.l    d0,d3                    ; alter letzter < neuer erster ?
- bcs.b    fren_deldel              ; ja, keine Überlappung
-; wir haben eine Überlappung
+ bcs.b    fren_deldel              ; ja, keine Ueberlappung
+; wir haben eine Ueberlappung
  cmp.l    d0,d1                    ; alter Anfang < neuer Anfang ?
  bcs.b    fren_del1                ; tritt normalerweise nicht auf
-; neuer Anfang <= alter Anfang. Erst ab neuem Ende+1 löschen.
+; neuer Anfang <= alter Anfang. Erst ab neuem Ende+1 loeschen.
  moveq    #32,d1
- add.l    d5,d1                    ; Löschpos: (Ende neu)+1
+ add.l    d5,d1                    ; Loeschpos: (Ende neu)+1
  bra.b    fren_del2                ; bis (Ende alt)
 fren_del1:
  moveq    #-32,d3
@@ -1530,22 +1530,22 @@ fren_del1:
 fren_del2:
  moveq    #E_OK,d0
  cmp.l    d1,d3                    ; Endpos < Anfangspos ?
- bcs.b    fren_ende                ; ja, nix löschen
-; Überlappung beseitigt
+ bcs.b    fren_ende                ; ja, nix loeschen
+; Ueberlappung beseitigt
 fren_deldel:
  move.l   d3,d0
 ;move.l   d1,d1
  move.l   a4,a0
  bsr      __fdelete
 
-* Directories aktualisieren und schließen
+* Directories aktualisieren und schliessen
 
 fren_ende:
  cmpi.l   #E_CHNG,d0               ; Diskwechsel ?
  beq.b    fren_ende2               ; ja, sofort abbrechen!!
  cmpi.l   #EDRIVE,d0               ; Diskwechsel ?
  beq.b    fren_ende2               ; ja, sofort abbrechen!!
- move.l   d0,d7                    ; Rückgabewert retten
+ move.l   d0,d7                    ; Rueckgabewert retten
  cmpa.l   a4,a5
  beq.b    fren_noa4
  move.l   a4,a0
@@ -1568,7 +1568,7 @@ fren_eaccdn:
  bra.b    fren_ende
 fren_ensame:
  moveq    #ENSAME,d0
- bra.b    fren_ende2               ; a4/a5 nicht geöffnet !
+ bra.b    fren_ende2               ; a4/a5 nicht geoeffnet !
 
 
 **********************************************************************
@@ -1576,8 +1576,8 @@ fren_ensame:
 * long dxfs_xattr( a0 = DD *dir, a1 = char *name, d0 = XATTR *xa,
 *                  d1 = int mode )
 *
-* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurück)
-*         1:   Folge nicht  (d.h. erstelle XATTR für den Link)
+* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurueck)
+*         1:   Folge nicht  (d.h. erstelle XATTR fuer den Link)
 *
 
 dxfs_xattr:
@@ -1586,7 +1586,7 @@ dxfs_xattr:
  move.l   d0,a5                    ; a5 = XATTR *
  move.w   d1,d7                    ; d7 = int mode
 
-* DD öffnen
+* DD oeffnen
  moveq    #OM_RPERM,d0
 ;move.l   a0,a0
  bsr      reopen_FD
@@ -1596,7 +1596,7 @@ dxfs_xattr:
  suba.l   a1,a1
  tst.b    (a3)                     ; ist ein Verzeichnis ?
  beq.b    fxa_isdir                ; ja !
- moveq    #FINDALL,d0              ; alle außer Volume
+ moveq    #FINDALL,d0              ; alle ausser Volume
  move.l   a3,a1                    ; Name
  move.l   a4,a0                    ; DD *
  bsr      dir_srch
@@ -1631,10 +1631,10 @@ fxa_ende:
 * long _xattr( a0 = DD *dir, a1 = DIR *dir, d0 = XATTR *xa,
 *              d1 = int mode )
 *
-* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurück)
-*         1:   Folge nicht  (d.h. erstelle XATTR für den Link)
+* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurueck)
+*         1:   Folge nicht  (d.h. erstelle XATTR fuer den Link)
 *
-* <dir> == NULL:    XATTR für das Verzeichnis oder Datei <a0>
+* <dir> == NULL:    XATTR fuer das Verzeichnis oder Datei <a0>
 *                   (a0 ist ein FD)
 *
 
@@ -1647,12 +1647,12 @@ _xattr:
 
  move.l   a5,a0
  lea      xattr_sizeof(a0),a1
- jsr      fast_clrmem              ; XATTR zunächst löschen
+ jsr      fast_clrmem              ; XATTR zunaechst loeschen
 
  move.l   a6,d0                    ; ist ein FD ?
  beq      _xa_is_fd                ; ja!
 
-; Trage Werte des DIR ein, soweit es für alle Dateien gleich ist
+; Trage Werte des DIR ein, soweit es fuer alle Dateien gleich ist
 
  move.l   dir_flen(a6),d1
  ror.w    #8,d1
@@ -1730,7 +1730,7 @@ futime:
  movem.l  d3/d4/d5/d7/a4/a3,-(sp)
  move.l   d0,-(sp)
  moveq    #FINDALL,d4              ; alle Dateien
- moveq    #dir_time,d5             ; Offset für Daten
+ moveq    #dir_time,d5             ; Offset fuer Daten
  moveq    #4,d3                    ; 4 Bytes
  moveq    #1,d7                    ; schreiben
  bra.b    __set_dir_attr
@@ -1741,7 +1741,7 @@ futime:
 * long dxfs_attrib( a0 = DD *dir, a1 = char *name, d0 = int mode,
 *                   d1 = int attrib )
 *
-* Rückgabe:    >= 0      Attribut
+* Rueckgabe:    >= 0      Attribut
 *              <  0      Fehler
 *              ELINK => a0 ist Zeiger auf Link
 *
@@ -1751,16 +1751,16 @@ futime:
 
 dxfs_attrib:
  movem.l  d3/d4/d5/d7/a4/a3,-(sp)
- subq.w   #2,sp                    ; (dummy, auf 4 Bytes auffüllen)
+ subq.w   #2,sp                    ; (dummy, auf 4 Bytes auffuellen)
  move.b   d1,-(sp)                 ; int attrib
  moveq    #FINDALL,d4
- moveq    #dir_attr,d5             ; Offset für Daten
+ moveq    #dir_attr,d5             ; Offset fuer Daten
  moveq    #1,d3                    ; 1 Byte
  move.w   d0,d7                    ; d7 = int mode
  beq.b    __set_dir_attr           ; will lesen
-* Schreiben gewünscht
+* Schreiben gewuenscht
  move.b   (sp),d1
-* Nur Bits für "ReadOnly", "Hidden", "System" und "Archive" zulassen !!
+* Nur Bits fuer "ReadOnly", "Hidden", "System" und "Archive" zulassen !!
  and.b    #$d8,d1
  bne      fatt_eaccdn
 
@@ -1768,7 +1768,7 @@ dxfs_attrib:
 __set_dir_attr:
  move.l   a1,a3                    ; a3 = Name
 
-* DD öffnen
+* DD oeffnen
 
  move.w   #OM_RPERM,d0
 ;move.l   a0,a0
@@ -1793,12 +1793,12 @@ __set_dir_attr:
  btst     #FAB_SYMLINK,d0          ; Symlink ?
  bne      fatt_symlink             ; ja, Sonderbehandlung
  tst.w    d7                       ; wollte ich nur lesen ?
- beq      fatt_close               ; ja, Attribut zurückgeben
+ beq      fatt_close               ; ja, Attribut zurueckgeben
  btst     #FAB_SUBDIR,d0           ; Subdir ?
  beq.b    fatt_futime              ; nein, weiter
 fatt_unknown:
  moveq    #EACCDN,d0
- bra.b    fatt_close               ; Subdir darf man nicht ändern
+ bra.b    fatt_close               ; Subdir darf man nicht aendern
 * Position des Attributs anfahren
 fatt_futime:
  move.l   d5,d0
@@ -1843,7 +1843,7 @@ fatt_symlink:
  move.l   fd_dmd(a4),a2
  move.l   d_dfs(a2),a2
  move.l   dfs_readlink(a2),a2
- jsr      (a2)                     ; ELINK oder Lesefehler o.ä.
+ jsr      (a2)                     ; ELINK oder Lesefehler o.ae.
  bra.b    fatt_close
 
 
@@ -1852,7 +1852,7 @@ fatt_symlink:
 * long dxfs_chown( a0 = DD *dir, a1 = char *name, d0 = int uid,
 *                  d1 = int gid )
 *
-* Rückgabe:    == 0      OK
+* Rueckgabe:    == 0      OK
 *              <  0      Fehler
 *
 
@@ -1865,7 +1865,7 @@ dxfs_chown:
 *
 * long dxfs_chmod( a0 = DD *dir, a1 = char *name, d0 = int mode )
 *
-* Rückgabe:    == 0      OK
+* Rueckgabe:    == 0      OK
 *              <  0      Fehler
 *
 
@@ -1878,8 +1878,8 @@ dxfs_chmod:
 *
 * long dxfs_dcreate(a0 = DD *d, a1 = char *name )
 *
-* 2.12.95:     Aktion wird durch appl_beg/end/critic geschützt,
-*              damit keine ungültigen Unterverzeichnisse entstehen.
+* 2.12.95:     Aktion wird durch appl_beg/end/critic geschuetzt,
+*              damit keine ungueltigen Unterverzeichnisse entstehen.
 *
 
  EVEN
@@ -1891,9 +1891,9 @@ dirproto:
 dxfs_dcreate:
  movem.l  d6/a4/a5,-(sp)
  suba.w   #64,sp
- jsr      appl_begcritic           ; ändert nur d2/a2
+ jsr      appl_begcritic           ; aendert nur d2/a2
 
-* Das Verzeichnis, in dem die neue Datei liegen soll, öffnen
+* Das Verzeichnis, in dem die neue Datei liegen soll, oeffnen
 
  move.l   a1,-(sp)
 ;move.l   a0,a0
@@ -1903,7 +1903,7 @@ dxfs_dcreate:
  bmi      dcre_ende                ; Verzeichnis ist in Benutzung
  move.l   d0,a4
 
-* Das Verzeichnis wird über "Fcreate" mit Attribut "Subdir" erzeugt.
+* Das Verzeichnis wird ueber "Fcreate" mit Attribut "Subdir" erzeugt.
 
  moveq    #0,d2
  subq.w   #1,d2                    ; Hi: kein Dcntl/Lo: DIR ist offen
@@ -1917,7 +1917,7 @@ dxfs_dcreate:
  bmi      dcre_ok
  move.l   d0,a5                    ; a5 = FD des neuen Verzeichnisses
 
-* Für das Verzeichnis wird eine Zuordnungseinheit reserviert und mit
+* Fuer das Verzeichnis wird eine Zuordnungseinheit reserviert und mit
 * Nullen initialisiert
 
  move.l   fd_dmd(a4),a2
@@ -1926,9 +1926,9 @@ dxfs_dcreate:
  move.l   a5,a0                    ; FD *
  jsr      (a2)
  tst.l    d0
- bmi      dcre_del                 ; Fehler, Datei wieder löschen
+ bmi      dcre_del                 ; Fehler, Datei wieder loeschen
 
-* Die Einträge "." und ".." werden erzeugt
+* Die Eintraege "." und ".." werden erzeugt
 
 * Eintrag "." erstellen
 
@@ -1952,7 +1952,7 @@ ncf_loop:
  swap     d0
  ror.w    #8,d0
  move.w   d0,dir_stcl_f32(sp)           ; stcl.hi
-* Länge = 0
+* Laenge = 0
 ;clr.l    dir_flen(sp)
 
 * Eintrag ".." erstellen
@@ -1972,21 +1972,21 @@ dcre_weiter1:
  swap     d0
  ror.w    #8,d0
  move.w   d0,dir_stcl_f32+dir_sizeof(sp)     ; stcl.hi
-* Wer weiß, ob ext_fd den FD verschoben hat!
+* Wer weiss, ob ext_fd den FD verschoben hat!
  moveq    #0,d0                    ; An den Dateianfang
  move.l   a5,a0
  bsr      __fseek
  bmi      dcre_del
 * wegschreiben
  lea      (sp),a1                  ; Daten
- moveq    #64,d0                   ; Länge
+ moveq    #64,d0                   ; Laenge
  move.l   a5,a0                    ; FD
  bsr      _fwrite
  bmi.b    dcre_del
 
-* Es ist alles in Butter, FD schließen
-* vorher muß das OM_WDENY des Parent aufgehoben werden,
-* weil dosdev_close den Parent nochmal öffnet !
+* Es ist alles in Butter, FD schliessen
+* vorher muss das OM_WDENY des Parent aufgehoben werden,
+* weil dosdev_close den Parent nochmal oeffnet !
 
  andi.w   #!OM_WDENY,fd_mode(a4)
 
@@ -1998,7 +1998,7 @@ dcre_weiter1:
  bra      dcre_ok
 
 * Es ist irgendein Fehler aufgetreten,
-* Datei erst schließen (FD freigeben) und dann löschen
+* Datei erst schliessen (FD freigeben) und dann loeschen
 
 
 dcre_del:
@@ -2008,15 +2008,15 @@ dcre_del:
  move.l   d0,a0
  jsr      strlen
 dcre_nlong:
- move.l   d0,-(sp)                 ; Länge des langen Namens
+ move.l   d0,-(sp)                 ; Laenge des langen Namens
 
  move.l   fd_dirpos(a5),d5         ; dirpos merken
  move.l   a5,a0
  bsr      free_FD
 
-* Datei wieder löschen
+* Datei wieder loeschen
 
- move.l   (sp)+,d1                 ; Länge des langen Namens
+ move.l   (sp)+,d1                 ; Laenge des langen Namens
  move.l   a4,a0                    ; DD des Pfades
  move.l   d5,d0                    ; dirpos
  bsr      _ddelete
@@ -2032,7 +2032,7 @@ dcre_ok:
  bsr      close_DD
  move.l   d6,d0
 dcre_ende:
- jsr      appl_endcritic           ; ändert nur d2/a2
+ jsr      appl_endcritic           ; aendert nur d2/a2
  adda.w   #64,sp
  movem.l  (sp)+,a4/a5/d6
  rts
@@ -2043,7 +2043,7 @@ dcre_ende:
 * long dxfs_ddelete( a0 = DD_FD *d )
 *
 * 2.12.95:
-*    Änderung am XFS-Konzept:
+*    Aenderung am XFS-Konzept:
 *    Beim Aufruf ist der <refcnt> garantiert 1, das wird vom Kernel
 *    getestet. Der DD wird nicht freigegeben.
 *
@@ -2051,28 +2051,28 @@ dcre_ende:
 dxfs_ddelete:
  movem.l  d5/a4/a5,-(sp)
  move.l   a0,a4                    ; a4 = DD *
- tst.l    fd_children(a4)          ; geöffnete Dateien oder Subdirs ?
+ tst.l    fd_children(a4)          ; geoeffnete Dateien oder Subdirs ?
  bne      ddel_eaccdn
  move.l   fd_parent(a4),d0         ; Parent existiert ?
  beq      ddel_eaccdn              ; nein, bin Root !
 
 *
-* unseren DD sperren, indem wir ihn exklusiv öffnen.
-* Damit sollte garantiert sein, daß <fd_multi> == NULL ist und
+* unseren DD sperren, indem wir ihn exklusiv oeffnen.
+* Damit sollte garantiert sein, dass <fd_multi> == NULL ist und
 * auch so bleibt.
 *
 
- moveq    #OM_RPERM+OM_RDENY+OM_WDENY,d0      ; nur lesen, aber exkl. öffnen
+ moveq    #OM_RPERM+OM_RDENY+OM_WDENY,d0      ; nur lesen, aber exkl. oeffnen
 ;move.l   a4,a0
  bsr      reopen_FD
  bmi.b    ddel_ende2               ; DD wird benutzt (?!?)
-;move.l   d0,a4                    ; überflüssig, weil exklusiv geöffnet
+;move.l   d0,a4                    ; ueberfluessig, weil exklusiv geoeffnet
 
 *
-* Parent zum Schreiben öffnen
+* Parent zum Schreiben oeffnen
 *
 
- suba.l   a5,a5                    ; FD ist noch ungültig
+ suba.l   a5,a5                    ; FD ist noch ungueltig
  move.l   fd_parent(a4),a0
  moveq    #OM_RPERM+OM_WPERM+OM_WDENY,d0
  bsr      reopen_FD
@@ -2088,8 +2088,8 @@ dxfs_ddelete:
  bmi.b    ddel_ende                ; Verzeichnis nicht leer
 
 *
-* Eintrag löschen, der auf unser Verzeichnis zeigt
-* Die Datei bleibt dabei geöffnet
+* Eintrag loeschen, der auf unser Verzeichnis zeigt
+* Die Datei bleibt dabei geoeffnet
 *
 
  move.l   fd_longname(a4),d1
@@ -2125,12 +2125,12 @@ ddel_ende:
 
  move.l   d0,d5                    ; Fehlercode retten
  move.l   a4,a0
- bsr      close_DD                 ; zu löschenden DD schließen
- move.l   a5,d1                    ; parent geöffnet ?
+ bsr      close_DD                 ; zu loeschenden DD schliessen
+ move.l   a5,d1                    ; parent geoeffnet ?
  beq.b    ddel_ende3               ; nein
 ddel_ende4:
  move.l   a5,a0
- bsr      close_DD                 ; parent schließen
+ bsr      close_DD                 ; parent schliessen
 ddel_ende3:
  move.l   d5,d0
 
@@ -2168,7 +2168,7 @@ dop_ende:
 * long dxfs_dreaddir( a0 = FD *d, d0 = int len, a1 = char *buf,
 *                     d1 = XATTR *xattr, d2 = long *xr )
 *
-* FÜr Dreaddir (xattr = NULL) und Dxreaddir
+* FUer Dreaddir (xattr = NULL) und Dxreaddir
 *
 
 dxfs_dreaddir:
@@ -2176,23 +2176,23 @@ dxfs_dreaddir:
  tst.w    d_flags(a2)
  beq.b    readdir_short
  jmp      vf_readdir
-; Funktion für kurze Namen
+; Funktion fuer kurze Namen
 readdir_short:
  movem.l  a3/a4/a5/a6,-(sp)
  move.l   a0,a4
  move.l   a1,a5
  move.l   d2,a3                    ; a3 = long *xr
  move.l   d1,a6                    ; a6 = XATTR *xattr
-* Prüfen, ob Puffer lang genug ist
+* Pruefen, ob Puffer lang genug ist
  cmpi.w   #8+3+1+1+4,d0
- bcc.b    drd_ok                   ; genug für 8+3 Zeichen +'.'+EOS+index
+ bcc.b    drd_ok                   ; genug fuer 8+3 Zeichen +'.'+EOS+index
  btst     #1,fd_dirch(a4)
  beq.b    drd_erange
  sub.w    #8+3+1+1,d0
  bcs.b    drd_erange
 * Directoryeintrag lesen
 drd_ok:
- suba.l   a1,a1                    ; Pufferadresse zurückgeben
+ suba.l   a1,a1                    ; Pufferadresse zurueckgeben
  moveq    #32,d0                   ; 32 Bytes
  move.l   a4,a0
  bsr      _fread
@@ -2202,7 +2202,7 @@ drd_ok:
  tst.b    (a1)
  beq      drd_enmfil               ; Ende des Verzeichnisses
  cmpi.b   #$e5,(a1)
- beq.b    drd_ok                   ; gelöschte Datei gilt nicht
+ beq.b    drd_ok                   ; geloeschte Datei gilt nicht
  btst     #FAB_VOLUME,dir_attr(a1)
  bne.b    drd_ok                   ; Volume gilt nicht
 
@@ -2296,11 +2296,11 @@ dxfs_dclosedir:
 *                  i.e. to a maximum 8 character base name and a maxi-
 *                  mum 3 character extension.
 *         6:   0 = case-sensitiv
-*              1 = nicht case-sensitiv, immer in Großschrift
-*              2 = nicht case-sensitiv, aber unbeeinflußt
+*              1 = nicht case-sensitiv, immer in Grossschrift
+*              2 = nicht case-sensitiv, aber unbeeinflusst
 *
-*         7:   Information über unterstützte Attribute und Modi
-*         8:   information über gültige Felder in XATTR
+*         7:   Information ueber unterstuetzte Attribute und Modi
+*         8:   information ueber gueltige Felder in XATTR
 *
 *      If  any  of these items are unlimited, then 0x7fffffffL is
 *      returned.
@@ -2310,11 +2310,11 @@ dpp_tab:
  DC.W     8              ;    Parameter 0..8
  DC.W     40             ; 0: (40 offene Dateien                 DFS)
  DC.W     1              ; 1: 1 Hardlink pro Datei
- DC.W     128            ; 2: 128 Bytes maximale Pfadlänge
- DC.W     12             ; 3: 12 Bytes maximale Dateinamenlänge
- DC.W     1              ; 4: (interne Blockgröße                DFS)
+ DC.W     128            ; 2: 128 Bytes maximale Pfadlaenge
+ DC.W     12             ; 3: 12 Bytes maximale Dateinamenlaenge
+ DC.W     1              ; 4: (interne Blockgroesse                DFS)
  DC.W     DP_DOSTRUNC    ; 5: Dateinamen 8+3
- DC.W     DP_CASECONV    ; 6: immer nach Großschrift
+ DC.W     DP_CASECONV    ; 6: immer nach Grossschrift
  DC.W     0              ; 7: (Dateimodi/-typen                  DFS)
  DC.W     DP_INDEX+DP_DEV+DP_NLINK+DP_BLKSIZE+DP_SIZE+DP_NBLOCKS+DP_MTIME
 
@@ -2349,10 +2349,10 @@ dpp_eaccdn:
  moveq    #EACCDN,d0
  rts
 dpp_3:
- moveq    #64,d0                   ; Dateinamenlänge
+ moveq    #64,d0                   ; Dateinamenlaenge
  rts
 dpp_5:
- moveq    #DP_NOTRUNC,d0           ; Dateinamen nicht absägen
+ moveq    #DP_NOTRUNC,d0           ; Dateinamen nicht absaegen
  rts
 dpp_6:
  moveq    #DP_CASEINSENS,d0        ; nicht case-sensitiv
@@ -2377,12 +2377,12 @@ all_files:
 
 dxfs_wlabel:
  move.l   fd_dmd(a0),a0
- move.l   d_root(a0),a0            ; zugehöriges Wurzelverzeichnis
+ move.l   d_root(a0),a0            ; zugehoeriges Wurzelverzeichnis
  movem.l  a0/a1,-(sp)
- moveq    #FINDLABL,d0             ; Nur Dateien mit Attribut 8 löschen
+ moveq    #FINDLABL,d0             ; Nur Dateien mit Attribut 8 loeschen
  lea      all_files(pc),a1         ; Name
 ;move.l   a0,a0
- bsr      _dxfs_fdelete            ; Vorhandene Volumes löschen
+ bsr      _dxfs_fdelete            ; Vorhandene Volumes loeschen
  movem.l  (sp)+,a0/a1
  tst.l    d0
  beq.b    dwl_ok
@@ -2391,10 +2391,10 @@ dxfs_wlabel:
 dwl_ok:
  tst.b    (a1)                     ; Name leer ?
  beq.b    dwl_ret0
- cmpi.b   #$e5,(a1)                ; gelöschten Eintrag erzeugen ?
+ cmpi.b   #$e5,(a1)                ; geloeschten Eintrag erzeugen ?
  beq.b    dwl_ret0
  moveq    #FA_VOLUME,d1            ; Volume
- move.w   #O_CREAT+O_EXCL,d0       ; Datei erstellen, nichts löschen
+ move.w   #O_CREAT+O_EXCL,d0       ; Datei erstellen, nichts loeschen
 ;move.l   a1,a1                    ; Name
 ;move.l   a0,a0
  bsr      dxfs_fopen               ; Neues Volume erstellen
@@ -2414,7 +2414,7 @@ dwl_ende:
 *                   d0 = char *buf, d1 = int len )
 *
 * a1 = NULL, wenn von Dreadlabel() aufgerufen.
-* sonst zeigt a1 üblicherweise auf "*.*"
+* sonst zeigt a1 ueblicherweise auf "*.*"
 *
 
 dxfs_rlabel:
@@ -2422,7 +2422,7 @@ dxfs_rlabel:
  move.l   d0,a5
  move.w   d1,d7
  move.l   fd_dmd(a0),a0
- move.l   d_root(a0),a0            ; zugehöriges Wurzelverzeichnis
+ move.l   d_root(a0),a0            ; zugehoeriges Wurzelverzeichnis
  moveq    #OM_RPERM,d0
  bsr      reopen_FD
  bmi.b    drl_ende
@@ -2432,7 +2432,7 @@ dxfs_rlabel:
  tst.w    d_flags(a0)              ; lange Dateinamen ?
  beq      drl_short                ; nein, alte Funktion
 
-* Für lange Namen
+* Fuer lange Namen
 
  move.w   d7,d0                    ; buflen
  move.l   a5,a1                    ; buf
@@ -2440,7 +2440,7 @@ dxfs_rlabel:
  jsr      vf_rlabel
  bra.b    drl_close
 
-* Für kurze Namen
+* Fuer kurze Namen
 
 drl_short:
  moveq    #ERANGE,d0
@@ -2483,7 +2483,7 @@ dxfs_readlink:
  move.w   d1,d7                    ; d7 = int buflen
  move.l   a1,a3                    ; a3 = char *name
 
-* DD öffnen
+* DD oeffnen
 
  moveq    #OM_RPERM,d0
 ;move.l   a0,a0
@@ -2491,7 +2491,7 @@ dxfs_readlink:
  bmi.b    rlnk_ende
  move.l   d0,a4                    ; a4 = FD
 
- moveq    #FINDALL,d0    ; alle außer Volumes
+ moveq    #FINDALL,d0    ; alle ausser Volumes
  move.l   a3,a1                    ; Name
  move.l   a4,a0                    ; DD
  bsr      dir_srch
@@ -2542,7 +2542,7 @@ dxfs_symlink:
 ;move.l   a0,a0                    ; DD *
  move.w   #MX_INT_CREATESYMLNK,d2
  swap     d2
- move.w   #OM_RPERM+OM_WPERM+OM_WDENY,d2       ; DD zum Schreiben öffnen
+ move.w   #OM_RPERM+OM_WPERM+OM_WDENY,d2       ; DD zum Schreiben oeffnen
  bra      _dxfs_fopen
 
 
@@ -2551,7 +2551,7 @@ dxfs_symlink:
 * long dxfs_dcntl( a0 = DD *d, a1 = char *name, d0 = int cmd,
 *                  d1 = long arg )
 *
-* Führt Spezialfunktionen aus
+* Fuehrt Spezialfunktionen aus
 *
 
 dxfs_dcntl:
@@ -2583,7 +2583,7 @@ dxfs_dcntl:
  moveq    #EINVFN,d0
  rts
 dc_cnfdfln:
- move.l   dfs_longnames.w,d0       ; alter Wert zurück
+ move.l   dfs_longnames.w,d0       ; alter Wert zurueck
  tst.l    d1
  bmi.b    dcntl_ende               ; negativ, nur Wert holen
  move.l   d1,dfs_longnames.w
@@ -2593,7 +2593,7 @@ dc_cnfln:
  move.l   fd_dmd(a0),a1
  lea      d_flags(a1),a1
  moveq    #0,d0
- move.w   (a1),d0                  ; alten Wert zurück
+ move.w   (a1),d0                  ; alten Wert zurueck
  tst.l    d1
  bmi.b    dcntl_ende
  move.w   d1,(a1)                  ; neuen Wert setzen
@@ -2614,7 +2614,7 @@ dc_open:
 ;move.l   a1,a1                    ; Name
 ;move.l   a0,a0                    ; DD *
  swap     d2
- move.w   #OM_RPERM+OM_WPERM+OM_WDENY,d2       ; DD zum Schreiben öffnen
+ move.w   #OM_RPERM+OM_WPERM+OM_WDENY,d2       ; DD zum Schreiben oeffnen
  bra      _dxfs_fopen
 dc_inst:
  move.l   dfs_list,dfs_next(a2)    ; DFS einbinden
@@ -2646,17 +2646,17 @@ dosxfs_kernel:
 *
 * long dtest( a4 = DD_FD *d )
 *
-* Der DD ist dabei bereits exklusiv (Schreibmodus) geöffnet.
+* Der DD ist dabei bereits exklusiv (Schreibmodus) geoeffnet.
 * Wird nur von xfs_ddelete aufgerufen
 *
 
 dtest:
- moveq    #64,d0                   ; Einträge '.' und '..' überspringen
+ moveq    #64,d0                   ; Eintraege '.' und '..' ueberspringen
  move.l   a4,a0                    ; FD
  bsr      __fseek
  bmi.b    dtest_ende
 dtest_nxtdir:
- suba.l   a1,a1                    ; Pufferadresse zurückgeben
+ suba.l   a1,a1                    ; Pufferadresse zurueckgeben
  moveq    #32,d0                   ; 32 Bytes
  move.l   a4,a0                    ; FD
  bsr      _fread
@@ -2666,10 +2666,10 @@ dtest_nxtdir:
  tst.b    (a0)
  beq.b    dtest_enddir             ; Ende des Verzeichnisses
  cmpi.b   #$e5,(a0)
- beq.b    dtest_nxtdir             ; gelöschte Datei => weitersuchen
+ beq.b    dtest_nxtdir             ; geloeschte Datei => weitersuchen
  cmpi.b   #$0f,dir_attr(a0)
  beq.b    dtest_nxtdir             ; langer Name => weitersuchen
-* Wir haben einen nicht gelöschte Haupteintrag gefunden => EACCDN
+* Wir haben einen nicht geloeschte Haupteintrag gefunden => EACCDN
  moveq    #EACCDN,d0               ; EACCDN, Verzeichnis nicht leer
  rts
 dtest_enddir:
@@ -2684,15 +2684,15 @@ dtest_ende:
 *                   d1 = long len_of_longname)
 *
 * a0 ist das Verzeichnis, in dem meine Datei liegt,
-* a0 ist bereits exklusiv geöffnet.
-* d1 enthält die Länge des langen Dateinamens oder == 0
+* a0 ist bereits exklusiv geoeffnet.
+* d1 enthaelt die Laenge des langen Dateinamens oder == 0
 *
 
 _ddelete:
  movem.l  a4/d5/d7,-(sp)
  move.l   a0,a4                    ; a4 = FD *
  move.l   d0,d5                    ; d5 = long dirpos
-* Die Position des langen Namens ermitteln wir aus der Länge des
+* Die Position des langen Namens ermitteln wir aus der Laenge des
 * Namens
  move.l   d5,d7                    ; Default: Wie Kurzname
  tst.l    d1
@@ -2704,13 +2704,13 @@ _ddelete:
  lsl.l    #5,d1                    ; * sizeof(DIR)
  sub.l    d1,d7                    ; Pos. des langen Namens
 _ddel_nolong:
-* FÜrs Löschen erst unsere Directoryposition anfahren
+* FUers Loeschen erst unsere Directoryposition anfahren
 * und die Daten holen.
 ;move.l   d5,d0
 ;move.l   a4,a0
  bsr      __fseek
  bmi      _ddel_ende
- suba.l   a1,a1                    ; Pufferadresse zurückgeben
+ suba.l   a1,a1                    ; Pufferadresse zurueckgeben
  moveq    #32,d0                   ; 32 Bytes
  move.l   a4,a0
  bsr      _fread
@@ -2731,13 +2731,13 @@ _ddel_ende:
 *
 * d0/a0 = FD *file_is_open(a0 = DD *dir, d0 = long position )
 *
-* Testet, ob eine Datei geöffnet ist, und gibt ggf. einen Zeiger
-* auf seinen Prototyp-FD zurück.
+* Testet, ob eine Datei geoeffnet ist, und gibt ggf. einen Zeiger
+* auf seinen Prototyp-FD zurueck.
 *
 
 file_is_open:
  move.l   fd_multi1(a0),a0
- move.l   fd_children(a0),a0            ; Liste geöffneter Dateien
+ move.l   fd_children(a0),a0            ; Liste geoeffneter Dateien
                                         ;  desselben DDs
  bra.b    fio_st
 fio_loop:
@@ -2760,7 +2760,7 @@ fio_ende:
 *               d0 = long main_position,
 *               d1 = long first_position)
 *
-* löscht die DIR-Einträge
+* loescht die DIR-Eintraege
 *
 
 __fdelete:
@@ -2797,15 +2797,15 @@ __fdel_ende:
 *               d0 = long main_position,
 *               d1 = long first_position)
 *
-* a0 ist bereits zum Schreiben geöffnet.
+* a0 ist bereits zum Schreiben geoeffnet.
 * Der erste DIR-Eintrag liegt bei <first_position>,
 * der Haupteintrag bei <main_position>.
 *
 * Diese Funktion wird von xfs_fdelete() und xfs_ddelete()
 * verwendet.
 * Bei xfs_ddelete() brauchen wir keinen Test, ob die Datei
-* geöffnet ist, da dieser Test schon durchgeführt wurde und die
-* Datei als "Lock" geöffnet bleiben muß.
+* geoeffnet ist, da dieser Test schon durchgefuehrt wurde und die
+* Datei als "Lock" geoeffnet bleiben muss.
 *
 
 _fdelete:
@@ -2823,22 +2823,22 @@ _fdelete:
  btst     #FAB_SUBDIR,dir_attr(a6) ; Subdir ?
  bne.b    _fdel_del                ; ja, kein Test!
 
-* Teste, ob unsere zu löschende Datei womöglich geöffnet ist.
+* Teste, ob unsere zu loeschende Datei womoeglich geoeffnet ist.
 
 _fdel_again:
  move.l   a4,a0
  move.l   d5,d0
  bsr      file_is_open
- beq.b    _fdel_del                ; Datei ist nicht geöffnet, OK
+ beq.b    _fdel_del                ; Datei ist nicht geoeffnet, OK
  btst     #5,(config_status+3).w
- beq.b    _fdel_eaccdn             ; Datei geöffnet => return(EACCDN)
+ beq.b    _fdel_eaccdn             ; Datei geoeffnet => return(EACCDN)
 
-* Im Kompatibilitätsmodus werden die Dateien geschlossen
+* Im Kompatibilitaetsmodus werden die Dateien geschlossen
 * GEFAHR !!
 
  move.l   d0,a0
  tst.w    fd_refcnt(a0)
- bmi.b    _fdel_eaccdn             ; Diese kann man nicht schließen
+ bmi.b    _fdel_eaccdn             ; Diese kann man nicht schliessen
  bsr      dosdev_close             ; Kompatib.: Dateien werden "geschlossen"
  tst.l    d0
  bmi      _fdel_ende
@@ -2859,9 +2859,9 @@ _fdel_del:
  tst.l    d0
  bmi.b    _fdel_ende               ; ggf. auch ELINK (a0 = char *name)
  subq.l   #1,d0                    ; ignorieren ?
- beq.b    _fdel_ende               ; ja, nichts löschen
+ beq.b    _fdel_ende               ; ja, nichts loeschen
 
-* Verzeichniseinträge löschen
+* Verzeichniseintraege loeschen
 
  move.l   d5,d0
 
@@ -2954,7 +2954,7 @@ free_clone_FD:
 * void unlist(a0 = void *obj, a1 = void *liste, d0 = int offs)
 *
 * Entfernt das Element <a0> aus der Liste <a1>.
-* a1 zeigt auf den Vorgänger + d0, a0 ist unverändert
+* a1 zeigt auf den Vorgaenger + d0, a0 ist unveraendert
 *
 
 fatal_errs:
@@ -2980,8 +2980,8 @@ unlist_found:
 *
 * long fflush(a0 = FD *file)
 *
-* Aktualisierung des zur Datei <file> gehörigen Directory- Eintrags.
-* Wird nur für Datendateien verwendet, da bei der Modifikation eines
+* Aktualisierung des zur Datei <file> gehoerigen Directory- Eintrags.
+* Wird nur fuer Datendateien verwendet, da bei der Modifikation eines
 * Verzeichnisses keine Angaben im parent modifiziert werden.
 *
 
@@ -2989,7 +2989,7 @@ fflush:
  moveq    #0,d0
  move.l   fd_multi1(a0),a0         ; Prototyp- FD verwenden
  btst     #0,fd_dirch(a0)          ; FD.dirty ?
- beq      ffl_rts                  ; nein, nichts verändert, alles OK
+ beq      ffl_rts                  ; nein, nichts veraendert, alles OK
  move.l   fd_parent(a0),d0         ; hiermit schreiben wir rum
  beq      ffl_rts                  ; wir sind selbst die Root ?!?
  movem.l  d7/a4/a5,-(sp)
@@ -3017,7 +3017,7 @@ ffl_opened:
 
 * Wenn fd_dirch.Bit_0 gesetzt ist, werden die Daten
 * filt.stcl_f32 file.time, file.date, file.clust, file.len
-* für das Zurückschreiben
+* fuer das Zurueckschreiben
 * erst ins INTEL- Format gebracht und dazu erst einmal kopiert
 
 * Directoryposition anfahren
@@ -3026,15 +3026,15 @@ ffl_opened:
  move.l   a4,a0
  bsr      __fseek
  bmi      ffl_close                ; Fehler
-* zurückzuschreibende Daten auf Stack
+* zurueckzuschreibende Daten auf Stack
  clr.l    -(sp)                    ; flen
  move.l   fd_len(a5),d0
- cmpi.l   #$7fffffff,d0            ; Länge ungültig (dir) ?
+ cmpi.l   #$7fffffff,d0            ; Laenge ungueltig (dir) ?
  beq.b    ffl_0
  ror.w    #8,d0
  swap     d0
  ror.w    #8,d0
- move.l   d0,(sp)                  ; Länge als intel speichern
+ move.l   d0,(sp)                  ; Laenge als intel speichern
 ffl_0:
  move.l   fd_Lstcl(a5),d0
  ror.w    #8,d0
@@ -3058,7 +3058,7 @@ ffl_0:
  bne.b    ffl_ok                   ; ja, OK
  bset     #FAB_ARCHIVE,fd_attr(a5) ; Archivbit schon gesetzt ?
  bne.b    ffl_ok                   ; ja, OK
-* Normale Datei, Archivbit muß gesetzt werden
+* Normale Datei, Archivbit muss gesetzt werden
  moveq    #dir_attr,d0
  add.l    fd_dirpos(a5),d0
  move.l   a4,a0
@@ -3069,7 +3069,7 @@ ffl_0:
  move.l   a4,a0                    ; FD
  bsr      _fwrite
  bmi.b    ffl_close                ; Schreibfehler
-* dirty- Flag des FD löschen
+* dirty- Flag des FD loeschen
 ffl_ok:
  bclr     #0,fd_dirch(a5)
  moveq    #0,d0                    ; kein Fehler
@@ -3093,7 +3093,7 @@ ffl_rts:
 * int chk_specdir(a0 = char *dateiname, d0 = char c)
 *
 * Durchsuche <dateiname> bis zum ersten Zeichen, das == c ist
-* Rückgabe: ""       =>   1
+* Rueckgabe: ""       =>   1
 *           ".c"     =>   -1
 *           "..c"    =>   -2
 *           "...c"   =>   -3
@@ -3125,14 +3125,14 @@ chks_0:
 *
 * EQ/MI long tst_name(a0 = char *name)
 *
-* Testet den Dateinamen <name> , ob er für
-* Fcreate() oder Frename() zulässig ist, also kein Nullname ist, kein
+* Testet den Dateinamen <name> , ob er fuer
+* Fcreate() oder Frename() zulaessig ist, also kein Nullname ist, kein
 * spezielles Verzeichnis (. oder ..) ist und
-* die Zeichen '*','?' und ':' nicht enthält.
-* Außerdem darf der Name nicht mit ' ' beginnen.
+* die Zeichen '*','?' und ':' nicht enthaelt.
+* Ausserdem darf der Name nicht mit ' ' beginnen.
 *
 * Achtung: Wegen der langen Namen wird hier auf eine maximale
-* Länge von 64 Zeichen getestet
+* Laenge von 64 Zeichen getestet
 *
 
 tst_name:
@@ -3147,7 +3147,7 @@ tst_name:
  cmpi.b   #'.',1(a0)
  beq.b    tstn_ende                ; Eintrag beginnt mit ".."
 tstn_begloop:
- moveq    #64,d1                   ; dbra- Zähler
+ moveq    #64,d1                   ; dbra- Zaehler
 tstn_loop:
  cmpi.b   #'?',(a0)
  beq.b    tstn_ende                ; Fehler
@@ -3159,7 +3159,7 @@ tstn_loop:
  beq.b    tstn_ok
  dbra     d1,tstn_loop
 tstn_ende:
- moveq    #EBADRQ,d0               ; zu lang oder ungültige Zeichen
+ moveq    #EBADRQ,d0               ; zu lang oder ungueltige Zeichen
  rts
 tstn_ok:
  moveq    #0,d0
@@ -3170,13 +3170,13 @@ tstn_ok:
 *
 * void dxfs_freeDD( a0 = DD *d )
 *
-* Der Referenzzähler eines DD ist vom Kernel auf 0 dekrementiert
+* Der Referenzzaehler eines DD ist vom Kernel auf 0 dekrementiert
 * worden. Ein XFS, das keine garbage collection macht, kann hier
 * Strukturen freigeben.
 *
 
 dxfs_freeDD:
- tst.l    fd_dev(a0)               ; ungültig ? (von gelöschtem DIR)
+ tst.l    fd_dev(a0)               ; ungueltig ? (von geloeschtem DIR)
  beq      free_FD                  ; ja, freigeben
  rts
 
@@ -3186,7 +3186,7 @@ dxfs_freeDD:
 * long dxfs_garbcoll( a0 = DMD *dir )
 *
 * Sucht nach einem unbenutzten FD
-* Rückgabe TRUE, wenn mindestens einer gefunden wurde.
+* Rueckgabe TRUE, wenn mindestens einer gefunden wurde.
 *
 
 dxfs_garbcoll:
@@ -3201,7 +3201,7 @@ dxfs_garbcoll:
 * DD *_collect_DD(a0 = DD *root)
 *  (wird nur von dfs_garbcoll aufgerufen)
 *
-* Gibt einen nicht benötigten DD zurück. Es wird erst das Verzeichnis
+* Gibt einen nicht benoetigten DD zurueck. Es wird erst das Verzeichnis
 * selbst, dann alle Unterverzeichnisse durchsucht. Die Root wird nie
 * freigegeben.
 *
@@ -3210,7 +3210,7 @@ _collect_DD:
  move.l   a5,-(sp)
  movea.l  a0,a5                    ; a5 ist der DD
 
-* prüfen, ob der DD selbst freigegeben werden kann
+* pruefen, ob der DD selbst freigegeben werden kann
 
 _cdd_loop:
  tst.l    fd_children(a5)          ; hat Unterverzeichnisse ?
@@ -3219,7 +3219,7 @@ _cdd_loop:
  beq      _cdd_sisters             ; ist kein DD_FD
  tst.l    fd_parent(a5)            ; Ist Root (kein Parent) ?
  beq.b    _cdd_sisters             ; nicht freigeben
- tst.w    fd_refcnt(a5)            ; ist geschützter Standardpfad ?
+ tst.w    fd_refcnt(a5)            ; ist geschuetzter Standardpfad ?
  bne      _cdd_sisters             ; ja, nicht freigeben
  tst.l    fd_owner(a5)             ; DD_FD belegt ?
  bne      _cdd_sisters
@@ -3227,7 +3227,7 @@ _cdd_loop:
  bne      _cdd_sisters             ; Prototyp- DD_FD nicht freigeben
  move.l   a5,a0
  bsr      free_FD                  ; ausklinken
- bra      _cdd_a5                  ; und zurückgeben
+ bra      _cdd_a5                  ; und zurueckgeben
 
 * Alle Unterverzeichnisse durchsuchen
 
@@ -3239,14 +3239,14 @@ _cdd_children:
  tst.l    d0
  bne.b    _cdd_ende                ; DD gefunden
 
-* Nächstes Verzeichnis auf gleicher Ebene durchsuchen
+* Naechstes Verzeichnis auf gleicher Ebene durchsuchen
 
 _cdd_sisters:
  movea.l  fd_next(a5),a5
  move.l   a5,d0
  bne.b    _cdd_loop
 
-* Nichts gefunden, NULL zurückgeben
+* Nichts gefunden, NULL zurueckgeben
 
  moveq    #0,d0
 _cdd_ende:
@@ -3264,17 +3264,17 @@ _cdd_a5:
 *              char *longname, void **link)
 *
 * Sucht das Verzeichnis mit dem Eintrag <subdir> im Ordner <dir>.
-* Gibt einen Zeiger auf den DD des <subdir> zurück. Notfalls muß
+* Gibt einen Zeiger auf den DD des <subdir> zurueck. Notfalls muss
 * dieser DD eben erzeugt werden.
-* Wegen der Plattenzugriffe in dirDD_srch kann es sein, daß ein
-* anderer Prozeß unseren DD gleichzeitig schon erzeugt hat.
-* Deshalb prüft get_DD noch einmal die Liste der Unterverzeichnisse,
+* Wegen der Plattenzugriffe in dirDD_srch kann es sein, dass ein
+* anderer Prozess unseren DD gleichzeitig schon erzeugt hat.
+* Deshalb prueft get_DD noch einmal die Liste der Unterverzeichnisse,
 * ob unser jetzt gefundener Eintrag schon enthalten ist.
 *
-* Der DD <dir> ist zu diesem Zeitpunkt geschützt, weil von
-* dirDD_srch aufgerufen und hier geöffnet.
+* Der DD <dir> ist zu diesem Zeitpunkt geschuetzt, weil von
+* dirDD_srch aufgerufen und hier geoeffnet.
 *
-* Rückgabe:
+* Rueckgabe:
 *    d0 = DD *dd    Der gesuchte DD
 *    d0 = ELINK
 *     (*link) = int len, char *p  Datei ist symbolischer Link
@@ -3289,15 +3289,15 @@ get_DD:
  movea.l  fd_children(a4),a0
  bra.b    gDD_nxtchild             ; Durchlaufe alle Kinder des DD
 gDD_childloop:
- cmp.l    fd_dirpos(a0),d5         ; sind wir's ?
- beq.b    gDD_ende                 ; DD gefunden => gib a3 zurück
- movea.l  fd_next(a0),a0           ; nächstes Geschwist
+ cmp.l    fd_dirpos(a0),d5         ; sind wir es ?
+ beq.b    gDD_ende                 ; DD gefunden => gib a3 zurueck
+ movea.l  fd_next(a0),a0           ; naechstes Geschwist
 gDD_nxtchild:
  move.l   a0,d0
  bne.b    gDD_childloop
 
 * Wir haben unser Verzeichnis nicht unter den Kindern von <dir> gefunden
-* erstelle einen Prototyp-FD, öffne aber nicht den Dateitreiber
+* erstelle einen Prototyp-FD, oeffne aber nicht den Dateitreiber
 
  move.l   20(sp),d0                ; langer Name
 ;move.l   a6,a6                    ; DIR *
@@ -3319,12 +3319,12 @@ gDD_ende:
 *                             d5 = long dirpos,
 *                             d0 = char *longname )
 *
-* erstellt einen Prototyp-FD aus den Verzeichnisdaten und öffnet den
+* erstellt einen Prototyp-FD aus den Verzeichnisdaten und oeffnet den
 * Dateitreiber.
 * Bei einem Unterverzeichnis und langem Dateinamen wird dieser
 * ebenfalls angelegt.
 *
-* a4/a5/a6/d5/d7 sind global und dürfen nicht verändert werden.
+* a4/a5/a6/d5/d7 sind global und duerfen nicht veraendert werden.
 *
 * Wird verwendet von fopen und get_DD
 *
@@ -3337,7 +3337,7 @@ DIR2protoFD:
 
 * Ein Teil des FD wird schon jetzt angelegt und kann vom DFS manipuliert
 * werden.
-* Achtung: fd_len und fd_Lstcl müssen vom DFS initialisiert werden
+* Achtung: fd_len und fd_Lstcl muessen vom DFS initialisiert werden
 
 ;move.w   dir_stcl(a6),d0          ; -> DFS
 ;ror.w    #8,d0
@@ -3365,7 +3365,7 @@ DIR2protoFD:
 * und ggf.
 *  fd_name, fd_xftype, fd_xdata usw.
 *
-* und ändert ggf. Daten
+* und aendert ggf. Daten
 *
 
  move.l   d_dfs(a2),a2
@@ -3376,7 +3376,7 @@ DIR2protoFD:
  tst.l    d0
  bmi.b    D2F_err
 
-* Den neuen FD vorne in die Liste der Kinder von <dir> einhängen
+* Den neuen FD vorne in die Liste der Kinder von <dir> einhaengen
 
  move.l   #dosdev_drv,fd_dev(a3)
  move.l   fd_multi1(a4),a0
@@ -3389,14 +3389,14 @@ DIR2protoFD:
 ;move.l   (a6)+,(a1)+
 ;move.l   (a6),(a1)                     ; Name (11 Zeichen) und Attribut
 
-* jetzt den langen Ordnernamen einfügen, wenn nötig
+* jetzt den langen Ordnernamen einfuegen, wenn noetig
 
  btst.b   #FAB_SUBDIR,fd_attr(a3)       ; Subdir ?
  beq.b    D2F_nosub                     ; nein!
 
  move.l   (sp),d0                       ; langer Name ?
  beq.b    D2F_nosub                     ; kein langer Name
- addq.w   #1,fd_refcnt(a3)              ; Block schützen
+ addq.w   #1,fd_refcnt(a3)              ; Block schuetzen
  jsr      int_malloc
  subq.w   #1,fd_refcnt(a3)
  move.l   d0,fd_longname(a3)
@@ -3433,10 +3433,10 @@ D2F_err:
 * -> d1 = long pos1           zeigt auf Haupt-DIR-Eintrag
 *    d2 = long pos2           Anfang des langen Namens, ggf. -1
 *
-*  Sucht im Directory <dir> von vorn nach der nächsten in <restpath>
+*  Sucht im Directory <dir> von vorn nach der naechsten in <restpath>
 *   spezifizierten Datei (auch Muster) mit dem Attributsmuster
 *   <attrib>.
-*  Wird verwendet für
+*  Wird verwendet fuer
 *
 *    Fopen
 *    Fdelete
@@ -3453,7 +3453,7 @@ dir_srch:
  move.l   fd_dmd(a0),a2
  tst.w    d_flags(a2)              ; lange Dateinamen ?
  beq      dirs_short               ; nein, alte Funktion
- suba.w   #8,sp                    ; Platz für spos/lpos
+ suba.w   #8,sp                    ; Platz fuer spos/lpos
  pea      4(sp)                    ; &lpos
  pea      4(sp)                    ; &apos
 ;move.w   d0,d0                    ; attrib
@@ -3515,8 +3515,8 @@ drss_all:
 *
 * Wie dir_srch, aber verlangt in a1 einen Zeiger auf den Dateinamen
 * samt Suchmuster im internen Format (12 Bytes), und zwar auf gerader
-* Adresse. Außerdem wird ab <pos> gesucht.
-* Verwendet für Fsfirst und Fsnext, sucht nur 8+3.
+* Adresse. Ausserdem wird ab <pos> gesucht.
+* Verwendet fuer Fsfirst und Fsnext, sucht nur 8+3.
 *
 
 _dir_srch:
@@ -3556,9 +3556,9 @@ dsrch_found:
  move.l   fd_fpos(a4),d1
  move.l   a3,d0
  bra.b    dsrch_ende               ; gefunden!
-* nächsten Verzeichniseintrag (struct DIR) lesen
+* naechsten Verzeichniseintrag (struct DIR) lesen
 dsrch_nxt:
- suba.l   a1,a1                    ; Pufferadresse zurückgeben
+ suba.l   a1,a1                    ; Pufferadresse zurueckgeben
  moveq    #32,d0                   ; 32 Bytes
  move.l   a4,a0                    ; FD
  bsr      _fread
@@ -3568,8 +3568,8 @@ dsrch_nxt:
  tst.b    (a3)                     ; Ende des Verzeichnisses ?
  bne.b    dsrch_loop               ; nein, weiter
 * Dateiende (oder nie benutzter Eintrag gefunden)
- cmpi.b   #$e5,(sp)                ; suche nach gelöschter Datei ?
- beq.b    dsrch_found              ; ja, gelöschte Datei gefunden
+ cmpi.b   #$e5,(sp)                ; suche nach geloeschter Datei ?
+ beq.b    dsrch_found              ; ja, geloeschte Datei gefunden
 dsrch_efilnf:
  moveq    #EFILNF,d0
 dsrch_ende:
@@ -3584,7 +3584,7 @@ dsrch_ende:
 * char *rcnv_8_3(a0 = char *intname, a1 = char *name)
 *
 * Wandelt einen internen Dateinamen (8+3-Format) in eine Zeichenkette
-* um und gibt in d0 einen Zeiger hinter den String zurück
+* um und gibt in d0 einen Zeiger hinter den String zurueck
 *
 
 rcnv_8_3:
@@ -3629,7 +3629,7 @@ i2n_n2:
  cmpi.b   #' ',(a2)
  bne.b    i2n_loop2
 
-* Schließe String mit EOS ab und gib Zeiger auf dieses EOS zurück
+* Schliesse String mit EOS ab und gib Zeiger auf dieses EOS zurueck
 
 ddtos_ende:
  clr.b    (a1)
@@ -3641,7 +3641,7 @@ ddtos_ende:
 *
 * void init_DTA(a0 = DIR *file, a1 = DTA *buf)
 *
-* Füllt den User- Bereich der DTA
+* Fuellt den User- Bereich der DTA
 *
 * nichts korrigiert, nur optimiert
 *
@@ -3655,7 +3655,7 @@ init_DTA:
  swap     d0
  move.l   d0,dta_time(a1)
 
- moveq    #0,d0                         ; dir: Länge 0
+ moveq    #0,d0                         ; dir: Laenge 0
  btst     #FAB_SUBDIR,dir_attr(a0)
  bne.b    indt_isdir
  move.l   dir_flen(a0),d0
@@ -3675,18 +3675,18 @@ indt_isdir:
 *
 * PL/MI d0 = FD *reopen_FD(a0 = DD_FD *verz, d0 = int omode)
 *
-*  Beschafft einen (Clone-)FD für eine Datei, die bereits über den
-*  Prototyp-FD <a0> geöffnet ist.
-*  Dies kommt vor, wenn eine Datei mehrmals geöffnet wird und wenn
-*  ein Verzeichnis geöffnet wird, da Verzeichnis- Prototyp- FDs nicht
+*  Beschafft einen (Clone-)FD fuer eine Datei, die bereits ueber den
+*  Prototyp-FD <a0> geoeffnet ist.
+*  Dies kommt vor, wenn eine Datei mehrmals geoeffnet wird und wenn
+*  ein Verzeichnis geoeffnet wird, da Verzeichnis- Prototyp- FDs nicht
 *  freigegeben werden.
-*  Die Kompatibilität des <omode> zu der bereits geöffneten Datei
-*  wird überprüft.
+*  Die Kompatibilitaet des <omode> zu der bereits geoeffneten Datei
+*  wird ueberprueft.
 *
 
 reopen_FD:
  move.l   a2,-(sp)                      ; PUREC
-; Verträglichkeit der Open- Modi testen
+; Vertraeglichkeit der Open- Modi testen
  tst.l    fd_owner(a0)                  ; Prototyp belegt ?
  bne.b    _opf_tst                      ; ja, teste ihn
  move.l   fd_multi(a0),d1               ; Prototyp frei, andere belegt ?
@@ -3696,7 +3696,7 @@ _opf_loop:
 _opf_tst:
  move.w   fd_mode(a0),d1
  btst     #BOM_NOCHECK,d1               ; kein Check durch den Kernel ?
- bne.b    _opf_nxt                      ; ja, ddev_open prüft
+ bne.b    _opf_nxt                      ; ja, ddev_open prueft
  ror.b    #4,d1
  and.b    d0,d1
  andi.b   #OM_RPERM+OM_WPERM,d1         ; Lese-/Schreibberechtigung
@@ -3705,10 +3705,10 @@ _opf_nxt:
  move.l   fd_multi(a0),d1
  bne.b    _opf_loop
 
- move.l   fd_multi1(a0),a0              ; zurück zum Prototyp
+ move.l   fd_multi1(a0),a0              ; zurueck zum Prototyp
  tst.l    fd_owner(a0)                  ; Prototyp benutzt ?
  beq.b    opd_a0                        ; nein, einfach nehmen
-* Es gibt keinen Konflikt zu bereits geöffneten Deskriptoren
+* Es gibt keinen Konflikt zu bereits geoeffneten Deskriptoren
 * Protoyp belegt, neuen FD anlegen
  move.w   d0,-(sp)
  move.l   a0,-(sp)
@@ -3716,7 +3716,7 @@ _opf_nxt:
  move.l   d0,a0
  move.l   (sp)+,a1
  move.w   (sp)+,d0
-* fd_name/fd_parent/fd_children/fd_next ist ungültig bei einem Clone
+* fd_name/fd_parent/fd_children/fd_next ist ungueltig bei einem Clone
  move.l   a1,fd_multi1(a0)              ; Prototyp-FD einsetzen
  move.l   fd_multi(a1),fd_multi(a0)
  move.l   a0,fd_multi(a1)               ; rein in die multi- Verkettung
@@ -3727,12 +3727,12 @@ _opf_nxt:
  move.l   fd_dmd(a1),fd_dmd(a0)
 
 /*
- move.w   fd_stcl(a1),fd_stcl(a0)       ; unnötig
- move.l   fd_len(a1),fd_len(a0)         ; unnötig
- move.l   fd_dirpos(a1),fd_dirpos(a0)   ; unnötig
- move.w   fd_date(a1),fd_date(a0)       ; unnötig
- move.w   fd_time(a1),fd_time(a0)       ; unnötig
- move.b   fd_attr(a1),fd_attr(a0)       ; unnötig
+ move.w   fd_stcl(a1),fd_stcl(a0)       ; unnoetig
+ move.l   fd_len(a1),fd_len(a0)         ; unnoetig
+ move.l   fd_dirpos(a1),fd_dirpos(a0)   ; unnoetig
+ move.w   fd_date(a1),fd_date(a0)       ; unnoetig
+ move.w   fd_time(a1),fd_time(a0)       ; unnoetig
+ move.b   fd_attr(a1),fd_attr(a0)       ; unnoetig
 */
 
 opd_a0:
@@ -3749,7 +3749,7 @@ opd_a0:
  move.l   a0,d0
  move.l   (sp)+,a2
  rts
-* Fehler beim Öffnen: FD einfach freigeben
+* Fehler beim Oeffnen: FD einfach freigeben
 opd_err:
  move.l   d0,-(sp)
  bsr      free_FD
@@ -3766,20 +3766,20 @@ opd_eaccdn:
 *
 * long close_DD(a0 = FD *file)
 *
-* Es ist sichergestellt, daß nach dem Aufruf der FD noch zur
-* Verfügung steht, da erst nach dem Plattenzugriff der FD freigegeben
+* Es ist sichergestellt, dass nach dem Aufruf der FD noch zur
+* Verfuegung steht, da erst nach dem Plattenzugriff der FD freigegeben
 * wird.
 *
-* Aufruf des Gerätetreibers zum Schließen.
+* Aufruf des Geraetetreibers zum Schliessen.
 * Die Funktion wird anstelle von dosdev_close im Fall von
 * Unterverzeichnissen aufgerufen, weil hier ihr Verzeichniseintrag
 * nicht modifiziert wird und Prototyp- FDs nicht freigegeben werden.
-* Im wesentlichen werden hier nur Caches zurückgeschrieben.
+* Im wesentlichen werden hier nur Caches zurueckgeschrieben.
 *
 
 
 close_DD:
-; zurückschreiben
+; zurueckschreiben
  move.l   a2,-(sp)                      ; wg. Pure C
  moveq    #0,d0                         ; kein Fehler
  move.l   fd_multi1(a0),a1              ; Prototyp verwenden!
@@ -3816,8 +3816,8 @@ fdd_clone:
 *
 * EQ/NE namecmp(a0 = char *string1, a1 = char *string2)
 *  vergleicht zwei Dateinamen im internen Format (11 Zeichen)
-*  auf Übereinstimmung (ohne Unterscheidung gr/kl)
-*  Rückgabe : 1      Namen gleich
+*  auf Uebereinstimmung (ohne Unterscheidung gr/kl)
+*  Rueckgabe : 1      Namen gleich
 *             0      Namen unterschiedlich
 *
 *  identisch mit DOS 0.19
@@ -3828,7 +3828,7 @@ fdd_clone:
 namecmp:
  movea.l  a0,a2
 ;movea.l  a1,a1
- moveq    #11-1,d2                 ; Zähler für dbra
+ moveq    #11-1,d2                 ; Zaehler fuer dbra
 nmc_loop:
  move.b   (a2)+,d0
  jsr      toupper
@@ -3851,17 +3851,17 @@ nmc_isne:
 *
 * Vergleicht ein 12- stelliges Dateimuster mit einem Dateinamen.
 * Die Stelle 11 ist das Datei- Attribut(-muster).
-* Rückgabe : 1 = MATCH, sonst 0
+* Rueckgabe : 1 = MATCH, sonst 0
 *
 * Im wesentlichen mit DOS 0.19 identisch, aber toupper nicht verwendet
 *
 * Korrektur: toupper verwendet, damit Dateien mit Umlautnamen
-*            gefunden werden können
+*            gefunden werden koennen
 * Vergleich der Attribute korrigiert, optimiert
 *
 * Regeln zum Vergleich der Attribute:
 *    1) ReadOnly und Archive werden bei dem Vergleich NIEMALS
-*       berücksichtigt.
+*       beruecksichtigt.
 *    2) Ist das Suchattribut 8, werden genau alle Dateien mit gesetztem
 *       Volume- Bit gefunden (auch versteckte usw.).
 *    3) Ist das Suchattribut nicht 8, werden normale Dateien IMMER
@@ -3894,24 +3894,24 @@ filename_match:
 ;move.l   a1,a1                    ; a1 = fname
  cmpi.b   #$e5,(a1)
  bne.b    fnmtch_l1
-* <fname> ist eine gelöschte Datei
+* <fname> ist eine geloeschte Datei
  cmpi.b   #'?',(a2)
- beq      fmat_ne                  ; paßt nicht
+ beq      fmat_ne                  ; passt nicht
  cmpi.b   #$e5,(a2)
- beq      fmat_eq                  ; gelöschte Datei gesucht !
+ beq      fmat_eq                  ; geloeschte Datei gesucht !
 * vergleiche 11 Zeichen
 fnmtch_l1:
- moveq    #11-1,d2                 ; dbra- Zähler
+ moveq    #11-1,d2                 ; dbra- Zaehler
 fnmtch_loop:
  move.b   (a2)+,d0
  cmpi.b   #'?',d0
- beq.b    fnmtch_l2                ; '?' paßt immer
+ beq.b    fnmtch_l2                ; '?' passt immer
  jsr      toupper
  move.b   d0,d1
  move.b   (a1),d0
  jsr      toupper
  cmp.b    d1,d0
- bne.b    fmat_ne                  ; paßt nicht
+ bne.b    fmat_ne                  ; passt nicht
 fnmtch_l2:
  addq.l   #1,a1
  dbra     d2,fnmtch_loop
@@ -3919,7 +3919,7 @@ fnmtch_l2:
  move.b   (a2),d0                  ; gesucht
  move.b   (a1),d1                  ; gefunden
  cmpi.b   #$0f,d1                  ; langer Dateiname ?
- beq.b    fmat_ne                  ; immer überlesen !
+ beq.b    fmat_ne                  ; immer ueberlesen !
  cmpi.b   #FA_VOLUME,d0
  beq.b    fmat_and                 ; nur Volumes suchen
  andi.b   #$1e,d1                  ; SymLink, ReadOnly und Archive ausbl.
@@ -3956,10 +3956,10 @@ fmat_ne:
 **********************************************************************
 *
 * void conv_8_3(a0 = char *pathname, a1 = char *name)
-*  Das in <pathname> stehende, erste Pfadelement (vor '\' oder EOS)
+*  Das in <pathname> stehende, erste Pfadelement (vor backslash oder EOS)
 *  wird ins interne Format gewandelt und nach <name> kopiert
 *
-* Wörtlich mit DOS 0.19 identisch
+* Woertlich mit DOS 0.19 identisch
 *
 * nur leicht optimiert, nichts korrigiert
 *
@@ -3980,7 +3980,7 @@ c83_nxtloop8:
  beq.b    c83_endloop8
  cmpi.b   #'*',d0
  beq.b    c83_endloop8
- cmpi.b   #'\',d0
+ cmpi.b   #$5c,d0
  beq.b    c83_endloop8
  cmpi.b   #'.',d0
  beq.b    c83_point
@@ -4000,7 +4000,7 @@ c83_point:
 c83_point_loop:
  move.b   (a0)+,d0
  beq.b    c83_endloop8
- cmpi.b   #'\',d0
+ cmpi.b   #$5c,d0
  beq.b    c83_endloop8
  cmpi.b   #'.',d0
  bne.b    c83_point_loop
@@ -4020,11 +4020,11 @@ c83_l1:
  beq.b    c83_fill8
  cmpi.b   #'.',d0
  beq.b    c83_fill8
- cmpi.b   #'\',d0
+ cmpi.b   #$5c,d0
  bne.b    c83_l2
 
 *
-* Dateiname auf 8 Zeichen auffüllen (' ' oder '?')
+* Dateiname auf 8 Zeichen auffuellen (' ' oder '?')
 *
 
 c83_fill8:
@@ -4067,7 +4067,7 @@ c83_ext3_next:
  beq.b    c83_fill3
  cmpi.b   #'*',d0
  beq.b    c83_fill3
- cmpi.b   #'\',d0
+ cmpi.b   #$5c,d0
  beq.b    c83_fill3
  cmpi.b   #'.',d0
  beq.b    c83_fill3
@@ -4075,7 +4075,7 @@ c83_ext3_next:
  bne.b    c83_ext3_loop
 
 *
-* Extension auf 3 Zeichen auffüllen (' ' oder '?')
+* Extension auf 3 Zeichen auffuellen (' ' oder '?')
 *
 
 c83_fill3:
@@ -4143,14 +4143,14 @@ dvw_dir:
 * mode & 0x0001:    cooked
 * mode & 0x0002:    echo mode
 *
-* Rückgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
+* Rueckgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
 *           0x0000FF1A bei EOF
 *
 
 dosdev_getc:
  move.l   fd_ddev(a0),a2
  move.l   ddev_getc(a2),d2
- beq.b    ddv_getc                 ; ist kein Gerät
+ beq.b    ddv_getc                 ; ist kein Geraet
  move.l   d2,a2
  jmp      (a2)
 ddv_getc:
@@ -4178,13 +4178,13 @@ ddv_eof:
 * mode & 0x0001:    cooked
 * mode & 0x0002:    echo mode
 *
-* Rückgabe: Anzahl gelesener Bytes oder Fehlercode
+* Rueckgabe: Anzahl gelesener Bytes oder Fehlercode
 *
 
 dosdev_getline:
  move.l   fd_ddev(a0),a2
  move.l   ddev_getline(a2),d2
- beq.b    ddv_getl                 ; ist kein Gerät
+ beq.b    ddv_getl                 ; ist kein Geraet
  move.l   d2,a2
  jmp      (a2)
 ddv_getl:
@@ -4200,11 +4200,11 @@ ddvgetl_loop:
  move.l   a5,a0
  bsr      _fread
  bmi.b    ddvgetl_ende             ; Fehler => return(errcode)
- beq.b    ddvgetl_eos              ; EOF => Anzahl zurückgeben
+ beq.b    ddvgetl_eos              ; EOF => Anzahl zurueckgeben
  cmpi.b   #$d,(a4)
- beq.b    ddvgetl_nxt              ; CR überlesen
+ beq.b    ddvgetl_nxt              ; CR ueberlesen
  cmpi.b   #$a,(a4)+
- beq.b    ddvgetl_eos              ; LF schließt ab
+ beq.b    ddvgetl_eos              ; LF schliesst ab
  addq.l   #1,d7                    ; erfolgreich eingelesen
 ddvgetl_nxt:
  cmp.l    d6,d7
@@ -4222,13 +4222,13 @@ ddvgetl_ende:
 *
 * mode & 0x0001:    cooked
 *
-* Rückgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
+* Rueckgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
 *
 
 dosdev_putc:
  move.l   fd_ddev(a0),a2
  move.l   ddev_putc(a2),d2
- beq.b    ddv_putc                 ; ist kein Gerät
+ beq.b    ddv_putc                 ; ist kein Geraet
  move.l   d2,a2
  jmp      (a2)
 ddv_putc:
@@ -4334,7 +4334,7 @@ fdt_wr:
  move.w   (a1),d0
  ror.w    #8,d0
  move.w   d0,fd_date(a0)
- bset     #0,fd_dirch(a0)          ; Verzeichniseintrag geändert
+ bset     #0,fd_dirch(a0)          ; Verzeichniseintrag geaendert
  moveq    #0,d0
  rts
 
@@ -4347,7 +4347,7 @@ fdatime_dev:
 *
 * long long dosdev_close(a0 = FD *file)
 *
-* schreibt alles zurück, ruft den Dateitreiber auf und gibt ggf.
+* schreibt alles zurueck, ruft den Dateitreiber auf und gibt ggf.
 * den FD frei.
 *
 
@@ -4358,14 +4358,14 @@ dosdev_close:
  tst.w    fd_refcnt(a5)
  beq.b    fclo_free
 
-* Zunächst das Update des Verzeichnisses, in dem die Datei liegt
+* Zunaechst das Update des Verzeichnisses, in dem die Datei liegt
 
 ;move.l   a5,a0
  bsr      fflush
  move.l   d0,d7                    ; Fehlercode merken
 
 * Dann den Dateitreiber schreiben lassen. Dabei werden ggf.
-* auch Sektorpuffer zurückgeschrieben.
+* auch Sektorpuffer zurueckgeschrieben.
 
  move.l   fd_ddev(a5),a2
  move.l   ddev_close(a2),a2
@@ -4373,7 +4373,7 @@ dosdev_close:
  jsr      (a2)
 
  tst.l    d0
- bmi.b    dfc_iserr                ; Fehlercode von ddev ist stärker
+ bmi.b    dfc_iserr                ; Fehlercode von ddev ist staerker
  move.l   d7,d0
 dfc_iserr:
  move.l   d0,d7

@@ -48,7 +48,7 @@ typedef struct
 typedef	WORD	(cdecl *HNDL_OBJ)( struct _dialog *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Bei énderungen an der DIALOG-Struktur muû auch die Assembler-Definition angepaût 		*/
+/* Bei aenderungen an der DIALOG-Struktur muss auch die Assembler-Definition angepasst 		*/
 /*	werden!																											*/
 /*----------------------------------------------------------------------------------------*/ 
 
@@ -62,11 +62,11 @@ typedef struct _dialog
 	void			*user_data;												/* benutzerinterne Daten */
 
 	OBJECT 		*tree;													/* Objektbaum */
-	GRECT			rect;														/* Dialogposition und -ausmaûe (nicht mit border geschnitten) */
+	GRECT			rect;														/* Dialogposition und -ausmasse (nicht mit border geschnitten) */
 
 	WORD			whdl;														/* Fensterhandle */
 	WORD			kind;														/* Fensterattribute */
-	GRECT			border;													/* Fensterposition und -ausmaûe (auf den Rand bezogen) */
+	GRECT			border;													/* Fensterposition und -ausmasse (auf den Rand bezogen) */
 
 	HNDL_OBJ		handle_exit;											/* Zeiger auf die Service-Funktion */
 
@@ -77,22 +77,22 @@ typedef struct _dialog
 	OBSPEC		root_ob_spec;											/* beim Aufruf von wdlg_open gesicherter ob_spec des ROOT-Objekts */
 } DIALOG;
 
-/* Definitionen fÅr <flags> */
+/* Definitionen fuer <flags> */
 #define	WDLG_BKGD	1													/* Hintergrundbedienung zulassen */
 
-/* Funktionsnummern fÅr <obj> bei handle_exit(...) */
+/* Funktionsnummern fuer <obj> bei handle_exit(...) */
 #define	HNDL_INIT	-1													/* Dialog initialisieren */
 #define	HNDL_MESG	-2													/* Message bearbeiten */
 #define	HNDL_CLSD	-3													/* Dialogfenster wurde geschlossen */
-#define	HNDL_OPEN	-5													/* Dialog-Initialisierung abschlieûen (zweiter Aufruf am Ende von wdlg_init) */
-#define	HNDL_EDIT	-6													/* Zeichen fÅr ein Edit-Feld ÅberprÅfen */
+#define	HNDL_OPEN	-5													/* Dialog-Initialisierung abschliessen (zweiter Aufruf am Ende von wdlg_init) */
+#define	HNDL_EDIT	-6													/* Zeichen fuer ein Edit-Feld ueberpruefen */
 #define	HNDL_EDDN	-7													/* Zeichen wurde ins Edit-Feld eingetragen */
 #define	HNDL_EDCH	-8													/* Edit-Feld wurde gewechselt */
 #define	HNDL_MOVE	-9													/* Dialog wurde verschoben */
 #define	HNDL_TOPW	-10												/* Dialog-Fenster ist nach oben gekommen */
 #define	HNDL_UNTP	-11												/* Dialog-Fenster ist nicht aktiv */
 
-/* Parameterbeschreibung fÅr die Service-Routine handle_exit():
+/* Parameterbeschreibung fuer die Service-Routine handle_exit():
 
 	WORD	handle_exit( struct _dialog *d, WORD obj, WORD clicks, void *data );
 	
@@ -106,44 +106,44 @@ typedef struct _dialog
 	clicks:	Anzahl der Mausklicks (falls es sich bei <obj>
 				um eine Objektnummer handelt)
 	
-	data:		der Inhalt hÑngt von <obj> ab
+	data:		der Inhalt haengt von <obj> ab
 					
-	Bedeutung von <data> abhÑngig von <obj>:
+	Bedeutung von <data> abhaengig von <obj>:
 
 	Falls <obj> eine (positive) Objektnummer ist, wird in <data>
-	die Variable <user_data> Åbergeben (siehe wdlg_create).
-	<clicks> enthÑlt die Anzahl der Mausklicks auf dieses Objekt.
+	die Variable <user_data> uebergeben (siehe wdlg_create).
+	<clicks> enthaelt die Anzahl der Mausklicks auf dieses Objekt.
 	
-	HNDL_INIT: <data> ist die bei wdlg_init Åbergebene Variable.
-					Wenn handle_exit() 0 zurÅckliefert, legt
+	HNDL_INIT: <data> ist die bei wdlg_init uebergebene Variable.
+					Wenn handle_exit() 0 zurueckliefert, legt
 					wdlg_create() keine Dialog-Struktur an (Fehler).
-					Die Variable <code> wird in <clicks> Åbergeben.
+					Die Variable <code> wird in <clicks> uebergeben.
 					
-	HNDL_OPEN: <data> ist die bei wdlg_open Åbergebene Variable.
-					Die Variable <code> wird in <clicks> Åbergeben.
+	HNDL_OPEN: <data> ist die bei wdlg_open uebergebene Variable.
+					Die Variable <code> wird in <clicks> uebergeben.
 					
 	HNDL_CLSD: <data> ist <user_data>. Wenn handle_exit() 0 
-					zurÅckliefert, wird der Dialog geschlossen -
-					wdlg_evnt() liefert 0 zurÅck.
+					zurueckliefert, wird der Dialog geschlossen -
+					wdlg_evnt() liefert 0 zurueck.
 
 	HNDL_MOVE: <data> ist <user_data>. Wenn handle_exit() 0 
-					zurÅckliefert, wird der Dialog geschlossen -
-					wdlg_evnt() liefert 0 zurÅck.
+					zurueckliefert, wird der Dialog geschlossen -
+					wdlg_evnt() liefert 0 zurueck.
 
 	HNDL_TOPW: <data> ist <user_data>. Wenn handle_exit() 0 
-					zurÅckliefert, wird der Dialog geschlossen -
-					wdlg_evnt() liefert 0 zurÅck.
+					zurueckliefert, wird der Dialog geschlossen -
+					wdlg_evnt() liefert 0 zurueck.
 
 	HNDL_UNTP: <data> ist <user_data>. Wenn handle_exit() 0 
-					zurÅckliefert, wird der Dialog geschlossen -
-					wdlg_evnt() liefert 0 zurÅck.
+					zurueckliefert, wird der Dialog geschlossen -
+					wdlg_evnt() liefert 0 zurueck.
 
 	HNDL_UMSG: <data> ist ein Zeiger auf den Message-Buffer.
-					Wenn handle_exit() 0 zurÅckliefert, wird der
-					Dialog geschlossen -	wdlg_evnt() liefert 0 zurÅck.
+					Wenn handle_exit() 0 zurueckliefert, wird der
+					Dialog geschlossen -	wdlg_evnt() liefert 0 zurueck.
 
 	HNDL_EDIT:	<data> zeigt auf ein Wort mit dem Tastencode.
-					Wenn handle_exit() 1 zurÅckliefert, wird der
+					Wenn handle_exit() 1 zurueckliefert, wird der
 					Tastendruck verarbeitet, bei 0 ignoriert.
 	
 	HNDL_EDDN:	<data> zeigt auf ein Wort mit dem Tastencode.

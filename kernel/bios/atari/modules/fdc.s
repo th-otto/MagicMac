@@ -14,9 +14,9 @@ boot_dsel_floppies:
  lea      giselect,a0              ; Soundchip
  move.b   #7,(a0)                  ; Register 7 selektieren
  move.b   #$c7,2(a0)               ; Port A/B auf Ausgang,
-                                   ;  Kanäle A/B/C Sound aus
+                                   ;  Kanaele A/B/C Sound aus
  move.b   #$f8,2(a0)               ; Port A/B auf Ausgang,
-                                   ;  Kanäle A/B/C Rauschen aus
+                                   ;  Kanaele A/B/C Rauschen aus
  move.b   #$e,(a0)                 ; Register 14 selektieren
  move.b   #7,2(a0)                 ; Floppies A/B deselektieren und Seite 0
 */
@@ -32,11 +32,11 @@ boot_dsel_floppies:
 *
 * Interruptsteuerung:
 *
-* Alles geht über den Eingang I5 des ST-MFP, hat den Interrupt #7
+* Alles geht ueber den Eingang I5 des ST-MFP, hat den Interrupt #7
 * (aktiviert mit Bit 7 von ierb)
-* Polling über Bit 5 von gpip
-* 1. aer für Bit 5 muß 0 sein, d.h. Interrupt wird ausgelöst beim
-*    Übergang von 1 auf 0
+* Polling ueber Bit 5 von gpip
+* 1. aer fuer Bit 5 muss 0 sein, d.h. Interrupt wird ausgeloest beim
+*    Uebergang von 1 auf 0
 * 2. Interrupt _mfpint (7) aktivieren und Vektor setzen (Adr. $11c)
 *
 
@@ -44,9 +44,9 @@ boot_dsel_floppies:
 *
 * Sperre den FDC/ACSI-DMA
 * und gib ihn wieder frei.
-* Kein Register (außer d0 bei acsi_end) wird verändert
+* Kein Register (ausser d0 bei acsi_end) wird veraendert
 *
-* Für die Zeit, in der AES noch nicht initialisiert ist, kann evnt_sem
+* Fuer die Zeit, in der AES noch nicht initialisiert ist, kann evnt_sem
 * nicht sperren, weil act_appl immer NULL ist.
 *
 
@@ -116,7 +116,7 @@ _acsi_end:
 *
 * long cond_wait_ACSI( d0 = long ticks_200hz )
 *
-* RÜckgabe:    0    OK
+* RUeckgabe:    0    OK
 *             -1    TimeOut
 *             -2    Busfehler
 *
@@ -132,7 +132,7 @@ cond_wait_ACSI:
 *
 * long wait_ACSI( d0 = long ticks_200hz )
 *
-* RÜckgabe:    0    OK
+* RUeckgabe:    0    OK
 *             -1    TimeOut
 *             -2    Busfehler
 *
@@ -142,12 +142,12 @@ wait_ACSI:
  rts
 _wait_ACSI:
  movem.l  d1-d2/a0-a2,-(sp)
- tst.w    pe_slice            ; präemptiv ?
+ tst.w    pe_slice            ; praeemptiv ?
  bmi.b    wdma_no_yield       ; nein, busy waiting
  move.l   act_appl,d2
- ble.b    wdma_no_yield       ; aktuelle Applikation ungültig
+ ble.b    wdma_no_yield       ; aktuelle Applikation ungueltig
 
-* neue Routine über evnt_IO und MFP- Interrupt
+* neue Routine ueber evnt_IO und MFP- Interrupt
 
  lsr.l    #2,d0               ; AES: 50Hz statt 200Hz
 wdma_neu:
@@ -170,7 +170,7 @@ wdma_ende:
  movem.l  (sp)+,d1-d2/a0-a2
  rts
 
-* alte Routine mit busy waiting über _hz_200
+* alte Routine mit busy waiting ueber _hz_200
 
 wdma_no_yield:
  add.l    _hz_200,d0
@@ -191,10 +191,10 @@ wdma_ok:
 
 **********************************************************************
 *
-* Interruptroutine für MFP, Interruptkanal #7 = I/O-Port 5
+* Interruptroutine fuer MFP, Interruptkanal #7 = I/O-Port 5
 * (DMA/FDC busy)
 *
-* Rückgabewert 0 (OK)
+* Rueckgabewert 0 (OK)
 *
 
 int_mfp7:
@@ -210,7 +210,7 @@ int_mfp7:
  jsr      appl_IOcomplete               ; wartende APP aufwecken
  movem.l  (sp)+,d0-d2/a0-a2
 imfp7_ende:
- move.b   #$7f,isrb                     ; service- Bit löschen
+ move.b   #$7f,isrb                     ; service- Bit loeschen
  rte
 
 
@@ -219,7 +219,7 @@ imfp7_ende:
 * void int_mfp7_unsel( a0 = long *unselect, a1 = APPL *ap );
 *
 * Deaktiviert den Interrupt wieder, wenn er nicht eingetroffen ist
-* Rückgabewert -1 (Timeout)
+* Rueckgabewert -1 (Timeout)
 *
 
 int_mfp7_unsel:
@@ -233,19 +233,19 @@ int_mfp7_unsel:
 *
 * long set_DMA_write( d0 = int tr_cnt, d1 = int fdc_cmd )
 *
-* Löscht den FIFO und setzt DMA auf Schreiben.
-* Schreibt <tr_cnt> in den DMA- Sektorzähler
-* Anschließend wird das Command/Status-Register des FDC selektiert
+* Loescht den FIFO und setzt DMA auf Schreiben.
+* Schreibt <tr_cnt> in den DMA- Sektorzaehler
+* Anschliessend wird das Command/Status-Register des FDC selektiert
 * und ein <fdc_cmd> abgesetzt.
 *
-* Setzt bei TimeOut den FDC zurück
+* Setzt bei TimeOut den FDC zurueck
 *
-* RÜckgabe:    0  und EQ OK
+* RUeckgabe:    0  und EQ OK
 *              -1 und NE TimeOut
 *
 
 set_DMA_write:
- move.w   #$90,(a6)                ; DMA-FIFO durch Klappern löschen
+ move.w   #$90,(a6)                ; DMA-FIFO durch Klappern loeschen
  bsr      teste_fa01
  move.w   #$190,(a6)               ; Bit 8  : DMA auf Schreiben
                                    ; Bit 4  : DMA selektieren
@@ -268,19 +268,19 @@ set_DMA_write:
 *
 * long set_DMA_read( )
 *
-* Löscht den FIFO und setzt DMA auf Lesen.
-* Schreibt eine "1" in den DMA- Sektorzähler
-* Anschließend wird das Command/Status-Register des FDC selektiert
+* Loescht den FIFO und setzt DMA auf Lesen.
+* Schreibt eine "1" in den DMA- Sektorzaehler
+* Anschliessend wird das Command/Status-Register des FDC selektiert
 * und ein READ SECTOR abgesetzt.
 *
-* Setzt bei TimeOut den FDC zurück
+* Setzt bei TimeOut den FDC zurueck
 *
-* RÜckgabe:    0  und EQ OK
+* RUeckgabe:    0  und EQ OK
 *              -1 und NE TimeOut
 *
 
 set_DMA_read:
- move.w   #$190,(a6)               ; DMA-FIFO durch Klappern löschen
+ move.w   #$190,(a6)               ; DMA-FIFO durch Klappern loeschen
  bsr      teste_fa01
  move.w   #$90,(a6)                ; Bit 8  : DMA auf Lesen
                                    ; Bit 4  : DMA selektieren
@@ -292,7 +292,7 @@ set_DMA_read:
  move.w   #$80,d7                  ; READ SECTOR
                                    ;  single sector Zugriff
                                    ;  mit SpinUp
-                                   ;  keine Verzögerung
+                                   ;  keine Verzoegerung
  bsr      d7_todma                 ; FDC-Kommando abschicken
 ;bra      wait_FDC_300
 
@@ -301,16 +301,16 @@ set_DMA_read:
 *
 * long wait_FDC( d0 = long ticks_200hz )
 *
-* Setzt bei TimeOut den FDC zurück
+* Setzt bei TimeOut den FDC zurueck
 *
 
 wait_FDC_300:
  move.l   flptimeout,d0       ; normalerweise 1,5s
 wait_FDC:
- bsr      cond_wait_ACSI      ; ändert kein Register
+ bsr      cond_wait_ACSI      ; aendert kein Register
  tst.l    d0
  beq.b    wfdc_ok
-* TimeOut: FDC zurücksetzen
+* TimeOut: FDC zuruecksetzen
  bsr      _resetfdc
  moveq    #-1,d0
  rts
@@ -319,9 +319,9 @@ wfdc_ok:
 
 
 _dsb_toa1:
- lea      dsb0,a1                  ; für A:
+ lea      dsb0,a1                  ; fuer A:
  beq.b    _dsb_ende
- addq.l   #(dsb1-dsb0),a1          ; für B:
+ addq.l   #(dsb1-dsb0),a1          ; fuer B:
 _dsb_ende:
  rts
 
@@ -333,14 +333,14 @@ flopini:
  tst.w    8(a5)
  bsr      _dsb_toa1
  move.w   seekrate,dsb_seekrate(a1)
- move.w   #3,dsb_hdmode(a1)        ; zunächst HD
+ move.w   #3,dsb_hdmode(a1)        ; zunaechst HD
  clr.w    dsb_track(a1)            ; Track #0
  move.l   a5,a0
  moveq    #-1,d0                   ; Default- Fehler ERROR
  bsr      floplock                 ; Initialisierung und Semaphore
  bsr      _select                  ; Laufwerk selektieren und
                                    ; FDC- Register setzen
- move.w   #$ff00,(a1)              ; Track ungültig
+ move.w   #$ff00,(a1)              ; Track ungueltig
  bsr      _seek0                   ; nach Spur #0 gehen
  beq.b    flpi_ok                  ; kein Fehler
  moveq    #10,d7                   ; Fehler: seek Track 10 versuchen
@@ -390,7 +390,7 @@ _Floprd:
  move.l   (a5),a1
  cmpa.l   phystop,a1               ; Pufferadresse > Ende ST-RAM ?
  bcs.b    flprd_st_ram
- move.l   a1,flp_fstbuf            ; tatsächliche Adresse merken
+ move.l   a1,flp_fstbuf            ; tatsaechliche Adresse merken
  move.l   ptr_frb,(a5)             ; Puffer statt Adressen "einpatchen"
  move.w   16(a5),flp_fstcnt
 flprd_st_ram:
@@ -400,7 +400,7 @@ flprd_st_ram:
 _floprd_l3:
  bsr      _select
  bsr      fgo2track                ; nach ctrack gehen
- bcs.b    flprd_err                ; böser Fehler
+ bcs.b    flprd_err                ; boeser Fehler
  bne      _retry                   ; kleiner Fehler
 _floprd_loopsect:
  move.w   #ERROR,_cerror
@@ -411,7 +411,7 @@ _floprd_loopsect:
  move.w   #EDRVNR,_cerror
  bra.b    _retry
 
-; OK, Befehl ausgeführt
+; OK, Befehl ausgefuehrt
 _floprd_l1:
  move.w   #$90,(a6)                ; Bit 8  : DMA auf Lesen
                                    ; Bit 4  : DMA selektieren
@@ -428,13 +428,13 @@ _floprd_l1:
                                    ; Bit 0 (busy) ignorieren
                                    ; Bit 1 (DRQ) ignorieren
  bne.b    _floprd_l2                ; Fehler aufgetreten
- move.w   #2,_rtrycnt              ; beim nächsten Mal wieder 2 Versuche
- addq.w   #1,csect                 ; nächster Sektor
+ move.w   #2,_rtrycnt              ; beim naechsten Mal wieder 2 Versuche
+ addq.w   #1,csect                 ; naechster Sektor
  addi.l   #$200,cdma               ; 512 Bytes gelesen
  subq.w   #1,ccount                ; noch weitere Sektoren ?
  beq.b    flprd_ok                 ; nein, Ende
  bsr      fdc_set_sec_adr          ; Sektor => FDC, Adresse => DMA
- bra      _floprd_loopsect                ; nächster Sektor
+ bra      _floprd_loopsect                ; naechster Sektor
 _floprd_l2:
  bsr.b    errbits                  ; FDC-Fehler dekodieren
 _retry:
@@ -527,7 +527,7 @@ flpwr_st_ram:
 _flopwr_l1:
  bsr      _select
  bsr      go2track
- bcs      flprd_err                ; böser Fehler
+ bcs      flprd_err                ; boeser Fehler
  bne      _flopwr_l2                ; kleinerer Fehler
 _flopwr_l4:
  move.w   #ERROR,_cerror
@@ -536,7 +536,7 @@ _flopwr_l4:
  move.w   #$a0,d1                  ; WRITE SECTOR
                                    ;  single sector Zugriff
                                    ;  mit SpinUp
-                                   ;  keine Verzögerung
+                                   ;  keine Verzoegerung
                                    ;  Prekomp. aus
                                    ;  Normale Daten
  bsr      set_DMA_write
@@ -551,15 +551,15 @@ _flopwr_l4:
  btst     #6,d0                    ; Schreibschutz ?
  bne      flprd_err                ; ja, Ende
  and.b    #$5c,d0
- bne.b    _flopwr_l3                ; Fehler, nächster Versuch
+ bne.b    _flopwr_l3                ; Fehler, naechster Versuch
  move.w   #2,_rtrycnt              ; wieder 2 Versuche
- addq.w   #1,csect                 ; nächster Sektor
- addi.l   #$200,cdma               ; nächste Adresse
- subq.w   #1,ccount                ; nächster Sektor
+ addq.w   #1,csect                 ; naechster Sektor
+ addi.l   #$200,cdma               ; naechste Adresse
+ subq.w   #1,ccount                ; naechster Sektor
  beq      flprd_ok                 ; war letzter
- bsr      fdc_set_sec_adr          ; Sektornummer und DMA- Adresse ändern
- bra      _flopwr_l4                ; und nächster Sektor
-; nächster Versuch
+ bsr      fdc_set_sec_adr          ; Sektornummer und DMA- Adresse aendern
+ bra      _flopwr_l4                ; und naechster Sektor
+; naechster Versuch
 _flopwr_l3:
  cmpi.w   #1,_rtrycnt              ; schon zweiter Versuch ?
  bne.b    _flopwr_l5                ; nein
@@ -567,7 +567,7 @@ _flopwr_l2:
  bsr      again_go2track           ; ggf. DD/HD umschalten
 _flopwr_l5:
  subq.w   #1,_rtrycnt
- bpl      _flopwr_l1                ; nächster Versuch
+ bpl      _flopwr_l1                ; naechster Versuch
  bra      flprd_err                ; Fehler
 
 
@@ -731,10 +731,10 @@ _flopfmt_l8:
  move.b   cdma+2,$ffff860b
  move.b   cdma+1,$ffff8609
 
- moveq    #$30,d0                  ; DMA-Sektorzähler auf 48 (???)
+ moveq    #$30,d0                  ; DMA-Sektorzaehler auf 48 (???)
  move.w   #$f0,d1                  ; WRITE TRACK
                                    ;  mit SpinUp
-                                   ;  ohne Verzögerung
+                                   ;  ohne Verzoegerung
                                    ;  Prekomp. ein
  bsr      set_DMA_write
  beq.b    _flopfmt_l4                ; OK
@@ -743,7 +743,7 @@ _flopfmt_l7:
  moveq    #1,d7
  rts
 
-* Sonderbehandlung für vorgegebene Sektornummern
+* Sonderbehandlung fuer vorgegebene Sektornummern
 
 _flopfmt_l3:
  cmp.w    flpfmt_spt,d3
@@ -823,8 +823,8 @@ flpver_st_ram:
 
 flpverify:
  move.w   #EREADF,_deferror
- movea.l  cdma,a2                  ; a2 enthält fehlerhafte Sektoren
- addi.l   #$200,cdma               ; 512 Bytes Platz für Fehlerliste
+ movea.l  cdma,a2                  ; a2 enthaelt fehlerhafte Sektoren
+ addi.l   #$200,cdma               ; 512 Bytes Platz fuer Fehlerliste
 flopver_loopsect:
  move.w   #2,_rtrycnt
  move.w   #$84,(a6)                ; DMA auf Lesen
@@ -855,9 +855,9 @@ flopver_retrloop:
 flopver_l3:
  addq.w   #1,csect
  subq.w   #1,ccount
- bne      flopver_loopsect                ; nächster Sektor
+ bne      flopver_loopsect                ; naechster Sektor
  subi.l   #$200,cdma               ; dma wieder auf Sektortabelle
- clr.w    (a2)                     ; Sektortabelle mit 0 abschließen
+ clr.w    (a2)                     ; Sektortabelle mit 0 abschliessen
  rts
 
 ; Retry, ggf. fehlerhafte Sektornummer merken
@@ -876,7 +876,7 @@ flopver_l2:
 *
 * floppy_vbl( void )
 *
-* VBL- Routine für Floppies
+* VBL- Routine fuer Floppies
 * wird von int_vbl aufgerufen, der 68030- Datencache ist abgeschaltet
 *
 
@@ -900,7 +900,7 @@ floppy_vbl:
 flopvbl_l3:
  addq.b   #1,d0                    ; A=1 B=2
  lsl.b    #1,d0                    ; A=Bit1 B=Bit2
- eori.b   #7,d0                    ; Bits sind low-aktiv, Seite 0 anwählen
+ eori.b   #7,d0                    ; Bits sind low-aktiv, Seite 0 anwaehlen
  bsr      setporta_flp             ; selektieren und Seite 0
                                    ; TOS 2.05: "bsr dma_tod0" statt move...
  bsr      dma_tod0                      ; #### NEU
@@ -939,13 +939,13 @@ flopvbl_l1:
 * Wird bei Beginn einer Floppy- Operation aufgerufen.
 * Setzt die flock- Semaphore.
 * Initialisiert die cxxxx- Variablen
-* Fährt bei ungültigem dsb_track Spur #0 an, ggf. bleibt
-*  dsb_track bei einem Fehler ungültig
+* Faehrt bei ungueltigem dsb_track Spur #0 an, ggf. bleibt
+*  dsb_track bei einem Fehler ungueltig
 *
 * Eingabe:  d0 = Default- Fehlercode
 *           (a0) und folgende: Parameter
 *
-* Rückgabe: a6 = $ffff8606 (dma_diskctl)
+* Rueckgabe: a6 = $ffff8606 (dma_diskctl)
 *           a1 = dsb
 *
 
@@ -964,7 +964,7 @@ floplock:
  move.w   #2,_rtrycnt
  tst.w    cdev
  bsr      _dsb_toa1
- tst.w    dsb_track(a1)            ; Track gültig ?
+ tst.w    dsb_track(a1)            ; Track gueltig ?
  bpl.b    floplk_l1                ; ja
  bsr      _select                  ; Laufwerk neu selektieren
  clr.w    dsb_track(a1)
@@ -976,7 +976,7 @@ floplock:
  bsr      _seek0                   ; Track #0 anfahren
  beq.b    floplk_l1                ; OK
 floplk_l2:
- move.w   #$ff00,dsb_track(a1)     ; Fehler: Track ungültig
+ move.w   #$ff00,dsb_track(a1)     ; Fehler: Track ungueltig
 floplk_l1:
  rts
 
@@ -1014,14 +1014,14 @@ flopfl_l1:
 
  move.w   cdev,a0
  adda.w   a0,a0
- adda.w   a0,a0                    ; *4 für Langwortzugriff
+ adda.w   a0,a0                    ; *4 fuer Langwortzugriff
  move.l   _frclock,wplatch+2(a0)   ; acctim, _frclock letzten Zugriffs
  cmpi.w   #1,_nflops
  bne.b    flopfl_l2
- move.l   _frclock,wplatch+6       ; acctim für virtuelles Laufwerk B:
+ move.l   _frclock,wplatch+6       ; acctim fuer virtuelles Laufwerk B:
 flopfl_l2:
  move.l   (sp)+,d0
-* TT-RAM-Unterstützung ("Nachsorge")
+* TT-RAM-Unterstuetzung ("Nachsorge")
  move.w   flp_fstcnt,d1       ; Anzahl Sektoren
  beq.b    flopfl_l3           ; keine
  bsr      cache_invalid
@@ -1029,7 +1029,7 @@ flopfl_l2:
  movea.l  flp_fstbuf,a0       ; Zieladresse
  movea.l  ptr_frb,a1
 flp_fstcpy:
- lsl.w    #4,d1               ; Sektoren in 32-Byte-Blöcke
+ lsl.w    #4,d1               ; Sektoren in 32-Byte-Bloecke
  subq.w   #1,d1               ; einer weniger
 flopfl_cpyloop:
  move.l   (a1)+,(a0)+
@@ -1049,7 +1049,7 @@ flopfl_l3:
 *
 * Schickt Kommando SEEK ohne Verify und mit SpinUp an
 * den FDC (d.h. Spur ctrack wird angefahren).
-* Rückgabe: NZ und C     Fehler bei flopcmds
+* Rueckgabe: NZ und C     Fehler bei flopcmds
 *           Z  und NC    OK
 *
 
@@ -1061,7 +1061,7 @@ hseek:
 *
 * Schickt Kommando SEEK ohne Verify und mit SpinUp an
 * den FDC (d.h. Spur wird angefahren).
-* Rückgabe: NZ und C     Fehler bei flopcmds
+* Rueckgabe: NZ und C     Fehler bei flopcmds
 *           Z  und NC    OK
 *
 * Eingabe: d7 = Tracknummer
@@ -1110,7 +1110,7 @@ again_go2track:
 
 **********************************************************************
 *
-* Rückgabe: Carry = fataler Fehler
+* Rueckgabe: Carry = fataler Fehler
 *           NE    = Fehler, ggf. nochmal versuchen
 *
 
@@ -1127,13 +1127,13 @@ go2_loop:
  bsr      d7_todma
  bsr.b    flopcmds            ; Kommando d6 an den FDC
 
- bcs.b    gtt_l1           ; Carry: böser Fehler
+ bcs.b    gtt_l1           ; Carry: boeser Fehler
 
  and.b    #$18,d7             ; CRC- Fehler ?
  beq.b    gtt_l2           ; nein, OK und Ende
 
  cmpi.b   #2,machine_type
- bcs.b    gtt_l3           ; NE und NC zurückgeben
+ bcs.b    gtt_l3           ; NE und NC zurueckgeben
 
  tst.b    hd_flag
  bne.b    is_hd_1
@@ -1148,14 +1148,14 @@ is_hd_1:
  move.w   d0,M_fdc_hdmode     ; DD/HD umschalten
  move.w   d0,dsb_hdmode(a1)   ; DD/HD im DSB merken
  subq.w   #1,(sp)
- bne.b    gtt_l3           ; schon zweiter Versuch, NE zurückgeben
+ bne.b    gtt_l3           ; schon zweiter Versuch, NE zurueckgeben
  bsr.b    _seek0              ; nochmal nach Spur 0
  bra.b    go2_loop            ; und nochmal versuchen
 gtt_l2:
  move.w   ctrack,dsb_track(a1)
  clr.w    d7                  ; kein Fehler
 gtt_l3:
- tst.w    d7                  ; Carry löschen
+ tst.w    d7                  ; Carry loeschen
 gtt_l1:
  addq.w   #2,sp
 aggtt_loop:
@@ -1166,8 +1166,8 @@ aggtt_loop:
 *
 * fgo2track()
 *
-* "go2track()" für Fastload. Wird bei Lesen/Verifizieren aufgerufen
-* Mit Setzen von Bit 4 des Konfigurationsbytes über Sconfig() kann
+* "go2track()" fuer Fastload. Wird bei Lesen/Verifizieren aufgerufen
+* Mit Setzen von Bit 4 des Konfigurationsbytes ueber Sconfig() kann
 * Fastload ausgeschaltet werden.
 *
 
@@ -1182,7 +1182,7 @@ fgo2track:
 *
 * Schickt Kommando RESTORE ohne Verify und mit SpinUp an
 * den FDC (d.h. Spur 0 wird angefahren).
-* Rückgabe: NZ und C     Fehler bei flopcmds
+* Rueckgabe: NZ und C     Fehler bei flopcmds
 *           NZ und NC    Fehler bei Restore (Track nicht bei 0)
 *           Z  und NC    OK
 *
@@ -1191,7 +1191,7 @@ _seek0:
  clr.w    d6             ; Restore ohne Verify, mit SpinUp
  bsr.b    flopcmds       ; Kommando an den FDC
  bne.b    seek0_l1      ; Fehler
- btst     #2,d7          ; Kopf über Spur 0 ?
+ btst     #2,d7          ; Kopf ueber Spur 0 ?
  eori     #4,ccr         ; Z-Flag invertieren (Z=OK/NZ=Error)
  bne.b    seek0_l1      ; Fehler
  clr.w    dsb_track(a1)  ; DSB aktualisieren
@@ -1224,19 +1224,19 @@ flopcmds_10:
 *                   h    0=erst Motor starten
 *                   u    Update des Track-Registers
 *
-* Rückgabe:    C-Flag: Fehler
+* Rueckgabe:    C-Flag: Fehler
 *              d7 = FDC-Status-Register
 *              d6 = 0  OK
 *              d6 = -1 Fehler
 *
 * Schaltet den FDC-Takt entsprechend DD/HD um.
 * Bit 0/1 des Kommandobytes enthalten dabei die seekrate.
-* Ein Fehler setzt den FDC zurück und gibt C-Flag zurück.
+* Ein Fehler setzt den FDC zurueck und gibt C-Flag zurueck.
 *
 
 flopcmds:
  move.w   dsb_seekrate(a1),d0
- and.b    #3,d0                    ; sicherheitshalber auf 0..3 kürzen
+ and.b    #3,d0                    ; sicherheitshalber auf 0..3 kuerzen
  tst.b    hd_flag
  beq.b    flc_st                   ; Rechner kann kein HD
 
@@ -1247,7 +1247,7 @@ flopcmds:
                                    ; 12 ms => 12 ms
                                    ; 2  ms => 6  ms
                                    ; 3  ms => 6  ms
- move.b   0(a0,d0.w),d0            ; seekrate für HD anpassen!
+ move.b   0(a0,d0.w),d0            ; seekrate fuer HD anpassen!
 flpcmds_l3:
  move.w   dsb_hdmode(a1),M_fdc_hdmode   ; FDC- Takt umschalten
 
@@ -1267,7 +1267,7 @@ flpcmds_l1:
  bsr      wait_FDC
  bne.b    flpcmds_l2                ; TimeOut
  bsr      dma_tod7                 ; FDC- Status-Register auslesen
- clr.w    d6                       ; Carry löschen
+ clr.w    d6                       ; Carry loeschen
  rts
 flpcmds_l2:
  moveq    #0,d6
@@ -1277,7 +1277,7 @@ flpcmds_l2:
 
 ************************************************************
 *
-* Setzt den FDC per "force interrupt" zurück.
+* Setzt den FDC per "force interrupt" zurueck.
 *
 *  Eingabe:    a6 = $ffff8606  (dma_fifo)
 *              a1 = dsb
@@ -1292,8 +1292,8 @@ _resetfdc:
  move.w   #$d0,d7             ; FORCE INTERRUPT
                               ;  ohne Unterbrechungs- Signalisierung
  bsr      d7_todma            ; Kommando ins FDC-Command-Register
-* Nach "force interrupt" muß 16 us gewartet werden
- moveq    #2,d0               ; 3 Durchläufe
+* Nach "force interrupt" muss 16 us gewartet werden
+ moveq    #2,d0               ; 3 Durchlaeufe
 _rstfdc_loop2:
  move.b   tcdr,d1             ; Timer C Data Register
 _rstfdc_loop:
@@ -1310,7 +1310,7 @@ _rstfdc_loop:
 * die in cside angegebene Diskettenseite.
 * Setzt das FDC-Track-Register aus dem DSB
 * Setzt das FDC-Sector-Register aus csect
-* Setzt das DMA-Adreßregister aus cdma
+* Setzt das DMA-Adressregister aus cdma
 *
 *  Eingabe:    a6 = $ffff8606  (dma_fifo)
 *              a1 = dsb
@@ -1336,7 +1336,7 @@ _select:
 ************************************************************
 *
 * Setzt das FDC-Sector-Register aus csect
-* Setzt das DMA-Adreßregister aus cdma
+* Setzt das DMA-Adressregister aus cdma
 *
 *  Eingabe:    a6 = $ffff8606  (dma_fifo)
 *              a1 = dsb
@@ -1358,8 +1358,8 @@ fdc_set_sec_adr:
 *
 * d2 = char setporta_flp(d0 = char setbits)
 *
-* Setzt einige der Bits 0/1/2 für die Floppysteuerung und gibt den
-* alten Registerinhalt in d2 zurück.
+* Setzt einige der Bits 0/1/2 fuer die Floppysteuerung und gibt den
+* alten Registerinhalt in d2 zurueck.
 *
 
 setporta_flp:
@@ -1368,7 +1368,7 @@ setporta_flp:
  move.b   #$e,giselect             ; Soundchip Register 14 selektieren
  move.b   giread,d1                ; Register 14 (I/O Port A) auslesen
  move.b   d1,d2                    ; alten Wert merken
- and.b    #$f8,d1                  ; Bits 0/1/2 löschen
+ and.b    #$f8,d1                  ; Bits 0/1/2 loeschen
  or.b     d0,d1                    ; neue Bits setzen
  move.b   d1,giwrite               ; Register schreiben
  move     (sp)+,sr
@@ -1418,20 +1418,20 @@ dmadelay_loop2:
 *
 * Wird zu Beginn von _Floprd/wr/ver/fmt aufgerufen.
 * Managet den Diskwechsel A/B.
-* In Mag!X wird auch Bereichsüberprüfung vorgenommen, leider in
-* TOS 3.06 nur unvollkommen gelöst
+* In Mag!X wird auch Bereichsueberpruefung vorgenommen, leider in
+* TOS 3.06 nur unvollkommen geloest
 *
 
 _tstchng:
  move.w   _nflops,d1
- beq.b    _tstc_eundev             ; überhaupt kein Laufwerk da
- move.w   (a0),d0                  ; angewähltes Laufwerk
+ beq.b    _tstc_eundev             ; ueberhaupt kein Laufwerk da
+ move.w   (a0),d0                  ; angewaehltes Laufwerk
  cmpi.w   #1,d0
  bhi.b    _tstc_eundev             ; ist weder A: noch B:
  subq.w   #1,d1
  bne.b    _tstc_ok                 ; habe zwei Laufwerke
  cmp.w    current_disk,d0          ; habe nur ein Laufwerk
- beq.b    _tstc_a                  ; aber ich muß jetzt nicht wechseln
+ beq.b    _tstc_a                  ; aber ich muss jetzt nicht wechseln
  move.l   a0,-(sp)
  move.w   d0,-(sp)
  move.w   #$ffef,-(sp)             ; EOTHER

@@ -3,7 +3,7 @@
 ;
 
 ;
-;noch zu überarbeiten:
+;noch zu ueberarbeiten:
 ;
 ;  devconnect (139)
 ;
@@ -24,7 +24,7 @@ ch_attenuation equ   $ffff893a   ;word Channel attenuation
 
 _int_dsp    equ   $3fc  ;Hier wird die IR-Routine eingetragen
 
-;Größe der Strukturelemente: 12 Bytes; Anzahl: 8 
+;Groesse der Strukturelemente: 12 Bytes; Anzahl: 8 
 sizeof_subs       equ   96    ;8*12 = 96 Bytes
 
 RXDF        equ   $0          ;Bitnummer: ISR Receive Data Register Full (RXDF)
@@ -37,13 +37,13 @@ dsp_irctrl  equ   $ffffa200   ;Interrupt Ctrl Register
 dsp_cmdvec  equ   $ffffa201   ;Command Vector Register
 dsp_irstat  equ   $ffffa202   ;Interrupt Status Register
 dsp_irvec   equ   $ffffa203   ;Interrupt Vector Register
-dsp_longwd  equ   $ffffa204   ;unbenutztes Byte ->für LONG-Zugriff benutzt
+dsp_longwd  equ   $ffffa204   ;unbenutztes Byte ->fuer LONG-Zugriff benutzt
 dsp_high    equ   $ffffa205      
 dsp_mid     equ   $ffffa206
 dsp_low     equ   $ffffa207
 
 ;
-;INIT-Routine für die DSP-Routinen
+;INIT-Routine fuer die DSP-Routinen
 dsp_stdinit:
 ;lblE05624:
    lea      _dsp_codebuf,a0
@@ -64,7 +64,7 @@ lblE0563A:
    addq.w   #1,d0
    lea      12(a0),a0            ;12 Bytes pro Eintrag
    
-lblE05650:  ;Ende des Arrays mit Subroutine-Einträgen erreicht?
+lblE05650:  ;Ende des Arrays mit Subroutine-Eintraegen erreicht?
    cmpa.l   #_dsp_subs+sizeof_subs,a0
    bcs.s    lblE0563A
    
@@ -76,7 +76,7 @@ lblE05650:  ;Ende des Arrays mit Subroutine-Einträgen erreicht?
    clr.w    _dsp_free_subridx
    move.w   #$8000,_dsp_uniqueability
    
-   moveq    #82,d0               ;codesize (DSP-Wörter)
+   moveq    #82,d0               ;codesize (DSP-Woerter)
    lea      lblE48B24,a0         ;*codeptr
    bsr      _Dsp_ExecBoot
    
@@ -91,7 +91,7 @@ lblE05650:  ;Ende des Arrays mit Subroutine-Einträgen erreicht?
 ;
 ;void Dsp_DoBlock(char *data_in,long size_in,char *data_out,long size_out);
 ;
-;Wenn vorhanden, dann übertrage zuerst <size_in> Daten von <data_in> zum DSP
+;Wenn vorhanden, dann uebertrage zuerst <size_in> Daten von <data_in> zum DSP
 ;und hole dann soviele Daten <data_out>, wie in <size_out> erfragt.
 ;
 Dsp_DoBlock:
@@ -116,7 +116,7 @@ lblE050EA:
    beq      lblE0510A
    subq.w   #1,d0
 lblE050F2:
-   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefüllt?
+   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefuellt?
    beq.s    lblE050F2
 
 lblE050FA:
@@ -153,7 +153,7 @@ lblE0513C:
    beq      lblE0515C
    subq.w   #1,d0
 lblE05144:
-   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefüllt?
+   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefuellt?
    beq.s    lblE05144
    
    move.b   dsp_high.w,(a1)+
@@ -187,7 +187,7 @@ lblE05186:
    beq      lblE0519E
    subq.w   #1,d0
 lblE0518E:
-   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefüllt?
+   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefuellt?
    beq.s    lblE0518E
 lblE05196:
    move.l   dsp_longwd.w,(a1)+
@@ -259,7 +259,7 @@ lblE053D8:
    move.l   (a0),d0
    cmp.l    _dsp_num_rcvblks,d0
    bne      lblE05454
-   andi.b   #$fe,dsp_irctrl.w    ;RXDF Request löschen
+   andi.b   #$fe,dsp_irctrl.w    ;RXDF Request loeschen
    bra      lblE05454.l
 
 lblE05412:                       ;Daten zum DSP schicken
@@ -275,9 +275,9 @@ lblE05420:
    movea.l  _dsp_tmtblks_done_ptr,a0
    addq.l   #1,(a0)              ;Block abgeschickt
    move.l   (a0),d0
-   cmp.l    _dsp_num_tmtblks,d0  ;alle Blöcke abgeschickt?
+   cmp.l    _dsp_num_tmtblks,d0  ;alle Bloecke abgeschickt?
    bne      lblE05454
-   andi.b   #$fd,dsp_irctrl.w    ;TXDE Request löschen
+   andi.b   #$fd,dsp_irctrl.w    ;TXDE Request loeschen
 lblE05454:
    movem.l  (sp)+,a0/d0
    rte
@@ -297,7 +297,7 @@ Dsp_IOStream:
    move.l   (a0),_dsp_tmtblks_done_ptr ;*blocks_done
    movea.l  _dsp_tmtblks_done_ptr,a0
    clr.l    (a0)                 ;0 blocks ready
-   move.l   _dsp_tmtsize,d0      ;Größe des Blocks
+   move.l   _dsp_tmtsize,d0      ;Groesse des Blocks
    subq.w   #1,d0
    movea.l  _dsp_tmtbuf_ptr,a0   ;*data_in
 lblE05286:
@@ -327,8 +327,8 @@ lblE052C4:
    move.b   dsp_low.w,(a0)+
    dbf      d0,lblE052C4
    
-   move.l   a0,_dsp_rcvbuf_ptr   ;nächste Adresse für Empfangsdatenblock
-   movea.l  _dsp_tmtblks_done_ptr,a0   ;blocks_done erhöhen
+   move.l   a0,_dsp_rcvbuf_ptr   ;naechste Adresse fuer Empfangsdatenblock
+   movea.l  _dsp_tmtblks_done_ptr,a0   ;blocks_done erhoehen
    addq.l   #1,(a0)
    move.l   (a0),d0
    cmp.l    _dsp_num_tmtblks,d0  ;==num_blocks?
@@ -339,13 +339,13 @@ lblE052C4:
 lblE052FA:
  move.l   _dsp_tmtsize,d0        ;block_insize
  subq.w   #1,d0
- movea.l  _dsp_tmtbuf_ptr,a0     ;Adresse für Sendepuffer holen
+ movea.l  _dsp_tmtbuf_ptr,a0     ;Adresse fuer Sendepuffer holen
 lblE05308:
    move.b   (a0)+,dsp_high.w
    move.b   (a0)+,dsp_mid.w
    move.b   (a0)+,dsp_low.w
    dbf      d0,lblE05308
-   move.l   a0,_dsp_tmtbuf_ptr   ;neue Adresse für Sendepuffer merken
+   move.l   a0,_dsp_tmtbuf_ptr   ;neue Adresse fuer Sendepuffer merken
 lblE0531E:
    movem.l  (sp)+,a0/d0
    rte
@@ -416,7 +416,7 @@ Dsp_Reserve:
    move.l   _dsp_avail_pmem,d1
    cmp.l    d1,d0
    bgt      lblE06074
-   move.l   d0,_dsp_xreserve  ;Größe des reserierten X-Speichers + $4000
+   move.l   d0,_dsp_xreserve  ;Groesse des reserierten X-Speichers + $4000
    move.l   (a0),d0           ;yreserve
    cmp.l    #$3eff,d0
    bgt      lblE06074
@@ -441,7 +441,7 @@ Dsp_LoadProg:
    move.l   a0,-(sp)          ;sichern
    move.w   d0,-(sp)          ;sichern
    
-   bsr      _Dsp_LodToBinary  ;liefert <codesize> oder -1 zurück, ! a0=codeptr, a1=file !
+   bsr      _Dsp_LodToBinary  ;liefert <codesize> oder -1 zurueck, ! a0=codeptr, a1=file !
    
    move.w   (sp)+,d1          ;abitlity
    move.l   (sp)+,a0          ;char *codeptr
@@ -473,8 +473,8 @@ Dsp_ExecProg:
 _Dsp_ExecProg:
    move.l   a0,-(sp)          ;sichern
 
-   moveq    #71,d0            ;codesize (Anzahl der _DSP-Wörter_)
-   lea      lblE48DE2,a0      ;*codeptr für Dsp_ExecBoot
+   moveq    #71,d0            ;codesize (Anzahl der _DSP-Woerter_)
+   lea      lblE48DE2,a0      ;*codeptr fuer Dsp_ExecBoot
    bsr      _Dsp_ExecBoot
 
    move.l   (sp)+,a0
@@ -494,7 +494,7 @@ exit_Dsp_Exec:
 ;
 ; a1.l: Quelle
 ; d0.w: Anzahl der DSP-Worte
-;zerstört d0,a1
+;zerstoert d0,a1
 tmt_to_DSP:
    subq.w   #1,d0
 tmt_req:
@@ -544,7 +544,7 @@ lblE05E4A:
    move.b   d1,giwrite.w
    move     d2,sr
    
-   move.l   #512,d1           ;Größe des interen DSP-Speichers
+   move.l   #512,d1           ;Groesse des interen DSP-Speichers
    sub.l    d0,d1             ;noch verbleibender interner Speicher
    subq.l   #1,d0
 lblE05E8A:
@@ -592,17 +592,17 @@ lblE0586A:
    move.l   a0,a2             ;Endadresse des LOD-Files
    move.l   d0,a0             ;Startadr des LOD-Files
    move.l   a0,-(sp)          ;Pufferadr der LOD-Datei auf den Stack wg. folgendem Mfree
-   bsr      conv_LOD_to_bin   ;LOD-Datei konvertieren, a0 = codeptr, liefert BIN-Länge in d0 zurück
+   bsr      conv_LOD_to_bin   ;LOD-Datei konvertieren, a0 = codeptr, liefert BIN-Laenge in d0 zurueck
    move.l   (sp)+,a0
    move.l   d0,-(sp)          ;_dsp_bin_len sichern
    
    move.l   a0,-(sp)          ;Pufferadr.
    move.w   #$49,-(sp)        ;Mfree
    trap     #GEMDOS
-   addq.l   #6,sp             ;Opcode + Pufferadr abräumen
+   addq.l   #6,sp             ;Opcode + Pufferadr abraeumen
 
    move.l   (sp)+,d0          ;_dsp_bin_len
-   divs.l   #3,d0             ;Länge in DSP-Worten
+   divs.l   #3,d0             ;Laenge in DSP-Worten
    rts
 
 ;
@@ -646,8 +646,8 @@ Dsp_FlushSubroutines:
    bra.s    lblE056CC
    
 lblE056C2:
-   clr.l    (a0)              ;Adresse löschen
-   clr.w    10(a0)            ;ability löschen
+   clr.l    (a0)              ;Adresse loeschen
+   clr.w    10(a0)            ;ability loeschen
    adda.w   #12,a0
 lblE056CC:
    cmpa.l   #_dsp_subs.l+sizeof_subs,a0
@@ -672,7 +672,7 @@ Dsp_LoadSubroutine:
    cmpi.l   #1024,d7
    ble.s    lblE05708
 
-   moveq    #0,d0             ;Subroutine ist zu groß -> Fehler
+   moveq    #0,d0             ;Subroutine ist zu gross -> Fehler
    bra      exit_LdSub
    
 lblE05708:
@@ -682,7 +682,7 @@ lblE05708:
    cmp.l    d1,d0
    ble.s    lblE05720         
 
-   moveq    #0,d0             ;Subroutine ist zu groß
+   moveq    #0,d0             ;Subroutine ist zu gross
    bra      exit_LdSub
  
 lblE05720:
@@ -728,7 +728,7 @@ lblE05EEA:
    bra.s    lblE0578E
 
 lblE0577C:
-   add.l    d5,(a2)           ;Größe + Startadresse = Endadresse der DSP-Routine
+   add.l    d5,(a2)           ;Groesse + Startadresse = Endadresse der DSP-Routine
    move.l   (a2),d0           ;Endadresse
    moveq    #-$17,d2
    add.w    8(a2),d2          ;Handle beginnen mit $17 (bis $1e)
@@ -780,7 +780,7 @@ lblE05F40:
    move.b   #16,dsp_low.w     ;16 DSP-Worte senden
 
    moveq    #15,d0
-; a0 zeigt noch auf _dsp_subr_adr, Tabelle mit Opcodes und Subr-Adr. an DSP übertragen
+; a0 zeigt noch auf _dsp_subr_adr, Tabelle mit Opcodes und Subr-Adr. an DSP uebertragen
 lblE05F74:                 
    move.b   (a0)+,dsp_high.w
    move.b   (a0)+,dsp_mid.w
@@ -803,12 +803,12 @@ lblE05F30:
    move.b   2(sp),dsp_mid.w
    move.b   3(sp),dsp_low.w
    
-   move.b   5(sp),dsp_high.w     ;Größe
+   move.b   5(sp),dsp_high.w     ;Groesse
    move.b   6(sp),dsp_mid.w
    move.b   7(sp),dsp_low.w
 
    move.l   d7,d0                ;size_in
-;Register a1 enthält bereits den Zeiger auf die Subroutine
+;Register a1 enthaelt bereits den Zeiger auf die Subroutine
    bsr      tmt_to_DSP
    
    move.w   _dsp_free_subridx,d6
@@ -829,13 +829,13 @@ exit_LdSub:
 ;Xbios 117
 ;
 ;int  Dsp_InqSubrAbility(int ability);
-;Liefert das Handle oder 0 zurück
+;Liefert das Handle oder 0 zurueck
 ;
 Dsp_InqSubrAbility:
 ;lblE06094:
    move.w   (a0),d1              ;ability
    lea      _dsp_subs,a0
-   moveq    #$16,d0              ;$17 ist das erste Handle für eine Subroutine
+   moveq    #$16,d0              ;$17 ist das erste Handle fuer eine Subroutine
 lblE060A0:
    addq.w   #1,d0                ;Handle
    cmp.w    10(a0),d1            ;== Handle der Subroutine?
@@ -852,23 +852,23 @@ lblE060BA:
 ;Xbios 118
 ;
 ;int  Dsp_RunSubroutine(int handle);
-;0: ok, -1: Subroutine konnte nicht ausgeführt werden
+;0: ok, -1: Subroutine konnte nicht ausgefuehrt werden
 ; 
-;Diese Funktion setzt voraus, daß die gesuchte Subroutine bereits geladen ist
+;Diese Funktion setzt voraus, dass die gesuchte Subroutine bereits geladen ist
 ;
 Dsp_RunSubroutine:
 ;lblE05F86:
    move.w   (a0),d0              ;handle
    move.w   d0,d1
-   cmp.b    #$17,d0              ;ungültiges Handle?
+   cmp.b    #$17,d0              ;ungueltiges Handle?
    blt      lblE05FCC
    
-   cmp.b    #$1e,d0              ;ungültiges Handle?
+   cmp.b    #$1e,d0              ;ungueltiges Handle?
    bgt      lblE05FCC
    
    sub.w    #$17,d1
    muls     #6,d1                ;6 Byte pro Eintrag
-   addq.w   #3,d1                ;erstes DSP-Wort überspringen
+   addq.w   #3,d1                ;erstes DSP-Wort ueberspringen
    lea      _dsp_subr_adr,a0
    adda.w   d1,a0
    move.b   (a0)+,dsp_high.w
@@ -993,7 +993,7 @@ lblE051CC:
    beq      lblE051E8
    subq.w   #1,d0
 lblE051D4:
-   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefüllt?
+   btst     #RXDF,dsp_irstat.w   ;Empfangsregister gefuellt?
    beq.s    lblE051D4
 lblE051DC:
    move.b   dsp_mid.w,(a1)+      ;wieso hier kein move.w?
@@ -1600,7 +1600,7 @@ devco_tab:
 MicroPSG:   
 ;lblE064CC:
  andi.w   #$fff,$ffff8930.w
- btst     #0,9(sp)            ;<srcclk> zulässig 0: 25,175 MHz oder 1: External Clock
+ btst     #0,9(sp)            ;<srcclk> zulaessig 0: 25,175 MHz oder 1: External Clock
  beq      lblE065B4
  ori.w    #$6000,$ffff8930.w     ;vorher: $2000
  bra      lblE0659C
@@ -1609,10 +1609,10 @@ EXTINP:
  move.w   8(sp),d0
 ; asl.w    #8,d0
 ; asl.w    #1,d0
-; andi.w   #$f0ff,$ffff8930.w ;Löschen und HS on
+; andi.w   #$f0ff,$ffff8930.w ;Loeschen und HS on
 ; or.w     d0,$ffff8930.w
    asl.w #1,d0
-   and.b #$f0,$ffff8930.w  ;Löschen und HS on
+   and.b #$f0,$ffff8930.w  ;Loeschen und HS on
    or.b  d0,$ffff8930.w
    
 ; bset.b #0,$ffff8930.w
@@ -1629,7 +1629,7 @@ EXTINP:
 DSPXMIT:
  move.w   8(sp),d0         ;srcclk
  asl.w    #5,d0
- andi.w   #$ff8f,$ffff8930.w  ;Löschen und HS on
+ andi.w   #$ff8f,$ffff8930.w  ;Loeschen und HS on
  or.w     d0,$ffff8930.w
 ; bset.b #4,$ffff8931.w
 ; tst.w    $c(sp)
@@ -1798,7 +1798,7 @@ buffptr:
 
 ;--------------------------------------
 ;
-;Länge der LOD-Datei über Fseek ermitteln (keine DTA notwendig),
+;Laenge der LOD-Datei ueber Fseek ermitteln (keine DTA notwendig),
 ;Puffer allozieren und Datei laden
 ;
 ;Eingaben
@@ -1828,7 +1828,7 @@ get_LOD_len:
    move.w   #$42,-(sp)  ;Fseek
    trap     #GEMDOS
    lea      10(sp),sp
-   move.l   d0,d6       ;Dateilänge
+   move.l   d0,d6       ;Dateilaenge
    bgt.b    seek_LOD_start ;Datei > 0 Bytes
    moveq    #0,d0       ;Fehler aufgetreten
    bra.b    exit_read_LODfile
@@ -1841,7 +1841,7 @@ seek_LOD_start:
    trap     #GEMDOS
    lea      10(sp),sp
 
-   move.l   d6,-(sp)    ;Dateilänge
+   move.l   d6,-(sp)    ;Dateilaenge
    move.w   #$48,-(sp)  ;Malloc
    trap     #GEMDOS
    addq.l   #6,sp
@@ -1869,15 +1869,15 @@ _close_LOD:
    addq.l   #4,sp
    
    move.l   d5,a0       ;Pufferadr
-   adda.l   d6,a0       ;Puffer + Länge = _dsp_LOD_endadr
+   adda.l   d6,a0       ;Puffer + Laenge = _dsp_LOD_endadr
 
    move.l   d5,d0       ;Pufferadr != 0: alles ok
 exit_read_LODfile:
-   movem.l  (sp)+,d5-d7 ;Register zurück
+   movem.l  (sp)+,d5-d7 ;Register zurueck
    rts   
 
 ;
-;LOD-Datei in Binärformat konvertieren
+;LOD-Datei in Binaerformat konvertieren
 ;
 ;Eingaben
 ;  a0: *LOD-Datei ,aktuelle Dateiposition
@@ -1893,28 +1893,28 @@ conv_LOD_to_bin:
    bra.s    lblE05D18
    
 lblE05D02:
-   subq.w   #1,d0                ;Index aus cmp_keyw: Schlüsselwort 1, DATA?
-   bne.s    lblE05D14            ;nein -> überspringe Zeile, suche nach Schlüsselwort ...
-   addq.l   #4,a0                ;Länge von 'DATA' auf akt. Dateipos.
+   subq.w   #1,d0                ;Index aus cmp_keyw: Schluesselwort 1, DATA?
+   bne.s    lblE05D14            ;nein -> ueberspringe Zeile, suche nach Schluesselwort ...
+   addq.l   #4,a0                ;Laenge von 'DATA' auf akt. Dateipos.
    move.l   (sp), d0             ;bin_len
    move.l   4(sp),a1             ;bin_ptr
    bsr      conv_DATA_args       ;wandle Daten hinter DATA-Token, neue Dateiposition in a0
-   move.l   d0,(sp)              ;aktuelle Länge der DSP-Binärdaten
-   bra.s    lblE05D20            ;vergleiche mit Schlüsselworten
+   move.l   d0,(sp)              ;aktuelle Laenge der DSP-Binaerdaten
+   bra.s    lblE05D20            ;vergleiche mit Schluesselworten
  
 lblE05D14:
    move.l   a2,a1                ;_dsp_LOD_endadr
-   bsr      skip_line            ;Zeilenden ermitteln und Zeile überspringen -> neue Pos in a0
+   bsr      skip_line            ;Zeilenden ermitteln und Zeile ueberspringen -> neue Pos in a0
 lblE05D18:
    cmp.b    #'_',(a0)
-   bne.b    lblE05D14            ;kein Unterstrich -> nächste Zeile
-   addq.l   #1,a0                ;aktuelle Dateipos. auf nächstes Zeichen
+   bne.b    lblE05D14            ;kein Unterstrich -> naechste Zeile
+   addq.l   #1,a0                ;aktuelle Dateipos. auf naechstes Zeichen
    
 lblE05D20:
    move.l   a0,-(sp)             ;akt. Dateiposition sichern
-   bsr      cmp_keyw             ;Vergleich mit den Schlüsselworten, aktuelle Dateiposition unverändert!
+   bsr      cmp_keyw             ;Vergleich mit den Schluesselworten, aktuelle Dateiposition unveraendert!
    move.l   (sp)+,a0
-   cmp.w    #5,d0                ;Schlüsselwort 5, END?
+   cmp.w    #5,d0                ;Schluesselwort 5, END?
    bne.s    lblE05D02            ;nein, dann weiter suchen
 
    move.l   (sp)+,d0             ;_dsp_bin_len
@@ -1922,51 +1922,51 @@ lblE05D20:
    rts
    
 ;
-;Vergleiche ab aktueller Dateiposition mit Schlüsselwörtern
+;Vergleiche ab aktueller Dateiposition mit Schluesselwoertern
 ;
 ;Eingabe
 ;  a0:   Zeiger auf aktuelle Dateiposition
 ;
 ;Ausgabe
 ;  d0: Index (0-5) oder 6 (Fehler)
-;zerstört a0-a1/d1-d2
+;zerstoert a0-a1/d1-d2
 ;
 cmp_keyw:
    movem.l  d3/a3-a5,-(sp)
    move.l   a0,a3             ;Zeiger auf aktuelle Dateiposition
    moveq    #0,d3
-   lea      token_adr,a5      ;Tabelle mit Zeigern auf Schlüsselworte
-   lea      token_len,a4      ;Tabelle mit Längen der Schlüsselworte
+   lea      token_adr,a5      ;Tabelle mit Zeigern auf Schluesselworte
+   lea      token_len,a4      ;Tabelle mit Laengen der Schluesselworte
    bra.s    chk_keyw_index
    
 lblE05988:
-   move.w   (a4)+,d0          ;Länge des Strings ohne Nullbyte
+   move.w   (a4)+,d0          ;Laenge des Strings ohne Nullbyte
    move.l   (a5)+,a1          ;Zeiger auf den String
    move.l   a3,a0             ;Zeiger auf die aktuelle Zeilenposition
-   bsr      strn_cmp          ;vergleiche Zeichen der angegebenen Länge
+   bsr      strn_cmp          ;vergleiche Zeichen der angegebenen Laenge
    tst.w    d0                ;Strings gleich?
    bne.s    lblE059AA         ;ja -> raus mit Index in d7 (->d0)
    
-   addq.w   #1,d3             ;Index erhöhen
+   addq.w   #1,d3             ;Index erhoehen
 chk_keyw_index:
    cmp.w    #6,d3             ;Index > 5?
    blt.s    lblE05988
 lblE059AA:
-   move.l   d3,d0             ;Index des Schlüsselworts
+   move.l   d3,d0             ;Index des Schluesselworts
    movem.l  (sp)+,d3/a3-a5
    rts
 
 ;
-;Vergleiche ab aktueller Dateiposition mit Schlüsselwort der angegebenen Länge
+;Vergleiche ab aktueller Dateiposition mit Schluesselwort der angegebenen Laenge
 ;
 ;Eingaben
 ;  a0:   Zeiger auf aktuelle Dateiposition
-;  a1:   Zeiger auf Schlüsselwort
-;  d0:   Länge des Schlüsselworts (W)
+;  a1:   Zeiger auf Schluesselwort
+;  d0:   Laenge des Schluesselworts (W)
 ;
 ;Ausgabe
 ;  d0: 0 falls Strings unterschiedlich, 1 falls identisch
-;zerstört a0-a1/d1-d2
+;zerstoert a0-a1/d1-d2
 ;
 strn_cmp:
    bra.s    lblE05940
@@ -1984,20 +1984,20 @@ lblE05926:
    rts
    
 lblE05940:
-   subq.w   #1,d0          ;Länge dec.
+   subq.w   #1,d0          ;Laenge dec.
    bpl.b    lblE05926      ;noch nicht alle Zeichen verglichen ...
    moveq    #1,d0          ;Strings identisch 
    rts
 
 ;
-; Suche Zeilenende und überspringe diese Zeile
+; Suche Zeilenende und ueberspringe diese Zeile
 ;
 ;Eingabe
 ;  a0:   aktuelle Zeilenposition
 ;  a1:   Endadr. der LOD-Datei
 ;Ausgabe
 ;  a0:   neue Dateiposition
-;zerstört a1
+;zerstoert a1
 ;
 skip_line:
 tst_CR:
@@ -2009,7 +2009,7 @@ tst_CR:
 tst_endadr:    
    cmpa.l   a1,a0                ;bereits am Dateiende?
    bhi.s    exit_skip_line       ;ja
-   addq.l   #1,a0                ;CR/LF überspringen
+   addq.l   #1,a0                ;CR/LF ueberspringen
 exit_skip_line:
    rts
 
@@ -2019,12 +2019,12 @@ exit_skip_line:
 ;
 ;Eingabe
 ;  a0:   Zeiger auf Zeichen P/X/Y hinter 'DATA'
-;  a1:   Zeiger auf Anfang der DSP-Binärdaten
+;  a1:   Zeiger auf Anfang der DSP-Binaerdaten
 ;  a2:   Endadr. des LOD-Files
-;  d0:   Länge der DSP-Binärdaten
+;  d0:   Laenge der DSP-Binaerdaten
 ;Ausgabe
 ;  a0:   aktuelle Dateiposition
-;  d0:   Länge der Binärdaten
+;  d0:   Laenge der Binaerdaten
 conv_DATA_args:
    movem.l  d3-d5/a3,-(sp)
    move.l   a1,a3
@@ -2032,7 +2032,7 @@ conv_DATA_args:
    
 _chk_spaces:
    cmp.b    #32,(a0)+            ;Leerzeichen?
-   beq.s    _chk_spaces          ;Leerzeichen überspringen
+   beq.s    _chk_spaces          ;Leerzeichen ueberspringen
 
    move.b   -1(a0),d0            ;Zeichen
 
@@ -2054,15 +2054,15 @@ lblE05ADC:
    bra.s    lblE05AFA
 
 lblE05AEE:                 
-   move.b   #2,(a1)+             ;dann "muß" es Y-Mem-Data sein ...
+   move.b   #2,(a1)+             ;dann "mu",$9e,"" es Y-Mem-Data sein ...
 
 lblE05AFA:
 
    moveq    #4,d0                ;4-stellige ASCII-Zahl ab Dateipos. konvertieren
-   addq.l   #1,a0                ;hinter P/X/Y muß ein Leerzeichen stehen, dann die ASCII-Zahl
-   bsr      cnv_asci_hex         ;-> Zahl in d0, akt. Pos in a0, a1 unverändert!
+   addq.l   #1,a0                ;hinter P/X/Y muss ein Leerzeichen stehen, dann die ASCII-Zahl
+   bsr      cnv_asci_hex         ;-> Zahl in d0, akt. Pos in a0, a1 unveraendert!
 
-   clr.b    (a1)+                ;Hi-Byte löschen
+   clr.b    (a1)+                ;Hi-Byte loeschen
    move.b   d0,1(a1)             ;Lo-Byte eintragen
    asr.w    #8,d0
    move.b   d0,(a1)              ;Mid-Byte eintragen
@@ -2074,11 +2074,11 @@ lblE05AFA:
 
    move.l   a2,a1                ;Endadr. des LOD-Files
    bsr      skip_line            ;aktuelle Dateiposition in a0
-   bra.s    lblE05CA0            ;'DATA P/X/Y' konvertieren und zum Anfang der nächsten Zeile
+   bra.s    lblE05CA0            ;'DATA P/X/Y' konvertieren und zum Anfang der naechsten Zeile
  
 lblE05C8A:
    cmp.b    #13,(a0)             ;CR?
-   bne.s    lblE05C00            ;nein, Leerzeichen überspringen, Zahlen konvertieren
+   bne.s    lblE05C00            ;nein, Leerzeichen ueberspringen, Zahlen konvertieren
    
    move.l   a2,a1                ;Endadr. des LOD-Files
    bsr      skip_line
@@ -2086,17 +2086,17 @@ lblE05C8A:
 
 lblE05C00:
    cmp.b    #32,(a0)+            ;Leerzeichen?
-   beq.s    lblE05C00            ;Leerzeichen überspringen
+   beq.s    lblE05C00            ;Leerzeichen ueberspringen
    subq.l   #1,a0
    
    cmp.b    #13,(a0)             ;CR?
    beq.s    lblE05CA0            ;Zeilenende erreicht
  
-   moveq    #6,d0                ;6-stellige ASCII-Zahl in Binärdarstellung wandeln
+   moveq    #6,d0                ;6-stellige ASCII-Zahl in Binaerdarstellung wandeln
    bsr      cnv_asci_hex         ;-> konvertierte Zahl in d0
 
    move.l   a3,a1                ;_dsp_bin_ptr
-   addq.l   #3,d3                ;_dsp_bin_len um hinzukommende Bytes erhöhen
+   addq.l   #3,d3                ;_dsp_bin_len um hinzukommende Bytes erhoehen
    adda.l   d3,a1                ;mit Lo-Byte beginnend eintragen
    move.b   d0,-(a1)             ;Lo-Byte
    lsr.l    #8,d0
@@ -2113,37 +2113,37 @@ lblE05CA0:
    cmp.b    #'_',(a0)            ;Unterstrich?
    bne      lblE05C8A            ;kein Unterstrich gefunden
 
-   addq.l   #1,a0                ;nächstes Zeichen
+   addq.l   #1,a0                ;naechstes Zeichen
  
    movea.l  a3,a1                ;_dsp_bin_ptr
-   adda.l   d4,a1                ;Offset zum Beginn der Binärdaten, Anzahld der DATA-Werte eintragen
-   clr.b    (a1)+                ;Hi-Byte löschen
+   adda.l   d4,a1                ;Offset zum Beginn der Binaerdaten, Anzahld der DATA-Werte eintragen
+   clr.b    (a1)+                ;Hi-Byte loeschen
    move.b   d5,1(a1)             ;Lo-Byte eintragen
    lsr.w    #8,d5
    move.b   d5,(a1)              ;Mid-Byte eintragen
 
-   move.l   d3,d0                ;_dsp_bin_len zurückliefern
+   move.l   d3,d0                ;_dsp_bin_len zurueckliefern
    movem.l  (sp)+,d3-d5/a3
    rts
 
 ;
-;Konvertiere Hex-ASCII-Zahl mit 1-8 Ziffern in Binärdarstellung
+;Konvertiere Hex-ASCII-Zahl mit 1-8 Ziffern in Binaerdarstellung
 ;
 ;Eingaben
 ;  a0:   Zeiger auf ASCII-Zahl
 ;  d0:   Anzahl der Ziffern
 ;
 ;Ausgaben
-;  d0:   gewandelte Zahl in Binärdarstellung
+;  d0:   gewandelte Zahl in Binaerdarstellung
 ;  a0:   zeigt hinter ASCII-Zahl
-;zerstört d1-d2
+;zerstoert d1-d2
 ;
 cnv_asci_hex:
-   moveq    #0,d1          ;löschen
+   moveq    #0,d1          ;loeschen
    bra      cnv_dbra
 
 cnv_loop:
-   lsl.l    #4,d1          ;Platz für die nächste Ziffer
+   lsl.l    #4,d1          ;Platz fuer die naechste Ziffer
 
    moveq    #-'0',d2       ;'0'
    add.b    (a0)+,d2       ;ASCII-Zeichen
@@ -2159,15 +2159,15 @@ cnv_loop:
    bhi.b    cnv_dbra
 
 ins_cipher:
-   add.b    #10,d2         ;10 addieren für Bereich a bis f
+   add.b    #10,d2         ;10 addieren fuer Bereich a bis f
 
 ins_digit:
-   add.b    d2,d1          ;Ziffer hinzufügen
+   add.b    d2,d1          ;Ziffer hinzufuegen
       
 cnv_dbra:
    dbra     d0,cnv_loop
    
-   move.l   d1,d0          ;der gewandelte Binärwert ...
+   move.l   d1,d0          ;der gewandelte Binaerwert ...
    rts
    
 ;-----------------------------------------
@@ -2191,7 +2191,7 @@ token_adr:
 
 token_len:
 ;lblE48EFA:
-   dc.w  5,4,9,6,7,3    ;Länge der Schlüsselworte
+   dc.w  5,4,9,6,7,3    ;Laenge der Schluesselworte
 
 
 EVEN

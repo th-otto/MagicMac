@@ -1,6 +1,6 @@
 **********************************************************************
 *
-* Dieses Modul enthält den Dateisystemtreiber für Laufwerk U:
+* Dieses Modul enthaelt den Dateisystemtreiber fuer Laufwerk U:
 *
 
      SUPER
@@ -14,8 +14,8 @@ DEBUG     EQU  8
      INCLUDE "debug.inc"
      INCLUDE "basepage.inc"
 
-DRIVE_U        EQU  'U'-'A'        ; für "MiNT"
-UROOT_LEN      EQU  64             ; soviele Einträge
+DRIVE_U        EQU  'U'-'A'        ; fuer "MiNT"
+UROOT_LEN      EQU  64             ; soviele Eintraege
 _drvbits       EQU  $4c2
 _nflops        EQU  $4a6
 
@@ -26,7 +26,7 @@ FT_SHM         EQU  2              ; "shared memory"
 FT_UNIPIPE     EQU  3              ; unidirektionale Pipe
 FT_BIPIPE      EQU  4              ; bidirektionale Pipe
 FT_DEVICE      EQU  5              ; Device
-FT_PROCESS     EQU  6              ; Prozeß
+FT_PROCESS     EQU  6              ; Prozess
 FT_SYMLINK     EQU  7              ; symbolischer Link
 FT_DEVICE2     EQU  8              ; Device mit Extradaten
 
@@ -37,7 +37,7 @@ FT_DEVICE2     EQU  8              ; Device mit Extradaten
      XREF Mxalloc,Mfree
 
      XREF dfs_fat_drv
-     XREF fast_clrmem         ; schnelle Speicherlösch- Routine
+     XREF fast_clrmem         ; schnelle Speicherloesch- Routine
      XREF str_to_con
      XREF conv_8_3
      XREF rcnv_8_3
@@ -68,13 +68,13 @@ FT_DEVICE2     EQU  8              ; Device mit Extradaten
 	TEXT
 
 dfs_u_drv:
- DC.B     'DFS_U   '          ; 8 Bytes für den Namen
- DC.L     dfs_fat_drv         ; nächster Treiber
+ DC.B     'DFS_U   '          ; 8 Bytes fuer den Namen
+ DC.L     dfs_fat_drv         ; naechster Treiber
  DC.L     fsu_init            ; Initialisierung
  DC.L     fsu_sync            ; Synchronisation (dummy)
  DC.L     drv_open            ; neues Laufwerk
  DC.L     drv_close           ; Laufwerk freigeben
- DC.L     fsu_dfree           ; Für Dfree()
+ DC.L     fsu_dfree           ; Fuer Dfree()
  DC.L     fsu_sfirst
  DC.L     fsu_snext
  DC.L     fsu_ext_fd          ; erweitere Verzeichnis
@@ -108,14 +108,14 @@ fsu_init:
 
 ; Root allozieren
 
- move.l   #(dir_sizeof*UROOT_LEN)+2,d0  ; n Einträge + EOF- Zeichen
- jsr      Bmalloc                       ; ändert nicht d0
+ move.l   #(dir_sizeof*UROOT_LEN)+2,d0  ; n Eintraege + EOF- Zeichen
+ jsr      Bmalloc                       ; aendert nicht d0
  move.l   a0,udrv_root
  move.l   a0,a5
  movem.l  a0/d0,-(sp)
 ;lea      (a0),a0
  lea      0(a0,d0.l),a1
- jsr      fast_clrmem                   ; Verzeichnis löschen
+ jsr      fast_clrmem                   ; Verzeichnis loeschen
  movem.l  (sp)+,d0/a0
 
 ; die 4 Pseudoverzeichnisse anlegen
@@ -124,19 +124,19 @@ fsu_init:
  lea      pseudo_dirs(pc),a4
 dosi_loop2:
  move.b   #$10,dir_attr(a5)             ; Unterverzeichnis
- move.w   #-1,dir_stcl(a5)              ; Startcluster ungültig
+ move.w   #-1,dir_stcl(a5)              ; Startcluster ungueltig
  move.l   a5,a1
  move.l   a4,a0
  jsr      conv_8_3
  addq.l   #6,a4
 
- move.l   #(dir_sizeof*32)+2,d0         ; 32 Einträge + EOF- Zeichen
- jsr      Bmalloc                       ; ändert nicht d0
+ move.l   #(dir_sizeof*32)+2,d0         ; 32 Eintraege + EOF- Zeichen
+ jsr      Bmalloc                       ; aendert nicht d0
 
  movem.l  a0/d0,-(sp)
 ;lea      (a0),a0
  lea      0(a0,d0.l),a1
- jsr      fast_clrmem                   ; Verzeichnis löschen
+ jsr      fast_clrmem                   ; Verzeichnis loeschen
  movem.l  (sp)+,d0/a0
 
  move.l   (a4)+,a1
@@ -144,11 +144,11 @@ dosi_loop2:
 
  move.w   #FT_MEMBLK,dir_xftype(a5)     ; Pseudodatei: Speicherblock
  move.l   a0,dir_xdata(a5)              ; Zeiger auf Daten
- subq.l   #2,d0                         ; Nettolänge
+ subq.l   #2,d0                         ; Nettolaenge
  ror.w    #8,d0
  swap     d0
  ror.w    #8,d0
- move.l   d0,dir_flen(a5)               ; Dateilänge eintragen
+ move.l   d0,dir_flen(a5)               ; Dateilaenge eintragen
 
  lea      dir_sizeof(a5),a5
  dbra     d7,dosi_loop2
@@ -179,7 +179,7 @@ fsu_sync:
 * Links wird nach <dst> kopiert (wenn er gefunden wird). Wenn er
 * nicht gefunden wird, wird ein Laufwerkbuchstabe kopiert.
 *
-* Diese Funktion wird für Dgetcwd() benötigt, wenn ein Symlink in
+* Diese Funktion wird fuer Dgetcwd() benoetigt, wenn ein Symlink in
 * U:\ umbenannt worden ist.
 *
 
@@ -190,7 +190,7 @@ get_u_lnk:
  move.l   (sp)+,a1
  ble.b    gul_err             ; nicht gefunden
  addq.l   #2,sp
- bra      rcnv_8_3            ; gibt in d0 den Zeiger zurück
+ bra      rcnv_8_3            ; gibt in d0 den Zeiger zurueck
 gul_err:
  move.w   (sp)+,d0
  addi.b   #'A',d0
@@ -216,7 +216,7 @@ _get_link:
  lsl.w    #8,d0
  move.b   #':',d0
  swap     d0
- move.w   #$5c00,d0                ; d0.l = 'A:\',0
+ move.w   #$5c00,d0                ; d0.l = 'A:\\',0
 _gl_free:
  moveq    #UROOT_LEN-1,d1
 _gl_loop:
@@ -266,8 +266,8 @@ ddl_ende:
 *
 * void add_link( d0 = int drv )
 *
-* fügt einen Link auf ein Laufwerk in U:\ ein.
-* der Link existiert noch nicht (es wird nicht auf Existenz geprüft).
+* fuegt einen Link auf ein Laufwerk in U:\ ein.
+* der Link existiert noch nicht (es wird nicht auf Existenz geprueft).
 *
 
 add_link:
@@ -281,7 +281,7 @@ add_link:
  lsl.w    #8,d0
  move.b   #':',d0
  swap     d0
- move.w   #$5c00,d0                ; d0.l = 'A:\',0
+ move.w   #$5c00,d0                ; d0.l = 'A:\\',0
 
  move.l   a0,a1
  move.l   #'    ',d1
@@ -289,10 +289,10 @@ add_link:
  move.l   d1,(a0)+
  move.l   d1,(a0)
  move.w   #FT_SYMLINK,dir_xftype(a1)    ; Pseudodatei: symbolischer Link
- lea      dir_xdata2-2(a1),a0           ; Platz für 2+4 Bytes !
- move.w   #4,(a0)+                      ; Länge des Links: 4 Bytes
+ lea      dir_xdata2-2(a1),a0           ; Platz fuer 2+4 Bytes !
+ move.w   #4,(a0)+                      ; Laenge des Links: 4 Bytes
 ;move.l   a0,dir_xdata(a1)              ; Zeiger auf Link
- move.l   d0,(a0)                       ; Link ist "A:\" usw.
+ move.l   d0,(a0)                       ; Link ist "A:\\" usw.
  move.b   (a0),(a1)                     ; Dateiname
  move.b   #$40,dir_attr(a1)             ; Attributbit 6: symlink
 
@@ -306,8 +306,8 @@ adl_err:
 * long drv_open( a0 = DMD *dmd )
 *
 * Ist d_dfs(a0) schon initialisiert, wird ein Diskwechsel
-* überprüft.
-* Wenn nicht, wird überprüft, ob auf Laufwerk d_drive(a0)
+* ueberprueft.
+* Wenn nicht, wird ueberprueft, ob auf Laufwerk d_drive(a0)
 * ein DOS- Dateisystem vorliegt.
 *
 
@@ -320,11 +320,11 @@ drv_open:
 * Dateisystem eintragen
  move.l   #dfs_u_drv,d_dfs(a0)     ; Dateisystem eintragen
  move.w   #-1,d_biosdev(a0)        ; kein BIOS-Device
-* Hier wären bei BIOS-Devices XHDI-Gerätenummern zu ermitteln
- clr.l    d_devcode(a0)            ; devcode ungültig
+* Hier waeren bei BIOS-Devices XHDI-Geraetenummern zu ermitteln
+ clr.l    d_devcode(a0)            ; devcode ungueltig
 ;move.l   <>,d_driver(a0)
 ;move.l   <>,d_devcode(a0)
-* Speicher für Root- DD_FD holen
+* Speicher fuer Root- DD_FD holen
  move.l   a0,-(sp)
  bsr      int_malloc
  move.l   (sp)+,a0
@@ -332,7 +332,7 @@ drv_open:
 * DD der Root initialisieren
  move.l   d0,a1
  move.l   a0,fd_dmd(a1)
- move.w   #dir_sizeof*(LASTDRIVE+5),fd_len+2(a1)  ; Dateilänge
+ move.w   #dir_sizeof*(LASTDRIVE+5),fd_len+2(a1)  ; Dateilaenge
  move.l   udrv_root,fd_xdata(a1)                ; Zeiger auf Daten
  move.l   #memblk_drv,fd_ddev(a1)
  move.w   #FT_MEMBLK,fd_xftype(a1)
@@ -347,14 +347,14 @@ fsu_chkdrv:
  moveq    #0,d0
 startdd_loop_u:
  cmpi.w   #DRIVE_U,d0
- beq.b    startdd_loopn_u          ; Laufwerk U: überspringen
+ beq.b    startdd_loopn_u          ; Laufwerk U: ueberspringen
  cmpi.w   #1,d0                    ; Laufwerk B: ?
  bne.b    stdnob                   ; nein
  cmpi.w   #2,_nflops
  bcs.b    startdd_loopn_u          ; kein physikalisches Laufwerk B:
 stdnob:
  btst.l   d0,d1
- beq.b    startdd_loopn_u          ; hat sich nicht geändert
+ beq.b    startdd_loopn_u          ; hat sich nicht geaendert
  move.l   _drvbits,d2
  btst.l   d0,d2
  movem.l  d0/d1/d2,-(sp)
@@ -403,7 +403,7 @@ fsu_dfree:
  clr.l    (a1)                     ; alles ausnullen
  moveq    #0,d0                    ; kein Fehler
  rts
-* FÜr U:\PROC
+* FUer U:\PROC
 dfr_proc:
  move.l   a6,-(sp)
  move.l   a1,a6
@@ -428,7 +428,7 @@ dfr_proc:
 * long fsu_sfirst( a0 = FD   *dd, a1 = DIR *d)
 *                  d0 = long pos, d1 = DTA *dta)
 *
-* Rückgabe:    d0 = E_OK
+* Rueckgabe:    d0 = E_OK
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -441,7 +441,7 @@ fsu_sfirst:
  beq      fsu_get_symlink
  cmpi.w   #FT_PROCESS,dir_xftype(a1)
  bne.b    fsf_ok
- move.l   dir_xdata(a1),a0              ; proc: Länge berechnen
+ move.l   dir_xdata(a1),a0              ; proc: Laenge berechnen
  move.l   a2,-(sp)
  bsr      pd_used_mem                   ; Speicherbedarf
  move.l   (sp)+,a2
@@ -455,7 +455,7 @@ fsf_ok:
 *
 * d0 = DIR *fsu_snext( a0 = DTA *dta, a1 = DMD *d )
 *
-* Rückgabe:    d0 = E_OK
+* Rueckgabe:    d0 = E_OK
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -466,7 +466,7 @@ fsu_snext:
  move.l   a0,a5
  move.l   dta_dpos(a5),a3          ; a3 ist Suchposition
 fsn_ps_loop:
- lea      32(a3),a3                ; nächster Eintrag
+ lea      32(a3),a3                ; naechster Eintrag
  tst.b    (a3)
  beq.b    fsn_notfound             ; Ende des Verzeichnisses
  move.l   a3,a1
@@ -474,7 +474,7 @@ fsn_ps_loop:
  jsr      filename_match
  tst.w    d0
  beq.b    fsn_ps_loop
- move.l   a3,dta_dpos(a5)          ; nächste Position für nächstes Fsnext
+ move.l   a3,dta_dpos(a5)          ; naechste Position fuer naechstes Fsnext
  move.l   a5,a1                    ; DTA *
  move.l   a3,a0                    ; DIR *
  jsr      init_DTA
@@ -486,7 +486,7 @@ fsn_ps_loop:
 fsn_nl:
  cmpi.w   #FT_PROCESS,dir_xftype(a3)
  bne.b    fsn_ok
- move.l   dir_xdata(a3),a0              ; proc: Länge berechnen
+ move.l   dir_xdata(a3),a0              ; proc: Laenge berechnen
  bsr      pd_used_mem                   ; Speicherbedarf
  move.l   d0,dta_len(a5)
 fsn_ok:
@@ -496,7 +496,7 @@ fsn_ende:
  rts
 fsn_notfound:
  moveq    #ENMFIL,d0
- clr.b    (a5)                     ; Suchname ungültig
+ clr.b    (a5)                     ; Suchname ungueltig
  clr.b    dta_name(a5)             ; gefundener Name leer
  bra.b    fsn_ende
 
@@ -505,7 +505,7 @@ fsn_notfound:
 *
 * long fsu_ext_fd( a0 = FD *f )
 *
-* Verzeichnisse des Pseudolaufwerks lassen sich nicht verlängern
+* Verzeichnisse des Pseudolaufwerks lassen sich nicht verlaengern
 *
 
 fsu_ext_fd:
@@ -517,8 +517,8 @@ fsu_ext_fd:
 *
 * d0 = MAGX_DEVDRV *DIR2ddev(a1 = DIR *dir)
 *
-* Gibt zu einer Datei den Gerätetreiber zurück.
-* ändert nur d0
+* Gibt zu einer Datei den Geraetetreiber zurueck.
+* aendert nur d0
 *
 
 ftype_tab:
@@ -547,13 +547,13 @@ d2m_ok:
 * long fsu_fcreate( a0 = FD *d, a1 = DIR *dir,
 *                   d0 = int cmd, d1 = long arg )
 *
-* Rückgabe: d0.l = Fehlercode
+* Rueckgabe: d0.l = Fehlercode
 *
 * Erstellt eine Datei (oder Verzeichnis) per Dcntl oder Fcreate.
 * Ist cmd == 0, wurde nur Fcreate gemacht.
-* a0 ist ein DD_FD und im exklusiven Modus geöffnet
-* Es ist <dir> zu ändern und entsprechende Maßnahmen zu ergreifen,
-* ggf. ein Fehlercode zurückzugeben.
+* a0 ist ein DD_FD und im exklusiven Modus geoeffnet
+* Es ist <dir> zu aendern und entsprechende Massnahmen zu ergreifen,
+* ggf. ein Fehlercode zurueckzugeben.
 *
 
 fsu_fcreate:
@@ -564,7 +564,7 @@ fsu_fcreate:
  cmpa.l   udrv_shmdir,a2
  bne.b    _fcre_pweiter
 
-* Sonderbehandlung für U:\SHM
+* Sonderbehandlung fuer U:\SHM
  tst.w    d0                       ; cmd == 0 (einfach Datei erstellen) ?
  bne      _fcre_ewrpro             ; nein, return(EWRPRO)
  move.w   #FT_SHM,dir_xftype(a1)
@@ -575,7 +575,7 @@ _fcre_pweiter:
  cmpa.l   udrv_devdir,a2
  bne.b    _fcre_pweiter2
 
-* Sonderbehandlung für U:\DEV
+* Sonderbehandlung fuer U:\DEV
  cmpi.w   #MX_DEV_INSTALL2,d0      ; attr = DEV_M_INSTALL ?
  beq.b    _fcre_devinstall2
  cmpi.w   #MX_DEV_INSTALL,d0       ; attr = DEV_M_INSTALL ?
@@ -586,18 +586,18 @@ _fcre_devinstall:
  move.w   #FT_DEVICE,dir_xftype(a1)
 _fcre__devinstall:
  clr.b    dir_attr(a1)
- move.l   d1,dir_xdata(a1)         ; Geräte- Info einsetzen
+ move.l   d1,dir_xdata(a1)         ; Geraete- Info einsetzen
  moveq    #0,d0
  rts
 
-* Neue Geräteinstallation. Zusätzliches Info-Langwort, das später
-* nach fd_usr3 kommt. Ist der Gerätetreiber NULL, wird ein BIOS-
-* Gerät erstellt.
+* Neue Geraeteinstallation. Zusaetzliches Info-Langwort, das spaeter
+* nach fd_usr3 kommt. Ist der Geraetetreiber NULL, wird ein BIOS-
+* Geraet erstellt.
 
 _fcre_devinstall2:
  move.l   d1,a0
  move.l   (a0)+,d1                 ; dir_xdata: Treiber
- bne.b    _fcre_devi_no0           ; Treiber angegeben, kein internes Gerät
+ bne.b    _fcre_devi_no0           ; Treiber angegeben, kein internes Geraet
  move.l   #_nul_devdrv,d1
  cmpi.l   #-1,(a0)
  beq.b    _fcre_devi_no0           ; -1: "NUL:"
@@ -612,7 +612,7 @@ _fcre_devinstall2:
  bne.b    _fcre_devi_no0
  move.l   #_midi_devdrv,d1         ; 3: "MIDI"
 _fcre_devi_no0:
- move.l   (a0),dir_xdata2(a1)      ; dir_xdata2: z.B. BIOS-Gerät
+ move.l   (a0),dir_xdata2(a1)      ; dir_xdata2: z.B. BIOS-Geraet
  move.w   #FT_DEVICE2,dir_xftype(a1)
  bra.b    _fcre__devinstall
 
@@ -621,7 +621,7 @@ _fcre_pweiter2:
  cmpa.l   udrv_procdir,a2
  bne.b    _fcre_pweiter3
 
-* Sonderbehandlung für U:\PROC
+* Sonderbehandlung fuer U:\PROC
  cmpi.w   #MX_INT_CREATEPROC,d0    ; cmd == PROC_CREATE ?
  bne      _fcre_ewrpro             ; nein, return(EWRPRO)
 _fcre_crproc:
@@ -630,10 +630,10 @@ _fcre_crproc:
  move.l   d1,a1
  jmp      proc_create
 
-* Sonderbehandlung für U:\PIPE
+* Sonderbehandlung fuer U:\PIPE
 _fcre_pweiter3:
  cmpa.l   udrv_pipedir,a2
- bne.b    _fcre_ewrpro             ; Root ist schreibgeschützt !
+ bne.b    _fcre_ewrpro             ; Root ist schreibgeschuetzt !
 
  tst.w    d0                       ; cmd == 0 (einfach Datei erstellen) ?
  bne.b    _fcre_ewrpro             ; nein, return(EWRPRO)
@@ -702,9 +702,9 @@ str1:
 *
 * long fsu_fdelete( a0 = DD *d, a1 = DIR *dir, d0 = long dirpos )
 *
-* Rückgabe: Fehlercode.
+* Rueckgabe: Fehlercode.
 * symbolische Links werden nicht verfolgt, d.h. der Link als
-* solcher wird gelöscht.
+* solcher wird geloescht.
 *
 
 fsu_fdelete:
@@ -729,8 +729,8 @@ del_ulink:
 * long fsu_fxattr( a0 = DD *d, a1 = DIR *dir,
 *                  d0 = int mode, d1 = XATTR *xattr)
 *
-* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurück)
-*         1:   Folge nicht  (d.h. erstelle XATTR für den Link)
+* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurueck)
+*         1:   Folge nicht  (d.h. erstelle XATTR fuer den Link)
 *
 * a1 == NULL: Es ist ein FD (a0)
 *
@@ -738,7 +738,7 @@ del_ulink:
 fsu_fxattr:
  move.l   a6,-(sp)
  move.l   d1,a6               ; a6 = XATTR *
- move.l   a1,d2               ; DIR- Eintrag übergeben ?
+ move.l   a1,d2               ; DIR- Eintrag uebergeben ?
  bne.b    fxa_dir             ; ja!
  move.l   fd_xdata(a0),d1     ; nein, xdata aus dem FD holen
  move.w   fd_xftype(a0),d2    ; und xftype aus dem FD holen
@@ -750,7 +750,7 @@ fxa_dir:
  bne.b    fxa_both            ; nein
  tst.w    d0                  ; Symlinks verfolgen ?
  bne.b    fxa_sym             ; nein
-* symlink muß verfolgt werden
+* symlink muss verfolgt werden
  move.l   d1,xattr_index(a6)            ; index eintragen
  andi.b   #%00001111,xattr_mode(a6)     ; Dateityp ausmaskieren...
  moveq    #14,d1                        ; ...symbolic link
@@ -810,7 +810,7 @@ fxa_dev:
  cmpi.w   #FT_PROCESS,d2
  bne.b    fxa_normal
 
- move.l   xattr_index(a6),a0  ; proc: Länge berechnen
+ move.l   xattr_index(a6),a0  ; proc: Laenge berechnen
  moveq    #0,d0
  move.w   p_procid(a0),d0
  move.l   d0,xattr_index(a6)
@@ -879,9 +879,9 @@ frl_err:
 * und ggf.
 *  fd_name, fd_xftype, fd_xdata usw.
 *
-* und ändert ggf. Daten
+* und aendert ggf. Daten
 *
-* Rückgabe:    0    OK
+* Rueckgabe:    0    OK
 *             ELINK, a0 ist Zeiger auf symbolischen Link
 *             <0    Fehlercode
 *
@@ -902,12 +902,12 @@ d2f_long:
  move.l   #$7fffffff,d1
  bra.b    d2f_both
 d2f_normal:
- move.l   dir_flen(a1),d1               ; Länge (intel)
+ move.l   dir_flen(a1),d1               ; Laenge (intel)
  ror.w    #8,d1
  swap     d1
  ror.w    #8,d1                         ; -> Motorola
 d2f_both:
- move.l   d1,fd_len(a0)                 ; FD- Länge eintragen
+ move.l   d1,fd_len(a0)                 ; FD- Laenge eintragen
 
  move.w   d0,fd_xftype(a0)
  move.l   dir_xdata(a1),fd_xdata(a0)    ; ja, Zeiger auf Daten!
@@ -942,7 +942,7 @@ d2f_dir:
 fsu_get_symlink:
  tst.b    dir_xdata2(a1)                ; Link direkt im DIR ?
  beq.b    fsu2d_ulink                   ; nein
- lea      dir_xdata2-2(a1),a0           ; Zeiger auf Länge
+ lea      dir_xdata2-2(a1),a0           ; Zeiger auf Laenge
  bra.b    fsu2d_ende
 fsu2d_ulink:
  move.l   dir_xdata(a1),a0              ; Zeiger auf Pfad

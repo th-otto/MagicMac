@@ -8,10 +8,10 @@
 
 typedef struct {
      WORD      fontID;        /* Font-ID */
-     WORD      fontH;         /* Netto-Zeichenhöhe für vst_height */
-     WORD      fontmono;      /* Flag für "monospaced" */
+     WORD      fontH;         /* Netto-Zeichenhoehe fuer vst_height */
+     WORD      fontmono;      /* Flag fuer "monospaced" */
      WORD      fontcharW;     /* Zeichenbreite bei mono */
-     WORD      fontcharH;     /* Zeichenhöhe (brutto) */
+     WORD      fontcharH;     /* Zeichenhoehe (brutto) */
      WORD      fontUpos;      /* Position des Unterstrichs */
      } FONTINFO;
 

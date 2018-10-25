@@ -12,10 +12,10 @@
 #if 0																			/* damit der Linker diese Funktionen nicht einbindet */
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fliežkommazahl in ein Objekt mit TEDINFO-Struktur eintragen										*/
+/* Fliesskommazahl in ein Objekt mit TEDINFO-Struktur eintragen										*/
 /* Funktionsresultat:	-																						*/
 /* obj:						Zeiger auf das Objekt															*/
-/* n:							Fliežkommazahl																		*/
+/* n:							Fliesskommazahl																		*/
 /*----------------------------------------------------------------------------------------*/ 
 void	double_to_tedinfo( OBJECT *obj, double n )
 {
@@ -37,12 +37,12 @@ void	double_to_tedinfo( OBJECT *obj, double n )
 		digits1 = digits2 = 0;
 
 		while ( *mask++ == '_' )
-			digits1++;									/* Anzahl der Vorkommastellen erh”hen	*/
+			digits1++;									/* Anzahl der Vorkommastellen erhoehen	*/
 		
 		if ( *(mask-1) )								/* String noch nicht beendet?	*/
 		{
 			while ( *mask++ == '_' )
-				digits2++;								/* Anzahl der Nachkommastellen erh”hen	*/
+				digits2++;								/* Anzahl der Nachkommastellen erhoehen	*/
 		}
 		
 		number = (LONG) (( n * pow( 10, digits2 )) + 0.5 );
@@ -55,15 +55,15 @@ void	double_to_tedinfo( OBJECT *obj, double n )
 			if (( number > 0 ) || ( i >= digits1 ))
 				*text = (number % 10) + '0';
 			else
-				*text = ' ';							/* Die unbenutzen Vorkommastellen mit Leerzeichen auffllen	*/
+				*text = ' ';							/* Die unbenutzen Vorkommastellen mit Leerzeichen auffuellen	*/
 			number /= 10;
 		}
 	} 
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Aus der TEDINFO-Struktur eines Objekts eine Fliežkommazahl extrahieren						*/
-/* Funktionsresultat:	Fliežkommazahl																		*/
+/* Aus der TEDINFO-Struktur eines Objekts eine Fliesskommazahl extrahieren						*/
+/* Funktionsresultat:	Fliesskommazahl																		*/
 /* obj:						Zeiger auf das Objekt															*/
 /*----------------------------------------------------------------------------------------*/ 
 double	tedinfo_to_double( OBJECT *obj )
@@ -86,12 +86,12 @@ double	tedinfo_to_double( OBJECT *obj )
 		digits1 = digits2 = 0;
 
 		while ( *mask++ == '_' )
-			digits1++;									/* Anzahl der Vorkommastellen erh”hen	*/
+			digits1++;									/* Anzahl der Vorkommastellen erhoehen	*/
 		
 		if ( *(mask-1) )								/* String noch nicht beendet?	*/
 		{
 			while ( *mask++ == '_' )
-				digits2++;								/* Anzahl der Nachkommastellen erh”hen	*/
+				digits2++;								/* Anzahl der Nachkommastellen erhoehen	*/
 		}
 		
 		text = obj->ob_spec.tedinfo->te_ptext;
@@ -123,7 +123,7 @@ double	tedinfo_to_double( OBJECT *obj )
 /* String in Festkommazahl (16.16) umwandeln																*/
 /* Funktionsresultat:	Festkommazahl (16.16 - Fixed)													*/
 /*	str:						Zeiger auf die Zeichenkette													*/
-/*	bad_chars:				wenn 1 zurckgeliefert wird, sind ungltige Zeichen vorhanden		*/
+/*	bad_chars:				wenn 1 zurueckgeliefert wird, sind ungueltige Zeichen vorhanden		*/
 /*----------------------------------------------------------------------------------------*/ 
 static LONG str_to_fixed( BYTE *str, WORD *bad_chars )
 {
@@ -162,7 +162,7 @@ static LONG str_to_fixed( BYTE *str, WORD *bad_chars )
 		number += low;														/* Nachkommateil addieren */
 	}	
 	
-	if ( *last != 0 )														/* ungltiges Zeichen? */
+	if ( *last != 0 )														/* ungueltiges Zeichen? */
 		*bad_chars = 1;
 	else
 		*bad_chars = 0;
@@ -191,7 +191,7 @@ static LONG get_number( BYTE *str, BYTE **end, WORD *digits )
 		{
 			number *= 10;
 			number += digit - '0';
-			(*digits)++;													/* Anzahl der Ziffern erh”hen */
+			(*digits)++;													/* Anzahl der Ziffern erhoehen */
 		}
 		else
 			break;			
@@ -201,14 +201,14 @@ static LONG get_number( BYTE *str, BYTE **end, WORD *digits )
 	
 	*end = str;																/* Zeiger auf das erste nicht numerische Zeichen*/
 
-	return( number );														/* Zahl zurckliefern */
+	return( number );														/* Zahl zurueckliefern */
 }
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Eine Festkommazahl (16.16) umwandeln in ein Textobjekt eintragen								*/
 /* Funktionsresultat:	-																						*/
 /*	str:						Zeiger auf die Zeichenkette													*/
-/*	len:						maximale L„nge ohne Nullbyte													*/
+/*	len:						maximale Laenge ohne Nullbyte													*/
 /*	number:					Festkommazahl																		*/
 /*----------------------------------------------------------------------------------------*/ 
 static void fixed_to_str( BYTE *str, WORD len, LONG number )
@@ -239,13 +239,13 @@ static void fixed_to_str( BYTE *str, WORD len, LONG number )
 			*str++ = (BYTE) digit + '0';
 			high -= digit * base;										/* vom Vorkommateil subtrahieren */
 			base /= 10;
-			len--;															/* verbleibende L„nge verringern */												
+			len--;															/* verbleibende Laenge verringern */												
 		}
 	}
 	else if ( len > 0 )
 	{
 		*str ++ = '0';														/* Vorkommateil ist 0 */
-		len--;																/* verbleibende L„nge verringern */												
+		len--;																/* verbleibende Laenge verringern */												
 	}
 	
 	if (( len > 1 ) && ( low > 0 ))									/* Nachkommateil vorhanden? */
@@ -255,14 +255,14 @@ static void fixed_to_str( BYTE *str, WORD len, LONG number )
 
 		low += 1;															/* 1/65536 addieren, um Fehler durch Abrundung zu vermeiden! */
 
-		while (( len > 0 ) && ( low > 10 ))							/* Nachkommateil gr”žer als m”gliche Rechenungenauigkeit? */
+		while (( len > 0 ) && ( low > 10 ))							/* Nachkommateil groesser als moegliche Rechenungenauigkeit? */
 		{
 			low *= 10;
 			digit = low >> 16;											/* Ziffer */
 			low -= digit << 16;											/* vom Nachkommateil subtrahieren */
 	
 			*str++ = (BYTE ) digit + '0';
-			len--;															/* verbleibende L„nge verringern */												
+			len--;															/* verbleibende Laenge verringern */												
 		}
 	}
 

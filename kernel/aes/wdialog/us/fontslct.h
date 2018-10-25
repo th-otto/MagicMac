@@ -1,4 +1,4 @@
-/* Resource Datei Indizes fÅr FONTSLCT */
+/* Resource Datei Indizes fuer FONTSLCT */
 
 #define FONTSL           0   /* Formular/Dialog */
 #define FSAMPLE          1   /* BOX in Baum FONTSL */

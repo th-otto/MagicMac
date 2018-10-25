@@ -496,7 +496,40 @@ static void convert(const char *filename)
 						fprintf(fo, "%c,$%02x,%c", instring, c, instring);
 					} else
 					{
-						fputc(c, fo);
+						switch (c)
+						{
+						case 0x84:
+							fputc('a', fo);
+							fputc('e', fo);
+							break;
+						case 0x94:
+							fputc('o', fo);
+							fputc('e', fo);
+							break;
+						case 0x81:
+							fputc('u', fo);
+							fputc('e', fo);
+							break;
+						case 0x8E:
+							fputc('A', fo);
+							fputc('e', fo);
+							break;
+						case 0x99:
+							fputc('O', fo);
+							fputc('e', fo);
+							break;
+						case 0x9A:
+							fputc('U', fo);
+							fputc('e', fo);
+							break;
+						case 0x9E:
+							fputc('s', fo);
+							fputc('s', fo);
+							break;
+						default:
+							fputc(c, fo);
+							break;
+						}
 					}
 					p += n;
 				} else

@@ -30,7 +30,7 @@ dummy_rwabs:
 *
 
 dummy_getbpb:
- moveq    #0,d0          ; NULL-Zeiger, d.h. BPB ist ungültig
+ moveq    #0,d0          ; NULL-Zeiger, d.h. BPB ist ungueltig
  rts
 
 

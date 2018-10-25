@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------------------*/ 
-/* Das folgende Array enth„lt die Resource-Datei, die fr rsrc_fix benutzt wird				*/
+/* Das folgende Array enthaelt die Resource-Datei, die fuer rsrc_fix benutzt wird				*/
 /*----------------------------------------------------------------------------------------*/ 
 
 #define	RSC_LEN		2362

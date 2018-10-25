@@ -1,11 +1,11 @@
 /*
 *
-* Video-Initialisierung für ST/TT/Falcon
+* Video-Initialisierung fuer ST/TT/Falcon
 *
 */
 
 pal_tab:
- DC.W     $0fff,$0f00,$00f0,$0ff0  ; für STe, der ST ignoriert Bits 3/7/11
+ DC.W     $0fff,$0f00,$00f0,$0ff0  ; fuer STe, der ST ignoriert Bits 3/7/11
  DC.W     $000f,$0f0f,$00ff,$0555
  DC.W     $0333,$0f33,$03f3,$0ff3
  DC.W     $033f,$0f3f,$03ff,$0000
@@ -32,13 +32,13 @@ boot_iv_flc:
  bsr      falcon_vmode                  ;ST-Hoch oder ST-Mittel setzen
 
  lea      $ffff9800.w,a1                ;Zeiger auf die Falcon-Palette
- move.l   #$ffffffff,(a1)+              ;Farbe 0: weiß
+ move.l   #$ffffffff,(a1)+              ;Farbe 0: weiss
  clr.l    (a1)+                         ;Farbe 1: schwarz
 
  bra.b    boot_iv_l1
      
 boot_iv_st_tt: 
- moveq    #1,d1                         ; ST-Syncmode für TT (intern)
+ moveq    #1,d1                         ; ST-Syncmode fuer TT (intern)
  cmpi.b   #3,machine_type
  beq.b    boot_iv_l2                     ; TT
  move.w   syshdr+os_palmode(pc),d0      ; wegen MAS- Fehler
@@ -59,16 +59,16 @@ boot_iv_loop:
  move.w   (a0)+,(a1)+
  dbf      d0,boot_iv_loop
 
-* Bildschirmspeicher 32 k bzw. 155k unter phystop setzen und löschen
-* <phystop>,<scrbuf_adr> und <scrbuf_len> müssen long-aligned sein
+* Bildschirmspeicher 32 k bzw. 155k unter phystop setzen und loeschen
+* <phystop>,<scrbuf_adr> und <scrbuf_len> muessen long-aligned sein
 
- move.l   #$8000,d0                ; STs und Falcon: 32K für Bildschirm
+ move.l   #$8000,d0                ; STs und Falcon: 32K fuer Bildschirm
  cmpi.b   #3,machine_type
  bne.b    vmems_st
- move.l   #$25900,d0               ; TT: ~155K für Bildschirm
+ move.l   #$25900,d0               ; TT: ~155K fuer Bildschirm
 vmems_st:
  movea.l  phystop,a0
- move.l   a0,a1                    ; bis phystop löschen
+ move.l   a0,a1                    ; bis phystop loeschen
  suba.l   d0,a0                    ; ab (phystop - d0)
  move.l   a0,_v_bas_ad
      IFNE FALCON

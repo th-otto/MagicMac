@@ -123,9 +123,9 @@ typedef union obspecptr
 
 typedef struct
 {
-        int             ob_next;        /* -> object's next sibling     */
-        int             ob_head;        /* -> head of object's children */
-        int             ob_tail;        /* -> tail of object's children */
+        int             ob_next;        /* -> objects next sibling      */
+        int             ob_head;        /* -> head of objects children  */
+        int             ob_tail;        /* -> tail of objects children  */
         unsigned int    ob_type;        /* object type: BOX, CHAR,...   */
         unsigned int    ob_flags;       /* object flags                 */
         unsigned int    ob_state;       /* state: SELECTED, OPEN, ...   */
@@ -150,7 +150,7 @@ typedef struct __parmblk
 typedef struct
 {
         OBJECT  *mn_tree;               /* Objektbaum */
-        int     mn_menu;                /* Parent der Menü-Objekte */
+        int     mn_menu;                /* Parent der Menue-Objekte */
         int     mn_item;                /* Startobjekt */
         int     mn_scroll;              /* Flag "scrolling" */
         int     mn_keystate;
@@ -251,9 +251,9 @@ typedef struct
 
 
 #if SPECIAL_ACCMENU
-/* Baum für ACC/APP- Menü */
+/* Baum fuer ACC/APP- Menue */
 extern OBJECT *gem_acaptree;
-/* Objektnummer des ersten Menüs, hier gem_acaptree einsetzen */
+/* Objektnummer des ersten Menues, hier gem_acaptree einsetzen */
 extern int B4650E;
 #endif
 
@@ -298,9 +298,9 @@ typedef struct _popupS {
   /* 02 */  OBJECT *pu_tree;
   /* 06 */  int pu_dflt_istart;
   /* 08 */  int pu_items;      /* Die Anzahl aller Menueeintraege */
-  /* 0A */  GRECT pu_rect;     /* Ausmaße des Basisobjekts */
+  /* 0A */  GRECT pu_rect;     /* Ausmasse des Basisobjekts */
   /* 12 */  int pu_curr_istart;
-  /* 14 */  int pu_root;       /* Objekt, das Menueeintraege enthält */
+  /* 14 */  int pu_root;       /* Objekt, das Menueeintraege enthaelt */
   /* 16 */  int pu_head;       /* Erster Menueeintrag in <imenu> */
   /* 18 */  int pu_tail;       /* Letzter Menueeintrag in <imenu> */
   /* 1A */  int pu_lastob;     /* != 0, falls <itail> LASTOB ist */
@@ -430,7 +430,7 @@ void DEBUGNUM (long n)
 
 /*****************************************************************
 *
-* Warte auf Loslassen der Mausknöpfe
+* Warte auf Loslassen der Mausknoepfe
 *
 *****************************************************************/
 
@@ -448,16 +448,16 @@ static void wait_until_mbuttons_released( void )
 
 /*****************************************************************
 *
-* Ändert den Status des Objektes <obj> vom Baum <tree>.
+* Aendert den Status des Objektes <obj> vom Baum <tree>.
 * Ist <addit> TRUE, wird <newobstate> ge-OR-t, sonst entfernt.
 * ist <drawit> TRUE, wird gezeichnet, wenn sich der Status
-* geändert hat (per objc_change)
+* geaendert hat (per objc_change)
 *
 *****************************************************************/
 
 static int smn_ichange( OBJECT *tree, int obj, int addit)
 {
-     return menu_modify( tree,          /* Menübaum */
+     return menu_modify( tree,          /* Menuebaum */
                          obj,           /* Objektnummer */
                          SELECTED,      /* statemask */
                          addit,         /* active */
@@ -468,7 +468,7 @@ static int smn_ichange( OBJECT *tree, int obj, int addit)
 
 /**********************************************************************
 *
-* Wenn <tree[obj]> gültig und nicht <ignobj> ist, wird das Objekt
+* Wenn <tree[obj]> gueltig und nicht <ignobj> ist, wird das Objekt
 * selektiert (addit == TRUE) bzw. deselektiert (addit == FALSE).
 *
 **********************************************************************/
@@ -487,9 +487,9 @@ static int smn_iselect( OBJECT *tree, int obj, int ignobj, int addit)
 * Wird nur von smn_popup und rekursiv aufgerufen.
 *
 * smn_mgrmrect:  Menuemanager: Rechteck der Menuezeile
-*         Rückgabe -1,   wenn ungültiges Objekt angeklickt
-*                        oder Maus in Menüzeile bewegt
-*                        oder außerhalb des Menüs geklickt
+*         Rueckgabe -1,   wenn ungueltiges Objekt angeklickt
+*                        oder Maus in Menuezeile bewegt
+*                        oder ausserhalb des Menues geklickt
 *
 ***********************************************************************/
 
@@ -547,8 +547,8 @@ DEBUGSTR("enter smn_dopopup ");
      _graf_mkstate( &mkb.evd );
 
      /* erwarteter Maustastenstatus:              */
-     /* beim Menü Änderung der linken Maustaste   */
-     /* sonst "linke Maustaste gedrückt"          */
+     /* beim Menue Aenderung der linken Maustaste   */
+     /* sonst "linke Maustaste gedr",$81,"ckt"          */
      /* ----------------------------------------- */
 
      if   (smn_mgrttree)
@@ -582,13 +582,13 @@ DEBUGNUM(mobj);
 
           if   (!quit && (which & MU_M1))
                {
-               if   (openpop)      /* kann Submenü öffnen */
+               if   (openpop)      /* kann Submenue oeffnen */
                     {
                     openpop = popisopen = FALSE;
                     events = MU_M1|MU_BUTTON;
                     }
      
-               if   (popisopen)    /* Submenue geöffnet, aber Maus noch außerhalb */
+               if   (popisopen)    /* Submenue geoeffnet, aber Maus noch ausserhalb */
                     {
                     
                     if   (events != (MU_TIMER|MU_M2|MU_M1|MU_BUTTON))
@@ -630,7 +630,7 @@ DEBUGNUM(mobj);
                          }
                     }
 
-               if   (!popisopen)        /* kein Popup ist geöffnet */
+               if   (!popisopen)        /* kein Popup ist geoeffnet */
                     {
                     if   (popchild)
                          {
@@ -649,7 +649,7 @@ DEBUGNUM(mobj);
                     }
                }    /* ENDIF (Rootobjekt betreten oder Item verlassen) */
 
-          /* Subpopup betreten oder Maus bewegt, während Subpop offen */
+          /* Subpopup betreten oder Maus bewegt, waehrend Subpop offen */
 
           if   (!quit && (which & MU_M2))
                {
@@ -722,7 +722,7 @@ if   ((popobj > 0) && (popup->pu_tree[popobj]).ob_state & SELECTED)
                               {
 #ifdef DEBUG2
 DEBUGSTR("EVC ");
-/* Manchmal ist <lastmobj> um 1 zu groß */
+/* Manchmal ist <lastmobj> um 1 zu gross */
 DEBUGNUM(lastmobj);
 DEBUGNUM(mobj);
 #endif
@@ -937,25 +937,25 @@ DEBUGSTR("\r\n");
 
 /***************************************************************************
 *
-* Initialisiert die Events für die Bearbeitung eines Popup.
+* Initialisiert die Events fuer die Bearbeitung eines Popup.
 *
-* Der Mauszeiger steht über <obj>, wobei <obj> auch NOOBJECT sein kann.
+* Der Mauszeiger steht ueber <obj>, wobei <obj> auch NOOBJECT sein kann.
 * Ist <desel> = TRUE, wird lastobj deselektiert, falls ungleich obj
 *
-* Wenn <obj> gültig ist, wird nur auf das Verlassen des Objekts
+* Wenn <obj> gueltig ist, wird nur auf das Verlassen des Objekts
 * gewartet, (MU_M1).
-* Wenn dabei das Objekt auf ein Popup verweist und noch keines geöffnet
+* Wenn dabei das Objekt auf ein Popup verweist und noch keines geoeffnet
 * ist oder werden soll (openpop == FALSE) wird:
 *
 *    openpop = TRUE
 *    popisopen = FALSE
 *    popobj = obj
 *
-* Wenn <obj> ungültig ist, wird in MU_M1 auf das Betreten des Wurzelobjekts
+* Wenn <obj> ungueltig ist, wird in MU_M1 auf das Betreten des Wurzelobjekts
 * gewartet.
-* Bei einem Menü erster Ebene zusätzlich auf das Betreten der Menüzeile (MU_M2).
+* Bei einem Menue erster Ebene zusaetzlich auf das Betreten der Menuezeile (MU_M2).
 * Wenn das Popup einen parent hat und dieser parent nicht ein normales
-* Menü ist, wird weiterhin auf eine minimale Mausbewegung gewartet (MU_M2).
+* Menue ist, wird weiterhin auf eine minimale Mausbewegung gewartet (MU_M2).
 *
 ***************************************************************************/
 
@@ -1022,7 +1022,7 @@ static void smn_evobject( void *app, popupS *popup, int obj, int ignobj,
                *events = MU_M2|MU_M1|MU_BUTTON;
                }
 
-          /* Menü erster Ebene: Warte auf Betreten der Menüzeile */
+          /* Menue erster Ebene: Warte auf Betreten der Menuezeile */
           /* --------------------------------------------------- */
 
           if   (smn_mgrttree)
@@ -1046,12 +1046,12 @@ static void smn_evobject( void *app, popupS *popup, int obj, int ignobj,
 
 /*******************************************************************
 *
-* rettet/restauriert den Bildschirmhintergrund eines Popup- Menüs
+* rettet/restauriert den Bildschirmhintergrund eines Popup- Menues
 *
 * <restore> = 0: retten
 * sonst          restaurieren
 *
-* RÜckgabe FALSE, wenn Fehler
+* RUeckgabe FALSE, wenn Fehler
 *
 *******************************************************************/
 
@@ -1073,12 +1073,12 @@ DEBUGSTR("enter smn_savescr ");
           /* GRECT berechnen */
           /* --------------- */
 
-          rect = popup->pu_rect;                  /* Außenabmessungen */
+          rect = popup->pu_rect;                  /* Aussenabmessungen */
           rect.g_x -= 1;
           rect.g_y -= 1;
           rect.g_w += 4;
           rect.g_h += 4;                     /* Schatten ???? */
-          grects_intersect( &desk_g, &rect);      /* mit Bildschirm ohne Menü schneiden */
+          grects_intersect( &desk_g, &rect);      /* mit Bildschirm ohne Menue schneiden */
           if   (!scrg_sav(&rect, &popup->pu_scrbuf))
                return(FALSE);                /* zuwenig Speicher */
           }
@@ -1102,7 +1102,7 @@ DEBUGSTR("exit smn_savescr\r\n");
 
 /*******************************************************************************
 *
-* Liefert TRUE, wenn <itree[item]> eines der beiden Menü-Scrollobjekte ist,
+* Liefert TRUE, wenn <itree[item]> eines der beiden Menue-Scrollobjekte ist,
 * d.h. mit Pfeil hoch oder Pfeil runter
 *
 *******************************************************************************/
@@ -1136,7 +1136,7 @@ static int smn_isupdn( popupS *popup, int item)
 
 /*
 *
-* Bearbeitet die Scrollpfeile eines scrollenden Menüs
+* Bearbeitet die Scrollpfeile eines scrollenden Menues
 *
 */
 
@@ -1168,19 +1168,19 @@ static int smn_doupdn( popupS *popup, int obj)
 
           offs = 0;      /* kein Scrolling */
 
-          /* Testen, ob die Pfeile da sind. Das kann man daran sehen, daß
+          /* Testen, ob die Pfeile da sind. Das kann man daran sehen, dass
              sich Anfang bzw. Ende verschieben */
 
           was_uparrow = (popup->pu_shead != popup->pu_head);
           was_dnarrow = (popup->pu_stail != popup->pu_tail);
 
-          /* Scrollpfeil nach oben betätigt */
+          /* Scrollpfeil nach oben betaetigt */
           if   (was_uparrow && (popup->pu_shead == obj))
                {
                popup->pu_curr_istart -= 1;
                offs = big_hchar;
                }
-          /* Scrollpfeil nach unten betätigt */
+          /* Scrollpfeil nach unten betaetigt */
           if   (was_dnarrow && (popup->pu_stail == obj))
                {
                popup->pu_curr_istart += 1;
@@ -1191,7 +1191,7 @@ static int smn_doupdn( popupS *popup, int obj)
                {
                ob = popup->pu_tree + popup->pu_shead;  /* irgendein Objekt */
                source_g.g_w = ob->ob_width;            /* alle Breiten sind gleich */
-               source_g.g_h = ob->ob_height;           /* Höhe einer Zeile */
+               source_g.g_h = ob->ob_height;           /* Hoehe einer Zeile */
                objc_offset( popup->pu_tree, popup->pu_root, &source_g.g_x, &source_g.g_y);
                source_g.g_y += source_g.g_h;           /* 1 Zeile frei */
                if   (offs < 0)
@@ -1220,7 +1220,7 @@ static int smn_doupdn( popupS *popup, int obj)
                          popup->pu_tree[ popup->pu_stail].ob_state = NORMAL;
                          smn_obdraw( popup->pu_tree, popup->pu_root, &source_g);
                          }
-                    /* erster Menüeintrag */
+                    /* erster Menueeintrag */
                     obj_to_g( popup->pu_tree, popup->pu_shead, &source_g);
                     if   (popup->pu_shead == popup->pu_head)
                          {    /* ist kein Pfeil mehr */
@@ -1237,7 +1237,7 @@ static int smn_doupdn( popupS *popup, int obj)
                          obj_to_g( popup->pu_tree, popup->pu_shead, &source_g);
                          smn_obdraw( popup->pu_tree, popup->pu_root, &source_g);
                          }
-                    /* letzter Menüeintrag */
+                    /* letzter Menueeintrag */
                     obj_to_g( popup->pu_tree, popup->pu_stail, &source_g);
                     source_g.g_y -= big_hchar;
                     if   (popup->pu_stail == popup->pu_tail)
@@ -1366,7 +1366,7 @@ void smn_moblk( OBJECT *tree, MOBLK2 *mob, int obj, int out)
 /********************
 *
 * Entspricht "sav_rst_menu" in MagiC
-* Für die Menüs. Benutzt den festen Bildschirmpuffer
+* Fuer die Menues. Benutzt den festen Bildschirmpuffer
 *
 ********************/
 
@@ -1392,15 +1392,15 @@ static void smn_mnrestore( void )
 
 /*
 *
-* Berechnet Parent (G_BOX) des Menüs mit Titelobjekt <W0C>
+* Berechnet Parent (G_BOX) des Menues mit Titelobjekt <W0C>
 *
-* Aufbau eines Menüs:
+* Aufbau eines Menues:
 *
-*    Objekt 0       IBOX      umfaßt Bildschirm und Menüleiste
-*     Objekt 1      BOX       weiße Box, Menüleiste
-*     Objekt 2      IBOX      Parent für alle Menütitel
-*      Objekt 3...n TITLE     Menütitel
-*     Objekt n+1    IBOX      Bildschirm ohne Menüleiste, Parent für Menüs
+*    Objekt 0       IBOX      umfasst Bildschirm und Menueleiste
+*     Objekt 1      BOX       weisse Box, Menueleiste
+*     Objekt 2      IBOX      Parent fuer alle Menuetitel
+*      Objekt 3...n TITLE     Menuetitel
+*     Objekt n+1    IBOX      Bildschirm ohne Menueleiste, Parent fuer Menues
 *
 */
 
@@ -1433,7 +1433,7 @@ static int smn_get_menu_obj( OBJECT *titletree, int titleobj )
 {
      int menu_obj;
   
-     menu_obj = titletree[ titletree[ ROOT].ob_tail].ob_head;    /* erstes Menü */
+     menu_obj = titletree[ titletree[ ROOT].ob_tail].ob_head;    /* erstes Menue */
      for  (titleobj -= 3; titleobj > 0; titleobj--)
           menu_obj = titletree[menu_obj].ob_next;
      return(menu_obj);
@@ -1443,10 +1443,10 @@ static int smn_get_menu_obj( OBJECT *titletree, int titleobj )
 
 /*
 *
-* Hintergrund in den festen Puffer retten und Menü zeichnen
+* Hintergrund in den festen Puffer retten und Menue zeichnen
 *
-* <title> ist die Objektnummer des Menütitels.
-* Gibt die Objektnummer des Menüs zurück.
+* <title> ist die Objektnummer des Menuetitels.
+* Gibt die Objektnummer des Menues zurueck.
 * 
 */
 
@@ -1481,7 +1481,7 @@ static int smn_draw_menu( OBJECT *titletree, int titleobj )
 
 /******************************************************************
 *
-* zeigt ein Menü
+* zeigt ein Menue
 *
 ******************************************************************/
 
@@ -1523,26 +1523,26 @@ static void open_mainmenu( OBJECT *titletree, int title, int lasttitle,
 
 /******************************************************************
 *
-* Hauptroutine: Anzeigen eines Menüs.
+* Hauptroutine: Anzeigen eines Menues.
 *
-* retval->tree enthält bei Aufruf den Menübaum
+* retval->tree enthaelt bei Aufruf den Menuebaum
 *
-* Rückgabe 0, wenn Menü abgebrochen, d.h. nichts angewählt,
+* Rueckgabe 0, wenn Menue abgebrochen, d.h. nichts angewaehlt,
 * sonst != 0
 *
-* RÜckgabewerte:
+* RUeckgabewerte:
 *    retvals        int       titel
-*    retvals+2      int       Menüeintrag
-*    retvals+4      OBJECT *  Objektbaum (ggf. Submenü)
-*    retvals+8      int       Parentobjekt des Menüs
+*    retvals+2      int       Menueeintrag
+*    retvals+4      OBJECT *  Objektbaum (ggf. Submenue)
+*    retvals+8      int       Parentobjekt des Menues
 *
-* Aufbau eines Menüs:
-*    Objekt 0       IBOX      umfaßt Bildschirm und Menüleiste
-*    Objekt 1       BOX       weiße Box, Menüleiste
-*    Objekt 2       IBOX      Parent für alle Menütitel
-*    Objekt 3...n   TITLE     Menütitel
-*    Objekt n+1     IBOX      Bildschirm ohne Menüleiste, Parent
-*                             für Menüs
+* Aufbau eines Menues:
+*    Objekt 0       IBOX      umfasst Bildschirm und Menueleiste
+*    Objekt 1       BOX       weisse Box, Menueleiste
+*    Objekt 2       IBOX      Parent fuer alle Menuetitel
+*    Objekt 3...n   TITLE     Menuetitel
+*    Objekt n+1     IBOX      Bildschirm ohne Menueleiste, Parent
+*                             fuer Menues
 *
 ******************************************************************/
 
@@ -1561,8 +1561,8 @@ int do_menu( struct domenuret *retval, void *menu_app )
      int xtitle;
      int dobj;
      OBJECT *menutree;
-     int popupdone;           /* TRUE, falls Popup-Eintrag ausgewählt */
-     int res;                 /* Rückgabewert (1 = OK, 0 = nix gewählt) */
+     int popupdone;           /* TRUE, falls Popup-Eintrag ausgewaehlt */
+     int res;                 /* Rueckgabewert (1 = OK, 0 = nix gewaehlt) */
      int quit;
      int lasttitle;
      int m2obj;               /* Menuebox */
@@ -1573,7 +1573,7 @@ int do_menu( struct domenuret *retval, void *menu_app )
      OBJECT *titletree;
      MENU outmenu;
      MENU inmenu;
-     popupS *popup;           /* heruntergefallenes Menü */
+     popupS *popup;           /* heruntergefallenes Menue */
      GRECT smn_mgrmrect;      /* Menuemanager: Rechteck der Menuezeile */
      unsigned int smn_reqmstate;   /* erwarteter Maustastenstatus */
 
@@ -1583,11 +1583,11 @@ DEBUGSTR("enter smn_mgr ");
 #endif
 
      mode = 1;
-     popup = NULL;                      /* kein heruntergefallenes Menü */
+     popup = NULL;                      /* kein heruntergefallenes Menue */
      title = tstate = m2obj = NOOBJECT;
      xtitle = lasttitle = NOOBJECT;
      res = quit = FALSE;
-     titletree = retval->tree;          /* aktuelles Menü */
+     titletree = retval->tree;          /* aktuelles Menue */
      menutree = titletree;
      smn_reqmstate = 0x1;
 #if 0
@@ -1597,7 +1597,7 @@ DEBUGSTR("enter smn_mgr ");
      smn_mouse( TRUE);                  /* Mauszeiger retten und ARROW */
 #endif
 
-     /* Objekt 2 ist Parent für alle Menütitel, dessen Ausmaße */
+     /* Objekt 2 ist Parent fuer alle Menuetitel, dessen Ausmasse */
      /* werden in smn_mgrmrect gemerkt */
 
      obj_to_g( titletree, 2, &smn_mgrmrect);
@@ -1621,7 +1621,7 @@ DEBUGSTR("enter smn_mgr ");
 
           tstate = titletree[ title].ob_state;
 
-          /* Menütitel selektieren und Menü herunterklappen */
+          /* Menuetitel selektieren und Menue herunterklappen */
           /* ---------------------------------------------- */
 
           open_mainmenu( titletree, title, lasttitle, menutree, &popup, &m2obj );
@@ -1648,9 +1648,9 @@ DEBUGSTR("enter smn_mgr ");
                          }
                     break;
 
-                    /* Mauszeiger über Menütitel            */
+                    /* Mauszeiger ueber Menuetitel            */
                     /* warte auf 1. Verlassen des Titels    */
-                    /*           2. Betreten des Menüs      */
+                    /*           2. Betreten des Menues      */
                     /* ------------------------------------ */
 
                     case 1:
@@ -1660,7 +1660,7 @@ DEBUGSTR("enter smn_mgr ");
                          if   (!(titletree[title].ob_state & DISABLED))
                               {
                               events = (MU_M2|MU_M1|MU_BUTTON);
-                              /* Betreten des Menüs */
+                              /* Betreten des Menues */
                               smn_moblk( menutree, &m2, m2obj, 0);
                               }
                          }
@@ -1686,16 +1686,16 @@ DEBUGSTR("enter smn_mgr ");
                if   (which & MU_BUTTON)
                     {
 
-                    /* Bei der Suche nicht Gesamtobjekt und Menüleiste */
-                    /* berücksichtigen */
+                    /* Bei der Suche nicht Gesamtobjekt und Menueleiste */
+                    /* beruecksichtigen */
                     dobj = _objc_find( titletree, 2, 1, *((long *) &mkb.evd.x));
 
-                    /* Klick auf kein oder auf ungültiges Objekt */
+                    /* Klick auf kein oder auf ungueltiges Objekt */
 
                     if   ((dobj == NOOBJECT) ||
                          (dobj != NOOBJECT) && (titletree[ dobj].ob_state & DISABLED))
                          {
-                         /* Tastaturstatus beim Auslösen des Menüs merken */
+                         /* Tastaturstatus beim Ausloesen des Menues merken */
 /*                       *pkstate = mkb.kstate;        */
                          quit = TRUE;
                          }
@@ -1706,13 +1706,13 @@ DEBUGSTR("enter smn_mgr ");
                          };
                     };
         
-               /* M2 eingetroffen, und Menü war offen */
+               /* M2 eingetroffen, und Menue war offen */
                /* ----------------------------------- */
 
                if   (!quit && (which & MU_M2) && (popup))
                     {
 
-                    /* heruntergefallenes Menü bearbeiten */
+                    /* heruntergefallenes Menue bearbeiten */
                     /* ---------------------------------- */
 
                     inmenu.mn_tree = menutree;
@@ -1799,10 +1799,10 @@ DEBUGSTR("enter smn_mgr ");
                if   (popupdone && (outmenu.mn_item != NOOBJECT))
                     {
                     res = TRUE;
-                    retval->title = title;             /* Objektnummer des Menütitels */
-                    retval->tree = outmenu.mn_tree;    /* Baum des Menüs */
-                    retval->pmenu = outmenu.mn_menu;   /* Wurzel des Menüs */
-                    retval->menu_obj = outmenu.mn_item;     /* ausgewähltes Objekt */
+                    retval->title = title;             /* Objektnummer des Menuetitels */
+                    retval->tree = outmenu.mn_tree;    /* Baum des Menues */
+                    retval->pmenu = outmenu.mn_menu;   /* Wurzel des Menues */
+                    retval->menu_obj = outmenu.mn_item;     /* ausgewaehltes Objekt */
 
 #if SPECIAL_ACCMENU
                     if   (*ptree == gem_acaptree)
@@ -1901,7 +1901,7 @@ DEBUGSTR("enter smn_popup ");
      res = 0;
      popres = -1;
 
-     /* kein Menü-Popup, sondern ein User-Popup */
+     /* kein Menue-Popup, sondern ein User-Popup */
      /* --------------------------------------- */
 
      if   (!smn_mgrttree)
@@ -1932,7 +1932,7 @@ DEBUGSTR("enter smn_popup ");
           wind_update(END_MCTRL);
           }
 
-     /* Menü-Popup */
+     /* Menue-Popup */
      /* ---------- */
 
      else {
@@ -1944,7 +1944,7 @@ DEBUGSTR("enter smn_popup ");
           }
 
 
-     /* Bei Fehler nur Nullen zurückgeben */
+     /* Bei Fehler nur Nullen zurueckgeben */
      /* --------------------------------- */
 
      if   (popres < 0)
@@ -1982,9 +1982,9 @@ static void smn_rctoxy( GRECT *rect, int *xy)
 
 /*
 *
-* Erzeugt ein neues popupS, hängt es in die verkettete
+* Erzeugt ein neues popupS, haengt es in die verkettete
 * Liste <smn_popuplist> ein und gibt eine neues popup
-* zurück.
+* zurueck.
 *
 */
 
@@ -2322,7 +2322,7 @@ static void smn_trudchange( popupS *popup, int W0C)
      if   (popup->pu_lastob)
           popup->pu_tree[ popup->pu_stail].ob_flags = LASTOB;
      
-     smn_trudinsert( popup);       /* Scrollpfeile wieder einfügen */
+     smn_trudinsert( popup);       /* Scrollpfeile wieder einfuegen */
      popup->pu_curr_istart = W0C;
 }
 
@@ -2330,7 +2330,7 @@ static void smn_trudchange( popupS *popup, int W0C)
 /**********************************************************************
 *
 * Setzt Pfeile anstelle der Texte in das erste und das letzte Objekt
-* eines Scrollmenüs, wenn dies nötig ist.
+* eines Scrollmenues, wenn dies noetig ist.
 *
 **********************************************************************/
 
@@ -2373,7 +2373,7 @@ static void smn_trudinsert( popupS *popup)
 
 /***********************************************************************
 * 
-* Restauriert das erste und das letzte Objekt eines Scrollmenüs
+* Restauriert das erste und das letzte Objekt eines Scrollmenues
 *
 ***********************************************************************/
 

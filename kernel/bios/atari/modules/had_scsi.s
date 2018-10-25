@@ -7,7 +7,7 @@
 ;fa 1.1.96:pseudo dma fuer scsi
 ; a0=basis adresse register
 ; a1=dma adresse
-; a2=alter stackwert/adresse letztes zu übertragendes long (restdaten!!)
+; a2=alter stackwert/adresse letztes zu uebertragendes long (restdaten!!)
 ; a3=sprungadresse/write back 3 adresse 
 ; a4=endadresse
 ; d0=divers
@@ -18,8 +18,8 @@
 ; d5=anzahl sectoren-1
 *restdaten:     equ     $ffff8710
 *sctr1:         equ     $ffff8715       ;normales scsi control register.    bit 0 = scsi write. bit 1 = dma on. bit 6 = count 0. bit 7 = buserror
-*sctr2:         equ     $ffff8717       ;zusätzlicher scsi control register.bit 0 = count0/eop. bit 1 = buserror
-*psdm:          equ     $ffff8741       ;pseudo dma adresse für daten
+*sctr2:         equ     $ffff8717       ;zusaetzlicher scsi control register.bit 0 = count0/eop. bit 1 = buserror
+*psdm:          equ     $ffff8741       ;pseudo dma adresse fuer daten
 *auu:           equ     $ffff8701
 *amu:           equ     $ffff8703
 *aml:           equ     $ffff8705
@@ -65,17 +65,17 @@ scsi_int2:      movem.l d0-d7/a0-a4,-(sp)
                 lea     psdm.w,a0
                 move.l  d2,a1                   ;dma adresse
                 move.l  d2,a4                   ;startadresse
-                add.l   d1,a4                   ;+länge=endadresse
+                add.l   d1,a4                   ;+laenge=endadresse
 scsijmp:        subq.l  #1,d1
                 move.l  d1,d5                   ;anzahl byts-1
                 lsr.l   #8,d5                   ;/512
                 lsr.l   #1,d5                   ;=anzahl ganze sectoren
-                and.l   #$1ff,d1                ;anzahl byts -1 im nächsten sector
+                and.l   #$1ff,d1                ;anzahl byts -1 im naechsten sector
                 lea     scsiwrlb,a3             ;sonst tabelle read nach a3
                 btst    #0,sctr1.w              ;write?
                 bne     scsibs                  ;ja->
                 lea     scsirdlb,a3             ;sonst tabelle read nach a3
-scsibs:         sub.l   d1,a3                   ;x2 weil jeder befehl wordlänge hat
+scsibs:         sub.l   d1,a3                   ;x2 weil jeder befehl wordlaenge hat
                 sub.l   d1,a3                   ;- = aktuelle einsprungadresse
                 jmp     (a3)                    ;verzweigen
 scsiwrloop:     move.b  (a1)+,(a0)      ;byt verschieben
@@ -1117,12 +1117,12 @@ scsirdlb1:      move.b  (a0),(a1)+              ;byt verschieben
                 move.l  (a0),restdaten.w        ;restdaten nach register
 scsiweiter:     moveq   #0,d1                   ;fertig
 scsiend:        bset    #1,sctr1.w              ;dma on = ein int 7 scharf
-                dc.w    _movec,_dtt0+$3000      ;dtt0 zurück
-                dc.w    _movec,_itt0+$6000      ;itt0 zurück
-                dc.w    _movec,_cacr+$7000      ;cacr zurück
+                dc.w    _movec,_dtt0+$3000      ;dtt0 zurueck
+                dc.w    _movec,_itt0+$6000      ;itt0 zurueck
+                dc.w    _movec,_cacr+$7000      ;cacr zurueck
                 dc.w    cpusha
                 nop
-                move.b  d1,cll.w                ;byt zaehler zurück
+                move.b  d1,cll.w                ;byt zaehler zurueck
                 lsr.l   #8,d1
                 move.b  d1,cml.w
                 lsr.l   #8,d1
@@ -1170,9 +1170,9 @@ scbuer40w:      cmp.l   $14(a7),a0              ;scsidaten bereich?
                 beq     scsitimeout             ;ja -> timout
 scsibuerer:     bset    #1,sctr1.w              ;dma on = ein, int 7 scharf
                 move.l  a2,a7                   ;alter stack
-                dc.w    _movec,_dtt0+$3000      ;dtt0 zurück
-                dc.w    _movec,_itt0+$6000      ;itt0 zurück
-                dc.w    _movec,_cacr+$7000      ;cacr zurück
+                dc.w    _movec,_dtt0+$3000      ;dtt0 zurueck
+                dc.w    _movec,_itt0+$6000      ;itt0 zurueck
+                dc.w    _movec,_cacr+$7000      ;cacr zurueck
                 dc.w    cpusha
                 nop
                 or.b    #$03,sctr2.w            ;buserror- und eop-bit setzen

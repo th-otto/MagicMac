@@ -43,7 +43,7 @@ DEBUG	EQU	0
 *
 * Liest die MAGX.INF vom Wurzelverzeichnis des aktuellen Laufwerks,
 * alloziert entsprechend Speicher (ST-RAM preferred) und gibt einen
-* Zeiger auf den Puffer (bzw. NULL) zurück.
+* Zeiger auf den Puffer (bzw. NULL) zurueck.
 * Die Daten werden mit EOS abgeschlossen.
 *
 
@@ -54,7 +54,7 @@ read_inf:
  movem.l	d7/a6,-(sp)
  suba.w	#xattr_sizeof,sp
  suba.l	a6,a6
-; Datei zum Lesen öffnen
+; Datei zum Lesen oeffnen
  clr.w	-(sp)			; O_RDONLY
  pea		inf_s(pc)
  move.w	#$3d,-(sp)
@@ -62,7 +62,7 @@ read_inf:
  addq.l	#8,sp
  move.l	d0,d7
  bmi.b	ri_err			; Lesefehler
-; Dateilänge ermitteln
+; Dateilaenge ermitteln
  move.w	#FSTAT,-(sp)
  pea		2(sp)			; &xattr
  move.w	d7,-(sp)
@@ -74,7 +74,7 @@ read_inf:
 ; Speicher allozieren
  move.w	#2,-(sp)			; ST-RAM preferred
  move.l	xattr_size+2(sp),-(sp)
- addq.l	#1,(sp)			; Platz fürs Nullbyte lassen!
+ addq.l	#1,(sp)			; Platz fuers Nullbyte lassen!
  move.w	#$44,-(sp)
  trap	#1				; gemdos Mxalloc
  addq.l	#8,sp
@@ -91,7 +91,7 @@ read_inf:
  trap	#1				; gemdos Fread
  adda.w	#12,sp
 ri_err2:
-; Datei schließen
+; Datei schliessen
  move.w	d7,-(sp)
  move.w	#$3e,-(sp)
  trap	#1				; gemdos Fclose
@@ -107,9 +107,9 @@ ri_err:
 *
 * char *rinf_path( a0 = char *line, a1 = char *buf, d0 = LONG buflen )
 *
-* Liest einen Pfad ein, überspringt dazu erstmal Blanks.
-* Es wird nichts kopiert, wenn es einen Überlauf gibt.
-* Rückgabe: Zeiger hinter den Pfad.
+* Liest einen Pfad ein, ueberspringt dazu erstmal Blanks.
+* Es wird nichts kopiert, wenn es einen Ueberlauf gibt.
+* Rueckgabe: Zeiger hinter den Pfad.
 *
 
 _skip_spc:
@@ -123,7 +123,7 @@ _sk_sk:
  bra.b	_skip_spc
 
 rinf_path:
- bsr.b	_skip_spc				; Leerzeichen überspringen
+ bsr.b	_skip_spc				; Leerzeichen ueberspringen
  move.l	a0,a2				; Beginn des Pfades
 rinfp_loop1:
  tst.b	(a0) 				; Zeile bis Leerstelle scannen
@@ -147,7 +147,7 @@ rinfp_loop2:
  move.b	(a2)+,(a1)+
  bra.b	rinfp_loop2
 rinfp_end:
- clr.b	(a1)					; buf löschen
+ clr.b	(a1)					; buf loeschen
  move.l	a0,d0				; Zeiger hinter den String
  rts
 
@@ -157,11 +157,11 @@ rinfp_end:
 * EQ/NE d0/a0 ULONG rinf_ul(a0 = char *s)
 *
 * liest eine "unsigned long" im Dezimalformat ein.
-* Rückgabe: a0 auf erstes ungültiges Zeichen.
+* Rueckgabe: a0 auf erstes ungueltiges Zeichen.
 *
 
 rinf_ul:
- bsr.b	_skip_spc				; Leerzeichen überspringen
+ bsr.b	_skip_spc				; Leerzeichen ueberspringen
  moveq	#0,d0
  move.l	a0,a1
 sd_loop:
@@ -180,8 +180,8 @@ sd_loop:
  add.l	d1,d0
  bra.b	sd_loop
 sd_endloop:
- subq.l	#1,a0				; auf erstes ungültiges Zeichen
- cmpa.l	a1,a0				; Rückgabe EQ, wenn Fehler
+ subq.l	#1,a0				; auf erstes ungueltiges Zeichen
+ cmpa.l	a1,a0				; Rueckgabe EQ, wenn Fehler
  rts
 
 
@@ -189,8 +189,8 @@ sd_endloop:
 *
 * char *rinf_nl( a0 = char *line )
 *
-* Setzt den Zeiger auf die nächste Zeile.
-* Rückgabe NULL bei Ende
+* Setzt den Zeiger auf die naechste Zeile.
+* Rueckgabe NULL bei Ende
 *
 
 rinf_nl:
@@ -213,7 +213,7 @@ rinf_nl_null:
 * Durchsucht die MAGX.INF nach einer Sektion, d.h. z.B. ist
 * section == "[aes]".
 * Gibt in d0 einen Zeiger auf das erste Zeichen der folgenden
-* Zeile zurück. Bzw. NULL, wenn nicht gefunden.
+* Zeile zurueck. Bzw. NULL, wenn nicht gefunden.
 *
 
 rinf_sec:
@@ -237,7 +237,7 @@ risc_null:
  suba.l	a0,a0				; nix gefunden
  bra.b	rinf_ende
 rinf_srch_seceol:
- bsr.b	rinf_nl				; a0 auf nächste Zeile
+ bsr.b	rinf_nl				; a0 auf naechste Zeile
  bne.b	rinf_loop				; OK
  rts
 
@@ -246,10 +246,10 @@ rinf_srch_seceol:
 *
 * char *rinf_tok( a0 = char *inf, a1 = char *token )
 *
-* Durchsucht die MAGX.INF innerhalb einer Sektion nach dem nächsten
+* Durchsucht die MAGX.INF innerhalb einer Sektion nach dem naechsten
 * Vorkommen eines Token.
-* Gibt in d0 und a0 einen Zeiger auf die gefundene Zeile zurück.
-* Rückgabe NULL, wenn nicht gefunden, d.h. EOF oder die nächste
+* Gibt in d0 und a0 einen Zeiger auf die gefundene Zeile zurueck.
+* Rueckgabe NULL, wenn nicht gefunden, d.h. EOF oder die naechste
 * Sektion erreicht.
 *
 
@@ -261,13 +261,13 @@ rinft_loop:
  beq.b 	rinft_null
  lsl.w	#8,d0
  move.b	1(a0),d0
- cmpi.w	#'#[',d0				; nächste Section?
+ cmpi.w	#'#[',d0				; naechste Section?
  beq.b	rinft_null			; ja, nichts gefunden
  move.l	a0,d2				; Zeiger auf Zeilenanfang merken
  move.l	a2,a1				; gesuchtes Token
  bsr		scan_tok				; gefunden ?
  beq.b	rinft_srch_seceol		; nein
- move.l	d2,a0				; Zeiger auf Zeilenanfang zurück
+ move.l	d2,a0				; Zeiger auf Zeilenanfang zurueck
 rinft_ende:
  move.l	a0,d0
  rts
@@ -275,7 +275,7 @@ rinft_null:
  suba.l	a0,a0				; nix gefunden
  bra.b	rinft_ende
 rinft_srch_seceol:
- bsr.b	rinf_nl				; a0 auf nächste Zeile
+ bsr.b	rinf_nl				; a0 auf naechste Zeile
  bne.b	rinft_loop			; OK
  rts
 
@@ -284,7 +284,7 @@ rinft_srch_seceol:
 *
 * EQ/NE d0/a0 scan_tok(a0 = char *s, a1 = char *token)
 *
-* ändert nur d1/d0/a0/a1
+* aendert nur d1/d0/a0/a1
 * a0 hinter das Token, wenn gefunden
 *
 
@@ -307,7 +307,7 @@ scantok_found:
 *
 * void rinf_vfat( a0 = char *inf )
 *
-* Führt alle Aktionen zur Initialisierung des VFAT-XFS aus der
+* Fuehrt alle Aktionen zur Initialisierung des VFAT-XFS aus der
 * MAGX.INF aus. D.h. sucht nach der Section "[vfat]" und nach der
 * Zeile "drives="
 *
@@ -327,7 +327,7 @@ rinf_vfat:
 ;move.l	d0,a0
  lea		vfat_tok2(pc),a1
  bsr		scan_tok
- beq.b	rivf_ende				; token ungültig
+ beq.b	rivf_ende				; token ungueltig
  move.l	a0,a6
  moveq	#0,d7				; noch keine Laufwerke
 rivf_loop:
@@ -353,12 +353,12 @@ rivf_loop:
  clr.w	2(sp)				; freigeben!
  trap	#1
  bra.b	rivf_ok
-; Laufwerk ließ sich nicht sperren, für U: lange Namen temporär
+; Laufwerk liess sich nicht sperren, fuer U: lange Namen temporaer
 rivf_err:
  move.w	4(sp),d0				; Laufwerk
  cmpi.w	#'U'-'A',d0			; Laufwerk U: ?
  bne.b	rivf_ok				; nein
- move.l	#$413a5c00,-(sp)		; "A:\"
+ move.l	#$413a5c00,-(sp)		; "A:\\"
  add.b	d0,(sp)
  pea		1					; lange Namen einschalten
  pea		4(sp)				; path
@@ -367,9 +367,9 @@ rivf_err:
  adda.w	#16,sp
 rivf_ok:
  addq.l	#6,sp
- bra.b	rivf_loop				; nächstes Zeichen
+ bra.b	rivf_loop				; naechstes Zeichen
 
-; d7.l enthält jetzt die Bitmaske
+; d7.l enthaelt jetzt die Bitmaske
 
 rivf_endloop:
  move.l	d7,dfs_longnames.w
@@ -385,7 +385,7 @@ rivf_ende:
 *				d1 = char *token, a1 = char *path )
 *
 * Sucht in der Section <section> nach der Zeile <token> und gibt den
-* angegebenen Pfad zurück.
+* angegebenen Pfad zurueck.
 *
 
 rinf_pth:
@@ -400,7 +400,7 @@ rinf_pth:
  move.l	d0,a0
  move.l	(sp)+,a1
  bsr		rinf_tok
- beq		rpth_err2				; token ungültig
+ beq		rpth_err2				; token ungueltig
  move.l	(sp)+,a1
 rpth_loop:
  cmpi.b	#'=',(a0)+
@@ -426,7 +426,7 @@ rpth_ende:
 * LONG rinf_coo( a0 = char *inf )
 *
 * Sucht nach der Section "#[boot]" und nach der
-* Zeile "cookies=" und gibt die Zahl zurück. 
+* Zeile "cookies=" und gibt die Zahl zurueck. 
 *
 
 rinf_coo:
@@ -453,7 +453,7 @@ rcoo_ok:
 * LONG rinf_log( a0 = char *inf )
 *
 * Sucht nach der Section "#[boot]" und nach der
-* Zeile "log=" und öffnet die angegebene Datei zum Schreiben. 
+* Zeile "log=" und oeffnet die angegebene Datei zum Schreiben. 
 *
 
 rinf_log:
@@ -483,7 +483,7 @@ rlog_ok:
 *
 * void rinf_img( a0 = char *inf )
 *
-* Führt alle Aktionen zur Anzeige eines Startbilds aus der
+* Fuehrt alle Aktionen zur Anzeige eines Startbilds aus der
 * MAGX.INF aus. D.h. sucht nach der Section "#[boot]" und nach der
 * Zeile "image=" und "tiles="
 *
@@ -492,11 +492,11 @@ rlog_ok:
 
 img_buf:		DS.L	1		/* Bild */
 img_w:		DS.W	1		/* Bildbreite */
-img_h:		DS.W	1		/* Bildhöhe */
+img_h:		DS.W	1		/* Bildhoehe */
 img_linew:	DS.W	1		/* Bytes pro Zeile */
 img_nplanes:	DS.W	1		/* Tiefe */
 img_palette:	DS.L	1		/* Zeiger auf Palette */
-img_npal:		DS.W	1		/* Länge der Palette */
+img_npal:		DS.W	1		/* Laenge der Palette */
 
 	TEXT
 
@@ -513,7 +513,7 @@ fd_sizeof 	EQU	20
 	IF	DEBUG
 img_lad:		DC.B	'IMG laden => ',0
 img_cnv:		DC.B	'IMG => MFDB => ',0
-img_cls:		DC.B	'IMG schließen => ',0
+img_cls:		DC.B	'IMG schlie',$9e,'en => ',0
 	ENDIF
 boot_tok:		DC.B	'#[boot]',0
 log_tok:		DC.B	'log=',0
@@ -582,7 +582,7 @@ rimg_go:
  lea		VPTSOUT(sp),a1
  move.l	a1,(a0)
 
-* Workstation öffnen (zunächst mit Gerätenummer 1)
+* Workstation oeffnen (zunaechst mit Geraetenummer 1)
 
  lea		VINTIN(sp),a1
  move.w	#1,(a1)+				; VDI-Device
@@ -592,7 +592,7 @@ rimg_loop2:
  dbf 	d0,rimg_loop2
  move.w	#2,(a1)+				; RC- Koordinaten
 
-; für NVDI:
+; fuer NVDI:
 ;  move.l	#'XRES',(a1)+
 ;  move.w	dflt_xdv,(a1)
 ; move.w	dflt_xdv,VPTSOUT(sp)	; FALCON!!!
@@ -609,7 +609,7 @@ rimg_loop2:
  tst.w	VCONTRL+12(sp)			; Handle OK?
  beq		rimg_ende				; nein, Fehler
 
- move.l	VINTOUT(sp),SCRW(sp)	; Bildschirmgröße-1
+ move.l	VINTOUT(sp),SCRW(sp)	; Bildschirmgroesse-1
  addq.w	#1,SCRW(sp)
  addq.w	#1,SCRH(sp)			; VDI => AES
 
@@ -640,7 +640,7 @@ rimg_loop2:
  lea		(sp),a0
  pea		IMGDESC(a0)			; Deskriptor ermitteln
  pea		TILPATH(a0)			; Pfad
- move.w	#4,-(sp)				; 4 WORDs übergeben
+ move.w	#4,-(sp)				; 4 WORDs uebergeben
  clr.l	-(sp)				; Funktion #0
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -659,8 +659,8 @@ rimg_loop2:
  move.w	#256,-(sp)			; max_pen
  move.w	#16,-(sp)				; min_index
  pea		MFDB(a0)				; mfdb ermitteln
- move.l	IMGDESC(a0),-(sp)		; Deskriptor übergeben
- move.w	#7,-(sp)				; 7 WORDs übergeben
+ move.l	IMGDESC(a0),-(sp)		; Deskriptor uebergeben
+ move.w	#7,-(sp)				; 7 WORDs uebergeben
  move.l	#2,-(sp)				; Funktion #2
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -685,7 +685,7 @@ rimg_loop2:
 
  pea		MFDB(a0)				; mfdb
  move.w	VCONTRL+12(a0),-(sp)	; VDI-Handle
- move.w	#7,-(sp)				; 7 WORDs übergeben
+ move.w	#7,-(sp)				; 7 WORDs uebergeben
  move.l	#4,-(sp)				; Funktion #4
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -693,12 +693,12 @@ rimg_loop2:
  adda.w	#40,sp
 
 *
-* MFDB für Kachel freigeben
+* MFDB fuer Kachel freigeben
 *
 
  move.l	IMGHDL(sp),a0
  move.l	img_buf(a0),a0
- cmpa.l	MFDB+fd_addr(sp),a0		; extra-Puffer für exp. Bild?
+ cmpa.l	MFDB+fd_addr(sp),a0		; extra-Puffer fuer exp. Bild?
  beq.b	rimg_free_til
  move.l	MFDB+fd_addr(sp),-(sp)
  gemdos	Mfree
@@ -711,7 +711,7 @@ rimg_loop2:
 rimg_free_til:
  lea		(sp),a0
  move.l	IMGDESC(a0),-(sp)		; Deskriptor freigeben
- move.w	#2,-(sp)				; 2 WORDs übergeben
+ move.w	#2,-(sp)				; 2 WORDs uebergeben
  move.l	#1,-(sp)				; Funktion #1
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -729,7 +729,7 @@ rimg_loadcntr:
  lea		(sp),a0
  pea		IMGDESC(a0)			; Deskriptor ermitteln
  pea		IMGPATH(a0)			; Pfad
- move.w	#4,-(sp)				; 4 WORDs übergeben
+ move.w	#4,-(sp)				; 4 WORDs uebergeben
  clr.l	-(sp)				; Funktion #0
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -739,13 +739,13 @@ rimg_loadcntr:
  tst.l	d0
  bmi		rimg_closeimgslb		; Datei nicht gefunden
 
-* Bild-Ausmaße testen
+* Bild-Ausmasse testen
 
  move.l	IMGDESC(sp),a0
  move.w	img_w(a0),d0			; Bildbreite
  cmp.w	SCRW(sp),d0
  bhi		rimg_free_img			; Bild zu breit
- move.w	img_h(a0),d0			; Bildhöhe
+ move.w	img_h(a0),d0			; Bildhoehe
  cmp.w	SCRH(sp),d0
  bhi		rimg_free_img			; Bild zu hoch
 
@@ -756,8 +756,8 @@ rimg_loadcntr:
  move.w	#256,-(sp)			; max_pen
  move.w	#16,-(sp)				; min_index
  pea		MFDB(a0)				; mfdb ermitteln
- move.l	IMGDESC(a0),-(sp)		; Deskriptor übergeben
- move.w	#7,-(sp)				; 7 WORDs übergeben
+ move.l	IMGDESC(a0),-(sp)		; Deskriptor uebergeben
+ move.w	#7,-(sp)				; 7 WORDs uebergeben
  move.l	#2,-(sp)				; Funktion #2
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -772,8 +772,8 @@ rimg_loadcntr:
  lea		(sp),a0
 
  move.l	IMGDESC(a0),a1
- move.w	SCRH(a0),d0			; Bildschirmhöhe
- sub.w	img_h(a1),d0			; - Bildhöhe
+ move.w	SCRH(a0),d0			; Bildschirmhoehe
+ sub.w	img_h(a1),d0			; - Bildhoehe
  lsr.w	#1,d0
  move.w	d0,-(sp)				; y
 
@@ -784,7 +784,7 @@ rimg_loadcntr:
 
  pea		MFDB(a0)				; mfdb
  move.w	VCONTRL+12(a0),-(sp)	; VDI-Handle
- move.w	#5,-(sp)				; 5 WORDs übergeben
+ move.w	#5,-(sp)				; 5 WORDs uebergeben
  move.l	#3,-(sp)				; Funktion #3
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -793,12 +793,12 @@ rimg_loadcntr:
 
 
 *
-* MFDB für Bild freigeben
+* MFDB fuer Bild freigeben
 *
 
  move.l	IMGHDL(sp),a0
  move.l	img_buf(a0),a0
- cmpa.l	MFDB+fd_addr(sp),a0		; extra-Puffer für exp. Bild?
+ cmpa.l	MFDB+fd_addr(sp),a0		; extra-Puffer fuer exp. Bild?
  beq.b	rimg_free_img
  move.l	MFDB+fd_addr(sp),-(sp)
  gemdos	Mfree
@@ -811,7 +811,7 @@ rimg_loadcntr:
 rimg_free_img:
  lea		(sp),a0
  move.l	IMGDESC(a0),-(sp)		; Deskriptor freigeben
- move.w	#2,-(sp)				; 2 WORDs übergeben
+ move.w	#2,-(sp)				; 2 WORDs uebergeben
  move.l	#1,-(sp)				; Funktion #1
  move.l	IMGHDL(a0),-(sp)		; Bib-Deskriptor
  move.l	IMGFN(a0),a1
@@ -819,7 +819,7 @@ rimg_free_img:
  adda.w	#14,sp
 
 *
-* LOAD_IMG.SLB schließen
+* LOAD_IMG.SLB schliessen
 *
 
 rimg_closeimgslb:
@@ -828,7 +828,7 @@ rimg_closeimgslb:
  trap	#1
  addq.l	#6,sp
 
-* WS schließen
+* WS schliessen
 
 rimg_closews:
  lea		VCONTRL(sp),a1
@@ -857,7 +857,7 @@ rimg_ende:
 rinf_bdev:
  movem.l	d7/a6,-(sp)
 	DEBON
-	DEB	'Lese Geräteinformationen'
+	DEB	'Lese Ger�teinformationen'
  suba.w	#80,sp
  move.l	a0,d0
  beq		rbd_ok				; keine INF-Datei
@@ -875,12 +875,12 @@ rbd_loop:
  addq.l	#8,a0
 	DEBL	'Zeile = ',a0
  bsr		rinf_ul
- move.l	d0,d7				; BIOS-Gerätenummer
+ move.l	d0,d7				; BIOS-Geraetenummer
 	DEBL	'Zeile2 = ',a0
-	DEBL 'BIOS-Gerät',d7
+	DEBL 'BIOS-Ger�t',d7
  cmpi.b	#',',(a0)+
  bne.b	rbd_nxt				; Fehler
- moveq	#80,d0				; Puffergröße
+ moveq	#80,d0				; Puffergroesse
  lea		(sp),a1				; Puffer
 ;move.l	a0,a0
  bsr		rinf_path				; Pfad einlesen
@@ -888,18 +888,18 @@ rbd_loop:
  tst.b	(sp)
  beq.b	rbd_nxt				; Pfad ist leer
 
-; Gerät anmelden
+; Geraet anmelden
  move.l	a0,a6				; inf retten
 
  move.l	d7,-(sp)				; BIOS-Nummer
- clr.l	-(sp)				; leerer Gerätetreiber
+ clr.l	-(sp)				; leerer Geraetetreiber
  pea		(sp)					; Treiber-Informationen
  pea		12(sp)				; Pfad
  move.w	#MX_DEV_INSTALL2,-(sp)
  gemdos	Dcntl
  adda.w	#20,sp
  
- move.l	a6,a0				; inf zurück
+ move.l	a6,a0				; inf zurueck
 
 rbd_nxt:
  bsr		rinf_nl
@@ -924,11 +924,11 @@ rinf_dvh:
  move.l	a0,-(sp)
  lea		con_tok(pc),a1
  moveq	#-1,d0
- bsr		_rinf_dvh				; für Handle -1 (CON)
+ bsr		_rinf_dvh				; fuer Handle -1 (CON)
  move.l	(sp),a0
  lea		aux_tok(pc),a1
  moveq	#-2,d0
- bsr		_rinf_dvh				; für Handle -2 (AUX)
+ bsr		_rinf_dvh				; fuer Handle -2 (AUX)
  move.l	(sp)+,a0
  lea		prn_tok(pc),a1
  moveq	#-3,d0
@@ -946,7 +946,7 @@ rinf_dvh:
 _rinf_dvh:
  movem.l	d7/a6,-(sp)
 	DEBON
-	DEB	'Lese Handle-Geräteinformationen'
+	DEB	'Lese Handle-Ger�teinformationen'
  move.w	d0,d7				; d7 = Handle
  move.l	a1,a6				; a6 = Token
  suba.w	#80,sp
@@ -967,15 +967,15 @@ dvh_loop:
  cmpi.b	#'=',(a0)+
  bne.b	dvh_loop
 
- moveq	#80,d0				; Puffergröße
+ moveq	#80,d0				; Puffergroesse
  lea		(sp),a1				; Puffer
 ;move.l	a0,a0
  bsr		rinf_path				; Pfad einlesen
 
-; Geräte-Handle zuweisen
+; Geraete-Handle zuweisen
 
  lea		(sp),a0				; Pfad
- move.w	d7,d0				; Gerätehandle
+ move.w	d7,d0				; Geraetehandle
  jsr		asgndevh
  
 dvh_ok:

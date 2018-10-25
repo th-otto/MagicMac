@@ -11,7 +11,7 @@
 
 ;WORD handle_exit( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
 ;Vorgaben:
-;Register d0-d2/a0-a1 kînnen verÑndert werden
+;Register d0-d2/a0-a1 koennen veraendert werden
 ;Eingaben:
 ;d0.w obj
 ;d1.w clicks
@@ -37,7 +37,7 @@ hndl_exit:			move.l	a2,-(sp)									;Register a2 sichern
 
 ;void	slct_item( LIST_BOX *box, LBOX_ITEM *item, WORD index, WORD last_state );
 ;Vorgaben:
-;Register d0-d2/a0-a1 kînnen verÑndert werden
+;Register d0-d2/a0-a1 koennen veraendert werden
 ;Eingaben:
 ;d0.w	index
 ;d1.w	last_state
@@ -64,14 +64,14 @@ slct_item:			move.l	a2,-(sp)									;Register a2 sichern
 						
 ;WORD	set_item( LIST_BOX *box, LBOX_ITEM *item, WORD index, GRECT *rect );
 ;Vorgaben:
-;Register d0-d2/a0-a1 kînnen verÑndert werden
+;Register d0-d2/a0-a1 koennen veraendert werden
 ;Eingaben:
 ;d0.w	index
 ;a0.l box
 ;a1.l item
 ;4(sp) rect
 ;Ausgaben:
-;d0.w	index fÅr Redraw
+;d0.w	index fuer Redraw
 set_item:			move.l	a2,-(sp)									;Register a2 sichern
 
 						move.w	LBOX_first_b(a0),-(sp)				;first

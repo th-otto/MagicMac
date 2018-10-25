@@ -1,6 +1,6 @@
 **********************************************************************
 *
-* Dieses Modul enthält die Dateitreiber für BIOS- Geräte
+* Dieses Modul enthaelt die Dateitreiber fuer BIOS- Geraete
 *
 
 DEBUG     EQU  16
@@ -60,7 +60,7 @@ _con_devdrv:
  DC.L     bios_ddev_lseek
  DC.L     0                        ; Standard- Fdatime
  DC.L     bios_ddev_ioctl
- DC.L     ret_0                    ; Löschen erlaubt
+ DC.L     ret_0                    ; Loeschen erlaubt
  DC.L     con_getc
  DC.L     con_getline
  DC.L     con_putc
@@ -73,7 +73,7 @@ _nul_devdrv:
  DC.L     bios_ddev_lseek
  DC.L     0                   ; Standard- Fdatime
  DC.L     bios_ddev_ioctl
- DC.L     ret_0               ; Löschen erlaubt
+ DC.L     ret_0               ; Loeschen erlaubt
  DC.L     0                   ; kein getc
  DC.L     0                   ; kein getline
  DC.L     0                   ; kein putc
@@ -86,7 +86,7 @@ _midi_devdrv:
  DC.L     bios_ddev_lseek
  DC.L     0                   ; Standard- Fdatime
  DC.L     bios_ddev_ioctl
- DC.L     ret_0               ; Löschen erlaubt
+ DC.L     ret_0               ; Loeschen erlaubt
  DC.L     0                   ; kein getc
  DC.L     0                   ; kein getline
  DC.L     0                   ; kein putc
@@ -99,7 +99,7 @@ _bios_devdrv:
  DC.L     bios_ddev_lseek
  DC.L     0
  DC.L     bios_ddev_ioctl
- DC.L     ret_0                    ; Löschen erlaubt
+ DC.L     ret_0                    ; Loeschen erlaubt
  DC.L     0                   ; kein getc
  DC.L     0                   ; kein getline
  DC.L     0                   ; kein putc
@@ -112,7 +112,7 @@ _anb_devdrv:
  DC.L     bios_ddev_lseek
  DC.L     0
  DC.L     bios_ddev_ioctl
- DC.L     ret_0                    ; Löschen erlaubt
+ DC.L     ret_0                    ; Loeschen erlaubt
  DC.L     0                   ; kein getc
  DC.L     0                   ; kein getline
  DC.L     0                   ; kein putc
@@ -123,10 +123,10 @@ _anb_devdrv:
 *
 * long con_read(a0 = FD *f, a1 = char *buf, d0 = long count)
 *
-* Per Default ist CON ein "cooked" Gerät, d.h. Fread verwendet
+* Per Default ist CON ein "cooked" Geraet, d.h. Fread verwendet
 * den "cooked" Modus
 *
-* TOS 1.4 limitiert das Einlesen auf 64K und gibt bei Überschreitung
+* TOS 1.4 limitiert das Einlesen auf 64K und gibt bei Ueberschreitung
 * einen Fehler aus. Da dies keinen Sinn ergibt, wurde die Abfrage
 * hier entfernt.
 *
@@ -148,7 +148,7 @@ con_read:
 *
 * long con_write(a0 = FD *f, a1 = char *buf, d0 = long count)
 *
-* Per Default ist CON ein "cooked" Gerät, d.h. Fwrite verwendet
+* Per Default ist CON ein "cooked" Geraet, d.h. Fwrite verwendet
 * den "cooked" Modus
 *
 
@@ -157,8 +157,8 @@ con_write:
  move.l   a1,a5                    ; a5 = s
  move.l   d0,d7                    ; d7 = len
 
-* neuer VT52: Wir übergeben der Routine den Zeiger die Daten
-* und den Zeiger auf die aktuelle Applikation. Gehören wir nicht
+* neuer VT52: Wir uebergeben der Routine den Zeiger die Daten
+* und den Zeiger auf die aktuelle Applikation. Gehoeren wir nicht
 * dem VT52, erhalten wir Fehlercode -2
 
  move.l   p_vt52.w,d1
@@ -172,8 +172,8 @@ con_write:
  tst.l    d0
  bge.b    fasts_ende               ; OK
  cmpi.l   #-2,d0
- beq.b    fasts_novt               ; läuft nicht im Fenster
- bra      break_vt                 ; ^C wurde betätigt
+ beq.b    fasts_novt               ; laeuft nicht im Fenster
+ bra      break_vt                 ; ^C wurde betaetigt
 
 fasts_vtold:
  bsr      vtwindow
@@ -186,7 +186,7 @@ fasts_vtboth:
  jsr      (a2)
  tst.l    d0
  bge      fasts_ende
- bra      break_vt                 ; ^C wurde betätigt
+ bra      break_vt                 ; ^C wurde betaetigt
 
 fasts_novt:
  lea      (ctrl_status+1).w,a4
@@ -244,7 +244,7 @@ con_getc:
  bge      cgc_afterget             ; OK
  cmpi.l   #-2,d0
  beq.b    cico_novt                ; wir laufen nicht im Fenster
- bra      break_vt                 ; ^C wurde betätigt
+ bra      break_vt                 ; ^C wurde betaetigt
 
 *
 * "cooked" im alten VT52
@@ -259,7 +259,7 @@ cico_vtboth:
  jsr      (a2)                     ; direkt den VT52 aufrufen
  tst.l    d0
  bge      cgc_afterget
- bra      break_vt                 ; ^C wurde betätigt
+ bra      break_vt                 ; ^C wurde betaetigt
 
 *
 * "cooked" ohne VT52
@@ -297,7 +297,7 @@ cgc_raw:
  addq.l   #4,sp
 
 *
-* ggf. ECHO ausführen
+* ggf. ECHO ausfuehren
 *
 
 cgc_afterget:
@@ -321,7 +321,7 @@ cgc_noecho:
 *                  a1 = char *buf, d1 = long len)
 *
 * Zeilenweise cooked/raw Eingabe mit/ohne Echo von CON
-* Rückgabe: immer Anzahl gelesener Bytes
+* Rueckgabe: immer Anzahl gelesener Bytes
 *
 * Achtung: <mode> wird hier ignoriert und ist immer ECHO+COOKED
 *
@@ -337,7 +337,7 @@ con_getline:
 * long con_putc(a0 = FD *fd, d0 = int mode, d1 = long c)
 *
 * cooked/raw Ausgabe auf CON
-* Rückgabe: immer 4L nach MiNT- Konvention
+* Rueckgabe: immer 4L nach MiNT- Konvention
 *
 
 con_putc:
@@ -374,11 +374,11 @@ coc_wloop:
 *
 *  was_ctrl_s( void )
 *
-* Wartet auf das erlösende CTRL-Q und löscht anschließend die
+* Wartet auf das erloesende CTRL-Q und loescht anschliessend die
 * Steuercodes aus dem Eingabepuffer.
 * Kommt zwischendurch ein ^C, wird abgebrochen.
-* head zeigt vor das älteste Zeichen (nächstes auszulesendes)
-* tail zeigt vor das nächstes einzulesendes Zeichen
+* head zeigt vor das aelteste Zeichen (naechstes auszulesendes)
+* tail zeigt vor das naechstes einzulesendes Zeichen
 *
 
 was_ctrl_s:
@@ -396,12 +396,12 @@ _cook_conbuf:
  ori.w    #$700,sr
  lea      iorec_kb.w,a0
  movea.l  (a0)+,a1                 ; Pufferzeiger
- move.w   (a0)+,d3                 ; Pufferlänge
+ move.w   (a0)+,d3                 ; Pufferlaenge
  move.w   (a0)+,d1                 ; head
  move.w   (a0),d2                  ; tail
 coc_loop:
- addq.w   #4,d1                    ; Head-Index erhöhen
- cmp.w    d3,d1                    ; mit Puffergröße vergleichen
+ addq.w   #4,d1                    ; Head-Index erhoehen
+ cmp.w    d3,d1                    ; mit Puffergroesse vergleichen
  bcs.b    coc_nosw
  moveq    #0,d1                    ; Pufferzeiger auf Pufferbeginn
 coc_nosw:
@@ -424,18 +424,18 @@ coc_kill:
 ; bra          coc_next
  move.w   d1,-(sp)                 ; aktuelle Position merken
 coc_loop2:
- lea      0(a1,d1.w),a2            ; zu löschende Position
+ lea      0(a1,d1.w),a2            ; zu loeschende Position
  subq.w   #4,d1
  bcc.b    coc_nosw2
  move.w   d3,d1
- subq.w   #4,d1                    ; Pufferindex 0..len-1 à 4 Bytes
+ subq.w   #4,d1                    ; Pufferindex 0..len-1 � 4 Bytes
 coc_nosw2:
  cmp.w    (iorec_kb+6).w,d1        ; ist Head ?
  beq.b    coc_iskill               ; ja, fertig
- move.l   0(a1,d1.w),(a2)          ; aufrücken
+ move.l   0(a1,d1.w),(a2)          ; aufruecken
  bra.b    coc_loop2
 coc_iskill:
- addq.w   #4,d1                    ; Head erhöhen
+ addq.w   #4,d1                    ; Head erhoehen
  cmp.w    d3,d1
  bcs.b    coc_nosw3
  moveq    #0,d1
@@ -461,7 +461,7 @@ ctrlc_s: DC.B '^C',13,10,0
 
 dos_break:
  clr.w    ctrl_status.w
- clr.l    (iorec_kb+6).w            ; Tastaturpuffer löschen
+ clr.l    (iorec_kb+6).w            ; Tastaturpuffer loeschen
 
 break_vt:
 * Zeichenfolge ^C,cr,lf auf die Konsole
@@ -469,7 +469,7 @@ break_vt:
  lea      ctrlc_s(pc),a0
  jsr      str_to_con
 
-* Prozeß beenden mit Rückgabewert EBREAK
+* Prozess beenden mit Rueckgabewert EBREAK
 
  moveq    #1,d1                    ; Speicher freigeben
  moveq    #EBREAK,d0
@@ -480,7 +480,7 @@ break_vt:
 *
 * EQ/NE VTWINDOW *vtwindow( void )
 *
-* Ist der VT52.PRG Server für unsere Applikation, wird ein Zeiger auf
+* Ist der VT52.PRG Server fuer unsere Applikation, wird ein Zeiger auf
 * die WINDOW- Struktur geliefert, sonst NULL
 *
 
@@ -505,7 +505,7 @@ vtw_novt:
 *
 * Ermittelt aktuelle Terminaldaten
 *
-* RÜckgabe:    d0   FALSE, wenn kein VT52-Emulator
+* RUeckgabe:    d0   FALSE, wenn kein VT52-Emulator
 *              d1   Anzahl Cursorspalten
 *              d2   Anzahl Cursorzeilen
 *              a0   Zeiger auf aktuelle x-Cursorposition
@@ -520,7 +520,7 @@ get_termdata:
  move.l   vt_getVDIESC(a2),a2
  jsr      (a2)
  tst.l    d0
- bmi.b    gtd_no_vtemu             ; kein Fenster zuständig
+ bmi.b    gtd_no_vtemu             ; kein Fenster zustaendig
  move.l   d0,a1                    ; a1 = Zeiger auf Pseudo-LineA
  bra.b    gtd_la
 
@@ -573,16 +573,16 @@ Bputch:
 *
 * long ???_ddev_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
-* O_TRUNC wird bei Geräten ignoriert
+* O_TRUNC wird bei Geraeten ignoriert
 *
 
 bios_ddev_open:
  move.l   fd_multi1(a0),a1              ; Prototyp-FD
- move.w   fd_usr3+2(a1),fd_usr1(a0)     ; BIOS- Gerät
+ move.w   fd_usr3+2(a1),fd_usr1(a0)     ; BIOS- Geraet
 ;; 27.6.2002
  cmpi.w   #100,fd_usr1(a0)
  bne.b    bddo_no100
@@ -597,15 +597,15 @@ bddo_no100:
 *
 * long bios_ddev_ioctl(a0 = FD *f,  d0 = int cmd, a1 = void *buf)
 *
-* 10.3.2002: Spezialparameter für Spezial-Rsconf
+* 10.3.2002: Spezialparameter fuer Spezial-Rsconf
 *
 
 bios_ddev_ioctl:
- clr.l    -(sp)                         ; Platz für Rückgabewert
- pea      (sp)                          ; Rückgabewert
+ clr.l    -(sp)                         ; Platz fuer Rueckgabewert
+ pea      (sp)                          ; Rueckgabewert
  move.l   a1,-(sp)
  move.w   d0,-(sp)
- move.w   fd_usr1(a0),-(sp)             ; BIOS-Gerät
+ move.w   fd_usr1(a0),-(sp)             ; BIOS-Geraet
  move.l   #'iocl',-(sp)
  move.l   #$ffffffff,-(sp)
  move.l   #$ffffffff,-(sp)
@@ -615,7 +615,7 @@ bios_ddev_ioctl:
  adda.w   #30,sp
  move.l   (sp)+,d1
  beq.b    ioctl_no_rsconf               ; kein erweitertes Rsconf
- rts                                    ; Rückgabewert von Rsconf liefern
+ rts                                    ; Rueckgabewert von Rsconf liefern
 ioctl_no_rsconf:
  moveq    #EINVFN,d0
  rts
@@ -652,11 +652,11 @@ nul_ddev_read:
 *
 * long nul_ddev_open(a0 = FD *f)
 *
-* O_TRUNC muß ausgewertet werden.
+* O_TRUNC muss ausgewertet werden.
 * Der Dateizeiger ist auf 0 zu stellen, falls nicht fd_fpos := 0
 * ausreicht.
 *
-* O_TRUNC wird bei Geräten ignoriert
+* O_TRUNC wird bei Geraeten ignoriert
 *
 
 nul_ddev_open:
@@ -685,7 +685,7 @@ bios_ddev_read:
  move.l   a1,a6                         ; a6 = Puffer
  moveq    #2,d6
  swap     d6
- move.w   fd_usr1(a0),d6                ; Fcode Bconin/BIOS- Gerät
+ move.w   fd_usr1(a0),d6                ; Fcode Bconin/BIOS- Geraet
  move.l   d0,d7
  bra.b    bmr_nextloop
 bmr_loop:
@@ -717,11 +717,11 @@ bios_ddev_read_nonblocking:
 
  moveq    #2,d6
  swap     d6
- move.w   fd_usr1(a0),d6                ; Fcode Bconin/BIOS- Gerät
+ move.w   fd_usr1(a0),d6                ; Fcode Bconin/BIOS- Geraet
 
  moveq    #1,d5
  swap     d5
- move.w   fd_usr1(a0),d5                ; Fcode Bconstat/BIOS- Gerät
+ move.w   fd_usr1(a0),d5                ; Fcode Bconstat/BIOS- Geraet
 
  bra.b    bmrnb_nextloop
 bmrnb_loop:
@@ -760,7 +760,7 @@ bios_ddev_write:
  move.l   a1,a6                         ; a6 = Puffer
  moveq    #3,d6
  swap     d6
- move.w   fd_usr1(a0),d6                ; Fcode Bconout/BIOS- Gerät
+ move.w   fd_usr1(a0),d6                ; Fcode Bconout/BIOS- Geraet
  move.l   d0,d7
  bra.b    bmw_nextloop
 bmw_loop:
@@ -782,10 +782,10 @@ bmw_nextloop:
 *
 * long bios_prn_write(a0 = FD *f, a1 = char *buf, d0 = long count)
 *
-* Druckerstatus berücksichtigen!
+* Druckerstatus beruecksichtigen!
 *
-* 2.12.95:     Die Funktion geht nicht mehr einzelbyteweise über den
-*              Trap, sondern wird direkt ausgeführt
+* 2.12.95:     Die Funktion geht nicht mehr einzelbyteweise ueber den
+*              Trap, sondern wird direkt ausgefuehrt
 *
 
 bios_prn_write:
@@ -797,7 +797,7 @@ bios_prn_write:
  move.l   a1,a6                         ; a6 = Puffer
  moveq    #3,d6
  swap     d6
- move.w   fd_usr1(a0),d6                ; Fcode Bconout/BIOS- Gerät
+ move.w   fd_usr1(a0),d6                ; Fcode Bconout/BIOS- Geraet
  move.l   d0,d7
  bra.b    bpw_nextloop
 bpw_loop:
@@ -807,7 +807,7 @@ bpw_loop:
  move.l   d6,-(sp)                      ; Bconout(dev, c)
  trap     #$d
  addq.l   #6,sp
- tst.w    d0                            ; bei PRN Status prüfen !
+ tst.w    d0                            ; bei PRN Status pruefen !
  bne.b    bpw_nextloop                  ; kein Fehler
 * Fehler, Timeout
  addq.l   #1,d7
@@ -829,10 +829,10 @@ bpw_ende:
 *                                d1 = long apcode );
 *
 * will schreiben:
-*    liefere immer eine '1' für OK.
+*    liefere immer eine '1' fuer OK.
 * will lesen:
 *    d0 = 0 (polling):   liefere '0' (nicht bereit)
-*    d0 = apcode     :   liefere unselect- Routine zurück.
+*    d0 = apcode     :   liefere unselect- Routine zurueck.
 *
 
 nul_ddev_stat:
@@ -842,7 +842,7 @@ nul_ddev_stat:
  moveq    #1,d0
  bra      _bmstat2                      ; bereit
 nstat_read:
- move.l   d1,d0                         ; polling erwünscht ?
+ move.l   d1,d0                         ; polling erwuenscht ?
  beq      _bmstat2                      ; ja, liefere 0
  lea      nstat_unsel(pc),a0
  move.l   a0,d0
@@ -905,7 +905,7 @@ midi_ddev_stat:
 
 **********************************************************************
 **********************************************************************
-*********************** INPUT für CON ********************************
+*********************** INPUT fuer CON ********************************
 **********************************************************************
 **********************************************************************
 
@@ -952,14 +952,14 @@ input:
  move.w   (a0),d4                  ; home_xpos in d4.low
  addq.w   #1,-6(a6)                ; Zeilenbreite
  clr.w    d7
- clr.w    d6                       ; Länge per Default 0
+ clr.w    d6                       ; Laenge per Default 0
  suba.l   a4,a4                    ; noch keine Ftaste
 inp_mainloop:
  move.w   d4,-(sp)
  add.w    d7,(sp)
  bsr      gotox                    ; gotox(x+zeiger)
  addq.l   #2,sp
- move.l   a4,d0                    ; gerade beim Ausführen einer F-Taste ?
+ move.l   a4,d0                    ; gerade beim Ausfuehren einer F-Taste ?
  beq.b    inp15
  move.b   (a4),d0
  beq.b    inp15                    ; Ende der Ftaste
@@ -983,7 +983,7 @@ inp15:
  beq.b    inp_mainloop             ; Zeiger ist auf Feldanfang
  subq.w   #1,d7
 inp_del:
- bsr      str_del                  ; Zeichen vor Cursorposition löschen
+ bsr      str_del                  ; Zeichen vor Cursorposition loeschen
  bsr      str_at
  moveq    #' ',d0
  bsr      Bputch
@@ -1024,12 +1024,12 @@ inp6:
  addq.w   #1,d7
  bra      inp_mainloop
 inp7:
- cmpi.l   #$520000,d0              ; K_INSERT : Einfügemodus ein
+ cmpi.l   #$520000,d0              ; K_INSERT : Einfuegemodus ein
  bne.b    inp8
  bclr.b   #1,(config_status+3).w
  bra      inp_mainloop
 inp8:
- cmpi.l   #$520030,d0              ; SH-K_INSERT: Einfügemodus aus
+ cmpi.l   #$520030,d0              ; SH-K_INSERT: Einfuegemodus aus
  bne.b    inp_nxt1
  bset.b   #1,(config_status+3).w
  bra      inp_mainloop
@@ -1061,15 +1061,15 @@ inp31:
  move.l   d1,a0                    ; letzte Eingabe
 inp32:
  tst.b    (a0)+
- bne.b    inp32                    ; nächsten String suchen
+ bne.b    inp32                    ; naechsten String suchen
  cmpa.l   #undo_buf+319,a0
  bcc.b    inp10                    ; bin am Ende, nichts tun
 inp33:
  tst.b    (a0)
- beq.b    inp10                    ; Nullstring nicht berücksichtigen
+ beq.b    inp10                    ; Nullstring nicht beruecksichtigen
  move.l   a0,-4(a6)
  move.l   a0,a4
- bra.b    inp_clr                  ; löschen, dann Undo
+ bra.b    inp_clr                  ; loeschen, dann Undo
 
 inp35:
  cmpi.l   #$500000,d0              ; K_DNARROW
@@ -1099,12 +1099,12 @@ inp10:
  tst.l    d0
  beq      inp_mainloop             ; Funktionstaste nicht belegt
  move.l   d0,a4
- addq.l   #3,a4                    ; bei "Fx=" sind 3 Zeichen zu überspringen
+ addq.l   #3,a4                    ; bei "Fx=" sind 3 Zeichen zu ueberspringen
  bra      inp_mainloop
 * Jetzt kommen die druckbaren Zeichen:
 inp20:
  clr.w    d2
- move.b   d0,d2                    ; obere 8 Bit löschen
+ move.b   d0,d2                    ; obere 8 Bit loeschen
  beq      inp_mainloop
  cmp.w    d5,d7                    ; Eingabefeld voll ?
  bge      inp_mainloop
@@ -1130,7 +1130,7 @@ inp90:
 inp92:
 * Rest des Undo- Puffers nach hinten
  move.w   d0,d1
- addq.w   #2,d1                    ; Platz für neuen String
+ addq.w   #2,d1                    ; Platz fuer neuen String
  lea      undo_buf+320,a1          ; Ziel
  move.l   a1,a2
  sub.w    d1,a2                    ; Quelle
@@ -1205,7 +1205,7 @@ gotox:
 *
 * void str_at()
 *
-*  Schreibt den String <char a5[]>, der eine Länge von <int d6> hat,
+*  Schreibt den String <char a5[]>, der eine Laenge von <int d6> hat,
 *  ab Position <int d7> nach Bildschirm- Position <int d4>
 *
 
@@ -1233,7 +1233,7 @@ sa1:
  move.w   (sp)+,d0                 ; ypos vor Ausgabe
 
 * Falls sich der Cursor nach der Ausgabe links befindet und er vorher
-* auf der letzten Zeile stand, muß der Bildschirm gescrollt haben.
+* auf der letzten Zeile stand, muss der Bildschirm gescrollt haben.
 * Folglich wandert unsere Home- Position nach oben
 
  move.l   -10(a6),a0
@@ -1269,9 +1269,9 @@ spa100:
 
 **************************************************************
 *
-* fügt in einen String <char a5[]> der Maximallänge <int d5>
+* fuegt in einen String <char a5[]> der Maximallaenge <int d5>
 * an Position <int d7> das Zeichen <char d2> ein.
-* akt_len (d6) wird entsprechend erhöht
+* akt_len (d6) wird entsprechend erhoeht
 *
 **************************************************************
 
@@ -1279,7 +1279,7 @@ spa100:
 
 str_ins:
  move.l   a5,a1
- adda.w   d7,a1                    ; a0 = Einfügeposition
+ adda.w   d7,a1                    ; a0 = Einfuegeposition
  move.l   a5,a0
  add.w    d6,a0                    ; a0 = String- Ende
  cmp.w    d5,d6
@@ -1299,9 +1299,9 @@ ins90:
 
 **************************************************************
 *
-* nimmt aus einem <char a5[]> der Länge <int d6> an Position
+* nimmt aus einem <char a5[]> der Laenge <int d6> an Position
 * <int d7> ein Zeichen heraus.
-* Die Länge wird entsprechend korrigiert
+* Die Laenge wird entsprechend korrigiert
 *
 **************************************************************
 
@@ -1323,8 +1323,8 @@ sd100:
  rts
 
 * int f_taste(d0 = int nr)
-*  Prüft, ob die Variable "F<nr>" im environment existiert
-*  Rückgabe: Zeiger auf gefundenen String (im env.) oder NULL
+*  Prueft, ob die Variable "F<nr>" im environment existiert
+*  Rueckgabe: Zeiger auf gefundenen String (im env.) oder NULL
 
 f_taste:
  cmpi.b   #10,d0

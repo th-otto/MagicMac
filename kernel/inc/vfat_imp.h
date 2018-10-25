@@ -1,6 +1,6 @@
 /*
 *
-* Headerdaten für die VFAT-Erweiterung des DOS_XFS.
+* Headerdaten fuer die VFAT-Erweiterung des DOS_XFS.
 *
 */
 
@@ -17,10 +17,10 @@ typedef struct {
  WORD          xftype;        /* 0x0c: Pseudodatei- Typ               */
  LONG          xdata;         /* 0x0e: Datenblock                     */
  char          dummy[4];
- WORD          time;          /* 0x16: Zeit  der letzten Änderung     */
- WORD          date;          /* 0x18: Datum der letzten Änderung     */
+ WORD          time;          /* 0x16: Zeit  der letzten Aenderung     */
+ WORD          date;          /* 0x18: Datum der letzten Aenderung     */
  WORD          stcl;          /* 0x1a: erster Cluster                 */
- LONG          flen;          /* 0x1c: Dateilänge                     */
+ LONG          flen;          /* 0x1c: Dateilaenge                     */
 } DIR;
 
 typedef struct {

@@ -1,4 +1,4 @@
-/* Resource Datei Indizes fÅr WINMAN */
+/* Resource Datei Indizes fuer WINMAN */
 
 #define T_WINDOW         0   /* Formular/Dialog */
 #define O_FRAME          0   /* BOX in Baum T_WINDOW */

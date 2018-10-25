@@ -1,4 +1,4 @@
-/* Resource Datei Indizes fÅr WINFRAME */
+/* Resource Datei Indizes fuer WINFRAME */
 
 #define T_WINDOW         0   /* Formular/Dialog */
 #define O_FRAME          0   /* IBOX in Baum T_WINDOW */

@@ -14,7 +14,7 @@ Setprt_inq     EQU $0021ffff       ; xbios Setprt(-1)
 
 **********************************************************************
 *
-* Routine, die normalerweise in scr_dump hängt
+* Routine, die normalerweise in scr_dump haengt
 *
 
 do_hardcopy:
@@ -26,25 +26,25 @@ do_hardcopy:
 
  lea      (sp),a0
  moveq    #1,d2
- pea      (a0)                     ; Parameter für _Prtblk
+ pea      (a0)                     ; Parameter fuer _Prtblk
  move.l   _v_bas_ad,(a0)+          ; pb_scrptr, Zeiger auf Bildschirm
  clr.w    (a0)+                    ; pb_offset
  moveq    #0,d0
  move.b   sshiftmd,d0
  lea      lblFC0D8E(pc),a1
  add.w    d0,a1
- add.w    d0,a1                    ; für Wortzugriff
+ add.w    d0,a1                    ; fuer Wortzugriff
  move.w   (a1),(a0)+               ; pb_width, Bildschirmbreite in Pixeln
- move.w   6(a1),(a0)+              ; pb_height, Bildschirmhöhe  in Pixeln
+ move.w   6(a1),(a0)+              ; pb_height, Bildschirmhoehe  in Pixeln
  clr.l    (a0)+                    ; pb_left/pb_right
- move.w   d0,(a0)+                 ; pb_screz, Auflösung (0,1,2)
+ move.w   d0,(a0)+                 ; pb_screz, Aufloesung (0,1,2)
 
 ;move.w   pr_conf,d1
 
  move.w   d1,d0
  lsr.w    #3,d0
  and.w    d2,d0
- move.w   d0,(a0)+                 ; pb_prrez, Qualität/Test
+ move.w   d0,(a0)+                 ; pb_prrez, Qualitaet/Test
  move.l   #$ffff8240,(a0)+         ; pb_colptr, Zeiger auf Farbpalette
  move.w   d1,d0
  and.w    #7,d0
@@ -61,8 +61,8 @@ do_hardcopy:
  rts
 
 lblFC0D8E:
- DC.W     320,640,640         ; horizontale Auflösungen
- DC.W     200,200,400         ; vertikale Auflösungen
+ DC.W     320,640,640         ; horizontale Aufloesungen
+ DC.W     200,200,400         ; vertikale Aufloesungen
 
 lblFC0D9A:
  DC.B     $00,$02,$01,$ff,$03,$ff,$ff,$ff
@@ -89,8 +89,8 @@ _Prtblk:
 * lblFC215C:
  movea.l  4(sp),a0
  movem.l  d3/d4/d5/d6/d7/a3/a4/a5/a6,-(sp)
- move.l   sp,prb_ruecksprung       ; für Fehlerbehandlung
- lea      -96(sp),sp               ; Platz für 16+16+16 Integers
+ move.l   sp,prb_ruecksprung       ; fuer Fehlerbehandlung
+ lea      -96(sp),sp               ; Platz fuer 16+16+16 Integers
  movea.l  a0,a5
  lea      32(sp),a4                ; int  prb_commoncol[16]
  lea      64(sp),a3                ; int  prb_druck_col[16]
@@ -141,7 +141,7 @@ lblFC2200:
  subq.w   #1,d0
  seq      prb_color_mp             ; Atari Matrix farbig
  subq.w   #1,d0
- beq      prb_error                ; kein Typenrad unterstützen
+ beq      prb_error                ; kein Typenrad unterstuetzen
  subq.w   #1,d0
  seq.b    prb_epson                ; Epson
  bne.b    no_qualtest              ; kein Epson
@@ -184,9 +184,9 @@ lblFC23BC:
  lea      (sp),a6                  ; prb_rgb
  move.l   a4,a1                    ; prb_commoncol
  move.l   a3,a2                    ; prb_druck_col
- moveq    #15,d2                   ; dbra- Zähler
+ moveq    #15,d2                   ; dbra- Zaehler
 lblFC23C2:
- moveq    #8,d1                    ; Default für prb_commoncol
+ moveq    #8,d1                    ; Default fuer prb_commoncol
  move.w   (a0)+,d0
  and.w    #$777,d0
  cmpi.w   #$777,d0
@@ -457,7 +457,7 @@ lblFC29C6:
 lblFC2A42:
  lea      (a6),a0                  ; prb_msk
  clr.l    (a0)+
- clr.l    (a0)                     ; 8 Bytes löschen
+ clr.l    (a0)                     ; 8 Bytes loeschen
  lea      prb_cix(pc),a0
  lea      prb_acht(pc),a1
  moveq    #3,d1
@@ -531,8 +531,8 @@ lblFC2B8A:
  move.b   (a1),(a2)
  lea      prb_cix(pc),a0
  adda.w   d7,a0
- adda.w   d7,a0                    ; 2*i für int- Zugriff
- move.w   d0,a1                    ; 2*prb_bitbild für int- Zugriff
+ adda.w   d7,a0                    ; 2*i fuer int- Zugriff
+ move.w   d0,a1                    ; 2*prb_bitbild fuer int- Zugriff
  move.w   0(sp,a1.w),(a0)
  move.w   64(sp,a1),prb_acht-prb_cix(a0)   ; prb_druck_col[prb_bitbild]
 
@@ -647,7 +647,7 @@ lblFC2DEC:
 lblFC2DF2:
  clr.b    prb_ch
  move.w   #$80,prb_zpvo
- moveq    #7,d2                    ; dbra- Zähler
+ moveq    #7,d2                    ; dbra- Zaehler
  move.l   a6,a0
 lblFC2E04:
  move.b   (a0)+,d0                 ; prb_msk
@@ -825,7 +825,7 @@ lblFC2832:
 *
 * void prtch(d0 = char c)
 *
-* Bricht bei Fehler sofort über longjmp ab.
+* Bricht bei Fehler sofort ueber longjmp ab.
 *
 
 lf:
@@ -871,7 +871,7 @@ prtstr_end:
 
 **********************************************************************
 *
-* Druckerausgabe für die interne Hardcopyfunktion.
+* Druckerausgabe fuer die interne Hardcopyfunktion.
 * Der 68030- Datencache ist bereits in int_vbl abgeschaltet worden
 *
 
@@ -1009,7 +1009,7 @@ exit:
 get_sysvars:
  move.l   _p_cookies,a0
  move.l   a0,d0
- beq.b    getsv_end                ; Zeiger ungültig
+ beq.b    getsv_end                ; Zeiger ungueltig
 getcookie_loop:
  move.l   (a0)+,d1                 ; Cookiename holen
  beq.b    getsv_end                ; Ende der Cookie- Liste

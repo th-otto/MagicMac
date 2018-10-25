@@ -8,7 +8,7 @@
 
 ;*********************************************************************************************                
 ; .22 
-;neue exception routine für mehr Information
+;neue exception routine fuer mehr Information
 
 exception:
 		addq.l #2,sp
@@ -26,7 +26,7 @@ exception4:	lea	startup_stk.w,SP ;den Stack initialisieren
 		lea	proc_stk.w,A0
 exception2:	move.w	(A1)+,(A0)+	;16 Worte vom SSP merken
 		dbra	D0,exception2
-		move.l	#$12345678,proc_lives.w ;Daten für gültig erklären
+		move.l	#$12345678,proc_lives.w ;Daten fuer gueltig erklaeren
 
 bombs:		lea	tb1(PC),A0	;zeiger auf starttext
 		bsr	string_out	;ausgeben
@@ -44,7 +44,7 @@ bomb_fa4:	lea	tbev(PC),A0	;zeiger auf exception text
 		subq.w	#1,D1		;mit bus error beginnen
 bomb_fa1:	subq.w	#1,D1		;
 		beq	bomb_fa2	;ok->weg
-bomb_fa3:	move.b	(A0)+,D6	;nächstes zeichen
+bomb_fa3:	move.b	(A0)+,D6	;naechstes zeichen
 		beq	bomb_fa1	;ende zeichenkette->
 		bra	bomb_fa3	;nein next
 bomb_fa2:	bsr	string_out	;text ausgeben
@@ -95,20 +95,20 @@ bomb_fa7:	move.l	(A1)+,D2	;wert hohlen
 		move.w	#2,-(SP)
 		trap	#13		;auf tastendruck warten
 		addq.l	#4,SP		;stack korrigieren
-;fa:14.9.97 neu: trap #3-> mit return normal ins programm zurück->testpunkt
+;fa:14.9.97 neu: trap #3-> mit return normal ins programm zurueck->testpunkt
 exitcrash:	cmp.w	#$8c,d7		;trap #3?
 		beq	trap3exit	;ja->
-		move.l	#$093A,$04A2.w	;BIOS-Stackpointer zurücksetzen
+		move.l	#$093A,$04A2.w	;BIOS-Stackpointer zuruecksetzen
 		move.l	#$4CFFFF,-(SP)	;
 		trap	#1		;Pterm(-1) versuchen
-;		jmp	kaltstart	;RESET, wenn mißlungen
+;		jmp	kaltstart	;RESET, wenn misslungen
 move.w #3,-(SP)
 move.l #'AnKr',-(SP)
 jmp Puntaes
 trap3exit:	move.l	proc_usp.w,a0
-		move	a0,usp          	;user stack pointer zurück
-		movem.l proc_regs.w,D0-D7/A0-A7 ;die Register zurück
-		rte				;rücksprung
+		move	a0,usp          	;user stack pointer zurueck
+		movem.l proc_regs.w,D0-D7/A0-A7 ;die Register zurueck
+		rte				;ruecksprung
 
 reg_aus:	moveq	#7,D0
 reg_aus1:	rol.l	#4,D2		;next hex zahl
@@ -125,7 +125,7 @@ reg_aus2:	bsr	zei_out 	;ausgeben
 
 string_out:	move.b	(A0)+,D6	;zeichen holen
 		bne	str_out1	;fertig? nein->
-		rts			;zurück
+		rts			;zurueck
 str_out1:	bsr	zei_out 	;zeichen out
 		bra	string_out	;und von vorn
 
@@ -136,7 +136,7 @@ zei_out:	movem.l D0-D4/A0-A1,-(SP) ;register sichern
 		move.w	#3,-(SP)
 		trap	#13		;zeichen ausgeben
 		addq.l	#6,SP
-		movem.l (SP)+,D0-D4/A0-A1 ;register zurück
+		movem.l (SP)+,D0-D4/A0-A1 ;register zurueck
 		rts
 
 ; .24 .28
@@ -145,7 +145,7 @@ zei_out:	movem.l D0-D4/A0-A1,-(SP) ;register sichern
 ; ausserdem sind auch noch die 68060 exeptions dabei.
 
 
-tb1:		DC.B 27,'H',10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,27,'p',27,'KException ausgelöst durch: ',0
+tb1:		DC.B 27,'H',10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,27,'p',27,'KException ausgel',$94,'st durch: ',0
 tb2:		DC.B 10,13,27,'K',10,13,27,'KPC=', 0,' SR=',0,' USP=',0,' Formatword=',0,' (PC-4)=',0
 tb3:		DC.B 10,13,27,'KD0-D7=',0,10,13,27,'KA0-A7=',0,10,13,27,'KStack=',0
 tb4:		DC.B 10,13,27,'K',10,13,27,'K < weiter mit beliebiger Taste >',27,'q',0

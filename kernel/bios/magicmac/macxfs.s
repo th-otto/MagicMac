@@ -30,7 +30,7 @@ _hz_200        EQU $4ba
      XREF Mac_xfsx                      ; von MAC_BIOS
      XREF dmdx
      XREF pe_slice
-     XREF appl_begcritic,appl_endcritic ; ändert d2/a2
+     XREF appl_begcritic,appl_endcritic ; aendert d2/a2
      XREF Mappl_IOcomplete              ; von AESEVT
 
 
@@ -128,7 +128,7 @@ io_sizeof:
 
 /*
 *
-* Für jedes eventuelle Laufwerk (A..Z) wird ein Deskriptor
+* Fuer jedes eventuelle Laufwerk (A..Z) wird ein Deskriptor
 * angelegt, mit dem das Laufwerk gesperrt werden und der
 * letzte Zugriff eingetragen werden kann.
 *
@@ -139,14 +139,14 @@ xfds_dirty:         DS.B 1              ; "dirty"
 xfds_resvd:         DS.B 1
 xfds_lastacc:       DS.L 1              ; letzter Zugriff
 xfds_sem:           DS.B bl_sizeof      ; Semaphore
-;xfds_iopb:         DS.B io_sizeof      ; PB für xfs_sync
+;xfds_iopb:         DS.B io_sizeof      ; PB fuer xfs_sync
 xfds_sizeof:
 
 /*
 *
-* Dies sind die eigentlichen Treiber, die über eine
+* Dies sind die eigentlichen Treiber, die ueber eine
 * Assemblerschnittstelle mit dem MagiX- Kernel und
-* über eine C-Schnittstelle mit dem MAC-Teil
+* ueber eine C-Schnittstelle mit dem MAC-Teil
 * kommunizieren.
 *
 */
@@ -165,7 +165,7 @@ fd_refnum:          DS.W 1         ; MacIntosh-FD
 
 mxfs:
  DC.B     'MMAC_HFS'               ; Name
- DC.L     0                        ; nächstes XFS
+ DC.L     0                        ; naechstes XFS
  DC.L     0                        ; Flags
  DC.L     mxfs_init
  DC.L     mxfs_sync
@@ -222,7 +222,7 @@ mdev:
 * die kleinste Atari-Laufwerknummer auf
 * demselben Mac-Volume.
 *
-* Ändert a2,d0,d2
+* Aendert a2,d0,d2
 *
 
 mxfs_unique_vrefnum:
@@ -249,11 +249,11 @@ mxuvn_found:
 *
 * Diese Routine wird vom MacOS im Interrupt
 * aufgerufen, wenn ein Transfer beendet wurde.
-* Die Routine darf a0-a1 und d0-d2 ändern.
+* Die Routine darf a0-a1 und d0-d2 aendern.
 *
-* Die Routine trägt den Atari-Fehlercode statt
+* Die Routine traegt den Atari-Fehlercode statt
 * der "unselect"-Routine ein. Der Fehlercode wird
-* dann von evnt_IO zurückgegeben.
+* dann von evnt_IO zurueckgegeben.
 *
 * Achtung: Die unteren 32k vom MacOS sind hier
 * eingeblendet
@@ -288,10 +288,10 @@ mdev_unsel:
 *
 * a2 = long *mxfs_get2_xfds( a0 = DMD *dmd )
 *
-* Ermittelt den Zeiger auf den zugehörigen
+* Ermittelt den Zeiger auf den zugehoerigen
 * xfds-Tabelleneintrag.
 *
-* Ändert nur a2,d2
+* Aendert nur a2,d2
 *
 
 mxfs_get_xfds:
@@ -318,11 +318,11 @@ mxfs_diskchange:
 mxfs_diskchange2:
  cmpi.l   #E_CHNG,d0
  bne.b    mxdc_ok
- move.l   (sp)+,a0            ; DMD zurück
+ move.l   (sp)+,a0            ; DMD zurueck
  move.w   d_drive(a0),d0
  jmp      diskchange
 mxdc_ok:
- addq.l   #4,sp               ; DMD überlesen
+ addq.l   #4,sp               ; DMD ueberlesen
  rts
 
 
@@ -349,7 +349,7 @@ mxfs_init:
  moveq    #NDRVS-1,d7
 mxi_loop:
  sf.b     xfds_dirty(a6)
- clr.l    xfds_lastacc(a6)         ; Zugriffszeit löschen
+ clr.l    xfds_lastacc(a6)         ; Zugriffszeit loeschen
  move.l   #'_MXD',d1
  lea      xfds_sem(a6),a0
  moveq    #SEM_CREATE,d0
@@ -377,7 +377,7 @@ mxfs_sync:
      IFNE BACKGR_DMA
 
 *
-* Prüfen, ob wir nicht die alte Routine aufrufen müssen
+* Pruefen, ob wir nicht die alte Routine aufrufen muessen
 *
 
  move.l   MSys+MacSys_xfs_dev,a2
@@ -387,7 +387,7 @@ mxfs_sync:
  bmi      mdev_sync_old
 
 *
-* sicherstellen, daß jedes Volume nur einmal ge-sync-t wird.
+* sicherstellen, dass jedes Volume nur einmal ge-sync-t wird.
 *
 
  move.w   d_drive(a0),d0                ; Laufwerknummer
@@ -401,13 +401,13 @@ mxfs_sync:
 
  mulu     #xfds_sizeof,d0
  move.l   Mac_xfsx,a2
- adda.w   d0,a2                         ; zugehöriger XFDS
+ adda.w   d0,a2                         ; zugehoeriger XFDS
 
 *
-* Feststellen, ob wir "sync"en müssen
+* Feststellen, ob wir "sync"en muessen
 *
 
- tst.b    xfds_dirty(a2)                ; geändert?
+ tst.b    xfds_dirty(a2)                ; geaendert?
  beq      mxsy_ende                     ; nein
  tst.l    xfds_lastacc(a2)              ; gerade aktiv ?
  beq      mxsy_ende                     ; ja, nix machen
@@ -431,7 +431,7 @@ mxfs_sync:
  moveq    #SEM_SET,d0
  jsr      evnt_sem
  tst.l    d0
- bne      mxfs_sync_ende                ; -1: Reentranz/1: TimeOut (unmöglich)
+ bne      mxfs_sync_ende                ; -1: Reentranz/1: TimeOut (unmoeglich)
 
  clr.l    xfds_lastacc(a6)              ; "im Zugriff"
 
@@ -445,7 +445,7 @@ mxfs_sync:
 ; move.l  act_appl,xfds_iopb+ioMagiCApp(a6)
  move.l   #mdev_completion_routine,ioCompletion(sp)
  move.l   #mdev_unsel,ioMagiCUnsel(sp)  ; Unselect-Routine bzw. Retcode
- move.l   act_appl,ioMagiCApp(sp)       ; für wakeup
+ move.l   act_appl,ioMagiCApp(sp)       ; fuer wakeup
      ELSE
  clr.l    ioCompletion(sp)
      ENDIF
@@ -496,14 +496,14 @@ mxfs_sync_loop:
      ENDIF
 
 *
-* "dirty" löschen und Semaphore freigeben
+* "dirty" loeschen und Semaphore freigeben
 *
 
 mxfs_sync_endwait:
  sf.b     xfds_dirty(a6)                ; nicht mehr "dirty"
  move.l   _hz_200,xfds_lastacc(a6)      ; Zeit des letzten Zugriffs!
 
- move.l   d0,d7                         ; Rückgabewert merken
+ move.l   d0,d7                         ; Rueckgabewert merken
  lea      xfds_sem(a6),a0
  moveq    #SEM_FREE,d0
  jsr      evnt_sem
@@ -548,7 +548,7 @@ mdev_sync_old:
 *
 * Ein Programm wird gerade terminiert. Das XFS kann alle von diesem
 * Programm belegten Ressourcen freigeben.
-* Alle Ressourcen, von dem der Kernel weiß (d.h. geöffnete Dateien)
+* Alle Ressourcen, von dem der Kernel weiss (d.h. geoeffnete Dateien)
 * sind bereits vom Kernel freigegeben worden.
 *
 
@@ -570,7 +570,7 @@ mxfs_pterm:
 * long mxfs_garbcoll( a0 = DMD *dir )
 *
 * Sucht nach einem unbenutzten FD
-* Rückgabe TRUE, wenn mindestens einer gefunden wurde.
+* Rueckgabe TRUE, wenn mindestens einer gefunden wurde.
 *
 
 mxfs_garbcoll:
@@ -582,7 +582,7 @@ mxfs_garbcoll:
 *
 * void mxfs_freeDD( a0 = DD *dir )
 *
-* Der Kernel hat den Referenzzähler des DD auf 0 dekrementiert.
+* Der Kernel hat den Referenzzaehler des DD auf 0 dekrementiert.
 * Die Struktur kann jetzt freigegeben werden.
 *
 
@@ -595,7 +595,7 @@ mxfs_freeDD:
 * long mxfs_drv_open( a0 = DMD *dmd )
 *
 * Initialisiert den DMD.
-* Diskwechsel auf der MAC-Seite sind z.Zt. noch nicht möglich,
+* Diskwechsel auf der MAC-Seite sind z.Zt. noch nicht moeglich,
 * daher wird bereits hier ein E_OK geliefert.
 *
 
@@ -643,8 +643,8 @@ drvop_err:
 *
 * long mxfs_drv_close( a0 = DMD *dmd , d0 = int mode)
 *
-* mode == 0:   Frage, ob schließen erlaubt, ggf. schließen
-*         1:   Schließen erzwingen, muß E_OK liefern
+* mode == 0:   Frage, ob schliessen erlaubt, ggf. schliessen
+*         1:   Schliessen erzwingen, muss E_OK liefern
 *
 
 mxfs_drv_close:
@@ -685,39 +685,39 @@ drvcl_err:
 * einen DD um.
 *
 * mode == 0: pathname zeigt auf eine beliebige Datei. Gib den DD
-*            zurück, in dem die Datei liegt.
+*            zurueck, in dem die Datei liegt.
 *            gib in a0 einen Zeiger auf den isolierten Dateinamen
-*            zurück.
+*            zurueck.
 *         1: pathname ist selbst ein Verzeichnis, gib dessen DD
-*            zurück, a0 ist danach undefiniert.
+*            zurueck, a0 ist danach undefiniert.
 *
-* Rückgabe:
-*  d0 = DD des Pfades, Referenzzähler entsprechend erhöht
-*  d1 = Rest- Dateiname ohne beginnenden '\'
+* Rueckgabe:
+*  d0 = DD des Pfades, Referenzzaehler entsprechend erhoeht
+*  d1 = Rest- Dateiname ohne beginnenden '\\'
 * oder
 *  d0 = ELINK
-*  d1 = Restpfad ohne beginnenden '\'
+*  d1 = Restpfad ohne beginnenden '\\'
 *  a0 = DD des Pfades, in dem der symbolische Link liegt. Dies ist
 *       wichtig bei relativen Pfadangaben im Link.
 *  a1 = NULL
 *            Der Pfad stellt den Parent des Wurzelverzeichnisses
 *            dar, der Kernel kann, wenn das Laufwerk U: ist, auf
-*            U:\ zurückgehen.
-*  a1 = Pfad des symbolischen Links. Der Pfad enthält einen
-*            symbolischen Link, womöglich auf ein
-*            anderes Laufwerk. Der Kernel muß den Restpfad <a0>
+*            U:\ zurueckgehen.
+*  a1 = Pfad des symbolischen Links. Der Pfad enthaelt einen
+*            symbolischen Link, womoeglich auf ein
+*            anderes Laufwerk. Der Kernel muss den Restpfad <a0>
 *            relativ zum neuen DD <a0> umwandeln.
-*            a1 zeigt auf ein Wort für die Zeichenkettenlänge
+*            a1 zeigt auf ein Wort fuer die Zeichenkettenlaenge
 *            (gerade Zahl auf gerader Adresse, inkl. EOS),
 *            danach folgt die Zeichenkette. Der Puffer kann
-*            flüchtig sein, der Kernel kopiert den Pfad um.
+*            fluechtig sein, der Kernel kopiert den Pfad um.
 *
 *
-* z.Zt. werden keine SymLinks unterstützt. Auch der Parent eines
+* z.Zt. werden keine SymLinks unterstuetzt. Auch der Parent eines
 * Wurzelverzeichnisses wird nicht korrekt behandelt.
-* Es wäre sinnvoll, einen Überblick über alle angeforderten DDs zu haben, um
+* Es waere sinnvoll, einen Ueberblick ueber alle angeforderten DDs zu haben, um
 * einer bereits referenzierten dirID keinen neuen Deskriptor anfordern
-* zu müssen, sondern einfach den Referenzzähler zu erhöhen.
+* zu muessen, sondern einfach den Referenzzaehler zu erhoehen.
 *
 
 mxfs_path2DD:
@@ -727,8 +727,8 @@ mxfs_path2DD:
  move.l   a5,-(sp)
  move.l   MSys+MacSys_a5,a5
  MAC
- move.w   d_drive(a2),-(sp)        ; für alten Emulator: Rückgabe vorbesetzen
- suba.w   #12,sp                   ; Platz für:
+ move.w   d_drive(a2),-(sp)        ; fuer alten Emulator: Rueckgabe vorbesetzen
+ suba.w   #12,sp                   ; Platz fuer:
                                    ;  Zeiger auf Rest-Dateiname
                                    ;  dirID des Pfads, in dem SymLink liegt
                                    ;  Zeiger auf den SymLink
@@ -763,21 +763,21 @@ mxfs_path2DD:
  add.w    d2,a2
  move.l   (a2),(sp)                ; DMD wechseln
  bge.b    p2d_samedrv
- moveq    #EPTHNF,d0               ; neuer DMD ungültig???
+ moveq    #EPTHNF,d0               ; neuer DMD ungueltig???
 
 p2d_samedrv:
  cmpi.l   #ELINK,d0                ; Symlink ?
  beq.b    p2d_link                 ; ja!
- tst.l    d0                       ; Rückgabewert...
+ tst.l    d0                       ; Rueckgabewert...
  bmi.b    p2d_err                  ; ist Fehler
  move.l   d1,-(sp)                 ; Dateinamen merken
  move.l   d0,-(sp)                 ; DirID merken
  jsr      int_malloc               ; DD allozieren
  move.l   d0,a0                    ; a0 = DD *
  move.l   (sp)+,dd_dirid(a0)       ; DirID in den DD eintragen
- move.l   (sp)+,d1                 ; Dateinamen zurück
+ move.l   (sp)+,d1                 ; Dateinamen zurueck
  move.l   (sp),dd_dmd(a0)          ; DMD in den DD eintragen
- addq.w   #1,dd_refcnt(a0)         ; Referenzzähler auf 1
+ addq.w   #1,dd_refcnt(a0)         ; Referenzzaehler auf 1
 ;move.l   a0,d0
 p2d_err:
  bra      mxfs_diskchange2
@@ -790,10 +790,10 @@ p2d_link:
  jsr      int_malloc               ; DD allozieren
  move.l   d0,a2                    ; a2 = DD *
  move.l   (sp)+,dd_dirid(a2)       ; DirID in den DD eintragen
- move.l   (sp)+,d1                 ; Dateinamen zurück
- move.l   (sp)+,a1                 ; Symlink zurück
+ move.l   (sp)+,d1                 ; Dateinamen zurueck
+ move.l   (sp)+,a1                 ; Symlink zurueck
  move.l   (sp)+,dd_dmd(a2)         ; DMD in den DD eintragen
- addq.w   #1,dd_refcnt(a2)         ; Referenzzähler auf 1
+ addq.w   #1,dd_refcnt(a2)         ; Referenzzaehler auf 1
  move.l   #ELINK,d0
  rts
 p2d_ende:
@@ -806,7 +806,7 @@ p2d_ende:
 * long mxfs_sfirst(a0 = DD *d, a1 = char *name, d0 = DTA *dta,
 *                  d1 = int attrib)
 *
-* Rückgabe:    d0 = errcode
+* Rueckgabe:    d0 = errcode
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -833,7 +833,7 @@ mxfs_sfirst:
 *
 * long mxfs_snext(a0 = DTA *dta, a1 = DMD *d)
 *
-* Rückgabe:    d0 = errcode
+* Rueckgabe:    d0 = errcode
 *             oder
 *              d0 = ELINK
 *              a0 = char *link
@@ -857,13 +857,13 @@ mxfs_snext:
 * d0 = FD * mxfs_fopen(a0 = DD *d, a1 = char *name, d0 = int omode,
 *                      d1 = int attrib )
 *
-* Öffnet und/oder erstellt Dateien, Öffnet den Dateitreiber.
+* Oeffnet und/oder erstellt Dateien, Oeffnet den Dateitreiber.
 * Der Open- Modus ist vom Kernel bereits in die interne
 * MagiX- Spezifikation konvertiert worden.
 *
-* Eine Wiederholung im Fall E_CHNG wird vom Kernel übernommen.
+* Eine Wiederholung im Fall E_CHNG wird vom Kernel uebernommen.
 *
-* Rückgabe:
+* Rueckgabe:
 * d0 = ELINK: Datei ist symbolischer Link
 *             a0 ist der Dateiname des symbolischen Links
 *
@@ -887,7 +887,7 @@ mxfs_fopen:
  ATARI
  move.l   (sp)+,a5
 
- tst.l    d0                       ; Rückgabewert
+ tst.l    d0                       ; Rueckgabewert
  bmi.b    fop_err                  ; ist Fehlercode
  move.w   d0,-(sp)                 ; RefNum (d.h. Mac-Handle (16 Bit))
  jsr      int_malloc               ; FD allozieren
@@ -907,13 +907,13 @@ fop_err:
 *
 * long mxfs_fdelete(a0 = DD *d, a1 = char *name)
 *
-* Eine Wiederholung im Fall E_CHNG wird vom Kernel übernommen.
+* Eine Wiederholung im Fall E_CHNG wird vom Kernel uebernommen.
 *
-* Rückgabe:
+* Rueckgabe:
 * d0 = ELINK: Datei ist symbolischer Link
 *             a0 ist der Dateiname des symbolischen Links
 *
-* Es dürfen keine SubDirs oder Labels gelöscht werden.
+* Es duerfen keine SubDirs oder Labels geloescht werden.
 *
 
 mxfs_fdelete:
@@ -965,8 +965,8 @@ mxfs_frename:
 * long mxfs_xattr( a0 = DD *dir, a1 = char *name, d0 = XATTR *xa,
 *                  d1 = int mode )
 *
-* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurück)
-*         1:   Folge nicht  (d.h. erstelle XATTR für den Link)
+* mode == 0:   Folge symbolischen Links  (d.h. gib ELINK zurueck)
+*         1:   Folge nicht  (d.h. erstelle XATTR fuer den Link)
 *
 
 mxfs_xattr:
@@ -991,7 +991,7 @@ mxfs_xattr:
 * long mxfs_attrib( a0 = DD *dir, a1 = char *name, d0 = int mode,
 *                   d1 = int attrib )
 *
-* Rückgabe:    >= 0      Attribut
+* Rueckgabe:    >= 0      Attribut
 *              <  0      Fehler
 *
 * mode == 0:   Lies Attribut
@@ -1020,7 +1020,7 @@ mxfs_attrib:
 * long mxfs_chown( a0 = DD *dir, a1 = char *name, d0 = int uid,
 *                  d1 = int gid )
 *
-* Rückgabe:    == 0      OK
+* Rueckgabe:    == 0      OK
 *              <  0      Fehler
 *
 
@@ -1045,7 +1045,7 @@ mxfs_chown:
 *
 * long mxfs_chmod( a0 = DD *dir, a1 = char *name, d0 = int mode )
 *
-* Rückgabe:    == 0      OK
+* Rueckgabe:    == 0      OK
 *              <  0      Fehler
 *
 
@@ -1069,7 +1069,7 @@ mxfs_chmod:
 *
 * long mxfs_dcreate(a0 = DD *d, a1 = char *name, d0 = int mode )
 *
-* mode ist üblicherweise "directory file" mit RWXRwXRwX
+* mode ist ueblicherweise "directory file" mit RWXRwXRwX
 *
 *
 * Hier wird "mode" ignoriert!
@@ -1180,7 +1180,7 @@ dop_ok:
 * long mxfs_dreaddir( a0 = void *dh, d0 = int len, a1 = char *buf,
 *                     d1 = XATTR *xattr, d2 = long *xr )
 *
-* FÜr Dreaddir (xattr = NULL) und Dxreaddir
+* FUer Dreaddir (xattr = NULL) und Dxreaddir
 *
 
 mxfs_dreaddir:
@@ -1267,8 +1267,8 @@ mxfs_dclosedir:
 *                  i.e. to a maximum 8 character base name and a maxi-
 *                  mum 3 character extension.
 *         6:   0 = case-sensitiv
-*              1 = nicht case-sensitiv, immer in Großschrift
-*              2 = nicht case-sensitiv, aber unbeeinflußt
+*              1 = nicht case-sensitiv, immer in Grossschrift
+*              2 = nicht case-sensitiv, aber unbeeinflusst
 *
 *      If  any  of these items are unlimited, then 0x7fffffffL is
 *      returned.
@@ -1404,7 +1404,7 @@ mxfs_readlink:
 * long mxfs_dcntl( a0 = DD *d, a1 = char *name, d0 = int cmd,
 *                  d1 = long arg )
 *
-* Führt Spezialfunktionen aus
+* Fuehrt Spezialfunktionen aus
 *
 
 mxfs_dcntl:
@@ -1441,7 +1441,7 @@ mdev_read:
      IFNE BACKGR_DMA
 
 *
-* Prüfen, ob wir nicht die alte Routine aufrufen müssen
+* Pruefen, ob wir nicht die alte Routine aufrufen muessen
 *
 
  move.l   MSys+MacSys_xfs_dev,a2
@@ -1465,7 +1465,7 @@ mdev_read:
 *
 
 ;move.l   a0,a0                    ; FD
- bsr      mxfs_get_xfds            ; ändert nicht a0/a1/d0
+ bsr      mxfs_get_xfds            ; aendert nicht a0/a1/d0
  move.l   a2,a6                    ; a6 = Zeiger auf letzte Zugriffszeit
 
 *
@@ -1477,7 +1477,7 @@ mdev_read:
  moveq    #SEM_SET,d0
  jsr      evnt_sem
  tst.l    d0
- bne      mdev_rd_ende             ; -1: Reentranz/1: TimeOut (unmöglich)
+ bne      mdev_rd_ende             ; -1: Reentranz/1: TimeOut (unmoeglich)
 
  clr.l    xfds_lastacc(a6)         ; gerade in Benutzung!
 
@@ -1493,7 +1493,7 @@ mdev_read:
      IF   EVNT_IO
  move.l   #mdev_completion_routine,ioCompletion(sp)
  move.l   #mdev_unsel,ioMagiCUnsel(sp)  ; Unselect-Routine bzw. Retcode
- move.l   act_appl,ioMagiCApp(sp)       ; für wakeup
+ move.l   act_appl,ioMagiCApp(sp)       ; fuer wakeup
      ELSE
  clr.l    ioCompletion(sp)
      ENDIF
@@ -1542,7 +1542,7 @@ mdev_rd_err:
 *
 
 ;jsr      appl_endcritic           ; darf wieder terminiert werden
- move.l   d0,a4                    ; Rückgabewert merken
+ move.l   d0,a4                    ; Rueckgabewert merken
  lea      xfds_sem(a6),a0
  moveq    #SEM_FREE,d0
  jsr      evnt_sem
@@ -1579,7 +1579,7 @@ mdev_write:
      IFNE BACKGR_DMA
 
 *
-* Prüfen, ob wir nicht die alte Routine aufrufen müssen
+* Pruefen, ob wir nicht die alte Routine aufrufen muessen
 *
 
  move.l   MSys+MacSys_xfs_dev,a2
@@ -1615,7 +1615,7 @@ mdev_write:
  moveq    #SEM_SET,d0
  jsr      evnt_sem
  tst.l    d0
- bne      mdev_wr_ende             ; -1: Reentranz/1: TimeOut (unmöglich)
+ bne      mdev_wr_ende             ; -1: Reentranz/1: TimeOut (unmoeglich)
 
  clr.l    xfds_lastacc(a6)         ; gerade in Benutzung!
 
@@ -1631,7 +1631,7 @@ mdev_write:
      IF   EVNT_IO
  move.l   #mdev_completion_routine,ioCompletion(sp)
  move.l   #mdev_unsel,ioMagiCUnsel(sp)  ; Unselect-Routine bzw. Retcode
- move.l   act_appl,ioMagiCApp(sp)       ; für wakeup
+ move.l   act_appl,ioMagiCApp(sp)       ; fuer wakeup
      ELSE
  clr.l    ioCompletion(sp)
      ENDIF
@@ -1683,7 +1683,7 @@ mdev_wr_loop:
 mdev_wr_ok:
  move.l   ioActCount(sp),d0
 mdev_wr_err:
- st.b     xfds_dirty(a6)           ; Daten geändert
+ st.b     xfds_dirty(a6)           ; Daten geaendert
  move.l   _hz_200,xfds_lastacc(a6) ; Zeit des letzten Zugriffs!
 
 *
@@ -1691,7 +1691,7 @@ mdev_wr_err:
 *
 
 ;jsr      appl_endcritic           ; darf wieder terminiert werden
- move.l   d0,a4                    ; Rückgabewert merken
+ move.l   d0,a4                    ; Rueckgabewert merken
  lea      xfds_sem(a6),a0
  moveq    #SEM_FREE,d0
  jsr      evnt_sem
@@ -1726,7 +1726,7 @@ mdev_wr_old:
 * mode & 0x0001:    cooked
 * mode & 0x0002:    echo mode
 *
-* Rückgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
+* Rueckgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
 *           0x0000FF1A bei EOF
 *
 
@@ -1752,7 +1752,7 @@ mdev_getc:
 * mode & 0x0001:    cooked
 * mode & 0x0002:    echo mode
 *
-* Rückgabe: Anzahl gelesener Bytes oder Fehlercode
+* Rueckgabe: Anzahl gelesener Bytes oder Fehlercode
 *
 
 mdev_getline:
@@ -1777,7 +1777,7 @@ mdev_getline:
 *
 * mode & 0x0001:    cooked
 *
-* Rückgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
+* Rueckgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
 *
 
 mdev_putc:
@@ -1881,7 +1881,7 @@ mdev_datime:
 *
 * long long mdev_close(a0 = FD *file)
 *
-* schreibt alles zurück, ruft den Dateitreiber auf und gibt ggf.
+* schreibt alles zurueck, ruft den Dateitreiber auf und gibt ggf.
 * den FD frei.
 *
 

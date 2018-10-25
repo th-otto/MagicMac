@@ -12,10 +12,10 @@
 /*
 
      6.8.95:
-     - Sonderbehandlung für 1 Plane ergänzt: Andreas Kromke
+     - Sonderbehandlung fuer 1 Plane ergaenzt: Andreas Kromke
 
      25.11.95:
-     - Da das MagiC-VDI mittlerweile vq_scrninfo() unterstützt, wird bei 
+     - Da das MagiC-VDI mittlerweile vq_scrninfo() unterstuetzt, wird bei 
        unbekannten Formaten wieder von gepackten Pixeln ausgegangen (Grafikkarte).
 
 */
@@ -23,7 +23,7 @@
 /*----------------------------------------------------------------------------------------*/ 
 /* extern aus dem AES                                                                                                                  */
 /*----------------------------------------------------------------------------------------*/ 
-extern    WORD vintout[];                              /* intout für VDI-Aufrufe */
+extern    WORD vintout[];                              /* intout fuer VDI-Aufrufe */
 extern    void *xp_tab;
 extern    void (*xp_ptr)( void );
 extern    void vq_color( WORD index, WORD setflag );   /* aus AESOBJ */
@@ -66,9 +66,9 @@ static void _vq_scrninfo( WORD *work_out )
 
 /*------------------------------------------------------------------------------*/ 
 /* Expandier-Funktion initialisieren - nur im Supervisor-Modus aufrufen!        */
-/* Funktionsresultat:    0: nicht unterstütztes Format                          */
-/*                       1: alles in Ordnung, Format wird unterstützt           */
-/*                       -1: Format muß nicht gewandelt werden                  */
+/* Funktionsresultat:    0: nicht unterstuetztes Format                          */
+/*                       1: alles in Ordnung, Format wird unterstuetzt           */
+/*                       -1: Format muss nicht gewandelt werden                  */
 /*                                                                              */
 /* handle:               VDI-Handle des AES                                     */
 /* planes:               Anzahl der Ebenen                                      */
@@ -80,7 +80,7 @@ WORD xp_init( WORD planes )
      if   ( planes == 1 )                         /* nur eine Ebene? */
      {
           xp_ptr = xp_dummy;
-          return( -1 );                           /* Wandlung nicht nötig */
+          return( -1 );                           /* Wandlung nicht noetig */
      }
 
      if ( planes > 8 )                            /* Direct Colour? */
@@ -88,8 +88,8 @@ WORD xp_init( WORD planes )
           LONG len;
           
           len = ( planes + 15 ) / 8;              /* Bytes pro Farbe */
-          len *= 256;                             /* Platz für 256 Farben lassen */
-          xp_tab = (void *)mmalloc( len );                 /* Speicher für Expandiertabelle */
+          len *= 256;                             /* Platz fuer 256 Farben lassen */
+          xp_tab = (void *)mmalloc( len );                 /* Speicher fuer Expandiertabelle */
      }
      /*
      else
@@ -137,10 +137,10 @@ WORD xp_init( WORD planes )
 
 /**************************************************************************
 *
-* Berechnet die Farbtabelle für direct colour.
+* Berechnet die Farbtabelle fuer direct colour.
 * Beim ersten Aufruf ist <colour_values> Null, daher wird der VDI-
-* Farbwert über vq_color berechnet. Beim Ändern der Palette werden
-* 3*256 UWORDs mit den Promillewerten für r,g,b übergeben.
+* Farbwert ueber vq_color berechnet. Beim Aendern der Palette werden
+* 3*256 UWORDs mit den Promillewerten fuer r,g,b uebergeben.
 *
 **************************************************************************/
 
@@ -191,9 +191,9 @@ void xp_colmp( WORD planes, WORD *work_out, UWORD *colour_values )
                }
           else vq_color( index, 0 );
 
-          value = intensity_to_value( vintout[1], work_out[8], &work_out[16] );/* Bitmuster für Rot-Intensität */
-          value |= intensity_to_value( vintout[2], work_out[9], &work_out[32] );/* Bitmuster für Grün-Intensität */
-          value |= intensity_to_value( vintout[3], work_out[10], &work_out[48] );/* Bitmuster für Blau-Intensität */
+          value = intensity_to_value( vintout[1], work_out[8], &work_out[16] );/* Bitmuster fuer Rot-Intensitaet */
+          value |= intensity_to_value( vintout[2], work_out[9], &work_out[32] );/* Bitmuster fuer Gruen-Intensitaet */
+          value |= intensity_to_value( vintout[3], work_out[10], &work_out[48] );/* Bitmuster fuer Blau-Intensitaet */
 
           /* Farbwert ablegen */
           /* ---------------- */
@@ -206,10 +206,10 @@ void xp_colmp( WORD planes, WORD *work_out, UWORD *colour_values )
 
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Farbintensität in Promille in Pixelwert wandeln                                        */
-/* Funktionsresultat:    Pixelwert für die übergebene Farbkomponente                      */
-/*   intensity:          Intensität in Promille                                           */
-/*   bits:               Anzahl der Bits für diese Intensität                             */
+/* Farbintensitaet in Promille in Pixelwert wandeln                                        */
+/* Funktionsresultat:    Pixelwert fuer die uebergebene Farbkomponente                      */
+/*   intensity:          Intensitaet in Promille                                           */
+/*   bits:               Anzahl der Bits fuer diese Intensitaet                             */
 /*   bit_no:             Zuordnung von Bitnummer zum Wert innerhalb des Pixels (work_out) */
 /*----------------------------------------------------------------------------------------*/ 
 static ULONG intensity_to_value( WORD intensity, WORD bits, WORD *bit_no )

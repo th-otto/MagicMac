@@ -4,15 +4,15 @@
 *
 * ab MagiC vom 13.4.95
 *
-* <magic> muß 'AnKr' sein.
+* <magic> muss 'AnKr' sein.
 *
-* subfn = 0:   System beenden und zurück zum MacOS bzw. Windows
+* subfn = 0:   System beenden und zurueck zum MacOS bzw. Windows
 * subfn = 1:   Wandle folgenden Alt-Tastencode in ASCII um
-* subfn = 2:   Neustart (warm_boot, nur für Atari)
-* subfn = 3:   Kaltstart (cold_boot, nur für Atari)
+* subfn = 2:   Neustart (warm_boot, nur fuer Atari)
+* subfn = 3:   Kaltstart (cold_boot, nur fuer Atari)
 * subfn = 4:   Getcookie: liefert Zeiger auf Cookie	12.4.98
 * subfn = 5:	Date2str: initialisiert datemode und liefert date2str
-* subfn = 6:	VT52 anmelden, alten Vektor zurückgeben
+* subfn = 6:	VT52 anmelden, alten Vektor zurueckgeben
 *
 
 Puntaes:
@@ -37,13 +37,13 @@ Puntaes:
  subq.w	#1,d0
  bne.b	pua_err
 * case 6:
- move.l	p_vt52,d0			; Rückgabe: alter Vektor
+ move.l	p_vt52,d0			; Rueckgabe: alter Vektor
  move.l	(a0),d1
  bmi.b	pua6_get			; neuer Vektor -1, nur alten liefern
- beq.b	pua6_reset		; neuer Vektor 0, Vektor löschen
+ beq.b	pua6_reset		; neuer Vektor 0, Vektor loeschen
  move.l	d1,a0			; Struktur
  tst.l	(a0)				; Versionsnummer
- bne.b	pua_6_err			; paßt nicht
+ bne.b	pua_6_err			; passt nicht
 pua6_reset:
  move.l	d1,p_vt52
 pua6_get:
@@ -65,7 +65,7 @@ pua5_nf:
  rte
 * case 4:
 pua_4:
- move.l	(a0),d0			; Cookie-Schlüssel
+ move.l	(a0),d0			; Cookie-Schluessel
  bsr		getcookie
  beq.b	pua4_nf			; nicht gefunden
  move.l	a0,d0			; Zeiger liefern
@@ -89,7 +89,7 @@ pua_0:
 	IFNE	MACINTOSH
  tst.l	act_appl
  beq.b	pua0_noaes
- jsr		v_clswk				; Auf dem Mac das VDI schließen
+ jsr		v_clswk				; Auf dem Mac das VDI schliessen
 pua0_noaes:
 	IFNE	MACOSX
  lea		MSysX+MacSysX_exit(pc),a0

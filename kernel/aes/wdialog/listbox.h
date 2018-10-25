@@ -80,17 +80,17 @@ typedef	WORD	(cdecl *SET_ITEM)( struct _list_box *box, OBJECT *tree, struct _lbo
 
 typedef struct	_lbox_item
 {
-	struct _lbox_item *next;	/* Zeiger auf den nÑchsten Eintrag in der Scroll-Liste */
+	struct _lbox_item *next;	/* Zeiger auf den naechsten Eintrag in der Scroll-Liste */
 	WORD	selected;				/* gibt an, ob das Objekt selektiert ist */
 
 	WORD	data2;	
-	void	*data;					/* Zeiger auf die zu diesem Eintrag gehîrige Datenstruktur */
-	BYTE	*name;					/* Zeiger auf den String fÅr diesen Eintrag */
+	void	*data;					/* Zeiger auf die zu diesem Eintrag gehoerige Datenstruktur */
+	BYTE	*name;					/* Zeiger auf den String fuer diesen Eintrag */
 
 } LBOX_ITEM;
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Bei énderungen an der LIST_BOX-Struktur muû auch die Assembler-Definition angepaût 	*/
+/* Bei aenderungen an der LIST_BOX-Struktur muss auch die Assembler-Definition angepasst 	*/
 /*	werden!																											*/
 /*----------------------------------------------------------------------------------------*/ 
 
@@ -103,7 +103,7 @@ typedef struct _list_box
 	
 	LBOX_ITEM	*items;			/* Zeiger auf die Liste der Elemente */
 	WORD			visible_a;
-	WORD			*obj_index;		/* Liste der Objekt-Indizes fÅr die EintrÑge */
+	WORD			*obj_index;		/* Liste der Objekt-Indizes fuer die Eintraege */
 
 	WORD			parent_box;		/* Objektnummer des Hintergrundrechtecks der Box */
 	WORD			button1;			/* Objektnummer des Scroll-Up-Buttons */
@@ -136,7 +136,7 @@ typedef struct _list_box
 #define	LBOX_AUTO	2			/* Auto-Scrolling */
 #define	LBOX_AUTOSLCT	4		/* automatische Darstellung beim Auto-Scrolling */
 #define	LBOX_REAL	8			/* Real-Time-Slider */
-#define	LBOX_SNGL	16			/* nur ein anwÑhlbarer Eintrag */
+#define	LBOX_SNGL	16			/* nur ein anwaehlbarer Eintrag */
 #define	LBOX_SHFT	32			/* Mehrfachselektionen mit Shift */
 #define	LBOX_TOGGLE	64			/* Status eines Eintrags bei Selektion wechseln */
 #define	LBOX_2SLDRS	128		/* Listbox hat einen hor. und einen vertikalen Slider */

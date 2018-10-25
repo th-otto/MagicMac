@@ -12,7 +12,7 @@ knvkey:  dc.b 4,0,0,0,0,0,0,0,0,0,0,0,0   ;Code $1d (Ctrl) - $29
          dc.b 1,32,8,0,$80                ;Code $36 (Rshift) - $3a
 
 _handlekey:
- moveq    #0,d1               ; Bits 8-15 säubern
+ moveq    #0,d1               ; Bits 8-15 saeubern
  move.b   d0,d1               ; Scancode
  bmi.b    and_kbshift
      IF   ALTGR
@@ -24,9 +24,9 @@ _handlekey:
      ENDIF
      ENDIF
      IF   ALT_NUMKEY
- cmpi.b   #$38,d1             ; Alt-Taste betätigt
+ cmpi.b   #$38,d1             ; Alt-Taste betaetigt
  bne.b    key_noaltmak
- clr.b    alt_numkey          ; ASCII-Code-Akkumulator löschen
+ clr.b    alt_numkey          ; ASCII-Code-Akkumulator loeschen
 key_noaltmak:
      ENDIF
  sub.b    #$1d,d1             ; Erster Eintrag der Tabelle
@@ -44,7 +44,7 @@ key_noaltmak:
  beq.b    mk_init_keyrep      ; keine Sondertaste
      ENDIF
      ENDIF
- bmi.b    toggle_capslock     ; muß $3a sein
+ bmi.b    toggle_capslock     ; muss $3a sein
  or.b     d1,kbshift
  rts
 
@@ -52,7 +52,7 @@ toggle_capslock:
  bsr      klick
  btst     #3,kbshift          ; ALT-Capslock ?
  beq.b    no_altgr_emu
- not.b    altgr_status        ; Emulation von AltGr über ALT-CapsLock
+ not.b    altgr_status        ; Emulation von AltGr ueber ALT-CapsLock
  rts
 no_altgr_emu:
  bchg     #4,kbshift
@@ -93,7 +93,7 @@ key_noaltbrk:
      ENDIF
  beq.b    brk_keyrep          ; keine Sondertaste
  not.b    d1                  ; Bits invertieren
- or.b     #16,d1              ; Bit 4 NICHT verändern!
+ or.b     #16,d1              ; Bit 4 NICHT veraendern!
  and.b    d1,kbshift
  rts
 
@@ -135,7 +135,7 @@ mk_init_keyrep:
 
      IF   ALT_NUMKEY
  move.b   kbshift,d1
- andi.w   #$2f,d1             ; alle außer CapsLock
+ andi.w   #$2f,d1             ; alle ausser CapsLock
  cmpi.w   #8,d1               ; nur Alt?
  bne.b    key_noaltnum
  cmpi.b   #$67,d0             ; Num7
@@ -152,7 +152,7 @@ mk_init_keyrep:
  move.b   d1,alt_numkey
  rts
 key_noaltnum2:
- clr.b    alt_numkey          ; ASCII-Code-Akkumulator löschen
+ clr.b    alt_numkey          ; ASCII-Code-Akkumulator loeschen
 key_noaltnum:
      ENDIF
 
@@ -162,7 +162,7 @@ key_noaltnum:
    bcc.b    hk_initdel
    move.b   key_reprate,d1
 hk_initdel:
-   move.b   d1,keyrepeat+1          ;initiale Verzögerung = max(rep,delay)
+   move.b   d1,keyrepeat+1          ;initiale Verzoegerung = max(rep,delay)
 ;
 ; Hier BSR-t die 200Hz- Routine rein, wenn Tastenwiederholung anliegt
 ; a0 = IOREC *buffer
@@ -202,13 +202,13 @@ keyctab:
 ;--------------------------------------------------------
 ;
 ; <klick> sichert im Gegensatz zur alten <klick>-Routine
-; nur das von den Tastatur IR-Routinen benötigte Register d0.b!
+; nur das von den Tastatur IR-Routinen benoetigte Register d0.b!
 klick:
    btst     #0,conterm
    beq.b    kl_silent
    move.w   d0,-(sp)
    movea.l  kcl_hook,a1            ; Die aufgerufene Routine darf
-   jsr      (a1)                   ; Register d0-d2/a0-a2 zerstören
+   jsr      (a1)                   ; Register d0-d2/a0-a2 zerstoeren
    move.w   (sp)+,d0
 kl_silent:
    rts
@@ -219,10 +219,10 @@ ShRLCtrlKey:
  bsr      klick
  moveq    #0,d1
  move.b   d0,d1                    ; Scancode in d1 merken
- andi.w   #$7f,d0                  ; d0 = Offset für Tabellenzugriff
+ andi.w   #$7f,d0                  ; d0 = Offset fuer Tabellenzugriff
  lea      keytblx+4,a0             ; Tabelle Shift
  tst.b    altgr_status
- bne.b    ctrl_altgr               ; ausführen...
+ bne.b    ctrl_altgr               ; ausfuehren...
  move.l   (a0),a0
  move.b   0(a0,d0.w),d0            ; ASCII nach d0 holen
 
@@ -239,7 +239,7 @@ hndk_wsc3:
  bra      put_key_to_buf
 
 hndk_wsc4:
- andi.w   #$1f,d0                  ; bei gedrückter CTRL- Taste nur bis $1f
+ andi.w   #$1f,d0                  ; bei gedrueckter CTRL- Taste nur bis $1f
  bra      put_key_to_buf
 
 ;-----------------------------------------------------
@@ -269,7 +269,7 @@ set_ctrl:
 ctrl_kein_sonder:
    bsr      klick
    move.b   d0,d1                   ;Scancode in d1 merken
-   andi.w   #$7f,d0                 ;d0 = Offset für Tabellenzugriff
+   andi.w   #$7f,d0                 ;d0 = Offset fuer Tabellenzugriff
    lea      keytblx,a0              ;a0 = Standard- Tastaturtabelle
    btst     #4,kbshift.w            ;CapsLock aktiv ?
    beq.b    ctrl_tst_altgr
@@ -282,7 +282,7 @@ ctrl_altgr:
    lea      12(a0),a1               ;3 Tabellen weiter
    move.l   (a1),a1
    add.w    d0,a1
-   cmpi.b   #$20,(a1)               ;zulässig ?
+   cmpi.b   #$20,(a1)               ;zulaessig ?
    beq.b    ctrl_no_altgr
    move.b   (a1),d0                 ;ASCII
    moveq    #$5f,d1                 ;Scancode ist immer $5f
@@ -330,13 +330,13 @@ hndk_w3:
  bra      put_key_to_buf
 
 hndk_w4:
- cmpi.b   #$2d,d0          ;CTRL-'
+ cmpi.b   #$2d,d0          ;CTRL-apostrophe
  bne.b    other_ctrl
  moveq    #$1f,d0
  bra      put_key_to_buf
 
 other_ctrl:
- andi.w   #$1f,d0                  ; bei gedrückter CTRL- Taste nur bis $1f
+ andi.w   #$1f,d0                  ; bei gedrueckter CTRL- Taste nur bis $1f
  bra      put_key_to_buf
 
 ;----------------------------------------------------
@@ -346,7 +346,7 @@ AltKey:
    moveq    #0,d1
    move.b   d0,d1                   ;Scancode in d1 merken
    lea      keytblx,a0              ;a0 = Standard- Tastaturtabelle
-   andi.w   #$7f,d0                 ;d0 = Offset für Tabellenzugriff
+   andi.w   #$7f,d0                 ;d0 = Offset fuer Tabellenzugriff
    btst     #4,kbshift.w            ;CapsLock aktiv ?
    beq.b    alt_tst_altgr
    lea      keytblx+8,a0            ;Tabelle Caps
@@ -357,7 +357,7 @@ alt_altgr:
    lea      12(a0),a1              ; 3 Tabellen weiter
    move.l   (a1),a1
    add.w    d0,a1
-   cmpi.b   #$20,(a1)              ; zulässig ?
+   cmpi.b   #$20,(a1)              ; zulaessig ?
    beq.b    alt_no_altgr
    move.b   (a1),d0                ; ASCII
    moveq    #$5f,d1                ; Scancode ist immer $5f
@@ -455,11 +455,11 @@ tst_AltHome:
 ;--- Ende der Maus-Emulation
 
 tst_AltNum:
- cmpi.b   #2,d1                    ; Scancode für Taste "1"
+ cmpi.b   #2,d1                    ; Scancode fuer Taste "1"
  bcs.b    hndk_w15                 ; nein, Esc-Taste
- cmpi.b   #$d,d1                   ; Taste ' (rechts von ß)
+ cmpi.b   #$d,d1                   ; Taste apostrophe (rechts von ss)
  bhi.b    hndk_w15
- addi.b   #$76,d1                  ; ALT-(obere Zahlenreihe, ß und ')
+ addi.b   #$76,d1                  ; ALT-(obere Zahlenreihe, ss und apostrophe)
 ;move.b   d1,$380
  bra.b    hndk_w16
 
@@ -488,7 +488,7 @@ hndk_w16:
 ; d1.b
 ; d2.b
 _mouse_emu:
-   subq.l   #4,sp                   ;Platz für 3 Bytes
+   subq.l   #4,sp                   ;Platz fuer 3 Bytes
    lea      (sp),a0
    movea.l  kbdvecs+$10,a2          ;mousevec
    moveq    #0,d0
@@ -512,7 +512,7 @@ ShRLAltKey:
    bsr      klick
    moveq    #0,d1
    move.b   d0,d1                   ;Scancode in d1 merken
-   andi.w   #$7f,d0                 ;d0 = Offset für Tabellenzugriff
+   andi.w   #$7f,d0                 ;d0 = Offset fuer Tabellenzugriff
    lea      keytblx+4,a0            ;Tabelle Shift
    tst.b    altgr_status
    bne      alt_altgr
@@ -614,7 +614,7 @@ ShRLCtrlAltKey:
    moveq    #0,d1
    move.b   d0,d1                   ;Scancode in d1 merken
    lea      keytblx,a0              ;a0 = Standard- Tastaturtabelle
-   andi.w   #$7f,d0                 ;d0 = Offset für Tabellenzugriff
+   andi.w   #$7f,d0                 ;d0 = Offset fuer Tabellenzugriff
    move.b   kbshift.w,d2
    btst     #4,d2                   ;CapsLock aktiv ?
    beq.b    hndk_w18
@@ -630,7 +630,7 @@ hkey_altgr:
    lea      12(a0),a1                ; 3 Tabellen weiter
    move.l   (a1),a1
    add.w    d0,a1
-   cmpi.b   #$20,(a1)                ; zulässig ?
+   cmpi.b   #$20,(a1)                ; zulaessig ?
    beq.b    no_altgr
    move.b   (a1),d0                  ; ASCII
    moveq    #$5f,d1                  ; Scancode ist immer $5f
@@ -639,7 +639,7 @@ hkey_altgr:
 no_altgr:
    move.l   (a0),a0
    move.b   0(a0,d0.w),d0            ; ASCII nach d0 holen
-   andi.w   #$1f,d0                  ; bei gedrückter CTRL- Taste nur bis $1f
+   andi.w   #$1f,d0                  ; bei gedrueckter CTRL- Taste nur bis $1f
    bra      put_key_to_buf
 
 ;------------------------------------------------------
@@ -647,7 +647,7 @@ no_altgr:
 plain_ascii:
    bsr      klick
    move.b   d0,d1                   ;Scancode in d1 merken
-   andi.w   #$7f,d0                 ;d0 = Offset für Tabellenzugriff
+   andi.w   #$7f,d0                 ;d0 = Offset fuer Tabellenzugriff
    lea      keytblx,a0              ;a0 = Standard- Tastaturtabelle
 
    btst     #4,kbshift.w            ;CapsLock aktiv ?
@@ -666,7 +666,7 @@ Key_hdl_altgr:
    lea      12(a0),a1               ;3 Tabellen weiter
    move.l   (a1),a1
    add.w    d0,a1
-   cmpi.b   #$20,(a1)               ;zulässig ?
+   cmpi.b   #$20,(a1)               ;zulaessig ?
    beq.b    Key_no_altgr
    move.b   (a1),d0                 ;ASCII
    moveq    #$5f,d1                 ;Scancode ist immer $5f
@@ -679,7 +679,7 @@ ShLKey:
 ShRLKey:
    bsr      klick
    move.b   d0,d1                   ;Scancode in d1 merken
-   andi.w   #$7f,d0                 ;d0 = Offset für Tabellenzugriff
+   andi.w   #$7f,d0                 ;d0 = Offset fuer Tabellenzugriff
    lea      keytblx+4,a0            ;Tabelle Shift
    tst.b    altgr_status            ;auf ALTGR testen
    bne.b    Key_hdl_altgr
@@ -725,7 +725,7 @@ deadkey_space:
  move.b   d2,d0
  move.b   deadkey_scan,d1
  move.l   a0,-(sp)
- bra      no_deadkey               ; dead key nachträglich eintragen, statt bsr
+ bra      no_deadkey               ; dead key nachtraeglich eintragen, statt bsr
 deadkey_after2:
  move.b   (sp)+,d0
  move.b   d0,kbshift
@@ -760,7 +760,7 @@ deadkey_both:
  move.b   d2,d0
  move.b   deadkey_scan,d1
  move.l   a0,-(sp)
- bra      no_deadkey               ; dead key nachträglich eintragen, statt bsr
+ bra      no_deadkey               ; dead key nachtraeglich eintragen, statt bsr
 deadkey_after:
  move.b   (sp)+,d0
  move.b   d0,kbshift
@@ -768,7 +768,7 @@ deadkey_after:
  move.w   (sp)+,d0
  bra.b    no_deadkey
 
-; Prüfe, ob die Taste ein dead key ist
+; Pruefe, ob die Taste ein dead key ist
 
 no_deadkey_active:
  move.l   keytblx+36,a0            ; dead key table
