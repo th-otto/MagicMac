@@ -118,7 +118,7 @@ fmb_ende:
 
 appl_exit:
  movea.l  act_appl,a0
- bsr      flush_msgbuf
+ bsr.s    flush_msgbuf
 ;bra      _appl_exit
 
 
@@ -132,7 +132,7 @@ appl_exit:
 _appl_exit:
  moveq    #20-1,d1                 ; GEM 2.0: 3 Aufrufe
 _ap_y:
- bsr      appl_yield               ; aendert nur d0/a0
+ bsr.s    appl_yield               ; aendert nur d0/a0
  dbra     d1,_ap_y
                                    ; erst beenden, wenn alle anderen Programme
  bsr      update_1                 ;  die Menues entsperrt haben
@@ -177,7 +177,7 @@ ctt_weiter2:
 
 appl_suspend:
  move.l   a0,-(sp)
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.b   #APSTAT_SUSPENDED,ap_status(a0)
  move.l   (sp)+,a0
 
@@ -206,7 +206,7 @@ appl_yield:
  tas.b    inaes                    ; Kernel gesperrt ?
  bne      ad_locked                ; ja
  movem.l  d0/d1/d2/a0/a1/a2/a3/a4,-(sp)      ; notwendige Register
- lea      act_appl.l,a4
+ lea      act_appl,a4
 * alle 10 Aufrufe suspend-list umsetzen
  subq.w   #1,pe_unsuspcnt
  bcc.b    ad_no_unsus
@@ -397,7 +397,7 @@ trap_term:
 trap_yield:
  tst.l    suspend_list
  bne.b    exec_yield
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  tst.l    (a0)                     ; gibt es weitere "ready" Applikationen?
  bne.b    exec_yield               ; ja, Kernel aufrufen
  tst.l    iocpbuf_cnt              ; sind inzw. Ereignisse eingetroffen ?
@@ -476,9 +476,9 @@ stp_thr:
 ; Entferne sie aus der Queue, wenn sie nicht die
 ; aktuelle APP ist.
 
- cmpa.l   act_appl.l,a0
+ cmpa.l   act_appl,a0
  beq.b    stp_ap_newstate
- lea      act_appl.l,a1
+ lea      act_appl,a1
  bra.b    stp_ap_unlist
  
 stp_ap_weiter1:
@@ -584,7 +584,7 @@ beg_mctrl:
  beq      begm_ende                ; Fehler bei "check and set"
  tst.w    beg_mctrl_cnt            ; schon gesetzt ?
  beq.b    begm_set_new             ; nein, setzen
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  cmpa.l   topwind_app,a0           ; bin ich auch Eigner ?
  beq.b    begm_increment           ; ja, nur Zaehler erhoehen
  bra.b    begm_set_again           ; workaround fuer Echtzeitscrolling
@@ -600,9 +600,9 @@ begm_set_new:
 
 begm_set_again:
  lea      full_g,a1                ; mir gehoert der ganze Bildschirm
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  jsr      _set_topwind_app
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.l   a0,topwind_app           ; auch bei keinem obersten Fenster
 
 begm_increment:
@@ -614,7 +614,7 @@ mctrl_0:
 end_mctrl:
  subq.w   #1,beg_mctrl_cnt
  bne.b    begm_not0
- bsr      _end_mctrl
+ bsr.s    _end_mctrl
 begm_not0:
  bsr      update_0
 begm_ok:
@@ -727,7 +727,7 @@ we2r_overflow:
 
 ap_to_lastready:
  sf.b     ap_status(a0)            ; ap_status = ready
- lea      act_appl.l,a2              ; Vorgaenger
+ lea      act_appl,a2              ; Vorgaenger
 _ap_to_last:
  movea.l  (a2),a1                  ; zu testende Applikation
  bra.b    a2l_next
@@ -843,10 +843,10 @@ refr_ende:
 *
 
 init_shutdown:
- tst.l    bufl_wback               ; write back daemon geladen ?
+ tst.l    (bufl_wback).l           ; write back daemon geladen ?
  beq.b    inisd_nowb               ; nein
  moveq    #-1,d0
- move.l   bufl_wback,a0            ; PD => APPL
+ move.l   (bufl_wback).l,a0            ; PD => APPL
  jsr      srch_process
  move.w   d0,d1                    ; dst_apid
  bmi.b    inisd_nowb               ; ???
@@ -867,7 +867,7 @@ inisd_send:
  move.l   sp,a0                    ; buf
  moveq    #16,d0                   ; 16 Bytes
 ;move.w   d1,d1                    ; dst_apid
- jsr      appl_write
+ bsr      appl_write
  adda.w   #16,sp
  rts
 
@@ -1119,7 +1119,7 @@ ha_end:
 *
 
 appl_begcritic:
- move.l   act_appl.l,d2
+ move.l   act_appl,d2
  ble.b    apbc_end
  move.l   d2,a2
  addq.w   #1,ap_critic(a2)
@@ -1144,7 +1144,7 @@ apbc_end:
 *
 
 appl_endcritic:
- move.l   act_appl.l,d2
+ move.l   act_appl,d2
  ble.b    apec_end
  move.l   d2,a2
  subq.w   #1,ap_critic(a2)
@@ -1228,7 +1228,7 @@ apec_end:
 evnt_sem:
  cmpi.w   #8,d0
  bhi      evs_err
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  add.w    d0,d0
  move.w   evstab(pc,d0.w),d0
  jmp      evstab(pc,d0.w)
@@ -1269,11 +1269,11 @@ evs_set:
 ;move.l   d0,d0
  bsr      wait_timer
  move.l   #EV_TIM+EV_SEM,d0
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  bsr      appl_wait
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  bsr      __rmv_ap_timer
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  btst     #EVB_SEM,ap_hbits+1(a0)
  bne.b    evs_tstdel          ; evnt_sem eingetroffen
  moveq    #1,d0               ; TimeOut
@@ -1282,7 +1282,7 @@ evs_notim:
  moveq    #EV_SEM,d0
 ;move.l   a1,a1
  bsr      appl_wait
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
 evs_tstdel:
  tst.l    ap_semaph(a0)       ; Semaphore noch gueltig ?
  bne.b    evs_ok              ; ja!
@@ -1444,9 +1444,9 @@ _wind_update:
  beq      end_update
 * BEG_UPDATE
  move.w   d0,d1                    ; Hibyte merken
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
 ;lea      upd_blockage,a0
- bsr      _beg_update              ; veraendert nur d0
+ bsr.s    _beg_update              ; veraendert nur d0
 ;                                  ; sind wir die sperrende Applikation ?
  bne.b    wu_ende                  ; ja, alles ok, d.h. return(1)
  andi.w   #$100,d1
@@ -1511,7 +1511,7 @@ end_update:
  ble.b    eupd_err                 ; ja, Fehler
  subq.w   #1,(a0)                  ; Zaehler dekrementieren
  bne.b    eupd_ok                  ; noch nicht 0
- bsr      free_semaphore
+ bsr.s    free_semaphore
  bsr      appl_yield
 eupd_ok:
  moveq    #1,d0                    ; kein Fehler
@@ -1607,9 +1607,9 @@ rkb_nowrap:
 
 
 fkb_loop:
- bsr      read_keybuf
+ bsr.s    read_keybuf
 flush_keybuf:
- movea.l  act_appl.l,a0
+ movea.l  act_appl,a0
  tst.w    ap_kbcnt(a0)
  bne.b    fkb_loop
  rts
@@ -1632,7 +1632,7 @@ handle_spec:
  moveq    #0,d2                    ; mbuf[3] ist 0
  moveq    #1,d1                    ; dst_apid = SCRENMGR
  moveq    #SM_M_SPECIAL,d0         ; Nachrichtencode
- jsr      send_msg
+ bsr      send_msg
  addq.l   #8,sp
  rts
 
@@ -1894,7 +1894,7 @@ send_click:
 
  move.l   ap_evbut(a0),-(sp)
  move.w   d0,-(sp)
- bsr      bstate_match
+ bsr.s    bstate_match
  tst.w    d0
  beq.b    sc_end2
  move.w   (sp)+,d0
@@ -1949,7 +1949,7 @@ hm_pl2:
  bls.b    hm_dcl_ok
 hm_dcl_clr:
 ;move.w   d0,d0                    ; mcl_timer, Doppelklick loeschen
- jsr      mclick_countdown
+ bsr      mclick_countdown
 hm_dcl_ok:
  move.l   (sp)+,gr_mkmx            ; Int -> AES-Variablen
 ;move.w   vptsout,gr_mkmx
@@ -2028,7 +2028,7 @@ send_mouse:
  move.w   d7,d1                    ; y
  move.w   d6,d0                    ; x
  move.l   ap_mgrect1(a5),a0        ; MGRECT *
- bsr      mouse_match
+ bsr.s    mouse_match
  beq.b    sm_m2                    ; nein, weiter
 
  move.l   a5,a0
@@ -2044,7 +2044,7 @@ sm_m2:
  move.w   d7,d1                    ; y
  move.w   d6,d0                    ; x
  move.l   ap_mgrect2(a5),a0        ; MGRECT *
- bsr      mouse_match
+ bsr.s    mouse_match
  beq.b    sm_ende                  ; nein, weiter
 
  move.l   a5,a0
@@ -2309,7 +2309,7 @@ but_int_send1:
  move.w   #1,-(sp)                 ; 1-fach
  move.w   d0,-(sp)                 ; Status
  pea      handle_but(pc)
- jsr      write_evnt_to_ringbuf
+ bsr      write_evnt_to_ringbuf
  addq.l   #8,sp
  tst.w    d0                       ; Ueberlauf des Ringpuffers ?
  bne.b    but_int_ok               ; nein, OK
@@ -2334,7 +2334,7 @@ mov_int:
  move.l   (sp),int_mx              ; Interrupt-Mausdaten merken
 ;move.w   2(sp),int_my
  pea      handle_mov(pc)
- jsr      write_evnt_to_ringbuf
+ bsr      write_evnt_to_ringbuf
  addq.l   #8,sp
  movem.l  (sp)+,a2/a1/a0/d2/d1/d0
  rts
@@ -2356,7 +2356,7 @@ draw_int:
 
 timer_int:
  addq.l   #1,timer_cnt
- move.l   act_appl.l,d0
+ move.l   act_appl,d0
  beq.b    ti_int_n
  move.l   d0,a0
  cmpi.l   #'AnKr',ap_stkchk(a0)
@@ -2370,7 +2370,7 @@ ti_int_n:
  bne.b    ti_int_weiter
  move.l   timer_cntup,-(sp)
  pea      handle_tim(pc)
- jsr      write_evnt_to_ringbuf
+ bsr      write_evnt_to_ringbuf
  addq.l   #8,sp
  tst.w    d0                            ; Puffer voll ?
  bne.b    ti_int_weiter                 ; nein
@@ -2384,7 +2384,7 @@ ti_int_weiter:
  bne.b    ti_int_weiter2
  move.l   alrm_cntup,-(sp)
  pea      handle_alm(pc)
- jsr      write_evnt_to_ringbuf
+ bsr      write_evnt_to_ringbuf
  addq.l   #8,sp
  tst.w    d0                            ; Puffer voll ?
  bne.b    ti_int_weiter2                ; nein
@@ -2396,7 +2396,7 @@ ti_int_weiter2:
  move.l   old_timer_int,-(sp)
  rts
 err_stkovl:
- clr.l    act_appl.l                      ; Reentranz verhindern
+ clr.l    act_appl                      ; Reentranz verhindern
  jmp      fatal_stack
 
 
@@ -2413,7 +2413,7 @@ mclick_countdown:
  move.w   mcl_count,-(sp)          ; n-fach Klick
  move.w   mcl_bstate,-(sp)         ; dabei Mausstatus
  pea      handle_but(pc)
- jsr      write_evnt_to_ringbuf    ; in den Ringpuffer schreiben
+ bsr      write_evnt_to_ringbuf    ; in den Ringpuffer schreiben
  addq.l   #8,sp
  move.w   int_butstate,d0          ; gegenwaertiger Zustand
  cmp.w    mcl_bstate,d0            ; wie zu Beginn des Doppelklicks ?
@@ -2421,7 +2421,7 @@ mclick_countdown:
  move.w   #1,-(sp)                 ; Einfachklick
  move.w   d0,-(sp)                 ; neuer Zustand
  pea      handle_but(pc)
- jsr      write_evnt_to_ringbuf    ; in den Ringpuffer schreiben
+ bsr      write_evnt_to_ringbuf    ; in den Ringpuffer schreiben
  addq.l   #8,sp
 mccd_ende:
  rts
@@ -2450,7 +2450,7 @@ appl_tplay:
  move.l   a0,a5                    ; a5 = mem
  move.w   d0,d7
  move.w   d1,d5
- jsr      appl_yield
+ bsr      appl_yield
  clr.w    aptp_dirtyint            ; Interrupts noch nicht umgesetzt
 * durchlaufe d6 = 0..count-1
  clr.w    d6
@@ -2521,10 +2521,10 @@ aptp_c3:
 aptp_l2:
  move.l   d4,-(sp)
  move.l   a0,-(sp)
- jsr      write_evnt_to_ringbuf
+ bsr      write_evnt_to_ringbuf
  addq.l   #8,sp
 aptp_yield:
- jsr      appl_yield
+ bsr      appl_yield
  addq.w   #1,d6
 aptp_loop_cont:
  cmp.w    d7,d6
@@ -2650,14 +2650,14 @@ appl_wait:
 *
 
 evnt_keybd:
- movea.l  act_appl.l,a0
+ movea.l  act_appl,a0
  tst.w    ap_kbcnt(a0)             ; Zeichen im Puffer ?
  bne      read_keybuf              ; Zeichen holen
 evk_wait:
  moveq    #EV_KEY,d0
  move.l   a0,a1
- bsr      appl_wait
- move.l   act_appl.l,a0
+ bsr.s    appl_wait
+ move.l   act_appl,a0
  bra      read_keybuf              ; Zeichen holen
 
 
@@ -2685,14 +2685,14 @@ evnt_button:
 
  move.l   d7,-(sp)
  move.w   gr_mkmstate,-(sp)
- jsr      bstate_match             ; gerade eingetroffen ?
+ bsr      bstate_match             ; gerade eingetroffen ?
  addq.l   #6,sp
 
  tst.w    d0
  beq.b    evb_wait                 ; nein
  move.w   gr_mkmstate,gr_evbstate  ; bstate bei EVENT
  move.l   a3,a0
- bsr      get_ev_xy_bkstate
+ bsr.s    get_ev_xy_bkstate
  move.w   gr_mnclicks,d0
  movem.l  (sp)+,a3/d7
  rts
@@ -2703,11 +2703,11 @@ evb_wait:
  bls.b    evb_nomulti
  addq.w   #1,mcl_in_events         ; Anzahl der erwarteten Mehrfachklicks
 evb_nomulti:
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.l   d7,ap_evbut(a1)
  moveq    #EV_BUT,d0
 ;move.l   a1,a1
- bsr      appl_wait
+ bsr.s    appl_wait
  move.l   a3,a0
  bsr      get_ev_xy_bkstate        ; aendert nur a0
  moveq    #0,d0                    ; Hibyte loeschen
@@ -2746,7 +2746,7 @@ evnt_mouse:
  cmp.w    (a4),d0                  ; gewuenschtes Ergebnis
  bne.b    evm_ende                 ; ja
 * Das Mausrechteck ist nicht gerade aktiv
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.l   a4,ap_mgrect1(a1)
  moveq    #EV_MG1,d0
 ;move.l   a1,a1
@@ -2771,7 +2771,7 @@ evm_ende:
 evnt_xmesag:
  move.l   a0,-(sp)                 ; char *buf
  move.w   #16,-(sp)                ; int  size
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.l   a1,-(sp)
  tst.w    ap_len(a1)               ; liegen Daten an ?
  beq.b    evmx_wait                ; nein, warten
@@ -2784,14 +2784,14 @@ evnt_xmesag:
 evmx_wait:
 ;move.l   d0,d0
  bsr      wait_timer
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.l   sp,ap_evparm(a1)
  moveq    #EV_MSG+EV_TIM,d0
 ;move.l   a1,a1
  bsr      appl_wait
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  bsr      __rmv_ap_timer
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.w   ap_hbits(a0),d0     ; eingetroffene Ereignisse
 evmx_ok:
  lea      10(sp),sp
@@ -2811,11 +2811,11 @@ evmx_ok:
 *
 
 evnt_fork:
- movea.l  act_appl.l,a1
+ movea.l  act_appl,a1
  move.l   a0,ap_evparm(a1)
  move.l   #EV_FORK,d0
  bsr      appl_wait
- movea.l  act_appl.l,a1
+ movea.l  act_appl,a1
  move.l   ap_evparm(a1),d0
  rts
 
@@ -2879,11 +2879,11 @@ hpfrk_ok:
 *
 
 evnt_pid:
- movea.l  act_appl.l,a1
+ movea.l  act_appl,a1
  move.w   d0,ap_evparm(a1)
  move.l   #EV_PID,d0
  bsr      appl_wait
- movea.l  act_appl.l,a1
+ movea.l  act_appl,a1
  move.l   ap_evparm(a1),a0
  rts
 
@@ -2960,7 +2960,7 @@ evnt_mesag:
 *
 
 appl_read:
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.l   a0,-(sp)                 ; char *buf
  move.w   d0,-(sp)                 ; int  size
  move.l   a1,-(sp)                 ; APPL *dst_ap
@@ -3105,7 +3105,7 @@ aw_err:
 *
 
 wait_timer:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  lea      ap_nxttim(a0),a0
  tst.l    d0                       ; 0 ms ?
  bne.b    wt_no_0
@@ -3167,15 +3167,15 @@ wt_ende:
 appl_alrm:
  move.l   d0,-(sp)                 ; Alarm setzen/deaktivieren/ermitteln
  bmi.b    apal_get
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  bsr      rmv_ap_alrm              ; Alarm entfernen
  move.l   (sp),d0
  beq.b    apal_get
  divu     ms_per_click,d0          ; Millisekunden -> Timerticks
  andi.l   #$0000ffff,d0
- bsr      wait_alrm
+ bsr.s    wait_alrm
 apal_get:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  moveq    #0,d0
  tst.b    ap_isalarm(a0)           ; Alarm gesetzt?
  beq.b    apal_ende                ; nein
@@ -3205,7 +3205,7 @@ apal_ende:
 *
 
 wait_alrm:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  st.b     ap_isalarm(a0)           ; Flag setzen
  lea      ap_nxtalrm(a0),a0
  tst.l    d0                       ; 0 ms ?
@@ -3409,7 +3409,7 @@ evnt_emIO:
 evnt_IO:
  movem.l  a5/a6,-(sp)
  move.l   a0,a6
- move.l   act_appl.l,a5
+ move.l   act_appl,a5
 
  tst.l    d0
  beq.b    evio_notim              ; warte unbegrenzt
@@ -3477,13 +3477,13 @@ evnt_mIO:
  bsr      wait_timer
  movem.l  (sp)+,d1/a0
  move.l   #EV_TIM+EV_IO,d0
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  bsr      appl_wait
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  bra      __rmv_ap_timer
 evmio_notim:
  move.l   #EV_IO,d0
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  bra      appl_wait
 
 
@@ -3502,7 +3502,7 @@ _evnt_timer:
 ;move.l   d0,d0
  bsr      wait_timer
  moveq    #EV_TIM,d0
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  bsr      appl_wait
  moveq    #1,d0                    ; ok
  move.l   (sp)+,a2
@@ -3520,7 +3520,7 @@ _evnt_timer:
 
 match_mkmxy_mgrect:
  movea.l  a0,a1
- move.l   act_appl.l,d0
+ move.l   act_appl,d0
  cmp.l    mouse_app,d0
  bne.b    mxyg_n                ; passt nicht
 
@@ -3585,7 +3585,7 @@ rmv_lstelm:
 _evnt_multi:
  link     a6,#-$a
  movem.l  d6/d7/a2/a3/a5,-(sp)
- move.l   act_appl.l,a5
+ move.l   act_appl,a5
  moveq    #0,d7
  move.w   8(a6),d7                 ; erwartete Ereignisse
  movea.l  $1e(a6),a3               ; out
@@ -3599,7 +3599,7 @@ _evnt_multi:
  tst.w    ap_kbcnt(a5)             ; kb_cnt > 0 (Zeichen im Puffer)?
  beq.b    evm_l1                   ; nein
  move.l   a5,a0
- jsr      read_keybuf
+ bsr      read_keybuf
  move.w   d0,8(a3)                 ; Taste eintragen
  or.w     #EV_KEY,d6               ; MU_KEYBD ist eingetroffen
 evm_l1:
@@ -3612,7 +3612,7 @@ evm_l1:
  ble.b    evm_l2
  move.l   $16(a6),-(sp)            ; but
  move.w   prev_mkmstate,-(sp)
- jsr      bstate_match
+ bsr      bstate_match
  addq.l   #6,sp
  tst.w    d0                       ; Mausklick passt ?
  beq.b    evm_l2                   ; nein
@@ -3623,7 +3623,7 @@ evm_l1:
 evm_l2:
  move.l   $16(a6),-(sp)            ; but
  move.w   gr_mkmstate,-(sp)
- jsr      bstate_match
+ bsr      bstate_match
  addq.l   #6,sp
  tst.w    d0                       ; Mausklick passt ?
  beq.b    evm_l3                   ; nein
@@ -3660,13 +3660,13 @@ evm_l6:
  tst.w    ap_len(a5)               ; ap_len
  ble.b    evm_l7                   ; keine Nachricht im Puffer
  move.l   $1a(a6),a0               ; Pufferadresse
- jsr      evnt_mesag               ; Nachricht holen
+ bsr      evnt_mesag               ; Nachricht holen
  or.w     #EV_MSG,d6               ; MU_MESAG eingetroffen
 evm_l7:
  tst.w    d6                       ; schon ein Event eingetroffen ?
  beq      evm_wait                 ; nein
  move.l   a3,a0                    ; out - Feld
- jsr      get_ev_xy_bkstate        ; out[0..3] setzen
+ bsr      get_ev_xy_bkstate        ; out[0..3] setzen
  btst     #EVB_BUT,d7              ; MU_BUTTON ?
  bne.b    evm_l8
 * kein MU_BUTTON
@@ -3739,7 +3739,7 @@ emu_nomul:
 *
 
  move.l   a3,a0                    ; out - Feld
- jsr      get_ev_xy_bkstate        ; out[0..3] setzen
+ bsr      get_ev_xy_bkstate        ; out[0..3] setzen
  btst     #EVB_BUT,d7              ; MU_BUTTON ?
  bne.b    evm_l14
 * kein MU_BUTTON
@@ -3778,7 +3778,7 @@ send_msg:
  suba.w   #16,sp                   ; Platz fuer 8 ints
  move.l   sp,a1
  move.w   d0,(a1)+                 ; buf[0] = Nachrichtentyp
- movea.l  act_appl.l,a2
+ movea.l  act_appl,a2
  move.w   ap_id(a2),(a1)+          ; buf[1] = id des Senders
  clr.w    (a1)+                    ; buf[2] = Ueberlaenge
  move.w   d2,(a1)+                 ; buf[3] = i1 (etwa whdl)
@@ -3787,6 +3787,6 @@ send_msg:
  move.l   sp,a0                    ; buf
  moveq    #16,d0                   ; 16 Bytes
 ;move.w   d1,d1                    ; dst_apid
- jsr      appl_write
+ bsr      appl_write
  adda.w   #16,sp
  rts
