@@ -427,7 +427,7 @@ coc_loop2:
  subq.w   #4,d1
  bcc.b    coc_nosw2
  move.w   d3,d1
- subq.w   #4,d1                    ; Pufferindex 0..len-1 … 4 Bytes
+ subq.w   #4,d1                    ; Pufferindex 0..len-1 a 4 Bytes
 coc_nosw2:
  cmp.w    (iorec_kb+6).w,d1        ; ist Head ?
  beq.b    coc_iskill               ; ja, fertig

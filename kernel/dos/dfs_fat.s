@@ -81,7 +81,7 @@ bs_sec_resvd:  DS.W      1    /* Anzahl reservierter Sektoren ab Partitionsanfan
                               /* darf nicht Null sein (Bootsektor!). Bei FAT12 und FAT16 */
                               /* sollte der Wert 1 sein, fuer FAT32 32 */
 bs_nfats:      DS.B      1    /* Anzahl FATs. M$ empfiehlt 2 */
-bs_dir_entr:   DS.B      2    /* Anzahl Eintraege (… 32 Bytes) fuer root, 0 bei FAT32 */
+bs_dir_entr:   DS.B      2    /* Anzahl Eintraege (a 32 Bytes) fuer root, 0 bei FAT32 */
 bs_nsectors:   DS.B      2    /* Anzahl Sektoren (reserviert+FAT+root+Data) bzw. 0, wenn > 65535 */
 bs_media:      DS.B      1    /* "media code": 0xf8 fuer Harddisk, 0xf0 fuer Wechselmedium */
                               /* der Wert muss im Lowbyte von FAT[0] stehen */
@@ -868,7 +868,7 @@ drv_open:
  tst.l    d_dfs(a0)                ; Laufwerk schon bekannt ?
  bne      dosf_chkdrv              ; ja, nur Diskwechsel testen
 
-;     DEB  'Versuchen, auf dem Laufwerk Dateisystem DFS_FAT zu ”ffnen'
+;     DEB  'Versuchen, auf dem Laufwerk Dateisystem DFS_FAT zu ',$94,'ffnen'
 
  move.l   a5,-(sp)
  suba.w   #bx_sizeof,sp
@@ -879,7 +879,7 @@ drv_open:
  bsr      getxbpb
  bmi      do_ende                  ; Fehler
 
-;     DEB  'Laufwerk enth„lt DOS-FAT-Dateistruktur => ”ffnen'
+;     DEB  'Laufwerk enth',$84,'lt DOS-FAT-Dateistruktur => ',$94,'ffnen'
 
 * Dateisystem eintragen
  move.l   #dfs_fat_drv,d_dfs(a5)        ; Dateisystem eintragen
@@ -3571,8 +3571,8 @@ FAT_write:
  rts
      ENDIF
 
-; DEBL     'FAT_write: cl = ',d0
-; DEBL     'FAT_write: nx = ',d1
+; DEBL     d0,'FAT_write: cl = '
+; DEBL     d1,'FAT_write: nx = '
 ; DEB      ' '
 
  movem.l  d4-d7/a5,-(sp)
@@ -3669,7 +3669,7 @@ ftw_ende:
 *
 
 FAT_read:
-;     DEBL 'FAT_read ',d0
+;     DEBL d0,'FAT_read '
  movem.l  d5-d7/a5,-(sp)
  movea.l  a0,a5                    ; -> DMD
  move.l   d0,d7                    ; Cluster-Nummer
@@ -3745,7 +3745,7 @@ ftr_ok:
  moveq    #0,d1                    ; N-Flag loeschen
 ftr_ende:
  movem.l  (sp)+,d5-d7/a5
-;     DEBL 'FAT_read =>',d0
+;     DEBL d0,'FAT_read =>'
  rts
 
 
@@ -3917,8 +3917,8 @@ ws_ok:
 *
 
 read_sector:
-      DEBL  'read sector ',d1
-      DEBL  '        drv ',d0
+      DEBL  d1,'read sector '
+      DEBL  d0,'        drv '
  movem.l  a5/a6/d5/d6/d7,-(sp)
  move.l   d2,d5                    ; d5 = secno2
  move.l   d1,d6                    ; d6 = secno
@@ -4154,9 +4154,9 @@ rs_ende:
 
 mrw_sectors:
 
-     DEBL 'mrw_sectors ',d1
-     DEBL '        drv ',d0
-     DEBL '     anzahl ',d2
+     DEBL d1,'mrw_sectors '
+     DEBL d0,'        drv '
+     DEBL d2,'     anzahl '
 
  movem.l  a4/a5/a6/d7/d6/d5,-(sp)
  move.l   a0,a4                    ; Puffer

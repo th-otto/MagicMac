@@ -857,7 +857,7 @@ rimg_ende:
 rinf_bdev:
  movem.l	d7/a6,-(sp)
 	DEBON
-	DEB	'Lese Ger„teinformationen'
+	DEB	'Lese Ger',$84,'teinformationen'
  suba.w	#80,sp
  move.l	a0,d0
  beq		rbd_ok				; keine INF-Datei
@@ -873,18 +873,18 @@ rbd_loop:
  move.l	a0,d0
  beq		rbd_ok				; Ende
  addq.l	#8,a0
-	DEBL	'Zeile = ',a0
+	DEBL	a0,'Zeile = '
  bsr		rinf_ul
  move.l	d0,d7				; BIOS-Geraetenummer
-	DEBL	'Zeile2 = ',a0
-	DEBL 'BIOS-Ger„t',d7
+	DEBL	a0,'Zeile2 = '
+	DEBL d7,'BIOS-Ger',$84,'t'
  cmpi.b	#',',(a0)+
  bne.b	rbd_nxt				; Fehler
  moveq	#80,d0				; Puffergroesse
  lea		(sp),a1				; Puffer
 ;move.l	a0,a0
  bsr		rinf_path				; Pfad einlesen
-	DEBT	'Pfad = ',a7
+	DEBT	a7,'Pfad = '
  tst.b	(sp)
  beq.b	rbd_nxt				; Pfad ist leer
 
@@ -946,7 +946,7 @@ rinf_dvh:
 _rinf_dvh:
  movem.l	d7/a6,-(sp)
 	DEBON
-	DEB	'Lese Handle-Ger„teinformationen'
+	DEB	'Lese Handle-Ger',$84,'teinformationen'
  move.w	d0,d7				; d7 = Handle
  move.l	a1,a6				; a6 = Token
  suba.w	#80,sp

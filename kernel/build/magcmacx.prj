@@ -46,7 +46,7 @@ MagicMacX.OS
 ..\aes\aesgraf.s
 ..\aes\aesrsc.s
 ..\aes\farbic.c [-G-]
-..\aes\wdialog\wdialog.c [-G-]
+..\aes\wdialog\wdialog.c [-G]
 ..\aes\wdialog\listbox.c
 ..\aes\wdialog\fnt_menu.c
 ..\aes\wdialog\shelsort.c

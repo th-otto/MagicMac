@@ -43,15 +43,14 @@ extern WORD _wind_open(WORD whdl, GRECT *g);
 extern WORD _wind_calc( WORD type,  WORD kind, GRECT *in, GRECT *out);
 extern WORD _wind_get(WORD whdl, WORD code, WORD *g );
 extern WORD _wind_set(WORD whdl, WORD opcode, WORD koor[4]);
-extern WORD form_wbutton(OBJECT *tree, WORD objnr, WORD clicks,
-					WORD *nxt_edit, WORD whandle);
+extern WORD form_wbutton(OBJECT *tree, WORD objnr, WORD clicks, WORD *nxt_edit, WORD whandle);
 extern WORD cdecl _form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, WORD whandle);
 
 #define	objc_draw( tree, obj, depth, clip ) \
 			set_clip_grect( clip ), \
 			_objc_draw( tree, obj, depth )
 
-#define	objc_edit( tree, obj, c, x, kind, rect ) \
+#define	objc_xedit( tree, obj, c, x, kind, rect ) \
 			_objc_edit( tree, obj, c, x, kind, rect )
 
 #define	objc_find( tree, obj, depth, x, y ) \
@@ -95,9 +94,8 @@ LONG mmalloc( ULONG size);
 #define	wind_open( handle, rect ) \
 			wind_open( handle, rect->g_x, rect->g_y, rect->g_w, rect->g_h )
 
-#define	objc_edit( tree, obj, c, x, kind, rect ) \
-			_GemParBlk.addrin[1] = rect, \
-			objc_edit( tree, obj, c, x, kind )
+#define	objc_xedit( tree, obj, c, x, kind, rect ) \
+			objc_xedit( tree, obj, c, x, kind, rect )
 
 #define	objc_draw( tree, obj, depth, clip ) \
 			objc_draw( tree, obj, depth, (clip)->g_x, (clip)->g_y, (clip)->g_w, (clip)->g_h )
@@ -398,7 +396,7 @@ void	wdlg_redraw( DIALOG *d, GRECT *rect, WORD obj, WORD depth )
 					{ 
 						objc_draw( d->tree, ROOT, depth, &w );		/* Edit-Objekt sicherheitshalber nochmal zeichnen */
 	
-						objc_edit( d->tree, d->act_editob, 0, &d->cursorpos, 103, &w );	/* Cursor zeichnen, falls innerhalb des Rechtecks */
+						objc_xedit( d->tree, d->act_editob, 0, &d->cursorpos, ED_DRAW, &w );	/* Cursor zeichnen, falls innerhalb des Rechtecks */
 					}
 				}
 			}
@@ -483,15 +481,15 @@ WORD	wdlg_set_edit( DIALOG *d, WORD obj )
 	{
 		if	( d->act_editob > 0 )										/* war ein Edit-Feld aktiv? */
 #if	CALL_MAGIC_KERNEL
-			objc_edit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END + (d->whdl<<8), 0L );
+			objc_xedit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END + (d->whdl<<8), 0L );
 #else
-			objc_edit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END, 0L );
+			objc_xedit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END, 0L );
 #endif
 		if	( obj > 0 )														/* neues Edit-Feld aktiv? */
 #if	CALL_MAGIC_KERNEL
-			objc_edit( d->tree, obj, 0, &d->cursorpos, ED_INIT + (d->whdl<<8), 0L );
+			objc_xedit( d->tree, obj, 0, &d->cursorpos, ED_INIT + (d->whdl<<8), 0L );
 #else
-			objc_edit( d->tree, obj, 0, &d->cursorpos, ED_INIT, 0L );
+			objc_xedit( d->tree, obj, 0, &d->cursorpos, ED_INIT, 0L );
 #endif
 		d->act_editob = obj;												/* Nummer des neuen Edit-Objekts */
 
@@ -805,19 +803,19 @@ static WORD	wdlg_button( DIALOG *d, EVNT *events, WORD clicks, WORD mx, WORD my,
 		if	(( d->act_editob != edit ) || ( obj == edit ))		/* wurde das Edit-Feld gewechselt? */
 		{
 #if CALL_MAGIC_KERNEL
-			objc_edit(d->tree, d->act_editob, 0, &d->cursorpos, ED_END + (d->whdl<<8), 0L );	/* Cursor im alten Editfeld ausschalten */
+			objc_xedit(d->tree, d->act_editob, 0, &d->cursorpos, ED_END + (d->whdl<<8), 0L );	/* Cursor im alten Editfeld ausschalten */
 #else
-			objc_edit(d->tree, d->act_editob, 0, &d->cursorpos, ED_END, 0L );	/* Cursor im alten Editfeld ausschalten */
+			objc_xedit(d->tree, d->act_editob, 0, &d->cursorpos, ED_END, 0L );	/* Cursor im alten Editfeld ausschalten */
 #endif
 			d->act_editob = edit;										/* Nummer des Edit-Objekts */
 
 #if CALL_MAGIC_KERNEL
-			objc_edit( d->tree, d->act_editob, mx, &d->cursorpos, 100, 0L );	/* Cursor aufs neue Editfeld, ED_CRSR */
+			objc_xedit( d->tree, d->act_editob, mx, &d->cursorpos, ED_CRSR, 0L );	/* Cursor aufs neue Editfeld, ED_CRSR */
 #else
 			if ( aes_flags & GAI_MAGIC )
-				objc_edit( d->tree, d->act_editob, mx, &d->cursorpos, 100, 0L );
+				objc_xedit( d->tree, d->act_editob, mx, &d->cursorpos, ED_CRSR, 0L );
 			else
-				objc_edit( d->tree, d->act_editob, 0, &d->cursorpos, ED_INIT, 0L );
+				objc_xedit( d->tree, d->act_editob, 0, &d->cursorpos, ED_INIT, 0L );
 
 #endif
 			hndl_exit( d, events, HNDL_EDCH, 0, &d->act_editob );	/* das Edit-Feld wurde gewechselt... */
@@ -887,9 +885,9 @@ static WORD	wdlg_key( DIALOG *d, EVNT *events )
 			if ( hndl_exit( d, events, HNDL_EDIT, 0, &key ))	/* soll der Code eingefuegt werden? */
 			{
 #if	CALL_MAGIC_KERNEL
-				objc_edit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR + (d->whdl<<8), 0L );	/* Zeichen einfuegen */
+				objc_xedit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR + (d->whdl<<8), 0L );	/* Zeichen einfuegen */
 #else
-				objc_edit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR, 0L );	/* Zeichen einfuegen */
+				objc_xedit( d->tree, d->act_editob, key, &d->cursorpos, ED_CHAR, 0L );	/* Zeichen einfuegen */
 #endif
 				events->mwhich &= ~MU_KEYBD;							/* Tastatur-Bit loeschen */
 				hndl_exit( d, events, HNDL_EDDN, 0, &key );		/* Code wurde eingefuegt... */
@@ -902,15 +900,15 @@ static WORD	wdlg_key( DIALOG *d, EVNT *events )
 		{
 			if	( d->act_editob > 0 )									/* war ein Edit-Feld aktiv? */
 #if	CALL_MAGIC_KERNEL
-				objc_edit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END + (d->whdl<<8), 0L );
+				objc_xedit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END + (d->whdl<<8), 0L );
 #else
-				objc_edit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END, 0L );
+				objc_xedit( d->tree, d->act_editob, 0, &d->cursorpos, ED_END, 0L );
 #endif
 			if	( neu_editob > 0 )										/* neues Edit-Feld aktiv? */
 #if	CALL_MAGIC_KERNEL
-				objc_edit( d->tree, neu_editob, 0, &d->cursorpos, ED_INIT + (d->whdl<<8), 0L );
+				objc_xedit( d->tree, neu_editob, 0, &d->cursorpos, ED_INIT + (d->whdl<<8), 0L );
 #else
-				objc_edit( d->tree, neu_editob, 0, &d->cursorpos, ED_INIT, 0L );
+				objc_xedit( d->tree, neu_editob, 0, &d->cursorpos, ED_INIT, 0L );
 #endif
 			d->act_editob = neu_editob;								/* Nummer des neuen Edit-Objekts */
 
@@ -974,9 +972,9 @@ static WORD	set_1st_edit( DIALOG *d )
 		{
 			d->act_editob = index;										/* Nummer des Edit-Objekts */
 #if	CALL_MAGIC_KERNEL
-			objc_edit( d->tree, index, 0, &d->cursorpos, ED_INIT + (d->whdl<<8), 0L );	/* Cursor ein */
+			objc_xedit( d->tree, index, 0, &d->cursorpos, ED_INIT + (d->whdl<<8), 0L );	/* Cursor ein */
 #else
-			objc_edit( d->tree, index, 0, &d->cursorpos, ED_INIT, 0L );	/* Cursor ein */
+			objc_xedit( d->tree, index, 0, &d->cursorpos, ED_INIT, 0L );	/* Cursor ein */
 #endif
 			break;
 		}

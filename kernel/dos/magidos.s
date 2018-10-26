@@ -381,7 +381,7 @@ dosi_nfs:
 *
 
 deleddev:
-     DEB  'Devices wieder l”schen'
+     DEB  'Devices wieder l',$94,'schen'
  movem.l  a5/a6/d7,-(sp)
 
 ; erst die Standard-Handles des Boot-Prozesses loeschen
@@ -486,7 +486,7 @@ iniddev1:
 *
 
 iniddev2:
-     DEB  'Ger„tehandles -1..-4 erzeugen'
+     DEB  'Ger',$84,'tehandles -1..-4 erzeugen'
  movem.l  d7/a5/a4,-(sp)
  moveq    #3,d7
  lea      dev_fds,a5
@@ -774,9 +774,9 @@ D_Mxalloc:
 _xalloc:
  move.l   act_pd,a1
 ;    IF   (DEBUG&DEBLEVEL)
-;    DEBL 'Mxalloc ',d0
+;    DEBL d0,'Mxalloc '
 ; jsr          Mxalloc
-;    DEBL 'Mxalloc -> ',d0
+;    DEBL d0,'Mxalloc -> '
 ; rts
 ;    ELSE
  jmp      Mxalloc
@@ -1222,7 +1222,7 @@ dxh_err:
  move.l   #bios_rawdrvr,d_driver(a5)
 dxh_ende:
  movem.l  (sp)+,a5/a6
-;     DEBL 'DMD_xhdi => ',d0
+;     DEBL d0,'DMD_xhdi => '
  rts
 
 
@@ -1283,7 +1283,7 @@ dc_valid:
  move.l   a5,d0                    ; => return(DMD)
 dc_ende:
  movem.l  (sp)+,a4/a5/d7
-;     DEBL  'DMD_create => ',d0
+;     DEBL  d0,'DMD_create => '
  rts
 
 
@@ -1427,7 +1427,7 @@ dfr_ende:
 
 path_to_DD:
 
-;    DEBT 'path_to_DD ',a0
+;    DEBT a0,'path_to_DD '
 
  moveq    #5,d2
  suba.l   a2,a2
@@ -1635,7 +1635,7 @@ pthdd_end:
  move.w   d6,d1                    ; RUeckgabe in d1: war Laufwerk U:
  movem.l  (sp)+,a6/a4/a3/d7/d6/d5/d4
 
-;    DEBL 'path_to_DD => ',d0
+;    DEBL d0,'path_to_DD => '
 
  rts
 pthdd_eloop:
@@ -1652,7 +1652,7 @@ pthdd_eloop:
 
 D_Dsetpath:
  movem.l  d6/d7/a3/a4/a5/a6,-(sp)
-;    DEBT 'Dsetpath ',(a0)
+;    DEBT (a0),'Dsetpath '
  move.l   (a0),-(sp)
 dsp_again:
  movea.l  act_pd,a4
@@ -1770,7 +1770,7 @@ dsp_ende:
  beq      dsp_again
  addq.l   #4,sp
  movem.l  (sp)+,d6/d7/a3/a4/a5/a6
-;    DEBL 'Dsetpath => ',d0
+;    DEBL d0,'Dsetpath => '
  rts
 
 
@@ -1809,7 +1809,7 @@ Dgetcwd:
  move.w   d0,d6                    ; d6 := drivecode
  move.w   d1,d7                    ; d7 := len
 dgp_again:
-;    DEBL  'Dgetcwd ',d0
+;    DEBL  d0,'Dgetcwd '
  move.w   d6,d0
  subq.w   #1,d0                    ; drivecode
  bcc.b    dgp_drv                  ; angegebenes Laufwerk verwenden
@@ -2209,7 +2209,7 @@ D_Fopen:
  move.w   4(a0),d0
  move.l   (a0),a0
 Fopen:
-     DEBT 'Fopen ',a0
+     DEBT a0,'Fopen '
  moveq    #0,d1
 _Fopen:
  movem.l  d3/d5/d6/d7/a3/a4/a6,-(sp)
@@ -2310,7 +2310,7 @@ fop_ok:
 fop_ende:
  adda.w   #256,sp
  movem.l  (sp)+,a6/a4/a3/d7/d6/d5/d3
-     DEBL 'Fopen => ',d0
+     DEBL d0,'Fopen => '
  rts
 fop_ferr:
  move.l   a4,a0
@@ -2391,7 +2391,7 @@ D_Dcntl:
  move.l   (a0),a0
 Dcntl:
 
-;    DEBT 'Dcntl ',a0
+;    DEBT a0,'Dcntl '
 
  cmpi.w   #MX_KER_GETINFO,d0       ; MagiC 6
  beq.b    dcntl_kerinfo
@@ -2424,7 +2424,7 @@ Dcntl:
 dcntl_kerinfo:
  move.l   #kernel,d0
 
-;    DEBL 'Dcntl => ',d0
+;    DEBL d0,'Dcntl => '
 
  rts
 dcntl_doslimits:
@@ -3276,7 +3276,7 @@ __fseek:
  bsr.b    _fseek
  tst.l    d0
 
-;     DEBL  '  __fseek => ',d0
+;     DEBL  d0,'  __fseek => '
 
  rts
 
@@ -3406,7 +3406,7 @@ ffor_ende:
 
 D_Fclose:
  move.w   (a0),d0
-;    DEBL  'Fclose (hdl=)',d0
+;    DEBL  d0,'Fclose (hdl=)'
 Fclose:
  movem.l  a5/d6,-(sp)
 
@@ -3456,7 +3456,7 @@ fclo_both:
 
 fclo_ende:
  movem.l  (sp)+,d6/a5
-;    DEBL  'Fclose => ',d0
+;    DEBL  d0,'Fclose => '
  rts
 fclo_eihndl:
  moveq    #EIHNDL,d0
@@ -3475,9 +3475,9 @@ D_Fread:
  move.l   (a0)+,d1
  move.l   (a0),a0
 Fread:
-;    DEBL  'Fread  hdl = ',d0
-;    DEBL  '       cnt = ',d1
-;    DEBL  '       buf = ',a0
+;    DEBL  d0,'Fread  hdl = '
+;    DEBL  d1,'       cnt = '
+;    DEBL  a0,'       buf = '
  move.l   a0,-(sp)
  move.l   d1,-(sp)
  bsr      hdl_to_FD
@@ -3509,7 +3509,7 @@ fread_eihndl:
 
 D_Fwrite:
  move.w   (a0)+,d0
-;     DEBL  'Fwrite (hdl=)',d0
+;     DEBL  d0,'Fwrite (hdl=)'
  move.l   (a0)+,d1
  bne.b    fwr_ok
  move.l   (a0),a0
@@ -3601,7 +3601,7 @@ _fread:
  jsr      (a2)
  tst.l    d0
 
-;     DEBL  '  _fread => ',d0
+;     DEBL  d0,'  _fread => '
 
  rts
 
@@ -3620,7 +3620,7 @@ _fwrite:
  jsr      (a2)
  tst.l    d0
 
-;     DEBL  '  _fwrite => ',d0
+;     DEBL  d0,'  _fwrite => '
 
  rts
 
@@ -7576,7 +7576,7 @@ STKOFFS   SET  HAVE_SEM
 
 Pexec:
      DEBON
-     DEBL 'Pexec mit Modus ',(a0)
+     DEBL (a0),'Pexec mit Modus '
  link     a6,#STKOFFS
  movem.l  d7/a4/a5,-(sp)
  moveq    #0,d7                    ; Datei nicht geoeffnet
@@ -7624,7 +7624,7 @@ pxc_jmptab:
 *
 
 pxc_mod0:
-     DEBT 'Pexec(0) mit Datei ',2(a4)
+     DEBT 2(a4),'Pexec(0) mit Datei '
  lea      PH(a6),a1
  move.l   2(a4),a0                 ; fname
  bsr      load_PH                  ; Oeffnen und PH einlesen
@@ -7960,7 +7960,7 @@ pxc__ende:
  jsr      evnt_sem
  move.l   d7,d0
 pxc_enden:
-     DEBL 'Pexec => ',d0
+     DEBL d0,'Pexec => '
  movem.l  (sp)+,d7/a4/a5
  unlk     a6
  rts
@@ -8927,9 +8927,9 @@ dt_go:
  movem.l  d0-d3/a0-a2,-(sp)
  DEB      'DOS-Aufruf...'
  move.l   $1038272,d0
- DEBL     ' $1038272 = ',d0
+ DEBL     d0,' $1038272 = '
  move.l   $1038272+12,d0
- DEBL     ' $1038272+12 = ',d0
+ DEBL     d0,' $1038272+12 = '
  movem.l  (sp)+,d0-d3/a0-a2
      ENDIF
 
@@ -8940,9 +8940,9 @@ dt_ret:
  movem.l  d0-d3/a0-a2,-(sp)
  DEB      '...DOS-Aufruf beendet'
  move.l   $1038272,d0
- DEBL     ' $1038272 = ',d0
+ DEBL     d0,' $1038272 = '
  move.l   $1038272+12,d0
- DEBL     ' $1038272+12 = ',d0
+ DEBL     d0,' $1038272+12 = '
  movem.l  (sp)+,d0-d3/a0-a2
      ENDIF
 
@@ -10455,7 +10455,7 @@ sbo_nloop:
  bsr      Pexec                    ; Bibliothek laden
  lea      14(sp),sp
 
-     DEBL 'SLB-Pexec EXE_LD => ',d0
+     DEBL d0,'SLB-Pexec EXE_LD => '
 
  tst.l    d0
  bmi      sbo_ende                 ; Fehler
@@ -10503,7 +10503,7 @@ sbo_no_env:
  bsr      Pexec                    ; Bibliothek laden
  lea      14(sp),sp
 
-     DEBL 'SLB-Pexec XEXE_INIT => ',d0
+     DEBL d0,'SLB-Pexec XEXE_INIT => '
 
 ; Start-Pfad in die Basepage kopieren (MagiC 6)
 

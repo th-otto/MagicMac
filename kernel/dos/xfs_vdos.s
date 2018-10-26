@@ -236,7 +236,7 @@ dxfs_drv_open:
      DEBON
  move.l   d_dfs(a0),d0
  bne      ddo_mediach              ; schon initialisiert
-     DEB  '™ffne neues DOSXFS- Laufwerk'
+     DEB  $99,'ffne neues DOSXFS- Laufwerk'
  movem.l  a4/a5,-(sp)
  move.l   a0,a5                    ; a5 = DMD *
 
@@ -469,7 +469,7 @@ dxfs_dfree:
 *
 
 dxfs_path2DD:
-     DEBT 'DOSXFS sucht einen Pfad: ',a1
+     DEBT a1,'DOSXFS sucht einen Pfad: '
  movem.l  a4/a5/a3/d7/d6,-(sp)
  move.w   d0,d6                    ; d6 = mode
  move.l   a1,a3                    ; a3 = Pfad
@@ -546,7 +546,7 @@ pthdd_nospec:
 * Wir muessen immer die langen Dateinamen beruecksichtigen, weil
 * der DD_FD in fd_longname den langen Pfadnamen enthalten muss!
 
-     DEBT ' vf_path2DD mit Pfad ',a3
+     DEBT a3,' vf_path2DD mit Pfad '
 
  clr.l    -(sp)
  pea      (sp)                     ; ggf. Zeiger auf Symlink
@@ -557,7 +557,7 @@ pthdd_nospec:
  addq.l   #4,sp
  move.l   (sp)+,a0                 ; ggf. Symlink
 
-     DEBL ' vf_path2DD => ',d0
+     DEBL d0,' vf_path2DD => '
 
  tst.l    d0
  bgt.b    pthdd_okdd               ; kein Fehler
@@ -592,8 +592,8 @@ pthdd_ref:
  addq.w   #1,fd_refcnt(a4)         ; DD wird vom Kernel referenziert!
 pthdd_ende:
  movem.l  (sp)+,a4/a5/a3/d7/d6
-     DEBL 'DOSXFS fand Pfad => ',d0
-     DEBT 'mit Restpfad (Dateiname) ',d1
+     DEBL d0,'DOSXFS fand Pfad => '
+     DEBT d1,'mit Restpfad (Dateiname) '
  rts
 pthdd_eaccdn:
  moveq    #EACCDN,d0               ; gesperrt, return(EACCDN)
@@ -803,10 +803,10 @@ dxfs_fopen:
 fop_dd_wr:
  ori.w    #OM_WPERM+OM_WDENY,d2    ; Schreibzugriffe anderer verbieten
 _dxfs_fopen:
-     DEBT '_dxfs_fopen ',a1
-     DEBL '        omode ',d0
-     DEBL '        attr  ',d1
-     DEBL '        cmd   ',d2
+     DEBT a1,'_dxfs_fopen '
+     DEBL d0,'        omode '
+     DEBL d1,'        attr  '
+     DEBL d2,'        cmd   '
  movem.l  d3/d4/d5/d6/d7/a3/a4/a6,-(sp)
  suba.w   #40,sp                   ; (sp):   DIR
                                    ; 32(sp): char *
@@ -3278,7 +3278,7 @@ _cdd_a5:
 *
 
 get_DD:
-     DEBT  'get_DD ',a1
+     DEBT  a1,'get_DD '
  movem.l  d5/a2/a4/a6,-(sp)
  movea.l  fd_multi1(a0),a4         ; a4 := DD_FD  (Prototyp)
  movea.l  a1,a6                    ; a6 := DIR
@@ -3306,7 +3306,7 @@ gDD_nxtchild:
  move.l   a0,(a1)                  ; ggf. Link eintragen
 gDD_ende:
  movem.l  (sp)+,a6/a4/a2/d5
-     DEBL  'get_DD => ',d0
+     DEBL  d0,'get_DD => '
  rts
 
 
@@ -3443,9 +3443,9 @@ D2F_err:
 
 dir_srch:
 
-     DEBL  'dir_srch PATH = ',a0
-     DEBT  '         Name = ',a1
-     DEBL  '         Attr = ',d0
+     DEBL  a0,'dir_srch PATH = '
+     DEBT  a1,'         Name = '
+     DEBL  d0,'         Attr = '
 
  move.l   fd_dmd(a0),a2
  tst.w    d_flags(a2)              ; lange Dateinamen ?
@@ -3461,9 +3461,9 @@ dir_srch:
  move.l   (sp)+,d1                 ; pos1
  move.l   (sp)+,d2                 ; pos2
 
-     DEBL  'dir_srch => ',d0
-     DEBL  '      d1 => ',d1
-     DEBL  '      d2 => ',d2
+     DEBL  d0,'dir_srch => '
+     DEBL  d1,'      d1 => '
+     DEBL  d2,'      d2 => '
 
  tst.l    d0
  rts
@@ -3498,9 +3498,9 @@ drss_all:
  moveq    #-1,d2                   ; kein langer Name
  tst.l    d0
 
-     DEBL  'dir_srch => ',d0
-     DEBL  '      d1 => ',d1
-     DEBL  '      d2 => ',d2
+     DEBL  d0,'dir_srch => '
+     DEBL  d1,'      d1 => '
+     DEBL  d2,'      d2 => '
 
  rts
 
@@ -3518,7 +3518,7 @@ drss_all:
 
 _dir_srch:
 
-     DEBT  '_dir_srch ',a1
+     DEBT  a1,'_dir_srch '
 
  movem.l  a3/a4,-(sp)
  suba.w   #12,sp
@@ -3570,7 +3570,7 @@ dsrch_nxt:
 dsrch_efilnf:
  moveq    #EFILNF,d0
 dsrch_ende:
-     DEBL  '_dir_srch => ',d0
+     DEBL  d0,'_dir_srch => '
  adda.w   #12,sp
  movem.l  (sp)+,a4/a3
  rts

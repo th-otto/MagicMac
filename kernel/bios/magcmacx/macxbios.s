@@ -1,3 +1,4 @@
+
 * BIOS fuer MagiC MAC X
 * ********************
 
@@ -99,7 +100,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 
 * Import aus STD
 
-     XREF      putch,putstr,getch,str_to_con
+     XREF      putch,putstr,getch,str_to_con,debug_puts
      IMPORT    date2str            ; void date2str( a0 = char *s, d0 = WORD date)
      IF   DEBUG
      XREF hexl,crlf
@@ -292,7 +293,7 @@ app0:               DS.L 1              /* APP #0 und Default- Superstack  */
 pgm_superst:        DS.L 1              /* Default- Superstack             */
 p_mgxinf:
 pgm_userst:         DS.L 1
-dflt_maptable:      DS.L NSERIAL*6     /* fuer 4 Eintraege Ö 24 Bytes       */
+dflt_maptable:      DS.L NSERIAL*6     /* fuer 4 Eintraege a 24 Bytes       */
 intern_maptab:      DS.L NSERIAL*6           ;interne MapTab. Enthaelt die Adressen
                                        ;der seriellen Mag!X-Biosroutinen
 ;
@@ -1644,6 +1645,7 @@ Bmalloc:
 *
 
 mac_puts:
+debug_puts:
  move.l   a0,a1
  lea      MSysX+MacSysX_debugout(pc),a0
  MACPPC
@@ -1659,7 +1661,7 @@ mac_puts:
 *
 
 bios_ptr:
-; DEBL    'Ptermres mit pd = ',a0
+; DEBL    a0,'Ptermres mit pd = '
 ; jsr          getch
  rts
 
@@ -1700,7 +1702,7 @@ print_bombs10:
 ;    IF DEBUG
 ; moveq   #0,d1
 ; move.w  6(sp),d1
-; DEBL    'Systemfehler (Bomben) :',d1
+; DEBL    d1,'Systemfehler (Bomben) :'
 ;    ENDIF
 
  lsr.w    #2,d0                    ; /4 ist Vektornummer
@@ -1718,8 +1720,8 @@ pb_loop:
 * Betriebssystem ueberpruefen
  lea      _start,a0
  lea      _ende,a1
-; DEBL    'PrÅfsummenberechnung von :',a0
-; DEBL    '                     bis :',a1
+; DEBL    a0,'Pr',$81,'fsummenberechnung von :'
+; DEBL    a1,'                     bis :'
  moveq    #0,d0
 os_chkloop:
  add.l    (a0)+,d0
@@ -1728,8 +1730,8 @@ os_chkloop:
  cmp.l    os_chksum,d0
  beq      os_chk_ok
 
-;    DEBL 'erwartete PrÅfsumme ',os_chksum
-;    DEBL 'Falsche PrÅfsumme ',d0
+;    DEBL os_chksum,'erwartete Pr',$81,'fsumme '
+;    DEBL d0,'Falsche Pr',$81,'fsumme '
 
  lea      os_corr_s(pc),a0
  jsr      putstr

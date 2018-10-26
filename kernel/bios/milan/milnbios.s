@@ -274,7 +274,7 @@ pgm_superst:        DS.L 1              /* Default- Superstack             */
 p_mgxinf:                               /* nicht glchztg. mit pgm_userst   */
 pgm_userst:         DS.L 1
 
-;dflt_maptable:     DS.L 4*6            /* fuer 4 Eintraege Ö 24 Bytes       */
+;dflt_maptable:     DS.L 4*6            /* fuer 4 Eintraege a 24 Bytes       */
 intern_maptab:      DS.L NSERIAL*6      ;interne MapTab. Enthaelt die Adressen
                                         ;der seriellen Mag!X-Biosroutinen
 ;
@@ -352,7 +352,7 @@ sys_start:
      IF   DEBUG
      DEBON
      lea  _start(pc),a0
-     DEBL '_start = ',a0
+     DEBL a0,'_start = '
      ENDIF
 
  lea      endofvars,sp             ; Hier Stack setzen wegen ggf. Exception
@@ -439,7 +439,7 @@ inst_cook:
  andi.l   #$ffffff00,d0                 ; auf 256-Byte-Grenze
  move.l   d0,end_os
  move.l   d0,exec_os
- DEBL     'end_os = ',d0
+ DEBL     d0,'end_os = '
  movea.l  syshdr+os_magic(pc),a0        ; Zeiger auf GEM- Parameterblock
  cmpi.l   #$87654321,(a0)+              ; gueltig ?
  bne.b    bot_no_aes                    ; nein
@@ -485,7 +485,7 @@ bot_no_frb:
 ; add.l   #$2000,d0                ; 8k (??!!??) noetig, sonst Crash
 ; move.l  d0,end_os                ; nicht noetig, aber 3.06 will es so
  move.l   d0,_membot
- DEBL     '_membot = ',d0
+ DEBL     d0,'_membot = '
 
 *
 * weitere Initialialisierungen
@@ -587,7 +587,7 @@ bot_loop4:
  move.l   #bconin_con,mbiosvecs+$28     ; Bconin(2)
  move.l   #bconstat_con,dev_vecs+$8     ; Bconstat(2)
  move.l   #bconstat_con,mbiosvecs+$8    ; Bconstat(2)
- DEB      'GerÑtevektoren initialisiert'
+ DEB      'Ger',$84,'tevektoren initialisiert'
 
 * MFP und Vektoren initialisieren, Interrupts fuer 200Hz und IKBD
 
@@ -736,21 +736,21 @@ addmem_nxt:
  DEB      'SCSI.RAM initialisiert'
  move.l   hdv_rw,-(sp)
  bsr      dskboot                  ; von Floppy booten
- DEB      'dskboot ausgefÅhrt'
+ DEB      'dskboot ausgef',$81,'hrt'
  bsr      apkgboot                 ; Flash-PKGs starten
- DEB      'apkgboot ausgefÅhrt'
+ DEB      'apkgboot ausgef',$81,'hrt'
  move.l   (sp)+,a0
  cmpa.l   hdv_rw,a0
  bne.b    boot_no_dma              ; hat schon von Floppy gebootet
 
  bsr      dmaboot                  ; von SCSI und ACSI booten
- DEB      'dmaboot ausgefÅhrt'
+ DEB      'dmaboot ausgef',$81,'hrt'
  jsr      secb_ext                 ; (Sektorpufferliste!)
  DEB      'Sektorpuffer erweitert'
 
 boot_no_dma:
  bsr      exec_respgms             ; residente Programme ausfuehren
- DEB      'residente Programme ausgefÅhrt'
+ DEB      'residente Programme ausgef',$81,'hrt'
 
 *
 * VDI nach DMA-Boot initialisieren (muss Treiber laden)
@@ -889,7 +889,7 @@ dskboot:
  move.l   hdv_boot,d0
  beq.b    dskb_ende
  move.l   d0,a0
-     DEBL 'springe nach hdv_boot = ',hdv_boot
+     DEBL hdv_boot,'springe nach hdv_boot = '
  jsr      (a0)
 ; tst.w    d0
 ; bne.b    dskb_ende
@@ -2367,9 +2367,9 @@ int_ikbd:
  movea.l  kbdvecs+$1c,a2           ; midisys
  jsr      (a2)
  move.l   32(sp),d0                ; LONG magic 'Miln'
-;    DEBL 'IKBD: (sp)=',d0
+;    DEBL d0,'IKBD: (sp)='
  lea      32+4(sp),a0              ; Parameter
-;    DEBL 'IKBD: 4(sp)=',(a0)
+;    DEBL (a0),'IKBD: 4(sp)='
  movea.l  kbdvecs+$20,a2           ; ikbdsys
  jsr      (a2)
 ; Interrupt quittieren
@@ -2418,14 +2418,14 @@ ikbdsys:
  subq.b   #1,d0
  bne.b    iks_err
  move.l   a0,-(sp)                 ; Mauspaket
-;    DEBL 'Mausdaten',-1(a0)
+;    DEBL -1(a0),'Mausdaten'
  movea.l  kbdvecs+$10,a2           ; mousevec
  jsr      (a2)
  addq.l   #4,sp
  rts
 iks_key:
  move.b   (a0),d0                  ; Zeichen
-     DEBL 'Taste ',d0
+     DEBL d0,'Taste '
  lea      iorec_kb,a0              ; Tastatur-IOREC
  move.l   kbdvecs-4,a1             ; i.a. handle_key
  jmp      (a1)

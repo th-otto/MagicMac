@@ -22,7 +22,7 @@ DEBLEVEL  EQU  1
      ENDIF
      ENDM
 
-     MACRO     DEB  text
+     MACRO     DEB  text,text2,text3
      LOCAL     t1,t2,t3
      IF   (DEBUG&DEBLEVEL)
  move.w   sr,-(sp)
@@ -30,18 +30,25 @@ DEBLEVEL  EQU  1
  beq      t3
  movem.l  d0-d2/a0-a2,-(sp)
  bra.b    t1
-t2: DC.B  text,$d,$a,0
+t2: DC.B  text
+    IFNB text2
+    dc.b text2
+    ENDC
+    IFNB text3
+    dc.b text3
+    ENDC
+     dc.b $d,$a,0
      EVEN
 t1:
  lea      t2(pc),a0
- bsr      str_to_con
+ bsr      debug_puts
  movem.l  (sp)+,d0-d2/a0-a2
 t3:
  move.w   (sp)+,sr
      ENDIF
      ENDM
 
-     MACRO     DEBL  text,val
+     MACRO     DEBL  val,text,text2,text3
      LOCAL     t1,t2,t3
      IF   (DEBUG&DEBLEVEL)
  move.w   sr,-(sp)
@@ -50,11 +57,18 @@ t3:
  movem.l  d0/d1/d2/d7/a0-a2,-(sp)
  move.l   val,d7
  bra.b    t1
-t2: DC.B  text,0
+t2: DC.B  text
+    IFNB text2
+    dc.b text2
+    ENDC
+    IFNB text3
+    dc.b text3
+    ENDC
+     dc.b 0
      EVEN
 t1:
  lea      t2(pc),a0
- bsr      str_to_con
+ bsr      debug_puts
  move.l   d7,d0
  bsr      hexl
  bsr      crlf
@@ -64,22 +78,29 @@ t3:
      ENDIF
      ENDM
 
-     MACRO     DEBT  text,text2
+     MACRO     DEBT  val,text,text2,text3
      LOCAL     t1,t2,t3
      IF   (DEBUG&DEBLEVEL)
  move.w   sr,-(sp)
  tst.b    $4ca
  beq      t3
  movem.l  d0/d1/d2/d7/a0-a2,-(sp)
- move.l   text2,d7
+ move.l   val,d7
  bra.b    t1
-t2: DC.B  text,0
+t2: DC.B  text
+    IFNB text2
+    dc.b text2
+    ENDC
+    IFNB text3
+    dc.b text3
+    ENDC
+     dc.b 0
      EVEN
 t1:
  lea      t2(pc),a0
- bsr      str_to_con
+ bsr      debug_puts
  move.l   d7,a0
- bsr      str_to_con
+ bsr      debug_puts
  bsr      crlf
  movem.l  (sp)+,d0/d1/d2/d7/a0-a2
 t3:

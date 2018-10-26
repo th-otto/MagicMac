@@ -61,7 +61,7 @@ bot_no_coo:
 
 * Jetzt (ab MagiC 6) log-Datei oeffnen
 
-	DEB	'BOOT.LOG îffnen?'
+	DEB	'BOOT.LOG ',$94,'ffnen?'
  move.l	p_mgxinf,a0
  jsr		rinf_log				; Log-Datei oeffnen
  move.l	d0,log_fd
@@ -89,7 +89,7 @@ no_eddi:
 
 * Jetzt XTENSION-Ordner, dann AUTO-Ordner
 
-	DEB	'GerÑtetreiber (DEV) laden'
+	DEB	'Ger',$84,'tetreiber (DEV) laden'
  lea 	devdir_s(pc),a5
  lea 	devpgm_s(pc),a6
  bsr 	auto_programs			; \GEMSYS\MAGIC\XTENSION\*.DEV
@@ -97,22 +97,22 @@ no_eddi:
  lea 	xfsdir_s(pc),a5
  lea 	xfspgm_s(pc),a6
  bsr 	auto_programs			; \GEMSYS\MAGIC\XTENSION\*.XFS
-	DEB	'BIOS-GerÑtedateien aus MAGX.INF konfigurieren'
+	DEB	'BIOS-Ger',$84,'tedateien aus MAGX.INF konfigurieren'
  move.l	p_mgxinf,a0
  jsr		rinf_bdev
-	DEB	'Restliche GerÑtedateien initialisieren'
+	DEB	'Restliche Ger',$84,'tedateien initialisieren'
  jsr		iniddev1
-	DEB	'GerÑte-Handles aus MAGX.INF zuweisen'
+	DEB	'Ger',$84,'te-Handles aus MAGX.INF zuweisen'
  move.l	p_mgxinf,a0
  jsr		rinf_dvh
 	DEB	'Restliche Handles des DOS initialisieren'
  jsr		iniddev2
-	DEB	'AUTOEXEC.BAT ausfÅhren'
+	DEB	'AUTOEXEC.BAT ausf',$81,'hren'
  lea 	autoexec_s(pc),a6
  bsr 	autoexec				; \AUTO\AUTOEXEC.BAT
  tst.w	d0					; ausgefuehrt ?
  beq.b	no_autop				; ja, OK
-	DEB	'kein AUTOEXEC.BAT => AUTO-Ordner ausfÅhren'
+	DEB	'kein AUTOEXEC.BAT => AUTO-Ordner ausf',$81,'hren'
  lea 	autodir_s(pc),a5
  lea 	autopgm_s(pc),a6
  bsr 	auto_programs			; \AUTO\*.PRG
@@ -120,7 +120,7 @@ no_autop:
 
 * Boot-Log schliessen
 
-	DEB	'BOOT.LOG schlieûen'
+	DEB	'BOOT.LOG schlie',$9e,'en'
  move.l	log_fd,d0
  bmi.b	bot_nolog2
  move.l	dev_vecs+$68,a1
@@ -172,7 +172,7 @@ bot_nodcr:
 * durchlaufen
 
 resolut_change_loop:
-	DEB	'AES ausfÅhren'
+	DEB	'AES ausf',$81,'hren'
 	IFNE	MILANCOMP
 * CPU-Cache einschalten
  move.w	#1,-(sp)				; enable

@@ -282,7 +282,7 @@ app0:               DS.L 1              /* APP #0 und Default- Superstack  */
 pgm_superst:        DS.L 1              /* Default- Superstack             */
 p_mgxinf:
 pgm_userst:         DS.L 1
-dflt_maptable:      DS.L 4*6            /* fuer 4 Eintraege … 24 Bytes       */
+dflt_maptable:      DS.L 4*6            /* fuer 4 Eintraege a 24 Bytes       */
 intern_maptab:      DS.L 4*6           ;interne MapTab. Enthaelt die Adressen
                                        ;der seriellen Mag!X-Biosroutinen
 ;
@@ -1462,6 +1462,7 @@ Bmalloc:
 *
 
 mac_puts:
+debug_puts:
  jsr_mi   MSys+MacSys_debugout     ; memory indirect
  rts
 

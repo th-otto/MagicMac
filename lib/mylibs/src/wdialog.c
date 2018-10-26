@@ -127,7 +127,7 @@ void wdlg_xredraw(DIALOG *d, GRECT *neu, int startob, int depth)
 			if	(d->act_editob > 0)
 				{
 				_GemParBlk.addrin[1] = &w;
-				objc_edit(d->tree, d->act_editob, 0, &(d->cursorpos), 103);
+				objc_edit(d->tree, d->act_editob, 0, &(d->cursorpos), ED_DRAW);
 				}
 			}
 		wind_get(d->whdl,WF_NEXTXYWH,&(w.g_x),&(w.g_y),&(w.g_w),&(w.g_h));

@@ -113,9 +113,9 @@ mc_init:
 mci_loop:
  clr.l    (a1)
  move.l   md_start(a0),a2          ; a2 = Startadresse
-     DEBL 'Block beginnt bei ',a2
+     DEBL a2,'Block beginnt bei '
  move.l   md_len(a0),d2            ; d2 = Laenge
-     DEBL 'Block hat L„nge ',d2
+     DEBL d2,'Block hat L',$84,'nge '
 
 * Korrektur fuer Langwortgrenze
 
