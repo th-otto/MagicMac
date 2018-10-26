@@ -14,7 +14,9 @@ extern char toupper(char c);
 
 LONG smalloc( ULONG size);
 void smfree( void *memblk );
-LONG mmalloc( ULONG size);
+#ifndef BINEXACT
+void *mmalloc( ULONG size);
+#endif
 void mfree( void *memblk );
 LONG mshrink( void *memblk, ULONG size);
 WORD dgetdrv( void );

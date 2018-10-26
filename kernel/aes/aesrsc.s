@@ -85,10 +85,10 @@ rsrc_obfix:
  muls     #24,d0
  lea      ob_x(a0,d0.l),a0         ; auf ob_x
  st.b     d0
- bsr      __rsrc_obfix             ; x
- bsr      __rsrc_obfix             ; y
- bsr      __rsrc_obfix             ; w
- bsr      __rsrc_obfix             ; h
+ bsr.s    __rsrc_obfix             ; x
+ bsr.s    __rsrc_obfix             ; y
+ bsr.s    __rsrc_obfix             ; w
+ bsr.s    __rsrc_obfix             ; h
  moveq    #1,d0
  rts
 
@@ -174,7 +174,7 @@ set_abs_adr:
 ;move.w   d0,d0
 ;move.l   a0,a0
  move.l   a0,-(sp)
- bsr      rsrc_gaddr
+ bsr.s    rsrc_gaddr
  move.l   d0,a1
  move.l   (sp)+,a0
 ;bra      rel_to_abs_adr
@@ -512,7 +512,10 @@ incol_noseldata3:
 
  lea      0(a4,d6.l),a0            ; Zeiger hinter Mono-Daten
  cmp.l    a0,a1                    ; CICON direkt hinter Mono-Daten ?
- beq.b    incol_no_cicp            ; ja, keine CICON-Daten kopieren
+; beq.b    incol_no_cicp            ; ja, keine CICON-Daten kopieren
+ IFNE BINEXACT
+ nop
+ ENDC
 incol_no_cicp:
 ;move.l   a1,a1                    ; Quelladresse
 ;move.l   a0,a0                    ; Zieladresse

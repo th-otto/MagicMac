@@ -54,6 +54,11 @@ static    ULONG intensity_to_value( WORD intensity, WORD bits, WORD *bit_no );
 
 static    UBYTE color_remap[16] = { 0,2,3,6,4,7,5,8,9,10,11,14,12,15,13,255 };
 
+#ifdef BINEXACT
+void *mmalloc( ULONG size);
+#endif
+
+
 
 static void _vq_scrninfo( WORD *work_out )
 {

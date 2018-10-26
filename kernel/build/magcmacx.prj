@@ -11,6 +11,7 @@ MagicMacX.OS
 .S[-DMMX_YIELD=1]
 .S[-DDEMO=0]
 .S[-DBINEXACT=1]
+.C[-DBINEXACT=1]
 .C[-P]
 .L[-S=0]
 =
@@ -32,7 +33,7 @@ MagicMacX.OS
 ..\bios\magcmacx\macxfs.s
 ..\vdi\mxvdiknl.s
 ..\vdi\drivers.c [-G]
-..\vdi\filediv.c
+..\vdi\filediv.c [-G]
 ..\vdi\init_res.c [-G]
 ..\vdi\string.s
 ..\vdi\tos.s
@@ -44,8 +45,8 @@ MagicMacX.OS
 ..\aes\aesmen.s
 ..\aes\aesgraf.s
 ..\aes\aesrsc.s
-..\aes\farbic.c
-..\aes\wdialog\wdialog.c
+..\aes\farbic.c [-G-]
+..\aes\wdialog\wdialog.c [-G-]
 ..\aes\wdialog\listbox.c
 ..\aes\wdialog\fnt_menu.c
 ..\aes\wdialog\shelsort.c

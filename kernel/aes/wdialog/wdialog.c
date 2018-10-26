@@ -76,6 +76,10 @@ extern WORD cdecl _form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, W
 
 #define rc_intersect(a,b)	grects_intersect(a,b)
 
+#ifdef BINEXACT
+LONG mmalloc( ULONG size);
+#endif
+
 #else
 
 /*----------------------------------------------------------------------------------------*/ 
