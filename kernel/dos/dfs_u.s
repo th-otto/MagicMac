@@ -782,13 +782,7 @@ fxa_dd:
  cmpa.l   (udrv_procdir).l,a2
  beq.b    fxa_dev             ; proc: 34
  addq.w   #1,xattr_dev(a6)
- IFNE BINEXACT
- ; BUG: cmpa.l   #(udrv_shmdir).l,a2
- dc.w  $b5fc
- dc.l udrv_shmdir
- ELSE
- cmpa.l   (udrv_shmdir).l,a2
- ENDC
+ cmpa.l   (udrv_shmdir),a2
  beq.b    fxa_dev             ; shm: 35
  move.w   #'U'-'A',xattr_dev(a6)   ; root
 fxa_dev:

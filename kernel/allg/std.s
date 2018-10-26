@@ -1184,11 +1184,7 @@ mmalloc:
  trap	#1				; gemdos Malloc
  addq.w	#6,sp
 ;move.l	(sp)+,a2
- IFEQ BINEXACT
- ; BUG: originally returned value in D0 only,
- ; but is declared as void *mmalloc() in wdialog.c
  move.l d0,a0
- ENDC
  tst.l	d0
  rts
 

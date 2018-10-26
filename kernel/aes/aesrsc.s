@@ -507,9 +507,7 @@ incol_noseldata3:
  lea      0(a4,d6.l),a0            ; Zeiger hinter Mono-Daten
  cmp.l    a0,a1                    ; CICON direkt hinter Mono-Daten ?
 ; beq.b    incol_no_cicp            ; ja, keine CICON-Daten kopieren
- IFNE BINEXACT
- nop
- ENDC
+
 incol_no_cicp:
 ;move.l   a1,a1                    ; Quelladresse
 ;move.l   a0,a0                    ; Zieladresse

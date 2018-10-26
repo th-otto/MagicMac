@@ -48,10 +48,6 @@ extern int enable_3d;
 
 #define	Malloc( size )	((void *) mmalloc( size ))
 
-#ifdef BINEXACT
-LONG mmalloc( ULONG size);
-#endif
-
 #include "shelsort.h"
 #else
 

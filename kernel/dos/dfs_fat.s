@@ -337,12 +337,7 @@ di_nxtb:
 
  addq.l   #4,a6                         ; naechste Liste
  moveq    #SECBUFN2-1,d7
- IFNE BINEXACT
- dc.w     $bdfc
- dc.l     bufl+4
- ELSE
- cmpa.l   #(bufl+4).w,a6
- ENDC
+ cmpa.l   #(bufl+4),a6
  bls.b    di_nxtl
  movem.l  (sp)+,a6/d7/d6
  rts
@@ -431,12 +426,7 @@ sync_nxt:
  move.l   a4,d0
  bne.b    sync_nxtbcb
  subq.l   #4,a3
- IFNE BINEXACT
- dc.w $b7fc
- dc.l bufl
- ELSE
- cmpa.l   #bufl.w,a3
- ENDC
+ cmpa.l   #bufl,a3
  bcc.b    sync_nxtlst
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
@@ -1830,12 +1820,7 @@ sinv_nxt:
 sinv_nxtbuf:
  bne      sinv_loop
  addq.l   #4,a0
- IFNE BINEXACT
- dc.w     $b1fc
- dc.l     bufl+4
- ELSE
- cmpa.l   #(bufl+4).w,a0
- ENDC
+ cmpa.l   #(bufl+4),a0
  bls      sinv_newlist
  moveq    #0,d0                    ; kein Fehler
  rts
@@ -1875,12 +1860,7 @@ suu_nxtbuf:
  bne      suu_loop
 
  addq.l   #4,a5
- IFNE BINEXACT
- dc.w $bbfc
- dc.l     bufl+4
- ELSE
- cmpa.l   #(bufl+4).w,a5
- ENDC
+ cmpa.l   #(bufl+4),a5
  bls      suu_newlist
  jsr      appl_endcritic           ; aendert nur d2/a2
  move.l   (sp)+,a5
@@ -2515,12 +2495,7 @@ _fclo_l1:
  move.l   a4,d0
  bne.b    _fclo_nxtbcb
  subq.l   #4,a3
- IFNE BINEXACT
- dc.w $b7fc
- dc.l bufl
- ELSE
- cmpa.l   #bufl.w,a3
- ENDC
+ cmpa.l   #bufl,a3
  bcc.b    _fclo_nxtlst
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler

@@ -171,12 +171,6 @@ extern void graf_rbox( int x, int y, int minw, int minh,
 
 extern WORD lbox_sbvis( void *lbox, WORD new);
 
-#if BINEXACT
-extern void vmemcpyl(void *dst, void *src, long len);
-#else
-#define vmemcpyl vmemcpy
-#endif
-
 /*
 #include <wdial_g.h>
 */
@@ -200,10 +194,6 @@ extern void vmemcpyl(void *dst, void *src, long len);
 
 #define   objc_edit( tree, obj, c, x, kind, rect ) \
                _objc_edit( tree, obj, c, x, kind, rect )
-
-#if BINEXACT
-void *smalloc( ULONG size);
-#endif
 
 #define   Malloc( size ) (smalloc( size ))
 
@@ -535,7 +525,7 @@ static char *insert_pattern(char *newpattern, char *patterns,
           else return(NULL);
           }
      else {
-          vmemcpyl(pos, newpattern, newlen);
+          vmemcpy(pos, newpattern, newlen);
           return(pos);
           }
 }
@@ -586,7 +576,7 @@ static void trim_path(char *spath, char *dpath)
 *
 *********************************************************************/
 
-#if BINEXACT
+#if 0 /* unused */
 void upperstring( char *s )
 {
      while(*s)
@@ -984,7 +974,7 @@ static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
           {
           int dummyglobal[15];
 
-          vmemcpyl( new, rsc, (UWORD) len );   /* Resource kopieren */
+          vmemcpy( new, rsc, (UWORD) len );   /* Resource kopieren */
           _rsrc_rcfix( dummyglobal, new );   /* Resource beim AES anmelden */
           }
      else form_xerr(ENSMEM, NULL);

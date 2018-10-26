@@ -144,12 +144,7 @@ mci_is_4:
  clr.l    (a2)                     ; mcb_prev : kein vorheriger Block
 mci_nxt_md:
  addq.l   #4,a1                    ; naechste Liste
- IFNE BINEXACT
- dc.w $b3fc
- dc.l mem_root+4
- ELSE
  cmpa.l   #(mem_root+4),a1
- ENDC
  bne.b    mci_no_end_st
  move.l   #-1,(a1)+                ; mem_root+4 ist immer -1L
 mci_no_end_st:
@@ -821,12 +816,7 @@ mada_nxt:
 * 2. Versuch: Neuen Block einrichten
 
 mada_neu:
- IFNE BINEXACT
- dc.w $b3fc
- dc.l     mem_root+60
- ELSE
  cmpa.l   #(mem_root+60).w,a1
- ENDC
  bcc.b    mada_err                 ; keine Liste mehr frei
  move.l   d1,a2
  move.l   a2,(a1)                  ; Block in Liste eintragen
@@ -1835,11 +1825,7 @@ pf_shmloop_ende:
 pf_noshm:
  clr.l    p_procdata(a5)           ; sicherheitshalber
 pf_no_procdata:
- IFNE BINEXACT
- lea      (mem_root).l,a4          ; Tabelle der Speicherlisten
- ELSE
- lea      (mem_root).w,a4          ; Tabelle der Speicherlisten
- ENDC
+ lea      mem_root,a4          ; Tabelle der Speicherlisten
 pf_memloop2:
  move.l   (a4)+,d1                 ; Speicherliste
  bmi      pf_memloop2              ; ungueltig

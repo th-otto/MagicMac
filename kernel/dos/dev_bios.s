@@ -1064,12 +1064,7 @@ inp31:
 inp32:
  tst.b    (a0)+
  bne.b    inp32                    ; naechsten String suchen
- IFNE BINEXACT
- dc.w $b1fc
- dc.l     undo_buf+319
- ELSE
- cmpa.l   #(undo_buf+319).w,a0
- ENDC
+ cmpa.l   #(undo_buf+319),a0
  bcc.b    inp10                    ; bin am Ende, nichts tun
 inp33:
  tst.b    (a0)
@@ -1086,12 +1081,7 @@ inp35:
  move.l   d1,a0                    ; letzter Undo
 inp37:
  subq.l   #1,a0
- IFNE BINEXACT
- dc.w $b1fc
- dc.l   undo_buf
- ELSE
- cmpa.l   #(undo_buf).w,a0
- ENDC
+ cmpa.l   #(undo_buf),a0
  bcs.b    inp38
  tst.b    -1(a0)
  bne.b    inp37

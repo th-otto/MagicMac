@@ -12,13 +12,9 @@ extern void ext_8_3(char *dst_name, char *src_int_name);
 extern void int_8_3(char *dst_int_name, char *src_name);
 extern char toupper(char c);
 
-#ifndef BINEXACT
 LONG smalloc( ULONG size);
-#endif
 void smfree( void *memblk );
-#ifndef BINEXACT
 void *mmalloc( ULONG size);
-#endif
 void mfree( void *memblk );
 LONG mshrink( void *memblk, ULONG size);
 WORD dgetdrv( void );

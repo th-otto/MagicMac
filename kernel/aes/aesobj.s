@@ -6213,11 +6213,7 @@ obdrw_l2:
                                    ; tcolor = BLACK
  lea      ob_modes(pc),a0          ; Modi der Objekttypen
  move.b   0(a0,d3.w),d0
- IFNE BINEXACT
- dc.w $0c00,$ffff                   ; TEDINFO ?
- ELSE
  cmpi.b   #-1,d0                   ; TEDINFO ?
- ENDC
  bne.b    _obdrw_notedinfo         ; nein
 
 * im Fall G_TEXT,G_BOXTEXT,G_FTEXT,G_FBOXTEXT,G_WINTITLE: TEDINFO auswerten
@@ -7638,11 +7634,7 @@ _obdrw_s3:
 _obdrw_unterstr:
  move.w   d4,d0
  lsr.w    #8,d0                    ; Hibyte von ob_state nach d0
- IFNE BINEXACT
- dc.w $0c00,$ffff
- ELSE
  cmpi.b   #-1,d0
- ENDC
  bne.b    _obdrw_no_allu           ; nicht alles unterstreichen
 
 ; alles unterstreichen. Im Fall 3D oben weiss, unten dklgrau.

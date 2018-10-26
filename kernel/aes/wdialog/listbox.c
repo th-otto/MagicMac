@@ -30,10 +30,6 @@
 			
 #define	Malloc( size )	((void *) mmalloc( size ))
 
-#ifdef BINEXACT
-LONG mmalloc( ULONG size);
-#endif
-
 #define rc_intersect(a,b)	grects_intersect(a,b)
 
 #else

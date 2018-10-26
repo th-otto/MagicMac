@@ -339,9 +339,6 @@ extern WORD cdecl _evnt_multi(WORD mtypes, MOBLK2 *mm1, MOBLK2 *mm2, LONG ms,
                          LONG but, WORD mbuf[8], EVNT_MULTI_DATA *ev);
 extern void _graf_mkstate( EVNTDATA *ev );
 extern WORD appl_yield( void );
-#if BINEXACT
-extern LONG smalloc( ULONG size);
-#endif
 extern void smfree( void *memblk );
 extern WORD grects_intersect( const GRECT *srcg, GRECT *dstg);
 extern WORD xy_in_grect( WORD x, WORD y, GRECT *g );
@@ -1973,7 +1970,7 @@ static void smn_obdraw( OBJECT *tree, int obj, GRECT *rect)
 } /* smn_obdraw */
 
 
-#if BINEXACT
+#if 0 /* unused */
 void smn_rctoxy( GRECT *rect, int *xy)
 {
   *((GRECT *) xy) = *rect;    /* !##! (statt &xy) */

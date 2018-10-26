@@ -380,14 +380,12 @@ MSysX:
  DC.L     0                   ; MacSys_seros                      0d0
  DC.L     0                   ; MacSys_serin                      0d4
  DC.L     0                   ; MacSys_serout                     0d8
- ifeq BINEXACT /* missing fields in released kernels */
  DC.L     0                   ; SerOpen                           0dc
  DC.L     0                   ; SerClose                          0e0
  DC.L     0                   ; SerRead                           0e4
  DC.L     0                   ; SerWrite                          0e8
  DC.L     0                   ; SerStat                           0ec
  DC.L     0                   ; SerIoctl                          0f0
- endc
  DCB.L    PTRLEN,0            ; MacSys_GetKbOrMous                0f4
  DC.L     0                   ; MacSys_dos_macfn                  104
  DC.L     0                   ; MacSys_xfs_version                108
@@ -3204,10 +3202,6 @@ install_cookies:
  move.l   a5,_p_cookies            ; Pointer setzen
 * _CPU Cookie, Loword enthaelt den <cpu_typ>
  move.l   #'_CPU',(a5)+
- IFNE BINEXACT
- clr.w    (a5)+
- move.w   cpu_typ,(a5)+
- ELSE
  moveq    #0,d1
  move.w   MSysX+MacSysX_cpu(pc),d1
  move.l   d1,(a5)+                 ; und CPU eintragen
@@ -3216,7 +3210,6 @@ install_cookies:
  bcs      scpu_typ
  addq.w   #1,cpu020                     ; mindestens 020-Prozessor
 scpu_typ:
- ENDC
 
 * FPU bestimmen
 
