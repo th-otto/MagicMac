@@ -258,9 +258,6 @@ DEBUG     EQU  0
      XREF      serno_t2
      XREF      serno_t3
      XREF      serno_t4
-     IFNE DEMO
-     XREF      serno_re
-     ENDIF
 
 * von WDIALOG
 
@@ -4266,24 +4263,12 @@ scrmg_mennor:
  beq.b    scrmg_m1
  move.w   #EV_KEY+EV_BUT+EV_MSG,(sp)
 scrmg_m1:
-     IFNE DEMO
- ori.w    #EV_TIM,(sp)
- move.l   #20000,10(sp)            ; timer
- move.b   $462+3,d0
- or.b     d0,12(sp)
-     ENDIF
  jsr      _evnt_multi
  lea      26(sp),sp
  move.w   d0,d7                    ; eingetretene Ereignisse
 
  bsr      update_1
 
-     IFNE DEMO
- btst     #EVB_TIM,d7
- beq.b    scrmg_notim
- jsr      serno_re
-scrmg_notim:
-     ENDIF
  btst     #EVB_MSG,d7
  beq      scrmg_nomsg
  lea      12(sp),a0                ; mbuf

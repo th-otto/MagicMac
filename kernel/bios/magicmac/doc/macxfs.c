@@ -3892,11 +3892,7 @@ void SetXFSDrive (short drv, MacXFSDrvType drvType, AliasHandle alias, MacDrvRef
 	}
 	drv_longnames[drv] = longnames;
 	drv_rvsDirOrder[drv] = reverseDirOrder;
-#ifdef DEMO
-	if (drv==2) setDrivebits (newbits);
-#else
 	if (drv>=2) setDrivebits (newbits);
-#endif
 }
 
 

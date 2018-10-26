@@ -23,11 +23,7 @@ __a_aes   EQU  $3300
 OUTSIDE   EQU  1
 NVDI      EQU  1                   ; NVDI- Unterstuetzung
 MAXDEPTH  EQU  8
-     IFNE DEMO
-NAPPS     EQU  6
-     ELSE
 NAPPS     EQU  126                 ; Gesamtanzahl der Applikationen
-     ENDIF
 NACCS     EQU  6                   ; Gesamtanzahl der ACCs (menuregs)
 NPOPAPPS  EQU  16                  ; Anzahl APPs im Popup
 MIN_NWIND EQU  16                  ; Gesamtanzahl der Windows einschl. 0
