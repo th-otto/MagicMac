@@ -611,7 +611,7 @@ minsize_ok2:
 _wbm_skind:
  movem.l  d3/d4/d6/a4/a6,-(sp)
  move.l   a0,a4                         ; a4 = WINDOW *
- bsr      _minimal_size
+ bsr.s    _minimal_size
  move.l   d0,w_min_g+g_w(a4)            ; Minimalgroesse initialisieren
  lea      w_tree(a0),a6
  move.w   w_kind(a0),d6
@@ -951,7 +951,7 @@ _wbsl_enough:
 
  subq.w   #1,d1
  move.w   d2,d0                    ; Breite/Hoehe von scroll
- bsr      __sslid                  ; aendert nur d0
+ bsr.s    __sslid                  ; aendert nur d0
 ;move.w   d0,d0
  cmp.w    ob_width+24(a1),d0       ; minimale Breite/Hoehe von slide
  ble.b    _wbsl_little
@@ -961,7 +961,7 @@ _wbsl_little:
  move.w   (a0),d0                  ; w_hslide/w_vslide
  move.w   ob_width(a1),d1
  sub.w    ob_width+24(a1),d1
- bsr      __sslid                  ; aendert nur d0
+ bsr.s    __sslid                  ; aendert nur d0
  move.w   d0,ob_x+24(a1)
  rts
 
@@ -1260,7 +1260,7 @@ _srd:
 
  lea      8(sp),a1
  move.l   d0,a0
- bsr      get_wgs_union
+ bsr.s    get_wgs_union
 
  lea      (sp),a1
  lea      8(sp),a0
@@ -1408,7 +1408,7 @@ iw_wgloop:
 iniw_sw:
 
 * WGRECT- Liste fuer Fenster 0 initialisieren
- jsr      alloc_wgrect
+ bsr      alloc_wgrect
  move.l   windx,a1
  move.l   (a1),a1                  ; Fenster #0
  move.l   a0,w_wg(a1)              ; windx[0].w_wg = a0
@@ -1422,7 +1422,7 @@ iniw_sw:
 
  moveq    #0,d1                    ; Typ 0
  moveq    #0,d0                    ; Handle 0
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.l   windx,a0
  move.l   (a0),a0
  bsr      __wind_create            ; => a0 = WINDOW *
@@ -1693,7 +1693,7 @@ _wcr_found:
 
  move.w   d7,d1                    ; kind
  move.w   d6,d0                    ; whdl
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  move.l   (a5),a0
  bsr      __wind_create            ; gibt WINDOW * zurueck, a2 unveraendert
 
@@ -1743,7 +1743,7 @@ wind_delete:
  beq.b    wdl_err                  ; !!!
  bsr      whdl_to_wnd
  beq.b    wdl_err
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  cmpa.l   w_owner(a0),a1           ; gehoert uns ?
  bne.b    wdl_err
  btst     #WSTAT_OPENED_B,w_state+1(a0)
@@ -2176,7 +2176,7 @@ wg_winv:
 
 * Hack fuer alte Programme:
 /*
- cmpa.l   act_appl.l,a0              ; oberstes Fenster gehoert mir
+ cmpa.l   act_appl,a0              ; oberstes Fenster gehoert mir
  beq.b    wgt_ok
  move.w   -4(a5),2(a5)             ; wi_gw3 bekommt tatsaechlichen Wert
  move.w   #XE_OTHWHDL,-4(a5)       ; gehoert mir nicht => return(XE_OTHWHDL)
@@ -2280,7 +2280,7 @@ _wind_set:
  bne      ws_err
  addq.w   #1,d0
  bne      ws_err
- move.l   act_appl.l,d2
+ move.l   act_appl,d2
  move.w   (a0),d1
  bmi.b    top_menu
  cmpi.w   #NAPPS,d1
@@ -2709,15 +2709,15 @@ ws_resvd:
  tst.w    d7
  bne      ws_endsw                 ; Ausschalten nicht erlaubt
  move.l   a5,a0
- jsr      wind0_draw               ; Fenster 0 neumalen
+ bsr      wind0_draw               ; Fenster 0 neumalen
  move.l   a5,a0
- jsr      send_all_redraws         ; andere Fenster neumalen
+ bsr      send_all_redraws         ; andere Fenster neumalen
  bra      ws_endsw
 
 * case 14 = WF_NEWDESK
 
 ws_newdesk:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  move.l   (a5)+,d0                 ; OBJECT *tree
  beq.b    wsnd_off
  move.w   (a5),d1                  ; int    firstob
@@ -4311,7 +4311,7 @@ swg_calcloop:
  move.l   a5,a0                    ; cut- Rechteck
  move.w   (a4),d0                  ; whdl
  bmi.b    swg_inv                  ; Fenster ungueltig (eingefroren)
- bsr      calc_wind_overlaps
+ bsr.s    calc_wind_overlaps
 swg_inv:
  tst.w    (a4)+                    ; war das Fenster 0 ?
  bne.b    swg_calcloop             ; nein, weiter
@@ -4391,7 +4391,7 @@ bnw_wgfreeloop:
  bsr      whdl_to_wnd
  beq.b    bnw_nextwin
 ;move.l   a0,a0
- bsr      wgfree
+ bsr.s    wgfree
 bnw_nextwin:
  bclr     #WSTAT_COVERED_B,w_state+1(a0)     ; "nicht ueberdeckt"
 
@@ -4411,7 +4411,7 @@ bnw_sw_inv:
  bhi.b    bnw_swgloop
  tst.w    (sp)+
  beq.b    b_ende2
- bsr      set_new_top
+ bsr.s    set_new_top
 b_ende2:
  move.l   (sp)+,a5
  rts
@@ -4461,7 +4461,7 @@ snt_changed:
  move.w   d0,topwhdl
 
  move.w   d6,d0
- bsr      win_inactive
+ bsr.s    win_inactive
 
  move.w   topwhdl,d0
  ble.b    snt_no_new_top
@@ -4721,7 +4721,7 @@ wind_close:
  beq      wcl_err
  move.l   a0,a4                    ; a4 = WINDOW *
 
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  cmpa.l   w_owner(a4),a1           ; gehoert uns ?
  bne      wcl_err                  ; nein, Fehler
 
@@ -4736,7 +4736,7 @@ wind_close:
 
  clr.w    -(sp)
  move.l   upd_blockage+bl_app,a0
- cmpa.l   act_appl.l,a0              ; blockieren wir?
+ cmpa.l   act_appl,a0              ; blockieren wir?
  bne.b    wcl_wait_lock_loop       ; nein
  move.w   upd_blockage,(sp)        ; Update-Counter retten
  beq.b    wcl_wait_lock_loop       ; war Null
@@ -4790,7 +4790,7 @@ wcl_not_locked:
  move.w   d1,d0
  bsr      whdl_to_wnd              ; a0 = WINDOW *
  beq.b    wcl_notop                ; ???
- move.l   act_appl.l,a1
+ move.l   act_appl,a1
  cmpa.l   w_owner(a0),a1           ; gehoert uns ?
  bne      wcl_notop                ; nein, kein oberstes Fenster!
 wcl_newtop:
@@ -4811,7 +4811,7 @@ wcl_notop:
 wcl_weiter:
 * Hintergrund malen
  lea      SIZE(a6),a0
- jsr      wind0_draw
+ bsr      wind0_draw
 * Rest neumalen
  lea      SIZE(a6),a1
  lea      WTAB(a6),a0
@@ -5369,7 +5369,7 @@ awr_wloop:
  move.l   a0,a1
  lea      desk_g,a0
  move.w   d1,d0
- bsr      wind_redraw
+ bsr.s    wind_redraw
  bra.b    awr_wloop
 awr_ende:
  movem.l  (sp)+,a5/a6
@@ -5660,7 +5660,7 @@ no_top:
  beq      setg_end                 ; Position und Groesse gleich => Ende
 rahmen:
  move.w   d7,d0
- jsr      wind_draw_whole
+ bsr      wind_draw_whole
 
 kein_rahmen2:
  moveq    #0,d6                    ; per Default Hintergrund nachmalen
@@ -5722,7 +5722,7 @@ nicht_rechts:
 no_sizer:
  move.l   a3,a0
  move.w   d7,d0
- jsr      send_rdrmsg
+ bsr      send_rdrmsg
 
  tst.b    d6
  bne      setg_end                 ; nach unten und rechts vergroessert
@@ -5732,7 +5732,7 @@ sub_redr:
  tst.l    g_w(a4)
  beq.b    setg_end                 ; altes Rechteck war w=h=0
  lea      OLDALL(a6),a0            ; Fensterumriss (inkl. Schatten)
- jsr      wind0_draw
+ bsr      wind0_draw
  move.l   a3,a0                    ; Platz fuer nwindows Fenster
  move.w   d7,d0
  bsr      get_wind_hierar          ; Liste aller unteren Fenster

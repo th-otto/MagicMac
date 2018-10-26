@@ -114,7 +114,7 @@ graf_growbox:
  move.l   (a6),-(sp)               ; cx,cy        (nach)
  move.l   (a4)+,-(sp)              ; anfx, anfy   (von)
  move.l   (a4),-(sp)               ; anfw, anfh   (Breite, Hoehe)
- jsr      graf_movebox
+ bsr      graf_movebox
  jsr      mouse_off
  moveq    #1,d7                    ; zweimal durchlaufen wegen XOR
 grgr_l1:
@@ -144,7 +144,7 @@ graf_shrinkbox:
  btst     #7,(config_status+3).w
  bne.b    no_shrinkbox
  movem.l  d2/d3/d4/d5/d6/d7/a4/a5/a6,-(sp)
- bsr      grfhelper2
+ bsr.s    grfhelper2
  jsr      mouse_off
  moveq    #1,d7
 grsr_l1:
@@ -257,7 +257,7 @@ grfm_l4:
 grfm_l5:
  clr.w    -(sp)
  movem.l  d4/d5/d6/d7,-(sp)
- jsr      xgrf_2box
+ bsr      xgrf_2box
  adda.w   #$12,sp
  dbf      d3,grfm_l5
  jsr      mouse_on
@@ -358,7 +358,7 @@ gwb_both:
  eori.w   #1,(sp)                  ; in/out- Flag fuer MGRECT toggeln
 
  move.l   sp,a0
- bsr      evnt_rel_mm              ; warte auf Mausbewegung und Loslassen der linken Taste
+ bsr.s    evnt_rel_mm              ; warte auf Mausbewegung und Loslassen der linken Taste
  beq.b    gwb_loop                 ; nicht losgelassen
 
  jsr      mctrl_0
@@ -447,7 +447,7 @@ draw_2grects:
  move.l   d5,-(sp)
  move.w   d0,-(sp)
  move.l   sp,a0
- bsr      evnt_rel_mm              ; warte auf Loslassen der Taste oder Mausbewegung
+ bsr.s    evnt_rel_mm              ; warte auf Loslassen der Taste oder Mausbewegung
  adda.w   #10,sp
  seq      d6
  ext.w    d6                       ; Taste losgelassen ?
@@ -653,7 +653,7 @@ gdb_noreal:
  lea      (sp),a0
  move.l   (a0)+,d0
 ;move.l   a0,a0
- jsr      draw_2grects
+ bsr      draw_2grects
 
 gdb_ask:
  tst.w    d0                  ; Maus losgelassen ?

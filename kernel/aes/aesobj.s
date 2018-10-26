@@ -114,7 +114,7 @@ vq_scrninfo:
  move.l   #$66000002,d0            ; 102: vq_scrninfo, intin[0] = 2
  move.w   #1,vcontrl+10            ; contrl[5] = 1
  move.l   a0,vdipb+12              ; intout auf work_out setzen
- bsr      vdi_1
+ bsr.s    vdi_1
  move.l   #vintout,vdipb+12        ; intout restaurieren
  rts
 
@@ -158,7 +158,7 @@ v_clswk:
  move.w   vcontrl+12,-(sp)         ; handle retten
  move.w   d0,vcontrl+12
  move.l   #$65000000,d0            ; close virtual workstation
- bsr      vdi_quick
+ bsr.s    vdi_quick
  move.w   (sp)+,vcontrl+12         ; handle zurueck
 vclw_weiter:
  move.l   #$02000000,d0            ; close workstation
@@ -225,11 +225,11 @@ vdi_quick:
 init_vdi:
  clr.l    xp_ptr                   ; hier kann sich jemand einklinken
  bsr      open_wstn
- jsr      init_vdivars
+ bsr      init_vdivars
 
  move.l   #$00000005,vintin        ; linksbuendig, Zeichenzellenoberkante
  move.l   #$27000002,d0            ; vst_alignment
- bsr      vdi_quick
+ bsr.s    vdi_quick
 
  clr.w    dummyvws
  tst.w    finfo_big+fontmono       ; grosser Zeichensatz proportional?
@@ -248,7 +248,7 @@ initvdi_loop1:
  move.l   sp,vdipb+12              ; intout auf dummy setzen
  move.w   vcontrl+12,-(sp)         ; handle retten
  move.l   #$6400000b,d0            ; v_opnvwk
- bsr      vdi_quick
+ bsr.s    vdi_quick
  move.l   #vintout,vdipb+12        ; intout restaurieren
  move.w   vcontrl+12,dummyvws      ; Dummy-WS merken
  move.w   (sp)+,vcontrl+12         ; handle zurueck
@@ -1018,7 +1018,7 @@ draw_text:
  move.w   d1,d5                    ; d5 = font
 
  move.l   a1,a0
- jsr      str_to_ints
+ bsr      str_to_ints
  beq      dtx_ende
 
  move.l   xclip,g_x(sp)
@@ -1626,7 +1626,7 @@ incl_ret0:
 *
 
 draw_line:
- jsr      mouse_off
+ bsr      mouse_off
  lea      4(sp),a0
  moveq    #2,d0
  bsr      v_pline                  ; eine Linie
@@ -1807,7 +1807,7 @@ z3dr_3d:
  move.l   sp,a0
  move.w   d6,d0
  move.w   d4,d1
- bsr      zeichne_3d
+ bsr.s    zeichne_3d
  addq.l   #8,sp
 
  btst     #SHADOWED_B,d4
@@ -2284,7 +2284,7 @@ draw_bitblk:
  lea      (a4),a0                  ; MFDB
  bsr.b    bitblk_to_mfdb
 * Maus ausschalten
- jsr      mouse_off
+ bsr      mouse_off
 * MFDB fuer Ziel erstellen, d3 = dstx,dsty
  move.w   d3,d1                    ; h
  movea.l  (a3)+,a1
@@ -2324,7 +2324,7 @@ dbtb_l1:
  bsr      vro_cpyfm
 * Maus wieder einschalten
 dbtb_l2:
- jsr      mouse_on
+ bsr      mouse_on
  lea      12(sp),sp
  movem.l  (sp)+,a5/a4/a3/d4/d3
  rts
@@ -2752,7 +2752,7 @@ gt_endl2:
 
  sf       vintin_dirty
  move.w   d6,d0
- bsr      extent
+ bsr.s    extent
  add.w    d0,vptsin                ; x-Koordinate weiterrechnen
  st       vintin_dirty
 
@@ -3019,7 +3019,7 @@ v_drawgrect:
 ;move.l   a0,a0
  bsr      grect_to_ptsin
  moveq    #4,d0                    ; 4 Punkte (zunaechst nur 3 Linien)
- bsr      v_draw_dashed_line
+ bsr.s    v_draw_dashed_line
  lea      vptsin+4,a0              ; 2. Paar (rechte obere Ecke)
  move.l   8(a0),(a0)+              ; 4. Paar (lu) nach 2. Paar (ro)
  subq.w   #1,-(a0)                 ; 1 von y der rechten oberen Ecke abz.
@@ -3752,12 +3752,12 @@ ocd_l1:
  subq.w   #1,(sp)                  ;       y+h-1
  move.w   g_x(a2),-(sp)            ; nach: x
  move.l   g_x(a2),-(sp)            ; von:  x,y
- jsr      draw_line                ; Cursor malen
+ bsr      draw_line                ; Cursor malen
 ocd_a2:
  addq.l   #8,sp
 ocd_restoreclip:
  lea      8(sp),a0
- jsr      set_clip_grect           ; Clipping wiederherstellen
+ bsr      set_clip_grect           ; Clipping wiederherstellen
 ocd_ende:
  bsr      mouse_on
 ocd_ende2:
@@ -3964,7 +3964,7 @@ objc_crsr:
  move.l   sp,a1                    ; GRECT
  move.w   d6,d0                    ; objnr
 ;move.l   a0,a0                    ; tree
- jsr      obj_to_g                 ; Objektausmasse nach GRECT
+ bsr      obj_to_g                 ; Objektausmasse nach GRECT
 
  moveq    #0,d1
  move.b   te_just(a3),d1           ; Scroll-Offset
@@ -6213,7 +6213,11 @@ obdrw_l2:
                                    ; tcolor = BLACK
  lea      ob_modes(pc),a0          ; Modi der Objekttypen
  move.b   0(a0,d3.w),d0
+ IFNE BINEXACT
+ dc.w $0c00,$ffff                   ; TEDINFO ?
+ ELSE
  cmpi.b   #-1,d0                   ; TEDINFO ?
+ ENDC
  bne.b    _obdrw_notedinfo         ; nein
 
 * im Fall G_TEXT,G_BOXTEXT,G_FTEXT,G_FBOXTEXT,G_WINTITLE: TEDINFO auswerten
@@ -6592,7 +6596,7 @@ _odr_ftxt_noscr:
  bsr      stwmod_tcolor
 
  lea      popup_tmp,a0
- jsr      str_to_ints
+ bsr      str_to_ints
 
  move.l   6(sp),vptsin             ; x,y
  bsr      gtext
@@ -6612,7 +6616,7 @@ _odr_ftxt_zero1:
  lea      popup_tmp,a0             ; Misch-String
  add.w    8(sp),a0                 ; + Anfang
  add.w    12(sp),a0                ; + Mitte (ggf. nur teilw. sichtbar)
- jsr      str_to_ints
+ bsr      str_to_ints
 
  move.w   g_x(sp),d0               ; x-Pos
  add.w    10(sp),d0                ; + Anfang
@@ -6839,7 +6843,7 @@ _odr_wintitle:
  bne.b    _odrw_wtns               ; nein
  addq.l   #1,a0                    ; fuehrendes Leerzeichen entfernen
 _odrw_wtns:
- jsr      str_to_ints              ; String ins txvintin[]-Feld => d0 = strlen
+ bsr      str_to_ints              ; String ins txvintin[]-Feld => d0 = strlen
  beq.b    _odrw_wt_l1              ; kein Zeichen
  lea      txvintin,a0
  add.w    d0,a0
@@ -7142,7 +7146,7 @@ _odr_special:
  bsr      setfont
 
  move.l   a3,a0                    ; ob_spec
- jsr      str_to_ints
+ bsr      str_to_ints
 
 ;move.w   d0,d0
  bsr      extent
@@ -7316,7 +7320,7 @@ _obd_rn:
  bsr      setfont
 
  move.l   a3,a0                    ; ob_spec
- jsr      str_to_ints
+ bsr      str_to_ints
  move.l   (a4),vptsin              ; x,y
  bsr      gtext
  move.w   d4,d0
@@ -7634,7 +7638,11 @@ _obdrw_s3:
 _obdrw_unterstr:
  move.w   d4,d0
  lsr.w    #8,d0                    ; Hibyte von ob_state nach d0
+ IFNE BINEXACT
+ dc.w $0c00,$ffff
+ ELSE
  cmpi.b   #-1,d0
+ ENDC
  bne.b    _obdrw_no_allu           ; nicht alles unterstreichen
 
 ; alles unterstreichen. Im Fall 3D oben weiss, unten dklgrau.
@@ -8082,7 +8090,7 @@ obfn_l1:
  move.l   a4,a1
 ;move.w   d0,d0
  move.l   a5,a0
- jsr      obj_to_g                 ; GRECT des parent
+ bsr      obj_to_g                 ; GRECT des parent
                                    ; aendert nicht a2
 
 * endif
@@ -8263,7 +8271,7 @@ objc_order:
 
  move.w   d6,d0
  move.l   a5,a0
- bsr      objc_delete              ; Objekt ausklinken
+ bsr.s    objc_delete              ; Objekt ausklinken
 
  move.l   a5,a1
  move.w   d5,d0
@@ -8364,7 +8372,7 @@ _objc_change:
  bsr      _objc_offset             ; GRECT berechnen
  move.w   d0,(sp)                  ; x
  move.w   d1,2(sp)                 ; y
- jsr      mouse_off                ; Maus abschalten
+ bsr      mouse_off                ; Maus abschalten
  tst.w    d7                       ; rahmen
  bge.b    obch_l1                  ; ist innen
  clr.w    d7                       ; aeusseren loeschen
@@ -8380,7 +8388,7 @@ obch_l1:
  move.l   a0,-(sp)                 ; GRECT *
  move.w   d6,-(sp)                 ; objnr
  move.l   a5,-(sp)                 ; tree
- jsr      do_userdef
+ bsr      do_userdef
  lea      18(sp),sp
  bra      obchg_mon_ende                ; Maus ein und Ende
 
@@ -8456,7 +8464,7 @@ objc_no3d:
  moveq    #7,d2                    ; IP_SOLID
  moveq    #1,d1                    ; Farbe
  moveq    #XOR,d0
- jsr      drawbox
+ bsr      drawbox
  addq.l   #8,sp
  bra.b    obchg_mon_ende                ; Maus ein und Ende
 
@@ -8471,7 +8479,7 @@ obchg_draw:
  move.l   a5,a0                    ; Tree
  bsr      __objc_draw              ; neu zeichnen
 obchg_mon_ende:
- jsr      mouse_on
+ bsr      mouse_on
 
 obc_ende:
  addq.l   #8,sp
@@ -8494,7 +8502,7 @@ obj_to_g:
  move.l   ob_width(a0,d1.l),4(a1)  ; w/h
 ;move.l   a0,a0
 ;move.w   d0,d0
- bsr      _objc_offset
+ bsr.s    _objc_offset
  move.w   d0,(a1)                  ; x
  move.w   d1,2(a1)                 ; y
  rts
@@ -8613,7 +8621,7 @@ prdo_ret:
 *
 
 set_xor_black:
- jsr      set_full_clip
+ bsr      set_full_clip
 _set_xor_black:
  moveq    #BLACK,d1
  moveq    #XOR,d0

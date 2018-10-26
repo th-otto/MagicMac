@@ -533,7 +533,7 @@ xf_noyp:
  move.l   a4,a0                    ; Dialoggroesse
  tst.w    -52(a6)                  ; fester Puffer ?
  beq.b    xf_no_fixb1              ; nein
- jsr      fast_save_scr
+ bsr      fast_save_scr
  bra.b    xf_no_fixb2
 xf_no_fixb1:
  lea      -50(a6),a1               ; Bildschirmpuffer-Adresse
@@ -764,7 +764,7 @@ xf_noold:
  moveq    #1,d1                    ; selektieren
  move.w   d7,d0                    ; objnr
  move.l   a5,a0                    ; OBJECT *tree
- bsr      _select
+ bsr.s    _select
 xf_nochg:
  bra      xf_loop
 
@@ -801,7 +801,7 @@ xf_endloop:
 
  tst.w    -52(a6)                  ; fester Puffer ?
  beq.b    xf_no_fixb3              ; nein
- jsr      restore_scr
+ bsr      restore_scr
  bra.b    xf_no_fixb4
 xf_no_fixb3:
  lea      -50(a6),a0               ; Bildschirmhintergrund
@@ -2043,7 +2043,7 @@ fdo_no_corner:
  moveq    #0,d1
  moveq    #0,d0
  move.l   a5,a0
- jsr      get_next_edit            ; erstes Editfeld holen
+ bsr      get_next_edit            ; erstes Editfeld holen
  move.w   d0,d7
 
 fdo_startob:
@@ -2978,9 +2978,9 @@ scr_to_mfdb:
  move.l   g_w(a0),-(sp)
  move.l   d0,-(sp)
 ;move.l   a0,a0
- bsr      grect_to_orect_s
+ bsr.s    grect_to_orect_s
  move.l   sp,a0                    ; Zielg
- bsr      grect_to_orect_d
+ bsr.s    grect_to_orect_d
  addq.l   #8,sp
 
  clr.l    mfdb1                    ; fd_addr der Quelle ist Bildschirm
@@ -3006,9 +3006,9 @@ mfdb_to_scr:
 
  move.l   g_w(a0),-(sp)            ; w/h
  move.l   d0,-(sp)                 ; x/y
- bsr      grect_to_orect_d         ; Bildschirmausschnitt
+ bsr.s    grect_to_orect_d         ; Bildschirmausschnitt
  move.l   sp,a0
- bsr      grect_to_orect_s         ; Puffer
+ bsr.s    grect_to_orect_s         ; Puffer
  addq.l   #8,sp
 
  clr.l    mfdb1                    ; fd_addr des Ziels ist Bildschirm
@@ -3091,7 +3091,7 @@ etvc_tab:
  DC.W     1    ; Tabellen-Ende
 
 gem_etvc:
- move.l   act_appl.l,a0
+ move.l   act_appl,a0
  tst.w    ap_wasgr(a0)             ; Grafikmodus ?
  beq      etvc_dos                 ; nein, alten (DOS-) etv-critic aufrufen
  lea      4(sp),a2
@@ -3134,7 +3134,7 @@ getvc_weiter:
  move.w   (a0),-(sp)
  move.w   #1,(a0)+                 ; bl_cnt = 1
  move.l   (a0),-(sp)
- move.l   act_appl.l,(a0)+           ; bl_app = act_appl
+ move.l   act_appl,(a0)+           ; bl_app = act_appl
  move.l   (a0),-(sp)
  clr.l    (a0)                     ; upd_blockage auf den Stack
  move.l   a0,-(sp)
@@ -3158,7 +3158,7 @@ getvc_weiter:
  move.b   (a1)+,d1                 ; Defaultbutton
  move.l   sp,a0                    ; Parameter fuer _sprintf()
 
- bsr      do_aes_alert
+ bsr.s    do_aes_alert
  addq.l   #6,sp
 
  move.w   d0,d7
@@ -3232,8 +3232,8 @@ dalt_skip:
 
 
      IF   COUNTRY=COUNTRY_DE
-al_ewrpro:     DC.B 2,'[1][Das Medium in Laufwerk %S:|ist schreibgeschuetzt.][Abbruch| Nochmal ]',0
-al_edrvnr:     DC.B 2,'[2][Laufwerk %S: antwortet nicht.|Bitte Laufwerk ueberpruefen oder|Medium einlegen!][Abbruch| Nochmal ]',0
+al_ewrpro:     DC.B 2,'[1][Das Medium in Laufwerk %S:|ist schreibgesch',$81,'tzt.][Abbruch| Nochmal ]',0
+al_edrvnr:     DC.B 2,'[2][Laufwerk %S: antwortet nicht.|Bitte Laufwerk ',$81,'berpr',$81,'fen oder|Medium einlegen!][Abbruch| Nochmal ]',0
 al_rwfault:    DC.B 2,'[1][Daten auf Diskette in Laufwerk|%S: eventuell defekt.][Abbruch| Nochmal ]',0
 al_ereadf:     DC.B 1,'[2][Lesefehler auf Laufwerk %S:.][Abbruch| Nochmal ]',0
 al_ewritf:     DC.B 2,'[1][Ihr Ausgabeger',$84,'t empf',$84,'ngt|keine Daten.][Abbruch| Nochmal ]',0
@@ -3283,7 +3283,7 @@ form_error:
  subi.l   #31,d0                   ; umrechnen in GEMDOS- Fehler
 fe_gemdos:
  suba.l   a0,a0                    ; kein Dateiname
- bsr      form_xerr
+ bsr.s    form_xerr
  moveq    #0,d0                    ; Rueckgabe immer 0
  rts
 
