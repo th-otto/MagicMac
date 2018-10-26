@@ -18,7 +18,6 @@ MagicMacX.OS
 ..\allg\read_inf.s
 ..\vdi\math.s
 ..\allg\std.s
-..\ser_my.s
 ..\dos\magidos.s
 ..\dos\malloc.s
 ..\dos\xfs_vdos.s

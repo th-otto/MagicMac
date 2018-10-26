@@ -27,10 +27,6 @@
 
      XREF      xp_raster
 
-* von SERNO
-
-     XREF      serno_test
-
 * von STD
 
      XREF      vmemcpy
@@ -277,8 +273,6 @@ strloop15:
  addq.l   #8,sp
  move.w   d0,d6
  bmi      rsld_err                 ; Fehler
-
- jsr      serno_test
 
 * Header einlesen
  pea      (sp)                     ; genug Platz

@@ -26,8 +26,6 @@ DEBUG     EQU  0
      XDEF      gem_magics          ; ->BIOS
      XDEF      endofvars           ; ->BIOS
      XDEF      appl_break
-     XDEF      serno_isok          ; ->SERNO
-     XDEF      ss_serno            ; ->SERNO
      XDEF      prtstr              ; ->SERNO
 
      XDEF      _graf_mkstate
@@ -253,12 +251,6 @@ DEBUG     EQU  0
      XREF      hexl,crlf
      ENDIF
 
-* von SERNO
-
-     XREF      serno_t2
-     XREF      serno_t3
-     XREF      serno_t4
-
 * von WDIALOG
 
      XREF      wdlg_create
@@ -343,7 +335,6 @@ DEBUG     EQU  0
 aes_start:
      DEBON
      DEB  'AES: vor dem ersten Befehl'
- jsr      serno_t3
 
  movea.l  4(sp),a5                 ; a5 = Zeiger auf Basepage
  move.l   a5,_basepage
@@ -453,7 +444,6 @@ aes_start:
  clr.w    prev_mkmy
 
  clr.b    hotkey_sem
- clr.b    serno_isok               ; noch ungetestet
  clr.w    dclick_val
 
 * Startbild (Default-Desktop)
@@ -561,8 +551,6 @@ aes_start:
 ;lea      -$358(a0),a0             ; Zeiger auf aktuelle Mausdaten
 ;move.l   a0,mousedata
  jsr      mouse_immed
-
- jsr      serno_t4
 
  moveq    #1,d1
  moveq    #3,d0
@@ -876,9 +864,6 @@ init_APPL:
  move.l   a2,a3                    ; a3 = usercode
 
  movem.l  d0/d1,-(sp)
-
- jsr      serno_t2                 ; Serno OK ?
- bmi.b    srk_err3                 ; nein
 
  move.w   #ap_stack,d0
  move.l   a5,a0
