@@ -55,7 +55,9 @@ SECBUFN2       EQU  2         ; 2 Sektoren fuer Daten puffern
      XREF str_to_con
      XREF resv_intmem,resvb_intmem,int_mblocks
 
-act_appl equ $3982 ; from AES FIXME
+* from AES
+
+	 XREF act_appl
 
 * von MATH
 

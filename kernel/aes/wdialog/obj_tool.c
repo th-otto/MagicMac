@@ -4,12 +4,13 @@
 */
 
 #include <portab.h>
-#include <math.h>
 #include <aes.h>
 
 #include "obj_tool.h"
 
 #if 0																			/* damit der Linker diese Funktionen nicht einbindet */
+
+#include <math.h>
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Fliesskommazahl in ein Objekt mit TEDINFO-Struktur eintragen										*/

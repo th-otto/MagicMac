@@ -52,7 +52,9 @@ extern WORD grects_intersect( const GRECT *srcg, GRECT *dstg);
 extern WORD _wind_get(WORD whdl, WORD code, WORD *g );
 extern void _rsrc_rcfix(void *global, RSHDR *rsc);
 extern LONG drvmap( void );
+#ifndef BINEXACT
 extern LONG smalloc(ULONG size);
+#endif
 extern void smfree( void *memblk );
 extern LONG smshrink( void *memblk, ULONG size);
 extern WORD dgetdrv( void );

@@ -181,8 +181,8 @@ NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 
 N_KEYTBL       EQU  10             ; 10 Tastaturtabellen
 
-cpu020 equ $19ea ; from mxvdiknl.o FIXME
-act_appl equ $3982 ; from AES FIXME
+	 XREF cpu020 ; from mxvdiknl.o
+	 XREF act_appl ; from AES
 
      TEXT
 
@@ -321,6 +321,8 @@ log_oldconout:      DS.L 1              /* Alter Vektor fuer Bootlog */
 p_vt52:             DS.L 1              /* fuer VT52.PRG */
 __e_bios:
 
+
+	XDEF act_pd
 
         TEXT
 

@@ -171,6 +171,12 @@ extern void graf_rbox( int x, int y, int minw, int minh,
 
 extern WORD lbox_sbvis( void *lbox, WORD new);
 
+#if BINEXACT
+extern void vmemcpyl(void *dst, void *src, long len);
+#else
+#define vmemcpyl vmemcpy
+#endif
+
 /*
 #include <wdial_g.h>
 */
@@ -194,6 +200,10 @@ extern WORD lbox_sbvis( void *lbox, WORD new);
 
 #define   objc_edit( tree, obj, c, x, kind, rect ) \
                _objc_edit( tree, obj, c, x, kind, rect )
+
+#if BINEXACT
+void *smalloc( ULONG size);
+#endif
 
 #define   Malloc( size ) (smalloc( size ))
 
@@ -525,7 +535,7 @@ static char *insert_pattern(char *newpattern, char *patterns,
           else return(NULL);
           }
      else {
-          vmemcpy(pos, newpattern, newlen);
+          vmemcpyl(pos, newpattern, newlen);
           return(pos);
           }
 }
@@ -576,11 +586,13 @@ static void trim_path(char *spath, char *dpath)
 *
 *********************************************************************/
 
-static void upperstring( char *s )
+#if BINEXACT
+void upperstring( char *s )
 {
      while(*s)
           *s++ = toupper(*s);
 }
+#endif
 
 
 /*********************************************************************
@@ -594,7 +606,7 @@ static void upperstring( char *s )
 static void date_to_str(char *s, unsigned int date)
 {
      (*fslx_d2s)(s, date);
-/*
+#if 0
 #define DATESEP     '.'
      int t,m;
 
@@ -613,7 +625,7 @@ static void date_to_str(char *s, unsigned int date)
      *s++ = date/10 + '0';
      *s++ = date%10 + '0';
      *s = '\0';
-*/
+#endif
 }
 
 
@@ -636,11 +648,11 @@ static void time_to_str(char *s, unsigned int time)
      *s++ = TIMESEP;
      *s++ = min/10 + '0';
      *s++ = min%10 + '0';
-/*
+#if 0
      *s++ = TIMESEP;
      *s++ = sec/10 + '0';
      *s++ = sec%10 + '0';
-*/
+#endif
      *s = '\0';
 }
 
@@ -972,7 +984,7 @@ static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
           {
           int dummyglobal[15];
 
-          vmemcpy( new, rsc, (UWORD) len );   /* Resource kopieren */
+          vmemcpyl( new, rsc, (UWORD) len );   /* Resource kopieren */
           _rsrc_rcfix( dummyglobal, new );   /* Resource beim AES anmelden */
           }
      else form_xerr(ENSMEM, NULL);
@@ -1123,7 +1135,7 @@ static void sort_and_cat( FSEL_DIALOG *fsd )
 
      anzahl = fsd->nfiles;
      shelsort(fsd->files, (size_t) anzahl,
-               sizeof(FILEINFO *), cmp_files, fsd);
+               sizeof(FILEINFO *), (int (*)(void *, void *, void *))cmp_files, fsd);
 
      for  (p_d = fsd->files; anzahl > 0; anzahl--,p_d++)
           {
@@ -3550,8 +3562,6 @@ WORD cdecl fsel_exinput(
           }
 
 
-#define act_appl ((APPL *)0x39a2) /* FIXME */
-#define act_pd ((PD *)0x2ba8) /* FIXME */
      longnames = ((act_pd->p_res2) & 1) || (act_appl->ap_id == 1);
 
      if   (longnames)

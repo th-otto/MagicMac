@@ -10,6 +10,7 @@
 
 
 	XDEF vmemcpy
+	XDEF vmemcpyl
 	XDEF memmove
 	XDEF	fast_clrmem
 	XDEF	toupper
@@ -229,6 +230,7 @@ fclr_ende:
 *
 
 vmemcpy:
+vmemcpyl:
  moveq	#0,d1
  move.w	d0,d1
  beq.b	mcp_end

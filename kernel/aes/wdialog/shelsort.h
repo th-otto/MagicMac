@@ -1,2 +1,2 @@
 extern void shelsort( void *base, LONG nmemb, LONG size,
-				WORD (*compar)(), void *udata );
+				int (*compar)(void *s1, void *s2, void *udata), void *udata );

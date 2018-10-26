@@ -24,9 +24,12 @@ DEBUG     EQU  16
      XREF      config_status
      XREF      prn_wrts
 
+* from AES
+
+	 XREF act_appl
+
 * vom DOS
 
-act_appl equ $3982 ; from AES FIXME
      XREF      get_act_appl
      XREF      Pterm
      XREF      str_to_con

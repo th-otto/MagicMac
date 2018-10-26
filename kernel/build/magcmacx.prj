@@ -51,6 +51,6 @@ MagicMacX.OS
 ..\aes\wdialog\fnt_menu.c [-G-]
 ..\aes\wdialog\shelsort.c [-G-]
 ..\aes\wdialog\wdintrfc.s
-..\aes\fsel\fsel.c
-..\aes\xmen_mgr\mtsmn.c
+..\aes\fsel\fsel.c [-G- -M-]
+..\aes\xmen_mgr\mtsmn.c [-G-]
 ..\ende.s

@@ -255,7 +255,7 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags );
 static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts );
 static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt );
 static void	sort_FNTs( FNT **fonts, WORD font_cnt );
-static WORD	cmp_font_names( FNT **a, FNT **b );
+static int	cmp_font_names( FNT **a, FNT **b );
 static FNT	*get_FNT( FNT *font, LONG id );
 static WORD	count_fonts( FNT *font );
 
@@ -1622,7 +1622,7 @@ static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt )
 static void	sort_FNTs( FNT **fonts, WORD font_cnt )
 {
 #if CALL_MAGIC_KERNEL
-	shelsort( fonts, font_cnt, sizeof(FNT *), cmp_font_names, 0L );	/* Fonts sortieren, so dass die Familien aufeinander folgen */
+	shelsort( fonts, font_cnt, sizeof(FNT *), (int (*)(void *, void *, void *))cmp_font_names, 0L );	/* Fonts sortieren, so dass die Familien aufeinander folgen */
 #else
 	qsort( fonts, font_cnt, sizeof(FNT *), cmp_font_names );	/* Fonts nach Familien aufeinander folgenden sortieren */
 #endif
@@ -1648,7 +1648,7 @@ static void	sort_FNTs( FNT **fonts, WORD font_cnt )
 /*	a:							Zeiger																				*/
 /*	b:							Zeiger																				*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	cmp_font_names( FNT **a, FNT **b )
+static int	cmp_font_names( FNT **a, FNT **b )
 {
 	FNT	*c;
 	FNT	*d;

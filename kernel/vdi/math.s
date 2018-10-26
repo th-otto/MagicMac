@@ -4,7 +4,7 @@
 	XDEF	_ldiv
 	XDEF	_lmul
 
-cpu020 equ $19ea ; from mxvdiknl.o FIXME
+	XREF cpu020 ; from mxvdiknl.o
 	
 	mc68020
 

@@ -25,6 +25,7 @@
 *
 *******************************************************************/
 
+#include <portab.h>
 #include <string.h>
 
 static void longxchg(char *s1, char *s2, size_t count)
@@ -53,7 +54,7 @@ static void memxchg(char *s1, char *s2, size_t count)
 }
 
 
-void shelsort(char *base, size_t count, size_t size,
+void shelsort(char *base, long count, long size,
 		    int (*compar)(void *s1, void *s2, void *udata), void *udata)
 {
 	register int (*vgl)(void *s1, void *s2, void *udata) = compar;

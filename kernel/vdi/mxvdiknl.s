@@ -40,7 +40,7 @@
 	XREF	Malloc_sys
 	XREF	Mshrink_sys
 
-	XREF	cpu020
+	XDEF	cpu020
 
 BehneError equ $78
 

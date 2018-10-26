@@ -22,7 +22,9 @@ DEBUG     EQU  16
      XREF vmemcpy
      XREF ncopy_from
 
-act_appl equ $3982 ; from AES FIXME
+* from AES
+
+	 XREF act_appl
 
      OFFSET
 

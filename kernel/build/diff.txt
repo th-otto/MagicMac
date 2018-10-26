@@ -1,0 +1,105 @@
+file_div.c: order of register loads different in call to read_file()
+old:
+[00029364] 7000                      moveq.l   #0,d0
+[00029366] 224a                      movea.l   a2,a1
+[00029368] 204c                      movea.l   a4,a0
+new:
+[00029364] 224a                      movea.l   a2,a1
+[00029366] 204c                      movea.l   a4,a0
+[00029368] 7000                      moveq.l   #0,d0
+
+
+wdialog.c: register usage different
+old:
+[00039db4] 48e7 181e                 movem.l   d3-d4/a3-a6,-(a7)
+new:
+[00039db4] 48e7 181c                 movem.l   d3-d4/a3-a5,-(a7)
+old:
+[00039dde] 4def 0008                 lea.l     8(a7),a6
+[00039de2] 4bef 0010                 lea.l     16(a7),a5
+[00039de6] 43d7                      lea.l     (a7),a1
+[00039de8] 204c                      movea.l   a4,a0
+[00039dea] 4eb9 0002 e9c2            jsr       $0002E9C2 ; grects_intersect
+[00039df0] 4a40                      tst.w     d0
+[00039df2] 6700 0090                 beq       $00039E84
+[00039df6] 41d7                      lea.l     (a7),a0
+[00039df8] 4eb9 0003 2f26            jsr       $00032F26 ; set_clip_grect
+[00039dfe] 3203                      move.w    d3,d1
+[00039e00] 3004                      move.w    d4,d0
+[00039e02] 206b 000e                 movea.l   14(a3),a0
+[00039e06] 4eb9 0003 58d2            jsr       $000358D2 ; _objc_draw
+[00039e0c] 302b 002a                 move.w    42(a3),d0
+[00039e10] 6f72                      ble.s     $00039E84
+[00039e12] 224d                      movea.l   a5,a1
+[00039e14] 206b 000e                 movea.l   14(a3),a0
+[00039e18] 3004                      move.w    d4,d0
+[00039e1a] 4eb9 0003 9eb0            jsr       $00039EB0 ; get_obj_GRECT
+[00039e20] 224e                      movea.l   a6,a1
+[00039e22] 302b 002a                 move.w    42(a3),d0
+[00039e26] 206b 000e                 movea.l   14(a3),a0
+[00039e2a] 4eb9 0003 9eb0            jsr       $00039EB0 ; get_obj_GRECT
+[00039e30] 536e 0002                 subq.w    #1,2(a6)
+[00039e34] 546e 0006                 addq.w    #2,6(a6)
+[00039e38] 224e                      movea.l   a6,a1
+[00039e3a] 204d                      movea.l   a5,a0
+[00039e3c] 4eb9 0002 e9c2            jsr       $0002E9C2 ; grects_intersect
+[00039e42] 4a40                      tst.w     d0
+[00039e44] 673e                      beq.s     $00039E84
+[00039e46] 43d7                      lea.l     (a7),a1
+[00039e48] 204e                      movea.l   a6,a0
+new:
+[00039dde] 4bef 0008                 lea.l     8(a7),a5
+[00039de2] 43d7                      lea.l     (a7),a1
+[00039de4] 204c                      movea.l   a4,a0
+[00039de6] 4eb9 0002 e9c2            jsr       $0002E9C2
+[00039dec] 4a40                      tst.w     d0
+[00039dee] 6700 0094                 beq       $00039E84
+[00039df2] 41d7                      lea.l     (a7),a0
+[00039df4] 4eb9 0003 2f26            jsr       $00032F26
+[00039dfa] 3203                      move.w    d3,d1
+[00039dfc] 3004                      move.w    d4,d0
+[00039dfe] 206b 000e                 movea.l   14(a3),a0
+[00039e02] 4eb9 0003 58d2            jsr       $000358D2
+[00039e08] 302b 002a                 move.w    42(a3),d0
+[00039e0c] 6f76                      ble.s     $00039E84
+[00039e0e] 43ef 0010                 lea.l     16(a7),a1
+[00039e12] 206b 000e                 movea.l   14(a3),a0
+[00039e16] 3004                      move.w    d4,d0
+[00039e18] 4eb9 0003 9eb0            jsr       $00039EB0
+[00039e1e] 224d                      movea.l   a5,a1
+[00039e20] 302b 002a                 move.w    42(a3),d0
+[00039e24] 206b 000e                 movea.l   14(a3),a0
+[00039e28] 4eb9 0003 9eb0            jsr       $00039EB0
+[00039e2e] 536d 0002                 subq.w    #1,2(a5)
+[00039e32] 546d 0006                 addq.w    #2,6(a5)
+[00039e36] 224d                      movea.l   a5,a1
+[00039e38] 41ef 0010                 lea.l     16(a7),a0
+[00039e3c] 4eb9 0002 e9c2            jsr       $0002E9C2
+[00039e42] 4a40                      tst.w     d0
+[00039e44] 673e                      beq.s     $00039E84
+[00039e46] 43d7                      lea.l     (a7),a1
+[00039e48] 204d                      movea.l   a5,a0
+old:
+[00039eaa] 4cdf 7818                 movem.l   (a7)+,d3-d4/a3-a6
+new:
+[00039eaa] 4cdf 3818                 movem.l   (a7)+,d3-d4/a3-a5
+relocs:
+old:
+; $00029dec
+; $00029dfa
+; $00029e08
+; $00029e1c
+; $00029e2c
+; $00029e3e
+new:
+; $00029de8
+; $00029df6
+; $00029e04
+; $00029e1a
+; $00029e2a
+; $00029e3e
+
+
+not linked into new version:
+0003f3b0: upperstring
+00043120: smn_punew
