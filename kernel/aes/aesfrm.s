@@ -3242,7 +3242,7 @@ al_echgab:     DC.B 1,'[3][Bitte Diskette %S in|Laufwerk A: einlegen!][  OK  ]',
 al_aeserr:     DC.B '[3][Falscher AES-Aufruf %L.][Abbruch]',0
 al_sigerr:     DC.B '[3][System hat keinen freien Speicher mehr!][ Weiter ]',0
      ENDIF
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 al_ewrpro:     DC.B 2,'[1][Disk in drive %S:|is write protected.][Cancel| Retry ]',0
 al_edrvnr:     DC.B 2,'[2][Drive %S: not connected.|Check drive|or insert disk!][Cancel| Retry ]',0
 al_rwfault:    DC.B 2,'[1][Data in drive|%S: may be damaged.][Cancel| Retry ]',0
@@ -3299,7 +3299,7 @@ fe_gemdos:
 pgm_s:    DC.B "Programm gab zur",$81,"ck :|",0
 err_s:    DC.B "| |(Fehler #%L)|][Abbruch]",0
      ENDIF
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 pgm_s:    DC.B "Program returned :|",0
 err_s:    DC.B "| |(Error #%L)|][Cancel]",0
      ENDIF

@@ -2133,7 +2133,7 @@ do_term_s:
  DC.B     $d,$a,$1b,'K',$a,'Programm wird terminiert',$d,$a,$1b,'K',$1b,'e',0
 
      ENDC
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 
 mem_fatal_errs:
  DC.B     '*** FATAL ERROR IN MEMORY MANAGEMENT:',0

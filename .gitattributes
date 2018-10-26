@@ -6,3 +6,4 @@
 *.prj -text
 *.rsh -text
 *.rh -text
+*.inc -text

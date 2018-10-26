@@ -109,13 +109,16 @@ extern WORD	is_magic;
 #include "listbox.h"
 #include "fnts.h"
 
+/* Die Resource-Datei */
+static unsigned char fnts_rsc[] = {
 #if		COUNTRY==COUNTRY_DE
-#include "ger\fnts_rsc.h"													/* Die Resource-Datei */
-#elif	COUNTRY==COUNTRY_US
-#include "us\fnts_rsc.h"
+#include "ger\fontslct.inc"
+#elif	(COUNTRY==COUNTRY_US) || (COUNTRY==COUNTRY_UK)
+#include "us\fontslct.inc"
 #elif	COUNTRY==COUNTRY_FR
-#include "fra\fnts_rsc.h"
+#include "fra\fontslct.inc"
 #endif
+};
 
 typedef struct
 {
@@ -334,7 +337,7 @@ FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD d
 	{
 		RSHDR	*resource;
 		
-		resource = copy_rsrc( (RSHDR *) fnts_rsc, RSC_LEN );	/* Resource kopieren und beim AES anmelden */
+		resource = copy_rsrc( (RSHDR *) fnts_rsc, sizeof(fnts_rsc) );	/* Resource kopieren und beim AES anmelden */
 
 		if ( resource )
 		{

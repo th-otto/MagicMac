@@ -11429,7 +11429,7 @@ diskerr_s1: DC.B  ' auf Laufwerk ',0
 diskerr_s2: DC.B  ':',$d,$a,'[A]bbruch, [W]iederholen, [I]gnorieren ? ',0
 
      ENDC
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 
 out_of_int_mem:
  DC.B     '*** OUT OF INTERNAL MEMORY:',$1b,'K',$d,$a

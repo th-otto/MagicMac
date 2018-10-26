@@ -1578,7 +1578,7 @@ diskinfo:      DC.B '[0][Informationen f',$81,'r Laufwerk %S:| |'
                DC.B '%L Bytes insgesamt|'
                DC.B '%L Bytes frei][  OK  ]',0
      ENDIF
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 fs_dflttit:    DC.B "FILE SELECTOR",0
 fs_ok:         DC.B "OK",0
 fs_abbruch:    DC.B "CANCEL",0

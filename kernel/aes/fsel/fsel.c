@@ -33,13 +33,15 @@
 #include "std.h"
 #include <sys/stat.h>
 
+static unsigned char fselx[] = {
 #if       COUNTRY==COUNTRY_DE
-#include "ger\fselrsrc.h"
-#elif     COUNTRY==COUNTRY_US
-#include "us\fselrsrc.h"
+#include "ger\fselx.inc"
+#elif     (COUNTRY==COUNTRY_US) || (COUNTRY==COUNTRY_UK)
+#include "us\fselx.inc"
 #elif     COUNTRY==COUNTRY_FR
-#include "fra\fselrsrc.h"
+#include "fra\fselx.inc"
 #endif
+};
 
 #define fsel_rsc ((RSHDR *) fselx)
 #define fsel_rslen sizeof(fselx)

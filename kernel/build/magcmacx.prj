@@ -9,8 +9,6 @@ MagicMacX.OS
 .C[-A-]
 .C[-K-]
 .S[-DMMX_YIELD=1]
-.S[-DBINEXACT=1]
-.C[-DBINEXACT=1]
 .C[-P]
 .L[-S=0]
 =

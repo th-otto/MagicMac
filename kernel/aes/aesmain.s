@@ -1630,7 +1630,7 @@ chgr_noxptab:
      IF   COUNTRY=COUNTRY_DE
 inf_errs:      DC.B $d,$a,'Fehler in MAGX.INF ',0
      ENDIF
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 inf_errs:      DC.B $d,$a,'Error in MAGX.INF ',0
      ENDIF
      IF  COUNTRY=COUNTRY_FR
@@ -3794,7 +3794,7 @@ bytes_s:  DC.B '  %L kBytes frei',0
 fsel_ldp: DC.B 'Programm parallel ausf',$81,'hren:',0
 fsel_ldo: DC.B 'Programm ausf',$81,'hren:',0
      ENDIF
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 aktaus_s: DC.B '  xxxxxxxx hide',0
 allaus_s: DC.B '  others   hide',0
 allein_s: DC.B '  all      unhide',0
@@ -7857,7 +7857,7 @@ fatal_win_mems:DC.B      '*** ZUWENIG SPEICHER IN FENSTERVERWALTUNG:',0
 fatal_wins:    DC.B      '*** FATALER FEHLER IN FENSTERVERWALTUNG:',0
 fatal_stack_s: DC.B      '*** ',$9A,'BERLAUF DES SYSTEMSTAPELS:',0
      ENDIF
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 fatal_errs:    DC.B      '*** FATAL ERROR IN AES:',0
 fatal_win_mems:DC.B      '*** INSUFFICIENT MEMORY IN WINDOW MANAGER:',0
 fatal_wins:    DC.B      '*** FATAL ERROR IN WINDOW MANAGER:',0
@@ -10906,7 +10906,7 @@ prtstr:
      IF   COUNTRY=COUNTRY_DE
 waitkeys: DC.B $1b,'e',$d,$a,'Taste dr',$81,'cken : ',0
      ENDIF
-     IF   COUNTRY=COUNTRY_US
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
 waitkeys: DC.B $1b,'e',$d,$a,'press any key : ',0
      ENDIF
      IF   COUNTRY=COUNTRY_FR
