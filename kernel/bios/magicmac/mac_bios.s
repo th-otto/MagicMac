@@ -62,6 +62,8 @@ DEBUG3    EQU  0
 ALTGR          EQU  $4c
 ALT_NUMKEY     EQU  1
 COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
+DEADKEYS       EQU  0
+N_KEYTBL       EQU  9             ; 9 Tastaturtabellen
 
 ; 0x37 ist Scancode fuer Command (Apple)
 ; 0x49 ist Scancode fuer PgUp
@@ -105,6 +107,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      IFNE FALCON
      XDEF      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
+	 XDEF MSys_BehneError
 
 * Import aus STD
 
@@ -185,6 +188,9 @@ D_BCD     EQU  $01092000
 
 NCOOKIES  EQU  21
 
+	XDEF act_pd
+	
+
      TEXT
 
 
@@ -238,7 +244,7 @@ ctrl_status:        DS.W 1              /* char ctrl_status[2]        */
                                         /* erstes Byte: einschalten   */
                                         /* Bit 7: CTRL-C              */
                                         /* Bit 1: CTRL-S/CTRL-Q       */
-keytblx:            DS.L 9              /* char *keytblx[9 !!!]       */
+keytblx:            DS.L N_KEYTBL       /* char *keytblx[9 !!!]       */
 default_keytblxp:   DS.L 1              /*  Zeiger auf Defaults       */
 pr_conf:            DS.W 1              /* int                        */
 prtblk_vec:         DS.L 1              /* -> xbios Prtblk            */
@@ -350,6 +356,7 @@ MSys:
  DC.L     0                   ; MacSys_set_physbase
  DC.L     0                   ; MacSys_VsetRGB
  DC.L     0                   ; MacSys_VgetRGB
+MSys_BehneError:
  DC.L     0                   ; MacSys_error
  DC.L     0                   ; MacSys_init
  DC.L     0                   ; MacSys_drv2devcode
@@ -1706,8 +1713,8 @@ crsh_loop:
  move.l   a1,_sysbase
  rts
 jmpop:
-long_zero EQU *+2
- jmp      0.l
+ dc.w $4ef9
+long_zero: dc.l 0
 braop:
  bra.b    jmpop
 

@@ -33,7 +33,7 @@
 	XREF	unload_NOD
 	XREF	clear_mem
 	XREF	load_file
-	XREF	MSys
+	XREF	MSys_BehneError
 	XREF	create_bitmap
 	XREF	Mfree_sys
 	XREF	init_NOD
@@ -41,8 +41,6 @@
 	XREF	Mshrink_sys
 
 	XDEF	cpu020
-
-BehneError equ $78
 
 /* version info for ndvi_struct */
 VERSION equ $0313
@@ -2354,7 +2352,7 @@ vdi_init1:
 		bra.s     vdi_init1
 load_NOD_err:
 		moveq.l   #-1,d0
-		movea.l   MSys+BehneError,a0
+		movea.l   MSys_BehneError,a0
 		jmp       (a0)
 vdi_init2:
 		bsr       init_font
@@ -2413,7 +2411,7 @@ load_scr2:
 		move.l    a0,d0
 		bne.s     load_scr3
 		moveq.l   #-1,d0
-		movea.l   MSys+BehneError,a0
+		movea.l   MSys_BehneError,a0
 		jmp       (a0)
 load_scr3:
 		lea.l     (screen_d).w,a3
@@ -2429,7 +2427,7 @@ load_scr3:
 		illegal
 load_scr4:
 		moveq.l   #-1,d0
-		movea.l   MSys+BehneError,a0
+		movea.l   MSys_BehneError,a0
 		jmp       (a0)
 load_scr5:
 		movem.l   (a7)+,d0-d2/a0-a2

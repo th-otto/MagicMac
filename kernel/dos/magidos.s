@@ -43,6 +43,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF  int_malloc
      XDEF  int_pmalloc
      XDEF  int_mfree
+     XDEF dos_time
 
      XDEF  resv_intmem
      XDEF  resvb_intmem

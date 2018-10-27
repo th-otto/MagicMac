@@ -62,15 +62,15 @@ chk_rtclock:
 *
 
 init_dosclock:
- move.w   syshdr+os_gendatg(pc),dos_date
+ move.w   syshdr+os_gendatg(pc),(dos_date).l
  bsr      _Gettime
  addq.l   #1,d0
  beq.b    idcl_ikbd                ; Zeit -1 = ungueltig -> IKBD probieren
  subq.l   #1,d0
 inidc_set:
- move.w   d0,dos_time
+ move.w   d0,(dos_time).l
  swap     d0
- move.w   d0,dos_date
+ move.w   d0,(dos_date).l
  rts
 idcl_ikbd:
  bsr      read_ikbdclock
@@ -147,7 +147,9 @@ _Settime:
 *
 
 read_megaclock:
+ IFEQ BINEXACT
  lea      $fffffc20,a0        ; Adresse des Uhrenchips
+ ENDC
  lea      rtclockbuf1,a1
  lea      rtclockbuf2,a2
  bsr      rmegac_l3
@@ -226,7 +228,9 @@ rmegac_rm1:
 *
 
 write_megaclock:
+ IFEQ BINEXACT
  lea      $fffffc20,a0        ; Adresse des Uhrenchips
+ ENDC
  lea      rtclockbuf1,a1
  move.w   6(sp),d1
  move.w   d1,d0
@@ -474,9 +478,9 @@ rttc_l1:
  move     d2,sr
  move     sr,d2
  ori      #$700,sr
- move.w   d0,dos_time
+ move.w   d0,(dos_time).l
  swap     d0
- move.w   d0,dos_date
+ move.w   d0,(dos_date).l
  swap     d0
  move     d2,sr
  rts

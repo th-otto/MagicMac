@@ -79,12 +79,12 @@ XFS95     EQU  1
      EXPORT      warm_boot           ; nach AES
      EXPORT      warmbvec,coldbvec   ; nach AES
      EXPORT      ideparm             ; nach IDE.C
-     EXPORT      putch
      EXPORT      prn_wrts            ; -> DEV_BIOS
      IFNE FALCON
      EXPORT      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
-     EXPORT      MSys                ; nach VDI
+     XDEF      bios_ptr            ; nach DOS
+	 XDEF MSys_BehneError
 
 ;Import vom DOS
 
@@ -93,6 +93,7 @@ XFS95     EQU  1
      XREF      iniddev1
      XREF      iniddev2
      XREF      deleddev
+	XDEF act_pd
 
 ;Import vom AES
 
@@ -168,14 +169,14 @@ XFS95     EQU  1
 	 INCLUDE "..\dos\magicdos.inc"
 
 ;----------------------------------------
-MSys           equ  0                   ;Mac-Systemfunktionen unter MagiC-Mac
-;----------------------------------------
 
 FDC_TIMEOUT    EQU  400            ; war vorher 300
 ;  FDC_TIMEOUT    EQU  600            ; fuer Julian
 
 ALTGR          EQU  0                   ; keine AltGr-Unterstuetzung
 ALT_NUMKEY     EQU  1
+DEADKEYS       EQU  0
+N_KEYTBL       EQU  9             ; 9 Tastaturtabellen
 
 D_DAY     EQU  11
 D_MONTH   EQU  9
@@ -328,7 +329,7 @@ ctrl_status:        DS.W 1              /* char ctrl_status[2]        */
                                         /* Bit 7: CTRL-C              */
                                         /* Bit 1: CTRL-S/CTRL-Q       */
 timedate:           DS.L 1              /* long                       */
-keytblx:            DS.L 9              /* char *keytblx[9 !!!]       */
+keytblx:            DS.L N_KEYTBL       /* char *keytblx[9 !!!]       */
 default_keytblxp:   DS.L 1              /*  Zeiger auf Defaults       */
 prt_last_timeout:   DS.L 1              /* long                       */
 pr_conf:            DS.W 1              /* int                        */
@@ -473,7 +474,7 @@ ENDIF
 __e_bios:
 
 IF __e_bios > $1199
-"",$9a,"berlauf der Bios-Variablen"
+$9a,"berlauf der Bios-Variablen"
 ENDIF
 
 
@@ -502,6 +503,7 @@ syshdr:
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run
+MSys_BehneError:
  DC.L     0
 
 
@@ -556,7 +558,7 @@ bot_ok1:
 
 * BIOS- Variablenbereich loeschen
  lea      clear_area,a0
- lea      __e_dos,a1
+ lea      (__e_dos).l,a1
  moveq    #0,d0
 bot_vclear:
  move.l   d0,(a0)+
@@ -1115,15 +1117,15 @@ dos_macfn:
  rts
 
 ;-----------------------------------------------------------------------
-     INCLUDE "scsi.s"
+     INCLUDE "..\..\bios\atari\modules\scsi.s"
      IFNE HADES
-     INCLUDE "had_fdc.s"
+     INCLUDE "..\..\bios\atari\modules\had_fdc.s"
      ELSE
-     INCLUDE "fdc.s"
+     INCLUDE "..\..\bios\atari\modules\fdc.s"
      ENDIF
-     INCLUDE "drive.s"
+     INCLUDE "..\..\bios\atari\modules\drive.s"
 ;-----------------------------------------------------------------------
-     INCLUDE "dsp.s"
+     INCLUDE "..\..\bios\atari\modules\dsp.s"
 ;-----------------------------------------------------------------------
 
 **********************************************************************
@@ -1912,18 +1914,17 @@ Bmalloc:
 fatal_err:
  lea      fatal_bios_errs(pc),a0
 
-
 **********************************************************************
 *
 * global void halt_system(a0 = char *errmsg)
 *
 halt_system:
  moveq    #$d,d0
- bsr.b    putch
+ bsr.b    xputch
  moveq    #$a,d0
- bsr.b    putch
+ bsr.b    xputch
  moveq    #$a,d0                   ; CR,LF,LF
- bsr.b    putch
+ bsr.b    xputch
  bsr.b    putstr                   ; Benutzermeldung
  lea      fatal_errs(pc),a0
  bsr      putstr                   ; "System angehalten"
@@ -1933,9 +1934,10 @@ halt_endless:
 putstr:
  move.b   (a0)+,d0
  beq.b    puts_ende
- bsr      putch
+ bsr      xputch
  bra.b    putstr
 puts_ende:
+bios_ptr:
  rts
 
 **********************************************************************
@@ -1943,7 +1945,7 @@ puts_ende:
 * PUREC void putch(char c)
 *
 
-putch:
+xputch:
  move.l  a2,-(sp)          ; wg. PureC
  andi.w   #$00ff,d0
  move.l   a0,-(sp)
@@ -1956,7 +1958,6 @@ putch:
  move.l   (sp)+,a0
  move.l  (sp)+,a2
  rts
-
 
 
 **********************************************************************
@@ -2358,8 +2359,8 @@ crsh_loop:
  move.l   a1,_sysbase
  rts
 jmpop:
-long_zero EQU *+2
- jmp      0.l
+ dc.w $4ef9
+long_zero: dc.l 0
 braop:
  bra.b    jmpop
 
@@ -3923,10 +3924,10 @@ ead08d1:  movea.l d0,a0
 
 
 
-     INCLUDE "serial.s"
-     INCLUDE "clock.s"
-     INCLUDE "video.s"
-     INCLUDE "keyb.s"
+     INCLUDE "..\..\bios\atari\modules\serial.s"
+     INCLUDE "..\..\bios\atari\modules\clock.s"
+     INCLUDE "..\..\bios\atari\modules\video.s"
+     INCLUDE "..\..\bios\atari\modules\keyb.s"
 
 
 
@@ -4045,9 +4046,9 @@ set_cpu_typ:
      ENDIF
 
      IFNE HADES
-     INCLUDE "had_cook.s"
+     INCLUDE "..\..\bios\atari\modules\had_cook.s"
      ELSE
-     INCLUDE "cook.s"
+     INCLUDE "..\..\bios\atari\modules\cook.s"
      ENDIF
 
 

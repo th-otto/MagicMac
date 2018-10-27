@@ -11491,11 +11491,23 @@ fillmem:
 *        DATA
 
 ss_serno:
- DC.L     0                        ; Seriennummer
-ss_nams:
- DCB.B    50,0                     ; Name
-ss_adrs:
- DCB.B    50,0                     ; Adresse
+ DC.L     $17bf5c5d                        ; Seriennummer
+ss_nams: ; Name
+ dc.b $93,$aa,$e4,$c3,$81,$ea,$f0,$08
+ dc.b $fe,$07,$1a,$2b,$3c,$41,$55,$4b
+ dc.b $54,$67,$69,$75,$8e,$91,$ad,$9f
+ dc.b $b3,$bb,$cd,$ca,$e5,$e2,$05,$f6
+ dc.b $08,$16,$19,$25,$3d,$52,$4e,$4d
+ dc.b $5e,$7a,$71,$7d,$96,$99,$b5,$52
+ dc.b $9f,$c3
+ss_adrs: ; Adresse
+ dc.b $ab,$9d,$e3,$dd,$ed,$a0,$06,$cc
+ dc.b $1f,$23,$2f,$3d,$51,$0e,$5e,$6d
+ dc.b $7d,$7f,$45,$96,$9c,$b2,$c4,$bf
+ dc.b $cf,$d7,$9d,$db,$f8,$10,$12,$19
+ dc.b $2d,$38,$4a,$4d,$58,$5b,$73,$88
+ dc.b $7c,$8b,$9b,$9f,$a8,$b5,$be,$67
+ dc.b $b6,$ed
  EVEN
 ss_kaos:
  DC.L     $21071965                ; Platz fuer Benutzerkennung (KAOS)

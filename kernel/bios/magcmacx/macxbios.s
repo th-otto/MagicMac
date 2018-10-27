@@ -97,6 +97,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      IFNE FALCON
      XDEF      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
+	 XDEF MSys_BehneError
 
 * Import aus STD
 
@@ -438,6 +439,7 @@ MSys:
  DC.L     0                   ; $6c MacSys_set_physbase
  DC.L     0                   ; $70 MacSys_VsetRGB
  DC.L     0                   ; $74 MacSys_VgetRGB
+MSys_BehneError:
  DC.L     BehneError          ; $78 MacSys_error. ###### FUeR BEHNES ######
  DC.L     0                   ; MacSys_init
  DC.L     0                   ; MacSys_drv2devcode

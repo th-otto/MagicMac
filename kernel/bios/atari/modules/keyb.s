@@ -257,16 +257,16 @@ no_key:
    jmp      pak_subr_tab(pc,d2.w)
 
 pak_subr_tab:
-   dc.w  subr_dummy - pak_subr_tab     ;$f6: Statusheader
-   dc.w  subr_dummy - pak_subr_tab     ;$f7: absolute Mausposition
-   dc.w  subr_relmouse - pak_subr_tab  ;$f8: relative Mausposition
-   dc.w  subr_relmouse - pak_subr_tab  ;$f9:...
-   dc.w  subr_relmouse - pak_subr_tab  ;$fa:...
-   dc.w  subr_relmouse - pak_subr_tab  ;$fb: realtive Mausposition
-   dc.w  subr_dummy - pak_subr_tab     ;$fc: Uhrzeit
-   dc.w  subr_joy - pak_subr_tab       ;$fd: ??
-   dc.w  subr_joy - pak_subr_tab       ;$fe: Joystick 0
-   dc.w  subr_joy - pak_subr_tab       ;$ff: Joystick 1
+   dc.w  subr_dummy-pak_subr_tab     ;$f6: Statusheader
+   dc.w  subr_dummy-pak_subr_tab     ;$f7: absolute Mausposition
+   dc.w  subr_relmouse-pak_subr_tab  ;$f8: relative Mausposition
+   dc.w  subr_relmouse-pak_subr_tab  ;$f9:...
+   dc.w  subr_relmouse-pak_subr_tab  ;$fa:...
+   dc.w  subr_relmouse-pak_subr_tab  ;$fb: realtive Mausposition
+   dc.w  subr_dummy-pak_subr_tab     ;$fc: Uhrzeit
+   dc.w  subr_joy-pak_subr_tab       ;$fd: ??
+   dc.w  subr_joy-pak_subr_tab       ;$fe: Joystick 0
+   dc.w  subr_joy-pak_subr_tab       ;$ff: Joystick 1
 
 subr_joy:
    move.b   d0,pack_joy+0
@@ -561,14 +561,15 @@ default_keytblx:
  DC.L     tab_unshift
  DC.L     tab_shift
  DC.L     tab_caps
- DC.L     tab_altgr
+ DC.L     tab_altgr ; tables for ctrl+altgr
  DC.L     tab_shaltgr
  DC.L     tab_altgr
- DC.L     tab_alt
+ DC.L     tab_alt   ; tables for alt
  DC.L     tab_shalt
  DC.L     tab_alt
 
 
+ IF COUNTRY=COUNTRY_DE
 tab_unshift:
  DC.B     $00,$1b,$31,$32,$33,$34,$35,$36,$37,$38,$39,$30,$9e,$27,$08,$09
  DC.B     $71,$77,$65,$72,$74,$7a,$75,$69,$6f,$70,$81,$2b,$0d,$00,$61,$73
@@ -596,6 +597,37 @@ tab_caps:
  DC.B     $00,$00,$00,$7f,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
  DC.B     $3c,$00,$00,$28,$29,$2f,$2a,$37,$38,$39,$34,$35,$36,$31,$32,$33
  DC.B     $30,$2e,$0d,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
+ ELSE
+
+tab_unshift:
+ DC.B     $00,$1b,$31,$32,$33,$34,$35,$36,$37,$38,$39,$30,$2d,$3d,$08,$09
+ DC.B     $71,$77,$65,$72,$74,$79,$75,$69,$6f,$70,$5b,$5d,$0d,$00,$61,$73
+ DC.B     $64,$66,$67,$68,$6a,$6b,$6c,$3b,$27,$60,$00,$23,$7a,$78,$63,$76
+ DC.B     $62,$6e,$6d,$2c,$2e,$2f,$00,$00,$00,$20,$00,$00,$00,$00,$00,$00
+ DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$2d,$00,$00,$00,$2b,$00
+ DC.B     $00,$00,$00,$7f,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+ DC.B     $5c,$00,$00,$28,$29,$2f,$2a,$37,$38,$39,$34,$35,$36,$31,$32,$33
+ DC.B     $30,$2e,$0d,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+tab_shift:
+ DC.B     $00,$1b,$21,$22,$9c,$24,$25,$5e,$26,$2a,$28,$29,$5f,$2b,$08,$09
+ DC.B     $51,$57,$45,$52,$54,$59,$55,$49,$4f,$50,$7b,$7d,$0d,$00,$41,$53
+ DC.B     $44,$46,$47,$48,$4a,$4b,$4c,$3a,$40,$ff,$00,$7e,$5a,$58,$43,$56
+ DC.B     $42,$4e,$4d,$3c,$3e,$5f,$00,$00,$00,$20,$00,$00,$00,$00,$00,$00
+ DC.B     $00,$00,$00,$00,$00,$00,$00,$37,$38,$00,$2d,$34,$00,$36,$2b,$00
+ DC.B     $32,$00,$30,$7f,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+ DC.B     $7c,$00,$00,$28,$29,$2f,$2a,$37,$38,$39,$34,$35,$36,$31,$32,$33
+ DC.B     $30,$2e,$0d,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+tab_caps:
+ DC.B     $00,$1b,$31,$32,$33,$34,$35,$36,$37,$38,$39,$30,$2d,$3d,$08,$09
+ DC.B     $51,$57,$45,$52,$54,$59,$55,$49,$4f,$50,$5b,$5d,$0d,$00,$41,$53
+ DC.B     $44,$46,$47,$48,$4a,$4b,$4c,$3b,$27,$60,$00,$23,$5a,$58,$43,$56
+ DC.B     $42,$4e,$4d,$2c,$2e,$2f,$00,$00,$00,$20,$00,$00,$00,$00,$00,$00
+ DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$2d,$00,$00,$00,$2b,$00
+ DC.B     $00,$00,$00,$7f,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+ DC.B     $5c,$00,$00,$28,$29,$2f,$2a,$37,$38,$39,$34,$35,$36,$31,$32,$33
+ DC.B     $30,$2e,$0d,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+ ENDC
 tab_alt:
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
  DC.B     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,'@',$00,$00,$00,$00,$00
