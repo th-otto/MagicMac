@@ -41,12 +41,13 @@ DEBUG4    EQU  0
      EXPORT    Bmaddalt            ; nach DOS (ab 25.9.96)
      EXPORT    dos_macfn           ; nach DOS
 
-     EXPORT    milan               ; nach MILAN.S
      XDEF      p_vt52              ; neues VT52 nach DOS
      EXPORT    warm_boot           ; nach AES
      EXPORT    warmbvec,coldbvec   ; nach AES
-     EXPORT    putch
      EXPORT    scrbuf_adr,scrbuf_len    ; nach DOS
+
+     XREF      putch
+     XREF      putstr
 
 ;Import vom DOS
 
@@ -139,20 +140,8 @@ NCOOKIES  EQU  35
 NSERIAL   EQU  5              /* max. Anzahl serieller Schnittstellen */
 ALTGR     EQU  $4c
 ALT_NUMKEY     EQU  1
-
-     OFFSET
-
-dta_sname:     DS.B      12   /* 0x00: Suchname     (von Fsfirst)          */
-dta_dpos:      DS.L      1    /* 0x0c: Suchpos. oder 0L bei nicht ROOT     */
-dta_clpos:     DS.W      1    /* 0x10: Clusterposition, wenn nicht Root    */
-dta_ccl:       DS.W      1    /* 0x12: Clusternummer, wenn nicht Root      */
-dta_drive:     DS.B      1    /* 0x14: Laufwerk (0..31)                    */
-dta_attr:      DS.B      1    /* 0x15: gefundenes Attribut                 */
-dta_time:      DS.W      1    /* 0x16: gefundene Zeit                      */
-dta_date:      DS.W      1    /* 0x18: gefundenes Datum                    */
-dta_len:       DS.L      1    /* 0x1a: gefundene Laenge                     */
-dta_name:      DS.B      14   /* 0x1e: gefundener Dateiname                */
-dta_sizeof:
+DEADKEYS       EQU  0
+N_KEYTBL       EQU  9             ; 9 Tastaturtabellen
 
      OFFSET
 
@@ -236,7 +225,7 @@ ctrl_status:        DS.W 1              /* char ctrl_status[2]        */
                                         /* erstes Byte: einschalten   */
                                         /* Bit 7: CTRL-C              */
                                         /* Bit 1: CTRL-S/CTRL-Q       */
-keytblx:            DS.L 9              /* char *keytblx[9 !!!]       */
+keytblx:            DS.L N_KEYTBL       /* char *keytblx[9 !!!]       */
 default_keytblxp:   DS.L 1              /*  Zeiger auf Defaults       */
 pr_conf:            DS.W 1              /* int                        */
 prtblk_vec:         DS.L 1              /* -> xbios Prtblk            */
@@ -308,7 +297,8 @@ IF __e_bios > $1199
 "",$9a,"berlauf der Bios-Variablen"
 ENDIF
 
-
+	XDEF act_pd
+	
      TEXT
 
 
@@ -1508,45 +1498,16 @@ fatal_err:
 
 halt_system:
  moveq    #$d,d0
- bsr.b    putch
+ bsr      putch
  moveq    #$a,d0
- bsr.b    putch
+ bsr      putch
  moveq    #$a,d0                   ; CR,LF,LF
- bsr.b    putch
- bsr.b    putstr                   ; Benutzermeldung
+ bsr      putch
+ bsr      putstr                   ; Benutzermeldung
  lea      fatal_errs(pc),a0
  bsr      putstr                   ; "System angehalten"
 halt_endless:
  bra      halt_endless
-
-putstr:
- move.b   (a0)+,d0
- beq.b    puts_ende
- bsr      putch
- bra.b    putstr
-puts_ende:
- rts
-
-
-**********************************************************************
-*
-* PUREC void putch(char c)
-*
-
-putch:
- move.l   a2,-(sp)                 ; wg. PureC
- andi.w   #$00ff,d0
- move.l   a0,-(sp)
- move.w   d0,-(sp)
- move.w   #2,-(sp)                 ; CON
- move.l   dev_vecs+$68,a0          ; Bconout CON
- jsr      (a0)
- addq.l   #4,sp
-
- move.l   (sp)+,a0
- move.l   (sp)+,a2
- rts
-
 
 **********************************************************************
 *
@@ -1711,8 +1672,8 @@ crsh_loop:
  move.l   a1,_sysbase
  rts
 jmpop:
-long_zero EQU *+2
- jmp      0.l
+ dc.w $4ef9
+long_zero: dc.l 0
 braop:
  bra.b    jmpop
 

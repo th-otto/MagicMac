@@ -1,2 +1,2 @@
-e:\bin\runopts +S winframe.slb
+runopts +S winframe.slb
 exit

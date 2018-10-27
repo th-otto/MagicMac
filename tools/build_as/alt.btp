@@ -1,5 +1,0 @@
-mas -v -i=c:\ass\inc %1
-IF ERRORLEVEL 1 END
-plink -v -s=0 -o=%1.tos %1
-IF ERRORLEVEL 1 END
-del %1.o

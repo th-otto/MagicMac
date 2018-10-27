@@ -75,7 +75,6 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      XDEF      ctrl_status         ; nach DOS
      XDEF      is_fpu              ; nach XAES
      XDEF      halt_system         ; nach DOS,AES
-     XDEF      bios_ptr            ; nach DOS
      XDEF      p_mgxinf            ; nach XAES
      XDEF      machine_type        ; nach VDI,DOS
      XDEF      config_status       ; nach DOS und AES
@@ -1649,20 +1648,6 @@ debug_puts:
  move.l   a0,a1
  lea      MSysX+MacSysX_debugout(pc),a0
  MACPPC
- rts
-
-
-**********************************************************************
-*
-* global void bios_ptr(a0 = PD *pd)
-*
-* Wird bei Ptermres aufgerufen.
-* (zu Debugging-Zwecken)
-*
-
-bios_ptr:
-; DEBL    a0,'Ptermres mit pd = '
-; jsr          getch
  rts
 
 

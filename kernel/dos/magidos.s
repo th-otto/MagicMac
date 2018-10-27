@@ -106,7 +106,6 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XREF  pe_slice,pe_timer
      XREF  dos_macfn           ; DOS-Funktionen des Macintosh
      XREF  sust_len
-     XREF  bios_ptr
 
 * Importe aus dem AES
 
@@ -6012,7 +6011,6 @@ D_Ptermres:
  bsr      Mshrink
 
  move.l   act_pd,a0
- jsr      bios_ptr                 ; zum Debugging
 
  jsr      secb_ext                 ; erweitere Pufferliste ?
 

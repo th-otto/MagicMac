@@ -1,6 +1,0 @@
-pasm -v -i=c:\ass\inc %1
-IF ERRORLEVEL 1 END
-plink -v -s=0 -o=%1.prg %1
-IF ERRORLEVEL 1 END
-exe2bin %1.prg
-del %1.o

@@ -18,6 +18,8 @@
      INCLUDE "mac_ker.inc"
      INCLUDE "..\dos\magicdos.inc"
 
+	 XREF act_appl ; from AES
+
 BACKGR_DMA     EQU  1
 EVNT_IO        EQU  1
 

@@ -829,6 +829,7 @@ exit_handlekey:
  rts
 
      IF   MILANCOMP
+
 keyb_led:
  movem.l  a0-a2/d0-d2,-(sp)
  move.l   milan,a2

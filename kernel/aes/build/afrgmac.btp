@@ -1,1 +1,0 @@
-mas -I=d:\xkaos -v %1 -d=COUNTRY=1 -d=MMX_YIELD=1 -d=DEMO=0

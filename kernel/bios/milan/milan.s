@@ -35,15 +35,15 @@ DEBUG     EQU  0
      XREF hexl,putstr,crlf
      ENDIF
 
-;Import vom VDI
-
-     IMPORT    milan
-
 ; Include
 
      INCLUDE   "debug.inc"
-     INCLUDE   "biosvars.inc"
      INCLUDE   "milan.inc"
+
+milan               EQU  $9a4      ; Zeiger auf Uebergabestruktur
+
+bell_hook equ $05ac
+kcl_hook       EQU $5b0
 
      TEXT
      SUPER

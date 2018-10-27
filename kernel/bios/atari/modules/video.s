@@ -4,9 +4,9 @@
 *
 
      IFNE HADES
-     INCLUDE "had_ivid.s"
+     INCLUDE "..\..\bios\atari\modules\had_ivid.s"
      ELSE
-     INCLUDE "ivid.s"
+     INCLUDE "..\..\bios\atari\modules\ivid.s"
      ENDIF
 
 **********************************************************************
@@ -280,11 +280,11 @@ prbo_st:
  cmp.w    #6,d7          ; TT-Hoch?
  blt.b    prbo_offset_st
  adda.l   #$12c00,a0     ; Offset der Bildschirmmitte bei TT-Hoch
- bra.b    prbo_image
+ bra.b    prbo_image_out
 prbo_offset_st:
  adda.w   #$3e80,a0      ; Offset der Bildschirmmitte bei ST-High/ST-Mid/ST-Low
 
-prbo_image:
+prbo_image_out:
  lea      prbo_image(pc),a1        ; Image der Bombe
  moveq    #15,d6                   ; 16 Zeilen
  add.w    d7,d7
