@@ -43,6 +43,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF  int_malloc
      XDEF  int_pmalloc
      XDEF  int_mfree
+     XDEF dos_time
 
      XDEF  resv_intmem
      XDEF  resvb_intmem
@@ -6009,8 +6010,6 @@ D_Ptermres:
  move.l   (a0),d0                  ; size
  move.l   act_pd,a0
  bsr      Mshrink
-
- move.l   act_pd,a0
 
  jsr      secb_ext                 ; erweitere Pufferliste ?
 

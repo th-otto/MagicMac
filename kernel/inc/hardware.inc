@@ -24,8 +24,8 @@ STC_BIT equ 7
 VERTFLAG equ $100
 VTF_BIT equ 8
 
-COLOR_MON equ 0
-MONO_MON  equ 1
+MONO_MON  equ 0
+COLOR_MON equ 1
 VGA_MON   equ 2
 TV_MON    equ 3
 
@@ -36,7 +36,7 @@ FALCONMDS equ 3
 
 MON_ID      equ $ffff8006
 EXTCLK      equ $ffff820a
-LINE_OFFSET equ $ffff821E
+LINE_OFFSET equ $ffff820e
 
 VWRAP equ $ffff8210
 HSCROLL equ $ffff8264
@@ -101,12 +101,22 @@ giwrite  equ $ffff8802
 
 keyctl   equ $fffffc00
 keybd    equ $fffffc02
-midictl  equ $fffffc06
-midi     equ $fffffc08
+midictl  equ $fffffc04
+midi     equ $fffffc06
 
 sccctl_a equ $ffff8c81
 _scc_dat equ 2
 sccctl_b equ $ffff8c85
 
-IDE_StatReg2 equ $fff00039
+IDE_Base         equ $fff00000
+IDE_Data         equ $00
+IDE_SectorCount  equ $09
+IDE_SectorNumber equ $0d
+IDE_CylL         equ $11
+IDE_CylH         equ $15
+IDE_DriveHead    equ $19
+IDE_StatReg      equ $1d
+IDE_Command      equ $1d
+IDE_StatReg2     equ $39
+
 M_fdc_hdmode equ $ffff860E

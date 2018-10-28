@@ -346,7 +346,7 @@ dmaboot:
  movea.l  sp,a1                    ; Stack fuer dma_noide
  move.l   #dma_noide,8.w           ; Busfehlervektor setzen
 
- tst.b    IDE_StatReg2             ; Dieses Register kann gelesen werden,
+ tst.b    IDE_Base+IDE_StatReg2    ; Dieses Register kann gelesen werden,
                                    ;   ohne dass IR-Bits sich veraendern
  move.l   a0,8.w                   ; Busfehlervektor zuruecksetzen
 
@@ -364,7 +364,7 @@ ENDIF
  move.l   _dskbufp,a0
  lea      2048(a0),a0              ; Platz fuer IDE-Daten
  jsr      IDEInitDrive             ; IDEInitDrive (dev, &ide_daten)
-
+  
 IFNE DEBUG
  lea      bt_ides(pc),a0
  bsr      putstr
@@ -763,7 +763,7 @@ fbpb_read:
  bra      fbpb_err                 ; Ignorieren wird nicht zugelassen
 fbpb_read_ok:
 
-* Hier wird der "",$94,"ffentliche" BiosParameterBlock berechnet
+* Hier wird der "Oeffentliche" BiosParameterBlock berechnet
 
  move.l   a5,a2
 
@@ -811,7 +811,7 @@ fbpb_read_ok:
  move.w   d0,(a2)+                 ; Bit 0: FAT- Typ 12 Bit
                                    ; Bit 1: nur eine FAT
 
-* Es folgt der "nicht",$94,"ffentliche" Teil
+* Es folgt der "nichtoeffentliche" Teil
 
  addq.l   #2,a2                    ; $12(a5) zunaechst ueberspringen
 
