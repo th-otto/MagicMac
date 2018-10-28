@@ -142,7 +142,7 @@ NSERIAL   EQU  5              /* max. Anzahl serieller Schnittstellen */
 ALTGR     EQU  $4c
 ALT_NUMKEY     EQU  1
 DEADKEYS       EQU  0
-N_KEYTBL       EQU  9             ; 9 Tastaturtabellen
+N_KEYTBL       EQU  9+DEADKEYS            ; 9 Tastaturtabellen
 
      OFFSET
 

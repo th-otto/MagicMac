@@ -179,7 +179,7 @@ D_BCD     EQU  $12292003           ; mmttjj
 NCOOKIES  EQU  21
 NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 
-N_KEYTBL       EQU  10             ; 10 Tastaturtabellen
+N_KEYTBL       EQU 9+DEADKEYS             ; 10 Tastaturtabellen
 
 	 XREF cpu020 ; from mxvdiknl.o
 	 XREF act_appl ; from AES
@@ -3160,10 +3160,11 @@ tab_shaltgr:
  DC.B  $00,$be,YYY,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
 tab_dead:
- DC.B     '',$ba,'','`','^',0
- DC.B     'a','',$a0,'','e','',$82,'','E','',$90,'','i','',$a1,'','o','',$a2,'','u','',$a3,'',0
- DC.B     'a','',$85,'','A','',$b6,'','e','',$8a,'','i','',$8d,'','o','',$95,'','u','',$97,'',0
- DC.B     'a','',$83,'','e','',$88,'','i','',$8c,'','o','',$93,'','u','',$96,'',0,0
+ DC.B     $ba,'`','^',0
+ DC.B     'a',$a0,'e',$82,'E',$90,'i',$a1,'o',$a2,'u',$a3,0
+ DC.B     'a',$85,'A',$b6,'e',$8a,'i',$8d,'o',$95,'u',$97,0
+ DC.B     'a',$83,'e',$88,'i',$8c,'o',$93,'u',$96,0
+ EVEN
 
 **********************************************************************
 *

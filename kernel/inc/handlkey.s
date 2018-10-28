@@ -771,8 +771,9 @@ deadkey_after:
 ; Pruefe, ob die Taste ein dead key ist
 
 no_deadkey_active:
- move.l   keytblx+36,a0            ; dead key table
+ move.l   keytblx+9*4,a0            ; dead key table
  move.l   a0,d2
+ beq.b    no_deadkey               ; no table
 ndk_loop:
  tst.b    (a0)
  beq.b    no_deadkey               ; Ende der Tabelle

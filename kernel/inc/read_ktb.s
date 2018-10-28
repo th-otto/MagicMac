@@ -1,8 +1,3 @@
-;N_KEYTBL		EQU	10
-MEM_KEYTBL	EQU	(N_KEYTBL*128)+(N_KEYTBL*4)
-FSIZE_KEYTBL	EQU	(N_KEYTBL*128)
-
-
 **********************************************************************
 *
 * void read_keytbl( void )
@@ -40,7 +35,7 @@ read_keytbl:
   bmi rdkt_close
 
   move.l xattr_size(a7),d6
-  cmpi.l #((9*128)+2),d6
+  cmpi.l #(9*128),d6
   bcs rdkt_close
   
 ; Speicher allozieren
@@ -76,6 +71,13 @@ rdkt_loop:
  lea		128(a1),a1
  dbra	d0,rdkt_loop
  move.l	a6,default_keytblxp		; als Default aktivieren
+ IFNE DEADKEYS
+ cmpi.l #(9*128),d6
+ bne rdkt_inst
+ clr.l -4(a0)
+rdkt_inst:
+ ENDC
+ 
  bsr 	_Bioskeys				; richtig aktivieren
  bra.b	rdkt_close
 

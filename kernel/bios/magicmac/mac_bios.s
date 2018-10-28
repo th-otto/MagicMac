@@ -63,7 +63,7 @@ ALTGR          EQU  $4c
 ALT_NUMKEY     EQU  1
 COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 DEADKEYS       EQU  0
-N_KEYTBL       EQU  9             ; 9 Tastaturtabellen
+N_KEYTBL       EQU  9+DEADKEYS            ; 9 Tastaturtabellen
 
 ; 0x37 ist Scancode fuer Command (Apple)
 ; 0x49 ist Scancode fuer PgUp

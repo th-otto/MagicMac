@@ -176,7 +176,7 @@ FDC_TIMEOUT    EQU  400            ; war vorher 300
 ALTGR          EQU  0                   ; keine AltGr-Unterstuetzung
 ALT_NUMKEY     EQU  1
 DEADKEYS       EQU  0
-N_KEYTBL       EQU  9             ; 9 Tastaturtabellen
+N_KEYTBL       EQU  9+DEADKEYS          ; 9 Tastaturtabellen
 
 D_DAY     EQU  11
 D_MONTH   EQU  9
