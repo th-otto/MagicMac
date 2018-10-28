@@ -84,7 +84,7 @@ XFS95     EQU  1
      IFNE FALCON
      EXPORT      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
-     XDEF      MSys                ; nach VDI
+     XDEF      MSys_BehneError                ; nach VDI
 
 ;Import vom DOS
 
@@ -503,6 +503,7 @@ syshdr:
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run
+MSys_BehneError:
  DC.L     0
 
 
@@ -1912,10 +1913,7 @@ Bmalloc:
 *
 fatal_err:
  lea      fatal_bios_errs(pc),a0
- bra halt_system
 
-MSys: ; only used by error output
-   ds.b $78
 **********************************************************************
 *
 * global void halt_system(a0 = char *errmsg)

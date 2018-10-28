@@ -73,6 +73,7 @@ N_KEYTBL       EQU  9             ; 9 Tastaturtabellen
 
      XDEF      _start
      XDEF      MSys
+     XDEF      MSys_BehneError
      XDEF      getcookie
      XDEF      drv2devcode         ; BIOS-Device => devcode (32 Bit)
      XDEF      bios2devcode        ; BIOS-Device => devcode (32 Bit)
@@ -355,6 +356,7 @@ MSys:
  DC.L     0                   ; MacSys_set_physbase
  DC.L     0                   ; MacSys_VsetRGB
  DC.L     0                   ; MacSys_VgetRGB
+MSys_BehneError:
  DC.L     0                   ; MacSys_error
  DC.L     0                   ; MacSys_init
  DC.L     0                   ; MacSys_drv2devcode
