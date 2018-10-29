@@ -1,0 +1,6 @@
+mktbl.ttp
+=
+cstartv.o
+mktbl.c
+pcstdlib.lib
+pctoslib.lib

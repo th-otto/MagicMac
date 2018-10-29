@@ -1,19 +1,2 @@
-Andreas Kromke
-2018-05-11
-
-
-ATARI
-	build batch files for Atari, Hades and MagicPC
-
-A_GER.BAT
-	helper batch file to call assembler and build German localisation
-
-MAGICMAC
-	build batch files for MagicMac
-
-MAGCMACX
-	build batch files for MagicMacX
-
-MILAN
-	build batch files for Magic Milan
-
+Andreas Kromke2018-05-11ATARI.PRJ	Pure-C project file for Atari, Hades and MagicPCMAGICMAC.PRJ	Pure-C project file for MagicMacMAGCMACX.PRJ	Pure-C project file for MagicMacXMILAN.PRJ	Pure-C project file for Magic MilanLocalisation is choosen by changing the COUNTRY= definitions.
+Currently US(0), DE(1), FR(2) and UK(3) are available.
