@@ -1416,7 +1416,7 @@ Rsconf:
 xbios_tab:
  DC.W     142
  DC.L     Initmous            ; 0
- DC.L     dummy_rte           ; 1=Ssbrk
+ DC.L     not_implemented     ; 1=Ssbrk
  DC.L     Physbase
  DC.L     Logbase
  DC.L     Getrez
@@ -1455,46 +1455,46 @@ xbios_tab:
  DC.L     Vsync
  DC.L     Supexec
  DC.L     Puntaes           ; 39, Puntaes
- DC.L     dummy_rte
+ DC.L     not_implemented
  DC.L     Floprate            ; 41
  DC.L     DMAread             ; 42
  DC.L     DMAwrite            ; 43
  DC.L     Bconmap             ; 44
- DC.L     dummy_rte
+ DC.L     not_implemented
  DC.L     NVMaccess           ; 46
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
  DC.L     Blitmode            ; 64
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte           ; 70
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte           ; 75
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
- DC.L     dummy_rte
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented     ; 70
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented     ; 75
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
+ DC.L     not_implemented
  DC.L     Esetshift           ; 80
  DC.L     Egetshift           ; 81
  DC.L     Esetbank            ; 82
@@ -1509,10 +1509,10 @@ xbios_tab:
    DC.L  mon_type             ;89
    DC.L  VsetSync             ;90
    DC.L  VgetSize             ;91
-   DC.L  dummy_rte
+   DC.L  not_implemented
    DC.L  VsetRGB              ;93
    DC.L  VgetRGB              ;94
-     DC.L     dummy_rte
+     DC.L     not_implemented
 ;Falcon DSP/Soundsystem 96-141
      dc.l Dsp_DoBlock
      dc.l Dsp_BlkHandShake
@@ -1538,7 +1538,7 @@ xbios_tab:
      dc.l Dsp_InqSubrAbility
      dc.l Dsp_RunSubroutine
      dc.l Dsp_Hf0
-     dc.l  Dsp_Hf1
+     dc.l Dsp_Hf1
      dc.l Dsp_Hf2
      dc.l Dsp_Hf3
      dc.l Dsp_BlkWords
@@ -1596,12 +1596,14 @@ _biosdisp:
 Bios_user:
    move.w   (a0)+,d0          ;Opcode
    cmp.w    (a1)+,d0
-   bcc.b       exit_bios
+   bcc.b    exit_bios
    add.w    d0,d0
    add.w    d0,d0
    move.l   (a1,d0.w),a1      ;Adresse der Biosroutine holen
    jmp      (a1)
 exit_bios:
+not_implemented:
+   lsr.w    #2,d0          ; Damit d0 == opcode
 dummy_rte:
    rte
 
