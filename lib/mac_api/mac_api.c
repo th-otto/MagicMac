@@ -1,7 +1,8 @@
 /*
  * MAC_API.C
  *
- * Set TABs to 4 */
+ * Set TABs to 4
+ */
 
 #include <tos.h>
 #include "MGMC_API.H"
