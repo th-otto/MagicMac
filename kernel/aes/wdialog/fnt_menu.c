@@ -104,7 +104,7 @@ extern WORD	is_magic;
 /* Lokale Includes																								*/
 /*----------------------------------------------------------------------------------------*/ 
 #include "obj_tool.h"
-#include "ger\FONTSLCT.H"
+#include "ger\fontslct.h"
 #include "wdialog.h"
 #include "listbox.h"
 #include "fnts.h"

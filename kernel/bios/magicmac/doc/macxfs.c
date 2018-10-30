@@ -147,7 +147,7 @@ Aenderungen von !TT:
 */
 
 //#include <stdio.h>
-#include <StdLib.h>
+#include <stdlib.h>
 #include <files.h>
 #include <OSUtils.h>
 #include <String.h>
@@ -172,7 +172,7 @@ Aenderungen von !TT:
 #include "macxfs.h"
 #include "MHDI.h"
 #include "TextConv.h"		// 9.6.96
-#include "MAC_XFS.H"		// TT: Mac-XFS-Erweiterungen
+#include "mac_xfs.h"		// TT: Mac-XFS-Erweiterungen
 
 #ifndef ELINK
 #define ELINK -300

@@ -5,7 +5,7 @@
      Compilerschalter: -B-P
 */
 
-#include <PORTAB.H>
+#include <portab.h>
 #include <tos.h>
 #include "std.h"
 

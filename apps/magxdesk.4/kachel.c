@@ -6,11 +6,11 @@
 /*----------------------------------------------------------------------------------------*/ 
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/ 
-#include <PORTAB.H>
-#include	<AES.H>
-#include <VDI.H>
-#include <TOS.H> 
-#include	<STDDEF.H>
+#include <portab.h>
+#include <aes.h>
+#include <vdi.h>
+#include <tos.h> 
+#include <stddef.h>
 
 #include "kachel.h"
 #include "imgload.h"

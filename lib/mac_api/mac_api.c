@@ -1,11 +1,12 @@
 /*
  * MAC_API.C
  *
- * Set TABs to 4 */
+ * Set TABs to 4
+ */
 
 #include <tos.h>
-#include "MGMC_API.H"
-#include "MAC_API.H"
+#include "mgmc_api.h"
+#include "mac_api.h"
 
 extern MgMcCookie *gMgMcCookie;		/* declared in DEMOMAIN.C */
 

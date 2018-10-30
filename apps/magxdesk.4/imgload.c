@@ -3,9 +3,9 @@
 	Kommentare ab: Spalte 60											*Spalte 60*
 */
 
-#include	<MGX_DOS.H>
-#include	<STDDEF.H>
-#include	<STRING.H>
+#include	<mgx_dos.h>
+#include	<stddef.h>
+#include	<string.h>
 
 #include "imgload.h"
 

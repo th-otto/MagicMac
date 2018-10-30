@@ -1,13 +1,25 @@
-/* * Demo-Programm zum Gebrauch der "Men XCMD" * */
-#include <stdio.h>#include <stddef.h>#include <stdlib.h>#include <string.h>#include <tos.h>
-#include <aes.h>#include "mgmc_api.h"
+/*
+ * Demo-Programm zum Gebrauch der "Men XCMD"
+ *
+ */
+
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tos.h>
+#include <aes.h>
+#include "mgmc_api.h"
 #include "men_xcmd.h"
-#include "mac_menu.h"
-MgMcCookie *gMgMcCookie;int apid;
+#include "mac_menu.h"
+
+MgMcCookie *gMgMcCookie;
+int apid;
 OBJECT *tree;
 OBJECT *ob;
 USERBLK userblk_macmenu;
-XCMDMgrRec *xcmd;XCMDHdl hdl;
+XCMDMgrRec *xcmd;
+XCMDHdl hdl;
 int mbar_h;
 WORD whdl;
 
@@ -40,7 +52,8 @@ static OBJECT o =
 	0,	/* w */
 	0	/* h */
 };
-/* Cookie structure */
+
+/* Cookie structure */
 
 typedef struct {
 	long		key;
@@ -186,10 +199,12 @@ void do_menu( void )
 					xcmd->call( hdl, xcmdSwitchToMacOS, &swparm);
 /*
 					byte = 2;
-					gMgMcCookie->configKernel (5, &byte);*/
+					gMgMcCookie->configKernel (5, &byte);
+*/
 					}
 				}
-			}		}
+			}
+		}
 	while(1);
 
 }
@@ -200,16 +215,22 @@ void do_menu( void )
 * Aktiviert ein Mac-MenÅ
 *
 *********************************************************************/
-int main (void){
-	COOKIE *cookie;	OpenMenuParm mparm;
+
+int main (void)
+{
+	COOKIE *cookie;
+	OpenMenuParm mparm;
 	unsigned char buf[256];
 	long ret;
 	GRECT desk_g;
-	GRECT g = {10, 30, 300, 100};
+	GRECT g = {10, 30, 300, 100};
 
 
-	cookie = getcookie('MgMc');	if	(!cookie)
-		return(-1);
+
+	cookie = getcookie('MgMc');
+	if	(!cookie)
+		return(-1);
+
 	apid = appl_init();
 	if	(apid < 0)
 		return(-1);
@@ -238,21 +259,30 @@ void do_menu( void )
 
 	/* Schnittstellen */
 
-	gMgMcCookie = (MgMcCookie *) cookie->value;		/* find and open the XCMD */
-	xcmd = gMgMcCookie->xcmdMgrPtr;	if	(!xcmd)
-		return(-1);
-	/* MEN XCMD */
+	gMgMcCookie = (MgMcCookie *) cookie->value;
+	
+	/* find and open the XCMD */
+
+	xcmd = gMgMcCookie->xcmdMgrPtr;
+	if	(!xcmd)
+		return(-1);
+
+	/* MEN XCMD */
+
 	Cconws("Mac MenÅ laden...\r\n");
-	hdl = xcmd->open("Men XCMD");
+	hdl = xcmd->open("Men XCMD");
+
 	if	((long)hdl < 0)
 		{
 		Cconws("Mac MenÅ XCMD ist nicht installiert.\r\n");
 		return(-1);		/* Men XCMD ist nicht installiert */
-		}
+		}
+
 	strcpy((char *) buf, "pDaten:Dokumente:MagicMacMenu:Testmenu.rsrc");
 	*buf = (unsigned char) strlen((char *) (buf+1));	/* Pascal- String */
 	mparm.rsc_filename = (char *)buf;
-	mparm.rsc_mbar_rscno = 128;	ret = xcmd->call (hdl, xcmdOpenMenu, &mparm);
+	mparm.rsc_mbar_rscno = 128;
+	ret = xcmd->call (hdl, xcmdOpenMenu, &mparm);
 
 	if	(!ret)
 		{
@@ -265,7 +295,8 @@ void do_menu( void )
 		Cconws((char *) buf);
 		}
 	Cconws("\r\n");
-/*	Cconin();	*/
+/*	Cconin();	*/
+
 	whdl = wind_create_grect(MOVER+CLOSER, &desk_g);
 	if	(whdl >= 0)
 		wind_open_grect(whdl, &g);
@@ -282,5 +313,7 @@ void do_menu( void )
 
 /*	Cconin();	*/
 
-	xcmd->close (hdl);
-	return(0);}
+	xcmd->close (hdl);
+
+	return(0);
+}
