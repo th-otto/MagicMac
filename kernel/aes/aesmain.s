@@ -66,6 +66,7 @@ DEBUG     EQU  0
 * von DOS
 
      XREF      config_status
+     XREF	   status_bits
      XREF      env_end
      XREF      pd_used_mem
      XREF      swap_paths
@@ -1295,7 +1296,7 @@ _api_usnxt:
 
 appl_info:
  movem.l  d4/d6/d7/a2/a5/a6,-(sp)
- bset     #0,config_status+23
+ bset     #0,status_bits+3
  DC.W     $a000                    ; AINIT
  move.l   V_CUR_XY(a0),-(sp)       ; Cursorposition retten
  move.l   V_CUR_AD(a0),-(sp)       ; Cursorposition retten
@@ -1597,7 +1598,7 @@ api_notidy:
  DC.W     $a000                    ; AINIT
  move.l   (sp)+,V_CUR_AD(a0)
  move.l   (sp)+,V_CUR_XY(a0)       ; Cursorposition restaurieren
- bclr     #0,config_status+23
+ bclr     #0,status_bits+3
  movem.l  (sp)+,a6/a5/a2/d4/d6/d7
  rts
 

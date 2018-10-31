@@ -65,6 +65,8 @@ XFS95     EQU  1
      XDEF      p_mgxinf            ; nach XAES
      EXPORT      machine_type        ; nach VDI,DOS
      EXPORT      config_status       ; nach DOS und AES
+     XDEF        pkill_vector        ; nach DOS und AES
+     XDEF        status_bits         ; nach DOS und AES
      EXPORT      pe_slice            ; nach XAES
      EXPORT      pe_timer            ; nach XAES
      EXPORT      first_sem           ; nach XAES
