@@ -221,7 +221,7 @@ mxfs_init:
 
  move.l   d0,a0                    ; dst
  lea      mxfs(pc),a1              ; src
- move.w   #mxfs_len-mxfs,d0
+ move.l   #mxfs_len-mxfs,d0
  jsr      vmemcpy
 
 ; Kopie anmelden

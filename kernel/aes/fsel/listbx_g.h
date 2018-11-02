@@ -21,18 +21,6 @@ typedef struct _lbox_item
 #define  LBOX_TOGGLE 64       /* Status eines Eintrags bei Selektion wechseln */
 #define  LBOX_2SLDRS 128      /* Listbox hat einen hor. und einen vertikalen Slider */
 
-#define  lbox_get_visible \
-         lbox_get_avis
-
-#define  lbox_get_first \
-         lbox_get_afirst
-         
-#define  lbox_set_slider \
-         lbox_set_asldr
-
-#define  lbox_scroll_to \
-         lbox_ascroll_to
-         
 extern void *lbox_create( OBJECT *tree, SLCT_ITEM slct, SET_ITEM set, LBOX_ITEM *items, WORD visible_a, WORD first_a,
                           WORD *ctrl_objs, WORD *objs, WORD flags, WORD pause_a, void *user_data, void *dialog,
                           WORD visible_b, WORD first_b, WORD entries_b, WORD pause_b );

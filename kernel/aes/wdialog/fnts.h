@@ -1,18 +1,5 @@
-#if	CALL_MAGIC_KERNEL
-
-#define	fnts_get_no_styles \
-			fnts_gns
-
-#define	fnts_get_style \
-			fnts_gs
-			
-#define	fnts_get_name \
-			fnts_gnm			
-
-#define	fnts_get_info \
-			fnts_gin
-
-#endif
+#ifndef __FNTS_H__
+#define __FNTS_H__ 1
 
 /* Definitionen fuer <font_flags> bei fnts_create() */
 
@@ -138,3 +125,5 @@ WORD	fnts_update( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, L
 WORD	fnts_evnt( FNT_DIALOG *fnt_dialog, EVNT *events, WORD *button, WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio );
 WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in, LONG ratio_in, 
 					WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio );
+
+#endif /* __FNTS_H__ */

@@ -10,7 +10,6 @@
 
 
 	XDEF vmemcpy
-	XDEF vmemcpyl
 	XDEF memmove
 	XDEF	fast_clrmem
 	XDEF	toupper
@@ -222,34 +221,31 @@ fclr_ende:
 
 **********************************************************************
 *
-* PUREC void vmemcpy(void *dst, void *src, UWORD len)
+* PUREC void vmemcpy(void *dst, void *src, size_t len)
 *
-* void vmemcpy(a0 = void *dst, a1 = void *src, d0 = unsigned int len
+* void vmemcpy(a0 = void *dst, a1 = void *src, d0 = unsigned long len
 *
 * aendert nur d1/a0/a1
 *
 
 vmemcpy:
-vmemcpyl:
- moveq	#0,d1
- move.w	d0,d1
+ move.l d0,d1
  beq.b	mcp_end
  cmpa.l	a0,a1
  bcs.b	mcp_dir2
 mcp_loop1:
  move.b	(a1)+,(a0)+
- subq.w	#1,d1
+ subq.l	#1,d1
  bne.b	mcp_loop1
+mcp_end:
  rts
 mcp_dir2:
- adda.l	d1,a1
  adda.l	d1,a0
- subq.w	#1,d1
+ adda.l	d1,a1
 mcp_loop2:
  move.b	-(a1),-(a0)
- subq.w	#1,d1
- bpl.b	mcp_loop2
-mcp_end:
+ subq.l	#1,d1
+ bne.b	mcp_loop2
  rts
 
 

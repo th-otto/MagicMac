@@ -5077,6 +5077,7 @@ wstpos_found:
 
 _wind_to_stackpos:
  move.w   d0,-(sp)                 ; whdl
+ moveq #0,d0
  move.w   nwindows,d0
  subq.w   #1,d0
  sub.w    d1,d0

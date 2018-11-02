@@ -1,6 +1,6 @@
 /*
 *
-* Dieses Modul enthaelt den Ressouce-Manager des AES
+* Dieses Modul enthaelt den Ressource-Manager des AES
 *
 * Die Routinen, die der Aufrufkonvention von PureC entsprechen,
 * sind mit "PUREC" gekennzeichnet.
@@ -560,7 +560,7 @@ xp_rasterC:
 
 **********************************************************************
 *
-* PUREC void _rsrc_rcfix(void *global, RSHDR *rsc)
+* PUREC void _rsrc_rcfix(WORD *global, RSHDR *rsc)
 *
 
 _rsrc_rcfix:

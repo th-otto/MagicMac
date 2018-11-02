@@ -6647,17 +6647,17 @@ env_set:
  move.l   a1,a0
  bsr      strlen
 
- move.w   d0,d2
+ move.l   d0,d2
  move.l   a2,a0
  bsr      strlen
- add.w    d0,d2
- addq.w   #1,d2               ; EOS ergaenzen
+ add.l    d0,d2
+ addq.l   #1,d2               ; EOS ergaenzen
  move.l   (sp),a0
  bsr      env_end             ; d0 = Env.-Laenge, aendert nicht d2
 
  move.l   (sp),a1             ; src
- lea      0(a1,d2.w),a0       ; dst
-;move.w   d0,d0
+ lea      0(a1,d2.l),a0       ; dst
+;move.l   d0,d0
  jsr      vmemcpy              ; Environment verschieben
 
  movem.l  (sp)+,a0/a1/a2
@@ -6944,7 +6944,7 @@ create_basepage:
  move.l   CMDLINE(a6),a1
  move.l   d4,a0
  lea      pr_cmdlin(a0),a0
- move.w   #128,d0
+ move.l   #128,d0
  jsr      vmemcpy                        ; genau 128 Bytes Basepage
  move.l   ARG0(a6),d0
  beq.b    crb_no_prfname                ; kein Pfad
@@ -9157,7 +9157,7 @@ fork_nosave:
 * Diverse Felder der Basepage kopieren
  move.l   a5,a1               ; src
  move.l   a6,a0               ; dst
- moveq    #p_dta,d0           ; len
+ moveq.l  #p_dta,d0           ; len
  jsr      vmemcpy              ; lowpa,hitpa,tbase,tlen,dbase,dlen,bbase,blen
  move.l   p_env(a5),p_env(a6)
  move.l   p_tbase(a5),256(a6)
@@ -9233,7 +9233,7 @@ dpex_200:
  move.l   p_procdata(a4),a0
  lea      pr_fname(a0),a0
  lea      pr_fname(a1),a1
- move.w   #pr_bconmap-pr_fname,d0
+ move.l   #pr_bconmap-pr_fname,d0
  jsr      vmemcpy
  suba.l   a1,a1                    ; kein limit
  move.l   p_procdata(a6),a0
@@ -9243,7 +9243,7 @@ dpex_200:
  move.l   p_env(a6),-(sp)          ; neues Env. retten
  lea      p_parent(a4),a1          ; kopieren ab p_parent
  lea      p_parent(a6),a0
- move.w   #p_cmdlin-p_parent,d0    ; kopieren bis p_cmdlin
+ move.l   #p_cmdlin-p_parent,d0    ; kopieren bis p_cmdlin
  jsr      vmemcpy
  move.l   (sp)+,p_env(a6)          ; neues Env zurueck
 * neue Basepage, neues Env, altes PROCDATA gehoeren neuem Prozess

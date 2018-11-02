@@ -214,6 +214,7 @@ pr_ok:
  beq.b    pr_ok2                   ; Pipe leer, keine Daten aufruecken
  lea      pipe_data(a6),a0         ; Ziel
  lea      pipe_data(a6,d0.w),a1    ; naechste Daten
+ moveq    #0,d0
  move.w   pipe_len(a6),d0          ; Restdaten verschieben
  jsr      vmemcpy
 pr_ok2:

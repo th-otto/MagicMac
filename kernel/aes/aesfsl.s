@@ -139,7 +139,7 @@ fsx_neg:
 
 * Baum fuer Dialogbox erzeugen
 
- move.w   d6,d0
+ move.l   d6,d0
  lea      fsel_tree(pc),a1
  move.l   a5,a0
  jsr      vmemcpy

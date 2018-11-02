@@ -3,8 +3,8 @@
 #include <vdi.h>
 #include "std.h"
 #include "filediv.h"
-#include "drivers.h"
 #include "nvdi.h"
+#include "drivers.h"
 #include "ph.h"
 
 extern char gdos_path[];

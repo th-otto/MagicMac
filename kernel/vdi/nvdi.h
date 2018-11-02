@@ -5,6 +5,10 @@
 
 #define MAX_HANDLES 128
 
+typedef struct _osd OSD;
+typedef struct _drv_sys DRV_SYS;
+
+
 typedef struct
 {
 	/*  0 */ uint8_t *baseAddr;		/* pointer to pixels */

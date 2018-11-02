@@ -90,6 +90,7 @@ N_KEYTBL       EQU  9+DEADKEYS            ; 9 Tastaturtabellen
      XDEF      p_mgxinf            ; nach XAES
      XDEF      machine_type        ; nach VDI,DOS
      XDEF      config_status       ; nach DOS und AES
+     XDEF      status_bits         ; nach DOS und AES
      XDEF      pe_slice            ; nach XAES
      XDEF      pe_timer            ; nach XAES
      XDEF      first_sem           ; nach XAES

@@ -2111,6 +2111,7 @@ rw_ap_buf:
 * schreiben aufs Pufferende
 * Einfach die ganze Nachricht in den Puffer hauen (hinter die dort schon
 * stehenden Daten)
+ moveq #0,d0
  move.w   d7,d0                    ; Anzahl Bytes
  move.l   a3,a1                    ; Quelle = buf
  lea      ap_buf(a5),a3            ; ap_buf
@@ -2215,7 +2216,7 @@ scanloop_end:
  sub.l    d0,d1                    ; d1 = Anzahl der zu kopierenden Bytes
  beq.b    cfertig                  ; nix zu kopieren
  move.l   d0,a1                    ; Quelle
- move.w   d1,d0                    ; Anzahl Bytes
+ move.l   d1,d0                    ; Anzahl Bytes
  move.l   (a4),a0
  jsr      vmemcpy
 cfertig:
@@ -2253,6 +2254,7 @@ rwap_wr_ready:
 
 * lesen vom Pufferanfang
 rwap_read:
+ moveq #0,d0
  move.w   d7,d0
  lea      ap_buf(a5),a1
  move.l   a3,a0

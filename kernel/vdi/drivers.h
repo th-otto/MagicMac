@@ -1,11 +1,6 @@
 #ifndef NDRIVERS_H
 #define NDRIVERS_H
 
-typedef struct _osd OSD;
-typedef struct _drv_sys DRV_SYS;
-
-#include "nvdi.h"
-
 /*
  * header of a *.OSD/*.NOD/*.SYS driver
  */
@@ -23,7 +18,9 @@ struct _drv_sys {
 	/* 36 */ void (*ext)(void);
 	/* 40 */ void (*scr)(void);
 	/* 44 */ char *name;
-	/* 48 */ void *res2[4];
+	/* 48 */ unsigned long offset_hdr;
+	/* 52 */ long o52;
+	/* 56 */ void *res2[2];
 	/* 64 */ struct bitmap_format format;
 	/* 80 */ 
 };

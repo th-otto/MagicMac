@@ -50,7 +50,7 @@ extern WORD fslx_sortmode;
 extern WORD fslx_flags;
 extern WORD grects_intersect( const GRECT *srcg, GRECT *dstg);
 extern WORD _wind_get(WORD whdl, WORD code, WORD *g );
-extern void _rsrc_rcfix(void *global, RSHDR *rsc);
+extern void _rsrc_rcfix(WORD *global, RSHDR *rsc);
 extern LONG drvmap( void );
 extern LONG smalloc(ULONG size);
 extern void smfree( void *memblk );

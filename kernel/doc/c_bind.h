@@ -52,7 +52,7 @@ extern void obj_to_g( OBJECT *tree, WORD objnr, GRECT *g);
 void set_clip_grect( GRECT *g );
 void vdi( VDIPB *pb );
 char *fn_name( char *path );
-void _rsrc_rcfix(void *global, RSHDR *rsc);
+void _rsrc_rcfix(WORD *global, RSHDR *rsc);
 
 extern void objc_add( OBJECT *tree, WORD parent, WORD child);
 extern void objc_delete( OBJECT *tree, WORD objnr);

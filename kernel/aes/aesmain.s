@@ -64,6 +64,7 @@ DEBUG     EQU  0
 * von DOS
 
      XREF      config_status
+     XREF	   status_bits
      XREF      env_end
      XREF      pd_used_mem
      XREF      swap_paths
@@ -257,15 +258,15 @@ DEBUG     EQU  0
      XREF      wdlg_open
      XREF      wdlg_close
      XREF      wdlg_delete
-     XREF      wdlg_gtree
-     XREF      wdlg_gedit
-     XREF      wdlg_gudata
-     XREF      wdlg_ghandle
-     XREF      wdlg_sedit
-     XREF      wdlg_stree
-     XREF      wdlg_ssize
-     XREF      wdlg_sic
-     XREF      wdlg_sui
+     XREF      wdlg_get_tree
+     XREF      wdlg_get_edit
+     XREF      wdlg_get_udata
+     XREF      wdlg_get_handle
+     XREF      wdlg_set_edit
+     XREF      wdlg_set_tree
+     XREF      wdlg_set_size
+     XREF      wdlg_set_iconify
+     XREF      wdlg_set_uniconify
      XREF      wdlg_evnt
      XREF      wdlg_redraw
 
@@ -276,26 +277,26 @@ DEBUG     EQU  0
      XREF      lbox_do
      XREF      lbox_delete
      XREF      lbox_cnt_items
-     XREF      lbox_gtree
-     XREF      lbox_gavis
-     XREF      lbox_gudata
-     XREF      lbox_gafirst
-     XREF      lbox_gsx
-     XREF      lbox_gnitems
-     XREF      lbox_gitem
-     XREF      lbox_gsitem
-     XREF      lbox_gidx
-     XREF      lbox_saslider
+     XREF      lbox_get_tree
+     XREF      lbox_get_avis
+     XREF      lbox_get_udata
+     XREF      lbox_get_afirst
+     XREF      lbox_get_slct_idx
+     XREF      lbox_get_items
+     XREF      lbox_get_item
+     XREF      lbox_get_slct_item
+     XREF      lbox_get_idx
+     XREF      lbox_set_asldr
      XREF      lbox_set_items
      XREF      lbox_free_items
-     XREF      lbox_flist
-     XREF      lbox_sato
-     XREF      lbox_gbvis
-     XREF      lbox_gbfirst
-     XREF      lbox_gbentries
-     XREF      lbox_sbslider
-     XREF      lbox_sbto
-     XREF      lbox_sbentries
+     XREF      lbox_free_list
+     XREF      lbox_ascroll_to
+     XREF      lbox_get_bvis
+     XREF      lbox_get_bfirst
+     XREF      lbox_get_bentries
+     XREF      lbox_set_bsldr
+     XREF      lbox_bscroll_to
+     XREF      lbox_set_bentries
 
 * von FNT_MENU
 
@@ -303,7 +304,10 @@ DEBUG     EQU  0
      XREF      fnts_delete
      XREF      fnts_open
      XREF      fnts_close
-     XREF      fnts_gns,fnts_gs,fnts_gnm,fnts_gin
+     XREF      fnts_get_no_styles
+     XREF      fnts_get_style
+     XREF      fnts_get_name
+     XREF      fnts_get_info
      XREF      fnts_add,fnts_remove
      XREF      fnts_evnt
      XREF      fnts_do
@@ -314,7 +318,7 @@ DEBUG     EQU  0
      XREF      fsel_exinput
      XREF      fslx_open
      XREF      fslx_close
-     XREF      fslx_gnx
+     XREF      fslx_getnxtfile
      XREF      fslx_evnt
      XREF      fslx_do
      XREF      fslx_set
@@ -448,7 +452,7 @@ aes_start:
 
 * Startbild (Default-Desktop)
 
- move.w   #2*24+28,d0              ; 2 OBJECTs + 1 TEDINFO
+ move.l   #2*24+28,d0              ; 2 OBJECTs + 1 TEDINFO
  lea      title_tree(pc),a1
  lea      shelw_startpic,a0
  jsr      vmemcpy
@@ -1280,7 +1284,7 @@ _api_usnxt:
 
 appl_info:
  movem.l  d4/d6/d7/a2/a5/a6,-(sp)
- bset     #0,config_status+23
+ bset     #0,status_bits+3
  DC.W     $a000                    ; AINIT
  move.l   V_CUR_XY(a0),-(sp)       ; Cursorposition retten
  move.l   V_CUR_AD(a0),-(sp)       ; Cursorposition retten
@@ -1582,7 +1586,7 @@ api_notidy:
  DC.W     $a000                    ; AINIT
  move.l   (sp)+,V_CUR_AD(a0)
  move.l   (sp)+,V_CUR_XY(a0)       ; Cursorposition restaurieren
- bclr     #0,config_status+23
+ bclr     #0,status_bits+3
  movem.l  (sp)+,a6/a5/a2/d4/d6/d7
  rts
 
@@ -2128,8 +2132,8 @@ rmi_wnd_ok:
  move.l   a0,shel_buf
  move.l   a6,d0
  beq.b    rmi_no_buf
- move.w   d7,d0
- addq.w   #1,d0                    ; Platz fuer Nullbyte
+ move.l   d7,d0
+ addq.l   #1,d0                    ; Platz fuer Nullbyte
  move.l   a6,a1
 ;move.l   a0,a0
  jsr      vmemcpy
@@ -2162,7 +2166,7 @@ rmi_nowarm:
  tst.b    (a0)                     ; Kontrollfelddaten leer ?
  bne.b    rmi_ctr_ok               ; nein, ok
  lea      inf_defdata(pc),a1
- move.w   #128,d0                  ; 128 Bytes + EOS
+ move.l   #128,d0                  ; 128 Bytes + EOS
  jsr      vmemcpy                   ; Default- Kontrollfeld- Daten
 rmi_ctr_ok:
  addq.l   #4,sp
@@ -3889,6 +3893,7 @@ alt_ctrl_tab:
  st       hotkey_sem
  lea      popup_tmp,a5
  lea      act_dialog(pc),a1
+ move.l #act_dialog_end-act_dialog,d0
  move.l   a5,a0
  jsr      vmemcpy
 
@@ -4007,7 +4012,7 @@ act_dialog:
  DC.W     0              ; ob_state
  DC.L     0              ; ob_spec
  DC.W     5,1,8,1        ; ob_x, ob_y, ob_width, ob_height
-
+act_dialog_end:
 
 **********************************************************************
 *
@@ -4966,7 +4971,7 @@ aesfn_tab:
  DC.W     dsp_error-aesfn_tab           ;
  DC.W     dsp_fslx_open-aesfn_tab       ; 190 ($be)
  DC.W     dsp_fslx_close-aesfn_tab      ; 191
- DC.W     dsp_fslx_gnx-aesfn_tab        ; 192
+ DC.W     dsp_fslx_getnxtfile-aesfn_tab ; 192
  DC.W     dsp_fslx_evnt-aesfn_tab       ; 193
  DC.W     dsp_fslx_do-aesfn_tab         ; 194
  DC.W     dsp_fslx_set-aesfn_tab        ; 195
@@ -5018,7 +5023,7 @@ dsys_6:
  cmpi.w   #WFRVERSION,(a0)+        ; Versionsnummer OK?
  bne      dsys_err                 ; nein, Fehler
  lea      wsizeof,a1               ; Quelladresse
- move.w   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
+ move.l   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
  jsr      vmemcpy                   ; umsetzen
  move.l   (a5),d0                  ; neue Struktur
  beq      dsys_ok                  ; keine neuen Werte
@@ -5026,7 +5031,7 @@ dsys_6:
  cmpi.w   #WFRVERSION,(a1)+        ; Versionsnummer OK?
  bne      dsys_err                 ; nein, Fehler
  lea      wsizeof,a0               ; Zieladresse
- move.w   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
+ move.l   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
  jsr      vmemcpy                   ; umsetzen
  move.l   #wsg_flags,(a6)          ; addrout[0]: Fenster-Einstellungen
  bra      dsys_ok
@@ -6379,7 +6384,7 @@ awdlg_get_tree:
 ;movea.l  a0,a0                    ; addrin[0]: dialog
  movea.l  (a5)+,a1                 ; addrin[1]: tree
  move.l   (a5)+,-(sp)              ; addrin[2]: r
- jsr      wdlg_gtree               ; WORD wdlg_get_tree( DIALOG *d, OBJECT **tree,
+ jsr      wdlg_get_tree            ; WORD wdlg_get_tree( DIALOG *d, OBJECT **tree,
 ;                                                       GRECT *r )
  addq.l   #4,sp
  move.w   d0,(a4)
@@ -6387,18 +6392,18 @@ awdlg_get_tree:
 awdlg_get_edit:
  lea      2(a4),a1                 ; &intout[1]
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_gedit               ; WORD wdlg_get_edit( DIALOG *d, WORD *cursor )
+ jsr      wdlg_get_edit            ; WORD wdlg_get_edit( DIALOG *d, WORD *cursor )
  move.w   d0,(a4)                  ; intout[0]: Edit-Objekt
  rts
 awdlg_get_udata:
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_gudata              ; void *wdlg_get_udata( DIALOG *d )
+ jsr      wdlg_get_udata           ; void *wdlg_get_udata( DIALOG *d )
  move.l   a0,(a6)                  ; addrout[0]
  move.w   #1,(a4)                  ; kein Fehler
  rts
 awdlg_get_handle:
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_ghandle             ; WORD wdlg_get_handle( DIALOG *d )
+ jsr      wdlg_get_handle          ; WORD wdlg_get_handle( DIALOG *d )
  move.w   d0,(a4)                  ; intout[0]: Edit-Objekt
  rts
 
@@ -6422,19 +6427,19 @@ dsp_wdlg_set:
 awdlg_set_edit:
  move.w   (a3),d0                  ; intin[1]: obj
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_sedit               ; WORD wdlg_set_edit( DIALOG *d, WORD obj )
+ jsr      wdlg_set_edit            ; WORD wdlg_set_edit( DIALOG *d, WORD obj )
  move.w   d0,(a4)                  ; intout[0]: Edit-Objekt
  rts
 awdlg_set_tree:
 ;move.l   a1,a1                    ; addrin[1]: tree
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_stree               ; WORD wdlg_set_tree( DIALOG *d, OBJECT *tree )
+ jsr      wdlg_set_tree            ; WORD wdlg_set_tree( DIALOG *d, OBJECT *tree )
  move.w   d0,(a4)                  ; intout[0]: Edit-Objekt
  rts
 awdlg_set_size:
 ;move.l   a1,a1                    ; addrin[1]: size
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_ssize               ; WORD    wdlg_set_size( DIALOG *d, GRECT *size )
+ jsr      wdlg_set_size            ; WORD    wdlg_set_size( DIALOG *d, GRECT *size )
  move.w   d0,(a4)                  ; intout[0]: Edit-Objekt
  rts
 awdlg_set_iconify:
@@ -6447,7 +6452,7 @@ awdlg_set_iconify:
  move.l   (a5),-(sp)               ; addrin[2]: title
 ;move.l   a1,a1                    ; addrin[1]: g
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_sic                 ; WORD wdlg_set_iconify( DIALOG *d, GRECT *g,
+ jsr      wdlg_set_iconify         ; WORD wdlg_set_iconify( DIALOG *d, GRECT *g,
                                    ;                   char *title,
                                    ;                   OBJECT *tree, WORD obj )
  addq.l   #8,sp
@@ -6458,7 +6463,7 @@ awdlg_set_uniconify:
  move.l   (a5),-(sp)               ; addrin[2]: title
 ;move.l   a1,a1                    ; addrin[1]: g
 ;movea.l  a0,a0                    ; addrin[0]: dialog
- jsr      wdlg_sui                 ; WORD wdlg_set_uniconify( DIALOG *d,
+ jsr      wdlg_set_uniconify       ; WORD wdlg_set_uniconify( DIALOG *d,
                                    ;                   GRECT *size,
                                    ;                   char *title,
                                    ;                   OBJECT *tree)
@@ -6530,7 +6535,7 @@ dsp_lbox_update:
  movea.l  (a5)+,a0                 ; addrin[0]: box
  movea.l  (a5),a1                  ; addrin[1]: rect
  jsr      lbox_update              ; void lbox_update( void *box, GRECT *rect )
- move.w   #1,(a4)                  ; kein Fehler
+ move.w   #1,(a4)                  ; no error (unneccessary, function is void)
  rts
 
 * case 172 = lbox_do
@@ -6584,65 +6589,65 @@ albox_get_tab:
 
 albox_cnt_items:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_cnt_items                ;WORD lbox_cnt_items( void *box );
+ jsr      lbox_cnt_items           ;WORD lbox_cnt_items( void *box );
  move.w   d0,(a4)
  rts
 albox_get_tree:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gtree               ; OBJECT  *lbox_gtree( void *box );
+ jsr      lbox_get_tree            ; OBJECT  *lbox_get_tree( void *box );
  bra.b    albox_puta0
 albox_get_size:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gavis               ; WORD lbox_get_visible( void *box );
+ jsr      lbox_get_avis            ; WORD lbox_get_avis( void *box );
  move.w   d0,(a4)
  rts
 albox_get_udata:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gudata              ; void *lbox_gudata( void *box );
+ jsr      lbox_get_udata           ; void *lbox_get_udata( void *box );
  bra.b    albox_puta0
 albox_get_first:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gafirst             ; WORD lbox_gfirst( void *box );
+ jsr      lbox_get_afirst          ; WORD lbox_get_afirst( void *box );
  move.w   d0,(a4)
  rts
 albox_get_s_idx:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gsx                 ; WORD lbox_gsx( void *box );
+ jsr      lbox_get_slct_idx        ; WORD lbox_get_slct_idx( void *box );
  move.w   d0,(a4)
  rts
 albox_get_items:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gnitems             ; SCROLL_ITEM *lbox_gnitems( void *box )
+ jsr      lbox_get_items           ; SCROLL_ITEM *lbox_get_items( void *box )
  bra.b    albox_puta0
 albox_get_item:
 ;movea.l  a0,a0                    ; addrin[0]: box
  move.w   (a3),d0                  ; intin[1]: n
- jsr      lbox_gitem               ; SCROLL_ITEM *lbox_gitem( void *box, WORD n );
+ jsr      lbox_get_item            ; SCROLL_ITEM *lbox_get_item( void *box, WORD n );
  bra.b    albox_puta0
 albox_get_s_item:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gsitem              ; SCROLL_ITEM *lbox_gsitem( void *box )
+ jsr      lbox_get_slct_item       ; SCROLL_ITEM *lbox_get_slct_item( void *box )
  bra.b    albox_puta0
 albox_get_idx:
 ;movea.l  a0,a0                    ; addrin[0]: box
  movea.l  (a5)+,a1                 ; addrin[1]: search
- jsr      lbox_gidx                ; WORD lbox_get_idx( SCROLL_ITEM *items,
+ jsr      lbox_get_idx             ; WORD lbox_get_idx( SCROLL_ITEM *items,
                                    ;    SCROLL_ITEM *search );
  move.w   d0,(a4)
  rts
 albox_get_bvis:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gbvis               ; WORD lbox_get_bvis( void *box );
+ jsr      lbox_get_bvis            ; WORD lbox_get_bvis( void *box );
  move.w   d0,(a4)
  rts
 albox_get_bentries:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gbentries           ; WORD lbox_get_bentries( void *box );
+ jsr      lbox_get_bentries        ; WORD lbox_get_bentries( void *box );
  move.w   d0,(a4)
  rts
 albox_get_bfirst:
 ;movea.l  a0,a0                    ; addrin[0]: box
- jsr      lbox_gbfirst             ; WORD lbox_get_bfirst( void *box );
+ jsr      lbox_get_bfirst          ; WORD lbox_get_bfirst( void *box );
  move.w   d0,(a4)
  rts
 albox_puta0:
@@ -6677,7 +6682,7 @@ albox_set_slider:
  move.w   (a3),d0                  ; intin[1]: first
 ;move.l   a0,a0                    ; box
  movea.l  (a5),a1                  ; addrin[1]: rect
- jmp      lbox_saslider            ; void lbox_sslider( void *box, WORD first,
+ jmp      lbox_set_asldr           ; void lbox_set_asldr( void *box, WORD first,
 ;                                                      GRECT *rect );
 albox_set_items:
 ;move.l   a0,a0                    ; box
@@ -6690,14 +6695,14 @@ albox_free_items:
 ;
 albox_free_list:
 ;move.l   a0,a0                    ; items
- jmp      lbox_flist               ; void lbox_free_list( SCROLL_ITEMS *items );
+ jmp      lbox_free_list           ; void lbox_free_list( SCROLL_ITEMS *items );
 ;
 albox_scroll_to:
  move.w   (a3),d0                  ; intin[1]: first
 ;movea.l  a0,a0                    ; addrin[0]: box
  movea.l  (a5)+,a1                 ; addrin[1]: box_rect
  move.l   (a5),-(sp)               ; addrin[2]: slider_rect
- jsr      lbox_sato                ; void lbox_scroll_to( void *box,
+ jsr      lbox_ascroll_to          ; void lbox_ascroll_to( void *box,
                                    ;    WORD first, GRECT *box_rect,
                                    ;    GRECT *slider_rect );
  addq.l   #4,sp
@@ -6708,13 +6713,13 @@ albox_set_bsldr:
  move.w   (a3),d0                  ; intin[1]: first
 ;movea.l  a0,a0                    ; addrin[0]: box
 ;movea.l  (a5)+,a1                 ; addrin[1]: rect
- jmp      lbox_sbslider            ; void lbox_set_bsldr( void *box,
+ jmp      lbox_set_bsldr           ; void lbox_set_bsldr( void *box,
 ;                                       WORD first, GRECT *rect );
 ;
 albox_set_bentries:
  move.w   (a3),d0                  ; intin[1]: entries
 ;movea.l  a0,a0                    ; addrin[0]: box
- jmp      lbox_sbentries           ; void lbox_set_bentries( void *box,
+ jmp      lbox_set_bentries        ; void lbox_set_bentries( void *box,
 ;                                       WORD entries );
 ;
 albox_bscroll_to:
@@ -6722,7 +6727,7 @@ albox_bscroll_to:
 ;movea.l  a0,a0                    ; addrin[0]: box
  movea.l  (a5)+,a1                 ; addrin[1]: box_rect
  move.l   (a5),-(sp)               ; addrin[2]: slider_rect
- jsr      lbox_sbto                ; void lbox_bscroll_to( void *box,
+ jsr      lbox_bscroll_to          ; void lbox_bscroll_to( void *box,
 ;                                       WORD first, GRECT *box_rect,
 ;                                       GRECT *slider_rect );
  addq.l   #4,sp
@@ -6798,7 +6803,7 @@ dsp_fnts_close:
 
 dsp_fnts_get:
  movea.l  (a5)+,a0                 ; addrin[0]: fnt_dialog
- move.w   (a3)+,d1                 ; intin[0]: Funktionsnummer
+ move.w   (a3)+,d1                 ; intin[0]: function number
  move.l   (a3),d0                  ; intin[1/2]: id
  tst.w    d1                       ; subfn
  beq.b    dsp_fnts_get_no_styles
@@ -6814,7 +6819,7 @@ fnts_err:
  rts
 
 dsp_fnts_get_no_styles:
- jsr      fnts_gns                 ; WORD fnts_get_no_styles
+ jsr      fnts_get_no_styles       ; WORD fnts_get_no_styles
                                    ;         ( void *fnt_dialog,
                                    ;         LONG id );
  move.w   d0,(a4)
@@ -6823,7 +6828,7 @@ dsp_fnts_get_no_styles:
 dsp_fnts_get_style:
  move.w   (a3),d1                  ; intin[3]: index
 
- jsr      fnts_gs                  ; LONG fnts_get_style( void *fnt_dialog,
+ jsr      fnts_get_style           ; LONG fnts_get_style( void *fnt_dialog,
                                    ;                   LONG id, WORD index );
  move.l   d0,(a4)                  ; intout[0/1]:
  rts
@@ -6833,7 +6838,7 @@ dsp_fnts_get_name:
  move.l   4(a5),-(sp)              ; addrin[3]: style_name
  move.l   (a5),-(sp)               ; addrin[2]: family_name
 
- jsr      fnts_gnm                 ; WORD fnts_get_name(
+ jsr      fnts_get_name            ; WORD fnts_get_name(
                                    ;         void *fnt_dialog,
                                    ;         LONG id, BYTE *full_name,
                                    ;         BYTE *family_name,
@@ -6846,7 +6851,7 @@ dsp_fnts_get_info:
  pea      4(a4)                    ; &intout[2]: outline
  lea      2(a4),a1                 ; &intout[1]: mono
 
- jsr      fnts_gin                 ; WORD fnts_get_info(
+ jsr      fnts_get_info            ; WORD fnts_get_info(
                                    ;              void *fnt_dialog,
                                    ;              LONG id, WORD *mono,
                                    ;              WORD *outline );
@@ -6977,12 +6982,12 @@ dsp_fslx_close:
  move.w   d0,(a4)
  rts
 
-* case 192 = fslx_gnx
+* case 192 = fslx_getnxtfile
 
-dsp_fslx_gnx:
+dsp_fslx_getnxtfile:
  move.l   (a5)+,a0                 ; addrin[0]:   fsd
  move.l   (a5),a1                  ; addrin[0]:   fname
- jsr      fslx_gnx
+ jsr      fslx_getnxtfile
  move.w   d0,(a4)
  rts
 
@@ -8046,7 +8051,7 @@ scc_ok:
 shel_read:
  move.l   a1,-(sp)
  move.l   act_appl,a2
- move.w   #$80,d0
+ move.l   #$80,d0
  lea      ap_cmd(a2),a1
 ;move.l   a0,a0
  jsr      vmemcpy
@@ -8057,7 +8062,7 @@ shel_read:
  clr.b    2(a0)
  bra.b    shr_7f              ; erweitert gibt immer $7f, weil zu lang
 shr_nxt:
- move.w   #$80,d0
+ move.l   #$80,d0
  lea      ap_tail(a2),a1
  move.l   (sp),a0
  jsr      vmemcpy
@@ -8305,7 +8310,7 @@ _shw_normtail:
  move.w   #ap_xtail,d1             ; xtail freigeben
  moveq    #0,d0                    ; kein neuer Block
  bsr      __resvldmem
- move.w   #$80,d0
+ move.l   #$80,d0
  move.l   a3,a1                    ; tail
  lea      ap_tail(a6),a0
  jsr      vmemcpy
@@ -8314,7 +8319,7 @@ _shw_normtail:
 * Kommando merken
 
 _shw_cmd:
- move.w   #$80,d0
+ move.l   #$80,d0
  move.l   a4,a1                    ; cmd
  lea      ap_cmd(a6),a0
  jsr      vmemcpy
@@ -8799,12 +8804,13 @@ gvt_ok:
 
 shel_get:
  move.l   shel_buf,a1
+ moveq #0,d1
  move.w   shel_buf_len,d1
  cmpi.w   #-1,d0
  beq.b    shg_len
  cmp.w    d1,d0               ; Ueberlauf ?
  bls.b    _shel_pg            ; nein, ok
- move.w   d1,d0               ; nur Pufferlaenge uebertragen
+ move.l   d1,d0               ; nur Pufferlaenge uebertragen
 _shel_pg:
  jsr      vmemcpy
  moveq    #1,d0

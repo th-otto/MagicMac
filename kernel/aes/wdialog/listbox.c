@@ -6,13 +6,18 @@
 */
 
 
+#define __WDIALOG_IMPLEMENTATION
+#define __HNDL_OBJ
+#define __MTDIALOG
 #include <portab.h>
 #include <tos.h>
 #include <aes.h>
 #include <vdi.h>
 #include "std.h"
 
-#define	CALL_MAGIC_KERNEL	1
+#ifndef CALL_MAGIC_KERNEL
+#define	CALL_MAGIC_KERNEL 1
+#endif
 
 #include "ker_bind.h"
 
@@ -22,22 +27,30 @@
 /* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel								*/
 /*----------------------------------------------------------------------------------------*/ 
 
-#define	evnt_timer( low, high ) \
-			_evnt_timer( low )
+#define	evnt_timer(low, high) _evnt_timer(low)
 
-#define	wind_get_grect( handle, field, g ) \
-			_wind_get_grect( handle, field, g )
+#define	wind_get_grect(handle, field, g) _wind_get_grect(handle, field, g)
 			
-#define	Malloc( size )	((void *) mmalloc( size ))
-
 #define rc_intersect(a,b)	grects_intersect(a,b)
 
 #else
 
-#define	appl_yield() \
-			evnt_timer( 0, 0 );
+#define	appl_yield() mt_evnt_timer(0, NULL)
+#define	evnt_timer(low, high) mt_evnt_timer(low, NULL)
+#define wind_update(kind) mt_wind_update(kind, NULL)
+#define	wind_get_grect(handle, field, g) mt_wind_get_grect(handle, field, g, NULL)
+#define graf_mouse(n, a) mt_graf_mouse(n, a, NULL)
+#define graf_slidebox(tree, p, o, h) mt_graf_slidebox(tree, p, o, h, NULL)
+#define objc_offset(tree, obj, x, y) mt_objc_offset(tree, obj, x, y, NULL)
+
+#include "wdlgmain.h"
 
 #endif
+
+#undef Malloc
+#define	Malloc( size )	((void *) mmalloc( size ))
+#undef Mfree
+#define	Mfree(p)	Mfree(p)
 
 #include "wdialog.h"
 #include "listbox.h"
@@ -47,11 +60,6 @@
 /*----------------------------------------------------------------------------------------*/ 
 extern void	slct_item( LIST_BOX *box, LBOX_ITEM *item, WORD index, WORD last_state );
 extern WORD	set_item( LIST_BOX *box, LBOX_ITEM *item, WORD index, GRECT *rect );
-
-/*----------------------------------------------------------------------------------------*/ 
-/* extern aus WDIALOG.C																							*/
-/*----------------------------------------------------------------------------------------*/ 
-extern WORD	rc_intersect( const GRECT *p1, GRECT *p2 );
 
 /*----------------------------------------------------------------------------------------*/ 
 /* interne Funktionen																							*/
@@ -88,12 +96,6 @@ static void	set_dial_clip( WORD handle, OBJECT *dial, WORD obj );
 
 static void	obj_change( OBJECT *tree, GRECT *rect, WORD obj, WORD state );
 static void	obj_redraw( LIST_BOX *box, GRECT *rect, WORD obj, WORD depth );
-
-#define	mkstate	graf_mkstate
-
-#if 0
-WORD	mkstate( WORD *mx, WORD *my, WORD *mbutton, WORD *kstate );
-#endif
 
 static void	bscroll( LIST_BOX *box, WORD first, WORD x1, WORD y1, WORD x2, WORD y2, WORD w, WORD h );
 static void	do_slider2_back( LIST_BOX *box, WORD mx, WORD my );
@@ -206,6 +208,9 @@ WORD	lbox_delete( LIST_BOX *box )
 /*----------------------------------------------------------------------------------------*/ 
 WORD	lbox_do( LIST_BOX *box, WORD obj )
 {
+#if	CALL_MAGIC_KERNEL == 0
+	EVNTDATA ev;
+#endif
 	OBJECT	*tree;
 	WORD	i;
 	WORD	dclick;
@@ -220,23 +225,31 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 	dclick = obj & 0x8000;
 	obj &= 0x7fff;
 
-	mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#if	CALL_MAGIC_KERNEL == 0
+	mt_graf_mkstate_event(&ev, NULL);
+	mx = ev.x;
+	my = ev.y;
+	mbutton = ev.bstate;
+	kstate = ev.kstate;
+#else
+	graf_mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#endif
 
-	if ( obj == box->button1 )											/* Scroll-Button 1? */
+	if ( obj == box->button1 )				/* Scroll-Button 1? */
 		do_scroll_button( box, obj );
-	else if ( obj == box->button2 )									/* Scroll-Button 2? */
+	else if ( obj == box->button2 )			/* Scroll-Button 2? */
 		do_scroll_button( box, obj );
-	else if ( obj == box->button_hl )								/* Scroll-Button 3? */
+	else if ( obj == box->button_hl )		/* Scroll-Button 3? */
 		do_scroll_button( box, obj );
-	else if ( obj == box->button_hr )								/* Scroll-Button 4? */
+	else if ( obj == box->button_hr )		/* Scroll-Button 4? */
 		do_scroll_button( box, obj );
-	else if ( obj == box->back1 )										/* Slider-Hintergrund? */
+	else if ( obj == box->back1 )			/* Slider-Hintergrund? */
 		do_slider_back( box, mx, my );
-	else if ( obj == box->slider1 )									/* Slider? */
+	else if ( obj == box->slider1 )			/* Slider? */
 		do_slider( box, mx, my );
-	else if ( obj == box->back_h )									/* Slider-Hintergrund? */
+	else if ( obj == box->back_h )			/* Slider-Hintergrund? */
 		do_slider2_back( box, mx, my );
-	else if ( obj == box->slider_h )									/* Slider? */
+	else if ( obj == box->slider_h )		/* Slider? */
 		do_slider_b( box, mx, my );
 	else
 	{	
@@ -253,7 +266,7 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 				selected = lbox_get_item( box, box->first_a + i );	
 				if( selected )												/* Eintrag vorhanden? */
 				{
-					WORD	last_state;
+					WORD last_state;
 					
 					last_state = selected->selected;					/* Status merken */
 					
@@ -297,13 +310,14 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 			WORD	buf[16];
 
 #if	CALL_MAGIC_KERNEL == 0
-			WORD	dummy;
-			GRECT	rect;
+			EVNTDATA ev2;
+			WORD dummy;
+			GRECT rect;
 
 			get_GRECT( tree, obj, &rect );
 #else
-			MGRECT	rect;
-			WORD		out[6];
+			MGRECT rect;
+			WORD out[6];
 			
 			rect.flag = 1;													/* warte auf Verlassen */			
 			get_GRECT( tree, obj, &rect.g );
@@ -314,17 +328,18 @@ WORD	lbox_do( LIST_BOX *box, WORD obj )
 			{
 
 #if	CALL_MAGIC_KERNEL == 0
-				mwhich = evnt_multi( MU_M1 + MU_BUTTON,
+				mwhich = MT_evnt_multi( MU_M1 + MU_BUTTON,
 											2,									/* Doppelklicks erkennen */
 											1,									/* nur linke Maustaste */
 											0,									/* linke Maustaste losgelassen */
-											1, rect.g_x, rect.g_y, rect.g_w, rect.g_h,	/* Objekt-Rechteck */
-											0,0,0,0,0,						/* kein 2. Rechteck			*/
+											1, &rect,	/* Objekt-Rechteck */
+											0, NULL,						/* kein 2. Rechteck			*/
 											buf,								/* Dummy-Buffer */
-											0,0,								/* ms */
-											&dummy, &dummy,
-											&mbutton, &dummy,
-											&dummy, &dummy );
+											0,								/* ms */
+											&ev2,
+											&dummy, &dummy, NULL);
+				mbutton = ev2.bstate;
+
 #else
 				mwhich = _evnt_multi( MU_M1 + MU_BUTTON,
 											 &rect,							/* 1. Rechteck */
@@ -530,8 +545,9 @@ WORD	lbox_get_bvis( LIST_BOX *box )
 /* Funktionsresultat:	alter Wert													*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /* new_bvis:				neue Anzahl */
-/*----------------------------------------------------------------------------------------*/ 
-WORD	lbox_set_bvis( LIST_BOX *box, WORD new_bvis )
+/*----------------------------------------------------------------------------------------*/
+/* BUG: not exported by wdialog.prg */
+WORD lbox_set_bvis( LIST_BOX *box, WORD new_bvis )
 {
 	WORD old;
 
@@ -781,7 +797,11 @@ static void	do_scroll_button( LIST_BOX *box, WORD button )
 {
 	OBJECT	*tree;
 	GRECT	*rect;
+#if	CALL_MAGIC_KERNEL == 0
+	EVNTDATA ev;
+#else
 	WORD	d;
+#endif
 	WORD	mbutton;
 	WORD	pause;
 	
@@ -834,7 +854,12 @@ static void	do_scroll_button( LIST_BOX *box, WORD button )
 		}
 
 		evnt_timer( p, 0 );												/* Verzoegerung */
-		mkstate( &d, &d, &mbutton, &d );
+#if	CALL_MAGIC_KERNEL == 0
+		mt_graf_mkstate_event(&ev, NULL);
+		mbutton = ev.bstate;
+#else
+		graf_mkstate(&d, &d, &mbutton, &d);
+#endif
 	} while ( mbutton == 1 );											/* wird der Button noch gedrueckt? */
 
 	obj_change( tree, rect, button, NORMAL );
@@ -951,10 +976,10 @@ static void	do_slider2_back( LIST_BOX *box, WORD mx, WORD my )
 /*	mx:						x-Koordinate des Mauszeigers													*/
 /*	my:						y-Koordinate des Mauszeigers													*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	do_slider( LIST_BOX *box, WORD mx, WORD my )
+static void	do_slider(LIST_BOX *box, WORD mx, WORD my)
 {
 	WORD	count;
-	
+
 	count = lbox_cnt_items( box );									/* Anzahl der Eintraege */
 	
 	if( count > box->visible_a )										/* genuegend Eintraege zum Scrollen vorhanden? */
@@ -969,9 +994,12 @@ static void	do_slider( LIST_BOX *box, WORD mx, WORD my )
 
 		if ( box->flags & LBOX_REAL )									/* Real-Time-Scrolling? */
 		{
-			WORD	mbutton;
+#if	CALL_MAGIC_KERNEL == 0
+			EVNTDATA ev;
+#else
 			WORD	kstate;
-	
+#endif
+			WORD	mbutton;
 			WORD	d;
 			WORD	offset;
 			WORD	ob;
@@ -1001,7 +1029,14 @@ static void	do_slider( LIST_BOX *box, WORD mx, WORD my )
 					real_aslider( box, count, mx - offset, ob_min, ob_max );
 			
 				appl_yield();
-				mkstate( &mx, &my, &mbutton, &kstate );
+#if	CALL_MAGIC_KERNEL == 0
+				mt_graf_mkstate_event(&ev, NULL);
+				mx = ev.x;
+				my = ev.y;
+				mbutton = ev.bstate;
+#else
+				graf_mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#endif
 			} while ( mbutton == 1 );									/* wird die Maustaste noch gedrueckt? */
 		}
 		else
@@ -1153,9 +1188,12 @@ static void	do_slider_b( LIST_BOX *box, WORD mx, WORD my )
 
 		if ( box->flags & LBOX_REAL )									/* Real-Time-Scrolling? */
 		{
-			WORD	mbutton;
+#if	CALL_MAGIC_KERNEL == 0
+			EVNTDATA ev;
+#else
 			WORD	kstate;
-	
+#endif
+			WORD	mbutton;
 			WORD	d;
 			WORD	offset;
 			WORD	ob;
@@ -1185,7 +1223,14 @@ static void	do_slider_b( LIST_BOX *box, WORD mx, WORD my )
 					real_bslider( box, box->entries_b, my - offset, ob_min, ob_max );
 			
 				appl_yield();
-				mkstate( &mx, &my, &mbutton, &kstate );
+#if	CALL_MAGIC_KERNEL == 0
+				mt_graf_mkstate_event(&ev, NULL);
+				mx = ev.x;
+				my = ev.y;
+				mbutton = ev.bstate;
+#else
+				graf_mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#endif
 			} while ( mbutton == 1 );									/* wird die Maustaste noch gedrueckt? */
 		}
 		else
@@ -1366,13 +1411,25 @@ static void	auto_scroll_up( LIST_BOX *box, WORD obj_y )
 {
 	LBOX_ITEM	*item;
 	WORD	last_state;
+#if	CALL_MAGIC_KERNEL
 	WORD	mx;
+#endif
 	WORD	my;
 	WORD	mbutton;
-	WORD	kstate;
+	WORD	keystate;
 
 	item = 0L;
-	mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#if	CALL_MAGIC_KERNEL == 0
+	{
+	EVNTDATA ev;
+	mt_graf_mkstate_event(&ev, NULL);
+	my = ev.y;
+	mbutton = ev.bstate;
+	keystate = ev.kstate;
+	}
+#else
+	graf_mkstate( &mx, &my, &mbutton, &keystate );						/* Mausstatus */
+#endif
 
 	while (( my <= obj_y + 1 ) && ( mbutton == 1 ))				/* ist die Maus Oberhalb des Objekts? */
 	{
@@ -1383,7 +1440,7 @@ static void	auto_scroll_up( LIST_BOX *box, WORD obj_y )
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
 				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
+				(( keystate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 	
 			item->selected = !item->selected;						/* Element anwaehlen */
@@ -1401,7 +1458,17 @@ static void	auto_scroll_up( LIST_BOX *box, WORD obj_y )
 
 			appl_yield();													/* Rechenzeit abgeben */
 		}
-		mkstate( &mx, &my, &mbutton, &kstate );
+#if	CALL_MAGIC_KERNEL == 0
+		{
+		EVNTDATA ev;
+		mt_graf_mkstate_event(&ev, NULL);
+		my = ev.y;
+		mbutton = ev.bstate;
+		keystate = ev.kstate;
+		}
+#else
+		graf_mkstate( &mx, &my, &mbutton, &keystate );						/* Mausstatus */
+#endif
 	}
 
 	if ( item && (( box->flags & LBOX_AUTOSLCT ) == 0 ))		/* wurde die Service-Routine noch nicht angesprungen? */
@@ -1419,12 +1486,24 @@ static void	auto_scroll_left( LIST_BOX *box, WORD obj_x )
 	LBOX_ITEM	*item;
 	WORD	last_state;
 	WORD	mx;
+#if	CALL_MAGIC_KERNEL
 	WORD	my;
+#endif
 	WORD	mbutton;
-	WORD	kstate;
+	WORD	keystate;
 
 	item = 0L;
-	mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#if	CALL_MAGIC_KERNEL == 0
+	{
+	EVNTDATA ev;
+	mt_graf_mkstate_event(&ev, NULL);
+	mx = ev.x;
+	mbutton = ev.bstate;
+	keystate = ev.kstate;
+	}
+#else
+	graf_mkstate( &mx, &my, &mbutton, &keystate );						/* Mausstatus */
+#endif
 
 	while (( mx <= obj_x + 1 ) && ( mbutton == 1 ))
 	{
@@ -1435,7 +1514,7 @@ static void	auto_scroll_left( LIST_BOX *box, WORD obj_x )
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
 				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
+				(( keystate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 
 			item->selected = !item->selected;						/* Element selektieren */
@@ -1453,7 +1532,17 @@ static void	auto_scroll_left( LIST_BOX *box, WORD obj_x )
 
 			appl_yield();													/* Rechenzeit abgeben */
 		}
-		mkstate( &mx, &my, &mbutton, &kstate );
+#if	CALL_MAGIC_KERNEL == 0
+		{
+		EVNTDATA ev;
+		mt_graf_mkstate_event(&ev, NULL);
+		mx = ev.x;
+		mbutton = ev.bstate;
+		keystate = ev.kstate;
+		}
+#else
+		graf_mkstate( &mx, &my, &mbutton, &keystate );
+#endif
 	}
 
 	if ( item && (( box->flags & LBOX_AUTOSLCT ) == 0 ))		/* wurde die Service-Routine noch nicht angesprungen? */
@@ -1470,16 +1559,28 @@ static void	auto_scroll_down( LIST_BOX *box, WORD obj_y )
 {
 	LBOX_ITEM	*item;
 	WORD	last_state;
+#if	CALL_MAGIC_KERNEL
 	WORD	mx;
+#endif
 	WORD	my;
 	WORD	mbutton;
-	WORD	kstate;
+	WORD	keystate;
 	WORD	count;
 
 	count = lbox_cnt_items( box );									/* Anzahl der Eintraege */
 	item = 0L;
 
-	mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#if	CALL_MAGIC_KERNEL == 0
+	{
+	EVNTDATA ev;
+	mt_graf_mkstate_event(&ev, NULL);
+	my = ev.y;
+	mbutton = ev.bstate;
+	keystate = ev.kstate;
+	}
+#else
+	graf_mkstate( &mx, &my, &mbutton, &keystate );						/* Mausstatus */
+#endif
 	
 	while (( my >= obj_y - 1 ) && ( mbutton == 1 ))
 	{
@@ -1490,7 +1591,7 @@ static void	auto_scroll_down( LIST_BOX *box, WORD obj_y )
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
 				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
+				(( keystate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 
 			item->selected = !item->selected;						/* Element selektieren */
@@ -1508,7 +1609,17 @@ static void	auto_scroll_down( LIST_BOX *box, WORD obj_y )
 				
 			appl_yield();													/* Rechenzeit abgeben */
 		}
-		mkstate( &mx, &my, &mbutton, &kstate );
+#if	CALL_MAGIC_KERNEL == 0
+		{
+		EVNTDATA ev;
+		mt_graf_mkstate_event(&ev, NULL);
+		my = ev.y;
+		mbutton = ev.bstate;
+		keystate = ev.kstate;
+		}
+#else
+		graf_mkstate( &mx, &my, &mbutton, &keystate );
+#endif
 	}
 
 	if ( item && (( box->flags & LBOX_AUTOSLCT ) == 0 ))		/* wurde die Service-Routine noch nicht angesprungen? */
@@ -1526,14 +1637,26 @@ static void	auto_scroll_right( LIST_BOX *box, WORD obj_x )
 	LBOX_ITEM	*item;
 	WORD	last_state;
 	WORD	mx;
+#if	CALL_MAGIC_KERNEL
 	WORD	my;
+#endif
 	WORD	mbutton;
-	WORD	kstate;
+	WORD	keystate;
 	WORD	count;
 
 	item = 0L;
 	count = lbox_cnt_items( box );									/* Anzahl der Eintraege */
-	mkstate( &mx, &my, &mbutton, &kstate );						/* Mausstatus */
+#if	CALL_MAGIC_KERNEL == 0
+	{
+	EVNTDATA ev;
+	mt_graf_mkstate_event(&ev, NULL);
+	mx = ev.x;
+	mbutton = ev.bstate;
+	keystate = ev.kstate;
+	}
+#else
+	graf_mkstate( &mx, &my, &mbutton, &keystate );						/* Mausstatus */
+#endif
 
 	while (( mx >= obj_x - 1 ) && ( mbutton == 1 ))
 	{
@@ -1544,7 +1667,7 @@ static void	auto_scroll_right( LIST_BOX *box, WORD obj_x )
 
 			if (( box->flags & LBOX_SNGL ) ||						/* keine Mehrfachselektion erlaubt oder */
 				(( box->flags & LBOX_SHFT ) &&						/* nur mit gedrueckter Shift-Taste erlaubt */
-				(( kstate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
+				(( keystate & ( K_LSHIFT + K_RSHIFT )) == 0 )))	/* und Shift ist nicht gedrueckt? */
 				deselect_list( box );									/* deselektieren */
 
 			item->selected = !item->selected;						/* Element selektieren */
@@ -1562,7 +1685,17 @@ static void	auto_scroll_right( LIST_BOX *box, WORD obj_x )
 				
 			appl_yield();													/* Rechenzeit abgeben */
 		}
-		mkstate( &mx, &my, &mbutton, &kstate );
+#if	CALL_MAGIC_KERNEL == 0
+		{
+		EVNTDATA ev;
+		mt_graf_mkstate_event(&ev, NULL);
+		mx = ev.x;
+		mbutton = ev.bstate;
+		keystate = ev.kstate;
+		}
+#else
+		graf_mkstate( &mx, &my, &mbutton, &keystate );
+#endif
 	}
 
 	if ( item && (( box->flags & LBOX_AUTOSLCT ) == 0 ))		/* wurde die Service-Routine noch nicht angesprungen? */
@@ -2151,7 +2284,7 @@ static void	set_dial_clip( WORD handle, OBJECT *dial, WORD obj )
 
  	vs_clip( handle, 1, (WORD *) &r );
 #else
-	(void)handle;
+	UNUSED(handle);
 	set_clip_grect( &r );
 #endif
 }
@@ -2168,7 +2301,7 @@ static void	obj_change( OBJECT *tree, GRECT *rect, WORD obj, WORD state )
 {
 	wind_update( BEG_UPDATE );
 #if	CALL_MAGIC_KERNEL == 0 
-	objc_change( tree, obj, 0, rect->g_x, rect->g_y, rect->g_w, rect->g_h, state, 1 );
+	mt_objc_change_grect( tree, obj, 0, rect, state, 1, NULL );
 #else
 	set_clip_grect(rect);
 	_objc_change( tree, obj, state, 1 );
@@ -2193,7 +2326,7 @@ static void	obj_redraw( LIST_BOX *box, GRECT *rect, WORD obj, WORD depth )
 	else
 	{
 #if	CALL_MAGIC_KERNEL == 0 
-		objc_draw( box->tree, obj, depth, rect->g_x, rect->g_y, rect->g_w, rect->g_h );
+		mt_objc_draw_grect( box->tree, obj, depth, rect, NULL );
 #else
 		set_clip_grect(rect);
 		_objc_draw( box->tree, obj, depth );
@@ -2201,32 +2334,6 @@ static void	obj_redraw( LIST_BOX *box, GRECT *rect, WORD obj, WORD depth )
 	}
 	wind_update( END_UPDATE );
 }
-
-#if 0
-WORD	mkstate( WORD *mx, WORD *my, WORD *mbutton, WORD *kstate )
-{
-	WORD	buf[16];
-	WORD	dummy;
-
-	wind_update( BEG_MCTRL );									/* Mauskontrolle holen */
-				
-	evnt_multi( MU_TIMER,
-					2,									/* Doppelklicks erkennen */
-					1,									/* nur linke Maustaste */
-					0,									/* linke Maustaste losgelassen */
-					0, 0, 0, 0, 0,					/* Objekt-Rechteck */
-					0, 0, 0, 0, 0,					/* kein 2. Rechteck			*/
-					buf,								/* Dummy-Buffer */
-					0,0,								/* ms */
-					mx, my,
-					mbutton, kstate,
-					&dummy, &dummy );
-
-	wind_update( END_MCTRL );									/* Mauskontrolle holen */
-
-	return( 1 );
-}
-#endif
 
 #if	CALL_MAGIC_KERNEL
 
@@ -2245,4 +2352,3 @@ WORD	graf_mkstate( WORD *mx, WORD *my, WORD *mbutton, WORD *kstate )
 }
 
 #endif
-	
