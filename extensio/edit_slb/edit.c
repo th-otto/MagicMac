@@ -4,10 +4,10 @@
 * ====
 *
 * Beginn der Programmierung:	20.7.97
-* letzte énderung:
+* letzte Aenderung:
 *
 * Programm zur Entwicklung eines Mehrzeilen-Editfeldes mit
-* GDOS-ZeichensÑtzen.
+* GDOS-Zeichensaetzen.
 *
 ****************************************************************/
 
@@ -38,7 +38,7 @@ int	gl_hhbox, gl_hwbox, gl_hhchar, gl_hwchar;
 int	ap_id;
 int aes_handle;		/* Screen-Workstation des AES */
 
-/* fÅr die SharedLib */
+/* fuer die SharedLib */
 SLB_EXEC	slbexec;
 SHARED_LIB  slb;
 
@@ -61,22 +61,31 @@ int main( void )
 	EVNT w_ev;
 	WORD whdl_dialog;
 	LONG err;
+	int ret = 1;
 
-
-	if   ((ap_id = appl_init()) < 0)
-		Pterm(-1);
+	if  ((ap_id = appl_init()) < 0)
+		return 1;
 	if	(!rsrc_load("edit.rsc"))
-		Pterm(-1);
-
+	{
+		form_alert(1, "[1][Cannot load resource][Cancel]");
+		appl_exit();
+		return 1;
+	}
 	if	(!rsrc_gaddr(R_TREE, T_DIALOG, &adr_dialog))
-		Pterm(-1);
-
+	{
+		form_alert(1, "[1][Wrong resource file][Cancel]");
+		goto fehler;
+	}
+	
 	/* SharedLib laden */
 	/* --------------- */
 
 	err = Slbopen("editobjc.slb", NULL, 1L, &slb, &slbexec);
 	if	(err < 0)
-		Pterm((WORD) err);
+	{
+		form_alert(1, "[1][Cannot load editobjc.slb][Cancel]");
+		goto fehler;
+	}
 
 	aes_handle = graf_handle(&gl_hwchar, &gl_hhchar, &gl_hwbox, &gl_hhbox);
 
@@ -84,7 +93,10 @@ int main( void )
 
 	xedit = edit_create();
 	if	(!xedit)
-		Pterm(-1);
+	{
+		form_alert(1, "[1][Cannot create edit object][Cancel]");
+		goto fehler;
+	}
 	adr_dialog[EDITFELD].ob_type = G_EDIT;
 	adr_dialog[EDITFELD].ob_spec.index = (long) xedit;
 	edit_set_buf( adr_dialog, EDITFELD, _buf, sizeof(_buf));
@@ -101,8 +113,11 @@ int main( void )
 						NULL,
 						0);
 	if	(!d_dialog)
+	{
+		form_alert(1, "[1][Cannot create dialog][Cancel]");
 		goto fehler;
-
+	}
+	
 	whdl_dialog = wdlg_open( d_dialog,
 						"EDIT",
 						NAME+CLOSER+MOVER,
@@ -110,7 +125,10 @@ int main( void )
 						0,
 						NULL );
 	if	(!whdl_dialog)
+	{
+		form_alert(1, "[1][Cannot create window][Cancel]");
 		goto fehler;
+	}
 
 
 	for	(;;)
@@ -118,7 +136,7 @@ int main( void )
 		w_ev.mwhich = evnt_multi(MU_KEYBD+MU_BUTTON+MU_MESAG,
 					  2,			/* Doppelklicks erkennen 	*/
 					  1,			/* nur linke Maustaste		*/
-					  1,			/* linke Maustaste gedrÅckt	*/
+					  1,			/* linke Maustaste gedrueckt	*/
 					  0,0,0,0,0,		/* kein 1. Rechteck			*/
 					  0,0,0,0,0,		/* kein 2. Rechteck			*/
 					  w_ev.msg,
@@ -149,12 +167,13 @@ int main( void )
 			}
 		} /* END FOREVER */
 
+	ret = 0;
 fehler:
 	if	(slb)
 		Slbclose( slb );
 	rsrc_free();
 	appl_exit();
-	return(0);
+	return ret;
 }
 
 
@@ -222,7 +241,7 @@ void objc_grect(OBJECT *tree, int objn, GRECT *g)
 
 /*********************************************************************
 *
-* PrÅft, ob der Mausklick ins Objekt ging.
+* Prueft, ob der Mausklick ins Objekt ging.
 *
 *********************************************************************/
 
@@ -276,7 +295,7 @@ void subobj_wdraw(void *d, int obj, int startob, int depth)
 
 /****************************************************************
 *
-* WÑhlt einen Zeichensatz aus.
+* Waehlt einen Zeichensatz aus.
 *
 ****************************************************************/
 
@@ -285,7 +304,7 @@ void subobj_wdraw(void *d, int obj, int startob, int depth)
 
 int dial_font( long *id, long *pt, int *mono, char *name )
 {
-	int work_out[57],work_in [12];	 /* VDI- Felder fÅr v_opnvwk() */
+	int work_out[57],work_in [12];	 /* VDI- Felder fuer v_opnvwk() */
 	int	handle;
 	register int i;
 	FNT_DIALOG *fnt_dialog;
@@ -294,7 +313,7 @@ int dial_font( long *id, long *pt, int *mono, char *name )
 	int dummy;
 
 
-	for( i = 1; i < 10 ; i++ )											/* work_in initialisieren */
+	for( i = 0; i < 10 ; i++ )											/* work_in initialisieren */
 		work_in[i] = 1;
 	work_in[10] = 2;		/* Rasterkoordinaten benutzen */
 	handle = aes_handle;
@@ -339,15 +358,15 @@ int dial_font( long *id, long *pt, int *mono, char *name )
 /*********************************************************************
 *
 * Behandelt die Exit- Objekte des Dialogs
-* Das Exit-Objekt <objnr> wurde mit <clicks> Klicks angewÑhlt.
+* Das Exit-Objekt <objnr> wurde mit <clicks> Klicks angewaehlt.
 *
 * objnr = -1:	Initialisierung.
 *			d->user_data und d->dialog_tree initialisieren!
-*		-2:	Nachricht int data[8] wurde Åbergeben
+*		-2:	Nachricht int data[8] wurde uebergeben
 * 		-3:	Fenster wurde durch Closebutton geschlossen.
 *		-4:	Programm wurde beendet.
 *
-* RÅckgabe:	0	Dialog schlieûen
+* Rueckgabe:	0	Dialog schliessen
 *			< 0	Fehlercode
 *
 *********************************************************************/
@@ -357,14 +376,14 @@ WORD	cdecl hdl_dialog(struct HNDL_OBJ_args args)
 	OBJECT *tree;
 
 
-	/* 1. Fall: Dialog soll geîffnet werden */
-	/* ------------------------------------ */
+	/* 1. Fall: Dialog soll geoeffnet werden */
+	/* ------------------------------------- */
 
 	tree = adr_dialog;
 
 	if	(args.obj == HNDL_INIT)
 		{
-		if	(d_dialog)			/* Dialog ist schon geîffnet ! */
+		if	(d_dialog)			/* Dialog ist schon geoeffnet ! */
 			return(0);			/* create verweigern */
 
 		d_dialog = args.dialog;
@@ -385,14 +404,14 @@ WORD	cdecl hdl_dialog(struct HNDL_OBJ_args args)
 	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
 		{
 		close_dialog:
-		return(0);		/* ...dann schlieûen wir ihn auch */
+		return(0);		/* ...dann schliessen wir ihn auch */
 		}
 
 	if	(args.obj < 0)
 		return(1);
 
-	/* 4. Fall: Exitbutton wurde betÑtigt */
-	/* ---------------------------------- */
+	/* 4. Fall: Exitbutton wurde betaetigt */
+	/* ----------------------------------- */
 
 	if	(args.clicks != 1)
 		goto ende;

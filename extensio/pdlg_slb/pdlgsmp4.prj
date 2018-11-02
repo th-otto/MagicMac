@@ -1,0 +1,12 @@
+PDLGSMP4.APP
+.C[-A-]
+
+=
+
+PCSTART.O				;PC-Startup-Code
+
+PDLGSMP4.C				;Hauptprogramm
+
+PCSTDLIB.LIB
+PCTOSLIB.LIB
+PCGEMLIB.LIB			;wird nur noch fÅr VDI-Bindings benutzt

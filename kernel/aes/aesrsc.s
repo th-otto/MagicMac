@@ -568,7 +568,7 @@ xp_rasterC:
 
 **********************************************************************
 *
-* PUREC void _rsrc_rcfix(void *global, RSHDR *rsc)
+* PUREC void _rsrc_rcfix(WORD *global, RSHDR *rsc)
 *
 
 _rsrc_rcfix:

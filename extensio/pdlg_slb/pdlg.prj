@@ -1,0 +1,9 @@
+pdlg.prg
+.C[-A-]
+.L[-S=$800]
+=              ; list of modules follows...
+cstartv.o      ; startup code
+pdlg.c
+pcstdlib.lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib	; fÅr VDI

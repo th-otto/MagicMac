@@ -1,0 +1,48 @@
+wdialog.prg
+.C[-I..\..\..\inc_c]
+.C[-I..\..\inc]
+.S[-I..\..\inc]
+
+.S[-DCOUNTRY=1]
+.C[-DCOUNTRY=1]
+
+.C[-DCALL_MAGIC_KERNEL=0]
+.S[-DBINEXACT=1]
+.C[-DBINEXACT=1]
+
+.C[-A-]
+.C[-K-]
+.C[-P]
+.L[-S=0]
+=
+wdstart.s
+wdintrfc.s
+wdlginit.c
+mgxcheck.s
+wdialog.c [-G]
+listbox.c [-G]
+fnt_menu.c [-G]
+xfrmpop.c
+math.s
+rsrcfix.c [-G]
+shelsort.c [-G-]
+std.s
+pdlg.c
+pdlgdrv.c
+pdlgsub.c
+pdlgqd.c
+pdlgmgmc.c
+popup.c
+list.c
+filestat.c
+readfile.c
+adaptrsc.c
+getmagic.s
+wdtos.s
+aesctrl.s
+mt_aes.c
+
+pcstdlib.lib
+
+vdi.s
+mac_api.s

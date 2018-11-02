@@ -8,6 +8,9 @@
 /*----------------------------------------------------------------------------------------*/ 
 /* Globale Includes																								*/
 /*----------------------------------------------------------------------------------------*/ 
+#define __WDIALOG_IMPLEMENTATION
+#define __HNDL_OBJ
+#define __MTDIALOG
 #include <country.h>
 #include <portab.h>
 #include <aes.h>
@@ -15,7 +18,9 @@
 #include <tos.h> 
 #include "std.h"
 
-#define	CALL_MAGIC_KERNEL	1
+#ifndef CALL_MAGIC_KERNEL
+#define	CALL_MAGIC_KERNEL 1
+#endif
 
 #include "ker_bind.h"
 
@@ -27,11 +32,9 @@
 
 extern int enable_3d;
 
-#define	is_3d_look \
-			(enable_3d)
+#define	is_3d_look (enable_3d)
 
-#define	bell() \
-			putch(7)
+#define	bell() putch(7)
 
 #define	objc_draw( tree, obj, depth, clip ) \
 			set_clip_grect( clip ), \
@@ -49,10 +52,11 @@ extern int enable_3d;
 #define	Malloc( size )	((void *) mmalloc( size ))
 
 #ifdef BINEXACT
-LONG mmalloc( ULONG size);
+LONG mmalloc(ULONG size);
 #endif
 
-#include "shelsort.h"
+#define vmemcpyl vmemcpy
+
 #else
 
 #include <stdio.h>
@@ -64,42 +68,42 @@ LONG mmalloc( ULONG size);
 /* Makros fuer die Pure C-GEMLIB																				*/
 /*----------------------------------------------------------------------------------------*/ 
 
-#define	is_3d_look \
-			objc_sysvar( 0, AD3DVALUE, 0, 0, &dummy, &dummy )
+#undef is_3d_look
+#define	is_3d_look mt_objc_sysvar(OB_GETVAR, AD3DVALUE, 0, 0, &dummy, &dummy, NULL)
 
-#define	objc_draw( tree, obj, depth, clip ) \
-			objc_draw( tree, obj, depth, (clip)->g_x, (clip)->g_y, (clip)->g_w, (clip)->g_h )
+#define	objc_draw(tree, obj, depth, clip) \
+			mt_objc_draw_grect(tree, obj, depth, clip, NULL)
 
-#define	form_dial( flag, l, b ) \
-			form_dial(flag, (l)->g_x, (l)->g_y, (l)->g_w, (l)->g_h, \
-			 (b)->g_x, (b)->g_y, (b)->g_w, (b)->g_h )
+#define	form_dial(flag, l, b) mt_form_dial_grect(flag, l, b, NULL)
+#define	form_xdial(flag, l, b, flyinf) mt_form_xdial_grect(flag, l, b, flyinf, NULL)
+#define	evnt_timer(low, high) mt_evnt_timer(low, NULL)
+#define wind_update(kind) mt_wind_update(kind, NULL)
+#define form_center_grect(t, r) mt_form_center_grect(t, r, NULL)
+#define form_do(tree, startob) \
+	mt_form_do(tree, startob, NULL)
+#define form_xdo(tree, startob, cursor_obj, scantab, flyinf) \
+	mt_form_xdo(tree, startob, cursor_obj, scantab, flyinf, NULL)
 
-#define	form_xdial( flag, l, b, flyinf ) \
-			form_xdial(flag, (l)->g_x, (l)->g_y, (l)->g_w, (l)->g_h, \
-			 (b)->g_x, (b)->g_y, (b)->g_w, (b)->g_h, flyinf)
+#define	bell() Bconout(2, 7)
 
-#define	bell() \
-			Bconout( 2, 7 )
+WORD errno;
 
-#define	Malloc( size ) _malloc( size )
-#define	Mfree( addr ) _mfree( addr )
+#include "wdlgmain.h"
 
-#define	lbox_free_items \
-			free_items
+#undef Malloc
+#define	Malloc(size) _malloc(size)
+#undef Mfree
+#define	Mfree(addr) _mfree(addr)
 
-#define	lbox_free_list \
-			free_list
+static void *_malloc(LONG size);
+static void _mfree(void *addr);
 
-extern void _rsrc_rcfix( void *global, RSHDR *rsc );
-static void	*_malloc( LONG size );
-static void	_mfree( void *addr );
+extern void vmemcpyl(void *dst, void *src, long len);
+#define strlen mystrlen
 
-#include "objcsysv.h"
-
-WORD		errno;															/* fuer Pure C, u.a. wegen malloc() */
-extern WORD	aes_flags;
-extern WORD	is_magic;
 #endif
+
+#include "shelsort.h"
 
 #include "vdi_bind.h"
 #include "vdi_bind.c"
@@ -108,7 +112,7 @@ extern WORD	is_magic;
 /* Lokale Includes																								*/
 /*----------------------------------------------------------------------------------------*/ 
 #include "obj_tool.h"
-#include "ger\FONTSLCT.H"
+#include "ger\fontslct.h"
 #include "wdialog.h"
 #include "listbox.h"
 #include "fnts.h"
@@ -148,7 +152,7 @@ typedef struct
 /* Zuordnung von Index zur Objektnummer in der Listbox */
 
 #define	NO_FNAMES	11
-const WORD	fname_ctrl[5] =
+const WORD fname_ctrl[5] =
 {
 	FNAME_BOX,
 	FNAME_UP,
@@ -156,7 +160,7 @@ const WORD	fname_ctrl[5] =
 	FNAME_BACK,
 	FNAME_WHITE
 };
-const WORD	fname_obj[NO_FNAMES] =
+const WORD fname_obj[NO_FNAMES] =
 {
 	FNAME_0, 
 	FNAME_1, 
@@ -172,7 +176,7 @@ const WORD	fname_obj[NO_FNAMES] =
 }; 
 
 #define	NO_FSTYLES	4
-const WORD	fstyle_ctrl[5] = 
+const WORD fstyle_ctrl[5] = 
 {
 	FSTL_BOX,
 	FSTL_UP,
@@ -180,7 +184,7 @@ const WORD	fstyle_ctrl[5] =
 	FSTL_BACK,
 	FSTL_WHITE
 };
-const WORD	fstyle_obj[NO_FSTYLES] =
+const WORD fstyle_obj[NO_FSTYLES] =
 {
 	FSTL_0,
 	FSTL_1,
@@ -189,7 +193,7 @@ const WORD	fstyle_obj[NO_FSTYLES] =
 };
 
 #define	NO_FSIZES	6
-const WORD	fsize_ctrl[5] =
+const WORD fsize_ctrl[5] =
 {
 	FPT_BOX,
 	FPT_UP,
@@ -197,7 +201,7 @@ const WORD	fsize_ctrl[5] =
 	FPT_BACK,
 	FPT_WHITE
 };	
-const WORD	fsize_obj[NO_FSIZES] =
+const WORD fsize_obj[NO_FSIZES] =
 {
 	FPT_0,
 	FPT_1,
@@ -207,7 +211,7 @@ const WORD	fsize_obj[NO_FSIZES] =
 	FPT_5
 };
 
-const BYTE	move_objs[25] =
+const BYTE move_objs[25] =
 {
 	FSAMPLE,
 	FNAME_UP,
@@ -239,73 +243,103 @@ const BYTE	move_objs[25] =
 /*----------------------------------------------------------------------------------------*/ 
 /* interne Funktionen																							*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	init_dialog( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio );
-static FNT	*create_lboxes( FNT_DIALOG *fnt_dialog, LONG id, LONG pt );
-static FNT	*build_lists( FNT *font_list, LONG id, LONG pt, LBOX_ITEM **font_names, LBOX_ITEM **font_styles, LBOX_ITEM **font_sizes );
-static LBOX_ITEM	*build_name_list( FNT *font, LONG id, FNT **family, FNT **fnt );
-static LBOX_ITEM	*build_style_list( FNT *font, LONG id );
-static LBOX_ITEM	*build_pt_list( FNT *font, LONG size, LBOX_ITEM **selected );
-static void	free_lboxes( FNT_DIALOG *fnt_dialog );
-static void	free_items( LIST_BOX *box );
-static void	free_list( LBOX_ITEM *item );
-static void	enable_lbox( OBJECT *tree, WORD *objs, WORD n );
-static void	disable_lbox( OBJECT *tree, WORD *objs, WORD n );
+static WORD init_dialog( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio );
+static FNT *create_lboxes( FNT_DIALOG *fnt_dialog, LONG id, LONG pt );
+static FNT *build_lists( FNT *font_list, LONG id, LONG pt, LBOX_ITEM **font_names, LBOX_ITEM **font_styles, LBOX_ITEM **font_sizes );
+static LBOX_ITEM *build_name_list( FNT *font, LONG id, FNT **family, FNT **fnt );
+static LBOX_ITEM *build_style_list( FNT *font, LONG id );
+static LBOX_ITEM *build_pt_list( FNT *font, LONG size, LBOX_ITEM **selected );
+static void free_lboxes( FNT_DIALOG *fnt_dialog );
+#if CALL_MAGIC_KERNEL == 0
+static void free_items( LIST_BOX *box );
+static void free_list( LBOX_ITEM *item );
+#define lbox_free_items free_items
+#define lbox_free_list free_list
+#endif
+static void enable_lbox( OBJECT *tree, WORD *objs, WORD n );
+static void disable_lbox( OBJECT *tree, WORD *objs, WORD n );
 
-static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags );
-static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts );
-static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt );
-static void	sort_FNTs( FNT **fonts, WORD font_cnt );
-static int	cmp_font_names( FNT **a, FNT **b );
-static FNT	*get_FNT( FNT *font, LONG id );
-static WORD	count_fonts( FNT *font );
+static FNT *build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags );
+static WORD get_pt_sizes( WORD vdi_handle, BYTE *pts );
+static WORD is_bitmap_mono( WORD vdi_handle, WORD pt );
+static void sort_FNTs( FNT **fonts, WORD font_cnt );
+static int cmp_font_names( FNT **a, FNT **b );
+static FNT *get_FNT( FNT *font, LONG id );
+static WORD count_fonts( FNT *font );
 
-static void	set_top( LIST_BOX *box, WORD last_top, WORD last_cnt, GRECT *rect );
-static LONG	slct_closest_height( LBOX_ITEM *item, LBOX_ITEM **slct, FNT *font, LONG pt );
+static void set_top( LIST_BOX *box, WORD last_top, WORD last_cnt, GRECT *rect );
+static LONG slct_closest_height( LBOX_ITEM *item, LBOX_ITEM **slct, FNT *font, LONG pt );
 
-static RSHDR	*copy_rsrc( RSHDR *rsc, LONG len );
-static void	init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags );
-static void	make_check_box( OBJECT *obj, USERBLK *userblk );
-static void	no3d_rsrc( RSHDR *rsh, OBJECT *tree );
+static RSHDR *copy_rsrc( RSHDR *rsc, LONG len );
+static void init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags );
+static void make_check_box( OBJECT *obj, USERBLK *userblk );
+static void no3d_rsrc( RSHDR *rsh, OBJECT *tree );
 static void FTEXT_to_FBOXTEXT( OBJECT *obj );
-static void	adapt_rsrc( OBJECT *tree, WORD button_flags );
-static void	move_hor_obj( OBJECT *tree, WORD offset );
+static void adapt_rsrc( OBJECT *tree, WORD button_flags );
+static void move_hor_obj( OBJECT *tree, WORD offset );
 
-static void	redraw_obj( FNT_DIALOG *fnt_dialog, WORD obj );
-static void	set_edit_obj( FNT_DIALOG *fnt_dialog, WORD obj );
-static WORD	get_edit_obj( FNT_DIALOG *fnt_dialog );
-static void	deselect_button( FNT_DIALOG *fnt_dialog, WORD obj );
-static void	show_check_box( OBJECT *tree, WORD obj );
-static void	hide_check_box( OBJECT *tree, WORD obj );
-static WORD	get_check_state( OBJECT *tree );
+static void redraw_obj( FNT_DIALOG *fnt_dialog, WORD obj );
+static void set_edit_obj( FNT_DIALOG *fnt_dialog, WORD obj );
+static WORD get_edit_obj( FNT_DIALOG *fnt_dialog );
+static void deselect_button( FNT_DIALOG *fnt_dialog, WORD obj );
+static void show_check_box( OBJECT *tree, WORD obj );
+static void hide_check_box( OBJECT *tree, WORD obj );
+static WORD get_check_state( OBJECT *tree );
 
-static WORD	do_buttons( FNT_DIALOG *fnt_dialog, WORD obj );
-static void	do_CHECK_NAME( OBJECT *tree );
-static void	do_CHECK_STYLE( OBJECT *tree );
-static void	do_CHECK_SIZE( OBJECT *tree );
-static void	do_CHECK_RATIO( OBJECT *tree );
-static WORD	get_fixed( OBJECT *obj, LONG *old_value, LONG min, LONG max );
-static WORD	check_key( UWORD code );
-static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT *clip_rect, WORD dialog_flags );
-static WORD	use_vqt_xfontinfo( void );
+static WORD do_buttons( FNT_DIALOG *fnt_dialog, WORD obj );
+static void do_CHECK_NAME( OBJECT *tree );
+static void do_CHECK_STYLE( OBJECT *tree );
+static void do_CHECK_SIZE( OBJECT *tree );
+static void do_CHECK_RATIO( OBJECT *tree );
+static WORD get_fixed( OBJECT *obj, LONG *old_value, LONG min, LONG max );
+static WORD check_key( UWORD code );
+static void draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT *clip_rect, WORD dialog_flags );
+static WORD use_vqt_xfontinfo( void );
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Funktionen fuer Userdefs, Listbox und Fensterdialog													*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	cdecl sample_text( PARMBLK *parmblock );
-WORD	cdecl check_box( PARMBLK *parmblock );
+WORD cdecl sample_text( PARMBLK *parmblock );
+WORD cdecl check_box( PARMBLK *parmblock );
 
-WORD	cdecl	set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD index, void *user_data, GRECT *rect, WORD first );
+WORD cdecl set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD index, void *user_data, GRECT *rect, WORD first );
 
-void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state );
-void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state );
-void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state );
+void cdecl slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state );
+void cdecl slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state );
+void cdecl slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state );
 
-WORD	cdecl	do_slct_font( DIALOG *d, EVNT *events, int objnr, int clicks, void *data );
+WORD cdecl do_slct_font( DIALOG *d, EVNT *events, int objnr, int clicks, void *data );
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Objektmanipulation																							*/
 /*----------------------------------------------------------------------------------------*/ 
 #include "objmacro.h"
+
+#if CALL_MAGIC_KERNEL == 0
+static long get_jarptr(void)
+{
+	return *((long *)0x5a0);
+}
+
+
+long *get_cookie_ptr(long id)
+{
+	long *jarptr;
+	
+	jarptr = (long *)Supexec(get_jarptr);
+	if (jarptr != NULL)
+	{
+		while (*jarptr != 0)
+		{
+			if (*jarptr == id)
+				return jarptr;
+			jarptr += 2;
+		}
+	}
+	return NULL;
+}
+
+#endif
 
 /*----------------------------------------------------------------------------------------*/ 
 /* Fontselektor initialisieren und Zeiger auf Struktur zurueckliefern								*/
@@ -323,7 +357,7 @@ FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD d
 	
 	if ( no_fonts == 0 )
 	{
-		WORD	work_out[57];
+		WORD work_out[57];
 		
 		vq_extnd( vdi_handle, 0, work_out );						/* vq_extnd() aufrufen, um die Anzahl der Systemfonts zu erfragen */
 		no_fonts = work_out[10];
@@ -349,7 +383,7 @@ FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD d
 			if ( is_3d_look == 0	)										/* kein 3D-Look? */
 				dialog_flags &= ~FNTS_3D;								/* 3D-Look ausschalten */
 #else
-			WORD	dummy;
+			WORD dummy;
 
 			if ( aes_flags & GAI_MAGIC )								/* MagiC-AES? */
 			{
@@ -416,7 +450,7 @@ FNT_DIALOG	*fnts_create( WORD vdi_handle, WORD no_fonts, WORD font_flags, WORD d
 /*	vdi_handle:				Handle der VDI-Workstation oder 0, wenn vst_unload_fonts() nicht	*/
 /*								aufgerufen werden soll.															*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_delete( FNT_DIALOG *fnt_dialog, WORD vdi_handle )
+WORD fnts_delete( FNT_DIALOG *fnt_dialog, WORD vdi_handle )
 {
 	FNT	*font;
 	
@@ -455,7 +489,7 @@ WORD	fnts_delete( FNT_DIALOG *fnt_dialog, WORD vdi_handle )
 /*	pt:						Hoehe in 1/65536 Punkten															*/
 /*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_open( FNT_DIALOG *fnt_dialog, WORD button_flags, WORD x, WORD y, LONG id, LONG pt, LONG ratio )
+WORD fnts_open( FNT_DIALOG *fnt_dialog, WORD button_flags, WORD x, WORD y, LONG id, LONG pt, LONG ratio )
 {
 	OBJECT	*tree;
 
@@ -467,7 +501,7 @@ WORD	fnts_open( FNT_DIALOG *fnt_dialog, WORD button_flags, WORD x, WORD y, LONG 
 	{
 		if ( init_dialog( fnt_dialog, button_flags, id, pt, ratio ))	/* konnte der Dialog initialisiert werden? */
 		{
-			WORD	handle;
+			WORD handle;
 
 			handle = wdlg_open( fnt_dialog->dialog, fnt_dialog->fstring_addr[FONTSL_NAME], NAME + MOVER + CLOSER, x, y, 0, 0L );
 								
@@ -493,7 +527,7 @@ WORD	fnts_open( FNT_DIALOG *fnt_dialog, WORD button_flags, WORD x, WORD y, LONG 
 /*	x:							x-Koordinate des Dialogs wird zurueckgeliefert							*/
 /*	y:							y-Koordinate des Dialogs wird zurueckgeliefert							*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_close( FNT_DIALOG *fnt_dialog, WORD *x, WORD *y )
+WORD fnts_close( FNT_DIALOG *fnt_dialog, WORD *x, WORD *y )
 {
 	if ( fnt_dialog->whdl )
 	{
@@ -523,7 +557,7 @@ WORD	fnts_close( FNT_DIALOG *fnt_dialog, WORD *x, WORD *y )
 /*	pt:						Hoehe in 1/65536 Punkten															*/
 /*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_update( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio )
+WORD fnts_update( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio )
 {
 	if ( fnt_dialog->dialog )											/* konnte die Dialog-Struktur angelegt werden? */
 	{
@@ -550,9 +584,9 @@ WORD	fnts_update( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, L
 /*	pt:						Hoehe in 1/65536 Punkten															*/
 /*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_evnt( FNT_DIALOG *fnt_dialog, EVNT *events, WORD *button, WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio )
+WORD fnts_evnt( FNT_DIALOG *fnt_dialog, EVNT *events, WORD *button, WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio )
 {
-	WORD	cont;
+	WORD cont;
 	
 	cont = wdlg_evnt( fnt_dialog->dialog, events );				/* Event fuer den Fensterdialog behandeln */
 	
@@ -584,13 +618,13 @@ WORD	fnts_evnt( FNT_DIALOG *fnt_dialog, EVNT *events, WORD *button, WORD *check_
 /*	pt:						Hoehe in 1/65536 Punkten															*/
 /*	ratio:					Verhaeltnis Breite/Hoehe															*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in, LONG ratio_in, WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio )
+WORD fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in, LONG ratio_in, WORD *check_boxes, LONG *id, LONG *pt, LONG *ratio )
 {
 	if ( init_dialog( fnt_dialog, button_flags, id_in, pt_in, ratio_in ))	/* konnte der Dialog initialisiert werden? */
 	{
-		OBJECT	*tree;
-		GRECT		size;
-		void		*flyinf;
+		OBJECT *tree;
+		GRECT size;
+		void *flyinf;
 		
 		tree = fnt_dialog->tree;
 
@@ -619,7 +653,7 @@ WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in,
 
 		while ( 1 )
 		{
-			WORD	obj;
+			WORD obj;
 
 #if CALL_MAGIC_KERNEL
 			obj = form_xdo( tree, fnt_dialog->edit_obj, &fnt_dialog->edit_obj, 0L, flyinf );	/* auf EXIT-Objekt warten */
@@ -674,11 +708,11 @@ WORD	fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in,
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	user_fonts:				Zeiger auf programmeigene Fonts												*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_add( FNT_DIALOG *fnt_dialog, FNTS_ITEM *user_fonts )
+WORD fnts_add( FNT_DIALOG *fnt_dialog, FNTS_ITEM *user_fonts )
 {
 	FNT	**font_tab;
 	FNT	*vdi_fonts;
-	WORD	no_fonts;
+	WORD no_fonts;
 	
 	vdi_fonts = fnt_dialog->font_list;
 	
@@ -723,7 +757,7 @@ WORD	fnts_add( FNT_DIALOG *fnt_dialog, FNTS_ITEM *user_fonts )
 /* Funktionsergebnis:	-																						*/
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*----------------------------------------------------------------------------------------*/ 
-void	fnts_remove( FNT_DIALOG *fnt_dialog )
+void fnts_remove( FNT_DIALOG *fnt_dialog )
 {
 	FNT	**fonts;
 	
@@ -755,11 +789,11 @@ void	fnts_remove( FNT_DIALOG *fnt_dialog )
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	id:						ID eines Fonts der Familie														*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_get_no_styles( FNT_DIALOG *fnt_dialog, LONG id )
+WORD fnts_get_no_styles( FNT_DIALOG *fnt_dialog, LONG id )
 {
 	FNT	*family;
 	FNT	*font;
-	WORD	no_styles;
+	WORD no_styles;
 	
 	font = fnt_dialog->font_list;
 	family = get_FNT( font, id );											/* Zeiger auf den Font holen */
@@ -821,7 +855,7 @@ LONG	fnts_get_style( FNT_DIALOG *fnt_dialog, LONG id, WORD index )
 /*	family_name:			Zeiger auf String fuer den Familiennamen oder 0L							*/
 /*	style_name:				Zeiger auf String fuer Stilnamen oder 0L									*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_get_name( FNT_DIALOG *fnt_dialog, LONG id, BYTE *full_name, BYTE *family_name, BYTE *style_name )
+WORD fnts_get_name( FNT_DIALOG *fnt_dialog, LONG id, BYTE *full_name, BYTE *family_name, BYTE *style_name )
 {
 	FNT	*font;
 	
@@ -852,7 +886,7 @@ WORD	fnts_get_name( FNT_DIALOG *fnt_dialog, LONG id, BYTE *full_name, BYTE *fami
 /*	mono:						Zeiger auf Flag fuer Aquidistanz												*/
 /*	outline:					Zeiger auf Flag fuer Vektorfont												*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	fnts_get_info( FNT_DIALOG *fnt_dialog, LONG id, WORD *mono, WORD *outline )
+WORD fnts_get_info( FNT_DIALOG *fnt_dialog, LONG id, WORD *mono, WORD *outline )
 {
 	FNT	*font;
 	
@@ -868,7 +902,7 @@ WORD	fnts_get_info( FNT_DIALOG *fnt_dialog, LONG id, WORD *mono, WORD *outline )
 	return( 0 );
 }
 
-static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LONG id, LONG pt, LONG ratio );
+static void set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LONG id, LONG pt, LONG ratio );
 
 /*****************************************************************************************/
 /*****************************************************************************************/
@@ -889,7 +923,7 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 /*	pt:						Hoehe in Punkten																	*/
 /*	ratio:					Breiten-Hoehen-Verhaeltnis														*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	init_dialog( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio )
+static WORD init_dialog( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LONG pt, LONG ratio )
 {
 	FNT	*font;
 
@@ -903,11 +937,11 @@ static WORD	init_dialog( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id, LON
 	return( 0 );
 }
 
-static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LONG id, LONG pt, LONG ratio )
+static void set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LONG id, LONG pt, LONG ratio )
 {
 	OBJECT	*tree;
 	
-	(void)id;
+	UNUSED(id);
 	if ( pt > ( 1000L << 16 ))											/* groesser als 1000 Punkte? */
 		pt = 1000L << 16;
 	if ( pt < 65536L )													/* kleiner als 1 Punkt? */
@@ -975,27 +1009,27 @@ static void	set_dialog( FNT_DIALOG *fnt_dialog, FNT *font, WORD button_flags, LO
 /*----------------------------------------------------------------------------------------*/ 
 static FNT	*create_lboxes( FNT_DIALOG *fnt_dialog, LONG id, LONG pt )
 {
-	extern const WORD	fname_obj[NO_FNAMES];
-	extern const WORD	fstyle_obj[NO_FSTYLES];
-	extern const WORD	fsize_obj[NO_FSIZES];
-	extern const WORD	fname_ctrl[5];
-	extern const WORD	fstyle_ctrl[5];
-	extern const WORD	fsize_ctrl[5];
+	extern const WORD fname_obj[NO_FNAMES];
+	extern const WORD fstyle_obj[NO_FSTYLES];
+	extern const WORD fsize_obj[NO_FSIZES];
+	extern const WORD fname_ctrl[5];
+	extern const WORD fstyle_ctrl[5];
+	extern const WORD fsize_ctrl[5];
 
-	LBOX_ITEM	*name_list;
-	LBOX_ITEM	*style_list;
-	LBOX_ITEM	*size_list;
-	LIST_BOX	*lbox_name;
-	LIST_BOX	*lbox_style;
-	LIST_BOX	*lbox_size;
+	LBOX_ITEM *name_list;
+	LBOX_ITEM *style_list;
+	LBOX_ITEM *size_list;
+	LIST_BOX *lbox_name;
+	LIST_BOX *lbox_style;
+	LIST_BOX *lbox_size;
 	FNT	*font;
 	
 	font = build_lists( fnt_dialog->font_list, id, pt, &name_list, &style_list, &size_list );	/* Listen aufbauen */
 
 	if ( font )																/* konnten die Listen erzeugt werden? */
 	{
-		LBOX_ITEM	*tmp;
-		WORD	index;
+		LBOX_ITEM *tmp;
+		WORD index;
 		
 		for ( index = 0, tmp = name_list; tmp && ( tmp->selected == 0 ); tmp = tmp->next )	/* Index der selektieren Familie ermitteln */
 			index++;
@@ -1216,7 +1250,7 @@ static LBOX_ITEM	*build_pt_list( FNT *font, LONG size, LBOX_ITEM **selected )
 {
 	LBOX_ITEM	*font_sizes;
 	LBOX_ITEM	**last;
-	WORD	i;
+	WORD i;
 	
 	*selected = 0L;
 	font_sizes = 0L;
@@ -1257,7 +1291,7 @@ static LBOX_ITEM	*build_pt_list( FNT *font, LONG size, LBOX_ITEM **selected )
 /* Funktionsresultat:	-																						*/
 /*	fnt_dialog:				Zeigehr auf die Dialog-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	free_lboxes( FNT_DIALOG *fnt_dialog )
+static void free_lboxes( FNT_DIALOG *fnt_dialog )
 {
 	if ( fnt_dialog->fnt_size )
 	{
@@ -1283,11 +1317,11 @@ static void	free_lboxes( FNT_DIALOG *fnt_dialog )
 
 #if CALL_MAGIC_KERNEL == 0
 
-static void	*_malloc( LONG size )
+static void *_malloc( LONG size )
 {
-#undef	Malloc
+#undef Malloc
 	
-	if ( is_magic )
+	if ( magx_found )
 		return( Malloc( size ));
 	else
 		return( malloc( size ));
@@ -1295,11 +1329,11 @@ static void	*_malloc( LONG size )
 #define	Malloc( size ) _malloc( size )
 }
 
-static void	_mfree( void *addr )
+static void _mfree( void *addr )
 {
-#undef	Mfree
+#undef Mfree
 
-	if ( is_magic )
+	if ( magx_found )
 		Mfree( addr );
 	else
 		free( addr );
@@ -1312,7 +1346,7 @@ static void	_mfree( void *addr )
 /* Funktionsresultat:	1																						*/
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	free_items( LIST_BOX *box )
+static void free_items( LIST_BOX *box )
 {
 	free_list( box->items );
 }
@@ -1322,7 +1356,7 @@ static void	free_items( LIST_BOX *box )
 /* Funktionsresultat:	1																						*/
 /* item:						Zeiger auf das erste LBOX_ITEM												*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	free_list( LBOX_ITEM *item )
+static void free_list( LBOX_ITEM *item )
 {
 	while ( item )
 	{
@@ -1343,11 +1377,11 @@ static void	free_list( LBOX_ITEM *item )
 /*	objs:						Feld mit n Objektnummern der Listbox-Objekte								*/
 /*	n:							Anzahl der Listbox-Objekte														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	enable_lbox( OBJECT *tree, WORD objs[], WORD n )
+static void enable_lbox( OBJECT *tree, WORD objs[], WORD n )
 {
 	while ( n > 0 )
 	{
-		WORD	obj;
+		WORD obj;
 		
 		obj = *objs++;
 		n--;
@@ -1364,11 +1398,11 @@ static void	enable_lbox( OBJECT *tree, WORD objs[], WORD n )
 /*	objs:						Feld mit n Objektnummern der Listbox-Objekte								*/
 /*	n:							Anzahl der Listbox-Objekte														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	disable_lbox( OBJECT *tree, WORD objs[], WORD n )
+static void disable_lbox( OBJECT *tree, WORD objs[], WORD n )
 {
 	while ( n > 0 )
 	{
-		WORD	obj;
+		WORD obj;
 		
 		obj = *objs++;
 		n--;
@@ -1391,10 +1425,10 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 	FNT	*font;
 	FNT	**font_tab;
 	TMP_FNT	*tmp;
-	WORD	i;
-	WORD	font_cnt;
-	LONG	len;
-	WORD	call_xfntinfo;
+	WORD i;
+	WORD font_cnt;
+	LONG len;
+	WORD call_xfntinfo;
 		
 	len = sizeof( XFNT_INFO ) + sizeof( TMP_FNT ) + ( no_fonts * sizeof( FNT *));
 		
@@ -1408,12 +1442,12 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 	
 	for ( i = 1; i <= no_fonts; i++ )	
 	{
-		LONG	name_len;
-		LONG	family_len;
-		LONG	style_len;
+		LONG name_len;
+		LONG family_len;
+		LONG style_len;
 		
-		UWORD	flags;
-		UWORD	font_format;
+		UWORD flags;
+		UWORD font_format;
 		
 		tmp->npts = 0;														/* Anzahl der vorhandenen Punkthoehen initialisieren */
 		tmp->mono = 0;														/* aequidistanz-Flag initialisieren */	
@@ -1427,7 +1461,7 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 			
 			if ( call_xfntinfo )											/* vqt_xfontinfo() benutzen? */
 			{
-				WORD	j;
+				WORD j;
 				
 				if ( flags & 0x0001 )									/* aequidistant? */
 					tmp->mono = 1;
@@ -1449,9 +1483,9 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 							
 				vqt_fontheader( vdi_handle, buf, path );
 
-				vmemcpy( tmp->family_name, buf + FH_SFACN, 16 );	/* Name der Fontfamilie */
+				vmemcpyl( tmp->family_name, buf + FH_SFACN, 16 );	/* Name der Fontfamilie */
 				tmp->family_name[16] = 0;
-				vmemcpy( tmp->style_name, buf + FH_FNTFM, 14 );	/* Name des Stils */
+				vmemcpyl( tmp->style_name, buf + FH_FNTFM, 14 );	/* Name des Stils */
 				tmp->style_name[14] = 0;
 
 				if ( buf[FH_CLFGS] & 2 )								/* aequidistant?	*/
@@ -1504,7 +1538,7 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 		
 		if ( font )															/* Speicher vorhanden? */
 		{
-			WORD	j;
+			WORD j;
 			
 			font->next = 0L;
 			font->display = 0L;											/* keine Anzeige-Funktion, da VDI-Font */
@@ -1546,19 +1580,19 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 /* Funktionsergebnis:	Anzahl der Punkthoehen															*/
 /*	pts:						Zeiger auf ein Feld fuer die Punkthoehen										*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts )
+static WORD get_pt_sizes( WORD vdi_handle, BYTE *pts )
 {		
-	WORD	j;
-	WORD	pt_last;
-	WORD	pt;
-	WORD	npts;
+	WORD j;
+	WORD pt_last;
+	WORD pt;
+	WORD npts;
 	
 	npts = 0;																/* Anzahl der Punkthoehen */
 	pt_last = 99 + 1;														/* groesste Punkthoehe sind 99 pt */
 	
 	while ( pt_last > 1 )												/* schon alle Punkthoehen durchgegangen? */
 	{
-		WORD	tmp;
+		WORD tmp;
 
 		pt = vst_point( vdi_handle, pt_last - 1, &tmp, &tmp, &tmp, &tmp );
 		if ( pt == pt_last )												/* laesst sich keine kleinere Punkthoehe mehr einstellen? */
@@ -1572,7 +1606,7 @@ static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts )
 		
 	for ( j = 0; j < (npts/2); j++ )									/* Reihenfolge umkehren... */
 	{
-		WORD	point;
+		WORD point;
 		
 		point = pts[j];													/* tauschen... */
 		pts[j] = pts[npts - j - 1];
@@ -1587,13 +1621,13 @@ static WORD	get_pt_sizes( WORD vdi_handle, BYTE *pts )
 /* Funktionsergebnis:	0: Font ist proportional 1: Font ist aequidistant						*/
 /*	pt:						testweise einzustellende Punkthoehe											*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt )
+static WORD is_bitmap_mono( WORD vdi_handle, WORD pt )
 {
-	WORD	first_ade;
-	WORD	last_ade;
-	WORD	d[8];
-	WORD	first_width;
-	WORD	width;
+	WORD first_ade;
+	WORD last_ade;
+	WORD d[8];
+	WORD first_width;
+	WORD width;
 	
 	vst_point( vdi_handle, pt, d, d, d, d );						/* groesste Punkthoehe einstellen */
 	vqt_fontinfo( vdi_handle, &first_ade, &last_ade, d, d, d );	/* Index des ersten und letzten Zeichens erfragen */
@@ -1619,13 +1653,9 @@ static WORD	is_bitmap_mono( WORD vdi_handle, WORD pt )
 /*	fonts:					vorsortiertes Feld mit Zeigern auf die Font-Strukuren					*/
 /*	cnt:						Anzahl der Fonts (Laenge von fonts)											*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	sort_FNTs( FNT **fonts, WORD font_cnt )
+static void sort_FNTs( FNT **fonts, WORD font_cnt )
 {
-#if CALL_MAGIC_KERNEL
 	shelsort( fonts, font_cnt, sizeof(FNT *), (int (*)(void *, void *, void *))cmp_font_names, 0L );	/* Fonts sortieren, so dass die Familien aufeinander folgen */
-#else
-	qsort( fonts, font_cnt, sizeof(FNT *), cmp_font_names );	/* Fonts nach Familien aufeinander folgenden sortieren */
-#endif
 
 	while ( font_cnt > 0 )
 	{
@@ -1652,7 +1682,7 @@ static int	cmp_font_names( FNT **a, FNT **b )
 {
 	FNT	*c;
 	FNT	*d;
-	WORD	cmp;
+	WORD cmp;
 	
 	c = *a;
 	d = *b;
@@ -1696,9 +1726,9 @@ static FNT	*get_FNT( FNT *font, LONG id )
 /* Funktionsergebnis:	Anzahl der Fonts																	*/
 /*	font:						Zeiger auf den ersten Font														*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	count_fonts( FNT *font )
+static WORD count_fonts( FNT *font )
 {
-	WORD	cnt;
+	WORD cnt;
 	
 	cnt = 0;
 
@@ -1717,19 +1747,19 @@ static WORD	count_fonts( FNT *font )
 /*	last_top:				Index des bisher ersten sichtbaren Elements								*/
 /*	last_cnt:				Anzahl der bisherigen Elemente												*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	set_top( LIST_BOX *box, WORD last_top, WORD last_cnt, GRECT *rect )
+static void set_top( LIST_BOX *box, WORD last_top, WORD last_cnt, GRECT *rect )
 {
-	WORD	cnt;
-	WORD	first;
+	WORD cnt;
+	WORD first;
 	
 	cnt = lbox_cnt_items( box );										/* Anzahl der Elemente in der Listbox */
 	
-	if ( cnt <= lbox_get_visible( box ))							/* weniger Elemente als die Box Eintraege hat? */
+	if ( cnt <= lbox_get_avis( box ))							/* weniger Elemente als die Box Eintraege hat? */
 		first = 0;															/* erstes Element ist auch das erste sichtbare */
 	else
 		first = (WORD) (((LONG) last_top ) * cnt / last_cnt );	/* erstes sichbares Element berechnen */
 
-	lbox_set_slider( box, first, rect );							/* Slider positionieren */
+	lbox_set_asldr( box, first, rect );							/* Slider positionieren */
 	lbox_update( box, rect );											/* Listbox zeichnen */
 }
 
@@ -1743,10 +1773,10 @@ static void	set_top( LIST_BOX *box, WORD last_top, WORD last_cnt, GRECT *rect )
 /*----------------------------------------------------------------------------------------*/ 
 static LONG	slct_closest_height( LBOX_ITEM *item, LBOX_ITEM **slct, FNT *font, LONG pt )
 {
-	LBOX_ITEM	*size;
-	LONG	diff;
-	LONG	set_pt;
-	WORD	i;
+	LBOX_ITEM *size;
+	LONG diff;
+	LONG set_pt;
+	WORD i;
 	
 	diff = 0x7fffffffL;
 
@@ -1791,14 +1821,14 @@ static RSHDR	*copy_rsrc( RSHDR *rsc, LONG len )
 	
 	if ( new )
 	{
-		WORD	dummy_global[15];
+		WORD dummy_global[15];
 
 #if CALL_MAGIC_KERNEL
-		vmemcpy( new, rsc, (UWORD) len );								/* Resource kopieren */
+		vmemcpy(new, rsc, (UWORD) len);								/* Resource kopieren */
 #else
-		vmemcpy( new, rsc, len );										/* Resource kopieren */
+		vmemcpyl( new, rsc, len );								/* Resource kopieren */
 #endif
-		_rsrc_rcfix( dummy_global, new );							/* Resource anpassen */
+		_rsrc_rcfix(dummy_global, new);							/* Resource anpassen */
 	}
 	return( new );															/* Zeiger auf den Resource-Header */
 }
@@ -1810,7 +1840,7 @@ static RSHDR	*copy_rsrc( RSHDR *rsc, LONG len )
 /*	fnt_dialog:				Zeiger auf die Dialog-Struktur												*/
 /*	dialog_flags:			...																					*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags )
+static void init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags )
 {
 	OBJECT	**tree_addr;
 	OBJECT	*tree;
@@ -1872,7 +1902,7 @@ static void	init_rsrc( RSHDR *rsh, FNT_DIALOG *fnt_dialog, WORD dialog_flags )
 /* Funktionsergebnis:	-																						*/
 /*	obj:						Zeiger auf das Objekt															*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	make_check_box( OBJECT *obj, USERBLK *userblk )
+static void make_check_box( OBJECT *obj, USERBLK *userblk )
 {
 	obj->ob_type = G_USERDEF;											/* Typ auf USERDEF aendern */
 	obj->ob_spec.userblk = userblk;
@@ -1888,10 +1918,10 @@ static void	make_check_box( OBJECT *obj, USERBLK *userblk )
 /*	rsh:						Zeiger auf den Resource-Header												*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	no3d_rsrc( RSHDR *rsh, OBJECT *tree )
+static void no3d_rsrc( RSHDR *rsh, OBJECT *tree )
 {
-	OBJECT	*obj;
-	UWORD	i;
+	OBJECT *obj;
+	UWORD i;
 	
 	obj = (OBJECT *) (((BYTE *) rsh ) + rsh->rsh_object );	/* Zeiger auf die Objekte */
 	
@@ -1948,7 +1978,7 @@ static void FTEXT_to_FBOXTEXT( OBJECT *obj )
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	button_flags:			...																					*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	adapt_rsrc( OBJECT *tree, WORD button_flags )
+static void adapt_rsrc( OBJECT *tree, WORD button_flags )
 {
 	if ( button_flags & FNTS_CHNAME )								/* Checkbox fuer die Namens-Listbox sichtbar? */
 		show_check_box( tree, CHECK_NAME );
@@ -2034,10 +2064,10 @@ static void	adapt_rsrc( OBJECT *tree, WORD button_flags )
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	offset:					Verschiebung (-1 oder +1)														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	move_hor_obj( OBJECT *tree, WORD offset )
+static void move_hor_obj( OBJECT *tree, WORD offset )
 {
 	extern const BYTE	move_objs[25];									/* Nummern der zu verschiebenden Objekte */
-	WORD	i;
+	WORD i;
 
 	for ( i = 0; i < 25; i++ )
 	{
@@ -2051,7 +2081,7 @@ static void	move_hor_obj( OBJECT *tree, WORD offset )
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	obj:						Nummer des Objekts																*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	redraw_obj( FNT_DIALOG *fnt_dialog, WORD obj )
+static void redraw_obj( FNT_DIALOG *fnt_dialog, WORD obj )
 {
 	OBJECT	*tree;
 	GRECT		rect;
@@ -2075,7 +2105,7 @@ static void	redraw_obj( FNT_DIALOG *fnt_dialog, WORD obj )
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	obj:						Nummer des neuen Edit-Objekts oder 0 (kein Edit-Objekt)				*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	set_edit_obj( FNT_DIALOG *fnt_dialog, WORD obj )
+static void set_edit_obj( FNT_DIALOG *fnt_dialog, WORD obj )
 {
 	if ( fnt_dialog->dialog )											/* Fensterdialog? */
 		wdlg_set_edit( fnt_dialog->dialog, obj );
@@ -2088,9 +2118,9 @@ static void	set_edit_obj( FNT_DIALOG *fnt_dialog, WORD obj )
 /* Funktionsresultat:	Nummer des Edit-Objekts	(0: kein Objekt aktiv)							*/
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	get_edit_obj( FNT_DIALOG *fnt_dialog )
+static WORD get_edit_obj( FNT_DIALOG *fnt_dialog )
 {
-	WORD	cursor;
+	WORD cursor;
 	
 	if ( fnt_dialog->dialog )											/* Fensterdialog? */
 		return( wdlg_get_edit( fnt_dialog->dialog, &cursor ));
@@ -2104,7 +2134,7 @@ static WORD	get_edit_obj( FNT_DIALOG *fnt_dialog )
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	obj:						Objektnummer																		*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	deselect_button( FNT_DIALOG *fnt_dialog, WORD obj )
+static void deselect_button( FNT_DIALOG *fnt_dialog, WORD obj )
 {
 	OBJECT	*tree;
 	
@@ -2124,7 +2154,7 @@ static void	deselect_button( FNT_DIALOG *fnt_dialog, WORD obj )
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	obj:						Nummer des Objekts																*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	show_check_box( OBJECT *tree, WORD obj )
+static void show_check_box( OBJECT *tree, WORD obj )
 {
 	tree[obj].ob_flags &= 0xff00;
 	tree[obj].ob_flags |= SELECTABLE + TOUCHEXIT;
@@ -2136,7 +2166,7 @@ static void	show_check_box( OBJECT *tree, WORD obj )
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*	obj:						Nummer des Objekts																*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	hide_check_box( OBJECT *tree, WORD obj )
+static void hide_check_box( OBJECT *tree, WORD obj )
 {
 	tree[obj].ob_flags &= 0xff00;
 	obj_HIDDEN( tree, obj );
@@ -2148,9 +2178,9 @@ static void	hide_check_box( OBJECT *tree, WORD obj )
 /* Funktionsergebnis:	Bitvektor fuer selektierte Checkboxen										*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	get_check_state( OBJECT *tree )
+static WORD get_check_state( OBJECT *tree )
 {
-	WORD	check_boxes;
+	WORD check_boxes;
 	
 	check_boxes = 0;
 
@@ -2175,11 +2205,11 @@ static WORD	get_check_state( OBJECT *tree )
 /*	fnt_dialog:				Zeiger auf die Fontdialog-Struktur											*/
 /*	obj:						Nummer des Objekts																*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	do_buttons( FNT_DIALOG *fnt_dialog, WORD obj )
+static WORD do_buttons( FNT_DIALOG *fnt_dialog, WORD obj )
 {
-	OBJECT	*tree;
-	WORD	exit_obj;
-	WORD	i;
+	OBJECT *tree;
+	WORD exit_obj;
+	WORD i;
 
 	tree = fnt_dialog->tree;
 
@@ -2291,7 +2321,7 @@ static WORD	do_buttons( FNT_DIALOG *fnt_dialog, WORD obj )
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	do_CHECK_NAME( OBJECT *tree )
+static void do_CHECK_NAME( OBJECT *tree )
 {
 	if	( tree[CHECK_NAME].ob_state & SELECTED )					/* selektiert? */
 		enable_lbox( tree, fname_obj, NO_FNAMES );				/* Objekte der Listbox sind anwaehlbar */
@@ -2304,7 +2334,7 @@ static void	do_CHECK_NAME( OBJECT *tree )
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	do_CHECK_STYLE( OBJECT *tree )
+static void do_CHECK_STYLE( OBJECT *tree )
 {
 	if	( tree[CHECK_STYLE].ob_state & SELECTED )					/* selektiert? */
 		enable_lbox( tree, fstyle_obj, NO_FSTYLES );				/* Objekte der Listbox sind anwaehlbar */
@@ -2317,7 +2347,7 @@ static void	do_CHECK_STYLE( OBJECT *tree )
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	do_CHECK_SIZE( OBJECT *tree )
+static void do_CHECK_SIZE( OBJECT *tree )
 {
 	if	( tree[CHECK_SIZE].ob_state & SELECTED )					/* selektiert? */
 	{
@@ -2338,7 +2368,7 @@ static void	do_CHECK_SIZE( OBJECT *tree )
 /* Funktionsergebnis:	-																						*/
 /*	tree:						Zeiger auf den Objektbaum														*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	do_CHECK_RATIO( OBJECT *tree )
+static void do_CHECK_RATIO( OBJECT *tree )
 {
 	if	( tree[CHECK_RATIO].ob_state & SELECTED )					/* selektiert? */
 	{
@@ -2360,10 +2390,10 @@ static void	do_CHECK_RATIO( OBJECT *tree )
 /*	min:						Minimum																				*/
 /*	max:						Maximum																				*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	get_fixed( OBJECT *obj, LONG *old_value, LONG min, LONG max )
+static WORD get_fixed( OBJECT *obj, LONG *old_value, LONG min, LONG max )
 {
-	LONG	a;
-	WORD	err;
+	LONG a;
+	WORD err;
 		
 	a = str_to_fixed( obj->ob_spec.tedinfo->te_ptext, &err );
 
@@ -2392,9 +2422,9 @@ static WORD	get_fixed( OBJECT *obj, LONG *old_value, LONG min, LONG max )
 /* Funktionsergebnis:	0: Taste ignorieren 1: Taste ist zugelassen								*/
 /*	ucode:					Tastencode																			*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	check_key( UWORD code )
+static WORD check_key( UWORD code )
 {
-	WORD	asc;
+	WORD asc;
 
 	asc = code & 0xff;													/* ASCII-Code */
 
@@ -2425,9 +2455,9 @@ static WORD	check_key( UWORD code )
 /*	clip_rect:				Zeiger auf VRECT-Struktur fuer das Clipping-Rechteck					*/
 /*	dialog_flags:			Aussehen des Dialogs																*/
 /*----------------------------------------------------------------------------------------*/ 
-static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT *clip_rect, WORD dialog_flags )
+static void draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT *clip_rect, WORD dialog_flags )
 {
-	WORD	xy[10];
+	WORD xy[10];
 
 	*clip_rect = *(VRECT *) &parmblock->pb_xc;					/* Clipping-Rechteck... */
 	clip_rect->x2 += clip_rect->x1 - 1;
@@ -2482,13 +2512,13 @@ static void	draw_3d_box( PARMBLK *parmblock, WORD vdi_handle, VRECT *rect, VRECT
 /* NVDI-Cookie suchen und feststellen, ob vqt_xfntinfo() aufgerufen werden kann				*/
 /* Funktionsresultat:	0: nicht aufrufen 1: aufrufen													*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	use_vqt_xfontinfo( void )
+static WORD use_vqt_xfontinfo( void )
 {
 	struct _nvdi_struct													/* verkuerzte NVDI-Struktur */
 	{
-		WORD	version;
-		LONG	datum;
-		WORD	conf;
+		WORD version;
+		LONG datum;
+		WORD conf;
 	} *nvdi_struct;
 
 	struct _cookie															/* Cookie-Struktur */
@@ -2496,14 +2526,22 @@ static WORD	use_vqt_xfontinfo( void )
 		LONG	id;
 		LONG	value;
 	} *search;
-	
+
+#define COOKIE_NVDI 0x4E564449L /* 'NVDI' */
+
+#if CALL_MAGIC_KERNEL
 	search = *(struct _cookie **) 0x5a0;							/* Zeiger auf den Cookie-Jar */
+#else
+	search = (struct _cookie *)get_cookie_ptr(COOKIE_NVDI);
+#endif
 	
 	if ( search )
 	{
+#if CALL_MAGIC_KERNEL
 		while ( search->id )
 		{
-			if ( search->id == 'NVDI' )								/* NVDI-Cookie? */
+			if ( search->id == COOKIE_NVDI )								/* NVDI-Cookie? */
+#endif
 			{
 				LONG	datum;
 				LONG	cmp;
@@ -2520,8 +2558,10 @@ static WORD	use_vqt_xfontinfo( void )
 				else
 					return( 0 );											/* vqt_fontheader() benutzen */
 			}
+#if CALL_MAGIC_KERNEL
 			search++;														/* naechster Cookie */
-		}		
+		}
+#endif
 	}
 	return( 0 );
 }
@@ -2534,19 +2574,19 @@ static WORD	use_vqt_xfontinfo( void )
 /*	item:						Zeiger auf den angewaehlten Eintrag											*/
 /* user_data:				Zeiger auf FNT_DIALOG-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
-void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
+void cdecl slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
 {
-	FNT_DIALOG	*fnt_dialog;
-	GRECT		*rect;
-	FNT		*family;
-	FNT		*font;
-	BYTE		last_style[64];
-	LBOX_ITEM	*style;
-	WORD		old_cnt;
-	WORD		old_top;
+	FNT_DIALOG *fnt_dialog;
+	GRECT *rect;
+	FNT *family;
+	FNT *font;
+	BYTE last_style[64];
+	LBOX_ITEM *style;
+	WORD old_cnt;
+	WORD old_top;
 
-	(void) obj_index;
-	(void) box;
+	UNUSED(obj_index);
+	UNUSED(box);
 	fnt_dialog = (FNT_DIALOG *) user_data;
 
 	if (( item->selected == 0 )|| ( item->selected == last_state ))	/* Deselektion ignorieren */
@@ -2561,7 +2601,7 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 	else
 		last_style[0] = 0;
 		
-	old_top = lbox_get_first( fnt_dialog->fnt_style );
+	old_top = lbox_get_afirst( fnt_dialog->fnt_style );
 	old_cnt = lbox_cnt_items( fnt_dialog->fnt_style );
 	lbox_free_items( fnt_dialog->fnt_style );					/* Speicher fuer LBOX_ITEMs freigeben */
 
@@ -2609,18 +2649,18 @@ void	cdecl	slct_family( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user
 /*	item:						Zeiger auf den angewaehlten Eintrag											*/
 /* user_data:				Zeiger auf FNT_DIALOG-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
-void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
+void cdecl slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
 {
-	LBOX_ITEM	*size_list;
-	GRECT		*rect;
-	WORD		old_cnt;
-	WORD		old_top;
-	LBOX_ITEM	*size;
+	LBOX_ITEM *size_list;
+	GRECT *rect;
+	WORD old_cnt;
+	WORD old_top;
+	LBOX_ITEM *size;
 	FNT	*font;
-	FNT_DIALOG	*fnt_dialog;
+	FNT_DIALOG *fnt_dialog;
 
-	(void) obj_index;
-	(void) box;
+	UNUSED(obj_index);
+	UNUSED(box);
 	fnt_dialog = (FNT_DIALOG *) user_data;
 
 	if (( item->selected == 0 ) || ( item->selected == last_state ))	/* Deselektion ignorieren */
@@ -2634,7 +2674,7 @@ void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_
 	fnt_dialog->outline = font->outline;
 	fnt_dialog->display = font->display;							/* Zeiger auf die Anzeige-Funktion */
 	
-	old_top = lbox_get_first( fnt_dialog->fnt_size );
+	old_top = lbox_get_afirst( fnt_dialog->fnt_size );
 	old_cnt = lbox_cnt_items( fnt_dialog->fnt_size );
 	lbox_free_items( fnt_dialog->fnt_size );						/* Speicher fuer LBOX_ITEMs freigeben */
 
@@ -2690,13 +2730,13 @@ void	cdecl	slct_style( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_
 /*	item:						Zeiger auf den angewaehlten Eintrag											*/
 /* user_data:				Zeiger auf FNT_DIALOG-Struktur												*/
 /*----------------------------------------------------------------------------------------*/ 
-void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
+void cdecl slct_size(LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_data, WORD obj_index, WORD last_state )
 {
-	FNT_DIALOG	*fnt_dialog;
-	WORD		edit_obj;
-	WORD	index;
+	FNT_DIALOG *fnt_dialog;
+	WORD edit_obj;
+	WORD index;
 	
-	(void) obj_index;
+	UNUSED(obj_index);
 	if ( item && (( item->selected == 0 ) || ( item->selected == last_state )))	/* Deselektion ignorieren */
 		return;
 
@@ -2746,15 +2786,15 @@ void	cdecl	slct_size( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, void *user_d
 /* user_data:				...																					*/
 /*	rect:						GRECT fuer Selektion/Deselektion oder 0L (nicht veraenderbar)			*/					
 /*----------------------------------------------------------------------------------------*/ 
-WORD	cdecl	set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD index, void *user_data, GRECT *rect, WORD first )
+WORD cdecl set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD index, void *user_data, GRECT *rect, WORD first )
 {
-	BYTE	*str;
-	BYTE	*ptext;
+	BYTE *str;
+	BYTE *ptext;
 
-	(void)first;
-	(void)rect;
-	(void)user_data;
-	(void)box;
+	UNUSED(first);
+	UNUSED(rect);
+	UNUSED(user_data);
+	UNUSED(box);
 	ptext = tree[index].ob_spec.tedinfo->te_ptext;				/* Zeiger auf String des GTEXT-Objekts */
 
 	if ( item )
@@ -2790,11 +2830,11 @@ WORD	cdecl	set_str_item( LIST_BOX *box, OBJECT *tree, LBOX_ITEM *item, WORD inde
 /*	clicks:					Anzahl der Mausklicks															*/
 /*	data:						Zeiger auf zusaetzliche Daten													*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	cdecl	do_slct_font( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data )
+WORD cdecl do_slct_font( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data )
 {
 	FNT_DIALOG	*fnt_dialog;
 	
-	(void)events;
+	UNUSED(events);
 	if ( obj < 0 )															/* Nachricht? */
 	{
 		if ( obj == HNDL_CLSD )											/* Dialog geschlossen? */
@@ -2832,13 +2872,13 @@ WORD	cdecl	do_slct_font( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, vo
 /* Funktionsresultat:	nicht aktualisierte Objektstati												*/
 /* parmblock:				Zeiger auf die Parameter-Block-Struktur									*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	cdecl sample_text( PARMBLK *parmblock )
+WORD cdecl sample_text( PARMBLK *parmblock )
 {
 	FNT_DIALOG	*fnt_dialog;
-	WORD	tmp;
-	VRECT	clip_rect;
-	VRECT	rect;
-	WORD	vdi_handle;
+	WORD tmp;
+	VRECT clip_rect;
+	VRECT rect;
+	WORD vdi_handle;
 	
 	fnt_dialog = (FNT_DIALOG *) parmblock->pb_parm;
 	vdi_handle = fnt_dialog->vdi_handle;
@@ -2879,12 +2919,12 @@ WORD	cdecl sample_text( PARMBLK *parmblock )
 
 		if ( fnt_dialog->outline )										/* Vektorfont? */
 		{
-			LONG	pt;
-			LONG	ratio;
-			WORD	negative;
-			ULONG	w1;
-			ULONG	w2;
-			LONG	width;
+			LONG pt;
+			LONG ratio;
+			WORD negative;
+			ULONG w1;
+			ULONG w2;
+			LONG width;
 
 			vst_arbpt32( vdi_handle, fnt_dialog->pt, &tmp, &tmp, &tmp, &tmp );	/* Hoehe einstellen */
 
@@ -2937,13 +2977,13 @@ WORD	cdecl sample_text( PARMBLK *parmblock )
 /* Funktionsresultat:	nicht aktualisierte Objektstati												*/
 /* parmblock:				Zeiger auf die Parameter-Block-Struktur									*/
 /*----------------------------------------------------------------------------------------*/ 
-WORD	cdecl check_box( PARMBLK *parmblock )
+WORD cdecl check_box( PARMBLK *parmblock )
 {
-	FNT_DIALOG	*fnt_dialog;
-	VRECT	clip_rect;
-	VRECT	rect;
-	WORD	xy[10];
-	WORD	vdi_handle;
+	FNT_DIALOG *fnt_dialog;
+	VRECT clip_rect;
+	VRECT rect;
+	WORD xy[10];
+	WORD vdi_handle;
 	
 	fnt_dialog = (FNT_DIALOG *) parmblock->pb_parm;
 	vdi_handle = fnt_dialog->vdi_handle;

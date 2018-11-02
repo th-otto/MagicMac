@@ -1,79 +1,5 @@
-#define	lbox_get_first \
-			lbox_get_afirst
-			
-#define	lbox_get_visible \
-			lbox_get_avis
-			
-#define	lbox_set_slider \
-			lbox_set_asldr
-
-#define	lbox_scroll_to \
-			lbox_ascroll_to
-
-
-#if	CALL_MAGIC_KERNEL
-
-#define	lbox_get_items \
-			lbox_gnitems
-
-#define	lbox_get_item \
-			lbox_gitem
-
-#define	lbox_get_tree \
-			lbox_gtree
-			
-#define	lbox_get_udata \
-			lbox_gudata
-
-#define	lbox_get_avis \
-			lbox_gavis
-			
-#define	lbox_get_bvis \
-			lbox_gbvis
-
-#define	lbox_set_bvis \
-			lbox_sbvis
-			
-#define	lbox_get_afirst \
-			lbox_gafirst
-
-#define	lbox_get_slct_idx \
-			lbox_gsx
-
-#define	lbox_get_slct_item \
-			lbox_gsitem
-
-#define	lbox_get_idx \
-			lbox_gidx
-
-#define	lbox_get_bvis \
-			lbox_gbvis
-			
-#define	lbox_get_bfirst \
-			lbox_gbfirst
-
-#define	lbox_get_bentries \
-			lbox_gbentries
-
-#define	lbox_free_list \
-			lbox_flist
-
-#define	lbox_set_asldr \
-			lbox_saslider
-
-#define	lbox_set_bsldr \
-			lbox_sbslider
-
-#define	lbox_ascroll_to \
-			lbox_sato
-
-#define	lbox_bscroll_to \
-			lbox_sbto
-
-#define	lbox_set_bentries \
-			lbox_sbentries 
-			
-#endif
+#ifndef __LISTBOX_H__
+#define __LISTBOX_H__ 1
 
 typedef	void	(cdecl *SLCT_ITEM)( struct _list_box *box, OBJECT *tree, struct _lbox_item *item, void *user_data, WORD obj_index, WORD last_state );
 typedef	WORD	(cdecl *SET_ITEM)( struct _list_box *box, OBJECT *tree, struct _lbox_item *item, WORD obj_index, void *user_data, GRECT *rect, WORD first );
@@ -174,3 +100,4 @@ void	lbox_set_bentries( LIST_BOX *box, WORD entries );
 void	lbox_bscroll_to( LIST_BOX *box, WORD first, GRECT *box_rect, GRECT *slider_rect );
 
 
+#endif

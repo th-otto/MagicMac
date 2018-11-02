@@ -1,0 +1,16 @@
+list_box.c:
+    lbox_do: a4 -> a5, different stack offsets
+    auto_scroll_up: a4->a5, a3->a4
+    auto_scroll_left: a4->a5, a3->a4
+    auto_scroll_down: a4->a5, a3->a4
+    auto_scroll_right: a4->a5, a3->a4
+
+pdlg.c:
+    set_icon_item: different register usage
+    insert_panel: different order of register loads in prologue
+
+pdlgqd:
+    different register usage in first loop of create_sub_dlgs
+    
+readfile:
+    different order of register loads in call to readbuf

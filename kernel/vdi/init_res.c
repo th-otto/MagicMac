@@ -2,8 +2,8 @@
 #include <tos.h>
 #include <vdi.h>
 #include "std.h"
-#include "drivers.h"
 #include "nvdi.h"
+#include "drivers.h"
 #include "init_res.h"
 
 /* Bitmasks for Vsetmode() */

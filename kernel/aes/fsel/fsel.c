@@ -26,7 +26,6 @@
 #include <string.h>
 #include <toserror.h>
 #define form_xdo    ____dummy2
-/* #include <magx.h> */
 #undef form_xdo
 #include "ger\fselx.h"
 #include "..\wdialog\shelsort.h"
@@ -64,83 +63,6 @@ typedef struct _xted {
 /* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel                       */
 /*----------------------------------------------------------------------------------------*/ 
 
-#define   fslx_getnxtfile fslx_gnx
-
-#define   wdlg_get_tree \
-               wdlg_gtree
-
-#define   wdlg_get_edit \
-               wdlg_gedit
-
-#define   wdlg_get_udata \
-               wdlg_gudata
-
-#define   wdlg_get_handle \
-               wdlg_ghandle
-
-#define   wdlg_set_edit \
-               wdlg_sedit
-
-#define   wdlg_set_size \
-               wdlg_ssize
-
-#define   lbox_get_items \
-               lbox_gnitems
-
-#define   lbox_get_item \
-               lbox_gitem
-               
-#define   lbox_get_tree \
-               lbox_gtree
-               
-#define   lbox_get_udata \
-               lbox_gudata
-
-#define   lbox_get_avis \
-               lbox_gavis
-               
-#define   lbox_get_bvis \
-               lbox_gbvis
-               
-#define   lbox_get_afirst \
-               lbox_gafirst
-
-#define   lbox_get_slct_idx \
-               lbox_gsx
-
-#define   lbox_get_slct_item \
-               lbox_gsitem
-
-#define   lbox_get_idx \
-               lbox_gidx
-
-#define   lbox_get_bvis \
-               lbox_gbvis
-               
-#define   lbox_get_bfirst \
-               lbox_gbfirst
-
-#define   lbox_get_bentries \
-               lbox_gbentries
-
-#define   lbox_free_list \
-               lbox_flist
-
-#define   lbox_set_asldr \
-               lbox_saslider
-
-#define   lbox_set_bsldr \
-               lbox_sbslider
-
-#define   lbox_ascroll_to \
-               lbox_sato
-
-#define   lbox_bscroll_to \
-               lbox_sbto
-
-#define   lbox_set_bentries \
-               lbox_sbentries 
-
 typedef   void *DIALOG;
 typedef   WORD (cdecl *HNDL_OBJ)( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
 
@@ -155,7 +77,7 @@ typedef   WORD (cdecl *HNDL_OBJ)( DIALOG *dialog, EVNT *events, WORD obj, WORD c
 #define   HNDL_UNTP -11                           /* Dialog-Fenster ist nicht aktiv */
 
 extern    void *wdlg_create( HNDL_OBJ handle_exit, OBJECT *tree, void *user_data, WORD code, void *data, WORD flags );
-extern    WORD wdlg_open( DIALOG *dialog, BYTE *title, WORD kind, WORD x, WORD y, WORD code, void *data );
+extern    WORD wdlg_open( DIALOG *dialog, const char *title, WORD kind, WORD x, WORD y, WORD code, void *data );
 extern    WORD wdlg_set_edit( DIALOG *dialog, WORD obj );
 extern    WORD wdlg_close( DIALOG *dialog, WORD *x, WORD *y );
 extern    WORD wdlg_delete( DIALOG *dialog );
@@ -169,17 +91,13 @@ extern    WORD wdlg_set_size( DIALOG *dialog, GRECT *size );
 extern void graf_rbox( int x, int y, int minw, int minh,
                          int *neuw, int *neuh);
 
-extern WORD lbox_sbvis( void *lbox, WORD new);
+extern WORD lbox_set_bvis( void *lbox, WORD new);
 
 #if BINEXACT
 extern void vmemcpyl(void *dst, void *src, long len);
 #else
 #define vmemcpyl vmemcpy
 #endif
-
-/*
-#include <wdial_g.h>
-*/
 
 #include "listbx_g.h"
 #include "ker_bind.h"
@@ -982,7 +900,7 @@ static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
      
      if   ( new )
           {
-          int dummyglobal[15];
+          WORD dummyglobal[15];
 
           vmemcpyl( new, rsc, (UWORD) len );   /* Resource kopieren */
           _rsrc_rcfix( dummyglobal, new );   /* Resource beim AES anmelden */
@@ -1692,7 +1610,7 @@ static void goto_subdir( FSEL_DIALOG *fsd, FILEINFO *fi )
 
 static int index2obj( FSEL_DIALOG *fsd, int index )
 {
-     index -= lbox_get_first(fsd->lbox);
+     index -= lbox_get_afirst(fsd->lbox);
      if   (index < 0)
           return(-1);         /* unsichtbar */
      if   (index >= NLINES)
@@ -1984,7 +1902,7 @@ static int cdecl draw_fname( PARMBLK *p )
      if   (line < 0)
           return(0);               /* Zeile ungueltig */
      fi = (FILEINFO *) lbox_get_item(fsd->lbox,
-                    line+lbox_get_first(fsd->lbox));
+                    line+lbox_get_afirst(fsd->lbox));
 
      if   (fi->is_alias)
           fs_effct(4);        /* kursiv */
@@ -2345,7 +2263,7 @@ static void scroll_to_obj( FSEL_DIALOG *fsd, int obj, int index)
           dob->ob_state |= SELECTED;
           fsel_draw(fsd, obj);
           }
-     else lbox_scroll_to( fsd->lbox,
+     else lbox_ascroll_to( fsd->lbox,
           index,
           (GRECT *) &tree->ob_x,
           (GRECT *) &tree->ob_x);
@@ -2605,7 +2523,7 @@ static int do_key(FSEL_DIALOG *fsd, WORD key, WORD kstate)
 
      if   (kstate & K_CTRL)
           {
-          new_selected_index = lbox_get_first(fsd->lbox);
+          new_selected_index = lbox_get_afirst(fsd->lbox);
           new_selected_index += amount;
 
           if   (new_selected_index > fsd->nfiles-1)
@@ -2621,7 +2539,7 @@ static int do_key(FSEL_DIALOG *fsd, WORD key, WORD kstate)
           if   (selected_index < 0)
                new_selected_index =
                     (amount < 0) ? fsd->nfiles-1 :
-                                   lbox_get_first(fsd->lbox);
+                                   lbox_get_afirst(fsd->lbox);
           else {
                offs = (amount < 0) ? 0 : -NLINES+1;
                new_selected_index = selected_index + amount;
@@ -2817,7 +2735,7 @@ static void resize_fs_tree( FSEL_DIALOG *fsd, WORD newwidth )
 
      _resize_fs_tree( tree, 0 );
 
-     lbox_sbvis( fsd->lbox, tree[FS_BOX0].ob_width/big_wchar);
+     lbox_set_bvis( fsd->lbox, tree[FS_BOX0].ob_width/big_wchar);
      lbox_set_bsldr(fsd->lbox, 0, NULL);
      lbox_update(fsd->lbox, NULL);
      abbrev_path_wo_drv(fsd->abbr_path,

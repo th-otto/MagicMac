@@ -1,33 +1,5 @@
-#if	CALL_MAGIC_KERNEL
-
-#define	wdlg_get_tree \
-			wdlg_gtree
-
-#define	wdlg_get_edit \
-			wdlg_gedit
-
-#define	wdlg_get_udata \
-			wdlg_gudata
-
-#define	wdlg_get_handle \
-			wdlg_ghandle
-
-#define	wdlg_set_edit \
-			wdlg_sedit
-
-#define	wdlg_set_tree \
-			wdlg_stree
-
-#define	wdlg_set_size \
-			wdlg_ssize
-
-#define	wdlg_set_iconify \
-			wdlg_sic
-
-#define	wdlg_set_uniconify \
-			wdlg_sui
-
-#endif
+#ifndef __WDIALOG_H__
+#define __WDIALOG_H__ 1
 
 #ifndef __EVNT
 #define __EVNT
@@ -54,43 +26,47 @@ typedef	WORD	(cdecl *HNDL_OBJ)( struct _dialog *dialog, EVNT *events, WORD obj, 
 
 typedef struct _dialog
 {
-	LONG			magic1;													/* Magic: 'wdlg' */
-	LONG			version;													/* Versionsnummer: 0x10000L */
+	LONG			magic1;				/* Magic: 'wdlg' */
+	LONG			version;			/* Versionsnummer: 0x10000L */
 	
 	WORD			flags;
 	
-	void			*user_data;												/* benutzerinterne Daten */
+	void			*user_data;			/* benutzerinterne Daten */
 
-	OBJECT 		*tree;													/* Objektbaum */
-	GRECT			rect;														/* Dialogposition und -ausmasse (nicht mit border geschnitten) */
+	OBJECT 		*tree;					/* Objektbaum */
+	GRECT			rect;				/* Dialogposition und -ausmasse (nicht mit border geschnitten) */
 
-	WORD			whdl;														/* Fensterhandle */
-	WORD			kind;														/* Fensterattribute */
-	GRECT			border;													/* Fensterposition und -ausmasse (auf den Rand bezogen) */
+	WORD			whdl;				/* Fensterhandle */
+	WORD			kind;				/* Fensterattribute */
+	GRECT			border;				/* Fensterposition und -ausmasse (auf den Rand bezogen) */
 
-	HNDL_OBJ		handle_exit;											/* Zeiger auf die Service-Funktion */
+	HNDL_OBJ		handle_exit;		/* Zeiger auf die Service-Funktion */
 
-	WORD			act_editob;												/* aktuelles Edit- Objekt */
+	WORD			act_editob;			/* aktuelles Edit- Objekt */
 	WORD			cursorpos;
 
-	WORD			root_ob_state;											/* beim Aufruf von wdlg_open gesicherter ob_state des ROOT-Objekts */
-	OBSPEC		root_ob_spec;											/* beim Aufruf von wdlg_open gesicherter ob_spec des ROOT-Objekts */
+	WORD			root_ob_state;		/* beim Aufruf von wdlg_open gesicherter ob_state des ROOT-Objekts */
+	OBSPEC		root_ob_spec;			/* beim Aufruf von wdlg_open gesicherter ob_spec des ROOT-Objekts */
 } DIALOG;
 
 /* Definitionen fuer <flags> */
-#define	WDLG_BKGD	1													/* Hintergrundbedienung zulassen */
+#ifndef WDLG_BKGD
+#define	WDLG_BKGD	0x0001				/* Permit background operation */
+#endif
 
 /* Funktionsnummern fuer <obj> bei handle_exit(...) */
-#define	HNDL_INIT	-1													/* Dialog initialisieren */
-#define	HNDL_MESG	-2													/* Message bearbeiten */
-#define	HNDL_CLSD	-3													/* Dialogfenster wurde geschlossen */
-#define	HNDL_OPEN	-5													/* Dialog-Initialisierung abschliessen (zweiter Aufruf am Ende von wdlg_init) */
-#define	HNDL_EDIT	-6													/* Zeichen fuer ein Edit-Feld ueberpruefen */
-#define	HNDL_EDDN	-7													/* Zeichen wurde ins Edit-Feld eingetragen */
-#define	HNDL_EDCH	-8													/* Edit-Feld wurde gewechselt */
-#define	HNDL_MOVE	-9													/* Dialog wurde verschoben */
-#define	HNDL_TOPW	-10												/* Dialog-Fenster ist nach oben gekommen */
-#define	HNDL_UNTP	-11												/* Dialog-Fenster ist nicht aktiv */
+#ifndef HNDL_INIT
+#define	HNDL_INIT	(-1)			/* Initialise dialog */
+#define	HNDL_MESG	(-2)			/* Handle message */
+#define	HNDL_CLSD	(-3)			/* Dialog window was closed */
+#define	HNDL_OPEN	(-5)			/* End of dialog initialisation (second call at end of wdlg_init) */
+#define	HNDL_EDIT	(-6)			/* Test characters for an edit-field */
+#define	HNDL_EDDN	(-7)			/* Character was entered in edit-field */
+#define	HNDL_EDCH	(-8)			/* Edit-field was changed */
+#define	HNDL_MOVE	(-9)			/* Dialog was moved */
+#define	HNDL_TOPW	(-10)			/* Dialog-window has been topped */
+#define	HNDL_UNTP	(-11)			/* Dialog-window is not active */
+#endif
 
 /* Parameterbeschreibung fuer die Service-Routine handle_exit():
 
@@ -154,7 +130,7 @@ typedef struct _dialog
 */
 
 extern	DIALOG	*wdlg_create( HNDL_OBJ handle_exit, OBJECT *tree, void *user_data, WORD code, void *data, WORD flags );
-extern	WORD	wdlg_open( DIALOG *d, BYTE *title, WORD kind, WORD x, WORD y, WORD code, void *data );
+extern	WORD	wdlg_open( DIALOG *d, const char *title, WORD kind, WORD x, WORD y, WORD code, void *data );
 extern	WORD	wdlg_close( DIALOG *d, WORD *x, WORD *y );
 extern	WORD	wdlg_delete( DIALOG *d );
 
@@ -166,8 +142,10 @@ extern	WORD	wdlg_get_handle( DIALOG *d );
 extern	WORD	wdlg_set_edit( DIALOG *d, WORD obj );
 extern	WORD	wdlg_set_tree( DIALOG *d, OBJECT *tree );
 extern	WORD	wdlg_set_size( DIALOG *d, GRECT *size );
-extern	WORD	wdlg_set_iconify( DIALOG *d, GRECT *g, char *title, OBJECT *tree, WORD obj );
-extern	WORD	wdlg_set_uniconify( DIALOG *d, GRECT *g, char *title, OBJECT *tree );
+extern	WORD	wdlg_set_iconify( DIALOG *d, GRECT *g, const char *title, OBJECT *tree, WORD obj );
+extern	WORD	wdlg_set_uniconify( DIALOG *d, GRECT *g, const char *title, OBJECT *tree );
 
 extern 	WORD	wdlg_evnt( DIALOG *d, EVNT *events );
 extern	void	wdlg_redraw( DIALOG *d, GRECT *rect, WORD obj, WORD depth );
+
+#endif

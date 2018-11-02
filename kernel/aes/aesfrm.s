@@ -445,7 +445,7 @@ xfrm_popup:
 
  move.l   a0,a5                    ; a5 = OBJECT *
 
-; Initialialisierung fuers Scrolling
+; Initialisierung fuers Scrolling
 
  clr.w    -52(a6)                  ; default: keinen festen Puffer verwenden
  move.l   a1,-34(a6)               ; Scrollroutine
