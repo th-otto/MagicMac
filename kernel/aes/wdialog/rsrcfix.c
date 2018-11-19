@@ -81,14 +81,14 @@ static void fix_nptr(WORD idx, WORD ob_type)
 	while (idx != 0)
 	{
 		idx--;
-		fix_long((_LONG *)get_address(ob_type, idx));
+		fix_long((LONG *)get_address(ob_type, idx));
 	}
 }
 
 
 static int fix_ptr(WORD type, WORD idx)
 {
-	_WORD _idx = idx;
+	WORD _idx = idx;
 	_idx = _idx;
 	return fix_long((LONG *)get_address(type, _idx));
 }
@@ -238,7 +238,7 @@ static void fix_object(void)
 		type = obj->ob_type & 0xFF;
 		if (type != G_BOX && type != G_IBOX && type != G_BOXCHAR)
 		{
-			fix_long((_LONG *) &obj->ob_spec);
+			fix_long((LONG *) &obj->ob_spec);
 		}
 	}
 }

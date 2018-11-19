@@ -17,6 +17,9 @@ typedef struct _prn_dialog PRN_DIALOG;
 #ifndef CALL_MAGIC_KERNEL
 #define	CALL_MAGIC_KERNEL 1
 #endif
+#ifndef PDLG_SLB
+#define	PDLG_SLB 0
+#endif
 
 
 #include "wdialog.h"
@@ -25,7 +28,7 @@ typedef struct _prn_dialog PRN_DIALOG;
 #include "listbox.h"
 #include "fnts.h"
 typedef struct _fslx_dialog { int dummy; } XFSL_DIALOG;
-typedef _WORD _CDECL (*XFSL_FILTER)(char *path, char *name, XATTR *xa);
+typedef WORD _CDECL (*XFSL_FILTER)(char *path, char *name, XATTR *xa);
 #include "mt_aes.h"
 #include "pdlg.h"
 
@@ -34,7 +37,7 @@ typedef _WORD _CDECL (*XFSL_FILTER)(char *path, char *name, XATTR *xa);
 #endif
 
 
-extern WORD vdi_handle;
+extern WORD aes_handle;
 extern WORD	aes_flags;
 #define	GAI_WDLG	0x0001	/* wdlg_xx()-functions available */
 #define	GAI_LBOX	0x0002	/* lbox_xx()-functions available */
@@ -73,7 +76,7 @@ WORD nvdi_read_default_settings(WORD vdi_handle, PRN_SETTINGS *settings);
 WORD open_vwork(WORD aes_handle, WORD *workout);
 WORD aes_check(void);
 
-WORD get_aes_info(_WORD *font_id, _WORD *font_height, _WORD *hor_3d, _WORD *ver_3d);
+WORD get_aes_info(WORD *font_id, WORD *font_height, WORD *hor_3d, WORD *ver_3d);
 LONG get_magic(void);
 extern size_t mystrlen(const char *s);
 void _appl_yield(void);
@@ -145,5 +148,36 @@ void *pdlg_malloc(LONG size);
 int pdlg_mfree(void *addr);
 
 extern void vmemcpyl(void *dst, void *src, long len);
+
+#endif
+
+
+
+#if PDLG_SLB
+#define wdlg_redraw(a, b, c, d) mt_wdlg_redraw(a, b, c, d, NULL)
+#define wdlg_set_edit(a, b) mt_wdlg_set_edit(a, b, NULL)
+#define wdlg_get_edit(a, b) mt_wdlg_get_edit(a, b, NULL)
+#define wdlg_create(a, b, c, d, e, f) mt_wdlg_create(a, b, c, d, e, f, NULL)
+#define wdlg_open(a, b, c, d, e, f, g) mt_wdlg_open(a, b, c, d, e, f, g, NULL)
+#define wdlg_delete(a) mt_wdlg_delete(a, NULL)
+#define wdlg_evnt(a, b) mt_wdlg_evnt(a, b, NULL)
+#define wdlg_close(a, b, c) mt_wdlg_close(a, b, c, NULL)
+#define wdlg_set_size(a, b) mt_wdlg_set_size(a, b, NULL)
+#define wdlg_get_udata(a) mt_wdlg_get_udata(a, NULL)
+
+#define lbox_create(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) mt_lbox_create(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, NULL)
+#define lbox_delete(a) mt_lbox_delete(a, NULL)
+#define lbox_do(a, b) mt_lbox_do(a, b, NULL)
+#define lbox_update(a, b) mt_lbox_update(a, b, NULL)
+#define lbox_set_items(a, b) mt_lbox_set_items(a, b, NULL)
+#define lbox_get_slct_item(a) mt_lbox_get_slct_item(a, NULL)
+#define lbox_get_afirst(a) mt_lbox_get_afirst(a, NULL)
+#define lbox_set_asldr(a, b, c) mt_lbox_set_asldr(a, b, c, NULL)
+
+#define vdi_handle aes_handle
+
+#else
+
+extern WORD vdi_handle;
 
 #endif

@@ -93,24 +93,24 @@
 #define CC_ANY_BRIGHT (CC_256_GREY | CC_32K_GREY | CC_65K_GREY | CC_16M_GREY | CC_256_COLOR | CC_32K_COLOR | CC_65K_COLOR | CC_16M_COLOR)
 
 
-static _LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static _LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static _LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL init_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL do_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static _LONG _CDECL reset_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL init_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL do_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static _LONG _CDECL reset_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL init_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL do_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL reset_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL init_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL do_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL reset_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub);
 
 static void set_tedinfo(OBJECT *tree, WORD obj, const char *str, WORD spaces);
 static void set_mode(PDLG_SUB *sub, PRN_SETTINGS *settings, WORD hdpi, WORD vdpi, LONG mode_id);
 static void set_color(PDLG_SUB *sub, PRN_SETTINGS *settings, LONG color_mode);
-static int do_qual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
+static int do_qual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
 static void set_paper_size(PDLG_SUB *sub, PRN_SETTINGS *settings);
 static void set_media_type(PDLG_SUB *sub, PRN_SETTINGS *settings);
 static void set_input_tray(PDLG_SUB *sub, PRN_SETTINGS *settings);
@@ -119,12 +119,12 @@ static void set_orientation(PDLG_SUB *sub, PRN_SETTINGS *settings);
 static void set_scale(PDLG_SUB *sub, PRN_SETTINGS *settings);
 static void set_dither_mode(PDLG_SUB *sub, PRN_SETTINGS *settings);
 static void set_device(PDLG_SUB *sub, PRN_SETTINGS *settings);
-static int do_size_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static int do_paperqual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static int do_intray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static int do_outtray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static int do_dither_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static int do_device_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
+static int do_size_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static int do_paperqual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static int do_intray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static int do_outtray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static int do_dither_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static int do_device_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
 static WORD slider_val(DIALOG *dialog, OBJECT *tree, WORD obj, WORD exit_button);
 static void empty_tedinfo(OBJECT *tree, WORD obj);
 
@@ -176,7 +176,7 @@ PDLG_SUB *pdlg_std_sub(OBJECT **tree_addr)
 }
 
 
-static _LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	PRN_ENTRY *printer;
 	OBJECT *tree;
@@ -241,7 +241,7 @@ static _LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	WORD index_offset = sub->index_offset;
 	WORD cursor;
@@ -289,7 +289,7 @@ static _LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD 
 }
 
 
-static _LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree = sub->tree;
 	WORD index_offset = sub->index_offset;
@@ -317,7 +317,7 @@ static _LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree;
 	WORD index_offset;
@@ -337,7 +337,7 @@ static _LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	switch (exit_obj - sub->index_offset)
 	{
@@ -366,7 +366,7 @@ static _LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD ex
 }
 
 
-static _LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree = sub->tree;
 	WORD index_offset = sub->index_offset;
@@ -380,7 +380,7 @@ static _LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL init_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL init_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree = sub->tree;
 	WORD index_offset = sub->index_offset;
@@ -463,7 +463,7 @@ static _LONG _CDECL init_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL do_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static LONG _CDECL do_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	fixed w;
 	
@@ -493,7 +493,7 @@ static _LONG _CDECL do_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD ex
 }
 
 
-static _LONG _CDECL reset_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL reset_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree = sub->tree;
 	WORD index_offset = sub->index_offset;
@@ -519,7 +519,7 @@ static _LONG _CDECL reset_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub)
 
 
 
-static _LONG _CDECL init_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL init_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree = sub->tree;
 	WORD index_offset = sub->index_offset;
@@ -546,7 +546,7 @@ static _LONG _CDECL init_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL do_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static LONG _CDECL do_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	switch (exit_obj - sub->index_offset)
 	{
@@ -560,7 +560,7 @@ static _LONG _CDECL do_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD e
 }
 
 
-static _LONG _CDECL reset_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL reset_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree = sub->tree;
 	WORD index_offset = sub->index_offset;
@@ -656,7 +656,7 @@ static WORD slider_val(DIALOG *dialog, OBJECT *tree, WORD obj, WORD exit_button)
 }
 
 
-int do_qual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+int do_qual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	PRN_ENTRY *printer;
 	WORD count;
@@ -704,7 +704,7 @@ int do_qual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
 }
 
 
-int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	LONG color_capabilities;
 	WORD selected;
@@ -744,7 +744,7 @@ int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
 }
 
 
-static int do_size_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static int do_size_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	PRN_ENTRY *printer;
 	WORD count;
@@ -791,7 +791,7 @@ static int do_size_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
 }
 
 
-static int do_paperqual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static int do_paperqual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	PRN_MODE *mode;
 	WORD count;
@@ -838,7 +838,7 @@ static int do_paperqual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_
 }
 
 
-static int do_intray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static int do_intray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	PRN_ENTRY *printer;
 	WORD count;
@@ -885,7 +885,7 @@ static int do_intray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj
 }
 
 
-static int do_outtray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static int do_outtray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	PRN_ENTRY *printer;
 	WORD count;
@@ -932,7 +932,7 @@ static int do_outtray_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_ob
 }
 
 
-static int do_dither_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static int do_dither_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	XDRV_ENTRY *driver;
 	WORD count;
@@ -990,7 +990,7 @@ static int do_dither_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj
 }
 
 
-static int do_device_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static int do_device_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	WORD selected;
 	const char *names[5];
@@ -1184,7 +1184,7 @@ XDRV_ENTRY *get_driver_info(XDRV_ENTRY *drv_info, WORD id)
 }
 
 
-PRN_ENTRY *find_printer(XDRV_ENTRY *drv_info, WORD id, _LONG printer_id)
+PRN_ENTRY *find_printer(XDRV_ENTRY *drv_info, WORD id, LONG printer_id)
 {
 	PRN_ENTRY *printer;
 	

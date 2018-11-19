@@ -24,13 +24,13 @@ static WORD __CDECL draw_underline(PARMBLK *pb);
 static void	userdef_text(WORD x, WORD y, const char *string);
 
 
-WORD get_aes_info(_WORD *font_id, _WORD *font_height, _WORD *hor_3d, _WORD *ver_3d)
+WORD get_aes_info(WORD *font_id, WORD *font_height, WORD *hor_3d, WORD *ver_3d)
 {
 	MAGX_COOKIE *magic;
-	_WORD work_out[57];
-	_WORD attrib[10];
-	_WORD pens;
-	_WORD flags;
+	WORD work_out[57];
+	WORD attrib[10];
+	WORD pens;
+	WORD flags;
 	
 	vq_extnd(vdi_handle, 0, work_out);
 	vqt_attributes(vdi_handle, attrib);
@@ -63,10 +63,10 @@ WORD get_aes_info(_WORD *font_id, _WORD *font_height, _WORD *hor_3d, _WORD *ver_
 		
 	if (flags & GAI_INFO)		/* ist appl_getinfo() vorhanden? */
 	{
-		_WORD ag1;
-		_WORD ag2;
-		_WORD ag3;
-		_WORD ag4;
+		WORD ag1;
+		WORD ag2;
+		WORD ag3;
+		WORD ag4;
 
 		if (mt_appl_getinfo(0, &ag1, &ag2, &ag3, &ag4, NULL)) /* Unterfunktion 0, Fonts */
 		{
@@ -97,7 +97,7 @@ WORD get_aes_info(_WORD *font_id, _WORD *font_height, _WORD *hor_3d, _WORD *ver_
 				{
 					if (pens >= 16) /* mindestens 16 Farben? */
 					{
-						_WORD dummy;
+						WORD dummy;
 						
 						flags |= GAI_3D;
 						mt_objc_sysvar(0, BACKGRCOL, 0, 0, &radio_bgcol, &dummy, NULL);
@@ -149,6 +149,7 @@ void pdlg_no3d_rsrc(OBJECT *obj, WORD nobs, WORD flag)
 }
 
 
+#if !PDLG_SLB
 void substitute_objects(OBJECT *objects, UWORD nobs, WORD flags, OBJECT *selected, OBJECT *deselected)
 {
 	OBJECT *obj;
@@ -256,6 +257,7 @@ void substitute_objects(OBJECT *objects, UWORD nobs, WORD flags, OBJECT *selecte
 		}
 	}
 }
+#endif
 
 
 void substitute_free(void)
