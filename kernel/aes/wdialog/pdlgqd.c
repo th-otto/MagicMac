@@ -14,15 +14,15 @@ struct mac_sub_dlg {
 
 
 
-static _LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static _LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static _LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL init_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static _LONG _CDECL do_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-static _LONG _CDECL reset_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL init_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub);
+static LONG _CDECL do_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL reset_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub);
 static short handle_dlg_paper_mac(void);
 static short handle_dlg_general_mac(void);
 static TPPrDlg pascal mac_dlg_init_paper(THPrint hPrint);
@@ -432,7 +432,7 @@ PDLG_SUB *pdlg_qd_sub(OBJECT **tree_addr)
 }
 
 
-static _LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	mac_subdlg = sub;
 	mac_settings = settings;
@@ -440,7 +440,7 @@ static _LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	UNUSED(settings);
 	UNUSED(sub);
@@ -461,7 +461,7 @@ static _LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD 
 }
 
 
-static _LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	XDRV_ENTRY *driver;
 	PRN_ENTRY *printer;
@@ -474,7 +474,7 @@ static _LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	mac_subdlg = sub;
 	mac_settings = settings;
@@ -482,7 +482,7 @@ static _LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	UNUSED(settings);
 	UNUSED(sub);
@@ -503,7 +503,7 @@ static _LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD ex
 }
 
 
-static _LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	XDRV_ENTRY *driver;
 	PRN_ENTRY *printer;
@@ -516,7 +516,7 @@ static _LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL init_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL init_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	XDRV_ENTRY *driver;
 	PRN_ENTRY *printer;
@@ -550,7 +550,7 @@ static _LONG _CDECL init_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static _LONG _CDECL do_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj)
+static LONG _CDECL do_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	switch (exit_obj - sub->index_offset)
 	{
@@ -571,7 +571,7 @@ static _LONG _CDECL do_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD 
 }
 
 
-static _LONG _CDECL reset_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub)
+static LONG _CDECL reset_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub)
 {
 	OBJECT *tree = sub->tree;
 	WORD index_offset = sub->index_offset;

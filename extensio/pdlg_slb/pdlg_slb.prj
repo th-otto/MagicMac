@@ -1,0 +1,50 @@
+pdlg.slb
+.C[-I..\..\inc_c]
+.C[-I..\..\kernel\inc]
+.C[-I..\..\kernel\aes\wdialog]
+
+.S[-DCOUNTRY=1]
+.C[-DCOUNTRY=1]
+
+.C[-DCALL_MAGIC_KERNEL=0]
+.C[-DPDLG_SLB=1]
+.S[-DBINEXACT=1]
+.C[-DBINEXACT=1]
+
+.C[-A-]
+.C[-K-]
+.C[-P]
+.L[-S=0]	; minimaler Stack
+=
+pdlghead.s      ; startup code for SLBs
+pdlg_slb.c
+;pdlgdsp.c [-P-]
+pdlgdsp.s
+
+..\..\kernel\aes\wdialog\math.s
+..\..\kernel\aes\wdialog\std.s
+
+..\..\kernel\aes\wdialog\pdlg.c
+..\..\kernel\aes\wdialog\pdlgdrv.c
+..\..\kernel\aes\wdialog\pdlgsub.c
+..\..\kernel\aes\wdialog\pdlgqd.c
+..\..\kernel\aes\wdialog\pdlgmgmc.c
+..\..\kernel\aes\wdialog\popup.c
+..\..\kernel\aes\wdialog\list.c
+slbopen.c
+..\..\kernel\aes\wdialog\filestat.c
+..\..\kernel\aes\wdialog\readfile.c
+..\..\kernel\aes\wdialog\adaptrsc.c
+..\..\kernel\aes\wdialog\getmagic.s
+..\..\kernel\aes\wdialog\rsrcfix.c [-G]
+..\..\kernel\aes\wdialog\shelsort.c [-G-]
+
+pdlgtos.s
+aesctrl.s
+mt_aes_i.c [-P-]
+..\..\kernel\aes\wdialog\mt_aes.c [-P-]
+
+pcstdlib.lib
+
+..\..\kernel\aes\wdialog\vdi.s
+..\..\kernel\aes\wdialog\mac_api.s

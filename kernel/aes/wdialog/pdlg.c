@@ -89,12 +89,18 @@ static RSHDR *copy_rsrc(const RSHDR *rsc, LONG len)
 	
 	if (new)
 	{
+#if CALL_MAGIC_KERNEL
 		WORD dummy_global[15];
 
 		vmemcpy(new, rsc, len);							/* Resource kopieren */
-#if CALL_MAGIC_KERNEL
 		_rsrc_rcfix(dummy_global, new);							/* Resource anpassen */
+#elif PDLG_SLB
+		vmemcpy(new, rsc, len);								/* Resource kopieren */
+		mt_rsrc_rcfix(new, NULL);						/* Resource anpassen */
 #else
+		WORD dummy_global[15];
+
+		vmemcpy(new, rsc, len);								/* Resource kopieren */
 		if (aes_flags & GAI_CICN)
 			mt_rsrc_rcfix(new, NULL);						/* Resource anpassen */
 		else
@@ -257,7 +263,11 @@ PRN_DIALOG *pdlg_create(WORD dialog_flags)
 				dialog_flags &= ~PDLG_3D;
 #else
 			WORD dummy;
-			if (!(aes_flags & GAI_MAGIC) || is_3d_look == 0)
+			if (
+#if !PDLG_SLB
+				!(aes_flags & GAI_MAGIC) ||
+#endif
+				is_3d_look == 0)
 			{
 				dialog_flags &= ~PDLG_3D;
 			}
@@ -327,7 +337,7 @@ WORD pdlg_dflt_settings(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings)
 }
 
 
-_LONG pdlg_get_setsize(_VOID)
+LONG pdlg_get_setsize(void)
 {
 	return sizeof(PRN_SETTINGS);
 }
@@ -638,12 +648,14 @@ WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *documen
 				sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;
 				if (sub->tree != NULL) /* FIXME: will be endless loop without a tree */
 				{
-					if (aes_flags & GAI_MAGIC)
-					{
-						exit_button = form_xdo(tree, prn_dialog->edit_obj, &prn_dialog->edit_obj, NULL, NULL);
-					} else
+#if !PDLG_SLB
+					if (!(aes_flags & GAI_MAGIC))
 					{
 						exit_button = form_do(tree, ROOT);
+					} else
+#endif
+					{
+						exit_button = form_xdo(tree, prn_dialog->edit_obj, &prn_dialog->edit_obj, NULL, NULL);
 					}
 				} else
 				{
@@ -675,7 +687,7 @@ WORD pdlg_xopen(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *docu
 	size_t size;
 	size_t subsize;
 	OBJECT *tree;
-	
+
 	prn_dialog->option_flags = option_flags;
 	size = tree_memsize(prn_dialog->tree_addr[MAIN_DIALOG]);
 	subsize = sub_dialog_maxsize(prn_dialog);
@@ -1439,6 +1451,7 @@ static void init_rsrc(RSHDR *rsh, PRN_DIALOG *prn_dialog, WORD dialog_flags)
 			tree[icons[i]].ob_spec.iconblk->ib_char = ICOLSPEC_MAKE(BLACK, WHITE, 0);
 		}
 		
+#if !PDLG_SLB
 		tree = trindex[PAPER_DIALOG];
 		tree[PAPER_PORTRAIT].ob_type = G_ICON;
 		tree[PAPER_PORTRAIT].ob_spec.iconblk = trindex[SUBDLG_ICONS][ICON_PORTRAIT].ob_spec.iconblk;
@@ -1446,6 +1459,7 @@ static void init_rsrc(RSHDR *rsh, PRN_DIALOG *prn_dialog, WORD dialog_flags)
 		tree[PAPER_LANDSCAPE].ob_spec.iconblk = trindex[SUBDLG_ICONS][ICON_LANDSCAPE].ob_spec.iconblk;
 
 		if (aes_flags & GAI_CICN)
+#endif
 		{
 			tree = trindex[CICON_DIALOG];
 			for (i = 0; i < NUM(cicons); i++)
@@ -1478,7 +1492,11 @@ static void init_rsrc(RSHDR *rsh, PRN_DIALOG *prn_dialog, WORD dialog_flags)
 #undef NUM
 	}
 	
-	if ((dialog_flags & PDLG_3D) && (aes_flags & GAI_3D))
+	if ((dialog_flags & PDLG_3D)
+#if !PDLG_SLB
+		&& (aes_flags & GAI_3D)
+#endif
+		)
 	{
 		pdlg_do3d_rsrc(objects, nobs, hor_3d, ver_3d);
 	} else
@@ -1493,6 +1511,7 @@ static void init_rsrc(RSHDR *rsh, PRN_DIALOG *prn_dialog, WORD dialog_flags)
 		pdlg_no3d_rsrc(objects, nobs, TRUE);
 	}
 	
+#if !PDLG_SLB
 	if (!(aes_flags & GAI_MAGIC))
 	{
 		OBJECT *selected, *deselected;
@@ -1511,6 +1530,7 @@ static void init_rsrc(RSHDR *rsh, PRN_DIALOG *prn_dialog, WORD dialog_flags)
 	{
 		substitute_objects(objects, nobs, aes_flags, NULL, NULL);
 	}
+#endif
 }
 
 
@@ -1520,10 +1540,14 @@ void *pdlg_malloc(LONG size)
 {
 	if (size != 0)
 	{
+#if PDLG_SLB
+		return (Malloc)(size);
+#else
 		if (magx_found)
 			return (Malloc)(size);
 		else
 			return malloc(size);
+#endif
 	}
 	return NULL;
 }
@@ -1531,10 +1555,14 @@ void *pdlg_malloc(LONG size)
 
 void pdlg_mfree(void *addr)
 {
+#if PDLG_SLB
+	(Mfree)(addr);
+#else
 	if (magx_found)
 		(Mfree)(addr);
 	else
 		free(addr);
+#endif
 }
 
 #endif

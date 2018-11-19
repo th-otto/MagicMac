@@ -67,21 +67,21 @@
 
 typedef struct _xdrv_entry {
 	/*   0 */ struct _xdrv_entry *next;
-	/*   4 */ _LONG        length;          /* Structure length */
-	/*   8 */ _LONG        format;          /* Data format */
-	/*  12 */ _LONG        reserved;        /* Reserved */
+	/*   4 */ LONG        length;          /* Structure length */
+	/*   8 */ LONG        format;          /* Data format */
+	/*  12 */ LONG        reserved;        /* Reserved */
 	
-	/*  16 */ _WORD        driver_id;       /* Driver number for the VDI */
-	/*  18 */ _WORD        driver_type;     /* Driver type */
-	/*  20 */ _WORD        version;
-	/*  22 */ _WORD        reserved2;       /* reserved */
-	/*  24 */ _LONG        offset_hdr;
-	/*  28 */ _LONG        reserved4;       /* reserved */
+	/*  16 */ WORD        driver_id;       /* Driver number for the VDI */
+	/*  18 */ WORD        driver_type;     /* Driver type */
+	/*  20 */ WORD        version;
+	/*  22 */ WORD        reserved2;       /* reserved */
+	/*  24 */ LONG        offset_hdr;
+	/*  28 */ LONG        reserved4;       /* reserved */
 	
 	/*  32 */ PRN_ENTRY   *printers;        /* List of printers belonging to driver */
 	/*  36 */ DITHER_MODE *dither_modes;
 	/*  40 */ DRV_INFO    *drv_info;
-	/*  44 */ _LONG        reserved6;
+	/*  44 */ LONG        reserved6;
 	/*  48 */ char         file_path[128];  /* driver path */
 	/* 176 */ char         driver_name[32];
 	/* 208 */ char         name[32];
@@ -298,6 +298,8 @@ void MacSetCTitle(ControlHandle theControl, Str255 title);
 void MacGetDItem(DialogPtr theDialog, Integer itemNo, Integer *itemType, Handle *item, Rect *box);
 
 
+WORD pdlg_xopen(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *document_name, WORD option_flags, WORD x, WORD y, WORD ap_id);
+
 XDRV_ENTRY *get_driver_list(OBJECT **tree_addr, WORD vhandle);
 void install_std_dialogs(OBJECT **tree_addr, XDRV_ENTRY *entry);
 void remove_std_dialogs(XDRV_ENTRY *printers);
@@ -306,8 +308,8 @@ void delete_modes(PRN_MODE **modes);
 void set_tedinfo(OBJECT *tree, WORD obj, const char *str, WORD spaces);
 void set_mode(PDLG_SUB *sub, PRN_SETTINGS *settings, WORD hdpi, WORD vdpi, LONG mode_id);
 void set_color(PDLG_SUB *sub, PRN_SETTINGS *settings, LONG color_mode);
-int do_qual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
+int do_qual_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
 
 
 
@@ -322,7 +324,7 @@ int nvdi_write_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings);
 XDRV_ENTRY *get_driver_info(XDRV_ENTRY *drv_info, WORD id);
 XDRV_ENTRY *get_driver(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings);
 PRN_ENTRY *get_printer(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings);
-PRN_ENTRY *find_printer(XDRV_ENTRY *drv_info, WORD id, _LONG printer_id);
+PRN_ENTRY *find_printer(XDRV_ENTRY *drv_info, WORD id, LONG printer_id);
 PRN_MODE *validate_mode(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings, WORD hdpi, WORD vdpi, LONG id);
 MEDIA_SIZE *validate_paper_size(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings);
 MEDIA_TYPE *validate_media_type(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings);
@@ -353,7 +355,7 @@ PDLG_SUB *pdlg_std_sub(OBJECT **tree_addr);
 PDLG_SUB *pdlg_fsm_sub(OBJECT **tree_addr);
 
 
-typedef struct																/* Dialogbeschreibung fÅr create_sub_dialogs() */
+typedef struct																/* Dialogbeschreibung fuer create_sub_dialogs() */
 {
 	WORD sub_id;
 	PDLG_INIT init_dlg;
@@ -362,7 +364,6 @@ typedef struct																/* Dialogbeschreibung fÅr create_sub_dialogs() */
 	WORD icon_index;
 	WORD tree_index;
 } SIMPLE_SUB;
-
 
 
 PDLG_SUB *install_sub_dialogs(OBJECT **tree_addr, const SIMPLE_SUB *subs, WORD count);
