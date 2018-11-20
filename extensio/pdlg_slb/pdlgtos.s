@@ -1,4 +1,3 @@
-	XDEF	_gemdos
 	XDEF	Mfree
 	XDEF	Malloc
 	XDEF	mmalloc
@@ -12,21 +11,14 @@
 	XDEF	Fsfirst
 	XDEF	Fopen
 	XDEF	Fxattr
-
+	XDEF	Slbopen
+	
 	XDEF Getrez
 	XDEF Supexec
 	
 	TEXT
 
-_gemdos:
-	move.l	(a7)+,save_pc
-	move.l	a2,save_a2
-	trap #1
-	move.l save_a2,a2
-	move.l save_pc,a1
-	jmp (a1)
-
-Mfree:
+	MODULE Mfree
 	pea (a2)
 	pea (a0)
 	move.w	#73,-(a7)
@@ -34,9 +26,10 @@ Mfree:
 	addq.w	#6,a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
+	MODULE Malloc
 mmalloc:
-Malloc:
 	pea (a2)
 	move.l	d0,-(a7)
 	move.w	#72,-(a7)
@@ -45,16 +38,18 @@ Malloc:
 	move.l d0,a0
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fwrite:
+	MODULE Fwrite
 	movem.l   d0-d1/a0/a2,-(a7)
 	move.w	#64,(a7)
 	trap	#1
 	lea 	12(a7),a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fsetdta:
+	MODULE Fsetdta
 	pea (a2)
 	pea (a0)
 	move.w	#26,-(a7)
@@ -62,8 +57,9 @@ Fsetdta:
 	addq.w	#6,a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fseek:
+	MODULE Fseek
 	pea (a2)
 	move.w	d2,-(a7)
 	move.w	d1,-(a7)
@@ -73,16 +69,18 @@ Fseek:
 	lea 	10(a7),a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fread:
+	MODULE Fread
 	movem.l   d0-d1/a0/a2,-(a7)
 	move.w	#63,(a7)
 	trap	#1
 	lea 	12(a7),a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fgetdta:
+	MODULE Fgetdta
 	pea (a2)
 	move.w	#47,-(a7)
 	trap	#1
@@ -90,8 +88,9 @@ Fgetdta:
 	movea.l	d0,a0
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fclose:
+	MODULE Fclose
 	pea (a2)
 	move.w	d0,-(a7)
 	move.w	#62,-(a7)
@@ -99,16 +98,18 @@ Fclose:
 	addq.w	#4,a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Dgetdrv:
+	MODULE Dgetdrv
 	pea (a2)
 	move.w	#25,-(a7)
 	trap	#1
 	addq.w	#2,a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fsfirst:
+	MODULE Fsfirst
 	pea (a2)
 	move.w	d0,-(a7)
 	pea (a0)
@@ -117,8 +118,9 @@ Fsfirst:
 	addq.w	#8,a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fopen:
+	MODULE Fopen
 	pea (a2)
 	move.w	d0,-(a7)
 	pea (a0)
@@ -127,16 +129,18 @@ Fopen:
 	addq.w	#8,a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-Fxattr:
+	MODULE Fxattr
 	movem.l   d0/a0-a2,-(a7)
 	move.w	#$12c,(a7)
 	trap	#1
 	lea 12(a7),a7
 	move.l (a7)+,a2
 	rts
-
-Supexec:
+	ENDMOD
+	
+	MODULE Supexec
 	pea (a2)
 	pea (a0)
 	move.w	#38,-(a7)
@@ -144,7 +148,29 @@ Supexec:
 	addq.w	#6,a7
 	move.l (a7)+,a2
 	rts
+	ENDMOD
 
-	BSS
-save_pc: ds.l 1
-save_a2: ds.l 1
+				MODULE	Slbopen
+				pea		(a2)
+				move.l	12(a7),-(a7)
+				move.l	12(a7),-(a7)
+				move.l	d0,-(a7)
+				pea		(a1)
+				pea		(a0)
+				move.w	#$16,-(a7)
+				trap #1
+				lea		22(a7),a7
+				move.l	(a7)+,a2
+				rts
+				ENDMOD
+								
+				MODULE	Slbclose
+				pea		(a2)
+				pea		(a0)
+				move.w	#$17,-(a7)
+				trap #1
+				addq.l	#6,a7
+				move.l	(a7)+,a2
+				rts
+				ENDMOD
+								
