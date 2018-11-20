@@ -2,13 +2,15 @@
 #include "pdlgqd.h"
 
 
+static unsigned char const pdlg_rsc[] = {
 #if COUNTRY == COUNTRY_DE || COUNTRY == COUNTRY_SG
-#include "ger\pdlg_rsc.h"
+#include "ger\pdlg.inc"
 #elif COUNTRY == COUNTRY_US || COUNTRY == COUNTRY_UK
-#include "us\pdlg_rsc.h"
+#include "us\pdlg.inc"
 #elif COUNTRY == COUNTRY_FR || COUNTRY == COUNTRY_SF
-#include "fra\pdlg_rsc.h"
+#include "fra\pdlg.inc"
 #endif
+};
 
 struct MgMcCookie *mgmc_cookie;
 PDLG_SUB *mac_subdlg;
