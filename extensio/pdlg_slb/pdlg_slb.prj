@@ -35,10 +35,10 @@ pdlgdsp.s
 ..\..\kernel\aes\wdialog\readfile.c
 ..\..\kernel\aes\wdialog\adaptrsc.c
 ..\..\kernel\aes\wdialog\getmagic.s
-..\..\kernel\aes\wdialog\rsrcfix.c [-G]
-..\..\kernel\aes\wdialog\shelsort.c [-G-]
+..\..\kernel\aes\wdialog\rsrcfix.c
+..\..\kernel\aes\wdialog\shelsort.c
 
-pdlgtos.s
+..\..\kernel\aes\wdialog\wdtos.s
 aesctrl.s
 mt_aes_i.c [-P-]
 ..\..\kernel\aes\wdialog\mt_aes.c [-P-]
