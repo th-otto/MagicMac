@@ -8804,14 +8804,16 @@ gvt_ok:
 
 shel_get:
  move.l   shel_buf,a1
- moveq #0,d1
  move.w   shel_buf_len,d1
  cmpi.w   #-1,d0
  beq.b    shg_len
  cmp.w    d1,d0               ; Ueberlauf ?
  bls.b    _shel_pg            ; nein, ok
- move.l   d1,d0               ; nur Pufferlaenge uebertragen
+ move.w   d1,d0               ; nur Pufferlaenge uebertragen
 _shel_pg:
+ swap d0
+ clr.w d0
+ swap d0
  jsr      vmemcpy
  moveq    #1,d0
  rts

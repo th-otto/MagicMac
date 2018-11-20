@@ -251,7 +251,7 @@ mcp_loop2:
 
 **********************************************************************
 *
-* PUREC void memmove(void *dst, void *src, LONG len)
+* PUREC void memmove(void *dst, void *src, size_t len)
 *
 * void memmove(a0 = void *dst, a1 = void *src, d0 = unsigned long len
 *

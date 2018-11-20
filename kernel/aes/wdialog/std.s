@@ -73,24 +73,22 @@ smp_gt:
 *
 
 vmemcpy:
- tst.l d0
+ move.l d0,d1
  beq.b	mcp_end
- move.l a0,d1
- cmpa.l	a1,a0
- bhi.b	mcp_dir2
+ cmpa.l	a0,a1
+ bcs.b	mcp_dir2
 mcp_loop1:
  move.b	(a1)+,(a0)+
- subq.l	#1,d0
- bhi.b	mcp_loop1
- movea.l d1,a0
+ subq.l	#1,d1
+ bne.b	mcp_loop1
 mcp_end:
  rts
 mcp_dir2:
- adda.l	d0,a0
- adda.l	d0,a1
+ adda.l	d1,a0
+ adda.l	d1,a1
 mcp_loop2:
  move.b	-(a1),-(a0)
- subq.l	#1,d0
- bhi.b	mcp_loop2
+ subq.l	#1,d1
+ bne.b	mcp_loop2
  rts
 
