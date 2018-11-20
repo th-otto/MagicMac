@@ -909,17 +909,17 @@ static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
 *
 ****************************************************************/
 
-static int cmp_files(FILEINFO **ff1, FILEINFO **ff2,
-          FSEL_DIALOG *fsd)
+static int cmp_files(const void *ff1, const void *ff2, void *udata)
 {
-     register int  r;
-     register long l;
-     register char *n1,*n2;
-     register FILEINFO *f1,*f2;
+     int  r;
+     long l;
+     char *n1,*n2;
+     const FILEINFO *f1;
+     const FILEINFO *f2;
+	FSEL_DIALOG *fsd = (FSEL_DIALOG *)udata;
 
-
-     f1 = *ff1;
-     f2 = *ff2;
+     f1 = *((const FILEINFO **)ff1);
+     f2 = *((const FILEINFO **)ff2);
 
      if   (fsd->sort_mode == SORTBYNONE)
           return(f1->number - f2->number);
@@ -1045,7 +1045,7 @@ static void sort_and_cat( FSEL_DIALOG *fsd )
 
      anzahl = fsd->nfiles;
      shelsort(fsd->files, (size_t) anzahl,
-               sizeof(FILEINFO *), (int (*)(void *, void *, void *))cmp_files, fsd);
+               sizeof(FILEINFO *), cmp_files, fsd);
 
      for  (p_d = fsd->files; anzahl > 0; anzahl--,p_d++)
           {
