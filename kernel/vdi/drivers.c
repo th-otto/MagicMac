@@ -69,7 +69,7 @@ int init_offscreen(const char *pattern)
 					osd->format = header.format;
 					osd->refcount = 0;
 					osd->sys = 0;
-					/* BUG: unknown2 not initialized */
+					osd->wk_size = 0;
 					osd->next = OSC_ptr;
 					OSC_ptr = osd;
 					OSC_count++;
