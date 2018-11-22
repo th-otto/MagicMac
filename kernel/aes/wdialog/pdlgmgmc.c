@@ -189,7 +189,7 @@ int mgmc_get_modes(PRN_ENTRY *printer, Boolean flag)
 			}
 			if ((res / 2) < xmax)
 			{
-				if (add_mode(printer, count, xmax, xmax, flag))  ; /* << BUG */
+				if (add_mode(printer, count, xmax, xmax, flag))
 					count++;
 			}
 		}

@@ -103,14 +103,13 @@ static WORD run_popup(GRECT *gr, const char **names, WORD num_names, WORD spaces
 	}
 	maxlen += spaces + 2;
 	object_size = (nlines + 1) * sizeof(OBJECT);
-	/* FIXME: check below */
 	tree = mmalloc(nlines * (maxlen + 1) + object_size);
+	if (tree == NULL)
+		return selected;
 	for (i = 0; i < nlines; i++)
 	{
 		args.strings[i] = ((char *)tree + object_size) + i * (maxlen + 1);
 	}
-	if (tree == NULL)
-		return selected;
 	maxlen = maxlen * gl_wchar;
 	if (maxlen < gr->g_w)
 		maxlen = gr->g_w;
@@ -122,7 +121,7 @@ static WORD run_popup(GRECT *gr, const char **names, WORD num_names, WORD spaces
 		tree[ROOT].ob_tail = nlines;
 	} else
 	{
-		tree[ROOT].ob_flags += LASTOB; /* BUG: +=? */
+		tree[ROOT].ob_flags |= LASTOB;
 		tree[ROOT].ob_head = NIL;
 		tree[ROOT].ob_tail = NIL;
 	}

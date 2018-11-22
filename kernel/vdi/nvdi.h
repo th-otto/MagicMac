@@ -49,7 +49,7 @@ struct v_unknown {
 	/*   0 */ void *unknown1;
 	/*   4 */ short unknown3;
 	/*   6 */ short unknown4;
-	/*   8 */ short unknown5;
+	/*   8 */ short device_type;
 	/*  10 */ short device_refcount;
 	/*  12 */ struct _drv_sys *device_addr;
 	/*  16 */ long unknown6;

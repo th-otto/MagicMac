@@ -68,7 +68,7 @@ static void translate_xattr(DTA *dta, XATTR *xattr, WORD drv)
 	xattr->st_gid = 0;
 	xattr->st_size = dta->d_length;
 	xattr->st_blksize = 1024;
-	xattr->st_blocks = (xattr->st_size + 1023) / 1024; /* FIXME: use shifts */
+	xattr->st_blocks = (xattr->st_size + 1023) >> 10;
 	xattr->st_mtim.u.d.time = dta->d_time;
 	xattr->st_mtim.u.d.date = dta->d_date;
 	xattr->st_atim.u.d.time = dta->d_time;

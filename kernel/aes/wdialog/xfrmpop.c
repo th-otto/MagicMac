@@ -43,6 +43,7 @@ WORD do_xfrm_popup(OBJECT *tree, WORD x, WORD y)
 		tree[ROOT].ob_y = y;
 	}
 	vq_extnd(vdi_handle, 0, workout);
+	vq_extnd(vdi_handle, 1, xworkout);
 	mt_wind_get_grect(0, WF_WORKXYWH, &gr, NULL);
 	if (tree[ROOT].ob_x < gr.g_x)
 		tree[ROOT].ob_x = gr.g_x;
@@ -85,7 +86,7 @@ WORD do_xfrm_popup(OBJECT *tree, WORD x, WORD y)
 	fdb.fd_h = gr.g_h;
 	fdb.fd_wdwidth = fdb.fd_w / 16;
 	fdb.fd_stand = 0;
-	fdb.fd_nplanes = xworkout[4]; /* BUG: global workout queried above, but not xworkout */
+	fdb.fd_nplanes = xworkout[4];
 	fdb.fd_addr = mmalloc(((long)fdb.fd_w * fdb.fd_h * fdb.fd_nplanes) / 8);
 	if (fdb.fd_addr == NULL)
 		return obj;

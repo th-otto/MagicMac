@@ -546,7 +546,7 @@ WORD	lbox_get_bvis( LIST_BOX *box )
 /*	box:						Zeiger auf die LIST_BOX-Struktur												*/
 /* new_bvis:				neue Anzahl */
 /*----------------------------------------------------------------------------------------*/
-/* BUG: not exported by wdialog.prg */
+/* NOTE: not exported by wdialog.prg */
 WORD lbox_set_bvis( LIST_BOX *box, WORD new_bvis )
 {
 	WORD old;

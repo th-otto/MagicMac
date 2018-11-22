@@ -1280,7 +1280,7 @@ WORD mt_wind_calc_grect(WORD subfn, WORD kind, const GRECT *ing, GRECT *outg, WO
 WORD mt_wind_new(WORD *global_aes)
 {
 	MT_PARMDATA aes_params;
-	static WORD const aes_control_data[4] = { 109, 0, 0, 0 }; /* BUG: nintout should be 1 */
+	static WORD const aes_control_data[4] = { 109, 0, 1, 0 };
 
 	_aes_trap(&aes_params, aes_control_data, global_aes);
 	return aes_params.intout[0];

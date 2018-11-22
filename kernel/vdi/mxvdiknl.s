@@ -201,7 +201,8 @@ MFDB_SIZE:
 
 /* screen driver */
 		OFFSET 0
-		ds.w 5
+		ds.w 4
+device_type:     ds.w 1
 device_refcount: ds.w 1
 device_addr:     ds.l 1
                  ds.l 1
@@ -2958,7 +2959,7 @@ vq_extnd:
 vq_extnd1:
 		movem.l   a2-a5,-(a7)
 		movea.l   pb_intin(a0),a4
-		movem.l   pb_intout(a0),a0-a2 ; BUG: accesses 1 element beyond end of PB
+		movem.l   pb_intout(a0),a0-a1
 		move.l    device_drv(a6),d0
 		beq.s     vq_extnd2
 		movea.l   d0,a2
@@ -5504,7 +5505,7 @@ v_bez_ex:
 		movem.l   (a7)+,d1-d7/a2-a5
 		rts
 bez_line:
-		cmpi.b    #$03,driver_type(a6)
+		cmpi.b    #3,driver_type(a6) ; DT_OLDNVDI
 		bne.s     gdos_line
 nvdi_line:
 		lea.l     -52(a7),a7
@@ -6289,7 +6290,7 @@ v_bezf_p3:
 		move.l    (a1),d7
 		subq.w    #1,d4
 		pea.l     v_bezf_e(pc)
-		cmpi.b    #$03,driver_type(a6)
+		cmpi.b    #3,driver_type(a6) ; DT_OLDNVDI
 		beq       fpoly
 		bra.s     gpoly
 v_bezf_e:
@@ -6957,7 +6958,7 @@ open_nvdi:
 		bra       opnwk_io
 set_disp:
 		move.l    #handle_f,vdi_disp(a6)
-		move.b    9(a3),driver_type(a6)
+		move.b    device_type+1(a3),driver_type(a6)
 		rts
 v_opnwk:
 		movem.l   d1-d7/a2-a5,-(a7)
@@ -7294,7 +7295,7 @@ wk_default:
 		move.w    (DEV_TAB+26).w,d0
 		subq.w    #1,d0
 		move.w    d0,colors(a6)
-		move.b    #$03,driver_type(a6)
+		move.b    #3,driver_type(a6) ; DT_OLDNVDI
 		clr.w     t_bitmap_flag(a6)
 		clr.w     res_ratio(a6)
 		cmpa.l    (aes_wk_p).w,a6

@@ -77,7 +77,7 @@
 #endif
 
 #define MAX_INPUT_TRAYS  4
-#define MAX_OUTPUT_TRAYS 3 /* BUG: should be 4 */
+#define MAX_OUTPUT_TRAYS 4
 
 #define S_INPUT_TRAYNAMES S_INPUT_TRAYNAME1, S_INPUT_TRAYNAME2, S_INPUT_TRAYNAME3, S_INPUT_TRAYNAME4
 #define S_INPUT_TRAYNAMES2 S_INPUT_TRAYNAME2_1, S_INPUT_TRAYNAME2_2, S_INPUT_TRAYNAME2_3, S_INPUT_TRAYNAME2_4
@@ -151,7 +151,6 @@ static void add_paper_size(PRN_ENTRY *printer, WORD id);
 static void add_mode(PRN_ENTRY *printer, WORD hdpi, WORD vdpi, WORD id);
 static WORD read_nvdi_hdr(DRV_SYS *hdr, struct zz *z, const char *filename, const char *drivername, LONG *offset_hdr);
 static struct xx *mgmc_read_hdr(const char *filepath, const char *name);
-static int mgmc_free(struct xx *p);
 
 
 struct XVDI_PARAMS {
@@ -161,17 +160,6 @@ struct XVDI_PARAMS {
 	WORD intout[16];
 	WORD ptsout[16];
 };
-
-extern struct
-{
-	WORD control[15];
-	WORD intin[132];
-	WORD intout[140];
-	WORD ptsin[145];
-	WORD ptsout[145];
-} _myVDIParBlk;
-
-static VDIPB vq_ext_pb = { _myVDIParBlk.control, _myVDIParBlk.intin, _myVDIParBlk.ptsin, _myVDIParBlk.intout, _myVDIParBlk.ptsout };
 
 
 
@@ -716,7 +704,7 @@ static PRN_ENTRY *query_mac_driver(OBJECT **tree_addr, XDRV_ENTRY *entry, DRV_SY
 				list_append((void **)&root, printer);
 			}
 		}
-		mgmc_free(p);
+		Mfree(p);
 	}
 	return root;
 }
@@ -807,7 +795,7 @@ static int create_mode_infos(XDRV_ENTRY *entry, PRN_ENTRY *printer, DRV_SYS *nvd
 	maxysize = maxxsize = 0;
 	min_input_trays = 32767;
 	min_output_trays = 32767;
-	buf = (struct yy *)((long)p + p->offset); /* FIXME: long cast */
+	buf = (struct yy *)((char *)p + p->offset);
 	for (i = 0; i < p->num_modes; i++)
 	{
 		if (buf->printer_id == printer->printer_id)
@@ -924,7 +912,7 @@ static int create_mode_infos(XDRV_ENTRY *entry, PRN_ENTRY *printer, DRV_SYS *nvd
 	
 	if (min_output_trays <= MAX_OUTPUT_TRAYS)
 	{
-		static const char *const output_tray_names[MAX_OUTPUT_TRAYS + 1] = { S_OUTPUT_TRAYNAMES };
+		static const char *const output_tray_names[MAX_OUTPUT_TRAYS] = { S_OUTPUT_TRAYNAMES };
 		
 		for (i = 0; i < min_output_trays; i++)
 		{
@@ -1279,7 +1267,7 @@ static struct xx *mgmc_read_hdr(const char *filepath, const char *name)
 	x = readfile(filename, &size);
 	if (x != NULL)
 	{
-		struct yy *y = (struct yy *)((long)x + x->offset); /* FIXME: long cast */
+		struct yy *y = (struct yy *)((char *)x + x->offset);
 		for (i = 0; i < x->num_modes; i++)
 		{
 #define FIX(e) if (y->e != 0) (char *)y->e += (long)x
@@ -1300,13 +1288,6 @@ static struct xx *mgmc_read_hdr(const char *filepath, const char *name)
 		}
 	}
 	return x;
-}
-
-
-static int mgmc_free(struct xx *p)
-{
-	Mfree(p);
-	return TRUE; /* FIXME */
 }
 
 
@@ -1361,8 +1342,8 @@ int nvdi_write_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 		}
 		if (writebuf(filename, &nvdihdr, sizeof(PH), sizeof(nvdihdr)) != sizeof(nvdihdr))
 			return FALSE;
-		/* BUG: no error check for read */
-		readbuf(filename, &hdr, nvdihdr.offset_hdr + sizeof(PH), sizeof(hdr));
+		if (readbuf(filename, &hdr, nvdihdr.offset_hdr + sizeof(PH), sizeof(hdr)) != sizeof(hdr))
+			return FALSE;
 		hdr.printer_id = (WORD)settings->printer_id;
 		hdr.mode_id = (WORD)settings->mode_id;
 		hdr.no_copies = (WORD)settings->no_copies;

@@ -246,7 +246,7 @@ static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD ex
 	WORD index_offset = sub->index_offset;
 	WORD cursor;
 	
-	switch (exit_obj - sub->index_offset) /* FIXME: use local */
+	switch (exit_obj - index_offset)
 	{
 	case PAGE_DEVICE_POPUP:
 		return PDLG_PREBUTTON | PDLG_PB_DEVICE;
@@ -708,7 +708,7 @@ int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 {
 	LONG color_capabilities;
 	WORD selected;
-	WORD i;
+	WORD i, count;
 	const char *names[NO_CC_BITS];
 	LONG vals[NO_CC_BITS];
 	const char **namep;
@@ -720,20 +720,19 @@ int do_color_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 		color_capabilities = mode->color_capabilities;
 	}
 	namep = names;
-	/* FIXME: use count for indexing */
-	for (i = selected = 0; i < NO_CC_BITS; i++)
+	for (i = selected = count = 0; i < NO_CC_BITS; i++)
 	{
 		if (color_capabilities & 1)
 		{
-			vals[namep - names] = 1L << i;
-			if (vals[namep - names] == settings->color_mode)
-				selected = (WORD)(namep - names);
+			vals[count] = 1L << i;
+			if (vals[count] == settings->color_mode)
+				selected = count;
 			*namep++ = color_cap_names[i];
+			count++;
 		}
 		color_capabilities >>= 1;
 	}
-	i = (WORD)(namep - names);
-	selected = simple_popup(sub->tree, exit_obj, names, i, selected);
+	selected = simple_popup(sub->tree, exit_obj, names, count, selected);
 	if (selected >= 0 && settings->color_mode != vals[selected])
 	{
 		set_color(sub, settings, vals[selected]);
@@ -782,10 +781,10 @@ static int do_size_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 					settings->size_id = size->size_id;
 					set_tedinfo(sub->tree, exit_obj, size->name, 2);
 					pdlg_redraw_obj(sub, exit_obj);
+					return TRUE;
 				}
 			}
 		}
-		return TRUE; /* BUG: should be above */
 	}
 	return FALSE;
 }
@@ -945,7 +944,7 @@ static int do_dither_popup(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
 	if (driver == NULL)
 		return FALSE;
 	mode = driver->dither_modes;
-	/* if (mode != NULL) BUG: not checked */
+	if (mode != NULL)
 	{
 		count = list_count(mode);
 		names = Malloc(count * sizeof(char *));
@@ -1710,7 +1709,7 @@ static void empty_tedinfo(OBJECT *tree, WORD obj)
 	
 	str = tree[obj].ob_spec.tedinfo->te_ptext;
 	len = strlen(str);
-	len /= 2; /* FIXME */
+	len >>= 1;
 	while (*str != '\0' && len >= 0)
 	{
 		*str++ = ' ';

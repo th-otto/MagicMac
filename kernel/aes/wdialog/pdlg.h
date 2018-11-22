@@ -29,6 +29,7 @@
 #define DT_FSM       2
 #define DT_OLDNVDI   3
 #define DT_NVDI      4
+#define DT_CUSTOM    5
 
 #define VDI_SCREEN_DEVICE   1
 #define VDI_PLOTTER_DEVICE 11

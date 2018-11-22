@@ -138,6 +138,7 @@ strcmp_greater:
 	moveq	#1,d0
 	rts
 
+    IFNE 0 /* unused */
 strgupr:
 strupr: ; not exported!
 	movea.l	a0,a1
@@ -167,8 +168,10 @@ strupr_store:
 	move.b	d0,(a1)+
 	bne.s	strupr_loop
 	rts
+	ENDC
 
-; BUG: actually works with shorts only
+; NOTE: actually works with shorts only
+    IFNE 0 /* ... but is acually unused */
 intstrg:
 	clr.l	-(a7)
 	clr.l	-(a7)
@@ -190,7 +193,9 @@ intstrg_2:
 	movea.l	d0,a0
 	lea 	12(a7),a7
 	rts
+	ENDC
 
+    IFNE 0 /* unused */
 strgint:
 	moveq	#0,d0
 	moveq	#0,d1
@@ -206,3 +211,4 @@ strgint_2:
 	bne.s	strgint_1
 strgint_3:
 	rts
+	ENDC

@@ -1121,7 +1121,7 @@ dsp_wdlg_get:
 		beq.s     awdlg_get_udata
 		subq.w    #1,d0                    ; 3: wdlg_get_handle ?
 		beq.s     awdlg_get_handle
-		; BUG: random return value
+		clr.w     (a4)                     ; intout[0] = 0: error
 		rts
 awdlg_get_tree:
 		movea.l   (a3)+,a0                 ; addrin[0]: dialog
@@ -1159,7 +1159,7 @@ dsp_wdlg_set:
 		beq.s     awdlg_set_iconify
 		subq.w    #1,d0
 		beq.s     awdlg_set_uniconify
-		; BUG: random return value
+		clr.w     (a4)                     ; intout[0] = 0: error
 		rts
 awdlg_set_edit:
 		move.w    (a2)+,d0                 
@@ -1664,13 +1664,12 @@ dsp_pdlg_close:
 		move.w    d0,(a4)
 		rts
 
-apdlg_get_exit:
-		rts ; FIXME
 dsp_pdlg_get:
 		move.w    (a2)+,d0
 		bne.s     apdlg_get_exit
 		bsr       pdlg_get_setsize
 		move.l    d0,(a4)
+apdlg_get_exit:
 		rts
 
 dsp_pdlg_set:

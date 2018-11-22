@@ -7,18 +7,9 @@
 #undef Mfree
 #define	Mfree(addr) Mfree(addr)
 
-static USERBLK *user_blks;
-static OBJECT *radio_selected;
-static OBJECT *radio_deselected;
+
 static WORD radio_bgcol;
 static WORD magic_version;
-
-
-static WORD __CDECL draw_innerframe(PARMBLK *pb);
-static WORD __CDECL draw_radio(PARMBLK *pb);
-static WORD __CDECL draw_check(PARMBLK *pb);
-static WORD __CDECL draw_underline(PARMBLK *pb);
-static void	userdef_text(WORD x, WORD y, const char *string);
 
 
 WORD get_aes_info(WORD *font_id, WORD *font_height, WORD *hor_3d, WORD *ver_3d)
@@ -75,7 +66,7 @@ WORD get_aes_info(WORD *font_id, WORD *font_height, WORD *hor_3d, WORD *ver_3d)
 			flags |= GAI_CICN;
 
 		if (mt_appl_getinfo(7, &ag1, &ag2, &ag3, &ag4, NULL)) /* Unterfunktion 7 */
-			flags |= ag1 & (GAI_WDLG|GAI_LBOX|GAI_FNTS|GAI_FSEL); /* FIXME: masks out GAI_PDLG */
+			flags |= ag1 & (GAI_WDLG|GAI_LBOX|GAI_FNTS|GAI_FSEL|GAI_PDLG);
 
 		if (mt_appl_getinfo(12, &ag1, &ag2, &ag3, &ag4, NULL) && (ag1 & 8)) /* AP_TERM? */
 			flags |= GAI_APTERM;
@@ -147,121 +138,30 @@ void pdlg_no3d_rsrc(OBJECT *obj, WORD nobs, WORD flag)
 
 
 #if !PDLG_SLB
-void substitute_objects(OBJECT *objects, UWORD nobs, WORD flags, OBJECT *selected, OBJECT *deselected)
+
+
+/*
+ * FIXME: using statics here will crash if this
+ * code is ever used by more than one application
+ */
+static USERBLK *user_blks;
+static OBJECT *radio_selected;
+static OBJECT *radio_deselected;
+
+
+
+static void	userdef_text(WORD x, WORD y, const char *string)
 {
-	OBJECT *obj;
-	UWORD i;
-	UWORD count;
+	WORD tmp;
 	
-	if ((flags & GAI_MAGIC) &&
-		magic_version >= 0x300)
-	{
-		user_blks = NULL;
-		return;
-	}
-	obj = objects;
-	i = nobs;
-	count = 0;
-	while (i != 0)
-	{
-		if ((obj->ob_state & WHITEBAK) &&
-			(obj->ob_state & 0x8000))
-		{
-			switch (obj->ob_type & 0xff)
-			{
-			case G_BUTTON:
-				count++;
-				break;
-			case G_STRING:
-				if ((obj->ob_state & 0xff00) == 0xff00)
-					count++;
-				break;
-			}
-		}
-		obj++;
-		i--;
-	}
-	if (count != 0)
-	{
-		user_blks = Malloc(count * sizeof(*user_blks));
-		radio_selected = selected;
-		radio_deselected = deselected;
-		if (user_blks != NULL)
-		{
-			USERBLK *blk;
-			
-			blk = user_blks;
-			obj = objects;
-			i = nobs;
-			while (i != 0)
-			{
-				WORD type;
-				UWORD state;
-				
-				type = obj->ob_type & 0xff;
-				state = obj->ob_state;
-				if (state & WHITEBAK)
-				{
-					if (state & 0x8000)
-					{
-						state &= 0xff00;
-						if (flags & GAI_MAGIC)
-						{
-							if (type == G_BUTTON && state == 0xfe00)
-							{
-								blk->ub_parm = obj->ob_spec.index;
-								blk->ub_code = draw_innerframe;
-								obj->ob_type = G_USERDEF;
-								obj->ob_flags &= ~FL3DMASK;
-								obj->ob_spec.userblk = blk;
-								blk++;
-							}
-						} else
-						{
-							switch (type)
-							{
-							case G_BUTTON:
-								blk->ub_parm = obj->ob_spec.index;
-								if (state == 0xfe00)
-									blk->ub_code = draw_innerframe;
-								else if (obj->ob_flags & RBUTTON)
-									blk->ub_code = draw_radio;
-								else
-									blk->ub_code = draw_check;
-								obj->ob_type = G_USERDEF;
-								obj->ob_flags &= ~FL3DMASK;
-								obj->ob_spec.userblk = blk;
-								blk++;
-								break;
-							case G_STRING:
-								if (state == 0xff00)
-								{
-									blk->ub_parm = obj->ob_spec.index;
-									blk->ub_code = draw_underline;
-									obj->ob_type = G_USERDEF;
-									obj->ob_flags &= ~FL3DMASK;
-									obj->ob_spec.userblk = blk;
-									blk++;
-								}
-								break;
-							}
-						}
-					}
-				}
-				obj++;
-				i--;
-			}
-		}
-	}
-}
-#endif
-
-
-void substitute_free(void)
-{
-	if (user_blks)
-		Mfree(user_blks);
-	user_blks = NULL;
+	vswr_mode(vdi_handle, MD_TRANS);
+	vst_font(vdi_handle, aes_font);
+	vst_color(vdi_handle, BLACK);
+	vst_effects(vdi_handle, 0);
+	vst_alignment(vdi_handle, 0, 5, &tmp, &tmp);
+	vst_height(vdi_handle, aes_height, &tmp, &tmp, &tmp, &tmp);
+	
+	v_gtext(vdi_handle, x, y, string);
 }
 
 
@@ -457,16 +357,119 @@ static WORD __CDECL draw_underline(PARMBLK *pb)
 }
 
 
-static void	userdef_text(WORD x, WORD y, const char *string)
+void substitute_objects(OBJECT *objects, UWORD nobs, WORD flags, OBJECT *selected, OBJECT *deselected)
 {
-	WORD tmp;
+	OBJECT *obj;
+	UWORD i;
+	UWORD count;
 	
-	vswr_mode(vdi_handle, MD_TRANS);
-	vst_font(vdi_handle, aes_font);
-	vst_color(vdi_handle, BLACK);
-	vst_effects(vdi_handle, 0);
-	vst_alignment(vdi_handle, 0, 5, &tmp, &tmp);
-	vst_height(vdi_handle, aes_height, &tmp, &tmp, &tmp, &tmp);
-	
-	v_gtext(vdi_handle, x, y, string);
+	if ((flags & GAI_MAGIC) &&
+		magic_version >= 0x300)
+	{
+		user_blks = NULL;
+		return;
+	}
+	obj = objects;
+	i = nobs;
+	count = 0;
+	while (i != 0)
+	{
+		if ((obj->ob_state & WHITEBAK) &&
+			(obj->ob_state & 0x8000))
+		{
+			switch (obj->ob_type & 0xff)
+			{
+			case G_BUTTON:
+				count++;
+				break;
+			case G_STRING:
+				if ((obj->ob_state & 0xff00) == 0xff00)
+					count++;
+				break;
+			}
+		}
+		obj++;
+		i--;
+	}
+	if (count != 0)
+	{
+		user_blks = Malloc(count * sizeof(*user_blks));
+		radio_selected = selected;
+		radio_deselected = deselected;
+		if (user_blks != NULL)
+		{
+			USERBLK *blk;
+			
+			blk = user_blks;
+			obj = objects;
+			i = nobs;
+			while (i != 0)
+			{
+				WORD type;
+				UWORD state;
+				
+				type = obj->ob_type & 0xff;
+				state = obj->ob_state;
+				if (state & WHITEBAK)
+				{
+					if (state & 0x8000)
+					{
+						state &= 0xff00;
+						if (flags & GAI_MAGIC)
+						{
+							if (type == G_BUTTON && state == 0xfe00)
+							{
+								blk->ub_parm = obj->ob_spec.index;
+								blk->ub_code = draw_innerframe;
+								obj->ob_type = G_USERDEF;
+								obj->ob_flags &= ~FL3DMASK;
+								obj->ob_spec.userblk = blk;
+								blk++;
+							}
+						} else
+						{
+							switch (type)
+							{
+							case G_BUTTON:
+								blk->ub_parm = obj->ob_spec.index;
+								if (state == 0xfe00)
+									blk->ub_code = draw_innerframe;
+								else if (obj->ob_flags & RBUTTON)
+									blk->ub_code = draw_radio;
+								else
+									blk->ub_code = draw_check;
+								obj->ob_type = G_USERDEF;
+								obj->ob_flags &= ~FL3DMASK;
+								obj->ob_spec.userblk = blk;
+								blk++;
+								break;
+							case G_STRING:
+								if (state == 0xff00)
+								{
+									blk->ub_parm = obj->ob_spec.index;
+									blk->ub_code = draw_underline;
+									obj->ob_type = G_USERDEF;
+									obj->ob_flags &= ~FL3DMASK;
+									obj->ob_spec.userblk = blk;
+									blk++;
+								}
+								break;
+							}
+						}
+					}
+				}
+				obj++;
+				i--;
+			}
+		}
+	}
 }
+
+
+void substitute_free(void)
+{
+	if (user_blks)
+		Mfree(user_blks);
+	user_blks = NULL;
+}
+#endif

@@ -326,7 +326,7 @@ VWK *create_bitmap(struct v_unknown *p, VWK *wk, MFDB *fdb, WORD *intin)
 				{
 					transform(fdb, &tmp, bitmap);
 					copy_mem(bitmap->bitmap_length, tmp.fd_addr, fdb->fd_addr);
-					/* BUG: tmp bitmap leaked */
+					Mfree_sys(tmp.fd_addr);
 				} else
 				{
 					tmp.fd_addr = fdb->fd_addr;

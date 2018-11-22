@@ -106,7 +106,7 @@ static RSHDR *copy_rsrc(const RSHDR *rsc, LONG len)
 		if (aes_flags & GAI_CICN)
 			mt_rsrc_rcfix(new, NULL);						/* Resource anpassen */
 		else
-			_rsrc_rcfix(dummy_global, new); /* BUG: does not work, because builtin _rsrc_rcfix doesn not handle color icons */
+			_rsrc_rcfix(dummy_global, new); /* NOTE: does not work, because builtin _rsrc_rcfix doesn not handle color icons */
 #endif
 	}
 	return new;															/* Zeiger auf den Resource-Header */
@@ -126,7 +126,7 @@ static int init_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 		settings->last_page = PG_MAX_PAGE;
 		settings->no_copies = PG_MIN_COPIES;
 		settings->driver_id = 0;
-		settings->driver_type = 0;
+		settings->driver_type = DT_NONE;
 		settings->driver_mode = 0;
 		/* reserved1 */
 		/* reserved2 */
@@ -157,29 +157,31 @@ static int init_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 			
 			printer = drv_info->printers;
 			drv_id = get_driver_info(drv_info, printer->driver_id);
-			/* BUG: no check here */
-			mode = printer->modes;
-			settings->driver_id = drv_id->driver_id;
-			settings->driver_type = drv_id->driver_type;
-			settings->driver_mode = 0;
-			settings->printer_id = printer->printer_id;
-			if (mode)
+			if (drv_id)
 			{
-				settings->mode_id = mode->mode_id;
-				settings->mode_hdpi = mode->hdpi;
-				settings->mode_vdpi = mode->vdpi;
-				settings->quality_id = 0;
-				if (printer->papers)
-					settings->size_id = printer->papers->size_id;
-				if (mode->paper_types)
-					settings->type_id = mode->paper_types->type_id;
-				settings->orientation = PG_PORTRAIT;
-				if (printer->input_trays)
-					settings->input_id = printer->input_trays->tray_id;
-				if (printer->output_trays)
-					settings->output_id = printer->output_trays->tray_id;
+				mode = printer->modes;
+				settings->driver_id = drv_id->driver_id;
+				settings->driver_type = drv_id->driver_type;
+				settings->driver_mode = 0;
+				settings->printer_id = printer->printer_id;
+				if (mode)
+				{
+					settings->mode_id = mode->mode_id;
+					settings->mode_hdpi = mode->hdpi;
+					settings->mode_vdpi = mode->vdpi;
+					settings->quality_id = 0;
+					if (printer->papers)
+						settings->size_id = printer->papers->size_id;
+					if (mode->paper_types)
+						settings->type_id = mode->paper_types->type_id;
+					settings->orientation = PG_PORTRAIT;
+					if (printer->input_trays)
+						settings->input_id = printer->input_trays->tray_id;
+					if (printer->output_trays)
+						settings->output_id = printer->output_trays->tray_id;
+				}
+				vstrcpy(settings->device, drv_id->device);
 			}
-			vstrcpy(settings->device, drv_id->device);
 		}
 	}
 	return TRUE;
@@ -258,8 +260,6 @@ PRN_DIALOG *pdlg_create(WORD dialog_flags)
 		rsc = copy_rsrc((const RSHDR *)pdlg_rsc, sizeof(pdlg_rsc));
 		if (rsc != NULL)
 		{
-			PRN_SETTINGS *settings;
-			
 #if CALL_MAGIC_KERNEL
 			if (is_3d_look == 0)
 				dialog_flags &= ~PDLG_3D;
@@ -283,10 +283,9 @@ PRN_DIALOG *pdlg_create(WORD dialog_flags)
 			d->sub_dialog = NULL;
 			d->printers = NULL;
 			d->drivers = get_driver_list(d->tree_addr, vdi_handle);
-			settings = &d->settings; /* FIXME */
 			if (d->drivers != NULL)
 			{
-				init_settings(d->drivers, settings);
+				init_settings(d->drivers, &d->settings);
 				return d;
 			}
 			Mfree(d->rsc);
@@ -300,11 +299,15 @@ PRN_DIALOG *pdlg_create(WORD dialog_flags)
 
 WORD pdlg_delete(PRN_DIALOG *prn_dialog)
 {
-	/* FIXME check ptr & magic */
-	pdlg_delete_drivers(&prn_dialog->drivers, vdi_handle);
-	substitute_free();
-	Mfree(prn_dialog->rsc);
-	Mfree(prn_dialog);
+	if (prn_dialog)
+	{
+		pdlg_delete_drivers(&prn_dialog->drivers, vdi_handle);
+#if !PDLG_SLB
+		substitute_free();
+#endif
+		Mfree(prn_dialog->rsc);
+		Mfree(prn_dialog);
+	}
 	return TRUE;
 }
 
@@ -547,7 +550,7 @@ static void reset_sub_dialog(PRN_DIALOG *prn_dialog, PRN_ENTRY *new_printer, WOR
 
 static size_t sub_dialog_maxsize(PRN_DIALOG *prn_dialog)
 {
-	LONG maxsize; /* FIXME: size_t */
+	size_t maxsize;
 	PDLG_SUB *sub_dialog;
 	XDRV_ENTRY *driver;
 	PRN_ENTRY *printer;
@@ -561,7 +564,7 @@ static size_t sub_dialog_maxsize(PRN_DIALOG *prn_dialog)
 		sub_dialog->option_flags = prn_dialog->option_flags;
 		if (sub_dialog->sub_tree != NULL)
 		{
-			LONG size = tree_memsize(sub_dialog->sub_tree);
+			size_t size = tree_memsize(sub_dialog->sub_tree);
 			if (size > maxsize)
 				maxsize = size;
 		}
@@ -577,7 +580,7 @@ static size_t sub_dialog_maxsize(PRN_DIALOG *prn_dialog)
 				sub_dialog->option_flags = prn_dialog->option_flags;
 				if (sub_dialog->sub_tree != NULL)
 				{
-					LONG size = tree_memsize(sub_dialog->sub_tree);
+					size_t size = tree_memsize(sub_dialog->sub_tree);
 					if (size > maxsize)
 						maxsize = size;
 				}
@@ -597,7 +600,7 @@ static void set_sub_title(PRN_DIALOG *prn_dialog, const char *title)
 	if (title != NULL)
 	{
 		strcat(prn_dialog->title, "\"");
-		strncat(prn_dialog->title, title, sizeof(prn_dialog->title) - 2); /* BUG */
+		strcat(prn_dialog->title, title);
 		strcat(prn_dialog->title, "\" ");
 	}
 }
@@ -621,7 +624,8 @@ WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *documen
 		prn_dialog->tree = tree;
 		prn_dialog->sub_count = 0;
 		prn_dialog->exit_button = 0;
-		prn_dialog->settings = *settings; /* BUG? should be optional */
+		if (settings)
+			prn_dialog->settings = *settings;
 		validate_settings(prn_dialog->drivers, &prn_dialog->settings);
 		driver = get_driver(prn_dialog->drivers, &prn_dialog->settings);
 		if (driver != NULL)
@@ -633,10 +637,10 @@ WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *documen
 			WORD exit_button;
 			
 			prn_dialog->printer_sub_id = sub->sub_id;
-			/* BUG: setup_panel is optional */
-			printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
-			/* BUG: init_dlg is optional */
-			sub->init_dlg(&prn_dialog->settings, sub);
+			if (printer->setup_panel)
+				printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
+			if (sub->init_dlg)
+				sub->init_dlg(&prn_dialog->settings, sub);
 			wind_update(BEG_UPDATE);
 			wind_update(BEG_MCTRL);
 			form_center_grect(tree, &prn_dialog->clip);
@@ -648,7 +652,7 @@ WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *documen
 			do
 			{
 				sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;
-				if (sub->tree != NULL) /* FIXME: will be endless loop without a tree */
+				if (sub->tree != NULL)
 				{
 #if !PDLG_SLB
 					if (!(aes_flags & GAI_MAGIC))
@@ -667,7 +671,8 @@ WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *documen
 			form_dial_grect(FMD_FINISH, &prn_dialog->clip, &prn_dialog->clip);
 			wind_update(END_MCTRL);
 			wind_update(END_UPDATE);
-			/* BUG: close_panel not called */
+			if (printer->close_panel)
+				printer->close_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
 			free_lboxes(prn_dialog);
 			free_printer_items(prn_dialog);
 			Mfree(tree);
@@ -703,19 +708,19 @@ WORD pdlg_xopen(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *docu
 			prn_dialog->tree = tree;
 			prn_dialog->sub_count = 0;
 			prn_dialog->exit_button = 0;
-			prn_dialog->settings = *settings; /* BUG? should be optional */
+			if (settings)
+				prn_dialog->settings = *settings;
 			validate_settings(prn_dialog->drivers, &prn_dialog->settings);
-			/* BUG? device name not set */
 			if (create_lboxes(prn_dialog))
 			{
 				PRN_ENTRY *printer = get_printer(prn_dialog->drivers, &prn_dialog->settings);
 				PDLG_SUB *sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;
 				
 				prn_dialog->printer_sub_id = sub->sub_id;
-				/* BUG: setup_panel is optional */
-				printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
-				/* BUG: init_dlg is optional */
-				sub->init_dlg(&prn_dialog->settings, sub);
+				if (printer->setup_panel)
+					printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
+				if (sub->init_dlg)
+					sub->init_dlg(&prn_dialog->settings, sub);
 				if (sub->tree != NULL)
 				{
 					WORD whdl = wdlg_open(prn_dialog->dialog, prn_dialog->title, NAME|MOVER, x, y, 0, NULL);
@@ -760,10 +765,9 @@ WORD pdlg_close(PRN_DIALOG *prn_dialog, WORD *x, WORD *y)
 	
 	if (prn_dialog->sub_whdl)
 	{
-		wdlg_close(prn_dialog->dialog, x, y); /* FIXME: use local */
+		wdlg_close(dialog, x, y);
 	} else
 	{
-		/* BUG: x/y can be NULL */
 		*x = -1;
 		*y = -1;
 	}
@@ -827,12 +831,10 @@ WORD pdlg_add_printers(PRN_DIALOG *prn_dialog, DRV_INFO *drv_info)
 		entry->format = DRV_ENTRY_FORMAT;
 		entry->reserved = 0;
 		entry->driver_id = drv_info->driver_id;
-		entry->driver_type = 0; /* FIXME: overwritten below */
 		entry->version = 0;
 		entry->reserved2 = 0;
 		entry->offset_hdr = 0;
 		entry->reserved4 = 0;
-		entry->dither_modes = NULL; /* FIXME: overwritten below */
 		entry->reserved6 = 0;
 		entry->file_path[0] = '\0';
 		entry->driver_name[0] = '\0';
@@ -841,7 +843,7 @@ WORD pdlg_add_printers(PRN_DIALOG *prn_dialog, DRV_INFO *drv_info)
 		entry->printers = drv_info->printers;
 		entry->dither_modes = drv_info->dither_modes;
 		vstrcpy(entry->device, drv_info->device);
-		entry->driver_type = 5; /* ??? */
+		entry->driver_type = DT_CUSTOM;
 		install_std_dialogs(prn_dialog->tree_addr, entry);
 		list_append((void **)&prn_dialog->drivers, entry);
 		return TRUE;
@@ -1066,7 +1068,6 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 	obj &= 0x7fff;
 	for (;;)
 	{
-		
 	again:
 		if (prn_dialog->printer_sub_id != new_sub->sub_id)
 			reset_sub_dialog(prn_dialog, NULL, new_sub->sub_id, NULL, old_sub);
@@ -1091,7 +1092,7 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 					continue;
 				this_sub = printer->sub;
 				if (this_sub->do_dlg == NULL)
-					goto done; /* FIXME */
+					return TRUE;
 				{
 					ret = this_sub->do_dlg(&prn_dialog->settings, this_sub, obj);
 					if (ret & PDLG_PREBUTTON)
@@ -1106,13 +1107,13 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 							return FALSE;
 						case PDLG_PB_DEVICE:
 							do_device_popup(prn_dialog, obj);
-							goto done; /* FIXME */
+							return TRUE;
 						default:
-							continue;
+							goto again;
 						}
 					}
 					if (!(ret & PDLG_CHG_SUB))
-						goto done;
+						return TRUE;
 					{
 						WORD id = (WORD)ret;
 						
@@ -1131,7 +1132,7 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 							old_sub = old_entry->sub;
 							new_sub = new_entry->sub;
 							obj = 0;
-							goto again;
+							continue;
 						} else
 						{
 							return FALSE;
@@ -1142,8 +1143,6 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 			break;
 		}
 	}
-done:
-	return TRUE;
 }
 
 
@@ -1219,11 +1218,11 @@ static int do_device_popup(PRN_DIALOG *prn_dialog, WORD obj)
 		if (printer != selected)
 		{
 			old_sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;
-			new_sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;
+			new_sub = old_sub;
 			if (new_sub->reset_dlg)
 				new_sub->reset_dlg(settings, new_sub);
-			/* BUG: close_panel is optional */
-			printer->close_panel((DRV_ENTRY *)prn_dialog->drivers, settings, printer, selected);
+			if (printer->close_panel)
+				printer->close_panel((DRV_ENTRY *)prn_dialog->drivers, settings, printer, selected);
 			if (pdlg_notequal(selected->sub_dialogs, printer->sub_dialogs))
 			{
 				first = lbox_get_afirst(prn_dialog->printer_lbox);
@@ -1236,8 +1235,8 @@ static int do_device_popup(PRN_DIALOG *prn_dialog, WORD obj)
 			new_driver = get_driver(prn_dialog->drivers, settings);
 			if (new_driver != NULL)
 				vstrcpy(settings->device, new_driver->device);
-			/* BUG: setup_panel is optional */
-			selected->setup_panel((DRV_ENTRY *)prn_dialog->drivers, settings, printer, selected);
+			if (selected->setup_panel)
+				selected->setup_panel((DRV_ENTRY *)prn_dialog->drivers, settings, printer, selected);
 			if (pdlg_notequal(selected->sub_dialogs, printer->sub_dialogs))
 			{
 				build_lists(prn_dialog);
