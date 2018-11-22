@@ -4,12 +4,15 @@
 
 #define P_COOKIES ((long **) 0x5a0)
 
+struct MgMcCookie *mgmc_cookie;
+VoidProcPtr	modeMac;
+VoidProcPtr	modeAtari;
+MacCtProc callMacContext;
+Ptr macA5;
+VoidProcPtr intrLock;
+VoidProcPtr intrUnlock;
 
-static long get_mgmc_cookie(void);
-static struct TGetRslBlk *mgmc_get_resolutions(void);
-static void mac_get_resolutions(void);
-static int add_mode(PRN_ENTRY *printer, long id, short iXRsl, short iYRsl, Boolean flag);
-
+static struct TGetRslBlk getRslBlk;
 
 
 static void do_init_settings(TPrint **settings)
@@ -106,6 +109,24 @@ long mgmc_validate_settings(PRN_SETTINGS *settings)
 }
 
 
+static long get_mgmc_cookie(void)
+{
+	long *jarptr;
+	
+	jarptr = *P_COOKIES;
+	if (jarptr != NULL)
+	{
+		while (*jarptr != 0)
+		{
+			if (*jarptr == 0x4D674D63L) /* 'MgMc' */
+				return jarptr[1];
+			jarptr += 2;
+		}
+	}
+	return 0;
+}
+
+
 void mgmc_init(void)
 {
 	mgmc_cookie = (struct MgMcCookie *)Supexec(get_mgmc_cookie);
@@ -129,6 +150,73 @@ void mgmc_init(void)
 }
 
 
+static void mac_get_resolutions(void)
+{
+	THPrint hPrint;
+	
+	mac_exit_code = 0;
+	hPrint = (THPrint)MacNewHandle(sizeof(TPrint));
+	if (hPrint != 0)
+	{
+		MacPrOpen();
+		if (MacPrError() == 0)
+		{
+			**hPrint = mac_settings->mac_settings;
+			getRslBlk.iOpCode = getRslDataOp;
+			MacPrGeneral(&getRslBlk);
+			if (MacPrError() == 0)
+				mac_exit_code = 1;
+		}
+		MacPrClose();
+		MacDisposeHandle((Handle)hPrint);
+	}
+}
+
+
+static struct TGetRslBlk *mgmc_get_resolutions(void)
+{
+	if (mgmc_cookie)
+	{
+		ExecuteMacFunction(mac_get_resolutions);
+		if (mac_exit_code != 0)
+			return &getRslBlk;
+	}
+	return NULL;
+}
+
+
+static int add_mode(PRN_ENTRY *printer, long id, short xres, short yres, Boolean flag)
+{
+	PRN_MODE *mode;
+	char buf[8];
+	
+	mode = Malloc(sizeof(*mode));
+	if (mode != NULL)
+	{
+		mode->next = NULL;
+		mode->mode_id = id;
+		mode->mode_capabilities = 0;
+		mode->color_capabilities = CC_MONO;
+		mode->dither_flags = 0;
+		mode->paper_types = NULL;
+		/* mode->reserved = 0; */
+		if (flag)
+		{
+			mode->color_capabilities |= CC_8_COLOR | CC_16M_COLOR;
+			mode->dither_flags |= CC_16M_COLOR;
+		}
+		mode->hdpi = xres;
+		mode->vdpi = yres;
+		itoa(xres, mode->name, 10);
+		strcat(mode->name, " * ");
+		itoa(yres, buf, 10);
+		strcat(mode->name, buf);
+		strcat(mode->name, " dpi");
+		list_append((void **)&printer->modes, mode);
+		return TRUE;
+	}
+	return FALSE;
+}
 
 
 int mgmc_get_modes(PRN_ENTRY *printer, Boolean flag)
@@ -196,91 +284,4 @@ int mgmc_get_modes(PRN_ENTRY *printer, Boolean flag)
 		}
 	}
 	return count;
-}
-
-
-static int add_mode(PRN_ENTRY *printer, long id, short xres, short yres, Boolean flag)
-{
-	PRN_MODE *mode;
-	char buf[8];
-	
-	mode = Malloc(sizeof(*mode));
-	if (mode != NULL)
-	{
-		mode->next = NULL;
-		mode->mode_id = id;
-		mode->mode_capabilities = 0;
-		mode->color_capabilities = CC_MONO;
-		mode->dither_flags = 0;
-		mode->paper_types = NULL;
-		/* mode->reserved = 0; */
-		if (flag)
-		{
-			mode->color_capabilities |= CC_8_COLOR | CC_16M_COLOR;
-			mode->dither_flags |= CC_16M_COLOR;
-		}
-		mode->hdpi = xres;
-		mode->vdpi = yres;
-		itoa(xres, mode->name, 10);
-		strcat(mode->name, " * ");
-		itoa(yres, buf, 10);
-		strcat(mode->name, buf);
-		strcat(mode->name, " dpi");
-		list_append((void **)&printer->modes, mode);
-		return TRUE;
-	}
-	return FALSE;
-}
-
-
-static struct TGetRslBlk *mgmc_get_resolutions(void)
-{
-	if (mgmc_cookie)
-	{
-		ExecuteMacFunction(mac_get_resolutions);
-		if (mac_exit_code != 0)
-			return &getRslBlk;
-	}
-	return NULL;
-}
-
-
-static void mac_get_resolutions(void)
-{
-	THPrint hPrint;
-	
-	mac_exit_code = 0;
-	hPrint = (THPrint)MacNewHandle(sizeof(TPrint));
-	if (hPrint != 0)
-	{
-		MacPrOpen();
-		if (MacPrError() == 0)
-		{
-			**hPrint = mac_settings->mac_settings;
-			getRslBlk.iOpCode = getRslDataOp;
-			MacPrGeneral(&getRslBlk);
-			if (MacPrError() == 0)
-				mac_exit_code = 1;
-		}
-		MacPrClose();
-		MacDisposeHandle((Handle)hPrint);
-	}
-}
-
-
-long get_mgmc_cookie(void)
-{
-	long *jarptr;
-	
-	jarptr = *P_COOKIES;
-	if (jarptr != NULL)
-	{
-		while (*jarptr != 0)
-		{
-			if (*jarptr == 0x4D674D63L) /* 'MgMc' */
-				return jarptr[1];
-			jarptr += 2;
-		}
-	}
-	return 0;
 }

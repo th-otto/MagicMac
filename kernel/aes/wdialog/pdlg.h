@@ -260,9 +260,7 @@ extern MacCtProc callMacContext;
 extern Ptr macA5;
 extern VoidProcPtr intrLock;
 extern VoidProcPtr intrUnlock;
-extern PDLG_SUB *mac_subdlg;
 extern PRN_SETTINGS *mac_settings;
-extern TPPrDlg mac_dlg;
 typedef TPPrDlg pascal (*PDlgInitProcPtr)(THPrint hPrint);
 
 void mgmc_init(void);

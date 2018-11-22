@@ -54,11 +54,4 @@ typedef struct append_item_list_struct {
 	DialogItem	items[1]; /* first item in the array */
 } ItemList, *ItemListPtr, **ItemListHandle;
 
-/* FIXME: does not need to be public */
-extern PItemProcPtr old_item_proc;
-extern ModalFilterProcPtr old_filter_proc;
-extern struct TGetRslBlk getRslBlk;
-extern struct TGetRotnBlk getRotnBlk;
-extern short mac_subdlg_code;
-extern short mac_dlg_code;
 extern short mac_exit_code;

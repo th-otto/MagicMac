@@ -12,6 +12,17 @@ struct mac_sub_dlg {
 	const char *title;
 };
 
+short mac_exit_code;
+PRN_SETTINGS *mac_settings;
+
+
+static PItemProcPtr old_item_proc;
+static ModalFilterProcPtr old_filter_proc;
+static TPPrDlg mac_dlg;
+static PDLG_SUB *mac_subdlg;
+static short mac_dlg_code;
+static short mac_subdlg_code;
+static struct TGetRotnBlk getRotnBlk;
 
 
 static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);

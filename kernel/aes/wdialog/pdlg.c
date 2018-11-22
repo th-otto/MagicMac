@@ -12,25 +12,6 @@ static unsigned char const pdlg_rsc[] = {
 #endif
 };
 
-struct MgMcCookie *mgmc_cookie;
-PDLG_SUB *mac_subdlg;
-PRN_SETTINGS *mac_settings;
-TPPrDlg mac_dlg;
-PItemProcPtr old_item_proc;
-ModalFilterProcPtr old_filter_proc;
-struct TGetRslBlk getRslBlk;
-struct TGetRotnBlk getRotnBlk;
-short mac_subdlg_code;
-short mac_dlg_code;
-short mac_exit_code;
-VoidProcPtr	modeMac;
-VoidProcPtr	modeAtari;
-MacCtProc callMacContext;
-Ptr macA5;
-VoidProcPtr intrLock;
-VoidProcPtr intrUnlock;
-
-
 
 
 /*
