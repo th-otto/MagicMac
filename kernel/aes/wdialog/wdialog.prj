@@ -16,8 +16,8 @@ wdialog.prg
 wdstart.s
 wdintrfc.s
 wdlginit.c
-mgxcheck.s
 wdialog.c
+cookies.c
 listbox.c
 fnt_menu.c
 xfrmpop.c
@@ -34,7 +34,6 @@ list.c
 filestat.c
 readfile.c
 adaptrsc.c
-getmagic.s
 wdtos.s
 aesctrl.s
 mt_aes.c

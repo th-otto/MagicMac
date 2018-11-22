@@ -2,6 +2,7 @@
 #include "wdlgmain.h"
 #include "pdlgqd.h"
 
+#define P_COOKIES ((long **) 0x5a0)
 
 
 static long get_mgmc_cookie(void);
@@ -271,7 +272,7 @@ long get_mgmc_cookie(void)
 {
 	long *jarptr;
 	
-	jarptr = *((long **)0x5a0);
+	jarptr = *P_COOKIES;
 	if (jarptr != NULL)
 	{
 		while (*jarptr != 0)

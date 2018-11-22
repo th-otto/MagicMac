@@ -77,7 +77,8 @@ WORD open_vwork(WORD aes_handle, WORD *workout);
 WORD aes_check(void);
 
 WORD get_aes_info(WORD *font_id, WORD *font_height, WORD *hor_3d, WORD *ver_3d);
-LONG get_magic(void);
+LONG get_magic_cookie(void);
+LONG get_nvdi_cookie(void);
 extern size_t mystrlen(const char *s);
 void _appl_yield(void);
 void substitute_objects(OBJECT *obj, UWORD nobs, WORD flags, OBJECT *selected, OBJECT *unselected);

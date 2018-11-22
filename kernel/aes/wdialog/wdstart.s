@@ -16,8 +16,8 @@
 		.IMPORT wd_nvdi_exit
 		.IMPORT wd_aes_init
 		.IMPORT aes_check
-		.IMPORT mgx_check
-		.IMPORT nvdi_check
+		.IMPORT get_magic_cookie
+		.IMPORT get_nvdi_cookie
 		.IMPORT aes_global
 
 		XREF do_xfrm_popup
@@ -252,7 +252,7 @@ exit:
 install:
 
 		clr.w     magx_version
-		bsr       mgx_check
+		bsr       get_magic_cookie
 		tst.l     d0
 		sne       d0
 		ext.w     d0
@@ -479,7 +479,7 @@ do_clswk1:
 do_clswk2:
 		move.l    -4(a1),-4(a0)
 do_clswk3:
-		bsr       nvdi_check
+		bsr       get_nvdi_cookie
 		tst.l     d0
 		beq.s     do_clswk4
 		bsr       wd_nvdi_exit

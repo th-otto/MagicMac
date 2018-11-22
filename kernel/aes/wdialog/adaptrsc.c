@@ -37,7 +37,7 @@ WORD get_aes_info(WORD *font_id, WORD *font_height, WORD *hor_3d, WORD *ver_3d)
 	if (aes_global[0] >= 0x0401)	/* mindestens AES 4.01? */
 		flags |= GAI_INFO;
 
-	magic = (MAGX_COOKIE *)Supexec(get_magic);
+	magic = (MAGX_COOKIE *)Supexec(get_magic_cookie);
 	magic_version = 0;
 	
 	if (magic)			/* MagiC vorhanden? */

@@ -34,7 +34,7 @@ pdlgdsp.s
 ..\..\kernel\aes\wdialog\filestat.c
 ..\..\kernel\aes\wdialog\readfile.c
 ..\..\kernel\aes\wdialog\adaptrsc.c
-..\..\kernel\aes\wdialog\getmagic.s
+..\..\kernel\aes\wdialog\cookies.c
 ..\..\kernel\aes\wdialog\rsrcfix.c
 ..\..\kernel\aes\wdialog\shelsort.c
 
