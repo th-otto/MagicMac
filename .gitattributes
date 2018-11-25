@@ -7,3 +7,4 @@
 *.rsh -text
 *.rh -text
 *.inc -text
+*.i -text

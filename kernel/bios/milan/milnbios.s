@@ -49,7 +49,6 @@ DEBUG4    EQU  0
 
      XREF      putch
      XREF      putstr
-     XDEF      MSys_BehneError
 
 ;Import vom DOS
 
@@ -330,7 +329,6 @@ syshdr:
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run
-MSys_BehneError:
  DC.L     0
 
 

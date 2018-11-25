@@ -624,7 +624,7 @@ static void qd_refresh_modes(XDRV_ENTRY *driver, PRN_ENTRY *printer)
 {
 	Boolean flag;
 	
-	if (driver->driver_type == DT_NVDI || driver->version >= 0x410)
+	if (driver->driver_type == DRIVER_AVDI || driver->version >= 0x410)
 		flag = TRUE;
 	else
 		flag = FALSE;

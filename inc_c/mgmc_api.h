@@ -20,7 +20,10 @@ typedef Ptr *Handle;
 typedef unsigned char *StringPtr;
 typedef void PixMap;
 typedef int Integer;
+#ifndef __Fixed_defined
+#define __Fixed_defined
 typedef long Fixed;
+#endif
 
 
 typedef long Size;
@@ -28,12 +31,16 @@ typedef short MacOSErr;
 typedef Handle ControlHandle;
 typedef unsigned char Str255[256];
 
-typedef struct {
-	unsigned short top;
-	unsigned short left;
-	unsigned short bottom;
-	unsigned short right;
-} Rect;
+#ifndef __Rect_defined
+#define __Rect_defined 1
+typedef struct
+{
+	unsigned short	top;			/* topmost line */
+	unsigned short	left;			/* leftmost columm */
+	unsigned short	bottom;			/* bottommost line */
+	unsigned short	right;			/* rightmost column */
+} Rect;		
+#endif
 
 typedef struct {
 	Integer v;

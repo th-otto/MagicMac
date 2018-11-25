@@ -136,7 +136,7 @@ static void delete_paper_types(MEDIA_TYPE **types);
 static void delete_paper_sizes(MEDIA_SIZE **sizes);
 static void delete_trays(PRN_TRAY **trays);
 
-static PRN_ENTRY *query_mac_driver(OBJECT **tree_addr, XDRV_ENTRY *entry, DRV_SYS *nvdihdr, struct zz *z);
+static PRN_ENTRY *query_mac_driver(OBJECT **tree_addr, XDRV_ENTRY *entry, DRVR_HEADER *nvdihdr, struct zz *z);
 static int is_mac_driver(XDRV_ENTRY *entry);
 static int can_do_landscape(XDRV_ENTRY *entry);
 static int can_do_contrast(XDRV_ENTRY *entry);
@@ -144,12 +144,12 @@ static int can_do_serial(XDRV_ENTRY *entry);
 static int can_do_acsi(XDRV_ENTRY *entry);
 static int can_do_file(XDRV_ENTRY *entry);
 static int can_do_copies(XDRV_ENTRY *entry);
-static int create_mode_infos(XDRV_ENTRY *entry, PRN_ENTRY *printer, DRV_SYS *nvdihdr, struct zz *z, struct xx *p);
+static int create_mode_infos(XDRV_ENTRY *entry, PRN_ENTRY *printer, DRVR_HEADER *nvdihdr, struct zz *z, struct xx *p);
 static PRN_ENTRY *query_fsm_driver(OBJECT **tree_addr, WORD vhandle, XDRV_ENTRY *entry, const char *name, char *filepath, const char *filename);
 static void add_input_tray(PRN_ENTRY *printer, WORD id);
 static void add_paper_size(PRN_ENTRY *printer, WORD id);
 static void add_mode(PRN_ENTRY *printer, WORD hdpi, WORD vdpi, WORD id);
-static WORD read_nvdi_hdr(DRV_SYS *hdr, struct zz *z, const char *filename, const char *drivername, LONG *offset_hdr);
+static WORD read_nvdi_hdr(DRVR_HEADER *hdr, struct zz *z, const char *filename, const char *drivername, LONG *offset_hdr);
 static struct xx *mgmc_read_hdr(const char *filepath, const char *name);
 
 
@@ -542,7 +542,7 @@ static XDRV_ENTRY *query_driver_info(OBJECT **tree_addr, WORD vhandle, WORD devi
 			entry->format = DRV_ENTRY_FORMAT;
 			entry->reserved = 0;
 			entry->driver_id = device;
-			entry->driver_type = DT_NONE;
+			entry->driver_type = DRIVER_NONE;
 			entry->version = 0;
 			entry->reserved2 = 0;
 			entry->offset_hdr = 0;
@@ -559,18 +559,18 @@ static XDRV_ENTRY *query_driver_info(OBJECT **tree_addr, WORD vhandle, WORD devi
 				entry->printers = entry->drv_info->printers;
 				entry->dither_modes = entry->drv_info->dither_modes;
 				vstrcpy(entry->device, entry->drv_info->device);
-				entry->driver_type = DT_NVDI;
+				entry->driver_type = DRIVER_AVDI;
 				install_std_dialogs(tree_addr, entry);
 			} else
 			{
-				DRV_SYS nvdihdr;
+				DRVR_HEADER nvdihdr;
 				struct zz z;
 				WORD type;
 				
 				type = read_nvdi_hdr(&nvdihdr, &z, entry->file_path, entry->driver_name, &entry->offset_hdr);
 				if (type)
 				{
-					entry->driver_type = DT_OLDNVDI;
+					entry->driver_type = DRIVER_NVDI;
 					entry->version = nvdihdr.version;
 					if (entry->offset_hdr != 0)
 					{
@@ -645,7 +645,7 @@ static XDRV_ENTRY *query_driver_info(OBJECT **tree_addr, WORD vhandle, WORD devi
 }
 
 
-static PRN_ENTRY *query_mac_driver(OBJECT **tree_addr, XDRV_ENTRY *entry, DRV_SYS *nvdihdr, struct zz *z)
+static PRN_ENTRY *query_mac_driver(OBJECT **tree_addr, XDRV_ENTRY *entry, DRVR_HEADER *nvdihdr, struct zz *z)
 {
 	struct xx *p;
 	PRN_ENTRY *root;
@@ -771,7 +771,7 @@ static int can_do_copies(XDRV_ENTRY *entry)
 }
 
 
-static int can_do_truecolor(XDRV_ENTRY *entry, DRV_SYS *nvdihdr)
+static int can_do_truecolor(XDRV_ENTRY *entry, DRVR_HEADER *nvdihdr)
 {
 	if (nvdihdr->version < 0x410 ||
 		strcmp(ATARILS_DRIVER_NAME, entry->driver_name) == 0 ||
@@ -781,7 +781,7 @@ static int can_do_truecolor(XDRV_ENTRY *entry, DRV_SYS *nvdihdr)
 }
 
 
-static int create_mode_infos(XDRV_ENTRY *entry, PRN_ENTRY *printer, DRV_SYS *nvdihdr, struct zz *z, struct xx *p)
+static int create_mode_infos(XDRV_ENTRY *entry, PRN_ENTRY *printer, DRVR_HEADER *nvdihdr, struct zz *z, struct xx *p)
 {
 	LONG maxxsize;
 	LONG maxysize;
@@ -946,7 +946,7 @@ static PRN_ENTRY *query_fsm_driver(OBJECT **tree_addr, WORD vhandle, XDRV_ENTRY 
 	WORD hdpi;
 	WORD vdpi;
 	
-	entry->driver_type = DT_UNKNOWN;
+	entry->driver_type = DRIVER_DYNAMIC;
 	entry->name[0] = '\0';
 	entry->device[0] = '\0';
 	
@@ -987,7 +987,7 @@ static PRN_ENTRY *query_fsm_driver(OBJECT **tree_addr, WORD vhandle, XDRV_ENTRY 
 						{
 							struct fsm_hdr *hdr = (struct fsm_hdr *)(p - 2);
 							
-							entry->driver_type = DT_FSM;
+							entry->driver_type = DRIVER_RESIDENT;
 							entry->offset_hdr = (char *)hdr - (char *)buf;
 							if (hdr->flags & FSM_PAPER_LETTER)
 								add_paper_size(printer, 0);
@@ -1229,7 +1229,7 @@ WORD vq_ext_devinfo(WORD handle, WORD device, WORD *dev_exists, char *filepath, 
 }
 
 
-static WORD read_nvdi_hdr(DRV_SYS *nvdihdr, struct zz *z, const char *filepath, const char *drivername, LONG *offset_hdr)
+static WORD read_nvdi_hdr(DRVR_HEADER *nvdihdr, struct zz *z, const char *filepath, const char *drivername, LONG *offset_hdr)
 {
 	char filename[256];
 	WORD ret;
@@ -1296,12 +1296,12 @@ int nvdi_write_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 	struct fsm_hdr fsm_hdr;
 	char filename[256];
 	struct zz hdr;
-	DRV_SYS nvdihdr;
+	DRVR_HEADER nvdihdr;
 	WORD i;
 	
 	vstrcpy(filename, drv_info->file_path);
 	strcat(filename, drv_info->driver_name);
-	if (drv_info->driver_type == DT_OLDNVDI)
+	if (drv_info->driver_type == DRIVER_NVDI)
 	{
 		if (readbuf(filename, &nvdihdr, sizeof(PH), sizeof(nvdihdr)) != sizeof(nvdihdr))
 			return FALSE;
@@ -1313,31 +1313,31 @@ int nvdi_write_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 		{
 		case CC_MONO:
 			nvdihdr.o52 = 0;
-			nvdihdr.format.colors = 2;
-			nvdihdr.format.planes = 1;
-			nvdihdr.format.format = FORM_ID_INTERLEAVED;
-			nvdihdr.format.flags = 1;
+			nvdihdr.info.colors = 2;
+			nvdihdr.info.planes = 1;
+			nvdihdr.info.format = FORM_ID_INTERLEAVED;
+			nvdihdr.info.flags = 1;
 			break;
 		case CC_8_COLOR:
 			nvdihdr.o52 = 0x10;
-			nvdihdr.format.colors = 8;
-			nvdihdr.format.planes = 3;
-			nvdihdr.format.format = FORM_ID_PIXPACKED;
-			nvdihdr.format.flags = 1;
+			nvdihdr.info.colors = 8;
+			nvdihdr.info.planes = 3;
+			nvdihdr.info.format = FORM_ID_PIXPACKED;
+			nvdihdr.info.flags = 1;
 			break;
 		case CC_16M_GREY:
 			nvdihdr.o52 = 0x10f;
-			nvdihdr.format.colors = 0x1000000L; /* 16M */
-			nvdihdr.format.planes = 32;
-			nvdihdr.format.format = FORM_ID_INTERLEAVED;
-			nvdihdr.format.flags = 1;
+			nvdihdr.info.colors = 0x1000000L; /* 16M */
+			nvdihdr.info.planes = 32;
+			nvdihdr.info.format = FORM_ID_INTERLEAVED;
+			nvdihdr.info.flags = 1;
 			break;
 		case CC_16M_COLOR:
 			nvdihdr.o52 = 0x11f;
-			nvdihdr.format.colors = 0x1000000L; /* 16M */
-			nvdihdr.format.planes = 32;
-			nvdihdr.format.format = FORM_ID_INTERLEAVED;
-			nvdihdr.format.flags = 1;
+			nvdihdr.info.colors = 0x1000000L; /* 16M */
+			nvdihdr.info.planes = 32;
+			nvdihdr.info.format = FORM_ID_INTERLEAVED;
+			nvdihdr.info.flags = 1;
 			break;
 		}
 		if (writebuf(filename, &nvdihdr, sizeof(PH), sizeof(nvdihdr)) != sizeof(nvdihdr))
@@ -1365,7 +1365,7 @@ int nvdi_write_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 		if (writebuf(filename, &hdr, nvdihdr.offset_hdr + sizeof(PH), sizeof(hdr)) == sizeof(hdr))
 			return TRUE;
 		return FALSE;
-	} else if (drv_info->driver_type == DT_FSM)
+	} else if (drv_info->driver_type == DRIVER_RESIDENT)
 	{
 		if (readbuf(filename, &fsm_hdr, drv_info->offset_hdr, sizeof(fsm_hdr)) != sizeof(fsm_hdr))
 			return FALSE;

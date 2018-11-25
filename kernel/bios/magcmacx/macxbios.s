@@ -62,7 +62,6 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      XDEF      _start
      XDEF      MSysX
      XDEF      MSys
-     XDEF      MSys_BehneError
      XDEF      getcookie
      XDEF      drv2devcode         ; BIOS-Device => devcode (32 Bit)
      XDEF      bios2devcode        ; BIOS-Device => devcode (32 Bit)
@@ -437,8 +436,7 @@ MSys:
  DC.L     0                   ; $6c MacSys_set_physbase
  DC.L     0                   ; $70 MacSys_VsetRGB
  DC.L     0                   ; $74 MacSys_VgetRGB
-MSys_BehneError:
- DC.L     BehneError          ; $78 MacSys_error. ###### FUeR BEHNES ######
+ DC.L     BehneError          ; $78 MacSys_error. ###### FUER BEHNES ######
  DC.L     0                   ; MacSys_init
  DC.L     0                   ; MacSys_drv2devcode
  DC.L     0                   ; MacSys_rawdrvr

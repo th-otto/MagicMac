@@ -1,4 +1,11 @@
 #include "drivers.h"
+#include "mxvdi.h"
 
-DRV_SYS *load_MAC_driver(MXVDI_PIXMAP *pixmap, const char *driver_dir);
-DRV_SYS *load_ATARI_driver(WORD shiftmode, WORD modecode, const char *driver_dir);
+#define NEW_NVDI 0
+
+#if NEW_NVDI
+DRVR_HEADER *load_MAC_driver(VDI_DISPLAY *display, const char *driver_dir);
+#else
+DRVR_HEADER *load_MAC_driver(MXVDI_PIXMAP *pixmap, const char *driver_dir);
+#endif
+DRVR_HEADER *load_ATARI_driver(WORD shiftmode, WORD modecode, const char *driver_dir);

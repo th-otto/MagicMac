@@ -3,126 +3,164 @@
 #include <vdi.h>
 #include "std.h"
 #include "filediv.h"
-#include "nvdi.h"
+#include "nvdi_wk.h"
+#include "mxvdi.h"
 #include "drivers.h"
 #include "ph.h"
 
+#define	OFFSCREEN_ptr OSC_ptr
+#define	OFFSCREEN_count OSC_count
+
 extern char gdos_path[];
-extern short OSC_count;
-extern OSD *OSC_ptr;
+extern WORD OFFSCREEN_count;
+extern DRIVER *OFFSCREEN_ptr;
 
 
-struct bitmap_format std_format = {
-	2L, 1, 2, 1, 0, 0, 0
-};
+DRIVER *load_NOD_driver(ORGANISATION *info);
+WORD unload_NOD_driver(DRIVER *drv);
 
-int init_offscreen(const char *pattern);
-int load_mon(void);
-void init_mon(DRV_SYS *);
-int delete_wk(VWK *vwk);
-VWK *create_wk(long size);
+WK *create_bitmap(DEVICE_DRIVER *device_driver, WK *dev_wk, MFDB *m, WORD *intin);
+WORD delete_bitmap(WK *wk);
+WK *create_wk(LONG wk_len);
+void init_mono_NOD(DRVR_HEADER *);
 
+static WORD delete_wk(WK *wk);
 
-int init_NOD(void)
+static WORD load_mono_NOD(void);
+static WORD init_offscreen_drivers(const char *pattern);
+
+/*----------------------------------------------------------------------------------------*/
+/* Offscreen-Treiber im Ordner gdos_path scannen                                          */
+/* Da sowohl OSD- als auch NOD-Treiber gesucht werden, kann fuer ein Bitformat mehr als   */
+/* ein Treiber vorhanden sein. Das ist jedoch unkritisch, da init_offscreen_drivers die   */
+/* Treiber rueckwaerts einsortiert, d.h. der letzte gefundene Treiber ist der erste in der*/
+/* Liste. Daher werden bevorzugt die OSD-Treiber geladen.                                 */
+/* Funktionsresultat:   1, wenn alles in Ordnung ist                                      */
+/*----------------------------------------------------------------------------------------*/
+WORD init_NOD_drivers(void)
 {
-	char fnamebuf[256];
-	
-	OSC_count = 0;
-	OSC_ptr = NULL;
-	strgcpy(fnamebuf, gdos_path);
-	strgcat(fnamebuf, "*.NOD");
-	init_offscreen(fnamebuf);
-	strgcpy(fnamebuf, gdos_path);
-	strgcat(fnamebuf, "*.OSD");
-	init_offscreen(fnamebuf);
-	if (load_mon() == FALSE || OSC_count == 0)
+	char tmp_path[256];
+
+	OFFSCREEN_count = 0;
+	OFFSCREEN_ptr = NULL;
+
+	strgcpy(tmp_path, gdos_path);
+	strgcat(tmp_path, "*.NOD");
+	init_offscreen_drivers(tmp_path);								/* alle NOD-Treiber suchen */
+
+	strgcpy(tmp_path, gdos_path);
+	strgcat(tmp_path, "*.OSD");
+	init_offscreen_drivers(tmp_path);								/* alle OSD-Treiber suchen */
+
+	if (load_mono_NOD() == FALSE)									/* monochromer Treiber vorhanden? */
 		return FALSE;
+
+	if (OFFSCREEN_count == 0)										/* sind ueberhaupt Treiber vorhanden? */
+		return FALSE;
+
 	return TRUE;
 }
 
 
-int init_offscreen(const char *pattern)
+static WORD init_offscreen_drivers(const char *tmp_path)
 {
-	OSD *osd;
-	char fnamebuf[256];
-	DRV_SYS header;
 	DTA dta;
-	DTA *olddta;
-	
-	olddta = Fgetdta();
+	DTA *old_dta;
+
+	old_dta = Fgetdta();
 	Fsetdta(&dta);
-	if (Fsfirst(pattern, 0) == 0)
+
+	if (Fsfirst(tmp_path, 0) == 0)	/* Datei gefunden */
 	{
 		do
 		{
-			strgcpy(fnamebuf, gdos_path);
-			strgcat(fnamebuf, dta.d_fname);
-			read_file(fnamebuf, &header, 28, sizeof(header));
-			if (strgcmp(header.magic, "OFFSCRN") == 0 && header.version > 0x280)
+			char name[256];
+			DRVR_HEADER head;
+
+			strgcpy(name, gdos_path);
+			strgcat(name, dta.d_fname);
+
+			read_file(name, &head, sizeof(PH), sizeof(head));	/* Treiberheader laden */
+
+			if (strgcmp(head.magic, OFFSCREEN_MAGIC) == 0 && head.version > 0x280)
 			{
-				osd = (OSD *)Malloc_sys(sizeof(*osd));
-				if (osd != NULL)
+				DRIVER *drv;
+
+				drv = (DRIVER *)Malloc_sys(sizeof(*drv));		/* Speicher fuer Treiberstruktur anfordern */
+				if (drv != NULL)
 				{
-					strgcpy(osd->fname, dta.d_fname);
-					osd->filesize = dta.d_length;
-					osd->path = gdos_path;
-					osd->format = header.format;
-					osd->refcount = 0;
-					osd->sys = 0;
-					osd->wk_size = 0;
-					osd->next = OSC_ptr;
-					OSC_ptr = osd;
-					OSC_count++;
+					strgcpy(drv->file_name, dta.d_fname);
+					drv->file_size = dta.d_length;
+					drv->file_path = gdos_path;
+					drv->info = head.info;
+					drv->used = 0;
+					drv->code = 0;
+					drv->wk_len = 0;
+					drv->next = OFFSCREEN_ptr;
+					OFFSCREEN_ptr = drv;
+					OFFSCREEN_count++;
 				}
 			}
 		} while (Fsnext() == 0);
 	}
-	Fsetdta(olddta);
+
+	Fsetdta(old_dta);
+
 	return TRUE;
 }
 
 
-int load_mon(void)
+static WORD load_mono_NOD(void)
 {
-	struct bitmap_format format;
-	OSD *p;
+	ORGANISATION info;
+	DRIVER *drv;
+	static ORGANISATION mono_format = { 2, 1, 2, 1, 0, 0, 0 };
 	
-	format = std_format;
-	if ((p = load_NOD(&format)) != NULL)
+	info = mono_format;
+	drv = load_NOD_driver(&info);
+	if (drv != NULL)
 	{
-		init_mon(p->sys);
+		init_mono_NOD(drv->code);
 		return TRUE;
 	}
 	return FALSE;
 }
 
 
-OSD *load_NOD(struct bitmap_format *format)
+/*----------------------------------------------------------------------------------------*/
+/* Offscreen-Treiber laden                                                                */
+/* Funktionsresultat:   Zeiger auf die Treiberstruktur oder 0                             */
+/* info:                        Zeiger auf die Treiberbeschreibung                        */
+/*----------------------------------------------------------------------------------------*/
+DRIVER *load_NOD_driver(ORGANISATION *info)
 {
-	OSD *p;
-	char fnamebuf[256];
-	
-	for (p = OSC_ptr; p != NULL; p = p->next)
+	DRIVER *drv;
+
+	for (drv = OFFSCREEN_ptr; drv != NULL; drv = drv->next)
 	{
-		if (p->format.colors == format->colors &&
-			p->format.planes == format->planes &&
-			p->format.format == format->format &&
-			(p->format.flags & format->flags) == format->flags)
+		/* uebereinstimmende Merkmale ueberpruefen */
+		if (drv->info.colors == info->colors &&
+			drv->info.planes == info->planes &&
+			drv->info.format == info->format &&
+			(drv->info.flags & info->flags) == info->flags)
 		{
-			if (p->sys == 0)
+			if (drv->code == 0)
 			{
-				strgcpy(fnamebuf, p->path);
-				strgcat(fnamebuf, p->fname);
-				p->sys = load_prg(fnamebuf);
+				char name[256];
+				
+				strgcpy(name, drv->file_path);
+				strgcat(name, drv->file_name);
+				drv->code = load_prg(name);
 			}
-			if (p->sys != 0)
+			
+			if (drv->code != 0)	/* Treiber geladen? */
 			{
-				if (p->refcount == 0)
+				if (drv->used == 0)	/* ist der Treiber das erste Mal geladen worden? */
 				{
-					p->wk_size = p->sys->init(&nvdi_struct);
+					drv->wk_len = drv->code->init(&nvdi_struct);	/* dann initialisieren */
 				}
-				++p->refcount;
-				return p;
+				++drv->used;
+				return drv;
 			}
 		}
 	}
@@ -130,207 +168,247 @@ OSD *load_NOD(struct bitmap_format *format)
 }
 
 
-int unload_NOD(OSD *drv)
+/*----------------------------------------------------------------------------------------*/
+/* Offscreen-Treiber freigeben                                                            */
+/* Funktionsresultat:   1                                                                 */
+/* drv:                     Zeiger auf die Treiberstruktur                                */
+/*----------------------------------------------------------------------------------------*/
+WORD unload_NOD_driver(DRIVER *drv)
 {
-	--drv->refcount;
-	if (drv->refcount == 0)
+	--drv->used;
+	if (drv->used == 0)	/* Treiber nicht mehr benutzt? */
 	{
-		Mfree_sys(drv->sys);
-		drv->sys = NULL;
+		Mfree_sys(drv->code);	/* Speichr freigeben */
+		drv->code = NULL;
 	}
 	return TRUE;
 }
 
 
-DRV_SYS *load_prg(const char *filename)
+/*----------------------------------------------------------------------------------------*/
+/* Programm-Datei laden und relozieren                                                    */
+/* Funktionsresultat:   Zeiger auf den Programmstart oder 0                               */
+/* name:                        Zeiger auf den kompletten Pfad mit Namen                  */
+/*----------------------------------------------------------------------------------------*/
+DRVR_HEADER *load_prg(const char *filename)
 {
-	DTA *olddta;
-	PH ph;
 	DTA dta;
-	DRV_SYS *sys;
-	long fd;
-	
-	sys = NULL;
-	olddta = Fgetdta();
+	DTA *old_dta;
+	DRVR_HEADER *addr;
+
+	addr = NULL;
+	old_dta = Fgetdta();
 	Fsetdta(&dta);
-	
+
 	if (Fsfirst(filename, 0) == 0)
 	{
-		fd = Fopen(filename, FO_READ);
-		if (fd > 0)
+		LONG handle;
+
+		handle = Fopen(filename, FO_READ);
+		if (handle > 0)
 		{
-			if (Fread((short)fd, sizeof(ph), &ph) == sizeof(ph) && ph.ph_branch == 0x601a)
+			PH phead;
+
+			/* Programmheader laden */
+			if (Fread((WORD)handle, sizeof(phead), &phead) == sizeof(phead))
 			{
-				long tpa_size;
-				long memsize;
-				unsigned char *relocs;
-				
-				memsize = dta.d_length + ph.ph_blen - ph.ph_slen;
-				sys = (DRV_SYS *)Malloc_sys(memsize);
-				if (sys != NULL)
+				if (phead.ph_branch == PH_MAGIC)	/* bra.s am Anfang? */
 				{
-					memsize = ph.ph_tlen + ph.ph_dlen;
-					tpa_size = memsize + ph.ph_blen;
-					if (Fread((short)fd, memsize, sys) == memsize)
+					LONG memsize;
+
+					memsize = dta.d_length + phead.ph_blen - phead.ph_slen;	/* anzufordernder Speicher	*/
+					addr = (DRVR_HEADER *)Malloc_sys(memsize);
+					if (addr != NULL)
 					{
-						long relocsize;
+						LONG TD_len;
+						LONG TDB_len;
 
-						Fseek(ph.ph_slen, (short)fd, SEEK_CUR);
-						clear_mem(ph.ph_blen, (char *)sys + memsize);
-						relocs = (unsigned char *)sys + tpa_size;
-						relocsize = -28 + dta.d_length - ph.ph_tlen - ph.ph_dlen - ph.ph_slen;
-						if (Fread((short)fd, relocsize, relocs) == relocsize)
+						TD_len = phead.ph_tlen + phead.ph_dlen;	/* Laenge von Text- und Data-Segment */
+						TDB_len = TD_len + phead.ph_blen;	/* Laenge von Text-, Data- und BSS-Segment */
+
+						if (Fread((WORD)handle, TD_len, addr) == TD_len)	/* Code und Daten laden */
 						{
-							unsigned long offset;
+							UBYTE *relo;
+							LONG relo_len;
 
-							offset = *((unsigned long *)relocs);
-							relocs += 4;
-							if (offset != 0)
+							Fseek(phead.ph_slen, (WORD)handle, SEEK_CUR);	/* Symboltabelle ueberspringen */
+							clear_mem(phead.ph_blen, (char *)addr + TD_len);	/* BSS-Segment loeschen */
+							
+							relo = (UBYTE *)addr + TDB_len;	/* Zeiger auf die Relokationsdaten */
+							
+							relo_len = dta.d_length - sizeof(PH) - phead.ph_tlen - phead.ph_dlen - phead.ph_slen;	/* Laenge der Relokationsdaten */
+							if (Fread((WORD)handle, relo_len, relo) == relo_len)
 							{
-								unsigned char *p;
-								unsigned char c;
+								ULONG relo_offset;
 
-								p = (unsigned char *)sys + offset;
-								*((long *)p) += (long)sys;
-								while ((c = *relocs++) != 0)
+								relo_offset = *((ULONG *)relo);	/* Startoffset fuer Relokationsdaten */
+								relo += 4;
+								if (relo_offset != 0)	/* Relokationsdaten vorhanden? */
 								{
-									if (c == 1)
+									UBYTE *code_ptr;
+									UBYTE relo_val;
+
+									code_ptr = (UBYTE *)addr + relo_offset;	/* erstes zu relozierendes Langwort */
+									*((LONG *)code_ptr) += (LONG)addr;
+									
+									while ((relo_val = *relo++) != 0)
 									{
-										p += 254;
-									} else
-									{
-										p += (unsigned long)c;
-										*((long *)p) += (long)sys;
+										if (relo_val == 1)
+										{
+											code_ptr += 254;
+										} else
+										{
+											code_ptr += (ULONG)relo_val;
+											*((LONG *)code_ptr) += (LONG)addr;
+										}
 									}
 								}
+								Mshrink_sys(addr, TDB_len);		/* Speicher fuer Relokationsdaten freigeben */
+							} else
+							{
+								Mfree_sys(addr);
+								addr = NULL;
 							}
-							Mshrink_sys(sys, tpa_size);
 						} else
 						{
-							Mfree_sys(sys);
-							sys = NULL;
+							Mfree_sys(addr);
+							addr = NULL;
 						}
-					} else
-					{
-						Mfree_sys(sys);
-						sys = NULL;
 					}
 				}
 			}
-			Fclose((short)fd);
+			Fclose((WORD)handle);
 		}
 	}
 	
-	Fsetdta(olddta);
-	if (sys)
-		clear_cpu_cache();
-	return sys;
+	Fsetdta(old_dta);
+
+	if (addr)																/* Programm geladen? */
+		clear_cpu_caches();												/* Caches loeschen */
+
+	return addr;
 }
 
 
-VWK *create_bitmap(struct v_unknown *p, VWK *wk, MFDB *fdb, WORD *intin)
+/*-----------------------------------------------------------------------------------------*/
+/* Offscreen-Treiber laden, Workstation oeffnen und initialisieren  und ggf. Speicher fuer */
+/* die Bitmap anfordern.                                                                   */
+/*                                                                                         */
+/* Funktionsresultat:   Zeiger auf die Workstation oder 0L                                 */
+/* device_driver:           Zeiger auf die Struktur des Geraetetreibers, dessen Handle bei */
+/*                              v_opnbm() uebergeben wurde                                 */
+/* dev_wk:                  Zeiger auf die zum Geraetetreiber gehoerende Workstation       */
+/* m:                           Zeiger auf den MFDB der Bitmap                             */
+/* intin:                   intin-Array wie es bei v_opnbm() vorliegt                      */
+/*-----------------------------------------------------------------------------------------*/
+WK *create_bitmap(DEVICE_DRIVER *device_driver, WK *dev_wk, MFDB *fdb, WORD *intin)
 {
-	OSD *osd;
-	struct bitmap_format format;
-	VWK *bitmap;
-	
+	WK *bitmap;
+	DRIVER *drv;
+	ORGANISATION info;
+
 	bitmap = NULL;
-	format.colors = *((long *)&intin[15]);
-	format.planes = intin[17];
-	format.format = intin[18];
-	format.flags = intin[19];
-	format.res1 = 0;
-	format.res2 = 0;
-	format.res3 = 0;
-	if (format.colors == 0)
+	
+	info.colors = *((LONG *)&intin[15]);
+	info.planes = intin[17];
+	info.format = intin[18];
+	info.flags = intin[19];
+	info.reserved[0] = 0;
+	info.reserved[1] = 0;
+	info.reserved[2] = 0;
+	
+	if (info.colors == 0) /* keine spezielle Organisation definiert? */
 	{
-		if (fdb->fd_nplanes == 0 || fdb->fd_nplanes == p->device_addr->format.planes)
-		{
-			format = p->device_addr->format;
-		} else
-		{
-			format.planes = 1;
-		}
+		if (fdb->fd_nplanes == 0 || fdb->fd_nplanes == device_driver->addr->info.planes)	/* Organisation wie der Bildschirmtreiber? */
+			info = device_driver->addr->info;
+		else
+			info.planes = 1;
 	}
-	if (format.planes == 1)
+
+	if (info.planes == 1)					/* monochrom? */
 	{
-		format.colors = 2;
-		format.format = FORM_ID_INTERLEAVED;
-		format.flags = 1;
+		info.colors = 2;
+		info.format = FORM_ID_INTERLEAVED;
+		info.flags = 1;
 	}
-	osd = load_NOD(&format);
-	if (osd != NULL)
+
+	drv = load_NOD_driver(&info);		/* Offscreen-Treiber laden und initialisieren */
+
+	if (drv != NULL)
 	{
-		bitmap = create_wk(osd->wk_size);
+		bitmap = create_wk(drv->wk_len);	/* Workstation anlegen */
+		
 		if (bitmap != NULL)
 		{
-			bitmap->v_format = format;
-			wk_init(NULL, osd, bitmap);
-			if (intin[11] != 0)
+			bitmap->bitmap_info = info;							/* Bitmap-Beschreibung setzen */
+			wk_init(NULL, drv, bitmap);	/* Workstation initialisieren */
+			
+			if (intin[11] != 0)					/* wurde die Bitmap-Groesse angegeben? */
 			{
 				bitmap->res_x = intin[11];
 				bitmap->res_y = intin[12];
 			} else
-			{
-				bitmap->res_x = wk->res_x;
-				bitmap->res_y = wk->res_y;
+			{										/* Bitmap-Groesse des Bildschirms uebernehmen */
+				bitmap->res_x = dev_wk->res_x;
+				bitmap->res_y = dev_wk->res_y;
 			}
-			if (intin[13] != 0)
+			if (intin[13] != 0)					/* wurde die Pixel-Groesse angegeben? */
 			{
 				bitmap->pixel_width = intin[13];
 				bitmap->pixel_height = intin[14];
 			} else
 			{
-				bitmap->pixel_width = wk->pixel_width;
-				bitmap->pixel_height = wk->pixel_height;
+				bitmap->pixel_width = dev_wk->pixel_width;
+				bitmap->pixel_height = dev_wk->pixel_height;
 			}
 			bitmap->bitmap_dx = ((bitmap->res_x + 16) & ~15) - 1;
 			bitmap->bitmap_dy = bitmap->res_y;
 			bitmap->clip_xmax = bitmap->res_x;
 			bitmap->clip_ymax = bitmap->res_y;
-			bitmap->bitmap_w = (short)((long)(bitmap->res_x + 1) * (long)(bitmap->r_planes + 1) / 8);
-			bitmap->bitmap_length = (long)bitmap->bitmap_w * (long)(bitmap->res_y + 1);
-			bitmap->bitmap_drv = osd;
+			bitmap->bitmap_width = (WORD)((LONG)(bitmap->res_x + 1) * (LONG)(bitmap->r_planes + 1) / 8);
+			bitmap->bitmap_len = (LONG)bitmap->bitmap_width * (LONG)(bitmap->res_y + 1);
+			bitmap->bitmap_drvr = drv;
 			
-			if (fdb->fd_addr == 0)
+			if (fdb->fd_addr == 0)					/* wurde kein Speicherblock uebergeben? */
 			{
 				fdb->fd_w = bitmap->res_x + 1;
 				fdb->fd_h = bitmap->res_y + 1;
 				fdb->fd_nplanes = bitmap->r_planes + 1;
 				fdb->fd_stand = 0;
-				fdb->fd_wdwidth = (bitmap->bitmap_w / (bitmap->r_planes + 1)) / 2;
-				bitmap->bitmap_addr = fdb->fd_addr = Malloc_sys(bitmap->bitmap_length);
-				if (fdb->fd_addr != NULL)
+				fdb->fd_wdwidth = (bitmap->bitmap_width / (bitmap->r_planes + 1)) / 2;
+				fdb->fd_addr = Malloc_sys(bitmap->bitmap_len);
+				bitmap->bitmap_addr = fdb->fd_addr;
+				if (fdb->fd_addr != NULL)						/* Speicher vorhanden? */
 				{
-					bitmap->v_format.flags |= 0x8000;
-					clear_bitmap(bitmap);
-					return bitmap;
+					bitmap->bitmap_info.flags |= 0x8000;	/* Bitmap wurde alloziert */
+					clear_bitmap(bitmap);				/* Bitmap loeschen */
 				} else
 				{
-					unload_NOD(osd);
-					delete_wk(bitmap);
+					unload_NOD_driver(drv);			/* Offscreen-Treiber entfernen */
+					delete_wk(bitmap);					/* Workstation loeschen */
 					return NULL;
 				}
-			}
-			
-			bitmap->bitmap_addr = fdb->fd_addr;
-			bitmap->bitmap_w = fdb->fd_wdwidth * 2 * fdb->fd_nplanes;
-			if (fdb->fd_stand)
+			} else
 			{
-				MFDB tmp;
+				bitmap->bitmap_addr = fdb->fd_addr;
+				bitmap->bitmap_width = fdb->fd_wdwidth * 2 * fdb->fd_nplanes;
+				if (fdb->fd_stand)					/* Standardformat? */
+				{
+					MFDB tmp;
 
-				tmp = *fdb;
-				tmp.fd_stand = 0;
-				tmp.fd_addr = Malloc_sys(bitmap->bitmap_length);
-				if (tmp.fd_addr != NULL)
-				{
-					transform(fdb, &tmp, bitmap);
-					copy_mem(bitmap->bitmap_length, tmp.fd_addr, fdb->fd_addr);
-					Mfree_sys(tmp.fd_addr);
-				} else
-				{
-					tmp.fd_addr = fdb->fd_addr;
-					transform(fdb, &tmp, bitmap);
+					tmp = *fdb;
+					tmp.fd_stand = 0;
+					tmp.fd_addr = Malloc_sys(bitmap->bitmap_len);
+					if (tmp.fd_addr != NULL)
+					{
+						transform_bitmap(fdb, &tmp, bitmap);
+						copy_mem(bitmap->bitmap_len, tmp.fd_addr, fdb->fd_addr);
+						/* BUG: tmp bitmap leaked; but crashes when we free it??? */
+					} else
+					{
+						tmp.fd_addr = fdb->fd_addr;
+						transform_bitmap(fdb, &tmp, bitmap);
+					}
 				}
 			}
 		}
@@ -339,47 +417,68 @@ VWK *create_bitmap(struct v_unknown *p, VWK *wk, MFDB *fdb, WORD *intin)
 }
 
 
-int delete_bitmap(VWK *vwk)
+/*----------------------------------------------------------------------------------------*/
+/* Offscreen-Treiber schliessen, ggf. Speicher fuer die Bitmap und die Workstation frei-  */
+/* geben.                                                                                 */
+/*                                                                                        */
+/* Funktionsresultat:   1                                                                 */
+/* wk:                      Zeiger auf die  Workstation                                   */
+/*----------------------------------------------------------------------------------------*/
+WORD delete_bitmap(WK *wk)
 {
-	unload_NOD(vwk->bitmap_drv);
-	if (vwk->v_format.flags & 0x8000)
+	unload_NOD_driver(wk->bitmap_drvr);		/* Offscreen-Treiber entfernen */
+	if (wk->bitmap_info.flags & 0x8000)		/* Speicher freigeben alloziert? */
 	{
-		Mfree_sys(vwk->bitmap_addr);
+		Mfree_sys(wk->bitmap_addr);
 	}
-	delete_wk(vwk);
+	delete_wk(wk);									/* Workstation entfernen */
+
 	return TRUE;
 }
 
 
-VWK *create_wk(long size)
+/*----------------------------------------------------------------------------------------*/
+/* Speicher fuer eine Workstation anfordern und loeschen, die Workstation in wk_tab ein-  */
+/* tragen und das   Handle in der Workstation vermerken.                                  */
+/*                                                                                        */
+/* Funktionsresultat:   Zeiger auf die Workstation oder 0L                                */
+/* wk_len:                  Laenge der Workstation                                        */
+/*----------------------------------------------------------------------------------------*/
+WK *create_wk(LONG wk_len)
 {
-	VWK *vwk = NULL;
-	int i;
+	WK *wk = NULL;
+	WORD handle;
 	
-	for (i = 2; i <= MAX_HANDLES; i++)
+	for (handle = 2; handle <= MAX_HANDLES; handle++)
 	{
-		if (wk_tab[i - 1] == &closed)
+		if (wk_tab[handle - 1] == &closed)	/* freier Eintrag? */
 		{
-			vwk = (VWK *)Malloc_sys(size);
-			if (vwk != NULL)
+			wk = (WK *)Malloc_sys(wk_len);			/* Speicher anfordern */
+			if (wk != NULL)
 			{
-				clear_mem(size, vwk);
-				vwk->wk_handle = i;
-				wk_tab[i - 1] = vwk;
+				clear_mem(wk_len, wk);			/* loeschen */
+				wk->wk_handle = handle;			/* Handle eintragen */
+				wk_tab[handle - 1] = wk;		/* Eintrag in der Workstation-Tabelle setzen */
 			}
 			break;
 		}
 	}
-	return vwk;
+	return wk;
 }
 
 
-int delete_wk(VWK *vwk)
+/*----------------------------------------------------------------------------------------*/
+/* Speicher einer Workstation zurueckgeben  und das Handle freigeben                      */
+/*                                                                                        */
+/* Funktionsresultat:   1, wenn die Workstation freigegeben werden konnte                 */
+/* wk_len:                  Laenge der Workstation                                        */
+/*----------------------------------------------------------------------------------------*/
+static WORD delete_wk(WK *wk)
 {
-	if (wk_tab[vwk->wk_handle - 1] == vwk)
+	if (wk_tab[wk->wk_handle - 1] == wk)
 	{
-		wk_tab[vwk->wk_handle - 1] = &closed;
-		Mfree_sys(vwk);
+		wk_tab[wk->wk_handle - 1] = &closed;
+		Mfree_sys(wk);
 		return TRUE;
 	}
 	return FALSE;

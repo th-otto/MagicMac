@@ -1,5 +1,5 @@
 #include "mgmc_api.h"
-#include "../vdi/nvdi.h"
+#include "../vdi/nvdi_wk.h"
 #include "../vdi/drivers.h"
 
 #if COUNTRY == COUNTRY_DE || COUNTRY == COUNTRY_SG
@@ -24,12 +24,12 @@
 /*
  * Driver types
  */
-#define DT_NONE      0
-#define DT_UNKNOWN   1
-#define DT_FSM       2
-#define DT_OLDNVDI   3
-#define DT_NVDI      4
-#define DT_CUSTOM    5
+#define DRIVER_NONE      0
+#define DRIVER_DYNAMIC   1
+#define DRIVER_RESIDENT  2
+#define DRIVER_NVDI      3
+#define DRIVER_AVDI      4
+#define DRIVER_CUSTOM    5
 
 #define VDI_SCREEN_DEVICE   1
 #define VDI_PLOTTER_DEVICE 11

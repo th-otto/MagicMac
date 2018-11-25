@@ -107,7 +107,7 @@ static int init_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 		settings->last_page = PG_MAX_PAGE;
 		settings->no_copies = PG_MIN_COPIES;
 		settings->driver_id = 0;
-		settings->driver_type = DT_NONE;
+		settings->driver_type = DRIVER_NONE;
 		settings->driver_mode = 0;
 		/* reserved1 */
 		/* reserved2 */
@@ -824,7 +824,7 @@ WORD pdlg_add_printers(PRN_DIALOG *prn_dialog, DRV_INFO *drv_info)
 		entry->printers = drv_info->printers;
 		entry->dither_modes = drv_info->dither_modes;
 		vstrcpy(entry->device, drv_info->device);
-		entry->driver_type = DT_CUSTOM;
+		entry->driver_type = DRIVER_CUSTOM;
 		install_std_dialogs(prn_dialog->tree_addr, entry);
 		list_append((void **)&prn_dialog->drivers, entry);
 		return TRUE;

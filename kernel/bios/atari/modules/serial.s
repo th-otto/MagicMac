@@ -6,20 +6,6 @@
 * d0 != 0, wenn SCC, sonst MFP
 *
 
-aux_status_rcv equ $1c
-aux_status_tmt equ $1d
-aux_lock_rcv   equ $1e
-aux_lock_tmt   equ $1f
-aux_handshake  equ $20
-aux_x_buf      equ $21
-baudrate       equ $22
-bitchr         equ $23
-
-ResetExtStatIntr  equ $10
-ResetTxINTPending equ $28
-ResetHighIUS      equ $38
-
-iva_mfp_tbe    equ $128
 
 init_aux_iorec:
  move.l   d0,-(sp)

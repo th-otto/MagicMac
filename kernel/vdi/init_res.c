@@ -2,7 +2,8 @@
 #include <tos.h>
 #include <vdi.h>
 #include "std.h"
-#include "nvdi.h"
+#include "nvdi_wk.h"
+#include "mxvdi.h"
 #include "drivers.h"
 #include "init_res.h"
 
@@ -16,24 +17,46 @@
 #define BPS8C			0x07	/* SuperVidel's 8-bit chunky mode */
 
 
-DRV_SYS *load_MAC_driver(MXVDI_PIXMAP *pixmap, const char *driver_dir)
+/*----------------------------------------------------------------------------------------*/
+/* Bildschirmtreiber fuer den Macintosh laden		                   					  */
+/* Funktionsresultat:	Zeiger auf den Treiberstart oder 0L								  */
+/*	pm:						Zeiger auf die PixMap des Bildschirms						  */
+/*	gdos_path:				Pfad, in dem der Treiber gesucht werden muss				  */
+/*----------------------------------------------------------------------------------------*/
+#if NEW_NVDI
+DRVR_HEADER *load_MAC_driver(VDI_DISPLAY *display, const char *driver_dir)
+#else
+DRVR_HEADER *load_MAC_driver(MXVDI_PIXMAP *pixmap, const char *driver_dir)
+#endif
 {
 	char fnamebuf[128];
 	
 	strgcpy(fnamebuf, driver_dir);
+#if NEW_NVDI
+	switch ((int) display->bm.bits)
+#else
 	switch (pixmap->pixelSize)
+#endif
 	{
 	case 1:
 		strgcat(fnamebuf, "MFM2.SYS");
 		break;
 	case 2:
+#if NEW_NVDI
+		if (display->bm.px_format == PX_ATARI2)				/* 4 Farben, 640 * 200 Kompatibilitaetsmodus? */
+#else
 		if (pixmap->planeBytes == 2)
+#endif
 			strgcat(fnamebuf, "MFM4IP.SYS");
 		else
 			strgcat(fnamebuf, "MFM4.SYS");
 		break;
 	case 4:
+#if NEW_NVDI
+		if (display->bm.px_format == PX_ATARI4)				/* 16 Farben 320 * 200 Kompatibilitaetsmodus? */
+#else
 		if (pixmap->planeBytes == 2)
+#endif
 			strgcat(fnamebuf, "MFM16IP.SYS");
 		else
 			strgcat(fnamebuf, "MFM16.SYS");
@@ -52,23 +75,30 @@ DRV_SYS *load_MAC_driver(MXVDI_PIXMAP *pixmap, const char *driver_dir)
 }
 
 
-DRV_SYS *load_ATARI_driver(WORD shiftmode, WORD modecode, const char *driver_dir)
+/*----------------------------------------------------------------------------------------*/
+/* Bildschirmtreiber fuer den Atari laden												  */
+/* Funktionsresultat:	Zeiger auf den Treiberstart oder 0L								  */
+/*	res:						Xbios-Aufloesung (sshiftmd)								  */
+/*	modecode:				Moduswort fuer den Falcon									  */
+/*	gdos_path:				Pfad, in dem der Treiber gesucht werden muss				  */
+/*----------------------------------------------------------------------------------------*/
+DRVR_HEADER *load_ATARI_driver(WORD shiftmode, WORD modecode, const char *driver_dir)
 {
 	char fnamebuf[128];
 	
 	strgcpy(fnamebuf, driver_dir);
 	switch (shiftmode)
 	{
-	case 0:
+	case 0:	/* ST-niedrig */
 		strgcat(fnamebuf, "MFA16.SYS");
 		break;
-	case 1:
+	case 1: /* ST-mittel */
 		strgcat(fnamebuf, "MFA4.SYS");
 		break;
-	case 2:
+	case 2: /* ST-hoch */
 		strgcat(fnamebuf, "MFA2.SYS");
 		break;
-	case 3:
+	case 3: /* Falcon	*/
 		switch (modecode & 7)
 		{
 		case BPS1:
@@ -91,13 +121,13 @@ DRV_SYS *load_ATARI_driver(WORD shiftmode, WORD modecode, const char *driver_dir
 			break;
 		}
 		break;
-	case 4:
+	case 4: /* TT-mittel */
 		strgcat(fnamebuf, "MFA16.SYS");
 		break;
-	case 6:
+	case 6: /* TT-hoch */
 		strgcat(fnamebuf, "MFA2.SYS");
 		break;
-	case 7:
+	case 7: /* TT-niedrig */
 		strgcat(fnamebuf, "MFA256.SYS");
 		break;
 	case 5:

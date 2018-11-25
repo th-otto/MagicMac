@@ -62,21 +62,21 @@ XFS95     EQU  1
      EXPORT      ctrl_status         ; nach DOS
      EXPORT      is_fpu              ; nach XAES
      EXPORT      halt_system         ; nach DOS,AES
-     XDEF      p_mgxinf            ; nach XAES
+     EXPORT      p_mgxinf            ; nach XAES
      EXPORT      machine_type        ; nach VDI,DOS
      EXPORT      config_status       ; nach DOS und AES
-     XDEF      status_bits         ; nach DOS und AES
+     EXPORT      status_bits         ; nach DOS und AES
      EXPORT      pe_slice            ; nach XAES
      EXPORT      pe_timer            ; nach XAES
      EXPORT      first_sem           ; nach XAES
      EXPORT      app0                ; nach AES
-     XDEF      sust_len            ; nach AES
-     XDEF      datemode            ; nach STD
+     EXPORT      sust_len            ; nach AES
+     EXPORT      datemode            ; nach STD
      EXPORT      Bmalloc             ; nach DOS
      EXPORT      Bmaddalt            ; nach DOS (ab 25.9.96)
      EXPORT      dos_macfn           ; nach DOS
 
-     XDEF           p_vt52              ; neues VT52 nach DOS
+     EXPORT      p_vt52              ; neues VT52 nach DOS
      EXPORT      warm_boot           ; nach AES
      EXPORT      warmbvec,coldbvec   ; nach AES
      EXPORT      ideparm             ; nach IDE.C
@@ -85,7 +85,6 @@ XFS95     EQU  1
      IFNE FALCON
      EXPORT      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
-     XDEF      MSys_BehneError                ; nach VDI
 
 ;Import vom DOS
 
@@ -179,10 +178,10 @@ ALT_NUMKEY     EQU  1
 DEADKEYS       EQU  0
 N_KEYTBL       EQU  9+DEADKEYS          ; 9 Tastaturtabellen
 
-D_DAY     EQU  11
-D_MONTH   EQU  9
-D_YEAR    EQU  2001
-D_BCD     EQU  $09112001
+D_DAY     EQU  17
+D_MONTH   EQU  11
+D_YEAR    EQU  2018
+D_BCD     EQU  $11172018
 
 NCOOKIES  EQU  35
 
@@ -475,7 +474,7 @@ ENDIF
 __e_bios:
 
 IF __e_bios > $1199
-$9a,"berlauf der Bios-Variablen"
+"bios variables overflow"
 ENDIF
 
 
@@ -504,8 +503,11 @@ syshdr:
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run
-MSys_BehneError:
  DC.L     0
+
+; referenced by MXVDIKNL
+MSys:
+  EXPORT MSys
 
 
 syshdr_code:
