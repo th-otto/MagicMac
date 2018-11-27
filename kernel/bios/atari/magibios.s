@@ -590,7 +590,7 @@ ccfl_loop:
  clr.w    cpu020                   ; 68020-Arithmetik moeglich?
  cmpi.b   #20,d0
  bcs.b    scpu_typ
- addq.w   #1,cpu020                ; mindenstens 020-Prozessor
+ addq.w   #1,cpu020                ; mindestens 020-Prozessor
 scpu_typ:
  move.w   d0,cpu_typ
  beq.b    inst_cook
@@ -600,6 +600,19 @@ inst_cook:
 
  bsr      boot_dsel_floppies            ; Floppies deselektieren
 
+*
+* boot_init_video might wait for an VBL interrupt.
+* Make sure the vector ist set, but lock vblqueue.
+* Also make sure mfp interrupts are disabled,
+* since sync_screen will lower the interrupt level.
+*
+ clr.w    vblsem
+ move.l   #int_vbl,$70             ; VBL
+ lea      gpip,a0
+ moveq    #0,d1
+ move.b d1,$12(a0) ; IMRA
+ move.b d1,$14(a0) ; IMRB
+ 
  bsr      boot_init_video               ; Videosystem initialisieren
 
 * Beginn der TPA setzen (je nachdem, ob GEM enthalten ist)

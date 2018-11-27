@@ -928,6 +928,8 @@ vmn_set:       DS.B mns_sizeof     /* fuer menu_settings */
 
      EVEN
 
+bootstack: ds.b 1024
+
 endofvars:
 
      TEXT
