@@ -2,6 +2,11 @@ PTRLEN    EQU  4         ; Zeiger auf Elementfunktion braucht 4 Zeiger
 
      OFFSET
 
+/*
+ * some variables are actually host addresses. DO NOT USE THEM,
+ * they might actually be 64bit addresses, and are not accessible
+ * from Atari-Side anyway
+ */
 ;Atari -> Mac
 MacSysX_magic:      DS.L 1         ; ist 'MagC'
 MacSysX_len:        DS.L 1         ; Laenge der Struktur
@@ -21,8 +26,8 @@ MacSysX_VdiInit:    DS.L PTRLEN    ; nach Initialisierung des VDI aufrufen
 MacSysX_pixmap:     DS.L 1         ; Daten fuers VDI
 MacSysX_pMMXCookie: DS.L 1         ; 68k-Zeiger auf MgMx-Cookie
 MacSysX_Xcmd:       DS.L PTRLEN    ; XCMD-Kommandos
-MacSysX_PPCAddr:    DS.L 1         ; tats. PPC-Adresse von 68k-Adresse 0
-MacSysX_VideoAddr:  DS.L 1         ; tats. PPC-Adresse des Bildschirmspeichers
+MacSysX_PPCAddr:    DS.L 1         ; tats. PPC-Adresse von 68k-Adresse 0 DO NOT USE
+MacSysX_VideoAddr:  DS.L 1         ; tats. PPC-Adresse des Bildschirmspeichers DO NOT USE
 MacSysX_Exec68k:    DS.L PTRLEN    ; hier kann der PPC-Callback 68k-Code ausfuehren
 MacSysX_gettime:    DS.L 1         ; LONG GetTime(void) Datum und Uhrzeit ermitteln
 MacSysX_settime:    DS.L 1         ; void SetTime(LONG *time) Datum/Zeit setzen

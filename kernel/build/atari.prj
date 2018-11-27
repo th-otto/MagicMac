@@ -30,6 +30,7 @@ magic.ram
 ..\dos\dfs_fat.s
 ..\bios\magicmac\macxfs.s
 ..\vdi\mxvdiknl.s
+..\vdi\setup.c
 ..\vdi\drivers.c
 ..\vdi\filediv.c
 ..\vdi\init_res.c
@@ -43,7 +44,7 @@ magic.ram
 ..\aes\aesmen.s
 ..\aes\aesgraf.s
 ..\aes\aesrsc.s
-..\aes\farbic.c [-G-]
+..\aes\farbic.c
 ..\aes\wdialog\wdialog.c
 ..\aes\wdialog\listbox.c
 ..\aes\wdialog\fnt_menu.c

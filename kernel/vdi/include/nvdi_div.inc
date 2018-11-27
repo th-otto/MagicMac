@@ -9,5 +9,3 @@ NVDI_YEAR           EQU $1998
 NVDI_AT             EQU 1
 NVDI_ET             EQU 0
 NVDI_MAT            EQU 0
-
-NEW_NVDI            equ 0

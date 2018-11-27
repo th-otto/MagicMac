@@ -57,8 +57,8 @@ extern OLD_MACSYS	MSys;			/* fuer alte MagiCMac-Version importieren (bei neuen n
 /*----------------------------------------------------------------------------------------*/
 /* Statische Daten																		  */
 /*----------------------------------------------------------------------------------------*/
-static VDI_SETUP_DATA setup;
-static VDI_DISPLAY display;
+static VDI_SETUP_DATA vdi_setup;
+static VDI_DISPLAY vdi_display;
 
 VDI_SETUP_DATA *MM_init(VDI_SETUP_DATA *in_setup);
 
@@ -73,77 +73,78 @@ VDI_SETUP_DATA *MM_init(VDI_SETUP_DATA *in_setup)
 
 		pm = (MXVDI_PIXMAP *) in_setup;				/* altes MagiCMac: uebergibt Zeiger auf PixMap */
 
-		display.magic = VDI_DISPLAY_MAGIC;
-		display.length = sizeof(VDI_DISPLAY);
-		display.format = 0;
-		display.reserved = 0;
+		vdi_display.magic = VDI_DISPLAY_MAGIC;
+		vdi_display.length = sizeof(VDI_DISPLAY);
+		vdi_display.format = 0;
+		vdi_display.reserved = 0;
 		
-		display.next = 0;							/* keine weiteren Monitore */
-		display.display_id = 0;
-		display.flags = VDI_DISPLAY_ACTIVE;
-		display.reserved1 = 0;
+		vdi_display.next = 0;							/* keine weiteren Monitore */
+		vdi_display.display_id = 0;
+		vdi_display.flags = VDI_DISPLAY_ACTIVE;
+		vdi_display.reserved1 = 0;
 		
-		display.hdpi = pm->hRes;					/* Pixelgroesse in dpi (16.16) */
-		display.vdpi = pm->vRes;
-		display.reserved2 = 0;
-		display.reserved3 = 0;
+		vdi_display.hdpi = pm->hRes;					/* Pixelgroesse in dpi (16.16) */
+		vdi_display.vdpi = pm->vRes;
+		vdi_display.reserved2 = 0;
+		vdi_display.reserved3 = 0;
 
-		display.reserved4 = 0;
-		display.reserved5 = 0;
-		display.reserved6 = 0;
-		display.reserved7 = 0;
+		vdi_display.reserved4 = 0;
+		vdi_display.reserved5 = 0;
+		vdi_display.reserved6 = 0;
+		vdi_display.reserved7 = 0;
 
 		/* Bitmapbeschreibung aufbauen */
-		display.bm.magic = CBITMAP_MAGIC;
-		display.bm.length = sizeof(GCBITMAP);		/* Strukturlaenge */
-		display.bm.format = 0;						/* Strukturformat (0) */
-		display.bm.reserved = 0;					/* reserviert (0) */
+		vdi_display.bm.magic = CBITMAP_MAGIC;
+		vdi_display.bm.length = sizeof(GCBITMAP);		/* Strukturlaenge */
+		vdi_display.bm.format = 0;						/* Strukturformat (0) */
+		vdi_display.bm.reserved = 0;					/* reserviert (0) */
 
-		display.bm.addr = pm->baseAddr;	/* Bildschirmadresse */
-		display.bm.width = pm->rowBytes & 0x3fff;	/* Breite in Bytes (obere zwei Bits von QD muessen ausmaskiert werden) */
-		display.bm.bits = pm->pixelSize;
+		vdi_display.bm.addr = pm->baseAddr;				/* Bildschirmadresse */
+		vdi_display.bm.width = pm->rowBytes & 0x3fff;	/* Breite in Bytes (obere zwei Bits von QD muessen ausmaskiert werden) */
+		vdi_display.bm.bits = pm->pixelSize;
 
-		if (pm->planeBytes == 2)					/* Emulation eines ATARI-Pixelformats? */
+		if (pm->planeBytes == 2)						/* Emulation eines ATARI-Pixelformats? */
 		{
-			if (display.bm.bits == 1)
-				display.bm.px_format = PX_PREF1;
-			else if (display.bm.bits == 2)			/* 4 Farben, 640 * 200 Kompatibilitaetsmodus */
-				display.bm.px_format = PX_ATARI2;
-			else if (display.bm.bits == 8)
-				display.bm.px_format = PX_ATARI8;	/* 256 Farben 320 * 480 Kompatibilitaetsmodus */
+			if (vdi_display.bm.bits == 1)
+				vdi_display.bm.px_format = PX_PREF1;
+			else if (vdi_display.bm.bits == 2)			/* 4 Farben, 640 * 200 Kompatibilitaetsmodus */
+				vdi_display.bm.px_format = PX_ATARI2;
+			else if (vdi_display.bm.bits == 8)
+				vdi_display.bm.px_format = PX_ATARI8;	/* 256 Farben 320 * 480 Kompatibilitaetsmodus */
 			else
-				display.bm.px_format = PX_ATARI4;	/* 16 Farben 320 * 200 Kompatibilitaetsmodus */
+				vdi_display.bm.px_format = PX_ATARI4;	/* 16 Farben 320 * 200 Kompatibilitaetsmodus */
 		}
-		else										/* normales MAC-Pixelformat */
+		else											/* normales MAC-Pixelformat */
 		{
-			if (display.bm.bits <= 8)
-				display.bm.px_format = PX_PREFn(display.bm.bits);
-			else if (display.bm.bits == 16)			/* 16 Bit xRGB? */
-				display.bm.px_format = PX_PREF15;
-			else									/* 32 Bit xRGB? */
-				display.bm.px_format = PX_PREF32;
+			if (vdi_display.bm.bits <= 8)
+				vdi_display.bm.px_format = PX_PREFn(vdi_display.bm.bits);
+			else if (vdi_display.bm.bits == 16)			/* 16 Bit xRGB? */
+				vdi_display.bm.px_format = PX_PREF15;
+			else										/* 32 Bit xRGB? */
+				vdi_display.bm.px_format = PX_PREF32;
 		}
 
-		display.bm.xmin = pm->bounds.left;			/* minimale diskrete x-Koordinate der Bitmap */
-		display.bm.ymin = pm->bounds.top;			/* minimale diskrete y-Koordinate der Bitmap */
-		display.bm.xmax = pm->bounds.right;			/* maximale diskrete x-Koordinate der Bitmap + 1 */
-		display.bm.ymax = pm->bounds.bottom;		/* maximale diskrete y-Koordinate der Bitmap + 1 */
+		vdi_display.bm.xmin = pm->bounds.left;			/* minimale diskrete x-Koordinate der Bitmap */
+		vdi_display.bm.ymin = pm->bounds.top;			/* minimale diskrete y-Koordinate der Bitmap */
+		vdi_display.bm.xmax = pm->bounds.right;			/* maximale diskrete x-Koordinate der Bitmap + 1 */
+		vdi_display.bm.ymax = pm->bounds.bottom;		/* maximale diskrete y-Koordinate der Bitmap + 1 */
 	
-		display.bm.ctab = 0;						/* Verweis auf die Farbtabelle ist hier 0 */
-		display.bm.itab = 0;						/* Verweis auf die inverse Farbtabelle ist hier 0 */
-		display.bm.color_space = CSPACE_RGB;		/* Farbraum, entweder CSPACE_RGB oder CSPACE_GRAY (um Graustufenbetrieb vernuenftig zu unterstuetzen) */
-		display.bm.reserved1 = 0;					/* reserviert */
+		vdi_display.bm.ctab = 0;						/* Verweis auf die Farbtabelle ist hier 0 */
+		vdi_display.bm.itab = 0;						/* Verweis auf die inverse Farbtabelle ist hier 0 */
+		vdi_display.bm.color_space = CSPACE_RGB;		/* Farbraum, entweder CSPACE_RGB oder CSPACE_GRAY (um Graustufenbetrieb vernuenftig zu unterstuetzen) */
+		vdi_display.bm.reserved1 = 0;					/* reserviert */
 	
-		in_setup = &setup;
-		in_setup->magic = VDI_SETUP_MAGIC;
-		in_setup->length = sizeof(VDI_SETUP_DATA);
-		in_setup->format = 0;
-		in_setup->reserved = 0;
+		vdi_setup.magic = VDI_SETUP_MAGIC;
+		vdi_setup.length = sizeof(VDI_SETUP_DATA);
+		vdi_setup.format = 0;
+		vdi_setup.reserved = 0;
 		
-		in_setup->displays = &display;
-		in_setup->report_error = MSys.error;			/* Funktion fuer den VDI-GAU */
-		in_setup->reserved1 = 0;
-		in_setup->reserved2 = 0;
+		vdi_setup.displays = &vdi_display;
+		vdi_setup.report_error = MSys.error;			/* Funktion fuer den VDI-GAU */
+		vdi_setup.reserved1 = 0;
+		vdi_setup.reserved2 = 0;
+	
+		return &vdi_setup;
 	}
-	return in_setup;									/* Direkter Hardwarezugriff fuer Atari */
+	return 0;											/* Direkter Hardwarezugriff fuer Atari */
 }

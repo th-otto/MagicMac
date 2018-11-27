@@ -23,40 +23,24 @@
 /*	pm:						Zeiger auf die PixMap des Bildschirms						  */
 /*	gdos_path:				Pfad, in dem der Treiber gesucht werden muss				  */
 /*----------------------------------------------------------------------------------------*/
-#if NEW_NVDI
 DRVR_HEADER *load_MAC_driver(VDI_DISPLAY *display, const char *driver_dir)
-#else
-DRVR_HEADER *load_MAC_driver(MXVDI_PIXMAP *pixmap, const char *driver_dir)
-#endif
 {
 	char fnamebuf[128];
 	
 	strgcpy(fnamebuf, driver_dir);
-#if NEW_NVDI
 	switch ((int) display->bm.bits)
-#else
-	switch (pixmap->pixelSize)
-#endif
 	{
 	case 1:
 		strgcat(fnamebuf, "MFM2.SYS");
 		break;
 	case 2:
-#if NEW_NVDI
 		if (display->bm.px_format == PX_ATARI2)				/* 4 Farben, 640 * 200 Kompatibilitaetsmodus? */
-#else
-		if (pixmap->planeBytes == 2)
-#endif
 			strgcat(fnamebuf, "MFM4IP.SYS");
 		else
 			strgcat(fnamebuf, "MFM4.SYS");
 		break;
 	case 4:
-#if NEW_NVDI
 		if (display->bm.px_format == PX_ATARI4)				/* 16 Farben 320 * 200 Kompatibilitaetsmodus? */
-#else
-		if (pixmap->planeBytes == 2)
-#endif
 			strgcat(fnamebuf, "MFM16IP.SYS");
 		else
 			strgcat(fnamebuf, "MFM16.SYS");

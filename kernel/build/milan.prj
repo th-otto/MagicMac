@@ -21,7 +21,7 @@ mmilan.ram
 ..\dos\malloc.s
 ..\dos\xfs_vdos.s
 ..\dos\vfat_s.s
-..\dos\vfat.c [-G-]
+..\dos\vfat.c
 ..\dos\dfs_u.s
 ..\dos\dev_bios.s
 ..\dos\dev_pipe.s
@@ -37,11 +37,11 @@ mmilan.ram
 ..\aes\aesgraf.s
 ..\aes\aesrsc.s
 ..\aes\farbic.c [-G-]
-..\aes\wdialog\wdialog.c [-G]
-..\aes\wdialog\listbox.c [-G-]
-..\aes\wdialog\fnt_menu.c [-G-]
-..\aes\wdialog\shelsort.c [-G-]
+..\aes\wdialog\wdialog.c
+..\aes\wdialog\listbox.c
+..\aes\wdialog\fnt_menu.c
+..\aes\wdialog\shelsort.c
 ..\aes\wdialog\wdintrfc.s
-..\aes\fsel\fsel.c [-G- -M-]
-..\aes\xmen_mgr\mtsmn.c [-G-]
+..\aes\fsel\fsel.c [-M-]
+..\aes\xmen_mgr\mtsmn.c
 ..\ende.s

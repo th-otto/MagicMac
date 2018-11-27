@@ -337,6 +337,11 @@ __e_bios:
 *
 **********************************************************************
 
+/*
+ * some variables are actually host addresses. DO NOT USE THEM,
+ * they might actually be 64bit addresses, and are not accessible
+ * from Atari-Side anyway
+ */
 MSysX:
  DC.L     'MagC'              ;                                   000
  DC.L     MacSysX_sizeof      ; MacSys_len                        004
@@ -356,11 +361,11 @@ MSysX:
  DC.L     0                   ; MacSys_pixmap                     058
  DC.L     0                   ; MacSysX_pMMXCookie                05c
  DCB.L    PTRLEN,0            ; MacSysX_Xcmd                      060
- DC.L     0                   ; MacSys_PPCAddr                    070
- DC.L     0                   ; MacSys_VideoAddr                  074
- DCB.L    PTRLEN,0            ; MacSys_Exec68k                    078
- DC.L     0                   ; MacSys_gettime                    088
- DC.L     0                   ; MacSys_settime                    08c
+ DC.L     0                   ; MacSys_PPCAddr                    070 DO NOT USE
+ DC.L     0                   ; MacSysX_VideoAddr                 074 DO NOT USE
+ DCB.L    PTRLEN,0            ; MacSysX_Exec68k                   078
+ DC.L     0                   ; MacSysX_gettime                   088
+ DC.L     0                   ; MacSysX_settime                   08c
  DC.L     0                   ; MacSysX_Setpalette                090
  DC.L     0                   ; MacSysX_Setcolor                  094
  DC.L     0                   ; MacSysX_VsetRGB                   098

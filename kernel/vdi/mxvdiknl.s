@@ -2,7 +2,7 @@
 ;******************************************************************************;
 ;*                                                                            *;
 ;*                                                                            *;
-;*                       (C) 1990-95 by Sven & Wilfried Behne                 *;
+;*                    (C) 1990-95 by Sven & Wilfried Behne                    *;
 ;*                                                                            *;
 ;******************************************************************************;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10,63 +10,65 @@
 
 ;Referenzen fuers Linken von MAGX.RAM
 
-   .EXPORT  __a_vdi
-   .EXPORT  __e_vdi
-   .EXPORT  vdi_blinit
-   .EXPORT  vt52_init
-   .EXPORT  vdi_init
-   .EXPORT vdi_entry  ;VDI-Dispatcher (wird mit rts verlassen)
-   .EXPORT int_linea  ;LINEA-Dispatcher (wird mit rte verlassen)
-   .EXPORT Blitmode   ;Xbios-Funktion Blitmode() (wird mit rte verlassen)
-   .EXPORT vdi_rawout ;Bios-Vektor $586
-   .EXPORT vdi_conout ;Bios-Vektor $592
-   .EXPORT vdi_cursor ;Bios-Cursor-Routine
-   .EXPORT vt_seq_e   ;Show cursor (VT52 ESC e)
-   .EXPORT vt_seq_f   ;Hide cursor (VT52 ESC f)
+                  .EXPORT __a_vdi
+                  .EXPORT __e_vdi
+                  .EXPORT vdi_blinit
+                  .EXPORT vt52_init
+                  .EXPORT vdi_init
+                  .EXPORT vdi_entry  ;VDI-Dispatcher (wird mit rts verlassen)
+                  .EXPORT int_linea  ;LINEA-Dispatcher (wird mit rte verlassen)
+                  .EXPORT Blitmode   ;Xbios-Funktion Blitmode() (wird mit rte verlassen)
+                  .EXPORT vdi_rawout ;Bios-Vektor $586
+                  .EXPORT vdi_conout ;Bios-Vektor $592
+                  .EXPORT vdi_cursor ;Bios-Cursor-Routine
+                  .EXPORT vt_seq_e   ;Show cursor (VT52 ESC e)
+                  .EXPORT vt_seq_f   ;Hide cursor (VT52 ESC f)
 
 ;Referenzen aus dem BIOS
-   .IMPORT  MM_init     ;VDI_SETUP_DATA   *MM_init( VDI_SETUP_DATA *in_setup );
-                  ;sorgt bei der Initialisierung fuer Kompatibilitaet zun alten MagiCMac
-   
+                  .IMPORT  MM_init   ;VDI_SETUP_DATA   *MM_init( VDI_SETUP_DATA *in_setup );
+                                     ;sorgt bei der Initialisierung fuer Kompatibilitaet zun alten MagiCMac
+
 ;sonstige Referenzen
 
-   .EXPORT  cpu020      ;wird in MATH.S benoetigt
-   .EXPORT  gdos_path
+                  .EXPORT cpu020     ;wird in MATH.S benoetigt
+                  .EXPORT gdos_path
 
-   .EXPORT  nvdi_struct
-   .EXPORT OSC_ptr
-   .EXPORT  OSC_count
-   .EXPORT  init_mono_NOD
-   .EXPORT  clear_cpu_caches  ;fuer DRIVERS
+                  .EXPORT nvdi_struct
+                  .EXPORT OSC_ptr
+                  .EXPORT OSC_count
+                  .EXPORT init_mono_NOD
+                  .EXPORT clear_cpu_caches  ;fuer DRIVERS
 
-   .IMPORT Malloc_sys
-   .IMPORT Mfree_sys
-   .IMPORT Mshrink_sys
+                  .IMPORT Malloc_sys
+                  .IMPORT Mfree_sys
+                  .IMPORT Mshrink_sys
 
-   .EXPORT  clear_bitmap
-   .EXPORT  transform_bitmap
-   .EXPORT  wk_init
-   .EXPORT  wk_tab
-   .EXPORT  closed
-   .IMPORT create_bitmap
-   .IMPORT delete_bitmap
+                  .EXPORT clear_bitmap
+                  .EXPORT transform_bitmap
+                  .EXPORT wk_init
+                  .EXPORT wk_tab
+                  .EXPORT closed
+                  .IMPORT create_bitmap
+                  .IMPORT delete_bitmap
 
-   .IMPORT init_NOD_drivers
-   .IMPORT load_NOD_driver
-   .IMPORT unload_NOD_driver
-   .IMPORT load_prg
-   .IMPORT load_file
+                  .IMPORT init_NOD_drivers
+                  .IMPORT load_NOD_driver
+                  .IMPORT unload_NOD_driver
+                  .IMPORT load_prg
+                  .IMPORT load_file
 
-   .IMPORT load_MAC_driver    ;void *load_MAC_driver( VDI_DISPLAY *display, BYTE *gdos_path )
-   .IMPORT load_ATARI_driver  ;void *load_ATARI_driver( WORD res, WORD modecode, BYTE *gdos_path );
+                  .IMPORT load_MAC_driver    ;void *load_MAC_driver( VDI_DISPLAY *display, BYTE *gdos_path )
+                  .IMPORT load_ATARI_driver  ;void *load_ATARI_driver( WORD res, WORD modecode, BYTE *gdos_path );
 
-   .IMPORT clear_mem       ;void clear_mem( LONG len, void *s );
+                  .IMPORT clear_mem          ;void clear_mem( LONG len, void *s );
 
-   .IMPORT strgcpy
-   .IMPORT strgcat
+                  .IMPORT strgcpy
+                  .IMPORT strgcat
 
    .IMPORT MSys
 BehneError equ $78
+	.EXPORT vdi_display
+	.EXPORT vdi_setup
    
 MAX_HANDLES       EQU 128                 ;Maximale Handlenummer
 MAX_PTS           EQU 1024                ;Maximale Anzahl der Koordinatenpaare in ptsin
@@ -112,67 +114,67 @@ CLOSED            EQU -1
 __a_vdi           EQU   $1200             ;Anfang der VDI-Variablen
 __e_vdi           EQU   SAVAREA+8*16*4    ;Ende der VDI-Variablen
 
-               .OFFSET  __a_vdi           ;ab hier beginnen die VDI-Variablen
+                  .OFFSET  __a_vdi        ;ab hier beginnen die VDI-Variablen
 
-tmp_buffer:                            ;kurzzeiger Buffer fuer Schweinereien, der ptsin, ..., contrl zerstoeren darf
+tmp_buffer:                               ;kurzzeiger Buffer fuer Schweinereien, der ptsin, ..., contrl zerstoeren darf
 ;VDI-Arrays
-ptsin:            DS.W 128*2           ;128 Koordinaten
-intin:            DS.W 12              ;12  Worte
-intout:           DS.W 12              ;12  Worte
-ptsout:           DS.L 12              ;12  Koordinaten
-contrl:           DS.W 12              ;12  Worte
-vdipb:            DS.L 5               ;5   Langworte
+ptsin:            DS.W 128*2              ;128 Koordinaten
+intin:            DS.W 12                 ;12  Worte
+intout:           DS.W 12                 ;12  Worte
+ptsout:           DS.L 12                 ;12  Koordinaten
+contrl:           DS.W 12                 ;12  Worte
+vdipb:            DS.L 5                  ;5   Langworte
 
 ;************** Fontheader **************
-font_hdr1:        DS.B sizeof_FONTHDR  ;Header des 6*6  Systemfonts
-font_hdr2:        DS.B sizeof_FONTHDR  ;Header des 8*8  Systemfonts
-font_hdr3:        DS.B sizeof_FONTHDR  ;Header des 8*16 Systemfonts
-font_hdr4:        DS.B sizeof_FONTHDR  ;Header des 16*32 Systemfonts (hier unbenutzt)
+font_hdr1:        DS.B sizeof_FONTHDR     ;Header des 6*6  Systemfonts
+font_hdr2:        DS.B sizeof_FONTHDR     ;Header des 8*8  Systemfonts
+font_hdr3:        DS.B sizeof_FONTHDR     ;Header des 8*16 Systemfonts
+font_hdr4:        DS.B sizeof_FONTHDR     ;Header des 16*32 Systemfonts (hier unbenutzt)
 
 ;**************** Diverses ***************
 
-atxt_off_table:   DS.L 1               ;Dummy-off_table fuer TextBlt
+atxt_off_table:   DS.L 1                  ;Dummy-off_table fuer TextBlt
 
 old_etv_timer:    DS.L 1
-key_state:        DS.L 1               ;*kbshift, Tasten-Status-Adresse
+key_state:        DS.L 1                  ;*kbshift, Tasten-Status-Adresse
 
-nvdi_pool:        DS.B sizeof_FMP      ;Pool fuer NVDI-mallocs (Texteffekte, Beziers..)
+nvdi_pool:        DS.B sizeof_FMP         ;Pool fuer NVDI-mallocs (Texteffekte, Beziers..)
 
-buffer_ptr:       DS.L 1               ;Zeiger auf den Buffer
+buffer_ptr:       DS.L 1                  ;Zeiger auf den Buffer
 
-system_boot:      DS.W 1               ;Flag ist waehrend der Startphase, d.h. vor vdi_init gesetzt
+system_boot:      DS.W 1                  ;Flag ist waehrend der Startphase, d.h. vor vdi_init gesetzt
 
-gdos_path:        DS.B 128             ;GDOS-Pfad
-screen_driver:    DS.B sizeof_driver   ;Treiberdaten des Bildschirmtreibers
+gdos_path:        DS.B 128                ;GDOS-Pfad
+screen_driver:    DS.B sizeof_driver      ;Treiberdaten des Bildschirmtreibers
 
 vt52_falcon_rez:  DS.W 4
 
 ;*********** Offscreen-Treiber **************
 OSC_ptr:
-OFFSCREEN_ptr:    DS.L 1               ;Zeiger auf die Liste der Offscreen-Treiber
+OFFSCREEN_ptr:    DS.L 1                  ;Zeiger auf die Liste der Offscreen-Treiber
 OSC_count:
-OFFSCREEN_count:  DS.W 1               ;Anzahl der Offscreen-Treiber
+OFFSCREEN_count:  DS.W 1                  ;Anzahl der Offscreen-Treiber
 
-mono_DRVR:        DS.L 1               ;Zeiger auf die Treiberstruktur fuer den monochromen Offscreen-Treiber
-mono_bitblt:      DS.L 1               ;Zeiger auf die Bitblt-Routine des monochromen Offscreen-Treibers
-mono_expblt:      DS.L 1               ;Zeiger auf die Expblt-Routine des monochromen Offscreen-Treibers
+mono_DRVR:        DS.L 1                  ;Zeiger auf die Treiberstruktur fuer den monochromen Offscreen-Treiber
+mono_bitblt:      DS.L 1                  ;Zeiger auf die Bitblt-Routine des monochromen Offscreen-Treibers
+mono_expblt:      DS.L 1                  ;Zeiger auf die Expblt-Routine des monochromen Offscreen-Treibers
 
 ;***************** Workstations ****************
-wk_tab0:          DS.L 1               ;Zeiger auf die LINE-A-Workstation
-wk_tab:           DS.L MAX_HANDLES     ;Zeiger auf die sonstigen Workstations
+wk_tab0:          DS.L 1                  ;Zeiger auf die LINE-A-Workstation
+wk_tab:           DS.L MAX_HANDLES        ;Zeiger auf die sonstigen Workstations
 
-linea_wk_ptr:     DS.L 1               ;Zeiger auf die LINEA-Workstation
-aes_wk_ptr:       DS.L 1               ;Zeiger auf die AES-Workstation
+linea_wk_ptr:     DS.L 1                  ;Zeiger auf die LINEA-Workstation
+aes_wk_ptr:       DS.L 1                  ;Zeiger auf die AES-Workstation
 
 ;**************** Ausgabevektoren *****************
-bconout_vec:      DS.L 1               ;Sprungvektor fuer den VT52
+bconout_vec:      DS.L 1                  ;Sprungvektor fuer den VT52
 
 bconout_tab:
-cursor_cnt_vec:   DS.L 1               ;Zeiger auf cursor_cnt
-cursor_vbl_vec:   DS.L 1               ;Zeiger auf die Cursor-Routine im VBL
-vt52_vec_vec:     DS.L 1               ;Zeiger auf bconout_vec
-con_vec:          DS.L 1               ;Vektor fuer Bios-Ausgabe ueber CON
-rawcon_vec:       DS.L 1               ;Vektor fuer Bios-Ausgabe ueber RAWCON
+cursor_cnt_vec:   DS.L 1                  ;Zeiger auf cursor_cnt
+cursor_vbl_vec:   DS.L 1                  ;Zeiger auf die Cursor-Routine im VBL
+vt52_vec_vec:     DS.L 1                  ;Zeiger auf bconout_vec
+con_vec:          DS.L 1                  ;Vektor fuer Bios-Ausgabe ueber CON
+rawcon_vec:       DS.L 1                  ;Vektor fuer Bios-Ausgabe ueber RAWCON
 
 color_map_ptr:    DS.L 1
 color_remap_ptr:  DS.L 1
@@ -255,14 +257,14 @@ n_set_caches:     DS.L 1
 n_get_caches:     DS.L 1
 n_get_FIF_path:   DS.L 1
 n_get_INF_name:   DS.L 1
-vdi_setup_ptr:    DS.L 1                                 ;Zeiger auf VDI_SETUP_DATA oder 0 (direkter Zugriff auf ATARI-Hardware)
+vdi_setup_ptr:    DS.L 1                                ;Zeiger auf VDI_SETUP_DATA oder 0 (direkter Zugriff auf ATARI-Hardware)
 
                   DS.L 32  ;Platz fuer weitere Variablen
 
 nstruct_ende:
 
-IF nstruct_ende > CUR_FONT                ;sind die Variablen fuer NVDI zu lang?
-   Fehler!
+IF *+0 > CUR_FONT                ;sind die Variablen fuer NVDI zu lang?
+   error "vdi variables too long"
 ENDIF
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -497,399 +499,475 @@ clear_cpu_exit:   rts
 ;     oder 0 (direkter Zugriff auf ATARI-Hardware)
 ;Ausgaben:
 ;-
-vdi_blinit:
-                  move.l   a0,-(sp)
-                  bsr      copy_nvdi_struct
-                  move.l   a0,(vdi_setup_ptr).w
-                  move.w   #1,(system_boot).w
+vdi_blinit:       movem.l  d0-d2/a0-a2,-(sp)
+
+                  bsr      MM_init              ;bei alten MagiCMac-Versionen den Zeiger auf die PixMap konvertieren
+                  move.l   a0,vdi_setup_ptr.w   ;Zeiger auf die PixMap des Macintosh
+                  move.w   #1,system_boot       ;wir sind gerade beim Systemstart
+                  
+                  bsr      copy_nvdi_struct     ;NVDI-Struktur kopieren
+
                   lea.l    (bconout_tab).w,a0
-                  move.l   #V_HID_CNT,(a0)+
-                  move.l   #vbl_curs,(a0)+ ; write cursor_vbl_vec
-                  move.l   #con_state,(a0)+ ; write v52_vec
-                  move.l   #vt_con,(a0)+ ; write con_vec
-                  move.l   #vt_rawcon,(a0)+ ; write rawcon_vec
-                  move.l   #vt_con,(con_state).w
-                  lea.l    (call_old_xbios).w,a0
-                  move.l   #dummy_rte,(a0)+
-                  move.l   #dummy_rte,(a0)+
-                  lea.l    (call_old_gemdos).w,a0
-                  move.l   #dummy_rte,(a0)+
-                  move.l   #dummy_rte,(a0)+
-                  lea.l    (mouse_buffer).w,a0
-                  move.l   #tmp_buffer,(a0)+
-                  move.l   #draw_sprite0,(a0)+
-                  move.l   #undraw_sprite0,(a0)+
-                  bsr      init_font
-                  lea.l    (screen_driver).w,a0
-                  clr.l    12(a0)
-                  clr.w    (blitter).w
-                  tst.l    (vdi_setup_ptr).w
-                  bne.s    vdi_blinit1
+                  move.l   #V_HID_CNT,(a0)+     ;cursor_cnt_vec: Zeiger auf den Cursor-Zaehler
+                  move.l   #vbl_cursor,(a0)+    ;cursor_vbl_vec: Zeiger auf die Cursor-VBL-Routine
+                  move.l   #con_state,(a0)+     ;vt52_vec_vec: Zeiger auf den VT52-Sprungvektor
+                  move.l   #vt_con,(a0)+        ;con_vec: Zeiger auf die Standardroutine fuer CON
+                  move.l   #vt_rawcon,(a0)+     ;rawcon_vec: Zeiger auf die Standardroutine fuer RAWCON
+                  move.l   #vt_con,(con_state).w ;Sprungvektor fuer VT52
+
+                  lea.l    (xbios_tab).w,a0
+                  move.l   #dummy_rte,(a0)+  ;call_old_xbios
+                  move.l   #dummy_rte,(a0)+  ;xbios_vec
+
+                  lea.l    (gemdos_tab).w,a0
+                  move.l   #dummy_rte,(a0)+  ;call_old_gemdos
+                  move.l   #dummy_rte,(a0)+  ;gemdos_vec
+
+                  lea.l    (mouse_tab).w,a0
+                  move.l   #tmp_buffer,(a0)+ ;mouse_buffer
+                  move.l   #draw_sprite_in,(a0)+   ;draw_spr_vec
+                  move.l   #undraw_sprite_in,(a0)+ ;undraw_spr_vec
+
+                  bsr      init_fonts        ;Fontheader kopieren
+
+                  lea.l    (screen_driver).w,a0  ;Zeiger auf die Treiberstruktur
+                  clr.l    driver_addr(a0)   ;Treiberadresse loeschen
+
+                  clr.w    (blitter).w       ;kein Blitter
+
+                  tst.l    (vdi_setup_ptr).w                  ;kein direkter Hardware-Zugriff (Mac)?
+                  bne.s    vdi_blinit_exit
+
                   move.l   d0,-(sp)
-                  bsr.s    chk_blit
+                  bsr.s    chk_blitter
                   move.w   d0,(blitter).w
                   move.l   (sp)+,d0
-vdi_blinit1:
-                  movea.l  (sp)+,a0
+vdi_blinit_exit:  movem.l  (sp)+,d0-d2/a0-a2
                   rts
-chk_blit:
-                  movem.l  d1/a0-a1,-(sp)
-                  move.w   sr,d1
-                  ori.w    #$0700,sr
-                  movea.l  a7,a0
-                  movea.l  ($00000008).w,a1
-                  move.l   #bus_err_blit,($00000008).w
+
+;Testen, ob der Blitter vorhanden ist
+;Vorgaben:
+;Nur Register d0 wird veraendert
+;Eingaben:
+;-
+;Ausgaben:
+;d0.w Bit 1 gibt an,ob der Blitter vorhanden ist
+chk_blitter:      movem.l  d1/a0-a1,-(sp)
+                  move.w   sr,d1             ;Statusregister sichern
+                  ori.w    #$0700,sr         ;Interrupts sperren
+                  movea.l  sp,a0             ;Stackpointer sichern
+                  movea.l  8.w,a1            ;Busfehler-Vektor sichern
+                  move.l   #bus_err_tst,8.w  ;eigenen Vektor eintragen
                   moveq.l  #0,d0
-                  tst.w    ($FFFF8A00).w
-                  moveq.l  #2,d0
-bus_err_blit:
-                  move.l   a1,($00000008).w
-                  movea.l  a0,a7
-                  move.w   d1,sr
+                  tst.w    ($ffff8a00).w     ;auf Hardware zugreifen
+                  moveq.l  #2,d0             ;Blitter ist vorhanden
+bus_err_tst:      move.l   a1,8.w            ;Busfehler-Vektor zurueck
+                  movea.l  a0,sp             ;Stackpointer zurueck
+                  move.w   d1,sr             ;Statusregister zurueck
                   movem.l  (sp)+,d1/a0-a1
                   rts
-rez_bps_tab:
-                  dc.w     1,2,4,8,16
-create_f:
+
+rez_bps_tab:      DC.W     1,2,4,8,16
+
+;VT52-Daten fuer Falcon generieren
+;Eingaben:
+;modecode.w
+;Ausgaben:
+;a0.l Zeiger auf Aufloesungen
+create_falcon_rez:
                   movem.l  d0-d2,-(sp)
                   move.w   (modecode).w,d0
                   lea.l    (vt52_falcon_rez).w,a0
+
                   moveq.l  #7,d1
-                  and.w    d0,d1
+                  and.w    d0,d1          ;Farbtiefe
                   add.w    d1,d1
-                  move.w   rez_bps_tab(pc,d1.w),d1
+                  move.w   rez_bps_tab(pc,d1.w),d1 ;Ebenenanzahl
                   move.w   d1,(a0)+
-                  mulu.w   #40,d1
-                  move.w   #320,d2
-                  btst     #3,d0
-                  beq.s    falcon_h1
-                  add.w    d1,d1
-                  add.w    d2,d2
-falcon_h1:
-                  btst     #6,d0
-                  beq.s    falcon_l
+
+                  mulu.w   #40,d1         ;Bytes pro Zeile (40 Spalten)
+                  move.w   #320,d2        ;320 Pixel
+                  btst     #CLM_BIT,d0    ;80 Spalten?
+                  beq.s    falcon_hor_over
+                  add.w    d1,d1          ;80 Spalten
+                  add.w    d2,d2          ;640 Pixel
+falcon_hor_over:  btst     #OVS_BIT,d0    ;Overscan?
+                  beq.s    falcon_lwidth
                   mulu.w   #12,d1
                   mulu.w   #12,d2
-                  divu.w   #10,d1
-                  divu.w   #10,d2
-falcon_l:
-                  move.w   d1,(a0)+
-                  move.w   d2,(a0)+
-                  btst     #7,d0
-                  beq.s    falcon_v1
-                  move.w   #200,d2
+                  divu.w   #10,d1         ;Overscan-Faktor 1.2
+                  divu.w   #10,d2         ;Overscan-Faktor 1.2
+falcon_lwidth:    move.w   d1,(a0)+       ;Bytes pro Zeile
+                  move.w   d2,(a0)+       ;Breite in Pixeln
+
+                  btst     #STC_BIT,d0    ;ST-Kompatibilitaet?
+                  beq.s    falcon_vga
+                  move.w   #200,d2        ;200 Zeilen in Farbe
                   moveq.l  #7,d1
-                  and.w    d0,d1
-                  bne.s    falcon_h2
-                  add.w    d2,d2
-                  bra.s    falcon_h2
-falcon_v1:
-                  btst     #4,d0
-                  beq.s    falcon_t
-                  move.w   #$00F0,d2
-                  btst     #8,d0
-                  bne.s    falcon_v2
-                  add.w    d2,d2
-                  bra.s    falcon_v2
-falcon_t:
-                  move.w   #200,d2
-                  btst     #8,d0
-                  beq.s    falcon_v2
-                  add.w    d2,d2
-falcon_v2:
-                  btst     #6,d0
-                  beq.s    falcon_h2
+
+                  and.w    d0,d1          ;Farbtiefe
+                  bne.s    falcon_height
+                  add.w    d2,d2          ;400 Zeilen in monochrom
+                  bra.s    falcon_height
+
+falcon_vga:       btst     #VGA_BIT,d0    ;VGA-Monitor?
+                  beq.s    falcon_tv
+                  move.w   #240,d2        ;240 Zeilen
+                  btst     #VTF_BIT,d0    ;Interlace oder Doublescan?
+                  bne.s    falcon_ver_over
+                  add.w    d2,d2          ;480 Zeilen
+                  bra.s    falcon_ver_over
+falcon_tv:        move.w   #200,d2        ;200 Zeilen
+                  btst     #VTF_BIT,d0    ;Interlace oder Doublescan?
+                  beq.s    falcon_ver_over
+                  add.w    d2,d2          ;400 Zeilen
+falcon_ver_over:  btst     #OVS_BIT,d0    ;Overscan?
+                  beq.s    falcon_height
                   muls.w   #12,d2
-                  divs.w   #10,d2
-falcon_h2:
-                  move.w   d2,(a0)+
+                  divs.w   #10,d2         ;Overscan-Faktor 1.2
+falcon_height:    move.w   d2,(a0)+
+
                   subq.l   #8,a0
                   movem.l  (sp)+,d0-d2
                   rts
-vt52_rez_tab:
-      dc.w 4,160,320,200
-      dc.w 2,160,640,200
-      dc.w 1,80,640,400
-      dc.w 0,0,0,0
-      dc.w 4,320,640,480
-      dc.w 0,0,0,0
-      dc.w 1,160,1280,960
-      dc.w 8,320,320,480
-vt52_init:
-      movem.l   d0-d2/a0-a2,-(sp)
-      move.w    (PLANES).w,-(sp)
-      move.l    (vdi_setup_ptr).w,d0
-      bne.s     vt52_init1
-      moveq.l   #0,d0
-      move.b    (sshiftmd).w,d0
-      cmp.w     #3,d0
-      bne.s     init_vt52_1
-      move.w    4(sp),(modecode).w
-      bsr       create_f
-      bra.s     init_vt52_2
-init_vt52_1:
-      lsl.w     #3,d0
-      lea.l     vt52_rez_tab(pc,d0.w),a0
-init_vt52_2:
-      move.w    (a0)+,(PLANES).w
-      move.w    (a0),(BYTES_LIN).w
-      move.w    (a0)+,(WIDTH).w
-      move.w    (a0)+,(V_REZ_HZ).w
-      move.w    (a0)+,(V_REZ_VT).w
-      bra.s     vt52_init2
-vt52_init1:
-      movea.l   d0,a0
-      move.l    (a0),(v_bas_ad).w
-      move.w    4(a0),d2
-      and.w     #$1FFF,d2
-      move.w    d2,(BYTES_LIN).w
-      move.w    d2,(WIDTH).w
-      move.w    32(a0),(PLANES).w
-      move.w    12(a0),d0
-      sub.w     8(a0),d0
-      move.w    d0,(V_REZ_HZ).w
-      move.w    10(a0),d1
-      sub.w     6(a0),d1
-      move.w    d1,(V_REZ_VT).w
-vt52_init2:
-      bsr.s     init_vt52_3
-      move.w    (sp)+,d0
-      tst.w     (system_boot).w
-      bne.s     vt52_init3
-      sub.w     (PLANES).w,d0
-      bsr       unload_s
-      bsr       load_scr
-vt52_init3:
-      movem.l   (sp)+,d0-d2/a0-a2
-      rts
-init_vt52_3:
-      movem.l   d0-d3/a0-a2,-(sp)
-      move.w    (V_REZ_HZ).w,d0
-      move.w    (V_REZ_VT).w,d1
-      move.w    (BYTES_LIN).w,d2
-      lea.l     header_09pt,a1
-      cmpi.w    #320,d1
-      blt.s     init_vt52_4
-      lea.l     header_10pt,a1
-init_vt52_4:
-      move.l    76(a1),(V_FNT_AD).w
-      move.l    72(a1),(V_OFF_AD).w
-      move.w    #$100,(V_FNT_WD).w
-      move.l    #$00FF0000,(V_FNT_ND).w
-      move.w    82(a1),d3
-      move.w    d3,(V_CEL_HT).w
-      lsr.w     #3,d0
-      subq.w    #1,d0
-      divu.w    d3,d1
-      subq.w    #1,d1
-      mulu.w    d3,d2
-      movem.w   d0-d2,(V_CEL_MX).w
-      move.l    #$0000ff,(V_COL_BG).w
-      move.w    #1,(V_HID_CNT).w
-      move.w    #$100,(V_STAT_0).w
-      move.w    #REQ_COL,(V_PERIOD).w
-      move.l    (v_bas_ad).w,(V_CUR_AD).w
-      clr.l     (V_CUR_XY).w
-      clr.w     (V_CUR_OF).w
-      movem.l   (sp)+,d0-d3/a0-a2
-      rts
-no_offscreen:
-   dc.b  'Offscreen-Treiber nicht gefunden.',$0D
-   dc.b  $0A,'MCMD wird gestartet...',$0D
-   dc.b  $0A,$00
-no_screen:
-   dc.b  'Bildschirm-Treiber nicht gefunden.',$0D,$0A
-   dc.b  'MCMD wird gestartet...',$0D,$0A
-   dc.b  $00
-empty_cmd:
-   dc.b  $00
-mcmd_path:
-   dc.b  'GEMDESK\MCMD.TOS',0
-system_halted:
-   dc.b  'System wird angehalten.',$0D,$0A,0
-   even
 
+;Anzahl der Bildebenen
+;Bytes pro Zeile
+;Anzahl der Pixel pro Zeile
+;Anzahl der Zeilen
+vt52_rez_tab:     DC.W 4,160,320,200      ;0 320 * 200 ST
+                  DC.W 2,160,640,200      ;1 640 * 200 ST
+                  DC.W 1,80,640,400       ;2 640 * 400 ST
+                  DC.W 0,0,0,0            ;3 Dummy-Eintrag
+                  DC.W 4,320,640,480      ;4 640 * 480 TT
+                  DC.W 0,0,0,0            ;5 Dummy-Eintrag
+                  DC.W 1,160,1280,960     ;6 1280 * 960 TT
+                  DC.W 8,320,320,480      ;7 320 * 480 TT
 
-Cconws:
-   movem.l  d1-d2/a0-a2,-(sp)
-   move.l   a0,-(sp)
-   move.w   #9,-(sp)
-   trap  #1
-   addq.l   #6,a7
-   movem.l  (sp)+,d1-d2/a0-a2
-   rts
+;VT52 intialisieren
+;Vorgaben:
+;kein Register wird veraendert
+;Eingaben:
+;d0.w neuer modecode falls es ein Falcon ist
+;Ausgaben:
+;-
+vt52_init:        movem.l  d0-d2/a0-a2,-(sp)
+                  move.w   (PLANES).w,-(sp)           ;alte Plane-Anzahl merken
 
-vdi_init:
-      movem.l   d0-d2/a0-a3/a6,-(sp)
-      bsr       search_cookies
-      bsr       init_vdi
-      bsr       init_gdos
-      jsr       init_NOD_drivers
-      tst.w     d0
-      bne.s     vdi_init2
-      tst.l     (vdi_setup_ptr).w
-      bne.s     load_NOD_err
-      lea.l     no_offscreen(pc),a0
-      jsr       Cconws
-      lea.l     -128(sp),a7
-      movea.l   a7,a0
-      lea.l     (gdos_path).w,a1
-      jsr       strgcpy
-      movea.l   a7,a0
-      lea.l     mcmd_path(pc),a1
-      jsr       strgcat
-      movea.l   a7,a0
-      clr.l     -(sp)
-      pea.l     empty_cmd(pc)
-      move.l    a0,-(sp)
-      clr.w     -(sp)
-      move.w    #$4b,-(sp) ; Pexec
-      trap      #1
-      lea.l     16(sp),a7
-      lea.l     128(sp),a7
-      lea.l     system_halted(pc),a0
-      jsr       Cconws
-vdi_init1:
-      nop
-      bra.s     vdi_init1
-load_NOD_err:
-      moveq.l   #-1,d0
-      movea.l   MSys+BehneError,a0
-      jmp       (a0)
-vdi_init2:
-      bsr       init_font
-      bsr.w     load_scr
-      lea.l     (screen_driver).w,a0
-      movea.l   driver_offscreen(a0),a1
-      movea.l   (linea_wk_ptr).w,a6
-      bsr       wk_default
-      movea.l   (aes_wk_ptr).w,a6
-      bsr       wk_default
-      bsr       init_cookies
-      clr.w     (system_boot).w
-      movem.l   (sp)+,d0-d2/a0-a3/a6
-      rts
-load_scr:
-      movem.l   d0-d2/a0-a2,-(sp)
-      movea.l   (screen_driver+driver_addr).w,a0
-      move.l    a0,d0
-      bne       load_scr3
-      tst.l     (vdi_setup_ptr).w
-      bne.s     load_scr2
-      moveq.l   #0,d0
-      move.b    (sshiftmd).w,d0
-      move.w    (modecode).w,d1
-      lea.l     (gdos_path).w,a0
-      bsr.w     load_ATARI_driver
-      move.l    a0,d0
-      bne.s     load_scr3
-      lea.l     no_screen(pc),a0
-      jsr       Cconws
-      lea.l     -128(sp),a7
-      movea.l   a7,a0
-      lea.l     (gdos_path).w,a1
-      jsr       strgcpy
-      movea.l   a7,a0
-      lea.l     mcmd_path(pc),a1
-      jsr       strgcat
-      movea.l   a7,a0
-      clr.l     -(sp)
-      pea.l     empty_cmd(pc)
-      move.l    a0,-(sp)
-      clr.w     -(sp)
-      move.w    #$4b,-(sp) ; Pexec
-      trap      #1
-      lea.l     16(sp),a7
-      lea.l     128(sp),a7
-      lea.l     system_halted(pc),a0
-      jsr       Cconws
-load_scr1:
-      nop
-      bra.s     load_scr1
-load_scr2:
-      movea.l   (vdi_setup_ptr).w,a0
-      lea.l     (gdos_path).w,a1
-      bsr.w     load_MAC_driver
-      move.l    a0,d0
-      bne.s     load_scr3
-      moveq.l   #-1,d0
-      movea.l   MSys+BehneError,a0
-      jmp       (a0)
-load_scr3:
-      lea.l     (screen_driver).w,a3
-      move.l    a0,driver_addr(a3)
-      movea.l   DRVR_init(a0),a2
-      lea.l     (nvdi_struct).w,a0
-      movea.l   a3,a1
-      jsr       (a2)
-      move.l    d0,16(a3)
-      bne.s     load_scr5
-      tst.l     (vdi_setup_ptr).w
-      bne.s     load_scr4
-      illegal
-load_scr4:
-      moveq.l   #-1,d0
-      movea.l   MSys+BehneError,a0
-      jmp       (a0)
-load_scr5:
-      movem.l   (sp)+,d0-d2/a0-a2
-      rts
-unload_s:
-      movem.l   d0-d2/a0-a2,-(sp)
-      lea.l     (nvdi_struct).w,a0
-      lea.l     (screen_driver).w,a1
-      move.l    driver_addr(a1),d0
-      beq.s     unload_s1
-      movea.l   d0,a2
-      movea.l   DRVR_reset(a2),a2
-      jsr       (a2)
-      tst.w     2(sp)
-      beq.s     unload_s1
-      lea.l     (screen_driver).w,a1
-      movea.l   driver_addr(a1),a0
-      clr.l     driver_addr(a1)
-      bsr.w     Mfree_sys
-unload_s1:
-      movem.l   (sp)+,d0-d2/a0-a2
-      rts
-init_vdi:
-      move.l    #WK_SIZE,d0
-      bsr.w     Malloc_sys
-      move.l    a0,(linea_wk_ptr).w
-      move.l    #WK_SIZE,d0
-      bsr.w     clear_mem
-      move.l    #WK_SIZE,d0
-      bsr.w     Malloc_sys
-      move.l    a0,(aes_wk_ptr).w
-      move.l    a0,(nvdi_aes_wk).w
-      move.l    #WK_SIZE,d0
-      bsr.w     clear_mem
-      move.l    #NVDI_BUF_SIZE,d0
-      bsr.w     Malloc_sys
-      move.l    a0,(buffer_ptr).w
-      move.w    #MAX_HANDLES-1,d0
-      lea.l     (wk_tab-4).w,a1
-      move.l    (linea_wk_ptr).w,(a1)+
+                  move.l   (vdi_setup_ptr).w,d0       ;kein direkter Hardware-Zugriff (Mac)?
+                  bne.s    vt52_init_MAC
+
+                  moveq.l  #0,d0
+                  move.b   (sshiftmd).w,d0            ;XBIOS-Aufloesung
+                  cmp.w    #FALCONMDS,d0              ;Falcon?
+                  bne.s    init_vt52_st_tt
+                  move.w   4(sp),(modecode).w         ;neuen modecode setzen
+                  bsr      create_falcon_rez
+                  bra.s    init_vt52_fad
+init_vt52_st_tt:  lsl.w    #3,d0                      ;*8 (4 Worteintraege pro Zeile)
+                  lea.l    vt52_rez_tab(pc,d0.w),a0   ;Zeiger auf die Aufloesungstabelle
+init_vt52_fad:    move.w   (a0)+,(PLANES).w           ;Anzahl der Ebenen
+                  move.w   (a0),(BYTES_LIN).w         ;Bytes pro Zeile
+                  move.w   (a0)+,(WIDTH).w
+                  move.w   (a0)+,(V_REZ_HZ).w         ;Breite
+                  move.w   (a0)+,(V_REZ_VT).w         ;Hoehe
+                  bra.s    vt52_init_exit
+
+vt52_init_MAC:    movea.l  d0,a0
+                  movea.l  VSD_displays(a0),a0        ;Zeiger auf die erste Bildschirmbeschreibung (VDI_DISPLAY-Struktur)
+                  move.l   VDISPLAY_addr(a0),(v_bas_ad).w  ;Bildschirmadresse
+                  move.l   VDISPLAY_width(a0),d2
+                  move.w   d2,(BYTES_LIN).w           ;Bytes pro Zeile
+                  move.w   d2,(WIDTH).w
+                  move.l   VDISPLAY_bits(a0),d0
+                  move.w   d0,(PLANES).w              ;Anzahl der Ebenen
+                  move.l   VDISPLAY_xmax(a0),d0
+                  sub.l    VDISPLAY_xmin(a0),d0
+                  move.w   d0,(V_REZ_HZ).w            ;Breite
+                  move.l   VDISPLAY_ymax(a0),d1
+                  sub.l    VDISPLAY_ymin(a0),d1
+                  move.w   d1,(V_REZ_VT).w            ;Hoehe
+
+vt52_init_exit:   bsr.s    init_vt52_vars             ;VT52-Variablen initialisieren
+                  move.w   (sp)+,d0                   ;zuletzt eingestellte Plane-Anzahl
+
+                  tst.w    (system_boot).w            ;noch waehrend der Bootphase?
+                  bne.s    vt52_init_return
+
+                  sub.w    (PLANES).w,d0              ;wurde die Plane-Anzahl veraendert?
+                  bsr      unload_scr_drvr            ;vorhandenen Treiber entfernen
+                  bsr      load_scr_drvr              ;neuen Bilschirmtreiber laden
+
+vt52_init_return: movem.l  (sp)+,d0-d2/a0-a2
+                  rts
+
+;Keine Parameter
+init_vt52_vars:   movem.l  d0-d3/a0-a2,-(sp)
+
+                  move.w   (V_REZ_HZ).w,d0            ;Breite in Pixeln
+                  move.w   (V_REZ_VT).w,d1            ;Hoehe in Zeilen
+                  move.w   (BYTES_LIN).w,d2           ;Bytes pro Zeile
+
+                  lea.l    header_09pt,a1             ;8*8 Systemfont
+                  cmpi.w   #320,d1                    ;weniger als 320 Zeilen?
+                  blt.s    init_vt52_font
+                  lea.l    header_10pt,a1             ;8*16 Systemfont
+init_vt52_font:   move.l   dat_table(a1),(V_FNT_AD).w ;Adresse des Fontimage
+                  move.l   off_table(a1),(V_OFF_AD).w ;Adresse der HOT
+                  move.w   #256,(V_FNT_WD).w          ;Breite des Fontimages in Bytes
+                  move.l   #$ff0000,(V_FNT_ND).w      ;Nummer des letzten/ersten Zeichens
+                  move.w   form_height(a1),d3         ;Zeichenhoehe
+                  move.w   d3,(V_CEL_HT).w            ;Zeichenhoehe
+                  lsr.w    #3,d0
+                  subq.w   #1,d0                      ;Textspaltenanzahl -1
+                  divu.w   d3,d1
+                  subq.w   #1,d1                      ;Textzeilenanzahl -1
+                  mulu.w   d3,d2                      ;Bytes pro Textzeile
+                  movem.w  d0-d2,(V_CEL_MX).w         ;V_CEL_MX, V_CEL_MY, V_CEL_WR
+                  move.l   #255,(V_COL_BG).w          ;Hinter-/Vordergrundfarbe
+                  move.w   #1,(V_HID_CNT).w           ;TOS-Cursor aus!
+                  move.w   #256,(V_STAT_0).w          ;blinken
+                  move.w   #$1e1e,(V_PERIOD).w        ;Blinkrate des Cursors/Zaehler
+                  move.l   (v_bas_ad).w,(V_CUR_AD).w  ;Cursoradresse
+                  clr.l    (V_CUR_XY).w               ;Cursor nach links oben
+                  clr.w    (V_CUR_OF).w               ;Offset von v_bas_ad
+
+                  movem.l  (sp)+,d0-d3/a0-a2
+                  rts
+
+no_offscreen_drivers:
+                  DC.B  'Offscreen-Treiber nicht gefunden.',13,10
+                  DC.B  'MCMD wird gestartet...',13,10,0
+
+no_screen_driver:
+                  DC.B  'Bildschirm-Treiber nicht gefunden.',13,10
+                  DC.B  'MCMD wird gestartet...',13,10,0
+
+empty_cmd:        DC.B  0
+mcmd_path:        DC.B  'GEMDESK\MCMD.TOS',0
+system_halted:    DC.B  'System wird angehalten.',13,10,0
+
+                  EVEN
+
+;WORD Cconws( const BYTE *buf );
+Cconws:           movem.l  d1-d2/a0-a2,-(sp)
+                  move.l   a0,-(sp)
+                  move.w   #CCONWS,-(sp)
+                  trap     #GEMDOS
+                  addq.l   #6,sp
+                  movem.l  (sp)+,d1-d2/a0-a2
+                  rts
+
+;VDI initialisieren
+;Vorgaben:
+;kein Register wird veraendert
+;Eingaben:
+;-
+;Ausgaben:
+;-
+vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
+
+                  bsr      search_cookies       ;Cookies suchen
+                  bsr      init_vdi_vecs        ;VDI-interne Vektoren vorbesetzen
+                  bsr      init_gdos            ;GDOS-Teil installieren
+                  jsr      init_NOD_drivers     ;Offscreen-Treiber initialisieren
+                  tst.w    d0                   ;alles in Ordnung?
+                  bne.s    vdi_init_fonts
+                  tst.l    (vdi_setup_ptr).w    ;kein direkter Hardware-Zugriff (Mac)?
+                  bne.s    load_NOD_err
+
+                  lea.l    no_offscreen_drivers(pc),a0
+                  jsr      Cconws               ;Meldung ausgeben
+
+                  lea.l    -128(sp),sp          ;Platz auf dem Stack reservieren
+
+                  movea.l  sp,a0
+                  lea.l    (gdos_path).w,a1     ;x:\GEMSYS\
+                  jsr      strgcpy
+                  movea.l  sp,a0
+                  lea.l    mcmd_path(pc),a1
+                  jsr      strgcat              ;GEMDESK\MCMD.TOS
+                  
+                  movea.l  sp,a0
+                  clr.l    -(sp)                ;Environment
+                  pea.l    empty_cmd(pc)        ;leere Kommandozeile
+                  move.l   a0,-(sp)             ;Name
+                  clr.w    -(sp)                ;Modus 0
+                  move.w   #PEXEC,-(sp)
+                  trap     #GEMDOS
+                  lea.l    16(sp),sp
+                  lea.l    128(sp),sp           ;Platz fuer den Pfad zurueckgeben
+
+                  lea.l    system_halted(pc),a0
+                  jsr      Cconws               ;Meldung ausgeben
+
+vdi_init_halt:    nop
+                  bra.s    vdi_init_halt
+
+load_NOD_err:     movea.l  vdi_setup_ptr.w,a0               
+                  movea.l  VSD_report_error(a0),a0
+                  moveq.l  #-1,d0               ;kein VDI-Treiber
+                  jmp      (a0)
+
+vdi_init_fonts:   bsr      init_fonts           ;Fonts initialisieren
+
+                  bsr      load_scr_drvr        ;Bildschirmtreiber laden
+
+                  lea.l    (screen_driver).w,a0
+                  movea.l  driver_offscreen(a0),a1
+                  movea.l  (linea_wk_ptr).w,a6
+                  bsr      wk_defaults          ;LINEA-Workstation initialisieren
+                  movea.l  (aes_wk_ptr).w,a6
+                  bsr      wk_defaults          ;AES-Workstation initialisieren
+
+                  bsr      init_cookies         ;eigene Cookies setzen
+
+                  clr.w    (system_boot).w      ;VDI ist initialisiert
+                  movem.l  (sp)+,d0-d2/a0-a3/a6
+                  rts
+
+;Bildschirmtreiber laden
+;Vorgaben:
+;kein Register wird veraendert
+;Eingaben:
+;-
+;Ausgaben:
+;-
+load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
+
+                  movea.l  (screen_driver+driver_addr).w,a0
+                  move.l   a0,d0
+                  bne      load_scr_call
+
+                  tst.l    (vdi_setup_ptr).w    ;kein direkter Hardware-Zugriff (Mac)?
+                  bne.s    load_scr_MAC
+
+                  moveq.l  #0,d0
+                  move.b   (sshiftmd).w,d0      ;XBIOS-Aufloesung
+                  move.w   (modecode).w,d1      ;Falcon-Moduswort
+                  lea.l    (gdos_path).w,a0
+                  bsr      load_ATARI_driver    ;Treiber fuer den Atari laden
+                  move.l   a0,d0                ;Treiber vorhanden?
+                  bne.s    load_scr_call
+
+                  lea.l    no_screen_driver(pc),a0
+                  jsr      Cconws               ;Meldung ausgeben
+
+                  lea.l    -128(sp),sp          ;Platz auf dem Stack reservieren
+
+                  movea.l  sp,a0
+                  lea.l    (gdos_path).w,a1     ;x:\GEMSYS\
+                  jsr      strgcpy
+                  movea.l  sp,a0
+                  lea.l    mcmd_path(pc),a1
+                  jsr      strgcat              ;GEMDESK\MCMD.TOS
+                  
+                  movea.l  sp,a0
+                  clr.l    -(sp)                ;Environment
+                  pea.l    empty_cmd(pc)        ;leere Kommandozeile
+                  move.l   a0,-(sp)             ;Name
+                  clr.w    -(sp)                ;Modus 0
+                  move.w   #PEXEC,-(sp)
+                  trap     #GEMDOS
+                  lea.l    16(sp),sp
+                  lea.l    128(sp),sp           ;Platz fuer den Pfad zurueckgeben
+
+                  lea.l    system_halted(pc),a0
+                  jsr      Cconws               ;Meldung ausgeben
+
+load_scr_halt:    nop
+                  bra.s    load_scr_halt
+
+load_scr_MAC:     movea.l  (vdi_setup_ptr).w,a0             ;kein direkter Hardware-Zugriff (Mac)
+                  movea.l  VSD_displays(a0),a0              ;Zeiger auf VDI_DISPLAY-Struktur
+                  lea.l    (gdos_path).w,a1
+                  bsr      load_MAC_driver                  ;Treiber fuer den Mac laden
+                  move.l   a0,d0                            ;Treiber vorhanden?
+                  bne.s    load_scr_call
+                  
+                  movea.l  vdi_setup_ptr.w,a0               
+                  movea.l  VSD_report_error(a0),a0
+                  moveq.l  #-1,d0                           ;kein VDI-Treiber
+                  jmp      (a0)
+
+load_scr_call:    lea.l    (screen_driver).w,a3 ;Treiberstruktur fuer den Bildschirmtreiber
+                  move.l   a0,driver_addr(a3)   ;Treiberstart
+                  movea.l  DRVR_init(a0),a2     ;Adresse der Initroutine
+                  lea.l    (nvdi_struct).w,a0   ;NVDI-Struktur uebergeben
+                  movea.l  a3,a1                ;Zeiger auf die Treiberstruktur
+                  jsr      (a2)
+                  move.l   d0,driver_wk_len(a3) ;Laenge der Wk fuer NVDI-Treiber
+                  bne.s    load_scr_exit        ;alles in Ordnung?
+
+                  tst.l    (vdi_setup_ptr).w    ;kein direkter Hardware-Zugriff (Mac)?
+                  bne.s    load_scr_err
+
+                  illegal                       ;VDI-Treiber meldet Fehler
+
+load_scr_err:     movea.l  vdi_setup_ptr.w,a0               
+                  movea.l  VSD_report_error(a0),a0
+                  moveq.l  #-1,d0               ;kein VDI-Treiber
+                  jmp      (a0)
+
+load_scr_exit:    movem.l  (sp)+,d0-d2/a0-a2
+                  rts
+
+unload_scr_drvr:
+                  movem.l  d0-d2/a0-a2,-(sp)
+                  lea.l    (nvdi_struct).w,a0
+                  lea.l    (screen_driver).w,a1
+                  move.l   driver_addr(a1),d0
+                  beq.s    unload_scr_drvr1
+                  movea.l  d0,a2
+                  movea.l  DRVR_reset(a2),a2
+                  jsr      (a2)
+                  tst.w    2(sp)
+                  beq.s    unload_scr_drvr1
+                  lea.l    (screen_driver).w,a1
+                  movea.l  driver_addr(a1),a0
+                  clr.l    driver_addr(a1)
+                  bsr.w    Mfree_sys
+unload_scr_drvr1:
+                  movem.l  (sp)+,d0-d2/a0-a2
+                  rts
+init_vdi_vecs:
+                  move.l   #WK_SIZE,d0
+                  bsr.w    Malloc_sys
+                  move.l   a0,(linea_wk_ptr).w
+                  move.l   #WK_SIZE,d0
+                  bsr.w    clear_mem
+                  move.l   #WK_SIZE,d0
+                  bsr.w    Malloc_sys
+                  move.l   a0,(aes_wk_ptr).w
+                  move.l   a0,(nvdi_aes_wk).w
+                  move.l   #WK_SIZE,d0
+                  bsr.w    clear_mem
+                  move.l   #NVDI_BUF_SIZE,d0
+                  bsr.w    Malloc_sys
+                  move.l   a0,(buffer_ptr).w
+                  move.w   #MAX_HANDLES-1,d0
+                  lea.l    (wk_tab-4).w,a1
+                  move.l   (linea_wk_ptr).w,(a1)+
 make_wk_:
-      move.l    #closed,(a1)+
-      dbf       d0,make_wk_
-      move.w    #$FFFF,(first_device).w
-      lea.l     (color_map_ptr).w,a1
-      move.l    #color_map_tab,(a1)+
-      move.l    #color_remap_tab,(a1)+
-      movea.l   (sysbase).w,a0
-      movea.l   8(a0),a0
-      move.l    36(a0),(key_state).w
-      cmpi.w    #$0106,2(a0)
-      bge.s     get_act_
-      move.l    #make_pling,(bell_hook).w
+                  move.l   #closed,(a1)+
+                  dbf      d0,make_wk_
+                  move.w   #$FFFF,(first_device).w
+                  lea.l    (color_map_ptr).w,a1
+                  move.l   #color_map_tab,(a1)+
+                  move.l   #color_remap_tab,(a1)+
+                  movea.l  (sysbase).w,a0
+                  movea.l  8(a0),a0
+                  move.l   36(a0),(key_state).w
+                  cmpi.w   #$0106,2(a0)
+                  bge.s    get_act_
+                  move.l   #make_pling,(bell_hook).w
 get_act_:
-      cmpi.w    #$100,2(a0)
-      bne.s     init_vdi1
-      move.l    #$00000E1B,(key_state).w
+                  cmpi.w   #$100,2(a0)
+                  bne.s    init_vdi1
+                  move.l   #$00000E1B,(key_state).w
 init_vdi1:
-      rts
-init_font:
+                  rts
+init_fonts:
       movem.l   d0-d2/a0-a2,-(sp)
       moveq.l   #2,d1
       lea.l     (font_hdr1).w,a1
@@ -903,7 +981,7 @@ init_font1:
       dbf       d1,init_font1
       clr.l     -4(a1)
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 copy_header:
       movem.l   d0/a0-a1,-(sp)
       moveq.l   #((sizeof_FONTHDR/4)-2),d0
@@ -911,7 +989,7 @@ copy_header1:
       move.l    (a0)+,(a1)+
       dbf       d0,copy_header1
       movem.l   (sp)+,d0/a0-a1
-      rts
+                  rts
 copy_nvdi_struct:
       movem.l   d0/a0-a1,-(sp)
       moveq.l   #((nvdi_struct_rom_end-nvdi_struct_rom)/2)-1,d0
@@ -921,12 +999,12 @@ copy_nvdi_struct1:
       move.w    (a0)+,(a1)+
       dbf       d0,copy_nvdi_struct1
       movem.l   (sp)+,d0/a0-a1
-      rts
+                  rts
 init_cookies:
       move.l    #$4D464D56,d0
       move.l    #MFMV_cookie,d1
       bsr.s     init_cookie
-      rts
+                  rts
 init_cookie:
       movem.l   d0-d1,-(sp)
       move.l    (p_cookies).w,d0
@@ -971,7 +1049,7 @@ cookie_f:
       move.l    d1,(a1)+
 cookie_err2:
       addq.l    #8,a7
-      rts
+                  rts
 search_cookies:
       move.l    #$5F435055,d0
       bsr.w     search_cookie
@@ -986,7 +1064,7 @@ search_cookies:
       move.l    #$5F4D4348,d0
       bsr.w     search_cookie
       move.l    d1,(nvdi_cookie_MCH).w
-      rts
+                  rts
 search_cookie:
       move.l    (p_cookies).w,d2
       beq.s     search_cookie2
@@ -997,11 +1075,11 @@ search_cookie1:
       move.l    (a0)+,d1
       cmp.l     d0,d2
       bne.s     search_cookie1
-      rts
+                  rts
 search_cookie2:
       clr.l     d0
       clr.l     d1
-      rts
+                  rts
 reset_cookie:
       move.l    (p_cookies).w,d2
       beq.s     reset_ck3
@@ -1018,11 +1096,11 @@ reset_ck2:
       move.l    -8(a0),-16(a0)
       bne.s     reset_ck2
 reset_ck3:
-      rts
+                  rts
 init_virtual_vbl:
-      rts
+                  rts
 reset_virtual_vbl:
-      rts
+                  rts
 MFMV_cookie:
       dc.b 'MFMV'
       dc.l      nvdi_struct
@@ -1033,15 +1111,15 @@ eddi_dispatch:
       add.w     d0,d0
       move.w    eddi_tab(pc,d0.w),d0
       jsr       eddi_tab(pc,d0.w)
-      rts
+                  rts
 eddi_tab:
       dc.w eddi_ver-eddi_tab
 eddi_err:
       moveq #-1,d0
-      rts
+                  rts
 eddi_ver:
       move.w    #$100,d0
-      rts
+                  rts
 v_contour:
       move.l    #scln_fail,(SEEDABORT).w
 seedfill:
@@ -1062,7 +1140,7 @@ seedfill:
       cmp.w     colors(a6),d0
       ble.s     tst_indx
 Ente:
-      rts
+                  rts
 tst_indx:
       tst.w     d0
       bge.s     indx_pos
@@ -1234,11 +1312,11 @@ lbl4B2:
       tst.w     d5
       bne       lbl1A2
 ex_seedf:
-      rts
+                  rts
 drawto_f:
       clr.w     d0
 ex_drawt:
-      rts
+                  rts
 draw_to:
       clr.w     (a2)
       tst.w     20(a5)
@@ -1249,7 +1327,7 @@ draw_to:
       tst.w     d0
       bne.s     lbl575
       addq.w    #2,a7
-      rts
+                  rts
 lbl575:
       moveq.l   #0,d3
       moveq.l   #-1,d4
@@ -1281,7 +1359,7 @@ lbl576:
 lbl60A:
       move.w    #1,(a2)
       clr.w     d0
-      rts
+                  rts
 lbl618:
       cmpi.w    #$FFFF,(a4)
       bne.s     lbl640
@@ -1302,7 +1380,7 @@ lbl646:
       move.w    #1,20(a5)
       addq.w    #2,a7
       clr.w     d0
-      rts
+                  rts
 lbl686:
       move.w    d4,d3
 lbl690:
@@ -1312,7 +1390,7 @@ lbl690:
       move.w    (a0),(a3)+
       move.w    (a1),(a3)
       moveq.l   #1,d0
-      rts
+                  rts
 fillabort:
       lea.l     28(a5),a0
       adda.w    d5,a0
@@ -1330,11 +1408,11 @@ lbl4FC:
       bsr.s     contour_
       move.w    d0,20(a5)
 ex_filla:
-      rts
+                  rts
 contour_:
 scln_fail:
       moveq.l   #0,d0
-      rts
+                  rts
 scanline:
       cmp.w     clip_ymin(a6),d1
       bmi.s     contour_
@@ -1346,7 +1424,7 @@ scanline:
       movea.l   p_scanline(a6),a4
       jmp       (a4)
 dummy_rts:
-      rts
+                  rts
 dummy_rte:
       rte
 vq_extnd:
@@ -1377,7 +1455,7 @@ vq_extnd4:
       jsr       (a3)
 vq_extnd5:
       movem.l   (sp)+,a2-a5
-      rts
+                  rts
 vq_scrninfo:
       move.l    a2,-(sp)
       movea.l   (a0),a1
@@ -1397,7 +1475,7 @@ vq_scrninfo2:
       jsr       (a2)
 vq_scrninfo3:
       movea.l   (sp)+,a2
-      rts
+                  rts
 vq_color:
       movea.l   pb_intout(a0),a1
       movea.l   pb_intin(a0),a0
@@ -1415,10 +1493,10 @@ vq_color:
       move.w    d1,(a1)+
       move.w    d2,(a1)+
       movem.l   (sp)+,d1-d2
-      rts
+                  rts
 vq_color2:
       move.w    #$FFFF,(a1)
-      rts
+                  rts
 vql_attributes:
       movem.l   pb_intout(a0),a0-a1 ; intout->a0, ptsout->a1
       move.w    l_style(a6),d0
@@ -1430,7 +1508,7 @@ vql_attributes:
       move.w    d0,(a0)+
       move.l    l_start(a6),(a0)+
       move.w    l_width(a6),(a1)
-      rts
+                  rts
 vqm_attributes:
       movem.l   pb_intout(a0),a0-a1 ; intout->a0, ptsout->a1
       move.w    m_type(a6),d0
@@ -1442,7 +1520,7 @@ vqm_attributes:
       move.w    d0,(a0)+
       move.w    m_width(a6),(a1)+
       move.w    m_height(a6),(a1)
-      rts
+                  rts
 vqf_attributes:
       movea.l   pb_intout(a0),a1
       move.w    f_interior(a6),(a1)+
@@ -1452,7 +1530,7 @@ vqf_attributes:
       addq.w    #1,d0
       move.w    d0,(a1)+
       move.w    f_perimeter(a6),(a1)+
-      rts
+                  rts
 vqt_attributes:
       movem.l   pb_intout(a0),a0-a1 ; intout->a0, ptsout->a1
       move.w    t_number(a6),(a0)+
@@ -1469,7 +1547,7 @@ vqt_attributes1:
       move.w    d0,(a0)
       move.l    t_width(a6),(a1)+
       move.l    t_cwidth(a6),(a1)
-      rts
+                  rts
 vqt_extend:
       movem.l   d1-d3/a2,-(sp)
       movea.l   (a0)+,a1
@@ -1555,7 +1633,7 @@ vqt_ext_10:
       move.w    d1,(a0)+
       move.l    d1,(a0)+
       movem.l   (sp)+,d1-d3/a2
-      rts
+                  rts
 vqt_ext_11:
       subq.w    #1,d3
       bne.s     vqt_ext_12
@@ -1565,7 +1643,7 @@ vqt_ext_11:
       move.l    d2,(a0)+
       move.l    d0,(a0)+
       movem.l   (sp)+,d1-d3/a2
-      rts
+                  rts
 vqt_ext_12:
       subq.w    #1,d3
       bne.s     vqt_ext_13
@@ -1576,7 +1654,7 @@ vqt_ext_12:
       move.w    d2,(a0)+
       move.w    d0,(a0)+
       movem.l   (sp)+,d1-d3/a2
-      rts
+                  rts
 vqt_ext_13:
       move.l    d2,(a0)+
       move.l    d0,(a0)+
@@ -1584,7 +1662,7 @@ vqt_ext_13:
       move.l    d1,(a0)+
       move.w    d2,(a0)+
       movem.l   (sp)+,d1-d3/a2
-      rts
+                  rts
 vqt_width:
       movea.l   pb_intin(a0),a1
       move.w    (a1),d0
@@ -1613,7 +1691,7 @@ vqt_width2:
       moveq.l   #0,d0
       move.l    d0,(a1)+
       move.l    d0,(a1)+
-      rts
+                  rts
 vqt_name:
       move.l    d1,-(sp)
       move.l    d2,-(sp)
@@ -1650,13 +1728,13 @@ vqt_name5:
       dbf       d0,vqt_name5
       move.l    (sp)+,d2
       move.l    (sp)+,d1
-      rts
+                  rts
 vqt_name6:
       moveq.l   #1,d1
       lea.l     (font_hdr1).w,a0
       bra.s     vqt_name4
 vq_cellarray:
-      rts
+                  rts
 vqin_mode:
       movea.l   pb_intin(a0),a1
       move.w    (a1),d0
@@ -1672,7 +1750,7 @@ vqin_write:
       move.w    d1,(a1)
       move.l    a0,d1
 vqin_mode1:
-      rts
+                  rts
 vqt_fontinfo:
       movem.l   d1-d4,-(sp)
       movem.l   pb_intout(a0),a1
@@ -1717,7 +1795,7 @@ vqt_fi_s:
       move.w    d3,(a1)+
       move.l    d4,(a1)+
       movem.l   (sp)+,d1-d4
-      rts
+                  rts
 vsin_mode:
       movea.l   pb_intin(a0),a1
       move.w    (a1)+,d0
@@ -1732,13 +1810,13 @@ vsin_mode:
       move.w    #2,(a1)
       bset      d0,input_mode(a6)
       move.l    a0,d1
-      rts
+                  rts
 vsin_mode1:
       move.w    #1,(a1)
       bclr      d0,input_mode(a6)
 vsin_mode2:
       move.l    a0,d1
-      rts
+                  rts
 v_locator:
       movea.l   pb_ptsin(a0),a1
 v_loc_cl1:
@@ -1781,16 +1859,16 @@ vsm_move:
 vsm_l_ex:
       andi.b    #$03,(CUR_MS_STAT).w
       move.w    d0,sr
-      rts
+                  rts
 vrq_locator:
       move.w    (MOUSE_BT).w,d0
       beq.s     vrq_locator
       move.l    (GCURX).w,(a1)
       addi.w    #31,d0
       move.w    d0,(a0)
-      rts
+                  rts
 v_valuator:
-      rts
+                  rts
 v_choice:
       movem.l   d1-d2/a2-a4,-(sp)
       movea.l   (a0),a3
@@ -1813,17 +1891,17 @@ vrq_choice:
 v_choice2:
       move.w    d0,(a4)
       movem.l   (sp)+,d1-d2/a2-a4
-      rts
+                  rts
 vsm_choice2:
       clr.w     8(a3)
       movem.l   (sp)+,d1-d2/a2-a4
-      rts
+                  rts
 v_status:
       move.w    #2,-(sp)
       move.w    #1,-(sp)
       trap      #13
       addq.l    #4,a7
-      rts
+                  rts
 v_input:
       move.w    #2,-(sp)
       move.w    #2,-(sp)
@@ -1833,7 +1911,7 @@ v_input:
       swap      d1
       lsl.w     #8,d1
       or.w      d1,d0
-      rts
+                  rts
 v_string:
       movem.l   d1-d5/a2-a4,-(sp)
       movea.l   (a0)+,a3 ; a3->contrl
@@ -1865,7 +1943,7 @@ vsm_str_2:
       sub.w     d4,d5
       move.w    d5,8(a3)
       movem.l   (sp)+,d1-d5/a2-a4
-      rts
+                  rts
 vrq_string:
       bsr.s     v_input
       and.w     d3,d0
@@ -1878,7 +1956,7 @@ vrq_str_1:
       sub.w     d4,d5
       move.w    d5,8(a3)
       movem.l   (sp)+,d1-d5/a2-a4
-      rts
+                  rts
 vsc_form:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   (a0),a1-a4
@@ -1901,7 +1979,7 @@ vsc_form1:
       movem.w   d0/d2/d4/d6,24(a1)
       movem.w   d1/d3/d5/d7,56(a1)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vsc_form2:
       move.w    colors(a6),d5
 vsc_form3:
@@ -1940,7 +2018,7 @@ vsc_form6:
       move.w    d0,sr
       subq.b    #1,(MOUSE_FLAG).w
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vex_timv:
       movea.l   (a0),a1
       movea.l   pb_intout(a0),a0
@@ -1950,7 +2028,7 @@ vex_timv:
       move.l    s_addr(a1),(USER_TIM).w
       move.w    d0,sr
       move.w    (timer_ms).w,(a0)
-      rts
+                  rts
 v_show_c:
       tst.w     bitmap_width(a6)
       bne.s     v_show_c4
@@ -1976,11 +2054,11 @@ v_show_c1:
       movem.l   (sp)+,d1-d7/a2-a5
 v_show_c2:
       subq.w    #1,(M_HID_CNT).w
-      rts
+                  rts
 v_show_c3:
       clr.w     (M_HID_CNT).w
 v_show_c4:
-      rts
+                  rts
 v_hide_c:
       tst.w     bitmap_width(a6)
       bne.s     v_hide_c2
@@ -1994,7 +2072,7 @@ v_hide_c:
 v_hide_c1:
       movem.l   (sp)+,d1-d7/a2-a5
 v_hide_c2:
-      rts
+                  rts
 vq_mouse:
       movem.l   pb_intout(a0),a0-a1
       move.w    sr,d0
@@ -2002,29 +2080,29 @@ vq_mouse:
       move.l    (GCURX).w,(a1)
       move.w    (MOUSE_BT).w,(a0)
       move.w    d0,sr
-      rts
+                  rts
 vex_butv:
       movea.l   (a0),a1
       move.l    (USER_BUT).w,d_addr(a1)
       move.l    s_addr(a1),(USER_BUT).w
-      rts
+                  rts
 vex_motv:
       movea.l   (a0),a1
       move.l    (USER_MOT).w,d_addr(a1)
       move.l    s_addr(a1),(USER_MOT).w
-      rts
+                  rts
 vex_curv:
       movea.l   (a0),a1
       move.l    (USER_CUR).w,d_addr(a1)
       move.l    s_addr(a1),(USER_CUR).w
-      rts
+                  rts
 vq_key_s:
       movea.l   pb_intout(a0),a1
       movea.l   (key_state).w,a0
       moveq.l   #15,d0
       and.b     (a0),d0
       move.w    d0,(a1)
-      rts
+                  rts
 vro_cpyfm:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   (a0),a1-a3
@@ -2174,7 +2252,7 @@ vro_width:
       jsr       (a0)
 vro_cpyfm2:
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vro_cpyfm3:
       tst.w     d6
       bne.s     vro_cpyfm2
@@ -2183,7 +2261,7 @@ vro_cpyfm3:
       movea.l   d6,a0
       jsr       (a0)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vrt_cpyfm:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   (a0),a1-a3
@@ -2326,7 +2404,7 @@ vrt_width:
       jsr       (a0)
 vrt_cpyfm3:
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vrt_cpyfm4:
       tst.w     d6
       bne.s     vrt_cpyfm3
@@ -2335,7 +2413,7 @@ vrt_cpyfm4:
       movea.l   d6,a0
       jsr       (a0)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vr_trnfm:
       movem.l   d1-d7/a2-a5,-(sp)
       movea.l   (a0),a1
@@ -2343,7 +2421,7 @@ vr_trnfm:
       movea.l   p_transform(a6),a2
       jsr       (a2)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 v_get_pixel:
       movem.l   d1-d2/a2,-(sp)
       movea.l   pb_intout(a0),a2
@@ -2359,12 +2437,12 @@ v_get_pixel:
       jsr       (a0)
       move.w    d0,(a2)+
       movem.l   (sp)+,d1-d2/a2
-      rts
+                  rts
 v_get_pixel1:
       swap      d0
       move.l    d0,(a2)+
       movem.l   (sp)+,d1-d2/a2
-      rts
+                  rts
 vswr_mode:
       movea.l   pb_intin(a0),a1
       movea.l   pb_intout(a0),a0
@@ -2375,7 +2453,7 @@ vswr_mode1:
       move.w    d0,wr_mode(a6)
       subq.w    #3,d0
       bhi.s     vswr_mode2
-      rts
+                  rts
 vswr_mode2:
       moveq.l   #1,d0
       bra.s     vswr_mode1
@@ -2415,7 +2493,7 @@ vs_color7:
       jsr       (a0)
 vs_color8:
       movem.l   (sp)+,d1-d4
-      rts
+                  rts
 vsl_type:
       movea.l   pb_intin(a0),a1
       movea.l   pb_intout(a0),a0
@@ -2426,14 +2504,14 @@ vsl_type1:
       move.w    d0,l_style(a6)
       subq.w    #6,d0
       bhi.s     vsl_type2
-      rts
+                  rts
 vsl_type2:
       moveq.l   #1,d0
       bra.s     vsl_type1
 vsl_udstyle:
       movea.l   pb_intin(a0),a1
       move.w    (a1),l_udstyle(a6)
-      rts
+                  rts
 vsl_width:
       movea.l   pb_ptsin(a0),a1
       movea.l   pb_ptsout(a0),a0
@@ -2445,7 +2523,7 @@ vsl_width:
 vsl_width1:
       move.w    d0,(a0)
       move.w    d0,l_width(a6)
-      rts
+                  rts
 vsl_width2:
       tst.w     d0
       bpl.s     vsl_width3
@@ -2463,7 +2541,7 @@ vsl_color:
 vsl_color1:
       move.w    d0,(a0)
       move.w    d0,l_color(a6)
-      rts
+                  rts
 vsl_color2:
       moveq.l   #1,d0
       bra.s     vsl_color1
@@ -2481,7 +2559,7 @@ vsl_ends1:
       moveq.l   #0,d0
 vsl_ends2:
       move.w    d0,l_end(a6)
-      rts
+                  rts
 vsm_type:
       movea.l   pb_intin(a0),a1
       move.w    (a1),d0
@@ -2508,7 +2586,7 @@ vsm_type2:
       add.w     d1,d0
       move.w    d0,m_width(a6)
       move.l    a0,d1
-      rts
+                  rts
 marker_a:
       dc.l      m_dot
       dc.l      m_plus
@@ -2545,7 +2623,7 @@ vsm_height3:
       move.w    d0,(a1)+
       move.w    m_height(a6),(a1)
       move.l    a0,d1
-      rts
+                  rts
 vsm_color:
       movea.l   pb_intin(a0),a1
       movea.l   pb_intout(a0),a0
@@ -2556,10 +2634,10 @@ vsm_color:
 vsm_color1:
       move.w    d0,(a0)
       move.w    d0,m_color(a6)
-      rts
+                  rts
 vdi_fktr:
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vst_height3:
       movea.l   pb_ptsout(a0),a1
       move.l    #$00070006,d0
@@ -2588,7 +2666,7 @@ vst_height3:
       move.l    (a0)+,(a1)+ ; off_table->t_offtab
       move.l    (a0)+,(a1)+ ; dat_table->t_image
       move.l    (a0)+,(a1)+ ; form_width/form_height -> t_iwidth/t_iheight
-      rts
+                  rts
 vst_height0:
       movea.l   pb_ptsout(a0),a1
       move.l    #$0007000D,d0
@@ -2615,7 +2693,7 @@ vst_height0:
       move.l    (a0)+,(a1)+ ; off_table->t_offtab
       move.l    (a0)+,(a1)+ ; dat_table->t_image
       move.l    (a0)+,(a1)+ ; form_width/form_height -> t_iwidth/t_iheight
-      rts
+                  rts
 vst_height:
       movea.l   pb_ptsin(a0),a1
       move.l    (a1),d0
@@ -2751,12 +2829,12 @@ vst_h_pt:
 vst_h_exit:
       movem.w   d0-d5,t_base(a6)
       movem.l   (sp)+,d1-d7/a2
-      rts
+                  rts
 vst_h_er:
       movea.l   pb_ptsout(a0),a1
       move.l    t_width(a6),(a1)+
       move.l    t_cwidth(a6),(a1)+
-      rts
+                  rts
 vst_point0:
       tst.w     d0
       ble.s     vst_point2
@@ -2764,7 +2842,7 @@ vst_point0:
       move.w    d0,(a0)
       move.l    t_width(a6),(a1)+
       move.l    t_cwidth(a6),(a1)+
-      rts
+                  rts
 vst_point:
       movea.l   pb_intin(a0),a1
       move.w    (a1),d0
@@ -2852,7 +2930,7 @@ vst_rot_:
       move.w    d0,t_rotation(a6)
       mulu.w    #$0384,d0
       move.w    d0,(a1)
-      rts
+                  rts
 vst_font:
       movea.l   pb_intin(a0),a1
       move.w    (a1),d0
@@ -2894,7 +2972,7 @@ vst_font3:
       move.l    #ptsout,pb_ptsout(a2)
       bra       vst_point3
 vst_font4:
-      rts
+                  rts
 vst_color:
       movea.l   pb_intin(a0),a1
       movea.l   pb_intout(a0),a0
@@ -2904,7 +2982,7 @@ vst_color:
 vst_color1:
       move.w    d0,(a0)
       move.w    d0,t_color(a6)
-      rts
+                  rts
 vst_color2:
       moveq.l   #1,d0
       bra.s     vst_color1
@@ -2916,7 +2994,7 @@ vst_effects:
       move.w    d0,(a0)
 vst_effects1:
       move.w    d0,t_effects(a6)
-      rts
+                  rts
 vst_alignment:
       movea.l   pb_intin(a0),a1
       movea.l   pb_intout(a0),a0
@@ -2933,7 +3011,7 @@ vst_v_al:
 vst_set_hor:
       move.l    d0,t_hor(a6)
       move.l    d0,(a0)
-      rts
+                  rts
 vsf_int_1:
       moveq.l   #0,d0
       move.w    d0,(a0)
@@ -2963,10 +3041,10 @@ vsf_int_tab:
       dc.b 0
 vsf_int_3:
       move.l    f_fill0(a6),-(a0)
-      rts
+                  rts
 vsf_int_4:
       move.l    f_fill1(a6),-(a0)
-      rts
+                  rts
 vsf_int_5:
       movea.l   f_fill2(a6),a1
       move.w    f_style(a6),d0
@@ -2974,7 +3052,7 @@ vsf_int_5:
       lsl.w     #5,d0
       adda.w    d0,a1
       move.l    a1,-(a0)
-      rts
+                  rts
 vsf_int_6:
       movea.l   f_fill3(a6),a1
       move.w    f_style(a6),d0
@@ -2982,11 +3060,11 @@ vsf_int_6:
       lsl.w     #5,d0
       adda.w    d0,a1
       move.l    a1,-(a0)
-      rts
+                  rts
 vsf_int_7:
       move.w    f_splanes(a6),(a0)
       move.l    f_spointer(a6),-(a0)
-      rts
+                  rts
 vsf_style:
       movea.l   pb_intin(a0),a1
       movea.l   pb_intout(a0),a0
@@ -3006,7 +3084,7 @@ vsf_sty_4:
       move.w    (a1),d0
       move.w    d0,(a0)
       move.w    d0,f_style(a6)
-      rts
+                  rts
 vsf_sty_2:
       move.w    (a1),d0
 vsf_sty_2_1:
@@ -3019,7 +3097,7 @@ vsf_sty_2_1:
       lsl.w     #5,d0
       adda.w    d0,a0
       move.l    a0,f_pointer(a6)
-      rts
+                  rts
 vsf_sty_2_2:
       moveq.l   #1,d0
       bra.s     vsf_sty_2_1
@@ -3035,7 +3113,7 @@ vsf_sty_3_1:
       lsl.w     #5,d0
       adda.w    d0,a0
       move.l    a0,f_pointer(a6)
-      rts
+                  rts
 vsf_sty_3_2:
       moveq.l   #1,d0
       bra.s     vsf_sty_3_1
@@ -3048,7 +3126,7 @@ vsf_color:
 vsf_color1:
       move.w    d0,(a0)
       move.w    d0,f_color(a6)
-      rts
+                  rts
 vsf_color2:
       moveq.l   #1,d0
       bra.s     vsf_color1
@@ -3058,7 +3136,7 @@ vsf_perimeter:
       move.w    (a1),d0
       move.w    d0,f_perimeter(a6)
       move.w    d0,(a0)
-      rts
+                  rts
 vsf_udpat:
       move.l    a2,-(sp)
       movea.l   (a0),a1
@@ -3073,7 +3151,7 @@ vsf_udpat:
       move.w    d0,f_planes(a6)
 vsf_udpat1:
       movea.l   (sp)+,a2
-      rts
+                  rts
 vs_grayo:
       movea.l   pb_intin(a0),a0
       moveq.l   #0,d0
@@ -3091,7 +3169,7 @@ vs_gor_s:
       move.l    f_fill0(a6),f_pointer(a6)
       clr.w     f_planes(a6)
       clr.w     f_interior(a6)
-      rts
+                  rts
       beq.s     vs_gor_a
       addq.w    #4,d0
 vs_gor_a:
@@ -3103,11 +3181,11 @@ vs_gor_a:
       adda.w    d0,a0
       move.l    a0,f_pointer(a6)
       clr.w     f_planes(a6)
-      rts
+                  rts
 v_setrgb:
-      rts
+                  rts
 v140:
-      rts
+                  rts
 v_pline_1:
       movem.l   d1-d5/a2-a5,-(sp)
       lea.l     -24(sp),a7
@@ -3167,7 +3245,7 @@ _rest_xy:
 exit_vpl:
       lea.l     24(sp),a7
       movem.l   (sp)+,d1-d5/a2-a5
-      rts
+                  rts
 small_line:
       movem.l   d1-d7/a2-a3,-(sp)
       movea.l   a0,a3
@@ -3175,7 +3253,7 @@ small_line:
       subq.w    #2,d4
       bpl       v_plines1
       movem.l   (sp)+,d1-d7/a2-a3
-      rts
+                  rts
 fat_line:
       cmpi.w    #1,l_width(a6)
       beq.s     small_line
@@ -3232,7 +3310,7 @@ _fat_whi:
       lea.l     24(sp),a7
 exit_fat:
       movem.l   (sp)+,d3-d6/a2-a4
-      rts
+                  rts
 fat_qpix:
       move.w    l_width(a6),d4
 _fat_qpi:
@@ -3259,7 +3337,7 @@ _fat_qwh:
       dbf       d3,_fat_qpi
       lea.l     16(sp),a7
       movem.l   (sp)+,d3-d6/a2-a4
-      rts
+                  rts
 conv_pix:
       move.w    res_ratio(a6),d0
       cmpi.w    #$FFFF,d0
@@ -3270,7 +3348,7 @@ conv_pix:
       move.l    (a0)+,d0
       add.w     d0,d0
       move.l    d0,(a1)
-      rts
+                  rts
 _pix2q_T:
       cmp.w     #1,d0
       bne.s     exit_pix
@@ -3282,7 +3360,7 @@ _pix2q_T:
       move.l    d0,(a1)+
       move.w    (a0),(a1)
 exit_pix:
-      rts
+                  rts
 conv_q2p:
       move.w    res_ratio(a6),d0
       cmpi.w    #$FFFF,d0
@@ -3299,7 +3377,7 @@ conv_q2p:
       move.l    (a0)+,d0
       asr.w     #1,d0
       move.l    d0,(a1)
-      rts
+                  rts
 _q2pix_T:
       cmp.w     #1,d0
       bne.s     exit_q2p
@@ -3317,7 +3395,7 @@ _q2pix_T:
       move.l    d0,(a1)+
       move.w    (a0),(a1)
 exit_q2p:
-      rts
+                  rts
 calc_lin:
       movem.l   d3-d7/a2-a3,-(sp)
       move.w    d0,d3
@@ -3392,7 +3470,7 @@ calc_dy_2:
       add.w     d4,d3
       movem.w   d0-d3,(a3)
       movem.l   (sp)+,d3-d7/a2-a3
-      rts
+                  rts
 hypot:
       move.l    d3,-(sp)
       mulu.w    d0,d0
@@ -3401,7 +3479,7 @@ hypot:
       bne.s     sqrt
       moveq.l   #1,d0 ; WTF? sqrt(0) = 1?
       addq.l    #4,a7
-      rts
+                  rts
 sqrt:
       moveq.l   #0,d0
       move.l    #$10000000,d2
@@ -3421,7 +3499,7 @@ lbl18:
       addq.l    #1,d0
 exit_hypot:
       move.l    (sp)+,d3
-      rts
+                  rts
 dr_start:
       movem.l   d3-d7/a2-a3,-(sp)
       movea.l   a0,a2
@@ -3448,7 +3526,7 @@ _strt_el:
       bsr       v_fillpie
 exit_str:
       movem.l   (sp)+,d3-d7/a2-a3
-      rts
+                  rts
 _strtfm_1:
       cmp.w     #1,d0
       bne.s     exit_str
@@ -3520,7 +3598,7 @@ _strt_qp:
       bsr       v_fillline
       lea.l     16(sp),a7
       movem.l   (sp)+,d3-d7/a2-a3
-      rts
+                  rts
 dr_endfm:
       movem.l   d3-d7/a2-a3,-(sp)
       move.w    d0,d3
@@ -3552,7 +3630,7 @@ _end_ell2:
       bsr       v_fillpie
 exit_end:
       movem.l   (sp)+,d3-d7/a2-a3
-      rts
+                  rts
 _endfm_A:
       cmp.w     #1,d0
       bne.s     exit_end
@@ -3624,7 +3702,7 @@ _end_qpi:
       bsr       v_fillline
       lea.l     16(sp),a7
       movem.l   (sp)+,d3-d7/a2-a3
-      rts
+                  rts
 tstlin_f:
       movem.l   d3-d7,-(sp)
       move.w    d0,d5
@@ -3672,7 +3750,7 @@ exit_fwd:
       addq.w    #2,d5
       move.w    d5,12(a1)
       movem.l   (sp)+,d3-d7
-      rts
+                  rts
 tstlin_b:
       movem.l   d3-d7,-(sp)
       move.w    d0,d5
@@ -3717,7 +3795,7 @@ exit_bk:
       addq.w    #2,d5
       move.w    d5,12(a1)
       movem.l   (sp)+,d3-d7
-      rts
+                  rts
 v_pline_2:
       tst.w     n_intin(a1)
       beq       v_pline_1
@@ -3753,7 +3831,7 @@ v_pline1:
 v_pline_4:
       movem.l   (sp)+,d2-d7
       move.l    a0,d1
-      rts
+                  rts
 v_plines:
       bmi.s     v_pline_7
       movem.l   d1-d7/a2-a3,-(sp)
@@ -3783,7 +3861,7 @@ v_pline_6:
       movem.l   (sp)+,d1-d7/a2-a3
 v_pline_7:
       clr.w     l_lastpix(a6)
-      rts
+                  rts
 search_min_max:
       movem.l   d0/d2-d7/a0,-(sp)
       subq.w    #1,d0
@@ -3810,7 +3888,7 @@ search_m4:
       dbf       d0,min_max_
       movem.w   d4-d7,(a3)
       movem.l   (sp)+,d0/d2-d7/a0
-      rts
+                  rts
 v_bez:
       movem.l   d1-d7/a2-a5,-(sp)
       move.l    a0,-(sp)
@@ -3903,7 +3981,7 @@ v_bez_ex:
       move.w    d5,(a1)+
       move.w    d6,(a1)+
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 bez_line:
       cmpi.b    #3,driver_type(a6) ; DRIVER_NVDI
       bne.s     gdos_line
@@ -3923,7 +4001,7 @@ nvdi_line:
       bra       v_pline_3
 nvdi_line1:
       lea.l     52(sp),a7
-      rts
+                  rts
 gdos_line:
       movem.l   d2/a2,-(sp)
       lea.l     -116(sp),a7
@@ -3961,7 +4039,7 @@ gdos_line:
       jsr       (a0)
       lea.l     116(sp),a7
       movem.l   (sp)+,d2/a2
-      rts
+                  rts
 bez_max_tab:
       dc.w 4,7,13,25,49,97
 calc_bez:
@@ -4034,7 +4112,7 @@ calc_bez4:
       addq.w    #1,d0
 call_bez:
       movea.l   (sp)+,a0
-      rts
+                  rts
 generate:
       cmpa.w    #0,a0
       beq.s     bez_out
@@ -4071,7 +4149,7 @@ generate:
       movem.l   (a2)+,d0-d7
       bsr.s     generate
       addq.w    #1,a0
-      rts
+                  rts
 bez_out:
       swap      d2
       rol.l     #1,d2
@@ -4109,7 +4187,7 @@ bez_out_2:
       bne.s     bez_out_3
       subq.l    #4,a1
 bez_out_3:
-      rts
+                  rts
 v_pmarker:
       movem.l   d1-d7/a2,-(sp)
       move.w    l_color(a6),-(sp)
@@ -4148,7 +4226,7 @@ v_pmarker2:
 v_pm_exit:
       move.w    (sp)+,l_color(a6)
       movem.l   (sp)+,d1-d7/a2
-      rts
+                  rts
 v_pmarker3:
       move.w    d5,-(sp)
       move.w    (a2)+,d0
@@ -4160,7 +4238,7 @@ v_pmarker3:
       dbf       d5,v_pmarker3
       move.w    (sp)+,l_color(a6)
       movem.l   (sp)+,d1-d7/a2
-      rts
+                  rts
 v_pmbuild:
       move.w    (a0)+,d0
       subq.w    #1,d0
@@ -4187,7 +4265,7 @@ v_pmbuild1:
       sub.w     d3,d4
       move.w    d4,(a1)+
       dbf       d0,v_pmbuild1
-      rts
+                  rts
 v_gtext:
       movem.l   d1-d7/a2-a5,-(sp)
 v_gtext_1:
@@ -4196,7 +4274,7 @@ v_gtext_2:
       movea.l   p_gtext(a6),a4
       jsr       (a4)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 v_fillpie:
       movem.l   d3-d7/a2-a5,-(sp)
       move.l    f_color(a6),-(sp)
@@ -4211,7 +4289,7 @@ v_fillpie:
       move.w    (sp)+,f_planes(a6)
       move.l    (sp)+,f_color(a6)
       movem.l   (sp)+,d3-d7/a2-a5
-      rts
+                  rts
 v_fillline:
       move.l    f_color(a6),-(sp)
       move.w    f_perimeter(a6),-(sp)
@@ -4233,7 +4311,7 @@ v_fillline:
       move.w    (sp)+,f_planes(a6)
       move.w    (sp)+,f_perimeter(a6)
       move.l    (sp)+,f_color(a6)
-      rts
+                  rts
 v_fillarray:
       movea.l   (a0),a1
       tst.w     n_intin(a1)
@@ -4370,7 +4448,7 @@ fpoly_br:
       clr.w     l_lastpix(a6)
       move.w    (sp)+,l_color(a6)
 fpoly_ex:
-      rts
+                  rts
 fpoly_hl:
       movea.l   a1,a3
 fpoly_ca:
@@ -4431,7 +4509,7 @@ fpoly_dr:
       move.w    a0,d6
       dbf       d6,fpoly_dr
 fpoly_hl2:
-      rts
+                  rts
 v_fae_bo:
       move.l    (a3),d0
       sub.l     16(a3),d0
@@ -4479,7 +4557,7 @@ v_fae_li:
       bsr       line
       move.w    (sp)+,l_color(a6)
 v_cellarray:
-      rts
+                  rts
 bez_pnt_tab:
       dc.w 4,7,13,25,49,97
 
@@ -4695,7 +4773,7 @@ v_bezf_p3:
       bra.s     gpoly
 v_bezf_e:
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 fsearch_:
       movem.l   d0-d7/a0,-(sp)
       subq.w    #1,d0
@@ -4744,7 +4822,7 @@ fsearch_8:
       dbf       d0,fmin_max
       movem.w   d4-d7,(a1)
       movem.l   (sp)+,d0-d7/a0
-      rts
+                  rts
 gpoly:
       move.w    clip_ymin(a6),d1
       move.w    clip_ymax(a6),d3
@@ -4806,7 +4884,7 @@ gpoly_bo:
       lea.l     116(sp),a7
       bsr       gdos_set
 gpoly_ex:
-      rts
+                  rts
 gpoly_hl:
       movea.l   a1,a3
 gpoly_ca:
@@ -4866,7 +4944,7 @@ gpoly_dr:
       move.w    (sp)+,d6
       dbf       d6,gpoly_dr
 gpoly_hl2:
-      rts
+                  rts
 gdos_fli:
       lea.l     -116(sp),a7
       lea.l     52(sp),a2
@@ -4896,7 +4974,7 @@ gdos_fli:
 gdos_fli2:
       jsr       (a0)
       lea.l     116(sp),a7
-      rts
+                  rts
 gperimeter:
       movem.l   d0-d2/a0-a2,-(sp)
       lea.l     2(sp),a2
@@ -4918,7 +4996,7 @@ gperimeter:
       jsr       (a0)
       lea.l     116(sp),a7
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 gdos_get:
       movem.l   d0-d2/a0-a2,-(sp)
       lea.l     -116(sp),a7
@@ -4945,7 +5023,7 @@ gdos_get:
       move.w    (a1),l_width(a6)
       lea.l     116(sp),a7
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 gdos_line0:
       movem.l   d0-d2/a0-a4,-(sp)
       lea.l     -116(sp),a7
@@ -4993,7 +5071,7 @@ gdos_line0:
       jsr       (a0)
       lea.l     116(sp),a7
       movem.l   (sp)+,d0-d2/a0-a4
-      rts
+                  rts
 gdos_set:
       movem.l   d0-d2/a0-a4,-(sp)
       lea.l     -116(sp),a7
@@ -5035,20 +5113,20 @@ gdos_set:
       jsr       (a0)
       lea.l     116(sp),a7
       movem.l   (sp)+,d0-d2/a0-a4
-      rts
+                  rts
 v_contour_fill:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   (a0),a1-a3
       bsr       v_contour
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 vr_recfl:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   pb_ptsin(a0),a0
       movem.w   (a0),d0-d3
       bsr       fbox_nor
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 v_gdp:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   (a0),a1-a3
@@ -5062,7 +5140,7 @@ v_gdp:
 v_gdp_error:
       movem.l   (sp)+,d1-d7/a2-a5
 v_gdp_exit:
-      rts
+                  rts
 v_gdp_tab:
       dc.w  v_bar-v_gdp_tab
       dc.w  v_arc-v_gdp_tab
@@ -5104,19 +5182,19 @@ v_bar_out:
 v_bar_exit:
       move.w    (sp)+,l_color(a6)
 v_bar_exit2:
-      rts
+                  rts
 hline_fill:
       movem.w   d0-d3,-(sp)
       moveq.l   #-1,d6
       bsr       hline
       movem.w   (sp)+,d0-d3
-      rts
+                  rts
 vline_fill:
       movem.w   d0-d3,-(sp)
       moveq.l   #-1,d6
       bsr       vline
       movem.w   (sp)+,d0-d3
-      rts
+                  rts
 v_pieslice:
       move.w    (a3)+,d0
       move.w    (a3)+,d1
@@ -5175,7 +5253,7 @@ v_ellarc2:
       bsr       nvdi_line
       move.l    (sp)+,buffer_addr(a6)
       move.l    (sp)+,buffer_len(a6)
-      rts
+                  rts
 v_ellpie:
       movem.w   (a3),d0-d3
       move.w    (a2)+,d4
@@ -5198,7 +5276,7 @@ v_rbox:
       move.l    (sp)+,l_start(a6)
       move.l    (sp)+,buffer_addr(a6)
       move.l    (sp)+,buffer_len(a6)
-      rts
+                  rts
 v_rfbox:
       movem.w   (a3),d0-d3
       tst.w     f_perimeter(a6)
@@ -5231,7 +5309,7 @@ v_plfill2:
       clr.w     l_lastpix(a6)
       move.w    (sp)+,l_color(a6)
 vpfl_ex:
-      rts
+                  rts
 v_justified:
       tst.l     (a2)+
       bne.s     v_justified2
@@ -5241,7 +5319,7 @@ v_justified:
       jsr       (a4)
       movea.l   (sp)+,a1
       addq.w    #2,n_intin(a1)
-      rts
+                  rts
 v_justified2:
       bra       text_jus
 v_bez_on:
@@ -5251,12 +5329,12 @@ v_bez_on:
       clr.w     bez_on(a6)
       clr.w     (a0)
 v_bez_oo:
-      rts
+                  rts
 v_bez_on2:
       move.w    #5,bez_qual(a6)
       move.w    #7,(a0)
       move.w    #1,bez_on(a6)
-      rts
+                  rts
 set_xbios:
       cmp.w     #4,d3
       bne.s     set_xbios1
@@ -5289,7 +5367,7 @@ set_xbios3:
       bsr       set_resolution
 set_res_2:
       movem.l   (sp)+,d0-d1
-      rts
+                  rts
 set_falc:
       movem.l   d0-d2/a0-a2,-(sp)
       move.l    d1,-(sp)
@@ -5313,24 +5391,24 @@ set_falc:
       lea.l     14(sp),a7
 set_flc_:
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 opnwk_lo:
       bsr       set_xbios
       move.l    (screen_driver+driver_addr).w,d0
       movea.l   d0,a0
       tst.l     d0
       bne.s     opnwk_dr
-      rts
+                  rts
 opnwk_dr:
       movem.l   d0-d2/a0-a2,-(sp)
       move.w    DRVR_planes(a0),d0
       cmp.w     (PLANES).w,d0
       beq.s     opnwk_dp
-      bsr       unload_s
-      bsr       load_scr
+      bsr       unload_scr_drvr
+      bsr       load_scr_drvr
 opnwk_dp:
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 open_nvdi:
       move.w    d3,(first_device).w
       movea.l   (aes_wk_ptr).w,a6
@@ -5347,19 +5425,19 @@ open_nvdi:
       movem.l   d1/a0-a1,-(sp)
       movea.l   a3,a0
       movea.l   driver_offscreen(a3),a1
-      bsr       wk_default
+      bsr       wk_defaults
       movem.l   (sp)+,d1/a0-a1
       movem.l   d1/a0-a1/a6,-(sp)
       movea.l   a3,a0
       movea.l   driver_offscreen(a3),a1
       movea.l   (linea_wk_ptr).w,a6
-      bsr       wk_default
+      bsr       wk_defaults
       movem.l   (sp)+,d1/a0-a1/a6
       bra       opnwk_io
 set_disp:
       move.l    #handle_f,disp_addr1(a6)
       move.b    driver_status(a3),driver_type(a6)
-      rts
+                  rts
 v_opnwk:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   (a0),a1-a5
@@ -5399,7 +5477,7 @@ v_opnwk_1:
       bsr       init_cookie
 opn_handle:
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 opnwk_op:
       move.l    a6,d0
       bsr       Mfree
@@ -5413,7 +5491,7 @@ opnwk_err1:
       movea.l   d1,a0
       movea.l   (a0),a1
       clr.w     handle(a1)
-      rts
+                  rts
 alloc_wk:
       moveq.l   #0,d4
       moveq.l   #MAX_HANDLES-2,d2
@@ -5454,7 +5532,7 @@ opnwk_cl:
       move.w    d4,wk_handle(a6)
 alloc_wk1:
       move.w    d4,handle(a1)
-      rts
+                  rts
 free_wk:
       lsl.w     #2,d0
       lea.l     (wk_tab-4).w,a0
@@ -5468,7 +5546,7 @@ get_resolution:
       addq.w    #1,d0
       move.w    d0,(resolution).w
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 set_resolution:
       movem.l   d0-d2/a0-a2,-(sp)
       move.w    d0,-(sp)
@@ -5479,13 +5557,13 @@ set_resolution:
       trap      #14
       lea.l     12(sp),a7
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 opnwk_io:
       bsr       init_arr
       bsr.s     v_opnwk_setattr
       bsr.s     v_opnwk_2
 opnwk_io2:
-      rts
+                  rts
 v_opnwk_2:
       movem.l   d0-d2/a0-a5,-(sp)
       move.l    device_drvr(a6),d0
@@ -5503,13 +5581,13 @@ v_opnwk_4:
       jsr       (a2)
 v_opnwk_5:
       movem.l   (sp)+,d0-d2/a0-a5
-      rts
+                  rts
 call_nvd:
       lsl.w     #3,d0
       lea.l     vdi_tab(pc),a0
       move.l    4(a0,d0.w),-(sp)
       movea.l   d1,a0
-      rts
+                  rts
 v_opnwk_setattr:
       movem.l   d0-d1/a0-a1/a3,-(sp)
       movea.l   d1,a0
@@ -5546,7 +5624,7 @@ opnwk_tc:
       bsr.s     call_nvd
       subi.l    #18,(a3)
       movem.l   (sp)+,d0-d1/a0-a1/a3
-      rts
+                  rts
 init_font_nvdi:
       movem.l   d0-d1/a0-a2,-(sp)
       lea.l     (font_hdr1).w,a1
@@ -5574,7 +5652,7 @@ init_nvdi:
       subq.w    #1,d1
       move.w    d1,(V_CEL_MY).w
       movem.l   (sp)+,d0-d1/a0-a2
-      rts
+                  rts
 init_res:
       movem.l   d0-d2/a0-a2,-(sp)
       movea.l   12(a3),a2
@@ -5591,7 +5669,7 @@ init_res:
       lea.l     64(sp),a7
 init_res1:
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 init_int:
       movem.l   d0-d7/a0-a6,-(sp)
       move.w    sr,-(sp)
@@ -5629,7 +5707,7 @@ init_int:
       lea.l     12(sp),a7
       move.w    (sp)+,sr
       movem.l   (sp)+,d0-d7/a0-a6
-      rts
+                  rts
 mouse_pa:
       dc.w  $0000,$0101
 mouse_form:
@@ -5669,21 +5747,21 @@ init_arr:
       clr.l     (COLBIT6).w
 init_la_:
       movem.l   (sp)+,d0/a0/a6
-      rts
+                  rts
 wk_init:
       move.l    a6,-(sp)
       movea.l   8(sp),a6
       moveq.l   #0,d1
-      bsr.s     wk_default
+      bsr.s     wk_defaults
       movea.l   (sp)+,a6
-      rts
+                  rts
 
 ;
 ; a0: ptr to screen_drv; can be null
 ; a1: ptr to offscreen driver; can be null
 ; a6: ptr to WK
 ;
-wk_default:
+wk_defaults:
       movem.l   d0-d2/a0-a1,-(sp)
       move.l    #handle_f,disp_addr1(a6)
       clr.l     disp_addr2(a6)
@@ -5785,7 +5863,7 @@ wkdef_ex:
       subq.w    #1,d0
       move.w    d0,res_ratio(a6)
       movem.l   (sp)+,d0-d2/a0-a1
-      rts
+                  rts
 
 init_mono_NOD:
       movem.l   d3-d7/a2-a6,-(sp)
@@ -5796,7 +5874,7 @@ init_mono_NOD:
       move.l    p_bitblt(a6),(mono_bitblt).w
       move.l    p_expblt(a6),(mono_expblt).w
       movem.l   (sp)+,d3-d7/a2-a6
-      rts
+                  rts
 Bconout: ; not exported!
       movem.l   d0-d2/a0-a2,-(sp)
       move.w    d0,-(sp)
@@ -5805,13 +5883,13 @@ Bconout: ; not exported!
       trap      #13
       addq.l    #6,a7
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 cldrvr:
       movem.l   d0-d2/a0-a2,-(sp)
       movea.l   disp_addr2(a6),a0
       jsr       (a0)
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 v_opnvwk:
       movem.l   d1-d7/a2-a5,-(sp)
       movem.l   (a0),a1-a5
@@ -5829,19 +5907,19 @@ v_opnvwk1:
       movem.l   a0-a1,-(sp)
       movea.l   a3,a0
       movea.l   driver_offscreen(a3),a1
-      bsr       wk_default
+      bsr       wk_defaults
       movem.l   (sp)+,a0-a1
       addq.w    #1,driver_use(a3)
 v_opnvwk2:
       bsr       opnwk_io
 v_opnvwk3:
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 v_opnvwk4:
       move.w    d4,d0
       bsr       free_wk
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 v_opnbm:
       move.l    a2,-(sp)
       move.l    s_addr(a1),-(sp)
@@ -5864,26 +5942,26 @@ v_opnbm:
       movea.l   a5,a1
       jsr       (a2)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 v_opnbm_1:
       movea.l   (sp),a0
       movea.l   (a0),a1
       clr.w     handle(a1)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 clear_bitmap:
       move.l    a6,-(sp)
       movea.l   a0,a6
       bsr       v_clrwk
       movea.l   (sp)+,a6
-      rts
+                  rts
 transform_bitmap:
       movem.l   a2/a6,-(sp)
       movea.l   12(sp),a6
       movea.l   p_transform(a6),a2
       jsr       (a2)
       movem.l   (sp)+,a2/a6
-      rts
+                  rts
 v_clswk_1:
       movem.l   (sp)+,d1-d2/a2
       bra       v_clsvwk
@@ -5932,9 +6010,9 @@ v_clswk_4:
       bsr       reset_cookie
 v_clswk_5:
       movem.l   (sp)+,d1-d3/a2
-      rts
+                  rts
 call_cls:
-      rts
+                  rts
 v_clsvwk:
       movem.l   d1-d2/a2,-(sp)
       movea.l   (a0),a1
@@ -5954,7 +6032,7 @@ v_clsvwk1:
       bsr       free_wk
 v_clsvwk2:
       movem.l   (sp)+,d1-d2/a2
-      rts
+                  rts
 v_clsbm:
       movea.l   bitmap_drvr(a6),a1
       movea.l   4(a1),a1
@@ -5964,14 +6042,14 @@ v_clsbm:
       movea.l   a6,a0
       jsr       delete_bitmap
       movem.l   (sp)+,d1-d2/a2
-      rts
+                  rts
 v_clsvwk3:
       movem.l   (sp)+,d1-d2/a2
       cmp.w     #1,d0
       beq.s     v_clsvwk4
       bra       v_clswk
 v_clsvwk4:
-      rts
+                  rts
 reset_int:
       movem.l   d0-d2/a0-a2,-(sp)
       move.w    sr,-(sp)
@@ -5992,7 +6070,7 @@ reset_int:
       clr.l     (a0)
       move.w    (sp)+,sr
       movem.l   (sp)+,d0-d2/a0-a2
-      rts
+                  rts
 v_clrwk:
       movem.l   d1-d7/a2-a5,-(sp)
       move.w    wr_mode(a6),-(sp)
@@ -6015,9 +6093,9 @@ v_clrwk:
       move.w    (sp)+,f_interior(a6)
       move.w    (sp)+,wr_mode(a6)
       movem.l   (sp)+,d1-d7/a2-a5
-      rts
+                  rts
 v_updwk:
-      rts
+                  rts
 vst_load_fonts:
       movem.l   d1-d3/a2-a5,-(sp)
       movea.l   (a0),a1
@@ -6061,11 +6139,11 @@ vst_lf_m:
       move.w    d1,(a4)
       move.l    t_bitmap_fonts(a6),(FONT_RING+8).w ; ???
       movem.l   (sp)+,d1-d3/a2-a5
-      rts
+                  rts
 vst_lfg_:
       clr.w     (a4)
       movem.l   (sp)+,d1-d3/a2-a5
-      rts
+                  rts
 vst_unload_fonts:
       movem.l   d1-d2/a2,-(sp)
       movea.l   (a0),a1
@@ -6081,7 +6159,7 @@ vst_ulf_:
       bra       vst_font2
 vst_unload1:
       movem.l   (sp)+,d1-d2/a2
-      rts
+                  rts
 vs_clip:
       movem.l   pb_intin(a0),a0-a1
       tst.w     bitmap_width(a6)
@@ -6135,7 +6213,7 @@ vs_clip_10:
       movem.w   d0-d3,(XMINCL).w
 vs_clip_11:
       movem.l   (sp)+,d1-d5
-      rts
+                  rts
 vs_clip_12:
       moveq.l   #0,d0
       moveq.l   #0,d1
@@ -6197,7 +6275,7 @@ vs_clip_23:
 vs_clip_24:
       movem.w   d0-d3,clip_xmin(a6)
       movem.l   (sp)+,d1-d7
-      rts
+                  rts
 text_par:
       move.l    t_image(a6),-(sp)
       exg       d0,d2
@@ -6310,7 +6388,7 @@ text_par11:
       bgt       text_par1
 text_par12:
       move.l    (sp)+,t_image(a6)
-      rts
+                  rts
 text_par13:
       movem.w   d3/d5-d6,-(sp)
       tst.w     t_act_line(a6)
@@ -6357,7 +6435,7 @@ text_par15:
       sub.w     d1,d5
       bgt       text_par1
       move.l    (sp)+,t_image(a6)
-      rts
+                  rts
 textp_it3:
       movem.w   d2/d4-d6,-(sp)
       tst.w     t_act_line(a6)
@@ -6403,7 +6481,7 @@ text_par17:
       sub.w     d1,d5
       bgt       text_par1
       move.l    (sp)+,t_image(a6)
-      rts
+                  rts
 textp_it6:
       movem.w   d5-d6,-(sp)
       tst.w     t_act_line(a6)
@@ -6448,7 +6526,7 @@ text_par19:
       sub.w     d1,d5
       bgt       text_par1
       move.l    (sp)+,t_image(a6)
-      rts
+                  rts
 textp_it9:
       movem.w   d5-d6,-(sp)
       tst.w     t_act_line(a6)
@@ -6519,7 +6597,7 @@ text_wid3:
       tst.w     d4
       bpl.s     text_pos
 text_exi:
-      rts
+                  rts
 text_mon:
       move.w    t_cwidth(a6),d4
       add.w     d5,d4
@@ -7214,7 +7292,7 @@ text_ita4:
       addq.w    #1,d1
       addq.w    #1,d3
       dbf       d7,text_ita3
-      rts
+                  rts
 text_rot2:
       subq.w    #1,d7
       bne.s     text_rot3
@@ -7242,7 +7320,7 @@ text_ita8:
       addq.w    #1,d0
       addq.w    #1,d2
       dbf       d7,text_ita7
-      rts
+                  rts
 text_rot3:
       subq.w    #1,d7
       bne.s     text_rot4
@@ -7314,7 +7392,7 @@ underlin7:
       adda.w    a3,a1
       dbf       d2,underlin6
 underlin8:
-      rts
+                  rts
 underlin_tab:
       dc.w  $8000,$C000,$E000,$F000
       dc.w  $F800,$FC00,$FE00,$FF00
@@ -7349,7 +7427,7 @@ bold_thi:
       move.w    d0,-(a4)
       dbf       d5,bold_loo
       move.w    (sp)+,d5
-      rts
+                  rts
 outline:
       movea.l   a0,a1
       move.l    buffer_len(a6),d0
@@ -7417,7 +7495,7 @@ outlined5:
       movea.l   (sp)+,a0
       movea.l   (sp)+,a1
       addq.w    #2,d5
-      rts
+                  rts
 light:
       move.w    #$5555,d0
       moveq.l   #15,d6
@@ -7437,7 +7515,7 @@ light_lo2:
       dbf       d6,light_lo2
       ror.w     #1,d0
       dbf       d7,light_lo1
-      rts
+                  rts
 light_it:
       move.w    #$5555,d2
       ror.w     d6,d2
@@ -7452,7 +7530,7 @@ light_i_2:
       ror.w     #1,d0
 light_i_3:
       dbf       d7,light_i_1
-      rts
+                  rts
 rotate90:
       movea.l   a0,a1
       move.l    buffer_len(a6),d0
@@ -7520,7 +7598,7 @@ rotate90_9:
       movea.l   (sp)+,a1
       exg       d4,d5
       movea.w   a3,a2
-      rts
+                  rts
 rotate180:
       movea.l   a0,a1
       move.l    buffer_len(a6),d0
@@ -7585,7 +7663,7 @@ rotate180_9:
       movem.w   (sp)+,d2-d3/d5
       movea.l   (sp)+,a0
       movea.l   (sp)+,a1
-      rts
+                  rts
 rotate270:
       movea.l   a0,a1
       move.l    buffer_len(a6),d0
@@ -7655,7 +7733,7 @@ rotate270_9:
       movea.l   (sp)+,a1
       exg       d4,d5
       movea.w   a3,a2
-      rts
+                  rts
 textblt_1:
       moveq.l   #0,d0
 textblt_2:
@@ -7692,7 +7770,7 @@ textblt_6:
       movea.l   p_textblit(a6),a4
       jmp       (a4)
 textblt_7:
-      rts
+                  rts
 fill_tex:
       movea.w   t_iwidth(a6),a2
       movea.l   t_offtab(a6),a4
@@ -7760,7 +7838,7 @@ ftb_next:
       lsl.w     #3,d4
       add.w     d2,d4
       sub.w     d3,d4
-      rts
+                  rts
 text_off:
       move.w    d6,d0
       beq.s     text_off2
@@ -7789,7 +7867,7 @@ text_off1:
       movea.l   buffer_addr(a6),a1
       moveq.l   #0,d2
 text_off2:
-      rts
+                  rts
 copy_to_:
       cmp.w     #7,d4
       bne.s     cptb_no_
@@ -7848,7 +7926,7 @@ cptbm_lo1:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_mul1
-      rts
+                  rts
 cptb_mul2:
       move.w    d1,d4
       move.l    (a0),d6
@@ -7869,7 +7947,7 @@ cptbm_lo2:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_mul2
-      rts
+                  rts
 cptb_mul3:
       move.w    d1,d4
       move.l    (a0),d6
@@ -7893,7 +7971,7 @@ cptbm_lo3:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_mul3
-      rts
+                  rts
 cptb_1wo:
       and.w     d3,d2
       move.w    d2,d3
@@ -7921,7 +7999,7 @@ cptb_wor1:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_wor1
-      rts
+                  rts
 cptb_wor2:
       move.l    (a0),d6
       ror.l     d0,d6
@@ -7930,7 +8008,7 @@ cptb_wor2:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_wor2
-      rts
+                  rts
 cptb_wor3:
       move.l    (a0),d6
       swap      d6
@@ -7940,7 +8018,7 @@ cptb_wor3:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_wor3
-      rts
+                  rts
 cptb_1lo:
       swap      d3
       move.w    d2,d3
@@ -7969,7 +8047,7 @@ cptb_lon1:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_lon1
-      rts
+                  rts
 cptb_lon2:
       move.l    (a0),d6
       ror.l     d0,d6
@@ -7982,7 +8060,7 @@ cptb_lon2:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_lon2
-      rts
+                  rts
 cptb_lon3:
       move.l    (a0),d6
       rol.l     d0,d6
@@ -7995,7 +8073,7 @@ cptb_lon3:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_lon3
-      rts
+                  rts
 cptb_byt1:
       addq.l    #1,a0
 cptb_byt2:
@@ -8011,7 +8089,7 @@ cptb_byt3:
       adda.w    a2,a0
       adda.w    a3,a1
       dbf       d5,cptb_byt3
-      rts
+                  rts
 ftb_grow1:
       move.w    (a5)+,d0
       sub.w     t_first_ade(a6),d0
@@ -8059,7 +8137,7 @@ ftb_grow3:
       lsl.w     #3,d4
       add.w     d2,d4
       sub.w     d3,d4
-      rts
+                  rts
 grow_byt1:
       addq.l    #1,a0
 grow_byt2:
@@ -8083,12 +8161,12 @@ grow_byt5:
       move.w    d1,(a1)
       adda.w    a3,a1
       dbf       d5,grow_byt3
-      rts
+                  rts
 grow_byt6:
       adda.w    a3,a1
       adda.w    a3,a1
       dbf       d5,grow_byt3
-      rts
+                  rts
 grow_cha1:
       lsr.w     #1,d5
       cmp.w     #7,d4
@@ -8153,7 +8231,7 @@ grow_db_6:
       add.w     d4,d4
       addq.w    #1,d4
       moveq.l   #15,d7
-      rts
+                  rts
 grow_cha3:
       move.w    t_iheight(a6),d1
       add.w     d1,d1
@@ -8222,7 +8300,7 @@ grow_nex1:
       dbf       d5,grow_loo1
 pte_grow3:
       moveq.l   #15,d7
-      rts
+                  rts
 grow_lin:
       move.l    a0,-(sp)
       move.l    a1,-(sp)
@@ -8278,7 +8356,7 @@ grow_exi:
       move.l    (sp)+,d1
       movea.l   (sp)+,a1
       movea.l   (sp)+,a0
-      rts
+                  rts
 shrink_c1:
       addq.w    #1,d5
       move.w    t_cheight(a6),d7
@@ -8322,7 +8400,7 @@ shrink_h:
       dbf       d5,shrink_c2
 shrink_c3:
       moveq.l   #15,d7
-      rts
+                  rts
 shrink_l:
       move.l    a0,-(sp)
       move.l    a1,-(sp)
@@ -8368,7 +8446,7 @@ shrink_e:
       move.w    (sp)+,d1
       movea.l   (sp)+,a1
       movea.l   (sp)+,a0
-      rts
+                  rts
 text_jus:
       move.w    n_intin(a1),d6
       subq.w    #3,d6
@@ -8490,7 +8568,7 @@ fellipse3:
 fellipse4:
       move.l    (sp)+,buffer_addr(a6)
       move.l    (sp)+,buffer_len(a6)
-      rts
+                  rts
 ellipse_1:
       movea.l   buffer_addr(a6),a1
 ellipse_2:
@@ -8510,7 +8588,7 @@ ellipse_3:
       bsr       ellipse_14
       move.l    -4(a1),(a1)+
       moveq.l   #2,d0
-      rts
+                  rts
 ellipse_4:
       divs.w    d6,d4
       clr.w     d4
@@ -8624,7 +8702,7 @@ ellipse_13:
       move.l    (sp)+,d4
       bsr.s     ellipse_14
       move.w    d5,d0
-      rts
+                  rts
 ellipse_14:
       lea.l     sin,a0
       adda.w    d4,a0
@@ -8678,7 +8756,7 @@ ell_over4:
 ell_noov4:
       move.w    d6,(a1)+
       swap      d4
-      rts
+                  rts
 fellipse5:
       moveq.l   #0,d4
       move.w    #3600,d5
@@ -8694,7 +8772,7 @@ fellipse5:
       movea.l   buffer_addr(a6),a3
       bra       v_pline_8
 fellipse6:
-      rts
+                  rts
 fellipse:
       movem.l   d0-d7/a0-a1,-(sp)
       movea.l   buffer_addr(a6),a0
@@ -8740,7 +8818,7 @@ fe_loop:
       bne.s     fe_loop
 fe_exit:
       movem.l   (sp)+,d0-d7/a0-a1
-      rts
+                  rts
 fec:
       tst.w     d2
       beq.s     fec_small1
@@ -8791,7 +8869,7 @@ fec_outp:
       dbf       d1,fec_loop
 fec_exit:
       movem.l   (sp)+,d0-d7/a0
-      rts
+                  rts
 fec_small1:
       move.l    a0,-(sp)
       move.w    d3,-(sp)
@@ -8800,7 +8878,7 @@ fec_small2:
       dbf       d3,fec_small2
       move.w    (sp)+,d3
       movea.l   (sp)+,a0
-      rts
+                  rts
 fec_small3:
       movem.l   d0/d3/a0,-(sp)
       move.w    d3,d0
@@ -8816,7 +8894,7 @@ fec_small5:
       move.w    #1,(a0)+
       dbf       d0,fec_small5
       movem.l   (sp)+,d0/d3/a0
-      rts
+                  rts
 fec_small6:
       move.w    d0,-(sp)
       move.w    d2,d0
@@ -8825,7 +8903,7 @@ fec_small6:
       lsr.w     #2,d0
       move.w    d0,(a0)
       move.w    (sp)+,d0
-      rts
+                  rts
 rbox_cal:
       movea.l   buffer_addr(a6),a3
       cmp.w     d0,d2
@@ -8859,7 +8937,7 @@ rbsmall:
       move.w    d0,(a3)+
       move.w    d1,(a3)+
       moveq.l   #5,d4
-      rts
+                  rts
 rbsmall2:
       move.w    d0,d4
       move.w    d1,d5
@@ -8886,7 +8964,7 @@ rbsmall2:
       move.w    d0,(a3)+
       move.w    d5,(a3)+
       moveq.l   #8,d4
-      rts
+                  rts
 rbnormal:
       addq.w    #8,d0
       subq.w    #8,d2
@@ -8932,7 +9010,7 @@ rbloop4:
       move.w    d1,(a3)+
       dbf       d4,rbloop4
       moveq.l   #37,d4
-      rts
+                  rts
 frbox:
       movem.l   d0-d7/a0-a1,-(sp)
 frbx1x2:
@@ -8995,7 +9073,7 @@ frbloop:
       bsr.s     fbox
 frbexit:
       movem.l   (sp)+,d0-d7/a0-a1
-      rts
+                  rts
 round:
       ori.b     #$02,d2
       ori.b     #$01,d1
@@ -9006,7 +9084,7 @@ fbox:
       bsr.s     fbox_nor
       movem.l   (sp)+,d0-d7/a0-a6
 fbox_exit:
-      rts
+                  rts
 fbox_nor:
       cmp.w     d0,d2
       bge.s     fbox_exg
@@ -9045,7 +9123,7 @@ fline_sa:
       movem.l   d0-d2/d4-d7/a1,-(sp)
       bsr.s     fline
       movem.l   (sp)+,d0-d2/d4-d7/a1
-      rts
+                  rts
 fline:
       cmp.w     d0,d2
       bge.s     fline_cl
@@ -9073,7 +9151,7 @@ fclip_y2:
       jmp       (a1)
 fline_ex:
 hline_ex:
-      rts
+                  rts
 hline:
       cmp.w     d0,d2
       bge.s     hline_cl
@@ -9151,7 +9229,7 @@ vclip_c_2:
       movea.l   p_vline(a6),a1
       jmp       (a1)
 vline_ex:
-      rts
+                  rts
 line:
       cmp.w     d0,d2
       bge.s     line_clip1
@@ -9212,7 +9290,7 @@ line_clip4:
       cmp.w     clip_xmin(a6),d2
       bge.s     line_clip9
 line_exit:
-      rts
+                  rts
 line_clip5:
       move.w    d1,d5
       sub.w     d3,d5
@@ -9264,7 +9342,7 @@ line_clip9:
       movea.l   p_line(a6),a1
       jmp       (a1)
 a_dummy:
-      rts
+                  rts
 linea_tab:
       dc.l  linea_init
       dc.l  put_pixel
@@ -9313,7 +9391,7 @@ linea_init:
       move.l    a0,d0
       lea.l     linea_font_tab,a1
       lea.l     linea_tab(pc),a2
-      rts
+                  rts
 set_lclip:
       lea.l     clip_xmin(a6),a1
       clr.l     (a1)+
@@ -9322,7 +9400,7 @@ set_lclip:
       move.w    (PLANES).w,d0
       subq.w    #1,d0
       move.w    d0,r_planes(a6)
-      rts
+                  rts
 set_lclip2:
       tst.w     (CLIP).w
       beq.s     set_lclip
@@ -9333,7 +9411,7 @@ set_lclip2:
       move.w    (PLANES).w,d0
       subq.w    #1,d0
       move.w    d0,r_planes(a6)
-      rts
+                  rts
 get_line:
       moveq.l   #0,d0
       moveq.l   #3,d1
@@ -9352,11 +9430,11 @@ linea_co2:
       bne.s     linea_co4
 linea_co3:
       moveq.l   #1,d0
-      rts
+                  rts
 linea_co4:
       lea.l     color_remap_tab,a0
       move.b    0(a0,d0.w),d0
-      rts
+                  rts
 get_line2:
       movea.l   (PATPTR).w,a0
       lea.l     WK_LENGTH(a6),a1
@@ -9403,7 +9481,7 @@ put_pixel:
       movea.l   p_set_pixel(a6),a0
       jsr       (a0)
       movea.l   (sp)+,a6
-      rts
+                  rts
 get_pixel:
       move.l    a6,-(sp)
       movea.l   (linea_wk_ptr).w,a6
@@ -9413,7 +9491,7 @@ get_pixel:
       movea.l   p_get_pixel(a6),a0
       jsr       (a0)
       movea.l   (sp)+,a6
-      rts
+                  rts
 linea_line:
       move.l    a6,-(sp)
       movea.l   (linea_wk_ptr).w,a6
@@ -9435,7 +9513,7 @@ linea_line:
 linea_line1:
       clr.w     l_lastpix(a6)
       movea.l   (sp)+,a6
-      rts
+                  rts
 linea_hline:
       move.l    a6,-(sp)
       movea.l   (linea_wk_ptr).w,a6
@@ -9446,7 +9524,7 @@ linea_hline:
       movem.w   (X1).w,d0-d2
       bsr       fline
       movea.l   (sp)+,a6
-      rts
+                  rts
 linea_rect:
       move.l    a6,-(sp)
       movea.l   (linea_wk_ptr).w,a6
@@ -9457,7 +9535,7 @@ linea_rect:
       movem.w   (X1).w,d0-d3
       bsr       fbox
       movea.l   (sp)+,a6
-      rts
+                  rts
 linea_bit_blt:
       move.l    a6,-(sp)
       movea.l   a6,a5 ; -> BITBLT structure
@@ -9527,7 +9605,7 @@ linea_ex2:
 linea_blt3:
       movea.l   (sp)+,a6
       lea.l     76(a6),a6
-      rts
+                  rts
 linea_text_blt:
       move.l    a6,-(sp)
       lea.l     -130(sp),a7
@@ -9653,7 +9731,7 @@ atext_ca:
       bsr       text
       lea.l     130(sp),a7
       movea.l   (sp)+,a6
-      rts
+                  rts
 show_mouse:
       move.l    a6,-(sp)
       moveq.l   #122,d0
@@ -9662,7 +9740,7 @@ show_mouse:
       movea.l   (linea_wk_ptr).w,a6
       bsr       call_nvd
       movea.l   (sp)+,a6
-      rts
+                  rts
 hide_mouse:
       move.l    a6,-(sp)
       moveq.l   #123,d0
@@ -9671,7 +9749,7 @@ hide_mouse:
       movea.l   (linea_wk_ptr).w,a6
       bsr       call_nvd
       movea.l   (sp)+,a6
-      rts
+                  rts
 transform_mouse:
       movea.l   (INTIN).w,a2
 transform_mouse1:
@@ -9681,8 +9759,8 @@ transform_mouse1:
       bra       vsc_form3
 undraw_sprite:
       move.l    (undraw_spr_vec).w,-(sp)
-      rts
-undraw_sprite0:
+                  rts
+undraw_sprite_in:
       move.w    (a2)+,d2
       subq.w    #1,d2
       bmi.s     undraw_error
@@ -9720,13 +9798,13 @@ undraw_1:
       adda.w    a3,a1
       dbf       d2,undraw_1
 undraw_error:
-      rts
+                  rts
 undraw_2:
       move.l    (a2)+,(a1)+
       move.l    (a2)+,(a1)+
       adda.w    a3,a1
       dbf       d2,undraw_2
-      rts
+                  rts
 undraw_4:
       move.l    (a2)+,(a1)+
       move.l    (a2)+,(a1)+
@@ -9734,7 +9812,7 @@ undraw_4:
       move.l    (a2)+,(a1)+
       adda.w    a3,a1
       dbf       d2,undraw_4
-      rts
+                  rts
 undraw_8:
       move.l    (a2)+,(a1)+
       move.l    (a2)+,(a1)+
@@ -9747,7 +9825,7 @@ undraw_8:
       adda.w    a3,a1
       dbf       d2,undraw_8
 vbl_mouse1:
-      rts
+                  rts
 vbl_mouse2:
       tst.w     (M_HID_CNT).w
       bne.s     vbl_mouse1
@@ -9763,8 +9841,8 @@ vbl_mouse2:
       lea.l     (M_POS_HX).w,a0
 draw_sprite:
       move.l    (draw_spr_vec).w,-(sp)
-      rts
-draw_sprite0:
+                  rts
+draw_sprite_in:
       move.l    a6,-(sp)
       move.w    6(a0),-(sp)
       move.w    8(a0),-(sp)
@@ -9873,7 +9951,7 @@ draw_sprite5:
 draw_sprite6:
       addq.l    #6,a7
       movea.l   (sp)+,a6
-      rts
+                  rts
 draw_sprite7:
       dc.l draw_sprite16
       dc.l draw_sprite17
@@ -9898,7 +9976,7 @@ draw_sprite9:
       move.w    d2,(a1)
       adda.w    d4,a1
       dbf       d5,draw_sprite8
-      rts
+                  rts
 draw_sprite10:
       move.w    (a1),d2
       move.w    d2,(a2)
@@ -9910,7 +9988,7 @@ draw_sprite11:
       move.w    d2,(a1)
       adda.w    d4,a1
       dbf       d5,draw_sprite10
-      rts
+                  rts
 draw_sprite12:
       move.w    (a1),d2
       neg.w     d3
@@ -9926,7 +10004,7 @@ draw_sprite13:
       move.w    d2,(a1)
       adda.w    d4,a1
       dbf       d5,draw_sprite12
-      rts
+                  rts
 draw_sprite14:
       moveq.l   #0,d0
       moveq.l   #0,d1
@@ -9993,7 +10071,7 @@ calc_add:
       adda.w    d0,a1
       move.w    (sp)+,d1
       move.w    (sp)+,d0
-      rts
+                  rts
 linea_copy_raster:
       move.l    a6,-(sp)
       movea.l   (linea_wk_ptr).w,a6
@@ -10011,7 +10089,7 @@ linea_copy_raster:
       bra       vrt_cpyfm
 linea_cf:
       movea.l   (sp)+,a6
-      rts
+                  rts
 mouse_int:
       move.w    sr,-(sp)
       movem.l   d0-d3/a0-a1,-(sp)
@@ -10078,7 +10156,7 @@ mouse_sa:
 mouse_ex:
       movem.l   (sp)+,d0-d3/a0-a1
       move.w    (sp)+,sr
-      rts
+                  rts
 clip_mouse:
       tst.w     d0
       bpl.s     clip_mouse1
@@ -10093,14 +10171,14 @@ clip_mouse2:
       tst.w     d1
       bpl.s     clip_mouse3
       moveq.l   #0,d1
-      rts
+                  rts
 clip_mouse3:
       cmp.w     (V_REZ_VT).w,d1
       blt.s     clip_mouse4
       move.w    (V_REZ_VT).w,d1
       subq.w    #1,d1
 clip_mouse4:
-      rts
+                  rts
 user_cur:
       move.w    sr,-(sp)
       ori.w     #$0700,sr
@@ -10108,14 +10186,14 @@ user_cur:
       move.w    d1,(CUR_Y).w
       bset      #0,(CUR_FLAG).w
       move.w    (sp)+,sr
-      rts
+                  rts
 sys_time:
       move.l    (NEXT_TIM).w,-(sp)
       move.l    (USER_TIM).w,-(sp)
-      rts
+                  rts
 v_escape_call:
       move.l    p_escape(a6),-(sp)
-      rts
+                  rts
 v_escape:
       tst.w     bitmap_width(a6)
       bne.s     v_escape2
@@ -10135,9 +10213,9 @@ v_escape:
       jsr       v_escape_tab(pc,d2.w)
       movem.l   (sp)+,d1-d7/a2-a5
 v_escape1:
-      rts
+                  rts
 v_escape2:
-      rts
+                  rts
 v_escape_tab:
       dc.w  v_escape1-v_escape_tab
       dc.w  vq_chcells-v_escape_tab
@@ -10165,7 +10243,7 @@ vq_chcells:
       swap      d3
       move.l    d3,(a4)
       move.w    #2,n_intout(a0)
-      rts
+                  rts
 v_exit_cur:
       addq.w    #1,(V_HID_CNT).w
       bclr      #1,(V_STAT_0).w
@@ -10207,26 +10285,26 @@ v_curtext1:
       trap      #1
       addq.l    #6,a7
 v_curtext2:
-      rts
+                  rts
 vq_curaddress:
       addq.w    #1,d0
       addq.w    #1,d1
       move.w    d1,(a4)+
       move.w    d0,(a4)+
       move.w    #2,n_intout(a0)
-      rts
+                  rts
 vq_tabstatus:
       move.w    #1,(a4)
       move.w    #1,n_intout(a0)
-      rts
+                  rts
 v_dspcur:
 v_rmcur:
-      rts
+                  rts
 v_hardcopy:
       move.w    #20,-(sp) ; Scrdmp
       trap      #14
       addq.l    #2,a7
-      rts
+                  rts
 Blitmode:
       move.w    (a0),d0
       bmi.s     Blitmode1
@@ -10247,7 +10325,7 @@ vdi_cursor:
       move.b    (V_PERIOD).w,(V_CUR_CT).w
       move.l    (cursor_vbl_vec).w,-(sp)
 vdi_cursor1:
-      rts
+                  rts
 rawcon:
 vdi_rawout:
       lea.l     6(sp),a0
@@ -10303,7 +10381,7 @@ cursor_off:
       bclr      #1,(V_STAT_0).w
       bne.s     cursor
 cursor_off1:
-      rts
+                  rts
 cursor_off2:
       cmpi.w    #1,(V_HID_CNT).w
       bcs.s     cursor_off4
@@ -10314,8 +10392,8 @@ cursor_off2:
 cursor_off3:
       subq.w    #1,(V_HID_CNT).w
 cursor_off4:
-      rts
-vbl_curs:
+                  rts
+vbl_cursor:
       btst      #0,(V_STAT_0).w
       beq.s     vbl_no_b
       bchg      #1,(V_STAT_0).w
@@ -10323,7 +10401,7 @@ vbl_curs:
 vbl_no_b:
       bset      #1,(V_STAT_0).w
       beq.s     cursor
-      rts
+                  rts
 cursor:
       movem.l   d0-d2/a0-a2,-(sp)
       move.w    (PLANES).w,d0
@@ -10343,7 +10421,7 @@ cursor_l:
       dbf       d0,cursor_b
       movem.l   (sp)+,d0-d2/a0-a2
 cursor_e:
-      rts
+                  rts
 vt_bel:
       btst      #2,(conterm).w
       beq.s     cursor_e
@@ -10354,7 +10432,7 @@ make_pling:
       move.w    #32,-(sp) ; Dosound
       trap      #14
       addq.l    #6,a7
-      rts
+                  rts
 pling:
       dc.w  $0034,$0100,$0200,$0300
       dc.w  $0400,$0500,$0600,$07FE
@@ -10376,7 +10454,7 @@ vt_lf:
       move.w    (V_CEL_WR).w,d1
       add.l     d1,(V_CUR_AD).w
       addq.w    #1,(V_CUR_XY+2).w
-      rts
+                  rts
 vt_cr:
       bsr       cursor_off
       pea.l     cursor_off2(pc)
@@ -10395,10 +10473,10 @@ set_x0_a:
       suba.l    d0,a1
       move.l    a1,(V_CUR_AD).w
       clr.w     (V_CUR_XY).w
-      rts
+                  rts
 vt_esc:
       move.l    #vt_esc_s,(con_state).w
-      rts
+                  rts
 vt_contr:
       cmpi.w    #27,d1
       beq.s     vt_esc
@@ -10411,7 +10489,7 @@ vt_contr:
       movem.w   (V_CUR_XY).w,d0-d1
       jmp       vt_c_tab(pc,d2.w)
 vt_c_exit:
-      rts
+                  rts
 
       dc.w      vt_bel-vt_c_tab
       dc.w      vt_bs-vt_c_tab
@@ -10465,11 +10543,11 @@ vtc_char3:
       lsr.w     #1,d0
       bcs.s     vtc_n_co
       addq.l    #1,(V_CUR_AD).w
-      rts
+                  rts
 vtc_n_co:
       subq.l    #1,a1
       move.l    a1,(V_CUR_AD).w
-      rts
+                  rts
 vtc_l_co:
       btst      #3,(V_STAT_0).w
       beq.s     vtc_con_2
@@ -10492,13 +10570,13 @@ vtc_l_co:
 vtc_con_1:
       subq.w    #1,(V_HID_CNT).w
 vtc_con_2:
-      rts
+                  rts
 vtc_char4:
       move.b    (a0),(a1)
       lea.l     256(a0),a0
       adda.w    a2,a1
       dbf       d0,vtc_char4
-      rts
+                  rts
 vtc_char5:
       move.b    (a0),d1
       not.b     d1
@@ -10506,7 +10584,7 @@ vtc_char5:
       lea.l     256(a0),a0
       adda.w    a2,a1
       dbf       d0,vtc_char5
-      rts
+                  rts
 vtc_bg_w:
       moveq.l   #0,d1
       bra.s     vtc_bg
@@ -10516,7 +10594,7 @@ vtc_bg:
       move.b    d1,(a1)
       adda.w    a2,a1
       dbf       d0,vtc_bg
-      rts
+                  rts
 vt_esc_s:
       cmpi.w    #'Y',d1
       beq       vt_seq_Y
@@ -10540,7 +10618,7 @@ vt_seq_t2:
       move.w    vt_seq_tab2(pc,d2.w),d2
       jmp       vt_seq_tab2(pc,d2.w)
 vt_seq_error:
-      rts
+                  rts
 vt_seq_tab1:
    dc.w  vt_seq_A-vt_seq_tab1
    dc.w  vt_seq_B-vt_seq_tab1
@@ -10616,7 +10694,7 @@ vt_seq_I:
       suba.w    (V_CEL_WR).w,a1
       move.l    a1,(V_CUR_AD).w
       move.w    d1,(V_CUR_XY+2).w
-      rts
+                  rts
 vt_seq_J:
 v_eeos:
       bsr.s     vt_seq_K
@@ -10635,7 +10713,7 @@ v_eeos:
       subq.w    #1,d7
       bra       clear_line2 ; 99ee
 vt_seq_J1:
-      rts
+                  rts
 vt_seq_K:
 v_eeol:
       bsr       cursor_off
@@ -10681,7 +10759,7 @@ vt_seq_M:
       bra       scroll_up1
 vt_seq_Y:
       move.l    #vt_set_y,(con_state).w
-      rts
+                  rts
 vt_set_y:
       subi.w    #32,d1
       move.w    (V_CUR_XY).w,d0
@@ -10695,7 +10773,7 @@ vt_set_x:
       bra       set_curs1
 vt_seq_b:
       move.l    #vt_set_b,(con_state).w
-      rts
+                  rts
 vt_set_b:
       moveq.l   #15,d0
       and.w     d0,d1
@@ -10705,10 +10783,10 @@ vt_set_b:
 vt_set_b1:
       move.w    d1,(V_COL_FG).w
       move.l    #vt_con,(con_state).w
-      rts
+                  rts
 vt_seq_c:
       move.l    #vt_set_c,(con_state).w
-      rts
+                  rts
 vt_set_c:
       moveq.l   #15,d0
       and.w     d0,d1
@@ -10718,7 +10796,7 @@ vt_set_c:
 vt_set_c1:
       move.w    d1,(V_COL_BG).w
       move.l    #vt_con,(con_state).w
-      rts
+                  rts
 vt_seq_d:
       bsr.s     vt_seq_o
       move.w    (V_CUR_XY+2).w,d1
@@ -10731,20 +10809,20 @@ vt_seq_d:
       adda.w    (V_CUR_OF).w,a1
       bra       clear_line2 ; 99ee
 vt_seq_d1:
-      rts
+                  rts
 vt_seq_e:
       tst.w     (V_HID_CNT).w
       beq.s     vt_seq_e1
       move.w    #1,(V_HID_CNT).w
       bra       cursor_off2
 vt_seq_e1:
-      rts
+                  rts
 vt_seq_f:
       bra       cursor_off
 vt_seq_j:
       bset      #5,(V_STAT_0).w
       move.l    (V_CUR_XY).w,(V_SAV_XY).w
-      rts
+                  rts
 vt_seq_k:
       movem.w   (V_SAV_XY).w,d0-d1
       bclr      #5,(V_STAT_0).w
@@ -10767,21 +10845,21 @@ vt_seq_o:
       adda.l    d1,a1
       bra       clear_line5 ; 9d50
 vt_seq_o1:
-      rts
+                  rts
 vt_seq_p:
 v_rvon:
       bset      #4,(V_STAT_0).w
-      rts
+                  rts
 vt_seq_q:
 v_rvoff:
       bclr      #4,(V_STAT_0).w
-      rts
+                  rts
 vt_seq_v:
       bset      #3,(V_STAT_0).w
-      rts
+                  rts
 vt_seq_w:
       bclr      #3,(V_STAT_0).w
-      rts
+                  rts
 scroll_up:
       movem.l   d2-d7/a1-a6,-(sp)
       movea.l   (v_bas_ad).w,a1
@@ -10819,11 +10897,11 @@ scroll_up2:
       swap      d7
       lsr.w     #1,d7
       dbf       d7,scroll_up3
-      rts
+                  rts
 scroll_up3:
       move.w    (a0)+,(a1)+
       dbf       d7,scroll_up3
-      rts
+                  rts
 scroll_down:
       movem.l   d2-d7/a1-a6,-(sp)
       movea.l   (v_bas_ad).w,a0
@@ -10867,11 +10945,11 @@ scroll_down2:
       lea.l     40(a0),a0
       lsr.w     #1,d7
       dbf       d7,scroll_down3
-      rts
+                  rts
 scroll_down3:
       move.w    -(a0),-(a1)
       dbf       d7,scroll_down3
-      rts
+                  rts
 clear_line:
       movem.l   d2-d7/a1-a6,-(sp)
 clear_line1:
@@ -11062,7 +11140,7 @@ clear_sc3:
       dbf       d7,clear_sc1
 clear_line3:
       movem.l   (sp)+,d2-d7/a1-a6
-      rts
+                  rts
 clear_co1:
       add.w     d5,d5
       moveq.l   #0,d2
@@ -11222,7 +11300,7 @@ clear_sc5:
       adda.w    a2,a1
       dbf       d7,clear_sc4
       movem.l   (sp)+,d2-d7/a1-a6
-      rts
+                  rts
 clear_co2:
       add.w     d5,d5
       add.w     d5,d5
@@ -11287,7 +11365,7 @@ clear_un:
       subq.l    #1,d7
       bpl.s     clear_un
       movem.l   (sp)+,d2-d7/a1-a6
-      rts
+                  rts
 clear_screen:
       movem.l   d2-d7/a1-a6,-(sp)
       move.w    (V_CEL_MY).w,d7
@@ -11328,7 +11406,7 @@ clear_lp3:
       addq.l    #2,a3
       dbf       d6,clear_lp1
       movem.l   (sp)+,d3-d6/a3-a4
-      rts
+                  rts
 opcode_err0:
       pea.l     vdi_exit(pc)
 opcode_error:
@@ -11337,7 +11415,7 @@ opcode_error:
       move.w    (a1),d0
       clr.w     n_intout(a1)
       clr.w     n_ptsout(a1)
-      rts
+                  rts
 handle_err:
       move.w    (a1),d0
       subq.w    #1,d0
@@ -11391,7 +11469,7 @@ vdi_dispatch1:
 vdi_exit:
       movem.l   (sp)+,a0-a1/a6
       moveq.l   #0,d0
-      rts
+                  rts
 vdi_tab:
    dc.w  0,0
    dc.l  opcode_error
