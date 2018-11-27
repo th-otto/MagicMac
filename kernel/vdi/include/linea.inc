@@ -352,10 +352,10 @@ P_NXLN              EQU 46                  ;Abstand zur naechsten Musterzeile
 P_NXPL              EQU 48                  ;Abstand zur naechsten Musterebene
 P_MASK              EQU 50                  ;(Musterlaenge -2) * Ebenenanzahl
 
-;Bitnummern fuers Cursorflag RESERVED
-CURSOR_BL           EQU 0                   ;Blinken (aus/ein)
-CURSOR_STATE        EQU 1                   ;momentaner Status (unsichtbar/sichtbar)
-CURSOR_ONOFF        EQU 2                   ;Cursordarstellung (aus/ein)
-WRAP                EQU 3                   ;Wrapping (aus/ein)
-INVERSE             EQU 4                   ;inverse Darstellung
-CURSOR_SAVED        EQU 5                   ;Cursorposition
+;bit numbers for vt52 cursor state V_STAT_0
+CURSOR_BL           EQU 0                   ;blink enabled
+CURSOR_STATE        EQU 1                   ;currently visible
+CURSOR_ONOFF        EQU 2                   ;cursor enabled (unused)
+WRAP                EQU 3                   ;wrap at eol
+INVERSE             EQU 4                   ;reverse video
+CURSOR_SAVED        EQU 5                   ;cursor position was saved

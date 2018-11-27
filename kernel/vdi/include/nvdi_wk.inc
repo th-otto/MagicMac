@@ -3,7 +3,7 @@
 ;wr_mode        60
 ;colors     20
 ;l_color        70
-;l_sdstyle  94
+;l_udstyle  94
 ;t_color        100
 ;f_color        190
 ;f_style        194
@@ -153,10 +153,10 @@ t_iwidth:      ds.w 1 /* width of font data in bytes */
 t_iheight:     ds.w 1 /* height of font data in lines */
 
 /* temporary data for bitmap text */
-t_eff_theight: ds.w 1 /* widening from effects */
+t_eff_thicken: ds.w 1 /* widening from effects */
 t_act_line:    ds.w 1 /* starting line number in text buffer */
-t_add_len:     ds.w 1 /* additional length for v_justified */
-t_space_:      ds.w 1 /* -1: per-character spacing */
+t_add_length:  ds.w 1 /* additional length for v_justified */
+t_space_kind:  ds.w 1 /* -1: per-character spacing */
                ds.w 1
 
 /* dimensions for vector fonts */
@@ -246,13 +246,13 @@ p_set_pixel:   ds.l 1
 p_get_pixel:   ds.l 1
 p_transform:   ds.l 1
 p_set_pattern: ds.l 1
-p_set_color:   ds.l 1
-p_get_color:   ds.l 1
+p_set_color_rgb:ds.l 1
+p_get_color_rgb:ds.l 1
 p_vdi_to_color:ds.l 1
 p_color_to_vdi:ds.l 1
                ds.l 3
 p_gtext:       ds.l 1
-p_escape:      ds.l 1
+p_escapes:     ds.l 1
                ds.w 4
 wk_owner:      ds.l 1 /* pointer to owning application */
 WK_LENGTH:

@@ -83,7 +83,7 @@ struct _wk {
 	/* 102 */ WORD free102;
 	/* 104 */ BYTE free104;
 	/* 105 */ char t_mapping;	    /* 0: use direct index 1: use t_asc_map */
-	/* 106 */ short t_first_ade;    /* code of first charaacter */
+	/* 106 */ short t_first_ade;    /* code of first character */
 	/* 108 */ short t_ades;         /* number of characters -1 */
 	/* 110 */ short t_space_index;  /* index for a space (delimiter for v_justified) */
 	/* 112 */ short t_unknown_index; /* index for a unknown character */
@@ -168,10 +168,10 @@ struct _wk {
 	/* 288 */ short t_iheight;      /* height of font data in lines */
 
 /* temporary data for bitmap text */
-	/* 290 */ short t_eff_theight;  /* widening from effects */
+	/* 290 */ short t_eff_thicken;  /* widening from effects */
 	/* 292 */ short t_act_line;     /* starting line number in text buffer */
-	/* 294 */ short t_add_len;      /* additional length for v_justified */
-	/* 296 */ short t_space_;       /* -1: per-character spacing */
+	/* 294 */ short t_add_length;   /* additional length for v_justified */
+	/* 296 */ short t_space_kind;   /* -1: per-character spacing */
 
 #define t_FONT_ptr t_pointer		/* pointer to current FONT structure */
 #define t_asc_map t_fonthdr         /* pointer to table ascii -> index */
@@ -254,21 +254,21 @@ struct _wk {
 	/* 516 */ void *p_line;         /* vector for diagonal line */
 	/* 520 */ void *p_expblt;       /* vector for expanded bitblk transfer */
 	/* 524 */ void *p_bitblt;       /* vector for bitblk transfer */
-	/* 528 */ void *p_textblt;      /* vector for text blit */
+	/* 528 */ void *p_textblit;     /* vector for text blit */
 	/* 532 */ void *p_scanline;     /* vector for scanline (seedfill) */
 	/* 536 */ void *p_set_pixel;
 	/* 540 */ void *p_get_pixel;
 	/* 544 */ void *p_transform;
 	/* 548 */ void *p_set_pattern;
-	/* 552 */ void *p_set_color;
-	/* 556 */ void *p_get_color;
+	/* 552 */ void *p_set_color_rgb;
+	/* 556 */ void *p_get_color_rgb;
 	/* 560 */ void *p_vdi_to_color;
 	/* 564 */ void *p_color_to_vdi;
 	          long free568;
 	          long free572;
 	          long free576;
 	/* 580 */ void *p_gtext;
-	/* 584 */ void *p_escape;
+	/* 584 */ void *p_escapes;
 	          long free588;
 	          long free592;
 	/* 596 */ void *wk_owner;       /* pointer to owning application */
