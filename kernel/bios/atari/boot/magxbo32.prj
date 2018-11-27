@@ -1,0 +1,5 @@
+magxbo32.prg
+.S[-I..\..\..\..\inc_as]
+.L[-S=0]
+=
+magxbo32.s

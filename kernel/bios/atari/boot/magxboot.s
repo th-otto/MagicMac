@@ -1,10 +1,10 @@
 **********************************************************************
 *
-* BOOTLADER FUeR Mag!X                             21.09.90
-* ===================
+* BOOTLOADER FUER Mag!X                           21.09.90
+* =====================
 *
 *                             erstellt            17.10.91
-*                             letzte Aenderung     22.06.96
+*                             letzte Aenderung    22.06.96
 *
 * Liest die Datei "*.RAM", stellt das Ende des Mag!X- Datenbereiches
 *  fest und reloziert sie. Bei Vorhandensein von TT-RAM wird das
@@ -15,7 +15,7 @@
 *
 **********************************************************************
 
-OUTSIDE   EQU  0              ; Programmlaenge auf 32k-Pages
+;OUTSIDE   EQU  0              ; Programmlaenge auf 32k-Pages
 RESIDENT  EQU  1              ; resetfest
 MODIFY    EQU  0              ; Modifikation nicht notwendig!
 
@@ -346,7 +346,7 @@ err:
 **********************************************************************
 
 cconws_country:
- bsr      _chk_nat
+ bsr.s    _chk_nat
  bne.b    cconws_country
 cconws:
  move.l   a0,-(sp)
@@ -407,10 +407,9 @@ name:
 
      EVEN
 
-stack     EQU  *+800
-
      BSS
 
  DS.B     800
+stack:
 
      END
