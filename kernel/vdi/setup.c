@@ -57,8 +57,8 @@ extern OLD_MACSYS	MSys;			/* fuer alte MagiCMac-Version importieren (bei neuen n
 /*----------------------------------------------------------------------------------------*/
 /* Statische Daten																		  */
 /*----------------------------------------------------------------------------------------*/
-static VDI_SETUP_DATA vdi_setup;
-static VDI_DISPLAY vdi_display;
+extern VDI_SETUP_DATA vdi_setup;
+extern VDI_DISPLAY vdi_display;
 
 VDI_SETUP_DATA *MM_init(VDI_SETUP_DATA *in_setup);
 
@@ -134,17 +134,16 @@ VDI_SETUP_DATA *MM_init(VDI_SETUP_DATA *in_setup)
 		vdi_display.bm.color_space = CSPACE_RGB;		/* Farbraum, entweder CSPACE_RGB oder CSPACE_GRAY (um Graustufenbetrieb vernuenftig zu unterstuetzen) */
 		vdi_display.bm.reserved1 = 0;					/* reserviert */
 	
-		vdi_setup.magic = VDI_SETUP_MAGIC;
-		vdi_setup.length = sizeof(VDI_SETUP_DATA);
-		vdi_setup.format = 0;
-		vdi_setup.reserved = 0;
+		in_setup = &vdi_setup;
+		in_setup->magic = VDI_SETUP_MAGIC;
+		in_setup->length = sizeof(VDI_SETUP_DATA);
+		in_setup->format = 0;
+		in_setup->reserved = 0;
 		
-		vdi_setup.displays = &vdi_display;
-		vdi_setup.report_error = MSys.error;			/* Funktion fuer den VDI-GAU */
-		vdi_setup.reserved1 = 0;
-		vdi_setup.reserved2 = 0;
-	
-		return &vdi_setup;
+		in_setup->displays = &vdi_display;
+		in_setup->report_error = MSys.error;			/* Funktion fuer den VDI-GAU */
+		in_setup->reserved1 = 0;
+		in_setup->reserved2 = 0;
 	}
-	return 0;											/* Direkter Hardwarezugriff fuer Atari */
+	return in_setup;									/* Direkter Hardwarezugriff fuer Atari */
 }

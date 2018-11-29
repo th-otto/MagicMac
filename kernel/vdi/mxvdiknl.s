@@ -264,6 +264,9 @@ vdi_setup_ptr:    DS.L 1                                ;Zeiger auf VDI_SETUP_DA
 
 nstruct_ende:
 
+vdi_display:      ds.b sizeof_VDI_DISPLAY
+vdi_setup:        ds.b sizeof_VDI_SETUP
+
 IF *+0 > CUR_FONT                ;sind die Variablen fuer NVDI zu lang?
    error "vdi variables too long"
 ENDIF
