@@ -684,9 +684,11 @@ vt52_init_MAC:    movea.l  d0,a0
                   move.w   d0,(PLANES).w              ;Anzahl der Ebenen
                   move.l   VDISPLAY_xmax(a0),d0
                   sub.l    VDISPLAY_xmin(a0),d0
+                  addq.l   #1,d0
                   move.w   d0,(V_REZ_HZ).w            ;Breite
                   move.l   VDISPLAY_ymax(a0),d1
                   sub.l    VDISPLAY_ymin(a0),d1
+                  addq.l   #1,d0
                   move.w   d1,(V_REZ_VT).w            ;Hoehe
 
 vt52_init_exit:   bsr.s    init_vt52_vars             ;VT52-Variablen initialisieren
@@ -715,8 +717,9 @@ init_vt52_vars:   movem.l  d0-d3/a0-a2,-(sp)
                   lea.l    header_10pt,a1             ;8*16 Systemfont
 init_vt52_font:   move.l   dat_table(a1),(V_FNT_AD).w ;Adresse des Fontimage
                   move.l   off_table(a1),(V_OFF_AD).w ;Adresse der HOT
-                  move.w   #256,(V_FNT_WD).w          ;Breite des Fontimages in Bytes
-                  move.l   #$ff0000,(V_FNT_ND).w      ;Nummer des letzten/ersten Zeichens
+                  move.w   form_width(a1),(V_FNT_WD).w ;Breite des Fontimages in Bytes
+                  move.w   first_ade(a1),(V_FNT_ND).w ;Nummer des ersten Zeichens
+                  move.w   last_ade(a1),(V_FNT_ST).w  ;Nummer des letzten Zeichens
                   move.w   form_height(a1),d3         ;Zeichenhoehe
                   move.w   d3,(V_CEL_HT).w            ;Zeichenhoehe
                   lsr.w    #3,d0
