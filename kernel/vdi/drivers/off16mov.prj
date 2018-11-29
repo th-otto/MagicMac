@@ -1,0 +1,7 @@
+off16mov.osd
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+off16mov.s

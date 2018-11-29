@@ -33,6 +33,9 @@ aaa.cfg
 *.slb
 *.os
 *.ram
+*.sys
+*.osd
+*.nod
 *.mode1v3
 *.pbxuser
 .directory

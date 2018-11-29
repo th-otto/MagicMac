@@ -235,13 +235,13 @@ struct _wk {
 	/* 454 */ short r_swidth;       /* bytes per src line */
 	/* 456 */ short r_splanes;      /* no of src planes -1 */
 	/* 458 */ long r_splane_len;    /* length of a plane */
-#define r_snxtwork r_splane_len     /* alternative: distance to next word of same plane */
+#define r_snxtword r_splane_len     /* alternative: distance to next word of same plane */
 	          char free462[8];
 	/* 470 */ void *r_daddr;        /* destination address */
 	/* 474 */ short r_dwidth;       /* bytes per destination line */
 	/* 476 */ short r_dplanes;      /* no of dst planes -1 */
 	/* 478 */ long r_dplane_len;    /* length of a plane */
-#define r_dnxtwork r_dplane_len     /* alternative: distance to next word of same plane */
+#define r_dnxtword r_dplane_len     /* alternative: distance to next word of same plane */
 	          char free482[8];
 	/* 490 */ short r_fgcol;        /* foreground color */
 	/* 492 */ short r_bgcol;        /* background color */
@@ -254,7 +254,7 @@ struct _wk {
 	/* 516 */ void *p_line;         /* vector for diagonal line */
 	/* 520 */ void *p_expblt;       /* vector for expanded bitblk transfer */
 	/* 524 */ void *p_bitblt;       /* vector for bitblk transfer */
-	/* 528 */ void *p_textblit;     /* vector for text blit */
+	/* 528 */ void *p_textblt;      /* vector for text blit */
 	/* 532 */ void *p_scanline;     /* vector for scanline (seedfill) */
 	/* 536 */ void *p_set_pixel;
 	/* 540 */ void *p_get_pixel;

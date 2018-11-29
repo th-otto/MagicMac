@@ -1,0 +1,8 @@
+mfa16.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfa16.s
+

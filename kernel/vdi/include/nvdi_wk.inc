@@ -10,6 +10,8 @@
 ;f_interior 192
 ;f_pointer  198
 
+MAX_PTS           EQU 1024                ;Maximale Anzahl der Koordinatenpaare in ptsin
+
 ;workstation attribute table (WK)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -219,13 +221,13 @@ r_saddr:       ds.l 1 /* src address */
 r_swidth:      ds.w 1 /* bytes per src line */
 r_splanes:     ds.w 1 /* no of src planes -1 */
 r_splane_len:         /* length of a plane */
-r_snxtwork:    ds.l 1 /* alternative: distance to next word of same plane */
+r_snxtword:    ds.l 1 /* alternative: distance to next word of same plane */
                ds.b 8
 r_daddr:       ds.l 1 /* destination address */
 r_dwidth:      ds.w 1 /* bytes per destination line */
 r_dplanes:     ds.w 1 /* no of dst planes -1 */
 r_dplane_len:         /* length of a plane */
-r_dnxtwork:    ds.l 1 /* alternative: distance to next word of same plane */
+r_dnxtword:    ds.l 1 /* alternative: distance to next word of same plane */
                ds.b 8
 r_fgcol:       ds.w 1 /* foreground color */
 r_bgcol:       ds.w 1 /* background color */
@@ -240,7 +242,7 @@ p_vline:       ds.l 1 /* vector for vertical line */
 p_line:        ds.l 1 /* vector for diagonal line */
 p_expblt:      ds.l 1 /* vector for expanded bitblk transfer */
 p_bitblt:      ds.l 1 /* vector for bitblk transfer */
-p_textblit:    ds.l 1 /* vector for text blit */
+p_textblt:     ds.l 1 /* vector for text blit */
 p_scanline:    ds.l 1 /* vector for scanline (seedfill) */
 p_set_pixel:   ds.l 1
 p_get_pixel:   ds.l 1

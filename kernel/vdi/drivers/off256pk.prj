@@ -1,0 +1,7 @@
+OFF256PK.OSD
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+off256pk.s

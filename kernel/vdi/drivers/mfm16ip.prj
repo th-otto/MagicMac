@@ -1,0 +1,7 @@
+mfm16ip.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfm16ip.s

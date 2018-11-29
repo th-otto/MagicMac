@@ -1,0 +1,7 @@
+mfa4.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfa4.s

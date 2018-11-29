@@ -1,0 +1,7 @@
+mfm16m.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfm16m.s

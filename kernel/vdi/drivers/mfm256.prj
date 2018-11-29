@@ -1,0 +1,7 @@
+mfm256.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfm256.s

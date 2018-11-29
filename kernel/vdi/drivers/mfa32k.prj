@@ -1,0 +1,7 @@
+mfa32k.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfa32k.s

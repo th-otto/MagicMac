@@ -1609,7 +1609,7 @@ textblt_cmp:      sub.w    d2,d4
                   sub.w    d3,d5
                   bmi.s    textblt_exit
 
-                  movea.l  p_textblit(a6),a4
+                  movea.l  p_textblt(a6),a4
                   jmp      (a4)
 
 textblt_exit:     rts

@@ -1,0 +1,7 @@
+mfm2.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfm2.s

@@ -1,0 +1,7 @@
+off016ip.osd
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+off016ip.s

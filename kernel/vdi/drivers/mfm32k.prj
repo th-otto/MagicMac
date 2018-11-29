@@ -1,0 +1,7 @@
+mfm32k.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfm32k.s

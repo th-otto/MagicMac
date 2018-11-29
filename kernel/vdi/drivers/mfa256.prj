@@ -1,0 +1,7 @@
+mfa256.sys
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+mfa256.s

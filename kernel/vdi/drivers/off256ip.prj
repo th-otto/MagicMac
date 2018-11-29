@@ -1,0 +1,7 @@
+OFF256IP.OSD
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+off256ip.s

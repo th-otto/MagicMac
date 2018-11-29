@@ -71,7 +71,6 @@ BehneError equ $78
 	.EXPORT vdi_setup
    
 MAX_HANDLES       EQU 128                 ;Maximale Handlenummer
-MAX_PTS           EQU 1024                ;Maximale Anzahl der Koordinatenpaare in ptsin
 NVDI_BUF_SIZE     EQU 16384               ;Groesse des Buffers
 
 .INCLUDE "include\nvdi_div.inc"
