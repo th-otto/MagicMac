@@ -6,6 +6,8 @@
 #include "drivers.h"
 #include "pixmap.h"	/* PixMap-Strukur */
 
+#if NEW_SETUP_API
+
 /*----------------------------------------------------------------------------------------*/
 /* Struktur fuer die Kompatibilitaet mit alten MM-Versionen								  */
 /*----------------------------------------------------------------------------------------*/
@@ -43,7 +45,7 @@ typedef struct
 	void		*set_physbase;		/* Bildschirmadresse bei Setscreen umsetzen (a0 zeigt auf den Stack von Setscreen()) */
 	void		*VsetRGB;			/* Farbe setzen (a0 zeigt auf den Stack bei VsetRGB()) */
 	void		*VgetRGB;			/* Farbe erfragen (a0 zeigt auf den Stack bei VgetRGB()) */
-	VDI_SETUP_TROUBLE	*error;		/* Fehlermeldung in d0.l an das Mac-System zurueckgeben */
+	int32_t     (*error)(int32_t err);		/* Fehlermeldung in d0.l an das Mac-System zurueckgeben */
 } OLD_MACSYS;
 
 extern OLD_MACSYS	MSys;			/* fuer alte MagiCMac-Version importieren (bei neuen nur Dummy) */
@@ -147,3 +149,5 @@ VDI_SETUP_DATA *MM_init(VDI_SETUP_DATA *in_setup)
 	}
 	return in_setup;									/* Direkter Hardwarezugriff fuer Atari */
 }
+
+#endif

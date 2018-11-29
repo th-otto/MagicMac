@@ -6,6 +6,18 @@
 #ifndef	__VDI_SETUP__
 #define	__VDI_SETUP__
 
+/*
+ * define this if the screen drivers support the new setup api.
+ * The original driver released by AK don't, and the source
+ * of drivers doesn't either. The object file (mxvdiknl.o) originally released
+ * did not make use of it, but the later uploaded mxvdiknl.s does.
+ * However the drivers are not yet prepared for it, and currently crash.
+ */
+ /* keep this in sync with the same setting in mxvdi.inc */
+#define NEW_SETUP_API 0
+
+#if NEW_SETUP_API
+
 /*----------------------------------------------------------------------------------------*/
 /* Monitorbeschreibung																							*/
 /*----------------------------------------------------------------------------------------*/
@@ -90,5 +102,7 @@ typedef struct
 	int32_t			reserved2;			/* reserviert (0) */
 
 } VDI_SETUP_DATA;
+
+#endif
 
 #endif /* __VDI_SETUP__ */

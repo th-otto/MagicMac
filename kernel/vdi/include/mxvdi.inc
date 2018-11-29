@@ -1,3 +1,11 @@
+/*
+ * define this if the screen drivers support the new setup api.
+ * see comments in mxvdi.h, and keep this setting in sync.
+ */
+NEW_SETUP_API EQU 0
+
+                IFNE NEW_SETUP_API
+
                 OFFSET 0
 
                                 ;typedef struct VDI_DISPLAY
@@ -59,3 +67,5 @@ VSD_reserved1:      DS.l    1   ;   int32           reserved1;  /* reserviert (0
 VSD_reserved2:      DS.l    1   ;   int32           reserved2;  /* reserviert (0) */
                                 ;} VDI_SETUP_DATA;
 sizeof_VDI_SETUP:
+
+                    ENDC

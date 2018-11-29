@@ -264,8 +264,10 @@ vdi_setup_ptr:    DS.L 1                                ;Zeiger auf VDI_SETUP_DA
 
 nstruct_ende:
 
+	IFNE NEW_SETUP_API
 vdi_display:      ds.b sizeof_VDI_DISPLAY
 vdi_setup:        ds.b sizeof_VDI_SETUP
+    ENDC
 
 IF *+0 > CUR_FONT                ;sind die Variablen fuer NVDI zu lang?
    error "vdi variables too long"
@@ -505,7 +507,9 @@ clear_cpu_exit:   rts
 ;-
 vdi_blinit:       movem.l  d0-d2/a0-a2,-(sp)
 
+                  IFNE NEW_SETUP_API
                   bsr      MM_init              ;bei alten MagiCMac-Versionen den Zeiger auf die PixMap konvertieren
+                  ENDC
                   move.l   a0,vdi_setup_ptr.w   ;Zeiger auf die PixMap des Macintosh
                   move.w   #1,system_boot       ;wir sind gerade beim Systemstart
                   
@@ -670,29 +674,50 @@ vt52_init:        movem.l  d0-d2/a0-a2,-(sp)
                   bra.s    init_vt52_fad
 init_vt52_st_tt:  lsl.w    #3,d0                      ;*8 (4 Worteintraege pro Zeile)
                   lea.l    vt52_rez_tab(pc,d0.w),a0   ;Zeiger auf die Aufloesungstabelle
-init_vt52_fad:    move.w   (a0)+,(PLANES).w           ;Anzahl der Ebenen
-                  move.w   (a0),(BYTES_LIN).w         ;Bytes pro Zeile
+init_vt52_fad:    move.w   (a0)+,(PLANES).w           ; number of planes
+                  move.w   (a0),(BYTES_LIN).w         ; bytes per line
                   move.w   (a0)+,(WIDTH).w
-                  move.w   (a0)+,(V_REZ_HZ).w         ;Breite
-                  move.w   (a0)+,(V_REZ_VT).w         ;Hoehe
+                  move.w   (a0)+,(V_REZ_HZ).w         ;width
+                  move.w   (a0)+,(V_REZ_VT).w         ;height
                   bra.s    vt52_init_exit
 
 vt52_init_MAC:    movea.l  d0,a0
-                  movea.l  VSD_displays(a0),a0        ;Zeiger auf die erste Bildschirmbeschreibung (VDI_DISPLAY-Struktur)
-                  move.l   VDISPLAY_addr(a0),(v_bas_ad).w  ;Bildschirmadresse
+                  IFNE NEW_SETUP_API
+                  movea.l  VSD_displays(a0),a0        ;pointer to first screen description (VDI_DISPLAY structure)
+                  move.l   VDISPLAY_addr(a0),(v_bas_ad).w  ;screen address
                   move.l   VDISPLAY_width(a0),d2
-                  move.w   d2,(BYTES_LIN).w           ;Bytes pro Zeile
+                  move.w   d2,(BYTES_LIN).w           ; bytes per line
                   move.w   d2,(WIDTH).w
                   move.l   VDISPLAY_bits(a0),d0
-                  move.w   d0,(PLANES).w              ;Anzahl der Ebenen
+                  move.w   d0,(PLANES).w              ; number of planes
                   move.l   VDISPLAY_xmax(a0),d0
                   sub.l    VDISPLAY_xmin(a0),d0
                   addq.l   #1,d0
-                  move.w   d0,(V_REZ_HZ).w            ;Breite
+                  bclr     #0,d0
+                  move.w   d0,(V_REZ_HZ).w            ;width
                   move.l   VDISPLAY_ymax(a0),d1
                   sub.l    VDISPLAY_ymin(a0),d1
                   addq.l   #1,d0
-                  move.w   d1,(V_REZ_VT).w            ;Hoehe
+                  bclr     #0,d0
+                  move.w   d1,(V_REZ_VT).w            ;height
+                  ELSE
+                  move.l   PM_baseAddr(a0),(v_bas_ad).w ; pointer to pixel data
+                  move.w   PM_rowBytes(a0),d2         ; number of bytes per line
+                  and.w    #$3FFF,d2                  ; mask off flags used by QuickDraw
+                  move.w   d2,(BYTES_LIN).w           ; bytes per line
+                  move.w   d2,(WIDTH).w
+                  move.w   PM_pixelSize(a0),(PLANES).w ; number of planes
+                  move.w   PM_bounds+R_right(a0),d0
+                  sub.w    PM_bounds+R_left(a0),d0
+                  addq.w   #1,d0
+                  bclr     #0,d0
+                  move.w   d0,(V_REZ_HZ).w            ;width
+                  move.w   PM_bounds+R_bottom(a0),d1
+                  sub.w    PM_bounds+R_left(a0),d1
+                  addq.w   #1,d0
+                  bclr     #0,d0
+                  move.w   d1,(V_REZ_VT).w            ;height
+                  ENDC
 
 vt52_init_exit:   bsr.s    init_vt52_vars             ;VT52-Variablen initialisieren
                   move.w   (sp)+,d0                   ;zuletzt eingestellte Plane-Anzahl
@@ -781,7 +806,7 @@ vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
                   tst.w    d0                   ;alles in Ordnung?
                   bne.s    vdi_init_fonts
                   tst.l    (vdi_setup_ptr).w    ;kein direkter Hardware-Zugriff (Mac)?
-                  bne.s    load_NOD_err
+                  bne      load_scr_err
 
                   lea.l    no_offscreen_drivers(pc),a0
                   jsr      Cconws               ;Meldung ausgeben
@@ -810,11 +835,6 @@ vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
 
 vdi_init_halt:    nop
                   bra.s    vdi_init_halt
-
-load_NOD_err:     movea.l  vdi_setup_ptr.w,a0               
-                  movea.l  VSD_report_error(a0),a0
-                  moveq.l  #-1,d0               ;kein VDI-Treiber
-                  jmp      (a0)
 
 vdi_init_fonts:   bsr      init_fonts           ;Fonts initialisieren
 
@@ -885,18 +905,16 @@ load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
 load_scr_halt:    nop
                   bra.s    load_scr_halt
 
-load_scr_MAC:     movea.l  (vdi_setup_ptr).w,a0             ;kein direkter Hardware-Zugriff (Mac)
+load_scr_MAC:     
+                  movea.l  (vdi_setup_ptr).w,a0             ;kein direkter Hardware-Zugriff (Mac)
+                  IFNE NEW_SETUP_API
                   movea.l  VSD_displays(a0),a0              ;Zeiger auf VDI_DISPLAY-Struktur
+                  ENDC
                   lea.l    (gdos_path).w,a1
                   bsr      load_MAC_driver                  ;Treiber fuer den Mac laden
                   move.l   a0,d0                            ;Treiber vorhanden?
-                  bne.s    load_scr_call
+                  beq.s    load_scr_err
                   
-                  movea.l  vdi_setup_ptr.w,a0               
-                  movea.l  VSD_report_error(a0),a0
-                  moveq.l  #-1,d0                           ;kein VDI-Treiber
-                  jmp      (a0)
-
 load_scr_call:    lea.l    (screen_driver).w,a3 ;Treiberstruktur fuer den Bildschirmtreiber
                   move.l   a0,driver_addr(a3)   ;Treiberstart
                   movea.l  DRVR_init(a0),a2     ;Adresse der Initroutine
@@ -911,8 +929,13 @@ load_scr_call:    lea.l    (screen_driver).w,a3 ;Treiberstruktur fuer den Bildsc
 
                   illegal                       ;VDI-Treiber meldet Fehler
 
-load_scr_err:     movea.l  vdi_setup_ptr.w,a0               
+load_scr_err:     
+                  IFNE NEW_SETUP_API
+                  movea.l  vdi_setup_ptr.w,a0               
                   movea.l  VSD_report_error(a0),a0
+                  ELSE
+                  movea.l  MSys+BehneError,a0
+                  ENDC
                   moveq.l  #-1,d0               ;kein VDI-Treiber
                   jmp      (a0)
 
