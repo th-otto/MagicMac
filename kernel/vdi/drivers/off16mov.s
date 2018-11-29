@@ -36,8 +36,6 @@ m2                EQU 0                   ;Offset mit 2 multiplizieren
 m4                EQU 1                   ;Offset mit 4 multiplizieren
 m6                EQU 2                   ;Offset mit 6 multiplizieren
 
-OLD EQU 0
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ;NVDI-Treiber initialisieren'
                   TEXT
@@ -1165,6 +1163,7 @@ get_pixel:        tst.w    bitmap_width(a6)
                   muls     bitmap_width(a6),d1
                   bra.s    get_pixel_line
 get_pixel_screen: movea.l  v_bas_ad.w,a0
+relok1:
                   muls     BYTES_LIN.w,d1
 get_pixel_line:   add.l    d1,a0
                   add.w    d0,d0
@@ -1191,6 +1190,7 @@ set_pixel:        tst.w    bitmap_width(a6)
                   muls     bitmap_width(a6),d1
                   bra.s    set_pixel_line
 set_pixel_screen: movea.l  v_bas_ad.w,a0
+relok2:
                   muls     BYTES_LIN.w,d1
 set_pixel_line:   add.l    d1,a0
                   add.w    d0,d0
@@ -1225,6 +1225,7 @@ fline:            tst.w    f_planes(a6)
                   lsl.w    #6,d4
                   adda.w   d4,a0          ;Zeiger auf die Musterzeile
 
+relok3:
                   move.w   BYTES_LIN.w,d4 ;Bytes pro Zeile
                   movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
                   
@@ -1246,9 +1247,7 @@ fline_laddr:      sub.w    d0,d2          ;dx
                   ext.l    d0
                   add.l    d0,d1          ;Zieladresse
 
-                  IFEQ OLD
                   move.l   a1,-(sp)
-                  ENDC
                   moveq    #64,d7         ;Abstand identischer Punkte des Musters
                   
                   moveq    #15,d6         ;Punktezaehler fuers Muster
@@ -1262,12 +1261,8 @@ fline_color:      moveq    #63,d0
 
                   move.w   d2,d4
                   lsr.w    #4,d4
-                  IFEQ OLD
                   movea.l  (sp),a1
                   adda.l   d1,a1          ;Offset addieren
-                  ELSE
-                  move.l   d1,a1
-                  ENDC
 fline_color_loop: move.l   d5,(a1)
                   adda.w   d7,a1
                   dbra     d4,fline_color_loop
@@ -1275,9 +1270,7 @@ fline_color_loop: move.l   d5,(a1)
                   addq.l   #4,d1          ;zum naechsten Punkt des Musters
                   subq.w   #1,d2
                   dbra     d6,fline_color
-                  IFEQ OLD
                   addq.l   #4,sp
-                  ENDC
                   move.l   (sp)+,a0
 fline_exit:       rts
 
@@ -1332,6 +1325,7 @@ hline:            lea      c_palette(a6),a1
                   muls     bitmap_width(a6),d1
                   bra.s    hline_laddr
 hline_screen:     movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok4:
                   muls     BYTES_LIN.w,d1
 hline_laddr:      move.w   d0,d4
                   add.w    d4,d4
@@ -1487,6 +1481,7 @@ vline_saddr:      lea      c_palette(a6),a1
                   move.l   0(a1,d4.w),d4  ;RGB-Farbwert
 
                   movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok5:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    vline_laddr
@@ -1671,6 +1666,7 @@ vline_solid_exit: rts
 ;Ausgaben
 ;d0-d7/a1 werden zerstoert
 line:             movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok6:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    line_laddr
@@ -1945,6 +1941,7 @@ fbox:             lea      c_palette(a6),a0
                   move.l   0(a0,d5.w),d5  ;RGB-Farbwert
 
                   movea.l  v_bas_ad.w,a1  ;Bildadresse
+relok7:
                   move.w   BYTES_LIN.w,d4 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    fbox_universal
@@ -2563,6 +2560,7 @@ textblt_exit:     rts
 ;Ausgaben
 ;d0-a5 werden zerstoert
 textblt:          movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok8:
                   movea.w  BYTES_LIN.w,a3 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    textblt_color
@@ -4395,21 +4393,17 @@ dummy:            rts
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ;Relozierungs-Information'
 relokation:
-                  IFNE OLD
-                  dc.w $86a
-                  dc.w $5c2
-                  dc.w $02c
-                  dc.w $024
-                  dc.w $0be
-                  dc.w $0fc
-                  dc.w $234
-                  dc.w $218
-                  dc.w $5de
-                  ENDC
-                  
+                  DC.W relok0-start+2
+                  DC.W relok1-relok0
+                  DC.W relok2-relok1
+                  DC.W relok3-relok2
+                  DC.W relok4-relok3
+                  DC.W relok5-relok4
+                  DC.W relok6-relok5
+                  DC.W relok7-relok6
+                  DC.W relok8-relok7
                   DC.W 0
                   
-               
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ;Laufzeitdaten'
 
