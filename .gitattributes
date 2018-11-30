@@ -8,3 +8,4 @@
 *.rh -text
 *.inc -text
 *.i -text
+*.bat -text

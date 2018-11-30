@@ -313,7 +313,7 @@ MX_DDEV drvr =
 	NULL			/* kein putc */
 };
 
-int main()
+int main(void)
 {
 	long errcode;
 	COOKIE *pMMXCookie;

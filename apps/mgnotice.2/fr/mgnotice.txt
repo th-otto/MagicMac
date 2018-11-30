@@ -1,0 +1,83 @@
+Description du programme MGNOTICE, Version 1.00 (… partir MagiC 5.10)
+-------------------------------------------------
+Andreas Kromke 11.02.97
+
+
+1. MGNOTICE en bref
+---------------------
+Avec ce programme vous pouvez cr‚er et g‚rer des fiches de notice.
+Les fiches sont, contrairement au programme fourni avec Ease, affich‚es
+dans des fenˆtres et sont ind‚pendantes du bureau utilis‚.
+
+2. Installation
+---------------
+On peut lancer manuellement le programme ou le placer dans le dossier de
+d‚marrage (/gemsys/magic/start). Les fiches de notice seront stock‚s dans
+/gemsys/gemdesk/notice/, si besoin ce dossier sera automatiquement cr‚‚.
+Le fichier .INF est sauv‚ dans le dossier actuel de MGNOTICE. Tout les
+fichiers sont en ASCII, donc pas de fichier cryptique qui serait
+inutilisable lors d'un prochain update. Les positions des fenˆtres sont,
+comme dans MagicDesk sans erreur d'arrondi et ind‚pendantes des
+r‚solutions, donc plus de fichier par r‚solution.
+
+3. Cr‚er une notice
+------------------
+Choisissez Fichier/Nouveau. Entrer la notice puis appuyez sur Return.
+La notice sera sauv‚ instantan‚ment. Si la position de la fenˆtre est
+modifi‚e par la suite, la nouvelle position sera sauv‚e au moment o— vous
+quitterez MGNOTICE ou au Shutdown du systŠme. La notice apparaŒt … la
+position de la fenˆtre d'entr‚e. Cette derniŠre position sera sauv‚e
+et lors de la sauvegarde des options aussi sauv‚e dans MGNOTICE.INF
+
+4. Pousse-avant et pousse-retour du programme de notice
+------------------------------------------------------
+Via le pop-up MagiC ou par un clic sur une fiche de notice, tous les
+fichiers sont visibles. Si une autre fenˆtre est pouss‚e en avant ou si
+la barre de menu est chang‚e via le pop-up MagiC, toutes les fiches
+seront pouss‚es vers l'arriŠre.
+
+5. Modifier fonte ou couleurs
+--------------------------------
+Cliquez sur une notice. La barre du haut devient grise. Maintenant
+choisissez ParamŠtres/fonte, resp. ParamŠtres/couleurs. Les
+changements seront sauv‚s instantan‚ment. La barre du haut gris‚e
+signale toujours une notice s‚lectionn‚e.
+Si la profondeur de couleurs d'‚cran est inf‚rieure … 16 couleurs, le
+systŠme rend toutes les couleurs "non-valables" en noir. MGNOTICE
+choisit dans ce cas toujours le blanc comme couleur pour le texte. Dans
+les notices est toujours sauv‚ le choix des couleurs d'origine. Il est
+possible de modifier la palette des couleurs en ‚ditant le fichier
+MGNOTICE.RSC.
+
+
+6. Effacer une notice
+----------------
+Cliquez une notice. La barre du haut devient grise. S‚lectionnez Fichier
+/Effacer. Le fenˆtre sera ferm‚e et le fichier de notice effac‚. Il n'y a
+pas (encore) de confirmation de s‚curit‚.
+
+7. Modifier notice
+---------------
+Cliquez une notice. La barre du haut devient grise. Choisissez
+Fichier/Ouvrir. Alternatif : double-clic sur la fenˆtre de notice. La
+fenˆtre de notice sera automatiquement adapt‚e dans sa taille.
+Alternative de secours: les fichiers sont en ASCII et
+peuvent au besoin ˆtre modifi‚s avec un ‚diteur des
+textes ASCII. Les mots cl‚s comme le BEGIN ne doivent pas ˆtre
+modifi‚s. N'oubliez pas dans ce cas de quitter MGNOTICE avant ces
+modifications, sinon les messages seront tout de suite ‚cras‚s.
+
+9. D‚placer notice
+--------------------
+Cliquez sur la fenˆtre avec la souris puis d‚placez-la. Comme la fenˆtre
+n'a pas un vrai "MOVER", un d‚placement en temps r‚el ne marche pas
+(pour le moment).
+
+9. Modifier r‚glages
+--------------------------
+Dans ParamŠtres/R‚glages, un clic sur le nom de la fonte affiche le
+s‚lecteur de fontes, un clic sur la couleur arriŠre plan affichera lui
+le pop-up des couleurs. La position de cette fenˆtre sera aussi bien
+sauv‚e.
+
+

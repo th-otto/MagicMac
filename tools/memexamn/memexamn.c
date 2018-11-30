@@ -325,18 +325,18 @@ char *nat_str(char *s)
 		Super((char *) oldssp);
 		}
 
-	while(*s != -1)
+	while(*s != (char)-1)
 		{
 		do	{
 			c = *s++;
 			if	(c == nat)		/* Nationalit„t gefunden */
 				{
-				while(*s != -1)	/* andere Nationalit„ten */
+				while(*s != (char)-1)	/* andere Nationalit„ten */
 					s++;			/*  berspringen */
 				return(s+1);
 				}
 			}
-		while(c != -1);
+		while(c != (char)-1);
 		while(*s)
 			s++;
 		s++;

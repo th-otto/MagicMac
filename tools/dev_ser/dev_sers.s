@@ -12,7 +12,7 @@
 	XDEF ser_dev_stat
 	XDEF ser_dev_ioctl
 
-	INCLUDE "mgx_xfs.inc"
+	INCLUDE "..\kernel\inc\mgx_xfs.inc"
 
 	TEXT
 

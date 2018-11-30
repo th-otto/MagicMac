@@ -7,6 +7,5 @@ editob.c (editob.h)
 memchar2.s
 
 pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
 pctoslib.lib   ; TOS lib
 pcgemlib.lib	; fÅr VDI

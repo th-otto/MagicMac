@@ -2604,7 +2604,6 @@ WORD mt_pdlg_use_settings(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, WORD *
 }
 
 
-#if !PDLG_SLB && BINEXACT
 WORD mt_pdlg_save_default_settings(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, WORD *global_aes)
 {
 	MT_PARMDATA aes_params;
@@ -2616,7 +2615,6 @@ WORD mt_pdlg_save_default_settings(PRN_DIALOG *prn_dialog, PRN_SETTINGS *setting
 	_aes_trap(&aes_params, aes_control_data, global_aes);
 	return aes_params.intout[0];
 }
-#endif
 
 
 WORD mt_pdlg_evnt(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, EVNT *events, WORD *button, WORD *global_aes)
