@@ -1,0 +1,11 @@
+instmagc.prg
+.C[-I..\..\inc_c]
+.C[-P-]
+.L[-S=4096]
+=
+cstartv.o     ; startup code
+instmagc.c	(instmagc.h,xcopy.h)
+xcopy.c		(xcopy.h)
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib	; AES/VDI lib

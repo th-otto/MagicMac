@@ -8,17 +8,10 @@
 #include <string.h>
 #include <tos.h>
 #include <aes.h>
-#include <tosdefs.h>
+#include <toserror.h>
 #include "country.h"
 #include <stdio.h>
 #include "xcopy.h"
-
-#ifndef NULL
-#define NULL ((void *) 0)
-#endif
-#ifndef EOS
-#define EOS	'\0'
-#endif
 
 extern void redraw_dialog( void );
 

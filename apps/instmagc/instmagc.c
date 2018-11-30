@@ -29,6 +29,7 @@
 #include <tos.h>
 #include <string.h>
 #include <stdlib.h>
+#include <toserror.h>
 #include "country.h"
 #include "instmagc.h"
 #include "xcopy.h"
