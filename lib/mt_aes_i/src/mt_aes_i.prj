@@ -1,8 +1,0 @@
-mt_aes_i.lib
-
-; .C[-P]		ggf.
-.L[-J]
-=
-mt_aessi.s
-mt_aes_i.c (mt_aes_i.h)
-..\mt_aes\mt_aes.o
