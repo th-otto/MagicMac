@@ -11,7 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <portab.h>
+#include <toserror.h>
 #include "kachel.h"
+#include <wdlgfslx.h>
 
 
 /****************************************************************
@@ -162,7 +164,7 @@ static int _load_app_icons( char *buf )
 	magic_rcfix.data += n_icons * sizeof(CICONBLK *);
 	rsrc_rcfix((RSHDR *) &magic_rcfix);
 	flen = magic_rcfix.endptr - buf;
-	Mshrink(0, buf, flen);
+	Mshrink(buf, flen);
 
 	/* relozieren */
 
@@ -260,7 +262,7 @@ void load_app_icons( void )
 		return;			/* Datei nicht gefunden */
 	retcode = Fcntl(fd, (long) &xa, FSTAT);
 	if	(!retcode)
-		flen = xa.size;
+		flen = xa.st_size;
 	else	goto err;
 
 	buf = Malloc(flen);

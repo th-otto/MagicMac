@@ -4,9 +4,9 @@
 */
 
 #include <portab.h>
-#include	<tos.h>
-#include	<stddef.h>
-#include	<string.h>
+#include <tos.h>
+#include <stddef.h>
+#include <string.h>
 #include <toserror.h>
 
 #include "imgload.h"

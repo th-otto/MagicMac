@@ -5,11 +5,14 @@
 *********************************************************************/
 
 #include <tos.h>
+#include <toserror.h>
 #include "k.h"
 #include <stdlib.h>
 #include <string.h>
 #include <vdi.h>
+#include <sys/stat.h>
 #include "pattern.h"
+#include <wdlgfslx.h>
 
 
 static POPINFO pop_kategorie;
@@ -638,7 +641,7 @@ int dial_info(WINDOW *w, int obj, void *is_weiter)
 		mal = TRUE;
 		Mgraf_mouse(HOURGLASS);
 		err = Fxattr(1, path, &xa);	/* Symlinks nicht folgen */
-		if	(!err && ((xa.mode & S_IFMT) == S_IFLNK))
+		if	(!err && ((xa.st_mode & S_IFMT) == S_IFLNK))
 			{
 			XATTR xa2;
 
@@ -657,12 +660,12 @@ int dial_info(WINDOW *w, int obj, void *is_weiter)
 			err_alert(err);
 			return(0);
 			}
-		file->time = xa.mtime;
-		file->date = xa.mdate;
-		file->filesize = xa.size;
+		file->time = xa.st_mtim.u.d.time;
+		file->date = xa.st_mtim.u.d.date;
+		file->filesize = xa.st_size;
 		strcpy(file->filename, get_name(path));
-		file->attrib   = xa.attr;
-		file->mode = xa.mode;
+		file->attrib   = xa.st_attr;
+		file->mode = xa.st_mode;
 
 		o = w->pobj+obj;
 		if	(o->ob_type == G_CICON)

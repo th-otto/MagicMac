@@ -18,7 +18,7 @@ allg.c		(k.h)
 imgload.c
 kachel.c	(kachel.h)
 spec.c		(k.h)						; TOS- SPEZIFISCHES
-..\..\kernel\aes\src\wdialog\shelsort.c
+..\..\kernel\aes\wdialog\shelsort.c
 ..\..\lib\mylibs\src\ll.s			; long long lib
 
 pcstdlib.lib   ; standard lib

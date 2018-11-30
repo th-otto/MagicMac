@@ -6,9 +6,12 @@
 *********************************************************************/
 
 #include <tos.h>
+#include <toserror.h>
 #include "k.h"
 #include <string.h>
 #include <stdlib.h>
+#include <mint/dcntl.h>
+#include <sys/stat.h>
 
 #define MAX_PATHLEN		256
 #define MAX_PATHDEPTH	12
@@ -194,7 +197,7 @@ static long _walk_path( void )
 				goto next;
 			}
 
-		if	((xa.mode & S_IFMT) == S_IFDIR)
+		if	((xa.st_mode & S_IFMT) == S_IFDIR)
 			{
 			_folders++;
 			strcpy(endp, name+4);
@@ -208,14 +211,14 @@ static long _walk_path( void )
 				}
 			}
 		else {
-			if	(xa.attr & (FA_HIDDEN | FA_SYSTEM))
+			if	(xa.st_attr & (FA_HIDDEN | FA_SYSTEM))
 				{
 				_hfiles++;
-				_hbytes += xa.size;
+				_hbytes += xa.st_size;
 				}
 			else {
 				_nfiles++;
-				_nbytes += xa.size;
+				_nbytes += xa.st_size;
 				}
 			}
 

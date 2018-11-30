@@ -1,25 +1,24 @@
 MAGXDESK.APP
-.L[-S=$800]
+.C[-I..\..\inc_c]
+.C[-P]
+.L[-S=2048]
 =
-tcmstart.o
-;MINSTART.S							; minimaler Startup-Code
-MAGXDESK	(k.h,magxdesk.h)	[-P -W-stv]	; RAHMENPROGRAMM, REDRAWS
-DMENU	(k.h,magxdesk.h)	[-P -W-stv]	; Menue
-DEFAULTS	(k.h,magxdesk.h)	[-P -W-stv]	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
-DKLICK	(k.h,magxdesk.h)	[-P -W-stv]	; MAUSAKTIONEN (™FFNEN)
-DIALOGS	(k.h,magxdesk.h)	[-P -W-stv]	; DIALOGE
-KLICK	(k.h,magxdesk.h)	[-P -W-stv]  	; MAUSAKTIONEN
-DWINDOWS	(k.h,magxdesk.h)	[-P -W-stv]
-PATTERN	(pattern.h)
-FILES	(k.h,magxdesk.h)	[-P]			; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
-ALLG		(k.h)
-IMGLOAD	(imgload.h)
-KACHEL	(kachel.h,imgload.h)
-SPEC		(k.h)						; TOS- SPEZIFISCHES
-SHELSORT.O
+cstartv.o
+magxdesk.c	(k.h,magxdesk.h)	[-P -W-stv]	; RAHMENPROGRAMM, REDRAWS
+dmenu.c	(k.h,magxdesk.h)	[-P -W-stv]	; Menue
+defaults.c	(k.h,magxdesk.h)	[-P -W-stv]	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
+dklick.c	(k.h,magxdesk.h)	[-P -W-stv]	; MAUSAKTIONEN (™FFNEN)
+dialogs.c	(k.h,magxdesk.h)	[-P -W-stv]	; DIALOGE
+klick.c	(k.h,magxdesk.h)	[-P -W-stv]  	; MAUSAKTIONEN
+dwindows.c	(k.h,magxdesk.h)	[-P -W-stv]
+pattern.c	(pattern.h)
+files.c	(k.h,magxdesk.h)	[-P]			; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
+allg.c		(k.h)
+imgload.c
+kachel.c	(kachel.h)
+spec.c		(k.h)						; TOS- SPEZIFISCHES
+..\..\kernel\aes\wdialog\shelsort.c
+..\..\lib\mylibs\src\ll.s			; long long lib
 pcstdlib.lib   ; standard lib
 pctoslib.lib   ; TOS lib
-mt_dos.lib	; zus„tzliche DOS-Aufrufe
-mt_aes.lib	; MAGIX AES- lib
 pcgemlib.lib	; GEM lib
-ll.o			; long long lib

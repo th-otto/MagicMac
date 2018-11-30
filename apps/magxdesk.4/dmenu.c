@@ -81,12 +81,12 @@ int key_2_menu( int key, int kstate, int *t, int *e )
 /* Alt-B */		case 0x3000:	title = MM_ANZEI; entry = M_ABILDR;break;
 /* Alt-T */		case 0x1400:	title = MM_ANZEI; entry = M_ATEXT;	break;
 
-/*
+#if 0
 /* Alt-H */		case 0x2300:	title = MM_ANZEI; entry = M_SPALTN;break;
 /* Alt-G */		case 0x2200:	title = MM_ANZEI; entry = M_ZGROES;break;
 /* Alt-D */		case 0x2000:	title = MM_ANZEI; entry = M_ZDATUM;break;
 /* Alt-Z */		case 0x1500:	title = MM_ANZEI; entry = M_ZZEIT;	break;
-*/
+#endif
 
 /* F1 */			case 0x3B00:	title = MM_ANZEI; entry = M_SNAME;	break;
 /* F2 */			case 0x3C00:	title = MM_ANZEI; entry = M_SDATUM;break;

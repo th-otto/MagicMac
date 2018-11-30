@@ -131,7 +131,7 @@ void subobj_draw(OBJECT *tree, int obj, int n, char *s)
 	else if	(n >= 0)
 			ultoa(n, z, 10);
 	objc_grect(tree, obj, &g);
-	objc_draw (tree, 0, MAX_DEPTH, &g);
+	objc_draw_grect(tree, 0, MAX_DEPTH, &g);
 }
 
 
@@ -308,10 +308,10 @@ int do_dialog(OBJECT *dialog)
 /*	p_flyinf = (status.use_fldl) ? &flyinf : NULL;	*/
 	p_flyinf = &flyinf;
 	form_center_grect(dialog, &cg);
-	form_xdial(FMD_START, NULL, &cg, p_flyinf);
-	objc_draw(dialog, ROOT, MAX_DEPTH, &cg);
+	form_xdial_grect(FMD_START, NULL, &cg, p_flyinf);
+	objc_draw_grect(dialog, ROOT, MAX_DEPTH, &cg);
 	exitbutton = 0x7f & form_xdo(dialog, 0, &dummy, NULL, flyinf);
-	form_xdial(FMD_FINISH, NULL, &cg, p_flyinf);
+	form_xdial_grect(FMD_FINISH, NULL, &cg, p_flyinf);
 	ob_dsel(dialog, exitbutton);
 	return(exitbutton);
 }
@@ -330,17 +330,17 @@ int do_exdialog(OBJECT *dialog,
 /*	p_flyinf = (status.use_fldl) ? &flyinf : NULL;	*/
 	p_flyinf = &flyinf;
 	form_center_grect(dialog, &cg);
-	form_xdial(FMD_START, NULL, &cg, p_flyinf);
-	objc_draw(dialog, ROOT, MAX_DEPTH, &cg);
+	form_xdial_grect(FMD_START, NULL, &cg, p_flyinf);
+	objc_draw_grect(dialog, ROOT, MAX_DEPTH, &cg);
 	for	(;;)
 		{
 		exitbutton = 0x7f & form_xdo(dialog, 0, &dummy, NULL, flyinf);
 		ob_dsel(dialog, exitbutton);
 		if	((*check)(dialog, exitbutton))
 			break;
-		objc_draw(dialog, exitbutton, 1, &cg);
+		objc_draw_grect(dialog, exitbutton, 1, &cg);
 		}
-	form_xdial(FMD_FINISH, NULL, &cg, p_flyinf);
+	form_xdial_grect(FMD_FINISH, NULL, &cg, p_flyinf);
 	if	(was_redraw != NULL)
 		*was_redraw = (flyinf == NULL);	/* RÅckgabe: Bildschirm zerstîrt */
 	return(exitbutton);

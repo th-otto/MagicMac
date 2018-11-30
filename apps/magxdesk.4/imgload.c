@@ -3,9 +3,11 @@
 	Kommentare ab: Spalte 60											*Spalte 60*
 */
 
-#include	<mgx_dos.h>
-#include	<stddef.h>
-#include	<string.h>
+#include <portab.h>
+#include <tos.h>
+#include <stddef.h>
+#include <string.h>
+#include <toserror.h>
 
 #include "imgload.h"
 
@@ -65,7 +67,7 @@ LONG load_IMG( BYTE *name, WORD *w, WORD *h,
 
 
 	*img = NULL;
-	retcode = open_img( name );
+	retcode = open_img( (char *)name );
 	if	(retcode < 0)
 		return(retcode);
 
@@ -167,7 +169,7 @@ static LONG open_img( char *path )
 	fd = (WORD) retcode;
 	retcode = Fcntl(fd, (long) &xa, FSTAT);
 	if	(!retcode)
-		d_len = xa.size;
+		d_len = xa.st_size;
 	else	goto err;
 
 	external_buf = Malloc( d_len );	/* Puffer anfordern */

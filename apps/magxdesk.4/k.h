@@ -7,12 +7,11 @@
 #define DEBUG	0
 
 #include <aes.h>
+#include <wdlgwdlg.h>
 #include "magxdesk.h"
 #include "country.h"
 #include "..\applicat\appldata.h"
 
-#define TRUE   1
-#define FALSE  0
 #define EOS    '\0'
 #ifndef NULL
 #define NULL        ( ( void * ) 0L )
@@ -359,10 +358,6 @@ extern void	drv_to_str(char *s, char c);
 extern long	err_alert(long e);
 extern char	*get_name(char *path);
 extern void	get_app_name(char *path, char apname[9]);
-extern long	Dxreaddir(int len, long dirhandle,
-				char *buf, XATTR *xattr, long *xr);
-extern long	Dreadlabel(char *path, char *buf, int len);
-extern long	Dwritelabel(char *path, char *name);
 extern void	abbrev_path(char *dst, char *src, int len );
 extern void	fname_ext(char *s, char *d);
 extern void	fname_int(char *s, char *d);
@@ -433,7 +428,6 @@ extern int	gl_hhbox, gl_hwbox, gl_hhchar, gl_hwchar;
 extern GRECT	desk_g,screen_g;
 extern USERBLK userblk;
 extern char	*pgm_ver;
-extern int	*aes_global;
 extern int	ap_id;
 extern int	folder_w;
 extern int	spaltenabstand;		/* FÅr Textausgabe */

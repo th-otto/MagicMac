@@ -13,6 +13,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
+#include <toserror.h>
 #include "pattern.h"
 
 
@@ -45,7 +46,6 @@ int work_out[57],work_in [12];	 /* VDI- Felder fÅr v_opnvwk() */
 int text_attrib[10];			 /* Default- Textattribute */
 
 int ap_id;
-int *aes_global;
 int isfirst;					/* MAGXDESK gebootet */
 int is_primary_shell;			/* Haupt-Shell */
 
@@ -121,11 +121,14 @@ void main()
 						  butt_nclicks,
 						  mbmask,			
 						  mbuttons,
-						  0,NULL,		/* kein 1. Rechteck			*/
-						  0,NULL,		/* kein 2. Rechteck			*/
+						  0,0,0,0,0,		/* kein 1. Rechteck			*/
+						  0,0,0,0,0,		/* kein 2. Rechteck			*/
 						  message,
 						  0L,	/* ms */
-						  &ev,
+						  &ev.x,
+						  &ev.y,
+						  &ev.bstate,
+						  &ev.kstate,
 						  &keycode, &butt_nclicks
 						  );
 
@@ -175,7 +178,7 @@ void main()
 
 			/* 2. Fall: Alt-1 .. Alt-9 (Auflîsungswechsel) */
 			/* ------------------------------------------- */
-/*
+#if 0
 			if	((ev.kstate & K_ALT) &&
 				 !(ev.kstate & (K_LSHIFT+K_RSHIFT+K_CTRL)) &&
 				 (unsigned int) keycode >= 0x7800 &&
@@ -186,7 +189,7 @@ void main()
 					shutdown(i, 0);
 				goto weiter_mesag;	/* Taste verarbeitet */
 				}
-*/
+#endif
 
 			/* 3. Fall: Ctrl-Fn (MenÅprogramm ausfÅhren) */
 			/* ----------------------------------------- */
@@ -494,7 +497,7 @@ static int key_2_action( int key, char ascii, int kstate )
 {
 	WINDOW *w;
 
-/*
+#if 0
 /* SH-INS	*/
 	if	(key == 0x5230)
 		{
@@ -508,7 +511,7 @@ static int key_2_action( int key, char ascii, int kstate )
 		status.resident = FALSE;
 		return(1);
 		}
-*/
+#endif
 
 	if	((kstate == K_LSHIFT+K_ALT) && (ascii == '<'))
 		{
@@ -1345,20 +1348,21 @@ void open_all_wind( void )
 	fenster0.closed = wind0_closed;
 	*((GRECT *) &(fenster0.pobj->ob_x)) = screen_g;
 	wind_set_ptr_int(SCREEN, WF_NEWDESK, fenster0.pobj, 0);
-	form_dial(FMD_FINISH, NULL, &screen_g);
+	form_dial_grect(FMD_FINISH, NULL, &screen_g);
 
 	/* Fenster îffnen */
 	/* -------------- */
 
 	set_char_dim();		/* Zeichengrîûe einstellen */
 
-/*
+#if 0
 	for	(i = 1; i <= ANZFENSTER; i++)
 		{
 		fenster[i].handle = -1;			/* unbenutzt			*/
 		fenster[i].memblk = NULL; 		/* kein allozierter Speicher */
 		}
-*/
+#endif
+
 	for	(set = FALSE,i = 1; i <= ANZFENSTER; i++)
 		{
 		j = i;
@@ -1508,7 +1512,6 @@ void anfang(void)
 	aes_handle = vdi_handle =
 	graf_xhandle(&gl_hwchar, &gl_hhchar, &gl_hwbox, &gl_hhbox,
 						 &vdi_device);
-	aes_global = _GemParBlk.global;
 	wind_get_grect(SCREEN, WF_WORKXYWH, &desk_g);
 	screen_g.g_x = screen_g.g_y = 0;
 	screen_g.g_w = desk_g.g_x+desk_g.g_w;

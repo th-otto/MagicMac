@@ -12,6 +12,13 @@
 #include "k.h"
 #include <string.h>
 #include <vdi.h>
+#include <toserror.h>
+
+typedef struct          /* used by Pexec */
+{
+        unsigned char   length;
+        char            command_tail[128];
+} COMMAND;
 
 
 
@@ -440,10 +447,10 @@ static int get_param(char *pgm, WINDOW *w, int obj,
 						{
 						e = get_name(path);
 						rettc1 = *e;
-/*
+#if 0
 						if	(!rettc1)
 							continue;		/* Nullname */
-*/
+#endif
 						*e = EOS;
 						isne = strcmp(pgm, path);
 						*e = rettc1;
@@ -1062,7 +1069,7 @@ static int do_va_start(char *program, COMMAND *param,
 			xmsg.msgbuf = msg;
 
 			if	(mem)
-				Mshrink(0, mem, strlen(mem+1)+3);
+				Mshrink(mem, strlen(mem+1)+3);
 			if	(0 >= appl_write(-2, 16, &xmsg))
 				{
 				Mfree(mem);

@@ -6,11 +6,14 @@
 
 #include <vdi.h>
 #include <tos.h>
+#include <toserror.h>
+#include <mgx_dos.h>
 #include <string.h>
 #include <stdlib.h>
 #include "pattern.h"
 #include "k.h"
 /* #include <stdio.h> */
+#include <sys/stat.h>
 
 static char *str_free;
 static char *str_full;
@@ -856,7 +859,7 @@ static long read_wind( WINDOW *w, int free_flag)
 				/* Versuche Blockvergr”žerung */
 				/* -------------------------- */
 
-				if	(Mshrink(0, w->memblk,
+				if	(Mshrink(w->memblk,
 							w->memblksize+NEXTMEMBLK))
 					{
 					char *newblk;
@@ -885,10 +888,10 @@ static long read_wind( WINDOW *w, int free_flag)
 				/* --------------- */
 
 				strcpy(mdta->filename, "..");
-				xa.mtime = xa.mdate = 0;
-				xa.size = 0L;
-				xa.attr = FA_SUBDIR;
-				xa.mode = S_IFDIR;
+				xa.st_mtime = 0;
+				xa.st_size = 0L;
+				xa.st_attr = FA_SUBDIR;
+				xa.st_mode = S_IFDIR;
 				err = err_xr = E_OK;
 				}
 			else	{
@@ -921,13 +924,13 @@ static long read_wind( WINDOW *w, int free_flag)
 			/* versteckte Dateien... */
 
 			if	((!status.show_all) &&
-				 (xa.attr & (FA_HIDDEN | FA_SYSTEM))
+				 (xa.st_attr & (FA_HIDDEN | FA_SYSTEM))
 				)
 				continue;		/* verst. Dateien! */
 
 			/* Symlink behandeln... */
 
-			if	((xa.mode & S_IFMT) == S_IFLNK)
+			if	((xa.st_mode & S_IFMT) == S_IFLNK)
 				{
 				XATTR xa2;
 
@@ -944,11 +947,11 @@ static long read_wind( WINDOW *w, int free_flag)
 			/* alles klar, abspeichern... */
 
 			mdta->number = anzahl;
-			mdta->time = xa.mtime;	/* Modif.zeit */
-			mdta->date = xa.mdate;
-			mdta->filesize = xa.size;
-			mdta->attrib = xa.attr;
-			mdta->mode = xa.mode;
+			mdta->time = xa.st_mtim.u.d.time;	/* Modif.zeit */
+			mdta->date = xa.st_mtim.u.d.date;
+			mdta->filesize = xa.st_size;
+			mdta->attrib = xa.st_attr;
+			mdta->mode = xa.st_mode;
 			anzahl++;
 			ziele += sizeof(MYDTA)+strlen(mdta->filename)+1;
 			if	(((long) ziele) & 1)
@@ -982,7 +985,7 @@ static long read_wind( WINDOW *w, int free_flag)
 	w->pobj = (OBJECT *) ( ziele + anzahl * sizeof(MYDTA *) );
 	limit = (char *) (w->pobj + anzahl + 1);
 	w->memblksize = limit - w->memblk;
-	Mshrink(0, w->memblk, w->memblksize);
+	Mshrink(w->memblk, w->memblksize);
 	for	(p_d = w->pmydta,ziele = w->memblk;
 			anzahl > 0; anzahl--)
 		{
@@ -1022,7 +1025,7 @@ static void calc_in(WINDOW *w)
 	else	{
 		gescrollte_pixel = w->yscroll*(w->showh+w->ydist);
 
-		wind_calc(WC_WORK, w->kind, &w->out, &w->in);
+		wind_calc_grect(WC_WORK, w->kind, &w->out, &w->in);
 		}
 	(w->pobj)->ob_x = w->in.g_x;
 	(w->pobj)->ob_y = w->in.g_y - gescrollte_pixel;
@@ -1163,11 +1166,11 @@ static void calc_obj_look(WINDOW *w, int dsel_flag)
 		w->ydist = status.v_icon_dist;
 		w->showh = w->max_hicon + 8;
 		w->showw = w->max_wicnobj;
-/*
+#if 0
 		w->showw = w->max_fname * 6;
 		if	(w->max_is_alias)
 			w->showw += 6;		/* fr Kursivstellung */
-*/
+#endif
 		}
 
 	/* Objekt der weižen Hintergrundbox */
@@ -1363,7 +1366,7 @@ WINDOW *create_wnd( int wnr, char *path, char *mask,
 		iconify_flags = flags & (WFLAG_ICONIFIED+WFLAG_ALLICONIFIED);
 		if	(iconify_flags == WFLAG_ALLICONIFIED)
 			w->handle = -1;
-		else	w->handle = wind_create(w->kind, &desk_g);
+		else	w->handle = wind_create_grect(w->kind, &desk_g);
 		if	((iconify_flags != WFLAG_ALLICONIFIED) && (w->handle < 0))
 			{
 			Mfree(w);
@@ -1467,14 +1470,14 @@ long opn_wnd(WINDOW *w, int fast)
 		re_arrange(w);
 	
 		if	(!fast && (i >= 0))
-			graf_growbox((GRECT *) &((fenster[0]->pobj+i+1)->ob_x),
+			graf_growbox_grect((GRECT *) &((fenster[0]->pobj+i+1)->ob_x),
 					   &w->out);
 		wind_set_str(w->handle, WF_INFO, w->info);
 		}
 
 	set_title(w);		/* Titel ist " <pfad><maske> "	*/
 	wind_set_str(w->handle, WF_NAME, w->title);
-	wind_open(w->handle, &w->out);
+	wind_open_grect(w->handle, &w->out);
 	dirty_win = TRUE;	/* Fensterliste ge„ndert */
 	return(E_OK);
 }
@@ -1592,7 +1595,7 @@ static void MY_closed(WINDOW *w, int kstate)
 	dirty_win = TRUE;		/* Fensterliste ge„ndert */
 
 	if	(i < n_deskicons)
-		graf_shrinkbox ((GRECT *) (&(fenster[0]->pobj+i+1)->ob_x),
+		graf_shrinkbox_grect((GRECT *) (&(fenster[0]->pobj+i+1)->ob_x),
 				 	 &w->out);
 }
 
@@ -1762,7 +1765,7 @@ static void MY_uniconified( WINDOW *w, GRECT *g, int unhide)
 	if	(unhide)
 		{
 		w->flags &= (~WFLAG_ALLICONIFIED);
-		w->handle = wind_create(w->kind, &desk_g);
+		w->handle = wind_create_grect(w->kind, &desk_g);
 		if	(w->handle > 0)
 			opn_wnd(w, TRUE);
 		else	{
@@ -1797,7 +1800,7 @@ static void MY_uniconified( WINDOW *w, GRECT *g, int unhide)
 * Das Fenster mit Handle <wnr> wird sofort geschlossen.
 *
 ****************************************************************/
-/*
+#if 0
 void close_immed( WINDOW *w)
 {
 	if	(w->path[0])
@@ -1807,7 +1810,7 @@ void close_immed( WINDOW *w)
 		w->closed(w, 0);		/* Fenster schliežen */
 		}
 }
-*/
+#endif
 
 /****************************************************************
 *
@@ -1879,7 +1882,7 @@ static void hshift(WINDOW *w, int newshift)
 				if	(diff > 0)
 					g.g_x += xcopy;
 				}
-			objc_draw(w->pobj, 0, 1, &g);
+			objc_draw_grect(w->pobj, 0, 1, &g);
 			}
 		wind_get_grect(whdl, WF_NEXTXYWH, &g);
 		}
@@ -1964,7 +1967,7 @@ static void vshift(WINDOW *w, int newshift)
 				if	(diff > 0)
 					g.g_y += ycopy;
 				}
-			objc_draw(w->pobj, 0, 1, &g);
+			objc_draw_grect(w->pobj, 0, 1, &g);
 			}
 		wind_get_grect(whdl, WF_NEXTXYWH, &g);
 		}
@@ -2572,7 +2575,7 @@ static void optimalsize_wnd( WINDOW *w )
 				- w->xdist;
 	g.g_h = w->yoffs + lins * (w->showh + w->ydist) - w->ydist;
 
-	wind_calc(WC_BORDER, w->kind, &g, &og);
+	wind_calc_grect(WC_BORDER, w->kind, &g, &og);
 	opt_w = og.g_w;
 	if	(og.g_y + og.g_h <= maxy)
 		goto ok;
@@ -2593,7 +2596,7 @@ static void optimalsize_wnd( WINDOW *w )
 		{
 		lins = (w->shownum + cols - 1) / cols;
 		g.g_h = w->yoffs + lins * (w->showh + w->ydist) - w->ydist;
-		wind_calc(WC_BORDER, w->kind, &g, &og);
+		wind_calc_grect(WC_BORDER, w->kind, &g, &og);
 		if	(og.g_y + og.g_h <= maxy)
 			goto ok;
 		cols++;

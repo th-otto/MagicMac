@@ -6,6 +6,7 @@
 *********************************************************************/
 
 #include <tos.h>
+#include <toserror.h>
 #include <vdi.h>
 #include "k.h"
 #include <stdlib.h>
@@ -312,11 +313,14 @@ void rubberbox( WINDOW *w, int x, int y, int mx, int my )
 		mwhich = evnt_multi(
 				mwhich,
 				1,1,0,		/* linke Mtaste loslassen */
-				1,&mg,		/* Mauspos. verlassen */
-				0,NULL,		/* kein 2. Mausrechteck */
+				1,mg.g_x,mg.g_y,mg.g_w,mg.g_h,		/* Mauspos. verlassen */
+				0,0,0,0,0,		/* kein 2. Mausrechteck */
 				NULL,		/* keine Message */
 				timer+20L,	/* Autoscroll-Timer */
-				&ev,
+				&ev.x,
+				&ev.y,
+				&ev.bstate,
+				&ev.kstate,
 				&dummy,		/* kreturn */
 				&dummy		/* breturn */
 				);
@@ -1128,11 +1132,14 @@ static void move_icons(int x, int y, WINDOW *w, int kbsh)
 			mwhich = evnt_multi(
 				MU_BUTTON+MU_M1+MU_TIMER,
 				1,1,0,	/* linke Mtaste loslassen */
-				1,&mg,			/* Mauspos. verlassen */
-				0,NULL,			/* kein 2. Mausrechteck */
+				1,mg.g_x,mg.g_y,mg.g_w,mg.g_h,			/* Mauspos. verlassen */
+				0,0,0,0,0,			/* kein 2. Mausrechteck */
 				NULL,			/* keine Message */
 				rtimer,			/* Autoscroll-Timer */
-				&ev,
+				&ev.x,
+				&ev.y,
+				&ev.bstate,
+				&ev.kstate,
 				&dummy,			/* kreturn */
 				&dummy			/* breturn */
 				);
@@ -1542,7 +1549,7 @@ static long resize_sel_mem( long add )
 
 	if	(add < 10240L)
 		add = 10240L;		/* immer mindestens 2k mehr */
-	if	( Mshrink(0, sel_mem, sel_mem_len + add) )
+	if	( Mshrink(sel_mem, sel_mem_len + add) )
 		{
 		blk = Malloc( sel_mem_len + add );	/* neuen Block alloz. */
 		if	(!blk)
