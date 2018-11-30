@@ -1480,7 +1480,8 @@ long put_icons(void)
 		h.n_ap2ic * sizeof(struct ico_ap) +
 		h.n_da2ic * sizeof(struct ico_dat) +
 		h.n_pa2ic * sizeof(struct ico_path) +
-		h.n_sp2ic * sizeof(struct ico_spec) + h.n_icn * sizeof(CICONBLK *) + all_iconlen;
+		h.n_sp2ic * sizeof(struct ico_spec) +
+		h.n_icn * sizeof(CICONBLK *) + all_iconlen;
 
 	buf = Malloc(all_len);
 	if (!buf || !ic)

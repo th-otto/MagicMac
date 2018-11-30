@@ -2,13 +2,13 @@
 
 #define MAX_NAMELEN 34
 #define MAX_PATHLEN 128
-#define MAX_PGMN 300
-#define MAX_DATN 300
-#define MAX_PTHN 200
+#define MAX_PGMN 400
+#define MAX_DATN 400
+#define MAX_PTHN 400
 #define MAX_SPCN 12
-#define MAX_LINN 600
+#define MAX_LINN 800
 #define MAX_RSCN 30
-#define MAX_ICNN 500
+#define MAX_ICNN 700
 #define MAXWINDEFPOS 10
 
 
