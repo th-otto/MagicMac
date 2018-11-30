@@ -37,22 +37,27 @@ static void *sbox;
 
 static int showindex_to_icnobj(int index)
 {
-	static int icons[] =
-		{SPCICON1,SPCICON2,SPCICON3,SPCICON4,SPCICON5};
+	static int icons[] = { SPCICON1, SPCICON2, SPCICON3, SPCICON4, SPCICON5 };
 
-	return(icons[index]);
+	return (icons[index]);
 }
+
 static int icnobj_to_showindex(int objnr)
 {
-	switch(objnr)
-		{
-		case SPCICON1: return(0);
-		case SPCICON2: return(1);
-		case SPCICON3: return(2);
-		case SPCICON4: return(3);
-		case SPCICON5: return(4);
-		}
-	return(-1);
+	switch (objnr)
+	{
+	case SPCICON1:
+		return (0);
+	case SPCICON2:
+		return (1);
+	case SPCICON3:
+		return (2);
+	case SPCICON4:
+		return (3);
+	case SPCICON5:
+		return (4);
+	}
+	return (-1);
 }
 
 
@@ -67,11 +72,12 @@ static void cdecl select_item(struct SLCT_ITEM_args args)
 #if 0
 	struct pth_file *myspc = (struct spc_file *) item;
 
-	if	(myspc->sel)
+	if (myspc->sel)
 		selected_spec = myspec;
-	else	selected_spec = NULL;
+	else
+		selected_spec = NULL;
 #endif
-	(void)args.box;
+	(void) args.box;
 }
 
 static WORD cdecl set_item(struct SET_ITEM_args args)
@@ -80,39 +86,40 @@ static WORD cdecl set_item(struct SET_ITEM_args args)
 	OBJECT *dob;
 	OBJECT *sob;
 	struct icon *ic;
-	int ic_height,ob_height;
+	int ic_height, ob_height;
 
-
-	if	(!myspc)
-		{
-		dob = args.tree+(args.tree+args.obj_index)->ob_head;
+	if (!myspc)
+	{
+		dob = args.tree + (args.tree + args.obj_index)->ob_head;
 		dob->ob_spec.tedinfo->te_ptext[1] = EOS;
 		dob->ob_flags &= ~TOUCHEXIT;
-		dob = args.tree+dob->ob_next;
+		dob = args.tree + dob->ob_next;
 		dob->ob_flags |= HIDETREE;
-		return(args.obj_index);
-		}
+		return (args.obj_index);
+	}
 
 	ob_height = args.tree[args.obj_index].ob_height;
 
 	/* Text */
 
-	dob = args.tree+args.obj_index;
-	strcpy(dob -> ob_spec.tedinfo->te_ptext+1, myspc->name);
+	dob = args.tree + args.obj_index;
+	strcpy(dob->ob_spec.tedinfo->te_ptext + 1, myspc->name);
 /*	len = (int) strlen(myspc->name);	*/
-	if	(myspc->selected)
+	if (myspc->selected)
 		ob_sel(dob, 0);
-	else	ob_dsel(dob, 0);
+	else
+		ob_dsel(dob, 0);
 /*	dob->ob_width = len * gl_hwchar;	*/
 	ic = icnx + myspc->iconnr;
 
 	/* Icons */
 
-	dob = args.tree+dob->ob_head;
+	dob = args.tree + dob->ob_head;
 
-	if	(myspc->selected)
+	if (myspc->selected)
 		dob->ob_state &= ~WHITEBAK;
-	else	dob->ob_state |= WHITEBAK;
+	else
+		dob->ob_state |= WHITEBAK;
 
 /*
 	if	(myspc->sel_icon)
@@ -120,12 +127,12 @@ static WORD cdecl set_item(struct SET_ITEM_args args)
 	else	ob_dsel(dob, 0);
 */
 	sob = rscx[ic->rscfile].adr_icons + ic->objnr;
-	ic_height = sob->ob_spec.ciconblk->monoblk.ib_hicon+8;
-	dob -> ob_y = ob_height - ic_height - 2;
-	dob -> ob_spec	= sob -> ob_spec;
-	dob -> ob_type	= sob -> ob_type;
-	dob -> ob_width	= sob -> ob_width;
-	dob -> ob_height	= sob -> ob_height;
+	ic_height = sob->ob_spec.ciconblk->monoblk.ib_hicon + 8;
+	dob->ob_y = ob_height - ic_height - 2;
+	dob->ob_spec = sob->ob_spec;
+	dob->ob_type = sob->ob_type;
+	dob->ob_width = sob->ob_width;
+	dob->ob_height = sob->ob_height;
 /*
 	if	(rect)
 		{
@@ -133,7 +140,7 @@ static WORD cdecl set_item(struct SET_ITEM_args args)
 		rect->g_w = visible_len*gl_hwchar;
 		}
 */
-	return(args.obj_index);
+	return (args.obj_index);
 }
 
 
@@ -143,24 +150,24 @@ static WORD cdecl set_item(struct SET_ITEM_args args)
 *
 *********************************************************************/
 
-static LBOX_ITEM *cat_spcs( void )
+static LBOX_ITEM *cat_spcs(void)
 {
 	register int i;
 	register struct spc_file *spc;
 	LBOX_ITEM *sc;
 
 	/* Verkette die "spc_file"-Strukturen */
-	for	(i = 0,spc = spcx; i < spcn-1; i++,spc++)
-		{
-		spc->next = spc+1;
-		}
-	if	(spcn)
-		{
+	for (i = 0, spc = spcx; i < spcn - 1; i++, spc++)
+	{
+		spc->next = spc + 1;
+	}
+	if (spcn)
+	{
 		sc = (LBOX_ITEM *) spcx;
-		spcx[spcn-1].next = NULL;
-		}
-	else	sc = NULL;
-	return(sc);
+		spcx[spcn - 1].next = NULL;
+	} else
+		sc = NULL;
+	return (sc);
 }
 
 
@@ -170,39 +177,29 @@ static LBOX_ITEM *cat_spcs( void )
 *
 *********************************************************************/
 
-void spc_dial_init_rsc( void )
+void spc_dial_init_rsc(void)
 {
 	int /* dummy, */ i;
-	static int ctrl_objs[5] =
-		{DF_BK, DF_UP, DF_DOWN, DF_BSL, DF_SLID};
-	static int objs[5] =
-		{SPC1,SPC2,SPC3,SPC4,SPC5};
+	static int ctrl_objs[5] = { DF_BK, DF_UP, DF_DOWN, DF_BSL, DF_SLID };
+	static int objs[5] = { SPC1, SPC2, SPC3, SPC4, SPC5 };
 
 
-	if	(!is_3d)
-		{
+	if (!is_3d)
+	{
 		adr_spc_dialog[ctrl_objs[3]].ob_spec.obspec.fillpattern = 1;
-		for	(i = 1; i < 5; i++)
+		for (i = 1; i < 5; i++)
 			adr_spc_dialog[ctrl_objs[i]].ob_spec.obspec.framesize = 1;
-		}
+	}
 /*
 	visible_len = (int) strlen(adr_spc_dialog[SPC1].ob_spec.tedinfo->te_ptext+1);
 */
-	sbox = lbox_create(	adr_spc_dialog,
-					select_item,
-					set_item,
-					cat_spcs(),	/* Items */
-					5,		/* Anzahl sichtbarer Eintr„ge */
-					0,		/* erster sichtbarer Eintrag */
-					ctrl_objs,
-					objs,
-					LBOX_VERT+LBOX_REAL+LBOX_SNGL+LBOX_TOGGLE,
-					20,		/* Scrollverz”gerung */
-					NULL,	/* user data */
-					NULL,
-					0,0,0,0
-					);
-	if	(!sbox)
+	sbox = lbox_create(adr_spc_dialog, select_item, set_item, cat_spcs(),	/* Items */
+					   5,				/* Anzahl sichtbarer Eintr„ge */
+					   0,				/* erster sichtbarer Eintrag */
+					   ctrl_objs, objs, LBOX_VERT + LBOX_REAL + LBOX_SNGL + LBOX_TOGGLE, 20,	/* Scrollverz”gerung */
+					   NULL,			/* user data */
+					   NULL, 0, 0, 0, 0);
+	if (!sbox)
 		Pterm((int) ENSMEM);
 }
 
@@ -214,22 +211,22 @@ void spc_dial_init_rsc( void )
 *
 *********************************************************************/
 
-static void scroll_win_key( DIALOG *d, long key )
+static void scroll_win_key(DIALOG * d, long key)
 {
 	register struct spc_file *spc;
 	register int n;
 
-	for	(n = 0,spc = spcx; n < spcn; n++,spc++)
-		if	(spc->key == key)
+	for (n = 0, spc = spcx; n < spcn; n++, spc++)
+		if (spc->key == key)
 			goto found;
 	return;
-	found:
-	if	((n > 0) && (n > spcn - 5))
+  found:
+	if ((n > 0) && (n > spcn - 5))
 		n = spcn - 5;
-	if	(n < 0)
+	if (n < 0)
 		n = 0;
 	lbox_ascroll_to(sbox, n, NULL, NULL);
-	if	(d)
+	if (d)
 		subobj_wdraw(d, DF_BK, DF_BK, MAX_DEPTH);
 }
 
@@ -242,30 +239,28 @@ static void scroll_win_key( DIALOG *d, long key )
 
 static void chg_icon(int myspc, int iconnr)
 {
-	OBJECT *sob,*dob;
+	OBJECT *sob, *dob;
 	int n;
 	struct icon *ic;
-	register int i;
+	int i;
 
-
-	if	(!d_spc)
+	if (!d_spc)
 		return;
 	ic = icnx + iconnr;
 	sob = rscx[ic->rscfile].adr_icons + ic->objnr;
 	n = lbox_get_first(sbox);
-	for	(i = 0; (i < 5) && (i+n < spcn); i++)
-		{
-		if	(i+n != myspc)
+	for (i = 0; (i < 5) && (i + n < spcn); i++)
+	{
+		if (i + n != myspc)
 			continue;
 		dob = adr_spc_dialog + showindex_to_icnobj(i);
 		ob_dsel(dob, 0);
 		dob->ob_spec = sob->ob_spec;
 		dob->ob_type = sob->ob_type;
-		dob->ob_width	= sob->ob_width;
-		dob->ob_height	= sob->ob_height;
-		subobj_wdraw(d_spc, showindex_to_icnobj(i),
-					0, MAX_DEPTH);
-		}
+		dob->ob_width = sob->ob_width;
+		dob->ob_height = sob->ob_height;
+		subobj_wdraw(d_spc, showindex_to_icnobj(i), 0, MAX_DEPTH);
+	}
 }
 
 
@@ -275,19 +270,19 @@ static void chg_icon(int myspc, int iconnr)
 *
 *********************************************************************/
 
-void spc_dial_set_icon( int iconnr )
+void spc_dial_set_icon(int iconnr)
 {
 	register int i;
 
 
-	for	(i = 0; i < spcn; i++)
+	for (i = 0; i < spcn; i++)
+	{
+		if (spcx[i].selected)
 		{
-		if	(spcx[i].selected)
-			{
 			spcx[i].iconnr = iconnr;
 			chg_icon(i, iconnr);
-			}
 		}
+	}
 }
 
 
@@ -302,39 +297,38 @@ static void spc_set_icon(int iconnr, int objnr)
 	int spc;
 
 	spc = icnobj_to_showindex(objnr);
-	if	(spc >= 0)
-		{
-		spc += lbox_get_first( sbox );
+	if (spc >= 0)
+	{
+		spc += lbox_get_first(sbox);
 		spcx[spc].iconnr = iconnr;
 		chg_icon(spc, iconnr);
-		}
+	}
 }
 
 static void spc_malen(int objnr)
 {
-	if	(d_spc)
-	subobj_wdraw(d_spc, objnr ,0, 8);
+	if (d_spc)
+		subobj_wdraw(d_spc, objnr, 0, 8);
 }
 
-int spc_get_zielobj(int x, int y, int whdl, OBJECT **tree,
-			int *objnr, void (**set_icon)(int iconnr, int objnr),
-			void (**malen)(int objnr))
+int spc_get_zielobj(int x, int y, int whdl, OBJECT ** tree,
+	int *objnr, void (**set_icon) (int iconnr, int objnr), void (**malen) (int objnr))
 {
 	GRECT dummy;
 
-	if	(!d_spc)
-		return(FALSE);		/* Objekt ungltig */
-	if	(whdl != wdlg_get_handle(d_spc))
-		return(FALSE);
+	if (!d_spc)
+		return (FALSE);					/* Objekt ungltig */
+	if (whdl != wdlg_get_handle(d_spc))
+		return (FALSE);
 	wdlg_get_tree(d_spc, tree, &dummy);
 	*objnr = objc_find(*tree, 0, 8, x, y);
-	if	(icnobj_to_showindex(*objnr) >= 0)
-		{
+	if (icnobj_to_showindex(*objnr) >= 0)
+	{
 		*set_icon = spc_set_icon;
 		*malen = spc_malen;
-		return(TRUE);
-		}
-	return(FALSE);
+		return (TRUE);
+	}
+	return (FALSE);
 }
 
 
@@ -362,114 +356,105 @@ WORD cdecl hdl_spc(struct HNDL_OBJ_args args)
 	OBJECT *tree;
 	long key;
 
-
 	/* 1. Fall: Dialog soll ge”ffnet werden */
 	/* ------------------------------------ */
 
 	tree = adr_spc_dialog;
 
-	if	(args.obj == HNDL_INIT)
-		{
-		if	(d_spc)			/* Dialog ist schon ge”ffnet ! */
-			return(0);		/* create verweigern */
+	if (args.obj == HNDL_INIT)
+	{
+		if (d_spc)						/* Dialog ist schon ge”ffnet ! */
+			return (0);					/* create verweigern */
 
-		if	(is_multiwindow)
+		if (is_multiwindow)
 			objs_disable(tree, DF_OK, DF_CN, 0);
 
-		if	((args.data) && (*((char **) args.data)))
-			{
+		if ((args.data) && (*((char **) args.data)))
+		{
 			memcpy(&key, *((char **) args.data), sizeof(long));
-			scroll_win_key( NULL, key );
-			}
-	
-		return(1);
+			scroll_win_key(NULL, key);
 		}
+
+		return (1);
+	}
 
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
-		{
-		close_dialog:
+	if (args.obj == HNDL_CLSD)			/* Wenn Dialog geschlossen werden soll... */
+	{
+	  close_dialog:
 		d_spc = NULL;
-		return(0);		/* ...dann schliežen wir ihn auch */
-		}
+		return (0);						/* ...dann schliežen wir ihn auch */
+	}
 
-	if	(args.obj < 0)
-		return(1);
+	if (args.obj < 0)
+		return (1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-		/* Doppelklick auf Icon */
-		/* -------------------- */
+	/* Doppelklick auf Icon */
+	/* -------------------- */
 
-	if	((args.clicks == 2) && (icnobj_to_showindex(args.obj) >= 0))
-		{
+	if ((args.clicks == 2) && (icnobj_to_showindex(args.obj) >= 0))
+	{
 		open_iconsel();
-		return(1);
-		}
+		return (1);
+	}
 
 
-	if	(args.clicks != 1)
+	if (args.clicks != 1)
 		goto ende;
 
 	/* Scrollbox angew„hlt */
 	/* ------------------- */
 
-	if	(args.obj == SPCICON1)
+	if (args.obj == SPCICON1)
 		args.obj = SPC1;
-	if	(args.obj == SPCICON2)
+	if (args.obj == SPCICON2)
 		args.obj = SPC2;
-	if	(args.obj == SPCICON3)
+	if (args.obj == SPCICON3)
 		args.obj = SPC3;
-	if	(args.obj == SPCICON4)
+	if (args.obj == SPCICON4)
 		args.obj = SPC4;
-	if	(args.obj == SPCICON5)
+	if (args.obj == SPCICON5)
 		args.obj = SPC5;
 #if 0
-	if	((args.obj == SPC1) ||
-		 (args.obj == SPC2) ||
-		 (args.obj == SPC3) ||
-		 (args.obj == SPC4) ||
-		 (args.obj == SPC5))
-		 return(1);		/* Aktivieren nicht zul„ssig */
+	if ((args.obj == SPC1) || (args.obj == SPC2) || (args.obj == SPC3) || (args.obj == SPC4) || (args.obj == SPC5))
+		return (1);						/* Aktivieren nicht zul„ssig */
 #endif
-	if	((args.obj == DF_UP) ||
-		 (args.obj == DF_DOWN) ||
-		 (args.obj == DF_BSL) ||
-		 (args.obj == DF_SLID) ||
-		 (args.obj == SPC1) ||
-		 (args.obj == SPC2) ||
-		 (args.obj == SPC3) ||
-		 (args.obj == SPC4) ||
-		 (args.obj == SPC5))
-		{
+	if ((args.obj == DF_UP) ||
+		(args.obj == DF_DOWN) ||
+		(args.obj == DF_BSL) ||
+		(args.obj == DF_SLID) ||
+		(args.obj == SPC1) || (args.obj == SPC2) || (args.obj == SPC3) || (args.obj == SPC4) || (args.obj == SPC5))
+	{
 		lbox_do(sbox, args.obj);
 
-		return(1);
-		}
+		return (1);
+	}
 
 
-		/* Buttons zur Dialogbeendigung */
-		/* ---------------------------- */
+	/* Buttons zur Dialogbeendigung */
+	/* ---------------------------- */
 
-	if	(args.obj == DF_OK)			/* OK */
-		{
+	if (args.obj == DF_OK)				/* OK */
+	{
 		save_dialog_xy(args.dialog);
-		if	(put_inf())
-			goto ende;				/* Fehler bei INF */
+		if (put_inf())
+			goto ende;					/* Fehler bei INF */
 		goto close_dialog;
-		}
+	}
 
-	if	(args.obj == DF_CN)			/* Abbruch */
-		{
+	if (args.obj == DF_CN)				/* Abbruch */
+	{
 		save_dialog_xy(args.dialog);
 		goto close_dialog;
-		}
+	}
 
-	ende:
+  ende:
 	ob_dsel(tree, args.obj);
 	subobj_wdraw(args.dialog, args.obj, args.obj, 1);
-	return(1);		/* weiter */
+	return (1);							/* weiter */
 }

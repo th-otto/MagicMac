@@ -99,53 +99,56 @@
 #include "appldata.h"
 #include "iconsel.h"
 
-int	gl_hhbox, gl_hwbox, gl_hhchar, gl_hwchar;
-int	ap_id;
-int	is_3d;
+int gl_hhbox;
+int gl_hwbox;
+int gl_hhchar;
+int gl_hwchar;
+int ap_id;
+int is_3d;
 GRECT scrg;
 
-int is_multiwindow;		/* alle Fenster sind offen */
+int is_multiwindow;						/* alle Fenster sind offen */
 
-int spcn	= 0;			/* Anzahl Spezialobjekte */
-int pthn	= 0;			/* Anzahl Pfade */
-int datn	= 0;			/* Anzahl Dateitypen */
-int pgmn	= 0;			/* Anzahl Programme */
-int icnn  = 0;			/* Anzahl Icons */
-int linn  = 0;			/* Anzahl Zeilen */
-int rscn	= 0;			/* Anzahl RSC-Dateien */
+int spcn = 0;							/* Anzahl Spezialobjekte */
+int pthn = 0;							/* Anzahl Pfade */
+int datn = 0;							/* Anzahl Dateitypen */
+int pgmn = 0;							/* Anzahl Programme */
+int icnn = 0;							/* Anzahl Icons */
+int linn = 0;							/* Anzahl Zeilen */
+int rscn = 0;							/* Anzahl RSC-Dateien */
 struct pgm_file pgmx[MAX_PGMN];
 struct dat_file datx[MAX_DATN];
 struct pth_file pthx[MAX_PTHN];
 struct spc_file spcx[MAX_SPCN];
-struct icon	 icnx[MAX_ICNN];
-struct zeile	 linx[MAX_LINN];
+struct icon icnx[MAX_ICNN];
+struct zeile linx[MAX_LINN];
 struct iconfile rscx[MAX_RSCN];
 
 
-void open_work		(void);
-void close_work     (void);
+void open_work(void);
+void close_work(void);
 
-static void _rsrc_load( char *fname );
-void  Mgraf_mouse(int type);
+static void _rsrc_load(char *fname);
+void Mgraf_mouse(int type);
 
 /* Dialoge */
 
-DIALOG *d_ica = NULL;			/* Icons fÅr Applikationen */
+DIALOG *d_ica = NULL;					/* Icons fÅr Applikationen */
 OBJECT *adr_ica_dialog;
 
-DIALOG *d_icp = NULL;			/* Icons fÅr Pfade */
+DIALOG *d_icp = NULL;					/* Icons fÅr Pfade */
 OBJECT *adr_icp_dialog;
 
-DIALOG *d_spc = NULL;			/* Spezial-Icons */
+DIALOG *d_spc = NULL;					/* Spezial-Icons */
 OBJECT *adr_spc_dialog;
 
-DIALOG *d_anw = NULL;			/* Anwendung anmelden */
+DIALOG *d_anw = NULL;					/* Anwendung anmelden */
 OBJECT *adr_anwndg;
 
-DIALOG *d_pth = NULL;			/* Pfade anmelden */
+DIALOG *d_pth = NULL;					/* Pfade anmelden */
 OBJECT *adr_newpath;
 
-DIALOG *d_typ = NULL;			/* Dateityp anmelden */
+DIALOG *d_typ = NULL;					/* Dateityp anmelden */
 OBJECT *adr_ftypes;
 
 
@@ -153,19 +156,19 @@ OBJECT *adr_ftypes;
 * Hauptprogramm
 ********************************************/
 
-int main( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
 	EVNT w_ev;
-	int	whdl;
-	char	action[2] = {0,0};
-	char *args[2] = {NULL, NULL};
+	int whdl;
+	char action[2] = { 0, 0 };
+	char *args[2] = { NULL, NULL };
 	WINDOW *w;
 	int dummy;
 	WORD intin2;
 
 
 	Pdomain(1);
-	if   ((ap_id = appl_init()) < 0)
+	if ((ap_id = appl_init()) < 0)
 		Pterm(-1);
 	Mrsrc_load("applicat.rsc", NULL);
 	objc_sysvar(0, MX_ENABLE3D, 0, 0, &is_3d, &dummy);
@@ -175,41 +178,41 @@ int main( int argc, char *argv[] )
 	/* INF- Datei einlesen */
 	/* ------------------- */
 
-	if	(get_inf())
-		return(-1);
+	if (get_inf())
+		return (-1);
 
 	/* Kommandozeile auswerten */
 	/* ----------------------- */
 
-	if	(argc > 1)
+	if (argc > 1)
+	{
+		if (argv[1][0] != '-')
 		{
-		if	(argv[1][0] != '-')
-			{
-			par_err:
+		  par_err:
 			Rform_alert(1, ALRT_ERRARG, NULL);
-			return(-1);
-			}
+			return (-1);
+		}
 		action[0] = argv[1][1];
-		if	(!action[0])
+		if (!action[0])
 			goto par_err;
 		action[1] = argv[1][2];
-		if	(argc > 2)
+		if (argc > 2)
 			args[0] = argv[2];
-		if	(argc > 3)
+		if (argc > 3)
 			args[1] = argv[3];
-		}
+	}
 
 
 	open_work();
 	load_icons();
 	load_int_icons();
 
-	if	((action[0] == 'c') && (!action[1]))
-		{
+	if ((action[0] == 'c') && (!action[1]))
+	{
 		/* nur compilieren */
 		put_inf();
 		goto fehler;
-		}
+	}
 
 	rsrc_gtree(T_APPS, &adr_ica_dialog);
 	ica_dial_init_rsc();
@@ -235,252 +238,187 @@ int main( int argc, char *argv[] )
 
 	is_multiwindow = FALSE;
 
-	if	(action[0] == 'i')
-		{
+	if (action[0] == 'i')
+	{
 		open_iconsel();
-		switch(action[1])
-			{
-		 case 'a':
-		 		d_ica = xy_wdlg_init(
-		 				hdl_ica,
-		 				adr_ica_dialog,
-		 				"APPLICATIONS",
-		 				0,
-		 				args,
-		 				STR_WINTITLE_APP);
-				if	(!d_ica)
-					goto fehler;
-				break;
-		 case 'd':
-		 		d_ica = xy_wdlg_init(
-		 				hdl_ica,
-		 				adr_ica_dialog,
-		 				"APPLICATIONS",
-		 				1,
-		 				args,
-		 				STR_WINTITLE_APP);
-				if	(!d_ica)
-					goto fehler;
-				break;
-		 case 'o':
-		 		d_icp = xy_wdlg_init(
-		 				hdl_icp,
-		 				adr_icp_dialog,
-		 				"PATHS",
-		 				0,
-		 				args,
-		 				STR_WINTITLE_PTH);
-				if	(!d_icp)
-					goto fehler;
-				break;
-		 case 's':
-		 		d_spc = xy_wdlg_init(
-		 				hdl_spc,
-		 				adr_spc_dialog,
-		 				"SPECIAL",
-		 				0,
-		 				args,
-		 				STR_WINTITLE_SPC);
-				if	(!d_spc)
-					goto fehler;
-				break;
-			}
-		}
-	else
-	if	(action[0] == 'a')
+		switch (action[1])
 		{
- 		d_ica = xy_wdlg_init(
- 				hdl_ica,
- 				adr_ica_dialog,
- 				"APPLICATIONS",
- 				2,
- 				args,
- 				STR_WINTITLE_APP);
-		if	(!d_ica)
-			goto fehler;
+		case 'a':
+			d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 0, args, STR_WINTITLE_APP);
+			if (!d_ica)
+				goto fehler;
+			break;
+		case 'd':
+			d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 1, args, STR_WINTITLE_APP);
+			if (!d_ica)
+				goto fehler;
+			break;
+		case 'o':
+			d_icp = xy_wdlg_init(hdl_icp, adr_icp_dialog, "PATHS", 0, args, STR_WINTITLE_PTH);
+			if (!d_icp)
+				goto fehler;
+			break;
+		case 's':
+			d_spc = xy_wdlg_init(hdl_spc, adr_spc_dialog, "SPECIAL", 0, args, STR_WINTITLE_SPC);
+			if (!d_spc)
+				goto fehler;
+			break;
 		}
+	} else if (action[0] == 'a')
+	{
+		d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 2, args, STR_WINTITLE_APP);
+		if (!d_ica)
+			goto fehler;
+	}
 
-	else	{
+	else
+	{
 		is_multiwindow = TRUE;
 
- 		d_ica = xy_wdlg_init(
- 				hdl_ica,
- 				adr_ica_dialog,
- 				"APPLICATIONS",
- 				0,
- 				args,
- 				STR_WINTITLE_APP);
-		if	(!d_ica)
+		d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 0, args, STR_WINTITLE_APP);
+		if (!d_ica)
 			goto fehler;
 
- 		d_icp = xy_wdlg_init(
- 				hdl_icp,
- 				adr_icp_dialog,
- 				"PATHS",
- 				0,
- 				args,
- 				STR_WINTITLE_PTH);
-		if	(!d_icp)
+		d_icp = xy_wdlg_init(hdl_icp, adr_icp_dialog, "PATHS", 0, args, STR_WINTITLE_PTH);
+		if (!d_icp)
 			goto fehler;
 
- 		d_spc = xy_wdlg_init(
- 				hdl_spc,
- 				adr_spc_dialog,
- 				"SPECIAL",
- 				0,
- 				args,
- 				STR_WINTITLE_SPC);
-		if	(!d_spc)
+		d_spc = xy_wdlg_init(hdl_spc, adr_spc_dialog, "SPECIAL", 0, args, STR_WINTITLE_SPC);
+		if (!d_spc)
 			goto fehler;
-		}
+	}
 
-	while(1)
+	while (1)
+	{
+		w_ev.mwhich = evnt_multi(MU_KEYBD + MU_BUTTON + MU_MESAG, 2,	/* Doppelklicks erkennen    */
+								 1,		/* nur linke Maustaste      */
+								 1,		/* linke Maustaste gedrÅckt */
+								 0, 0, 0, 0, 0,	/* kein 1. Rechteck         */
+								 0, 0, 0, 0, 0,	/* kein 2. Rechteck         */
+								 w_ev.msg, 0L,	/* ms */
+								 &w_ev.mx, &w_ev.my, &w_ev.mbutton, &w_ev.kstate, &w_ev.key, &w_ev.mclicks);
+
+		if (w_ev.mwhich & MU_KEYBD)
 		{
-		w_ev.mwhich = evnt_multi(MU_KEYBD+MU_BUTTON+MU_MESAG,
-					  2,			/* Doppelklicks erkennen 	*/
-					  1,			/* nur linke Maustaste		*/
-					  1,			/* linke Maustaste gedrÅckt	*/
-					  0,0,0,0,0,		/* kein 1. Rechteck			*/
-					  0,0,0,0,0,		/* kein 2. Rechteck			*/
-					  w_ev.msg,
-					  0L,	/* ms */
-					  &w_ev.mx,
-					  &w_ev.my,
-					  &w_ev.mbutton,
-					  &w_ev.kstate,
-					  &w_ev.key,
-					  &w_ev.mclicks
-					  );
-
-		if	(w_ev.mwhich & MU_KEYBD)
-			{
 			int message[8];
 
-			if	(w_ev.key == 0x1011)	/* Ctrl-Q */
-				{
-				break;		/* Beenden */
-				}
-			else
-			if	(w_ev.key == 0x1615)	/* Ctrl-U */
-				{
+			if (w_ev.key == 0x1011)		/* Ctrl-Q */
+			{
+				break;					/* Beenden */
+			} else if (w_ev.key == 0x1615)	/* Ctrl-U */
+			{
 				/* unser oberstes Fenster <whdl> ermitteln */
-				intin2 = ap_id;		/* Eingabewert! */
-				wind_get(0, WF_BOTTOM, &intin2, &whdl,
-						&dummy, &dummy);
+				intin2 = ap_id;			/* Eingabewert! */
+				wind_get(0, WF_BOTTOM, &intin2, &whdl, &dummy, &dummy);
 				/* schicke mir selbst eine Nachricht */
-				if	(whdl > 0)
-					{
+				if (whdl > 0)
+				{
 					message[0] = WM_CLOSED;
 					message[1] = ap_id;
 					message[2] = 0;
 					message[3] = whdl;
-					message[4] = message[5] =
-					message[6] = message[7] = 0;
+					message[4] = message[5] = message[6] = message[7] = 0;
 					appl_write(ap_id, 16, message);
-					}
-				goto key_done;
 				}
-			if	(w_ev.key == 0x1117)	/* Ctrl-W */
-				{
+				goto key_done;
+			}
+			if (w_ev.key == 0x1117)		/* Ctrl-W */
+			{
 				/* unser unterstes Fenster <whdl> ermitteln */
-				intin2 = ap_id;		/* Eingabewert! */
-				wind_get(-1, WF_BOTTOM, &intin2, &whdl,
-						&dummy, &dummy);
+				intin2 = ap_id;			/* Eingabewert! */
+				wind_get(-1, WF_BOTTOM, &intin2, &whdl, &dummy, &dummy);
 				/* schicke mir selbst eine Nachricht */
-				if	(whdl > 0)
-					{
+				if (whdl > 0)
+				{
 					message[0] = WM_TOPPED;
 					message[1] = ap_id;
 					message[2] = 0;
 					message[3] = whdl;
-					message[4] = message[5] =
-					message[6] = message[7] = 0;
+					message[4] = message[5] = message[6] = message[7] = 0;
 					appl_write(ap_id, 16, message);
-					}
-				goto key_done;
 				}
+				goto key_done;
+			}
 
 			w = whdl2window(top_whdl());
-			if	(w)
-				{
+			if (w)
+			{
 				w->key(w, w_ev.kstate, w_ev.key);
-			key_done:
+			  key_done:
 				w_ev.mwhich &= ~MU_KEYBD;	/* bearbeitet */
-				}
 			}
+		}
 
-		if	(w_ev.mwhich & MU_BUTTON)
-			{
+		if (w_ev.mwhich & MU_BUTTON)
+		{
 			w = whdl2window(wind_find(w_ev.mx, w_ev.my));
-			if	(w)
-				{
-				w->button(w, w_ev.kstate, w_ev.mx, w_ev.my,
-						w_ev.mbutton, w_ev.mclicks);
-				w_ev.mwhich &= ~MU_BUTTON;	/* bearbeitet */
-				}
-			}
-
-		if	(w_ev.mwhich & MU_MESAG)
+			if (w)
 			{
-			if	(w_ev.msg[0] == AP_TERM)
-				{
+				w->button(w, w_ev.kstate, w_ev.mx, w_ev.my, w_ev.mbutton, w_ev.mclicks);
+				w_ev.mwhich &= ~MU_BUTTON;	/* bearbeitet */
+			}
+		}
+
+		if (w_ev.mwhich & MU_MESAG)
+		{
+			if (w_ev.msg[0] == AP_TERM)
+			{
 				close_work();
-				return(0);
-				}
+				return (0);
+			}
 /*
 			if	(w_ev.msg[0] == AV_START)
 				{
 				}
 */
 
-			if	(((w_ev.msg[0] >= 20) &&
-					(w_ev.msg[0] < 40)) ||		/* WM_XX */
-				 	(w_ev.msg[0] >= 1040))
-				{
+			if (((w_ev.msg[0] >= 20) && (w_ev.msg[0] < 40)) ||	/* WM_XX */
+				(w_ev.msg[0] >= 1040))
+			{
 				w = whdl2window(w_ev.msg[3]);
-				if	(w)
-					{
+				if (w)
+				{
 					w->message(w, w_ev.kstate, w_ev.msg);
 					w_ev.mwhich &= ~MU_MESAG;	/* bearbeitet */
-					}
 				}
 			}
+		}
 
 
-		if	(d_ica && !wdlg_evnt(d_ica, &w_ev))
+		if (d_ica && !wdlg_evnt(d_ica, &w_ev))
 			break;
-		if	(d_icp && !wdlg_evnt(d_icp, &w_ev))
+		if (d_icp && !wdlg_evnt(d_icp, &w_ev))
 			break;
-		if	(d_spc && !wdlg_evnt(d_spc, &w_ev))
+		if (d_spc && !wdlg_evnt(d_spc, &w_ev))
 			break;
 
-		if	(d_typ && !wdlg_evnt(d_typ, &w_ev))
-			{
+		if (d_typ && !wdlg_evnt(d_typ, &w_ev))
+		{
 			Mfree(wdlg_get_udata(d_typ));
 			wdlg_close(d_typ, NULL, NULL);
 			wdlg_delete(d_typ);
 			d_typ = NULL;
-			}
-		if	(d_anw && !wdlg_evnt(d_anw, &w_ev))
-			{
+		}
+		if (d_anw && !wdlg_evnt(d_anw, &w_ev))
+		{
 			Mfree(wdlg_get_udata(d_anw));
 			wdlg_close(d_anw, NULL, NULL);
 			wdlg_delete(d_anw);
 			d_anw = NULL;
-			}
-		if	(d_pth && !wdlg_evnt(d_pth, &w_ev))
-			{
+		}
+		if (d_pth && !wdlg_evnt(d_pth, &w_ev))
+		{
 			Mfree(wdlg_get_udata(d_pth));
 			wdlg_close(d_pth, NULL, NULL);
 			wdlg_delete(d_pth);
 			d_pth = NULL;
-			}
+		}
 
-		} /* END FOREVER */
+	}									/* END FOREVER */
 
-	fehler:
+  fehler:
 	close_work();
-	return(0);
+	return (0);
 }
 
 
@@ -490,7 +428,7 @@ long err_alert(long e)
 {
 	form_xerr(e, err_file);
 	err_file = NULL;
-	return(e);
+	return (e);
 }
 
 
@@ -500,61 +438,44 @@ long err_alert(long e)
 *
 *************************************************************/
 
-DIALOG *xy_wdlg_init(
-			HNDL_OBJ hndl_obj,
-			OBJECT *tree,
-			char *ident,
-			int code,
-			void *data,
-			int title_code
-			)
+DIALOG *xy_wdlg_init(HNDL_OBJ hndl_obj, OBJECT * tree, char *ident, int code, void *data, int title_code)
 {
 	int whdl;
-	register WINDEFPOS *wd;
-	int x,y;
+	WINDEFPOS *wd;
+	int x, y;
 	DIALOG *d;
 	struct dialog_userdata *du;
 
 
-	if	(NULL == (du = Malloc(sizeof(struct dialog_userdata))))
-		return(NULL);
-	if	((wd = def_wind_pos( ident )) != NULL)
-		{
+	if (NULL == (du = Malloc(sizeof(struct dialog_userdata))))
+		return (NULL);
+	if ((wd = def_wind_pos(ident)) != NULL)
+	{
 		x = wd->g.g_x;
 		y = wd->g.g_y + gl_hhbox;
-		}
-	else	x = y = -1;
+	} else
+		x = y = -1;
 	du->ident = ident;
 	du->mode = 0;
-	d = wdlg_create(
-			hndl_obj,
-			tree,
-			du,			/* user_data */
-			code,
-			data,
-			0			/* flags */
-			);
+	d = wdlg_create(hndl_obj, tree, du,	/* user_data */
+					code, data, 0		/* flags */
+		);
 
-	if	(d)
+	if (d)
+	{
+		whdl = wdlg_open(d, Rgetstring(title_code, NULL), NAME + CLOSER + MOVER, x, y, 0,	/* code */
+						 NULL);			/* data */
+		if (whdl <= 0)
 		{
-		whdl = wdlg_open(
-			d,
-			Rgetstring(title_code, NULL),
-			NAME+CLOSER+MOVER,
-			x,y,
-			0,			/* code */
-			NULL );		/* data */
-		if	(whdl <= 0)
-			{
 			wdlg_delete(d);
 			d = NULL;
 			Rform_alert(1, ALRT_ERRWINDOPEN, NULL);
-			}
 		}
+	}
 
-	if	(!d)
+	if (!d)
 		Mfree(du);
-	return(d);
+	return (d);
 }
 
 
@@ -565,9 +486,9 @@ DIALOG *xy_wdlg_init(
 *
 *************************************************************/
 
-void save_dialog_xy( DIALOG *d )
+void save_dialog_xy(DIALOG * d)
 {
-	register WINDEFPOS *wd;
+	WINDEFPOS *wd;
 	OBJECT *tree;
 	GRECT dummy;
 	struct dialog_userdata *du;
@@ -575,18 +496,18 @@ void save_dialog_xy( DIALOG *d )
 
 	du = wdlg_get_udata(d);
 	wdlg_get_tree(d, &tree, &dummy);
-	wd = def_wind_pos( du->ident );
-	if	((!wd) && (n_windefpos < MAXWINDEFPOS))
-		{
-		wd = windefpos+n_windefpos;	/* freien Eintrag suchen */
+	wd = def_wind_pos(du->ident);
+	if ((!wd) && (n_windefpos < MAXWINDEFPOS))
+	{
+		wd = windefpos + n_windefpos;	/* freien Eintrag suchen */
 		strcpy(wd->name, du->ident);
 		n_windefpos++;
-		}
-	if	(wd)
-		{
+	}
+	if (wd)
+	{
 		wd->g.g_x = tree->ob_x;
 		wd->g.g_y = tree->ob_y - gl_hhbox;
-		}
+	}
 }
 
 
@@ -602,9 +523,9 @@ void subobj_wdraw(void *d, int obj, int startob, int depth)
 	GRECT g;
 
 
-	wdlg_get_tree( d, &tree, &g );
+	wdlg_get_tree(d, &tree, &g);
 	objc_grect(tree, obj, &g);
-	wdlg_redraw( d, &g, startob, depth );
+	wdlg_redraw(d, &g, startob, depth);
 }
 
 
@@ -629,9 +550,9 @@ void close_work(void)
 *
 ****************************************************************/
 
-int rsrc_gtree(int index, OBJECT **tree )
+int rsrc_gtree(int index, OBJECT ** tree)
 {
-	return(rsrc_gaddr(R_TREE, index, tree));
+	return (rsrc_gaddr(R_TREE, index, tree));
 }
 
 
@@ -648,30 +569,30 @@ int rsrc_gtree(int index, OBJECT **tree )
 int extract_apname(char *path, char *name)
 {
 	char *nurname;
-	char fname[MAX_NAMELEN+10];
+	char fname[MAX_NAMELEN + 10];
 	char *f;
 
 
 	nurname = get_name(path);
-	if	(strlen(nurname) > MAX_NAMELEN+9)
-		{
-		over:
+	if (strlen(nurname) > MAX_NAMELEN + 9)
+	{
+	  over:
 		Rform_alert(1, ALRT_FNAME_2LONG, NULL);
-		return(-1);
-		}
+		return (-1);
+	}
 	strcpy(fname, nurname);
 	f = strchr(fname, '.');
-	if	(f)
+	if (f)
 		*f = EOS;
-	if	(!fname[0] || (strlen(fname) > MAX_NAMELEN-1))
+	if (!fname[0] || (strlen(fname) > MAX_NAMELEN - 1))
 		goto over;
-	if	(strpbrk(fname, "[]:\\'"))
-		{
+	if (strpbrk(fname, "[]:\\'"))
+	{
 		Rform_alert(1, ALRT_FNAME_INVAL, NULL);
-		return(-1);
-		}
+		return (-1);
+	}
 	strcpy(name, fname);
-	return(nurname == path);
+	return (nurname == path);
 }
 
 
@@ -683,11 +604,11 @@ int extract_apname(char *path, char *name)
 
 int get_deficonnr(long key)
 {
-	register int i;
-	register struct spc_file *spc_file;
+	int i;
+	struct spc_file *spc_file;
 
-	for	(i = 0,spc_file = spcx; i < spcn; i++,spc_file++)
-		if	(spc_file->key == key)
-			return(spc_file->iconnr);
-	return(0);
+	for (i = 0, spc_file = spcx; i < spcn; i++, spc_file++)
+		if (spc_file->key == key)
+			return (spc_file->iconnr);
+	return (0);
 }

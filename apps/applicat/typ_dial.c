@@ -18,23 +18,22 @@
 
 #define TXT(a)      ((((a) -> ob_spec.tedinfo))->te_ptext)
 
-static struct dat_file mydat;	/* Anwendung in Arbeit */
-static struct pgm_file mypgm;	/* Anwendung in Arbeit */
+static struct dat_file mydat;			/* Anwendung in Arbeit */
+static struct pgm_file mypgm;			/* Anwendung in Arbeit */
 
-extern int  rsrc_gtree(int gindex, OBJECT **tree );
-extern int  selected(OBJECT *tree, int which);
-extern void ob_dsel(OBJECT *tree, int which);
-extern void ob_sel (OBJECT *tree, int which);
-extern void objs_hide(OBJECT *tree, ...);
-extern void objs_unhide(OBJECT *tree, ...);
+extern int rsrc_gtree(int gindex, OBJECT ** tree);
+extern int selected(OBJECT * tree, int which);
+extern void ob_dsel(OBJECT * tree, int which);
+extern void ob_sel(OBJECT * tree, int which);
+extern void objs_hide(OBJECT * tree, ...);
+extern void objs_unhide(OBJECT * tree, ...);
 
 extern void fname_ext(char *s, char *d);
 extern void Mgraf_mouse(int type);
 extern long err_alert(long e);
 
-extern int insert_dat( struct pgm_file *pgm, struct dat_file *dat );
-extern int change_dat( struct pgm_file *pgm, struct dat_file *dat,
-				char *newname );
+extern int insert_dat(struct pgm_file *pgm, struct dat_file *dat);
+extern int change_dat(struct pgm_file *pgm, struct dat_file *dat, char *newname);
 
 /*********************************************************************
 *
@@ -42,7 +41,7 @@ extern int change_dat( struct pgm_file *pgm, struct dat_file *dat,
 *
 *********************************************************************/
 
-void typ_dial_init_rsc( void )
+void typ_dial_init_rsc(void)
 {
 }
 
@@ -73,39 +72,40 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 
 	tree = adr_ftypes;
 
-	if	(args.obj == HNDL_INIT)
+	if (args.obj == HNDL_INIT)
+	{
+		if (d_typ)						/* Dialog ist schon ge”ffnet ! */
 		{
-		if	(d_typ)			/* Dialog ist schon ge”ffnet ! */
-			{
-			wind_set(wdlg_get_handle(d_typ), WF_TOP, 0,0,0,0);
-			return(0);		/* create verweigern */
-			}
+			wind_set(wdlg_get_handle(d_typ), WF_TOP, 0, 0, 0, 0);
+			return (0);					/* create verweigern */
+		}
 
-		(TXT(tree+FTYPE_2))[0] = EOS;
-		(TXT(tree+FTYPE_3))[0] = EOS;
-		(TXT(tree+FTYPE_4))[0] = EOS;
+		(TXT(tree + FTYPE_2))[0] = EOS;
+		(TXT(tree + FTYPE_3))[0] = EOS;
+		(TXT(tree + FTYPE_4))[0] = EOS;
 
-		if	(args.clicks == 1)
-			{
-								/* Dateityp editieren */
+		if (args.clicks == 1)
+		{
+			/* Dateityp editieren */
 			mydat = *((struct dat_file *) args.data);
-			mypgm = *((struct pgm_file *) pgmx+mydat.pgm);
-			strcpy(TXT(tree+FTYPE_1), mydat.name);
+			mypgm = *((struct pgm_file *) pgmx + mydat.pgm);
+			strcpy(TXT(tree + FTYPE_1), mydat.name);
 			objs_hide(tree, FTYPE_2, FTYPE_3, FTYPE_4, 0);
-			}
-		else	{
-			if	(args.clicks == 2)
-				{
+		} else
+		{
+			if (args.clicks == 2)
+			{
 				extern char *def_txt;
 
 				mypgm = *((struct pgm_file *) args.data);
-				strcpy(TXT(tree+FTYPE_1), def_txt);
-				}
-				
-			else	{
+				strcpy(TXT(tree + FTYPE_1), def_txt);
+			}
+
+			else
+			{
 				mypgm = *((struct pgm_file *) args.data);
-				(TXT(tree+FTYPE_1))[0] = EOS;
-				}
+				(TXT(tree + FTYPE_1))[0] = EOS;
+			}
 			mydat.sel = FALSE;
 			mydat.name[0] = EOS;
 			mydat.rscname[0] = EOS;
@@ -116,62 +116,62 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 			(tree[FTYPE_2]).ob_flags |= EDITABLE;
 			(tree[FTYPE_3]).ob_flags |= EDITABLE;
 			(tree[FTYPE_4]).ob_flags |= EDITABLE;
-			}
-
-		strcpy((tree+FTYPE_ANW)->ob_spec.free_string, mypgm.name);
-
-		return(1);
 		}
+
+		strcpy((tree + FTYPE_ANW)->ob_spec.free_string, mypgm.name);
+
+		return (1);
+	}
 
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(args.obj == HNDL_CLSD) /* Wenn Dialog geschlossen werden soll... */
-		{
-		close_dialog:
+	if (args.obj == HNDL_CLSD)			/* Wenn Dialog geschlossen werden soll... */
+	{
+	  close_dialog:
 		save_dialog_xy(args.dialog);
-		return(0);		/* ...dann schliežen wir ihn auch */
-		}
+		return (0);						/* ...dann schliežen wir ihn auch */
+	}
 
-	if	(args.obj < 0)
-		return(1);
+	if (args.obj < 0)
+		return (1);
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(args.clicks != 1)
+	if (args.clicks != 1)
 		goto ende;
 
-	if	(args.obj == FTYPE_OK)
-		{
+	if (args.obj == FTYPE_OK)
+	{
 		register int i;
 
 		ob_dsel(tree, args.obj);
-		if	(mydat.name[0])	/* Zeichenkette editieren */
-			{
-			change_dat( &mypgm, &mydat,TXT(tree+FTYPE_1));
-			}
-		else	{				/* neue Dateitypen */
-			for	(i = 0; i < 4; i++)
-				{
-				strcpy(mydat.name, TXT(tree+FTYPE_1+i));
-				if	(mydat.name[0])
-					insert_dat( &mypgm, &mydat );
-				}
-			}
-		goto close_dialog;
-		}
-
-	if	(args.obj == FTYPE_CN)			/* Abbruch */
+		if (mydat.name[0])				/* Zeichenkette editieren */
 		{
+			change_dat(&mypgm, &mydat, TXT(tree + FTYPE_1));
+		} else
+		{								/* neue Dateitypen */
+			for (i = 0; i < 4; i++)
+			{
+				strcpy(mydat.name, TXT(tree + FTYPE_1 + i));
+				if (mydat.name[0])
+					insert_dat(&mypgm, &mydat);
+			}
+		}
+		goto close_dialog;
+	}
+
+	if (args.obj == FTYPE_CN)			/* Abbruch */
+	{
 		ob_dsel(tree, args.obj);
 		goto close_dialog;
-		}
+	}
 
-	return(1);
+	return (1);
 
-	ende:
+  ende:
 	ob_dsel(tree, args.obj);
 	subobj_wdraw(args.dialog, args.obj, args.obj, 1);
-	return(1);		/* weiter */
+	return (1);							/* weiter */
 }

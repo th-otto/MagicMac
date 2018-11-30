@@ -41,33 +41,32 @@ WINDOW *mywindow = NULL;
 
 int xrel, yrel;
 
-void draw_boxes(OBJECT *tree, OBJECT *mov_boxes[], int anz_boxes,
-			 GRECT *grenz, int xoff, int yoff)
+void draw_boxes(OBJECT * tree, OBJECT * mov_boxes[], int anz_boxes, GRECT * grenz, int xoff, int yoff)
 {
 	int px, py;
 	int pxy[10];
 
 
-	vswr_mode	(vdi_handle, MD_XOR);
-	vsl_type	(vdi_handle, DASH);
-	if	(grenz)
-		{
-		if	(grenz->g_x + xoff < scrg.g_x)
+	vswr_mode(vdi_handle, MD_XOR);
+	vsl_type(vdi_handle, DASH);
+	if (grenz)
+	{
+		if (grenz->g_x + xoff < scrg.g_x)
 			xoff = scrg.g_x - grenz->g_x;
-		if	(grenz->g_y + yoff < scrg.g_y)
+		if (grenz->g_y + yoff < scrg.g_y)
 			yoff = scrg.g_y - grenz->g_y;
-		if	(grenz->g_x + grenz->g_w + xoff > scrg.g_x + scrg.g_w)
+		if (grenz->g_x + grenz->g_w + xoff > scrg.g_x + scrg.g_w)
 			xoff = scrg.g_x + scrg.g_w - (grenz->g_x + grenz->g_w);
-		if	(grenz->g_y + grenz->g_h + yoff > scrg.g_y + scrg.g_h)
+		if (grenz->g_y + grenz->g_h + yoff > scrg.g_y + scrg.g_h)
 			yoff = scrg.g_y + scrg.g_h - (grenz->g_y + grenz->g_h);
-		}
+	}
 	px = tree->ob_x + xoff;
 	py = tree->ob_y + yoff;
 	xrel = xoff;
 	yrel = yoff;
 
-	for	(; anz_boxes > 0; anz_boxes--,mov_boxes++)
-		{
+	for (; anz_boxes > 0; anz_boxes--, mov_boxes++)
+	{
 		pxy[0] = (*mov_boxes)->ob_x + px;
 		pxy[1] = (*mov_boxes)->ob_y + py;
 
@@ -83,8 +82,8 @@ void draw_boxes(OBJECT *tree, OBJECT *mov_boxes[], int anz_boxes,
 		pxy[8] = pxy[0];
 		pxy[9] = pxy[1];
 
-		v_pline(vdi_handle,5,pxy);		/* Rechteck malen */
-		}
+		v_pline(vdi_handle, 5, pxy);	/* Rechteck malen */
+	}
 	vswr_mode(vdi_handle, MD_REPLACE);
 }
 
@@ -98,27 +97,27 @@ void draw_boxes(OBJECT *tree, OBJECT *mov_boxes[], int anz_boxes,
 *
 ****************************************************************/
 
-void move_icons(int x_koor, int y_koor, OBJECT *tree, int objnr)
+void move_icons(int x_koor, int y_koor, OBJECT * tree, int objnr)
 {
 	int clip_rect[4];
 	GRECT g;
 	GRECT *ptr_g;
 	OBJECT *mov_boxes;
 	EVNTDATA ev;
-	int old_x,old_y;
+	int old_x, old_y;
 	OBJECT *zieltree;
 	int zielwhdl;
 	int zielobj;
 	int altobj = 0;
 	OBJECT *alttree = NULL;
-	void (*set_icon)(int iconnr, int objnr);
-	void (*malen)(int objnr);
-	void (*altmalen)(int objnr) = NULL;
+	void (*set_icon) (int iconnr, int objnr);
+	void (*malen) (int objnr);
+	void (*altmalen) (int objnr) = NULL;
 
 
-	mov_boxes = tree + objnr;		/* Tabelle aller Objekte */
+	mov_boxes = tree + objnr;			/* Tabelle aller Objekte */
 	ptr_g = &g;
-	objc_grect(tree, objnr, ptr_g);	/* Hlle aller Objekte */
+	objc_grect(tree, objnr, ptr_g);		/* Hlle aller Objekte */
 
 	wind_update(BEG_UPDATE);
 	graf_mouse(M_OFF, NULL);
@@ -126,64 +125,61 @@ void move_icons(int x_koor, int y_koor, OBJECT *tree, int objnr)
 
 	clip_rect[0] = scrg.g_x;
 	clip_rect[1] = scrg.g_y;
-	clip_rect[2] = scrg.g_x+scrg.g_w-1;
-	clip_rect[3] = scrg.g_y+scrg.g_h-1;
-	vs_clip	(vdi_handle, TRUE, clip_rect);
+	clip_rect[2] = scrg.g_x + scrg.g_w - 1;
+	clip_rect[3] = scrg.g_y + scrg.g_h - 1;
+	vs_clip(vdi_handle, TRUE, clip_rect);
 
 	ev.x = x_koor;
 	ev.y = y_koor;
-	do	{
-		vs_clip	(vdi_handle, TRUE, clip_rect);
-		draw_boxes(tree, &mov_boxes, 1, ptr_g,
-				 ev.x-x_koor, ev.y-y_koor);
+	do
+	{
+		vs_clip(vdi_handle, TRUE, clip_rect);
+		draw_boxes(tree, &mov_boxes, 1, ptr_g, ev.x - x_koor, ev.y - y_koor);
 		graf_mouse(M_ON, NULL);
 
 		old_x = ev.x;
 		old_y = ev.y;
-		do	{
+		do
+		{
 			graf_mkstate(&ev.x, &ev.y, &ev.bstate, &ev.kstate);
-			}
-		while(ev.x == old_x && ev.y == old_y && (ev.bstate & 1));
+		}
+		while (ev.x == old_x && ev.y == old_y && (ev.bstate & 1));
 		graf_mouse(M_OFF, NULL);
-		draw_boxes(tree, &mov_boxes, 1, ptr_g,
-				 old_x-x_koor, old_y-y_koor);
+		draw_boxes(tree, &mov_boxes, 1, ptr_g, old_x - x_koor, old_y - y_koor);
 
 		zielwhdl = wind_find(ev.x, ev.y);
-		if	(!ica_get_zielobj(ev.x, ev.y, zielwhdl, &zieltree,
-				&zielobj, &set_icon, &malen) &&
-			 !icp_get_zielobj(ev.x, ev.y, zielwhdl, &zieltree,
-				&zielobj, &set_icon, &malen) &&
-			 !spc_get_zielobj(ev.x, ev.y, zielwhdl, &zieltree,
-				&zielobj, &set_icon, &malen))
-			{
+		if (!ica_get_zielobj(ev.x, ev.y, zielwhdl, &zieltree, &zielobj, &set_icon, &malen) &&
+			!icp_get_zielobj(ev.x, ev.y, zielwhdl, &zieltree, &zielobj, &set_icon, &malen) &&
+			!spc_get_zielobj(ev.x, ev.y, zielwhdl, &zieltree, &zielobj, &set_icon, &malen))
+		{
 			zieltree = NULL;
 			zielobj = -1;
-			}
+		}
 
-		if	(zieltree != alttree || zielobj != altobj)
+		if (zieltree != alttree || zielobj != altobj)
+		{
+			if (alttree && altobj > 0)
 			{
-			if	(alttree && altobj > 0)
-				{
 				altmalen(altobj);
-				}
-			if	(zieltree && zielobj > 0)
-				{
+			}
+			if (zieltree && zielobj > 0)
+			{
 				ob_sel(zieltree, zielobj);
 				malen(zielobj);
 				ob_dsel(zieltree, zielobj);
-				}
-			alttree = zieltree;
-			altobj  = zielobj;
-			altmalen = malen;
 			}
+			alttree = zieltree;
+			altobj = zielobj;
+			altmalen = malen;
 		}
-	while(ev.bstate & 1);
+	}
+	while (ev.bstate & 1);
 
-	if	(zielobj > 0)
-		{
+	if (zielobj > 0)
+	{
 		malen(zielobj);
 		set_icon(objnr - 1, zielobj);
-		}
+	}
 	graf_mouse(ARROW, NULL);
 	graf_mouse(M_ON, NULL);
 	wind_update(END_UPDATE);
@@ -198,35 +194,36 @@ void move_icons(int x_koor, int y_koor, OBJECT *tree, int objnr)
 *******************************************************************/
 
 #pragma warn -par
-static void button_iconsel( WINDOW *w, int kstate,
-				int x, int y, int button, int nclicks )
+static void button_iconsel(WINDOW * w, int kstate, int x, int y, int button, int nclicks)
 {
-	int	objnr;
+	int objnr;
 	EVNTDATA ev;
 
 
 	objnr = find_obj(w->tree, x, y);
-	if	(objnr <= 0)
+	if (objnr <= 0)
 		return;
-	if	(nclicks == 2)
-		{
+	if (nclicks == 2)
+	{
 		ica_dial_set_icon(objnr - 1);
 		icp_dial_set_icon(objnr - 1);
 		spc_dial_set_icon(objnr - 1);
 		return;
-		}
+	}
 	graf_mkstate(&ev.x, &ev.y, &ev.bstate, &ev.kstate);
-	if	(ev.bstate & 1)
-		{
+	if (ev.bstate & 1)
+	{
 		move_icons(x, y, w->tree, objnr);
 		return;
-		}
+	}
 
-	if	(selected(w->tree, objnr))
+	if (selected(w->tree, objnr))
 		ob_dsel(w->tree, objnr);
-	else	ob_sel(w->tree, objnr);
+	else
+		ob_sel(w->tree, objnr);
 	obj_malen(w->handle, w->tree, objnr);
 }
+
 #pragma warn .par
 
 
@@ -236,18 +233,18 @@ static void button_iconsel( WINDOW *w, int kstate,
 *
 *******************************************************************/
 
-void init_iconsel( void )
+void init_iconsel(void)
 {
 	WINDEFPOS *w;
 
 	w = def_wind_pos("ICONS");
-	if	(w)
-		{
+	if (w)
+	{
 		iconwindow.out = w->g;
-		}
-	else	{
+	} else
+	{
 		iconwindow.out = scrg;
-		}
+	}
 }
 
 
@@ -258,13 +255,13 @@ void init_iconsel( void )
 *******************************************************************/
 
 #pragma warn -par
-static void close_iconsel( WINDOW *w, int kstate )
+static void close_iconsel(WINDOW * w, int kstate)
 {
 	WINDEFPOS *wd;
 	WINDOW **sw;
 
 	wd = def_wind_pos("ICONS");
-	if	(wd)
+	if (wd)
 		wd->g = iconwindow.out;
 
 	wind_close(w->handle);
@@ -274,6 +271,7 @@ static void close_iconsel( WINDOW *w, int kstate )
 	mywindow = NULL;
 	*sw = NULL;
 }
+
 #pragma warn .par
 
 
@@ -283,82 +281,79 @@ static void close_iconsel( WINDOW *w, int kstate )
 *
 *******************************************************************/
 
-int open_iconsel( void )
+int open_iconsel(void)
 {
 	WINDOW **w;
-	register OBJECT *o,*sob;
+	OBJECT *o;
+	OBJECT *sob;
 	ICONBLK *icb;
-	register int i;
+	int i;
 
-
-	if	(mywindow)		/* schon ge”ffnet */
-		{
-		wind_set(WF_TOP, mywindow->handle, 0,0,0,0);
-		return(0);	/* OK */
-		}
+	if (mywindow)						/* schon ge”ffnet */
+	{
+		wind_set(WF_TOP, mywindow->handle, 0, 0, 0, 0);
+		return (0);						/* OK */
+	}
 	w = new_window();
-	if	(!w)
-		return(-1);		/* kein Slot */
-	iconwindow.handle = wind_create_grect(NAME+CLOSER+FULLER+MOVER+
-						SIZER+UPARROW+DNARROW+VSLIDE,
-						&scrg);
+	if (!w)
+		return (-1);					/* kein Slot */
+	iconwindow.handle = wind_create_grect(NAME + CLOSER + FULLER + MOVER + SIZER + UPARROW + DNARROW + VSLIDE, &scrg);
 
-	iconwindow.tree = Malloc(sizeof(OBJECT) * (icnn+1));
-	if	(!iconwindow.tree)
-		return(-3);
+	iconwindow.tree = Malloc(sizeof(OBJECT) * (icnn + 1));
+	if (!iconwindow.tree)
+		return (-3);
 
-	if	(iconwindow.handle < 0)
-		{
+	if (iconwindow.handle < 0)
+	{
 		Mfree(iconwindow.tree);
-		return(-2);		/* kein AES-Fenster */
-		}
+		return (-2);					/* kein AES-Fenster */
+	}
 
 	/* Baum aufbauen */
 
 	o = iconwindow.tree;
 	/* Objekt der weižen Hintergrundbox */
-	o -> ob_next = -1;
-	o -> ob_type = G_BOX;
-	o -> ob_state = NORMAL;
-	o -> ob_spec.index = (long) (WHITE);
-	if	(icnn > 0)
-		{
-		o -> ob_flags = NONE;
-		o -> ob_head = 1;
-		o -> ob_tail = icnn;
-		}
-	else {
-		o -> ob_flags = LASTOB;
-		o -> ob_head = o -> ob_tail = -1;
-		}
+	o->ob_next = -1;
+	o->ob_type = G_BOX;
+	o->ob_state = NORMAL;
+	o->ob_spec.index = (long) (WHITE);
+	if (icnn > 0)
+	{
+		o->ob_flags = NONE;
+		o->ob_head = 1;
+		o->ob_tail = icnn;
+	} else
+	{
+		o->ob_flags = LASTOB;
+		o->ob_head = o->ob_tail = -1;
+	}
 
 	iconwindow.max_hicon = 0;
-	for	(i = 1; i <= icnn; i++)
-		{
+	for (i = 1; i <= icnn; i++)
+	{
 		o++;
-		o -> ob_next = (i < icnn) ? (i+1) : (0);
-		o -> ob_head = o -> ob_tail = -1;
-		o -> ob_flags = (i < icnn) ? NONE : LASTOB;
-		sob = rscx[icnx[i-1].rscfile].adr_icons + icnx[i-1].objnr;
+		o->ob_next = (i < icnn) ? (i + 1) : (0);
+		o->ob_head = o->ob_tail = -1;
+		o->ob_flags = (i < icnn) ? NONE : LASTOB;
+		sob = rscx[icnx[i - 1].rscfile].adr_icons + icnx[i - 1].objnr;
 
 		icb = NULL;
-		if	(sob -> ob_type == G_USERDEF)
+		if (sob->ob_type == G_USERDEF)
 			icb = (ICONBLK *) sob->ob_spec.userblk->ub_parm;
-		else
-		if	((sob -> ob_type == G_ICON) ||
-			 (sob -> ob_type == G_CICON))
+		else if ((sob->ob_type == G_ICON) || (sob->ob_type == G_CICON))
 			icb = sob->ob_spec.iconblk;
-		else icb = NULL;
+		else
+			icb = NULL;
 
-		if	(icb && (icb->ib_hicon > iconwindow.max_hicon))
+		if (icb && (icb->ib_hicon > iconwindow.max_hicon))
 			iconwindow.max_hicon = icb->ib_hicon;
 
-		o->ob_type   = sob->ob_type;
-		o->ob_width  = sob->ob_width;
+		o->ob_type = sob->ob_type;
+		o->ob_width = sob->ob_width;
 		o->ob_height = sob->ob_height;
-		o->ob_spec   = sob->ob_spec;
-		o->ob_state  = NORMAL+WHITEBAK;
-		}
+		o->ob_spec = sob->ob_spec;
+		o->ob_state = NORMAL + WHITEBAK;
+	}
 
 	init_window(&iconwindow);
 	iconwindow.flags = 0;
@@ -373,9 +368,8 @@ int open_iconsel( void )
 	iconwindow.button = button_iconsel;
 	iconwindow.close = close_iconsel;
 	*w = mywindow = &iconwindow;
-	wind_set_str(iconwindow.handle, WF_NAME,
-				Rgetstring(STR_WTIT_ICONS, NULL));
+	wind_set_str(iconwindow.handle, WF_NAME, Rgetstring(STR_WTIT_ICONS, NULL));
 	iconwindow.open(&iconwindow);
-	wind_set(iconwindow.handle, WF_BEVENT, 0x0001, 0, 0, 0 );
-	return(0);
+	wind_set(iconwindow.handle, WF_BEVENT, 0x0001, 0, 0, 0);
+	return (0);
 }
