@@ -14,12 +14,12 @@
 
 #define DEBUG 0
 
-#include <mgx_dos.h>
+#include <tos.h>
 #include <aes.h>
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tosdefs.h>
+#include <toserror.h>
 #include "globals.h"
 #include "win_objs.h"
 #include "winframe.h"
@@ -44,6 +44,17 @@ WINFRAME_HANDLER old_wfh,new_wfh;
 WINFRAME_SETTINGS *settings;
 WORD h_inw;
 
+typedef struct
+{
+	WORD	control[5];
+	WORD	intin[AES_INTINMAX];
+	WORD	intout[AES_INTOUTMAX];
+	void	*addrin[AES_ADDRINMAX];
+	void	*addrout[AES_ADDROUTMAX];
+} MT_PARMDATA;
+
+void _aes_trap(MT_PARMDATA *aes_params, const WORD *control, WORD *global_aes);
+
 
 /*********************************************************************
 *
@@ -55,13 +66,13 @@ static WORD sys_set_winframe_manager( WINFRAME_HANDLER *old_wfh,
 						WINFRAME_HANDLER *new_wfh,
 						WINFRAME_SETTINGS **set )
 {
-	PARMDATA d;
-	static WORD	c[] = { 0, 1, 1, 2 };
+	MT_PARMDATA d;
+	static WORD	const c[] = { 0, 1, 1, 2 };
 
 	d.intin[0] = 6;	/* Subcode 6: Fensterrahmen-Manager */
 	d.addrin[0] = old_wfh;
 	d.addrin[1] = new_wfh;
-	_mt_aes( &d, c, NULL );
+	_aes_trap( &d, c, NULL );
 	if	(set)
 		*set = d.addrout[0];
 	return( d.intout[0] );
@@ -119,7 +130,7 @@ LONG cdecl slb_init( void )
 	if	(name)
 		name++;
 	else	name = path;
-	vstrcpy(name, "winframe.rsc");
+	strcpy(name, "winframe.rsc");
 	if	(!rsrc_load(path))
 		{
 		form_xerr(EFILNF, "winframe.rsc");

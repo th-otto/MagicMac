@@ -1,13 +1,12 @@
-WINFRAME.SLB
+winframe.slb
+.C[-I..\..\inc_c]
 .L[-S=256]	; minimaler Stack
 =
 win_head.s      ; startup code for SLBs
 win_slb.c 	(winframe.h,win_objs.h,globals.h)
-win_objs		(winframe.h,win_objs.h,globals.h)
+win_objs.c		(winframe.h,win_objs.h,globals.h)
+aesctrl.s
 
 pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
 pctoslib.lib   ; TOS lib
-mt_aes.lib
 pcgemlib.lib	; fÅr VDI
-

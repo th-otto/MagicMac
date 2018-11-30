@@ -9,3 +9,4 @@
 *.inc -text
 *.i -text
 *.bat -text
+*.inf -text

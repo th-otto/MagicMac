@@ -108,7 +108,7 @@ extern LONG cdecl slb_fn0( PD *pd, LONG fn, WORD nargs,
 	*pimg = img;
 	if	(!img)
 		return(ENSMEM);
-	return(load_IMG( path, &img->w, &img->h,
+	return(load_IMG( (BYTE *)path, &img->w, &img->h,
 		&img->line_width, &img->nplanes,
 		&img->palette, &img->pal_entries,
 		&img->buf ));

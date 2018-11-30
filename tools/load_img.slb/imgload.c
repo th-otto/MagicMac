@@ -66,7 +66,7 @@ LONG load_IMG( BYTE *name, WORD *w, WORD *h,
 
 
 	*img = NULL;
-	retcode = open_img( name );
+	retcode = open_img( (char *)name );
 	if	(retcode < 0)
 		return(retcode);
 
