@@ -1,0 +1,28 @@
+FLOCK_OK - Ein Program fÅr MagiC 3.0, STs und einige Festplattentreiber
+
+Da ab MagiC 3.0 auch Platten- und Diskettenzugriffe parallel und im 
+Hintergrund mîglich sind, bei den Rechnern der ST-Serie der DMA-Chip aber 
+sowohl fÅr die Festplatte als auch fÅr die Floppy zustÑndig ist, muû der 
+Festplattentreiber hier entsprechend angepaût sein.
+
+AHDI ist das z.B. NICHT!!
+
+Das heiût, daû es hier bei aktiviertem Datentransfer im Hintergrund unter 
+MagiC DatenmÅll gibt, sobald auf Festplatte und Floppy gleichzeitig 
+zugegriffen wird. Insbesondere bei aktiviertem Writeback-DÑmon kann das 
+nicht mehr so gut kontrolliert werden. Um jetzt aber nicht komplett auf 
+den Hintergrundbetrieb verzichten zu mÅssen, gibt es dieses Programm, 
+welches sicherstellt, daû auf Platte und Floppy nicht gleichzeitig 
+zugegriffen wird.
+
+*** WICHTIG ***
+
+Das Programm FLOCK_OK.PRG muû dabei im Ordner AUTO/APPS liegen, NICHT im 
+normalen AUTO-Ordner!
+
+TT-User brauchen das Programm Åbrigens nicht, da hier Floppy und 
+Festplatte unabhÑngig von einander arbeiten.
+
+
+Oliver Scheel, Ludwigshafen im MÑrz 1995
+

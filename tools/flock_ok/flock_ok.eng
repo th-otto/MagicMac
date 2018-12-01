@@ -1,0 +1,31 @@
+FLOCK_OK - A program fr MagiC >= 3.0, ST-computers and some hard disk drivers.
+
+Since version 3.0 MagiC allows parallel floppy disk and hard disk access
+in background. As the ST computers use the very same chip for both floppy
+and hard drive (i.e. the DMA chip) the access must be synchronized between
+floppy driver (included in the MagiC kernel) and the hard disk driver
+(usually loaded from hard disk). As no other TOS compatible OS knows anything
+about "background DMA" (neither MiNT nor TOS are reentrant and therefore both
+are and will ever be unable to do background DMA) one needs a special hard disk
+driver to use this special feature (e.g. HDDRIVER by Uwe Seimet).
+
+If you use another hard disk driver (e.g. AHDI) you must be very careful
+not to activate "DMA background" in the MagiC CPX, otherwise the loss of
+data is possible. If you want to use floppy background DMA you must therefore
+use this little program that prohibits the disk driver from accessing the
+DMA chip while the floppy is active. Don't use this program when using
+HDDRIVER.
+
+*** IMPORTANT ***
+
+The program FLOCK_OK.PRG must be copied to the "application auto folder",
+normally this is \gemsys\magic\start.
+DO NOT COPY IT TO THE NORMAL AUTO FOLDER !!!
+
+TT user do not need this program as long as the hard disk is connected to
+SCSI and not to ACSI, because TT SCSI uses a completely different hardware
+without conflict between SCSI and floppy.
+
+
+Oliver Scheel, Ludwigshafen, March 1995
+Translation: Andreas Kromke, June 1996

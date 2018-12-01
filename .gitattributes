@@ -10,3 +10,4 @@
 *.i -text
 *.bat -text
 *.inf -text
+*.txt -text
