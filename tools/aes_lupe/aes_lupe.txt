@@ -1,0 +1,248 @@
+                                                    Berlin, 7.4.92
+          Laurenz Prner
+          Rathenower Strae 24
+          D - 1000 Berlin 21
+          030 394 68 96
+
+          Foreign countries:
+          ++49 30 394 68 96
+
+
+
+
+                                /----------\
+                                AES-Lupe 2.4
+                                ------------
+                      Ein Programm von Laurenz Prner
+                      --------------------------------
+                     /           \        /           \
+                               ½ Cynics 1992
+                              ---------------
+                             /               \
+               /-------------------------------------------\
+               |  "We're supporting Cyberpunk Actionware"  |
+               \-------------------------------------------/
+
+          "Sowas kann man gar nicht programmieren."
+                                         Arnd Rosemeier, M„rz 1991
+
+
+
+
+           ...und noch 'ne Lupe
+          ----------------------
+          Die  AES-Lupe  ist  die  Weiterentwicklung  der  im  ST-
+          Magazin  vorgestellten  VDI-Lupe.   Die  VDI-Lupe  hatte 
+          gegenber  s„mtlichen Lupenprogrammen schon  wesentliche 
+          Vorteile:  saubere GEM-Ausgabe, flimmerfreies Scrolling, 
+          hohe   Arbeitsgeschwindigkeit  sind  nur  einige   ihrer 
+          Features.  Auch  die AES-Lupe arbeitet,  ebenso wie  die 
+          VDI-Lupe, in allen Aufl”sungsstufen und stellt  auch  in 
+          den  verzerrten ST-Farbaufl”sungen (ST Low und  ST  Mid) 
+          ihre Daten und die Dialogboxen korrekt dar.
+
+          Im  Gegensatz  zur AES-Lupe war jedoch die  VDI-Lupe  in 
+          ihrer Anwendung arg beschr„nkt:
+
+          Sie  konnte  nur in der GEM-Menzeile  aktiviert  werden 
+          und  fror  dann das Bild ein.  Darber hinaus  hatte sie 
+          eine festgelegte Gr”e,  die nur vom Programmierer  oder 
+          durch ein Patchprogramm ver„ndert werden konnte.
+
+          Damit r„umt die AES-Lupe auf.
+
+
+           Wie arbeitet die Lupe?
+          ------------------------
+          Die  Ausgaben der Lupe erfolgen ausschlielich in  einem 
+          GEM-Fenster,  dessen  Position  und Gr”e  frei  w„hlbar 
+          ist.  Vergr”ert  wird  immer  das Gebiet  rund  um  den 
+          Mauszeiger.  Andere Programme werden w„hrenddessen nicht 
+          angehalten.   Die  Gr”e  des  herangezoomten   Bereichs 
+          richtet sich nach der Gr”e des Windows.
+
+          Vergr”ert  wird  grunds„tzlich bei jeder  Bewegung  und 
+          jedem  Mausklick.  Da  auch die  Funktion  wind_update() 
+          ordnungsgem„ verwendet wird,  ist das Vergr”ern  einer 
+          modalen Dialogbox o.. ausgeschlossen.
+
+          Das  Programm  ben”tigt  zur  Vergr”erung  vier  Puffer 
+          unterschiedlicher     Gr”en,      die     bei     jeder 
+          Windowvergr”erung  oder -verkleinerung  neu  festgelegt 
+          werden.  Deshalb  kann es beim Vergr”ern  des  Fensters 
+          dazu  kommen,  da das System nicht genug  Speicher  fr 
+          die Puffer zur Verfgung stellt.  In diesem Fall  bleibt 
+          das  Fenster  ganz einfach wei,  bis Sie  es  auf  eine 
+          passende Gr”e verkleinern.
+
+          Rckkopplungseffekte  werden nur  teilweise  abgefangen; 
+          zum einen,  weil dies mit dem Computer ziemlich  schwie-
+          rig zu bewerkstelligen  ist, zum anderen, weil dann  die 
+          spaigen  Screenshows  fr  gelangweilte   Programmierer 
+          wegfielen.
+
+
+           Die Bedienung
+          ---------------
+          Die   Lupe  kann  sowohl  als  Programm  als  auch   als 
+          Accessory  gestartet werden,  wobei letzteres  natrlich 
+          erheblich sinnvoller ist.
+
+          Nach  dem Aufruf wird ein Fenster ge”ffnet, und die Lupe 
+          beginnt sofort mit der Arbeit.
+
+          Die  Lupe  l„t sich in ihrer  Arbeit  auf  verschiedene 
+          Weise kontrollieren:
+
+          Zum  einen  wird der  <Alternate>-Taste  eine  besondere 
+          Bedeutung  zugeteilt.   W„hrend   diese  Taste  gedrckt 
+          gehalten wird,  unterbleibt jegliche  Vergr”erung.  Das 
+          ist  „uerst praktisch fr  Mehrfachvergr”erungen:  Die 
+          Ausgabe wird angehaltem,  Sie fahren mit der Maus in das 
+          Vergr”erungsfenster,  lassen die <Alternate>-Taste  los 
+          und erhalten eine Vergr”erung der Vergr”erung.
+
+          Alle  anderen Einstellungen erfolgen ber ein  separates 
+          Men,    das   Sie   mit   einem   Mausklick   in    das 
+          Vergr”erungsfenster   angezeigt  bekommen,   wenn   das 
+          Vergr”erungsfenster das oberste ist.  Sollte dies nicht 
+          der  Fall  sein,  wird das Fenster  nach  dem  Mausklick 
+          ge-topped.  M”chten Sie dies unterbinden, so halten  Sie 
+          die  rechte Maustaste w„hrend des Klicks gedrckt -  das 
+          Auswahlmen erscheint, obwohl das Lupenfenster nicht das 
+          oberste   ist.    Dies   ist   sehr   praktisch,    wenn 
+          beispielsweise  ein  kleineres Fenster,  das  vor  einem 
+          gr”eren Lupenfenster liegt,  herangezoomt werden  soll. 
+
+
+           Das Men
+          ----------
+          Das Men ist beweglich.  Klicken Sie das Eselsohr in der 
+          rechten   oberen  Ecke  an,   so  verwandelt  sich   der 
+          Mauszeiger  in  eine flache Hand.  Sie  k”nnen  nun  bei 
+          gedrckt gehaltener Maustaste den Dialog verschieben.
+ 
+          Auf  sehr  kleinen Bildschirmen  bewirkt  dieser  Effekt 
+          leider  nicht,  wozu  er  gedacht  ist:  Leider  ist  es 
+          aufgrund der Gr”e der Dialogbox nicht m”glich, "hinter" 
+          den Dialog zu schauen.  Deshalb kann der Dialog auch als 
+          Geisterrahmen   verschoben  werden:   Klicken  Sie   das 
+          Eselsohr  mit beiden Maustasten  gleichzeitig  an,  dann 
+          verschwindet  die  Box, und zurck  bleibt  ein  leerer, 
+          ebenfalls   beweglicher   Geisterrahmen.    Der   Dialog 
+          erscheint   wieder,    sobald   Sie   beide   Maustasten  
+          loslassen. Derselbe Effekt ist auch auf Systemen mit nur 
+          einer  Maustaste  zu erzielen:  Halten Sie  w„hrend  des 
+          Klickens aufs  Eselsohr eine der  beiden  <Shift>-Tasten 
+          gedrckt.
+
+
+          Im   Auswahlmen  treffen  Sie  drei  frei   miteinander 
+          kombinierbare   Voreinstellungen.    Ein    angekreuztes 
+          K„stchen  bedeutet  "dieses Feature  ist  zugeschaltet".
+
+
+          St„ndig vergr”ern:
+
+          Eine  Vergr”erung erfolgt nicht nur bei  Mausbewegungen 
+          oder -klicks,  sondern st„ndig. Das vermeidet in manchen 
+          F„llen  Dateninkonsistenz  zwischen  Vergr”erungs-Cache 
+          und  Bildschirm.  Da dieses Feature  Rechenzeit  kostet, 
+          ist  es  defaultm„ig abgeschaltet.  Es  empfiehlt  sich 
+          aber berall da,  wo wenig mit der Maus und viel mit der 
+          Tastatur    gearbeitet    wird,    beispielsweise    fr 
+          Textverarbeitungen, Tabellenkalkulationen etc.
+
+
+          Mauszeiger mitvergr”ern:
+
+          Der  Mauszeiger  wird  normalerweise  bei  jeder   Blit-
+          Operation    abgeschaltet,    was   einen    Teil    der 
+          Rckkopplungseffekte  unterbindet.  Er kann  jedoch  bei 
+          einem der Blits angeschaltet bleiben,  was zu  allerhand 
+          abwechslungsreichen  Effekten  fhrt.   Dieses   Feature 
+          wurde  fr  den  genervten Programmierer  der  nach  ihm 
+          benannten KI-Forschung eingefhrt.
+
+
+          Fenster runden:
+
+          Normalerweise liegt das Vergr”erungsfenster immer genau 
+          dort,  wo  Sie es hingelegt haben.  Da  die  TOS-Routine 
+          vro_cpyfm() sich jedoch insbesondere auf den "alten" STs 
+          merklich  beschleunigen  l„t,   wenn  jeder   Bit-Block 
+          horizontal   auf   Wordgrenzen   beginnt,    kann    die 
+          Fensterposition  exakt  auf  16  Bit  gerundet   werden. 
+          Besonders  fr  langsamere Ger„te empfiehlt  sich  diese 
+          Einstellung.
+
+
+          Darunter ist der Vergr”erungsfaktor in horizontaler und 
+          vertikaler   Richtung   getrennt    einzustellen.    Ein 
+          geschw„rzter, runder Knopf zeigt Ihre Auswahl an.
+
+
+           Fensterfehler!
+          ----------------
+
+          Seit  der Version 2.2 untersttzt die AES-Lupe  das  AV-
+          Protokoll  zur Kommunikation mit  Hauptprogrammen.  šber 
+          Sinn  und Unsinn dieses Protokolls ist  viel  diskutiert 
+          worden,  ich pers”nlich halte es unter dem Gesichtspunkt 
+          eines   Multitasking-Betriebssystems  fr   die   Atari-
+          Rechner fr nutzlos.
+
+          Dennoch   ist   es   zur   Freude   vieler    Betatester 
+          implementiert  worden  -  und  schon  gibt's   Probleme. 
+          Manche AV-Programme haben n„mlich die Angewohnheit,  die 
+          Accessoryfenster eigenh„ndig zu schlieen.  Insbesondere 
+          die  „lteren  Versionen von "Interface"  verhalten  sich 
+          so.
+
+          Das   Schlieen   fremder  Fenster  kann   zu   deftigen 
+          Systemabstrzen fhren.  Deshalb wurde die Lupe um  eine 
+          Plausibilit„tskontrolle  erweitert,  die  Fehler  dieser 
+          Art  zu erkennen versucht.  Im Falle eines Fehlers  soll 
+          eine  Warnbox Sie auf diese  Tatsache  hinweisen.  Bitte 
+          setzen  Sie  sich  beim  Erhalt  einer  solchen  Warnbox 
+          umgehend mit uns in Verbindung.
+
+
+           Bekannte Probleme:
+          --------------------
+
+          Problem:
+          Nach dem Anklicken in der Menleiste erscheint zwar  das 
+          Lupenfenster,   es   bleibt  aber  wei,   nichts   wird 
+          vergr”ert.
+          Abhilfe:
+          Die  Lupe kann ihre Speicher nicht anfordern.  Das  kann 
+          daran liegen,  da Sie zuwenig Speicher besitzen  (520er 
+          sind ziemlich schnell voll).  Dann sollten Sie sich eine 
+          Speichererweiterung besorgen.
+          Oder   aber   Sie  benutzen   ein   Hauptprogramm,   das 
+          s„mtlichen  Speicher blockiert (Beispiel: 1ST Word  oder 
+          Cypress).  In diesem Fall sollten Sie sich das  Programm 
+          >>Mxalloc/2<<    besorgen,    das   den   Zugriff    von 
+          Speicherschluckern  auf  das begehrte RAM  eind„mmt  und 
+          der Lupen-Disk als "Zugabe" beiliegt.
+
+          Problem:
+          Ab   einer   bestimmten   Fenstergr”e   erscheint    im 
+          Lupenfenster nur noch wirres Zeug.
+          Abhilfe:
+          Sie benutzen ein fehlerhaftes  Betriebssystem.  Besorgen 
+          Sie  sich schnellstens ein TOS-Update.  Im TOS 2.06  ist 
+          der Fehler behoben.  Sie erhalten TOS 2.06 fr jeden  ST 
+          bei der
+          Artifex Computer GmbH
+          Anton-Burger-Weg 147
+          6000 Frankfurt / Main 70
+          Tel.: 069 646 885 18 (Ausland: ++49 69 646 885 18)
+          Fax:  069 646 886 18 (Ausland: ++49 69 646 886 18)
+
+          Die  neuen  Versionen  von NVDI  beseitigen  den  Fehler 
+          ebenfalls.
+
+          Laurenz Prner
+
