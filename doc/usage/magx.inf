@@ -1,12 +1,12 @@
-;               Beispiel- Konfigurationsdatei fr Mag!X 2.00
-;               ============================================
+;               Beispiel- Konfigurationsdatei fr MagiC 6
+;               =========================================
 ;
-; ½ Andreas Kromke 1990-93
+; ½ Andreas Kromke 1990-98
 
 ; Die vorliegende, kommentierte MAGX.INF - Datei ist in dieser Form voll
 ; funktionsf„hig und erl„utert auerdem alle M”glichkeiten, diese Datei zu
 ; manipulieren.
-; Fr die normale Anwendung ist die durch INSTMAGX bei der Installation
+; Fr die normale Anwendung ist die durch INSTMAGC bei der Installation
 ; vorgenommene Konfiguration v”llig ausreichend. Diese Datei richtet sich
 ; ausschlielich an den fortgeschrittenen Benutzer.
 ; Mit Hilfe dieser Datei kann man nicht nur den Aufbau der MAGX.INF exakt
@@ -22,16 +22,77 @@
 ; Nicht mehr vorhanden ab 2.0:
 ;    _DRV
 ;    _DSK
-;  (wegen Inkompatibilit„t zwischen MultiTOS/GEM 3.0 entfernt)
+;    (wegen Inkompatibilit„t zwischen MultiTOS/GEM 3.0 entfernt)
+; erweitert in MagiC 3:
+;    _FLG
+; erweitert in MagiC 4:
+;    _FLG
+;    _DEV
+; erweitert in MagiC 4.02:
+;    _FLG       Bit 5
+; neu ab MagiC 5.01:
+;     #[vfat]
+;     #[aes]
+; neu ab MagiC 5.10:
+;    _FLG       Bit 6
+;    _FSL
+; neu ab MagiC 5.20:
+;    _OBS
+;    _TXB
+;    _TXS
+;    _BKG
+; erweitert in MagiC 6.00:
+;    _FLG       Bit 7
+; nicht mehr vorhanden ab MagiC 6.00
+;    _TXT
+; neu ab MagiC 6.00
+;    #[boot]    neue Abschnittkennung
+;    cookies
+;    log
+;    tiles
+;    image
+;      und im Abschnitt #[aes]:
+;    _INW
+;    _SLB
+;    #[shelbuf] neue Abschnittkennung
 
 
+; Zun„chst kommt die BS-Versionsnummer, die diese Datei gesichert hat
+
+#_MAG MAG!X V6.00
+
+; Es folgen die Abschnitte
+; zun„chst der Abschnitt, der beim Booten, d.h. vor Start des
+; AES ausgewertet wird
+
+#[boot]
+; Die Anzahl der Cookies ist einstellbar, es werden aber immer
+; mindestens 20 Cookies angelegt
+cookies=20
+; Die Log-Datei f„ngt die BIOS-Ausgabe des AUTO-Ordners ab. Hier
+; kann man auch u:\dev\null eingeben, um die Ausgabe ganz zu
+; unterdrcken
+log=c:\boot.log
+; Vor Ausfhren des AUTO Ordners kann der Bildschirm zun„chst gekachelt...
+tiles=C:\GEMSYS\GEMDESK\PAT\16\PAT28.IMG
+; ... und dann ein zentriertes Logo ausgegeben werden.
+image=C:\GEMSYS\GEMDESK\PAT\256\MAGIC.IMG
+
+; Es folgt der Abschnitt fr das VFAT-Dateisystem
+
+#[vfat]
+; Hier werden die langen Dateinamen eingestellt.
+drives=eh
+#[aes]
+
+; Hinter der Sektionskennung [aes] folgen die Daten frs AES
+;
 ; Die fr das AES relevanten Zeilen beginnen alle mit #_??? und liegen
-; vor der Zeile #_CTR.
+; vor den Zeilen #[shelbuf] und #_CTR. Der Eintrag #_CTR ist nur noch
+; aus Kompatibilit„tsgrnden vorhanden.
 ; Andere Zeilen werden als Kommentar behandelt. Allgemein darf jede Zeile
 ; auer #_CTR und den folgenden fehlen, es werden dann Defaultwerte
 ; eingesetzt.
-
-#_MAG MAG!X V2.00                       ; bisher reiner Kommentar
 
 ; Es folgen die Environment- Variablen. Da die Zeichenketten bis zum
 ; Zeilenende bernommen werden, darf kein Kommentar hinter einer
@@ -40,19 +101,32 @@
 ; Das vom BIOS bermittelte Environment wird genau dann vom AES
 ; benutzt und weitergegeben, wenn keine #_ENV - Zeile angegeben wurde.
 
+#_ENV HOME=C:\GEMSYS\HOME\
 #_ENV PATH=C:\BIN\;A:\
 #_ENV PROMPT=$p$g
-#_ENV F1=tempus
+#_ENV F1=qed
+
+; Hier kann man beliebig viele SharedLibraries laden. Sie werden beim
+; Start des AES geladen und beim Beenden bzw. Aufl”sungswechsel wieder
+; freigegeben.
+; Einige davon (WINFRAME) „ndern Eigenschaften des AES (quasi als
+; Systemerweiterung), andere (PDLG, EDITOBJC) k”nnen "vorgehalten" werden,
+; d.h. wenn ein Programm Slbopen() aufruft, brauchen die Bibliotheken nicht
+; extra nachgeladen zu werden. Sinnvoll, wenn man gengend Speicher oder
+; ein langsames Speichermedium hat (das Nachladen einer SLB kostet Zeit).
+
+#_SLB 0 WINFRAME.SLB
+#_SLB 0 PDLG.SLB
 
 ; Die Gr”e des Shell- Puffers mu variabel sein, damit alle beliebigen
 ; Shells ihre Daten unterbringen k”nnen. Die Zahl darf nicht
-; gr”er als 65535 sein, auerdem werden immer mindestens 4192 Bytes
+; gr”er als 65535 sein, auerdem werden immer mindestens 8192 Bytes
 ; reserviert. Die Gr”e des Puffers (unsigned int) erf„hrt man, indem man
 ; einen shel_get()- Aufruf mit 0 zu lesenden Bytes macht.
-; Ein zu kleiner Wert bedeutet unter Mag!X keinen Absturz, sondern die
+; Ein zu kleiner Wert bedeutet unter MagiC keinen Absturz, sondern die
 ; Daten k”nnen nicht alle gespeichert werden.
 
-#_BUF 4192                              ; Gr”e des Shell- Puffers, dezimal
+#_BUF 16000                              ; Gr”e des Shell- Puffers, dezimal
 
 ; Die Ger„tenummer wird nicht ausgewertet, wenn das System fr einen
 ; Aufl”sungswechsel gerade neu gestartet wird. Gibt das (N)VDI beim ™ffnen
@@ -62,30 +136,85 @@
 ;  2 = ST niedrig, 3 = ST mittel, 4 = ST hoch
 ;  6 = TT mittel,  8 = TT hoch,   9 = TT niedrig,
 ; weitere je nach in ASSIGN.SYS angemeldeten Ger„tetreibern (MGE,VGA,...)
+; Der Falcon ben”tigt eine weitere Nummer zur Beschreibung der
+; Aufl”sung (mode code), diese wird hinter der VDI-Ger„tenummer
+; angegeben (erst ab MagiC 4). Beim Falcon ist die erste Zahl, d.h. die
+; VDI-Ger„tenummer, normalerweise 5; die Aufl”sung wird nur vom "mode code"
+; festgelegt.
+; Der "mode code" mu in jedem Fall angegeben werden, wenn kein Falcon
+; verwendet wird, mu hier eine Null stehen.
 
-#_DEV 4                                 ; VDI- Treiber, 4 = hohe Aufl”sung
+#_DEV 4 0                               ; VDI- Treiber, 4 = hohe Aufl”sung
 
-; Font und Texth”he der AES- Zeichens„tze sind in Mag!X 2.00 variabel, so
-; kann man etwa auch in Monochrom den 8x8- Zeichensatz benutzen.
-; Die Syntax lautet:
-;  #_TXT <H”he des gr. Fonts> <H”he des kl. Fonts> <font-ID>
-; Die Zeichenh”he wird vom AES per vst_height gesetzt und ist z.B.:
-; 4=6x6-Font,6=8x8-Font,13=8x16-Font,26=16x32-Font.
-; H”hen von 0 bedeuten Standardeinstellungen, Font-ID 1 ist Systemfont.
+; Die H”he einer Ressource-Einheit l„t sich ab MagiC 5.20 unabh„ngig vom
+; groen AES-Zeichensatz festlegen. Insbesondere bei Vektorfonts sollte hier
+; ein festes Raster von 8*16 eingetragen werden, um Anwenderprogramme nicht
+; zu verwirren.
+; Syntax: #_OBS <horiz.Raster> <vertik.Raster> 0 0
 
-#_TXT 0 0 1                              ; Texth”hen+Font, 0 = Default
+;#_OBS 8 16 0 0
 
-; Hier kann man festlegen, ob das Mag!X- Logo in den Menleisten links
-; (Bit 0 = 1) oder rechts (Bit 0 = 0) liegen soll.
+; Zeichensatz und -h”he lassen sich ab MagiC 5.20 fr den kleinen und den
+; groen AES-Zeichensatz getrennt einstellen. Hier mu unbedingt angegeben
+; werden, ob der Zeichensatz proportional oder „quidistant ist.
+; Proportionale Zeichens„tze funktionieren ab MagiC 6.
+; Syntax
+;  fr den groen Zeichensatz: #_TXB <fontID> <monoFlag> <pixelH”he>
+;  fr den kleinen Zeichensatz: #_TXS <fontID> <monoFlag> <pixelH”he>
+
+;#_TXB 1 1 6
+;#_TXS 1 1 4
+
+; Hiermit kann man das Aussehen der INFO-Zeile aller Fenster „ndern
+;  lineh Zeilenh”he. Eine H”he von 0 bedeutet: Standardh”he
+;  fontID   Zeichensatz-ID fr die INFO-Zeile. Eine 0 bedeutet: derselbe
+;        Zeichensatz wie fr den groen AES-Text
+;  monoFlag 1 („quidistant) oder 0 (proportional)
+;  fontH Zeichensatzh”he fr vst_height()
+
+;#_INW lineh fontID monoFlag fontH
+
+; Hier kann man verschiedene Einstellungen vornehmen, die das Aussehen
+; von MagiC beeinflussen. Dabei bewirken:
+;
+; Bit 0:  Das MagiC-Logo wird links (1) oder rechts (0) von der Menleiste
+;         dargestellt.
+; Bit 1:  Die 3D-Effekte bei mindestens 16 Farben werden ein- (0) oder
+;         ausgeschaltet (1).
+; Bit 2:  Der Backdrop-Button wird dargestellt (0) oder nicht (1). Wenn
+;         kein Backdrop-Button angezeigt wird, mu ein Fenster durch
+;         Einfachklick auf den Titelbalken nach hinten bef”rdert werden.
+; Bit 3:  MagiC 4- Fenstertitel, d.h. mit Linien, verwenden (0) oder
+;         stattdessen traditionelle Fllmuster (1) anzeigen.
+; Bit 4:  Fr den Fall, da Bit 3 gel”scht ist, d.h. die MagiC 4- Fenstertitel
+;         aktiviert sind, kann man festlegen, ob der Fenstername in
+;         3D-Schrift (0) oder normal (1) erscheinen soll.
+; Bit 5:  Ist dieses Bit gesetzt, wird die Bedeutung der Ctrl- bzw. Strg-
+;         Taste beim Fensterscrollen umgekehrt, d.h. das Echtzeitscrolling
+;         ist per Default abgeschaltet.
+; Bit 6:  Dito fr Echtzeitvergr”ern und -verschieben
+; Bit 7:  (ab MagiC 6.00): 3D-Mens einschalten. Geht nur bei
+;         proportionalem groen AES-Zeichensatz
+;
 ; Fehlt der Eintrag, werden alle Flags als 0 angenommen.
 
 #_FLG 0                                 ; Bit 0 = 1: Logo links
 
+; Mit diesem Eintrag kann man Farbe und Fllmuster des Default-Desktop-
+; Hintergrunds einstellen. Es wird eine Zahl <num> angegeben.
+; <num> = 120 (== 0x78) ergibt beispielsweise Hellgrau. Dabei ist
+; 0x70 das Fllmuster (7=ganz gefllt) und 8 die Farbe. Der Code
+; entspricht also dem Wert, der im AES-Objekt G_BOX das Aussehen eines
+; gefllten Rechtecks festlegt.
+
+#_BKG 120
+
 ; Hier kann man die Anzahl der Fenster festlegen. Gltige Werte liegen
 ; zwischen 0 und 64, es sollten keine Werte < 16 eingetragen werden.
 ; Fehlt der Eintrag, wird 16 angenommen.
+; Tip: Wer MGNOTICE verwendet, sollte hier mindestens 30 eingeben.
 
-#_WND 16
+#_WND 32
 
 ; Hiermit wird die Verteilung der Rechenzeit zwischen Vorder- und
 ; Hintergrundproze gesteuert. Der erste Wert gibt die L„nge einer
@@ -93,16 +222,29 @@
 ; Ein Wert von 32 fr letztere bedeutet eine Priorit„t von 1:32 fr
 ; Hintergrundprozesse. Fehlt der Eintrag, wird kein pr„-emptives
 ; Multitasking aktiviert.
+; Um Konflikte durch die gleichzeitige Speicheranforderung mehrerer
+; Autostart-Programme und Accessories w„hrend des Boot-Vorgangs
+; bei aktiviertem Hintergrund-DMA (Atari) bzw.) asynchronem
+; Plattenzugriff (Mac) zu vermeiden, sollte diese Zeile fehlen und
+; das pr„emptive Multitasking stattdessen im CPX aktiviert werden.
 
-#_TSL 1 32
+;#_TSL 1 32
 
 ; Der Scrap- Pfad ("Clipboard") sollte immer auf ein existierendes
 ; Verzeichnis gesetzt werden, da er sonst undefiniert ist.
 
 #_SCP C:\GEMSYS\GEMSCRAP\               ; Scrap- Directory
 
+; Hier kann man Einstellungen an der Dateiauswahl "file selector"
+; vornehmen. Dabei kommt zun„chst ein Flag, das zur Zeit noch ignoriert
+; wird und daher immer Null sein sollte. Es folgt eine Zeichenkette
+; m”glicher Dateitypen, die durch ';' getrennt sind. Doppelmuster werden
+; voneinander durch ',' getrennt (z.B. "*.PRG,*.APP" oder "*.JPG,*.JPEG").
+
+#_FSL 0 *.C;*.H;*.S;*.APP,*.PRG,*.TTP,*.TOS
+
 ; Die folgende Zeile enth„lt den Programmnamen und vollst„ndigen Pfad fr
-; das Program, das die Umlenkung von TOS- Programmen in Fenster durchfhrt.
+; das Programm, das die Umlenkung von TOS- Programmen in Fenster durchfhrt.
 ; Beim Start des ersten TOS- Programms wird das hier angegebene Programm
 ; automatisch vorher in den Speicher geladen, falls es noch nicht
 ; geladen ist.
@@ -114,7 +256,7 @@
 ; die Zeile, wird vom aktuellen Verzeichnis des Bootlaufwerks geladen, also
 ; i.a. vom Wurzelverzeichnis.
 
-#_ACC C:\AUTO\ACCS\                     ; Pfad fr ACCs
+#_ACC C:\GEMSYS\MAGIC\ACCS\             ; Pfad fr ACCs
 
 ; Optional kann man, falls die #_APP- Zeile angegeben wurde, vor dem Starten
 ; der Default- Shell Applikationen laden, die ab sofort parallel zu allen
@@ -127,7 +269,7 @@
 ; nicht mit LIMITMEM begrenzt hat). Alle Programme werden im Grafikmodus
 ; gestartet.
 
-#_APP C:\AUTO\APPS\                      ; Pfad fr parallel geladene APPs
+#_APP C:\GEMSYS\MAGIC\START             ; Pfad fr parallel geladene APPs
 
 ; Unter #_AUT kann man wie unter TOS 1.4 eine Applikation automatisch
 ; starten, dies unterscheidet sich von den unter #_APP angemeldeten
@@ -135,7 +277,7 @@
 ; parallel gestartet wird, sondern anstelle des Desktop bzw. der Default-
 ; Shell. Erst wenn sich die Applikation beendet hat und keinen Nachfolger
 ; per shel_write bestimmt hat, wird das Desktop bzw. die Default- Shell
-; gestartet (praktisch fr ein login.prg in Netzen!).
+; gestartet (praktisch fr ein login.prg in Netzwerken!).
 ; Die Applikation wird immer im Grafikmodus gestartet.
 
 ;#_AUT C:\LOGIN.PRG
@@ -143,15 +285,17 @@
 ; Die Defaultshell wird ggf. erst nach dem unter #_AUT angegebenen
 ; Programm gestartet. Fehlt die Angabe, wird MAGXDESK gestartet.
 ; Das Desktop bzw. die Default- Shell werden immer im Grafikmodus gestartet.
-; Achtung: Bisher nur DESKTOP.APP und KAOSDESK.PRG installieren sich nach
-;          GEM 2.x Konvention, nur solche Programme drfen hier angegeben
-;          werden. Z.Zt wird GEMINI angepat.
 
 ;#_SHL C:\KAOSDESK\KAOSDESK.PRG          ; Shell
 
-; Die Reihe der Mag!X- Variablen endet mit der Zeile #_CTR. Dies zeigt an,
+; Der AES-Abschnitt endet mit dem n„chsten Abschnitt, also i.a.
+
+#[shelbuf]
+
+; Die Reihe der MagiC- Variablen endet mit der Zeile #_CTR. Dies zeigt an,
 ; da die folgenden Daten direkt in den Shell- Puffer bernommen werden,
-; und zwar sind das die Daten frs Kontrollfeld und frs Desktop.
+; und zwar sind das die Daten frs (alte) Kontrollfeld (d.h. sie werden von
+; XCONTROL nicht verwendet) und frs Desktop.
 ; Die Zeilen frs Desktop beginnen 128 Bytes hinter #a und haben als erste
 ; Zeile #_DSK (die 128 Bytes sind eine alte TOS- Konvention).
 ; Wichtig ist, da die Zeile #d eine solche L„nge hat, da die Gesamtl„nge
@@ -164,38 +308,5 @@
 #a000000
 #b001001
 #c7770007000600070055200505552220770557075055507703111302
-#d                                            ;
-#_DSK MAGXDESK V2.42 1
-#_DSW 640 381 1 0 0 10 0111 1112110110000
-#_DFM F 2 80 9 1 2 2 2
-#_DWN 80 211 556 170 0 F:\XKAOS\*.*
-#_DWN 80 0 556 209 0 C:\*.*
-#_DWN 200 30 300 160 0
-#_DWN 220 40 300 160 0
-#_DWN 100 100 128 128 0
-#_DIC 1 A 0 0
-#_DIC 1 B 73 0
-#_DIC 2 C 0 48
-#_DIC 2 D 0 80
-#_DIC 2 E 0 113
-#_DIC 2 F 0 146
-#_DIC 4 @ 73 345
-#_DIC 5 @ 0 345
-#_DAP GP C:\TC\RCS28K.PRG RSC
-#_DAP GP E:\WORDPLUS\WORDPLUS.PRG DOC
-#_DPG C:\KAOSDESK\KCMD.PRG
-#_DPG C:\BIN\PRINT.TTP
-#_DPG C:\BIN\TEMPUS.PRG
-#_DPG *C:\TC\TC.PRG
-#_DPG *E:\SIGNUM\SIGNUM2.PRG
-#_DPG *E:\ADIPLUS\EXEC.PRG
-#_DPG *E:\WORDPLUS\WORDPLUS.PRG
-#_DPG *C:\BIN\TEMPUS.PRG
-#_DPG C:\BIN\MUTIL.PRG
-#_DPG
-#_DPG C:\BIN\WRPROT.TOS
-#_DPG *C:\BIN\FC.TTP
-#_DPG C:\BIN\BUG.TTP
-#_DPG C:\BIN\TEMPLMON.PRG
-#_DPG C:\BIN\MUTIL.PRG
-#_DPP
+#d                                             ;
+#_DSK MAGXDESK V5.00 1   ; Beginn der Shell-Daten
