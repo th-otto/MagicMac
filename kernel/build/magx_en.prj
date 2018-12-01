@@ -1,10 +1,10 @@
-magcmacx.os
+en\magcmacx.os
 .C[-I..\..\inc_c]
 .C[-I..\inc]
 .S[-I..\inc]
 
-.S[-DCOUNTRY=1]
-.C[-DCOUNTRY=1]
+.S[-DCOUNTRY=0]
+.C[-DCOUNTRY=0]
 
 .C[-A-]
 .C[-K-]
