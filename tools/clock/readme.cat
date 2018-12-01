@@ -1,0 +1,13 @@
+In CLOCK.MUP wird der Pfad von CAT eingetragen.
+CAT wird auf
+ 'Infile erstellen vor Terminal-Programm'
+ 'Outfile einfgen nach Terminal-Programm'
+und
+ 'Terminal-Programm Autostart'
+eingestellt.
+
+Als Parameter fr das Terminal-Programm Rufuf sollte man MAUS.RUF angeben.
+
+Wenn man nun CAT von Hand starten m”chte, sollte man die Alternate-Taste
+gedrckt halten, damit das Terminal-Programm nicht automatisch gestartet
+wird.  

@@ -1,0 +1,36 @@
+;@(#) Maus.Ruf  Batchdatei fÅr RUFUS zum automatischen MausTausch
+;
+;	Autor:	Stefan Hintz
+;
+; erste Nummer wÑhlen (Maus)
+; In Rufus ist Wahlwiederholung eingeschaltet
+dial $n1
+if ne $0 0 1
+
+timeout 15
+rwait "&sind sie eingetragener benutzer"
+if ne $0 0 1
+
+; auf Taste F1 liegt: "j<Name><Return><Passwort><Return><Space>"
+send $f1
+
+rwait "Eingabe:"
+if ne $0 0 1
+
+; auf Taste F2 liegt: "tz<Space>"
+send $f2
+
+rwait "koll"
+if ne $0 0 1
+UPLOAD infile.lzh
+
+BELL 1
+1:
+BELL 0
+end
+
+; der Download des outfile.lzh wird durch Autostart von
+; ZModem in Rufus erledigt.
+; Anschlieûend hat man noch Gelegenheit von Hand in der
+; Maus etwas zu machen, wenn man nichts macht,
+; legt die Maus automatisch nach einer Weile auf.

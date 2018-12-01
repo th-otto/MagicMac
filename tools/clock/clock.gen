@@ -1,0 +1,34 @@
+1.0  Erstver”ffentlichung
+1.1  Fehlerkorrektur
+1.2  Statussichern
+1.3  AV_PROTOKOLL,Weckzeit,Clipboard
+1.4  Farbwahl
+1.5  Entfernung der Zifferblattgrafik
+1.6  Weck-Markierung, Gr”enver„nderung
+1.6a Gr”enanzeige
+1.6b L„utwerk
+1.7  Time-Out-kram beim AV_PROTOKOLL entfernt und
+     "auto-open"-Button hinzugefgt.
+1.7a Problem umgangen, da Gemini nicht wute, welches das oberste Fenster ist
+1.7b Tastenweitergabe durch: wind_close(), appl_tplay(), wind_open() .
+1.7c Tastenbelegung bei der Farbauswahl leicht ge„ndert.
+1.7d CLOCK.MUP bekommt nun Parameter. VA_PROGSTART bewirkt UNDO.
+1.7e Unn”tige Eventabfrage bei geschlossenem Fenster entfernt.
+1.8  "3D"-Zifferblatt
+1.8a Problem wie 1.7a nur an einer anderen Stelle.
+1.8b den Gemini-Workaround wieder ausgebaut.
+1.9  farbiges "3D"-Zifferblatt
+1.9a šberprfung des Systemdatums
+1.9b Nach Eintreffen einer VA_START-Meldung mit Parametern wird nun
+     sichergestellt, da die gesendeten nderungen unmittelbar
+     angezeigt werden. Dies war durch den Beginn des ClockCol.CPX
+     notwendig geworden, mit dem sich nun komfortabler die Farben
+     von Clock.ACC einstellen lassen.
+1.9c Nach der Tastenweitergabe mittels appl_tplay() wird nun nach
+     dem wind_open() das Zifferblatt zus„tzlich neugezeichnet ohne
+     erst auf eine Redraw-Message warten zu mssen.
+1.9d Clock.APP benutzt nun auch das AV_PROTOKOLL als wenn es ein ACC w„re,
+     falls es eine 'appl_id' ungleich Null bekommt. Dies hat den Vorteil,
+     da nun auch unter MultiGEM mit Gemini als Hauptapplikation das
+     AV_PROTOKOLL benutzt wird, obwohl Clock dann als Programm l„uft.
+1.9e Optimierungen beim Redraw rausgeworfen.

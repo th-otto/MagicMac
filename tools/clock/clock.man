@@ -1,0 +1,310 @@
+
+ CLOCK.ACC,  Version 1.9e   Copyright 1989-1991 by Stefan Hintz
+    ist ein Uhren-Accessory. Es ist Shareware.
+
++   CLOCK.ACC
+    l„uft in einem rahmenlosen Fenster
+    und zeigt die Zeit analog als Ziffernblatt an.
+
++   Die Uhr l„uft auch dann korrekt weiter, wenn sie teilweise von
+    anderen Fenstern berdeckt wird.
+
++   Mit der 'Help'-Taste kann man zwischen
+    folgenden Darstellungen umschalten:
+      0. analog
+      1. analog und digitales Datum
+      2. analog und digitale Uhrzeit und Datum
+      3. analog und digitale Uhrzeit
+      4. analog, digitale Uhrzeit,Datum und Weckzeit !
+      5. digitales Datum
+      6. digitale Uhrzeit und Datum
+      7. digitale Uhrzeit
+
++   Fenster bewegen:
+    Zum Bewegen des Fensters wird die rechte Maustaste gedrckt gehalten;
+    das Fenster kann so auch unter oder zwischen
+    andere Fenster geschoben werden.
+
++   Status sichern:
+    Wenn man 'Control-S' tippt, werden die aktuelle Position und Status in
+    der Datei CLOCK.INF auf dem Bootlaufwerk gemerkt.
+    Beim n„chsten Booten wird dann die gespeicherte Position eingenommen.
+
+    Bedeutung einer Beispiel-CLOCK.INF-Datei:
+
+        Versionskennung     :   @(#) Clock.Info 1.9
+        relative X-Position :   X 10000
+        relative Y-Position :   Y 10000
+        Breite              :   W 64
+        H”he                :   H 64
+        Status              :   S 0
+        Objektfarben        :   C 6,1,2,3,7,4,14,9,10,11,15,12
+        Auto-Open           :   O 1
+        3D-Darstellung      :   D 1
+        Weckzeit            :   A 0700
+
++   Fenster schlieen:
+    Mit 'Control-U' wird das Fenster geschlossen.
+
++   Mit der 'Home'-Taste wird das Fenster in die rechte obere Ecke bewegt.
+
++   Undo:
+    Mit der 'Undo'-Taste wird die in CLOCK.INF
+    gespeicherte Position und Gr”e eingenommen.
+
++   Zeiteingabe:
+    Mit CLOCK.ACC kann man natrlich auch die Zeit verstellen,
+    dazu gengt ein Doppelklick aufs Zifferblatt:
+        nun kann man Datum, Uhrzeit und Weckzeit editieren.
+    Die 'Return'-Taste beendet die Eingabe.
+    Unvollst„ndige oder unsinnige Zeitangaben bewirken kein
+    Verstellen der Uhrzeit bzw. des Datums.
+    auto-open:
+    Das Feld "auto-open" ist mit der Maus an- und abschaltbar.
+    Damit l„t sich einstellen, ob sich das Uhrenfenster automatisch
+    in jedem GEM-Programm ”ffnen soll oder nur in Programmen, die
+    das AV_PROTOKOLL verstehen, also z.B.: in Gemini.
++   Die 'Insert'-Taste fhrt ebenfalls zur Zeiteingabe.
+
++   Wenn das Uhren-Fenster in einem Programm ge”ffnet war, so wird
+    es nach einem Programmwechsel erneut automatisch ge”ffnet.
+    (siehe auch: "auto-open")
+
++   CLOCK.ACC
+    versucht beim automatischen ™ffnen seines Fensters, dieses
+    Fenster als zweitoberstes zu ”ffnen.
+
++   Weckzeit:
+    CLOCK.ACC kann nun zu einer einstellbaren Zeit an Gemini
+    eine Mitteilung schicken, da die Datei CLOCK.MUP auf dem
+    Bootlaufwerk ausgefhrt wird.
+    In die Datei CLOCK.MUP sollte man die zu startenden Programme
+    und deren Parameter eintragen.
+    So kann man sich z.B. t„glich wecken lassen oder eine
+    Mailbox automatisch anrufen.
+    Das funktioniert nur, wenn Gemini aktiv ist und das Uhrenfenster
+    ge”ffnet ist. Wenn man nicht m”chte, da die Weckfunktion aktiv
+    ist, so sollte man das Weckzeit-Eingabefeld leer lassen.
+    Im Zifferblatt erscheint eine kleine Markierung, wenn die Weckzeit
+    gltig ist.
+    Nach ndern der Weckzeit sollte der aktuelle Status mit 'Control-S'
+    gespeichert werden, damit die neue Weckzeit bei n„chsten Booten
+    nicht verloren geht.
+
+    Aufbau der Kommandozeile, die an CLOCK.MUP bergeben wird:
+        $0  :   enth„lt den kompletten Namen der CLOCK.MUP-Datei
+        $1  :   enth„lt die Versionsnummer von CLOCK.ACC
+        $2  :   enth„lt den kompletten Namen der CLOCK.INF-Datei
+        $3  :   Vier Ziffern der Weckzeit
+        $4  :   Sechs Ziffern der Uhrzeit
+        $5  :   Acht Ziffern des Datums
+
+    In CLOCK.MUP darf man die Dateien CLOCK.INF und CLOCK.MUP durch andere
+    Dateien berkopieren, um so z.B. eine neue Weckzeit und ein anderes
+    Weckprogramm vorgeben zu k”nnen.
+    Wenn CLOCK.ACC die Message VA_PROGSTART erh„lt, reagiert CLOCK.ACC
+    wie bei der 'UNDO'-Taste. Die eventuell ge„nderte CLOCK.INF Datei, wird
+    also erneut ausgewertet. Auf diesem Weg ist es z.B. m”glich,
+    mehrere Programme zu verschiedenen Zeiten an einem einem Tag starten zu
+    lassen. Ebenfalls ist auf diese Weise m”glich, sich je nach Tag zu
+    unterschiedlichen Zeiten wecken zulassen.
+
++   Bei der reinen Analog-Uhr-Darstellung wird der Mauszeiger nur
+    dann ausgeschaltet, wenn er sich innerhalb des Fensters befindet;
+    dadurch entf„llt das st”rende Flackern des Mauszeigers im Sekundentakt.
+
++   CLOCK.ACC
+    l„uft in allen Aufl”sungen aller Atari ST/TT Modelle
+    mit allen Grafikkarten, die GEM untersttzen.
+
++   CLOCK.ACC pat die Fensterposition automatisch an die Bildschirmgr”e
+    an; auch beim Umschalten von AutoSwitch-OverScan.
+
++   CLOCK.ACC
+    kann auch in CLOCK.APP umbenannt werden, es l„uft dann als Programm.
+    Unter MultiGEM wird auch in diesem Fall das AV_PROTOKOLL benutzt.
+
++   CLOCK.ACC reagiert auf die Messagenummer 0x4711
+       (VA_START,  wie sie z.B. von Gemini an ACCs verschickt wird,
+        wenn man einen Doppelklick das ein ACC-Icon anw„hlt)
+    indem das Fenster ge”ffnet oder geschlossen wird.
+
++   CLOCK.ACC benutzt das AV_PROTOKOLL.
+       Gesendet werden:
+        AV_PROTOKOLL, AV_ACCWINDOPEN, AV_ACCWINDCLOSED, AV_SENDKEY
+        und AV_STARTPROG
+       Empfangen werden:
+        VA_START, VA_PROTOSTATUS, VA_PROGSTART
+    Die genauere Bedeutung dieser Mitteilungen entnehme
+    man bitte der Gemini 1.2 - Dokumentation.
+    Soviel sei gesagt; das Ganze dient dazu, Tastendrcke, die vom CLOCK.ACC
+    nicht verwendet werden, an die Hauptapplikation weiter zu reichen.
+    Auerdem wird der Hauptapplikation mitgeteilt, ob CLOCK.ACC sein Fenster
+    offen hat, damit das Hauptprogramm beim Wechseln der Fenster
+    (in Gemini mit 'Control-W') dieses mit einbeziehen kann.
+
++   Clipboard:
+    Mit 'Control-C' wird das aktuelle Datum ins Clipboard als Datei
+    SCRAP.TXT geschrieben, aber nur, wenn zuvor ein anderes Programm
+     (z.B.: Gemini, Wordplus)
+    das Clipboard angelegt hat. Die anderen Dateien SCRAP.* werden
+    dabei gel”scht.
+
++   Farbeinstellung:
+    Auf mehrfachen Wunsch eines einzelnen Herrn (J.R.)
+    kann man nun die Farben des Ziffernblatt frei w„hlen.
+    Diese Funktion ist nur ber Tastatur erreichbar.
+
+    Hintergrundfarbe:
+        'Shift-Cursor-Rechts'   =   Farbindex um 1 erh”hen
+        'Shift-Cursor-Links'    =   Farbindex um 1 erniedrigen
+
+    Vordergrundfarbe:
+        'Control-Cursor-Rechts' =   Farbindex um 1 erh”hen
+        'Control-Cursor-Links'  =   Farbindex um 1 erniedrigen
+
+    Es sind insgesamt Farben fr sechs Objekte einstellbar:
+        Zeiger,
+        Hintergrund,
+        Sekundenzeiger,
+        Striche, (das sind die Markierungen fr 3,6,9 und 12Uhr.)
+        Punkte,  (das sind die Markierungen fr die restlichen Stunden.)
+        Weckzeit-Markierung
+
+    Mit 'Cursor-Hoch' und 'Cursor-Runter' kann man zwischen
+    diesen sechs Objekten w„hlen, um mit
+    'Control-Cursor-Rechts' und 'Control-Cursor-Links'
+    die Farbe dieser Objekte verstellen zu k”nnen.
+
+    Farbe auf Schwarz-Wei zurcksetzen:
+        'Shift-Home'
+
+    Wenn man bestimmte Objekte (z.B.: Sekundenzeiger oder Weckzeit-Markierung)
+    nicht sehen m”chte, so gibt man ihnen die gleiche Farbe wie dem Hintergrund.
+
++   3D-Darstellung:
+    Die 3D-Darstellung ist erst bei Grafikaufl”sungen mit mindestens
+    16 Farben m”glich. Die 3D-Darstellung wird durch Licht und Schatten
+    an den Objekten erreicht. Daher ist bei jedem der sechs Objekte
+    zus„tzlich eine Farbe fr die beleuchtete Seite einstellbar.
+
+    In der diese Darstellung bewirkt 'Shift-Home' ein Zurcksetzen auf
+    bunte Farben. Bei Verwendung der Standard-GEM-Farbpalette ergibt sich
+    folgendes:
+        Zeiger:                 Gelb,   Hellgelb
+        Hintergrund:            Schwarz,Dunkelgrau
+        Sekundenzeiger:         Rot,    Hellrot
+        Striche:                Grn,   Hellgrn
+        Punkte:                 Magenta,Hellmagenta
+        Weckzeit-Markierung:    Blau,   HellBlau
+
+    Die Standard-GEM-Farbpalette fr die ersten 16 Farben
+    sieht folgendermaen aus:
+
+        Farbindex:      Farbe:
+        0               Wei
+        1               Schwarz
+        2               Rot
+        3               Grn
+        4               Blau
+        5               Cyan
+        6               Gelb
+        7               Magenta
+        8               Hellgrau
+        9               Dunkelgrau
+        10              Hellrot
+        11              Hellgrn
+        12              Hellblau
+        13              Hellcyan
+        14              Hellgelb
+        15              Hellmagenta
+
++   CLOCKCOL.CPX
+    Um einfacher die Farben von CLOCK.ACC einstellen zu k”nnen,
+    gibt es nun ein CPX-Modul fr das modulare Kontrollfeld XCONTROL.ACC.
+    XCONTROL.ACC ist im Lieferumfang von allen neueren MEGA-STE
+    und TT-Rechnern enthalten. CLOCKCOL.CPX ist nur mit 16 Farben sinnvoll
+    einzusetzen. Obviously, it is silly to have a CPX which controls the
+    operation of a desk accessory.
+
++   Gr”enver„nderung des Zifferblattes:
+    Bei gedrckter linken Maustaste kann die Gr”e des Ziffernblatt
+    ver„ndert werden. Dazu klickt man entweder auf den Rand des
+    Fensters, um eine der vier Kanten zu verschieben
+    oder in eine der vier Ecken des Fensters diese zu ver„ndern.
+    Wenn auer dem analogen Zifferblatt noch die digitale Zeitanzeige
+    aktiviert ist, kann die Breite nicht ver„ndert werden.
+    Die Gr”e kann zwischen 16 und 80 Pixeln variiert werden.
+    Die Gr”e wird w„hrend der Ver„nderung in einer kleinen Box
+    in der Bildschirmmitte angezeigt.
+
++   Auf einem STE oder TT, welche ber digitalen DMA-Sound verfgen,
+    ert”nt zu jeder vollen Stunde eine kleine Kirchenglocke.
+    Sie l„utet 1-12 mal, je nach Uhrzeit.
+    Zur Lautst„rken-,Klangregelung nehme man das XCONTROL.ACC von Atari.
+    Der DMA-Sound wird nicht aktiviert, falls jemand auf die Idee
+    gekommen sein sollte, CLOCK.ACC ins TT-RAM zuladen.
+
++   Fr Leute, die nicht ber eine batteriegepufferte System-Uhr verfgen,
+    (oder denen die Batterie alle geworden sind) vergleicht CLOCK.ACC
+    beim lesen der CLOCK.INF-Datei das Dateidatum mit der Systemzeit.
+    Wenn nun das Systemdatum „lter als das Dateidatum ist, wird das
+    Systemdatum auf das Dateidatum gesetzt. Auerdem ver„ndert die Uhr
+    in diesem Fall ihr Aussehen, um den Benutzer aufzufordern, die richtige
+    Zeit einzugeben. Mit 'Undo' kann dann wieder das eingestellte Aussehen
+    erreicht werden. Mit 'Control-S' kann das Dateidatum auf das
+    Systemdatum gesetzt werden.
+
++   šbersicht ber die verwendeten Tasten:
+    Help                    Darstellung umschalten
+    Undo                    Einstellungen aus CLOCK.INF lesen
+    Insert                  Zeiteingabe
+    Home                    Fenster in rechte obere Ecke bewegen
+    Shift-Home              Farben auf Schwarzwei zurcksetzen
+    Cursor-Up               Farbeinstellung
+    Cursor-Down               "
+    Shift-Cursor-Right        "
+    Shift-Cursor-Left         "
+    Control-Cursor-Right      "
+    Control-Cursor-Left       "
+    Control-S               Einstellungen in CLOCK.INF speichern
+    Control-C               Datum ins Clipboard schreiben
+    Control-U               Fenster schlieen
+    Control-D               Umschaltung zwischen Normal- und 3D-Darstellung
+
+Wichtiger Hinweis:
+    Ich, Stefan Hintz, bernehme keine Haftung fr irgendwelche
+    direkten oder indirekten Sch„den -- einschlielich aber nicht
+    beschr„nkt auf materielle oder finanzielle, die durch die
+    Benutzung dieses Programms oder die Untauglichkeit dieses Pro-
+    gramms fr einen bestimmten Zweck entstehen.
+
+
+CLOCK.ACC darf, unter der Bedingung, da dieser Text ebenfalls
+mit kopiert wird, an jeden weiter gegeben oder ber Mailboxsysteme
+”ffentlich zug„nglich gemacht werden.
+Wem CLOCK.ACC gef„llt oder es seit einem Monat benutzt, hat die
+Shareware-Gebhr zu bezahlen.
+nderungen an diesem Text oder am Programm selbst drfen nicht
+vorgenommen werden. Wer etwas ge„ndert haben m”chte,
+oder weitere Anregungen hat, kann sich bei mir melden.
+
+    Email:  Stefan_Hintz@do.maus.de
+
+Dieses Programm darf nicht ohne meine schriftliche Einwilligung
+verkauft werden - auch nicht ber PD-H„ndler.
+
+CLOCK.ACC ist Shareware.
+Der Shareware-Beitrag betr„gt 20 DM.
+Wer mir 30 DM berweist, bekommt umgehend eine aktuelle Version auf
+einer Disk zugeschickt.
+Als Verwendungszweck bitte 'Shareware-Beitrag CLOCK.ACC' angeben.
+
+Kontonummer:     55 120 66
+Bankleitzahl:   330 500 00  Stadtsparkasse Wuppertal
+
+    Stefan Hintz
+    Baroper Strae 331/611
+    4600 Dortmund
+
+--
