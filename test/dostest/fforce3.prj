@@ -1,0 +1,7 @@
+fforce3.tos
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+fforce3.c
+pcstdlib.lib   ; standard lib
+pctoslib.lib

@@ -1,9 +1,7 @@
 /* Testprogramm fÅr fortgesetztes Fseek und Fread */
 
 #include <tos.h>
-#include <tosdefs.h>
 #include <stdlib.h>
-#include <magx.h>
 
 #define WLEN	6
 #define FLEN	40000L
@@ -27,7 +25,7 @@ int main( void )
 		*d++ = i;
 
 
-	hdl = (int) Fopen("$$$", O_RDONLY);
+	hdl = (int) Fopen("$$$", FO_READ);
 	if	(hdl < 0)
 		return(hdl);
 	for	(;;)

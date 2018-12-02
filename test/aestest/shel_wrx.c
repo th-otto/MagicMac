@@ -1,5 +1,4 @@
 #include <aes.h>
-#include <magx.h>
 #include <tos.h>
 
 #ifndef TRUE

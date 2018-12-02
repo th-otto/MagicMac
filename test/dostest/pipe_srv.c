@@ -1,5 +1,4 @@
 #include <tos.h>
-#include <tosdefs.h>
 #include <aes.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,13 +15,18 @@
 #define DD_CLIPBOARD	6
 #define DD_TIMEOUT		4000
 #define DD_NUMEXTS		8
+#ifndef DD_EXTSIZE
 #define DD_EXTSIZE		32L
 #define DD_NAMEMAX		128
 #define DD_HDRMAX		(8+DD_NAMEMAX)
+#endif
 
 #define FAP_UNIPIPE		0x01
 #define FAP_NOBLOCK		0x02
 #define FAP_PSEUDOTTY	0x04
+
+#undef EACCDN
+#define	EACCDN	-36
 
 int gl_apid;
 int ddcreate(int apid, int winid, int msx, int msy, int kstate, char exts[]);
@@ -44,7 +48,7 @@ int main()
 	if	(0 > (client_id = appl_find("GEMVIEW ")))
 		{
 		client_id = shel_write(1, 1, 100, "c:\\bin\\gemview\\gemview.app", "");
-		evnt_timer(3000, 0);
+		evnt_timer(3000);
 		}
 
 	fd = ddcreate(client_id, -1, 0, 0, 0, exts);

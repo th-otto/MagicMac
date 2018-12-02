@@ -35,7 +35,8 @@ static void RectCopy(
 		long val;
 	} pixel;
 
-
+	(void) dx;
+	(void) dy;
 	for	(ih = 0; ih < h; ih++)
 	{
 		for	(iw = 0; iw < w; iw++)

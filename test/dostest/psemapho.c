@@ -1,7 +1,7 @@
 #include <tos.h>
+#include <mgx_dos.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <magx.h>
 #include <string.h>
 #include <stdlib.h>
 

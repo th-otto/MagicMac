@@ -1,0 +1,8 @@
+shel_fin.prg
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+shel_fnd.c
+pcstdlib.lib   ; standard lib
+pcgemlib.lib
+pctoslib.lib

@@ -1,9 +1,16 @@
 #include <tos.h>
 #include <aes.h>
-#include <tosdefs.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#undef SIGUSR1
+#define SIGUSR1 29
+#undef SIGUSR2
+#define SIGUSR2 30
+#undef SIGTERM
+#define SIGTERM 15
+
 
 void cdecl handler(long signr)
 {
@@ -43,7 +50,7 @@ int main( void )
 						  0,0,0,0,0,	/* kein 1. Rechteck			*/
 						  0,0,0,0,0,	/* kein 2. Rechteck			*/
 						  msg,
-						  10000,0,	/* ms */
+						  10000,	/* ms */
 						  &ev_mmox, &ev_mmoy,
 						  &ev_mmobutton, &kstate,
 						  &keycode, &ev_mbreturn
@@ -53,5 +60,4 @@ int main( void )
 			printf("msg[%d] == %02x\n", ret2, msg[ret2]);
 		printf("\n");
 		}
-	return(0);
 }

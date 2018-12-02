@@ -2,9 +2,10 @@
 
 #include <tos.h>
 #include <stdio.h>
-#include <magx.h>
 
-int main()
+#define HDL_CON -1
+
+int main(void)
 {
 	long ret;
 	int newhdl;

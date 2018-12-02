@@ -18,7 +18,7 @@ int	ap_id;
 int aes_handle;		/* Screen-Workstation des AES */
 
 
-void main()
+int main()
 {
 	register int i;
 	int pxy[4];
@@ -46,4 +46,5 @@ void main()
 	vs_clip(vdi_handle, 1, pxy);
 	pxy[2] = 15;
 	vr_recfl(vdi_handle, pxy);
+	return 0;
 }

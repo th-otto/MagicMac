@@ -1,5 +1,4 @@
 #include <tos.h>
-#include <tosdefs.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>

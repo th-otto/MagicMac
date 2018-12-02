@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <tos.h>
 #include <aes.h>
-#include <magx.h>
 
 #ifndef TRUE
 #define TRUE	1

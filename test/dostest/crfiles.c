@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 		if	(ret < 0)
 			break;
 		Fclose((int) ret);
-		ret = E_OK;
+		ret = 0;
 		}
 
 	return((int) ret);

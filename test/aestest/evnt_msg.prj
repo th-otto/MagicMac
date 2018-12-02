@@ -1,0 +1,8 @@
+evnt_msg.prg
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+evnt_msg.c
+pcstdlib.lib   ; standard lib
+pcgemlib.lib
+pctoslib.lib

@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <tos.h>
-#include <tosdefs.h>
 
 #define BUFLEN	8192
 char buf[BUFLEN];

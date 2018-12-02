@@ -3,7 +3,9 @@
 #include <tos.h>
 #include <stdio.h>
 
-int main()
+#define STDERR 4
+
+int main(void)
 {
 	long ret,ret2;
 	int oldhdl;

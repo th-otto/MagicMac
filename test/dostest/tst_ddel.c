@@ -1,10 +1,9 @@
 #include <tos.h>
 #include <string.h>
-#include <tosdefs.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-int main( void )
+void main( void )
 {
 	int	i;
 	char	path[128];
@@ -23,6 +22,4 @@ int main( void )
 			Ddelete(path);
 			}
 		}
-
-	return(0);
 }

@@ -1,5 +1,5 @@
 #include <tos.h>
-#include <tosdefs.h>
+#include <mint/dcntl.h>
 
 int main()
 {
@@ -13,7 +13,7 @@ int main()
 		return((int) retcode);
 	blk = Malloc(1234L);
 	if	(!blk)
-		return((int) ENSMEM);
+		return((int) -39);
 	handle = (int) retcode;
 
 	retcode = Fcntl(handle, (long) blk, SHMSETBLK);

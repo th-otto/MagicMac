@@ -1,0 +1,8 @@
+test_68k.tos
+.C [-DMAGIC]
+=
+cstartv.o
+test_68k.c (ass68k.h)
+ass68k.s
+pctoslib.lib
+pcstdlib.lib

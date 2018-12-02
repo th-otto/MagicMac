@@ -1,10 +1,12 @@
 #include <tos.h>
 #include <aes.h>
 #include <setjmp.h>
-#include <tosdefs.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#undef SIGUSR1
+#define SIGUSR1 29
 
 jmp_buf env;
 

@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#undef SIGALRM
+#define SIGALRM		14		/* alarm clock */
+
 static int count = 0;
 static int sem = 0;
 static int blocked = 0;

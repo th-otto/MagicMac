@@ -1,5 +1,4 @@
 #include <tos.h>
-#include <tosdefs.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -112,9 +111,9 @@ long xattr(int mode, char *s)
 	printf("\r\nFxattr => %ld\n", ret);
 
 	/* mode */
-	typ  = ((xattr.mode) >> 12) & 15;
-	spec = ((xattr.mode) >> 9) & 7;
-	acs  = (xattr.mode) & 511;
+	typ  = ((xattr.st_mode) >> 12) & 15;
+	spec = ((xattr.st_mode) >> 9) & 7;
+	acs  = (xattr.st_mode) & 511;
 	switch(typ)
 		{
 		case 2:	strcpy(s, "BIOS special file");break;
@@ -137,22 +136,22 @@ long xattr(int mode, char *s)
 	printf(( acs       & 1) ? "X" : "x");
 	printf("\n");
 
-	printf("index   : $%08lx\n", xattr.index);
-	printf("dev     : %d\n", xattr.dev);
-	printf("res1    : %d\n", xattr.reserved1);
-	printf("nlink   : %d\n", xattr.nlink);
-	printf("uid     : %d\n", xattr.uid);
-	printf("gid     : %d\n", xattr.gid);
-	printf("size    : %ld\n", xattr.size);
-	printf("blksize : %ld\n", xattr.blksize);
-	printf("nblocks : %ld\n", xattr.nblocks);
-	printf("mtime   : %s\n", time_to_str(xattr.mtime));
-	printf("mdate   : %s\n", date_to_str(xattr.mdate));
-	printf("atime   : %s\n", time_to_str(xattr.atime));
-	printf("adate   : %s\n", date_to_str(xattr.adate));
-	printf("ctime   : %s\n", time_to_str(xattr.ctime));
-	printf("cdate   : %s\n", date_to_str(xattr.cdate));
-	printf("attr    : $%02x\n", xattr.attr);
+	printf("index   : $%08lx\n", xattr.st_ino);
+	printf("dev     : %d\n", xattr.st_dev);
+	printf("rdev    : %d\n", xattr.st_rdev);
+	printf("nlink   : %d\n", xattr.st_nlink);
+	printf("uid     : %d\n", xattr.st_uid);
+	printf("gid     : %d\n", xattr.st_gid);
+	printf("size    : %ld\n", xattr.st_size);
+	printf("blksize : %ld\n", xattr.st_blksize);
+	printf("nblocks : %ld\n", xattr.st_blocks);
+	printf("mtime   : %s\n", time_to_str(xattr.st_mtim.u.d.time));
+	printf("mdate   : %s\n", date_to_str(xattr.st_mtim.u.d.date));
+	printf("atime   : %s\n", time_to_str(xattr.st_atim.u.d.time));
+	printf("adate   : %s\n", date_to_str(xattr.st_atim.u.d.date));
+	printf("ctime   : %s\n", time_to_str(xattr.st_ctim.u.d.time));
+	printf("cdate   : %s\n", date_to_str(xattr.st_ctim.u.d.date));
+	printf("attr    : $%02x\n", xattr.st_attr);
 	return(ret);
 }
 
@@ -229,7 +228,7 @@ void readline(char *s, int len)
 {
 	long ret;
 
-	ret = Fread(STDIN, (long) len, s);
+	ret = Fread(0, (long) len, s);
 	if	(ret < 0)
 		exit((int) ret);
 	s[ret] = '\0';

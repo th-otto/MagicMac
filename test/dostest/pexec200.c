@@ -1,3 +1,4 @@
+#include <portab.h>
 #include <tos.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,7 +25,7 @@ int main(int argc, char *argv[])
 		if	(ret < 0)
 			return((int) ret);
 		fh = (WORD) ret;
-		Fforce(STDOUT, fh);
+		Fforce(1, fh);
 		Fclose(fh);
 		argc--;
 		}

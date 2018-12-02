@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <tos.h>
-#include <tosdefs.h>
 #include <aes.h>
-#include <magx.h>
 #include <ctype.h>
 
 int main()

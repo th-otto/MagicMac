@@ -1,8 +1,12 @@
 #include <tos.h>
-#include <tosdefs.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#undef SIGUSR1
+#define SIGUSR1 29
+#undef SIGUSR2
+#define SIGUSR2 30
 
 void cdecl handler(long signr)
 {

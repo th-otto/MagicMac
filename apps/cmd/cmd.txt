@@ -135,14 +135,14 @@ Daher merke:
 
 Fr  Sch„den,  die durch Anwendung dieses Programms  entstehen,  kann  der 
 Autor selbstverst„ndlich nicht haften.
-Eventuelle  ™hnlichkeiten  von CMD oder den  Hilfsprogrammen  mit  anderen 
+Eventuelle  hnlichkeiten  von CMD oder den  Hilfsprogrammen  mit  anderen 
 Programmen namhafter oder unbekannter Hersteller sind nicht  beabsichtigt, 
 sondern w„ren rein zuf„llig.
 
 Das Betriebssystem GEMDOS des Atari ist,  einschlielich der Funktionsnum-
 mern fr die DOS- Aufrufe, fast kompatibel zu MS-DOS 2.0. Auch lassen sich 
 MS-DOS Disketten problemlos lesen und beschreiben.
-Diese  ™hnlichkeit  hat mich bereits 1986  dazu  bewogen,  eine  Kommando- 
+Diese  hnlichkeit  hat mich bereits 1986  dazu  bewogen,  eine  Kommando- 
 Oberfl„che  wie COMMAND.COM fr den Atari zu schreiben,  ohne  mich  dabei 
 sklavisch an das "groe" Vorbild zu halten.  Wer MS-DOS kennt,  wird  sehr 
 schnell mit CMD umgehen k”nnen.  Man k”nnte dabei fast vergessen,  da man 

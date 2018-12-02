@@ -1,0 +1,8 @@
+tfail.prg
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+tfail.c
+pcstdlib.lib   ; standard lib
+pcgemlib.lib
+pctoslib.lib

@@ -2,7 +2,8 @@
 
 #include <tos.h>
 #include <stdio.h>
-#include <magx.h>
+
+#define HDL_PRN -3
 
 int main()
 {

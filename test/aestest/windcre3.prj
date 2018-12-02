@@ -1,0 +1,8 @@
+windcre3.prg
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+windcre3.c
+pcstdlib.lib   ; standard lib
+pcgemlib.lib
+pctoslib.lib

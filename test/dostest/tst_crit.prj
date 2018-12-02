@@ -1,0 +1,8 @@
+tst_crit.tos
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+tst_crit.c
+pcstdlib.lib   ; standard lib
+pcgemlib.lib
+pctoslib.lib

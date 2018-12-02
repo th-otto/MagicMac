@@ -225,7 +225,7 @@ int main( void )
 	err = Fopen("pvditst.ini", 0);
 	if	(err < 0)
 	{
-		if	(err == EFILNF)
+		if	(err == -33)
 			err = 0;
 
 		test1(100, 20, 100, 50);

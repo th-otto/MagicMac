@@ -21,7 +21,7 @@ void main()
 		evnt_mesag(message);
 		if	(message[0] == WM_TOPPED)
 			{
-			wind_set(hdl, WF_TOP);
+			wind_set_int(hdl, WF_TOP, 0);
 			}
 		else
 		if	(message[0] == WM_REDRAW)

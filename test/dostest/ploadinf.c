@@ -1,5 +1,6 @@
 #include <tos.h>
 #include <stdio.h>
+#include <mint/dcntl.h>
 
 int main(int argc, char *argv[])
 {

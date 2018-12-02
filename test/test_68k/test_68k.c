@@ -58,14 +58,14 @@ static void subxl(long l1, long l2, long l3)
 static void calc(void)
 {
 	register long i;
-/*
+#if 0
+
 	long l1,l2,l3,l4;
-	int c1,c2,c3,c4;
-*/
-/*
+	int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+#endif
+#if 0
 	long d0_d1_d2[3];
-*/
-/*	c1 = c2 = c3 = c4 = 0;	*/
+#endif
 
 	subxl(0x80000000L, 0, 0x10);
 	subxl(0x80000000L, 0, 0x0);
@@ -74,28 +74,30 @@ static void calc(void)
 	subxl(0, 0x7fffffffL, 0x10);
 	subxl(0, 0x7fffffffL, 0x0);
 
-/*
+#if 0
 	subxw(0x8000, 0, 0x10);
 	subxw(0x8000, 0, 0x0);
 	subxw(0x8000, 0x7fff, 0x10);
 	subxw(0x8000, 0x7fff, 0x0);
 	subxw(0, 0x7fff, 0x10);
 	subxw(0, 0x7fff, 0x0);
-*/
+#endif
 	for	(i = 0; i < DATALEN - 3; i++)
 	{
-/*		subxw(random_data[i], random_data[i+1], random_data[i+2]); */
+#if 0
+		subxw(random_data[i], random_data[i+1], random_data[i+2]);
+#endif
 		subxl(random_data[i], random_data[i+1], random_data[i+2]);
 
-/*
+#if 0
 		l1 = roxr_w(random_data[i], random_data[i+1] & 0x1f, &c1);
 		l2 = roxr_l(random_data[i], random_data[i+1] & 0x1f, &c2);
 		l3 = roxl_w(random_data[i], random_data[i+1] & 0x1f, &c3);
 		l4 = roxl_l(random_data[i], random_data[i+1] & 0x1f, &c4);
 		printf("%08lx %08lx %08lx %08lx %04x %04x %04x %04x\n",
 			l1,l2,l3,l4,c1,c2,c3,c4);
-*/
-/*
+#endif
+#if 0
 		d0_d1_d2[0] = 1; /*random_data[i]; */
 		d0_d1_d2[1] = random_data[i+1] & 0xffff;
 		d0_d1_d2[2] = random_data[i+2] & 0xffff;
@@ -104,15 +106,15 @@ static void calc(void)
 		divs_l(d0_d1_d2);
 		printf("0x%08lx R 0x%08lx\n",
 			d0_d1_d2[1],d0_d1_d2[0]);
-*/
-/*
+#endif
+#if 0
 		d0_d1_d2[0] = random_data[i];
 		d0_d1_d2[1] = random_data[i+1];
 		d0_d1_d2[2] = random_data[i+2];
 		muls_l(d0_d1_d2);
 		printf("%08lx %08lx %08lx\n",
 			d0_d1_d2[0],d0_d1_d2[1],d0_d1_d2[2]);
-*/
+#endif
 	}
 }
 

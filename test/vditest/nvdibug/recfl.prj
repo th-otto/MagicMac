@@ -1,0 +1,8 @@
+recfl.prg
+.L[-S=$800]
+=
+cstartv.o
+recfl.c
+pcstdlib.lib   ; standard lib
+pctoslib.lib   ; TOS lib
+pcgemlib.lib	; GEM lib

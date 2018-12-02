@@ -15,7 +15,7 @@ void main()
 	hdl = wind_create(NAME+MOVER, 0, 0, 100, 100);
 	if	(hdl <= 0)
 		return;
-	wind_set(hdl, WF_NAME, "Testprogramm");
+	wind_set_str(hdl, WF_NAME, "Testprogramm");
 
 	wind_calc(WC_BORDER, NAME+MOVER, 50,50,100,1,
 				&g.g_x,&g.g_y,&g.g_w,&g.g_h);

@@ -1,0 +1,7 @@
+psignal2.tos
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+psignal2.c
+pcstdlib.lib   ; standard lib
+pctoslib.lib

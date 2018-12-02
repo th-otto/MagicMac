@@ -1,8 +1,14 @@
 #include <tos.h>
-#include <tosdefs.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#undef SIGUSR1
+#define SIGUSR1 29
+#undef SIGUSR2
+#define SIGUSR2 30
+#undef SIGTERM
+#define SIGTERM 15
 
 void cdecl handler(long signr)
 {
@@ -15,7 +21,7 @@ void cdecl handler(long signr)
 	Cconws("...OK\r\n");
 }
 
-int main( void )
+void main( void )
 {
 	long ret;
 
@@ -26,5 +32,4 @@ int main( void )
 	printf("Psignal => %ld\n", ret);
 	for	(;;)
 		Cconout('a');
-	return(0);
 }

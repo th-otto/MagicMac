@@ -1,6 +1,5 @@
 #include <tos.h>
 #include <string.h>
-#include <tosdefs.h>
 #include <stdio.h>
 #include <stdlib.h>
 

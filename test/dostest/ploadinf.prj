@@ -1,0 +1,7 @@
+ploadinf.ttp
+.L[-S=$4000]   ; stacksize 16k
+=              ; list of modules follows...
+cstartv.o
+ploadinf.c
+pcstdlib.lib   ; standard lib
+pctoslib.lib

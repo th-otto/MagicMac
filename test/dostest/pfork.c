@@ -8,6 +8,12 @@
 
 #define KILLME		1
 
+#undef SIGUSR1
+#define SIGUSR1 29
+#undef SIGUSR2
+#define SIGUSR2 30
+
+
 static void cdecl handle_sigusr1(long signal);
 
 void main(void)

@@ -1,5 +1,4 @@
 #include <tos.h>
-#include <tosdefs.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -40,7 +39,7 @@ void readline(char *s, int len)
 {
 	long ret;
 
-	ret = Fread(STDIN, (long) len, s);
+	ret = Fread(0, (long) len, s);
 	if	(ret < 0)
 		exit((int) ret);
 	s[ret] = '\0';
