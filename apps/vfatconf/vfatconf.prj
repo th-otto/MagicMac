@@ -1,6 +1,6 @@
 vfatconf.prg
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src]
+.C[-I..\..\lib\mylibs]
 .C[-8-]
 .C[-K-]
 .C[-P-]
@@ -8,7 +8,7 @@ vfatconf.prg
 =              ; list of modules follows...
 cstartv.o     ; startup code
 vfatconf.c     (vfatconf.h)
-..\..\lib\mylibs\src\gemutils.c
+..\..\lib\mylibs\gemutils.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib

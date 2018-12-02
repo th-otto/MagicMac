@@ -1,7 +1,7 @@
 mgedit7.app
 .C[-DMM7]
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src\]
+.C[-I..\..\lib\mylibs]
 .C[-K-]
 .L[-S=$1000]   ; Stackgr”že 4k
 =
@@ -9,7 +9,7 @@ cstartv.o     ; startup code
 mgedit.c        (mgedit.h,globals.h,mm7.h)
 opt_dial		(mgedit.h,globals.h)
 mgedwind		(globals.h)
-..\..\lib\mylibs\src\gemut_mt.c
+..\..\lib\mylibs\gemut_mt.c
 mm7.c	(mm7.h)	[-P]
 mac_api.c          ; call interface to Mac OS functions
 

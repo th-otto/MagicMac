@@ -1,6 +1,6 @@
 mgformat.prg
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src\]
+.C[-I..\..\lib\mylibs]
 .C[-K-]
 .C[-P-]
 .L[-S=$400]
@@ -10,7 +10,7 @@ mgformat.c [-W-stv]
 fmt_dial.c
 cpy_dial.c
 format.c		; Thread
-..\..\lib\mylibs\src\gemut_mt.c
+..\..\lib\mylibs\gemut_mt.c
 
 pcstdlib.lib   ; standard lib
 pcgemlib.lib

@@ -427,7 +427,7 @@ extern int	aes_handle,vdi_handle,vdi_device,char_w,char_h;
 extern int	gl_hhbox, gl_hwbox, gl_hhchar, gl_hwchar;
 extern GRECT	desk_g,screen_g;
 extern USERBLK userblk;
-extern char	*pgm_ver;
+extern char	const pgm_ver[];
 extern int	ap_id;
 extern int	folder_w;
 extern int	spaltenabstand;		/* FÅr Textausgabe */

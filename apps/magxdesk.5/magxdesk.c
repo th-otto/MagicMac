@@ -39,7 +39,7 @@ char ext_btp[4];			/* Dateityp .BTP */
 char 	dirty_drives	[ANZDRIVES];
 _DISKINFO 	dinfo		[ANZDRIVES];
 
-char	*pgm_ver = "5.02";
+char const pgm_ver[] = "5.02";
 
 /* int message[16]; */
 int work_out[57],work_in [12];	 /* VDI- Felder fÅr v_opnvwk() */

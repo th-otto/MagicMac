@@ -1,6 +1,6 @@
 mgnotice.app
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src]
+.C[-I..\..\lib\mylibs]
 .C[-K-]
 .C[-P-]
 .L[-S=$1000]   ; Stackgr”že 4k
@@ -10,7 +10,7 @@ mgnotice.c     (mgnotice.h,globals.h,windows.h)
 opt_dial.c	(mgnotice.h,globals.h)
 windows.c		(windows.h)
 mgnwind.c		(globals.h,windows.h)
-..\..\lib\mylibs\src\gemut_mt.c
+..\..\lib\mylibs\gemut_mt.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib

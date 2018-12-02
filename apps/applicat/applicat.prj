@@ -2,7 +2,7 @@ applicat.app
 .C[-K-]
 .C[-P]
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src]
+.C[-I..\..\lib\mylibs]
 .L[-S=$2000]   ; Stackgrîûe auf 8 KByte setzen
 =              ; list of modules follows...
 cstartv.o     ; startup code mit ARGV und Quoting
@@ -20,7 +20,7 @@ spc_dial.c  (applicat.h,appl.h)       ; Icons fÅr Spezialobjekte
 
 inf.c       (appl.h,appldata.h)
 windows.c	(windows.h)
-..\..\lib\mylibs\src\gemut_mt.c
+..\..\lib\mylibs\gemut_mt.c
 pcstdlib.lib   ; standard lib
 pctoslib.lib
 pcgemlib.lib

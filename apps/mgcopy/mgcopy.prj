@@ -1,6 +1,6 @@
 mgcopy.app
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src]
+.C[-I..\..\lib\mylibs]
 .C[-K-]
 .C[-P-]
 .L[-S=$1000]   ; Stackgr”že 4k (der thread hat mehr)
@@ -10,7 +10,7 @@ mgcopy        	(mgcopy.h,globals.h)
 cpfiles       	(cpfiles.h,globals.h)
 beg_dial		(mgcopy.h,beg_dial.h,globals.h)
 dat_dial		(mgcopy.h,dat_dial.h,globals.h)
-..\..\lib\mylibs\src\gemut_mt.c
+..\..\lib\mylibs\gemut_mt.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib

@@ -1,6 +1,6 @@
 mgsearch.app
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src]
+.C[-I..\..\lib\mylibs]
 .C[-K-]
 .C[-P-]
 .L[-S=$4000]   ; Stackgr”že auf 16 KByte setzen
@@ -10,8 +10,8 @@ mgsearch.c      (mgsearch.h)
 search.c       	(search.h)
 srch_win.c		(srch_win.h)
 ..\magxdesk.5\pattern.c
-..\..\lib\mylibs\src\gemutils.c
-..\..\lib\mylibs\src\windows.c
+..\..\lib\mylibs\gemutils.c
+..\..\lib\mylibs\windows.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib

@@ -1,6 +1,6 @@
 mgedit.app
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src\]
+.C[-I..\..\lib\mylibs]
 .C[-K-]
 .L[-S=$1000]   ; Stackgr”že 4k
 =
@@ -8,7 +8,7 @@ cstartv.o     ; startup code
 mgedit         (mgedit.h,globals.h)
 opt_dial		(mgedit.h,globals.h)
 mgedwind		(globals.h)
-..\..\lib\mylibs\src\gemut_mt.c
+..\..\lib\mylibs\gemut_mt.c
 
 pcstdlib.lib   ; standard lib
 pctoslib.lib
