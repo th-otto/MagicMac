@@ -40,6 +40,8 @@ int n_windefpos = 0;
 WINDEFPOS windefpos[MAXWINDEFPOS];
 static int old_w, old_h;				/* alte Bildschirmgr”že */
 
+static char const applicat_inf[] = "applicat.inf";
+static char const applicat_dat[] = "applicat.dat";
 
 
 /****************************************************************
@@ -136,7 +138,7 @@ static void put_wind_pos(char *s)
 *
 *********************************************************************/
 
-static int get_icon(char *fname, int n)
+static int get_icon(const char *fname, int n)
 {
 	int i;
 
@@ -672,10 +674,8 @@ long get_inf(void)
 	char group[100];
 	char iconname[128];
 	XATTR xa;
-	char *fname = "applicat.inf";
 
-
-	ret = Fxattr(0, "applicat.inf", &xa);
+	ret = Fxattr(0, applicat_inf, &xa);
 	if (ret < E_OK)
 		goto err_open;
 	if (NULL == (inf_buf = Malloc(xa.st_size + 1)))
@@ -684,14 +684,14 @@ long get_inf(void)
 		return (ENSMEM);
 	}
 
-	ret = Fopen(fname, O_RDONLY);
+	ret = Fopen(applicat_inf, O_RDONLY);
 	if (ret < E_OK)
 	{
 	  err_open:
 		if (inf_buf)
 			Mfree(inf_buf);
 		inf_buf = NULL;
-		form_xerr(ret, fname);
+		form_xerr(ret, applicat_inf);
 		return (ret);
 	}
 	hdl = (int) ret;
@@ -1104,9 +1104,16 @@ long put_inf(void)
 
 	get_len(&npg, &nd, &npt, &ns, &ni, NULL);
 
-	sprintf(buf, ";PROGRAMS = %ld\r\n"
-			";FILETYPES = %ld\r\n"
-			";PATHS = %ld\r\n" ";SPECS = %ld\r\n" ";ICONS = %ld of %d\r\n", npg, nd, npt, ns, ni, icnn);
+	sprintf(buf, ";PROGRAMS = %ld of %d\r\n"
+			";FILETYPES = %ld of %d\r\n"
+			";PATHS = %ld of %d\r\n"
+			";SPECS = %ld\r\n"
+			";ICONS = %ld of %d/%d\r\n",
+			npg, MAX_PGMN,
+			nd, MAX_DATN,
+			npt, MAX_PTHN,
+			ns, MAX_SPCN,
+			ni, icnn, MAX_ICNN);
 
 	ret = iwrite(hdl, wbuf, &wlen, buf);
 	if (ret)
@@ -1214,9 +1221,9 @@ long put_inf(void)
 
 	ret = Fclose(hdl);
 	if (!ret)
-		ret = Fdelete("applicat.inf");
+		ret = Fdelete(applicat_inf);
 	if (!ret)
-		ret = Frename(0, "applicat.$$$", "applicat.inf");
+		ret = Frename(0, "applicat.$$$", applicat_inf);
 	if (ret)
 	{
 		form_xerr(EWRITF, NULL);
@@ -1690,7 +1697,7 @@ long put_icons(void)
 	/* alles schreiben */
 	/* --------------- */
 
-	ret = Fcreate("applicat.dat", 0);
+	ret = Fcreate(applicat_dat, 0);
 	if (ret < 0L)
 		return (ret);
 	hdl = (int) ret;
@@ -1703,7 +1710,7 @@ long put_icons(void)
 		return (ret);
 	if (ret != all_len)
 	{
-		Fdelete("applicat.dat");
+		Fdelete(applicat_dat);
 		error(STR_ERR_FULL_INF);
 	}
 	return (E_OK);
