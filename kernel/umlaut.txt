@@ -1,9 +1,10 @@
-Ã¤ ae „
-Ã¶ oe ”
-Ã¼ ue 
+utf8     atari iso8859-1
+Ã¤   ae  „     ä
+Ã¶   oe  ”     ö
+Ã¼   ue       ü
 
-Ã„ Ae 
-Ã– Oe ™
-Ãœ Ue š
+Ã„   Ae       Ä
+Ã–   Oe  ™     Ö
+Ãœ   Ue  š     Ü
 
-ÃŸ ss 
+ÃŸ   ss       ß
