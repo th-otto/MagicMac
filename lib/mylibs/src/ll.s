@@ -47,7 +47,7 @@
  bcc.b	um_noc
  addq.l	#1,d4		; 1 Bit šberlauf
 um_noc:
- add.l	d5,d5
+ add.l	d5,d2
  bcc.b	um_noc2
  addq.l	#1,d6		; 1 Bit šberlauf
 um_noc2:
