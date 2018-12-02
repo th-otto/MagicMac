@@ -1,5 +1,6 @@
 MAGXDESK.APP
 .C[-I..\..\inc_c]
+.C[-I..\..\lib\mylibs]
 .C[-P]
 .L[-S=2048]
 =
@@ -18,7 +19,7 @@ imgload.c
 kachel.c	(kachel.h)
 spec.c		(k.h)						; TOS- SPEZIFISCHES
 ..\..\kernel\aes\wdialog\shelsort.c
-..\..\lib\mylibs\ll.s			; long long lib
+..\..\lib\mylibs\ll.c			; long long lib
 pcstdlib.lib   ; standard lib
 pctoslib.lib   ; TOS lib
 pcgemlib.lib	; GEM lib

@@ -10,6 +10,7 @@
 #include "k.h"
 #include <stdlib.h>
 #include <string.h>
+#include "ll.h"
 
 #define INFO_FILE_NOBJS (FI_SIZER+1)
 #define ALIAS_MAXLEN 255
@@ -342,7 +343,7 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 {
 	long err;
 	OBJECT *o;
-	ULONG bytes[2];		/* 64 Bit */
+	ULONG64 bytes;		/* 64 Bit */
 	OBJECT *tree;
 	int ob;
 
@@ -365,7 +366,6 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		{
 		_DISKINFO frei;
 		int lw;
-		extern void ullmul( ULONG m1, ULONG m2, ULONG erg[2]);
 		int offs;
 
 
@@ -393,15 +393,15 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		frei.b_secsiz *= frei.b_clsiz;
 	
 		/* Benutzte Bytes auf Laufwerk: total - frei */
-		ullmul( frei.b_total-frei.b_free, frei.b_secsiz, bytes );
+		bytes = ullmul( frei.b_total-frei.b_free, frei.b_secsiz);
 		print_ull(bytes, (tree+DI_BUSED)->ob_spec.free_string);
 	
 		/* freie Bytes auf Laufwerk: */
-		ullmul( frei.b_free, frei.b_secsiz, bytes );
+		bytes = ullmul( frei.b_free, frei.b_secsiz);
 		print_ull(bytes, (tree+DI_BFREE)->ob_spec.free_string);
 
 		/* Gesamt Bytes auf Laufwerk: */
-		ullmul( frei.b_total, frei.b_secsiz, bytes );
+		bytes = ullmul( frei.b_total, frei.b_secsiz);
 		print_ull(bytes, (tree+DI_BTOTAL)->ob_spec.free_string);
 
 		offs = 4*gl_hhchar;
@@ -554,11 +554,11 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		*endp = EOS;
 		Mgraf_mouse(ARROW);
 
-		bytes[0] = 0L;
+		bytes.p.hi = 0L;
 		if	(err != E_OK)
 			{
 			err_alert(err);
-			bytes[1] = 0;
+			bytes.p.lo = 0;
 			}
 		else	{
 			ultoa(n_ord, (tree+OI_N_ORD)->ob_spec.free_string, 10);
@@ -566,12 +566,12 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 			ultoa(n_vda, (tree+OI_N_VDA)->ob_spec.free_string, 10);
 			ultoa(b_vda, (tree+OI_B_VDA)->ob_spec.free_string, 10);
 	
-			bytes[1] = b_dat + b_vda;
+			bytes.p.lo = b_dat + b_vda;
 			}
 		}
 	else	{
-		bytes[0] = 0L;
-		bytes[1] = ifd->f.filesize;
+		bytes.p.hi = 0L;
+		bytes.p.lo = ifd->f.filesize;
 
 		ob_dsel(tree, FI_SETDA);
 		ob_sel_dsel(tree, FI_RDONL, (ifd->f.attrib) & FA_RDONLY);

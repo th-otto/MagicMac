@@ -14,6 +14,7 @@
 #include "k.h"
 /* #include <stdio.h> */
 #include <sys/stat.h>
+#include "ll.h"
 
 static char *str_free;
 static char *str_full;
@@ -475,8 +476,7 @@ void show_free( WINDOW *mywindow)
 	DISKINFO *d;
 	long percent;
 	char *t;
-	ULONG bytes[2];	/* 64 Bit */
-	extern void ullmul( ULONG m1, ULONG m2, ULONG erg[2]);
+	ULONG64 bytes;	/* 64 Bit */
 
 
 	if	(mywindow->flags & WFLAG_ICONIFIED)
@@ -493,13 +493,13 @@ void show_free( WINDOW *mywindow)
 	else	d = dinfo+lwc;
 
 	/* freie Bytes auf Laufwerk: */
-	ullmul( d->b_free, d->b_secsiz * d->b_clsiz, bytes );
+	bytes = ullmul( d->b_free, d->b_secsiz * d->b_clsiz);
 	print_ull(bytes, s);
 
 	strcat(s, Rgetstring(STR_BYTES));
 	strcat(s, "       ( ");
 	t = s+strlen(s);
-	percent = ((d->b_free) * 100L)/d->b_total;
+	percent = (d->b_free * 100L)/d->b_total;
 	print_ul(percent, t);
 	strcat(t, "% )");
 	Rxform_alert(1, ALRT_FREE_AT_DRV, lwc + 'A', s);

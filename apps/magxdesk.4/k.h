@@ -364,7 +364,6 @@ extern void	fname_int(char *s, char *d);
 extern int	fname_match(char *fname, char *fmask);
 extern void	Mgraf_mouse(int type);
 extern char	*print_ul(unsigned long z, char *p);
-extern char	*print_ull(unsigned long z[2], char *p);
 extern char	*print_big_bytes(unsigned long z, char *p);
 extern int	suffixtyp(char *s);
 extern void	time_to_str(char *s, unsigned int time);

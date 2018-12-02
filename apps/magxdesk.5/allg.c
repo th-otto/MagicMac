@@ -12,6 +12,7 @@
 #include <vdi.h>
 #include "k.h"
 #include "pattern.h"
+#include "ll.h"
 
 /* #include <stdio.h> */
 
@@ -743,23 +744,23 @@ char *print_ul(unsigned long z, char *p)
 *
 *********************************************************************/
 
-char *print_ull(unsigned long z[2], char *p)
+char *print_ull(ULONG64 z, char *p)
 {
 	char c = '\0';
-	ULONG l = z[1];	/* l = untere 32 Bit */
+	ULONG l = z.p.lo;	/* l = untere 32 Bit */
 
 /*
 	printf("%08lx %08lx\n", z[0], z[1]);
 */
-	if	(z[0])		/* Zahl > 32 Bit */
+	if	(z.p.hi)		/* Zahl > 32 Bit */
 		{
-		if	(z[0] >= 1024L)
+		if	(z.p.hi >= 1024L)
 			{
 			c = '#';		/* šberlauf */
 			goto err;
 			}
 		l >>= 10L;			/* durch 1024 teilen */
-		l |= (z[0] << 22L);		/* obere 10 Bit ODERn */
+		l |= (z.p.hi << 22L);		/* obere 10 Bit ODERn */
 		c = 'k';
 		}
 	p = print_ul(l, p);

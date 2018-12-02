@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include "pattern.h"
 #include <wdlgfslx.h>
+#include "ll.h"
 
 
 static POPINFO pop_kategorie;
@@ -224,8 +225,7 @@ static int info_disk(char *path, int weiter)
 	CICONBLK cic;
 	OBJECT *o;
 	int	is_8_3;
-	ULONG bytes[2];		/* 64Bit */
-	extern void ullmul( ULONG m1, ULONG m2, ULONG erg[2]);
+	ULONG64 bytes;		/* 64Bit */
 
 
 
@@ -278,15 +278,15 @@ static int info_disk(char *path, int weiter)
 	frei.b_secsiz *= frei.b_clsiz;
 
 	/* Gesamt Bytes auf Laufwerk: */
-	ullmul( frei.b_total, frei.b_secsiz, bytes );
+	bytes = ullmul( frei.b_total, frei.b_secsiz);
 	print_ull(bytes, (adr_dskinf+DI_BTOTL)->ob_spec.free_string);
 
 	/* Benutzte Bytes auf Laufwerk: total - frei */
-	ullmul( frei.b_total-frei.b_free, frei.b_secsiz, bytes );
+	bytes = ullmul( frei.b_total-frei.b_free, frei.b_secsiz);
 	print_ull(bytes, (adr_dskinf+DI_BUSED)->ob_spec.free_string);
 
 	/* freie Bytes auf Laufwerk: */
-	ullmul( frei.b_free, frei.b_secsiz, bytes );
+	bytes = ullmul( frei.b_free, frei.b_secsiz);
 	print_ull(bytes, (adr_dskinf+DI_BFREE)->ob_spec.free_string);
 
 	err = walk_path(path, &b_dat, &b_vda, &n_ord, &n_dat, &n_vda);
@@ -371,7 +371,7 @@ static int info_file(char *path, int drv, MYDTA *f, int weiter)
 	CICONBLK cic;
 	OBJECT *o;
 	int is_8_3;
-	ULONG bytes[2];		/* 64 Bit */
+	ULONG64 bytes;		/* 64 Bit */
 
 
 	if	(init_xted(adr_datinf+DATINF_T, path, &xted, neuname,
@@ -410,8 +410,8 @@ static int info_file(char *path, int drv, MYDTA *f, int weiter)
 
 	time_to_str((adr_datinf+FI_ZEIT )->ob_spec.free_string, f->time);
 	date_to_str((adr_datinf+FI_DATUM)->ob_spec.free_string, f->date);
-	bytes[0] = 0L;
-	bytes[1] = f->filesize;
+	bytes.p.hi = 0L;
+	bytes.p.lo = f->filesize;
 	print_ull(bytes, (adr_datinf+FI_SIZE)->ob_spec.free_string);
 	strcat((adr_datinf+FI_SIZE)->ob_spec.free_string, " Bytes");
 
@@ -505,7 +505,7 @@ static int info_folder(char *path, int drv, MYDTA *f, int weiter)
 	CICONBLK cic;
 	OBJECT *o;
 	int is_8_3;
-	ULONG bytes[2];		/* 64 Bit */
+	ULONG64 bytes;		/* 64 Bit */
 
 
 	if	(init_xted(adr_ordinf+ORDINF_T, path, &xted, neuname,
@@ -558,8 +558,8 @@ static int info_folder(char *path, int drv, MYDTA *f, int weiter)
 	ultoa(n_vda, 		(adr_ordinf+OI_N_VDA)->ob_spec.free_string, 10);
 	ultoa(b_vda, 		(adr_ordinf+OI_B_VDA)->ob_spec.free_string, 10);
 
-	bytes[0] = 0L;
-	bytes[1] = b_dat + b_vda;
+	bytes.p.hi = 0L;
+	bytes.p.lo = b_dat + b_vda;
 	print_ull(bytes, (adr_ordinf+OI_BYTES)->ob_spec.free_string);
 	strcat((adr_ordinf+OI_BYTES)->ob_spec.free_string, " Bytes");
 
