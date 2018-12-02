@@ -343,7 +343,8 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 {
 	long err;
 	OBJECT *o;
-	ULONG64 bytes;		/* 64 Bit */
+	ULONG64 free, total, used;
+	int shift;
 	OBJECT *tree;
 	int ob;
 
@@ -393,16 +394,20 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		frei.b_secsiz *= frei.b_clsiz;
 	
 		/* Benutzte Bytes auf Laufwerk: total - frei */
-		bytes = ullmul( frei.b_total-frei.b_free, frei.b_secsiz);
-		print_ull(bytes, (tree+DI_BUSED)->ob_spec.free_string);
+		used = ullmul( frei.b_total-frei.b_free, frei.b_secsiz);
 	
 		/* freie Bytes auf Laufwerk: */
-		bytes = ullmul( frei.b_free, frei.b_secsiz);
-		print_ull(bytes, (tree+DI_BFREE)->ob_spec.free_string);
+		free = ullmul( frei.b_free, frei.b_secsiz);
 
 		/* Gesamt Bytes auf Laufwerk: */
-		bytes = ullmul( frei.b_total, frei.b_secsiz);
-		print_ull(bytes, (tree+DI_BTOTAL)->ob_spec.free_string);
+		total = ullmul( frei.b_total, frei.b_secsiz);
+		if (used.p.hi || free.p.hi || total.p.hi)
+			shift = 10;
+		else
+			shift = 0;
+		print_ull(used, shift, (tree+DI_BUSED)->ob_spec.free_string);
+		print_ull(free, shift, (tree+DI_BFREE)->ob_spec.free_string);
+		print_ull(total, shift, (tree+DI_BTOTAL)->ob_spec.free_string);
 
 		offs = 4*gl_hhchar;
 
@@ -554,11 +559,11 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		*endp = EOS;
 		Mgraf_mouse(ARROW);
 
-		bytes.p.hi = 0L;
+		used.p.hi = 0L;
 		if	(err != E_OK)
 			{
 			err_alert(err);
-			bytes.p.lo = 0;
+			used.p.lo = 0;
 			}
 		else	{
 			ultoa(n_ord, (tree+OI_N_ORD)->ob_spec.free_string, 10);
@@ -566,12 +571,12 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 			ultoa(n_vda, (tree+OI_N_VDA)->ob_spec.free_string, 10);
 			ultoa(b_vda, (tree+OI_B_VDA)->ob_spec.free_string, 10);
 	
-			bytes.p.lo = b_dat + b_vda;
+			used.p.lo = b_dat + b_vda;
 			}
 		}
 	else	{
-		bytes.p.hi = 0L;
-		bytes.p.lo = ifd->f.filesize;
+		used.p.hi = 0L;
+		used.p.lo = ifd->f.filesize;
 
 		ob_dsel(tree, FI_SETDA);
 		ob_sel_dsel(tree, FI_RDONL, (ifd->f.attrib) & FA_RDONLY);
@@ -580,7 +585,7 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		ob_sel_dsel(tree, FI_ARCHI, (ifd->f.attrib) & FA_ARCHIVE);
 		}
 
-	print_ull(bytes, (tree+FI_SIZE)->ob_spec.free_string);
+	print_ull(used, 0, (tree+FI_SIZE)->ob_spec.free_string);
 	strcat((tree+FI_SIZE)->ob_spec.free_string, " Bytes");
 
 	return(0);

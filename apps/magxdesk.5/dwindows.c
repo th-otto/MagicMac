@@ -492,7 +492,7 @@ void show_free( WINDOW *mywindow)
 
 	/* freie Bytes auf Laufwerk: */
 	bytes = ullmul( d->b_free, d->b_secsiz * d->b_clsiz);
-	print_ull(bytes, s);
+	print_ull(bytes, bytes.p.hi ? 10 : 0, s);
 
 	strcat(s, Rgetstring(STR_BYTES));
 	strcat(s, "       ( ");

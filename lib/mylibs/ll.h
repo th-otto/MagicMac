@@ -13,4 +13,4 @@ typedef union {
 } ULONG64;
 
 ULONG64 ullmul(unsigned long x, unsigned long y);
-char *print_ull(ULONG64 z, char *p);
+char *print_ull(ULONG64 z, int shift, char *p);

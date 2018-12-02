@@ -744,7 +744,7 @@ char *print_ul(unsigned long z, char *p)
 *
 *********************************************************************/
 
-char *print_ull(ULONG64 z, char *p)
+char *print_ull(ULONG64 z, int shift, char *p)
 {
 	char c = '\0';
 	ULONG l = z.p.lo;	/* l = untere 32 Bit */
@@ -752,17 +752,17 @@ char *print_ull(ULONG64 z, char *p)
 /*
 	printf("%08lx %08lx\n", z[0], z[1]);
 */
-	if	(z.p.hi)		/* Zahl > 32 Bit */
-		{
-		if	(z.p.hi >= 1024L)
-			{
-			c = '#';		/* šberlauf */
-			goto err;
-			}
-		l >>= 10L;			/* durch 1024 teilen */
-		l |= (z.p.hi << 22L);		/* obere 10 Bit ODERn */
+	if	(z.p.hi >= (1UL << shift))
+	{
+		c = '#';		/* šberlauf */
+		goto err;
+	}
+	if (shift > 0)
+	{
+		l >>= shift;			/* durch 1024 teilen */
+		l |= (z.p.hi << (32 - shift));		/* obere 10 Bit ODERn */
 		c = 'k';
-		}
+	}
 	p = print_ul(l, p);
 	err:
 	if	(c)

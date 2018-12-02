@@ -225,10 +225,9 @@ static int info_disk(char *path, int weiter)
 	CICONBLK cic;
 	OBJECT *o;
 	int	is_8_3;
-	ULONG64 bytes;		/* 64Bit */
-
-
-
+	ULONG64 total, free, used;
+	int shift;
+	
 	Mgraf_mouse(HOURGLASS);
 	lw = path[0] - 'A';
 	rsrc_gaddr(0, T_DSKINF, &adr_dskinf);
@@ -278,16 +277,21 @@ static int info_disk(char *path, int weiter)
 	frei.b_secsiz *= frei.b_clsiz;
 
 	/* Gesamt Bytes auf Laufwerk: */
-	bytes = ullmul( frei.b_total, frei.b_secsiz);
-	print_ull(bytes, (adr_dskinf+DI_BTOTL)->ob_spec.free_string);
+	total = ullmul( frei.b_total, frei.b_secsiz);
 
 	/* Benutzte Bytes auf Laufwerk: total - frei */
-	bytes = ullmul( frei.b_total-frei.b_free, frei.b_secsiz);
-	print_ull(bytes, (adr_dskinf+DI_BUSED)->ob_spec.free_string);
+	used = ullmul( frei.b_total-frei.b_free, frei.b_secsiz);
 
 	/* freie Bytes auf Laufwerk: */
-	bytes = ullmul( frei.b_free, frei.b_secsiz);
-	print_ull(bytes, (adr_dskinf+DI_BFREE)->ob_spec.free_string);
+	free = ullmul( frei.b_free, frei.b_secsiz);
+
+	if (used.p.hi || free.p.hi || total.p.hi)
+		shift = 10;
+	else
+		shift = 0;
+	print_ull(total, shift, (adr_dskinf+DI_BTOTL)->ob_spec.free_string);
+	print_ull(used, shift, (adr_dskinf+DI_BUSED)->ob_spec.free_string);
+	print_ull(free, shift, (adr_dskinf+DI_BFREE)->ob_spec.free_string);
 
 	err = walk_path(path, &b_dat, &b_vda, &n_ord, &n_dat, &n_vda);
 	if	(err != E_OK)
@@ -412,7 +416,7 @@ static int info_file(char *path, int drv, MYDTA *f, int weiter)
 	date_to_str((adr_datinf+FI_DATUM)->ob_spec.free_string, f->date);
 	bytes.p.hi = 0L;
 	bytes.p.lo = f->filesize;
-	print_ull(bytes, (adr_datinf+FI_SIZE)->ob_spec.free_string);
+	print_ull(bytes, 0, (adr_datinf+FI_SIZE)->ob_spec.free_string);
 	strcat((adr_datinf+FI_SIZE)->ob_spec.free_string, " Bytes");
 
 	ob_dsel(adr_datinf, FI_SETDA);
@@ -560,7 +564,7 @@ static int info_folder(char *path, int drv, MYDTA *f, int weiter)
 
 	bytes.p.hi = 0L;
 	bytes.p.lo = b_dat + b_vda;
-	print_ull(bytes, (adr_ordinf+OI_BYTES)->ob_spec.free_string);
+	print_ull(bytes, 0, (adr_ordinf+OI_BYTES)->ob_spec.free_string);
 	strcat((adr_ordinf+OI_BYTES)->ob_spec.free_string, " Bytes");
 
 	Mgraf_mouse(ARROW);
