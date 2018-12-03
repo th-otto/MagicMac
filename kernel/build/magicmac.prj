@@ -1,3 +1,6 @@
+; Project file for MAG_MAC.RAM
+; (Classic Mac version, german localization)
+; For other localizations, change the COUNTRY code below
 mag_mac.ram
 .C[-I..\..\inc_c]
 .C[-I..\inc]

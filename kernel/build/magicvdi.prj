@@ -1,3 +1,5 @@
+; Project file for MAGICVDI.PRG
+; (standalone VDI for testing)
 magicvdi.prg
 
 .C[-I..\..\inc_c]

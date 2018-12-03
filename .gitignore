@@ -33,6 +33,7 @@ aaa.cfg
 *.slb
 *.os
 *.ram
+*.rom
 *.sys
 *.osd
 *.nod

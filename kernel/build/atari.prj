@@ -1,3 +1,6 @@
+; Project file for MAGIC.RAM
+; (Atari Version, german localization)
+; For other localizations, change the COUNTRY code below
 magic.ram
 .C[-I..\..\inc_c]
 .C[-I..\inc]
@@ -9,6 +12,7 @@ magic.ram
 .C[-A-]
 .C[-K-]
 .S[-DMMX_YIELD=0]
+.S[-DHADES=0]
 .C[-P]
 .L[-S=0]
 =

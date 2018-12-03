@@ -1,3 +1,5 @@
+; Project file for MagicMagX.OS
+; (MacOSX version, german localization)
 magcmacx.os
 .C[-I..\..\inc_c]
 .C[-I..\inc]

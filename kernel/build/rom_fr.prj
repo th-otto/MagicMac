@@ -1,22 +1,23 @@
-; Project file for MMAGIC.RAM
-; (Milan Version, german localization)
-; For other localizations, change the COUNTRY code below
-mmilan.ram
+; Project file for MAGIC.ROM
+; (Atari ROM Version, french localization)
+fr\magic.rom
 .C[-I..\..\inc_c]
 .C[-I..\inc]
 .S[-I..\inc]
 
-.S[-DCOUNTRY=1]
-.C[-DCOUNTRY=1]
+.S[-DCOUNTRY=2]
+.C[-DCOUNTRY=2]
 
 .C[-A-]
 .C[-K-]
 .S[-DMMX_YIELD=0]
 .C[-P]
 .L[-S=0]
+.L[-T=$E00000]
 =
-..\bios\milan\milnbios.s
-..\bios\milan\milan.s
+..\bios\atari\magibios.s
+..\bios\atari\xfs95\xfs95ini.s
+..\bios\atari\ide.s
 ..\allg\read_inf.s
 ..\vdi\math.s
 ..\allg\std.s
@@ -30,7 +31,14 @@ mmilan.ram
 ..\dos\dev_pipe.s
 ..\dos\dev_mem.s
 ..\dos\dfs_fat.s
+..\bios\magicmac\macxfs.s
+..\vdi\mxvdiknl.s
+..\vdi\setup.c
+..\vdi\drivers.c
+..\vdi\filediv.c
+..\vdi\init_res.c
 ..\vdi\string.s
+..\vdi\tos.s
 ..\aes\aesmain.s
 ..\aes\aesevt.s
 ..\aes\aesfrm.s
@@ -39,7 +47,7 @@ mmilan.ram
 ..\aes\aesmen.s
 ..\aes\aesgraf.s
 ..\aes\aesrsc.s
-..\aes\farbic.c [-G-]
+..\aes\farbic.c
 ..\aes\wdialog\wdialog.c
 ..\aes\wdialog\listbox.c
 ..\aes\wdialog\fnt_menu.c
