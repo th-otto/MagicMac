@@ -88,7 +88,7 @@ static void recalc(int *wert, int old, int new)
 *
 *********************************************************************/
 
-WINDEFPOS *def_wind_pos(char *s)
+WINDEFPOS *def_wind_pos(const char *s)
 {
 	WINDEFPOS *w;
 	int i;
@@ -757,6 +757,11 @@ long get_inf(void)
 			readline();
 			while (line[0] != '[')
 			{
+				if (pthn >= MAX_PTHN)
+				{
+					Rform_alert(1, ALRT_OVERFLOW, NULL);
+					goto err;
+				}
 				if (scanpath(&lpos, pthx[pthn].path, MAX_PATHLEN))
 					goto erri;
 				if (scanpath(&lpos, pthx[pthn].rscname, MAX_NAMELEN))
@@ -776,6 +781,11 @@ long get_inf(void)
 			readline();
 			while (line[0] != '[')
 			{
+				if (spcn >= MAX_SPCN)
+				{
+					Rform_alert(1, ALRT_OVERFLOW, NULL);
+					goto err;
+				}
 				if (scanpath(&lpos, (char *) &(spcx[spcn].key), 4))
 					goto erri;
 				if (scanpath(&lpos, spcx[spcn].name, MAX_NAMELEN))
@@ -795,6 +805,11 @@ long get_inf(void)
 		/* Applikation */
 		/* ----------- */
 
+		if (pgmn >= MAX_PGMN)
+		{
+			Rform_alert(1, ALRT_OVERFLOW, NULL);
+			goto err;
+		}
 		strcpy(pgmx[pgmn].name, group);
 		readline();
 		if (line[0])
@@ -831,6 +846,11 @@ long get_inf(void)
 			/* Dateityp suchen */
 			int i;
 
+			if (datn >= MAX_DATN || linn >= MAX_LINN)
+			{
+				Rform_alert(1, ALRT_OVERFLOW, NULL);
+				goto err;
+			}
 			if (scanpath(&lpos, datx[datn].name, MAX_NAMELEN))
 				goto erri;
 			if (scanpath(&lpos, datx[datn].rscname, MAX_NAMELEN))
@@ -842,7 +862,7 @@ long get_inf(void)
 
 			for (i = 0; i < datn; i++)
 			{
-				if (!strcmp(datx[datn].name, datx[i].name))
+				if (!stricmp(datx[datn].name, datx[i].name))
 				{
 					error(STR_ERR_MULTITYP);
 					goto err;			/* schon verkettet */

@@ -58,11 +58,11 @@ static int suffixtyp(char *s)
 		ext[1] = (*s++ & 0x5f);
 		ext[2] = (*s++ & 0x5f);
 		ext[3] = '\0';
-		if (!strcmp(ext, "PRG") || !strcmp(ext, "APP"))
+		if (!stricmp(ext, "PRG") || !stricmp(ext, "APP"))
 			return (PGMT_ISGEM);
-		if (!strcmp(ext, "TOS"))
+		if (!stricmp(ext, "TOS"))
 			return (0);
-		if (!strcmp(ext, "TTP"))
+		if (!stricmp(ext, "TTP"))
 			return (PGMT_TP);
 	}
 	return (PGMT_ISGEM);

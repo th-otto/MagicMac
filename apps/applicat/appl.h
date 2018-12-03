@@ -96,7 +96,7 @@ extern int is_multiwindow;		/* alle Fenster sind offen */
 
 extern int n_windefpos;
 extern WINDEFPOS windefpos[MAXWINDEFPOS];
-extern WINDEFPOS *def_wind_pos(char *s);
+extern WINDEFPOS *def_wind_pos(const char *s);
 #ifdef NWINDOWS
 extern WINDOW *mywindow;
 #endif
