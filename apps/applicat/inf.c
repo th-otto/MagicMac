@@ -167,7 +167,7 @@ void load_int_icons(void)
 void load_icons(void)
 {
 	int i;
-	char *fname = "rsc\\12345678901234567890";
+	char fname[MAX_PATHLEN];
 	long errcode;
 	struct icon *ic;
 	OBJECT *ob;
@@ -175,7 +175,7 @@ void load_icons(void)
 	DTA mydta;
 	int rscglobal[5];
 
-
+	strcpy(fname, "rsc\\12345678901234567890");
 	save_rscdata(systemglobal);			/* System-RSC merken */
 
 	strcpy(rscx[0].fname, "<intern>");
@@ -183,6 +183,8 @@ void load_icons(void)
 	rscx[0].firsticon = 1;
 
 	ic = icnx;
+	icnn = 0;
+	
 	ic->rscfile = 0;					/* internes Icon */
 	ic->objnr = I_FLPDSK;
 	ic++;
@@ -291,7 +293,7 @@ void load_icons(void)
 	{
 		spcx[i].iconnr = get_icon(spcx[i].rscname, spcx[i].rscindex);
 		if (spcx[i].iconnr < 0)
-			spcx[i].iconnr = 3;
+			spcx[i].iconnr = 3; /* I_DATEI */
 	}
 
 	for (i = 0; i < pgmn; i++)
@@ -301,7 +303,7 @@ void load_icons(void)
 		{
 			pgmx[i].iconnr = get_deficonnr('APPS');
 			if (!pgmx[i].iconnr)
-				pgmx[i].iconnr = 2;
+				pgmx[i].iconnr = 2; /* I_PROGRA */
 		}
 	}
 
@@ -312,7 +314,7 @@ void load_icons(void)
 		{
 			datx[i].iconnr = get_deficonnr('DATS');
 			if (!datx[i].iconnr)
-				datx[i].iconnr = 3;
+				datx[i].iconnr = 3; /* I_DATEI */
 		}
 	}
 
@@ -323,7 +325,7 @@ void load_icons(void)
 		{
 			pthx[i].iconnr = get_deficonnr('FLDR');
 			if (!pthx[i].iconnr)
-				pthx[i].iconnr = 1;
+				pthx[i].iconnr = 1; /* I_ORDNER */
 		}
 	}
 
@@ -765,7 +767,7 @@ long get_inf(void)
 					goto erri;
 				if (scanint(&lpos, &pthx[pthn].rscindex))
 					goto erri;
-				if (scanpath(&lpos, iconname, 128))
+				if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
 					goto erri;
 				readline();
 				pthn++;
@@ -786,7 +788,7 @@ long get_inf(void)
 					goto erri;
 				if (scanint(&lpos, &spcx[spcn].rscindex))
 					goto erri;
-				if (scanpath(&lpos, iconname, 128))
+				if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
 					goto erri;
 				readline();
 				spcn++;
@@ -805,12 +807,12 @@ long get_inf(void)
 				goto erri;
 			if (scanint(&lpos, &pgmx[pgmn].rscindex))
 				goto erri;
-			if (scanpath(&lpos, iconname, 128))
+			if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
 				goto erri;
 		}
 		readline();
 
-		if (scanpath(&lpos, pgmx[pgmn].path, 128))
+		if (scanpath(&lpos, pgmx[pgmn].path, MAX_PATHLEN))
 			goto erri;
 
 /*		strcpy(pgmx[pgmn].path, line);	*/
@@ -839,7 +841,7 @@ long get_inf(void)
 				goto erri;
 			if (scanint(&lpos, &datx[datn].rscindex))
 				goto erri;
-			if (scanpath(&lpos, iconname, 128))
+			if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
 				goto erri;
 
 			for (i = 0; i < datn; i++)
@@ -1107,7 +1109,7 @@ long put_inf(void)
 	sprintf(buf, ";PROGRAMS = %ld of %d\r\n"
 			";FILETYPES = %ld of %d\r\n"
 			";PATHS = %ld of %d\r\n"
-			";SPECS = %ld\r\n"
+			";SPECS = %ld of %d\r\n"
 			";ICONS = %ld of %d/%d\r\n",
 			npg, MAX_PGMN,
 			nd, MAX_DATN,
