@@ -33,7 +33,7 @@
 FALCON    EQU  1
 MACINTOSH EQU  0
 MILANCOMP EQU  0
-HADES     EQU  0
+;HADES     EQU  0
 DEBUG     EQU  0
 DEBUG2    EQU  0
 DEBUG3    EQU  0
@@ -2088,7 +2088,7 @@ exc63:    move.b    #63,-(sp)
 
 exc:
      IFNE HADES
-     INCLUDE "had_exc.s"
+     INCLUDE "..\..\bios\atari\modules\had_exc.s"
      ELSE
  move.b   (sp)+,proc_pc            ; Vektornummer
  movem.l  d0/d1/d2/d3/d4/d5/d6/d7/a0/a1/a2/a3/a4/a5/a6/sp,proc_regs
@@ -4290,8 +4290,8 @@ pmmu_tt1:
 
 
      IFNE    HADES
-     INCLUDE "had_scsi.s"
-     INCLUDE "unim_int.s"
+     INCLUDE "..\..\bios\atari\modules\had_scsi.s"
+     INCLUDE "..\..\bios\atari\modules\unim_int.s"
      ENDIF
      
      END
