@@ -12,7 +12,7 @@
 
 exception:
 		addq.l #2,sp
-move.l	2(SP),proc_pc.w ;pc merken
+        move.l	2(SP),proc_pc.w ;pc merken
 		movem.l D0-D7/A0-A7,proc_regs.w ;die Register merken
 		move	USP,A0
 		move.l	A0,proc_usp.w	;den USP merken

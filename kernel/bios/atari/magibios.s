@@ -170,6 +170,21 @@ XFS95     EQU  1
 
 ;----------------------------------------
 
+     IFNE HADES
+_movecd equ $4e7a ; used for movec xx,dn
+_movec  equ $4e7b ; used for movec d0,xx
+_cacr   equ $0002
+_itt0   equ $0004
+_itt1   equ $0005
+_dtt0   equ $0006
+_dtt1   equ $0007
+_pcr    equ $0808
+cinva   equ $f4d8 ; cinva bc
+cpusha  equ $f4f8 ; cpusha bc
+     ENDC
+
+;----------------------------------------
+
 FDC_TIMEOUT    EQU  400            ; war vorher 300
 ;  FDC_TIMEOUT    EQU  600            ; fuer Julian
 
@@ -469,12 +484,13 @@ verifyflag:         DS.W 1         ; W: 0 = Sektortest. <> 0 = verify
 cfiller:            DS.L 1         ; L: (Format)
 regsave:            DS.L 16        ; L: zeigt auf gesicherte Register
 status_buffer:      DS.B 8         ; max. 7 Bytes bis $1838
+startup_stk         equ $700
 ENDIF
 
 __e_bios:
 
 IF __e_bios > $1199
-"bios variables overflow"
+   error "bios variables overflow"
 ENDIF
 
 
@@ -1938,11 +1954,23 @@ fatal_err:
 *
 halt_system:
  moveq    #$d,d0
+ IFNE HADES
+ bsr.l    putch
+ ELSE
  bsr      putch
+ ENDC
  moveq    #$a,d0
+ IFNE HADES
+ bsr.l    putch
+ ELSE
  bsr      putch
+ ENDC
  moveq    #$a,d0                   ; CR,LF,LF
+ IFNE HADES
+ bsr.l    putch
+ ELSE
  bsr      putch
+ ENDC
  bsr.b    putstr                   ; Benutzermeldung
  lea      fatal_errs(pc),a0
  bsr      putstr                   ; "System angehalten"
@@ -1952,7 +1980,11 @@ halt_endless:
 putstr:
  move.b   (a0)+,d0
  beq.b    puts_ende
+ IFNE HADES
+ bsr.l    putch
+ ELSE
  bsr      putch
+ ENDC
  bra.b    putstr
 puts_ende:
  rts

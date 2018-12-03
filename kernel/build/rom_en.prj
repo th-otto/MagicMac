@@ -1,5 +1,8 @@
 ; Project file for MAGIC.ROM
 ; (Atari ROM Version, english localization)
+; Pure-C creates a 38 byte long header for programs
+; linked to absolute addresses; this must be stripped
+; before using it as ROM
 en\magic.rom
 .C[-I..\..\inc_c]
 .C[-I..\inc]
@@ -11,6 +14,7 @@ en\magic.rom
 .C[-A-]
 .C[-K-]
 .S[-DMMX_YIELD=0]
+.S[-DHADES=0]
 .C[-P]
 .L[-S=0]
 .L[-T=$E00000]

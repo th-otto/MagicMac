@@ -195,7 +195,7 @@ _nolfpu:                           ; keine LineF FPU
 no_atari_dma:   move.l   a2,a7
           move.l    a1,8.w
 
-          move.l    #id,(a5)+
+          move.l    #'hade',(a5)+
       move.l   $44e.w,d1      ; adresse bildspeicher
       cmp.l    #$a0000000,d1       ;pci
       bcc nopcigk             ;nein->
@@ -234,7 +234,7 @@ cok_nosw:
 
  move.l   #'_IDT',(a5)+
  moveq #0,d0
- move.w   syshdr+$1c(pc),d0
+ move.w   syshdr+$1c,d0
  bclr     #0,d0
  cmp.w    #(idt_tab_end-idt_tab),d0
  bcs.s    idt_ok
