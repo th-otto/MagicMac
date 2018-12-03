@@ -11,3 +11,4 @@
 *.bat -text
 *.inf -text
 *.txt -text
+*.TXT -text

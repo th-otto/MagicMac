@@ -391,7 +391,7 @@ int insert_pth(struct pth_file *new, struct pth_file *old)
 	/* neuen Pfad erstellen (einsortieren) */
 	/* ----------------------------------- */
 
-	if (datn >= MAX_DATN)
+	if (pthn >= MAX_PTHN)
 	{
 		Rform_alert(1, ALRT_OVERFLOW, NULL);
 		return (-3);					/* šberlauf */

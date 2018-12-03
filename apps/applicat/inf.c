@@ -159,11 +159,6 @@ static int get_icon(const char *fname, int n)
 *
 *********************************************************************/
 
-void load_int_icons(void)
-{
-	rsrc_gtree(T_DEFICN, &(rscx[0].adr_icons));
-}
-
 void load_icons(void)
 {
 	int i;
@@ -181,6 +176,7 @@ void load_icons(void)
 	strcpy(rscx[0].fname, "<intern>");
 	rscx[0].nicons = 7;
 	rscx[0].firsticon = 1;
+	rsrc_gtree(T_DEFICN, &(rscx[0].adr_icons));
 
 	ic = icnx;
 	icnn = 0;

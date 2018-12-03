@@ -117,7 +117,6 @@ extern long err_alert(long e);
 
 extern int  rsrc_gtree(int gindex, OBJECT **tree );
 extern void load_icons( void );
-extern void load_int_icons( void );
 extern long get_inf( void );
 extern long put_inf( void );
 extern int spcn;

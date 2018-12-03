@@ -205,7 +205,6 @@ int main(int argc, char *argv[])
 
 	open_work();
 	load_icons();
-	load_int_icons();
 
 	if ((action[0] == 'c') && (!action[1]))
 	{
