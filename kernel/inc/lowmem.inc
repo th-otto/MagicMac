@@ -16,7 +16,7 @@ resvector      EQU $42a
 phystop        EQU $42e
 _membot        EQU $432
 _memtop        EQU $436
-memval2        EQU $43a
+memval2        EQU $43a       /* Validates memctrl and memconf if $237698AA */
 flock          EQU $43e
 seekrate       EQU $440
 _timer_ms      EQU $442
@@ -71,12 +71,12 @@ prv_lst        EQU $50a
 prv_auxo       EQU $50e
 prv_aux        EQU $512
 pun_ptr        EQU $516       ; hier unbenutzt
-memval3        EQU $51a
+memval3        EQU $51a       /* If $5555AAAA, reset        */
 dev_vecs       EQU $51e       /* long dev_vecs[8*4]         */
 cpu_typ        EQU $59e       /* int cpu_typ                */
 _p_cookies     EQU $5a0       /* long *cookie               */
-fstrm_top      EQU $5a4
-fstrm_valid    EQU $5a8
+ramtop         EQU $5a4       /* Pointer to end of FastRam  */
+ramvalid       EQU $5a8       /* Validates ramtop if $1357BD13 */
 bell_hook      EQU $5ac       /* long *pointer auf pling    */
 kcl_hook       EQU $5b0       /* long *pointer auf keyklick */
 

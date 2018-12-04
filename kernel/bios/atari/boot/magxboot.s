@@ -150,9 +150,9 @@ do_install:
  cmpi.l   #'MAGX',(a0)
  bne      err
  move.l   #$1000000,fstrm_beg
- cmpi.l   #$1357bd13,fstrm_valid
+ cmpi.l   #$1357bd13,ramvalid
  bne.b    no_ttram
- cmpi.l   #$1080000,fstrm_top      ; mind. 512k TT-RAM ?
+ cmpi.l   #$1080000,ramtop         ; mind. 512k TT-RAM ?
  bcs.b    no_ttram
  move.l   #$1000000,a5             ; Startadresse = Beginn TT-RAM
 

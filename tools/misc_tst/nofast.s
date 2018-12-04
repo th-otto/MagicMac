@@ -8,5 +8,5 @@
 
  clr.l    -(sp)
  gemdos   Super
- clr.l    fstrm_top
+ clr.l    ramtop
  gemdos   Pterm0

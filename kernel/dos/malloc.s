@@ -15,7 +15,7 @@
  SUPER
 
 fstrm_beg      EQU $49e            ; in Mag!X Beginn des TT-RAMs
-fstrm_top      EQU $5a4
+ramtop         EQU $5a4
 _memtop        EQU $436
 
      INCLUDE "errno.inc"
@@ -279,7 +279,7 @@ memr_do:
  move.l   (mem_root+4).w,d0
  ble      mem_err_dump             ; Fehler
  move.l   d0,a0
- move.l   fstrm_top,d2
+ move.l   ramtop,d2
  cmpa.l   a0,a1
  bcs      mem_err_dump             ; Adresse < TT_RAM
  cmpa.l   d2,a1

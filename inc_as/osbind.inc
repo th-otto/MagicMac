@@ -317,8 +317,8 @@ memval3        EQU $51a
 dev_vecs       EQU $51e       /* long dev_vecs[8*4]         */
 cpu_typ        EQU $59e       /* int cpy_typ                */
 _p_cookies     EQU $5a0       /* long *cookie               */
-fstrm_top      EQU $5a4
-fstrm_valid    EQU $5a8
+ramtop         EQU $5a4
+ramvalid       EQU $5a8
 bell_hook      EQU $5ac       /* long *pointer auf pling    */
 kcl_hook       EQU $5b0       /* long *pointer auf keyklick */
 

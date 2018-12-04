@@ -663,7 +663,7 @@ bot_aestpa:
 
  clr.l    ptr_frb                  ; Default: kein alternatives RAM
  move.l   end_os,d0
- cmpi.l   #$1357bd13,fstrm_valid   ; TT-RAM gueltig ?
+ cmpi.l   #$1357bd13,ramvalid      ; TT-RAM gueltig ?
  bne.b    bot_nofast               ; nein, wir brauchen keinen FRB
  move.l   d0,ptr_frb               ; fuer Floppytreiber merken
  move.l   d0,-(sp)
@@ -1852,11 +1852,11 @@ Getmpb:
  move.l   d0,(a1)+                 ; Laenge
  clr.l    (a1)                     ; kein owner
 * ggf. zweiten MD fuer TT-RAM einrichten
- cmpi.l   #$1357bd13,fstrm_valid   ; TT-RAM gueltig ?
+ cmpi.l   #$1357bd13,ramvalid   ; TT-RAM gueltig ?
  bne.b    gmp_ende            ; nein, Ende
  move.l   fstrm_beg,d0
- move.l   fstrm_top,d1
- sub.l    d0,d1               ; fstrm_top (Ende des TT-RAMs) <= sein Anfang
+ move.l   ramtop,d1
+ sub.l    d0,d1               ; ramtop (Ende des TT-RAMs) <= sein Anfang
  bls.b    gmp_ende            ; ja, Ende
  lea      ttram_md,a1
  move.l   a1,themd            ; hineinketten
