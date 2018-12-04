@@ -22,7 +22,6 @@
 #include <vdi.h>
 #include <portab.h>
 #include <tos.h>
-#include <magx.h>
 #include <string.h>
 #include <stdlib.h>
 #include "toserror.h"

@@ -1,7 +1,6 @@
 #include <tos.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tosdefs.h>
 
 #define SERNO "188160918"
 #define PERS_NAME "Test Name"

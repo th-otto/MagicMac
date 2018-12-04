@@ -22,7 +22,6 @@
 #include <mt_aes.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tosdefs.h>
 #include "mgformat.h"
 #include "gemut_mt.h"
 #include "toserror.h"

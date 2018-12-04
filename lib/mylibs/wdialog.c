@@ -18,7 +18,6 @@
 #else
 #include <stddef.h>
 #endif
-#include <magx.h>
 #include "gemutils.h"
 #include "wdialog.h"
 

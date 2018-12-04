@@ -7,7 +7,6 @@
 
 #include <tos.h>
 #include <aes.h>
-#include <tosdefs.h>
 #include <string.h>
 #include <stdlib.h>
 #include "gemut_mt.h"

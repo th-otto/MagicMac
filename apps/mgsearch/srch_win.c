@@ -8,10 +8,8 @@
 #include <aes.h>
 #include <vdi.h>
 #include <tos.h>
-#include <tosdefs.h>
 #include <string.h>
 #include <stdlib.h>
-#include <magx.h>
 #include "mgsearch.h"
 #include "gemutils.h"
 #include "portab.h"

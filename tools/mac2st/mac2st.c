@@ -3,7 +3,6 @@
 */
 
 #include <tos.h>
-#include <tosdefs.h>
 
 
 int main(int argc, char *argv[])

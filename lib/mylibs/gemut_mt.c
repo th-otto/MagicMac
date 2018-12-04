@@ -12,7 +12,6 @@
 #include <aes.h>
 #include <mt_aes.h>
 #include <vdi.h>
-#include <tosdefs.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>

@@ -12,7 +12,6 @@
 #include <stddef.h>
 #include <toserror.h>
 #include <tos.h>
-#include <magx.h>
 #define PD BASEPAGE
 typedef void APPL;
 #include "mgx_xfs.h"

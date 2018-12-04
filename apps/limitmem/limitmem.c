@@ -12,7 +12,6 @@
 *********************************************************************/
 
 #include <tos.h>
-#include <tosdefs.h>
 #include <ph.h>
 #include <stdlib.h>
 #include <string.h>

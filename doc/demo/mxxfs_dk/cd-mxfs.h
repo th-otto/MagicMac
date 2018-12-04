@@ -10,9 +10,7 @@
 
 #include <portab.h>
 #include <stddef.h>
-#include <tosdefs.h>
 #include <tos.h>
-#include <magx.h>
 #include "mgx_xfs.h"
 
 /* Hier die Assembler-Schnittstelle */

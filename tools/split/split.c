@@ -17,7 +17,6 @@
 #include <tos.h>
 #include <stddef.h>
 #include <string.h>
-#include <tosdefs.h>
 #include <structs.h>
 
 

@@ -14,8 +14,6 @@
 *********************************************************************/
 
 #include <tos.h>
-#include <magix.h>
-#include <tosdefs.h>
 #include <stdio.h>
 #include <string.h>
 #include <country.h>

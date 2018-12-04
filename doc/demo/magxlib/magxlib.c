@@ -8,7 +8,6 @@
 #include <tos.h>
 #include <string.h>
 #include <aes.h>
-#include <magx.h>
 #include "magxlib.h"
 
 

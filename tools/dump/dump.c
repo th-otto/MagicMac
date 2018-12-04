@@ -14,7 +14,6 @@
 *******************************************************************/
 
 #include <tos.h>
-#include <tosdefs.h>
 #include <stddef.h>
 #include <string.h>
 #include <limits.h>

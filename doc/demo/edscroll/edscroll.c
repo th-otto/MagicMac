@@ -8,7 +8,6 @@
 #include <aes.h>
 #include <tos.h>
 #include <string.h>
-#include <magx.h>
 #include "magxlib.h"
 #include "edscroll.h"
 

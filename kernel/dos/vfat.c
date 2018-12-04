@@ -6,8 +6,6 @@
 
 #include <portab.h>
 #include <tos.h>
-#include <tosdefs.h>
-#include <magx.h>
 #include "pd.h"
 #include "mgx_xfs.h"
 #include "mgx_dfs.h"

@@ -16,7 +16,6 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include "toserror.h"
-#include <magx.h>
 #include "gemutils.h"
 
 #define MIN(a,b) ((a < b) ? a : b)

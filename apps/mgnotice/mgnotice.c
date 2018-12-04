@@ -18,7 +18,6 @@
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tosdefs.h>
 #include <toserror.h>
 #include <wdlgfslx.h>
 #include "windows.h"

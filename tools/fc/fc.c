@@ -18,7 +18,6 @@
 #include <tos.h>
 #include <string.h>
 #include <stdio.h>
-#include <tosdefs.h>
 #include <limits.h>
 
 #define TRUE   1

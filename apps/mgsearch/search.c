@@ -11,10 +11,8 @@
 #include <tos.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tosdefs.h>
 #include <sys/stat.h>
 #include "toserror.h"
-#include <magx.h>
 #include "gemutils.h"
 #include "..\magxdesk.5\pattern.h"
 
