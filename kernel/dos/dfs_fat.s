@@ -171,6 +171,9 @@ FSI_TrailSig:       DS.L      1    /* 0xaa550000, wenn gueltig, fuer alle 3 Info
 ;is_next_cluster:   DS.L      1    /* Most recently allocated cluster. Unused under Linux. */
 ;is_reserved2:      DS.L      4
 
+/* avoid root dir fragmentation */
+FAT32_ROFF equ 32
+
      OFFSET
 * BCB
 b_link:        DS.L      1    /* 0x00: Zeiger auf naechsten BCB             */
@@ -204,7 +207,7 @@ xb_sizeof:
 b_recsiz:      DS.W      1    /* 0x00: Bytes/Sektor                        */
 b_clsiz:       DS.W      1    /* 0x02: Sektoren/Cluster                    */
 b_clsizb:      DS.W      1    /* 0x04: Bytes pro Cluster                   */
-b_rdlen:       DS.W      1    /* 0x06: Sektoren fuer Root                   */
+b_rdlen:       DS.W      1    /* 0x06: Sektoren fuer Root                  */
 b_fsiz:        DS.W      1    /* 0x08: Sektoren pro FAT                    */
 b_fatrec:      DS.W      1    /* 0x0a: Sektornr. der 2. FAT                */
 b_datrec:      DS.W      1    /* 0x0c: Sektornr. des 1. Datenclusters      */
@@ -220,8 +223,8 @@ b_flags:       DS.W      8    /* 0x10: Bit 0/Flag 0 = FAT- Typ             */
 bx_recsiz:     DS.W      1    /* Bytes/Sektor                         */
 bx_clsiz:      DS.W      1    /* Sektoren/Cluster                     */
 bx_clsizb:     DS.W      1    /* Bytes pro Cluster                    */
-bx_rdlen:      DS.W      1    /* FAT12/16: Sektoren fuer Root          */
-bx_rdclust:    DS.L      1    /* FAT32: Startcluster fuer Root         */
+bx_rdlen:      DS.W      1    /* FAT12/16: Sektoren fuer Root         */
+bx_rdclust:    DS.L      1    /* FAT32: Startcluster fuer Root        */
 bx_fsiz:       DS.L      1    /* Sektoren pro FAT                     */
 bx_fat1rec:    DS.L      1    /* Sektornr. der 1. FAT                 */
 bx_fatrec:     DS.L      1    /* Sektornr. der aktiven (i.a.) 2. FAT  */
@@ -576,13 +579,25 @@ set_disk_clean:
  beq.b    sdc_ok2                  ; ungueltig
  bmi.b    sdc_ende                 ; Fehler
 
- move.l   d_nfree_cl(a5),FSI_Free_Count(a1)
- moveq    #2,d1
+ move.l   d_nfree_cl(a5),d0
+ ror.w #8,d0
+ swap d0
+ ror.w #8,d0
+ move.l   d0,FSI_Free_Count(a1)
+ moveq    #FAT32_ROFF,d1
  move.l   d_1stfree_cl(a5),d0
  cmp.l    d1,d0
  bcc.b    sdc_putnf
  move.l   d1,d0
 sdc_putnf:
+ move.l   d_numcl(a5),d1
+ cmp.l    d1,d0
+ bcs.s    sdc_putnf2
+ moveq    #FAT32_ROFF,d0
+sdc_putnf2:
+ ror.w #8,d0
+ swap d0
+ ror.w #8,d0
  move.l   d0,FSI_Nxt_Free(a1)
 ; Sektor aendern (nicht verzoegert)
  move.w   #1,xb_dirty(a0)          ; Puffer als geaendert markieren
@@ -947,15 +962,32 @@ dro_bothroot:
 
 * FSINFO-Sektor einlesen und Daten ermitteln
 
- clr.l    d_1stfree_cl(a5)         ; Cache fuer freien Cl. (FAT16/FAT32)
  moveq    #-1,d0
+ move.l   d0,d_1stfree_cl(a5)      ; Cache fuer freien Cl. (FAT16/FAT32)
  move.l   d0,d_nfree_cl(a5)        ; Anzahl freier Cluster unbekannt
 
  move.l   a5,a0
  bsr      rd_fsinfo                ; Lesen
  ble.b    do_ok                    ; Fehler oder ungueltig
- move.l   FSI_Free_Count(a1),d_nfree_cl(a5)
- move.l   FSI_Nxt_Free(a1),d_1stfree_cl(a5)
+ move.l   FSI_Free_Count(a1),d0
+ ror.w #8,d0
+ swap d0
+ ror.w #8,d0
+ move.l   FSI_Nxt_Free(a1),d2
+ ror.w #8,d2
+ swap d2
+ ror.w #8,d2
+ move.l   d_numcl(a5),d1
+ cmp.l    d1,d0 ; number free clusters <= numcl?
+ bcc.s    do_ok ; no, error
+ cmp.l    d1,d2 ; next free cluster <= numcl?
+ bcc.s    do_ok ; no, error
+ moveq.l  #FAT32_ROFF,d1
+ cmp.l    d1,d2 ; next free cluster < 32?
+ bcs.s    do_ok ; yes, error
+ 
+ move.l   d0,d_nfree_cl(a5)
+ move.l   d2,d_1stfree_cl(a5)
 
 do_ok:
  moveq    #E_OK,d0
@@ -2261,7 +2293,8 @@ _fdel_nxtcl:
  move.l   d6,d0                    ; cluster
  bsr      FAT_read
  bmi      _fdel_ende
- clr.l    d_1stfree_cl(a5)         ; Cache fuer freien Cluster loeschen!!
+ moveq    #-1,d1
+ move.l   d1,d_1stfree_cl(a5)         ; Cache fuer freien Cluster loeschen!!
  move.l   d0,d7
  move.l   a5,a0
  moveq    #0,d1
@@ -2963,7 +2996,8 @@ fsh_nxtcl:
  bsr      FAT_write
  bmi      fsh_ende
 fsh_clear:
- clr.l    d_1stfree_cl(a4)         ; Cache fuer freien Cluster loeschen!
+ moveq    #-1,d1
+ move.l   d1,d_1stfree_cl(a4)      ; Cache fuer freien Cluster loeschen!
  addq.l   #1,d_nfree_cl(a4)        ; Anzahl freier Cluster erhoeht!
  bne.b    fsh_wasvalid             ; war nicht -1
  subq.l   #1,d_nfree_cl(a4)        ; war -1, bleibt -1
