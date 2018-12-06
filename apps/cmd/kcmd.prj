@@ -2,5 +2,6 @@ kcmd.tos
 .C[-P-]
 .C[-K-]
 .S[-I..\..\inc_as]
+.L[-S=8192]
 =
 kcmd.s

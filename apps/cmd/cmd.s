@@ -30,14 +30,14 @@ SP_PARGV  EQU  PARGV-4
 SP_BATCH  EQU  BATCH-4
 
 
+                XREF    _StkSize
+                GLOBL	_stksize
 
      OFFSET    0
 
 environment:   DS.B      $3ff
 env_ende:      DS.B      1
 
-               DS.B      3000
-stack:         DS.L      1
 c_sysbase:     DS.L      1              * Merker fÅr "_sysbase"
 c_phystop:     DS.L      1              * Merker fÅr "phystop"
 query_flag:    DS.W      1
@@ -99,6 +99,9 @@ alt_ssp:       DS.L      1
 evnt_ret:      DS.L      20        * oberste Langworte des ssp hier sichern
      ENDC
 
+
+stacktop:      DS.L      1
+
 bsslen:
 
 
@@ -112,19 +115,27 @@ _base     EQU  *-$100
 *  Nach AusfÅhren eines Befehls wird jeweils batchlevel = 0 gesetzt.
 
 
+__text:
+Start:          bra     Start0
+
+                dc.l    0 ; _RedirTab
+_stksize:       dc.l    _StkSize                * Stack size entry
 
 ***** Speicher zurÅckgeben ************************
 
+Start0:
 
  IFF      ACC
 
  movea.l  4(sp),a1
- lea      d+stack(pc),sp
- movea.w  #$100,a0                 ; ProgrammlÑnge + $100
- adda.l   $c(a1),a0
- adda.l   $14(a1),a0
- adda.l   $1c(a1),a0
- move.l   a0,-(sp)
+ move.l   #$100,d0                 ; ProgrammlÑnge + $100
+ add.l    $c(a1),d0
+ add.l    $14(a1),d0
+ add.l    $1c(a1),d0
+ lea      -32(a1,d0.l),sp
+ lea      d+stacktop(pc),a0
+ move.l   sp,(a0)
+ move.l   d0,-(sp)
  move.l   a1,-(sp)
  clr.w    -(sp)
  gemdos   Mshrink
@@ -143,8 +154,15 @@ _base     EQU  *-$100
 
 ZEILEN    EQU  19                  * soviele Bildschirmzeilen retten
 
+ move.l   a0,a1
+ move.l   #$100,d0                 ; ProgrammlÑnge + $100
+ add.l    $c(a1),d0
+ add.l    $14(a1),d0
+ add.l    $1c(a1),d0
+ lea      -32(a1,d0.l),sp
+ lea      d+stacktop(pc),a0
+ move.l   sp,(a0)
 * ssp retten
- lea      d+stack(pc),sp
  clr.l    -(sp)
  gemdos   Super
  addq.l   #6,sp
@@ -236,7 +254,7 @@ ini_parent:
 ini_xaes_nopd:
 
 again:
- lea      d+stack(pc),sp
+ move.l   d+stacktop(pc),sp
 * ssp und usp rÅcksetzen
  clr.l    -(sp)
  gemdos   Super
@@ -7005,7 +7023,6 @@ mpi_end:
  move.l   (sp)+,a5
  rts
 
-
 * TODO: Localization
 
 *       DATA
@@ -7120,12 +7137,11 @@ aespb:    DC.L      (d+control)-_base
 pgmname:  DC.B      '  CMD',0
      ENDC
 
+d:
+
 ************ BEGINN DES BSS ***********
 
-d:
+
         BSS
 
-     DS.B  bsslen
-
-
-     END
+__bss:    DS.B  bsslen
