@@ -25,6 +25,8 @@ os_chksum EQU  $486           ; trp14ret
 
      INCLUDE "osbind.inc"
 
+sizeof_PH equ 28
+
      TEXT
      SUPER
 
@@ -141,8 +143,8 @@ do_install:
 
 * pruefen, ob MagiX, und a5 auf Ladeadresse
 
- move.l   $1c+os_magic(a6),a0
- lea      $1c(a6,a0.l),a0
+ move.l   sizeof_PH+os_magic(a6),a0
+ lea      sizeof_PH(a6,a0.l),a0
  cmpi.l   #$87654321,(a0)+
  bne      err
  move.l   (a0)+,a5                 ; Ende der Variablen
@@ -160,7 +162,7 @@ do_install:
 
 no_ttram:
      IFNE MODIFY
- lea      $1c(a6),a1               ; a1 = Anfang des TOS
+ lea      sizeof_PH(a6),a1         ; a1 = Anfang des TOS
  lea      32000(a1),a2             ; max. 32000 Bytes durchsuchen
  move.b   1(a1),d0
  ext.w    d0                       ; Branch- Offset
@@ -195,14 +197,14 @@ do_modify:
  bcs.b    ver_tt
  move.w   #$0400,d0
 ver_tt:
- move.w   d0,os_version+$1c(a6)
+ move.w   d0,os_version+sizeof_PH(a6)
 ver_st:
  gemdos   Dgetdrv
  addq.l   #2,sp
 ;buf+1c ist das Programm ohne den Programmheader
 ;bei Offset 0x14 steht der Zeiger auf die AES-Variablen
- move.l   ($14+$1c)(a6),a0
- lea      $1c(a6,a0.l),a0
+ move.l   (os_magic+sizeof_PH)(a6),a0
+ lea      sizeof_PH(a6,a0.l),a0
  lea      $7a(a0),a0
  cmpi.l   #'____',(a0)             ; Sicherheitsfrage fuer alten Kernel
  bne.b    do_reloc
@@ -222,11 +224,11 @@ do_reloc:
  move.l   d0,d5                    ; tatsaechliche Laenge von MagiX
  add.l    $e(a6),d0                ; Laenge von SYM
 
- lea      $1c(a6,d0.l),a3          ; Beginn der Relocation- Daten
+ lea      sizeof_PH(a6,d0.l),a3    ; Beginn der Relocation- Daten
  lea      0(a6,d6.l),a2            ; Dateiende
  cmpa.l   a2,a3
  bcc.b    end_reloc
- lea      $1c(a6),a0
+ lea      sizeof_PH(a6),a0
  move.l   (a3)+,d0                 ; erstes Relocation- Langwort
 reloc_loop:
  add.l    d0,a0
@@ -245,7 +247,7 @@ reloc_loop2:
 
 end_reloc:
 * Checksumme ermitteln
- lea      $1c(a6),a0
+ lea      sizeof_PH(a6),a0
  lea      0(a0,d5.l),a1
  moveq    #0,d0
 os_chkloop:
@@ -266,7 +268,7 @@ startcopy:
 
 toscopy:
  move.l   a5,a0
- lea      $1c(a6),a1
+ lea      sizeof_PH(a6),a1
  move.l   d5,d0                    ; Laenge
  lsr.l    #3,d0                    ; /8
  cmpa.l   a0,a1

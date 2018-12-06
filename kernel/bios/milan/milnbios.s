@@ -1686,7 +1686,7 @@ crsh_loop:
  move.w   jmpop(pc),-6(a1)              ; Opcode fuer "jmp"
  move.l   4(a1),-4(a1)                  ;                  os_start
  move.w   braop(pc),(a1)                ; Branch auf "jmp os_start"
- move.w   $1e(a1),$1c(a1)               ; gendatg->palmode ??
+ ;move.w   $1e(a1),$1c(a1)               ; gendatg->palmode ??
  move.l   a1,_sysbase
  rts
 jmpop:
