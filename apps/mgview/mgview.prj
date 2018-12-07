@@ -1,6 +1,6 @@
 mgview.app
 .C[-I..\..\inc_c]
-.C[-I..\..\lib\mylibs\src]
+.C[-I..\..\lib\mylibs]
 .C[-K-]
 .C[-P-]
 .L[-S=$1000]   ; Stackgr”že 4k (der thread hat mehr)
@@ -11,7 +11,7 @@ windows.c		(windows.h,globals.h)
 mgwind.c		(mgwind.h,globals.h,windows.h)
 ;memchar2.s
 memchar2.c
-..\..\lib\mylibs\src\gemut_mt.o
+..\..\lib\mylibs\gemut_mt.c
 pcstdlib.lib   ; standard lib
 pctoslib.lib
 pcgemlib.lib
