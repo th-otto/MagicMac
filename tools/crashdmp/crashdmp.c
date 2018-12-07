@@ -18,13 +18,14 @@
 #include <stddef.h>
 
 
-#define P_COOKIES	((long *) 0x5a0)
-#define proc_lives	((long *) 0x380L)
+#define P_COOKIES	((unsigned long *) 0x5a0)
+#define proc_lives	((unsigned long *) 0x380L)
 #define PROC_MAGIC	0x12345678L
-#define proc_regs	((long *) 0x384L)
-#define proc_pc	((long *) 0x3c4L)
-#define proc_usp	((long *) 0x3c8L)
-#define proc_stk	((int  *) 0x3ccL)
+#define proc_regs	((unsigned long *) 0x384L)
+#define proc_pc		((unsigned long *) 0x3c4L)
+#define proc_usp	((unsigned long *) 0x3c8L)
+#define proc_stk	((unsigned short *) 0x3ccL)
+#define proc_bp		((unsigned long *) 0x3ecL)
 
 #define EN_BUS		2
 #define EN_ADDR	3
@@ -52,7 +53,7 @@
 
 static char ausgabe[] = "  XX = 00000000";
 
-static int cpu = 0;
+static short cpu = 0;
 
 /**************************************************************
 *
@@ -61,7 +62,7 @@ static int cpu = 0;
 *
 **************************************************************/
 
-static void setint(char *adresse, unsigned int wert)
+static void setint(char *adresse, unsigned short wert)
 {
 	register int i, j;
 
@@ -103,10 +104,25 @@ static void setlong(char *adresse, unsigned long wert)
 *
 **************************************************************/
 
-static void print_pc(long pc)
+static void print_pc(unsigned long pc)
 {
 	Cconws("PC on exception:               ");
 	setlong(ausgabe + 7, pc);
+	Cconws(ausgabe + 7);
+	Cconws(CRLF);
+}
+
+
+/**************************************************************
+*
+* Prints the value the BASEPAGE (MagiC extension)
+*
+**************************************************************/
+
+static void print_bp(unsigned long bp)
+{
+	Cconws("BP on exception:               ");
+	setlong(ausgabe + 7, bp);
 	Cconws(ausgabe + 7);
 	Cconws(CRLF);
 }
@@ -133,7 +149,7 @@ static void print_op(unsigned short op)
 *
 **************************************************************/
 
-static void print_xt(int xt)
+static void print_xt(unsigned short xt)
 {
 	static const char *const status[] = {
 		"indetermined",
@@ -158,12 +174,12 @@ static void print_xt(int xt)
 *
 **************************************************************/
 
-static void print_sr(int st)
+static void print_sr(unsigned short st)
 {
 	char *s;
 
 	Cconws("SR on exception:              ");
-	if (st < 0)
+	if (st & (1 << 15))
 		Cconws(" TR");
 	if (st & (1 << 13))
 		Cconws(" SUP");
@@ -189,7 +205,7 @@ static void print_sr(int st)
 *
 **************************************************************/
 
-static void print_ad(long ad)
+static void print_ad(unsigned long ad)
 {
 	Cconws("Error while accessing address: ");
 	setlong(ausgabe + 7, ad);
@@ -203,7 +219,7 @@ static void print_ad(long ad)
 *
 *************************************************************/
 
-static long get_cookie(long typ)
+static long get_cookie(unsigned long typ)
 {
 	unsigned long *p_cookies;
 
@@ -213,7 +229,7 @@ static long get_cookie(long typ)
 		if (*p_cookies == typ)
 		{
 			p_cookies++;
-			return (*p_cookies);
+			return *p_cookies;
 		}
 		p_cookies += 2;
 	}
@@ -229,11 +245,11 @@ int main(void)
 	char *fehler;
 
 	usp = Super(0L);					/* Supervisormodus */
-	cpu = (int) get_cookie('_CPU');
+	cpu = (short) get_cookie(0x5F435055UL); /* '_CPU' */
 
 	if (*proc_lives != PROC_MAGIC)
 	{
-		Super((int *) usp);				/* Usermodus */
+		Super((void *) usp);			/* Usermodus */
 		return 0;
 	}
 
@@ -337,23 +353,49 @@ int main(void)
 	{
 		if (cpu > 0)
 		{
-			print_pc(*((long *) (proc_stk + 1)));
+			unsigned short format = (proc_stk[3] & 0xf000) >> 12;
+			
+			print_pc(*((unsigned long *) (proc_stk + 1)));
 			print_sr(proc_stk[0]);
-			print_ad(*((long *) (proc_stk + 8)));
-			print_xt(proc_stk[5]);
+			switch (format)
+			{
+			case 8: /* 68010 access error frame */
+				print_ad(*((unsigned long *) (proc_stk + 5)));
+				print_xt(proc_stk[4]);
+				break;
+			case 2: /* address error */
+			case 3:
+				print_ad(*((unsigned long *) (proc_stk + 4)));
+				break;
+			case 7: /* 68040 access error */
+				print_ad(*((unsigned long *) (proc_stk + 4)));
+				print_xt(proc_stk[6]);
+				break;
+			case 4: /* 68060 access error */
+				print_ad(*((unsigned long *) (proc_stk + 4)));
+				print_xt(proc_stk[6]);
+				break;
+			default:
+				print_ad(*((unsigned long *) (proc_stk + 8)));
+				print_xt(proc_stk[5]);
+				break;
+			}
 		} else
 		{
-			print_pc(*((long *) (proc_stk + 5)));
+			print_pc(*((unsigned long *) (proc_stk + 5)));
 			print_sr(proc_stk[4]);
-			print_ad(*((long *) (proc_stk + 1)));
+			print_ad(*((unsigned long *) (proc_stk + 1)));
 			print_op(proc_stk[3]);
 			print_xt(proc_stk[0]);
 		}
 	} else
 	{
-		print_pc(*((long *) (proc_stk + 1)));
-		print_sr(proc_stk[1]);
+		print_pc(*((unsigned long *) (proc_stk + 1)));
+		print_sr(proc_stk[0]);
 	}
+
+	if (*proc_bp)
+		print_bp(*proc_bp);
 
 	/* Stack ausgeben */
 	/* -------------- */
@@ -370,6 +412,6 @@ int main(void)
 		Cconws((i % 2) ? CRLF : "   ");
 	}
 
-	Super((int *) usp);					/* Usermodus */
+	Super((void *) usp);				/* Usermodus */
 	return 0;
 }

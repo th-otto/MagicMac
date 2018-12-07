@@ -1513,6 +1513,7 @@ print_bombs10:
 pb_loop:
  move.w   (a1)+,(a0)+
  dbf      d0,pb_loop
+ move.l   (act_pd).w,(a0)
  move.l   #$12345678,proc_lives
  move.l   #savptr_area,savptr
 * Betriebssystem ueberpruefen

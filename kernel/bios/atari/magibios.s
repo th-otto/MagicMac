@@ -2132,6 +2132,7 @@ exc:
 pb_loop:
  move.w   (a1)+,(a0)+
  dbf      d0,pb_loop
+ move.l   (act_pd).w,(a0)
  move.l   #$12345678,proc_lives
  moveq    #0,d1
  move.b   proc_pc,d1

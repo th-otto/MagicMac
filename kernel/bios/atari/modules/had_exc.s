@@ -26,6 +26,7 @@ exception4:	lea	startup_stk.w,SP ;den Stack initialisieren
 		lea	proc_stk.w,A0
 exception2:	move.w	(A1)+,(A0)+	;16 Worte vom SSP merken
 		dbra	D0,exception2
+        move.l  (act_pd).w,(a0)
 		move.l	#$12345678,proc_lives.w ;Daten fuer gueltig erklaeren
 
 bombs:		lea	tb1(PC),A0	;zeiger auf starttext
