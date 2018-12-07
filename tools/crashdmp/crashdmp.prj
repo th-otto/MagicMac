@@ -4,10 +4,10 @@ crashdmp.tos
 .C[-P-]
 .C[-A-]
 .C[-G-]
-.L[-S=0]
+.L[-S=4096]
 
 =
-cstartv.o
+cstart0.o
 
 crashdmp.c
 
