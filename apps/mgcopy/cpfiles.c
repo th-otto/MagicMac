@@ -195,7 +195,7 @@ static int dial_datexi(char *path, char *fname, filetype ftype,
 	FILEDESCR fd;
 	EVNT w_ev;
 	int panic;
-
+	WORD dummy;
 
 	ret = Dpathconf(path, DP_NAMEMAX);
 	if	(ret > 0L)
@@ -273,7 +273,7 @@ static int dial_datexi(char *path, char *fname, filetype ftype,
 		if	(d_dat && !wdlg_evnt(d_dat, &w_ev))
 			{
 			cldat:
-			wdlg_close(d_dat, NULL, NULL);
+			wdlg_close(d_dat, &dummy, &dummy);
 			wdlg_delete(d_dat);
 			d_dat = NULL;
 			}

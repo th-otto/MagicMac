@@ -149,7 +149,7 @@ static void print_op(unsigned short op)
 *
 **************************************************************/
 
-static void print_xt(unsigned short xt)
+static void print_xt(unsigned short xt, unsigned short rw)
 {
 	static const char *const status[] = {
 		"indetermined",
@@ -164,7 +164,7 @@ static void print_xt(unsigned short xt)
 
 	Cconws("Prozessor state:               ");
 	Cconws(status[xt & 7]);
-	Cconws(xt & 16 ? ", Read \r\n" : ", Write\r\n");
+	Cconws(xt & rw ? ", Read \r\n" : ", Write\r\n");
 }
 
 
@@ -361,7 +361,7 @@ int main(void)
 			{
 			case 8: /* 68010 access error frame */
 				print_ad(*((unsigned long *) (proc_stk + 5)));
-				print_xt(proc_stk[4]);
+				print_xt(proc_stk[4], 0x800);
 				break;
 			case 2: /* address error */
 			case 3:
@@ -369,15 +369,15 @@ int main(void)
 				break;
 			case 7: /* 68040 access error */
 				print_ad(*((unsigned long *) (proc_stk + 4)));
-				print_xt(proc_stk[6]);
+				print_xt(proc_stk[6], 0x100);
 				break;
 			case 4: /* 68060 access error */
 				print_ad(*((unsigned long *) (proc_stk + 4)));
-				print_xt(proc_stk[6]);
+				print_xt(proc_stk[6], 0x100);
 				break;
-			default:
+			default: /* hopefully format 11: 68020/30 access error */
 				print_ad(*((unsigned long *) (proc_stk + 8)));
-				print_xt(proc_stk[5]);
+				print_xt(proc_stk[5], 0x40);
 				break;
 			}
 		} else
@@ -386,7 +386,7 @@ int main(void)
 			print_sr(proc_stk[4]);
 			print_ad(*((unsigned long *) (proc_stk + 1)));
 			print_op(proc_stk[3]);
-			print_xt(proc_stk[0]);
+			print_xt(proc_stk[0], 0x10);
 		}
 	} else
 	{

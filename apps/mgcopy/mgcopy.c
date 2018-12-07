@@ -675,7 +675,7 @@ void terminate_dialog( void **dialog, GRECT *pref_g )
 		wind_get(whandle, WF_ICONIFY, &iconified,
 				&dummy, &dummy, &dummy);
 	else	iconified = TRUE;
-	wdlg_close( *dialog, NULL, NULL );
+	wdlg_close( *dialog, &dummy, &dummy );
 	wdlg_delete( *dialog );
 	*dialog = NULL;
 	/* Fensterposition merken */

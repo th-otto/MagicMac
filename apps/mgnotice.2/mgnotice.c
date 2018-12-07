@@ -925,7 +925,7 @@ int main( void )
 	EVNT w_ev;
 	int i;
 	long err;
-
+	WORD dummy;
 
 
 	/* SharedLib laden */
@@ -1019,7 +1019,7 @@ int main( void )
 
 		if	(d_options && !wdlg_evnt(d_options, &w_ev))
 			{
-			wdlg_close(d_options, NULL, NULL);
+			wdlg_close(d_options, &dummy, &dummy);
 			wdlg_delete(d_options);
 			d_options = NULL;
 			/* Fensterposition merken */

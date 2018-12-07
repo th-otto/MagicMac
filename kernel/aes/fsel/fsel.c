@@ -1841,6 +1841,8 @@ static void clr_dirty( FSEL_DIALOG *fsd)
 
 static void fsel_dialog_exit( FSEL_DIALOG *fsd )
 {
+	WORD dummy;
+	
      if   (fsd)
           {
           if   (fsd->files)
@@ -1851,7 +1853,7 @@ static void fsel_dialog_exit( FSEL_DIALOG *fsd )
                Mfree(fsd->rshdr);
           if   (fsd->dialog)
                {
-               wdlg_close(fsd->dialog, NULL, NULL);
+               wdlg_close(fsd->dialog, &dummy, &dummy);
                wdlg_delete(fsd->dialog);
                }
           Mfree(fsd);

@@ -953,7 +953,7 @@ int main( int argc, char *argv[] )
 	int i;
 	LONG err;
 	int update = FALSE;
-
+	WORD dummy;
 
 
 	/* SharedLib laden */
@@ -1040,7 +1040,7 @@ int main( int argc, char *argv[] )
 
 		if	(d_options && !wdlg_evnt(d_options, &w_ev))
 			{
-			wdlg_close(d_options, NULL, NULL);
+			wdlg_close(d_options, &dummy, &dummy);
 			wdlg_delete(d_options);
 			d_options = NULL;
 			/* Fensterposition merken */

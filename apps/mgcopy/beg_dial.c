@@ -345,7 +345,7 @@ void beg_dial_action( int argc, char *argv[],
 {
 	THREADINFO thi;
 	int whdl;
-
+	WORD dummy;
 
 	if	(copy_id <= 0)	/* thread noch nicht aktiv */
 		{
@@ -396,7 +396,7 @@ void beg_dial_action( int argc, char *argv[],
 		if	(copy_id <= 0)
 			{
 			form_xerr(ENSMEM, NULL);
-			wdlg_close(d_working, NULL, NULL);
+			wdlg_close(d_working, &dummy, &dummy);
 			wdlg_delete(d_working);
 			d_working = NULL;
 			}

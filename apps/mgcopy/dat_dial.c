@@ -51,9 +51,11 @@ void dat_dial_init_rsc( void )
 
 void close_dat_dialog( void )
 {
+	WORD dummy;
+	
 	if	(d_dat)
 		{
-		wdlg_close(d_dat, NULL, NULL);
+		wdlg_close(d_dat, &dummy, &dummy);
 		wdlg_delete(d_dat);
 		d_dat = NULL;
 		}

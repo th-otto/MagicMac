@@ -62,7 +62,8 @@ int main( void )
 	WORD whdl_dialog;
 	LONG err;
 	int ret = 1;
-
+	WORD dummy;
+	
 	if  ((ap_id = appl_init()) < 0)
 		return 1;
 	if	(!rsrc_load("edit.rsc"))
@@ -154,7 +155,7 @@ int main( void )
 
 		if	(d_dialog && !wdlg_evnt(d_dialog, &w_ev))
 			{
-			wdlg_close(d_dialog, NULL, NULL);
+			wdlg_close(d_dialog, &dummy, &dummy);
 			wdlg_delete(d_dialog);
 			d_dialog = NULL;
 			break;

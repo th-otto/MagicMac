@@ -394,21 +394,21 @@ int main(int argc, char *argv[])
 		if (d_typ && !wdlg_evnt(d_typ, &w_ev))
 		{
 			Mfree(wdlg_get_udata(d_typ));
-			wdlg_close(d_typ, NULL, NULL);
+			wdlg_close(d_typ, &dummy, &dummy);
 			wdlg_delete(d_typ);
 			d_typ = NULL;
 		}
 		if (d_anw && !wdlg_evnt(d_anw, &w_ev))
 		{
 			Mfree(wdlg_get_udata(d_anw));
-			wdlg_close(d_anw, NULL, NULL);
+			wdlg_close(d_anw, &dummy, &dummy);
 			wdlg_delete(d_anw);
 			d_anw = NULL;
 		}
 		if (d_pth && !wdlg_evnt(d_pth, &w_ev))
 		{
 			Mfree(wdlg_get_udata(d_pth));
-			wdlg_close(d_pth, NULL, NULL);
+			wdlg_close(d_pth, &dummy, &dummy);
 			wdlg_delete(d_pth);
 			d_pth = NULL;
 		}

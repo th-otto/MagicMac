@@ -80,13 +80,14 @@ static int variable_strings[] = {
 void do_info_file_dialogs( EVNT *w_ev )
 {
 	INFO_FILE_DATA *ifd,**prev;
-
+	WORD dummy;
+	
 	for	(ifd = info_file_dialogs, prev = &info_file_dialogs;
 			(ifd); prev = &ifd->next, ifd = ifd->next)
 		{
 		if	(!wdlg_evnt(ifd->dialog, w_ev))
 			{
-			wdlg_close(ifd->dialog, NULL, NULL);
+			wdlg_close(ifd->dialog, &dummy, &dummy);
 			wdlg_delete(ifd->dialog);
 			*prev = ifd->next;	/* ausklinken */
 			n_info_file_dialogs--;

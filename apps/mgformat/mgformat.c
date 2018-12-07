@@ -323,7 +323,7 @@ int main( int argc, char *argv[] )
 	int	src_dev;
 	int	dst_dev;
 	enum actioncode action;
-
+	WORD dummy;
 
 	/* Kommandozeile auswerten */
 	/* ----------------------- */
@@ -442,7 +442,7 @@ int main( int argc, char *argv[] )
 
 		if	(d_fmtopt && !wdlg_evnt(d_fmtopt, &w_ev))
 		{
-			wdlg_close(d_fmtopt, NULL, NULL);
+			wdlg_close(d_fmtopt, &dummy, &dummy);
 			wdlg_delete(d_fmtopt);
 			d_fmtopt = NULL;
 		}

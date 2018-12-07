@@ -399,6 +399,7 @@ static void reset_sub_dialog(PRN_DIALOG *prn_dialog, PRN_ENTRY *new_printer, WOR
 	WORD ow = prn_dialog->tree[ROOT].ob_width;
 	WORD oh = prn_dialog->tree[ROOT].ob_height;
 	WORD act_editob;
+	WORD dummy;
 	
 	if (old_sub->reset_dlg != NULL)
 		old_sub->reset_dlg(&prn_dialog->settings, old_sub);
@@ -519,7 +520,7 @@ static void reset_sub_dialog(PRN_DIALOG *prn_dialog, PRN_ENTRY *new_printer, WOR
 	{
 		if (dialog != NULL)
 		{
-			wdlg_close(dialog, NULL, NULL);
+			wdlg_close(dialog, &dummy, &dummy);
 			prn_dialog->sub_whdl = 0;
 		} else
 		{
