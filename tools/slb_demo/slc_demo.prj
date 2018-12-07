@@ -1,8 +1,8 @@
 slc_demo.tos
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 =              ; list of modules follows...
 cstartv.o      ; startup code
 slc_demo.c
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

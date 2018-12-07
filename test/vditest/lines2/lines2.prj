@@ -1,8 +1,9 @@
 lines2.prg
+.C[-I..\..\..\pc\include]
 .L[-S=$800]
 =
-cstartv.o
+..\..\..\pc\lib\cstartv.o
 lines2.c
-pcstdlib.lib   ; standard lib
-pctoslib.lib   ; TOS lib
-pcgemlib.lib	; GEM lib
+..\..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\..\pc\lib\pctoslib.lib   ; TOS lib
+..\..\..\pc\lib\pcgemlib.lib	; GEM lib

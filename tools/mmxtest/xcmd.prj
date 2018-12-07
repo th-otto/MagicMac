@@ -1,4 +1,5 @@
 xcmd.ttp
+.C[-I..\..\pc\include]
 
 .C[-K-]
 .C[-P-]
@@ -7,9 +8,9 @@ xcmd.ttp
 .L[-S=0]
 
 =
-cstartv.o
+..\..\pc\lib\cstartv.o
 
 xcmd.c
 
-pcstdlib.lib
-pctoslib.lib
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib

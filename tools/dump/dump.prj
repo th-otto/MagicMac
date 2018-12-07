@@ -1,9 +1,9 @@
 dump.ttp    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 .S[-I..\..\inc_as]
 =              ; list of modules follows...
-cstartv.o     ; startup code (mit ParameterÅbergabe)
+..\..\pc\lib\cstartv.o     ; startup code (mit Parameteruebergabe)
 dump.c
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

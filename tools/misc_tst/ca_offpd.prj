@@ -3,6 +3,5 @@ ca_offpd.prg    ; name of executable pgm is topmost window
 .S[-I..\..\inc_as]
 =              ; list of modules follows...
 ca_offpd.s
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

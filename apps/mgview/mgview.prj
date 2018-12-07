@@ -1,17 +1,18 @@
 mgview.app
 .C[-I..\..\inc_c]
 .C[-I..\..\lib\mylibs]
+.C[-I..\..\pc\include]
 .C[-K-]
 .C[-P-]
 .L[-S=$1000]   ; Stackgr”že 4k (der thread hat mehr)
 =              ; list of modules follows...
-cstartv.o     ; startup code mit ARGV und Quoting
+..\..\pc\lib\cstartv.o     ; startup code mit ARGV und Quoting
 mgview.c        	(mgview.h,globals.h,windows.h)
 windows.c		(windows.h,globals.h)
 mgwind.c		(mgwind.h,globals.h,windows.h)
 ;memchar2.s
 memchar2.c
 ..\..\lib\mylibs\gemut_mt.c
-pcstdlib.lib   ; standard lib
-pctoslib.lib
-pcgemlib.lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

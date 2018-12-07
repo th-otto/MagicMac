@@ -1,9 +1,10 @@
 pdlg.prg
 .C[-A-]
+.C[-I..\..\pc\include]
 .L[-S=$800]
 =              ; list of modules follows...
-cstartv.o      ; startup code
+..\..\pc\lib\cstartv.o      ; startup code
 pdlg.c
-pcstdlib.lib
-pctoslib.lib   ; TOS lib
-pcgemlib.lib	; fÅr VDI
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

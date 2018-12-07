@@ -1235,7 +1235,7 @@ int decode5(void)
 int branch(void)
 {
 	register int  cond;
-	char displ;
+	unsigned char displ;
 
 
 	cond = (befehl >> 8) & 15;
@@ -1249,7 +1249,7 @@ int branch(void)
 			writestr(bedingung(cond));
 			}
 
-	if	(is30 && (displ == -1))
+	if	(is30 && (displ == 0xff))
 		{
 		writestr(".l");		/* long branch (68030) */
 		writepos(OPR_POS);

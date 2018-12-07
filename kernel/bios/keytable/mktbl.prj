@@ -1,6 +1,7 @@
 mktbl.ttp
+.C[-I..\..\pc\include]
 =
-cstartv.o
+..\..\pc\lib\cstartv.o
 mktbl.c
-pcstdlib.lib
-pctoslib.lib
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib

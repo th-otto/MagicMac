@@ -1,8 +1,8 @@
 ph_bit3.ttp
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 =
-cstartv.o    ; fÅr lange Dateinamen
+..\..\pc\lib\cstartv.o    ; fuer lange Dateinamen
 ph_bit3.c
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

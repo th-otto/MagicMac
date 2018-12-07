@@ -1,11 +1,12 @@
 mgsearch.app
 .C[-I..\..\inc_c]
 .C[-I..\..\lib\mylibs]
+.C[-I..\..\pc\include]
 .C[-K-]
 .C[-P-]
 .L[-S=$4000]   ; Stackgr”že auf 16 KByte setzen
 =              ; list of modules follows...
-cstartv.o     ; startup code
+..\..\pc\lib\cstartv.o     ; startup code
 mgsearch.c      (mgsearch.h)
 search.c       	(search.h)
 srch_win.c		(srch_win.h)
@@ -13,6 +14,6 @@ srch_win.c		(srch_win.h)
 ..\..\lib\mylibs\gemutils.c
 ..\..\lib\mylibs\windows.c
 
-pcstdlib.lib   ; standard lib
-pctoslib.lib
-pcgemlib.lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

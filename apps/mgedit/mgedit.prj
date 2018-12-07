@@ -1,15 +1,16 @@
 mgedit.app
 .C[-I..\..\inc_c]
 .C[-I..\..\lib\mylibs]
+.C[-I..\..\pc\include]
 .C[-K-]
 .L[-S=$1000]   ; Stackgrîûe 4k
 =
-cstartv.o     ; startup code
-mgedit         (mgedit.h,globals.h)
-opt_dial		(mgedit.h,globals.h)
-mgedwind		(globals.h)
+..\..\pc\lib\cstartv.o     ; startup code
+mgedit.c         (mgedit.h,globals.h)
+opt_dial.c		(mgedit.h,globals.h)
+mgedwind.c		(globals.h)
 ..\..\lib\mylibs\gemut_mt.c
 
-pcstdlib.lib   ; standard lib
-pctoslib.lib
-pcgemlib.lib	; fÅr VDI
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

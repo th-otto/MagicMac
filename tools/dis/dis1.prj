@@ -1,10 +1,10 @@
 dis1.ttp
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 =
-cstartv.o
+..\..\pc\lib\cstartv.o
 dis1.c
 dec.c
 shelsort.c
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

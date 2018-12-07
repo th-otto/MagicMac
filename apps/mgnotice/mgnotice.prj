@@ -1,11 +1,12 @@
 mgnotice.app
 .C[-I..\..\inc_c]
 .C[-I..\..\lib\mylibs]
+.C[-I..\..\pc\include]
 .C[-K-]
 .C[-P-]
 .L[-S=$1000]   ; Stackgrîûe 4k
 =
-cstartv.o     ; startup code
+..\..\pc\lib\cstartv.o     ; startup code
 mgnotice.c       (mgnotice.h,globals.h,windows.h)
 new_dial.c		(mgnotice.h,globals.h)
 opt_dial.c		(mgnotice.h,globals.h)
@@ -13,6 +14,6 @@ windows.c		(windows.h)
 mgnwind.c		(globals.h,windows.h)
 ..\..\lib\mylibs\gemut_mt.c
 
-pcstdlib.lib   ; standard lib
-pctoslib.lib
-pcgemlib.lib	; fÅr VDI
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

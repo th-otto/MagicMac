@@ -2,12 +2,13 @@ mgxclock.prg
 .C[-8-]
 .C[-K-]
 .C[-P-]
+.C[-I..\..\pc\include]
 .L[-S=$4000]
 =
-cstart0.O      ; startup code
+..\..\pc\lib\cstart0.o      ; startup code
 
 mgxclock.c
 
-pcstdlib.lib   ; standard lib
-pctoslib.lib   ; TOS lib
-pcgemlib.lib   ; AES and VDI lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcgemlib.lib   ; AES and VDI lib

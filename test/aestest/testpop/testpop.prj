@@ -1,8 +1,9 @@
 testpop.prg
+.C[-I..\..\..\pc\include]
 .L[-S=$4000]   ; Stackgr”že auf 16 KByte setzen
 =              ; list of modules follows...
-cstartv.o
+..\..\..\pc\lib\cstartv.o
 testpop.c       (test.h)
-pcstdlib.lib   ; standard lib
-pctoslib.lib
-pcgemlib.lib
+..\..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\..\pc\lib\pctoslib.lib
+..\..\..\pc\lib\pcgemlib.lib

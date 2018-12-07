@@ -22,7 +22,6 @@
 */
 #include <string.h>
 #include <stdlib.h>
-#include "mmxdaemn.h"
 #include "toserror.h"
 #include "av.h"
 #if DEBUG

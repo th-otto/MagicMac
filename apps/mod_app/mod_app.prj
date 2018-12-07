@@ -3,11 +3,12 @@ mod_app.ttp
 .C[-K-]
 .C[-P-]
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 .L[-S=$4000]
 =
-cstartv.O      ; startup code
+..\..\pc\lib\cstartv.o      ; startup code
 
 mod_app.c
 
-pcstdlib.lib   ; standard lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

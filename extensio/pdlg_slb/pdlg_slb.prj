@@ -2,6 +2,7 @@ pdlg.slb
 .C[-I..\..\inc_c]
 .C[-I..\..\kernel\inc]
 .C[-I..\..\kernel\aes\wdialog]
+.C[-I..\..\pc\include]
 
 .S[-DCOUNTRY=1]
 .C[-DCOUNTRY=1]
@@ -43,7 +44,7 @@ aesctrl.s
 mt_aes_i.c [-P-]
 ..\..\kernel\aes\wdialog\mt_aes.c [-P-]
 
-pcstdlib.lib
+..\..\pc\lib\pcstdlib.lib
 
 ..\..\kernel\aes\wdialog\vdi.s
 ..\..\kernel\aes\wdialog\mac_api.s

@@ -1,9 +1,10 @@
 dev_ser.tos    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .S[-I..\..\inc_as]
+.C[-I..\..\pc\include]
 =              ; list of modules follows...
-cstart0.o     ; startup code (mit Parameterbergabe)
+..\..\pc\lib\cstart0.o     ; startup code (mit Parameterbergabe)
 dev_ser.c
 dev_sers.s
-pcstdlib.lib   ; standard lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

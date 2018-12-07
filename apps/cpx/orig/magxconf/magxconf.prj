@@ -14,4 +14,4 @@ magxconf.c
 gemdos.s
 aesctrl.s
 mt_aes.c [-P]
-pcstdlib.lib
+..\..\pc\lib\pcstdlib.lib

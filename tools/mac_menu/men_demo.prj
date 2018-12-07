@@ -6,13 +6,14 @@ men_demo.tos      ; name of executable program
                     ;  Y+: add debug information
                     ;  T-: no stack checking because of "Supexec" usage
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 =                  ; list of modules follows...
 
-cstartv.o          ; startup code
+..\..\pc\lib\cstartv.o          ; startup code
 
 men_demo.c         ; the main program
 ..\..\lib\mac_api\mac_api.c          ; call interface to Mac OS functions
 
-pcstdlib.lib       ; standard library
-pctoslib.lib       ; TOS library
-pcgemlib.lib	; GEM lib
+..\..\pc\lib\pcstdlib.lib       ; standard library
+..\..\pc\lib\pctoslib.lib       ; TOS library
+..\..\pc\lib\pcgemlib.lib	; GEM lib

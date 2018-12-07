@@ -1,7 +1,8 @@
 crfiles.ttp
+.C[-I..\..\pc\include]
 .L[-S=$4000]   ; stacksize 16k
 =              ; list of modules follows...
-cstartv.o
+..\..\pc\lib\cstartv.o
 crfiles.c
-pcstdlib.lib   ; standard lib
-pctoslib.lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib

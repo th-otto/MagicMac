@@ -1,10 +1,10 @@
 edit.prg
 .C[-A-]
+.C[-I..\..\pc\include]
 .L[-S=$800]
 =              ; list of modules follows...
-cstartv.o      ; startup code
+..\..\pc\lib\cstartv.o      ; startup code
 edit.c (edit.h)
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
-pcgemlib.lib	; fÅr VDI
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

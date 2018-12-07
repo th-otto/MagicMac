@@ -1,8 +1,9 @@
 psemapho.ttp
 .c[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 .L[-S=$4000]   ; stacksize 16k
 =              ; list of modules follows...
-cstartv.o
+..\..\pc\lib\cstartv.o
 psemapho.c
-pcstdlib.lib   ; standard lib
-pctoslib.lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib

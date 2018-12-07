@@ -4,13 +4,14 @@ cmddline.prg
 .C[-P-]
 .C[-A-]
 .C[-G-]
+.C[-I..\..\pc\include]
 .L[-S=0]
 
 =
-cstartv.o
+..\..\pc\lib\cstartv.o
 
 cmdline.c
 
-pcstdlib.lib
-pctoslib.lib
-pcgemlib.lib
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

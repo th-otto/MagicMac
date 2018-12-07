@@ -1,4 +1,5 @@
 crashdmp.tos
+.C[-I..\..\pc\include]
 
 .C[-K-]
 .C[-P-]
@@ -7,9 +8,9 @@ crashdmp.tos
 .L[-S=4096]
 
 =
-cstart0.o
+..\..\pc\lib\cstart0.o
 
 crashdmp.c
 
-pcstdlib.lib
-pctoslib.lib
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib

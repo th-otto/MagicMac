@@ -1,8 +1,8 @@
 dos_mon.prg    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .S[-I..\..\inc_as]
+.C[-I..\..\pc\include]
 =              ; list of modules follows...
 dos_mon.s
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

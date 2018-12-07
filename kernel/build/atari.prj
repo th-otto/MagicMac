@@ -5,6 +5,7 @@ magic.ram
 .C[-I..\..\inc_c]
 .C[-I..\inc]
 .S[-I..\inc]
+.C[-I..\..\pc\include]
 
 .S[-DCOUNTRY=1]
 .C[-DCOUNTRY=1]

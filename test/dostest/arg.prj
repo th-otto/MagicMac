@@ -1,7 +1,8 @@
 arg.tos
 .L[-S=$4000]   ; stacksize 16k
+.C[-I..\..\pc\include]
 =              ; list of modules follows...
-cstartv.o
+..\..\pc\lib\cstartv.o
 arg.c
-pcstdlib.lib   ; standard lib
-pctoslib.lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib

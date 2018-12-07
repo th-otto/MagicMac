@@ -1,11 +1,12 @@
-PDLGSMP3.APP
+pdlgsmp3.app
 .C[-A-]
+.C[-I..\..\pc\include]
 =
 
-PCSTART.O				;PC-Startup-Code
+..\..\pc\lib\pcstart.o				;PC-Startup-Code
 
-PDLGSMP3.C				;Hauptprogramm
+pdlgsmp3.c				;Hauptprogramm
 
-PCSTDLIB.LIB
-PCTOSLIB.LIB
-PCGEMLIB.LIB			;wird nur noch fÅr VDI-Bindings benutzt
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

@@ -1,7 +1,8 @@
 cd-mxfs.xfs
+.C[-I..\..\pc\include]
 =
 cd-mxfsc.c (cd-mxfs.h)
 cd-mxfs.s
 cd-mxfsk.s
-pctoslib.lib
-pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcstdlib.lib

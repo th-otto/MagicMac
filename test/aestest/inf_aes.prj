@@ -1,8 +1,9 @@
 inf_aes.prg
+.C[-I..\..\pc\include]
 .L[-S=$4000]   ; stacksize 16k
 =              ; list of modules follows...
-cstartv.o
+..\..\pc\lib\cstartv.o
 inf_aes.c
-pcstdlib.lib   ; standard lib
-pcgemlib.lib
-pctoslib.lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pcgemlib.lib
+..\..\pc\lib\pctoslib.lib

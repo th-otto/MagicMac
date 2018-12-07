@@ -1,6 +1,7 @@
 wdialog.prg
 .C[-I..\..\..\inc_c]
 .C[-I..\..\inc]
+.C[-I..\..\..\pc\include]
 .S[-I..\..\inc]
 
 .S[-DCOUNTRY=1]
@@ -39,7 +40,7 @@ aesctrl.s
 mt_aes.c
 math.s
 
-pcstdlib.lib
+..\..\..\pc\lib\pcstdlib.lib
 
 vdi.s
 mac_api.s

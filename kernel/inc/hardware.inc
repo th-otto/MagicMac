@@ -180,6 +180,8 @@ ST_SHIFT          EQU $ffff8260
 SP_SHIFT          EQU $ffff8266
 EXTCLK            EQU $ffff820a
 
+memconf           EQU $ffff8001
+
 MON_ID            EQU $ffff8006           ;Monitor-ID-Bits
 
 VADDR_HIGH        EQU $ffff8205

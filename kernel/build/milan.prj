@@ -4,6 +4,7 @@
 mmilan.ram
 .C[-I..\..\inc_c]
 .C[-I..\inc]
+.C[-I..\..\pc\include]
 .S[-I..\inc]
 
 .S[-DCOUNTRY=1]

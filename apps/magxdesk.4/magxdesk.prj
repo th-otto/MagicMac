@@ -1,10 +1,11 @@
 MAGXDESK.APP
 .C[-I..\..\inc_c]
 .C[-I..\..\lib\mylibs]
+.C[-I..\..\pc\include]
 .C[-P]
 .L[-S=2048]
 =
-cstartv.o
+..\..\pc\lib\cstartv.o
 magxdesk.c	(k.h,magxdesk.h)	[-P -W-stv]	; RAHMENPROGRAMM, REDRAWS
 dmenu.c	(k.h,magxdesk.h)	[-P -W-stv]	; Menue
 defaults.c	(k.h,magxdesk.h)	[-P -W-stv]	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
@@ -20,6 +21,6 @@ kachel.c	(kachel.h)
 spec.c		(k.h)						; TOS- SPEZIFISCHES
 ..\..\kernel\aes\wdialog\shelsort.c
 ..\..\lib\mylibs\ll.c			; long long lib
-pcstdlib.lib   ; standard lib
-pctoslib.lib   ; TOS lib
-pcgemlib.lib	; GEM lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcgemlib.lib	; GEM lib

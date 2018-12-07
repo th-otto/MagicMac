@@ -6,6 +6,7 @@
 en\magic.rom
 .C[-I..\..\inc_c]
 .C[-I..\inc]
+.C[-I..\..\pc\include]
 .S[-I..\inc]
 
 .S[-DCOUNTRY=0]

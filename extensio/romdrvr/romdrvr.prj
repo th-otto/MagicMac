@@ -1,8 +1,8 @@
 romdrvr.prg    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 .S[-I..\..\inc_as]
 =              ; list of modules follows...
 romdrvr.s
-pcstdlib.lib   ; standard lib
-pcextlib.lib   ; extended lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

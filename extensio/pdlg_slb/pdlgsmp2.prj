@@ -1,12 +1,13 @@
-PDLGSMP2.APP
+pdlgsmp2.app
+.C[-I..\..\pc\include]
 .C[-A-]
 
 =
 
-PCSTART.O				;PC-Startup-Code
+..\..\pc\lib\pcstart.o				;PC-Startup-Code
 
-PDLGSMP2.C				;Hauptprogramm
+pdlgsmp2.c				;Hauptprogramm
 
-PCSTDLIB.LIB
-PCTOSLIB.LIB
-PCGEMLIB.LIB			;wird nur noch fÅr VDI-Bindings benutzt
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

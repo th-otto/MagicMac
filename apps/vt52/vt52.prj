@@ -1,11 +1,12 @@
 vt52.prg
 .C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
 .C[-P-]
 .C[-K-]
 .C[-M-]
 .L[-S=8192]
 =
-cstartv.o
+..\..\pc\lib\cstartv.o
 vt_emu.c (wstruct.h,wlib.h,vtstruct.h,vt_emu.h)
 vt_sem.s
 vt_bios.s
@@ -22,6 +23,6 @@ dragdrop.c
 wlib.c (wstruct.h,list.h)
 list_new.c (list.h)
 
-pctoslib.lib
-pcstdlib.lib
-pcgemlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pcgemlib.lib

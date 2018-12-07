@@ -1,12 +1,13 @@
 print.ttp
+.C[-I..\..\pc\include]
 .C[-8-]
 .C[-K-]
 .C[-P-]
 .L[-S=$4000]
 =
-cstartv.o      ; startup code
+..\..\pc\lib\cstartv.o      ; startup code
 
 print.c
 
-pcstdlib.lib   ; standard lib
-pctoslib.lib   ; TOS lib
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib
