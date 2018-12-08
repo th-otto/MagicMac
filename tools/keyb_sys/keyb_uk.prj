@@ -1,9 +1,0 @@
-keyb_uk.tos    ; name of executable pgm is topmost window
-.C[-I..\..\inc_c]
-.C[-I..\..\pc\include]
-.S[-I..\..\inc_as]
-=              ; list of modules follows...
-..\..\pc\lib\cstartv.o     ; startup code (mit Parameteruebergabe)
-keyb_uk.c
-..\..\pc\lib\pcstdlib.lib   ; standard lib
-..\..\pc\lib\pctoslib.lib   ; TOS lib

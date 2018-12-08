@@ -214,7 +214,7 @@ if	(n_info_file_dialogs > 4)
 	if	((desk_g.g_w >= 800) && (number & 1))
 		x += ifd->tree->ob_width+32;
 	y = desk_g.g_y + (number << 2) + 20;
-	if	(desk_g.g_h >= 460)
+	if	(desk_g.g_h > 480)
 		y += 80;
 
 	if	(isfolder)
