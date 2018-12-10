@@ -920,7 +920,7 @@ lblFE82C8: DC.B     $1b,'X',0,-1
 
      EVEN
 
-*    BSS
+    BSS
 
 prb_centronics:     DS.B 1              /* char prb_centronics        */
 prb_b2:             DS.B 1              /* char prb_b2                */
@@ -968,6 +968,8 @@ prb_epson:          DS.B 1              /* char prb_epson             */
 prb_color_mp:       DS.B 1              /* char prb_color_mp          */
 
      EVEN
+
+	TEXT
 
 ********************
 *** Installation ***
