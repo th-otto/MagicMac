@@ -10,10 +10,3 @@ extern long prepare_action(int function,
 				long *clsize_dst,
 				int argc, char *argv[],
 				char *dest_path);
-extern long copy_move(int move_flag,
-			int cmode,
-			int argc, char *argv[],
-			char *dest_path);
-extern long create_aliases(int cmode, int argc, char *argv[],
-			char *dest_path);
-extern long delete(int argc, char *argv[]);

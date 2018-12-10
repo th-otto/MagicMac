@@ -28,25 +28,27 @@
 int working_is_expanded;
 
 static OBJECT *adr_beg_iconified;
-static int	is_iconified,working_is_iconified;
-static long n_dat,n_ord;	/* Anzahl Dateien/Ordner */
-static long used_src;	/* Ben”tigter Speicherplatz */
-static long netto_src;	/* fr den Fortschrittsbalken */
+static int is_iconified;
+static int working_is_iconified;
+static long n_dat, n_ord;				/* Anzahl Dateien/Ordner */
+static long used_src;					/* Ben”tigter Speicherplatz */
+static long netto_src;					/* fr den Fortschrittsbalken */
+
 /* Ziel: */
-static long cl_used_dst;	/* soviel br„uchte eine Kopie */
-static long cl_free_dst;	/* soviele Cluster sind auf Zielpfad frei */
-static long clsize_dst;	/* Clustergr”že Zielpfad */
+static long cl_used_dst;				/* soviel br„uchte eine Kopie */
+static long cl_free_dst;				/* soviele Cluster sind auf Zielpfad frei */
+static long clsize_dst;					/* Clustergr”že Zielpfad */
 
 
-static char *delete_text;	/* =	"L”sche Dateien";	*/
-static char *copy_text;		/* =	"Kopiere Dateien";	*/
-static char *alias_text;		/* =	"Aliase erstellen";	*/
-static char *move_text;		/* =	"Verschiebe Dateien";	*/
+static char *delete_text;				/* =    "L”sche Dateien";   */
+static char *copy_text;					/* =    "Kopiere Dateien";  */
+static char *alias_text;				/* =    "Aliase erstellen"; */
+static char *move_text;					/* =    "Verschiebe Dateien";   */
 
-static char *titel;			/* einer der fnf vorherigen */
+static char *titel;						/* einer der fnf vorherigen */
 
-static char *work_ak_text;	/* die gerade ausgefhrte Aktion */
-static char *work_dt_text;	/* die gerade bearbeitete Datei */
+static char *work_ak_text;				/* die gerade ausgefhrte Aktion */
+static char *work_dt_text;				/* die gerade bearbeitete Datei */
 
 
 /*********************************************************************
@@ -55,36 +57,36 @@ static char *work_dt_text;	/* die gerade bearbeitete Datei */
 *
 *********************************************************************/
 
-void beg_dial_init_rsc( void )
+void beg_dial_init_rsc(void)
 {
-	rsrc_gaddr(0, T_CPMVDL,  &adr_beg);
+	rsrc_gaddr(0, T_CPMVDL, &adr_beg);
 	rsrc_gaddr(0, T_WORKING, &adr_working);
-	rsrc_gaddr(0, T_ICONIF,  &adr_beg_iconified);
-	adr_beg_iconified[1].ob_width  = 72;
-	adr_beg_iconified[1].ob_height = (adr_beg_iconified[1].ob_spec.iconblk->ib_hicon)+8;
+	rsrc_gaddr(0, T_ICONIF, &adr_beg_iconified);
+	adr_beg_iconified[1].ob_width = 72;
+	adr_beg_iconified[1].ob_height = (adr_beg_iconified[1].ob_spec.iconblk->ib_hicon) + 8;
 
-	delete_text	= Rgetstring(STR_DELETEFILES, NULL);
-	copy_text		= Rgetstring(STR_COPYFILES, NULL);
-	alias_text	= Rgetstring(STR_ALIASFILES, NULL);
-	move_text		= Rgetstring(STR_MOVEFILES, NULL);
+	delete_text = Rgetstring(STR_DELETEFILES, NULL);
+	copy_text = Rgetstring(STR_COPYFILES, NULL);
+	alias_text = Rgetstring(STR_ALIASFILES, NULL);
+	move_text = Rgetstring(STR_MOVEFILES, NULL);
 
-	work_ak_text = (adr_working+WORK_AK)->ob_spec.tedinfo->te_ptext;
-	work_dt_text = (adr_working+WORK_DT)->ob_spec.free_string;
+	work_ak_text = (adr_working + WORK_AK)->ob_spec.tedinfo->te_ptext;
+	work_dt_text = (adr_working + WORK_DT)->ob_spec.free_string;
 
 	working_is_expanded = prefs.work_expanded;
-	if	(!working_is_expanded)
-		{
+	if (!working_is_expanded)
+	{
 		objs_hide(adr_working, WORK_AK, WORK_DT, 0);
-		adr_working->ob_height -= 3*gl_hhbox;
-		adr_working[WORK_STOP].ob_y -= 3*gl_hhbox;
+		adr_working->ob_height -= 3 * gl_hhbox;
+		adr_working[WORK_STOP].ob_y -= 3 * gl_hhbox;
 		adr_working[WORK_EXP].ob_spec.obspec.character = 3;
-		}
-	if	(!is_3d)
-		{
+	}
+	if (!is_3d)
+	{
 		adr_working[WORK_MAXIMAL].ob_spec.obspec.framesize = -1;
 		adr_working[WORK_MAXIMAL].ob_spec.obspec.fillpattern = 7;
 		adr_working[WORK_AKTUELL].ob_spec.obspec.fillpattern = 4;
-		}
+	}
 	init_messages();
 }
 
@@ -95,22 +97,26 @@ void beg_dial_init_rsc( void )
 *
 *********************************************************************/
 
-void set_dialog_title( int action )
+void set_dialog_title(int action)
 {
-	switch(action)
-		{
-		case 'D': titel = delete_text;
-				break;
+	switch (action)
+	{
+	case 'D':
+		titel = delete_text;
+		break;
 
-		case 'C': titel = copy_text;
-				break;
+	case 'C':
+		titel = copy_text;
+		break;
 
-		case 'A': titel = alias_text;
-				break;
+	case 'A':
+		titel = alias_text;
+		break;
 
-		case 'M': titel = move_text;
-				break;
-		}
+	case 'M':
+		titel = move_text;
+		break;
+	}
 }
 
 
@@ -120,79 +126,59 @@ void set_dialog_title( int action )
 *
 *********************************************************************/
 
-long beg_dial_prepare( int argc, char *argv[],
-					char *dstpath )
+long beg_dial_prepare(int argc, char *argv[], char *dstpath)
 {
 	long err;
 
 
 	Mgraf_mouse(HOURGLASS);
 
-	err = prepare_action(action,
-					copy_mode,
-					tst_free,
-					&n_dat,
-					&n_ord,
-					&used_src,	/* Brutto-Bytes auf Quelle */
-					&cl_used_dst,	/* Brutto-Bytes auf Ziel */
-					&netto_src,	/* Netto-Bytes */
-					&cl_free_dst,	/* freie Cluster auf Ziel */
-					&clsize_dst,
-					argc,
-					argv,
-					dstpath);
+	err = prepare_action(action, copy_mode, tst_free, &n_dat, &n_ord, &used_src,	/* Brutto-Bytes auf Quelle */
+						 &cl_used_dst,	/* Brutto-Bytes auf Ziel */
+						 &netto_src,	/* Netto-Bytes */
+						 &cl_free_dst,	/* freie Cluster auf Ziel */
+						 &clsize_dst, argc, argv, dstpath);
 #if DEBUG
-	printf(
-		"\x1b" "H"				/* Cursor -> (0,0) */
-		"Anzahl Dateien: %ld\n"
-		"Anzahl Ordner: %ld\n"
-		"\n"
-		"Netto-Speicherbedarf auf Quelle: %ld Bytes\n"
-		"Brutto-Speicherbedarf auf Quelle: %ld Bytes\n"
-		"\n"
-		"freien Speicher auf Ziel prfen: %c\n"
-		"Zielpfad: %s\n"
-		"Brutto-Speicherbedarf auf Ziel: %ld Cluster\n"
-		"Clustergr”že auf Ziel: %ld Bytes\n"
-		"Freie Cluster auf Ziel: %ld\n",
-
-		n_dat,
-		n_ord,
-		netto_src,
-		used_src,
-		tst_free ? 'J' : 'N',
-		(dstpath) ? dstpath : "-- kein Pfad --",
-		cl_used_dst,
-		clsize_dst,
-		cl_free_dst
-		);
+	printf("\033H"					/* Cursor -> (0,0) */
+		   "Anzahl Dateien: %ld\n"
+		   "Anzahl Ordner: %ld\n"
+		   "\n"
+		   "Netto-Speicherbedarf auf Quelle: %ld Bytes\n"
+		   "Brutto-Speicherbedarf auf Quelle: %ld Bytes\n"
+		   "\n"
+		   "freien Speicher auf Ziel prfen: %c\n"
+		   "Zielpfad: %s\n"
+		   "Brutto-Speicherbedarf auf Ziel: %ld Cluster\n"
+		   "Clustergr”že auf Ziel: %ld Bytes\n"
+		   "Freie Cluster auf Ziel: %ld\n",
+		   n_dat,
+		   n_ord,
+		   netto_src,
+		   used_src,
+		   tst_free ? 'J' : 'N', (dstpath) ? dstpath : "-- kein Pfad --", cl_used_dst, clsize_dst, cl_free_dst);
 #endif
 
 	Mgraf_mouse(ARROW);
-	if	(err)
-		{
-		return(err);
-		}
-	if	(n_dat == 0 && n_ord == 0)		/* keine Objekte */
-		{
-		return(1);
-		}
+	if (err)
+	{
+		return err;
+	}
+	if (n_dat == 0 && n_ord == 0)		/* keine Objekte */
+	{
+		return 1;
+	}
 
 
-	if	(((action == 'C') ||
-		  (action == 'M') ||
-		  (action == 'A')) &&
-		  tst_free &&
-		 (cl_used_dst > cl_free_dst))
-		{
-		if	(2 == Rform_alert(2, ALRT_INSUFFSPACE, NULL))
+	if (((action == 'C') || (action == 'M') || (action == 'A')) && tst_free && (cl_used_dst > cl_free_dst))
+	{
+		if (2 == Rform_alert(2, ALRT_INSUFFSPACE, NULL))
 			err = EBREAK;
-		}
+	}
 
-	return(err);
+	return err;
 }
 
-static long count_bytes;		/* zum Runterz„hlen */
+static long count_bytes;				/* zum Runterz„hlen */
 static long beg_count_bytes;
 
 /*********************************************************************
@@ -205,90 +191,89 @@ static long beg_count_bytes;
 *
 *********************************************************************/
 
-void down_cnt( int ord, char *aktion, char *path, long bytes )
+void down_cnt(int ord, char *aktion, char *path, long bytes)
 {
-	int  obj;
+	int obj;
 	long cnt;
 	char *z;
 	OBJECT *tree = adr_working;
 	char *s;
-	char buf[OUTPUT_FNAME_LEN+1];
+	char buf[OUTPUT_FNAME_LEN + 1];
 
 
 
 
-	if	(ord != 2)
-		{
+	if (ord != 2)
+	{
 #if DEBUG
 		printf(" erledigt: %ld\n", bytes);
 #endif
 		count_bytes += bytes;
-		if	(count_bytes > beg_count_bytes)
+		if (count_bytes > beg_count_bytes)
 			count_bytes = beg_count_bytes;
-		if	(count_bytes > 0x7fffffffL/adr_working[WORK_MAXIMAL].ob_width)
-			{
-			cnt = count_bytes / (beg_count_bytes/adr_working[WORK_MAXIMAL].ob_width);
-			}
-		else	{
+		if (count_bytes > 0x7fffffffL / adr_working[WORK_MAXIMAL].ob_width)
+		{
+			cnt = count_bytes / (beg_count_bytes / adr_working[WORK_MAXIMAL].ob_width);
+		} else
+		{
 			cnt = count_bytes * adr_working[WORK_MAXIMAL].ob_width;
 			cnt /= beg_count_bytes;
-			}
+		}
 		tree[WORK_AKTUELL].ob_width = (int) cnt;
 
-		if	(ord == 1)
-			{
+		if (ord == 1)
+		{
 			obj = WORK_O;
 			cnt = --n_ord;
 			goto cnt_tst;
-			}
-		else
-		if	(ord == 0)
-			{
+		} else if (ord == 0)
+		{
 			obj = WORK_D;
 			cnt = --n_dat;
 		  cnt_tst:
-			if	((cnt > 99999L) || (cnt < 0))
-				return;			/* ??? */
-			}
+			if ((cnt > 99999L) || (cnt < 0))
+				return;					/* ??? */
 		}
+	}
 
-	if	(!d_working || !wind_update(BEG_UPDATE + 0x100))
+	if (!d_working || !wind_update(BEG_UPDATE + 0x100))
 		return;
 
-	if	(ord == 2)
-		{
+	if (ord == 2)
+	{
 		s = work_dt_text;
 		buf[OUTPUT_FNAME_LEN] = EOS;
-		strncpy(buf, get_name(path), OUTPUT_FNAME_LEN+1);
-		if	(buf[OUTPUT_FNAME_LEN])
-			strcpy(buf+(OUTPUT_FNAME_LEN-3), "...");
-		if	(*path != *s || s[1] != ':' || strcmp(s+2, buf))
-			{
-			*s++ = *path;			/* Laufwerk */
+		strncpy(buf, get_name(path), OUTPUT_FNAME_LEN + 1);
+		if (buf[OUTPUT_FNAME_LEN])
+			strcpy(buf + (OUTPUT_FNAME_LEN - 3), "...");
+		if (*path != *s || s[1] != ':' || strcmp(s + 2, buf))
+		{
+			*s++ = *path;				/* Laufwerk */
 			*s++ = ':';
 			strcpy(s, buf);
-			if	(!is_iconified)
+			if (!is_iconified)
 				subobj_wdraw(d_working, WORK_DT, ROOT, MAX_DEPTH);
-			}
-		if	(strcmp(work_ak_text, aktion))
-			{
-			strcpy(work_ak_text, aktion);
-			if	(!working_is_iconified)
-				subobj_wdraw(d_working, WORK_AK, ROOT, MAX_DEPTH);
-			}
 		}
+		if (strcmp(work_ak_text, aktion))
+		{
+			strcpy(work_ak_text, aktion);
+			if (!working_is_iconified)
+				subobj_wdraw(d_working, WORK_AK, ROOT, MAX_DEPTH);
+		}
+	}
 
-	else	{
-		if	((bytes) && (!working_is_iconified))
+	else
+	{
+		if ((bytes) && (!working_is_iconified))
 			subobj_wdraw(d_working, WORK_AKTUELL, WORK_AKTUELL, MAX_DEPTH);
 
-		if	((ord == 0) || (ord == 1))
+		if ((ord == 0) || (ord == 1))
+		{
+			if (working_is_iconified)
 			{
-			if	(working_is_iconified)
-				{
 				GRECT g;
 				ICONBLK *ic;
-	
+
 				ic = adr_beg_iconified[1].ob_spec.iconblk;
 				z = ic->ib_ptext;
 				cnt = n_ord + n_dat;
@@ -296,89 +281,78 @@ void down_cnt( int ord, char *aktion, char *path, long bytes )
 				objc_grect(adr_beg_iconified, 1, &g);
 				g.g_x += ic->ib_xtext;
 				g.g_y += ic->ib_ytext;
-				g.g_w  = ic->ib_wtext;
-				g.g_h  = ic->ib_htext;
+				g.g_w = ic->ib_wtext;
+				g.g_h = ic->ib_htext;
 				wdlg_redraw(d_working, &g, 0, MAX_DEPTH);
-				}
-			else	{
-				z = (tree+obj)->ob_spec.free_string;
+			} else
+			{
+				z = (tree + obj)->ob_spec.free_string;
 				ultoa(cnt, z, 10);
 				subobj_wdraw(d_working, obj, ROOT, MAX_DEPTH);
-				}
 			}
 		}
+	}
 	wind_update(END_UPDATE);
 }
 
 
-void ackn_cancel( void )
+void ackn_cancel(void)
 {
 	abbruch = FALSE;
-	if	((d_working) && (!is_iconified))
-		{
+	if ((d_working) && (!is_iconified))
+	{
 		wind_update(BEG_UPDATE);
-		adr_working[WORK_STOP].ob_state &= ~(DISABLED+SELECTED);
+		adr_working[WORK_STOP].ob_state &= ~(DISABLED + SELECTED);
 		subobj_wdraw(d_working, WORK_STOP, WORK_STOP, MAX_DEPTH);
 		wind_update(END_UPDATE);
-		}
+	}
 }
-		
 
-void close_beg_dialog( void )
+
+void close_beg_dialog(void)
 {
-	if	(d_beg)
-		{
-		terminate_dialog( &d_beg, &prefs.main_win );
-		}
-	if	(d_working)
-		{
-		terminate_dialog( &d_working, &prefs.progr_win );
-		}
-	send_shwdraw( );
+	if (d_beg)
+	{
+		terminate_dialog(&d_beg, &prefs.main_win);
+	}
+	if (d_working)
+	{
+		terminate_dialog(&d_working, &prefs.progr_win);
+	}
+	send_shwdraw();
 }
-		
+
 
 static ACTIONPARAMETER param;
 
-void beg_dial_action( int argc, char *argv[],
-					char *dstpath, int mode )
+void beg_dial_action(int argc, char *argv[], char *dstpath, int mode)
 {
 	THREADINFO thi;
 	int whdl;
 	WORD dummy;
 
-	if	(copy_id <= 0)	/* thread noch nicht aktiv */
-		{
+	if (copy_id <= 0)					/* thread noch nicht aktiv */
+	{
 		beg_count_bytes = netto_src;
 		count_bytes = 0L;
 		adr_working[WORK_AKTUELL].ob_width = 0;
 #if DEBUG
 		printf("Bytes auf Quelle: %ld\n", netto_src);
 #endif
-		d_working = wdlg_create(hdl_work,
-			adr_working,
-			NULL,
-			mode,
-			NULL,
-			0);
+		d_working = wdlg_create(hdl_work, adr_working, NULL, mode, NULL, 0);
 
-		if	(!d_working)
+		if (!d_working)
 			goto errw;
 
-		whdl = wdlg_open( d_working,
-					titel,
-					NAME+CLOSER+MOVER+SMALLER,
-					prefs.progr_win.g_x,prefs.progr_win.g_y,
-					0,
-					NULL );
-		if	(whdl <= 0)
-			{
+		whdl = wdlg_open(d_working, titel, NAME + CLOSER + MOVER + SMALLER, prefs.progr_win.g_x, prefs.progr_win.g_y, 0, NULL);
+		if (whdl <= 0)
+		{
 			wdlg_delete(d_working);
 			d_working = NULL;
-			errw:
+		  errw:
 			Rform_alert(1, ALRT_ERROPENWIND, NULL);
 			return;
-			}
+		}
 
 		param.action = action;
 		param.argc = argc;
@@ -391,17 +365,16 @@ void beg_dial_action( int argc, char *argv[],
 		thi.stacksize = 0x4000L;		/* 16k Userstack */
 		thi.mode = 0;
 		thi.res1 = 0L;
-		copy_id = shel_write(SHW_THR_CREATE, 1, 0, 
-						(char *) &thi, (char *) (&param));
-		if	(copy_id <= 0)
-			{
+		copy_id = shel_write(SHW_THR_CREATE, 1, 0, (char *) &thi, (char *) (&param));
+		if (copy_id <= 0)
+		{
 			form_xerr(ENSMEM, NULL);
 			wdlg_close(d_working, &dummy, &dummy);
 			wdlg_delete(d_working);
 			d_working = NULL;
-			}
-		else	run_status = DLG_RUNNING;
-		}
+		} else
+			run_status = DLG_RUNNING;
+	}
 }
 
 
@@ -421,7 +394,7 @@ void beg_dial_action( int argc, char *argv[],
 *
 *********************************************************************/
 
-WORD	cdecl hdl_beg(struct HNDL_OBJ_args args)
+WORD cdecl hdl_beg(struct HNDL_OBJ_args args)
 {
 	long kbytes;
 	OBJECT *tree;
@@ -432,162 +405,161 @@ WORD	cdecl hdl_beg(struct HNDL_OBJ_args args)
 
 	tree = adr_beg;
 
-	if	(args.obj == HNDL_INIT)
+	if (args.obj == HNDL_INIT)
+	{
+		if (d_beg)						/* Dialog ist schon ge”ffnet ! */
+			return 0;
+
+		switch (args.clicks)			/* action */
 		{
-		if	(d_beg)			/* Dialog ist schon ge”ffnet ! */
-			return(0);
+		case 'D':
+			objs_hide(tree, CPMVD_MD, 0);
+			break;
 
-		switch(args.clicks)			/* action */
+
+		case 'A':
+			ob_sel(tree, CPMVD_KB);
+			ob_dsel(tree, CPMVD_RE);
+			objs_disable(tree, CPMVD_KA, CPMVD_KU, 0);
+			objs_unhide(tree, CPMVD_MD, 0);
+			break;
+
+		case 'C':
+		case 'M':
+			objs_unhide(tree, CPMVD_MD, 0);
+			objs_enable(tree, CPMVD_KA, CPMVD_KU, 0);
+			ob_sel_dsel(tree, CPMVD_KB, copy_mode == CONFIRM);
+			ob_sel_dsel(tree, CPMVD_KA, copy_mode == BACKUP);
+			ob_sel_dsel(tree, CPMVD_KU, copy_mode == OVERWRITE);
+			ob_dsel(tree, CPMVD_RE);
+			break;
+		}
+
+		(adr_beg + CPMVDL_B)->ob_spec.free_string[0] = EOS;
+
+		ultoa(n_dat, (adr_beg + CPMVDL_D)->ob_spec.free_string, 10);
+		ultoa(n_ord, (adr_beg + CPMVDL_O)->ob_spec.free_string, 10);
+		if (args.clicks == 'D')
+			kbytes = (used_src + 1023L) / 1024L;
+		else
+		{
+			if (clsize_dst & 1023L)		/* nicht durch 1024 teilbar */
 			{
-			case 'D': objs_hide(tree, CPMVD_MD, 0);
-					break;
-
-
-			case 'A': ob_sel(tree, CPMVD_KB);
-					ob_dsel(tree, CPMVD_RE);
-					objs_disable(tree, CPMVD_KA, CPMVD_KU, 0);
-					objs_unhide(tree, CPMVD_MD, 0);
-					break;
-
-			case 'C':
-			case 'M':	objs_unhide(tree, CPMVD_MD, 0);
-					objs_enable(tree, CPMVD_KA, CPMVD_KU, 0);
-					ob_sel_dsel(tree, CPMVD_KB, copy_mode == CONFIRM);
-					ob_sel_dsel(tree, CPMVD_KA, copy_mode == BACKUP);
-					ob_sel_dsel(tree, CPMVD_KU, copy_mode == OVERWRITE);
-					ob_dsel(tree, CPMVD_RE);
-					break;
-			}
-
-		(adr_beg+CPMVDL_B)->ob_spec.free_string[0] = EOS;
-
-		ultoa(n_dat, (adr_beg+CPMVDL_D)->ob_spec.free_string, 10);
-		ultoa(n_ord, (adr_beg+CPMVDL_O)->ob_spec.free_string, 10);
-		if	(args.clicks == 'D')
-			kbytes = (used_src+1023L)/1024L;
-		else	{
-			if	(clsize_dst & 1023L)	/* nicht durch 1024 teilbar */
+				if (clsize_dst & 511L)	/* nicht durch 512 teilbar */
 				{
-				if	(clsize_dst & 511L)	/* nicht durch 512 teilbar */
-					{
 					kbytes = clsize_dst * cl_used_dst;
 					kbytes >>= 10L;
-					}
-				else	{
+				} else
+				{
 					kbytes = clsize_dst >> 9L;	/* teile durch 512 */
 					kbytes *= cl_used_dst;
-					if	(kbytes & 1)
-						kbytes++;				/* aufrunden! */
+					if (kbytes & 1)
+						kbytes++;		/* aufrunden! */
 					kbytes >>= 1L;
-					}
 				}
-			else	{
+			} else
+			{
 				kbytes = clsize_dst >> 10L;	/* Bytes -> kBytes */
 				kbytes *= cl_used_dst;
-				}
 			}
-		ultoa(kbytes, (adr_beg+CPMVDL_B)->ob_spec.free_string, 10);
+		}
+		ultoa(kbytes, (adr_beg + CPMVDL_B)->ob_spec.free_string, 10);
 
 		ob_dsel(adr_beg, CPMVD_OK);
 		ob_dsel(adr_beg, CPMVD_AB);
 		adr_beg[CPMVD_OK].ob_state &= ~DISABLED;
 		adr_beg[CPMVD_AB].ob_state &= ~DISABLED;
-		(adr_beg+CPMVDL_T)->ob_spec.free_string = titel;
+		(adr_beg + CPMVDL_T)->ob_spec.free_string = titel;
 
 		d_beg = args.dialog;
 		is_iconified = FALSE;
-		return(1);
-		}
+		return 1;
+	}
 
 	/* 2. Fall: Nachricht mit Code >= 1040 empfangen */
 	/* --------------------------------------------- */
 
-	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if (args.obj == HNDL_MESG)			/* Wenn Nachricht empfangen... */
+	{
+		switch (args.events->msg[0])
 		{
-		switch(args.events->msg[0])
-			{
-			 case WM_ALLICONIFY:
-	
-			 case WM_ICONIFY:
-			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
-	 							" MGCOPY ",
-	 							adr_beg_iconified, 1);
-			 	is_iconified = TRUE;
-			 	wind_update(END_UPDATE);
-			 	break;
-	
-			 case WM_UNICONIFY:
-			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
-		 							Rgetstring(STR_MAINTITLE,
-		 									NULL),
-		 							adr_beg);
-			 	is_iconified = FALSE;
-			 	wind_update(END_UPDATE);
-				break;
-	
-			}
-		return(1);		/* weiter */
+		case WM_ALLICONIFY:
+
+		case WM_ICONIFY:
+			wind_update(BEG_UPDATE);
+			wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg + 4), " MGCOPY ", adr_beg_iconified, 1);
+			is_iconified = TRUE;
+			wind_update(END_UPDATE);
+			break;
+
+		case WM_UNICONIFY:
+			wind_update(BEG_UPDATE);
+			wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg + 4), Rgetstring(STR_MAINTITLE, NULL), adr_beg);
+			is_iconified = FALSE;
+			wind_update(END_UPDATE);
+			break;
+
 		}
+		return 1;						/* weiter */
+	}
 
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
-		{
+	if (args.obj == HNDL_CLSD)			/* Wenn Dialog geschlossen werden soll... */
+	{
 
-		if	(run_status == DLG_RUNNING)	/* Aktion l„uft ! */
-			goto ende;				/* ignorieren ?!??! */
+		if (run_status == DLG_RUNNING)	/* Aktion l„uft ! */
+			goto ende;					/* ignorieren ?!??! */
 
-		close_dialog:
+	  close_dialog:
 		run_status = DLG_FINISHED;
-		return(0);		/* ...dann schliežen wir ihn auch */
-		}
+		return 0;						/* ...dann schliežen wir ihn auch */
+	}
 
-	if	(args.obj < 0)	/* unbekannte Unterfunktion */
-		return(1);
+	if (args.obj < 0)					/* unbekannte Unterfunktion */
+		return 1;
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(args.clicks != 1)
+	if (args.clicks != 1)
 		goto ende;
 
-	if	(args.obj == CPMVD_AB)			/* Abbruch */
-		{
-		if	(run_status == DLG_WAITING)	/* keine Aktion l„uft */
+	if (args.obj == CPMVD_AB)			/* Abbruch */
+	{
+		if (run_status == DLG_WAITING)	/* keine Aktion l„uft */
 			goto close_dialog;
-		goto ende;		/* ignorieren ?!!??? */
-		}
+		goto ende;						/* ignorieren ?!!??? */
+	}
 
-	if	(args.obj == CPMVD_OK)			/* OK */
-		{
-		if	(selected(adr_beg, CPMVD_KB))
+	if (args.obj == CPMVD_OK)			/* OK */
+	{
+		if (selected(adr_beg, CPMVD_KB))
 			copy_mode = CONFIRM;
-		if	(selected(adr_beg, CPMVD_KA))
+		if (selected(adr_beg, CPMVD_KA))
 			copy_mode = BACKUP;
-		if	(selected(adr_beg, CPMVD_KU))
+		if (selected(adr_beg, CPMVD_KU))
 			copy_mode = OVERWRITE;
-		if	(selected(adr_beg, CPMVD_RE))
+		if (selected(adr_beg, CPMVD_RE))
 			copy_mode = RENAME;
 
 		/* Jetzt geht es los */
 
-		beg_dial_action(nargs-2, xargv+2, dst_path, copy_mode);
+		beg_dial_action(nargs - 2, xargv + 2, dst_path, copy_mode);
 
-		if	(run_status == DLG_RUNNING)	/* OK ? */
-			{
-			return(0);		/* Dialog schliežen */
-			}
+		if (run_status == DLG_RUNNING)	/* OK ? */
+		{
+			return 0;					/* Dialog schliežen */
 		}
+	}
 
-	return(1);
+	return 1;
 
-	ende:
+  ende:
 	ob_dsel(tree, args.obj);
 	subobj_wdraw(args.dialog, args.obj, args.obj, 0);
-	return(1);		/* weiter */
+	return 1;							/* weiter */
 }
 
 
@@ -607,7 +579,7 @@ WORD	cdecl hdl_beg(struct HNDL_OBJ_args args)
 *
 *********************************************************************/
 
-WORD	cdecl hdl_work(struct HNDL_OBJ_args args)
+WORD cdecl hdl_work(struct HNDL_OBJ_args args)
 {
 	OBJECT *tree;
 
@@ -617,144 +589,141 @@ WORD	cdecl hdl_work(struct HNDL_OBJ_args args)
 
 	tree = adr_working;
 
-	if	(args.obj == HNDL_INIT)
-		{
-		if	(d_working)		/* Dialog ist schon ge”ffnet ! */
-			return(0);
+	if (args.obj == HNDL_INIT)
+	{
+		if (d_working)					/* Dialog ist schon ge”ffnet ! */
+			return 0;
 
 		work_ak_text[0] = EOS;
 		work_dt_text[0] = EOS;
 
-		ultoa(n_dat, (tree+WORK_D)->ob_spec.free_string, 10);
-		ultoa(n_ord, (tree+WORK_O)->ob_spec.free_string, 10);
+		ultoa(n_dat, (tree + WORK_D)->ob_spec.free_string, 10);
+		ultoa(n_ord, (tree + WORK_O)->ob_spec.free_string, 10);
 
 		ob_dsel(tree, WORK_STOP);
 		tree[WORK_STOP].ob_state &= ~DISABLED;
 
 		d_working = args.dialog;
 		working_is_iconified = FALSE;
-		return(1);
-		}
+		return 1;
+	}
 
 	/* 2. Fall: Nachricht mit Code >= 1040 empfangen */
 	/* --------------------------------------------- */
 
-	if	(args.obj == HNDL_MESG)	/* Wenn Nachricht empfangen... */
+	if (args.obj == HNDL_MESG)			/* Wenn Nachricht empfangen... */
+	{
+		switch (args.events->msg[0])
 		{
-		switch(args.events->msg[0])
-			{
-			 case WM_ALLICONIFY:
-	
-			 case WM_ICONIFY:
-			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg+4),
-	 							" MGCOPY ",
-	 							adr_beg_iconified, 1);
-			 	working_is_iconified = TRUE;
-			 	wind_update(END_UPDATE);
-			 	break;
-	
-			 case WM_UNICONIFY:
-			 	wind_update(BEG_UPDATE);
-			 	wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg+4),
-		 							titel,
-		 							adr_working);
-			 	working_is_iconified = FALSE;
-			 	wind_update(END_UPDATE);
-				break;
-	
-			}
-		return(1);		/* weiter */
+		case WM_ALLICONIFY:
+
+		case WM_ICONIFY:
+			wind_update(BEG_UPDATE);
+			wdlg_set_iconify(args.dialog, (GRECT *) (args.events->msg + 4), " MGCOPY ", adr_beg_iconified, 1);
+			working_is_iconified = TRUE;
+			wind_update(END_UPDATE);
+			break;
+
+		case WM_UNICONIFY:
+			wind_update(BEG_UPDATE);
+			wdlg_set_uniconify(args.dialog, (GRECT *) (args.events->msg + 4), titel, adr_working);
+			working_is_iconified = FALSE;
+			wind_update(END_UPDATE);
+			break;
+
 		}
+		return 1;						/* weiter */
+	}
 
 	/* 3. Fall: Dialog soll geschlossen werden */
 	/* --------------------------------------- */
 
-	if	(args.obj == HNDL_CLSD)	/* Wenn Dialog geschlossen werden soll... */
-		{
+	if (args.obj == HNDL_CLSD)			/* Wenn Dialog geschlossen werden soll... */
+	{
 
-		if	(run_status == DLG_RUNNING)	/* Aktion l„uft ! */
-			{
+		if (run_status == DLG_RUNNING)	/* Aktion l„uft ! */
+		{
 			args.obj = WORK_STOP;
 			goto do_abbruch;
-			}
-
-		close_dialog:
-		run_status = DLG_FINISHED;
-		return(0);		/* ...dann schliežen wir ihn auch */
 		}
 
-	if	(args.obj < 0)	/* unbekannte Unterfunktion */
-		return(1);
+	  close_dialog:
+		run_status = DLG_FINISHED;
+		return 0;						/* ...dann schliežen wir ihn auch */
+	}
+
+	if (args.obj < 0)					/* unbekannte Unterfunktion */
+		return 1;
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
 
-	if	(args.clicks != 1)
+	if (args.clicks != 1)
 		goto ende;
 
-	if	(args.obj == WORK_EXP)			/* erweiterter Modus */
-		{
+	if (args.obj == WORK_EXP)			/* erweiterter Modus */
+	{
 		int handle = wdlg_get_handle(args.dialog);
 		GRECT g;
-		int ydiff = 3*gl_hhbox;
+		int ydiff = 3 * gl_hhbox;
 		char c;
 
 		working_is_expanded = !working_is_expanded;
 		wind_get_grect(handle, WF_CURRXYWH, &g);
-		if	(working_is_expanded)
-			{
+		if (working_is_expanded)
+		{
 			objs_unhide(tree, WORK_AK, WORK_DT, 0);
 			objs_hide(tree, WORK_STOP, 0);
 			subobj_wdraw(d_working, WORK_STOP, ROOT, MAX_DEPTH);
-			c = 2;	/* Pfeil nach unten */
-			}
-		else	{
+			c = 2;						/* Pfeil nach unten */
+		} else
+		{
 			objs_hide(tree, WORK_AK, WORK_DT, 0);
 			ydiff = -ydiff;
-			c = 3;	/* Pfeil nach rechts */
-			}
+			c = 3;						/* Pfeil nach rechts */
+		}
 		tree->ob_height += ydiff;
 		g.g_h += ydiff;
 		tree[WORK_STOP].ob_y += ydiff;
 		wind_set_grect(handle, WF_CURRXYWH, &g);
-		if	(working_is_expanded)
+		if (working_is_expanded)
 			objs_unhide(tree, WORK_STOP, 0);
-		else	subobj_wdraw(d_working, WORK_STOP, ROOT, MAX_DEPTH);
+		else
+			subobj_wdraw(d_working, WORK_STOP, ROOT, MAX_DEPTH);
 		tree[WORK_EXP].ob_spec.obspec.character = c;
-		goto ende;	/* deselektieren */
-		}
+		goto ende;						/* deselektieren */
+	}
 
-	if	(args.obj == WORK_STOP)		/* Abbruch */
+	if (args.obj == WORK_STOP)			/* Abbruch */
+	{
+		if (run_status == DLG_WAITING)	/* keine Aktion l„uft */
 		{
-		if	(run_status == DLG_WAITING)	/* keine Aktion l„uft */
-			{
 			goto close_dialog;
-			}
-	do_abbruch:
+		}
+	  do_abbruch:
 		tree[WORK_STOP].ob_state |= DISABLED;
 
 		/* ggf. Thread aufwecken */
 		/* --------------------- */
 
-		if	(copy_id > 0)
-			{
+		if (copy_id > 0)
+		{
 			int message[8];
 
-			message[0] = 1031;		/* Nachrichtennummer */
-			message[1] = ap_id;		/* Absender */
-			message[2] = 0;		/* šberl„nge */
+			message[0] = 1031;			/* Nachrichtennummer */
+			message[1] = ap_id;			/* Absender */
+			message[2] = 0;				/* šberl„nge */
 			appl_write(copy_id, 16, message);
-			}
+		}
 		abbruch = TRUE;
 		goto ende2;
-		}
+	}
 
-	return(1);
+	return 1;
 
-	ende:
+  ende:
 	ob_dsel(tree, args.obj);
-	ende2:
+  ende2:
 	subobj_wdraw(args.dialog, args.obj, args.obj, 0);
-	return(1);		/* weiter */
+	return 1;							/* weiter */
 }

@@ -1914,7 +1914,7 @@ void cpmvdl_icns(WINDOW *w, char *destpath, int kbsh)
 
 	/* Kommandozeilen-Schalter */
 
-	strcpy(selpaths, "\xfe" "ARGV=MagX");
+	strcpy(selpaths, "\xfe" "ARGV=");
 	selpaths += 11;
 	strcpy(selpaths, "MGCOPY.APP");	/* arg[0] */
 	selpaths += 11;
