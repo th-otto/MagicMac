@@ -2,6 +2,7 @@ x.prg    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .C[-I..\..\pc\include]
 .S[-I..\..\inc_as]
+.L[-S=4096]
 =              ; list of modules follows...
 x.s
 ..\..\pc\lib\pcstdlib.lib   ; standard lib

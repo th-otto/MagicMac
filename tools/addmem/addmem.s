@@ -86,9 +86,10 @@ ver_err:
 ver_errs:
  DC.B     'ADDMEM: Kein KAOS installiert oder falsche TOS- Version',$d,$a,0
 
-b:
 
      BSS
+
+b:
 
  DS.B     BSIZE
 

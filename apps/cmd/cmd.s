@@ -6547,7 +6547,8 @@ cle_22:
  bra.b    cle_27
 cle_25:
  lea      errorlevel(pc),a0
- move.w   (a0),d+errlv2-errorlevel(a0) * alten Wert von errorlevel retten
+ lea      d+errlv2(pc),a1
+ move.w   (a0),(a1) * alten Wert von errorlevel retten
  clr.w    (a0)                * errorlevel l”schen
  move.l   a5,a0
  bsr      intern_com_search
@@ -7137,11 +7138,12 @@ aespb:    DC.L      (d+control)-_base
 pgmname:  DC.B      '  CMD',0
      ENDC
 
-d:
 
 ************ BEGINN DES BSS ***********
 
 
         BSS
 
-__bss:    DS.B  bsslen
+d:
+
+	    DS.B  bsslen

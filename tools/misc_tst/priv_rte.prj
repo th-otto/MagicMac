@@ -2,6 +2,7 @@ priv_rte.prg    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .C[-I..\..\pc\include]
 .S[-I..\..\inc_as]
+.L[-S=4096]
 =              ; list of modules follows...
 priv_rte.s
 ..\..\pc\lib\pcstdlib.lib   ; standard lib

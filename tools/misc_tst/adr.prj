@@ -2,6 +2,7 @@ adr.prg    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .S[-I..\..\inc_as]
 .C[-I..\..\pc\include]
+.L[-S=4096]
 =              ; list of modules follows...
 adr.s
 ..\..\pc\lib\pcstdlib.lib   ; standard lib

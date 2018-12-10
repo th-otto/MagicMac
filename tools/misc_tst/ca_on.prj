@@ -1,6 +1,7 @@
 ca_on.prg    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .S[-I..\..\inc_as]
+.L[-S=4096]
 =              ; list of modules follows...
 ca_on.s
 ..\..\pc\lib\pcstdlib.lib   ; standard lib

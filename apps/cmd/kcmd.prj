@@ -4,4 +4,4 @@ kcmd.tos
 .S[-I..\..\inc_as]
 .L[-S=8192]
 =
-kcmd.s
+kcmd.s (cmd.s)

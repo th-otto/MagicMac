@@ -4,4 +4,4 @@ mcmd.tos
 .S[-I..\..\inc_as]
 .L[-S=8192]
 =
-mcmd.s
+mcmd.s (cmd.s)

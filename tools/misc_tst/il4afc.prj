@@ -2,6 +2,7 @@ il4afc.prg    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .C[-I..\..\pc\include]
 .S[-I..\..\inc_as]
+.L[-S=4096]
 =              ; list of modules follows...
 il4afc.s
 ..\..\pc\lib\pcstdlib.lib   ; standard lib
