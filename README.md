@@ -45,3 +45,7 @@ The files are licensed according to GPLv3, see [LICENSE](LICENSE) file.
 # External Licenses
 
 MVDI and sources have been provided by courtesy of Sven und Wilfried Behne and distributed under the main license.
+
+# Building
+
+Read the [building instructions](BUILDING.md) file.
