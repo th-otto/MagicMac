@@ -34,7 +34,7 @@
      XREF      toupper
      XREF      _sprintf
 
-     XDEF      fsel_exinput
+     XDEF      mx_fsel_exinput
 
 ; COUNTRY TODO
 al_fserr:      DC.B '[1][Zuwenig Speicher f',$81,'r|Dateiauswahl!][ABBRUCH]',0
@@ -92,7 +92,7 @@ FS_CANC   SET  40        ; "Abbruch"
 * -100(a4):    Muster
 *
 
-fsel_exinput:
+mx_fsel_exinput:
  link     a6,#-$28
  movem.l  d3/d4/d5/d6/d7/a3/a4/a5,-(sp)
 

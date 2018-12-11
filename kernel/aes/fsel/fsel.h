@@ -45,7 +45,7 @@ extern WORD fslx_evnt(
                char **pattern );
 
 extern void * fslx_do(
-               char *title,
+               const char *title,
                char *path, WORD pathlen,
                char *fname, WORD fnamelen,
                char *patterns,
@@ -67,3 +67,9 @@ extern WORD fslx_set(
                WORD subfn,
                WORD flags,
                WORD *oldval );
+
+WORD cdecl mx_fsel_exinput(
+               char *path,
+               char *fname,
+               int *button,
+               const char *title );

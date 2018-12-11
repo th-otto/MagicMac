@@ -15,18 +15,14 @@
 
 #define DEBUG 0
 
+#define __WDIALOG_IMPLEMENTATION
 #include <portab.h>
 #include <country.h>
-#define fsel_exinput     ____dummy1
 #include <aes.h>
-#undef fsel_exinput
 #include <vdi.h>
 #include <tos.h>
-#include <mgx_dos.h>
 #include <string.h>
 #include <toserror.h>
-#define form_xdo    ____dummy2
-#undef form_xdo
 #include "ger\fselx.h"
 #include "..\wdialog\shelsort.h"
 #include "std.h"
@@ -45,81 +41,34 @@ static unsigned char fselx[] = {
 #define fsel_rsc ((RSHDR *) fselx)
 #define fsel_rslen sizeof(fselx)
 
-/* Kram, der in AES.H fehlt */
-
-#ifndef FL3DBAK
-#define FL3DBAK      0x0400   /* 3D Background                AES 4.0      */
-#endif
-#ifndef FL3DMASK
-#define FL3DMASK     0x0600
-#endif
-
-typedef struct _xted {
-     char      *xte_ptmplt;
-     char      *xte_pvalid;
-     WORD      xte_vislen;
-     WORD      xte_scroll;
-} XTED;
-
 /*----------------------------------------------------------------------------------------*/ 
 /* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel                       */
 /*----------------------------------------------------------------------------------------*/ 
 
-typedef   void *DIALOG;
-typedef   WORD (cdecl *HNDL_OBJ)( DIALOG *dialog, EVNT *events, WORD obj, WORD clicks, void *data );
+#ifndef CALL_MAGIC_KERNEL
+#define	CALL_MAGIC_KERNEL 1
+#endif
 
-#define   HNDL_INIT -1                            /* Dialog initialisieren */
-#define   HNDL_CLSD -3                            /* Dialogfenster wurde geschlossen */
-#define   HNDL_OPEN -5                            /* Dialog-Initialisierung abschliessen (zweiter Aufruf am Ende von wdlg_init) */
-#define   HNDL_EDIT -6                            /* Zeichen fuer ein Edit-Feld ueberpruefen */
-#define   HNDL_EDDN -7                            /* Zeichen wurde ins Edit-Feld eingetragen */
-#define   HNDL_EDCH -8                            /* Edit-Feld wurde gewechselt */
-#define   HNDL_MOVE -9                            /* Dialog wurde verschoben */
-#define   HNDL_TOPW -10                           /* Dialog-Fenster ist nach oben gekommen */
-#define   HNDL_UNTP -11                           /* Dialog-Fenster ist nicht aktiv */
-
-extern    void *wdlg_create( HNDL_OBJ handle_exit, OBJECT *tree, void *user_data, WORD code, void *data, WORD flags );
-extern    WORD wdlg_open( DIALOG *dialog, BYTE *title, WORD kind, WORD x, WORD y, WORD code, void *data );
-extern    WORD wdlg_set_edit( DIALOG *dialog, WORD obj );
-extern    WORD wdlg_close( DIALOG *dialog, WORD *x, WORD *y );
-extern    WORD wdlg_delete( DIALOG *dialog );
-extern    WORD wdlg_evnt( DIALOG *dialog, EVNT *events );
-extern    void wdlg_redraw( DIALOG *dialog, GRECT *rect, WORD obj, WORD depth );
-extern    void *wdlg_get_udata( DIALOG *dialog );
-extern    WORD wdlg_get_edit( DIALOG *dialog, WORD *cursor );
-extern    WORD wdlg_get_tree( DIALOG *dialog, OBJECT **tree, GRECT *r );
-extern    WORD wdlg_set_size( DIALOG *dialog, GRECT *size );
-
-extern void graf_rbox( int x, int y, int minw, int minh,
-                         int *neuw, int *neuh);
-
-extern WORD lbox_set_bvis( void *lbox, WORD new);
-
-#include "listbx_g.h"
 #include "ker_bind.h"
-#include "fsel.h"
 
-#define   objc_draw( tree, obj, depth, clip ) \
+#if	CALL_MAGIC_KERNEL
+
+#define   objc_draw_grect( tree, obj, depth, clip ) \
                set_clip_grect( clip ); \
                _objc_draw( tree, obj, depth )
 
-#define   form_xdial( flag, little, big, flyinf ) \
+#define   form_xdial_grect( flag, little, big, flyinf ) \
                frm_xdial( flag, little, big, flyinf )
 
-#define   form_center( tree, rect ) \
+#define   form_center_grect( tree, rect ) \
                _form_center_grect( tree, rect )
 
-#define   form_popup( tree, xy ) \
-               _form_popup( tree, xy )
+#define   form_popup( tree, x, y ) _form_popup( tree, ((unsigned long)(x) << 16) | (y) )
 
 #define   objc_edit( tree, obj, c, x, kind, rect ) \
                _objc_edit( tree, obj, c, x, kind, rect )
 
-#define   Malloc( size ) (smalloc( size ))
-
-#define   Mfree( block ) smfree( block )
-
-#define   Mshrink( dummy, block, size ) smshrink( block, size )
+#define   Mshrink( block, size ) smshrink( block, size )
 
 #define   Dgetdrv   dgetdrv
 
@@ -137,6 +86,34 @@ extern WORD lbox_set_bvis( void *lbox, WORD new);
 #define   Dgetpath  dgetpath
 
 #define   Drvmap    drvmap
+
+#else
+
+/* Currently not included in wdialog.prg */
+
+#include "wdlgmain.h"
+
+#define   form_xdial_grect(flag, little, big, flyinf) \
+               mt_form_xdial_grect(flag, little, big, flyinf, NULL)
+
+#define   form_center_grect(tree, rect) mt_form_center_grect(tree, rect, NULL)
+
+#define   form_popup( tree, x, y ) mt_form_popup(tree, x, y, NULL)
+
+#define   objc_edit(tree, obj, c, x, kind, rect) \
+               mt_objc_edit_grect(tree, obj, c, x, kind, rect)
+
+#endif
+
+
+#undef Malloc
+#define   Malloc( size ) (smalloc( size ))
+#undef Mfree
+#define   Mfree( block ) smfree( block )
+
+#include <wdlgwdlg.h>
+#include "listbx_g.h"
+#include "fsel.h"
 
 
 #define FIXED_PATTLEN    256
@@ -156,10 +133,6 @@ extern WORD lbox_set_bvis( void *lbox, WORD new);
 #define LASTMAXMEMBLK    0x200000L /* Ende mit 2M */
 #define MINFREEBLK  4096L          /* soviel muss noch frei sein */
 
-#ifndef NULL
-#define NULL ((void *)0)
-#endif
-#define EOS '\0'
 
 typedef struct _fi
 {
@@ -777,7 +750,7 @@ static char * do_popup( OBJECT *parent_tree, int objnr,
 
      objc_offset(parent_tree, objnr, &tree[0].ob_x, &tree[0].ob_y);
      tree[0].ob_y -= y_offs;
-     anzahl = form_popup(tree, 0L);
+     anzahl = form_popup(tree, 0, 0);
      if   (anzahl > 0)
           {
           s = tree[anzahl+1].ob_spec.free_string;
@@ -814,7 +787,7 @@ static int do_tree_popup( OBJECT *parent_tree, int objnr,
      else y_offs = 0;
      objc_offset(parent_tree, objnr, &popup[0].ob_x, &popup[0].ob_y);
      popup[0].ob_y -= y_offs;
-     dummy = form_popup(popup, 0L);
+     dummy = form_popup(popup, 0, 0);
      if   (active_obj >= 0)
           popup[active_obj].ob_state &= ~CHECKED;
      return(dummy);
@@ -1169,7 +1142,7 @@ static long read_dir( FSEL_DIALOG *fsd )
                /* Versuche Blockvergroesserung */
                /* -------------------------- */
 
-               if   (Mshrink(0, fsd->memblk,
+               if   (Mshrink(fsd->memblk,
                               memblksize+NEXTMEMBLK))
                     {
                     char *newblk;
@@ -1354,7 +1327,7 @@ static long read_dir( FSEL_DIALOG *fsd )
                     }
                }
           memblksize = limit - fsd->memblk;
-          Mshrink(0, fsd->memblk, memblksize);
+          Mshrink(fsd->memblk, memblksize);
           }
      else {
           Mfree(fsd->memblk);
@@ -2191,7 +2164,7 @@ static void fsel_draw( FSEL_DIALOG *fsd, int obj )
      if   (fsd->dialog)
           wdlg_redraw( fsd->dialog, &g, obj, MAX_DEPTH );
      else {
-          objc_draw(fsd->tree, obj, MAX_DEPTH, &g);
+          objc_draw_grect(fsd->tree, obj, MAX_DEPTH, &g);
           }
 }
 
@@ -2577,7 +2550,7 @@ static void objc_visgrect(OBJECT *tree, int objn, GRECT *g)
           {
           x = o->ob_x;
           y = o->ob_y;
-          _form_center_grect(o, g);
+          form_center_grect(o, g);
           g->g_x += nx - o->ob_x;
           g->g_y += ny - o->ob_y;
           o->ob_x = x;
@@ -3141,7 +3114,7 @@ static void give_return(
 *
 ****************************************************************/
 
-void *fslx_do( char *title,
+void *fslx_do( const char *title,
                char *path, WORD pathlen,
                char *fname, WORD fnamelen,
                char *patterns,
@@ -3185,7 +3158,7 @@ void *fslx_do( char *title,
      p_flyinf = &flyinf;
      tree = fsd->tree;
      if   (title)
-          tree[TITLE].ob_spec.free_string = title;
+          tree[TITLE].ob_spec.free_string = (char *)title;
      tree[FS_SIZER].ob_flags |= HIDETREE;    /* kein SIZER */
 
      xxdoinf.xdoinf.unsh =
@@ -3195,13 +3168,13 @@ void *fslx_do( char *title,
      xxdoinf.xdoinf.resvd = autoloc_callback;
      xxdoinf.fsd = fsd;
 
-     _form_center_grect(tree, &c);
+     form_center_grect(tree, &c);
 
      wind_update(BEG_MCTRL);
      graf_mouse(ARROW, NULL);
 /*   graf_mouse(M_ON, NULL);  */
-     form_xdial(FMD_START, &c, &c, p_flyinf);
-     objc_draw(tree, ROOT, MAX_DEPTH, &c);
+     form_xdial_grect(FMD_START, &c, &c, p_flyinf);
+     objc_draw_grect(tree, ROOT, MAX_DEPTH, &c);
 
      fsd->editob = 0;
      do_autolocate(fsd);
@@ -3217,7 +3190,7 @@ void *fslx_do( char *title,
           }
      while(!exitbutton);
 
-     form_xdial(FMD_FINISH, &c, &c, p_flyinf);
+     form_xdial_grect(FMD_FINISH, &c, &c, p_flyinf);
      wind_update(END_MCTRL);
 
 /*   fsd->tree[exitbutton].ob_state &= ~SELECTED; */
@@ -3243,32 +3216,30 @@ void *fslx_do( char *title,
 * ======================================
 *
 ****************************************************************/
-#pragma warn -par
-static WORD cdecl do_xfsl( DIALOG *dialog, EVNT *events, WORD obj,
-                         WORD clicks, void *data )
+static WORD cdecl do_xfsl(struct HNDL_OBJ_args args)
 {
      FSEL_DIALOG    *fsd;
      int oldeditob;
 
 
-     if   ( obj < 0 )                        /* Nachricht? */
+     if   ( args.obj < 0 )                        /* Nachricht? */
           {
-          if   ( obj == HNDL_CLSD )          /* Dialog geschlossen? */
+          if   ( args.obj == HNDL_CLSD )          /* Dialog geschlossen? */
                {
-               fsd = (FSEL_DIALOG *) wdlg_get_udata( dialog );
+               fsd = (FSEL_DIALOG *) wdlg_get_udata( args.dialog );
                fsd->button = FS_CANCEL;
                return( 0 );
                }
           }
      else
           {
-          fsd = (FSEL_DIALOG *) data;
+          fsd = (FSEL_DIALOG *) args.data;
 
           wind_update(BEG_UPDATE);
-          fsd->editob = oldeditob = wdlg_get_edit(dialog, &fsd->cursorpos);
-          fsd->button = do_button(fsd, obj, clicks);
+          fsd->editob = oldeditob = wdlg_get_edit(args.dialog, &fsd->cursorpos);
+          fsd->button = do_button(fsd, args.obj, args.clicks);
           if   (fsd->editob != oldeditob)
-               wdlg_set_edit(dialog, fsd->editob);
+               wdlg_set_edit(args.dialog, fsd->editob);
           fsel_redraw( fsd );
           wind_update(END_UPDATE);
           return( !fsd->button );
@@ -3276,7 +3247,6 @@ static WORD cdecl do_xfsl( DIALOG *dialog, EVNT *events, WORD obj,
 
      return( 1 );   
 }
-#pragma warn .par
 
 void * fslx_open(
                char *title,
@@ -3436,11 +3406,11 @@ WORD fslx_set( WORD subfn, WORD flags, WORD *oldval )
 }
 
 
-WORD cdecl fsel_exinput(
+WORD cdecl mx_fsel_exinput(
                char *path,
                char *fname,
                int *button,
-               char *title )
+               const char *title )
 {
      void *fsd;
      char *pattern;

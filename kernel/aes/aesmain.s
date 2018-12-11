@@ -315,7 +315,7 @@ DEBUG     EQU  0
 
 * von FSEL
 
-     XREF      fsel_exinput
+     XREF      mx_fsel_exinput
      XREF      fslx_open
      XREF      fslx_close
      XREF      fslx_getnxtfile
@@ -375,7 +375,7 @@ aes_start:
 
 /* Dateiauswahl: */
 
- move.l   #fsel_exinput,p_fsel
+ move.l   #mx_fsel_exinput,p_fsel
  clr.w    fslx_sortmode            ; SORTBYNAME
  move.w   #1,fslx_flags            ; SHOW_8P3
  move.w   #5,-(sp)                 ; subfn 5

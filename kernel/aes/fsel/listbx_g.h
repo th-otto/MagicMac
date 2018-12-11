@@ -43,6 +43,8 @@ extern WORD lbox_get_bvis( void *box );
 extern WORD lbox_get_bentries( void *box );
 extern WORD lbox_get_bfirst( void *box );
 
+WORD lbox_set_bvis( void *box, WORD new_bvis );
+
 extern void lbox_set_asldr( void *box, WORD first, GRECT *rect );
 extern void lbox_set_items( void *box, LBOX_ITEM *items );
 extern void lbox_free_items( void *box );
