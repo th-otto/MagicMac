@@ -1,7 +1,7 @@
-; Project file for MAGIC.RAM
+; Project file for MHADES.RAM
 ; (Hades Version, german localization)
 ; For other localizations, change the COUNTRY code below
-magic.ram
+mhades.ram
 .C[-I..\..\inc_c]
 .C[-I..\inc]
 .C[-I..\..\pc\include]

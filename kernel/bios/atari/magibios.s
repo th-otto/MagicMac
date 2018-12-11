@@ -490,7 +490,6 @@ verifyflag:         DS.W 1         ; W: 0 = Sektortest. <> 0 = verify
 cfiller:            DS.L 1         ; L: (Format)
 regsave:            DS.L 16        ; L: zeigt auf gesicherte Register
 status_buffer:      DS.B 8         ; max. 7 Bytes bis $1838
-startup_stk         equ $700
 ENDIF
 
 __e_bios:

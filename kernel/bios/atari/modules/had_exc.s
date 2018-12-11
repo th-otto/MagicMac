@@ -21,7 +21,7 @@ exception:
 		move.w	6(SP),D1	;formatword holen
 		and.w	#$0FFF,D1	;format weg=offset
 		asr.w	#2,D1		;/4 ergibt vector
-exception4:	lea	startup_stk.w,SP ;den Stack initialisieren
+exception4:	lea	endofvars.w,SP ;den Stack initialisieren
 		moveq	#15,D0
 		lea	proc_stk.w,A0
 exception2:	move.w	(A1)+,(A0)+	;16 Worte vom SSP merken
