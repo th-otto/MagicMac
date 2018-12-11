@@ -712,7 +712,7 @@ vt52_init_MAC:    movea.l  d0,a0
                   bclr     #0,d0
                   move.w   d0,(V_REZ_HZ).w            ;width
                   move.w   PM_bounds+R_bottom(a0),d1
-                  sub.w    PM_bounds+R_left(a0),d1
+                  sub.w    PM_bounds+R_top(a0),d1
                   addq.w   #1,d0
                   bclr     #0,d0
                   move.w   d1,(V_REZ_VT).w            ;height
