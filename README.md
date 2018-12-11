@@ -14,7 +14,7 @@ This repository is holding my sources for Atari and related computers, i.e. 68k 
 
 Applications:
 
-* MAGICDESK
+* MAGXDESK
 * APPLICAT
 * CHGRES
 * MAGXCONF
@@ -24,7 +24,7 @@ Applications:
 * MGCOPY
 * MGNOTICE
 * MGVIEW
-* SHUDOWN
+* SHUTDOWN
 * VT52
 
 Tools:
@@ -40,7 +40,7 @@ Upload complete as of 2018-11-20
 
 # License
 
-The files are licensed according to GPLv3, see LICENSE file.
+The files are licensed according to GPLv3, see [LICENSE](LICENSE) file.
 
 # External Licenses
 
