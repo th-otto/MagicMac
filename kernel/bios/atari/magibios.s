@@ -168,6 +168,12 @@ XFS95     EQU  1
      INCLUDE "debug.inc"
 	 INCLUDE "..\dos\magicdos.inc"
 
+IF COUNTRY==COUNTRY_US
+PALMODE equ 0
+else
+PALMODE equ 1
+endc
+
 ;----------------------------------------
 
      IFNE HADES
@@ -514,7 +520,7 @@ syshdr:
  DC.L     syshdr_code
  DC.L     gem_magics          ; GEM- Parameterblock
  DC.L     D_BCD               ; USA-Format!
- DC.W     COUNTRY+COUNTRY+1   ; immer PAL !
+ DC.W     COUNTRY+COUNTRY+PALMODE
  DC.W     D_DAY+(D_MONTH<<5)+((D_YEAR-1980)<<9) ; Datum im GEMDOS- Format
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
