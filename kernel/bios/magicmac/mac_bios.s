@@ -179,12 +179,8 @@ N_KEYTBL       EQU  9+DEADKEYS            ; 9 Tastaturtabellen
      INCLUDE "mac_ker.inc"
      INCLUDE "debug.inc"
 	 INCLUDE "..\dos\magicdos.inc"
+     INCLUDE "version.inc"
 
-
-D_DAY     EQU  9
-D_MONTH   EQU  1
-D_YEAR    EQU  2000
-D_BCD     EQU  $01092000
 
 NCOOKIES  EQU  21
 
@@ -391,7 +387,7 @@ syshdr:
  DC.L     gem_magics          ; GEM- Parameterblock
  DC.L     D_BCD               ; USA-Format!
  DC.W     COUNTRY+COUNTRY+1   ; immer PAL !
- DC.W     D_DAY+(D_MONTH<<5)+((D_YEAR-1980)<<9) ; Datum im GEMDOS- Format
+ DC.W     D_DOSDATE           ; Datum im GEMDOS- Format
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run

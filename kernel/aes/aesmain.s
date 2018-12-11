@@ -17,6 +17,7 @@ DEBUG     EQU  0
      INCLUDE "bios.inc"
      INCLUDE "lowmem.inc"
 	 INCLUDE "..\dos\magicdos.inc"
+	 INCLUDE "version.inc"
 
         TEXT
         SUPER
@@ -11507,7 +11508,7 @@ gem_magics:
  DC.L     aes_start                ; $08: Start von AES/DESKTOP
 
  DC.L     'MAGX'                   ; $0c: bei KAOS : 'KAOS'
- DC.L     $02102000                ; $10: Erstelldatum
+ DC.L     D_BCD                    ; $10: Erstelldatum
  DC.L     change_resolution        ; $14: d0=dev/d1=txt/d2=xdv
  DC.L     shel_vector              ; $18: ROM- Desktop
  DC.L     aes_bootdrv              ; $1c: char *, hierhin kommt DESKTOP.INF
@@ -11519,8 +11520,8 @@ gem_magics:
 
 * ab MAGIX:
 
- DC.W     $0620                    ; $30: Versionsnummer
- DC.W     3                        ;   0=alpha 1=beta 2=gamma 3=release
+ DC.W     MGX_VERSION              ; $30: Versionsnummer
+ DC.W     MGX_RELEASE              ;   0=alpha 1=beta 2=gamma 3=release
  DC.L     _basepage                ; $34:
  DC.L     moff_cnt                 ; $38:
  DC.L     shel_buf_len             ; $3c: unsigned int, Laenge

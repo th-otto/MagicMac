@@ -168,6 +168,8 @@ XFS95     EQU  1
      INCLUDE "debug.inc"
 	 INCLUDE "..\dos\magicdos.inc"
 
+	 INCLUDE "version.inc"
+
 IF COUNTRY==COUNTRY_US
 PALMODE equ 0
 else
@@ -198,11 +200,6 @@ ALTGR          EQU  0                   ; keine AltGr-Unterstuetzung
 ALT_NUMKEY     EQU  1
 DEADKEYS       EQU  0
 N_KEYTBL       EQU  9+DEADKEYS          ; 9 Tastaturtabellen
-
-D_DAY     EQU  17
-D_MONTH   EQU  11
-D_YEAR    EQU  2018
-D_BCD     EQU  $11172018
 
 NCOOKIES  EQU  35
 
@@ -520,7 +517,7 @@ syshdr:
  DC.L     gem_magics          ; GEM- Parameterblock
  DC.L     D_BCD               ; USA-Format!
  DC.W     COUNTRY+COUNTRY+PALMODE
- DC.W     D_DAY+(D_MONTH<<5)+((D_YEAR-1980)<<9) ; Datum im GEMDOS- Format
+ DC.W     D_DOSDATE           ; Datum im GEMDOS- Format
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run

@@ -132,11 +132,6 @@ DEBUG4    EQU  0
 ;----------------------------------------
 
 
-D_DAY     EQU  01
-D_MONTH   EQU  7
-D_YEAR    EQU  1999
-D_BCD     EQU  $07011999
-
 NCOOKIES  EQU  35
 NSERIAL   EQU  5              /* max. Anzahl serieller Schnittstellen */
 ALTGR     EQU  $4c
@@ -325,7 +320,7 @@ syshdr:
  DC.L     gem_magics          ; GEM- Parameterblock
  DC.L     D_BCD               ; USA-Format!
  DC.W     COUNTRY+COUNTRY+1   ; immer PAL !
- DC.W     D_DAY+(D_MONTH<<5)+((D_YEAR-1980)<<9) ; Datum im GEMDOS- Format
+ DC.W     D_DOSDATE           ; Datum im GEMDOS- Format
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run

@@ -171,11 +171,8 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      INCLUDE "debug.inc"
 	 INCLUDE "..\dos\magicdos.inc"
 
-D_DAY     EQU  29
-D_MONTH   EQU  12
-D_YEAR    EQU  2003
-D_BCD     EQU  $12292003           ; mmttjj
-
+	INCLUDE "version.inc"
+	
 NCOOKIES  EQU  21
 NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 
@@ -482,7 +479,7 @@ syshdr:
  DC.L     gem_magics          ; GEM- Parameterblock
  DC.L     D_BCD               ; USA-Format!
  DC.W     COUNTRY+COUNTRY+1   ; immer PAL !
- DC.W     D_DAY+(D_MONTH<<5)+((D_YEAR-1980)<<9) ; Datum im GEMDOS- Format
+ DC.W     D_DOSDATE           ; Datum im GEMDOS- Format
  DC.L     _mifl_unused        ; _root
  DC.L     kbshift
  DC.L     act_pd              ; _run
