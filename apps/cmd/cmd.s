@@ -402,6 +402,8 @@ not_from_tc:
  move.l   (a2),a0                  * Zeiger auf Environment- String
  lea      d+environment(pc),a1
  move.l   a1,(a2)                  * Zeiger in Basepage auf neues Environment setzen
+ move.l a0,d0
+ beq.s ini_22
 * Environment kopieren
  move.w   #env_ende-environment-2,d1
 ini_23:
