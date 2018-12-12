@@ -11,8 +11,9 @@ magcmacx.os
 
 .C[-A-]
 .C[-K-]
-.S[-DMMX_YIELD=1]
 .C[-P]
+.S[-DMMX_YIELD=1]
+.S[-S]
 .L[-S=0]
 =
 ..\bios\magcmacx\macxbios.s

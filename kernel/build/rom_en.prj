@@ -14,9 +14,10 @@ en\magic.rom
 
 .C[-A-]
 .C[-K-]
+.C[-P]
 .S[-DMMX_YIELD=0]
 .S[-DHADES=0]
-.C[-P]
+.S[-S]
 .L[-S=0]
 .L[-T=$E00000]
 =
