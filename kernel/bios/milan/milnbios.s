@@ -128,6 +128,7 @@ DEBUG4    EQU  0
      INCLUDE "milan.inc"
 	include "country.inc"
 	 INCLUDE "..\dos\magicdos.inc"
+	 INCLUDE "version.inc"
 	
 ;----------------------------------------
 
