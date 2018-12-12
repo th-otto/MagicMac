@@ -12,10 +12,11 @@ mhades.ram
 
 .C[-A-]
 .C[-K-]
+.C[-P]
+.C[-2]
 .S[-DMMX_YIELD=0]
 .S[-DHADES=1]
 .S[-S]
-.C[-P]
 .L[-S=0]
 =
 ..\bios\atari\magibios.s
