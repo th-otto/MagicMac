@@ -29,6 +29,8 @@ linked to elsewhere.
 
 * Sources to build WDIALOG.PRG were added.
 
+* Sources for CHGRES.PRG were added.
+
 * binary files that can be rebuild were removed
 
 * Some bug fixes. Take a look at the commit history.

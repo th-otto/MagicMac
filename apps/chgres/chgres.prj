@@ -1,0 +1,14 @@
+chgres.prg
+.C[-K-]
+.C[-P-]
+.C[-I..\..\pc\include]
+.L[-S=16000]
+=
+..\..\pc\lib\cstartv.o
+chgres.c
+popup.c
+inf.c
+
+..\..\pc\lib\pcgemlib.lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcstdlib.lib
