@@ -1,0 +1,20 @@
+chgres.prg
+.C[-K-]
+.C[-P-]
+.C[-G]
+.C[-IC:\pc\orig\include]
+.C[-IC:\pc\include]
+.L[-S=16000]
+=              ; list of modules follows...
+pcmxstrt.s
+restab.c
+chgres.c
+tables.c
+popup.c
+inf.c
+wdlg.s
+aes.s
+
+;C:\pc\orig\lib\pcgemlib.lib
+C:\pc\orig\lib\pcstdlib.lib
+C:\pc\orig\lib\pctoslib.lib
