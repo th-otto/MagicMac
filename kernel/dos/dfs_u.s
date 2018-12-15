@@ -16,7 +16,7 @@ DEBUG     EQU  8
      INCLUDE "magicdos.inc"
 
 DRIVE_U        EQU  'U'-'A'        ; fuer "MiNT"
-UROOT_LEN      EQU  64             ; soviele Eintraege
+UROOT_LEN      EQU  128            ; soviele Eintraege
 _drvbits       EQU  $4c2
 _nflops        EQU  $4a6
 
