@@ -676,7 +676,7 @@ bot_aestpa:
 bot_nofast:
  move.l   d0,_membot
 
-* weitere Initialialisierungen
+* weitere Initialisierungen
 
  move.w   #8,nvbls
  st       _fverify
@@ -994,14 +994,12 @@ no_magic_pc:
 
 * Prozessorcaches und PMMU initialisieren
 
-     IFNE HADES
- cmp.w    #40,cpu_typ         ; ab 040er CPU: hier keine Init mehr?!?
- bcc.b    bot_cpu_weiter
-     ENDIF
  cmpi.w   #20,cpu_typ
  bcs.b    bot_cpu_weiter      ; 68000 oder 68010
  cmpi.w   #30,cpu_typ
  bcs.b    bot_cpu_nopmmu
+ cmp.w    #40,cpu_typ         ; ab 040er CPU: hier keine Init mehr?!?
+ bcc.b    bot_cpu_weiter
  lea      $700,a0
  lea      pmmutab,a1
  moveq    #$3f,d0             ; 64 Langworte
@@ -1009,7 +1007,7 @@ bot_loop5:
  move.l   (a1)+,(a0)+         ; Tabelle initialisieren
  dbf      d0,bot_loop5
  pmove    pmmu_crp,crp       ; DC.W     $f039,$4c00,$00e3,$6520
- pmove    pmmu_tc,tc        ; DC.W     $f039,$4000,$00e3,$6528
+ pmove    pmmu_tc,tc         ; DC.W     $f039,$4000,$00e3,$6528
  pmove    pmmu_tt0,tt0       ; DC.W     $f039,$0800,$00e3,$652c
  pmove    pmmu_tt1,tt1       ; DC.W     $f039,$0c00,$00e3,$6530
 bot_cpu_nopmmu:
@@ -3997,85 +3995,44 @@ ci_0:
 * Bestimmung des Prozessors
 *
 
-     IFEQ HADES
 get_cpu_typ:
  move.l   sp,a0                    ; Hier Stack retten wegen ggf. Exception
  moveq    #0,d0                    ; Default CPU ist 68000
- move.l   #set_cpu_typ,$10         ; bei illegal fliegen wir nach dort raus
+ nop                               ; flush pipelines
+ lea      set_cpu_typ(pc),a1       ; bei illegal fliegen wir nach dort raus
+ move.l   a1,$10                   ; illegal instruction
+ move.l   a1,$2c                   ; line F
+ move.l   a1,$f4                   ; unimplemented instruction
 
  move     ccr,d1
  moveq    #10,d0                   ; War OK ? Kennung fuer 68010 nach d1
  movec.l  cacr,d1
  move.l   d1,d0
- ori.w    #$8200,d1                ; freeze data cache
+ ori.w    #$0101,d1                ; enable '020 instr. and '030 data caches
 
-                                   ; 68040 data cache enable
  movec    d1,cacr
  movec    cacr,d1
- movec    d0,cacr                  ; cacr in jedem Fall restaurieren
- moveq    #20,d0                   ; Kennung fuer 68020 nach d1
- btst     #9,d1                    ; Bit 9 testen
- beq.b    set_cpu_typ              ; War 0, obwohl gesetzt ? -> 68020
- moveq    #30,d0                   ; Kennung fuer 68030 nach d1
- btst     #15,d1                   ; Bit 15 testen
- beq.b    set_cpu_typ              ; War 0, obwohl gesetzt ? -> 68030
+ movec    d0,cacr                  ; always restore cacr
+ btst     #0,d1                    ; if '020 instr. cache was not enabled, this is a 68040+
+ beq.s    x040
+ moveq    #20,d0                   ; assume 68020
+ btst     #8,d1                    ; check if 68030 data cache was enabled
+ beq.b    set_cpu_typ              ; no data cache, we are done
+ pmove    tc,12.l                  ; try to access the TC register
+ moveq    #30,d0                   ; no fault -> this is a 030
+ bra.s    set_cpu_typ
 
 ; Ab hier kann es nur noch ein 040 oder ein 060 sein
 
- moveq    #40,d0                   ; Kennung fuer 68040 nach d0
- move.l   $f4.w,a1                 ; Exeption61 retten
- lea      chk68060(pc),a2          ; bei 060 fliegen wir nach dort raus
- move.l   a2,$f4.w                 ; Exception umsetzen
- cmp2.b   (a0),d0                  ; erzeugt Exception beim 060
- bra.b    cpu_40_60_ok
-chk68060:
- moveq    #60,d0                   ; Kennung fuer 68060 nach d0
-cpu_40_60_ok:
- move.l   a1,$f4.w                 ; Exeption61 restaurieren
+x040:
+ moveq    #40,d0                   ; assume 68040
+ dc.w     $4e7a,$1808              ; movec pcr,d1
+ moveq    #60,d0                   ; no fault -> this is 68060
 
 set_cpu_typ:
  move.l   a0,sp                    ; Stack wiederherstellen
+ nop                               ; flush pipelines
  rts
-
-     ELSE
-
-get_cpu_typ:
- move.l   sp,a0                    ; Hier Stack retten wegen ggf. Exception
- moveq    #0,d0                    ; Default CPU ist 68000
- move.l   #set_cpu_typ,$10         ; bei illegal fliegen wir nach dort raus
-
- move     ccr,d1
- moveq    #10,d0                   ; War OK ? Kennung fuer 68010 nach d1
- movec.l  cacr,d1
- move.l   d1,d0
- ori.w    #$8200,d1                ; freeze data cache
-                                   ; 68040 data cache enable
- movec    d1,cacr
- movec    cacr,d1
- movec    d0,cacr                  ; cacr in jedem Fall restaurieren
- moveq    #20,d0                   ; Kennung fuer 68020 nach d1
- btst     #9,d1                    ; Bit 9 testen
- beq.b    set_cpu_typ2             ; War 0, obwohl gesetzt ? -> 68020
- moveq    #30,d0                   ; Kennung fuer 68030 nach d1
- btst     #15,d1                   ; Bit 15 testen
- beq.b    set_cpu_typ2             ; War 0, obwohl gesetzt ? -> 68030
- moveq    #40,d0                   ; Kennung fuer 68040 nach d0
-
-set_cpu_typ2:
- move.l   Exept61.w,a1             ; Exeption61 retten
- lea      chk68060(pc),a2          ; bei 060 fliegen wir nach dort raus
- move.l   a2,Exept61.w             ;
- cmp2.b   (a0),d0                  ; geht NICHT bei 060er!
- bra.s    cpu_40_60_ok
-chk68060:
- moveq    #60,d0
-cpu_40_60_ok:
- move.l   a1,Exept61.w             ; Exeption61 zurueck
-
-set_cpu_typ:
- move.l   a0,sp                    ; Stack wiederherstellen
- rts
-     ENDIF
 
      IFNE HADES
      INCLUDE "..\..\bios\atari\modules\had_cook.s"

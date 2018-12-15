@@ -507,7 +507,7 @@ coldb_20:
  movec.l  d0,cacr
  cmpi.w   #30,cpu_typ
  bcs.b    coldb_00
-* ab 68030 MMU desaktivieren
+* ab 68030 MMU deaktivieren
 ;pmove    long_zero(pc),tc         ; fuer 68030: disable translation
 ;pmove    long_zero(pc),tt0
 ;pmove    long_zero(pc),tt1
