@@ -480,7 +480,7 @@ void change_objs_menu( int updwin, int updpgm )
 	int hpos = 0;
 
 
-	prev = &(adr_hauptmen[M_OBJPAR].ob_head);
+	prev = &(adr_hauptmen[M_OBJ_BOX].ob_head);
 	for	(i = M_WIND1, o = adr_hauptmen + M_WIND1;
 			i <= M_PGM10; i++,o++)
 		{
@@ -558,9 +558,9 @@ void change_objs_menu( int updwin, int updpgm )
 		last = newpgm;
 		}
 
-	*prev = M_OBJPAR;
-	adr_hauptmen[M_OBJPAR].ob_tail = last;
-	adr_hauptmen[M_OBJPAR].ob_height = hpos;
+	*prev = M_OBJ_BOX;
+	adr_hauptmen[M_OBJ_BOX].ob_tail = last;
+	adr_hauptmen[M_OBJ_BOX].ob_height = hpos;
 }
 
 

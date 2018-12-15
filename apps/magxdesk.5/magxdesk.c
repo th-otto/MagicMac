@@ -1424,52 +1424,64 @@ static void _rsrc_load( char *fname )
 
 void get_rsc(void)
 {
-	register int i,lowres;
+	register int i;
 	register OBJECT *image;
 	int      isfirst;
 
 
-	lowres = (desk_g.g_w/gl_hwchar < 60) ||
-				 (K_CTRL+K_ALT == (K_CTRL+K_ALT & Kbshift(-1)));
 	isfirst = (*((void **) (aes_global+7)) == NULL);
 	if	(isfirst)								/* erster Start */
 		{
-
+		OBJECT *tree;
+		
 		desk_path[0] = Dgetdrv() + 'A';
 		desk_path[1] = ':';
 		Dgetpath(desk_path+2, 0);
 		strcat(desk_path, "\\");
 
-		if	(lowres)
-			{
-			_rsrc_load("magxdesl.rsc");
-			rsrc_gaddr(0, HAUPTMEN, &adr_hauptmen);
-			}
-		else adr_hauptmen = NULL;
 		_rsrc_load("magxdesk.rsc");
-		if	(!adr_hauptmen)
-			rsrc_gaddr(0, HAUPTMEN, &adr_hauptmen);
+		rsrc_gaddr(0, HAUPTMEN, &adr_hauptmen);
 		rsrc_gaddr(0, T_ICONS,  &adr_icons);
 		rsrc_gaddr(0, T_EINST, &adr_einst);
 		rsrc_gaddr(0, T_TTPPAR, &adr_ttppar);
 		rsrc_gaddr(0, T_ABOUT,  &adr_about);
 		rsrc_gaddr(0, T_DATINF, &adr_datinf);
+		tree = adr_hauptmen;
+#define fix_menu(obj) \
+		if ((tree[obj].ob_x + tree[obj].ob_width + 2) > (desk_g.g_x + desk_g.g_w)) \
+			tree[obj].ob_x = desk_g.g_x + desk_g.g_w - tree[obj].ob_width - 2
+		if ((tree[MM_OBJS].ob_x + tree[MM_OBJS].ob_width) > (desk_g.g_x + desk_g.g_w))
+		{
+			tree[MM_DATEI].ob_spec.free_string = Rgetstring(STR_SHORT_FILE);
+			tree[MM_DATEI].ob_width = ((WORD)strlen(tree[MM_DATEI].ob_spec.free_string) + 1) * gl_hwchar;
+			tree[MM_ANZEI].ob_spec.free_string = Rgetstring(STR_SHORT_VIEW);
+			tree[MM_ANZEI].ob_width = ((WORD)strlen(tree[MM_ANZEI].ob_spec.free_string) + 1) * gl_hwchar;
+			
+			tree[MM_ANZEI].ob_x = tree[MM_DATEI].ob_x + tree[MM_DATEI].ob_width;
+			tree[MM_OPTIO].ob_x = tree[MM_ANZEI].ob_x + tree[MM_ANZEI].ob_width;
+			tree[MM_OBJS].ob_x = tree[MM_OPTIO].ob_x +tree[MM_OPTIO].ob_width;
+		}
+		fix_menu(M_FILE_BOX);
+		fix_menu(M_DISPLAY_BOX);
+		fix_menu(M_OPTION_BOX);
+		fix_menu(M_OBJ_BOX);
+#undef fix_menu
 		load_app_icons();
 		}
 
 	/* Icongrîûen fÅr Auflîsungen korrigieren */
-/*
+#if 0
 	for	(i = I_FLPDSK; i <= I_BTCHDA; i++)
 		{
 		(adr_icons+i) -> ob_width  = 72;
 		(adr_icons+i) -> ob_height = 36;
 		}
-*/
+#endif
 
 	if	(!isfirst)
 		return;
 	/* Gruppenrahmen anpassen */
-/*
+#if 0
 	i = gl_hhchar >> 1;
 	(adr_einste+EINST_S1)->ob_y		+= i;
 	(adr_einste+EINST_S1)->ob_height	+= i;
@@ -1480,7 +1492,7 @@ void get_rsc(void)
 	(adr_cpmvdl+CPMVD_R1)->ob_y -= i;
 	(adr_datinf+FI_R1   )->ob_y -= i;
 	(adr_ordinf+OI_R1   )->ob_y -= i;
-*/
+#endif
 	image = adr_about + ABOU_IMG;
 	image->ob_height = image->ob_spec.bitblk->bi_hl;
 	while((image->ob_y + image->ob_height > (adr_about + ABOU_OS) -> ob_y) &&
