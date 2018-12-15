@@ -98,7 +98,8 @@ static char const s_timeout[] = "[3][SHUTDOWN:| |ZeitÅberschreitung.][Abbruch]";
 static char const s_unknown[] = "<Unbekannt>";
 static char const s_impossible[] = "[3][SHUTDOWN:| |Shutdown- Prozeû nicht mîglich.|%s lieferte Fehlercode %d.][Abbruch]";
 static char const s_active_app[] = "[3][SHUTDOWN:| |%s ist noch aktiv.|Bitte manuell beenden!][Abbruch]";
-static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown war erfolgreich.|Rechner jetzt abschalten!][Neustart|Kaltstart]";
+static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown war erfolgreich.|Rechner jetzt abschalten!][Neustart|Kaltstart%s]";
+static char const s_poweroff[] = "|Ausschalten";
 #elif COUNTRY == COUNTRY_US || COUNTRY == COUNTRY_UK
 static char const s_syntax_error[] = "[3][SHUTDOWN:|Error in SHUTDOWN.INF. Line| |%s][Continue]";
 static char const s_process_locked[] = "[3][SHUTDOWN:| |Process ist currently locked.][Cancel]";
@@ -106,7 +107,8 @@ static char const s_timeout[] = "[3][SHUTDOWN:| |Timeout.][Cancel]";
 static char const s_unknown[] = "<unknown>";
 static char const s_impossible[] = "[3][SHUTDOWN:| |Shutdown process failed.|%s has sent error code %d.][Cancel]";
 static char const s_active_app[] = "[3][SHUTDOWN:| |%s is still running.|Please terminate manually!][Cancel]";
-static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown was successful.|Shut off computer now!][Restart|Cold Boot]";
+static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown was successful.|Shut off computer now!][Restart|Cold Boot%s]";
+static char const s_poweroff[] = "|Power off";
 #elif COUNTRY == COUNTRY_FR || COUNTRY == COUNTRY_SF
 static char const s_syntax_error[] = "[3][SHUTDOWN:|Erreur dans SHUTDOWN.INF. Ligne| |%s][Suite]";
 static char const s_process_locked[] = "[3][SHUTDOWN:| |Processus bloquÇ.][Abandon]";
@@ -114,7 +116,8 @@ static char const s_timeout[] = "[3][SHUTDOWN:| |DÇbordement temps.][Abandon]";
 static char const s_unknown[] = "<inconnu>";
 static char const s_impossible[] = "[3][SHUTDOWN:| |Processus Shutdown impossible. |%s retourne erreur %d.][Abandon]";
 static char const s_active_app[] = "[3][SHUTDOWN:| |%s encore actif.|Quittez manuellement !][Abandon]";
-static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown rÇussi.|Eteignez l'ordinateur!][RedÇmarrer|Reset Ö froid]";
+static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown rÇussi.|Eteignez l'ordinateur!][RedÇmarrer|Reset Ö froid%s]";
+static char const s_poweroff[] = "|Eteindre";
 #endif
 
 /****************************************************************
@@ -535,24 +538,28 @@ int main(int argc, char *argv[])
 	char apname[16];
 	char s[256];
 	int i;
-	int dev, xdv, txt, isfalcon;
+	int dev, xdv, txt, isfalcon, ct60;
 	int doex, isgr, isover;
 	int msgtyp;
 	int iteration;
 	char c;
-	enum { ask, warmboot = 2, coldboot = 3} bootmode = ask;
+	enum { ask, warmboot = 2, coldboot = 3, poweroff = -1 } bootmode = ask;
 
 	ap_id = appl_init();
 
 	/* -w oder -c */
 
-	if ((argc >= 2) && (argv[1][0] == '-'))
+	ct60 = xbios(39, 'AnKr', 4, 0x43543630L) != 0;
+	
+	if (argc >= 2 && argv[1][0] == '-')
 	{
 		c = toupper(argv[1][1]);
 		if (c == 'C')
 			bootmode = coldboot;
 		else if (c == 'W')
 			bootmode = warmboot;
+		else if (c == 'P' && ct60)
+			bootmode = poweroff;
 		argv++;
 		argc--;
 	}
@@ -791,12 +798,19 @@ int main(int argc, char *argv[])
 #endif
 			xbios(39, 'AnKr', 0);		/* Beendet MagicMac */
 
+			/*
+			 * FIXME: does not work with MagicMac/MagicPC,
+			 * because VDI was already shut down
+			 */
 			if (bootmode == ask)
 			{
-				dev = form_alert(1, s_successful);
+				sprintf(s, s_successful, ct60 ? s_poweroff : "");
+				dev = form_alert(1, s);
 /*				shel_write(SHW_SHUTDOWN, FALSE, 0, NULL, NULL);	*/
 				if (dev == 1)
 					bootmode = warmboot;
+				else if (dev == 3)
+					bootmode = poweroff;
 				else
 					bootmode = coldboot;
 			}
