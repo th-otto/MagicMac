@@ -3129,7 +3129,7 @@ void *fslx_do( const char *title,
      GRECT c;
      int exitbutton;
      void *flyinf;
-     void **p_flyinf;
+     void **p_flyinf = NULL;
      FSEL_DIALOG *fsd;
      struct xxdoinf xxdoinf;
      OBJECT *tree;

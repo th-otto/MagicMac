@@ -300,7 +300,7 @@ int do_dialog(OBJECT *dialog)
 {
 	GRECT cg;
 	int exitbutton, dummy;
-	void *flyinf;
+	void *flyinf = NULL;
 	void **p_flyinf;
 
 
@@ -322,7 +322,7 @@ int do_exdialog(OBJECT *dialog,
 {
 	GRECT cg;
 	int exitbutton,dummy;
-	void *flyinf;
+	void *flyinf = NULL;
 	void **p_flyinf;
 
 

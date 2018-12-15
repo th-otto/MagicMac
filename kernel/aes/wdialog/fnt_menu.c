@@ -629,7 +629,7 @@ WORD fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in,
 	{
 		OBJECT *tree;
 		GRECT size;
-		void *flyinf;
+		void *flyinf = NULL;
 		
 		tree = fnt_dialog->tree;
 

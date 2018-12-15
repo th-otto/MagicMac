@@ -313,8 +313,7 @@ WORD	do_dialog( OBJECT *dialog )
 {
 	GRECT		size;
 	WORD		selected;
-	void		*flyinf;
-	void		*scantab=0L;
+	void		*flyinf = NULL;
 	int		lastcrsr;
 
 	wind_update( BEG_UPDATE );	/* Bildschirm sperren */
@@ -330,7 +329,7 @@ WORD	do_dialog( OBJECT *dialog )
 	objc_draw_grect( dialog, ROOT, MAX_DEPTH, &size );
 	
 	/* Dialog abarbeiten */
-	selected = form_xdo( dialog, ROOT, &lastcrsr, scantab, flyinf ) & 0x7fff;	/* Nummer des Ausgangsobjekts */
+	selected = form_xdo( dialog, ROOT, &lastcrsr, NULL, flyinf ) & 0x7fff;	/* Nummer des Ausgangsobjekts */
 	 
 	form_xdial_grect( FMD_FINISH, &size, &size, &flyinf );
 

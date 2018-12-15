@@ -610,7 +610,7 @@ int do_dialog(OBJECT *dialog)
 {
 	int cx, cy, cw, ch;
 	int exitbutton, dummy;
-	void *flyinf;
+	void *flyinf = NULL;
 	void **p_flyinf;
 
 
@@ -631,7 +631,7 @@ int do_exdialog(OBJECT *dialog,
 {
 	int cx, cy, cw, ch;
 	int exitbutton,dummy;
-	void *flyinf;
+	void *flyinf = NULL;
 	void **p_flyinf;
 
 

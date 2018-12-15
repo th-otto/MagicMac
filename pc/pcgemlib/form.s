@@ -201,13 +201,14 @@ fmd_dial2:
 				
 				move.l	a0,_GemParBlk+addrin
 				lea     _GemParBlk+aintin,a0
+				clr.l   addrin+4-aintin(a0)
 				move.w	d0,(a0)+
 				move.w	d1,(a0)+
 				move.w	d2,(a0)+
 				move.l	4(a7),(a0)+
 				move.l	8(a7),(a0)+
 				move.l	12(a7),(a0)
-				move.l  #$33090101,d1
+				move.l  #$33090102,d1
 				bra		_aes
 				
 				ENDMOD
@@ -218,6 +219,7 @@ fmd_dial2:
 				move.l	a1,d1
 				lea     _GemParBlk+aintin,a1
 				move.l	4(a7),addrin-aintin(a1)
+				clr.l   addrin+4-aintin(a1)
 				move.w	d0,(a1)+
 				move.l  a0,d0
 				bne.s   fmd_xdial1
@@ -231,7 +233,7 @@ fmd_xdial2:
 				move.l	d1,a0
 				move.l	(a0)+,(a1)+
 				move.l	(a0),(a1)+
-				move.l  #$33090101,d1
+				move.l  #$33090102,d1
 				bra		_aes
 				
 				ENDMOD
