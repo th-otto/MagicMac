@@ -3,3 +3,5 @@ Andreas Kromke
 
 
 Switch parallel floppy access ON or OFF
+
+These tools are obsolete; use MAGXCONF.CPX instead.
