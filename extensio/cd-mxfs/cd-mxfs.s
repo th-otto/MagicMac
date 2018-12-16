@@ -8,7 +8,7 @@
 **
 */
 
-     INCLUDE "mgx_xfs.inc"
+     INCLUDE "..\..\kernel\inc\mgx_xfs.inc"
      INCLUDE "mgx_devd.inc"
 
 

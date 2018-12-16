@@ -9,7 +9,7 @@
 **
 */
 
-     INCLUDE "MGX_XFS.INC"
+     INCLUDE "..\..\kernel\inc\mgx_xfs.inc"
 
 
 /*

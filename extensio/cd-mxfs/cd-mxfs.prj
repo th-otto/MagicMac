@@ -1,6 +1,6 @@
 spinmxfs.prg
-.C[-I..\..\..\inc_c]
-.S[-I..\..\..\inc_as]
+.C[-I..\..\inc_c]
+.S[-I..\..\inc_as]
 .C[-I..\..\pc\include]
 .C[-P]
 .C [-DMAGIC]
@@ -9,7 +9,6 @@ spinmxfs.prg
 cd-mxfsc.c (cd-mxfs.h, cfgread.c)
 cd-mxfs.s
 cd-mxfsk.s
+bin\libcdfs.lib
 ..\..\pc\lib\pctoslib.lib
 ..\..\pc\lib\pcstdlib.lib
-..\bin\libcdfs.lib
-..\bin\libdosix.lib
