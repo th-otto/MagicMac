@@ -4,11 +4,11 @@
 
 static unsigned char const pdlg_rsc[] = {
 #if COUNTRY == COUNTRY_DE || COUNTRY == COUNTRY_SG
-#include "ger\pdlg.inc"
+#include "de\pdlg.inc"
 #elif COUNTRY == COUNTRY_US || COUNTRY == COUNTRY_UK
-#include "us\pdlg.inc"
+#include "en\pdlg.inc"
 #elif COUNTRY == COUNTRY_FR || COUNTRY == COUNTRY_SF
-#include "fra\pdlg.inc"
+#include "fr\pdlg.inc"
 #endif
 };
 

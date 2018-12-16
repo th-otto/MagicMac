@@ -115,7 +115,7 @@ static void _mfree(void *addr);
 #undef NUM_OBS
 #undef NUM_TREE
 #include "obj_tool.h"
-#include "ger\fontslct.h"
+#include "de\fontslct.h"
 #include "wdialog.h"
 #include "listbox.h"
 #include "fnts.h"
@@ -123,11 +123,11 @@ static void _mfree(void *addr);
 /* Die Resource-Datei */
 static unsigned char fnts_rsc[] = {
 #if		COUNTRY==COUNTRY_DE
-#include "ger\fontslct.inc"
+#include "de\fontslct.inc"
 #elif	(COUNTRY==COUNTRY_US) || (COUNTRY==COUNTRY_UK)
-#include "us\fontslct.inc"
+#include "en\fontslct.inc"
 #elif	COUNTRY==COUNTRY_FR
-#include "fra\fontslct.inc"
+#include "fr\fontslct.inc"
 #endif
 };
 

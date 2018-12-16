@@ -23,18 +23,18 @@
 #include <tos.h>
 #include <string.h>
 #include <toserror.h>
-#include "ger\fselx.h"
+#include "de\fselx.h"
 #include "..\wdialog\shelsort.h"
 #include "std.h"
 #include <sys/stat.h>
 
 static unsigned char fselx[] = {
 #if       COUNTRY==COUNTRY_DE
-#include "ger\fselx.inc"
+#include "de\fselx.inc"
 #elif     (COUNTRY==COUNTRY_US) || (COUNTRY==COUNTRY_UK)
-#include "us\fselx.inc"
+#include "en\fselx.inc"
 #elif     COUNTRY==COUNTRY_FR
-#include "fra\fselx.inc"
+#include "fr\fselx.inc"
 #endif
 };
 

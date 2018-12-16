@@ -3,11 +3,11 @@
 #include "../vdi/drivers.h"
 
 #if COUNTRY == COUNTRY_DE || COUNTRY == COUNTRY_SG
-#include "ger\pdlg.h"
+#include "de\pdlg.h"
 #elif COUNTRY == COUNTRY_US || COUNTRY == COUNTRY_UK
-#include "us\pdlg.h"
+#include "en\pdlg.h"
 #elif COUNTRY == COUNTRY_FR || COUNTRY == COUNTRY_SF
-#include "fra\pdlg.h"
+#include "fr\pdlg.h"
 #endif
 
 
