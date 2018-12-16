@@ -92,8 +92,6 @@
      XREF      do_signals
 
 
-MC68060   EQU  0
-
 **********************************************************************
 *
 * void flush_msgbuf( APPL *ap )
@@ -289,7 +287,7 @@ ad_newready:
 
 ad_switch:
  cmpa.l   a0,a3                    ; ist neue APP = alte APP ?
- beq.b    ad_return                ; ja, kein Kontextwechsel
+ beq      ad_return                ; ja, kein Kontextwechsel
  tst.b    no_switch
  beq.b    ad_chgcntxt              ; kein Kontextwechsel erlaubt!
  move.l   (a0),(a4)                ; unerwuenschte APPL ausklinken
@@ -304,11 +302,13 @@ ad_chgcntxt:
  tst.b    is_fpu                        ; LineF- FPU installiert ?
  beq.b    ad_no_fpu                     ; nein!
  fsave    -(sp)
-     IF   MC68060
- tst.b    10(sp)
-     ELSE
+ cmp.w    #60,cpu_typ
+ bcs.s    ad_check_no060
+ tst.b    2(sp)
+ bra.s    ad_check_null
+ad_check_no060:
  tst.b    (sp)                          ; NULL/IDLE/BUSY- Flag
-     ENDIF
+ad_check_null:
  beq.b    ad_no_fpu                     ; NULL
  fmovem.x fp0-fp7,-(sp)                 ; Datenregister
  fmovem.l fpcr/fpsr/fpiar,-(sp)         ; Statusregister
