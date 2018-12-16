@@ -14,7 +14,7 @@ wdialog.prg
 .C[-P]
 .L[-S=0]
 =
-wdstart.s
+wdstart.s [-S]
 wdintrfc.s
 wdlginit.c
 wdialog.c
