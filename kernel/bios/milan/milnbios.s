@@ -371,8 +371,15 @@ ccfl_loop:
 *
 
  jsr      get_fpu_typ
- tst.w    d0
- sne      is_fpu
+ cmp.w    #40,cpu_typ
+ bcs.s    set_fpu
+ bne.s    set_fpu_060
+ moveq    #8,d0
+ bra.s    set_fpu
+set_fpu_060:
+ moveq    #16,d0
+set_fpu:
+ move.b   d0,is_fpu
  move.w   #6,stack_offset
  jsr      get_cpu_typ
  clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik moeglich?

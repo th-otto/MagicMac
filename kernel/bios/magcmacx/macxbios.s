@@ -3129,13 +3129,16 @@ scpu_typ:
 *  7 = Atari Register FPU + mit Sicherheit 68882 LineF FPU
 *  8 = 68040 internal LineF FPU
 *  9 = Atari Register FPU + 68040 internal LineF FPU
+* 16 = 68060 internal LineF FPU
+* 17 = Atari Register FPU + 68060 internal LineF FPU
 * Das Loword ist fuer eine spaetere eventuelle
 * softwaremaessige LineF- Emulation reserviert und derzeit immer 0
 
  moveq    #0,d1
  move.w   MSysX+MacSysX_fpu(pc),d1
- cmpi.w   #2,d1                    ; LineF FPU ?
- scc.b    is_fpu                   ; ja !
+ move.w   d1,d0
+ bclr     #0,d0
+ move.b   d0,is_fpu                ; LineF FPU?
  swap     d1                       ; Kennung ins Hiword
  move.l   #'_FPU',(a5)+
  move.l   d1,(a5)+                 ; und FPUs eintragen

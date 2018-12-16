@@ -24,58 +24,7 @@ install_cookies:
  clr.w    (a5)+
  move.w   cpu_typ,(a5)+
 
-* FPU bestimmen
-
-* Nach Atari Dokumentation ist die Belegung wie folgt:
-* _FPU Cookie ist IMMER da !!!
-* Belegung im Highword:
-*  0 = keine Hardware- FPU
-*  1 = Atari Register FPU (memory mapped)
-*  2 = LineF FPU
-*  3 = Atari Register FPU + LineF FPU
-*  4 = mit Sicherheit 68881 LineF FPU
-*  5 = Atari Register FPU + mit Sicherheit 68881 LineF FPU
-*  6 = mit Sicherheit 68882 LineF FPU
-*  7 = Atari Register FPU + mit Sicherheit 68882 LineF FPU
-*  8 = 68040 internal LineF FPU
-*  9 = Atari Register FPU + 68040 internal LineF FPU
-* Das Loword ist fuer eine spaetere eventuelle
-* softwaremaessige LineF- Emulation reserviert und derzeit immer 0
-
- moveq    #0,d1
-* Test auf (Atari) FPU
- movea.l  8,a0                     ; Busfehler retten
- move.l   #_noafpu,8               ; neuen Busfehler eintragen
- move.l   $fffffa46,d0
- move.l   d1,$fffffa46             ; Atari FPU initialisieren
- addq.w   #1,d1                    ; Bit0: SFP004 ("Atari FPU")
-_noafpu:
-* Test auf (Line F) FPU
- movea.l  $2c,a1                   ; LineF retten
- move.l   #_nolfpu,$2c             ; bei LineF Trap gehts dahin
-;move.l   #_nolfpu,$34             ; TOS 2.05
- fsave    -(sp)                    ; und noch testen, was fuer eine FPU
- move.w   (sp),d0                  ; Version Bytes ($18=881,$38=882,$40=68040)
- cmp.b    #$18,d0                  ; 68881 ?
- beq.b    _is881
- cmp.b    #$38,d0                  ; 68882 ?
- beq.b    _is882
- cmp.b    #$40,d0                  ; 68040 internal FPU ?
- bne.b    _no040
- addq.w   #2,d1                    ; 8: 68040
-_is882:
- addq.w   #2,d1                    ; 6: 68882
-_is881:
- addq.w   #2,d1                    ; 4: 68881
-_no040:
- addq.w   #2,d1                    ; 2: LineF- FPU
- st.b     is_fpu
-_nolfpu:                           ; keine LineF FPU
- swap     d1                       ; Kennung ins Hiword
- move.l   a1,$2c                   ; alten LineF restaurieren
- move.l   a2,sp                    ; Stack wiederherstellen
- move.l   #'_FPU',(a5)+
- move.l   d1,(a5)+                 ; und FPUs eintragen
+ INCLUDE "..\..\bios\atari\modules\fpudetec.inc"
 
 * _VDO Cookie eintragen
  move.l   #'_VDO',(a5)+
