@@ -32,6 +32,20 @@ _WORD vdi_str2array(const char *src, _WORD *des)
 }
 
 
+_WORD vdi_str2arrayn(const char *src, _WORD *des, _WORD nmax)
+{
+	_WORD len = 0;
+	const unsigned char *c = (const unsigned char *) src;
+
+	while (len < nmax && *c)
+	{
+		*(des++) = *(c++);
+		len++;
+	}
+	return len;
+}
+
+
 _WORD vdi_wstrlen(const _WORD *wstr)
 {
 	register _WORD len = 0;
