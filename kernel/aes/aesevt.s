@@ -329,9 +329,7 @@ ad_no_old:
 
 
 ; neuen Kontext zurueck
-     IFNE OUTSIDE
- move.w   SUPERSTACKLEN+ap_stack(a0),d0      ; erzwingt Einlagern eines Blocks
-     ENDIF
+ move.w   SUPERSTACKLEN+ap_stack(a0),d0      ; erzwingt Einlagern eines Blocks, fuer OUTSIDE
  lea      ap_ssp(a0),a1
  move.l   (a1)+,sp                      ; ap_ssp
 

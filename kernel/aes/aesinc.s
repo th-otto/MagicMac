@@ -20,7 +20,6 @@ __a_aes   EQU  $3300
 * AES fuer MagiX
 
 
-OUTSIDE   EQU  1
 NVDI      EQU  1                   ; NVDI- Unterstuetzung
 MAXDEPTH  EQU  8
 NAPPS     EQU  126                 ; Gesamtanzahl der Applikationen
