@@ -599,9 +599,10 @@ rimg_loop2:
 
  lea		VCONTRL(sp),a1
  move.w	#1,(a1)+				; open workstation
- clr.w	(a1)+				; kein ptsin
- addq.l	#2,a1				; ptsout nicht setzen
- move.w	#11,(a1)				; 11 intin-Werte (NVDI: 12)
+ clr.l	(a1)+				; kein ptsin/ptsout
+ move.w	#11,(a1)+				; 11 intin-Werte (NVDI: 12)
+ clr.l (a1)+
+ clr.w (a1)
  lea		VDIPB(sp),a0
  move.l	a0,d1
  moveq	#$73,d0
