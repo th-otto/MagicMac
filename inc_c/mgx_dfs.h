@@ -17,23 +17,26 @@
 *
 *********************************************************************/
 
+typedef struct _mx_dosfd MX_DOSFD;
+typedef struct _mx_dosdir MX_DOSDIR;
+
 typedef struct _mx_ddev {
-     LONG cdecl     (*ddev_open)   (struct _mx_dosfd *f);
-     LONG cdecl     (*ddev_close)();
-     LONG cdecl     (*ddev_read)();
-     LONG cdecl     (*ddev_write)();
-     LONG cdecl     (*ddev_stat)();
-     LONG cdecl     (*ddev_seek)();
-     LONG cdecl     (*ddev_datime)();
-     LONG cdecl     (*ddev_ioctl)();
-     LONG cdecl     (*ddev_delete)();
-     LONG cdecl     (*ddev_getc)();
-     LONG cdecl     (*ddev_getline)();
-     LONG cdecl     (*ddev_putc)();
+     LONG cdecl (*ddev_open)(MX_DOSFD *f);
+     LONG cdecl (*ddev_close)(MX_DOSFD *f);
+     LONG cdecl (*ddev_read)(MX_DOSFD *f, void *buf, long len);
+     LONG cdecl (*ddev_write)(MX_DOSFD *f, void *buf, long len);
+     LONG cdecl (*ddev_stat)(MX_DOSFD *f, short rwflag, void *unsel, APPL *appl);
+     LONG cdecl (*ddev_seek)(MX_DOSFD *f, long where, short whence);
+     LONG cdecl (*ddev_datime)(MX_DOSFD *f, short *buf, short rwflag);
+     LONG cdecl (*ddev_ioctl)(MX_DOSFD *f, short cmd, void *buf);
+     LONG cdecl (*ddev_delete)(MX_DOSFD *f, MX_DOSDIR *dir);
+     LONG cdecl (*ddev_getc)(MX_DOSFD *f, short mode);
+     LONG cdecl (*ddev_getline)(MX_DOSFD *f, char *buf, long size, short mode);
+     LONG cdecl (*ddev_putc)(MX_DOSFD *f, short mode, long val);
 } MX_DDEV;
 
 
-typedef struct _mx_dosfd {
+struct _mx_dosfd {
      struct _mx_dosdmd	*fd_dmd;
      WORD      fd_refcnt;
      WORD      fd_mode;
@@ -58,7 +61,7 @@ typedef struct _mx_dosfd {
      ULONG     fd_user1;
      ULONG     fd_user2;
      char		*fd_longname;
-} MX_DOSFD;
+};
 
 typedef struct _mx_dosdta {
      char      dta_sname[12];
@@ -85,7 +88,7 @@ typedef struct _mx_dosdmd {
 } MX_DOSDMD;
 
 
-typedef struct _mx_dosdir {
+struct _mx_dosdir {
      char      dir_name[11];
      char      dir_attr;
      WORD      dir_usr1;
@@ -95,28 +98,28 @@ typedef struct _mx_dosdir {
      WORD      dir_date;
      WORD      dir_stcl;
      ULONG     dir_flen;
-} MX_DOSDIR;
+};
 
 
 
 typedef struct _mx_dfs {
      char      dfs_name[8];
      struct _mx_dfs   *dfs_next;
-     long      (*dfs_init)();
-     long      (*dfs_sync)();
-     long      (*dfs_drv_open)();
-     long      (*dfs_drv_close)();
-     long      (*dfs_dfree)();
-     long      (*dfs_sfirst)();
-     long      (*dfs_snext)();
-     long      (*dfs_ext_fd)();
-     long      (*dfs_fcreate)();
-     long      (*dfs_fxattr)();
-     long      (*dfs_dir2index)();
-     long      (*dfs_readlink)();
-     long      (*dfs_dir2FD)();
-     long      (*dfs_fdelete)();
-     long      (*dfs_pathconf)();
+     long      (*dfs_init)(void);
+     long      (*dfs_sync)(MX_DOSDMD *d);
+     long      (*dfs_drv_open)(MX_DOSDMD *d);
+     long      (*dfs_drv_close)(MX_DOSDMD *d, short mode);
+     long      (*dfs_dfree)(MX_DOSDMD *, long df[4]);
+     long      (*dfs_sfirst)(MX_DOSFD *dd, MX_DOSDIR *dir, LONG pos, MX_DOSDTA *dta, void *link);
+     long      (*dfs_snext)(MX_DOSDTA *dta, MX_DOSDMD *d, void *next);
+     long      (*dfs_ext_fd)(MX_DOSFD *dd);
+     long      (*dfs_fcreate)(MX_DOSFD *fd, MX_DOSDIR *dir, short cmd, long arg);
+     long      (*dfs_fxattr)(MX_DOSFD *dd, MX_DOSDIR *dir, short mode, XATTR *xattr, void *link);
+     long      (*dfs_dir2index)(MX_DOSFD *dd, MX_DOSDIR *dir, void *link);
+     long      (*dfs_readlink)(MX_DOSFD *dd, MX_DOSDIR *dir, void *link);
+     long      (*dfs_dir2FD)(MX_DOSFD *dd, MX_DOSDIR *dir, void *link);
+     long      (*dfs_fdelete)(MX_DOSFD *dd, MX_DOSDIR *dir, long pos);
+     long      (*dfs_pathconf)(MX_DOSFD *dd, short cmd);
 } MX_DFS;
 
 /* unterstÅtzte Dcntl- Modi */

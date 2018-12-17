@@ -432,6 +432,7 @@ struct control_FAT32
 # define MX_KER_DRVSTAT		(('m'<< 8) | 4)		/* mgx_dos.txt */
 # define MX_KER_XFSNAME		(('m'<< 8) | 5)		/* mgx_dos.txt */
 # define MX_DEV_INSTALL 	(('m'<< 8) | 0x20)	/* mgx_dos.txt */
+# define MX_DEV_INSTALL2 	(('m'<< 8) | 0x21)	/* mgx_dos.txt */
 # define MX_DFS_GETINFO		(('m'<< 8) | 0x40)	/* mgx_dos.txt */
 # define MX_DFS_INSTDFS		(('m'<< 8) | 0x41)	/* mgx_dos.txt */
 

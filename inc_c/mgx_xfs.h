@@ -55,12 +55,13 @@ typedef struct {
 
 typedef struct {
 	WORD	version;
-	LONG	_dir_srch;
-	LONG	reopen_FD;
-	LONG	close_DD;
-	LONG	match_8_3;
-	LONG	conv_8_3;
-	LONG	init_DTA;
+	LONG	(*_dir_srch)(void /* DD */ *dir, char *fname, LONG pos);
+	LONG	(*reopen_FD)(void /* DD_FD */ *dir, WORD omode);
+	LONG	(*close_DD)(void /* FD */ *file);
+	WORD	(*match_8_3)(const char *pattern, const char *fname);
+	void	(*conv_8_3)(const char *from, char *to);
+	void	(*init_DTA)(void /* DIR */ *dirfile, DTA *dta);
+	char    *(*rcnv_8_3)(const char *from, char *to);
 } MX_DFSKERNEL;
 
 
@@ -306,6 +307,20 @@ typedef struct {
 #ifndef CDROMEJECT
 #define	CDROMEJECT     0x4309	/* Kernel: Medium auswerfen */
 #endif
+
+/*
+ * MagiC opcodes (all group 'm' opcodes are reserved for MagiC)
+ */
+
+#define MX_KER_GETINFO		(('m'<< 8) | 0)		/* mgx_dos.txt */
+#define MX_KER_DOSLIMITS	(('m'<< 8) | 1)		/* mgx_dos.txt */
+#define MX_KER_INSTXFS		(('m'<< 8) | 2)		/* mgx_dos.txt */
+#define MX_KER_DRVSTAT		(('m'<< 8) | 4)		/* mgx_dos.txt */
+#define MX_KER_XFSNAME		(('m'<< 8) | 5)		/* mgx_dos.txt */
+#define MX_DEV_INSTALL	 	(('m'<< 8) | 0x20)	/* mgx_dos.txt */
+#define MX_DEV_INSTALL2	 	(('m'<< 8) | 0x21)	/* mgx_dos.txt */
+#define MX_DFS_GETINFO		(('m'<< 8) | 0x40)	/* mgx_dos.txt */
+#define MX_DFS_INSTDFS		(('m'<< 8) | 0x41)	/* mgx_dos.txt */
 
 /* untersttzte Dcntl- Modi */
 /* # define FUTIME       0x4603 */

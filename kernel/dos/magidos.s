@@ -2840,7 +2840,7 @@ D_Dreaddir:
  move.w   (a0)+,d0            ; d0 = int len
  moveq    #xfs_dreaddir,d2
 _dd:
- move.l   (a0),a0
+ move.l   (a0),a0             ; a0 = FD *dirhandle
  move.l   dhd_dmd(a0),a2
  move.l   d_xfs(a2),a2
  move.l   0(a2,d2.w),a2
