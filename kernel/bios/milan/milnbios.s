@@ -370,16 +370,6 @@ ccfl_loop:
 * CPU, Cookies und machine_type
 *
 
- jsr      get_fpu_typ
- cmp.w    #40,cpu_typ
- bcs.s    set_fpu
- bne.s    set_fpu_060
- moveq    #8,d0
- bra.s    set_fpu
-set_fpu_060:
- moveq    #16,d0
-set_fpu:
- move.b   d0,is_fpu
  move.w   #6,stack_offset
  jsr      get_cpu_typ
  clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik moeglich?
@@ -391,6 +381,16 @@ scpu_typ:
  beq.b    inst_cook
  move.w   #8,stack_offset
 inst_cook:
+ jsr      get_fpu_typ
+ cmp.w    #40,cpu_typ
+ bcs.s    set_fpu
+ bne.s    set_fpu_060
+ moveq    #8,d0
+ bra.s    set_fpu
+set_fpu_060:
+ moveq    #16,d0
+set_fpu:
+ move.b   d0,is_fpu
 
  jsr      ivideo                        ; Videosystem initialisieren
 
@@ -398,6 +398,13 @@ inst_cook:
  move.l   a0,_p_cookies
  moveq    #NCOOKIES,d0
  jsr      icookies                      ; maschinenspez. Cookies
+
+ ; Fix a bug in MilanTOS, which sets a wrong _FPU cookie value
+ clr.l    d1
+ move.b   is_fpu,d1
+ swap     d1                            ; Wert
+ move.l   #'_FPU',d0                    ; key
+ bsr      putcookie
 
 *
 * "soft"-Cookies (_IDT und MagX)
