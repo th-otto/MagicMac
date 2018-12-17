@@ -1,6 +1,6 @@
-$Id: milan_hw.txt,v 1.7 1998/11/03 12:26:07 rincewind Exp $
+$Id: milan_hw.txt,v 1.10 1999/11/17 20:19:40 rincewind Exp $
 
-Milan Hardwaredoku
+Milan Mini-Hardwaredocumentation
 
 Memory layout:
 
@@ -48,12 +48,17 @@ $2A8 serial port 4 (optional)
 $2F8 serial port 2
 $3F0 Floppy disk controller
 $3F8 serial port 1
+$400-$420 onboard (SuperIO etc.)
 
 ISA Interrupts:
 ISA Interrupt vectors are located at $140+4*isa_int_vector.
 You must use Setexc() to set the vector, because otherwise the interrupt is
 not enabled in the interrupt controller. Restore the old vector using
 Setexc() when uninstalling your driver.
+
+The interrupt routine must end with an RTE instruction, and does not have
+to do anything special about the interrupt controller - EOI handling is
+done by TOS.
 
 Original ST MFP GPIO-Port:
 BIT  DIR
@@ -78,20 +83,31 @@ BIT  DIR
  7   IN   * KEYLOCK switch
 
 ISA Interrupts
+ 0	Timer
  1	keyboard
  3	87308 serial port 2
  4	87308 serial port 1
- 5
- 6
+ 5	available
+ 6	FDC
  7	printer port
- 8
- 9
-10
-11
+ 8	RTC
+ 9	available
+10	available
+11	available
 12	PS/2 mouse port
-13
+13	available
 14	PCI IDE primary channel
 15	PCI IDE secondary channel
+
+ISA DMA
+0	(Byte)		free (used for refresh in original PC design)
+1	(Byte)		free
+2	(Byte)		floppy disk controller
+3	(Byte)		free
+4	Cascade
+5	(16 Bit)	free
+6	(16 Bit)	free
+7	(16 Bit)	free
 
 
 ISA I/O functions:
