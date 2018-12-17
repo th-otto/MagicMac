@@ -8611,7 +8611,7 @@ resv_end:
 *
 
 collect_IMB:
- movem.l  d7/a5,-(sp)
+ movem.l  d7/a2/a5,-(sp)
 * a5 durchlaeuft alle Laufwerke (DMDs) von 0 bis LASTDRIVE
  moveq    #0,d7                    ; noch nichts erreicht
  lea      dmdx,a5
@@ -8630,7 +8630,7 @@ coli_next:
  cmpa.l   #dmdx+4*LASTDRIVE,a5
  bls.b    coli_loop
  move.l   d7,d0
- movem.l  (sp)+,d7/a5
+ movem.l  (sp)+,d7/a2/a5
  rts
 
 
