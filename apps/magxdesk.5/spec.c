@@ -32,7 +32,7 @@ void get_syshdr( void )
 	aesvars = *((AESVARS **) (aes_global+11));
 	if	(aesvars->magic2 != 'MAGX')
 		Pterm(-1);
-	inf_name[0] = *(aesvars->aes_bootdrv) + 'A';
+	inf_name[0] = letter_from_drive(*(aesvars->aes_bootdrv));
 
 	os_ver_s[ 7] = (((aesvars->version) >> 12)     ) + '0';
 	os_ver_s[ 8] = (((aesvars->version) >> 8) & 0xf) +'0';
@@ -40,7 +40,7 @@ void get_syshdr( void )
 	os_ver_s[11] = (((aesvars->version)     ) & 0xf) +'0';
 
 	if	(aesvars->release < 3)
-		os_ver_s[12] = *("рст" + (aesvars->release));
+		os_ver_s[12] = 0xe0 + aesvars->release;
 
 	os_ver_s[18] = (((aesvars->date) >> 28)      ) + '0';
 	os_ver_s[19] = (((aesvars->date) >> 24) & 0xf) + '0';

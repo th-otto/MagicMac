@@ -503,3 +503,6 @@ extern char *os_ver_s;
 extern void set_parent_paths( void );
 extern void res_exec( void );
 extern void get_syshdr( void );
+
+int drive_from_letter(int drv);
+int letter_from_drive(int drv);

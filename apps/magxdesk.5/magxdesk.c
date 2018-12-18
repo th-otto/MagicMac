@@ -173,7 +173,7 @@ void main()
 			if	(w_ev.kstate == (K_ALT+K_LSHIFT))
 				{
 				drv = toupper(ascii);
-				if	((drv >= 'A') && (drv <= 'Z'))
+				if	(drive_from_letter(drv) >= 0)
 					{
 					if	(0 > (i = drv_to_icn(drv)))
 						goto weiter_mesag;	/* Taste verarbeitet */
@@ -283,7 +283,7 @@ void main()
 							}
 						break;
 					case AV_PATH_UPDATE:
-						w_ev.msg[3] = (**(char **)(w_ev.msg+3))-'A';
+						w_ev.msg[3] = drive_from_letter((**(char **)(w_ev.msg+3)));
 				     case SH_WDRAW:
 				     	if	((w_ev.msg[3] >= 0) &&
 				     		 (w_ev.msg[3] < ANZDRIVES))
@@ -294,7 +294,7 @@ void main()
 								i++,pw++)
 								{
 								w = *pw;
-								if	((w) && (w->path[0] -'A' == w_ev.msg[3]))
+								if	((w) && (drive_from_letter(w->path[0]) == w_ev.msg[3]))
 									dirty_drives[w->real_drive] = TRUE;
 								}
 							}
@@ -1301,7 +1301,7 @@ void shutdown( int dev, int txt )
 			vst_unload_fonts(vdi_handle, 0);
 		v_clsvwk(vdi_handle);
 		/* Pfade an den Parent weiterreichen: */
-		Dsetdrv(desk_path[0]-'A');
+		Dsetdrv(drive_from_letter(desk_path[0]));
 		Dsetpath(desk_path);
 		shel_write(TRUE, TRUE, SHW_SINGLE, shutdown_prg, "");
 		/* und Programm aufrufen */
@@ -1434,7 +1434,7 @@ void get_rsc(void)
 		{
 		OBJECT *tree;
 		
-		desk_path[0] = Dgetdrv() + 'A';
+		desk_path[0] = letter_from_drive(Dgetdrv());
 		desk_path[1] = ':';
 		Dgetpath(desk_path+2, 0);
 		strcat(desk_path, "\\");
@@ -1645,12 +1645,12 @@ void anfang(void)
 				if	((fenster[j]) && (fenster[j]->path[0] == drv))
 					goto nexticn;
 				}
-			if	(drv < 'C')		/* nicht fr A: und B: */
+			if	(drv == 'A' || drv == 'B')		/* nicht fr A: und B: */
 				continue;
 			name[0] = EOS;
 			pth[0] = drv;
 			Dreadlabel(pth, name, 65);
-			set_dname(drv-'A', name);
+			set_dname(drive_from_letter(drv), name);
 			}
 		}
 

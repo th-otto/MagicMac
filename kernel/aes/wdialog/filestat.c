@@ -28,6 +28,8 @@ long filestat(WORD nofollowlinks, const char *name, XATTR *xattr)
 					drv -= 'A';
 				else if (drv >= 'a' && drv <= 'z')
 					drv -= 'a';
+				else if (drv >= '1' && drv <= '6')
+					drv = drv - '1' + 26;
 				else
 					drv = Dgetdrv();
 			} else

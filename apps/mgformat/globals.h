@@ -57,3 +57,5 @@ extern void	cpy_dial_init_rsc( int src_dev, int dst_dev );
 extern WORD	cdecl hdl_cpydsk( struct HNDL_OBJ_args );
 extern WORD	cdecl hdl_fmtopt( struct HNDL_OBJ_args );
 
+int drive_from_letter(int drv);
+int letter_from_drive(int drv);

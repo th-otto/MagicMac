@@ -158,7 +158,7 @@ void read_inf( void )
 			if	(!strncmp(s, "TMPDRV ", 7))
 				{
 				s += 7;
-				prefs.tmpdrv = (*s++) - 'A';
+				prefs.tmpdrv = drive_from_letter(*s++);
 				}
 
 			if	(!strncmp(s, "SIDES ", 6))
@@ -279,7 +279,7 @@ void write_inf( void )
 	strcat(buf, "\r\nWINDOW FORMAT ");
 	print_winpos(buf + strlen(buf), &prefs.format_win, 4);
 
-	tmpdrvs[0] = prefs.tmpdrv + 'A';
+	tmpdrvs[0] = letter_from_drive(prefs.tmpdrv);
 	strcat(buf, "\r\nTMPDRV ");
 	strcat(buf, tmpdrvs);
 
@@ -344,8 +344,8 @@ int main( int argc, char *argv[] )
 		if	(!stricmp(arg, "-c"))
 			action = COPY;
 		else	{
-			tmp = (*arg++ & 0x5f) - 'A';	/* ->devno */
-			if	(tmp < 0 || tmp > 31)
+			tmp = drive_from_letter(*arg++);	/* ->devno */
+			if	(tmp < 0)
 				return(-1);
 			if	(*arg++ != ':' || *arg)
 				return(-1);		/* Fehler */

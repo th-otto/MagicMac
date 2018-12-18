@@ -210,6 +210,27 @@ static void cati(char *s, int i)
 	ultoa(i, s, 10);
 }
 
+
+int drive_from_letter(int drv)
+{
+	if (drv >= 'A' && drv <= 'Z')
+		drv = drv - 'A';
+	else if (drv >= 'a' && drv <= 'z')
+		drv = drv - 'a';
+	else if (drv >= '1' && drv <= '6')
+		drv = (drv - '1') + 26;
+	else
+		return -1;
+	return drv;
+}
+
+
+int letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
 static int info_disk(char *path, int weiter)
 {
 	int lw,ret;
@@ -229,7 +250,7 @@ static int info_disk(char *path, int weiter)
 	int shift;
 	
 	Mgraf_mouse(HOURGLASS);
-	lw = path[0] - 'A';
+	lw = drive_from_letter(path[0]);
 	rsrc_gaddr(0, T_DSKINF, &adr_dskinf);
 
 	cic = *diskname_to_iconblk(path[0], NULL);
@@ -953,7 +974,7 @@ void dial_laufwe(void)
 		else
 		if	(ic->icontyp == ITYP_DISK)
 			{
-			dev = ic->isdisk - 'A';
+			dev = drive_from_letter(ic->isdisk);
 			drvs &= ~(1L << dev);	/* entspr. Bit l”schen */
 			}
 		}
@@ -961,12 +982,13 @@ void dial_laufwe(void)
 	/* noch fehlende Icons anmelden */
 	/* ---------------------------- */
 
-	for	(i = 0; i < 26; i++,drvs >>= 1)	/* Laufwerke 'A'..'Z' */
+	for	(i = 0; i < 32; i++,drvs >>= 1)	/* Laufwerke 'A'..'Z' */
 		{
 		if	(drvs & 1L)	/* existiert, nicht angemeldet */
 			{
-			c = diskname_to_iconblk(i+'A', &name);
-			make_icon(ITYP_DISK, c, i+'A', name, NULL, FALSE,-1,0);
+			int letter = i >= 26 ? i - 26 + '1' : i + 'A';
+			c = diskname_to_iconblk(letter, &name);
+			make_icon(ITYP_DISK, c, letter, name, NULL, FALSE,-1,0);
 			}
 		}
 
@@ -1344,7 +1366,7 @@ void dial_einste(void)
 		return;		/* Fehler */
 		if	(!ret)
 			return;	/* Abbruch */
-		reload_status(path[0] - 'A');
+		reload_status(drive_from_letter(path[0]));
 		return;
 		}
 

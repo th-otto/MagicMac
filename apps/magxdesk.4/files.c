@@ -58,7 +58,7 @@ long get_real_drive(char *path)
 		path = buf;
 		}
 
-	drv = path[0]-'A';
+	drv = drive_from_letter(path[0]);
 	Dsetdrv(drv);
 	ret = Dsetpath(path);
 	if	(ret)
@@ -73,11 +73,10 @@ long get_real_drive(char *path)
 
 		ret = Dgetpath(buf, 0);	/* Pfad von U: */
 		if	(!ret &&
-			 (buf[0] == '\\') &&
-			 (buf[1] >= 'A') &&
-			 (buf[1] <= 'Z') &&
-			 ((buf[2] == '\\') || !buf[2]))
-			drv = buf[1] - 'A';
+			 buf[0] == '\\' &&
+			 drive_from_letter(buf[1]) >= 0 &&
+			 (buf[2] == '\\' || !buf[2]))
+			drv = drive_from_letter(buf[1]);
 		}
 
 	return((int) drv);

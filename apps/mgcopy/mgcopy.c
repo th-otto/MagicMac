@@ -328,8 +328,14 @@ static void read_inf(char *fname)
 
 	else
 	{
+		WORD drv;
+		
 		s = infpath;
-		*s++ = Dgetdrv() + 'A';
+		drv = Dgetdrv();
+		if (drv >= 26)
+			*s++ = drv - 26 + '1';
+		else
+			*s++ = drv + 'A';
 		*s++ = ':';
 		Dgetpath(s, 0);
 		s += strlen(s);

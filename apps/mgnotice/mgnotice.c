@@ -958,13 +958,14 @@ int main( void )
 	EVNT w_ev;
 	int dummy;
 	int i;
-
+	int drv;
 
 
 	/* Initialisierung */
 	/* --------------- */
 
-	notice_path[0] = Dgetdrv()+'A';
+	drv = Dgetdrv();
+	notice_path[0] = drv >= 26 ? drv - 26 + '1' : drv + 'A';
 	if   ((ap_id = appl_init()) < 0)
 		Pterm(-1);
 	i = _GemParBlk.global[10];

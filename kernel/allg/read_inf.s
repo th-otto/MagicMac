@@ -335,7 +335,7 @@ rivf_loop:
  andi.w	#$5f,d0				; toupper
  subi.w	#'A',d0
  bmi.b	rivf_endloop
- cmpi.w	#'Z'-'A',d0
+ cmpi.w	#'Z'-'A',d0 ; LASTDRIVE
  bhi.b	rivf_endloop
 
 ; d0 ist jetzt die Laufwerknummer.

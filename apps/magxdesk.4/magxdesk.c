@@ -159,7 +159,7 @@ void main()
 			if	(ev.kstate == (K_ALT+K_LSHIFT))
 				{
 				drv = toupper(ascii);
-				if	((drv >= 'A') && (drv <= 'Z'))
+				if	(drive_from_letter(drv) >= 0)
 					{
 					if	(0 > (i = drv_to_icn(drv)))
 						goto weiter_mesag;	/* Taste verarbeitet */
@@ -269,7 +269,7 @@ void main()
 							}
 						break;
 					case AV_PATH_UPDATE:
-						message[3] = (**(char **)(message+3))-'A';
+						message[3] = drive_from_letter((**(char **)(message+3)));
 				     case SH_WDRAW:
 				     	if	((message[3] >= 0) &&
 				     		 (message[3] < ANZDRIVES))
@@ -280,7 +280,7 @@ void main()
 								i++,pw++)
 								{
 								w = *pw;
-								if	((w) && (w->path[0] -'A' == message[3]))
+								if	((w) && (drive_from_letter(w->path[0]) == message[3]))
 									dirty_drives[w->real_drive] = TRUE;
 								}
 							}
@@ -309,7 +309,8 @@ void main()
 							8192;	/* AV_STARTED */
 						(*(char **)(message+6)) = "MAGXDESK";
 						appl_write(client, 16, message);
-						break;/*
+						break;
+/*
 					case AV_EXIT:
 						break;
 */
@@ -320,7 +321,8 @@ void main()
 						ev_mwhich &= ~MU_MESAG;	/* bearbeitet */
 						goto do_key;
 
-					case AV_WHAT_IZIT:						client = message[1];
+					case AV_WHAT_IZIT:
+						client = message[1];
 						w = whdl2window(wind_find(message[3],
 											message[4]));
 						if	(w)
@@ -338,10 +340,14 @@ void main()
 							message[1] = ap_id;
 							message[2] =
 							message[7] = 0;
-							message[3] = ap_id;							(*(char **)(message+5)) = NULL;
+							message[3] = ap_id;
+							(*(char **)(message+5)) = NULL;
 							appl_write(client, 16, message);
-							}						break;
-					case AV_DRAG_ON_WINDOW:						client = message[1];
+							}
+						break;
+
+					case AV_DRAG_ON_WINDOW:
+						client = message[1];
 						message[0] = VA_DRAG_COMPLETE;
 						message[1] = ap_id;
 						message[2] =
@@ -351,7 +357,8 @@ void main()
 						message[6] =
 						message[7] = 0;
 						appl_write(client, 16, message);
-						break;
+						break;
+
 					case AV_STARTED:
 						Mfree((*(char **)(message+3))-1);
 						break;
@@ -1280,7 +1287,7 @@ void shutdown( int dev, int txt )
 			vst_unload_fonts(vdi_handle, 0);
 		v_clsvwk(vdi_handle);
 		/* Pfade an den Parent weiterreichen: */
-		Dsetdrv(desk_path[0]-'A');
+		Dsetdrv(drive_from_letter(desk_path[0]));
 		Dsetpath(desk_path);
 		shel_write(TRUE, TRUE, SHW_SINGLE, shutdown_prg, "");
 		/* und Programm aufrufen */
@@ -1413,7 +1420,7 @@ void get_rsc(void)
 		{
 		OBJECT *tree;
 
-		desk_path[0] = Dgetdrv() + 'A';
+		desk_path[0] = letter_from_drive(Dgetdrv());
 		desk_path[1] = ':';
 		Dgetpath(desk_path+2, 0);
 		strcat(desk_path, "\\");
@@ -1621,12 +1628,12 @@ void anfang(void)
 				if	((fenster[j]) && (fenster[j]->path[0] == drv))
 					goto nexticn;
 				}
-			if	(drv < 'C')		/* nicht fr A: und B: */
+			if	(drv == 'A' || drv == 'B')		/* nicht fr A: und B: */
 				continue;
 			name[0] = EOS;
 			pth[0] = drv;
 			Dreadlabel(pth, name, 65);
-			set_dname(drv-'A', name);
+			set_dname(drive_from_letter(drv), name);
 			}
 		}
 

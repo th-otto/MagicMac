@@ -973,6 +973,27 @@ void	start_tos( BYTE *file )
 	}
 }
 
+
+static int drive_from_letter(int drv)
+{
+	if (drv >= 'A' && drv <= 'Z')
+		drv = drv - 'A';
+	else if (drv >= 'a' && drv <= 'z')
+		drv = drv - 'a';
+	else if (drv >= '1' && drv <= '6')
+		drv = (drv - '1') + 26;
+	else
+		return -1;
+	return drv;
+}
+
+
+static int letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
 /*----------------------------------------------------------------------------------------*/
 /* TOS-Programm starten																							*/
 /* Funktionsresultat:	Applikationsnummer oder -1 (Fehler)											*/
@@ -998,8 +1019,12 @@ WORD	exec_tos( BYTE *fname, BYTE *fpath, BYTE *fcmd )
 	strupr( path );
 	strcat( fpath, fname );
 
-	if ( path[0] >= 'A' )
-		Dsetdrv( path[0] - 65 );
+	if (path[0] != '\0' && path[1] == ':')
+	{
+		WORD drv = drive_from_letter(path[0]);
+		if (drv >= 0)
+			Dsetdrv(drv);
+	}
 	Dsetpath( path );
 
 	tscreen = open_vt( columns, rows, buffer_rows, font_id, cpoint );
@@ -2081,7 +2106,7 @@ void	std_settings( void )
 	for ( i = 0; i < 128; app_window[i++] = 0L );
 */
 	drive = Dgetdrv();
-	*path = drive + 'A';
+	*path = letter_from_drive(drive);
 	*( path + 1 )= ':';
 	Dgetpath( path + 2, drive + 1 ); 
 	if ( *( path + strlen( path )) != '\\' )
@@ -2099,7 +2124,7 @@ void	std_settings( void )
 	}
 	else																		/* aktuellen Pfad benutzen */
 	{
-		home[0] = Dgetdrv() + 'A';
+		home[0] = path[0];
 		home[1] = ':';
 		Dgetpath( home + 2, 0 );
 		if ( home[strlen( home ) - 1] != '\\' )					/* kein Backslash am Ende? */

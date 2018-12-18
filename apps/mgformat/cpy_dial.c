@@ -21,6 +21,26 @@ static int is_iconified = FALSE;
 static struct fmt_parameter fmt_parameter;
 
 
+int drive_from_letter(int drv)
+{
+	if (drv >= 'A' && drv <= 'Z')
+		drv = drv - 'A';
+	else if (drv >= 'a' && drv <= 'z')
+		drv = drv - 'a';
+	else if (drv >= '1' && drv <= '6')
+		drv = (drv - '1') + 26;
+	else
+		return -1;
+	return drv;
+}
+
+
+int letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
 /*********************************************************************
 *
 * Initialisierung der Objektklasse "Disk-Kopierdialog"
@@ -34,8 +54,8 @@ void cpy_dial_init_rsc( int src_dev, int dst_dev )
 
 	mt_rsrc_gaddr(0, T_CPYDSK, &adr_cpydsk, global);
 	(adr_cpydsk+CPYDS_R1)->ob_y -= gl_hhchar >> 1;
-	*((adr_cpydsk + CPYDS_QU)->ob_spec.free_string) = src_dev + 'A';
-	*((adr_cpydsk + CPYDS_ZI)->ob_spec.free_string) = dst_dev + 'A';
+	*((adr_cpydsk + CPYDS_QU)->ob_spec.free_string) = letter_from_drive(src_dev);
+	*((adr_cpydsk + CPYDS_ZI)->ob_spec.free_string) = letter_from_drive(dst_dev);
 }
 
 
@@ -209,8 +229,8 @@ WORD	cdecl hdl_cpydsk(struct HNDL_OBJ_args args)
 		goto close_dialog;
 		}
 
-	source_drv = *((tree + CPYDS_QU)->ob_spec.free_string) - 'A';
-	dest_drv   = *((tree + CPYDS_ZI)->ob_spec.free_string) - 'A';
+	source_drv = drive_from_letter(*((tree + CPYDS_QU)->ob_spec.free_string));
+	dest_drv   = drive_from_letter(*((tree + CPYDS_ZI)->ob_spec.free_string));
 
 	if	(args.obj == CPYDS_ZI)			/* Ziel- Laufwerk */
 		{
@@ -222,7 +242,7 @@ WORD	cdecl hdl_cpydsk(struct HNDL_OBJ_args args)
 			}
 		while(dest_drv != 0 && dest_drv > 1 /* && disk_type(dest_drv) != 'FD'*/ );
 
-		newlw[0] = dest_drv + 'A';
+		newlw[0] = letter_from_drive(dest_drv);
 		newlw[1] = EOS;
 		MYsubobj_wdraw(args.dialog, args.obj, -1, newlw);
 		return(1);

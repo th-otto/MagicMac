@@ -991,7 +991,7 @@ static long setpath(char *program, int stdpath)
 		rett = *endp;
 		*endp = EOS;
 		if	(program[0] && program[1] == ':')
-			Dsetdrv(program[0] - 'A');
+			Dsetdrv(drive_from_letter(program[0]));
 		if	(program < endp)
 			doserr = Dsetpath(program);
 		else doserr = E_OK;
@@ -1009,7 +1009,7 @@ static long setpath(char *program, int stdpath)
 		if	((tw) && (tw->wnr))	/* nicht Fenster #0 */
 			{
 			path = tw->path;
-			Dsetdrv (path[0] - 'A');
+			Dsetdrv (drive_from_letter(path[0]));
 			Dsetpath(path);
 			}
 		doserr = E_OK;

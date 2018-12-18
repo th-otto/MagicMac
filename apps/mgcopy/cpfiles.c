@@ -271,6 +271,20 @@ static int dial_datexi(char *path, char *fname, filetype ftype, int is_ren)
 }
 
 
+static int drive_from_letter(int drv)
+{
+	if (drv >= 'A' && drv <= 'Z')
+		drv = drv - 'A';
+	else if (drv >= 'a' && drv <= 'z')
+		drv = drv - 'a';
+	else if (drv >= '1' && drv <= '6')
+		drv = drv - '1' + 26;
+	else
+		return -1;
+	return drv;
+}
+
+
 /****************************************************************
 *
 * Ermittle freien Speicher und Clustergrîûe fÅr <path>
@@ -288,7 +302,9 @@ static long pathinfo(char *path, long *free_clusters, long *cluster_size)
 	/* -------------------- */
 
 	Fsetdta(&dta);
-	drv = (path[0] & 0x5f) - 'A';
+	drv = drive_from_letter(path[0]);
+	if (drv < 0)
+		return EFILNF;
 	Dsetdrv(drv);
 	errcode = Dsetpath(path);
 
@@ -342,13 +358,13 @@ static void set_dirty(long err, char *path, char val)
 
 	if (err != EWRPRO && err != EDRIVE && err != EFILNF && err != EPTHNF && err != EACCDN && err != ENSAME)
 	{
-		drv = *path - 'A';
+		drv = drive_from_letter(*path);
 		if (drv == 'U' - 'A')
 		{
 			if (path[4] == '\\')
-				drv = path[3] - 'A';
+				drv = drive_from_letter(path[3]);
 		}
-		if (dirty_drives[drv] == 1)
+		if (drv < 0 || dirty_drives[drv] == 1)
 			return;						/* schon "dirty" */
 		dirty_drives[drv] = val;
 	}
@@ -405,7 +421,7 @@ static long GDdelete(char *path, char *name)
 #endif
 
 
-/*
+#if 0
 	/o 1. Versuch: Standardverzeichnis wechseln o/
 	/o ---------------------------------------- o/
 
@@ -422,14 +438,15 @@ static long GDdelete(char *path, char *name)
 
 		if	(doserr == EACCDN)
 			{
-			if	(!Dlock(DLOCKMODE_LOCK, path[0]-'A'))
+			WORD drv = drive_from_letter(path[0]);
+			if	(!Dlock(DLOCKMODE_LOCK, drv))
 				{
-				Dlock(DLOCKMODE_UNLOCK, path[0]-'A');
+				Dlock(DLOCKMODE_UNLOCK, drv);
 				doserr = Ddelete(all);
 				}
 			}
 		}
-*/
+#endif
 
 	set_dirty(doserr, path, 1);
 	err_file = all;
@@ -993,7 +1010,9 @@ static long GFcopy(char *path, char *fname, char *new_name, XATTR * xa, char *zp
 
 	/* benutzte Puffergrîûe ggf. verkleinern */
 
-	drv = (alls[0] & 0x5f) - 'A';
+	drv = drive_from_letter(alls[0]);
+	if (drv < 0)
+		return EFILNF;
 	my_bsize = bsize;
 	if (((drv == 0) || (drv == 1)) && (bsize > FLP_BSIZE))
 		my_bsize = FLP_BSIZE;			/* Floppy! */
@@ -1893,10 +1912,11 @@ static long copy_move(int move_flag, int cmode, int argc, char *argv[], char *de
 
 	/* Laufwerk bestimmen wg. nur 32k Puffer fÅr Floppies */
 
-	drv = dest_path[0] - 'A';
+	drv = drive_from_letter(dest_path[0]);
 	if ((drv == ('U' - 'A')) && (dest_path[4] == '\\'))
-		drv = dest_path[3] - 'A';
-
+		drv = drive_from_letter(dest_path[3]);
+	if (drv < 0)
+		return EFILNF;
 	err = (long) Malloc(-1);
 	if (err < 65536L)					/* mind. 32k Puffer */
 		return ENSMEM;

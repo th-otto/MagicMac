@@ -516,8 +516,9 @@ int main( int argc, char *argv[] )
 
 	if	(argc != 2)
 		{
+		WORD drv = Dgetdrv();
 		strcpy(param, "-Dx");
-		param[2] = Dgetdrv() + 'A';
+		param[2] = drv >= 26 ? drv - 26 + '1' : drv + 'A';
 		}
 	else	strcpy(param, argv[1]);
 

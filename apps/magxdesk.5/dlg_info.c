@@ -380,7 +380,7 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 			return(-1);
 			}
 
-		lw = ifd->path[0] - 'A';
+		lw = drive_from_letter(ifd->path[0]);
 		err = Dfree(&frei, lw + 1);
 		if	(err != E_OK)
 			goto fehler;

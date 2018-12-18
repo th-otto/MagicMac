@@ -1639,7 +1639,7 @@ void reload_status(int drv)
 	Mgraf_mouse(HOURGLASS);
 	olddrv = inf_name[0];
 	if	(drv >= 0)
-		inf_name[0] = drv + 'A';
+		inf_name[0] = letter_from_drive(drv);
 	inf = (char *) Malloc(65536L);
 	if	(inf == NULL)
 		{

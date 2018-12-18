@@ -148,7 +148,7 @@ long read_dname(int lw, char *name)
 
      olddta = Fgetdta();
      Fsetdta(&dta);
-     path[0] = lw + 'A';
+     path[0] = letter_from_drive(lw);
      strcpy(path+1, ":\\*.*");
      doserr = Fsfirst(path, FA_VOLUME);
      if   (doserr != E_OK)
@@ -248,7 +248,7 @@ int tryagain(long *doserr, int drv)
 
 
      s = (((DOSVARS *) Sconfig(SC_DOSVARS, 0L))->err_to_str)((char) (*doserr));
-     ret = Rxform_alert(2, AL_CAN_RETR_CONT, drv+'A', s, global);
+     ret = Rxform_alert(2, AL_CAN_RETR_CONT, letter_from_drive(drv), s, global);
      if   (ret == 1)          /* Abbruch */
           return(0);
      if   (ret == 2)          /* Wiederholen */
@@ -376,7 +376,7 @@ long label(int lw, char *name)
      char diskname[40];
 
 
-     pfad[0] = lw + 'A';
+     pfad[0] = letter_from_drive(lw);
      strcpy(diskname,     pfad);
      strcpy(diskname + 3, name);
      if   (!*name)
@@ -751,7 +751,7 @@ int msg_chg( enum eingelegt_typ willhaben, int src_dev, int dst_dev )
 	s = Rgetstring((willhaben == QUELLE) ? STR_SOURCE : STR_DEST,
 				global);
 	eingelegt = willhaben;
-	return(1 == Rxform_alert(1, AL_INSERT_DISK, src_dev+'A',
+	return(1 == Rxform_alert(1, AL_INSERT_DISK, letter_from_drive(src_dev),
 			s, global));
 }
 
@@ -840,7 +840,7 @@ long diskcopy(int dst_apid, int whdl, int slw, int dlw, int tmp, int fmt)
 
 	if	(tmp >= 0)
 		{
-		tmpdatei[0] = tmp + 'A';
+		tmpdatei[0] = letter_from_drive(tmp);
 		tmpdatei[1] = ':';
      	tmpnam(tmpdatei+2);
      	handle = -1;

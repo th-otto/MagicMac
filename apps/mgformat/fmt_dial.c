@@ -65,7 +65,7 @@ void fmt_dial_init_rsc( int devno, int init, int only )
 	mt_rsrc_gaddr(0, T_FORMAT, &adr_format, global);
 	mt_rsrc_gaddr(0, T_FMTOPT, &adr_fmtopt, global);
 	/* Laufwerkbuchstaben einsetzen */
-	drv_to_str(((adr_format+FORMAT_T)->ob_spec.tedinfo)->te_ptmplt, src_dev+'A');
+	drv_to_str(((adr_format+FORMAT_T)->ob_spec.tedinfo)->te_ptmplt, letter_from_drive(src_dev));
 	/* Diskname frs Formatieren auf "" setzen 	*/
 	*((adr_format+FORMAT_T)->ob_spec.tedinfo)->te_ptext = EOS;
 	/* Gruppenrahmen anpassen */
@@ -219,7 +219,7 @@ WORD cdecl hdl_fmtopt(struct HNDL_OBJ_args args)
 		ultoa(prefs.sidincr, r, 10);
 		r = (adr_fmtopt+CLU_NUM)->ob_spec.free_string;
 		ultoa(prefs.clustsize, r, 10);
-		((adr_fmtopt+FMOPT_TM)->ob_spec.tedinfo)->te_ptext[0] = prefs.tmpdrv + 'A';
+		((adr_fmtopt+FMOPT_TM)->ob_spec.tedinfo)->te_ptext[0] = letter_from_drive(prefs.tmpdrv);
 
 		return(1);
 		}
@@ -291,8 +291,8 @@ WORD cdecl hdl_fmtopt(struct HNDL_OBJ_args args)
 		if	(tmplw == 0 || tmplw == '@')
 			tmplw = -1;			/* Kein Tempor„rlaufwerk */
 		else {
-			tmplw -= 'A';
-			if	(0 == (Drvmap() & (1 << tmplw)))
+			tmplw = drive_from_letter(tmplw);
+			if	(tmplw < 0 || 0 == (Drvmap() & (1 << tmplw)))
 				{
 				Rform_alert(1, AL_TMPINV, global);
 				ob_dsel(tree, args.obj);
@@ -394,7 +394,7 @@ WORD	cdecl hdl_format(struct HNDL_OBJ_args args)
 
 		if	((adr_format + FORMT_OK)->ob_state & DISABLED)
 			{
-			if	(2 == Rxform_alert(2, AL_DEL_ALL, src_dev + 'A',
+			if	(2 == Rxform_alert(2, AL_DEL_ALL, letter_from_drive(src_dev),
 							NULL, global))
 				return(0);	/* Dialog nicht ”ffnen */
 			}

@@ -500,7 +500,7 @@ void show_free( WINDOW *mywindow)
 	percent = (d->b_free * 100L)/d->b_total;
 	print_ul(percent, t);
 	strcat(t, "% )");
-	Rxform_alert(1, ALRT_FREE_AT_DRV, lwc + 'A', s);
+	Rxform_alert(1, ALRT_FREE_AT_DRV, letter_from_drive(lwc), s);
 }
 
 
@@ -522,7 +522,7 @@ void set_dname(int lw, char *dname)
 	GRECT g;
 
 
-	lw += 'A';
+	lw = letter_from_drive(lw);
 	for	(i = 0; i < n_deskicons; i++)
 		if	(icon[i].isdisk == lw)
 			{
@@ -729,7 +729,7 @@ static long read_wind( WINDOW *w, int free_flag)
 		w->real_drive = -1;			/* kein altes Laufwerk */
 	w->sel_maske[0] = EOS;			/* Keine Selektionsmaske */
 	Mgraf_mouse(HOURGLASS);
-	drv = w->path[0] - 'A';			/* Nominal-Laufwerk */
+	drv = drive_from_letter(w->path[0]);			/* Nominal-Laufwerk */
 
 
 	/* Bei Fehler auf Root umschalten */
@@ -758,9 +758,9 @@ static long read_wind( WINDOW *w, int free_flag)
 		/* Dabei wird ggf. der Diskwechsel erkannt	*/
 		/* ----------------------------------------- */
 
-		rpath[0] = drv+'A';
+		rpath[0] = letter_from_drive(drv);
 		dname[0] = EOS;
-		err = Dreadlabel(rpath, dname, 65);
+		err = Dreadlabel(rpath, dname, (int)sizeof(dname));
 		set_dname(drv, dname);
 		if	(err != EFILNF && err != ERANGE && err != E_OK)
 			continue;
@@ -1443,11 +1443,11 @@ long opn_wnd(WINDOW *w, int fast)
 {
 	register int i;
 	register long ret;
-	unsigned int drv;
+	int drv;
 
 
-	drv = w->path[0] - 'A';
-	if	(drv > ('Z'-'A'))
+	drv = drive_from_letter(w->path[0]);
+	if	(drv < 0)
 		return(EDRIVE);		/* nicht A: .. Z: */
 	Dsetdrv(drv);
 	i = drv_to_icn(w->path[0]);
@@ -1503,7 +1503,7 @@ static void MY_topped( WINDOW *w )
 	if	(w->handle > 0)
 		{
 		wind_set_int(w->handle, WF_TOP, 0);
-		Dsetdrv(w->path[0] - 'A');
+		Dsetdrv(drive_from_letter(w->path[0]));
 		}
 }
 
@@ -2904,7 +2904,7 @@ static void MY_keyed( WINDOW *w, int kstate, int key )
 		  shift &&
 		  (kstate & (K_CTRL)))
 		{
-		drv = (key & 0x3f) + 'A' - 1;
+		drv = letter_from_drive((key & 0x3f) - 1);
 		if	(drv_to_icn(drv) >= 0)
 			{
 			w->path[0] = drv;
@@ -2944,7 +2944,7 @@ static void MY_keyed( WINDOW *w, int kstate, int key )
 						errcode = Dlock(1, w->real_drive);
 						if	(errcode < 0)
 							{
-							root[0] = w->real_drive + 'A';
+							root[0] = letter_from_drive(w->real_drive);
 							err_file = root;
 							err_alert(errcode);
 							}

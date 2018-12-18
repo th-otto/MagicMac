@@ -137,7 +137,7 @@ _main()
 
 			case AV_PATH_UPDATE:
 				path = *(char **)&msg[3];
-				Send(Server, SH_WDRAW, *path-'A', 0L, 0L);
+				Send(Server, SH_WDRAW, drive_from_letter(*path), 0L, 0L);
 				break;
 		}
 	} while (1);

@@ -189,6 +189,10 @@ get_u_lnk:
 gul_err:
  move.w   (sp)+,d0
  addi.b   #'A',d0
+ cmp.b #'Z',d0
+ ble.s gul_err2
+ sub.b #('Z'+1-'1'),d0
+gul_err2:
  move.b   d0,(a1)+            ; Laufwerkbuchstaben einsetzen
  clr.b    (a1)
  move.l   a1,d0
@@ -208,6 +212,10 @@ _get_link:
  move.w   d0,d2                    ; d2.w = drv
  bmi.b    _gl_free                 ; suche freien Platz
  addi.b   #'A',d0
+ cmp.b #'Z',d0
+ ble.s _gl_drv
+ sub.b #('Z'+1-'1'),d0
+_gl_drv:
  lsl.w    #8,d0
  move.b   #':',d0
  swap     d0
@@ -273,6 +281,10 @@ add_link:
 
  move.w   (sp),d0
  addi.b   #'A',d0
+ cmp.b #'Z',d0
+ ble.s _al_drv
+ sub.b #('Z'+1-'1'),d0
+_al_drv:
  lsl.w    #8,d0
  move.b   #':',d0
  swap     d0
