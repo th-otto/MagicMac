@@ -1,11 +1,12 @@
-spinmxfs.prg
+spinmxfs.xfs
 .C[-I..\..\inc_c]
 .S[-I..\..\inc_as]
 .C[-I..\..\pc\include]
-.C[-P]
+.C[-P-]
 .C [-DMAGIC]
+.L[-S=8192]
 =
-..\..\pc\lib\cstartv.o      ; startup code
+..\..\pc\lib\cstart0.o      ; startup code
 cd-mxfsc.c (cd-mxfs.h, cfgread.c)
 cd-mxfs.s
 cd-mxfsk.s

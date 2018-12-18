@@ -376,8 +376,8 @@ WORD main (void)
 	if	(ret < E_OK)
 		return((WORD) ret);		/* Fehler */
 
-	Ptermres(-1L, (WORD) E_OK);
-	return(-1);
+	Ptermres(_PgmSize, (WORD) E_OK);
+	return 0;
 }
 
 /* convert a Unix time into a DOS time. The longword returned contains
@@ -1217,7 +1217,7 @@ static LONG cdecl   xfs_ddelete( MX_DD *dd )
 *
 * Berechnet aus einem DD einen Pfadnamen.
 *
-* Im Prinzipt wie beim MiNT-XFS. Nur wird statt des fcookie
+* Im Prinzip wie beim MiNT-XFS. Nur wird statt des fcookie
 * ein DD verwendet.
 *
 *******************************************************************/
