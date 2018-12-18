@@ -4120,6 +4120,7 @@ flk_ok:
  move.w   #F_SETLK,-(sp)
  pea      2(sp)
  move.w   (a0),-(sp)
+ move.l   sp,a0
  bsr.b    D_Fcntl
  adda.w   #22,sp
  rts
