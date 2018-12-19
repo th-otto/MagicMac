@@ -2638,6 +2638,7 @@ D_Fdelete:
 *
 
 D_Dcreate:
+ move.w   #0755,d0
  moveq    #xfs_dcreate,d2
  bra.b    _df3
 

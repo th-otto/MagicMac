@@ -30,13 +30,13 @@ static LONG cdecl	xfs_garbcoll( MX_DMD *dmd );
 static void cdecl	xfs_freeDD( MX_DD *dd );
 static LONG cdecl   xfs_drv_open( MX_DMD *dmd );
 static LONG cdecl   xfs_drv_close( MX_DMD *dmd, WORD mode );
-static MX_DD *cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
+static LONG cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
      						char **restp, MX_DD **symlink_dd,
      						void **symlink );
 static LONG cdecl	xfs_sfirst( MX_DD *dd, char *name, DTA *dta,
      						WORD attrib, void **symlink );
 static LONG cdecl	xfs_snext( DTA *dta, MX_DMD *dmd, void **symlink );
-static MX_FD * cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
+static LONG cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
      						WORD attrib, void **symlink );
 static LONG cdecl	xfs_fdelete( MX_DD *dd, char *name );
 static LONG cdecl	xfs_link( MX_DD *altdd, MX_DD *neudd,
@@ -49,10 +49,10 @@ static LONG cdecl	xfs_attrib( MX_DD *dd, char *name, WORD mode,
 static LONG cdecl   xfs_chown( MX_DD *dd, char *name, WORD uid,
 							WORD gid );
 static LONG cdecl   xfs_chmod( MX_DD *dd, char *name, WORD mode );
-static LONG cdecl   xfs_dcreate( MX_DD *dd , char *name );
+static LONG cdecl   xfs_dcreate( MX_DD *dd , char *name, WORD mode );
 static LONG cdecl   xfs_ddelete( MX_DD *dd );
 static LONG cdecl   xfs_DD2name( MX_DD *dd, char *buf, WORD buflen );
-static MX_DHD * cdecl   xfs_dopendir( MX_DD *d, WORD tosflag );
+static LONG cdecl   xfs_dopendir( MX_DD *d, WORD tosflag );
 static LONG cdecl   xfs_dreaddir( MX_DHD *dh, WORD len, char *buf,
 							XATTR *xattr, LONG *xr );
 static LONG cdecl   xfs_drewinddir( MX_DHD *dhd );
@@ -809,7 +809,7 @@ static LONG cdecl   xfs_drv_close( MX_DMD *dmd, WORD mode )
 *
 *******************************************************************/
 
-static MX_DD *cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
+static LONG cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
 							char **restp, MX_DD **symlink_dd,
 							void **symlink )
 {
@@ -845,7 +845,7 @@ static MX_DD *cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
 		if	(l > 127)
 			{
 			kernel_int_mfree(current);
-			return((MX_DD *) EPTHNF);
+			return EPTHNF;
 			}
 
 		/* Pfadelement umkopieren -> pathelem[] */
@@ -870,7 +870,7 @@ static MX_DD *cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
 			if	(ret == EFILNF)
 				ret = EPTHNF;
 			kernel_int_mfree(current);
-			return((MX_DD *) ret);
+			return ret;
 			}
 
 		current->index = index;
@@ -879,7 +879,7 @@ static MX_DD *cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
 		}
 
 	*restp = path;
-	return(&(current->dd));
+	return (LONG)&(current->dd);
 }
 
 
@@ -1010,7 +1010,7 @@ static LONG cdecl	xfs_snext( DTA *dta, MX_DMD *dmd, void **symlink )
 *
 *******************************************************************/
 
-static MX_FD * cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
+static LONG cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
      						WORD attrib, void **symlink )
 {
 	LONG ret;
@@ -1023,11 +1023,11 @@ static MX_FD * cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
 	/* ---------------------------- */
 
 	if	(E_OK != (ret = init_vol (dd->dd_dmd->d_drive)))
-		return( (MX_FD *) ret );
+		return ret;
 
 	ret = lookup( (CDXFS_DD *) dd, name, &index, &de );
 	if	((ret != E_OK) && (ret != EFILNF))
-		return( (MX_FD *) ret);
+		return ret;
 
 	/* Dann prfen wir alle Datei- und ™ffnungsmodi */
 	/* -------------------------------------------- */
@@ -1035,14 +1035,14 @@ static MX_FD * cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
 	if	(ret)	/* Datei ex. noch nicht */
 		{
 		if	(omode & O_CREAT)
-			return( (MX_FD *) EWRPRO);
-		return( (MX_FD *) ret );
+			return EWRPRO;
+		return ret;
 		}
 	else	{
 		if	(omode & (O_TRUNC /* +OM_WPERM */))
-			return( (MX_FD *) EWRPRO);
+			return EWRPRO;
 		if	(omode & O_EXCL)
-			return( (MX_FD *) EACCDN );
+			return EACCDN;
 
 		fd = kernel_int_malloc();
 		fd->fd.fd_dmd = dd->dd_dmd;
@@ -1060,7 +1060,7 @@ static MX_FD * cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
 		fd->mdate = de.mdate;
 		fd->index = index;
 		fd->ass = 0;	/* "primary file", d.h. data fork */
-		return(&(fd->fd));
+		return (LONG)&(fd->fd);
 		}
 }
 
@@ -1193,7 +1193,7 @@ static LONG cdecl   xfs_chmod( MX_DD *dd, char *name, WORD mode )
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_dcreate( MX_DD *dd , char *name )
+static LONG cdecl   xfs_dcreate( MX_DD *dd , char *name, WORD mode )
 {
 	return(EWRPRO);
 }
@@ -1316,14 +1316,14 @@ static LONG cdecl   xfs_DD2name( MX_DD *dd, char *buf, WORD buflen )
 *
 *******************************************************************/
 
-static MX_DHD * cdecl   xfs_dopendir( MX_DD *dd, WORD tosflag )
+static LONG cdecl xfs_dopendir( MX_DD *dd, WORD tosflag )
 {
 	CDXFS_DHD *dhd;
 	LONG ret;
 
 
 	if	(E_OK != (ret = init_vol (dd->dd_dmd->d_drive)))
-		return( (MX_DHD *) ret );
+		return ret;
 
 	dhd = kernel_int_malloc();
 
@@ -1333,7 +1333,7 @@ static MX_DHD * cdecl   xfs_dopendir( MX_DD *dd, WORD tosflag )
 	dhd->fp.dev = dd->dd_dmd->d_drive;
 	dhd->fp.dirflg = tosflag;
 
-	return(&(dhd->dhd));
+	return (LONG)&(dhd->dhd);
 }
 
 

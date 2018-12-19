@@ -3349,7 +3349,7 @@ DIR2protoFD:
  move.l   fd_dmd(a0),a2                 ; a2 = DMD
  move.l   a2,fd_dmd(a3)
 ;clr.l    fd_owner(a3)
-;clr.l    fd_refcnt(a3)
+;clr.w    fd_refcnt(a3)
 
 *
 * Hier kann das DFS noch einmal einschreiten.

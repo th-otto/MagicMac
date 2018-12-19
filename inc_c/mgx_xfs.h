@@ -184,6 +184,13 @@ typedef struct xattr {
 #endif
 #endif
 
+/*
+ * For reference only.
+ * Some of the functions return values in more
+ * than one register, which makes it impossible to directly
+ * call them from C-Code without a wrapper.
+ * For XFS implemented in C, use CDECL_MX_XFS
+ */
 typedef struct _mx_xfs {
      char      xfs_name[8];
      struct    _mx_xfs *xfs_next;
@@ -195,17 +202,17 @@ typedef struct _mx_xfs {
      long      (*xfs_freeDD)(MX_DD *dd);
      long      (*xfs_drv_open)(MX_DMD *dmd);
      long      (*xfs_drv_close)(MX_DMD *dmd, WORD mode);
-     long      (*xfs_path2DD)(MX_DD *dd, char *path, WORD mode, char **restp, MX_DD **symlink_dd, void **symlink);
-     long      (*xfs_sfirst)(MX_DD *dd, char *name, DTA *dta, WORD attrib, void **symlink);
+     long      (*xfs_path2DD)(MX_DD *dd, char *path, WORD mode, /* d1= */ char **restp, /* a0= */ MX_DD **symlink_dd, /* a1= */ void **symlink);
+     long      (*xfs_sfirst)(MX_DD *dd, char *name, DTA *dta, WORD attrib, /* a0= */ void **symlink);
      long      (*xfs_snext)(DTA *dta, MX_DMD *dmd, void **symlink);
-     long      (*xfs_fopen)(MX_DD *dd, char *name, WORD omode, WORD attrib, void **symlink);
+     long      (*xfs_fopen)(MX_DD *dd, char *name, WORD omode, WORD attrib, /* a0= */ void **symlink);
      long      (*xfs_fdelete)(MX_DD *dd, char *name);
-     long      (*xfs_link)(MX_DD *altdd, MX_DD *neudd, char *altname, char *neuname, WORD flag);
-     long      (*xfs_xattr)(MX_DD *dd, char *name, XATTR *xa, WORD mode);
+     long      (*xfs_link)(MX_DD *altdd, MX_DD *neudd, /* d0= */ char *altname, /* d1= */ char *neuname, /* d2= */ WORD flag);
+     long      (*xfs_xattr)(MX_DD *dd, char *name, /* d0= */ XATTR *xa, /* d1= */ WORD mode);
      long      (*xfs_attrib)(MX_DD *dd, char *name, WORD mode, WORD attrib);
      long      (*xfs_chown)(MX_DD *dd, char *name, WORD uid, WORD gid);
      long      (*xfs_chmod)(MX_DD *dd, char *name, WORD mode);
-     long      (*xfs_dcreate)(MX_DD *dd, char *name);
+     long      (*xfs_dcreate)(MX_DD *dd, char *name, WORD mode);
      long      (*xfs_ddelete)(MX_DD *dd);
      long      (*xfs_DD2name)(MX_DD *dd, char *buf, WORD buflen);
      long      (*xfs_dopendir)(MX_DD *d, WORD tosflag);
@@ -226,41 +233,38 @@ typedef struct _cdecl_mx_xfs {
      struct _cdecl_mx_xfs *xfs_next;
      ULONG		xfs_flags;
      LONG cdecl	(*xfs_init)(void);
-     void cdecl     (*xfs_sync)(MX_DMD *dmd);
-     void	cdecl	(*xfs_pterm)(MX_DMD *dmd, PD *pd);
+     void cdecl (*xfs_sync)(MX_DMD *dmd);
+     void cdecl (*xfs_pterm)(MX_DMD *dmd, PD *pd);
      LONG cdecl	(*xfs_garbcoll)(MX_DMD *dmd);
      void cdecl	(*xfs_freeDD)(MX_DD *dd);
-     LONG cdecl     (*xfs_drv_open)(MX_DMD *dmd);
-     LONG cdecl     (*xfs_drv_close)(MX_DMD *dmd, WORD mode);
-     MX_DD * cdecl  (*xfs_path2DD)(MX_DD *dd, char *path, WORD mode,
+     LONG cdecl (*xfs_drv_open)(MX_DMD *dmd);
+     LONG cdecl (*xfs_drv_close)(MX_DMD *dmd, WORD mode);
+     LONG cdecl (*xfs_path2DD)(MX_DD *dd, char *path, WORD mode,
      						char **restp, MX_DD **symlink_dd,
      						void **symlink);
-     LONG cdecl     (*xfs_sfirst)(MX_DD *dd, char *name, DTA *dta,
-     						WORD attrib, void **symlink);
-     LONG cdecl     (*xfs_snext)(DTA *dta, MX_DMD *dmd, void **symlink);
-     MX_FD * cdecl  (*xfs_fopen)(MX_DD *dd, char *name, WORD omode, WORD attrib, void **symlink);
-     LONG cdecl     (*xfs_fdelete)(MX_DD *dd, char *name);
-     LONG cdecl     (*xfs_link)(MX_DD *altdd, MX_DD *neudd,
-							char *altname, char *neuname,
-							WORD flag);
-     LONG cdecl     (*xfs_xattr)(MX_DD *dd, char *name, XATTR *xa, WORD mode);
-     LONG cdecl     (*xfs_attrib)(MX_DD *dd, char *name, WORD mode, WORD attrib);
-     LONG cdecl     (*xfs_chown)(MX_DD *dd, char *name, WORD uid, WORD gid);
-     LONG cdecl     (*xfs_chmod)(MX_DD *dd, char *name, WORD mode);
-     LONG cdecl     (*xfs_dcreate)(MX_DD *dd, char *name);
-     LONG cdecl     (*xfs_ddelete)(MX_DD *dd);
-     LONG cdecl     (*xfs_DD2name)(MX_DD *dd, char *buf, WORD buflen);
-     MX_DHD * cdecl (*xfs_dopendir)(MX_DD *d, WORD tosflag);
-     LONG cdecl     (*xfs_dreaddir)(MX_DHD *dh, WORD len, char *buf, XATTR *xattr, LONG *xr);
-     LONG cdecl     (*xfs_drewinddir)(MX_DHD *dhd);
-     LONG cdecl     (*xfs_dclosedir)(MX_DHD *dhd);
-     LONG cdecl     (*xfs_dpathconf)(MX_DD *dd, WORD which);
-     LONG cdecl     (*xfs_dfree)(MX_DD *dd, LONG buf[4]);
-     LONG cdecl     (*xfs_wlabel)(MX_DD *dd, char *name);
-     LONG cdecl     (*xfs_rlabel)(MX_DD *dd, char *name, char *buf, WORD buflen);
-     LONG cdecl     (*xfs_symlink)(MX_DD *dd, char *name, char *to);
-     LONG cdecl     (*xfs_readlink)(MX_DD *dd, char *name, char *buf, WORD buflen);
-     LONG cdecl     (*xfs_dcntl)(MX_DD *dd, char *name, WORD cmd, LONG arg);
+     LONG cdecl (*xfs_sfirst)(MX_DD *dd, char *name, DTA *dta, WORD attrib, void **symlink);
+     LONG cdecl (*xfs_snext)(DTA *dta, MX_DMD *dmd, void **symlink);
+     LONG cdecl (*xfs_fopen)(MX_DD *dd, char *name, WORD omode, WORD attrib, void **symlink);
+     LONG cdecl (*xfs_fdelete)(MX_DD *dd, char *name);
+     LONG cdecl (*xfs_link)(MX_DD *altdd, MX_DD *neudd, char *altname, char *neuname, WORD flag);
+     LONG cdecl (*xfs_xattr)(MX_DD *dd, char *name, XATTR *xa, WORD mode);
+     LONG cdecl (*xfs_attrib)(MX_DD *dd, char *name, WORD mode, WORD attrib);
+     LONG cdecl (*xfs_chown)(MX_DD *dd, char *name, WORD uid, WORD gid);
+     LONG cdecl (*xfs_chmod)(MX_DD *dd, char *name, WORD mode);
+     LONG cdecl (*xfs_dcreate)(MX_DD *dd, char *name, WORD mode);
+     LONG cdecl (*xfs_ddelete)(MX_DD *dd);
+     LONG cdecl (*xfs_DD2name)(MX_DD *dd, char *buf, WORD buflen);
+     LONG cdecl (*xfs_dopendir)(MX_DD *d, WORD tosflag);
+     LONG cdecl (*xfs_dreaddir)(MX_DHD *dh, WORD len, char *buf, XATTR *xattr, LONG *xr);
+     LONG cdecl (*xfs_drewinddir)(MX_DHD *dhd);
+     LONG cdecl (*xfs_dclosedir)(MX_DHD *dhd);
+     LONG cdecl (*xfs_dpathconf)(MX_DD *dd, WORD which);
+     LONG cdecl (*xfs_dfree)(MX_DD *dd, LONG buf[4]);
+     LONG cdecl (*xfs_wlabel)(MX_DD *dd, char *name);
+     LONG cdecl (*xfs_rlabel)(MX_DD *dd, char *name, char *buf, WORD buflen);
+     LONG cdecl (*xfs_symlink)(MX_DD *dd, char *name, char *to);
+     LONG cdecl (*xfs_readlink)(MX_DD *dd, char *name, char *buf, WORD buflen);
+     LONG cdecl (*xfs_dcntl)(MX_DD *dd, char *name, WORD cmd, LONG arg);
 } CDECL_MX_XFS;
 
 /* Dcntl(KER_DOSLIMITS) -> Zeiger auf Zeiger auf: */

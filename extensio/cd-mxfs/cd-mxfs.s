@@ -498,11 +498,12 @@ cdxfs_chmod:
 *
 
 cdxfs_dcreate:
+ move.w d0,-(sp)
  move.l	a1,-(sp)
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_dcreate,a0
  jsr      (a0)
- addq.l	#8,sp
+ lea 10(a7),a7
  rts
 
 

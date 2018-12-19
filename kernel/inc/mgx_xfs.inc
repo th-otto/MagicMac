@@ -33,11 +33,11 @@ mxk_int_malloc:     DS.L      1
 mxk_int_mfree:      DS.L      1
 mxk_resv_intmem:    DS.L      1
 mxk_diskchange:     DS.L      1
-mxk_DMD_rdevinit:	DS.L		1
-mxk_ker_proc_info:	DS.L		1
-mxk_ker_mxalloc:	DS.L		1
-mxk_ker_mfree:		DS.L		1
-mxk_ker_mshrink:	DS.L		1
+mxk_DMD_rdevinit:	DS.L      1
+mxk_ker_proc_info:	DS.L      1
+mxk_ker_mxalloc:	DS.L      1
+mxk_ker_mfree:		DS.L      1
+mxk_ker_mshrink:	DS.L      1
 
 	OFFSET
 
