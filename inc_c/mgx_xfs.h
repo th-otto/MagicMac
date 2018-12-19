@@ -240,7 +240,7 @@ typedef struct _cdecl_mx_xfs {
      LONG cdecl (*xfs_drv_open)(MX_DMD *dmd);
      LONG cdecl (*xfs_drv_close)(MX_DMD *dmd, WORD mode);
      LONG cdecl (*xfs_path2DD)(MX_DD *dd, const char *path, WORD mode,
-     						char **restp, MX_DD **symlink_dd,
+     						const char **restp, MX_DD **symlink_dd,
      						void **symlink);
      LONG cdecl (*xfs_sfirst)(MX_DD *dd, const char *name, DTA *dta, WORD attrib, void **symlink);
      LONG cdecl (*xfs_snext)(DTA *dta, MX_DMD *dmd, void **symlink);

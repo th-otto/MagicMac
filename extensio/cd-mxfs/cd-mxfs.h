@@ -27,6 +27,6 @@ extern void * cdecl kernel_int_malloc( void );
 extern void cdecl kernel_int_mfree( void *block );
 extern LONG cdecl kernel_diskchange( WORD drv );
 extern LONG cdecl kernel_proc_info( WORD code, PD *pd );
-extern void cdecl kernel_conv_8_3( char *from, char to[11] );
-extern WORD cdecl kernel_match_8_3( char *patt, char *fname );
+extern void cdecl kernel_conv_8_3( const char *from, char to[11] );
+extern WORD cdecl kernel_match_8_3( const char *patt, const char *fname );
 extern LONG eject( WORD fn, LONG devcode );

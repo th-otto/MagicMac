@@ -30,26 +30,26 @@ static LONG cdecl	xfs_garbcoll( MX_DMD *dmd );
 static void cdecl	xfs_freeDD( MX_DD *dd );
 static LONG cdecl   xfs_drv_open( MX_DMD *dmd );
 static LONG cdecl   xfs_drv_close( MX_DMD *dmd, WORD mode );
-static LONG cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
-     						char **restp, MX_DD **symlink_dd,
+static LONG cdecl xfs_path2DD( MX_DD *dd, const char *path, WORD mode,
+     						const char **restp, MX_DD **symlink_dd,
      						void **symlink );
-static LONG cdecl	xfs_sfirst( MX_DD *dd, char *name, DTA *dta,
+static LONG cdecl	xfs_sfirst( MX_DD *dd, const char *name, DTA *dta,
      						WORD attrib, void **symlink );
 static LONG cdecl	xfs_snext( DTA *dta, MX_DMD *dmd, void **symlink );
-static LONG cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
+static LONG cdecl	xfs_fopen( MX_DD *dd, const char *name, WORD omode,
      						WORD attrib, void **symlink );
-static LONG cdecl	xfs_fdelete( MX_DD *dd, char *name );
+static LONG cdecl	xfs_fdelete( MX_DD *dd, const char *name );
 static LONG cdecl	xfs_link( MX_DD *altdd, MX_DD *neudd,
-							char *altname, char *neuname,
+							const char *altname, const char *neuname,
 							WORD flag );
-static LONG cdecl	xfs_xattr( MX_DD *dd, char *name, XATTR *xa,
-							WORD mode );
-static LONG cdecl	xfs_attrib( MX_DD *dd, char *name, WORD mode,
+static LONG cdecl	xfs_xattr( MX_DD *dd, const char *name, XATTR *xa,
+							WORD mode, void **symlink );
+static LONG cdecl	xfs_attrib( MX_DD *dd, const char *name, WORD mode,
 							WORD attrib );
-static LONG cdecl   xfs_chown( MX_DD *dd, char *name, WORD uid,
-							WORD gid );
-static LONG cdecl   xfs_chmod( MX_DD *dd, char *name, WORD mode );
-static LONG cdecl   xfs_dcreate( MX_DD *dd , char *name, WORD mode );
+static LONG cdecl   xfs_chown( MX_DD *dd, const char *name, WORD uid,
+							WORD gid, void **symlink );
+static LONG cdecl   xfs_chmod( MX_DD *dd, const char *name, WORD mode, void **symlink );
+static LONG cdecl   xfs_dcreate( MX_DD *dd , const char *name, WORD mode );
 static LONG cdecl   xfs_ddelete( MX_DD *dd );
 static LONG cdecl   xfs_DD2name( MX_DD *dd, char *buf, WORD buflen );
 static LONG cdecl   xfs_dopendir( MX_DD *d, WORD tosflag );
@@ -59,14 +59,14 @@ static LONG cdecl   xfs_drewinddir( MX_DHD *dhd );
 static LONG cdecl   xfs_dclosedir( MX_DHD *dhd );
 static LONG cdecl   xfs_dpathconf( MX_DD *dd, WORD which );
 static LONG cdecl   xfs_dfree( MX_DD *dd, LONG buf[4] );
-static LONG cdecl   xfs_wlabel( MX_DD *dd, char *name );
-static LONG cdecl   xfs_rlabel( MX_DD *dd, char *name, char *buf,
+static LONG cdecl   xfs_wlabel( MX_DD *dd, const char *name );
+static LONG cdecl   xfs_rlabel( MX_DD *dd, const char *name, char *buf,
      						WORD buflen );
-static LONG cdecl   xfs_symlink( MX_DD *dd, char *name, char *to);
-static LONG cdecl   xfs_readlink( MX_DD *dd, char *name, char *buf,
+static LONG cdecl   xfs_symlink( MX_DD *dd, const char *name, const char *to);
+static LONG cdecl   xfs_readlink( MX_DD *dd, const char *name, char *buf,
      						WORD buflen );
-static LONG cdecl   xfs_dcntl( MX_DD *dd, char *name, WORD cmd,
-     						LONG arg );
+static LONG cdecl   xfs_dcntl( MX_DD *dd, const char *name, WORD cmd,
+     						LONG arg, void **symlink );
 
 /*
 * Das sind alle cdecl-Pendants der Device-Funktionen:
@@ -809,13 +809,13 @@ static LONG cdecl   xfs_drv_close( MX_DMD *dmd, WORD mode )
 *
 *******************************************************************/
 
-static LONG cdecl xfs_path2DD( MX_DD *dd, char *path, WORD mode,
-							char **restp, MX_DD **symlink_dd,
+static LONG cdecl xfs_path2DD( MX_DD *dd, const char *path, WORD mode,
+							const char **restp, MX_DD **symlink_dd,
 							void **symlink )
 {
 	DIRENTRY de;
 	char *nextelem;
-	char *s;
+	const char *s;
 	CDXFS_DD *current;
 	char pathelem[128];		/* Puffer fÅr ein Pfad-Element */
 	LONG ret;
@@ -954,7 +954,7 @@ static LONG search ( WORD drive, CDXFS_DTA *dta, WORD first)
 *
 *******************************************************************/
 
-static LONG cdecl	xfs_sfirst( MX_DD *dd, char *name, DTA *dta,
+static LONG cdecl	xfs_sfirst( MX_DD *dd, const char *name, DTA *dta,
      						WORD attrib, void **symlink )
 {
 	LONG ret;
@@ -1010,7 +1010,7 @@ static LONG cdecl	xfs_snext( DTA *dta, MX_DMD *dmd, void **symlink )
 *
 *******************************************************************/
 
-static LONG cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
+static LONG cdecl	xfs_fopen( MX_DD *dd, const char *name, WORD omode,
      						WORD attrib, void **symlink )
 {
 	LONG ret;
@@ -1073,7 +1073,7 @@ static LONG cdecl	xfs_fopen( MX_DD *dd, char *name, WORD omode,
 *
 *******************************************************************/
 
-static LONG cdecl	xfs_fdelete( MX_DD *dd, char *name )
+static LONG cdecl	xfs_fdelete( MX_DD *dd, const char *name )
 {
 	return(EWRPRO);
 }
@@ -1089,7 +1089,7 @@ static LONG cdecl	xfs_fdelete( MX_DD *dd, char *name )
 *******************************************************************/
 
 static LONG cdecl	xfs_link( MX_DD *altdd, MX_DD *neudd,
-						char *altname, char *neuname,
+						const char *altname, const char *neuname,
 						WORD flag )
 {
 	return(EWRPRO);
@@ -1107,8 +1107,8 @@ static LONG cdecl	xfs_link( MX_DD *altdd, MX_DD *neudd,
 *
 *******************************************************************/
 
-static LONG cdecl	xfs_xattr( MX_DD *dd, char *name, XATTR *xa,
-							WORD mode )
+static LONG cdecl	xfs_xattr( MX_DD *dd, const char *name, XATTR *xa,
+							WORD mode, void **symlink )
 {
 	LONG ret;
 	DIRENTRY de;
@@ -1140,16 +1140,17 @@ static LONG cdecl	xfs_xattr( MX_DD *dd, char *name, XATTR *xa,
 *
 *******************************************************************/
 
-static LONG cdecl	xfs_attrib( MX_DD *dd, char *name, WORD mode,
+static LONG cdecl	xfs_attrib( MX_DD *dd, const char *name, WORD mode,
 							WORD attrib )
 {
 	XATTR xa;
 	long ret;
-
+	void *symlink;
+	
 	if	(mode)
 		return(EWRPRO);
 
-	ret = xfs_xattr( dd, name, &xa, 0);
+	ret = xfs_xattr( dd, name, &xa, 0, &symlink);
 	if	(ret)
 		return(ret);
 	return(xa.st_attr & 0xff);
@@ -1164,8 +1165,8 @@ static LONG cdecl	xfs_attrib( MX_DD *dd, char *name, WORD mode,
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_chown( MX_DD *dd, char *name, WORD uid,
-							WORD gid )
+static LONG cdecl   xfs_chown( MX_DD *dd, const char *name, WORD uid,
+							WORD gid, void **symlink )
 {
 	return(EWRPRO);
 }
@@ -1179,7 +1180,7 @@ static LONG cdecl   xfs_chown( MX_DD *dd, char *name, WORD uid,
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_chmod( MX_DD *dd, char *name, WORD mode )
+static LONG cdecl   xfs_chmod( MX_DD *dd, const char *name, WORD mode, void **symlink )
 {
 	return(EWRPRO);
 }
@@ -1193,7 +1194,7 @@ static LONG cdecl   xfs_chmod( MX_DD *dd, char *name, WORD mode )
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_dcreate( MX_DD *dd , char *name, WORD mode )
+static LONG cdecl   xfs_dcreate( MX_DD *dd , const char *name, WORD mode )
 {
 	return(EWRPRO);
 }
@@ -1491,7 +1492,7 @@ static LONG cdecl   xfs_dfree( MX_DD *dd, LONG buf[4] )
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_wlabel( MX_DD *dd, char *name )
+static LONG cdecl   xfs_wlabel( MX_DD *dd, const char *name )
 {
 	return(EWRPRO);
 }
@@ -1503,7 +1504,7 @@ static LONG cdecl   xfs_wlabel( MX_DD *dd, char *name )
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_rlabel( MX_DD *dd, char *name, char *buf,
+static LONG cdecl   xfs_rlabel( MX_DD *dd, const char *name, char *buf,
      						WORD buflen )
 {
 	LOGICAL_DEV *ldp;
@@ -1528,7 +1529,7 @@ static LONG cdecl   xfs_rlabel( MX_DD *dd, char *name, char *buf,
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_symlink( MX_DD *dd, char *name, char *to)
+static LONG cdecl   xfs_symlink( MX_DD *dd, const char *name, const char *to)
 {
 	return(EWRPRO);
 }
@@ -1540,7 +1541,7 @@ static LONG cdecl   xfs_symlink( MX_DD *dd, char *name, char *to)
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_readlink( MX_DD *dd, char *name, char *buf,
+static LONG cdecl   xfs_readlink( MX_DD *dd, const char *name, char *buf,
      						WORD buflen )
 {
 	return(EINVFN);
@@ -1554,8 +1555,8 @@ static LONG cdecl   xfs_readlink( MX_DD *dd, char *name, char *buf,
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_dcntl( MX_DD *dd, char *name, WORD cmd,
-     						LONG arg )
+static LONG cdecl   xfs_dcntl( MX_DD *dd, const char *name, WORD cmd,
+     						LONG arg, void **symlink )
 {
 	LOGICAL_DEV *ldp;
 	long ret;
