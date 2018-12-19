@@ -126,9 +126,9 @@ typedef struct _mx_dmd {
      struct _mx_xfs *d_xfs;
      WORD      d_drive;
      MX_DD     *d_root;
-     WORD      biosdev;
-     LONG      driver;
-     LONG      devcode;
+     WORD      d_biosdev;
+     LONG      d_driver;
+     LONG      d_devcode;
 } MX_DMD;
 
 
@@ -239,19 +239,19 @@ typedef struct _cdecl_mx_xfs {
      void cdecl	(*xfs_freeDD)(MX_DD *dd);
      LONG cdecl (*xfs_drv_open)(MX_DMD *dmd);
      LONG cdecl (*xfs_drv_close)(MX_DMD *dmd, WORD mode);
-     LONG cdecl (*xfs_path2DD)(MX_DD *dd, char *path, WORD mode,
+     LONG cdecl (*xfs_path2DD)(MX_DD *dd, const char *path, WORD mode,
      						char **restp, MX_DD **symlink_dd,
      						void **symlink);
-     LONG cdecl (*xfs_sfirst)(MX_DD *dd, char *name, DTA *dta, WORD attrib, void **symlink);
+     LONG cdecl (*xfs_sfirst)(MX_DD *dd, const char *name, DTA *dta, WORD attrib, void **symlink);
      LONG cdecl (*xfs_snext)(DTA *dta, MX_DMD *dmd, void **symlink);
-     LONG cdecl (*xfs_fopen)(MX_DD *dd, char *name, WORD omode, WORD attrib, void **symlink);
-     LONG cdecl (*xfs_fdelete)(MX_DD *dd, char *name);
-     LONG cdecl (*xfs_link)(MX_DD *altdd, MX_DD *neudd, char *altname, char *neuname, WORD flag);
-     LONG cdecl (*xfs_xattr)(MX_DD *dd, char *name, XATTR *xa, WORD mode);
-     LONG cdecl (*xfs_attrib)(MX_DD *dd, char *name, WORD mode, WORD attrib);
-     LONG cdecl (*xfs_chown)(MX_DD *dd, char *name, WORD uid, WORD gid);
-     LONG cdecl (*xfs_chmod)(MX_DD *dd, char *name, WORD mode);
-     LONG cdecl (*xfs_dcreate)(MX_DD *dd, char *name, WORD mode);
+     LONG cdecl (*xfs_fopen)(MX_DD *dd, const char *name, WORD omode, WORD attrib, void **symlink);
+     LONG cdecl (*xfs_fdelete)(MX_DD *dd, const char *name);
+     LONG cdecl (*xfs_link)(MX_DD *altdd, MX_DD *neudd, const char *altname, const char *neuname, WORD flag);
+     LONG cdecl (*xfs_xattr)(MX_DD *dd, const char *name, XATTR *xa, WORD mode, void **symlink);
+     LONG cdecl (*xfs_attrib)(MX_DD *dd, const char *name, WORD mode, WORD attrib);
+     LONG cdecl (*xfs_chown)(MX_DD *dd, const char *name, WORD uid, WORD gid, void **symlink);
+     LONG cdecl (*xfs_chmod)(MX_DD *dd, const char *name, WORD mode, void **symlink);
+     LONG cdecl (*xfs_dcreate)(MX_DD *dd, const char *name, WORD mode);
      LONG cdecl (*xfs_ddelete)(MX_DD *dd);
      LONG cdecl (*xfs_DD2name)(MX_DD *dd, char *buf, WORD buflen);
      LONG cdecl (*xfs_dopendir)(MX_DD *d, WORD tosflag);
@@ -260,11 +260,11 @@ typedef struct _cdecl_mx_xfs {
      LONG cdecl (*xfs_dclosedir)(MX_DHD *dhd);
      LONG cdecl (*xfs_dpathconf)(MX_DD *dd, WORD which);
      LONG cdecl (*xfs_dfree)(MX_DD *dd, LONG buf[4]);
-     LONG cdecl (*xfs_wlabel)(MX_DD *dd, char *name);
-     LONG cdecl (*xfs_rlabel)(MX_DD *dd, char *name, char *buf, WORD buflen);
-     LONG cdecl (*xfs_symlink)(MX_DD *dd, char *name, char *to);
-     LONG cdecl (*xfs_readlink)(MX_DD *dd, char *name, char *buf, WORD buflen);
-     LONG cdecl (*xfs_dcntl)(MX_DD *dd, char *name, WORD cmd, LONG arg);
+     LONG cdecl (*xfs_wlabel)(MX_DD *dd, const char *name);
+     LONG cdecl (*xfs_rlabel)(MX_DD *dd, const char *name, char *buf, WORD buflen);
+     LONG cdecl (*xfs_symlink)(MX_DD *dd, const char *name, const char *to);
+     LONG cdecl (*xfs_readlink)(MX_DD *dd, const char *name, char *buf, WORD buflen);
+     LONG cdecl (*xfs_dcntl)(MX_DD *dd, const char *name, WORD cmd, LONG arg, void **symlink);
 } CDECL_MX_XFS;
 
 /* Dcntl(KER_DOSLIMITS) -> Zeiger auf Zeiger auf: */
@@ -299,6 +299,17 @@ typedef struct {
 #define   OM_RDENY       16
 #define   OM_WDENY       32
 #define   OM_NOCHECK     64
+
+/*
+ * Dont get fooled by Pure-C header files;
+ * we need the MiNT values here
+ */
+#undef O_CREAT
+#undef O_TRUNC
+#undef O_EXCL
+#define O_CREAT		0x200
+#define O_TRUNC		0x400
+#define O_EXCL		0x800
 
 
 /* unterstÅtzte Dcntl- Modi (Mag!X- spezifisch!) */

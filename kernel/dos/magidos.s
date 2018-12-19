@@ -2028,6 +2028,8 @@ sfirst_symlink:
  movem.l  a6/a5,-(sp)
  move.l   sp,a6                    ; sp merken
  move.l   a1,a5                    ; a5 = DTA
+ move.l   a0,d0
+ beq.s    sfs_ok
  move.w   (a0)+,d0                 ; Laenge des Links inkl. EOS und gerade
  suba.w   d0,sp
  lsr.w    #1,d0
@@ -2757,9 +2759,11 @@ fxf_nounlock:
  bsr      sfirst_symlink
  bra      fxf_ende
 fxf_nosf:
+ move.l a0,d0
+ beq fxf_ende
  move.w   (a0)+,d0
  cmpi.w   #256,d0
- bhi.b    fxf_eloop                ; Link zu lang
+ bhi.b    fxf_eloop                ; Link zu lang; FIXME: ELOOP is wrong here
  move.l   sp,a1
  lsr.w    #1,d0
  bra.b    fxf_endl

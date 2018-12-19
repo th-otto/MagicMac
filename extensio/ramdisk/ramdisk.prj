@@ -1,0 +1,17 @@
+ramdisk.xfs
+.C [ -Y ]
+.S [ -Y ]
+.C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
+.S[-I..\..\kernel\inc]
+.C[-P-]
+.L[-S=8192]
+=
+..\..\pc\lib\cstart0.o
+
+ramdisk.c (ramdisk.h, proto.h)
+ramutil.c (ramdisk.h, proto.h, version.h)
+pc_xfs.s
+
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcstdlib.lib

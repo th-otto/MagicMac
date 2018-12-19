@@ -353,7 +353,7 @@ cdxfs_snext:
 
 cdxfs_fopen:
  clr.l	-(sp)
- pea		(sp)
+ pea (sp)
  move.w	d1,-(sp)
  move.w	d0,-(sp)
  move.l	a1,-(sp)
@@ -462,13 +462,16 @@ cdxfs_attrib:
 *
 
 cdxfs_chown:
+ clr.l	-(sp)
+ pea (sp)
  move.w	d1,-(sp)
  move.w	d0,-(sp)
  move.l	a1,-(sp)
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_chown,a0
  jsr      (a0)
- adda.w	#12,sp
+ adda.w	#16,sp
+ move.l (sp)+,a0
  rts
 
 
@@ -481,12 +484,15 @@ cdxfs_chown:
 *
 
 cdxfs_chmod:
+ clr.l	-(sp)
+ pea (sp)
  move.w	d0,-(sp)
  move.l	a1,-(sp)
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_chmod,a0
  jsr      (a0)
- adda.w	#10,sp
+ adda.w	#14,sp
+ move.l (sp)+,a0
  rts
 
 
@@ -725,17 +731,25 @@ cdxfs_readlink:
 * long xfs_dcntl( a0 = DD *d, a1 = char *name, d0 = int cmd,
 *                  d1 = long arg )
 *
+* RÅckgabe:    d0 = errcode
+*             oder
+*              d0 = ELINK
+*              a0 = char *link
+*
 * FÅhrt Spezialfunktionen aus
 *
 
 cdxfs_dcntl:
+ clr.l	-(sp)
+ pea (sp)
  move.l	d1,-(sp)
  move.w	d0,-(sp)
  move.l	a1,-(sp)
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_dcntl,a0
  jsr      (a0)
- adda.w	#14,sp
+ lea 18(sp),sp
+ move.l (sp)+,a0
  rts
 
 

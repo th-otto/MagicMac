@@ -1,0 +1,1067 @@
+@database "Dokumentation zum Ramdisk-XFS"
+@author "Thomas Binder"
+@subject Dokumentation/Utilities
+@$VER: ramdisk.hyp (07/08/96)
+@define VERSION 21.07.1996
+@define DOCVERSION 29.08.1996
+@width 80
+
+@extern ST-Guide st-guide.hyp/Main
+@extern MagiC magic4.hyp/Main
+@extern TOS tos.hyp/Main
+@extern Fattrib() tos.hyp/Fattrib
+@extern Fchmod() tos.hyp/Fchmod
+@extern Fsfirst() tos.hyp/Fsfirst
+@extern Fsnext() tos.hyp/Fsnext
+@extern Dreaddir() tos.hyp/Dreaddir
+@extern Dreadlabel() tos.hyp/Dreadlabel
+@extern Mxalloc() tos.hyp/Mxalloc
+@extern Pgetuid() tos.hyp/Pgetuid
+@extern Pdomain() tos.hyp/Pdomain
+
+@tabsize 4
+@help helpme
+
+@node Inhalt "Dokumentation zum Ramdisk-XFS fr MagiC"
+@symbol r Main
+@symbol r Ramdisk-XFS
+@noref
+@next Inhalt
+
+Vorl„ufige Dokumentation zum Ramdisk-XFS vom @:"VERSION", Stand: @:DOCVERSION
+
+Allgemeines
+ Was ist das Ramdisk-XFS?
+ Was kann das Ramdisk-XFS?
+ Was kann das Ramdisk-XFS nicht?
+ Installation
+ Die Zusatzprogramme
+ Bekannte Probleme
+ Fragen und Antworten
+ Zum Kopieren des Ramdisk-XFS
+ Rechtliches
+ Danksagungen
+ @{"Wer hat's verbrochen?" link Autor}
+ History
+
+Technisches
+ Die Datei RAMDISK.INF
+ Die Debug-Version
+ Die Sourcecodes
+ Bemerkungen
+
+@endnode
+
+
+@node "Was ist das Ramdisk-XFS?"
+Was ist das Ramdisk-XFS?                                     Ramdisk-XFS
+@line 1 72 0 0 1
+
+Das Ramdisk-XFS ist ein externes Filesystem fr MagiC ab Version 3 und 
+MagiCMac, wobei die Nutzung unter MagiC 4 bzw. MagiCMac ab Version 
+1.2.5 vorzuziehen ist (mehr dazu unter Bekannte Probleme und 
+Bemerkungen). Es stellt eine schnelle Ramdisk zur Verfgung, die 
+gegenber einer konventionellen Vertreterin einige Vorteile hat.
+
+Durch die Untersttzung von langen Dateinamen mit der Untscheidung von 
+Gro- und Kleinschreibung erh„lt man die M”glichkeit, eigene Programme 
+in dieser Hinsicht zu testen, ohne dafr langsame Disketten nehmen oder 
+eine Festplattenpartition opfern zu mssen.
+
+Auch der Nur-Anwender kann von den Eigenschaften des Ramdisk-XFS 
+profitieren, da es sich problemlos als Verzeichnis fr tempor„re 
+Dateien nutzen l„t, auf das schnell zugegriffen wird und das sich in 
+der Gr”e dem jeweiligen Inhalt anpat.
+
+Darberhinaus stellt das Ramdisk-XFS auch ein Beispiel fr die 
+Programmierung von externen Filesystemen fr MagiC mit Hilfe des Pure-C-
+Interfaces dar. Aus diesem Grund werden s„mtliche Quellcodes in 
+kommentierter Form mitgeliefert.
+
+An dieser Stelle ein kleiner Hinweis: Wenn in dieser Anleitung von 
+MagiC 4 die Rede ist, schliet das MagiC 5 mit ein. Ich hatte keine 
+Lust, das berall zu „ndern.
+
+@endnode
+
+
+@node "Was kann das Ramdisk-XFS?"
+@symbol a Vorteile
+Was kann das Ramdisk-XFS?                                    Ramdisk-XFS
+@line 1 72 0 0 1
+
+Das Ramdisk-XFS hat folgende Eigenschaften:
+
+- Dateinamen mit einer L„nge von bis zu 32 Zeichen
+- Unterscheidung von Gro- und Kleinschreibung, die Datei Test ist also 
+  nicht identisch mit der Datei TEST
+- Dynamische Speicherverwaltung, d.h. die Ramdisk belegt immer nur so 
+  viel Speicher, wie zur Aufnahme des aktuellen Inhalts n”tig ist
+- Belegt den Speicher nicht bis zum letzten Byte, sondern l„t immer 
+  einen gewissen Speicherblock frei, dessen Gr”e frei w„hlbar ist
+- Eingeschr„nkte Untersttzung von Unix-Filemodi
+- Symbolische Links
+- Freie W„hlbarkeit der Laufwerkskennung (selbstsuchend oder durch den 
+  Anwender festgelegt)
+- Der Name, unter dem das Ramdisk-XFS in Laufwerk U angesprochen werden 
+  kann, l„t sich bereits in der Konfigurationsdatei festlegen
+- Benutzter Speichertyp kann flexibel festgelegt werden
+- Untersttzung eines Volume Labels ("Diskettenname")
+
+Die Geschwindigkeit h„ngt natrlich stark von der benutzten Hardware 
+ab. Grunds„tzlich l„t sich jedoch sagen, da das Ramdisk-XFS beim 
+Lesen etwas schneller, beim Schreiben etwas langsamer als eine 
+gew”hnliche Ramdisk ist. (Die geringere Geschwindigkeit beim Schreiben 
+h„ngt dabei mit der dynamischen Anforderung des Speichers bei 
+gleichzeitiger Grenzwertberwachung zusammen.)
+
+Als kleiner Anhaltspunkt hier die Daten des Ramdisk-XFS auf einem 
+Falcon030 mit 4MB ST-Ram, MagiC 4.01 und 1024x768x16 
+Bildschirmaufl”sung (gemessen mit How-Fast): Lesen ca. 1.8 MB/s, 
+Schreiben ca. 0,6 MB/s. Bei abgeschaltetem Videochip: Lesen ca. 3 MB/s, 
+Schreiben ca. 1 MB/s.
+
+@endnode
+
+
+@node "Was kann das Ramdisk-XFS nicht?"
+@symbol a Einschr„nkungen
+Was kann das Ramdisk-XFS nicht?                              Ramdisk-XFS
+@line 1 72 0 0 1
+
+Leider ist das Ramdisk-XFS nicht ohne Einschr„nkungen, folgende Dinge 
+funktionieren nicht oder nicht richtig:
+
+- Keinerlei Filesharing, eine Datei kann immer nur h”chstens einmal 
+  ge”ffnet sein. Es ist also noch nicht einmal m”glich, eine Datei 
+  zweimal zum Lesen zu ”ffnen, selbst wenn es der gleiche Proze ist 
+  (das liegt aber haupts„chlich daran, da die MagiC-Doku hier einen 
+  leicht konfusen Eindruck macht).
+- Die Unix-Filemodi werden nur soweit ausgewertet, wie es MagiC zul„t. 
+  Da s„mtliche MiNT-Aufrufe, die sich mit User-IDs besch„ftigen, in 
+  MagiC nicht vorhanden sind, benutzt das Ramdisk-XFS einen Kompromi: 
+  Es werden nur die Zugriffsrechte des Eigners berprft, und zwar fr 
+  jeden User. Dies ist n”tig, weil man unter MagiC im Prinzip st„ndig 
+  Superuser ist und man sonst keinen richtigen Schreibschutz benutzen 
+  k”nnte (fr den Superuser gelten unter Unix keine Einschr„nkungen).
+- Das Sticky-Bit fr Verzeichnisse wird ignoriert, weil MagiC ohnehin 
+  keine Gruppen-IDs untersttzt.
+- Gleiches gilt fr die Bits "Set User-ID/Group-ID on execution". 
+  Allerdings mten die sowieso vom Kernel ausgewertet werden, was mit 
+  dem XFS-Konzept von MagiC wohl nicht m”glich sein drfte.
+- Durch die dynamische Speicheranforderung wird der freie Speicher 
+  unter ungnstigen Umst„nden stark fragmentiert. Allerdings kann man 
+  ja dafr sorgen, da stets ein gengend groer Speicherblock am Stck 
+  freibleibt. Der Ramdisk selbst macht fragmentierter Speicher nichts 
+  aus, da alle Files aus kleinen verketteten Bl”cken bestehen.
+
+Mehr dazu findet sich unter Bekannte Probleme und Bemerkungen.
+
+Ich habe hier sicherlich auch einige Sachen vergessen, also bitte nicht 
+aufregen, wenn etwas nicht klappt, obwohl es nicht hier aufgefhrt ist.
+
+@endnode
+
+
+@node Installation
+Installation des Ramdisk-XFS                                 Ramdisk-XFS
+@line 1 72 0 0 1
+
+Um das Ramdisk-XFS benutzen zu k”nnen, mu lediglich die Datei 
+ramdisk.xfs in das Verzeichnis \gemsys\magic\xtension des Bootlaufwerks 
+kopiert werden. Beim n„chsten Booten ist die Ramdisk dann aktiv. 
+Zus„tzlich sollte man gleichzeitig im selben Verzeichnis eine Datei 
+namens ramdisk.inf anlegen und das XFS damit fr seine Zwecke 
+konfigurieren (eine Beispieldatei ist im Archiv enthalten). Unterl„t 
+man dies, installiert sich die Ramdisk auf dem ersten freien 
+Laufwerksbuchstaben, benutzt bevorzugt TT-RAM, l„t mindestens 512K am 
+Stck frei, erlaubt keine Umlaute in Filenamen und legt kein Default-
+Volume-Label an.
+
+Alternativ kann man ramdisk.xfs auch in ramdisk.tos umbennenen und 
+direkt vom Desktop aus starten. Auf diese Weise kann man das XFS auch 
+nur kurz antesten, ohne es gleich richtig installieren zu mssen.
+
+Wie mir berichtet wurde, scheint es Probleme zu geben, wenn man das 
+XFS unter MagiC 4 auf einem Falcon mit Nova-Grafikkarte im oben 
+beschriebenen Ordner mitstarten will. Woran das liegt, kann ich 
+leider nicht sagen. Es hilft auf jeden Fall, das XFS als ramdisk.prg 
+in den APPS-Ordner von MagiC zu legen.
+
+@endnode
+
+
+@node "Die Zusatzprogramme"
+Zusatzprogramme fr das Ramdisk-XFS                          Ramdisk-XFS
+@line 1 72 0 0 1
+
+Neben den .xfs-Dateien finden sich auch zwei Tools im gleichnamigen 
+Ordner des Archivs:
+
+@symbol ari CheckFree
+CheckFree:
+Chckfree.app geh”rt in den Ordner \gemsys\magic\start (bzw. in den 
+Ordner, in dem die Autostart-Applikationen liegen) und wartet nach dem 
+Start lediglich fortlaufend auf die Nachricht AP_TERM, die bei einem 
+Shutdown an alle laufenden Applikationen verschickt wird. Es prft 
+dann, ob die in der Datei chckfree.inf angegebenen Laufwerke (siehe 
+Beispieldatei) leer sind; falls nicht, wird der Shutdown verweigert, 
+als Fehlercode erh„lt man die Nummer des Laufwerks, das nicht leer war 
+(1 = A, 2 = B, ...) Man kann also auf diese Weise sicherstellen, da 
+sich keine Dateien mehr auf einem Ramdisk-Laufwerk befinden, bevor man 
+einen Reset ausl”st oder MagiCMac beendet.
+
+@symbol ari GarbageCollector
+GarbageCollector:
+Garbcoll.app ist ein Programm, das wirklich nichts weiter macht, als 
+sich gleich wieder zu beenden. Sinnvoll wird es erst dann, wenn man es 
+als Single-Start-Programm startet, weil dann der Desktop beendet und 
+damit aller von ihm belegter Speicher freigegeben wird. Auf diese Weise 
+k”nnen u.U. Speicherlcken, die nach umfangreichen L”schaktionen auf 
+der Ramdisk entstanden sind, wieder geschlossen werden.
+
+@endnode
+
+
+@node "Bekannte Probleme"
+Bekannte Probleme                                            Ramdisk-XFS
+@line 1 72 0 0 1
+
+Folgende Probleme bei Benutzung des Ramdisk-XFS sind bekannt (siehe 
+auch Einschr„nkungen und Bemerkungen):
+
+- Das Ramdisk-XFS zusammen mit Outside oder VRAM ist t”dlich (wenn das 
+  XFS den alternativen Speicher benutzen darf), da bei jedem Schreiben 
+  von Dateien die verkettete Liste der bisher belegten Bl”cke 
+  durchgegangen werden mu. Outside bzw. VRAM mu dann im schlimmsten 
+  Fall jedesmal auslagern, das (stckweise) Schreiben von l„ngeren 
+  Dateien kann dann unter Umst„nden mehrere Minuten bis Stunden dauern.
+- Beim Erweitern von Verzeichnissen werden die Index-Zeiger von ".." in 
+  den Strukturen der untergeordneten Directories nicht angepat. Das 
+  hat zwar prinzipiell keine sch„dlichen Auswirkungen auf den normalen 
+  Betrieb, sollte aber dennoch erw„hnt werden.
+- MagiC 3 und MagiCMac vor Version 1.2.5 untersttzen noch nicht den 
+  Systemaufruf Pdomain(), mit der das XFS feststellen kann, ob das 
+  laufende Programm korrekt mit langen Dateinamen und Unterscheidung 
+  von Gro/Kleinschreibung umgehen kann. Daher kann es bei diesen 
+  Systemen ”fters passieren, da Dateinamen bunt gewrfelt komplett 
+  gro oder komplett kleingeschrieben sind oder da ein Programm eine 
+  Datei nicht findet, eine falsche findet oder eine neue nicht anlegen 
+  kann. Wer also das Ramdisk-XFS sinnvoll einsetzen will, sollte besser 
+  aktuelle Versionen von MagiC bzw. MagiCMac verwenden.
+- Thing <= 1.00 (und viele andere Programme, die in den meisten F„llen 
+  mit den MiNTLibs gelinkt wurden) schalten nur unter MiNT mittels 
+  Pdomain() in die MiNT-Domain, um anzuzeigen, da sie lange Dateinamen 
+  korrekt behandeln. Als Folge zeigt Thing zwar korrekt lange Namen an, 
+  von ihm neu angelegte Dateien und Ordner werden aber immer komplett 
+  in Kleinbuchstaben gewandelt. Bei anderen Programmen, z.B. leider 
+  auch bei der LZHShell, fhrt dieser fehlende Aufruf dazu, da 
+  verstmmelte Dateinamen benutzt werden, obwohl das Programm es 
+  eigentlich besser k”nnte.
+- Ebenfalls im Zusammenhang mit dem letztgenannten Problem: Das 
+  Hilfsprogramm MGCOPY des MagXDesks von MagiC 4 l„uft ebenfalls nicht 
+  in der MiNT-Domain, daher gibt es auch hier nur kleingeschriebene 
+  neue Dateien und u.U. Probleme mit angeblich bereits existierenden 
+  Dateien.
+- Gemini kann keine Dateien auf der Ramdisk anlegen, weil es immer den 
+  gr”ten freien Speicherblock als Puffer benutzt und so nichts mehr 
+  fr das XFS brig bleibt (die Mupfel-Kommandos cp und mv verhalten 
+  sich leider genauso). Eingeschr„nkte Abhilfe schafft hier das MagiC-
+  Utility LimitMem; besser w„re es jedoch, Gemini wrde beim Kopieren 
+  nicht mehr so rcksichtslos vorgehen.
+- Das Fhren des Logfiles der Debug-Version scheint mit MagiCMac nicht 
+  zu funktionieren. Von leeren Logfiles bis hin zu blen 
+  Systemabstrzen kommt offensichtlich alles vor. Unter MagiC 4 dagegen 
+  funktioniert es einwandfrei (das ist zumindest meine Erfahrung).
+- Auf Rechnern mit dem MC68000 kommt es laut Berichten zu Abstrzen, 
+  wenn man den MagiC-internen Fileselector auf dem Ramdisk-XFS-Laufwerk 
+  benutzt. Leider kann ich das hier nicht nachvollziehen, vielleicht 
+  l„t sich das Problem aber irgendwann kl„ren.
+
+Auch hier kann es gut sein, da ich noch den einen oder anderen Punkt 
+vergessen habe. Ich werde diese Liste also bei Bedarf noch erweitern 
+und bin fr Hinweise immer dankbar.
+
+@endnode
+
+
+@node "Fragen und Antworten"
+Fragen und Antworten                                         Ramdisk-XFS
+@line 1 72 0 0 1
+
+Alles etwas bunt durcheinander gewrfelt, ich hoffe, es geht trotzdem...
+
+F: Was fange ich mit diesen .xfs-Dateien an? Wohin mu ich die 
+   kopieren, oder wie rufe ich sie auf?
+A: Wie beim Punkt Installation beschrieben, mu ramdisk.xfs in den 
+   Ordner \gemsys\magic\xtension des Bootlaufwerks kopiert werden. Die 
+   Datei ramdebug.xfs braucht man nur, wenn man Debug-Ausgaben 
+   protokollieren und mir zuschicken m”chte.
+
+F: Thing <= 1.00 legt, obwohl ich MagiC 4/MagiCMac 1.2.5 benutze, nur 
+   kleingeschriebene Dateinamen an. Auch Umbennenen mit Grobuchstaben 
+   klappt nicht.
+A: Diese Thing-Versionen benutzen unter MagiC leider nicht den 
+   Systemaufruf Pdomain(), um mitzuteilen, da sie lange Dateinamen und 
+   die Unterscheidung von Gro-und Kleinschreibung beherrschen. Daher 
+   wandelt das XFS alle Dateinamen in Kleinbuchstaben um, da von 
+   solchen Programmen in der Regel komplett gro geschriebene Filenamen 
+   benutzt werden, was nicht so toll aussehen wrde.
+
+F: Ich m”chte mit Kobold arbeiten, mu ich dazu den GEMDOS-Modus fr 
+   das Laufwerk des Ramdisk-XFS einschalten?
+A: Selbstverst„ndlich, denn intern werden komplett andere Strukturen 
+   als auf FAT-Filesystemen benutzt. Auf jeden Fall sollte man nach 
+   M”glichkeit aktuelle Versionen von Kobold benutzen, da diese meines 
+   Wissens mit erweiterten Filesystemen zurechtkommen.
+
+F: Wenn ich mit MagiC 3 Dateien von einem FAT-Laufwerk mit dem Kobold 
+   auf das Ramdisk-XFS-Laufwerk kopiere, erscheinen sie alle komplett 
+   gro geschrieben. Mache ich das aber mit Thing, haben sie alle nur 
+   Kleinbuchstaben. Woran liegt das?
+A: Da MagiC 3 den Systemaufruf Pdomain() noch nicht bereitstellt, kann 
+   das XFS nicht feststellen, ob das laufende Programm korrekt mit 
+   langen Dateinamen und der Unterscheidung von Gro/Kleinschreibung 
+   umgehen kann. Daher werden alle Namen unver„ndert bernommen. Kobold 
+   benutzt im GEMDOS-Modus immer komplett in Grobuchstaben gehaltene 
+   Dateinamen, w„hrend Thing merkt, da das Ziellaufwerk die 
+   Schreibweise unterscheidet und daher eine Wandlung in 
+   Kleinbuchstaben vornimmt.
+
+F: Das Ramdisk-XFS untersttzt angeblich lange Dateinamen mit 
+   Unterscheidung von Gro- und Kleinschreibung. Mein Desktop zeigt 
+   aber immer nur normale 8+3-Namen an, die komplett gro geschrieben 
+   sind. Warum?
+A: Der Desktop kommt offensichtlich nicht mit langen Dateinamen zurecht 
+   und benutzt die alte Methode zum Lesen von Verzeichnissen, die 
+   prinzipbedingt nur verstmmelte Dateinamen liefert.
+
+F: Warum k”nnen Gemini und Mupfel keine Dateien auf das Ramdisk-XFS 
+   kopieren?
+A: Weil beide immer den gr”ten verfgbaren Speicherblock als 
+   Kopierpuffer benutzt und somit dem XFS nichts mehr brig lassen. 
+   M”gliche Abhilfe: Gemini bzw. der Mupfel mittels LimitMem weniger 
+   Speicher zur Verfgung stellen.
+
+F: Warum kann das Programm XYZ nichts auf dem Ramdisk-XFS abspeichern?
+A: In aller Regel aus dem gleichen Grund wie eine Frage vorher: Das 
+   Programm belegt allen freien Speicher und l„t der Ramdisk daher 
+   keinen Platz fr neue Dateien mehr. Auch hier kann man unter 
+   Umst„nden mit LimitMem Abhilfe schaffen. Es kann auerdem sein, da 
+   man die Variable leavefree in der RAMDISK.INF auf einen zu hohen 
+   Wert gesetzt hat und das XFS daher von sich aus das Allozieren von 
+   neuem Speicher verweigert.
+
+Werden bestimmt noch mehr...
+
+@endnode
+
+
+@node "Zum Kopieren des Ramdisk-XFS"
+Zum Kopieren                                                 Ramdisk-XFS
+@line 1 72 0 0 1
+
+Das Ramdisk-XFS ist Freeware, darf und soll also ohne Bedenken benutzt 
+und kostenlos weitergegeben werden (der Vertrieb ber PD-H„ndler ist 
+gestattet, solange der Preis pro Diskette DM 10 nicht bersteigt). Auch 
+der Upload in Mailboxen ist erlaubt und erwnscht, wenn fr den 
+Download keine Gebhren anfallen (auer den Telefongebhren, natrlich).
+
+Es mssen in jedem Fall alle Dateien unver„ndert und vollst„ndig 
+kopiert werden (Archivierung ist erlaubt). Da es nicht wenige sind, 
+hier die Auflistung, wie genau der zu kopierende Verzeichnisbaum 
+auszusehen hat:
+
+pc_xfs\
+    |_ atarierr.h
+    |_ mgx_xfs.h
+    |_ pc_xfs.h
+    |_ pc_xfs.inc
+    |_ pc_xfs.s
+    |_ sogehts.txt
+ramdisk\
+    |_ proto.h
+    |_ ramdebug.prj
+    |_ ramdisk.c
+    |_ ramdisk.h
+    |_ ramdisk.prj
+    |_ ramutil.c
+    |_ version.h
+tools\
+    |_ chckfree.app
+    |_ chckfree.inf
+    |_ garbcoll.app
+ramdebug.xfs
+ramdisk.hyp
+ramdisk.inf
+ramdisk.ref
+ramdisk.stg
+ramdisk.xfs
+
+Da viele Quellcodes enthalten sind, erfolgt die Originaldistribution 
+als Archiv im Archiv. Das „uere enth„lt lediglich die Dateien 
+archive.lzh und archive.sig. Erstere ist dabei das innere Archiv mit 
+den oben aufgelisteten Dateien, und archive.sig ist ein PGP-
+Signaturfile fr archive.lzh. Auf diese Weise kann jeder nachprfen, ob 
+die Dateien (insbesondere eben die Sourcecodes) wirklich direkt von mir 
+stammen und nicht in irgendeiner Weise manipuliert wurden. Mein 
+”ffentlicher Schlssel ist selbstverst„ndlich auf Anfrage erh„ltlich.
+
+Es ist nicht erlaubt, das Ramdisk-XFS einem anderen Produkt ohne meine 
+ausdrckliche schriftliche Genehmigung beizulegen. Wer so etwas vorhat, 
+darf sich ruhig bei mir melden, in aller Regel werde ich die Zustimmung 
+nicht verweigern.
+
+Das Ramdisk-XFS hat einen nicht unerheblichen Teil meiner Freizeit 
+beansprucht; trotzdem habe ich es als Freeware inklusive aller 
+Quelltexte ver”ffentlicht. Ich bitte daher alle, die es regelm„ig 
+benutzen, mir meine Arbeit durch eine kleine Spende zu honorieren, was 
+auch die Weiterentwicklung des XFS sichert. Das ist brigens kein 
+leeres Gew„sch, man sollte sich wirklich einmal ernsthaft berlegen, ob 
+einem die weitere Untersttzung der Atari-Plattform durch Free- und 
+Shareware-Programmierer nicht eine Geld- oder Sachspende wert ist!
+
+@endnode
+
+
+@node Rechtliches
+Rechtliches                                                  Ramdisk-XFS
+@line 1 72 0 0 1
+
+Das Ramdisk-XFS und die dazugeh”renden Utilities wurden mit groer 
+Sorgfalt entwickelt und eingehend getestet. Dennoch kann nicht 
+ausgeschlossen werden, da sie noch Fehler enthalten. Ich kann daher 
+weder die einwandfreie Funktionsf„higkeit, noch die Tauglichkeit zu 
+einem bestimmten Zweck garantieren.
+
+Desweiteren erfolgt die Benutzung des Ramdisk-XFS und der beiliegenden 
+Utilities auf eigene Gefahr! Ich, Thomas Binder, bernehme keinerlei 
+Haftung fr Sch„den jeglicher Art, die direkt oder indirekt durch die 
+sach- oder unsachgem„e Anwendung des Ramdisk-XFS und/oder der 
+Utilities entstanden sind oder entstanden sein k”nnten.
+
+Jegliche nderung an den Sourcecodes, auer fr den Privatgebrauch, ist 
+untersagt. Daraus folgt direkt, da ver„nderte Quellen nicht verbreitet 
+werden drfen. Wer etwas verbessert oder erweitert hat, darf mir gerne 
+ein Diff schicken; sinnvolle Sachen nehme ich bei Gelegenheit auf, 
+natrlich mit gebhrender Erw„hnung des jeweiligen Autors.
+
+Wer Teile der Sourcen fr ein eigenes XFS bernehmen will, kann dies 
+tun, mu dann aber ausdrcklich auf diesen Umstand hinweisen. Dies 
+sollte in der Dokumentation, in der Einschaltmeldung, und, bei 
+Sourcedistributionen, auch an den entsprechenden Stellen im Quellcode 
+geschehen.
+
+@endnode
+
+
+@node Danksagungen
+Danksagungen                                                 Ramdisk-XFS
+@line 1 72 0 0 1
+
+Ich danke den folgenden Leuten, ohne deren Untersttzung das Ramdisk-
+XFS nicht in der jetzigen Form existieren wrde (alphabetische 
+Reihenfolge):
+
+- @{U}Denesh Bhabuta@{u}
+  Fr den Support in England.
+
+- @{U}Oliver Buchmann@{u}
+  Fr das Weiterleiten von Interessenten.
+
+- @{U}Alexander Clauss@{u}
+  Fr das Betatesten.
+
+- @{U}Stefan Damerau@{u}
+  Fr das Betatesten.
+
+- @{U}Phillip Frank@{u}
+  Fr das Betatesten.
+
+- @{U}Dirk Hagedorn@{u}
+  Fr das Betatesten.
+
+- @{U}G”tz Hoffart@{u}
+  Fr das Betatesten und seine Vorschl„ge.
+
+- @{U}Dirk Klemmt@{u}
+  Fr das Betatesten.
+
+- @{U}Andreas Kromke@{u}
+  Fr die MagiC-Programmiererdoku (auch wenn sie in vielen Punkten 
+  besser sein k”nnte) und seine Hilfe bei Problemen.
+
+- @{U}Egbert Mattikau@{u}
+  Fr das Betatesten.
+
+- @{U}Thomas Much@{u}
+  Fr das Betatesten (speziell mit Texel).
+
+- @{U}Rainer Riedl@{u}
+  Fr das Betatesten.
+
+- @{U}Frank R”ske@{u}
+  Fšr das Betatesten und einige Vorschl„ge.
+
+- @{U}Peter Rottengatter@{u} (diesmal mit richtigem Nachnamen...)
+  Fr das Betatesten.
+
+- @{U}Herwig Schelauske@{u}
+  Fr das Betatesten.
+
+- @{U}S”ren Schnee@{u}
+  Fr das Betatesten.
+
+- @{U}Uwe Seimet@{u}
+  Fr das Betatesten.
+
+- @{U}Manfred Ssykor@{u}
+  Fr das Betatesten.
+
+- @{U}Arno Welzel@{u}
+  Fr das Betatesten.
+
+@endnode
+
+
+@node Autor
+@symbol a "Thomas Binder"
+@symbol a "Adresse"
+Autor                                                        Ramdisk-XFS
+@line 1 72 0 0 1
+
+Wer einen Fehler gefunden hat, Vorschl„ge, Verbesserungen oder Kritik 
+loswerden m”chte, meinen ”ffentlichen PGP-Schlssel braucht oder 
+einfach nur mit mir "reden" will, kann diese Adresse benutzen:
+
+Thomas Binder
+Johann-Valentin-May-Strae 7
+64665 Alsbach-H„hnlein
+Deutschland
+
+Per EMail bin ich im InterNet und im Mausnetz ber folgende Adressen 
+erreichbar:
+
+binder@rbg.informatik.th-darmstadt.de
+gryf@hrz.th-darmstadt.de (wird nicht so oft geprft)
+Thomas Binder @ HD (ich tausche nur Montags, Mittwochs und Samstags)
+
+Wer ab und zu (oder h„ufiger ;) ) im IRC h„ngt, sollte nach Gryf gucken.
+
+@alabel Spende
+Wer das Ramdisk-XFS h„ufiger oder regelm„ig benutzt, sollte so fair 
+sein und meine Arbeit durch eine kleine Spende honorieren (auch 
+Sachspenden sind willkommen). Meine Bankverbindung:
+
+Dresdner Bank AG Frankfurt am Main
+Konto-Nummer: 9 024 050 00
+Bankleitzahl: 500 800 00
+
+Vielen Dank!
+
+@endnode
+
+
+@node History
+History                                                      Ramdisk-XFS
+@line 1 72 0 0 1
+
+Release 1 vom 23.04.1996
+Release 2 vom 29.08.1996
+
+@endnode
+
+
+@node "Release 1"
+Release 1 vom 23.04.1996                                     Ramdisk-XFS
+@line 1 72 0 0 1
+
+- Erste ”ffentliche Version, leider noch mit ein paar Einschr„nkungen
+
+@endnode
+
+
+@node "Release 2"
+@next "Release 2"
+Release 2 vom 29.08.1996                                     Ramdisk-XFS
+@line 1 72 0 0 1
+
+- Symbolische Links auf Verzeichnisse funktionieren (wieder)
+- Deutlich geringere Speicherfragmentierung (bei gleichzeitigen leichten 
+  Einbuen bei der Schreibgeschwindigkeit) durch neues Vorgehen bei der 
+  Anforderung von Speicher, leider sehr spezifisch auf die MagiC-
+  Speicherverwaltung zugeschnitten
+- Es ist jetzt auch m”glich, die Ramdisk als Laufwerk B: anzumelden, 
+  wenn man nur ein echtes Diskettenlaufwerk angeschlossen hat
+- Einige Spezialfunktionen von MagiC 5 werden jetzt ausgenutzt, die 
+  eine leichte Geschwindigkeitssteigerung insbesondere beim Schreiben 
+  bringen
+- Kein selbstmodifizierender Code im Pure-C-Interface mehr
+
+@endnode
+
+
+@node "Die Datei RAMDISK.INF"
+@prev "Die Datei RAMDISK.INF"
+@symbol ar ramdisk.inf
+@symbol ar Konfiguration
+@symbol a konfigurieren
+Konfiguration mit Hilfe der Datei RAMDISK.INF                Ramdisk-XFS
+@line 1 72 0 0 1
+
+Das Verhalten des Ramdisk-XFS l„t sich weitreichend ber eine 
+Konfigurationsdatei bestimmen. Der Name dieser Datei bildet sich aus 
+dem Basisnamen, unter dem das XFS gestartet wurde, plus der Endung 
+".inf". Lautet der Dateiname des Filesystems also ramdisk.xfs, wird 
+nach der Datei ramdisk.inf gesucht, was der bliche Fall sein sollte.
+
+Die Datei wird zun„chst im Ordner \gemsys\magic\xtension des aktuellen 
+Laufwerks gesucht, danach in dessen Wurzelverzeichnis und schlielich 
+noch im aktuellen Verzeichnis. Wird sie nirgendwo gefunden, werden 
+sinnvolle Defaulteinstellungen benutzt.
+
+Bei der Konfigurationsdatei handelt es sich um eine simple ASCII-Datei, 
+in der drei Typen von Zeilen vorkommen k”nnen:
+
+1. Leerzeilen (sollte klar sein...)
+2. Kommentarzeilen; das sind alle Zeilen, die mit einem Doppelkreuz (#) 
+   beginnen
+3. Konfigurationszeilen, die immer das Format Variable=Wert haben mssen
+
+Alle anderen Zeilen sind fehlerhaft und werden gemeldet; das gilt auch 
+fr Konfigurationszeilen mit falschen Parametern. Das XFS wartet in 
+solchen F„llen auf einen Tastendruck, damit man die fehlerhafte Zeile 
+in Ruhe lesen kann.
+
+Folgende Variablen k”nnen in den Konfigurationszeilen vorkommen 
+(Gro- und Kleinschreibung wird nicht unterschieden):
+
+drive     - Legt das Laufwerk fest, auf dem sich die Ramdisk installiert
+mountname - Legt den Verzeichnisnamen fest, unter dem die Ramdisk auf 
+            Laufwerk U zu finden ist
+label     - Default-"Diskettenname" fr das Ramdisk-XFS
+ramtype   - Bestimmt den zu benutzenden Speichertyp
+leavefree - Gr”e des mindestens freizuhaltenden Speicherblocks
+8bit      - Legt fest, ob ASCII-Zeichen > 127 (also Umlaute und andere 
+            Sonderzeichen) in Dateinamen erlaubt sind
+
+Die Defaulteinstellungen
+
+@endnode
+
+
+@node drive "Die Variable drive"
+drive                                                        Ramdisk-XFS
+@line 1 72 0 0 1
+
+Defaultwert: Undefiniert, das XFS sucht sich die erste freie Kennung
+
+Mit Hilfe der Variablen drive kann man festlegen, welches BIOS-Laufwerk 
+das Ramdisk-XFS benutzen soll (leider ist es mit der momentanen Version 
+der XFS-Schnittstelle von MagiC nicht m”glich, ohne auszukommen, da 
+man nicht direkt mounten kann).
+
+Als Wert wird einfach der gewnschte Laufwerksbuchstabe angegeben, also 
+z.B. drive=Z. Enth„lt die Datei ramdisk.inf keine drive-Zeile, sucht 
+sich das XFS selbstt„tig das erste freie BIOS-Laufwerk und belegt 
+dieses. Sollte keines mehr frei oder das durch drive festgelegte 
+bereits vergeben sein, erh„lt man eine entsprechende Meldung, das XFS 
+installiert sich dann natrlich nicht.
+
+Als Besonderheit kann man drive auch auf B setzen, wenn man nur ein 
+Diskettenlaufwerk angeschlossen hat.
+
+@endnode
+
+
+@node mountname "Die Variable mountname"
+mountname                                                    Ramdisk-XFS
+@line 1 72 0 0 1
+
+Defaultwert: Laufwerksbuchstabe
+
+Unter MagiC sind alle BIOS-Laufwerke auch als Unterverzeichnisse von 
+Laufwerk U ansprechbar, das Laufwerk J findet sich also auch im 
+Directory U:\j. Beim Ramdisk-XFS kann man nun gezielt einen anderen 
+Namen fr dieses Verzeichnis w„hlen, der dann bei mountname angegeben 
+werden mu, also z.B. mountname=RamXFS. Fehlt diese Zeile, heit das 
+Verzeichnis wie gew”hnlich und h„ngt dementsprechend davon ab, unter 
+welcher Laufwerkskennung sich das Ramdisk-XFS installiert hat.
+
+Hinweis: Zur Zeit sind im Laufwerk U von MagiC nur 8+3-Namen in 
+Grobuchstaben m”glich, d.h. das obige Beispiel (mountname=RamXFS) 
+wrde zu dem Verzeichnis U:\RAMXFS fhren.
+
+@endnode
+
+
+@node label "Die Variable label"
+label                                                        Ramdisk-XFS
+@line 1 72 0 0 1
+
+Defaultwert: Kein Label
+
+Das Ramdisk-XFS untersttzt die von TOS-kompatiblen Laufwerken und ISO-
+9660-CDROMs bekannten Volume Labels ("Diskettennamen"). Da diese 
+natrlich nicht dauerhaft gespeichert werden k”nnen, l„t sich mit 
+Hilfe der Variablen label ein solcher Name bereits beim Start festlegen.
+
+Das Label des Ramdisk-XFS darf selbstverst„ndlich auch bis zu 32 
+Zeichen lang sein (šberl„ngen werden abgeschnitten) und Gro- und 
+Kleinbuchstaben enthalten. Leider benutzen viele Desktops noch nicht 
+den korrekten Betriebssystemaufruf (Dreadlabel()), um diesen Namen ohne 
+8+3-Verstmmelung ermitteln zu k”nnen, daher wird von diesen dann 
+beispielsweise nur "Ramdisk-" statt "Ramdisk-XFS-Label" angezeigt 
+(„hnliches gilt natrlich auch fr das ndern des Labels).
+
+@endnode
+
+
+Defaultwert: altorst
+@node ramtype "Die Variable ramtype"
+ramtype                                                      Ramdisk-XFS
+@line 1 72 0 0 1
+
+Defaultwert: altorst
+
+Mit Hilfe dieser Variablen kann man genau bestimmen, welchen 
+Speichertyp das Ramdisk-XFS fr seine Daten benutzen soll. Folgende 
+Werte sind m”glich:
+
+stonly: Nur ST-kompatibles RAM
+altonly: Nur Alternate RAM ("Fast RAM")
+storalt: Egal, aber lieber ST-kompatibel
+altorst: Egal, aber lieber Alternate RAM
+
+@endnode
+
+
+@node leavefree "Die Variable leavefree"
+leavefree                                                    Ramdisk-XFS
+@line 1 72 0 0 1
+
+Defaultwert: 512
+
+Das Ramdisk-XFS achtet immer darauf, da es nicht den kompletten freien 
+Speicher belegt und einen zusammenh„ngenden Speicherblock einer 
+gewissen Mindestgr”e freil„t. Mit der Variablen leavefree kann nun 
+festgelegt werden, wieviele Kilobytes dies sein sollen. M”chte man 
+also, da das XFS immer mindestens 2 Megabyte am Stck fr andere 
+Programme freil„t, mu man die Zeile leavefree=2048 in seine 
+ramdisk.inf aufnehmen.
+
+Natrlich kann man hier auch 0 eintragen, dann darf man sich aber auch 
+nicht wundern, wenn pl”tzlich kein Speicher mehr frei ist und sich der 
+Desktop dann aus genau diesem Grund weigert, eine Datei von der Ramdisk 
+zu l”schen...
+
+Wenn die Ramdisk Speicher braucht, schaut sie zun„chst nach, wie gro 
+der gr”te zusammenh„ngende Speicherblock des gewnschten RAM-Typs ist 
+(siehe auch ramtype). Danach wird der ben”tigte Speicher angefordert. 
+Diese Anforderung gilt nur dann als fehlgeschlagen, wenn eine der 
+folgenden Bedinungen erfllt ist:
+
+- die Anforderung ist tats„chlich fehlgeschlagen, es gibt also sowieso 
+  nicht mehr genug freien Speicher
+- der gr”te zusammenh„ngende Speicherblock ist jetzt kleiner als bei 
+  leavefree angegeben
+- der gr”te zusammenh„ngende Speicherblock war schon vor der 
+  Anforderung zu klein und ist jetzt noch kleiner geworden
+
+In den beiden letzten F„llen wird der gerade angeforderte Speicher 
+wieder freigegeben.
+
+@endnode
+
+
+@node 8bit "Die Variable 8bit"
+8bit                                                         Ramdisk-XFS
+@line 1 72 0 0 1
+
+Defaultwert: false
+
+Mit der Variablen 8bit kann man festlegen, ob in Dateinamen auf dem 
+Ramdisk-XFS Umlaute und andere Sonderzeichen erlaubt sind, deren ASCII-
+Code gr”er oder gleich 128 ist. Ist das gewnscht, mu man die Zeile 
+8bit=true in die ramdisk.inf aufnehmen.
+
+@endnode
+
+
+@node "Die Defaulteinstellungen"
+@symbol ar Defaulteinstellungen
+Defaultwerte der Variablen                                   Ramdisk-XFS
+@line 1 72 0 0 1
+
+Wenn eine bestimmte Variable in der Datei ramdisk.inf nicht auftaucht, 
+werden passende Standardwerte angenommen, die hier nochmals in einer 
+šbersicht zu sehen sind. Fehlt die Datei ganz, werden alle hier 
+stehenden Werte bernommen.
+
+drive=<Erste freie BIOS-Laufwerkskennung>
+mountname=<Buchstabe des durch drive festgelegten Laufwerks>
+label=<keines vorhanden>
+ramtype=altorst
+leavefree=512
+8bit=false
+
+Werte in spitzen Klammern sind natrlich nur eine Umschreibung des 
+tats„chlichen Inhalts, der nicht direkt dargestellt werden kann.
+
+@endnode
+
+
+@node "Die Debug-Version"
+Debug-Version                                                Ramdisk-XFS
+@line 1 72 0 0 1
+
+Wer glaubt, einen Fehler nachvollziehbar gefunden zu haben, kann mir 
+durch das Zuschicken eines Debug-Protokolls viel Arbeit abnehmen. Zu 
+diesem Zweck mu man statt ramdisk.xfs die Datei ramdebug.xfs 
+installieren oder zus„tzlich starten. Diese Version gibt haufenweise 
+Protokollausgaben in die Datei c:\gemsys\magic\xtension\ramdebug.log 
+aus, was leider auch einen gewaltigen Geschwindigkeitseinbruch bedeutet.
+
+Aus diesem Grund kann man in der INF-Datei, die dann natrlich 
+ramdebug.inf heit, zus„tzlich die Variablen logfile und logback 
+benutzen. Mit logfile l„t sich der komplette Zugriffspfad (immer 
+absolut und mit Laufwerksangabe!) fr das Logfile anlegen, ber logback 
+kann ein weiterer Zugriffspfad angegeben werden, in den das alte 
+Logfile beim Start umbenannt wird (mu sich auf dem gleichen 
+physikalischen Laufwerk befinden!) Gibt man logfile alleine oder nach 
+einer logback-Zeile an, wird kein Backup erzeugt. Auf den Drucker 
+umlenken geht auch, dazu einfach U:\dev\prn fr logfile angeben 
+(natrlich dann ohne logback).
+
+Wer den Geschwindigkeitsverlust ertr„glich halten will, kann das 
+Logfile auf eine andere Ramdisk legen, @{U}auf keinen Fall@{u} aber auf 
+die Debug-Ramdisk selbst, sonst gibt es eine Endlosrekursion!
+
+Das Logfile kann zwischenzeitlich bedenkenlos gel”scht werden, wenn man 
+den ganzen Krempel, der durch das Anlegen eventueller Testdateien 
+entstanden ist, loswerden will, bevor man den eigentlichen Fehler 
+reproduziert.
+
+H„lt man beim Start der Debug-Version eine der Umschalttasten gedrckt, 
+werden alle Protokollausgaben direkt auf den Bildschirm geschrieben.
+
+@{U}Wichtig:@{u} Mit MagiCMac scheint das protokollieren der Debug-
+Ausgaben leider berhaupt nicht zu funktionieren, mal h„ngt sich das 
+System auf, mal ist die Datei leer. Die Ausgabe auf den Bildschirm 
+scheint jedoch zu klappen.
+
+@endnode
+
+
+@node "Die Sourcecodes"
+Die Sourcecodes                                              Ramdisk-XFS
+@line 1 72 0 0 1
+
+Wie bereits an anderer Stelle erw„hnt, soll das Ramdisk-XFS auch als 
+Grundlage fr interessierte Programmierer dienen, die prinzipiell ein 
+Filesystem fr MagiC programmieren wollen, dies aber wegen mangelnder 
+Beispiele (das CDROM-XFS gibt es ja nur als Binary) bisher nicht in 
+Angriff genommen haben.
+
+Darberhinaus sind die Quellcodes auch ein Beispiel fr die Benutzung 
+der Pure-C-Schnittstelle, mit der die Entwicklung eines Filesystems fr 
+MagiC deutlich bequemer wird. Assembler in allen Ehren, aber ich wollte 
+keinen ext2fs-Treiber in Maschinensprache basteln mssen...
+
+Damit die Sourcen auch wirklich hilfreich sind, habe ich sie 
+ausfhrlich kommentiert (vielleicht habe ich dabei auch etwas 
+bertrieben...) Zus„tzlich zu den reinen Kommentaren, was bestimmte 
+Codeabschnitte bewirken, finden sich viele Tips und Anmerkungen fr die 
+Programmierung eigener Filesysteme fr MagiC.
+
+Wer will, kann Teile der Sourcen bernehmen, mu das dann aber auch an 
+passender Stelle (Doku, Einschaltmeldung und bei Source-Distributionen 
+auch in den Quellen) erw„hnen. Eine nderung der Sourcen bzw. eine 
+Komplettbernahme fr ein eigenes Ramdisk-XFS ist jedoch nicht 
+gestattet! N„heres hierzu im Abschnitt Rechtliches.
+
+@endnode
+
+
+@node Bemerkungen
+Bemerkungen                                                  Ramdisk-XFS
+@line 1 72 0 0 1
+
+Hier finden sich einige Anmerkungen zu bestimmten Verhaltensweisen 
+des Ramdisk-XFS.
+
+Konvertierung der Filenamen fr Fsfirst()/Fsnext().
+
+Suchen von Dateien
+
+Verwaltung der Zugriffsrechte
+
+@endnode
+
+
+@node "Konvertierung der Filenamen"
+Behandlung von Dateinamen bei Fsfirst()/Fsnext()             Ramdisk-XFS
+@line 1 72 0 0 1
+
+Die Systemaufrufe Fsfirst()/Fsnext() (und Dreaddir() im sogenannten 
+Kompatibilit„tsmodus) liefern Filenamen, die denen auf FAT-Filesystemen 
+entsprechen; sie haben also maximal acht Zeichen Prefix, eventuell 
+einen Punkt und dahinter maximal drei Zeichen Suffix (alles in 
+Grobuchstaben). Da ein XFS fr MagiC diese Konvertierung selbst 
+vornehmen mu, finden sich hier die Regeln, nach denen das Ramdisk-XFS 
+diese Umwandlung der Dateinamen erreicht. Sie ist brigens auch fr das 
+Suchen von Dateien von Bedeutung, um auch „lteren Programmen die Chance 
+zu geben, Files zu finden.
+
+1. Die Filenamen "." fr das aktuelle und ".." fr das bergeordnete 
+   Verzeichnis werden direkt bernommen
+2. Alle Zeichen werden in Grobuchstaben gewandelt
+3. Alle in FAT-Dateinamen nicht erlaubten Zeichen werden in ein X 
+   umgewandelt (betrifft insbesondere Leerzeichen)
+4. Alle Punkte im Filenamen, auer dem letzten, werden in ein Komma 
+   verwandelt; ist der letzte Punkt gleichzeitig das letzte Zeichen des 
+   Filenamens, wird er ignoriert (z„hlt aber trotzdem als letzter Punkt)
+5. Ist das erste Zeichen ein Punkt und dies ist der einzige Punkt im 
+   Filenamen, wird er doch in ein Komma verwandelt
+6. Die ersten acht Zeichen vor dem letzten Punkt werden bernommen 
+   (wenn es keine acht sind, entsprechend weniger)
+7. Die ersten drei Zeichen nach dem letzten Punkt (sofern einer 
+   existiert) werden mitsamt dem Punkt bernommen
+
+Ein paar Beispiele:
+
+"." -> "." (Regel 1)
+"Sehr_langer_Dateiname" -> "SEHR_LAN" (Regeln 2 und 6)
+"Mein Bild.tiff" -> "MEINXBIL.TIF" (Regeln 2, 3, 6 und 7)
+".profile" -> ",PROFILE" (Regeln 2, 5 und 6)
+"Viele.Punkte.im.Namen" -> "VIELE,PU.NAM" (Regeln 2, 4, 6 und 7)
+"Punkt am Ende." -> "PUNKTXAM" (Regeln 2, 3, 4 und 6)
+
+@endnode
+
+
+@node "Suchen von Dateien"
+Vorgehensweise bei der Dateisuche                            Ramdisk-XFS
+@line 1 72 0 0 1
+
+Das Suchen von Dateien auf der Ramdisk ist unter MagiC 3 oder bei 
+Programmen, die in der TOS-Domain laufen, eine etwas schwierigere 
+Angelegenheit. Man erwartet schlielich, da ein altes Programm Dateien 
+”ffnen kann, auch wenn sie durch die Dateiauswahlbox verstmmelt wurden.
+
+Dazu ein Beispiel: Eine Datei auf der Ramdisk heit Beispielname.txt 
+und soll nun in einem „lteren Programm ge”ffnet werden. In der 
+Dateiauswahlbox wird der Name zu BEISPIEL.TXT und wird dementsprechend 
+so vom Programm gesucht. Wrde das XFS jetzt nicht auch mit 8+3-
+Vergleichen arbeiten, k”nnte die Datei nicht ge”ffnet werden.
+
+Folgende Tabelle zeigt eine šbersicht, wann das Ramdisk-XFS wie sucht. 
+Dabei wird zwischen "Zugriff" und "Existenz" unterschieden. Im ersten 
+Fall soll auf die Datei zugegriffen werden, im zweiten soll lediglich 
+festgestellt werden, ob bereits eine Datei gleichen Namens existiert.
+
+                Suchen                         Existenz
+
+     MagiC3 MagiC4-TOS MagiC4-MiNT   MagiC3 MagiC4-TOS MagiC4-MiNT
+(1)    ja       ja         ja          ja      nein        ja
+(2)   nein      ja        nein        nein      ja        nein
+(3)    ja       ja        nein        nein     nein       nein
+
+(1) = Direkter Vergleich der Filenamen ohne irgendwelche Umwandlungen
+(2) = Vergleich der Filenamen in Kleinbuchstaben
+(3) = Vergleich der Filenamen in 8+3-Schreibweise
+
+TOS und MiNT hinter MagiC 4 bezieht sich hier auf die Domain, in der 
+das suchende bzw. prfende Programm l„uft.
+
+Wenn Methode (3) gebraucht wird, um eine Datei zu suchen, kann es 
+passieren, da eine falsche ermittelt wird. Wenn es im obigen Beispiel 
+noch eine Datei beispieldatei.txt gibt, deren Eintrag physikalisch vor 
+dem von Beispielname.txt liegt, wird beim ™ffnen von BEISPIEL.TXT immer 
+die erste gefunden, da sie auf 8+3-Basis bereits den gleichen Namen 
+hat, auch wenn eigentlich die andere Datei gemeint war.
+
+@endnode
+
+
+@node "Verwaltung der Zugriffsrechte"
+@next "Verwaltung der Zugriffsrechte"
+Zugriffsrechte                                               Ramdisk-XFS
+@line 1 72 0 0 1
+
+Da das Ramdisk-XFS so weit wie m”glich ein Unix-Filesystem nachbildet, 
+MagiC aber bislang keinerlei Mehrbenutzerf„higkeit besitzt, werden die 
+Zugriffsrechte etwas anders als beispielsweise von MiNT gewohnt 
+ausgewertet.
+
+Unter MagiC gibt es nur einen einzigen User, der damit auch "Superuser" 
+ist. Dieser hat unter Unix normalerweise keinerlei Einschr„nkungen im 
+Bezug auf Dateizugriffe, kann also alle Dateien einsehen, ver„ndern, 
+neu anlegen, l”schen, etc. (eine Ausnahme davon sind z.B. Dateien in 
+einem AFS-Baum, was hier aber nicht weiter von Interesse ist).
+
+Wrde das Ramdisk-XFS jetzt den "Superuser" wie gewohnt behandeln, 
+k”nnte man berhaupt keine Zugriffsbeschr„nkungen realisieren. Daher 
+werden die Rechte immer berprft, und zwar die, die fr den Eigner 
+eingetragen sind.
+
+Auf diese Weise kann man mit Hilfe des GEMDOS-Calls Fchmod() den 
+Zugriff auf Dateien und Verzeichnisse regeln. L”scht man beispielsweise 
+das Schreibbit, k”nnen keine neuen Eintr„ge in dem Verzeichnis mehr 
+angelegt werden. Ein gel”schtes Lesebit verbietet es, Dateien zu lesen 
+oder Verzeichnisse anzuzeigen.
+
+Eine weitere Besonderheit ist das x-Bit. Bei Dateien zeigt es 
+eigentlich nur an, ob es sich um ein ausfhrbares File handelt (auch 
+Skripte). Es wird bei Programmen, die in der TOS-Domain laufen, 
+automatisch fr neue Dateien gesetzt, die mit .tos, .ttp, .prg, .app, 
+.gtp oder .acc enden.
+
+Bei einem Verzeichnis hingegen gibt das x-Bit an, ob es "berschritten" 
+werden darf, d.h. ob es in einer Pfadangabe als Teilstck vorkommen 
+darf. Ein Beispiel: Ist das x-Bit des Directories Z:\foo\bar gel”scht, 
+kann man sich zwar den Inhalt anschauen, nicht jedoch auf Dateien oder 
+Unterverzeichnisse zugreifen. Ein Versuch, die Datei 
+Z:\foo\bar\foobar.txt zu ”ffnen, schl„gt also fehl.
+
+Auch das Lesebit bietet bei Verzeichnissen noch eine kleine 
+šberraschung: Ist es gel”scht, das x-Bit aber gesetzt, kann man den 
+Inhalt nicht mehr anzeigen lassen. Trotzdem kann man auf Dateien und 
+Unterverzeichnisse, deren Namen man kennt, zugreifen. Ist also das 
+Lesebit bei Z:\foo\bar gel”scht (und gleichzeitig das x-Bit gesetzt), 
+schl„gt ein ls -l Z:\foo\bar fehl. Die Datei Z:\foo\bar\foobar.txt l„t 
+sich jedoch problemlos ”ffnen (sofern sie existiert und lesbar ist).
+
+Der GEMDOS-Befehl Fattrib() erlaubt es, zumindest das Schreibbit (ber 
+das Nur-Lesen-Bit) von Dateien und Directories zu beeinflussen. Daneben 
+wird auch das Archivbit fr Dateien untersttzt, obwohl es das auf Unix-
+Filesystemen nicht gibt. (Als "Ersatz" fhren diese, wie auch das 
+Ramdisk-XFS, ein Datum der letzten Modifikation, was fr Backup-Zwecke 
+weitaus besser geeignet ist, da es im Gegensatz zum Archivbit nach 
+erfolgter Sicherung der Datei nicht manipuliert werden mu.)
+
+Das Schreibbit verh„lt sich aus Kompatibilit„tsgrnden leicht anders 
+als unter Unix: Ist es nicht gesetzt, kann eine Datei nicht gel”scht 
+werden. Unter Unix w„re das problemlos m”glich, da die Zugriffsrechte 
+des dazugeh”rigen Verzeichnisses entscheiden, ob eine Datei gel”scht 
+werden kann oder nicht (das rm-Kommando fragt aber im Normalfall bei 
+solchen Dateien vorher nach).
+
+@endnode
+
+
+@node helpme Hilfe
+@prev helpme
+@next helpme
+Hilfsseite                                                   Ramdisk-XFS
+@line 1 72 0 0 1
+
+Dies ist eine Hypertextanleitung zum Ramdisk-XFS, der flexiblen 
+dynamischen Ramdisk fr MagiC und MagiCMac, die auch lange Dateinamen 
+untersttzt.
+
+Vielen herzlichen Dank bei dieser Gelegenheit an Holger Weets & Co. fr 
+den ST-Guide und die dazugeh”renden Utilities!
+
+@endnode
+

@@ -704,8 +704,8 @@ static LONG cdecl   xfs_drv_open( MX_DMD *dmd )
 
 	dmd->d_root = &(root->dd);
 	dmd->d_xfs = &cdxfs;
-	dmd->devcode = (LONG) ldp;
-	dmd->driver = (LONG) eject;
+	dmd->d_devcode = (LONG) ldp;
+	dmd->d_driver = (LONG) eject;
 	return(E_OK);
 }
 
