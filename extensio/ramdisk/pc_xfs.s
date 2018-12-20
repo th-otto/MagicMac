@@ -46,9 +46,9 @@
 ;             eingebaut: my_mxalloc, my_mfree und my_mshrink.
 
 	include	"mgx_xfs.inc"
-	include "pc_xfs.inc"
 
-	export	install_xfs,real_xfs
+	export	install_xfs
+	export	my_xfs
 
 ; Makro zum Retten von Registern. Als Parameter erhÑlt es eine Nummer
 ; und die zu rettenden Register im movem-Format; wird es nur mit
@@ -93,8 +93,7 @@ endm
 ; RÅckgabe:
 ; a0: Zeiger auf THE_MX_KERNEL-Struktur, wenn die Anmeldung geklappt
 ;     hat, sonst 0
-module install_xfs
-	import	the_xfs_sync,my_xfs
+install_xfs:
 
 	movem.l	a2-a3,-(sp)
 	moveq	#0,d0
@@ -104,22 +103,13 @@ module install_xfs
 
 ; Ansonsten die einzelnen Funktionspointer und den Namen des XFS
 ; in die jeweiligen Zielstrukturen eintragen.
-	lea		_xfs_name(a0),a2
-	lea		the_xfs_sync,a3
-	move.w	#_xfs_sync,d0
-	moveq	#0,d1
+	move.l	a0,a2
+	lea		my_cxfs,a3
+	lea		xfs_sizeof(a3),a1
 copy_xfs:
-	move.l	(a2,d0.w),(a3,d1.w)
-	addq.w	#4,d1
-	addq.w	#4,d0
-	cmpi.w	#_xfs_end,d0
+	move.l	(a2)+,(a3)+
+	cmp.l	a3,a1
 	bne.s	copy_xfs
-	lea		_xfs_name(a0),a2
-	lea		my_xfs,a3
-	move.w	#7,d0
-copy_name:
-	move.b	(a2)+,(a3)+
-	dbra	d0,copy_name
 
 ; Jetzt das XFS mit der "echten" Struktur per Dcntl anmelden, bei
 ; Fehler abbrechen
@@ -133,7 +123,6 @@ failure:
 	move.l	d0,a0
 	movem.l	(sp)+,a2-a3
 	rts
-endmod
 
 ; Es folgen jetzt die Routinen, die fÅr die einzelnen XFS-Funktionen
 ; tatsÑchlich angemeldet sind. Sie rufen die zugehîrigen C-Funktionen
@@ -142,42 +131,42 @@ endmod
 ; Funktion zu beschreiben schenke ich mir...
 my_sync:
 	pushr	1
-	move.l	the_xfs_sync(pc),a6
+	move.l	my_cxfs+xfs_sync(pc),a6
 	jsr		(a6)
 	popr
 	rts
 
 my_pterm:
 	pushr	2
-	move.l	the_xfs_pterm,a6
+	move.l	my_cxfs+xfs_pterm,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_garbcoll:
 	pushr	3
-	move.l	the_xfs_garbcoll,a6
+	move.l	my_cxfs+xfs_garbcoll,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_freeDD:
 	pushr	4
-	move.l	the_xfs_freeDD,a6
+	move.l	my_cxfs+xfs_freeDD,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_drv_open:
 	pushr	5
-	move.l	the_xfs_drv_open,a6
+	move.l	my_cxfs+xfs_drv_open,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_drv_close:
 	pushr	6
-	move.l	the_xfs_drv_close,a6
+	move.l	my_cxfs+xfs_drv_close,a6
 	jsr		(a6)
 	popr
 	rts
@@ -188,7 +177,7 @@ my_path2DD:
 	pea		8(sp)
 	pea		8(sp)
 	pea		8(sp)
-	move.l	the_xfs_path2DD,a6
+	move.l	my_cxfs+xfs_path2DD,a6
 	jsr		(a6)
 	lea		12(sp),sp
 	move.l	(sp)+,d1
@@ -203,7 +192,7 @@ my_sfirst:
 	pea		(sp)
 	move.l	d0,-(sp)
 	move.w	d1,d0
-	move.l	the_xfs_sfirst,a6
+	move.l	my_cxfs+xfs_sfirst,a6
 	jsr		(a6)
 	addq.l	#8,sp
 	move.l	(sp)+,a0
@@ -214,7 +203,7 @@ my_snext:
 	pushr	9,a1/d1-d2
 	clr.l	-(sp)
 	pea		(sp)
-	move.l	the_xfs_snext,a6
+	move.l	my_cxfs+xfs_snext,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	move.l	(sp)+,a0
@@ -225,7 +214,7 @@ my_fopen:
 	pushr	10,a1/d1-d2
 	clr.l	-(sp)
 	pea		(sp)
-	move.l	the_xfs_fopen,a6
+	move.l	my_cxfs+xfs_fopen,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	move.l	(sp)+,a0
@@ -234,7 +223,7 @@ my_fopen:
 
 my_fdelete:
 	pushr	11
-	move.l	the_xfs_fdelete,a6
+	move.l	my_cxfs+xfs_fdelete,a6
 	jsr		(a6)
 	popr
 	rts
@@ -244,7 +233,7 @@ my_link:
 	move.l	d1,-(sp)
 	move.l	d0,-(sp)
 	move.w	d2,d0
-	move.l	the_xfs_link,a6
+	move.l	my_cxfs+xfs_link,a6
 	jsr		(a6)
 	addq.l	#8,sp
 	popr
@@ -256,7 +245,7 @@ my_xattr:
 	pea		(sp)
 	move.l	d0,-(sp)
 	move.w	d1,d0
-	move.l	the_xfs_xattr,a6
+	move.l	my_cxfs+xfs_xattr,a6
 	jsr		(a6)
 	addq.l	#8,sp
 	move.l	(sp)+,a0
@@ -267,7 +256,7 @@ my_attrib:
 	pushr	14,a1/d1-d2
 	clr.l	-(sp)
 	pea		(sp)
-	move.l	the_xfs_attrib,a6
+	move.l	my_cxfs+xfs_attrib,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	move.l	(sp)+,a0
@@ -278,7 +267,7 @@ my_chown:
 	pushr	15,a1/d1-d2
 	clr.l	-(sp)
 	pea		(sp)
-	move.l	the_xfs_chown,a6
+	move.l	my_cxfs+xfs_chown,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	move.l	(sp)+,a0
@@ -289,7 +278,7 @@ my_chmod:
 	pushr	16,a1/d1-d2
 	clr.l	-(sp)
 	pea		(sp)
-	move.l	the_xfs_chmod,a6
+	move.l	my_cxfs+xfs_chmod,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	move.l	(sp)+,a0
@@ -298,28 +287,28 @@ my_chmod:
 
 my_dcreate:
 	pushr	17
-	move.l	the_xfs_dcreate,a6
+	move.l	my_cxfs+xfs_dcreate,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_ddelete:
 	pushr	18
-	move.l	the_xfs_ddelete,a6
+	move.l	my_cxfs+xfs_ddelete,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_DD2name:
 	pushr	19
-	move.l	the_xfs_DD2name,a6
+	move.l	my_cxfs+xfs_DD2name,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_dopendir:
 	pushr	20
-	move.l	the_xfs_dopendir,a6
+	move.l	my_cxfs+xfs_dopendir,a6
 	jsr		(a6)
 	popr
 	rts
@@ -328,7 +317,7 @@ my_dreaddir:
 	pushr	21
 	move.l	d2,-(sp)
 	move.l	d1,-(sp)
-	move.l	the_xfs_dreaddir,a6
+	move.l	my_cxfs+xfs_dreaddir,a6
 	jsr		(a6)
 	addq.l	#8,sp
 	popr
@@ -336,35 +325,35 @@ my_dreaddir:
 
 my_drewinddir:
 	pushr	22
-	move.l	the_xfs_drewinddir,a6
+	move.l	my_cxfs+xfs_drewinddir,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_dclosedir:
 	pushr	23
-	move.l	the_xfs_dclosedir,a6
+	move.l	my_cxfs+xfs_dclosedir,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_dpathconf:
 	pushr	24
-	move.l	the_xfs_dpathconf,a6
+	move.l	my_cxfs+xfs_dpathconf,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_dfree:
 	pushr	25
-	move.l	the_xfs_dfree,a6
+	move.l	my_cxfs+xfs_dfree,a6
 	jsr		(a6)
 	popr
 	rts
 
 my_wlabel:
 	pushr	26
-	move.l	the_xfs_wlabel,a6
+	move.l	my_cxfs+xfs_wlabel,a6
 	jsr		(a6)
 	popr
 	rts
@@ -373,7 +362,7 @@ my_rlabel:
 	pushr	27
 	move.l	d0,-(sp)
 	move.w	d1,d0
-	move.l	the_xfs_rlabel,a6
+	move.l	my_cxfs+xfs_rlabel,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	popr
@@ -382,7 +371,7 @@ my_rlabel:
 my_symlink:
 	pushr	28
 	move.l	d0,-(sp)
-	move.l	the_xfs_symlink,a6
+	move.l	my_cxfs+xfs_symlink,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	popr
@@ -392,7 +381,7 @@ my_readlink:
 	pushr	29
 	move.l	d0,-(sp)
 	move.w	d1,d0
-	move.l	the_xfs_readlink,a6
+	move.l	my_cxfs+xfs_readlink,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	popr
@@ -402,7 +391,7 @@ my_dcntl:
 	pushr	30,a1/d1-d2
 	clr.l	-(sp)
 	pea		(sp)
-	move.l	the_xfs_dcntl,a6
+	move.l	my_cxfs+xfs_dcntl,a6
 	jsr		(a6)
 	addq.l	#4,sp
 	move.l	(sp)+,a0
@@ -449,71 +438,10 @@ my_xfs:
 	dc.l	my_readlink		; xfs_readlink
 	dc.l	my_dcntl		; xfs_dcntl
 
-; Hier steht der Zeiger auf die beim Kernel angemeldete Struktur, den
-; man fÅr das korrekte Belegen eines DMD braucht.
-real_xfs:
-	dc.l	my_xfs
+	BSS
 
 ; In diese Tabelle werden spÑter von install_xfs die Adressen der
 ; XFS-C-Funktionen eingetragen, um sie in den vorgeschalteten
 ; Assemblerroutinen ohne Offsetberechnungen anspringen zu kînnen.
-the_xfs_sync:
-	dc.l	0
-the_xfs_pterm:
-	dc.l	0
-the_xfs_garbcoll:
-	dc.l	0
-the_xfs_freeDD:
-	dc.l	0
-the_xfs_drv_open:
-	dc.l	0
-the_xfs_drv_close:
-	dc.l	0
-the_xfs_path2DD:
-	dc.l	0
-the_xfs_sfirst:
-	dc.l	0
-the_xfs_snext:
-	dc.l	0
-the_xfs_fopen:
-	dc.l	0
-the_xfs_fdelete:
-	dc.l	0
-the_xfs_link:
-	dc.l	0
-the_xfs_xattr:
-	dc.l	0
-the_xfs_attrib:
-	dc.l	0
-the_xfs_chown:
-	dc.l	0
-the_xfs_chmod:
-	dc.l	0
-the_xfs_dcreate:
-	dc.l	0
-the_xfs_ddelete:
-	dc.l	0
-the_xfs_DD2name:
-	dc.l	0
-the_xfs_dopendir:
-	dc.l	0
-the_xfs_dreaddir:
-	dc.l	0
-the_xfs_drewinddir:
-	dc.l	0
-the_xfs_dclosedir:
-	dc.l	0
-the_xfs_dpathconf:
-	dc.l	0
-the_xfs_dfree:
-	dc.l	0
-the_xfs_wlabel:
-	dc.l	0
-the_xfs_rlabel:
-	dc.l	0
-the_xfs_symlink:
-	dc.l	0
-the_xfs_readlink:
-	dc.l	0
-the_xfs_dcntl:
-	dc.l	0
+my_cxfs:
+	ds.b xfs_sizeof

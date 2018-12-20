@@ -69,7 +69,7 @@ typedef void APPL;
  * werden, wenn es sich um MagiC-Strukturen wie DMD, DD, FD, oder DHD
  * handelt.
  */
-extern void	*real_xfs;
+extern MX_XFS my_xfs;
 
 
 /*
@@ -77,9 +77,12 @@ extern void	*real_xfs;
  * Struktur fehlen die Anteile der XFS-Schnittstelle, die fÅr
  * (externe) Treiber ohne Belang sind.
  */
-typedef struct
+typedef struct _the_mgx_xfs
 {
 	char	xfs_name[8];
+	struct _the_mgx_xfs *xfs_next;
+	ULONG   xfs_flags;
+	long    (*xfs_init)(void);
 	void	(*xfs_sync)(MX_DMD *d);
 	void	(*xfs_pterm)(MX_DMD *d, PD *pd);
 /*

@@ -169,6 +169,7 @@ xfs_rlabel:    DS.L      1
 xfs_symlink:   DS.L      1
 xfs_readlink:  DS.L      1
 xfs_dcntl:     DS.L      1
+xfs_sizeof:
 
      TEXT
 

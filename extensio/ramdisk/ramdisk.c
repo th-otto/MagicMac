@@ -384,7 +384,7 @@ LONG ramdisk_drv_open(MX_DMD *d)
 		if (d->d_drive == ramdisk_drive)
 		{
 /* Wie gesagt: Unbedingt real_xfs fr d_xfs eintragen! */
-			d->d_xfs = real_xfs;
+			d->d_xfs = &my_xfs;
 			d->d_root = (MX_DD *)&fd[ROOT];
 			d->d_biosdev = -1;
 			d->d_driver = 0;
@@ -426,7 +426,7 @@ LONG ramdisk_drv_open(MX_DMD *d)
  * Laufwerk angemeldet wurde, das jetzt von einem anderen XFS
  * beansprucht wird.
  */
-	if (d->d_xfs != real_xfs)
+	if (d->d_xfs != &my_xfs)
 		return(EDRIVE);
 	return(E_OK);
 }
@@ -446,7 +446,7 @@ LONG ramdisk_drv_close(MX_DMD *d, WORD mode)
  * Auch hier sicherheitshalber eine Prfung, ob noch das richtige
  * XFS eingetragen ist
  */
-	if (d->d_xfs != real_xfs)
+	if (d->d_xfs != &my_xfs)
 		return(EDRIVE);
 	for (i = 0; i < MAX_DHD; i++)
 	{
@@ -2974,6 +2974,9 @@ LONG ramdisk_putc(MX_FD *file, WORD mode, LONG value)
 
 THE_MGX_XFS ramdisk_xfs = {
 	"Ramdisk",
+	0,
+	0,
+	0,
 	ramdisk_sync,
 	ramdisk_pterm,
 	ramdisk_garbcoll,

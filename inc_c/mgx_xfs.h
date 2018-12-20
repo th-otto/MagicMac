@@ -222,7 +222,7 @@ typedef struct _mx_xfs {
      long      (*xfs_fdelete)(MX_DD *dd, char *name);
      long      (*xfs_link)(MX_DD *altdd, MX_DD *neudd, /* d0= */ char *altname, /* d1= */ char *neuname, /* d2= */ WORD flag);
      long      (*xfs_xattr)(MX_DD *dd, char *name, /* d0= */ XATTR *xa, /* d1= */ WORD mode);
-     long      (*xfs_attrib)(MX_DD *dd, char *name, WORD mode, WORD attrib);
+     long      (*xfs_attrib)(MX_DD *dd, char *name, WORD mode, WORD attrib, void **symlink);
      long      (*xfs_chown)(MX_DD *dd, char *name, UWORD uid, UWORD gid);
      long      (*xfs_chmod)(MX_DD *dd, char *name, UWORD mode);
      long      (*xfs_dcreate)(MX_DD *dd, char *name, UWORD mode);
