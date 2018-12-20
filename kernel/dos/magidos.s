@@ -2542,15 +2542,15 @@ kernel:
  DC.L     evnt_sem
  DC.L     Pfree
  DC.W     FDSIZE              ; Laenge eines internen Speicherblocks
- DC.L     int_malloc
+ DC.L     int_malloc_c
  DC.L     int_mfree
  DC.L     resv_intmem
  DC.L     diskchange
- DC.L     DMD_rdevinit        ; ab 3.6.95
- DC.L     proc_info           ; ab 14.11.95
- DC.L     ker_mxalloc         ; ab 15.6.96
- DC.L     ker_mfree           ; ab 15.6.96
- DC.L     ker_mshrink         ; ab 15.6.96
+ DC.L     DMD_rdevinit        ; ab 3.6.95 (kernel version 1)
+ DC.L     proc_info           ; ab 14.11.95 (kernel version 2)
+ DC.L     ker_mxalloc         ; ab 15.6.96 (kernel version 4)
+ DC.L     ker_mfree           ; ab 15.6.96 (kernel version 4)
+ DC.L     ker_mshrink         ; ab 15.6.96 (kernel version 4)
 
 
 **********************************************************************
@@ -8692,6 +8692,14 @@ intm_ende:
  lea      FDSIZE(a0),a1
  jsr      fast_clrmem
  move.l   (sp)+,d0                 ; Zeiger auf Datenbereich zurueck
+ rts
+
+; via kernel struct exported function:
+; return value in both a0/d0, because of some
+; wrong declaration in some headers
+int_malloc_c:
+ bsr.s int_malloc
+ move.l d0,a0
  rts
 
 
