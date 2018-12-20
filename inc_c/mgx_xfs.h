@@ -51,18 +51,18 @@ typedef struct {
      long (*evnt_sem)         ( WORD mode, void *sem, LONG timeout );
      void (*Pfree)            ( PD *pd );
      WORD int_msize;
-     LONG /* void * */ int_malloc         ( void );
-     void int_mfree           ( void *memblk );
-     void resv_intmem         ( void *mem, LONG bytes );
-     LONG diskchange          ( WORD drv );
+     LONG (*int_malloc)       ( void );
+     void (*int_mfree)        ( void *memblk );
+     void (*resv_intmem)      ( void *mem, LONG bytes );
+     LONG (*diskchange)       ( WORD drv );
 /* Ab Kernelversion 1: */
-     LONG DMD_rdevinit		( struct _mx_dmd *dmd );
+     LONG (*DMD_rdevinit)     ( struct _mx_dmd *dmd );
 /* Ab Kernelversion 2: */
-     LONG proc_info			( WORD code, PD *pd );
+     LONG (*proc_info)        ( WORD code, PD *pd );
 /* Ab Kernelversion 4: */
-	LONG mxalloc			( LONG amount, WORD mode, PD *pd );
-	LONG mfree			( void *block );
-	LONG mshrink			( LONG newlen, void *block );
+     LONG (*mxalloc)          ( LONG amount, WORD mode, PD *pd );
+     LONG (*mfree)            ( void *block );
+     LONG (*mshrink)          ( void *block, LONG newlen );
 } MX_KERNEL;
 
 

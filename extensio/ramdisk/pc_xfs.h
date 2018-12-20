@@ -306,46 +306,45 @@ typedef struct
  */
 typedef struct
 {
-	WORD		version;
-	void		(*fast_clrmem)(void *von, void *bis);
-	char		(*to_upper)(WORD c);
-	void 		(*_sprintf)(char *dest, char *source, LONG *p);
-	BASPAG		**act_pd;
-	void		*act_appl;
-	void		*keyb_appl;
-	WORD		*pe_slice;
-	WORD		*pe_timer;
-	void		(*appl_yield)(void);
-	void		(*appl_suspend)(void);
-	void		(*appl_begcritic)(void);
-	void		(*appl_endcritic)(void);
-	LONG		(*event_IO)(LONG ticks_50hz, MAGX_UNSEL *unsel);
-	void		(*event_mIO)(LONG ticks_50hz, MAGX_UNSEL *unsel,
-		WORD cnt);
-	void		(*event_emIO)(void *ap);
-	void		(*appl_IOcomplete)(void *ap);
-#define SEM_FREE	0
-#define SEM_SET		1
-#define SEM_TEST	2
-#define SEM_CSET	3
-#define SEM_GET		4
-#define SEM_CREATE	5
-#define SEM_DEL		6
-	LONG		(*evnt_sem)(WORD mode, void *sem, LONG timeout);
-	void		(*Pfree)(BASPAG *pd);
-	WORD		int_msize;
-	void		*(*int_malloc)(void);
-	void		(*int_mfree)(void *memblk);
-	void		(*resv_intmem)(void *mem, LONG bytes);
-	LONG		(*diskchange)(WORD drv);
-/* Dieses Element existiert nur, wenn version >= 1 ist! */
-	LONG		(*DMD_rdevinit)(DMD *dmd);
-/* Dieses Element existiert nur, wenn version >= 2 ist! */
-	LONG		(*proc_info)(WORD code, BASPAG *pd);
-/* Die folgenden drei Elemente existieren nur bei version >= 4! */
-	void		*(*mxalloc)(LONG amount, WORD mode, BASPAG *pd);
-	LONG		(*mfree)(void *block);
-	void		*(*mshrink)(void *block, LONG newlen);
+     WORD version;
+     void (*fast_clrmem)      ( void *von, void *bis );
+     char (*toupper)          ( char c );
+     void (*_sprintf)         ( char *dest, const char *source, LONG *p );
+     BASPAG     **act_pd;
+     void *act_appl;
+     void *keyb_appl;
+     WORD *pe_slice;
+     WORD *pe_timer;
+     void (*appl_yield)       ( void );
+     void (*appl_suspend)     ( void );
+     void (*appl_begcritic)   ( void );
+     void (*appl_endcritic)   ( void );
+     long (*evnt_IO)          ( LONG ticks_50hz, MAGX_UNSEL *unsel );
+     void (*evnt_mIO)         ( LONG ticks_50hz, MAGX_UNSEL *unsel, WORD cnt );
+     void (*evnt_emIO)        ( void *ap );
+     void (*appl_IOcomplete)  ( void *ap );
+#define SEM_FREE    0
+#define SEM_SET     1
+#define SEM_TEST    2
+#define SEM_CSET    3
+#define SEM_GET     4
+#define SEM_CREATE  5
+#define SEM_DEL     6
+     long (*evnt_sem)         ( WORD mode, void *sem, LONG timeout );
+     void (*Pfree)            ( BASPAG *pd );
+     WORD int_msize;
+     LONG (*int_malloc)       ( void );
+     void (*int_mfree)        ( void *memblk );
+     void (*resv_intmem)      ( void *mem, LONG bytes );
+     LONG (*diskchange)       ( WORD drv );
+/* Ab Kernelversion 1: */
+     LONG (*DMD_rdevinit)     ( DMD *dmd );
+/* Ab Kernelversion 2: */
+     LONG (*proc_info)        ( WORD code, BASPAG *pd );
+/* Ab Kernelversion 4: */
+     LONG (*mxalloc)          ( LONG amount, WORD mode, BASPAG *pd );
+     LONG (*mfree)            ( void *block );
+     LONG (*mshrink)          ( void *block, LONG newlen );
 } THE_MX_KERNEL;
 
 /*
@@ -355,6 +354,8 @@ typedef struct
  * diese Struktur zu gehen, da die Kopie nicht aktualisiert wird.
  */
 extern THE_MX_KERNEL *real_kernel;
+extern THE_MX_KERNEL *kernel;
+extern THE_MX_KERNEL *install_kernel(THE_MX_KERNEL *);
 
 /*
  * Routine zur Installation des XFS. Ihr Åbergibt man den Zeiger auf
@@ -362,7 +363,7 @@ extern THE_MX_KERNEL *real_kernel;
  * Kernelstruktur von MagiC 3 oder NULL, wenn ein Fehler aufgetreten
  * ist.
  */
-THE_MX_KERNEL *install_xfs(THE_MGX_XFS *xfs);
+LONG install_xfs(THE_MGX_XFS *xfs);
 
 /* Einfachste Form eines DD */
 typedef struct

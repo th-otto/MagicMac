@@ -13,6 +13,7 @@ ramdebug.xfs
 ramdisk.c (ramdisk.h, proto.h)
 ramutil.c (ramdisk.h, proto.h, version.h)
 pc_xfs.s
+pc_kern.s
 
 ..\..\pc\lib\pctoslib.lib
 ..\..\pc\lib\pcstdlib.lib

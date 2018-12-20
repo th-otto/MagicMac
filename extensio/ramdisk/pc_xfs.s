@@ -49,7 +49,6 @@
 	include "pc_xfs.inc"
 
 	export	install_xfs,real_xfs
-	export	real_kernel
 
 ; Makro zum Retten von Registern. Als Parameter erhÑlt es eine Nummer
 ; und die zu rettenden Register im movem-Format; wird es nur mit
@@ -95,7 +94,7 @@ endm
 ; a0: Zeiger auf THE_MX_KERNEL-Struktur, wenn die Anmeldung geklappt
 ;     hat, sonst 0
 module install_xfs
-	import	the_xfs_sync,my_xfs,my_mx_kernel
+	import	the_xfs_sync,my_xfs
 
 	movem.l	a2-a3,-(sp)
 	moveq	#0,d0
@@ -130,23 +129,6 @@ copy_name:
 	move.w	#$130,-(sp)		; Dcntl
 	trap	#1
 	lea		12(sp),sp
-	tst.l	d0
-	bmi.s	failure
-
-; Zeiger auf die tatsÑchliche Kernelstruktur speichern und die
-; Variablen in die C-Struktur Åbertragen (auch wenn das C-Programm
-; auf sie eigentlich nur Åber real_kernel zugreifen soll)
-	move.l	d0,real_kernel
-	move.l	d0,a0
-	lea		my_mx_kernel,a1
-	move.w	mxk_version(a0),mxk_version(a1)
-	move.l	mxk_act_pd(a0),mxk_act_pd(a1)
-	move.l	mxk_act_appl(a0),mxk_act_appl(a1)
-	move.l	mxk_keyb_app(a0),mxk_keyb_app(a1)
-	move.l	mxk_pe_slice(a0),mxk_pe_slice(a1)
-	move.l	mxk_pe_timer(a0),mxk_pe_timer(a1)
-	move.w	mxk_int_msize(a0),mxk_int_msize(a1)
-	move.l	a1,d0
 failure:
 	move.l	d0,a0
 	movem.l	(sp)+,a2-a3
@@ -427,192 +409,6 @@ my_dcntl:
 	popr	a1/d1-d2
 	rts
 
-; Ab hier folgen die Routinen, die das AusfÅhren der Kernelfunktionen
-; Åbernehmen und dabei dafÅr sorgen, daû die Register gerettet werden
-my_fast_clrmem:
-	pushr	31,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_fast_clrmem(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_toupper:
-	pushr	32,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_toupper(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my__sprintf:
-	move.l	4(sp),d0
-	pushr	33,d3-d7/a2-a5
-	move.l	d0,-(sp)
-	move.l	a1,-(sp)
-	move.l	a0,-(sp)
-	move.l	real_kernel,a6
-	move.l	mxk__sprintf(a6),a6
-	jsr		(a6)
-	lea		12(sp),sp
-	popr	d3-d7/a2-a5
-	rts
-
-my_appl_yield:
-	pushr	34,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_appl_yield(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_appl_suspend:
-	pushr	35,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_appl_suspend(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_appl_begcritic:
-	pushr	36,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_appl_begcritic(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_appl_endcritic:
-	pushr	37,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_appl_endcritic(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_evnt_IO:
-	pushr	38,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_evnt_IO(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_evnt_mIO:
-	pushr	39,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_evnt_mIO(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_evnt_emIO:
-	pushr	40,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_evnt_emIO(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_appl_IOcomplete:
-	pushr	41,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_appl_IOcomplete(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_evnt_sem:
-	pushr	42,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_evnt_sem(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_Pfree:
-	pushr	43,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_Pfree(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_int_malloc:
-	pushr	44,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_int_malloc(a6),a6
-	jsr		(a6)
-	move.l	d0,a0
-	popr	d3-d7/a2-a5
-	rts
-
-my_int_mfree:
-	pushr	45,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_int_mfree(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_resv_intmem:
-	pushr	46,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_resv_intmem(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_diskchange:
-	pushr	47,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_diskchange(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_DMD_rdevinit:
-	pushr	48,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_DMD_rdevinit(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_proc_info:
-	pushr	49,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_ker_proc_info(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_mxalloc:
-	pushr	50,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_ker_mxalloc(a6),a6
-	jsr		(a6)
-	move.l	d0,a0
-	popr	d3-d7/a2-a5
-	rts
-
-my_mfree:
-	pushr	51,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_ker_mfree(a6),a6
-	jsr		(a6)
-	popr	d3-d7/a2-a5
-	rts
-
-my_mshrink:
-	pushr	52,d3-d7/a2-a5
-	move.l	real_kernel,a6
-	move.l	mxk_ker_mshrink(a6),a6
-	jsr		(a6)
-	move.l	d0,a0
-	popr	d3-d7/a2-a5
-	rts
-
 	data
 
 ; Diese Struktur wird tatsÑchlich beim Kernel angemeldet und enthÑlt
@@ -721,42 +517,3 @@ the_xfs_readlink:
 	dc.l	0
 the_xfs_dcntl:
 	dc.l	0
-
-; Dies ist die Kernelstruktur, die von install_xfs zurÅckgeliefert
-; wird
-my_mx_kernel:
-	dc.w	0
-	dc.l	my_fast_clrmem
-	dc.l	my_toupper
-	dc.l	my__sprintf
-	dc.l	0
-	dc.l	0
-	dc.l	0
-	dc.l	0
-	dc.l	0
-	dc.l	my_appl_yield
-	dc.l	my_appl_suspend
-	dc.l	my_appl_begcritic
-	dc.l	my_appl_endcritic
-	dc.l	my_evnt_IO
-	dc.l	my_evnt_mIO
-	dc.l	my_evnt_emIO
-	dc.l	my_appl_IOcomplete
-	dc.l	my_evnt_sem
-	dc.l	my_Pfree
-	dc.w	0
-	dc.l	my_int_malloc
-	dc.l	my_int_mfree
-	dc.l	my_resv_intmem
-	dc.l	my_diskchange
-	dc.l	my_DMD_rdevinit
-	dc.l	my_proc_info
-	dc.l	my_mxalloc
-	dc.l	my_mfree
-	dc.l	my_mshrink
-
-; Hier steht spÑter der Zeiger auf die echte Kernelstruktur
-real_kernel:
-	dc.l	0
-
-; EOF

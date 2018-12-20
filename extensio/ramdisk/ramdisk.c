@@ -532,7 +532,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
  * und eine Komponente auch lÑnger als 32 Zeichen sein kînnte und
  * daher "beschnitten" werden muû.
  */
-	temp = (kernel->int_malloc)();
+	temp = (void *)(kernel->int_malloc)();
 	temp[32] = 0;
 /* PrÅfen, ob der gelieferte DD Åberhaupt OK ist */
 	dd = (RAMDISK_FD *)reldir;
@@ -733,7 +733,7 @@ LONG ramdisk_sfirst(void *srchdir, char *name, MGX_DTA *dta,
 	dd = (RAMDISK_FD *)srchdir;
 	if (check_dd(dd) < 0)
 		return(check_dd(dd));
-	temp = (kernel->int_malloc)();
+	temp = (void *)(kernel->int_malloc)();
 	the_dta = (RAMDISK_DTA *)dta;
 	tostrunc(temp, name, 1);
 	fill_tosname(the_dta->dta_mask, temp);
@@ -840,7 +840,7 @@ LONG ramdisk_snext(MGX_DTA *dta, DMD *dmd, char **symlink)
 				r = EFILNF;
 			return(r);
 		}
-		name = (kernel->int_malloc)();
+		name = (void *)(kernel->int_malloc)();
 		fill_tosname(name, the_dta->dta_name);
 		matched = match_tosname(name, the_dta->dta_mask);
 		(kernel->int_mfree)(name);
@@ -1265,7 +1265,7 @@ LONG ramdisk_link(void *olddir, void *newdir, char *oldname,
  * liefern, was auf einem case-sensitiven Filesystem unpraktisch
  * ist)
  */
-	temp = (kernel->int_malloc)();
+	temp = (void *)(kernel->int_malloc)();
 	temp[32] = 0;
 	strncpy(temp, newname, 32L);
 	if (p_Pdomain(-1) == 0)
@@ -1768,7 +1768,7 @@ LONG ramdisk_DD2name(void *dir, char *name, WORD bufsize)
 	if (bufsize < 1)
 		return(ERANGE);
 	*name = 0;
-	temp = (kernel->int_malloc)();
+	temp = (void *)(kernel->int_malloc)();
 /*
  * Jetzt vom aktuellen dd rÅckwÑrts bis zu dem Verzeichnis im Pfad
  * gehen, das Åber dem Wurzelverzeichnis liegt. Damit am Ende der

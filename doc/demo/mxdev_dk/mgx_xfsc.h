@@ -46,7 +46,7 @@ typedef struct {
      LONG proc_info			( WORD code, PD *pd );
 	LONG mxalloc			( LONG amount, WORD mode, PD *pd );
 	LONG mfree			( void *block );
-	LONG mshrink			( LONG newlen, void *block );
+	LONG mshrink			( void *block, LONG newlen );
 } MX_KERNEL;
 
 

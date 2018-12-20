@@ -182,7 +182,7 @@ WORD main(void)
  * angeforderten Speicherstcke grož genug sind, um einen tempor„ren
  * Filenamen der Ramdisk aufzunehmen.
  */
-	if ((kernel = (THE_MX_KERNEL *)Dcntl(KER_GETINFO, NULL, 0L)) ==
+	if ((real_kernel = (THE_MX_KERNEL *)Dcntl(KER_GETINFO, NULL, 0L)) ==
 		NULL)
 	{
 		Cconws("Installation failed (kernel structure unavailable)!"
@@ -191,6 +191,7 @@ WORD main(void)
 		Cnecin();
 		return(-1);
 	}
+	kernel = install_kernel(real_kernel);
 	if (kernel->int_msize < 34)
 	{
 		Cconws("Installation failed (kernel blocksize too small)!"
@@ -206,7 +207,7 @@ WORD main(void)
  * muž. Die tats„chliche Struktur (wie sie schon weiter oben per
  * Dcntl ermittelt wurde) findet sich jetzt im Zeiger real_kernel.
  */
-	if ((kernel = install_xfs(&ramdisk_xfs)) == NULL)
+	if (install_xfs(&ramdisk_xfs) <= 0)
 	{
 		Cconws("Installation failed!\r\n");
 		Cconws("Please press any key!\r\n");
@@ -687,7 +688,7 @@ LONG Pdomain_kernel(WORD ignore)
  */
 void *Mxalloc_kernel(LONG amount, WORD mode)
 {
-	return((kernel->mxalloc)(amount, mode & ~0x4000, _BasPag));
+	return (void *)((kernel->mxalloc)(amount, mode & ~0x4000, _BasPag));
 }
 
 /*
@@ -865,8 +866,8 @@ DIRENTRY *findfile(RAMDISK_FD *dd, char *pathname, WORD spos,
 	if (!xaccess(dd->fd_file))
 		return(NULL);
 /* Zweimal Speicher fr tempor„re Filenamen anfordern */
-	temp = (kernel->int_malloc)();
-	dos = (kernel->int_malloc)();
+	temp = (void *)(kernel->int_malloc)();
+	dos = (void *)(kernel->int_malloc)();
 	temp[32] = 0;
 	strncpy(temp, pathname, 32L);
 	search = (DIRENTRY *)dd->fd_file->de_faddr;
@@ -1648,7 +1649,7 @@ WORD has_xext(char *name)
 
 	if (p_Pdomain(-1) == 1)
 		return(0);
-	temp = (kernel->int_malloc)();
+	temp = (void *)(kernel->int_malloc)();
 	temp[32] = 0;
 	strncpy(temp, name, 32L);
 	strrev(temp);

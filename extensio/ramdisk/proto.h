@@ -36,6 +36,11 @@ void read_infofile(void);
 WORD readline(WORD handle, char *buffer);
 LONG get_and_set_drive(void);
 LONG set_ramdisk_drive(void);
+void increase_refcnts(RAMDISK_FD *dd);
+LONG attrib_action(DIRENTRY *entry, LONG rwflag, LONG attrib);
+LONG chmod_action(DIRENTRY *entry, LONG _mode, LONG dummy);
+LONG get_size(DIRENTRY *search);
+LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg);
 
 LONG ramdisk_sync(DMD *d);
 void ramdisk_pterm(BASPAG *pd);
@@ -45,7 +50,6 @@ LONG ramdisk_drv_open(DMD *d);
 LONG ramdisk_drv_close(DMD *d, WORD mode);
 LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
 	char **lastpath, LONG *linkdir, char **symlink);
-void increase_refcnts(RAMDISK_FD *dd);
 LONG ramdisk_sfirst(void *srchdir, char *name, MGX_DTA *dta,
 	WORD attrib, char **symlink);
 LONG ramdisk_snext(MGX_DTA *dta, DMD *dmd, char **symlink);
@@ -58,12 +62,10 @@ LONG ramdisk_xattr(void *dir, char *name, XATTR *xattr, WORD mode,
 	char **symlink);
 LONG ramdisk_attrib(void *dir, char *name, WORD rwflag, WORD attrib,
 	char **symlink);
-LONG attrib_action(DIRENTRY *entry, LONG rwflag, LONG attrib);
 LONG ramdisk_chown(void *dir, char *name, UWORD uid, UWORD gid,
 	char **symlink);
 LONG ramdisk_chmod(void *dir, char *name, UWORD mode,
 	char **symlink);
-LONG chmod_action(DIRENTRY *entry, LONG _mode, LONG dummy);
 LONG ramdisk_dcreate(void *dir, char *name);
 LONG ramdisk_ddelete(void *dir);
 LONG ramdisk_DD2name(void *dir, char *name, WORD bufsize);
@@ -74,14 +76,12 @@ LONG ramdisk_drewinddir(void *dhd);
 LONG ramdisk_dclosedir(void *dhd);
 LONG ramdisk_dpathconf(void *dir, WORD which);
 LONG ramdisk_dfree(void *dd, DISKINFO *free);
-LONG get_size(DIRENTRY *search);
 LONG ramdisk_wlabel(void *dir, char *name);
 LONG ramdisk_rlabel(void *dir, char *name, char *buf, WORD len);
 LONG ramdisk_symlink(void *dir, char *name, char *to);
 LONG ramdisk_readlink(void *dir, char *name, char *buf, WORD size);
 LONG ramdisk_dcntl(void *dir, char *name, WORD cmd, LONG arg,
 	char **symlink);
-LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg);
 
 LONG ramdisk_close(void *file);
 LONG ramdisk_read(void *file, LONG count, char *buffer);
@@ -132,6 +132,7 @@ WORD get_cookie(ULONG cookie, ULONG *value);
  * Globale Variablen, die entweder "extern" oder direkt deklariert
  * bzw. definiert werden.
  */
+extern THE_MX_KERNEL *kernel;
 #ifdef ONLY_EXTERN
 #define _GLOBAL	extern
 _GLOBAL	THE_MGX_XFS	ramdisk_xfs;
@@ -157,7 +158,6 @@ _GLOBAL	WORD			ramdisk_drive,
 						starttime,
 						startdate;
 _GLOBAL	DMD				*ramdisk_dmd;
-_GLOBAL	THE_MX_KERNEL	*kernel;
 _GLOBAL	RAMDISK_FD		fd[MAX_FD];
 _GLOBAL	RAMDISK_DHD		dhd[MAX_DHD];
 _GLOBAL	DIRENTRY		root[ROOTSIZE],
