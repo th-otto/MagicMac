@@ -1220,7 +1220,7 @@ LONG check_fd(RAMDISK_FD *fd)
  * RÅckgabe:
  * GEMDOS-Fehlercode, der meist der Returncode von action ist.
  */
-LONG work_entry(RAMDISK_FD *dd, const char *name, char **symlink,
+LONG work_entry(RAMDISK_FD *dd, const char *name, void **symlink,
 	WORD writeflag, LONG par1, LONG par2,
 	LONG (*action)(DIRENTRY *entry, LONG par1, LONG par2))
 {
@@ -1781,6 +1781,8 @@ void *Krealloc(void *ptr, LONG old_len, LONG new_len)
 }
 
 #ifdef DEBUG
+
+#include <mint/arch/nf_ops.h>
 
 #undef O_RDWR
 #undef O_APPEND

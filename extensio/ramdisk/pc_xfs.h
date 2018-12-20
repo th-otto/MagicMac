@@ -101,8 +101,8 @@ typedef struct
  * a0: *linkdir
  * a1: *symlink
  */
-	LONG	(*xfs_path2DD)(MX_DD *reldir, char *pathname, WORD mode,
-		char **lastpath, MX_DD **linkdir, char **symlink);
+	LONG	(*xfs_path2DD)(MX_DD *reldir, const char *pathname, WORD mode,
+		const char **lastpath, MX_DD **linkdir, void **symlink);
 /*
  * Auch xfs_sfirst liefert zwei RÅckgabeparameter. Da a0 aber nur
  * einen Zeiger auf einen Symbolischen Link enthalten kann, ist der
@@ -111,10 +111,10 @@ typedef struct
  * nicht vergessen, daû die ersten beiden "Buchstaben" die LÑnge des
  * Links (als Wort) angeben).
  */
-	LONG	(*xfs_sfirst)(MX_DD *srchdir, char *name, DTA *dta,
-		WORD attrib, char **symlink);
+	LONG	(*xfs_sfirst)(MX_DD *srchdir, const char *name, DTA *dta,
+		WORD attrib, void **symlink);
 /* Entsprechendes gilt natÅrlich auch fÅr xfs_snext */
-	LONG	(*xfs_snext)(DTA *dta, MX_DMD *dmd, char **symlink);
+	LONG	(*xfs_snext)(DTA *dta, MX_DMD *dmd, void **symlink);
 #define OM_RPERM	1
 #define OM_WPERM	2
 #define OM_EXEC		4
@@ -136,22 +136,22 @@ typedef struct
  * Auch xfs_fopen liefert unter UmstÑnden einen Zeiger auf einen
  * symbolischen Link...
  */
-	LONG	(*xfs_fopen)(MX_DD *dir, char *name, WORD omode,
-		WORD attrib, char **symlink);
-	LONG	(*xfs_fdelete)(MX_DD *dir, char *name);
-	LONG	(*xfs_link)(MX_DD *olddir, MX_DD *newdir, char *oldname,
-		char *newname, WORD flag_link);
+	LONG	(*xfs_fopen)(MX_DD *dir, const char *name, WORD omode,
+		WORD attrib, void **symlink);
+	LONG	(*xfs_fdelete)(MX_DD *dir, const char *name);
+	LONG	(*xfs_link)(MX_DD *olddir, MX_DD *newdir, const char *oldname,
+		const char *newname, WORD flag_link);
 /* Ebenfalls zusÑtzlich mit Platzhalter fÅr symbolischen Link */
-	LONG	(*xfs_xattr)(MX_DD *dir, char *name, XATTR *xattr,
-		WORD mode, char **symlink);
+	LONG	(*xfs_xattr)(MX_DD *dir, const char *name, XATTR *xattr,
+		WORD mode, void **symlink);
 /* Und noch dreimal... */
-	LONG	(*xfs_attrib)(MX_DD *dir, char *name, WORD rwflag,
-		WORD attrib, char **symlink);
-	LONG	(*xfs_chown)(MX_DD *dir, char *name, UWORD uid,
-		UWORD gid, char **symlink);
-	LONG	(*xfs_chmod)(MX_DD *dir, char *name, UWORD mode,
-		char **symlink);
-	LONG	(*xfs_dcreate)(MX_DD *dir, char *name);
+	LONG	(*xfs_attrib)(MX_DD *dir, const char *name, WORD rwflag,
+		WORD attrib, void **symlink);
+	LONG	(*xfs_chown)(MX_DD *dir, const char *name, UWORD uid,
+		UWORD gid, void **symlink);
+	LONG	(*xfs_chmod)(MX_DD *dir, const char *name, UWORD mode,
+		void **symlink);
+	LONG	(*xfs_dcreate)(MX_DD *dir, const char *name, UWORD mode);
 	LONG	(*xfs_ddelete)(MX_DD *dir);
 	LONG	(*xfs_DD2name)(MX_DD *dir, char *name, WORD bufsize);
 	LONG	(*xfs_dopendir)(MX_DD *dir, WORD tosflag);
@@ -161,15 +161,15 @@ typedef struct
 	LONG	(*xfs_dclosedir)(MX_DHD *dhd);
 	LONG	(*xfs_dpathconf)(MX_DD *dir, WORD which);
 	LONG	(*xfs_dfree)(MX_DD *dd, DISKINFO *free);
-	LONG	(*xfs_wlabel)(MX_DD *dir, char *name);
-	LONG	(*xfs_rlabel)(MX_DD *dir, char *name, char *buf,
+	LONG	(*xfs_wlabel)(MX_DD *dir, const char *name);
+	LONG	(*xfs_rlabel)(MX_DD *dir, const char *name, char *buf,
 		WORD len);
-	LONG	(*xfs_symlink)(MX_DD *dir, char *name, char *to);
-	LONG	(*xfs_readlink)(MX_DD *dir, char *name, char *buf,
+	LONG	(*xfs_symlink)(MX_DD *dir, const char *name, const char *to);
+	LONG	(*xfs_readlink)(MX_DD *dir, const char *name, char *buf,
 		WORD size);
 /* Nochmal mit Platzhalter fÅr symbolischen Link */
-	LONG	(*xfs_dcntl)(MX_DD *dir, char *name, WORD cmd, LONG arg,
-		char **symlink);
+	LONG	(*xfs_dcntl)(MX_DD *dir, const char *name, WORD cmd, LONG arg,
+		void **symlink);
 } THE_MGX_XFS;
 
 /*
@@ -180,8 +180,8 @@ typedef struct
 typedef struct
 {
 	LONG	(*dev_close)(MX_FD *file);
-	LONG	(*dev_read)(MX_FD *file, LONG count, char *buffer);
-	LONG	(*dev_write)(MX_FD *file, LONG count, char *buffer);
+	LONG	(*dev_read)(MX_FD *file, LONG count, void *buffer);
+	LONG	(*dev_write)(MX_FD *file, LONG count, void *buffer);
 	LONG	(*dev_stat)(MX_FD *file, MAGX_UNSEL *unselect,
 		WORD rwflag, LONG apcode);
 	LONG	(*dev_seek)(MX_FD *file, LONG where, WORD mode);
