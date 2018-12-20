@@ -42,17 +42,17 @@ LONG chmod_action(DIRENTRY *entry, LONG _mode, LONG dummy);
 LONG get_size(DIRENTRY *search);
 LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg);
 
-LONG ramdisk_sync(DMD *d);
-void ramdisk_pterm(BASPAG *pd);
-LONG ramdisk_garbcoll(DMD *d);
+LONG ramdisk_sync(MX_DMD *d);
+void ramdisk_pterm(PD *pd);
+LONG ramdisk_garbcoll(MX_DMD *d);
 void ramdisk_freeDD(void *dd);
-LONG ramdisk_drv_open(DMD *d);
-LONG ramdisk_drv_close(DMD *d, WORD mode);
+LONG ramdisk_drv_open(MX_DMD *d);
+LONG ramdisk_drv_close(MX_DMD *d, WORD mode);
 LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
 	char **lastpath, LONG *linkdir, char **symlink);
 LONG ramdisk_sfirst(void *srchdir, char *name, DTA *dta,
 	WORD attrib, char **symlink);
-LONG ramdisk_snext(DTA *dta, DMD *dmd, char **symlink);
+LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, char **symlink);
 LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
 	char **symlink);
 LONG ramdisk_fdelete(void *dir, char *name);
@@ -157,7 +157,7 @@ THE_MGX_DEV		ramdisk_dev = {
 _GLOBAL	WORD			ramdisk_drive,
 						starttime,
 						startdate;
-_GLOBAL	DMD				*ramdisk_dmd;
+_GLOBAL	MX_DMD			*ramdisk_dmd;
 _GLOBAL	RAMDISK_FD		fd[MAX_FD];
 _GLOBAL	RAMDISK_DHD		dhd[MAX_DHD];
 _GLOBAL	DIRENTRY		root[ROOTSIZE],

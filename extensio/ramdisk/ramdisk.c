@@ -260,7 +260,7 @@
  * Ramdisk ja keinerlei Caches benutzt (im Prinzip ist sie ein
  * einziger, grožer Cache ;)
  */
-LONG ramdisk_sync(DMD *d)
+LONG ramdisk_sync(MX_DMD *d)
 {
 	TRACE(("sync\r\n"));
 	return(E_OK);
@@ -273,7 +273,7 @@ LONG ramdisk_sync(DMD *d)
  * Hatte man bei dopendir Speicher angefordert, muž dieser natrlich
  * dem System zurckgegeben werden.
  */
-void ramdisk_pterm(BASPAG *pd)
+void ramdisk_pterm(PD *pd)
 {
 	WORD	i;
 
@@ -294,7 +294,7 @@ void ramdisk_pterm(BASPAG *pd)
  * besser nichts ver„ndern, wenn einem die Funktionsf„higkeit seines
  * XFS am Herzen liegt...
  */
-LONG ramdisk_garbcoll(DMD *d)
+LONG ramdisk_garbcoll(MX_DMD *d)
 {
 	TRACE(("garbcoll\r\n"));
 	return(E_OK);
@@ -374,7 +374,7 @@ void ramdisk_freeDD(void *dd)
  * real_xfs aus pc_xfs.h eingetragen wird, da ramdisk_xfs nicht die
  * Struktur ist, die vom Kernel angesprochen werden soll.
  */
-LONG ramdisk_drv_open(DMD *d)
+LONG ramdisk_drv_open(MX_DMD *d)
 {
 	static WORD	opened_once = 0;
 
@@ -386,9 +386,9 @@ LONG ramdisk_drv_open(DMD *d)
 		{
 /* Wie gesagt: Unbedingt real_xfs fr d_xfs eintragen! */
 			d->d_xfs = real_xfs;
-			d->d_root = &fd[ROOT];
+			d->d_root = (MX_DD *)&fd[ROOT];
 			d->d_biosdev = -1;
-			d->d_driver = d->d_dfs = 0L;
+			d->d_driver = 0L;
 			d->d_devcode = 0L;
 			if (!opened_once)
 			{
@@ -438,7 +438,7 @@ LONG ramdisk_drv_open(DMD *d)
  * offenes Directory gefunden, wird bei mode == 0 EACCDN geliefert,
  * ansonsten wird das Handle freigegeben.
  */
-LONG ramdisk_drv_close(DMD *d, WORD mode)
+LONG ramdisk_drv_close(MX_DMD *d, WORD mode)
 {
 	WORD	i;
 
@@ -776,7 +776,7 @@ LONG ramdisk_sfirst(void *srchdir, char *name, DTA *dta,
 	return(ramdisk_snext((DTA *)the_dta, ramdisk_dmd, symlink));
 }
 
-LONG ramdisk_snext(DTA *dta, DMD *dmd, char **symlink)
+LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, char **symlink)
 {
 	RAMDISK_DHD	handle;
 	RAMDISK_DTA	*the_dta;

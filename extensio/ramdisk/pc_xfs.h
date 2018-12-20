@@ -58,12 +58,9 @@
 #include <portab.h>
 #include <sys/stat.h>
 #include "toserror.h"
-
-#ifndef ELINK
-#define ELINK		-300
-#define KER_GETINFO	0x100
-#define KER_INSTXFS	0x200
-#endif
+#define PD BASEPAGE
+typedef void APPL;
+#include "mgx_xfs.h"
 
 /*
  * Zeiger auf die tatsÑchlich von MagiC angesprochenen Strukturen.
@@ -76,88 +73,6 @@ extern void	*real_xfs;
 
 
 /*
- * Der Drive-Media-Descriptor (DMD); prinzipiell erweiterbar, aber
- * leider kann Pure C ja keine Vererbung :(
- */
-typedef struct
-{
-	void	*d_xfs;
-	WORD	d_drive;
-	void	*d_root;
-	WORD	d_biosdev;
-	void	*d_driver;
-	LONG	d_devcode;
-	void	*d_dfs;
-} DMD;
-
-/* Die Struktur(en) fÅr dev_stat */
-typedef union unsel_union
-{
-	void	(*unsel)(void *un);
-	LONG	status;
-} UNSELECT;
-
-typedef struct magx_unsel_struct
-{
-	UNSELECT	unsel;
-	LONG		param;
-} MAGX_UNSEL;
-
-#ifndef __XATTR
-#define __XATTR
-/* Die XATTR-Struktur */
-typedef struct {
-    UWORD   mode;           /* Filetyp und -modus */
-/* Mîgliche Filetypen */
-#define S_IFMT  0170000     /* Maske zur Isolierung des Filetyps */
-#define S_IFCHR 0020000     /* Spezielles BIOS-File (z.B. Device) */
-#define S_IFDIR 0040000     /* Verzeichnis */
-#define S_IFREG 0100000     /* Normale Datei */
-#define S_IFIFO 0120000     /* FIFO (Pipe mit Namen) */
-#define S_IMEM  0140000     /* Speicherblock- oder Prozeûfile */
-#define S_IFLNK 0160000     /* Symbolischer Link */
-
-/*
- * Spezielle Bits (zumindest die ersten beiden kînnen unter MagiC
- * ohne énderung des XFS-Konzepts nicht korrekt benutzt werden)
- */
-#define S_ISUID 04000       /* User-ID des EigentÅmers bei Aufruf setzen */
-#define S_ISGID 02000       /* Gruppen-ID bei Aufruf setzen */
-#define S_ISVTX 01000       /* "Sticky bit", Bedeutung abhÑngig vom Filetyp */
-
-/* Zugriffsrechte */
-#define S_IRUSR 0400        /* EigentÅmer darf Datei lesen */
-#define S_IWUSR 0200        /*      "       "    "   beschreiben */
-#define S_IXUSR 0100        /*      "       "    "   ausfÅhren */
-#define S_IRGRP 0040        /* Gruppenmitglieder dÅrfen Datei lesen */
-#define S_IWGRP 0020        /*          "           "     "   beschreiben */
-#define S_IXGRP 0010        /*          "           "     "   ausfÅhren */
-#define S_IROTH 0004        /* Andere dÅrfen Datei lesen */
-#define S_IWOTH 0002        /*    "      "     "   beschreiben */
-#define S_IXOTH 0001        /*    "      "     "   ausfÅhren */
-
-    LONG    index;          /* Fileindex, wie bei Dreaddir */
-    UWORD   dev;            /* GerÑt, auf dem die Datei liegt */
-    UWORD   rdev;           /* TatsÑchliches GerÑt (z.B. bei BIOS-Files) */
-    UWORD   nlink;          /* Zahl der "echten" Links auf dieses File */
-    UWORD   uid;            /* User-ID des EigentÅmers */
-    UWORD   gid;            /* Gruppen-ID fÅr dieses File */
-    LONG    size;           /* LÑnge in Bytes */
-    LONG    blksize;        /* Grîûe eines Blocks in Bytes */
-    LONG    nblocks;        /* Anzahl von Blocks, die die Datei belegt */
-    WORD    mtime;          /* Uhrzeit der letzten Modifikation */
-    WORD    mdate;          /* Datum der letzten Modifikation */
-    WORD    atime;          /* Uhrzeit des letzten Zugriffs auf die Datei */
-    WORD    adate;          /* Datum des letzten Zugriffs */
-    WORD    ctime;          /* Erzeugungszeit */
-    WORD    cdate;          /* Erzeugungsdatum */
-    WORD    attr;           /* Standard-TOS-Attribute (wie bei Fattrib) */
-    WORD    reserved2;      /* bislang reserviert */
-    LONG    reserved3[2];   /* dito */
-} XATTR;
-#endif
-
-/*
  * Die XFS-Schnittstelle, wie sie das C-Programm sieht. In dieser
  * Struktur fehlen die Anteile der XFS-Schnittstelle, die fÅr
  * (externe) Treiber ohne Belang sind.
@@ -165,18 +80,18 @@ typedef struct {
 typedef struct
 {
 	char	xfs_name[8];
-	LONG	(*xfs_sync)(DMD *d);
-	void	(*xfs_pterm)(BASPAG *pd);
+	LONG	(*xfs_sync)(MX_DMD *d);
+	void	(*xfs_pterm)(PD *pd);
 /*
  * FÅr xfs_garbcoll muû ein Funktionspointer angegeben werden, auch
  * wenn das Filesystem die interne Speicherverwaltung von MagiC 3
  * nicht benutzt. In diesem Fall einfach eine Funktion einbinden, die
  * 0L zurÅckliefert.
  */
-	LONG	(*xfs_garbcoll)(DMD *d);
+	LONG	(*xfs_garbcoll)(MX_DMD *d);
 	void	(*xfs_freeDD)(void *dd);
-	LONG	(*xfs_drv_open)(DMD *d);
-	LONG	(*xfs_drv_close)(DMD *d, WORD mode);
+	LONG	(*xfs_drv_open)(MX_DMD *d);
+	LONG	(*xfs_drv_close)(MX_DMD *d, WORD mode);
 /*
  * Da xfs_path2DD normalerweise bis zu vier RÅckgabewerte hat, werden
  * drei davon in Zeigerparametern zurÅckgegeben. Die Zuordnung der
@@ -199,7 +114,7 @@ typedef struct
 	LONG	(*xfs_sfirst)(void *srchdir, char *name, DTA *dta,
 		WORD attrib, char **symlink);
 /* Entsprechendes gilt natÅrlich auch fÅr xfs_snext */
-	LONG	(*xfs_snext)(DTA *dta, DMD *dmd, char **symlink);
+	LONG	(*xfs_snext)(DTA *dta, MX_DMD *dmd, char **symlink);
 #define OM_RPERM	1
 #define OM_WPERM	2
 #define OM_EXEC		4
@@ -299,9 +214,9 @@ typedef struct
      void (*fast_clrmem)      ( void *von, void *bis );
      char (*toupper)          ( char c );
      void (*_sprintf)         ( char *dest, const char *source, LONG *p );
-     BASPAG     **act_pd;
-     void *act_appl;
-     void *keyb_appl;
+     PD	**act_pd;
+     APPL *act_appl;
+     APPL *keyb_app;
      WORD *pe_slice;
      WORD *pe_timer;
      void (*appl_yield)       ( void );
@@ -310,28 +225,21 @@ typedef struct
      void (*appl_endcritic)   ( void );
      long (*evnt_IO)          ( LONG ticks_50hz, MAGX_UNSEL *unsel );
      void (*evnt_mIO)         ( LONG ticks_50hz, MAGX_UNSEL *unsel, WORD cnt );
-     void (*evnt_emIO)        ( void *ap );
-     void (*appl_IOcomplete)  ( void *ap );
-#define SEM_FREE    0
-#define SEM_SET     1
-#define SEM_TEST    2
-#define SEM_CSET    3
-#define SEM_GET     4
-#define SEM_CREATE  5
-#define SEM_DEL     6
+     void (*evnt_emIO)        ( APPL *ap );
+     void (*appl_IOcomplete)  ( APPL *ap );
      long (*evnt_sem)         ( WORD mode, void *sem, LONG timeout );
-     void (*Pfree)            ( BASPAG *pd );
+     void (*Pfree)            ( PD *pd );
      WORD int_msize;
      LONG (*int_malloc)       ( void );
      void (*int_mfree)        ( void *memblk );
      void (*resv_intmem)      ( void *mem, LONG bytes );
      LONG (*diskchange)       ( WORD drv );
 /* Ab Kernelversion 1: */
-     LONG (*DMD_rdevinit)     ( DMD *dmd );
+     LONG (*DMD_rdevinit)     ( MX_DMD *dmd );
 /* Ab Kernelversion 2: */
-     LONG (*proc_info)        ( WORD code, BASPAG *pd );
+     LONG (*proc_info)        ( WORD code, PD *pd );
 /* Ab Kernelversion 4: */
-     LONG (*mxalloc)          ( LONG amount, WORD mode, BASPAG *pd );
+     LONG (*mxalloc)          ( LONG amount, WORD mode, PD *pd );
      LONG (*mfree)            ( void *block );
      LONG (*mshrink)          ( void *block, LONG newlen );
 } THE_MX_KERNEL;
@@ -357,14 +265,14 @@ LONG install_xfs(THE_MGX_XFS *xfs);
 /* Einfachste Form eines DD */
 typedef struct
 {
-	DMD		*dd_dmd;
+	MX_DMD	*dd_dmd;
 	WORD	dd_refcnt;
 } MGX_DD;
 
 /* Einfachste Form eines FD */
 typedef struct
 {
-	DMD		*fd_dmd;
+	MX_DMD	*fd_dmd;
 	WORD	fd_refcnt;
 	WORD	fd_mode;
 	void	*fd_dev;
@@ -373,7 +281,7 @@ typedef struct
 /* Einfachste Form eines DHD */
 typedef struct
 {
-	DMD		*dhd_dmd;
+	MX_DMD	*dhd_dmd;
 } MGX_DHD;
 
 #endif

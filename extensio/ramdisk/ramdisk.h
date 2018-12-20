@@ -36,6 +36,7 @@
 #ifndef _RAMDISK_H
 #define _RAMDISK_H
 
+#include <portab.h>
 #include "pc_xfs.h"
 
 #define MAX_FD			200
@@ -96,7 +97,7 @@ typedef struct
 
 typedef struct ram_fd
 {
-	DMD				*fd_dmd;
+	MX_DMD			*fd_dmd;
 	WORD			fd_refcnt;
 	WORD			fd_mode;
 	THE_MGX_DEV		*fd_dev;
@@ -104,16 +105,16 @@ typedef struct ram_fd
 	DIRENTRY		*fd_file;
 	WORD			fd_is_parent;
 	struct ram_fd	*fd_parent;
-	BASPAG			*fd_owner;
+	PD				*fd_owner;
 } RAMDISK_FD;
 
 typedef struct
 {
-	DMD			*dhd_dmd;
+	MX_DMD		*dhd_dmd;
 	DIRENTRY	*dhd_dir;
 	WORD		dhd_pos;
 	WORD		dhd_tosmode;
-	BASPAG		*dhd_owner;
+	PD			*dhd_owner;
 } RAMDISK_DHD;
 
 typedef struct
