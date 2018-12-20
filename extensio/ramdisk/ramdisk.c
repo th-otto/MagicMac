@@ -9,7 +9,7 @@
  * C-Quellcode des Ramdisk-Filesystems fÅr MagiC 3, das auf der
  * Pure-C-Schnittstelle aufbaut. Hier finden sich die Routinen, die
  * vom Kernel (indirekt Åber die Schnittstelle) aufgerufen werden,
- * also die Elemente der THE_MGX_XFS- und THE_MGX_DEV-Strukturen
+ * also die Elemente der THE_MGX_XFS- und MX_DEV-Strukturen
  * darstellen.
  * Anmerkung: Dieser Quellcode stellt keinen Ersatz fÅr die MagiC-
  * Doku dar; nur zusammen mit ihr wird man alles nachvollziehen
@@ -3006,7 +3006,7 @@ THE_MGX_XFS ramdisk_xfs = {
 	ramdisk_dcntl
 };
 
-THE_MGX_DEV ramdisk_dev = {
+MX_DEV ramdisk_dev = {
 	ramdisk_close,
 	ramdisk_read,
 	ramdisk_write,

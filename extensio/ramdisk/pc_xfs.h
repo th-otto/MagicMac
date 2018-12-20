@@ -173,28 +173,10 @@ typedef struct
 } THE_MGX_XFS;
 
 /*
- * Devicetreiber, wieder aus C-Sicht, trotzdem identisch mit der
+ * Der Devicetreiber ist identisch mit der
  * "echten" Struktur, d.h. hier sind keine vorgeschalteten
  * Assemblerroutinen n”tig
  */
-typedef struct
-{
-	LONG	(*dev_close)(MX_FD *file);
-	LONG	(*dev_read)(MX_FD *file, LONG count, void *buffer);
-	LONG	(*dev_write)(MX_FD *file, LONG count, void *buffer);
-	LONG	(*dev_stat)(MX_FD *file, MAGX_UNSEL *unselect,
-		WORD rwflag, LONG apcode);
-	LONG	(*dev_seek)(MX_FD *file, LONG where, WORD mode);
-	LONG	(*dev_datime)(MX_FD *file, WORD *d, WORD setflag);
-	LONG	(*dev_ioctl)(MX_FD *file, WORD cmd, void *buf);
-#define CMODE_RAW		0
-#define CMODE_COOKED	1
-#define CMODE_ECHO		2
-	LONG	(*dev_getc)(MX_FD *file, WORD mode);
-	LONG	(*dev_getline)(MX_FD *file, char *buf, WORD mode,
-		LONG size);
-	LONG	(*dev_putc)(MX_FD *file, WORD mode, LONG value);
-} THE_MGX_DEV;
 
 /*
  * Die Kernel-Struktur, deren Funktionen leider auch nicht direkt von

@@ -134,7 +134,7 @@ WORD get_cookie(ULONG cookie, ULONG *value);
  */
 extern THE_MX_KERNEL *kernel;
 extern THE_MGX_XFS ramdisk_xfs;
-extern THE_MGX_DEV ramdisk_dev;
+extern MX_DEV ramdisk_dev;
 #ifdef ONLY_EXTERN
 #define _GLOBAL	extern
 #else
