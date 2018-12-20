@@ -6224,8 +6224,10 @@ dsp_shel_wdef:
 * case $82 = xgrf_stepcalc
 
 dsp_xgrf_stepcalc:
- cmpi.w   #5,4(a1)                 ; contrl[2] (Laenge intout) == 5 ?
+ cmpi.w   #5,4(a1)                 ; contrl[2] (length intout) == 5 ?
  beq.b    dsp_appl_getinfo
+ cmpi.w   #1,4(a1)                 ; contrl[2] (length intout) == 1 ?
+ beq.b    dsp_appl_getinfo         ; -> appl_getinfo_str
  pea      10(a4)
  pea      8(a4)
  pea      6(a4)
