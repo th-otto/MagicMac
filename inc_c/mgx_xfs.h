@@ -82,12 +82,12 @@ typedef struct _mx_dev {
      long      (*dev_close)(struct _mx_fd *f);
      long      (*dev_read)(struct _mx_fd *f, LONG count, void *buf);
      long      (*dev_write)(struct _mx_fd *f, LONG count, void *buf);
-     long      (*dev_stat)(struct _mx_fd *f, LONG *unselect, WORD rwflag, LONG apcode);
+     long      (*dev_stat)(struct _mx_fd *f, MAGX_UNSEL *unselect, WORD rwflag, LONG apcode);
      long      (*dev_seek)(struct _mx_fd *f, LONG where, WORD mode);
      long      (*dev_datime)(struct _mx_fd *f, WORD d[2], WORD set);
      long      (*dev_ioctl)(struct _mx_fd *f, WORD cmd, void *buf);
      long      (*dev_getc)(struct _mx_fd *f, WORD mode);
-     long      (*dev_getline)(struct _mx_fd *f, char *buf, LONG size, WORD mode);
+     long      (*dev_getline)(struct _mx_fd *f, char *buf, WORD mode, LONG size);
      long      (*dev_putc)(struct _mx_fd *f, WORD mode, LONG val);
 } MX_DEV;
 
@@ -95,12 +95,12 @@ typedef struct _cdecl_mx_dev {
      LONG cdecl (*dev_close)(struct _mx_fd *f);
      LONG cdecl	(*dev_read)(struct _mx_fd *f, LONG count, void *buf);
      LONG cdecl (*dev_write)(struct _mx_fd *f, LONG count, void *buf);
-     LONG cdecl (*dev_stat)(struct _mx_fd *f, LONG *unselect, WORD rwflag, LONG apcode);
+     LONG cdecl (*dev_stat)(struct _mx_fd *f, MAGX_UNSEL *unselect, WORD rwflag, LONG apcode);
      LONG cdecl (*dev_seek)(struct _mx_fd *f, LONG where, WORD mode);
      LONG cdecl (*dev_datime)(struct _mx_fd *f, WORD d[2], WORD set);
      LONG cdecl (*dev_ioctl)(struct _mx_fd *f, WORD cmd, void *buf);
      LONG cdecl	(*dev_getc)(struct _mx_fd *f, WORD mode);
-     LONG cdecl (*dev_getline)(struct _mx_fd *f, char *buf, LONG size, WORD mode);
+     LONG cdecl (*dev_getline)(struct _mx_fd *f, char *buf, WORD mode, LONG size);
      LONG cdecl (*dev_putc)(struct _mx_fd *f, WORD mode, LONG val);
 } CDECL_MX_DEV;
 
@@ -261,7 +261,7 @@ typedef struct _cdecl_mx_xfs {
      LONG cdecl (*xfs_fdelete)(MX_DD *dd, const char *name);
      LONG cdecl (*xfs_link)(MX_DD *altdd, MX_DD *neudd, const char *altname, const char *neuname, WORD flag);
      LONG cdecl (*xfs_xattr)(MX_DD *dd, const char *name, XATTR *xa, WORD mode, void **symlink);
-     LONG cdecl (*xfs_attrib)(MX_DD *dd, const char *name, WORD mode, WORD attrib);
+     LONG cdecl (*xfs_attrib)(MX_DD *dd, const char *name, WORD mode, WORD attrib, void **symlink);
      LONG cdecl (*xfs_chown)(MX_DD *dd, const char *name, UWORD uid, UWORD gid, void **symlink);
      LONG cdecl (*xfs_chmod)(MX_DD *dd, const char *name, UWORD mode, void **symlink);
      LONG cdecl (*xfs_dcreate)(MX_DD *dd, const char *name, UWORD mode);

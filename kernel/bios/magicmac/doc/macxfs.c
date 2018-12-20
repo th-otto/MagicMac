@@ -3663,7 +3663,7 @@ static LONG dev_getc( MAC_FD *f, WORD mode )
 }
 
 
-static LONG dev_getline( MAC_FD *f, char *buf, LONG size, WORD mode )
+static LONG dev_getline( MAC_FD *f, char *buf, WORD mode, LONG size )
 {
 	unsigned char c;
 	LONG gelesen,ret;

@@ -419,13 +419,15 @@ cdxfs_link:
 *
 
 cdxfs_xattr:
- move.l	d1,-(sp)
+ clr.l -(sp)
+ pea (sp)
+ move.w	d1,-(sp)
  move.l	d0,-(sp)
  move.l	a1,-(sp)
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_xattr,a0
  jsr      (a0)
- adda.w	#16,sp
+ lea 22(sp),sp
  rts
 
 
@@ -442,13 +444,16 @@ cdxfs_xattr:
 *
 
 cdxfs_attrib:
+ clr.l -(sp)
+ pea (sp)
  move.w	d1,-(sp)
  move.w	d0,-(sp)
  move.l	a1,-(sp)
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_attrib,a0
  jsr      (a0)
- adda.w	#12,sp
+ lea 16(sp),sp
+ move.l (sp)+,a0
  rts
 
 
@@ -812,8 +817,7 @@ cddev_getc:
 
 **********************************************************************
 *
-* long dev_getline( a0 = FD *f, a1 = char *buf, d1 = long size,
-*                      d0 = int mode )
+* long dev_getline( a0 = FD *f, a1 = char *buf, d0 = int mode, d1 = long size )
 *
 * mode & 0x0001:    cooked
 * mode & 0x0002:    echo mode
@@ -822,8 +826,8 @@ cddev_getc:
 *
 
 cddev_getline:
- move.w   d0,-(sp)                 ; mode
  move.l   d1,-(sp)                 ; size
+ move.w   d0,-(sp)                 ; mode
  move.l   a1,-(sp)                 ; buf
  move.l   a0,-(sp)                 ; FD
  move.l	cdecl_cddev+dev_getline,a0

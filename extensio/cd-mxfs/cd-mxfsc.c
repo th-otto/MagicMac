@@ -45,11 +45,11 @@ static LONG cdecl	xfs_link( MX_DD *altdd, MX_DD *neudd,
 static LONG cdecl	xfs_xattr( MX_DD *dd, const char *name, XATTR *xa,
 							WORD mode, void **symlink );
 static LONG cdecl	xfs_attrib( MX_DD *dd, const char *name, WORD mode,
-							WORD attrib );
-static LONG cdecl   xfs_chown( MX_DD *dd, const char *name, WORD uid,
-							WORD gid, void **symlink );
-static LONG cdecl   xfs_chmod( MX_DD *dd, const char *name, WORD mode, void **symlink );
-static LONG cdecl   xfs_dcreate( MX_DD *dd , const char *name, WORD mode );
+							WORD attrib, void **symlink );
+static LONG cdecl   xfs_chown( MX_DD *dd, const char *name, UWORD uid,
+							UWORD gid, void **symlink );
+static LONG cdecl   xfs_chmod( MX_DD *dd, const char *name, UWORD mode, void **symlink );
+static LONG cdecl   xfs_dcreate( MX_DD *dd , const char *name, UWORD mode );
 static LONG cdecl   xfs_ddelete( MX_DD *dd );
 static LONG cdecl   xfs_DD2name( MX_DD *dd, char *buf, WORD buflen );
 static LONG cdecl   xfs_dopendir( MX_DD *d, WORD tosflag );
@@ -58,7 +58,7 @@ static LONG cdecl   xfs_dreaddir( MX_DHD *dh, WORD len, char *buf,
 static LONG cdecl   xfs_drewinddir( MX_DHD *dhd );
 static LONG cdecl   xfs_dclosedir( MX_DHD *dhd );
 static LONG cdecl   xfs_dpathconf( MX_DD *dd, WORD which );
-static LONG cdecl   xfs_dfree( MX_DD *dd, LONG buf[4] );
+static LONG cdecl   xfs_dfree( MX_DD *dd, DISKINFO *buf );
 static LONG cdecl   xfs_wlabel( MX_DD *dd, const char *name );
 static LONG cdecl   xfs_rlabel( MX_DD *dd, const char *name, char *buf,
      						WORD buflen );
@@ -75,14 +75,13 @@ static LONG cdecl   xfs_dcntl( MX_DD *dd, const char *name, WORD cmd,
 static LONG cdecl	dev_close( MX_FD *f );
 static LONG cdecl	dev_read( MX_FD *f, LONG count, void *buf );
 static LONG cdecl	dev_write( MX_FD *f, LONG count, void *buf );
-static LONG cdecl	dev_stat( MX_FD *f, LONG *unselect,
+static LONG cdecl	dev_stat( MX_FD *f, MAGX_UNSEL *unselect,
 							WORD rwflag, LONG apcode );
 static LONG cdecl	dev_seek( MX_FD *f, LONG where, WORD mode );
 static LONG cdecl	dev_datime( MX_FD *f, WORD d[2], WORD set);
 static LONG cdecl	dev_ioctl( MX_FD *f, WORD cmd, void *buf );
 static LONG cdecl	dev_getc( MX_FD *f, WORD mode );
-static LONG cdecl	dev_getline( MX_FD *f, char *buf, LONG size,
-							WORD mode );
+static LONG cdecl	dev_getline( MX_FD *f, char *buf, WORD mode, LONG size );
 static LONG cdecl	dev_putc( MX_FD *f, WORD mode, LONG val );
 
 
@@ -1141,16 +1140,15 @@ static LONG cdecl	xfs_xattr( MX_DD *dd, const char *name, XATTR *xa,
 *******************************************************************/
 
 static LONG cdecl	xfs_attrib( MX_DD *dd, const char *name, WORD mode,
-							WORD attrib )
+							WORD attrib, void **symlink )
 {
 	XATTR xa;
 	long ret;
-	void *symlink;
 	
 	if	(mode)
 		return(EWRPRO);
 
-	ret = xfs_xattr( dd, name, &xa, 0, &symlink);
+	ret = xfs_xattr( dd, name, &xa, 0, symlink);
 	if	(ret)
 		return(ret);
 	return(xa.st_attr & 0xff);
@@ -1165,8 +1163,8 @@ static LONG cdecl	xfs_attrib( MX_DD *dd, const char *name, WORD mode,
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_chown( MX_DD *dd, const char *name, WORD uid,
-							WORD gid, void **symlink )
+static LONG cdecl   xfs_chown( MX_DD *dd, const char *name, UWORD uid,
+							UWORD gid, void **symlink )
 {
 	return(EWRPRO);
 }
@@ -1180,7 +1178,7 @@ static LONG cdecl   xfs_chown( MX_DD *dd, const char *name, WORD uid,
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_chmod( MX_DD *dd, const char *name, WORD mode, void **symlink )
+static LONG cdecl   xfs_chmod( MX_DD *dd, const char *name, UWORD mode, void **symlink )
 {
 	return(EWRPRO);
 }
@@ -1194,7 +1192,7 @@ static LONG cdecl   xfs_chmod( MX_DD *dd, const char *name, WORD mode, void **sy
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_dcreate( MX_DD *dd , const char *name, WORD mode )
+static LONG cdecl   xfs_dcreate( MX_DD *dd , const char *name, UWORD mode )
 {
 	return(EWRPRO);
 }
@@ -1462,7 +1460,7 @@ static LONG cdecl   xfs_dpathconf( MX_DD *dd, WORD which )
 *
 *******************************************************************/
 
-static LONG cdecl   xfs_dfree( MX_DD *dd, LONG buf[4] )
+static LONG cdecl   xfs_dfree( MX_DD *dd, DISKINFO *buf )
 {
 	LOGICAL_DEV *ldp;
 	LONG ret;
@@ -1475,10 +1473,10 @@ static LONG cdecl   xfs_dfree( MX_DD *dd, LONG buf[4] )
 
 	ldp = mydrives[drive];
 
-	buf[0] = 0;
-	buf[1] = ldp->totalsize;
-	buf[2] = ldp->blocksize;
-	buf[3] = 1;
+	buf->b_free = 0;
+	buf->b_total = ldp->totalsize;
+	buf->b_secsiz = ldp->blocksize;
+	buf->b_clsiz = 1;
 
 	return(E_OK);
 }
@@ -1678,17 +1676,17 @@ static LONG cdecl	dev_write( MX_FD *f, LONG count, void *buf )
 *
 *******************************************************************/
 
-static LONG cdecl	dev_stat( MX_FD *f, LONG *unselect,
+static LONG cdecl	dev_stat( MX_FD *f, MAGX_UNSEL *unselect,
 							WORD rwflag, LONG apcode )
 {
 	if	(apcode)			/* komplizierter Fall */
 		{
-		*unselect = 1;
+		unselect->unsel.status = 1;
 		return(1);		/* Ger„t bereit */
 		}
 	else	{				/* polling */
 		if	(unselect)
-			*unselect = 1;
+			unselect->unsel.status = 1;
 		return(1);
 		}
 }
@@ -1843,8 +1841,7 @@ static LONG cdecl	dev_getc( MX_FD *f, WORD mode )
 *
 *******************************************************************/
 
-static LONG cdecl	dev_getline( MX_FD *f, char *buf, LONG size,
-							WORD mode )
+static LONG cdecl	dev_getline( MX_FD *f, char *buf, WORD mode, LONG size )
 {
 	unsigned char c;
 	LONG gelesen,ret;
