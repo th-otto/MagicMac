@@ -112,7 +112,6 @@
 #define ONLY_EXTERN
 #include "ramdisk.h"
 
-static WORD	wait_for_key;
 static char	mountname[256];
 #ifdef DEBUG
 static char	logfile[256];
@@ -128,8 +127,6 @@ WORD main(void)
 	{
 		Cconws("The Ramdisk-XFS only works with MagiC 3 or better!"
 			"\r\n");
-		Cconws("Please press any key!\r\n");
-		Cnecin();
 		return(-1);
 	}
 	Cconws("\r\nRamdisk-XFS dated "VERSION"\r\n");
@@ -161,8 +158,6 @@ WORD main(void)
 		if ((ramdisk_drive = (WORD)Supexec(get_and_set_drive)) == -1)
 		{
 			Cconws("Installation failed (no free drive)!r\n");
-			Cconws("Please press any key!\r\n");
-			Cnecin();
 			return(-1);
 		}
 	}
@@ -172,8 +167,6 @@ WORD main(void)
 		{
 			Cconws("Installation failed (drive already in use)!"
 				"\r\n");
-			Cconws("Please press any key!\r\n");
-			Cnecin();
 			return(-1);
 		}
 	}
@@ -187,8 +180,6 @@ WORD main(void)
 	{
 		Cconws("Installation failed (kernel structure unavailable)!"
 			"\r\n");
-		Cconws("Please press any key!\r\n");
-		Cnecin();
 		return(-1);
 	}
 	kernel = install_kernel(real_kernel);
@@ -196,8 +187,6 @@ WORD main(void)
 	{
 		Cconws("Installation failed (kernel blocksize too small)!"
 			"\r\n");
-		Cconws("Please press any key!\r\n");
-		Cnecin();
 		return(-1);
 	}
 /*
@@ -210,8 +199,6 @@ WORD main(void)
 	if (install_xfs(&ramdisk_xfs) <= 0)
 	{
 		Cconws("Installation failed!\r\n");
-		Cconws("Please press any key!\r\n");
-		Cnecin();
 		return(-1);
 	}
 /*
@@ -239,7 +226,6 @@ WORD main(void)
 		{
 			Cconws(help);
 			Cconws("! (Frename failed)\r\n");
-			wait_for_key = 1;
 		}
 		else
 		{
@@ -297,11 +283,6 @@ WORD main(void)
 /* Startzeit und -datum fr das Wurzelverzeichnis merken */
 	starttime = Tgettime();
 	startdate = Tgetdate();
-	if (wait_for_key)
-	{
-		Cconws("Please press any key!\r\n");
-		Cnecin();
-	}
 /*
  * Ein XFS muž, sobald es erfolgreich mit install_xfs angemeldet
  * wurde, dauerhaft im Speicher verbleiben, deswegen muž hier
@@ -329,7 +310,6 @@ void read_infofile(void)
 	LONG		err;
 	WORD		handle;
 
-	wait_for_key = 0;
 /*
  * Die Datei findet sich entweder im Ordner \gemsys\magic\xtension
  * des aktuellen Laufwerks, in dessen Wurzelverzeichnis oder im
@@ -409,7 +389,6 @@ invalid_line:
 			Cconws("Invalid line in INF-file (ignored):\r\n");
 			Cconws(input);
 			Cconws("\r\n");
-			wait_for_key = 1;
 			continue;
 		}
 		*arg = 0;
