@@ -721,7 +721,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
  * '*' enth„lt (das Ramdisk-XFS akzeptiert das), doch viel schlimmes
  * wird dabei nicht passieren.
  */
-LONG ramdisk_sfirst(void *srchdir, char *name, MGX_DTA *dta,
+LONG ramdisk_sfirst(void *srchdir, char *name, DTA *dta,
 	WORD attrib, char **symlink)
 {
 	RAMDISK_FD	*dd;
@@ -773,10 +773,10 @@ LONG ramdisk_sfirst(void *srchdir, char *name, MGX_DTA *dta,
  * sfirst selbst liest keinen Verzeichniseintrag, sondern ruft snext
  * auf und liefert dessen Ergebnis
  */
-	return(ramdisk_snext((MGX_DTA *)the_dta, ramdisk_dmd, symlink));
+	return(ramdisk_snext((DTA *)the_dta, ramdisk_dmd, symlink));
 }
 
-LONG ramdisk_snext(MGX_DTA *dta, DMD *dmd, char **symlink)
+LONG ramdisk_snext(DTA *dta, DMD *dmd, char **symlink)
 {
 	RAMDISK_DHD	handle;
 	RAMDISK_DTA	*the_dta;

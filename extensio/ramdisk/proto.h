@@ -50,9 +50,9 @@ LONG ramdisk_drv_open(DMD *d);
 LONG ramdisk_drv_close(DMD *d, WORD mode);
 LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
 	char **lastpath, LONG *linkdir, char **symlink);
-LONG ramdisk_sfirst(void *srchdir, char *name, MGX_DTA *dta,
+LONG ramdisk_sfirst(void *srchdir, char *name, DTA *dta,
 	WORD attrib, char **symlink);
-LONG ramdisk_snext(MGX_DTA *dta, DMD *dmd, char **symlink);
+LONG ramdisk_snext(DTA *dta, DMD *dmd, char **symlink);
 LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
 	char **symlink);
 LONG ramdisk_fdelete(void *dir, char *name);

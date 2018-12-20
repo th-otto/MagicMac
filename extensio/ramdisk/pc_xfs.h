@@ -74,17 +74,6 @@
  */
 extern void	*real_xfs;
 
-/* Die MagiC-3-DTA */
-typedef struct
-{
-	char	dta_res1[20];
-	char	dta_drive;
-	char	dta_attribute;
-	WORD	dta_time;
-	WORD	dta_date;
-	LONG	dta_len;
-	char	dta_name[14];
-} MGX_DTA;
 
 /*
  * Der Drive-Media-Descriptor (DMD); prinzipiell erweiterbar, aber
@@ -207,10 +196,10 @@ typedef struct
  * nicht vergessen, daû die ersten beiden "Buchstaben" die LÑnge des
  * Links (als Wort) angeben).
  */
-	LONG	(*xfs_sfirst)(void *srchdir, char *name, MGX_DTA *dta,
+	LONG	(*xfs_sfirst)(void *srchdir, char *name, DTA *dta,
 		WORD attrib, char **symlink);
 /* Entsprechendes gilt natÅrlich auch fÅr xfs_snext */
-	LONG	(*xfs_snext)(MGX_DTA *dta, DMD *dmd, char **symlink);
+	LONG	(*xfs_snext)(DTA *dta, DMD *dmd, char **symlink);
 #define OM_RPERM	1
 #define OM_WPERM	2
 #define OM_EXEC		4
