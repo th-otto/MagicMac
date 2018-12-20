@@ -132,7 +132,6 @@ WORD get_cookie(ULONG cookie, ULONG *value);
  * Globale Variablen, die entweder "extern" oder direkt deklariert
  * bzw. definiert werden.
  */
-extern THE_MX_KERNEL *kernel;
 extern THE_MGX_XFS ramdisk_xfs;
 extern MX_DEV ramdisk_dev;
 #ifdef ONLY_EXTERN

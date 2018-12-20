@@ -179,6 +179,14 @@ typedef struct
  */
 
 /*
+ * Zeiger auf die tatsÑchlich von Dcntl(KER_INSTXFS, ...) gelieferte
+ * Kernelstruktur. Die Funktionen sollten nicht angesprochen werden,
+ * fÅr das Auslesen der Variablen ist es jedoch ratsam, immer Åber
+ * diese Struktur zu gehen, da die Kopie nicht aktualisiert wird.
+ */
+extern MX_KERNEL *real_kernel;
+
+/*
  * Die Kernel-Struktur, deren Funktionen leider auch nicht direkt von
  * Pure C aus aufgerufen werden kînnen, da sie unter UmstÑnden das
  * Register A2 verÑndern, was Pure C Åberhaupt nicht mag. Also wird
@@ -190,51 +198,8 @@ typedef struct
  * auch real_kernel, um die tatsÑchlich gewÅnschten Routinen
  * aufzurufen.
  */
-typedef struct
-{
-     WORD version;
-     void (*fast_clrmem)      ( void *von, void *bis );
-     char (*toupper)          ( char c );
-     void (*_sprintf)         ( char *dest, const char *source, LONG *p );
-     PD	**act_pd;
-     APPL *act_appl;
-     APPL *keyb_app;
-     WORD *pe_slice;
-     WORD *pe_timer;
-     void (*appl_yield)       ( void );
-     void (*appl_suspend)     ( void );
-     void (*appl_begcritic)   ( void );
-     void (*appl_endcritic)   ( void );
-     long (*evnt_IO)          ( LONG ticks_50hz, MAGX_UNSEL *unsel );
-     void (*evnt_mIO)         ( LONG ticks_50hz, MAGX_UNSEL *unsel, WORD cnt );
-     void (*evnt_emIO)        ( APPL *ap );
-     void (*appl_IOcomplete)  ( APPL *ap );
-     long (*evnt_sem)         ( WORD mode, void *sem, LONG timeout );
-     void (*Pfree)            ( PD *pd );
-     WORD int_msize;
-     LONG (*int_malloc)       ( void );
-     void (*int_mfree)        ( void *memblk );
-     void (*resv_intmem)      ( void *mem, LONG bytes );
-     LONG (*diskchange)       ( WORD drv );
-/* Ab Kernelversion 1: */
-     LONG (*DMD_rdevinit)     ( MX_DMD *dmd );
-/* Ab Kernelversion 2: */
-     LONG (*proc_info)        ( WORD code, PD *pd );
-/* Ab Kernelversion 4: */
-     LONG (*mxalloc)          ( LONG amount, WORD mode, PD *pd );
-     LONG (*mfree)            ( void *block );
-     LONG (*mshrink)          ( void *block, LONG newlen );
-} THE_MX_KERNEL;
-
-/*
- * Zeiger auf die tatsÑchlich von Dcntl(KER_INSTXFS, ...) gelieferte
- * Kernelstruktur. Die Funktionen sollten nicht angesprochen werden,
- * fÅr das Auslesen der Variablen ist es jedoch ratsam, immer Åber
- * diese Struktur zu gehen, da die Kopie nicht aktualisiert wird.
- */
-extern THE_MX_KERNEL *real_kernel;
-extern THE_MX_KERNEL *kernel;
-extern THE_MX_KERNEL *install_kernel(THE_MX_KERNEL *);
+extern MX_KERNEL *kernel;
+extern MX_KERNEL *install_kernel(MX_KERNEL *);
 
 /*
  * Routine zur Installation des XFS. Ihr Åbergibt man den Zeiger auf

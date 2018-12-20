@@ -175,7 +175,7 @@ int main(void)
  * angeforderten SpeicherstÅcke groû genug sind, um einen temporÑren
  * Filenamen der Ramdisk aufzunehmen.
  */
-	if ((real_kernel = (THE_MX_KERNEL *)Dcntl(KER_GETINFO, NULL, 0L)) ==
+	if ((real_kernel = (MX_KERNEL *)Dcntl(KER_GETINFO, NULL, 0L)) ==
 		NULL)
 	{
 		Cconws("Installation failed (kernel structure unavailable)!"
