@@ -447,8 +447,8 @@ toup_ende:
  rts
 
 sonder_s:
- DC.B	'',$84,'',$94,'',$81,'',$82,'',$85,'',$86,'',$87,'',$91,'',$a4,'',$b0,'',$b1,'',$b3,'',$b4,'',$c0,'',0
- DC.B	'',$8e,'',$99,'',$9a,'',$90,'',$b6,'',$8f,'',$80,'',$92,'',$a5,'',$b7,'',$b8,'',$b2,'',$b5,'',$c1,'',0
+ DC.B	$84,$94,$81,$82,$85,$86,$87,$91,$a4,$b0,$b1,$b3,$b4,$c0,0
+ DC.B	$8e,$99,$9a,$90,$b6,$8f,$80,$92,$a5,$b7,$b8,$b2,$b5,$c1,0
 
 
 **********************************************************************
@@ -765,7 +765,7 @@ d2s_1:
 
 **********************************************************************
 *
-* void _sprintf(char *dest, char *source, long p[])
+* void _sprintf(char *dest, const char *source, long p[])
 *
 * Schreibt einen String <source> nach <dest> und setzt dabei Werte
 * wie "%W" und "%L" ein. p zeigt auf "long"s, die jeweils als

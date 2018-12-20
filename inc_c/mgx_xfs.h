@@ -17,11 +17,24 @@
 
 #define ELINK  -300           /* Datei ist symbolischer Link */
 
+/* Die Struktur(en) fÅr dev_stat */
+typedef union unsel_union
+{
+	void	(*unsel)(void *un);
+	LONG	status;
+} UNSELECT;
+
+typedef struct magx_unsel_struct
+{
+	UNSELECT	unsel;
+	LONG		param;
+} MAGX_UNSEL;
+
 typedef struct {
      WORD version;
      void (*fast_clrmem)      ( void *von, void *bis );
      char (*toupper)          ( char c );
-     void (*_sprintf)         ( char *dest, char *source, LONG *p );
+     void (*_sprintf)         ( char *dest, const char *source, LONG *p );
      PD	**act_pd;
      APPL *act_appl;
      APPL *keyb_app;
@@ -31,12 +44,12 @@ typedef struct {
      void (*appl_suspend)     ( void );
      void (*appl_begcritic)   ( void );
      void (*appl_endcritic)   ( void );
-     long (*evnt_IO)          ( LONG ticks_50hz, void *unsel );
-     void (*evnt_mIO)         ( LONG ticks_50hz, void *unsel, WORD cnt );
+     long (*evnt_IO)          ( LONG ticks_50hz, MAGX_UNSEL *unsel );
+     void (*evnt_mIO)         ( LONG ticks_50hz, MAGX_UNSEL *unsel, WORD cnt );
      void (*evnt_emIO)        ( APPL *ap );
      void (*appl_IOcomplete)  ( APPL *ap );
      long (*evnt_sem)         ( WORD mode, void *sem, LONG timeout );
-     void (*Pfree)            ( void *pd );
+     void (*Pfree)            ( PD *pd );
      WORD int_msize;
      LONG /* void * */ int_malloc         ( void );
      void int_mfree           ( void *memblk );
@@ -210,9 +223,9 @@ typedef struct _mx_xfs {
      long      (*xfs_link)(MX_DD *altdd, MX_DD *neudd, /* d0= */ char *altname, /* d1= */ char *neuname, /* d2= */ WORD flag);
      long      (*xfs_xattr)(MX_DD *dd, char *name, /* d0= */ XATTR *xa, /* d1= */ WORD mode);
      long      (*xfs_attrib)(MX_DD *dd, char *name, WORD mode, WORD attrib);
-     long      (*xfs_chown)(MX_DD *dd, char *name, WORD uid, WORD gid);
-     long      (*xfs_chmod)(MX_DD *dd, char *name, WORD mode);
-     long      (*xfs_dcreate)(MX_DD *dd, char *name, WORD mode);
+     long      (*xfs_chown)(MX_DD *dd, char *name, UWORD uid, UWORD gid);
+     long      (*xfs_chmod)(MX_DD *dd, char *name, UWORD mode);
+     long      (*xfs_dcreate)(MX_DD *dd, char *name, UWORD mode);
      long      (*xfs_ddelete)(MX_DD *dd);
      long      (*xfs_DD2name)(MX_DD *dd, char *buf, WORD buflen);
      long      (*xfs_dopendir)(MX_DD *d, WORD tosflag);
@@ -249,9 +262,9 @@ typedef struct _cdecl_mx_xfs {
      LONG cdecl (*xfs_link)(MX_DD *altdd, MX_DD *neudd, const char *altname, const char *neuname, WORD flag);
      LONG cdecl (*xfs_xattr)(MX_DD *dd, const char *name, XATTR *xa, WORD mode, void **symlink);
      LONG cdecl (*xfs_attrib)(MX_DD *dd, const char *name, WORD mode, WORD attrib);
-     LONG cdecl (*xfs_chown)(MX_DD *dd, const char *name, WORD uid, WORD gid, void **symlink);
-     LONG cdecl (*xfs_chmod)(MX_DD *dd, const char *name, WORD mode, void **symlink);
-     LONG cdecl (*xfs_dcreate)(MX_DD *dd, const char *name, WORD mode);
+     LONG cdecl (*xfs_chown)(MX_DD *dd, const char *name, UWORD uid, UWORD gid, void **symlink);
+     LONG cdecl (*xfs_chmod)(MX_DD *dd, const char *name, UWORD mode, void **symlink);
+     LONG cdecl (*xfs_dcreate)(MX_DD *dd, const char *name, UWORD mode);
      LONG cdecl (*xfs_ddelete)(MX_DD *dd);
      LONG cdecl (*xfs_DD2name)(MX_DD *dd, char *buf, WORD buflen);
      LONG cdecl (*xfs_dopendir)(MX_DD *d, WORD tosflag);
@@ -259,7 +272,7 @@ typedef struct _cdecl_mx_xfs {
      LONG cdecl (*xfs_drewinddir)(MX_DHD *dhd);
      LONG cdecl (*xfs_dclosedir)(MX_DHD *dhd);
      LONG cdecl (*xfs_dpathconf)(MX_DD *dd, WORD which);
-     LONG cdecl (*xfs_dfree)(MX_DD *dd, LONG buf[4]);
+     LONG cdecl (*xfs_dfree)(MX_DD *dd, DISKINFO *buf);
      LONG cdecl (*xfs_wlabel)(MX_DD *dd, const char *name);
      LONG cdecl (*xfs_rlabel)(MX_DD *dd, const char *name, char *buf, WORD buflen);
      LONG cdecl (*xfs_symlink)(MX_DD *dd, const char *name, const char *to);
