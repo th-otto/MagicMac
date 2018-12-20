@@ -189,6 +189,8 @@ fast_clrmem:
  move.l   a0,d0
  btst     #0,d0
  beq.b    fclr_even
+ cmpa.l   a0,a1
+ beq.b    fclr_ende
  move.b   d1,(a0)+
 fclr_even:
  move.l   a1,d0
