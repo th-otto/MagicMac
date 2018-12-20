@@ -42,58 +42,58 @@ LONG chmod_action(DIRENTRY *entry, LONG _mode, LONG dummy);
 LONG get_size(DIRENTRY *search);
 LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg);
 
-LONG ramdisk_sync(MX_DMD *d);
-void ramdisk_pterm(PD *pd);
+void ramdisk_sync(MX_DMD *d);
+void ramdisk_pterm(MX_DMD *dmd, PD *pd);
 LONG ramdisk_garbcoll(MX_DMD *d);
-void ramdisk_freeDD(void *dd);
+void ramdisk_freeDD(MX_DD *dd);
 LONG ramdisk_drv_open(MX_DMD *d);
 LONG ramdisk_drv_close(MX_DMD *d, WORD mode);
-LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
-	char **lastpath, LONG *linkdir, char **symlink);
-LONG ramdisk_sfirst(void *srchdir, char *name, DTA *dta,
+LONG ramdisk_path2DD(MX_DD *reldir, char *pathname, WORD mode,
+	char **lastpath, MX_DD **linkdir, char **symlink);
+LONG ramdisk_sfirst(MX_DD *srchdir, char *name, DTA *dta,
 	WORD attrib, char **symlink);
 LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, char **symlink);
-LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
+LONG ramdisk_fopen(MX_DD *dir, char *name, WORD omode, WORD attrib,
 	char **symlink);
-LONG ramdisk_fdelete(void *dir, char *name);
-LONG ramdisk_link(void *olddir, void *newdir, char *oldname,
+LONG ramdisk_fdelete(MX_DD *dir, char *name);
+LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, char *oldname,
 	char *newname, WORD flag_link);
-LONG ramdisk_xattr(void *dir, char *name, XATTR *xattr, WORD mode,
+LONG ramdisk_xattr(MX_DD *dir, char *name, XATTR *xattr, WORD mode,
 	char **symlink);
-LONG ramdisk_attrib(void *dir, char *name, WORD rwflag, WORD attrib,
+LONG ramdisk_attrib(MX_DD *dir, char *name, WORD rwflag, WORD attrib,
 	char **symlink);
-LONG ramdisk_chown(void *dir, char *name, UWORD uid, UWORD gid,
+LONG ramdisk_chown(MX_DD *dir, char *name, UWORD uid, UWORD gid,
 	char **symlink);
-LONG ramdisk_chmod(void *dir, char *name, UWORD mode,
+LONG ramdisk_chmod(MX_DD *dir, char *name, UWORD mode,
 	char **symlink);
-LONG ramdisk_dcreate(void *dir, char *name);
-LONG ramdisk_ddelete(void *dir);
-LONG ramdisk_DD2name(void *dir, char *name, WORD bufsize);
-LONG ramdisk_dopendir(void *dir, WORD tosflag);
-LONG ramdisk_dreaddir(void *dhd, WORD size, char *buf, XATTR *xattr,
+LONG ramdisk_dcreate(MX_DD *dir, char *name);
+LONG ramdisk_ddelete(MX_DD *dir);
+LONG ramdisk_DD2name(MX_DD *dir, char *name, WORD bufsize);
+LONG ramdisk_dopendir(MX_DD *dir, WORD tosflag);
+LONG ramdisk_dreaddir(MX_DHD *dhd, WORD size, char *buf, XATTR *xattr,
 	LONG *xr);
-LONG ramdisk_drewinddir(void *dhd);
-LONG ramdisk_dclosedir(void *dhd);
-LONG ramdisk_dpathconf(void *dir, WORD which);
-LONG ramdisk_dfree(void *dd, DISKINFO *free);
-LONG ramdisk_wlabel(void *dir, char *name);
-LONG ramdisk_rlabel(void *dir, char *name, char *buf, WORD len);
-LONG ramdisk_symlink(void *dir, char *name, char *to);
-LONG ramdisk_readlink(void *dir, char *name, char *buf, WORD size);
-LONG ramdisk_dcntl(void *dir, char *name, WORD cmd, LONG arg,
+LONG ramdisk_drewinddir(MX_DHD *dhd);
+LONG ramdisk_dclosedir(MX_DHD *dhd);
+LONG ramdisk_dpathconf(MX_DD *dir, WORD which);
+LONG ramdisk_dfree(MX_DD *dd, DISKINFO *free);
+LONG ramdisk_wlabel(MX_DD *dir, char *name);
+LONG ramdisk_rlabel(MX_DD *dir, char *name, char *buf, WORD len);
+LONG ramdisk_symlink(MX_DD *dir, char *name, char *to);
+LONG ramdisk_readlink(MX_DD *dir, char *name, char *buf, WORD size);
+LONG ramdisk_dcntl(MX_DD *dir, char *name, WORD cmd, LONG arg,
 	char **symlink);
 
-LONG ramdisk_close(void *file);
-LONG ramdisk_read(void *file, LONG count, char *buffer);
-LONG ramdisk_write(void *file, LONG count, char *buffer);
-LONG ramdisk_stat(void *file, MAGX_UNSEL *unselect, WORD rwflag,
+LONG ramdisk_close(MX_FD *file);
+LONG ramdisk_read(MX_FD *file, LONG count, char *buffer);
+LONG ramdisk_write(MX_FD *file, LONG count, char *buffer);
+LONG ramdisk_stat(MX_FD *file, MAGX_UNSEL *unselect, WORD rwflag,
 	LONG apcode);
-LONG ramdisk_seek(void *file, LONG where, WORD mode);
-LONG ramdisk_datime(void *file, WORD *d, WORD setflag);
-LONG ramdisk_ioctl(void *file, WORD cmd, void *buf);
-LONG ramdisk_getc(void *file, WORD mode);
-LONG ramdisk_getline(void *file, char *buf, WORD mode, LONG size);
-LONG ramdisk_putc(void *file, WORD mode, LONG value);
+LONG ramdisk_seek(MX_FD *file, LONG where, WORD mode);
+LONG ramdisk_datime(MX_FD *file, WORD *d, WORD setflag);
+LONG ramdisk_ioctl(MX_FD *file, WORD cmd, void *buf);
+LONG ramdisk_getc(MX_FD *file, WORD mode);
+LONG ramdisk_getline(MX_FD *file, char *buf, WORD mode, LONG size);
+LONG ramdisk_putc(MX_FD *file, WORD mode, LONG value);
 
 void prepare_dir(DIRENTRY *dir, WORD maxentries, DIRENTRY *parent);
 DIRENTRY *findfile(RAMDISK_FD *dd, const char *pathname, WORD spos,
@@ -133,26 +133,12 @@ WORD get_cookie(ULONG cookie, ULONG *value);
  * bzw. definiert werden.
  */
 extern THE_MX_KERNEL *kernel;
+extern THE_MGX_XFS ramdisk_xfs;
+extern THE_MGX_DEV ramdisk_dev;
 #ifdef ONLY_EXTERN
 #define _GLOBAL	extern
-_GLOBAL	THE_MGX_XFS	ramdisk_xfs;
-_GLOBAL THE_MGX_DEV	ramdisk_dev;
 #else
 #define _GLOBAL
-THE_MGX_XFS		ramdisk_xfs = {
-	"Ramdisk", ramdisk_sync, ramdisk_pterm, ramdisk_garbcoll,
-	ramdisk_freeDD, ramdisk_drv_open, ramdisk_drv_close,
-	ramdisk_path2DD, ramdisk_sfirst, ramdisk_snext, ramdisk_fopen,
-	ramdisk_fdelete, ramdisk_link, ramdisk_xattr, ramdisk_attrib,
-	ramdisk_chown, ramdisk_chmod, ramdisk_dcreate, ramdisk_ddelete,
-	ramdisk_DD2name, ramdisk_dopendir, ramdisk_dreaddir,
-	ramdisk_drewinddir, ramdisk_dclosedir, ramdisk_dpathconf,
-	ramdisk_dfree, ramdisk_wlabel, ramdisk_rlabel, ramdisk_symlink,
-	ramdisk_readlink, ramdisk_dcntl};
-THE_MGX_DEV		ramdisk_dev = {
-	ramdisk_close, ramdisk_read, ramdisk_write, ramdisk_stat,
-	ramdisk_seek, ramdisk_datime, ramdisk_ioctl, ramdisk_getc,
-	ramdisk_getline, ramdisk_putc};
 #endif
 _GLOBAL	WORD			ramdisk_drive,
 						starttime,

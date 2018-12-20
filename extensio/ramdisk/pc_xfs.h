@@ -80,8 +80,8 @@ extern void	*real_xfs;
 typedef struct
 {
 	char	xfs_name[8];
-	LONG	(*xfs_sync)(MX_DMD *d);
-	void	(*xfs_pterm)(PD *pd);
+	void	(*xfs_sync)(MX_DMD *d);
+	void	(*xfs_pterm)(MX_DMD *d, PD *pd);
 /*
  * FÅr xfs_garbcoll muû ein Funktionspointer angegeben werden, auch
  * wenn das Filesystem die interne Speicherverwaltung von MagiC 3
@@ -89,7 +89,7 @@ typedef struct
  * 0L zurÅckliefert.
  */
 	LONG	(*xfs_garbcoll)(MX_DMD *d);
-	void	(*xfs_freeDD)(void *dd);
+	void	(*xfs_freeDD)(MX_DD *dd);
 	LONG	(*xfs_drv_open)(MX_DMD *d);
 	LONG	(*xfs_drv_close)(MX_DMD *d, WORD mode);
 /*
@@ -101,8 +101,8 @@ typedef struct
  * a0: *linkdir
  * a1: *symlink
  */
-	LONG	(*xfs_path2DD)(void *reldir, char *pathname, WORD mode,
-		char **lastpath, LONG *linkdir, char **symlink);
+	LONG	(*xfs_path2DD)(MX_DD *reldir, char *pathname, WORD mode,
+		char **lastpath, MX_DD **linkdir, char **symlink);
 /*
  * Auch xfs_sfirst liefert zwei RÅckgabeparameter. Da a0 aber nur
  * einen Zeiger auf einen Symbolischen Link enthalten kann, ist der
@@ -111,7 +111,7 @@ typedef struct
  * nicht vergessen, daû die ersten beiden "Buchstaben" die LÑnge des
  * Links (als Wort) angeben).
  */
-	LONG	(*xfs_sfirst)(void *srchdir, char *name, DTA *dta,
+	LONG	(*xfs_sfirst)(MX_DD *srchdir, char *name, DTA *dta,
 		WORD attrib, char **symlink);
 /* Entsprechendes gilt natÅrlich auch fÅr xfs_snext */
 	LONG	(*xfs_snext)(DTA *dta, MX_DMD *dmd, char **symlink);
@@ -136,39 +136,39 @@ typedef struct
  * Auch xfs_fopen liefert unter UmstÑnden einen Zeiger auf einen
  * symbolischen Link...
  */
-	LONG	(*xfs_fopen)(void *dir, char *name, WORD omode,
+	LONG	(*xfs_fopen)(MX_DD *dir, char *name, WORD omode,
 		WORD attrib, char **symlink);
-	LONG	(*xfs_fdelete)(void *dir, char *name);
-	LONG	(*xfs_link)(void *olddir, void *newdir, char *oldname,
+	LONG	(*xfs_fdelete)(MX_DD *dir, char *name);
+	LONG	(*xfs_link)(MX_DD *olddir, MX_DD *newdir, char *oldname,
 		char *newname, WORD flag_link);
 /* Ebenfalls zusÑtzlich mit Platzhalter fÅr symbolischen Link */
-	LONG	(*xfs_xattr)(void *dir, char *name, XATTR *xattr,
+	LONG	(*xfs_xattr)(MX_DD *dir, char *name, XATTR *xattr,
 		WORD mode, char **symlink);
 /* Und noch dreimal... */
-	LONG	(*xfs_attrib)(void *dir, char *name, WORD rwflag,
+	LONG	(*xfs_attrib)(MX_DD *dir, char *name, WORD rwflag,
 		WORD attrib, char **symlink);
-	LONG	(*xfs_chown)(void *dir, char *name, UWORD uid,
+	LONG	(*xfs_chown)(MX_DD *dir, char *name, UWORD uid,
 		UWORD gid, char **symlink);
-	LONG	(*xfs_chmod)(void *dir, char *name, UWORD mode,
+	LONG	(*xfs_chmod)(MX_DD *dir, char *name, UWORD mode,
 		char **symlink);
-	LONG	(*xfs_dcreate)(void *dir, char *name);
-	LONG	(*xfs_ddelete)(void *dir);
-	LONG	(*xfs_DD2name)(void *dir, char *name, WORD bufsize);
-	LONG	(*xfs_dopendir)(void *dir, WORD tosflag);
-	LONG	(*xfs_dreaddir)(void *dhd, WORD size, char *buf,
+	LONG	(*xfs_dcreate)(MX_DD *dir, char *name);
+	LONG	(*xfs_ddelete)(MX_DD *dir);
+	LONG	(*xfs_DD2name)(MX_DD *dir, char *name, WORD bufsize);
+	LONG	(*xfs_dopendir)(MX_DD *dir, WORD tosflag);
+	LONG	(*xfs_dreaddir)(MX_DHD *dhd, WORD size, char *buf,
 		XATTR *xattr, LONG *xr);
-	LONG	(*xfs_drewinddir)(void *dhd);
-	LONG	(*xfs_dclosedir)(void *dhd);
-	LONG	(*xfs_dpathconf)(void *dir, WORD which);
-	LONG	(*xfs_dfree)(void *dd, DISKINFO *free);
-	LONG	(*xfs_wlabel)(void *dir, char *name);
-	LONG	(*xfs_rlabel)(void *dir, char *name, char *buf,
+	LONG	(*xfs_drewinddir)(MX_DHD *dhd);
+	LONG	(*xfs_dclosedir)(MX_DHD *dhd);
+	LONG	(*xfs_dpathconf)(MX_DD *dir, WORD which);
+	LONG	(*xfs_dfree)(MX_DD *dd, DISKINFO *free);
+	LONG	(*xfs_wlabel)(MX_DD *dir, char *name);
+	LONG	(*xfs_rlabel)(MX_DD *dir, char *name, char *buf,
 		WORD len);
-	LONG	(*xfs_symlink)(void *dir, char *name, char *to);
-	LONG	(*xfs_readlink)(void *dir, char *name, char *buf,
+	LONG	(*xfs_symlink)(MX_DD *dir, char *name, char *to);
+	LONG	(*xfs_readlink)(MX_DD *dir, char *name, char *buf,
 		WORD size);
 /* Nochmal mit Platzhalter fÅr symbolischen Link */
-	LONG	(*xfs_dcntl)(void *dir, char *name, WORD cmd, LONG arg,
+	LONG	(*xfs_dcntl)(MX_DD *dir, char *name, WORD cmd, LONG arg,
 		char **symlink);
 } THE_MGX_XFS;
 
@@ -179,21 +179,21 @@ typedef struct
  */
 typedef struct
 {
-	LONG	(*dev_close)(void *file);
-	LONG	(*dev_read)(void *file, LONG count, char *buffer);
-	LONG	(*dev_write)(void *file, LONG count, char *buffer);
-	LONG	(*dev_stat)(void *file, MAGX_UNSEL *unselect,
+	LONG	(*dev_close)(MX_FD *file);
+	LONG	(*dev_read)(MX_FD *file, LONG count, char *buffer);
+	LONG	(*dev_write)(MX_FD *file, LONG count, char *buffer);
+	LONG	(*dev_stat)(MX_FD *file, MAGX_UNSEL *unselect,
 		WORD rwflag, LONG apcode);
-	LONG	(*dev_seek)(void *file, LONG where, WORD mode);
-	LONG	(*dev_datime)(void *file, WORD *d, WORD setflag);
-	LONG	(*dev_ioctl)(void *file, WORD cmd, void *buf);
+	LONG	(*dev_seek)(MX_FD *file, LONG where, WORD mode);
+	LONG	(*dev_datime)(MX_FD *file, WORD *d, WORD setflag);
+	LONG	(*dev_ioctl)(MX_FD *file, WORD cmd, void *buf);
 #define CMODE_RAW		0
 #define CMODE_COOKED	1
 #define CMODE_ECHO		2
-	LONG	(*dev_getc)(void *file, WORD mode);
-	LONG	(*dev_getline)(void *file, char *buf, WORD mode,
+	LONG	(*dev_getc)(MX_FD *file, WORD mode);
+	LONG	(*dev_getline)(MX_FD *file, char *buf, WORD mode,
 		LONG size);
-	LONG	(*dev_putc)(void *file, WORD mode, LONG value);
+	LONG	(*dev_putc)(MX_FD *file, WORD mode, LONG value);
 } THE_MGX_DEV;
 
 /*

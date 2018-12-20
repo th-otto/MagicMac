@@ -260,10 +260,9 @@
  * Ramdisk ja keinerlei Caches benutzt (im Prinzip ist sie ein
  * einziger, groûer Cache ;)
  */
-LONG ramdisk_sync(MX_DMD *d)
+void ramdisk_sync(MX_DMD *d)
 {
 	TRACE(("sync\r\n"));
-	return(E_OK);
 }
 
 /*
@@ -273,7 +272,7 @@ LONG ramdisk_sync(MX_DMD *d)
  * Hatte man bei dopendir Speicher angefordert, muû dieser natÅrlich
  * dem System zurÅckgegeben werden.
  */
-void ramdisk_pterm(PD *pd)
+void ramdisk_pterm(MX_DMD *dmd, PD *pd)
 {
 	WORD	i;
 
@@ -313,7 +312,7 @@ LONG ramdisk_garbcoll(MX_DMD *d)
  * die bei path2DD auftreten kînnen, wenn beim weiteren Parsen ein
  * Fehler aufgetreten ist.
  */
-void ramdisk_freeDD(void *dd)
+void ramdisk_freeDD(MX_DD *dd)
 {
 	RAMDISK_FD	*i;
 	WORD		j;
@@ -490,8 +489,8 @@ LONG ramdisk_drv_close(MX_DMD *d, WORD mode)
  * zur VerfÅgung stellen muû, den Rest erledigt der Kernel. DafÅr ist
  * die MagiC-Lîsung in den meisten FÑllen deutlich schneller.
  */
-LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
-	char **lastpath, LONG *linkdir, char **symlink)
+LONG ramdisk_path2DD(MX_DD *reldir, char *pathname, WORD mode,
+	char **lastpath, MX_DD **linkdir, char **symlink)
 {
 	char		*next,
 				*current,
@@ -629,7 +628,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
 			if (dd == &fd[ROOT])
 			{
 				*lastpath = next;
-				*linkdir = (LONG)dd;
+				*linkdir = (MX_DD *)dd;
 				*symlink = NULL;
 				return(ELINK);
 			}
@@ -657,7 +656,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
 				&found->de_faddr[2]));
 			increase_refcnts(dd);
 			*lastpath = next;
-			*linkdir = (LONG)dd;
+			*linkdir = (MX_DD *)dd;
 			*symlink = found->de_faddr;
 			return(ELINK);
 		}
@@ -721,7 +720,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
  * '*' enthÑlt (das Ramdisk-XFS akzeptiert das), doch viel schlimmes
  * wird dabei nicht passieren.
  */
-LONG ramdisk_sfirst(void *srchdir, char *name, DTA *dta,
+LONG ramdisk_sfirst(MX_DD *srchdir, char *name, DTA *dta,
 	WORD attrib, char **symlink)
 {
 	RAMDISK_FD	*dd;
@@ -826,7 +825,7 @@ LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, char **symlink)
  */
 	for (;;)
 	{
-		r = ramdisk_dreaddir(&handle, 13, the_dta->dta_name, &xattr,
+		r = ramdisk_dreaddir((MX_DHD *)&handle, 13, the_dta->dta_name, &xattr,
 			&dummy);
 		the_dta->dta_pos = handle.dhd_pos;
 		if (r)
@@ -906,7 +905,7 @@ LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, char **symlink)
  * - Wird Filesharing unterstÅtzt, muû natÅrlich geprÅft werden, ob
  *   der neue Modus mit den bisherigen harmoniert
  */
-LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
+LONG ramdisk_fopen(MX_DD *dir, char *name, WORD omode, WORD attrib,
 	char **symlink)
 {
 	RAMDISK_FD	*dd,
@@ -1137,7 +1136,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
  * Physikalisch gelîscht wÅrde sie dann erst, wenn der letzte Prozeû
  * die Datei schlieût.
  */
-LONG ramdisk_fdelete(void *dir, char *name)
+LONG ramdisk_fdelete(MX_DD *dir, char *name)
 {
 	RAMDISK_FD	*dd,
 				*fd;
@@ -1222,7 +1221,7 @@ LONG ramdisk_fdelete(void *dir, char *name)
  * nicht zu den "Nachfahren" des Quellverzeichnis gehîrt (man darf
  * z.B. \usr nicht nach \usr\local verschieben).
  */
-LONG ramdisk_link(void *olddir, void *newdir, char *oldname,
+LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, char *oldname,
 	char *newname, WORD flag_link)
 {
 	RAMDISK_FD	*old,
@@ -1383,7 +1382,7 @@ LONG ramdisk_link(void *olddir, void *newdir, char *oldname,
  * anzugeben, welche Felder der XATTR-Struktur mit verlÑûlichen
  * Werten gefÅllt werden.
  */
-LONG ramdisk_xattr(void *dir, char *name, XATTR *xattr, WORD mode,
+LONG ramdisk_xattr(MX_DD *dir, char *name, XATTR *xattr, WORD mode,
 	char **symlink)
 {
 	RAMDISK_FD	*dd;
@@ -1435,7 +1434,7 @@ LONG ramdisk_xattr(void *dir, char *name, XATTR *xattr, WORD mode,
  * daû die beiden jeweils anderen mitbetroffenen EintrÑge ebenfalls
  * geÑndert werden.
  */
-LONG ramdisk_attrib(void *dir, char *name, WORD rwflag, WORD attrib,
+LONG ramdisk_attrib(MX_DD *dir, char *name, WORD rwflag, WORD attrib,
 	char **symlink)
 {
 	TRACE(("attrib - %L\\%S, %L, %L\r\n", dir, name, (LONG)rwflag,
@@ -1486,7 +1485,7 @@ LONG attrib_action(DIRENTRY *entry, LONG rwflag, LONG attrib)
  * immer auf das Ziel eines symbolischen Links, nicht auf den Link
  * selbst!)
  */
-LONG ramdisk_chown(void *dir, char *name, UWORD uid, UWORD gid,
+LONG ramdisk_chown(MX_DD *dir, char *name, UWORD uid, UWORD gid,
 	char **symlink)
 {
 	TRACE(("chown - not supported\r\n"));
@@ -1512,7 +1511,7 @@ LONG ramdisk_chown(void *dir, char *name, UWORD uid, UWORD gid,
  * realisiert, damit auch die Zugriffsrechte von Verzeichnissen
  * korrekt geÑndert werden kînnen.
  */
-LONG ramdisk_chmod(void *dir, char *name, UWORD mode, char **symlink)
+LONG ramdisk_chmod(MX_DD *dir, char *name, UWORD mode, char **symlink)
 {
 	TRACE(("chmod - %L\\%S, %L\r\n", dir, name, (LONG)mode));
 	return(work_entry((RAMDISK_FD *)dir, name, symlink, 1, mode, 0L,
@@ -1543,7 +1542,7 @@ LONG chmod_action(DIRENTRY *entry, LONG _mode, LONG dummy)
  * Das Anlegen eines neuen Unterverzeichnisses ist natÅrlich recht
  * unspektakÅlar...
  */
-LONG ramdisk_dcreate(void *dir, char *name)
+LONG ramdisk_dcreate(MX_DD *dir, char *name)
 {
 	RAMDISK_FD	*dd;
 	DIRENTRY	*entry,
@@ -1569,7 +1568,7 @@ LONG ramdisk_dcreate(void *dir, char *name)
  * Es darf natÅrlich noch keinen Verzeichniseintrag gleichen Namens
  * geben
  */
-	if (findfile(dir, name, 0, FF_EXIST, 0) != NULL)
+	if (findfile((RAMDISK_FD *)dir, name, 0, FF_EXIST, 0) != NULL)
 	{
 		TRACE(("dcreate: Datei existiert bereits!\r\n"));
 		return(EACCDN);
@@ -1621,7 +1620,7 @@ LONG ramdisk_dcreate(void *dir, char *name)
  * selbe Verzeichnis referenziert. Da das Ramdisk-XFS DDs mehrfach
  * nutzt, erÅbrigt sich das Problem hier.
  */
-LONG ramdisk_ddelete(void *dir)
+LONG ramdisk_ddelete(MX_DD *dir)
 {
 	RAMDISK_FD	*dd,
 				parent,
@@ -1673,7 +1672,7 @@ LONG ramdisk_ddelete(void *dir)
 	parent = *(dd->fd_parent);
 /* Vor Kernelversion 3 muû der DD jetzt freigegeben werden */
 	if (real_kernel->version < 3)
-		ramdisk_freeDD(dd);
+		ramdisk_freeDD((MX_DD *)dd);
 /*
  * Zum Lîschen eines Verzeichnisses muû das Vaterverzeichnis
  * beschreibbar sein
@@ -1751,7 +1750,7 @@ LONG ramdisk_ddelete(void *dir)
  * interessanterweise nicht... Zum GlÅck funktioniert mit MagiC 4
  * alles bestens, das Problem besteht also wirklich nur mit MagiC 3.
  */
-LONG ramdisk_DD2name(void *dir, char *name, WORD bufsize)
+LONG ramdisk_DD2name(MX_DD *dir, char *name, WORD bufsize)
 {
 	RAMDISK_FD	*dd;
 	char		*temp;
@@ -1818,7 +1817,7 @@ LONG ramdisk_DD2name(void *dir, char *name, WORD bufsize)
  * also einen DD benutzen, der nicht mehr gÅltig und u.U. sogar schon
  * wieder anderweitig vergeben ist.
  */
-LONG ramdisk_dopendir(void *dir, WORD tosflag)
+LONG ramdisk_dopendir(MX_DD *dir, WORD tosflag)
 {
 	WORD		i;
 	RAMDISK_FD	*dd;
@@ -1874,7 +1873,7 @@ LONG ramdisk_dopendir(void *dir, WORD tosflag)
  * Da ein Verzeichniseintrag der Ramdisk die XATTR-Struktur enthÑlt,
  * erÅbrigt sich das zweite genannte Problem hier ohnehin...
  */
-LONG ramdisk_dreaddir(void *dhd, WORD size, char *buf, XATTR *xattr,
+LONG ramdisk_dreaddir(MX_DHD *dhd, WORD size, char *buf, XATTR *xattr,
 	LONG *xr)
 {
 	RAMDISK_DHD	*handle;
@@ -1963,7 +1962,7 @@ LONG ramdisk_dreaddir(void *dhd, WORD size, char *buf, XATTR *xattr,
  * Beim Ramdisk-XFS genÅgt es, den Lesezeiger wieder auf Null zu
  * setzen.
  */
-LONG ramdisk_drewinddir(void *dhd)
+LONG ramdisk_drewinddir(MX_DHD *dhd)
 {
 	RAMDISK_DHD	*handle;
 
@@ -1985,7 +1984,7 @@ LONG ramdisk_drewinddir(void *dhd)
  * dopendir zur Beschleunigung des Lesens angefordert hat, wieder
  * freizugeben
  */
-LONG ramdisk_dclosedir(void *dhd)
+LONG ramdisk_dclosedir(MX_DHD *dhd)
 {
 	RAMDISK_DHD	*handle;
 
@@ -2014,11 +2013,11 @@ LONG ramdisk_dclosedir(void *dhd)
  * unabhÑngig, es ist allerdings bei speziellen Filesystemen durchaus
  * anders denkbar.
  */
-LONG ramdisk_dpathconf(void *dir, WORD which)
+LONG ramdisk_dpathconf(MX_DD *dir, WORD which)
 {
 	TRACE(("dpathconf - %L, %L\r\n", dir, (LONG)which));
-	if (check_dd(dir) < 0)
-		return(check_dd(dir));
+	if (check_dd((RAMDISK_FD *)dir) < 0)
+		return(check_dd((RAMDISK_FD *)dir));
 	switch (which)
 	{
 		case -1:
@@ -2077,7 +2076,7 @@ LONG ramdisk_dpathconf(void *dir, WORD which)
  * nur die GEMDOS-Funktion Dfree, die ein Laufwerk als Parameter
  * erhÑlt, keinen Pfad). Bei MiNT ist es Åbrigens Ñhnlich, komisch.
  */
-LONG ramdisk_dfree(void *dd, DISKINFO *free)
+LONG ramdisk_dfree(MX_DD *dd, DISKINFO *free)
 {
 	LONG	freeblocks,
 			usedblocks;
@@ -2103,8 +2102,8 @@ LONG ramdisk_dfree(void *dd, DISKINFO *free)
 		}
 	}
 #endif
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if (check_dd((RAMDISK_FD *)dd) < 0)
+		return(check_dd((RAMDISK_FD *)dd));
 /*
  * Die freien Blocks errechnen sich aus dem (fÅr die Ramdisk) noch
  * freien Speicher geteilt durch die Grîûe eines Fileblocks. Das
@@ -2165,12 +2164,12 @@ LONG get_size(DIRENTRY *search)
  * MagiC-Doku. Werden keine Labels unterstÅtzt, muû EACCDN geliefert
  * werden.
  */
-LONG ramdisk_wlabel(void *dir, char *name)
+LONG ramdisk_wlabel(MX_DD *dir, char *name)
 {
 	TRACE(("wlabel - %S\r\n", name));
 /* dir wird nur ÅberprÅft, sonst aber ignoriert */
-	if (check_dd(dir) < 0)
-		return(check_dd(dir));
+	if (check_dd((RAMDISK_FD *)dir) < 0)
+		return(check_dd((RAMDISK_FD *)dir));
 /*
  * Bei Bedarf Volume Label lîschen, sonst die ersten 32 Zeichen des
  * gewÅnschten Labels Åbernehmen
@@ -2191,12 +2190,12 @@ LONG ramdisk_wlabel(void *dir, char *name)
  * Der Parameter name wird von der Ramdisk ignoriert, was laut
  * Doku auch zulÑssig ist.
  */
-LONG ramdisk_rlabel(void *dir, char *name, char *buf, WORD len)
+LONG ramdisk_rlabel(MX_DD *dir, char *name, char *buf, WORD len)
 {
 	TRACE(("rlabel - %S %L\r\n", name, (LONG)len));
 /* dir wird zwar ÅberprÅft, sonst aber ignoriert */
-	if (check_dd(dir) < 0)
-		return(check_dd(dir));
+	if (check_dd((RAMDISK_FD *)dir) < 0)
+		return(check_dd((RAMDISK_FD *)dir));
 /*
  * Ist das Label leer, wird EFILNF geliefert, weil genaugenommen
  * keines existiert
@@ -2222,7 +2221,7 @@ LONG ramdisk_rlabel(void *dir, char *name, char *buf, WORD len)
  * sondern eher ein Gemisch aus beidem... Vielleicht ein GFA-Basic-
  * String? ;>
  */
-LONG ramdisk_symlink(void *dir, char *name, char *to)
+LONG ramdisk_symlink(MX_DD *dir, char *name, char *to)
 {
 	RAMDISK_FD	*dd;
 	DIRENTRY	*entry;
@@ -2242,7 +2241,7 @@ LONG ramdisk_symlink(void *dir, char *name, char *to)
 	if (findfile(dd, name, 0, FF_EXIST, 0) != NULL)
 		return(EACCDN);
 /* Versuchen, einen neuen Eintrag zu erhalten */
-	if ((entry = new_file(dir, name)) == NULL)
+	if ((entry = new_file((RAMDISK_FD *)dir, name)) == NULL)
 		return(EACCDN);
 /*
  * Berechnen, wieviel Speicher der Link im MagiC-Format braucht und
@@ -2277,7 +2276,7 @@ LONG ramdisk_symlink(void *dir, char *name, char *to)
  * aufzunehmen. UnterstÅtzt das XFS keine symbolischen Links, muû
  * auch hier EINVFN geliefert werden.
  */
-LONG ramdisk_readlink(void *dir, char *name, char *buf, WORD size)
+LONG ramdisk_readlink(MX_DD *dir, char *name, char *buf, WORD size)
 {
 	RAMDISK_FD	*dd;
 	DIRENTRY	*found;
@@ -2315,7 +2314,7 @@ LONG ramdisk_readlink(void *dir, char *name, char *buf, WORD size)
  * auch Verzeichnisse bearbeiten zu kînnen. Bislang wird nur FUTIME
  * (Zeiten verÑndern) unterstÅtzt.
  */
-LONG ramdisk_dcntl(void *dir, char *name, WORD cmd, LONG arg,
+LONG ramdisk_dcntl(MX_DD *dir, char *name, WORD cmd, LONG arg,
 	char **symlink)
 {
 	RAMDISK_FD	*dd;
@@ -2383,7 +2382,7 @@ LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg)
  * Wenn eine Datei geschlossen werden soll, muû man sicherstellen,
  * daû der refcnt auch wirklich Null ist, bevor man ihn freigibt
  */
-LONG ramdisk_close(void *file)
+LONG ramdisk_close(MX_FD *file)
 {
 	RAMDISK_FD	*fd;
 
@@ -2417,7 +2416,7 @@ LONG ramdisk_close(void *file)
  * durch die Tatsache, daû die Startposition des Lesevorgangs selten
  * direkt am Anfang eines Blocks liegt.
  */
-LONG ramdisk_read(void *file, LONG count, char *buffer)
+LONG ramdisk_read(MX_FD *file, LONG count, char *buffer)
 {
 	RAMDISK_FD	*fd;
 	FILEBLOCK	*the_file;
@@ -2492,7 +2491,7 @@ LONG ramdisk_read(void *file, LONG count, char *buffer)
  * die bisherigen angehÑngt werden. Sollte kein Speicher mehr frei
  * sein, kînnen eben nicht alle Bytes geschrieben werden.
  */
-LONG ramdisk_write(void *file, LONG count, char *buffer)
+LONG ramdisk_write(MX_FD *file, LONG count, char *buffer)
 {
 	RAMDISK_FD	*fd;
 	FILEBLOCK	*the_file,
@@ -2612,7 +2611,7 @@ LONG ramdisk_write(void *file, LONG count, char *buffer)
  * ich mich auch noch nicht auseinandergesetzt, zumal das Problem
  * in der Regel auch nur fÅr "echte" Devices akut ist.
  */
-LONG ramdisk_stat(void *file, MAGX_UNSEL *unselect, WORD rwflag,
+LONG ramdisk_stat(MX_FD *file, MAGX_UNSEL *unselect, WORD rwflag,
 	LONG apcode)
 {
 	RAMDISK_FD	*fd;
@@ -2664,7 +2663,7 @@ rs_exit:
  * ERANGE melden. Ansonsten ist seek, zumindest beim Ramdisk-XFS,
  * kein Problem.
  */
-LONG ramdisk_seek(void *file, LONG where, WORD mode)
+LONG ramdisk_seek(MX_FD *file, LONG where, WORD mode)
 {
 	RAMDISK_FD	*fd;
 	LONG		new_pos;
@@ -2723,7 +2722,7 @@ LONG ramdisk_seek(void *file, LONG where, WORD mode)
  * das Datum der letzten énderung genommen, wie es auch in der DTA
  * von snext geliefert wird.
  */
-LONG ramdisk_datime(void *file, WORD *d, WORD setflag)
+LONG ramdisk_datime(MX_FD *file, WORD *d, WORD setflag)
 {
 	RAMDISK_FD	*fd;
 
@@ -2765,7 +2764,7 @@ LONG ramdisk_datime(void *file, WORD *d, WORD setflag)
  * FIONWRITE (wieviele Bytes kînnen sicher geschrieben werden) und
  * FUTIME (Zugriffs- und Modifikationszeit Ñndern).
  */
-LONG ramdisk_ioctl(void *file, WORD cmd, void *buf)
+LONG ramdisk_ioctl(MX_FD *file, WORD cmd, void *buf)
 {
 	RAMDISK_FD	*fd;
 	WORD		*timebuf;
@@ -2859,7 +2858,7 @@ LONG ramdisk_ioctl(void *file, WORD cmd, void *buf)
  * sicherlich ebensowenig erfolgreich sein wird. mode wird nicht
  * beachtet!
  */
-LONG ramdisk_getc(void *file, WORD mode)
+LONG ramdisk_getc(MX_FD *file, WORD mode)
 {
 	RAMDISK_FD	*fd;
 	UBYTE		dummy;
@@ -2891,7 +2890,7 @@ LONG ramdisk_getc(void *file, WORD mode)
  * mode nicht beachtet, was aber sowieso eher fÅr Terminal-Devices
  * wichtig ist.
  */
-LONG ramdisk_getline(void *file, char *buf, WORD mode, LONG size)
+LONG ramdisk_getline(MX_FD *file, char *buf, WORD mode, LONG size)
 {
 	RAMDISK_FD	*fd;
 	LONG		dummy,
@@ -2955,7 +2954,7 @@ LONG ramdisk_getline(void *file, char *buf, WORD mode, LONG size)
  * Das Ramdisk-XFS beachtet auch hier mode nicht, weil das eigentlich
  * nur fÅr Terminal-Devicetreiber sinnvoll ist.
  */
-LONG ramdisk_putc(void *file, WORD mode, LONG value)
+LONG ramdisk_putc(MX_FD *file, WORD mode, LONG value)
 {
 	RAMDISK_FD	*fd;
 	char		dummy;
@@ -2969,4 +2968,49 @@ LONG ramdisk_putc(void *file, WORD mode, LONG value)
 }
 #pragma warn .par
 
-/* EOF */
+THE_MGX_XFS ramdisk_xfs = {
+	"Ramdisk",
+	ramdisk_sync,
+	ramdisk_pterm,
+	ramdisk_garbcoll,
+	ramdisk_freeDD,
+	ramdisk_drv_open,
+	ramdisk_drv_close,
+	ramdisk_path2DD,
+	ramdisk_sfirst,
+	ramdisk_snext,
+	ramdisk_fopen,
+	ramdisk_fdelete,
+	ramdisk_link,
+	ramdisk_xattr,
+	ramdisk_attrib,
+	ramdisk_chown,
+	ramdisk_chmod,
+	ramdisk_dcreate,
+	ramdisk_ddelete,
+	ramdisk_DD2name,
+	ramdisk_dopendir,
+	ramdisk_dreaddir,
+	ramdisk_drewinddir,
+	ramdisk_dclosedir,
+	ramdisk_dpathconf,
+	ramdisk_dfree,
+	ramdisk_wlabel,
+	ramdisk_rlabel,
+	ramdisk_symlink,
+	ramdisk_readlink,
+	ramdisk_dcntl
+};
+
+THE_MGX_DEV ramdisk_dev = {
+	ramdisk_close,
+	ramdisk_read,
+	ramdisk_write,
+	ramdisk_stat,
+	ramdisk_seek,
+	ramdisk_datime,
+	ramdisk_ioctl,
+	ramdisk_getc,
+	ramdisk_getline,
+	ramdisk_putc
+};
