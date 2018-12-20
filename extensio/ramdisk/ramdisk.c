@@ -2624,38 +2624,31 @@ LONG ramdisk_stat(MX_FD *file, MAGX_UNSEL *unselect, WORD rwflag,
 	TRACE(("stat - %L, %L, %L, %L\r\n", file, unselect,
 		(LONG)rwflag, apcode));
 	fd = (RAMDISK_FD *)file;
-/*
- * Man m”ge mir die Verwendung von goto verzeihen, aber hier ist es
- * wirklich „užerst praktisch
- */
 	if (check_fd(fd) < 0)
 	{
 		retcode = check_fd(fd);
-		goto rs_exit;
 	}
 /*
  * Wenn Lesebereitschaft bei einem File getestet werden soll, daž
  * nicht zum Lesen ge”ffnet ist, muž ein Fehler gemeldet werden
  */
-	if (!rwflag && ((fd->fd_mode & (OM_RPERM | OM_EXEC)) == 0))
+	else if (!rwflag && ((fd->fd_mode & (OM_RPERM | OM_EXEC)) == 0))
 	{
 		retcode = EACCDN;
-		goto rs_exit;
 	}
 /* Gleiches gilt natrlich auch fr den umgekehrten Fall */
-	if (rwflag && ((fd->fd_mode & OM_WPERM) == 0))
+	else if (rwflag && ((fd->fd_mode & OM_WPERM) == 0))
 	{
 		retcode = EACCDN;
-		goto rs_exit;
-	}
+	} else
+	{
 /* Ansonsten kann getrost "Bereit" gemeldet werden */
-	retcode = 1L;
+		retcode = 1L;
+	}
 /*
  * Bei der Ergebnisrckgabe muž, wenn unselect kein Nullpointer war,
- * der Returnwert auch in unsel.status abgelegt werden (daher auch
- * das goto, um unn”tige Tipparbeit und if-Verrenkungen zu vermeiden)
+ * der Returnwert auch in unsel.status abgelegt werden
  */
-rs_exit:
 	if (unselect != NULL)
 		unselect->unsel.status = retcode;
 	return(retcode);
@@ -2960,13 +2953,9 @@ LONG ramdisk_getline(MX_FD *file, char *buf, WORD mode, LONG size)
  */
 LONG ramdisk_putc(MX_FD *file, WORD mode, LONG value)
 {
-	RAMDISK_FD	*fd;
 	char		dummy;
 
 	TRACE(("putc - %L, %L, %L\r\n", file, (LONG)mode, value));
-	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
-		return(check_fd(fd));
 	dummy = (char)value;
 	return(ramdisk_write(file, 1L, &dummy));
 }
