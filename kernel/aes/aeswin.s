@@ -80,6 +80,14 @@
 
 WINDXMINUS     EQU  1         ; Fenster duerfen links herausragen.
 
+; new version of find_icon_pos:
+; if set set, start allocating position at the bottom-right,
+; walking left, then up
+; if unset use old bevhaviour, starting bottom-left, walking
+; right then up
+NEW_FIND_ICON_POS EQU 1
+
+
 /* Fensterrahmen-Elemente */
 
 O_FRAME        EQU  0   /* BOX in Baum T_WINDOW */
@@ -2992,22 +3000,21 @@ find_icon_pos:
  clr.l    (a0)+               ; GRECT mit je 72 Pixel aussen
  move.l   #$00480048,(a0)
 
-/*
- move.l   a0,a1               ; out
- move.l   #$00480048,-(sp)
- clr.l    -(sp)               ; GRECT mit je 72 Pixel innen
- lea      (sp),a0
- moveq    #NAME,d1
- moveq    #0,d0               ; (WC_BORDER)   errechne Aussenmasse
- bsr      _wind_calc
- addq.l   #8,sp
-*/
-
  move.w   scr_h,d0
  sub.w    g_h(a6),d0
+ IFNE NEW_FIND_ICON_POS
+ sub.w    #16,d0              ; for Appline
+ ENDC
  move.w   d0,g_y(a6)          ; Beginne Suche am unteren Rand
 fip_yloop:
+ IFNE NEW_FIND_ICON_POS
+ move.w   scr_w,d0
+ sub.w    g_w(a6),d0
+ move.w   d0,g_x(a6)          ; Beginne Suche nach freiem Platz rechts
+ ELSE
  clr.w    g_x(a6)             ; Beginne Suche nach freiem Platz bei x=0
+ ENDC
+
 fip_xloop:
 * Durchsuche Fensterliste
  lea      whdlx,a5
@@ -3027,10 +3034,17 @@ fip_hloop:
  beq.b    fip_hloop           ; nein, naechstes Fenster
 * der Platz ist schon belegt
  move.w   g_w(a6),d0
+ IFNE NEW_FIND_ICON_POS
+ sub.w    d0,g_x(a6)          ; einen Platz weiter nach links
+ add.w    g_x(a6),d0          ; rechter Rand
+ cmp.w    #0,d0               ; links vom Bildschirm ?
+ bge.b    fip_xloop           ; nein, weitermachen
+ ELSE
  add.w    d0,g_x(a6)          ; einen Platz weiter nach rechts
  add.w    g_x(a6),d0          ; rechter Rand
  cmp.w    scr_w,d0            ; rechts vom Bildschirm ?
  bls.b    fip_xloop           ; nein, weitermachen
+ ENDC
  move.w   g_h(a6),d0
  sub.w    d0,g_y(a6)          ; einen Platz weiter nach oben
  move.w   g_y(a6),d1
