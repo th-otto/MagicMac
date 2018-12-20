@@ -250,7 +250,7 @@
  */
 #ifdef DEBUG
 #define return(x)	{LONG abccba = (LONG)(x);\
-	TRACE(("return(%L), Zeile %L\r\n", 2, abccba,\
+	TRACE(("return(%L), Zeile %L\r\n", abccba,\
 		(LONG)__LINE__));\
 	return(abccba);}
 #endif
@@ -262,7 +262,7 @@
  */
 LONG ramdisk_sync(DMD *d)
 {
-	TRACE(("sync\r\n", 0));
+	TRACE(("sync\r\n"));
 	return(E_OK);
 }
 
@@ -277,7 +277,7 @@ void ramdisk_pterm(BASPAG *pd)
 {
 	WORD	i;
 
-	TRACE(("pterm\r\n", 0));
+	TRACE(("pterm\r\n"));
 	for (i = 0; i < MAX_DHD; i++)
 	{
 		if (dhd[i].dhd_owner == pd)
@@ -296,7 +296,7 @@ void ramdisk_pterm(BASPAG *pd)
  */
 LONG ramdisk_garbcoll(DMD *d)
 {
-	TRACE(("garbcoll\r\n", 0));
+	TRACE(("garbcoll\r\n"));
 	return(E_OK);
 }
 
@@ -318,12 +318,12 @@ void ramdisk_freeDD(void *dd)
 	RAMDISK_FD	*i;
 	WORD		j;
 
-	TRACE(("freeDD - DD = %L\r\n", 1, dd));
+	TRACE(("freeDD - DD = %L\r\n", dd));
 	i = (RAMDISK_FD *)dd;
 /* Sicherstellen, daû der DD auch wirklich freigegeben werden soll */
 	if (i->fd_refcnt != 0)
 	{
-		TRACE(("freeDD: fd_refcnt == %L!\r\n", 1, (LONG)i->fd_refcnt));
+		TRACE(("freeDD: fd_refcnt == %L!\r\n", (LONG)i->fd_refcnt));
 		return;
 	}
 /*
@@ -340,7 +340,7 @@ void ramdisk_freeDD(void *dd)
 /* Nur freigeben, wenn is_parent und refcnt Null sind */
 		if (!i->fd_is_parent && !i->fd_refcnt)
 		{
-			TRACE(("freeDD: Gebe DD %L frei!\r\n", 1, i));
+			TRACE(("freeDD: Gebe DD %L frei!\r\n", i));
 			i->fd_file = NULL;
 		}
 /*
@@ -359,7 +359,7 @@ void ramdisk_freeDD(void *dd)
 		if ((fd[j].fd_file != NULL) && !fd[j].fd_refcnt &&
 			!fd[j].fd_is_parent)
 		{
-			TRACE(("freeDD: Gebe \"Leichen\"-DD %L frei!\r\n", 1,
+			TRACE(("freeDD: Gebe \"Leichen\"-DD %L frei!\r\n",
 				&fd[j]));
 			fd[j].fd_file = NULL;
 		}
@@ -378,7 +378,7 @@ LONG ramdisk_drv_open(DMD *d)
 {
 	static WORD	opened_once = 0;
 
-	TRACE(("drv_open - drive %L\r\n", 1, (LONG)d->d_drive));
+	TRACE(("drv_open - drive %L\r\n", (LONG)d->d_drive));
 	if (d->d_xfs == NULL)
 	{
 /* PrÅfen, ob sich drv_open auf unser Ramdisk-Laufwerk bezieht */
@@ -442,7 +442,7 @@ LONG ramdisk_drv_close(DMD *d, WORD mode)
 {
 	WORD	i;
 
-	TRACE(("drv_close - %S\r\n", 1, mode ? "forced" : "requested"));
+	TRACE(("drv_close - %S\r\n", mode ? "forced" : "requested"));
 /*
  * Auch hier sicherheitshalber eine PrÅfung, ob noch das richtige
  * XFS eingetragen ist
@@ -514,7 +514,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
  */
 #undef return
 #define return(x)	{(kernel->int_mfree)(temp);\
-	TRACE(("-> %L, %S, %L, %S; %L\r\n", 5, (LONG)(x), *lastpath,\
+	TRACE(("-> %L, %S, %L, %S; %L\r\n", (LONG)(x), *lastpath,\
 		*linkdir, *symlink, (LONG)__LINE__));\
 	return(x);}
 
@@ -522,7 +522,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
 	*lastpath = *symlink = "";
 	*linkdir = 0L;
 #endif
-	TRACE(("path2DD - %L, %S (%L), %S; root = %L\r\n", 5, reldir,
+	TRACE(("path2DD - %L, %S (%L), %S; root = %L\r\n", reldir,
 		pathname, pathname, dirlookup ? "Verzeichnis" : "Datei",
 		&fd[ROOT]));
 /* Speicher fÅr eine Pfadkomponente anfordern (bei der
@@ -653,7 +653,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
  */
 		if (is_link(found->de_xattr.st_mode))
 		{
-			TRACE(("path2DD: Folge symbolischem Link auf %S!\r\n", 1,
+			TRACE(("path2DD: Folge symbolischem Link auf %S!\r\n",
 				&found->de_faddr[2]));
 			increase_refcnts(dd);
 			*lastpath = next;
@@ -693,7 +693,7 @@ LONG ramdisk_path2DD(void *reldir, char *pathname, WORD mode,
  */
 #ifdef DEBUG
 #define return(x)	{LONG abccba = (LONG)(x);\
-	TRACE(("return(%L), Zeile %L\r\n", 2, abccba,\
+	TRACE(("return(%L), Zeile %L\r\n", abccba,\
 		(LONG)__LINE__));\
 	return(abccba);}
 #endif
@@ -729,7 +729,7 @@ LONG ramdisk_sfirst(void *srchdir, char *name, MGX_DTA *dta,
 	DIRENTRY	*found;
 	char		*temp;
 
-	TRACE(("sfirst - %L\\%S, %L\r\n", 3, srchdir, name, (LONG)attrib));
+	TRACE(("sfirst - %L\\%S, %L\r\n", srchdir, name, (LONG)attrib));
 	dd = (RAMDISK_FD *)srchdir;
 	if (check_dd(dd) < 0)
 		return(check_dd(dd));
@@ -787,7 +787,7 @@ LONG ramdisk_snext(MGX_DTA *dta, DMD *dmd, char **symlink)
 				r;
 	char		*name;
 
-	TRACE(("snext - %S\r\n", 1, ((RAMDISK_DTA *)dta)->dta_mask));
+	TRACE(("snext - %S\r\n", ((RAMDISK_DTA *)dta)->dta_mask));
 	if (dmd != ramdisk_dmd)
 		return(EDRIVE);
 	the_dta = (RAMDISK_DTA *)dta;
@@ -853,7 +853,7 @@ LONG ramdisk_snext(MGX_DTA *dta, DMD *dmd, char **symlink)
 			if (is_link(xattr.st_mode))
 			{
 				TRACE(("snext: Folge symbolischem Link auf %S!"
-					"\r\n", 1, &((char *)xattr.st_ino)[2]));
+					"\r\n", &((char *)xattr.st_ino)[2]));
 				*symlink = (char *)xattr.st_ino;
 				return(ELINK);
 			}
@@ -862,9 +862,9 @@ LONG ramdisk_snext(MGX_DTA *dta, DMD *dmd, char **symlink)
  * entspricht die Abfrage dem CodestÅck, das im Profibuch bei Fsfirst
  * angegeben ist.
  */
-			TRACE(("Suchattribut: %L, Dateiattribut: %L\r\n", 2,
+			TRACE(("Suchattribut: %L, Dateiattribut: %L\r\n",
 				(LONG)the_dta->dta_attr, (LONG)xattr.st_attr));
-			TRACE(("Mode: %L\r\n", 1, (LONG)xattr.st_mode));
+			TRACE(("Mode: %L\r\n", (LONG)xattr.st_mode));
 			if (xattr.st_attr == 0)
 				break;
 			if (xattr.st_attr & (FA_CHANGED|FA_RDONLY))
@@ -915,7 +915,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
 	FILEBLOCK	*file,
 				*next;
 
-	TRACE(("fopen - %L\\%S, %L, %L\r\n", 4, dir, name, (LONG)omode,
+	TRACE(("fopen - %L\\%S, %L, %L\r\n", dir, name, (LONG)omode,
 		(LONG)attrib));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
@@ -926,7 +926,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
  */
 	if (!xaccess(dd->fd_file))
 	{
-		TRACE(("fopen: x-Bit fehlt!\r\n", 0));
+		TRACE(("fopen: x-Bit fehlt!\r\n"));
 		return(EACCDN);
 	}
 /*
@@ -936,7 +936,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
 	if (((omode & O_CREAT) || (omode & O_TRUNC)) &&
 		((omode & OM_WPERM) != OM_WPERM))
 	{
-		TRACE(("fopen: O_CREAT bzw. O_TRUNC ohne OM_WPERM!\r\n", 0));
+		TRACE(("fopen: O_CREAT bzw. O_TRUNC ohne OM_WPERM!\r\n"));
 		return(EACCDN);
 	}
 /*
@@ -958,7 +958,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
  */
 		if (is_link(found->de_xattr.st_mode))
 		{
-			TRACE(("fopen: Folge symbolischem Link auf %S!\r\n", 1,
+			TRACE(("fopen: Folge symbolischem Link auf %S!\r\n",
 				&found->de_faddr[2]));
 			*symlink = found->de_faddr;
 			return(ELINK);
@@ -969,7 +969,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
 /* Schreiben in schreibgeschÅtzte Dateien geht auch nicht */
 		if ((omode & OM_WPERM) && !waccess(found))
 		{
-			TRACE(("fopen: OM_WPERM auf schreibgeschÅtzte Datei!\r\n", 0));
+			TRACE(("fopen: OM_WPERM auf schreibgeschÅtzte Datei!\r\n"));
 			return(EACCDN);
 		}
 /*
@@ -980,7 +980,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
 		if ((omode & (O_CREAT | O_EXCL)) == (O_CREAT | O_EXCL))
 		{
 			TRACE(("fopen: Datei existiert, O_CREAT und O_EXCL sind "
-				"aber gewÅnscht!\r\n", 0));
+				"aber gewÅnscht!\r\n"));
 			return(EACCDN);
 		}
 	}
@@ -998,9 +998,9 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
  */
 	if (new_fd->fd_parent != NULL)
 	{
-		TRACE(("fopen: Datei schon geîffnet!\r\n", 0));
+		TRACE(("fopen: Datei schon geîffnet!\r\n"));
 		TRACE(("rootDD = %L, new_fd = %L, new_fd->fd_parent = %L\r\n",
-			3, &fd[ROOT], new_fd, new_fd->fd_parent));
+			&fd[ROOT], new_fd, new_fd->fd_parent));
 		return(EACCDN);
 	}
 	if (found == NULL)
@@ -1013,21 +1013,21 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
  */
 		if ((omode & O_CREAT) != O_CREAT)
 		{
-			TRACE(("fopen: File nicht gefunden, kein O_CREAT!\r\n", 0));
+			TRACE(("fopen: File nicht gefunden, kein O_CREAT!\r\n"));
 			return(EFILNF);
 		}
 #ifdef CHECK_OPEN
 /* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
 	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
 	{
-		TRACE(("fopen: Dir offen!\r\n", 0));
+		TRACE(("fopen: Dir offen!\r\n"));
 		return(EACCDN);
 	}
 #endif
 /* NatÅrlich darf keine Datei namens "." oder ".." angelegt werden */
 		if (!strcmp(name, ".") || !strcmp(name, ".."))
 		{
-			TRACE(("fopen: Name ist \".\" oder \"..\"!\r\n", 0));
+			TRACE(("fopen: Name ist \".\" oder \"..\"!\r\n"));
 			return(EACCDN);
 		}
 /*
@@ -1041,7 +1041,7 @@ LONG ramdisk_fopen(void *dir, char *name, WORD omode, WORD attrib,
  */
 		if ((found = new_file(dd, name)) == NULL)
 		{
-			TRACE(("fopen: File konnte nicht angelegt werden!\r\n", 0));
+			TRACE(("fopen: File konnte nicht angelegt werden!\r\n"));
 			return(EACCDN);
 		}
 /* Speicher anfordern, ggf. Fehler melden */
@@ -1145,7 +1145,7 @@ LONG ramdisk_fdelete(void *dir, char *name)
 	FILEBLOCK	*file,
 				*next;
 
-	TRACE(("fdelete - %L\\%S\r\n", 2, dir, name));
+	TRACE(("fdelete - %L\\%S\r\n", dir, name));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
 		return(check_dd(dd));
@@ -1156,7 +1156,7 @@ LONG ramdisk_fdelete(void *dir, char *name)
 /* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
 	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
 	{
-		TRACE(("fdelete: Dir offen!\r\n", 0));
+		TRACE(("fdelete: Dir offen!\r\n"));
 		return(EACCDN);
 	}
 #endif
@@ -1166,25 +1166,25 @@ LONG ramdisk_fdelete(void *dir, char *name)
  */
 	if (!waccess(dd->fd_file) || !xaccess(dd->fd_file))
 	{
-		TRACE(("fdelete: Kein Schreibrecht fÅr Verzeichnis!\r\n", 0));
+		TRACE(("fdelete: Kein Schreibrecht fÅr Verzeichnis!\r\n"));
 		return(EACCDN);
 	}
 /* Verzeichnisse kînnen nicht per fdelete gelîscht werden */
 	if (is_dir(found->de_xattr.st_mode))
 	{
-		TRACE(("fdelete: Datei ist Verzeichnis!\r\n", 0));
+		TRACE(("fdelete: Datei ist Verzeichnis!\r\n"));
 		return(EACCDN);
 	}
 /* PrÅfen, ob die Datei noch offen ist und entsprechend reagieren */
 	if (((fd = findfd(found)) != NULL) && (fd->fd_parent != NULL))
 	{
-		TRACE(("fdelete: Datei noch geîffnet!\r\n", 0));
+		TRACE(("fdelete: Datei noch geîffnet!\r\n"));
 		return(EACCDN);
 	}
 /* Auch fÅr die Datei selbst mÅssen Schreibrechte vorhanden sein */
 	if (!waccess(found))
 	{
-		TRACE(("fdelete: Datei ist schreibgeschÅtzt!\r\n", 0));
+		TRACE(("fdelete: Datei ist schreibgeschÅtzt!\r\n"));
 		return(EACCDN);
 	}
 /*
@@ -1234,10 +1234,10 @@ LONG ramdisk_link(void *olddir, void *newdir, char *oldname,
 
 	if (flag_link)
 	{
-		TRACE(("link - hardlinks not supported!\r\n", 0));
+		TRACE(("link - hardlinks not supported!\r\n"));
 		return(EINVFN);
 	}
-	TRACE(("link - rename %L\\%S to %L\\%S\r\n", 4, olddir, oldname,
+	TRACE(("link - rename %L\\%S to %L\\%S\r\n", olddir, oldname,
 		newdir, newname));
 	old = (RAMDISK_FD *)olddir;
 	new = (RAMDISK_FD *)newdir;
@@ -1389,18 +1389,18 @@ LONG ramdisk_xattr(void *dir, char *name, XATTR *xattr, WORD mode,
 	RAMDISK_FD	*dd;
 	DIRENTRY	*found;
 
-	TRACE(("xattr - %L\\%S (%L)\r\n", 3, dir, name, name));
+	TRACE(("xattr - %L\\%S (%L)\r\n", dir, name, name));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
 	{
-		TRACE(("xattr: check_dd fehlgeschlagen!\r\n", 0));
+		TRACE(("xattr: check_dd fehlgeschlagen!\r\n"));
 		return(check_dd(dd));
 	}
-	TRACE(("xattr: %S\r\n", 1, name));
+	TRACE(("xattr: %S\r\n", name));
 /* Das angeforderte File suchen, ggf. Fehler melden */
 	if ((found = findfile(dd, name, 0, FF_SEARCH, 1)) == NULL)
 	{
-		TRACE(("xattr: %S nicht gefunden!\r\n", 1, name));
+		TRACE(("xattr: %S nicht gefunden!\r\n", name));
 		return(EFILNF);
 	}
 /*
@@ -1409,7 +1409,7 @@ LONG ramdisk_xattr(void *dir, char *name, XATTR *xattr, WORD mode,
  */
 	if (!mode && is_link(found->de_xattr.st_mode))
 	{
-		TRACE(("xattr: Folge symbolischem Link auf %S!\r\n", 1,
+		TRACE(("xattr: Folge symbolischem Link auf %S!\r\n",
 			&found->de_faddr[2]));
 		*symlink = found->de_faddr;
 		return(ELINK);
@@ -1438,7 +1438,7 @@ LONG ramdisk_xattr(void *dir, char *name, XATTR *xattr, WORD mode,
 LONG ramdisk_attrib(void *dir, char *name, WORD rwflag, WORD attrib,
 	char **symlink)
 {
-	TRACE(("attrib - %L\\%S, %L, %L\r\n", 4, dir, name, (LONG)rwflag,
+	TRACE(("attrib - %L\\%S, %L, %L\r\n", dir, name, (LONG)rwflag,
 		(LONG)attrib));
 	return(work_entry((RAMDISK_FD *)dir, name, symlink, rwflag,
 		rwflag, attrib, attrib_action));
@@ -1489,7 +1489,7 @@ LONG attrib_action(DIRENTRY *entry, LONG rwflag, LONG attrib)
 LONG ramdisk_chown(void *dir, char *name, UWORD uid, UWORD gid,
 	char **symlink)
 {
-	TRACE(("chown - not supported\r\n", 0));
+	TRACE(("chown - not supported\r\n"));
 /*
  * Wird work_entry mit NULL als action aufgerufen, wird EINVFN
  * geliefert, wenn name kein symbolischer Link ist. Ansonsten wird
@@ -1514,7 +1514,7 @@ LONG ramdisk_chown(void *dir, char *name, UWORD uid, UWORD gid,
  */
 LONG ramdisk_chmod(void *dir, char *name, UWORD mode, char **symlink)
 {
-	TRACE(("chmod - %L\\%S, %L\r\n", 3, dir, name, (LONG)mode));
+	TRACE(("chmod - %L\\%S, %L\r\n", dir, name, (LONG)mode));
 	return(work_entry((RAMDISK_FD *)dir, name, symlink, 1, mode, 0L,
 		chmod_action));
 }
@@ -1549,19 +1549,19 @@ LONG ramdisk_dcreate(void *dir, char *name)
 	DIRENTRY	*entry,
 				*new;
 
-	TRACE(("dcreate - %L\\%S, rootDD = %L\r\n", 3, dir, name,
+	TRACE(("dcreate - %L\\%S, rootDD = %L\r\n", dir, name,
 		&fd[ROOT]));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
 	{
-		TRACE(("dcreate: dd fehlerhaft!\r\n", 0));
+		TRACE(("dcreate: dd fehlerhaft!\r\n"));
 		return(check_dd(dd));
 	}
 #ifdef CHECK_OPEN
 /* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
 	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
 	{
-		TRACE(("dcreate: Dir offen!\r\n", 0));
+		TRACE(("dcreate: Dir offen!\r\n"));
 		return(EACCDN);
 	}
 #endif
@@ -1571,13 +1571,13 @@ LONG ramdisk_dcreate(void *dir, char *name)
  */
 	if (findfile(dir, name, 0, FF_EXIST, 0) != NULL)
 	{
-		TRACE(("dcreate: Datei existiert bereits!\r\n", 0));
+		TRACE(("dcreate: Datei existiert bereits!\r\n"));
 		return(EACCDN);
 	}
 /* Neuen Eintrag anfordern, ggf. Fehler melden */
 	if ((entry = new_file(dd, name)) == NULL)
 	{
-		TRACE(("dcreate: Kein Platz mehr!\r\n", 0));
+		TRACE(("dcreate: Kein Platz mehr!\r\n"));
 		return(EACCDN);
 	}
 /* Speicher fÅr neues Verzeichnis anfordern, ggf. Fehler melden */
@@ -1631,11 +1631,11 @@ LONG ramdisk_ddelete(void *dir)
 				cnt,
 				max;
 
-	TRACE(("ddelete - %L\r\n", 1, dir));
+	TRACE(("ddelete - %L\r\n", dir));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
 		return(check_dd(dd));
-	TRACE(("ddelete: %L entspricht %L\\%S\r\n", 3, dir, dd->fd_parent,
+	TRACE(("ddelete: %L entspricht %L\\%S\r\n", dir, dd->fd_parent,
 		dd->fd_file->de_fname));
 	if (real_kernel->version < 3)
 	{
@@ -1647,7 +1647,7 @@ LONG ramdisk_ddelete(void *dir)
  */
 		if (--dd->fd_refcnt > 0)
 		{
-			TRACE(("ddelete: refcnt == %L!\r\n", 1,
+			TRACE(("ddelete: refcnt == %L!\r\n",
 				(LONG)dd->fd_refcnt));
 			return(EACCDN);
 		}
@@ -1662,7 +1662,7 @@ LONG ramdisk_ddelete(void *dir)
  * nicht die Kernelversion 3).
  */
 		TRACE(("ddelete: Kernelversion > 2, kein fd_refcnt-Check!"
-			"\r\n", 0));
+			"\r\n"));
 	}
 /*
  * Vom aktuellen DD eine Kopie machen, weil er u.U. freigegeben wird,
@@ -1681,20 +1681,20 @@ LONG ramdisk_ddelete(void *dir)
 	if (!waccess(parent.fd_file))
 	{
 		TRACE(("ddelete: Kein Schreibzugriff auf Elternverzeichnis!"
-			"\r\n", 0));
+			"\r\n"));
 		return(EACCDN);
 	}
 /* Das Verzeichnis selbst muû ebenfalls beschreibbar sein */
 	if (!waccess(copy.fd_file))
 	{
-		TRACE(("ddelete: Verzeichnis ist schreibgeschÅtzt!\r\n", 0));
+		TRACE(("ddelete: Verzeichnis ist schreibgeschÅtzt!\r\n"));
 		return(EACCDN);
 	}
 /* Zum Lesen geîffnet darf das Verzeichnis ebenfalls nicht sein */
 	the_dir = (DIRENTRY *)copy.fd_file->de_faddr;
 	if (dir_is_open(the_dir))
 	{
-		TRACE(("ddelete: Verzeichnis offen!\r\n", 0));
+		TRACE(("ddelete: Verzeichnis offen!\r\n"));
 		return(EACCDN);
 	}
 /*
@@ -1707,7 +1707,7 @@ LONG ramdisk_ddelete(void *dir)
 /* Gleiches gilt fÅr das Vaterverzeichnis */
 	if (dir_is_open((DIRENTRY *)parent.fd_file->de_faddr))
 	{
-		TRACE(("ddelete: Elternverzeichnis offen!\r\n", 0));
+		TRACE(("ddelete: Elternverzeichnis offen!\r\n"));
 		return(EACCDN);
 	}
 #endif
@@ -1722,7 +1722,7 @@ LONG ramdisk_ddelete(void *dir)
 		{
 			if (++cnt > 2)
 			{
-				TRACE(("ddelete: Verzeichnis nicht leer!\r\n", 0));
+				TRACE(("ddelete: Verzeichnis nicht leer!\r\n"));
 				return(EACCDN);
 			}
 		}
@@ -1756,7 +1756,7 @@ LONG ramdisk_DD2name(void *dir, char *name, WORD bufsize)
 	RAMDISK_FD	*dd;
 	char		*temp;
 
-	TRACE(("DD2name - %L\r\n", 1, dir));
+	TRACE(("DD2name - %L\r\n", dir));
 /* Wie Åblich erstmal prÅfen, ob der dd gÅltig ist */
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
@@ -1800,7 +1800,7 @@ LONG ramdisk_DD2name(void *dir, char *name, WORD bufsize)
  */
 	strrev(name);
 	(kernel->int_mfree)(temp);
-	TRACE(("DD2name liefert: %S\r\n", 1, name));
+	TRACE(("DD2name liefert: %S\r\n", name));
 	return(E_OK);
 }
 
@@ -1823,7 +1823,7 @@ LONG ramdisk_dopendir(void *dir, WORD tosflag)
 	WORD		i;
 	RAMDISK_FD	*dd;
 
-	TRACE(("dopendir %L\r\n", 1, dir));
+	TRACE(("dopendir %L\r\n", dir));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
 		return(check_dd(dd));
@@ -1882,7 +1882,7 @@ LONG ramdisk_dreaddir(void *dhd, WORD size, char *buf, XATTR *xattr,
 	DIRENTRY	*dir;
 	WORD		pos;
 
-	TRACE(("%S\r\n", 1, (xattr == NULL) ? "dreaddir" : "dxreaddir"));
+	TRACE(("%S\r\n", (xattr == NULL) ? "dreaddir" : "dxreaddir"));
 	handle = (RAMDISK_DHD *)dhd;
 /*
  * ZunÑchst einmal das Handle prÅfen, dabei auch auf den Prozeû 
@@ -1931,7 +1931,7 @@ LONG ramdisk_dreaddir(void *dhd, WORD size, char *buf, XATTR *xattr,
 		if (((WORD)strlen(dir[pos].de_fname) + 4) >=
 			size)
 		{
-			TRACE(("%S paût nicht in den Puffer!", 1,
+			TRACE(("%S paût nicht in den Puffer!",
 				(LONG)dir[pos].de_fname));
 			return(ERANGE);
 		}
@@ -1967,7 +1967,7 @@ LONG ramdisk_drewinddir(void *dhd)
 {
 	RAMDISK_DHD	*handle;
 
-	TRACE(("drewinddir\r\n", 0));
+	TRACE(("drewinddir\r\n"));
 	handle = (RAMDISK_DHD *)dhd;
 /* Wieder das Handle ÅberprÅfen */
 	if ((handle == NULL) || (handle->dhd_dmd != ramdisk_dmd) ||
@@ -1989,7 +1989,7 @@ LONG ramdisk_dclosedir(void *dhd)
 {
 	RAMDISK_DHD	*handle;
 
-	TRACE(("dclosedir\r\n", 0));
+	TRACE(("dclosedir\r\n"));
 	handle = (RAMDISK_DHD *)dhd;
 /* Handle checken */
 	if ((handle == NULL) || (handle->dhd_dmd != ramdisk_dmd) ||
@@ -2016,7 +2016,7 @@ LONG ramdisk_dclosedir(void *dhd)
  */
 LONG ramdisk_dpathconf(void *dir, WORD which)
 {
-	TRACE(("dpathconf - %L, %L\r\n", 2, dir, (LONG)which));
+	TRACE(("dpathconf - %L, %L\r\n", dir, (LONG)which));
 	if (check_dd(dir) < 0)
 		return(check_dd(dir));
 	switch (which)
@@ -2082,7 +2082,7 @@ LONG ramdisk_dfree(void *dd, DISKINFO *free)
 	LONG	freeblocks,
 			usedblocks;
 
-	TRACE(("dfree\r\n", 0));
+	TRACE(("dfree\r\n"));
 /*
  * Im Debug-Modus wird protokolliert, welche DDs durch welches
  * Verzeichnis belegt sind. Auf diese Weise kann bei Bedarf geprÅft
@@ -2097,7 +2097,7 @@ LONG ramdisk_dfree(void *dd, DISKINFO *free)
 		{
 			if (fd[i].fd_file != NULL)
 			{	
-				TRACE(("fd %L ist belegt durch %S!\r\n", 2, &fd[i],
+				TRACE(("fd %L ist belegt durch %S!\r\n", &fd[i],
 					((DIRENTRY *)fd[i].fd_file)->de_fname));
 			}
 		}
@@ -2137,7 +2137,7 @@ LONG get_size(DIRENTRY *search)
 	WORD		i;
 	LONG		newsize;
 
-	TRACE(("get_size - Verzeichnis %L\r\n", 1, search));
+	TRACE(("get_size - Verzeichnis %L\r\n", search));
 /* ZunÑchst die Grîûe des aktuellen Directories selbst ermitteln */
 	newsize = search[0].de_xattr.st_blocks;
 /*
@@ -2167,7 +2167,7 @@ LONG get_size(DIRENTRY *search)
  */
 LONG ramdisk_wlabel(void *dir, char *name)
 {
-	TRACE(("wlabel - %S\r\n", 1, name));
+	TRACE(("wlabel - %S\r\n", name));
 /* dir wird nur ÅberprÅft, sonst aber ignoriert */
 	if (check_dd(dir) < 0)
 		return(check_dd(dir));
@@ -2193,7 +2193,7 @@ LONG ramdisk_wlabel(void *dir, char *name)
  */
 LONG ramdisk_rlabel(void *dir, char *name, char *buf, WORD len)
 {
-	TRACE(("rlabel - %S %L\r\n", 2, name, (LONG)len));
+	TRACE(("rlabel - %S %L\r\n", name, (LONG)len));
 /* dir wird zwar ÅberprÅft, sonst aber ignoriert */
 	if (check_dd(dir) < 0)
 		return(check_dd(dir));
@@ -2229,7 +2229,7 @@ LONG ramdisk_symlink(void *dir, char *name, char *to)
 	char		*link;
 	LONG		len;
 
-	TRACE(("symlink - %S to %L\\%S\r\n", 3, to, dir, name));
+	TRACE(("symlink - %S to %L\\%S\r\n", to, dir, name));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
 		return(check_dd(dd));
@@ -2282,7 +2282,7 @@ LONG ramdisk_readlink(void *dir, char *name, char *buf, WORD size)
 	RAMDISK_FD	*dd;
 	DIRENTRY	*found;
 
-	TRACE(("readlink - %L\\%S\r\n", 2, dir, name));
+	TRACE(("readlink - %L\\%S\r\n", dir, name));
 	dd = (RAMDISK_FD *)dir;
 	if (check_dd(dd) < 0)
 		return(check_dd(dd));
@@ -2320,7 +2320,7 @@ LONG ramdisk_dcntl(void *dir, char *name, WORD cmd, LONG arg,
 {
 	RAMDISK_FD	*dd;
 
-	TRACE(("dcntl - %L\\%S, %L, %L\r\n", 4, dir, name, (LONG)cmd,
+	TRACE(("dcntl - %L\\%S, %L, %L\r\n", dir, name, (LONG)cmd,
 		arg));
 	dd = (RAMDISK_FD *)dir;
 	return(work_entry(dd, name, symlink, 1, cmd, arg, dcntl_action));
@@ -2387,17 +2387,17 @@ LONG ramdisk_close(void *file)
 {
 	RAMDISK_FD	*fd;
 
-	TRACE(("close - %L\r\n", 1, file));
+	TRACE(("close - %L\r\n", file));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 	{
-		TRACE(("close: check_fd fehlgeschlagen!\r\n", 0));
+		TRACE(("close: check_fd fehlgeschlagen!\r\n"));
 		return(check_fd(fd));
 	}
-	TRACE(("close: fd_refcnt vorher: %L", 1, (LONG)fd->fd_refcnt));
+	TRACE(("close: fd_refcnt vorher: %L", (LONG)fd->fd_refcnt));
 	if (fd->fd_refcnt)
 		fd->fd_refcnt--;
-	TRACE(("close: fd_refcnt nachher: %L", 1, (LONG)fd->fd_refcnt));
+	TRACE(("close: fd_refcnt nachher: %L", (LONG)fd->fd_refcnt));
 	if (!fd->fd_refcnt)
 		fd->fd_file = NULL;
 	return(E_OK);
@@ -2425,7 +2425,7 @@ LONG ramdisk_read(void *file, LONG count, char *buffer)
 				read,
 				readable;
 
-	TRACE(("read - %L, %L\r\n", 2, file, count));
+	TRACE(("read - %L, %L\r\n", file, count));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(check_fd(fd));
@@ -2506,7 +2506,7 @@ LONG ramdisk_write(void *file, LONG count, char *buffer)
 				maxcount,
 				pos;
 
-	TRACE(("write - %L, %L\r\n", 2, file, count));
+	TRACE(("write - %L, %L\r\n", file, count));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(check_fd(fd));
@@ -2618,7 +2618,7 @@ LONG ramdisk_stat(void *file, MAGX_UNSEL *unselect, WORD rwflag,
 	RAMDISK_FD	*fd;
 	LONG		retcode;
 
-	TRACE(("stat - %L, %L, %L, %L\r\n", 4, file, unselect,
+	TRACE(("stat - %L, %L, %L, %L\r\n", file, unselect,
 		(LONG)rwflag, apcode));
 	fd = (RAMDISK_FD *)file;
 /*
@@ -2669,7 +2669,7 @@ LONG ramdisk_seek(void *file, LONG where, WORD mode)
 	RAMDISK_FD	*fd;
 	LONG		new_pos;
 
-	TRACE(("seek - %L, %L, %L\r\n", 3, file, where, (LONG)mode));
+	TRACE(("seek - %L, %L, %L\r\n", file, where, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(check_fd(fd));
@@ -2727,7 +2727,7 @@ LONG ramdisk_datime(void *file, WORD *d, WORD setflag)
 {
 	RAMDISK_FD	*fd;
 
-	TRACE(("datime - %L, %L\r\n", 2, file, (LONG)setflag));
+	TRACE(("datime - %L, %L\r\n", file, (LONG)setflag));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(check_fd(fd));
@@ -2772,7 +2772,7 @@ LONG ramdisk_ioctl(void *file, WORD cmd, void *buf)
 	LONG		*avail;
 	XATTR		*xattr;
 
-	TRACE(("ioctl - %L, %L, %L\r\n", 3, file, (LONG)cmd,  buf));
+	TRACE(("ioctl - %L, %L, %L\r\n", file, (LONG)cmd,  buf));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(check_fd(fd));
@@ -2864,7 +2864,7 @@ LONG ramdisk_getc(void *file, WORD mode)
 	RAMDISK_FD	*fd;
 	UBYTE		dummy;
 
-	TRACE(("getchar - %L, %L\r\n", 2, file, (LONG)mode));
+	TRACE(("getchar - %L, %L\r\n", file, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(check_fd(fd));
@@ -2897,7 +2897,7 @@ LONG ramdisk_getline(void *file, char *buf, WORD mode, LONG size)
 	LONG		dummy,
 				count;
 
-	TRACE(("getline - %L, %L, %L\r\n", 3, file, size, (LONG)mode));
+	TRACE(("getline - %L, %L, %L\r\n", file, size, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(0L);
@@ -2912,7 +2912,7 @@ LONG ramdisk_getline(void *file, char *buf, WORD mode, LONG size)
 			return(count);
 /* Das nÑchste Zeichen via getline einlesen */
 		dummy = ramdisk_getc(file, 0);
-		TRACE(("getline: count = %L, gelesenes Byte: %L\r\n", 2,
+		TRACE(("getline: count = %L, gelesenes Byte: %L\r\n",
 			count, dummy));
 /*
  * Ist es das Zeichen fÅr Dateiende, den Puffer mit einem Nullbyte
@@ -2960,7 +2960,7 @@ LONG ramdisk_putc(void *file, WORD mode, LONG value)
 	RAMDISK_FD	*fd;
 	char		dummy;
 
-	TRACE(("putc - %L, %L, %L\r\n", 3, file, (LONG)mode, value));
+	TRACE(("putc - %L, %L, %L\r\n", file, (LONG)mode, value));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(check_fd(fd));

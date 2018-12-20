@@ -96,24 +96,24 @@ LONG ramdisk_getline(void *file, char *buf, WORD mode, LONG size);
 LONG ramdisk_putc(void *file, WORD mode, LONG value);
 
 void prepare_dir(DIRENTRY *dir, WORD maxentries, DIRENTRY *parent);
-DIRENTRY *findfile(RAMDISK_FD *dd, char *pathname, WORD spos,
+DIRENTRY *findfile(RAMDISK_FD *dd, const char *pathname, WORD spos,
 	WORD s_or_e, WORD maybe_dir);
 #define FF_SEARCH	0
 #define FF_EXIST	1
 RAMDISK_FD *findfd(DIRENTRY *fname);
-DIRENTRY *new_file(RAMDISK_FD *curr, char *name);
+DIRENTRY *new_file(RAMDISK_FD *curr, const char *name);
 WORD dir_is_open(DIRENTRY *dir);
-WORD check_name(char *name);
+WORD check_name(const char *name);
 LONG check_dd(RAMDISK_FD *dd);
 LONG check_fd(RAMDISK_FD *fd);
-LONG work_entry(RAMDISK_FD *dd, char *name, char **symlink,
+LONG work_entry(RAMDISK_FD *dd, const char *name, char **symlink,
 	WORD writeflag, LONG par1, LONG par2,
 	LONG (*action)(DIRENTRY *entry, LONG par1, LONG par2));
 LONG set_amtime(DIRENTRY *entry, LONG set_atime, LONG unused);
-void tostrunc(char *src, char *dest, WORD wildcards);
+void tostrunc(char *dest, const char *src, WORD wildcards);
 void fill_tosname(char *dest, char *src);
 WORD match_tosname(char *to_check, char *sample);
-WORD has_xext(char *name);
+WORD has_xext(const char *name);
 void *Kmalloc(LONG len);
 void *Krealloc(void *ptr, LONG old_len, LONG new_len);
 LONG Pdomain_gemdos(WORD domain);
@@ -121,7 +121,7 @@ LONG Pdomain_kernel(WORD ignore);
 void *Mxalloc_kernel(LONG amount, WORD mode);
 WORD Mfree_kernel(void *block);
 #ifdef DEBUG
-void trace(char *format, WORD params, ...);
+void trace(const char *format, ...);
 #define TRACE(x) trace x
 #else
 #define TRACE(x)

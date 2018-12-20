@@ -118,7 +118,7 @@ static char	logfile[256];
 static char logback[256];
 #endif
 
-WORD main(void)
+int main(void)
 {
 	char	help[2];
 
@@ -155,7 +155,7 @@ WORD main(void)
  */
 	if (ramdisk_drive < 0)
 	{
-		if ((ramdisk_drive = (WORD)Supexec(get_and_set_drive)) == -1)
+		if ((ramdisk_drive = (WORD)Supexec(get_and_set_drive)) < 0)
 		{
 			Cconws("Installation failed (no free drive)!r\n");
 			return(-1);
@@ -566,22 +566,21 @@ WORD readline(WORD handle, char *buffer)
  */
 LONG get_and_set_drive(void)
 {
-	LONG	*_drvbits,
-			i;
+	LONG	*_drvbits;
+	int i;
 
 	_drvbits = (LONG *)0x4c2;
-	for (i = 2L; i < 26L; i++)
+	for (i = 2; i < 26; i++)
 	{
-		if ((i != (LONG)('U' - 'A')) && !(*_drvbits & (1L << i)))
+		if ((i != ('U' - 'A')) && !(*_drvbits & (1L << i)))
 		{
 			*_drvbits |= (1L << i);
 			break;
 		}
 	}
-	if (i == 26L)
-		return(-1L);
-	else
-		return(i);
+	if (i == 26)
+		return -1;
+	return i;
 }
 
 /*
@@ -647,7 +646,7 @@ LONG Pdomain_kernel(WORD ignore)
 	LONG	domain;
 
 	domain = (kernel->proc_info)(1, *(real_kernel->act_pd));
-	TRACE(("Kernel-Pdomain liefert %L!\r\n", 1, domain));
+	TRACE(("Kernel-Pdomain liefert %L!\r\n", domain));
 	return(domain);
 }
 #pragma warn .par
@@ -705,8 +704,7 @@ void increase_refcnts(RAMDISK_FD *dd)
 	for (dd = dd->fd_parent; dd != NULL; dd = dd->fd_parent)
 	{
 		dd->fd_is_parent++;
-		TRACE(("increase_refcnts: is_parent von %L jetzt %L!\r\n", 2,
-			dd, (LONG)dd->fd_is_parent));
+		TRACE(("increase_refcnts: is_parent von %L jetzt %L!\r\n", dd, (LONG)dd->fd_is_parent));
 	}
 }
 
@@ -821,7 +819,7 @@ void prepare_dir(DIRENTRY *dir, WORD maxentries, DIRENTRY *parent)
  * Rckgabe:
  * Zeiger auf den gefundenen Verzeichniseintrag, oder NULL.
  */
-DIRENTRY *findfile(RAMDISK_FD *dd, char *pathname, WORD spos,
+DIRENTRY *findfile(RAMDISK_FD *dd, const char *pathname, WORD spos,
 	WORD s_or_e, WORD maybe_dir)
 {
 	WORD		i,
@@ -922,7 +920,7 @@ DIRENTRY *findfile(RAMDISK_FD *dd, char *pathname, WORD spos,
 		if (search[i].de_faddr == NULL)
 			continue;
 		tostrunc(dos, search[i].de_fname, 0);
-		TRACE(("findfile: temp = %S, dos = %S\r\n", 2, temp, dos));
+		TRACE(("findfile: temp = %S, dos = %S\r\n", temp, dos));
 		if (!strcmp(temp, dos))
 		{
 			(kernel->int_mfree)(temp);
@@ -997,7 +995,7 @@ RAMDISK_FD *findfd(DIRENTRY *fname)
  * Rckgabe:
  * Zeiger auf den neuen Eintrag, oder NULL.
  */
-DIRENTRY *new_file(RAMDISK_FD *curr, char *name)
+DIRENTRY *new_file(RAMDISK_FD *curr, const char *name)
 {
 	DIRENTRY	*dir,
 				*new_dir;
@@ -1055,11 +1053,11 @@ DIRENTRY *new_file(RAMDISK_FD *curr, char *name)
  * solche Prozesse oft Filenamen wie STGUIDE.APP liefern, die auf
  * einem casesensitiven Filesystem aber nicht so toll ausehen
  */
-		TRACE(("new_file: Wandele Filenamen in Lowercase!\r\n", 0));
+		TRACE(("new_file: Wandele Filenamen in Lowercase!\r\n"));
 		strlwr(dir[i].de_fname);
 	}
 	else
-		TRACE(("new_file: Filename nicht gewandelt!\r\n", 0));
+		TRACE(("new_file: Filename nicht gewandelt!\r\n"));
 /*
  * Die wichtigsten Felder des Eintrags belegen. Dabei wird das Feld
  * de_faddr bewužt noch nicht gefllt, der Eintrag bleibt also bis
@@ -1118,7 +1116,7 @@ WORD dir_is_open(DIRENTRY *dir)
  * Rckgabe:
  * 0, wenn der Name ungltig ist, 1 sonst.
  */
-WORD check_name(char *name)
+WORD check_name(const char *name)
 {
 	WORD	i,
 			max,
@@ -1222,7 +1220,7 @@ LONG check_fd(RAMDISK_FD *fd)
  * Rckgabe:
  * GEMDOS-Fehlercode, der meist der Returncode von action ist.
  */
-LONG work_entry(RAMDISK_FD *dd, char *name, char **symlink,
+LONG work_entry(RAMDISK_FD *dd, const char *name, char **symlink,
 	WORD writeflag, LONG par1, LONG par2,
 	LONG (*action)(DIRENTRY *entry, LONG par1, LONG par2))
 {
@@ -1252,7 +1250,7 @@ LONG work_entry(RAMDISK_FD *dd, char *name, char **symlink,
 /* Test auf symbolischen Link */
 	if (is_link(found->de_xattr.st_mode) && (symlink != NULL))
 	{
-		TRACE(("work_entry: Folge symbolischem Link auf %S!\r\n", 1,
+		TRACE(("work_entry: Folge symbolischem Link auf %S!\r\n",
 			&found->de_faddr[2]));
 		*symlink = found->de_faddr;
 		return(ELINK);
@@ -1382,7 +1380,7 @@ LONG set_amtime(DIRENTRY *entry, LONG set_atime, LONG unused)
  * wildcards: Wenn ungleich Null, werden ? und * im Ursprungsnamen
  *            bernommen, sonst durch X ersetzt.
  */
-void tostrunc(char *dest, char *src, WORD wildcards)
+void tostrunc(char *dest, const char *src, WORD wildcards)
 {
 	WORD	i;
 	char	*lastdot,
@@ -1392,10 +1390,10 @@ void tostrunc(char *dest, char *src, WORD wildcards)
 #ifdef DEBUG
 	if (!check_name(src))
 	{
-		TRACE(("tostrunc: Falscher Dateiname: %S\r\n", 1, src));
+		TRACE(("tostrunc: Falscher Dateiname: %S\r\n", src));
 	}
 #endif
-	TRACE(("tostrunc: %S -> %L\r\n", 2, src, dest));
+	TRACE(("tostrunc: %S -> %L\r\n", src, dest));
 /* "." und ".." unver„ndert kopieren */
 	if (!strcmp(src, ".") || !strcmp(src, ".."))
 	{
@@ -1497,7 +1495,7 @@ void fill_tosname(char *dest, char *src)
 	WORD	i;
 	char	*dot;
 
-	TRACE(("fill_tosname...\r\n", 0));
+	TRACE(("fill_tosname...\r\n"));
 /* "." und ".." werden direkt behandelt */
 	if (!strcmp(src, "."))
 	{
@@ -1548,7 +1546,7 @@ void fill_tosname(char *dest, char *src)
 			break;
 		}
 	}
-	TRACE(("fill_tosname liefert: %S\r\n", 1, dest));
+	TRACE(("fill_tosname liefert: %S\r\n", dest));
 }
 
 /*
@@ -1574,7 +1572,7 @@ WORD match_tosname(char *to_check, char *sample)
 {
 	WORD	i;
 
-	TRACE(("match_tosname: %S, %S\r\n", 2, to_check, sample));
+	TRACE(("match_tosname: %S, %S\r\n", to_check, sample));
 /*
  * Es werden einfach der Reihe nach alle Zeichen der Namen verglichen
  * (hier wird der Vorteil des von fill_tosname erzeugten Formats
@@ -1588,11 +1586,11 @@ WORD match_tosname(char *to_check, char *sample)
 		if (sample[i] != '?')
 			if (sample[i] != to_check[i])
 			{
-				TRACE(("Warnix\r\n", 0));
+				TRACE(("Warnix\r\n"));
 				return(0);
 			}
 	}
-	TRACE(("Alles klar, pažt\r\n", 0));
+	TRACE(("Alles klar, pažt\r\n"));
 	return(1);
 }
 
@@ -1621,7 +1619,7 @@ static char	*xext[] = {"sot.", "ptt.", "grp.", "ppa.", "ptg.",
  *    aktiv
  * 1: Die TOS-Domain ist aktiv und name hat eine passende Endung.
  */
-WORD has_xext(char *name)
+WORD has_xext(const char *name)
 {
 	char	*temp;
 	WORD	i;
@@ -1803,25 +1801,22 @@ void *Krealloc(void *ptr, LONG old_len, LONG new_len)
  * params: Anzahl der Parameter, die noch folgen.
  * ...: Die Parameter fr den Formatstring, soweit n”tig.
  */
-void trace(char *format, WORD params, ...)
+void trace(const char *format, ...)
 {
 	va_list		args;
-	static char	output[128];
-	static LONG	out[10];
-	WORD		i,
-				handle;
-	LONG		err;
+	static char	output[512];
 
-	va_start(args, params);
-	params = (params > 10) ? 10 : params;
-	for (i = 0; i < params; i++)
-		out[i] = va_arg(args, LONG);
+	va_start(args, format);
+	(kernel->_sprintf)(output, format, (LONG *)args);
 	va_end(args);
-	(kernel->_sprintf)(output, format, out);
 	if (debug_to_screen)
 		Cconws(output);
 	else
 	{
+#if 1
+		LONG		err;
+		WORD		handle;
+
 		if ((err = Fopen(logfile, O_RDWR|O_APPEND|O_CREAT)) >= 0L)
 		{
 			handle = (WORD)err;
@@ -1830,6 +1825,9 @@ void trace(char *format, WORD params, ...)
 		}
 		else
 			Cconws(output);
+#else
+		nf_debugprintf("%s", output);
+#endif
 	}
 }
 #endif /* DEBUG */
