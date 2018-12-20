@@ -262,28 +262,6 @@ extern THE_MX_KERNEL *install_kernel(THE_MX_KERNEL *);
  */
 LONG install_xfs(THE_MGX_XFS *xfs);
 
-/* Einfachste Form eines DD */
-typedef struct
-{
-	MX_DMD	*dd_dmd;
-	WORD	dd_refcnt;
-} MGX_DD;
-
-/* Einfachste Form eines FD */
-typedef struct
-{
-	MX_DMD	*fd_dmd;
-	WORD	fd_refcnt;
-	WORD	fd_mode;
-	void	*fd_dev;
-} MGX_FD;
-
-/* Einfachste Form eines DHD */
-typedef struct
-{
-	MX_DMD	*dhd_dmd;
-} MGX_DHD;
-
 #endif
 
 /* EOF */
