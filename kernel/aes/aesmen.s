@@ -110,7 +110,7 @@ menu_modify:
  clr.l    -(sp)                    ; do_draw ist FALSE, newstate ist Dummy
  move.w   d0,-(sp)                 ; objnr
  move.l   a0,-(sp)                 ; tree
- muls     #24,d0
+ muls     #OBJECT_SIZE,d0
  move.w   ob_state(a0,d0.l),d0     ; d0 = aktueller Status
  tst.b    7+10(sp)                 ; DISABLED pruefen ?
  beq.b    mmo_go                   ; nein
@@ -596,7 +596,7 @@ menu_draw:
 
  move.l   (sp)+,a0                 ; Menuebaum
      IF   MACOS_SUPPORT
- cmpi.w   #G_IBOX,24+ob_type(a0)
+ cmpi.w   #G_IBOX,OBJECT_SIZE+ob_type(a0)
  beq.b    mdr_ende                 ; kein MagiC-Logo ins Mac-Menue
      ENDIF
  cmpi.w   #16,menubar_grect+g_h    ; war gr_hhbox
@@ -696,20 +696,20 @@ mon__ismine:
  bne      mon_fontmono
  btst     #7,look_flags+1
  beq.b    mon_2d1
- ori.w    #FL3DBAK,24+ob_flags(a5) ; Objekt 1: Menueleiste
+ ori.w    #FL3DBAK,OBJECT_SIZE+ob_flags(a5) ; Objekt 1: Menueleiste
 mon_2d1:
- move.w   2*24+ob_head(a5),d0      ; erster Menuetitel
- move.w   2*24+ob_x(a5),d7         ; abs. Pos. des ersten Titels
+ move.w   2*OBJECT_SIZE+ob_head(a5),d0      ; erster Menuetitel
+ move.w   2*OBJECT_SIZE+ob_x(a5),d7         ; abs. Pos. des ersten Titels
  bmi      mon_fontmono             ; keine Menuetitel
  move.w   ob_tail(a5),d1           ; rechter Teil (Menues)
- mulu     #24,d1
+ mulu     #OBJECT_SIZE,d1
  move.w   ob_head(a5,d1.l),d1      ; erstes Menue
  moveq    #0,d5                    ; Pos. des ersten Titels
 mon_title_loop:
- mulu     #24,d0
+ mulu     #OBJECT_SIZE,d0
  lea      0(a5,d0.l),a4            ; a4 = OBJECT *
  move.w   d5,ob_x(a4)              ; x-Pos fuer Menuetitel
- mulu     #24,d1
+ mulu     #OBJECT_SIZE,d1
  lea      0(a5,d1.l),a6
  move.w   d5,ob_x(a6)              ; Position auch fuer Menue
  add.w    d7,ob_x(a6)
@@ -724,7 +724,7 @@ mon_2d:
  move.w   ob_next(a4),d0           ; naechter Titel
  cmpi.w   #2,d0                    ; ist der Parent ?
  bne.b    mon_title_loop           ; nein
- move.w   d5,2*24+ob_width(a5)     ; Breite des Parent setzen
+ move.w   d5,2*OBJECT_SIZE+ob_width(a5)     ; Breite des Parent setzen
 
 * erstes Menue modifizieren: Accessories eintragen
 
@@ -735,18 +735,18 @@ mon_fontmono:
  jsr      obj_to_g                 ; Objekt 2 ist Menuezeile
 
  move.w   ob_tail(a5),d1           ; rechter Teil (Menues)
- muls     #24,d1
+ muls     #OBJECT_SIZE,d1
  move.w   ob_head(a5,d1.l),d7      ; erstes Menue
 
  move.w   d7,d1
- muls     #24,d1
+ muls     #OBJECT_SIZE,d1
  move.l   #-1,ob_head(a5,d1.l)     ; ob_head und ob_tail des ersten Menues
 
  move.w   d7,d5
  bsr      _add                     ; "ueber ..."
 
  move.w   d7,d1
- muls     #24,d1
+ muls     #OBJECT_SIZE,d1
  lea      ob_height(a5,d1.l),a0    ; Hoehe des ACC- Menues
 
  move.w   big_hchar,d4
@@ -771,7 +771,7 @@ mon_loop:
  bsr      _add2
 
  move.w   d5,d1
- muls     #24,d1
+ muls     #OBJECT_SIZE,d1
  move.w   d4,ob_y(a5,d1.l)
  add.w    big_hchar,d4
  move.w   ob_type(a5,d1.l),d0      ; Objekttyp des Menueeintrags
@@ -877,10 +877,10 @@ sci_apy:
 modify_acc_menu:
  move.l   a6,-(sp)
  move.w   ob_tail(a0),d0           ; rechter Teil (Menues)
- muls     #24,d0
+ muls     #OBJECT_SIZE,d0
  move.w   ob_head(a0,d0.l),d0      ; erstes Menue
  addq.w   #2,d0                    ; G_BOX,"ueber ..." und "------"
- muls     #24,d0
+ muls     #OBJECT_SIZE,d0
  add.l    d0,a0
  moveq    #NACCS,d1                ; Tabellenlaenge
  lea      reg_apidx,a1
@@ -900,7 +900,7 @@ mom_loop:
  bset     #DISABLED_B,ob_state+1(a0)    ; ungueltig machen
  bset     d1,d0                         ; und vermerken
 mom_nxtob:
- lea      24(a0),a0
+ lea      OBJECT_SIZE(a0),a0
  dbra     d1,mom_loop
  move.l   (sp)+,a6
  rts
@@ -920,10 +920,10 @@ mom_nxtob:
 
 restore_acc_menu:
  move.w   ob_tail(a0),d1           ; rechter Teil (Menues)
- muls     #24,d1
+ muls     #OBJECT_SIZE,d1
  move.w   ob_head(a0,d1.l),d1      ; erstes Menue
  addq.w   #2,d1                    ; G_BOX,"ueber ..." und "------"
- muls     #24,d1
+ muls     #OBJECT_SIZE,d1
  add.l    d1,a0
  moveq    #NACCS,d1                ; Tabellenlaenge
  bra.b    ram_nxtob
@@ -932,7 +932,7 @@ ram_loop:
  beq.b    ram_nxtob                ; nein
  bclr     #DISABLED_B,ob_state+1(a0)    ; gueltig machen
 ram_nxtob:
- lea      24(a0),a0
+ lea      OBJECT_SIZE(a0),a0
  dbra     d1,ram_loop
  rts
 
@@ -1383,7 +1383,7 @@ xmenu_export:
 
 menu_attach:
  movem.l  a6/a5,-(sp)
- mulu     #24,d1
+ mulu     #OBJECT_SIZE,d1
  lea      0(a0,d1.l),a6            ; a6 = OBJECT *
  move.l   a1,a5
  tst.w    d0
@@ -1484,7 +1484,7 @@ menat1_next:
  btst     #7,look_flags+1
  beq.b    menat_2d
  move.w   4(a0),d0                 ; mn_menu (parent fuer Submenue)
- mulu     #24,d0
+ mulu     #OBJECT_SIZE,d0
  add.l    (a0),d0                  ; mn_tree
  move.l   d0,a1
  ori.w    #FL3DBAK,ob_flags(a1)
@@ -1591,7 +1591,7 @@ menatg_ende:
 menu_istart:
  move.w   d0,-(sp)
  move.w   d2,-(sp)
- mulu     #24,d1
+ mulu     #OBJECT_SIZE,d1
  pea      0(a0,d1.l)               ; OBJECT * merken
  move.l   act_appl,a1
  move.l   (sp),a0

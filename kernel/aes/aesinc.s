@@ -111,6 +111,7 @@ ob_x      EQU  $10
 ob_y      EQU  $12
 ob_width  EQU  $14
 ob_height EQU  $16
+OBJECT_SIZE    EQU  24
 
 * TEDINFO
 
