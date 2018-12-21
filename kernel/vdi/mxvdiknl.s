@@ -64,6 +64,7 @@
 
                   .IMPORT strgcpy
                   .IMPORT strgcat
+                  .IMPORT mmx_yield
 
    .IMPORT MSys
 BehneError equ $78
@@ -833,6 +834,7 @@ vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
                   jsr      Cconws               ;Meldung ausgeben
 
 vdi_init_halt:    nop
+				  jsr      mmx_yield
                   bra.s    vdi_init_halt
 
 vdi_init_fonts:   bsr      init_fonts           ;Fonts initialisieren
@@ -902,6 +904,7 @@ load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
                   jsr      Cconws               ;Meldung ausgeben
 
 load_scr_halt:    nop
+				  jsr      mmx_yield
                   bra.s    load_scr_halt
 
 load_scr_MAC:     

@@ -14,7 +14,6 @@ mmilan.ram
 .C[-K-]
 .C[-P]
 .C[-2]
-.S[-DMMX_YIELD=0]
 .S[-S]
 .L[-S=0]
 =

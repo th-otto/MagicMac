@@ -85,6 +85,7 @@ XFS95     EQU  1
      IFNE FALCON
      EXPORT      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
+     EXPORT mmx_yield
 
 ;Import vom DOS
 
@@ -1975,6 +1976,7 @@ halt_system:
  lea      fatal_errs(pc),a0
  bsr      putstr                   ; "System angehalten"
 halt_endless:
+ bsr mmx_yield
  bra      halt_endless
 
 putstr:
@@ -2987,7 +2989,10 @@ _bconin:
  lea      8(a0),a1                 ; *Tail
  move.w   (a1),d1                  ; Tail-Index
  cmp.w    -(a1),d1                 ; Head-Index
- beq.b    _bconin
+ bne.s    _bconin_in
+ bsr mmx_yield
+ bra.s _bconin
+_bconin_in:
 ; Head- Index ist ungleich Tail- Index, also Zeichen da!
  move     sr,-(sp)
  ori      #$700,sr                 ; Interrupts sperren
@@ -3987,6 +3992,17 @@ ci_20:
 ci_0:
  rts
 
+; Stop the CPU until an interrupt occurs.
+; This may save some host CPU time on emulators (i.e. ARAnyM).
+mmx_yield:
+  move.w sr,d0
+  IFNE HADES
+  stop    #$2100                 ; Auf Hades: Auch HBL-Int zulassen: SCSI
+  ELSE
+  stop    #$2300
+  ENDC
+  move.w d0,sr
+  rts
 
 **********************************************************************
 *

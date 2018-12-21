@@ -40,10 +40,7 @@
      XREF      appl_break
      XREF      funselect           ; DOS
      XREF      kbshift             ; vom BIOS
-     IF   MMX_YIELD
-     XREF      MSysX
-     INCLUDE   "..\bios\magcmacx\macxker.inc"
-     ENDIF
+	 XREF      mmx_yield           ; vom BIOS
 
      XREF      fatal_stack         ; von AESMAIN
      XREF      enab_warmb          ; von AESMAIN
@@ -258,17 +255,10 @@ ad_loop:
  tst.l    suspend_list             ; angehaltene Programme
  bne.b    ad_newsuspend
  tst.l    iocpbuf_cnt              ; sind inzwischen Ereignisse eingetroffen ?
-
-     IF   MMX_YIELD
  bne.b    ad__kernel
- lea      (iocpbuf_cnt),a1         ; Parameter
- lea      MSysX+MacSysX_Yield,a0
- MACPPC
- bra.b    ad_loop
-     ELSE
- beq.b    ad_loop                  ; nein, zurueck in die Schleife
- bra.b    ad__kernel
-     ENDIF
+ jsr  mmx_yield
+ bra.b    ad_loop                  ; nein, zurueck in die Schleife
+
 ad_newsuspend:
  tst.l    iocpbuf_cnt
  bne.b    ad__kernel

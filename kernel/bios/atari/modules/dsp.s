@@ -1221,7 +1221,7 @@ locksnd:
    rte
 
 lblE06320:
-   move.l   #$ffffff7f,d0
+   move.l   #$ffffff7f,d0 ; ESNDLOCKED
    rte
 
 ;
@@ -1237,7 +1237,7 @@ unlocksnd:
    rte
 
 lblE0633C:
-   moveq    #-$80,d0
+   moveq    #-$80,d0 ; ESNDNOTLOCK
    rte
 
 ;

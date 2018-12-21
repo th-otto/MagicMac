@@ -12,7 +12,6 @@ magic.ram
 
 .C[-A-]
 .C[-K-]
-.S[-DMMX_YIELD=0]
 .S[-DHADES=0]
 .S[-S]
 .C[-P]

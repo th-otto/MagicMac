@@ -12,7 +12,6 @@ magcmacx.os
 .C[-A-]
 .C[-K-]
 .C[-P]
-.S[-DMMX_YIELD=1]
 .S[-S]
 .L[-S=0]
 =

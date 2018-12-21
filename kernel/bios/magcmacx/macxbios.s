@@ -138,6 +138,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      XREF      endofvars           ; AES: Ende aller Variablen
      XREF      _ende               ; AES: Ende des Betriebssystems
      XREF      gem_magics          ; AES: Parameterblock
+	 XDEF mmx_yield
 
 * Import von AESOBJ
 
@@ -3344,6 +3345,17 @@ bpw_ende:
  movem.l  (sp)+,d6/d7/a6
  rts
 
+mmx_yield:
+ move.l a0,-(a7)
+ move.l a1,-(a7)
+ clr.l -(a7)
+ lea      (a7),a1         ; Parameter
+ lea      MSysX+MacSysX_Yield,a0
+ MACPPC
+ addq.l #4,a7
+ move.l (a7)+,a1
+ move.l (a7)+,a0
+ rts
 
 
 **********************************************************************

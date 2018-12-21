@@ -108,6 +108,7 @@ N_KEYTBL       EQU  9+DEADKEYS            ; 9 Tastaturtabellen
      IFNE FALCON
      XDEF      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
+     EXPORT mmx_yield
 
 * Import aus STD
 
@@ -2325,6 +2326,13 @@ my_tasksw2:
  clr.l    MSys+MacSys_tasksw       ; fuer Event
  jmp      appl_yield
 
+; Stop the CPU until an interrupt occurs.
+; This may save some host CPU time on emulators (i.e. ARAnyM).
+mmx_yield:
+  move.w sr,d0
+  stop    #0x2300
+  move.w d0,sr
+  rts
 
      INCLUDE "priv_exc.s"
 

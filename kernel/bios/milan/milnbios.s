@@ -41,6 +41,7 @@ DEBUG4    EQU  0
      EXPORT    Bmalloc             ; nach DOS
      EXPORT    Bmaddalt            ; nach DOS (ab 25.9.96)
      EXPORT    dos_macfn           ; nach DOS
+     EXPORT mmx_yield
 
      XDEF      p_vt52              ; neues VT52 nach DOS
      EXPORT    warm_boot           ; nach AES
@@ -2442,6 +2443,14 @@ Logbase:
  move.l   _v_bas_ad,d0
  rte
 
+
+; Stop the CPU until an interrupt occurs.
+; This may save some host CPU time on emulators (i.e. ARAnyM).
+mmx_yield:
+  move.w sr,d0
+  stop    #0x2300
+  move.w d0,sr
+  rts
 
 **********************************************************************
 *
