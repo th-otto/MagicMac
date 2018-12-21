@@ -690,14 +690,33 @@ menu_on:
 mon__ismine:
  move.l   a5,menutree              ; Menuebaum merken
 
+* Set menu background color
+
+ btst     #7,look_flags+1          ; 3D look for menu
+ beq.b    mon_co_end
+mon_col_loop:
+ move.w	 ob_type(a5),d1
+ and.w	 #$ff,d1
+ cmp.w	 #G_BOX,d1                  ; G_BOX ?
+ bne.s	 mon_col_box
+ andi.w  #$ff80,ob_spec+2(a5)
+ ori.w	 #$0070+LWHITE,ob_spec+2(a5) ; interiorcol = LWHITE, fillpattern = IP_SOLID
+ bra.s	 mon_col_box1
+mon_col_box:
+ ori.w    #FL3DBAK,ob_flags(a5)
+mon_col_box1:
+ moveq    #LASTOB,d1
+ movea.l  a5,a4
+ lea      OBJECT_SIZE(a5),a5
+ and.w    ob_flags(a4),d1
+ beq.s    mon_col_loop
+ move.l   menutree,a5
+mon_co_end:
+
 * Proportional-Systemfont: Menuetitel neu ausrichten
 
  tst.w    finfo_big+fontmono
  bne      mon_fontmono
- btst     #7,look_flags+1
- beq.b    mon_2d1
- ori.w    #FL3DBAK,OBJECT_SIZE+ob_flags(a5) ; Objekt 1: Menueleiste
-mon_2d1:
  move.w   2*OBJECT_SIZE+ob_head(a5),d0      ; erster Menuetitel
  move.w   2*OBJECT_SIZE+ob_x(a5),d7         ; abs. Pos. des ersten Titels
  bmi      mon_fontmono             ; keine Menuetitel
@@ -713,10 +732,6 @@ mon_title_loop:
  lea      0(a5,d1.l),a6
  move.w   d5,ob_x(a6)              ; Position auch fuer Menue
  add.w    d7,ob_x(a6)
- btst     #7,look_flags+1
- beq.b    mon_2d
- ori.w    #FL3DBAK,ob_flags(a6)
-mon_2d:
  move.l   a4,a0                    ; OBJECT *
  jsr      stw_title                ; Breite setzen
  add.w    ob_width(a4),d5          ; Breite addieren

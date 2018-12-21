@@ -530,9 +530,9 @@ obs_11:
  beq.b    obs_11_white             ; nein, Menue ist weiss
  btst     #7,look_flags+1          ; 3D-Menues aktiviert?
  beq.b    obs_11_white             ; nein
- tst.w    finfo_big+fontmono       ; grosser Zeichensatz aequidistant?
- bne.b    obs_11_white             ; ja, Menue ist weiss
- moveq    #8,d1                    ; Menue ist hellgrau
+; tst.w    finfo_big+fontmono       ; grosser Zeichensatz aequidistant?
+; bne.b    obs_11_white             ; ja, Menue ist weiss
+ moveq    #LWHITE,d1               ; Menue ist hellgrau
  bra.b    obs_ok2
 obs_11_white:
  moveq    #WHITE,d1                ; Menue ist weiss

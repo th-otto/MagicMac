@@ -193,8 +193,7 @@ drives=eh
 ;         Taste beim Fensterscrollen umgekehrt, d.h. das Echtzeitscrolling
 ;         ist per Default abgeschaltet.
 ; Bit 6:  Dito fr Echtzeitvergr”ern und -verschieben
-; Bit 7:  (ab MagiC 6.00): 3D-Mens einschalten. Geht nur bei
-;         proportionalem groen AES-Zeichensatz
+; Bit 7:  (ab MagiC 6.00): 3D-Mens einschalten.
 ;
 ; Fehlt der Eintrag, werden alle Flags als 0 angenommen.
 
