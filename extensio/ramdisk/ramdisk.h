@@ -48,6 +48,7 @@
 #define ROOT_DE			(DIRENTRY *)1L
 #define LEAVE_FREE		(512L * 1024L)
 #define RAM_TYPE		3
+#define RAM_MAXFNAME    32
 
 #define is_file(x)		((x & S_IFMT) == S_IFREG)
 #define is_dir(x)		((x & S_IFMT) == S_IFDIR)
@@ -87,7 +88,7 @@
 
 typedef struct
 {
-	char	de_fname[34];
+	char	de_fname[RAM_MAXFNAME + 2];
 	char	*de_faddr;
 	WORD	de_nr;
 	WORD	de_maxnr;

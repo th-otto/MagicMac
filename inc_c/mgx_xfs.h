@@ -36,8 +36,8 @@ typedef struct {
      char (*toupper)          ( char c );
      void (*_sprintf)         ( char *dest, const char *source, LONG *p );
      PD	**act_pd;
-     APPL *act_appl;
-     APPL *keyb_app;
+     APPL **act_appl;
+     APPL **keyb_app;
      WORD *pe_slice;
      WORD *pe_timer;
      void (*appl_yield)       ( void );

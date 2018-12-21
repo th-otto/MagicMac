@@ -150,7 +150,7 @@ _GLOBAL	DIRENTRY		root[ROOTSIZE],
 _GLOBAL	LONG			leave_free;
 _GLOBAL	WORD			ram_type,
 						eight_bit;
-_GLOBAL char			volume_label[34];
+_GLOBAL char			volume_label[RAM_MAXFNAME + 2];
 _GLOBAL LONG			(*p_Pdomain)(WORD ignore);
 _GLOBAL void			*(*_Mxalloc)(LONG amount, WORD mode);
 _GLOBAL WORD			(*_Mfree)(void *block);

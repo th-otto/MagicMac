@@ -183,7 +183,7 @@ int main(void)
 		return(-1);
 	}
 	kernel = install_kernel(real_kernel);
-	if (kernel->int_msize < 34)
+	if (kernel->int_msize < (RAM_MAXFNAME + 2))
 	{
 		Cconws("Installation failed (kernel blocksize too small)!"
 			"\r\n");
@@ -463,8 +463,8 @@ invalid_line:
 /* Die ersten 32 Zeichen hinter label= werden direkt bernommen */
 		if (!stricmp(input, "label"))
 		{
-			volume_label[32] = 0;
-			strncpy(volume_label, &arg[1], 32L);
+			volume_label[RAM_MAXFNAME] = 0;
+			strncpy(volume_label, &arg[1], RAM_MAXFNAME);
 			continue;
 		}
 #ifdef DEBUG
@@ -845,8 +845,8 @@ DIRENTRY *findfile(RAMDISK_FD *dd, const char *pathname, WORD spos,
 /* Zweimal Speicher fr tempor„re Filenamen anfordern */
 	temp = (void *)(kernel->int_malloc)();
 	dos = (void *)(kernel->int_malloc)();
-	temp[32] = 0;
-	strncpy(temp, pathname, 32L);
+	temp[RAM_MAXFNAME] = 0;
+	strncpy(temp, pathname, RAM_MAXFNAME);
 	search = (DIRENTRY *)dd->fd_file->de_faddr;
 	max = search[0].de_maxnr;
 /*
@@ -1045,7 +1045,7 @@ DIRENTRY *new_file(RAMDISK_FD *curr, const char *name)
 	}
 /* Den neuen Eintrag komplett l”schen und den Namen eintragen */
 	(kernel->fast_clrmem)(&dir[i], &dir[i + 1]);
-	strncpy(dir[i].de_fname, name, 32L);
+	strncpy(dir[i].de_fname, name, RAM_MAXFNAME);
 	if (p_Pdomain(-1) == 0)
 	{
 /*
@@ -1118,19 +1118,19 @@ WORD dir_is_open(DIRENTRY *dir)
  */
 WORD check_name(const char *name)
 {
-	WORD	i,
-			max,
-			check;
+	WORD	i;
+	unsigned short max;
+	unsigned short check;
 
 /* Leere Namen sind auch nicht zul„ssig */
 	if (!*name)
 		return(0);
 	max = eight_bit ? 255 : 127;
-	for (i = 0; i < strlen(name); i++)
+	for (i = 0; name[i] != '\0'; i++)
 	{
-		check = (WORD)name[i] & 0xff;
-		if ((check < 32) || (check > max) ||
-			(name[i] == '\\'))
+		check = (unsigned char)name[i];
+		if (check < 0x20 || check > max ||
+			check == '\\' || check == '/')
 		{
 			return(0);
 		}
@@ -1627,8 +1627,8 @@ WORD has_xext(const char *name)
 	if (p_Pdomain(-1) == 1)
 		return(0);
 	temp = (void *)(kernel->int_malloc)();
-	temp[32] = 0;
-	strncpy(temp, name, 32L);
+	temp[RAM_MAXFNAME] = 0;
+	strncpy(temp, name, RAM_MAXFNAME);
 	strrev(temp);
 	for (i = 0; i < (sizeof(xext) / sizeof(char *)); i++)
 	{

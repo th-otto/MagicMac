@@ -77,9 +77,9 @@ typedef struct _m_u {
 } MAGX_UNSEL;
 
 typedef struct {
-     void *act_pd;
-     APPL *act_appl;
-     APPL *keyb_app;
+     void **act_pd;
+     APPL **act_appl;
+     APPL **keyb_app;
      void (*appl_yield)       ( void );
      void (*appl_suspend)     ( void );
      long (*evnt_IO)          ( long ticks_50hz, void *unsel );

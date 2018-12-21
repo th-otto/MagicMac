@@ -500,7 +500,8 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
 				*dd;
 	DIRENTRY	*found;
 	WORD		dirlookup = mode;
-
+	LONG err;
+	
 /*
  * Da temp per int_malloc angefordert wird, muû der Speicher vor
  * Verlassen der Funktion wieder freigegeben werden. Das erreicht man
@@ -532,11 +533,11 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
  * daher "beschnitten" werden muû.
  */
 	temp = (void *)(kernel->int_malloc)();
-	temp[32] = 0;
+	temp[RAM_MAXFNAME] = 0;
 /* PrÅfen, ob der gelieferte DD Åberhaupt OK ist */
 	dd = (RAMDISK_FD *)reldir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return(err);
 /* Wird ein Nullzeiger geliefert, lehnt path2DD das ab */
 	if (pathname == NULL)
 		return(dirlookup ? EPTHNF : EFILNF);
@@ -589,8 +590,8 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
 		if ((next = strchr(pathname, '\\')) != NULL)
 		{
 			size_t len = next - pathname;
-			if (len > 32)
-				len = 32;
+			if (len > RAM_MAXFNAME)
+				len = RAM_MAXFNAME;
 			strncpy(temp, pathname, len);
 			temp[len] = '\0';
 			current = temp;
@@ -729,11 +730,12 @@ LONG ramdisk_sfirst(MX_DD *srchdir, const char *name, DTA *dta,
 	RAMDISK_DTA	*the_dta;
 	DIRENTRY	*found;
 	char		*temp;
-
+	LONG err;
+	
 	TRACE(("sfirst - %L\\%S, %L\r\n", srchdir, name, (LONG)attrib));
 	dd = (RAMDISK_FD *)srchdir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 	temp = (void *)(kernel->int_malloc)();
 	the_dta = (RAMDISK_DTA *)dta;
 	tostrunc(temp, name, 1);
@@ -915,12 +917,13 @@ LONG ramdisk_fopen(MX_DD *dir, const char *name, WORD omode, WORD attrib,
 	DIRENTRY	*found;
 	FILEBLOCK	*file,
 				*next;
-
+	LONG err;
+	
 	TRACE(("fopen - %L\\%S, %L, %L\r\n", dir, name, (LONG)omode,
 		(LONG)attrib));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 /*
  * Diese öberprÅfung ist eigentlich nicht nîtig, da findfile auch das
  * x-Flag testet, aber so wird EACCDN statt EFILNF geliefert
@@ -1145,11 +1148,12 @@ LONG ramdisk_fdelete(MX_DD *dir, const char *name)
 	DIRENTRY	*found;
 	FILEBLOCK	*file,
 				*next;
+	LONG err;
 
 	TRACE(("fdelete - %L\\%S\r\n", dir, name));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 /* Die Datei suchen; existiert sie nicht, Fehler melden */
 	if ((found = findfile(dd, name, 2, FF_SEARCH, 0)) == NULL)
 		return(EFILNF);
@@ -1232,6 +1236,7 @@ LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
 	DIRENTRY	*e_old,
 				*e_new;
 	char		*temp;
+	LONG err;
 
 	if (flag_link)
 	{
@@ -1242,10 +1247,10 @@ LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
 		newdir, newname));
 	old = (RAMDISK_FD *)olddir;
 	new = (RAMDISK_FD *)newdir;
-	if (check_dd(old) < 0)
-		return(check_dd(old));
-	if (check_dd(new) < 0)
-		return(check_dd(new));
+	if ((err = check_dd(old)) < 0)
+		return err;
+	if ((err = check_dd(new)) < 0)
+		return err;
 /*
  * FÅr beide betroffenen Verzeichnisse mÅssen die entsprechenden
  * Rechte vorhanden sein
@@ -1267,8 +1272,8 @@ LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
  * ist)
  */
 	temp = (void *)(kernel->int_malloc)();
-	temp[32] = 0;
-	strncpy(temp, newname, 32L);
+	temp[RAM_MAXFNAME] = 0;
+	strncpy(temp, newname, RAM_MAXFNAME);
 	if (p_Pdomain(-1) == 0)
 		strlwr(temp);
 	newname = temp;
@@ -1389,13 +1394,14 @@ LONG ramdisk_xattr(MX_DD *dir, const char *name, XATTR *xattr, WORD mode,
 {
 	RAMDISK_FD	*dd;
 	DIRENTRY	*found;
+	LONG err;
 
 	TRACE(("xattr - %L\\%S (%L)\r\n", dir, name, name));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
+	if ((err = check_dd(dd)) < 0)
 	{
 		TRACE(("xattr: check_dd fehlgeschlagen!\r\n"));
-		return(check_dd(dd));
+		return err;
 	}
 	TRACE(("xattr: %S\r\n", name));
 /* Das angeforderte File suchen, ggf. Fehler melden */
@@ -1549,14 +1555,15 @@ LONG ramdisk_dcreate(MX_DD *dir, const char *name, UWORD mode)
 	RAMDISK_FD	*dd;
 	DIRENTRY	*entry,
 				*new;
+	LONG err;
 
 	TRACE(("dcreate - %L\\%S, rootDD = %L\r\n", dir, name,
 		&fd[ROOT]));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
+	if ((err = check_dd(dd)) < 0)
 	{
 		TRACE(("dcreate: dd fehlerhaft!\r\n"));
-		return(check_dd(dd));
+		return err;
 	}
 #ifdef CHECK_OPEN
 /* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
@@ -1631,11 +1638,12 @@ LONG ramdisk_ddelete(MX_DD *dir)
 	WORD		i,
 				cnt,
 				max;
+	LONG err;
 
 	TRACE(("ddelete - %L\r\n", dir));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 	TRACE(("ddelete: %L entspricht %L\\%S\r\n", dir, dd->fd_parent,
 		dd->fd_file->de_fname));
 	if (real_kernel->version < 3)
@@ -1756,12 +1764,13 @@ LONG ramdisk_DD2name(MX_DD *dir, char *name, WORD bufsize)
 {
 	RAMDISK_FD	*dd;
 	char		*temp;
+	LONG err;
 
 	TRACE(("DD2name - %L\r\n", dir));
 /* Wie Åblich erstmal prÅfen, ob der dd gÅltig ist */
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 /*
  * Wenn nicht mindestens ein Byte Platz hat, gleich einen Fehler
  * melden (wegen des abschlieûenden Nullbytes).
@@ -1823,11 +1832,12 @@ LONG ramdisk_dopendir(MX_DD *dir, WORD tosflag)
 {
 	WORD		i;
 	RAMDISK_FD	*dd;
+	LONG err;
 
 	TRACE(("dopendir %L\r\n", dir));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 /*
  * Zum Lesen eines Verzeichnisses sind nur Leserechte nîtig, das x-
  * Flag muû nur dann gesetzt sein, wenn man einen Eintrag innerhalb
@@ -2017,43 +2027,45 @@ LONG ramdisk_dclosedir(MX_DHD *dhd)
  */
 LONG ramdisk_dpathconf(MX_DD *dir, WORD which)
 {
+	LONG err;
+
 	TRACE(("dpathconf - %L, %L\r\n", dir, (LONG)which));
-	if (check_dd((RAMDISK_FD *)dir) < 0)
-		return(check_dd((RAMDISK_FD *)dir));
+	if ((err = check_dd((RAMDISK_FD *)dir)) < 0)
+		return err;
 	switch (which)
 	{
-		case -1:
+		case DP_MAXREQ:
 /* Maximal Modus 8 */
-			return(8);
-		case 0:
+			return DP_XATTRFIELDS;
+		case DP_IOPEN:
 /*
  * Es kînnen allerhîchstens soviel Dateien geîffnet werden wie FDs
  * vorhanden sind (minus 1 fÅr den Root-DD)
  */
 			return(MAX_FD - 1);
-		case 1:
+		case DP_MAXLINKS:
 /* Keine Hardlinks, also maximal 1 Link pro File */
 			return(1);
-		case 2:
+		case DP_PATHMAX:
 /*
  * Pfadnamen kînnen unendlich lang werden (genaugenommen zwar nicht,
  * weil ja die Anzahl an DDs begrenzt ist, aber das macht letztlich
  * keinen groûen Unterschied)
  */
 			return(0x7fffffffL);
-		case 3:
+		case DP_NAMEMAX:
 /* Maximal 32 Zeichen Filename */
-			return(32L);
-		case 4:
+			return RAM_MAXFNAME;
+		case DP_ATOMIC:
 /* "Am StÅck" kînnen maximal DEFAULTFILE Bytes geschrieben werden */
 			return(DEFAULTFILE);
-		case 5:
+		case DP_TRUNC:
 /* Die Ramdisk schneidet zu lange Filenamen automatisch ab */
-			return(1L);
-		case 6:
+			return DP_AUTOTRUNC;
+		case DP_CASE:
 /* Volle Unterscheidung von Groû- und Kleinschreibung */
-			return(0L);
-		case 7:
+			return DP_CASESENS;
+		case DP_MODEATTR:
 /*
  * Mîgliche Filetypen: Directories, symbolische Links, normale Files.
  * Alle Unix-Filemodi bis auf Setuid, Setgid und das "Sticky-Bit".
@@ -2062,7 +2074,7 @@ LONG ramdisk_dpathconf(MX_DD *dir, WORD which)
  */
 			return(0x01900000L | (0777L << 8L) |
 				FA_RDONLY | FA_DIR | FA_CHANGED | FA_SYMLINK);
-		case 8:
+		case DP_XATTRFIELDS:
 /* Alle Elemente der XATTR-Struktur echt vorhanden */
 			return(0x0fffL);
 		default:
@@ -2082,6 +2094,7 @@ LONG ramdisk_dfree(MX_DD *dd, DISKINFO *free)
 {
 	LONG	freeblocks,
 			usedblocks;
+	LONG err;
 
 	TRACE(("dfree\r\n"));
 /*
@@ -2104,8 +2117,8 @@ LONG ramdisk_dfree(MX_DD *dd, DISKINFO *free)
 		}
 	}
 #endif
-	if (check_dd((RAMDISK_FD *)dd) < 0)
-		return(check_dd((RAMDISK_FD *)dd));
+	if ((err = check_dd((RAMDISK_FD *)dd)) < 0)
+		return err;
 /*
  * Die freien Blocks errechnen sich aus dem (fÅr die Ramdisk) noch
  * freien Speicher geteilt durch die Grîûe eines Fileblocks. Das
@@ -2168,10 +2181,12 @@ LONG get_size(DIRENTRY *search)
  */
 LONG ramdisk_wlabel(MX_DD *dir, const char *name)
 {
+	LONG err;
+
 	TRACE(("wlabel - %S\r\n", name));
 /* dir wird nur ÅberprÅft, sonst aber ignoriert */
-	if (check_dd((RAMDISK_FD *)dir) < 0)
-		return(check_dd((RAMDISK_FD *)dir));
+	if ((err = check_dd((RAMDISK_FD *)dir)) < 0)
+		return err;
 /*
  * Bei Bedarf Volume Label lîschen, sonst die ersten 32 Zeichen des
  * gewÅnschten Labels Åbernehmen
@@ -2180,8 +2195,8 @@ LONG ramdisk_wlabel(MX_DD *dir, const char *name)
 		strcpy(volume_label, "");
 	else
 	{
-		volume_label[32] = 0;
-		strncpy(volume_label, name, 32L);
+		volume_label[RAM_MAXFNAME] = 0;
+		strncpy(volume_label, name, RAM_MAXFNAME);
 	}
 	return(E_OK);
 }
@@ -2194,10 +2209,12 @@ LONG ramdisk_wlabel(MX_DD *dir, const char *name)
  */
 LONG ramdisk_rlabel(MX_DD *dir, const char *name, char *buf, WORD len)
 {
+	LONG err;
+
 	TRACE(("rlabel - %S %L\r\n", name, (LONG)len));
 /* dir wird zwar ÅberprÅft, sonst aber ignoriert */
-	if (check_dd((RAMDISK_FD *)dir) < 0)
-		return(check_dd((RAMDISK_FD *)dir));
+	if ((err = check_dd((RAMDISK_FD *)dir)) < 0)
+		return err;
 /*
  * Ist das Label leer, wird EFILNF geliefert, weil genaugenommen
  * keines existiert
@@ -2229,11 +2246,12 @@ LONG ramdisk_symlink(MX_DD *dir, const char *name, const char *to)
 	DIRENTRY	*entry;
 	char		*link;
 	LONG		len;
+	LONG err;
 
 	TRACE(("symlink - %S to %L\\%S\r\n", to, dir, name));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 #ifdef CHECK_OPEN
 /* PrÅfen, ob das Verzeichnis nicht noch geîffnet ist */
 	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
@@ -2282,11 +2300,12 @@ LONG ramdisk_readlink(MX_DD *dir, const char *name, char *buf, WORD size)
 {
 	RAMDISK_FD	*dd;
 	DIRENTRY	*found;
+	LONG err;
 
 	TRACE(("readlink - %L\\%S\r\n", dir, name));
 	dd = (RAMDISK_FD *)dir;
-	if (check_dd(dd) < 0)
-		return(check_dd(dd));
+	if ((err = check_dd(dd)) < 0)
+		return err;
 /* Den Verzeichniseintrag suchen */
 	if ((found = findfile(dd, name, 2, FF_SEARCH, 0)) == NULL)
 		return(EFILNF);
