@@ -101,7 +101,7 @@ typedef struct ram_fd
 	MX_DMD			*fd_dmd;
 	WORD			fd_refcnt;
 	WORD			fd_mode;
-	MX_DEV			*fd_dev;
+	const MX_DEV	*fd_dev;
 	LONG			fd_fpos;
 	DIRENTRY		*fd_file;
 	WORD			fd_is_parent;

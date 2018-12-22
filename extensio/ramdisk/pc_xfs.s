@@ -104,6 +104,9 @@ install_xfs:
 ; Ansonsten die einzelnen Funktionspointer und den Namen des XFS
 ; in die jeweiligen Zielstrukturen eintragen.
 	move.l	a0,a2
+	lea		my_xfs,a1
+	move.l  (a0),(a1)
+	move.l  4(a0),4(a1)
 	lea		my_cxfs,a3
 	lea		xfs_sizeof(a3),a1
 copy_xfs:

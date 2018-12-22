@@ -2406,13 +2406,14 @@ LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg)
 LONG ramdisk_close(MX_FD *file)
 {
 	RAMDISK_FD	*fd;
-
+	LONG err;
+	
 	TRACE(("close - %L\r\n", file));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
+	if ((err = check_fd(fd)) < 0)
 	{
 		TRACE(("close: check_fd fehlgeschlagen!\r\n"));
-		return(check_fd(fd));
+		return err;
 	}
 	TRACE(("close: fd_refcnt vorher: %L", (LONG)fd->fd_refcnt));
 	if (fd->fd_refcnt)
@@ -2445,11 +2446,12 @@ LONG ramdisk_read(MX_FD *file, LONG count, void *_buffer)
 				read,
 				readable;
 	char *buffer = _buffer;
+	LONG err;
 
 	TRACE(("read - %L, %L\r\n", file, count));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
-		return(check_fd(fd));
+	if ((err = check_fd(fd)) < 0)
+		return err;
 /*
  * Wenn das File nicht zum Lesen oder Ausfhren ge”ffnet war, einen
  * Fehler melden
@@ -2527,11 +2529,12 @@ LONG ramdisk_write(MX_FD *file, LONG count, void *_buffer)
 				written,
 				maxcount,
 				pos;
+	LONG err;
 
 	TRACE(("write - %L, %L\r\n", file, count));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
-		return(check_fd(fd));
+	if ((err = check_fd(fd)) < 0)
+		return err;
 /* Fehler melden, wenn das File nicht zum Schreiben ge”ffnet ist */
 	if ((fd->fd_mode & OM_WPERM) == 0)
 		return(EACCDN);
@@ -2643,9 +2646,9 @@ LONG ramdisk_stat(MX_FD *file, MAGX_UNSEL *unselect, WORD rwflag,
 	TRACE(("stat - %L, %L, %L, %L\r\n", file, unselect,
 		(LONG)rwflag, apcode));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
+	if ((retcode = check_fd(fd)) < 0)
 	{
-		retcode = check_fd(fd);
+		;
 	}
 /*
  * Wenn Lesebereitschaft bei einem File getestet werden soll, daž
@@ -2683,11 +2686,12 @@ LONG ramdisk_seek(MX_FD *file, LONG where, WORD mode)
 {
 	RAMDISK_FD	*fd;
 	LONG		new_pos;
+	LONG err;
 
 	TRACE(("seek - %L, %L, %L\r\n", file, where, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
-		return(check_fd(fd));
+	if ((err = check_fd(fd)) < 0)
+		return err;
 /* Je nach Modus die Bezugsposition fr das seek ermitteln */
 	switch (mode)
 	{
@@ -2741,11 +2745,12 @@ LONG ramdisk_seek(MX_FD *file, LONG where, WORD mode)
 LONG ramdisk_datime(MX_FD *file, WORD *d, WORD setflag)
 {
 	RAMDISK_FD	*fd;
+	LONG err;
 
 	TRACE(("datime - %L, %L\r\n", file, (LONG)setflag));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
-		return(check_fd(fd));
+	if ((err = check_fd(fd)) < 0)
+		return err;
 	switch(setflag)
 	{
 		case 0:
@@ -2786,11 +2791,12 @@ LONG ramdisk_ioctl(MX_FD *file, WORD cmd, void *buf)
 	WORD		*timebuf;
 	LONG		*avail;
 	XATTR		*xattr;
+	LONG err;
 
 	TRACE(("ioctl - %L, %L, %L\r\n", file, (LONG)cmd,  buf));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
-		return(check_fd(fd));
+	if ((err = check_fd(fd)) < 0)
+		return err;
 	avail = (LONG *)buf;
 	switch (cmd)
 	{
@@ -2878,11 +2884,12 @@ LONG ramdisk_getc(MX_FD *file, WORD mode)
 {
 	RAMDISK_FD	*fd;
 	UBYTE		dummy;
+	LONG err;
 
 	TRACE(("getchar - %L, %L\r\n", file, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
-	if (check_fd(fd) < 0)
-		return(check_fd(fd));
+	if ((err = check_fd(fd)) < 0)
+		return err;
 	if (ramdisk_read(file, 1L, (char *)&dummy) != 1L)
 		return(0xff1aL);
 /*
@@ -3017,7 +3024,7 @@ THE_MGX_XFS ramdisk_xfs = {
 	ramdisk_dcntl
 };
 
-MX_DEV ramdisk_dev = {
+MX_DEV const ramdisk_dev = {
 	ramdisk_close,
 	ramdisk_read,
 	ramdisk_write,

@@ -115,7 +115,7 @@ typedef struct _mx_fd {
      struct _mx_dmd *fd_dmd;
      WORD      fd_refcnt;
      WORD      fd_mode;
-     MX_DEV    *fd_dev;
+     const MX_DEV    *fd_dev;
 } MX_FD;
 
 

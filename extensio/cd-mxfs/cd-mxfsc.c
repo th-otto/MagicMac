@@ -106,10 +106,10 @@ static int firstdrive = -1;
 * Die cdecl-XFS-Struktur fÅr den Assembler-Umsetzer:
 */
 
-CDECL_MX_XFS cdecl_cdxfs = {
+CDECL_MX_XFS const cdecl_cdxfs = {
 	"CDROM",
 	NULL,
-	0L,
+	0,
 	NULL,
 	xfs_sync,
 	xfs_pterm,
@@ -147,7 +147,7 @@ CDECL_MX_XFS cdecl_cdxfs = {
 * Die cdecl-Device-Struktur fÅr den Assembler-Umsetzer:
 */
 
-CDECL_MX_DEV cdecl_cddev = {
+CDECL_MX_DEV const cdecl_cddev = {
 	dev_close,
 	dev_read,
 	dev_write,
@@ -164,7 +164,7 @@ CDECL_MX_DEV cdecl_cddev = {
 * Die cdecl-BlockDevice-Struktur fÅr den Assembler-Umsetzer:
 */
 
-CDECL_MX_DDEV cdecl_cdblkdev = {
+CDECL_MX_DDEV const cdecl_cdblkdev = {
 	blkdev_open,
 	blkdev_close,
 	blkdev_read,

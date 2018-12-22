@@ -133,7 +133,7 @@ WORD get_cookie(ULONG cookie, ULONG *value);
  * bzw. definiert werden.
  */
 extern THE_MGX_XFS ramdisk_xfs;
-extern MX_DEV ramdisk_dev;
+extern const MX_DEV ramdisk_dev;
 #ifdef ONLY_EXTERN
 #define _GLOBAL	extern
 #else

@@ -40,8 +40,8 @@ struct _mx_dosfd {
      struct _mx_dosdmd	*fd_dmd;
      WORD      fd_refcnt;
      WORD      fd_mode;
-     MX_DEV    *fd_dev;
-     MX_DDEV   *fd_ddev;
+     const MX_DEV    *fd_dev;
+     const MX_DDEV   *fd_ddev;
      char      fd_name[11];
      char      fd_attr;
      PD        *fd_owner;

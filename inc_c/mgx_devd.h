@@ -21,8 +21,8 @@ typedef struct _mx_dosfd {
      MX_DMD    *fd_dmd;
      WORD      fd_refcnt;
      WORD      fd_mode;
-     MX_DEV    *fd_dev;
-     struct    _mx_ddev *fd_ddev;
+     const MX_DEV    *fd_dev;
+     const struct    _mx_ddev *fd_ddev;
      char      fd_name[11];
      char      fd_attr;
      PD        *fd_owner;
