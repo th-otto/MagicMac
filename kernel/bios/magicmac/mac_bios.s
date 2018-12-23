@@ -89,6 +89,7 @@ N_KEYTBL       EQU  9+DEADKEYS            ; 9 Tastaturtabellen
      XDEF      p_mgxinf            ; nach XAES
      XDEF      machine_type        ; nach VDI,DOS
      XDEF      config_status       ; nach DOS und AES
+     XDEF      pkill_vector        ; nach DOS und AES
      XDEF      status_bits         ; nach DOS und AES
      XDEF      pe_slice            ; nach XAES
      XDEF      pe_timer            ; nach XAES
@@ -262,7 +263,7 @@ config_status:      DS.L 1
                     DS.L 1              /* 04: hier -> DOSVARS            */
                     DS.L 1              /* 08: hier -> AESVARS            */
                     DS.L 1              /* 12: hier -> vdi_tidy           */
-                    DS.L 1              /* 16: -> hddriver_functions      */
+hddf_vector:        DS.L 1              /* 16: -> hddriver_functions      */
 status_bits:        DS.L 1              /* 20: Bit 0: APP-Manager ist aktiv */
 pkill_vector:       DS.L 1              /* 24: VERKETTEN: z.B. fuer DSP     */
 
@@ -475,7 +476,7 @@ bot_aestpa:
  clr.l    act_appl                 ; single task
 
  move.l   #'_DMY',dummy_sem+bl_name  ; Dummy- Semaphore initialisieren
- clr.l    config_status+16         ; kein paralleler Plattentransfer
+ clr.l    hddf_vector              ; kein paralleler Plattentransfer
 
 ;move.l   #syshdr,_sysbase
  move.l   #savptr_area,savptr

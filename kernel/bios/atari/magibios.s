@@ -65,6 +65,7 @@ XFS95     EQU  1
      EXPORT      p_mgxinf            ; nach XAES
      EXPORT      machine_type        ; nach VDI,DOS
      EXPORT      config_status       ; nach DOS und AES
+     EXPORT      pkill_vector        ; nach DOS und AES
      EXPORT      status_bits         ; nach DOS und AES
      EXPORT      pe_slice            ; nach XAES
      EXPORT      pe_timer            ; nach XAES
@@ -693,7 +694,7 @@ bot_nofast:
  move.l   #ncr_sem,dma_sem+bl_next
  lea      hddrv_tab-2,a0           ; Tabellenlaenge
  move.w   #6,(a0)+                 ; 6 Zeiger
- move.l   a0,config_status+16      ; Cookie -> Tabelle
+ move.l   a0,hddf_vector           ; Cookie -> Tabelle
  lea      _acsi_begin(pc),a1
  move.l   a1,(a0)+
  lea      _acsi_end(pc),a1

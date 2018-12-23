@@ -93,6 +93,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
 
      XREF  _start              ; Beginn des ROMs
      XREF  config_status
+     XREF  pkill_vector
      XREF  fast_clrmem         ; schnelle Speicherloesch- Routine
      XREF  getcookie           ; Cookie suchen
      XREF  bios2devcode        ; BIOS-Device => devcode (32 Bit)
@@ -6221,7 +6222,7 @@ pdk_no_sigchld:
  jsr      pkill_threads            ; alle Threads ausser aktueller APP killen
 pk_no_aes:
 * Sprung ueber config_status+24
- move.l   (config_status+24).w,d0
+ move.l   (pkill_vector).w,d0
  beq.b    pk_no_tidy
  move.l   d0,a2
  move.l   a5,a0                    ; PD *
@@ -9301,7 +9302,7 @@ dpex_no_appl:
  jsr      pkill_threads            ; alle Threads ausser aktueller APP killen
 dpex200_no_aes:
 * Sprung ueber config_status+24
- move.l   (config_status+24).w,d0
+ move.l   (pkill_vector).w,d0
  beq.b    dpex200_no_tidy
  move.l   d0,a2
  move.l   a4,a0                    ; PD *
