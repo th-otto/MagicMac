@@ -260,7 +260,7 @@ typedef struct
 	void	*membot;						/* End of the AES-variables        */
 	void	*aes_start;						/* Start address                   */
 	long	magic2;							/* Is 'MAGX'                       */
-	long	date;							/* Creation date ddmmyyyy          */
+	long	date;							/* Creation date mmddyyyy          */
     void    (*chgres)(int res, int txt);    /* Change resolution               */
     long    (**shel_vector)(void);          /* Resident desktop                */
 	char    *aes_bootdrv;                   /* Booting took place from here    */

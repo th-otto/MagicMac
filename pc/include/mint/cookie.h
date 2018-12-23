@@ -263,7 +263,7 @@
 #define C_MADN 0x4D41444EL     /* NEX-Output */
 #define C_MagC 0x4D616743L     /* Magic Dials Configuration program */
 #define C_MAGN 0x4D41474EL     /* MAGNUM card */
-#define C_MagX 0x4D616758L     /* MagiC */
+#define C_MagX 0x4D616758L     /* MagX */
 #define C_MAST 0x4D415354L     /* Master */
 #define C_MaTC 0x4D615443L     /* Matrix True Color Graphics Card */
 #define C_MbAr 0x4D624172L     /* MenuBar */
