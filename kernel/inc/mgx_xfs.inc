@@ -48,6 +48,7 @@ dfsk_close_DD:		DS.L	1
 dfsk_match_8_3:	DS.L	1
 dfsk_conv_8_3:		DS.L	1
 dfsk_init_DTA:		DS.L	1
+dfsk_rcnv_8_3:		DS.L	1
 
      OFFSET
 

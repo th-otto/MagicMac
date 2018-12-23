@@ -1219,7 +1219,7 @@ LONG ramdisk_fdelete(MX_DD *dir, const char *name)
 
 /*
  * Das Ramdisk-XFS untersttzt keine Hardlinks, daher werden in
- * dieser Funktion nur das Umbennenen bzw. Verschieben von Dateien,
+ * dieser Funktion nur das Umbenennen bzw. Verschieben von Dateien,
  * Links und Verzeichnissen erm”glicht.
  * Wird dabei ein Verzeichnis echt verschoben, mu die Adresse von
  * ".." angepat werden, da sich ja das Elternverzeichnis ge„ndert

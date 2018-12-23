@@ -212,7 +212,6 @@ int main(void)
  * Fr Laufwerk B: muž erst noch der Link in Laufwerk U: angelegt
  * werden
  */
-#define Fsymlink(old, new)	gemdos(0x12e, (char *)old, (char *)new)
 		Fsymlink("B:\\", "U:\\b");
 	}
 	Cconws("Installed as U:\\");
@@ -625,7 +624,7 @@ LONG set_ramdisk_drive(void)
  */
 LONG Pdomain_gemdos(WORD domain)
 {
-	return(gemdos(281, domain));
+	return Pdomain(domain);
 }
 
 /*
@@ -1599,8 +1598,14 @@ WORD match_tosname(char *to_check, char *sample)
  * beim Anlegen in der TOS-Domain automatisch das x-Flag fr
  * "Ausfhrbar" gesetzt wird
  */
-static char	*xext[] = {"sot.", "ptt.", "grp.", "ppa.", "ptg.",
-	"cca."};
+static char const xext[][5] = {
+	"sot.",
+	"ptt.",
+	"grp.",
+	"ppa.",
+	"ptg.",
+	"cca."
+};
 
 /*
  * has_xext
@@ -1621,24 +1626,21 @@ static char	*xext[] = {"sot.", "ptt.", "grp.", "ppa.", "ptg.",
  */
 WORD has_xext(const char *name)
 {
-	char	*temp;
+	char temp[RAM_MAXFNAME + 1];
 	WORD	i;
 
 	if (p_Pdomain(-1) == 1)
 		return(0);
-	temp = (void *)(kernel->int_malloc)();
-	temp[RAM_MAXFNAME] = 0;
 	strncpy(temp, name, RAM_MAXFNAME);
+	temp[RAM_MAXFNAME] = 0;
 	strrev(temp);
-	for (i = 0; i < (sizeof(xext) / sizeof(char *)); i++)
+	for (i = 0; i < (sizeof(xext) / sizeof(xext[0])); i++)
 	{
-		if (!strnicmp(temp, xext[i], strlen(xext[i])))
+		if (!strnicmp(temp, xext[i], 4))
 		{
-			(kernel->int_mfree)(temp);
 			return(1);
 		}
 	}
-	(kernel->int_mfree)(temp);
 	return(0);
 }
 

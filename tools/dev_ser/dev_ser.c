@@ -297,7 +297,7 @@ long ser_dev_delete ( MX_DOSFD *parent, MX_DOSDIR *dir )
 
 #pragma warn +par
 
-MX_DDEV drvr =
+MX_DDEV const drvr =
 {
 	ser_dev_open,
 	ser_dev_close,

@@ -904,7 +904,7 @@ cddev_ioctl:
 
 **********************************************************************
 *
-* long long dev_datime(a0 = FD *file, a1 = int d[2], d0 = int set)
+* long dev_datime(a0 = FD *file, a1 = int d[2], d0 = int set)
 *
 
 cddev_datime:
@@ -919,7 +919,7 @@ cddev_datime:
 
 **********************************************************************
 *
-* long long dev_close(a0 = FD *file)
+* long dev_close(a0 = FD *file)
 *
 * schreibt alles zurÅck, ruft den Dateitreiber auf und gibt ggf.
 * den FD frei.

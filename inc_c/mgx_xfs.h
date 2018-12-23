@@ -20,7 +20,12 @@
 /* Die Struktur(en) fÅr dev_stat */
 typedef union unsel_union
 {
-	void	(*unsel)(void *un);
+	void	(*unsel)(union unsel_union *un, APPL *ap);
+	/*
+	 * zero/negative: error return from interrupt
+	 * 1: OK
+	 * else: function pointer above
+	 */
 	LONG	status;
 } UNSELECT;
 
@@ -34,7 +39,7 @@ typedef struct {
      WORD version;
      void (*fast_clrmem)      ( void *von, void *bis );
      char (*toupper)          ( char c );
-     void (*_sprintf)         ( char *dest, const char *source, LONG *p );
+     void cdecl (*_sprintf)   ( char *dest, const char *source, LONG *p );
      PD	**act_pd;
      APPL **act_appl;
      APPL **keyb_app;
