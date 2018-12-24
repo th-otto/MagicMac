@@ -190,24 +190,18 @@ int info_file(char *path, int drv, MYDTA *f,
 	if	(isdrive)
 		ifd->f.is_alias = FALSE;
 
-/*
-if	(n_info_file_dialogs > 4)
-	goto fixed_dialog;
-*/
 	ifd->dialog = wdlg_create(
 			hdl_info_file,
 			ifd->tree,
 			ifd,
 			0,
-			NULL,
+			ifd,
 			0);
 
 	if	(!ifd->dialog)
 		{
-		fixed_dialog:
-		ret = _info_file(ifd, weiter);
 		Mfree(ifd);
-		return(ret);
+		return -1;
 		}
 
 	x = 100 + (number << 2);
@@ -227,7 +221,9 @@ if	(n_info_file_dialogs > 4)
 		{
 		wdlg_delete(ifd->dialog);
 		ifd->dialog = NULL;
-		goto fixed_dialog;
+		ret = _info_file(ifd, weiter);
+		Mfree(ifd);
+		return(ret);
 		}
 
 	/* Struktur einketten */
@@ -563,8 +559,11 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		used.p.hi = 0L;
 		if	(err != E_OK)
 			{
-			err_alert(err);
 			used.p.lo = 0;
+			tree[OI_N_ORD].ob_spec.free_string[0] = '\0';
+			tree[OI_N_DAT].ob_spec.free_string[0] = '\0';
+			tree[OI_N_VDA].ob_spec.free_string[0] = '\0';
+			tree[OI_B_VDA].ob_spec.free_string[0] = '\0';
 			}
 		else	{
 			ultoa(n_ord, (tree+OI_N_ORD)->ob_spec.free_string, 10);
@@ -755,7 +754,6 @@ static int _info_file(INFO_FILE_DATA *ifd, int weiter)
 *
 *********************************************************************/
 
-#pragma warn -par
 static _WORD _CDECL hdl_info_file(struct HNDL_OBJ_args args)
 {
 	INFO_FILE_DATA *ifd;
@@ -877,4 +875,3 @@ static _WORD _CDECL hdl_info_file(struct HNDL_OBJ_args args)
 
 	return( 1 );	
 }
-#pragma warn +par

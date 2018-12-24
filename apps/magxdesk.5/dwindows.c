@@ -383,7 +383,8 @@ static void set_info( WINDOW *mywindow )
 				d->b_free = 0L;
 				Dsetdrv(lwc);
 				Dsetpath(mywindow->path);
-				Dfree(d, 0);
+				if (Dfree(d, 0) < 0)
+					return;
 				}
 			else	d = dinfo+lwc;
 		
@@ -475,7 +476,7 @@ void show_free( WINDOW *mywindow)
 	long percent;
 	char *t;
 	ULONG64 bytes;	/* 64 Bit */
-
+	long err;
 
 	if	(mywindow->flags & WFLAG_ICONIFIED)
 		return;
@@ -486,7 +487,11 @@ void show_free( WINDOW *mywindow)
 		d->b_free = 0L;
 		Dsetdrv(lwc);
 		Dsetpath(mywindow->path);
-		Dfree(d, 0);
+		if ((err = Dfree(d, 0)) < 0)
+		{
+			err_alert(err);
+			return;
+		}
 		}
 	else	d = dinfo+lwc;
 
@@ -717,9 +722,7 @@ static long read_wind( WINDOW *w, int free_flag)
 		w->memblksize = FIRSTMAXMEMBLK;
 	if	(w->memblksize < 8192L)
 		return(ENSMEM);			/* nix zu wollen */
-#pragma warn -pia
-	if	(!(w->memblk = Malloc(w->memblksize)))
-#pragma warn .pia
+	if	((w->memblk = Malloc(w->memblksize)) == 0)
 		return(ENSMEM);
 
 	/* Initialisierungen */
