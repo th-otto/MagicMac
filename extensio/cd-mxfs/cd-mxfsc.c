@@ -250,7 +250,7 @@ to_digit (unsigned int num)
 
 /* Konfigurationsdatei lesen */
 
-WORD main (void)
+int main (void)
 {
 	void * oldssp;
 	LONG ret;

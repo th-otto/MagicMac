@@ -48,6 +48,26 @@ strtok2 (char **string, char *toks)
 	return ret;
 }
 
+static int drive_from_letter(int drv)
+{
+	if (drv >= 'A' && drv <= 'Z')
+		drv = drv - 'A';
+	else if (drv >= 'a' && drv <= 'z')
+		drv = drv - 'a';
+	else if (drv >= '1' && drv <= '6')
+		drv = (drv - '1') + 26;
+	else
+		return -1;
+	return drv;
+}
+
+
+static int letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
 static void
 parse_line (char *line)
 {
@@ -142,19 +162,17 @@ parse_line (char *line)
 	
 	while (args)
 	{
-		if (strlen (args) == 3 && args[1] == ':' &&
-			isalpha (args[0]) && isalpha (args[2]))
-		{
-			int dosdrive, metadrive;
+		int dosdrive, metadrive;
 
+		if (strlen (args) == 3 && args[1] == ':' &&
+			(dosdrive = drive_from_letter(args[0])) >= 0 &&
+			(metadrive = drive_from_letter(args[2])) >= 0)
+		{
 			str = "MetaDOS XBIOS device X on X:\r\n";
-			str[21] = args[2];
-			str[26] = args[0];
+			str[21] = letter_from_drive(metadrive);
+			str[26] = letter_from_drive(dosdrive);
 			Cconws (str);
 			
-			dosdrive = toupper (args[0]) - 'A';
-			metadrive = toupper (args[2]);
-
 			mydrives[dosdrive] = Mxalloc (sizeof (LOGICAL_DEV), 0);
 			if (!mydrives[dosdrive])
 			{
@@ -165,7 +183,7 @@ parse_line (char *line)
 			else
 			{
 				memset (mydrives[dosdrive], 0, sizeof (LOGICAL_DEV));
-				mydrives[dosdrive]->metadevice = metadrive;
+				mydrives[dosdrive]->metadevice = letter_from_drive(metadrive);
 			}
 		}
 
