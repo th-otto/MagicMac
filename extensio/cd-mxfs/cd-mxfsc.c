@@ -234,17 +234,6 @@ LOGICAL_DEV *mydrives[32];
 
 /* CFG read: define OS macros and #include CFG reader */
 
-#define KMALLOC	Malloc
-#define KFREE	Mfree
-#define MXALLOC Mxalloc
-#define MFREE	Mfree
-#define CCONWS	Cconws
-#define FOPEN	Fopen
-#define FREAD	Fread
-#define FSEEK	Fseek
-#define FCLOSE	Fclose
-#define SPRINTF	sprintf
-
 #include "cfgread.c"
 
 
@@ -1285,12 +1274,6 @@ static LONG cdecl   xfs_DD2name( MX_DD *dd, char *buf, WORD buflen )
 
 	if	(E_OK != (ret = init_vol (dd->dd_dmd->d_drive)))
 		return( ret );
-
-/* {
-	char buf[80];
-	kernel->sprintf (buf, "getname %ld %ld\r\n", relto->index, dir->index);
-	CCONWS (buf);
-} */
 
 	ldp = mydrives[dd->dd_dmd->d_drive];
 	*buf = '\0';
