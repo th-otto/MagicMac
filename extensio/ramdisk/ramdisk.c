@@ -315,55 +315,55 @@ LONG ramdisk_garbcoll(MX_DMD *d)
 void ramdisk_freeDD(MX_DD *dd)
 {
 	RAMDISK_FD	*i;
-	WORD		j;
+	WORD j;
 
 	TRACE(("freeDD - DD = %L\r\n", dd));
 	i = (RAMDISK_FD *)dd;
-/* Sicherstellen, daû der DD auch wirklich freigegeben werden soll */
+	/* Sicherstellen, daû der DD auch wirklich freigegeben werden soll */
 	if (i->fd_refcnt != 0)
 	{
 		TRACE(("freeDD: fd_refcnt == %L!\r\n", (LONG)i->fd_refcnt));
 		return;
 	}
-/*
- * Den aktuellen is_parent-ZÑhler um Eins erhîhen, da er in der
- * Schleife vermindert wird. Auf diese Weise wird nur eine Schleife
- * gebraucht und trotzdem korrekt ÅberprÅft, ob der vom Kernel
- * freizugebende DD kein Eltern-DD eines anderen mehr ist.
- */
+	/*
+	 * Den aktuellen is_parent-ZÑhler um Eins erhîhen, da er in der
+	 * Schleife vermindert wird. Auf diese Weise wird nur eine Schleife
+	 * gebraucht und trotzdem korrekt ÅberprÅft, ob der vom Kernel
+	 * freizugebende DD kein Eltern-DD eines anderen mehr ist.
+	 */
 	i->fd_is_parent++;
 	while (i != NULL)
 	{
 		if (i->fd_is_parent)
 			i->fd_is_parent--;
-/* Nur freigeben, wenn is_parent und refcnt Null sind */
+		/* Nur freigeben, wenn is_parent und refcnt Null sind */
 		if (!i->fd_is_parent && !i->fd_refcnt)
 		{
 			TRACE(("freeDD: Gebe DD %L frei!\r\n", i));
 			i->fd_file = NULL;
 		}
-/*
- * Den nÑchsten DD in der rÅckwÑrts verketteten Liste wÑhlen. Der
- * parent des Root-DDs, der auf jeden Fall erreicht wird, ist NULL,
- * was die Abbruchbedingung der Schleife ist.
- */
+		/*
+		 * Den nÑchsten DD in der rÅckwÑrts verketteten Liste wÑhlen. Der
+		 * parent des Root-DDs, der auf jeden Fall erreicht wird, ist NULL,
+		 * was die Abbruchbedingung der Schleife ist.
+		 */
 		i = i->fd_parent;
 	}
-/*
- * Die "Leichen" freigeben; also alle DDs, die nicht frei sind,
- * obwohl refcnt und is_parent beide Null sind
- */
+	/*
+	 * Die "Leichen" freigeben; also alle DDs, die nicht frei sind,
+	 * obwohl refcnt und is_parent beide Null sind
+	 */
 	for (j = ROOT + 1; j < MAX_FD; j++)
 	{
 		if ((fd[j].fd_file != NULL) && !fd[j].fd_refcnt &&
 			!fd[j].fd_is_parent)
 		{
-			TRACE(("freeDD: Gebe \"Leichen\"-DD %L frei!\r\n",
-				&fd[j]));
+			TRACE(("freeDD: Gebe \"Leichen\"-DD %L frei!\r\n", &fd[j]));
 			fd[j].fd_file = NULL;
 		}
 	}
 }
+
 
 /*
  * FÅr drv_open muû eine statische Variable gefÅhrt werden, die
@@ -375,15 +375,15 @@ void ramdisk_freeDD(MX_DD *dd)
  */
 LONG ramdisk_drv_open(MX_DMD *d)
 {
-	static WORD	opened_once = 0;
+	static WORD opened_once = 0;
 
 	TRACE(("drv_open - drive %L\r\n", (LONG)d->d_drive));
 	if (d->d_xfs == NULL)
 	{
-/* PrÅfen, ob sich drv_open auf unser Ramdisk-Laufwerk bezieht */
+		/* PrÅfen, ob sich drv_open auf unser Ramdisk-Laufwerk bezieht */
 		if (d->d_drive == ramdisk_drive)
 		{
-/* Wie gesagt: Unbedingt real_xfs fÅr d_xfs eintragen! */
+			/* Wie gesagt: Unbedingt real_xfs fÅr d_xfs eintragen! */
 			d->d_xfs = &my_xfs;
 			d->d_root = (MX_DD *)&fd[ROOT];
 			d->d_biosdev = -1;
@@ -391,11 +391,11 @@ LONG ramdisk_drv_open(MX_DMD *d)
 			d->d_devcode = 0;
 			if (!opened_once)
 			{
-/*
- * Wurde die Ramdisk das erste Mal geîffnet, mÅssen FDs, DHDs und das
- * Wurzelverzeichnis gelîscht sowie einige wichtige Strukturen
- * vorbereitet werden
- */
+				/*
+				 * Wurde die Ramdisk das erste Mal geîffnet, mÅssen FDs, DHDs und das
+				 * Wurzelverzeichnis gelîscht sowie einige wichtige Strukturen
+				 * vorbereitet werden
+				 */
 				opened_once = 1;
 				(kernel->fast_clrmem)(root, &root[ROOTSIZE]);
 				prepare_dir(root, ROOTSIZE, ROOT_DE);
@@ -409,27 +409,29 @@ LONG ramdisk_drv_open(MX_DMD *d)
 				strcpy(root_de.de_fname, "");
 				root_de.de_faddr = (char *)root;
 			}
-/*
- * Diskwechsel kînnen ja nicht vorkommen (das ist ja der Zweck von
- * drv_open nach dem ersten ôffnen), also wird immer E_OK geliefert
- */
+			/*
+			 * Diskwechsel kînnen ja nicht vorkommen (das ist ja der Zweck von
+			 * drv_open nach dem ersten ôffnen), also wird immer E_OK geliefert
+			 */
 			return(E_OK);
-		}
-		else
-/* War es das falsche Laufwerk, EDRIVE liefern */
+		} else
+		{
+			/* War es das falsche Laufwerk, EDRIVE liefern */
 			return(EDRIVE);
+		}
 	}
-/*
- * Gleiches gilt, wenn - aus welchem Grund auch immer -, d_xfs nicht
- * mehr auf den richtigen Wert (real_xfs, nicht &ramdisk_xfs!) zeigt.
- * Das kann eigentlich nur passieren, wenn die Ramdisk auf einem
- * Laufwerk angemeldet wurde, das jetzt von einem anderen XFS
- * beansprucht wird.
- */
+	/*
+	 * Gleiches gilt, wenn - aus welchem Grund auch immer -, d_xfs nicht
+	 * mehr auf den richtigen Wert (real_xfs, nicht &ramdisk_xfs!) zeigt.
+	 * Das kann eigentlich nur passieren, wenn die Ramdisk auf einem
+	 * Laufwerk angemeldet wurde, das jetzt von einem anderen XFS
+	 * beansprucht wird.
+	 */
 	if (d->d_xfs != &my_xfs)
 		return(EDRIVE);
 	return(E_OK);
 }
+
 
 /*
  * Bei drv_close mÅssen nur noch die Directory-Handles ÅberprÅft
@@ -439,21 +441,21 @@ LONG ramdisk_drv_open(MX_DMD *d)
  */
 LONG ramdisk_drv_close(MX_DMD *d, WORD mode)
 {
-	WORD	i;
+	WORD i;
 
 	TRACE(("drv_close - %S\r\n", mode ? "forced" : "requested"));
-/*
- * Auch hier sicherheitshalber eine PrÅfung, ob noch das richtige
- * XFS eingetragen ist
- */
+	/*
+	 * Auch hier sicherheitshalber eine PrÅfung, ob noch das richtige
+	 * XFS eingetragen ist
+	 */
 	if (d->d_xfs != &my_xfs)
 		return(EDRIVE);
 	for (i = 0; i < MAX_DHD; i++)
 	{
-/* PrÅfen, ob das Handle Nr. i belegt ist, also noch benutzt wird */
+		/* PrÅfen, ob das Handle Nr. i belegt ist, also noch benutzt wird */
 		if (dhd[i].dhd_dir != NULL)
 		{
-/* Je nach mode entsprechend reagieren */
+			/* Je nach mode entsprechend reagieren */
 			if (mode)
 				dhd[i].dhd_dir = NULL;
 			else
@@ -462,6 +464,7 @@ LONG ramdisk_drv_close(MX_DMD *d, WORD mode)
 	}
 	return(E_OK);
 }
+
 
 /*
  * path2DD gehîrt zu den XFS-Funktionen, die einem am meisten
@@ -489,8 +492,7 @@ LONG ramdisk_drv_close(MX_DMD *d, WORD mode)
  * zur VerfÅgung stellen muû, den Rest erledigt der Kernel. DafÅr ist
  * die MagiC-Lîsung in den meisten FÑllen deutlich schneller.
  */
-LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
-	const char **lastpath, MX_DD **linkdir, void **symlink)
+LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode, const char **lastpath, MX_DD **linkdir, void **symlink)
 {
 	const char *next;
 	const char *current;
@@ -502,16 +504,16 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
 	WORD		dirlookup = mode;
 	LONG err;
 	
-/*
- * Da temp per int_malloc angefordert wird, muû der Speicher vor
- * Verlassen der Funktion wieder freigegeben werden. Das erreicht man
- * in einer Funktion wie dieser, die an vielen Stellen verlassen
- * wird, am besten, in dem man return so umdefiniert, daû dies
- * automatisch gemacht wird. Nebenbei lÑût sich dabei auch noch
- * wunderschîn eine TRACE-Ausgabe der Returnwerte realisieren...
- * NatÅrlich muû das return-Makro am Ende der Funktion wieder
- * gelîscht werden.
- */
+	/*
+	 * Da temp per int_malloc angefordert wird, muû der Speicher vor
+	 * Verlassen der Funktion wieder freigegeben werden. Das erreicht man
+	 * in einer Funktion wie dieser, die an vielen Stellen verlassen
+	 * wird, am besten, in dem man return so umdefiniert, daû dies
+	 * automatisch gemacht wird. Nebenbei lÑût sich dabei auch noch
+	 * wunderschîn eine TRACE-Ausgabe der Returnwerte realisieren...
+	 * NatÅrlich muû das return-Makro am Ende der Funktion wieder
+	 * gelîscht werden.
+	 */
 #undef return
 #define return(x)	{(kernel->int_mfree)(temp);\
 	TRACE(("-> %L, %S, %L, %S; %L\r\n", (LONG)(x), *lastpath,\
@@ -525,68 +527,69 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
 	TRACE(("path2DD - %L, %S (%L), %S; root = %L\r\n", reldir,
 		pathname, pathname, dirlookup ? "Verzeichnis" : "Datei",
 		&fd[ROOT]));
-/* Speicher fÅr eine Pfadkomponente anfordern (bei der
- * Initialisierung wurde ja sichergestellt, daû int_malloc dafÅr ein
- * genÅgend groûes SpeicherstÅck alloziert). TemporÑrer Speicher
- * ist nîtig, da der gelieferte Pfad nicht verÑndert werden darf
- * und eine Komponente auch lÑnger als 32 Zeichen sein kînnte und
- * daher "beschnitten" werden muû.
- */
+	/* Speicher fÅr eine Pfadkomponente anfordern (bei der
+	 * Initialisierung wurde ja sichergestellt, daû int_malloc dafÅr ein
+	 * genÅgend groûes SpeicherstÅck alloziert). TemporÑrer Speicher
+	 * ist nîtig, da der gelieferte Pfad nicht verÑndert werden darf
+	 * und eine Komponente auch lÑnger als 32 Zeichen sein kînnte und
+	 * daher "beschnitten" werden muû.
+	 */
 	temp = (void *)(kernel->int_malloc)();
 	temp[RAM_MAXFNAME] = 0;
-/* PrÅfen, ob der gelieferte DD Åberhaupt OK ist */
+	/* PrÅfen, ob der gelieferte DD Åberhaupt OK ist */
 	dd = (RAMDISK_FD *)reldir;
 	if ((err = check_dd(dd)) < 0)
 		return(err);
-/* Wird ein Nullzeiger geliefert, lehnt path2DD das ab */
+	/* Wird ein Nullzeiger geliefert, lehnt path2DD das ab */
 	if (pathname == NULL)
 		return(dirlookup ? EPTHNF : EFILNF);
-/* Den Zeiger auf das Nullbyte des Pfadnamens merken */
+	/* Den Zeiger auf das Nullbyte des Pfadnamens merken */
 	nullbyte = strchr(pathname, 0);
-/*
- * In der folgenden Schleife wird jeweils die erste Komponente des
- * Pfades extrahiert (next zeigt auf sie) und dann entsprechend
- * reagiert. Ebenso zeigt dd immer auf den DD des VorgÑngers, zu
- * Beginn also auf das gelieferte relative Verzeichnis.
- */
+	/*
+	 * In der folgenden Schleife wird jeweils die erste Komponente des
+	 * Pfades extrahiert (next zeigt auf sie) und dann entsprechend
+	 * reagiert. Ebenso zeigt dd immer auf den DD des VorgÑngers, zu
+	 * Beginn also auf das gelieferte relative Verzeichnis.
+	 */
 	for (next = pathname;;)
 	{
-/* Eventuell fÅhrende Backslashes Åberlesen */
-		for (; *next == '\\'; next++);
-/*
- * Wenn noch weitere Komponenten folgen, muû der aktuelle DD ein
- * Verzeichnis mit x-Zugriff sein (das x-Bit bei Verzeichnissen sagt
- * in etwa "darf Åberschritten werden" aus). Wenn es die letzte
- * Komponente ist, findet keine öberprÅfung statt. Dies wird dann
- * in findfile bzw. new_file nachgeholt.
- */
+		/* Eventuell fÅhrende Backslashes Åberlesen */
+		for (; *next == '\\'; next++)
+			;
+		/*
+		 * Wenn noch weitere Komponenten folgen, muû der aktuelle DD ein
+		 * Verzeichnis mit x-Zugriff sein (das x-Bit bei Verzeichnissen sagt
+		 * in etwa "darf Åberschritten werden" aus). Wenn es die letzte
+		 * Komponente ist, findet keine öberprÅfung statt. Dies wird dann
+		 * in findfile bzw. new_file nachgeholt.
+		 */
 		if (*next && !xaccess(dd->fd_file))
 			return(EACCDN);
-/*
- * Folgt keine Komponente mehr, ist der aktuelle DD das Ergebnis der
- * Funktion, er muû also zurÅckgeliefert werden. Vorher werden noch
- * fd_refcnt und fd_is_parent durch increase_refcnts angepaût.
- * Dazu noch eine Anmerkung: path2DD wird vom Kernel auch mit leerem
- * Pfadnamen aufgerufen, womit diese Bedingung gleich zu Anfang
- * erfÅllt ist. Das passiert beispielsweise, wenn ein Programm
- * Dopendir vom Wurzelverzeichnis aufruft.
- */
+		/*
+		 * Folgt keine Komponente mehr, ist der aktuelle DD das Ergebnis der
+		 * Funktion, er muû also zurÅckgeliefert werden. Vorher werden noch
+		 * fd_refcnt und fd_is_parent durch increase_refcnts angepaût.
+		 * Dazu noch eine Anmerkung: path2DD wird vom Kernel auch mit leerem
+		 * Pfadnamen aufgerufen, womit diese Bedingung gleich zu Anfang
+		 * erfÅllt ist. Das passiert beispielsweise, wenn ein Programm
+		 * Dopendir vom Wurzelverzeichnis aufruft.
+		 */
 		if (!*next)
 		{
 			increase_refcnts(dd);
 			*lastpath = next;
 			return((LONG)dd);
 		}
-/*
- * current ist ein Zeiger auf die aktuelle Komponente, wÑhrend
- * pathname auf den kompletten Restpfad zeigt
- */
+		/*
+		 * current ist ein Zeiger auf die aktuelle Komponente, wÑhrend
+		 * pathname auf den kompletten Restpfad zeigt
+		 */
 		pathname = current = next;
-/*
- * Nach dem nÑchsten Backslash suchen. Wird einer gefunden, muû die
- * aktuelle Komponente nach temp umkopiert und current auf temp
- * gesetzt werden.
- */
+		/*
+		 * Nach dem nÑchsten Backslash suchen. Wird einer gefunden, muû die
+		 * aktuelle Komponente nach temp umkopiert und current auf temp
+		 * gesetzt werden.
+		 */
 		if ((next = strchr(pathname, '\\')) != NULL)
 		{
 			size_t len = next - pathname;
@@ -595,37 +598,37 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
 			strncpy(temp, pathname, len);
 			temp[len] = '\0';
 			current = temp;
-/* Backslash(es) Åberlesen */
-			for (; *next == '\\'; next++);
-		}
-		else
+			/* Backslash(es) Åberlesen */
+			for (; *next == '\\'; next++)
+				;
+		} else
 		{
-/*
- * Wurde kein Backslash mehr gefunden, ist zu prÅfen, ob der DD einer
- * Datei gesucht wurde. Falls ja, ist die Suche beendet und der
- * aktuelle DD wird zurÅckgeliefert (nach Erhîhung von fd_refcnt und
- * fd_parent).
- */
+			/*
+			 * Wurde kein Backslash mehr gefunden, ist zu prÅfen, ob der DD einer
+			 * Datei gesucht wurde. Falls ja, ist die Suche beendet und der
+			 * aktuelle DD wird zurÅckgeliefert (nach Erhîhung von fd_refcnt und
+			 * fd_parent).
+			 */
 			if (!dirlookup)
 			{
 				increase_refcnts(dd);
 				*lastpath = pathname;
 				return((LONG)dd);
 			}
-/*
- * Ist jedoch der DD eines Verzeichnisses gesucht, wird next auf
- * das Nullbyte umgesetzt, damit wird der noch zu belegende neue
- * DD zu Beginn des nÑchsten Schleifendurchgangs zurÅckgeliefert.
- */
+			/*
+			 * Ist jedoch der DD eines Verzeichnisses gesucht, wird next auf
+			 * das Nullbyte umgesetzt, damit wird der noch zu belegende neue
+			 * DD zu Beginn des nÑchsten Schleifendurchgangs zurÅckgeliefert.
+			 */
 			next = nullbyte;
 		}
-/*
- * Ist die aktuelle Komponente "..", wird geprÅft, ob das aktuelle
- * Verzeichnis das Wurzelverzeichnis ist. Wenn ja, wird dies dem
- * Kernel signalisiert (Ñhnlich EMOUNT in MiNT). Andernfalls wird nur
- * der DD auf seinen "Vater" umgesetzt und der nÑchste Durchgang der
- * Schleife gestartet.
- */
+		/*
+		 * Ist die aktuelle Komponente "..", wird geprÅft, ob das aktuelle
+		 * Verzeichnis das Wurzelverzeichnis ist. Wenn ja, wird dies dem
+		 * Kernel signalisiert (Ñhnlich EMOUNT in MiNT). Andernfalls wird nur
+		 * der DD auf seinen "Vater" umgesetzt und der nÑchste Durchgang der
+		 * Schleife gestartet.
+		 */
 		if (!strcmp(current, ".."))
 		{
 			if (dd == &fd[ROOT])
@@ -638,56 +641,56 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
 			dd = dd->fd_parent;
 			continue;
 		}
-/* "." wird komplett Åbersprungen */
+		/* "." wird komplett Åbersprungen */
 		if (!strcmp(current, "."))
 			continue;
-/*
- * In allen anderen FÑllen muû die aktuelle Komponente jetzt gesucht
- * werden, sie ist ein Bestandteil des Pfades. Wird sie nicht
- * gefunden, ist der Pfad ungÅltig und es muû EPTHNF geliefert
- * werden.
- */
+		/*
+		 * In allen anderen FÑllen muû die aktuelle Komponente jetzt gesucht
+		 * werden, sie ist ein Bestandteil des Pfades. Wird sie nicht
+		 * gefunden, ist der Pfad ungÅltig und es muû EPTHNF geliefert
+		 * werden.
+		 */
 		if ((found = findfile(dd, current, 2, FF_SEARCH, 0)) == NULL)
 			return(EPTHNF);
-/*
- * Ist die Komponente ein symbolischer Link, wird dieser ausgelesen
- * und dem Kernel mit einer entsprechenden Meldung geliefert
- */
+		/*
+		 * Ist die Komponente ein symbolischer Link, wird dieser ausgelesen
+		 * und dem Kernel mit einer entsprechenden Meldung geliefert
+		 */
 		if (is_link(found->de_xattr.st_mode))
 		{
-			TRACE(("path2DD: Folge symbolischem Link auf %S!\r\n",
-				&found->de_faddr[2]));
+			TRACE(("path2DD: Folge symbolischem Link auf %S!\r\n", &found->de_faddr[2]));
 			increase_refcnts(dd);
 			*lastpath = next;
 			*linkdir = (MX_DD *)dd;
 			*symlink = found->de_faddr;
 			return(ELINK);
 		}
-/* Ist es kein Verzeichnis, ist der Pfad ungÅltig, also EPTHNF */
+		/* Ist es kein Verzeichnis, ist der Pfad ungÅltig, also EPTHNF */
 		if (!is_dir(found->de_xattr.st_mode))
 			return(EPTHNF);
-/*
- * Einen DD fÅr das Verzeichnis anfordern, der auch schon vom
- * gleichen Verzeichnis belegt sein kann (der fd_refcnt wird ja
- * erhîht). Auf diese Weise ist sichergestellt, daû ein Verzeichnis
- * bei ddelete z.B. nicht mehrere zu ÅberprÅfende DDs hat. Auûerdem
- * wird dadurch die DD-Ausnutzung effizienter.
- * War allerdings kein DD mehr frei, muû abgebrochen werden.
- */
+		/*
+		 * Einen DD fÅr das Verzeichnis anfordern, der auch schon vom
+		 * gleichen Verzeichnis belegt sein kann (der fd_refcnt wird ja
+		 * erhîht). Auf diese Weise ist sichergestellt, daû ein Verzeichnis
+		 * bei ddelete z.B. nicht mehrere zu ÅberprÅfende DDs hat. Auûerdem
+		 * wird dadurch die DD-Ausnutzung effizienter.
+		 * War allerdings kein DD mehr frei, muû abgebrochen werden.
+		 */
 		if ((new = findfd(found)) == NULL)
 			return(ENSMEM);
 		new->fd_dmd = ramdisk_dmd;
 		new->fd_file = found;
-/*
- * Den aktuellen DD als "Vater" des neuen eintragen und danach den
- * neuen DD zum aktuellen machen
- */
+		/*
+		 * Den aktuellen DD als "Vater" des neuen eintragen und danach den
+		 * neuen DD zum aktuellen machen
+		 */
 		new->fd_parent = dd;
 		dd = new;
 	}
-/* Wichtig: Das oben definierte return-Makro muû gelîscht werden! */
+	/* Wichtig: Das oben definierte return-Makro muû gelîscht werden! */
 #undef return
 }
+
 
 /*
  * Im Debug-Modus wird jetzt wieder return umdefiniert, um jedes
@@ -723,15 +726,14 @@ LONG ramdisk_path2DD(MX_DD *reldir, const char *pathname, WORD mode,
  * '*' enthÑlt (das Ramdisk-XFS akzeptiert das), doch viel schlimmes
  * wird dabei nicht passieren.
  */
-LONG ramdisk_sfirst(MX_DD *srchdir, const char *name, DTA *dta,
-	WORD attrib, void **symlink)
+LONG ramdisk_sfirst(MX_DD *srchdir, const char *name, DTA *dta, WORD attrib, void **symlink)
 {
-	RAMDISK_FD	*dd;
-	RAMDISK_DTA	*the_dta;
-	DIRENTRY	*found;
-	char		*temp;
+	RAMDISK_FD *dd;
+	RAMDISK_DTA *the_dta;
+	DIRENTRY *found;
+	char *temp;
 	LONG err;
-	
+
 	TRACE(("sfirst - %L\\%S, %L\r\n", srchdir, name, (LONG)attrib));
 	dd = (RAMDISK_FD *)srchdir;
 	if ((err = check_dd(dd)) < 0)
@@ -742,103 +744,99 @@ LONG ramdisk_sfirst(MX_DD *srchdir, const char *name, DTA *dta,
 	fill_tosname(the_dta->dta_mask, temp);
 	(kernel->int_mfree)(temp);
 	the_dta->dta_pos = 0;
-/*
- * FÅr sfirst ist Leseberechtigung nîtig, sobald die fertige Maske
- * ein '?' enthÑlt. In allen anderen FÑllen soll nur die Existenz
- * eines bestimmten Files geprÅft werden, wozu nur x-Rechte nîtig
- * sind, die aber schon von path2DD geprÅft wurden.
- */
+	/*
+	 * FÅr sfirst ist Leseberechtigung nîtig, sobald die fertige Maske
+	 * ein '?' enthÑlt. In allen anderen FÑllen soll nur die Existenz
+	 * eines bestimmten Files geprÅft werden, wozu nur x-Rechte nîtig
+	 * sind, die aber schon von path2DD geprÅft wurden.
+	 */
 	if ((strchr(the_dta->dta_mask, '?') != NULL))
 	{
 		if (!raccess(dd->fd_file))
 			return(EACCDN);
-	}
-	else
+	} else
 	{
-/*
- * Suche ohne Wildcards wird direkt auf findfile zurÅckgefÅhrt (mit
- * Originalmaske!), damit Gemini beim Kopieren bereits existierende
- * Files korrekt umbennenen kann. Auch bei manchen Ñlteren Programmen
- * kann dies hilfreich sein, wenn sie Åbergebene Dateien per Fsfirst
- * suchen: Wenn es ein langer Filename ist, kînnte der alleinige
- * Vergleich auf 8+3-Ebene das falsche File finden, falls sich die
- * Namen im TOS-Format nicht unterscheiden (z.B. dateiname1 und
- * dateiname2).
- */
+		/*
+		 * Suche ohne Wildcards wird direkt auf findfile zurÅckgefÅhrt (mit
+		 * Originalmaske!), damit Gemini beim Kopieren bereits existierende
+		 * Files korrekt umbennenen kann. Auch bei manchen Ñlteren Programmen
+		 * kann dies hilfreich sein, wenn sie Åbergebene Dateien per Fsfirst
+		 * suchen: Wenn es ein langer Filename ist, kînnte der alleinige
+		 * Vergleich auf 8+3-Ebene das falsche File finden, falls sich die
+		 * Namen im TOS-Format nicht unterscheiden (z.B. dateiname1 und
+		 * dateiname2).
+		 */
 		if ((found = findfile(dd, name, 0, FF_SEARCH, 1)) == NULL)
-			return(EFILNF);
+			return (EFILNF);
 		the_dta->dta_pos = -found->de_nr;
 	}
-	the_dta->dta_drive = (char)ramdisk_drive;
-	the_dta->dta_attr = (char)attrib;
-	the_dta->dta_dir = (DIRENTRY *)dd->fd_file->de_faddr;
-/*
- * sfirst selbst liest keinen Verzeichniseintrag, sondern ruft snext
- * auf und liefert dessen Ergebnis
- */
-	return(ramdisk_snext((DTA *)the_dta, ramdisk_dmd, symlink));
+	the_dta->dta_drive = (char) ramdisk_drive;
+	the_dta->dta_attr = (char) attrib;
+	the_dta->dta_dir = (DIRENTRY *) dd->fd_file->de_faddr;
+	/*
+	 * sfirst selbst liest keinen Verzeichniseintrag, sondern ruft snext
+	 * auf und liefert dessen Ergebnis
+	 */
+	return (ramdisk_snext((DTA *)the_dta, ramdisk_dmd, symlink));
 }
 
 LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, void **symlink)
 {
-	RAMDISK_DHD	handle;
-	RAMDISK_DTA	*the_dta;
-	XATTR		xattr;
-	WORD		first_call,
-				matched;
-	LONG		dummy,
-				r;
-	char		*name;
+	RAMDISK_DHD handle;
+	RAMDISK_DTA *the_dta;
+	XATTR xattr;
+	WORD first_call, matched;
+	LONG dummy, r;
+	char *name;
 
 	TRACE(("snext - %S\r\n", ((RAMDISK_DTA *)dta)->dta_mask));
 	if (dmd != ramdisk_dmd)
 		return(EDRIVE);
 	the_dta = (RAMDISK_DTA *)dta;
-/*
- * Wenn dta_pos noch <= 0 ist, stammt der Aufruf von direkt von
- * sfirst, was in first_call gespeichert wird
- */
+	/*
+	 * Wenn dta_pos noch <= 0 ist, stammt der Aufruf von direkt von
+	 * sfirst, was in first_call gespeichert wird
+	 */
 	first_call = (the_dta->dta_pos <= 0);
 	if (the_dta->dta_pos < 0)
 		the_dta->dta_pos = -the_dta->dta_pos;
-/*
- * Wenn es nicht der erste Aufruf ist und die Maske keine Wildcards
- * enthÑlt, muû gleich ENMFIL geliefert werden
- */
+	/*
+	 * Wenn es nicht der erste Aufruf ist und die Maske keine Wildcards
+	 * enthÑlt, muû gleich ENMFIL geliefert werden
+	 */
 	if (!first_call && (strchr(the_dta->dta_mask, '?') == NULL))
 		return(ENMFIL);
-/*
- * Es wird ein Pseudo-Directory-Handle eingerichtet, das dann fÅr
- * dreaddir benutzt wird. Dabei muû natÅrlich der TOS-Modus benutzt
- * werden, damit schon passende Namen geliefert werden.
- */
+	/*
+	 * Es wird ein Pseudo-Directory-Handle eingerichtet, das dann fÅr
+	 * dreaddir benutzt wird. Dabei muû natÅrlich der TOS-Modus benutzt
+	 * werden, damit schon passende Namen geliefert werden.
+	 */
 	handle.dhd_dmd = dmd;
 	handle.dhd_dir = the_dta->dta_dir;
 	handle.dhd_pos = the_dta->dta_pos;
 	handle.dhd_tosmode = 1;
-/*
- * Zum Auslesen aus der Kernelstruktur immer den Zeiger real_kernel
- * benutzen, kernel soll und muû nur fÅr Funktionsaufrufe genutzt
- * werden
- */
+	/*
+	 * Zum Auslesen aus der Kernelstruktur immer den Zeiger real_kernel
+	 * benutzen, kernel soll und muû nur fÅr Funktionsaufrufe genutzt
+	 * werden
+	 */
 	handle.dhd_owner = *real_kernel->act_pd;
-/*
- * In der folgenden Schleife wird solange dreaddir aufgerufen, bis
- * entweder ein Fehler aufgetreten oder ein passender Name mit
- * passendem Attribut gefunden wurde
- */
+	/*
+	 * In der folgenden Schleife wird solange dreaddir aufgerufen, bis
+	 * entweder ein Fehler aufgetreten oder ein passender Name mit
+	 * passendem Attribut gefunden wurde
+	 */
 	for (;;)
 	{
-		r = ramdisk_dreaddir((MX_DHD *)&handle, 13, the_dta->dta_name, &xattr,
-			&dummy);
+		r = ramdisk_dreaddir((MX_DHD *)&handle, 13, the_dta->dta_name, &xattr, &dummy);
 		the_dta->dta_pos = handle.dhd_pos;
 		if (r)
 		{
-/*
- * Ist die Fehlermeldung ENMFIL und dieses snext ist eigentlich
- * sfirst (sfirst ruft ja am Ende snext auf), muû stattdessen EFILNF
- * geliefert werden
- */
+			/*
+			 * Ist die Fehlermeldung ENMFIL und dieses snext ist eigentlich
+			 * sfirst (sfirst ruft ja am Ende snext auf), muû stattdessen EFILNF
+			 * geliefert werden
+			 */
 			if (first_call && (r == ENMFIL))
 				r = EFILNF;
 			return(r);
@@ -849,24 +847,22 @@ LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, void **symlink)
 		(kernel->int_mfree)(name);
 		if (matched)
 		{
-/*
- * Ist der gefundene Name ein symbolischer Link, muû das dem Kernel
- * signalisiert werden
- */
+			/*
+			 * Ist der gefundene Name ein symbolischer Link, muû das dem Kernel
+			 * signalisiert werden
+			 */
 			if (is_link(xattr.st_mode))
 			{
-				TRACE(("snext: Folge symbolischem Link auf %S!"
-					"\r\n", &((char *)xattr.st_ino)[2]));
+				TRACE(("snext: Folge symbolischem Link auf %S!\r\n", &((char *)xattr.st_ino)[2]));
 				*symlink = (char *)xattr.st_ino;
 				return(ELINK);
 			}
-/*
- * Ansonsten werden Suchattribut und Dateiattribut verglichen. Dabei
- * entspricht die Abfrage dem CodestÅck, das im Profibuch bei Fsfirst
- * angegeben ist.
- */
-			TRACE(("Suchattribut: %L, Dateiattribut: %L\r\n",
-				(LONG)the_dta->dta_attr, (LONG)xattr.st_attr));
+			/*
+			 * Ansonsten werden Suchattribut und Dateiattribut verglichen. Dabei
+			 * entspricht die Abfrage dem CodestÅck, das im Profibuch bei Fsfirst
+			 * angegeben ist.
+			 */
+			TRACE(("Suchattribut: %L, Dateiattribut: %L\r\n", (LONG)the_dta->dta_attr, (LONG)xattr.st_attr));
 			TRACE(("Mode: %L\r\n", (LONG)xattr.st_mode));
 			if (xattr.st_attr == 0)
 				break;
@@ -876,17 +872,18 @@ LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, void **symlink)
 				break;
 		}
 	}
-/*
- * Wurde ein passender Eintrag gefunden, muû die DTA entsprechend
- * gefÅllt werden. Als Zeit wird dabei immer die der letzten
- * Modifikation geliefert, was am ehesten zutrifft.
- */
+	/*
+	 * Wurde ein passender Eintrag gefunden, muû die DTA entsprechend
+	 * gefÅllt werden. Als Zeit wird dabei immer die der letzten
+	 * Modifikation geliefert, was am ehesten zutrifft.
+	 */
 	the_dta->dta_attribute = xattr.st_attr;
 	the_dta->dta_time = xattr.st_mtim.u.d.time;
 	the_dta->dta_date = xattr.st_mtim.u.d.date;
 	the_dta->dta_len = xattr.st_size;
 	return(E_OK);
 }
+
 
 /*
  * fopen beim Ramdisk-XFS ist bislang unvollstÑndig, da eine Datei
@@ -909,192 +906,186 @@ LONG ramdisk_snext(DTA *dta, MX_DMD *dmd, void **symlink)
  * - Wird Filesharing unterstÅtzt, muû natÅrlich geprÅft werden, ob
  *   der neue Modus mit den bisherigen harmoniert
  */
-LONG ramdisk_fopen(MX_DD *dir, const char *name, WORD omode, WORD attrib,
-	void **symlink)
+LONG ramdisk_fopen(MX_DD *dir, const char *name, WORD omode, WORD attrib, void **symlink)
 {
-	RAMDISK_FD	*dd,
-				*new_fd;
-	DIRENTRY	*found;
-	FILEBLOCK	*file,
-				*next;
+	RAMDISK_FD *dd, *new_fd;
+	DIRENTRY *found;
+	FILEBLOCK *file, *next;
 	LONG err;
-	
-	TRACE(("fopen - %L\\%S, %L, %L\r\n", dir, name, (LONG)omode,
-		(LONG)attrib));
+
+	TRACE(("fopen - %L\\%S, %L, %L\r\n", dir, name, (LONG)omode, (LONG)attrib));
 	dd = (RAMDISK_FD *)dir;
 	if ((err = check_dd(dd)) < 0)
 		return err;
-/*
- * Diese öberprÅfung ist eigentlich nicht nîtig, da findfile auch das
- * x-Flag testet, aber so wird EACCDN statt EFILNF geliefert
- */
+	/*
+	 * Diese öberprÅfung ist eigentlich nicht nîtig, da findfile auch das
+	 * x-Flag testet, aber so wird EACCDN statt EFILNF geliefert
+	 */
 	if (!xaccess(dd->fd_file))
 	{
 		TRACE(("fopen: x-Bit fehlt!\r\n"));
 		return(EACCDN);
 	}
-/*
- * Wenn O_CREAT oder O_TRUNC gesetzt ist, muû auch Schreibzugriff
- * gewÅnscht sein, sonst stimmt etwas nicht
- */
+	/*
+	 * Wenn O_CREAT oder O_TRUNC gesetzt ist, muû auch Schreibzugriff
+	 * gewÅnscht sein, sonst stimmt etwas nicht
+	 */
 	if (((omode & O_CREAT) || (omode & O_TRUNC)) &&
 		((omode & OM_WPERM) != OM_WPERM))
 	{
 		TRACE(("fopen: O_CREAT bzw. O_TRUNC ohne OM_WPERM!\r\n"));
 		return(EACCDN);
 	}
-/*
- * File suchen, ohne 8+3-Vergleich, wenn die Datei neu angelegt
- * werden soll (OM_WPERM, O_CREAT und O_TRUNC gesetzt), sonst mit
- */
-	if ((omode & (OM_WPERM | O_CREAT | O_TRUNC)) ==
-		(OM_WPERM | O_CREAT | O_TRUNC))
+	/*
+	 * File suchen, ohne 8+3-Vergleich, wenn die Datei neu angelegt
+	 * werden soll (OM_WPERM, O_CREAT und O_TRUNC gesetzt), sonst mit
+	 */
+	if ((omode & (OM_WPERM | O_CREAT | O_TRUNC)) == (OM_WPERM | O_CREAT | O_TRUNC))
 	{
 		found = findfile(dd, name, 2, FF_EXIST, 0);
-	}
-	else
+	} else
+	{
 		found = findfile(dd, name, 2, FF_SEARCH, 0);
+	}
 	if (found != NULL)
 	{
-/*
- * Wird das File gefunden und es ist ein symbolischer Link, muû das
- * dem Kernel signalisiert werden
- */
+		/*
+		 * Wird das File gefunden und es ist ein symbolischer Link, muû das
+		 * dem Kernel signalisiert werden
+		 */
 		if (is_link(found->de_xattr.st_mode))
 		{
-			TRACE(("fopen: Folge symbolischem Link auf %S!\r\n",
-				&found->de_faddr[2]));
+			TRACE(("fopen: Folge symbolischem Link auf %S!\r\n", &found->de_faddr[2]));
 			*symlink = found->de_faddr;
 			return(ELINK);
 		}
-/* Verzeichnisse kînnen nicht als Datei geîffnet werden */
+		/* Verzeichnisse kînnen nicht als Datei geîffnet werden */
 		if (is_dir(found->de_xattr.st_mode))
 			return(EFILNF);
-/* Schreiben in schreibgeschÅtzte Dateien geht auch nicht */
+		/* Schreiben in schreibgeschÅtzte Dateien geht auch nicht */
 		if ((omode & OM_WPERM) && !waccess(found))
 		{
 			TRACE(("fopen: OM_WPERM auf schreibgeschÅtzte Datei!\r\n"));
 			return(EACCDN);
 		}
-/*
- * Sollten die Modi O_CREAT und O_EXCL gesetzt sein, muû EACCDN
- * geliefert werden, da gewÅnscht wurde, eine neue Datei anzulegen,
- * die bislang nicht existiert
- */
+		/*
+		 * Sollten die Modi O_CREAT und O_EXCL gesetzt sein, muû EACCDN
+		 * geliefert werden, da gewÅnscht wurde, eine neue Datei anzulegen,
+		 * die bislang nicht existiert
+		 */
 		if ((omode & (O_CREAT | O_EXCL)) == (O_CREAT | O_EXCL))
 		{
-			TRACE(("fopen: Datei existiert, O_CREAT und O_EXCL sind "
-				"aber gewÅnscht!\r\n"));
+			TRACE(("fopen: Datei existiert, O_CREAT und O_EXCL sind aber gewÅnscht!\r\n"));
 			return(EACCDN);
 		}
 	}
-/*
- * Einen FD fÅr die Datei anfordern, Fehler melden, wenn das nicht
- * klappt
- */
+	/*
+	 * Einen FD fÅr die Datei anfordern, Fehler melden, wenn das nicht
+	 * klappt
+	 */
 	if ((new_fd = findfd(found)) == NULL)
 		return(ENSMEM);
-/*
- * Gibt es schon einen belegten FD fÅr diese Datei, wird mit EACCDN
- * abgebrochen. Genaugenommen mÅûte jetzt hier eine öberprÅfung
- * stattfinden, ob die Zugriffsmodi kompatibel sind. Das habe ich mir
- * aber bisher gespart...
- */
+	/*
+	 * Gibt es schon einen belegten FD fÅr diese Datei, wird mit EACCDN
+	 * abgebrochen. Genaugenommen mÅûte jetzt hier eine öberprÅfung
+	 * stattfinden, ob die Zugriffsmodi kompatibel sind. Das habe ich mir
+	 * aber bisher gespart...
+	 */
 	if (new_fd->fd_parent != NULL)
 	{
 		TRACE(("fopen: Datei schon geîffnet!\r\n"));
-		TRACE(("rootDD = %L, new_fd = %L, new_fd->fd_parent = %L\r\n",
-			&fd[ROOT], new_fd, new_fd->fd_parent));
+		TRACE(("rootDD = %L, new_fd = %L, new_fd->fd_parent = %L\r\n", &fd[ROOT], new_fd, new_fd->fd_parent));
 		return(EACCDN);
 	}
 	if (found == NULL)
 	{
-/*
- * Die Datei war noch nicht vorhanden, also muû sie angelegt werden.
- * Dazu muû aber O_CREAT gesetzt sein, sonst wurde nur ôffnen einer
- * bereits existenten Datei gewÅnscht und es muû EFILNF geliefert
- * werden.
- */
+		/*
+		 * Die Datei war noch nicht vorhanden, also muû sie angelegt werden.
+		 * Dazu muû aber O_CREAT gesetzt sein, sonst wurde nur ôffnen einer
+		 * bereits existenten Datei gewÅnscht und es muû EFILNF geliefert
+		 * werden.
+		 */
 		if ((omode & O_CREAT) != O_CREAT)
 		{
 			TRACE(("fopen: File nicht gefunden, kein O_CREAT!\r\n"));
 			return(EFILNF);
 		}
 #ifdef CHECK_OPEN
-/* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
-	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
-	{
-		TRACE(("fopen: Dir offen!\r\n"));
-		return(EACCDN);
-	}
+		/* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
+		if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
+		{
+			TRACE(("fopen: Dir offen!\r\n"));
+			return(EACCDN);
+		}
 #endif
-/* NatÅrlich darf keine Datei namens "." oder ".." angelegt werden */
+		/* NatÅrlich darf keine Datei namens "." oder ".." angelegt werden */
 		if (!strcmp(name, ".") || !strcmp(name, ".."))
 		{
 			TRACE(("fopen: Name ist \".\" oder \"..\"!\r\n"));
 			return(EACCDN);
 		}
-/*
- * Neuen Verzeichniseintrag anlegen, ggf. Fehler melden. Der Filename
- * wird bei TOS-Domain-Prozessen nur in Kleinbuchstaben gewandelt,
- * nicht in's 8+3-Format. Das ist eine Kompromiûlîsung, weil viele
- * Programme zwar mit langen Dateinamen zurecht kommen, unter MagiC
- * aber nicht in die MiNT-Domain schalten, weil sie das Vorhandensein
- * von Pdomain vom MiNT-Cookie abhÑngig machen, anstatt die Funktion
- * einfach aufzurufen.
- */
+		/*
+		 * Neuen Verzeichniseintrag anlegen, ggf. Fehler melden. Der Filename
+		 * wird bei TOS-Domain-Prozessen nur in Kleinbuchstaben gewandelt,
+		 * nicht in's 8+3-Format. Das ist eine Kompromiûlîsung, weil viele
+		 * Programme zwar mit langen Dateinamen zurecht kommen, unter MagiC
+		 * aber nicht in die MiNT-Domain schalten, weil sie das Vorhandensein
+		 * von Pdomain vom MiNT-Cookie abhÑngig machen, anstatt die Funktion
+		 * einfach aufzurufen.
+		 */
 		if ((found = new_file(dd, name)) == NULL)
 		{
 			TRACE(("fopen: File konnte nicht angelegt werden!\r\n"));
 			return(EACCDN);
 		}
-/* Speicher anfordern, ggf. Fehler melden */
+
+		/* Speicher anfordern, ggf. Fehler melden */
 		if ((file = Kmalloc(sizeof(FILEBLOCK))) == NULL)
 			return(ENSMEM);
 		file->next = NULL;
-/*
- * Jetzt ist sichergestellt, daû tatsÑchlich ein neuer Eintrag
- * entsteht, also muû die Modifikationszeit des Verzeichnisses
- * angepaût werden
- */
+		/*
+		 * Jetzt ist sichergestellt, daû tatsÑchlich ein neuer Eintrag
+		 * entsteht, also muû die Modifikationszeit des Verzeichnisses
+		 * angepaût werden
+		 */
 		work_entry(dd, ".", NULL, 1, 0L, 0L, set_amtime);
-/* Die noch leeren Elemente im neuen Eintrag fÅllen */
+		/* Die noch leeren Elemente im neuen Eintrag fÅllen */
 		found->de_faddr = (char *)file;
 		found->de_xattr.st_mode = S_IFREG;
-/* Bei passender Endung das x-Flag setzen */
+		/* Bei passender Endung das x-Flag setzen */
 		if ((omode & OM_EXEC) || has_xext(name))
 			found->de_xattr.st_mode |= 0777;
 		else
 			found->de_xattr.st_mode |= 0666;
-/*
- * Wird ein schreibgeschÅtztes File neu angelegt, mÅssen die
- * Zugriffsrechte beschnitten werden. FA_CHANGED wird Åbrigens immer
- * gesetzt, GEMDOS macht das beim Anlegen einer leeren Datei nicht,
- * dadurch gehen beim Backup u.U. EintrÑge verloren.
- */
+		/*
+		 * Wird ein schreibgeschÅtztes File neu angelegt, mÅssen die
+		 * Zugriffsrechte beschnitten werden. FA_CHANGED wird Åbrigens immer
+		 * gesetzt, GEMDOS macht das beim Anlegen einer leeren Datei nicht,
+		 * dadurch gehen beim Backup u.U. EintrÑge verloren.
+		 */
 		if (attrib & FA_RDONLY)
 		{
 			found->de_xattr.st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 			attrib = FA_RDONLY | FA_CHANGED;
-		}
-		else
+		} else
+		{
 			attrib = FA_CHANGED;
+		}
 		found->de_xattr.st_ino = (LONG)file;
 		found->de_xattr.st_size = 0;
 		found->de_xattr.st_blocks = 1;
 		found->de_xattr.st_attr = attrib;
-	}
-	else
+	} else
 	{
 		if (omode & O_TRUNC)
 		{
-/*
- * Falls die Datei schon existierte und O_TRUNC gesetzt ist, muû das
- * File jetzt auf LÑnge Null gekÅrzt werden. TatsÑchlich bleibt dabei
- * ein Fileblock vorhanden, eine Datei mit LÑnge 0 belegt auf der
- * Ramdisk trotzdem einen Fileblock. Das ist zwar nicht so toll,
- * erleichert aber einige Dinge.
- */
+			/*
+			 * Falls die Datei schon existierte und O_TRUNC gesetzt ist, muû das
+			 * File jetzt auf LÑnge Null gekÅrzt werden. TatsÑchlich bleibt dabei
+			 * ein Fileblock vorhanden, eine Datei mit LÑnge 0 belegt auf der
+			 * Ramdisk trotzdem einen Fileblock. Das ist zwar nicht so toll,
+			 * erleichert aber einige Dinge.
+			 */
 			file = (FILEBLOCK *)found->de_faddr;
 			next = file->next;
 			file->next = NULL;
@@ -1110,27 +1101,28 @@ LONG ramdisk_fopen(MX_DD *dir, const char *name, WORD omode, WORD attrib,
 			found->de_xattr.st_attr |= FA_CHANGED;
 		}
 	}
-/* Den neuen FD auffÅllen und zurÅckliefern */
+	/* Den neuen FD auffÅllen und zurÅckliefern */
 	new_fd->fd_dmd = ramdisk_dmd;
 	new_fd->fd_refcnt = 1;
 	new_fd->fd_mode = omode;
-/*
- * Hier darf die Ramdisk-Struktur eingetragen werden, da die
- * Parameterformate und die Registerbenutzung im Gegensatz zur
- * THE_MGX_XFS-Struktur kompatibel sind
- */
+	/*
+	 * Hier darf die Ramdisk-Struktur eingetragen werden, da die
+	 * Parameterformate und die Registerbenutzung im Gegensatz zur
+	 * THE_MGX_XFS-Struktur kompatibel sind
+	 */
 	new_fd->fd_dev = &ramdisk_dev;
 	new_fd->fd_fpos = 0L;
 	new_fd->fd_file = found;
 	new_fd->fd_parent = dd;
-/*
- * Zum Auslesen aus der Kernelstruktur immer den Zeiger real_kernel
- * benutzen, kernel soll und muû nur fÅr Funktionsaufrufe genutzt
- * werden
- */
+	/*
+	 * Zum Auslesen aus der Kernelstruktur immer den Zeiger real_kernel
+	 * benutzen, kernel soll und muû nur fÅr Funktionsaufrufe genutzt
+	 * werden
+	 */
 	new_fd->fd_owner = *real_kernel->act_pd;
 	return((LONG)new_fd);
 }
+
 
 /*
  * Eine Datei soll gelîscht werden. Es ist zwar schîn, daû der Kernel
@@ -1143,62 +1135,61 @@ LONG ramdisk_fopen(MX_DD *dir, const char *name, WORD omode, WORD attrib,
  */
 LONG ramdisk_fdelete(MX_DD *dir, const char *name)
 {
-	RAMDISK_FD	*dd,
-				*fd;
-	DIRENTRY	*found;
-	FILEBLOCK	*file,
-				*next;
+	RAMDISK_FD *dd, *fd;
+	DIRENTRY *found;
+	FILEBLOCK *file, *next;
 	LONG err;
 
 	TRACE(("fdelete - %L\\%S\r\n", dir, name));
 	dd = (RAMDISK_FD *)dir;
 	if ((err = check_dd(dd)) < 0)
 		return err;
-/* Die Datei suchen; existiert sie nicht, Fehler melden */
+	/* Die Datei suchen; existiert sie nicht, Fehler melden */
 	if ((found = findfile(dd, name, 2, FF_SEARCH, 0)) == NULL)
 		return(EFILNF);
 #ifdef CHECK_OPEN
-/* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
+	/* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
 	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
 	{
 		TRACE(("fdelete: Dir offen!\r\n"));
 		return(EACCDN);
 	}
 #endif
-/*
- * FÅr das Lîschen von Dateien sind Schreib- und Zugriffsrechte fÅr
- * das betroffene Verzeichnis nîtig
- */
+	/*
+	 * FÅr das Lîschen von Dateien sind Schreib- und Zugriffsrechte fÅr
+	 * das betroffene Verzeichnis nîtig
+	 */
 	if (!waccess(dd->fd_file) || !xaccess(dd->fd_file))
 	{
 		TRACE(("fdelete: Kein Schreibrecht fÅr Verzeichnis!\r\n"));
 		return(EACCDN);
 	}
-/* Verzeichnisse kînnen nicht per fdelete gelîscht werden */
+	/* Verzeichnisse kînnen nicht per fdelete gelîscht werden */
 	if (is_dir(found->de_xattr.st_mode))
 	{
 		TRACE(("fdelete: Datei ist Verzeichnis!\r\n"));
 		return(EACCDN);
 	}
-/* PrÅfen, ob die Datei noch offen ist und entsprechend reagieren */
+	/* PrÅfen, ob die Datei noch offen ist und entsprechend reagieren */
 	if (((fd = findfd(found)) != NULL) && (fd->fd_parent != NULL))
 	{
 		TRACE(("fdelete: Datei noch geîffnet!\r\n"));
 		return(EACCDN);
 	}
-/* Auch fÅr die Datei selbst mÅssen Schreibrechte vorhanden sein */
+	/* Auch fÅr die Datei selbst mÅssen Schreibrechte vorhanden sein */
 	if (!waccess(found))
 	{
 		TRACE(("fdelete: Datei ist schreibgeschÅtzt!\r\n"));
 		return(EACCDN);
 	}
-/*
- * Jetzt den durch die Datei (oder den Link) belegten Speicher
- * freigeben und den Eintrag im Verzeichnis als leer kennzeichnen
- */
+	/*
+	 * Jetzt den durch die Datei (oder den Link) belegten Speicher
+	 * freigeben und den Eintrag im Verzeichnis als leer kennzeichnen
+	 */
 	if (is_link(found->de_xattr.st_mode))
+	{
 		Kfree(found->de_faddr);
-	else
+	} else
 	{
 		file = (FILEBLOCK *)found->de_faddr;
 		do
@@ -1209,13 +1200,14 @@ LONG ramdisk_fdelete(MX_DD *dir, const char *name)
 		} while (file != NULL);
 	}
 	found->de_faddr = NULL;
-/*
- * Schlieûlich noch die Modifikationszeit des betroffenen
- * Verzeichnisses anpassen
- */
+	/*
+	 * Schlieûlich noch die Modifikationszeit des betroffenen
+	 * Verzeichnisses anpassen
+	 */
 	work_entry(dd, ".", NULL, 1, 0L, 0L, set_amtime);
 	return(E_OK);
 }
+
 
 /*
  * Das Ramdisk-XFS unterstÅtzt keine Hardlinks, daher werden in
@@ -1227,15 +1219,11 @@ LONG ramdisk_fdelete(MX_DD *dir, const char *name)
  * nicht zu den "Nachfahren" des Quellverzeichnis gehîrt (man darf
  * z.B. \usr nicht nach \usr\local verschieben).
  */
-LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
-	const char *newname, WORD flag_link)
+LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname, const char *newname, WORD flag_link)
 {
-	RAMDISK_FD	*old,
-				*new,
-				*i;
-	DIRENTRY	*e_old,
-				*e_new;
-	char		*temp;
+	RAMDISK_FD *old, *new, *i;
+	DIRENTRY *e_old, *e_new;
+	char *temp;
 	LONG err;
 
 	if (flag_link)
@@ -1243,66 +1231,65 @@ LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
 		TRACE(("link - hardlinks not supported!\r\n"));
 		return(EINVFN);
 	}
-	TRACE(("link - rename %L\\%S to %L\\%S\r\n", olddir, oldname,
-		newdir, newname));
+	TRACE(("link - rename %L\\%S to %L\\%S\r\n", olddir, oldname, newdir, newname));
 	old = (RAMDISK_FD *)olddir;
 	new = (RAMDISK_FD *)newdir;
 	if ((err = check_dd(old)) < 0)
 		return err;
 	if ((err = check_dd(new)) < 0)
 		return err;
-/*
- * FÅr beide betroffenen Verzeichnisse mÅssen die entsprechenden
- * Rechte vorhanden sein
- */
+	/*
+	 * FÅr beide betroffenen Verzeichnisse mÅssen die entsprechenden
+	 * Rechte vorhanden sein
+	 */
 	if (!waccess(old->fd_file) || !waccess(new->fd_file) ||
 		!xaccess(old->fd_file) || !xaccess(new->fd_file))
 	{
 		return(EACCDN);
 	}
-/* PrÅfen, ob der gewÅnschte neue Name zulÑssig ist */
+	/* PrÅfen, ob der gewÅnschte neue Name zulÑssig ist */
 	if (!check_name(newname))
 		return(EACCDN);
-/*
- * Den neuen Namen auf die maximale LÑnge stutzen und, wenn der
- * aufrufende Prozeû in der TOS-Domain lÑuft, in Kleinbuchstaben
- * umwandeln (diese Umwandlung ist sinnvoll, weil TOS-Domain-
- * Prozesse in der Regel komplett groû geschriebene Filenamen
- * liefern, was auf einem case-sensitiven Filesystem unpraktisch
- * ist)
- */
+	/*
+	 * Den neuen Namen auf die maximale LÑnge stutzen und, wenn der
+	 * aufrufende Prozeû in der TOS-Domain lÑuft, in Kleinbuchstaben
+	 * umwandeln (diese Umwandlung ist sinnvoll, weil TOS-Domain-
+	 * Prozesse in der Regel komplett groû geschriebene Filenamen
+	 * liefern, was auf einem case-sensitiven Filesystem unpraktisch
+	 * ist)
+	 */
 	temp = (void *)(kernel->int_malloc)();
 	temp[RAM_MAXFNAME] = 0;
 	strncpy(temp, newname, RAM_MAXFNAME);
 	if (p_Pdomain(-1) == 0)
 		strlwr(temp);
 	newname = temp;
-/*
- * Das umzubennende File muû gefunden werden, notfalls, je nach
- * MagiC-Version und aktueller Domain, auch mit 8+3-Vergleichen
- */
+	/*
+	 * Das umzubennende File muû gefunden werden, notfalls, je nach
+	 * MagiC-Version und aktueller Domain, auch mit 8+3-Vergleichen
+	 */
 	if ((e_old = findfile(old, oldname, 2, FF_SEARCH, 0)) == NULL)
 	{
 		(kernel->int_mfree)(temp);
 		return(EFILNF);
 	}
-/*
- * Im Gegensatz dazu muû beim Zielfilenamen nur sichergestellt sein,
- * daû nicht schon ein Eintrag mit exakt dem selben Namen existiert;
- * daher wird nur mit FF_EXIST gesucht
- */
+	/*
+	 * Im Gegensatz dazu muû beim Zielfilenamen nur sichergestellt sein,
+	 * daû nicht schon ein Eintrag mit exakt dem selben Namen existiert;
+	 * daher wird nur mit FF_EXIST gesucht
+	 */
 	if ((e_new = findfile(new, newname, 0, FF_EXIST, 0)) != NULL)
 	{
 		(kernel->int_mfree)(temp);
 		return(EACCDN);
 	}
-/*
- * Ist der Quelleintrag ein Verzeichnis, muû sichergestellt werden,
- * daû das Zielverzeichnis nicht unterhalb liegt. Dazu reicht es aus,
- * die DD-Kette dies Zielverzeichnis rÅckwÑrts nach Vorkommen des
- * Quelleintrags abzusuchen. Wird er gefunden, ist das Verschieben
- * nicht mîglich.
- */
+	/*
+	 * Ist der Quelleintrag ein Verzeichnis, muû sichergestellt werden,
+	 * daû das Zielverzeichnis nicht unterhalb liegt. Dazu reicht es aus,
+	 * die DD-Kette dies Zielverzeichnis rÅckwÑrts nach Vorkommen des
+	 * Quelleintrags abzusuchen. Wird er gefunden, ist das Verschieben
+	 * nicht mîglich.
+	 */
 	if (is_dir(e_old->de_xattr.st_mode))
 	{
 		for (i = new; i->fd_parent != NULL; i = i->fd_parent)
@@ -1314,19 +1301,19 @@ LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
 			}
 		}
 	}
-/*
- * Der nachfolgende Test ist defaultmÑûig nicht aktiv, weil zumindest
- * Thing beim Verschieben von Dateien in Verzeichnissen Frename
- * direkt nach D(x)readdir aufruft. Ein solches Vorgehen ist nicht
- * empfehlenswert, es ist besser, erst alle Dateinamen in eine Liste
- * einzulesen und sie erst nach dem Dclosedir der Reihe nach
- * zu verschieben.
- */
+	/*
+	 * Der nachfolgende Test ist defaultmÑûig nicht aktiv, weil zumindest
+	 * Thing beim Verschieben von Dateien in Verzeichnissen Frename
+	 * direkt nach D(x)readdir aufruft. Ein solches Vorgehen ist nicht
+	 * empfehlenswert, es ist besser, erst alle Dateinamen in eine Liste
+	 * einzulesen und sie erst nach dem Dclosedir der Reihe nach
+	 * zu verschieben.
+	 */
 #ifdef CHECK_OPEN
-/*
- * Sicherstellen, daû die beiden betroffenen Verzeichnisse nicht
- * noch per Dopendir geîffnet sind
- */
+	/*
+	 * Sicherstellen, daû die beiden betroffenen Verzeichnisse nicht
+	 * noch per Dopendir geîffnet sind
+	 */
 	if (dir_is_open((DIRENTRY *)old->fd_file->de_faddr))
 	{
 		(kernel->int_mfree)(temp);
@@ -1338,47 +1325,46 @@ LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
 		return(EACCDN);
 	}
 #endif
-/* Wenn die beiden DDs gleich sind, soll nur umbenannt werden */
+	/* Wenn die beiden DDs gleich sind, soll nur umbenannt werden */
 	if (old == new)
 	{
 		strcpy(e_old->de_fname, newname);
-/* Die Modifikationszeit des aktuellen Verzeichnisses anpassen */
+		/* Die Modifikationszeit des aktuellen Verzeichnisses anpassen */
 		work_entry(old, ".", NULL, 1, 0L, 0L, set_amtime);
 		(kernel->int_mfree)(temp);
 		return(E_OK);
 	}
-/*
- * Sonst versuchen, einen neuen Eintrag im Zielverzeichnis anzulegen
- */
+	/*
+	 * Sonst versuchen, einen neuen Eintrag im Zielverzeichnis anzulegen
+	 */
 	if ((e_new = new_file(new, newname)) == NULL)
 	{
 		(kernel->int_mfree)(temp);
 		return(EACCDN);
 	}
-/*
- * Klappte das, die Modifikationszeiten der beiden Verzeichnisse
- * anpassen, den alten Eintrag in den neuen kopieren, den neuen Namen
- * eintrage und den alten Eintrag freigeben
- */
+	/*
+	 * Klappte das, die Modifikationszeiten der beiden Verzeichnisse
+	 * anpassen, den alten Eintrag in den neuen kopieren, den neuen Namen
+	 * eintrage und den alten Eintrag freigeben
+	 */
 	work_entry(old, ".", NULL, 1, 0L, 0L, set_amtime);
 	work_entry(new, ".", NULL, 1, 0L, 0L, set_amtime);
 	*e_new = *e_old;
 	strcpy(e_new->de_fname, newname);
 	e_old->de_faddr = NULL;
-/*
- * Wurde ein Unterverzeichnis auf diese Weise in ein neues Directory
- * verschoben, muû noch der ".."-Eintrag angepaût werden
- */
+	/*
+	 * Wurde ein Unterverzeichnis auf diese Weise in ein neues Directory
+	 * verschoben, muû noch der ".."-Eintrag angepaût werden
+	 */
 	if (is_dir(e_new->de_xattr.st_mode))
 	{
-		((DIRENTRY *)e_new->de_faddr)[1].de_faddr =
-			new->fd_file->de_faddr;
-		((DIRENTRY *)e_new->de_faddr)[1].de_xattr.st_ino =
-			(LONG)new->fd_file->de_faddr;
+		((DIRENTRY *)e_new->de_faddr)[1].de_faddr = new->fd_file->de_faddr;
+		((DIRENTRY *)e_new->de_faddr)[1].de_xattr.st_ino = (LONG)new->fd_file->de_faddr;
 	}
 	(kernel->int_mfree)(temp);
 	return(E_OK);
 }
+
 
 /*
  * FÅr die Ramdisk ist xattr keine allzu groûe Schwierigkeit, weil
@@ -1389,11 +1375,10 @@ LONG ramdisk_link(MX_DD *olddir, MX_DD *newdir, const char *oldname,
  * anzugeben, welche Felder der XATTR-Struktur mit verlÑûlichen
  * Werten gefÅllt werden.
  */
-LONG ramdisk_xattr(MX_DD *dir, const char *name, XATTR *xattr, WORD mode,
-	void **symlink)
+LONG ramdisk_xattr(MX_DD *dir, const char *name, XATTR *xattr, WORD mode, void **symlink)
 {
-	RAMDISK_FD	*dd;
-	DIRENTRY	*found;
+	RAMDISK_FD *dd;
+	DIRENTRY *found;
 	LONG err;
 
 	TRACE(("xattr - %L\\%S (%L)\r\n", dir, name, name));
@@ -1404,27 +1389,27 @@ LONG ramdisk_xattr(MX_DD *dir, const char *name, XATTR *xattr, WORD mode,
 		return err;
 	}
 	TRACE(("xattr: %S\r\n", name));
-/* Das angeforderte File suchen, ggf. Fehler melden */
+	/* Das angeforderte File suchen, ggf. Fehler melden */
 	if ((found = findfile(dd, name, 0, FF_SEARCH, 1)) == NULL)
 	{
 		TRACE(("xattr: %S nicht gefunden!\r\n", name));
 		return(EFILNF);
 	}
-/*
- * Ist das betroffene File ein symbolischer Link und sollen solche
- * verfolgt werden, muû das dem Kernel gemeldet werden
- */
+	/*
+	 * Ist das betroffene File ein symbolischer Link und sollen solche
+	 * verfolgt werden, muû das dem Kernel gemeldet werden
+	 */
 	if (!mode && is_link(found->de_xattr.st_mode))
 	{
-		TRACE(("xattr: Folge symbolischem Link auf %S!\r\n",
-			&found->de_faddr[2]));
+		TRACE(("xattr: Folge symbolischem Link auf %S!\r\n", &found->de_faddr[2]));
 		*symlink = found->de_faddr;
 		return(ELINK);
 	}
-/* In allen anderen FÑllen die Zielstruktur auffÅllen */
+	/* In allen anderen FÑllen die Zielstruktur auffÅllen */
 	*xattr = found->de_xattr;
 	return(E_OK);
 }
+
 
 /*
  * Das Ermitteln bzw. Setzen der GEMDOS-Attribute kann, je nach
@@ -1442,49 +1427,46 @@ LONG ramdisk_xattr(MX_DD *dir, const char *name, XATTR *xattr, WORD mode,
  * daû die beiden jeweils anderen mitbetroffenen EintrÑge ebenfalls
  * geÑndert werden.
  */
-LONG ramdisk_attrib(MX_DD *dir, const char *name, WORD rwflag, WORD attrib,
-	void **symlink)
+LONG ramdisk_attrib(MX_DD *dir, const char *name, WORD rwflag, WORD attrib, void **symlink)
 {
-	TRACE(("attrib - %L\\%S, %L, %L\r\n", dir, name, (LONG)rwflag,
-		(LONG)attrib));
-	return(work_entry((RAMDISK_FD *)dir, name, symlink, rwflag,
-		rwflag, attrib, attrib_action));
+	TRACE(("attrib - %L\\%S, %L, %L\r\n", dir, name, (LONG)rwflag, (LONG)attrib));
+	return(work_entry((RAMDISK_FD *)dir, name, symlink, rwflag, rwflag, attrib, attrib_action));
 }
 
 LONG attrib_action(DIRENTRY *entry, LONG rwflag, LONG attrib)
 {
 	if (rwflag)
 	{
-/*
- * Die Ramdisk unterstÅtzt, neben dem Verzeichnis-Attribut, das
- * natÅrlich nicht verÑndert werden darf, nur FA_RDONLY und
- * FA_CHANGED. Im Falle von FA_RDONLY werden entweder allen
- * drei Userklassen (Owner/Group/Others) die Schreibrechte entzogen
- * oder gewÑhrt.
- */
+		/*
+		 * Die Ramdisk unterstÅtzt, neben dem Verzeichnis-Attribut, das
+		 * natÅrlich nicht verÑndert werden darf, nur FA_RDONLY und
+		 * FA_CHANGED. Im Falle von FA_RDONLY werden entweder allen
+		 * drei Userklassen (Owner/Group/Others) die Schreibrechte entzogen
+		 * oder gewÑhrt.
+		 */
 		if (attrib & FA_RDONLY)
 		{
 			entry->de_xattr.st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 			entry->de_xattr.st_attr |= FA_RDONLY;
-		}
-		else
+		} else
 		{
 			entry->de_xattr.st_mode |= S_IWUSR | S_IWGRP | S_IWOTH;
 			entry->de_xattr.st_attr &= ~FA_RDONLY;
 		}
-/* FA_CHANGED kann bei Verzeichnissen nicht gesetzt werden */
+		/* FA_CHANGED kann bei Verzeichnissen nicht gesetzt werden */
 		if ((attrib & FA_CHANGED) && is_file(entry->de_xattr.st_mode))
 			entry->de_xattr.st_attr |= FA_CHANGED;
 		else
 			entry->de_xattr.st_attr &= ~FA_CHANGED;
 	}
-/*
- * Am Schluû immer das momentan gÅltige Attribut liefern, damit ist
- * auch die Bedingung erfÅllt, daû bei énderungen nur die tatsÑchlich
- * gesetzten Attribute als Returncode benutzt werden dÅrfen.
- */
+	/*
+	 * Am Schluû immer das momentan gÅltige Attribut liefern, damit ist
+	 * auch die Bedingung erfÅllt, daû bei énderungen nur die tatsÑchlich
+	 * gesetzten Attribute als Returncode benutzt werden dÅrfen.
+	 */
 	return(entry->de_xattr.st_attr);
 }
+
 
 /*
  * chown wird bislang nicht unterstÅtzt, aber trotzdem muû die
@@ -1493,17 +1475,15 @@ LONG attrib_action(DIRENTRY *entry, LONG rwflag, LONG attrib)
  * immer auf das Ziel eines symbolischen Links, nicht auf den Link
  * selbst!)
  */
-LONG ramdisk_chown(MX_DD *dir, const char *name, UWORD uid, UWORD gid,
-	void **symlink)
+LONG ramdisk_chown(MX_DD *dir, const char *name, UWORD uid, UWORD gid, void **symlink)
 {
 	TRACE(("chown - not supported\r\n"));
-/*
- * Wird work_entry mit NULL als action aufgerufen, wird EINVFN
- * geliefert, wenn name kein symbolischer Link ist. Ansonsten wird
- * wie Åblich *symlink belegt und ELINK gemeldet.
- */
-	return(work_entry((RAMDISK_FD *)dir, name, symlink, 0, uid, gid,
-		0));
+	/*
+	 * Wird work_entry mit NULL als action aufgerufen, wird EINVFN
+	 * geliefert, wenn name kein symbolischer Link ist. Ansonsten wird
+	 * wie Åblich *symlink belegt und ELINK gemeldet.
+	 */
+	return work_entry((RAMDISK_FD *)dir, name, symlink, 0, uid, gid, 0);
 }
 
 /*
@@ -1522,20 +1502,19 @@ LONG ramdisk_chown(MX_DD *dir, const char *name, UWORD uid, UWORD gid,
 LONG ramdisk_chmod(MX_DD *dir, const char *name, UWORD mode, void **symlink)
 {
 	TRACE(("chmod - %L\\%S, %L\r\n", dir, name, (LONG)mode));
-	return(work_entry((RAMDISK_FD *)dir, name, symlink, 1, mode, 0L,
-		chmod_action));
+	return(work_entry((RAMDISK_FD *)dir, name, symlink, 1, mode, 0L, chmod_action));
 }
 
 LONG chmod_action(DIRENTRY *entry, LONG _mode, LONG dummy)
 {
-	UWORD	mode;
+	UWORD mode;
 
-/*
- * Der neue Zugriffsmodus wird direkt in die XATTR-Struktur des
- * Verzeichniseintrags kopiert; je nach neuem Zustand der Rechte
- * fÅr das Schreiben wird das FA_RDONLY-Bit im GEMDOS-Attribut
- * gesetzt oder gelîscht
- */
+	/*
+	 * Der neue Zugriffsmodus wird direkt in die XATTR-Struktur des
+	 * Verzeichniseintrags kopiert; je nach neuem Zustand der Rechte
+	 * fÅr das Schreiben wird das FA_RDONLY-Bit im GEMDOS-Attribut
+	 * gesetzt oder gelîscht
+	 */
 	mode = (UWORD)_mode;
 	entry->de_xattr.st_mode &= S_IFMT;
 	entry->de_xattr.st_mode |= mode;
@@ -1546,19 +1525,18 @@ LONG chmod_action(DIRENTRY *entry, LONG _mode, LONG dummy)
 	return(E_OK);
 }
 
+
 /*
  * Das Anlegen eines neuen Unterverzeichnisses ist natÅrlich recht
  * unspektakÅlar...
  */
 LONG ramdisk_dcreate(MX_DD *dir, const char *name, UWORD mode)
 {
-	RAMDISK_FD	*dd;
-	DIRENTRY	*entry,
-				*new;
+	RAMDISK_FD *dd;
+	DIRENTRY *entry, *new;
 	LONG err;
 
-	TRACE(("dcreate - %L\\%S, rootDD = %L\r\n", dir, name,
-		&fd[ROOT]));
+	TRACE(("dcreate - %L\\%S, rootDD = %L\r\n", dir, name, &fd[ROOT]));
 	dd = (RAMDISK_FD *)dir;
 	if ((err = check_dd(dd)) < 0)
 	{
@@ -1566,44 +1544,43 @@ LONG ramdisk_dcreate(MX_DD *dir, const char *name, UWORD mode)
 		return err;
 	}
 #ifdef CHECK_OPEN
-/* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
+	/* PrÅfen, ob das aktuelle Verzeichnis nicht noch geîffnet ist */
 	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
 	{
 		TRACE(("dcreate: Dir offen!\r\n"));
 		return(EACCDN);
 	}
 #endif
-/*
- * Es darf natÅrlich noch keinen Verzeichniseintrag gleichen Namens
- * geben
- */
+	/*
+	 * Es darf natÅrlich noch keinen Verzeichniseintrag gleichen Namens
+	 * geben
+	 */
 	if (findfile((RAMDISK_FD *)dir, name, 0, FF_EXIST, 0) != NULL)
 	{
 		TRACE(("dcreate: Datei existiert bereits!\r\n"));
 		return(EACCDN);
 	}
-/* Neuen Eintrag anfordern, ggf. Fehler melden */
+	/* Neuen Eintrag anfordern, ggf. Fehler melden */
 	if ((entry = new_file(dd, name)) == NULL)
 	{
 		TRACE(("dcreate: Kein Platz mehr!\r\n"));
 		return(EACCDN);
 	}
-/* Speicher fÅr neues Verzeichnis anfordern, ggf. Fehler melden */
+	/* Speicher fÅr neues Verzeichnis anfordern, ggf. Fehler melden */
 	if ((new = Kmalloc(DEFAULTDIR * sizeof(DIRENTRY))) == NULL)
 		return(ENSMEM);
-/*
- * Erst jetzt ist sichergestellt, daû der neue Eintrag auch von Dauer
- * ist, also kann die Modifikationszeit des aktuellen Verzeichnisses
- * angepaût werden
- */
+	/*
+	 * Erst jetzt ist sichergestellt, daû der neue Eintrag auch von Dauer
+	 * ist, also kann die Modifikationszeit des aktuellen Verzeichnisses
+	 * angepaût werden
+	 */
 	work_entry(dd, ".", NULL, 1, 0L, 0L, set_amtime);
-/*
- * Das neue Verzeichnis lîschen, die EintrÑge "." und ".." anlegen
- * und den neuen Eintrag fertig ausfÅllen
- */
+	/*
+	 * Das neue Verzeichnis lîschen, die EintrÑge "." und ".." anlegen
+	 * und den neuen Eintrag fertig ausfÅllen
+	 */
 	(kernel->fast_clrmem)(new, &new[DEFAULTDIR]);
-	prepare_dir(new, (WORD)DEFAULTDIR,
-		(DIRENTRY *)dd->fd_file->de_faddr);
+	prepare_dir(new, (WORD)DEFAULTDIR, (DIRENTRY *)dd->fd_file->de_faddr);
 	entry->de_faddr = (char *)new;
 	entry->de_xattr.st_mode = S_IFDIR | 0777;
 	entry->de_xattr.st_ino = (LONG)new;
@@ -1612,6 +1589,7 @@ LONG ramdisk_dcreate(MX_DD *dir, const char *name, UWORD mode)
 	entry->de_xattr.st_attr = FA_DIR;
 	return(E_OK);
 }
+
 
 /*
  * Das Lîschen eines Verzeichnisses ist etwas schwieriger, was leider
@@ -1631,99 +1609,90 @@ LONG ramdisk_dcreate(MX_DD *dir, const char *name, UWORD mode)
  */
 LONG ramdisk_ddelete(MX_DD *dir)
 {
-	RAMDISK_FD	*dd,
-				parent,
-				copy;
-	DIRENTRY	*the_dir;
-	WORD		i,
-				cnt,
-				max;
+	RAMDISK_FD *dd, parent, copy;
+	DIRENTRY *the_dir;
+	WORD i, cnt, max;
 	LONG err;
 
 	TRACE(("ddelete - %L\r\n", dir));
 	dd = (RAMDISK_FD *)dir;
 	if ((err = check_dd(dd)) < 0)
 		return err;
-	TRACE(("ddelete: %L entspricht %L\\%S\r\n", dir, dd->fd_parent,
-		dd->fd_file->de_fname));
+	TRACE(("ddelete: %L entspricht %L\\%S\r\n", dir, dd->fd_parent, dd->fd_file->de_fname));
 	if (real_kernel->version < 3)
 	{
-/*
- * Vor Kernelversion 3 muû man, wie bereits erwÑhnt, den refcnt des
- * DDs selbst erniedrigen und dann prÅfen, ob er Null ist. Wenn nein,
- * darf das Verzeichnis nicht gelîscht werden, weil es vom Kernel
- * noch gebraucht wird.
- */
+		/*
+		 * Vor Kernelversion 3 muû man, wie bereits erwÑhnt, den refcnt des
+		 * DDs selbst erniedrigen und dann prÅfen, ob er Null ist. Wenn nein,
+		 * darf das Verzeichnis nicht gelîscht werden, weil es vom Kernel
+		 * noch gebraucht wird.
+		 */
 		if (--dd->fd_refcnt > 0)
 		{
-			TRACE(("ddelete: refcnt == %L!\r\n",
-				(LONG)dd->fd_refcnt));
+			TRACE(("ddelete: refcnt == %L!\r\n", (LONG)dd->fd_refcnt));
 			return(EACCDN);
 		}
-	}
-	else
+	} else
 	{
-/*
- * Ab Kernelversion 3 erledigt der Kernel diese Aufgabe, daher kann
- * hier der die Verringerung und PrÅfung des refcnts entfallen. Der
- * TRACE ist nur aus SicherheitsgrÅnden eingebaut, falls es wider
- * Erwarten doch nicht funktionieren sollte (bis dato habe ich noch
- * nicht die Kernelversion 3).
- */
-		TRACE(("ddelete: Kernelversion > 2, kein fd_refcnt-Check!"
-			"\r\n"));
+		/*
+		 * Ab Kernelversion 3 erledigt der Kernel diese Aufgabe, daher kann
+		 * hier der die Verringerung und PrÅfung des refcnts entfallen. Der
+		 * TRACE ist nur aus SicherheitsgrÅnden eingebaut, falls es wider
+		 * Erwarten doch nicht funktionieren sollte (bis dato habe ich noch
+		 * nicht die Kernelversion 3).
+		 */
+		TRACE(("ddelete: Kernelversion > 2, kein fd_refcnt-Check!\r\n"));
 	}
-/*
- * Vom aktuellen DD eine Kopie machen, weil er u.U. freigegeben wird,
- * womit sein Inhalt natÅrlich verloren geht. Gleiches gilt fÅr den
- * DD des "Vaters".
- */
+	/*
+	 * Vom aktuellen DD eine Kopie machen, weil er u.U. freigegeben wird,
+	 * womit sein Inhalt natÅrlich verloren geht. Gleiches gilt fÅr den
+	 * DD des "Vaters".
+	 */
 	copy = *dd;
 	parent = *(dd->fd_parent);
-/* Vor Kernelversion 3 muû der DD jetzt freigegeben werden */
+	/* Vor Kernelversion 3 muû der DD jetzt freigegeben werden */
 	if (real_kernel->version < 3)
 		ramdisk_freeDD((MX_DD *)dd);
-/*
- * Zum Lîschen eines Verzeichnisses muû das Vaterverzeichnis
- * beschreibbar sein
- */
+	/*
+	 * Zum Lîschen eines Verzeichnisses muû das Vaterverzeichnis
+	 * beschreibbar sein
+	 */
 	if (!waccess(parent.fd_file))
 	{
-		TRACE(("ddelete: Kein Schreibzugriff auf Elternverzeichnis!"
-			"\r\n"));
+		TRACE(("ddelete: Kein Schreibzugriff auf Elternverzeichnis!\r\n"));
 		return(EACCDN);
 	}
-/* Das Verzeichnis selbst muû ebenfalls beschreibbar sein */
+	/* Das Verzeichnis selbst muû ebenfalls beschreibbar sein */
 	if (!waccess(copy.fd_file))
 	{
 		TRACE(("ddelete: Verzeichnis ist schreibgeschÅtzt!\r\n"));
 		return(EACCDN);
 	}
-/* Zum Lesen geîffnet darf das Verzeichnis ebenfalls nicht sein */
+	/* Zum Lesen geîffnet darf das Verzeichnis ebenfalls nicht sein */
 	the_dir = (DIRENTRY *)copy.fd_file->de_faddr;
 	if (dir_is_open(the_dir))
 	{
 		TRACE(("ddelete: Verzeichnis offen!\r\n"));
 		return(EACCDN);
 	}
-/*
- * Der Check, ob das Vaterverzeichnis noch offen ist, wird auch wegen
- * Problemen mit Thing defaultmÑûig nicht eingebunden, weil Thing
- * beim rekursiven Lîschen Ddelete aufruft, wenn das Vaterverzeichnis
- * noch geîffnet ist :(
- */
+	/*
+	 * Der Check, ob das Vaterverzeichnis noch offen ist, wird auch wegen
+	 * Problemen mit Thing defaultmÑûig nicht eingebunden, weil Thing
+	 * beim rekursiven Lîschen Ddelete aufruft, wenn das Vaterverzeichnis
+	 * noch geîffnet ist :(
+	 */
 #ifdef CHECK_PARENT
-/* Gleiches gilt fÅr das Vaterverzeichnis */
+	/* Gleiches gilt fÅr das Vaterverzeichnis */
 	if (dir_is_open((DIRENTRY *)parent.fd_file->de_faddr))
 	{
 		TRACE(("ddelete: Elternverzeichnis offen!\r\n"));
 		return(EACCDN);
 	}
 #endif
-/*
- * Jetzt muû geprÅft werden, ob das Verzeichnis leer ist, also keine
- * EintrÑge auûer "." und ".." mehr existieren
- */
+	/*
+	 * Jetzt muû geprÅft werden, ob das Verzeichnis leer ist, also keine
+	 * EintrÑge auûer "." und ".." mehr existieren
+	 */
 	max = the_dir->de_maxnr;
 	for (cnt = i = 0; i < max; i++)
 	{
@@ -1736,16 +1705,17 @@ LONG ramdisk_ddelete(MX_DD *dir)
 			}
 		}
 	}
-/*
- * Ging alles glatt, den Speicher, den das Verzeichnis belegt hat,
- * freigeben, die Modifikationszeit des Elternverzeichnisses anpassen
- * und den Eintrag im Vaterverzeichnis freigeben
- */
+	/*
+	 * Ging alles glatt, den Speicher, den das Verzeichnis belegt hat,
+	 * freigeben, die Modifikationszeit des Elternverzeichnisses anpassen
+	 * und den Eintrag im Vaterverzeichnis freigeben
+	 */
 	Kfree(the_dir);
 	work_entry(&parent, ".", NULL, 1, 0L, 0L, set_amtime);
 	copy.fd_file->de_faddr = NULL;
 	return(E_OK);
 }
+
 
 /*
  * DD2name soll zu einem gegebenen DD den Zugriffspfad liefern; hier
@@ -1762,35 +1732,35 @@ LONG ramdisk_ddelete(MX_DD *dir)
  */
 LONG ramdisk_DD2name(MX_DD *dir, char *name, WORD bufsize)
 {
-	RAMDISK_FD	*dd;
-	char		*temp;
+	RAMDISK_FD *dd;
+	char *temp;
 	LONG err;
 
 	TRACE(("DD2name - %L\r\n", dir));
-/* Wie Åblich erstmal prÅfen, ob der dd gÅltig ist */
+	/* Wie Åblich erstmal prÅfen, ob der dd gÅltig ist */
 	dd = (RAMDISK_FD *)dir;
 	if ((err = check_dd(dd)) < 0)
 		return err;
-/*
- * Wenn nicht mindestens ein Byte Platz hat, gleich einen Fehler
- * melden (wegen des abschlieûenden Nullbytes).
- */
+	/*
+	 * Wenn nicht mindestens ein Byte Platz hat, gleich einen Fehler
+	 * melden (wegen des abschlieûenden Nullbytes).
+	 */
 	if (bufsize < 1)
 		return(ERANGE);
 	*name = 0;
 	temp = (void *)(kernel->int_malloc)();
-/*
- * Jetzt vom aktuellen dd rÅckwÑrts bis zu dem Verzeichnis im Pfad
- * gehen, das Åber dem Wurzelverzeichnis liegt. Damit am Ende der
- * Pfad in der richtigen Reihenfolge herauskommt, wird der aktuelle
- * aktuelle Ordnername umgedreht angehÑngt und das Ergebnis vor der
- * RÅckgabe ebenfalls komplett gedreht. Beim AnhÑngen jedes
- * Zwischenpfades muû natÅrlich geprÅft werden, ob im Puffer noch
- * genug Platz ist.
- */
+	/*
+	 * Jetzt vom aktuellen dd rÅckwÑrts bis zu dem Verzeichnis im Pfad
+	 * gehen, das Åber dem Wurzelverzeichnis liegt. Damit am Ende der
+	 * Pfad in der richtigen Reihenfolge herauskommt, wird der aktuelle
+	 * aktuelle Ordnername umgedreht angehÑngt und das Ergebnis vor der
+	 * RÅckgabe ebenfalls komplett gedreht. Beim AnhÑngen jedes
+	 * Zwischenpfades muû natÅrlich geprÅft werden, ob im Puffer noch
+	 * genug Platz ist.
+	 */
 	for (; dd->fd_parent != NULL; dd = dd->fd_parent)
 	{
-/* FÅr TOS-Domain-Prozesse einen verkrÅppelten Pfad liefern */
+		/* FÅr TOS-Domain-Prozesse einen verkrÅppelten Pfad liefern */
 		if (p_Pdomain(-1) == 0)
 			tostrunc(temp, dd->fd_file->de_fname, 0);
 		else
@@ -1804,15 +1774,16 @@ LONG ramdisk_DD2name(MX_DD *dir, char *name, WORD bufsize)
 		strcat(name, temp);
 		strcat(name, "\\");
 	}
-/*
- * Zu guter Letzt den erzeugten Pfad umdrehen, damit er die richtige
- * Reihenfolge hat
- */
+	/*
+	 * Zu guter Letzt den erzeugten Pfad umdrehen, damit er die richtige
+	 * Reihenfolge hat
+	 */
 	strrev(name);
 	(kernel->int_mfree)(temp);
 	TRACE(("DD2name liefert: %S\r\n", name));
 	return(E_OK);
 }
+
 
 /*
  * Bei dopendir muû man, Ñhnlich wie bei path2DD, die zu liefernde
@@ -1830,34 +1801,34 @@ LONG ramdisk_DD2name(MX_DD *dir, char *name, WORD bufsize)
  */
 LONG ramdisk_dopendir(MX_DD *dir, WORD tosflag)
 {
-	WORD		i;
-	RAMDISK_FD	*dd;
+	WORD i;
+	RAMDISK_FD *dd;
 	LONG err;
 
 	TRACE(("dopendir %L\r\n", dir));
 	dd = (RAMDISK_FD *)dir;
 	if ((err = check_dd(dd)) < 0)
 		return err;
-/*
- * Zum Lesen eines Verzeichnisses sind nur Leserechte nîtig, das x-
- * Flag muû nur dann gesetzt sein, wenn man einen Eintrag innerhalb
- * des Verzeichnisses ansprechen will (es bedeutet, wie bereits
- * erwÑhnt, soviel wie "Verzeichnis darf Åberschritten werden")
- */
+	/*
+	 * Zum Lesen eines Verzeichnisses sind nur Leserechte nîtig, das x-
+	 * Flag muû nur dann gesetzt sein, wenn man einen Eintrag innerhalb
+	 * des Verzeichnisses ansprechen will (es bedeutet, wie bereits
+	 * erwÑhnt, soviel wie "Verzeichnis darf Åberschritten werden")
+	 */
 	if (!raccess(dd->fd_file))
 		return(EACCDN);
-/* Eine freie Directory-Handle-Struktur suchen */
+	/* Eine freie Directory-Handle-Struktur suchen */
 	for (i = 0; i < MAX_DHD; i++)
 	{
 		if (dhd[i].dhd_dir == NULL)
 		{
-/*
- * Wurde eine gefunden, diese fÅllen. Dabei wird der Zeiger auf den
- * Beginn des zu lesenden Verzeichnisses, das tosflag und der
- * aufrufende Prozeû abgelegt. dhd_pos gibt fÅr dreaddir an, der
- * wievielte Eintrag der nÑchste zu lesende ist und muû daher zu
- * Beginn auf Null gesetzt werden.
- */
+			/*
+			 * Wurde eine gefunden, diese fÅllen. Dabei wird der Zeiger auf den
+			 * Beginn des zu lesenden Verzeichnisses, das tosflag und der
+			 * aufrufende Prozeû abgelegt. dhd_pos gibt fÅr dreaddir an, der
+			 * wievielte Eintrag der nÑchste zu lesende ist und muû daher zu
+			 * Beginn auf Null gesetzt werden.
+			 */
 			dhd[i].dhd_dmd = ramdisk_dmd;
 			dhd[i].dhd_dir = (DIRENTRY *)dd->fd_file->de_faddr;
 			dhd[i].dhd_pos = 0;
@@ -1866,9 +1837,10 @@ LONG ramdisk_dopendir(MX_DD *dir, WORD tosflag)
 			return((LONG)&dhd[i]);
 		}
 	}
-/* War keine Struktur mehr frei, einen Fehler melden */
+	/* War keine Struktur mehr frei, einen Fehler melden */
 	return(ENHNDL);
 }
+
 
 /*
  * In dreaddir hat man wieder zwei Probleme: Der Name muû unter
@@ -1885,33 +1857,32 @@ LONG ramdisk_dopendir(MX_DD *dir, WORD tosflag)
  * Da ein Verzeichniseintrag der Ramdisk die XATTR-Struktur enthÑlt,
  * erÅbrigt sich das zweite genannte Problem hier ohnehin...
  */
-LONG ramdisk_dreaddir(MX_DHD *dhd, WORD size, char *buf, XATTR *xattr,
-	LONG *xr)
+LONG ramdisk_dreaddir(MX_DHD *dhd, WORD size, char *buf, XATTR *xattr, LONG *xr)
 {
-	RAMDISK_DHD	*handle;
-	RAMDISK_FD	help;
-	DIRENTRY	*dir;
-	WORD		pos;
+	RAMDISK_DHD *handle;
+	RAMDISK_FD help;
+	DIRENTRY *dir;
+	WORD pos;
 
-	TRACE(("%S\r\n", (xattr == NULL) ? "dreaddir" : "dxreaddir"));
+	TRACE(("%S\r\n", xattr == NULL ? "dreaddir" : "dxreaddir"));
 	handle = (RAMDISK_DHD *)dhd;
-/*
- * ZunÑchst einmal das Handle prÅfen, dabei auch auf den Prozeû 
- * achtenn. Der Test auf NULL ist zwar prinzipiell unnîtig, weil der
- * Kernel ja schon den DMD ermittelt haben muû, aber sicher ist
- * sicher.
- */
+	/*
+	 * ZunÑchst einmal das Handle prÅfen, dabei auch auf den Prozeû 
+	 * achtenn. Der Test auf NULL ist zwar prinzipiell unnîtig, weil der
+	 * Kernel ja schon den DMD ermittelt haben muû, aber sicher ist
+	 * sicher.
+	 */
 	if ((handle == NULL) || (handle->dhd_dmd != ramdisk_dmd) ||
 		(handle->dhd_owner != *real_kernel->act_pd))
 	{
 		return(EIHNDL);
 	}
-/*
- * Da bei einem Lesezugriff auf ein Verzeichnis dessen Zugriffszeit
- * geÑndert werden muû, wird work_entry aufgerufen. Diese Funktion
- * erwartet allerdings einen DD, daher muû ein solcher generiert
- * werden (Ñhnlich wie oben fÅr den Aufruf von xattr vorgeschlagen).
- */
+	/*
+	 * Da bei einem Lesezugriff auf ein Verzeichnis dessen Zugriffszeit
+	 * geÑndert werden muû, wird work_entry aufgerufen. Diese Funktion
+	 * erwartet allerdings einen DD, daher muû ein solcher generiert
+	 * werden (Ñhnlich wie oben fÅr den Aufruf von xattr vorgeschlagen).
+	 */
 	help.fd_dmd = ramdisk_dmd;
 	help.fd_refcnt = 0;
 	help.fd_file = handle->dhd_dir;
@@ -1919,53 +1890,51 @@ LONG ramdisk_dreaddir(MX_DHD *dhd, WORD size, char *buf, XATTR *xattr,
 	work_entry(&help, ".", NULL, 1, 1L, 0L, set_amtime);
 	dir = handle->dhd_dir;
 	pos = handle->dhd_pos;
-/* Den nÑchsten nicht-leeren Verzeichniseintrag suchen */
-	for (; (pos < dir->de_maxnr) && (dir[pos].de_faddr == NULL);
-		pos++);
-/* Gibt es keinen mehr, das Ende des Lesevorgangs signalisieren */
+	/* Den nÑchsten nicht-leeren Verzeichniseintrag suchen */
+	for (; (pos < dir->de_maxnr) && (dir[pos].de_faddr == NULL); pos++)
+		;
+	/* Gibt es keinen mehr, das Ende des Lesevorgangs signalisieren */
 	if (pos >= dir->de_maxnr)
 		return(ENMFIL);
-/*
- * Ansonsten je nach Modus den Namen in's 8+3-Format quetschen oder
- * ihn unverÑndert samt Index (nicht vergessen!) ablegen. Dabei muû
- * immer darauf geachtet werden, daû der Zielpuffer genÅgend Platz
- * bietet!
- */
+	/*
+	 * Ansonsten je nach Modus den Namen in's 8+3-Format quetschen oder
+	 * ihn unverÑndert samt Index (nicht vergessen!) ablegen. Dabei muû
+	 * immer darauf geachtet werden, daû der Zielpuffer genÅgend Platz
+	 * bietet!
+	 */
 	if (handle->dhd_tosmode)
 	{
 		if (size < 13)
 			return(ERANGE);
 		tostrunc(buf, dir[pos].de_fname, 0);
-	}
-	else
+	} else
 	{
-		if (((WORD)strlen(dir[pos].de_fname) + 4) >=
-			size)
+		if (((WORD)strlen(dir[pos].de_fname) + 4) >= size)
 		{
-			TRACE(("%S paût nicht in den Puffer!",
-				(LONG)dir[pos].de_fname));
+			TRACE(("%S paût nicht in den Puffer!", (LONG)dir[pos].de_fname));
 			return(ERANGE);
 		}
 		*(LONG *)buf = (LONG)dir[pos].de_xattr.st_ino;
 		strcpy(&buf[4], dir[pos].de_fname);
 	}
-/*
- * Ggf. auch die XATTR-Struktur gefÅllt werden (also im Falle eines
- * Dxreaddir-Aufrufs). Dabei dÅrfen symbolische Links nicht verfolgt
- * werden!
- */
+	/*
+	 * Ggf. auch die XATTR-Struktur gefÅllt werden (also im Falle eines
+	 * Dxreaddir-Aufrufs). Dabei dÅrfen symbolische Links nicht verfolgt
+	 * werden!
+	 */
 	if (xattr != NULL)
 	{
 		*xattr = dir[pos].de_xattr;
 		*xr = 0L;
 	}
-/*
- * Zum Schluû noch den Lesezeiger fÅr den nÑchsten dreaddir-Aufruf
- * setzen
- */
+	/*
+	 * Zum Schluû noch den Lesezeiger fÅr den nÑchsten dreaddir-Aufruf
+	 * setzen
+	 */
 	handle->dhd_pos = pos + 1;
 	return(E_OK);
 }
+
 
 /*
  * FÅr das "ZurÅckspulen" eines Verzeichnisses muû nicht viel
@@ -1976,20 +1945,21 @@ LONG ramdisk_dreaddir(MX_DHD *dhd, WORD size, char *buf, XATTR *xattr,
  */
 LONG ramdisk_drewinddir(MX_DHD *dhd)
 {
-	RAMDISK_DHD	*handle;
+	RAMDISK_DHD *handle;
 
 	TRACE(("drewinddir\r\n"));
 	handle = (RAMDISK_DHD *)dhd;
-/* Wieder das Handle ÅberprÅfen */
+	/* Wieder das Handle ÅberprÅfen */
 	if ((handle == NULL) || (handle->dhd_dmd != ramdisk_dmd) ||
 		(handle->dhd_owner != *real_kernel->act_pd))
 	{
 		return(EIHNDL);
 	}
-/* Lesezeiger zurÅcksetzen */
+	/* Lesezeiger zurÅcksetzen */
 	handle->dhd_pos = 0;
 	return(E_OK);
 }
+
 
 /*
  * Bei dclosedir hat man die Mîglichkeit, Puffer, die man u.U. bei
@@ -1998,20 +1968,21 @@ LONG ramdisk_drewinddir(MX_DHD *dhd)
  */
 LONG ramdisk_dclosedir(MX_DHD *dhd)
 {
-	RAMDISK_DHD	*handle;
+	RAMDISK_DHD *handle;
 
 	TRACE(("dclosedir\r\n"));
 	handle = (RAMDISK_DHD *)dhd;
-/* Handle checken */
+	/* Handle checken */
 	if ((handle == NULL) || (handle->dhd_dmd != ramdisk_dmd) ||
 		(handle->dhd_owner != *real_kernel->act_pd))
 	{
 		return(EIHNDL);
 	}
-/* Handle freigeben */
+	/* Handle freigeben */
 	handle->dhd_dir = NULL;
 	return(E_OK);
 }
+
 
 /*
  * dpathconf ist eine sehr wichtige Funktion, damit Programme
@@ -2034,54 +2005,54 @@ LONG ramdisk_dpathconf(MX_DD *dir, WORD which)
 		return err;
 	switch (which)
 	{
-		case DP_MAXREQ:
-/* Maximal Modus 8 */
-			return DP_XATTRFIELDS;
-		case DP_IOPEN:
-/*
- * Es kînnen allerhîchstens soviel Dateien geîffnet werden wie FDs
- * vorhanden sind (minus 1 fÅr den Root-DD)
- */
-			return(MAX_FD - 1);
-		case DP_MAXLINKS:
-/* Keine Hardlinks, also maximal 1 Link pro File */
-			return(1);
-		case DP_PATHMAX:
-/*
- * Pfadnamen kînnen unendlich lang werden (genaugenommen zwar nicht,
- * weil ja die Anzahl an DDs begrenzt ist, aber das macht letztlich
- * keinen groûen Unterschied)
- */
-			return(0x7fffffffL);
-		case DP_NAMEMAX:
-/* Maximal 32 Zeichen Filename */
-			return RAM_MAXFNAME;
-		case DP_ATOMIC:
-/* "Am StÅck" kînnen maximal DEFAULTFILE Bytes geschrieben werden */
-			return(DEFAULTFILE);
-		case DP_TRUNC:
-/* Die Ramdisk schneidet zu lange Filenamen automatisch ab */
-			return DP_AUTOTRUNC;
-		case DP_CASE:
-/* Volle Unterscheidung von Groû- und Kleinschreibung */
-			return DP_CASESENS;
-		case DP_MODEATTR:
-/*
- * Mîgliche Filetypen: Directories, symbolische Links, normale Files.
- * Alle Unix-Filemodi bis auf Setuid, Setgid und das "Sticky-Bit".
- * TOS-Attribute: Verzeichnis, Nur Lesen, VerÑndert, symbolischer
- * Link (wie es MagiC benutzt)
- */
-			return(0x01900000L | (0777L << 8L) |
-				FA_RDONLY | FA_DIR | FA_CHANGED | FA_SYMLINK);
-		case DP_XATTRFIELDS:
-/* Alle Elemente der XATTR-Struktur echt vorhanden */
-			return(0x0fffL);
-		default:
-/* Andere Dpathconf-Modi kennt das Filesystem nicht */
-			return(EINVFN);
+	case DP_MAXREQ:
+		/* Maximal Modus 8 */
+		return DP_XATTRFIELDS;
+	case DP_IOPEN:
+		/*
+		 * Es kînnen allerhîchstens soviel Dateien geîffnet werden wie FDs
+		 * vorhanden sind (minus 1 fÅr den Root-DD)
+		 */
+		return(MAX_FD - 1);
+	case DP_MAXLINKS:
+		/* Keine Hardlinks, also maximal 1 Link pro File */
+		return(1);
+	case DP_PATHMAX:
+		/*
+		 * Pfadnamen kînnen unendlich lang werden (genaugenommen zwar nicht,
+		 * weil ja die Anzahl an DDs begrenzt ist, aber das macht letztlich
+		 * keinen groûen Unterschied)
+		 */
+		return(0x7fffffffL);
+	case DP_NAMEMAX:
+		/* Maximal 32 Zeichen Filename */
+		return RAM_MAXFNAME;
+	case DP_ATOMIC:
+		/* "Am StÅck" kînnen maximal DEFAULTFILE Bytes geschrieben werden */
+		return(DEFAULTFILE);
+	case DP_TRUNC:
+		/* Die Ramdisk schneidet zu lange Filenamen automatisch ab */
+		return DP_AUTOTRUNC;
+	case DP_CASE:
+		/* Volle Unterscheidung von Groû- und Kleinschreibung */
+		return DP_CASESENS;
+	case DP_MODEATTR:
+		/*
+		 * Mîgliche Filetypen: Directories, symbolische Links, normale Files.
+		 * Alle Unix-Filemodi bis auf Setuid, Setgid und das "Sticky-Bit".
+		 * TOS-Attribute: Verzeichnis, Nur Lesen, VerÑndert, symbolischer
+		 * Link (wie es MagiC benutzt)
+		 */
+		return(0x01900000L | (0777L << 8L) | FA_RDONLY | FA_DIR | FA_CHANGED | FA_SYMLINK);
+	case DP_XATTRFIELDS:
+		/* Alle Elemente der XATTR-Struktur echt vorhanden */
+		return(0x0fffL);
+	default:
+		/* Andere Dpathconf-Modi kennt das Filesystem nicht */
+		return(EINVFN);
 	}
 }
+
 
 /*
  * Bei dfree ist es mir nach wie vor ein RÑtsel, wozu ein DD
@@ -2092,49 +2063,47 @@ LONG ramdisk_dpathconf(MX_DD *dir, WORD which)
  */
 LONG ramdisk_dfree(MX_DD *dd, DISKINFO *free)
 {
-	LONG	freeblocks,
-			usedblocks;
+	LONG freeblocks, usedblocks;
 	LONG err;
 
 	TRACE(("dfree\r\n"));
-/*
- * Im Debug-Modus wird protokolliert, welche DDs durch welches
- * Verzeichnis belegt sind. Auf diese Weise kann bei Bedarf geprÅft
- * werden, ob DDs falsch oder unnîtig belegt sind oder versehentlich
- * freigegeben wurden
- */
+	/*
+	 * Im Debug-Modus wird protokolliert, welche DDs durch welches
+	 * Verzeichnis belegt sind. Auf diese Weise kann bei Bedarf geprÅft
+	 * werden, ob DDs falsch oder unnîtig belegt sind oder versehentlich
+	 * freigegeben wurden
+	 */
 #ifdef DEBUG
 	{
-		WORD	i;
+		WORD i;
 
 		for (i = 0; i < MAX_FD; i++)
 		{
 			if (fd[i].fd_file != NULL)
-			{	
-				TRACE(("fd %L ist belegt durch %S!\r\n", &fd[i],
-					((DIRENTRY *)fd[i].fd_file)->de_fname));
+			{
+				TRACE(("fd %L ist belegt durch %S!\r\n", &fd[i], ((DIRENTRY *)fd[i].fd_file)->de_fname));
 			}
 		}
 	}
 #endif
 	if ((err = check_dd((RAMDISK_FD *)dd)) < 0)
 		return err;
-/*
- * Die freien Blocks errechnen sich aus dem (fÅr die Ramdisk) noch
- * freien Speicher geteilt durch die Grîûe eines Fileblocks. Das
- * ergibt zwar nie einen 100%ig verlÑûlichen Wert, aber besser wird
- * man es bei einer Ramdisk auch kaum machen kînnen, da sich der
- * freie Speicher stÑndig Ñndern kann.
- */
+	/*
+	 * Die freien Blocks errechnen sich aus dem (fÅr die Ramdisk) noch
+	 * freien Speicher geteilt durch die Grîûe eines Fileblocks. Das
+	 * ergibt zwar nie einen 100%ig verlÑûlichen Wert, aber besser wird
+	 * man es bei einer Ramdisk auch kaum machen kînnen, da sich der
+	 * freie Speicher stÑndig Ñndern kann.
+	 */
 	freeblocks = ((LONG)Kmalloc(-1) + DEFAULTFILE - 1) / DEFAULTFILE;
-/*
- * Die belegten Blîcke werden rekursiv vom Wurzelverzeichnis aus
- * gezÑhlt. Das Wurzelverzeichnis selbst belegt 0 Blîcke, damit die
- * Ramdisk auch wirklich als leer angesehen wird, wenn keine Dateien
- * oder Verzeichnisse vorhanden sind.
- */
+	/*
+	 * Die belegten Blîcke werden rekursiv vom Wurzelverzeichnis aus
+	 * gezÑhlt. Das Wurzelverzeichnis selbst belegt 0 Blîcke, damit die
+	 * Ramdisk auch wirklich als leer angesehen wird, wenn keine Dateien
+	 * oder Verzeichnisse vorhanden sind.
+	 */
 	usedblocks = get_size(root);
-/* Die Zielstruktur belegen */
+	/* Die Zielstruktur belegen */
 	free->b_free = freeblocks;
 	free->b_total = freeblocks + usedblocks;
 	free->b_secsiz = DEFAULTFILE;
@@ -2142,24 +2111,25 @@ LONG ramdisk_dfree(MX_DD *dd, DISKINFO *free)
 	return(E_OK);
 }
 
+
 /*
  * Diese direkte Hilfsfunktion fÅr dfree ermittelt rekursiv die
  * belegten Blocks relativ zum Directory search
  */
 LONG get_size(DIRENTRY *search)
 {
-	WORD		i;
-	LONG		newsize;
+	WORD i;
+	LONG newsize;
 
 	TRACE(("get_size - Verzeichnis %L\r\n", search));
-/* ZunÑchst die Grîûe des aktuellen Directories selbst ermitteln */
+	/* ZunÑchst die Grîûe des aktuellen Directories selbst ermitteln */
 	newsize = search[0].de_xattr.st_blocks;
-/*
- * Dann alle EintrÑge auûer "." und ".." durchgehen und ihre Grîûe
- * addieren, wenn es Dateien oder symbolische Links sind. Bei
- * Verzeichnissen wird get_size rekursiv aufgerufen und das
- * Ergebnis addiert.
- */
+	/*
+	 * Dann alle EintrÑge auûer "." und ".." durchgehen und ihre Grîûe
+	 * addieren, wenn es Dateien oder symbolische Links sind. Bei
+	 * Verzeichnissen wird get_size rekursiv aufgerufen und das
+	 * Ergebnis addiert.
+	 */
 	for (i = 2; i < search[0].de_maxnr; i++)
 	{
 		if (search[i].de_faddr != NULL)
@@ -2170,9 +2140,10 @@ LONG get_size(DIRENTRY *search)
 				newsize += search[i].de_xattr.st_blocks;
 		}
 	}
-/* Am Ende die neu ermittelte Blockzahl zurÅckliefern */
+	/* Am Ende die neu ermittelte Blockzahl zurÅckliefern */
 	return(newsize);
 }
+
 
 /*
  * Hier muû ein Label angelegt/geÑndert werden, nÑheres siehe
@@ -2184,13 +2155,13 @@ LONG ramdisk_wlabel(MX_DD *dir, const char *name)
 	LONG err;
 
 	TRACE(("wlabel - %S\r\n", name));
-/* dir wird nur ÅberprÅft, sonst aber ignoriert */
+	/* dir wird nur ÅberprÅft, sonst aber ignoriert */
 	if ((err = check_dd((RAMDISK_FD *)dir)) < 0)
 		return err;
-/*
- * Bei Bedarf Volume Label lîschen, sonst die ersten 32 Zeichen des
- * gewÅnschten Labels Åbernehmen
- */
+	/*
+	 * Bei Bedarf Volume Label lîschen, sonst die ersten 32 Zeichen des
+	 * gewÅnschten Labels Åbernehmen
+	 */
 	if (*name == '\xe5')
 		strcpy(volume_label, "");
 	else
@@ -2200,6 +2171,7 @@ LONG ramdisk_wlabel(MX_DD *dir, const char *name)
 	}
 	return(E_OK);
 }
+
 
 /*
  * Zum Ermitteln des Volume Labels, nÑheres siehe MagiC-Doku.
@@ -2212,22 +2184,23 @@ LONG ramdisk_rlabel(MX_DD *dir, const char *name, char *buf, WORD len)
 	LONG err;
 
 	TRACE(("rlabel - %S %L\r\n", name, (LONG)len));
-/* dir wird zwar ÅberprÅft, sonst aber ignoriert */
+	/* dir wird zwar ÅberprÅft, sonst aber ignoriert */
 	if ((err = check_dd((RAMDISK_FD *)dir)) < 0)
 		return err;
-/*
- * Ist das Label leer, wird EFILNF geliefert, weil genaugenommen
- * keines existiert
- */
+	/*
+	 * Ist das Label leer, wird EFILNF geliefert, weil genaugenommen
+	 * keines existiert
+	 */
 	if (!*volume_label)
 		return(EFILNF);
-/* PrÅfen, ob der Zielpuffer genug Platz bietet */
+	/* PrÅfen, ob der Zielpuffer genug Platz bietet */
 	if ((WORD)strlen(volume_label) >= len)
 		return(ERANGE);
-/* Aktuelles Label in Zielpuffer kopieren */
+	/* Aktuelles Label in Zielpuffer kopieren */
 	strcpy(buf, volume_label);
 	return(E_OK);
 }
+
 
 /*
  * Ein symbolischer Link soll angelegt werden, werden keine solchen
@@ -2242,10 +2215,10 @@ LONG ramdisk_rlabel(MX_DD *dir, const char *name, char *buf, WORD len)
  */
 LONG ramdisk_symlink(MX_DD *dir, const char *name, const char *to)
 {
-	RAMDISK_FD	*dd;
-	DIRENTRY	*entry;
-	char		*link;
-	LONG		len;
+	RAMDISK_FD *dd;
+	DIRENTRY *entry;
+	char *link;
+	LONG len;
 	LONG err;
 
 	TRACE(("symlink - %S to %L\\%S\r\n", to, dir, name));
@@ -2253,31 +2226,31 @@ LONG ramdisk_symlink(MX_DD *dir, const char *name, const char *to)
 	if ((err = check_dd(dd)) < 0)
 		return err;
 #ifdef CHECK_OPEN
-/* PrÅfen, ob das Verzeichnis nicht noch geîffnet ist */
+	/* PrÅfen, ob das Verzeichnis nicht noch geîffnet ist */
 	if (dir_is_open((DIRENTRY *)dd->fd_file->de_faddr))
 		return(EACCDN);
 #endif
-/* Herausfinden, ob eine Datei gleichen Namens schon existiert */
+	/* Herausfinden, ob eine Datei gleichen Namens schon existiert */
 	if (findfile(dd, name, 0, FF_EXIST, 0) != NULL)
 		return(EACCDN);
-/* Versuchen, einen neuen Eintrag zu erhalten */
+	/* Versuchen, einen neuen Eintrag zu erhalten */
 	if ((entry = new_file((RAMDISK_FD *)dir, name)) == NULL)
 		return(EACCDN);
-/*
- * Berechnen, wieviel Speicher der Link im MagiC-Format braucht und
- * diesen anfordern
- */
+	/*
+	 * Berechnen, wieviel Speicher der Link im MagiC-Format braucht und
+	 * diesen anfordern
+	 */
 	len = strlen(to) + 1L;
 	if (len & 1)
 		len++;
 	if ((link = Kmalloc(len + 2L)) == NULL)
 		return(ENSMEM);
-/*
- * Ging alles glatt, jetzt die Modifikationszeit des Verzeichnisses
- * anpassen, das Ziel des Links in den angeforderten Speicherbereich
- * kopieren und den neuen Verzeichniseintrag auffÅllen. Dabei wird
- * als GEMDOS-Attribut das von MagiC benutzte FA_SYMLINK eingetragen.
- */
+	/*
+	 * Ging alles glatt, jetzt die Modifikationszeit des Verzeichnisses
+	 * anpassen, das Ziel des Links in den angeforderten Speicherbereich
+	 * kopieren und den neuen Verzeichniseintrag auffÅllen. Dabei wird
+	 * als GEMDOS-Attribut das von MagiC benutzte FA_SYMLINK eingetragen.
+	 */
 	work_entry(dd, ".", NULL, 1, 0L, 0L, set_amtime);
 	*(WORD *)link = (WORD)len;
 	strcpy(&link[2], to);
@@ -2290,6 +2263,7 @@ LONG ramdisk_symlink(MX_DD *dir, const char *name, const char *to)
 	return(E_OK);
 }
 
+
 /*
  * Beim Lesen eine symbolischen Links muû darauf geachtet werden, daû
  * size groû genug ist, den Zugriffspfad samt abschlieûendem Nullbyte
@@ -2298,32 +2272,33 @@ LONG ramdisk_symlink(MX_DD *dir, const char *name, const char *to)
  */
 LONG ramdisk_readlink(MX_DD *dir, const char *name, char *buf, WORD size)
 {
-	RAMDISK_FD	*dd;
-	DIRENTRY	*found;
+	RAMDISK_FD *dd;
+	DIRENTRY *found;
 	LONG err;
 
 	TRACE(("readlink - %L\\%S\r\n", dir, name));
 	dd = (RAMDISK_FD *)dir;
 	if ((err = check_dd(dd)) < 0)
 		return err;
-/* Den Verzeichniseintrag suchen */
+	/* Den Verzeichniseintrag suchen */
 	if ((found = findfile(dd, name, 2, FF_SEARCH, 0)) == NULL)
 		return(EFILNF);
-/* Wenn es kein symbolischer Link ist, einen Fehler melden */
+	/* Wenn es kein symbolischer Link ist, einen Fehler melden */
 	if (!is_link(found->de_xattr.st_mode))
 		return(EACCDN);
-/* PrÅfen, ob der Zielpuffer groû genug ist */
+	/* PrÅfen, ob der Zielpuffer groû genug ist */
 	if (size < (strlen(&found->de_faddr[2]) + 1L))
 		return(ERANGE);
-/*
- * Wenn ja, wird die letzte Zugriffszeit des Links gesetzt und der
- * Zielpfad in den Puffer kopiert
- */
+	/*
+	 * Wenn ja, wird die letzte Zugriffszeit des Links gesetzt und der
+	 * Zielpfad in den Puffer kopiert
+	 */
 	found->de_xattr.st_atim.u.d.time = Tgettime();
 	found->de_xattr.st_atim.u.d.date = Tgetdate();
 	strcpy(buf, &found->de_faddr[2]);
 	return(E_OK);
 }
+
 
 /*
  * dcntl fÅhrt bestimmte Aktionen fÅr VerzeichniseintrÑge durch. Der
@@ -2335,67 +2310,66 @@ LONG ramdisk_readlink(MX_DD *dir, const char *name, char *buf, WORD size)
  * auch Verzeichnisse bearbeiten zu kînnen. Bislang wird nur FUTIME
  * (Zeiten verÑndern) unterstÅtzt.
  */
-LONG ramdisk_dcntl(MX_DD *dir, const char *name, WORD cmd, LONG arg,
-	void **symlink)
+LONG ramdisk_dcntl(MX_DD *dir, const char *name, WORD cmd, LONG arg, void **symlink)
 {
-	RAMDISK_FD	*dd;
+	RAMDISK_FD *dd;
 
-	TRACE(("dcntl - %L\\%S, %L, %L\r\n", dir, name, (LONG)cmd,
-		arg));
+	TRACE(("dcntl - %L\\%S, %L, %L\r\n", dir, name, (LONG)cmd, arg));
 	dd = (RAMDISK_FD *)dir;
 	return(work_entry(dd, name, symlink, 1, cmd, arg, dcntl_action));
 }
 
+
 LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg)
 {
-	WORD	*timebuf;
+	WORD *timebuf;
 
 	switch ((WORD)cmd)
 	{
-/*
- * Zu FUTIME habe ich bisher keine brauchbare Doku gefunden, daher
- * hier eine kurze Beschreibung (die Funktionsweise habe ich in den
- * MinixFS-Sourcen entnommen):
- * FÅr das Kommando FUTIME zeigt arg auf ein WORD-Array mit vier
- * Elementen. Die Belegung:
- * arg[0] - Uhrzeit des letzten Zugriffs
- * arg[1] - Datum des letzten Zugriffs
- * arg[2] - Uhrzeit der letzten Modifikation
- * arg[3] - Datum der letzten Modifikation
- * Wenn arg ein Nullzeiger ist, sollen alle drei Zeiten (also auch
- * die Erstellungszeit) auf das aktuelle Datum gesetzt werden, sonst
- * atime/adate auf arg[0/1], mtime/mdate auf arg[2/3] und ctime/cdate
- * auf die aktuelle Uhrzeit/das aktuelle Datum. Die Erstellungszeit
- * (also ctime/cdate) wird immer auf die aktuelle Zeit gesetzt, damit
- * man eine Datei nicht zurÅckdatieren kann (das kann durchaus
- * wichtig sein).
- */
-		case FUTIME:
-/* FÅr FUTIME braucht man Schreibzugriff auf die Datei */
-			if (!waccess(entry))
-				return(EACCDN);
-			timebuf = (WORD *)arg;
-			entry->de_xattr.st_ctim.u.d.time = Tgettime();
-			entry->de_xattr.st_ctim.u.d.date = Tgetdate();
-			if (timebuf != NULL)
-			{
-				entry->de_xattr.st_atim.u.d.time = timebuf[0];
-				entry->de_xattr.st_atim.u.d.date = timebuf[1];
-				entry->de_xattr.st_mtim.u.d.time = timebuf[2];
-				entry->de_xattr.st_mtim.u.d.date = timebuf[3];
-			}
-			else
-			{
-				entry->de_xattr.st_atim.u.d.time = entry->de_xattr.st_mtim.u.d.time =
-					entry->de_xattr.st_ctim.u.d.time;
-				entry->de_xattr.st_atim.u.d.date = entry->de_xattr.st_mtim.u.d.date =
-					entry->de_xattr.st_ctim.u.d.date;
-			}
-			return(E_OK);
-		default:
-			return(EINVFN);
+		/*
+		 * Zu FUTIME habe ich bisher keine brauchbare Doku gefunden, daher
+		 * hier eine kurze Beschreibung (die Funktionsweise habe ich in den
+		 * MinixFS-Sourcen entnommen):
+		 * FÅr das Kommando FUTIME zeigt arg auf ein WORD-Array mit vier
+		 * Elementen. Die Belegung:
+		 * arg[0] - Uhrzeit des letzten Zugriffs
+		 * arg[1] - Datum des letzten Zugriffs
+		 * arg[2] - Uhrzeit der letzten Modifikation
+		 * arg[3] - Datum der letzten Modifikation
+		 * Wenn arg ein Nullzeiger ist, sollen alle drei Zeiten (also auch
+		 * die Erstellungszeit) auf das aktuelle Datum gesetzt werden, sonst
+		 * atime/adate auf arg[0/1], mtime/mdate auf arg[2/3] und ctime/cdate
+		 * auf die aktuelle Uhrzeit/das aktuelle Datum. Die Erstellungszeit
+		 * (also ctime/cdate) wird immer auf die aktuelle Zeit gesetzt, damit
+		 * man eine Datei nicht zurÅckdatieren kann (das kann durchaus
+		 * wichtig sein).
+		 */
+	case FUTIME:
+		/* FÅr FUTIME braucht man Schreibzugriff auf die Datei */
+		if (!waccess(entry))
+			return(EACCDN);
+		timebuf = (WORD *)arg;
+		entry->de_xattr.st_ctim.u.d.time = Tgettime();
+		entry->de_xattr.st_ctim.u.d.date = Tgetdate();
+		if (timebuf != NULL)
+		{
+			entry->de_xattr.st_atim.u.d.time = timebuf[0];
+			entry->de_xattr.st_atim.u.d.date = timebuf[1];
+			entry->de_xattr.st_mtim.u.d.time = timebuf[2];
+			entry->de_xattr.st_mtim.u.d.date = timebuf[3];
+		} else
+		{
+			entry->de_xattr.st_atim.u.d.time = entry->de_xattr.st_mtim.u.d.time =
+				entry->de_xattr.st_ctim.u.d.time;
+			entry->de_xattr.st_atim.u.d.date = entry->de_xattr.st_mtim.u.d.date =
+				entry->de_xattr.st_ctim.u.d.date;
+		}
+		return(E_OK);
+	default:
+		return(EINVFN);
 	}
 }
+
 
 /* Ab hier folgen die Funktionen des Device-Treibers */
 
@@ -2405,9 +2379,9 @@ LONG dcntl_action(DIRENTRY *entry, LONG cmd, LONG arg)
  */
 LONG ramdisk_close(MX_FD *file)
 {
-	RAMDISK_FD	*fd;
+	RAMDISK_FD *fd;
 	LONG err;
-	
+
 	TRACE(("close - %L\r\n", file));
 	fd = (RAMDISK_FD *)file;
 	if ((err = check_fd(fd)) < 0)
@@ -2423,6 +2397,7 @@ LONG ramdisk_close(MX_FD *file)
 		fd->fd_file = NULL;
 	return(E_OK);
 }
+
 
 /*
  * Beim Lesen muû man immer darauf achten, daû man nicht Åber das
@@ -2440,11 +2415,9 @@ LONG ramdisk_close(MX_FD *file)
  */
 LONG ramdisk_read(MX_FD *file, LONG count, void *_buffer)
 {
-	RAMDISK_FD	*fd;
-	FILEBLOCK	*the_file;
-	LONG		pos,
-				read,
-				readable;
+	RAMDISK_FD *fd;
+	FILEBLOCK *the_file;
+	LONG pos, read, readable;
 	char *buffer = _buffer;
 	LONG err;
 
@@ -2452,19 +2425,19 @@ LONG ramdisk_read(MX_FD *file, LONG count, void *_buffer)
 	fd = (RAMDISK_FD *)file;
 	if ((err = check_fd(fd)) < 0)
 		return err;
-/*
- * Wenn das File nicht zum Lesen oder AusfÅhren geîffnet war, einen
- * Fehler melden
- */
+	/*
+	 * Wenn das File nicht zum Lesen oder AusfÅhren geîffnet war, einen
+	 * Fehler melden
+	 */
 	if ((fd->fd_mode & (OM_RPERM | OM_EXEC)) == 0)
 		return(EACCDN);
-/* Ggf. die Anzahl der zu lesenden Bytes verringern */
+	/* Ggf. die Anzahl der zu lesenden Bytes verringern */
 	if ((fd->fd_fpos + count) > fd->fd_file->de_xattr.st_size)
 		count = fd->fd_file->de_xattr.st_size - fd->fd_fpos;
-/*
- * Den Fileblock und die Position in ihm ermitteln, an der das Lesen
- * beginnen muû
- */
+	/*
+	 * Den Fileblock und die Position in ihm ermitteln, an der das Lesen
+	 * beginnen muû
+	 */
 	pos = 0L;
 	the_file = (FILEBLOCK *)fd->fd_file->de_faddr;
 	while ((pos + DEFAULTFILE) < fd->fd_fpos)
@@ -2473,13 +2446,13 @@ LONG ramdisk_read(MX_FD *file, LONG count, void *_buffer)
 		pos += DEFAULTFILE;
 	}
 	pos = fd->fd_fpos - pos;
-/*
- * In der folgenden Schleife werden so lange aufeinanderfolgende
- * Fileblîcke in den Zielpuffer kopiert, bis alle lesbaren Bytes
- * bearbeitet wurden. Da Anfang und Ende des Lesens mitten in einem
- * Block liegen kînnen, wird mit der Variable readable angegeben,
- * wieviele Bytes im aktuellen Durchgang gelesen werden kînnen.
- */
+	/*
+	 * In der folgenden Schleife werden so lange aufeinanderfolgende
+	 * Fileblîcke in den Zielpuffer kopiert, bis alle lesbaren Bytes
+	 * bearbeitet wurden. Da Anfang und Ende des Lesens mitten in einem
+	 * Block liegen kînnen, wird mit der Variable readable angegeben,
+	 * wieviele Bytes im aktuellen Durchgang gelesen werden kînnen.
+	 */
 	readable = DEFAULTFILE - pos;
 	read = 0L;
 	while (count > 0L)
@@ -2493,16 +2466,17 @@ LONG ramdisk_read(MX_FD *file, LONG count, void *_buffer)
 		pos = 0L;
 		the_file = the_file->next;
 	}
-/*
- * Am Ende die Position des innerhalb der Datei auf den aktuellen
- * Stand bringen und die letzte Zugriffszeit setzen
- */
+	/*
+	 * Am Ende die Position des innerhalb der Datei auf den aktuellen
+	 * Stand bringen und die letzte Zugriffszeit setzen
+	 */
 	fd->fd_fpos += read;
 	fd->fd_file->de_xattr.st_atim.u.d.time = Tgettime();
 	fd->fd_file->de_xattr.st_atim.u.d.date = Tgetdate();
-/* ZurÅckgeben, wieviele Bytes tatsÑchlich gelesen wurden */
+	/* ZurÅckgeben, wieviele Bytes tatsÑchlich gelesen wurden */
 	return(read);
 }
+
 
 /*
  * FÅr das Schreiben gilt Ñhnliches wie fÅr das Lesen, allerdings muû
@@ -2518,30 +2492,22 @@ LONG ramdisk_read(MX_FD *file, LONG count, void *_buffer)
 LONG ramdisk_write(MX_FD *file, LONG count, void *_buffer)
 {
 	char *buffer = _buffer;
-	RAMDISK_FD	*fd;
-	FILEBLOCK	*the_file,
-				*add,
-				*j,
-				*new;
-	LONG		new_blocks,
-				i,
-				writeable,
-				written,
-				maxcount,
-				pos;
+	RAMDISK_FD *fd;
+	FILEBLOCK *the_file, *add, *j, *new;
+	LONG new_blocks, i, writeable, written, maxcount, pos;
 	LONG err;
 
 	TRACE(("write - %L, %L\r\n", file, count));
 	fd = (RAMDISK_FD *)file;
 	if ((err = check_fd(fd)) < 0)
 		return err;
-/* Fehler melden, wenn das File nicht zum Schreiben geîffnet ist */
+	/* Fehler melden, wenn das File nicht zum Schreiben geîffnet ist */
 	if ((fd->fd_mode & OM_WPERM) == 0)
 		return(EACCDN);
-/*
- * Den Fileblock, in dem das Schreiben beginnt und den, an den ggf.
- * neue Blîcke angehÑngt werden, ermitteln.
- */
+	/*
+	 * Den Fileblock, in dem das Schreiben beginnt und den, an den ggf.
+	 * neue Blîcke angehÑngt werden, ermitteln.
+	 */
 	pos = 0L;
 	j = the_file = (FILEBLOCK *)fd->fd_file->de_faddr;
 	while (j != NULL)
@@ -2554,26 +2520,25 @@ LONG ramdisk_write(MX_FD *file, LONG count, void *_buffer)
 		add = j;
 		j = j->next;
 	}
-/*
- * Berechnen, wieviele Bytes maximal in die bisher vorhandenen
- * Fileblîcke passen. Sollte das nicht reichen, um alle gewÅnschten
- * Bytes zu schreiben, muû die Datei erweitert werden.
- */
+	/*
+	 * Berechnen, wieviele Bytes maximal in die bisher vorhandenen
+	 * Fileblîcke passen. Sollte das nicht reichen, um alle gewÅnschten
+	 * Bytes zu schreiben, muû die Datei erweitert werden.
+	 */
 	maxcount = fd->fd_file->de_xattr.st_blocks * DEFAULTFILE;
 	if ((fd->fd_fpos + count) > maxcount)
 	{
-/*
- * Zum Erweitern berechnen, wieviele neue Fileblîcke benîtigt werden
- */
-		new_blocks = (fd->fd_fpos + count + DEFAULTFILE - 1) /
-			DEFAULTFILE;
+		/*
+		 * Zum Erweitern berechnen, wieviele neue Fileblîcke benîtigt werden
+		 */
+		new_blocks = (fd->fd_fpos + count + DEFAULTFILE - 1) / DEFAULTFILE;
 		new_blocks -= fd->fd_file->de_xattr.st_blocks;
-/*
- * Entsprechend viele Blîcke der Reihe nach anfordern, an das
- * Fileende anhÑngen und die Zahl der schreibbaren Bytes entsprechend
- * erhîhen. Sollte fÅr einen Block kein Speicher mehr verfÅgbar sein,
- * muû die Schleife vorzeitig abgebrochen werden.
- */
+		/*
+		 * Entsprechend viele Blîcke der Reihe nach anfordern, an das
+		 * Fileende anhÑngen und die Zahl der schreibbaren Bytes entsprechend
+		 * erhîhen. Sollte fÅr einen Block kein Speicher mehr verfÅgbar sein,
+		 * muû die Schleife vorzeitig abgebrochen werden.
+		 */
 		for (i = 0; i < new_blocks; i++)
 		{
 			if ((new = Kmalloc(sizeof(FILEBLOCK))) == NULL)
@@ -2584,17 +2549,17 @@ LONG ramdisk_write(MX_FD *file, LONG count, void *_buffer)
 			new->next = NULL;
 			add = new;
 		}
-/*
- * Jetzt bestimmen, wieviele Bytes tatsÑchlich geschrieben werden
- * kînnen
- */
+		/*
+		 * Jetzt bestimmen, wieviele Bytes tatsÑchlich geschrieben werden
+		 * kînnen
+		 */
 		if ((fd->fd_fpos + count) > maxcount)
 			count = maxcount - fd->fd_fpos;
 	}
-/*
- * Die Vorgehensweise zum Schreiben entspricht exakt der zum Lesen,
- * nur daû Quelle und Ziel vertauscht sind
- */
+	/*
+	 * Die Vorgehensweise zum Schreiben entspricht exakt der zum Lesen,
+	 * nur daû Quelle und Ziel vertauscht sind
+	 */
 	pos = fd->fd_fpos - pos;
 	writeable = DEFAULTFILE - pos;
 	written = 0L;
@@ -2609,26 +2574,27 @@ LONG ramdisk_write(MX_FD *file, LONG count, void *_buffer)
 		pos = 0L;
 		the_file = the_file->next;
 	}
-/*
- * Auch hier nach dem Schreiben die Position innerhalb der Datei auf
- * den aktuellen Stand bringen. Da sich die Datei durch das Schreiben
- * vergrîûert haben kann, muû ggf. die Dateigrîûe im Directoryeintrag
- * angepaût werden. Beim Lesen des Eintrags erhÑlt man also immer die
- * gerade aktuelle LÑnge, selbst wenn das File noch beschrieben wird.
- */
+	/*
+	 * Auch hier nach dem Schreiben die Position innerhalb der Datei auf
+	 * den aktuellen Stand bringen. Da sich die Datei durch das Schreiben
+	 * vergrîûert haben kann, muû ggf. die Dateigrîûe im Directoryeintrag
+	 * angepaût werden. Beim Lesen des Eintrags erhÑlt man also immer die
+	 * gerade aktuelle LÑnge, selbst wenn das File noch beschrieben wird.
+	 */
 	fd->fd_fpos += written;
 	if (fd->fd_fpos > fd->fd_file->de_xattr.st_size)
 		fd->fd_file->de_xattr.st_size = fd->fd_fpos;
-/*
- * Die Modifikationszeit der Datei setzen und anzeigen, daû die Datei
- * verÑndert wurde. Am Schluû dann die Zahl der geschriebenen Bytes
- * zurÅckliefern.
- */
+	/*
+	 * Die Modifikationszeit der Datei setzen und anzeigen, daû die Datei
+	 * verÑndert wurde. Am Schluû dann die Zahl der geschriebenen Bytes
+	 * zurÅckliefern.
+	 */
 	fd->fd_file->de_xattr.st_mtim.u.d.time = Tgettime();
 	fd->fd_file->de_xattr.st_mtim.u.d.date = Tgetdate();
 	fd->fd_file->de_xattr.st_attr |= FA_CHANGED;
 	return(written);
 }
+
 
 /*
  * Mit stat soll festgestellt werden, ob Bytes gelesen bzw.
@@ -2637,44 +2603,43 @@ LONG ramdisk_write(MX_FD *file, LONG count, void *_buffer)
  * ich mich auch noch nicht auseinandergesetzt, zumal das Problem
  * in der Regel auch nur fÅr "echte" Devices akut ist.
  */
-LONG ramdisk_stat(MX_FD *file, MAGX_UNSEL *unselect, WORD rwflag,
-	LONG apcode)
+LONG ramdisk_stat(MX_FD *file, MAGX_UNSEL *unselect, WORD rwflag, LONG apcode)
 {
-	RAMDISK_FD	*fd;
-	LONG		retcode;
+	RAMDISK_FD *fd;
+	LONG retcode;
 
-	TRACE(("stat - %L, %L, %L, %L\r\n", file, unselect,
-		(LONG)rwflag, apcode));
+	TRACE(("stat - %L, %L, %L, %L\r\n", file, unselect, (LONG)rwflag, apcode));
 	fd = (RAMDISK_FD *)file;
 	if ((retcode = check_fd(fd)) < 0)
 	{
 		;
 	}
-/*
- * Wenn Lesebereitschaft bei einem File getestet werden soll, daû
- * nicht zum Lesen geîffnet ist, muû ein Fehler gemeldet werden
- */
+	/*
+	 * Wenn Lesebereitschaft bei einem File getestet werden soll, daû
+	 * nicht zum Lesen geîffnet ist, muû ein Fehler gemeldet werden
+	 */
 	else if (!rwflag && ((fd->fd_mode & (OM_RPERM | OM_EXEC)) == 0))
 	{
 		retcode = EACCDN;
 	}
-/* Gleiches gilt natÅrlich auch fÅr den umgekehrten Fall */
+	/* Gleiches gilt natÅrlich auch fÅr den umgekehrten Fall */
 	else if (rwflag && ((fd->fd_mode & OM_WPERM) == 0))
 	{
 		retcode = EACCDN;
 	} else
 	{
-/* Ansonsten kann getrost "Bereit" gemeldet werden */
+		/* Ansonsten kann getrost "Bereit" gemeldet werden */
 		retcode = 1L;
 	}
-/*
- * Bei der ErgebnisrÅckgabe muû, wenn unselect kein Nullpointer war,
- * der Returnwert auch in unsel.status abgelegt werden
- */
+	/*
+	 * Bei der ErgebnisrÅckgabe muû, wenn unselect kein Nullpointer war,
+	 * der Returnwert auch in unsel.status abgelegt werden
+	 */
 	if (unselect != NULL)
 		unselect->unsel.status = retcode;
 	return(retcode);
 }
+
 
 /*
  * Wenn der Schreib-/Lesezeiger einer Datei verschoben werden soll,
@@ -2684,51 +2649,52 @@ LONG ramdisk_stat(MX_FD *file, MAGX_UNSEL *unselect, WORD rwflag,
  */
 LONG ramdisk_seek(MX_FD *file, LONG where, WORD mode)
 {
-	RAMDISK_FD	*fd;
-	LONG		new_pos;
+	RAMDISK_FD *fd;
+	LONG new_pos;
 	LONG err;
 
 	TRACE(("seek - %L, %L, %L\r\n", file, where, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
 	if ((err = check_fd(fd)) < 0)
 		return err;
-/* Je nach Modus die Bezugsposition fÅr das seek ermitteln */
+	/* Je nach Modus die Bezugsposition fÅr das seek ermitteln */
 	switch (mode)
 	{
-		case 0:
-			new_pos = 0L;
-			break;
-		case 1:
-			new_pos = fd->fd_fpos;
-			break;
-		case 2:
-			new_pos = fd->fd_file->de_xattr.st_size;
-			break;
-		default:
-/*
- * Bei einem ungÅltigen Seek-Modus gebe ich einfach die aktuelle
- * Position zurÅck. Ob das so OK ist, weiû ich nicht, aber wenn ein
- * Programm Fseek falsch aufruft, muû es auch mit falschen
- * Ergebnissen rechnen...
- */
-			return(fd->fd_fpos);
+	case 0:
+		new_pos = 0L;
+		break;
+	case 1:
+		new_pos = fd->fd_fpos;
+		break;
+	case 2:
+		new_pos = fd->fd_file->de_xattr.st_size;
+		break;
+	default:
+		/*
+		 * Bei einem ungÅltigen Seek-Modus gebe ich einfach die aktuelle
+		 * Position zurÅck. Ob das so OK ist, weiû ich nicht, aber wenn ein
+		 * Programm Fseek falsch aufruft, muû es auch mit falschen
+		 * Ergebnissen rechnen...
+		 */
+		return(fd->fd_fpos);
 	}
-/*
- * Den Offset addieren (er gibt immer an, wieviele Bytes Åbersprungen
- * werden sollen, also muû er fÅr Modus 2 einen Wert <= 0 haben).
- * WÅrden dadurch die Grenzen Åberschritten, den Zeiger nicht
- * verÑndern und einen Fehler melden.
- */
+	/*
+	 * Den Offset addieren (er gibt immer an, wieviele Bytes Åbersprungen
+	 * werden sollen, also muû er fÅr Modus 2 einen Wert <= 0 haben).
+	 * WÅrden dadurch die Grenzen Åberschritten, den Zeiger nicht
+	 * verÑndern und einen Fehler melden.
+	 */
 	new_pos += where;
 	if ((new_pos < 0L) || (new_pos > fd->fd_file->de_xattr.st_size))
 		return(ERANGE);
-/*
- * Ging alles glatt, den Zeiger auf die neue Position setzen und
- * diese zurÅckliefern
- */
+	/*
+	 * Ging alles glatt, den Zeiger auf die neue Position setzen und
+	 * diese zurÅckliefern
+	 */
 	fd->fd_fpos = new_pos;
 	return(new_pos);
 }
+
 
 /*
  * Soll das Datum einer geîffneten Datei verÑndert werden, muû man
@@ -2744,37 +2710,38 @@ LONG ramdisk_seek(MX_FD *file, LONG where, WORD mode)
  */
 LONG ramdisk_datime(MX_FD *file, WORD *d, WORD setflag)
 {
-	RAMDISK_FD	*fd;
+	RAMDISK_FD *fd;
 	LONG err;
 
 	TRACE(("datime - %L, %L\r\n", file, (LONG)setflag));
 	fd = (RAMDISK_FD *)file;
 	if ((err = check_fd(fd)) < 0)
 		return err;
-	switch(setflag)
+	switch (setflag)
 	{
-		case 0:
-/* Zeit und Datum der letzten Modifikation auslesen */
-			d[0] = fd->fd_file->de_xattr.st_mtim.u.d.time;
-			d[1] = fd->fd_file->de_xattr.st_mtim.u.d.date;
-			break;
-		case 1:
-/* Zum éndern mÅssen Schreibrechte fÅr die Datei vorhanden sein */
-			if (!waccess(fd->fd_file))
-				return(EACCDN);
-			fd->fd_file->de_xattr.st_ctim.u.d.time = Tgettime();
-			fd->fd_file->de_xattr.st_ctim.u.d.date = Tgetdate();
-			fd->fd_file->de_xattr.st_atim.u.d.time =
-				fd->fd_file->de_xattr.st_mtim.u.d.time = d[0];
-			fd->fd_file->de_xattr.st_atim.u.d.date =
-				fd->fd_file->de_xattr.st_mtim.u.d.date = d[1];
-			break;
-		default:
-/* UngÅltige Werte fÅr setflag werden mit Fehler quittiert */
+	case 0:
+		/* Zeit und Datum der letzten Modifikation auslesen */
+		d[0] = fd->fd_file->de_xattr.st_mtim.u.d.time;
+		d[1] = fd->fd_file->de_xattr.st_mtim.u.d.date;
+		break;
+	case 1:
+		/* Zum éndern mÅssen Schreibrechte fÅr die Datei vorhanden sein */
+		if (!waccess(fd->fd_file))
 			return(EACCDN);
+		fd->fd_file->de_xattr.st_ctim.u.d.time = Tgettime();
+		fd->fd_file->de_xattr.st_ctim.u.d.date = Tgetdate();
+		fd->fd_file->de_xattr.st_atim.u.d.time =
+			fd->fd_file->de_xattr.st_mtim.u.d.time = d[0];
+		fd->fd_file->de_xattr.st_atim.u.d.date =
+			fd->fd_file->de_xattr.st_mtim.u.d.date = d[1];
+		break;
+	default:
+		/* UngÅltige Werte fÅr setflag werden mit Fehler quittiert */
+		return(EACCDN);
 	}
 	return(E_OK);
 }
+
 
 /*
  * ioctl ist der Bruder von dcntl und ist fÅr offene Dateien
@@ -2787,89 +2754,88 @@ LONG ramdisk_datime(MX_FD *file, WORD *d, WORD setflag)
  */
 LONG ramdisk_ioctl(MX_FD *file, WORD cmd, void *buf)
 {
-	RAMDISK_FD	*fd;
-	WORD		*timebuf;
-	LONG		*avail;
-	XATTR		*xattr;
+	RAMDISK_FD *fd;
+	WORD *timebuf;
+	LONG *avail;
+	XATTR *xattr;
 	LONG err;
 
-	TRACE(("ioctl - %L, %L, %L\r\n", file, (LONG)cmd,  buf));
+	TRACE(("ioctl - %L, %L, %L\r\n", file, (LONG)cmd, buf));
 	fd = (RAMDISK_FD *)file;
 	if ((err = check_fd(fd)) < 0)
 		return err;
 	avail = (LONG *)buf;
 	switch (cmd)
 	{
-/* Zu FUTIME siehe dcntl */
-		case FUTIME:
-			if (!waccess(fd->fd_file))
-				return(EACCDN);
-			timebuf = (WORD *)buf;
-			fd->fd_file->de_xattr.st_ctim.u.d.time = Tgettime();
-			fd->fd_file->de_xattr.st_ctim.u.d.date = Tgetdate();
-			if (timebuf != NULL)
-			{
-				fd->fd_file->de_xattr.st_atim.u.d.time = timebuf[0];
-				fd->fd_file->de_xattr.st_atim.u.d.date = timebuf[1];
-				fd->fd_file->de_xattr.st_mtim.u.d.time = timebuf[2];
-				fd->fd_file->de_xattr.st_mtim.u.d.date = timebuf[3];
-			}
-			else
-			{
-				fd->fd_file->de_xattr.st_atim.u.d.time =
-					fd->fd_file->de_xattr.st_mtim.u.d.time =
-					fd->fd_file->de_xattr.st_ctim.u.d.time;
-				fd->fd_file->de_xattr.st_atim.u.d.date =
-					fd->fd_file->de_xattr.st_mtim.u.d.date =
-					fd->fd_file->de_xattr.st_ctim.u.d.date;
-			}
-			return(E_OK);
-		case FIONREAD:
-/*
- * Es kann natÅrlich nur fÅr Dateien, die zum Lesen geîffnet sind,
- * die Anzahl der lesbaren Bytes ermittelt werden
- */
-			if ((fd->fd_mode & (OM_RPERM | OM_EXEC)) == 0)
-				return(EACCDN);
-/*
- * Bei der Ramdisk kînnen immer soviele Bytes gelesen werden, wie
- * noch zwischen Lesezeigerposition und Dateiende vorhanden sind
- */
-			*avail = fd->fd_file->de_xattr.st_size - fd->fd_fpos;
-			return(E_OK);
-		case FIONWRITE:
-/*
- * FÅr FIONWRITE gilt natÅrlich analog zu FIONREAD, daû nur fÅr
- * Dateien, die zum Schreiben offen sind, die Anzahl der schreibbaren
- * Bytes ermittelt werden kann
- */
-			if ((fd->fd_mode & OM_WPERM) == 0)
-				return(EACCDN);
-/*
- * Es kînnen auf jeden Fall soviele Bytes geschrieben werden, wie
- * zwischen Ende des letzten Fileblocks und der Position des
- * Schreibzeigers noch vorhanden sind
- */
-			*avail = fd->fd_file->de_xattr.st_blocks * DEFAULTFILE -
-				fd->fd_fpos;
-			if (*avail < 0L)
-				*avail = 0L;
-			return(E_OK);
-		case FSTAT:
-/*
- * FÅr FSTAT muû einfach die XATTR-Struktur der Datei in den
- * Zielbereich kopiert werden. FÅr andere Filesysteme ist das u.U.
- * wesentlich kompliziert, weil die XATTR-Struktur erst "gebastelt"
- * werden muû.
- */
-			xattr = (XATTR *)buf;
-			*xattr = fd->fd_file->de_xattr;
-			return(E_OK);
-		default:
-/* Nicht unterstÅtzte Kommandos mÅssen mit EINVFN abgelehnt werden */
-			return(EINVFN);
+	/* Zu FUTIME siehe dcntl */
+	case FUTIME:
+		if (!waccess(fd->fd_file))
+			return(EACCDN);
+		timebuf = (WORD *)buf;
+		fd->fd_file->de_xattr.st_ctim.u.d.time = Tgettime();
+		fd->fd_file->de_xattr.st_ctim.u.d.date = Tgetdate();
+		if (timebuf != NULL)
+		{
+			fd->fd_file->de_xattr.st_atim.u.d.time = timebuf[0];
+			fd->fd_file->de_xattr.st_atim.u.d.date = timebuf[1];
+			fd->fd_file->de_xattr.st_mtim.u.d.time = timebuf[2];
+			fd->fd_file->de_xattr.st_mtim.u.d.date = timebuf[3];
+		} else
+		{
+			fd->fd_file->de_xattr.st_atim.u.d.time =
+				fd->fd_file->de_xattr.st_mtim.u.d.time =
+				fd->fd_file->de_xattr.st_ctim.u.d.time;
+			fd->fd_file->de_xattr.st_atim.u.d.date =
+				fd->fd_file->de_xattr.st_mtim.u.d.date =
+				fd->fd_file->de_xattr.st_ctim.u.d.date;
+		}
+		return(E_OK);
+	case FIONREAD:
+		/*
+		 * Es kann natÅrlich nur fÅr Dateien, die zum Lesen geîffnet sind,
+		 * die Anzahl der lesbaren Bytes ermittelt werden
+		 */
+		if ((fd->fd_mode & (OM_RPERM | OM_EXEC)) == 0)
+			return(EACCDN);
+		/*
+		 * Bei der Ramdisk kînnen immer soviele Bytes gelesen werden, wie
+		 * noch zwischen Lesezeigerposition und Dateiende vorhanden sind
+		 */
+		*avail = fd->fd_file->de_xattr.st_size - fd->fd_fpos;
+		return(E_OK);
+	case FIONWRITE:
+		/*
+		 * FÅr FIONWRITE gilt natÅrlich analog zu FIONREAD, daû nur fÅr
+		 * Dateien, die zum Schreiben offen sind, die Anzahl der schreibbaren
+		 * Bytes ermittelt werden kann
+		 */
+		if ((fd->fd_mode & OM_WPERM) == 0)
+			return(EACCDN);
+		/*
+		 * Es kînnen auf jeden Fall soviele Bytes geschrieben werden, wie
+		 * zwischen Ende des letzten Fileblocks und der Position des
+		 * Schreibzeigers noch vorhanden sind
+		 */
+		*avail = fd->fd_file->de_xattr.st_blocks * DEFAULTFILE - fd->fd_fpos;
+		if (*avail < 0L)
+			*avail = 0L;
+		return(E_OK);
+	case FSTAT:
+		/*
+		 * FÅr FSTAT muû einfach die XATTR-Struktur der Datei in den
+		 * Zielbereich kopiert werden. FÅr andere Filesysteme ist das u.U.
+		 * wesentlich kompliziert, weil die XATTR-Struktur erst "gebastelt"
+		 * werden muû.
+		 */
+		xattr = (XATTR *)buf;
+		*xattr = fd->fd_file->de_xattr;
+		return(E_OK);
+	default:
+		/* Nicht unterstÅtzte Kommandos mÅssen mit EINVFN abgelehnt werden */
+		return(EINVFN);
 	}
 }
+
 
 /*
  * Ein Byte aus einer Datei auslesen. Bei Filesystemen fÅhrt man
@@ -2882,22 +2848,23 @@ LONG ramdisk_ioctl(MX_FD *file, WORD cmd, void *buf)
  */
 LONG ramdisk_getc(MX_FD *file, WORD mode)
 {
-	RAMDISK_FD	*fd;
-	UBYTE		dummy;
+	RAMDISK_FD *fd;
+	UBYTE dummy;
 	LONG err;
 
 	TRACE(("getchar - %L, %L\r\n", file, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
 	if ((err = check_fd(fd)) < 0)
 		return err;
-	if (ramdisk_read(file, 1L, (char *)&dummy) != 1L)
+	if (ramdisk_read(file, 1L, &dummy) != 1L)
 		return(0xff1aL);
-/*
- * Konnte ein Byte gelesen werden, dieses auf ULONG erweitern und
- * zurÅckliefern
- */
+	/*
+	 * Konnte ein Byte gelesen werden, dieses auf ULONG erweitern und
+	 * zurÅckliefern
+	 */
 	return((ULONG)dummy);
 }
+
 
 /*
  * getline ist etwas vertrackter, weil man prinzipiell auch auf
@@ -2915,45 +2882,43 @@ LONG ramdisk_getc(MX_FD *file, WORD mode)
  */
 LONG ramdisk_getline(MX_FD *file, char *buf, WORD mode, LONG size)
 {
-	RAMDISK_FD	*fd;
-	LONG		dummy,
-				count;
+	RAMDISK_FD *fd;
+	LONG dummy, count;
 
 	TRACE(("getline - %L, %L, %L\r\n", file, size, (LONG)mode));
 	fd = (RAMDISK_FD *)file;
 	if (check_fd(fd) < 0)
 		return(0L);
-/*
- * Die Schleife hat nur interne Abbruchsbedingungen, count zÑhlt
- * dabei, wieviele Zeichen bisher eingelesen wurden
- */
+	/*
+	 * Die Schleife hat nur interne Abbruchsbedingungen, count zÑhlt
+	 * dabei, wieviele Zeichen bisher eingelesen wurden
+	 */
 	for (count = 0L;; count++)
 	{
-/* Abbrechen, wenn schon die Maximalzahl an Zeichen gelesen ist */
+		/* Abbrechen, wenn schon die Maximalzahl an Zeichen gelesen ist */
 		if (count == size)
 			return(count);
-/* Das nÑchste Zeichen via getline einlesen */
+		/* Das nÑchste Zeichen via getline einlesen */
 		dummy = ramdisk_getc(file, 0);
-		TRACE(("getline: count = %L, gelesenes Byte: %L\r\n",
-			count, dummy));
-/*
- * Ist es das Zeichen fÅr Dateiende, den Puffer mit einem Nullbyte
- * abschlieûen und die Zahl der gelesen Zeichen liefern (das mit dem
- * Nullbyte ist nicht unbedingt nîtig, sieht allerdings besser aus)
- */
+		TRACE(("getline: count = %L, gelesenes Byte: %L\r\n", count, dummy));
+		/*
+		 * Ist es das Zeichen fÅr Dateiende, den Puffer mit einem Nullbyte
+		 * abschlieûen und die Zahl der gelesen Zeichen liefern (das mit dem
+		 * Nullbyte ist nicht unbedingt nîtig, sieht allerdings besser aus)
+		 */
 		if (dummy == 0xff1aL)
 		{
 			buf[count] = 0;
 			return(count);
 		}
-/*
- * Wurde ein CR oder ein LF gelesen, ist der Lesevorgang ebenfalls
- * beendet, das jeweilige Zeichen darf aber nicht mitgezÑhlt werden.
- * Im Falle von CR muû noch das nÑchste Zeichen Åberlesen werden, da
- * Zeilenenden entweder CRLF oder LF sind und das LF im ersten Fall
- * eben Åbersprungen werden muû (sonst wÅrde der nÑchste Aufruf von
- * getline eine Leerzeile liefern).
- */
+		/*
+		 * Wurde ein CR oder ein LF gelesen, ist der Lesevorgang ebenfalls
+		 * beendet, das jeweilige Zeichen darf aber nicht mitgezÑhlt werden.
+		 * Im Falle von CR muû noch das nÑchste Zeichen Åberlesen werden, da
+		 * Zeilenenden entweder CRLF oder LF sind und das LF im ersten Fall
+		 * eben Åbersprungen werden muû (sonst wÅrde der nÑchste Aufruf von
+		 * getline eine Leerzeile liefern).
+		 */
 		if ((dummy == 0xdL) || (dummy == 0xaL))
 		{
 			if (dummy == 0xdL)
@@ -2961,13 +2926,14 @@ LONG ramdisk_getline(MX_FD *file, char *buf, WORD mode, LONG size)
 			buf[count] = 0;
 			return(count);
 		}
-/*
- * Bei allen anderen Zeichen dieses jetzt im Puffer plazieren und den
- * nÑchsten Schleifendurchlauf beginnen
- */
+		/*
+		 * Bei allen anderen Zeichen dieses jetzt im Puffer plazieren und den
+		 * nÑchsten Schleifendurchlauf beginnen
+		 */
 		buf[count] = dummy;
 	}
 }
+
 
 /*
  * Auch das Ausgeben fÅhrt man am geschicktesten auf write zurÅck,
@@ -2979,7 +2945,7 @@ LONG ramdisk_getline(MX_FD *file, char *buf, WORD mode, LONG size)
  */
 LONG ramdisk_putc(MX_FD *file, WORD mode, LONG value)
 {
-	char		dummy;
+	char dummy;
 
 	TRACE(("putc - %L, %L, %L\r\n", file, (LONG)mode, value));
 	dummy = (char)value;
