@@ -56,7 +56,9 @@ parse_line (char *line)
 	char *driver;
 	char *args;
 	int cacheblocks = DEFAULTCACHESIZE;
-	
+	LONG data;		/* for kernel__sprintf */
+	char *str;
+
 	if (!c) return;
 	
 	driver = strtok2 (&l, ",");
@@ -103,32 +105,38 @@ parse_line (char *line)
 		char buf[80];
 		size_t cachesize = cacheblocks * sizeof (CACHEENTRY);
 
-		DCCache = MXALLOC (cachesize, 2);
+		DCCache = Mxalloc (cachesize, 2);
 
 		if (!DCCache && cacheblocks > DEFAULTCACHESIZE)
 		{
 			cacheblocks = DEFAULTCACHESIZE;
 			cachesize = cacheblocks * sizeof (CACHEENTRY);
-			DCCache = MXALLOC (cachesize, 2);
+			DCCache = Mxalloc (cachesize, 2);
 		}
+
+		data = cachesize / 1024;
 
 		if (DCCache)
 		{
 			memset (DCCache, 0, cachesize);
 			DCSize = cacheblocks;
-			SPRINTF (buf, "(%ld Kbytes of sector cache)\r\n", cachesize / 1024);
-			CCONWS (buf);
+			kernel__sprintf(buf,
+						"(%L Kbytes of sector cache)\r\n",
+						&data);
+			Cconws (buf);
 		}
 		else
 		{
-			SPRINTF (buf, "Can't allocate %ld bytes for sector caching, aborting...\r\n", cachesize / 1024);
-			CCONWS (buf);
+			kernel__sprintf(buf,
+					"Can't allocate %L bytes for sector caching, aborting...\r\n",
+					&data);
+			Cconws (buf);
 			return;			
 		}
 	}
 	
 	
-	/* Ger„te eintragen */
+	/* Geraete eintragen */
 	l = args;
 	args = strtok2 (&l, " ,\t");
 	
@@ -138,20 +146,21 @@ parse_line (char *line)
 			isalpha (args[0]) && isalpha (args[2]))
 		{
 			int dosdrive, metadrive;
-			char buf[80];
-			
-			SPRINTF (buf, "MetaDOS XBIOS device %c on %c:\r\n",
-				args[2], args[0]);
-			CCONWS (buf);
+
+			str = "MetaDOS XBIOS device X on X:\r\n";
+			str[21] = args[2];
+			str[26] = args[0];
+			Cconws (str);
 			
 			dosdrive = toupper (args[0]) - 'A';
 			metadrive = toupper (args[2]);
 
-			mydrives[dosdrive] = MXALLOC (sizeof (LOGICAL_DEV), 0);
+			mydrives[dosdrive] = Mxalloc (sizeof (LOGICAL_DEV), 0);
 			if (!mydrives[dosdrive])
 			{
-				SPRINTF (buf, "Not enough memory for drive %c:\r\n", dosdrive);
-				CCONWS (buf);
+				str = "Not enough memory for drive X:\r\n";
+				str[28] = dosdrive;
+				Cconws (str);
 			}
 			else
 			{
@@ -190,37 +199,37 @@ read_config (void)
 	char *scratch;
 	int isok;
 		
-	handle = FOPEN ("\\auto\\config.sys", 0);
+	handle = Fopen ("\\auto\\config.sys", 0);
 	
 	if (handle < 0) {
-		CCONWS ("Can't open `\\auto\\config.sys'!\r\n");
+		Cconws ("Can't open `\\auto\\config.sys'!\r\n");
 		return 0;
 	}
 
-	filesize = FSEEK (0L, (int) handle, 2);
-	FSEEK (0L, (int) handle, 0);
+	filesize = Fseek (0L, (int) handle, 2);
+	Fseek (0L, (int) handle, 0);
 
-	scratch = KMALLOC (filesize);
+	scratch = Malloc (filesize);
 	if (!scratch) {
-		FCLOSE ((int) handle);
-		CCONWS ("Not enough memory!\r\n!");
+		Fclose ((int) handle);
+		Cconws ("Not enough memory!\r\n!");
 		return 0;
 	}
 	
-	count = FREAD ((int) handle, filesize, scratch);
+	count = Fread ((int) handle, filesize, scratch);
 	if (count != filesize) {
-		FCLOSE ((int) handle);
-		CCONWS ("Read error in `\\auto\\config.sys'!\r\n!");
+		Fclose ((int) handle);
+		Cconws ("Read error in `\\auto\\config.sys'!\r\n!");
 		return 0;
 	}
 	
-	FCLOSE ((int) handle);
+	Fclose ((int) handle);
 
 	isok = parse_config (scratch);
 
-	KFREE (scratch);
+	Mfree (scratch);
 	
-	if (!isok && DCCache) MFREE (DCCache);
+	if (!isok && DCCache) Mfree (DCCache);
 	
 	return isok;
 }
