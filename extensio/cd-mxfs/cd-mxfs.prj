@@ -1,0 +1,17 @@
+spinmxfs.xfs
+.C[-IC:\pc\orig\include]
+.C[-I..\..\inc_c]
+.S[-I..\..\kernel\inc]
+.C[-P-]
+.C[-M-]
+.C[-G-]
+.C[-DMAGIC]
+.L[-S=4096]
+=
+pcstart.s      ; startup code
+cd-mxfsc.c (cd-mxfs.h, cfgread.c)
+cd-mxfs.s
+cd-mxfsk.s
+c:\pc\orig\lib\pctoslib.lib
+c:\pc\orig\lib\pcstdlib.lib
+bin\libcdfs.lib

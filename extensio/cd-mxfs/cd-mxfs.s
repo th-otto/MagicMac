@@ -9,7 +9,7 @@
 */
 
      INCLUDE "mgx_xfs.inc"
-     INCLUDE "mgx_devd.inc"
+     INCLUDE "..\..\inc_as\mgx_devd.inc"
 
 
 /*

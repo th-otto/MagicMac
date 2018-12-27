@@ -35,6 +35,7 @@ aaa.cfg
 *.ram
 *.rom
 *.sys
+*.xfs
 *.osd
 *.nod
 *.mode1v3

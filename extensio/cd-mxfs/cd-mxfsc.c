@@ -12,7 +12,6 @@
 
 #include <string.h>
 #include <ctype.h>
-#include <sys/stat.h>
 #include "cd-mxfs.h"
 #include "cdfs.h"
 #include "metados.h"
@@ -328,8 +327,7 @@ WORD main (void)
 				mi1.mi_info->mi_version >= 0x270)
 			{
 				/* WTF: messing with MetaDOS memory */
-				char *log2phys = (char *)mi1.mi_info->mi_log2phys;
-				log2phys[i] = mydrives[i]->metadevice;
+				((char *)mi1.mi_info->mi_log2phys)[i] = mydrives[i]->metadevice;
 			}
 			
 			strcpy (buff, "u:\\dev\\dsk.cmtx");
@@ -503,7 +501,7 @@ static LONG init_vol (WORD drv)
 			EDRIVE  Laufwerk ungÅltig
                E_CHNG  Laufwerk mit neuer Disk gÅltig
           */
-#if 0
+#if 1
 		DKFlipPreferred (ldp);		/* ???!!!??? */
 		DKInitVolume (ldp);			/* ???!!!??? */
 #endif
@@ -1152,7 +1150,7 @@ static LONG cdecl	xfs_attrib( MX_DD *dd, char *name, WORD mode,
 	ret = xfs_xattr( dd, name, &xa, 0);
 	if	(ret)
 		return(ret);
-	return(xa.st_attr & 0xff);
+	return(xa.attr & 0xff);
 }
 
 
