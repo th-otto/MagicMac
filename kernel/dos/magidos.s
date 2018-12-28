@@ -211,26 +211,26 @@ lslb_sizeof:
 */
      OFFSET
 
-ph_branch:     DS.W      1    /* 0x00: muss 0x601a sein!! */
-ph_tlen:       DS.L      1    /* 0x02: Laenge  des TEXT - Segments */
-ph_dlen:       DS.L      1    /* 0x06: Laenge  des DATA - Segments */
-ph_blen:       DS.L      1    /* 0x0a: Laenge  des BSS  - Segments */
-ph_slen:       DS.L      1    /* 0x0e: Laenge  der Symboltabelle   */
+ph_branch:     DS.W      1    /* 0x00: must be 0x601a */
+ph_tlen:       DS.L      1    /* 0x02: length of TEXT - segment */
+ph_dlen:       DS.L      1    /* 0x06: length of DATA - segment */
+ph_blen:       DS.L      1    /* 0x0a: length of BSS  - segment */
+ph_slen:       DS.L      1    /* 0x0e: length of symbol table */
 ph_res1:       DS.L      1    /* 0x12: */
-ph_flags:      DS.L      1    /* 0x16:  Bit 0: Heap nicht loeschen */
-                              /*        Bit 1: Laden ins FastRAM  */
-                              /*        Bit 2: Malloc aus FastRAM */
-                              /*        Bit 3: nur t+d+b+s (MagiC 5.20) */
-                              /*        Bit 4,5,6,7: Speicherschutz (MiNT) */
-                              /*        Bit 8: unbenutzt          */
-                              /*        Bit 9: unbenutzt          */
-                              /*        Bit 10: unbenutzt         */
-                              /*        Bit 11: SharedText (MiNT) */
-                              /*        Bit 12: unbenutzt         */
-                              /*        Bit 13: unbenutzt         */
-                              /*        Bit 14: unbenutzt         */
-                              /*        Bit 15: unbenutzt         */
-                              /*        Bits 31..28: TPA-Size     */
+ph_flags:      DS.L      1    /* 0x16:  Bit 0: Fastload: don't clear heap */
+                              /*        Bit 1: load to FastRAM */
+                              /*        Bit 2: Malloc from FastRAM */
+                              /*        Bit 3: only t+d+b+s (MagiC 5.20) */
+                              /*        Bit 4,5,6,7: memory protection (MiNT) */
+                              /*        Bit 8: unused */
+                              /*        Bit 9: unused */
+                              /*        Bit 10: unused */
+                              /*        Bit 11: unused */
+                              /*        Bit 12: SharedText (MiNT) */
+                              /*        Bit 13: unused */
+                              /*        Bit 14: unused */
+                              /*        Bit 15: unused */
+                              /*        Bits 31..28: TPA-Size */
                               /*         (mal 128k + 128k: Mindestgr. Heap */
 ph_reloflag:   DS.W      1    /* 0x1a: != 0: nicht relozieren */
 ph_sizeof:
