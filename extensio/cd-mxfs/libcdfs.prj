@@ -1,0 +1,17 @@
+libcdfs.lib
+.C[-IC:\pc\orig\include]
+.C[-I..\..\inc_c]
+.S[-I..\..\kernel\inc]
+.C[-P]
+.C[-M-]
+.C[-G-]
+.L[-G]
+.L[-J]
+=
+doscache.c
+doskern.c
+hfs.c
+iso9660.c
+tocfs.c
+procfile.s
+metados.c

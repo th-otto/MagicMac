@@ -14,4 +14,10 @@ cd-mxfs.s
 cd-mxfsk.s
 c:\pc\orig\lib\pctoslib.lib
 c:\pc\orig\lib\pcstdlib.lib
-bin\libcdfs.lib
+doscache.c [-P]
+doskern.c [-P]
+hfs.c [-P]
+iso9660.c [-P]
+tocfs.c [-P]
+procfile.s
+metados.c [-P]

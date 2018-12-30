@@ -10,10 +10,10 @@ char *
 sccsid (void)
 {
 #ifdef MINT
-	return "@(#)spin.xfs "VERSIONSTRING", Copyright (c) Julian F. Reschke, "__DATE__;
+	return "@(#)spin.xfs " VERSIONSTRING ", Copyright (c) Julian F. Reschke, " __DATE__;
 #endif
 #ifdef MAGIC
-	return "@(#)spinmxfs.prg "VERSIONSTRING", Copyright (c) Julian F. Reschke & Andreas Kromke, Jun  1 1997";
+	return "@(#)spinmxfs.prg " VERSIONSTRING ", Copyright (c) Julian F. Reschke & Andreas Kromke, Jun  1 1997";
 #endif
 }
 
@@ -128,7 +128,7 @@ parse_line (char *line)
 	}
 	
 	
-	/* Ger„te eintragen */
+	/* Geraete eintragen */
 	l = args;
 	args = strtok2 (&l, " ,\t");
 	
