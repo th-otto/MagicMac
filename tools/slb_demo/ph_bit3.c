@@ -20,28 +20,28 @@
 /************************************************************************/
 
 typedef struct {
- WORD ph_branch;		/* 0x00: muž 0x601a sein */
- LONG ph_tlen;			/* 0x02: L„nge  des TEXT - Segments */
- LONG ph_dlen;			/* 0x06: L„nge  des DATA - Segments */
- LONG ph_blen;			/* 0x0a: L„nge  des BSS  - Segments */
- LONG ph_slen;			/* 0x0e: L„nge  der Symboltabelle */
- LONG ph_res1;			/* 0x12: von PureC ben”tigt */
- LONG ph_flags;		/* 0x16:	Bit 0: Heap nicht l”schen */
-					/*		Bit 1: Laden ins FastRAM	 */
-					/*		Bit 2: Malloc aus FastRAM */
-					/*		Bit 3: nur t+d+b+s (MagiC 5.20) */
-					/*		Bit 4,5,6,7: Speicherschutz (MiNT) */
-					/*		Bit 8: unbenutzt		 */
-					/*		Bit 9: unbenutzt		 */
-					/*		Bit 10: unbenutzt		 */
-					/*		Bit 11: SharedText (MiNT) */
-					/*		Bit 12: unbenutzt		 */
-					/*		Bit 13: unbenutzt		 */
-					/*		Bit 14: unbenutzt		 */
-					/*		Bit 15: unbenutzt		 */
-					/*		Bits 31..28: TPA-Size	 */
-					/*		 (mal 128k + 128k: Mindestgr. Heap */
- WORD ph_reloflag;		/* 0x1a: ungleich Null => nicht relozieren */
+ WORD ph_branch;     /* 0x00: must be 0x601a */
+ LONG ph_tlen;       /* 0x02: length of TEXT - segment */
+ LONG ph_dlen;       /* 0x06: length of DATA - segment */
+ LONG ph_blen;       /* 0x0a: length of BSS  - segment */
+ LONG ph_slen;       /* 0x0e: length of Symboltabelle */
+ LONG ph_res1;       /* 0x12: von PureC ben”tigt */
+ LONG ph_flags;      /* 0x16: Bit 0: Fastload: don't clear heap */
+                        /*    Bit 1: load to FastRAM */
+                        /*    Bit 2: Malloc from FastRAM */
+                        /*    Bit 3: only t+d+b+s (MagiC 5.20) */
+                        /*    Bit 4,5,6,7: memory protection (MiNT) */
+                        /*    Bit 8: unused */
+                        /*    Bit 9: unused */
+                        /*    Bit 10: unused */
+                        /*    Bit 11: unused */
+                        /*    Bit 12: SharedText (MiNT) */
+                        /*    Bit 13: unused */
+                        /*    Bit 14: unused */
+                        /*    Bit 15: unused */
+                        /*    Bits 31..28: TPA-Size */
+                        /*     (mal 128k + 128k: Mindestgr. Heap */
+ WORD ph_reloflag;      /* 0x1a: ungleich Null => nicht relozieren */
 } PH;
 
 
