@@ -1,0 +1,6 @@
+magxct60.prg
+.S[-I..\..\..\..\inc_as]
+.S[-DOUTSIDE=0]
+.L[-S=0]
+=
+magxct60.s
