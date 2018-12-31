@@ -1,0 +1,12 @@
+xp_rastr.slb
+.C[-P-]
+.C[-I..\..\pc\include]
+.C[-I..\..\inc_c]
+.L[-S=256]	; minimaler Stack
+=
+libhead.s      ; startup code for SLBs
+xp_rastr.c (farbicon.h)
+farbicon.s
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcstdlib.lib
+
