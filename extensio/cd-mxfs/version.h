@@ -1,0 +1,1 @@
+#define VERSIONSTRING "1.00"

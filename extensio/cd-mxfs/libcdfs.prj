@@ -1,0 +1,17 @@
+libcdfs.lib
+.C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
+.C[-P]
+.C[-M-]
+.C[-G-]
+.L[-G]
+.L[-J]
+=
+doscache.c
+doskern.c
+hfs.c
+iso9660.c
+tocfs.c
+procfile.s
+;only for reference; use the reentrant version from the new pctoslib.lib instead
+;metados.c

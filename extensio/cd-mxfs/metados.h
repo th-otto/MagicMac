@@ -72,17 +72,18 @@ typedef struct
 #define METAGETDEVINFO	0	/* Ioctl # for above info, only supported by
                                some drivers */
 
-void Metainit (META_INFO_1 *);
-long Metaopen (short drive, META_DRVINFO *buffer);
-long Metaclose (short drive);
-long Metaread (short drive, void *buffer, long blockno, short blks);
-long Metawrite (short drive, void *buffer, long blockno, short blks);
-long Metastatus (short drive, void *buffer);
-long Metaioctl (short drive, long magic, short opcode, void *buffer);
-long Metasetsongtime (short drive, short repeat, long starttime, long endtime);
-long Metagettoc (short drive, short flag, CD_TOC_ENTRY *buffer);
-long Metadiscinfo (short drive, CD_DISC_INFO *p);
-long Metastartaudio (short drive, short flag, unsigned char *bytearray);
-long Metastopaudio (short drive);
+
+void Metainit(META_INFO_1 *);
+long Metaopen(short drive, META_DRVINFO *buffer);
+long Metaclose(short drive);
+long Metaread(short drive, void *buffer, long blockno, short blks);
+long Metawrite(short drive, void *buffer, long blockno, short blks);
+long Metastatus(short drive, void *buffer);
+long Metaioctl(short drive, long magic, short opcode, void *buffer);
+long Metasetsongtime(short drive, short repeat, long starttime, long endtime);
+long Metagettoc(short drive, short flag, CD_TOC_ENTRY *buffer);
+long Metadiscinfo(short drive, CD_DISC_INFO *p);
+long Metastartaudio(short drive, short flag, const unsigned char *bytearray);
+long Metastopaudio(short drive);
 
 #endif

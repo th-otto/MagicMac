@@ -18,7 +18,7 @@
 #include "metados.h"
 #include "macfs.h"
 
-#include "spin.h"
+#include "version.h"
 
 /*
 * Das sind alle cdecl-Pendants der XFS-Funktionen:
@@ -326,7 +326,7 @@ int main (void)
 			mdi.mdi_magic = 'INFO';
 			mdi.mdi_length = sizeof (mdi);
 
-			if (0 == Metaioctl (mydrives[i]->metadevice, 'FCTL',
+			if (0 == Metaioctl (mydrives[i]->metadevice, METADOS_IOCTL_MAGIC,
 				METAGETDEVINFO, &mdi))
 			{
 				strcpy (buff, "u:\\dev\\dsk.cxtxdxs0");
@@ -364,7 +364,7 @@ int main (void)
 	if	(ret < E_OK)
 		return((WORD) ret);		/* Fehler */
 
-	Ptermres(_PgmSize, (WORD) E_OK);
+	Ptermres(_PgmSize, E_OK);
 	return 0;
 }
 
@@ -448,7 +448,7 @@ LONG cdecl cdecl_eject( WORD fn, LOGICAL_DEV *ldp )
 		{
 		if	(ldp)
 			{
-			return (Metaioctl (ldp->metadevice, 'FCTL',
+			return (Metaioctl (ldp->metadevice, METADOS_IOCTL_MAGIC,
 						CDROMEJECT,(void *)0L));
 			}
 		return(EDRIVE);
@@ -1133,7 +1133,7 @@ static LONG cdecl	xfs_attrib( MX_DD *dd, const char *name, WORD mode,
 {
 	XATTR xa;
 	long ret;
-	
+
 	if	(mode)
 		return(EWRPRO);
 
@@ -1552,7 +1552,7 @@ static LONG cdecl   xfs_dcntl( MX_DD *dd, const char *name, WORD cmd,
 
 	ldp = mydrives[drive];
 	if	((cmd >> 8) == 'C')
-		return Metaioctl (ldp->metadevice, 'FCTL', cmd, (void *)arg);
+		return Metaioctl (ldp->metadevice, METADOS_IOCTL_MAGIC, cmd, (void *)arg);
 
 	ret = lookup ((CDXFS_DD *) dd, name, &index, &de);
 	if	(ret)
@@ -1978,7 +1978,7 @@ static LONG cdecl	blkdev_ioctl( MX_DOSFD *f, WORD cmd, void *buf )
 {
 	LOGICAL_DEV *ldp = mydrives[/* f->fc.aux*/ firstdrive];
 	
-	return Metaioctl (ldp->metadevice, 'FCTL', cmd, buf);
+	return Metaioctl (ldp->metadevice, METADOS_IOCTL_MAGIC, cmd, buf);
 }
 
 

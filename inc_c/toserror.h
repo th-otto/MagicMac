@@ -1,6 +1,6 @@
 /* BIOS level errors */
 
-#define E_OK	  0L	/* OK, no error 		*/
+#define E_OK	  0		/* OK, no error 		*/
 #define ERROR	 -1L	/* basic, fundamental error	*/
 #define EDRVNR	 -2L	/* drive not ready		*/
 #define EUNCMD	 -3L	/* unknown command		*/

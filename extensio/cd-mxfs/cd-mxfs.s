@@ -353,7 +353,7 @@ cdxfs_snext:
 
 cdxfs_fopen:
  clr.l	-(sp)
- pea (sp)
+ pea	(sp)
  move.w	d1,-(sp)
  move.w	d0,-(sp)
  move.l	a1,-(sp)
@@ -475,7 +475,7 @@ cdxfs_chown:
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_chown,a0
  jsr      (a0)
- adda.w	#16,sp
+ lea 16(sp),sp
  move.l (sp)+,a0
  rts
 
@@ -496,7 +496,7 @@ cdxfs_chmod:
  move.l	a0,-(sp)
  move.l	cdecl_cdxfs+xfs_chmod,a0
  jsr      (a0)
- adda.w	#14,sp
+ lea 14(sp),sp
  move.l (sp)+,a0
  rts
 

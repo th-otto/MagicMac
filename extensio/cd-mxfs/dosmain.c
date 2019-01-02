@@ -52,7 +52,7 @@ int cacheblocks = DEFAULTCACHESIZE;
 char *
 sccsid (void)
 {
-	return "@(#)hs-iso.dos "VERSIONSTRING", Copyright (c) Julian F. Reschke, "__DATE__;
+	return "@(#)hs-iso.dos " VERSIONSTRING ", Copyright (c) Julian F. Reschke, " __DATE__;
 }
 
 /* Diverse Utility-Funktionen */
@@ -869,7 +869,7 @@ DCntl (LOGICAL_DEV *ldp, char *pathname, long ret, int opcode,
 /* printf ("Dcntl: %x %s %lx\n", dop, name, arg); */
 
 	if ((dop >> 8) == 'C')
-		return Metaioctl (ldp->metadevice, 'FCTL', dop, (void *)arg);
+		return Metaioctl (ldp->metadevice, METADOS_IOCTL_MAGIC, dop, (void *)arg);
 
 	switch (dop)
 	{

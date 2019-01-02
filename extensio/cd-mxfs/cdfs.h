@@ -37,52 +37,73 @@ typedef struct
 /* File structure, 8 longs max */
 typedef struct
 {
-	unsigned long	start, size, offset, iindex, de_end;
-	unsigned int	dev, dirflg;
+	unsigned long	start;
+	unsigned long	size;
+	unsigned long	offset;
+	unsigned long	iindex;
+	unsigned long	de_end;
+	unsigned int	dev;
+	unsigned int	dirflg;
 } MYFILE;
 
 #if sizeof (MYFILE) > 32
 #error MYFILE structure too big for MetaDOS
 #endif
 
+typedef struct logical_dev LOGICAL_DEV;
+
 typedef struct
 {
-	long	(*get_root)(struct logical_dev *, unsigned long, int);
-	long	(*get_direntry)(struct logical_dev *, unsigned long *,
-				unsigned long dirend, DIRENTRY *);
-	long	(*readfile)(struct logical_dev *, long start, long offset,
+	long	(*get_root)(LOGICAL_DEV *ldp, unsigned long lba, int count);
+	long	(*get_direntry)(LOGICAL_DEV *ldp, unsigned long *adr,
+				unsigned long dirend, DIRENTRY *de);
+	long	(*readfile)(LOGICAL_DEV *ldp, long start, long offset,
 				long size, long iindex, long cnt, char *buffer);
-	long	(*label)(struct logical_dev *, char *str, int size, int rw);
-	long	(*pathconf)(struct logical_dev *, int mode);
+	long	(*label)(LOGICAL_DEV *ldp, char *str, int size, int rw);
+	long	(*pathconf)(LOGICAL_DEV *ldp, int mode);
 } FILESYSTEM;
 
 typedef struct
 {
 	unsigned char	data[BLOCKSIZE];
-	unsigned long	timestamp, blkno;
+	unsigned long	timestamp;
+	unsigned long	blkno;
 	unsigned int	device;
 } CACHEENTRY;
 
-typedef struct logical_dev
+typedef struct
 {
-	int 			metadevice;
-	int				fspreference;
+	unsigned short block;				/* first allocation block */
+	unsigned short count;				/* number of allocation blocks */
+} hfs_extent;
+
+typedef hfs_extent hfs_extent_rec[3];
+
+struct logical_dev
+{
+	short 			metadevice;
+	short			fspreference;
+#define FSPREFERENCE_ISO   0
+#define FSPREFERENCE_HFS   1
+#define FSPREFERENCE_TOC   2
 	FILESYSTEM		fs;
-	char			scratch[2352];
-	int				fsprivate;
+	char			scratch[2352]; /* CD_FRAMESIZE_RAW */
+	short			fsprivate;
 	char			fslabel[34];
-	unsigned long	blocksize, totalsize;
-	unsigned long	rootdir, rootdirsize;
+	unsigned long	blocksize;
+	unsigned long	totalsize;
+	unsigned long	rootdir;
+	unsigned long	rootdirsize;
 	unsigned long	mediatime;
-	unsigned int	mount_date, mount_time;
+	unsigned short	mount_date;
+	unsigned short	mount_time;
 	union {
 		struct {
 			unsigned long partoffset;
 			unsigned long allocstart;
 			unsigned long blocksize;
-			struct {
-				unsigned int StABN, NumABlks;
-			} catalogextents[3], overflowextents[3];
+			hfs_extent_rec catalogextents;
+			hfs_extent_rec overflowextents;
 		} hfs;
 	} p;
 	struct {
@@ -90,10 +111,10 @@ typedef struct logical_dev
 		char 			name[512];
 		char			*tail;
 		unsigned long	parentstart;
-		unsigned int	inuse;
+		unsigned short	inuse;
 		unsigned long	index;
 	} lastde;
-} LOGICAL_DEV;
+};
 
 
 /**** Cache control ****/
@@ -101,11 +122,10 @@ typedef struct logical_dev
 #define DEFAULTCACHESIZE	8
 
 /* clear all cache entries for the logical device */
-void DCClear (LOGICAL_DEV *ldp);
+void DCClear(LOGICAL_DEV *ldp);
 
 /* read from a logical device */
-long DCRead (LOGICAL_DEV *ldp, unsigned long adr, unsigned long cnt,
-	void *buffer);
+long DCRead(LOGICAL_DEV *ldp, unsigned long adr, unsigned long cnt, void *buffer);
 
 /* size of cache in blocks */
 extern int DCSize;
@@ -117,17 +137,16 @@ extern CACHEENTRY *DCCache;
 /**** CD lib kernel ****/
 
 /* initialize the device */
-int DKInitVolume (LOGICAL_DEV *ldp);
+int DKInitVolume(LOGICAL_DEV *ldp);
 
 /* convert DIRENTRY structure to XATTR structure */
-void DKDirentry2Xattr (LOGICAL_DEV *ldp, DIRENTRY *de, int drive,
-	XATTR *xap);
+void DKDirentry2Xattr(LOGICAL_DEV *ldp, DIRENTRY *de, int drive, XATTR *xap);
 
 /* convert filename to 8+3 format */
-void DKTosify (char *dst, const char *src);
+void DKTosify(char *dst, const char *src);
 
 /* flip filesystem type preference */
-void DKFlipPreferred (LOGICAL_DEV *ldp);
+void DKFlipPreferred(LOGICAL_DEV *ldp);
 
 /* set to # of open files supported by the kernel if not unlimited */
 extern long DKMaxOpenFiles;
@@ -135,9 +154,10 @@ extern long DKMaxOpenFiles;
 /**** to be supplied by FS specific part ****/
 
 /* convert Unix time to DOS time */
-unsigned long DMDosTime (unsigned long t);
+unsigned long DMDosTime(unsigned long t);
 
 /**** internal stuff ****/
 
 #define MEDIADELAY	400
 
+#define METADOS_IOCTL_MAGIC 0x4643544CL /* 'FCTL' */
