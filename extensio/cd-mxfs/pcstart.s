@@ -313,7 +313,7 @@ Start7:
 * Test if fpu 68881 is present
 
 Start8:
-        JSR     _fpuinit
+;        JSR     _fpuinit
 
 ******* Execute main program *******************************************
 *

@@ -67,7 +67,7 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 	int flag;
 	const char *sccsid;
 	
-	sccsid = "@(#)libcdfs.lib, Copyright (c) Julian F. Reschke, May 30 1997";
+	sccsid = "@(#)libcdfs.lib, Copyright (c) Julian F. Reschke, Jun  9 1997";
 	flag = 0;
 	
 	if (get_hz() > ldp->mediatime)
@@ -213,5 +213,12 @@ void DKTosify(char *dst, const char *src)
 void DKFlipPreferred(LOGICAL_DEV *ldp)
 {
 	++ldp->fspreference;
+	ldp->fspreference = ldp->fspreference % 3;
+}
+
+
+void DKFlipPreferredReversed(LOGICAL_DEV *ldp)
+{
+	--ldp->fspreference;
 	ldp->fspreference = ldp->fspreference % 3;
 }

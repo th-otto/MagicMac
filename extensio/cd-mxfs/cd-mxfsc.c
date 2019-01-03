@@ -11,6 +11,7 @@
 */
 
 #include <string.h>
+#include <stdio.h>
 #include <ctype.h>
 #include "cd-mxfs.h"
 #include "cdfs.h"
@@ -231,6 +232,7 @@ typedef struct cdxfs_dta {
 MX_KERNEL *kernel;
 MX_DFSKERNEL *dfskernel;
 LOGICAL_DEV *mydrives[32];
+static MX_DDEV *mydev[32];
 
 /* CFG read: define OS macros and #include CFG reader */
 
@@ -287,7 +289,7 @@ WORD main (void)
 
 	if (sizeof(CDXFS_FD) > kernel->int_msize)
 	{
-		Cconws ("SPIN: interner Fehler\n");
+		Cconws ("SPIN: internal error\n");
 		return 1;
 	}
 
@@ -299,16 +301,25 @@ WORD main (void)
 
 	if (!mi1.mi_info)
 	{
-		ret = Pexec(0, "\\GEMSYS\\MAGIC\\XTENSION\\METAXBS.SYS","",NULL);
-		if	(ret >= 0L)
-			Metainit(&mi1);
-		if	(!mi1.mi_info)
-			{
-			Cconws ("\007\033pMetaXBS not installed. "
-					"No drives installed!\033q\r\n");
-			return(-1);
-			}
+		ret = Pexec(0, "\\auto\\metaxbs.prg","",NULL);
+		Metainit(&mi1);
 	}
+	if (!mi1.mi_info)
+	{
+		ret = Pexec(0, "\\auto\\metaxbs.prx","",NULL);
+		Metainit(&mi1);
+	}
+	if (!mi1.mi_info)
+	{
+		ret = Pexec(0, "\\gemsys\\magic\\xtension\\metaxbs.sys","",NULL);
+		Metainit(&mi1);
+	}
+	if	(!mi1.mi_info)
+		{
+		Cconws ("\007\033pMetaXBS not installed. "
+				"No drives installed!\033q\r\n");
+		return(1);
+		}
 
 	/* set up the drive bits */
 
@@ -330,52 +341,59 @@ WORD main (void)
 				((char *)mi1.mi_info->mi_log2phys)[i] = mydrives[i]->metadevice;
 			}
 			
-			strcpy (buff, "u:\\dev\\dsk.cmtx");
-			buff[14] = tolower (mydrives[i]->metadevice);
-			
-			mdi.mdi_magic = 'INFO';
-			mdi.mdi_length = sizeof (mdi);
-
-			if (0 == Metaioctl (mydrives[i]->metadevice, METADOS_IOCTL_MAGIC,
-				METAGETDEVINFO, &mdi))
+			mydev[i] = Malloc(sizeof(MX_DEV)); /* BUG */
+			if (mydev[i] != 0)
 			{
-				strcpy (buff, "u:\\dev\\dsk.cxtxdxs0");
-				buff[12] = '0' + (mdi.mdi_major / 8);
-				buff[14] = '0' + (mdi.mdi_major & 7);
-				buff[16] = '0' + (mdi.mdi_minor & 7);
+				sprintf(buff, "u:\\dev\\cmt%c.dsk", tolower (mydrives[i]->metadevice));
 				
-				if (mdi.mdi_length >= offsetof (META_DEVINFO, mdi_lun))
+				mdi.mdi_magic = 'INFO';
+				mdi.mdi_length = sizeof (mdi);
+	
+				if (0 == Metaioctl (mydrives[i]->metadevice, METADOS_IOCTL_MAGIC,
+					METAGETDEVINFO, &mdi))
 				{
-					buff[12] = to_digit (mdi.mdi_controller);
-					buff[14] = to_digit (mdi.mdi_target);
-					buff[16] = to_digit (mdi.mdi_lun);
+					strcpy (buff, "u:\\dev\\cxtxdxs0.dsk");
+					buff[8] = '0' + (mdi.mdi_major / 8);
+					buff[10] = '0' + (mdi.mdi_major & 7);
+					buff[12] = '0' + (mdi.mdi_minor & 7);
+					
+					if (mdi.mdi_length >= offsetof (META_DEVINFO, mdi_lun))
+					{
+						buff[8] = to_digit (mdi.mdi_controller);
+						buff[10] = to_digit (mdi.mdi_target);
+						buff[12] = to_digit (mdi.mdi_lun);
+					}
 				}
-			}
-
-/*
-			memset (&hld, (int) sizeof (hld), 0);
-			hld.drvsize = sizeof (blk_device);
-			hld.driver = &blk_device;
-			hld.dinfo = i;
-			hld.fmode = 00060444;
-*/
-			/* Das erste CD-ROM bekommt einen "default"-Eintrag */
-			if	(first)
-				{
-				Dcntl(DEV_M_INSTALL, "u:\\dev\\cdrom",
-							(long) &cdblkdev);
-				first = 0;
-				}
-/*			Dcntl (DEV_M_INSTALL, buff, (long) &cdblkdev);	*/
+				
+				*((MX_DEV *)mydev[i]) = *((MX_DEV *)&cdblkdev); /* ??? */
+#if 0
+				memset (&hld, (int) sizeof (hld), 0);
+				hld.drvsize = sizeof (blk_device);
+				hld.driver = &blk_device;
+				hld.dinfo = i;
+				hld.fmode = 00060444;
+#endif
+	
+				/* Das erste CD-ROM bekommt einen "default"-Eintrag */
+				if	(first)
+					{
+					Dcntl(DEV_M_INSTALL, "u:\\dev\\cdrom",
+								(long) mydev[i]);
+					first = 0;
+					}
+#if 1
+				Dcntl (DEV_M_INSTALL, buff, (long) mydev[i]);
+#endif
 			}
 		}
+	}
 
 	ret = Dcntl(KER_INSTXFS, NULL, (LONG) &cdxfs);
 	if	(ret < E_OK)
 		return((WORD) ret);		/* Fehler */
 
 	Ptermres(-1L, (WORD) E_OK);
-	return(-1);
+	return 1;
 }
 
 /* convert a Unix time into a DOS time. The longword returned contains
@@ -458,6 +476,7 @@ LONG cdecl cdecl_eject( WORD fn, LOGICAL_DEV *ldp )
 		{
 		if	(ldp)
 			{
+			DKFlipPreferredReversed(ldp);
 			return (Metaioctl (ldp->metadevice, METADOS_IOCTL_MAGIC,
 						CDROMEJECT,(void *)0L));
 			}
@@ -501,13 +520,13 @@ static LONG init_vol (WORD drv)
 			EDRIVE  Laufwerk ungltig
                E_CHNG  Laufwerk mit neuer Disk gltig
           */
-#if 1
+#if 0
 		DKFlipPreferred (ldp);		/* ???!!!??? */
 		DKInitVolume (ldp);			/* ???!!!??? */
 #endif
 		return(kernel_diskchange (drv));
 		}
-	return((ret & 1) ? E_OK : EDRIVE);
+	return (ret & 1) ? (short)E_OK : (short)EDRIVE;
 }
 
 
@@ -679,8 +698,10 @@ static LONG cdecl   xfs_drv_open( MX_DMD *dmd )
 		return( init_vol(drive) );
 
 	ret = DKInitVolume (ldp);	/* nix eingelegt: 3 */
+#if 0
 	if	( ret != 1 )
 		return( EDRIVE );
+#endif
 
 	/* Daten fr das Wurzelverzeichnis ermitteln */
 
@@ -1583,7 +1604,7 @@ static LONG cdecl   xfs_dcntl( MX_DD *dd, char *name, WORD cmd,
 				memset (M, 0, sizeof (MacFinderInfo));
 				M->fdType = de.type;
 				M->fdCreator = de.creator;				
-				return de.type != 0 && de.creator != 0 ? E_OK : EINVFN;
+				return (de.type != 0 && de.creator != 0) ? (short)E_OK : (short)EINVFN;
 			}
 		
 		case FMACSETTYCR:
@@ -1788,7 +1809,7 @@ static LONG cdecl	dev_ioctl( MX_FD *f, WORD cmd, void *buf )
 				memset (M, 0, sizeof (MacFinderInfo));
 				M->fdType = fd->type;
 				M->fdCreator = fd->creator;				
-				return fd->type != 0 && fd->creator != 0 ? E_OK : EINVFN;
+				return (fd->type != 0 && fd->creator != 0) ? (short)E_OK : (short)EINVFN;
 			}
 		
 		case FMACSETTYCR:
@@ -1889,7 +1910,17 @@ static LONG cdecl	dev_putc( MX_FD *f, WORD mode, LONG val )
 
 static LONG cdecl	blkdev_open( MX_DOSFD *fd )
 {
-	return( E_OK );
+	int i;
+	
+	for (i = 0; i < 32; i++)
+	{
+		if (mydev[i] == fd->fd_ddev)
+		{
+			fd->fd_user1 = i;
+			return E_OK;
+		}
+	}
+	return( EINTRN );
 }
 
 
@@ -1910,7 +1941,7 @@ static LONG cdecl	blkdev_close( MX_DOSFD *fd )
 
 static LONG cdecl	blkdev_read( MX_DOSFD *f, LONG count, void *buf )
 {
-	LOGICAL_DEV *ldp = mydrives[/* f->fc.aux*/ firstdrive];
+	LOGICAL_DEV *ldp = mydrives[(int)f->fd_user1];
 	long ret;
 
 	ret = DCRead (ldp, f->fd_fpos, count, buf);
@@ -1993,7 +2024,7 @@ static LONG cdecl	blkdev_seek( MX_DOSFD *f, LONG offset, WORD whence )
 
 static LONG cdecl	blkdev_ioctl( MX_DOSFD *f, WORD cmd, void *buf )
 {
-	LOGICAL_DEV *ldp = mydrives[/* f->fc.aux*/ firstdrive];
+	LOGICAL_DEV *ldp = mydrives[(int)f->fd_user1];
 	
 	return Metaioctl (ldp->metadevice, METADOS_IOCTL_MAGIC, cmd, buf);
 }
