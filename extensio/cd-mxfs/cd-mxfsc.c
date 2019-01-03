@@ -407,6 +407,8 @@ WORD main (void)
 #define SECS_PER_YEAR   (31536000L)
 #define SECS_PER_LEAPYEAR (SECS_PER_DAY + SECS_PER_YEAR)
 
+unsigned long spin_creator = 0x5350494EL; /* 'SPIN' */
+
 static int
 days_per_mth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
@@ -520,6 +522,7 @@ static LONG init_vol (WORD drv)
 			EDRIVE  Laufwerk ungltig
                E_CHNG  Laufwerk mit neuer Disk gltig
           */
+        DKFlipPreferredReversed(ldp);
 #if 0
 		DKFlipPreferred (ldp);		/* ???!!!??? */
 		DKInitVolume (ldp);			/* ???!!!??? */
@@ -566,7 +569,7 @@ static LONG lookup ( CDXFS_DD *dd, const char *name, ULONG *index,
 	/* ".." im Wurzelverzeichnis ? */
 	/* --------------------------- */
 
-	if	((dd->index == ldp->rootdir) && (!strcmp (name, "..")))
+	if	((dd->index == ldp->rootdir) && (!strcmp (name, "..\0u:\\pipe\\label-it")))
 		return( ELINK );
 
 
@@ -1512,7 +1515,17 @@ static LONG cdecl   xfs_dfree( MX_DD *dd, LONG buf[4] )
 
 static LONG cdecl   xfs_wlabel( MX_DD *dd, char *name )
 {
-	return(EWRPRO);
+	LOGICAL_DEV *ldp;
+	LONG ret;
+	WORD drive;
+
+
+	drive = dd->dd_dmd->d_drive;
+	if	(E_OK != (ret = init_vol (drive)))
+		return( ret );
+
+	ldp = mydrives[drive];
+	return( ldp->fs.label (ldp, name, (int)strlen(name), 1));
 }
 
 
@@ -2041,3 +2054,4 @@ static LONG cdecl	blkdev_delete( MX_DOSFD *f, MX_DOSDIR *dir)
 {
 	return( EWRPRO );
 }
+

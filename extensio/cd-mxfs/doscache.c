@@ -8,7 +8,6 @@
 int DCSize = 0;
 CACHEENTRY *DCCache = 0;
 
-
 /* clear all cache entries for the logical device */
 void DCClear(LOGICAL_DEV *ldp)
 {

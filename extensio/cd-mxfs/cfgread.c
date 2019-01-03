@@ -13,7 +13,7 @@ sccsid (void)
 	return "@(#)spin.xfs " VERSIONSTRING ", Copyright (c) Julian F. Reschke, " __DATE__;
 #endif
 #ifdef MAGIC
-	return "@(#)spinmxfs.prg " VERSIONSTRING ", Copyright (c) Julian F. Reschke & Andreas Kromke, Jun 12 1997";
+	return "@(#)spinmagc.xfs " VERSIONSTRING ", Copyright (c) Julian F. Reschke & Andreas Kromke, Jul  6 1997";
 #endif
 }
 

@@ -212,7 +212,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	int minute;
 	int second;
 	int have_px = FALSE;
-	char sname[34] = { 0 }; /* BUG: too short for RR extension */
+	char sname[256] = { 0 };
 	long iindex;
 	unsigned long extent;
 	unsigned long size;

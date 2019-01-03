@@ -296,8 +296,7 @@ done:
 
 	de->adate = de->cdate = de->mdate = ldp->mount_date;
 	/* BUG: should not include writable */
-	/* BUG: S_IFREG missing */
-	de->mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH;
+	de->mode = __S_IFREG|S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH;
 	if (track & 1)
 		de->mode |= S_IRWXU|S_IRWXG|S_IRWXO;
 	de->pri.start = track & 1 ? addr2track(track) : curr.cdte_addr.lba + PROGFILE_OFFSET;
@@ -316,7 +315,7 @@ done:
 	de->atime = de->mtime = lba2time(next.cdte_addr.lba - curr.cdte_addr.lba);
 	de->ctime = lba2time(curr.cdte_addr.lba);
 	de->nlink = 1;
-	de->creator = 0x4344546cL; /* CDTl */
+	de->creator = spin_creator;
 	return 0;
 }
 

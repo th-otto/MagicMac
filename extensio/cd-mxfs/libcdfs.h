@@ -109,3 +109,5 @@ extern unsigned long const proc_len;
 extern short proc_device;
 extern unsigned char proc_track;
 extern unsigned char const proc_file[];
+
+extern unsigned long spin_creator;
