@@ -317,7 +317,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	de->atime = de->mtime = lba2time(next.cdte_addr.lba - curr.cdte_addr.lba);
 	de->ctime = lba2time(curr.cdte_addr.lba);
 	de->nlink = 1;
-	de->creator = 0x4344546cL; /* CDTl */
+	de->creator = 0x5350494eL; /* 'SPIN' */
 	return 0;
 }
 

@@ -225,6 +225,8 @@ void DKFlipPreferred(LOGICAL_DEV *ldp)
 
 void DKFlipPreferredReversed(LOGICAL_DEV *ldp)
 {
-	--ldp->fspreference;
-	ldp->fspreference = ldp->fspreference % 3;
+	if (ldp->fspreference > 0)
+		--ldp->fspreference;
+	else
+		ldp->fspreference = 2;
 }

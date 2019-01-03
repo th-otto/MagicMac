@@ -89,7 +89,7 @@ struct logical_dev
 	FILESYSTEM		fs;
 	char			scratch[2352]; /* CD_FRAMESIZE_RAW */
 	short			fsprivate;
-	char			fslabel[34];
+	char			fslabel[65];
 	unsigned long	blocksize;
 	unsigned long	totalsize;
 	unsigned long	rootdir;

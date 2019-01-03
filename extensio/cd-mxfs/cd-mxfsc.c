@@ -506,6 +506,7 @@ static LONG init_vol (WORD drv)
 			EDRIVE  Laufwerk ungltig
                E_CHNG  Laufwerk mit neuer Disk gltig
           */
+        DKFlipPreferredReversed(ldp);
 #if 0
 		DKFlipPreferred (ldp);		/* ???!!!??? */
 		DKInitVolume (ldp);			/* ???!!!??? */
@@ -1492,7 +1493,17 @@ static LONG cdecl   xfs_dfree( MX_DD *dd, DISKINFO *buf )
 
 static LONG cdecl   xfs_wlabel( MX_DD *dd, const char *name )
 {
-	return(EWRPRO);
+	LOGICAL_DEV *ldp;
+	LONG ret;
+	WORD drive;
+
+
+	drive = dd->dd_dmd->d_drive;
+	if	(E_OK != (ret = init_vol (drive)))
+		return( ret );
+
+	ldp = mydrives[drive];
+	return( ldp->fs.label (ldp, (char *)name, (int)strlen(name), 1));
 }
 
 

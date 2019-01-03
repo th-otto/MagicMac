@@ -213,7 +213,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	int minute;
 	int second;
 	int have_px = FALSE;
-	char sname[128];
+	char sname[256];
 	long iindex;
 	unsigned long extent;
 	unsigned long size;

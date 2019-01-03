@@ -14,12 +14,18 @@ proc_file:
 	dc.l 0
 	dc.w 0
 textstart:
+	move.l #0,-(a7)
+	move.l #0,-(a7)
+	move.l #0,-(a7)
+	move.l #0,-(a7)
+	move.l #0,-(a7)
+	move.l #0,-(a7)
 	pea	proc_bytes(pc)
 	move.w	#0,-(a7)
 	move.w	proc_device(pc),-(a7)
 	move.w	#59,-(a7) /* Metastartaudio */
 	trap	#14
-	lea 	14(a7),a7
+	lea 	34(a7),a7
 	tst.l	d0
 	beq.s	alles_ok
 	move.w	#1,-(a7)
