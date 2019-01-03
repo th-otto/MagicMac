@@ -111,8 +111,9 @@ static void dir2direntry(hfs_cat_key *key, CatDataRec *rec, DIRENTRY *de, long i
 		de->nlink = 2;
 		strcpy(de->longname, "..");
 	}
-	/* BUG: should not include writable */
-	de->mode = isexec ? S_IRWXU|S_IRWXG|S_IRWXO : S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH;
+	de->mode = S_IRUSR|S_IRGRP|S_IROTH;
+	if (isexec)
+		de->mode |= S_IXUSR|S_IXGRP|S_IXOTH;
 	de->mode |= de->tosattr & FA_SUBDIR ? __S_IFDIR : __S_IFREG;
 	DKTosify(de->truncname, de->longname);
 }
@@ -161,7 +162,7 @@ static int get_file_seg(LOGICAL_DEV *ldp, long iindex, int rsrc_flag, long addr,
 			return FALSE;
 		rec = catalog_record(key);
 		ext = rec->u.fil.ExtRec;
-		if (rsrc_flag == 1) /* FIXME */
+		if (rsrc_flag)
 			ext = rec->u.fil.RExtRec;
 	}
 	
@@ -187,7 +188,7 @@ static int get_file_seg(LOGICAL_DEV *ldp, long iindex, int rsrc_flag, long addr,
 
 static long dc_read(LOGICAL_DEV *ldp, unsigned long adr, unsigned long cnt, void *buffer)
 {
-	return DCRead(ldp, ldp->p.hfs.partoffset + adr, cnt, buffer); /* FIXME: optimize */
+	return DCRead(ldp, adr + ldp->p.hfs.partoffset, cnt, buffer);
 }
 
 
@@ -248,19 +249,15 @@ static long get_record_from_node(LOGICAL_DEV *ldp, unsigned short first_block, s
 
 static long next_rec(hfs_bnode_desc *node, unsigned short *link, unsigned short *recno)
 {
-	int err; /* FIXME: should be long */
-	
 	++(*recno);
 	if (*recno >= node->num_recs)
 	{
 		*recno = 0;
 		*link = (unsigned short)node->next;
 	}
-	if ((err = *link) != 0) /* FIXME */
-		err = 0;
-	else
-		err = (int)EPTHNF;
-	return err;
+	if (*link != 0)
+		return 0;
+	return EPTHNF;
 }
 
 struct xbuf {
@@ -354,7 +351,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *start, unsigned long d
 		*start = (unsigned long)first_block << 16;
 		*start += recno;
 		{
-			unsigned short parid;
+			unsigned short parid = 0;
 			
 			while (p->u.key.FNum == block)
 			{
@@ -386,7 +383,6 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *start, unsigned long d
 			err = get_record_from_node(ldp, first_block, recno, &current, p, sizeof(buf));
 			if (err != 0)
 				return err;
-			/* BUG: parid may be used unitialized */
 			while (p->u.key.FNum < parid)
 			{
 				err = next_rec(&current, &first_block, &recno);
@@ -410,10 +406,9 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *start, unsigned long d
 				rec = catalog_record((hfs_cat_key *)p);
 				if (rec->cdrType == HFS_CDR_DIR && rec->u.dir.DirID == block)
 				{
-					/* BUG: does not set length field */
 					strcpy(&((hfs_cat_key *)p)->CName[1], ".");
-					/* BUG: missing cast for first_block */
-					dir2direntry((hfs_cat_key *)p, rec, de, (first_block << 16) != 0 || recno != 0 ? 1 : 0);
+					((hfs_cat_key *)p)->CName[0] = 1;
+					dir2direntry((hfs_cat_key *)p, rec, de, first_block != 0 || recno != 0 ? 1 : 0);
 					return 0;
 				}
 				err = next_rec(&current, &first_block, &recno);
@@ -490,14 +485,14 @@ static long get_root(LOGICAL_DEV *ldp, unsigned long lba, int count)
 	long addr;
 	long err;
 	unsigned long blkcnt;
-	int i; /* FIXME: should be unsigned */
+	unsigned int i;
 	
 	UNUSED(count);
 	addr = lba * BLOCKSIZE;
 	err = DCRead(ldp, addr, sizeof(blk0), &blk0);
 	if (err == E_CHNG)
 		err = DCRead(ldp, addr, sizeof(blk0), &blk0);
-	if (err == EMEDIA || err < 0) /* FIXME: unneeded extra check for EMEDIA */
+	if (err < 0)
 		return err;
 	if (blk0.sbSig != cpu_to_be16(HFS_DRVR_DESC_MAGIC))
 		return ERROR;
@@ -546,8 +541,9 @@ static long label(LOGICAL_DEV *ldp, char *str, int size, int rw)
 		return EWRPRO;
 	strncpy(str, ldp->fslabel, size);
 	str[size - 1] = '\0';
-	/* FIXME */
-	return strlen(ldp->fslabel) >= size ? (int)ERANGE : 0;
+	if (strlen(ldp->fslabel) >= size)
+		return ERANGE;
+	return 0;
 }
 
 
@@ -573,7 +569,7 @@ static long pathconf(LOGICAL_DEV *ldp, int mode)
 	case DP_CASE:
 		return DP_CASEINSENS;
 	case DP_MODEATTR:
-		return DP_FT_REG|DP_FT_DIR|FA_READONLY|FA_HIDDEN; /* FIXME: should include unix modes */
+		return DP_FT_REG|DP_FT_DIR|FA_READONLY|FA_HIDDEN;
 	}
 	return EINVFN;
 }

@@ -35,7 +35,7 @@ typedef struct
 	const char 		*mi_log2phys;	/* maps DOS-IDs to MetaDOS XBIOS device numbers */
 
 	/* introduced with version 0x271 */
-	unsigned int 	mi_handles;	/* max. number of open files, 0 == no limit */
+	unsigned short 	mi_handles;	/* max. number of open files, 0 == no limit */
 } META_INFO_2;
 
 typedef struct

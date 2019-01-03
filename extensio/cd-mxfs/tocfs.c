@@ -163,7 +163,7 @@ static long get_entries_m(LOGICAL_DEV *ldp, short track, struct cdrom_tocentry *
 	unsigned short trackno;
 	
 	toc = (CD_TOC_ENTRY *)ldp->scratch;
-	memset(toc, CD_MAX_TRACKS * (int)sizeof(*toc), 0); /* BUG: wrong order */
+	memset(toc, 0, CD_MAX_TRACKS * sizeof(*toc));
 	
 	err = Metagettoc(ldp->metadevice, 1, toc);
 	if (err != 0)
@@ -182,12 +182,12 @@ static long get_entries_m(LOGICAL_DEV *ldp, short track, struct cdrom_tocentry *
 			break;
 		if (toc[i].trackno == track)
 		{
-			memset(curr, 10, 0); /* BUG: wrong order */
-			memset(next, 10, 0);
+			memset(curr, 0, sizeof(*curr));
+			memset(next, 0, sizeof(*next));
 			curr->cdte_track = toc[i].trackno;
 			next->cdte_track = toc[i + 1].trackno;
-			curr->cdte_addr.lba = ((long)(short)toc[i].minute * 60 + toc[i].second) * CD_FRAMES + toc[i].frame - CD_MSF_OFFSET; /* FIXME: double cast */
-			next->cdte_addr.lba = ((long)(short)toc[i + 1].minute * 60 + toc[i + 1].second) * CD_FRAMES + toc[i + 1].frame - CD_MSF_OFFSET;
+			curr->cdte_addr.lba = ((long)toc[i].minute * 60 + toc[i].second) * CD_FRAMES + toc[i].frame - CD_MSF_OFFSET;
+			next->cdte_addr.lba = ((long)toc[i + 1].minute * 60 + toc[i + 1].second) * CD_FRAMES + toc[i + 1].frame - CD_MSF_OFFSET;
 			return 0;
 		}
 	}
@@ -211,7 +211,9 @@ static long get_entries(LOGICAL_DEV *ldp, short track, struct cdrom_tocentry *cu
 	if (err != 0)
 	{
 		*addr = -1;
-		return err == EFILNF ? ENMFIL : err; /* FIXME */
+		if (err == EFILNF)
+			err = ENMFIL;
+		return err;
 	}
 	err = Metaioctl(ldp->metadevice, METADOS_IOCTL_MAGIC, CDROMREADTOCENTRY, next);
 	if (err == EFILNF)
@@ -237,7 +239,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	int isaudio;
 	
 	UNUSED(dirend);
-again: /* FIXME */
+	for (;;)
 	{
 		memset(de, 0, sizeof(*de));
 		if (*addr == -1)
@@ -250,8 +252,7 @@ again: /* FIXME */
 			{
 				de->pri.length *= 2;
 			}
-			/* BUG: should not include writable */
-			de->mode = __S_IFDIR|S_IRWXU|S_IRWXG|S_IRWXO;
+			de->mode = __S_IFDIR|S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH;
 			de->adate = de->cdate = de->mdate = ldp->mount_date;
 			de->atime = de->ctime = de->mtime = ldp->mount_time;
 			de->nlink = 2;
@@ -274,18 +275,15 @@ again: /* FIXME */
 		if (track & 1)
 		{
 			if (isaudio)
-				goto done;
+				break;
 			else
-				goto again;
+				continue;
 		}
 		if (!isaudio)
-			goto done;
+			break;
 		else if (ldp->fsprivate & FS_AUDIO)
-			goto done;
-		else
-			goto again;
+			break;
 	}
-done:
 	if (track & 1)
 		strcpy(de->truncname, "TRACK00.PRG");
 	else
@@ -295,11 +293,9 @@ done:
 	strcpy(de->longname, de->truncname);
 
 	de->adate = de->cdate = de->mdate = ldp->mount_date;
-	/* BUG: should not include writable */
-	/* BUG: S_IFREG missing */
-	de->mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH;
+	de->mode = __S_IFREG|S_IRUSR|S_IRGRP|S_IROTH;
 	if (track & 1)
-		de->mode |= S_IRWXU|S_IRWXG|S_IRWXO;
+		de->mode |= S_IXUSR|S_IXGRP|S_IXOTH;
 	de->pri.start = track & 1 ? addr2track(track) : curr.cdte_addr.lba + PROGFILE_OFFSET;
 	if (track & 1)
 	{
@@ -324,9 +320,11 @@ done:
 static long readfile(LOGICAL_DEV *ldp, long start, long offset,
 	long size, long iindex, long cnt, char *buffer)
 {
-	long fileoffset;
+	unsigned long fileoffset;
 	long recno;
 	long err;
+	struct cdrom_read cdread;
+	long offset_in_rec;
 
 	UNUSED(iindex);
 	
@@ -359,11 +357,7 @@ static long readfile(LOGICAL_DEV *ldp, long start, long offset,
 			return 0;
 	}
 
-	{
-	struct cdrom_read cdread;
-	long offset_in_rec;
-
-	recno = fileoffset / CD_FRAMESIZE_RAW; /* FIXME: uses signed div */
+	recno = fileoffset / CD_FRAMESIZE_RAW;
 	offset_in_rec = fileoffset % CD_FRAMESIZE_RAW;
 	if (offset_in_rec != 0 || cnt < CD_FRAMESIZE_RAW)
 	{
@@ -383,7 +377,7 @@ static long readfile(LOGICAL_DEV *ldp, long start, long offset,
 		cnt -= toread;
 	}
 	
-	recno = fileoffset / CD_FRAMESIZE_RAW; /* FIXME: uses signed div */
+	recno = fileoffset / CD_FRAMESIZE_RAW;
 	offset_in_rec = fileoffset % CD_FRAMESIZE_RAW;
 	
 	while (cnt > CD_FRAMESIZE_RAW)
@@ -402,7 +396,7 @@ static long readfile(LOGICAL_DEV *ldp, long start, long offset,
 		fileoffset += cdread.cdread_buflen;
 		cnt -= cdread.cdread_buflen;
 		
-		recno = fileoffset / CD_FRAMESIZE_RAW; /* FIXME: uses signed div */
+		recno = fileoffset / CD_FRAMESIZE_RAW;
 		offset_in_rec = fileoffset % CD_FRAMESIZE_RAW;
 	}
 	
@@ -415,7 +409,6 @@ static long readfile(LOGICAL_DEV *ldp, long start, long offset,
 		if (err != 0)
 			return err;
 		memcpy(buffer, ldp->scratch, cnt);
-	}
 	}
 	
 	return 0;
@@ -436,7 +429,7 @@ static long get_root(LOGICAL_DEV *ldp, unsigned long lba, int count)
 	UNUSED(count);
 
 	ldp->fsprivate = 0;
-	memset(di, (int)sizeof(di), 0); /* BUG: wrong order; BUG: wrong usage */
+	memset(di, 0, sizeof(*di));
 	firsttrack = 1;
 	lasttrack = 0;
 	if (Metadiscinfo(ldp->metadevice, di) == 0)
@@ -446,7 +439,7 @@ static long get_root(LOGICAL_DEV *ldp, unsigned long lba, int count)
 		lasttrack = di->lasttrack;
 		bcd2bin(&lasttrack);
 	}
-	memset(&toc, (int)sizeof(toc), 0); /* BUG: wrong order */
+	memset(&toc, 0, sizeof(toc));
 	for (i = firsttrack; i <= lasttrack; i++)
 	{
 		toc.cdte_track = i;
@@ -490,8 +483,9 @@ static long label(LOGICAL_DEV *ldp, char *str, int size, int rw)
 	}
 	strncpy(str, ldp->fslabel, size);
 	str[size - 1] = '\0';
-	/* FIXME */
-	return strlen(ldp->fslabel) >= size ? (int)ERANGE : 0;
+	if (strlen(ldp->fslabel) >= size)
+		return ERANGE;
+	return 0;
 }
 
 
@@ -517,7 +511,7 @@ static long pathconf(LOGICAL_DEV *ldp, int mode)
 	case DP_MAXLINKS:
 		return 1;
 	case DP_MODEATTR:
-		/* BUG: FA_VOLUME is a lie */
+		/* FA_VOLUME is handle by kernel */
 		return DP_FT_REG|DP_FT_DIR|FA_VOLUME;
 	}
 	return EINVFN;

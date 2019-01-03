@@ -93,7 +93,8 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 	}
 	ldp->mount_date = Tgetdate();
 	ldp->mount_time = Tgettime();
-	ldp->lastde.inuse = ldp->lastde.name[0] = 0; /* FIXME */
+	ldp->lastde.inuse = 0;
+	ldp->lastde.name[0] = 0;
 	
 	if (ldp->fspreference == FSPREFERENCE_HFS && get_root(ldp, hfs.get_root) == 0)
 	{
@@ -185,7 +186,6 @@ void DKTosify(char *dst, const char *src)
 		len = dot - src;
 	if (dot != NULL)
 		++dot;
-	*dst = '\0'; /* FIXME */
 	for (i = 0; i < 8 && i < (int)len; i++)
 	{
 		*dst = src[i];
@@ -196,9 +196,9 @@ void DKTosify(char *dst, const char *src)
 	}
 	if (dot == NULL)
 		dot = &src[i];
-	if (strlen(dot) != 0) /* FIXME */
+	if (*dot != '\0')
 		*dst++ = '.';
-	for (i = 0; i < 3 && i < strlen(dot); i++)
+	for (i = 0; i < 3 && dot[i] != '\0'; i++)
 	{
 		*dst = dot[i];
 		if (*dst == '.' || *dst <= ' ')

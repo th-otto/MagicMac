@@ -2565,7 +2565,7 @@ D_Fsfirst:
  move.l   p_dta(a1),a1             ; a1 = DTA *
  move.w   4(a0),d0                 ; d0 = sattr
  move.l   (a0),a0                  ; a0 = path
- cmpi.b   #8,d0                    ; will Volume lesen
+ cmpi.b   #FA_VOLUME,d0            ; will Volume lesen
  beq.b    fsf_rdlabel
 Fsfirst:
  moveq    #xfs_sfirst,d2

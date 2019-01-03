@@ -95,7 +95,7 @@ long DCRead(LOGICAL_DEV *ldp, unsigned long adr, unsigned long cnt, void *buffer
 	p = buffer;
 	while (cnt != 0)
 	{
-		short blks; /* BUG: should be unsigned */
+		unsigned short blks;
 		
 		blockno = adr / BLOCKSIZE;
 		offset = adr & (BLOCKSIZE - 1);

@@ -15,8 +15,7 @@
 #define ISOFS_ROCKRIDGE  0x02
 #define ISOFS_JOLIET     0x04
 
-/* BUG: too small to hold an RR_NM extension + 255 length name */
-#define RR_BUFSIZE 256
+#define RR_BUFSIZE 512
 
 /*
  * 16-bit value encoded as both little-/big-endian
@@ -47,16 +46,17 @@ static unsigned short const uni_tab[] = {
 };
 
 
-/*
- * BUG: dangerous for empty strings,
- * or strings with only blanks
- */
 static void remove_trailing_blanks(char *str)
 {
+	char *start;
+	
+	if (*str == '\0')
+		return;
+	start = str;
 	while (*str != '\0')
 		str++;
 	--str;
-	while (*str == ' ')
+	while (str >= start && *str == ' ')
 	{
 		*str = '\0';
 		str--;
@@ -115,8 +115,7 @@ static void uni_tune(char *name, unsigned char *namelen)
 	*namelen = *namelen / 2;
 	for (i = 0; i < *namelen; i++)
 	{
-		/* BUG: using signed char here */
-		c = (name[i * 2] << 8) | name[i * 2 + 1];
+		c = ((unsigned char)name[i * 2] << 8) | (unsigned char)name[i * 2 + 1];
 		if (c >= 0x80)
 		{
 			for (j = 0; j < 128; j++)
@@ -150,8 +149,7 @@ static void copyfn(const char *src, int len, char *dst)
 		p = dst;
 		end = &src[len];
 		*p = '\0';
-		/* BUG: should check for end first */
-		while (*src != '\0' && *src != ';' && src != end)
+		while (src != end && *src != '\0' && *src != ';')
 		{
 			if (extflag == 0 && *src == '.')
 			{
@@ -187,8 +185,7 @@ static void copyfn_long(const char *src, int len, char *dst)
 		end = &src[len];
 		p = dst;
 		*dst = '\0';
-		/* BUG: should check for end first */
-		while (*src != '\0' && *src != ';' && src != end)
+		while (src != end && *src != '\0' && *src != ';')
 		{
 			*dst++ = *src++;
 		}
@@ -201,8 +198,7 @@ static void copyfn_long(const char *src, int len, char *dst)
 
 static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long dirend, DIRENTRY *de)
 {
-	struct iso_directory_record *buf = (struct iso_directory_record *)ldp->scratch;
-	struct iso_directory_record *rec = buf;
+	struct iso_directory_record *rec = (struct iso_directory_record *)ldp->scratch;
 	int cont = TRUE;
 	int name_len;
 	int year;
@@ -212,7 +208,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	int minute;
 	int second;
 	int have_px = FALSE;
-	char sname[34] = { 0 }; /* BUG: too short for RR extension */
+	char sname[128];
 	long iindex;
 	unsigned long extent;
 	unsigned long size;
@@ -220,6 +216,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	long err;
 	
 	iindex = 0;
+	sname[0] = '\0';
 	memset(de, 0, sizeof(*de));
 	while (cont)
 	{
@@ -229,7 +226,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 		err = DCRead(ldp, *addr, RR_BUFSIZE, ldp->scratch);
 		if (err != 0)
 			return err;
-		if (buf->length == 0)
+		if (rec->length == 0)
 		{
 			*addr &= ~(ISOFS_BLOCK_SIZE - 1);
 			*addr += ISOFS_BLOCK_SIZE;
@@ -237,72 +234,54 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 				*addr = -1;
 		} else
 		{
-			*addr += buf->length;
+			*addr += rec->length;
 			cont = FALSE;
 		}
 		if (ldp->fsprivate & ISOFS_HIGHSIERRA)
+			flags = rec->date[6];
+		else
+			flags = rec->flags;
+		if (flags & DE_FILE)
 		{
-			if (rec->date[6] & DE_FILE)
-			{
-				iindex = de->iindex;
-				copyfn_long(rec->name, rec->name_len, sname);
-				extent = isonum_733(rec->extent) * ldp->blocksize;
-				size = isonum_733(rec->size);
-				cont = TRUE;
-			}
-			if (ldp->rootdir == (de->iindex & ~(ISOFS_BLOCK_SIZE - 1)) &&
-				rec->name_len == 1 &&
-				rec->name[0] == 1)
-			{
-				cont = TRUE;
-			}
-		} else
+			iindex = de->iindex;
+			copyfn_long(rec->name, rec->name_len, sname);
+			extent = isonum_733(rec->extent) * ldp->blocksize;
+			size = isonum_733(rec->size);
+			cont = TRUE;
+		}
+		if (ldp->rootdir == (de->iindex & ~(ISOFS_BLOCK_SIZE - 1)) &&
+			rec->name_len == 1 &&
+			rec->name[0] == 1)
 		{
-			if (buf->flags & DE_FILE)
-			{
-				iindex = de->iindex;
-				copyfn_long(buf->name, buf->name_len, sname);
-				extent = isonum_733(buf->extent) * ldp->blocksize;
-				size = isonum_733(buf->size);
-				cont = TRUE;
-			}
-			if (ldp->rootdir == (de->iindex & ~(ISOFS_BLOCK_SIZE - 1)) &&
-				buf->name_len == 1 &&
-				buf->name[0] == 1)
-			{
-				cont = TRUE;
-			}
+			cont = TRUE;
 		}
 	}
 
 	de->fsprivate = 0;
-	/* BUG: should be set to 'TEXT' and 'hcsd' */
-	de->type = de->creator = 0;
+	de->type = 0x54455854L; /* 'TEXT' */
+	de->creator = 0x68635354L; /* 'hscd' */
+	de->pri.start = isonum_733(rec->extent) * ldp->blocksize;
+	de->pri.length = isonum_733(rec->size);
+	year = rec->date[0];
+	month = rec->date[1];
+	day = rec->date[2];
+	hour = rec->date[3];
+	minute = rec->date[4];
+	second = rec->date[5];
+	/* BUG: GMT offset not handled */
 	if (!(ldp->fsprivate & ISOFS_HIGHSIERRA))
 	{
 		struct rock_ridge *rr;
 		
-		de->pri.start = isonum_733(buf->extent) * ldp->blocksize;
-		de->pri.length = isonum_733(buf->size);
-		flags = buf->flags;
-		year = buf->date[0];
-		month = buf->date[1];
-		day = buf->date[2];
-		hour = buf->date[3];
-		minute = buf->date[4];
-		second = buf->date[5];
-		/* BUG: GMT offset not handled */
+		flags = rec->flags;
 		if (ldp->fsprivate & ISOFS_JOLIET)
-			uni_tune(buf->name, &buf->name_len);
-		copyfn_long(buf->name, buf->name_len, de->longname);
-		copyfn(buf->name, buf->name_len, de->truncname);
+			uni_tune(rec->name, &rec->name_len);
+		copyfn_long(rec->name, rec->name_len, de->longname);
+		copyfn(rec->name, rec->name_len, de->truncname);
 		
-		/*
-		 * BUG: same buffer used for directory record and extensions
-		 */
-		rr = (struct rock_ridge *)ldp->scratch;
+		rr = (struct rock_ridge *)(ldp->scratch + RR_BUFSIZE);
 
-		if (get_susp_field(ldp, buf, "NM", rr, RR_BUFSIZE, 0) &&
+		if (get_susp_field(ldp, rec, "NM", rr, RR_BUFSIZE, 0) &&
 			!(rr->u.NM.flags & (NM_CURRENT|NM_PARENT)))
 		{
 			name_len = rr->len - (int)offsetof(struct rock_ridge, u.NM.name);
@@ -311,7 +290,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 			de->longname[name_len] = '\0';
 		}
 		
-		if (get_susp_field(ldp, buf, "SP", rr, RR_BUFSIZE, 0) &&
+		if (get_susp_field(ldp, rec, "SP", rr, RR_BUFSIZE, 0) &&
 			rr->len == 7 &&
 			rr->version == 1 &&
 			rr->u.SP.magic[0] == 0xBE &&
@@ -320,15 +299,15 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 			de->fsprivate = 1;
 		}
 		
-		if (get_susp_field(ldp, buf, "AA", rr, RR_BUFSIZE, 0) &&
+		if (get_susp_field(ldp, rec, "AA", rr, RR_BUFSIZE, 0) &&
 			rr->len == 14 &&
-			rr->version == 2) /* FIXME: can also be version 6 */
+			(rr->version == 2 || rr->version == 6))
 		{
-			/* FIXME: don't use memcpy here */
-			memcpy(&de->type, rr->u.AA.hfs.fileType, 8);
+			de->type = *((unsigned long *)rr->u.AA.hfs.fileType + 0);
+			de->creator = *((unsigned long *)rr->u.AA.hfs.fileType + 4);
 		}
 
-		if (get_susp_field(ldp, buf, "PX", rr, RR_BUFSIZE, 0) &&
+		if (get_susp_field(ldp, rec, "PX", rr, RR_BUFSIZE, 0) &&
 			rr->version == 1)
 		{
 			have_px = TRUE;
@@ -340,15 +319,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 		}
 	} else
 	{
-		de->pri.start = isonum_733(rec->extent) * ldp->blocksize;
-		de->pri.length = isonum_733(rec->size);
 		flags = rec->date[6];
-		year = rec->date[0];
-		month = rec->date[1];
-		day = rec->date[2];
-		hour = rec->date[3];
-		minute = rec->date[4];
-		second = rec->date[5];
 		copyfn_long(rec->name, rec->name_len, de->longname);
 		copyfn(rec->name, rec->name_len, de->truncname);
 	}
@@ -360,11 +331,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	if (year < 80)
 	{
 		de->adate = de->cdate = de->mdate = (1 << 5) + 1;
-#if 1 /* BUG */
-		de->atime = de->cdate = de->mdate = 0;
-#else
 		de->atime = de->ctime = de->mtime = 0;
-#endif
 	} else
 	{
 		de->adate = de->cdate = de->mdate = (((year - 80) & 0x7f) << 9) | (month << 5) | day;
@@ -375,8 +342,7 @@ static long get_direntry(LOGICAL_DEV *ldp, unsigned long *addr, unsigned long di
 	{
 		de->nlink = flags & DE_DIRECTORY ? 2 : 1;
 		de->uid = de->gid = 0;
-		/* BUG: should not include writable */
-		de->mode = flags & DE_DIRECTORY ? __S_IFDIR|S_IRWXU|S_IRWXG|S_IRWXO : __S_IFREG|S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH;
+		de->mode = flags & DE_DIRECTORY ? __S_IFDIR|S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH : __S_IFREG|S_IRUSR|S_IRGRP|S_IROTH;
 	}
 	de->tosattr = flags & DE_DIRECTORY ? FA_SUBDIR : 0;
 	if (flags & DE_EXISTENCE)
@@ -429,7 +395,7 @@ static long __get_root(LOGICAL_DEV *ldp, unsigned long lba, int count, int suppl
 		if (err == E_CHNG)
 			err = DCRead(ldp, recno * ISOFS_BLOCK_SIZE, ISOFS_BLOCK_SIZE, ldp->scratch);
 		if (err == EMEDIA)
-			return err = err; /* FIXME */
+			return err;
 		if (err == 0)
 		{
 			struct iso_supplementary_descriptor *desc = (struct iso_supplementary_descriptor *)ldp->scratch;
@@ -458,18 +424,17 @@ static long __get_root(LOGICAL_DEV *ldp, unsigned long lba, int count, int suppl
 					
 					if (isonum_733(root.extent) != 0)
 					{
+						unsigned char name_len = 32;
 						ldp->totalsize = isonum_733(desc->volume_space_size);
-						ldp->blocksize = *((short *)(desc->logical_block_size + 2)); /* FIXME: isonum_721 */
+						ldp->blocksize = isonum_721(desc->logical_block_size);
 						ldp->rootdir = isonum_733(root.extent) * ldp->blocksize;
 						ldp->rootdirsize = isonum_733(root.size);
 						if (supplementary)
 						{
-							unsigned char name_len = 32;
 							uni_tune(desc->volume_id, &name_len);
 						}
-						/* BUG: if converted above, volume_id only has 16 chars */
-						strncpy(ldp->fslabel, desc->volume_id, 32);
-						ldp->fslabel[32] = '\0';
+						strncpy(ldp->fslabel, desc->volume_id, name_len);
+						ldp->fslabel[name_len] = '\0';
 						remove_trailing_blanks(ldp->fslabel);
 						ldp->fsprivate = supplementary ? ISOFS_JOLIET : 0;
 						if (is_rr(ldp))
@@ -486,7 +451,7 @@ static long __get_root(LOGICAL_DEV *ldp, unsigned long lba, int count, int suppl
 				struct iso_directory_record *r = &hs->root_directory_record;
 				
 				ldp->totalsize = isonum_733(hs->volume_space_size);
-				ldp->blocksize = *((short *)(hs->logical_block_size + 2)); /* FIXME: isonum_721 */
+				ldp->blocksize = isonum_721(hs->logical_block_size);
 				ldp->rootdir = isonum_733(r->extent) * ldp->blocksize;
 				ldp->rootdirsize = isonum_733(r->size);
 				ldp->fsprivate = ISOFS_HIGHSIERRA;
@@ -521,8 +486,9 @@ static long label(LOGICAL_DEV *ldp, char *str, int size, int rw)
 		return EWRPRO;
 	strncpy(str, ldp->fslabel, size);
 	str[size - 1] = '\0';
-	/* FIXME */
-	return strlen(ldp->fslabel) >= size ? (int)ERANGE : 0;
+	if (strlen(ldp->fslabel) >= size)
+		return ERANGE;
+	return 0;
 }
 
 
@@ -556,8 +522,7 @@ static long pathconf(LOGICAL_DEV *ldp, int mode)
 	case DP_MAXLINKS:
 		return 1;
 	case DP_MODEATTR:
-		/* FIXME: should include unix modes */
-		/* BUG: FA_VOLUME is a lie */
+		/* FA_VOLUME is handled by kernel */
 		return DP_FT_REG|DP_FT_DIR|FA_VOLUME|FA_READONLY|FA_HIDDEN;
 	}
 	return EINVFN;
