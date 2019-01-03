@@ -157,7 +157,7 @@ typedef struct {	/* Discinfo for MetaDiscInfo() function */
 #define CDROM_AUDIO_ERROR       0x14
 #define CDROM_AUDIO_NO_STATUS   0x15
 
-#define METADOS_IOCTL_MAGIC	(('F'<<24)|('C'<<16)|('T'<<8)|'L')
+#define METADOS_IOCTL_MAGIC	0x4643544CL /* 'FCTL' */
 
 #define CDROM_LEADOUT_CDAR	0xa2
 

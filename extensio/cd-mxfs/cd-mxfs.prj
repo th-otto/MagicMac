@@ -1,4 +1,4 @@
-spinmxfs.xfs
+spinmagc.xfs
 .C[-I..\..\inc_c]
 .C[-I..\..\pc\include]
 .S[-I..\..\inc_as]

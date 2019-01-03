@@ -1,11 +1,16 @@
+#include <portab.h>
 #include <string.h>
 #include <stddef.h>
 #include <ctype.h>
 #include <tos.h>
+#include "mint/cdromio.h"
+#define PD BASEPAGE
+typedef void APPL;
+#include "mgx_xfs.h"
+#include "mgx_devd.h"
 #include "cdfs.h"
 #include "libcdfs.h"
 #include "metados.h"
-#include "mint/cdromio.h"
 
 
 /* set to # of open files supported by the kernel if not unlimited */
@@ -67,7 +72,8 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 	int flag;
 	const char *sccsid;
 	
-	sccsid = "@(#)libcdfs.lib, Copyright (c) Julian F. Reschke, May 30 1997";
+	sccsid = "@(#)libcdfs.lib, Copyright (c) Julian F. Reschke, " __DATE__;
+	(void)sccsid;
 	flag = 0;
 	
 	if (get_hz() > ldp->mediatime)
@@ -82,7 +88,6 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 			DCClear(ldp);
 		}
 	}
-	(void)sccsid;
 
 	if ((ldp->fs.get_root == isofs.get_root && ldp->fspreference == FSPREFERENCE_ISO) ||
 		(ldp->fs.get_root == hfs.get_root && ldp->fspreference == FSPREFERENCE_HFS) ||
@@ -214,5 +219,12 @@ void DKTosify(char *dst, const char *src)
 void DKFlipPreferred(LOGICAL_DEV *ldp)
 {
 	++ldp->fspreference;
+	ldp->fspreference = ldp->fspreference % 3;
+}
+
+
+void DKFlipPreferredReversed(LOGICAL_DEV *ldp)
+{
+	--ldp->fspreference;
 	ldp->fspreference = ldp->fspreference % 3;
 }

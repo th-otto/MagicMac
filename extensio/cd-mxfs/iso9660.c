@@ -1,9 +1,14 @@
+#include <portab.h>
 #include <string.h>
 #include <stddef.h>
 #include <ctype.h>
 #include <tos.h>
 #include <time.h>
 #include <toserror.h>
+#define PD BASEPAGE
+typedef void APPL;
+#include "mgx_xfs.h"
+#include "mgx_devd.h"
 #include "cdfs.h"
 #include "libcdfs.h"
 #include "metados.h"

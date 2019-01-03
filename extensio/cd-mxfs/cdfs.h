@@ -114,6 +114,7 @@ struct logical_dev
 		unsigned short	inuse;
 		unsigned long	index;
 	} lastde;
+	MX_DDEV ddev;
 };
 
 
@@ -147,6 +148,7 @@ void DKTosify(char *dst, const char *src);
 
 /* flip filesystem type preference */
 void DKFlipPreferred(LOGICAL_DEV *ldp);
+void DKFlipPreferredReversed(LOGICAL_DEV *ldp);
 
 /* set to # of open files supported by the kernel if not unlimited */
 extern long DKMaxOpenFiles;
