@@ -134,29 +134,11 @@ static short addr2track(short addr)
 }
 
 
-static void bcd2bin3(unsigned char *str)
+static unsigned short bcd2bin(unsigned char val)
 {
-	int c, c2;
-	
-	c = c2 = str[0];
-	c /= 16;
-	c *= 10;
-	str[0] = c + (c2 &= 0x0f);
-	c = c2 = str[1];
-	c /= 16;
-	c *= 10;
-	str[1] = c + (c2 &= 0x0f);
-	c = c2 = str[2];
-	c /= 16;
-	c *= 10;
-	str[2] = c + (c2 &= 0x0f);
-}
-
-
-static void bcd2bin(unsigned short *str)
-{
-	unsigned short c = str[0] >> 4;
-	str[0] = (str[0] & 0x0f) + c * 10;
+	unsigned char r = (val >> 4) * 10;
+	r += (val & 0x0f);
+	return r;
 }
 
 
@@ -165,7 +147,6 @@ static long get_entries_m(LOGICAL_DEV *ldp, short track, struct cdrom_tocentry *
 	CD_TOC_ENTRY *toc;
 	long err;
 	int i;
-	unsigned short trackno;
 	
 	toc = (CD_TOC_ENTRY *)ldp->scratch;
 	memset(toc, 0, CD_MAX_TRACKS * sizeof(*toc));
@@ -175,10 +156,10 @@ static long get_entries_m(LOGICAL_DEV *ldp, short track, struct cdrom_tocentry *
 		return err;
 	for (i = 0; i < CD_MAX_TRACKS; i++)
 	{
-		trackno = toc[i].trackno;
-		bcd2bin(&trackno);
-		toc[i].trackno = trackno;
-		bcd2bin3(&toc[i].minute);
+		toc[i].trackno = bcd2bin(toc[i].trackno);
+		toc[i].minute = bcd2bin(toc[i].minute);
+		toc[i].second = bcd2bin(toc[i].second);
+		toc[i].frame = bcd2bin(toc[i].frame);
 	}
 
 	for (i = 0; i < (CD_MAX_TRACKS - 1); i++)
@@ -439,10 +420,8 @@ static long get_root(LOGICAL_DEV *ldp, unsigned long lba, int count)
 	lasttrack = 0;
 	if (Metadiscinfo(ldp->metadevice, di) == 0)
 	{
-		firsttrack = di->firsttrack;
-		bcd2bin(&firsttrack);
-		lasttrack = di->lasttrack;
-		bcd2bin(&lasttrack);
+		firsttrack = bcd2bin(di->firsttrack);
+		lasttrack = bcd2bin(di->lasttrack);
 	}
 	memset(&toc, 0, sizeof(toc));
 	for (i = firsttrack; i <= lasttrack; i++)
