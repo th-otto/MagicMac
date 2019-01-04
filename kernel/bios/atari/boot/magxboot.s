@@ -15,15 +15,14 @@
 *
 **********************************************************************
 
-;OUTSIDE   EQU  0              ; Programmlaenge auf 32k-Pages
-RESIDENT  EQU  1              ; resetfest
+;OUTSIDE   EQU  0              ; memory segments on 32k pages
+RESIDENT  EQU  1              ; reset resident
 MODIFY    EQU  0              ; Modifikation nicht notwendig!
 
-fstrm_beg EQU  $49e           ; ___md
-os_chksum EQU  $486           ; trp14ret
-
-
      INCLUDE "osbind.inc"
+
+fstrm_beg EQU  ____md
+os_chksum EQU  trp14ret
 
 sizeof_PH equ 28
 
@@ -33,9 +32,9 @@ sizeof_PH equ 28
  movea.l  4(sp),a1
  lea      stack(pc),sp
  movea.w  #$100,a0                 ; Programmlaenge + $100
- adda.l   $c(a1),a0
- adda.l   $14(a1),a0
- adda.l   $1c(a1),a0
+ adda.l   p_tlen(a1),a0
+ adda.l   p_dlen(a1),a0
+ adda.l   p_blen(a1),a0
  move.l   a0,-(sp)
  move.l   a1,-(sp)
  clr.w    -(sp)
@@ -97,7 +96,7 @@ err2:
 
 do_install:
  clr.w    -(sp)
- pea      name(pc)
+ pea      magx_name(pc)
  gemdos   Fsfirst
  addq.l   #8,sp
  tst.l    d0
@@ -111,7 +110,7 @@ do_install:
 * Oeffnen der Datei: Handle d7
 
  clr.w    -(sp)
- pea      name(pc)
+ pea      magx_name(pc)
  gemdos   Fopen
  addq.l   #8,sp
  move.w   d0,d7
@@ -211,7 +210,7 @@ ver_st:
  addi.b   #'A',d0
  move.b   d0,(a0)+
  move.b   #':',(a0)+
- lea      name(pc),a1
+ lea      magx_name(pc),a1
 namecpy_loop:
  move.b   (a1)+,(a0)+
  bne.b    namecpy_loop
@@ -222,7 +221,7 @@ do_reloc:
  move.l   2(a6),d0                 ; Laenge von TEXT
  add.l    6(a6),d0                 ; Laenge von DATA
  move.l   d0,d5                    ; tatsaechliche Laenge von MagiX
- add.l    $e(a6),d0                ; Laenge von SYM
+ add.l    14(a6),d0                ; Laenge von SYM
 
  lea      sizeof_PH(a6,d0.l),a3    ; Beginn der Relocation- Daten
  lea      0(a6,d6.l),a2            ; Dateiende
@@ -260,7 +259,7 @@ os_chkloop:
 ;move.l   d3,$88                   ; Zeichensatzadresse fuer MAGIXVDI
  lea      toscopy(pc),a1           ; aktuelle Adresse der Startroutine
  lea      $600,a0                  ; neue Adresse der Startroutine
- move.w   #(err-toscopy)/4,d0
+ move.w   #((toscopyend-toscopy+3)/4)-1,d0
 startcopy:
  move.l   (a1)+,(a0)+
  dbra     d0,startcopy
@@ -296,7 +295,7 @@ cpy_end:
  bne.b    cpy_st
  add.l    d5,fstrm_beg
      IFNE OUTSIDE
-* Beginn des FastRAM hinter Mag!X auf 32k-Grenze
+/* align start of FastRAM, beyond end of MagiC on 32k boundary */
  move.l   fstrm_beg,d0
  add.l    #$00007fff,d0            ; 32k-1 addieren
  andi.w   #$8000,d0                ; auf volle 32k gehen
@@ -306,7 +305,7 @@ cpy_end:
 cpy_st:
  add.l    d5,os_membot(a5)         ; OS- Laenge auf TPA- Beginn addieren
      IFNE OUTSIDE
-* Beginn des ST-RAM hinter Mag!X auf 32k-Grenze
+/* align start of ST-RAM, beyond end of MagiC on 32k boundary */
  move.l   os_membot(a5),d0
  add.l    #$00007fff,d0            ; 32k-1 addieren
  andi.w   #$8000,d0                ; auf volle 32k gehen
@@ -317,7 +316,7 @@ cpy_st:
  bne.b    startit
  add.l    d5,(a0)
      IFNE OUTSIDE
-* Beginn des ST-RAM hinter Mag!X-AES auf 32k-Grenze
+/* align start of ST-RAM, beyond end of AES on 32k boundary */
  move.l   (a0),d0
  add.l    #$00007fff,d0            ; 32k-1 addieren
  andi.w   #$8000,d0                ; auf volle 32k gehen
@@ -326,6 +325,7 @@ cpy_st:
 startit:
  clr.l    _hz_200                  ; Zeitpunkt des Kaltstarts festlegen
  jmp      (a5)                     ; MagiX starten
+toscopyend:
 
 
 err:
@@ -336,25 +336,27 @@ err:
 *
 * void cconws_country(a0 = char *s)
 *
-* in d4 steht die Nationalitaet
-* Aufbau der Zeichenkette, auf die a0 zeigt:
-* char n1,n2,...,-1      Nationalitaeten fuer erste Zeichenkette
-* char s1[]              erste Zeichenkette
-* char n3,n4,...,-1      Nationalitaeten fuer zweite Zeichenkette
-* char s2[]              zweite Zeichenkette
-* char -1                Abschluss
-* char defs[]            Defaultstring (i.a. englisch)
+* d4: country code
+* a0: ptr to countries & strings, as below:
+* char n1,n2,...,-1      countries for 1st string
+* char s1[]              1st string
+* char n3,n4,...,-1      countries for 2nd string
+* char s2[]              2nd string
+* char -1                terminator
+* char defs[]            default string (usually english)
 *
 **********************************************************************
 
 cconws_country:
- bsr.s    _chk_nat
- bne.b    cconws_country
+		bsr.s    _chk_nat
+		bne.b    cconws_country
 cconws:
- move.l   a0,-(sp)
- gemdos   Cconws
- addq.l   #6,sp
- rts
+        movem.l  d1-d2/a1-a2,-(a7)
+		move.l   a0,-(sp)
+		gemdos   Cconws
+		addq.l   #6,sp
+        movem.l  (a7)+,d1-d2/a1-a2
+		rts
 
 _chk_nat:
  move.b   (a0)+,d0
@@ -403,7 +405,7 @@ press_key:
  DC.B     -1
  DC.B     LF,'Press any key!',CR,LF,0
 
-name:
+magx_name:
  DC.B     '\magic.ram',0
  DCB.B    10,0
 

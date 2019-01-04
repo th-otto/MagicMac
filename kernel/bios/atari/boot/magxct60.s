@@ -1,18 +1,13 @@
+;OUTSIDE   EQU  0              ; memory segments on 32k pages
+RESIDENT  EQU  1              ; resetfest
 
+     INCLUDE "osbind.inc"
 
-resvalid    EQU $426
-resvector   EQU $42A
-phystop     EQU $42E
-_memtop     EQU $436
-trp14ret    EQU $486
-_md         EQU $49E
-_hz_200     EQU $4BA
-_SYSBASE    EQU $4F2
-memval3     EQU $51A
-PROC_TYPE   EQU $59E
-_cookies    EQU $5A0
-TT_ramtop   EQU $5A4
-TT_ramvalid EQU $5A8
+fstrm_beg EQU  ____md
+os_chksum EQU  trp14ret
+
+sizeof_PH equ 28
+
 
 
 MACRO Super adr
@@ -41,10 +36,10 @@ ENDM
         MC68030
 
 
-        movea.l $0004(a7),a5                    ; BasePagePointer from Stack
-        move.l  $000C(a5),d0                    ; text segment size
-        add.l   $0014(a5),d0                    ; data segment size
-        add.l   $001C(a5),d0                    ; bss segment size
+        movea.l 4(a7),a5                        ; BasePagePointer from Stack
+        move.l  p_tlen(a5),d0                   ; text segment size
+        add.l   p_dlen(a5),d0                   ; data segment size
+        add.l   p_blen(a5),d0                   ; bss segment size
         add.l   #1800,d0                        ; for stack and basepage
         and.b   #$FE,d0
         lea     -104(a5,d0.l),a7
@@ -54,11 +49,11 @@ ENDM
         clr.w   -(a7)
         move.w  #$4A,-(a7)                      ; Mshrink
         trap    #1
-        adda.w  #$C,a7
+        adda.w  #12,a7
         movem.l (a7)+,d1-d2/a1-a2
         move.l  #$4D616758,d0                   ; MagX
         bsr     GET_COOKIE
-        bpl     LAC2
+        bpl     err
         clr.l   MACHINE
         clr.w   CT60
         clr.w   EXT_CLOCK
@@ -92,7 +87,7 @@ L0B6:
         addq.l  #4,a7
         and.w   #$3,d0                          ; Shift
         cmp.w   #$3,d0
-        beq     LAC2
+        beq     err
         move.l  #$5F465251,d0                   ; _FRQ, internal clock
         bsr     GET_COOKIE
         bmi     L1CA
@@ -131,13 +126,13 @@ L0B6:
 L1CA:
         movem.l d1-d2/a1-a2,-(a7)
         move.w  #$0,-(a7)
-        pea     NOM_MAGIC+1
+        pea     magx_name+1
         move.w  #$003D,-(a7)                    ; Fopen
         trap    #1
         addq.w  #8,a7
         movem.l (a7)+,d1-d2/a1-a2
         move.w  d0,d7
-        bmi     LAC2
+        bmi     err
         movem.l d1-d2/a1-a2,-(a7)
         move.w  #2,-(a7)
         move.w  d7,-(a7)
@@ -147,7 +142,7 @@ L1CA:
         adda.w  #10,a7
         movem.l (a7)+,d1-d2/a1-a2
         move.l  d0,d6
-        ble     LAC2
+        ble     err
         movem.l d1-d2/a1-a2,-(a7)
         move.w  #0,-(a7)
         move.w  d7,-(a7)
@@ -157,7 +152,7 @@ L1CA:
         adda.w  #10,a7
         movem.l (a7)+,d1-d2/a1-a2
         tst.l   d0
-        bmi     LAC2
+        bmi     err
         movem.l d1-d2/a1-a2,-(a7)
         move.l  d6,-(a7)
         move.w  #$0048,-(a7)                    ; Malloc
@@ -165,7 +160,7 @@ L1CA:
         addq.w  #6,a7
         movem.l (a7)+,d1-d2/a1-a2
         tst.l   d0
-        ble     LAC2
+        ble     err
         movea.l d0,a6
         movem.l d1-d2/a1-a2,-(a7)
         pea     (a6)
@@ -183,95 +178,94 @@ L1CA:
         addq.w  #4,a7
         movem.l (a7)+,d1-d2/a1-a2
         cmp.l   (a7)+,d6
-        bne     LAC2
+        bne     err
         tst.l   d0
-        bmi     LAC2
+        bmi     err
         cmpi.w  #$601A,(a6)
-        bne     LAC2
-        movea.l $0030(a6),a0
-        lea     $1C(a6,a0.l),a0
+        bne     err
+        movea.l sizeof_PH+os_magic(a6),a0
+        lea     sizeof_PH(a6,a0.l),a0
         cmpi.l  #$87654321,(a0)+
-        bne     LAC2
+        bne     err
         movea.l (a0)+,a5
         addq.l  #4,a0
         cmpi.l  #$4D414758,(a0)                 ; MAGX
-        bne     LAC2
+        bne     err
         movem.l d1-d2/a1-a2,-(a7)
         Super 0
         movem.l (a7)+,d1-d2/a1-a2
-        move.l  #$01000000,_md
-        cmpi.l  #$1357BD13,TT_ramvalid
-        bne.s   L2E2
-        cmpi.l  #$01080000,TT_ramtop
-        bcs.s   L2E2
+
+        move.l  #$01000000,fstrm_beg
+        cmpi.l  #$1357BD13,ramvalid
+        bne.s   no_ttram
+        cmpi.l  #$01080000,ramtop
+        bcs.s   no_ttram
         movea.l #$01000000,a5
-L2E2:
+no_ttram:
         cmpi.l  #$00020000,MACHINE              ; Atari TT or Hades?
-        bcs.s   L306
+        bcs.s   ver_st
         move.w  #$0300,d0
         cmpi.l  #$00030000,MACHINE              ; Falcon?
-        bcs.s   L302
+        bcs.s   ver_tt
         move.w  #$0400,d0
-L302:
-        move.w  d0,$001E(a6)
-L306:
+ver_tt:
+        move.w  d0,os_version+sizeof_PH(a6)
+ver_st:
         movem.l d1-d2/a1-a2,-(a7)
         move.w  #$0019,-(a7)                    ; Dgetdrv
         trap    #1
-L310:
         addq.w  #2,a7
         movem.l (a7)+,d1-d2/a1-a2
-        movea.l $0030(a6),a0
-        lea     $1C(a6,a0.l),a0
+        movea.l os_magic+sizeof_PH(a6),a0
+        lea     sizeof_PH(a6,a0.l),a0
         lea     $007A(a0),a0
         cmpi.l  #$5F5F5F5F,(a0)
-        bne.s   L33E
+        bne.s   do_reloc
         add.b   #$41,d0
         move.b  d0,(a0)+
         move.b  #$3A,(a0)+
-        lea     NOM_MAGIC,a1
-L33A:
+        lea     magx_name,a1
+namecpy_loop:
         move.b  (a1)+,(a0)+
-        bne.s   L33A
-L33E:
+        bne.s   namecpy_loop
+do_reloc:
         move.l  2(a6),d0
         add.l   6(a6),d0
         move.l  d0,d5
         add.l   14(a6),d0
-        lea     $1C(a6,d0.l),a3
+        lea     sizeof_PH(a6,d0.l),a3
         lea     0(a6,d6.l),a2
         cmpa.l  a2,a3
-        bcc.s   L37A
-        lea     $001C(a6),a0                    ; reloge MagiC
+        bcc.s   end_reloc
+        lea     sizeof_PH(a6),a0                    ; reloge MagiC
         move.l  (a3)+,d0
-L35E:
+reloc_loop:
         adda.l  d0,a0
         move.l  a5,d0
         add.l   d0,(a0)
-L364:
+reloc_loop2:
         cmpa.l  a2,a3
-        bhi.s   L37A
+        bhi.s   end_reloc
         moveq   #0,d0
-L36A:
         move.b  (a3)+,d0
-        beq.s   L37A
+        beq.s   end_reloc
         cmp.b   #$01,d0
-        bne.s   L35E
+        bne.s   reloc_loop
         lea     $00FE(a0),a0
-        bra.s   L364
+        bra.s   reloc_loop2
 
-L37A:
-        lea     $001C(a6),a0
+end_reloc:
+        lea     sizeof_PH(a6),a0
         lea     0(a0,d5.l),a1
         moveq   #0,d0
-L384:
+os_chkloop:
         add.l   (a0)+,d0
         cmpa.l  a0,a1
-        bcs.s   L384
-        move.l  d0,trp14ret
+        bcs.s   os_chkloop
+        move.l  d0,os_chksum
         tst.w   CT60
         beq     LA10
-        lea     $001C(a6),a1                    ; patch
+        lea     sizeof_PH(a6),a1                ; patch
         move.l  d5,d1
         lsr.l   #1,d1
         moveq   #0,d2
@@ -613,14 +607,14 @@ L972:
         movem.l (a7)+,d1-d2/a1-a2
 LA10:
         ori     #$700,sr                        ; not allowed interruptions
-        lea     LA5E(pc),a1
+        lea     toscopy(pc),a1
         lea     $0600,a0
-        moveq   #$18,d0
-LA1E:
+        moveq   #((toscopyend-toscopy+3)/4)-1,d0
+startcopy:
         move.l  (a1)+,(a0)+
-        dbf     d0,LA1E
+        dbf     d0,startcopy
         move.l  _memtop,phystop
-        cmpi.l  #$28,CPU
+        cmpi.l  #40,CPU
         bcs.s   LA42
         dc.w    $F478                           ; CPUSHA DC
         moveq   #$00,d0                         ; inhibe & vide caches
@@ -629,7 +623,7 @@ LA1E:
         bra.s   LA5A
 
 LA42:
-        cmpi.l  #$14,CPU
+        cmpi.l  #20,CPU
         bcs.s   LA5A
         movec   cacr,d0
         or.w    #$808,d0                        ; clear caches
@@ -637,49 +631,75 @@ LA42:
 LA5A:
         jmp     $0600
 
-LA5E:
+toscopy:
         movea.l a5,a0
-        lea     $001C(a6),a1
-LA64:
+        lea     sizeof_PH(a6),a1
         move.l  d5,d0
         lsr.l   #3,d0
         subq.l  #1,d0
         cmpa.l  a0,a1                           ; deplace MagiC
-        bhi.s   LA7E
-        beq.s   LA86
+        bhi.s   cpy_uloop
+        beq.s   cpy_end
         adda.l  d5,a1
         adda.l  d5,a0
-LA74:
+cpy_dloop:
         move.l  -(a1),-(a0)
         move.l  -(a1),-(a0)
-        dbf     d0,LA74
-        bra.s   LA86
+        dbf     d0,cpy_dloop
+        bra.s   cpy_end
 
-LA7E:
+cpy_uloop:
         move.l  (a1)+,(a0)+
         move.l  (a1)+,(a0)+
-        dbf     d0,LA7E
-LA86:
+        dbf     d0,cpy_uloop
+cpy_end:
         move.l  #$5555AAAA,memval3
+     IFNE RESIDENT
         move.l  #$31415926,resvalid
         move.l  a5,resvector
+     ENDIF
         cmpa.l  #$01000000,a5
-        bne.s   LAA8
-        add.l   d5,_md
-        bra.s   LABA
+        bne.s   cpy_st
+        add.l   d5,fstrm_beg
+     IFNE OUTSIDE
+/* align start of FastRAM, beyond end of MagiC on 32k boundary */
+		move.l   fstrm_beg,d0
+		add.l    #$00007fff,d0            ; 32k-1 addieren
+		andi.w   #$8000,d0                ; auf volle 32k gehen
+		move.l   d0,fstrm_beg
+     ENDIF
+        bra.s   startit
 
-LAA8:
-        add.l   d5,$000C(a5)
-        movea.l $0014(a5),a0
+cpy_st:
+        add.l   d5,os_membot(a5)
+     IFNE OUTSIDE
+/* align start of ST-RAM, beyond end of MagiC on 32k boundary */
+		move.l   os_membot(a5),d0
+		add.l    #$00007fff,d0            ; 32k-1 addieren
+		andi.w   #$8000,d0                ; auf volle 32k gehen
+		move.l   d0,os_membot(a5)
+     ENDIF
+        movea.l os_magic(a5),a0
         cmpi.l  #$87654321,(a0)+
-        bne.s   LABA
+        bne.s   startit
         add.l   d5,(a0)
-LABA:
+     IFNE OUTSIDE
+/* align start of ST-RAM, beyond end of AES on 32k boundary */
+		move.l   (a0),d0
+		add.l    #$00007fff,d0            ; 32k-1 addieren
+		andi.w   #$8000,d0                ; auf volle 32k gehen
+		move.l   d0,(a0)
+     ENDIF
+startit:
         clr.l   _hz_200
         jmp     (a5)
 
         nop
-LAC2:
+toscopyend:
+
+
+err:
+done:
         movem.l d1-d2/a1-a2,-(a7)
         clr.w   -(a7)                           ; Pterm0
         trap    #1
@@ -757,7 +777,7 @@ GET_COOKIE:
         movea.l d0,a6                           ;  saves SSP
 LB6C:
         moveq   #$00,d7
-        move.l  _cookies,d0
+        move.l  _p_cookies,d0
         beq.s   LB88
         movea.l d0,a0
 LB76:
@@ -838,7 +858,7 @@ Text_Mhz:
         dc.b    ' Mhz',$00
 Text_Patch_PSG:
         dc.b    $0D,$0A,'Patch PSG printer',$00
-NOM_MAGIC:
+magx_name:
         dc.b    '\magic.ram',$00
 ERR:
         dc.b    $0D,$0A,$0A,'WARNING ! A part is not patched ! (',$00
