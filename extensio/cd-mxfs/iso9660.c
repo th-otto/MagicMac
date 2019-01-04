@@ -428,7 +428,7 @@ static long __get_root(LOGICAL_DEV *ldp, unsigned long lba, int count, int suppl
 		err = DCRead(ldp, recno * ISOFS_BLOCK_SIZE, ISOFS_BLOCK_SIZE, ldp->scratch);
 		if (err == E_CHNG)
 			err = DCRead(ldp, recno * ISOFS_BLOCK_SIZE, ISOFS_BLOCK_SIZE, ldp->scratch);
-		if (err == EMEDIA)
+		if (err == EMEDIA || err == EINSERT)
 			return err = err; /* FIXME */
 		if (err == 0)
 		{

@@ -458,16 +458,19 @@ static long get_root(LOGICAL_DEV *ldp, unsigned long lba, int count)
 		}
 	}
 	
-	cdread.cdread_buflen = CD_FRAMESIZE_RAW;
-	cdread.cdread_bufaddr = ldp->scratch;
-	cdread.cdread_lba = toc.cdte_addr.msf.minute * 60;
-	cdread.cdread_lba += toc.cdte_addr.msf.second + CD_MSF_OFFSET / CD_FRAMES;
-	cdread.cdread_lba *= CD_FRAMES;
-	cdread.cdread_lba += toc.cdte_addr.msf.frame;
-	err = Metaioctl(ldp->metadevice, METADOS_IOCTL_MAGIC, CDROMREADDA, &cdread);
-	if (err == 0)
-		ldp->fsprivate |= FS_AUDIO;
-	ldp->rootdirsize = (lasttrack - firsttrack + 1);
+	if (lasttrack != 0)
+	{
+		cdread.cdread_buflen = CD_FRAMESIZE_RAW;
+		cdread.cdread_bufaddr = ldp->scratch;
+		cdread.cdread_lba = toc.cdte_addr.msf.minute * 60;
+		cdread.cdread_lba += toc.cdte_addr.msf.second + CD_MSF_OFFSET / CD_FRAMES;
+		cdread.cdread_lba *= CD_FRAMES;
+		cdread.cdread_lba += toc.cdte_addr.msf.frame;
+		err = Metaioctl(ldp->metadevice, METADOS_IOCTL_MAGIC, CDROMREADDA, &cdread);
+		if (err == 0)
+			ldp->fsprivate |= FS_AUDIO;
+	}
+	ldp->rootdirsize = (1 + lasttrack - firsttrack);
 	ldp->blocksize = 1;
 	ldp->totalsize = ldp->rootdirsize * proc_len;
 	if (ldp->rootdirsize == 0)

@@ -1,1 +1,1 @@
-#define VERSIONSTRING "0.32"
+#define VERSIONSTRING "0.34"

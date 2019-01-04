@@ -497,7 +497,7 @@ static long get_root(LOGICAL_DEV *ldp, unsigned long lba, int count)
 	err = DCRead(ldp, addr, sizeof(blk0), &blk0);
 	if (err == E_CHNG)
 		err = DCRead(ldp, addr, sizeof(blk0), &blk0);
-	if (err == EMEDIA || err < 0) /* FIXME: unneeded extra check for EMEDIA */
+	if (err == EMEDIA || err == EINSERT || err < 0) /* FIXME: unneeded extra check for EMEDIA */
 		return err;
 	if (blk0.sbSig != cpu_to_be16(HFS_DRVR_DESC_MAGIC))
 		return ERROR;

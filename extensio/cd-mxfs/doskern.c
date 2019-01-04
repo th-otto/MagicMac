@@ -23,6 +23,8 @@ static long get_root(LOGICAL_DEV *ldp, long (*p_get_root)(LOGICAL_DEV *ldp, unsi
 	
 	root_offset = 0;
 	count = 1;
+	if (p_get_root == tocfs.get_root)
+		return p_get_root(ldp, 0, count);
 	err = Metaioctl(ldp->metadevice, METADOS_IOCTL_MAGIC, CDROMREADOFFSET, &root_offset);
 	if (err == 0)
 	{
@@ -67,7 +69,7 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 	int flag;
 	const char *sccsid;
 	
-	sccsid = "@(#)libcdfs.lib, Copyright (c) Julian F. Reschke, Jul  6 1997";
+	sccsid = "@(#)libcdfs.lib, Copyright (c) Julian F. Reschke, Nov  4 1997";
 	flag = 0;
 	
 	if (get_hz() > ldp->mediatime)
@@ -80,6 +82,7 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 			memset(&ldp->fs, 0, sizeof(ldp->fs));
 			flag |= 2;
 			DCClear(ldp);
+			ldp->fspreference = 0;
 		}
 	}
 	(void)sccsid;
@@ -106,8 +109,7 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 		if (get_root(ldp, tocfs.get_root) == 0)
 		{
 			ldp->fs = tocfs;
-			if (ldp->rootdirsize != 0)
-				ldp->fspreference = FSPREFERENCE_TOC;
+			ldp->fspreference = FSPREFERENCE_TOC;
 			return flag | 1;
 		}
 	}
@@ -129,8 +131,7 @@ int DKInitVolume(LOGICAL_DEV *ldp)
 	if (get_root(ldp, tocfs.get_root) == 0)
 	{
 		ldp->fs = tocfs;
-		if (ldp->rootdirsize != 0)
-			ldp->fspreference = FSPREFERENCE_TOC;
+		ldp->fspreference = FSPREFERENCE_TOC;
 		return flag | 1;
 	}
 	
