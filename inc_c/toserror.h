@@ -18,6 +18,7 @@
 #define EUNDEV	-15L	/* unknown device		*/
 #define EBADSF	-16L	/* bad sectors on format	*/
 #define EOTHER	-17L	/* insert other disk	*/
+#define EINSERT -18     /* insert media */
 
 /* BDOS level errors */
 
