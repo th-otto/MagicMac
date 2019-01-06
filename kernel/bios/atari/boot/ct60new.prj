@@ -1,0 +1,6 @@
+ct60new.tos
+.S[-I..\..\..\..\inc_as]
+.S[-DOUTSIDE=0]
+.L[-S=0]
+=
+ct60new.s
