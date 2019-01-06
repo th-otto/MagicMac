@@ -47,7 +47,7 @@ boot_iv_st_tt:
  bsr      delay_special_b
  moveq    #2,d1
 boot_iv_l2:
- move.b   d1,$ffff820a                  ; ST:50 Hz/PAL TT:Sync intern
+ move.b   d1,EXTCLK                     ; ST:50 Hz/PAL TT:Sync intern
 
 * Farbpalette setzen
 

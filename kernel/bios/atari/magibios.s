@@ -189,9 +189,9 @@ _itt1   equ $0005
 _dtt0   equ $0006
 _dtt1   equ $0007
 _pcr    equ $0808
+     ENDC
 cinva   equ $f4d8 ; cinva bc
 cpusha  equ $f4f8 ; cpusha bc
-     ENDC
 
 ;----------------------------------------
 
@@ -729,6 +729,7 @@ bot_nofast:
  lea      only_rte(pc),a3
  lea      dummyfn(pc),a4
  lea      8,a0
+; FIXME: might need adjustment for CT60
  moveq    #$3d,d0
  lea      exc02(pc),a1
  move.l   #exc03-exc02,d1
@@ -737,6 +738,7 @@ bot_nofast:
 
  cmpi.l   #$fa52235f,$fa0000
  beq.b    bot_l1
+; FIXME: might need adjustment for CT60
  moveq    #$3d,d0
 bot_loop:
  move.l   a1,(a0)+
@@ -931,6 +933,8 @@ bot_l4:
 
 * Cartridge testen
 
+; FIXME: boot loader for CTPCI invokes trap #0 here
+
 ;    IFEQ HADES
  moveq    #1,d0
  bsr      cartscan
@@ -1001,7 +1005,7 @@ no_magic_pc:
  cmpi.w   #30,cpu_typ
  bcs.b    bot_cpu_nopmmu
  cmp.w    #40,cpu_typ         ; ab 040er CPU: hier keine Init mehr?!?
- bcc.b    bot_cpu_weiter
+ bcc.b    bot_cpu_040
  lea      $700,a0
  lea      pmmutab,a1
  moveq    #$3f,d0             ; 64 Langworte
@@ -1018,6 +1022,10 @@ bot_cpu_nopmmu:
                               ;  $100: enable data cache
                               ; $1000: data burst enable
                               ; $2000: write allocate
+ movec    d0,cacr
+ bra.s    bot_cpu_weiter
+bot_cpu_040:
+ move.l   #$a0808000,d0
  movec    d0,cacr
 bot_cpu_weiter:
 
@@ -1373,9 +1381,12 @@ ivbl_nocol:
  beq.b    ivbl_l3
  move.l   d0,_v_bas_ad
  move.b   d0,$ffff820d             ; STe
- lsr.l    #8,d0
- lea      $ffff8201,a1
- movep.w  d0,0(a1)
+ lea      $ffff8201,a1             ; low byte
+ swap     d0
+ move.b   d0,(a1)                  ; high byte
+ swap     d0
+ lsr.w    #8,d0                    ; mid byte
+ move.b   d0,2(a1)
  clr.l    screenpt
 ivbl_l3:
      ENDIF
@@ -2546,7 +2557,7 @@ bcoprt_loop:
  move.l   _hz_200,d0               ; aktuelle Zeit
  sub.l    d2,d0                    ; - Zeit seit Beginn
  cmpi.l   #6000,d0                 ; schon 30s gewartet ?
- blt.b    bcoprt_loop                ; nein, weiter warten
+ blt.b    bcoprt_loop              ; nein, weiter warten
 bcoprt_end:
  moveq    #0,d0                    ; Timeout
  move.l   _hz_200,prt_last_timeout ; Zeit des letzten Timeouts merken
@@ -3060,18 +3071,12 @@ init_mfp:
  move.l   d7,-(sp)
  lea      gpip,a0
  moveq    #0,d1
- movep.l  d1,0(a0)                 ; fa01: irgendwas loeschen
-                                   ; fa03: Interrupt bei hi->lo
-                                   ; fa05: alle Ports als Eingaenge
-                                   ; fa07: IERA loeschen
- movep.l  d1,8(a0)                 ; fa09: IERB loeschen
-                                   ; fa0b: IPRA
-                                   ; fa0d: IPRB
-                                   ; fa0f: ISRA
- movep.l  d1,$10(a0)               ; fa11: ISRB
-                                   ; fa13: IMRA
-                                   ; fa15: IMRB
-                                   ; fa17: Interrupt vector register
+; clear all interrupt masks, pending bits etc.
+ moveq    #-24,d0
+init_mfp_loop:
+ move.b   d1,24(a0,d0.w)
+ addq.l   #2,d0
+ bne.s    init_mfp_loop
  move.b   #$48,$16(a0)             ; fa17: VR = Hinibble der Vektornummer=4
                                    ;            Automatic-EOI-Modus
  bset     #2,2(a0)                 ; Eingang I2 (CTS) soll Interrupt ausloesen
@@ -3099,16 +3104,18 @@ init_mfp:
 ;move.l   #$880101,d0              ; TOS 1.xx: #$880101
 
 
- move.l   #$880105,d0              ; TOS 2.05: #$880105
-                                   ; scr = 0
-                                   ; ucr.7 =  1: clock mode clk/16
+ ; move.l   #$880105,d0            ; TOS 2.05: #$880105
+ ; movep.l  d0,$26(a0)
+ moveq    #0,d1
+ move.b   d1,$26(a0)               ; scr = 0
+ move.b   #$88,$28(a0)             ; ucr.7 =  1: clock mode clk/16
                                    ;    .6
                                    ;    .5 = 00: Wortlaenge 8 Bits
                                    ;    .4
                                    ;    .3 = 01: start = stop = 1, asynchron
                                    ;    .2 = 0 : parity disable
                                    ;    .1 = 0 : parity even
-                                   ; rsr.7 = 0 : buffer not full
+ move.b   #$01,$2a(a0)             ; rsr.7 = 0 : buffer not full
                                    ;    .6 = 0 : no overrun error
                                    ;    .5 = 0 : no parity error
                                    ;    .4 = 0 : no frame error
@@ -3116,7 +3123,7 @@ init_mfp:
                                    ;    .2 = 0 : match ? char in progress ?
                                    ;    .1 = 0 : synchronous strip disable
                                    ;    .0 = 1 : receiver enable
-                                   ; tsr.7 = 0 : Sendepuffer nicht leer
+ move.b   #$05,$2c(a0)             ; tsr.7 = 0 : Sendepuffer nicht leer
                                    ;    .6 = 0 : no underrun error
                                    ;    .5 = 0 : no auto turnaround
                                    ;    .4 = 0 : Senden nicht beendet
@@ -3124,7 +3131,6 @@ init_mfp:
                                    ;    .2
                                    ;    .1 = 10: high Pegel
                                    ;    .0 = 1 : transmitter enable
- movep.l  d0,$26(a0)
 
  cmpi.b   #4,machine_type          ; Falcon wie Mega STe behandeln
  beq.b    imf_ste
@@ -3134,16 +3140,22 @@ init_mfp:
  bne.b    imf_ste                  ; Mega STE
  moveq    #0,d1
  lea      GPIP_TT,a0               ; MFP_TT
- movep.l  d1,0(a0)
- movep.l  d1,8(a0)
- movep.l  d1,$10(a0)
+ moveq    #-24,d0
+init_ttmfp_loop:
+ move.b   d1,24(a0,d0.w)
+ addq.l   #2,d0
+ bne.s    init_ttmfp_loop
  move.b   #$58,$16(a0)             ; andere Vektornummer als MFP_ST
  bset     #7,2(a0)                 ; Eingang I7 (SCSI) soll Interrupt ausloesen
                                    ; bei steigender Flanke
 ;move.l   #$880105,d0
- movep.l  d0,$26(a0)
- move.b   #1,$fffffa9d             ; TT_MFP+TCDCR (Timer C/D- Ctrl-Reg)
- move.b   #2,$fffffaa5             ; TT_MFP+TDDR  (Timer D- Data-Reg
+ moveq    #0,d1
+ move.b   d1,$26(a0)               ; scr = 0
+ move.b   #$88,$28(a0)
+ move.b   #$01,$2a(a0)
+ move.b   #$05,$2c(a0)
+ move.b   #1,$1c(a0)               ; TT_MFP+TCDCR (Timer C/D- Ctrl-Reg)
+ move.b   #2,$24(a0)               ; TT_MFP+TDDR  (Timer D- Data-Reg
 ;move.b   #1,iorec_ser2+$22        ; baudrate fuer TT_MFP, unnoetig, s.u.
 imf_ste:
  bsr      init_scc                 ; Mega STE und hoeher
@@ -3976,7 +3988,7 @@ cache_invalid:
  cmpi.w   #40,cpu_typ         ; ab 40er Cache anders loeschen ...
  bcs.b    ci_20
  nop
- DC.W     $f4f8               ; cpusha -- alle Caches zurueck und loeschen
+ DC.W     cpusha              ; cpusha -- alle Caches zurueck und loeschen
  nop
  rts
 ci_20:

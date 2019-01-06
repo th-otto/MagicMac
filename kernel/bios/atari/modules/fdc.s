@@ -253,6 +253,7 @@ set_DMA_write:
  move.w   d0,d7                    ; DMA: Anz. Sektoren
  bsr      d7_todma
 
+; FIXME: CT60 patches this to bsr dma_delay
  bsr      teste_fa01               ; neu - andernfalls Busfehler bei Falcon-DMA
                                    ; (zu schneller Zugriff)
 
