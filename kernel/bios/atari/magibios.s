@@ -4025,6 +4025,9 @@ mmx_yield:
 *
 
 get_cpu_typ:
+ move.l   $10,-(a7)                ; save illegal instruction
+ move.l   $2c,-(a7)                ; save line F
+ move.l   $f4,-(a7)                ; save unimplemented instruction
  move.l   sp,a0                    ; Hier Stack retten wegen ggf. Exception
  moveq    #0,d0                    ; Default CPU ist 68000
  nop                               ; flush pipelines
@@ -4061,6 +4064,9 @@ x040:
 set_cpu_typ:
  move.l   a0,sp                    ; Stack wiederherstellen
  nop                               ; flush pipelines
+ move.l   (a7)+,$f4                ; restore unimplemented instruction
+ move.l   (a7)+,$2c                ; restore line F
+ move.l   (a7)+,$10                ; restore illegal instruction
  rts
 
      IFNE HADES
