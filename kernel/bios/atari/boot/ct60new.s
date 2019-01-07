@@ -418,7 +418,7 @@ skip_p5:
 skip_p6:
 
 /*
- * During initialization of execption vectors,
+ * During initialization of exception vectors,
  * leave the ones that were already installed
  * by the CTBIOS intact.
  * location:
@@ -436,7 +436,7 @@ skip_p6:
 skip_p7:
 
 /*
- * During initialization of execption vectors,
+ * During initialization of exception vectors,
  * leave the ones that were already installed
  * by the CTBIOS intact.
  * location:
@@ -454,7 +454,7 @@ skip_p7:
 skip_p8:
 
 /*
- * During initialization of execption vectors,
+ * During initialization of exception vectors,
  * leave the Line-F vector intact.
  * location:
  *    magibios.s, near syshdr_l1
@@ -811,6 +811,16 @@ done_p5:
         bra     patch_done
 done_p6:
 
+        cmp.l   #0x21C80010,d0                  /* move.l a0,(0x10).w */
+        bne.s   done_p9
+        cmpi.l  #0x4e7121c8,4(a1)               /* nop;move.l a0,(0x2c).w */
+        bne.s   done_p9
+        lea     Text_Patch_Vectors_3_ok(pc),a0
+        bsr     cconws
+        addq.w  #1,d2
+        bra     patch_done
+done_p9:
+
         cmp.l   #0x54415441,d0                  /* addq.w #2,d1; addq.w #2,d1 */
         bne.s   done_p14
         cmpi.l  #0x54415441,4(a1)               /* addq.w #2,d1; addq.w #2,d1 */
@@ -881,6 +891,17 @@ no_ide_patch:
         bra     wait_key
 
 patch_ok:
+        lea     copy_msg(pc),a0
+        bsr     cconws
+        lea     -10(sp),sp
+        move.l  sp,a0
+        move.l  a5,d0
+        bsr     conv_hex
+        bsr     cconws
+        lea     10(sp),sp
+        lea     crlf(pc),a0
+        bsr     cconws
+        
   IFNE PATCHONLY
 		bra done
   ENDC
@@ -910,6 +931,13 @@ not_040:
 go_toscopy:
         jmp     0x0600
 
+
+/*
+ * copy magic to its excution address
+ * A5: target address
+ * A6: start of file, including gemdos header
+ * D5: length of text+data
+ */
 toscopy:
         movea.l a5,a0
         lea     sizeof_PH(a6),a1
@@ -970,7 +998,7 @@ cpy_st:
 		move.l   d0,(a0)
      ENDIF
 startit:
-        clr.l   _hz_200
+        move.l  #16000,_hz_200
         jmp     (a5)
 
         nop
@@ -1037,6 +1065,37 @@ conv_deci_err:
         dbf     d1,conv_deci_err
 conv_deci_end:
         rts
+
+/*
+ * A0:target string pointer ASCII
+ * D0:32 bit value
+ */
+conv_hex:
+		swap  d0
+		bsr.s conv_hex4
+		swap  d0
+		bsr.s conv_hex4
+		clr.b (a0)
+		subq.l #8,a0
+		rts
+conv_hex4:
+		rol.w #8,d0
+		bsr.s conv_hex2
+		ror.w #8,d0
+conv_hex2:
+		ror.w #4,d0
+		bsr.s conv_hex1
+		rol.w #4,d0
+conv_hex1:
+		move.b d0,d1
+		and.w  #15,d1
+		add.b  #48,d1
+		cmp.b  #58,d1
+		bcs.s  conv_hexdone
+		add.b  #39,d1
+conv_hexdone:
+		move.b d1,(a0)+
+		rts
 
 /*
  * A0:target string pointer ASCII
@@ -1169,6 +1228,8 @@ Text_Patch_Vectors_2:
         .dc.b    'Patch vectors 2',CR,LF,0
 Text_Patch_Vectors_3:
         .dc.b    'Patch vectors 3',CR,LF,0
+Text_Patch_Vectors_3_ok:
+        .dc.b    'Vectors 3 ok',CR,LF,0
 Text_Patch_Reset_1:
         .dc.b    'Patch reset 1',CR,LF,0
 Text_Patch_Reset_2:
@@ -1216,6 +1277,9 @@ not_found_msg:
 err_load_msg:
 		.dc.b   -1
 		.dc.b   'Error loading magic.ram',CR,LF,0
+
+copy_msg:
+		.dc.b   'Copying magic.ram to $',0
 
 dont_install_msg:
 		.dc.b    COUNTRY_DE,COUNTRY_SG,-1

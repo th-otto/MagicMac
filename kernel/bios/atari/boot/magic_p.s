@@ -16,10 +16,8 @@
 		trap      #1
 
 patchit:
-		pea.l     title(pc)
-		move.w    #9,-(a7) /* Cconws */
-		trap      #1
-		addq.w    #6,a7
+		lea       title(pc),a0
+		bsr       cconws
 
 		move.w    #7,-(a7) /* Crawcin */
 		trap      #1
@@ -34,10 +32,8 @@ patchit:
 		addq.w    #8,a7
 		move.w    d0,d7
 		bpl.s     patchit1
-		pea.l     no_magic_msg(pc)
-		move.w    #9,-(a7) /* Cconws */
-		trap      #1
-		addq.w    #6,a7
+		lea       no_magic_msg(pc),a0
+		bsr       cconws
 		move.w    #7,-(a7) /* Crawcin */
 		trap      #1
 		addq.w    #2,a7
@@ -90,7 +86,8 @@ patchit1:
 		lea       0(a2,d0.l),a3 /* end of text */
 		move.w    #0xF039,d2 /* pmove opcode we are searching for */
 		move.w    #0x6006,d3 /* bra.s *+8 */
-
+        moveq     #0,d0
+        
 patchloop:
 		cmpa.l    a3,a2
 		bcc.s     patchend
@@ -99,9 +96,19 @@ patchloop:
 patchop:
 		move.w    d3,-2(a2)
 		addq.w    #6,a2
+		addq.l    #1,d0
 		bra.s     patchloop
 patchend:
-
+        lea       found_msg(pc),a0
+        bsr       cconws
+        lea       -10(sp),sp
+        move.l    sp,a0
+        bsr       conv_hex
+        bsr       cconws
+        lea       10(sp),sp
+        lea       crlf(pc),a0
+        bsr       cconws
+        
 		clr.w     -(a7)
 		pea.l     magx_name_bak(pc)
 		move.w    #61,-(a7) /* Fopen */
@@ -113,17 +120,13 @@ patchend:
 		move.w    #62,-(a7) /* Fclose */
 		trap      #1
 		addq.w    #4,a7
-		pea.l     exists_msg(pc)
-		move.w    #9,-(a7) /* Cconws */
-		trap      #1
-		addq.w    #6,a7
+		lea       exists_msg(pc),a0
+		bsr       cconws
 		bra.s     done
 
 writeit:
-		pea.l     creating_msg(pc)
-		move.w    #9,-(a7) /* Cconws */
-		trap      #1
-		addq.w    #6,a7
+		lea       creating_msg(pc),a0
+		bsr       cconws
 
 		pea.l     magx_name_bak(pc)
 		pea.l     magx_name(pc)
@@ -135,10 +138,8 @@ writeit:
 		bmi.s     err
 
 done:
-		pea.l     saving_msg(pc)
-		move.w    #9,-(a7) /* Cconws */
-		trap      #1
-		addq.w    #6,a7
+		lea       saving_msg(pc),a0
+		bsr       cconws
 
 		clr.w     -(a7)
 		pea.l     magx_name(pc)
@@ -168,10 +169,8 @@ done:
 		trap      #1
 		addq.w    #6,a7
 
-		pea.l     finish_msg(pc)
-		move.w    #9,-(a7) /* Cconws */
-		trap      #1
-		addq.w    #6,a7
+		lea       finish_msg(pc),a0
+		bsr       cconws
 
 		move.w    #7,-(a7) /* Crawcin */
 		trap      #1
@@ -185,16 +184,53 @@ err:
 		addq.w    #6,a7
 
 nomem_err:
-		pea.l     errmsg(pc)
-		move.w    #9,-(a7)
-		trap      #1
-		addq.w    #6,a7
+		lea       errmsg(pc),a0
+		bsr       cconws
 		move.w    #7,-(a7)
 		trap      #1
 		addq.w    #2,a7
 		rts
 
-		.data
+/*
+ * A0:target string pointer ASCII
+ * D0:32 bit value
+ */
+conv_hex:
+		swap  d0
+		bsr.s conv_hex4
+		swap  d0
+		bsr.s conv_hex4
+		clr.b (a0)
+		subq.l #8,a0
+		rts
+conv_hex4:
+		rol.w #8,d0
+		bsr.s conv_hex2
+		ror.w #8,d0
+conv_hex2:
+		ror.w #4,d0
+		bsr.s conv_hex1
+		rol.w #4,d0
+conv_hex1:
+		move.b d0,d1
+		and.w  #15,d1
+		add.b  #48,d1
+		cmp.b  #58,d1
+		bcs.s  conv_hexdone
+		add.b  #39,d1
+conv_hexdone:
+		move.b d1,(a0)+
+		rts
+
+cconws:
+        movem.l  d0-d2/a1-a2,-(a7)
+		move.l   a0,-(sp)
+		move.w   #9,-(a7) /* Cconws */
+		trap     #1
+		addq.l   #6,sp
+        movem.l  (a7)+,d0-d2/a1-a2
+		rts
+
 title:  
 		.dc.b 27,'E'
         .ascii "~~~~~~~~MAGIC PATCH FOR CENTurbo II~~~~~~~~~"
@@ -217,15 +253,16 @@ finish_msg:
         .dc.b 13,10
         .ascii "Finish !"
         .dc.b 13,10,0
-key_msg:
-        .ascii "A key to exit..."
-        .dc.b 13,10,0
 no_magic_msg:
         .dc.b 13,10
         .ascii "No MAGIC.RAM ?!"
         .dc.b 13,10
+key_msg:
         .ascii "A key to exit..."
         .dc.b 13,10,0
+found_msg:
+        .ascii "Found patches: $"
+        .dc.b 0
 magx_name:
         .ascii "MAGIC.RAM"
         .dc.b 0
@@ -237,6 +274,7 @@ errmsg:
         .ascii "ERROR during work !!!!"
         .dc.b 13,10
         .ascii "A key to exit..."
+crlf:
         .dc.b 13,10,0
 
      .even

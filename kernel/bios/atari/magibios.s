@@ -564,11 +564,15 @@ syshdr_code:
 syshdr_l1:
  lea      endofvars,sp             ; Hier Stack setzen wegen ggf. Exception
  lea      bot_ok1(pc),a0
+ move.l   $2c,-(sp)                ; save LineF handler, in case FP2p060 was installed
+ move.l   sp,a1
  move.l   a0,8                     ; Busfehler
  move.l   a0,$10                   ; Illegaler Befehl
+ nop                               ; this is just here to prevent old boot program from patching it
  move.l   a0,$2c                   ; Line-F
  moveq    #0,d0
  movec    d0,vbr                   ; fuer 68010/20/30
+ movec    d0,cacr                  ; fuer 68040/60
  move.l   #$808,d0                 ; instr/data-cache off/clear
  movec    d0,cacr                  ; fuer 68020/30
  pmove    long_zero,tc             ; fuer 68030: disable translation
@@ -576,6 +580,8 @@ syshdr_l1:
  pmove    long_zero,tt1
  frestore long_zero                ; fuer 68882
 bot_ok1:
+ move.l   a1,sp
+ move.l   (sp)+,$2c                ; restore LineF handler
      ENDIF
 
 
