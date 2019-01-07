@@ -288,6 +288,23 @@ os_chkloop:
         lsr.l   #1,d1
         moveq   #0,d2
 
+/*
+ * determine the number of patches to expect
+ */
+        moveq   #19,d3                         /* max patches */
+        tst.w   CTPCI
+        beq.s   no_ctpci_patch
+        addq    #1,d3
+no_ctpci_patch:
+        tst.w   EXT_CLOCK
+        beq.s   no_ext_patch
+        addq.w  #3,d3                          /* add 3 */
+no_ext_patch:
+        tst.w   IDE_SLAVE
+        beq.s   no_ide_patch
+        addq    #3,d3
+no_ide_patch:
+
 
 patch_loop:
 
@@ -310,8 +327,8 @@ patch_loop:
         move.l  #0x203CA080,(a1)                /* MOVE.L #0xA0808000,D0 */
         move.l  #0x80004E7B,4(a1)
         lea     Text_Patch_cache_1(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p1:
 
@@ -329,8 +346,8 @@ skip_p1:
         move.l  #0x00024E71,4(a1)               /* nop */
         move.w  #0xF4F8,8(a1)                   /* CPUSHA BC */
         lea     Text_Patch_cache_2(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p2:
 
@@ -354,8 +371,8 @@ skip_p2:
         move.l  d0,4(a1)
         move.l  d0,8(a1)
         lea     Text_Patch_cache_3(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p3:
 
@@ -374,8 +391,8 @@ skip_p3:
         move.l  #0x10185481,4(a1)               /* addq.l #2,d1 */
         move.l  #0x66F84E71,8(a1)               /* bne.s *-6; nop */
         lea     Text_Patch_movep_1(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p4:
 
@@ -397,8 +414,8 @@ skip_p4:
         move.l  #0x117C0005,16(a1)
         move.l  #0x002C6038,20(a1)              /* bra.s *+0x3a (imf_ste) */
         lea     Text_Patch_movep_2(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p5:
 
@@ -412,8 +429,8 @@ skip_p5:
         bne.s   skip_p6
         move.l  #0x703C4E75,(a1)                /* moveq.l #60,d0; rts */
         lea     Text_Patch_CPU_type(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p6:
 
@@ -430,8 +447,8 @@ skip_p6:
         bne.s   skip_p7
         move.w  #0x7008,4(a1)                   /* moveq #8,d0 */
         lea     Text_Patch_Vectors_1(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p7:
 
@@ -448,8 +465,8 @@ skip_p7:
         bne.s   skip_p8
         move.w  #0x7008,(a1)                    /* moveq #8,d0 */
         lea     Text_Patch_Vectors_2(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p8:
 
@@ -465,8 +482,8 @@ skip_p8:
         bne.s   skip_p9
         move.l  #0x4E714E71,4(a1)               /* nop;nop */
         lea     Text_Patch_Vectors_3(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p9:
 
@@ -484,8 +501,8 @@ patch_reset1:
         bne     patch_done
         move.w  #0x4E71,(a1)                    /* nop */
         lea     Text_Patch_Reset_1(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p10:
 
@@ -502,8 +519,8 @@ skip_p10:
         bne.s   patch_reset1
         move.w  #0x4E71,(a1)
         lea     Text_Patch_Reset_2(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p11:
 
@@ -522,8 +539,8 @@ skip_p11:
         bne.s   skip_p12
         move.l  #0x4E714E71,12(a1)              /* nop;nop */
         lea     Text_Patch_DSP(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p12:
 
@@ -543,7 +560,7 @@ skip_p12:
         bne.s   skip_p13
         move.l  #0x610008BA,4(a1)               /* bsr dma_delay */
         lea     Text_Patch_Floppy(pc),a0
-        bsr     cconws
+        bsr     print_addr
         /* not counted for number of patches */
         bra     patch_done
 skip_p13:
@@ -563,8 +580,8 @@ skip_p13:
         bne.s   skip_p14
         move.w  #0x7210,6(a1)                   /* moveq.l #16,d1 */
         lea     Text_Patch_FPU_Cookie(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         tst.l   FPU
         bne     patch_done
         move.w  #0x7200,6(a1)                   /* moveq.l #0,d1 */
@@ -586,8 +603,8 @@ skip_p14:
         bne.s   skip_p15
         move.l  #0x4E714E71,2(a1)               /* nop;nop */
         lea     Text_Patch_FPU_save(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p15:
 
@@ -605,7 +622,8 @@ skip_p15:
         move.l  #0x4E714E71,(a1)
         move.w  #0x4E71,4(a1)
         lea     Text_Patch_FPU_restore(pc),a0
-        bsr     cconws
+        /* not counted; that sequence is not found in 6.20 kernel */
+        bsr     print_addr
         bra     patch_done
 skip_p16:
 
@@ -622,8 +640,8 @@ skip_p16:
         bne.s   skip_p17
         move.w  #0x4E71,2(a1)                   /* nop */
         lea     Text_Patch_PMMU(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p17:
 
@@ -642,8 +660,8 @@ skip_p17:
         move.l  #0x4E714E71,(a1)
         move.w  #0x4E71,4(a1)
         lea     Text_Patch_Monitor_1(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p18:
 
@@ -660,8 +678,8 @@ skip_p18:
         bne.s   skip_p19
         move.l  #0x4E714E71,(a1)                /* nop;nop */
         lea     Text_Patch_Monitor_2(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p19:
 
@@ -717,8 +735,8 @@ skip_p19:
         move.l  #0x4E754E71,52(a1)
         move.w  #0x4E71,0x0038(a1)              /* nop */
         lea     Text_Patch_PSG(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 skip_p20:
 
@@ -733,10 +751,10 @@ skip_p20:
 		bne.s   skip_p21
 		cmp.w   #0x7001,4(a1)                   /* moveq #1,d0 */
 		bne.s   skip_p21
-		move.w  #0x4E40,4(A1)                   /* trap #0 TOS */
+		move.w  #0x4E40,4(a1)                   /* trap #0 TOS */
         lea     Text_Patch_CTPCI(pc),a0
-        bsr     cconws
-		addq    #1,D2
+		addq    #1,d2
+        bsr     print_count_and_addr
 		bra     patch_done
 skip_p21:
 
@@ -753,8 +771,8 @@ skip_p21:
 		bne.s   skip_p22
 		move.w  #0x7011,(a1)                    /* moveq #0x11,d0 */
         lea     Text_Patch_IDE_slave(pc),a0
-        bsr     cconws
 		addq    #1,d2
+        bsr     print_count_and_addr
 		moveq   #49,d0
 		move.l  a1,a0
 p22_loop:
@@ -764,8 +782,8 @@ p22_loop:
 		bne     patch_done
 		move.w  #0x7811,(a0)                    /* moveq #0x11,D4 */
         lea     Text_Patch_IDE_slave(pc),a0
-        bsr     cconws
 		addq    #1,d2
+        bsr     print_count_and_addr
 		bra     patch_done  
 skip_p22:
 
@@ -782,8 +800,8 @@ skip_p22:
         cmp.w   #0x66f8,8(a1)                   /* bne.s init_mfp_loop */
         bne.s   done_p4
         lea     Text_Patch_movep_1_ok(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
 done_p4:
 
         cmp.l   #0x117C0088,d0                  /* move.b #0x88,0x28(a0) */
@@ -797,8 +815,8 @@ done_p4:
         cmp.l   #0x002c0c38,16(a1)
         bne.s   done_p5
         lea     Text_Patch_movep_2_ok(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
 done_p5:
 
         cmp.l   #0x204F7000,d0                  /* move.l sp,a0; moveq #0,d0 */
@@ -806,8 +824,8 @@ done_p5:
         cmpi.w  #0x4e71,4(a1)                   /* nop */
         bne.s   done_p6
         lea     Text_Patch_CPU_ok(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 done_p6:
 
@@ -816,8 +834,8 @@ done_p6:
         cmpi.l  #0x4e7121c8,4(a1)               /* nop;move.l a0,(0x2c).w */
         bne.s   done_p9
         lea     Text_Patch_Vectors_3_ok(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 done_p9:
 
@@ -828,8 +846,8 @@ done_p9:
         cmpi.w  #0x3001,8(a1)                   /* move.w d1,d0 */
         bne.s   done_p14
         lea     Text_Patch_FPU_Cookie_ok(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 done_p14:
 
@@ -838,8 +856,8 @@ done_p14:
         cmpi.l  #0x003c059e,4(a1)               /* cmpi.w #60,(0xcpu_typ).w */
         bne.s   done_p15
         lea     Text_Patch_FPU_save_ok(pc),a0
-        bsr     cconws
         addq.w  #1,d2
+        bsr     print_count_and_addr
         bra     patch_done
 done_p15:
 
@@ -850,43 +868,12 @@ patch_done:
         subq.l  #1,d1
         bgt     patch_loop
 
-        moveq   #19,d3                         /* max patches */
-        tst.w   CTPCI
-        beq.s   no_ctpci_patch
-        addq    #1,d3
-no_ctpci_patch:
-        tst.w   EXT_CLOCK
-        beq.s   no_ext_patch
-        addq.w  #3,d3                          /* add 3 */
-no_ext_patch:
-        tst.w   IDE_SLAVE
-        beq.s   no_ide_patch
-        addq    #3,d3
-no_ide_patch:
-
         cmp.w   d3,d2                          /* compare how many patches done */
         beq     patch_ok
         lea     not_all_patches_msg(pc),a0
         bsr     cconws
-        link    a5,#-4
-        clr.w   -2(a5)
-        lea     -4(a5),a0
-        move.l  d2,d0
-        moveq   #2,d1
-        bsr     CONV_DECI
-        lea     -4(a5),a0
-        bsr     cconws
-        lea     slash(pc),a0
-        bsr     cconws
-        lea     -4(a5),a0
-        move.l  d3,d0
-        moveq   #2,d1
-        bsr     CONV_DECI
-        lea     -4(a5),a0
-        bsr     cconws
-        unlk    a5
-
-        lea     close_paren(pc),a0
+        bsr     print_num_patches
+        lea     crlf(pc),a0
         bsr     cconws
         bra     wait_key
 
@@ -1039,6 +1026,54 @@ wait_key:
         bsr     cconws
 		bra     err
 
+print_count_and_addr:
+        bsr     cconws
+        bsr.s   print_num_patches
+print_count1:
+		lea     space(pc),a0
+        bsr     cconws
+        lea     sizeof_PH(a6),a0
+        move.l  a1,d0
+        sub.l   a0,d0
+        lea     -10(sp),sp
+        move.l  sp,a0
+        bsr     conv_hex
+        move.l  sp,a0
+        bsr     cconws
+        lea     10(sp),sp
+		lea     crlf(pc),a0
+        bsr     cconws
+		rts
+print_addr:
+        bsr     cconws
+		bra.s   print_count1
+
+print_num_patches:
+        move.l  d1,-(sp)
+        subq.l  #4,sp
+        clr.l   (sp)
+        lea     open_paren(pc),a0
+        bsr     cconws
+        move.l  sp,a0
+        move.l  d2,d0
+        moveq   #2,d1
+        bsr     CONV_DECI
+        move.l  sp,a0
+        bsr     cconws
+        lea     slash(pc),a0
+        bsr     cconws
+        move.l  sp,a0
+        move.l  d3,d0
+        moveq   #2,d1
+        bsr     CONV_DECI
+        move.l  sp,a0
+        bsr     cconws
+        lea     close_paren(pc),a0
+        bsr     cconws
+        addq.l  #4,sp
+        move.l  (sp)+,d1
+		rts
+
 /*
  * A0:target string pointer ASCII
  * D0:32 bit value
@@ -1066,6 +1101,33 @@ conv_deci_err:
 conv_deci_end:
         rts
 
+
+/*
+ * A0:target string pointer ASCII
+ * D0:32 bit value
+ * D1:number of digits
+ */
+CONV_DECI_SIMPLE:
+        move.w  d1,-(sp)
+        subq.w  #1,d1
+        move.l  d0,-(a7)
+conv_simple_loop:
+        moveq   #0,d0
+        move.w  (a7),d0
+        divu    #10,d0                          /* poids fort /10 */
+        move.w  d0,(a7)                         /* resultat poids fort */
+        move.w  2(a7),d0
+        divu    #10,d0                          /* ((reste * 65536) + poids faible)/10 */
+        move.w  d0,2(a7)                        /* resultat poids faible */
+        swap    d0
+        or.w    #0x0030,d0
+        move.b  d0,0(a0,d1.w)
+        dbf     d1,conv_simple_loop
+        addq.l  #4,a7
+        move.w  (sp)+,d1
+        rts
+
+
 /*
  * A0:target string pointer ASCII
  * D0:32 bit value
@@ -1087,6 +1149,7 @@ conv_hex2:
 		bsr.s conv_hex1
 		rol.w #4,d0
 conv_hex1:
+		move.l d1,-(sp)
 		move.b d0,d1
 		and.w  #15,d1
 		add.b  #48,d1
@@ -1095,33 +1158,8 @@ conv_hex1:
 		add.b  #39,d1
 conv_hexdone:
 		move.b d1,(a0)+
+		move.l (sp)+,d1
 		rts
-
-/*
- * A0:target string pointer ASCII
- * D0:32 bit value
- * D1:number of digits
- */
-CONV_DECI_SIMPLE:
-        move.w  d1,-(a7)
-        subq.w  #1,d1
-        move.l  d0,-(a7)
-conv_simple_loop:
-        moveq   #0,d0
-        move.w  (a7),d0
-        divu    #10,d0                          /* poids fort /10 */
-        move.w  d0,(a7)                         /* resultat poids fort */
-        move.w  2(a7),d0
-        divu    #10,d0                          /* ((reste * 65536) + poids faible)/10 */
-        move.w  d0,2(a7)                        /* resultat poids faible */
-        swap    d0
-        or.w    #0x0030,d0
-        move.b  d0,0(a0,d1.w)
-        dbf     d1,conv_simple_loop
-        addq.l  #4,a7
-        move.w  (a7)+,d1
-        rts
-
 
 /*
  * Input:
@@ -1205,55 +1243,55 @@ Info_Text:
 		.dc.b -1
         .dc.b    CR,LF,LF,0x1B,'p MagiC-BOOTER ',0x1B,'q',CR,LF,0
 Text_Patch_cache_1:
-        .dc.b    'Patch cache 1',CR,LF,0
+        .dc.b    'Patch cache 1',0
 Text_Patch_cache_2:
-        .dc.b    'Patch cache 2',CR,LF,0
+        .dc.b    'Patch cache 2',0
 Text_Patch_cache_3:
-        .dc.b    'Patch cache 3',CR,LF,0
+        .dc.b    'Patch cache 3',0
 Text_Patch_movep_1:
-        .dc.b    'Patch movep 1',CR,LF,0
+        .dc.b    'Patch movep 1',0
 Text_Patch_movep_1_ok:
-        .dc.b    'Movep 1 ok',CR,LF,0
+        .dc.b    'Movep 1 ok',0
 Text_Patch_movep_2:
-        .dc.b    'Patch movep 2',CR,LF,0
+        .dc.b    'Patch movep 2',0
 Text_Patch_movep_2_ok:
-        .dc.b    'Movep 2 ok',CR,LF,0
+        .dc.b    'Movep 2 ok',0
 Text_Patch_CPU_type:
-        .dc.b    'Patch CPU type',CR,LF,0
+        .dc.b    'Patch CPU type',0
 Text_Patch_CPU_ok:
-        .dc.b    'CPU detection ok',CR,LF,0
+        .dc.b    'CPU detection ok',0
 Text_Patch_Vectors_1:
-        .dc.b    'Patch vectors 1',CR,LF,0
+        .dc.b    'Patch vectors 1',0
 Text_Patch_Vectors_2:
-        .dc.b    'Patch vectors 2',CR,LF,0
+        .dc.b    'Patch vectors 2',0
 Text_Patch_Vectors_3:
-        .dc.b    'Patch vectors 3',CR,LF,0
+        .dc.b    'Patch vectors 3',0
 Text_Patch_Vectors_3_ok:
-        .dc.b    'Vectors 3 ok',CR,LF,0
+        .dc.b    'Vectors 3 ok',0
 Text_Patch_Reset_1:
-        .dc.b    'Patch reset 1',CR,LF,0
+        .dc.b    'Patch reset 1',0
 Text_Patch_Reset_2:
-        .dc.b    'Patch reset 2',CR,LF,0
+        .dc.b    'Patch reset 2',0
 Text_Patch_DSP:
-        .dc.b    'Patch DSP',CR,LF,0
+        .dc.b    'Patch DSP',0
 Text_Patch_Floppy:
-        .dc.b    'Patch floppy',CR,LF,0
+        .dc.b    'Patch floppy',0
 Text_Patch_FPU_Cookie:
-        .dc.b    'Patch FPU cookie',CR,LF,0
+        .dc.b    'Patch FPU cookie',0
 Text_Patch_FPU_Cookie_ok:
-        .dc.b    'FPU cookie ok',CR,LF,0
+        .dc.b    'FPU cookie ok',0
 Text_Patch_PMMU:
-        .dc.b    'Patch PMMU 030 tree',CR,LF,0
+        .dc.b    'Patch PMMU 030 tree',0
 Text_Patch_Monitor_1:
-        .dc.b    'Patch external clock 32MHz RGB monitor 1',CR,LF,0
+        .dc.b    'Patch external clock 32MHz RGB monitor 1',0
 Text_Patch_Monitor_2:
-        .dc.b    'Patch external clock 32MHz RGB monitor 2',CR,LF,0
+        .dc.b    'Patch external clock 32MHz RGB monitor 2',0
 Text_Patch_FPU_save:
-        .dc.b    'Patch context FPU save',CR,LF,0
+        .dc.b    'Patch context FPU save',0
 Text_Patch_FPU_save_ok:
-        .dc.b    'Context FPU save ok',CR,LF,0
+        .dc.b    'Context FPU save ok',0
 Text_Patch_FPU_restore:
-        .dc.b    'Patch context FPU restore',CR,LF,0
+        .dc.b    'Patch context FPU restore',0
 Text_Internal_clock:
         .dc.b    'Internal clock : ',CR,LF,0
 Text_external_clock:
@@ -1261,15 +1299,25 @@ Text_external_clock:
 Text_Mhz:
         .dc.b    ' Mhz',0
 Text_Patch_PSG:
-        .dc.b    'Patch PSG printer',CR,LF,0
+        .dc.b    'Patch PSG printer',0
 Text_Patch_CTPCI:
-		.dc.b    'Patch CTPCI',CR,LF,0
+		.dc.b    'Patch CTPCI',0
 Text_Patch_IDE_slave:
         .dc.b    'Patch boot IDE slave',CR,LF,0
 magx_name:
         .dc.b    92,'magic.ram',0
 not_all_patches_msg:
-        .dc.b    CR,LF,'WARNING! A part is not patched! (',0
+        .dc.b    CR,LF,'WARNING! A part is not patched!',0
+open_paren:
+		.dc.b    ' ','(',0
+slash:
+		.dc.b    '/',0
+close_paren:
+		.dc.b    ')',0
+crlf:
+		.dc.b    CR,LF,0
+space:
+		.dc.b    ' ','$',0
 
 not_found_msg:
 		.dc.b   -1
@@ -1296,13 +1344,6 @@ press_key_msg:
 		.dc.b    'Appuyez sur une touche!',0
 		.dc.b    -1
 		.dc.b    'Press any key!',0
-
-slash:
-		.dc.b    '/',0
-close_paren:
-		.dc.b    ')'
-crlf:
-		.dc.b    CR,LF,0
 
         .bss
 
