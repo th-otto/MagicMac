@@ -1,0 +1,236 @@
+
+                                  Anleitung
+
+                                      zu
+
+                                   MAGICROM
+
+                          Release 6, vom 23.06.1996
+
+                                     von
+
+                               Wilfried Mintrop
+
+
+------------------------------------------------------------------------------
+Programmbeschreibung:
+---------------------
+
+Das Programm erzeugt aus einem vorhandenen MagiC! 2, 3, 4 oder 5 eine 
+ROM-fÑhige Version. FÅr MagiC! 4 und 5 bitte die Neuerungen beachten.
+
+Dazu kann noch der Scsi-Treiber des CBHD-Paketes (>4.56) von Steffen Engel mit 
+ins EPROM gebrannt werden. Dieses Paket ist unter anderem in der Maus SZ zu 
+finden (cbhd45?.tos). (Wer scsi.ram mit einbindet sollte die HD-Pause 3 Sek. 
+lÑnger wÑhlen, als ohne scsi.ram).
+
+Das daraus resultierend BS wartet beim Kaltstart eine zu bestimmende Zeit 
+(s.u.) auf eine HD. Dabei wird das rotierende MagiC!-Symbol und ein kÅrzer 
+werdender Balken gezeigt. Dieser Vorgang kann durch BetÑtigung einer Taste 
+abgebrochen werden (s.u.).
+
+Es werden wahlweise 2,4 oder 6 Dateien erzeugt, die direkt in EPROMs gebrannt
+werden kînnen. Zudem entsteht eine Datei die den EPROM-Inhalt am StÅck erhÑlt
+(magixrom.img).
+
+
+------------------------------------------------------------------------------
+Voraussetzungen:
+----------------
+ 
+Das Programm erwartet die Datei magic.ram oder mag!x.ram auf Laufwerk C oder
+im Verzeichnis von magicrom.ttp und erzeugt die Dateien im Ordner, aus dem
+magixrom.ttp aufgerufen wurde. Dabei hat magic.ram Vorrang vor mag!x.ram.
+
+Soll auch der Scsi-Treiber mit ins EPROM, muû die Datei scsi.ram (aus dem 
+CBHD-Paket) entweder auf Laufwerk C oder in den Ordner aus dem magixrom.ttp 
+gestartet werden soll.
+
+FÅr das Doppel-BS muû sich noch das zweite BS (TOS2.06 oder TOS3.0x) als 
+Bit-Image in der Datei TOS.IMG im Verzeichnis von magicrom.ttp befinden.
+
+Ein EPROM-Brenner und EPROMs wÑren auch nicht schlecht.
+
+Leider funktioniert die ROM-Version von MagiC! nur auf STs (260, 520, 1040, 
+Mega) mit oder ohne Pak/Frak.
+
+Es kînnte sein, daû die Version Release 6 auch auf Mega STes lÑuft. Leider 
+kann ichs nicht ausprobieren.
+
+TTs und Falcons kommen auf alle FÑlle nicht in Frage.
+
+
+------------------------------------------------------------------------------
+Wenn's geklappt hat:
+-------------------
+
+Der HD-Bildschirm zeigt:
+
+- links:
+   ein sich mit der Zeit verkÅrzender Balken mit einem MagiC!- oder TOS-Icon, 
+   (in AbhÑngigkeit vom zu startenden BS).
+
+- rechts oben:
+   1. Zeile: Uhrzeit,
+   2. Zeile: Datum,
+   3. Zeile: LÑnge ST-RAM,
+   4. Zeile: LÑnge Fast-RAM.
+ 
+- rechts unten:
+   letzte Zeile:      magixrom.ttp Versionsdatum und Relozierungs-Option,
+   vorletzte Zeile:   MagiC-Version,
+   drittletzte Zeile: TOS-Version (nur wenn auch vorhanden).
+   viertletzte Zeile: SCSI-RAM Version (nur wenn mit ins EPROM gebrannt).
+
+- links unten:
+   letzte Zeile:      Eine Meldung, ob MagiC! im ROM oder in einem eventuell 
+                      vorhandenem Fast-RAM laufen soll.
+   vorletzte Zeile:   Eine Meldung, ob scsi.ram mitgestartet werden soll.
+
+Stehen vor den EintrÑgen Verweise auf Funktionstasten, kann man mit diesen die 
+jeweilige Konfiguration verÑndern:
+
+F1:  Starte nach der HD-Pause MagiC!,
+F2:  Starte nach der HD-Pause TOS,
+F3:  Umschalten: MagiC! lÑuft im ROM oder Fast-RAM,
+F4:  Umschalten: scsi.ram wird installiert oder nicht,
+F7:  Das im Rechner vorhandene ST-RAM vermindern (in 1MB Schritten). Es gab 
+     mal Programme die mit 'viel' Speicher nicht zurechtkamen, hiermit kann 
+     man den Speicher anpassen,
+F8:  Fast-RAM ein oder ausschalten,
+F9:  HD-Pause anhalten,
+F10: HD-Pause neu starten. Alle ursprÅnglichen Einstellungen werden wieder 
+     eingestellt.
+
+Alle anderen Tasten brechen die HD-Pause ab.
+
+Der Status von F1, F2, F3 und F4 wird fÅr die nÑchsten Starts (Kalt wie Warm) 
+in sonst nicht benîtigten Register der Rechneruhr gespeichert.
+
+
+------------------------------------------------------------------------------
+Bedienug von magixrom.ttp:
+--------------------------
+
+Aufruf:    magixrom.ttp rm pnn az b t
+
+Dabei bedeutet:
+
+rm    Relozierung fÅr
+
+      m = 0:  ab $fc0000 in 6 Eproms a 32KB
+              $fc0000 High  mag_fc_e.032 (=U4), Low  mag_fc_o.032 (=U7)
+              $fd0000  "    mag_fd_e.032 (=U3),  "   mag_fd_o.032 (=U6)
+              $fe0000  "    mag_fe_e.032 (=U2),  "   mag_fe_o.032 (=U5)
+
+      m = 1:  ab $fc0000 in 2 Eproms a 128KB
+              $fc0000 High  mag_fc_e.128 (=Hi0), Low  mag_fc_o.128 (=Lo0)
+
+      m = 2:  ab $e00000 in 2 Eproms a 128KB (Default)
+              $e00000 High  mag_e0_e.128 (=EE), Low  mag_e0_o.128 (=EO)
+
+      m = 3:  ab $e00000 in 4 Eproms a 64KB (fÅr PAK/3)
+              Highbytes des Highwords mag_e0he.064 in U10
+              Lowbytes  des     "     mag_e0ho.064 in U11
+              Highbytes des Lowwords  mag_e0le.064 in U12
+              Lowbytes  des     "     mag_e0lo.064 in U13
+
+      m = 4:  ab $e00000 in 4 Eproms a 126KB (fÅr PAK/3)
+              Aufteilung wie bei m = 3, nur die Dateiendung lautet '128'.
+              MagiC! wird dann als erstes gestartet. Das originale BS muû
+              als tos.img im gleichen Ordner liegen. Dann kommen:
+                    mag_e0he.128 in U10
+                    mag_e0ho.128 in U11
+                    mag_e0le.128 in U12
+                    mag_e0lo.128 in U13
+
+
+pnn   nn Sekunden Pause bei Kaltstart um auf die HD zu warten.
+      Die Sekunden mÅssen auf alle FÑlle zweistellig Åbergeben werden.
+      Der kleinste erlaubte Wert ist 1 Sekunde, Maximalwert ist 25 Sekunden.
+      (Default sind 6 Sekunden)
+      Wird scsi.ram mit ins EPROM gebrannt, sollte die HD-Pause ca. 3 Sek. 
+      lÑnger gewÑhlt werden, als ohne scsi.ram.
+
+az    Alt-RAM Test (nur wenn kein Fast-Ram gefunden wurde):
+
+      z = +:  von phystop bis $C00000,
+      z = -:  von phystop bis $a00000,
+      z = 0:  keine Test (Default).
+ 
+b     WÑhrend der HD-Pause blinkt die Floppy-LED:
+      lang aus, kurz an, lang aus, u.s.w., wenn MagiC! laufen soll,
+      lang aus, kurz an, kurz aus, kurz an, lang aus, u.s.w., fÅr TOS.
+      (Ist ganz nÅtzlich, wenn mit Graphikkarte gearbeitet wird und der
+       Bildschirm wÑhrend der Bootphase nicht zu sehen ist)
+
+t     Erzeugt eine Testversion, die dann sofort im RAM gestartet wird. Alle
+      hinter diesem Parameter eingegebenen Parameter werden nicht mehr
+      beachtet.
+      ACHTUNG !!!  Dies ist identisch mit einem Kaltstart. 
+
+Die Kommandozeilenparameter sind nicht nîtig (ohne, bzw. bei fehlerhaften
+werden die Defaultwerte genommen) und die Reihenfolge ist beliebig.
+
+WÑhrend des Laufs wird die erzeugte Version angezeigt. (FÅr den Option r4
+wird MagiC! ab $E50000 bzw. $E40000, fÅr die Option t $000000 angezeigt)
+
+
+------------------------------------------------------------------------------
+énderungen und Neuerungen seit Release 4:
+-----------------------------------------
+
+- Mîglichkeit des Einbindens von SCSI.RAM (aus dem CBHD-Paket)
+ 
+- Die Tastenbelegung hat sich ein wenig geÑndert
+  (siehe Auflistung der Tasten oben)
+
+- Werden die EPROMs mit Option r0 oder r1 (also MagiC! ab $FC0000) oder r4
+  (Doppel-BS) erzeugt kann via F2 ein vorhandenes TOS ab $E00000 aktiviert 
+  werden.
+ 
+- Soll MagiC4 oder 5 ins EPROM, funtionieren nur noch die Optionen r2, r3 und 
+  r4. Letztere nur noch mit kleinem (<256KB) TOS. Das heiût, MagiC! 4 und 5 
+  lÑuft nur noch im Bereich ab $E00000.
+ 
+- Die Kaltstart-Option (via Reset-Taste) habe ich wieder rausgenommen.
+  (Hat die Åberhaupt jemand benutzt?)
+ 
+
+------------------------------------------------------------------------------
+Danksagungen:
+-------------
+
+Auf diesem Wege mîchte ich mich auch bei Andreas Kromke und Steffen Engel
+bedanken. Andreas danke ich fÅr seine Genehmigung seine mag!x.ram 
+Relozierungs- und Verifizierungsroutinen benutzen zu dÅrfen, Steffen fÅr die 
+PAK/3 Anpassung, die ST- und Fast-RAM-Erkennungsroutinen, sowie die 
+Realisation des Doppel-BS.
+
+
+------------------------------------------------------------------------------
+Rechtliches:
+------------
+
+NatÅrlich hafte ich fÅr keine SchÑden die durch dieses Programm oder
+die dadurch erzeugte Mag!X/MagiC! ROM-Version entstehen.
+
+Das Programm ist Freeware.
+
+
+------------------------------------------------------------------------------
+Der Autor:
+----------
+
+Wilfried Mintrop
+Immenweg 3
+51371 Leverkusen
+
+E-mail:
+Wilfried Mintrop @ K2,
+wilfried_mintrop@k2.maus.de
+
+
+
+
+
