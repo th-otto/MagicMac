@@ -14,4 +14,5 @@ COUNTRY_NO      EQU   11          ; Norway
 COUNTRY_DK      EQU   12          ; Denmark
 COUNTRY_SA      EQU   13          ; Saudi Arabia
 COUNTRY_NL      EQU   14          ; Netherlands
-COUNTRY_CZ      equ   15          ; Czech Republic COUNTRY_HU      equ   16          ; Hungary
+COUNTRY_CZ      equ   15          ; Czech Republic 
+COUNTRY_HU      equ   16          ; Hungary

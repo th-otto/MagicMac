@@ -5,6 +5,7 @@ magic.ram
 
 .S[-DCOUNTRY=1]
 .C[-DCOUNTRY=1]
+.S[-S]
 
 .S[-DBINEXACT=1]
 .C[-DBINEXACT=1]

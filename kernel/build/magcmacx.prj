@@ -5,6 +5,7 @@ MagicMacX.OS
 
 .S[-DCOUNTRY=1]
 .C[-DCOUNTRY=1]
+.S[-S]
 
 .C[-A-]
 .C[-K-]
