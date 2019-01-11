@@ -1,4 +1,4 @@
-us\shutdown.prg
+en\shutdown.prg
 .C[-I..\..\inc_c]
 .C[-I..\..\pc\include]
 .C[-8-]
@@ -7,7 +7,7 @@ us\shutdown.prg
 .L[-S=$1000]   ; Stackgr”že 4k (der thread hat mehr)
 =              ; list of modules follows...
 ..\..\pc\lib\cstartv.o     ; startup code mit ARGV und Quoting
-shut_us.c
+shut_en.c
 ..\..\pc\lib\pcstdlib.lib   ; standard lib
 ..\..\pc\lib\pctoslib.lib
 ..\..\pc\lib\pcgemlib.lib
