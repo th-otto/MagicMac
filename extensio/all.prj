@@ -1,0 +1,11 @@
+all.prj
+=
+cd-mxfs\cd-mxfs.prj
+edit_slb\edit.prj
+edit_slb\edit_slb.prj
+load_img\load_img.prj
+pdlg_slb\pdlg.prj
+pdlg_slb\pdlg_slb.prj
+ramdisk\ramdisk.prj
+romdrvr\romdrvr.prj
+xp_rastr.slb\xp_rastr.prj
