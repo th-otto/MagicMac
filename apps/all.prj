@@ -5,6 +5,7 @@ chgres\chgres.prj
 cmd\all.prj
 cpx\all.prj
 instmagc\instmagc.prj
+limitmem\limitmem.prj
 magxdesk.4\magxdesk.prj
 magxdesk.5\magxdesk.prj
 matrix\matrix.prj
