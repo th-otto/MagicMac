@@ -109,6 +109,7 @@ real_phystop     equ 0xf386
 
 
         .TEXT
+     	.SUPER
 
 start:
         move.w  #6,hddelay

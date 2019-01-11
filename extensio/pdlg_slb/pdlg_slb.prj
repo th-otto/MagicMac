@@ -9,8 +9,6 @@ pdlg.slb
 
 .C[-DCALL_MAGIC_KERNEL=0]
 .C[-DPDLG_SLB=1]
-.S[-DBINEXACT=1]
-.C[-DBINEXACT=1]
 
 .C[-A-]
 .C[-K-]

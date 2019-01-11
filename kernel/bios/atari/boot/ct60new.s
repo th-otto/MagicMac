@@ -22,6 +22,7 @@ sizeof_PH equ 28
 
 
         .TEXT
+     	.SUPER
 
         movea.l 4(a7),a5                        /* BasePagePointer from Stack */
         lea     stack(pc),sp

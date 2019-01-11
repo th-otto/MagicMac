@@ -34,6 +34,7 @@ ENDM
 ; for PASM
 
         MC68030
+     	SUPER
 
 
         movea.l 4(a7),a5                        ; BasePagePointer from Stack
