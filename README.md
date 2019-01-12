@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/th-otto/MagicMac.svg?branch=master)](https://travis-ci.org/th-otto/MagicMac)
+
+Latest snapshot: [![Download](https://api.bintray.com/packages/th-otto/magicmac-files/snapshots/images/download.svg) ](https://bintray.com/th-otto/magicmac-files/snapshots/_latestVersion#files)
+
 # Sources for Atari and Related
 
 This repository is holding my sources for Atari and related computers, i.e. 68k code running inside a real machine or in an emulator:
