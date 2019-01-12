@@ -49,7 +49,7 @@ mcopy -b "$SRCDIR/apps/vt52/de/vt52.rsc" "$BUILDROOT/de/GEMSYS/GEMDESK/"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/de/pdlg.slb" "$BUILDROOT/de/GEMSYS/MAGIC/XTENSION/"
 
-mcopy -b "$SRCDIR/auto/accs/de/cops.app" "$BUILDROOT/de/AUTO/ACCS/"
+mcopy -b "$SRCDIR/auto/accs/de/cops.app" "$BUILDROOT/de/AUTO/ACCS/COPS.ACC"
 mcopy -b "$SRCDIR/auto/accs/cpx/de/*.CPX" "$BUILDROOT/de/AUTO/ACCS/CPX/"
 
 mcopy -b "$SRCDIR/kernel/build/de/magic.ram" "$BUILDROOT/de"
@@ -78,7 +78,7 @@ mcopy -b "$SRCDIR/apps/vt52/en/vt52.rsc" "$BUILDROOT/en/GEMSYS/GEMDESK/"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/en/pdlg.slb" "$BUILDROOT/en/GEMSYS/MAGIC/XTENSION/"
 
-mcopy -b "$SRCDIR/auto/accs/en/cops.app" "$BUILDROOT/en/AUTO/ACCS/"
+mcopy -b "$SRCDIR/auto/accs/en/cops.app" "$BUILDROOT/en/AUTO/ACCS/COPS.ACC"
 mcopy -b "$SRCDIR/auto/accs/cpx/en/*.CPX" "$BUILDROOT/en/AUTO/ACCS/CPX/"
 
 mcopy -b "$SRCDIR/kernel/build/en/magic.ram" "$BUILDROOT/en"
@@ -108,7 +108,7 @@ mcopy -b "$SRCDIR/apps/vt52/fr/vt52.rsc" "$BUILDROOT/fr/GEMSYS/GEMDESK/"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/fr/pdlg.slb" "$BUILDROOT/fr/GEMSYS/MAGIC/XTENSION/"
 
-mcopy -b "$SRCDIR/auto/accs/fr/cops.app" "$BUILDROOT/fr/AUTO/ACCS/"
+mcopy -b "$SRCDIR/auto/accs/fr/cops.app" "$BUILDROOT/fr/AUTO/ACCS/COPS.ACC"
 mcopy -b "$SRCDIR/auto/accs/cpx/fr/*.CPX" "$BUILDROOT/fr/AUTO/ACCS/CPX/"
 
 mcopy -b "$SRCDIR/kernel/build/fr/magic.ram" "$BUILDROOT/fr"
@@ -141,7 +141,7 @@ for lang in $LANGUAGES; do
 	mcopy -b "$SRCDIR/apps/magxdesk.5/magxdesk.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/magxdesk.5/rsc/*" "$BUILDROOT/$lang/GEMSYS/GEMDESK/RSC/"
 	
-	mcopy -bs "$SRCDIR/apps/magxdesk.5/pat/."  "$BUILDROOT/$lang/GEMSYS/GEMDESK/PAT/"
+	mcopy -bs "$SRCDIR/apps/magxdesk.5/pat/*"  "$BUILDROOT/$lang/GEMSYS/GEMDESK/PAT/"
 	mcopy -b "$SRCDIR/apps/mgclock/mgclock.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/mgcopy/mgcopy.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/mgedit/mgedit.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
@@ -157,16 +157,16 @@ for lang in $LANGUAGES; do
 	mcopy -b "$SRCDIR/apps/vfatconf/vfatconf.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/vt52/vt52.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/wbdaemon/wbdaemon.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-	mcopy -b "$SRCDIR/apps/mmxdaemn/mmxdaemn.prg" "$BUILDROOT/$lang/GEMSYS/MAGIC/START/"
+	mcopy -b "$SRCDIR/apps/mmxdaemn/mmxdaemn.prg" "$BUILDROOT/$lang/GEMSYS/MAGIC/START/MMXDAEMN.PRX"
 	mcopy -b "$SRCDIR/tools/dev_ser/dev_ser.tos" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
-	mcopy -b "$SRCDIR/extensio/ramdisk/ramdisk.xfs" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
-	mcopy -b "$SRCDIR/extensio/cd-mxfs/spinmagc.xfs" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
+	mcopy -b "$SRCDIR/extensio/ramdisk/ramdisk.xfs" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/RAMDISK.XFX"
+	mcopy -b "$SRCDIR/extensio/cd-mxfs/spinmagc.xfs" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/SPINMAGC.XFX"
 	mcopy -b "$SRCDIR/extensio/edit_slb/editobjc.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 	mcopy -b "$SRCDIR/extensio/load_img/load_img.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 	mcopy -b "$SRCDIR/kernel/winframe/winframe.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 	mcopy -b "$SRCDIR/kernel/winframe/winframe.rsc" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 	mcopy -b "$SRCDIR/kernel/winframe/winframe.inf" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
-	mcopy -bs "$SRCDIR/kernel/winframe/themes/." "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/THEMES/"
+	mcopy -bs "$SRCDIR/kernel/winframe/themes/*" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/THEMES/"
 	mcopy -b "$SRCDIR/tools/addmem/addmem.prg" "$BUILDROOT/$lang/EXTRAS/"
 	mcopy -b "$SRCDIR/tools/misc_tst/adr.prg" "$BUILDROOT/$lang/EXTRAS/BIN/"
 	mcopy -b "$SRCDIR/tools/misc_tst/il0008.prg" "$BUILDROOT/$lang/EXTRAS/BIN/"
