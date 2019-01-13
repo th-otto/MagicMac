@@ -65,6 +65,7 @@ cd kernel
 pcmake -B -F vdi/drivers/all.prj
 pcmake -B -F winframe/winframe.prj
 pcmake -B -F bios/atari/boot/all.prj
+pcmake -B -F bios/atari/boot/ct60new.prj
 
 #
 # now the kernels
