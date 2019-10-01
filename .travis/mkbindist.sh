@@ -55,6 +55,7 @@ mcopy -b "$SRCDIR/auto/accs/cpx/de/*.CPX" "$BUILDROOT/de/AUTO/ACCS/CPX/"
 mcopy -b "$SRCDIR/kernel/build/de/magic.ram" "$BUILDROOT/de"
 mcopy -b "$SRCDIR/kernel/build/de/mmilan.ram" "$BUILDROOT/de"
 mcopy -b "$SRCDIR/kernel/build/de/mhades.ram" "$BUILDROOT/de"
+mcopy -b "$SRCDIR/kernel/build/de/magcmacx.os" "$BUILDROOT/de"
 
 
 #
@@ -84,6 +85,7 @@ mcopy -b "$SRCDIR/auto/accs/cpx/en/*.CPX" "$BUILDROOT/en/AUTO/ACCS/CPX/"
 mcopy -b "$SRCDIR/kernel/build/en/magic.ram" "$BUILDROOT/en"
 mcopy -b "$SRCDIR/kernel/build/en/mmilan.ram" "$BUILDROOT/en"
 mcopy -b "$SRCDIR/kernel/build/en/mhades.ram" "$BUILDROOT/en"
+mcopy -b "$SRCDIR/kernel/build/en/magcmacx.os" "$BUILDROOT/en"
 
 
 #
@@ -114,6 +116,7 @@ mcopy -b "$SRCDIR/auto/accs/cpx/fr/*.CPX" "$BUILDROOT/fr/AUTO/ACCS/CPX/"
 mcopy -b "$SRCDIR/kernel/build/fr/magic.ram" "$BUILDROOT/fr"
 mcopy -b "$SRCDIR/kernel/build/fr/mmilan.ram" "$BUILDROOT/fr"
 mcopy -b "$SRCDIR/kernel/build/fr/mhades.ram" "$BUILDROOT/fr"
+mcopy -b "$SRCDIR/kernel/build/fr/magcmacx.os" "$BUILDROOT/fr"
 
 #
 # Common files
