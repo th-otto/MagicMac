@@ -53,6 +53,7 @@
 ; ===> FPU-Abfrage geaendert; ist nun aehnlich zum Hades-TOS
 
 
+ move.l   sp,a2                    ; Stackpointer retten
  moveq    #0,d1
 * Test auf (Atari) FPU
  movea.l  8,a0                     ; Busfehler retten

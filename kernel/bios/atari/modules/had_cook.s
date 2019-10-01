@@ -19,7 +19,6 @@
 install_cookies:
  move.l   a5,-(sp)
  lea      cookies,a5               ; Adresse der Cookies
- move.l   sp,a2                    ; Stackpointer retten
  move.l   a5,_p_cookies            ; Pointer setzen
 * _CPU Cookie, Loword enthaelt den <cpu_typ>
  move.l   #'_CPU',(a5)+
