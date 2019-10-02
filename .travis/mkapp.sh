@@ -99,7 +99,7 @@ cp -a "$SRC_DIR/apps/mgnotice.2/fr/mgnotice.rsc" "$RESOURCES_DIR/fr.lproj/rootfs
 cp -a "$SRC_DIR/apps/mgnotice.2/fr/mgnotice.txt" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGNOTICE.TXT"
 cp -a "$SRC_DIR/apps/mgsearch/fr/mgsearch.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGSEARCH.RSC"
 # TODO: french translation
-cp -a "$SRC_DIR/apps/mod_app/en/mod_app.txt" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
+cp -a "$SRC_DIR/apps/mod_app/fr/mod_app.txt" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
 cp -a "$SRC_DIR/apps/shutdown/fr/shutdown.prg" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/SHUTDOWN.PRG"
 cp -a "$SRC_DIR/apps/vfatconf/fr/vfatconf.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/VFATCONF.RSC"
 cp -a "$SRC_DIR/apps/vt52/fr/vt52.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/VT52.RSC"

@@ -1,4 +1,4 @@
-dev_ser.tos    ; name of executable pgm is topmost window
+dev_ser.dev    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .S[-I..\..\inc_as]
 .C[-I..\..\pc\include]

@@ -1,0 +1,111 @@
+The utility program MOD_APP
+===========================
+
+Formatting:  Tab width 5
+
+Andreas Kromke
+3.5.98
+Last modification: 31.3.99
+
+
+Purpose?
+--------
+
+The installation of a program, generally by an installation program, should
+copy not only the appropriate program files onto the hard drive, but also
+the new program should be "made known" to the system.  This process is
+traditionally called under GEM/TOS "Install application", and so far had to
+be executed by hand.
+MOD_APP.TTP is a small program which relieves you of this work. It modifies
+the MagiC system files that contain the application information, including
+the icon allocations. The modifications automatically become active with
+the next start of the AES.
+
+Methodology
+-------------
+
+An installation program should copy first the necessary files onto the hard
+drive. Then it must determine the drive on which MagiC is situated (thus in
+general the boot drive). Finally "<Boot drive>:\GEMSYS\GEMDESK\MOD_APP.TTP"
+is called if necessary several times by normal Pexec() in order to make the
+modifications of the system files; the return values should be analysed.
+
+MOD_APP modifies the system files in such a way that with the next start of
+the AES, the new settings of MAGXDESK are taken into account. Theoretically
+it would be also possible to activate the settings immediately by just
+calling APPLICAT. Since however APPLICAT only runs under MagiC, the
+advantage of MOD_APP to run under all TOS systems would be lost.
+
+
+Install application
+-------------------
+
+Call:
+
+	mod_app -Xia prgname rscname|- iconnr|-1 path|- 1
+
+Meaning:
+
+	X		The drive letter for the MagiC drive
+	prgname	E.g. jinnee.prg
+	rscname	E.g. MAGICICN.RSC or - for the default icon
+	iconnr	Number of the icon (object number - 1) or -1
+	path	E.g. C:\JINNEE\JINNEE.APP or "-", if no path
+			is to be entered. A path is needed
+			whenever file types are assigned.
+	1		Here there should always be a 1 for "GEM program"
+
+Example:
+
+	mod_app Cia papillon.prg  - -1  - 1
+
+Installs the program "Papillon" without path and with the default icon for
+programs.
+
+Install filetype for applications and assign icon
+-------------------------------------------------
+
+Call:
+
+	mod_app -Xid prgname ftyp rscname|- iconnr|-1
+
+Meaning:
+
+	prgname	E.g. jinnee.prg
+	ftyp	E.g. *.JIC or *.JINC or ICONS.INF
+	rscname	See above
+	iconnr	See above
+
+Example:
+
+	mod_app -Cid papillon *.x - -1
+
+Installs the filetype "*.x" for the program "Papillon" without path and
+with the default icon for files.
+
+Return values
+------------
+
+	0				OK
+	< 0				System error
+	1				Syntax error in the call
+	2				Format error in APPLICAT.INF
+	3				ID already assigned
+	4				Application not installed (-Xid)
+	5				Application path missing (-Xid)
+
+
+Remarks
+-------
+
+- if filetypes are to be installed, MOD_APP must be called several times.
+  With each call one can determine on the basis of the return value whether
+  the filetype was already otherwise assigned
+- Some errors cannot be detected by MOD_APP. With the next start of the AES
+  these errors are corrected automatically however (hopefully...).
+- All changes that MOD_APP can make are exclusively constructive.
+  No applications can be uninstalled, or filetypes uninstalled or
+  reinstalled for another program. So if a filetype is already
+  assigned, an error message should be generated, so that the user may
+  alter the type manually if the occasion arises.
+

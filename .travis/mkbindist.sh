@@ -161,7 +161,7 @@ for lang in $LANGUAGES; do
 	mcopy -b "$SRCDIR/apps/vt52/vt52.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/wbdaemon/wbdaemon.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/mmxdaemn/mmxdaemn.prg" "$BUILDROOT/$lang/GEMSYS/MAGIC/START/MMXDAEMN.PRX"
-	mcopy -b "$SRCDIR/tools/dev_ser/dev_ser.tos" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
+	mcopy -b "$SRCDIR/tools/dev_ser/dev_ser.dev" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 	mcopy -b "$SRCDIR/extensio/ramdisk/ramdisk.xfs" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/RAMDISK.XFX"
 	mcopy -b "$SRCDIR/extensio/cd-mxfs/spinmagc.xfs" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/SPINMAGC.XFX"
 	mcopy -b "$SRCDIR/extensio/edit_slb/editobjc.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
