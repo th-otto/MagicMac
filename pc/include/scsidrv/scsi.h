@@ -351,7 +351,7 @@ typedef struct{
 /*****************************************************************************
  * Variablen
  *****************************************************************************/
-GLOBAL long ScsiFlags;   /* Wert fÅr tScsiCmd.Flags */
+extern long ScsiFlags;   /* Wert fÅr tScsiCmd.Flags */
 
 
 /*****************************************************************************
@@ -457,9 +457,9 @@ typedef struct
 }tCmd12;
 
 
-GLOBAL ULONG    BlockLen;
-GLOBAL ULONG    MaxDmaLen;
-GLOBAL UWORD    LogicalUnit;
+extern ULONG    BlockLen;
+extern ULONG    MaxDmaLen;
+extern UWORD    LogicalUnit;
 
 void SetCmd6(tCmd6 *Cmd,
              UWORD Opcode,

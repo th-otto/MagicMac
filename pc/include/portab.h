@@ -89,12 +89,6 @@
 
 #define REG     register                      /* Register variable           */
 #define AUTO    auto                          /* Local to function           */
-#define EXTERN  extern                        /* External variable           */
-#define LOCAL   static                        /* Local to module             */
-#define MLOCAL  LOCAL                         /* Local to module             */
-#define GLOBAL                                /* Global variable             */
-#define LIB_GLOBAL GLOBAL
-#define OS_GLOBAL  GLOBAL
 
 /*****************************************************************************/
 /* COMPILER DEPENDENT DEFINITIONS                                            */
@@ -160,7 +154,6 @@
 #define _ULONG ULONG
 #define _VOID VOID
 #define _BOOL BOOLEAN
-#define _DOUBLE double
 
 #ifndef _LPVOID
 #define _LPVOID void *
@@ -170,13 +163,7 @@
 #  define _LPBYTE char *
 #endif
 
-#define LOCAL static
-#define RLOCAL LOCAL
-#define GLOBAL /**/
-#define EXTERN extern
 #define _HUGE 
-#define EXP_PTR
-#define EXP_PROC
 
 #define FUNK_NULL 0l
 

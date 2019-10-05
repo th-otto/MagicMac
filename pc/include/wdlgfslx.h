@@ -55,7 +55,7 @@ typedef _WORD _CDECL (*XFSL_FILTER)(struct XFSL_FILTER_args);
 typedef struct _fslx_dialog { int dummy; } XFSL_DIALOG;
 
 
-EXTERN XFSL_DIALOG *fslx_open(
+XFSL_DIALOG *fslx_open(
 	const char *title,
 	_WORD x, _WORD y,
 	_WORD *handle,
@@ -67,7 +67,7 @@ EXTERN XFSL_DIALOG *fslx_open(
 	_WORD sort_mode,
 	_WORD flags);
 
-EXTERN _WORD fslx_evnt(
+_WORD fslx_evnt(
 	XFSL_DIALOG *fsd,
 	EVNT *events,
 	char *path,
@@ -77,7 +77,7 @@ EXTERN _WORD fslx_evnt(
 	_WORD *sort_mode,
 	char **pattern);
 
-EXTERN XFSL_DIALOG *fslx_do(
+XFSL_DIALOG *fslx_do(
 	const char *title,
 	char *path, _WORD pathlen,
 	char *fname, _WORD fnamelen,
@@ -90,11 +90,9 @@ EXTERN XFSL_DIALOG *fslx_do(
 	_WORD *nfiles,
 	char **pattern);
 
-EXTERN _VOID (*fslx_func)(EVNT *e);
-
-EXTERN _WORD fslx_getnxtfile(XFSL_DIALOG *fsd, char *fname);
-EXTERN _WORD fslx_close(XFSL_DIALOG *fsd);
-EXTERN _WORD fslx_set_flags(_WORD flags, _WORD *oldval);
+_WORD fslx_getnxtfile(XFSL_DIALOG *fsd, char *fname);
+_WORD fslx_close(XFSL_DIALOG *fsd);
+_WORD fslx_set_flags(_WORD flags, _WORD *oldval);
 
 
 /** parameters for UTXT_FN callback functions
@@ -168,8 +166,6 @@ struct _fnts_item
 #define FNTS_OPTION		FNTS_OPT
 
 typedef struct _fnt_dialog { int dummy; } FNT_DIALOG;
-
-EXTERN _BOOL (*fnts_func)(_BOOL get_event, _VOID *e);
 
 FNT_DIALOG *fnts_create(_WORD vdi_handle, _WORD no_fonts, _WORD font_flags, _WORD dialog_flags, const char *sample, const char *opt_button);
 _WORD fnts_delete(FNT_DIALOG *fnt_dialog, _WORD vdi_handle);

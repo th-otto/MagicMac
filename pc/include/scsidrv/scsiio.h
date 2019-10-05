@@ -65,13 +65,13 @@
  * Variablen
  *****************************************************************************/
 
-GLOBAL tpScsiCall scsicall;     /* READ ONLY!! */
+extern tpScsiCall scsicall;     /* READ ONLY!! */
 
-GLOBAL BOOLEAN    HasVirtual;   /* READ ONLY!! */
+extern BOOLEAN    HasVirtual;   /* READ ONLY!! */
 
-GLOBAL tReqData   ReqBuff;      /* Request Sense Buffer fÅr alle Kommandos */
+extern tReqData   ReqBuff;      /* Request Sense Buffer fÅr alle Kommandos */
 
-GLOBAL WORD       DriverRev;    /* Revision of identified scsidriver in system */
+extern WORD       DriverRev;    /* Revision of identified scsidriver in system */
 
 /*****************************************************************************
  * Funktionen und zugehîrige Typen
