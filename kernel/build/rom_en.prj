@@ -22,7 +22,7 @@ en\magic.rom
 =
 ..\bios\atari\magibios.s
 ..\bios\atari\xfs95\xfs95ini.s
-..\bios\atari\ide.s
+..\bios\atari\modules\ide.c
 ..\allg\read_inf.s
 ..\vdi\math.s
 ..\allg\std.s

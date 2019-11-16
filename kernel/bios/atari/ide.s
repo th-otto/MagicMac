@@ -1,3 +1,7 @@
+/*
+ * old code; no longer used
+ */
+
 		XDEF IDEWrite
 		XDEF IDERead
 		XDEF IDEIdentify
