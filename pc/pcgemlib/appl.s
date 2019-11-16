@@ -110,13 +110,10 @@ gl_apid:		dc.w	-1
 
 				MODULE	_appl_yield
 				
+				move.l  a2,-(a7)
 				move.w	#$00c9,d0
-				move.l	a2,-(a7)
-				move.l	#aespb,d1
 				trap	#2
-				lea.l	_GemParBlk+aintout,a0
-				move.w	(a0)+,d0
-				move.l	(a7)+,a2
+				move.l  (a7)+,a2
 				rts
 
 				ENDMOD

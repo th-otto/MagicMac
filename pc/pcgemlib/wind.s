@@ -121,6 +121,8 @@
 				move.l	a1,-(a7)
 				move.l	a0,-(a7)
 				lea.l	_GemParBlk+aintin,a1
+				clr.l	aintout+2-aintin(a1)
+				clr.l	aintout+6-aintin(a1)
 				move.w	d0,(a1)+
 				move.w	d1,(a1)+
 				cmp.w #2,d1		; WF_NAME ?
@@ -201,6 +203,7 @@ windint_gcolor:
 				
 				move.l	a0,-(a7)
 				lea.l	_GemParBlk+aintin,a1
+				clr.l	aintout+2-aintin(a1)
 				move.w	d0,(a1)+
 				move.w	d1,(a1)+
 				move.l	#$68020500,d1

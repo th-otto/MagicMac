@@ -15,7 +15,7 @@
 _aes1:			lea.l	_GemParBlk+acontrl,a1
 				clr.l	(a1)+
 				clr.l	(a1)+
-				move.w	d0,(a1)
+				move.w	d0,(a1)		/* contrl[4] = naddrout */
 				movep.l	d1,-7(a1)
 				move.w	#$00c8,d0
 				move.l	a2,-(a7)

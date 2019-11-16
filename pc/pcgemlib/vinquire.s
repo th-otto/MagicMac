@@ -313,7 +313,7 @@ vqt_extent16n2:	clr.w	(a0)
 				move.w	#1,v_nintin(a0)
 				move.w	d1,intin(a0)
 				clr.w	v_opcode2(a0)
-				clr.w	intout+33*2	; clear fsm flag
+				clr.w	intout+33*2(a0)	; clear fsm flag
 				move.w	#130,d1
 				bsr		_VdiCtrl2
 				movea.l	(a7)+,a1
