@@ -1,0 +1,7 @@
+magxmila.prg
+.S[-I..\..\..\..\inc_as]
+.S[-S]              ; Privileged instructions
+.S[-DOUTSIDE=0]
+.L[-S=0]
+=
+magxmila.s (magxboot.s)

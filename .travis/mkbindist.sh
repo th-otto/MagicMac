@@ -184,6 +184,7 @@ for lang in $LANGUAGES; do
 	mcopy -b "$SRCDIR/kernel/bios/atari/boot/ct60new.tos" "$BUILDROOT/$lang/EXTRAS/ct60boot.prg"
 	mcopy -b "$SRCDIR/kernel/bios/atari/boot/magic_p.tos" "$BUILDROOT/$lang/EXTRAS/"
 	mcopy -b "$SRCDIR/kernel/bios/atari/boot/ct60.txt" "$BUILDROOT/$lang/EXTRAS/"
+	mcopy -b "$SRCDIR/kernel/bios/atari/boot/magxmila.prg" "$BUILDROOT/$lang/EXTRAS/"
 	mcopy -b "$SRCDIR/kernel/bios/atari/boot/magxboot.prg" "$BUILDROOT/$lang/AUTO/"
 	mcopy -b "$SRCDIR/tools/hardcopy/hardcopy.prg" "$BUILDROOT/$lang/EXTRAS/"
 	mcopy -b "$SRCDIR/tools/flock_ok/flock_ok.prg" "$BUILDROOT/$lang/EXTRAS/FLOCK_OK/"
