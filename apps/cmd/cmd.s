@@ -798,7 +798,7 @@ hdl_to_tab:
  rts
 
 handle_tab:
- DCB.B    1+(81/8),0               * 81 Handles merken
+ DCB.B    1+(129/8),0              * 128 Handles merken
  EVEN
 
 * char *alloc_tpa(d0 = long size)
