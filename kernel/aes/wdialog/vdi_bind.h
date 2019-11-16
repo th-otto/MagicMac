@@ -25,7 +25,7 @@ typedef struct
 } XFNT_INFO;
 #endif
 
-WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, UWORD *font_format, UWORD *flags );
+WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, WORD *font_format, WORD *flags );
 WORD	vqt_xfntinfo( WORD handle, WORD flags, WORD id, WORD index, XFNT_INFO *info );
 
 void	rect_sort( VRECT *rect );

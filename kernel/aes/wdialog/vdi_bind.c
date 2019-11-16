@@ -120,7 +120,7 @@ WORD rect_intersect( VRECT *rect1, VRECT *rect2, VRECT *dst )
 /*	font_format:			Fontformat																			*/
 /*	flags:					...																					*/
 /*----------------------------------------------------------------------------------------*/ 
-static WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, UWORD *font_format, UWORD *flags )
+static WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, WORD *font_format, WORD *flags )
 {
 	VDIPB pb;
 	WORD	contrl[12];

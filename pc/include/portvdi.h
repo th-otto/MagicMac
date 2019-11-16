@@ -845,7 +845,7 @@ void	v_ftext16n      (VdiHdl, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD n
 void	v_ftext_offset16(VdiHdl, _WORD x, _WORD y, const vdi_wchar_t *wstr, const _WORD *offset);
 void	v_ftext_offset16n(VdiHdl, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD num, const _WORD *offset);
 _WORD	vq_ext_devinfo (VdiHdl, _WORD device, _WORD *dev_exists, char *file_path, char *file_name, char *name);
-_WORD	vqt_ext_name    (VdiHdl, _WORD __index, char *name, _UWORD *font_format, _UWORD *flags);
+_WORD	vqt_ext_name    (VdiHdl, _WORD __index, char *name, _WORD *font_format, _WORD *flags);
 _WORD	vqt_name_and_id (VdiHdl, _WORD font_format, char *font_name, char *ret_name);
 _WORD	vqt_xfntinfo    (VdiHdl, _WORD flags, _WORD id, _WORD __index, XFNT_INFO *info);
 _WORD vst_name 	(VdiHdl, _WORD font_format, char *font_name, char *ret_name);

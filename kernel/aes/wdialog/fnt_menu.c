@@ -1451,8 +1451,8 @@ static FNT	*build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags )
 		LONG family_len;
 		LONG style_len;
 		
-		UWORD flags;
-		UWORD font_format;
+		WORD flags;
+		WORD font_format;
 		
 		tmp->npts = 0;														/* Anzahl der vorhandenen Punkthoehen initialisieren */
 		tmp->mono = 0;														/* aequidistanz-Flag initialisieren */	

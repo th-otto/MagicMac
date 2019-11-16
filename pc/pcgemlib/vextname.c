@@ -24,7 +24,7 @@
  *
  */
 
-_WORD vqt_ext_name(_WORD handle, _WORD index, char *name, _UWORD *font_format, _UWORD *flags)
+_WORD vqt_ext_name(_WORD handle, _WORD index, char *name, _WORD *font_format, _WORD *flags)
 {
 	_WORD vdi_control[VDI_CNTRLMAX]; 
 	_WORD vdi_intin[2];   
