@@ -295,8 +295,7 @@ WORD open_screen_wk( WORD aes_handle, WORD *work_out )
          work_in[11],
          i;
 
-   for( i = 1; i < 10 ; work_in[i++] = 1 );  /* work_in initialisieren */
-   work_in[0] = Getrez() + 2;                /* Aufl”sung */
+   for( i = 0; i < 10 ; work_in[i++] = 1 );  /* work_in initialisieren */
    work_in[10] = 2;                          /* Rasterkoordinaten benutzen */
    handle = aes_handle;
 

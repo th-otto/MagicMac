@@ -56,10 +56,9 @@ WORD init_wlib( WORD id )
 	app_id = id;															/* AES-Programm-ID */
 	window_list = 0L;
 
-	for ( i = 1; i < 10 ; i++ )
+	for ( i = 0; i < 10 ; i++ )
 		work_in[i] = 1;
 
-	work_in[0] = Getrez() + 2;											/* Aufl”sung */
 	work_in[10] = 2;														/* Rasterkoordinaten benutzen */
 
 	vdi_handle = graf_handle( &i, &i, &i, &i );

@@ -1493,8 +1493,7 @@ TSCREEN	*open_vt( WORD	columns, WORD rows, WORD buffer_rows, WORD font, WORD poi
 				work_out[57],
 				i;
 			
-		for( i = 1; i < 10 ; work_in[i++] = 1 );					/* work_in initialisieren */
-		work_in[0] = Getrez() + 2;										/* Aufl”sung */
+		for( i = 0; i < 10 ; work_in[i++] = 1 );					/* work_in initialisieren */
 		work_in[10] = 2;													/* Rasterkoordinaten benutzen */
 		tscreen->handle = graf_handle( &i, &i, &i, &i );
 		v_opnvwk( work_in, &tscreen->handle, work_out );

@@ -325,7 +325,7 @@ int dial_font( long *id, long *pt, int *mono, char *name )
 	int dummy;
 
 
-	for( i = 1; i < 10 ; i++ )											/* work_in initialisieren */
+	for( i = 0; i < 10 ; i++ )											/* work_in initialisieren */
 		work_in[i] = 1;
 	work_in[10] = 2;		/* Rasterkoordinaten benutzen */
 	handle = aes_handle;

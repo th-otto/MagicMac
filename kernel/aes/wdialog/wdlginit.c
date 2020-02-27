@@ -78,9 +78,8 @@ WORD open_vwork(WORD aes_handle, WORD *workout)
 	WORD i;
 	WORD handle;
 	
-	for (i = 1; i < 10; i++)
+	for (i = 0; i < 10; i++)
 		workin[i] = 1;
-	workin[0] = Getrez() + 2;
 	workin[10] = 2;
 	handle = aes_handle;
 	v_opnvwk(workin, &handle, workout);

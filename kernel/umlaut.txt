@@ -1,4 +1,4 @@
-utf8     atari iso8859-1
+utf8     atari cp1252
 Ã¤   ae  „     ä
 Ã¶   oe  ”     ö
 Ã¼   ue       ü
@@ -8,3 +8,7 @@ utf8     atari iso8859-1
 Ãœ   Ue  š     Ü
 
 ÃŸ   ss       ß
+â€       »     †
+Â©       ½     ©
+Â®       ¾     ®
+â„¢      ¿     ™
