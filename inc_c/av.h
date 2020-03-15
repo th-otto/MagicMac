@@ -24,3 +24,5 @@
 #define VA_DRAG_COMPLETE		0x4735
 #define AV_STARTED       	0x4738
 #define AV_XOPENWIND		0x4740
+
+#define AV_SENDCLICK 0x4709
