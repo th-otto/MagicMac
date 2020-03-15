@@ -1,0 +1,25 @@
+!iflang [english]
+	!hyphen At!-ten!-tion
+	!hyphen ap!-pli!-ca!-tion
+	!hyphen do!-cu!-men!-ted
+	!hyphen ef!-fects
+	!hyphen re!-so!-lu!-tions
+	!hyphen scrol!-ling
+!else
+	!hyphen Aus!-ga!-ben
+	!hyphen Bild!-schirm
+	!hyphen Fens!-ters
+	!hyphen FÅll!-muster
+	!hyphen Pfad!-an!-ga!-ben
+	!hyphen Stand!-ard!-grîs!-se
+	!hyphen System!-zeichen!-satz
+	!hyphen ak!-zep!-tiert
+	!hyphen be!-ein!-flus!-st
+	!hyphen be!-nut!-zen
+	!hyphen dazu!-ge!-hîrige
+	!hyphen ein!-ge!-tra!-gen
+	!hyphen er!-leich!-tern
+	!hyphen ge!-spei!-chert
+	!hyphen Shell!-puf!-fer
+	!hyphen ein!-stel!-len
+!endif

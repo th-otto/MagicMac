@@ -1,0 +1,18 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node History
+	Sorry, there is no English history file. Try the German
+      (!xlink [HISTORY.TXT] [HISTORY.TXT])
+!else
+#---------------------------------------------
+# German part of the the documentation        
+#---------------------------------------------
+	!node History
+	Informationen Åber die énderungen und Anpassungen von (!ProgrammName)
+	befinden sich prinzipiel nicht in einer Dokumentation, da sie diese nur
+	unnîtig aufblasen wÅrden. (!nl)
+	Sie finden die History-Datei hier:
+		(!xlink [HISTORY.TXT] [HISTORY.TXT])
+!endif

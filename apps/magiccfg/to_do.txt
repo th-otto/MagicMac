@@ -1,0 +1,5 @@
+to do list
+----------
+- "Bildchen" im Info-Dialog
+- alternative File- und Font-Selektoren untersttzen
+- Alert-Boxen in Fenstern

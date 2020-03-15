@@ -1,0 +1,653 @@
+History zum MagiC-Configurator
+------------------------------
+   ??.??.96 - erste Idee eines bequemen Programmes, dass die
+              Konfiguration der MAGX.INF Åbernimmt. (Nachdem ich
+              mich sehr geÑrgert habe, dass das MagiC 5.01 nach der
+              Installation nicht lief. Die mitgelieferte MAGX.INF
+              war irgendwie unbrauchbar...)
+
+            - Fertigstellung der ersten Version. ('KONFMAGX')
+              Ich habe sie nur in die BigBenBBS verîffentlicht.
+
+   25.09.97 - Ich habe die Idee mit dem MagiC-Configurator neu
+              aufgegriffen, da er der Grundstein fÅr eine Reihe
+              von Configuratoren sein soll.
+
+
+R1 05.10.97 - erste Version an Beta-Tester ausgeliefert (B. Jurt,
+              W. Dîrig). Diese beinhaltet :
+                  -alle Flags verÑndern ausser #_ENV
+                  -Fensterdialoge
+                  -UnterstÅtzung fÅr lange Dateinamen
+                  -Laden und Speicher ;-)
+                  -alle Kommentare werden automatisch gelîscht
+                  -ARGV-ParameterÅbergabe
+                  -setzt automatisch korrekte MagiC-Versionsnummer
+
+   06.10.97 - BubbleGEM-UnterstÅtzung (-> Rechtsklick bringt einen
+              kleinen Hilfetext hervor)
+            - Auslagerung der Hilfetexte in die Datei 'MagiCCfg.bub'
+              (Man sollte hier doch mal ein Standard definieren, damit
+              nicht jeder sein eigenes *.BUB erfindet!!!)
+            - README.TXT geschrieben (Sinn und Zweck, Rechtliches,
+              History)
+
+   11.10.97 - gravierender Bug entfernt, der zu einem Absturz fÅhrte,
+              falls das Programm nicht auf einem Falcon ausgefÅhrt
+              wurde.  (danke Benny)
+              --> Jetzt hat es diverse Sicherheitsabfragen
+            - Kann jetzt nicht mehr gestartet werden, falls die
+              Funktionen von WDIALOG nicht vorhanden sind. -> ein
+              Absturz weniger ;-)
+            - Die Kommentare werden nun in der Datei belassen...
+              Es werden jedoch ÅberflÅssige Wiederholungen von
+              Flags entfernt.
+              Ob diese Lîsung besser ist sei dahingestellt. (Hi Benny)
+              Wieso muss denn der User noch Kommentare in der Datei
+              haben ?? Er hat ja dieses Tools, um die Konfig zu
+              erstellen :-)
+            - Die wichtigsten Strings in die RSC ausgelagert. Dies
+              ermîglicht eine einfache Umsetzung in andere Sprachen.
+
+   12.10.97 - noch ein gravierender Bug entfernt: Da der 68000er Prozessor
+              nicht mit LONG auf ungerade Adressen zugreifen kann, stÅrzte
+              die SaveMAGX()-Routine auf diesen Prozessoren ab!!
+              Da dies keinem Beta-Tester passiert ist sondern nur mir, als
+              ich das Programm auf nem ollen ST ausprobiert habe, nehme ich
+              an, dass dies auf die 68030er Prozessoren zurÅckzufÅhren ist.
+              Diese kînnen anscheinend mit LONG auf ungerade Adressen
+              schreiben (seltsam!).
+            - Ich hab jetz herausgefunden wieso MagXDesk seine Programme
+              nicht mehr findet. Ich habe das Programm unter Shell ein-
+              getragen. Dies fÅhrte dazu, das MagXDesk als alternative zu
+              MagXDesk lief. Dadurch wurden anscheinend die internen Pfade
+              verÑndert.
+              Folgerung: Wer mit MagXDesk arbeiten will, darf unter Shell
+              KEIN Programm eintragen. Dieser Menupunkt muss also anders
+              interpretiert werden :
+                  Unter Pfade/Shell wird ein ALTERNATIVER Desktop zu
+                  MagXDesk angegeben. Wenn dieser Eintrag leer ist, wird
+                  MagXDesk als Desktop gestartet.
+            - Der Pfade-Dialog ist nun "von Hand" editierbar (zum lîschen).
+              Es handelt sich um scrollbare Editfelder, so dass der Pfad
+              nicht mehr gekÅrzt angezeigt wird.
+            - Ein paar Schreibfehler im README.TXT und in der Bubble-Hilfe
+              entfernt... wer findet noch mehr ? :-)
+            - Das Flag #_MAG wird nicht mehr ausgewertet beim Laden.
+              Dies fÅhrte vîllig unverstÑndlich zu einem Ladefehler. ?!?!
+R2 12.10.97 - zweite Version an Beta-Tester ausgeliefert (B. Jurt,
+              W. Dîrig).
+              !!!!!!!!!!!!!! keine offizielle RELEASE !!!!!!!!!!!!!!
+   20.10.97 - Versionsabfrage fÅr <Echtzeitvergrîsserung> eingebaut.
+              d.h. man kann unter MagiC < 5.10 daran nichts Ñndern.
+              (hoffentlich :-) -> ungetestet
+            - Fehler aus Bubble-Hilfe entfernt und englische Format-
+              beschreibung angefÅgt (so kann es jemand Åbersetzen, wenn er
+              mîchte).
+
+   01.11.97 - Einbindung des #_ENV-Flags (Laden und Speichern)
+            - Environment-Dialog mit Listboxen eingebaut (scrollen usw.)
+              Noch kein Neu/Entfernen/Setzen eingebaut. (Hab noch Probleme
+              mit den verketteten Listen ;-))
+            - Problem: Absturz, wenn keine Environment-Variable gesetzt
+              ist.
+
+erste offzielle Release (="Not"-Release):
+   14.11.97 - Habe die Routinen fÅr den Environment-Dialog wieder entfernt,
+              um eine stabile Version releasen zu kînnen. Denn wie ich ge-
+              sehen habe besteht ein echter Bedarf fÅr dieses Programm...
+              Ich will deshalb die ôffentlichkeit nicht noch lÑnger warten
+              lassen. ;-)
+              Der Environment-Dialog wird aber sicher in der nÑchsten
+              Version vorhanden sein !!
+            - Environment-Dialog ergÑnzt bzw. neu geschrieben. 'Setzen' und
+              'Entfernen' funktioniert. Fehlt noch 'Neu'.
+
+R3 15.11.97 - Habe nun den Environment-Dialog ergÑnzt ('Neu').
+              Scheint nun zu funktionieren ;-) --> Ich teste es mal....
+            - R3 an Betatester ausgeliefert
+
+   25.11.97 - Habe endlich die Bubble-Help-Datei ergÑnzt (fÅr Variablen-
+              Dialog)
+
+   30.11.97 - MagiC-Configurator startet wenn nîtig BubbleGEM manuell.
+              (sofern die Environent-Variable BUBBLEGEM existiert)
+
+   12.12.97 - Jetzt habe ich endlich das Drag&Drop-Protokoll (nach ATARI-
+              Konvention) eingebaut. Nun kann man per D&D Pfade Åbergeben
+              und Environment-Variablen ergÑnzen. Dazu muss man einfach
+              von einem D&D-fÑhigen Desktop eine Datei auf das ent-
+              sprechende Edit-Objekt ziehen.
+
+zweite offizielle Release:
+   13.12.97 - ZWEITE Release (v0.04û). Habe das Readme-File aktualisiert.
+              Ich muss zugeben, dass ich keine grossartigen HÑrtetests
+              gemacht habe. Lediglich neu dazugekommene Funktionen wurden
+              ÅberprÅft. Evtl. haben sich Bugs eingeschlichen (was ich aber
+              nicht hoffe).
+            - Ups, da hat sich wirklich was getan. Ich hatte vergessen die
+              Bubble-Hilfe-Datei anzupassen. Daher erhielt man im Variablen-
+              Dialog stets falsche Infos (bei den Buttons).
+              Ich habe die Release-Version in der BBB, ACT und X-Com ausge-
+              tauscht und hoffe, dass die falsche Version sich nicht gross
+              verbreiten konnte. (immerhin lagen nur einige Stunden zwischen
+              den 2 Releases)
+
+   15.12.97 - Die Mails, die ich auf die Verîffentlichung erhalten habe,
+              haben mich motiviert, nochmals etwas am Programm zu feilen.
+              Ich habe nun eine neuprogrammierung begonnen. Die Sourcen
+              sollen so wieder an Struktur gewinnen :-)
+            - habe bemerkt, dass die MagiC-Versionsabfrage gar nie (!)
+              funktionieren konnte, da ich den Wert als dezimal Zahl
+              anstatt als Hex-Zahl betrachtet habe (0x0500 > 500)
+   16.12.97 - aus ungeklÑrten GrÅnden stÅrzt das Programm beim Beenden
+              bei fnts_delete() ab. Das seltsame ist, dass das nicht immer
+              der Fall ist. Wenn ich ein paar puts() oder Cconws() Aufrufe
+              einbaue, dann klappts wieder.
+   20.12.97 - Habe evtl. den Fehler gefunden. Das Prg stÅrzt ab, wenn ich
+              bei den zu zeigenden Fonts nur FNTS_BTMP angegeben habe. Nun
+              steht dort FNTS_BTMP|FNTS_MONO und es funktioniert jetzt.
+              ----> Kann das jemand erklÑren ??? (Helft mir)
+            - nun werden die Dialoge Åber "universelle" Prozeduren ver-
+              waltet. -> grîssere öbersicht beim Source-Code (ausserdem
+              kleineres Programm)
+   21.12.97 - ich habe einen Fehler in der alten Version entdeckt:
+                 Als die Fileselect-Box aufgerufen wurde und man mit Abbruch
+                 abgebrochen hat, gab es beim nÑchsten Aufruf der FSel-Box
+                 MÅll als Dateiname (um genau zu sein: der Pfad der Datei).
+            - Beim Beenden des Programms wird man nun gefragt, ob man das
+              System neu booten will (Hi Bernd!). Dabei wird zur Zeit
+              lediglich das Programm SHUTDOWN.PRG ausgefÅhrt. Es _MUSS_ im
+              Verzeichnis
+                   C:\GEMSYS\GEMDESK\
+              zu finden sein. Evtl. wird man dies spÑter konfigurieren
+              kînnen. (oder es wird endlich ein Standard definiert, um dies
+              sauber zu machen. z.B. eine Environment Variable :
+                      SHUTDOWN=<Prog-Pfad>
+            - Drag&Drop wieder eingebaut.
+            - GEM-Interface jetzt fertig (also so wie es vorher war ;-)
+   23.12.97 - Import-Routine verbessert: Nun werden bei ASCII-Zeilen die
+              ÅberflÅssigen SPACEs (am Zeilenende) entfernt. Dadurch kann
+              es (hoffentlich) nicht mehr zu Import-Fehlern kommen, falls
+              es unnÅtze SPACEs am Ende hat. War z.B. bei der dokumentierten
+              MAGX.INF ein Problem.
+            - Fehler entdeckt (hehehe....): Also in der Bubble-Hilfe zu
+              Taskwechsel stand:
+              <Gibt die LÑnge einer Zeitscheibe (im prÑ-emptiven Multi-
+              tasking) in 5ms-Einheiten an....>
+              Wenn man nun aber z.B. 5 in das Edit-Feld geschrieben hat, so
+              wurde in Wirklichkeit aber 5*5 ms = 25 ms eingestellt.
+              Sorry, war ein dummer Fehler....
+            - Fehler in der Save-Routine beseitigt. Konnte zu Problemen
+              fÅhren falls man eine Magx.INF mit kunter bunten Kommentaren
+              hatte.
+            - VFat-UnterstÅtzung eingebaut. Sie scheint auch korrekt zu
+              funktionieren =:-)
+            - Neue Versionsnummer: V0.05û  (es hat sich ja schliesslich
+              etwas getan!)
+            - Trennung der History vom Readme-File. (wurde langsam zu lang)
+            - Idee bzw. GesprÑch mit einem Freund Åber eine Homepage im
+              Internet
+            - Die Fileselect-Box wird nun automatisch fÅr C:\ geîffnet.
+              (Hallo Michael :-))
+            - Habe eine Doku zum _FSL Flag in der ASH-BOX gefunden:
+========== Schnipp ==================
+- Dateiauswahl: In der MAGX.INF kann innerhalb des [aes]-Abschnitts eine
+  Vorgabe fÅr zusÑtzliche Dateitypen angegeben werden. Typisch wÑre:
+
+#_FSL 0 *.C;*.H;*.S
+
+  Dabei ist <0> ein Flag, das zur Zeit noch ignoriert wird und daher immer
+  Null sein sollte. Es folgt eine Zeichenkette mîglicher Extensions, die
+  durch ';' getrennt sind. Doppelmuster werden voneinander durch ','
+  getrennt (z.B. "*.PRG,*.APP" oder "*.JPG,*.JPEG").
+============ Schnapp ==================
+
+   24.12.97 - Ich hab nach langer Suche endlich herausgefunden, warum die
+              Iconify-Routine nicht funktioniert hat: Ich hatte eine alte
+              Version von WDIALOG installiert (1.95). Diese hat noch einen
+              Bug im wdlg_uniconify()-Aufruf.
+              Man muss also WDIALOG 1.98 oder neuer benutzen, damit's
+              funktioniert! ---> Iconify-UnterstÅtzung (Hallo Bernd!!)
+            - noch keine WM_ALLICONIFY-UnterstÅtzung (wird wie WM_ICONIFY
+              behandelt)
+            - Ich hab grad herausgefunden, dass da was beim "Auflîsung"-
+              Dialog nicht klappt (=stÅrzt ab). Der Fehler muss bei der
+              Cookie-Routine sein! (evtl. war diese Routine fÅr die
+              misteriîsen AbstÅrze bei diversen Usern verantwortlich!)
+              --> korrigiert
+   25.12.97 - Debug-Version gebaut, die mir ein genaues Protokoll schreibt,
+              damit ich die fehlerhafte Prozedur finden kann. (fÅr Thomas M.
+              und Co)
+
+   03.01.98 - Nun versteht das Programm VA_START und Drag&Drop einer
+              MAGX.INF auf das Hauptfenster. Bei beiden Nachrichten wird die
+              Åbergebene Datei geîffnet. Man kann nun also den MagiC-
+              Configurator im Desktop fÅr MAGX.INF anmelden. Auch wenn er
+              schon gestartet wurde, ladet er eine MAGX.INF nach (dank VA-
+              Protokoll).
+            - Haupt-Dialog Åberarbeitet: Nun gibt es einen neuen Button
+              <Diverses>, dahinter versteckt sich ein Dialog zum Einstellen
+              der #_TSL,#_WND,#_BUF und #_FSL -Flags. Dadurch wurde der
+              Haupt-Dialog etwas kleiner.
+            - BubbleHilfe-Datei ergÑnzt
+            - Versionssprung auf V0.99û (ist ja schon fast perfekt :-))
+            - Bug behoben: Iconifizierte Fenster/Dialoge konnten nochmals
+              geîffnet werden, da sie nicht schon als geîffnet erkannt
+              wurden. Dadurch wurde ich auf einen weiteren Bug aufmerksam,
+              der nur Auftrat, wenn mehr Dialoge geîffnet wurde, als
+              Speicher zur Verwaltung zur VerfÅgung stand (=nun behoben).
+            - #_BKG-Flag kann man nun mit dem "Hintergrund"-Dialog ein-
+              stellen (fÅr all die ungeduldigen MagiC 5.20er, zu denen ich
+              leider noch nicht gehîre *seufz*)  -> ungetestet
+R4 03.01.98 - vierte Release an Beta-Tester. FÅr einige hat sich nicht viel
+              getan, aber was solls... ich mîchte ja sobald wie mîglich eine
+              neue îffentliche Release.
+            - Versionsabfrage fÅr Hintergrund-Button eingebaut (ab 5.20)
+              und korrigiert (ich habe wieder Hex mit Dezimalzahlen ver-
+              glichen)
+
+   04.01.98 - Fehler beseitigt durch den der Text 'Fsl-Masken' im Dialog
+              'Diverses' Åberschrieben wurde.
+
+   05.01.98 - Man kann nun nur noch die VFAT-Einstellungen fÅr Laufwerke
+              vornehmen, die auch angemeldet sind! (Idee von B.Jurt)
+            - Neue Email- und Homepage-Adresse ins Readme-File eingetragen.
+
+   10.01.98 - Fehler beim Laden entfernt. Beim Flag #_FSL wurde der Rest
+              nach dem Zeichen <;> entfernt, da er als Kommentar betrachtet
+              wurde. (Dank an Bernd MÑdicke)
+            - EMail-Adresse korrigiert und Homepage-Adresse entfernt
+            - Resource angepasst
+            - Debug-Proceduren entfernt
+
+dritte offizielle Release
+   10.01.98 - TATATA..... Die neue, offizielle Release vom
+                             MagiC-Configurator
+              Leider ist das #_BKG-Flag immernoch ungetestet. Ich wÑr froh,
+              wenn mir ein MagiC 5.20-User mitteilen kînnte ob es
+              funktioniert.
+            - BubbleGEM-Hilfe an BGH-Format angepasst
+   13.01.98 - Bug beim Speichern des #_BKG-Flags gefunden (dank Oliver
+              Buchmann). Das Flag wurde nicht gespeichert, falls die
+              Shellbuffer-Variable nicht gesetzt war :-)
+            - Der Hintergrunddialog kann nun als getestet angesehen werden.
+   18.01.98 - Hypertext-Anleitung geschrieben (deutsch)
+   19.01.98 - Save-Routine umgestellt: nun werden die Flags alphabetisch
+              gespeichert :-)
+            - Dialogboxen fÅr MagiC 6-Erweiterungen angepasst
+              -> 3D-Menus an-/abschaltbar (Default: aus)
+            - Font-Dialog Åberarbeitet: Nun muss man unter MagiC 5.20
+              nicht mehr den gleichen Font fÅr den grossen und den
+              kleinen Zeichensatz auswÑhlen -> UnterstÅtzung der Flags
+              #_TXB und #_TXS. Interessant sind diese Flags aber erst
+              unter MagiC 6, bei dem man dann proportionale Fonts benutzen
+              kann.
+            - Ab MagiC 5.20 werden alte #_TXT-Daten sinnvoll in Daten
+              fÅr die Flags #_TXB und #_TXS Åbernommen.
+            - Mit MagiC kleiner als 5.20 kann man den Font nur fÅr den
+              grossen Zeichensatz wÑhlen. Dieser wird dann automatisch
+              auch fÅr den kleinen Zeichensatz verwendet.
+            - Beim Laden einer MAGX.INF sollten nicht #_TXT und #_TXB/#_TXS
+              gemischt vorhanden sein, denn nur die letzten Daten in der
+              MAGX.INF werden Åbernommen. Beim nÑchsten Speichern wird aber
+              nur noch #_TXT oder #_TXB/#_TXS gespeichert (je nach MagiC-
+              Version).
+            - zur Zeit klappt das Umrechnen zwischen der Pt-Angabe und der
+              von der AES benutzten Punkt-Hîhe noch nicht.
+              -> Die Punkt-Angabe wird nur Åbernommen, falls man die
+              passende Checkbox im Fontdialog selektiert
+   03.02.98 - Weitere Anpassung an MagiC 6:
+                    #_OBS, #_SLB werden geladen und wieder zurÅckgeschrieben
+            - AES-Objektraster (#_OBS <ow> <oh>) lassen sich im Font-Dialog
+              einstellen. Die anderen Werte bw und bh lassen sich noch nicht
+              editieren, da sie noch nicht von MagiC ausgewertet werden.
+            - Dialoge kosmetisch angepasst. Buttonhîhe + 1 Pixel und
+              Titel + 3 Pixel
+            - Fehler entdeckt: Falls eine Zeile der MAGX.INF nicht soviele
+              Parameter hat, wie erwartet wird, dann schwirrt das Programm
+              ab.  -> öberarbeitung der Lade-Routine nîtig
+            - MagiC-Configurator setzt nun auch den [shelbuf] Abschnitt,
+              wie es von MagiC 6 erwÅnscht wird.
+   07.02.98 - Umrechnung zwischen Drucker-Punkten und AES-Fontgrîssenangaben
+              nach folgender Formel:
+                   Dr.Punkt  = AES-Punkt * work_out[4] / 353
+                   AES-Punkt ermittle ich mit vqt_attributes()
+              Leider kommt es manchmal zu Rundungsfehlern, da ich mit LONG
+              rechne.
+            - Lade-Routine neu geschrieben:
+                 - verbesserte Tolleranz bei der Syntax (z.B. kînnen jetzt
+                   dem Data-Flag (#_???) beliebig viele Spaces folgen.
+                   Auch zwischen den Parametern dÅrfen mehrere Spaces sein.)
+                   Ausgenommen sind: #_ENV, #_FSL
+                 - komplexer, aber dafÅr universeller
+   08.02.98 - Ich habe versucht die Save-Routine neu zu schreiben,
+              da ich aber kein Konzept gefunden habe, das keine MÑngel
+              aufwies habe ich wieder auf das altbekannte Konzept zurÅck-
+              gegriffen (lediglich kleinere Optimierungen).
+              Nachteile: die Daten werden nicht Sektionsweise Åbernommen,
+              d.h. dass fremde/unbekannte Daten evtl. nach dem Speichern
+              nicht mehr in der Sektion sind, in die sie gehîren (wie
+              z.B. Kommentare).
+              Da ich den Support aber noch lange weiterfÅhren werde, wird es
+              stÑndig eine aktuelle Version geben (also keine fremden Flags).
+            - Neu: die Quell-MAGX.INF wird im Speicher gehalten, so
+              dass es keine Probleme/Verwirrungen gibt, wenn die Ziel-
+              MAGX.INF nicht gleich wie die Quelle ist!
+            - Bug behoben: es konnte vorkommen, dass MÅll am Ende der
+              MAGX.INF angehÑngt wurde (seehhhrr selten!).
+            - Auflîsungs-Dialog erweitert:
+              Man kann nun auch angeben, dass MagiC die Auflîsung nicht
+              Ñndern soll (#_DEV 1 0). Dies ist ja bei MagiCMac erwÅnscht.
+   10.02.98 - BubbleGEM-Hilfe vervollstÑndigt.
+
+   24.02.98 - Fehler beim Laden behoben:
+                Wurde beim Start als Parameter "MAGX.INF" Åbergeben, dann
+                behauptete das Programm, dass es sich nicht um eine MAGX.INF
+                handle, da intern der Dateiname="" war und der
+                Pfad="MAGX.INF". Dies fÅhrte dann auch zum erwarteten
+                Absturz ;-)
+            - Die Verwaltung der #_ENV EintrÑge habe ich nun auf verkettete
+              Listen umgestellt. Dadurch sind beliebig viele EintrÑge
+              mîglich (nicht nur 32, wie bisher).
+            - Environment-Variablen kînnen nun aktiviert und deaktiviert
+              werden. (Hallo Finn :-))
+              Dadurch kann man mit den Variablen experimentieren, ohne dass
+              man stÑndig die Variablen lîschen muss.
+              Daktivierte EintrÑge werden folgendermassen gespeichert:
+                        ;#_ENV <Variable>
+            - Dadurch dass die deaktivierten EintrÑge erst nach den aktiven
+              EintrÑgen gesucht werden, wird die Reihenfolge beim Speichern
+              geÑndert.  --> muss ich evtl. noch Ñndern
+            - Falls der _VDO -Cookie nicht existierte konnte es zu einem
+              Absturz kommen (aber: normaler Weise existiert der Cookie ja!)
+
+vierte offizielle Release
+   08.03.98 - Da ich in letzter Zeit nicht mehr zum Programmieren kam,
+              verîffentliche ich die jetzige Version.
+              Zur Zeit wird MagiC 6 noch nicht ganz unterstÅtzt.
+   12.03.98 - Beim Speichern wird nun immer eine BAK-Datei angelegt
+              (Wunsch von B. MÑdicke)
+            - Es konnte passieren, dass leere ENV-Variablen in die
+              MAGX.INF gespeichert wurden.
+            - Beim Erstellen einer neuen MAGX.INF konnte es zu einem
+              Absturz kommen (Pointer ins Nichts -> Tod)
+            - Ein Fehler im Font-Dialog unter MagiC 5.04 konnte noch
+              nicht gefunden werden.
+   29.03.98 - UnterstÅtzung von BUBBLEGEM_REQUEST = zeitgesteuerter Aufruf
+              von BubbleGEM
+   31.03.98 - Falls ein Fehler beim Sichern der Daten auftritt wird nicht
+              mehr beendet (auch wenn die Save-Routine durch ^Q aufgerufen
+              wurde). Geschah z.B. bei schreibgeschÅtzten Dateien.
+            - Lade-Routine wiedereinmal umgeschrieben. Jetzt wird wieder
+              zeilenweise gearbeitet: Reihenfolge wird eingehalten;
+              KÅrzel (z.B. "#_FLG" oder "drives=") werden nur noch ein-
+              gelesen, wenn sie in der korrekten Sektion (z.B. "#[aes]"
+              oder "#[vfat]") vorkommen.
+              Seit MagiC 6 sind klare Sektionen vorhanden!
+            - #[boot]-Sektion wird geladen
+   02.04.98 - Save-Routine neu geschrieben. Sie arbeitet jetzt auch auf der
+              Ebene von Sektionen. Neu werden jetzt die Kommentare oder
+              unbekannte Daten am Ende der jeweiligen Sektion angehÑngt.
+              Also: Kommentare zum #[AES]-Bereich gehîren IN den #[aes]-
+              Bereich, sonst landet der Kommentar sicher an einem Ort wo
+              er nicht hingehîrt! (Diese Regel gilt auch fÅr die #[vfat]
+              und #[boot] Sektion!)
+              Unbekannte Sektionen und Daten, die in keine Sektion ein-
+              geordnet werden konnten werden am Ende der bekannten Sektionen
+              abgelegt. (Aber vor der Sektion #[shelbuf] bzw. vor #_CTR !!!)
+              ---> Dadurch sollte der Configurator in Zukunft auch mit
+              neuen/fremden Sektionen arbeiten.
+              ---> Durch die Umstrukturierung wurde die Save-Routine
+              wahrscheinlich etwas langsamer :-( DafÅr jedoch "sauberer" :-)
+              Ab MagiC > 5.20 wird vor den Kontrollfeld-Daten #[shelbuf]
+              eingefÅgt.
+            - #[boot]-Sektion wird nun auch gespeichert ;-)
+            - Boot-Dialog eingebaut. Der Dialog ist erst ab MagiC >5.20
+              zugÑnglich.
+              Wie im Pfad-Dialog kann man per Drag&Drop die Files (Logbuch,
+              Startbild) auswÑhlen.
+            - Beta-Version an A. Kromke und O. Buchmann
+   10.04.98 - Auf Anregung von A. Kromke hab ich einige énderungen
+              vorgenommen:
+                  - kosmetische énderungen an einigen Dialogen
+                  - "Neustart", "Ende" und "Abbruch"-Buttons beim Beenden
+                  - Laden und Speichern der #_INW -Daten
+                  - Laden und Speichern von "tiles=" in der [boot]-Sektion
+            - harmloser Fehler beseitigt: Wurde beim ôffnen kein Dateiname
+              angegeben (z.B. durch Drag&Drop eines Ordner auf das Haupt-
+              fenster), so wollte das Programm eine neue Datei ohne Namen
+              erstellen. Dies fÅhrte dann beim Speichern zu einer Fehler-
+              Meldung, die aber nichts Schlimmes bedeutete.
+   13.04.98 - Handling des Pfad-Dialogs verbessert:
+                  - Einfach-Klick positioniert den Cursor im Editfeld
+                  - Doppel-Klick îffnet den passenden Fileselector
+            - Routine zur Installation von scrollenden Editfeldern neu
+              geschrieben (=eigene geschrieben). Der Text, der am Anfang der
+              Schablone steht, wird jetzt Åbernommen.
+   15.04.98 - Jetzt funktioniert das neue Handling im Pfad-Dialog sogar ;-))
+            - Der unnîtige Gruppenrahmen im Auflîsungsdialog entfernt.
+              War vielleicht schîn, aber hatte keinen richtigen Zweck.
+            - Mir ist aufgefallen, dass man beim Falcon nicht die einfachen
+              Device-Nummern fÅr die Standard-Auflîsungen des STs benutzen
+              kann.  -> muss ich Ñndern
+            - Habe begonnen den "Default Auflîsung"-Dialog zu Åberarbeiten.
+              Als Vorbild musste das Programm CHGRES.APP herhalten :-)
+              Leider hab ich noch Probleme beim sortieren der verketteten
+              Liste.
+   16.04.98 - Nun funktioniert das Sortieren der verketteten Liste (=die
+              Auflîsungen werden jetzt der Grîsse nach sortiert).
+              Jetzt gefÑllt mir der Auflîsungs-Dialog ;-)
+            - Env-Variablen lassen sich jetzt nur noch mit einem Doppelklick
+              aktivieren und deaktivieren.
+            - LÑngste Env-Variable von 129 auf 256 erhîht (scrollendes
+              Editfeld!)
+            - Alle Dialoge wiedereinmal genauer getestet und Åberarbeitet.
+            - Tastatur-KÅrzel ^U eingefÅhrt um das oberste Fenster zu
+              schliessen.
+            - Das Handling des Boot-Dialogs ist jetzt gleich wie beim Pfad-
+              Dialog:
+                  - Einfach-Klick positioniert den Cursor im Editfeld
+                  - Doppel-Klick îffnet den passenden Fileselector
+            - Habe begonnen einen eigenen Dialog fÅr die Shared Libraries
+              zu schreiben. Auch diese werden in verketteten Listen
+              verwaltet und in einer List-Box dargestellt (vgl. Env- und
+              Auflîsungs-Dialog)
+   17.04.98 - General-öberholung beendet. Nun stehen alle MagiC 6 Features
+              wie sie sollen. Der SharedLib-Dialog lÑsst sich Ñhnlich wie
+              der EnvVar-Dialog bedienen.
+            - Resource- und BubbleHilfe-Datei aufgerÑumt, ergÑnzt und ge-
+              sÑubert.
+            - diverse Tests auf LauffÑhigkeit gemacht.
+            - Die Mode-Codes fÅr die Falcon-Auflîsungen sind nicht alle ge-
+              testet! Dies gilt vor allem fÅr die RGB-Modis, da ich keinen
+              RGB-Monitor habe.
+   27.04.98 - Bug behoben: falls AV_STARTED mit einem NULL-Pointer empfangen
+              wurde, kam es zu einem Absturz. Dieses Ereignis kam vor,
+              falls das Programm schon im Speicher war und der User das Prog
+              nochmals starten wollte: Jinnee sendet AV_STARTED mit einem
+              NULL-Pointer
+            - Probleme beim Auflîsungs-Dialog beseitigt
+            - Ungelîstes Problem: Edit-Felder sehen in einigen MagiC-
+              Versionen "unschîn" aus wenn man scrollt: Die Textschablone
+              scrollt nÑmlich auch mit!
+              Lîsung ????
+   17.05.98 - "lange Edit-Felder" wieder auf's alte System umgestellt. D.h.
+              sie haben keine Textschablone mehr (zumindest, dort wo sie fÅr
+              "dumme" MagiC-Versionen (<5.20) erreichbar sind.
+            - Bubble-Hilfe angepasst.
+            - deutsche Dokumentation Åberarbeitet (TXT, HYP)
+            - schlimmer Bug entdeckt: wdlg_set_edit() klappt nicht mehr...
+              Kenne keine Ursache dafÅr!! Mit MagiC lÑuft's problemlos, aber
+              sobald man WDialog installiert (Version egal!), stÅrzt das
+              Programm beim Aufruf von wdlg_set_edit() ab!
+   19.05.98 - wdlg_set_edit()-Bug gefunden und behoben:
+              WÑhrend einem HNDL_EDCH-Ereignis habe ich das Edit-Feld ge-
+              Ñndert (zu Redraw-Zwecken). Dadurch trat ein neues HNDL_EDCH-
+              Ereignis auf.  -> unendliche (?) Rekursion
+              Zumindest unter dem normalen MagiC 5.20 trat kein Fehler auf.
+              Daher habe ich das nie bemerkt!
+R9 19.05.98 - endlich kann die neue Beta raus!
+            - Bug beseitigt, der zum Absturz fÅhren konnte falls im
+              Auflîsungs-Dialog kein Eintrag angewÑhlt war.
+   29.05.98 - Falls die Environment-Variable SDMASTER existiert, dann wird
+              das dort angegebene Programm gestartet. So lÑsst sich auch
+              ein Shutdown mit der Ease erreichen.
+              Das angegebene Programm wird parallel mittels shel_write()
+              gestartet.
+
+offizielle Release:
+   07.06.98 - Ich verîffentliche diese Version zum Marktstart von MagiC 6.
+              Das Iconify-Problem ist noch nicht gelîst (Niemand konnte mir
+              bisher helfen :-()
+   18.06.98 - Bug beseitigt: Es wurde <bootlog> statt <log> in die MAGX.INF
+              eingetragen. (Bugreport von B. MÑdicke)
+              Wieso hat das niemand zuvor bemerkt ?
+              Ausserdem: Probleme mit Calvino (=Fontselektor)
+              --> ev. xFSL-UnterstÅtzung einbauen?
+   25.06.98 - Dummy-Test-Routine entfernt und durch eine echte ersetzt.
+              Nur ASCII-Files (inkl. CR,LF und TAB) werden auf Anhieb ge-
+              laden. Falls die #_MAG-Zeile fehlt motzt MagiCCfg auch!
+            - Fehlerhafte Stelle in Bezug auf Liberty gefunden:
+                 -Der wdlg_open()-Aufruf stÅrzt ab.
+                 -Grund: unbekannt! (ev. weil sie aus einer <handle_exit>
+                  Routine heraus aufgerufen wird ?)
+   29.06.98 - SÑmtliche Dialog-Verwaltungs-Routinen neu geschrieben.
+              Leider ist dadurch der Liberty-Bug nicht verschwunden!
+              Aber ich habe jetzt zeigen kînnen, dass dank Liberty
+              auch ein wdlg_close()-Aufruf abstÅrzen kann ;-)
+            - Falls man nach LIBERTY WDialog 1.98 startet, dann gibt
+              es keine Probleme mit wdlg_xy()-Aufrufen!
+   03.07.98 - Falls ein Falcon angeschlossen ist, kann der neue Eintrag
+              "Nova" im Auflîsungs-Dialog angewÑhlt werden.
+              Kann man diese Karte per Cookie erkennen ?
+              Wer hat mir diverse Dokumentationen zur Erkennung von
+              Grafik-Karten ?
+   04.07.98 - Iconify "funktioniert" wieder (aber leider so fehlerhaft
+              wie schon in der letzten Version)
+            - History und Doku angepasst (NEUE Email-Adresse!!!)
+
+offizielle Release der Version 1.11:
+            - Da im Bereich der Liberty-kompatibilitÑt keine weiteren
+              Fortschritte zu erwarten sind, verîffentliche ich diese
+              Version, da einige Bugfixes drin sind.
+
+<nach langer Pause wieder einmal in den Source-Code geschaut>
+   05.11.98 - RSC an proportionale Systemfonts angepasst.
+            - Absturz beim Doppelklick auf ein leeres Library-Feld
+              beseitigt.
+            - Iconify-Bug beseitigt (Dank Manfred Lippert)
+
+   30.11.98 - Wilfried Behne hat mir eine ins Englisch Åbersetzte RSC-
+              und BGH-Datei geschickt. (herzlichen Dank!)
+
+<schon wieder: nach langer Pause .....>
+   15.01.99 - Anpassung an meine neue Dialog-Library (hoffentlich)
+              beendet.
+              Neuerungen: - korrektes ALLICONIFY implementiert
+                          - Dialoge werden nach einmaligem ôffnen an der
+                            alten Position wieder geîffnet (nicht mehr
+                            zentriert)
+                          - CTRL+W aktiviert nÑchstes Fenster
+                          - AV_SENDCLICK, AV_SENDKEY werden unterstÅtzt
+                            (BubbleGEM sendet diese Nachrichten)
+                          - Help-Taste wird abgefangen -> fÅr ST-Guide-
+                            Hilfe
+                          - Liberty scheint nicht mehr abzustÅrzen mit den
+                            neuen Dialog-Routinen
+
+    18.01.99 - Auflîsungs-Dialog Åberarbeitet (Farben-Popup "while-running",
+               Treiber und Modus auch manuell einstellbar)
+             - Problem beim schliessen der Dialoge beseitigt (wdlg_close ruft
+               nicht automatisch die <handle_proc> auf. Obwohl das wdlg_open
+               tut... -> inkonsistenz des WDialog-Konzepts)
+             - MAGICCFG wÑhlt nun beim starten das Bootlaufwerk intelligent
+               aus (=wird Åber _BOOTDEV ermittelt)
+    19.01.99 - Drag&Drop beim VFat-Dialog implementiert
+             - Variablen-Dialog Åberarbeitet
+             - Diverses-Dialog Åberarbeitet
+             - BubbleGEM-Hilfe angepasst
+    20.01.99 - Englische RSC- und BGH-Datei angepasst.
+             - ST-Guide-Hilfe vervollstÑndigt
+             - Tests haben ergeben, dass Liberty 1.30 noch immer beim
+               wdlg_open()-Aufruf abstÅrzt.
+               Dies geschieht aber "nur" 3 mal. Danach lÑuft das Programm
+               normal! (???)
+    25.01.99 - Iconify Åber CTRL+ALT+SPACE und Alliconify Åber
+               CTRL+ALT+LSHIFT+SPACE erreichbar
+             - SprachenabhÑngigkeit auf C-Sourcen-Ebene
+<--- Entwicklung fÅr einige Zeit gestoppt (wg. MilitÑr) --->
+    20.10.99 - Anpassung an die aktuelle Dialog-Library von mir (Iconify
+               per Tastatur verbessert: Uniconify auch mîglich).
+             - Versuchsweise Fenster-Fileselector eingebaut. Klappt noch
+               nicht wie es sollte.
+    01.11.99 - kleine Anpassung an der RSC
+             - de-/aktivieren von Variablen per Doppelklick wird nun korrekt
+               als énderung der Datei angesehen --> man wird aufgefordert die
+               énderung zu speichern.
+    18.12.99 - Anpassung an die aktuelle Dialog-Library
+             - File- und Fontselektor nun im Fenster (aber trotzdem modal)
+             - Es sollte nun weniger Fehler bei der Umwandlung von Pixel-
+               grîssen in VDI-Punkte geben (=der voreingestellte Zeichensatz
+               in Fontselektor sollte nun îfters stimmen)
+             - MagiCCfg ist nun Liberty-kompatibel (=Es gibt keine AbstÅrze
+               im Zusammenhang mit Liberty mehr)
+             - Versionssprung auf V1.25
+    22.12.99 - Englische Dokumentation fertig geschrieben.
+    29.12.99 - Deutsche und Englische Dokumentation nach Fehlern abgesucht
+               und ergÑnzt.
+             - Bug im Auflîsungs-Dialog beseitigt: Man konnte mehrmals
+               "Treiber" an- und abschalten.
+             - Deutsche und Englische Programmpakete zusammengestellt.
+offizielle Release der Version 1.25
+    03.01.00 - Bug im RSC File beseitigt ("Diverses"-Dialog)
+    05.03.00 - Bug beseitigt, der verhinderte, dass das Iconify per
+               Tastatur (FlipIconify) funktionierte.
+    09.03.00 - Deutschfehler in der BubbleGEM Hilfe beseitigt (Tipps von
+               G. Hîlscher)
+    02.04.00 - Fehler beim Laden beseitigt. MagiCCfg geht nun nicht mehr 
+               davon aus, dass alle Zeilen kÅrzer als 256 Zeichen sind, 
+               sondern ermittelt vor dem Laden die maximale ZeilenlÑnge.
+               Der Fehler trat vor allem bei sehr langen Environmentvariablen
+               auf. (Dank an Stefan Kuhr)
+    03.04.00 - Optischer Fehler in diversen Dialogen beseitigt: Es blieben oft
+               Reste des Cursors beim Neuzeichnen Åbrig.
+             - Neu erstellte Variablen haben jetzt korrekterweise keinen 
+               Inhalt (beim selektieren wird nicht mehr der Inhalt der letzten
+               Variable angezeigt).
+             - Fehler bei den neuen Fileselektor-Routinen beseitigt: es konnte
+               keine "Nicht existierende" Datei angegeben werden. 
+               "Sichern unter..." klappte auch nicht so wie es sollte.
+             - Begrenzung der scrollenden Edit-Felder ist definitiv 256 Zeichen
+               bei MagiC 6.0x
+             - Versionssprung auf V1.26
+             - Fehler beim Speichern "Åberlanger Zeilen" beseitigt. (statischer
+               Buffer entfernt)
+    11.04.00 - Fehler beim Schliessen des Fontselektors gefunden: das Programm
+               dachte dass das Fenster noch benutzt wÅrde (Handle nicht 
+               gelîscht). Dadurch konnte es vorkommen, dass ein weiterer 
+               Dialog ohne Inhalt dargestellt wurde (nur der Fensterrahmen 
+               sichtbar).
+             - Meine neue Adresse in der Doku und RSC angepasst.
+    11.05.00 - Deutsche und Englische Dokumentation Åberarbeitet (Englische
+               Doku wurde von Sean Barbieri korrigiert -- Many Thanks!).
+ im Juli '00 - Diverse Versuche einen Winframe-Installer einzubauen.
+               Leider ohne Erfolg.
+    14.08.00 - Fehler beim Library-Dialog entfernt: Das TastaturkÅrzel fÅr
+               éndern liess sich nicht anwÑhlen (ALT+é gibts nicht?)
+    15.08.00 - Ich habe alles was mit Winframe zu tun hatte wieder rausge-
+               schmissen. Ich denke das lÑsst sich nicht ohne weiteres machen.
+               Ausserdem wÑre die mir vorgeschwebte Lîsung ein brutaler Hack
+               und so etwas gehîrt nicht in den Configurator! Evtl. entsteht
+               dafÅr ein eigenes Programm.
+             - Anpassung an mein neues DIALLIB-Konzept.
+
+    22.09.01 - Anpassung an die aktuellste Dial-Lib.
+             - Document-History-Protocol UnterstÅtzung eingebaut
+             - Alle BGH-Dateien (deutsch, englisch, franzîsisch) den neuen 
+               Gegebenheiten angepasst.
+             - Bug entdeckt: im Dialog "Environment-Variable Ñndern" wird man
+               trotz druck auf die "Help-Taste" nicht zur entsprechenden
+               Hilfe-Seite gefÅhrt. Es erscheint nur die Titelseite.
+               Problem in MagiC-Cfg oder im ST-Guide?
+             - Dokumentation leicht abgeÑndert

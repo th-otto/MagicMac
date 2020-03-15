@@ -1,0 +1,69 @@
+#!language english
+#!no_images				[asc,stg]
+
+!code [tos]
+
+
+# Macro Definitionen
+!macro ProgrammName		MagiC-Configurator
+!macro ProgrammVersion	1.26
+!macro ProgrammJahr		2000
+!macro Autor				Philipp DonzÇ
+!macro Strasse				Rue de l'industrie 7
+!macro Ort					1020 Renens
+!macro Homepage			(!xlink[http://philippdonze.atari.org/][http://philippdonze.atari.org/])
+!macro Email				PhilippDonze@gmx.ch
+!ifnlang [german]
+	!macro Land					Switzerland
+	!macro Beschreibung		The hypertext for
+	!macro ProgrammDatum		22th September 2001
+!else
+	!macro Land					Schweiz
+	!macro Beschreibung		Der Hypertext zu
+	!macro ProgrammDatum		22. September 2001
+!endif
+
+# ST-Guide Datenbank Information
+!raw [stg] @author   "Philipp DonzÇ"
+!raw [stg] @$VER: 1.26 (22/09/2001)
+!iflang [english]
+	!docinfo [stgdatabase] The configurator for MagiC
+	!raw [stg] @subject  "Documentation/Utilities"
+!else 
+	!docinfo [stgdatabase] Der Konfigurator fÅr MagiC
+	!raw [stg] @subject  "Dokumentation/Utilities"
+!endif	#not english
+
+
+!sort_hyphen_file		[asc,stg]
+!tabwidth 3
+!parwidth 75
+!use_auto_subtocs    [html,stg]
+!use_auto_subsubtocs [html,stg]
+!no_effects				[asc]
+#!use_justification	[asc]
+#!use_auto_toptocs		[info,html,stg,tvh,win,aqv]
+!use_nodes_inside_index	[info,html,stg,tvh,win,aqv]
+
+
+# Wort-Trennungs-Informationen
+!include Include\Hyphen.ui
+
+
+# Hier beginnt die Dokumentation
+!begin_document
+
+!include Include\Titelseite.ui
+!include Include\Inhaltsverzeichnis.ui
+!include Include\EinfÅhrung.ui
+!include Include\Bedienung.ui
+!include Include\Systemvoraussetzungen.ui
+!include Include\BekannteBugs.ui
+!include Include\History.ui
+!include Include\Interna.ui
+!include Include\Rechtliches.ui
+!include Include\Autor.ui
+!include Include\Danksagung.ui
+!include Include\Pnodes.ui
+
+!end_document

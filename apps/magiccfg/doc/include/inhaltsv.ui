@@ -1,0 +1,13 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node* Table of contents
+	!toc [all]
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!node* Inhaltsverzeichnis
+	!toc [all]
+!endif

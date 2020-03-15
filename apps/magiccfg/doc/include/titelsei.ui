@@ -1,0 +1,65 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!ifndest [asc]
+		!node* Title
+	!else
+		!bigskip
+	!endif
+	!begin_center
+		(!Beschreibung) (!nl)
+		(!nl)
+		(!ProgrammName) (!nl)
+		(!nl)
+		Version (!ProgrammVersion) (!nl)
+		(!ProgrammDatum) (!nl)
+		(!nl)
+		by (!nl)
+		(!nl)
+		(!Autor) (!nl)
+		(!Strasse) (!nl)
+		(!Ort) (!nl)
+		(!Land) (!nl)
+		(!nl)
+		(!Email) (!nl)
+		!smallskip
+		!ifndest [asc]
+			Table of contents
+		!else
+			!bigskip
+		!endif
+	!end_center
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!ifndest [asc]
+		!node* Titelseite
+	!else
+		!bigskip
+	!endif
+	!begin_center
+		(!Beschreibung) (!nl)
+		(!nl)
+		(!ProgrammName) (!nl)
+		(!nl)
+		Version (!ProgrammVersion) (!nl)
+		(!ProgrammDatum) (!nl)
+		(!nl)
+		von (!nl)
+		(!nl)
+		(!Autor) (!nl)
+		(!Strasse) (!nl)
+		(!Ort) (!nl)
+		(!Land) (!nl)
+		(!nl)
+		(!Email) (!nl)
+		!smallskip
+		!ifndest [asc]
+			Inhaltsverzeichnis
+		!else
+			!bigskip
+		!endif
+	!end_center
+!endif

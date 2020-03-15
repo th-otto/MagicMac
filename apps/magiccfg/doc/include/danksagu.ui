@@ -1,0 +1,47 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node Thanks
+   Here I would like to thank the Atari community.
+   First I was very sceptical about any receiving any feedback from
+   users.
+   I assumed I wouldn't have much reaction but I was wrong.
+   Some users wrote to me with their ideas and criticisms which has helped
+   to continually improve the program.
+
+   Many Thanks!
+   
+   
+   Special thanks go to:
+   !begin_verbatim
+      Wilfried Behne (for the 1st English RSC+BGH)
+      Silvain Perchaud (for the 1st French RSC+BGH)
+   !end_verbatim
+
+   Very special thanks to Sean Barbieri who showed me that Atari (and
+   MagiC) is still alive outside the German speaking countries.
+   He encouraged me with his emails and letter to translate MAGICCFG
+   into English.
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!node Danksagung
+	Hier mîchte ich mich einmal herzlich bei der Atari-Gemeinde bedanken.
+	Zu Beginn war ich sehr skeptisch gegenÅber dem Feedback der Benutzer.
+	Ich dachte ich wÅrde sie gut genug kennen und dÅrfe keine Reaktion
+	aus der Welt erwarten. Um so mehr hat es mich erfreut, dass sich
+	Benutzer bei mir gemeldet haben und mit positiver Kritik und neuen
+	Ideen zur Verbesserung des Programmes beigetragen haben.
+
+	Vielen Dank!
+
+
+	Besonderen Dank geht an:
+	!begin_verbatim
+		Wilfried Behne (fÅr die 1. Englische RSC+BGH)
+		Sean Barbieri (fÅrs Probe-Lesen der Englischen Dokumentation)
+		Silvain Perchaud (fÅr die 1. Franzîsische RSC+BGH)
+	!end_verbatim
+!endif

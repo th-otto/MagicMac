@@ -1,0 +1,614 @@
+@author   "Philipp Donz‚"
+@$VER: 1.26 (22/09/2001)
+@subject  "Dokumentation/Utilities"
+@database "Der Konfigurator fr MagiC"
+@width 75
+
+@node "Titelseite"
+@{U}Titelseite                                                                 @{u}
+
+                             Der Hypertext zu
+
+                            MagiC-Configurator
+
+                               Version 1.26
+                            22. September 2001
+
+                                    von
+
+                               Philipp Donz‚
+                           Rue de l'industrie 7
+                                1020 Renens
+                                  Schweiz
+
+                           PhilippDonze@@gmx.ch
+
+
+                            Inhaltsverzeichnis
+
+@endnode
+
+
+@node "Inhaltsverzeichnis"
+@{U}Inhaltsverzeichnis                                                         @{u}
+
+ 1  Einfhrung
+
+ 2  Bedienung
+    2.1  Programminfo...
+    2.2  Hauptdialog
+    2.3  Zugriffspfade „ndern
+    2.4  Default-Aufl”sung „ndern
+    2.5  Environment-Variablen „ndern
+    2.6  AES-Zeichensatz „ndern
+    2.7  Lange Dateinamen einstellen
+    2.8  Fenster
+    2.9  Hintergrund
+    2.10  Boot-Einstellungen
+    2.11  residente Libraries
+    2.12  Diverses...
+
+ 3  Systemvoraussetzungen
+
+ 4  Bekannte Bugs
+
+ 5  History
+
+ 6  Interna
+
+ 7  Rechtliches
+
+ 8  Autor
+
+ 9  Danksagung
+
+@endnode
+
+
+@node "Einfhrung"
+@{U}1  Einfhrung                                                              @{u}
+
+Der MagiC-Configurator (im Folgenden MAGICCFG genannt) ist ein Programm, 
+mit dem man ber ein einfach zu bedienendes GEM-Interface die MAGX.INF der 
+Versionen 5.0 bis 6 konfigurieren kann.
+Diese Datei dient dazu, das verhalten von MagiC genauer zu spezifizieren. 
+So kann zum Beispiel die Fensterverwaltung und das Aussehen stark beein- 
+flusst werden (3D-Darstellung, Echtzeit-Sizer, -Scrolling, MagiC-Logo,...).
+Um diese Datei bearbeiten zu k”nnen, ben”tigt man genaues Wissen ber die 
+verschiedenen Flags und unbliche Zahlensysteme (bin„r und hexadezimal). 
+Weil diese Arbeit nicht jedermanns Sache ist, habe ich dieses Programm 
+entwickelt.
+
+Sinn von MAGICCFG ist es die gesamte Konfigurationsarbeit so zu erleich- 
+tern, dass der Benutzer nichts von den verschiedenen Flags und Segmenten 
+wissen muss.
+
+Die wichtigsten Funktionen im šberblick:
+
+                            MagiC-Configurator
+
+   ù ist voll in GEM eingebunden und l„sst sich ber moderne Fensterdialoge 
+     steuern.
+
+   ù kennt alle Flags und Segmente von MagiC bis und mit Version 6.01
+
+   ù bercksichtigt unbekannte Flags und Segmente (=ver„ndert sie nicht) 
+     und ist daher zukunftssicher.
+
+   ù ist BubbleGEM-kompatibel, d.h. er untersttzt das beliebte Hilfe- 
+     System.
+
+   ù bietet eine ST-Guide Online-Hilfe.
+
+   ù nutzt den MagiC-Fontselector (seit V1.25 sogar im Fenster).
+
+   ù nutzt den MagiC-Fileselector.
+
+   ù untersttzt lange Dateinamen.
+
+   ù untersttzt ARGV, Drag&Drop nach Atari-Konvention und VA_START zum 
+     problemlosen Laden von Dateien.
+
+   ù untersttzt Iconify und Alliconify.
+
+@endnode
+
+
+@node "Bedienung"
+@{U}2  Bedienung                                                               @{u}
+
+Prinzipiell kann man in jedem Dialog "HELP" drcken und erh„lt eine ST- 
+Guide Hilfe (sofern ST-Guide installiert ist, d.h. sich schon im Speicher 
+befindet).
+Falls BubbleGEM installiert ist, kann auch mit der rechten Maustaste eine 
+kleine Hilfe in Sprechblasen-Form angefordert werden.
+
+Generell gilt: die nderungen werden erst nach einem Neustart aktiv!
+
+ 2.1  Programminfo...
+ 2.2  Hauptdialog
+ 2.3  Zugriffspfade „ndern
+ 2.4  Default-Aufl”sung „ndern
+ 2.5  Environment-Variablen „ndern
+ 2.6  AES-Zeichensatz „ndern
+ 2.7  Lange Dateinamen einstellen
+ 2.8  Fenster
+ 2.9  Hintergrund
+ 2.10  Boot-Einstellungen
+ 2.11  residente Libraries
+ 2.12  Diverses...
+
+@endnode
+
+
+@node "Programminfo..."
+@toc "Bedienung"
+@{U}2.1  Programminfo...                                                       @{u}
+
+Hier erfahren Sie mehr zur Programmversion und zur Adresse des Autors.
+
+@endnode
+
+
+@node "Hauptdialog"
+@toc "Bedienung"
+@{U}2.2  Hauptdialog                                                           @{u}
+
+Im Fenstertitel wird der Dateiname der aktuellen Datei angegeben.
+
+Darunter finden Sie die Versionsnummer des benutzten MagiC, also die Zahl, 
+die bei #_MAG eingetragen wird.
+
+Im Gruppenrahmen "Flags" finden Sie alle Konfigurations-Bit, die Sie mit 
+dem Flag #_FLG einstellen k”nnen.
+
+   ù MagiC Logo links/rechts:
+     Bewirkt, dass das MagiC Logo in der linken oder in der rechten oberen 
+     Ecke gezeichnet wird.
+
+   ù 3D-Effekte ein/aus :
+     Dies bewirkt, dass das System Fenster und Dialoge in einem modernen 
+     3D-Look zeichnet. (nur bei mindestens 16 Farben)
+
+   ù Backdrop-Button ein/aus
+     Der Backdrop-Button wird dargestellt oder nicht. Falls er nicht 
+     dargestellt wird, bewirkt ein Klick auf den Titel-Balken eines Fens- 
+     ters, dass es nach hinten bef”rdert wird.
+
+   ù Fenstertitel-Linien ein/aus
+     Ab MagiC 4 k”nnen die Fenster anstatt mit dem traditionellen Fll- 
+     muster auch mit Linien gefllt werden („hnlich wie beim Mac OS).
+
+   ù Fenstertitel in 3D ein/aus
+     Falls die Fenstertitel-Linien aktiviert sind, kann auch der Titel in 
+     3D darstellen gezeichnet werden.
+
+   ù Echtzeitscrolling ein/aus
+     Entscheidet ob das Echtzeitscrolling per Default aktiv ist oder nicht.
+
+   ù Echtzeitvergr”sserung ein/aus
+     Bestimmt, ob Fenster in Echtzeit vergr”ssert und bewegt werden k”nnen 
+     oder nicht.
+
+   ù 3D-Mens ein/aus :
+     Ab Version 6 kann MagiC die Menzeile ebenfalls mit einem 3D-Effekt 
+     versehen. In der aktuellen Version 6.01 klappt dies aber nur falls als 
+     AES-Zeichensatz ein proportionaler Zeichensatz verwendet wird.
+
+Im unteren Teil des Dialogs finden Sie mehrere Buttons um weitere Dialoge 
+aufzurufen.
+
+@endnode
+
+
+@node "Zugriffspfade „ndern"
+@toc "Bedienung"
+@{U}2.3  Zugriffspfade „ndern                                                  @{u}
+
+In diesem Dialog k”nnen Sie die verschiedenen Zugriffspfade festlegen. Sie 
+k”nnen dazu per Drag&Drop eine Datei auf das entsprechende Edit-Feld ziehen 
+oder mit einem Doppelklick auf das Edit-Feld den File-Selektor aufrufen. 
+(Auch von Hand k”nnen Daten eingegeben werden... aber wer will das schon ? 
+;-))
+
+   ù Scrap:
+     Dies ist das Verzeichnis, indem Daten fr die Zwischenablage gespei- 
+     chert werden. Bei vielen Benutzern ist dies "C:\CLIPBRD\" oder 
+     "C:\GEMSYS\GEMSCRAP\".
+
+   ù Acc:
+     Aus diesem Verzeichnis werden die Accessories geladen. Bei vielen 
+     Benutzern ist dies "C:\ACC\" oder "C:\GEMSYS\ACC\".
+     Beachten Sie also, dass bei der Installation von ACCs diese nicht in 
+     das Root-Verzeichnis ihrer Boot-Partition (meist "C:\") sondern in den 
+     hier angegebenen Pfad kopiert werden.
+
+   ù Start:
+     Unter MagiC gibt es einen Start-Ordner. In diesem befinden sich 
+     Applikationen (also AES-Programme), die vor dem Start der Shell 
+     gestartet werden. Sie laufen danach parallel zur Shell.
+     Im Gegensatz zum AUTO-Ordner drfen diese Programme AES-Aufrufe 
+     machen. Programme, die sich bei vielen Benutzern im Start-Ordner 
+     befinden sind BUBBLE.APP (=BubbleGEM), OLGA.APP (=OLGA-Manager) usw.
+
+   ù Shell:
+     Hier geben sie an, welche Shell sie benutzen (Ease, jinnee, ...). Wenn 
+     Sie MagXDesk als Desktop installieren m”chten mssen Sie dieses Feld 
+     leer lassen. MagiC startet automatisch MagXDesk falls keine andere 
+     Shell hier angegeben wird.
+
+   ù Auto-Start:
+     Hier k”nnen Sie eine Auto-Start Applikation angeben. Dieses Programm 
+     wird im Gegensatz zu den Programmen im Start-Ordner nicht (!) parallel 
+     zur Shell gestartet. Erst wenn sich diese Applikation beendet hat wird 
+     die Shell gestartet (praktisch fr Login bei Netzwerken).
+
+   ù Terminal:
+     Hier k”nnen Sie angeben welches Terminal fr die Umlenkung der Ausga- 
+     ben von TOS-Programmen in Fenster verantwortlich sein soll. Dieses 
+     Programm wird immer automatisch gestartet falls ein TOS-Programm 
+     ausgefhrt werden soll.
+     Bei den meisten Benutzern ist dies "C:\GEMSYS\GEMDESK\VT52.PRG".
+
+@endnode
+
+
+@node "Default-Aufl”sung „ndern"
+@toc "Bedienung"
+@{U}2.4  Default-Aufl”sung „ndern                                              @{u}
+
+In diesem Dialog k”nnen sie die Default-Aufl”sung w„hlen, d.h. die Bild- 
+schirm-Aufl”sung, die die AES nach dem Boot-Vorgang einstellen soll. Die 
+Aufl”sung w„hrend dem Boot-Vorgang kann hiermit nicht ver„ndert werden!
+Die m”glichen Aufl”sungen werden an Hand des "_VDO"-Cookies bestimmt. 
+Mangels einer Dokumentation, werden zur Zeit lediglich Standard-Atari- 
+Aufl”sungen angeboten (ST,TT,F030).
+
+Die Bedienung dieses Dialogs ist dem Programm CHGRES.PRG, das von MagXDesk 
+und jinnee verwendet wird, nachempfunden worden. Zuerst w„hlt man die 
+Farbanzahl und danach die Aufl”sung. Ausserdem kann man einstellen dass die 
+Aufl”sung nach dem Booten nicht ge„ndert werden soll. (z.B. bei MagiC-Mac 
+oder MagiC-PC).
+Um andere VDI-Treiber auszuw„hlen, k”nnen Sie mit dem Punkt "Treiber" die 
+Treibernummer (welche in der ASSIGN.SYS eingetragen ist) einstellen. Evtl. 
+muss noch der Modus einen spezifischen Wert haben (wenn nicht sollte hier 
+eine 0 stehen).
+
+Um Grafikkarten untersttzen zu k”nnen, sollte ich von den Anwendern 
+Informationen ber die verwendete Grafikkarte, die benutzten Treibernummern 
+und eine Beschreibung, wie ich sie erkennen kann, erhalten. Also schreibt 
+mir, falls ihr eine Untersttzung fr eure Grafikkarte wnscht!
+
+@endnode
+
+
+@node "Environment-Variablen „ndern"
+@toc "Bedienung"
+@{U}2.5  Environment-Variablen „ndern                                          @{u}
+
+Hier kann man die bekannten Environment-Variablen erstellen, „ndern und 
+l”schen.
+Mit 'Neu' wird eine neue Variable in die Liste eingefgt. Geben Sie zuerst 
+einen Namen ein und „ndern Sie dann den Variableninhalt. Zum setzen von 
+Pfaden, kann auch Drag & Drop angewendet werden.
+
+Mit 'ndern', wird die nderung, die Sie an der selektierten Variable 
+vorgenommen haben in die Liste bernommen. Achtung: Es gibt kein UNDO!
+
+Mit 'Entfernen' wird die selektierte Variable aus der Liste entfernt. Auch 
+hier ist kein UNDO m”glich!
+
+Variablen k”nnen durch das Aktivieren/Deaktivieren des K„stchens beim 
+ndern einer Variable aktiviert bzw. deaktiviert werden. Dasselbe kann 
+erreicht werden, indem auf das entsprechende Listenelement doppelt geklickt 
+wird.
+
+@endnode
+
+
+@node "AES-Zeichensatz „ndern"
+@toc "Bedienung"
+@{U}2.6  AES-Zeichensatz „ndern                                                @{u}
+
+Wer schon immer den Standardzeichensatz von Atari nicht mochte, benutzte 
+frher sicher schon andere Tools, um den Systemzeichensatz zu ersetzen.
+
+Mit MagiC k”nnen Sie nun den Zeichensatz, den die AES verwenden soll selber 
+bestimmen. Im Gegensatz zu diversen anderen Tools, wird nicht der System- 
+zeichensatz berschrieben. D.h. der Zeichensatz bleibt im Speicher, wird 
+aber nicht zum Zeichnen der AES-Objekte verwendet.
+
+Sie k”nnen in diesem Dialog nun den grossen und kleinen Zeichensatz, den 
+die AES fr grosse und kleine Schriften (wie Icontexte) verwendet einstel- 
+len. Klicken Sie dazu auf die entsprechenden Popups.
+Wenn Sie bei den Zeichensatz-H”hen 0 eingeben, setzt die AES die Standard- 
+gr”sse. Die AES berechnet die Gr”sse aber nicht mit Punkten, sondern mit 
+Pixel!
+
+Ab MagiC 6 k”nnen auch proportionale Zeichens„tze verwendet werden. Es ist 
+aber dann n”tig, dass Sie das AES-Objektraster einstellen. Brauchbare Werte 
+sind fr die Breite 8 und die H”he 16 Pixel.
+
+@endnode
+
+
+@node "Lange Dateinamen einstellen"
+@toc "Bedienung"
+@{U}2.7  Lange Dateinamen einstellen                                           @{u}
+
+Hier k”nnen Sie einstellen auf welchen Laufwerken das Win95-kompatible 
+VFat-System benutzt werden soll. Aktivieren sie dazu nur die gewnschten 
+Laufwerke.(!nl) Das VFat-System ist zum alten Fat-System kompatibel. Falls 
+Sie also wieder einmal TOS starten, werden Sie "verstmmelte" Dateinamen 
+vorfinden (also Dateinamen mit einer Tilde (~)). Diese Dateien sollten Sie 
+unter TOS nicht l”schen, verschieben oder umbenennen, da sonst der dazuge- 
+h”rige lange Dateiname verloren geht.
+
+Laufwerke k”nnen auch per Drag&Drop bergeben werden!
+
+@endnode
+
+
+@node "Fenster"
+@toc "Bedienung"
+@{U}2.8  Fenster                                                               @{u}
+
+In diesem Dialog k”nnen Sie einerseits die Anzahl Fenster einstellen, fr 
+die das OS beim Aufstarten Speicher reserviert und andererseits findet man 
+hier Einstellungen fr MagiC 6, um den Zeichensatz fr die INFO-Zeile 
+„ndern zu k”nnen. Auch die Gesamth”he der INFO-Zeile kann festgelegt 
+werden!
+
+@endnode
+
+
+@node "Hintergrund"
+@toc "Bedienung"
+@{U}2.9  Hintergrund                                                           @{u}
+
+Ab MagiC 5.2 kann man in diesem Dialog das Hintergrundmuster und die 
+Hintergrundfarbe einstellen. Das kleine Vorschau-Feld gibt einen Ausblick 
+auf den neuen Desktop-Hintergrund.
+
+@endnode
+
+
+@node "Boot-Einstellungen"
+@toc "Bedienung"
+@{U}2.10  Boot-Einstellungen                                                   @{u}
+
+Seit MagiC 6 kann das OS ein Startbild anzeigen. Dieses, und auch das 
+Hintergrundmuster das angegeben werden kann, muss im XIMG-Format vorliegen.
+Auch ein Logbuch kann gefhrt werden, so dass trotz dem Startbild doch noch 
+eine M”glichkeit besteht die Ausgaben der AUTO-Ordner-Programme ansehen zu 
+k”nnen.
+Ausserdem kann noch die Anzahl Speicherpl„tze fr Cookies angegeben werden. 
+Wenn Sie den Cookie-Jar gengend gross dimensionieren, muss er sp„ter nicht 
+mehr erweitert werden.
+
+@endnode
+
+
+@node "residente Libraries"
+@toc "Bedienung"
+@{U}2.11  residente Libraries                                                  @{u}
+
+Hier angegebene Shared-Libraries, werden automatisch beim Starten des OS in 
+den Speicher geladen und warten dort auf ihre Nutzung.
+Im Feld "Version" k”nnen Sie die minimale Versionsnummer angeben. Falls die 
+Library nicht mindestens diese Versionsnummer tr„gt, wird sie nicht in den 
+Speicher geladen.
+
+@endnode
+
+
+@node "Diverses..."
+@toc "Bedienung"
+@{U}2.12  Diverses...                                                          @{u}
+
+In diesem Dialog k”nnen Sie die Default-Masken fr die Dateiauswahlbox 
+definieren. Die verschiedenen Masken mssen durch ";" getrennt werden. 
+Mehrfachmuster werden voneinander durch "," getrennt.
+Also zum Beispiel: *.PRG,*.APP;*.JPG,*.JPEG;MAGX.INF;*.BAK
+
+Im Abschnitt "System" kann die Gr”sse des Shellpuffers (der mit shel_get() 
+und shel_put() bearbeitet wird) angegeben werden. Wird hier nichts einge- 
+tragen werden mindestens 4096 Bytes (ab MagiC 6 8192 Bytes) fr den Shell- 
+puffer reserviert.
+Auch das Multitasking kann schon beim Aufstarten aktiviert werden. Beachten 
+Sie aber, dass dies zu Problemen mit verschiedenen Programmen fhren kann. 
+Die erste Zahl gibt die Zeitscheibendauer in ms an. Die zweite Zahl steht 
+fr die Hintergrundpriorit„t.
+
+@endnode
+
+
+@node "Systemvoraussetzungen"
+@{U}3  Systemvoraussetzungen                                                   @{u}
+
+Das Programm ben”tigt ein installiertes MagiC 5.0 oder gr”sser. (logisch 
+oder nicht ?)
+
+@endnode
+
+
+@node "Bekannte Bugs"
+@{U}4  Bekannte Bugs                                                           @{u}
+
+Wegen einem Bug in den „lteren wdlg_x()-Routinen kann es auf einigen 
+Systemen dazu kommen, dass man einen iconifizierten Dialog nicht mehr 
+deiconifizieren kann.
+Abhilfe: installieren Sie ein aktuelles WDIALOG.PRG (ab V1.98) oder benut- 
+zen Sie MagiC 5.13 oder gr”sser.
+
+Da die scrollenden Edit-Felder bei MagiC < Version 5.20 auf 80 und bei 
+MagiC >= Version 5.20 auf 256 Zeichen beschr„nkt sind, k”nnen keine Pfadan- 
+gaben und keine Environment-Variablen l„nger als 256 Zeichen sein. MagiCCfg 
+kann seit der Version 1.26 Zeilen l„nger als 256 Zeichen korrekt laden und 
+speichern. Leider klappt das Editieren solcher Zeilen wegen dem oben 
+genannten Problem nicht.
+
+Immer wieder melden Anwender Probleme mit dem Zeichensatz-Dialog. Doch 
+meistens liegt das Problem nicht am Dialog bzw. an MagiCCfg sondern am 
+verwendeten Fontselector. MagiCCfg nutzt keine alternativen Fontselectoren! 
+MagiCCfg benutzt lediglich die von MagiC zur Verfgung gestellten fnts_xx() 
+Aufrufe. Wenn der benutzte Fontselector nicht alle fnts_xx() Aufrufe wie 
+MagiC untersttzt, dann ist das eine inkompatibilit„t des Fontselectors! Es 
+ist bekannt, dass die Calvino-Shell V0.99d/beta3 fr MagiC obengenanntes 
+Problem hat!
+
+@endnode
+
+
+@node "History"
+@{U}5  History                                                                 @{u}
+
+Informationen ber die nderungen und Anpassungen von MagiC-Configurator 
+befinden sich prinzipiel nicht in einer Dokumentation, da sie diese nur 
+unn”tig aufblasen wrden.
+Sie finden die History-Datei hier: @{"HISTORY.TXT" link "HISTORY.TXT"}
+
+@endnode
+
+
+@node "Interna"
+@{U}6  Interna                                                                 @{u}
+
+Das Programm untersttzt in der aktuellen Version 1.26 folgende Flags und 
+Segmente:
+
+ab MagiC 5.0:
+    #_MAG       (=Versionsnummer wird automatisch gesetzt)
+
+    #[vfat]     (=Einstellungen fr Laufwerke mit langen Dateinamen)
+    drives=     (=Laufwerke die VFAT benutzen)
+
+    #[aes]      (=Beginn des AES-Segments)
+    #_ACC       (=Accessory-Ordner)
+    #_APP       (=START-Ordner)
+    #_AUT       (=Login-Programmname z.B. fr Netzwerke, Multiuser)
+    #_BUF       (=Shell-Buffergr”sse )
+    #_DEV       (=Start-Aufl”sung)
+    #_ENV       (=Environmentvariablen wie z.B. PATH, HOME)
+    #_FLG       (=Konfigurationsflags)
+    #_FSL       (=Masken-Vorgabe fr den Fileselektor)
+    #_SCP       (=Scrap-/Clipboard-Ordner)
+    #_SHL       (=Shell-Programm)
+    #_TRM       (=Terminalprogramm  =Console)
+    #_TSL       (=Pr„emptives Multitasking konfigurieren)
+    #_TXT       (=Systemzeichensatz)
+    #_WND       (=Anzahl Fenster)
+    #_CTR       (=Zeigt bei „lteren MagiC-Versionen den Beginn der
+                  Kontrollfeld-/Shellbuffer-Daten an = Ende von
+                  MAGX.INF)
+
+ab MagiC 5.2:
+    #_BKG       (=Desktophintergrund-Farbe und -Muster)
+    #_TXB       (=grosser Systemzeichensatz)
+    #_TXS       (=kleiner Systemzeichensatz)
+                --> Daten aus #_TXT werden automatisch umgewandelt
+
+ab MagiC 6.0:
+    #_INW       (=Konfiguration der Fenster-Infozeile)
+    #_OBS       (=AES-Objektraster)
+    #_SLB       (=residente Shared-Libraries)
+
+    #[boot]     (=Beginn des Boot-Segments)
+    log=        (=Protokoll-Datei fr den Boot-Vorgang)
+    cookies=    (=Anzahl Cookies, fr die Speicher reserviert wird)
+    image=      (=Startbild, das beim Start von MagiC angezeigt wird)
+    tiles=      (=Hintergrund-Pattern)
+
+    #[shelbuf]  (=Begin der Shellbuffer-Daten)
+
+@endnode
+
+
+@node "Rechtliches"
+@{U}7  Rechtliches                                                             @{u}
+
+                      MagiC-Configurator Version 1.26
+                    Copyright ½ 2000 bei Philipp Donz‚
+
+Diese Version des MagiC-Configurator ist FREEWARE. D.h. jeder darf das 
+Programm an alle Bekannten/Verwandten/Freunde/Kollegen weitergeben, solange 
+er die Dateien unver„ndert weitergibt. Zu dieser Release geh”ren folgende 
+Dateien :
+
+                        MAGICCFG.APP
+                        MAGICCFG.BGH
+                        MAGICCFG.RSC
+                        MAGICCFG.HYP
+                        MAGICCFG.TXT
+                        HISTORY.TXT
+
+Ich bernehme keine Haftung fr Sch„den, die mittelbar oder unmittelbar 
+durch die Untauglichkeit dieser Software entstehen k”nnen. Die Benutzung 
+dieses Programmes erfolgt auf @{B}EIGENES@{b} Risiko.
+
+Obwohl der Autor das Programm nach bestem Wissen und Gewissen geschrieben 
+hat, kann er nicht garantieren, dass die vorliegende Software frei von 
+Fehlern ist.
+
+@endnode
+
+
+@node "Autor"
+@alias "Autors"
+@{U}8  Autor                                                                   @{u}
+
+Fehlerreports, Kritik und Anregungen an: (auch Belohnungen werden akzep- 
+tiert ;-)
+
+
+                 Adresse:   Philipp Donz‚                  
+                            Rue de l'industrie 7           
+                            1020 Renens                    
+                            Schweiz                        
+                 Internet:  PhilippDonze@@@@gmx.ch           
+                 Homepage:  @{"http://philippdonze.atari.org/" link "http://philippdonze.atari.org/"} 
+
+@endnode
+
+
+@node "Danksagung"
+@{U}9  Danksagung                                                              @{u}
+
+Hier m”chte ich mich einmal herzlich bei der Atari-Gemeinde bedanken. Zu 
+Beginn war ich sehr skeptisch gegenber dem Feedback der Benutzer. Ich 
+dachte ich wrde sie gut genug kennen und drfe keine Reaktion aus der Welt 
+erwarten. Um so mehr hat es mich erfreut, dass sich Benutzer bei mir 
+gemeldet haben und mit positiver Kritik und neuen Ideen zur Verbesserung 
+des Programmes beigetragen haben.
+
+Vielen Dank!
+
+Besonderen Dank geht an:
+
+      Wilfried Behne (fr die 1. Englische RSC+BGH)
+      Sean Barbieri (frs Probe-Lesen der Englischen Dokumentation)
+      Silvain Perchaud (fr die 1. Franz”sische RSC+BGH)
+
+@endnode
+
+
+@pnode "Flags"
+@alias "Flag"
+Unter Flags verstehe ich spezielle Anweisungen in der 
+MAGX.INF wie #_FLG, #_MAG, #_DEV usw. Die AES spezifischen 
+beginnen stets mit '#_'.
+
+@endnode
+
+
+@pnode "Segment"
+@alias "Segmente"
+Unter einem Segment verstehe ein Abschnitt von Flags in der 
+MAGX.INF. Ein Segment beginnt dort immer mit #[<name>]. 
+<name> ist dabei der Segmentname (also z.B. aes,boot, vfat, 
+shelbuf).
+
+@endnode
+
+
+

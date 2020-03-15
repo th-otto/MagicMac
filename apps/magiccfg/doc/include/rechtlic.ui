@@ -1,0 +1,65 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node Copyright notice
+   !begin_center
+        (!ProgrammName) Version (!ProgrammVersion) (!nl)
+        Copyright (!copyright) (!ProgrammJahr) by (!Autor)
+   !end_center
+   This version of (!ProgrammName) is FREEWARE. This means everyone
+   can use, copy or distribute it to their friends/uncles etc. as long as
+   all files remain unchanged.
+   
+   At least following files should be present in your distribution folder:
+
+   !begin_verbatim
+                        MAGICCFG.APP
+                        MAGICCFG.BGH
+                        MAGICCFG.RSC
+                        MAGICCFG.HYP
+                        MAGICCFG.TXT
+                        HISTORY.TXT
+   !end_verbatim
+
+   
+	This program comes with NO WARRANTY. The author cannot be held 
+	responsible for any damage done by proper or improper use of this
+	program. (!nl)
+
+	Although the author wrote the program with the best intentions, he
+	can't guarantee that the software is free from faults or bugs. (!nl)
+
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!node Rechtliches
+	!begin_center
+	     (!ProgrammName) Version (!ProgrammVersion) (!nl)
+	     Copyright (!copyright) (!ProgrammJahr) bei (!Autor)
+	!end_center
+	Diese Version des (!ProgrammName) ist FREEWARE. D.h. jeder darf das
+	Programm an alle Bekannten/Verwandten/Freunde/Kollegen weitergeben, 
+	solange er die Dateien unverÑndert weitergibt.
+	Zu dieser Release gehîren folgende Dateien :
+
+	!begin_verbatim
+								MAGICCFG.APP
+								MAGICCFG.BGH
+								MAGICCFG.RSC
+								MAGICCFG.HYP
+								MAGICCFG.TXT
+								HISTORY.TXT
+	!end_verbatim
+
+	
+	Ich Åbernehme keine Haftung fÅr SchÑden, die mittelbar oder
+	unmittelbar durch die Untauglichkeit dieser Software 
+	entstehen kînnen.
+	Die Benutzung dieses Programmes erfolgt auf (!B)EIGENES(!b) Risiko.
+	
+	Obwohl der Autor das Programm nach bestem Wissen und Gewissen
+	geschrieben hat, kann er nicht garantieren, dass die vorliegende
+	Software frei von Fehlern ist.
+!endif
