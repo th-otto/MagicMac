@@ -132,4 +132,34 @@
 #define F10                         0x4400
 #define SHFT_F10                    0x5d00
 
+/*      Bits zu Kennzeichnung der Zusatztasten  */
+#define KbNUM                       0x10                /*      Zahlenblock     */
+#define KbALT                       0x08
+#define KbCTRL                      0x04
+#define KbSHIFT                     0x03
+#define KbLSHIFT                    0x02
+#define KbRSHIFT                    0x01
+#define KbHELP                      0x62
+
+/*      Cursor-Bereich  */
+#define KbUNDO                      0x61
+#define KbHELP                      0x62
+#define KbINSERT                    0x52
+#define KbHOME                      0x47
+#define KbUP                        0x48
+#define KbDOWN                      0x50
+#define KbLEFT                      0x4b
+#define KbRIGHT                     0x4d
+/*      Alternate-numerische Tasten     */
+#define KbAlt1                      0x78
+#define KbAlt2                      0x79
+#define KbAlt3                      0x7a
+#define KbAlt4                      0x7b
+#define KbAlt5                      0x7c
+#define KbAlt6                      0x7d
+#define KbAlt7                      0x7e
+#define KbAlt8                      0x7f
+#define KbAlt9                      0x80
+#define KbAlt0                      0x81
+
 /************************************************************************/
