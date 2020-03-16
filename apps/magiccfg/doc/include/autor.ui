@@ -1,0 +1,37 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node Author
+   Send bug reports, criticism and encouragement to:
+   (rewards are also very welcome ;-)
+
+   
+   !begin_table [rl]
+       Address: !! (!Autor)
+                !! (!Strasse)
+                !! (!Ort)
+                !! (!Land)
+      Internet: !! (!Email)
+      Homepage: !! (!Homepage)
+   !end_table
+
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!node Autor
+	!alias Autors
+	Fehlerreports, Kritik und Anregungen an: 
+	(auch Belohnungen werden akzeptiert ;-)
+	
+
+	!begin_table [rl]
+		 Adresse: !! (!Autor)
+                !! (!Strasse)
+                !! (!Ort)
+                !! (!Land)
+		Internet: !! (!Email)
+		Homepage: !! (!Homepage)
+	!end_table
+!endif

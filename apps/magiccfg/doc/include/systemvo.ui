@@ -1,0 +1,14 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node System requirements
+	This program needs at least an installed MagiC 5.0.
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!node Systemvoraussetzungen
+	Das Programm ben”tigt ein installiertes MagiC 5.0 oder gr”sser.
+	(logisch oder nicht ?)
+!endif

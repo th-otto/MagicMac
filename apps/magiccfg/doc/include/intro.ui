@@ -1,0 +1,61 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+!node Introduction
+
+!else
+#---------------------------------------------
+# German part of the the documentation        
+#---------------------------------------------
+!node Einfhrung
+
+Der MagiC-Configurator (im Folgenden MAGICCFG genannt) ist ein Programm,
+mit dem man ber ein einfach zu bedienendes GEM-Interface die MAGX.INF der
+Versionen 5.0 bis 6 konfigurieren kann. (!nl)
+Diese Datei dient dazu, das verhalten von MagiC genauer zu
+spezifizieren. So kann zum Beispiel die Fensterverwaltung und das
+Aussehen stark beeinflusst werden (3D-Darstellung, Echtzeit-Sizer,
+-Scrolling, MagiC-Logo,...). Um diese Datei bearbeiten zu k”nnen,
+ben”tigt man genaues Wissen ber die verschiedenen Flags und unbliche
+Zahlensysteme (bin„r und hexadezimal). Weil diese Arbeit nicht
+jedermanns Sache ist, habe ich dieses Programm entwickelt.
+
+Sinn von MAGICCFG ist es die gesamte Konfigurationsarbeit so zu erleich-
+tern, dass der Benutzer nichts von den verschiedenen Flags und Segmenten
+wissen muss.
+
+Die wichtigsten Funktionen im šberblick:
+
+!begin_center
+                            MagiC-Configurator
+!end_center
+
+!begin_itemize
+
+!item ist voll in GEM eingebunden und l„sst sich ber moderne
+Fensterdialoge steuern.
+
+!item kennt alle Flags und Segmente von MagiC bis und mit Version 6.01
+
+!item bercksichtigt unbekannte Flags und Segmente (=ver„ndert sie
+nicht) und ist daher zukunftssicher.
+
+!item ist BubbleGEM-kompatibel, d.h. er untersttzt das beliebte Hilfe-
+System.
+
+!item bietet eine ST-Guide Online-Hilfe.
+
+!item nutzt den MagiC-Fontselector (seit V1.25 sogar im Fenster).
+
+!item nutzt den MagiC-Fileselector.
+
+!item untersttzt lange Dateinamen.
+
+!item untersttzt ARGV, Drag&Drop nach Atari-Konvention und VA_START
+zum problemlosen Laden von Dateien.
+
+!item  untersttzt Iconify und Alliconify.
+!end_itemize
+
+!endif

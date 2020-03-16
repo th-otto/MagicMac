@@ -1,0 +1,59 @@
+magiccfg.app
+
+.C[-K-]
+.C[-P-]
+.C[-I..\..\inc_c]
+.C[-I..\..\lib\mylibs]
+.C[-I..\..\pc\include]
+.L[-S=$2000]   ; Stackgrîûe auf 8 KByte setzen
+;.L[-V]
+
+=              ; list of modules follows...
+..\..\pc\lib\cstartv.o     ; startup code mit ARGV und Quoting
+
+magiccfg.c [-P]
+source\addi.c [-P]
+source\file.c [-P]
+source\fileproc.c [-P]
+source\dial_abo.c
+source\dial_mai.c
+source\dial_pth.c [-P]
+source\dial_fnt.c [-P]
+source\dial_var.c
+source\dial_res.c
+source\dial_vfa.c
+source\dial_oth.c
+source\dial_bac.c
+source\dial_bot.c
+source\dial_win.c
+source\dial_lib.c
+source\filefont.c
+
+
+source\dl_user.c  (diallib.h)    ;  Wichtige User-Routinen
+source\dl_init.c  (diallib.h)    ;  Sehr wichtig
+source\dl_event.c (diallib.h)    ;  Sehr wichtig
+source\dl_items.c (diallib.h)    ;  Sehr wichtig
+source\dl_menu.c  (diallib.h)    ;  fÅr Menu-Steuerung nîtig
+source\dl_dial.c  (diallib.h)    ;  fÅr Dialoge nîtig
+;source\dl_win.c  (diallib.h)    ;  fÅr Fenster nîtig
+source\dl_filsl.c (diallib.h)    ;  fÅr Dateiauswahl im Fenster nîtig
+source\dl_fonsl.c (diallib.h)    ;  fÅr Zeichensatzauswahl im Fenster nîtig
+
+source\dl_routs.c (diallib.h)    ;  Diverse Routinen (Debug, File Parsing,...)
+source\dl_av.c    (diallib.h)    ;  AV-Protokoll
+;source\dl_avcmd.c   (diallib.h)    ;  AV-Protokoll Kommandos versenden
+source\dl_drag.c  (diallib.h)    ;  Ataris Drag&Drop-Protokoll (benîtigt DRAGDROP.O)
+source\dl_bubbl.c (diallib.h)    ;  BubbleGEM Hilfe-Protokoll (benîtigt BGH.O)
+source\dl_help.c  (diallib.h)    ;  ST-Guide Hilfe-Protokoll
+source\dl_ledit.c (diallib.h)    ;  Lange Editfelder von MagiC (benîtigt COOKIE.O)
+;source\dl_cfgrd.c   (diallib.h)    ;  liest eine ASCII-Konfigurationsdatei.
+source\dl_dhst.c  (diallib.h)    ;  Document-History Protokoll (benîtigt COOKIE.O)
+
+dragdrop.c           ;  wird fÅr DL_DRAG benîtigt
+bgh.c                ;  wird fÅr DL_BUBBL benîtigt
+; cookie.o              ;  wird fÅr DL_LEDIT und DL_DHST benîtigt
+
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib

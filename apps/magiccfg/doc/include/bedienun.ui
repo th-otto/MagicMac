@@ -1,0 +1,430 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+!node Using MagiC-Configurator
+   If ST-Guide is installed (this means it is already resident in memory),
+   by clicking "HELP" more information is available. (!nl)
+   If BubbleGEM is installed, you can press the right mouse button to get
+   a short context help in a bubble.
+   
+   Generally: any change will become active after the next reboot.
+   
+!subnode Program Info...
+   Here you will find more about the program version and the author's
+   address.
+!subnode Main dialog
+   In the window title bar you can see the name of the currently processed
+   file.
+
+   Below you'll find the version number of MagiC. This is the number, which
+   will be stored in the #_MAG flag.
+
+   In the frame "Flags" you'll find every configuration bit which can be
+   changed in the #_FLG flag.
+   !begin_itemize
+   !item MagiC Logo left/right: (!nl)
+      This will move the MagiC Logo to the left or right upper corner of 
+      the screen.
+   !item 3D effects on/off : (!nl)
+      If there are more than 16 colours, windows and dialogs are drawn in
+      a modern 3D look.
+   !item Backdrop button on/off (!nl)
+      The backdrop button will be enabled or disabled. If it is disabled
+      a single click on the title bar puts the current window in the
+      background.
+   !item Title bar lines on/off (!nl)
+      From MagiC 4 the window title bar can be filled with lines instead
+      of the traditional filling pattern.
+   !item 3D window title on/off (!nl)
+      If the title bar lines are enabled you can also choose to have it
+      drawn in 3D.
+   !item Real time scrolling on/off (!nl)
+      This button selects if real time scrolling is enabled by default or
+      not. You can disable the current state by pressing CTRL while
+      scrolling the window.
+   !item Real time resizing on/off (!nl)
+      Selects whether the resizing and moving of the windows is in real time.
+   !item 3D menus on/off : (!nl)
+      From version 6 of MagiC the menu bar can also be drawn with 3D
+      effects. In version 6.01 this works only if the current AES
+      font is a proportional font.
+   !end_itemize
+
+   Below you will find different buttons to access further dialogs.
+
+!subnode Change access paths
+   In this dialog you can set up the different access paths.
+   For this you can Drag a file or folder to the edit fields or you can
+   double click on the edit field to get a fileselector box. (it is
+   also possible to write the path using the keyboard ;-)) (!nl)
+   
+   !begin_itemize
+   !item Scrap: (!nl)
+      This directory will contain the data you Cut&Copy out of a GEM
+      application (=the clipboard path). Most users will use one of the
+      following choices: "C:\CLIPBRD\" or "C:\GEMSYS\GEMSCRAP\".
+   !item Acc: (!nl)
+      This is the path to the accessories.  Most users will use one of
+      the following choices: "C:\ACC\" or "C:\GEMSYS\ACC\". (!nl)
+      Note: if you want to install accessories you have to put them
+      into this designated folder! MagiC loads no accessories from the 
+      root directory if a path is defined.
+   !item Start: (!nl)
+      With MagiC there is also a new type of start folder. In this folder
+      you can put any GEM applications you want to start while the system
+      boots. These applications are started before the shell application
+      has started. They are running parallel to the shell (!nl)
+      It's difference to the standard AUTO folder is: These applications
+      are allowed to call the AES. (!nl)
+      Most users put programs like BUBBLE.APP (=BubbleGEM), 
+      OLGA.APP (=OLGA manager) in this folder.
+   !item Shell: (!nl)
+      Here you can define the shell process/application (Ease, jinnee,
+      Thing,...)
+      If you want to use MagXDesk you have to leave this field empty.
+      MagiC automatically starts MagXDesk if no other shell is defined.
+   !item Auto start: (!nl)
+      Here you can choose the program which will be called before the shell
+      boots up. The application is not going to run in parallel with the
+      shell.
+      Only when this program has finished will the shell program be called.
+      (handy for net login)
+   !item Terminal: (!nl)
+      Here you can define the terminal emulator you want to use. It is
+      then called if a TOS program has been started. The terminal emulator
+      has to ensure that output of the program is in a window. (!nl)
+      Most users will choose: "C:\GEMSYS\GEMDESK\VT52.PRG".
+   !end_itemize
+
+!subnode Change default resolution
+   In this dialog you can choose the default resolution (the screen
+   resolution which the AES sets after booting). The selected resolution
+   can't influence the resolution during the actual boot process! (!nl)
+   MAGICCFG uses the "_VDO"-Cookie to allow selection of the various
+   resolutions.   
+   This means MAGICCFG only supports the standard resolutions documented
+   for each Atari.
+   
+   The handling of this dialog is very similar to the handling of CHGRES.PRG
+   which is supported by MagXDesk and jinnee to change the resolution.
+   First of all you can choose the colour depth and after that all the 
+   possible resolutions are listed.
+   It's also possible to set the option "no resolution change". This means
+   the AES doesn't change the current resolution (for MagiC-PC or MagiC-Mac). (!nl)
+   If you want to use a different VDI driver (because you use a graphics
+   card) you can set the driver number (which is written in the ASSIGN.SYS
+   file) in the "driver" edit field. You may also have to adjust the "mode".
+   If not set this value to 0.
+   
+!subnode Change environment variables
+   Here you can set, change or delete the (in)famous environment variables. 
+   (!nl)
+   With 'New' a new variable is added to the list.
+   First enter a name and then the variable content.
+   To set a specific path you can also use Drag&Drop.
+   
+   With 'Change' the change you made in the selected variable over writes 
+   the previous one in the list. NOTE!: There is no UNDO option!
+   
+   'Delete' removes the selected variable from the list. Here too there
+   is no UNDO option!
+   
+   If you want to activate or deactivate a variable, you can tick the check
+   box (on the left, beside the name) while you are changing a variable.
+   The same task can be done by double clicking on an entry in the list.
+!subnode Change AES font
+   If you have always hated the standard Atari font, you are probably 
+   familiar to different tools used to replace the old Atari font.
+   
+   With MagiC you don't have to replace the font, you can set the AES font
+   on your own choice. The AES uses this font to draw any AES objects.
+   
+   In this dialog you can set a large and a small font. The large font is 
+   used to draw normal objects like text fields. The small font is mostly 
+   used for icon texts. 
+   (Attention: jinnee uses his own settings to draw icons)
+   Click on the corresponding popup to alter the font. (!nl)
+   If you set the font height to 0 the AES will take standard values.
+   Attention: the AES calculates the font height in pixel not in points!)
+   
+   From MagiC 6 it is possible to use proportional fonts.
+   If used, it is then necessary to set the AES object raster.
+   Useful values are: width 8 and height 16 pixel.
+!subnode Activate long file names
+   Here you can set the option for each drive whether the Win95 
+   compatible VFAT system should be used. Just select via the corresponding 
+   buttons. (!nl)
+   The VFAT system is compatible to the old FAT system. So if you are
+   going back to TOS you'll find the file names cut off (the file name
+   ends with the '(!~)'). Don't change or move these files while you are
+   running TOS because they will loose their long name.
+   
+   You can also use Drag&Drop to choose a drive.
+!subnode Window
+   In this window you can set up the number of windows the system reserves
+   space for at boot up.
+   
+   From MagiC 6 you can also set the font which the AES uses to draw
+   the INFO line. The overall height of the INFO line can also be set.
+
+   Note: jinnee uses his own settings.
+!subnode Background
+   From MagiC 5.2 you can choose the background pattern and colour.
+   The preview window shows you how your desktop background will look.
+   
+   Note: this option is only active if the shell application (jinnee
+   or MagXDesk) you use doesn't have its own settings.
+
+!subnode Boot settings
+   From MagiC 6 the OS can display a picture while booting up (like
+   Mac OS and Windows). This and the background pattern are normal
+   XIMG pictures. (!nl)
+   If these bootup pictures are used it is probably also desirable that
+   the programs in the AUTO folder don't mess up the screen with their
+   output (program blabla is started...). To avoid this problem it is
+   possible to define a log file into which all the output is written.
+   Everything which was formerly written to the screen will then be written
+   to this file. (!nl)
+   Note: If a program asks for a key press while the system is booting up
+   you won't see anything of the message. So you shouldn't use a program
+   which asks for key pressess or you shouldn't use the log file option. (!nl)
+   
+   WARNING: Some users have found that with the log mode active within 
+   MagiC 6 it will occasionally write the log data to other files that have
+   been opened by other programs during the boot process, rather than to the
+   log file.
+   You can disable this by leaving the entries that define the logging and
+   boot picture empty.
+
+   You can also set the number of cookies for which MagiC reserves space.
+   If the cookie jar is large enough no other program is needed to resize 
+   the cookie jar.
+!subnode Resident libraries
+   Here you can see the list of resident shared-libraries. They are loaded 
+   into memory when MagiC is booting and wait there until needed. (!nl)
+   In the field "Version" you can set the minimum version number.
+   If the corresponding library doesn't have this minimum version number
+   it won't be loaded into memory.
+!subnode Miscellaneous
+   In this dialog you can alter the default masks from the fileselect box.
+   The different masks have to be separated by ";". Multiple masks have to
+   be separated by ",". (!nl)
+   For example: *.PRG,*.APP;*.JPG,*.JPEG;MAGX.INF;*.BAK
+   
+   In the segment "System" you can set the size of the shell buffer (which
+   can be altered with shel_get() and shel_put()). If no value is set MagiC
+   reserves at least 4096 Bytes (since MagiC 6 8192 Bytes). (!nl)
+   The multitasking while booting option can also be activated. The first
+   value represents the time slice. The second value represents the
+   background priority.
+   
+   WARNING: If you activate this multitasking option while booting up 
+   this can lead to various problems.
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+!node Bedienung
+	Prinzipiell kann man in jedem Dialog "HELP" drÅcken und erhÑlt
+	eine ST-Guide Hilfe (sofern ST-Guide installiert ist, d.h. sich schon
+	im Speicher befindet). (!nl)
+	Falls BubbleGEM installiert ist, kann auch mit der rechten Maustaste
+	eine kleine Hilfe in Sprechblasen-Form angefordert werden.
+	
+	Generell gilt: die énderungen werden erst nach einem Neustart aktiv!
+	
+!subnode Programminfo...
+	Hier erfahren Sie mehr zur Programmversion und zur Adresse des Autors.
+!subnode Hauptdialog
+	Im Fenstertitel wird der Dateiname der aktuellen Datei angegeben.
+
+	Darunter finden Sie die Versionsnummer des benutzten MagiC, also die
+	Zahl, die bei #_MAG eingetragen wird.
+	
+	Im Gruppenrahmen "Flags" finden Sie alle Konfigurations-Bit, die Sie mit
+	dem Flag #_FLG einstellen kînnen.
+	!begin_itemize
+	!item MagiC Logo links/rechts: (!nl)
+		Bewirkt, dass das MagiC Logo in der linken oder in der rechten
+		oberen Ecke gezeichnet wird.
+	!item 3D-Effekte ein/aus : (!nl)
+		Dies bewirkt, dass das System Fenster und Dialoge in einem modernen 
+		3D-Look zeichnet. (nur bei mindestens 16 Farben)
+	!item Backdrop-Button ein/aus (!nl)
+		Der Backdrop-Button wird dargestellt oder nicht. Falls er nicht
+		dargestellt wird, bewirkt ein Klick auf den Titel-Balken eines
+		Fensters, dass es nach hinten befîrdert wird.
+	!item Fenstertitel-Linien ein/aus (!nl)
+		Ab MagiC 4 kînnen die Fenster anstatt mit dem traditionellen
+		FÅllmuster auch mit Linien gefÅllt werden (Ñhnlich wie beim Mac OS).
+	!item Fenstertitel in 3D ein/aus (!nl)
+		Falls die Fenstertitel-Linien aktiviert sind, kann auch der Titel 
+		in 3D darstellen gezeichnet werden.
+	!item Echtzeitscrolling ein/aus (!nl)
+		Entscheidet ob das Echtzeitscrolling per Default aktiv ist oder 
+		nicht.
+	!item Echtzeitvergrîsserung ein/aus (!nl)
+		Bestimmt, ob Fenster in Echtzeit vergrîssert und bewegt werden
+		kînnen oder nicht.
+	!item 3D-MenÅs ein/aus : (!nl)
+		Ab Version 6 kann MagiC die MenÅzeile ebenfalls mit einem 3D-Effekt
+		versehen. In der aktuellen Version 6.01 klappt dies aber nur falls 
+		als AES-Zeichensatz ein proportionaler Zeichensatz verwendet wird.
+	!end_itemize
+	
+	Im unteren Teil des Dialogs finden Sie mehrere Buttons um weitere Dialoge
+	aufzurufen.
+!subnode Zugriffspfade Ñndern
+	In diesem Dialog kînnen Sie die verschiedenen Zugriffspfade festlegen.
+	Sie kînnen dazu per Drag&Drop eine Datei auf das entsprechende Edit-Feld
+	ziehen oder mit einem Doppelklick auf das Edit-Feld den File-Selektor
+	aufrufen. (Auch von Hand kînnen Daten eingegeben werden... aber wer will
+	das schon ? ;-)) (!nl)
+	
+	!begin_itemize
+	!item Scrap: (!nl)
+		Dies ist das Verzeichnis, indem Daten fÅr die Zwischenablage gespeichert
+		werden. Bei vielen Benutzern ist dies "C:\CLIPBRD\" oder 
+		"C:\GEMSYS\GEMSCRAP\".
+	!item Acc: (!nl)
+		Aus diesem Verzeichnis werden die Accessories geladen. Bei vielen 
+		Benutzern ist dies "C:\ACC\" oder "C:\GEMSYS\ACC\". (!nl)
+		Beachten Sie also, dass bei der Installation von ACCs diese nicht
+		in das Root-Verzeichnis ihrer Boot-Partition (meist "C:\") sondern
+		in den hier angegebenen Pfad kopiert werden.
+	!item Start: (!nl)
+		Unter MagiC gibt es einen Start-Ordner. In diesem befinden sich
+		Applikationen (also AES-Programme), die vor dem Start der Shell
+		gestartet werden. Sie laufen danach parallel zur Shell. (!nl)
+		Im Gegensatz zum AUTO-Ordner dÅrfen diese Programme AES-Aufrufe
+		machen. Programme, die sich bei vielen Benutzern im Start-Ordner
+		befinden sind BUBBLE.APP (=BubbleGEM), OLGA.APP (=OLGA-Manager) usw.
+	!item Shell: (!nl)
+		Hier geben sie an, welche Shell sie benutzen (Ease, jinnee, ...).
+		Wenn Sie MagXDesk als Desktop installieren mîchten mÅssen Sie dieses
+		Feld leer lassen. MagiC startet automatisch MagXDesk falls keine
+		andere Shell hier angegeben wird.
+	!item Auto-Start: (!nl)
+		Hier kînnen Sie eine Auto-Start Applikation angeben. Dieses Programm
+		wird im Gegensatz zu den Programmen im Start-Ordner nicht (!) parallel 
+		zur Shell gestartet. Erst wenn sich diese Applikation beendet hat
+		wird die Shell gestartet (praktisch fÅr Login bei Netzwerken).
+	!item Terminal: (!nl)
+		Hier kînnen Sie angeben welches Terminal fÅr die Umlenkung der 
+		Ausgaben von TOS-Programmen in Fenster verantwortlich sein soll.
+		Dieses Programm wird immer automatisch gestartet falls ein 
+		TOS-Programm ausgefÅhrt werden soll. (!nl)
+		Bei den meisten Benutzern ist dies "C:\GEMSYS\GEMDESK\VT52.PRG".
+	!end_itemize
+!subnode Default-Auflîsung Ñndern
+	In diesem Dialog kînnen sie die Default-Auflîsung wÑhlen, d.h. die
+	Bildschirm-Auflîsung, die die AES nach dem Boot-Vorgang einstellen
+	soll. Die Auflîsung wÑhrend dem Boot-Vorgang kann hiermit nicht
+	verÑndert werden! (!nl)
+	Die mîglichen Auflîsungen werden an Hand des "_VDO"-Cookies bestimmt.
+	Mangels einer Dokumentation, werden zur Zeit lediglich 
+	Standard-Atari-Auflîsungen angeboten (ST,TT,F030).
+	
+	Die Bedienung dieses Dialogs ist dem Programm CHGRES.PRG, das von 
+	MagXDesk und jinnee verwendet wird, nachempfunden worden. Zuerst wÑhlt 
+	man die Farbanzahl und danach die Auflîsung. Ausserdem kann man einstellen
+	dass die Auflîsung nach dem Booten nicht geÑndert werden soll. (z.B. bei
+	MagiC-Mac oder MagiC-PC). (!nl)
+	Um andere VDI-Treiber auszuwÑhlen, kînnen Sie mit dem Punkt "Treiber" die 
+	Treibernummer (welche in der ASSIGN.SYS eingetragen ist) einstellen.
+	Evtl. muss noch der Modus einen spezifischen Wert haben (wenn nicht sollte
+	hier eine 0 stehen).
+	
+	Um Grafikkarten unterstÅtzen zu kînnen, sollte ich von den Anwendern
+	Informationen Åber die verwendete Grafikkarte, die benutzten Treibernummern
+	und eine Beschreibung, wie ich sie erkennen kann, erhalten. Also schreibt
+	mir, falls ihr eine UnterstÅtzung fÅr eure Grafikkarte wÅnscht!
+!subnode Environment-Variablen Ñndern
+	Hier kann man die bekannten Environment-Variablen erstellen, Ñndern
+	und lîschen. (!nl)
+	Mit 'Neu' wird eine neue Variable in die Liste eingefÅgt.
+	Geben Sie zuerst einen Namen ein und Ñndern Sie dann den Variableninhalt.
+	Zum setzen von Pfaden, kann auch Drag & Drop angewendet werden.
+	
+	Mit 'éndern', wird die énderung, die Sie an der selektierten Variable
+	vorgenommen haben in die Liste Åbernommen. Achtung: Es gibt kein UNDO!
+	
+	Mit 'Entfernen' wird die selektierte Variable aus der Liste entfernt.
+	Auch hier ist kein UNDO mîglich!
+	
+	Variablen kînnen durch das Aktivieren/Deaktivieren des KÑstchens beim
+	éndern einer Variable aktiviert bzw. deaktiviert werden. Dasselbe
+	kann erreicht werden, indem auf das entsprechende Listenelement 
+	doppelt geklickt wird.
+!subnode AES-Zeichensatz Ñndern
+	Wer schon immer den Standardzeichensatz von Atari nicht mochte, benutzte
+	frÅher sicher schon andere Tools, um den Systemzeichensatz zu ersetzen.
+	
+	Mit MagiC kînnen Sie nun den Zeichensatz, den die AES verwenden soll
+	selber bestimmen. Im Gegensatz zu diversen anderen Tools, wird nicht
+	der Systemzeichensatz Åberschrieben. D.h. der Zeichensatz bleibt im
+	Speicher, wird aber nicht zum Zeichnen der AES-Objekte verwendet.
+	
+	Sie kînnen in diesem Dialog nun den grossen und kleinen Zeichensatz,
+	den die AES fÅr grosse und kleine Schriften (wie Icontexte) verwendet
+	einstellen. Klicken Sie dazu auf die entsprechenden Popups. (!nl)
+	Wenn Sie bei den Zeichensatz-Hîhen 0 eingeben, setzt die AES die
+	Standardgrîsse. Die AES berechnet die Grîsse aber nicht mit Punkten,
+	sondern mit Pixel!
+	
+	Ab MagiC 6 kînnen auch proportionale ZeichensÑtze verwendet werden.
+	Es ist aber dann nîtig, dass Sie das AES-Objektraster einstellen.
+	Brauchbare Werte sind fÅr die Breite 8 und die Hîhe 16 Pixel.
+!subnode Lange Dateinamen einstellen
+	Hier kînnen Sie einstellen auf welchen Laufwerken das Win95-kompatible
+	VFat-System benutzt werden soll. Aktivieren sie dazu nur die gewÅnschten 
+	Laufwerke.(!nl)
+	Das VFat-System ist zum alten Fat-System kompatibel. Falls Sie also
+	wieder einmal TOS starten, werden Sie "verstÅmmelte" Dateinamen 
+	vorfinden (also Dateinamen mit einer Tilde (!~)). Diese Dateien sollten
+	Sie unter TOS nicht lîschen, verschieben oder umbenennen, da sonst der
+	dazugehîrige lange Dateiname verloren geht.
+	
+	Laufwerke kînnen auch per Drag&Drop Åbergeben werden!
+!subnode Fenster
+	In diesem Dialog kînnen Sie einerseits die Anzahl Fenster einstellen,
+	fÅr die das OS beim Aufstarten Speicher reserviert und andererseits
+	findet man hier Einstellungen fÅr MagiC 6, um den Zeichensatz fÅr
+	die INFO-Zeile Ñndern zu kînnen. Auch die Gesamthîhe der INFO-Zeile
+	kann festgelegt werden!
+!subnode Hintergrund
+	Ab MagiC 5.2 kann man in diesem Dialog das Hintergrundmuster und die
+	Hintergrundfarbe einstellen. Das kleine Vorschau-Feld gibt einen 
+	Ausblick auf den neuen Desktop-Hintergrund.
+!subnode Boot-Einstellungen
+	Seit MagiC 6 kann das OS ein Startbild anzeigen. Dieses, und auch das
+	Hintergrundmuster das angegeben werden kann, muss im XIMG-Format 
+	vorliegen. (!nl)
+	Auch ein Logbuch kann gefÅhrt werden, so dass trotz dem Startbild doch
+	noch eine Mîglichkeit besteht die Ausgaben der AUTO-Ordner-Programme
+	ansehen zu kînnen. (!nl)
+	Ausserdem kann noch die Anzahl SpeicherplÑtze fÅr Cookies angegeben
+	werden. Wenn Sie den Cookie-Jar genÅgend gross dimensionieren, muss
+	er spÑter nicht mehr erweitert werden.
+!subnode residente Libraries
+	Hier angegebene Shared-Libraries, werden automatisch beim Starten des 
+	OS in den Speicher geladen und warten dort auf ihre Nutzung. (!nl)
+	Im Feld "Version" kînnen Sie die minimale Versionsnummer angeben.
+	Falls die Library nicht mindestens diese Versionsnummer trÑgt, wird
+	sie nicht in den Speicher geladen.
+!subnode Diverses...
+	In diesem Dialog kînnen Sie die Default-Masken fÅr die Dateiauswahlbox
+	definieren. Die verschiedenen Masken mÅssen durch ";" getrennt werden.
+	Mehrfachmuster werden voneinander durch "," getrennt. (!nl)
+	Also zum Beispiel: *.PRG,*.APP;*.JPG,*.JPEG;MAGX.INF;*.BAK
+	
+	Im Abschnitt "System" kann die Grîsse des Shellpuffers (der mit
+	shel_get() und shel_put() bearbeitet wird) angegeben werden. Wird hier
+	nichts eingetragen werden mindestens 4096 Bytes (ab MagiC 6 8192 Bytes)
+	fÅr den Shellpuffer reserviert. (!nl)
+	Auch das Multitasking kann schon beim Aufstarten aktiviert werden.
+	Beachten Sie aber, dass dies zu Problemen mit verschiedenen
+	Programmen fÅhren kann. Die erste Zahl gibt die Zeitscheibendauer in
+	ms an. Die zweite Zahl steht fÅr die HintergrundprioritÑt.
+!endif

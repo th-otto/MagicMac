@@ -1,0 +1,56 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node Known bugs
+   Because of a bug in older wdlg_x() routines it is possible on some
+   systems that you can't de-iconify an iconificated dialog. (!nl)
+   Remedy: install WDIALOG.PRG (at least V1.98) or use MagiC 
+   5.13 or higher.
+
+	Because of the 256 characters limitation (MagiC before 5.20: 80 
+	characters) in scrolling edit fields, you can't write any path or 
+	environment variable longer then this limit.
+	But from version 1.26 of MagiCCfg lines longer then this limitation
+	are loaded and saved properly. Be carefull not to edit these long 
+	entries though or you will lose data!
+
+	Sometimes MagiCCfg users send me bug reports regarding the font
+	dialog. But generaly the problem is not MagiCCfg but the used 
+	fontselector.
+	MagiCCfg doesn't make use of alternative fontselectors. It uses just
+	the MagiC internal fnts_xx() calls. If you've got a fontselector which
+	traps the MagiC internal calls but doesn't support all these calls
+	(some are just ignored), you'll have problems with MagiCCfg.
+	MagiCCfg makes intensive use of the internal calls. If some are missing
+	it can't work properly. Disable the fontselector.
+	It is known (and documented) that the Calvino-Shell V0.99d/beta3 for 
+	MagiC has this problem.
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!node Bekannte Bugs
+	Wegen einem Bug in den Ñlteren wdlg_x()-Routinen kann es auf einigen
+	Systemen dazu kommen, dass man einen iconifizierten Dialog nicht mehr
+	deiconifizieren kann. (!nl)
+	Abhilfe: installieren Sie ein aktuelles WDIALOG.PRG (ab V1.98) oder
+	benutzen Sie MagiC 5.13 oder grîsser.
+
+	Da die scrollenden Edit-Felder bei MagiC < Version 5.20 auf 80 und bei 
+	MagiC >= Version 5.20 auf 256 Zeichen beschrÑnkt sind, kînnen keine
+	Pfadangaben und keine Environment-Variablen lÑnger als 256 Zeichen 
+	sein. MagiCCfg kann seit der Version 1.26 Zeilen lÑnger als 256 Zeichen
+	korrekt laden und speichern. Leider klappt das Editieren solcher Zeilen
+	wegen dem oben genannten Problem nicht.
+	
+	Immer wieder melden Anwender Probleme mit dem Zeichensatz-Dialog. Doch
+	meistens liegt das Problem nicht am Dialog bzw. an MagiCCfg sondern
+	am verwendeten Fontselector. MagiCCfg nutzt keine alternativen 
+	Fontselectoren! MagiCCfg benutzt lediglich die von MagiC zur VerfÅgung
+	gestellten fnts_xx() Aufrufe. Wenn der benutzte Fontselector nicht
+	alle fnts_xx() Aufrufe wie MagiC unterstÅtzt, dann ist das eine 
+	inkompatibilitÑt des Fontselectors!
+	Es ist bekannt, dass die Calvino-Shell V0.99d/beta3 fÅr MagiC 
+	obengenanntes Problem hat!
+!endif

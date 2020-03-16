@@ -1,0 +1,170 @@
+#BGH 000 000 000
+#User 000
+# 000 Titel
+#More 000
+# 001 Schliesst den Dialog.
+# 002 öbernimmt die énderungen und schliesst den Dialog.
+# 003 Verwirft die énderungen und schliesst den Dialog.
+#Dial 001
+# 000 Dieses Fenster gehîrt zum|MagiC-Configurator !
+# 001 ^
+#Dial 002 Autor
+# 001 >001
+#Dial 003 Hauptdialog
+# 001 Versionsnummer des benutzten MagiC
+# 003 Bestimmt, ob sich MagiC im modernen 3D-Look oder im TOS-Look prÑsentiert.
+# 004 Bestimmt, ob der Backdrop-Button angezeigt wird. Falls er nicht angezeigt wird, bewirkt ein Klick auf den Titelbalken das gleiche wie ein Klick auf den Backdrop-Button.
+# 005 Hiermit bestimmt man, ob die Fenster mit Linien anstatt mit dem unter TOS Åblichen Muster gefÅllt werden.
+# 006 Hiermit bestimmt man, ob die Fenstertitel mit moderner 3D-Schrift oder flach (wie unter TOS) gezeichnet werden.
+# 007 Hier kînnen Sie das Echtzeit-Scrolling von MagiC ein- bzw. ausschalten.
+# 009 Wollen Sie das MagiC-Logo in der linken oberen Ecke?
+# 010 Wollen Sie das MagiC-Logo in der rechten oberen Ecke?
+# 011 Hier kann man das Echtzeit-Bewegen und -Vergrîssern von MagiC ein- bzw. ausschalten.
+# 012 Bestimmt, ob MagiC die MenÅ-Zeile im modernen 3D-Look oder im TOS-Look prÑsentiert.
+# 013 Mit diesem Button kommen Sie zu einem Dialog, in welchem Sie alle MagiC-spezifischen Pfade einstellen kînnen.
+# 014 Mit diesem Button kommen Sie zu einem Dialog, in welchem Sie die Default-Auflîsung einstellen kînnen.
+# 015 Mit diesem Button kommen Sie zu einem Dialog, in welchem Sie die Environment-Variablen einstellen kînnen.
+# 016 Haben Sie diesen hÑûlichen Atari-Zeichensatz satt? Mit diesem Button kommen Sie zu einem hilfreichen Dialog!
+# 017 Mit dem folgenden Dialog kînnen Sie einstellen, auf welchen Laufwerken Sie lange Dateinamen (VFat) benutzen mîchten.
+# 018 Hier finden Sie Fenster-spezifische Einstellungen. Diese sind vor allem fÅr MagiC 6 Anwender interessant.
+# 019 Mit dem folgenden Dialog kînnen Sie die Hintergrundfarbe und das Hintergrundmuster einstellen. (ab MagiC 5.2)
+# 020 Der folgende Dialog dient zum VerÑndern der Boot-Einstellungen (Start-Vorgang von MagiC) (ab MagiC 6)
+# 021 In diesem Dialog kînnen Sie einstellen, welche Shared-Libraries die AES beim Aufstarten resident in den Speicher lÑdt.
+# 022 Im folgenden Dialog finden Sie diverse andere Einstellungen, die es nicht wert waren, in einen eigenen Dialog aufgenommen zu werden :-)
+#Dial 004
+# 001 Hier kînnen Sie den Clipboard-Pfad festlegen. Dieses Verzeichnis wird fÅr den Datenaustausch zwischen verschiedenen Applikationen genutzt. (Copy&Paste)
+# 002 Aus diesem Verzeichnis werden die Accessories geladen.
+# 003 In diesem Verzeichnis werden Applikationen gesucht, welche beim Booten automatisch gestartet werden sollen. (Also nach der Initialisierung der ACC's)
+# 004 Dieses alternative Programm ersetzt MagXDesk und Åbernimmt so die Aufgaben einer GEM-Shell (z.B. Gemini, Thing, Jinnee, u.a.)
+# 005 Dieses Programm wird automatisch nach dem Booten abgearbeitet. Praktisch fÅr Passwortabfragen usw. (z.B. LOGIN.PRG). Dieser Pfad kann auch leer gelassen werden.
+# 006 Das durch diesen Pfad beschriebene Programm wird beim Start eines TOS-/TTP-Programms gestartet. (z.B. TOS2GEM, VT52.PRG, u.a.)
+# 013 >002
+# 014 >003
+#Dial 005
+# 002 Hier kînnen Sie die Farbtiefe wÑhlen.
+# 004 In diesem Feld kînnen Sie die mîglichen Auflîsungen (zur gewÑhlten Farbtiefe) auswÑhlen. Es werden nur die dem Configurator bekannten Auflîsungen angegeben.
+# 005 ^
+# 006 ^
+# 007 ^
+# 008 ^
+# 009 ^
+# 010 ^
+# 011 ^
+# 012 ^
+# 013 ^
+# 014 Scrollt eine Zeile nach oben.
+# 015 Hiermit kînnen Sie seitenweise scrollen.
+# 016 Hiermit kînnen Sie den sichtbaren Bereich scrollen.
+# 017 Scrollt eine Zeile nach unten.
+# 018 Ist dieser Radiobutton selektiert so Ñndert MagiC beim Start die Auflîsung nicht. Dies ist praktisch fÅr MagiCMac-Anwender.
+# 019 >002
+# 020 >003
+# 021 Hiermit aktivieren Sie die benutzerdefinierten Einstellungen.
+# 022 Tragen Sie hier die VDI-Treibernummer ein.
+# 023 Tragen Sie hier einen evtl. benîtigten Mode-Code ein.
+#Dial 006
+# 002 Hiermit wÑhlen Sie eine Variable, die Sie editieren mîchten. Doppelklick aktiviert bzw. deaktiviert eine Variable.
+# 003 ^
+# 004 ^
+# 005 ^
+# 006 ^
+# 007 ^
+# 008 ^
+# 009 ^
+# 010 Scrollt eine Zeile nach oben.
+# 011 Hiermit kînnen Sie seitenweise scrollen.
+# 012 Hiermit kînnen Sie den sichtbaren Bereich scrollen.
+# 013 Scrollt eine Zeile nach unten.
+# 015 Aktiviert die Variable.
+# 016 Geben Sie hier den Namen der Variablen ein (z.B. HOME, PATH, usw.)
+# 018 Hier kînnen Sie den Inhalt der gewÑhlten Variable Ñndern.
+# 019 FÅgt eine neue Variable hinzu.
+# 020 öbernimmt die verÑnderte Variable in die Liste.
+# 021 Entfernt die gewÑhlte Variable.
+# 022 Schliesst den Dialog (die Liste wird immer Åbernommen, auch wenn der Dialog Åber den Closer des Fensters geschlossen wird).
+#Dial 007
+# 002 Gibt den Namen des AES-Zeichensatzes an, der fÅr die grosse Schrift benutzt wird.
+# 003 Legt die Hîhe fÅr grosse Schriften fest. 0 setzt die Standard-Grîsse.
+# 005 Gibt den Namen des AES-Zeichensatzes an, der fÅr die kleine Schrift benutzt wird.
+# 006 Legt die Hîhe fÅr kleine Schriften fest. 0 setzt die Standard-Grîsse.
+# 007 >002
+# 008 >003
+# 010 Hiermit kann man die Objekt-Breite fÅr die AES festlegen. Dies ist vor allem nîtig, wenn proportionale ZeichensÑtze verwendet werden. Mit 0 ermittelt die AES die Grîsse selbst.
+# 011 Hiermit kann man die Objekt-Hîhe fÅr die AES festlegen. Dies ist vor allem nîtig, wenn proportionale ZeichensÑtze verwendet werden. Mit 0 ermittelt die AES die Grîsse selbst.
+#Dial 008
+# 002 Wird dieser Button selektiert, so werden lange Dateinamen auf dem entsprechenden Laufwerk zugelassen.
+# 003 ^
+# 004 ^
+# 005 ^
+# 006 ^
+# 007 ^
+# 008 ^
+# 009 ^
+# 010 ^
+# 011 ^
+# 012 ^
+# 013 ^
+# 014 ^
+# 015 ^
+# 016 ^
+# 017 ^
+# 018 ^
+# 019 ^
+# 020 ^
+# 021 ^
+# 022 ^
+# 023 ^
+# 024 ^
+# 025 ^
+# 026 ^
+# 027 ^
+# 028 öbernimmt die énderungen und schliesst den Dialog. Die Einstellungen werden aber erst nach dem nÑchsten Systemstart aktiv.
+# 029 >003
+#Dial 009
+# 003 Gibt die Anzahl Bytes an, die fÅr den Shellbuffer reserviert werden. Es werden immer mindestens 4192 Bytes reserviert (ab MagiC 6 min. 8192).
+# 004 Aktiviert das Multitasking beim Booten. Dies kann zu Problemen beim Aufstarten fÅhren!
+# 005 Gibt die LÑnge einer Zeitscheibe (im prÑ-emptiven Multitasking) in Millisekunden an.
+# 006 Gibt die HintergrundprioritÑt an. Ein Wert von 32 bedeutet eine PrioritÑt von 1:32 fÅr Hintergrundprozesse.
+# 010 Hier kînnen Sie die Standard-Masken fÅr den MagiC-Fileselektor definieren.  Zeichenketten mîglicher Extensionen sind durch ';' zu trennen. Doppelmuster werden voneinander durch ',' getrennt (z.B. "*.PRG,*.APP" oder "*.JPG,*.JPEG").
+# 011 >002
+# 012 >003
+#Dial 010
+# 002 Hiermit kînnen Sie die Hintergrundmuster verÑndern.
+# 004 Hiermit kînnen Sie das Hintergrundfarbe verÑndern.
+# 005 Dieses kleine Feld zeigt Ihnen, wie der Desktop-Hintergrund mit den eingestellten Werten aussehen wÅrde.
+# 007 >002
+# 008 >003
+#Dial 011
+# 001 Hier kînnen Sie den Pfad fÅr ein Logbuch angeben, welches den Boot-Vorgang mitprotokolliert.
+# 002 Hiermit bestimmen Sie den Pfad des Start-Bildes. Das Startbild sollte im XIMG-Format vorliegen (*.img).
+# 003 Hiermit kînnen Sie ein Pattern (=Muster) im XIMG-Format wÑhlen, welches zum Zeichnen des Hintergrunds genommen wird. MagiC zeichnet das gewÑhlte Bild so oft wie nîtig um den ganzen Hintergrund zu fÅllen.
+# 004 Geben Sie hier die Anzahl Cookies an, fÅr die Speicher angelegt wird. (genÅgend gross gewÑhlt muss der Cookie-Jar wÑhrend dem Booten nicht mehr erweitert werden)
+# 005 >002
+# 006 >003
+#Dial 012
+# 001 Geben Sie hier die Anzahl Fenster an, fÅr die Speicher angelegt wird. (Es sollte fÅr mindestens 16 Fenster Speicher reserviert werden!)
+# 003 Gibt den Namen, des Zeichensatzes an, der in der Infozeile der AES-Fenster benutzt wird.
+# 004 Legt die Hîhe fÅr Info-Zeichensatz fest. 0 setzt die Standard-Grîsse.
+# 005 Legt die Hîhe der Infozeile in Pixel fest.
+# 006 >002
+# 007 >003
+#Dial 013
+# 002 Ein einfach-Klick selektiert die Library, damit Sie die minimale Versionsnummer Ñndern kînnen. Mit einem Doppelklick kînnen Sie per Fileselector eine Library Ñndern.
+# 003 ^
+# 004 ^
+# 005 ^
+# 006 ^
+# 007 ^
+# 008 ^
+# 009 ^
+# 010 ^
+# 011 ^
+# 012 Scrollt eine Zeile nach oben.
+# 013 Hiermit kînnen Sie seitenweise scrollen.
+# 014 Hiermit kînnen Sie den sichtbaren Bereich scrollen.
+# 015 Scrollt eine Zeile nach unten.
+# 016 Schliesst den Dialog. (wie Fenster schliessen)
+# 017 Hiermit kînnen Sie eine neue Library hinzufÅgen (geht auch per Drag&Drop) dazu wird ein Fileselektor aufgerufen.
+# 018 Setzt die minimale Versions-Nummer der selektierten Library.
+# 019 Mit diesem Button kînnen Sie eine Library aus der Liste entfernen.
+# 020 Hier kînnen Sie eine minimale Versionsnummer angeben. Beim Start werden Libraries, deren Versionsnummer kleiner ist als die angegebene, nicht resident geladen. Dadurch werden veraltete Libraries erst gar nicht geladen.

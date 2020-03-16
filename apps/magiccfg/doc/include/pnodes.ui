@@ -1,0 +1,29 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!pnode* flags
+	!alias flag
+	For me flags are special tags like #_FLG, #_MAG, #_DEV ...
+	in the MAGX.INF file. The ones which are AES specific start with '#_'.
+
+	!pnode* segment
+	!alias segments
+	For me are segments tags which group different flags in the MAGX.INF
+	file. A segment starts always with #[<name>]. <name> is a placeholder
+	for the segment name (=aes,boot, vfat, shelbuf).
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!pnode* Flags
+	!alias Flag
+	Unter Flags verstehe ich spezielle Anweisungen in der MAGX.INF wie
+	#_FLG, #_MAG, #_DEV usw. Die AES spezifischen beginnen stets mit '#_'.
+	
+	!pnode* Segment
+	!alias Segmente
+	Unter einem Segment verstehe ein Abschnitt von Flags in der MAGX.INF.
+	Ein Segment beginnt dort immer mit #[<name>]. <name> ist dabei der
+	Segmentname (also z.B. aes,boot, vfat, shelbuf).
+!endif

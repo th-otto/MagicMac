@@ -1,0 +1,105 @@
+!iflang [english]
+#---------------------------------------------
+# English part of the documentation           
+#---------------------------------------------
+	!node Internal
+   The program in the actual version (!ProgrammVersion) supports following
+   flags and segments:
+   !begin_verbatim
+since MagiC 5.0:
+    #_MAG       (=version number; automatically set)
+
+    #[vfat]     (=settings for drives with long file names)
+    drives=     (=drives which use VFAT)
+
+    #[aes]      (=start of the AES segment)
+    #_ACC       (=accessory folder)
+    #_APP       (=START folder)
+    #_AUT       (=login program file)
+    #_BUF       (=shell buffer size)
+    #_DEV       (=start resolution)
+    #_ENV       (=environment variables)
+    #_FLG       (=configuration flags)
+    #_FSL       (=masks for the fileselektor box)
+    #_SCP       (=scrap/clipboard folder)
+    #_SHL       (=shell program)
+    #_TRM       (=terminal program)
+    #_TSL       (=pre-emptive multitasking)
+    #_TXT       (=system font)
+    #_WND       (=number of windows)
+    #_CTR       (=shows the start of the control panel and shell buffer
+                  data = end of MAGX.INF)
+
+since MagiC 5.2:
+    #_BKG       (=desktop background color and pattern)
+    #_TXB       (=large system font)
+    #_TXS       (=small system font)
+    
+since MagiC 6.0:
+    #_INW       (=INFO line configuration)
+    #_OBS       (=AES object raster)
+    #_SLB       (=resident shared libraries)
+  
+    #[boot]     (=begin of boot segment)
+    log=        (=log file)
+    cookies=    (=number of cookies)
+    image=      (=start picture)
+    tiles=      (=background pattern/image for the start picture)
+
+    #[shelbuf]  (=start of shell buffer data)
+   !end_verbatim
+!else
+#---------------------------------------------
+# German part of the documentation            
+#---------------------------------------------
+	!node Interna
+	Das Programm unterstÅtzt in der aktuellen Version (!ProgrammVersion) 
+	folgende Flags und Segmente:
+	!begin_verbatim
+ab MagiC 5.0:
+    #_MAG       (=Versionsnummer wird automatisch gesetzt)
+
+    #[vfat]     (=Einstellungen fÅr Laufwerke mit langen Dateinamen)
+    drives=     (=Laufwerke die VFAT benutzen)
+
+    #[aes]      (=Beginn des AES-Segments)
+    #_ACC       (=Accessory-Ordner)
+    #_APP       (=START-Ordner)
+    #_AUT       (=Login-Programmname z.B. fÅr Netzwerke, Multiuser)
+    #_BUF       (=Shell-Buffergrîsse )
+    #_DEV       (=Start-Auflîsung)
+    #_ENV       (=Environmentvariablen wie z.B. PATH, HOME)
+    #_FLG       (=Konfigurationsflags)
+    #_FSL       (=Masken-Vorgabe fÅr den Fileselektor)
+    #_SCP       (=Scrap-/Clipboard-Ordner)
+    #_SHL       (=Shell-Programm)
+    #_TRM       (=Terminalprogramm  =Console)
+    #_TSL       (=PrÑemptives Multitasking konfigurieren)
+    #_TXT       (=Systemzeichensatz)
+    #_WND       (=Anzahl Fenster)
+    #_CTR       (=Zeigt bei Ñlteren MagiC-Versionen den Beginn der 
+                  Kontrollfeld-/Shellbuffer-Daten an = Ende von 
+                  MAGX.INF)
+
+ab MagiC 5.2:
+    #_BKG       (=Desktophintergrund-Farbe und -Muster)
+    #_TXB       (=grosser Systemzeichensatz)
+    #_TXS       (=kleiner Systemzeichensatz)
+                --> Daten aus #_TXT werden automatisch umgewandelt
+    
+ab MagiC 6.0:
+    #_INW       (=Konfiguration der Fenster-Infozeile)
+    #_OBS       (=AES-Objektraster)
+    #_SLB       (=residente Shared-Libraries)
+  
+    #[boot]     (=Beginn des Boot-Segments)
+    log=        (=Protokoll-Datei fÅr den Boot-Vorgang)
+    cookies=    (=Anzahl Cookies, fÅr die Speicher reserviert wird)
+    image=      (=Startbild, das beim Start von MagiC angezeigt wird)
+    tiles=      (=Hintergrund-Pattern)
+
+    #[shelbuf]  (=Begin der Shellbuffer-Daten)
+	!end_verbatim
+
+!endif
+
