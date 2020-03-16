@@ -12,3 +12,4 @@
 *.inf -text
 *.txt -text
 *.TXT -text
+*.bgh -text
