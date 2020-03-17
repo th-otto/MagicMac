@@ -38,6 +38,13 @@ echo ""
 status=`mtype -t C:/status.txt`
 test "$status" != "0" && exit 1
 
+UDO=~/tmp/udo/udo
+export UDO
+HCP=~/tmp/hcp/bin/hcp
+export HCP
+
+make -C apps/magiccfg/doc
+
 . .travis/mkbindist.sh
 
 

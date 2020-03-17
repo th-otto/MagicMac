@@ -10,107 +10,127 @@ function upper()
 }
 
 LANGUAGES="de fr en"
+LPROJ_de=de.lproj
+LPROJ_en=English.lproj
+LPROJ_fr=fr.lproj
+
+for lang in ${LANGUAGES}; do
+	eval LPROJ=\${LPROJ_$lang}
+
+	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK"
+	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION"
+	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPX"
+	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPZ"
+	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG"
+done
 
 set -e
 
 #
 # German localizations
 #
-mkdir -p "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK"
-mkdir -p "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/MAGIC/XTENSION"
-mkdir -p "$RESOURCES_DIR/de.lproj/rootfs/AUTO/ACCS/CPX"
-mkdir -p "$RESOURCES_DIR/de.lproj/rootfs/AUTO/ACCS/CPZ"
+lang=de
+eval LPROJ=\${LPROJ_$lang}
 
-cp -a "$SRC_DIR/apps/applicat/applicat.inf" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/APPLICAT.INF"
-cp -a "$SRC_DIR/apps/applicat/applicat.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/APPLICAT.RSC"
-cp -a "$SRC_DIR/apps/chgres/chgres.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/CHGRES.RSC"
-cp -a "$SRC_DIR/apps/magxdesk.5/magxdesk.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MAGXDESK.RSC"
-cp -a "$SRC_DIR/apps/cmd/mcmd.tos" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MCMD.TOS"
-cp -a "$SRC_DIR/apps/mgcopy/mgcopy.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MGCOPY.RSC"
-cp -a "$SRC_DIR/apps/mgedit/mgedit.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MGEDIT.RSC"
-cp -a "$SRC_DIR/apps/mgformat/mgformat.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MGFORMAT.RSC"
-cp -a "$SRC_DIR/apps/mgnotice.2/mgnotice.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MGNOTICE.RSC"
-cp -a "$SRC_DIR/apps/mgnotice.2/mgnotice.txt" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MGNOTICE.TXT"
-cp -a "$SRC_DIR/apps/mgsearch/mgsearch.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MGSEARCH.RSC"
-cp -a "$SRC_DIR/apps/mod_app/mod_app.txt" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
-cp -a "$SRC_DIR/apps/shutdown/de/shutdown.prg" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/SHUTDOWN.PRG"
-cp -a "$SRC_DIR/apps/vfatconf/vfatconf.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/VFATCONF.RSC"
-cp -a "$SRC_DIR/apps/vt52/de/vt52.rsc" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/GEMDESK/VT52.RSC"
+cp -a "$SRC_DIR/apps/applicat/applicat.inf" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/APPLICAT.INF"
+cp -a "$SRC_DIR/apps/applicat/applicat.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/APPLICAT.RSC"
+cp -a "$SRC_DIR/apps/chgres/chgres.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/CHGRES.RSC"
+cp -a "$SRC_DIR/apps/magxdesk.5/magxdesk.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MAGXDESK.RSC"
+cp -a "$SRC_DIR/apps/cmd/mcmd.tos" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MCMD.TOS"
+cp -a "$SRC_DIR/apps/mgcopy/mgcopy.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGCOPY.RSC"
+cp -a "$SRC_DIR/apps/mgedit/mgedit.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGEDIT.RSC"
+cp -a "$SRC_DIR/apps/mgformat/mgformat.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGFORMAT.RSC"
+cp -a "$SRC_DIR/apps/mgnotice.2/mgnotice.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGNOTICE.RSC"
+cp -a "$SRC_DIR/apps/mgnotice.2/mgnotice.txt" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGNOTICE.TXT"
+cp -a "$SRC_DIR/apps/mgsearch/mgsearch.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGSEARCH.RSC"
+cp -a "$SRC_DIR/apps/mod_app/mod_app.txt" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
+cp -a "$SRC_DIR/apps/shutdown/de/shutdown.prg" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/SHUTDOWN.PRG"
+cp -a "$SRC_DIR/apps/vfatconf/vfatconf.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/VFATCONF.RSC"
+cp -a "$SRC_DIR/apps/vt52/de/vt52.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/VT52.RSC"
+cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.RSC"
+cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.BGH"
+cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
+cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
 
-cp -a "$SRC_DIR/extensio/pdlg_slb/pdlg.slb" "$RESOURCES_DIR/de.lproj/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
+cp -a "$SRC_DIR/extensio/pdlg_slb/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
 
-cp -a "$SRC_DIR/kernel/build/de/magcmacx.os" "$RESOURCES_DIR/de.lproj/MagicMacX.OS"
+cp -a "$SRC_DIR/kernel/build/de/magcmacx.os" "$RESOURCES_DIR/$LPROJ/MagicMacX.OS"
 
-cp -a "$SRC_DIR/auto/accs/de/cops.app" "$RESOURCES_DIR/de.lproj/rootfs/AUTO/ACCS/COPS.ACC"
-for f in "$SRC_DIR/auto/accs/cpx/de/"*.cpx; do
-	cp -a "$f" "$RESOURCES_DIR/de.lproj/rootfs/AUTO/ACCS/CPX/$(upper $(basename $f))"
+cp -a "$SRC_DIR/auto/accs/$lang/cops.app" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/COPS.ACC"
+for f in "$SRC_DIR/auto/accs/cpx/$lang/"*.cpx; do
+	cp -a "$f" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPX/$(upper $(basename $f))"
 done
 
 #
 # English localizations
 #
-mkdir -p "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK"
-mkdir -p "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/MAGIC/XTENSION"
-mkdir -p "$RESOURCES_DIR/English.lproj/rootfs/AUTO/ACCS/CPX"
-mkdir -p "$RESOURCES_DIR/English.lproj/rootfs/AUTO/ACCS/CPZ"
+lang=en
+eval LPROJ=\${LPROJ_$lang}
 
-cp -a "$SRC_DIR/apps/applicat/us/applicat.inf" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/APPLICAT.INF"
-cp -a "$SRC_DIR/apps/applicat/us/applicat.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/APPLICAT.RSC"
-cp -a "$SRC_DIR/apps/chgres/en/chgres.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/CHGRES.RSC"
-cp -a "$SRC_DIR/apps/magxdesk.5/us/magxdesk.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MAGXDESK.RSC"
-cp -a "$SRC_DIR/apps/cmd/mcmd.tos" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MCMD.TOS"
-cp -a "$SRC_DIR/apps/mgcopy/us/mgcopy.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MGCOPY.RSC"
-cp -a "$SRC_DIR/apps/mgedit/us/mgedit.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MGEDIT.RSC"
-cp -a "$SRC_DIR/apps/mgformat/us/mgformat.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MGFORMAT.RSC"
-cp -a "$SRC_DIR/apps/mgnotice.2/us/mgnotice.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MGNOTICE.RSC"
-cp -a "$SRC_DIR/apps/mgnotice.2/us/mgnotice.txt" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MGNOTICE.TXT"
-cp -a "$SRC_DIR/apps/mgsearch/us/mgsearch.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MGSEARCH.RSC"
-cp -a "$SRC_DIR/apps/mod_app/en/mod_app.txt" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
-cp -a "$SRC_DIR/apps/shutdown/en/shutdown.prg" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/SHUTDOWN.PRG"
-cp -a "$SRC_DIR/apps/vfatconf/en/vfatconf.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/VFATCONF.RSC"
-cp -a "$SRC_DIR/apps/vt52/en/vt52.rsc" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/GEMDESK/VT52.RSC"
+cp -a "$SRC_DIR/apps/applicat/us/applicat.inf" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/APPLICAT.INF"
+cp -a "$SRC_DIR/apps/applicat/us/applicat.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/APPLICAT.RSC"
+cp -a "$SRC_DIR/apps/chgres/$lang/chgres.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/CHGRES.RSC"
+cp -a "$SRC_DIR/apps/magxdesk.5/us/magxdesk.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MAGXDESK.RSC"
+cp -a "$SRC_DIR/apps/cmd/mcmd.tos" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MCMD.TOS"
+cp -a "$SRC_DIR/apps/mgcopy/us/mgcopy.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGCOPY.RSC"
+cp -a "$SRC_DIR/apps/mgedit/us/mgedit.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGEDIT.RSC"
+cp -a "$SRC_DIR/apps/mgformat/us/mgformat.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGFORMAT.RSC"
+cp -a "$SRC_DIR/apps/mgnotice.2/us/mgnotice.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGNOTICE.RSC"
+cp -a "$SRC_DIR/apps/mgnotice.2/us/mgnotice.txt" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGNOTICE.TXT"
+cp -a "$SRC_DIR/apps/mgsearch/us/mgsearch.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGSEARCH.RSC"
+cp -a "$SRC_DIR/apps/mod_app/$lang/mod_app.txt" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
+cp -a "$SRC_DIR/apps/shutdown/$lang/shutdown.prg" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/SHUTDOWN.PRG"
+cp -a "$SRC_DIR/apps/vfatconf/$lang/vfatconf.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/VFATCONF.RSC"
+cp -a "$SRC_DIR/apps/vt52/$lang/vt52.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/VT52.RSC"
+cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.RSC"
+cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.BGH"
+cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
+cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
 
-cp -a "$SRC_DIR/extensio/pdlg_slb/en/pdlg.slb" "$RESOURCES_DIR/English.lproj/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
+cp -a "$SRC_DIR/extensio/pdlg_slb/en/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
 
-cp -a "$SRC_DIR/kernel/build/en/magcmacx.os" "$RESOURCES_DIR/English.lproj/MagicMacX.OS"
+cp -a "$SRC_DIR/kernel/build/en/magcmacx.os" "$RESOURCES_DIR/$LPROJ/MagicMacX.OS"
 
-cp -a "$SRC_DIR/auto/accs/en/cops.app" "$RESOURCES_DIR/English.lproj/rootfs/AUTO/ACCS/COPS.ACC"
+cp -a "$SRC_DIR/auto/accs/en/cops.app" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/COPS.ACC"
 for f in "$SRC_DIR/auto/accs/cpx/en/"*.cpx; do
-	cp -a "$f" "$RESOURCES_DIR/English.lproj/rootfs/AUTO/ACCS/CPX/$(upper $(basename $f))"
+	cp -a "$f" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPX/$(upper $(basename $f))"
 done
 
 #
 # French localizations
 #
-mkdir -p "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK"
-mkdir -p "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/MAGIC/XTENSION"
-mkdir -p "$RESOURCES_DIR/fr.lproj/rootfs/AUTO/ACCS/CPX"
-mkdir -p "$RESOURCES_DIR/fr.lproj/rootfs/AUTO/ACCS/CPZ"
+lang=fr
+eval LPROJ=\${LPROJ_$lang}
 
-cp -a "$SRC_DIR/apps/applicat/fr/applicat.inf" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/APPLICAT.INF"
-cp -a "$SRC_DIR/apps/applicat/fr/applicat.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/APPLICAT.RSC"
-cp -a "$SRC_DIR/apps/chgres/fr/chgres.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/CHGRES.RSC"
-cp -a "$SRC_DIR/apps/magxdesk.5/fr/magxdesk.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MAGXDESK.RSC"
-cp -a "$SRC_DIR/apps/cmd/mcmd.tos" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MCMD.TOS"
-cp -a "$SRC_DIR/apps/mgcopy/fr/mgcopy.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGCOPY.RSC"
-cp -a "$SRC_DIR/apps/mgedit/fr/mgedit.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGEDIT.RSC"
-cp -a "$SRC_DIR/apps/mgformat/fr/mgformat.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGFORMAT.RSC"
-cp -a "$SRC_DIR/apps/mgnotice.2/fr/mgnotice.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGNOTICE.RSC"
-cp -a "$SRC_DIR/apps/mgnotice.2/fr/mgnotice.txt" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGNOTICE.TXT"
-cp -a "$SRC_DIR/apps/mgsearch/fr/mgsearch.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MGSEARCH.RSC"
+cp -a "$SRC_DIR/apps/applicat/$lang/applicat.inf" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/APPLICAT.INF"
+cp -a "$SRC_DIR/apps/applicat/$lang/applicat.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/APPLICAT.RSC"
+cp -a "$SRC_DIR/apps/chgres/$lang/chgres.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/CHGRES.RSC"
+cp -a "$SRC_DIR/apps/magxdesk.5/$lang/magxdesk.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MAGXDESK.RSC"
+cp -a "$SRC_DIR/apps/cmd/mcmd.tos" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MCMD.TOS"
+cp -a "$SRC_DIR/apps/mgcopy/$lang/mgcopy.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGCOPY.RSC"
+cp -a "$SRC_DIR/apps/mgedit/$lang/mgedit.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGEDIT.RSC"
+cp -a "$SRC_DIR/apps/mgformat/$lang/mgformat.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGFORMAT.RSC"
+cp -a "$SRC_DIR/apps/mgnotice.2/$lang/mgnotice.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGNOTICE.RSC"
+cp -a "$SRC_DIR/apps/mgnotice.2/$lang/mgnotice.txt" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGNOTICE.TXT"
+cp -a "$SRC_DIR/apps/mgsearch/$lang/mgsearch.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MGSEARCH.RSC"
 # TODO: french translation
-cp -a "$SRC_DIR/apps/mod_app/fr/mod_app.txt" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
-cp -a "$SRC_DIR/apps/shutdown/fr/shutdown.prg" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/SHUTDOWN.PRG"
-cp -a "$SRC_DIR/apps/vfatconf/fr/vfatconf.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/VFATCONF.RSC"
-cp -a "$SRC_DIR/apps/vt52/fr/vt52.rsc" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/GEMDESK/VT52.RSC"
+cp -a "$SRC_DIR/apps/mod_app/$lang/mod_app.txt" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/MOD_APP.TXT"
+cp -a "$SRC_DIR/apps/shutdown/$lang/shutdown.prg" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/SHUTDOWN.PRG"
+cp -a "$SRC_DIR/apps/vfatconf/$lang/vfatconf.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/VFATCONF.RSC"
+cp -a "$SRC_DIR/apps/vt52/$lang/vt52.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/GEMDESK/VT52.RSC"
+cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.RSC"
+cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.BGH"
+# TODO: french translation
+cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
+cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
 
-cp -a "$SRC_DIR/extensio/pdlg_slb/fr/pdlg.slb" "$RESOURCES_DIR/fr.lproj/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
+cp -a "$SRC_DIR/extensio/pdlg_slb/$lang/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
 
-cp -a "$SRC_DIR/kernel/build/fr/magcmacx.os" "$RESOURCES_DIR/fr.lproj/MagicMacX.OS"
+cp -a "$SRC_DIR/kernel/build/$lang/magcmacx.os" "$RESOURCES_DIR/$LPROJ/MagicMacX.OS"
 
-cp -a "$SRC_DIR/auto/accs/fr/cops.app" "$RESOURCES_DIR/fr.lproj/rootfs/AUTO/ACCS/COPS.ACC"
-for f in "$SRC_DIR/auto/accs/cpx/fr/"*.cpx; do
-	cp -a "$f" "$RESOURCES_DIR/fr.lproj/rootfs/AUTO/ACCS/CPX/$(upper $(basename $f))"
+cp -a "$SRC_DIR/auto/accs/$lang/cops.app" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/COPS.ACC"
+for f in "$SRC_DIR/auto/accs/cpx/$lang/"*.cpx; do
+	cp -a "$f" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPX/$(upper $(basename $f))"
 done
 
 #
@@ -135,6 +155,7 @@ mkdir -p "$RESOURCES_DIR/rootfs-common/EXTRAS/BIN"
 mkdir -p "$RESOURCES_DIR/rootfs-common/EXTRAS/FLOCK_OK"
 mkdir -p "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOCK"
 mkdir -p "$RESOURCES_DIR/rootfs-common/EXTRAS/AES_LUPE"
+mkdir -p "$RESOURCES_DIR/rootfs-common/EXTRAS/MAGICCFG"
 mkdir -p "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMSCRAP"
 mkdir -p "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK"
 mkdir -p "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK/PAT"
@@ -190,6 +211,8 @@ cp -a "$SRC_DIR/tools/showfree/showfree.tos" "$RESOURCES_DIR/rootfs-common/GEMSY
 cp -a "$SRC_DIR/apps/shutdown/shutdown.inf" "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK/SHUTDOWN.INF"
 cp -a "$SRC_DIR/apps/vfatconf/vfatconf.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK/VFATCONF.PRG"
 cp -a "$SRC_DIR/apps/vt52/vt52.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK/VT52.PRG"
+cp -a "$SRC_DIR/apps/magiccfg/magiccfg.app" "$RESOURCES_DIR/rootfs-common/EXTRAS/MAGICCFG/MAGICCFG.APP"
+cp -a "$SRC_DIR/apps/magiccfg/history.txt" "$RESOURCES_DIR/rootfs-common/EXTRAS/MAGICCFG/HISTORY.TXT"
 cp -a "$SRC_DIR/apps/wbdaemon/wbdaemon.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK/WBDAEMON.PRG"
 cp -a "$SRC_DIR/apps/mmxdaemn/mmxdaemn.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/START/MMXDAEMN.PRG"
 cp -a "$SRC_DIR/tools/dev_ser/dev_ser.tos" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/DEV_SER.DEV"

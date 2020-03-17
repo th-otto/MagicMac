@@ -14,6 +14,20 @@ sudo apt-get install -y \
 curl --get https://tho-otto.de/download/mag-hdd.tar.bz2 --output mag-hdd.tar.bz2
 curl --get https://tho-otto.de/download/aranym-1.0.2-trusty-x86_64-a9de1ec.tar.xz --output aranym.tar.xz
 
+mkdir -p ~/tmp/udo
+(
+cd ~/tmp/udo
+curl --get "https://www.tho-otto.de/download/udo-7.12-linux.tar.bz2" --output udo.tar.bz2
+tar xjf udo.tar.bz2
+)
+
+(
+cd ~/tmp
+curl --get "https://tho-otto.de/download/hcp-1.0.3-linux.tar.bz2" --output hcp.tar.bz2
+tar xjf hcp.tar.bz2
+mv hcp-1.0.3 hcp
+)
+
 tar xvf mag-hdd.tar.bz2
 test -f config-hdd || exit 1
 
