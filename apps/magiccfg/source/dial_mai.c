@@ -94,47 +94,47 @@ GRECT		rect;
 				break;
 			case MA_RESOLUTION :
 				OpenDialog(HandleResolution,tree_addr[RESOLUTION], string_addr[WDLG_RES],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_VARIABLES :
 				OpenDialog(HandleVariables,tree_addr[VARIABLES], string_addr[WDLG_ENV],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_FONT :
 				OpenDialog(HandleFont,tree_addr[FONT], string_addr[WDLG_FONT],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_VFAT :
 				OpenDialog(HandleVFat,tree_addr[VFAT], string_addr[WDLG_VFAT],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_OTHER :
 				OpenDialog(HandleOther,tree_addr[OTHER], string_addr[WDLG_OTHER],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_BACKGROUND :
 				OpenDialog(HandleBackground,tree_addr[BACKGROUND], string_addr[WDLG_BACKGROUND],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_BOOT :
 				OpenDialog(HandleBoot,tree_addr[BOOT], string_addr[WDLG_BOOT],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_WINDOW :
 				OpenDialog(HandleWindow,tree_addr[WINDOW], string_addr[WDLG_WINDOW],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 			case MA_LIBS :
 				OpenDialog(HandleLibraries,tree_addr[LIBRARIES], string_addr[WDLG_LIBRARIES],-1,-1);
-				tree[args.dialog].ob_state&=(~OS_SELECTED);
+				tree[args.obj].ob_state&=(~OS_SELECTED);
 				wdlg_redraw(args.dialog,&rect,args.obj,0);
 				break;
 		}

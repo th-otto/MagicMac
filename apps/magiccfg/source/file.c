@@ -64,7 +64,7 @@ LBOX_ITEM *ptr, *ptr2;
 		ptr2=(LBOX_ITEM *)ptr->next;
 		Mfree(ptr);
 		ptr=ptr2;
-	};
+	}
 	mgx_EnvVar=NULL;
 
 	ptr=(LBOX_ITEM *)mgx_SlbItems;
@@ -73,7 +73,7 @@ LBOX_ITEM *ptr, *ptr2;
 		ptr2=(LBOX_ITEM *)ptr->next;
 		Mfree(ptr);
 		ptr=ptr2;
-	};
+	}
 	mgx_SlbItems=NULL;
 
 	mgx_version=MagiC_Version;
