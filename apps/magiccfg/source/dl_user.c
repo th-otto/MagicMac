@@ -1,7 +1,7 @@
 #include <tos.h>
 #include <gemx.h>
 #include "diallib.h"
-#include SPEC_DEFINITION_FILE
+#include "defs.h"
 
 
 

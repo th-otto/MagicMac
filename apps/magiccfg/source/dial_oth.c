@@ -1,6 +1,6 @@
 #include <tos.h>
 #include <gemx.h>
-#include "DIALLIB.H"
+#include "diallib.h"
 #include "defs.h"
 
 void SetMTaskStatus(OBJECT *tree,int status)

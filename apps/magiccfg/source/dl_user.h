@@ -68,19 +68,14 @@
 /*	UnterstÅtzung fÅr das Documen-History Protokoll	*/
 #define	USE_DOCUMENTHISTORY	YES
 
-/*	Name der Prototypen-Include-Datei angeben	*/
-#define	SPEC_DEFINITION_FILE	"DEFS.H"
-
 /*	Programmname "schîn"	*/
 #define	PROGRAM_NAME			"MagiCCfg"
 /*	Programmname in Grossbuchstaben	*/
 #define	PROGRAM_UNAME			"MAGICCFG"
 /*	Dateiname der Resource-Datei	*/
-#define	RESOURCE_FILE			"MAGICCFG.RSC"
-/*	Dateiname der Resource-Header-Datei	*/
-#define	RESOURCE_HEADER_FILE	"MAGICCFG.H"
+#define	RESOURCE_FILE			"magiccfg.rsc"
 /*	Dateiname der BubbleGEM-Hilfedatei	*/
-#define	BUBBLEGEM_FILE			"MAGICCFG.BGH"
+#define	BUBBLEGEM_FILE			"magiccfg.bgh"
 /*	Dateiname der ST-Guide-Hilfedatei	*/
 #define	STGUIDE_FILE			"*:\\MAGICCFG.HYP "
 

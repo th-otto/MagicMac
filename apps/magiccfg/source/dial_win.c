@@ -1,6 +1,6 @@
 #include <tos.h>
 #include <gemx.h>
-#include "DIALLIB.H"
+#include "diallib.h"
 #include "defs.h"
 
 long tmp_inw_fontid, tmp_inw_fonth;

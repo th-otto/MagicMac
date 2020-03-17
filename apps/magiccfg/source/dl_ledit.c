@@ -1,8 +1,8 @@
 #include <tos.h>
 #include <gemx.h>
-#include <mint\cookie.h>
+#include <mint/cookie.h>
 #include "diallib.h"
-#include SPEC_DEFINITION_FILE
+#include "defs.h"
 
 #if USE_LONGEDITFIELDS == YES
 

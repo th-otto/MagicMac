@@ -1,6 +1,6 @@
 #include <tos.h>
 #include <gemx.h>
-#include "DIALLIB.H"
+#include "diallib.h"
 #include "defs.h"
 
 #define	NO_VIS_VAR	8

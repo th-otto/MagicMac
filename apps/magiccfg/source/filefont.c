@@ -1,7 +1,7 @@
 #include <tos.h>
 #include <gemx.h>
 #include <atarierr.h>
-#include "DIALLIB.H"
+#include "diallib.h"
 #include "defs.h"
 
 /* Fxattr modes */

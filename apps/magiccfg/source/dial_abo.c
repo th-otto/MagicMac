@@ -1,6 +1,6 @@
 #include <tos.h>
 #include <gemx.h>
-#include "DIALLIB.H"
+#include "diallib.h"
 #include "defs.h"
 
 WORD cdecl HandleAbout( struct HNDL_OBJ_args args )

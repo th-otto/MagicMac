@@ -1,9 +1,9 @@
 #include <tos.h>
 #include <gemx.h>
 #include <string.h>
-#include <DRAGDROP.H>
+#include <dragdrop.h>
 #include "diallib.h"
-#include SPEC_DEFINITION_FILE
+#include "defs.h"
 
 #if USE_DRAGDROP == YES
 

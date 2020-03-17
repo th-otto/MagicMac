@@ -10,11 +10,11 @@
 #define	ENGLISH					2
 #define	FRENCH					3
 
-#include "SOURCE\DL_USER.H"			/*	Applikationsspezifische Daten	*/
+#include "source/dl_user.h"			/*	Applikationsspezifische Daten	*/
 
-#include RESOURCE_HEADER_FILE			/*	Resource-Header einbinden	*/
+#include "magiccfg.h"			/*	Resource-Header einbinden	*/
 
-#include "SOURCE\DL_MISS.H"			/*	fehlende Definitionen erg„nzen	*/
+#include "source/dl_miss.h"			/*	fehlende Definitionen erg„nzen	*/
 
 #define	USE_ITEM				(USE_DIALOG|USE_WINDOW|USE_FILESELECTOR|USE_FONTSELECTOR)
 

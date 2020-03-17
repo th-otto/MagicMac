@@ -1,8 +1,8 @@
 #include <tos.h>
 #include <falcon.h>
 #include <gemx.h>
-#include <mint\cookie.h>
-#include "DIALLIB.H"
+#include <mint/cookie.h>
+#include "diallib.h"
 #include "defs.h"
 
 

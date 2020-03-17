@@ -1,6 +1,6 @@
 #include <tos.h>
 #include <gemx.h>
-#include <mint\cookie.h>
+#include <mint/cookie.h>
 #include <dhst.h>
 #include "diallib.h"
 

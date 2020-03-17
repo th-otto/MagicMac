@@ -2,7 +2,7 @@
 #include <gemx.h>
 #include <av.h>
 #include "diallib.h"
-#include SPEC_DEFINITION_FILE
+#include "defs.h"
 
 #if USE_AV_PROTOCOL != NO
 

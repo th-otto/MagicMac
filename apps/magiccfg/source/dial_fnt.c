@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "DIALLIB.H"
+#include "diallib.h"
 #include "defs.h"
 
 long	tmp_txs_id, tmp_txs_h,
