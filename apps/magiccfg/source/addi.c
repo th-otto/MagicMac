@@ -6,7 +6,6 @@
 
 
 long MagiC_Version;
-unsigned long MagiC_Date;
 
 FONTSEL_DATA *fnt_dialog;
 
@@ -22,32 +21,29 @@ MAGX_COOKIE *cookie=NULL;
 #if 0
 	{
 		MagiC_Version = 0x610;
-		MagiC_Date = 0x20200101L;
-	}
+	} else
 #else
 	{
 		form_alert(1,string_addr[NO_MAGIC_FOUND]);	/*	Meldung	*/
 		return(TRUE);									/*	nicht da ? -> tsch《s	*/
 	}
-	aesvars=cookie->aesvars;						/*	Aesvars holen	*/
-	if(!aesvars)										/*	NULL ? -> tsch《s	*/
-	{
-		form_alert(1,string_addr[NO_MAGIC_VARS]);		/*	Meldung	*/
-		return(TRUE);
-	}
-	
-	MagiC_Date=aesvars->date << 16L;				/*	MagiC-Versionsdatum aufbauen	*/
-	MagiC_Date|=aesvars->date >> 24L;
-	MagiC_Date|=(aesvars->date >> 8L) & 0xff00L;
-
-	MagiC_Version=aesvars->version;				/*	Versionsnummer	*/
-
-	if(MagiC_Version<0x0500)						/*	Version < 5.00 ? */
-	{
-		form_alert(1,string_addr[NO_MAGIC_FOUND]);	/*	Meldung	*/
-		return(TRUE);									/*	und tsch《s	*/
-	}
 #endif
+	{
+		aesvars=cookie->aesvars;						/*	Aesvars holen	*/
+		if(!aesvars)										/*	NULL ? -> tsch《s	*/
+		{
+			form_alert(1,string_addr[NO_MAGIC_VARS]);		/*	Meldung	*/
+			return(TRUE);
+		}
+		
+		MagiC_Version=aesvars->version;				/*	Versionsnummer	*/
+	
+		if(MagiC_Version<0x0500)						/*	Version < 5.00 ? */
+		{
+			form_alert(1,string_addr[NO_MAGIC_FOUND]);	/*	Meldung	*/
+			return(TRUE);									/*	und tsch《s	*/
+		}
+	}
 
 	if(appl_find("?AGI")==0)						/*	appl_getinfo() vorhanden ?	*/
 	{

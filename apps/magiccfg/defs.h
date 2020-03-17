@@ -42,7 +42,6 @@ typedef struct _lib_item
  */
 extern	FONTSEL_DATA *fnt_dialog;
 extern	long MagiC_Version;
-extern	unsigned long MagiC_Date;
 
 int CheckSystem(void);
 int CreateFNTS(void);
