@@ -122,6 +122,7 @@ WORD cdecl HandleFont( struct HNDL_OBJ_args args )
 OBJECT	*tree;
 GRECT		rect;
 _WORD index,mono,outl;
+_WORD dummy;
 
 	wdlg_get_tree( args.dialog, &tree, &rect );		/* Adresse des Baums erfragen */
 
@@ -129,7 +130,7 @@ _WORD index,mono,outl;
 	{
 		if ( args.obj == HNDL_OPEN )					
 		{
-			appl_getinfo(0,&aes_s,NULL,NULL,NULL);
+			appl_getinfo(0,&aes_s,&dummy,&dummy,&dummy);
 
 			index=fnts_get_info(fnt_dialog->dialog,mgx_txb_id,&mono,&outl);
 			tmp_txb_id=mgx_txb_id;

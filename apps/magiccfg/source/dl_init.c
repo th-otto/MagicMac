@@ -50,6 +50,7 @@ void DoExitSystem(void);
 
 int DoAesInit(void)
 {
+	_WORD dummy;
 #if DEBUG_LOG==ON
 long ret;
 	ret=Fopen(PROGRAM_NAME ".log",O_WRONLY|O_CREAT|O_APPEND);
@@ -103,13 +104,13 @@ Bit 3:           fslx_xx()-Funktionen sind vorhanden (1)
 Bit 4:           pdlg_xx()-Funktionen sind vorhanden (1)
 */
 
-	if((appl_getinfo(7,&has_wlffp,NULL,NULL,NULL)==0)||
+	if((appl_getinfo(7,&has_wlffp,&dummy,&dummy,&dummy)==0)||
 		((has_wlffp & 0x01) != 0x01))
 	{
 		form_alert(1,tree_addr[DIAL_LIBRARY][DI_WDIALOG_ERROR].ob_spec.free_string);
 		return(TRUE);
 	}
-	if(appl_getinfo(11,&has_iconify,NULL,NULL,NULL))
+	if(appl_getinfo(11,&has_iconify,&dummy,&dummy,&dummy))
 		has_iconify=has_iconify & 0x80;
 
 	iconified_tree=tree_addr[DIAL_LIBRARY];

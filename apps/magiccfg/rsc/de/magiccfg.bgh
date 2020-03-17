@@ -11,9 +11,9 @@
 #Dial 001
 # 000 Dieses Fenster geh”rt zum|MagiC-Configurator !
 # 001 ^
-#Dial 002 Autor
+#Dial 002 Author
 # 001 >001
-#Dial 003 Hauptdialog
+#Dial 003 Main dialog
 # 001 Versionsnummer des benutzten MagiC
 # 003 Bestimmt, ob sich MagiC im modernen 3D-Look oder im TOS-Look pr„sentiert.
 # 004 Bestimmt, ob der Backdrop-Button angezeigt wird. Falls er nicht angezeigt wird, bewirkt ein Klick auf den Titelbalken das gleiche wie ein Klick auf den Backdrop-Button.

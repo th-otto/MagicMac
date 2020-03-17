@@ -1,13 +1,13 @@
 #include <tos.h>
 #include <gemx.h>
-#include <mint\sysvars.h>
-#include "DIALLIB.H"
+#include <mint/sysvars.h>
+#include "diallib.h"
 #include "defs.h"
 
 
 long GetBootDrive(void)
 {
-	*tmp_path=(char)*_bootdev+'A';
+	*tmp_path=*_bootdev+'A';
 	*std_paths=*tmp_path;
 	return(0);
 }
@@ -23,12 +23,12 @@ int main(int argc, char *argv[])
 		DoExitSystem();
 		return(0);
 	}
-/*
+#if 1
 	Supexec(GetBootDrive);
-*/
-
-	*tmp_path=(char)'A';
+#else
+	*tmp_path='A';
 	*std_paths=*tmp_path;
+#endif
 
 
 

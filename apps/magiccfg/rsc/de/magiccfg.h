@@ -68,11 +68,11 @@
 #define DI_HELP_ERROR      5 /* STRING in tree DIAL_LIBRARY */
 #define DI_VDI_WKS_ERROR   6 /* STRING in tree DIAL_LIBRARY */
 
-/* Autor */
+/* Author */
 #define PROGRAM_INFO       2 /* form/dialog */
 #define PR_OK              1 /* BUTTON in tree PROGRAM_INFO */
 
-/* Hauptdialog */
+/* Main dialog */
 #define MAIN               3 /* form/dialog */
 #define MA_VERSION         1 /* STRING in tree MAIN */
 #define MA_3D_EFFECT       3 /* BUTTON in tree MAIN */
@@ -350,7 +350,7 @@
 
 #define NEW_FILE          28 /* Free string */
 
-#define TITEL              0 /* BubbleUser */
+#define TITLE              0 /* BubbleUser */
 
 #define MORE               0 /* BubbleMore */
 

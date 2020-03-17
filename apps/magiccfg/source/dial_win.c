@@ -52,7 +52,7 @@ WORD index,mono,outl;
 			WORD char_h,dummy,i,mode,pt_int=1,set_pt_int;
 			long pt=0L;
 			WORD aes_s;
-				appl_getinfo(0,&aes_s,NULL,NULL,NULL);
+				appl_getinfo(0,&aes_s,&dummy,&dummy,&dummy);
 				font_dialog=args.dialog;
 				font_object=args.obj;
 
