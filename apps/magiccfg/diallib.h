@@ -10,74 +10,81 @@
 #define	ENGLISH					2
 #define	FRENCH					3
 
-#include "source/dl_user.h"			/*	Applikationsspezifische Daten	*/
+#include "source/dl_user.h"		/* Application specific definitions */
 
-#include "magiccfg.h"			/*	Resource-Header einbinden	*/
+#include "magiccfg.h"			/* Include resource header file */
 
-#include "source/dl_miss.h"			/*	fehlende Definitionen erg„nzen	*/
+#include "source/dl_miss.h"		/* Include missing type definitions */
 
-#define	USE_ITEM				(USE_DIALOG|USE_WINDOW|USE_FILESELECTOR|USE_FONTSELECTOR)
+#define	USE_ITEM       (USE_DIALOG|USE_WINDOW|USE_FILESELECTOR|USE_FONTSELECTOR)
 
-/*	Window-Typen	*/
-#define	WIN_WINDOW	1
-#define	WIN_DIALOG	2
-#define	WIN_FILESEL	3
-#define	WIN_FONTSEL	4
-#define	WIN_PRINTER	5
+/*	Window types	*/
+#define	WIN_WINDOW  1
+#define	WIN_DIALOG  2
+#define	WIN_FILESEL 3
+#define	WIN_FONTSEL 4
+#define	WIN_PRINTER 5
 
-/*	USER_DATA status-flags	*/
-#define	WIS_OPEN			0x01
-#define	WIS_ICONIFY		0x02
-#define	WIS_ALLICONIFY	0x04
-#define	WIS_FULL			0x10
+/*	USER_DATA status flags	*/
+#define	WIS_OPEN        0x01
+#define	WIS_ICONIFY     0x02
+#define	WIS_ALLICONIFY  0x04
+#define	WIS_FULL        0x10
+#define WIS_MFCLOSE     0x20	/* Marked for CLOSE */
 
 
-/*	Window-Messages	*/
-#define	WIND_INIT					-1
-#define	WIND_OPEN					-2
-#define	WIND_EXIT					-4
-#define	WIND_CLOSE					-5
+/*	Window messages	*/
+#define	WIND_INIT                -1
+#define	WIND_OPEN                -2
+#define	WIND_OPENSIZE            -3
+#define	WIND_EXIT                -4
+#define	WIND_CLOSE               -5
 
-#define	WIND_KEYPRESS				-10
-#define	WIND_CLICK					-15
+#define	WIND_KEYPRESS           -10
+#define	WIND_CLICK              -11
 
-#define	WIND_REDRAW					-20
-#define	WIND_SIZED					-21
-#define	WIND_MOVED					-22
-#define	WIND_TOPPED					-23
-#define	WIND_NEWTOP					-24
-#define	WIND_UNTOPPED				-25
-#define	WIND_ONTOP					-26
-#define	WIND_BOTTOM					-27
+#define	WIND_REDRAW             -20
+#define	WIND_SIZED              -21
+#define	WIND_MOVED              -22
+#define	WIND_TOPPED             -23
+#define	WIND_NEWTOP             -24
+#define	WIND_UNTOPPED           -25
+#define	WIND_ONTOP              -26
+#define	WIND_BOTTOM             -27
+#define	WIND_FULLED             -28
 
 #define	WIND_DRAGDROPFORMAT		-30
-#define	WIND_DRAGDROP				-31
+#define	WIND_DRAGDROP           -31
 
-#define	WIND_ICONIFY				-40
-#define	WIND_UNICONIFY				-41
-#define	WIND_ALLICONIFY			-42
+#define	WIND_ICONIFY            -40
+#define	WIND_UNICONIFY          -41
+#define	WIND_ALLICONIFY         -42
 
-#define	WIND_BUBBLE					-50
+#define	WIND_BUBBLE             -50
 
-/*	File Maximum	*/
-#define	DL_PATHMAX					256
-#define	DL_NAMEMAX					64
+/*	Toolbar messages	*/
+#define	WIND_TBCLICK            -60
+#define	WIND_TBUPDATE           -61
 
-/*	AV-Protokoll Flags	*/
-#define	AV_P_VA_SETSTATUS		0x01
-#define	AV_P_VA_START			0x02
-#define	AV_P_AV_STARTED		0x04
-#define	AV_P_VA_FONTCHANGED	0x08
-#define	AV_P_QUOTING			0x10
-#define	AV_P_VA_PATH_UPDATE	0x20
+/*	File maximum	*/
+#define	DL_PATHMAX              256
+#define	DL_NAMEMAX               64
+
+/*	AV protokol flags	*/
+#define	AV_P_VA_SETSTATUS       0x01
+#define	AV_P_VA_START           0x02
+#define	AV_P_AV_STARTED         0x04
+#define	AV_P_VA_FONTCHANGED     0x08
+#define	AV_P_QUOTING            0x10
+#define	AV_P_VA_PATH_UPDATE     0x20
 
 typedef struct _chain_data_
 {
 	struct _chain_data_	*next;
 	struct _chain_data_	*previous;
-	int	type;
-	int	whandle;
-	int	status;
+	short	type;
+	WORD	whandle;
+	short	status;
 	GRECT last;
 }CHAIN_DATA;
 
@@ -85,9 +92,9 @@ typedef struct _dialog_data_
 {
 	struct _dialog_data_	*next;
 	struct _dialog_data_	*previous;
-	int	type;
-	int	whandle;
-	int	status;
+	short	type;
+	WORD	whandle;
+	short	status;
 	GRECT last;
 	DIALOG *dial;
 	OBJECT *obj;
@@ -101,14 +108,13 @@ typedef struct _window_data_
 {
 	struct _window_data_	*next;
 	struct _window_data_	*previous;
-	int	type;
-	int	whandle;
-	int	status;
-	GRECT full;
+	short	type;
+	WORD	whandle;
+	short	status;
 	GRECT last;
 	HNDL_WIN proc;
 	char	*title;
-	int	kind;
+	short	kind;
 	int	vdi_handle;
 	int	workout[57];
 	int	ext_workout[57];
@@ -128,17 +134,17 @@ typedef struct _filesel_data_
 {
 	struct _filesel_data_	*next;
 	struct _filesel_data_	*previous;
-	int	type;
-	int	whandle;
-	int	status;
+	short	type;
+	WORD	whandle;
+	short	status;
 	GRECT last;
 	HNDL_FSL proc;
 	void *dialog;
 	char path[DL_PATHMAX];
 	char name[DL_NAMEMAX];
-	int	button;
-	int	sort_mode;
-	int	nfiles;
+	WORD	button;
+	WORD	sort_mode;
+	WORD	nfiles;
 	void *data;
 }FILESEL_DATA;
 
@@ -149,15 +155,15 @@ typedef struct _fontsel_data_
 {
 	struct _fontsel_data_	*next;
 	struct _fontsel_data_	*previous;
-	int	type;
-	int	whandle;
-	int	status;
+	short	type;
+	WORD	whandle;
+	short	status;
 	GRECT last;
 	HNDL_FONT proc;
 	FNT_DIALOG *dialog;
-	int	font_flag;
+	short	font_flag;
 	char 	*opt_button;
-	int	button,check_boxes;
+	WORD	button,check_boxes;
 	long	id,pt,ratio;
 	int	vdi_handle;
 	void *data;

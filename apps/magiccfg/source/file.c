@@ -164,9 +164,9 @@ int QuitClose(void)
 		{
 			if(!open_file)					/*	Dateiname bestimmt ?	*/
 			{
-				OpenFileselector(QuitCloseFile,string_addr[FSEL_MAG_SAVE],tmp_path,
-					std_paths,std_masks,0);
-				ModalItem();
+				if (OpenFileselector(QuitCloseFile,string_addr[FSEL_MAG_SAVE],tmp_path,
+					std_paths,std_masks,0))
+					ModalItem();
 				return(FALSE);
 			}
 			Save();
@@ -218,9 +218,9 @@ void New(void)
 		{
 			if(!open_file)					/*	Dateiname bestimmt ?	*/
 			{
-				OpenFileselector(NewCloseFile,string_addr[FSEL_MAG_SAVE],tmp_path,
-					std_paths,std_masks,0);
-				ModalItem();
+				if (OpenFileselector(NewCloseFile,string_addr[FSEL_MAG_SAVE],tmp_path,
+					std_paths,std_masks,0))
+					ModalItem();
 				return;
 			}
 			Save();
