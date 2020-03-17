@@ -42,3 +42,11 @@ aaa.cfg
 *.mode1v3
 *.pbxuser
 .directory
+
+# UDO generated files
+*.stg
+*.ul*
+*.hyp
+*.ref
+udo*.gif
+apps/magiccfg/doc/magiccfg*.txt

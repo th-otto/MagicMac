@@ -1,5 +1,8 @@
-#!language english
+!ifset GERMAN
 !language german
+!else
+!language english
+!endif
 #!no_images				[asc,stg]
 
 !code_source [tos]

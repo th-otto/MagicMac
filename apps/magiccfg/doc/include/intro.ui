@@ -4,6 +4,50 @@
 #---------------------------------------------
 !node Introduction
 
+MagiC-Configurator (=MAGICCFG) is a program, which helps to configure 
+the MAGX.INF of MagiC 5.0 to 6.0 with a user friendly GEM interface.
+The file (MAGX.INF) is there to specify exactly how MagiC should 
+behave. So it is possible to change the window management and indeed 
+the Look&Feel of MagiC. (!nl)
+Previously, to be able to adapt this file it was necessary to know a 
+lot about the different flags and unusual counting systems involved: 
+binary and hexadecimal. So because this type of editing work isn't 
+everyones's cup of tea I wrote this program.
+
+Basically MAGICCFG is a simplification of the configuration editing 
+process of MagiC, so that the user doesn't have to have previous 
+knowledge about flags and (!link [segments] [segment]).
+
+The most important features are:
+!begin_center
+                          MagiC-Configurator
+!end_center
+
+!begin_itemize
+!item conforms completely to GEM and uses modern window dialogs.
+
+!item knows every flag and segment up to MagiC version 6.01.
+
+!item sensitive to unknown flags and segments and doesn't alter such 
+values (= it can be used with future versions of MagiC)
+
+!item is BubbleGEM compatible, this means it supports this famous help 
+system.
+
+!item has an ST-Guide online help.
+
+!item uses the MagiC-Fontselector (from V1.25 in a window).
+
+!item uses the MagiC-Fileselector.
+
+!item supports long filenames.
+
+!item supports ARGV, Drag&Drop how Atari defined it and VA_START to 
+load new files without errors.
+
+!item  uses iconify and alliconify.
+!end_itemize
+
 !else
 #---------------------------------------------
 # German part of the the documentation        
