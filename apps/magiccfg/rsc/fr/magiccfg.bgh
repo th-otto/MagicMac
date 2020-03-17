@@ -1,4 +1,7 @@
 #BGH 000 000 000
+
+ BubbleGEM Help-File by ORCS 2.17 for ResourceMaster/ORCS
+
 #User 000
 # 000 Titel
 #More 000
@@ -31,7 +34,7 @@
 # 020 Le dialogue suivant aide … modifier les paramŠtres de boot (=Start de MagiC) (… partir de MagiC 6)
 # 021 Dans ce dialogue vous pouvez param‚trer quelles Shared-Libraries (librairies partag‚es) l'AES doit mettre r‚sidents en m‚moire au lancement.
 # 022 Divers paramŠtres, qui ne peuvent ˆtre plac‚s dans un autre dialogue :-)
-#Dial 004
+#Dial 004 Path
 # 001 Vous pouvez d‚terminer ici le chemin du presse-papier. Ce r‚pertoire sera utilis‚ pour l'‚change de donn‚es entre diff‚rentes applications. (Copier&Coller)
 # 002 Les accessoires seront charg‚s dans ce r‚pertoire.
 # 003 Les applications pr‚sentes dans ce r‚pertoire seront lanc‚es automatiquement au boot. (Aussi aprŠs l'initialisation des ACCs)
@@ -40,7 +43,7 @@
 # 006 Le programme d‚sign‚ par ce chemin sera utilis‚ … chaque lancement d'une application TOS-/TTP. (ex. TOS2GEM, VT52.PRG, etc)
 # 013 >002
 # 014 >003
-#Dial 005
+#Dial 005 Resolution
 # 002 Vous pouvez choisir ici le nombre de couleurs.
 # 004 Vous pouvez choisir dans ce champ les r‚solutions souhait‚es (suivant le nombre de couleurs). Ne sont disponibles que les r‚solutions connues du configurateur.
 # 005 ^
@@ -62,7 +65,7 @@
 # 021 Vous activez avec les paramŠtres d‚finis par l'utilisateur.
 # 022 Entrez ici le num‚ro de p‚riph‚rique VDI.
 # 023 Entrez ici un code de mode ‚ventuellement n‚cessaire.
-#Dial 006
+#Dial 006 Variables
 # 002 Choisissez une variable que vous souhaitez ‚diter. Un double clic active/d‚sactive une variable.
 # 003 ^
 # 004 ^
@@ -82,7 +85,7 @@
 # 020 Applique les variables modifi‚es dans la liste.
 # 021 EnlŠve la variable choisie.
 # 022 Ferme le dialogue (la liste sera toujours renomm‚e, mˆme si le dialogue est ferm‚ avec le bouton de fermeture de la fenˆtre).
-#Dial 007
+#Dial 007 Font
 # 002 Donne le nom de la fonte AES qui sera utilis‚e pour l'‚criture en gros.
 # 003 D‚termine la taille pour l'‚criture en gros. 0 est la taille standard.
 # 005 Donne le nom de la fonte AES qui sera utilis‚e pour l'‚criture en petit.
@@ -91,7 +94,7 @@
 # 008 >003
 # 010 Ici est d‚termin‚ la largeur de l'objet pour l'AES. Cela est n‚cessaire quand des fontes proportionnelles sont utilis‚es. Avec 0 l'AES adapte la taille lui-mˆme.
 # 011 Ici est d‚termin‚ la hauteur de l'objet pour l'AES. Cela est n‚cessaire quand des fontes proportionnelles sont utilis‚es. Avec 0 l'AES adapte la taille lui-mˆme.
-#Dial 008
+#Dial 008 VFAT
 # 002 Si ce bouton est activ‚, les noms longs de fichiers seront admis sur les lecteurs sp‚cifi‚s.
 # 003 ^
 # 004 ^
@@ -120,7 +123,7 @@
 # 027 ^
 # 028 Applique les modifications et ferme le dialogue. Les r‚glages seront actifs au prochain lancement.
 # 029 >003
-#Dial 009
+#Dial 009 Other
 # 003 Donne le nombre d'octets qui doivent ˆtre r‚serv‚s au tampon du shell. Il y aura toujours environ 4192 octets de r‚serv‚ (… partir de MagiC 6 min. 8192).
 # 004 Active le multitƒches au boot. Cel… peut poser des problŠmes au d‚marrage!
 # 005 Donne la longueur d'une tranche de temps systŠme (en multitƒches pr‚emptif) en millisecondes.
@@ -128,27 +131,27 @@
 # 010 Vous pouvez d‚finir ici les masques standards du s‚lecteur de fichier de MagiC. Les chaŒnes des extensions sont s‚par‚es par ';'. Les motifs doubles seront s‚par‚s par ',' (ex. "*.PRG,*.APP" ou "*.JPG,*.JPEG").
 # 011 >002
 # 012 >003
-#Dial 010
+#Dial 010 Background
 # 002 Vous pouvez ici changer le motif de fond.
 # 004 Vous pouvez ici changer la couleur de fond.
 # 005 Ce petit espace vous donne une apercu du fond du bureau avec les valeurs entr‚es.
 # 007 >002
 # 008 >003
-#Dial 011
+#Dial 011 Boot
 # 001 Vous pouvez donner ici le chemin du fichier de log qui enregistre les ‚vŠnement du boot.
 # 002 Vous d‚terminez ici le chemin de l'image de lancement. Cette image doit ˆtre au format XIMG (*.img).
 # 003 Vous pouvez choisir ici un motif au format XIMG qui sera utilis‚ pour le fond. MagiC duplique l'image choisie pour remplir entiŠrement le fond.
 # 004 Donnez ici le nombre de cookies qui seront charg‚s en m‚moire. (le cookie-jar doit ˆtre d'une taille n‚cessaire car durant le boot il ne peut ˆtre agrandi)
 # 005 >002
 # 006 >003
-#Dial 012
+#Dial 012 Window
 # 001 Entrez ici le nombre maximum de fenˆtres pouvant ˆtre ouvertes simultan‚ment. (Il doit y avoir environ 16 fenˆtres de r‚serv‚es en m‚moire!)
 # 003 Fonte qui sera utilis‚e pour la ligne d'info de la fenˆtre AES.
 # 004 D‚termine la taille de la fonte d'info. 0 est la taille standard.
 # 005 D‚termine la taille de la ligne d'info en pixels.
 # 006 >002
 # 007 >003
-#Dial 013
+#Dial 013 Libraries
 # 002 Un simple clic s‚lectionne la librairie, avec laquelle vous pouvez changer le num‚ro de version minimale. Avec un double clic vous pouvez choisir une autre librairie.
 # 003 ^
 # 004 ^
