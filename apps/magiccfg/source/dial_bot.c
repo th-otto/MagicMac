@@ -26,7 +26,7 @@ GRECT		rect;
 		}
 		if (args.obj == HNDL_EDCH )
 		{
-			if((args.events->mclicks==2)&&(args.events->mbutton==1))
+			if(args.events && args.events->mclicks == 2 && args.events->mbutton == 1)
 			{
 			char path[MPATHMAX];
 				args.obj=*(int *)args.data;

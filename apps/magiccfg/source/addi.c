@@ -19,6 +19,12 @@ AESVARS *aesvars;
 MAGX_COOKIE *cookie=NULL;
 
 	if(Getcookie('MagX', (void *)&cookie))		/*	MagiC-Cookie suchen	*/
+#if 0
+	{
+		MagiC_Version = 0x610;
+		MagiC_Date = 0x20200101L;
+	}
+#else
 	{
 		form_alert(1,string_addr[NO_MAGIC_FOUND]);	/*	Meldung	*/
 		return(TRUE);									/*	nicht da ? -> tschÅss	*/
@@ -41,6 +47,7 @@ MAGX_COOKIE *cookie=NULL;
 		form_alert(1,string_addr[NO_MAGIC_FOUND]);	/*	Meldung	*/
 		return(TRUE);									/*	und tschÅss	*/
 	}
+#endif
 
 	if(appl_find("?AGI")==0)						/*	appl_getinfo() vorhanden ?	*/
 	{
