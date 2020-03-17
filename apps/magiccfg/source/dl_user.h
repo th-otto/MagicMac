@@ -6,9 +6,6 @@
 /*	Debuglogbuch-Datei erstellen? (=Alle Debug Ausgaben in diese Datei)	*/
 #define	DEBUG_LOG				OFF
 
-/*	Sprache des Programms (fÅr Text-Strings im Programmcode)	*/
-#define	LANGUAGE				GERMAN
-
 /*	Programm nur unter MagiC lauffÑhig? (MagiC spez. Funktionen Benutzen?)	*/
 #define	MAGIC_ONLY				NO
 

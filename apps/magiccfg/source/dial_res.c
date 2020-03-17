@@ -30,38 +30,27 @@ char *Colordepth[]=
 
 int tmp_col;
 
-#if LANGUAGE == GERMAN
-char	*no_resolution="Keine Aufl”sung anw„hlbar",
-		*st_high="640x400 (ST-Hoch)",
-		*tt_high="1280x960 (TT-Hoch)",
-		*st_med="640x200 (ST-Mittel)",
-		*st_low="320x200 (ST-Gering)",
-		*tt_med="640x480 (TT-Mittel)",
-		*tt_low="320x480 (TT-Gering)",
-#else
-char	*no_resolution="no change",
-		*st_high="640x400 (ST high)",
-		*tt_high="1280x960 (TT high)",
-		*st_med="640x200 (ST medium)",
-		*st_low="320x200 (ST low)",
-		*tt_med="640x480 (TT medium)",
-		*tt_low="320x480 (TT low)",
-#endif
-		*f64_48="640x480",
-		*f64_24="640x240",
-		*f64_40="640x400",
-		*f64_20="640x200",
-		*f32_48="320x480",
-		*f32_24="320x240",
-		*f32_40="320x400",
-		*f32_20="320x200",
+static char *st_high;
+static char *tt_high;
+static char *st_med;
+static char *st_low;
+static char *tt_med;
+static char *tt_low;
+static char *f64_48="640x480";
+static char *f64_24="640x240";
+static char *f64_40="640x400";
+static char *f64_20="640x200";
+static char *f32_48="320x480";
+static char *f32_24="320x240";
+static char *f32_40="320x400";
+static char *f32_20="320x200";
 
-		*f76_48="768x480",
-		*f76_24="768x240",
-		*f38_48="384x480",
-		*f38_24="384x240",
+static char *f76_48="768x480";
+static char *f76_24="768x240";
+static char *f38_48="384x480";
+static char *f38_24="384x240";
 		
-		*fnull="";
+static char *fnull="";
 		
 
 typedef struct
@@ -70,7 +59,7 @@ typedef struct
 	int mode;
 }A_RESO;
 
-A_RESO vga_tab[]=
+static A_RESO vga_tab[]=
 {
 	{&st_high,BPS1|VGA|STMODES|COL80},
 	{&st_med,BPS2|VGA|STMODES|COL80|VERTFLAG},
@@ -250,9 +239,16 @@ long value;
 int vdo;
 	if(Getcookie('_VDO',&value))
 	{
-		NewEntry(no_resolution, -1, -1);
+		NewEntry(string_addr[NO_RESOLUTION], -1, -1);
 		return;
 	}
+
+	st_high = string_addr[FS_ST_HIGH];
+	tt_high = string_addr[FS_TT_HIGH];
+	st_med = string_addr[FS_ST_MED];
+	st_low = string_addr[FS_ST_LOW];
+	tt_med = string_addr[FS_TT_MED];
+	tt_low = string_addr[FS_TT_LOW];
 
 	vdo=*(int *)&value;
 
@@ -341,7 +337,7 @@ int vdo;
 	}
 
 	if(ResVar==NULL)
-		NewEntry(no_resolution, -1, -1);
+		NewEntry(string_addr[NO_RESOLUTION], -1, -1);
 	
 	ResVar=Sort();
 }

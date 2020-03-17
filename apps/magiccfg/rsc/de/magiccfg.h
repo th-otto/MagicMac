@@ -5,19 +5,19 @@
  */
 
 /*
- * Number of Strings:        358
+ * Number of Strings:        365
  * Number of Bitblks:        0
  * Number of Iconblks:       0
  * Number of Color Iconblks: 1
  * Number of Color Icons:    1
  * Number of Tedinfos:       65
- * Number of Free Strings:   29
+ * Number of Free Strings:   36
  * Number of Free Images:    0
  * Number of Objects:        291
  * Number of Trees:          17
  * Number of Userblks:       0
  * Number of Images:         0
- * Total file size:          17316
+ * Total file size:          17488
  */
 
 #undef RSC_NAME
@@ -35,8 +35,8 @@
 # define RSC_STATIC_FILE 0
 #endif
 #if !RSC_STATIC_FILE
-#define NUM_STRINGS 358
-#define NUM_FRSTR 29
+#define NUM_STRINGS 365
+#define NUM_FRSTR 36
 #define NUM_UD 0
 #define NUM_IMAGES 0
 #define NUM_BB 0
@@ -349,6 +349,20 @@
 #define FNTS_SAMPLE       27 /* Free string */
 
 #define NEW_FILE          28 /* Free string */
+
+#define NO_RESOLUTION     29 /* Free string */
+
+#define FS_ST_HIGH        30 /* Free string */
+
+#define FS_TT_HIGH        31 /* Free string */
+
+#define FS_ST_MED         32 /* Free string */
+
+#define FS_ST_LOW         33 /* Free string */
+
+#define FS_TT_MED         34 /* Free string */
+
+#define FS_TT_LOW         35 /* Free string */
 
 #define TITLE              0 /* BubbleUser */
 

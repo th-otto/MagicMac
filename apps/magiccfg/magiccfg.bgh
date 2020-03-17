@@ -1,4 +1,7 @@
 #BGH 000 000 000
+
+ BubbleGEM Help-File by ORCS 2.17 for ResourceMaster/ORCS
+
 #User 000
 # 000 Titel
 #More 000
@@ -8,9 +11,9 @@
 #Dial 001
 # 000 Dieses Fenster geh”rt zum|MagiC-Configurator !
 # 001 ^
-#Dial 002 Autor
+#Dial 002 Author
 # 001 >001
-#Dial 003 Hauptdialog
+#Dial 003 Main dialog
 # 001 Versionsnummer des benutzten MagiC
 # 003 Bestimmt, ob sich MagiC im modernen 3D-Look oder im TOS-Look pr„sentiert.
 # 004 Bestimmt, ob der Backdrop-Button angezeigt wird. Falls er nicht angezeigt wird, bewirkt ein Klick auf den Titelbalken das gleiche wie ein Klick auf den Backdrop-Button.
@@ -31,7 +34,7 @@
 # 020 Der folgende Dialog dient zum Ver„ndern der Boot-Einstellungen (Start-Vorgang von MagiC) (ab MagiC 6)
 # 021 In diesem Dialog k”nnen Sie einstellen, welche Shared-Libraries die AES beim Aufstarten resident in den Speicher l„dt.
 # 022 Im folgenden Dialog finden Sie diverse andere Einstellungen, die es nicht wert waren, in einen eigenen Dialog aufgenommen zu werden :-)
-#Dial 004
+#Dial 004 Path
 # 001 Hier k”nnen Sie den Clipboard-Pfad festlegen. Dieses Verzeichnis wird fr den Datenaustausch zwischen verschiedenen Applikationen genutzt. (Copy&Paste)
 # 002 Aus diesem Verzeichnis werden die Accessories geladen.
 # 003 In diesem Verzeichnis werden Applikationen gesucht, welche beim Booten automatisch gestartet werden sollen. (Also nach der Initialisierung der ACC's)
@@ -40,7 +43,7 @@
 # 006 Das durch diesen Pfad beschriebene Programm wird beim Start eines TOS-/TTP-Programms gestartet. (z.B. TOS2GEM, VT52.PRG, u.a.)
 # 013 >002
 # 014 >003
-#Dial 005
+#Dial 005 Resolution
 # 002 Hier k”nnen Sie die Farbtiefe w„hlen.
 # 004 In diesem Feld k”nnen Sie die m”glichen Aufl”sungen (zur gew„hlten Farbtiefe) ausw„hlen. Es werden nur die dem Configurator bekannten Aufl”sungen angegeben.
 # 005 ^
@@ -62,7 +65,7 @@
 # 021 Hiermit aktivieren Sie die benutzerdefinierten Einstellungen.
 # 022 Tragen Sie hier die VDI-Treibernummer ein.
 # 023 Tragen Sie hier einen evtl. ben”tigten Mode-Code ein.
-#Dial 006
+#Dial 006 Variables
 # 002 Hiermit w„hlen Sie eine Variable, die Sie editieren m”chten. Doppelklick aktiviert bzw. deaktiviert eine Variable.
 # 003 ^
 # 004 ^
@@ -82,7 +85,7 @@
 # 020 šbernimmt die ver„nderte Variable in die Liste.
 # 021 Entfernt die gew„hlte Variable.
 # 022 Schliesst den Dialog (die Liste wird immer bernommen, auch wenn der Dialog ber den Closer des Fensters geschlossen wird).
-#Dial 007
+#Dial 007 Font
 # 002 Gibt den Namen des AES-Zeichensatzes an, der fr die grosse Schrift benutzt wird.
 # 003 Legt die H”he fr grosse Schriften fest. 0 setzt die Standard-Gr”sse.
 # 005 Gibt den Namen des AES-Zeichensatzes an, der fr die kleine Schrift benutzt wird.
@@ -91,7 +94,7 @@
 # 008 >003
 # 010 Hiermit kann man die Objekt-Breite fr die AES festlegen. Dies ist vor allem n”tig, wenn proportionale Zeichens„tze verwendet werden. Mit 0 ermittelt die AES die Gr”sse selbst.
 # 011 Hiermit kann man die Objekt-H”he fr die AES festlegen. Dies ist vor allem n”tig, wenn proportionale Zeichens„tze verwendet werden. Mit 0 ermittelt die AES die Gr”sse selbst.
-#Dial 008
+#Dial 008 VFAT
 # 002 Wird dieser Button selektiert, so werden lange Dateinamen auf dem entsprechenden Laufwerk zugelassen.
 # 003 ^
 # 004 ^
@@ -120,7 +123,7 @@
 # 027 ^
 # 028 šbernimmt die Žnderungen und schliesst den Dialog. Die Einstellungen werden aber erst nach dem n„chsten Systemstart aktiv.
 # 029 >003
-#Dial 009
+#Dial 009 Other
 # 003 Gibt die Anzahl Bytes an, die fr den Shellbuffer reserviert werden. Es werden immer mindestens 4192 Bytes reserviert (ab MagiC 6 min. 8192).
 # 004 Aktiviert das Multitasking beim Booten. Dies kann zu Problemen beim Aufstarten fhren!
 # 005 Gibt die L„nge einer Zeitscheibe (im pr„-emptiven Multitasking) in Millisekunden an.
@@ -128,27 +131,27 @@
 # 010 Hier k”nnen Sie die Standard-Masken fr den MagiC-Fileselektor definieren.  Zeichenketten m”glicher Extensionen sind durch ';' zu trennen. Doppelmuster werden voneinander durch ',' getrennt (z.B. "*.PRG,*.APP" oder "*.JPG,*.JPEG").
 # 011 >002
 # 012 >003
-#Dial 010
+#Dial 010 Background
 # 002 Hiermit k”nnen Sie die Hintergrundmuster ver„ndern.
 # 004 Hiermit k”nnen Sie das Hintergrundfarbe ver„ndern.
 # 005 Dieses kleine Feld zeigt Ihnen, wie der Desktop-Hintergrund mit den eingestellten Werten aussehen wrde.
 # 007 >002
 # 008 >003
-#Dial 011
+#Dial 011 Boot
 # 001 Hier k”nnen Sie den Pfad fr ein Logbuch angeben, welches den Boot-Vorgang mitprotokolliert.
 # 002 Hiermit bestimmen Sie den Pfad des Start-Bildes. Das Startbild sollte im XIMG-Format vorliegen (*.img).
 # 003 Hiermit k”nnen Sie ein Pattern (=Muster) im XIMG-Format w„hlen, welches zum Zeichnen des Hintergrunds genommen wird. MagiC zeichnet das gew„hlte Bild so oft wie n”tig um den ganzen Hintergrund zu fllen.
 # 004 Geben Sie hier die Anzahl Cookies an, fr die Speicher angelegt wird. (gengend gross gew„hlt muss der Cookie-Jar w„hrend dem Booten nicht mehr erweitert werden)
 # 005 >002
 # 006 >003
-#Dial 012
+#Dial 012 Window
 # 001 Geben Sie hier die Anzahl Fenster an, fr die Speicher angelegt wird. (Es sollte fr mindestens 16 Fenster Speicher reserviert werden!)
 # 003 Gibt den Namen, des Zeichensatzes an, der in der Infozeile der AES-Fenster benutzt wird.
 # 004 Legt die H”he fr Info-Zeichensatz fest. 0 setzt die Standard-Gr”sse.
 # 005 Legt die H”he der Infozeile in Pixel fest.
 # 006 >002
 # 007 >003
-#Dial 013
+#Dial 013 Libraries
 # 002 Ein einfach-Klick selektiert die Library, damit Sie die minimale Versionsnummer „ndern k”nnen. Mit einem Doppelklick k”nnen Sie per Fileselector eine Library „ndern.
 # 003 ^
 # 004 ^

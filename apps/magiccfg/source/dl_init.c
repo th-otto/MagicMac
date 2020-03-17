@@ -26,13 +26,9 @@ RGB1000 save_palette[256];
 int	old_domain;
 #endif
 
-#if LANGUAGE==GERMAN
-char	*err_loading_rsc="[1][Fehler beim Laden von |'"RESOURCE_FILE"'.][Abbruch]";
-#elif LANGUAGE==FRENCH
-char	*err_loading_rsc="[1][Impossible de trouver '"RESOURCE_FILE"'.][Annuler]";
-#else
+/* char	*err_loading_rsc="[1][Fehler beim Laden von |'"RESOURCE_FILE"'.][Abbruch]"; */
+/* char	*err_loading_rsc="[1][Impossible de trouver '"RESOURCE_FILE"'.][Annuler]"; */
 char	*err_loading_rsc="[1][Error while loading |'"RESOURCE_FILE"'.][Cancel]";
-#endif
 char	*resource_file=RESOURCE_FILE;
 RSHDR	*rsh;
 OBJECT	**tree_addr;
