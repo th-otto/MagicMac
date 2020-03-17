@@ -18,6 +18,7 @@ void LoadFile(FILESEL_DATA *ptr, int nfiles)
 		strcpy(tmp_path,ptr->path);
 		strcat(tmp_path,ptr->name);
 		Open(0);
+		ModalItem();
 	}
 }
 

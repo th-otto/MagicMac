@@ -265,7 +265,6 @@ char *ptr;
 	{
 		OpenFileselector(LoadFile,string_addr[FSEL_MAG_OPEN],tmp_path,
 			std_paths,std_masks,0);
-		ModalItem();
 		return;
 	}
 
