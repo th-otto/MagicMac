@@ -785,9 +785,9 @@ typedef struct
 /* Structure used by Bconmap() */
 typedef struct
 {
-	short (*Bconstat)(void);
-	long (*Bconin)(void);
-	long (*Bcostat)(void);
+	short _CDECL (*Bconstat)(short dev);
+	long _CDECL (*Bconin)(short dev);
+	long _CDECL (*Bcostat)(short dev);
 	void _CDECL (*Bconout)(short, short);
 	unsigned long _CDECL (*Rsconf)(short, short, short, short, short, short);
 	_IOREC *iorec;

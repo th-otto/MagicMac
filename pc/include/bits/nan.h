@@ -43,10 +43,10 @@
 
 # include <endian.h>
 
-# if __BYTE_ORDER == __BIG_ENDIAN
+# if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
 #  define __nan_bytes		{ 0x7f, 0xc0, 0, 0 }
 # endif
-# if __BYTE_ORDER == __LITTLE_ENDIAN
+# if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 #  define __nan_bytes		{ 0, 0, 0xc0, 0x7f }
 # endif
 

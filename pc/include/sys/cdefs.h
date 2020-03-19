@@ -350,9 +350,8 @@
      || (defined __clang__ && (defined __GNUC_STDC_INLINE__ \
 			       || defined __GNUC_GNU_INLINE__)))
 # if defined __GNUC_STDC_INLINE__ || defined __cplusplus
-#  define __extern_inline extern __inline __attribute__ ((__gnu_inline__))
-#  define __extern_always_inline \
-  extern __always_inline __attribute__ ((__gnu_inline__))
+#  define __extern_inline __attribute__ ((__gnu_inline__)) extern __inline
+#  define __extern_always_inline __attribute__ ((__gnu_inline__)) extern __always_inline
 # else
 #  define __extern_inline extern __inline
 #  define __extern_always_inline extern __always_inline

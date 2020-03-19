@@ -37,6 +37,7 @@ typedef struct __pthread_t *pthread_t;
 # define __have_pthread_attr_t	1
 typedef struct __pthread_attr pthread_attr_t;
 #endif
+#if !defined(__PUREC__) && !defined(__TURBOC__)
 struct __pthread_attr
 {
 	/* Scheduler parameters and priority. */
@@ -170,5 +171,6 @@ struct __pthread_barrierattr
 
 #endif
 
+#endif /* __PUREC__ */
 
 #endif	/* bits/pthreadtypes.h */

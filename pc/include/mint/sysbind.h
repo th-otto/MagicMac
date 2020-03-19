@@ -66,7 +66,7 @@ __BEGIN_DECLS
 #define Crawcin() (long)trap_1_w(0x7)
 #define Cnecin() (long)trap_1_w(0x8)
 #define Cconws(a) (short)trap_1_wl(0x9,(long)(a))
-#define Cconrs(a) (void)trap_1_wl(0xa,(long)(a))
+#define Cconrs(a) (long)trap_1_wl(0xa,(long)(a))
 #define Cconis() (short)trap_1_w(0xb)
 #define Dsetdrv(a) (long)trap_1_ww(0xe,(short)(a))
 #define Cconos() (short)trap_1_w(0x10)

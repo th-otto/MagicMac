@@ -57,9 +57,9 @@
 # define BYTE_ORDER	__BYTE_ORDER
 #endif
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 # define __LONG_LONG_PAIR(HI, LO) LO, HI
-#elif __BYTE_ORDER == __BIG_ENDIAN
+#elif __BYTE_ORDER == __ORDER_BIG_ENDIAN__
 # define __LONG_LONG_PAIR(HI, LO) HI, LO
 #endif
 
@@ -68,7 +68,7 @@
 # include <bits/byteswap.h>
 # include <bits/uintn-id.h>
 
-# if __BYTE_ORDER == __LITTLE_ENDIAN
+# if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 #  define htobe16(x) __bswap_16 (x)
 #  define htole16(x) __uint16_identity (x)
 #  define be16toh(x) __bswap_16 (x)

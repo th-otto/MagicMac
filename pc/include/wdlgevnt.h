@@ -4,7 +4,7 @@
 typedef _LONG fixed;
 
 /* Mouse rectangle for EVNT_multi() */
-#ifndef __MOBLK
+#if !defined(__MOBLK) && !defined(__TOS)
 #define __MOBLK
 typedef struct
 {

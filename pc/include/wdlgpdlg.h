@@ -32,10 +32,10 @@ struct PDLG_HNDL_args
 	_WORD exit_obj;
 };
 
-typedef _LONG _CDECL (*PDLG_INIT)(PRN_SETTINGS *settings, PDLG_SUB *sub);
-typedef _LONG _CDECL (*PDLG_HNDL)(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
-typedef _LONG _CDECL (*PDLG_RESET)(PRN_SETTINGS *settings, PDLG_SUB *sub);
-typedef _LONG _CDECL (*PRN_SWITCH)(DRV_ENTRY *drivers, PRN_SETTINGS *settings, PRN_ENTRY *old_printer, PRN_ENTRY *new_printer);
+typedef long __CDECL (*PDLG_INIT)(PRN_SETTINGS *settings, PDLG_SUB *sub);
+typedef long __CDECL (*PDLG_HNDL)(struct PDLG_HNDL_args args);
+typedef long __CDECL (*PDLG_RESET)(PRN_SETTINGS *settings, PDLG_SUB *sub);
+typedef long __CDECL (*PRN_SWITCH)(DRV_ENTRY *drivers, PRN_SETTINGS *settings, PRN_ENTRY *old_printer, PRN_ENTRY *new_printer);
 
 struct _drv_entry {
 	DRV_ENTRY   *next;
@@ -377,10 +377,10 @@ _WORD pdlg_close(PRN_DIALOG *prn_dialog, _WORD *x, _WORD *y);
 PRN_DIALOG *pdlg_create(_WORD dialog_flags);
 _WORD pdlg_delete(PRN_DIALOG *prn_dialog);
 _WORD pdlg_dflt_settings(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings);
-_WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, CONST char *document_name, _WORD option_flags);
+_WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *document_name, _WORD option_flags);
 _WORD pdlg_evnt(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, EVNT *events, _WORD *button);
 _WORD pdlg_free_settings(PRN_SETTINGS *prn_settings);
-_LONG pdlg_get_setsize(_VOID);
+_LONG pdlg_get_setsize(void);
 PRN_SETTINGS *pdlg_new_settings(PRN_DIALOG *prn_dialog);
 _WORD pdlg_open(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *document_name, _WORD option_flags, _WORD x, _WORD y);
 _WORD pdlg_remove_printers(PRN_DIALOG *prn_dialog);

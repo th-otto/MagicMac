@@ -402,7 +402,7 @@ extern uint16_t htons (uint16_t __hostshort)
 /* We can optimize calls to the conversion functions.  Either nothing has
    to be done or we are using directly the byte-swapping functions which
    often can be inlined.  */
-#if __BYTE_ORDER == __BIG_ENDIAN
+#if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
 /* The host byte order is the same as network byte order,
    so these functions are all just identity.  */
 # define ntohl(x)	__uint32_identity (x)
@@ -411,7 +411,7 @@ extern uint16_t htons (uint16_t __hostshort)
 # define htons(x)	__uint16_identity (x)
 #else
 # ifdef __OPTIMIZE__
-#  if __BYTE_ORDER == __LITTLE_ENDIAN
+#  if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 #   define ntohl(x)	__bswap_32 (x)
 #   define ntohs(x)	__bswap_16 (x)
 #   define htonl(x)	__bswap_32 (x)

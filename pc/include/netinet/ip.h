@@ -50,10 +50,10 @@ struct timestamp
   {
     uint8_t len;
     uint8_t ptr;
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
     unsigned int flags:4;
     unsigned int overflow:4;
-#elif __BYTE_ORDER == __BIG_ENDIAN
+#elif __BYTE_ORDER == __ORDER_BIG_ENDIAN__
     unsigned int overflow:4;
     unsigned int flags:4;
 #else
@@ -64,10 +64,10 @@ struct timestamp
 
 struct iphdr
   {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
     unsigned int ihl:4;
     unsigned int version:4;
-#elif __BYTE_ORDER == __BIG_ENDIAN
+#elif __BYTE_ORDER == __ORDER_BIG_ENDIAN__
     unsigned int version:4;
     unsigned int ihl:4;
 #else
@@ -99,11 +99,11 @@ struct iphdr
  * against negative integers quite easily, and fail in subtle ways.
  */
 struct ip {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
     uint8_t ip_hl:4;		/* header length */
     uint8_t ip_v:4;			/* version */
 #endif
-#if __BYTE_ORDER == __BIG_ENDIAN
+#if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
     uint8_t ip_v:4;			/* version */
     uint8_t ip_hl:4;		/* header length */
 #endif
@@ -129,11 +129,11 @@ struct ip_timestamp
     uint8_t ipt_code;			/* IPOPT_TS */
     uint8_t ipt_len;			/* size of structure (variable) */
     uint8_t ipt_ptr;			/* index of current entry */
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
     uint8_t ipt_flg:4;		/* flags, see below */
     uint8_t ipt_oflw:4;		/* overflow counter */
 #endif
-#if __BYTE_ORDER == __BIG_ENDIAN
+#if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
     uint8_t ipt_oflw:4;		/* overflow counter */
     uint8_t ipt_flg:4;		/* flags, see below */
 #endif

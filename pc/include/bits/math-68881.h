@@ -1007,20 +1007,20 @@ sqrtl (long double x)
 __MATH_68881_INLINE double
 hypot (double x, double y)
 {
-  return sqrt (x*x + y*y);
+  return __builtin_isinf(x) || __builtin_isinf(y) ? __builtin_inf() : sqrt (x*x + y*y);
 }
 
 __MATH_68881_INLINE float
 hypotf (float x, float y)
 {
-  return sqrtf (x*x + y*y);
+  return __builtin_isinff(x) || __builtin_isinff(y) ? __builtin_inff() : sqrtf (x*x + y*y);
 }
 #define _GLIBCXX_HAVE_HYPOTF 1
 
 __MATH_68881_INLINE long double
 hypotl (long double x, long double y)
 {
-  return sqrtl (x*x + y*y);
+  return __builtin_isinfl(x) || __builtin_isinfl(y) ? __builtin_infl() : sqrtl (x*x + y*y);
 }
 #define _GLIBCXX_HAVE_HYPOTL 1
 

@@ -50,7 +50,7 @@
 # include <endian.h>
 # include <bits/types.h>
 
-# if __BYTE_ORDER == __LITTLE_ENDIAN
+# if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 #  define __STRING2_SMALL_GET16(src, idx) \
      (((__const unsigned char *) (__const char *) (src))[idx + 1] << 8	      \
       | ((__const unsigned char *) (__const char *) (src))[idx])

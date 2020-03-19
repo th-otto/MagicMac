@@ -15,6 +15,11 @@
 #  include <wdlgevnt.h>
 #endif
 
+/*
+ * do indidcate certain difference to original PCGEMLIB
+ */
+#define _GEMLIB_COMPATIBLE 1
+
 EXTERN_C_BEG
 
 extern short _app;
@@ -652,8 +657,8 @@ typedef struct
 	_WORD	intin[VDI_INTINMAX];
 	_WORD	intout[VDI_INTOUTMAX];
 	_WORD	ptsout[VDI_PTSOUTMAX];
-	_VOID	*addrin[AES_ADDRINMAX];
-	_VOID	*addrout[AES_ADDROUTMAX];
+	void	*addrin[AES_ADDRINMAX];
+	void	*addrout[AES_ADDROUTMAX];
 	_WORD	ptsin[VDI_PTSINMAX];
 	_WORD	acontrl[AES_CTRLMAX];
 	_WORD	aintin[AES_INTINMAX];
@@ -689,8 +694,8 @@ extern _WORD aes_global[];
 
 extern int _AesCall( _LONG c0to3); /* c4=0 */ /* MO */
 extern int _AesXCall( _LONG c0to3, _WORD c4);  /* MO */
-extern int vq_aes(_VOID);
-extern _VOID _crystal(AESPARBLK *aespb);
+extern short vq_aes(void);
+extern void _crystal(AESPARBLK *aespb);
 extern _WORD _aes(_WORD dummy, _LONG code);
 extern _WORD aes(AESPB *pb);
 
@@ -734,7 +739,7 @@ typedef struct
 	void	*aes_start;						/* Start address                   */
 	long	magic2;							/* Is 'MAGX'                       */
 	long	date;							/* Creation date ddmmyyyy          */
-    void    (*chgres)(int res, int txt);    /* Change resolution               */
+    void    (*chgres)(short res, short txt);    /* Change resolution               */
     long    (**shel_vector)(void);          /* Resident desktop                */
 	char    *aes_bootdrv;                   /* Booting took place from here    */
 	short *vdi_device;                      /* VDI-driver used by AES          */
@@ -1127,6 +1132,7 @@ _WORD appl_yield(void);
 _WORD appl_bvset(_WORD bvdisks, _WORD bvharddisks);
 _WORD appl_xbvget(_ULONG *bvdisk, _ULONG *bvhard);
 _WORD appl_xbvset(_ULONG bvdisk, _ULONG bvhard);
+void _appl_yield(void);
 
 
 /****** Event definitions ***********************************************/
@@ -1373,6 +1379,8 @@ _WORD evnt_event( MEVENT *mevent );
 
 /* this is our special invention to increase evnt_multi performance */
 
+#ifndef _EVENT
+#define _EVENT 1
 typedef struct /* Special type for EventMulti */
 {
 	/* input parameters */
@@ -1387,6 +1395,7 @@ typedef struct /* Special type for EventMulti */
 	/* message buffer */
 	_WORD     ev_mmgpbuf[8];
 } EVENT;
+#endif
 
 _WORD EvntMulti( EVENT *evnt_struct );
 
@@ -1878,6 +1887,8 @@ _WORD fsel_boxinput( char *fs_einpath, char *fs_einsel, _WORD *fs_eexbutton, con
 #define WF_WINX         0x5758          /* WINX 2.3 */
 #define WF_WINXCFG      0x5759          /* WINX 2.3 */
 #define WF_DDELAY       0x575a          /* WINX 2.3 */
+                     /* 0x575b reserved by WINX; used for appl_getinfo(11) */
+                     /* 0x575c reserved by WINX; used for appl_getinfo(12) */
 #define WF_SHADE        0x575d          /* WINX 2.3 */
 #define WF_STACK        0x575e          /* WINX 2.3 */
 #define WF_TOPALL       0x575f          /* WINX 2.3 */

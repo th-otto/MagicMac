@@ -49,7 +49,7 @@ int Nenable( void );
 #define Nprinter(a,b,c)  ((int)gemdos(121,a,b,c))     /* Net-Printer installation    */
 #define Nreset()         gemdos(120)           /* System RESET                */
 #define Nrecord(a,b,c,d) ((int)gemdos(119,a,b,c,d))   /* Record LOCKING              */
-#define Nmsg(a,b,c,d,e)  ((int)gemdos(118,((_WORD)(a)),((_VOID *)(b)),((char *)(c)),((_WORD)(d)),((_WORD)(e)))) /* Net message pipe            */
+#define Nmsg(a,b,c,d,e)  ((int)gemdos(118,((_WORD)(a)),((void *)(b)),((char *)(c)),((_WORD)(d)),((_WORD)(e)))) /* Net message pipe            */
 #define Nremote(a)       ((int)gemdos(117,a))         /* Net-Multiuser/Multitasking  */
 #define Ndisable()       gemdos(116)           /* disable Net-Driver          */
 #define Nenable()        gemdos(115)           /* enable Net-Driver           */

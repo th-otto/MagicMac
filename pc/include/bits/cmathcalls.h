@@ -213,25 +213,25 @@ __MATH_PRECNAME(conj) (_Mdouble_complex_ __z) __THROW
 #if __HAVE_COMPLEX_TYPE
 
 __extern_inline _Mdouble_complex_
-__MATH_PRECNAME(cadd) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2) __THROW
+__MATH_PRECNAME(cadd) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2)
 {
   return __z1 + __z2;
 }
 
 __extern_inline _Mdouble_complex_
-__MATH_PRECNAME(csub) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2) __THROW
+__MATH_PRECNAME(csub) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2)
 {
   return __z1 - __z2;
 }
 
 __extern_inline _Mdouble_complex_
-__MATH_PRECNAME(cdiv) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2) __THROW
+__MATH_PRECNAME(cdiv) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2)
 {
   return __z1 / __z2;
 }
 
 __extern_inline _Mdouble_complex_
-__MATH_PRECNAME(cmul) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2) __THROW
+__MATH_PRECNAME(cmul) (_Mdouble_complex_ __z1, _Mdouble_complex_ __z2)
 {
   return __z1 * __z2;
 }

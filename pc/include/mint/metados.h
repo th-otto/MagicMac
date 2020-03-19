@@ -33,7 +33,7 @@
 #define trap_14_wwlwl(n,a,b,c,d)	\
 __extension__	\
 ({	\
-	register long retvalue __asm__("d0");	\
+	register long __retvalue __asm__("d0");	\
 	short _a = (short)(a);	\
 	long _b = (long)(b);	\
 	short _c = (short)(c);	\
@@ -47,11 +47,11 @@ __extension__	\
 		"movw	%1,%%sp@-\n\t"	\
 		"trap	#14\n\t"	\
 		"lea	%%sp@(14),%%sp"	\
-		: "=r"(retvalue)	\
+		: "=r"(__retvalue)	\
 		: "g"(n), "r"(_a), "r"(_b), "r"(_c), "r"(_d)	\
 		: OSBIND_CLOBBER_LIST	\
 	);	\
-	retvalue;	\
+	__retvalue;	\
 })
 #endif
 
@@ -59,7 +59,7 @@ __extension__	\
 #define trap_14_wwwll(n,a,b,c,d)	\
 __extension__	\
 ({	\
-	register long retvalue __asm__("d0");	\
+	register long __retvalue __asm__("d0");	\
 	short _a = (short)(a);	\
 	short _b = (short)(b);	\
 	long _c = (long)(c);	\
@@ -73,11 +73,11 @@ __extension__	\
 		"movw	%1,%%sp@-\n\t"	\
 		"trap	#14\n\t"	\
 		"lea	%%sp@(14),%%sp"	\
-		: "=r"(retvalue)	\
+		: "=r"(__retvalue)	\
 		: "g"(n), "r"(_a), "r"(_b), "r"(_c), "r"(_d)	\
 		: OSBIND_CLOBBER_LIST	\
 	);	\
-	retvalue;	\
+	__retvalue;	\
 })
 #endif
 
@@ -204,7 +204,7 @@ long Metaread(short drive, void *buffer, long blockno, short count);
 long Metawrite(short drive, void *buffer, long blockno, short count);
 long Metastatus(short drive, metastatus_t *buffer);
 long Metaioctl(short drive, long magic, short opcode, void *buffer);
-long Metastartaudio(short drive, short flag, metatracks_t *tracks);
+long Metastartaudio(short drive, short flag, const metatracks_t *tracks);
 long Metastopaudio(short drive);
 long Metasetsongtime(short drive, short repeat, long starttime, long endtime);
 long Metagettoc(short drive, short flag, metatocentry_t *buffer);

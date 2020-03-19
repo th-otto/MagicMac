@@ -89,6 +89,11 @@
 
 #define REG     register                      /* Register variable           */
 #define AUTO    auto                          /* Local to function           */
+#define LOCAL   static                        /* Local to module             */
+#define MLOCAL  LOCAL                         /* Local to module             */
+#define GLOBAL                                /* Global variable             */
+#define LIB_GLOBAL GLOBAL
+#define OS_GLOBAL  GLOBAL
 
 /*****************************************************************************/
 /* COMPILER DEPENDENT DEFINITIONS                                            */
@@ -152,8 +157,9 @@
 #define _LONG LONG
 #define _LONG_PTR _LONG
 #define _ULONG ULONG
-#define _VOID VOID
+#define _VOID void
 #define _BOOL BOOLEAN
+#define _DOUBLE double
 
 #ifndef _LPVOID
 #define _LPVOID void *
@@ -163,7 +169,12 @@
 #  define _LPBYTE char *
 #endif
 
+#define LOCAL static
+#define RLOCAL LOCAL
+#define GLOBAL /**/
 #define _HUGE 
+#define EXP_PTR
+#define EXP_PROC
 
 #define FUNK_NULL 0l
 
@@ -181,7 +192,7 @@
 #  define BigEndian (is_big_endian())
 #  define IfBigEndian if (BigEndian)
 #  define IfNotBigEndian if (!BigEndian)
-_BOOL is_big_endian ( _VOID );
+_BOOL is_big_endian ( void );
 #else
 #  if BigEndian
 #    define IfBigEndian /**/
@@ -221,9 +232,9 @@ _BOOL is_big_endian ( _VOID );
 
 #ifndef NO_CONST
 #  ifdef __GNUC__
-#    define NO_CONST(p) __extension__({ union { CONST _VOID *cs; _VOID *s; } x; x.cs = p; x.s; })
+#    define NO_CONST(p) __extension__({ union { CONST void *cs; void *s; } x; x.cs = p; x.s; })
 #  else
-#    define NO_CONST(p) ((_VOID *)(p))
+#    define NO_CONST(p) ((void *)(p))
 #  endif
 #endif
 

@@ -63,7 +63,7 @@
  *	 the end of each def can now be removed, and the value of
  *	 retvalue ends up in the correct register. it avoids all the
  *	 silly "mov d0,[d|a]n" type sequences from being generated. a real win.
- *	 (note in the outputs "=r"(retvalue) still has to be specified,
+ *	 (note in the outputs "=r"(__retvalue) still has to be specified,
  *	 otherwise in certain situations you end up loosing the return
  *	 value in d0, as gcc sees no output, and correctly assumes that the
  *	 asm returns no value).
@@ -447,10 +447,10 @@ __extension__								\
 __extension__								\
 ({									\
 	register long __retvalue __asm__("d0");				\
-	short _a = (short)(a);						\
-	short _b = (long)(b);						\
-	long  _c = (short) (c);						\
-	long  _d = (short) (d);						\
+	long _a = (long)(a);						\
+	short _b = (short)(b);						\
+	short _c = (short)(c);						\
+	short _d = (short)(d);						\
 	    								\
 	__asm__ volatile						\
 	(								\

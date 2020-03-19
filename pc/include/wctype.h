@@ -65,9 +65,9 @@ __END_NAMESPACE_C99
    machine's byte order.  */
 
 #  include <endian.h>
-#  if __BYTE_ORDER == __BIG_ENDIAN
+#  if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
 #   define _ISwbit(bit)	(1 << (bit))
-#  else /* __BYTE_ORDER == __LITTLE_ENDIAN */
+#  else /* __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__ */
 #   define _ISwbit(bit)	\
 	((bit) < 8 ? (int) ((1UL << (bit)) << 24)			      \
 	 : ((bit) < 16 ? (int) ((1UL << (bit)) << 8)			      \

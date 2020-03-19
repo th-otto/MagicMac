@@ -105,11 +105,11 @@ struct tcphdr {
 	u_short	th_dport;		/* destination port */
 	tcp_seq	th_seq;			/* sequence number */
 	tcp_seq	th_ack;			/* acknowledgement number */
-# if __BYTE_ORDER == __LITTLE_ENDIAN
+# if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 	uint8_t th_x2:4;	/* (unused) */
 	uint8_t th_off:4;	/* data offset */
 # endif
-# if __BYTE_ORDER == __BIG_ENDIAN
+# if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	uint8_t	th_off:4;		/* data offset */
 	uint8_t	th_x2:4;		/* (unused) */
 # endif

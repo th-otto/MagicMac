@@ -10,7 +10,7 @@
 
 #include <bits/types.h>
 
-#ifdef	__HAVE_M68KFPU__
+#ifdef	__HAVE_FPU__
 /* D3-D7,PC,A2-A7,FP3-FP7 */
 typedef char  __jmp_buf[12*4 + 5*12];
 #else

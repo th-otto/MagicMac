@@ -41,6 +41,7 @@ struct nf_ops
 #define NF_ID_VERSION   "NF_VERSION"
 #define NF_ID_STDERR    "NF_STDERR"
 #define NF_ID_SHUTDOWN  "NF_SHUTDOWN"
+#define NF_ID_EXIT      "NF_EXIT"
 #define NF_ID_DEBUG     "DEBUGPRINTF"
 #define NF_ID_ETHERNET  "ETHERNET"
 #define NF_ID_HOSTFS    "HOSTFS"
@@ -56,6 +57,7 @@ struct nf_ops
 #define NF_ID_XHDI      "XHDI"
 #define NF_ID_SCSI      "NF_SCSIDRV"
 #define NF_ID_HOSTEXEC  "HOSTEXEC"
+#define NF_ID_CONFIG    "NF_CONFIG"
 
 
 __BEGIN_DECLS
@@ -113,6 +115,12 @@ int nf_debug(const char *msg);
  * May only be called from Supervisor.
  **/
 long nf_shutdown(int mode);
+
+/**
+ * Shutdown the emulator.
+ * May be called from user mode.
+ **/
+long nf_exit(int exitcode);
 
 /**
  * Write a formatted string to the host's terminal.

@@ -68,7 +68,7 @@ typedef struct
 /* We need to know the word order here.  This assumes that the word order
    is consistent with the byte order.  */
 # include <endian.h>
-# if __BYTE_ORDER == __BIG_ENDIAN
+# if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
 #define __quad_low(q) ((q).__val[1])
 #define __uquad_low(q) ((q).__val[1])
 #define __quad_high(q) ((q).__val[0])

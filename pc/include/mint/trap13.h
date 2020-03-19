@@ -43,47 +43,47 @@ __BEGIN_DECLS
 #define trap_13_w(n) \
 __extension__ \
 ({ \
-	register long retvalue __asm__("d0"); \
+	register long __retvalue __asm__("d0"); \
 	 \
 	__asm__ volatile \
 	( \
-		"movw	%1,%sp@-\n\t" \
+		"movw	%1,%%sp@-\n\t" \
 		"trap	#13\n\t" \
-		"addql	#2,%sp" \
-	: "=r"(retvalue) /* outputs */ \
+		"addql	#2,%%sp" \
+	: "=r"(__retvalue) /* outputs */ \
 	: "g"(n) /* inputs  */ \
 	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc" /* clobbered regs */ \
 	  AND_MEMORY \
 	); \
-	retvalue; \
+	__retvalue; \
 })
 
 #define trap_13_wwl(n,a,b) \
 __extension__ \
 ({ \
-	register long retvalue __asm__("d0"); \
+	register long __retvalue __asm__("d0"); \
 	short _a = (short)(a); \
 	long _b = (long)(b); \
 	 \
 	__asm__ volatile \
 	( \
-		"movl	%3,%sp@-\n\t" \
-		"movw	%2,%sp@-\n\t" \
-		"movw	%1,%sp@-\n\t" \
+		"movl	%3,%%sp@-\n\t" \
+		"movw	%2,%%sp@-\n\t" \
+		"movw	%1,%%sp@-\n\t" \
 		"trap	#13\n\t" \
-		"addql	#8,%sp" \
-	: "=r"(retvalue) /* outputs */ \
+		"addql	#8,%%sp" \
+	: "=r"(__retvalue) /* outputs */ \
 	: "g"(n), "r"(_a), "r"(_b) /* inputs  */ \
 	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc" /* clobbered regs */ \
 	  AND_MEMORY \
 	); \
-	retvalue; \
+	__retvalue; \
 })
 
 #define trap_13_wwlwwwl(n,a,b,c,d,e,f) \
 __extension__ \
 ({ \
-	register long retvalue __asm__("d0"); \
+	register long __retvalue __asm__("d0"); \
 	short _a = (short)(a); \
 	long _b = (long)(b); \
 	short _c = (short)(c); \
@@ -93,83 +93,83 @@ __extension__ \
 	 \
 	__asm__ volatile \
 	( \
-		"movl	%7,%sp@-\n\t" \
-		"movw	%6,%sp@-\n\t" \
-		"movw	%5,%sp@-\n\t" \
-		"movw	%4,%sp@-\n\t" \
-		"movl	%3,%sp@-\n\t" \
-		"movw	%2,%sp@-\n\t" \
-		"movw	%1,%sp@-\n\t" \
+		"movl	%7,%%sp@-\n\t" \
+		"movw	%6,%%sp@-\n\t" \
+		"movw	%5,%%sp@-\n\t" \
+		"movw	%4,%%sp@-\n\t" \
+		"movl	%3,%%sp@-\n\t" \
+		"movw	%2,%%sp@-\n\t" \
+		"movw	%1,%%sp@-\n\t" \
 		"trap	#13\n\t" \
-		"lea	%sp@(18),%sp" \
-	: "=r"(retvalue) /* outputs */ \
+		"lea	%%sp@(18),%%sp" \
+	: "=r"(__retvalue) /* outputs */ \
 	: "g"(n), "r"(_a), "r"(_b), "r"(_c), "r"(_d), "r"(_e), "r"(_f) /* inputs  */ \
 	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc" /* clobbered regs */ \
 	  AND_MEMORY \
 	); \
-	retvalue; \
+	__retvalue; \
 })
 
 #define trap_13_www(n,a,b) \
 __extension__ \
 ({ \
-	register long retvalue __asm__("d0"); \
+	register long __retvalue __asm__("d0"); \
 	short _a = (short)(a); \
 	short _b = (short)(b); \
 	 \
 	__asm__ volatile \
 	( \
-		"movw	%3,%sp@-\n\t" \
-		"movw	%2,%sp@-\n\t" \
-		"movw	%1,%sp@-\n\t" \
+		"movw	%3,%%sp@-\n\t" \
+		"movw	%2,%%sp@-\n\t" \
+		"movw	%1,%%sp@-\n\t" \
 		"trap	#13\n\t" \
-		"addql	#6,%sp" \
-	: "=r"(retvalue) /* outputs */ \
+		"addql	#6,%%sp" \
+	: "=r"(__retvalue) /* outputs */ \
 	: "g"(n), "r"(_a), "r"(_b) /* inputs  */ \
 	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc" /* clobbered regs */ \
 	  AND_MEMORY \
 	); \
-	retvalue; \
+	__retvalue; \
 })
 
 #define trap_13_ww(n,a) \
 __extension__ \
 ({ \
-	register long retvalue __asm__("d0"); \
+	register long __retvalue __asm__("d0"); \
 	short _a = (short)(a); \
 	 \
 	__asm__ volatile \
 	( \
-		"movw	%2,%sp@-\n\t" \
-		"movw	%1,%sp@-\n\t" \
+		"movw	%2,%%sp@-\n\t" \
+		"movw	%1,%%sp@-\n\t" \
 		"trap	#13\n\t" \
-		"addql	#4,%sp" \
-	: "=r"(retvalue) /* outputs */ \
+		"addql	#4,%%sp" \
+	: "=r"(__retvalue) /* outputs */ \
 	: "g"(n), "r"(_a) /* inputs  */ \
 	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc" /* clobbered regs */ \
 	  AND_MEMORY \
 	); \
-	retvalue; \
+	__retvalue; \
 })
 
 #define trap_13_wl(n,a) \
 __extension__ \
 ({ \
-	register long retvalue __asm__("d0"); \
+	register long __retvalue __asm__("d0"); \
 	long _a = (long)(a); \
 	 \
 	__asm__ volatile \
 	( \
-		"movl	%2,%sp@-\n\t" \
-		"movw	%1,%sp@-\n\t" \
+		"movl	%2,%%sp@-\n\t" \
+		"movw	%1,%%sp@-\n\t" \
 		"trap	#13\n\t" \
-		"addql	#6,%sp" \
-	: "=r"(retvalue) /* outputs */ \
+		"addql	#6,%%sp" \
+	: "=r"(__retvalue) /* outputs */ \
 	: "g"(n), "r"(_a) /* inputs  */ \
 	: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2", "cc" /* clobbered regs */ \
 	  AND_MEMORY \
 	); \
-	retvalue; \
+	__retvalue; \
 })
 
 __END_DECLS

@@ -132,7 +132,7 @@ WORD mt_form_xdial( WORD fo_diflag, WORD fo_dilittlx,
                WORD fo_dilittlh, WORD fo_dibigx,
                WORD fo_dibigy, WORD fo_dibigw, WORD fo_dibigh,
                void **flydial, WORD *global_aes );
-extern WORD mt_form_xdial_grect( WORD fo_diflag, const GRECT *little, const GRECT *big, _VOID **flydial, WORD *global_aes );
+extern WORD mt_form_xdial_grect( WORD fo_diflag, const GRECT *little, const GRECT *big, void **flydial, WORD *global_aes );
 extern WORD mt_form_alert( WORD fo_adefbttn, const char *fo_astring, WORD *global_aes );
 extern WORD mt_form_error( WORD fo_enum, WORD *global_aes );
 extern WORD mt_form_center (OBJECT *, WORD *Cx, WORD *Cy, WORD *Cw, WORD *Ch, WORD *global_aes);

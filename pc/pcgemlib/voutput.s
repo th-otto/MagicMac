@@ -15,6 +15,8 @@
 				GLOBL	v_gtext16
 				GLOBL	v_gtext16n
 				GLOBL	v_justified
+				GLOBL	v_justified16
+				GLOBL	v_justified16n
 				GLOBL	v_pieslice
 				GLOBL	v_pline
 				GLOBL	v_pmarker
@@ -302,6 +304,58 @@ v_justified1:	move.b	(a0)+,d1
 				bne		v_justified1
 				lea		_GemParBlk,a0
 				move.w	d2,v_nintin(a0)
+				moveq	#11,d1
+				bra		_VdiCtrl2
+
+				ENDMOD
+
+
+				MODULE	v_justified16
+
+				lea		_GemParBlk,a1
+				move.w	#2,v_nptsin(a1)
+				move.w	#10,v_opcode2(a1)
+				move.w	d1,ptsin(a1)
+				move.w	d2,ptsin+2(a1)
+				move.w	4(a7),ptsin+4(a1) /* len */
+				clr.w	ptsin+6(a1)
+				lea		intin(a1),a1
+				move.l	6(a7),(a1)+  /* word_space & char_space */
+				moveq	#0,d1
+				moveq	#1,d2
+v_justified16_1:	move.w	(a0)+,d1
+				addq.w	#1,d2
+				move.w	d1,(a1)+
+				bne		v_justified16_1
+				lea		_GemParBlk,a0
+				move.w	d2,v_nintin(a0)
+				moveq	#11,d1
+				bra		_VdiCtrl2
+
+				ENDMOD
+
+
+				MODULE	v_justified16n
+
+				lea		_GemParBlk,a1
+				move.w	#2,v_nptsin(a1)
+				move.w	#10,v_opcode2(a1)
+				move.w	d1,ptsin(a1)
+				move.w	d2,ptsin+2(a1)
+				move.w  4(a7),d2	 /* num */
+				move.w	6(a7),ptsin+4(a1) /* len */
+				clr.w	ptsin+6(a1)
+				move.w	d2,d1
+				addq.w  #2,d1
+				move.w	d1,v_nintin(a1)
+				lea		intin(a1),a1
+				move.l	8(a7),(a1)+  /* word_space & char_space */
+				bra.s	v_justified16n_2
+v_justified16n_1:
+				move.w	(a0)+,(a1)+
+v_justified16n_2:
+				dbra	d2,v_justified16n_1
+				lea		_GemParBlk,a0
 				moveq	#11,d1
 				bra		_VdiCtrl2
 

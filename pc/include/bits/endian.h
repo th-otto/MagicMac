@@ -5,7 +5,7 @@
 #endif
 
 #ifndef __BYTE_ORDER__
-#define __BYTE_ORDER__ __BIG_ENDIAN
+#define __BYTE_ORDER__ __ORDER_BIG_ENDIAN__
 #endif
 #ifndef __FLOAT_WORD_ORDER__
 #define __FLOAT_WORD_ORDER__ __ORDER_BIG_ENDIAN__

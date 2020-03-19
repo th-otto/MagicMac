@@ -553,17 +553,6 @@ extern int ferror_unlocked __P ((FILE *__stream));
 extern void perror __P ((__const char *__s));
 
 
-/* These variables normally should not be used directly.  The `strerror'
-   function provides all the needed functionality.  */
-#if defined(__USE_BSD) || defined(__USE_PUREC)
-extern const int sys_nerr;
-extern __const char *__const sys_errlist[];
-#endif
-#ifdef	__USE_GNU
-extern __const int _sys_nerr;
-extern __const char *__const _sys_errlist[];
-#endif
-
 #if defined(__USE_POSIX) || defined(__USE_PUREC)
 /* Return the system file descriptor for STREAM.  */
 extern int fileno __P ((FILE *__stream));

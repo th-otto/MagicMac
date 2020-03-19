@@ -1,7 +1,7 @@
 #ifndef __WDLG_H__
 #define __WDLG_H__
 
-#include <portaes.h>
+#include <aes.h>
 #include <wdlgevnt.h>
 
 /* MagiC XTED Struktur */
@@ -107,7 +107,7 @@ struct HNDL_OBJ_args
  */
 #if !defined(__HNDL_OBJ)
 #define __HNDL_OBJ
-typedef _WORD _CDECL (*HNDL_OBJ)(struct HNDL_OBJ_args);
+typedef _WORD __CDECL (*HNDL_OBJ)(struct HNDL_OBJ_args);
 #endif
 
 /* Function numbers for <obj> with handle_exit(...) */
@@ -128,15 +128,15 @@ typedef _WORD _CDECL (*HNDL_OBJ)(struct HNDL_OBJ_args);
 #define WDLG_BKGD 0x0001
 
 _WORD wdlg_close(DIALOG *dialog, _WORD *x, _WORD *y);
-DIALOG *wdlg_create(HNDL_OBJ handle_exit, OBJECT *tree, _VOID *user_data, _WORD code, _VOID *data, _WORD flags);
+DIALOG *wdlg_create(HNDL_OBJ handle_exit, OBJECT *tree, void *user_data, _WORD code, void *data, _WORD flags);
 _WORD wdlg_delete(DIALOG *dialog);
 _WORD wdlg_evnt(DIALOG *dialog, EVNT *events);
 _WORD wdlg_get_edit(DIALOG *dialog, _WORD *cursor);
 _WORD wdlg_get_handle(DIALOG *dialog);
 _WORD wdlg_get_tree(DIALOG *dialog, OBJECT **tree, GRECT *r);
-_VOID *wdlg_get_udata(DIALOG *dialog);
-_WORD wdlg_open(DIALOG *dialog, const char *title, _WORD kind, _WORD x, _WORD y, _WORD code, _VOID *data);
-_VOID wdlg_redraw(DIALOG *dialog, GRECT *rect, _WORD obj, _WORD depth);
+void *wdlg_get_udata(DIALOG *dialog);
+_WORD wdlg_open(DIALOG *dialog, const char *title, _WORD kind, _WORD x, _WORD y, _WORD code, void *data);
+void wdlg_redraw(DIALOG *dialog, GRECT *rect, _WORD obj, _WORD depth);
 _WORD wdlg_set_edit(DIALOG *dialog, _WORD obj);
 _WORD wdlg_set_iconify(DIALOG *dialog, GRECT *g, const char *title, OBJECT *tree, _WORD obj);
 _WORD wdlg_set_size(DIALOG *dialog, GRECT *new_size);

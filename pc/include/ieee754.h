@@ -32,12 +32,12 @@ union ieee754_float
     /* This is the IEEE 754 single-precision format.  */
     struct
       {
-#if	__BYTE_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:8;
 	__uint32_t   mantissa:23;
 #endif				/* Big endian.  */
-#if	__BYTE_ORDER == __LITTLE_ENDIAN
+#if	__BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 	__uint32_t   mantissa:23;
 	unsigned int exponent:8;
 	unsigned int negative:1;
@@ -47,13 +47,13 @@ union ieee754_float
     /* This format makes it easier to see if a NaN is a signalling NaN.  */
     struct
       {
-#if	__BYTE_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:8;
 	unsigned int quiet_nan:1;
 	__uint32_t   mantissa:22;
 #endif				/* Big endian.  */
-#if	__BYTE_ORDER == __LITTLE_ENDIAN
+#if	__BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
 	__uint32_t   mantissa:22;
 	unsigned int quiet_nan:1;
 	unsigned int exponent:8;
@@ -72,15 +72,15 @@ union ieee754_double
     /* This is the IEEE 754 double-precision format.  */
     struct
       {
-#if	__BYTE_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:11;
 	/* Together these comprise the mantissa.  */
 	__uint32_t    mantissa0:20;
 	__uint32_t    mantissa1:32;
 #endif				/* Big endian.  */
-#if	__BYTE_ORDER == __LITTLE_ENDIAN
-# if	__FLOAT_WORD_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
+# if	__FLOAT_WORD_ORDER == __ORDER_BIG_ENDIAN__
 	__uint32_t   mantissa0:20;
 	unsigned int exponent:11;
 	unsigned int negative:1;
@@ -98,7 +98,7 @@ union ieee754_double
     /* This format makes it easier to see if a NaN is a signalling NaN.  */
     struct
       {
-#if	__BYTE_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:11;
 	unsigned int quiet_nan:1;
@@ -106,7 +106,7 @@ union ieee754_double
 	__uint32_t   mantissa0:19;
 	__uint32_t   mantissa1:32;
 #else
-# if	__FLOAT_WORD_ORDER == __BIG_ENDIAN
+# if	__FLOAT_WORD_ORDER == __ORDER_BIG_ENDIAN__
 	__uint32_t   mantissa0:19;
 	unsigned int quiet_nan:1;
 	unsigned int exponent:11;
@@ -134,7 +134,7 @@ union ieee854_long_double
     /* This is the IEEE 854 double-extended-precision format.  */
     struct
       {
-#if	__BYTE_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:15;
 #if !(defined(__PUREC__) || defined(__TURBOC__)) || defined(__MATH_68881__)
@@ -143,8 +143,8 @@ union ieee854_long_double
 	__uint32_t   mantissa0:32;
 	__uint32_t   mantissa1:32;
 #endif
-#if	__BYTE_ORDER == __LITTLE_ENDIAN
-# if	__FLOAT_WORD_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
+# if	__FLOAT_WORD_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int exponent:15;
 	unsigned int negative:1;
 	unsigned int empty:16;
@@ -163,7 +163,7 @@ union ieee854_long_double
     /* This is for NaNs in the IEEE 854 double-extended-precision format.  */
     struct
       {
-#if	__BYTE_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:15;
 #if !(defined(__PUREC__) || defined(__TURBOC__)) || defined(__MATH_68881__)
@@ -174,8 +174,8 @@ union ieee854_long_double
 	__uint32_t   mantissa0:30;
 	__uint32_t   mantissa1:32;
 #endif
-#if	__BYTE_ORDER == __LITTLE_ENDIAN
-# if	__FLOAT_WORD_ORDER == __BIG_ENDIAN
+#if	__BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
+# if	__FLOAT_WORD_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int exponent:15;
 	unsigned int negative:1;
 	unsigned int empty:16;

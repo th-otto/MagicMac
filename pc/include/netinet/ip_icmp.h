@@ -30,7 +30,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)ip_icmp.h	7.5 (Berkeley) 6/28/90
+ *	@(#)ip_icmp.h	8.1 (Berkeley) 6/10/93
  */
 
 /*
@@ -68,7 +68,6 @@ struct icmphdr
   } un;
 };
 
-
 /*
  * Internal of an ICMP Router Advertisement
  */
@@ -89,8 +88,8 @@ struct icmp {
 		u_char ih_pptr;			/* ICMP_PARAMPROB */
 		struct in_addr ih_gwaddr;	/* ICMP_REDIRECT */
 		struct ih_idseq {
-			n_short	icd_id;
-			n_short	icd_seq;
+			uint16_t	icd_id;
+			uint16_t	icd_seq;
 		} ih_idseq;
 		uint32_t ih_void;
 
@@ -100,7 +99,7 @@ struct icmp {
 	      uint16_t ipm_void;
 	      uint16_t ipm_nextmtu;
 	    } ih_pmtu;
-	
+
 	    struct ih_rtradv
 	    {
 	      uint8_t irt_num_addrs;
@@ -124,13 +123,13 @@ struct icmp {
 			n_time its_rtime;
 			n_time its_ttime;
 		} id_ts;
-	    struct icmp_ra_addr id_radv;
 		struct id_ip  {
 			struct ip idi_ip;
 			/* options and then 64 bits of data */
 		} id_ip;
+	    struct icmp_ra_addr id_radv;
 		u_long	id_mask;
-		char	id_data[1];
+		uint8_t	id_data[1];
 	} icmp_dun;
 #define	icmp_otime	icmp_dun.id_ts.its_otime
 #define	icmp_rtime	icmp_dun.id_ts.its_rtime
@@ -144,7 +143,7 @@ struct icmp {
 /*
  * Lower bounds on packet lengths for various types.
  * For the error advice packets must first insure that the
- * packet is large enought to contain the returned ip header.
+ * packet is large enough to contain the returned ip header.
  * Only then can we do the check to see if 64 bits of packet
  * data have been returned, since we need to check the returned
  * ip header length.
@@ -153,8 +152,13 @@ struct icmp {
 #define	ICMP_TSLEN	(8 + 3 * sizeof (n_time))	/* timestamp */
 #define	ICMP_MASKLEN	12				/* address mask */
 #define	ICMP_ADVLENMIN	(8 + sizeof (struct ip) + 8)	/* min */
+#ifndef _IP_VHL
 #define	ICMP_ADVLEN(p)	(8 + ((p)->icmp_ip.ip_hl << 2) + 8)
 	/* N.B.: must separately check that ip_hl >= 5 */
+#else
+#define	ICMP_ADVLEN(p)	(8 + (IP_VHL_HL((p)->icmp_ip.ip_vhl) << 2) + 8)
+	/* N.B.: must separately check that header length >= 5 */
+#endif
 
 /*
  * Definition of type and code field values.

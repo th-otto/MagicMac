@@ -39,9 +39,9 @@ __BEGIN_DECLS
    machine's byte order.  */
 
 # include <endian.h>
-# if __BYTE_ORDER == __BIG_ENDIAN
+# if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
 #  define _ISbit(bit)	(1 << (bit))
-# else /* __BYTE_ORDER == __LITTLE_ENDIAN */
+# else /* __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__ */
 #  define _ISbit(bit)	((bit) < 8 ? ((1 << (bit)) << 8) : ((1 << (bit)) >> 8))
 # endif
 

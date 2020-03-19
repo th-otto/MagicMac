@@ -17,6 +17,7 @@ nf_ops.c [-S-] ; asm code contained there will not work with stack frames, dont 
 nf_debug.c
 nf_name.c
 nf_shutd.c
+nf_exit.c
 nf_stder.c
 nf_vers.c
 nf_exec.c

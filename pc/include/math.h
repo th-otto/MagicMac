@@ -1,28 +1,30 @@
-#ifndef _MATH_H
-#define _MATH_H 1
+/*  math.h -- MiNTLib.
+    Copyright (C) 2019 Thorsten Otto <admin@tho-otto.de>
+
+    This file is part of the MiNTLib project, and may only be used
+    modified and distributed under the terms of the MiNTLib project
+    license, COPYMINT.  By continuing to use, modify, or distribute
+    this file you indicate that you have read the license and
+    understand and accept it fully.
+*/
 
 /*
- *  FILE
- *
- *      math.h    include file for users of portable math library
- *
- *  SYNOPSIS
- *
- *      #include <math.h>
- *
- *  DESCRIPTION
- *
- *      This file should be included in any user compilation module
- *      which accesses routines from the Portable Math Library (PML).
- *
+ *	ISO C99 Standard: 7.12 Mathematics	<math.h>
  */
+
+#ifndef _MATH_H
+#define _MATH_H 1
 
 #ifndef	_FEATURES_H
 # include <features.h>
 #endif
 
+#if (defined(__HAVE_68881__) || defined(__FPU__) || (defined(__mcoldfire__) && defined(__mcffpu__))) && !defined(__HAVE_FPU__)
+#  define __HAVE_FPU__ 1
+#endif
+
 /*
- * PureC use __NFPUIN__ to inhibit math inline intrinsics
+ * PureC uses __NFPUIN__ to inhibit math inline intrinsics
  */
 #if defined(__NFPUIN__) && !defined(__NO_MATH_INLINES)
 #  define __NO_MATH_INLINES
@@ -59,7 +61,6 @@ __BEGIN_DECLS
    On all IEEE754 machines, this is +Infinity.  */
 #include <bits/huge_val.h>
 
-/* Get machine-dependent NAN value (returned for some domain errors).  */
 #ifdef	 __USE_ISOC99
 /* Get machine-dependent INFINITY value.  */
 # include <bits/inf.h>
@@ -211,6 +212,7 @@ extern _LIB_VERSION_TYPE _LIB_VERSION;
 
    We have a problem when using C++ since `exception' is a reserved
    name in C++.  */
+/* do not change the comment above; it is looked up by GCCs fixincludes script */
 #ifdef __cplusplus
 struct __exception
 #else

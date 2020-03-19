@@ -68,7 +68,7 @@
 #ifndef _SYS_SYSCALL_H
 # define _SYS_SYSCALL_H 1
 
-#include <syscall-list.h>
+#include <bits/syscall.h>
 #include <asm/unistd.h>
 
 #endif /* _SYS_SYSCALL_H */

@@ -42,7 +42,7 @@ extern VDIPB _VdiParBlk;
 
 typedef int32_t fix31;
 
-typedef unsigned short vdi_wchar_t; /* 16bit string, eg. for unicode */
+typedef short vdi_wchar_t; /* 16bit string, eg. for unicode */
 
 #define fix31_to_point(a) ((_WORD)((((a) + 32768L) >> 16)))
 #define point_to_fix31(a) (((fix31)(a)) << 16)
@@ -107,6 +107,7 @@ void    v_rfbox ( _WORD handle, _WORD *pxyarray );
 void    v_justified( _WORD handle, _WORD x, _WORD y, const char *string,
                      _WORD length, _WORD word_space,
                      _WORD char_space );
+void	v_justified16(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD len, _WORD word_space, _WORD char_space);
 void	v_justified16n(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD num, _WORD len, _WORD word_space, _WORD char_space);
 
 
@@ -473,8 +474,9 @@ void vs_grayoverride(_WORD handle, _WORD grayval);
 
 /****** Raster definitions *********************************************/
 
-#ifndef __MFDB__
+#if !defined(__MFDB__) && !defined(__MFDB)
 #define __MFDB__
+#define __MFDB
 typedef struct
 {
         void            *fd_addr;

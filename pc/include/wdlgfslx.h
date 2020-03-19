@@ -6,8 +6,12 @@
  */
 
 #include <portab.h>
+#if !defined(__TOS) && !defined(__TOS_H__)
 #include <mintbind.h>
+#endif
+#if !defined(__VDI__)
 #include <portvdi.h>
+#endif
 #include <wdlgevnt.h>
 
 
@@ -50,7 +54,7 @@ struct XFSL_FILTER_args {
 /* note: the callback needs arguments on stack;
    but since we pass the whole structure, the
    arguments will be pushed on the stack anyway */
-typedef _WORD _CDECL (*XFSL_FILTER)(struct XFSL_FILTER_args);
+typedef _WORD __CDECL (*XFSL_FILTER)(struct XFSL_FILTER_args);
 
 typedef struct _fslx_dialog { int dummy; } XFSL_DIALOG;
 
@@ -111,7 +115,7 @@ struct UTXT_FN_args
 /* note: the callback needs arguments on stack;
    but since we pass the whole structure, the
    arguments will be pushed on the stack anyway */
-typedef void _CDECL (*UTXT_FN)(struct UTXT_FN_args);
+typedef void __CDECL (*UTXT_FN)(struct UTXT_FN_args);
 
 typedef struct _fnts_item FNTS_ITEM;
 
@@ -122,7 +126,7 @@ struct _fnts_item
     _LONG       id;                     /* ID of font, >= 65536 for application's own fonts */
     _WORD       index;                  /* Index of font (if a VDI-font) */
     char        mono;                   /* Flag for equidistant fonts */
-    _BYTE       outline;                /* Flag for vector font */
+    unsigned char outline;              /* Flag for vector font */
     _WORD       npts;                   /* Number of predefined point sizes */
     char        *full_name;             /* Pointer to complete name */
     char        *family_name;           /* Pointer to family name */
@@ -178,7 +182,7 @@ _WORD fnts_get_name(FNT_DIALOG *fnt_dialog, _LONG id, char *full_name, char *fam
 _WORD fnts_get_info(FNT_DIALOG *fnt_dialog, _LONG id, _WORD *mono, _WORD *outline);
 
 _WORD fnts_add(FNT_DIALOG *fnt_dialog, FNTS_ITEM *user_fonts);
-_VOID fnts_remove(FNT_DIALOG *fnt_dialog);
+void fnts_remove(FNT_DIALOG *fnt_dialog);
 _WORD fnts_update(FNT_DIALOG *fnt_dialog, _WORD button_flags, _LONG id, _LONG pt, _LONG ratio);
 
 _WORD fnts_evnt(FNT_DIALOG *fnt_dialog, EVNT *events, _WORD *button, _WORD *check_boxes, _LONG *id, _LONG *pt, _LONG *ratio);
