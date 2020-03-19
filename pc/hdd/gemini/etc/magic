@@ -1,0 +1,104 @@
+# @(#)Tools/magic
+# Magicdatei fr file.ttp
+#
+# Dokumentation siehe file(1) und magic(5). Ergaenzungen und/oder
+# Korrekturen bitte an jr@ms.maus.de schicken.
+#
+###############
+# Executables #
+###############
+0	short		0x601a		GEMDOS executable
+>24	byte		&0x08		(shared text)
+>25	byte		&0x01		(fload)
+>25	byte&6		0x02		(load to alt ram)
+>25	byte&6		0x04		(malloc from alt ram)
+>25	byte&6		0x06		(load/malloc alt ram)
+>25	byte&0xf0	0x00		(private)
+>25	byte&0xf0	0x10		(global)
+>25	byte&0xf0	0x20		(super)
+>25	byte&0xf0	0x30		(readable)
+>14     long            >0 not stripped
+>2      long            x               text %ld
+>6      long            x data %ld
+>10     long            x bss %ld
+0	short		0x0064		CPX file
+>8	short		x		(version %04lx)
+>4	long		x		(id 0x%08lx)
+>2	short		x		(flags 0x%04lx)
+#
+# Objektdateien
+#
+0	long		0x4efa001c	Borland object file
+0	long		0x00000107	GNU object file
+#################
+# Archivdateien #
+#################
+0	short		0x1f8b		gzip compressed data
+0	short		0x5dff		MWC archive file
+0	short		0xff65		DR archive file
+0	short		070707		cpio archive
+0	string		070707		ASCII cpio archive
+0	string		Gnu		GNU archive file
+0	string		!<arch>		BSD archive file
+2	long		0x2d6c6831	LHArc (lh1) archive
+2	long		0x2d6c6835	LHArc (lh5) archive
+0	short		0x1a08		ARC archive
+0	string		PK		ZIP archive
+20	long		0xdca7c4fd	Zoo archive
+257	string		ustar		TAR file
+##################
+# gepackte Daten #
+##################
+0	short		0x1f1f		packed file (old style method)
+0	short		0x1f1e		packed file
+###############
+# Textdateien #
+###############
+0	short		0x1f30		Wordplus document
+0	string		sdoc0001	Signum!2 document
+2	string		sdoc		Signum!3 document
+13	string		CDK		Calamus document
+###############
+# Bilddateien #
+###############
+0	long		0xffff1800	GEM metafile
+0	string		GIF		GIF picture
+6	string		JFIF		JPEG picture
+16	string		XIMG		XIMG raster image
+0	long		0x4d4d002a	TIFF picture (Motorola)
+0	long		0x49492a00	TIFF picture (Intel)
+0	string		PCD_OPA		Photo CD Overview (?)
+2048	string		PCD_IPI		Photo CD Picture (?)
+################
+# Sounddateien #
+################
+0	string		.snd		.snd file
+>12	long		1		8-bit u-law,
+>12	long		2		8-bit linear PCM,
+>12	long		3		16-bit linear PCM,
+>12	long		4		24-bit linear PCM,
+>12	long		5		32-bit linear PCM,
+>12	long		6		32-bit floating point,
+>12	long		7		64-bit floating point,
+>12	long		23		compressed (G.721 ADPCM),
+>16	long		x		%ld Hz,
+>20	long		x		%ld channels,
+0	string		2BIT		AVR sound file
+>12	short		0x0		mono,
+>12	short		0xffff		stereo,
+>14	short		x		%ld bit,
+>16	short		0x0		unsigned,
+>16	short		0xffff		signed,
+>24	short		x		%ld Hz.
+0	string		RIFF		RIFF sound file
+0	string		MThd		Standard MIDI File
+############
+# Diverses #
+############
+0	string		Help		Borland help file
+34	short		f		GEM RSC-File
+8	long		f		Bitstream Speedo Font
+0	string		PBAS		PureC project data base
+0	string		#!		Shell script
+0	short		0x2771		MultiTOS AES keyboard table
+

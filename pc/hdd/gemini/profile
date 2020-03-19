@@ -1,0 +1,152 @@
+#!mupfel
+# Mupfel Startup
+#
+
+# Verzeichnis, in dem die GEMINI-Distribution liegt
+test "$GEMINIHOME" = "" && GEMINIHOME="C:\gemini"
+export GEMINIHOME
+# echo "executing $GEMINIHOME\profile"
+
+if test -z "$HOME"; then
+	export HOME="C:\home"
+fi
+
+# Liste der Pfade, in denen nach Kommandos gesucht wird
+export PATH="c:\pc,${GEMINIHOME}\bin,c:\usr\bin,${GEMINIHOME},c:\bin"
+
+# finally prepend .
+export PATH=".,$PATH"
+
+export CDPATH=".."
+export PS1="%i%p>%I "  # "%i%p>%I "
+export SUFFIX="ttp,prg,app,tos,mup,acc,gtp,bat"
+export GEMSUFFIX="prg,app,acc,gtp"
+export DRIVEMAP="CDEFGHIJK"
+#export TMPDIR="u:\ram"
+export TRASHDIR=C:\TRASHDIR
+export CONSOLEDIR="$GEMINIHOME"
+export MANPATH="${GEMINIHOME}\man"
+export OPTIONPATH="${MANPATH}\options"
+unset HISTFILE
+export SCRAPDIR="c:\clipbrd"
+cookie -s MiNT && export TERM=vt52
+[ -z "$TERMCAP" ] && export TERMCAP=c:\etc\termcap
+
+
+# andere Dinge fr Tools wie nroff und more, cookie
+export ETCDIR=$GEMINIHOME\etc
+export LESSHELP=c:\etc\less.hlp
+if [ "$0" = "mupfel.app" ]
+then
+	export SHELL=$GEMINIHOME\MUPFEL.APP
+else
+	export SHELL=$GEMINIHOME\mupfel.ttp
+fi
+export GZIP="-S z"
+export LESS="-M"
+
+#   m: Maus anschalten?
+#   c: Textcursor einschalten?
+#   b: Hintergrund grau?
+#   s: Argumente auch mit shel_write bergeben?
+#   d: Vor Ausfhrung in Programm-Verzeichnis wechseln?
+#   w: Sollen TOS-Programme im Console-Window laufen?
+#   x: Das ARGV-Verfahren benutzen?
+#   k: Nach Programmende auf Tastendruck warten?
+#   o: Programm als Overlay starten?
+#   l: Cursor-Blinken einschalten? (Fr TOS-Programme)
+#   i: Programm l„uft im Single-Modus von Mag!X
+#
+#   GEM-Programme: m:y,c:n,b:y,s:y,d:y,w:n,x:y,k:n,o:n,l:n,i:n
+#   TOS-Programme: m:n,c:y,b:n,s:n,d:n,w:y,x:y,k:n,o:n,l:n,i:n
+#
+
+# mouse, no cursor, background, shel_write,
+# set directory, no console window, XARG, no keypress
+export GEMDEFAULT="M:Y,C:N,B:Y,S:Y,D:N,W:Y,X:Y,K:N"
+# no mouse no, cursor, no background, no shel_write,
+# don't set directory, no console window, XARG, no keypress
+export TOSDEFAULT="M:N,C:Y,B:N,S:N,D:N,W:Y,X:Y,K:N"
+#Dies ist ein Fix fr KAOS von Carsten Fiehe @ H2
+if cookie -s KAOS || cookie -s _EOS
+then
+  export GEMDEFAULT="m:n"
+  export APPDEFAULT="m:n"
+fi
+
+
+# Parameter fr einige Programme
+# export OPT_UE_PRG="d:n"
+# export OPT_TC_PRG="d:n"
+# export OPT_TD_PRG="d:n"
+# export OPT_NRSC_PRG="d:n"
+# export OPT_BUG_PRG="d:n"
+# export OPT_DB_PRG="d:n,c:y"
+export OPT_GUCK_TTP="w:n"
+# export OPT_UNITERM_PRG="x:n"
+# export OPT_TEMPUS_PRG="d:n,x:n"
+# export OPT_ORCS_PRG="d:n"
+# export OPT_GFABASIC_PRG="d:n"
+export OPT_RZ_PRG="m:n,c:y,b:n"
+export OPT_SZ_PRG="m:n,c:y,b:n"
+export OPT_UE_TTP="d:n,w:n"
+export OPT_UE_PRG="d:n,x:n"
+export OPT_LC_PRG="d:y"
+#export OPT_BACKTALK_TTP="x:n"
+#export OPT_MUPFEL_APP="x:y"
+
+# Man spricht Deutsch.
+#export LANG=german
+
+# Setze Zeitzone fr date und andere Kommandos
+#export TZ='MET-1MDT,M3.5.0,M10.5.0'
+#export TZ='MDT-2'
+export TZ='MET-1'
+
+export STDERR=AUX:
+
+
+alias sh=$GEMINIHOME\mupfel.ttp
+if [ -r $HOME\mupfel.rc ]
+then
+	. $HOME\mupfel.rc
+fi
+alias ..='cd ..'
+alias l='ls -l'
+
+#export ECHO=c:\atari\usr\bin\echo
+export SH=$GEMINIHOME\mupfel.ttp
+
+# Wenn der Programmname "gemini" ist, dann fhre die
+# Befehle aus
+#if [ $0 = gemini.app ]
+#then
+#	# Wechsle nach HOME
+#	cd
+#	echo
+#	echo "    Willkommen bei Gemini 2"
+#	echo
+#fi
+
+export OPT_GS312_GTP=$TOSDEFAULT
+export OPT_GS261_GTP=$TOSDEFAULT
+export OPT_GS_GTP=$TOSDEFAULT
+#export GS_WIN=off
+export O_INF=C:\atari\usr\local\o\etc\o.inf
+
+export MUPFEL_PROFILE_READ=TRUE
+
+cd C:\
+
+if test -r autobld.sh; then
+	LOGFILE="C:\errors.txt"
+	rm -f "${LOGFILE}"
+	.\autobld.sh 2>"${LOGFILE}"
+
+	status=$?
+	echo "autobld status $status"
+	nfapi --print "autobld status $status"
+	echo $status >C:\status.txt
+
+	nfapi --shutdown
+fi
