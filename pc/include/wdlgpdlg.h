@@ -33,7 +33,11 @@ struct PDLG_HNDL_args
 };
 
 typedef long __CDECL (*PDLG_INIT)(PRN_SETTINGS *settings, PDLG_SUB *sub);
+#if 0
 typedef long __CDECL (*PDLG_HNDL)(struct PDLG_HNDL_args args);
+#else
+typedef long __CDECL (*PDLG_HNDL)(PRN_SETTINGS *settings, PDLG_SUB *sub, _WORD exit_obj);
+#endif
 typedef long __CDECL (*PDLG_RESET)(PRN_SETTINGS *settings, PDLG_SUB *sub);
 typedef long __CDECL (*PRN_SWITCH)(DRV_ENTRY *drivers, PRN_SETTINGS *settings, PRN_ENTRY *old_printer, PRN_ENTRY *new_printer);
 
