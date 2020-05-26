@@ -352,6 +352,7 @@ scanline:         move.w   d0,d3          ;X-Start merken
                   muls     bitmap_width(a6),d1
                   bra.s    scanline_laddr
 scanline_screen:  movea.l  v_bas_ad.w,a3  ;Adresse des Bildschirms
+relok0:
                   muls     BYTES_LIN.w,d1
 scanline_laddr:   adda.l   d1,a3
                   adda.w   d0,a3          ;Bildschirmanfang+Y-Zeile+ Zeilenoffset
@@ -781,6 +782,7 @@ get_pixel:        tst.w    bitmap_width(a6)
                   muls     bitmap_width(a6),d1
                   bra.s    get_pixel_line
 get_pixel_screen: movea.l  v_bas_ad.w,a0
+relok1:
                   muls     BYTES_LIN.w,d1
 get_pixel_line:   add.l    d1,a0
                   add.w    d0,a0
@@ -804,6 +806,7 @@ set_pixel:        tst.w    bitmap_width(a6)
                   muls     bitmap_width(a6),d1
                   bra.s    set_pixel_line
 set_pixel_screen: movea.l  v_bas_ad.w,a0
+relok2:
                   muls     BYTES_LIN.w,d1
 set_pixel_line:   add.l    d1,a0
                   add.w    d0,a0
@@ -872,6 +875,7 @@ hline_color:      movep.w  0(a1),d5
                   muls     bitmap_width(a6),d1
                   bra.s    hline_laddr
 hline_screen:     movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok3:
                   muls     BYTES_LIN.w,d1
 hline_laddr:      ext.l    d0
                   add.l    d0,d1
@@ -1103,6 +1107,7 @@ fline_save:       move.l   a0,-(sp)
                   muls     bitmap_width(a6),d1
                   bra.s    fline_laddr
 fline_screen:     movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok4:
                   muls     BYTES_LIN.w,d1
 fline_laddr:      ext.l    d0
                   add.l    d0,d1
@@ -1255,6 +1260,7 @@ vline:            sub.w    d1,d3          ;Zaehler
 ;Startadresse berechnen
                   movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
                   moveq    #0,d5          ;Langwort loeschen
+relok5:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    vline_laddr
@@ -1436,6 +1442,7 @@ vline_solid_exit: rts
 ;Ausgaben:
 ;-
 line:             movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok6:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    line_laddr
@@ -1656,6 +1663,7 @@ line_eor_x45:     add.w    d1,d3          ;e + 2dx-2dy
 ;-
 fbox:             movea.l  f_pointer(a6),a4 ;Zeiger aufs Fuellmuster
                   movea.l  v_bas_ad.w,a1  ;Bildadresse
+relok7:
                   move.w   BYTES_LIN.w,d4 ;Bytes pro Zeile
                   
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
@@ -2881,6 +2889,7 @@ fbox_sld_shrt2:   REPT 16
 ;Ausgaben:
 ;-
 textblt:          movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok8:
                   movea.w  BYTES_LIN.w,a3 ;Bytes pro Zielzeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    textblt_color
@@ -7339,9 +7348,16 @@ dummy:            rts
 relokation:
 ;Reloziert am: Tue May 16 12:47:18 1995
 
-DC.w 702,732,34,84,594,458,560,436,2540
-
-                  DC.W 0
+				dc.w relok0-start+2
+				dc.w relok1-relok0
+				dc.w relok2-relok1
+				dc.w relok3-relok2
+				dc.w relok4-relok3
+				dc.w relok5-relok4
+				dc.w relok6-relok5
+				dc.w relok7-relok6
+				dc.w relok8-relok7
+				dc.w 0 /* end of data */
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ;'Laufzeitdaten'
