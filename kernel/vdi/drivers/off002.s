@@ -347,6 +347,7 @@ get_pixel:        tst.w    bitmap_width(a6)
                   muls     bitmap_width(a6),d1
                   bra.s    get_pixel_line
 get_pixel_screen: movea.l  v_bas_ad.w,a0
+relok0:
                   muls     BYTES_LIN.w,d1
 get_pixel_line:   add.l    d1,a0
                   move.w   d0,d1
@@ -378,6 +379,7 @@ set_pixel:        tst.w    bitmap_width(a6)
                   muls     bitmap_width(a6),d1
                   bra.s    set_pixel_line
 set_pixel_screen: movea.l  v_bas_ad.w,a0
+relok1:
                   muls     BYTES_LIN.w,d1
 set_pixel_line:   add.l    d1,a0
                   move.w   d0,d1
@@ -4420,6 +4422,7 @@ fbox_tt:          move.w   wr_mode(a6),d7
                   movea.l  f_pointer(a6),a0 ;Zeiger auf das Fuellmuster
 
                   movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok2:
                   move.w   BYTES_LIN.w,d4 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    fbox_screen_tt
@@ -4644,6 +4647,7 @@ fbox:             move.w   wr_mode(a6),d7
 fbox_mode:        add.w    d7,d7
 
 fbox_pointer:     movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok3:
                   move.w   BYTES_LIN.w,d4 ;Bytes pro Zeile
                   move.w   bitmap_width(a6),d5 ;Off-Screen-Bitmap?
                   beq.s    fbox_screen
@@ -5075,6 +5079,7 @@ fbox_dbf7:        dbra     d3,fbox_bloop7
 
 
 fbox_white:       movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok4:
                   move.w   BYTES_LIN.w,d4 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    fbox_white_screen
@@ -5485,6 +5490,7 @@ hline_saddr_tt:   move.w   bitmap_width(a6),d4 ;Off-Screen-Bitmap?
                   muls     d4,d1
                   bra.s    hline_laddr_tt
 hline_screen_tt:  movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok5:
                   muls     BYTES_LIN.w,d1
 hline_laddr_tt:   adda.l   d1,a1          ;Zeilenadresse
                   move.w   d0,d1          ;x1 sichern
@@ -5764,6 +5770,7 @@ hline_saddr:      move.w   bitmap_width(a6),d4 ;Off-Screen-Bitmap?
                   muls     d4,d1
                   bra.s    hline_laddr
 hline_screen:     movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok6:
                   muls     BYTES_LIN.w,d1
 hline_laddr:      adda.l   d1,a1          ;Zeilenadresse
                   move.w   d0,d1          ;x1 sichern
@@ -6062,6 +6069,7 @@ vline:            sub.w    d1,d3          ;Zaehler
 
 ;Startadresse berechnen
                   movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok7:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    vline_laddr
@@ -6116,6 +6124,7 @@ vline_tab:        DC.W vline4-vline_tab
 ;Ausgaben:
 ;-
 line:             movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok8:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   move.w   bitmap_width(a6),d4 ;Off-Screen-Bitmap?
                   beq.s    line_laddr
@@ -6448,6 +6457,7 @@ line_blk_exit45:  rts
 ;Ausgaben:
 ;-
 textblt:          movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok9:
                   movea.w  BYTES_LIN.w,a3 ;Bytes pro Zeile
                   move.w   bitmap_width(a6),d6 ;Off-Screen-Bitmap
                   beq.s    textblt_smode
@@ -6644,6 +6654,7 @@ scanline:         move.l   d5,-(sp)
                   muls     bitmap_width(a6),d1
                   bra.s    scanline_laddr
 scanline_screen:  movea.l  v_bas_ad.w,a3  ;Adresse des Bildschirms
+relok10:
                   muls     BYTES_LIN.w,d1
 scanline_laddr:   adda.l   d1,a3          ;Zeilenadresse
                   move.w   d0,d4          ;x1
@@ -6787,10 +6798,18 @@ fill1:            DC.L -1,-1,-1,-1,-1,-1,-1,-1
 relokation:
 ;Reloziert am: Sun Jan 21 20:38:22 1996
 
-DC.w 716,56,7472,508,1208,936,460,1016,86,630
-DC.w 458
-
-                  DC.W 0                  ;Ende der Daten
+				dc.w relok0-start+2
+				dc.w relok1-relok0
+				dc.w relok2-relok1
+				dc.w relok3-relok2
+				dc.w relok4-relok3
+				dc.w relok5-relok4
+				dc.w relok6-relok5
+				dc.w relok7-relok6
+				dc.w relok8-relok7
+				dc.w relok9-relok8
+				dc.w relok10-relok9
+				dc.w 0 /* end of data */
 
                   BSS
 
