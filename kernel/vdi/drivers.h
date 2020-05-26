@@ -22,8 +22,8 @@ typedef struct DRVR_tag {
 	/* 10 */ short version;				/* driver version; at least 0x290 for *.SYS */
 	/* 12 */ unsigned short header_len;	/* length of header */
 	/* 14 */ unsigned short type;		/* driver type; 0 for *.OSD, 1 for *.SYS */
-	/* 16 */ long (*init)(NVDI_STRUCT *nvdi); /* initialise driver */
-	/* 20 */ void (*reset)(NVDI_STRUCT *nvdi); /* release driver */
+	/* 16 */ long (*init)(NVDI_STRUCT *nvdi, DEVICE_DRIVER *drv); /* initialise driver */
+	/* 20 */ void (*reset)(NVDI_STRUCT *nvdi, DEVICE_DRIVER *drv); /* release driver */
 	/* 24 */ void (*wk_init)(NVDI_STRUCT *nvdi); /* initialise workstation */
 	/* 28 */ void (*wk_reset)(NVDI_STRUCT *nvdi); /* release workstation */
 	/* 32 */ void (*opnwkinfo)(WORD *intout, WORD *ptsout); /* create output for v_opnwk; change resolution; a6 points to WK */

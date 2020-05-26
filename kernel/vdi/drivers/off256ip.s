@@ -364,6 +364,7 @@ get_pixel:        movem.l  d2-d3,-(sp)
                   muls     bitmap_width(a6),d1
                   bra.s    get_pixel_line
 get_pixel_screen: movea.l  v_bas_ad.w,a0
+relok0:
                   muls     BYTES_LIN.w,d1
 get_pixel_line:   add.l    d1,a0
                   moveq    #$fffffff0,d1
@@ -401,6 +402,7 @@ set_pixel:        move.l   d3,-(sp)
                   muls     bitmap_width(a6),d1
                   bra.s    set_pixel_line
 set_pixel_screen: movea.l  v_bas_ad.w,a0
+relok1:
                   muls     BYTES_LIN.w,d1
 set_pixel_line:   add.l    d1,a0
                   moveq    #$fffffff0,d1
@@ -5638,6 +5640,7 @@ fbox_mplane:      sub.w    d1,d3          ;Zeilenzaehler
                   and.w    d2,d4          ;Anzahl der Shifts fuer Zielmaske
 
                   movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok2:
                   move.w   BYTES_LIN.w,d6 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    fbox_mp_laddr
@@ -5646,6 +5649,7 @@ fbox_mplane:      sub.w    d1,d3          ;Zeilenzaehler
 fbox_mp_laddr:    move.w   d1,d7
                   muls     d6,d7
                   adda.l   d7,a1          ;Zeilenadresse
+relok3:
                   move.w   PLANES.w,d7
                   add.w    d7,d7
                   sub.w    d7,d6
@@ -5689,6 +5693,7 @@ fboxm_count:      subq.w   #2,d2
                   lea      color_map(pc),a0
                   move.b   0(a0,d0.w),d0
 
+relok4:
                   move.w   PLANES.w,d1
                   subq.w   #1,d1
                   move.w   d1,-(sp)
@@ -5789,6 +5794,7 @@ fbox_mask2:       DC.L $7fff7fff
 fbox:             tst.w    f_planes(a6)   ;mehrfarbiges Muster?
                   bne      fbox_mplane
 fbox_saddr:       movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok5:
                   move.w   BYTES_LIN.w,d6 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    fbox_build_masks
@@ -6363,6 +6369,7 @@ fline_saddr_pat:  movem.l  d3/a0/a2,-(sp)
                   muls     bitmap_width(a6),d1
                   bra.s    fbox_pat_masks
 fline_pat_screen: movea.l  v_bas_ad.w,a1  ;Adresse des Bilschirms
+relok6:
                   muls     BYTES_LIN.w,d1
 fbox_pat_masks:   add.w    d4,d4
                   add.w    d5,d5
@@ -6578,6 +6585,7 @@ hline:            tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   muls     bitmap_width(a6),d1
                   bra.s    hline_laddr
 hline_screen:     movea.l  v_bas_ad.w,a1  ;Adresse des Bilschirms
+relok7:
                   muls     BYTES_LIN.w,d1
 hline_laddr:      adda.l   d1,a1          ;Zeilenadresse
                   moveq    #15,d4
@@ -6946,6 +6954,7 @@ vline:            sub.w    d1,d3          ;Zaehler
 
 ;Startadresse berechnen
                   movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok8:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    vline_laddr
@@ -7128,6 +7137,7 @@ line_exit:        rts
 ;Ausgaben
 ;d0-d7/a1 werden zerstoert
 line:             movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok9:
                   move.w   BYTES_LIN.w,d5 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    line_laddr
@@ -9482,6 +9492,7 @@ textblt_soft:     cmpi.w   #1,wr_mode(a6) ;REPLACE oder TRANSPARENT?
                   beq.s    textblt_black
 
 textblt_soft_vb:  movea.l  v_bas_ad.w,a1  ;Adresse des Bilschirms
+relok10:
                   movea.w  BYTES_LIN.w,a3 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    textblt_soft_ad
@@ -9503,6 +9514,7 @@ textblt_soft_ad:  move.l   a0,r_saddr(a6) ;Quelladresse
                   bra      expblt_soft
 
 textblt_black:    movea.l  v_bas_ad.w,a1  ;Adresse des Bildschirms
+relok11:
                   movea.w  BYTES_LIN.w,a3 ;Bytes pro Zeile
                   tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   beq.s    textblt_blk_laddr
@@ -9867,6 +9879,7 @@ scanline:         movem.l  d5-d7,-(sp)    ;Register sichern
                   muls     bitmap_width(a6),d1
                   bra.s    scanline_laddr
 scanline_screen:  movea.l  v_bas_ad.w,a4  ;Adresse des Bildschirms
+relok12:
                   muls     BYTES_LIN.w,d1 ;y1
 scanline_laddr:   adda.l   d1,a4          ;Zeilenadresse
                   moveq    #$fffffff0,d4
@@ -10025,8 +10038,19 @@ scanline_exit:    movem.l  (sp)+,d5-d7
 relokation:
 ;Reloziert am: Sun Jan 21 20:46:48 1996
 
-DC.w 728,68,14178,24,92,236,1248,442,794,376
-DC.w 4726,90,740
+				dc.w relok0-start+2
+				dc.w relok1-relok0
+				dc.w relok2-relok1
+				dc.w relok3-relok2
+				dc.w relok4-relok3
+				dc.w relok5-relok4
+				dc.w relok6-relok5
+				dc.w relok7-relok6
+				dc.w relok8-relok7
+				dc.w relok9-relok8
+				dc.w relok10-relok9
+				dc.w relok11-relok10
+				dc.w relok12-relok11
 
                   DC.W 0                  ;Ende der Daten
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

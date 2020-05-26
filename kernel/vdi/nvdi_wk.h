@@ -32,9 +32,9 @@ struct _wk {
 	/*   0 */ void *disp_addr1;		/* pointer to NVDI-Dispatcher */
 	/*   4 */ void *disp_addr2;		/* pointer to Treiber-Dispatcher */
 	/*   8 */ short wk_handle;		/* workstation handle */
+	/*  10 */ short driver_id;		/* device ID */
 
 /* coordinate system */
-	/*  10 */ short driver_id;		/* device ID */
 	/*  12 */ short pixel_width;	/* width of a pixel in micro meter */
 	/*  14 */ short pixel_height;	/* height of a pixel in micro meter */
 	/*  16 */ short res_x;			/* raster width -1 */
