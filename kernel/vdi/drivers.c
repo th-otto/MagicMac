@@ -178,6 +178,7 @@ WORD unload_NOD_driver(DRIVER *drv)
 	--drv->used;
 	if (drv->used == 0)	/* Treiber nicht mehr benutzt? */
 	{
+		/* FIXME: call drv->code->reset */
 		Mfree_sys(drv->code);	/* Speichr freigeben */
 		drv->code = NULL;
 	}
