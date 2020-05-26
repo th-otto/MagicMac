@@ -474,3 +474,375 @@ vdi_tab100:
 
                   DC.W 5,2
                   DC.L vqt_fontinfo       ;131
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;132
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;133
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;134 (vex_wheelv)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;135
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;136
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;137
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;138 (v_setrgb)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;139
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;140
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;141
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;142
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;143
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;144
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;145
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;146
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;147
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;148
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;149
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;150
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;151
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;152
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;153
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;154
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;155
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;156
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;157
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;158
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;159
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;160
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;161
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;162
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;163
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;164
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;165
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;166
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;167
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;168
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;169
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;170 (vr_transfer_bits)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;171 (vr_clip_rect*)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;172
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;173
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;174
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;175
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;176
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;177
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;178
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;179
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;180 (v_create_driver_info)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;181 (v_delete_driver_info)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;182 (v_read_default_settings/v_write_default_settings)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;183
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;184
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;185
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;186
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;187
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;188
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;189
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;190 (vqt_charindex)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;191
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;192
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;193
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;194
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;195
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;196
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;197
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;198
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;199
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;200 (vs[tflmr]_fg_color)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;201 (vs[tflmr]_bg_color)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;202 (vq[tflmr]_fg_color)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;203 (vq[tflmr]_bg_color)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;204 (v_color2value)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;205 (vs_ctab)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;206 (vq_ctab)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;207 (vs_[hilite|min|max|weight]_color)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;208 (v_create_itab)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;209 (vq_[hilite|min|max|weight]_color)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;210
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;211
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;212
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;213
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;214
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;215
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;216
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;217
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;218
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;219
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;220
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;221
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;222
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;223
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;224
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;225
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;226
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;227
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;228
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;229 (vqt_xfntinfo)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;230 (vst_name)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;231 (vst_width)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;232 (vqt_fontheader)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;233 (v_mono_ftext)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;234 (vqt_trackkern)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;235 (vqt_pairkern)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;236 (vst_charmap/vst_map_mode)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;237 (vst_kern) 
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;238 (vq_ptsinsz)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;239 (v_getbitmap_info)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;240 (vqt_f_extent)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;241 (v_ftext)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;242 (v_killoutline)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;243 (v_getoutline)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;244 (vst_scratch)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;245 (vst_error)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;246 (vst_arbpt)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;247 (vqt_advance)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;248 (vq_devinfo)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;249 (v_savecache)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;250 (v_loadcache)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;251 (v_flushcache)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;252 (vst_setsize)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;253 (vst_skew)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;254 (vqt_get_table)
+
+                  DC.W 0,0
+                  DC.L opcode_err         ;255 (vqt_cachesize/vqt_cacheinfo)
