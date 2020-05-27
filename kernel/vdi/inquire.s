@@ -1,7 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ;'6. Auskunftsfunktionen'
 
-; EXTENDED INQUIRE FUNCTION (VDI 102)
+/*
+ * EXTENDED INQUIRE FUNCTION (VDI 102)
+ */
 vq_extnd:         movea.l  (a0),a1        ;contrl
                   cmpi.w   #1,opcode2(a1) ;vq_scrninfo?
                   bne.s    vq_extnd2
@@ -65,61 +67,71 @@ vq_color:         movea.l  pb_intout(a0),a1 ;intout
 vq_color_err:     move.w   #-1,(a1)       ;intout[0] = Fehler;
                   rts
 
-; INQUIRE CURRENT POLYLINE ATTRIBUTES (VDI 35)
-vql_attributes:   movem.l  pb_intout(a0),a0-a1 ; intout->a0, ptsout->a1
+/*
+ *  INQUIRE CURRENT POLYLINE ATTRIBUTES (VDI 35)
+ */
+vql_attributes:   movem.l  pb_intout(a0),a0-a1   /* intout->a0, ptsout->a1 */
                   move.w   l_style(a6),d0
                   addq.w   #L_SOLID,d0
-                  move.w   d0,(a0)+       ;intout[0] = Linienstil;
-                  move.w   l_color(a6),(a0)+ ;intout[1] = Linienfarbe;
+                  move.w   d0,(a0)+              /* intout[0] = line style */
+                  move.w   l_color(a6),(a0)+     /* intout[1] = line color */
                   move.w   wr_mode(a6),d0
-                  addq.w   #REPLACE,d0       ;intout[2] = Grafikmodus;
+                  addq.w   #REPLACE,d0           /* intout[2] = graphic mode */
                   move.w   d0,(a0)+
-                  move.l   l_start(a6),(a0)+ ;intout[3/4] = Linienenden;
-                  move.w   l_width(a6),(a1) ;ptsout[0] = Linienbreite;
+                  move.l   l_start(a6),(a0)+     /* intout[3/4] = line ends */
+                  move.w   l_width(a6),(a1)      /* ptsout[0] = line width */
                   rts
 
-; INQUIRE CURRENT POLYMARKER ATTRIBUTES (VDI 36)
-vqm_attributes:   movem.l  pb_intout(a0),a0-a1 ; intout->a0, ptsout->a1
+/*
+ * INQUIRE CURRENT POLYMARKER ATTRIBUTES (VDI 36)
+ */
+vqm_attributes:   movem.l  pb_intout(a0),a0-a1   /* intout->a0, ptsout->a1 */
                   move.w   m_type(a6),d0
                   addq.w   #M_DOT,d0
-                  move.w   d0,(a0)+       ;intout[0] = Markertyp;
-                  move.w   m_color(a6),(a0)+ ;intout[1] = Markerfarbe;
+                  move.w   d0,(a0)+              /* intout[0] = marker type */
+                  move.w   m_color(a6),(a0)+     /* intout[1] = marker color */
                   move.w   wr_mode(a6),d0
                   addq.w   #REPLACE,d0
-                  move.w   d0,(a0)+       ;intout[2] = Grafikmodus;
-                  move.w   m_width(a6),(a1)+ ;ptsout[0] = Markerbreite;
-                  move.w   m_height(a6),(a1) ;ptsout[1] = Markerhoehe;
+                  move.w   d0,(a0)+              /* intout[2] = graphic mode */
+                  move.w   m_width(a6),(a1)+     /* ptsout[0] = marker width */
+                  move.w   m_height(a6),(a1)     /* ptsout[1] = marker height */
                   rts
 
-; INQUIRE CURRENT FILL AREA ATTRIBUTES (VDI 37)
-vqf_attributes:   movea.l  pb_intout(a0),a1 ;intout
-                  move.w   f_interior(a6),(a1)+ ;intout[0] = Fuelltyp;
-                  move.w   f_color(a6),(a1)+ ;intout[1] = Fuellfarbe;
-                  move.w   f_style(a6),(a1)+ ;intout[2] = Musterindex;
+/*
+ * INQUIRE CURRENT FILL AREA ATTRIBUTES (VDI 37)
+ */
+vqf_attributes:   movea.l  pb_intout(a0),a1      /* intout */
+                  move.w   f_interior(a6),(a1)+  /* intout[0] = fill type */
+                  move.w   f_color(a6),(a1)+     /* intout[1] = fill color */
+                  move.w   f_style(a6),(a1)+     /* intout[2] = fill style */
                   move.w   wr_mode(a6),d0
                   addq.w   #REPLACE,d0
-                  move.w   d0,(a1)+       ;intout[3] = Grafikmodus;
-                  move.w   f_perimeter(a6),(a1)+ ;intout[4] = Umrahmungsflag;
+                  move.w   d0,(a1)+              /* intout[3] = graphic mode */
+                  move.w   f_perimeter(a6),(a1)+ /* intout[4] = outline flag */
                   rts
 
-; INQUIRE CURRENT GRAPHIC TEXT ATTRIBUTES (VDI 38)
-vqt_attributes:   movem.l  pb_intout(a0),a0-a1 ; intout->a0, ptsout->a1
-                  move.w   t_number(a6),(a0)+ ;intout[0] = Fontnummer;
-                  move.w   t_color(a6),(a0)+ ;intout[1] = Textfarbe;
+/*
+ * INQUIRE CURRENT GRAPHIC TEXT ATTRIBUTES (VDI 38)
+ */
+vqt_attributes:   movem.l  pb_intout(a0),a0-a1   /* intout->a0, ptsout->a1 */
+                  move.w   t_number(a6),(a0)+    /* intout[0] = font number */
+                  move.w   t_color(a6),(a0)+     /* intout[1] = text color */
                   move.w   t_rotation(a6),d0
-                  tst.b    t_font_type(a6)   ;Vektorfont? Dann ist der Wert in 1/10 Grad
+                  tst.b    t_font_type(a6)       /* vectorfont? then value is in 1/10 degree */
                   bne.s    vqt_attr_rot
                   mulu.w   #900,d0
-vqt_attr_rot:     move.w   d0,(a0)+       ;intout[2] = Textrotation;
-                  move.l   t_hor(a6),(a0)+ ;intout[3/4] = h./v. Ausrichtung;
+vqt_attr_rot:     move.w   d0,(a0)+              /* intout[2] = text rotation */
+                  move.l   t_hor(a6),(a0)+       /* intout[3/4] = h./v. orientation */
                   move.w   wr_mode(a6),d0
-                  addq.w   #REPLACE,d0 ; note: not done by TOS VDI
-                  move.w   d0,(a0)        ;intout[5] = Schreibmodus;
-                  move.l   t_width(a6),(a1)+    ;ptsout[0/1] t_width / t_height
-                  move.l   t_cwidth(a6),(a1)    ;ptsout[2/3] t_cwidth / t_cheight 
+                  addq.w   #REPLACE,d0           /* note: not done by TOS VDI */
+                  move.w   d0,(a0)               /* intout[5] = graphic mode */
+                  move.l   t_width(a6),(a1)+     /* ptsout[0/1] t_width / t_height */
+                  move.l   t_cwidth(a6),(a1)     /* ptsout[2/3] t_cwidth / t_cheight */
                   rts
 
-; INQUIRE TEXT EXTENT (VDI 116)
+/*
+ * INQUIRE TEXT EXTENT (VDI 116)
+ */
 vqt_extent:       movem.l  d1-d3/a2,-(sp)
                   movea.l  (a0)+,a1       ;contrl
                   move.w   n_intin(a1),d0 ;Zeichenanzahl
@@ -310,7 +322,9 @@ vqin_write_mode:  move.w   d1,(a1)        ;intout[0] = Eingabemodus;
                   move.l   a0,d1          ;pblock
 vqin_mode_exit:   rts
 
-; INQUIRE CURRENT FACE INFORMATION (VDI 131)
+/*
+ * INQUIRE CURRENT FACE INFORMATION (VDI 131)
+ */
 vqt_fontinfo:     movem.l  d1-d4,-(sp)
                   movem.l  pb_intout(a0),a1
                   move.l   t_first_ade(a6),d0

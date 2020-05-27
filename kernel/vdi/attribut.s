@@ -547,7 +547,9 @@ vsf_int_err:      moveq.l  #F_HOLLOW,d0
                   clr.w    (a0)
                   bra.s    vsf_int_hollow
 
-; SET FILL INTERIOR INDEX (VDI 23)
+/*
+ * SET FILL INTERIOR INDEX (VDI 23)
+ */
 vsf_interior:     movea.l  pb_intin(a0),a1 ;intin
                   movea.l  pb_intout(a0),a0 ;intout
                   move.w   (a1),d0        ;Fuelltyp = intin[0];
@@ -568,29 +570,31 @@ vsf_int_tab:      DC.B vsf_int_hollow-vsf_int_user_def
                   DC.B 0
 
 ;Subroutinen von vsf_interior (Rueckgabewerte: a1 = Musterzeiger)
-vsf_int_hollow:   move.l   f_fill0(a6),-(a0) ;Zeiger aufs weisse Fuellmuster
+vsf_int_hollow:   move.l   f_fill0(a6),-(a0) ;Zeiger aufs weisse Fuellmuster -> f_pointer
                   rts
-vsf_int_solid:    move.l   f_fill1(a6),-(a0) ;Zeiger aufs schwarze Fuellmuster
+vsf_int_solid:    move.l   f_fill1(a6),-(a0) ;Zeiger aufs schwarze Fuellmuster -> f_pointer
                   rts
 vsf_int_pattern:  movea.l  f_fill2(a6),a1 ;Zeiger aufs erste Graustufenmuster
                   move.w   f_style(a6),d0 ;Musterindex
                   subq.w   #1,d0
                   lsl.w    #5,d0          ;*32 wegen Musterauswahl
                   adda.w   d0,a1          ;Zeiger aufs Fuellmuster
-                  move.l   a1,-(a0)
+                  move.l   a1,-(a0)       ; -> f_pointer
                   rts
 vsf_int_hatch:    movea.l  f_fill3(a6),a1 ;Zeiger aufs erste Schraffurmuster
                   move.w   f_style(a6),d0 ;Musterindex
                   subq.w   #1,d0
                   lsl.w    #5,d0          ;*32 wegen Musterauswahl
                   adda.w   d0,a1          ;Zeiger aufs Fuellmuster
-                  move.l   a1,-(a0)
+                  move.l   a1,-(a0)       ; -> f_pointer
                   rts
 vsf_int_user_def: move.w   f_splanes(a6),(a0)   ;Zahl der Planes
-                  move.l   f_spointer(a6),-(a0) ;Zeiger aufs selbstdefinierte Muster
+                  move.l   f_spointer(a6),-(a0) ;Zeiger aufs selbstdefinierte Muster -> f_pointer
                   rts
 
-; SET FILL STYLE INDEX (VDI 24)
+/*
+ *  SET FILL STYLE INDEX (VDI 24)
+ */
 vsf_style:        movea.l  pb_intin(a0),a1   ;intin
                   movea.l  pb_intout(a0),a0  ;intout
                   move.w   f_interior(a6),d0 ;Highbyte von d0.w ist sauber !
@@ -640,7 +644,9 @@ vsf_sty_hat_save: move.w   d0,(a0)        ;intout[0] = neuer Musterindex;
 vsf_sty_hat_err:  moveq.l  #1,d0          ;Musterindex = 1;
                   bra.s    vsf_sty_hat_save
 
-; SET FILL COLOR INDEX (VDI 25)
+/*
+ * SET FILL COLOR INDEX (VDI 25)
+ */
 vsf_color:        movea.l  pb_intin(a0),a1 ;intin
                   movea.l  pb_intout(a0),a0 ;intout
                   move.w   (a1),d0        ;Fuellfarbe
@@ -652,7 +658,9 @@ vsf_color_set:    move.w   d0,(a0)        ;intout[0] = neue Musterfarbe
 vsf_color_err:    moveq.l  #BLACK,d0      ;intout[0] = BLACK;
                   bra.s    vsf_color_set
 
-; SET FILL PERIMETER VISIBILITY (VDI 104)
+/*
+ * SET FILL PERIMETER VISIBILITY (VDI 104)
+ */
 vsf_perimeter:    movea.l  pb_intin(a0),a1 ;intin
                   movea.l  pb_intout(a0),a0 ;intout
                   move.w   (a1),d0        ;Flag = intin[0];
@@ -660,7 +668,9 @@ vsf_perimeter:    movea.l  pb_intin(a0),a1 ;intin
                   move.w   d0,(a0)        ;intout[0] = Flag;
                   rts
 
-; SET USER-DEFINED FILL PATTERN (VDI 112)
+/*
+ * SET USER-DEFINED FILL PATTERN (VDI 112)
+ */
 vsf_udpat:        move.l   a2,-(sp)
                   movea.l  (a0),a1        ;contrl
                   move.w   n_intin(a1),d0 ;Eintraege in intin
@@ -675,8 +685,10 @@ vsf_udpat:        move.l   a2,-(sp)
 vsf_udpat_exit:   movea.l  (sp)+,a2
                   rts
 
-;SET GRAY OVERRIDE (VDI 133)
-; BUG: not in dispatch table
+/*
+ * SET GRAY OVERRIDE (VDI 133)
+ */
+/ BUG: not in dispatch table */
 vs_grayoverride:  movea.l  pb_intin(a0),a0 ;intin
                   moveq.l  #0,d0
                   move.w   (a0),d0        ;Grauwert
@@ -704,7 +716,9 @@ vs_gor_addr:      move.w   #F_PATTERN,f_interior(a6)
                   clr.w    f_planes(a6)
                   rts
 
-;SET RED,GREEN,BLUE INTENSITY (VDI 138)
+/*
+ * SET RED,GREEN,BLUE INTENSITY (VDI 138)
+ */
 v_setrgb:
                   rts
 
