@@ -328,7 +328,7 @@ vqin_mode_exit:   rts
 vqt_fontinfo:     movem.l  d1-d4,-(sp)
                   movem.l  pb_intout(a0),a1
                   move.l   t_first_ade(a6),d0
-                  add.w    first_ade(a6),d0 ; BUG? first_ade is fonthdr offset, but a6 points to WK and buffer_len is accessed here
+                  add.w    t_first_ade(a6),d0 /* t_ades -> last_ade */
                   move.l   d0,(a1)+       ;intout[0/1] = min./max. Index;
                   movea.l  pb_ptsout(a0),a1
                   lea.l    t_height(a6),a0
