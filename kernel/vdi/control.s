@@ -667,7 +667,9 @@ wk_arrays:
                   move.w   #$ffff,(a0)+   ;l_udstyle
 
 ;Textattribute
-                  clr.l    t_effects(a6)        ;t_effects/t_rotation
+                  clr.w    t_effects(a6)
+                  clr.w    t_light_pct(a6)
+                  clr.w    t_rotation(a6)
                   clr.l    t_hor(a6)            ;t_hor/t_ver
                   move.w   #T_SYSTEM_FACE,t_number(a6)   ;t_number
                   move.l   #font_hdr1,t_pointer(a6)   ;t_pointer
