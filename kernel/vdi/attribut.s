@@ -1,6 +1,8 @@
                   ;'3. Attributfunktionen'
 
-; SET WRITING MODE (VDI 32)
+/*
+ * SET WRITING MODE (VDI 32)
+ */
 vswr_mode:        movea.l  pb_intin(a0),a1 ;intin
                   movea.l  pb_intout(a0),a0 ;intout
                   move.w   (a1),d0        ;Grafikmodus
@@ -13,7 +15,9 @@ vswr_mode_set:    move.w   d0,(a0)        ;intout[0] = Grafikmodus;
 vswr_mode_err:    moveq.l  #REPLACE,d0    ;intout[0] = REPLACE;
                   bra.s    vswr_mode_set
 
-; SET COLOR REPRESENTATION (VDI 14)
+/*
+ * SET COLOR REPRESENTATION (VDI 14)
+ */
 vs_color:         movem.l  d1-d4,-(sp)
                   movem.l  pb_intin(a0),a0 ;intin
                   move.w   (a0)+,d3       ;Farbindex
@@ -50,7 +54,9 @@ vs_color_exit:    movem.l  (sp)+,d1-d4
                   rts
 
 
-; SET POLYLINE LINE TYPE (VDI 15)
+/*
+ * SET POLYLINE LINE TYPE (VDI 15)
+ */
 vsl_type:         movea.l  pb_intin(a0),a1 ;intin
                   movea.l  pb_intout(a0),a0 ;intout
                   move.w   (a1),d0        ;intin[0] = Linienstil
@@ -176,7 +182,9 @@ vsm_height_addr:  move.l   marker_addrs(pc,d0.w),a1 ;Zeiger auf Struktur
                   move.l   a0,d1
                   rts
 
-; SET POLYMARKER COLOR INDEX (VDI 20)
+/*
+ * SET POLYMARKER COLOR INDEX (VDI 20)
+ */
 vsm_color:        movea.l  pb_intin(a0),a1 ;intin
                   movea.l  pb_intout(a0),a0 ;intout
                   move.w   (a1),d0
@@ -191,64 +199,66 @@ vdi_fktret:       movem.l  (sp)+,d1-d7/a2-a5
                   rts
 
 vst_height6:      movea.l  pb_ptsout(a0),a1 ;ptsout
-                  move.l   #$00070006,d0  ;Zeichenbreite/Zeichenhoehe
-                  movea.l  #$00080008,a0  ;Zeichenzellenbreite/-hoehe
-                  move.l   d0,(a1)+       ;Zeichenbreite/Zeichenhoehe
-                  move.l   a0,(a1)+       ;Zeichenzellenbreite/-hoehe
+                  move.l   #$00070006,d0  /* character width/height */
+                  movea.l  #$00080008,a0  /* cell width/height */
+                  move.l   d0,(a1)+       /* character width/height */
+                  move.l   a0,(a1)+       /* cell width/height */
                   lea.l    t_width(a6),a1
-                  move.l   d0,(a1)+       ;t_width / t_height
-                  move.l   a0,(a1)+       ;t_cwidth / t_cheight
+                  move.l   d0,(a1)+       /* t_width / t_height */
+                  move.l   a0,(a1)+       /* t_cwidth / t_cheight */
                   lea.l    t_base(a6),a1
-                  move.l   #$00060002,(a1)+ ; t_base=6, t_half=2
+                  move.l   #$00060002,(a1)+ /* t_base=6, t_half=2 */
                   moveq.l  #7,d0
-                  move.l   d0,(a1)+       ; t_descent=0,t_bottom=7
+                  move.l   d0,(a1)+       /* t_descent=0, t_bottom=7 */
                   swap     d0
-                  move.l   d0,(a1)+       ; t_ascent=7,t_top=0
+                  move.l   d0,(a1)+       /* t_ascent=7, t_top=0 */
                   addq.l   #(t_left_off-t_top-2),a1
-                  move.l   #$00010008,(a1)+ ; t_left_off=1,t_whole_off=8
+                  move.l   #$00010008,(a1)+ /* t_left_off=1, t_whole_off=8 */
                   moveq.l  #0,d0
-                  move.l   d0,(a1)+       ; t_thicken=0, t_uline=0
-                  move.w   d0,t_prop(a6)  ; t_prop=0, t_grow=0
-                  lea.l    (font_hdr2).w,a0   ;Adresse des Fontheaders
+                  move.l   d0,(a1)+       /* t_thicken=0, t_uline=0 */
+                  move.w   d0,t_prop(a6)  /* t_prop=0, t_grow=0 */
+                  lea.l    (font_hdr2).w,a0   /* address of fontheader */
                   lea.l    t_fonthdr(a6),a1
-                  move.l   a0,(a1)+       ;t_fonthdr
-                  move.l   a0,(CUR_FONT).w  ;Kompatibilitaet
+                  move.l   a0,(a1)+       /* t_fonthdr */
+                  move.l   a0,(CUR_FONT).w  /* compatibility */
                   lea.l    off_table(a0),a0
-                  move.l   (a0)+,(a1)+    ; off_table->t_offtab
-                  move.l   (a0)+,(a1)+    ; dat_table->t_image
-                  move.l   (a0)+,(a1)+    ; form_width/form_height -> t_iwidth/t_iheight
+                  move.l   (a0)+,(a1)+    /* off_table->t_offtab */
+                  move.l   (a0)+,(a1)+    /* dat_table->t_image */
+                  move.l   (a0)+,(a1)+    /* form_width/form_height -> t_iwidth/t_iheight */
                   rts
 
 vst_height13:     movea.l  pb_ptsout(a0),a1 ;ptsout
-                  move.l   #$0007000d,d0  ;Zeichenbreite/Zeichenhoehe
-                  movea.l  #$00080010,a0  ;Zeichenzellenbreite/-hoehe
-                  move.l   d0,(a1)+       ;Zeichenbreite/Zeichenhoehe
-                  move.l   a0,(a1)+       ;Zeichenzellenbreite/-hoehe
+                  move.l   #$0007000d,d0  /* character width/height */
+                  movea.l  #$00080010,a0  /* cell width/height */
+                  move.l   d0,(a1)+       /* character width/height */
+                  move.l   a0,(a1)+       /* cell width/height */
                   lea.l    t_width(a6),a1
-                  move.l   d0,(a1)+       ;t_width / t_height
-                  move.l   a0,(a1)+       ;t_cwidth / t_cheight
+                  move.l   d0,(a1)+       /* t_width / t_height */
+                  move.l   a0,(a1)+       /* t_cwidth / t_cheight */
                   lea.l    t_base(a6),a1
-                  move.l   #$000d0005,(a1)+ ; t_base=13, t_half=5
-                  move.l   #$0002000f,(a1)+ ; t_descent=2,t_bottom=15
-                  move.l   #$000f0000,(a1)+ ; t_ascent=15,t_top=0
+                  move.l   #$000d0005,(a1)+ /* t_base=13, t_half=5 */
+                  move.l   #$0002000f,(a1)+ /* t_descent=2, t_bottom=15 */
+                  move.l   #$000f0000,(a1)+ /* t_ascent=15, t_top=0 */
                   addq.l   #(t_left_off-t_top-2),a1
                   moveq.l  #0,d0
-                  move.l   #$00010008,(a1)+ ; t_left_off=1,t_whole_off=8
-                  move.l   d0,(a1)+       ;t_thicken=0, t_uline=0
-                  move.w   d0,t_prop(a6)  ;t_prop=0, t_grow=0
-                  lea.l    (font_hdr3).w,a0 ;Adresse des Fontheaders
+                  move.l   #$00010008,(a1)+ /* t_left_off=1, t_whole_off=8 */
+                  move.l   d0,(a1)+       /* t_thicken=0, t_uline=0 */
+                  move.w   d0,t_prop(a6)  /* t_prop=0, t_grow=0 */
+                  lea.l    (font_hdr3).w,a0 /* address of fontheader */
                   lea.l    t_fonthdr(a6),a1
-                  move.l   a0,(a1)+       ;t_fonthdr
-                  move.l   a0,(CUR_FONT).w  ;Kompatibilitaet
+                  move.l   a0,(a1)+       /* t_fonthdr */
+                  move.l   a0,(CUR_FONT).w  /* compatibility */
                   lea.l    off_table(a0),a0
-                  move.l   (a0)+,(a1)+    ; off_table->t_offtab
-                  move.l   (a0)+,(a1)+    ; dat_table->t_image
-                  move.l   (a0)+,(a1)+    ; form_width/form_height -> t_iwidth/t_iheight
+                  move.l   (a0)+,(a1)+    /* off_table->t_offtab */
+                  move.l   (a0)+,(a1)+    /* dat_table->t_image */
+                  move.l   (a0)+,(a1)+    /* form_width/form_height -> t_iwidth/t_iheight */
                   rts
 
-; SET CHARACTER HEIGHT, ABSOLUTE MODE (VDI 12)
+/*
+ * SET CHARACTER HEIGHT, ABSOLUTE MODE (VDI 12)
+ */
 vst_height:       movea.l  pb_ptsin(a0),a1 ;ptsin
-                  move.l   (a1),d0        ;Texthoehe = ptsin[1];
+                  move.l   (a1),d0        /* text height = ptsin[1] */
                   clr.w    t_point_last(a6)
                   cmp.w    t_height(a6),d0
                   beq      vst_h_err
@@ -382,7 +392,9 @@ vst_point_same:   tst.w    d0
                   move.l   t_cwidth(a6),(a1)+   ;t_cwidth / t_cheight
                   rts
 
-; SET CHARACTER HEIGHT, POINTS MODE (VDI 107)
+/*
+ * SET CHARACTER HEIGHT, POINTS MODE (VDI 107)
+ */
 vst_point:        movea.l  pb_intin(a0),a1 ;intin
                   move.w   (a1),d0        ;Texthoehe = intin[0];
                   cmp.w    t_point_last(a6),d0
@@ -688,7 +700,7 @@ vsf_udpat_exit:   movea.l  (sp)+,a2
 /*
  * SET GRAY OVERRIDE (VDI 133)
  */
-/ BUG: not in dispatch table */
+/* BUG: not in dispatch table */
 vs_grayoverride:  movea.l  pb_intin(a0),a0 ;intin
                   moveq.l  #0,d0
                   move.w   (a0),d0        ;Grauwert

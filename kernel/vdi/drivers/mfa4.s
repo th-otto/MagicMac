@@ -6,7 +6,7 @@
 ;******************************************************************************;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Labels und Konstanten
-                  ;'Header'
+                  ; 'Header'
 
 VERSION           EQU $0313
 
@@ -20,9 +20,8 @@ VERSION           EQU $0313
 
 PATTERN_LENGTH    EQU (32*2)              ;Fuellmusterlaenge bei 2 Ebenen
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  ;'Initialisierung'
+                  ; 'Initialisierung'
                   TEXT
 
 start:
@@ -155,9 +154,9 @@ get_extndinfo:    movem.l  d0/a0-a2,-(sp)
                   moveq    #44,d0         ;45 Elemente kopieren
 ext_out_int:      move.w   (a2)+,(a0)+
                   dbra     d0,ext_out_int
-                  
+
                   move.w   #1,38-90(a0)      ;work_out[19]: Clipping an
-                  
+
                   movea.l  nvdi_struct(pc),a2
                   movea.l  _nvdi_extnd_work_out(a2),a2
                   lea      90(a2),a2
@@ -166,8 +165,8 @@ ext_out_int:      move.w   (a2)+,(a0)+
 ext_out_pts:      move.w   (a2)+,(a1)+
                   dbra     d0,ext_out_pts
                   lea      clip_xmin(a6),a2
-                  move.l   (a2)+,0-24(a1)    ;work_out[46/47]: clip_xmin/clip_ymin
-                  move.l   (a2)+,4-24(a1)    ;work_out[48/49]: clip_xmax/clip_ymax
+                  move.l   (a2)+,0-24(a1)    ;work_out[45/46]: clip_xmin/clip_ymin
+                  move.l   (a2)+,4-24(a1)    ;work_out[47/48]: clip_xmax/clip_ymax
                   
                   movem.l  (sp)+,d0/a0-a2
                   rts
@@ -181,7 +180,7 @@ ext_out_pts:      move.w   (a2)+,(a1)+
 ;a6.l Workstation
 ;Ausgaben:
 ;-
-get_scrninfo:     movem.l  d0-d2/a0-a1,-(sp)
+get_scrninfo:     movem.l  d0-d1/a0-a1,-(sp)
                   move.w   video(pc),d1
                   moveq    #3,d0          ;3 Bits pro Farbintensitaet auf ST
                   cmpi.w   #ST_VIDEO,d1   ;ST?
@@ -217,7 +216,7 @@ scrninfo_loop:    move.b   (a1)+,d1
 scrninfo_loop2:   move.w   d1,(a0)+
                   dbra     d0,scrninfo_loop2
 
-                  movem.l  (sp)+,d0-d2/a0-a1
+                  movem.l  (sp)+,d0-d1/a0-a1
                   rts
                
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

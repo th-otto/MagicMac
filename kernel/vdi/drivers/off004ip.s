@@ -123,8 +123,8 @@ ext_out_int:      move.w   (a2)+,(a0)+
 ext_out_pts:      move.w   (a2)+,(a1)+
                   dbra     d0,ext_out_pts
                   lea      clip_xmin(a6),a2
-                  move.l   (a2)+,0-24(a1)    ;work_out[46/47]: clip_xmin/clip_ymin
-                  move.l   (a2)+,4-24(a1)    ;work_out[48/49]: clip_xmax/clip_ymax
+                  move.l   (a2)+,0-24(a1)    ;work_out[45/46]: clip_xmin/clip_ymin
+                  move.l   (a2)+,4-24(a1)    ;work_out[47/48]: clip_xmax/clip_ymax
 
                   movem.l  (sp)+,d0/a0-a2
                   rts
@@ -278,8 +278,8 @@ transform:        moveq    #0,d0          ;Langwort loeschen
                   bra.s    vr_trnfm_addr
 vr_trnfm_dep:     clr.w    fd_stand(a1)   ;geraeteabhaengiges Zielformat
                   exg      d0,d1          ;Planes und Worte tauschen
-vr_trnfm_addr:    movea.l  (a0),a0        ;Quellblockadresse
-                  movea.l  (a1),a1        ;Zielblockadresse
+vr_trnfm_addr:    movea.l  fd_addr(a0),a0 ;Quellblockadresse
+                  movea.l  fd_addr(a1),a1 ;Zielblockadresse
                   subq.l   #1,d0          ;mindestens eine Ebene/Wort ?
                   bmi.s    vr_trnfm_exit
                   move.l   d1,d4

@@ -166,8 +166,8 @@ ext_out_int:      move.w   (a2)+,(a0)+
 ext_out_pts:      move.w   (a2)+,(a1)+
                   dbra     d0,ext_out_pts
                   lea      clip_xmin(a6),a2
-                  move.l   (a2)+,0-24(a1)    ;work_out[46/47]: clip_xmin/clip_ymin
-                  move.l   (a2)+,4-24(a1)    ;work_out[48/49]: clip_xmax/clip_ymax
+                  move.l   (a2)+,0-24(a1)    ;work_out[45/46]: clip_xmin/clip_ymin
+                  move.l   (a2)+,4-24(a1)    ;work_out[47/48]: clip_xmax/clip_ymax
                   
                   movem.l  (sp)+,d0/a0-a2
                   rts
@@ -238,7 +238,7 @@ init_res_vd:      lea      out_st_low(pc),a2
                   cmp.w    #ST_VIDEO,d0
                   beq.s    init_res_set
                   lea      out_tt_ste_low(pc),a2
-                  cmpi.b   #0,sshiftmd.w  ;ST-niedrig?
+                  cmpi.b   #ST_LOW,sshiftmd.w  ;ST-niedrig?
                   beq.s    init_res_set
                   lea      out_tt_mid(pc),a2 
 init_res_set:     lea      DEV_TAB.w,a1   ;work_out fuer v_opnwk/v_opnvwk

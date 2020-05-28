@@ -21,8 +21,9 @@ VERSION           EQU $0313
 PATTERN_LENGTH    EQU 32                  ;minimale Fuellmusterlaenge
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  ; 'NVDI-Treiber initialisieren'
+                  ; 'Initialisierung'
                   TEXT
+
 start:
 header:           bra.s continue          ;Fuer Aufrufe von normale Treibern
                   DC.B  'NVDIDRV',0       ;ID des NVDI-Treibers
@@ -110,7 +111,7 @@ reset:            movem.l  d0-d2/a0-a2,-(sp)
                   movea.l  _nvdi_unload_NOD_driver(a0),a2
                   movea.l  driver_offscreen(a1),a0 ;Offscreen-Treiber entfernen
                   jsr      (a2)           ;WORD unload_NOD_driver( DRIVER *drv );
-                  bsr      reset_screen_vecs
+                  bsr.s    reset_screen_vecs
                   movem.l  (sp)+,d0-d2/a0-a2
                   rts
 
@@ -164,8 +165,8 @@ ext_out_int:      move.w   (a2)+,(a0)+
 ext_out_pts:      move.w   (a2)+,(a1)+
                   dbra     d0,ext_out_pts
                   lea      clip_xmin(a6),a2
-                  move.l   (a2)+,0-24(a1)    ;work_out[46/47]: clip_xmin/clip_ymin
-                  move.l   (a2)+,4-24(a1)    ;work_out[48/49]: clip_xmax/clip_ymax
+                  move.l   (a2)+,0-24(a1)    ;work_out[45/46]: clip_xmin/clip_ymin
+                  move.l   (a2)+,4-24(a1)    ;work_out[47/48]: clip_xmax/clip_ymax
                   
                   movem.l  (sp)+,d0/a0-a2
                   rts

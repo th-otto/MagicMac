@@ -283,9 +283,9 @@ vqt_name:         move.l   d1,-(sp)
 vqt_name_search:  move.l   next_font(a0),d2 ;Zeiger auf naechsten Font
                   beq.s    vqt_name_err
 vqt_name_addr:    movea.l  d2,a0          ;Adresse des Fontheaders
-                  cmp.w    (a0),d1        ;noch der gleiche Zeichensatz ?
+                  cmp.w    font_id(a0),d1 ;noch der gleiche Zeichensatz ?
                   beq.s    vqt_name_search
-vqt_name_index:   move.w   (a0),d1        ;neue Zeichensatznummer
+vqt_name_index:   move.w   font_id(a0),d1 ;neue Zeichensatznummer
                   dbra     d0,vqt_name_search
 vqt_name_found:   move.w   d1,(a1)+       ;Fontnummer
                   moveq.l  #7,d0          ;Zaehler
@@ -300,7 +300,7 @@ vqt_name_copy:    move.l   (a0)+,d1
                   move.l   (sp)+,d1
                   rts
 
-vqt_name_err:     moveq.l  #1,d1          ;Default-Zeichensatznummer
+vqt_name_err:     moveq.l  #T_SYSTEM_FACE,d1 ;Default-Zeichensatznummer
                   lea.l    (font_hdr1).w,a0
                   bra.s    vqt_name_found
 
@@ -329,29 +329,29 @@ vqt_fontinfo:     movem.l  d1-d4,-(sp)
                   movem.l  pb_intout(a0),a1
                   move.l   t_first_ade(a6),d0
                   add.w    t_first_ade(a6),d0 /* t_ades -> last_ade */
-                  move.l   d0,(a1)+       ;intout[0/1] = min./max. Index;
+                  move.l   d0,(a1)+       /* intout[0/1] = min./max. Index */
                   movea.l  pb_ptsout(a0),a1
                   lea.l    t_height(a6),a0
                   moveq.l  #0,d0
                   moveq.l  #0,d1
                   moveq.l  #0,d4
-                  move.w   (a0)+,d4       ;Basislinie<->Zellenobergrenze
-                  move.w   (a0)+,(a1)+    ;ptsout[0] = Zellenbreite;
+                  move.w   (a0)+,d4       /* Basislinie<->Zellenobergrenze */
+                  move.w   (a0)+,(a1)+    /* ptsout[0] = t_cwidth = cell width */
                   lea.l    t_half(a6),a0
                   move.l   d4,d2
                   move.w   d4,d3
-                  sub.w    (a0)+,d2       ;Basislinie<->Zeichenhalblinie
-                  sub.w    (a0)+,d3       ;Basislinie<->Zeichenobergrenze
-                  move.w   (a0)+,d0
-                  move.w   (a0)+,d1
-                  sub.w    d4,d0          ;Basislinie<->Zellenuntergrenze
+                  sub.w    (a0)+,d2       /* Basislinie<->Zeichenhalblinie (t_half) */
+                  sub.w    (a0)+,d3       /* Basislinie<->Zeichenobergrenze (t_descent) */
+                  move.w   (a0)+,d0       /* t_bottom */
+                  move.w   (a0)+,d1       /* t_ascent */
+                  sub.w    d4,d0          /* Basislinie<->Zellenuntergrenze */
                   bpl.s    vqt_fi_base_bot
-                  moveq.l  #0,d0          ;fuer Sonderfall t_height = 1
-vqt_fi_base_bot:  sub.w    d4,d1          ;Basislinie<->Zeichenuntergrenze
+                  moveq.l  #0,d0          /* special case t_height = 1 */
+vqt_fi_base_bot:  sub.w    d4,d1          /* Basislinie<->Zeichenuntergrenze */
                   swap     d0
                   swap     d1
                   swap     d2
-                  btst     #T_BOLD_BIT,t_effects+1(a6) ;fett ?
+                  btst     #T_BOLD_BIT,t_effects+1(a6) /* bold? */
                   beq.s    vqt_fi_italics
                   move.w   t_thicken(a6),d0 ;Verbreiterungsfaktor
 vqt_fi_italics:   btst     #T_ITALICS_BIT,t_effects+1(a6) ;kursiv ?
