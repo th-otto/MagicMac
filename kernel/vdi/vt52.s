@@ -690,7 +690,7 @@ clear_lines:      move.w   (V_CEL_MX).w,d5
                   move.w   (V_COL_BG).w,d6
                   movea.w  (BYTES_LIN).w,a2
                   move.w   (PLANES).w,d2
-                  cmp.w    #8,d2          ;mehr als 8 Planes?
+                  cmp.w    #8,d2          /* more than 8 planes? */
                   bgt      clear_line_uni
                   add.w    d2,d2
                   move.w   clear_tab(pc,d2.w),d2
@@ -729,10 +729,12 @@ clear_mono2:      move.w   d5,d6
                   and.w    #$007F,d6
                   add.w    d6,d6
                   lea.l    clear_scr_mono(pc,d6.w),a3 ;Sprungadresse
-;d5 Zaehler innerhalb der Zeile
-;d7 Zeilenzaehler
-;a2 Differenz bis zur naechsten Zeile
-;a3 Sprungadresse
+/*
+ * d5 counter inside line
+ * d7 line counter
+ * a2 offset to next line
+ * a3 jump address
+ */
 clear_scrm_loop:  move.w   d5,d6
                   jmp      (a3)
 clear_scr_word:   move.w   d2,(a1)+
@@ -874,26 +876,28 @@ clear_lines_ex:   movem.l  (sp)+,d2-d7/a1-a6
 clear_color2:     add.w    d5,d5
                   moveq.l  #0,d2
                   lsr.w    #1,d6
-                  negx.w   d2             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d2             /* either black or white */
                   swap     d2
                   lsr.w    #1,d6
-                  negx.w   d2             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d2             /* either black or white */
 clear_regs2:      move.l   d2,d3
 clear_regs4:      move.l   d2,d4
                   movea.l  d3,a4
 clear_regs8:      suba.w   d5,a2
                   subq.w   #1,d5
-                  lsr.w    #2,d5          ;/4
+                  lsr.w    #2,d5          /* /4 */
                   move.w   d5,d6
-                  lsr.w    #7,d5          ;/128 Zaehler
+                  lsr.w    #7,d5          /* /128 counter */
                   not.w    d6
                   and.w    #$007F,d6
                   add.w    d6,d6
                   lea.l    clear_scr_line(pc,d6.w),a3 ;Sprungadresse
-;d5 Zaehler innerhalb der Zeile
-;d7 Zeilenzaehler
-;a2 Differenz bis zur naechsten Zeile
-;a3 Sprungadresse
+/*
+ * d5 counter inside line
+ * d7 line counter
+ * a2 offset to next line
+ * a3 jump address
+ */
 clear_scr_loop:   move.w   d5,d6
                   jmp      (a3)
 
@@ -1035,48 +1039,48 @@ clear_color4:     add.w    d5,d5
                   moveq.l  #0,d2
                   moveq.l  #0,d3
                   lsr.w    #1,d6
-                  negx.w   d2             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d2             /* either black or white */
                   swap     d2
                   lsr.w    #1,d6
 
-                  negx.w   d2             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d2             /* either black or white */
                   lsr.w    #1,d6
-                  negx.w   d3             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d3             /* either black or white */
                   swap     d3
                   lsr.w    #1,d6
-                  negx.w   d3             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d3             /* either black or white */
                   bra      clear_regs4
 clear_color8:     moveq.l  #0,d2
                   moveq.l  #0,d3
                   moveq.l  #0,d4
                   moveq.l  #0,d5
                   lsr.w    #1,d6
-                  negx.w   d2             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d2             /* either black or white */
                   swap     d2
                   lsr.w    #1,d6
-                  negx.w   d2             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d2             /* either black or white */
                   lsr.w    #1,d6
-                  negx.w   d3             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d3             /* either black or white */
                   swap     d3
                   lsr.w    #1,d6
-                  negx.w   d3             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d3             /* either black or white */
                   lsr.w    #1,d6
-                  negx.w   d4             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d4             /* either black or white */
                   swap     d4
                   lsr.w    #1,d6
-                  negx.w   d4             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d4             /* either black or white */
                   lsr.w    #1,d6
-                  negx.w   d5             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d5             /* either black or white */
                   swap     d5
                   lsr.w    #1,d6
-                  negx.w   d5             ;je nach V_COL_BG schwarz oder weiss
+                  negx.w   d5             /* either black or white */
                   movea.l  d5,a4
                   move.w   (V_CEL_MX).w,d5
                   addq.w   #1,d5
                   lsl.w    #3,d5
                   bra      clear_regs8
 
-clear_line_uni:   addq.w   #1,d7          ;Zeilenanzahl
+clear_line_uni:   addq.w   #1,d7          /* line counter */
                   mulu.w   (BYTES_LIN).w,d7
                   lsr.l    #5,d7
                   subq.l   #1,d7
@@ -1108,19 +1112,21 @@ clear_screen:     movem.l  d2-d7/a1-a6,-(sp)
                   adda.w   (V_CUR_OF).w,a1  ;Startadresse
                   bra      clear_lines
 
-;Bereich einer Textzeile loeschen
-;Eingaben
-;d2.w Spaltenanzahl -1
-;a1.l Adresse
-;a2.w Bytes pro Zeile
-;Ausgaben
-;d0-d2/a0-a1 werden zerstoert
+/*
+ * clear part of a line
+ * inputs:
+ * d2.w number of columns -1
+ * a1.l address
+ * a2.w bytes per line
+ * outputs:
+ * d0-d2/a0-a1 are trashed
+ */
 clear_line_part:  movem.l  d3-d6/a3-a4,-(sp)
-                  move.w   (V_COL_BG).w,d4  ;Hintergrundfarbe
+                  move.w   (V_COL_BG).w,d4  /* background color */
                   move.w   (PLANES).w,d5
                   move.w   d5,d6
-                  add.w    d5,d5          ;Planeoffset
-                  subq.w   #1,d6          ;Planezaehler
+                  add.w    d5,d5          /* plane offset */
+                  subq.w   #1,d6          /* plane counter */
                   movea.l  a1,a3
 clear_lp_bloop:   move.w   d2,d3
                   movea.l  a3,a0
@@ -1130,7 +1136,7 @@ clear_lp_bloop:   move.w   d2,d3
                   lea.l    vtc_bg_black(pc),a4
 clear_lp_loop:    movea.l  a0,a1
                   move.w   (V_CEL_HT).w,d0
-                  subq.w   #1,d0          ;Zeilen - 1
+                  subq.w   #1,d0          /* number of lines - 1 */
                   jsr      (a4)
                   addq.l   #1,a0
                   move.l   a0,d1
@@ -1139,7 +1145,7 @@ clear_lp_loop:    movea.l  a0,a1
                   subq.l   #2,a0
                   adda.w   d5,a0          
 clear_lp_dbf:     dbra     d3,clear_lp_loop
-                  addq.l   #2,a3          ;naechste Plane
+                  addq.l   #2,a3          /* next plane */
                   dbra     d6,clear_lp_bloop
                   movem.l  (sp)+,d3-d6/a3-a4
                   rts

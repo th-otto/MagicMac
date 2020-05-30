@@ -1016,28 +1016,44 @@ vt_seq_tab2:      DC.W vt_seq_b-vt_seq_tab2
 ;a1 Cursoradresse
 ;a2 Bytes pro Zeile
 
-; ALPHA CURSOR UP (VDI 5, ESCAPE 4)/ Cursor up (VT 52 ESC A)
+/*
+ * ALPHA CURSOR UP (VDI 5, ESCAPE 4)/ Cursor up (VT 52 ESC A)
+ */
 v_curup:
 vt_seq_A:         subq.w   #1,d1
                   bra      set_cursor_xy
-;ALPHA CURSOR DOWN (VDI 5,ESCAPE 5)/ Cursor down (VT52 ESC B)
+
+/*
+ * ALPHA CURSOR DOWN (VDI 5,ESCAPE 5)/ Cursor down (VT52 ESC B)
+ */
 v_curdown:
 vt_seq_B:         addq.w   #1,d1
                   bra      set_cursor_xy
-; ALPHA CURSOR RIGHT (VDI 5, ESCAPE 6)/ Cursor right (VT52 ESC C)
 
+/*
+ * ALPHA CURSOR RIGHT (VDI 5, ESCAPE 6)/ Cursor right (VT52 ESC C)
+ */
 v_curright:
 vt_seq_C:         addq.w   #1,d0
                   bra      set_cursor_xy
-; ALPHA CURSOR LEFT (VDI 5, ESCAPE 7)/ Cursor left (VT52 ESC D)
+
+/*
+ * ALPHA CURSOR LEFT (VDI 5, ESCAPE 7)/ Cursor left (VT52 ESC D)
+ */
 v_curleft:
 vt_seq_D:         subq.w   #1,d0
                   bra      set_cursor_xy
-;Clear screen (VT52 ESC E)
+
+/*
+ * Clear screen (VT52 ESC E)
+ */
 vt_seq_E:         bsr      cursor_off
                   bsr      clear_screen
                   bra.s    vt_seq_H_in
-; HOME ALPHA CURSOR (VDI 5, ESCAPE 8)/ Home Cursor (VT52 ESC H)
+
+/*
+ * HOME ALPHA CURSOR (VDI 5, ESCAPE 8)/ Home Cursor (VT52 ESC H)
+ */
 v_curhome:
 vt_seq_H:         bsr      cursor_off
 vt_seq_H_in:      clr.l    V_CUR_XY0.w
@@ -1045,7 +1061,10 @@ vt_seq_H_in:      clr.l    V_CUR_XY0.w
                   adda.w   V_CUR_OF.w,a1
                   move.l   a1,V_CUR_AD.w
                   bra      cursor_on
-;Cursor up and insert (VT52 ESC I)
+
+/*
+ * Cursor up and insert (VT52 ESC I)
+ */
 vt_seq_I:         pea      cursor_on(pc)
                   bsr      cursor_off
                   subq.w   #1,d1          ;Cursor bereits in der obersten Zeile ?
@@ -1054,7 +1073,10 @@ vt_seq_I:         pea      cursor_on(pc)
                   move.l   a1,V_CUR_AD.w
                   move.w   d1,V_CUR_XY1.w
                   rts
-; ERASE TO END OF ALPHA SRCEEN (VDI 5, ESCAPE 9)/ Erase to end of page (VT52 ESC J)
+
+/*
+ * ERASE TO END OF ALPHA SRCEEN (VDI 5, ESCAPE 9)/ Erase to end of page (VT52 ESC J)
+ */
 v_eeos:
 vt_seq_J:         bsr.s    vt_seq_K       ;Bis zum Zeilenende loeschen
                   move.w   V_CUR_XY1.w,d1 ;Textzeile
@@ -1072,15 +1094,23 @@ vt_seq_J:         bsr.s    vt_seq_K       ;Bis zum Zeilenende loeschen
                   subq.w   #1,d7          ;Anzahl der zu loeschenden Bildzeilen -1
                   bra      clear_lines    ;Zeilen loeschen/Register zurueck
 vt_seq_J_exit:    rts
-; ERASE TO END OF ALPHA TEXT LINE (VDI 5, ESCAPE 10)
+
+/*
+ * ERASE TO END OF ALPHA TEXT LINE (VDI 5, ESCAPE 10)
+ */
 v_eeol:
-;Clear to end of line (VT52 ESC K)
+/*
+ * Clear to end of line (VT52 ESC K)
+ */
 vt_seq_K:         bsr      cursor_off
                   move.w   V_CEL_MX.w,d2
                   sub.w    d0,d2          ;Anzahl der zu loeschenden Zeichen
                   bsr      clear_line_part
                   bra      cursor_on
-;Insert line (VT52 ESC I)
+
+/*
+ * Insert line (VT52 ESC I)
+ */
 vt_seq_L:         pea      cursor_on(pc)
                   bsr      cursor_off
                   bsr      set_x0         ;Cursor an Zeilenanfang
@@ -1103,7 +1133,9 @@ vt_seq_L:         pea      cursor_on(pc)
 vt_seq_L_exit:    movea.l  V_CUR_AD.w,a1  ;Startadresse
                   bra      clear_line2    ;Zeile loeschen/ Register zurueck
 
-;Delete Line (VT52 ESC M)
+/*
+ * Delete Line (VT52 ESC M)
+ */
 vt_seq_M:         pea      cursor_on(pc)
                   bsr      cursor_off
                   bsr      set_x0         ;Cursor an Zeilenanfang
@@ -1118,7 +1150,9 @@ vt_seq_M:         pea      cursor_on(pc)
                   subq.w   #1,d7          ;wegen dbf
                   bra      scroll_up2     ;Scrollen/loeschen/Register/Cursor an
 
-;Set cursor position (VT52 ESC Y)
+/*
+ * Set cursor position (VT52 ESC Y)
+ */
 vt_seq_Y:         move.l   #vt_set_y,con_state.w ;Sprungadresse
                   rts
 ;y-Koordinate setzen
@@ -1133,7 +1167,9 @@ vt_set_x:         subi.w   #32,d1
                   move.l   con_vec(pc),con_state.w ;Sprungadresse
                   bra      set_cursor_xy
 
-;Foreground color (VT52 ESC b)
+/*
+ * Foreground color (VT52 ESC b)
+ */
 vt_seq_b:         move.l   #vt_set_b,con_state.w
                   rts
 vt_set_b:         and.w    #1,d1          ;ausmaskieren
@@ -1154,14 +1190,19 @@ vt_set_b_ok:      move.l   a0,con_vec
                   move.l   rawcon_vec(pc),_rawcon_vec(a1)
 vt_set_b_exit:    move.l   con_vec(pc),con_state.w ;Sprungadresse
                   rts
-;Background color (VT52 ESC c)
+
+/*
+ * Background color (VT52 ESC c)
+ */
 vt_seq_c:         move.l   #vt_set_c,con_state.w
                   rts
 vt_set_c:         and.w    #1,d1
                   move.w   d1,V_COL_BG.w
                   bra.s    vt_set_b_in
 
-;Erase to start of page (VT52 ESC d)
+/*
+ * Erase to start of page (VT52 ESC d)
+ */
 vt_seq_d:         bsr.s    vt_seq_o       ;ab Zeilenanfang loeschen
                   move.w   V_CUR_XY1.w,d1 ;Textzeile
                   beq.s    vt_seq_d_exit
@@ -1173,19 +1214,31 @@ vt_seq_d:         bsr.s    vt_seq_o       ;ab Zeilenanfang loeschen
                   adda.w   V_CUR_OF.w,a1  ;Seitenanfang
                   bra      clear_lines    ;loeschen/Register zurueck
 vt_seq_d_exit:    rts
-;Show cursor (VT52 ESC e)
+
+/*
+ * Show cursor (VT52 ESC e)
+ */
 vt_seq_e:         tst.w    V_HID_CNT.w
                   beq.s    vt_seq_e_exit
                   move.w   #1,V_HID_CNT.w
                   bra      cursor_on
 vt_seq_e_exit:    rts
-;Hide cursor (VT52 ESC f)
+
+/*
+ * Hide cursor (VT52 ESC f)
+ */
 vt_seq_f:         bra      cursor_off
-;Save cursor (VT52 ESC j)
+
+/*
+ * Save cursor (VT52 ESC j)
+ */
 vt_seq_j:         bset     #CURSOR_SAVED,V_STAT_0.w
                   move.l   V_CUR_XY0.w,V_SAV_XY.w
                   rts
-;Restore cursor (VT52 ESC k)
+
+/*
+ * Restore cursor (VT52 ESC k)
+ */
 vt_seq_k:         movem.w  V_SAV_XY.w,d0-d1
 
                   bclr     #CURSOR_SAVED,V_STAT_0.w
@@ -1193,12 +1246,18 @@ vt_seq_k:         movem.w  V_SAV_XY.w,d0-d1
                   moveq    #0,d0
                   moveq    #0,d1
                   bra      set_cursor_xy
-;Erase line (VT52 ESC l)
+
+/*
+ * Erase line (VT52 ESC l)
+ */
 vt_seq_l:         bsr      cursor_off
                   bsr      set_x0         ;Zeilenanfang
                   bsr      clear_line
                   bra      cursor_on
-;Erase to line start (VT52 ESC o)
+
+/*
+ * Erase to line start (VT52 ESC o)
+ */
 vt_seq_o:         move.w   d0,d2
                   subq.w   #1,d2          ;Spaltenanzahl -1
                   bmi.s    vt_seq_o_exit
@@ -1208,18 +1267,30 @@ vt_seq_o:         move.w   d0,d2
                   adda.l   d1,a1          ;Zeilenanfang
                   bra      clear_line_part
 vt_seq_o_exit:    rts
-;REVERSE VIDEO ON (VDI 5, ESCAPE 13)/Reverse video (VT52 ESC p)
+
+/*
+ * REVERSE VIDEO ON (VDI 5, ESCAPE 13)/Reverse video (VT52 ESC p)
+ */
 v_rvon:
 vt_seq_p:         bset     #INVERSE,V_STAT_0.w
                   rts
-; REVERSE VIDEO OFF (VDI 5, ESCAPE 14)/Normal Video (VT52 ESC q)
+
+/*
+ * REVERSE VIDEO OFF (VDI 5, ESCAPE 14)/Normal Video (VT52 ESC q)
+ */
 v_rvoff:
 vt_seq_q:         bclr     #INVERSE,V_STAT_0.w
                   rts
-;Wrap at end of line (VT52 ESC v)
+
+/*
+ * Wrap at end of line (VT52 ESC v)
+ */
 vt_seq_v:         bset     #WRAP,V_STAT_0.w
                   rts
-;Discard end of line (VT52 ESC w)
+
+/*
+ * Discard end of line (VT52 ESC w)
+ */
 vt_seq_w:         bclr     #WRAP,V_STAT_0.w
                   rts
 
@@ -1282,8 +1353,10 @@ scroll_downw:     move.w   -(a0),-(a1)
                   dbra     d7,scroll_downw
                   rts
 
-;Eingabe
-;a1 Zeilenadresse
+/*
+ * Inputs:
+ * a1 address of line
+ */
 clear_line:       movem.l  d2-d7/a1-a6,-(sp)
 clear_line2:      move.w   V_CEL_HT.w,d7
                   subq.w   #1,d7
@@ -1315,10 +1388,12 @@ clear_mono2:      move.w   d5,d6
                   and.w    #127,d6
                   add.w    d6,d6
                   lea      clear_scr_mono(pc,d6.w),a3 ;Sprungadresse
-;d5 Zaehler innerhalb der Zeile
-;d7 Zeilenzaehler
-;a2 Differenz bis zur naechsten Zeile
-;a3 Sprungadresse
+/*
+ * d5 counter inside line
+ * d7 line counter
+ * a2 offset to next line
+ * a3 jump address
+ */
 clear_scrm_loop:  move.w   d5,d6
                   jmp      (a3)
 clear_scr_word:   move.w   d2,(a1)+
@@ -1332,36 +1407,40 @@ clear_scr_mono:   REPT 128
 clear_lines_ex:   movem.l  (sp)+,d2-d7/a1-a6
                   rts
 
-;Bildschirm loeschen
-;Eingaben
-; -
-;Ausgaben
-;kein Register wird zerstoert
+/*
+ * clear screen
+ * inputs:
+ * -
+ * outputs:
+ * all registers preserved
+ */
 clear_screen:     movem.l  d2-d7/a1-a6,-(sp)
-                  move.w   V_CEL_MY.w,d7  ;Textzeilenanzahl -1
+                  move.w   V_CEL_MY.w,d7  /* number of textlines -1 */
                   addq.w   #1,d7
                   mulu     V_CEL_HT.w,d7
-                  subq.w   #1,d7          ;Zeilenanzahl -1
+                  subq.w   #1,d7          /* number of lines -1 */
                   movea.l  v_bas_ad.w,a1
-                  adda.w   V_CUR_OF.w,a1  ;Startadresse
+                  adda.w   V_CUR_OF.w,a1  /* start address */
                   bra      clear_lines
 
-;Bereich einer Textzeile loeschen
-;Eingaben
-;d2.w Spaltenanzahl -1
-;a1.l Adresse
-;a2.w Bytes pro Zeile
-;Ausgaben
-;d0-d2/a0-a1 werden zerstoert
+/*
+ * clear part of a line
+ * inputs:
+ * d2.w number of columns -1
+ * a1.l address
+ * a2.w bytes per line
+ * outputs:
+ * d0-d2/a0-a1 are trashed
+ */
 clear_line_part:  movem.l  d3-d6/a3-a4,-(sp)
                   moveq    #16,d0
                   sub.w    V_CEL_HT.w,d0
                   add.w    d0,d0
-                  move.w   V_COL_BG.w,d4  ;Hintergrundfarbe
-                  moveq    #1,d5          ;PLANES
+                  move.w   V_COL_BG.w,d4  /* background color */
+                  moveq    #1,d5          /* PLANES */
                   move.w   d5,d6
-                  add.w    d5,d5          ;Planeoffset
-                  subq.w   #1,d6          ;Planezaehler
+                  add.w    d5,d5          /* plane offset */
+                  subq.w   #1,d6          /* plane counter */
                   movea.l  a1,a3
 clear_lp_bloop:   move.w   d2,d3
                   movea.l  a3,a0

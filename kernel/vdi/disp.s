@@ -476,7 +476,7 @@ vdi_tab100:
                   DC.L vqt_fontinfo       ;131
 
                   DC.W 0,0
-                  DC.L opcode_err         ;132
+                  DC.L opcode_err         ;132 (vqt_justified)
 
                   DC.W 0,0
                   DC.L opcode_err         ;133

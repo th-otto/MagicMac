@@ -457,7 +457,7 @@ Mshrink: ; not exported!
                   movem.l  d1-d2/a0-a2,-(sp)
                   movea.l  d0,a0
                   move.l   d1,d0
-                  bsr      Mshrink_sys
+                  jsr      Mshrink_sys
                   movem.l  (sp)+,d1-d2/a0-a2
                   rts
 
@@ -469,7 +469,7 @@ Mshrink: ; not exported!
 Mfree: ; not exported!
                   movem.l  d1-d2/a0-a2,-(sp)
                   move.l   d0,a0
-                  bsr      Mfree_sys
+                  jsr      Mfree_sys
                   movem.l  (sp)+,d1-d2/a0-a2
                   rts
 

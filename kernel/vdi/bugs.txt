@@ -1,0 +1,7 @@
+v_bez_qual not supported
+v_sound/vs_mute no longer supported
+v_dspcur/v_rmcur not supported
+v_dspcur should ignore coordinates
+v_offset not supported
+
+V_CEL_WR used
