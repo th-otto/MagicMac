@@ -2430,7 +2430,7 @@ Logbase:
 
 Getrez:
  moveq    #0,d0
- move.w   sshiftmd,d0
+ move.b   sshiftmd,d0
  rte
 
 
