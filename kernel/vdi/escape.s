@@ -12,7 +12,7 @@ v_escape_in:      tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   cmp.w    #V_RMCUR,d0
                   bhi.s    v_escape_unof
                   movem.l  d1-d7/a2-a5,-(sp)
-                  movem.l  pb_intin(a0),a2-a5
+                  movem.l  pb_intin(a0),a2-a5  /* a2=intin, a3=ptsin, a4=intout, a5=ptsout */
                   add.w    d0,d0
                   move.w   v_escape_tab(pc,d0.w),d2
                   movea.l  a2,a5
@@ -46,70 +46,89 @@ v_escape_tab:     DC.W v_escape_exit-v_escape_tab
                   DC.W v_dspcur-v_escape_tab ;18
                   DC.W v_rmcur-v_escape_tab ;19
 
-; INQUIRE ADDRESSABLE ALPHA CHARACTER CELLS (VDI 5, ESCAPE 1)
-vq_chcells:       move.l   (V_CEL_MX).w,d3  ;Spalten / Zeilen
+/*
+ * INQUIRE ADDRESSABLE ALPHA CHARACTER CELLS (VDI 5, ESCAPE 1)
+ */
+vq_chcells:       move.l   (V_CEL_MX).w,d3  /* columns / lines */
                   addi.l   #$00010001,d3
                   swap     d3
                   move.l   d3,(a4)
-                  move.w   #2,n_intout(a0) ;Eintraege in intout
+                  move.w   #2,n_intout(a0)
                   rts
 
-; EXIT ALPHA MODE (VDI 5, ESCAPE 2)
-v_exit_cur:       addq.w   #1,(V_HID_CNT).w ;Cursor aus
+/*
+ * EXIT ALPHA MODE (VDI 5, ESCAPE 2)
+ */
+v_exit_cur:       addq.w   #1,(V_HID_CNT).w /* cursor off */
                   bclr     #CURSOR_STATE,(V_STAT_0).w
-                  bra      clear_screen   ;Bildschirm loeschen
+                  bra      clear_screen
 
-; ENTER ALPHA MODE (VDI 5, ESCAPE 3)
-v_enter_cur:      clr.l    (V_CUR_XY).w    ;Spalte 0/Zeile 0
-                  move.l   (v_bas_ad).w,(V_CUR_AD).w ;Adresse des Cursors
-                  move.l   (con_vec).w,(con_state).w  ;Zeiger auf VT-Routine
-                  jsr      clear_screen   ;Bildschirm loeschen
+/*
+ * ENTER ALPHA MODE (VDI 5, ESCAPE 3)
+ */
+v_enter_cur:      clr.l    (V_CUR_XY).w    /* column 0 / row 0 */
+                  move.l   (v_bas_ad).w,(V_CUR_AD).w /* address of cursor */
+                  move.l   (con_vec).w,(con_state).w  /* pointer to VT function */
+                  jsr      clear_screen
                   bclr     #CURSOR_STATE,(V_STAT_0).w
                   move.w   #1,(V_HID_CNT).w
                   bra      cursor_on      ;Cursor an
 
-; DIRECT ALPHA CURSOR ADDRESS (VDI 5, ESCAPE 11)
-vs_curaddress:    move.w   (a5)+,d1       ;Zeile
-                  move.w   (a5)+,d0       ;Spalte
+/*
+ * DIRECT ALPHA CURSOR ADDRESS (VDI 5, ESCAPE 11)
+ */
+vs_curaddress:    move.w   (a5)+,d1       /* column */
+                  move.w   (a5)+,d0       /* row */
                   subq.w   #1,d0
                   subq.w   #1,d1
                   bra      set_cursor_xy
 
-; OUTPUT CURSOR ADDRESSABLE ALPHA TEXT (VDI 5, ESCAPE 12)
+/*
+ * OUTPUT CURSOR ADDRESSABLE ALPHA TEXT (VDI 5, ESCAPE 12)
+ * inputs:
+ *  d1: pb
+ *  a0: control
+ *  a5: intin
+ *  a6: wk
+ */
 v_curtext:        moveq.l  #0,d1
-                  move.w   n_intin(a0),d1 ;Zeichenanzahl
-                  subq.w   #1,d1          ;zu wenig Zeichen ?
+                  move.w   n_intin(a0),d1 /* number of characters */
+                  subq.w   #1,d1          /* not any characters? */
                   bmi.s    v_curtext_exit
                   movea.l  buffer_addr(a6),a0
-                  movea.l  a0,a1          ;Bufferadresse
+                  movea.l  a0,a1          /* buffer address */
                   move.l   buffer_len(a6),d0
                   subq.l   #1,d0
-                  sub.l    d1,d0          ;zu viele Zeichen ?
+                  sub.l    d1,d0          /* too many characters? */
                   bgt.s    v_curtext_copy
                   add.l    d1,d0
-                  move.l   d0,d1          ;Maximalanzahl
-v_curtext_copy:   move.w   (a5)+,d0       ;Zeichen einlesen
-                  move.b   d0,(a1)+       ;und kopieren
+                  move.l   d0,d1          /* maximum count */
+v_curtext_copy:   move.w   (a5)+,d0       /* get character */
+                  move.b   d0,(a1)+       /* copy it */
                   dbra     d1,v_curtext_copy
-                  clr.b    (a1)+          ;Stringende
+                  clr.b    (a1)+          /* mark end of string */
 
-                  move.l   a0,-(sp)       ;Stringadresse
+                  move.l   a0,-(sp)       /* string address */
                   move.w   #CCONWS,-(sp)
                   trap     #GEMDOS
                   addq.l   #6,sp
 
 v_curtext_exit:   rts
 
-; INQUIRE CURRENT ALPHA CURCOR ADDRESS (VDI 5, ESCAPE 15)
+/*
+ * INQUIRE CURRENT ALPHA CURCOR ADDRESS (VDI 5, ESCAPE 15)
+ */
 vq_curaddress:    addq.w   #1,d0
                   addq.w   #1,d1
-                  move.w   d1,(a4)+       ;intout[0] = Zeile;
-                  move.w   d0,(a4)+       ;intout[1] = Spalte;
-                  move.w   #2,n_intout(a0) ;Eintraege in intout
+                  move.w   d1,(a4)+       /* intout[0] = column */
+                  move.w   d0,(a4)+       /* intout[1] = row */
+                  move.w   #2,n_intout(a0)
                   rts
 
-; INQUIRE TABLET STATUS (VDI 5, ESCAPE 16)
-vq_tabstatus:     move.w   #1,(a4)        ;Maus verfuegbar
+/*
+ * INQUIRE TABLET STATUS (VDI 5, ESCAPE 16)
+ */
+vq_tabstatus:     move.w   #1,(a4)        /* mouse available */
                   move.w   #1,n_intout(a0)
                   rts
 

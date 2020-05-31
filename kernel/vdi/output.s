@@ -834,7 +834,7 @@ v_pline_eff:      tst.w    n_intin(a1)    ;bezarr vorhanden?
                   bra      v_pline_thick  ;Linie
 
 ; POLYLINE (VDI 6)
-v_pline:          movea.l  (a0),a1        ;contrl
+v_pline:          movea.l  pb_control(a0),a1
                   movep.w  l_start+1(a6),d0 ;Linienendstile ?
                   add.w    l_width(a6),d0 ;breite Linie?
                   add.w    n_intin(a1),d0 ;bezarr vorhanden?

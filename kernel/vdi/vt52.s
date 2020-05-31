@@ -39,13 +39,15 @@ bconout:          lea.l    6(sp),a0       ;Achtung: hier muss lea 6(sp) stehen, 
                   movea.l  (con_state).w,a0
                   jmp      (a0)
 
-;Cursor positionieren
-;Eingabe
-;d0 Textspalte
-;d1 Textzeile
-;Ausgabe
-;a1 Cursoradresse
-;zerstoert werden d0-d2
+/*
+ * position cursor
+ * inputs:
+ * d0.w: column
+ * d1.w: line
+ * outputs:
+ * a1 cursor address
+ * d0-d2 are trashed
+ */
 set_cursor_xy:    bsr      cursor_off
 set_cur_clipx1:   move.w   (V_CEL_MX).w,d2
                   tst.w    d0
@@ -64,26 +66,31 @@ set_cur_clipy2:   cmp.w    d2,d1
 set_cursor:       movem.w  d0-d1,(V_CUR_XY).w
                   movea.l  (v_bas_ad).w,a1
                   mulu.w   (V_CEL_WR).w,d1
-                  adda.l   d1,a1          ;Zeilenadresse
+                  adda.l   d1,a1          /* line address */
+                  /* BUG: address calculation wrong for planes >= 16 */
                   moveq.l  #1,d1
                   and.w    d0,d1
-                  and.w    #$fffe,d0
+                  and.w    #0xfffe,d0
                   mulu.w   (PLANES).w,d0
                   add.w    d1,d0
-                  adda.w   d0,a1          ;Cursoradresse
-                  adda.w   (V_CUR_OF).w,a1 ;Offset
+                  adda.w   d0,a1          /* cursor address */
+                  adda.w   (V_CUR_OF).w,a1 /* offset */
                   move.l   a1,(V_CUR_AD).w
                   bra.s    cursor_on
 
-;Cursor ausschalten
-cursor_off:       addq.w   #1,(V_HID_CNT).w ;Hochzaehlen
+/*
+ * turn text cursor off
+ */
+cursor_off:       addq.w   #1,(V_HID_CNT).w /* increment count */
                   cmpi.w   #1,(V_HID_CNT).w
                   bne.s    cursor_off_exit
-                  bclr     #CURSOR_STATE,(V_STAT_0).w ;Cursor sichtbar ?
+                  bclr     #CURSOR_STATE,(V_STAT_0).w /* cursor visible? */
                   bne.s    cursor
 cursor_off_exit:  rts
 
-;Cursor einschalten
+/*
+ * turn text cursor on
+ */
 cursor_on:        cmpi.w   #1,(V_HID_CNT).w
                   bcs.s    cursor_on_exit2
                   bhi.s    cursor_on_exit1
@@ -94,7 +101,7 @@ cursor_on_exit1:  subq.w   #1,(V_HID_CNT).w
 cursor_on_exit2:  rts
 
 
-vbl_cursor:       btst     #CURSOR_BL,(V_STAT_0).w ;Blinken ein ?
+vbl_cursor:       btst     #CURSOR_BL,(V_STAT_0).w /* blinking on? */
                   beq.s    vbl_no_bl
                   bchg     #CURSOR_STATE,(V_STAT_0).w
                   bra.s    cursor
@@ -102,32 +109,39 @@ vbl_no_bl:        bset     #CURSOR_STATE,(V_STAT_0).w
                   beq.s    cursor
                   rts
 
-;Cursor zeichnen
+/*
+ * draw text cursor
+ * BUG: does not work for pixel-packed modes
+ */
 cursor:           movem.l  d0-d2/a0-a2,-(sp)
-                  move.w   (PLANES).w,d0    ;Planezaehler
+                  move.w   (PLANES).w,d0    /* plane counter */
                   subq.w   #1,d0
                   move.w   (V_CEL_HT).w,d2
                   subq.w   #1,d2
-                  movea.l  (V_CUR_AD).w,a0     ;Cursoradresse
-                  movea.w  (BYTES_LIN).w,a2    ;Bytes pro Zeile
+                  movea.l  (V_CUR_AD).w,a0     /* cursor address */
+                  movea.w  (BYTES_LIN).w,a2    /* bytes per line */
 cursor_bloop:     movea.l  a0,a1
                   move.w   d2,d1
 cursor_loop:      not.b    (a1)
-                  adda.w   a2,a1             ;naechste Zeile
+                  adda.w   a2,a1             /* next line */
                   dbra     d1,cursor_loop
-                  addq.l   #2,a0             ;naechste Plane
-                  dbra     d0,cursor_bloop   ;Bildebenen abarbeiten
+                  addq.l   #2,a0             /* next plane */
+                  dbra     d0,cursor_bloop   /* loop for planes */
                   movem.l  (sp)+,d0-d2/a0-a2
 cursor_exit:      rts
 
-;BEL, Klingelzeichen
+/*
+ * BEL, ring the bell
+ */
 vt_bel:           btst     #2,(conterm).w   ;Glocke an ?
                   beq.s    cursor_exit
                   movea.l  (bell_hook).w,a0
                   jmp      (a0)
 
 
-;Glocke erzeugen
+/*
+ * make sound for bell
+ */
 make_pling:       pea.l    pling(pc)      ;Sequenz fuer Yamaha-Chip
                   move.w   #DOSOUND,-(sp)
                   trap     #XBIOS
@@ -137,46 +151,56 @@ pling:            DC.B $00,$34,$01,$00,$02,$00,$03,$00,$04,$00,$05,$00,$06,$00,$
                   DC.B $08,$10,$09,$00,$0a,$00,$0b,$00,$0c,$10,$0d,$09,$ff,$00
 
 
-;BACKSPACE, ein Zeichen zurueck
-;d0 Textspalte
-;d1 Textzeile
+/*
+ * BACKSPACE, one character back
+ * d0 column
+ * d1 line
+ */
 vt_bs:            movem.w  (V_CUR_XY).w,d0-d1
-                  subq.w   #1,d0          ;eine Spalte zurueck
+                  subq.w   #1,d0          /* one column back */
                   bra      set_cursor_xy
 
-;HT
-;d0 Textspalte
-;d1 Textzeile
-vt_ht:            andi.w   #$fff8,d0      ;maskieren
-                  addq.w   #8,d0          ;naechster Tabulator
+/*
+ * HT
+ * d0 column
+ * d1 line
+ */
+vt_ht:            andi.w   #$fff8,d0      /* mask */
+                  addq.w   #8,d0          /* next tab */
                   bra      set_cursor_xy
 
-;LINEFEED, naechste Zeile
-;d1 Textzeile
+/*
+ * LINEFEED, next line
+ * d1 line
+ */
 vt_lf:            pea.l    cursor_on(pc)
                   bsr      cursor_off
                   sub.w    (V_CEL_MY).w,d1
                   beq      scroll_up_page
-                  move.w   (V_CEL_WR).w,d1  ;d1: High-Word=0 ! (durch movem.w)
-                  add.l    d1,(V_CUR_AD).w  ;naechste Textzeile
+                  move.w   (V_CEL_WR).w,d1  /* d1: High-Word=0 ! (durch movem.w) */
+                  add.l    d1,(V_CUR_AD).w  /* next line */
                   addq.w   #1,(V_CUR_XY+2).w
                   rts
 
-;RETURN, Zeilenanfang
-;d0 Textspalte
+/*
+ * RETURN, start of line
+ * d0 column
+ */
 vt_cr:            bsr      cursor_off
                   pea.l    cursor_on(pc)
                   movea.l  (V_CUR_AD).w,a1
 
-;Cursor an den Zeilenanfang setzen
-;Eingabe
-;d0 Cursorspalte
-;a1 Cursoradresse
-;Ausgabe
-;a1 neue Cursoradresse
-;zerstoert werden d0/d2
+/*
+ * set cursor to start of line
+ * inputs:
+ * d0 column
+ * a1 cursor address
+ * outputs:
+ * a1 new Cursor address
+ * d0/d2 are trashed
+ */
 set_x0:           move.w   (PLANES).w,d2
-                  btst     #0,d0          ;Wortgrenze oder Byteposition?
+                  btst     #0,d0          /* word or byte position? */
                   beq.s    set_x0_even
                   subq.w   #1,d0
                   mulu.w   d2,d0
@@ -188,8 +212,10 @@ set_x0_addr:      suba.l   d0,a1
                   clr.w    (V_CUR_XY).w
                   rts
 
-;ESC
-vt_esc:           move.l   #vt_esc_seq,(con_state).w ;Sprungadresse
+/*
+ * ESC
+ */
+vt_esc:           move.l   #vt_esc_seq,(con_state).w /* jump address */
                   rts
 
 vt_control:       cmpi.w   #27,d1
@@ -197,10 +223,11 @@ vt_control:       cmpi.w   #27,d1
                   subq.w   #7,d1
                   subq.w   #6,d1
                   bhi.s    vt_c_exit
-                  move.l   #vt_con,(con_state).w ;Sprungadresse
+                  move.l   #vt_con,(con_state).w /* jump address */
                   add.w    d1,d1
                   move.w   vt_c_tab(pc,d1.w),d2
-                  movem.w  (V_CUR_XY).w,d0-d1 ;Textspalte/-zeile
+                  /* note: movem.w does sign extend, whic is assumed in a lot of functions above/below */
+                  movem.w  (V_CUR_XY).w,d0-d1 /* text column/line */
                   jmp      vt_c_tab(pc,d2.w)
 vt_c_exit:        rts
 
@@ -212,21 +239,21 @@ vt_c_exit:        rts
                   DC.W vt_lf-vt_c_tab     ;12 FF
 vt_c_tab:         DC.W vt_cr-vt_c_tab     ;13 CR
 
-vt_con:           cmpi.w   #32,d1         ;Steuerzeichen ?
+vt_con:           cmpi.w   #32,d1         /* control character? */
                   blt.s    vt_control
 vt_rawcon:        move.l   d3,-(sp)
                   move.w   (V_CEL_HT).w,d0
                   subq.w   #1,d0
-                  movea.l  (V_FNT_AD).w,a0  ;Fontimageadresse
-                  movea.l  (V_CUR_AD).w,a1  ;Cursoradresse
-                  movea.w  (BYTES_LIN).w,a2 ;Bytes pro Zeile
-                  adda.w   d1,a0            ;Adresse des Zeichens(-Offset)
+                  movea.l  (V_FNT_AD).w,a0  /* address of font image */
+                  movea.l  (V_CUR_AD).w,a1  /* address of cursor */
+                  movea.w  (BYTES_LIN).w,a2 /* bytes pro line */
+                  adda.w   d1,a0            /* address of character(-Offset) */
                   move.w   (PLANES).w,d2
                   subq.w   #1,d2          ;Planezaehler
                   move.l   (V_COL_BG).w,d3  ;Hintergrundfarbe/Vordergrundfarbe
                   move.b   #4,(V_CUR_CT).w  ;Blinkzaehler hochsetzen -> kein Cursor
-                  bclr     #CURSOR_STATE,(V_STAT_0).w ;Cursor nicht sichtbar
-                  btst     #INVERSE,(V_STAT_0).w ;invertieren ?
+                  bclr     #CURSOR_STATE,(V_STAT_0).w /* cursor not visible */
+                  btst     #INVERSE,(V_STAT_0).w /* invert ? */
                   beq.s    vtc_char_loop
                   swap     d3             ;Hinter- und Vordergrundfarbe tauschen
 vtc_char_loop:    movem.l  d0/a0-a1,-(sp)

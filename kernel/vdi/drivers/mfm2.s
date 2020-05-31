@@ -1541,10 +1541,12 @@ v_curaddress:     move.w   (a5)+,d1       ;Zeile
                   subq.w   #1,d1
                   bra      set_cursor_xy
 
-; OUTPUT CURSOR ADDRESSABLE ALPHA TEXT (VDI 5, ESCAPE 12)
+/*
+ * OUTPUT CURSOR ADDRESSABLE ALPHA TEXT (VDI 5, ESCAPE 12)
+ */
 v_curtext:        movem.l  d1-d3/a2-a3,-(sp)
                   movea.l  pb_intin(a0),a3 ;intin
-                  move.w   n_intin(a1),d3 ;Zeichenanzahl
+                  move.w   n_intin(a1),d3 /* number of characters */
                   subq.w   #1,d3          ;zu wenig Zeichen ?
                   bmi.s    v_curtext_exit
 v_curtext_loop:   move.w   (a3)+,d1       ;Zeichen

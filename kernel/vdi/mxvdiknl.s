@@ -2302,7 +2302,7 @@ fbox_clipy2:      cmp.w    (a1),d3
 fbox_clipyy:      cmp.w    d1,d3
                   blt.s    fbox_exit
 
-                  movea.l  p_fbox(a6),a1 ; ??? where is that set?
+                  movea.l  p_fbox(a6),a1
                   jmp      (a1)
 
 ;horizontale Linie mit Fuellmuster ausgeben
@@ -2416,7 +2416,7 @@ vclip_y_cmp:      cmp.w    d3,d1
                   movea.l  p_vline(a6),a1
                   jmp      (a1)
 
-Clipping:
+; Clipping:
 vline_change:     exg      d1,d3
 
                   add.w    l_lastpix(a6),d3
