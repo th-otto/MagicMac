@@ -2389,6 +2389,7 @@ init_font:
  bls.b    ifo_standardfont         ; 0 oder 1: Systemfont (default) verwenden
  move.l   a0,-(sp)
  move.l   #$77000000,d0            ; vst_load_fonts(intin[0] = 0)
+ clr.l    vcontrl+20               ; contrl[10/11] = 0
  bsr      vdi_1
  move.l   (sp)+,a0
  tst.w    vintout

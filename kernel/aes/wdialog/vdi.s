@@ -258,6 +258,7 @@ _myVDIParBlk:
 
 				MODULE	vst_load_fonts
 				move.w    d1,_myVDIParBlk+intin
+				clr.l     _myVDIParBlk+control+20 /* contrl[10/11] = 0 */
 				moveq.l   #119,d1
 				moveq.l   #1,d2
 				bra       _VdiCtrl

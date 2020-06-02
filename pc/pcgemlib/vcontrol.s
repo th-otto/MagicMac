@@ -34,6 +34,7 @@
 				lea		_GemParBlk,a0
 				clr.w	v_nptsin(a0)
 				move.w	#1,v_nintin(a0)
+				clr.l   20(a0) /* contrl[10/11] = 0 */
 				move.w	d1,intin(a0)
 				moveq	#119,d1
 				bra		_VdiCtrl
