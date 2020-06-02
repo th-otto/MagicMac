@@ -942,11 +942,11 @@ v_clswk_all:      movea.l  (a1)+,a2
 v_clswk_phys:     move.l   #closed,-4(a1) /* schliessen */
 v_clswk_next:     dbra     d3,v_clswk_all
                   movem.l  d0/a0-a1/a6,-(sp)
-                  movea.l  (a0),a1        /* contrl */
-                  move.w   #VST_UNLOAD_FONTS,(a1) /* neue Funktionsnummer */
+                  movea.l  pb_control(a0),a1
+                  move.w   #VST_UNLOAD_FONTS,opcode(a1) /* neue Funktionsnummer */
                   bsr      vst_unload_fonts /* Fonts der phys. WK entfernen */
                   movem.l  (sp)+,d0/a0-a1/a6
-                  movea.l  (a0),a1        /* contrl */
+                  movea.l  pb_control(a0),a1
                   move.w   #V_CLSWK,(a1)
                   movea.l  device_drvr(a6),a2   /* Zeiger auf die Treiberstruktur */
                   clr.w    driver_use(a2) /* Treiber nicht in Gebrauch ! */
@@ -1021,18 +1021,18 @@ reset_interrupts: movem.l  d0-d2/a0-a2,-(sp)
 /* Interrupt-Vektoren setzen */
                   move.l   (old_etv_timer).w,(etv_timer).w
                   lea.l    (USER_TIM).w,a0  /* Line-A-Vektoren loeschen */
-                  clr.l    (a0)+
-                  clr.l    (a0)+
-                  clr.l    (a0)+
-                  clr.l    (a0)+
-                  clr.l    (a0)+
+                  clr.l    (a0)+          /* USER_TIM */
+                  clr.l    (a0)+          /* NEXT_TIM */
+                  clr.l    (a0)+          /* USER_BUT */
+                  clr.l    (a0)+          /* USER_CUR */
+                  clr.l    (a0)+          /* USER_MOT */
                   clr.l    -(sp)
                   clr.l    -(sp)
-                  clr.l    -(sp)          /* Maus ausschalten */
+                  clr.l    -(sp)          /* turn off mouse Initmouse(0) */
                   trap     #XBIOS
                   lea.l    12(sp),sp
                   movea.l  (vbl_queue).w,a0
-                  clr.l    (a0)           /* VBL-Routine loeschen */
+                  clr.l    (a0)           /* reset VBL routine */
                   move.w   (sp)+,sr
                   movem.l  (sp)+,d0-d2/a0-a2
                   rts
@@ -1090,9 +1090,9 @@ vst_lf_nvdi:      movea.l  d0,a0
                   move.l   a0,t_bitmap_fonts(a6)
 vst_lf_in:        moveq.l  #-1,d0
                   moveq.l  #0,d1
-vst_lf_loop:      cmp.w    (a0),d0        /* gleiche Nummer ? */
+vst_lf_loop:      cmp.w    font_id(a0),d0 /* gleiche Nummer ? */
                   beq.s    vst_lf_format
-                  move.w   (a0),d0
+                  move.w   font_id(a0),d0
                   addq.w   #1,d1          /* Anzahl inkrementieren */
 vst_lf_format:    tst.b    flags+1(a0)    /* Motorola- oder Intel- Format ? BUG: should btst #T_SWAP_BIT */
                   bne.s    vst_lf_mot
@@ -1123,7 +1123,7 @@ vst_lfg_err2:     clr.w    (a4)
  * UNLOAD FONTS (VDI 120)
  */
 vst_unload_fonts: movem.l  d1-d2/a2,-(sp)
-                  movea.l  (a0),a1        /* contrl */
+                  movea.l  pb_control(a0),a1
                   tst.l    t_bitmap_fonts(a6) /* Zeichensaetze geladen ? */
                   beq.s    vst_unload_exit
                   clr.l    t_bitmap_fonts(a6) /* keine Zeichensaetze ueber GDOS verf. */
@@ -1131,7 +1131,7 @@ vst_unload_fonts: movem.l  d1-d2/a2,-(sp)
 vst_ulf_nvdi:     movem.l  (sp)+,d1-d2/a2
                   movea.l  d1,a0          /* pblock */
                   movem.l  d1-d7/a2,-(sp)
-                  moveq.l  #1,d0          /* Systemfont einstellen */
+                  moveq.l  #T_SYSTEM_FACE,d0  /* Systemfont einstellen */
                   lea.l    (font_hdr1).w,a0
                   bra      vst_font_found
 
