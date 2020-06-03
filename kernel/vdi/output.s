@@ -1780,6 +1780,7 @@ v_bez_fill:       movem.l  d1-d7/a2-a5,-(sp)
                   cmp.w    #3,d7          /* mindestens 3 Koordinatenpaare? */
                   blt      v_bezf_exit
 
+                  movea.l  bez_buffer(a6),a1
                   move.l   bez_buf_len(a6),d0 /* Bezier-Buffer vorhanden? */
                   bne.s    v_bezf_mem
 
