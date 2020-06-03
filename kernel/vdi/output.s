@@ -1801,7 +1801,7 @@ v_bezf_mem:       move.l   d7,d1
 
 v_bezf_saveq:     move.w   bez_qual(a6),-(sp) /* Bezier-Qualitaet sichern */
 
-                  movea.l  pb_ptsin(a0),a4 /* ptsin */
+                  movea.l  pb_ptsin(a0),a4
                   movea.l  pb_intin(a0),a0 /* intin (bezarr) */
 
                   movea.l  a1,a2
@@ -2371,7 +2371,7 @@ gdos_line_std:    movem.l  d0-d2/a0-a4,-(sp)
                   move.w   #L_SOLID,(a4)        /* intin[0] = durchgehende Linie */
                   move.l   sp,d1                /* n_intin ist 1, n_ptsin 0 */
                   movea.l  disp_addr2(a6),a0
-                  jsr      (a0)
+                  jsr      (a0)                 /* vsl_type() aufrufen */
 
                   move.w   #VSL_ENDS,(a3)       /* Linienenden setzen */
                   move.w   #2,n_intin(a3)
@@ -2542,8 +2542,8 @@ vline_fill:       movem.w  d0-d3,-(sp)
  */
 v_pieslice:       move.w   (a3)+,d0       /* x */
                   move.w   (a3)+,d1       /* y */
-                  move.w   (a2)+,d4       /* Anfangswinkel */
-                  move.w   (a2)+,d5       /* Endwinkel */
+                  move.w   (a2)+,d4       /* starting angle */
+                  move.w   (a2)+,d5       /* ending angle */
                   move.w   8(a3),d2       /* xr */
                   move.w   d2,d3          /* yr = xr */
                   move.w   res_ratio(a6),d6 /* keine Dehnung ? */
@@ -2594,14 +2594,14 @@ v_arc:            move.w   (a3)+,d0       /* x */
  * ELLIPTICAL ARC (VDI 11, GDP 6)
  */
 v_ellarc:         movem.w  (a3),d0-d3     /* x,y,xr,yr */
-v_ellarc2:        move.w   (a2)+,d4       /* Anfangswinkel */
-                  move.w   (a2)+,d5       /* Endwinkel */
+v_ellarc2:        move.w   (a2)+,d4       /* starting angle */
+                  move.w   (a2)+,d5       /* ending angle */
                   move.l   buffer_len(a6),-(sp)
                   move.l   buffer_addr(a6),-(sp)
                   bsr      ellipse_calc
-                  move.l   a1,d1          /* erste unbenutze Bufferadresse */
+                  move.l   a1,d1          /* first unused buffer address */
                   movea.l  (sp),a0
-                  sub.l    a0,d1          /* neue Bufferlaenge */
+                  sub.l    a0,d1          /* new buffer len */
                   move.l   d1,buffer_len(a6)
                   move.l   a1,buffer_addr(a6)
                   bsr      nvdi_lines
@@ -2613,8 +2613,8 @@ v_ellarc2:        move.w   (a2)+,d4       /* Anfangswinkel */
  * ELLIPTICAL PIE (VDI 11, GDP 7)
  */
 v_ellpie:         movem.w  (a3),d0-d3     /* x,y,xr,yr */
-                  move.w   (a2)+,d4       /* Anfangswinkel */
-                  move.w   (a2)+,d5       /* Endwinkel */
+                  move.w   (a2)+,d4       /* starting angle */
+                  move.w   (a2)+,d5       /* ending angle */
                   bra      fellipse_arc
 
 /*
