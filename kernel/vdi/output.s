@@ -17,6 +17,7 @@ _dy               EQU 16
 _dx_sign          EQU 18                  /* Vorzeichen: 0 pos, -1 neg. */
 _dy_sign          EQU 20
 ptsin_chgd        EQU 22                  /* Flag: ptsin-Koord. geaendert: Bit 0 Startk., Bit 1 Endk. */
+sizeof_pts_start  EQU 24
 
 /*
  * Dicke v_plines mit Start- und Endstil zeichnen
@@ -31,11 +32,11 @@ ptsin_chgd        EQU 22                  /* Flag: ptsin-Koord. geaendert: Bit 0
  */
 v_pline_thick:    movem.l  d1-d5/a2-a5,-(sp)
 
-                  lea.l    -24(sp),sp
+                  lea.l    -sizeof_pts_start(sp),sp
                   movea.l  sp,a3          /* Zeiger auf pts_start-Struktur */
                   movea.l  a0,a2          /* pb sichern */
-                  move.l   pb_ptsin(a2),(a3) /* nxt_ptsin */
-                  movea.l  (a2),a0        /* contrl */
+                  move.l   pb_ptsin(a2),nxt_ptsin(a3)
+                  movea.l  pb_control(a2),a0
                   move.w   n_ptsin(a0),n_pts(a3)
 
                   moveq.l  #0,d3          /* Voreinst.: ptsin unveraendert */
@@ -51,11 +52,11 @@ v_pline_thick:    movem.l  d1-d5/a2-a5,-(sp)
 
                   moveq.l  #1,d3          /* ptsin[0/1] veraendert */
                   movea.l  pb_ptsin(a2),a5
-                  movea.l  (a3),a4        /* nxt_ptsin */
+                  movea.l  nxt_ptsin(a3),a4
                   cmpa.l   a4,a5          /* zeigen beide auf 1. ptsin-Paar ? */
                   beq.s    first_ptsin    /* ja */
                   subq.l   #4,a4          /* Koord.-paar vor nxt_ptsin[] sichern */
-                  move.l   a4,(a3)        /* ptsin-Start fuer fat_line() */
+                  move.l   a4,nxt_ptsin(a3)  /* ptsin-Start fuer fat_line() */
 
 first_ptsin:      move.l   (a4),d4        /* x1,y1 sichern */
                   move.l   x_start(a3),(a4) /* aus pts_start in ptsin kopieren */
@@ -63,7 +64,7 @@ first_ptsin:      move.l   (a4),d4        /* x1,y1 sichern */
 no_startfm:       tst.w    l_end(a6)
                   beq.s    no_endfm
 
-                  movea.l  (a2),a0        /* contrl */
+                  movea.l  pb_control(a2),a0
                   move.w   n_ptsin(a0),d0
                   movea.l  pb_ptsin(a2),a0
                   movea.l  a3,a1
@@ -71,7 +72,7 @@ no_startfm:       tst.w    l_end(a6)
                   bsr      dr_endfm
 
                   addq.w   #2,d3          /* ptsin[n-1/n] veraendert */
-                  movea.l  (a2),a0        /* contrl */
+                  movea.l  pb_control(a2),a0
                   move.w   n_ptsin(a0),d0
                   subq.w   #1,d0
                   ext.l    d0
@@ -82,7 +83,7 @@ no_startfm:       tst.w    l_end(a6)
                   move.l   x_end(a3),(a5) /* aus pts_start in ptsin kopieren */
 
 no_endfm:         move.w   n_pts(a3),d0
-                  movea.l  (a3),a0        /* aktuelles ptsin */
+                  movea.l  nxt_ptsin(a3),a0 /* aktuelles ptsin */
 
                   bsr.s    fat_line
 
@@ -97,7 +98,7 @@ _rest_xyn:        btst     #1,d3
                   beq.s    exit_vplth
                   move.l   d5,(a5)        /* alte Endpos. zurueck */
 
-exit_vplth:       lea.l    24(sp),sp      /* Stack korrigieren */
+exit_vplth:       lea.l    sizeof_pts_start(sp),sp      /* Stack korrigieren */
                   movem.l  (sp)+,d1-d5/a2-a5
                   rts
 
@@ -114,6 +115,7 @@ small_line:       movem.l  d1-d7/a2-a3,-(sp)
                   bpl      v_plines_in
                   movem.l  (sp)+,d1-d7/a2-a3
                   rts
+
 /*
  * fat_line zeichnet nur Linien ohne Effekte
  *
@@ -237,10 +239,8 @@ conv_pix2q:       move.w   res_ratio(a6),d0
                   bne.s    _pix2q_TTLOW
 
                   move.l   (a0)+,d0       /* x1, y1 */
-
                   add.w    d0,d0          /* y1 * 2 */
                   move.l   d0,(a1)+
-
                   move.l   (a0)+,d0       /* x2, y2 */
                   add.w    d0,d0          /* y2 * 2 */
                   move.l   d0,(a1)
@@ -423,7 +423,7 @@ lblA:             move.l   d0,d3          /* x2 = xroot + */
                   add.l    d2,d3          /*      + m2 */
                   lsr.l    #1,d0          /* xroot/2 */
 
-                  cmp.l    d3,d1          /* x2 =< x ? */
+                  cmp.l    d3,d1          /* x2 <= x ? */
                   bcs.s    lbl18          /* nein */
                   sub.l    d3,d1          /* x -= x2 */
                   add.l    d2,d0          /* xroot += m2 */
@@ -437,6 +437,7 @@ lbl18:            lsr.l    #2,d2          /* m2 / 4 */
 
 exit_hypot:       move.l   (sp)+,d3
                   rts
+
 /*
  * Zeichne Anfang der Linie mit Kreis oder Pfeil
  *
@@ -495,10 +496,7 @@ _strtfm_ARR:      cmp.w    #ARROW,d0
                   moveq.l  #9,d2          /* Pfeilhoehe 9 Pixel vorgeben */
                   bra.s    _strtfm_calc
 
-_strtfm_TTl:                              /*  cmpi.w  #TT_LOWRES,res_ratio(a6) */
-  .IFNE 0
-                  bne.s   _strtfm
-  .ENDC
+_strtfm_TTl:
                   tst.w    res_ratio(a6)
                   ble.s    _strtfm
 
@@ -570,6 +568,7 @@ _strt_qpix:       move.w   d0,(a0)+       /* x1 */
                   lea.l    16(sp),sp      /* Stack korrigieren */
                   movem.l  (sp)+,d3-d7/a2-a3
                   rts
+
 /*
  * Zeichne Ende der Linie mit Kreis oder Pfeil
  *
@@ -633,10 +632,7 @@ _endfm_ARR:       cmp.w    #ARROW,d0
                   moveq.l  #9,d2          /* Pfeilhoehe 9 Pixel vorgeben */
                   bra.s    _endfm_calc
 
-_endfm_TTl:                               /*   cmpi.w  #TT_LOWRES,res_ratio(a6) */
-       .IFNE 0
-                  bne.s   _endfm
-       .ENDC
+_endfm_TTl:
                   tst.w    res_ratio(a6)
                   ble.s    _endfm
 
@@ -692,7 +688,6 @@ _end_qpix:        move.w   d0,(a0)+       /* xn */
                   add.w    d2,d5          /* = y3 */
 
                   movem.w  d0-d1/d4-d7,(a0) /* in Struktur eintragen */
-
                   movea.l  sp,a0
                   movea.l  a0,a1
                   bsr      conv_q2pix     /* auf Bildschirmpixel zurueck */
@@ -715,7 +710,7 @@ _end_qpix:        move.w   d0,(a0)+       /* xn */
 tstlin_fwd:       movem.l  d3-d7,-(sp)
                   move.w   d0,d5          /* sichern */
 /*  Vorbesetzung der pts_start-Struktur fuer den etwaigen Fehlerfall */
-                  move.l   a0,(a1)        /* nxt_ptsin */
+                  move.l   a0,nxt_ptsin(a1)
                   move.w   d0,n_pts(a1)
 
                   move.w   l_width(a6),d4
@@ -740,7 +735,6 @@ _fwd_posdx:
                   neg.l    d3
                   moveq.l  #-1,d7         /* dy-Vorzeichen neg. */
 
-
 /*
  * Jetzt ein ausreichend grosses dx, dy finden, damit die Pfeilrichtung
  * vernuenftig ermittelt werden kann
@@ -756,23 +750,15 @@ _fwd_cntr:        dbra     d5,_fwd_loop
                   addq.w   #1,d5
 
 _fwd_found:       subq.l   #4,a0          /* letzte Pos. des ptsin-Zeigers */
-                  move.l   a0,(a1)
+                  move.l   a0,nxt_ptsin(a1)
 
                   move.w   res_ratio(a6),d0 /* ggf. Steigung auf 'virtuelles Bild' umrechnen */
-      .IFNE 0
-                cmpi.w  #ST_MIDRES,d0
-                bne.s   _fwd_TTLOW
-      .ENDC
                   bpl.s    _fwd_TTLOW
 
                   add.w    d3,d3          /* _dy * 2 */
                   bra.s    exit_fwd
 
 _fwd_TTLOW:
-      .IFNE 0
-                cmp.w   #TT_LOWRES,d0
-                bne.s   exit_fwd
-      .ENDC
                   ble.s    exit_fwd
 
                   add.w    d2,d2          /* _dx * 2 */
@@ -829,20 +815,12 @@ _bk_cntr:         dbra     d5,_bk_loop
                   addq.w   #1,d5
 
 _bk_found:        move.w   res_ratio(a6),d0 /* ggf. Steigung auf 'virtuelles Bild' umrechnen */
-      .IFNE 0
-                cmpi.w  #ST_MIDRES,d0
-                bne.s   _bk_TTLOW
-      .ENDC
                   bpl.s    _bk_TTLOW
 
                   add.w    d3,d3          /* _dy * 2 */
                   bra.s    exit_bk
 
 _bk_TTLOW:
-      .IFNE 0
-                cmp.w   #TT_LOWRES,d0
-                bne.s   exit_bk
-      .ENDC
                   ble.s    exit_bk
 
                   add.w    d2,d2          /* _dx * 2 */
@@ -882,15 +860,15 @@ v_pline:          movea.l  pb_control(a0),a1
  * Ausgaben:
  * -
  */
-v_pline_thin:     move.w   n_ptsin(a1),d0 /* Zaehler */
+v_pline_thin:     move.w   n_ptsin(a1),d0 /* counter */
                   subq.w   #2,d0
-                  bne.s    v_plines       /* nur eine Linie ? */
+                  bne.s    v_plines       /* only one line ? */
 v_pline1:         movem.l  d2-d7,-(sp)
-                  pea.l    v_pline_ret1(pc) /* Ruecksprungadresse */
-                  move.w   l_style(a6),d0 /* Linienstilnummer */
+                  pea.l    v_pline_ret1(pc) /* return address */
+                  move.w   l_style(a6),d0 /* line style */
                   add.w    d0,d0
-                  move.w   l_styles(a6,d0.w),d6 /* Linienmuster */
-                  movea.l  pb_ptsin(a0),a1 /* ptsin */
+                  move.w   l_styles(a6,d0.w),d6 /* line style */
+                  movea.l  pb_ptsin(a0),a1
                   movem.w  (a1),d0-d3
                   cmp.w    d1,d3
                   beq      hline
@@ -898,23 +876,23 @@ v_pline1:         movem.l  d2-d7,-(sp)
                   beq      vline
                   bra      line
 v_pline_ret1:     movem.l  (sp)+,d2-d7
-                  move.l   a0,d1          /* d1 restaurieren (pblock) */
+                  move.l   a0,d1          /* restore d1 (pblock) */
                   rts
 
 v_plines:         bmi.s    v_pline_exit
                   movem.l  d1-d7/a2-a3,-(sp)
-                  movea.l  pb_ptsin(a0),a3 /* ptsin */
-                  move.w   d0,d4          /* Linienzaehler */
-v_plines_in:      move.w   l_style(a6),d0 /* Linienstilnummer */
+                  movea.l  pb_ptsin(a0),a3
+                  move.w   d0,d4          /* counter */
+v_plines_in:      move.w   l_style(a6),d0 /* line style index */
                   add.w    d0,d0
-                  movea.w  l_styles(a6,d0.w),a2 /* Linienmuster */
+                  movea.w  l_styles(a6,d0.w),a2 /* line style */
                   cmpi.w   #EX_OR-1,wr_mode(a6)
                   bne.s    v_pline_loop
-                  not.w    l_lastpix(a6)  /* -1, letzen Punkt nicht setzen */
+                  not.w    l_lastpix(a6)  /* -1, do not set last point */
 v_pline_loop:     movea.w  d4,a0
                   movem.w  (a3),d0-d3
                   addq.l   #4,a3
-                  move.w   a2,d6          /* Linienstil */
+                  move.w   a2,d6          /* line style */
                   pea.l    v_pline_ret2(pc)
                   cmp.w    d1,d3
                   beq      hline
@@ -924,7 +902,7 @@ v_pline_loop:     movea.w  d4,a0
 v_pline_ret2:     move.w   a0,d4
                   dbra     d4,v_pline_loop
                   movem.l  (sp)+,d1-d7/a2-a3
-v_pline_exit:     clr.w    l_lastpix(a6)  /* 0, letzten Punkt setzen */
+v_pline_exit:     clr.w    l_lastpix(a6)  /* 0, draw last point */
                   rts
 
 /*
@@ -972,17 +950,17 @@ v_bez:            movem.l  d1-d7/a2-a5,-(sp)
 
                   moveq.l  #0,d5          /* Punktzaehler insgesamt */
                   moveq.l  #0,d6          /* Zaehler fuer Jump-Points */
-                  movea.l  (a0),a1        /* contrl */
+                  movea.l  pb_control(a0),a1
                   move.w   n_ptsin(a1),d7 /* Zaehler */
                   ble      v_bez_exit
 
                   moveq.l  #-1,d2
                   subq.w   #1,d7          /* Punktezaehler */
 
-                  movea.l  pb_ptsout(a0),a3 /* Zeiger auf intout */
+                  movea.l  pb_ptsout(a0),a3
                   move.l   res_x(a6),(a3)
                   clr.l    4(a3)
-                  movea.l  pb_ptsin(a0),a4 /* ptsin */
+                  movea.l  pb_ptsin(a0),a4
                   movea.l  pb_intin(a0),a5 /* bezarr */
 
                   move.w   #ROUND,l_end(a6)
@@ -1034,7 +1012,7 @@ v_bez_bez:        and.w    #1,d3          /* Bezier-Start? */
                   beq.s    v_bez_next
                   subq.w   #3,d7          /* mindestens 3 weitere Punkte vorhanden? */
                   blt.s    v_bez_exit
-                  bne.s    v_bez_save     /* letzer Punkt? */
+                  bne.s    v_bez_save     /* letzter Punkt? */
                   move.w   2(sp),l_end(a6) /* Endstil */
 
 v_bez_save:       movem.w  d5-d7,-(sp)
@@ -1157,7 +1135,7 @@ gdos_lines:       movem.l  d2/a2,-(sp)
 bez_max_tab:      DC.W 4,7,13,25,49,97
 
 /*
- * 4-Punkt-Bezier berechenen
+ * 4-Punkt-Bezier berechnen
  * Vorgaben:
  * Register d0-d7 werden veraendert
  * Eingaben:
@@ -1311,7 +1289,6 @@ generate_bez:     cmpa.w   #0,a0          /* Qualitaet = 0, Rekursionsende? */
                   bsr.s    generate_bez   /* xabcd, yabcd, xbcd, ybcd, xcd, ycd, dx ,dy */
 
                   addq.w   #1,a0          /* Qualitaet wieder inkrementieren */
-
                   rts
 
 bez_out:          swap     d2
@@ -1386,7 +1363,6 @@ v_pmarker_loop2:  movem.w  d0-d4,-(sp)
                   dbra     d5,v_pmarker_loop1
                   lea.l    64(sp),sp      /* Stack korrigieren */
 v_pm_exit:        move.w   (sp)+,l_color(a6)
-
                   movem.l  (sp)+,d1-d7/a2
                   rts
 
@@ -1443,9 +1419,8 @@ v_pmbuild_loop:   move.w   (a0)+,d4
  * TEXT (VDI 8)
  */
 v_gtext:          movem.l  d1-d7/a2-a5,-(sp)
-v_gtext_in:       movem.l  (a0),a1-a3
-
-v_gtext_bmp:      movea.l  p_gtext(a6),a4
+                  movem.l  (a0),a1-a3
+                  movea.l  p_gtext(a6),a4
                   jsr      (a4)
                   movem.l  (sp)+,d1-d7/a2-a5
                   rts
@@ -1505,7 +1480,7 @@ v_fillline:       move.l   f_color(a6),-(sp) /* f_color/f_interior */
 /*
  * FILLED AREA (VDI 9)
  */
-v_fillarea:       movea.l  (a0),a1        /* contrl */
+v_fillarea:       movea.l  pb_control(a0),a1
                   tst.w    n_intin(a1)    /* bezarr vorhanden? */
                   beq.s    v_fillarea_no_bez
                   cmpi.w   #13,opcode2(a1) /* Bezierfunktion benutzen ? */
@@ -1761,9 +1736,7 @@ v_fa_test2:       cmp.w    d0,d2
                   cmp.w    d3,d5
                   bne      v_fillarea2
                   move.w   d4,d2
-
-/* Umrahmung ?? */
-v_fa_perim:       cmp.w    d1,d3
+v_fa_perim:       cmp.w    d1,d3          /* Umrahmung ?? */
                   bge.s    v_fa_perim2
                   exg      d1,d3
 v_fa_perim2:      tst.w    f_perimeter(a6)
@@ -1801,7 +1774,7 @@ bez_pnt_tab:      DC.W 4,7,13,25,49,97
  */
 v_bez_fill:       movem.l  d1-d7/a2-a5,-(sp)
 
-                  movea.l  (a0),a1        /* contrl */
+                  movea.l  pb_control(a0),a1
                   moveq.l  #0,d7          /* Highword loeschen */
                   move.w   n_ptsin(a1),d7 /* Zaehler */
                   cmp.w    #3,d7          /* mindestens 3 Koordinatenpaare? */
