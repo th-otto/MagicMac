@@ -646,7 +646,7 @@ vsf_sty_hatch:    move.w   (a1),d0        ;Musterindex = intin[0];
 vsf_sty_hat_save: move.w   d0,(a0)        ;intout[0] = neuer Musterindex;
                   move.w   d0,f_style(a6) ;Musterindex
                   subq.w   #1,d0
-                  cmpi.w   #21,d0         ;falscher Musterindex ?
+                  cmpi.w   #11,d0         ;falscher Musterindex ?
                   bhi.s    vsf_sty_hat_err
                   movea.l  f_fill3(a6),a0 ;Zeiger aufs erste Graustufenmuster
                   lsl.w    #5,d0          ;*32 wegen Musterauswahl
