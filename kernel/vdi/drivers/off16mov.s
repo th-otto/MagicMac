@@ -2266,7 +2266,7 @@ fbox_repl_shrt2:  REPT 15
                   dbra     d3,fbox_repl_shrt0
                   rts
 
-fbox_eor:         subq.w   #EX_OR-REPLACE,d7
+fbox_eor:         subq.w   #MD_XOR-MD_REPLACE,d7
                   blt      fbox_trans     ;TRANSPARENT?
                   bne      fbox_rev_trans ;REVERS TRANSPARENT?
                   move.w   f_interior(a6),d7
@@ -2573,7 +2573,7 @@ textblt_color:    clr.w    r_bgcol(a6)
                   move.w   wr_mode(a6),r_wmode(a6)
                   clr.w    r_splanes(a6)                    ;hier stand vorher move.w #0,r_splanes(a6) => habe ich ersetzt, weil ich unten das bra.s expand_blt eingefuegt habe
                   move.w   r_planes(a6),r_dplanes(a6)
-                  cmpi.w   #REV_TRANS-REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
+                  cmpi.w   #MD_ERASE-MD_REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
                   bne.s    expand_blt
                   clr.w    r_fgcol(a6)    ;r_wmode nur wortweise nutzen!
                   move.w   t_color(a6),r_bgcol(a6) ;Textfarbe

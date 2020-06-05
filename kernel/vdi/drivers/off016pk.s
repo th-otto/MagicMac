@@ -772,7 +772,7 @@ textblt_color:    clr.w    r_bgcol(a6)
                   clr.w    r_splanes(a6)
                   move.w   r_planes(a6),r_dplanes(a6)
 
-                  cmpi.w   #REV_TRANS-REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
+                  cmpi.w   #MD_ERASE-MD_REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
                   bne      expand_blt
                   clr.w    r_fgcol(a6)    ;r_wmode nur wortweise nutzen!
                   move.w   t_color(a6),r_bgcol(a6) ;Textfarbe
@@ -836,11 +836,11 @@ hline_in:         move.w   d2,d3          ;x2
                   lsr.w    #4,d4          ;x1 / 16
                   sub.w    d4,d2          ;(Laenge in 16 Pixeln) - 1
 
-                  subq.w   #TRANSPARENT-1,d5
+                  subq.w   #MD_TRANS-1,d5
                   beq      hline_trans
-                  subq.w   #EX_OR-TRANSPARENT,d5 ;EOR?
+                  subq.w   #MD_XOR-MD_TRANS,d5 ;EOR?
                   beq      hline_eor
-                  subq.w   #REV_TRANS-EX_OR,d5
+                  subq.w   #MD_ERASE-MD_XOR,d5
                   beq      hline_rev_trans
 
                   moveq    #8,d4
@@ -1776,11 +1776,11 @@ fbox_lwidth:      move.w   d6,-(sp)       ;Bytes pro Zeile
                   sub.w    d5,d6
                   movea.l  d6,a3          ;Abstand zu 17. Zeile
 
-                  subq.w   #TRANSPARENT-1,d7
+                  subq.w   #MD_TRANS-1,d7
                   beq      fbox_trans
-                  subq.w   #EX_OR-TRANSPARENT,d7 ;EOR?
+                  subq.w   #MD_XOR-MD_TRANS,d7 ;EOR?
                   beq      fbox_eor
-                  subq.w   #REV_TRANS-EX_OR,d7
+                  subq.w   #MD_ERASE-MD_XOR,d7
                   beq      fbox_rev_trans
 
                   lea      color_map_long(pc),a5

@@ -76,7 +76,7 @@ vql_attributes:   movem.l  pb_intout(a0),a0-a1   /* intout->a0, ptsout->a1 */
                   move.w   d0,(a0)+              /* intout[0] = line style */
                   move.w   l_color(a6),(a0)+     /* intout[1] = line color */
                   move.w   wr_mode(a6),d0
-                  addq.w   #REPLACE,d0           /* intout[2] = graphic mode */
+                  addq.w   #MD_REPLACE,d0        /* intout[2] = graphic mode */
                   move.w   d0,(a0)+
                   move.l   l_start(a6),(a0)+     /* intout[3/4] = line ends */
                   move.w   l_width(a6),(a1)      /* ptsout[0] = line width */
@@ -91,7 +91,7 @@ vqm_attributes:   movem.l  pb_intout(a0),a0-a1   /* intout->a0, ptsout->a1 */
                   move.w   d0,(a0)+              /* intout[0] = marker type */
                   move.w   m_color(a6),(a0)+     /* intout[1] = marker color */
                   move.w   wr_mode(a6),d0
-                  addq.w   #REPLACE,d0
+                  addq.w   #MD_REPLACE,d0
                   move.w   d0,(a0)+              /* intout[2] = graphic mode */
                   move.w   m_width(a6),(a1)+     /* ptsout[0] = marker width */
                   move.w   m_height(a6),(a1)     /* ptsout[1] = marker height */
@@ -105,7 +105,7 @@ vqf_attributes:   movea.l  pb_intout(a0),a1      /* intout */
                   move.w   f_color(a6),(a1)+     /* intout[1] = fill color */
                   move.w   f_style(a6),(a1)+     /* intout[2] = fill style */
                   move.w   wr_mode(a6),d0
-                  addq.w   #REPLACE,d0
+                  addq.w   #MD_REPLACE,d0
                   move.w   d0,(a1)+              /* intout[3] = graphic mode */
                   move.w   f_perimeter(a6),(a1)+ /* intout[4] = outline flag */
                   rts
@@ -123,7 +123,7 @@ vqt_attributes:   movem.l  pb_intout(a0),a0-a1   /* intout->a0, ptsout->a1 */
 vqt_attr_rot:     move.w   d0,(a0)+              /* intout[2] = text rotation */
                   move.l   t_hor(a6),(a0)+       /* intout[3/4] = h./v. orientation */
                   move.w   wr_mode(a6),d0
-                  addq.w   #REPLACE,d0           /* note: not done by TOS VDI */
+                  addq.w   #MD_REPLACE,d0        /* note: not done by TOS VDI */
                   move.w   d0,(a0)               /* intout[5] = graphic mode */
                   move.l   t_width(a6),(a1)+     /* ptsout[0/1] t_width / t_height */
                   move.l   t_cwidth(a6),(a1)     /* ptsout[2/3] t_cwidth / t_cheight */

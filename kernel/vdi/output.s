@@ -886,7 +886,7 @@ v_plines:         bmi.s    v_pline_exit
 v_plines_in:      move.w   l_style(a6),d0 /* line style index */
                   add.w    d0,d0
                   movea.w  l_styles(a6,d0.w),a2 /* line style */
-                  cmpi.w   #EX_OR-1,wr_mode(a6)
+                  cmpi.w   #MD_XOR-1,wr_mode(a6)
                   bne.s    v_pline_loop
                   not.w    l_lastpix(a6)  /* -1, do not set last point */
 v_pline_loop:     movea.w  d4,a0
@@ -1614,7 +1614,7 @@ fpoly_loop:       movea.l  a4,a0          /* Quellbuffer */
 
                   move.w   l_color(a6),-(sp)
                   move.w   f_color(a6),l_color(a6)
-                  cmpi.w   #EX_OR-REPLACE,wr_mode(a6)
+                  cmpi.w   #MD_XOR-MD_REPLACE,wr_mode(a6)
                   bne.s    fpoly_border
 
                   not.w    l_lastpix(a6)  /* - 1, letzten Punkt nicht setzen */
@@ -2652,7 +2652,7 @@ v_pline_fill:     subq.w   #2,d4          /* weniger als zwei Punkte? */
                   bmi.s    vpfl_ex
                   move.w   l_color(a6),-(sp)
                   move.w   f_color(a6),l_color(a6)
-                  cmpi.w   #EX_OR-REPLACE,wr_mode(a6)
+                  cmpi.w   #MD_XOR-MD_REPLACE,wr_mode(a6)
                   bne.s    v_plfill_loop2
                   not.w    l_lastpix(a6)  /* - 1, letzten Punkt nicht setzen */
 v_plfill_loop2:   movea.w  d4,a0

@@ -302,7 +302,7 @@ linea_bitblt_exp: move.l   OP_TAB(a5),d6
                   moveq.l  #1,d7
                   cmp.l    #$04040707,d6              ;Verknuepfungen fuer TRANSPARENT?
                   beq.s    linea_exp_mode
-                  moveq.l  #0,d7                      ;REPLACE
+                  moveq.l  #0,d7                      ;MD_REPLACE
 linea_exp_mode:   move.w   d7,r_wmode(a6)
 
                   movea.l  p_expblt(a6),a0

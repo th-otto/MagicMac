@@ -7,12 +7,12 @@ vswr_mode:        movea.l  pb_intin(a0),a1 ;intin
                   movea.l  pb_intout(a0),a0 ;intout
                   move.w   (a1),d0        ;Grafikmodus
 vswr_mode_set:    move.w   d0,(a0)        ;intout[0] = Grafikmodus;
-                  subq.w   #REPLACE,d0
+                  subq.w   #MD_REPLACE,d0
                   move.w   d0,wr_mode(a6) ;Grafikmodus eintragen
-                  subq.w   #REV_TRANS-REPLACE,d0
+                  subq.w   #MD_ERASE-MD_REPLACE,d0
                   bhi.s    vswr_mode_err
                   rts
-vswr_mode_err:    moveq.l  #REPLACE,d0    ;intout[0] = REPLACE;
+vswr_mode_err:    moveq.l  #MD_REPLACE,d0 ;intout[0] = MD_REPLACE;
                   bra.s    vswr_mode_set
 
 /*

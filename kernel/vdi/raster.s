@@ -176,8 +176,8 @@ vro_cpyfm_mono:   tst.w    d6             /* monochrom? */
 vrt_cpyfm:        movem.l  d1-d7/a2-a5,-(sp)
                   movem.l  (a0),a1-a3
                   move.w   (a2)+,d0
-                  subq.w   #REPLACE,d0
-                  cmpi.w   #REV_TRANS-REPLACE,d0
+                  subq.w   #MD_REPLACE,d0
+                  cmpi.w   #MD_ERASE-MD_REPLACE,d0
                   bhi.s    vro_cpyfm_exit
                   move.w   d0,r_wmode(a6)
                   move.w   (a2)+,d0       /* fg_col */

@@ -221,7 +221,7 @@ LSTLIN:        ds.w 1      /* (lineavars+$020)  flag for setting line end points
 LNMASK:        ds.w 1      /* (lineavars+$022)  line pattern */
                .EXPORT WMODE
 WMODE:         ds.w 1      /* (lineavars+$024)  0 = REPLACE, 1 = TRANSPARENT, */
-WMODE_LOW           EQU WMODE+1              /* 2 = EOR    , 3 = NOT TRANSPARENT */
+WMODE_LOW           EQU WMODE+1              /* 2 = XOR    , 3 = NOT TRANSPARENT */
 /* line coordinates */
                .EXPORT X1
 X1:            ds.w 1      /* (lineavars+$026)  x1 */

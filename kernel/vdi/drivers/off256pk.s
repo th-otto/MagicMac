@@ -1682,9 +1682,9 @@ fbox_universal:   movea.l  buffer_addr(a6),a0 ;Bufferadresse
                   move.w   d6,-(sp)       ;Bytes pro Zeile
 
                   move.w   wr_mode(a6),d7
-                  subq.w   #TRANSPARENT-1,d7
+                  subq.w   #MD_TRANS-1,d7
                   beq      fbox_trans
-                  subq.w   #REV_TRANS-TRANSPARENT,d7
+                  subq.w   #MD_ERASE-MD_TRANS,d7
                   beq      fbox_rev_trans
 
                   moveq    #$fffffffc,d4
@@ -1698,7 +1698,7 @@ fbox_universal:   movea.l  buffer_addr(a6),a0 ;Bufferadresse
                   sub.w    d5,d6
                   movea.l  d6,a3          ;Abstand zu 17. Zeile
 
-                  addq.w   #REV_TRANS-EX_OR,d7 ;EOR?
+                  addq.w   #MD_ERASE-MD_XOR,d7 ;EOR?
                   beq      fbox_eor
 
                   lea      color_map(pc),a5
@@ -2901,7 +2901,7 @@ textblt_color:    clr.w    r_bgcol(a6)
                   clr.w    r_splanes(a6)
                   move.w   r_planes(a6),r_dplanes(a6)
 
-                  cmpi.w   #REV_TRANS-REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
+                  cmpi.w   #MD_ERASE-MD_REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
                   bne.s    expand_blt
                   clr.w    r_fgcol(a6)    ;r_wmode nur wortweise nutzen!
                   move.w   t_color(a6),r_bgcol(a6) ;Textfarbe
@@ -2982,7 +2982,7 @@ eblt_long:        tst.w    d1             ;Beginn des Quellblocks auf Byte-Posit
                   bne.s    eblt_use_masks
                   move.w   r_wmode(a6),d0
                   beq.s    eblt_byte_repl ;REPLACE
-                  subq.w   #EX_OR-REPLACE,d0
+                  subq.w   #MD_XOR-MD_REPLACE,d0
                   blt.s    eblt_byte_tr   ;TRANSPARENT?
                   beq.s    eblt_byte_eor  ;XOR?
                   bra.s    eblt_use_masks ;REVERS TRANSPARENT
@@ -3936,7 +3936,7 @@ eblto_long:       tst.w    d1             ;Beginn des Quellblocks auf Byte-Posit
 
                   move.w   r_wmode(a6),d0
                   beq.s    eblto_byte_repl ;REPLACE
-                  subq.w   #EX_OR-REPLACE,d0
+                  subq.w   #MD_XOR-MD_REPLACE,d0
                   blt.s    eblto_byte_tr  ;TRANSPARENT?
                   beq.s    eblto_byte_eor ;XOR?
                   bra.s    eblto_use_masks ;REVERS TRANSPARENT

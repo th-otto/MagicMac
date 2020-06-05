@@ -169,10 +169,28 @@ L_ARROW             EQU 1                       ;pfeilfoermiges Linienende
 L_ROUNDED           EQU 2                       ;rundes Linienende
 
 ;Verknuepfungsmodi
-REPLACE             EQU 1
-TRANSPARENT         EQU 2
-EX_OR               EQU 3
-REV_TRANS           EQU 4
+MD_REPLACE          EQU 1
+MD_TRANS            EQU 2
+MD_XOR              EQU 3
+MD_ERASE            EQU 4
+
+/* bit blt rules */
+ALL_WHITE           = 0              /* D := 0 */
+S_AND_D             = 1              /* D := S AND D */
+S_AND_NOTD          = 2              /* D := S AND (NOT D) */
+S_ONLY              = 3              /* D := S */
+NOTS_AND_D          = 4              /* D := (NOT S) AND D */
+D_ONLY              = 5              /* D := D */
+S_XOR_D             = 6              /* D := S XOR D */
+S_OR_D              = 7              /* D := S OR D */
+NOT_SORD            = 8              /* D := NOT (S OR D) */
+NOT_SXORD           = 9              /* D := NOT (S XOR D) */
+NOT_D               = 10             /* D := NOT D */
+S_OR_NOTD           = 11             /* D := S OR (NOT D) */
+NOT_S               = 12             /* D := NOT S */
+NOTS_OR_D           = 13             /* D := (NOT S) OR D */
+NOT_SANDD           = 14             /* D := NOT (S AND D) */
+ALL_BLACK           = 15             /* D := 1 */
 
 ;Farben
 WHITE               EQU 0                       ;Weiss

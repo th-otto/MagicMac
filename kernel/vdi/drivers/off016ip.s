@@ -471,10 +471,10 @@ bitblt_soft:      cmp.w    d4,d6                            ;horizontal skaliere
                   move.b   d7,r_wmode(a6)
                   bra.s    bitblt_planes
 
-expblt_modes:     DC.B 0,12,3,15          ;REPLACE
-                  DC.B 4,4,7,7            ;OR
-                  DC.B 6,6,6,6            ;EOR
-                  DC.B 1,13,1,13          ;NOT OR
+expblt_modes:     DC.B 0,12,3,15          ;MD_REPLACE
+                  DC.B 4,4,7,7            ;MD_TRANS
+                  DC.B 6,6,6,6            ;MD_XOR
+                  DC.B 1,13,1,13          ;MD_ERASE
 
 expblt_soft:      moveq    #3,d7
                   and.w    r_wmode(a6),d7
@@ -5144,10 +5144,10 @@ write_line_mode:  add.w    d0,d0
                   movem.l  (sp)+,d0-d3
                   rts
 
-wl_exp_modes:     DC.B 0,12,3,15          ;REPLACE
-                  DC.B 4,4,7,7            ;OR
-                  DC.B 6,6,6,6            ;EOR
-                  DC.B 1,13,1,13          ;NOT OR
+wl_exp_modes:     DC.B 0,12,3,15          ;MD_REPLACE
+                  DC.B 4,4,7,7            ;MD_TRANS
+                  DC.B 6,6,6,6            ;MD_XOR
+                  DC.B 1,13,1,13          ;MD_ERASE
 
 write_start_mask: DC.W %1111111111111111
 write_end_mask:   DC.W %0111111111111111
@@ -5803,7 +5803,7 @@ fbox_laddr:       movea.w  d4,a3          ;Bytes pro Zeile
                   bne.s    fbox_usual
                   bra.s    fbox_white
 
-fbox_mode2:       cmp.w    #TRANSPARENT-REPLACE,d7
+fbox_mode2:       cmp.w    #MD_TRANS-MD_REPLACE,d7
                   bne.s    fbox_usual
                   tst.w    f_color(a6)
                   bne.s    fbox_usual
@@ -6064,7 +6064,7 @@ fbox_solid_last:
                   dbra     d3,fbox_solid_bloop
                   rts
 
-fbox_eor:         subq.w   #EX_OR-REPLACE,d7
+fbox_eor:         subq.w   #MD_XOR-MD_REPLACE,d7
                   bne.s    fbox_rev_trans
 
                   moveq    #15,d0
@@ -6492,16 +6492,16 @@ hline_laddr:      adda.l   d1,a1          ;Zeilenadresse
                   sub.w    d0,d2          ;Anzahl der Bytes-8
                   asr.w    #3,d2          ;Anzahl der Worte pro Plane -1
 
-                  subq.w   #TRANSPARENT-REPLACE,d7 ;TRANSPARENT ?
+                  subq.w   #MD_TRANS-MD_REPLACE,d7 ;TRANSPARENT ?
                   beq      hline_trans
-                  subq.w   #REV_TRANS-TRANSPARENT,d7 ;REVERS TRANSPARENT ?
+                  subq.w   #MD_ERASE-MD_TRANS,d7 ;REVERS TRANSPARENT ?
                   beq      hline_rev_trans
 
                   move.w   d6,d1
                   swap     d6
                   move.w   d1,d6          ;32-Bit-Linienmuster
 
-                  addq.w   #REV_TRANS-EX_OR,d7 ;EOR
+                  addq.w   #MD_ERASE-MD_XOR,d7 ;EOR
                   beq.s    hline_eor
 
                   move.w   l_color(a6),d7
@@ -6850,7 +6850,7 @@ vline_rw_loop:    and.w    d1,(a0)
                   movea.l  (sp)+,a0
                   rts
 
-vline_eor:        subq.w   #EX_OR-REPLACE,d7
+vline_eor:        subq.w   #MD_XOR-MD_REPLACE,d7
                   bmi.s    vline_trans
                   bgt.s    vline_rev_trans
                   cmp.w    #$aaaa,d6
@@ -7069,7 +7069,7 @@ line_black_loop:  or.l     d4,d7          ;Punkt in der Maske setzen
                   bpl.s    line_black
 line_black_exit:  rts
 
-line_eor:         subq.w   #EX_OR-REPLACE,d7 ;Eor ?
+line_eor:         subq.w   #MD_XOR-MD_REPLACE,d7 ;Eor ?
                   bmi.s    line_trans
                   bgt.s    line_rev_trans
                   bra.s    line_eor_mask
@@ -7299,7 +7299,7 @@ line_bl45_exit:   movea.l  (sp)+,a3
                   rts
 
 
-line_eor45:       subq.w   #EX_OR-REPLACE,d7 ;Eor ?
+line_eor45:       subq.w   #MD_XOR-MD_REPLACE,d7 ;Eor ?
                   beq.s    line_eor45_rot
                   bmi.s    line_trans45
                   bra.s    line_rev_trans45
@@ -7391,7 +7391,7 @@ textblt_soft_ad:  move.l   a0,r_saddr(a6) ;Quelladresse
                   clr.w    r_bgcol(a6)    ;r_wmode nur wortweise nutzen!
                   move.w   t_color(a6),r_fgcol(a6) ;Textfarbe
                   move.w   wr_mode(a6),r_wmode(a6)
-                  cmpi.w   #REV_TRANS-REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
+                  cmpi.w   #MD_ERASE-MD_REPLACE,r_wmode(a6) ;REVERS TRANSPARENT?
                   bne      expblt_soft
                   clr.w    r_fgcol(a6)    ;r_wmode nur wortweise nutzen!
                   move.w   t_color(a6),r_bgcol(a6) ;Textfarbe
