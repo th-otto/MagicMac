@@ -154,14 +154,14 @@ get_scrninfo:     movem.l  d0-d1/a0-a1,-(sp)
                   move.w   #1,(a0)+       ;[14] Bitorganisation
                   clr.w    (a0)+          ;[15] unbenutzt
 
-                  moveq    #15,d0
+                  moveq    #4-1,d0
                   moveq    #0,d1
                   lea      color_map(pc),a1
 scrninfo_loop:    move.b   (a1)+,d1
                   move.w   d1,(a0)+
                   dbra     d0,scrninfo_loop
-                  move.w   #239,d0
-                  moveq    #15,d1
+                  move.w   #252-1,d0
+                  moveq    #3,d1
 scrninfo_loop2:   move.w   d1,(a0)+
                   dbra     d0,scrninfo_loop2
 
