@@ -2839,51 +2839,51 @@ blt_dec_tab:      DC.W blt_dec_0-blt_dec_tab,0,0,0
                   DC.W blt_dec_2-blt_dec_tab,blt_dec_last_2-blt_dec_tab,blt_dec_next_2-blt_dec_tab,0
                   DC.W blt_dec_3-blt_dec_tab,blt_dec_last_3-blt_dec_tab,blt_dec_next_3-blt_dec_tab,0
                   DC.W blt_dec_4-blt_dec_tab,blt_dec_last_4-blt_dec_tab,blt_dec_next_4-blt_dec_tab,0
-                  DC.W blt_dec_5-blt_inc_tab,0,0,0
+                  DC.W blt_dec_5-blt_dec_tab,0,0,0
                   DC.W blt_dec_6-blt_dec_tab,blt_dec_last_6-blt_dec_tab,blt_dec_next_6-blt_dec_tab,0
                   DC.W blt_dec_7-blt_dec_tab,blt_dec_last_7-blt_dec_tab,blt_dec_next_7-blt_dec_tab,0
                   DC.W blt_dec_8-blt_dec_tab,blt_dec_last_8-blt_dec_tab,blt_dec_next_8-blt_dec_tab,0
                   DC.W blt_dec_9-blt_dec_tab,blt_dec_last_9-blt_dec_tab,blt_dec_next_9-blt_dec_tab,0
-                  DC.W blt_dec_10-blt_inc_tab,0,0,0
+                  DC.W blt_dec_10-blt_dec_tab,0,0,0
                   DC.W blt_dec_11-blt_dec_tab,blt_dec_last_11-blt_dec_tab,blt_dec_next_11-blt_dec_tab,0
                   DC.W blt_dec_12-blt_dec_tab,blt_dec_last_12-blt_dec_tab,blt_dec_next_12-blt_dec_tab,0
                   DC.W blt_dec_13-blt_dec_tab,blt_dec_last_13-blt_dec_tab,blt_dec_next_13-blt_dec_tab,0
                   DC.W blt_dec_14-blt_dec_tab,blt_dec_last_14-blt_dec_tab,blt_dec_next_14-blt_dec_tab,0
-                  DC.W blt_dec_15-blt_inc_tab,0,0,0
+                  DC.W blt_dec_15-blt_dec_tab,0,0,0
 
 blt_dec_l_tab:    DC.W blt_dec_0-blt_dec_tab,0,0,0
                   DC.W blt_dec_l1-blt_dec_tab,blt_dec_last_l1-blt_dec_tab,blt_dec_next_l1-blt_dec_tab,0
                   DC.W blt_dec_l2-blt_dec_tab,blt_dec_last_l2-blt_dec_tab,blt_dec_next_l2-blt_dec_tab,0
                   DC.W blt_dec_l3-blt_dec_tab,blt_dec_last_l3-blt_dec_tab,blt_dec_next_l3-blt_dec_tab,0
                   DC.W blt_dec_l4-blt_dec_tab,blt_dec_last_l4-blt_dec_tab,blt_dec_next_l4-blt_dec_tab,0
-                  DC.W blt_dec_5-blt_inc_tab,0,0,0
+                  DC.W blt_dec_5-blt_dec_tab,0,0,0
                   DC.W blt_dec_l6-blt_dec_tab,blt_dec_last_l6-blt_dec_tab,blt_dec_next_l6-blt_dec_tab,0
                   DC.W blt_dec_l7-blt_dec_tab,blt_dec_last_l7-blt_dec_tab,blt_dec_next_l7-blt_dec_tab,0
                   DC.W blt_dec_l8-blt_dec_tab,blt_dec_last_l8-blt_dec_tab,blt_dec_next_l8-blt_dec_tab,0
                   DC.W blt_dec_l9-blt_dec_tab,blt_dec_last_l9-blt_dec_tab,blt_dec_next_l9-blt_dec_tab,0
-                  DC.W blt_dec_10-blt_inc_tab,0,0,0
+                  DC.W blt_dec_10-blt_dec_tab,0,0,0
                   DC.W blt_dec_l11-blt_dec_tab,blt_dec_last_l11-blt_dec_tab,blt_dec_next_l11-blt_dec_tab,0
                   DC.W blt_dec_l12-blt_dec_tab,blt_dec_last_l12-blt_dec_tab,blt_dec_next_l12-blt_dec_tab,0
                   DC.W blt_dec_l13-blt_dec_tab,blt_dec_last_l13-blt_dec_tab,blt_dec_next_l13-blt_dec_tab,0
                   DC.W blt_dec_l14-blt_dec_tab,blt_dec_last_l14-blt_dec_tab,blt_dec_next_l14-blt_dec_tab,0
-                  DC.W blt_dec_15-blt_inc_tab,0,0,0
+                  DC.W blt_dec_15-blt_dec_tab,0,0,0
 
 blt_dec_r_tab:    DC.W blt_dec_0-blt_dec_tab,0,0,0
                   DC.W blt_dec_r1-blt_dec_tab,blt_dec_last_r1-blt_dec_tab,blt_dec_next_r1-blt_dec_tab,0
                   DC.W blt_dec_r2-blt_dec_tab,blt_dec_last_r2-blt_dec_tab,blt_dec_next_r2-blt_dec_tab,0
                   DC.W blt_dec_r3-blt_dec_tab,blt_dec_last_r3-blt_dec_tab,blt_dec_next_r3-blt_dec_tab,0
                   DC.W blt_dec_r4-blt_dec_tab,blt_dec_last_r4-blt_dec_tab,blt_dec_next_r4-blt_dec_tab,0
-                  DC.W blt_dec_5-blt_inc_tab,0,0,0
+                  DC.W blt_dec_5-blt_dec_tab,0,0,0
                   DC.W blt_dec_r6-blt_dec_tab,blt_dec_last_r6-blt_dec_tab,blt_dec_next_r6-blt_dec_tab,0
                   DC.W blt_dec_r7-blt_dec_tab,blt_dec_last_r7-blt_dec_tab,blt_dec_next_r7-blt_dec_tab,0
                   DC.W blt_dec_r8-blt_dec_tab,blt_dec_last_r8-blt_dec_tab,blt_dec_next_r8-blt_dec_tab,0
                   DC.W blt_dec_r9-blt_dec_tab,blt_dec_last_r9-blt_dec_tab,blt_dec_next_r9-blt_dec_tab,0
-                  DC.W blt_dec_10-blt_inc_tab,0,0,0
+                  DC.W blt_dec_10-blt_dec_tab,0,0,0
                   DC.W blt_dec_r11-blt_dec_tab,blt_dec_last_r11-blt_dec_tab,blt_dec_next_r11-blt_dec_tab,0
                   DC.W blt_dec_r12-blt_dec_tab,blt_dec_last_r12-blt_dec_tab,blt_dec_next_r12-blt_dec_tab,0
                   DC.W blt_dec_r13-blt_dec_tab,blt_dec_last_r13-blt_dec_tab,blt_dec_next_r13-blt_dec_tab,0
                   DC.W blt_dec_r14-blt_dec_tab,blt_dec_last_r14-blt_dec_tab,blt_dec_next_r14-blt_dec_tab,0
-                  DC.W blt_dec_15-blt_inc_tab,0,0,0
+                  DC.W blt_dec_15-blt_dec_tab,0,0,0
 
 blt_dec_0:        move.w   r_dwidth(a6),d7
                   not.w    d3
