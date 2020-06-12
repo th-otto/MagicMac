@@ -1212,7 +1212,7 @@ eddi_version:     move.w   #$0100,d0
                   rts
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  ;'v_countourfill'
+                  ;'v_contourfill'
 
 v_contourfill_in: move.l   #contour_abort,(SEEDABORT).w
 seedfill:         movem.w  (a3),d0-d1     ;x-Start/y-Start

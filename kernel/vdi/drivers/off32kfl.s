@@ -4558,7 +4558,7 @@ wl_16_16_m15_loop:move.w   d1,(a1)+
 ENDIF
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  ; 'v_countourfill'
+                  ; 'v_contourfill'
 
 ;Zeile absuchen bis sich die Pixelfarbe aendert
 ;Vorgaben:

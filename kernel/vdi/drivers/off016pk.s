@@ -311,7 +311,7 @@ color_to_vdi:     lea      color_remap(pc),a0
                   rts
                
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  ; 'v_countourfill'
+                  ; 'v_contourfill'
 
 ;Zeile fuer v_contourfill absuchen
 ;

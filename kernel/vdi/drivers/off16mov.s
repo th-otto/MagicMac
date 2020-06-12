@@ -406,7 +406,7 @@ init_rgbo_loop:   move.w   d3,d4       ;
                   rts
                   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                  ;v_countourfill'
+                  ;v_contourfill'
 
 ;Zeile absuchen bis sich die Pixelfarbe aendert
 ;Vorgaben:

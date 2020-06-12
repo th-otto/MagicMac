@@ -471,7 +471,7 @@ vt_seq_K:         bsr      cursor_off
                   bsr      clear_line_part
                   bra      cursor_on
 
-;Insert line (VT52 ESC I)
+;Insert line (VT52 ESC L)
 vt_seq_L:         pea.l    cursor_on(pc)
                   bsr      cursor_off
                   bsr      set_x0         ;Cursor an Zeilenanfang
