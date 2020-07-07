@@ -680,11 +680,8 @@ _WORD    v_bez_on( _WORD handle );
 void    v_bez_off( _WORD handle );
 _WORD    v_bez_con( _WORD handle, _WORD onoff );
 void    v_set_app_buff( _WORD handle, void **buf_p, _WORD nparagraphs );
-void    v_bez( _WORD handle, _WORD count, _WORD *xyarr,
-                int8_t *bezarr, _WORD *extent, _WORD *totpts, _WORD *totmoves );
-void    v_bez_fill( _WORD handle, _WORD count, _WORD *xyarr,
-                     int8_t *bezarr, _WORD *extent, _WORD *totpts,
-                     _WORD *totmoves );
+void    v_bez( _WORD handle, _WORD count, _WORD *xyarr, char *bezarr, _WORD *extent, _WORD *totpts, _WORD *totmoves );
+void    v_bez_fill( _WORD handle, _WORD count, _WORD *xyarr, char *bezarr, _WORD *extent, _WORD *totpts, _WORD *totmoves );
 _WORD   v_bez_qual( _WORD handle, _WORD prcnt, _WORD *actual );
 
 
@@ -859,7 +856,7 @@ void  vst_width	(VdiHdl, _WORD width, _WORD *char_width, _WORD *char_height, _WO
 /*
  * The following functions requires NVDI version 4.x or higher
  */
-_WORD vqt_char_index (_WORD handle, _UWORD scr_index, _WORD scr_mode, _WORD dst_mode);
+_WORD vqt_char_index (_WORD handle, _WORD scr_index, _WORD scr_mode, _WORD dst_mode);
 _WORD vst_map_mode   (_WORD handle, _WORD mode);
 
 #define vqt_is_char_available(handle,unicode) \
@@ -922,53 +919,58 @@ _WORD vst_map_mode   (_WORD handle, _WORD mode);
 /*----------------------------------------------------------------------------------------*/
 /* Pixelformate fÅr ATARI-Grafik																				*/
 /*----------------------------------------------------------------------------------------*/
-#define	PX_ATARI1	( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )
-#define	PX_ATARI2	( PX_IPLANES + PX_1COMP + PX_USES2 + PX_2BIT )
-#define	PX_ATARI4	( PX_IPLANES + PX_1COMP + PX_USES4 + PX_4BIT )
-#define	PX_ATARI8	( PX_IPLANES + PX_1COMP + PX_USES8 + PX_8BIT )
-#define	PX_FALCON15	( PX_PACKED + PX_3COMP + PX_USES16 + PX_16BIT )
+#define	PX_ATARI1	( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
+#define	PX_ATARI2	( PX_IPLANES | PX_1COMP | PX_USES2 | PX_2BIT )
+#define	PX_ATARI4	( PX_IPLANES | PX_1COMP | PX_USES4 | PX_4BIT )
+#define	PX_ATARI8	( PX_IPLANES | PX_1COMP | PX_USES8 | PX_8BIT )
+#define	PX_FALCON15	( PX_PACKED | PX_3COMP | PX_USES16 | PX_16BIT )
 
 /*----------------------------------------------------------------------------------------*/
 /* Pixelformate fÅr Macintosh																					*/
 /*----------------------------------------------------------------------------------------*/
-#define	PX_MAC1		( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )
-#define	PX_MAC4		( PX_PACKED + PX_1COMP + PX_USES4 + PX_4BIT )
-#define	PX_MAC8		( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )
-#define	PX_MAC15	( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES15 + PX_16BIT )
-#define	PX_MAC32	( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )
+#define	PX_MAC1		( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
+#define	PX_MAC4		( PX_PACKED | PX_1COMP | PX_USES4 | PX_4BIT )
+#define	PX_MAC8		( PX_PACKED | PX_1COMP | PX_USES8 | PX_8BIT )
+#define	PX_MAC15	( PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES15 | PX_16BIT )
+#define	PX_MAC32	( PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
 /* Pixelformate fÅr Grafikkarten																				*/
 /*----------------------------------------------------------------------------------------*/
-#define	PX_VGA1		( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )
-#define	PX_VGA4		( PX_PLANES + PX_1COMP + PX_USES4 + PX_4BIT )
-#define	PX_VGA8		( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )
-#define	PX_VGA15	( PX_REVERSED + PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES15 + PX_16BIT )
-#define	PX_VGA16	( PX_REVERSED + PX_PACKED + PX_3COMP + PX_USES16 + PX_16BIT )
-#define	PX_VGA24	( PX_REVERSED + PX_PACKED + PX_3COMP + PX_USES24 + PX_24BIT )
-#define	PX_VGA32	( PX_REVERSED + PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )
+#define	PX_VGA1		( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
+#define	PX_VGA4		( PX_PLANES | PX_1COMP | PX_USES4 | PX_4BIT )
+#define	PX_VGA8		( PX_PACKED | PX_1COMP | PX_USES8 | PX_8BIT )
+#define	PX_VGA15	( PX_REVERSED | PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES15 | PX_16BIT )
+#define	PX_VGA16	( PX_REVERSED | PX_PACKED | PX_3COMP | PX_USES16 | PX_16BIT )
+#define	PX_VGA24	( PX_REVERSED | PX_PACKED | PX_3COMP | PX_USES24 | PX_24BIT )
+#define	PX_VGA32	( PX_REVERSED | PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
 
-#define	PX_MATRIX16	( PX_PACKED + PX_3COMP + PX_USES16 + PX_16BIT )
+#define	PX_MATRIX16	( PX_PACKED | PX_3COMP | PX_USES16 | PX_16BIT )
 
-#define	PX_NOVA32	( PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )
+#define	PX_NOVA32	( PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
 /* Pixelformate fÅr Drucker																					*/
 /*----------------------------------------------------------------------------------------*/
-#define	PX_PRN1		( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )
-#define	PX_PRN8		( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )
-#define	PX_PRN32	( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )
+#define	PX_PRN1		( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
+#define	PX_PRN8		( PX_PACKED | PX_1COMP | PX_USES8 | PX_8BIT )
+#define	PX_PRN32	( PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
 /* bevorzugte (schnelle) Pixelformate fÅr Bitmaps 														*/
 /*----------------------------------------------------------------------------------------*/
 
-#define	PX_PREF1	( PX_PACKED + PX_1COMP + PX_USES1 + PX_1BIT )
-#define	PX_PREF2	( PX_PACKED + PX_1COMP + PX_USES2 + PX_2BIT )
-#define	PX_PREF4	( PX_PACKED + PX_1COMP + PX_USES4 + PX_4BIT )
-#define	PX_PREF8	( PX_PACKED + PX_1COMP + PX_USES8 + PX_8BIT )
-#define	PX_PREF15	( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES15 + PX_16BIT )
-#define	PX_PREF32	( PX_xFIRST + PX_PACKED + PX_3COMP + PX_USES24 + PX_32BIT )
+#define	PX_PREF1	( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
+#define	PX_PREF2	( PX_PACKED | PX_1COMP | PX_USES2 | PX_2BIT )
+#define	PX_PREF4	( PX_PACKED | PX_1COMP | PX_USES4 | PX_4BIT )
+#define	PX_PREF8	( PX_PACKED | PX_1COMP | PX_USES8 | PX_8BIT )
+#define	PX_PREF15	( PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES15 | PX_16BIT )
+#define	PX_PREF32	( PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
+
+#define	PX_RGB		( PX_PACKED | PX_3COMP | PX_USES24 | PX_24BIT )
+#define	PX_BGR		( PX_REVERSED | PX_PACKED | PX_3COMP | PX_USES24 | PX_24BIT )
+#define	PX_RGBA		( PX_PACKED | PX_3COMP | PX_USES32 | PX_32BIT )
+#define	PX_BGRA		( PX_REVERSED | PX_PACKED | PX_3COMP | PX_USES32 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
 /* Farbtabellen																									*/
@@ -1108,29 +1110,29 @@ struct _gcbitmap
 #define	T_DITHER_MODE		128	/* Konstante fÅrs Dithern */
 
 /* logische Transfermodi */
-#define	T_LOGIC_COPY		T_LOGIC_MODE+0
-#define	T_LOGIC_OR			T_LOGIC_MODE+1
-#define	T_LOGIC_XOR			T_LOGIC_MODE+2
-#define	T_LOGIC_AND			T_LOGIC_MODE+3
-#define	T_LOGIC_NOT_COPY	T_LOGIC_MODE+4
-#define	T_LOGIC_NOT_OR		T_LOGIC_MODE+5
-#define	T_LOGIC_NOT_XOR		T_LOGIC_MODE+6
-#define	T_LOGIC_NOT_AND		T_LOGIC_MODE+7
+#define	T_LOGIC_COPY		(T_LOGIC_MODE+0)
+#define	T_LOGIC_OR			(T_LOGIC_MODE+1)
+#define	T_LOGIC_XOR			(T_LOGIC_MODE+2)
+#define	T_LOGIC_AND			(T_LOGIC_MODE+3)
+#define	T_LOGIC_NOT_COPY	(T_LOGIC_MODE+4)
+#define	T_LOGIC_NOT_OR		(T_LOGIC_MODE+5)
+#define	T_LOGIC_NOT_XOR		(T_LOGIC_MODE+6)
+#define	T_LOGIC_NOT_AND		(T_LOGIC_MODE+7)
 
 /* Zeichenmodi */
-#define	T_REPLACE			T_DRAW_MODE+0
-#define	T_TRANSPARENT		T_DRAW_MODE+1
-#define	T_HILITE			T_DRAW_MODE+2
-#define	T_REVERS_TRANSPARENTT_DRAW_MODE+3
+#define	T_REPLACE			 (T_DRAW_MODE+0)
+#define	T_TRANSPARENT		 (T_DRAW_MODE+1)
+#define	T_HILITE			 (T_DRAW_MODE+2)
+#define	T_REVERS_TRANSPARENT (T_DRAW_MODE+3)
 
 /* arithmetische Transfermodi */
-#define	T_BLEND				T_ARITH_MODE+0
-#define	T_ADD				T_ARITH_MODE+1
-#define	T_ADD_OVER			T_ARITH_MODE+2
-#define	T_SUB				T_ARITH_MODE+3
-#define	T_MAX				T_ARITH_MODE+5
-#define	T_SUB_OVER			T_ARITH_MODE+6
-#define	T_MIN				T_ARITH_MODE+7
+#define	T_BLEND				(T_ARITH_MODE+0)
+#define	T_ADD				(T_ARITH_MODE+1)
+#define	T_ADD_OVER			(T_ARITH_MODE+2)
+#define	T_SUB				(T_ARITH_MODE+3)
+#define	T_MAX				(T_ARITH_MODE+5)
+#define	T_SUB_OVER			(T_ARITH_MODE+6)
+#define	T_MIN				(T_ARITH_MODE+7)
 
 typedef struct			/* Rechteck fÅr 16-Bit-Koordinaten */
 {
@@ -1159,7 +1161,7 @@ _WORD		v_ctab_vdi2idx		(_WORD handle, _WORD vdi_index);
 _WORD		v_delete_ctab		(_WORD handle, COLOR_TAB *ctab);
 _WORD		v_delete_itab		(_WORD handle, ITAB_REF itab);
 int32_t		v_get_ctab_id		(_WORD handle);
-_WORD		v_get_outline		(_WORD handle, _WORD __index, _WORD x_offset, _WORD y_offset, _WORD *pts, int8_t *flags, _WORD max_pts);
+_WORD		v_get_outline		(_WORD handle, _WORD __index, _WORD x_offset, _WORD y_offset, _WORD *pts, char *flags, _WORD max_pts);
 _WORD		v_open_bm		(_WORD base_handle, GCBITMAP *bitmap, _WORD color_flags, _WORD unit_flags, _WORD pixel_width, _WORD pixel_height);
 _WORD		v_resize_bm		(_WORD handle, _WORD width, _WORD height, int32_t b_width, unsigned char *addr);
 void		v_setrgb		(_WORD handle, _WORD type, _WORD r, _WORD g, _WORD b);
@@ -1185,7 +1187,7 @@ int32_t		vqr_bg_color		(_WORD handle, COLOR_ENTRY *fg_color);
 int32_t		vqr_fg_color		(_WORD handle, COLOR_ENTRY *fg_color);
 int32_t		vqt_bg_color		(_WORD handle, COLOR_ENTRY *fg_color);
 int32_t		vqt_fg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-void		vr_transfer_bits	(_WORD handle, GCBITMAP *src_bm, GCBITMAP *dst_bm, const RECT16 *src_rect, const RECT16 *dst_rect, _WORD mode);
+void		vr_transfer_bits	(_WORD handle, GCBITMAP *src_bm, GCBITMAP *dst_bm, const _WORD *src_rect, const _WORD *dst_rect, _WORD mode);
 _WORD		vs_ctab			(_WORD handle, COLOR_TAB *ctab);
 _WORD		vs_ctab_entry		(_WORD handle, _WORD __index, int32_t color_space, COLOR_ENTRY *color);
 _WORD		vs_dflt_ctab		(_WORD handle);
