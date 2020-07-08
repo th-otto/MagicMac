@@ -58,11 +58,17 @@
    and 32-bit `int's and `long int's.  */
 
 /* Number of bits in a `char'.	*/
-#  define CHAR_BIT	8
+#  ifndef __CHAR_BIT__
+#   define __CHAR_BIT__ 8
+#  endif
+#  define CHAR_BIT	__CHAR_BIT__
 
 /* Minimum and maximum values a `signed char' can hold.  */
+#  ifndef __SCHAR_MAX__
+#    define __SCHAR_MAX__ 127
+#  endif
 #  define SCHAR_MIN	(-128)
-#  define SCHAR_MAX	127
+#  define SCHAR_MAX	__SCHAR_MAX__
 
 /* Maximum value an `unsigned char' can hold.  (Minimum is 0.)  */
 #  define UCHAR_MAX	255U
@@ -82,18 +88,24 @@
 #  endif
 
 /* Minimum and maximum values a `signed short int' can hold.  */
+#  ifndef __SHRT_MAX__
+#    define __SHRT_MAX__ 32767
+#  endif
 #  define SHRT_MIN	(-32767-1)
-#  define SHRT_MAX	32767
+#  define SHRT_MAX	__SHRT_MAX__
 
 /* Maximum value an `unsigned short int' can hold.  (Minimum is 0.)  */
 #  define USHRT_MAX	65535U
 
 /* Minimum and maximum values a `signed int' can hold.  */
-#  ifdef __MSHORT__
-#    define INT_MAX         32767
-#  else
-#    define INT_MAX	2147483647
+#  ifndef __INT_MAX__
+#    ifdef __MSHORT__
+#      define __INT_MAX__         32767
+#    else
+#      define __INT_MAX__	2147483647
+#    endif
 #  endif
+#  define INT_MAX __INT_MAX__
 #  define INT_MIN	(-INT_MAX - 1)
 
 /* Maximum value an `unsigned int' can hold.  (Minimum is 0.)  */
@@ -116,7 +128,7 @@
 #  if defined(__USE_ISOC99) && !defined(__NO_LONGLONG)
 
 /* Minimum and maximum values a `signed long long int' can hold.  */
-#   define LLONG_MAX	9223372036854775807LL
+#   define LLONG_MAX	__LONG_LONG_MAX__
 #   define LLONG_MIN	(-LLONG_MAX - 1LL)
 
 /* Maximum value an `unsigned long long int' can hold.  (Minimum is 0.)  */
@@ -136,7 +148,31 @@
     the definitions from gcc's header.  */
 #if defined __GNUC__ && !defined _GCC_LIMITS_H_
 /* `_GCC_LIMITS_H_' is what GCC's file defines.  */
-# include_next <limits.h>
+#if (defined __STDC_WANT_IEC_60559_BFP_EXT__ || (defined (__STDC_VERSION__) && __STDC_VERSION__ > 201710L))
+/* TS 18661-1 / C2X widths of integer types.  */
+# undef CHAR_WIDTH
+# define CHAR_WIDTH __SCHAR_WIDTH__
+# undef SCHAR_WIDTH
+# define SCHAR_WIDTH __SCHAR_WIDTH__
+# undef UCHAR_WIDTH
+# define UCHAR_WIDTH __SCHAR_WIDTH__
+# undef SHRT_WIDTH
+# define SHRT_WIDTH __SHRT_WIDTH__
+# undef USHRT_WIDTH
+# define USHRT_WIDTH __SHRT_WIDTH__
+# undef INT_WIDTH
+# define INT_WIDTH __INT_WIDTH__
+# undef UINT_WIDTH
+# define UINT_WIDTH __INT_WIDTH__
+# undef LONG_WIDTH
+# define LONG_WIDTH __LONG_WIDTH__
+# undef ULONG_WIDTH
+# define ULONG_WIDTH __LONG_WIDTH__
+# undef LLONG_WIDTH
+# define LLONG_WIDTH __LONG_LONG_WIDTH__
+# undef ULLONG_WIDTH
+# define ULLONG_WIDTH __LONG_LONG_WIDTH__
+#endif
 #endif
 
 /* The <limits.h> files in some gcc versions don't define LLONG_MIN,

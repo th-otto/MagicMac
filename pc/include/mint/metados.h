@@ -195,20 +195,29 @@ typedef struct {	/* Discinfo for MetaDiscInfo() function */
 
 #endif
 
-#if defined(__PUREC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
+#if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
 
-long Metainit(metainit_t *buffer);
-long Metaopen(short drive, metaopen_t *buffer);
-long Metaclose(short drive);
-long Metaread(short drive, void *buffer, long blockno, short count);
-long Metawrite(short drive, void *buffer, long blockno, short count);
-long Metastatus(short drive, metastatus_t *buffer);
-long Metaioctl(short drive, long magic, short opcode, void *buffer);
-long Metastartaudio(short drive, short flag, const metatracks_t *tracks);
-long Metastopaudio(short drive);
-long Metasetsongtime(short drive, short repeat, long starttime, long endtime);
-long Metagettoc(short drive, short flag, metatocentry_t *buffer);
-long Metadiscinfo(short drive, metadiscinfo_t *buffer);
+#if defined(__AHCC__)
+	#define __XBIOS(b)  cdecl __syscall__(14,b)
+#else
+	#define __XBIOS(b)
+#endif
+
+long __XBIOS(0x30) Metainit(metainit_t *buffer);
+long __XBIOS(0x31) Metaopen(short drive, metaopen_t *buffer);
+long __XBIOS(0x32) Metaclose(short drive);
+long __XBIOS(0x33) Metaread(short drive, void *buffer, long blockno, short count);
+long __XBIOS(0x34) Metawrite(short drive, void *buffer, long blockno, short count);
+long __XBIOS(0x35) Metaseek(short drive, long dummy, long offset);
+long __XBIOS(0x36) Metastatus(short drive, metastatus_t *buffer);
+long __XBIOS(0x37) Metaioctl(short drive, long magic, short opcode, void *buffer);
+long __XBIOS(0x3b) Metastartaudio(short drive, short flag, const metatracks_t *tracks);
+long __XBIOS(0x3c) Metastopaudio(short drive);
+long __XBIOS(0x3d) Metasetsongtime(short drive, short repeat, long starttime, long endtime);
+long __XBIOS(0x3e) Metagettoc(short drive, short flag, metatocentry_t *buffer);
+long __XBIOS(0x3f) Metadiscinfo(short drive, metadiscinfo_t *buffer);
+
+#undef __XBIOS
 
 #endif
 

@@ -65,7 +65,7 @@
 #define BYTE	signed char
 #define UBYTE	unsigned char
 
-#if (!(defined(__PUREC__) || defined(__TURBOC__)) || (defined(_COMPILER_H) && !defined(__MSHORT__)) || defined(__GEMLIB__)) && !defined(__USE_GEMLIB)
+#if (!(defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__)) || (defined(_COMPILER_H) && !defined(__MSHORT__)) || defined(__GEMLIB__)) && !defined(__USE_GEMLIB)
 #define __USE_GEMLIB 1
 #endif
 #ifdef __USE_GEMLIB

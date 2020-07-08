@@ -231,6 +231,7 @@ int         stat( const char *path, struct stat *buff );
 /* isatty() also declared in unistd.h */
 int         isatty( int handle );
 long        filelength( int handle );
+long        fsize( const char *name );
 
 size_t      coreleft( void );
 

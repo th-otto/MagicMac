@@ -17,12 +17,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#if defined(__GNUC__)
-
-#  include_next <stdbool.h>
-
-#else
-
 #ifndef _STDBOOL_H
 #define _STDBOOL_H
 
@@ -40,7 +34,7 @@
 #ifndef __cplusplus
 
 #define bool	_Bool
-#if !defined(__AHCC__)
+#if !defined(__AHCC__) && !defined(__GNUC__)
 #define _Bool	int
 #endif
 #define true	1
@@ -48,7 +42,7 @@
 
 #else
 
-/* Supporting <stdbool.h> in C++ is a GCC extension.  */
+/* Supporting _Bool in C++ is a GCC extension.  */
 #define _Bool	bool
 
 #if __cplusplus < 201103L
@@ -58,7 +52,7 @@
 #define true	true
 #endif
 
-#endif
+#endif /* __cplusplus */
 
 #endif
 
@@ -66,5 +60,3 @@
 #define __bool_true_false_are_defined 1
 
 #endif /* _STDBOOL_H */
-
-#endif /* __GNUC__ */

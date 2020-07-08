@@ -3,13 +3,20 @@
 
 struct __stdio_file
 {
+#if defined(__AHCC__) || defined(__AHCCLIB__)
+        unsigned char	*BufPtr;	/* current buffer pointer */
+        long		     _cnt;		/* # of bytes in buffer */
+        unsigned char	*BufStart;	/* base of file buffer */
+        size_t		    _bsiz;		/* buffer size */
+#else
         void *BufPtr;           /* next byte write              */
         void *BufLvl;           /* next byte read               */
         void *BufStart;         /* first byte of buffer         */
         void *BufEnd;           /* first byte after buffer      */
+#endif
         int  Handle;            /* gemdos handle                */
         char Flags;             /* some Flags                   */
-        char resv;
+        char Mode;
         char ChrBuf;            /* little buffer                */
         char ungetFlag;
 };

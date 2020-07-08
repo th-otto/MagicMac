@@ -160,7 +160,7 @@ struct itimerspec
     struct timespec it_value;
   };
 
-#if defined(__PUREC__) || defined(__TURBOC__)
+#if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__)
 #include <signal.h>
 #else
 /* We can use a simple forward declaration.  */

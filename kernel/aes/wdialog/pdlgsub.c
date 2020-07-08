@@ -94,16 +94,16 @@
 
 
 static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL do_dlg_general(struct PDLG_HNDL_args args);
 static LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
 static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL do_dlg_paper(struct PDLG_HNDL_args args);
 static LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
 static LONG _CDECL init_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static LONG _CDECL do_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL do_dlg_color(struct PDLG_HNDL_args args);
 static LONG _CDECL reset_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub);
 static LONG _CDECL init_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static LONG _CDECL do_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL do_dlg_device(struct PDLG_HNDL_args args);
 static LONG _CDECL reset_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub);
 
 static void set_tedinfo(OBJECT *tree, WORD obj, const char *str, WORD spaces);
@@ -241,8 +241,11 @@ static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
+static LONG _CDECL do_dlg_general(struct PDLG_HNDL_args args)
 {
+	PRN_SETTINGS *settings = args.settings;
+	PDLG_SUB *sub = args.sub;
+	_WORD exit_obj = args.exit_obj;
 	WORD index_offset = sub->index_offset;
 	WORD cursor;
 	
@@ -337,8 +340,12 @@ static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
+static LONG _CDECL do_dlg_paper(struct PDLG_HNDL_args args)
 {
+	PRN_SETTINGS *settings = args.settings;
+	PDLG_SUB *sub = args.sub;
+	_WORD exit_obj = args.exit_obj;
+
 	switch (exit_obj - sub->index_offset)
 	{
 	case PAPER_DEVICE_POPUP:
@@ -463,8 +470,11 @@ static LONG _CDECL init_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static LONG _CDECL do_dlg_color(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
+static LONG _CDECL do_dlg_color(struct PDLG_HNDL_args args)
 {
+	PRN_SETTINGS *settings = args.settings;
+	PDLG_SUB *sub = args.sub;
+	_WORD exit_obj = args.exit_obj;
 	fixed w;
 	
 	switch (exit_obj - sub->index_offset)
@@ -546,8 +556,12 @@ static LONG _CDECL init_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static LONG _CDECL do_dlg_device(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
+static LONG _CDECL do_dlg_device(struct PDLG_HNDL_args args)
 {
+	PRN_SETTINGS *settings = args.settings;
+	PDLG_SUB *sub = args.sub;
+	_WORD exit_obj = args.exit_obj;
+
 	switch (exit_obj - sub->index_offset)
 	{
 	case DEVICE_DEVICE_POPUP:

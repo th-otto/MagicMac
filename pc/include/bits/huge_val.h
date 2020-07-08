@@ -59,6 +59,7 @@
 
 #else /* not GCC */
 
+#if 0
 #if defined(__DOUBLE_64__)
 static union { unsigned char __c[8]; double __d; } __huge_val =
   { { 0x7f, 0xf0, 0, 0, 0, 0, 0, 0 } };
@@ -74,12 +75,15 @@ static union { unsigned char __c[10]; double __d; } __huge_val =
  * definition above is more accurrate, but cannot be
  * used in static initializations.
  */
+#endif
 #undef HUGE_VAL
 #define HUGE_VAL 1.189731495357231765E+4932
 
 #ifdef	 __USE_ISOC99
+#if 0
 static union { unsigned char __c[4]; float __f; } __huge_valf =
   { { 0x7f, 0x80, 0, 0 } };
+#endif
 #  define HUGE_VALF	(__huge_valf.__f)
 
 /*
@@ -89,14 +93,18 @@ static union { unsigned char __c[4]; float __f; } __huge_valf =
 #undef HUGE_VALF
 #define HUGE_VALF ((float)HUGE_VAL)
 
+#if 0
 #if defined(__HAVE_68881__)
+#if 0
 static union { unsigned char __c[12]; long double __ld; } __huge_vall =
   { { 0x7f, 0xff, 0, 0, 0x80, 0, 0, 0, 0, 0, 0, 0 } };
 #else
 static union { unsigned char __c[10]; long double __ld; } __huge_vall =
   { { 0x7f, 0xff, 0x80, 0, 0, 0, 0, 0, 0, 0 } };
 #endif
+#endif
 #  define HUGE_VALL	(__huge_vall.__ld)
+#endif
 
 /*
  * definition above is more accurrate, but cannot be

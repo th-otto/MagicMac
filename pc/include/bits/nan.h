@@ -50,7 +50,11 @@
 #  define __nan_bytes		{ 0, 0, 0xc0, 0x7f }
 # endif
 
+#if 0
 static union { unsigned char __c[4]; float __d; } const __nan_union = { __nan_bytes };
+#else
+extern union { unsigned char __c[4]; float __d; } const __nan_union;
+#endif
 # define NAN	(__nan_union.__d)
 
 #endif	/* GCC.  */

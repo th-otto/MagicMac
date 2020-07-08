@@ -137,7 +137,7 @@ union ieee854_long_double
 #if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:15;
-#if !(defined(__PUREC__) || defined(__TURBOC__)) || defined(__MATH_68881__)
+#if !(defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__)) || defined(__MATH_68881__)
 	unsigned int empty:16;
 #endif
 	__uint32_t   mantissa0:32;
@@ -166,7 +166,7 @@ union ieee854_long_double
 #if	__BYTE_ORDER == __ORDER_BIG_ENDIAN__
 	unsigned int negative:1;
 	unsigned int exponent:15;
-#if !(defined(__PUREC__) || defined(__TURBOC__)) || defined(__MATH_68881__)
+#if !(defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__)) || defined(__MATH_68881__)
 	unsigned int empty:16;
 #endif
 	unsigned int one:1;

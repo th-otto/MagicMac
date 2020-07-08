@@ -386,4 +386,3 @@ __MATHCALL (scalb,, (_Mdouble_ __x, _Mdouble_ __n));
 #ifndef __STRICT_ANSI__
 __MATHCALL (poly,, (int order, const _Mdouble_ *coeffs, _Mdouble_ x));
 #endif
-

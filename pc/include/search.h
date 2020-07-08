@@ -77,7 +77,11 @@ typedef struct entry
 ENTRY;
 
 /* Opaque type for internal use.  */
+#if (defined(__PUREC__) || defined(__TURBOC__)) && !defined(_LIBC)
+struct _ENTRY { int dummy; };
+#else
 struct _ENTRY;
+#endif
 
 /* Family of hash table handling functions.  The functions also
    have reentrant counterparts ending with _r.  The non-reentrant

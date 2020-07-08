@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-#if defined __cplusplus || (defined __STDC__ && __STDC__) || defined __PUREC__ || defined(__TURBOC__) || defined WINDOWS32
+#if defined __cplusplus || (defined __STDC__ && __STDC__) || defined __PUREC__ || defined(__AHCC__) || defined(__TURBOC__) || defined WINDOWS32
 # if !defined __GLIBC__ || !defined __P
 #  undef	__P
 #  define __P(protos)	protos
@@ -37,7 +37,7 @@ extern "C" {
 #endif /* C++ or ANSI C.  */
 
 #if !defined(const) && !defined(__const)
-# if (defined __STDC__ && __STDC__) || defined __PUREC__ || defined(__TURBOC__) || defined __cplusplus
+# if (defined __STDC__ && __STDC__) || defined __PUREC__ || defined(__AHCC__) || defined(__TURBOC__) || defined __cplusplus
 #  define __const	const
 # else
 #  define __const

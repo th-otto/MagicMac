@@ -229,7 +229,7 @@ struct mutimbuf
 struct ploadinfo
 {
 	/* passed */
-	short fnamelen;	/* length of fname includeing EOS */
+	short fnamelen;	/* length of fname including EOS */
 	
 	/* returned */
 	char *cmdlin; /* 128 byte */

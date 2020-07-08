@@ -283,7 +283,11 @@ typedef __WINT_TYPE__ wint_t;
 #ifdef _STDDEF_H
 
 /* Offset of member MEMBER in a struct of type TYPE. */
+#ifdef __AHCC__
+#define offsetof(TYPE, MEMBER) __offsetof__((TYPE).MEMBER)
+#else
 #define offsetof(TYPE, MEMBER) ((size_t)&(((TYPE *)0)->MEMBER))
+#endif
 
 #endif /* _STDDEF_H was defined this time */
 

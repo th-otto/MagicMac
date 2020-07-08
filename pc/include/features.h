@@ -227,7 +227,7 @@
 # define _DEFAULT_SOURCE	1
 #endif
 
-#if (defined(__PUREC__) || defined(__TURBOC__)) && defined(__MSHORT__) && \
+#if (defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__)) && defined(__MSHORT__) && \
 	!defined(_ISOC99_SOURCE) && \
 	!defined(_POSIX_SOURCE) && !defined(_POSIX_C_SOURCE) && \
 	!defined(_XOPEN_SOURCE) && !defined(_XOPEN_SOURCE_EXTENDED) && \
@@ -242,7 +242,7 @@
 # define __NO_REDIRECT
 # define __NO_CTYPE
 #endif
-#if (defined(__PUREC__) || defined(__TURBOC__)) && (!defined(__LONGLONG__) || __LONGLONG__ == 0)
+#if (defined(__PUREC__) || defined(__TURBOC__) || defined(__AHCC__)) && (!defined(__LONGLONG__) || __LONGLONG__ == 0)
 #  define __NO_LONGLONG
 #endif
 #ifdef _PUREC_SOURCE

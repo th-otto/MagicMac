@@ -143,7 +143,7 @@ struct option
    arguments to the option '\0'.  This behavior is specific to the GNU
    `getopt'.  */
 
-#if defined(__GNU_LIBRARY__) || defined(__MINT__) || defined(__PUREC__) || defined(__TURBOC__)
+#if defined(__GNU_LIBRARY__) || defined(__MINT__) || defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__)
 /* Many other libraries have conflicting prototypes for getopt, with
    differences in the consts, in stdlib.h.  To avoid compilation
    errors, only prototype getopt for the GNU C library.  */

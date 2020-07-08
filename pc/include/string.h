@@ -666,6 +666,25 @@ char    *strset( char *s, int c );
 char    *strnset( char *s, int c, size_t n );
 #endif
 
+/*
+ * only found in AHCC library so far
+ */
+#if (defined(__USE_MISC) || defined(__USE_PUREC)) && (defined(__AHCC__) || defined(__AHCCLIB__))
+long strpos(char *string, char symbol);
+long strrpos(char *string, char symbol);
+char *stradj(char *string, int dir);
+int memicmp(const void *mem1, const void *mem2, size_t len);
+char *stristr(const char *string, const char *pattern);
+int strirpl(char *string, const char *ptrn, const char *rpl, int n);
+int strrpl(char *string, const char *ptrn, const char *rpl, int n);
+char *strrpbrk(const char *__s, const char *__accept);
+char *substr(char *dest, const char *source, size_t start, size_t e);
+char *subnstr(char *dest, const char *source, size_t start, size_t length);
+#endif
+#if defined(__USE_MISC) || defined(__USE_PUREC)
+void swab(const void *src, void *dst, __ssize_t n);
+#endif
+
 /* BSD? */
 extern size_t strlcpy (char *dst, const char *src, size_t siz);
 extern size_t strlcat (char *dst, const char *src, size_t siz);

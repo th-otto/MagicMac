@@ -26,13 +26,13 @@ static struct TGetRotnBlk getRotnBlk;
 
 
 static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL do_dlg_general(struct PDLG_HNDL_args args);
 static LONG _CDECL reset_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub);
 static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL do_dlg_paper(struct PDLG_HNDL_args args);
 static LONG _CDECL reset_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub);
 static LONG _CDECL init_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub);
-static LONG _CDECL do_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj);
+static LONG _CDECL do_dlg_options(struct PDLG_HNDL_args args);
 static LONG _CDECL reset_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub);
 static short handle_dlg_paper_mac(void);
 static short handle_dlg_general_mac(void);
@@ -451,11 +451,9 @@ static LONG _CDECL init_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static LONG _CDECL do_dlg_general(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
+static LONG _CDECL do_dlg_general(struct PDLG_HNDL_args args)
 {
-	UNUSED(settings);
-	UNUSED(sub);
-	UNUSED(exit_obj);
+	UNUSED(args);
 	ExecuteMacFunction(do_dlg_general_mac);
 	switch (mac_exit_code)
 	{
@@ -493,11 +491,9 @@ static LONG _CDECL init_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static LONG _CDECL do_dlg_paper(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
+static LONG _CDECL do_dlg_paper(struct PDLG_HNDL_args args)
 {
-	UNUSED(settings);
-	UNUSED(sub);
-	UNUSED(exit_obj);
+	UNUSED(args);
 	ExecuteMacFunction(do_dlg_paper_mac);
 	switch (mac_exit_code)
 	{
@@ -561,8 +557,12 @@ static LONG _CDECL init_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub)
 }
 
 
-static LONG _CDECL do_dlg_options(PRN_SETTINGS *settings, PDLG_SUB *sub, WORD exit_obj)
+static LONG _CDECL do_dlg_options(struct PDLG_HNDL_args args)
 {
+	PRN_SETTINGS *settings = args.settings;
+	PDLG_SUB *sub = args.sub;
+	_WORD exit_obj = args.exit_obj;
+
 	switch (exit_obj - sub->index_offset)
 	{
 	case DITHER_DEVICE_POPUP:

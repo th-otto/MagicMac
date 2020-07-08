@@ -24,6 +24,13 @@
 #endif
 
 /*
+ * AHCC  is currently lacking softfloat support in the libraries
+ */
+#if defined(__AHCC__) && !defined(__HAVE_FPU__)
+#error "floating point not implemented by this compiler"
+#endif
+
+/*
  * PureC uses __NFPUIN__ to inhibit math inline intrinsics
  */
 #if defined(__NFPUIN__) && !defined(__NO_MATH_INLINES)
@@ -51,7 +58,7 @@
 #if (defined(__mcoldfire__) || defined(__GNUC__)) && !defined(__DOUBLE_64__)
 #  define __DOUBLE_64__ 1 /* double == long double == ieee754-64bit */
 #endif
-#if defined(__PUREC__) || defined(__TURBOC__)
+#if (defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__)) && !defined(__mcoldfire__)
 #  define __DOUBLE_80__ 1 /* double == long double == ieee854-96bit */
 #endif
 
@@ -72,11 +79,19 @@ __BEGIN_DECLS
 /* Get general and ISO C9X specific information.  */
 #include <bits/mathdef.h>
 
-
 /* The file <bits/mathcalls.h> contains the prototypes for all the
    actual math functions.  These macros are used for those prototypes,
    so we can easily declare each function as both `name' and `__name',
    and can declare the float versions `namef' and `__namef'.  */
+
+/*
+ * AHCC has sever problems with the macro defininitions
+ * in mathcall.h, so we must do it the traditional way
+ */
+
+#ifdef __AHCC__
+#include <ahcc/math.h>
+#else
 
 #define __MATHCALL(function,suffix, args)	\
   __MATHDECL (_Mdouble_,function,suffix, args)
@@ -167,6 +182,7 @@ extern long double __REDIRECT_NTH (nexttowardl,
 #undef	__MATHDECL
 #undef	__MATHCALL
 
+#endif /* __AHCC__ */
 
 # define X_TLOSS	1.41484755040568800000e+16
 
@@ -436,8 +452,8 @@ void    setmatherr( int (*errorfunc)( struct exception *e ) );
 int     fpumode( int disable );
 void xdcnv(const double *val, void *rep8bytes);
 void dxcnv(const void *rep8bytes, double *val);
-double x80x96cnv( void *rep10bytes );
-void   x96x80cnv( double rep12bytes, void *rep10bytes );
+long double x80x96cnv( const void *rep10bytes );
+void   x96x80cnv( long double rep12bytes, void *rep10bytes );
 
 #if defined( __HAVE_68881__ )
 double  fint( double __x );
@@ -518,10 +534,15 @@ extern int matherr (struct exception *) __THROW;
    ({ __typeof__(x) __x = (x); __typeof__(y) __y = (y);			      \
       !isunordered (__x, __y) && __x > __y; }))
 #else
+#if 0
+/* Pure-C is not smart enouh to optimize it away if it is unused */
 static int __isgreater(long double x, long double y)
 {
 	return !isunordered (x, y) && x > y;
 }
+#else
+int __isgreater(long double x, long double y);
+#endif
 #define isgreater(x, y) __isgreater(x, y)
 #endif
 # endif
@@ -534,10 +555,15 @@ static int __isgreater(long double x, long double y)
    ({ __typeof__(x) __x = (x); __typeof__(y) __y = (y);			      \
       !isunordered (__x, __y) && __x >= __y; }))
 #else
+#if 0
+/* Pure-C is not smart enouh to optimize it away if it is unused */
 static int __isgreaterequal(long double x, long double y)
 {
 	return !isunordered (x, y) && x >= y;
 }
+#else
+int __isgreaterequal(long double x, long double y);
+#endif
 #define isgreaterequal(x, y) __isgreaterequal(x, y)
 #endif
 # endif
@@ -550,10 +576,15 @@ static int __isgreaterequal(long double x, long double y)
    ({ __typeof__(x) __x = (x); __typeof__(y) __y = (y);			      \
       !isunordered (__x, __y) && __x < __y; }))
 #else
+#if 0
+/* Pure-C is not smart enouh to optimize it away if it is unused */
 static int __isless(long double x, long double y)
 {
 	return !isunordered (x, y) && x < y;
 }
+#else
+int __isless(long double x, long double y);
+#endif
 #define isless(x, y) __isless(x, y)
 #endif
 # endif
@@ -566,10 +597,15 @@ static int __isless(long double x, long double y)
    ({ __typeof__(x) __x = (x); __typeof__(y) __y = (y);			      \
       !isunordered (__x, __y) && __x <= __y; }))
 #else
+#if 0
+/* Pure-C is not smart enouh to optimize it away if it is unused */
 static int __islessequal(long double x, long double y)
 {
 	return !isunordered (x, y) && x <= y;
 }
+#else
+int __islessequal(long double x, long double y);
+#endif
 #define islessequal(x, y) __islessequal(x, y)
 #endif
 # endif
@@ -582,10 +618,15 @@ static int __islessequal(long double x, long double y)
    ({ __typeof__(x) __x = (x); __typeof__(y) __y = (y);			      \
       !isunordered (__x, __y) && (__x < __y || __y < __x); }))
 #else
+#if 0
+/* Pure-C is not smart enouh to optimize it away if it is unused */
 static int __islessgreater(long double x, long double y)
 {
 	return !isunordered (x, y) && (x < y || x > y);
 }
+#else
+int __islessgreater(long double x, long double y);
+#endif
 #define islessgreater(x, y) __islessgreater(x, y)
 #endif
 # endif

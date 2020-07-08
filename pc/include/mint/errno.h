@@ -889,7 +889,7 @@
 # define EGSBF			__KERNEL_NEG(ETOS_SBLOCK)
 #endif
 
-#elif defined(__PUREC__) || defined(__TURBOC__)
+#elif defined(__PUREC__) || defined(__TURBOC__) || defined(__AHCC__)
 
 #include <purec/errno.h>
 

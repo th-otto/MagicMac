@@ -1076,7 +1076,13 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 				if (this_sub->do_dlg == NULL)
 					return TRUE;
 				{
-					ret = this_sub->do_dlg(&prn_dialog->settings, this_sub, obj);
+					struct PDLG_HNDL_args args;
+					args.settings = &prn_dialog->settings;
+					args.sub = this_sub;
+					args.exit_obj = obj;
+#pragma warn -stv
+					ret = this_sub->do_dlg(args);
+#pragma warn +stv
 					if (ret & PDLG_PREBUTTON)
 					{
 						switch ((WORD)ret)

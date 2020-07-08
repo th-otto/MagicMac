@@ -1,4 +1,3 @@
-
 #ifndef _MINT_MINTBIND_H
 #define _MINT_MINTBIND_H 1
 
@@ -117,7 +116,7 @@ typedef struct
 #define DP_VOLNAMEMAX 9         /* maximum length of a volume name (0 if volume names not supported) */
 #define DP_MAXREQ	(-1) /* Dpathconf(-1) */			/* highest legal request */
 
-#if defined(__PUREC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
+#if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
 
 #include <mint/slb.h>
 
@@ -132,169 +131,186 @@ typedef void _CDECL (*__mint_sighandler_t) (long signum);
 #endif
 #endif
 
-int Syield(void);							/* GEMDOS 0xff */
-long Fpipe(short *ptr);						/* GEMDOS 0x100 */
-int Ffchown(int f, int uid, int gid);		/* GEMDOS 0x101 */
-int Ffchmod(int f, int mode);				/* GEMDOS 0x102 */
-int Fsync(int f);							/* GEMDOS 0x103 */
-long Fcntl(int f, long arg, int cmd);		/* GEMDOS 0x104 */
+#if defined(__AHCC__)
+	#define __GEMDOS(b) cdecl __syscall__( 1,b)
+	#define __BIOS(b)   cdecl __syscall__(13,b)
+	#define __XBIOS(b)  cdecl __syscall__(14,b)
+#else
+	#define __GEMDOS(b)
+	#define __BIOS(b)
+	#define __XBIOS(b)
+#endif
+
+short __GEMDOS(0xff)	Syield(void);
+long __GEMDOS(0x100)	Fpipe(short *ptr);
+short __GEMDOS(0x101)	Ffchown(short f, short uid, short gid);
+short __GEMDOS(0x102)	Ffchmod(short f, short mode);
+short __GEMDOS(0x103)	Fsync(short f);
+long __GEMDOS(0x104)	Fcntl(short f, long arg, short cmd);
 #define Fcntl(f, arg, cmd) Fcntl(f, (long)(arg), cmd)
-long Finstat(int f);						/* GEMDOS 0x105 */
-long Foutstat(int f);						/* GEMDOS 0x106 */
-long Fgetchar(int f, int mode);				/* GEMDOS 0x107 */
-long Fputchar(int f, long c, int mode); 	/* GEMDOS 0x108 */
-long Pwait(void);							/* GEMDOS 0x109 */
-int Pnice(int delta);						/* GEMDOS 0x10a */
-int Pgetpid(void);							/* GEMDOS 0x10b */
-int Pgetppid(void);							/* GEMDOS 0x10c */
-int Pgetpgrp(void);							/* GEMDOS 0x10d */
-int Psetpgrp(int pid, int newgrp);			/* GEMDOS 0x10e */
-int Pgetuid(void);							/* GEMDOS 0x10f */
-int Psetuid(int id);						/* GEMDOS 0x110 */
-int Pkill(int pid, int sig);				/* GEMDOS 0x111 */
-__mint_sighandler_t Psignal(int sig, __mint_sighandler_t handler);		/* GEMDOS 0x112 */
-long Pvfork(void);							/* GEMDOS 0x113 */
-int Pgetgid(void);							/* GEMDOS 0x114 */
-int Psetgid(int id);						/* GEMDOS 0x115 */
-long Psigblock(unsigned long mask);			/* GEMDOS 0x116 */
-long Psigsetmask(unsigned long mask);		/* GEMDOS 0x117 */
-long Pusrval(long arg);						/* GEMDOS 0x118 */
-int Pdomain(int newdom);					/* GEMDOS 0x119 */
-long Psigreturn(void);						/* GEMDOS 0x11a */
-long Pfork(void);							/* GEMDOS 0x11b */
-long Pwait3(int flag, long *rusage);		/* GEMDOS 0x11c */
-int Fselect(unsigned int timeout, long *rfds, long *wfds, long *xfds); /* GEMDOS 0x11d */
-long Prusage(long r[8]);					/* GEMDOS 0x11e */
-long Psetlimit(int lim, long value);		/* GEMDOS 0x11f */
-long Talarm(long secs);						/* GEMDOS 0x120 */
-long Pause(void);							/* GEMDOS 0x121 */
-long Sysconf(int n);						/* GEMDOS 0x122 */
-long Psigpending(void);						/* GEMDOS 0x123 */
-long Dpathconf(const char *name, int n);	/* GEMDOS 0x124 */
-long Pmsg(int mode, long mbox, void *msg); 	/* GEMDOS 0x125 */
-long Fmidipipe(int pid, int in, int out);	/* GEMDOS 0x126 */
-int Prenice(int pid, int delta);			/* GEMDOS 0x127 */
-long Dopendir(const char *name, int flag);	/* GEMDOS 0x128 */
-long Dreaddir(int buflen, long dir, char *buf); /*GEMDOS 0x129 */
+long __GEMDOS(0x105)	Finstat(short f);
+long __GEMDOS(0x106)	Foutstat(short f);
+long __GEMDOS(0x107)	Fgetchar(short f, short mode);
+long __GEMDOS(0x108)	Fputchar(short f, long c, short mode);
+long __GEMDOS(0x109)	Pwait(void);
+short __GEMDOS(0x10a)	Pnice(short delta);
+short __GEMDOS(0x10b)	Pgetpid(void);
+short __GEMDOS(0x10c)	Pgetppid(void);
+short __GEMDOS(0x10d)	Pgetpgrp(void);
+short __GEMDOS(0x10e)	Psetpgrp(short pid, short newgrp);
+short __GEMDOS(0x10f)	Pgetuid(void);
+short __GEMDOS(0x110)	Psetuid(short id);
+short __GEMDOS(0x111)	Pkill(short pid, short sig);
+__mint_sighandler_t __GEMDOS(0x112) Psignal(short sig, __mint_sighandler_t handler);
+long __GEMDOS(0x113)	Pvfork(void);
+short __GEMDOS(0x114)	Pgetgid(void);
+short __GEMDOS(0x115)	Psetgid(short id);
+long __GEMDOS(0x116)	Psigblock(unsigned long mask);
+long __GEMDOS(0x117)	Psigsetmask(unsigned long mask);
+long __GEMDOS(0x118)	Pusrval(long arg);
+short __GEMDOS(0x119)	Pdomain(short newdom);
+long __GEMDOS(0x11a)	Psigreturn(void);
+long __GEMDOS(0x11b)	Pfork(void);
+long __GEMDOS(0x11c)	Pwait3(short flag, long *rusage);
+short __GEMDOS(0x11d)	Fselect(unsigned short timeout, long *rfds, long *wfds, long *xfds);
+long __GEMDOS(0x11e)	Prusage(long r[8]);
+long __GEMDOS(0x11f)	Psetlimit(short lim, long value);
+long __GEMDOS(0x120)	Talarm(long secs);
+long __GEMDOS(0x121)	Pause(void);
+long __GEMDOS(0x122)	Sysconf(short n);
+long __GEMDOS(0x123)	Psigpending(void);
+long __GEMDOS(0x124)	Dpathconf(const char *name, short n);
+long __GEMDOS(0x125)	Pmsg(short mode, long mbox, void *msg);
+long __GEMDOS(0x126)	Fmidipipe(short pid, short in, short out);
+short __GEMDOS(0x127)	Prenice(short pid, short delta);
+long __GEMDOS(0x128)	Dopendir(const char *name, short flag);
+long __GEMDOS(0x129)	Dreaddir(short buflen, long dir, char *buf);
 #define Dreaddir(buflen, dir, buf) Dreaddir(buflen, (long)(dir), buf)
-long Drewinddir(long dir);					/* GEMDOS 0x12a */
+long __GEMDOS(0x12a)	Drewinddir(long dir);
 #define Drewinddir(dir) Drewinddir((long)(dir))
-long Dclosedir(long dir);					/* GEMDOS 0x12b */
+long __GEMDOS(0x12b)	Dclosedir(long dir);
 #define Dclosedir(dir) Dclosedir((long)(dir))
-long Fxattr(int flag, const char *name, XATTR *buf);	/* GEMDOS 0x12c */
-long Flink(const char *oldname, const char *newname);	/* GEMDOS 0x12d */
-long Fsymlink(const char *oldname, const char *newname);	/* GEMDOS 0x12e */
-long Freadlink(int siz, char *buf, const char *name); /*GEMDOS 0x12f */
-long Dcntl(int cmd, const char *name, long arg);	/* GEMDOS 0x130 */
-long Fchown(const char *name, int uid, int gid);	/* GEMDOS 0x131 */
-long Fchmod(const char *name, int mode);	/* GEMDOS 0x132 */
-unsigned short Pumask(unsigned short mask);						/* GEMDOS 0x133 */
-long Psemaphore(int mode, long id, long timeout); /* GEMDOS 0x134 */
-int Dlock(int mode, int drive);				/* GEMDOS 0x135 */
-long Psigpause(unsigned long mask);			/* GEMDOS 0x136 */
-long Psigaction(int sig, long act, long oact);	/* GEMDOS 0x137 */
+long __GEMDOS(0x12c)	Fxattr(short flag, const char *name, XATTR *buf);
+long __GEMDOS(0x12d)	Flink(const char *oldname, const char *newname);
+long __GEMDOS(0x12e)	Fsymlink(const char *oldname, const char *newname);
+long __GEMDOS(0x12f)	Freadlink(short siz, char *buf, const char *name);
+long __GEMDOS(0x130)	Dcntl(short cmd, const char *name, long arg);
+long __GEMDOS(0x131)	Fchown(const char *name, short uid, short gid);
+long __GEMDOS(0x132)	Fchmod(const char *name, short mode);
+unsigned short __GEMDOS(0x133)	Pumask(unsigned short mask);
+long __GEMDOS(0x134)	Psemaphore(short mode, long id, long timeout);
+short __GEMDOS(0x135)	Dlock(short mode, short drive);
+long __GEMDOS(0x136)	Psigpause(unsigned long mask);
+long __GEMDOS(0x137)	Psigaction(short sig, long act, long oact);
 #define Psigaction(sig, act, oact) Psigaction(sig, (long)(act), (long)(oact))
-int Pgeteuid(void);							/* GEMDOS 0x138 */
-int Pgetegid(void);							/* GEMDOS 0x139 */
-long Pwaitpid(int pid, int flag, long *rusage);	/* GEMDOS 0x13a */
-long Dgetcwd(char *path, int drv, int size);	/* GEMDOS 0x13b */
-long Salert(const char *msg);				/* GEMDOS 0x13c */
-unsigned long Tmalarm(unsigned long millisecs);				/* GEMDOS 0x13d */
-long Psigintr(int vec, int sig);			/* GEMDOS 0x13e */
-long Suptime(unsigned long *cur_uptime, unsigned long loadave[3]); /* GEMDOS 0x13f */
-int Ptrace(int request, int pid, void *addr, long data); /* GEMDOS 0x140 */
-long Mvalidate(int pid, void *addr, long size, long *flags); /* GEMDOS 0x141 */
-long Dxreaddir(int len, long handle, char *buf, XATTR *attr, long *xret); /* GEMDOS 0x142 */
-long Pseteuid(int id);						/* GEMDOS 0x143 */
-long Psetegid(int id);						/* GEMDOS 0x144 */
-long Pgetauid(void);						/* GEMDOS 0x145 */
-long Psetauid(int id);						/* GEMDOS 0x146 */
-long Pgetgroups(int gidsetlen, unsigned short gidset[]); /* GEMDOS 0x147 */
-long Psetgroups(int ngroups, unsigned short gidset[]); /* GEMDOS 0x148 */
-long Tsetitimer(int which, long *interval, long *value, long *ointeral, long *ovalue); /* GEMDOS 0x149 */
-long Scookie(int action, void *yummy);		/* GEMDOS 0x14a */
-long Dchroot(const char *path);				/* GEMDOS 0x14a */
+short __GEMDOS(0x138)	Pgeteuid(void);
+short __GEMDOS(0x139)	Pgetegid(void);
+long __GEMDOS(0x13a)	Pwaitpid(short pid, short flag, long *rusage);
+long __GEMDOS(0x13b)	Dgetcwd(char *path, short drv, short size);
+long __GEMDOS(0x13c)	Salert(const char *msg);
+unsigned long __GEMDOS(0x13d)	Tmalarm(unsigned long millisecs);
+long __GEMDOS(0x13e)	Psigintr(short vec, short sig);
+long __GEMDOS(0x13f)	Suptime(unsigned long *cur_uptime, unsigned long loadave[3]);
+short __GEMDOS(0x140)	Ptrace(short request, short pid, void *addr, long data);
+long __GEMDOS(0x141)	Mvalidate(short pid, void *addr, long size, long *flags);
+long __GEMDOS(0x142)	Dxreaddir(short len, long handle, char *buf, XATTR *attr, long *xret);
+long __GEMDOS(0x143)	Pseteuid(short id);
+long __GEMDOS(0x144)	Psetegid(short id);
+long __GEMDOS(0x145)	Pgetauid(void);
+long __GEMDOS(0x146)	Psetauid(short id);
+long __GEMDOS(0x147)	Pgetgroups(short gidsetlen, unsigned short gidset[]);
+long __GEMDOS(0x148)	Psetgroups(short ngroups, unsigned short gidset[]);
+long __GEMDOS(0x149)	Tsetitimer(short which, long *interval, long *value, long *ointerval, long *ovalue);
+long __GEMDOS(0x14a)	Scookie(short action, void *yummy);
+long __GEMDOS(0x14a)	Dchroot(const char *path);
 /* Fstat64 uses mint internal struct stat, which is now the same as mintlibs struct stat */
 #ifdef _SYS_STAT_H
-long Fstat64(int flag, const char *name, struct stat *st); /* GEMDOS 0x14b */
+long __GEMDOS(0x14b)	Fstat64(int flag, const char *name, struct stat *st);
 #else
-long Fstat64(int flag, const char *name, void /* struct stat */ *st); /* GEMDOS 0x14b */
+long __GEMDOS(0x14b)	Fstat64(int flag, const char *name, void /* struct stat */ *st);
 #endif
-long Fseek64(long high, unsigned long low, int handle, int how, long *newpos); /* GEMDOS 0x14c */
-long Dsetkey(long major, unsigned long minor, const char *key, int cipher); /* GEMDOS 0x14d */
-long Psetreuid(int rid, int eid);			/* GEMDOS 0x14e */
-long Psetregid(int rid, int eid);			/* GEMDOS 0x14f */
-long Sync(void);							/* GEMDOS 0x150 */
-long Shutdown(long restart);				/* GEMDOS 0x151 */
-long Dreadlabel(const char *path, char *label, int maxlen); /* GEMDOS 0x152 */
-long Dwritelabel(const char *path, const char *label); /* GEMDOS 0x153 */
-long Ssystem(int mode, long arg1, long arg2); /* GEMDOS 0x154 */
+long __GEMDOS(0x14c)	Fseek64(long high, unsigned long low, short handle, short how, long *newpos);
+long __GEMDOS(0x14d)	Dsetkey(long major, unsigned long minor, const char *key, short cipher);
+long __GEMDOS(0x14e)	Psetreuid(short rid, short eid);
+long __GEMDOS(0x14f)	Psetregid(short rid, short eid);
+long __GEMDOS(0x150)	Sync(void);
+long __GEMDOS(0x151)	Shutdown(long restart);
+long __GEMDOS(0x152)	Dreadlabel(const char *path, char *label, short maxlen);
+long __GEMDOS(0x153)	Dwritelabel(const char *path, const char *label);
+long __GEMDOS(0x154)	Ssystem(short mode, long arg1, long arg2);
 #if defined(_SYS_TIME_H) && defined(__USE_BSD) /* otherwise struct timezone not declared */
-long Tgettimeofday(struct timeval *tv, struct __mint_timezone *tz); /* GEMDOS 0x155 */
-long Tsettimeofday(struct timeval *tv, struct __mint_timezone *tz);  /* GEMDOS 0x156 */
-long Tadjtime(const struct timeval *delta, struct timeval *olddelta);	/* GEMDOS 0x157 */
+long __GEMDOS(0x155)	Tgettimeofday(struct timeval *tv, struct __mint_timezone *tz);
+long __GEMDOS(0x156)	Tsettimeofday(struct timeval *tv, struct __mint_timezone *tz);
+long __GEMDOS(0x157)	Tadjtime(const struct timeval *delta, struct timeval *olddelta);
 #endif
-long Pgetpriority(int which, int who);		/* GEMDOS 0x158 */
-long Psetpriority(int which, int who, int pri); /* GEMDOS 0x159 */
-long Fpoll(void *fds, long nfds, unsigned long timeout); /* GEMDOS 0x15a */
-long Fwritev(int fd, void /* struct iovec */ *iov, long niov); /* GEMDOS 0x15b */
-long Freadv(int fd, void /* struct iovec */ *iov, long niov); /* GEMDOS 0x15c */
-long Ffstat64(int fd, void /* struct stat */ *st); /* GEMDOS 0x15d */
-long Psysctl(long *name, long namelen, void *old, unsigned long *oldlen, const void *_new, unsigned long newlen); /* GEMDOS 0x15e */
-long Semulation(int which, int op, long a1, long a2, long a3, long a4, long a5, long a6, long a7); /* GEMDOS 0x15f */
+long __GEMDOS(0x158)	Pgetpriority(short which, short who);
+long __GEMDOS(0x159)	Psetpriority(short which, short who, short pri);
+long __GEMDOS(0x15a)	Fpoll(void *fds, long nfds, unsigned long timeout);
+long __GEMDOS(0x15b)	Fwritev(short fd, void /* struct iovec */ *iov, long niov);
+long __GEMDOS(0x15c)	Freadv(short fd, void /* struct iovec */ *iov, long niov);
+long __GEMDOS(0x15d)	Ffstat64(short fd, void /* struct stat */ *st);
+long __GEMDOS(0x15e)	Psysctl(long *name, long namelen, void *old, unsigned long *oldlen, const void *_new, unsigned long newlen);
+long __GEMDOS(0x15f)	Semulation(short which, short op, long a1, long a2, long a3, long a4, long a5, long a6, long a7);
 #define Pemulation Semulation
 #ifdef _SYS_SOCKET_H
-long Fsocket(long domain, long type, long protocol); /* GEMDOS 0x160 */
-long Fsocketpair(long domain, long type, long protocol, short fds[2]); /* GEMDOS 0x161 */
-long Faccept(short fd, struct sockaddr *name, unsigned long *anamelen); /* GEMDOS 0x162 */
-long Fconnect(short fd, struct sockaddr *name, unsigned long anamelen); /* GEMDOS 0x163 */
-long Fbind(short fd, const struct sockaddr *name, unsigned long namelen); /* GEMDOS 0x164 */
-long Flisten(short fd, long backlog); /* GEMDOS 0x165 */
-long Frecvmsg(short fd, struct msghdr *msg, long flags); /* GEMDOS 0x166 */
-long Fsendmsg(short fd, const struct msghdr *msg, long flags); /* GEMDOS 0x167 */
-long Frecvfrom(short fd, void *buf, unsigned long len, long flags, struct sockaddr *from, unsigned long *fromlenaddr); /* GEMDOS 0x168 */
-long Fsendto(short fd, const void *buf, unsigned long len, long flags, const struct sockaddr *to, unsigned long tolen); /* GEMDOS 0x169 */
-long Fsetsockopt(short fd, long level, long name, const void *val, unsigned long valsize); /* GEMDOS 0x16a */
-long Fgetsockopt(short fd, long level, long name, void *val, unsigned long *avalsize); /* GEMDOS 0x16b */
-long Fgetpeername(short fd, struct sockaddr *asa, unsigned long *alen); /* GEMDOS 0x16c */
-long Fgetsockname(short fd, struct sockaddr *asa, unsigned long *alen); /* GEMDOS 0x16d */
-long Fshutdown(short fd, long how); /* GEMDOS 0x16e */
+long __GEMDOS(0x160)	Fsocket(long domain, long type, long protocol);
+long __GEMDOS(0x161)	Fsocketpair(long domain, long type, long protocol, short fds[2]);
+long __GEMDOS(0x162)	Faccept(short fd, struct sockaddr *name, unsigned long *anamelen);
+long __GEMDOS(0x163)	Fconnect(short fd, struct sockaddr *name, unsigned long anamelen);
+long __GEMDOS(0x164)	Fbind(short fd, const struct sockaddr *name, unsigned long namelen);
+long __GEMDOS(0x165)	Flisten(short fd, long backlog);
+long __GEMDOS(0x166)	Frecvmsg(short fd, struct msghdr *msg, long flags);
+long __GEMDOS(0x167)	Fsendmsg(short fd, const struct msghdr *msg, long flags);
+long __GEMDOS(0x168)	Frecvfrom(short fd, void *buf, unsigned long len, long flags, struct sockaddr *from, unsigned long *fromlenaddr);
+long __GEMDOS(0x169)	Fsendto(short fd, const void *buf, unsigned long len, long flags, const struct sockaddr *to, unsigned long tolen);
+long __GEMDOS(0x16a)	Fsetsockopt(short fd, long level, long name, const void *val, unsigned long valsize);
+long __GEMDOS(0x16b)	Fgetsockopt(short fd, long level, long name, void *val, unsigned long *avalsize);
+long __GEMDOS(0x16c)	Fgetpeername(short fd, struct sockaddr *asa, unsigned long *alen);
+long __GEMDOS(0x16d)	Fgetsockname(short fd, struct sockaddr *asa, unsigned long *alen);
+long __GEMDOS(0x16e)	Fshutdown(short fd, long how);
 #endif
 #if defined(_SYS_SHM_H)
-long Pshmget(long key, long size, long shmflg); /* GEMDOS 0x170 */
-long Pshmctl(long shmid, long cmd, struct shmid_ds *buf); /* GEMDOS 0x171 */
-long Pshmat(long shmid, const void *shmaddr, long shmflg); /* GEMDOS 0x172 */
-long Pshmdt(const void *shmaddr); /* GEMDOS 0x173 */
-long Psemget(long key, long nsems, long semflg); /* GEMDOS 0x174 */
-long Psemctl(long semid, long semnum, long cmd, void /* union semun */ *arg); /* GEMDOS 0x175 */
-long Psemop(long semid, struct sembuf *sops, long nsops); /* GEMDOS 0x176 */
-long Psemconfig(long flag); /* GEMDOS 0x177 */
-long Pmsgget(long key, long msgflg); /* GEMDOS 0x178 */
-long Pmsgctl(long msqid, long cmd, struct msqid_ds *buf); /* GEMDOS 0x179 */
-long Pmsgsnd(long msqid, const void *msgp, long msgsz, long msgflg); /* GEMDOS 0x17a */
-long Pmsgrcv(long msqid, void *msgp, long msgsz, long msgtyp, long msgflg); /* GEMDOS 0x17b */
+long __GEMDOS(0x170)	Pshmget(long key, long size, long shmflg);
+long __GEMDOS(0x171)	Pshmctl(long shmid, long cmd, struct shmid_ds *buf);
+long __GEMDOS(0x172)	Pshmat(long shmid, const void *shmaddr, long shmflg);
+long __GEMDOS(0x173)	Pshmdt(const void *shmaddr);
+long __GEMDOS(0x174)	Psemget(long key, long nsems, long semflg);
+long __GEMDOS(0x175)	Psemctl(long semid, long semnum, long cmd, void /* union semun */ *arg);
+long __GEMDOS(0x176)	Psemop(long semid, struct sembuf *sops, long nsops);
+long __GEMDOS(0x177)	Psemconfig(long flag);
+long __GEMDOS(0x178)	Pmsgget(long key, long msgflg);
+long __GEMDOS(0x179)	Pmsgctl(long msqid, long cmd, struct msqid_ds *buf);
+long __GEMDOS(0x17a)	Pmsgsnd(long msqid, const void *msgp, long msgsz, long msgflg);
+long __GEMDOS(0x17b)	Pmsgrcv(long msqid, void *msgp, long msgsz, long msgtyp, long msgflg);
 #endif
-long Maccess(void *addr, long size, short mode); /* GEMDOS 0x17d */
-long Fchown16(const char *name, short uid, short gid, short follow); /* GEMDOS 0x180 */
-long Fchdir(short fd); /* GEMDOS 0x181 */
-long Ffdopendir(short fd); /* GEMDOS 0x182 */
-long Fdirfd(long handle); /* GEMDOS 0x183 */
+long __GEMDOS(0x17d)	Maccess(void *addr, long size, short mode);
+long __GEMDOS(0x180)	Fchown16(const char *name, short uid, short gid, short follow);
+long __GEMDOS(0x181)	Fchdir(short fd);
+long __GEMDOS(0x182)	Ffdopendir(short fd);
+long __GEMDOS(0x183)	Fdirfd(long handle);
 
-long Srealloc(long size);					/* GEMDOS 0x15 */
+long __GEMDOS(0x15)		Srealloc(long size);
 
 
 /* KAOS 1.2 */
-long Sconfig(int mode, long value);
-long Fshrink(int handle);
-/* #define Fshrink(a)      Fwrite(a, 0L, (void *) -1L) */
+long __GEMDOS(0x33)		Sconfig(short mode, long value);
+#ifdef __AHCC__
+#define Fshrink(a)      Fwrite(a, 0L, (void *) -1L)
+#define Mgrow(p,s) Mshrink(p,s)
+#define Mblavail(block) Mshrink(block, -1l)
+#else
+long Fshrink(short handle);
 long Mgrow(void *block, long newsize);
-/* #define Mgrow Mshrink */
 long Mblavail(void *block);
-/* #define Mblavail(block) Mshrink(block, -1l) */
+#endif
 
 /* MagiC 5.20 Share Library Support */
-long Slbopen(const char *name, const char *path, long min_ver, SLB_HANDLE *slb, SLB_EXEC *slbexec); /* GEMDOS 0x16 */
-long Slbclose(SLB_HANDLE slb);				/* GEMDOS 0x17 */
+long __GEMDOS(0x16)		Slbopen(const char *name, const char *path, long min_ver, SLB_HANDLE *slb, SLB_EXEC *slbexec);
+long __GEMDOS(0x17)		Slbclose(SLB_HANDLE slb);
+
+#undef __GEMDOS
+#undef __BIOS
+#undef __XBIOS
 
 #endif /* __PUREC__ */
 
@@ -668,7 +684,7 @@ __extension__								\
 #define Slbclose(sl)						\
 		trap_1_wl(0x17, (long)(sl))
 #define	Syield()						\
-		(int)trap_1_w(0xff)
+		trap_1_w(0xff)
 #define Fpipe(ptr)						\
 		trap_1_wl(0x100, (long)(ptr))
 #define Ffchown(f, uid, gid)					\
@@ -691,29 +707,29 @@ __extension__								\
 #define Pwait()							\
 		trap_1_w(0x109)
 #define Pnice(delta)						\
-		(int)trap_1_ww(0x10a, (short)(delta))
+		trap_1_ww(0x10a, (short)(delta))
 #define Pgetpid()						\
-		(int)trap_1_w(0x10b)
+		(short)trap_1_w(0x10b)
 #define Pgetppid()						\
-		(int)trap_1_w(0x10c)
+		(short)trap_1_w(0x10c)
 #define Pgetpgrp()						\
-		(int)trap_1_w(0x10d)
+		(short)trap_1_w(0x10d)
 #define Psetpgrp(pid, grp)					\
-		(int)trap_1_www(0x10e, (short)(pid), (short)(grp))
+		(short)trap_1_www(0x10e, (short)(pid), (short)(grp))
 #define Pgetuid()						\
-		(int)trap_1_w(0x10f)
+		(short)trap_1_w(0x10f)
 #define Psetuid(id)						\
-		(int)trap_1_ww(0x110, (short)(id))
+		(short)trap_1_ww(0x110, (short)(id))
 #define Pkill(pid, sig)						\
-		(int)trap_1_www(0x111, (short)(pid), (short)(sig))
+		(short)trap_1_www(0x111, (short)(pid), (short)(sig))
 #define Psignal(sig, handler)					\
 		(__mint_sighandler_t)trap_1_wwl(0x112, (short)(sig), (long)(handler))
 #define Pvfork()						\
 		trap_1_w(0x113)
 #define Pgetgid()						\
-		(int)trap_1_w(0x114)
+		(short)trap_1_w(0x114)
 #define Psetgid(id)						\
-		(int)trap_1_ww(0x115, (short)(id))
+		(short)trap_1_ww(0x115, (short)(id))
 #define Psigblock(mask)						\
 		trap_1_wl(0x116, (unsigned long)(mask))
 #define Psigsetmask(mask)					\
@@ -721,7 +737,7 @@ __extension__								\
 #define Pusrval(arg)						\
 		trap_1_wl(0x118, (long)(arg))
 #define Pdomain(arg)						\
-		(int)trap_1_ww(0x119, (short)(arg))
+		(short)trap_1_ww(0x119, (short)(arg))
 #define Psigreturn()						\
 		(void)trap_1_w(0x11a)
 #define Pfork()							\
@@ -729,7 +745,7 @@ __extension__								\
 #define Pwait3(flag, rusage)					\
 		trap_1_wwl(0x11c, (short)(flag), (long)(rusage))
 #define Fselect(time, rfd, wfd, xfd)				\
-		(int)trap_1_wwlll(0x11d, (unsigned short)(time), (long)(rfd), \
+		(short)trap_1_wwlll(0x11d, (unsigned short)(time), (long)(rfd), \
 				(long)(wfd), (long)(xfd))
 #define Prusage(rsp)						\
 		trap_1_wl(0x11e, (long)(rsp))
@@ -752,7 +768,7 @@ __extension__								\
 #define Fmidipipe(pid, in, out)					\
 		trap_1_wwww(0x126, (short)(pid), (short)(in),(short)(out))
 #define Prenice(pid, delta)					\
-		(int)trap_1_www(0x127, (short)(pid), (short)(delta))
+		(short)trap_1_www(0x127, (short)(pid), (short)(delta))
 #define Dopendir(name, flag)					\
 		trap_1_wlw(0x128, (long)(name), (short)(flag))
 #define Dreaddir(len, handle, buf)				\
@@ -780,15 +796,15 @@ __extension__								\
 #define Psemaphore(mode, id, tmout)				\
 		trap_1_wwll(0x134, (short)(mode), (long)(id), (long)(tmout))
 #define Dlock(mode, drive)					\
-		(int)trap_1_www(0x135, (short)(mode), (short)(drive))
+		(short)trap_1_www(0x135, (short)(mode), (short)(drive))
 #define Psigpause(mask)						\
 		trap_1_wl(0x136, (unsigned long)(mask))
 #define Psigaction(sig, act, oact)					\
 		trap_1_wwll(0x137, (short)(sig), (long)(act), (long)(oact))
 #define Pgeteuid()						\
-		(int)trap_1_w(0x138)
+		(short)trap_1_w(0x138)
 #define Pgetegid()						\
-		(int)trap_1_w(0x139)
+		(short)trap_1_w(0x139)
 #define Pwaitpid(pid,flag, rusage)				\
 		trap_1_wwwl(0x13a, (short)(pid), (short)(flag), (long)(rusage))
 #define Dgetcwd(path, drv, size)				\
@@ -811,13 +827,13 @@ __extension__								\
 		trap_1_wwllll(0x142, (short)(len), (long)(handle), \
 			      (long)(buf), (long)(xattr), (long)(xret))
 #define Pseteuid(id)						\
-		(int)trap_1_ww(0x143, (short)(id))
+		(short)trap_1_ww(0x143, (short)(id))
 #define Psetegid(id)						\
-		(int)trap_1_ww(0x144, (short)(id))
+		(short)trap_1_ww(0x144, (short)(id))
 #define Pgetauid()						\
-		(int)trap_1_w(0x145)
+		(short)trap_1_w(0x145)
 #define Psetauid(id)						\
-		(int)trap_1_ww(0x146, (short)(id))
+		(short)trap_1_ww(0x146, (short)(id))
 #define Pgetgroups(gidsetlen, gidset)				\
 		trap_1_wwl(0x147, (short)(gidsetlen), (long)(gidset))
 #define Psetgroups(gidsetlen, gidset)				\
@@ -836,9 +852,9 @@ __extension__								\
 		trap_1_wlllw(0x14d, (long)(major), (long)(minor), (long)(key), \
 		(short)(cipher))
 #define Psetreuid(rid, eid)   \
-		(int)trap_1_www(0x14e, (short)(rid), (short)(eid))
+		(short)trap_1_www(0x14e, (short)(rid), (short)(eid))
 #define Psetregid(rid, eid)   \
-		(int)trap_1_www(0x14f, (short)(rid), (short)(eid))
+		(short)trap_1_www(0x14f, (short)(rid), (short)(eid))
 #define Sync()   \
 		trap_1_w(0x150)
 #define Shutdown(restart)  \

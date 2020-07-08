@@ -373,22 +373,6 @@ void Mrsrc_load( char *fname )
 
 /*********************************************************************
 *
-* Dxreaddir()
-*
-* Beim Fxattr werden Symlinks nicht verfolgt.
-* <xr> enth„lt nach dem Aufruf den Fehlercode von Fxattr.
-*
-*********************************************************************/
-
-long Dxreaddir(int len, long dirhandle,
-			char *buf, XATTR *xattr, long *xr)
-{
-	return(gemdos(0x142, len, dirhandle, buf, xattr, xr));
-}
-
-
-/*********************************************************************
-*
 * Liest Komma-getrennte Werte aus einer Zeichenkette, die mit
 * '\n' oder EOS beendet ist
 *

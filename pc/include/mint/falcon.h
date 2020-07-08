@@ -266,17 +266,23 @@ enum montypes {STmono=0, STcolor, VGAcolor, TVcolor};
 
 #endif /* __GNUC__ */
 
-#if defined(__PUREC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
+#if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
 
-extern int    VsetScreen(void *lscrn, void *pscrn, int rez, int mode);
-extern short  VsetMode(short mode);
-extern short  VgetMonitor(void);
-extern void   VsetSync(short ext);
-extern long   VgetSize(short mode);
-extern void   VsetRGB(short index, short count, long *array);
-extern void   VgetRGB(short index, short count, long *array);
-extern short  Validmode(short mode);
-extern void   VsetMask(long ormask, long andmask, short overlay);
+#if defined(__AHCC__)
+	#define __XBIOS(b)  cdecl __syscall__(14,b)
+#else
+	#define __XBIOS(b)
+#endif
+
+short  __XBIOS(0x05) VsetScreen(void *lscrn, void *pscrn, short rez, short mode);
+short  __XBIOS(0x58) VsetMode(short mode);
+short  __XBIOS(0x59) VgetMonitor(void);
+void   __XBIOS(0x5a) VsetSync(short ext);
+long   __XBIOS(0x5b) VgetSize(short mode);
+void   __XBIOS(0x5d) VsetRGB(short index, short count, long *array);
+void   __XBIOS(0x5e) VgetRGB(short index, short count, long *array);
+short  __XBIOS(0x5f) Validmode(short mode);
+void   __XBIOS(0x96) VsetMask(long ormask, long andmask, short overlay);
 
 #endif /* __PUREC__ */
 
@@ -512,23 +518,23 @@ typedef struct SndBufPtr {
 
 #endif /* __GNUC__ */
 
-#if defined(__PUREC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
+#if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
 
-extern long Locksnd(void);
-extern long Unlocksnd(void);
-extern long Soundcmd(short mode, short data);
-extern long NSoundcmd(short mode, short data, long data2);
-extern long Setbuffer(short region, void *beg, void *end);
-extern long Setmode(short stereo_mode);
-extern long Settracks(short play, short rec);
-extern long Setmontracks(short montrack);
-extern long Setinterrupt(short src_inter, short cause);
-extern long Buffoper(short mode);
-extern long Dsptristate(short dspxmit, short dsprec);
-extern long Gpio(short mode, short data);
-extern long Devconnect(short src, short dst, short sclk, short pre, short proto);
-extern short Sndstatus(short reset);
-extern long Buffptr(long *ptr);
+long __XBIOS(0x80) Locksnd(void);
+long __XBIOS(0x81) Unlocksnd(void);
+long __XBIOS(0x82) Soundcmd(short mode, short data);
+long __XBIOS(0x82) NSoundcmd(short mode, short data, long data2);
+long __XBIOS(0x83) Setbuffer(short region, void *beg, void *end);
+long __XBIOS(0x84) Setmode(short stereo_mode);
+long __XBIOS(0x85) Settracks(short play, short rec);
+long __XBIOS(0x86) Setmontracks(short montrack);
+long __XBIOS(0x87) Setinterrupt(short src_inter, short cause);
+long __XBIOS(0x88) Buffoper(short mode);
+long __XBIOS(0x89) Dsptristate(short dspxmit, short dsprec);
+long __XBIOS(0x8a) Gpio(short mode, short data);
+long __XBIOS(0x8b) Devconnect(short src, short dst, short sclk, short pre, short proto);
+short __XBIOS(0x8c) Sndstatus(short reset);
+long __XBIOS(0x8d) Buffptr(long *ptr);
 
 #endif /* __PUREC__ */
 
@@ -614,40 +620,42 @@ extern long Buffptr(long *ptr);
 #endif /* __GNUC__ */
 
 
-#if defined(__PUREC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
+#if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
 
-void Dsp_DoBlock(const void *data_in, long size_in, void *data_out, long size_out);
-void Dsp_BlkHandShake(const void *data_in, long size_in, void *data_out, long size_out);
-void Dsp_BlkUnpacked(const long *data_in, long size_in, long *data_out, long size_out);
-void Dsp_InStream(const void *data_in, long block_size, long num_blocks, long *blocks_done);
-void Dsp_OutStream(void *data_out, long block_size, long num_blocks, long *blocks_done);
-void Dsp_IOStream(const void *data_in, void *data_out, long block_insize, long block_outsize, long num_blocks, long *blocks_done);
-void Dsp_RemoveInterrupts(short mask);
-short Dsp_GetWordSize(void);
-short Dsp_Lock(void);
-void Dsp_Unlock(void);
-void Dsp_Available(long *xavailable, long *yavailable);
-short Dsp_Reserve(long xreserve, long yreserve);
-short Dsp_LoadProg(const char *file, short ability, void *buffer);
-void Dsp_ExecProg(const void *codeptr, long codesize, short ability);
-void Dsp_ExecBoot(const void *codeptr, long codesize, short ability);
-long Dsp_LodToBinary(const char *file, void *codeptr);
-void Dsp_TriggerHC(short vector);
-short Dsp_RequestUniqueAbility(void);
-short Dsp_GetProgAbility(void);
-void Dsp_FlushSubroutines(void);
-short Dsp_LoadSubroutine(const void *codeptr, long codesize, short ability);
-short Dsp_InqSubrAbility(short ability);
-short Dsp_RunSubroutine(short handle);
-short Dsp_Hf0(short flag);
-short Dsp_Hf1(short flag);
-short Dsp_Hf2(void);
-short Dsp_Hf3(void);
-void Dsp_BlkWords(const short *data_in, long size_in, short *data_out, long size_out);
-void Dsp_BlkBytes(const unsigned char *data_in, long size_in, unsigned char *data_out, long size_out);
-char Dsp_HStat(void);
-void Dsp_SetVectors(void __CDECL (*receiver)(long data), long __CDECL (*transmitter)(void));
-void Dsp_MultBlocks(long numsend, long numrecv, const _DSPBLOCK *sendblk, _DSPBLOCK *recvblks);
+void __XBIOS(0x60) Dsp_DoBlock(const void *data_in, long size_in, void *data_out, long size_out);
+void __XBIOS(0x61) Dsp_BlkHandShake(const void *data_in, long size_in, void *data_out, long size_out);
+void __XBIOS(0x62) Dsp_BlkUnpacked(const long *data_in, long size_in, long *data_out, long size_out);
+void __XBIOS(0x63) Dsp_InStream(const void *data_in, long block_size, long num_blocks, long *blocks_done);
+void __XBIOS(0x64) Dsp_OutStream(void *data_out, long block_size, long num_blocks, long *blocks_done);
+void __XBIOS(0x65) Dsp_IOStream(const void *data_in, void *data_out, long block_insize, long block_outsize, long num_blocks, long *blocks_done);
+void __XBIOS(0x66) Dsp_RemoveInterrupts(short mask);
+short __XBIOS(0x67) Dsp_GetWordSize(void);
+short __XBIOS(0x68) Dsp_Lock(void);
+void __XBIOS(0x69) Dsp_Unlock(void);
+void __XBIOS(0x6a) Dsp_Available(long *xavailable, long *yavailable);
+short __XBIOS(0x6b) Dsp_Reserve(long xreserve, long yreserve);
+short __XBIOS(0x6c) Dsp_LoadProg(const char *file, short ability, void *buffer);
+void __XBIOS(0x6d) Dsp_ExecProg(const void *codeptr, long codesize, short ability);
+void __XBIOS(0x6e) Dsp_ExecBoot(const void *codeptr, long codesize, short ability);
+long __XBIOS(0x6f) Dsp_LodToBinary(const char *file, void *codeptr);
+void __XBIOS(0x70) Dsp_TriggerHC(short vector);
+short __XBIOS(0x71) Dsp_RequestUniqueAbility(void);
+short __XBIOS(0x72) Dsp_GetProgAbility(void);
+void __XBIOS(0x73) Dsp_FlushSubroutines(void);
+short __XBIOS(0x74) Dsp_LoadSubroutine(const void *codeptr, long codesize, short ability);
+short __XBIOS(0x75) Dsp_InqSubrAbility(short ability);
+short __XBIOS(0x76) Dsp_RunSubroutine(short handle);
+short __XBIOS(0x77) Dsp_Hf0(short flag);
+short __XBIOS(0x78) Dsp_Hf1(short flag);
+short __XBIOS(0x79) Dsp_Hf2(void);
+short __XBIOS(0x7a) Dsp_Hf3(void);
+void __XBIOS(0x7b) Dsp_BlkWords(const short *data_in, long size_in, short *data_out, long size_out);
+void __XBIOS(0x7c) Dsp_BlkBytes(const unsigned char *data_in, long size_in, unsigned char *data_out, long size_out);
+char __XBIOS(0x7d) Dsp_HStat(void);
+void __XBIOS(0x7e) Dsp_SetVectors(void __CDECL (*receiver)(long data), long __CDECL (*transmitter)(void));
+void __XBIOS(0x7f) Dsp_MultBlocks(long numsend, long numrecv, const _DSPBLOCK *sendblk, _DSPBLOCK *recvblks);
+
+#undef __XBIOS
 
 #endif /* __PUREC__ */
 

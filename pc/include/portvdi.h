@@ -289,6 +289,9 @@ void	v_justified16n(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WO
 #define PM_DIAMOND       MRKR_DIAMOND
 
 /* vst_alignment modes */
+#undef TA_BOTTOM /* clashes with Win32 */
+#undef TA_TOP /* clashes with Win32 */
+#undef TA_CENTER /* clashes with Win32 */
 #define TA_LEFT         	0 /* horizontal */
 #define TA_CENTER       	1
 #define TA_RIGHT        	2
@@ -340,6 +343,7 @@ void	v_justified16n(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WO
 #define SCREEN_ERROR	1
 
 /* vst_error return values */
+#undef NO_ERROR /* clashes with Win32 */
 #define NO_ERROR		0
 #define CHAR_NOT_FOUND	1
 #define FILE_READERR 	8
@@ -433,7 +437,7 @@ void    vsl_ends( _WORD handle, _WORD beg_style, _WORD end_style );
 _WORD    vsm_type( _WORD handle, _WORD symbol );
 _WORD    vsm_height( _WORD handle, _WORD height );
 _WORD    vsm_color( _WORD handle, _WORD color_index );
-_WORD    vst_height( _WORD handle, _WORD height, _WORD *char_width,
+void     vst_height( _WORD handle, _WORD height, _WORD *char_width,
                     _WORD *char_height, _WORD *cell_width,
                     _WORD *cell_height );
 _WORD    vst_point( _WORD handle, _WORD point, _WORD *char_width,

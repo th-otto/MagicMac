@@ -16,7 +16,7 @@
 #endif
 
 /*
- * do indidcate certain difference to original PCGEMLIB
+ * do indicate certain difference to original PCGEMLIB
  */
 #define _GEMLIB_COMPATIBLE 1
 
@@ -2204,8 +2204,8 @@ _WORD shel_get( char *sh_gaddr, _WORD sh_glen );
 _WORD shel_put( const char *sh_paddr, _WORD sh_plen );
 _WORD shel_find( char *sh_fpbuff );
 _WORD shel_envrn( char **sh_epvalue, const char *sh_eparm );
-_WORD shel_rdef ( char *cmd, char *dir ); /* GEM 2.x */
-_WORD shel_wdef ( const char *cmd, const char *dir ); /* GEM 2.x */
+void shel_rdef ( char *cmd, char *dir ); /* GEM 2.x */
+void shel_wdef ( const char *cmd, const char *dir ); /* GEM 2.x */
 
 _WORD shel_help (_WORD sh_hmode, const char *sh_hfile, const char *sh_hkey);
 

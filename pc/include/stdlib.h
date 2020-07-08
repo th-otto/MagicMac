@@ -34,7 +34,7 @@ __BEGIN_DECLS
 /* Returned by `div'.  */
 typedef struct {
 	int quot;			/* Quotient.  */
-    	int rem;			/* Remainder.  */
+	int rem;			/* Remainder.  */
 } div_t;
 
 /* Returned by `ldiv'.  */
@@ -72,7 +72,7 @@ extern int atoi (__const char *__nptr) __THROW;
 /* Convert a string to a long integer.  */
 extern long int atol (__const char *__nptr) __THROW;
 
-#if defined __USE_ISOC99 || (defined __GNUC__ && defined __USE_MISC) && !defined(__NO_LONGLONG)
+#if (defined __USE_ISOC99 || (defined __GNUC__ && defined __USE_MISC)) && !defined(__NO_LONGLONG)
 /* This function will be part of the standard C library in ISO C 9X.  */
 extern long long int atoll (__const char *__nptr) __THROW;
 #endif
@@ -110,7 +110,7 @@ extern long long int strtouq (__const char* __nptr, char** _endptr,
                                          int __base) __THROW;
 #endif  /* GCC and use BSD.  */
 
-#if defined __USE_ISOC99 || (defined __GNUC__ && defined __USE_MISC) && !defined(__NO_LONGLONG)
+#if (defined __USE_ISOC99 || (defined __GNUC__ && defined __USE_MISC)) && !defined(__NO_LONGLONG)
 /* These functions will be part of the standard C library in ISO C 9X.  */
 /* Convert a string to a quadword integer.  */
 extern long long int strtoll (__const char* __nptr, char** _endptr,
@@ -267,10 +267,14 @@ extern void qsort (void* __base, size_t __total_elems,
                              size_t __size, 
                              __compar_fn_t __compar) __THROW;
 
+#if defined(__AHCC__) || defined(__AHCCLIB__)
+void hsort(void *__base, size_t __nmemb, size_t __size, __compar_fn_t __compar);
+#endif
+
 extern int abs (int __x) __THROW;
 extern long labs (long __x) __THROW;
 
-#ifdef __USE_ISOC99
+#if defined(__USE_ISOC99) && !defined(__NO_LONGLONG)
 __extension__ extern long long int llabs (long long int __x)
      __THROW;
 #endif
@@ -420,6 +424,10 @@ extern char* canonicalize_file_name (__const char* __name) __THROW;
    ENAMETOOLONG; if the name fits in fewer then PATH_MAX chars, returns
    the name in RESOLVED.  */
 extern char* realpath (__const char* __name, char* __resolved) __THROW;
+#endif
+
+#if defined(__AHCC__) && !defined(_XA_MEMORY_H)
+#include <ahcm.h>		/* HR: A home cooked memory allocator */
 #endif
 
 __END_DECLS

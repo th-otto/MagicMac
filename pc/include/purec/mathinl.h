@@ -61,8 +61,8 @@
 #define flognp1( x )      __FLOGNP1__( x )
 
 /* Conversion functions only for PC881LIB.LIB */
-double x80x96cnv( void *rep10bytes );
-void   x96x80cnv( double rep12bytes, void *rep10bytes );
+long double x80x96cnv( const void *rep10bytes );
+void   x96x80cnv( long double rep12bytes, void *rep10bytes );
 
 /*
  * Other (undocumented) inline functions:

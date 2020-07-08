@@ -40,11 +40,9 @@ if ! test -f ../lib/pcgemlib.lib -o ! -f ../lib/cstartv.o; then
 fi
 
 mkdir -p pc/lib pc/include
-mkdir -p src/magicmac/pc/lib
 
 cp -pr ../include/. pc/include
 cp -pr ../lib/*.s ../lib/*.o pc/lib
-cp -pr ../lib/*.s ../lib/*.o src/magicmac/pc/lib
 
 if ! test -d "$PURE_C"; then
 	echo -n "Where are the Pure-C libraries? ($PURE_C) "
@@ -61,7 +59,6 @@ fi
 #
 for lib in pcstdlib.lib pcfltlib.lib pclnalib.lib pc881lib.lib pcextlib.lib; do
 	cp -a "$PURE_C/lib/$lib" pc/lib || exit 1
-	cp -a "$PURE_C/lib/$lib" src/magicmac/pc/lib || exit 1
 done
 
 #
@@ -69,7 +66,6 @@ done
 #
 for lib in pcgemlib.lib pctoslib.lib; do
 	cp -a "../lib/$lib" pc/lib || exit 1
-	cp -a "../lib/$lib" src/magicmac/pc/lib || exit 1
 done
 
 #
@@ -79,9 +75,24 @@ for prg in cpp.ttp dispobj.ttp pasm.ttp pcc.ttp plink.ttp; do
 	cp -a "$PURE_C/$prg" pc || exit 1
 done
 
+
+#
+# AHCC libraries & programs
+# These are currently based on version 5.6, but with some hacks
+# (commandline tools don't wait for key press,
+# gem library compiled using our headers etc.)
+# Only used for ColdFire builds
+#
+for lib in ahccstd.lib ahccstdf.lib ahccgem.lib ahccgemf.lib ahcstart.o; do
+	cp -a "$PURE_C/lib/$lib" pc/lib
+done
+for prg in ahcl.ttp ahclcf.ttp ahcc.ttp ahcccf.ttp ; do
+	cp -a "$PURE_C/$prg" pc
+done
+
 # our make tool; must be in the Pure-C directory
+# source of this is available at https://github.com/th-otto/pcmake
 cp -a bin/pcmake.ttp pc
-cp -a bin/pcmake.ttp src/magicmac/pc
 
 
 #
@@ -92,9 +103,10 @@ mformat -T 61035 -h 64 -s 32 -H 0 -S 5 c:
 
 clash_option="-D s"
 
-for file in autoexec.bat emudesk.inf mcmd.tos newdesk.inf gemini bin pc src; do
+for file in autoexec.bat emudesk.inf mcmd.tos newdesk.inf gemini bin pc auto; do
 	mcopy $clash_option -bso $file C:/
 done
+mmd $clash_option C:/src
 
 echo "$image generated"
 

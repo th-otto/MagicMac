@@ -288,7 +288,7 @@
 #define C_MID3 0x4D494433L     /* MIDINET3 */
 #define C_MIMA 0x4D494D41L     /* MIDI Manager */
 #define C_MiNT 0x4D694E54L     /* Mint/MultiTOS */
-#define C_MIPS 0x4D495053L     /* SPOOL120.PRG - Printer sspooler */
+#define C_MIPS 0x4D495053L     /* SPOOL120.PRG - Printer spooler */
 #define C_MJAF 0x4D4A4146L     /* AUTOFONT */
 #define C_MKHC 0x4D4B4843L     /* Hardcopy Fixer */
 #define C_MkJr 0x4D6B4A72L     /* Cookie Jar creator program */

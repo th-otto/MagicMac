@@ -57,7 +57,7 @@
 #endif
 
 #ifndef __MSHORT__
-#  if (defined(__PUREC__) && (__PUREC__ < 0x400)) || defined(__TURBOC__)
+#  if (defined(__PUREC__) && (__PUREC__ < 0x400)) || defined(__TURBOC__) || defined(__AHCC__)
 #     define __MSHORT__
 #  endif
 #endif
@@ -227,7 +227,7 @@
 #endif
 
 #ifndef __USER_LABEL_PREFIX__
-#  if defined(__PUREC__) || defined(__TURBOC__) || defined(__ELF__)
+#  if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__) || defined(__ELF__)
 #    define __USER_LABEL_PREFIX__
 #  else
 #    define __USER_LABEL_PREFIX__ _

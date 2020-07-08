@@ -4,23 +4,33 @@
 
 /* Prototypen */
 
-int Nactive( void );
-int Nnodeid( void );
-int Nlogged( int nn );
-long Nlock( const char *file );
-long Nunlock( const char *file );
-long Nlocked(void );
-long Nprinter( int nn, int kopf, int dd );
-void Nreset( void );
-int Nrecord( int handle, int mm, long offset, long leng );
-int Nmsg( int rw, char *buf, char *id, int node, int leng );
-int Nremote( int nn );
-void Ndisable( void );
-int Nenable( void );
+#if defined(__PUREC__) || defined(__AHCC__) || defined(__TURBOC__) || (defined(__GNUC__) && !defined(__mc68000__))
 
-#define NETACTIVE 100
+#if defined(__AHCC__)
+	#define __GEMDOS(b)  cdecl __syscall__(1,b)
+#else
+	#define __GEMDOS(b)
+#endif
 
-#ifdef __GNUC__
+short __GEMDOS(127)	Nactive( void );
+short __GEMDOS(126)	Nnodeid( void );
+short __GEMDOS(125)	Nlogged( short nn );
+long __GEMDOS(124)	Nlock( const char *file );
+long __GEMDOS(123)	Nunlock( const char *file );
+long __GEMDOS(122)	Nlocked(void );
+long __GEMDOS(121)	Nprinter( short nn, short kopf, short dd );
+void __GEMDOS(120)	Nreset( void );
+short __GEMDOS(119)	Nrecord( short handle, short mm, long offset, long leng );
+short __GEMDOS(118)	Nmsg( short rw, char *buf, char *id, short node, short leng );
+short __GEMDOS(117)	Nremote( short nn );
+void __GEMDOS(116)	Ndisable( void );
+short __GEMDOS(115)	Nenable( void );
+
+#undef __GEMDOS
+
+#endif /* __PUREC__ */
+
+#if defined(__GNUC__) && defined(__mc68000__)
 
 #define Nactive()        ((short)trap_1_w(127))
 #define Nnodeid()        ((short)trap_1_w(126))
@@ -36,27 +46,9 @@ int Nenable( void );
 #define Ndisable()       trap_1_w(116)
 #define Nenable()        trap_1_w(115)
 
-#else
-
-#ifdef USE_MACROS
-
-#define Nactive()        ((int)gemdos(127))           /* Net-Driver install request  */
-#define Nnodeid()        ((int)gemdos(126))           /* Nodeadapter ID request      */
-#define Nlogged(a)       ((int)gemdos(125,a))         /* Nodeadapter install request */
-#define Nlock(a)         gemdos(124,a)         /* Lock file                   */
-#define Nunlock(a)       gemdos(123,a)         /* Unlock file                 */
-#define Nlocked()        gemdos(122)           /* Lock-Error checking         */
-#define Nprinter(a,b,c)  ((int)gemdos(121,a,b,c))     /* Net-Printer installation    */
-#define Nreset()         gemdos(120)           /* System RESET                */
-#define Nrecord(a,b,c,d) ((int)gemdos(119,a,b,c,d))   /* Record LOCKING              */
-#define Nmsg(a,b,c,d,e)  ((int)gemdos(118,((_WORD)(a)),((void *)(b)),((char *)(c)),((_WORD)(d)),((_WORD)(e)))) /* Net message pipe            */
-#define Nremote(a)       ((int)gemdos(117,a))         /* Net-Multiuser/Multitasking  */
-#define Ndisable()       gemdos(116)           /* disable Net-Driver          */
-#define Nenable()        gemdos(115)           /* enable Net-Driver           */
-
-#endif /* USE_MACROS */
-
 #endif /* __GNUC__ */
+
+#define NETACTIVE 100
 
 /*** V 1.0 Beta ***/
 
@@ -80,4 +72,3 @@ int Nenable( void );
 /* NET ERROR */
 
 #define NET_ERROR   -36
-

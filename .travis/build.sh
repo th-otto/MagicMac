@@ -22,6 +22,8 @@ SRCDIR=c:/src/magicmac
 clash_option="-D s"
 mmd $clash_option $SRCDIR
 mcopy $clash_option -bso apps auto doc extensio inc_as inc_c kernel lib non-tos pc test tools $SRCDIR
+mcopy $clash_option "C:/pc/lib/*.lib" $SRCDIR/pc/lib
+mcopy $clash_option "C:/pc/lib/*.o" $SRCDIR/pc/lib
 
 export SDL_VIDEODRIVER=dummy
 export SDL_AUDIODRIVER=dummy
@@ -33,9 +35,13 @@ echo ""
 echo "##################################"
 echo "error output from emulator run:"
 echo "##################################"
-mtype C:/errors.txt | grep -v "entering directory"
+mtype C:/errors.txt | grep -v ": entering directory" | grep -v ": processing "
 echo ""
 status=`mtype -t C:/status.txt`
+mtype "$SRCDIR/pcerr.txt" | grep -F "Error 
+Fatal 
+Warning "
+echo ""
 test "$status" != "0" && exit 1
 
 UDO=~/tmp/udo/udo
