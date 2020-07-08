@@ -34,11 +34,9 @@
 #if (defined(__PUREC__) || defined(__TURBOC__)) && (defined(__mc68000__) && !defined(__mcoldfire__) && !defined(__AHCC__))
 static __inline __uint16_t __bswap_16(__uint16_t x) 0xe058; /* ror.w d0 */
 #elif defined(__mc68000__) && !defined(__mcoldfire__) && defined(__AHCC__)
-static __uint16_t __asm__ __bswap_16(__uint16_t __bsx)
-{
-	ror.w d0
-	rts
-}
+#define __bswap_16(x) __bswp__(x)
+#elif defined(__AHCC__) /* AHCC is not smart enough to emit that from object files */
+#define __bswap_16(x) __bswap_constant_16(x)
 #else
 static __inline __uint16_t
 __bswap_16 (__uint16_t __bsx)
@@ -58,13 +56,7 @@ static __inline __uint32_t __bswap_32_1(__uint32_t x) 0x4840; /* swap d0 */
 static __inline __uint32_t __bswap_32_2(__uint32_t x) 0xe058; /* ror.w d0 */
 #define __bswap_32(v) __bswap_32_2(__bswap_32_1(__bswap_32_0(v)))
 #elif defined(__mc68000__) && !defined(__mcoldfire__) && defined(__AHCC__)
-static __uint32_t __asm__ __bswap_32(__uint32_t __bsx)
-{
-	ror.w d0
-	swap d0
-	ror.w d0
-	rts
-}
+#define __bswap_32(x) __bswp__(x)
 #elif defined __GNUC__ && !defined(__mcoldfire__)
 static __inline __uint32_t
 __bswap_32 (__uint32_t __bsx)
@@ -77,6 +69,8 @@ __bswap_32 (__uint32_t __bsx)
 			: "+d" (__bsx));
   return __bsx;
 }
+#elif defined(__AHCC__) /* AHCC is not smart enough to emit that from object files */
+#define __bswap_32(x) __bswap_constant_32(x)
 #else
 static __inline __uint32_t
 __bswap_32 (__uint32_t __bsx)

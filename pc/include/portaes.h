@@ -691,6 +691,9 @@ extern _WORD gl_apid;
 extern _WORD gl_ap_version;
 /** global AES array */
 extern _WORD aes_global[];
+#ifdef __AHCC__
+#define aes_global _GemParBlk.global
+#endif
 
 extern int _AesCall( _LONG c0to3); /* c4=0 */ /* MO */
 extern int _AesXCall( _LONG c0to3, _WORD c4);  /* MO */
