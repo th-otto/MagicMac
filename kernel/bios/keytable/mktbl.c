@@ -207,9 +207,9 @@ static void write_alttab(FILE *out, int tab)
 static int is_deadkey(unsigned char c, int deadkeys_format)
 {
 	int i;
-	char deadchars[256 + 1];
+	unsigned char deadchars[256 + 1];
 	int n_deadchars;
-	
+
 	switch (deadkeys_format)
 	{
 	case FORMAT_MINT:
@@ -217,7 +217,7 @@ static int is_deadkey(unsigned char c, int deadkeys_format)
 		deadchars[0] = 0;
 		for (i = 0; i < tabsize[TAB_DEADKEYS] && deadkeys[i] != 0; i += 3)
 		{
-			if (strchr(deadchars, deadkeys[i]) == NULL)
+			if (strchr((char *) deadchars, deadkeys[i]) == NULL)
 			{
 				deadchars[n_deadchars++] = deadkeys[i];
 				deadchars[n_deadchars] = 0;
@@ -251,7 +251,7 @@ static void write_c_tbl(FILE *out, int tab, const char *suffix, int deadkeys_for
 	int i;
 	unsigned char c;
 	int d;
-	
+
 	fprintf(out, "static const UBYTE keytbl_%s_%s[] = {\n", tblname, suffix);
 	for (i = 0; i < MAX_SCANCODE; )
 	{
@@ -280,7 +280,7 @@ static void write_c_alt(FILE *out, int tab, const char *suffix)
 {
 	int i;
 	unsigned char c;
-	
+
 	fprintf(out, "static const UBYTE keytbl_%s_%s[] = {\n", tblname, suffix);
 
 	for (i = 0; i < tabsize[tab]; i++)
@@ -302,7 +302,7 @@ static void write_deadkeys(FILE *out, int deadkeys_format)
 	int i, j;
 	char deadchars[256 + 1];
 	int n_deadchars;
-	
+
 	switch (deadkeys_format)
 	{
 	case FORMAT_MINT:
@@ -378,7 +378,7 @@ static void write_deadkeys(FILE *out, int deadkeys_format)
 		n_deadchars = 0;
 		break;
 	}
-	
+
 	fprintf(out, "static const UBYTE * keytbl_%s_dead[] = {\n", tblname);
 	for (j = 0; j < n_deadchars; j++)
 	{
@@ -831,7 +831,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	/*
 	 * the altgr table is missing from a lot of sources
 	 */
@@ -840,7 +840,7 @@ int main(int argc, char **argv)
 		keytab[TAB_ALTGR][0] = 0;
 		tabsize[TAB_ALTGR] = 1;
 	}
-	
+
 	for (tab = 0; tab < N_KEYTBL; tab++)
 	{
 		if (tab <= TAB_CAPS || is_mint == 0)
