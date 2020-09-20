@@ -267,22 +267,20 @@ fmd_xdial2:
 
 				MODULE	xfrm_popup
 				
-				move.l	a0,_GemParBlk+addrin
-				move.l	a1,_GemParBlk+addrin+4
-				move.l	8(a7),_GemParBlk+addrin+8
+				move.l	a0,_GemParBlk+addrin        /* tree */
+				move.l	a1,_GemParBlk+addrin+4      /* init */
+				move.l	8(a7),_GemParBlk+addrin+8   /* param */
 				lea     _GemParBlk+aintin,a1
-				move.w	d0,(a1)+
-				move.w	d1,(a1)+
-				move.w	d2,(a1)+
-				move.l	4(a7),(a1)+
+				move.w	d0,(a1)+                    /* intin[0] = x */
+				move.w	d1,(a1)+                    /* intin[1] = y */
+				move.w	d2,(a1)+                    /* intin[2] = firstscrlob */
+				move.l	4(a7),(a1)+                 /* intin[3/4] = lastscrlob/nlines */
 				move.l	12(a7),a0
-				move.w	(a0),(a1)
+				move.w	(a0),(a1)                   /* intin[5] = *lastscrlpos */
 				move.l  #$87060203,d1
 				bsr		_aes
-				move.l	12(a7),a0
-				move.w	d0,(a0)
+				move.l	12(a7),a1                   /* *lastscrlpos = intout[1] */
+				move.w	(a0),(a1)
 				rts
 				
 				ENDMOD
-
-
