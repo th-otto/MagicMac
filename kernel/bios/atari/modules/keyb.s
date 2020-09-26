@@ -94,7 +94,7 @@ Bioskeys:
 _Bioskeys:
  move.l   default_keytblxp,a1      ; Tabelle der 9 Default-Zeiger
  lea      keytblx,a0               ; aktive Zeiger
- moveq    #9-1,d0                  ; Zaehler
+ moveq    #N_KEYTBL-1,d0           ; Zaehler
 _bioskeys_loop:
  move.l   (a1)+,(a0)+
  dbra     d0,_bioskeys_loop
