@@ -29,8 +29,8 @@ typedef struct _ORGANISATION {
 typedef struct _wk WK;
 
 struct _wk {
-	/*   0 */ void *disp_addr1;		/* pointer to NVDI-Dispatcher */
-	/*   4 */ void *disp_addr2;		/* pointer to Treiber-Dispatcher */
+	/*   0 */ void *disp_addr1;		/* pointer to VDI dispatcher; called from VDI trap entry */
+	/*   4 */ void *disp_addr2;		/* pointer to actual driver-dispatcher */
 	/*   8 */ short wk_handle;		/* workstation handle */
 	/*  10 */ short driver_id;		/* device ID */
 
