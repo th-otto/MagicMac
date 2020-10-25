@@ -80,8 +80,8 @@ struct _wk {
 
 /* text handling */
 	/* 100 */ short t_color;        /* text color */
-	/* 102 */ WORD free102;
-	/* 104 */ BYTE free104;
+	/* 102 */ short free102;
+	/* 104 */ char free104;
 	/* 105 */ char t_mapping;	    /* 0: use direct index 1: use t_asc_map */
 	/* 106 */ short t_first_ade;    /* code of first character */
 	/* 108 */ short t_ades;         /* number of characters -1 */

@@ -87,34 +87,42 @@
 struct fsm_hdr {
 	LONG magic1; /* '_FSM' */
 	LONG magic2; /* '_HDR' */
-	UWORD version;
+
+	UWORD quality; /* 1=final, 0=draft */
+
 	UWORD flags;
+#define FSM_QUALITY      0x0001
 #define FSM_PAPER_LETTER 0x0002
 #define FSM_PAPER_LEGAL  0x0004
 #define FSM_PAPER_DINA4  0x0008
 #define FSM_PAPER_DINB5  0x0010
 #define FSM_PAPER_USER   0x0020
 #define FSM_RESOLUTION   0x0040
+#define FSM_DPI          0x0080
 #define FSM_SERIAL       0x0100
 #define FSM_INTRAY_0     0x0200
 #define FSM_INTRAY_1     0x0400
 #define FSM_INTRAY_2     0x0800
 #define FSM_INTRAY_3     0x1000
-	WORD color_mode;
-	WORD o14;
-	WORD o16;
-	WORD o18;
-	WORD o20;
-	WORD o22;
+#define FSM_EXT_PAGE     0x2000 /* 2nd page sz table */
+
+	WORD color_mode;	/* default number of planes */
+	WORD totplanes;		/* number of selectable color modes (1-4possible) */
+
+	WORD plane_vals[4];
+
 	WORD hdpi[4];
 	WORD vdpi[4];
+
 	WORD size_id;
-	WORD o42;
-	WORD o44;
-	WORD aux_dev;
-	WORD input_tray_id;
+
+	WORD xres;			/* Default horiz. res; eg. 2389 for 8.0" */
+	WORD yres;			/* Default vert. res; eg. 3321 for 10.4" */
+
+	WORD aux_dev;		/* port: 0 = parallel, 1 = serial etc.. */
+	WORD input_tray_id;	/* 0=tractor, 1=tray1, 2=tray2, 3=manual */
 	char name[26];
-	char o76[16];
+	WORD paper_size[4][2];
 };
 
 #define PAPERSIZE_FSM_LETTER 0

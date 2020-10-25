@@ -2253,7 +2253,7 @@ gdos_fline_jsr:   jsr      (a0)
                   rts
 
 /*
- * Fuer VDI-Treiber vsf_perimter() aufrufen
+ * Fuer VDI-Treiber vsf_perimeter() aufrufen
  * Vorgaben:
  * kein Register wird veraendert
  * Eingaben:
