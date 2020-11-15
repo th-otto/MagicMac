@@ -979,7 +979,7 @@ v_clsvwk:         movem.l  d1-d2/a2,-(sp)
                   movea.l  (a0),a1        /* contrl */
                   move.w   handle(a1),d0  /* contrl[6] = Handle */
                   beq.s    v_clsvwk_exit  /* Handle = 0 ? */
-                  cmp.w    #1,d0          /* AES-Workstation? */
+                  cmp.w    #AES_HANDLE,d0 /* AES-Workstation? */
                   beq.s    v_clsvwk_err
                   tst.l    bitmap_addr(a6)   /* Offscreen? */
                   bne.s    v_clsbm

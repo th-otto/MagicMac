@@ -137,7 +137,7 @@ _ldiv_exit:
 	rts
 
 
-;Vorzeichenlosen 32-Bit-Dividendt durch 32-Bit-Divisor teilen
+;Vorzeichenlosen 32-Bit-Dividend durch 32-Bit-Divisor teilen
 ;Vorgaben:
 ;Register d0-d2/a0 werden veraendert
 ;Eingaben:

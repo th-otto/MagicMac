@@ -287,7 +287,11 @@ closed:           DC.L handle_err         ;Fehlerbehandlungsroutine
                   DC.W  -1                ;devce_id -1: geschlossene Workstation
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   INCLUDE  "tables.inc"
+	.include "colormap.inc"
+	.include "pattern.inc"
+	.include "sincos.inc"
+	.include "marker.inc"
+	.include "workout.inc"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1720,7 +1724,7 @@ ellipse_grad:     divs.w   #10,d4         ;in Grad umrechnen
                   bsr      ellipse_point  ;Startpunkt berechnen
                   move.l   d5,-(sp)       ;Endwinkel sichern
 
-                  lea.l    sin,a0
+                  lea.l    isintable,a0
 ellipse_grad8:    cmp.w    #100,d2
                   bgt.s    ellipse_grad4
                   cmp.w    #100,d3
@@ -1782,7 +1786,7 @@ ellipse_cloop:    move.w   (a0),d6        ;sin
                   bra.s    ell_noover1
 ell_overmi1:      move.w   #32767,d6      ;grosses positives Ergebnis
 ell_noover1:      move.w   d6,(a1)+
-                  move.w   cos-sin(a0),d6 ;cos
+                  move.w   icostable-isintable(a0),d6 ;cos
                   muls.w   d3,d6          ;* b
                   add.l    d6,d6          ;* 2
                   add.l    d7,d6          ;runden
@@ -1827,7 +1831,7 @@ ellipse_last:     move.w   d4,d5
 ;d3.w rb
 ;d4.l Winkel in Grad im unteren und Rest in 10tel Grad im oberen Wort
 ;a1.l wird um 4 Bytes weitergesetzt, x- und y-Koordinate wurden abgelegt
-ellipse_point:    lea.l    sin,a0
+ellipse_point:    lea.l    isintable,a0
                   adda.w   d4,a0
                   adda.w   d4,a0
                   swap     d4
@@ -1852,7 +1856,7 @@ ellipse_point:    lea.l    sin,a0
                   bra.s    ell_noover3
 ell_overmi3:      move.w   #32767,d6      ;grosses positives Ergebnis
 ell_noover3:      move.w   d6,(a1)+
-                  lea.l    cos-sin(a0),a0 ;Zeiger in die Cosinus-Tabelle
+                  lea.l    icostable-isintable(a0),a0 ;Zeiger in die Cosinus-Tabelle
                   move.w   (a0),d7
                   move.w   -(a0),d6
                   sub.w    d6,d7
