@@ -362,7 +362,7 @@ text_position:    move.w   (a3)+,d0       /* x */
 text_alignment:   moveq.l  #0,d2          /* shift to left */
                   move.w   t_hor(a6),d7   /* horizontal alignment */
                   beq.s    text_left      /* left aligned ? */
-                  subq.w   #T_MID_ALIGN,d7 /* centered ? */
+                  subq.w   #TA_CENTER,d7  /* centered ? */
                   bne.s    text_right
                   move.w   d4,d2
                   addq.w   #1,d2

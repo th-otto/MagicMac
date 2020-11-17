@@ -213,16 +213,16 @@ MARKER_OFFY         EQU 6
 ;Text
 T_SYSTEM_FACE       EQU 1                       ;Systemzeichensatz
 
-T_LEFT_ALIGN        EQU 0                       ;linksbuendige Ausrichtung
-T_MID_ALIGN         EQU 1                       ;zentrierte Ausrichtung
-T_RIGHT_ALIGN       EQU 2                       ;rechtsbuendige Ausrichtung
+TA_LEFT             EQU 0                       ;linksbuendige Ausrichtung
+TA_CENTER           EQU 1                       ;zentrierte Ausrichtung
+TA_RIGHT            EQU 2                       ;rechtsbuendige Ausrichtung
 
-T_BASE_ALIGN        EQU 0                       ;Zeichenbasislinie
-T_HALF_ALIGN        EQU 1                       ;Zeichenhalblinie
-T_ASCENT_ALIGN      EQU 2                       ;Zeichenoberkante
-T_BOTTOM_ALIGN      EQU 3                       ;Zellenunterkante
-T_DESCENT_ALIGN     EQU 4                       ;Zeichenunterkante
-T_TOP_ALIGN         EQU 5                       ;Zellenoberkante
+TA_BASE             EQU 0                       ;Zeichenbasislinie
+TA_HALF             EQU 1                       ;Zeichenhalblinie
+TA_ASCENT           EQU 2                       ;Zeichenoberkante
+TA_BOTTOM           EQU 3                       ;Zellenunterkante
+TA_DESCENT          EQU 4                       ;Zeichenunterkante
+TA_TOP              EQU 5                       ;Zellenoberkante
 
 T_BOLD              EQU 1                       ;Maske fuer fett
 T_LIGHT             EQU 2                       ;Maske fuer hell

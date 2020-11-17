@@ -540,7 +540,7 @@ vst_set_point:
 vst_rotation:
 	movea.l    pb_intout(a0),a1
 	movea.l    pb_intin(a0),a0
-	move.w     (a0),d0                  /* rotation angle */
+	move.w     (a0),d0                  /* rotation angle in 1/10 degree */
 	ext.l      d0
 	divs.w     #3600,d0
 	swap       d0                       /* remaining angle */
@@ -565,15 +565,13 @@ vst_font:
 	move.w     d0,(a1)                  /* intout[0] = font ID */
 	cmp.w      t_number(a6),d0          /* font already current? */
 	beq.s      vst_font_exit
-
 	movem.l    d1-d7/a2,-(sp)           /* save registers */
-
 	lea.l      (font_hdr1).w,a0         /* header of first system font */
 	cmp.w      #T_SYSTEM_FACE,d0        /* system font? */
 	beq.s      vst_font_found
 	move.l     t_bitmap_fonts(a6),d1    /* have fonts been loaded by GDOS? */
 	beq.s      vst_font_loop
-	movea.l    d1,a0                    /* addresse des ersten zugeladenen Fonts */
+	movea.l    d1,a0                    /* address of first loaded font */
 vst_font_loop:
 	cmp.w      font_id(a0),d0           /* font found? */
 	beq.s      vst_font_found
@@ -582,7 +580,7 @@ vst_font_loop:
 	bne.s      vst_font_loop
 	moveq.l    #T_SYSTEM_FACE,d0
 	lea.l      (font_hdr1).w,a0         /* address of system font */
-	move.w     d0,(a1)                  /* font ID 1 */
+	move.w     d0,(a1)                  /* new font id in intout */
 vst_font_found:
 	move.l     a0,t_pointer(a6)
 	move.l     a0,(CUR_FONT).w          /* for compatibility */
@@ -639,14 +637,14 @@ vst_effects_exit:
 vst_alignment:
 	movea.l    pb_intin(a0),a1
 	movea.l    pb_intout(a0),a0
-	move.w     (a1)+,d0                 /* horizontale alignment */
-	cmpi.w     #T_RIGHT_ALIGN,d0
+	move.w     (a1)+,d0                 /* horizontal alignment */
+	cmpi.w     #TA_RIGHT,d0
 	bls.s      vst_v_alignment
-	moveq.l    #T_LEFT_ALIGN,d0
+	moveq.l    #TA_LEFT,d0
 vst_v_alignment:
 	swap       d0
 	move.w     (a1),d0                  /* vertical alignment */
-	cmp.w      #T_TOP_ALIGN,d0
+	cmp.w      #TA_TOP,d0
 	bls.s      vst_set_align
 	clr.w      d0                       /* V_BASE_ALIGN */
 vst_set_align:
