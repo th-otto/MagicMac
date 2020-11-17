@@ -679,20 +679,22 @@ vsf_int_set:
 	jmp        vsf_int_user_def(pc,d0.w)
 
 vsf_int_tab:
-	DC.B vsf_int_hollow-vsf_int_user_def
-	DC.B vsf_int_solid-vsf_int_user_def
-	DC.B vsf_int_pattern-vsf_int_user_def
-	DC.B vsf_int_hatch-vsf_int_user_def
-	DC.B vsf_int_user_def-vsf_int_user_def
-	DC.B 0
+	.dc.b vsf_int_hollow-vsf_int_user_def
+	.dc.b vsf_int_solid-vsf_int_user_def
+	.dc.b vsf_int_pattern-vsf_int_user_def
+	.dc.b vsf_int_hatch-vsf_int_user_def
+	.dc.b vsf_int_user_def-vsf_int_user_def
+	.even
 
 /* sub-functions of vsf_interior (return: a1 = pattern pointer) */
 vsf_int_hollow:
 	move.l     f_fill0(a6),-(a0)        /* pointer to empty pattern -> f_pointer */
 	rts
+
 vsf_int_solid:
 	move.l     f_fill1(a6),-(a0)        /* pointer to solid pattern -> f_pointer */
 	rts
+
 vsf_int_pattern:
 	movea.l    f_fill2(a6),a1           /* pointer to first grayscale pattern */
 	move.w     f_style(a6),d0           /* pattern index */
@@ -701,6 +703,7 @@ vsf_int_pattern:
 	adda.w     d0,a1                    /* pointer to pattern data */
 	move.l     a1,-(a0)                 /*  -> f_pointer */
 	rts
+
 vsf_int_hatch:
 	movea.l    f_fill3(a6),a1           /* pointer to hatch pattern */
 	move.w     f_style(a6),d0           /* pattern index */
@@ -709,6 +712,7 @@ vsf_int_hatch:
 	adda.w     d0,a1                    /* pointer to pattern data */
 	move.l     a1,-(a0)                 /*  -> f_pointer */
 	rts
+
 vsf_int_user_def:
 	move.w     f_splanes(a6),(a0)       /* number of planes */
 	move.l     f_spointer(a6),-(a0)     /* pointer to user defined pattern -> f_pointer */
@@ -726,12 +730,12 @@ vsf_style:
 
 /* Tabelle der Subroutinen */
 vsf_style_tab:
-	DC.B vsf_sty_hollow-vsf_style_tab
-	DC.B vsf_sty_solid-vsf_style_tab
-	DC.B vsf_sty_pattern-vsf_style_tab
-	DC.B vsf_sty_hatch-vsf_style_tab
-	DC.B vsf_sty_user_def-vsf_style_tab
-	DC.B 0
+	.dc.b vsf_sty_hollow-vsf_style_tab
+	.dc.b vsf_sty_solid-vsf_style_tab
+	.dc.b vsf_sty_pattern-vsf_style_tab
+	.dc.b vsf_sty_hatch-vsf_style_tab
+	.dc.b vsf_sty_user_def-vsf_style_tab
+	.even
 
 /* sub-functions of vsf_style */
 vsf_sty_hollow:
@@ -864,7 +868,7 @@ v_setrgb:
 	rts
 
 /* unbekannt (VDI 140) */
-v140:
+v_op140:
 /* unbekannt (VDI 142) */
-v142:
+v_op142:
 	rts
