@@ -137,8 +137,8 @@ fd_r3:      ds.w 1   /* reserved */
 sizeof_MFDB:
 
 
-/* VDIPB */
-		OFFSET 0
+/* offsets of VDI parameter block (VDIPB) */
+		.OFFSET 0
 pb_control: ds.l 1
 pb_intin:   ds.l 1
 pb_ptsin:   ds.l 1
@@ -146,18 +146,21 @@ pb_intout:  ds.l 1
 pb_ptsout:  ds.l 1
 sizeof_PB:
 
-/* VDI control */
-		OFFSET 0
-opcode:   ds.w 1
-n_ptsin:  ds.w 1
-n_ptsout: ds.w 1
-n_intin:  ds.w 1
-n_intout: ds.w 1
-opcode2:  ds.w 1
-handle:   ds.w 1
-s_addr:   ds.l 1
-d_addr:   ds.l 1
-sizeof_contrl       EQU 32
+/* offsets of VDI control array */
+		.OFFSET 0
+v_opcode:       ds.w 1
+v_nptsin:       ds.w 1
+v_nptsout:      ds.w 1
+v_nintin:       ds.w 1
+v_nintout:      ds.w 1
+v_opcode2:      ds.w 1
+v_handle:       ds.w 1
+s_addr:         ds.l 1
+d_addr:         ds.l 1
+                ds.l 1
+                ds.l 1
+                ds.w 1
+sizeof_contrl:
 
 ;Linien
 L_WIDTH_MIN         EQU 1                       ;minimale Linienbreite

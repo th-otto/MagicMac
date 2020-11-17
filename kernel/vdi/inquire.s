@@ -5,7 +5,7 @@
  * EXTENDED INQUIRE FUNCTION (VDI 102)
  */
 vq_extnd:         movea.l  (a0),a1        ;contrl
-                  cmpi.w   #1,opcode2(a1) ;vq_scrninfo?
+                  cmpi.w   #1,v_opcode2(a1) ;vq_scrninfo?
                   bne.s    vq_extnd2
                   movea.l  pb_intin(a0),a1 ;intin
                   cmpi.w   #2,(a1)        ;vq_scrninfo?
@@ -31,8 +31,8 @@ vq_extnd_exit:    movem.l  (sp)+,a2-a5
 ; INQUIRE SCREEN INFORMATION (VDI 102,1)
 vq_scrninfo:      move.l   a2,-(sp)
                   movea.l  (a0),a1        ;contrl
-                  move.w   #272,n_intout(a1)
-                  clr.w    n_ptsout(a1)
+                  move.w   #272,v_nintout(a1)
+                  clr.w    v_nptsout(a1)
                   movea.l  pb_intout(a0),a0 ;intout
                   move.l   device_drvr(a6),d0   ;Geraetetreiber?
                   beq.s    vq_scrninfo_off
@@ -134,7 +134,7 @@ vqt_attr_rot:     move.w   d0,(a0)+              /* intout[2] = text rotation */
  */
 vqt_extent:       movem.l  d1-d3/a2,-(sp)
                   movea.l  (a0)+,a1       ;contrl
-                  move.w   n_intin(a1),d0 ;Zeichenanzahl
+                  move.w   v_nintin(a1),d0 ;Zeichenanzahl
                   movea.l  (a0),a1        ;intin
                   movea.l  pb_ptsout-pb_intin(a0),a0 ;ptsout
                   moveq.l  #0,d1

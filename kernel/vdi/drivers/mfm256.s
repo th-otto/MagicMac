@@ -324,7 +324,7 @@ relo_exit:        movem.l  (sp)+,d0-d2/a0-a2
 ; OUTPUT CURSOR ADDRESSABLE ALPHA TEXT (VDI 5, ESCAPE 12)
 v_curtext:        movem.l  d1-d3/a2-a3,-(sp)
                   movea.l  pb_intin(a0),a3 ;intin
-                  move.w   n_intin(a1),d3 ;Zeichenanzahl
+                  move.w   v_nintin(a1),d3 ;Zeichenanzahl
                   subq.w   #1,d3          ;zu wenig Zeichen ?
                   bmi.s    v_curtext_exit
 v_curtext_loop:   move.w   (a3)+,d1          ;Zeichen
@@ -1508,7 +1508,7 @@ get_color_real:   move.w   (a0)+,d0       ;Rot
 
 ; ESCAPE (VDI 5)
 v_escape:         movea.l  (a0),a1        ;contrl
-                  move.w   opcode2(a1),d0 ;Unteropcode
+                  move.w   v_opcode2(a1),d0 ;Unteropcode
 ;Opcodebereich pruefen
                   cmpi.w   #V_CURTEXT,d0  ;v_curtext()?
                   beq      v_curtext
@@ -1552,7 +1552,7 @@ vq_chcells:       move.l   V_CEL_MX.w,d3  ;Spalten / Zeilen
                   swap     d3
 
                   move.l   d3,(a4)
-                  move.w   #2,n_intout(a0) ;Eintraege in intout
+                  move.w   #2,v_nintout(a0) ;Eintraege in intout
                   rts
 
 ; EXIT ALPHA MODE (VDI 5, ESCAPE 2)
@@ -1581,7 +1581,7 @@ vq_curaddress:    addq.w   #1,d0
                   addq.w   #1,d1
                   move.w   d1,(a4)+       ;intout[0] = Zeile;
                   move.w   d0,(a4)+       ;intout[1] = Spalte;
-                  move.w   #2,n_intout(a0) ;Eintraege in intout
+                  move.w   #2,v_nintout(a0) ;Eintraege in intout
                   rts
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

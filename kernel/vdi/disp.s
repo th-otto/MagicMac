@@ -10,8 +10,8 @@ opcode_err_rts:   pea.l    vdi_exit(pc)   ;Ruecksprungadresse eintragen
 opcode_err:       movea.l  d1,a1
                   movea.l  (a1),a1
 opcode_err_komp:  move.w   (a1),d0        ;Funktionsnummer
-opcode_err_exit:  clr.w    n_intout(a1)   ;keine Ausgaben
-                  clr.w    n_ptsout(a1)
+opcode_err_exit:  clr.w    v_nintout(a1)  ;keine Ausgaben
+                  clr.w    v_nptsout(a1)
                   rts
 
 ;Aufruf mit ungueltigem Handle bearbeiten
@@ -28,7 +28,7 @@ handle_err_tst:   move.w   (a1),d0        ;contrl[0] = Opcode
                   beq.s    handle_0_used  ; BUG: v_resize_bm has same opcode, but needs valid handle
 handle_err_komp:  nop
 handle_0_used:    movea.l  (linea_wk_ptr).w,a6
-                  clr.w    handle(a1)     ;contrl[6]=0
+                  clr.w    v_handle(a1)   ;contrl[6]=0
                   moveq.l  #0,d0
                   bra.s    handle_found   ;in den Dispatcher einspringen
 
@@ -41,7 +41,7 @@ vdi_entry:
                   movem.l  a0-a1/a6,-(sp)          ;Register retten
                   movea.l  d1,a0                   ;pblock
                   movea.l  (a0),a1                 ;contrl
-                  move.w   handle(a1),d0           ;contrl[6] (Handle)
+                  move.w   v_handle(a1),d0         ;contrl[6] (Handle)
                   beq.s    handle_err_tst
                   cmp.w    #MAX_HANDLES,d0         ;Handle gueltig ?
                   bhi.s    handle_err_tst
@@ -67,8 +67,8 @@ vdi_disp_opnvwk:  sub.w    #V_OPNVWK,d0            ;ungueltige Funktionsnummer?
                   lsl.w    #3,d0
                   lea.l    vdi_tab100(pc),a0
                   adda.w   d0,a0
-vdi_disp_par:     move.w   (a0)+,n_ptsout(a1)      ;Anzahl der Eintraege in ptsout
-                  move.w   (a0)+,n_intout(a1)      ;Anzahl der Eintraege in intout
+vdi_disp_par:     move.w   (a0)+,v_nptsout(a1)     ;Anzahl der Eintraege in ptsout
+                  move.w   (a0)+,v_nintout(a1)     ;Anzahl der Eintraege in intout
                   movea.l  (a0),a1                 ;Funktionsadresse
                   movea.l  d1,a0                   ;pblock
                   jsr      (a1)

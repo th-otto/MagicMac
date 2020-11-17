@@ -442,7 +442,7 @@ atext_rot180:     subq.w   #T_ROT_180-T_ROT_90,d0           ;Textdrehung um 180 
 
 atext_rot270:     add.w    d4,(DESTY).w                     ;y-Koordinate des naechsten Zeichens
 
-atext_call:       move.w   #1,n_intin(a1)                   ;1 Zeichen
+atext_call:       move.w   #1,v_nintin(a1)                  ;1 Zeichen
                   clr.w    (a2)                             ;intin[0]: Index 0
                   movem.w  d2-d3,(a3)                       ;ptsin[0/1]: x, y
                   bsr      text

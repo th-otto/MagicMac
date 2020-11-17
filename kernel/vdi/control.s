@@ -137,7 +137,7 @@ open_nvdi_drvr:   move.w   d3,(first_device).w
                   moveq.l  #1,d4             /* Handle */
                   move.w   d3,driver_id(a6)  /* Treiber-ID speichern */
                   move.w   d4,wk_handle(a6)
-                  move.w   d4,handle(a1)
+                  move.w   d4,v_handle(a1)
                   addq.w   #1,driver_use(a3) /* Semaphore erhoehen */
                   move.w   d4,driver_open_hdl(a3)
                   bsr      init_fonthdr      /* Fontheader fuer LINE-A erstellen */
@@ -221,9 +221,9 @@ v_opnwk:          movem.l  d1-d7/a2-a5,-(sp)
                   move.l   #ptsout,(a0)+
 
                   move.w   #VST_FONT,(a1)
-                  move.w   #1,n_intin(a1)
-                  clr.w    n_ptsin(a1)
-                  move.w   #1,handle(a1)
+                  move.w   #1,v_nintin(a1)
+                  clr.w    v_nptsin(a1)
+                  move.w   #1,v_handle(a1)
 
                   move.w   #1,(a2)              /* Systemfont einstellen */
 
@@ -260,7 +260,7 @@ opnwk_err_load:                           /* Fehler beim Laden des Geraetetreibe
 opnwk_err_exit:   movem.l  (sp)+,d1-d7/a2-a5
                   movea.l  d1,a0
                   movea.l  pb_control(a0),a1
-                  clr.w    handle(a1)     /* Fehler */
+                  clr.w    v_handle(a1)   /* Fehler */
                   rts
 
 /*
@@ -310,7 +310,7 @@ opnwk_clr_wk:     clr.w    (a6)+
                   movea.l  d0,a6
                   move.w   d3,driver_id(a6) /* Treiber-ID speichern */
                   move.w   d4,wk_handle(a6)
-alloc_wk_exit:    move.w   d4,handle(a1)
+alloc_wk_exit:    move.w   d4,v_handle(a1)
                   rts
 
 /*
@@ -827,9 +827,9 @@ cldrvr:           movem.l  d0-d2/a0-a2,-(sp)
  */
 v_opnvwk:         movem.l  d1-d7/a2-a5,-(sp)
                   movem.l  (a0),a1-a5
-                  cmpi.w   #1,opcode2(a1) /* v_opnbm()? */
+                  cmpi.w   #1,v_opcode2(a1) /* v_opnbm()? */
                   bne.s    v_opnvwk_id
-                  cmpi.w   #20,n_intin(a1) /* richtige Parameteranzahl? */
+                  cmpi.w   #20,v_nintin(a1) /* richtige Parameteranzahl? */
                   beq.s    v_opnbm
 v_opnvwk_id:      move.w   driver_id(a6),d3 /* Geraetekennung */
                   movea.l  device_drvr(a6),a3
@@ -875,7 +875,7 @@ v_opnbm:          move.l   a2,-(sp)       /* intout */
                   movea.l  (sp),a0        /* pb */
                   move.l   a0,d1
                   movem.l  (a0),a1-a5
-                  move.w   wk_handle(a6),handle(a1)   /* Handle ausgeben */
+                  move.w   wk_handle(a6),v_handle(a1)   /* Handle ausgeben */
                   bsr      v_opnwk_in     /* intin beruecksichtigen */
                   movea.l  bitmap_drvr(a6),a2
                   movea.l  DRIVER_code(a2),a2
@@ -888,7 +888,7 @@ v_opnbm:          move.l   a2,-(sp)       /* intout */
 
 v_opnbm_err:      move.l   (sp),a0        /* pb */
                   move.l   (a0),a1        /* contrl */
-                  clr.w    handle(a1)
+                  clr.w    v_handle(a1)
                   movem.l  (sp)+,d1-d7/a2-a5
                   rts
 
@@ -920,7 +920,7 @@ v_clswk_err:      movem.l  (sp)+,d1-d2/a2
  */
 v_clswk:          movem.l  d1-d3/a2,-(sp)
                   movea.l  pb_control(a0),a1
-                  move.w   handle(a1),d0  /* contrl[6] = Handle */
+                  move.w   v_handle(a1),d0  /* contrl[6] = Handle */
                   beq.s    v_clswk_exit   /* Handle = 0 ? */
                   movea.l  device_drvr(a6),a2   /* Zeiger auf die Treiberstruktur */
                   move.l   a2,d2          /* kein Geraetetreiber? */
@@ -943,7 +943,7 @@ v_clswk_phys:     move.l   #closed,-4(a1) /* schliessen */
 v_clswk_next:     dbra     d3,v_clswk_all
                   movem.l  d0/a0-a1/a6,-(sp)
                   movea.l  pb_control(a0),a1
-                  move.w   #VST_UNLOAD_FONTS,opcode(a1) /* neue Funktionsnummer */
+                  move.w   #VST_UNLOAD_FONTS,v_opcode(a1) /* neue Funktionsnummer */
                   bsr      vst_unload_fonts /* Fonts der phys. WK entfernen */
                   movem.l  (sp)+,d0/a0-a1/a6
                   movea.l  pb_control(a0),a1
@@ -977,7 +977,7 @@ call_clsvwk:      rts
  */
 v_clsvwk:         movem.l  d1-d2/a2,-(sp)
                   movea.l  (a0),a1        /* contrl */
-                  move.w   handle(a1),d0  /* contrl[6] = Handle */
+                  move.w   v_handle(a1),d0  /* contrl[6] = Handle */
                   beq.s    v_clsvwk_exit  /* Handle = 0 ? */
                   cmp.w    #AES_HANDLE,d0 /* AES-Workstation? */
                   beq.s    v_clsvwk_err

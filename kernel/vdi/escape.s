@@ -7,7 +7,7 @@ v_escape:         move.l   p_escapes(a6),-(sp)
 v_escape_in:      tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   bne.s    v_escape_unof
                   movea.l  (a0),a1        ;contrl
-                  move.w   opcode2(a1),d0 ;Unteropcode
+                  move.w   v_opcode2(a1),d0 ;Unteropcode
 ;Opcodebereich pruefen
                   cmp.w    #V_RMCUR,d0
                   bhi.s    v_escape_unof
@@ -53,7 +53,7 @@ vq_chcells:       move.l   (V_CEL_MX).w,d3  /* columns / lines */
                   addi.l   #$00010001,d3
                   swap     d3
                   move.l   d3,(a4)
-                  move.w   #2,n_intout(a0)
+                  move.w   #2,v_nintout(a0)
                   rts
 
 /*
@@ -92,7 +92,7 @@ vs_curaddress:    move.w   (a5)+,d1       /* column */
  *  a6: wk
  */
 v_curtext:        moveq.l  #0,d1
-                  move.w   n_intin(a0),d1 /* number of characters */
+                  move.w   v_nintin(a0),d1 /* number of characters */
                   subq.w   #1,d1          /* not any characters? */
                   bmi.s    v_curtext_exit
                   movea.l  buffer_addr(a6),a0
@@ -122,14 +122,14 @@ vq_curaddress:    addq.w   #1,d0
                   addq.w   #1,d1
                   move.w   d1,(a4)+       /* intout[0] = column */
                   move.w   d0,(a4)+       /* intout[1] = row */
-                  move.w   #2,n_intout(a0)
+                  move.w   #2,v_nintout(a0)
                   rts
 
 /*
  * INQUIRE TABLET STATUS (VDI 5, ESCAPE 16)
  */
 vq_tabstatus:     move.w   #1,(a4)        /* mouse available */
-                  move.w   #1,n_intout(a0)
+                  move.w   #1,v_nintout(a0)
                   rts
 
 

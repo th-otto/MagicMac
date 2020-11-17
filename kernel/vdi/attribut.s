@@ -813,7 +813,7 @@ vsf_perimeter:
 vsf_udpat:
 	move.l     a2,-(sp)
 	movea.l    pb_control(a0),a1        /* contrl */
-	move.w     n_intin(a1),d0           /* entries in intin */
+	move.w     v_nintin(a1),d0          /* entries in intin */
 	movea.l    pb_intin(a0),a0
 	movea.l    f_spointer(a6),a1
 	movea.l    p_set_pattern(a6),a2

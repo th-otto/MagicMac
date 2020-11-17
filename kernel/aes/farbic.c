@@ -68,9 +68,9 @@ static void _vq_scrninfo( WORD *work_out )
 
 /*------------------------------------------------------------------------------*/ 
 /* Expandier-Funktion initialisieren - nur im Supervisor-Modus aufrufen!        */
-/* Funktionsresultat:    0: nicht unterstuetztes Format                          */
-/*                       1: alles in Ordnung, Format wird unterstuetzt           */
-/*                       -1: Format muss nicht gewandelt werden                  */
+/* Funktionsresultat:    0: nicht unterstuetztes Format                         */
+/*                       1: alles in Ordnung, Format wird unterstuetzt          */
+/*                       -1: Format muss nicht gewandelt werden                 */
 /*                                                                              */
 /* handle:               VDI-Handle des AES                                     */
 /* planes:               Anzahl der Ebenen                                      */

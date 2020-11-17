@@ -290,7 +290,7 @@ textp_ital_next270:
  * Ausgaben
  * d0-d7/a0-a5 werden zerstoert
  */
-text:             move.w   n_intin(a1),d6 /* character count */
+text:             move.w   v_nintin(a1),d6 /* character count */
                   ble.s    text_exit      /* enough ? */
                   subq.w   #1,d6          /* character counter */
 
@@ -2365,7 +2365,7 @@ shrink_exit:      move.w   (sp)+,d4
  * Ausgaben
  * d0-d7/a0-a5 werden zerstoert
  */
-text_justified:   move.w   n_intin(a1),d6 /* character count */
+text_justified:   move.w   v_nintin(a1),d6 /* character count */
                   subq.w   #3,d6
                   cmp.w    #32764,d6      /* enough characters? */
                   bhi      text_exit

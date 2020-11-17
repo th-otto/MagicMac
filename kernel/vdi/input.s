@@ -51,10 +51,10 @@ vsm_locator:      move.w   sr,d0
                   movea.l  (a0),a1        ;contrl
                   tst.w    (MOUSE_BT).w
                   beq.s    vsm_move
-                  move.w   #1,n_intout(a1) ;Eintraege in intout
+                  move.w   #1,v_nintout(a1) ;Eintraege in intout
 vsm_move:         btst     #5,(CUR_MS_STAT).w
                   beq.s    vsm_l_exit
-                  move.w   #1,n_ptsout(a1) ;Eintraege in ptsout
+                  move.w   #1,v_nptsout(a1) ;Eintraege in ptsout
 vsm_l_exit:       andi.b   #3,(CUR_MS_STAT).w
                   move.w   d0,sr
                   rts
@@ -91,7 +91,7 @@ vrq_choice:       bsr.s    v_input        ;Zeichen einlesen
 v_choice_out:     move.w   d0,(a4)
                   movem.l  (sp)+,d1-d2/a2-a4
                   rts
-vsm_choice_n:     clr.w    n_intout(a3)
+vsm_choice_n:     clr.w    v_nintout(a3)
                   movem.l  (sp)+,d1-d2/a2-a4
                   rts
 
@@ -141,7 +141,7 @@ vsm_string:       bsr.s    v_status
 vsm_str_nos:      addq.w   #1,d4
 vsm_str_ret:      sub.w    d4,d5
 
-                  move.w   d5,n_intout(a3) ;Zeichenanzahl
+                  move.w   d5,v_nintout(a3) ;Zeichenanzahl
                   movem.l  (sp)+,d1-d5/a2-a4
                   rts
 
@@ -154,7 +154,7 @@ vrq_string:       bsr.s    v_input        ;Zeichen einlesen
                   dbra     d4,vrq_string
                   addq.w   #1,d4
 vrq_str_ret:      sub.w    d4,d5
-                  move.w   d5,n_intout(a3) ;Zeichenanzahl
+                  move.w   d5,v_nintout(a3) ;Zeichenanzahl
                   movem.l  (sp)+,d1-d5/a2-a4
                   rts
 
@@ -162,10 +162,10 @@ vrq_str_ret:      sub.w    d4,d5
 vsc_form:         movem.l  d1-d7/a2-a5,-(sp)
                   movem.l  (a0),a1-a4
 
-                  tst.w    n_intin(a1)    ;Mausform ausgeben ?
+                  tst.w    v_nintin(a1)   ;Mausform ausgeben ?
                   bne.s    vsc_form_in
 ;Mausform in intout ausgeben
-vsc_form_out:     move.w   #37,n_intout(a1)
+vsc_form_out:     move.w   #37,v_nintout(a1)
                   lea.l    (M_POS_HX).w,a0
                   movea.l  a4,a1
                   movem.w  (a0)+,d0-d4

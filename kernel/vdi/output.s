@@ -1,8 +1,6 @@
 /*
- * VDI-Ausgabefunktionen
- * letzte Aenderung am 12.06.94
+ * pts_start-Struktur
  */
-
 	.OFFSET 0
 nxt_ptsin:        .ds.l 1                 /* zeigt auf die naechsten ptsin-Elemente */
 x_start:          .ds.w 1                 /* X-Startkoordinate fuer die Linie */
@@ -31,72 +29,72 @@ sizeof_pts_start:
  * -
  */
 v_pline_thick:
-	movem.l  d1-d5/a2-a5,-(sp)
+	movem.l    d1-d5/a2-a5,-(sp)
 
-	lea.l    -sizeof_pts_start(sp),sp
-	movea.l  sp,a3          /* Zeiger auf pts_start-Struktur */
-	movea.l  a0,a2          /* pb sichern */
-	move.l   pb_ptsin(a2),nxt_ptsin(a3)
-	movea.l  pb_control(a2),a0
-	move.w   n_ptsin(a0),n_pts(a3)
+	lea.l      -sizeof_pts_start(sp),sp
+	movea.l    sp,a3                    /* Zeiger auf pts_start-Struktur */
+	movea.l    a0,a2                    /* pb sichern */
+	move.l     pb_ptsin(a2),nxt_ptsin(a3)
+	movea.l    pb_control(a2),a0
+	move.w     v_nptsin(a0),n_pts(a3)
 
-	moveq.l  #0,d3          /* Voreinst.: ptsin unveraendert */
+	moveq.l    #0,d3          /* Voreinst.: ptsin unveraendert */
 
-	tst.w    l_start(a6)
-	beq.s    no_startfm
+	tst.w      l_start(a6)
+	beq.s      no_startfm
 
-	move.w   n_ptsin(a0),d0
-	movea.l  pb_ptsin(a2),a0
-	movea.l  a3,a1
+	move.w     v_nptsin(a0),d0
+	movea.l    pb_ptsin(a2),a0
+	movea.l    a3,a1
 
-	bsr      dr_startfm
+	bsr        dr_startfm
 
-	moveq.l  #1,d3          /* ptsin[0/1] veraendert */
-	movea.l  pb_ptsin(a2),a5
-	movea.l  nxt_ptsin(a3),a4
-	cmpa.l   a4,a5          /* zeigen beide auf 1. ptsin-Paar ? */
-	beq.s    first_ptsin    /* ja */
-	subq.l   #4,a4          /* Koord.-paar vor nxt_ptsin[] sichern */
-	move.l   a4,nxt_ptsin(a3)  /* ptsin-Start fuer fat_line() */
+	moveq.l    #1,d3          /* ptsin[0/1] veraendert */
+	movea.l    pb_ptsin(a2),a5
+	movea.l    nxt_ptsin(a3),a4
+	cmpa.l     a4,a5          /* zeigen beide auf 1. ptsin-Paar ? */
+	beq.s      first_ptsin    /* ja */
+	subq.l     #4,a4          /* Koord.-paar vor nxt_ptsin[] sichern */
+	move.l     a4,nxt_ptsin(a3)  /* ptsin-Start fuer fat_line() */
 
 first_ptsin:
-	move.l   (a4),d4        /* x1,y1 sichern */
-	move.l   x_start(a3),(a4) /* aus pts_start in ptsin kopieren */
+	move.l     (a4),d4        /* x1,y1 sichern */
+	move.l     x_start(a3),(a4) /* aus pts_start in ptsin kopieren */
 
 no_startfm:
-	tst.w    l_end(a6)
-	beq.s    no_endfm
+	tst.w      l_end(a6)
+	beq.s      no_endfm
 
-	movea.l  pb_control(a2),a0
-	move.w   n_ptsin(a0),d0
-	movea.l  pb_ptsin(a2),a0
-	movea.l  a3,a1
+	movea.l    pb_control(a2),a0
+	move.w     v_nptsin(a0),d0
+	movea.l    pb_ptsin(a2),a0
+	movea.l    a3,a1
 
-	bsr      dr_endfm
+	bsr        dr_endfm
 
-	addq.w   #2,d3          /* ptsin[n-1/n] veraendert */
-	movea.l  pb_control(a2),a0
-	move.w   n_ptsin(a0),d0
-	subq.w   #1,d0
-	ext.l    d0
-	asl.l    #2,d0          /* *4 */
-	movea.l  pb_ptsin(a2),a5
-	adda.l   d0,a5
-	move.l   (a5),d5        /* xn,yn sichern */
-	move.l   x_end(a3),(a5) /* aus pts_start in ptsin kopieren */
+	addq.w     #2,d3          /* ptsin[n-1/n] veraendert */
+	movea.l    pb_control(a2),a0
+	move.w     v_nptsin(a0),d0
+	subq.w     #1,d0
+	ext.l      d0
+	asl.l      #2,d0          /* *4 */
+	movea.l    pb_ptsin(a2),a5
+	adda.l     d0,a5
+	move.l     (a5),d5        /* xn,yn sichern */
+	move.l     x_end(a3),(a5) /* aus pts_start in ptsin kopieren */
 
 no_endfm:
-	move.w   n_pts(a3),d0
-	movea.l  nxt_ptsin(a3),a0 /* aktuelles ptsin */
+	move.w     n_pts(a3),d0
+	movea.l    nxt_ptsin(a3),a0 /* aktuelles ptsin */
 
-	bsr.s    fat_line
+	bsr.s      fat_line
 
-	tst.w    d3
-	beq.s    exit_vplth
+	tst.w      d3
+	beq.s      exit_vplth
 
-	btst     #0,d3
-	beq.s    _rest_xyn
-	move.l   d4,(a4)        /* alte Startpos. zurueck */
+	btst       #0,d3
+	beq.s      _rest_xyn
+	move.l     d4,(a4)        /* alte Startpos. zurueck */
 
 _rest_xyn:
 	btst     #1,d3
@@ -112,7 +110,7 @@ exit_vplth:
  * small_line zeichnet 1 Pixel dicke Linien ohne Effekte
  *
  * a0.l ptsin
- * d0.w n_ptsin
+ * d0.w v_nptsin
  */
 small_line:
 	movem.l  d1-d7/a2-a3,-(sp)
@@ -127,7 +125,7 @@ small_line:
  * fat_line zeichnet nur Linien ohne Effekte
  *
  * a0: ptsin
- * d0: n_ptsin
+ * d0: v_nptsin
  */
 fat_line:
 	cmpi.w   #1,l_width(a6) /* Sonderbehandlung */
@@ -199,7 +197,7 @@ fat_TT_LOW:
 	move.w   (sp)+,d3
 
 _fat_while:
-	dbra     d3,fat_TT_LOW  /* bis n_ptsin < 2 */
+	dbra     d3,fat_TT_LOW  /* bis v_nptsin < 2 */
 	lea.l    8+16(sp),sp    /* Stack korrigieren */
 exit_fat_line:
 	movem.l  (sp)+,d3-d6/a2-a4
@@ -237,7 +235,7 @@ _fat_qpix:
 	move.w   (sp)+,d3
 
 _fat_qwhile:
-	dbra     d3,_fat_qpix   /* bis n_ptsin < 2 */
+	dbra     d3,_fat_qpix   /* bis v_nptsin < 2 */
 	lea.l    16(sp),sp      /* Stack korrigieren */
 	movem.l  (sp)+,d3-d6/a2-a4
 	rts
@@ -476,7 +474,7 @@ exit_hypot:
  * a0: *ptsin
  * a1: &pts_start, zeigt auf die Struktur, die nachher auf aktuellen
  *                 Start von ptsin[], x_start, y_start und n_pts weist
- * d0: n_ptsin
+ * d0: v_nptsin
  */
 dr_startfm:
 	movem.l  d3-d7/a2-a3,-(sp)
@@ -618,7 +616,7 @@ _strt_qpix:
  * a0: *ptsin
  * a1: &pts_start, zeigt auf die Struktur, die nachher auf aktuellen
  *                 Start von ptsin[], x_end, y_end und n_pts weist
- * d0: n_ptsin
+ * d0: v_nptsin
  */
 dr_endfm:
 	movem.l  d3-d7/a2-a3,-(sp)
@@ -759,7 +757,7 @@ _end_qpix:
 /*
  * a0: *ptsin
  * a1: *pts_start
- * d0: n_ptsin
+ * d0: v_nptsin
  */
 tstlin_fwd:
 	movem.l  d3-d7,-(sp)
@@ -831,7 +829,7 @@ exit_fwd:
 /*
  * a0: *ptsin, hier: Zeiger auf das LETZTE ptsin-Paar !
  * a1: *pts_start
- * d0.w: n_ptsin
+ * d0.w: v_nptsin
  */
 tstlin_bk:
 	movem.l  d3-d7,-(sp)
@@ -896,9 +894,9 @@ exit_bk:
 	rts
 
 v_pline_eff:
-	tst.w    n_intin(a1)     /* bezarr vorhanden? */
+	tst.w    v_nintin(a1)    /* bezarr vorhanden? */
 	beq      v_pline_thick
-	cmpi.w   #13,opcode2(a1) /* Bezier-Aufruf? */
+	cmpi.w   #13,v_opcode2(a1) /* Bezier-Aufruf? */
 	beq      v_bez
 	tst.w    bez_on(a6)
 	bne      v_bez
@@ -911,7 +909,7 @@ v_pline:
 	movea.l  pb_control(a0),a1
 	movep.w  l_start+1(a6),d0 /* Linienendstile ? */
 	add.w    l_width(a6),d0 /* breite Linie? */
-	add.w    n_intin(a1),d0 /* bezarr vorhanden? */
+	add.w    v_nintin(a1),d0 /* bezarr vorhanden? */
 	subq.w   #1,d0          /* irgendwelche Effekte? */
 	bne.s    v_pline_eff
 
@@ -927,7 +925,7 @@ v_pline:
  * -
  */
 v_pline_thin:
-	move.w   n_ptsin(a1),d0 /* counter */
+	move.w   v_nptsin(a1),d0 /* counter */
 	subq.w   #2,d0
 	bne.s    v_plines       /* only one line ? */
 v_pline1:
@@ -1032,7 +1030,7 @@ v_bez:
 	moveq.l  #0,d5          /* Punktzaehler insgesamt */
 	moveq.l  #0,d6          /* Zaehler fuer Jump-Points */
 	movea.l  pb_control(a0),a1
-	move.w   n_ptsin(a1),d7 /* Zaehler */
+	move.w   v_nptsin(a1),d7 /* Zaehler */
 	ble      v_bez_exit
 
 	moveq.l  #-1,d2
@@ -1165,7 +1163,7 @@ nvdi_lines:
 	move.l   a1,(sp)              /* Adresse von contrl */
 	move.l   sp,d1                /* pb */
 	movea.l  d1,a0                /* pb */
-	move.w   d0,n_ptsin(a1)       /* Anzahl der Koordinatenpaare */
+	move.w   d0,v_nptsin(a1)      /* Anzahl der Koordinatenpaare */
 
 	pea.l    nvdi_lines_ret(pc)
 
@@ -1198,9 +1196,9 @@ gdos_lines:
 	move.l   a2,(a0)+             /* pb_ptsout: Dummy */
 
 	move.w   #VSL_ENDS,(a1)+      /* Funktionsnummer */
-	clr.l    (a1)+                /* n_ptsin/n_ptsout */
-	move.w   #2,(a1)+             /* n_intin */
-	clr.l    (a1)+                /* n_intout/opcode2 */
+	clr.l    (a1)+                /* v_nptsin/v_nptsout */
+	move.w   #2,(a1)+             /* v_nintin */
+	clr.l    (a1)+                /* v_nintout/v_opcode2 */
 	move.w   wk_handle(a6),(a1)   /* Treiber-Handle */
 	movea.l  disp_addr2(a6),a0    /* Zeiger auf den Treiber-Dispatcher */
 	jsr      (a0)                 /* vsl_ends() aufrufen */
@@ -1214,9 +1212,9 @@ gdos_lines:
 	lea.l    sizeof_PB(a0),a1     /* contrl */
 
 	move.w   #V_PLINE,(a1)+       /* Funktionsnummer */
-	move.w   d0,(a1)+             /* n_ptsin: Anzahl der Koordinatenpaare */
-	clr.l    (a1)+                /* n_ptsout/n_intin */
-	clr.l    (a1)+                /* n_intout/opcode2 */
+	move.w   d0,(a1)+             /* v_nptsin: Anzahl der Koordinatenpaare */
+	clr.l    (a1)+                /* v_nptsout/v_nintin */
+	clr.l    (a1)+                /* v_nintout/v_opcode2 */
 	move.w   wk_handle(a6),(a1)   /* Treiber-Handle */
 	movea.l  disp_addr2(a6),a0    /* Zeiger auf den Treiber-Dispatcher */
 	jsr      (a0)                 /* v_pline() aufrufen */
@@ -1441,7 +1439,7 @@ v_pmarker:
 	move.w   l_color(a6),-(sp)
 	move.w   m_color(a6),l_color(a6)
 	movem.l  (a0),a0-a2     /* contrl/intin/ptsin */
-	move.w   n_ptsin(a0),d5 /* Anzahl der Polymarker */
+	move.w   v_nptsin(a0),d5 /* Anzahl der Polymarker */
 	subq.w   #1,d5          /* wegen dbf */
 	bmi.s    v_pm_exit
 	tst.w    m_type(a6)     /* Punkt? */
@@ -1599,9 +1597,9 @@ v_fillline:
  */
 v_fillarea:
 	movea.l  pb_control(a0),a1
-	tst.w    n_intin(a1)    /* bezarr vorhanden? */
+	tst.w    v_nintin(a1)    /* bezarr vorhanden? */
 	beq.s    v_fillarea_no_bez
-	cmpi.w   #13,opcode2(a1) /* Bezierfunktion benutzen ? */
+	cmpi.w   #13,v_opcode2(a1) /* Bezierfunktion benutzen ? */
 	beq      v_bez_fill
 	tst.w    bez_on(a6)
 	bne      v_bez_fill
@@ -1610,7 +1608,7 @@ v_fillarea_no_bez:movem.l  d1-d7/a2-a5,-(sp)
 	pea.l    vdi_fktret(pc)
 	movem.l  (a0),a1-a3
 
-	move.w   n_ptsin(a1),d0
+	move.w   v_nptsin(a1),d0
 	subq.w   #1,d0          /* wg. dbf */
 	ble      fpoly_exit
 	cmpi.w   #1,d0          /* nur eine Linie ? */
@@ -1620,7 +1618,7 @@ v_fillarea_no_bez:movem.l  d1-d7/a2-a5,-(sp)
 	cmpi.w   #4,d0          /* Rechteck ? */
 	beq      v_fae_box2
 v_fillarea2:
-	move.w   n_ptsin(a1),d4
+	move.w   v_nptsin(a1),d4
 	subq.w   #1,d4
 
 /*
@@ -1930,7 +1928,7 @@ v_bez_fill:
 
 	movea.l  pb_control(a0),a1
 	moveq.l  #0,d7          /* Highword loeschen */
-	move.w   n_ptsin(a1),d7 /* Zaehler */
+	move.w   v_nptsin(a1),d7 /* Zaehler */
 	cmp.w    #3,d7          /* mindestens 3 Koordinatenpaare? */
 	blt      v_bezf_exit
 
@@ -2304,9 +2302,9 @@ gpoly_loop:
 gpoly_border:
 	lea.l    sizeof_PB(sp),a1
 	move.w   #V_PLINE,(a1)+       /* Funktionsnummer */
-	move.w   #2,(a1)+             /* n_ptsin: Anzahl der Koordinatenpaare */
-	clr.l    (a1)+                /* n_ptsout/n_intin: 0 */
-	clr.l    (a1)+                /* n_intout/n_opcode2: 0 */
+	move.w   #2,(a1)+             /* v_nptsin: Anzahl der Koordinatenpaare */
+	clr.l    (a1)+                /* v_nptsout/v_nintin: 0 */
+	clr.l    (a1)+                /* v_nintout/v_opcode2: 0 */
 	move.w   wk_handle(a6),(a1)   /* Treiber-Handle */
 	move.l   a1,(sp)              /* pb_control: contrl */
 	move.l   a4,pb_ptsin(sp)      /* pb_ptsin: ptsin */
@@ -2433,10 +2431,10 @@ gdos_fline:
 	move.l   a2,(a0)+             /* pb_intout: Dummy */
 	move.l   a2,(a0)+             /* pb_ptsout: Dummy */
 
-	move.w   #VR_RECFL,opcode(a1) /* Funktionsnummer */
-	move.w   #2,n_ptsin(a1)       /* Anzahl der Koordinatenpaare */
-	clr.w    n_intin(a1)          /* keine Integers */
-	move.w   wk_handle(a6),handle(a1) /* Treiber-Handle */
+	move.w   #VR_RECFL,v_opcode(a1) /* Funktionsnummer */
+	move.w   #2,v_nptsin(a1)      /* Anzahl der Koordinatenpaare */
+	clr.w    v_nintin(a1)         /* keine Integers */
+	move.w   wk_handle(a6),v_handle(a1) /* Treiber-Handle */
 	move.w   d0,(a2)+             /* x1 */
 	move.w   d1,(a2)+             /* y */
 	move.w   d2,(a2)+             /* x2 */
@@ -2445,8 +2443,8 @@ gdos_fline:
 	movea.l  disp_addr2(a6),a0    /* Zeiger auf den Treiber-Dispatcher */
 	cmpi.w   #SCREEN9,driver_id(a6) /* Bildschirmtreiber? */
 	bls.s    gdos_fline_jsr
-	move.w   #V_GDP,opcode(a1)    /* Funktionsnummer */
-	move.w   #V_BAR,opcode2(a1)   /* Unterfunktion */
+	move.w   #V_GDP,v_opcode(a1)  /* Funktionsnummer */
+	move.w   #V_BAR,v_opcode2(a1) /* Unterfunktion */
 	addq.w   #1,-(a2)             /* wegen eines Fehlers in Druckertreibern */
 	subq.w   #1,-4(a2)            /* eine groessere v_bar() zeichnen */
 gdos_fline_jsr:
@@ -2480,9 +2478,9 @@ gperimeter:
 	move.l   a2,(a0)+             /* pb_ptsout: Dummy */
 
 	move.w   #VSF_PERIMETER,(a1)+ /* Funktionsnummer */
-	clr.l    (a1)+                /* n_ptsin/n_ptsout */
-	move.w   #1,(a1)              /* n_intin */
-	move.w   wk_handle(a6),handle-n_intin(a1) /* Treiber-Handle */
+	clr.l    (a1)+                /* v_nptsin/v_nptsout */
+	move.w   #1,(a1)              /* v_nintin */
+	move.w   wk_handle(a6),v_handle-v_nintin(a1) /* Treiber-Handle */
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)
 
@@ -2514,10 +2512,10 @@ gdos_get_lattr:
 	lea.l    32(a2),a2
 	move.l   a2,(a0)              /* pb_ptsout */
 
-	move.w   #VQL_ATTRIBUTES,opcode(a1) /* Funktionsnummer */
-	clr.w    n_ptsin(a1)
-	clr.w    n_intin(a1)
-	move.w   wk_handle(a6),handle(a1) /* Treiber-Handle */
+	move.w   #VQL_ATTRIBUTES,v_opcode(a1) /* Funktionsnummer */
+	clr.w    v_nptsin(a1)
+	clr.w    v_nintin(a1)
+	move.w   wk_handle(a6),v_handle(a1) /* Treiber-Handle */
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)                 /* vql_attributes() aufrufen */
 
@@ -2556,38 +2554,38 @@ gdos_line_std:
 	move.l   a2,(a0)+             /* pb_intout */
 	move.l   a2,(a0)              /* pb_ptsout */
 
-	move.w   wk_handle(a6),handle(a3) /* Treiber-Handle */
-	move.w   #VQF_ATTRIBUTES,opcode(a3) /* Funktionsnummer */
-	clr.w    n_ptsin(a3)
-	clr.w    n_intin(a3)
+	move.w   wk_handle(a6),v_handle(a3) /* Treiber-Handle */
+	move.w   #VQF_ATTRIBUTES,v_opcode(a3) /* Funktionsnummer */
+	clr.w    v_nptsin(a3)
+	clr.w    v_nintin(a3)
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)                 /* vqf_attributes() aufrufen */
 	move.w   sizeof_PB+sizeof_contrl+32+2(sp),d0
 	move.w   d0,f_color(a6)       /* aktuelle Fuellfarbe */
 
 	move.w   #VSL_COLOR,(a3)      /* Linienfarbe setzen */
-	move.w   #1,n_intin(a3)
+	move.w   #1,v_nintin(a3)
 	move.w   d0,(a4)              /* intin[0] = Linienfarbe */
-	move.l   sp,d1                /* n_ptsin ist 0 */
+	move.l   sp,d1                /* v_nptsin ist 0 */
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)                 /* vsl_color() aufrufen */
 
 	move.w   #VSL_TYPE,(a3)       /* Linientyp setzen */
 	move.w   #L_SOLID,(a4)        /* intin[0] = durchgehende Linie */
-	move.l   sp,d1                /* n_intin ist 1, n_ptsin 0 */
+	move.l   sp,d1                /* v_nintin ist 1, v_nptsin 0 */
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)                 /* vsl_type() aufrufen */
 
 	move.w   #VSL_ENDS,(a3)       /* Linienenden setzen */
-	move.w   #2,n_intin(a3)
+	move.w   #2,v_nintin(a3)
 	clr.l    (a4)                 /* intin[0/1] =  Start und Ende eckig */
-	move.l   sp,d1                /* n_ptsin ist 0 */
+	move.l   sp,d1                /* v_nptsin ist 0 */
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)                 /* vsl_ends() aufrufen */
 
 	move.w   #VSL_WIDTH,(a3)      /* Linienbreite setzen */
-	move.w   #1,n_ptsin(a3)
-	clr.w    n_intin(a3)
+	move.w   #1,v_nptsin(a3)
+	clr.w    v_nintin(a3)
 	move.w   #1,(a4)              /* ptsin[0] = Breite 1 */
 	move.l   sp,d1
 	movea.l  disp_addr2(a6),a0
@@ -2621,33 +2619,33 @@ gdos_set_lattr:
 	move.l   a2,(a0)+             /* pb_intout */
 	move.l   a2,(a0)              /* pb_ptsout */
 
-	move.w   wk_handle(a6),handle(a3) /* Treiber-Handle */
-	move.w   #VSL_WIDTH,opcode(a3)
-	move.w   #1,n_ptsin(a3)
-	clr.w    n_intin(a3)
+	move.w   wk_handle(a6),v_handle(a3) /* Treiber-Handle */
+	move.w   #VSL_WIDTH,v_opcode(a3)
+	move.w   #1,v_nptsin(a3)
+	clr.w    v_nintin(a3)
 	move.w   l_width(a6),(a4)     /* ptsin[0] = Linienbreite */
 	move.l   sp,d1
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)
 
-	move.w   #VSL_ENDS,opcode(a3) /* Funktionsnummer */
-	clr.w    n_ptsin(a3)
-	move.w   #2,n_intin(a3)
+	move.w   #VSL_ENDS,v_opcode(a3) /* Funktionsnummer */
+	clr.w    v_nptsin(a3)
+	move.w   #2,v_nintin(a3)
 	move.l   l_start(a6),(a4)     /* intin[0/1] = Linienenden */
 	move.l   sp,d1
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)
 
-	move.w   #VSL_COLOR,opcode(a3)
-	move.w   #1,n_intin(a3)
+	move.w   #VSL_COLOR,v_opcode(a3)
+	move.w   #1,v_nintin(a3)
 	move.w   l_color(a6),(a4)     /* intin[0] = Linienfarbe */
-	move.l   sp,d1                /* n_ptsin ist 0 */
+	move.l   sp,d1                /* v_nptsin ist 0 */
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)
 
-	move.w   #VSL_TYPE,opcode(a3)
+	move.w   #VSL_TYPE,v_opcode(a3)
 	move.w   l_style(a6),(a4)     /* intin[0] = Linienstil */
-	move.l   sp,d1                /* n_intin ist 1, n_ptsin ist 0 */
+	move.l   sp,d1                /* v_nintin ist 1, v_nptsin ist 0 */
 	movea.l  disp_addr2(a6),a0
 	jsr      (a0)
 
@@ -2683,7 +2681,7 @@ vr_recfl:
 v_gdp:
 	movem.l  d1-d7/a2-a5,-(sp)
 	movem.l  (a0),a1-a3
-	move.w   opcode2(a1),d0 /* Unteropcode */
+	move.w   v_opcode2(a1),d0 /* Unteropcode */
 	subq.w   #V_BAR,d0
 	cmpi.w   #V_BEZ_ONOFF-V_BAR,d0
 	bhi.s    v_gdp_err
@@ -2910,12 +2908,12 @@ vpfl_ex:
 v_justified:
 	tst.l    (a2)+             /* keine Dehnung ? */
 	bne.s    v_justified2
-	subq.w   #2,n_intin(a1)
+	subq.w   #2,v_nintin(a1)
 	move.l   a1,-(sp)
 	movea.l  p_gtext(a6),a4
 	jsr      (a4)
 	movea.l  (sp)+,a1
-	addq.w   #2,n_intin(a1)    /* korrigieren */
+	addq.w   #2,v_nintin(a1)   /* korrigieren */
 	rts
 v_justified2:
 	bra      text_justified
@@ -2925,7 +2923,7 @@ v_justified2:
  */
 v_bez_on:
 	movea.l  pb_intout(a0),a0
-	tst.w    n_ptsin(a1)
+	tst.w    v_nptsin(a1)
 	bne.s    v_bez_on2
 	clr.w    bez_on(a6)
 	clr.w    (a0)
