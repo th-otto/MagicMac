@@ -407,7 +407,7 @@ setexc:           movem.l  d1-d2/a1-a2,-(sp)
 
 ;Ausgaben
 ;d0-a6 werden zerstoert
-init_gdos:        lea.l    (screen_driver).w,a1 ;Treibertabelle
+init_gdos:        lea.l    screen_driver,a1     ;Treibertabelle
                   move.l   #$4E564449,(a1)+     ; 'NVDI'
                   clr.l    (a1)+
                   clr.b    (a1)+                ;Ende des Namens
@@ -423,7 +423,7 @@ init_gdos:        lea.l    (screen_driver).w,a1 ;Treibertabelle
                   movea.l  os_magic(a0),a0      ;Zeiger auf die AES-Variablen
                   move.w   AESVARS_idrive(a0),d0   ;Installationslaufwerk
 
-                  lea.l    (gdos_path).w,a0
+                  lea.l    gdos_path,a0
                   add.w    #'A',d0
                   move.b   d0,(a0)+       ;Laufwerksbuchstabe
                   move.b   #':',(a0)+
@@ -477,7 +477,7 @@ Mfree: ; not exported!
                   movem.l  (sp)+,d1-d2/a0-a2
                   rts
 
-clear_cpu_caches: move.w   (nvdi_cpu_type).w,d0    ;CPU-Kennung
+clear_cpu_caches: move.w   nvdi_cpu_type,d0        ;CPU-Kennung
                   cmp.w    #40,d0
                   blt.s    clear_cpu030
                   move.w   sr,-(sp)                ;Statusregister sichern
@@ -519,7 +519,7 @@ vdi_blinit:       movem.l  d0-d2/a0-a2,-(sp)
                   
                   bsr      copy_nvdi_struct     ;NVDI-Struktur kopieren
 
-                  lea.l    (bconout_tab).w,a0
+                  lea.l    bconout_tab,a0
                   move.l   #V_HID_CNT,(a0)+     ;cursor_cnt_vec: Zeiger auf den Cursor-Zaehler
                   move.l   #vbl_cursor,(a0)+    ;cursor_vbl_vec: Zeiger auf die Cursor-VBL-Routine
                   move.l   #con_state,(a0)+     ;vt52_vec_vec: Zeiger auf den VT52-Sprungvektor
@@ -527,32 +527,32 @@ vdi_blinit:       movem.l  d0-d2/a0-a2,-(sp)
                   move.l   #vt_rawcon,(a0)+     ;rawcon_vec: Zeiger auf die Standardroutine fuer RAWCON
                   move.l   #vt_con,(con_state).w ;Sprungvektor fuer VT52
 
-                  lea.l    (xbios_tab).w,a0
+                  lea.l    xbios_tab,a0
                   move.l   #dummy_rte,(a0)+  ;call_old_xbios
                   move.l   #dummy_rte,(a0)+  ;xbios_vec
 
-                  lea.l    (gemdos_tab).w,a0
+                  lea.l    gemdos_tab,a0
                   move.l   #dummy_rte,(a0)+  ;call_old_gemdos
                   move.l   #dummy_rte,(a0)+  ;gemdos_vec
 
-                  lea.l    (mouse_tab).w,a0
+                  lea.l    mouse_tab,a0
                   move.l   #tmp_buffer,(a0)+ ;mouse_buffer
                   move.l   #draw_sprite_in,(a0)+   ;draw_spr_vec
                   move.l   #undraw_sprite_in,(a0)+ ;undraw_spr_vec
 
                   bsr      init_fonts        ;Fontheader kopieren
 
-                  lea.l    (screen_driver).w,a0  ;Zeiger auf die Treiberstruktur
+                  lea.l    screen_driver,a0  ;Zeiger auf die Treiberstruktur
                   clr.l    driver_addr(a0)   ;Treiberadresse loeschen
 
-                  clr.w    (blitter).w       ;kein Blitter
+                  clr.w    blitter       ;kein Blitter
 
-                  tst.l    (vdi_setup_ptr).w                  ;kein direkter Hardware-Zugriff (Mac)?
+                  tst.l    vdi_setup_ptr                  ;kein direkter Hardware-Zugriff (Mac)?
                   bne.s    vdi_blinit_exit
 
                   move.l   d0,-(sp)
                   bsr.s    chk_blitter
-                  move.w   d0,(blitter).w
+                  move.w   d0,blitter
                   move.l   (sp)+,d0
 vdi_blinit_exit:  movem.l  (sp)+,d0-d2/a0-a2
                   rts
@@ -588,8 +588,8 @@ rez_bps_tab:      DC.W     1,2,4,8,16
 ;a0.l Zeiger auf Aufloesungen
 create_falcon_rez:
                   movem.l  d0-d2,-(sp)
-                  move.w   (modecode).w,d0
-                  lea.l    (vt52_falcon_rez).w,a0
+                  move.w   modecode,d0
+                  lea.l    vt52_falcon_rez,a0
 
                   moveq.l  #7,d1
                   and.w    d0,d1          ;Farbtiefe
@@ -666,14 +666,14 @@ vt52_rez_tab:     DC.W 4,160,320,200      ;0 320 * 200 ST
 vt52_init:        movem.l  d0-d2/a0-a2,-(sp)
                   move.w   (PLANES).w,-(sp)           ;alte Plane-Anzahl merken
 
-                  move.l   (vdi_setup_ptr).w,d0       ;kein direkter Hardware-Zugriff (Mac)?
+                  move.l   vdi_setup_ptr,d0           ;kein direkter Hardware-Zugriff (Mac)?
                   bne.s    vt52_init_MAC
 
                   moveq.l  #0,d0
                   move.b   (sshiftmd).w,d0            ;XBIOS-Aufloesung
                   cmp.w    #FALCONMDS,d0              ;Falcon?
                   bne.s    init_vt52_st_tt
-                  move.w   4(sp),(modecode).w         ;neuen modecode setzen
+                  move.w   4(sp),modecode             ;neuen modecode setzen
                   bsr      create_falcon_rez
                   bra.s    init_vt52_fad
 init_vt52_st_tt:  lsl.w    #3,d0                      ;*8 (4 Worteintraege pro Zeile)
@@ -726,7 +726,7 @@ vt52_init_MAC:    movea.l  d0,a0
 vt52_init_exit:   bsr.s    init_vt52_vars             ;VT52-Variablen initialisieren
                   move.w   (sp)+,d0                   ;zuletzt eingestellte Plane-Anzahl
 
-                  tst.w    (system_boot).w            ;noch waehrend der Bootphase?
+                  tst.w    system_boot                ;noch waehrend der Bootphase?
                   bne.s    vt52_init_return
 
                   sub.w    (PLANES).w,d0              ;wurde die Plane-Anzahl veraendert?
@@ -809,7 +809,7 @@ vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
                   jsr      init_NOD_drivers     ;Offscreen-Treiber initialisieren
                   tst.w    d0                   ;alles in Ordnung?
                   bne.s    vdi_init_fonts
-                  tst.l    (vdi_setup_ptr).w    ;kein direkter Hardware-Zugriff (Mac)?
+                  tst.l    vdi_setup_ptr        ;kein direkter Hardware-Zugriff (Mac)?
                   bne      load_scr_err
 
                   lea.l    no_offscreen_drivers(pc),a0
@@ -818,7 +818,7 @@ vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
                   lea.l    -128(sp),sp          ;Platz auf dem Stack reservieren
 
                   movea.l  sp,a0
-                  lea.l    (gdos_path).w,a1     ;x:\GEMSYS\
+                  lea.l    gdos_path,a1         ;x:\GEMSYS\
                   jsr      strgcpy
                   movea.l  sp,a0
                   lea.l    mcmd_path(pc),a1
@@ -845,16 +845,16 @@ vdi_init_fonts:   bsr      init_fonts           ;Fonts initialisieren
 
                   bsr      load_scr_drvr        ;Bildschirmtreiber laden
 
-                  lea.l    (screen_driver).w,a0
+                  lea.l    screen_driver,a0
                   movea.l  driver_offscreen(a0),a1
-                  movea.l  (linea_wk_ptr).w,a6
+                  movea.l  linea_wk_ptr,a6
                   bsr      wk_defaults          ;LINEA-Workstation initialisieren
-                  movea.l  (aes_wk_ptr).w,a6
+                  movea.l  aes_wk_ptr,a6
                   bsr      wk_defaults          ;AES-Workstation initialisieren
 
                   bsr      init_cookies         ;eigene Cookies setzen
 
-                  clr.w    (system_boot).w      ;VDI ist initialisiert
+                  clr.w    system_boot          ;VDI ist initialisiert
                   movem.l  (sp)+,d0-d2/a0-a3/a6
                   rts
 
@@ -867,17 +867,17 @@ vdi_init_fonts:   bsr      init_fonts           ;Fonts initialisieren
 ;-
 load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
 
-                  movea.l  (screen_driver+driver_addr).w,a0
+                  movea.l  screen_driver+driver_addr,a0
                   move.l   a0,d0
                   bne      load_scr_call
 
-                  tst.l    (vdi_setup_ptr).w    ;kein direkter Hardware-Zugriff (Mac)?
+                  tst.l    vdi_setup_ptr        ;kein direkter Hardware-Zugriff (Mac)?
                   bne.s    load_scr_MAC
 
                   moveq.l  #0,d0
                   move.b   (sshiftmd).w,d0      ;XBIOS-Aufloesung
-                  move.w   (modecode).w,d1      ;Falcon-Moduswort
-                  lea.l    (gdos_path).w,a0
+                  move.w   modecode,d1          ;Falcon-Moduswort
+                  lea.l    gdos_path,a0
                   bsr      load_ATARI_driver    ;Treiber fuer den Atari laden
                   move.l   a0,d0                ;Treiber vorhanden?
                   bne.s    load_scr_call
@@ -888,7 +888,7 @@ load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
                   lea.l    -128(sp),sp          ;Platz auf dem Stack reservieren
 
                   movea.l  sp,a0
-                  lea.l    (gdos_path).w,a1     ;x:\GEMSYS\
+                  lea.l    gdos_path,a1         ;x:\GEMSYS\
                   jsr      strgcpy
                   movea.l  sp,a0
                   lea.l    mcmd_path(pc),a1
@@ -912,28 +912,29 @@ load_scr_halt:    nop
                   bra.s    load_scr_halt
 
 load_scr_MAC:     
-                  movea.l  (vdi_setup_ptr).w,a0             ;kein direkter Hardware-Zugriff (Mac)
+                  movea.l  vdi_setup_ptr,a0             ;kein direkter Hardware-Zugriff (Mac)
                   IFNE NEW_SETUP_API
                   movea.l  VSD_displays(a0),a0              ;Zeiger auf VDI_DISPLAY-Struktur
                   ENDC
-                  lea.l    (gdos_path).w,a1
+                  lea.l    gdos_path,a1
                   bsr      load_MAC_driver                  ;Treiber fuer den Mac laden
                   move.l   a0,d0                            ;Treiber vorhanden?
                   beq.s    load_scr_err
                   
-load_scr_call:    lea.l    (screen_driver).w,a3 ;Treiberstruktur fuer den Bildschirmtreiber
-                  move.l   a0,driver_addr(a3)   ;Treiberstart
-                  movea.l  DRVR_init(a0),a2     ;Adresse der Initroutine
-                  lea.l    (nvdi_struct).w,a0   ;NVDI-Struktur uebergeben
-                  movea.l  a3,a1                ;Zeiger auf die Treiberstruktur
-                  jsr      (a2)
-                  move.l   d0,driver_wk_len(a3) ;Laenge der Wk fuer NVDI-Treiber
-                  bne.s    load_scr_exit        ;alles in Ordnung?
+load_scr_call:
+	lea.l    screen_driver,a3     ;Treiberstruktur fuer den Bildschirmtreiber
+	move.l   a0,driver_addr(a3)   ;Treiberstart
+	movea.l  DRVR_init(a0),a2     ;Adresse der Initroutine
+	lea.l    nvdi_struct,a0       ;NVDI-Struktur uebergeben
+	movea.l  a3,a1                ;Zeiger auf die Treiberstruktur
+	jsr      (a2)
+	move.l   d0,driver_wk_len(a3) ;Laenge der Wk fuer NVDI-Treiber
+	bne.s    load_scr_exit        ;alles in Ordnung?
 
-                  tst.l    (vdi_setup_ptr).w    ;kein direkter Hardware-Zugriff (Mac)?
-                  bne.s    load_scr_err
+	tst.l    vdi_setup_ptr        ;kein direkter Hardware-Zugriff (Mac)?
+	bne.s    load_scr_err
 
-                  illegal                       ;VDI-Treiber meldet Fehler
+	illegal                       ;VDI-Treiber meldet Fehler
 
 load_scr_err:     
                   IFNE NEW_SETUP_API
@@ -957,8 +958,8 @@ load_scr_exit:    movem.l  (sp)+,d0-d2/a0-a2
 ;Ausgaben:
 ;-
 unload_scr_drvr:  movem.l  d0-d2/a0-a2,-(sp)
-                  lea.l    (nvdi_struct).w,a0 ;NVDI-Struktur uebergeben
-                  lea.l    (screen_driver).w,a1 ;Zeiger auf die Treiberstruktur
+                  lea.l    nvdi_struct,a0    ;NVDI-Struktur uebergeben
+                  lea.l    screen_driver,a1  ;Zeiger auf die Treiberstruktur
                   move.l   driver_addr(a1),d0
                   beq.s    unload_scr_exit   ;Treiber vorhanden?
                   movea.l  d0,a2
@@ -968,7 +969,7 @@ unload_scr_drvr:  movem.l  d0-d2/a0-a2,-(sp)
                   tst.w    2(sp)             ;wurde die Plane-Anzahl veraendert?
                   beq.s    unload_scr_exit
                   
-                  lea.l    (screen_driver).w,a1 ;Zeiger auf die Treiberstruktur
+                  lea.l    screen_driver,a1  ;Zeiger auf die Treiberstruktur
                   move.l   driver_addr(a1),a0
                   clr.l    driver_addr(a1)   ;Treiberadresse loeschen
                   bsr      Mfree_sys         ;Treiberspeicher freigeben
@@ -979,42 +980,42 @@ unload_scr_exit:  movem.l  (sp)+,d0-d2/a0-a2
 ; zerstoert d0-d2/a0-a2
 init_vdi_vecs:    move.l   #WK_SIZE,d0
                   bsr      Malloc_sys
-                  move.l   a0,(linea_wk_ptr).w
+                  move.l   a0,linea_wk_ptr
                   move.l   #WK_SIZE,d0
                   bsr      clear_mem         ;Speicher der LineA-Workstation loeschen
 
                   move.l   #WK_SIZE,d0
                   bsr      Malloc_sys
-                  move.l   a0,(aes_wk_ptr).w
-                  move.l   a0,(nvdi_aes_wk).w
+                  move.l   a0,aes_wk_ptr
+                  move.l   a0,nvdi_aes_wk
                   move.l   #WK_SIZE,d0
                   bsr      clear_mem         ;Speicher der AES-Workstation loeschen
 
                   move.l   #NVDI_BUF_SIZE,d0
                   bsr      Malloc_sys
-                  move.l   a0,(buffer_ptr).w ;Buffer fuer Texteffekte usw.
+                  move.l   a0,buffer_ptr     ;Buffer fuer Texteffekte usw.
 
                   move.w   #MAX_HANDLES-1,d0
-                  lea.l    (wk_tab0).w,a1    ;Zeiger auf die Workstationtabelle-4
-                  move.l   (linea_wk_ptr).w,(a1)+ ;Adresse der LINE-A-Workstation
+                  lea.l    wk_tab0,a1        ;Zeiger auf die Workstationtabelle-4
+                  move.l   linea_wk_ptr,(a1)+ ;Adresse der LINE-A-Workstation
 make_wk_tab:      move.l   #closed,(a1)+
                   dbra     d0,make_wk_tab
-                  move.w   #CLOSED,(first_device).w
+                  move.w   #CLOSED,first_device
 
-                  lea.l    (color_map_ptr).w,a1
+                  lea.l    color_map_ptr,a1
                   move.l   #color_map_tab,(a1)+
                   move.l   #color_remap_tab,(a1)+
 
                   movea.l  (sysbase).w,a0 ;Zeiger auf Sysheader
 
                   movea.l  os_beg(a0),a0  ;vorhandenen Ramheader uebergehen
-                  move.l   kbshift(a0),(key_state).w ;Tastenstatus (Kbshift)
+                  move.l   kbshift(a0),key_state ;Tastenstatus (Kbshift)
                   cmpi.w   #$0106,os_version(a0) ;bell_hook schon vorhanden?
                   bge.s    get_act_pd
                   move.l   #make_pling,(bell_hook).w ;Glocken-Routine
 get_act_pd:       cmpi.w   #$0100,os_version(a0) ;TOS 1.0 ?
                   bne.s    init_vdi_vecs_exit
-                  move.l   #$00000E1B,(key_state).w ;Tastenstatus (Kbshift) von TOS 1.0
+                  move.l   #$00000E1B,key_state ;Tastenstatus (Kbshift) von TOS 1.0
 init_vdi_vecs_exit:
                   rts
 
@@ -1023,7 +1024,7 @@ init_vdi_vecs_exit:
 ;d0-d1/a0-a3 werden zerstoert
 init_fonts:       movem.l  d0-d2/a0-a2,-(sp)
                   moveq.l  #2,d1          ;Zaehler
-                  lea.l    (font_hdr1).w,a1
+                  lea.l    font_hdr1,a1
                   lea.l    linea_font_tab(pc),a2 ;neue LINE-A-Fonttabelle
 init_fonts_loop:  move.l   (a2)+,d0       ;keine weiteren Fonts ?
                   movea.l  d0,a0
@@ -1054,7 +1055,7 @@ copy_header_loop: move.l   (a0)+,(a1)+
 copy_nvdi_struct: movem.l  d0/a0-a1,-(sp)
                   moveq.l  #((nvdi_struct_rom_end-nvdi_struct_rom)/2)-1,d0
                   lea.l    nvdi_struct_rom(pc),a0
-                  lea.l    (nvdi_struct).w,a1
+                  lea.l    nvdi_struct,a1
 copy_nvdi_struct2:move.w   (a0)+,(a1)+
                   dbra     d0,copy_nvdi_struct2
                   movem.l  (sp)+,d0/a0-a1
@@ -1118,19 +1119,19 @@ cookie_exit:      addq.l   #8,sp          ;Stack korrigieren
 ;d0-d2/a0 werden zerstoert
 search_cookies:   move.l   #$5F435055,d0 ; '_CPU'-Cookie suchen
                   bsr      search_cookie
-                  move.l   d1,(nvdi_cookie_CPU).w   ;Prozessortyp
+                  move.l   d1,nvdi_cookie_CPU   ;Prozessortyp
                   sub.w    #20,d1
                   spl      d1
                   ext.w    d1
-                  move.w   d1,(cpu020).w
+                  move.w   d1,cpu020
 
                   move.l   #$5F56444F,d0  ; '_VDO'-Cookie suchen
                   bsr      search_cookie
-                  move.l   d1,(nvdi_cookie_VDO).w
+                  move.l   d1,nvdi_cookie_VDO
                   
                   move.l   #$5F4D4348,d0  ; '_MCH'-Cookie suchen
                   bsr      search_cookie
-                  move.l   d1,(nvdi_cookie_MCH).w
+                  move.l   d1,nvdi_cookie_MCH
                   rts
 
 ;Cookie suchen
@@ -1602,7 +1603,7 @@ scanline:         cmp.w    clip_ymin(a6),d1
                   jmp      (a4)           ;Rueckgabewert in d0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-dummy_rts:        rts
+just_rts:         rts
 dummy_rte:        rte
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .INCLUDE "inquire.s"                
