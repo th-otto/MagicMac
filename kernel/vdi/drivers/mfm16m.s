@@ -554,7 +554,7 @@ vt_char_col:      movem.l  d3-d4/a3,-(sp)
                   lea      palette_data(pc),a2
                   move.l   0(a2,d2.w),d2  ;Vordergrundfarbe
                   move.l   0(a2,d3.w),d3  ;Hintergrundfarbe
-                  btst     #INVERSE,V_STAT_0.w ;invertieren ?
+                  btst     #CURSOR_INVERSE,V_STAT_0.w ;invertieren ?
                   beq.s    vt_char_col2
                   exg      d2,d3
 vt_char_col2:     movea.l  d0,a0
@@ -594,7 +594,7 @@ vt_n_column:      move.w   V_CUR_XY0.w,d0
                   addq.w   #1,V_CUR_XY0.w
                   moveq    #-1,d0         ;alles OK fuer MiNT
                   rts
-vt_l_column:      btst     #WRAP,V_STAT_0.w ;Wrapping ein ?
+vt_l_column:      btst     #CURSOR_WRAP,V_STAT_0.w ;Wrapping ein ?
                   beq.s    vt_con_exit
                   addq.w   #1,V_HID_CNT.w ;Cursor sperren
 vt_l_column2:     ext.l    d0
@@ -892,18 +892,18 @@ vt_seq_o:         move.w   d0,d2
 vt_seq_o_exit:    rts
 ;REVERSE VIDEO ON (VDI 5, ESCAPE 13)/Reverse video (VT52 ESC p)
 v_rvon:
-vt_seq_p:         bset     #INVERSE,V_STAT_0.w
+vt_seq_p:         bset     #CURSOR_INVERSE,V_STAT_0.w
                   rts
 ; REVERSE VIDEO OFF (VDI 5, ESCAPE 14)/Normal Video (VT52 ESC q)
 v_rvoff:
-vt_seq_q:         bclr     #INVERSE,V_STAT_0.w
+vt_seq_q:         bclr     #CURSOR_INVERSE,V_STAT_0.w
                   rts
 ;Wrap at end of line (VT52 ESC v)
-vt_seq_v:         bset     #WRAP,V_STAT_0.w
+vt_seq_v:         bset     #CURSOR_WRAP,V_STAT_0.w
 
                   rts
 ;Discard end of line (VT52 ESC w)
-vt_seq_w:         bclr     #WRAP,V_STAT_0.w
+vt_seq_w:         bclr     #CURSOR_WRAP,V_STAT_0.w
                   rts
 
 scroll_up_page:   movem.l  d2-d7/a1-a6,-(sp)

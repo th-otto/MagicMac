@@ -587,7 +587,7 @@ vtm_rawcon:       movea.l  V_FNT_AD.w,a0  ;Fontimageadresse
                   move.w   BYTES_LIN.w,d2 ;Bytes pro Zeile
                   move.b   #4,V_CUR_CT.w  ;Zaehler auf 4 -> keinen Cursor zeichnen
                   bclr     #CURSOR_STATE,V_STAT_0.w ;Cursor nicht sichtbar
-                  btst     #INVERSE,V_STAT_0.w ;invertieren ?
+                  btst     #CURSOR_INVERSE,V_STAT_0.w ;invertieren ?
                   bne      vtm_charrev
                   sub.w    V_CEL_HT.w,d0  ;Zeichenhoehe 16 ?
                   beq.s    vtm_charx_jmp
@@ -635,7 +635,7 @@ vtm_n_column:     move.w   V_CUR_XY0.w,d0
                   addq.w   #1,V_CUR_XY0.w
                   rts
 
-vtm_l_column:     btst     #WRAP,V_STAT_0.w ;Wrapping ein ?
+vtm_l_column:     btst     #CURSOR_WRAP,V_STAT_0.w ;Wrapping ein ?
                   beq.s    vtm_con_exit
                   addq.w   #1,V_HID_CNT.w ;Cursor sperren
 vtm_l_column2:    sub.l    d0,V_CUR_AD.w  ;Zeilenanfang (d0: High-Word=0 !)
@@ -750,7 +750,7 @@ vtc_rawcon:       move.l   d3,-(sp)
                   move.l   V_COL_BG.w,d3  ;Hintergrundfarbe/Vordergrundfarbe
                   move.b   #4,V_CUR_CT.w  ;Blinkzaehler hochsetzen -> kein Cursor
                   bclr     #CURSOR_STATE,V_STAT_0.w ;Cursor nicht sichtbar
-                  btst     #INVERSE,V_STAT_0.w ;invertieren ?
+                  btst     #CURSOR_INVERSE,V_STAT_0.w ;invertieren ?
                   beq.s    vtc_char_loop
                   swap     d3             ;Hinter- und Vordergrundfarbe tauschen
 vtc_char_loop:    move.l   a1,-(sp)
@@ -780,7 +780,7 @@ vtc_n_column:     subq.l   #1,a1
                   move.l   a1,V_CUR_AD.w
                   moveq    #-1,d0         ;alles OK fuer MiNT
                   rts
-vtc_l_column:     btst     #WRAP,V_STAT_0.w ;Wrapping ein ?
+vtc_l_column:     btst     #CURSOR_WRAP,V_STAT_0.w ;Wrapping ein ?
                   beq.s    vtc_con_exit1
                   addq.w   #1,V_HID_CNT.w ;Cursor sperren
                   subq.w   #1,d0
@@ -1272,26 +1272,26 @@ vt_seq_o_exit:    rts
  * REVERSE VIDEO ON (VDI 5, ESCAPE 13)/Reverse video (VT52 ESC p)
  */
 v_rvon:
-vt_seq_p:         bset     #INVERSE,V_STAT_0.w
+vt_seq_p:         bset     #CURSOR_INVERSE,V_STAT_0.w
                   rts
 
 /*
  * REVERSE VIDEO OFF (VDI 5, ESCAPE 14)/Normal Video (VT52 ESC q)
  */
 v_rvoff:
-vt_seq_q:         bclr     #INVERSE,V_STAT_0.w
+vt_seq_q:         bclr     #CURSOR_INVERSE,V_STAT_0.w
                   rts
 
 /*
  * Wrap at end of line (VT52 ESC v)
  */
-vt_seq_v:         bset     #WRAP,V_STAT_0.w
+vt_seq_v:         bset     #CURSOR_WRAP,V_STAT_0.w
                   rts
 
 /*
  * Discard end of line (VT52 ESC w)
  */
-vt_seq_w:         bclr     #WRAP,V_STAT_0.w
+vt_seq_w:         bclr     #CURSOR_WRAP,V_STAT_0.w
                   rts
 
 scroll_up_page:   movem.l  d2-d7/a1-a6,-(sp)

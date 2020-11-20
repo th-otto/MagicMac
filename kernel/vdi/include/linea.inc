@@ -356,6 +356,6 @@ P_MASK              EQU 50                  ;(Musterlaenge -2) * Ebenenanzahl
 CURSOR_BL           EQU 0                   ;blink enabled
 CURSOR_STATE        EQU 1                   ;currently visible
 CURSOR_ONOFF        EQU 2                   ;cursor enabled (unused)
-WRAP                EQU 3                   ;wrap at eol
-INVERSE             EQU 4                   ;reverse video
+CURSOR_WRAP         EQU 3                   ;wrap at eol
+CURSOR_INVERSE      EQU 4                   ;reverse video
 CURSOR_SAVED        EQU 5                   ;cursor position was saved
