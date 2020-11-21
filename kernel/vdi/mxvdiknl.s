@@ -174,13 +174,9 @@ vt52_vec_vec:     DS.L 1                  ;Zeiger auf bconout_vec
 con_vec:          DS.L 1                  ;Vektor fuer Bios-Ausgabe ueber CON
 rawcon_vec:       DS.L 1                  ;Vektor fuer Bios-Ausgabe ueber RAWCON
 
-color_map_ptr:    DS.L 1
-color_remap_ptr:  DS.L 1
+color_map_tables: DS.L 2
 
-mouse_tab:
-mouse_buffer:     DS.L 1                  ;Zeiger auf den Hintergrundbuffer
-draw_spr_vec:     DS.L 1                  ;Vektor fuer DRAW SPRITE
-undraw_spr_vec:   DS.L 1                  ;Vektor fuer UNDRAW SPRITE
+mouse_tab:        DS.L 3
 
 xbios_tab:
 call_old_xbios:   DS.L 1                  ;Zeiger auf die Routine, die XBIOS anspringt
@@ -308,7 +304,7 @@ nvdi_struct_rom:  DC.W  NVDI_VERSION      ;Versionsnummer im BCD-Format
 
                   DC.L  font_hdr1         ;Zeiger auf den ersten Fontheader
                   DC.L  sys_font_info     ;Zeiger auf Informationsstruktur ueber die Bildschirm-Systemfonts
-                  DC.L  color_map_ptr     ;Zeiger auf die Farbumwandlungstabellen
+                  DC.L  color_map_tables  ;Zeiger auf die Farbumwandlungstabellen
                   DC.L  work_out0         ;.l Zeiger auf die Standard-Ausgaben fuer v_opnwk/v_opnvwk/v_opnbm
                   DC.L  extnd_out0        ;.l Zeiger auf die Standard-Ausgaben fuer vq_extnd
                   DC.W  MAX_HANDLES       ;Anzahl der Workstations
@@ -585,7 +581,7 @@ rez_bps_tab:      DC.W     1,2,4,8,16
 ;a0.l Zeiger auf Aufloesungen
 create_falcon_rez:
                   movem.l  d0-d2,-(sp)
-                  move.w   modecode,d0
+                  move.w   nvdi_struct+_nvdi_modecode,d0
                   lea.l    vt52_falcon_rez,a0
 
                   moveq.l  #7,d1
@@ -670,7 +666,7 @@ vt52_init:        movem.l  d0-d2/a0-a2,-(sp)
                   move.b   (sshiftmd).w,d0            ;XBIOS-Aufloesung
                   cmp.w    #FALCONMDS,d0              ;Falcon?
                   bne.s    init_vt52_st_tt
-                  move.w   4(sp),modecode             ;neuen modecode setzen
+                  move.w   4(sp),nvdi_struct+_nvdi_modecode ;neuen modecode setzen
                   bsr      create_falcon_rez
                   bra.s    init_vt52_fad
 init_vt52_st_tt:  lsl.w    #3,d0                      ;*8 (4 Worteintraege pro Zeile)
@@ -873,7 +869,7 @@ load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
 
                   moveq.l  #0,d0
                   move.b   (sshiftmd).w,d0      ;XBIOS-Aufloesung
-                  move.w   modecode,d1          ;Falcon-Moduswort
+                  move.w   nvdi_struct+_nvdi_modecode,d1          ;Falcon-Moduswort
                   lea.l    gdos_path,a0
                   bsr      load_ATARI_driver    ;Treiber fuer den Atari laden
                   move.l   a0,d0                ;Treiber vorhanden?
@@ -997,9 +993,9 @@ init_vdi_vecs:    move.l   #WK_SIZE,d0
                   move.l   linea_wk_ptr,(a1)+ ;Adresse der LINE-A-Workstation
 make_wk_tab:      move.l   #closed,(a1)+
                   dbra     d0,make_wk_tab
-                  move.w   #CLOSED,first_device
+                  move.w   #CLOSED,nvdi_struct+_nvdi_first_device
 
-                  lea.l    color_map_ptr,a1
+                  lea.l    color_map_tables,a1
                   move.l   #color_map_tab,(a1)+
                   move.l   #color_remap_tab,(a1)+
 
@@ -1662,8 +1658,7 @@ dummy_rte:        rte
 ; 00001950: vt52_vec_vec
 ; 00001954: con_vec
 ; 00001958: rawcon_vec
-; 0000195C: color_map_ptr
-; 00001960: color_remap_ptr
+; 0000195C: color_map_tables
 ; 00001964: mouse_buffer
 ; 00001968: draw_spr_vec
 ; 0000196C: undraw_spr_vec

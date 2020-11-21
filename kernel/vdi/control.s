@@ -18,7 +18,7 @@ set_xbios_res:
 	beq.s      set_falcon_res
 set_xbios_rsave:
 	movem.l    d0-d1,-(sp)
-	move.w     resolution,d0            /* Xbios-Aufloesung +1 */
+	move.w     nvdi_struct+_nvdi_xbios_res,d0            /* Xbios-Aufloesung +1 */
 	tst.w      d3                       /* aktuelle Aufloesung ? */
 	beq.s      set_res_exit
 	moveq.l    #ST_HIGH+1,d1            /* hohe ST-Aufloesung (Xbios) */
@@ -37,7 +37,7 @@ set_res_mono:
 	btst       d0,#0x28 /* %101000  */  /* Aufloesung vorhanden ? */
 	beq.s      set_xbios_res2
 set_act_res:
-	move.w     resolution,d0
+	move.w     nvdi_struct+_nvdi_xbios_res,d0
 	subq.w     #1,d0
 set_xbios_res2:
 	bsr        set_resolution           /* neue Aufloesung setzen */
@@ -65,11 +65,11 @@ set_falcon_res:
 	addq.l     #4,sp
 	movea.l    (sp)+,a0                 /* pb */
 	movea.l    pb_ptsout(a0),a0
-	move.w     d0,modecode              /* aktuellen modecode sichern */
+	move.w     d0,nvdi_struct+_nvdi_modecode /* aktuellen modecode sichern */
 	cmp.w      (a0),d0                  /* gewuenschte Aufloesung schon eingestellt? */
 	beq.s      set_flc_res_exit
 
-	move.w     (a0),modecode
+	move.w     (a0),nvdi_struct+_nvdi_modecode
 
 	move.w     (a0),-(sp)               /* modecode */
 	move.w     #FALCONMDS,-(sp)         /* Falcon-Aufloesungen */
@@ -143,7 +143,7 @@ opnwk_dpl_exit:
  * a5.l ptsout
  */
 open_nvdi_drvr:
-	move.w     d3,first_device
+	move.w     d3,nvdi_struct+_nvdi_first_device
 	movea.l    aes_wk_ptr,a6            /* Workstation des AES */
 	move.l     a6,wk_tab                /* in die Wk-Tabelle eintragen */
 	moveq.l    #1,d4                    /* Handle */
@@ -365,7 +365,7 @@ get_resolution:
 	moveq.l    #0,d0
 	move.b     (sshiftmd).w,d0
 	addq.w     #1,d0
-	move.w     d0,resolution            /* aktuelle Aufloesung +1 */
+	move.w     d0,nvdi_struct+_nvdi_xbios_res  /* aktuelle Aufloesung +1 */
 	movem.l    (sp)+,d0-d2/a0-a2
 	rts
 

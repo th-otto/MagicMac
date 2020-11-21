@@ -196,7 +196,7 @@ vsc_form_fg:      cmp.w    d5,d4          ;ungueltige Vordergrundfarbe ?
 vsc_form_colors:  moveq.l  #15,d5
                   and.w    d5,d0          ;Hot-Spot-x
                   and.w    d5,d1          ;Hot-Spot-y
-                  movea.l  (color_map_ptr).w,a1
+                  movea.l  color_map_tables+_color_map_ptr,a1
                   move.b   0(a1,d3.w),d3  ;Bildebenenzuordnung
                   move.b   0(a1,d4.w),d4  ;Bildebenenzuordnung
                   movem.w  d0-d4,(M_POS_HX).w
@@ -251,7 +251,7 @@ v_show_c2:        cmpi.w   #1,(M_HID_CNT).w ;darf die Maus gezeichnet werden ?
                   clr.b    (CUR_FLAG).w
                   move.w   d2,sr          ;altes sr
                   lea.l    (M_POS_HX).w,a0
-                  movea.l  (mouse_buffer).w,a2
+                  movea.l  mouse_tab+_mouse_buffer,a2
                   bsr      draw_sprite    ;Maus zeichnen
 
                   movem.l  (sp)+,d1-d7/a2-a5
@@ -268,7 +268,7 @@ v_hide_c:         tst.w    bitmap_width(a6) ;Off-Screen-Bitmap?
                   addq.w   #1,(a2)
                   cmpi.w   #1,(a2)        ;Maus noch vorhanden?
                   bne.s    v_hide_c_exit2
-                  movea.l  (mouse_buffer).w,a2
+                  movea.l  mouse_tab+_mouse_buffer,a2
                   bsr      undraw_sprite  ;Hintergrund zurueckschreiben
 v_hide_c_exit2:   movem.l  (sp)+,d1-d7/a2-a5
 v_hide_c_exit:    rts

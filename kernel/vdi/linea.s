@@ -563,7 +563,7 @@ transform_in:
  * d0-d2/a1-a3 werden zerstoert
  */
 undraw_sprite:
-	move.l     undraw_spr_vec,-(sp)
+	move.l     mouse_tab+_undraw_spr_vec,-(sp)
 	rts
 undraw_sprite_in:
 	move.w     (a2)+,d2
@@ -646,7 +646,7 @@ vbl_mouse:
 	bne.s      vbl_mouse_exit
 	bclr       #0,(CUR_FLAG).w          /* control access to cursor position */
 	beq.s      vbl_mouse_exit
-	movea.l    mouse_buffer,a2
+	movea.l    mouse_tab+_mouse_buffer,a2
 	move.l     a2,-(sp)
 	bsr        undraw_sprite            /* restore background */
 	movea.l    (sp)+,a2                 /* buffer address */
@@ -664,7 +664,7 @@ vbl_mouse:
  * d0-d7/a0-a5 werden zerstoert
  */
 draw_sprite:
-	move.l     draw_spr_vec,-(sp)
+	move.l     mouse_tab+_draw_spr_vec,-(sp)
 	rts
 draw_sprite_in:
 	move.l     a6,-(sp)
