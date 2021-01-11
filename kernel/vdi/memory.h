@@ -13,44 +13,47 @@
 /* Memory Block */
 typedef struct MB_tag
 {
-	ULONG magic;				/* Magic, das den Block identifiziert	*/
-	struct MB_tag *prev;		/* Zeiger auf den Vorgaenger in der Blockliste	*/
-	struct MB_tag *next;		/* Zeiger auf den Nachfolger in der Blockliste	*/
-	struct MB_tag *mem_prev;	/* Zeiger auf den im Speicher davorliegenden Block	*/
-	struct MB_tag *mem_next;	/* Zeiger auf den im Speicher dahinterliegenden Block	*/
-	LONG len;					/* Laenge des folgenden Speicherbereichs	*/
+	ULONG magic;				/* magic to identify a memory block */
+	struct MB_tag *prev;		/* predecessor in block list */
+	struct MB_tag *next;		/* successor in block list */
+	struct MB_tag *mem_prev;	/* predecessor in memory */
+	struct MB_tag *mem_next;	/* successor in memory */
+	LONG len;					/* length of memory area that follows */
 	UWORD status;
 } MB;
 
-/* Memory  Pool */
+/* Memory Pool */
 typedef struct MP_tag
 {
-	WORD used;					/* Semaphore fuer Zugriffe auf den MP */
-	MB ff_mb;					/* erster freier Block */
-	MB lf_mb;					/* letzter freier Block	*/
-	MB fu_mb;					/* erster benutzter Block	*/
-	MB lu_mb;					/* letzter benutzter Block	*/
-	LONG len;					/* Laenge des Speicherbereichs	ohne Verwaltungsinformationen */
-	struct MP_tag *next;		/* Zeiger auf den naechsten MP	*/
+	WORD used;					/* semaphore for access */
+	MB ff_mb;					/* first free block */
+	MB lf_mb;					/* last free block */
+	MB fu_mb;					/* first used block */
+	MB lu_mb;					/* last used block */
+	LONG len;					/* size of usable memory area */
+	struct MP_tag *next;		/* pointer to next MP */
 } MP;
 
-/* Fast Memory  Pool */
+/* Fast Memory Pool */
 typedef struct FMP_tag
 {
 	MP pool;
 	WORD fast_used;
-	void *fast;					/* Zeiger auf einen schnellen Speicherbereich fester Groesse */
+	void *fast;					/* pointer to fast memory area of fixed size */
 	MP *merged;
-	LONG erged_size;
+	LONG merged_size;
 } FMP;
 
 #define	FIRST_MB ff_mb.mem_next	/* Zeiger auf den ersten MB eines Pools */
 #define	LAST_MB	lf_mb.mem_prev	/* Zeiger auf den letzten MB eines Pools */
 
-/* Nachdem der Memory Pool initialisiert ist, zeigt ff_mb.mem_next immer auf den ersten	*/
-/*	Memory Block im Speicher und lf_mb.mem_prev zeigt immer auf den letzen Memory Block im	*/
-/*	Speicher des Pools.																							*/
-/*	Durch len wird die Laenge des Pool-Speichers angegeben.											*/
+/*
+ * After the memory pool has been initialized, ff_mb.mem_next always points to the first
+ * Memory block in the memory and lf_mb.mem_prev always points to the last memory block in the
+ * Memory of the pool.
+ *
+ * Len specifies the length of the pool memory.
+ */
 
 void *malloc_mb(MP *pool, LONG len);
 WORD mfree_mb(MP *pool, void *mem);
@@ -75,7 +78,9 @@ WORD reset_mem(void);
 #define	mfree_wcb(x) mfree_mb(&wcache_mp, x)
 #define	mfree_blk(x) mfree_mb(&div_mp, x)
 
-extern MP div_mp;
 extern MP acache_mp;
 extern MP bcache_mp;
 extern MP fcache_mp;
+extern MP kcache_mp;
+extern MP wcache_mp;
+extern MP div_mp;
