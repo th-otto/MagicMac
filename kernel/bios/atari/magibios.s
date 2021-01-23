@@ -549,7 +549,7 @@ syshdr_code:
  move.l   #$210,d0
  DC.W     _movec,3            ;setze no cache, precise fuer mc68060
 ;                             ;    (geht auch fuer mc68040)
- clr.b    sctr2               ;vme int off, scsi count0/eop und buserror off
+ clr.b    dma_sctr2           ;vme int off, scsi count0/eop und buserror off
      ELSE
  move     #$2700,sr
  move.w   #$100,$ffff8606          ; 3.06: DMA-Write an Peripherie
