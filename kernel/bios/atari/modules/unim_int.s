@@ -204,9 +204,9 @@ x060_real_snan:
 x060_real_dz:
 x060_real_inex:
      dc.w      $f327                    ;fsave         -(sp)
-     move.w         #$6000,2(sp)
+     move.w    #$6000,2(sp)
      dc.w      $f35f                    ;frestore (sp)+
-     dc.l      $f23c,$9000,0,0               ;fmove.l #0,fpcr
+     dc.w      $f23c,$9000,0,0          ;fmovem.l #0,fpcr
      rte
 
 ;# The sample routine below clears the exception status bit, clears the NaN
@@ -214,21 +214,21 @@ x060_real_inex:
 ;# bsun will now be re-executed but with the NaN FPSR bit cleared.
 x060_real_bsun:
      dc.w      $f327                    ;fsave         -(sp)
-     dc.l      $f23c,$9000,0,0               ;fmove.l #0,fpcr
-     and.b          #$fe,(sp)
+     dc.w      $f23c,$9000,0,0          ;fmovem.l #0,fpcr
+     and.b     #$fe,(sp)
      dc.l      $f21f,$8800              ;fmove.l (sp)+,fpsr
-     add.w          #$c,sp
-     dc.l      $f23c,$9000,0,0               ;fmove.l #0,fpcr
+     add.w     #$c,sp
+     dc.w      $f23c,$9000,0,0          ;fmovem.l #0,fpcr
      rte
 
 x060_real_fpu_disabled:
-     move.l         d0,-(sp)            ;# enabled the fpu
+     move.l    d0,-(sp)                 ;# enabled the fpu
      dc.w      _movec,_pcr
      bclr      #1,d0
      dc.w      _movecd,_pcr
-     move.l         (sp)+,d0
-     move.l         $c(sp),2(sp)             ;# set "Current PC"
-     dc.l      $f23c,$9000,0,0               ;fmove.l #0,fpcr
+     move.l    (sp)+,d0
+     move.l    $c(sp),2(sp)             ;# set "Current PC"
+     dc.w      $f23c,$9000,0,0          ;fmovem.l #0,fpcr
      rte
 
 ;# The size of this section MUST be 128 bytes!!!
