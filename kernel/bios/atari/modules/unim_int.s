@@ -214,7 +214,7 @@ x060_real_inex:
 ;# bsun will now be re-executed but with the NaN FPSR bit cleared.
 x060_real_bsun:
      dc.w      $f327                    ;fsave         -(sp)
-     dc.w      $f23c,$9000,0,0          ;fmovem.l #0,fpcr
+     dc.w      $f227,$a800              ;fmovem.l   fpsr,-(a7)
      and.b     #$fe,(sp)
      dc.l      $f21f,$8800              ;fmove.l (sp)+,fpsr
      add.w     #$c,sp
