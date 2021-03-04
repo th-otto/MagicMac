@@ -1,23 +1,23 @@
 /*
  * resource set indices for magxdesk
  *
- * created by ORCS 2.16
+ * created by ORCS 2.18
  */
 
 /*
- * Number of Strings:        297
+ * Number of Strings:        291
  * Number of Bitblks:        7
  * Number of Iconblks:       8
  * Number of Color Iconblks: 0
  * Number of Color Icons:    0
- * Number of Tedinfos:       19
+ * Number of Tedinfos:       17
  * Number of Free Strings:   42
  * Number of Free Images:    0
- * Number of Objects:        266
+ * Number of Objects:        264
  * Number of Trees:          11
  * Number of Userblks:       0
  * Number of Images:         23
- * Total file size:          16044
+ * Total file size:          15840
  */
 
 #undef RSC_NAME
@@ -35,7 +35,7 @@
 # define RSC_STATIC_FILE 0
 #endif
 #if !RSC_STATIC_FILE
-#define NUM_STRINGS 297
+#define NUM_STRINGS 291
 #define NUM_FRSTR 42
 #define NUM_UD 0
 #define NUM_IMAGES 23
@@ -43,8 +43,8 @@
 #define NUM_FRIMG 0
 #define NUM_IB 8
 #define NUM_CIB 0
-#define NUM_TI 19
-#define NUM_OBS 266
+#define NUM_TI 17
+#define NUM_OBS 264
 #define NUM_TREE 11
 #endif
 
@@ -112,39 +112,39 @@
 #define M_PGM10                           77 /* STRING in tree HAUPTMEN */
 
 #define T_ICONS                            1 /* form/dialog */
-#define I_DSK                              1 /* ICON in tree T_ICONS */ /* max len 12 */
-#define I_DRK                              2 /* ICON in tree T_ICONS */ /* max len 12 */
-#define I_PAP                              3 /* ICON in tree T_ICONS */ /* max len 12 */
-#define I_ORD                              4 /* ICON in tree T_ICONS */ /* max len 12 */
-#define I_PRO                              5 /* ICON in tree T_ICONS */ /* max len 12 */
-#define I_DAT                              6 /* ICON in tree T_ICONS */ /* max len 12 */
-#define I_BAT                              7 /* ICON in tree T_ICONS */ /* max len 12 */
+#define I_DSK                              1 /* ICON in tree T_ICONS */
+#define I_DRK                              2 /* ICON in tree T_ICONS */
+#define I_PAP                              3 /* ICON in tree T_ICONS */
+#define I_ORD                              4 /* ICON in tree T_ICONS */
+#define I_PRO                              5 /* ICON in tree T_ICONS */
+#define I_DAT                              6 /* ICON in tree T_ICONS */
+#define I_BAT                              7 /* ICON in tree T_ICONS */
 #define I_ORD16                            8 /* IMAGE in tree T_ICONS */
 #define I_ORD08                            9 /* IMAGE in tree T_ICONS */
 #define I_ORD24                           10 /* IMAGE in tree T_ICONS */
-#define I_PAR                             11 /* ICON in tree T_ICONS */ /* max len 12 */
+#define I_PAR                             11 /* ICON in tree T_ICONS */
 #define I_PAR24                           12 /* IMAGE in tree T_ICONS */
 #define I_PAR16                           13 /* IMAGE in tree T_ICONS */
 #define I_PAR08                           14 /* IMAGE in tree T_ICONS */
 
 #define T_MASKE                            2 /* form/dialog */
-#define MASKE_TX                           1 /* FTEXT in tree T_MASKE */ /* max len 12 */
+#define MASKE_TX                           1 /* FTEXT in tree T_MASKE */
 #define MASKE_OK                           2 /* BUTTON in tree T_MASKE */
 #define MASKE_AL                           3 /* BUTTON in tree T_MASKE */
 
 #define T_TTPPAR                           3 /* form/dialog */
 #define TTPPAR_T                           2 /* STRING in tree T_TTPPAR */
-#define TTPPAR_1                           3 /* FTEXT in tree T_TTPPAR */ /* max len 63 */
-#define TTPPAR_2                           4 /* FTEXT in tree T_TTPPAR */ /* max len 63 */
+#define TTPPAR_1                           3 /* FTEXT in tree T_TTPPAR */
+#define TTPPAR_2                           4 /* FTEXT in tree T_TTPPAR */
 #define TTPPA_OK                           5 /* BUTTON in tree T_TTPPAR */
 
 #define T_NEUORD                           4 /* form/dialog */
-#define NEUORD_T                           3 /* FTEXT in tree T_NEUORD */ /* max len 1 */
+#define NEUORD_T                           3 /* FTEXT in tree T_NEUORD */
 #define NEORD_OK                           4 /* BUTTON in tree T_NEUORD */
 
 #define T_DATINF                           5 /* form/dialog */
 #define FI_ICON                            2 /* BOXCHAR in tree T_DATINF */
-#define DATINF_T                           4 /* FTEXT in tree T_DATINF */ /* max len 1 */
+#define DATINF_T                           4 /* FTEXT in tree T_DATINF */
 #define FI_SIZE                            6 /* STRING in tree T_DATINF */
 #define FI_DATUM                           8 /* STRING in tree T_DATINF */
 #define FI_ZEIT                           10 /* STRING in tree T_DATINF */
@@ -154,14 +154,14 @@
 #define FI_ARCHI                          15 /* BUTTON in tree T_DATINF */
 #define FI_SYSTE                          16 /* BUTTON in tree T_DATINF */
 #define FI_ISALI                          17 /* STRING in tree T_DATINF */
-#define FI_ALIAS                          18 /* FTEXT in tree T_DATINF */ /* max len 34 */
+#define FI_ALIAS                          18 /* FTEXT in tree T_DATINF */
 #define FI_CONT                           19 /* BUTTON in tree T_DATINF */
 #define FI_OK                             20 /* BUTTON in tree T_DATINF */
 #define FI_CAN                            21 /* BUTTON in tree T_DATINF */
 
 #define T_ORDINF                           6 /* form/dialog */
 #define OI_ICON                            2 /* BOXCHAR in tree T_ORDINF */
-#define ORDINF_T                           4 /* FTEXT in tree T_ORDINF */ /* max len 1 */
+#define ORDINF_T                           4 /* FTEXT in tree T_ORDINF */
 #define OI_DATUM                           6 /* STRING in tree T_ORDINF */
 #define OI_ZEIT                            8 /* STRING in tree T_ORDINF */
 #define OI_BYTES                          10 /* STRING in tree T_ORDINF */
@@ -170,7 +170,7 @@
 #define OI_N_VDA                          16 /* STRING in tree T_ORDINF */
 #define OI_B_VDA                          18 /* STRING in tree T_ORDINF */
 #define OI_ISALI                          20 /* STRING in tree T_ORDINF */
-#define OI_ALIAS                          21 /* FTEXT in tree T_ORDINF */ /* max len 34 */
+#define OI_ALIAS                          21 /* FTEXT in tree T_ORDINF */
 #define OI_CONT                           22 /* BUTTON in tree T_ORDINF */
 #define OI_OK                             23 /* BUTTON in tree T_ORDINF */
 #define OI_CAN                            24 /* BUTTON in tree T_ORDINF */
@@ -178,7 +178,7 @@
 #define T_DSKINF                           7 /* form/dialog */
 #define DI_ICON                            2 /* BOXCHAR in tree T_DSKINF */
 #define DI_NAMT                            3 /* STRING in tree T_DSKINF */
-#define DI_NAME                            4 /* FTEXT in tree T_DSKINF */ /* max len 1 */
+#define DI_NAME                            4 /* FTEXT in tree T_DSKINF */
 #define DI_EXEC                            5 /* STRING in tree T_DSKINF */
 #define DI_N_ORD                           7 /* STRING in tree T_DSKINF */
 #define DI_N_DAT                           9 /* STRING in tree T_DSKINF */
@@ -213,12 +213,12 @@
 #define EIN_KOBO                          21 /* BUTTON in tree T_EINST */
 #define EIN_CPRS                          22 /* BUTTON in tree T_EINST */
 #define EIN_GRP3                          23 /* IBOX in tree T_EINST */
-#define EIN_EDIT                          25 /* FTEXT in tree T_EINST */ /* max len 27 */
-#define EIN_SHOW                          27 /* FTEXT in tree T_EINST */ /* max len 27 */
-#define EIN_PRNT                          29 /* FTEXT in tree T_EINST */ /* max len 27 */
-#define EIN_CMD                           31 /* FTEXT in tree T_EINST */ /* max len 27 */
-#define EIN_BAT                           33 /* FTEXT in tree T_EINST */ /* max len 3 */
-#define EIN_BTP                           35 /* FTEXT in tree T_EINST */ /* max len 3 */
+#define EIN_EDIT                          25 /* FTEXT in tree T_EINST */
+#define EIN_SHOW                          27 /* FTEXT in tree T_EINST */
+#define EIN_PRNT                          29 /* FTEXT in tree T_EINST */
+#define EIN_CMD                           31 /* FTEXT in tree T_EINST */
+#define EIN_BAT                           33 /* FTEXT in tree T_EINST */
+#define EIN_BTP                           35 /* FTEXT in tree T_EINST */
 #define EIN_GRP4                          36 /* IBOX in tree T_EINST */
 #define EINST_VE                          37 /* BUTTON in tree T_EINST */
 #define EIN_8PL3                          38 /* BUTTON in tree T_EINST */
@@ -239,144 +239,100 @@
 #define EIN_RAS0                          58 /* BOXCHAR in tree T_EINST */
 #define EIN_RAS                           59 /* BOXCHAR in tree T_EINST */
 #define EIN_RAS1                          60 /* BOXCHAR in tree T_EINST */
-#define EIN_KACH                          61 /* FTEXT in tree T_EINST */ /* max len 28 */
+#define EIN_KACH                          61 /* FTEXT in tree T_EINST */
 #define EINS_DRK                          63 /* BUTTON in tree T_EINST */
 #define EINST_DN                          64 /* BUTTON in tree T_EINST */
 
 #define T_ABOUT                            9 /* form/dialog */
 #define ABOU_IMG                           1 /* IMAGE in tree T_ABOUT */
 #define ABOU_OS                            2 /* STRING in tree T_ABOUT */
-#define ABOU_VER                           3 /* TEXT in tree T_ABOUT */ /* max len 15 */
-#define O_LIZNZ1                           6 /* TEXT in tree T_ABOUT */ /* max len 47 */
-#define O_LIZNZ2                           7 /* TEXT in tree T_ABOUT */ /* max len 47 */
+#define ABOU_VER                           3 /* TEXT in tree T_ABOUT */
 
 #define T_POPKAT                          10 /* form/dialog */
 
 #define STR_INST_NEW_PGM                   0 /* Free string */
-/* Neues Programm eintragen */
 
 #define STR_CHOOSE_PATTN                   1 /* Free string */
-/* Muster anwÑhlen */
 
 #define STR_STOP                           2 /* Free string */
-/* |Abbruch */
 
 #define STR_SIDES                          3 /* Free string */
-/*  Seiten  */
 
 #define STR_TRACKS                         4 /* Free string */
-/*  Spuren  */
 
 #define STR_SECTORS                        5 /* Free string */
-/*  Sektoren */
 
 #define STR_READ_INF                       6 /* Free string */
-/* INF-Datei lesen */
 
 #define STR_SRT_NAMES                      7 /* Free string */
-/*      NAMEN */
 
 #define STR_SRT_DATE                       8 /* Free string */
-/*      DATUM */
 
 #define STR_SRT_SIZE                       9 /* Free string */
-/*      GRôûE */
 
 #define STR_SRT_TYPE                      10 /* Free string */
-/*        TYP */
 
 #define STR_SRT_UNSORTED                  11 /* Free string */
-/* UNSORTIERT */
 
 #define STR_NEW                           12 /* Free string */
-/* <neu>... */
 
 #define STR_PATH_2_DEEP                   13 /* Free string */
-/* Pfad zu tief */
 
 #define STR_MORE_THAN                     14 /* Free string */
-/*  mehr als  */
 
 #define STR_OBJECTS                       15 /* Free string */
-/*  Objekte */
 
 #define STR_BYTES_IN                      16 /* Free string */
-/*  Bytes in  */
 
 #define STR_OBJECT                        17 /* Free string */
-/*  Objekt */
 
 #define STR_OBJCTS_DATIV                  18 /* Free string */
-/*  Objekten */
 
 #define STR_SELECTED                      19 /* Free string */
-/*  selektierten */
 
 #define STR_BYTES                         20 /* Free string */
-/*  Bytes |  */
 
 #define STR_FREE                          21 /* Free string */
-/*  frei  */
 
 #define STR_FULL                          22 /* Free string */
-/* voll  */
 
 #define ALRT_PRINT                        23 /* Alert string */
-/* [2][Druckprogramm aufrufen?][OK|Abbruch] */
 
 #define ALRT_NO_KOBOLD                    24 /* Alert string */
-/* [3][KOBOLD nicht installiert!][Abbruch] */
 
 #define ALRT_STOP_PROC                    25 /* Alert string */
-/* [1][Vorgang abbrechen ?][  JA  | NEIN ] */
 
 #define ALRT_CONT_LNAMES                  26 /* Alert string */
-/* [1][Das Verzeichnis enthÑlt|Åberlange Dateinamen.][  OK  ] */
 
 #define ALRT_APPISACTIVE                  27 /* Alert string */
-/* [2][Anwendung ist schon aktiv.|Nochmal starten?][OK|Abbruch] */
 
 #define ALRT_NO_MORE_WND                  28 /* Alert string */
-/* [3][Keine Fenster mehr.][Abbruch] */
 
 #define ALRT_CANT_OPEN                    29 /* Alert string */
-/* [3][Drucker und Papierkorb lassen|sich nicht îffnen.][Abbruch] */
 
 #define ALRT_NO_PGM_ASNG                  30 /* Alert string */
-/* [3][Kein Programm eingetragen|oder ungÅltig!][Abbruch] */
 
 #define ALRT_DD_NO_CMDLN                  31 /* Alert string */
-/* [3][Das Zielprogramm akzeptiert|keine Kommandozeile.][Abbruch] */
 
 #define ALRT_DD_FAILURE                   32 /* Alert string */
-/* [3][Auf dieses Fenster kann man|keine Dateien ziehen!][Abbruch] */
 
 #define ALRT_PRINTR_INFO                  33 /* Alert string */
-/* [1][DRUCKER-INFORMATION| |Schiebe Dateien hier hinein,|um sie auszudrucken.][  OK  %s] */
 
 #define ALRT_NO_INF_AT_X                  34 /* Alert string */
-/* [2][Keine INF- Datei auf %c:|Defaults verwenden ?][OK|Abbruch] */
 
 #define ALRT_OVL_AES_BUF                  35 /* Alert string */
-/* [3][öberlauf des AES- Puffers!][Abbruch] */
 
 #define ALRT_ERR_AT_INF                   36 /* Alert string */
-/* [3][Fehler auf INF- Datei!][Abbruch] */
 
 #define ALRT_SAVE_WORK                    37 /* Alert string */
-/* [2][Arbeit sichern nach|%s ?][OK|Abbruch] */
 
 #define ALRT_TRASH_INFO                   38 /* Alert string */
-/* [1][PAPIERKORB-INFORMATION| |Schiebe Dateien, Ordner und|Disks hier hinein,|um sie zu lîschen.][  OK  %s] */
 
 #define ALRT_OVL_CMDLINE                  39 /* Alert string */
-/* [3][KommandozeilenÅberlauf.][Abbruch] */
 
 #define ALRT_FREE_AT_DRV                  40 /* Alert string */
-/* [0][Freier Platz auf Laufwerk %c:| |      %s][  OK  ] */
 
 #define STR_SHORT_VIEW                    41 /* Free string */
-/*  Zeige */
 
 
 
