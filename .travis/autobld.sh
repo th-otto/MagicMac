@@ -77,6 +77,7 @@ cd build
 
 # english
 export PCCFLAGS=-DCOUNTRY=0
+export PCASFLAGS=-DCOUNTRY=0
 pcmake -B -F magcmacx.prj >> "$ERRFILE"
 mv magcmacx.os en
 pcmake -B -F magicmac.prj >> "$ERRFILE"
@@ -90,6 +91,7 @@ mv mmilan.ram en
 
 # french
 export PCCFLAGS=-DCOUNTRY=2
+export PCASFLAGS=-DCOUNTRY=2
 pcmake -B -F magcmacx.prj >> "$ERRFILE"
 mv magcmacx.os fr
 pcmake -B -F magicmac.prj >> "$ERRFILE"
@@ -103,6 +105,7 @@ mv mmilan.ram fr
 
 # german
 export PCCFLAGS=-DCOUNTRY=1
+export PCASFLAGS=-DCOUNTRY=1
 pcmake -B -F magcmacx.prj >> "$ERRFILE"
 mv magcmacx.os de
 pcmake -B -F magicmac.prj >> "$ERRFILE"
@@ -115,6 +118,7 @@ pcmake -B -F milan.prj >> "$ERRFILE"
 mv mmilan.ram de
 
 unset PCCFLAGS
+unset PCASFLAGS
 
 cd ..\..
 
