@@ -91,22 +91,24 @@
 				lea		_GemParBlk,a0
 				clr.w	v_nptsin(a0)
 				clr.w	v_nintin(a0)
+				clr.l	intout+6(a0) /* clr intout[3/4]; not always returned */
 				move.w	#35,d1
 				bsr		_VdiCtrl
 				movea.l	(a7)+,a1
-				move.w	d0,(a1)+
-				move.w	(a0)+,(a1)+
-				move.w	(a0)+,(a1)+
-				move.w	_GemParBlk+ptsout,(a1)+
+				move.w	d0,(a1)+     /* attrib[0] = intout[0] = linetype */
+				move.w	(a0)+,(a1)+  /* attrib[1] = intout[1] = linecolor */
+				move.w	(a0)+,(a1)+  /* attrib[2] = intout[2] = writing mode */
+				move.w	ptsout-intout-6(a0),(a1)+ /* attrib[3] = ptsout[0] = line width */
 				moveq	#0,d1
 				moveq	#0,d2
-				move.w	_GemParBlk+v_nintout,d0
+				move.w	v_nintout-intout-6(a0),d0
 				subq.w	#3,d0
 				ble		vql_a1
 				move.w	(a0)+,d1
 				move.w	(a0)+,d2
-vql_a1:			move.w	d1,(a1)+
-				move.w	d2,(a1)+
+vql_a1:
+				move.w	d1,(a1)+  /* attrib[4] = intout[3] = line start */
+				move.w	d2,(a1)+  /* attrib[5] = intout[4] = line end */
 				rts
 
 				ENDMOD
@@ -125,7 +127,7 @@ vql_a1:			move.w	d1,(a1)+
 				move.w	(a0)+,(a1)+
 				move.w	(a0)+,(a1)+
 				move.w	(a0)+,(a1)+
-				move.w	_GemParBlk+ptsout+2,(a1)+
+				move.w	ptsout+2-intout-8(a0),(a1)+
 				rts
 
 				ENDMOD
@@ -146,7 +148,7 @@ vql_a1:			move.w	d1,(a1)+
 				move.w	(a0)+,(a1)+
 				move.w	(a0)+,(a1)+
 				move.w	(a0)+,(a1)+
-				lea		_GemParBlk+ptsout,a0
+				lea		ptsout-intout-12(a0),a0
 				move.w	(a0)+,(a1)+
 				move.w	(a0)+,(a1)+
 				move.w	(a0)+,(a1)+

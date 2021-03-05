@@ -486,6 +486,8 @@ v_get_outline1:	rts
 				move.l	a0,-(a7)
 				lea		_GemParBlk,a0
 				clr.w	v_nptsin(a0)
+				clr.w	v_nintout(a0)
+				clr.w	v_nptsout(a0)
 				move.w	#1,v_nintin(a0)
 				move.w	d1,intin(a0)
 				move.w	#248,d1
@@ -506,7 +508,7 @@ vq_devinfo1:	clr.w	d0
 vq_devinfo2:	move.w	ptsout(a0),(a1)
 				move.l	(a7)+,a1
 				; set the filename. The value in vdi_intout may be "DRIVER.SYS"
-	 			; or "DRIVER   SYS". vdi_intout is not a nul-terminated string.
+				; or "DRIVER  SYS". vdi_intout is not a nul-terminated string.
 				; In both cases, this binding returns a valid filename: "DRIVER.SYS"
 				; with a null-character to ended the string.
 				lea		intout(a0),a0

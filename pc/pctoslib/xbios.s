@@ -160,7 +160,7 @@ save_ptr:		dc.l	save_end
 
 ; STE/TT
 				MODULE	Bconmap				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#44,-(a7)
 				CALLXBIOS
@@ -170,7 +170,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Bioskeys				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#$18,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -179,7 +179,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Blitmode				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#$40,-(a7)
 				CALLXBIOS
@@ -189,7 +189,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Cursconf				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$15,-(a7)
@@ -200,9 +200,9 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	DMAread				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d1,-(a7)
 				move.l	d0,-(a7)
 				move.w	#42,-(a7)
@@ -213,9 +213,9 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	DMAwrite				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d1,-(a7)
 				move.l	d0,-(a7)
 				move.w	#43,-(a7)
@@ -226,8 +226,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Dosound				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	#$20,-(a7)
 				CALLXBIOS
 				addq.w	#6,a7
@@ -237,8 +237,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EgetPalette				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#85,-(a7)
@@ -249,7 +249,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EgetShift				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#81,-(a7)
 				CALLXBIOS
 				addq.l	#2,a7
@@ -258,7 +258,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EsetBank				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#82,-(a7)
 				CALLXBIOS
@@ -268,7 +268,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EsetColor				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#83,-(a7)
@@ -279,7 +279,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EsetGray				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#86,-(a7)
 				CALLXBIOS
@@ -289,8 +289,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EsetPalette				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#84,-(a7)
@@ -301,7 +301,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EsetShift				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#80,-(a7)
 				CALLXBIOS
@@ -311,7 +311,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	EsetSmear				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#87,-(a7)
 				CALLXBIOS
@@ -321,7 +321,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Flopfmt				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	16(a7),-(a7) ; virgin
 				move.l	14(a7),-(a7) ; magic
 				move.w	16(a7),-(a7) ; interlv
@@ -329,8 +329,8 @@ save_ptr:		dc.l	save_end
 				move.w	d2,-(a7) ; trackno
 				move.w	d1,-(a7) ; spt
 				move.w	d0,-(a7) ; devno
-				move.l	a1,-(a7) ; filler
-				move.l	a0,-(a7) ; buf
+				pea     (a1) ; filler
+				pea     (a0) ; buf
 				move.w	#$A,-(a7)
 				CALLXBIOS
 				lea		26(a7),a7
@@ -339,7 +339,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Floprate				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#41,-(a7)
@@ -350,13 +350,13 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Floprd				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.l	8(a7),-(a7) ; sideno + count
 				move.w	d2,-(a7) ; trackno
 				move.w	d1,-(a7) ; sectno
 				move.w	d0,-(a7) ; dev
-				move.l	a1,-(a7) ; filler
-				move.l	a0,-(a7) ; buf
+				pea     (a1) ; filler
+				pea     (a0) ; buf
 				move.w	#8,-(a7)
 				CALLXBIOS
 				lea		20(a7),a7
@@ -365,13 +365,13 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Flopver				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.l	8(a7),-(a7)
 				move.w	d2,-(a7)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#$13,-(a7)
 				CALLXBIOS
 				lea		20(a7),a7
@@ -380,13 +380,13 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Flopwr				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.l	8(a7),-(a7)
 				move.w	d2,-(a7)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#9,-(a7)
 				CALLXBIOS
 				lea		20(a7),a7
@@ -395,7 +395,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Getrez				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#4,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -404,7 +404,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Gettime				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#$17,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -413,7 +413,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Giaccess				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$1C,-(a7)
@@ -424,8 +424,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Ikbdws				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$19,-(a7)
 				CALLXBIOS
@@ -435,9 +435,9 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Initmouse
-				move.l	a2,-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a1)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#0,-(a7)
 				CALLXBIOS
@@ -447,7 +447,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Iorec				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#$E,-(a7)
 				CALLXBIOS
@@ -458,7 +458,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Jdisint				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#$1A,-(a7)
 				CALLXBIOS
@@ -468,7 +468,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Jenabint				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#$1B,-(a7)
 				CALLXBIOS
@@ -478,7 +478,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Kbdvbase				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#$22,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -488,7 +488,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Kbrate				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$23,-(a7)
@@ -499,10 +499,10 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Keytbl				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.l	8(a7),-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#$10,-(a7)
 				CALLXBIOS
 				lea		$E(a7),a7
@@ -512,7 +512,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Logbase				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#3,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -522,8 +522,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Mfpint				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$D,-(a7)
 				CALLXBIOS
@@ -533,8 +533,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Midiws				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$C,-(a7)
 				CALLXBIOS
@@ -544,7 +544,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Offgibit				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#$1D,-(a7)
 				CALLXBIOS
@@ -554,7 +554,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Ongibit				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#$1E,-(a7)
 				CALLXBIOS
@@ -564,7 +564,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Physbase				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#2,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -574,11 +574,11 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Protobt				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d2,-(a7)
 				move.w	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#$12,-(a7)
 				CALLXBIOS
 				lea		14(a7),a7
@@ -587,8 +587,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Prtblk				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	#$24,-(a7)
 				CALLXBIOS
 				addq.w	#6,a7
@@ -597,7 +597,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Puntaes				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#$27,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -606,7 +606,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Random				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#$11,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -615,7 +615,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Rsconf				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	12(a7),-(a7)
 				move.w	12(a7),-(a7)
 				move.w	12(a7),-(a7)
@@ -630,7 +630,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Scrdmp				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#$14,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -639,7 +639,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Setcolor				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#7,-(a7)
@@ -650,8 +650,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Setpalette				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	#6,-(a7)
 				CALLXBIOS
 				addq.w	#6,a7
@@ -660,7 +660,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Setprt				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#$21,-(a7)
 				CALLXBIOS
@@ -671,11 +671,11 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Setscreen				
 VsetScreen:
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#5,-(a7)
 				CALLXBIOS
 				lea		14(a7),a7
@@ -684,7 +684,7 @@ VsetScreen:
 				ENDMOD
 
 				MODULE	Settime				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.l	d0,-(a7)
 				move.w	#$16,-(a7)
 				CALLXBIOS
@@ -694,7 +694,7 @@ VsetScreen:
 				ENDMOD
 
 				MODULE	Ssbrk				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#1,-(a7)
 				CALLXBIOS
@@ -705,7 +705,7 @@ VsetScreen:
 				ENDMOD
 
 				MODULE	Vsync				
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#$25,-(a7)
 				CALLXBIOS
 				addq.w	#2,a7
@@ -714,8 +714,8 @@ VsetScreen:
 				ENDMOD
 
 				MODULE	Supexec				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	#$26,-(a7)
 				CALLXBIOS
 				addq.w	#6,a7
@@ -724,8 +724,8 @@ VsetScreen:
 				ENDMOD
 
 				MODULE	Xbtimer				
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	d2,-(a7)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
@@ -738,7 +738,7 @@ VsetScreen:
 
 ; ST-Book
 				MODULE	Waketime
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$2F,-(a7)
@@ -782,7 +782,7 @@ VsetScreen:
 				move.l	d1,-(a7)
 				pea		(a1)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#98,-(a7)
 				CALLXBIOS
 				lea		18(a7),a7
@@ -792,10 +792,10 @@ VsetScreen:
 				
 				MODULE	Dsp_InStream
 				pea		(a2)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#99,-(a7)
 				CALLXBIOS
 				lea		18(a7),a7
@@ -805,10 +805,10 @@ VsetScreen:
 				
 				MODULE	Dsp_OutStream
 				pea		(a2)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#100,-(a7)
 				CALLXBIOS
 				lea		18(a7),a7
@@ -822,8 +822,8 @@ VsetScreen:
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#101,-(a7)
 				CALLXBIOS
 				lea		26(a7),a7
@@ -870,8 +870,8 @@ VsetScreen:
 				
 				MODULE	Dsp_Available
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#106,-(a7)
 				CALLXBIOS
 				lea		10(a7),a7
@@ -892,9 +892,9 @@ VsetScreen:
 				
 				MODULE	Dsp_LoadProg
 				pea		(a2)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#108,-(a7)
 				CALLXBIOS
 				lea		12(a7),a7
@@ -906,7 +906,7 @@ VsetScreen:
 				pea		(a2)
 				move.w	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#109,-(a7)
 				CALLXBIOS
 				lea		12(a7),a7
@@ -918,7 +918,7 @@ VsetScreen:
 				pea		(a2)
 				move.w	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#110,-(a7)
 				CALLXBIOS
 				lea		12(a7),a7
@@ -928,8 +928,8 @@ VsetScreen:
 				
 				MODULE	Dsp_LodToBinary
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#111,-(a7)
 				CALLXBIOS
 				lea		10(a7),a7
@@ -978,7 +978,7 @@ VsetScreen:
 				pea		(a2)
 				move.w	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#116,-(a7)
 				CALLXBIOS
 				lea		12(a7),a7
@@ -1047,9 +1047,9 @@ VsetScreen:
 				MODULE	Dsp_BlkWords
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#123,-(a7)
 				CALLXBIOS
 				lea		18(a7),a7
@@ -1060,9 +1060,9 @@ VsetScreen:
 				MODULE	Dsp_BlkBytes
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#124,-(a7)
 				CALLXBIOS
 				lea		18(a7),a7
@@ -1081,8 +1081,8 @@ VsetScreen:
 				
 				MODULE	Dsp_SetVectors
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#126,-(a7)
 				CALLXBIOS
 				lea		10(a7),a7
@@ -1092,8 +1092,8 @@ VsetScreen:
 				
 				MODULE	Dsp_MultBlocks
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
 				move.w	#127,-(a7)
@@ -1233,8 +1233,8 @@ VgetMonitor:
 				
 				MODULE	Setbuffer
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#131,-(a7)
 				CALLXBIOS
@@ -1526,7 +1526,7 @@ VgetMonitor:
 				
 				MODULE	NVMaccess
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d2,-(a7)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)

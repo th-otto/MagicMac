@@ -39,7 +39,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Bconin
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#2,-(a7)
 				CALLBIOS
@@ -49,7 +49,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Bconout
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#3,-(a7)
@@ -60,7 +60,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Bconstat
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#1,-(a7)
 				CALLBIOS
@@ -70,7 +70,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Bcostat
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#8,-(a7)
 				CALLBIOS
@@ -80,7 +80,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Drvmap
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#10,-(a7)
 				CALLBIOS
 				addq.w	#2,a7
@@ -89,7 +89,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Getbpb
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#7,-(a7)
 				CALLBIOS
@@ -100,8 +100,8 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Getmpb
-				move.l	a2,-(a7)
-				move.l	a0,-(a7)
+				pea     (a2)
+				pea     (a0)
 				move.w	#0,-(a7)
 				CALLBIOS
 				addq.w	#6,a7
@@ -110,7 +110,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Kbshift
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#11,-(a7)
 				CALLBIOS
@@ -120,7 +120,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Mediach
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	d0,-(a7)
 				move.w	#9,-(a7)
 				CALLBIOS
@@ -135,7 +135,7 @@ save_ptr:		dc.l	save_end
 				move.w	12(a7),-(a7)
 				move.w	d2,-(a7)
 				move.w	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#4,-(a7)
 				CALLBIOS
@@ -157,7 +157,7 @@ save_ptr:		dc.l	save_end
 				ENDMOD
 
 				MODULE	Tickcal
-				move.l	a2,-(a7)
+				pea     (a2)
 				move.w	#6,-(a7)
 				CALLBIOS
 				addq.w	#2,a7

@@ -346,7 +346,7 @@
 				
 				MODULE	Psignal
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$112,-(a7)
 				CALLDOS
@@ -769,7 +769,7 @@
 				
 				MODULE	Pwaitpid
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$13a,-(a7)
@@ -783,7 +783,7 @@
 				pea		(a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#$13b,-(a7)
 				CALLDOS
 				lea		10(a7),a7
@@ -793,7 +793,7 @@
 				
 				MODULE	Salert
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#$13c,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -1053,8 +1053,8 @@
 				MODULE	Dreadlabel
 				pea		(a2)
 				move.w	d0,-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#$152,-(a7)
 				CALLDOS
 				lea		12(a7),a7
@@ -1064,8 +1064,8 @@
 				
 				MODULE	Dwritelabel
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#$153,-(a7)
 				CALLDOS
 				lea		10(a7),a7
@@ -1087,8 +1087,8 @@
 
 				MODULE	Tgettimeofday
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#$155,-(a7)
 				CALLDOS
 				lea		10(a7),a7
@@ -1098,8 +1098,8 @@
 				
 				MODULE	Tsettimeofday
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	#$156,-(a7)
 				CALLDOS
 				lea		10(a7),a7
@@ -1145,7 +1145,7 @@
 				pea		(a2)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#$15a,-(a7)
 				CALLDOS
 				lea		14(a7),a7
@@ -1156,7 +1156,7 @@
 				MODULE	Fwritev
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$15b,-(a7)
 				CALLDOS
@@ -1168,7 +1168,7 @@
 				MODULE	Freadv
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$15c,-(a7)
 				CALLDOS
@@ -1179,7 +1179,7 @@
 				
 				MODULE	Ffstat64
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$15d,-(a7)
 				CALLDOS
@@ -1193,9 +1193,9 @@
 				move.l	d1,-(a7) ; newlen
 				move.l	16(a7),-(a7) ; new
 				move.l	16(a7),-(a7) ; oldlen
-				move.l	a1,-(a7) ; old
+				pea     (a1) ; old
 				move.l	d0,-(a7) ; namelen
-				move.l	a0,-(a7) ; name
+				pea     (a0) ; name
 				move.w	#$15e,-(a7)
 				CALLDOS
 				lea		26(a7),a7
@@ -1235,7 +1235,7 @@
 				
 				MODULE	Fsocketpair
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
@@ -1248,8 +1248,8 @@
 				
 				MODULE	Faccept
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$162,-(a7)
 				CALLDOS
@@ -1260,7 +1260,7 @@
 				
 				MODULE	Fconnect
 				pea		(a2)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.l	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$163,-(a7)
@@ -1273,7 +1273,7 @@
 				MODULE	Fbind
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$164,-(a7)
 				CALLDOS
@@ -1296,7 +1296,7 @@
 				MODULE	Frecvmsg
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$166,-(a7)
 				CALLDOS
@@ -1308,7 +1308,7 @@
 				MODULE	Fsendmsg
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$167,-(a7)
 				CALLDOS
@@ -1320,10 +1320,10 @@
 				MODULE	Frecvfrom
 				pea		(a2)
 				move.l	8(a7),-(a7)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$168,-(a7)
 				CALLDOS
@@ -1335,10 +1335,10 @@
 				MODULE	Fsendto
 				pea		(a2)
 				move.l	8(a7),-(a7)
-				move.l	a1,-(a7)
+				pea     (a1)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$169,-(a7)
 				CALLDOS
@@ -1350,7 +1350,7 @@
 				MODULE	Fsetsockopt
 				pea		(a2)
 				move.l	8(a7),-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
 				move.w	d0,-(a7)
@@ -1363,8 +1363,8 @@
 
 				MODULE	Fgetsockopt
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
 				move.w	d0,-(a7)
@@ -1377,8 +1377,8 @@
 
 				MODULE	Fgetpeername
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$16c,-(a7)
 				CALLDOS
@@ -1389,8 +1389,8 @@
 
 				MODULE	Fgetsockname
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a1)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$16d,-(a7)
 				CALLDOS
@@ -1424,7 +1424,7 @@
 
 				MODULE	Pshmctl
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
 				move.w	#$171,-(a7)
@@ -1437,7 +1437,7 @@
 				MODULE	Pshmat
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d0,-(a7)
 				move.w	#$172,-(a7)
 				CALLDOS
@@ -1448,7 +1448,7 @@
 
 				MODULE	Pshmdt
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#$173,-(a7)
 				CALLDOS
 				lea		6(a7),a7
@@ -1470,7 +1470,7 @@
 
 				MODULE	Psemctl
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
@@ -1484,7 +1484,7 @@
 				MODULE	Psemop
 				pea		(a2)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d0,-(a7)
 				move.w	#$176,-(a7)
 				CALLDOS
@@ -1516,7 +1516,7 @@
 
 				MODULE	Pmsgctl
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
 				move.w	#$179,-(a7)
@@ -1530,7 +1530,7 @@
 				pea		(a2)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d0,-(a7)
 				move.w	#$17a,-(a7)
 				CALLDOS
@@ -1544,7 +1544,7 @@
 				move.l	8(a7),-(a7)
 				move.l	d2,-(a7)
 				move.l	d1,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.l	d0,-(a7)
 				move.w	#$17b,-(a7)
 				CALLDOS
@@ -1557,7 +1557,7 @@
 				pea		(a2)
 				move.l	d1,-(a7)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#$17d,-(a7)
 				CALLDOS
 				lea		14(a7),a7
@@ -1570,7 +1570,7 @@
 				move.w	d2,-(a7)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea     (a0)
 				move.w	#$180,-(a7)
 				CALLDOS
 				lea		12(a7),a7

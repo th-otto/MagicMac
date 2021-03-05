@@ -348,39 +348,15 @@ wind_xget4:		rts
 
 				MODULE	wind_set_str
 				
-				lea.l	_GemParBlk+aintin,a1
-				move.w	d0,(a1)+
-				move.w	d1,(a1)+
-				move.l	a0,(a1)+
-				clr.l	(a1)
-				move.l  #$69060100,d1
-				bra		_aes
-
-				ENDMOD
-
-
-				MODULE	wind_set_ptr_int
-				
+wind_set_ptr:
+				moveq	#0,d2
+wind_set_ptr_int:
 				lea.l	_GemParBlk+aintin,a1
 				move.w	d0,(a1)+
 				move.w	d1,(a1)+
 				move.l	a0,(a1)+
 				move.w	d2,(a1)+
 				clr.w	(a1)
-				move.l  #$69060100,d1
-				bra		_aes
-
-				ENDMOD
-
-
-				MODULE	wind_set_ptr
-				
-				move.l	a1,d2
-				lea.l	_GemParBlk+aintin,a1
-				move.w	d0,(a1)+
-				move.w	d1,(a1)+
-				move.l	a0,(a1)+
-				move.l	d2,(a1)
 				move.l  #$69060100,d1
 				bra		_aes
 

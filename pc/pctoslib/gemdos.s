@@ -198,7 +198,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Cconws
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$09,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -208,7 +208,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Cconrs				
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$0A,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -282,7 +282,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Fsetdta
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$1A,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -295,7 +295,7 @@ save_ptr:		dc.l	save_end
 ; luckily, the Super() function is handled as a special
 ; case in TOS and does not change a2
 				MODULE	Super
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$20,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -373,7 +373,7 @@ save_ptr:		dc.l	save_end
 				MODULE	Dfree
 				pea		(a2)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$36,-(a7)
 				CALLDOS
 				addq.w	#8,a7
@@ -383,7 +383,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Dcreate
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$39,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -393,7 +393,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Ddelete
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$3A,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -403,7 +403,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Dsetpath
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$3B,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -425,7 +425,7 @@ save_ptr:		dc.l	save_end
 				MODULE	Fopen
 				pea		(a2)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$3D,-(a7)
 				CALLDOS
 				addq.w	#8,a7
@@ -445,7 +445,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Fread
 				pea		(a2)				
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.l	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$3F,-(a7)
@@ -457,7 +457,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Fwrite
 				pea		(a2)				
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.l	d1,-(a7)
 				move.w	d0,-(a7)
 				move.w	#$40,-(a7)
@@ -507,7 +507,7 @@ save_ptr:		dc.l	save_end
 				pea		(a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$43,-(a7)
 				CALLDOS
 				lea		10(a7),a7
@@ -560,7 +560,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Mfree
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$49,-(a7)
 				CALLDOS
 				addq.w	#6,a7
@@ -571,7 +571,7 @@ save_ptr:		dc.l	save_end
 				MODULE	Mshrink
 				pea		(a2)				
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea		(a0)
 				clr.w	-(a7)
 				move.w	#$4A,-(a7)
 				CALLDOS
@@ -583,8 +583,8 @@ save_ptr:		dc.l	save_end
 				MODULE	Pexec
 				pea		(a2)
 				move.l	8(a7),-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea		(a1)
+				pea		(a0)
 				move.w	d0,-(a7)
 				move.w	#$4B,-(a7)
 				CALLDOS
@@ -606,7 +606,7 @@ save_ptr:		dc.l	save_end
 				MODULE	Fsfirst
 				pea		(a2)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$4E,-(a7)
 				CALLDOS
 				addq.w	#8,a7
@@ -625,8 +625,8 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Frename
 				pea		(a2)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea		(a1)
+				pea		(a0)
 				move.w	d0,-(a7)
 				move.w	#$56,-(a7)
 				CALLDOS
@@ -639,7 +639,7 @@ save_ptr:		dc.l	save_end
 				pea		(a2)
 				move.w	d1,-(a7)
 				move.w	d0,-(a7)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$57,-(a7)
 				CALLDOS
 				lea		10(a7),a7
@@ -653,7 +653,7 @@ save_ptr:		dc.l	save_end
 				MODULE	Maddalt
 				pea		(a2)
 				move.l	d0,-(a7)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$14,-(a7)
 				CALLDOS
 				lea		10(a7),a7
@@ -718,8 +718,8 @@ save_ptr:		dc.l	save_end
 				move.l	12(a7),-(a7)
 				move.l	12(a7),-(a7)
 				move.l	d0,-(a7)
-				move.l	a1,-(a7)
-				move.l	a0,-(a7)
+				pea		(a1)
+				pea		(a0)
 				move.w	#$16,-(a7)
 				CALLDOS
 				lea		22(a7),a7
@@ -729,7 +729,7 @@ save_ptr:		dc.l	save_end
 								
 				MODULE	Slbclose
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$17,-(a7)
 				CALLDOS
 				addq.l	#6,a7
@@ -817,7 +817,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Unlock
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$7b,-(a7)
 				CALLDOS
 				addq.l	#6,a7
@@ -827,7 +827,7 @@ save_ptr:		dc.l	save_end
 
 				MODULE	Lock
 				pea		(a2)
-				move.l	a0,-(a7)
+				pea		(a0)
 				move.w	#$7c,-(a7)
 				CALLDOS
 				addq.l	#6,a7
