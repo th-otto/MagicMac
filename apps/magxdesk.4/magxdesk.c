@@ -39,7 +39,7 @@ char ext_btp[4];			/* Dateityp .BTP */
 char 	dirty_drives	[ANZDRIVES];
 DISKINFO 	dinfo		[ANZDRIVES];
 
-char const pgm_ver[] = "4.10";
+char const pgm_ver[] = "4.11";
 
 int message[16];
 int work_out[57],work_in [12];	 /* VDI- Felder fr v_opnvwk() */
@@ -1482,7 +1482,7 @@ void get_rsc(void)
 		 (image->ob_y > 0))
 		image->ob_y--;
 
-	strcpy ((adr_about + ABOU_VER)->ob_spec.tedinfo->te_ptext+11, pgm_ver);
+	strcpy ((adr_about + ABOU_VER)->ob_spec.tedinfo->te_ptext+10, pgm_ver);
 	(adr_about + ABOU_OS)->ob_spec.free_string = os_ver_s;
 	i = adr_about->ob_width;
 	i -= (int) strlen(os_ver_s) * gl_hwchar;
