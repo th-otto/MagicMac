@@ -107,16 +107,6 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      XREF hexl,crlf
      ENDIF
 
-* Import aus READ_INF
-
-     XREF      read_inf            ; char *read_inf( void );
-     IMPORT    rinf_vfat           ; void rinf_vfa( a0 = char *inf );
-     IMPORT    rinf_img            ; void rinf_img( a0 = char *inf );
-     IMPORT    rinf_log            ; long rinf_log( a0 = char *inf );
-     IMPORT    rinf_coo
-     IMPORT    rinf_bdev
-     IMPORT    rinf_dvh
-
 * Import von MATH
 
      XREF      _lmul

@@ -1,3 +1,14 @@
+;Import aus READ_INF
+
+     IMPORT    read_inf            ; char *read_inf( void );
+     IMPORT    rinf_vfat           ; void rinf_vfa( a0 = char *inf );
+     IMPORT    rinf_img            ; void rinf_img( a0 = char *inf );
+     IMPORT    rinf_log            ; long rinf_log( a0 = char *inf );
+     IMPORT    rinf_coo            ; long rinf_coo( a0 = char *inf );
+     IMPORT    rinf_idt            /* long rinf_idt( a0 = char *inf ) */
+     IMPORT    rinf_bdev           /* long rinf_bdev( a0 = char *inf ) */
+     IMPORT    rinf_dvh            /* long rinf_dvh( a0 = char *inf ) */
+
 	DEB	'Bootlaufwerk setzen'
  bsr 	set_bootdrive			; Bootlaufwerk als aktuelles
 ;move.l	$bffff,-(sp)			; TOS 3.06
@@ -26,9 +37,9 @@
  move.l	p_mgxinf,a0
  jsr		rinf_coo
  tst.l	d0
- beq.b	bot_no_coo
+ beq.s 	bot_no_coo
  cmpi.l	#NCOOKIES,d0
- bcs.b	bot_no_coo			; Mindestgroesse
+ bcs.s	bot_no_coo			; Mindestgroesse
 	DEB	'ja, neue Cookies anlegen!'
  move.l	d0,-(sp)				; Anzahl merken
  lsl.l	#3,d0				; * 8 wg. 2 LONGs pro Eintrag
@@ -58,6 +69,17 @@ bot_coo_clr_loop:
 bot_coo_ende:
  move.l	d0,_p_cookies			; Zeiger umsetzen
 bot_no_coo:
+
+/* override idt cookie */
+ move.l	p_mgxinf,a0
+ jsr		rinf_idt
+ beq.s      no_idt_val
+ move.l     d0,a1            /* save value */
+ move.l     #0x5f494454,d0   /* '_IDT' */
+ bsr        getcookie
+ beq.s      no_idt_val
+ move.l     a1,4(a0)         /* overwrite _IDT cookie value */
+no_idt_val:
 
 * Jetzt (ab MagiC 6) log-Datei oeffnen
 

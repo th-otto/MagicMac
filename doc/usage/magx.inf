@@ -55,6 +55,9 @@
 ;    _INW
 ;    _SLB
 ;    #[shelbuf] neue Abschnittkennung
+; neu ab MagiC 6.21
+;    im Abschnitt #[boot]:
+;    idt
 
 
 ; ZunÑchst kommt die BS-Versionsnummer, die diese Datei gesichert hat
@@ -69,12 +72,38 @@
 ; Die Anzahl der Cookies ist einstellbar, es werden aber immer
 ; mindestens 20 Cookies angelegt
 cookies=20
+
+; The value of the _IDT cookie (to change the date/time format)
+; can be set here. If not present, a value corresponding to the
+; language is choosen:
+; us=$002f 12h/MDY/'/'
+; de=$112e 24h/DMY/'.'
+; fr=$112f 24h/DMY/'/'
+; uk=$112f 24h/DMY/'/'
+; es=$112f 24h/DMY/'/'
+; it=$102f 24h/MDY/'/'
+; se=$122d 24h/YMD/'-'
+; sf=$112e 24h/DMY/'/'
+; sg=$112e 24h/DMY/'.'
+; tr=$112d 24h/DMY/'-'
+; fi=$112e 24h/DMY/'.'
+; no=$112e 24h/DMY/'.'
+; dk=$112d 24h/DMY/'-'
+; sa=$102f 24h/MDY/'/'
+; nl=$102d 24h/DMY/'-'
+; cz=$112e 24h/DMY/'.'
+; hu=$122d 24h/YMD/'-'
+; example:
+idt=$112f
+
 ; Die Log-Datei fÑngt die BIOS-Ausgabe des AUTO-Ordners ab. Hier
 ; kann man auch u:\dev\null eingeben, um die Ausgabe ganz zu
 ; unterdrÅcken
 log=c:\boot.log
+
 ; Vor AusfÅhren des AUTO Ordners kann der Bildschirm zunÑchst gekachelt...
 tiles=C:\GEMSYS\GEMDESK\PAT\16\PAT28.IMG
+
 ; ... und dann ein zentriertes Logo ausgegeben werden.
 image=C:\GEMSYS\GEMDESK\PAT\256\MAGIC.IMG
 
@@ -83,6 +112,7 @@ image=C:\GEMSYS\GEMDESK\PAT\256\MAGIC.IMG
 #[vfat]
 ; Hier werden die langen Dateinamen eingestellt.
 drives=eh
+
 #[aes]
 
 ; Hinter der Sektionskennung [aes] folgen die Daten fÅrs AES

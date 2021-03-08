@@ -16,6 +16,7 @@
 	XDEF	rinf_path
 	XDEF	rinf_ul
 	XDEF	rinf_coo
+	XDEF	rinf_idt
 	XDEF	rinf_bdev
 	XDEF	rinf_dvh
 
@@ -163,7 +164,10 @@ rinfp_end:
 rinf_ul:
  bsr.b	_skip_spc				; Leerzeichen ueberspringen
  moveq	#0,d0
+ moveq	#0,d1
  move.l	a0,a1
+ cmp.b  #'$',(a0)
+ beq    rinf_hex
 sd_loop:
  move.b	(a0)+,d1
  subi.b	#'0',d1
@@ -175,14 +179,35 @@ sd_loop:
  add.l	d0,d0
  add.l	d0,d0
  add.l	d2,d0				; lmulu #10,d0
- ext.w	d1
- ext.l	d1
  add.l	d1,d0
  bra.b	sd_loop
 sd_endloop:
  subq.l	#1,a0				; auf erstes ungueltiges Zeichen
  cmpa.l	a1,a0				; Rueckgabe EQ, wenn Fehler
  rts
+
+rinf_hex:
+ addq.w #1,a0
+sd_hex_loop:
+ move.b	(a0)+,d1
+ subi.b	#'0',d1
+ bcs.b	sd_endloop
+ cmpi.b	#10,d1
+ bcs.b	sd_hex2
+ subi.b #'A'-'0',d1
+ bcs.s  sd_endloop
+ cmpi.b	#6,d1
+ bcs.b	sd_hex1
+ subi.b #'a'-'A',d1
+ bcs.s  sd_endloop
+ cmpi.b	#6,d1
+ bcc.b	sd_endloop
+sd_hex1:
+ add.b  #10,d1
+sd_hex2:
+ lsl.l  #4,d0
+ add.l	d1,d0
+ bra.b	sd_hex_loop
 
 
 *********************************************************************
@@ -450,6 +475,33 @@ rcoo_ok:
 
 *********************************************************************
 *
+* LONG rinf_idt( a0 = char *inf )
+*
+* Sucht nach der Section "#[boot]" und nach der
+* Zeile "idt=" und gibt die Zahl zurueck. 
+*
+
+rinf_idt:
+ move.l	a0,d0
+ beq.b	ridt_ok				; keine INF-Datei
+ lea		boot_tok(pc),a1
+;move.l	a0,a0
+ bsr		rinf_sec
+ tst.l	d0
+ beq.b	ridt_ok				; section fehlt
+ move.l	d0,a0
+ lea		idt_tok(pc),a1
+ bsr		rinf_tok
+ move.l	a0,d0
+ beq.b	ridt_ok				; keine Angabe
+ addq.l	#4,a0
+ bsr		rinf_ul
+ridt_ok:
+ rts
+
+
+*********************************************************************
+*
 * LONG rinf_log( a0 = char *inf )
 *
 * Sucht nach der Section "#[boot]" und nach der
@@ -463,7 +515,7 @@ rinf_log:
  lea		log_tok(pc),a1
  move.l	a1,d1
  lea		(sp),a1
- bsr.s		rinf_pth
+ bsr		rinf_pth
  tst.b	(sp)
  beq.b	rlog_ende				; keine Datei angegeben
 
@@ -518,6 +570,7 @@ img_cls:		DC.B	'IMG schlie',$9e,'en => ',0
 boot_tok:		DC.B	'#[boot]',0
 log_tok:		DC.B	'log=',0
 coo_tok:		DC.B	'cookies=',0
+idt_tok:		DC.B	'idt=',0
 bdv_tok:		DC.B 'biosdev=',0
 con_tok:		DC.B	'con=',0
 aux_tok:		DC.B	'aux=',0

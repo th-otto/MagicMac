@@ -13,6 +13,8 @@
 *    _FDC (wenn HD-Floppy installiert)
 *    MagX
 *
+* destroys: a0-a2/d0-d2
+*
 
 install_cookies:
  move.l   a5,-(sp)
