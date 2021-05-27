@@ -55,6 +55,11 @@
 ;    _INW
 ;    _SLB
 ;    #[shelbuf] neue Abschnittkennung
+; neu ab MagiC 6.20
+;	biosdev
+;	con
+;	aux
+;	prn
 ; neu ab MagiC 6.21
 ;    im Abschnitt #[boot]:
 ;    idt
@@ -107,7 +112,41 @@ tiles=C:\GEMSYS\GEMDESK\PAT\16\PAT28.IMG
 ; ... und dann ein zentriertes Logo ausgegeben werden.
 image=C:\GEMSYS\GEMDESK\PAT\256\MAGIC.IMG
 
-; Es folgt der Abschnitt fr das VFAT-Dateisystem
+; Ermittlung der BIOS-Geraete.
+; Da ohne nderungen an MAGX.INF einige Dateinamen in u:/dev 
+; ab MagiC 6.20 fehlen wrden, finden Sie hier einige Beispiele für
+; verschiedene Computertypen, die erg„nzt werden mssen:
+
+;Atari ST:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+
+;Atari Mega-STE:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\modem2
+;biosdev=8,u:\dev\serial2
+
+;Atari TT:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\modem2
+;biosdev=8,u:\dev\serial1
+;biosdev=9,u:\dev\serial2
+
+;Atari Falcon:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\lan
+
+;Mac:
+;(keine)
+
+;Die GEMDOS Standard-Ausgaben k”nnen nun auch auf
+;vorhandene BIOS-Ger„te umgeleitet werden:
+;con=u:\dev\console
+;aux=u:\dev\modem
+;prn=u:\dev\prn
 
 #[vfat]
 ; Hier werden die langen Dateinamen eingestellt.

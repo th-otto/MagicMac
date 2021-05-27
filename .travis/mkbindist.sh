@@ -53,6 +53,7 @@ mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS
 mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
 cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
 cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 
@@ -89,6 +90,7 @@ mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS
 mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
 cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
 cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 
@@ -127,6 +129,8 @@ mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS
 # TODO: french translation
 cp "apps/magiccfg/doc/magiccfg_en.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
 cp "apps/magiccfg/doc/magiccfg_en.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+# TODO: french translation
+mcopy -b "$SRCDIR/doc/usage/magx_en.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 
@@ -223,7 +227,6 @@ for lang in $LANGUAGES; do
 	mcopy -b "$SRCDIR/tools/clock/clockcol.cpx" "$BUILDROOT/$lang/EXTRAS/CLOCK/"
 	mcopy -b "$SRCDIR/tools/clock/maus.ruf" "$BUILDROOT/$lang/EXTRAS/CLOCK/"
 	mcopy -b "$SRCDIR/tools/clock/readme.cat" "$BUILDROOT/$lang/EXTRAS/CLOCK/"
-	mcopy -b "$SRCDIR/doc/usage/magx.inf" "$BUILDROOT/$lang/EXTRAS/"
 	# mcopy -b "$SRCDIR/apps/instmagc/magx.inf" "$BUILDROOT/$lang/"
 
 	mcopy -b "$SRCDIR/kernel/vdi/drivers/*.SYS" "$BUILDROOT/$lang/GEMSYS/"

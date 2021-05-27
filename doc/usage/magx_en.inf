@@ -1,0 +1,382 @@
+;               Example Configuration file for MagiC 6
+;               ======================================
+;
+; ½ Andreas Kromke 1990-2001
+
+; This version of a commented MAGX.INF file is fully functioning.
+; It provides full explanation of any settings for manipulation.
+;
+; For normal application, the configuration performed on installation
+; will suffice completely. This file should be of interest to the
+; advanced user only. It provides assistance for stepwise understanding
+; of these settings (e.g. for evaluation by your own programs) - but,
+; what is more, you can make modifications directly, in particular those
+; difficult or even impossible to make from within MAGXDESK.
+; New from Mag!X 2.0:
+;    _WND
+;    _TSL
+;    _FLG
+;    _TRM
+;    _TXT      additional parameters!
+; Don't exist from 2.0 on:
+;    _DRV
+;    _DSK
+;    (removed because of incompatibilty between MultiTOS/GEM 3.0)
+; extension in MagiC 3:
+;    _FLG
+; extension in MagiC 4:
+;    _FLG
+;    _DEV
+; extension in MagiC 4.02:
+;    _FLG      Bit 5
+; new from MagiC 5.01 on:
+;    #[vfat]
+;    #[aes]
+; new from MagiC 5.10 on:
+;    _FLG      Bit 6
+;    _FSL
+; new from MagiC 5.20 on:
+;    _OBS
+;    _TXB
+;    _TXS
+;    _BKG
+; extension in MagiC 6.00:
+;    _FLG      Bit 7
+; doesn't exist any more from MagiC 6.00 on
+;    _TXT
+; new from MagiC 6.00 on
+;    #[boot]        marker for new section
+;    cookies
+;    log
+;    tiles
+;    image
+;     and in section #[aes]:
+;    _INW
+;    _SLB
+;    #[shelbuf]     marker for new section
+; new from MagiC 6.20
+;	biosdev
+;	con
+;	aux
+;	prn
+; new from MagiC 6.21
+;	in section [boot]
+;	idt
+
+; First comes the version number of the OS, that saved this file
+
+#_MAG MAG!X V6.20
+
+; Now the sections
+; first the section evaluated on booting, i.e.
+; before starting the AES
+
+#[boot]
+; The number of cookies can be determined,
+; but at least 20 cookies will always be installed.
+cookies=20
+
+; The value of the _IDT cookie (to change the date/time format)
+; can be set here. If not present, a value corresponding to the
+; language is choosen:
+; us=$002f 12h/MDY/'/'
+; de=$112e 24h/DMY/'.'
+; fr=$112f 24h/DMY/'/'
+; uk=$112f 24h/DMY/'/'
+; es=$112f 24h/DMY/'/'
+; it=$102f 24h/MDY/'/'
+; se=$122d 24h/YMD/'-'
+; sf=$112e 24h/DMY/'/'
+; sg=$112e 24h/DMY/'.'
+; tr=$112d 24h/DMY/'-'
+; fi=$112e 24h/DMY/'.'
+; no=$112e 24h/DMY/'.'
+; dk=$112d 24h/DMY/'-'
+; sa=$102f 24h/MDY/'/'
+; nl=$102d 24h/DMY/'-'
+; cz=$112e 24h/DMY/'.'
+; hu=$122d 24h/YMD/'-'
+; example:
+idt=$112f
+
+; The log file redirects the BIOS output of the AUTO folder.
+; You can also put u:\dev\null here in order to suppress
+; the output completely.
+log=c:\boot.log
+
+; Before executing the AUTO folder, you can tile the screen...
+tiles=C:\GEMSYS\GEMDESK\PAT\16\PAT28.IMG
+
+; ...then draw a logo on the center of the screen...
+image=C:\GEMSYS\GEMDESK\PAT\256\MAGIC.IMG
+
+; Determination of the BIOS devices.
+; As without changes to MAGX.INF a few filenames would be missing
+; in u:/dev from MagiC 6.20 onwards, here are a few examples for
+; various computer types that have to be supplemented:
+
+;Atari ST:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+
+;Atari Mega-STE:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\modem2
+;biosdev=8,u:\dev\serial2
+
+;Atari TT:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\modem2
+;biosdev=8,u:\dev\serial1
+;biosdev=9,u:\dev\serial2
+
+;Atari Falcon:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\lan
+
+;Mac:
+;(none)
+
+;The GEMDOS standard files can now also be redirected to BIOS
+;devices that are present in u:\dev:
+;con=u:\dev\console
+;aux=u:\dev\modem
+;prn=u:\dev\prn
+
+; Now the section for the VFAT file system
+
+#[vfat]
+; This is the option for long file names.
+drives=eh
+
+#[aes]
+
+; After the identification for the section [aes]
+; the data for the AES.
+;
+; All lines relevant for the AES start with #_??? and come
+; before the lines #[shelbuf] and #_CTR. The entry #_CTR only exists
+; for reasons of compatibility.
+; Other lines will be treated for comments.
+; In general, all lines except for #_CTR and the following ones
+; are optional - if they are missing, default values are put in.
+
+; Now the variables for the environment. Since the strings are read
+; to the end of line, you must not put any comment behind the #_ENV line.
+; This is necessary in order to allow colons or blanks in the string
+; for the environment.
+; The environment transferred by BIOS will be used and transmitted
+; by AES if, and only if, no #_ENV line has been specified.
+
+#_ENV HOME=C:\GEMSYS\HOME\
+#_ENV PATH=C:\BIN\;A:\
+#_ENV PROMPT=$p$g
+#_ENV F1=qed
+
+; You can load arbitrarily many SharedLibraries. They are loaded
+; on starting AES and will be released on termination of AES or change
+; of resolution.
+; Some of them (WINFRAME) change attributes of AES (quasi system
+; extension), others (PDLG, EDITOBJC) can be "stocked",
+; i.e., if a program calls Slbopen(), the libraries don't have
+; to be reloaded again. This is useful if you have suficient memory
+; and/or a slow disk medium (reloading of an SLB takes some time).
+
+#_SLB 0 WINFRAME.SLB
+#_SLB 0 PDLG.SLB
+
+; The size of the shell buffer must be variable so that any shell
+; can store its data there.  At least 8192 bytes are always reserved
+; anyway, and your number must not exceed 65535. You can get the
+; size of the buffer (an unsigned int) by calling shel_get() with 0 bytes
+; to read.  If the size of the buffer is insufficient, there won't
+; be a crash, but the shell won't be able to store all of its data.
+
+#_BUF 16000                              ; size of the shell buffer, decimal
+
+; The device number will not be evaluated if the system is being
+; restarted for a change of resolution. If, on opening the
+; work station, (N)VDI returns an error code (Handle 0), the VDI
+; will be restarted with device number 1 (current resolution).
+; The usual resolutions of ST/TT are
+;  2 = ST low, 3 = ST medium, 4 = ST high
+;  6 = TT medium,  8 = TT high,  9 = TT low,
+; higher numbers depend on the device drivers (MGE,VGA,...)
+; specified in ASSIGN.SYS.
+; The Falcon requires an additional number describing the resolution
+; (mode code), this is specified after the VDI device number
+; (from MagiC 4 on). Usually, the first number for the Falcon,
+; the VDI device number, is "5", the resolution is specified by
+; the "mode code" only.
+; Specification of the "mode code" is mandatory - if no Falcon is used,
+; it is "0".
+
+#_DEV 4 0                               ; VDI driver, 4 = high resolution
+
+; The dimensions of a resource unit can be defined independently from
+; the big AES font, from Magic 5.20 on.  In order to guarantee high
+; compability with applications, you should, in particular when using
+; vector fonts, determine a fixed raster of 8*16.
+; Syntax: #_OBS <horiz.Raster> <vertic.Raster> 0 0
+
+;#_OBS 8 16 0 0
+
+; Font ID and font height can be specified separately for the small
+; and large AES font, from MagiC 5.20 on. You do have to specify
+; whether your font is proportional or monospaced. Proportional
+; fonts work from MagiC 6 on.
+; Syntax
+;  for the big font: #_TXB <fontID> <monoFlag> <pixelHeight>
+;  for the small font: #_TXS <fontID> <monoFlag> <pixelHeight>
+
+;#_TXB 1 1 6
+;#_TXS 1 1 4
+
+; With the following setting you can change the format of the INFO
+; line in all windows:
+;    lineh     height of line. "0" means standard height.
+;    fontID    font ID for the INFO line. "0" means: the same font
+;              as for the big AES text
+;    monoFlag  1 (monospaced) or 0 (proportional)
+;    fontH     font height for vst_height()
+
+;#_INW lineh fontID monoFlag fontH
+
+; Here you can specify parameters influencing the look of MagiC:
+;
+; Bit 0:  The MagiC logo is placed on the left (1) or on
+;         the right (0) of the menu bar.
+; Bit 1:  The 3D effects on using at least 16 colours are switched
+;         on (0) or off (1).
+; Bit 2:  The backdrop button is drawn (0) or isn't (1). If there isn't
+;         any backdrop button, you must click the window title bar in
+;         order to drop a window on the lowest background level.
+; Bit 3:  Use the MagiC 4 window title, i.e. with lines (0), or draw
+;         the traditional fill pattern (1).
+; Bit 4:  If bit 3 is 0 (and thus the MagiC 4 window titles are
+;         activated), you can determine whether the window name should
+;         appear in 3D look (0) or normally (1).
+; Bit 5:  If this bit is 1, the meaning of the Ctrl key is inverted
+;         on scrolling the window, i.e., real time scrolling is
+;         switched off by default.
+; Bit 6:  Ditto for real time resizing or moving
+; Bit 7:  (from MagiC 6.00 on): switches on 3D menus. This only works
+;         with proportional big AES font.
+;
+; All flags that are not explicitely specified are assumed to be 0.
+
+#_FLG 0                                 ; Bit 0 = 1: Logo on the left
+
+; With this entry, you can choose colour and fill pattern of
+; the background of the default desktop. Specify a number <num>.
+; <num> = 120 (== 0x78) yields a light grey. 0x70 is the fill pattern
+; (7 = totally filled) and 8 the colour. Thus the code corresponds
+; to a value specifying the look of a filled rectangle of the AES
+; object G_BOX.
+
+#_BKG 120
+
+; Here you can specify the maximum number of windows. Valid values
+; are between 0 and 64, you shouldn'd use a value < 16. Missing
+; specifications are assumed to be 16.
+; Hint: when using MGNOTICE, enter at least 30.
+
+#_WND 32
+
+; Here you control the distribution of CPU time between foreground
+; and background processes. The fist value yields the length of a
+; time slice in multiples of 5ms, the second the background
+; priority: "32" means a priority of 1:32 for background processes.
+; If any specification is missing, preemptive multitasking is
+; deactivated.
+; In order to avoid conflicts caused by concurrent memory requests
+; by several autostart programs and accessories during the boot
+; process with activated background DMA (Atari) or asynchronous
+; disk access (Mac), this line should be omitted and preemptive
+; multitasking should be activated in the TSLICE.CPX instead.
+
+;#_TSL 1 32
+
+; The Scrap-path ("Clipboard") should always indicate an existing
+; directory, else it is undefined.
+
+#_SCP C:\GEMSYS\GEMSCRAP\               ; Scrap Directory
+
+; Here you can make specifications regarding the "file selector".
+; First comes a flag - which at time is ignored and should
+; therefore always be zero - followed by a string of possible file
+; types, separated by ";". Double patterns are separated by ","
+; ( e.g. "*.PRG,*.APP" or "*.JPG,*.JPEG").
+
+#_FSL 0 *.C;*.H;*.S;*.APP,*.PRG,*.TTP,*.TOS
+
+; The following line contains the program and its complete path
+; that performs the redirection of TOS programs in windows.
+; When starting the first TOS program, this program will be started
+; automatically if it hasn't been loaded.
+
+#_TRM C:\GEMSYS\GEMDESK\VT52.PRG
+
+; This line specifies the path accessories are loaded from.
+; If none is found, none is loaded. If this line is omitted, the
+; current directory of the boot drive is used, in general this is
+; the root directory.
+
+#_ACC C:\GEMSYS\MAGIC\ACCS\             ; path for ACCs
+
+; If there is a #_APP-line, applications can be loaded before
+; starting the default shell. These will be available in parallel
+; to all other programs immediately. This is an alternative to
+; the old accessory concept, since these can be removed from
+; the memory again, whilst acessories couldn't. Only progams with
+; adequate memory requirements are eligible - if you load
+; WORDPLUS this way, you won't be able to load any other
+; program (if you haven't limited memory allocation by LIMITMEM).
+; All programs are started in graphics mode.
+
+#_APP C:\GEMSYS\MAGIC\START             ; path for parallelly loaded APPs
+
+; With #_AUT you can start an application automatically as with
+; TOS 1.4. The difference to those specified under #_APP is the
+; following: the application specified under #_AUT isn't started
+; in parallel but instead of the desktop or the default shell.
+; Only when the application is finished - and has not determined
+; any successor by shel_write() - is the desktop or the default shell
+; started. (this is useful for a login prg in networks!)
+; The application is always started in graphics mode.
+
+;#_AUT C:\LOGIN.PRG
+
+; The default shell is started only after any program specified
+; in #_AUT. Without specification, MAGXDESK is started.
+; Desktop or default shell are always started in graphics mode.
+
+;#_SHL C:\KAOSDESK\KAOSDESK.PRG          ; Shell
+
+; The AES section finishes with the next section, thus, in general, with
+
+#[shelbuf]
+
+; The listing of the MagiC variables finishes with the line
+; #_CTR, indicating that the subsequent data will be
+; transferred directly into the shell buffer, namely the
+; data for the (old) control panel (this means that XCONTROL
+; doesn't use them) and the data for the desktop.
+; The lines for the desktop start with 128 bytes after #a,
+; the first line is #_DSK. (the 128 bytes present an old TOS
+; convention).
+; It is important that the length of line #d is such that
+; the total length of the control panel data is exactly
+; 128 bytes. Since some editors remove trailing blanks
+; (this can also lead to errors with the environment variables,
+; we finish the line with a ";" instead of a blank.
+
+#_CTR                                   ; Start of data for the control panel
+#a000000
+#b001001
+#c7770007000600070055200505552220770557075055507703111302
+#d                                            ;
+#_DSK MAGXDESK V4.00 1                  ; start of the shell data
