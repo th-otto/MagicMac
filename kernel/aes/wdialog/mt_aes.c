@@ -108,7 +108,7 @@ WORD mt_appl_search(WORD mode, char *name, WORD *type, WORD *id,
 						WORD *global_aes)
 {
 	MT_PARMDATA aes_params;
-	static WORD const aes_control_data[4] = { 18, 0, 1, 0 };
+	static WORD const aes_control_data[4] = { 18, 1, 3, 1 };
 
 	aes_params.intin[0] = mode;
 	aes_params.addrin[0] = name;
