@@ -13,13 +13,25 @@
 * auf dem Stapel Åbergeben, dies ermîglicht die Verwendung eines
 * beliebigen Compilers.
 *
+* MagiC 3.00 onwards
+* ==================
+*
+* Structures for binding in an XFS.
+* The correct prototypes for the implementation of an XFS
+* in 'C' will follow as soon as the 'C' interface is ready.
+*
+* As at times several registers are used for return values and
+* in addition pointers are passed in data registers, an interface
+* is planned as _cdecl, i.e. all parameters are passed on the stack.
+* This permits the use of any desired compiler.
+*
 * Version: 3.10.94
 *
 *********************************************************************/
 
 typedef struct {
      WORD version;
-     void (*fast_clrmem)      ( void *von, void *bis );
+     void (*fast_clrmem)      ( void *from, void *to );
      char (*toupper)          ( char c );
      void (*_sprintf)         ( char *dest, char *source, LONG *p );
      void *act_pd;
@@ -111,31 +123,31 @@ typedef struct _mx_dmd {
 typedef struct xattr {
      unsigned short mode;
 /* file types */
-#define S_IFMT 0170000        /* mask to select file type */
+#define S_IFMT      0170000        /* mask to select file type */
 #define S_IFCHR     0020000        /* BIOS special file */
 #define S_IFDIR     0040000        /* directory file */
-#define S_IFREG 0100000       /* regular file */
-#define S_IFIFO 0120000       /* FIFO */
-#define S_IMEM 0140000        /* memory region or process */
+#define S_IFREG     0100000        /* regular file */
+#define S_IFIFO     0120000        /* FIFO */
+#define S_IMEM      0140000        /* memory region or process */
 #define S_IFLNK     0160000        /* symbolic link */
 
 /* special bits: setuid, setgid, sticky bit */
 #define S_ISUID     04000
-#define S_ISGID 02000
+#define S_ISGID     02000
 #define S_ISVTX     01000
 
 /* file access modes for user, group, and other*/
 #define S_IRUSR     0400
-#define S_IWUSR 0200
-#define S_IXUSR 0100
-#define S_IRGRP 0040
+#define S_IWUSR     0200
+#define S_IXUSR     0100
+#define S_IRGRP     0040
 #define S_IWGRP     0020
 #define S_IXGRP     0010
 #define S_IROTH     0004
 #define S_IWOTH     0002
 #define S_IXOTH     0001
 #define DEFAULT_DIRMODE (0777)
-#define DEFAULT_MODE     (0666)
+#define DEFAULT_MODE    (0666)
      long index;
      unsigned short dev;
      unsigned short reserved1;
@@ -191,16 +203,16 @@ typedef struct _mx_xfs {
      long      (*xfs_dcntl)();
 } MX_XFS;
 
-/* Schreib-/Lesemodi fÅr Fgetchar und Fputchar */
+/* Write/Read modes for Fgetchar and Fputchar */
 
 #define   CMODE_RAW      0
 #define   CMODE_COOKED   1
 #define   CMODE_ECHO     2
 
-/* Open- Modus von Dateien (Mag!X- intern)                                 */
-/* NOINHERIT wird nicht unterstÅtzt, weil nach TOS- Konvention nur die     */
-/* Handles 0..5 vererbt werden                                             */
-/* HiByte wie unter MiNT verwendet                                         */
+/* Open mode of files (MagiC-internal)                                    */
+/* NOINHERIT is not supported, because in the TOS convention only the     */
+/* handles 0..5 are inherited                                             */
+/* High byte used as under MiNT                                           */
 
 #define   OM_RPERM       1
 #define   OM_WPERM       2
@@ -211,7 +223,7 @@ typedef struct _mx_xfs {
 #define   OM_NOCHECK     64
 
 
-/* Open- Modus von Dateien ( -> MiNT) */
+/* Open mode of files ( -> MiNT) */
 
 #define   O_RWMODE       3
 #define   O_RDONLY       0
@@ -232,7 +244,7 @@ typedef struct _mx_xfs {
 #define   O_TRUNC        0x400
 #define   O_EXCL         0x800
 
-/* unterstÅtzte Dcntl- Modi (Mag!X- spezifisch!) */
+/* Supported Dcntl modes (MagiC-specific!) */
 #define   KER_GETINFO    0x0100
 #define   KER_INSTXFS    0x0200
 #define   KER_SETWBACK   0x0300
@@ -240,10 +252,10 @@ typedef struct _mx_xfs {
 #define   DFS_INSTDFS    0x1200
 #define   DEV_M_INSTALL  0xcd00
 
-/* unterstÅtzte Fcntl- Modi */
+/* Supported Fcntl modes */
 #define   FTRUNCATE      0x4604
 
-/* Modi und Codes fÅr Dpathconf() (-> MiNT) */
+/* Modes and codes for Dpathconf() (-> MiNT) */
 
 #define   DP_MAXREQ      -1
 #define   DP_IOPEN       0
@@ -260,7 +272,7 @@ typedef struct _mx_xfs {
 #define    DP_CASECONV   1
 #define    DP_CASEINSENS 2
 
-/* FÅr Psemaphore, die Modi 0/1 werden z.Zt. nicht unterstÅtzt */
+/* For Psemaphore, the modes 0/1 are not supported at present */
 
 #define   PSEM_CRGET     0
 #define   PSEM_DESTROY   1

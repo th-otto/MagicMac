@@ -13,6 +13,18 @@
 * auf dem Stapel Åbergeben, dies ermîglicht die Verwendung eines
 * beliebigen Compilers.
 *
+* MagiC 3.00 onwards
+* ==================
+*
+* Structures for binding in a DFS.
+* The correct prototypes for the implementation of a DFS
+* in 'C' will follow as soon as the 'C' port is ready.
+*
+* As at times several registers are used for return values, and in
+* addition pointers are passed in data registers, a port as _cdecl
+* is planned, i.e. all parameters are passed on the stack, which
+* makes possible the use of any desired compiler.
+*
 * Version: 4.4.94
 *
 *********************************************************************/
@@ -122,12 +134,12 @@ typedef struct _mx_dfs {
      long      (*dfs_pathconf)(MX_DOSFD *dd, short cmd);
 } MX_DFS;
 
-/* unterstÅtzte Dcntl- Modi */
+/* Supported Dcntl modes */
 #define   DFS_GETINFO    0x1100
 #define   DFS_INSTDFS    0x1200
 #define   DEV_M_INSTALL  0xcd00
 
-/* zusÑtzliche Attributbits */
+/* additional attribute bits */
 #ifndef FA_SYMLINK
 #define	FA_SYMLINK	0x40
 #endif

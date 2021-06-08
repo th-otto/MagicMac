@@ -9,6 +9,11 @@
 * SÑmtliche Parameter werden auf dem Stapel Åbergeben, dies
 * ermîglicht die Verwendung eines beliebigen Compilers.
 *
+* Structures for binding in a DFS via a "Glue"-code in 'C'.
+*
+* All parameters are passes on the stack, which permits the
+* use of any desired compiler.
+*
 * Version: 1.12.94
 *
 *********************************************************************/
@@ -123,7 +128,7 @@ typedef struct _mx_dfs {
      LONG cdecl     (*dfs_pathconf)( MX_DOSFD *dd, WORD cmd );
 } MX_DFS;
 
-/* unterstÅtzte Dcntl- Modi */
+/* Supported Dcntl modes */
 #define   DFS_GETINFO    0x1100
 #define   DFS_INSTDFS    0x1200
 #define   DEV_M_INSTALL  0xcd00

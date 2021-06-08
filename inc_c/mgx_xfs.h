@@ -10,12 +10,22 @@
 *
 * Es wird <portab.h> benîtigt.
 *
+* MagiC 3 onwards
+* ===============
+*
+* Structures for binding in an XFS.
+* For the implementation of an XFS in 'C' the corresponding 
+* CDECL_xxx structures for MX_XFS and MX_DEV are defined.
+* This allows the use of any desired compiler.
+*
+* <portab.h> is required
+*
 * Version: 10.5.97
 *
 *********************************************************************/
 
 
-#define ELINK  -300           /* Datei ist symbolischer Link */
+#define ELINK  -300           /* File is a symbolic link */
 
 /* Die Struktur(en) fÅr dev_stat */
 typedef union unsel_union
@@ -37,7 +47,7 @@ typedef struct magx_unsel_struct
 
 typedef struct {
      WORD version;
-     void (*fast_clrmem)      ( void *von, void *bis );
+     void (*fast_clrmem)      ( void *from, void *to );
      char (*toupper)          ( char c );
      void cdecl (*_sprintf)   ( char *dest, const char *source, LONG *p );
      PD	**act_pd;
@@ -60,11 +70,11 @@ typedef struct {
      void (*int_mfree)        ( void *memblk );
      void (*resv_intmem)      ( void *mem, LONG bytes );
      LONG (*diskchange)       ( WORD drv );
-/* Ab Kernelversion 1: */
+/* From kernel version 1 on: */
      LONG (*DMD_rdevinit)     ( struct _mx_dmd *dmd );
-/* Ab Kernelversion 2: */
+/* From kernel version 2 on: */
      LONG (*proc_info)        ( WORD code, PD *pd );
-/* Ab Kernelversion 4: */
+/* From kernel version 4 on: */
      LONG (*mxalloc)          ( LONG amount, WORD mode, PD *pd );
      LONG (*mfree)            ( void *block );
      LONG (*mshrink)          ( void *block, LONG newlen );
@@ -150,7 +160,7 @@ typedef struct _mx_dmd {
 } MX_DMD;
 
 
-/* structure for getxattr (-> MiNT) */
+/* Structure for getxattr (-> MiNT) */
 
 #ifndef S_IFMT
 
@@ -159,24 +169,24 @@ typedef struct _mx_dmd {
 typedef struct xattr {
      unsigned short mode;
 /* file types */
-#define S_IFMT 0170000        /* mask to select file type */
+#define S_IFMT      0170000        /* mask to select file type */
 #define S_IFCHR     0020000        /* BIOS special file */
 #define S_IFDIR     0040000        /* directory file */
-#define S_IFREG 0100000       /* regular file */
-#define S_IFIFO 0120000       /* FIFO */
-#define S_IMEM 0140000        /* memory region or process */
+#define S_IFREG     0100000        /* regular file */
+#define S_IFIFO     0120000        /* FIFO */
+#define S_IMEM      0140000        /* memory region or process */
 #define S_IFLNK     0160000        /* symbolic link */
 
 /* special bits: setuid, setgid, sticky bit */
 #define S_ISUID     04000
-#define S_ISGID 02000
+#define S_ISGID     02000
 #define S_ISVTX     01000
 
 /* file access modes for user, group, and other*/
 #define S_IRUSR     0400
-#define S_IWUSR 0200
-#define S_IXUSR 0100
-#define S_IRGRP 0040
+#define S_IWUSR     0200
+#define S_IXUSR     0100
+#define S_IRGRP     0040
 #define S_IWGRP     0020
 #define S_IXGRP     0010
 #define S_IROTH     0004
@@ -285,30 +295,30 @@ typedef struct _cdecl_mx_xfs {
      LONG cdecl (*xfs_dcntl)(MX_DD *dd, const char *name, WORD cmd, LONG arg, void **symlink);
 } CDECL_MX_XFS;
 
-/* Dcntl(KER_DOSLIMITS) -> Zeiger auf Zeiger auf: */
+/* Dcntl(KER_DOSLIMITS) -> Pointer to pointer to: */
 
 typedef struct {
-     UWORD     version;                 /* Versionsnummer */
-     UWORD     num_drives;              /* max. Anzahl Laufwerke */
-     ULONG     max_secsizb;             /* max. Sektorgrîûe in Bytes */
-     UWORD     min_nfats;               /* min. Anzahl FATs */
-     UWORD     max_nfats;               /* max. Anzahl FATs */
-     ULONG     min_nclsiz;              /* min. Anzahl Sektoren/Cluster */
-     ULONG     max_nclsiz;              /* max. Anzahl Sektoren/Cluster */
-     ULONG     max_ncl;                 /* max. Anzahl Cluster */
-     ULONG     max_nsec;                /* max. Anzahl Sektoren */
+     UWORD     version;                 /* Version number */
+     UWORD     num_drives;              /* Max. number of drives */
+     ULONG     max_secsizb;             /* Max. sector size in bytes */
+     UWORD     min_nfats;               /* Min. number of FATs */
+     UWORD     max_nfats;               /* Max. number of FATs */
+     ULONG     min_nclsiz;              /* Min. number of sectors/clusters */
+     ULONG     max_nclsiz;              /* Max. number of sectors/clusters */
+     ULONG     max_ncl;                 /* Max. number of clusters */
+     ULONG     max_nsec;                /* Max. number of sectors */
 } MX_DOSLIMITS;
 
-/* Schreib-/Lesemodi fÅr Fgetchar und Fputchar */
+/* Write/Read modes for Fgetchar and Fputchar */
 
 #define   CMODE_RAW      0
 #define   CMODE_COOKED   1
 #define   CMODE_ECHO     2
 
-/* Open- Modus von Dateien (Mag!X- intern)                                 */
-/* NOINHERIT wird nicht unterstÅtzt, weil nach TOS- Konvention nur die     */
-/* Handles 0..5 vererbt werden                                             */
-/* HiByte wie unter MiNT verwendet                                         */
+/* Opening mode of files (MagiC-internal)                                  */
+/* NOINHERIT is not supported, as according to TOS convention only the     */
+/* handles 0..5 are inherited                                              */
+/* High byte as used under MiNT                                            */
 
 #define   OM_RPERM       1
 #define   OM_WPERM       2
@@ -330,7 +340,7 @@ typedef struct {
 #define O_EXCL		0x800
 
 
-/* unterstÅtzte Dcntl- Modi (Mag!X- spezifisch!) */
+/* Supported Dcntl modes (MagiC-specific!) */
 #define   KER_GETINFO    0x0100
 #define   KER_DOSLIMITS  0x0101
 #define   KER_INSTXFS    0x0200
@@ -338,7 +348,7 @@ typedef struct {
 #define   DFS_INSTDFS    0x1200
 #define   DEV_M_INSTALL  0xcd00
 #ifndef CDROMEJECT
-#define	CDROMEJECT     0x4309	/* Kernel: Medium auswerfen */
+#define	CDROMEJECT     0x4309	/* Kernel: Eject medium */
 #endif
 
 /*
@@ -355,10 +365,10 @@ typedef struct {
 #define MX_DFS_GETINFO		(('m'<< 8) | 0x40)	/* mgx_dos.txt */
 #define MX_DFS_INSTDFS		(('m'<< 8) | 0x41)	/* mgx_dos.txt */
 
-/* unterstÅtzte Dcntl- Modi */
+/* Supported Dcntl-modes */
 /* # define FUTIME       0x4603 */
 
-/* unterstÅtzte Fcntl- Modi */
+/* Supported Fcntl-modes */
 #ifndef FSTAT
 #define   FSTAT          (('F'<< 8) | 0)
 #endif
