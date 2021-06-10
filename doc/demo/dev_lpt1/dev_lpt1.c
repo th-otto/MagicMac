@@ -17,14 +17,18 @@
 ********************************************************************/
 
 
+#include <portab.h>
 #include <string.h>
 #include <tos.h>
+#include <toserror.h>
+#define PD BASEPAGE
+typedef void APPL;
+#define cdecl
 #include "mgx_xfs.h"
 #include "mgx_dfs.h"
 
 extern void handle_busy( void );
 
-#define NULL ((void *) 0)
 
 /******************************************************************
 *
@@ -77,7 +81,7 @@ long lpt_dev_close  (MX_DOSFD *f)
 *
 ******************************************************************/
 
-long lpt_dev_read   (MX_DOSFD *f, void *buf,  long len  )
+long lpt_dev_read   (MX_DOSFD *f, long len, void *buf  )
 {
      return(EACCDN);
 }
@@ -90,7 +94,7 @@ long lpt_dev_read   (MX_DOSFD *f, void *buf,  long len  )
 *
 ******************************************************************/
 
-extern long lpt_dev_write  (MX_DOSFD *f, void *buf,  long len  );
+extern long lpt_dev_write  (MX_DOSFD *f, long len, void *buf  );
 
 
 /******************************************************************
@@ -100,7 +104,7 @@ extern long lpt_dev_write  (MX_DOSFD *f, void *buf,  long len  );
 *
 ******************************************************************/
 
-extern long lpt_dev_stat   (MX_DOSFD *f, int  rwflag, void *unsel, void *appl);
+extern long lpt_dev_stat   (MX_DOSFD *f, void *unsel, short rwflag, APPL *appl);
 
 
 /******************************************************************
@@ -109,7 +113,7 @@ extern long lpt_dev_stat   (MX_DOSFD *f, int  rwflag, void *unsel, void *appl);
 *
 ******************************************************************/
 
-long lpt_dev_lseek  (MX_DOSFD *f, long where, int mode  )
+long lpt_dev_lseek  (MX_DOSFD *f, long where, short mode  )
 {
      return(EACCDN);
 }
@@ -137,7 +141,7 @@ long lpt_dev_datime (MX_DOSFD *f, int  *buf,  int rwflag)
 *
 ******************************************************************/
 
-long lpt_dev_ioctl  (MX_DOSFD *f, int  cmd, void *buf )
+long lpt_dev_ioctl  (MX_DOSFD *f, short cmd, void *buf )
 {
      return(EACCDN);
 }

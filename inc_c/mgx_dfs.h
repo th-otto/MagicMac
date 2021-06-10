@@ -35,9 +35,9 @@ typedef struct _mx_dosdir MX_DOSDIR;
 typedef struct _mx_ddev {
      LONG cdecl (*ddev_open)(MX_DOSFD *f);
      LONG cdecl (*ddev_close)(MX_DOSFD *f);
-     LONG cdecl (*ddev_read)(MX_DOSFD *f, void *buf, long len);
-     LONG cdecl (*ddev_write)(MX_DOSFD *f, void *buf, long len);
-     LONG cdecl (*ddev_stat)(MX_DOSFD *f, short rwflag, void *unsel, APPL *appl);
+     LONG cdecl (*ddev_read)(MX_DOSFD *f, long len, void *buf);
+     LONG cdecl (*ddev_write)(MX_DOSFD *f, long len, void *buf);
+     LONG cdecl (*ddev_stat)(MX_DOSFD *f, void *unsel, short rwflag, APPL *appl);
      LONG cdecl (*ddev_seek)(MX_DOSFD *f, long where, short whence);
      LONG cdecl (*ddev_datime)(MX_DOSFD *f, short *buf, short rwflag);
      LONG cdecl (*ddev_ioctl)(MX_DOSFD *f, short cmd, void *buf);

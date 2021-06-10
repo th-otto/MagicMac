@@ -64,15 +64,13 @@ typedef struct _mx_cdecl_ddev {
      LONG cdecl     (*ddev_close)  (MX_DOSFD *f);
      LONG cdecl     (*ddev_read)   (MX_DOSFD *f, LONG len, void *buf );
      LONG cdecl     (*ddev_write)  (MX_DOSFD *f, LONG len, void *buf);
-     LONG cdecl     (*ddev_stat)   (MX_DOSFD *f, LONG *unsel,
-     							WORD rwflag, LONG apcode);
+     LONG cdecl     (*ddev_stat)   (MX_DOSFD *f, LONG *unsel, WORD rwflag, LONG apcode);
      LONG cdecl     (*ddev_seek)   (MX_DOSFD *f, LONG where, WORD mode);
      LONG cdecl     (*ddev_datime) (MX_DOSFD *f, WORD *buf, WORD rwflag);
      LONG cdecl     (*ddev_ioctl)  (MX_DOSFD *f, WORD cmd, void *buf);
      LONG cdecl     (*ddev_delete) (MX_DOSFD *p, MX_DOSDIR *dir);
      LONG cdecl     (*ddev_getc)   (MX_DOSFD *f, WORD mode );
-     LONG cdecl     (*ddev_getline)(MX_DOSFD *f, char *buf,
-                                        LONG size, WORD mode );
+     LONG cdecl     (*ddev_getline)(MX_DOSFD *f, char *buf, LONG size, WORD mode );
      LONG cdecl     (*ddev_putc)   (MX_DOSFD *f, WORD mode, LONG val );
 } CDECL_MX_DDEV;
 

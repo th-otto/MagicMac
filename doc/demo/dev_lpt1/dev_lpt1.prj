@@ -1,9 +1,13 @@
                ; TTP.PRJ   for use with TTP- programs
                ; ------------------------------------
-dev_lpt1.tos   ; name of executable pgm is topmost window
+dev_lpt1.tos
+.C[-I..\..\..\inc_c]
+.C[-I..\..\..\pc\include]
+.S[-I..\..\..\inc_as]
+.S[-I..\..\..\kernel\inc]
 =              ; list of modules follows...
-tcnstart.o     ; startup code (mit ParameterÅbergabe)
+..\..\..\pc\lib\cstartv.o     ; startup code (mit ParameterÅbergabe)
 dev_lpt1.c
-dev_lpt1.s
-..\..\pc\lib\pcstdlib.lib   ; standard lib
-..\..\pc\lib\pctoslib.lib   ; TOS lib
+dev_lpts.s
+..\..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\..\pc\lib\pctoslib.lib   ; TOS lib

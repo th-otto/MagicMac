@@ -34,9 +34,11 @@
 *
 ********************************************************************/
 
+#include "portab.h"
 #include <string.h>
 #include <tos.h>
 
+typedef void *APPL;
 #include "mgx_xfsc.h"
 #include "mgx_dfsc.h"
 
@@ -106,7 +108,7 @@ LONG cdecl sample_close( MX_DOSFD *f )
 *
 ******************************************************************/
 
-LONG cdecl sample_read( MX_DOSFD *f, void *buf,  LONG len )
+LONG cdecl sample_read( MX_DOSFD *f, LONG len, void *buf )
 {
 	return(0L);
 }
@@ -118,7 +120,7 @@ LONG cdecl sample_read( MX_DOSFD *f, void *buf,  LONG len )
 *
 ******************************************************************/
 
-LONG cdecl sample_write( MX_DOSFD *f, void *buf,  LONG len )
+LONG cdecl sample_write( MX_DOSFD *f, LONG len, void *buf )
 {
 	return(0L);
 }
@@ -130,8 +132,7 @@ LONG cdecl sample_write( MX_DOSFD *f, void *buf,  LONG len )
 *
 ******************************************************************/
 
-LONG cdecl sample_stat( MX_DOSFD *f, WORD rwflag, void *unsel,
-					void *appl)
+LONG cdecl sample_stat( MX_DOSFD *f, void *unsel, WORD rwflag, void *appl)
 {
 	return(0);
 }

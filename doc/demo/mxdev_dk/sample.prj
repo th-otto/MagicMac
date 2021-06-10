@@ -1,9 +1,13 @@
                ; TTP.PRJ   for use with TTP- programs
                ; ------------------------------------
-sample.tos     ; name of executable pgm is topmost window
+sample.tos
+.C[-I..\..\..\inc_c]
+.C[-I..\..\..\pc\include]
+.S[-I..\..\..\inc_as]
+.S[-I..\..\..\kernel\inc]
 =              ; list of modules follows...
-tcnstart.o     ; startup code (mit ParameterÅbergabe)
-sample.c	(mgx_dfs.h,mgx_xfs.h,magx.h)
-sample.s
-pcstdlib.lib   ; standard lib
-pctoslib.lib   ; TOS lib
+..\..\..\pc\lib\cstartv.o     ; startup code (mit ParameterÅbergabe)
+sample.c
+samples.s
+..\..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\..\pc\lib\pctoslib.lib   ; TOS lib
