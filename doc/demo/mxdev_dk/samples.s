@@ -169,14 +169,15 @@ _sample_ioctl:
 
 **********************************************************************
 *
-* LONG _sample_delete( a1 = DIR *dir )
+* LONG _sample_delete( a0 = MX_DOSFD *f, a1 = DIR *dir )
 *
 
 _sample_delete:
  move.l	a1,-(sp)
+ move.l	a0,-(sp)
  move.l	drvr+ddev_delete,a0
  jsr		(a0)
- addq.l	#4,sp
+ addq.l	#8,sp
  rts
 
 
