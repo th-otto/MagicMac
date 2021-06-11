@@ -774,8 +774,8 @@ d2s_1:
 *
 
 _sprintf:
- movem.l	a3/a4/a5,-(sp)
- movem.l	$10(sp),a5/a4/a3		; a3 = dst
+ movem.l	d2/a3/a4/a5,-(sp)
+ movem.l	20(sp),a5/a4/a3		; a3 = dst
 							; a4 = src
 							; a5 = p[]
 _spr_loop:
@@ -824,7 +824,7 @@ _spr_long:
 
 _spr_ende:
  clr.b	(a3)
- movem.l	(sp)+,a5/a4/a3
+ movem.l	(sp)+,a5/a4/a3/d2
  rts
 
 
