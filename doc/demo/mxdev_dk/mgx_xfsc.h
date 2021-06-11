@@ -33,7 +33,7 @@ typedef struct {
      WORD version;
      void (*fast_clrmem)      ( void *from, void *to );
      char (*toupper)          ( char c );
-     void (*_sprintf)         ( char *dest, char *source, LONG *p );
+     void cdecl (*_sprintf)   ( char *dest, char *source, LONG *p );
      void *act_pd;
      APPL **act_appl;
      APPL **keyb_app;
