@@ -1,0 +1,31 @@
+name: Linux build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  SSH_ID: ${{ secrets.SSH_ID }}
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install SSH keys
+        run: ./.scripts/install_ssh_id.sh
+      - name: Setup environment
+        run: ./.scripts/setup_env.sh
+      - name: Install packages
+        run: |
+          ./.scripts/install_prerequisities.sh
+      - name: build
+        run: ./.scripts/build.sh
+      - name: deploy
+        if: ${{ github.event_name == 'push' }}
+        env:
+          COMMITER_NAME: ${{ github.event.commits[0].author.name }}
+          COMMITER_EMAIL: ${{ github.event.commits[0].author.email }}
+        run: ./.scripts/deploy.sh

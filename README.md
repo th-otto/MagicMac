@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/th-otto/MagicMac.svg?branch=master)](https://travis-ci.org/th-otto/MagicMac)
+[![Build Status](https://github.com/th-otto/MagicMac/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/th-otto/MagicMac/actions) 
 
-Latest snapshot: [![Download](https://api.bintray.com/packages/th-otto/magicmac-files/snapshots/images/download.svg) ](https://bintray.com/th-otto/magicmac-files/snapshots/_latestVersion#files)
+Latest snapshot: [Download](https://tho-otto.de/snapshots/magicmac/)
 
 # Sources for Atari and Related
 
