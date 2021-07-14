@@ -23,6 +23,7 @@ DEBUG     EQU  2
      INCLUDE "kernel.inc"
      INCLUDE "basepage.inc"
 	 INCLUDE "magicdos.inc"
+	 include "country.inc"
 
      SUPER
 
@@ -2956,7 +2957,15 @@ free_clone_FD:
 *
 
 fatal_errs:
+ IF   COUNTRY=COUNTRY_DE
  DC.B     '*** FATALER FEHLER IM DOS-XFS:',0
+ ENDIF
+ IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
+ DC.B     '*** FATAL ERROR IN DOS-XFS:',0
+ ENDIF
+ IF   COUNTRY=COUNTRY_FR
+ DC.B     '*** ERREUR FATALE DANS L'DOS-XFS:',0
+ ENDIF
  EVEN
 
 unlist_loop:

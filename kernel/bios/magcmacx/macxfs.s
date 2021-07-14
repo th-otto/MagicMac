@@ -312,7 +312,7 @@ mxfs_freeDD:
 mxfs_drv_open:
  move.l   a0,-(sp)                 ; DMD merken
 
- subq.l   #6,sp                    ; Platz fuer DD
+ subq.l   #6,sp                    ; Platz fuer MXFSDD
  move.l   d_xfs(a0),-(sp)          ; Flag "schon initialisiert", Diskwechsel ?
  pea      0+4(sp)                  ; &dd
  move.w   d_drive(a0),-(sp)
@@ -910,10 +910,10 @@ dop_ok:
 
 **********************************************************************
 *
-* long mxfs_dreaddir( a0 = void *dh, d0 = int len, a1 = char *buf,
+* long mxfs_dreaddir( a0 = FD *dh, d0 = int len, a1 = char *buf,
 *                     d1 = XATTR *xattr, d2 = long *xr )
 *
-* FUer Dreaddir (xattr = NULL) und Dxreaddir
+* Fuer Dreaddir (xattr = NULL) und Dxreaddir
 *
 
 mxfs_dreaddir:

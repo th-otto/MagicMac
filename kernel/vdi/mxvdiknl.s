@@ -764,6 +764,7 @@ init_vt52_font:   move.l   dat_table(a1),(V_FNT_AD).w ;Adresse des Fontimage
                   movem.l  (sp)+,d0-d3/a0-a2
                   rts
 
+ IF   COUNTRY=COUNTRY_DE
 no_offscreen_drivers:
                   DC.B  'Offscreen-Treiber nicht gefunden.',13,10
                   DC.B  'MCMD wird gestartet...',13,10,0
@@ -772,9 +773,33 @@ no_screen_driver:
                   DC.B  'Bildschirm-Treiber nicht gefunden.',13,10
                   DC.B  'MCMD wird gestartet...',13,10,0
 
+system_halted:    DC.B  'System wird angehalten.',13,10,0
+ ENDIF
+ IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
+no_offscreen_drivers:
+                  DC.B  'Offscreen-driver not found.',13,10
+                  DC.B  'Executing MCMD...',13,10,0
+
+no_screen_driver:
+                  DC.B  'Screen-driver not found.',13,10
+                  DC.B  'Executing MCMD...',13,10,0
+
+system_halted:    DC.B  'System is halted.',13,10,0
+ ENDIF
+ IF   COUNTRY=COUNTRY_FR
+no_offscreen_drivers:
+                  DC.B  'Offscreen-driver not found.',13,10
+                  DC.B  'Executing MCMD...',13,10,0
+
+no_screen_driver:
+                  DC.B  'Screen-driver not found.',13,10
+                  DC.B  'Executing MCMD...',13,10,0
+
+system_halted:    DC.B  'System is halted.',13,10,0
+ ENDIF
+
 empty_cmd:        DC.B  0
 mcmd_path:        DC.B  'GEMDESK\MCMD.TOS',0
-system_halted:    DC.B  'System wird angehalten.',13,10,0
 
                   EVEN
 
