@@ -672,6 +672,7 @@ void    vsc_expose( _WORD handle, _WORD state );
 #define GDOS_AMC       0x0007E864L    /* AMCGDos von Arnd Beissner   */
 #define GDOS_AMCLIGHT  0x0007E8BAL    /* GEMINI-Spezial-GDos von Arnd Beissner */
 #define GDOS_NVDI      0x00000000L    /* NVDI von Bela GmbH */
+#define GDOS_TTF       0x3e5d0957L    /* TTF-GDOS */
 
 /* Testet ob ein GDOS geladen ist */
 /* Achtung, das ABC-GEM (GEM 2.1) schmiert bei dieser Funktion ab!!! */

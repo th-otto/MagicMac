@@ -13,9 +13,8 @@
    Library General Public License for more details.
 
    You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
 
 /* Modified for MiNTLib by Frank Naumann <fnaumann@freemint.de>.  */
 
@@ -172,7 +171,7 @@ extern int setsockopt (int __fd, int __level, int __optname,
 /* Prepare to accept connections on socket FD.
    N connection requests will be queued before further requests are refused.
    Returns 0 on success, -1 for errors.  */
-extern int listen (int __fd, int __backlog) __THROW;
+extern int listen (int __fd, unsigned int __n) __THROW;
 
 /* Await a connection on socket FD.
    When a connection arrives, open a new socket to communicate with it,

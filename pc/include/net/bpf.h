@@ -37,7 +37,7 @@
  *
  *      @(#)bpf.h       7.1 (Berkeley) 5/7/91
  *
- * @(#) $Header: /mint/mintlib/include/net/bpf.h,v 1.3 2001/11/15 23:41:28 fna Exp $ (LBL)
+ * @(#) $Header$ (LBL)
  */
 
 /*

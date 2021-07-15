@@ -163,94 +163,89 @@ struct icmp {
 /*
  * Definition of type and code field values.
  */
-#define	ICMP_ECHOREPLY			0		/* echo reply */
-#define	ICMP_DEST_UNREACH		3		/* dest unreachable, codes: */
-#define		ICMP_NET_UNREACH		0	/* bad net */
-#define		ICMP_HOST_UNREACH		1	/* bad host */
-#define		ICMP_PROT_UNREACH		2	/* bad protocol */
-#define		ICMP_PORT_UNREACH		3	/* bad port */
-#define		ICMP_FRAG_NEEDED		4	/* IP_DF caused drop */
-#define		ICMP_SR_FAILED			5	/* src route failed */
-#define		ICMP_NET_UNKNOWN		6	/* unknown net */	
-#define		ICMP_HOST_UNKNOWN		7	/* unknown host */
-#define		ICMP_HOST_ISOLATED		8	/* src host isolated */
-#define		ICMP_NET_ANO			9	/* net denied */
-#define		ICMP_HOST_ANO			10	/* host denied */
-#define		ICMP_NET_UNR_TOS		11	/* bad tos for net */
-#define		ICMP_HOST_UNR_TOS		12	/* bad tos for host */
-#define		ICMP_PKT_FILTERED		13	/* Packet filtered */
-#define		ICMP_PREC_VIOLATION		14	/* Precedence violation */
-#define		ICMP_PREC_CUTOFF		15	/* Precedence cut off */
-#define		NR_ICMP_UNREACH			15	/* instead of hardcoding immediate value */
-#define	ICMP_SOURCE_QUENCH		4		/* packet lost, slow down */
-#define	ICMP_REDIRECT			5		/* shorter route, codes: */
-#define		ICMP_REDIR_NET			0	/* for network */
-#define		ICMP_REDIR_HOST			1	/* for host */
-#define		ICMP_REDIR_NETTOS		2	/* for net and tos */
-#define		ICMP_REDIR_HOSTTOS		3	/* for host and tos */
-#define	ICMP_ECHO				8		/* echo service */
-#define	ICMP_ROUTERADVERT		9		/* router advertisement */
-#define	ICMP_ROUTERSOLICIT		10		/* router solicitation */
-#define	ICMP_TIME_EXCEEDED		11		/* time exceeded, code: */
-#define		ICMP_EXC_TTL			0	/* TTL count exceeded */
-#define		ICMP_EXC_FRAGTIME		1	/* Fragment Reass time exceeded	*/
-#define	ICMP_PARAMETERPROB		12		/* ip header bad */
-#define	ICMP_TIMESTAMP			13		/* timestamp request */
-#define	ICMP_TIMESTAMPREPLY		14		/* timestamp reply */
-#define	ICMP_INFO_REQUEST		15		/* information request */
-#define	ICMP_INFO_REPLY			16		/* information reply */
-#define	ICMP_ADDRESS			17		/* address mask request */
-#define	ICMP_ADDRESSREPLY		18		/* address mask reply */
-#define NR_ICMP_TYPES			18
+#define ICMP_ECHOREPLY		0		/* echo reply */
+#define ICMP_UNREACH		3		/* dest unreachable, codes: */
+#define		ICMP_UNREACH_NET		0	/* bad net */
+#define		ICMP_UNREACH_HOST		1	/* bad host */
+#define		ICMP_UNREACH_PROTOCOL	2	/* bad protocol */
+#define		ICMP_UNREACH_PORT		3	/* bad port */
+#define		ICMP_UNREACH_NEEDFRAG	4	/* IP_DF caused drop */
+#define		ICMP_UNREACH_SRCFAIL	5	/* src route failed */
+#define		ICMP_UNREACH_NET_UNKNOWN 6	/* unknown net */
+#define		ICMP_UNREACH_HOST_UNKNOWN 7	/* unknown host */
+#define		ICMP_UNREACH_ISOLATED	8	/* src host isolated */
+#define		ICMP_UNREACH_NET_PROHIB 9	/* prohibited access */
+#define		ICMP_UNREACH_HOST_PROHIB 10	/* host denied */
+#define		ICMP_UNREACH_TOSNET		11	/* bad tos for net */
+#define		ICMP_UNREACH_TOSHOST	12	/* bad tos for host */
+#define		ICMP_UNREACH_FILTER_PROHIB      13	/* admin prohib */
+#define		ICMP_UNREACH_ADMIN_PROHIBIT ICMP_UNREACH_FILTER_PROHIB		/* communication administratively prohibited */
+#define		ICMP_UNREACH_HOST_PRECEDENCE    14	/* host prec vio. */
+#define		ICMP_UNREACH_PRECEDENCE_CUTOFF  15	/* prec cutoff */
+#define ICMP_SOURCEQUENCH	4		/* packet lost, slow down */
+#define ICMP_REDIRECT		5		/* shorter route, codes: */
+#define		ICMP_REDIRECT_NET		0	/* for network */
+#define		ICMP_REDIRECT_HOST		1	/* for host */
+#define		ICMP_REDIRECT_TOSNET	2	/* for tos and net */
+#define		ICMP_REDIRECT_TOSHOST	3	/* for tos and host */
+#define ICMP_ALTHOSTADDR	6		/* alternative host address */
+#define ICMP_ECHO			8		/* echo service */
+#define ICMP_ROUTERADVERT	9		/* router advertisement */
+#define		ICMP_ROUTERADVERT_NORMAL 0
+#define		ICMP_ROUTERADVERT_NOROUTE 16
+#define ICMP_ROUTERSOLICIT	10		/* router solicitation */
+#define ICMP_TIMXCEED		11		/* time exceeded, code: */
+#define		ICMP_TIMXCEED_INTRANS	0		/* ttl==0 in transit */
+#define		ICMP_TIMXCEED_REASS	1		/* ttl==0 in reass */
+#define ICMP_PARAMPROB		12		/* ip header bad */
+#define		ICMP_PARAMPROB_ERRATPTR 0
+#define		ICMP_PARAMPROB_OPTABSENT 1 /* req. opt. absent */
+#define		ICMP_PARAMPROB_LENGTH	2
+#define ICMP_TSTAMP			13		/* timestamp request */
+#define ICMP_TSTAMPREPLY	14		/* timestamp reply */
+#define ICMP_IREQ			15		/* information request */
+#define ICMP_IREQREPLY		16		/* information reply */
+#define ICMP_MASKREQ		17		/* address mask request */
+#define ICMP_MASKREPLY		18		/* address mask reply */
+#define ICMP_TRACEROUTE		30		/* traceroute (deprecated) */
+#define ICMP_DATACONVERR	31		/* data conversion error (deprecated) */
+#define ICMP_MOBILE_REDIRECT	32		/* mobile redirect (deprecated) */
+#define ICMP_IPV6_WHEREAREYOU	33		/* ipv6 where are you (deprecated) */
+#define ICMP_IPV6_IAMHERE	34		/* ipv6 i am here (deprecated) */
+#define ICMP_MOBILE_REGREQUEST	35		/* mobile registration req (deprecated) */
+#define ICMP_MOBILE_REGREPLY	36		/* mobile registration reply (deprecated) */
+#define ICMP_SKIP		39		/* SKIP (deprecated) */
+#define ICMP_PHOTURIS		40		/* security */
+#define		ICMP_PHOTURIS_UNKNOWN_INDEX	0	/* unknown sec index */
+#define		ICMP_PHOTURIS_AUTH_FAILED	1	/* auth failed */
+#define		ICMP_PHOTURIS_DECOMPRESS_FAILED 2	/* decompress failed */
+#define		ICMP_PHOTURIS_DECRYPT_FAILED	3	/* decrypt failed */
+#define		ICMP_PHOTURIS_NEED_AUTHN	4	/* no authentication */
+#define		ICMP_PHOTURIS_NEED_AUTHZ	5	/* no authorization */
 
+#define	ICMP_MAXTYPE		18
 
-#ifdef __USE_MISC
+/* aliases */
+#define ICMP_DEST_UNREACH        ICMP_UNREACH
+#define ICMP_NET_UNREACH         ICMP_UNREACH_NET
+#define ICMP_HOST_UNREACH        ICMP_UNREACH_HOST
+#define ICMP_PROT_UNREACH        ICMP_UNREACH_PROTOCOL
+#define ICMP_PORT_UNREACH        ICMP_UNREACH_PORT
+#define ICMP_FRAG_NEEDED         ICMP_UNREACH_NEEDFRAG
+#define ICMP_SR_FAILED           ICMP_UNREACH_SRCFAIL
+#define ICMP_NET_UNKNOWN         ICMP_UNREACH_NET_UNKNOWN
+#define ICMP_HOST_UNKNOWN        ICMP_UNREACH_HOST_UNKNOWN
+#define ICMP_HOST_ISOLATED       ICMP_UNREACH_ISOLATED
+#define ICMP_NET_ANO             ICMP_UNREACH_NET_PROHIB
+#define ICMP_HOST_ANO            ICMP_UNREACH_HOST_PROHIB
+#define ICMP_NET_UNR_TOS         ICMP_UNREACH_TOSNET
+#define ICMP_HOST_UNR_TOS        ICMP_UNREACH_TOSHOST
+#define ICMP_PKT_FILTERED        ICMP_UNREACH_FILTER_PROHIB
+#define ICMP_PREC_VIOLATION      ICMP_UNREACH_HOST_PRECEDENCE
+#define ICMP_PREC_CUTOFF         ICMP_UNREACH_PRECEDENCE_CUTOFF
 
-/* Definition of type and code fields. */
-/* defined above: ICMP_ECHOREPLY, ICMP_REDIRECT, ICMP_ECHO */
-#define	ICMP_UNREACH		ICMP_DEST_UNREACH
-#define	ICMP_SOURCEQUENCH	ICMP_SOURCE_QUENCH
-#define	ICMP_TIMXCEED		ICMP_TIME_EXCEEDED
-#define	ICMP_PARAMPROB		ICMP_PARAMETERPROB
-#define	ICMP_TSTAMP			ICMP_TIMESTAMP
-#define	ICMP_TSTAMPREPLY	ICMP_TIMESTAMPREPLY
-#define	ICMP_IREQ			ICMP_INFO_REQUEST
-#define	ICMP_IREQREPLY		ICMP_INFO_REPLY
-#define	ICMP_MASKREQ		ICMP_ADDRESS
-#define	ICMP_MASKREPLY		ICMP_ADDRESSREPLY
+#define ICMP_TIME_EXCEEDED       ICMP_TIMXCEED
 
-#define	ICMP_MAXTYPE		NR_ICMP_TYPES
-
-/* UNREACH codes */
-#define	ICMP_UNREACH_NET	        	ICMP_NET_UNREACH
-#define	ICMP_UNREACH_HOST	        	ICMP_HOST_UNREACH
-#define	ICMP_UNREACH_PROTOCOL	    	ICMP_PROT_UNREACH
-#define	ICMP_UNREACH_PORT	        	ICMP_PORT_UNREACH
-#define	ICMP_UNREACH_NEEDFRAG	    	ICMP_FRAG_NEEDED
-#define	ICMP_UNREACH_SRCFAIL	    	ICMP_SR_FAILED
-#define	ICMP_UNREACH_NET_UNKNOWN    	ICMP_NET_UNKNOWN
-#define	ICMP_UNREACH_HOST_UNKNOWN   	ICMP_HOST_UNKNOWN
-#define	ICMP_UNREACH_ISOLATED	    	ICMP_HOST_ISOLATED
-#define	ICMP_UNREACH_NET_PROHIB	    	ICMP_NET_ANO
-#define	ICMP_UNREACH_HOST_PROHIB    	ICMP_HOST_ANO
-#define	ICMP_UNREACH_TOSNET	        	ICMP_NET_UNR_TOS
-#define	ICMP_UNREACH_TOSHOST	    	ICMP_HOST_UNR_TOS
-#define	ICMP_UNREACH_FILTER_PROHIB  	ICMP_PKT_FILTERED
-#define	ICMP_UNREACH_HOST_PRECEDENCE    ICMP_PREC_VIOLATION
-#define	ICMP_UNREACH_PRECEDENCE_CUTOFF  ICMP_PREC_CUTOFF
-
-/* REDIRECT codes */
-#define	ICMP_REDIRECT_NET		ICMP_REDIR_NET
-#define	ICMP_REDIRECT_HOST		ICMP_REDIR_HOST
-#define	ICMP_REDIRECT_TOSNET	ICMP_REDIR_NETTOS
-#define	ICMP_REDIRECT_TOSHOST	ICMP_REDIR_HOSTTOS
-
-/* TIMEXCEED codes */
-#define	ICMP_TIMXCEED_INTRANS	ICMP_EXC_TTL
-#define	ICMP_TIMXCEED_REASS		ICMP_EXC_FRAGTIME
-
-/* PARAMPROB code */
-#define	ICMP_PARAMPROB_OPTABSENT 1		/* req. opt. absent */
 
 #define	ICMP_INFOTYPE(type) \
 	((type) == ICMP_ECHOREPLY || (type) == ICMP_ECHO || \
@@ -259,7 +254,33 @@ struct icmp {
 	(type) == ICMP_IREQ || (type) == ICMP_IREQREPLY || \
 	(type) == ICMP_MASKREQ || (type) == ICMP_MASKREPLY)
 
-#endif /* __USE_MISC */
+/*
+ * ICMP Extension Structure Header (RFC4884).
+ */
+#define ICMP_EXT_VERSION	2
+#define ICMP_EXT_OFFSET		128
+
+struct icmp_ext_hdr {
+#if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
+	unsigned int version:4;
+	unsigned int rsvd1:4;
+	unsigned int rsvd2:8;
+#else
+	unsigned int rsvd2:8;
+	unsigned int rsvd1:4;
+	unsigned int version:4;
+#endif
+	uint16_t checksum;
+};
+
+/*
+ * ICMP Extension Object Header (RFC4884).
+ */
+struct icmp_ext_obj_hdr {
+	uint16_t length;
+	uint8_t class_num;
+	uint8_t c_type;
+};
 
 __END_DECLS
 

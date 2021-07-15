@@ -1,7 +1,9 @@
 #ifndef __MTAES__
 #define __MTAES__
 
+#define _mt_aes _mt_aes_alt
 #include <aes.h>
+#undef _mt_aes
 #include <wdlgevnt.h>
 #include <wdlgpdlg.h>
 #include <wdlgfslx.h>

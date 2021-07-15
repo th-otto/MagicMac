@@ -50,7 +50,7 @@
 #define GEM        XGEM                       /* OS/2 default is X/GEM       */
 #endif /* MSDOS */
 
-#if defined(FLEXOS) || defined(UNIX)
+#if defined(FLEXOS) || defined(__unix__)
 #define GEM        XGEM                       /* FlexOS default is X/GEM     */
 #endif /* FLEXOS */
 #endif /* GEM */

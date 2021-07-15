@@ -96,7 +96,7 @@ typedef __int32_t __off_t;	/* Type of file sizes and offsets.  */
 typedef __quad_t __loff_t;	/* Type of file sizes and offsets.  */
 typedef __loff_t __off64_t;	/* Type of file sizes and offsets (LFS).  */
 typedef int __pid_t;		/* Type of process identifications.  */
-typedef long int __ssize_t;	/* Type of a byte count, or error.  */
+typedef signed long int __ssize_t;	/* Type of a byte count, or error.  */
 typedef __u_quad_t __fsid_t;	/* Type of file system IDs.  */
 typedef __int32_t __clock_t;	/* Type of CPU usage counts.  */
 typedef __int32_t __rlim_t;	/* Type for resource measurement.  */
@@ -190,7 +190,7 @@ typedef unsigned int __t_uscalar_t;
 /* Duplicates info from stdint.h but this is used in unistd.h.  */
 typedef long int __intptr_t;
 
-/* Duplicate info from sys/socket.h.  */
-typedef __uint32_t __socklen_t;
+/* Real type of socklen_t, used in places where unistd.h was not included.  */
+typedef unsigned long __socklen_t;
 
 #endif /* bits/types.h */

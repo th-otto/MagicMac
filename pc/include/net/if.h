@@ -42,25 +42,26 @@ enum
 #define IFF_NOTRAILERS	IFF_NOTRAILERS
     IFF_RUNNING = 0x40,		/* Resources allocated.  */
 #define IFF_RUNNING	IFF_RUNNING
-    IFF_NOARP = 0x80,		/* No address resolution protocol.  */
+    IFF_NOARP = 0x80		/* No address resolution protocol.  */
 #define IFF_NOARP	IFF_NOARP
+
+#if 0
+/* Not supported */
     IFF_PROMISC = 0x100,	/* Receive all packets.  */
 #define IFF_PROMISC	IFF_PROMISC
     IFF_ALLMULTI = 0x200,	/* Receive all multicast packets.  */
 #define IFF_ALLMULTI	IFF_ALLMULTI
-    IFF_MULTICAST = 0x0400,	/* Supports multicast.  */
-#define IFF_MULTICAST	IFF_MULTICAST
-#define IFF_IGMP		IFF_MULTICAST
-
-/* Not supported */
     IFF_MASTER = 0x400,		/* Master of a load balancer.  */
 #define IFF_MASTER	IFF_MASTER
     IFF_SLAVE = 0x800,		/* Slave of a load balancer.  */
 #define IFF_SLAVE	IFF_SLAVE
+    IFF_MULTICAST = 0x1000,	/* Supports multicast.  */
+#define IFF_MULTICAST	IFF_MULTICAST
     IFF_PORTSEL = 0x2000,	/* Can set media type.  */
 #define IFF_PORTSEL	IFF_PORTSEL
     IFF_AUTOMEDIA = 0x4000	/* Auto media select active.  */
 #define IFF_AUTOMEDIA	IFF_AUTOMEDIA
+#endif
   };
 
 /* The ifaddr structure contains information about one address of an
@@ -76,7 +77,7 @@ struct ifaddr
 	struct sockaddr	ifu_broadaddr;
 	struct sockaddr	ifu_dstaddr;
       } ifa_ifu;
-    struct iface *ifa_ifp;	/* Back-pointer to interface.  */
+    struct ifnet *ifa_ifp;	/* Back-pointer to interface.  */
     struct ifaddr *ifa_next;	/* Next address for interface.  */
   };
 
@@ -122,11 +123,11 @@ struct ifnet {
 
 
 struct	ifstat {
-	u_long	in_packets;	/* # input packets */
-	u_long	in_errors;	/* # input errors */
-	u_long	out_packets;	/* # output packets */
-	u_long	out_errors;	/* # output errors */
-	u_long	collisions;	/* # collisions */	
+	unsigned long	in_packets;	/* # input packets */
+	unsigned long	in_errors;	/* # input errors */
+	unsigned long	out_packets;	/* # output packets */
+	unsigned long	out_errors;	/* # output errors */
+	unsigned long	collisions;	/* # collisions */
 };
 
 /*
@@ -148,7 +149,7 @@ struct	ifreq {
 		long	ifru_ivalue;
 		long	ifru_mtu;
 		struct	ifstat ifru_stats;
-		caddr_t	ifru_data;
+		void	*ifru_data;
 	} ifr_ifru;
 #define	ifr_addr	ifr_ifru.ifru_addr	/* address */
 #define	ifr_hwaddr	ifr_ifru.ifru_hwaddr	/* hardware address */
@@ -172,7 +173,7 @@ struct	ifreq {
 struct	ifconf {
 	short	ifc_len;		/* size of associated buffer */
 	union {
-		caddr_t	ifcu_buf;
+		void *ifcu_buf;
 		struct	ifreq *ifcu_req;
 	} ifc_ifcu;
 #define	ifc_buf	ifc_ifcu.ifcu_buf	/* buffer address */

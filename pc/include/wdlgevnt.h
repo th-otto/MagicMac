@@ -1,7 +1,10 @@
 #ifndef __WDLGEVNT_H__
 #define __WDLGEVNT_H__
 
+#ifndef __fixed_defined
+#define __fixed_defined 1
 typedef _LONG fixed;
+#endif
 
 /* Mouse rectangle for EVNT_multi() */
 #if !defined(__MOBLK) && !defined(__TOS)

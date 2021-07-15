@@ -162,9 +162,13 @@ struct flock
 /* Bits OR'd into the second argument to open.  */
 
 #ifdef _PUREC_SOURCE
+#undef O_APPEND
 #define O_APPEND    0x0008		/* position at EOF */
+#undef O_CREAT
 #define O_CREAT     0x0020		/* create new file if needed */
+#undef O_TRUNC
 #define O_TRUNC     0x0040		/* make file 0 length */
+#undef O_EXCL
 #define O_EXCL      0x0080		/* error if file exists */
 #define	O_NONBLOCK	0x1000		/* Non-blocking I/O */
 

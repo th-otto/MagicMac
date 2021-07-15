@@ -6,16 +6,16 @@
 # error "Never include <bits/setjmp.h> directly; use <setjmp.h> instead."
 #endif
 
-#ifdef _PUREC_SOURCE
+#ifdef __PUREC__
 
 #include <bits/types.h>
 
 #ifdef	__HAVE_FPU__
 /* D3-D7,PC,A2-A7,FP3-FP7 */
-typedef char  __jmp_buf[12*4 + 5*12];
+typedef __int32_t  __jmp_buf[12 + 5*3];
 #else
 /* D3-D7,PC,A2-A7 */
-typedef char  __jmp_buf[12*4];
+typedef __int32_t  __jmp_buf[12];
 #endif
 
 #else

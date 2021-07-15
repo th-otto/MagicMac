@@ -2,7 +2,7 @@
 /*
  * Definitions for tcp compression routines.
  *
- * $Header: /mint/mintlib/include/net/slcompress.h,v 1.2 2001/07/11 23:59:06 fna Exp $
+ * $Header: slcompress.h,v 1.2 2001/07/11 23:59:06 fna Exp $
  *
  * Copyright (c) 1989 Regents of the University of California.
  * All rights reserved.

@@ -5,6 +5,8 @@
 #include <wdlgevnt.h>
 
 /* MagiC XTED Struktur */
+#ifndef __XTED
+#define __XTED
 typedef struct
 {
 	char *xte_ptmplt;
@@ -12,6 +14,7 @@ typedef struct
 	_WORD xte_vislen;
 	_WORD xte_scroll;
 } XTED;
+#endif
 
 #ifndef __MTDIALOG
 #define __MTDIALOG

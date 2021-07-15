@@ -65,15 +65,23 @@ struct timestamp
 struct iphdr
   {
 #if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
+    unsigned int tos:8;
     unsigned int ihl:4;
     unsigned int version:4;
 #elif __BYTE_ORDER == __ORDER_BIG_ENDIAN__
+/*
+ * Beware: the original definition uses "unsigned char"
+ * for the type of bitfields. This is a GNU-C only
+ * extension and not portable. Also, declaring
+ * ip_tos as unsigned char, but not being part of the bitfield,
+ * causes some compilers (like Pure-C) to align it at an even address.
+ */
     unsigned int version:4;
     unsigned int ihl:4;
+    unsigned int tos:8;
 #else
 # error	"Please fix <bits/endian.h>"
 #endif
-    uint8_t tos;
     uint16_t tot_len;
     uint16_t id;
     uint16_t frag_off;
@@ -93,21 +101,25 @@ struct iphdr
 
 /*
  * Structure of an internet header, naked of options.
- *
- * We declare ip_len and ip_off to be short, rather than u_short
- * pragmatically since otherwise unsigned comparisons can result
- * against negative integers quite easily, and fail in subtle ways.
  */
 struct ip {
-#if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
-    uint8_t ip_hl:4;		/* header length */
-    uint8_t ip_v:4;			/* version */
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    unsigned int ip_tos:8;		/* type of service */
+    unsigned int ip_hl:4;		/* header length */
+    unsigned int ip_v:4;		/* version */
 #endif
-#if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
-    uint8_t ip_v:4;			/* version */
-    uint8_t ip_hl:4;		/* header length */
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+/*
+ * Beware: the original definition uses "unsigned char"
+ * for the type of bitfields. This is a GNU-C only
+ * extension and not portable. Also, declaring
+ * ip_tos as unsigned char, but not being part of the bitfield,
+ * causes some compilers (like Pure-C) to align it at an even address.
+ */
+    unsigned int ip_v:4;		/* version */
+    unsigned int ip_hl:4;		/* header length */
+    unsigned int ip_tos:8;		/* type of service */
 #endif
-    uint8_t ip_tos;			/* type of service */
     unsigned short ip_len;		/* total length */
     unsigned short ip_id;		/* identification */
     unsigned short ip_off;		/* fragment offset field */
@@ -134,15 +146,15 @@ struct ip_timestamp
     uint8_t ipt_oflw:4;		/* overflow counter */
 #endif
 #if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
-    uint8_t ipt_oflw:4;		/* overflow counter */
-    uint8_t ipt_flg:4;		/* flags, see below */
+    unsigned int ipt_oflw:4;	/* overflow counter */
+    unsigned int ipt_flg:4;		/* flags, see below */
 #endif
     uint32_t data[9];
   };
 #endif /* __USE_MISC */
 
 #define	IPVERSION	4               /* IP version number */
-#define	IP_MAXPACKET	65535		/* maximum packet size */
+#define	IP_MAXPACKET	65535U		/* maximum packet size */
 
 /*
  * Definitions for Explicit Congestion Notification (ECN)

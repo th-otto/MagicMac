@@ -12,9 +12,8 @@
    Library General Public License for more details.
 
    You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
 
 #ifndef _SYS_SELECT_H
 # error "Never use <bits/select.h> directly; include <sys/select.h> instead."
@@ -23,7 +22,17 @@
 
 /* We don't use `memset' because this would require a prototype and
    the array isn't too big.  */
+#ifdef __GNUC__
+#define __FD_ZERO(s) \
+  do {									      \
+    unsigned int __i;							      \
+    __fd_set *__arr = (s);						      \
+    for (__i = 0; __i < sizeof (__fd_set) / sizeof (__fd_mask); ++__i)	      \
+      __FDS_BITS (__arr)[__i] = 0;					      \
+  } while (0)
+#else
 #define __FD_ZERO(s) memset((char *)(s), 0, sizeof(*(s)))
+#endif
 #define __FD_SET(d, s)     (__FDS_BITS (s)[__FDELT(d)] |= __FDMASK(d))
 #define __FD_CLR(d, s)     (__FDS_BITS (s)[__FDELT(d)] &= ~__FDMASK(d))
 #define __FD_ISSET(d, s)   ((__FDS_BITS (s)[__FDELT(d)] & __FDMASK(d)) != 0)

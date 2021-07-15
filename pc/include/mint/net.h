@@ -18,9 +18,8 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
+ * along with this program; if not, see
+ * <http://www.gnu.org/licenses/>.
  * 
  * Author: Frank Naumann <fnaumann@freemint.de>
  * Started: 2000-01-12
@@ -107,7 +106,7 @@ struct dom_ops
 				 short addrlen, short flags);
 	
 	long	(*socketpair)	(struct socket *s1, struct socket *s2);
-	long	(*accept)	(struct socket *s, struct socket *new,
+	long	(*accept)	(struct socket *s, struct socket *_new,
 			 	 short flags);
 	
 	long	(*getname)	(struct socket *s, struct sockaddr *addr,

@@ -95,6 +95,19 @@ __BEGIN_DECLS
 # include <sys/socket.h>
 # include <stdint.h>
 
+/*
+ * Pure-C does not allow to use anything else but
+ * int to be used as bitfield. But for other compilers,
+ * int might be too large for correct alignment of following members
+ */
+#ifndef __bitfield_type
+#ifdef __PUREC__
+#define __bitfield_type unsigned int
+#else
+#define __bitfield_type unsigned char
+#endif
+#endif
+
 typedef	uint32_t tcp_seq;
 /*
  * TCP header.
@@ -106,14 +119,15 @@ struct tcphdr {
 	tcp_seq	th_seq;			/* sequence number */
 	tcp_seq	th_ack;			/* acknowledgement number */
 # if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__
-	uint8_t th_x2:4;	/* (unused) */
-	uint8_t th_off:4;	/* data offset */
+	__bitfield_type	th_flags:8;
+	__bitfield_type th_x2:4;	/* (unused) */
+	__bitfield_type th_off:4;	/* data offset */
 # endif
 # if __BYTE_ORDER == __ORDER_BIG_ENDIAN__
-	uint8_t	th_off:4;		/* data offset */
-	uint8_t	th_x2:4;		/* (unused) */
+	__bitfield_type	th_off:4;		/* data offset */
+	__bitfield_type	th_x2:4;		/* (unused) */
+	__bitfield_type	th_flags:8;
 # endif
-	uint8_t	th_flags;
 #define	TH_FIN	0x01
 #define	TH_SYN	0x02
 #define	TH_RST	0x04
@@ -210,7 +224,8 @@ struct tcp_info
   uint8_t	tcpi_probes;
   uint8_t	tcpi_backoff;
   uint8_t	tcpi_options;
-  uint8_t	tcpi_snd_wscale : 4, tcpi_rcv_wscale : 4;
+  __bitfield_type tcpi_snd_wscale : 4;
+  __bitfield_type tcpi_rcv_wscale : 4;
 
   uint32_t	tcpi_rto;
   uint32_t	tcpi_ato;

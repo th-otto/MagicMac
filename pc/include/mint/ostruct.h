@@ -140,22 +140,23 @@ typedef struct
 /* Codes used with Fcreate()/Fsfirst() */
 
 #define        FA_RDONLY           0x01
-#define        FA_READONLY         FA_RDONLY
 #define        FA_HIDDEN           0x02
 #define        FA_SYSTEM           0x04
 #define        FA_LABEL            0x08
-#define        FA_VOLUME           FA_LABEL
 #define        FA_DIR              0x10
+#define        FA_CHANGED          0x20
+#define        FA_SYMLINK          0x40			/* MagiC 3.0 */
+/* alternative names: */
+#define        FA_READONLY         FA_RDONLY
+#define        FA_VOLUME           FA_LABEL
 #define        FA_SUBDIR           FA_DIR
 #ifndef FA_DIREC
 #define        FA_DIREC            FA_DIR
 #endif
-#define        FA_CHANGED          0x20
 #define        FA_ARCHIVE          FA_CHANGED
 #ifndef FA_ARCH
 #define        FA_ARCH             FA_CHANGED
 #endif
-#define        FA_SYMLINK          0x40			/* MagiC 3.0 */
 
 /* Codes used with Pexec */
 

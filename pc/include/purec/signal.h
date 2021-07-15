@@ -108,6 +108,11 @@
 
 #define __NSIG 90
 
+#ifdef __USE_BSD
+/* a mask for signals */
+#define sigmask(__sig) __sigmask(__sig)
+#endif /* BSD */
+
 #ifdef __USE_MISC
 # define NSIG __NSIG
 #endif

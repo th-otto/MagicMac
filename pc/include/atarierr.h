@@ -85,6 +85,7 @@
 #define EMOUNT		-200
 
 #define EAGAIN		-326		/* Operation would block.  */
+#undef EWOULDBLOCK
 #define EWOULDBLOCK	EAGAIN
 
 

@@ -43,6 +43,7 @@
 #define C_BLOW 0x424C4F57L     /* Blowup030 */
 #define C_BSIM 0x4253494DL     /* Drive B Simulator */
 #define C_BSTE 0x42535445L     /* BigSTE */
+#define C_BScn 0x4253636EL     /* BACKSCAN */
 #define C_BUG1 0x42554731L     /* Bugaboo Debugger */
 #define C_C24P 0x43323450L     /* CyRel 24Bit-Patch */
 #define C_CACH 0x43414348L     /* Cache-Control */
@@ -312,6 +313,7 @@
 #define C_MZVT 0x4D5A5654L     /* Driver videotext decoder from Print-Technik */
 #define C_N203 0x4E323033L     /* Multi Accessory */
 #define C_nAES 0x6E414553L     /* N.AES, the AES for MiNT */
+#define C_NAH3 0x4E414833L     /* N_ALTHLP snapshot tool */
 #define C_NBEL 0x4E42454CL     /* SOUND.PRG */
 #define C_NBLL 0x4E424C4CL     /* NEWBELL.PRG */
 #define C_NCLN 0x4E434C4EL     /* NiceLine */

@@ -146,6 +146,7 @@ long __GEMDOS(0x100)	Fpipe(short *ptr);
 short __GEMDOS(0x101)	Ffchown(short f, short uid, short gid);
 short __GEMDOS(0x102)	Ffchmod(short f, short mode);
 short __GEMDOS(0x103)	Fsync(short f);
+#undef Fcntl
 long __GEMDOS(0x104)	Fcntl(short f, long arg, short cmd);
 #define Fcntl(f, arg, cmd) Fcntl(f, (long)(arg), cmd)
 long __GEMDOS(0x105)	Finstat(short f);
@@ -240,7 +241,7 @@ long __GEMDOS(0x153)	Dwritelabel(const char *path, const char *label);
 long __GEMDOS(0x154)	Ssystem(short mode, long arg1, long arg2);
 #if defined(_SYS_TIME_H) && defined(__USE_BSD) /* otherwise struct timezone not declared */
 long __GEMDOS(0x155)	Tgettimeofday(struct timeval *tv, struct __mint_timezone *tz);
-long __GEMDOS(0x156)	Tsettimeofday(struct timeval *tv, struct __mint_timezone *tz);
+long __GEMDOS(0x156)	Tsettimeofday(const struct timeval *tv, const struct __mint_timezone *tz);
 long __GEMDOS(0x157)	Tadjtime(const struct timeval *delta, struct timeval *olddelta);
 #endif
 long __GEMDOS(0x158)	Pgetpriority(short which, short who);
@@ -256,7 +257,7 @@ long __GEMDOS(0x15f)	Semulation(short which, short op, long a1, long a2, long a3
 long __GEMDOS(0x160)	Fsocket(long domain, long type, long protocol);
 long __GEMDOS(0x161)	Fsocketpair(long domain, long type, long protocol, short fds[2]);
 long __GEMDOS(0x162)	Faccept(short fd, struct sockaddr *name, unsigned long *anamelen);
-long __GEMDOS(0x163)	Fconnect(short fd, struct sockaddr *name, unsigned long anamelen);
+long __GEMDOS(0x163)	Fconnect(short fd, const struct sockaddr *name, unsigned long anamelen);
 long __GEMDOS(0x164)	Fbind(short fd, const struct sockaddr *name, unsigned long namelen);
 long __GEMDOS(0x165)	Flisten(short fd, long backlog);
 long __GEMDOS(0x166)	Frecvmsg(short fd, struct msghdr *msg, long flags);

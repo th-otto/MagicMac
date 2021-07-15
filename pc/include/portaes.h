@@ -11,9 +11,6 @@
 #ifndef __GRECT_H__
 #  include <grect.h>
 #endif
-#ifdef OS_ATARI
-#  include <wdlgevnt.h>
-#endif
 
 /*
  * do indicate certain difference to original PCGEMLIB
@@ -75,6 +72,7 @@ extern short _app;
 	 (((fillpattern) & 0x07) <<  4) | \
 	 (((interiorcol) & 0x0f)      ))
 
+#ifndef _MT_GEMLIB_H_
 typedef struct _tedinfo
 {
 	char	*te_ptext;		/* ptr to text (must be 1st)    */
@@ -88,7 +86,8 @@ typedef struct _tedinfo
 	_WORD	te_thickness;	/* border thickness             */
 	_WORD	te_txtlen;		/* text string length           */
 	_WORD	te_tmplen;		/* template string length       */
-} PACKED TEDINFO;
+} TEDINFO;
+#endif
 #define te_junk1 te_fontid
 #define te_junk2 te_fontsize
 
@@ -108,6 +107,7 @@ typedef struct _tedinfo
 	 (((maskcol)    & 0x0f) <<  8) | \
 	 (((ch)         & 0xff)      ))
 
+#ifndef _MT_GEMLIB_H_
 typedef struct _iconblk
 {
 	_WORD	*ib_pmask;
@@ -124,9 +124,11 @@ typedef struct _iconblk
 	_WORD	ib_ytext;
 	_WORD	ib_wtext;
 	_WORD	ib_htext;
-} PACKED ICONBLK;
+} ICONBLK;
+#endif
 
 
+#ifndef _MT_GEMLIB_H_
 typedef struct _bitblk
 {
 	_WORD	*bi_pdata;			/* ptr to bit forms data        */
@@ -135,12 +137,11 @@ typedef struct _bitblk
 	_WORD	bi_x;				/* source x in bit form         */
 	_WORD	bi_y;				/* source y in bit form         */
 	_WORD	bi_color;			/* foreground color             */
-} PACKED BITBLK;
-
-
-#ifdef __GNUC__
-#pragma pack(push,1)
+} BITBLK;
 #endif
+
+
+#ifndef _MT_GEMLIB_H_
 typedef struct _cicon {
 	_WORD	num_planes;			/* number of planes in the following data */
 	_WORD	*col_data;			/* pointer to color bitmap in standard form */
@@ -148,34 +149,28 @@ typedef struct _cicon {
 	_WORD	*sel_data;			/* pointer to color bitmap of selected icon */
 	_WORD	*sel_mask;			/* pointer to single plane mask of selected icon */
 	struct _cicon *next_res;	/* pointer to next icon for a different resolution */
-} PACKED CICON; /* AES >= 3.3 */
+} CICON; /* AES >= 3.3 */
 
 typedef struct _ciconblk {
 	ICONBLK monoblk;			/* default monochrome icon */
 	CICON *mainlist;			/* list of color icons for different resolutions */
-} PACKED CICONBLK; /* AES >= 3.3 */
-#ifdef __GNUC__
-#pragma pack(pop)
+} CICONBLK; /* AES >= 3.3 */
 #endif
 
 #define CICON_STR_SIZE 12
 
-struct __parmblk;
+struct parm_block;
 
-struct PARMBLK_args {
-	struct __parmblk *pb;
-};
-#ifdef __NO_CDECL
-typedef _WORD _CDECL (*PARMBLKFUNC)(struct PARMBLK_args);
-#else
-typedef _WORD _CDECL (*PARMBLKFUNC)(struct __parmblk *pb);
-#endif
+typedef _WORD _CDECL (*PARMBLKFUNC)(struct parm_block *pb);
+#ifndef _MT_GEMLIB_H_
 typedef struct
 {
 	PARMBLKFUNC ub_code;
 	_LONG_PTR ub_parm;
-} PACKED USERBLK;
+} USERBLK;
+#endif
 
+#ifndef _MT_GEMLIB_H_
 typedef struct
 {
 	unsigned character   :  8;
@@ -187,7 +182,9 @@ typedef struct
 	unsigned interiorcol :  4;
 } bfobspec;
 typedef bfobspec BFOBSPEC;
+#endif
 
+#ifndef _MT_GEMLIB_H_
 typedef struct objc_colorword
 {
 	unsigned	borderc : 4;
@@ -196,6 +193,7 @@ typedef struct objc_colorword
 	unsigned	pattern : 3;
 	unsigned	fillc   : 4;
 } OBJC_COLORWORD;
+#endif
 
 /*
  * Macros to manipulate a OBSPEC info
@@ -236,7 +234,7 @@ typedef struct {
 	char	*string;					/* etwa "TOS|KAOS|MAG!X" */
 	_WORD	num;						/* Nr. der aktuellen Zeichenkette */
 	_WORD	maxnum;						/* maximal erlaubtes <num> */
-} PACKED SWINFO;
+} SWINFO;
 #endif /* SWINFO */
 
 #ifndef _POPINFO
@@ -244,9 +242,10 @@ typedef struct {
 typedef struct {
 	struct	_object *tree;				/* Popup- Menue */
 	_WORD	obnum;						/* aktuelles Objekt von <tree> */
-} PACKED POPINFO;
+} POPINFO;
 #endif
 
+#ifndef _MT_GEMLIB_H_
 typedef union obspecptr
 {
 	_LONG_PTR	index;
@@ -258,9 +257,11 @@ typedef union obspecptr
 	USERBLK		*userblk;
 	CICONBLK	*ciconblk;
 	char		*free_string;
-} PACKED OBSPEC;
+} OBSPEC;
+#endif
 
 
+#ifndef _MT_GEMLIB_H_
 typedef struct _object
 {
 	_WORD	ob_next;					/* -> object's next sibling */
@@ -274,10 +275,12 @@ typedef struct _object
 	_WORD	ob_y;						/* upper left corner of object */
 	_WORD	ob_width;					/* object width */
 	_WORD	ob_height;					/* object height */
-} PACKED OBJECT;
+} OBJECT;
+#endif
 
 
-typedef struct __parmblk
+#ifndef _MT_GEMLIB_H_
+typedef struct parm_block
 {
 	OBJECT	*pb_tree;
 	_WORD	pb_obj;
@@ -287,6 +290,7 @@ typedef struct __parmblk
 	_WORD	pb_xc, pb_yc, pb_wc, pb_hc;
 	_LONG_PTR	pb_parm;
 } PARMBLK;
+#endif
 
 /****** Object definitions **********************************************/
 
@@ -332,6 +336,7 @@ typedef struct __parmblk
 #define OF_HIDETREE        0x0080
 #define OF_INDIRECT        0x0100
 /* 3D objects AES 3.4	*/
+#undef OF_FL3DMASK
 #define OF_FL3DMASK        0x0600
 #define OF_FL3DNONE        0x0000
 #define OF_FL3DIND		   0x0200
@@ -546,6 +551,7 @@ typedef struct __parmblk
 #define R_FRSTR         15              /* gets addr of pointer to free strings */
 #define R_FRIMG         16              /* gets addr of pointer to free images  */
 
+#ifndef _MT_GEMLIB_H_
 typedef struct rshdr
 {
 	_UWORD	rsh_vrsn;
@@ -566,7 +572,8 @@ typedef struct rshdr
 	_UWORD	rsh_nstring;
 	_UWORD	rsh_nimages;
 	_UWORD	rsh_rssize;		/* total bytes in resource */
-} PACKED RSHDR;
+} RSHDR;
+#endif
 
 
 /* wind calc flags */
@@ -574,6 +581,8 @@ typedef struct rshdr
 #define WC_WORK   1
 
 
+#ifndef _AES_GLOBAL_defined
+#define _AES_GLOBAL_defined
 typedef union
 {
 	void *spec;			/* PC_GEM */
@@ -595,6 +604,7 @@ typedef struct _aes_global {
 	_WORD ap_bvdisk;
 	_WORD ap_bvhard;
 } AES_GLOBAL;
+#endif
 
 #define	_AESversion   (((AES_GLOBAL *)aes_global)->ap_version)
 #define	_AESnumapps   (((AES_GLOBAL *)aes_global)->ap_count)
@@ -608,6 +618,7 @@ typedef struct _aes_global {
 
 /* Mouse form definition block */
 
+#ifndef _MT_GEMLIB_H_
 typedef struct mfstr
 {
 	_WORD	mf_xhot;
@@ -618,6 +629,7 @@ typedef struct mfstr
 	_WORD	mf_mask[16];
 	_WORD	mf_data[16];
 } MFORM;
+#endif
 
 
 /************************************************************************/
@@ -626,10 +638,13 @@ typedef struct mfstr
 
 #if defined(__TOS__) || defined(__atarist__)
 
+#ifdef __PUREC__
 #include <wdlgevnt.h>
+#endif
 
 /****** GEMparams *******************************************************/
 
+#ifndef _MT_GEMLIB_H_
 /** size of the aes_control[] array */
 #define AES_CTRLMAX		6		/* actually 5; use 6 to make it long aligned */
 /** size of the aes_global[] array */
@@ -687,6 +702,8 @@ typedef AESPARBLK AESPB; /* MagiC name */
 
 extern AESPARBLK _AesParBlk;
 extern GEMPARBLK _GemParBlk;
+#endif
+
 extern _WORD gl_apid;
 extern _WORD gl_ap_version;
 /** global AES array */
@@ -695,12 +712,15 @@ extern _WORD aes_global[];
 #define aes_global _GemParBlk.global
 #endif
 
-extern int _AesCall( _LONG c0to3); /* c4=0 */ /* MO */
-extern int _AesXCall( _LONG c0to3, _WORD c4);  /* MO */
-extern short vq_aes(void);
-extern void _crystal(AESPARBLK *aespb);
-extern _WORD _aes(_WORD dummy, _LONG code);
-extern _WORD aes(AESPB *pb);
+int _AesCall( _LONG c0to3); /* c4=0 */ /* MO */
+int _AesXCall( _LONG c0to3, _WORD c4);  /* MO */
+short vq_aes(void);
+void _crystal(AESPB *aespb);
+_WORD _aes(_WORD dummy, _LONG code);
+#ifndef _MT_GEMLIB_H_
+_WORD aes(AESPB *pb);
+#endif
+_WORD _mt_aes(AESPB *pb, _LONG code);
 
 
 
@@ -721,11 +741,7 @@ typedef struct
 	void		*dmdx;					/* DMDs                       */
 	void		*imbx;					/* Internal DOS-memory list   */
 	void		(*resv_intmem)(void);	/* Extend DOS memory          */
-#ifdef __NO_CDECL
-	void *etv_critic;
-#else
 	long      __CDECL (*etv_critic)(short err);         /* etv_critic of GEMDOS      */
-#endif
 	char *	((*err_to_str)(signed char e));	/* Conversion code->plaintext */
 	void		*xaes_appls;
 	void		*mem_root;
@@ -805,14 +821,23 @@ typedef struct
 #define APS_SHEL  APP_DESK
 
 /* application type (appl_search return values) */
+#undef APP_SYSTEM
 #define APP_SYSTEM			0x001
+#undef APP_APPLICATION
 #define APP_APPLICATION		0x002
+#undef APP_ACCESSORY
 #define APP_ACCESSORY		0x004
+#undef APP_SHELL
 #define APP_SHELL 			0x008
+#undef APP_AESSYS
 #define APP_AESSYS			0x010
+#undef APP_AESTHREAD
 #define APP_AESTHREAD		0x020
+#undef APP_TASKINFO
 #define APP_TASKINFO        0x100 /* XaAES extension for taskbar applications. */
+#undef APP_HIDDEN
 #define APP_HIDDEN          0x100 /* Task is disabled; XaAES only for APP_TASKINFO */
+#undef APP_FOCUS
 #define APP_FOCUS 	        0x200 /* Active application; XaAES only for APP_TASKINFO */
 
 #define APK_SYS APP_SYSTEM
@@ -827,6 +852,7 @@ typedef struct
 #define APPL_CURRFIND() appl_find(NULL)
 
 /* appl_getinfo modes */
+#undef AES_LARGEFONT
 #define AES_LARGEFONT		APG_FONT
 #define APG_FONT    0   /* Get AES regular font information
                          * o1: font height, o2: font id,
@@ -834,9 +860,11 @@ typedef struct
                          *     1 - fsm font
                          *     2 and on to be defined in the future */
 
+#undef AES_SMALLFONT
 #define AES_SMALLFONT		APG_SMLFONT
 #define APG_SMLFONT 1   /* Get AES small font information. see above */
 
+#undef AES_SYSTEM
 #define AES_SYSTEM			APG_REZ
 #define APG_REZ     2   /* Get AES current resolution number and the number
                          * of color is being supported by the object library
@@ -844,6 +872,7 @@ typedef struct
                          * o2: number of color supported by AES object library
                          * o3: color icons: 0 - Not supported 1 - supported
                          */
+#undef AES_LANGUAGE
 #define AES_LANGUAGE 		APG_LANG
 #define APG_LANG    3   /* o1: currently used language (see below) */
 
@@ -855,6 +884,7 @@ typedef struct
 #define L_ITALIAN    5
 #define L_SWEDISH    6
 
+#undef AES_PROCESS
 #define AES_PROCESS 		APG_GLOBAL1
 #define APG_GLOBAL1    4
         /* Get general AES environment info #1
@@ -868,6 +898,7 @@ typedef struct
                   1 - rsrc_rcfix implemented
         */
 
+#undef AES_PCGEM
 #define AES_PCGEM			APG_GLOBAL2
 #define APG_GLOBAL2    5
         /*
@@ -882,6 +913,7 @@ typedef struct
                   1 - shel_r/wdef implemented
         */
 
+#undef AES_INQUIRE
 #define AES_INQUIRE 		APG_GLOBAL3
 #define APG_GLOBAL3    6
         /*
@@ -897,6 +929,7 @@ typedef struct
                   1 - menu_bar(MENU_INSTL) implemented
         */
 
+#undef AES_WDIALOG
 #define AES_WDIALOG APG_RESVD
 #define APG_RESVD  7
 
@@ -905,6 +938,7 @@ typedef struct
             ap_gout1,2,3,4 to 0.
         */
 
+#undef AES_MOUSE
 #define AES_MOUSE			APG_MOUSE
 #define APG_MOUSE  8
 
@@ -918,6 +952,7 @@ typedef struct
                   basis
         */
 
+#undef AES_MENU
 #define AES_MENU			APG_MENUS
 #define APG_MENUS  9
 
@@ -934,6 +969,7 @@ typedef struct
                   1 - words 5/6/7 in MN_SELECTED message give extra info
         */
 
+#undef AES_SHELL
 #define AES_SHELL			APG_SHELLW
 #define APG_SHELLW     10
 
@@ -954,6 +990,7 @@ typedef struct
                   1 - sh_wiscr controls ARGV parameter passing
         */
 
+#undef AES_WINDOW
 #define AES_WINDOW			APG_WINDOWS
 #define APG_WINDOWS    11
 
@@ -984,6 +1021,7 @@ typedef struct
                   1 - wind_update check and set allowed
         */
 
+#undef AES_MESSAGE
 #define AES_MESSAGE			APG_MESSAGES
 #define APG_MESSAGES   12
 
@@ -1009,6 +1047,7 @@ typedef struct
                 bit 0: WM_ICONIFY message gives coordinates (0=no,1=yes)
         */
 
+#undef AES_OBJECT
 #define AES_OBJECT			APG_OBJECTS
 #define APG_OBJECTS    13
 
@@ -1028,6 +1067,7 @@ typedef struct
                       of new object types like radio buttons
         */
 
+#undef AES_FORM
 #define AES_FORM			APG_FORMS
 #define APG_FORMS      14
 
@@ -1048,14 +1088,21 @@ typedef struct
 #define AES_VERSION         96
 #define AES_WOPTS           97
 #define AES_WFORM			98
+#undef AES_APPL_OPTION
 #define AES_APPL_OPTION		99
 #define AES_WINX		 22360			/* AES WINX information */
 
+#undef AESLANG_ENGLISH
 #define AESLANG_ENGLISH		L_ENGLISH
+#undef AESLANG_GERMAN
 #define AESLANG_GERMAN		L_GERMAN
+#undef AESLANG_FRENCH
 #define AESLANG_FRENCH		L_FRENCH
+#undef AESLANG_SPANISH
 #define AESLANG_SPANISH 	L_SPANISH
+#undef AESLANG_ITALIAN
 #define AESLANG_ITALIAN 	L_ITALIAN
+#undef AESLANG_SWEDISH
 #define AESLANG_SWEDISH 	L_SWEDISH
 
 /* appl_getinfo return values (AES_LARGEFONT, AES_SMALLFONT) */
@@ -1102,11 +1149,13 @@ typedef struct
  *  Please read documentation of mt_appl_trecord() and mt_appl_tplay() for more details and
  *  known bugs related to this structure.
  */
+#ifndef _MT_GEMLIB_H_
 typedef struct pEvntrec
 {
 	long ap_event;		/* one of the APPEVNT_XXX constant */
 	long ap_value;		/* kind of data depends on \a ap_event */
 } EVNTREC;
+#endif
 
 
 /* extended appl_write structure */
@@ -1302,6 +1351,7 @@ typedef struct _mevent
 	_ULONG	e_xtra2;
 } MEVENT;
 
+#ifndef _MT_GEMLIB_H_
 typedef struct mouse_event_type
 {
 	_WORD *x;
@@ -1309,6 +1359,7 @@ typedef struct mouse_event_type
 	_WORD *b;
 	_WORD *k;
 } MOUSE_EVENT;
+#endif
 
 #ifndef __PXY
 # define __PXY
@@ -1321,6 +1372,7 @@ typedef struct point_coord
 
 /** structure comprising the most of the input arguments of mt_evnt_multi()
  */
+#ifndef _MT_GEMLIB_H_
 typedef struct {
 	_WORD emi_flags;          /* the event mask to watch */
 	_WORD emi_bclicks;		  /* see mt_evnt_multi() */
@@ -1333,11 +1385,13 @@ typedef struct {
 	_WORD emi_tlow;		  	  /* see mt_evnt_multi() */
 	_WORD emi_thigh;          /* the timer 32-bit value of interval split into short type member */
 } EVMULT_IN;
+#endif
 
 /** structure comprising the output arguments of mt_evnt_multi()
  *
  * @note For undocumented members consult the mt_evnt_multi() documentation.
  */
+#ifndef _MT_GEMLIB_H_
 typedef struct {
 	_WORD emo_events;	/* the bitfield of events occured (also a return value of mt_evnt_multi_fast() */
 	PXY   emo_mouse;
@@ -1346,6 +1400,7 @@ typedef struct {
 	_WORD emo_kreturn;
 	_WORD emo_mclicks;
 } EVMULT_OUT;
+#endif
 
 
 /* evnt_dclick flags */
@@ -1408,7 +1463,9 @@ _WORD evnt_multi_fast(const EVMULT_IN *em_i, _WORD MesagBuf[], EVMULT_OUT *em_o)
 /****** Menu definitions ************************************************/
 
 /* menu_bar modes */
+#undef MENU_INQUIRE
 #define MENU_INQUIRE (-1)	/* MO */
+#undef MENU_INQUIRY
 #define MENU_INQUIRY   MENU_INQUIRE
 #define MENU_REMOVE 0
 #define MENU_ERASE   MENU_REMOVE    	/* MO */
@@ -1437,6 +1494,7 @@ _WORD evnt_multi_fast(const EVMULT_IN *em_i, _WORD MesagBuf[], EVMULT_OUT *em_o)
 #define MIS_SETALIGN 		1	/* set the alignment of a parent menu item with a sub-menu item, see mt_menu_istart() */
 
 
+#ifndef _MT_GEMLIB_H_
 typedef struct
 {
 	OBJECT *mn_tree;		/*  - the object tree of the menu */
@@ -1451,8 +1509,10 @@ typedef struct
 					 */
 	_UWORD	mn_keystate;	/* - The CTRL, ALT, SHIFT Key state at the time the	*/
 } MENU;
+#endif
 
 
+#ifndef _MT_GEMLIB_H_
 typedef struct
 {
 	_LONG	display;
@@ -1461,6 +1521,7 @@ typedef struct
 	_LONG	speed;
 	_WORD	height;
 } MN_SET;
+#endif
 
 /* menu_attach modes */
 #define ME_INQUIRE		0	/* inquire information on a sub-menu attached, see mt_menu_attach() */
@@ -1652,7 +1713,7 @@ _WORD form_xdial( _WORD fo_diflag, _WORD fo_dilittlx,
 _WORD form_xdial_grect( _WORD fo_diflag, const GRECT *little, const GRECT *big, void **flydial );
 _WORD form_xdo( OBJECT *tree, _WORD startob, _WORD *lastcrsr, XDO_INF *tabs, void *flydial);
 _WORD form_xerr(_LONG errcode, const char *errfile);
-extern _WORD xfrm_popup(
+_WORD xfrm_popup(
                 OBJECT *tree, _WORD x, _WORD y,
                 _WORD firstscrlob, _WORD lastscrlob,
                 _WORD nlines,
@@ -1668,7 +1729,9 @@ extern _WORD xfrm_popup(
 #define ARROW             0
 #define TEXT_CRSR         1
 #define HOURGLASS         2
+#undef BUSY_BEE
 #define BUSY_BEE          HOURGLASS
+#undef BUSYBEE
 #define BUSYBEE           HOURGLASS
 #define POINT_HAND        3
 #define FLAT_HAND         4
@@ -1774,14 +1837,7 @@ _WORD scrp_clear( void );
 #define FSEL_OK			 1	/* the fileselector has been closed by using the OK button */
 
 /** callback function used by BoxKite file selector. See mt_fsel_boxinput() */
-#ifdef __NO_CDECL
-struct FSEL_CALLBACK_args {
-	_WORD *msg;
-}
-typedef void _CDECL (*FSEL_CALLBACK)(struct FSEL_CALLBACK_args);
-#else
-typedef void _CDECL (*FSEL_CALLBACK)( _WORD *msg);
-#endif
+typedef void __CDECL (*FSEL_CALLBACK)( _WORD *msg);
 
 _WORD fsel_input( char *fs_iinpath, char *fs_iinsel, _WORD *fs_iexbutton );
 _WORD fsel_exinput( char *fs_einpath, char *fs_einsel, _WORD *fs_eexbutton, const char *fs_elabel );
@@ -1868,34 +1924,59 @@ _WORD fsel_boxinput( char *fs_einpath, char *fs_einsel, _WORD *fs_eexbutton, con
 #define WF_OBFLAG       1001            /* FreeGEM: Window tree: flag words */
 #define WF_OBTYPE       1002            /* FreeGEM: Window tree: type words */
 #define WF_OBSPEC       1003            /* FreeGEM: Window tree: spec dwords */
+#undef X_WF_MENU
 #define X_WF_MENU       0x1100          /* Geneva */
+#undef X_WF_DIALOG
 #define X_WF_DIALOG     0x1200          /* Geneva */
+#undef X_WF_DIALWID
 #define X_WF_DIALWID    0x1300          /* Geneva */
+#undef X_WF_DIALHT
 #define X_WF_DIALHT     0x1400          /* Geneva */
+#undef X_WF_DFLTDESK
 #define X_WF_DFLTDESK   0x1500          /* Geneva */
+#undef X_WF_MINMAX
 #define X_WF_MINMAX     0x1600          /* Geneva */
+#undef X_WF_HSPLIT
 #define X_WF_HSPLIT     0x1700          /* Geneva */
+#undef X_WF_VSPLIT
 #define X_WF_VSPLIT     0x1800          /* Geneva */
+#undef X_WF_SPLMIN
 #define X_WF_SPLMIN     0x1900          /* Geneva */
+#undef X_WF_HSLIDE2
 #define X_WF_HSLIDE2    0x1a00          /* Geneva */
+#undef X_WF_VSLIDE2
 #define X_WF_VSLIDE2    0x1b00          /* Geneva */
+#undef X_WF_HSLSIZE2
 #define X_WF_HSLSIZE2   0x1c00          /* Geneva */
+#undef X_WF_VSLSIZE2
 #define X_WF_VSLSIZE2   0x1d00          /* Geneva */
+#undef X_WF_DIALFLGS
 #define X_WF_DIALFLGS   0x1e00          /* Geneva */
   #define X_WD_ACTIVE   1       /* Mouse/keyboard events processed */
   #define X_WD_BLITSCRL 2       /* Use blit for realtime scroll */
+#undef X_WF_OBJHAND
 #define X_WF_OBJHAND    0x1f00          /* Geneva */
+#undef X_WF_DIALEDIT
 #define X_WF_DIALEDIT   0x2000          /* Geneva */
+#undef X_WF_DCOLSTAT
 #define X_WF_DCOLSTAT   0x2100          /* Geneva */
+#undef WF_WINX
 #define WF_WINX         0x5758          /* WINX 2.3 */
+#undef WF_WINXCFG
 #define WF_WINXCFG      0x5759          /* WINX 2.3 */
+#undef WF_DDELAY
 #define WF_DDELAY       0x575a          /* WINX 2.3 */
                      /* 0x575b reserved by WINX; used for appl_getinfo(11) */
                      /* 0x575c reserved by WINX; used for appl_getinfo(12) */
+#undef WF_SHADE
 #define WF_SHADE        0x575d          /* WINX 2.3 */
+#undef WF_STACK
 #define WF_STACK        0x575e          /* WINX 2.3 */
+#undef WF_TOPALL
 #define WF_TOPALL       0x575f          /* WINX 2.3 */
+#undef WF_BOTTOMALL
 #define WF_BOTTOMALL    0x5760          /* WINX 2.3 */
+#undef WF_XAAES
 #define WF_XAAES        0x5841          /* XaAES: 'XA' */
 
 /* wind_set(WF_DCOLOR) */
@@ -1960,6 +2041,7 @@ _WORD fsel_boxinput( char *fs_einpath, char *fs_einsel, _WORD *fs_eexbutton, con
 #define END_MCTRL   2
 #define BEG_MCTRL   3
 #define BEG_CHECK   0x100   /* prevent the application from blocking */
+#undef NO_BLOCK
 #define NO_BLOCK BEG_CHECK
 
 _WORD wind_create( _WORD wi_crkind, _WORD wi_crwx, _WORD wi_crwy, _WORD wi_crww, _WORD wi_crwh );
@@ -1996,7 +2078,7 @@ _WORD wind_xset_grect( _WORD whl, _WORD srt, const GRECT *s, GRECT *r);
 _WORD wind_set_int( _WORD whl, _WORD srt, _WORD i);
 _WORD wind_set_str( _WORD whl, _WORD srt, const char *s);
 _WORD wind_get_str( _WORD whl, _WORD srt, char *s);
-_WORD wind_set_ptr(_WORD whl, _WORD srt, void *p1, void *p2);
+_WORD wind_set_ptr(_WORD whl, _WORD srt, void *p1);
 _WORD wind_set_ptr_int(_WORD whl, _WORD srt, void *s, _WORD g);
 
 
@@ -2015,6 +2097,7 @@ _BOOL rsrc_flip(void *hdr, _LONG size);
 
 /* tail for default shell */
 
+#ifndef _MT_GEMLIB_H_
 #ifndef _SHELTAIL
 #define _SHELTAIL
 typedef struct _sheltail {
@@ -2024,6 +2107,7 @@ typedef struct _sheltail {
 	_LONG	lasterr;                 /* letzter Fehler             */
 	_WORD	wasgr;                   /* Programm war Grafikapp.    */
 } SHELTAIL;
+#endif
 #endif
 
 /* shel_write modes for parameter "isover" */
@@ -2136,6 +2220,7 @@ typedef struct _sheltail {
 #define SHWF_ENV   SW_ENVIRON    /* MO */
 #define SHWF_FLAGS SW_UID		 /* MO */
 
+#ifndef _MT_GEMLIB_H_
 /* shel_write alternative structure for sh_wpcmd parameter */
 typedef struct _shwparblk {
 	char	*prgname;
@@ -2145,7 +2230,9 @@ typedef struct _shwparblk {
 	void	*environment;
     _LONG   flags;                      /* From MagiC 6 on */
 } SHWPARBLK;
+#endif
 
+#ifndef _MT_GEMLIB_H_
 typedef struct
 {
 	char *newcmd;
@@ -2156,7 +2243,9 @@ typedef struct
 	_WORD uid;
 	_WORD gid;
 } SHELW;
+#endif
 
+#ifndef _MT_GEMLIB_H_
 /** similar to ::SHELW, with MagiC 6 only specificity, and without XaAES extensions */
 typedef struct
 {
@@ -2167,7 +2256,9 @@ typedef struct
 	char	*env;		/* see SHELW::env */
 	long	flags;		/* since MagiC 6.  only used if the extended mode #SHW_XMDFLAGS is set*/
 } XSHW_COMMAND;
+#endif
 
+#ifndef _MT_GEMLIB_H_
 #undef environ
 /* Geneva */
 typedef struct
@@ -2178,21 +2269,17 @@ typedef struct
 	char *dflt_dir;
 	char *environ;
 } SHWRCMD;
-
-struct THREADINFO_args {
-	void *par;
-};
-typedef struct {
-#ifdef __NO_CDECL
-	_LONG _CDECL (*proc)(struct THREADINFO_args);
-#else
-	_LONG _CDECL (*proc)(void *par);
 #endif
+
+#ifndef _MT_GEMLIB_H_
+typedef struct {
+	_LONG __CDECL (*proc)(void *par);
 	void	*user_stack;
 	_ULONG	stacksize;
 	_WORD	mode;                       /* Always set to 0! */
 	_LONG	res1;                       /* Always set to 0! */
 } THREADINFO;
+#endif
 
 /* shel_get modes */
 #define SHEL_BUFSIZE (-1)	/* return the size of AES shell buffer, see mt_shel_read() */
@@ -2215,11 +2302,11 @@ _WORD shel_help (_WORD sh_hmode, const char *sh_hfile, const char *sh_hkey);
 
 /****** Xgrf definitions ***********************************************/
 
-extern _WORD xgrf_stepcalc(_WORD orgw, _WORD orgh, _WORD xc, _WORD yc, _WORD wc, _WORD hc,
+_WORD xgrf_stepcalc(_WORD orgw, _WORD orgh, _WORD xc, _WORD yc, _WORD wc, _WORD hc,
     _WORD *pxc, _WORD *pyc, _WORD *pcnt, _WORD *pxstep, _WORD *pystep);
-extern _WORD xgrf_2box(_WORD xc, _WORD yc, _WORD w, _WORD h, _WORD corners, _WORD cnt,
+_WORD xgrf_2box(_WORD xc, _WORD yc, _WORD w, _WORD h, _WORD corners, _WORD cnt,
     _WORD xstep, _WORD ystep, _WORD doubled);
-extern void	xgrf_rbox(const GRECT *clip, const GRECT *box);
+void	xgrf_rbox(const GRECT *clip, const GRECT *box);
 
 /* JCE 8 Jan 1998 ViewMAX UI elements (for the xgrf_colour command)
  *
@@ -2251,15 +2338,15 @@ extern void	xgrf_rbox(const GRECT *clip, const GRECT *box);
 
 /****** Proc_ definitions (GEM/XM) *************************************/
 
-_WORD proc_create(_LPVOID ibegaddr, _LONG isize, _WORD isswap, _WORD isgem,
+_WORD proc_create(void *ibegaddr, _LONG isize, _WORD isswap, _WORD isgem,
 		_WORD *onum);
 _WORD proc_run(_WORD proc_num, _WORD isgraf, _WORD isover, char *pcmd,
 		char *ptail);
 _WORD proc_delete(_WORD proc_num);
 _WORD proc_info(_WORD num, _WORD *oisswap, _WORD *oisgem, 
-		_LPVOID *obegaddr, _LONG *ocsize, _LPVOID *oendmem, 
-		_LONG *ossize, _LPVOID *ointtbl);
-_LPVOID proc_malloc(_LONG size, _LONG *ret_size);
+		void **obegaddr, _LONG *ocsize, void **oendmem, 
+		_LONG *ossize, void **ointtbl);
+void *proc_malloc(_LONG size, _LONG *ret_size);
 _WORD proc_switch(_WORD pid);
 _WORD proc_shrink(_WORD pid);
 
