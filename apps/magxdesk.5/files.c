@@ -31,7 +31,7 @@ long eject_medium(char *path)
 	ret = Dcntl(CDROMEJECT, path, 0L);
 	if	(!ret)
 		auto_close_windows();
-	return(err_alert(ret));
+	return err_alert(ret);
 }
 
 
@@ -62,7 +62,7 @@ long get_real_drive(char *path)
 	Dsetdrv(drv);
 	ret = Dsetpath(path);
 	if	(ret)
-		return(ret);		/* Fehler bei Dsetpath */
+		return ret;		/* Fehler bei Dsetpath */
 
 	ret = Dgetdrv();
 	if	(ret >= 0)
@@ -79,7 +79,7 @@ long get_real_drive(char *path)
 			drv = drive_from_letter(buf[1]);
 		}
 
-	return((int) drv);
+	return drv;
 }
 
 
@@ -94,9 +94,9 @@ static int qbreak( void )
 	if	((Kbshift(-1) & (K_LSHIFT | K_RSHIFT)) == (K_LSHIFT | K_RSHIFT))
 		{
 		if	(1 == Rform_alert(1, ALRT_STOP_PROC))
-			return(TRUE);
+			return TRUE;
 		}
-	return(FALSE);
+	return FALSE;
 }
 
 
@@ -110,19 +110,19 @@ static int qbreak( void )
 void set_dirty(long err, char *path, int drv, char val)
 {
 	if	(err != EWRPRO && err != EDRIVE && err != EFILNF &&
-	 	 err != EPTHNF && err != EACCDN)
-	 	{
+		 err != EPTHNF && err != EACCDN)
+		{
 
-	 	if	(drv < 0)
-	 		{
-	 		err = get_real_drive(path);
-	 		if	(err < 0L)
-	 			return;		/* Fehler bei Dsetpath */
-	 		drv = (int) err;
-	 		}
+		if	(drv < 0)
+			{
+			err = get_real_drive(path);
+			if	(err < 0)
+				return;		/* Fehler bei Dsetpath */
+			drv = (int) err;
+			}
 
-	 	if	(dirty_drives[drv] == 1)
-	 		return;		/* schon "dirty" */
+		if	(dirty_drives[drv] == 1)
+			return;		/* schon "dirty" */
 		dirty_drives[drv] = val;
 		}
 }
@@ -146,7 +146,6 @@ static char *_path;
 static long _walk_path( void )
 {
 	long	dir;
-	int	dirlen;			/* Anzahl Eintr„ge in diesem Verzeichnis */
 	long errcode;
 	char *endp;
 	char name[MAX_NAMELEN+1+4];
@@ -161,26 +160,24 @@ static long _walk_path( void )
 		{
 		err_alert(EPTHOV);
 		depth--;
-		return(E_OK);
+		return E_OK;
 		}
 	if	(qbreak())
-		return(EBREAK);
-	dirlen = 0;
+		return EBREAK;
 
 	errcode = Dopendir(_path, 0);
 	if	(errcode < E_OK)
-		goto err2;
+		return err_alert(errcode);
 
 	dir = errcode;
 	do	{
-		errcode = Dxreaddir(MAX_NAMELEN+1+4, dir,
+		errcode = Dxreaddir(sizeof(name), dir,
 						name,
 						&xa, &err_xr);
 		if	(qbreak())
 			{
-			ebreak:
 			Dclosedir(dir);
-			return(EBREAK);
+			return EBREAK;
 			}
 		if	(errcode)
 			break;
@@ -193,7 +190,7 @@ static long _walk_path( void )
 		if	(name[4] == '.')
 			{
 			if	(name[5] == '.' || name[5] == EOS)
-				goto next;
+				 continue;
 			}
 
 		if	((xa.st_mode & S_IFMT) == S_IFDIR)
@@ -206,7 +203,7 @@ static long _walk_path( void )
 			if	(errcode)
 				{
 				Dclosedir(dir);
-				return(errcode);
+				return errcode;
 				}
 			}
 		else {
@@ -221,10 +218,9 @@ static long _walk_path( void )
 				}
 			}
 
-		next:
-		dirlen++;
 		if	(qbreak())
-			goto ebreak;
+			Dclosedir(dir);
+			return EBREAK;
 		}
 	while(!errcode);
 
@@ -232,8 +228,7 @@ static long _walk_path( void )
 	depth--;
 	if	(errcode == EFILNF || errcode == ENMFIL)
 		errcode = E_OK;
-	err2:
-	return(err_alert(errcode));
+	return err_alert(errcode);
 }
 
 long walk_path(char *path, long *nbytes,
@@ -251,5 +246,5 @@ long walk_path(char *path, long *nbytes,
 	*folders  = _folders;		/* Anzahl Ordner */
 	*nfiles   = _nfiles;		/* Anzahl normale Dateien */
 	*hfiles   = _hfiles;		/* Anzahl versteckte Dateien */
-	return(errcode);
+	return errcode;
 }
