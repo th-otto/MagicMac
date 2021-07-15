@@ -1221,6 +1221,7 @@
 				rts
 				ENDMOD
 				
+/* long Fsocket(long domain, long type, long protocol); */
 				MODULE	Fsocket
 				pea		(a2)
 				move.l	d2,-(a7)
@@ -1233,6 +1234,7 @@
 				rts
 				ENDMOD
 				
+/* long Fsocketpair(long domain, long type, long protocol, short fds[2]); */
 				MODULE	Fsocketpair
 				pea		(a2)
 				pea     (a0)
@@ -1246,6 +1248,7 @@
 				rts
 				ENDMOD
 				
+/* long Faccept(short fd, struct sockaddr *name, unsigned long *anamelen); */
 				MODULE	Faccept
 				pea		(a2)
 				pea     (a1)
@@ -1258,10 +1261,11 @@
 				rts
 				ENDMOD
 				
+/* long Fconnect(short fd, const struct sockaddr *name, unsigned long anamelen); */
 				MODULE	Fconnect
 				pea		(a2)
-				pea     (a1)
 				move.l	d1,-(a7)
+				pea     (a0)
 				move.w	d0,-(a7)
 				move.w	#$163,-(a7)
 				CALLDOS
@@ -1270,6 +1274,7 @@
 				rts
 				ENDMOD
 				
+/* long Fbind(short fd, const struct sockaddr *name, unsigned long namelen); */
 				MODULE	Fbind
 				pea		(a2)
 				move.l	d1,-(a7)
@@ -1282,6 +1287,7 @@
 				rts
 				ENDMOD
 
+/* long Flisten(short fd, long backlog); */
 				MODULE	Flisten
 				pea		(a2)
 				move.l	d1,-(a7)
@@ -1293,6 +1299,7 @@
 				rts
 				ENDMOD
 
+/* long Frecvmsg(short fd, struct msghdr *msg, long flags); */
 				MODULE	Frecvmsg
 				pea		(a2)
 				move.l	d1,-(a7)
@@ -1305,6 +1312,7 @@
 				rts
 				ENDMOD
 
+/* long Fsendmsg(short fd, const struct msghdr *msg, long flags); */
 				MODULE	Fsendmsg
 				pea		(a2)
 				move.l	d1,-(a7)
@@ -1317,6 +1325,7 @@
 				rts
 				ENDMOD
 
+/* long Frecvfrom(short fd, void *buf, unsigned long len, long flags, struct sockaddr *from, unsigned long *fromlenaddr); */
 				MODULE	Frecvfrom
 				pea		(a2)
 				move.l	8(a7),-(a7)
@@ -1332,6 +1341,7 @@
 				rts
 				ENDMOD
 
+/* long Fsendto(short fd, const void *buf, unsigned long len, long flags, const struct sockaddr *to, unsigned long tolen); */
 				MODULE	Fsendto
 				pea		(a2)
 				move.l	8(a7),-(a7)
@@ -1347,6 +1357,7 @@
 				rts
 				ENDMOD
 
+/* long Fsetsockopt(short fd, long level, long name, const void *val, unsigned long valsize); */
 				MODULE	Fsetsockopt
 				pea		(a2)
 				move.l	8(a7),-(a7)
@@ -1361,6 +1372,7 @@
 				rts
 				ENDMOD
 
+/* long Fgetsockopt(short fd, long level, long name, void *val, unsigned long *avalsize); */
 				MODULE	Fgetsockopt
 				pea		(a2)
 				pea     (a1)
@@ -1375,6 +1387,7 @@
 				rts
 				ENDMOD
 
+/* long Fgetpeername(short fd, struct sockaddr *asa, unsigned long *alen); */
 				MODULE	Fgetpeername
 				pea		(a2)
 				pea     (a1)
@@ -1387,6 +1400,7 @@
 				rts
 				ENDMOD
 
+/* long Fgetsockname(short fd, struct sockaddr *asa, unsigned long *alen); */
 				MODULE	Fgetsockname
 				pea		(a2)
 				pea     (a1)
@@ -1399,6 +1413,7 @@
 				rts
 				ENDMOD
 
+/* long Fshutdown(short fd, long how); */
 				MODULE	Fshutdown
 				pea		(a2)
 				move.l	d1,-(a7)

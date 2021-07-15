@@ -26,7 +26,7 @@ int nf_debugvprintf(const char *format, va_list args)
 	}	
 	{
 #if defined(_PUREC_SOURCE) || !defined(HAVE_VASPRINTF)
-		char buf[2048];
+		static char buf[2048];
 		
 #ifdef HAVE_VSNPRINTF
 		ret = vsnprintf(buf, sizeof(buf), format, args);
