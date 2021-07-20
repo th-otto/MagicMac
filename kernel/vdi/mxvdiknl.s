@@ -86,6 +86,7 @@ NVDI_BUF_SIZE     EQU 16384               ;Groesse des Buffers
 .INCLUDE "include\pixmap.inc"
 .INCLUDE "include\mxvdi.inc"
 .INCLUDE "include\aesvars.inc"
+.INCLUDE "country.inc"
 
 
 ALLOC             EQU 1
