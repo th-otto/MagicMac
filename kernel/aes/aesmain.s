@@ -11486,6 +11486,11 @@ fillmem:
 
 *        DATA
 
+/*
+ * serial number information is no longer used;
+ * we keep the space anyways, for the sake of older installation
+ * programs that write the information here
+ */
 ss_serno:
  DC.L     0                        ; Seriennummer
 ss_nams:
@@ -11493,6 +11498,8 @@ ss_nams:
 ss_adrs:
  DCB.B    50,0                     ; Adresse
  EVEN
+
+
 ss_kaos:
  DC.L     $21071965                ; Platz fuer Benutzerkennung (KAOS)
  DC.L     $21071965

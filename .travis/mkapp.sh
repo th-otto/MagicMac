@@ -1,5 +1,11 @@
 #!/bin/sh
 
+#
+# Script to create a directory structure used
+# by AtariX to populate the root filesystem of
+# a fresh installation
+#
+
 RELEASE_DIR=/tmp/atarix
 RESOURCES_DIR="$RELEASE_DIR/AtariX.app/Contents/Resources"
 SRC_DIR=`pwd`
