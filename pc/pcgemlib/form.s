@@ -259,7 +259,7 @@ fmd_xdial2:
 				
 				move.l	d0,_GemParBlk+aintin
 				move.l	a0,_GemParBlk+addrin
-				move.l  #$88010101,d1
+				move.l  #$88020101,d1
 				bra		_aes
 
 				ENDMOD
