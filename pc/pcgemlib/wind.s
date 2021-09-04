@@ -231,6 +231,8 @@ windint_gcolor:
 				
 				move.l	a0,-(a7)
 				lea.l	_GemParBlk+aintin,a0
+				clr.l   aintout+2-aintin(a0)
+				clr.l   aintout+6-aintin(a0)
 				move.w	d0,(a0)+
 				move.w	d1,(a0)+
 				move.l	#$68020500,d1
