@@ -1,0 +1,393 @@
+;           Exemple- Fichier de configuration pour MagiC 6
+;           ==============================================
+;
+; ½ Andreas Kromke 1990-2000
+
+; Ce fichier MAGX.INF ici comment‚ est sous cette forme
+; totalement utilisable et en outre explique toutes les
+; possibilit‚s pour manipuler ce fichier.
+; Pour une utilisation normale, la configuration r‚alis‚e par
+; l'installateur INSTMAGC est totalement suffisante.
+; En d‚finitive, ce fichier s'adresse aux utilisateurs avertis.
+; ¶ l'aide de ce fichier, il est non seulement possible de
+; comprendre exactement la construction de MAGX.INF
+; (peut ˆtre pour une exploitation sp‚cifique) mais ‚galement
+; d'enregistrer des manipulations qui ne sont pas possibles
+; depuis MAGXDESK.
+
+; Nouveau … partir Mag!X 2.0:
+;    _WND
+;    _TSL
+;    _FLG
+;    _TRM
+;    _TXT
+; Enlargi dans MagiC 3:
+;    _FLG
+; Enlargi dans MagiC 4:
+;    _FLG
+;    _DEV
+; Enlargi dans MagiC 4.02:
+;    _FLG      Bit 5
+; Nouveau … partir MagiC 5.01:
+;  #[vfat]
+;  #[aes]
+; Nouveau … partir MagiC 5.10:
+;    _FLG		Bit 6
+;	_FSL
+; Nouveau … partir MagiC 5.20:
+;    _OBS
+;    _TXB
+;    _TXS
+;	_BKG
+; Enlargi dans MagiC 6.00:
+;    _FLG		Bit 7
+; plus disponible depuis MagiC 6.00
+;	_TXT
+; Nouveau … partir MagiC 6.00
+;	#[boot]		nouvelle marque de section
+;	cookies
+;	log
+;	tiles
+;	image
+;	 et dans la section #[aes]:
+;	_INW
+;	_SLB
+;	#[shelbuf]	nouvelle marque de section
+; Nouveau … partir MagiC 6.20
+;	biosdev
+;	con
+;	aux
+;	prn
+; Nouveau … partir MagiC 6.21
+;	dans la section [boot]
+;	idt
+
+
+; D'abord le num‚ro de version de MagiC avec lequel le fichier .INF ‚tait sauv‚.
+#_MAG MAG!X V6.20
+
+; Vont suivre ce qu'on nomme les "sections".
+; d'abord la section qui au boot, c…d au lancement de l'AES,
+; est ex‚cut‚e
+
+#[boot]
+; Le nombre de Cookies est param‚trable, il y aura toujours
+; environ 20 Cookies de charg‚s
+cookies=20
+
+; The value of the _IDT cookie (to change the date/time format)
+; can be set here. If not present, a value corresponding to the
+; language is choosen:
+; us=$002f 12h/MDY/'/'
+; de=$112e 24h/DMY/'.'
+; fr=$112f 24h/DMY/'/'
+; uk=$112f 24h/DMY/'/'
+; es=$112f 24h/DMY/'/'
+; it=$102f 24h/MDY/'/'
+; se=$122d 24h/YMD/'-'
+; sf=$112e 24h/DMY/'/'
+; sg=$112e 24h/DMY/'.'
+; tr=$112d 24h/DMY/'-'
+; fi=$112e 24h/DMY/'.'
+; no=$112e 24h/DMY/'.'
+; dk=$112d 24h/DMY/'-'
+; sa=$102f 24h/MDY/'/'
+; nl=$102d 24h/DMY/'-'
+; cz=$112e 24h/DMY/'.'
+; hu=$122d 24h/YMD/'-'
+; example:
+idt=$112f
+
+; Le fichier Log capte les sorties BIOS du dossier AUTO. Ici
+; on peut aussi entrer u:\dev\null pour imprimer la sortie
+log=c:\boot.log
+; Avant l'ex‚cution du dossier AUTO l'‚cran peut ˆtre tout d'abord carrel‚...
+tiles=C:\GEMSYS\GEMDESK\PAT\16\PAT28.IMG
+; ... et ensuite un logo centr‚ peut ˆtre affich‚.
+image=C:\GEMSYS\GEMDESK\PAT\256\MAGIC.IMG
+
+; Determination of the BIOS devices.
+; As without changes to MAGX.INF a few filenames would be missing
+; in u:/dev from MagiC 6.20 onwards, here are a few examples for
+; various computer types that have to be supplemented:
+
+;Atari ST:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+
+;Atari Mega-STE:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\modem2
+;biosdev=8,u:\dev\serial2
+
+;Atari TT:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\modem2
+;biosdev=8,u:\dev\serial1
+;biosdev=9,u:\dev\serial2
+
+;Atari Falcon:
+;biosdev=3,u:\dev\midi
+;biosdev=6,u:\dev\modem1
+;biosdev=7,u:\dev\lan
+
+;Mac:
+;(none)
+
+;The GEMDOS standard files can now also be redirected to BIOS
+;devices that are present in u:\dev:
+;con=u:\dev\console
+;aux=u:\dev\modem
+;prn=u:\dev\prn
+
+; La section pour le systŠme de fichier VFAT suit
+
+#[vfat]
+; Ici, on rŠgle les noms de fichiers longs.
+drives=eh
+
+#[aes]
+; DerriŠre l'indicateur de section [aes] suivent les donn‚es concernant l'AES
+; Les lignes concerant l'AES commencent toutes par #_??? et
+; se trouvent avant la ligne #_CTR.
+; Les autres lignes sont trait‚es comme du commentaire. En
+; g‚n‚ral, chaque ligne … l'exception de #_CTR et des suivantes
+; peuvent manquer, ce sont alors les valeurs par d‚faut qui sont
+; mises en place.
+
+; Vont suivre les variables d'environnement. Comme les chaŒnes
+; de caractŠres sont prises en compte jusqu'… la fin de ligne
+; il ne peut y avoir de commentaire derriŠre une ligne #_ENV
+; Ceci est ‚galement n‚cessaire pour laisser par ex. des
+; points-virgules ou des espaces dans les chaŒnes d'environnement.
+; L'environnement transmis par le BIOS est alors exactement
+; utilis‚ et retransmis par AES, lorsqu'aucune ligne #_ENV
+; n'a ‚t‚ indiqu‚e.
+
+#_ENV HOME=C:\GEMSYS\HOME\
+#_ENV PATH=C:\BIN\;A:\
+#_ENV PROMPT=$p$g
+#_ENV F1=tempus
+
+; Ici vous pouvez charger un nombre quelconque de librairies partag‚es. Elles
+; seront charg‚es au lancement de l'AES et relƒch‚es … l'extinction ou … un
+; changement de r‚solution.
+; Quelques-unes (WINFRAME) modifient des particularit‚s de l'AES (comme
+; une extension systŠme), d'autres (PDLG, EDITOBJC) peuvent ˆtre "tenues en avant",
+; c…d que lorsqu'un programme appelle Slbopen(), les bibliothŠques n'ont pas besoin
+; d'ˆtre charg‚es … nouveau. Ceci est utile lorsque l'on possŠde peu de m‚moire
+; ou une m‚moire lente (le chargement d'une SLB prend du temps).
+
+#_SLB 0 WINFRAME.SLB
+#_SLB 0 PDLG.SLB
+
+; La taille du buffer Shell doit ˆtre variable, de fa‡on … ce
+; que tous les shells pr‚sents puissent stocker leurs donn‚es
+; le nombre ne doit pas ˆtre plus grand que 65535 , en outre
+; il y aura toujours au moins 4192 Bytes de r‚serv‚s
+; On obtient la taille du buffer (unsigned int), en faisant
+; un appel shel_get() avec 0 bytes … lire.
+; Une trop petite valeur ne provoque pas de plantage sous
+; Mag!X, mais les donn‚es ne peuvent ˆtre sauv‚es.
+
+#_BUF 16000              ; taille du buffer Shell, d‚cimal
+
+; Le num‚ro de p‚riph‚rique n'est pas utilis‚, lorsque le systŠme
+; vient juste d'ˆtre relanc‚ pour un changement de r‚solution. Si
+; (N)VDI indique … l'ouverture de la Workstation un code d'erreur
+; (Handle 0), alors le VDI sera relanc‚ une nouvelle fois avec
+; num‚ro de p‚riph‚rique 1 (r‚solution actuelle).
+; Les r‚solutions courantes du ST/TT sont
+;  2 = ST basse, 3 = ST moyenne, 4 = ST haute
+;  6 = TT moyenne,  8 = TT haute,   9 = TT basse,
+; d'autres selon les pilotes d‚clar‚s dans le fichier ASSIGN.SYS
+; (MGE,VGA,...)
+;
+; Nouveau … partir de MagiC 4 :
+; Le Falcon demande un num‚ro suppl‚mentaire pour la description
+; de la r‚solution (mode code). Celui-ci sera indiqu‚ … la suite du num‚ro
+; de p‚riph‚rique.
+
+; Sur un Falcon, le premier chiffre est
+; g‚n‚ralement le 5, la r‚solution est r‚gl‚e exclusivement par
+; le mode code donc le second chiffre.
+
+; Le "mode code" doit ˆtre indiqu‚ dans tous les cas, s'il s'agit
+; d'une autre machine qu'un Falcon, un z‚ro doit se trouver ici.
+
+#_DEV 4 0            ; Pilote VDI 4 = haute r‚solution
+
+; La hauteur du contenu d'un ressource peut ˆtre d‚termin‚e ind‚pendemment
+; des grandes polices AES … partir de MagiC 5.20. En particulier avec les fontes
+; vectorielles, un raster fixe de 8*16 doit ˆtre entr‚ pour ne pas gˆner 
+; les programmes.
+; Syntax: #_OBS <raster horizontal> <raster vertical> 0 0
+
+;#_OBS 8 16 0 0
+
+; La police et la taille peuvent ˆtre param‚tr‚es s‚par‚ments … partir de
+; MagiC 5.20 pour les petites et grandes polices AES. Ici il doit ˆtre absolument
+; inform‚ si la police est proportionnelle ou ‚quidistante.
+; Les polices proportionnelles fonctionnent … partir de MagiC 6.
+; Syntaxe
+;  Pour les grandes polices: #_TXB <fontID> <monoFlag> <hauteur en pixels>
+;  Pour les petites polices: #_TXS <fontID> <monoFlag> <hauteur en pixels>
+
+;#_TXB 1 1 6
+;#_TXS 1 1 4
+
+; Ici on peut modifier l'allure de la ligne d'info de toutes les fenˆtres
+;	lineh	Hauteur de ligne. Une hauteur de 0 signifie: hauteur standard
+;	fontID	ID de la police pour la ligne d'info. Un 0 signifie: la mˆme
+;			police que pour les grands textes AES
+;	monoFlag	1 (‚quidistant) ou 0 (proportionnel)
+;	fontH	Hauteur de la police pour vst_height()
+
+;#_INW lineh fontID monoFlag fontH
+
+; On d‚termine ici le "look" de MagiC :
+;
+; Bit 0:  le logo de Mag!X- Logo se retrouve … gauche dans la
+;         barre des menus (Bit 0 = 1) ou … droite (Bit 0 = 0).
+; Bit 1:  L'effet 3D (… partir de 16 couleurs) est branch‚ (0)
+;         ou d‚branch‚.
+; Bit 2:  Le boutton "Backdrop" est affich‚ (0) ou pas (1).
+;         Si ce bouton n'est pas affich‚, une fenˆtre doit ˆtre
+;         plac‚e en arriŠre d'un simple clic sur la barre de titre.
+
+; Bit 3:  La barre de titre de MagiC (0) dans les fenˆtres (avec
+;         des lignes) ou les traditionnelles
+; Bit 4:  Si Bit 3 est z‚ro (donc barre de titre de MagiC activ‚)
+;         on d‚termine ici, si le nom de la fenˆtre apparaŒt en
+;         3D (0) ou normal (1).
+; Bit 5:  Ce Bit activ‚ (1), la fonction de la touche Ctrl
+;         respectivement Strg est invers‚e, le scrolling en temps
+;         r‚el donc d‚sactiv‚.
+; Bit 6:  Pareil pour le d‚placement et l'agrandissement en temps r‚el
+; Bit 7:	(… partir de MagiC 6.00): activer les menus 3D. Ne fonctionne
+;		qu'avec les grandes fontes AES proportionnelles
+;
+; Si cette entr‚e manque tous les Flags sont mis … 0.
+
+#_FLG 0                ; Bit 0 = 1: Logo … gauche
+
+; Avec cette entr‚ on peut r‚gler la couleur et le motif de fond du fond
+; de bureau par d‚faut. Un nombre <num> sera donn‚.
+; <num> = 120 (== 0x78) donne par expl gris clair. 
+; 0x70 est le motif (7=entiŠrement rempli) et 8 la couleur. Le code
+; correspond aussi … la valeur qu'un objet AES G_BOX d‚termine pour l'allure
+; d'un angle droit rempli.
+
+#_BKG 120
+
+; On indique ici le nombre de fenˆtres. Les valeurs admises
+; sont comprises entre 0 et 64, il ne faudrait indiquer de
+: valeur < 16.
+; Si cette entr‚e manque, c'est 16 qui est pris en compte.
+
+#_WND 16
+
+; Ceci permet de contr“ler la r‚partition de temps de calcul entre
+; des processus de premier et d'arriŠre plan. La premier valeur
+; indique une "tranche de temps" (Timeslice) en unit‚ de 5 ms,
+; la deuxiŠme valeur la priorit‚ d'arriŠre-plan.
+; Une valeur de 32 pour cette derniŠre signifie une priorit‚ de
+; 1:32 les processus d'arriŠre plan. Si cette entr‚e manque, le
+; multitƒche pr‚emptif n'est pas activ‚.
+; Pour ‚viter des conflits avec les accŠs en m‚moire en mˆme temps
+; de plusieurs programmes Auto et accessoires durant le boot
+; (en activant par expl le DMA en fond (Atari)) d'accŠs asynchrones au
+; disque dur (Mac), cette ligne doit ˆtre absente et le multitƒches
+; pr‚emptif doit ˆtre activ‚ dans le CPX.
+
+
+;#_TSL 1 32
+
+; Le chemin "Scrap" ("Clipboard") doit toujours ˆtre dirig‚ vers
+; un dossier existant car sinon il reste ind‚fini.
+
+#_SCP C:\GEMSYS\GEMSCRAP\               ; Scrap- Directory
+
+; Ici on peut param‚trer le s‚lecteur de fichiers.
+; Se trouve d'abord un Flag qui doit ˆtre pour le moment ignor‚
+; et toujours rester … la valeur Null. Suivent des chaŒnes de caractŠres
+; des types de fichiers souhait‚s, s‚par‚s par ';'. Les types doubles 
+; sont s‚par‚s par ',' (par expl. "*.PRG,*.APP" ou "*.JPG,*.JPEG").
+
+#_FSL 0 *.C;*.H;*.S;*.APP,*.PRG,*.TTP,*.TOS
+
+; Les lignes suivantes contiennent le nom de programme et chemin
+; complets pour le programme qui d‚rive les programmes TOS dans
+; une fenˆtre.
+; Au lancement du premier programme TOS, le programme indiqu‚ ici
+; est d'abord automatiquement charg‚ en m‚moire, au cas o— il ne
+; serait pas encore charg‚.
+
+#_TRM C:\GEMSYS\GEMDESK\VT52.PRG
+
+; Les accessoires sont charg‚s par le chemin indiqu‚ en #_ACC.
+; s'il n'y en a pas de trouv‚, ils ne sont bien entendu pas
+; charg‚s.
+; Si la ligne manque, le chargement se fera depuis le lecteur de
+; boot, donc … la racine de la partition.
+
+#_ACC C:\GEMSYS\MAGIC\ACCS\
+
+; De maniŠre optionnelle, si la ligne #_APP a ‚t‚ indiqu‚e
+; on peut charger avant le lancement du Shell par d‚faut des
+; applications qui seront alors aussit“t disponibles en parallŠle.
+; Ceci est une alternative au concept vieilli des accessoires, car
+; chacun, contrairement … ce dernier concept, peut ˆtre “ter de la
+; m‚moire.
+; Il n'est question ici que de programmes qui se conduisent avec
+; mesure par rapport … la m‚moire. Si l'on charge ainsi WORDPLUS,
+; aucun autre programme ne pourra ˆtre charg‚ (si sa faim de
+; m‚moire n'a pas ‚t‚ limit‚e par LIMITMEM).
+; Tous les programmes seront lanc‚s en mode graphique.
+
+#_APP C:\GEMSYS\MAGIC\START
+;                    Chemin pour applications charg‚s en parallŠle
+
+; Sous #_AUT on peut comme sous TOS 1.4 lancer une application
+; automatiquement, ceci se diff‚rencie des programmes d‚clar‚s par
+; #_APP en ce que les applications d‚clar‚es par #AUT_ ne sont pas
+; lanc‚s en parallŠle, mais … la place du desktop ou du shell par
+; d‚faut. C'est seulement lorsque l'application a termin‚ et
+; qu'aucune suivante n'a command‚ de shel_write, que le bureau ou
+; le shell par d‚faut sera relanc‚ (pratique pour un programme de
+; login en r‚seau !).
+; L'application est toujours lanc‚e en mode graphique.
+
+;#_AUT C:\LOGIN.PRG
+
+; Le shell par d‚faut est ‚ventuellement lanc‚ aprŠs le programme
+; indiqu‚ dans #_AUT. Si l'entr‚e est manquante, c'est MAGXDESK
+; qui est lanc‚.
+; Attention: tous les bureaux ne s'installent pas selon les conventions
+; du GEM 2.x, seuls de tels programmes peuvent ˆtre indiqu‚s ici.
+
+;#_SHL C:\KAOSDESK\KAOSDESK.PRG          ; Shell
+
+; La rang‚e des variables de Mag!X se termine avec la ligne #_CTR.
+; Ceci indique que les donn‚es suivantes seront directement
+; enregistr‚es dans le buffer du shell, et effectivement il s'agit
+; des donn‚es pour les champs de contr“le et le desktop. Les
+; lignes pour le desktop commencent 128 bytes aprŠs #a et ont
+; comme premiŠre ligne #_DSK (les 128 bytes sont une vieille
+; convention du TOS).
+; Il est important que la ligne #d ait une telle longueur que la
+; longueur totale du champ de contr“le des donn‚es se monte
+; exactement … 128 bytes. Comme certains ‚diteurs effacent les
+; espaces … droite en fin de ligne (peut ‚galement conduire … des
+; erreurs pour les variables d'environnement), la ligne est
+; termin‚e ici par un ";" au lieu d'un espace.
+
+
+#_CTR        ; D‚but du champ de contr“le des donn‚es
+#a000000
+#b001001
+#c7770007000600070055200505552220770557075055507703111302
+#d                                            ;
+#_DSK MAGXDESK V4.00 1           ; D‚but des donn‚es du shell

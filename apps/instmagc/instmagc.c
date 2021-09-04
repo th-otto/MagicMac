@@ -16,7 +16,7 @@
 * -	MAGX.INF auf X:\ erstellen
 *
 * Von Disk 2:
-* -	MAGiC.RAM auf X:\ erstellen
+* -	MAGIC.RAM auf X:\ erstellen
 * -	MAGXDESC.RSC auf X:\GEMSYS\GEMDESK erstellen
 * -  Wenn X:\CPX\ nicht existiert, per fsel_input() nachfragen.
 *    ggf. X:\CPX erstellen.
@@ -29,6 +29,8 @@
 #include <tos.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <toserror.h>
 #include "country.h"
 #include "instmagc.h"
@@ -65,18 +67,18 @@ static int test_serno(long code);
 #define PERS_ADRESSE "Test Adresse, 00000 Test Stadt"
 
 
-static char dst_dir[] = "X:\\";
-static char cpxpath[128] = "X:\\CPX\\";
-static char *zusatzpath = "X:\\GEMSYS\\MAGIC\\UTILITY\\";
-static char *zusatz = "X:\\GEMSYS\\MAGIC\\UTILITY\\EXTRAS\\";
-static char *inf_name = "X:\\MAGX.INF";
-static char *inf_old_name = "X:\\MAGX.xxx";
-static char *rampath = "X:\\MAGIC.RAM";
-static char *rscname = "X:\\GEMSYS\\GEMDESK\\MAGXDESK.RSC";
-static char *mod_appname = "X:\\GEMSYS\\GEMDESK\\MOD_APP.TTP";
-static char *mod_appparm = "\0-Xis PARD ZurÅck MAGICICN.RSC 132";
-static char *default_home = "@:\\GEMSYS\\HOME\\";
-static char *default_dev = "1 0";
+static char dst_dir[128] = "X:\\xx\mm\\";
+static char cpxpath[128];
+static char zusatzpath[128];
+static char zusatz[128];
+static char inf_name[128];
+static char inf_old_name[128];
+static char rampath[128];
+static char rscname[128];
+static char mod_appname[128];
+static char mod_appparm[] = "\0-Xis PARD ZurÅck MAGICICN.RSC 132";
+static char default_home[] = "@:\\GEMSYS\\HOME\\";
+static char default_dev[] = "1 0";
 
 
 static char *rs_str(int obj)
@@ -84,6 +86,18 @@ static char *rs_str(int obj)
 	char *str = 0;
 	rsrc_gaddr(R_STRING, obj, &str);
 	return str;
+}
+
+
+static int alertv(const char *format, ...)
+{
+	char buf[256];
+	va_list(args);
+	
+	va_start(args, format);
+	vsprintf(buf, format, args);
+	va_end(args);
+	return form_alert(1, buf);
 }
 
 
@@ -103,16 +117,29 @@ static void close_work(void)
 
 /****************************************************************
 *
+* Bestimmt die Begrenzung eines Objekts
+*
+****************************************************************/
+
+static void objc_grect(OBJECT *tree, int objn, GRECT *g)
+{
+	objc_offset(tree, objn, &(g->g_x), &(g->g_y));
+	g->g_w = (tree + objn)->ob_width;
+	g->g_h = (tree + objn)->ob_height;
+}
+
+
+/****************************************************************
+*
 * Malt ein Unterobjekt. Wenn es sich um eine Zahl handelt, wird
 * sie ausgegeben, sonst ggf. der String
 *
 ****************************************************************/
 
-static void subobj_draw(OBJECT *tree, int obj, int n, char *s)
+static void subobj_draw(OBJECT *tree, int obj, int n, const char *s)
 {
 	GRECT g;
 	char *z;
-	void objc_grect(OBJECT * tree, int objn, GRECT * g);
 
 	z = (tree + obj)->ob_spec.free_string;
 	if (s)
@@ -120,11 +147,11 @@ static void subobj_draw(OBJECT *tree, int obj, int n, char *s)
 	else if (n >= 0)
 		ultoa(n, z, 10);
 	objc_grect(tree, obj, &g);
-	objc_draw(tree, 0, MAX_DEPTH, g.g_x, g.g_y, g.g_w, g.g_h);
+	objc_draw_grect(tree, 0, MAX_DEPTH, &g);
 }
 
 
-static void callback(char *action, char *name)
+void callback(const char *action, const char *name)
 {
 	subobj_draw(adr_dialog, O_ACTION, 0, action);
 	subobj_draw(adr_dialog, O_PATH, 0, name);
@@ -259,7 +286,7 @@ static int create_ram(void)
 		return 0;
 	flen = Fread(file, BUFLEN, buf);
 	Fclose(file);
-	if (flen <= 0L)
+	if (flen <= 0)
 		return 0;
 
 	keys = Keytbl((void *) -1L, (void *) -1L, (void *) -1L);
@@ -314,8 +341,6 @@ static int create_ram(void)
 
 static int create_rsc(void)
 {
-	char *s;
-	int is;
 	int file;
 	long flen;
 	long doserr;
@@ -326,25 +351,7 @@ static int create_rsc(void)
 		return 0;
 	flen = Fread(file, BUFLEN, buf);
 	Fclose(file);
-	if (flen <= 0L)
-		return 0;
-	is = 0;
-	for (s = buf; s < buf + flen && is < 2; s++)
-	{
-		if (!strncmp(s, "Erika Mustermann", 16))
-		{
-			memcpy(s, TXT(O_PERS_NAME), 36L);
-			is++;
-			continue;
-		}
-		if (!strncmp(s, "Quarkstraûe", 11))
-		{
-			memcpy(s, TXT(O_PERS_ADRESSE), 47L);
-			is++;
-			continue;
-		}
-	}
-	if (is < 2)
+	if (flen <= 0)
 		return 0;
 	file = (int) MFcreate(rscname);
 	if (file < 0)
@@ -357,6 +364,34 @@ static int create_rsc(void)
 		return 0;
 	}
 	return 1;
+}
+
+
+/****************************************************************
+*
+* ermittle Zeichenkette <key> in Abschnitt <section>
+*
+* section:	"\r\n#[...]"
+* key:		"\r\ndrives="
+*
+****************************************************************/
+
+static char *find_key(const char *key, const char *section)
+{
+	char *s;
+	char *t;
+
+	s = strstr(infbuf, section);
+	if (!s)
+		return NULL;					/* Abschnitt nicht da */
+	s += strlen(section);
+	t = strstr(s, "\r\n#[");			/* nÑchster Abschnitt */
+	s = strstr(s, key);
+	if (!s)
+		return NULL;					/* SchlÅssel nicht da */
+	if (t && s >= t)
+		return NULL;					/* SchlÅssel in anderem Abschnitt */
+	return s + strlen(key);
 }
 
 
@@ -377,7 +412,7 @@ static int load_inf(void)
 		return 0;
 	flen = Fread(file, INFBUFLEN - 1, infbuf);
 	Fclose(file);
-	if (flen <= 0L)
+	if (flen <= 0)
 		return 0;
 	buf[flen] = EOS;					/* Mit Nullbyte abschlieûen */
 	return 1;
@@ -394,11 +429,10 @@ static int create_inf(void)
 {
 	int file;
 	long flen;
-	char *s,
-	*t;
-	char *old,
-	*old2;
-	char *alert;
+	char *s;
+	char *t;
+	char *old;
+	char *old2;
 	int i;
 
 	/* MAGX.INF von Diskette lesen */
@@ -409,7 +443,7 @@ static int create_inf(void)
 		return 0;
 	flen = Fread(file, BUFLEN - 1, buf);
 	Fclose(file);
-	if (flen <= 0L)
+	if (flen <= 0)
 		return 0;
 	buf[flen] = EOS;					/* Mit Nullbyte abschlieûen */
 
@@ -418,7 +452,11 @@ static int create_inf(void)
 
 	s = buf;
 	while (NULL != (s = strchr(s, '@')))
-		*s = drv;
+	{
+		/* do not patch the icon character for desktop icons */
+		if (s[1] != ' ')
+			*s = drv;
+	}
 
 	/* Kontrollfeld-Daten reinpatchen */
 	/* ------------------------------ */
@@ -432,10 +470,9 @@ static int create_inf(void)
 	/* MAGX.INF erstellen */
 	/* ------------------ */
 
-	if (!Frename(0, inf_name, inf_old_name))
+	if (Frename(0, inf_name, inf_old_name) == 0)
 	{
-		rsrc_gaddr(R_STRING, INF_REN, &alert);
-		form_alert(1, alert);
+		form_alert(1, rs_str(INF_REN));
 	}
 
 	file = (int) MFcreate(inf_name);
@@ -472,8 +509,9 @@ static int create_inf(void)
 			case 1:
 				old = find_key("\r\n#_DEV ", "\r\n#[aes]");
 				if (old)
+				{
 					old2 = strstr(old, "\r\n");
-				else
+				} else
 				{
 					old = default_dev;
 					old2 = old + strlen(old);
@@ -484,8 +522,9 @@ static int create_inf(void)
 			case 2:
 				old = find_key("\r\n#_ENV HOME=", "\r\n#[aes]");
 				if (old)
+				{
 					old2 = strstr(old, "\r\n");
-				else
+				} else
 				{
 					old = default_home;
 					old2 = old + strlen(old);
@@ -514,7 +553,6 @@ static int install(int exitbutton)
 {
 	long doserr;
 	int i;
-	char *alert;
 
 	if (exitbutton == O_PERS_ABBRUCH)
 		return 1;
@@ -529,9 +567,17 @@ static int install(int exitbutton)
 			drv = i - O_PERS_LWA + 'A';
 	}
 
-	dst_dir[0] = zusatzpath[0] = zusatz[0] = cpxpath[0] =
-		inf_name[0] = inf_old_name[0] = rampath[0] = rscname[0] = default_home[0] = drv;
-	mod_appname[0] = mod_appparm[2] = drv;
+	dst_dir[0] = drv;
+	strcat(strcpy(zusatzpath, dst_dir), "GEMSYS\\MAGIC\\UTILITY\\");
+	strcat(strcpy(zusatz, zusatzpath), "EXTRAS\\");
+	strcat(strcpy(cpxpath, dst_dir), "CPX\\");
+	strcat(strcpy(inf_name, dst_dir), "MAGX.INF");
+	strcat(strcpy(inf_old_name, dst_dir), "MAGX.xxx");
+	strcat(strcpy(rampath, dst_dir), "MAGIC.RAM");
+	strcat(strcpy(rscname, dst_dir), "GEMSYS\\GEMDESK\\MAGXDESK.RSC");
+	default_home[0] = drv;
+	strcat(strcpy(mod_appname, dst_dir), "GEMSYS\\GEMDESK\\MOD_APP.TTP");
+	mod_appparm[2] = drv;
 
 	/* alte INF-Datei lesen */
 	/* -------------------- */
@@ -550,8 +596,7 @@ static int install(int exitbutton)
 	if (doserr)
 	{
 	  cp_err:
-		rsrc_gaddr(R_STRING, ERR_COPY, &alert);
-		form_alert(1, alert);
+		form_alert(1, rs_str(ERR_COPY));
 		return 0;
 	}
 
@@ -562,8 +607,7 @@ static int install(int exitbutton)
 	{
 		DTA dta;
 
-		rsrc_gaddr(R_STRING, DISK_2, &alert);
-		if (2 == form_alert(1, alert))
+		if (2 == form_alert(1, rs_str(DISK_2)))
 			return 0;
 
 		/* FÅr TOS: */
@@ -584,8 +628,7 @@ static int install(int exitbutton)
 
 	if (!create_inf())
 	{
-		rsrc_gaddr(R_STRING, ERR_INF, &alert);
-		form_alert(1, alert);
+		form_alert(1, rs_str(ERR_INF));
 		return 0;
 	}
 
@@ -594,8 +637,7 @@ static int install(int exitbutton)
 
 	if (!create_ram())
 	{
-		rsrc_gaddr(R_STRING, ERR_RAM, &alert);
-		form_alert(1, alert);
+		form_alert(1, rs_str(ERR_RAM));
 		return 0;
 	}
 
@@ -604,8 +646,7 @@ static int install(int exitbutton)
 
 	if (!create_rsc())
 	{
-		rsrc_gaddr(R_STRING, ERR_RSC, &alert);
-		form_alert(1, alert);
+		form_alert(1, rs_str(ERR_RSC));
 		return 0;
 	}
 
@@ -615,21 +656,9 @@ static int install(int exitbutton)
 	doserr = copy_subdir("MAGX_2\\CPX\\", cpxpath);
 	if (doserr)
 	{
-		rsrc_gaddr(R_STRING, ERR_CPX, &alert);
-		form_alert(1, alert);
+		form_alert(1, rs_str(ERR_CPX));
 	}
-	rsrc_gaddr(R_STRING, WCOLOR, &alert);
-	{
-		char s[256];
-		char *t;
-
-		strcpy(s, alert);
-		t = strchr(s, '%');
-		strcpy(t, cpxpath);
-		t = strchr(alert, '%');
-		strcat(s, t + 2);
-		form_alert(1, s);
-	}
+	alertv(rs_str(WCOLOR), cpxpath);
 
 	/* Auf Wunsch ZusÑtze kopieren */
 	/* --------------------------- */
@@ -640,23 +669,22 @@ static int install(int exitbutton)
 		doserr = copy_subdir("MAGX_2\\EXTRAS\\", zusatz);
 		if (doserr)
 		{
-			rsrc_gaddr(R_STRING, ERR_EXTRAS, &alert);
-			form_alert(1, alert);
+			form_alert(1, rs_str(ERR_EXTRAS));
 		}
 	}
 
 
+#if 0
 	/* MOD_APP aufrufen */
 	/* ---------------- */
-
 	mod_appparm[0] = (char) strlen(mod_appparm + 1);
 	Pexec(0, mod_appname, mod_appparm, NULL);
+#endif
 
 	/* fertig */
 	/* ------ */
 
-	rsrc_gaddr(R_STRING, FERTIG, &alert);
-	form_alert(1, alert);
+	form_alert(1, rs_str(FERTIG));
 
 	return 1;
 }
@@ -670,16 +698,16 @@ static int install(int exitbutton)
 
 static int do_exdialog(OBJECT *dialog, int (*check)(int exitbutton))
 {
-	int cx, cy, cw, ch;
+	GRECT cr;
 	int exitbutton;
 
 	/* Pfad usw. entfernen */
 	dialog[O_ACTION].ob_flags |= HIDETREE;
 	dialog[O_PATH].ob_flags |= HIDETREE;
 
-	form_center(dialog, &cx, &cy, &cw, &ch);
-	form_dial(FMD_START, 0, 0, 0, 0, cx, cy, cw, ch);
-	objc_draw(dialog, ROOT, MAX_DEPTH, cx, cy, cw, ch);
+	form_center_grect(dialog, &cr);
+	form_dial_grect(FMD_START, &cr, &cr);
+	objc_draw_grect(dialog, ROOT, MAX_DEPTH, &cr);
 	for (;;)
 	{
 		exitbutton = 0x7f & form_do(dialog, 0);
@@ -698,9 +726,9 @@ static int do_exdialog(OBJECT *dialog, int (*check)(int exitbutton))
 		subobj_draw(dialog, O_ACTION, -1, NULL);
 		subobj_draw(dialog, O_PATH, -1, NULL);
 		graf_mouse(ARROW, NULL);
-		objc_draw(dialog, exitbutton, 1, cx, cy, cw, ch);
+		objc_draw_grect(dialog, exitbutton, 1, &cr);
 	}
-	form_dial(FMD_FINISH, 0, 0, 0, 0, cx, cy, cw, ch);
+	form_dial_grect(FMD_FINISH, &cr, &cr);
 	return exitbutton;
 }
 
@@ -732,21 +760,21 @@ int main(void)
 		return 0;
 	}
 
-	rsrc_gaddr(R_STRING, READING, &reading);
-	rsrc_gaddr(R_STRING, CRFOLDER, &crfolder);
-	rsrc_gaddr(R_STRING, WRITING, &writing);
-	rsrc_gaddr(R_STRING, ERR_CREATING, &err_creating);
-	rsrc_gaddr(R_STRING, DISKFULL, &diskfull);
+	reading = rs_str(READING);
+	crfolder = rs_str(CRFOLDER);
+	writing = rs_str(WRITING);
+	err_creating = rs_str(ERR_CREATING);
+	diskfull = rs_str(DISKFULL);
 
 	/* Bildschirm- Arbeitsbereich berechnen */
 	/* ------------------------------------ */
 
-	wind_get(SCREEN, 4, &scrx, &scry, &scrw, &scrh);
+	wind_get(SCREEN, WF_WORKXYWH, &scrx, &scry, &scrw, &scrh);
 
 	/* Adressen der Resourcen berechnen */
 	/* -------------------------------- */
 
-	rsrc_gaddr(0, TREE_PERSONALIZE, &adr_dialog);
+	rsrc_gaddr(R_TREE, TREE_PERSONALIZE, &adr_dialog);
 
 	/* inf- Datei laden */
 	/* ---------------- */
@@ -804,54 +832,6 @@ int main(void)
 }
 
 
-static void ws(int file, char *s)
-{
-	Fwrite(file, strlen(s), s);
-}
-
-
-/****************************************************************
-*
-* ermittle Zeichenkette <key> in Abschnitt <section>
-*
-* section:	"\r\n#[...]"
-* key:		"\r\ndrives="
-*
-****************************************************************/
-
-static char *find_key(char *key, char *section)
-{
-	char *s;
-	char *t;
-
-	s = strstr(infbuf, section);
-	if (!s)
-		return NULL;					/* Abschnitt nicht da */
-	s += strlen(section);
-	t = strstr(s, "\r\n#[");			/* nÑchster Abschnitt */
-	s = strstr(s, key);
-	if (!s)
-		return NULL;					/* SchlÅssel nicht da */
-	if (t && s >= t)
-		return NULL;					/* SchlÅssel in anderem Abschnitt */
-	return s + strlen(key);
-}
-
-
-/****************************************************************
-*
-* Bestimmt die Begrenzung eines Objekts
-*
-****************************************************************/
-
-void objc_grect(OBJECT * tree, int objn, GRECT * g)
-{
-	objc_offset(tree, objn, &(g->g_x), &(g->g_y));
-	g->g_w = (tree + objn)->ob_width;
-	g->g_h = (tree + objn)->ob_height;
-}
-
-
 /*   Das Verfahren beruht darauf, daû die laufende Nummer nicht direkt
      verwendet, sondern mit Hilfe einer bestimmten Abbildung in eine
      echte Teilmenge der natÅrlichen Zahlen abgebildet wird. Diese Abbildung
@@ -890,25 +870,25 @@ static int test_serno(long serno)
 	char *mag2 = MAG2;
 
 	i = serno - MAG3;
-	k = 0L;
-	j = 1L;
+	k = 0;
+	j = 1;
 	for (l = 31; l >= 0; l--)
 	{
 		if (mag2[l] == 'x')
 		{
-			if (i & 1L)
+			if (i & 1)
 				k |= j;					/* Bit einmischen */
-			j <<= 1L;
+			j <<= 1;
 		} else if (mag2[l] == '1')
 		{
 			if (!(i & 1L))
 				return -1;
 		} else
 		{
-			if (i & 1L)
+			if (i & 1)
 				return -1;
 		}
-		i >>= 1L;
+		i >>= 1;
 	}
 	if (k % MAG1)
 		return -1;					/* Fehler */

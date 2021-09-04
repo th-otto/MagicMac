@@ -1,8 +1,8 @@
-extern long copy_subdir( char *src, char *dst );
-extern long MFcreate( char *name );
-extern long GDcreate(char *path, char *name);
-extern long GFcopy(char *path, char *name, char *dstpath);
-extern void callback(char *action, char *name);
+long copy_subdir(const char *src, const char *dst);
+long MFcreate(const char *name);
+long GDcreate(const char *path, const char *name);
+long GFcopy(const char *path, const char *name, const char *dstpath);
+void callback(const char *action, const char *name);
 
 extern char *writing;
 extern char *reading;

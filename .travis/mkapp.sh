@@ -131,8 +131,7 @@ cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/roo
 # TODO: french translation
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
-# TODO: french translation
-cp -a "$SRC_DIR/doc/usage/magx_en.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
+cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
 
 cp -a "$SRC_DIR/extensio/pdlg_slb/$lang/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
 
@@ -260,7 +259,15 @@ cp -a "$SRC_DIR/tools/clock/clock.mup" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOC
 cp -a "$SRC_DIR/tools/clock/clockcol.cpx" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOCK/CLOCKCOL.CPX"
 cp -a "$SRC_DIR/tools/clock/maus.ruf" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOCK/MAUS.RUF"
 cp -a "$SRC_DIR/tools/clock/readme.cat" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOCK/README.CAT"
-cp -a "$SRC_DIR/apps/instmagc/magx.inf" "$RESOURCES_DIR/rootfs-common/MAGX.INF"
+
+#
+# The installation program replaces @: with the boot drive.
+# for the emulator, that will always be C:
+#
+sed -e 's|@:|C:|g' \
+    -e 's|drives=%|drives=|' \
+    -e 's|_DEV %|_DEV 1 0|' \
+    "$SRC_DIR/apps/instmagc/magx.inf" > "$RESOURCES_DIR/rootfs-common/MAGX.INF"
 
 for f in "$SRC_DIR/kernel/vdi/drivers/"*.sys "$SRC_DIR/kernel/vdi/drivers/"*.osd; do
 	cp -a "$f" "$RESOURCES_DIR/rootfs-common/GEMSYS/$(upper $(basename $f))"
