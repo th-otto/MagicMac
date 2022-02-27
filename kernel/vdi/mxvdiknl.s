@@ -455,7 +455,7 @@ Mshrink: ; not exported!
                   movem.l  d1-d2/a0-a2,-(sp)
                   movea.l  d0,a0
                   move.l   d1,d0
-                  jsr      Mshrink_sys
+                  bsr      Mshrink_sys
                   movem.l  (sp)+,d1-d2/a0-a2
                   rts
 
@@ -467,7 +467,7 @@ Mshrink: ; not exported!
 Mfree: ; not exported!
                   movem.l  d1-d2/a0-a2,-(sp)
                   move.l   d0,a0
-                  jsr      Mfree_sys
+                  bsr      Mfree_sys
                   movem.l  (sp)+,d1-d2/a0-a2
                   rts
 
@@ -503,16 +503,23 @@ clear_cpu_exit:   rts
 ;     oder 0 (direkter Zugriff auf ATARI-Hardware)
 ;Ausgaben:
 ;-
-vdi_blinit:       movem.l  d0-d2/a0-a2,-(sp)
+vdi_blinit:       
+                  move.l  a0,-(sp)
 
+                  IFNE MAGICPC
+                  bsr      copy_nvdi_struct     ;NVDI-Struktur kopieren
+                  ELSE
                   IFNE NEW_SETUP_API
                   bsr      MM_init              ;bei alten MagiCMac-Versionen den Zeiger auf die PixMap konvertieren
+                  ENDC
                   ENDC
                   move.l   a0,vdi_setup_ptr.w   ;Zeiger auf die PixMap des Macintosh
                   move.w   #1,system_boot       ;wir sind gerade beim Systemstart
                   
+                  IFEQ MAGICPC
                   bsr      copy_nvdi_struct     ;NVDI-Struktur kopieren
-
+				  ENDC
+					
                   lea.l    bconout_tab,a0
                   move.l   #V_HID_CNT,(a0)+     ;cursor_cnt_vec: Zeiger auf den Cursor-Zaehler
                   move.l   #vbl_cursor,(a0)+    ;cursor_vbl_vec: Zeiger auf die Cursor-VBL-Routine
@@ -548,7 +555,7 @@ vdi_blinit:       movem.l  d0-d2/a0-a2,-(sp)
                   bsr.s    chk_blitter
                   move.w   d0,blitter
                   move.l   (sp)+,d0
-vdi_blinit_exit:  movem.l  (sp)+,d0-d2/a0-a2
+vdi_blinit_exit:  move.l  (sp)+,a0
                   rts
 
 ;Testen, ob der Blitter vorhanden ist
@@ -701,19 +708,15 @@ vt52_init_MAC:    movea.l  d0,a0
                   ELSE
                   move.l   PM_baseAddr(a0),(v_bas_ad).w ; pointer to pixel data
                   move.w   PM_rowBytes(a0),d2         ; number of bytes per line
-                  and.w    #$3FFF,d2                  ; mask off flags used by QuickDraw
+                  and.w    #$1FFF,d2                  ; mask off flags used by QuickDraw
                   move.w   d2,(BYTES_LIN).w           ; bytes per line
                   move.w   d2,(WIDTH).w
                   move.w   PM_pixelSize(a0),(PLANES).w ; number of planes
                   move.w   PM_bounds+R_right(a0),d0
                   sub.w    PM_bounds+R_left(a0),d0
-                  addq.w   #1,d0
-                  bclr     #0,d0
                   move.w   d0,(V_REZ_HZ).w            ;width
                   move.w   PM_bounds+R_bottom(a0),d1
                   sub.w    PM_bounds+R_top(a0),d1
-                  addq.w   #1,d0
-                  bclr     #0,d0
                   move.w   d1,(V_REZ_VT).w            ;height
                   ENDC
 
@@ -743,9 +746,8 @@ init_vt52_vars:   movem.l  d0-d3/a0-a2,-(sp)
                   lea.l    header_10pt,a1             ;8*16 Systemfont
 init_vt52_font:   move.l   dat_table(a1),(V_FNT_AD).w ;Adresse des Fontimage
                   move.l   off_table(a1),(V_OFF_AD).w ;Adresse der HOT
-                  move.w   form_width(a1),(V_FNT_WD).w ;Breite des Fontimages in Bytes
-                  move.w   first_ade(a1),(V_FNT_ND).w ;Nummer des ersten Zeichens
-                  move.w   last_ade(a1),(V_FNT_ST).w  ;Nummer des letzten Zeichens
+                  move.w   #256,(V_FNT_WD).w ;Breite des Fontimages in Bytes
+                  move.l   #$ff0000,(V_FNT_ND).w      ;Nummer des ersten Zeichens
                   move.w   form_height(a1),d3         ;Zeichenhoehe
                   move.w   d3,(V_CEL_HT).w            ;Zeichenhoehe
                   lsr.w    #3,d0
@@ -765,7 +767,6 @@ init_vt52_font:   move.l   dat_table(a1),(V_FNT_AD).w ;Adresse des Fontimage
                   movem.l  (sp)+,d0-d3/a0-a2
                   rts
 
- IF   COUNTRY=COUNTRY_DE
 no_offscreen_drivers:
                   DC.B  'Offscreen-Treiber nicht gefunden.',13,10
                   DC.B  'MCMD wird gestartet...',13,10,0
@@ -774,33 +775,9 @@ no_screen_driver:
                   DC.B  'Bildschirm-Treiber nicht gefunden.',13,10
                   DC.B  'MCMD wird gestartet...',13,10,0
 
-system_halted:    DC.B  'System wird angehalten.',13,10,0
- ENDIF
- IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
-no_offscreen_drivers:
-                  DC.B  'Offscreen-driver not found.',13,10
-                  DC.B  'Executing MCMD...',13,10,0
-
-no_screen_driver:
-                  DC.B  'Screen-driver not found.',13,10
-                  DC.B  'Executing MCMD...',13,10,0
-
-system_halted:    DC.B  'System is halted.',13,10,0
- ENDIF
- IF   COUNTRY=COUNTRY_FR
-no_offscreen_drivers:
-                  DC.B  'Offscreen-driver not found.',13,10
-                  DC.B  'Executing MCMD...',13,10,0
-
-no_screen_driver:
-                  DC.B  'Screen-driver not found.',13,10
-                  DC.B  'Executing MCMD...',13,10,0
-
-system_halted:    DC.B  'System is halted.',13,10,0
- ENDIF
-
 empty_cmd:        DC.B  0
 mcmd_path:        DC.B  'GEMDESK\MCMD.TOS',0
+system_halted:    DC.B  'System wird angehalten.',13,10,0
 
                   EVEN
 
@@ -829,7 +806,7 @@ vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
                   tst.w    d0                   ;alles in Ordnung?
                   bne.s    vdi_init_fonts
                   tst.l    vdi_setup_ptr        ;kein direkter Hardware-Zugriff (Mac)?
-                  bne      load_scr_err
+                  bne      load_NOD_err
 
                   lea.l    no_offscreen_drivers(pc),a0
                   jsr      Cconws               ;Meldung ausgeben
@@ -857,8 +834,17 @@ vdi_init:         movem.l  d0-d2/a0-a3/a6,-(sp)
                   jsr      Cconws               ;Meldung ausgeben
 
 vdi_init_halt:    nop
-				  jsr      mmx_yield
                   bra.s    vdi_init_halt
+
+load_NOD_err:     
+                  moveq.l  #-1,d0               ;kein VDI-Treiber
+                  IFNE NEW_SETUP_API
+                  movea.l  vdi_setup_ptr.w,a0               
+                  movea.l  VSD_report_error(a0),a0
+                  ELSE
+                  movea.l  BehneError.l,a0 /* BUG */
+                  ENDC
+                  jmp      (a0)
 
 vdi_init_fonts:   bsr      init_fonts           ;Fonts initialisieren
 
@@ -888,7 +874,7 @@ load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
 
                   movea.l  screen_driver+driver_addr,a0
                   move.l   a0,d0
-                  bne      load_scr_call
+                  bne.w    load_scr_call
 
                   tst.l    vdi_setup_ptr        ;kein direkter Hardware-Zugriff (Mac)?
                   bne.s    load_scr_MAC
@@ -927,7 +913,6 @@ load_scr_drvr:    movem.l  d0-d2/a0-a2,-(sp)
                   jsr      Cconws               ;Meldung ausgeben
 
 load_scr_halt:    nop
-				  jsr      mmx_yield
                   bra.s    load_scr_halt
 
 load_scr_MAC:     
@@ -938,8 +923,17 @@ load_scr_MAC:
                   lea.l    gdos_path,a1
                   bsr      load_MAC_driver                  ;Treiber fuer den Mac laden
                   move.l   a0,d0                            ;Treiber vorhanden?
-                  beq.s    load_scr_err
+                  bne.s    load_scr_call
                   
+                  moveq.l  #-1,d0               ;kein VDI-Treiber
+                  IFNE NEW_SETUP_API
+                  movea.l  vdi_setup_ptr.w,a0               
+                  movea.l  VSD_report_error(a0),a0
+                  ELSE
+                  movea.l  BehneError.l,a0 /* BUG */
+                  ENDC
+                  jmp      (a0)
+
 load_scr_call:
 	lea.l    screen_driver,a3     ;Treiberstruktur fuer den Bildschirmtreiber
 	move.l   a0,driver_addr(a3)   ;Treiberstart
@@ -956,13 +950,13 @@ load_scr_call:
 	illegal                       ;VDI-Treiber meldet Fehler
 
 load_scr_err:     
+                  moveq.l  #-1,d0               ;kein VDI-Treiber
                   IFNE NEW_SETUP_API
                   movea.l  vdi_setup_ptr.w,a0               
                   movea.l  VSD_report_error(a0),a0
                   ELSE
-                  movea.l  MSys+BehneError,a0
+                  movea.l  BehneError.l,a0 /* BUG */
                   ENDC
-                  moveq.l  #-1,d0               ;kein VDI-Treiber
                   jmp      (a0)
 
 load_scr_exit:    movem.l  (sp)+,d0-d2/a0-a2

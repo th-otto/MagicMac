@@ -10,6 +10,7 @@
 
 
 	XDEF vmemcpy
+		GLOBL vmemcpyl
 	XDEF memmove
 	XDEF	fast_clrmem
 	XDEF	toupper
@@ -41,7 +42,6 @@
 	XDEF dgetpath
 	XDEF drvmap
 
-	XDEF	putch
 	XDEF putstr
 	XDEF crlf
 	XDEF hexl
@@ -79,16 +79,11 @@ dev_vecs		EQU $51e		/* long dev_vecs[8*4]		*/
 putstr:
  move.b	(a0)+,d0
  beq.b	puts_ende
- bsr.b 	putch
+ bsr.s 	putch
  bra.b	putstr
 puts_ende:
  rts
 
-
-**********************************************************************
-*
-* PUREC void putch( d0 = char c)
-*
 
 putch:
  move.l	a2,-(sp)				; wg. PureC
@@ -102,7 +97,6 @@ putch:
  move.l   (sp)+,a0
  move.l	(sp)+,a2
  rts
-
 
 **********************************************************************
 *
@@ -189,8 +183,6 @@ fast_clrmem:
  move.l   a0,d0
  btst     #0,d0
  beq.b    fclr_even
- cmpa.l   a0,a1
- beq.b    fclr_ende
  move.b   d1,(a0)+
 fclr_even:
  move.l   a1,d0
@@ -231,23 +223,26 @@ fclr_ende:
 *
 
 vmemcpy:
- move.l d0,d1
+vmemcpyl:
+ moveq #0,d1
+ move.w d0,d1
  beq.b	mcp_end
  cmpa.l	a0,a1
  bcs.b	mcp_dir2
 mcp_loop1:
  move.b	(a1)+,(a0)+
- subq.l	#1,d1
+ subq.w	#1,d1
  bne.b	mcp_loop1
-mcp_end:
  rts
 mcp_dir2:
- adda.l	d1,a0
  adda.l	d1,a1
+ adda.l	d1,a0
+ subq.w	#1,d1
 mcp_loop2:
  move.b	-(a1),-(a0)
- subq.l	#1,d1
- bne.b	mcp_loop2
+ subq.w	#1,d1
+ bpl.b	mcp_loop2
+mcp_end:
  rts
 
 
@@ -774,8 +769,8 @@ d2s_1:
 *
 
 _sprintf:
- movem.l	d2/a3/a4/a5,-(sp)
- movem.l	20(sp),a5/a4/a3		; a3 = dst
+ movem.l	a3/a4/a5,-(sp)
+ movem.l	16(sp),a5/a4/a3		; a3 = dst
 							; a4 = src
 							; a5 = p[]
 _spr_loop:
@@ -824,7 +819,7 @@ _spr_long:
 
 _spr_ende:
  clr.b	(a3)
- movem.l	(sp)+,a5/a4/a3/d2
+ movem.l	(sp)+,a5/a4/a3
  rts
 
 
@@ -1182,7 +1177,6 @@ mmalloc:
  trap	#1				; gemdos Malloc
  addq.w	#6,sp
 ;move.l	(sp)+,a2
- move.l d0,a0
  tst.l	d0
  rts
 

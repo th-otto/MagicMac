@@ -9,6 +9,8 @@
 #define   imax( i1, i2)  ((i1 > i2) ? i1 : i2)
 #define   imin( i1, i2)  ((i1 < i2) ? i1 : i2)
 
+LONG smalloc( ULONG size);
+
 
 #define SPECIAL_ACCMENU  0
 
@@ -1970,7 +1972,7 @@ static void smn_obdraw( OBJECT *tree, int obj, GRECT *rect)
 } /* smn_obdraw */
 
 
-#if 0 /* unused */
+#if 1 /* unused */
 void smn_rctoxy( GRECT *rect, int *xy)
 {
   *((GRECT *) xy) = *rect;    /* !##! (statt &xy) */

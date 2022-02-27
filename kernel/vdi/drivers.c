@@ -95,7 +95,7 @@ static WORD init_offscreen_drivers(const char *tmp_path)
 					drv->info = head.info;
 					drv->used = 0;
 					drv->code = 0;
-					drv->wk_len = 0;
+					/* drv->wk_len = 0; */
 					drv->next = OFFSCREEN_ptr;
 					OFFSCREEN_ptr = drv;
 					OFFSCREEN_count++;

@@ -125,7 +125,7 @@ copy_sb_sub:
 	bpl.s	copy_sb_loop
 	rts
 
-    IFNE 0 /* unused */
+    IFNE 1 /* unused */
 ;void	copy_mem_aln( LONG len, void *s, void *d );
 ;Bytes kopieren, Adressen sind gerade und die Anzahl ist eine Vielfache von zwei
 ;Vorgaben:
@@ -237,7 +237,7 @@ strcmp_gt:
 ;a0.l	String
 ;Ausgaben:
 ;a0.l String
-    IFNE 0 /* unused */
+    IFNE 1 /* unused */
 strgupr:
 strupr: ; not exported!
 	movea.l	a0,a1
@@ -280,7 +280,7 @@ strupr_save:
 ;Ausgaben:
 ;a0.l String
 ; NOTE: actually works with shorts only
-    IFNE 0 /* ... but is acually unused */
+    IFNE 1 /* ... but is acually unused */
 intstrg:
 	clr.l	-(sp)
 	clr.l	-(sp)
@@ -313,7 +313,7 @@ intstrg_copy:
 ;a0.l	String
 ;Ausgaben:
 ;d0.l Zahl
-    IFNE 0 /* unused */
+    IFNE 1 /* unused */
 strgint:
 	moveq	#0,d0
 	moveq	#0,d1

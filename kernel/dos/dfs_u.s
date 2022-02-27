@@ -16,7 +16,7 @@ DEBUG     EQU  8
      INCLUDE "magicdos.inc"
 
 DRIVE_U        EQU  'U'-'A'        ; fuer "MiNT"
-UROOT_LEN      EQU  128            ; soviele Eintraege
+UROOT_LEN      EQU  64            ; soviele Eintraege
 _drvbits       EQU  $4c2
 _nflops        EQU  $4a6
 
@@ -189,9 +189,6 @@ get_u_lnk:
 gul_err:
  move.w   (sp)+,d0
  addi.b   #'A',d0
- cmp.b #'Z',d0
- ble.s gul_err2
- sub.b #('Z'+1-'1'),d0
 gul_err2:
  move.b   d0,(a1)+            ; Laufwerkbuchstaben einsetzen
  clr.b    (a1)
@@ -212,9 +209,6 @@ _get_link:
  move.w   d0,d2                    ; d2.w = drv
  bmi.b    _gl_free                 ; suche freien Platz
  addi.b   #'A',d0
- cmp.b #'Z',d0
- ble.s _gl_drv
- sub.b #('Z'+1-'1'),d0
 _gl_drv:
  lsl.w    #8,d0
  move.b   #':',d0
@@ -281,9 +275,6 @@ add_link:
 
  move.w   (sp),d0
  addi.b   #'A',d0
- cmp.b #'Z',d0
- ble.s _al_drv
- sub.b #('Z'+1-'1'),d0
 _al_drv:
  lsl.w    #8,d0
  move.b   #':',d0
@@ -611,9 +602,6 @@ _fcre_devinstall2:
  move.l   #_con_devdrv,d1
  cmpi.l   #2,(a0)
  beq.b    _fcre_devi_no0           ; 2: "CON:"
- move.l   #_anb_devdrv,d1          ; 27.6.2002
- cmpi.l   #100,(a0)
- beq.b    _fcre_devi_no0           ; 100: "AUXNB" nichtblockierend
  move.l   #_bios_devdrv,d1
  cmpi.l   #3,(a0)
  bne.b    _fcre_devi_no0
@@ -794,7 +782,9 @@ fxa_dd:
  cmpa.l   (udrv_procdir).l,a2
  beq.b    fxa_dev             ; proc: 34
  addq.w   #1,xattr_dev(a6)
- cmpa.l   (udrv_shmdir),a2
+ /* cmpa.l   udrv_shmdir.l,a2 */ /* BUG BINEXACT */
+ dc.w $b5fc
+ dc.l udrv_shmdir
  beq.b    fxa_dev             ; shm: 35
  move.w   #'U'-'A',xattr_dev(a6)   ; root
 fxa_dev:

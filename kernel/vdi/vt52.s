@@ -705,14 +705,14 @@ vt_seq_f:
  */
 vt_seq_j:
 	bset       #CURSOR_SAVED,(V_STAT_0).w
-	move.l     (V_CUR_XY).w,(V_SAV_XY).w
+	move.l     (V_CUR_XY).w,(RETSAV).w
 	rts
 
 /*
  * Restore cursor (VT52 ESC k)
  */
 vt_seq_k:
-	movem.w    (V_SAV_XY).w,d0-d1
+	movem.w    (RETSAV).w,d0-d1
 	bclr       #CURSOR_SAVED,(V_STAT_0).w
 	bne        set_cursor_xy
 	moveq.l    #0,d0

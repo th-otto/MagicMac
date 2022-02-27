@@ -107,6 +107,7 @@ static unsigned char fselx[] = {
 
 
 #undef Malloc
+void *smalloc( ULONG size);
 #define   Malloc( size ) (smalloc( size ))
 #undef Mfree
 #define   Mfree( block ) smfree( block )
@@ -115,6 +116,7 @@ static unsigned char fselx[] = {
 #include "listbx_g.h"
 #include "fsel.h"
 
+void vmemcpyl(void *dst, void *src, long len);
 
 #define FIXED_PATTLEN    256
 #define MAXPATH          256
@@ -408,7 +410,7 @@ static char *insert_pattern(char *newpattern, char *patterns,
           }
 
      if   ((oldlen) && (oldlen != newlen))
-          vmemcpy(pos+newlen, s, ende-s);
+          vmemcpy(pos+newlen, s, (int)(ende-s));
 
 
      if   (!newlen)
@@ -418,7 +420,7 @@ static char *insert_pattern(char *newpattern, char *patterns,
           else return(NULL);
           }
      else {
-          vmemcpy(pos, newpattern, newlen);
+          vmemcpyl(pos, newpattern, newlen);
           return(pos);
           }
 }
@@ -469,7 +471,7 @@ static void trim_path(char *spath, char *dpath)
 *
 *********************************************************************/
 
-#if 0 /* unused */
+#if 1 /* unused */
 void upperstring( char *s )
 {
      while(*s)
@@ -867,7 +869,7 @@ static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
           {
           WORD dummyglobal[15];
 
-          vmemcpy( new, rsc, len );   /* Resource kopieren */
+          vmemcpyl( new, rsc, (unsigned int)len );   /* Resource kopieren */
           _rsrc_rcfix( dummyglobal, new );   /* Resource beim AES anmelden */
           }
      else form_xerr(ENSMEM, NULL);
@@ -882,17 +884,17 @@ static RSHDR *copy_rsrc( RSHDR *rsc, LONG len )
 *
 ****************************************************************/
 
-static int cmp_files(const void *ff1, const void *ff2, void *udata)
+static int cmp_files(FILEINFO **ff1, FILEINFO **ff2,
+          FSEL_DIALOG *fsd)
 {
-     int  r;
-     long l;
-     char *n1,*n2;
-     const FILEINFO *f1;
-     const FILEINFO *f2;
-	FSEL_DIALOG *fsd = (FSEL_DIALOG *)udata;
+     register int  r;
+     register long l;
+     register char *n1,*n2;
+     register FILEINFO *f1,*f2;
 
-     f1 = *((const FILEINFO **)ff1);
-     f2 = *((const FILEINFO **)ff2);
+
+     f1 = *ff1;
+     f2 = *ff2;
 
      if   (fsd->sort_mode == SORTBYNONE)
           return(f1->number - f2->number);
@@ -1018,7 +1020,7 @@ static void sort_and_cat( FSEL_DIALOG *fsd )
 
      anzahl = fsd->nfiles;
      shelsort(fsd->files, (size_t) anzahl,
-               sizeof(FILEINFO *), cmp_files, fsd);
+               sizeof(FILEINFO *), (int (*)(void *, void *, void *))cmp_files, fsd);
 
      for  (p_d = fsd->files; anzahl > 0; anzahl--,p_d++)
           {
@@ -1150,7 +1152,7 @@ static long read_dir( FSEL_DIALOG *fsd )
                     newblk = (char *)Malloc(newsize);
                     if   (!newblk)
                          break;    /* Fehler */
-                    vmemcpy(newblk, fsd->memblk, ziele - fsd->memblk);
+                    vmemcpy(newblk, fsd->memblk, (int)(ziele - fsd->memblk));
                     limit = newblk + (limit - fsd->memblk);
                     ziele = newblk + (ziele - fsd->memblk);
                     Mfree(fsd->memblk);
@@ -1814,8 +1816,6 @@ static void clr_dirty( FSEL_DIALOG *fsd)
 
 static void fsel_dialog_exit( FSEL_DIALOG *fsd )
 {
-	WORD dummy;
-	
      if   (fsd)
           {
           if   (fsd->files)
@@ -1826,7 +1826,7 @@ static void fsel_dialog_exit( FSEL_DIALOG *fsd )
                Mfree(fsd->rshdr);
           if   (fsd->dialog)
                {
-               wdlg_close(fsd->dialog, &dummy, &dummy);
+               wdlg_close(fsd->dialog, NULL, NULL);
                wdlg_delete(fsd->dialog);
                }
           Mfree(fsd);
@@ -3129,7 +3129,7 @@ void *fslx_do( const char *title,
      GRECT c;
      int exitbutton;
      void *flyinf;
-     void **p_flyinf = NULL;
+     void **p_flyinf;
      FSEL_DIALOG *fsd;
      struct xxdoinf xxdoinf;
      OBJECT *tree;
@@ -3216,30 +3216,32 @@ void *fslx_do( const char *title,
 * ======================================
 *
 ****************************************************************/
-static WORD cdecl do_xfsl(struct HNDL_OBJ_args args)
+#pragma warn -par
+static WORD cdecl do_xfsl(DIALOG *dialog, EVNT *events, WORD obj,
+                         WORD clicks, void *data)
 {
      FSEL_DIALOG    *fsd;
      int oldeditob;
 
 
-     if   ( args.obj < 0 )                        /* Nachricht? */
+     if   ( obj < 0 )                        /* Nachricht? */
           {
-          if   ( args.obj == HNDL_CLSD )          /* Dialog geschlossen? */
+          if   ( obj == HNDL_CLSD )          /* Dialog geschlossen? */
                {
-               fsd = (FSEL_DIALOG *) wdlg_get_udata( args.dialog );
+               fsd = (FSEL_DIALOG *) wdlg_get_udata( dialog );
                fsd->button = FS_CANCEL;
                return( 0 );
                }
           }
      else
           {
-          fsd = (FSEL_DIALOG *) args.data;
+          fsd = (FSEL_DIALOG *) data;
 
           wind_update(BEG_UPDATE);
-          fsd->editob = oldeditob = wdlg_get_edit(args.dialog, &fsd->cursorpos);
-          fsd->button = do_button(fsd, args.obj, args.clicks);
+          fsd->editob = oldeditob = wdlg_get_edit(dialog, &fsd->cursorpos);
+          fsd->button = do_button(fsd, obj, clicks);
           if   (fsd->editob != oldeditob)
-               wdlg_set_edit(args.dialog, fsd->editob);
+               wdlg_set_edit(dialog, fsd->editob);
           fsel_redraw( fsd );
           wind_update(END_UPDATE);
           return( !fsd->button );
@@ -3281,7 +3283,7 @@ void * fslx_open(
                     TRUE );
      if   (fsd)
           {
-          fsd->dialog = wdlg_create( do_xfsl, fsd->tree, fsd,
+          fsd->dialog = wdlg_create( (HNDL_OBJ)do_xfsl, fsd->tree, fsd,
                          0, NULL, 0 );
           if   ( fsd->dialog )
                {

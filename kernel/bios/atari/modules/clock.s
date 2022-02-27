@@ -62,15 +62,15 @@ chk_rtclock:
 *
 
 init_dosclock:
- move.w   syshdr+os_gendatg(pc),dos_date
+ move.w   syshdr+os_gendatg(pc),dos_date.l
  bsr      _Gettime
  addq.l   #1,d0
  beq.b    idcl_ikbd                ; Zeit -1 = ungueltig -> IKBD probieren
  subq.l   #1,d0
 inidc_set:
- move.w   d0,dos_time
+ move.w   d0,dos_time.l
  swap     d0
- move.w   d0,dos_date
+ move.w   d0,dos_date.l
  rts
 idcl_ikbd:
  bsr      read_ikbdclock
@@ -474,9 +474,9 @@ rttc_l1:
  move     d2,sr
  move     sr,d2
  ori      #$700,sr
- move.w   d0,dos_time
+ move.w   d0,dos_time.l
  swap     d0
- move.w   d0,dos_date
+ move.w   d0,dos_date.l
  swap     d0
  move     d2,sr
  rts

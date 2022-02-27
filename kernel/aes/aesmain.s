@@ -27,6 +27,8 @@ DEBUG     EQU  0
      XDEF      gem_magics          ; ->BIOS
      XDEF      endofvars           ; ->BIOS
      XDEF      appl_break
+     XDEF      serno_isok          ; ->SERNO
+     XDEF      ss_serno            ; ->SERNO
      XDEF      prtstr              ; ->SERNO
 
      XDEF      _graf_mkstate
@@ -253,6 +255,12 @@ DEBUG     EQU  0
      XREF      hexl,crlf
      ENDIF
 
+* von SERNO
+
+     XREF      serno_t2
+     XREF      serno_t3
+     XREF      serno_t4
+
 * von WDIALOG
 
      XREF      wdlg_create
@@ -340,6 +348,7 @@ DEBUG     EQU  0
 aes_start:
      DEBON
      DEB  'AES: vor dem ersten Befehl'
+ jsr      serno_t3
 
  movea.l  4(sp),a5                 ; a5 = Zeiger auf Basepage
  move.l   a5,_basepage
@@ -449,11 +458,12 @@ aes_start:
  clr.w    prev_mkmy
 
  clr.b    hotkey_sem
+ clr.b    serno_isok               ; noch ungetestet
  clr.w    dclick_val
 
 * Startbild (Default-Desktop)
 
- move.l   #2*24+28,d0              ; 2 OBJECTs + 1 TEDINFO
+ move.w   #2*24+28,d0              ; 2 OBJECTs + 1 TEDINFO
  lea      title_tree(pc),a1
  lea      shelw_startpic,a0
  jsr      vmemcpy
@@ -556,6 +566,8 @@ aes_start:
 ;lea      -$358(a0),a0             ; Zeiger auf aktuelle Mausdaten
 ;move.l   a0,mousedata
  jsr      mouse_immed
+
+ jsr      serno_t4
 
  moveq    #1,d1
  moveq    #3,d0
@@ -869,6 +881,9 @@ init_APPL:
  move.l   a2,a3                    ; a3 = usercode
 
  movem.l  d0/d1,-(sp)
+
+ jsr      serno_t2                 ; Serno OK ?
+ bmi.b    srk_err3                 ; nein
 
  move.w   #ap_stack,d0
  move.l   a5,a0
@@ -2133,8 +2148,8 @@ rmi_wnd_ok:
  move.l   a0,shel_buf
  move.l   a6,d0
  beq.b    rmi_no_buf
- move.l   d7,d0
- addq.l   #1,d0                    ; Platz fuer Nullbyte
+ move.w   d7,d0
+ addq.w   #1,d0                    ; Platz fuer Nullbyte
  move.l   a6,a1
 ;move.l   a0,a0
  jsr      vmemcpy
@@ -2167,7 +2182,7 @@ rmi_nowarm:
  tst.b    (a0)                     ; Kontrollfelddaten leer ?
  bne.b    rmi_ctr_ok               ; nein, ok
  lea      inf_defdata(pc),a1
- move.l   #128,d0                  ; 128 Bytes + EOS
+ move.w   #128,d0                  ; 128 Bytes + EOS
  jsr      vmemcpy                   ; Default- Kontrollfeld- Daten
 rmi_ctr_ok:
  addq.l   #4,sp
@@ -3894,7 +3909,7 @@ alt_ctrl_tab:
  st       hotkey_sem
  lea      popup_tmp,a5
  lea      act_dialog(pc),a1
- move.l #act_dialog_end-act_dialog,d0
+ ; move.w #act_dialog_end-act_dialog,d0
  move.l   a5,a0
  jsr      vmemcpy
 
@@ -5024,7 +5039,7 @@ dsys_6:
  cmpi.w   #WFRVERSION,(a0)+        ; Versionsnummer OK?
  bne      dsys_err                 ; nein, Fehler
  lea      wsizeof,a1               ; Quelladresse
- move.l   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
+ move.w   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
  jsr      vmemcpy                   ; umsetzen
  move.l   (a5),d0                  ; neue Struktur
  beq      dsys_ok                  ; keine neuen Werte
@@ -5032,7 +5047,7 @@ dsys_6:
  cmpi.w   #WFRVERSION,(a1)+        ; Versionsnummer OK?
  bne      dsys_err                 ; nein, Fehler
  lea      wsizeof,a0               ; Zieladresse
- move.l   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
+ move.w   #wbm_endvars-wsizeof,d0  ; Laenge der Struktur
  jsr      vmemcpy                   ; umsetzen
  move.l   #wsg_flags,(a6)          ; addrout[0]: Fenster-Einstellungen
  bra      dsys_ok
@@ -6226,8 +6241,8 @@ dsp_shel_wdef:
 dsp_xgrf_stepcalc:
  cmpi.w   #5,4(a1)                 ; contrl[2] (length intout) == 5 ?
  beq.b    dsp_appl_getinfo
- cmpi.w   #1,4(a1)                 ; contrl[2] (length intout) == 1 ?
- beq.b    dsp_appl_getinfo         ; -> appl_getinfo_str
+; cmpi.w   #1,4(a1)                 ; contrl[2] (length intout) == 1 ?
+; beq.b    dsp_appl_getinfo         ; -> appl_getinfo_str
  pea      10(a4)
  pea      8(a4)
  pea      6(a4)
@@ -7262,6 +7277,46 @@ gm_ende:
 
 mouseforms:
 marrow_data:
+
+ IFNE MAGICPC
+ DC.W     0    ; xhot
+ DC.W     0    ; yhot
+ DC.W     2    ; planes
+ DC.W     1    ; bg_col
+ DC.W     13   ; fg_col
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000001000000000
+ DC.W     %0000001100000000
+ DC.W     %0000001110000000
+ DC.W     %0000001111000000
+ DC.W     %0000000111100000
+ DC.W     %0000000011110000
+ DC.W     %0000000001111000
+ DC.W     %0000000000111100
+ DC.W     %0000001111111110
+ DC.W     %0000001111111111
+ DC.W     %0000001111000000
+ DC.W     %0000001100000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ DC.W     %1000000000000000
+ DC.W     %1100000000000000
+ DC.W     %1110000000000000
+ DC.W     %1111000000000000
+ DC.W     %1111100000000000
+ DC.W     %1111110000000000
+ DC.W     %1111111000000000
+ DC.W     %1111111100000000
+ DC.W     %1111111110000000
+ DC.W     %1111111111000000
+ DC.W     %1111000000000000
+ DC.W     %1100000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ ELSE
  DC.W     0    ; xhot
  DC.W     0    ; yhot
  DC.W     1    ; planes
@@ -7299,6 +7354,7 @@ marrow_data:
  DC.W     %0000001100000000
  DC.W     %0000001100000000
  DC.W     %0000000000000000
+ ENDC
 
  DC.W     7
  DC.W     7
@@ -7339,6 +7395,46 @@ marrow_data:
  DC.W     %0011110000111100
 
 mbee_data:
+ IFNE MAGICPC
+ DC.W     0
+ DC.W     0
+ DC.W     2
+ DC.W     1
+ DC.W     13
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000001000000000
+ DC.W     %0000001100000000
+ DC.W     %0000001110000000
+ DC.W     %0000001111000000
+ DC.W     %0000000111100000
+ DC.W     %0000000011110000
+ DC.W     %0000000001111000
+ DC.W     %0000000000111100
+ DC.W     %0000001111111110
+ DC.W     %0000001111111111
+ DC.W     %0000001111000000
+ DC.W     %0000001100000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+
+ DC.W     %1000000000000000
+ DC.W     %1100000000000000
+ DC.W     %1110000000000000
+ DC.W     %1111000000000000
+ DC.W     %1111100000000000
+ DC.W     %1111110000000000
+ DC.W     %1111111000000000
+ DC.W     %1111111100000000
+ DC.W     %1111111110000000
+ DC.W     %1111111111000000
+ DC.W     %1111000000000000
+ DC.W     %1100000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ DC.W     %0000000000000000
+ ELSE
  DC.W     8
  DC.W     8
  DC.W     1
@@ -7377,6 +7473,7 @@ mbee_data:
  DC.W     %0100101001010110
  DC.W     %0011010000010100
  DC.W     %0000000000000000
+ ENDC
 
  DC.W     0
  DC.W     0
@@ -7399,6 +7496,7 @@ mbee_data:
  DC.W     %0000111111111111
  DC.W     %0000001111111111
  DC.W     %0000000011111111
+
  DC.W     %0011000000000000
  DC.W     %0100110000000000
  DC.W     %0110001000000000
@@ -7414,7 +7512,6 @@ mbee_data:
  DC.W     %0001000000000001
  DC.W     %0000110001000001
  DC.W     %0000001110000000
-
  DC.W     %0000000011000000
 
 mflat_data:
@@ -8054,7 +8151,7 @@ scc_ok:
 shel_read:
  move.l   a1,-(sp)
  move.l   act_appl,a2
- move.l   #$80,d0
+ move.w   #$80,d0
  lea      ap_cmd(a2),a1
 ;move.l   a0,a0
  jsr      vmemcpy
@@ -8065,7 +8162,7 @@ shel_read:
  clr.b    2(a0)
  bra.b    shr_7f              ; erweitert gibt immer $7f, weil zu lang
 shr_nxt:
- move.l   #$80,d0
+ move.w   #$80,d0
  lea      ap_tail(a2),a1
  move.l   (sp),a0
  jsr      vmemcpy
@@ -8313,7 +8410,7 @@ _shw_normtail:
  move.w   #ap_xtail,d1             ; xtail freigeben
  moveq    #0,d0                    ; kein neuer Block
  bsr      __resvldmem
- move.l   #$80,d0
+ move.w   #$80,d0
  move.l   a3,a1                    ; tail
  lea      ap_tail(a6),a0
  jsr      vmemcpy
@@ -8322,7 +8419,7 @@ _shw_normtail:
 * Kommando merken
 
 _shw_cmd:
- move.l   #$80,d0
+ move.w   #$80,d0
  move.l   a4,a1                    ; cmd
  lea      ap_cmd(a6),a0
  jsr      vmemcpy
@@ -8814,9 +8911,6 @@ shel_get:
  bls.b    _shel_pg            ; nein, ok
  move.w   d1,d0               ; nur Pufferlaenge uebertragen
 _shel_pg:
- swap d0
- clr.w d0
- swap d0
  jsr      vmemcpy
  moveq    #1,d0
  rts
@@ -11492,11 +11586,19 @@ fillmem:
  * programs that write the information here
  */
 ss_serno:
- DC.L     0                        ; Seriennummer
+ DC.L     $13bf439b                        ; Seriennummer
 ss_nams:
- DCB.B    50,0                     ; Name
+ dc.w $9086,$b9ab,$c4ab,$e1ec,$bfe9
+ dc.w $0923,$2230,$3a31,$4708,$6975
+ dc.w $8e91,$ad9f,$b3bb,$cdca,$e5e2
+ dc.w $05f6,$0816,$1925,$3d52,$4e4d
+ dc.w $5e7a,$717d,$9699,$b552,$9fc3
 ss_adrs:
- DCB.B    50,0                     ; Adresse
+ dc.w $5b9b,$d2db,$deff,$06cc,$1f23
+ dc.w $2f3d,$510e,$5e6d,$7d7f,$4596
+ dc.w $9cb2,$c4bf,$cfd7,$9ddb,$f810
+ dc.w $1219,$2d38,$4a4d,$585b,$7388
+ dc.w $7c8b,$9b9f,$a8b5,$be67,$b6ed
  EVEN
 
 
@@ -11517,7 +11619,7 @@ gem_magics:
  DC.L     aes_start                ; $08: Start von AES/DESKTOP
 
  DC.L     'MAGX'                   ; $0c: bei KAOS : 'KAOS'
- DC.L     D_BCD                    ; $10: Erstelldatum
+ DC.L     $02102000 ; D_BCD                    ; $10: Erstelldatum
  DC.L     change_resolution        ; $14: d0=dev/d1=txt/d2=xdv
  DC.L     shel_vector              ; $18: ROM- Desktop
  DC.L     aes_bootdrv              ; $1c: char *, hierhin kommt DESKTOP.INF

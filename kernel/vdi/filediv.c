@@ -27,6 +27,7 @@ unsigned char *load_file(const char *filename, long *length)
 		addr = (unsigned char *)Malloc_sys(dta.d_length);
 		if (addr != NULL)
 		{
+			/* BINEXACT: order of parameter loading different */
 			*length = read_file(filename, addr, 0, dta.d_length);
 			if (*length != dta.d_length)							/* Datei unvollstaendig?	*/
 			{

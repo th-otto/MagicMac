@@ -2636,9 +2636,9 @@ dosxfs_kernel:
  DC.L     reopen_FD
  DC.L     close_DD
  DC.L     filename_match
- DC.L     conv_8_3_c
+ DC.L     conv_8_3
  DC.L     init_DTA
- DC.L     rcnv_8_3_c
+ DC.L     rcnv_8_3
 
 
 **********************************************************************
@@ -3594,13 +3594,6 @@ dsrch_ende:
 * um und gibt in d0 einen Zeiger hinter den String zurueck
 *
 
-rcnv_8_3_c:
-  move.l a2,-(a7)
-  bsr.s rcnv_8_3
-  move.l (a7)+,a2
-  rts
-
-
 rcnv_8_3:
  tst.b    (a0)                     ; Name ist 0 ?
  beq      ddtos_ende               ; DD ist Root, schreibe Nullstring
@@ -3976,12 +3969,6 @@ fmat_ne:
 *
 * nur leicht optimiert, nichts korrigiert
 *
-
-conv_8_3_c:
-  move.l a2,-(a7)
-  bsr.s conv_8_3
-  move.l (a7)+,a2
-  rts
 
 conv_8_3:
  movea.l  a0,a2

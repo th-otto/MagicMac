@@ -340,7 +340,9 @@ di_nxtb:
 
  addq.l   #4,a6                         ; naechste Liste
  moveq    #SECBUFN2-1,d7
- cmpa.l   #(bufl+4),a6
+ /* cmpa.l   #(bufl+4),a6 */ /* BINEXACT */
+ dc.w $bdfc
+ dc.l bufl+4
  bls.b    di_nxtl
  movem.l  (sp)+,a6/d7/d6
  rts
@@ -429,7 +431,9 @@ sync_nxt:
  move.l   a4,d0
  bne.b    sync_nxtbcb
  subq.l   #4,a3
- cmpa.l   #bufl,a3
+ /* cmpa.l   #bufl,a3 */ /* BINEXACT */
+ dc.w $b7fc
+ dc.l bufl
  bcc.b    sync_nxtlst
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
@@ -579,25 +583,13 @@ set_disk_clean:
  beq.b    sdc_ok2                  ; ungueltig
  bmi.b    sdc_ende                 ; Fehler
 
- move.l   d_nfree_cl(a5),d0
- ror.w #8,d0
- swap d0
- ror.w #8,d0
- move.l   d0,FSI_Free_Count(a1)
- moveq    #FAT32_ROFF,d1
+ move.l   d_nfree_cl(a5),FSI_Free_Count(a1)
+ moveq    #2,d1
  move.l   d_1stfree_cl(a5),d0
  cmp.l    d1,d0
  bcc.b    sdc_putnf
  move.l   d1,d0
 sdc_putnf:
- move.l   d_numcl(a5),d1
- cmp.l    d1,d0
- bcs.s    sdc_putnf2
- moveq    #FAT32_ROFF,d0
-sdc_putnf2:
- ror.w #8,d0
- swap d0
- ror.w #8,d0
  move.l   d0,FSI_Nxt_Free(a1)
 ; Sektor aendern (nicht verzoegert)
  move.w   #1,xb_dirty(a0)          ; Puffer als geaendert markieren
@@ -962,32 +954,15 @@ dro_bothroot:
 
 * FSINFO-Sektor einlesen und Daten ermitteln
 
+ clr.l    d_1stfree_cl(a5)      ; Cache fuer freien Cl. (FAT16/FAT32)
  moveq    #-1,d0
- move.l   d0,d_1stfree_cl(a5)      ; Cache fuer freien Cl. (FAT16/FAT32)
  move.l   d0,d_nfree_cl(a5)        ; Anzahl freier Cluster unbekannt
 
  move.l   a5,a0
  bsr      rd_fsinfo                ; Lesen
  ble.b    do_ok                    ; Fehler oder ungueltig
- move.l   FSI_Free_Count(a1),d0
- ror.w #8,d0
- swap d0
- ror.w #8,d0
- move.l   FSI_Nxt_Free(a1),d2
- ror.w #8,d2
- swap d2
- ror.w #8,d2
- move.l   d_numcl(a5),d1
- cmp.l    d1,d0 ; number free clusters <= numcl?
- bcc.s    do_ok ; no, error
- cmp.l    d1,d2 ; next free cluster <= numcl?
- bcc.s    do_ok ; no, error
- moveq.l  #FAT32_ROFF,d1
- cmp.l    d1,d2 ; next free cluster < 32?
- bcs.s    do_ok ; yes, error
- 
- move.l   d0,d_nfree_cl(a5)
- move.l   d2,d_1stfree_cl(a5)
+ move.l   FSI_Free_Count(a1),d_nfree_cl(a5)
+ move.l   FSI_Nxt_Free(a1),d_1stfree_cl(a5)
 
 do_ok:
  moveq    #E_OK,d0
@@ -1852,7 +1827,9 @@ sinv_nxt:
 sinv_nxtbuf:
  bne      sinv_loop
  addq.l   #4,a0
- cmpa.l   #(bufl+4),a0
+ /* cmpa.l   #(bufl+4),a0 */ /* BINEXACT */
+ dc.w $b1fc
+ dc.l bufl+4
  bls      sinv_newlist
  moveq    #0,d0                    ; kein Fehler
  rts
@@ -1892,7 +1869,9 @@ suu_nxtbuf:
  bne      suu_loop
 
  addq.l   #4,a5
- cmpa.l   #(bufl+4),a5
+ /* cmpa.l   #(bufl+4),a5 */ /* BINEXACT */
+ dc.w $bbfc
+ dc.l bufl+4
  bls      suu_newlist
  jsr      appl_endcritic           ; aendert nur d2/a2
  move.l   (sp)+,a5
@@ -2293,8 +2272,7 @@ _fdel_nxtcl:
  move.l   d6,d0                    ; cluster
  bsr      FAT_read
  bmi      _fdel_ende
- moveq    #-1,d1
- move.l   d1,d_1stfree_cl(a5)         ; Cache fuer freien Cluster loeschen!!
+ clr.l    d_1stfree_cl(a5)         ; Cache fuer freien Cluster loeschen!!
  move.l   d0,d7
  move.l   a5,a0
  moveq    #0,d1
@@ -2528,7 +2506,9 @@ _fclo_l1:
  move.l   a4,d0
  bne.b    _fclo_nxtbcb
  subq.l   #4,a3
- cmpa.l   #bufl,a3
+ /* cmpa.l   #bufl,a3 */ /* BINEXACT */
+ dc.w $b7fc
+ dc.l bufl
  bcc.b    _fclo_nxtlst
 
  moveq    #0,d0                    ; keine Aktionen, kein Fehler
@@ -2996,8 +2976,7 @@ fsh_nxtcl:
  bsr      FAT_write
  bmi      fsh_ende
 fsh_clear:
- moveq    #-1,d1
- move.l   d1,d_1stfree_cl(a4)      ; Cache fuer freien Cluster loeschen!
+ clr.l    d_1stfree_cl(a4)      ; Cache fuer freien Cluster loeschen!
  addq.l   #1,d_nfree_cl(a4)        ; Anzahl freier Cluster erhoeht!
  bne.b    fsh_wasvalid             ; war nicht -1
  subq.l   #1,d_nfree_cl(a4)        ; war -1, bleibt -1

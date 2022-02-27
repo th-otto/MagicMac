@@ -435,13 +435,6 @@ wb_01send:
                                    ;  RTS und DTR auf 0
 
 warmb_02:
- cmpi.w   #40,cpu_typ
- bcs.b    warmb_020
- dc.w     cinva
- nop
- bra.s    warmb_00
- 
-warmb_020:
  cmpi.w   #20,cpu_typ
  bcs.b    warmb_00
  move.l   #$808,d0                 ; Bit  0=0: instr cache off

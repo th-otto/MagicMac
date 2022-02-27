@@ -1003,7 +1003,9 @@ mouse_int_lower:
 	move.w     sr,-(sp)
 	movem.l    d0-d3/a0-a1,-(sp)
 	ori.w      #0x0700,sr
-	/* andi     #0xfdff,sr */           /* lower to IPL 5 */
+	IFNE MAGICPC
+	andi     #0xfdff,sr           /* lower to IPL 5 */
+	ENDC
 
 mouse_int_but:
 	move.b     (a0)+,d0

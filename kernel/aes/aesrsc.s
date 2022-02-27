@@ -27,6 +27,10 @@
 
      XREF      xp_raster
 
+* von SERNO
+
+     XREF      serno_test
+
 * von STD
 
      XREF      vmemcpy
@@ -274,6 +278,8 @@ strloop15:
  move.w   d0,d6
  bmi      rsld_err                 ; Fehler
 
+ jsr      serno_test
+
 * Header einlesen
  pea      (sp)                     ; genug Platz
  pea      rsh_sizeof               ; sizeof(RSHDR)
@@ -507,6 +513,7 @@ incol_noseldata3:
  lea      0(a4,d6.l),a0            ; Zeiger hinter Mono-Daten
  cmp.l    a0,a1                    ; CICON direkt hinter Mono-Daten ?
 ; beq.b    incol_no_cicp            ; ja, keine CICON-Daten kopieren
+ nop /* BINEXACT */
 
 incol_no_cicp:
 ;move.l   a1,a1                    ; Quelladresse

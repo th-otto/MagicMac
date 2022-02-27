@@ -1,0 +1,68 @@
+; Project file for MAGIC_PC.OS
+; (MagiC-PC Version, german localization)
+; For other localizations, change the COUNTRY code below
+magic_pc.os
+.C[-I..\..\inc_c]
+.C[-I..\inc]
+.S[-I..\inc]
+.C[-I..\..\pc\include]
+
+.S[-DCOUNTRY=1]
+.C[-DCOUNTRY=1]
+
+.S[-DMAGICPC=1]
+.C[-DMAGICPC=1]
+
+.C[-A-]
+.C[-K-]
+.S[-DHADES=0]
+.S[-S]
+.C[-P]
+.C[-G]
+.L[-S=0]
+.L[-T=$e00000]
+.L[-B=0]
+;.L[-binary] ; requires patched PC.PRG/PLINK.TTP
+=
+..\bios\atari\magibios.s
+..\bios\atari\xfs95\xfs95ini.s
+..\bios\atari\ide.s
+..\allg\read_inf.s
+..\vdi\math.s
+..\allg\std.s
+..\ser_my.s
+..\dos\magidos.s
+..\dos\malloc.s
+..\dos\xfs_vdos.s
+..\dos\vfat_s.s
+..\dos\vfat.c [-G-]
+..\dos\dfs_u.s
+..\dos\dev_bios.s
+..\dos\dev_pipe.s
+..\dos\dev_mem.s
+..\dos\dfs_fat.s
+..\bios\magicmac\macxfs.s
+..\vdi\mxvdiknl.s
+..\vdi\setup.c
+..\vdi\drivers.c
+..\vdi\filediv.c
+..\vdi\init_res.c
+..\vdi\string.s
+..\vdi\tos.s
+..\aes\aesmain.s
+..\aes\aesevt.s
+..\aes\aesfrm.s
+..\aes\aesobj.s
+..\aes\aeswin.s
+..\aes\aesmen.s
+..\aes\aesgraf.s
+..\aes\aesrsc.s
+..\aes\farbic.c [-G-]
+..\aes\wdialog\wdialog.c [-G-]
+..\aes\wdialog\listbox.c [-G-]
+..\aes\wdialog\fnt_menu.c [-G-]
+..\aes\wdialog\shelsort.c
+..\aes\wdialog\wdintrfc.s
+..\aes\fsel\fsel.c [-M- -G-]
+..\aes\xmen_mgr\mtsmn.c [-G-]
+..\ende.s

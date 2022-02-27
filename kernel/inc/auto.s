@@ -70,17 +70,6 @@ bot_coo_ende:
  move.l	d0,_p_cookies			; Zeiger umsetzen
 bot_no_coo:
 
-/* override idt cookie */
- move.l	p_mgxinf,a0
- jsr		rinf_idt
- beq.s      no_idt_val
- move.l     d0,a1            /* save value */
- move.l     #0x5f494454,d0   /* '_IDT' */
- bsr        getcookie
- beq.s      no_idt_val
- move.l     a1,4(a0)         /* overwrite _IDT cookie value */
-no_idt_val:
-
 * Jetzt (ab MagiC 6) log-Datei oeffnen
 
 	DEB	'BOOT.LOG ',$94,'ffnen?'

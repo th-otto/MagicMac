@@ -105,19 +105,6 @@ _bios_devdrv:
  DC.L     0                   ; kein getc
  DC.L     0                   ; kein getline
  DC.L     0                   ; kein putc
-_anb_devdrv:
- DC.L     bios_ddev_open      ; 27.6.2002
- DC.L     bios_ddev_close
- DC.L     bios_ddev_read_nonblocking
- DC.L     bios_ddev_write
- DC.L     bios_ddev_stat
- DC.L     bios_ddev_lseek
- DC.L     0
- DC.L     bios_ddev_ioctl
- DC.L     ret_0                    ; Loeschen erlaubt
- DC.L     0                   ; kein getc
- DC.L     0                   ; kein getline
- DC.L     0                   ; kein putc
 
 
 
@@ -583,17 +570,9 @@ Bputch:
 *
 
 bios_ddev_open:
- move.l   fd_multi1(a0),a1              ; Prototyp-FD
- move.w   fd_usr3+2(a1),fd_usr1(a0)     ; BIOS- Geraet
-;; 27.6.2002
- cmpi.w   #100,fd_usr1(a0)
- bne.b    bddo_no100
- move.w   #1,fd_usr1(a0)
-bddo_no100:
-;;
+ move.w   fd_usr3+2(a0),fd_usr1(a0)     ; BIOS- Geraet
  moveq    #0,d0
  rts
-
 
 **********************************************************************
 *
@@ -603,22 +582,6 @@ bddo_no100:
 *
 
 bios_ddev_ioctl:
- clr.l    -(sp)                         ; Platz fuer Rueckgabewert
- pea      (sp)                          ; Rueckgabewert
- move.l   a1,-(sp)
- move.w   d0,-(sp)
- move.w   fd_usr1(a0),-(sp)             ; BIOS-Geraet
- move.l   #'iocl',-(sp)
- move.l   #$ffffffff,-(sp)
- move.l   #$ffffffff,-(sp)
- move.l   #$fffefffe,-(sp)
- move.w   #15,-(sp)                     ; Rsconf
- trap     #$e
- adda.w   #30,sp
- move.l   (sp)+,d1
- beq.b    ioctl_no_rsconf               ; kein erweitertes Rsconf
- rts                                    ; Rueckgabewert von Rsconf liefern
-ioctl_no_rsconf:
  moveq    #EINVFN,d0
  rts
 
@@ -700,51 +663,6 @@ bmr_nextloop:
  bcc.b    bmr_loop
  move.l   (sp)+,d0
  movem.l  (sp)+,d6/d7/a6
- rts
-
-
-**********************************************************************
-*
-* long bios_ddev_read_nonblocking(a0 = FD *f, a1 = char *buf, d0 = long count)
-*
-* 27.6.2002
-*
-
-bios_ddev_read_nonblocking:
- movem.l  d4/d5/d6/d7/a6,-(sp)
-
- move.l   a1,a6                         ; a6 = Puffer
- move.l   d0,d7                         ; d7 = count
- moveq    #0,d4                         ; d4 = gelesene Bytes
-
- moveq    #2,d6
- swap     d6
- move.w   fd_usr1(a0),d6                ; Fcode Bconin/BIOS- Geraet
-
- moveq    #1,d5
- swap     d5
- move.w   fd_usr1(a0),d5                ; Fcode Bconstat/BIOS- Geraet
-
- bra.b    bmrnb_nextloop
-bmrnb_loop:
- move.l   d5,-(sp)                      ; Bconstat(dev)
- trap     #$d
- addq.l   #4,sp
- tst.l    d0                            ; Daten da?
- beq.b    bmrnb_end                     ; nein, Ende
-
- move.l   d6,-(sp)                      ; Bconin(dev, c)
- trap     #$d
- addq.l   #4,sp
- move.b   d0,(a6)+
- addq.l   #1,d4
-bmrnb_nextloop:
- subq.l   #1,d7
- bcc.b    bmrnb_loop
-
-bmrnb_end:
- move.l   d4,d0
- movem.l  (sp)+,d4/d5/d6/d7/a6
  rts
 
 
@@ -1064,7 +982,9 @@ inp31:
 inp32:
  tst.b    (a0)+
  bne.b    inp32                    ; naechsten String suchen
- cmpa.l   #(undo_buf+319),a0
+ /* cmpa.l   #(undo_buf+319),a0 */ /* BINEXACT */
+ dc.w $b1fc
+ dc.l undo_buf+319
  bcc.b    inp10                    ; bin am Ende, nichts tun
 inp33:
  tst.b    (a0)
@@ -1081,7 +1001,9 @@ inp35:
  move.l   d1,a0                    ; letzter Undo
 inp37:
  subq.l   #1,a0
- cmpa.l   #(undo_buf),a0
+ /* cmpa.l   #(undo_buf),a0 */ /* BINEXACT */
+ dc.w $b1fc
+ dc.l undo_buf
  bcs.b    inp38
  tst.b    -1(a0)
  bne.b    inp37

@@ -12,7 +12,7 @@ vq_extnd:         movea.l  (a0),a1        ;contrl
                   beq.s    vq_scrninfo
 vq_extnd2:        movem.l  a2-a5,-(sp)
                   movea.l  pb_intin(a0),a4
-                  movem.l  pb_intout(a0),a0-a1
+                  movem.l  pb_intout(a0),a0-a2
                   move.l   device_drvr(a6),d0   ;Geraetetreiber?
                   beq.s    vq_extnd_off
                   movea.l  d0,a2
@@ -328,7 +328,7 @@ vqin_mode_exit:   rts
 vqt_fontinfo:     movem.l  d1-d4,-(sp)
                   movem.l  pb_intout(a0),a1
                   move.l   t_first_ade(a6),d0
-                  add.w    t_first_ade(a6),d0 /* t_ades -> last_ade */
+                  add.w    first_ade(a6),d0 /* t_ades -> last_ade */
                   move.l   d0,(a1)+       /* intout[0/1] = min./max. Index */
                   movea.l  pb_ptsout(a0),a1
                   lea.l    t_height(a6),a0

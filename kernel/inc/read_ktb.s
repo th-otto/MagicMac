@@ -10,8 +10,7 @@ keytbl_fname:
 	EVEN
 
 read_keytbl:
- movem.l	a6/d6/d7,-(sp)
- suba.w #xattr_sizeof,a7
+ movem.l	a6/d7,-(sp)
 
 ; Datei zum Lesen oeffnen
 
@@ -23,26 +22,10 @@ read_keytbl:
  move.l	d0,d7
  bmi	rdkt_ende				; nicht gefunden
 
-; determine file size
-
-  move.w #FSTAT,-(a7)
-  pea 2(a7)
-  move.w d7,-(a7)
-  move.w	#$104,-(sp)			; Fcntl
-  trap	#1
-  adda.w #10,a7
-  tst.l d0
-  bmi rdkt_close
-
-  move.l xattr_size(a7),d6
-  cmpi.l #(9*128),d6
-  bcs rdkt_close
-  
 ; Speicher allozieren
 
  move.w	#2,-(sp)				; lieber ST-RAM
- move.l d6,a0			; 10 Zeiger + 10 Tabellen je 128 Bytes
- pea N_KEYTBL*4(a0)
+ pea N_KEYTBL*132
  move.w	#$44,-(sp)			; Mxalloc
  trap	#1
  addq.l	#8,sp
@@ -53,12 +36,12 @@ read_keytbl:
 ; Datei einlesen
 
  pea		(N_KEYTBL*4)(a6)
- move.l	d6,-(sp)		; 10 Tabellen
+ move.l	#N_KEYTBL*128,-(a7)
  move.w	d7,-(sp)
  move.w	#$3f,-(sp)			; Fread
  trap	#1
  adda.w	#12,sp
- sub.l	d6,d0
+ sub.l	#N_KEYTBL*128,d0
  bne.b	rdkt_free				; Dateilaenge zu kurz
 
 ; Tabellen aktivieren
@@ -98,6 +81,5 @@ rdkt_close:
  addq.l	#4,sp
 
 rdkt_ende:
- adda.w #xattr_sizeof,a7
- movem.l	(sp)+,a6/d6/d7
+ movem.l	(sp)+,a6/d7
  rts

@@ -255,9 +255,8 @@ ad_loop:
  tst.l    suspend_list             ; angehaltene Programme
  bne.b    ad_newsuspend
  tst.l    iocpbuf_cnt              ; sind inzwischen Ereignisse eingetroffen ?
- bne.b    ad__kernel
- jsr  mmx_yield
- bra.b    ad_loop                  ; nein, zurueck in die Schleife
+ beq.b    ad_loop                  ; nein, zurueck in die Schleife
+ bra.b    ad__kernel
 
 ad_newsuspend:
  tst.l    iocpbuf_cnt
@@ -291,15 +290,9 @@ ad_chgcntxt:
 * FPU retten
  tst.b    is_fpu                        ; LineF- FPU installiert ?
  beq.b    ad_no_fpu                     ; nein!
- fsave    -(sp)
- cmp.w    #60,cpu_typ
- bcs.s    ad_check_no060
- tst.b    2(sp)
- bra.s    ad_check_null
-ad_check_no060:
- tst.b    (sp)                          ; NULL/IDLE/BUSY- Flag
-ad_check_null:
- beq.b    ad_no_fpu                     ; NULL
+ fsave -(a7)
+ tst.b (a7)
+ beq ad_no_fpu
  fmovem.x fp0-fp7,-(sp)                 ; Datenregister
  fmovem.l fpcr/fpsr/fpiar,-(sp)         ; Statusregister
  move.w   #-1,-(sp)                     ; Flag fuer "FPU komplett gesichert"
@@ -2099,7 +2092,6 @@ rw_ap_buf:
 * schreiben aufs Pufferende
 * Einfach die ganze Nachricht in den Puffer hauen (hinter die dort schon
 * stehenden Daten)
- moveq #0,d0
  move.w   d7,d0                    ; Anzahl Bytes
  move.l   a3,a1                    ; Quelle = buf
  lea      ap_buf(a5),a3            ; ap_buf
@@ -2204,7 +2196,7 @@ scanloop_end:
  sub.l    d0,d1                    ; d1 = Anzahl der zu kopierenden Bytes
  beq.b    cfertig                  ; nix zu kopieren
  move.l   d0,a1                    ; Quelle
- move.l   d1,d0                    ; Anzahl Bytes
+ move.w   d1,d0                    ; Anzahl Bytes
  move.l   (a4),a0
  jsr      vmemcpy
 cfertig:
@@ -2242,7 +2234,6 @@ rwap_wr_ready:
 
 * lesen vom Pufferanfang
 rwap_read:
- moveq #0,d0
  move.w   d7,d0
  lea      ap_buf(a5),a1
  move.l   a3,a0

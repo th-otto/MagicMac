@@ -81,8 +81,9 @@ e_nfd:   moveq    #-33,d0
 *            != 0: MAGIC_PC vorhanden, Adresse der folgenden Struktur:
 *
 
-mpc_vers: dc.l    0        * Versionsnummer (z.Zt $00001000 fuer 0.1)
-mpc_date: dc.l    0        * Versionsdatum (z.B.  $19960530 fuer 30.05.1996
+	xref exc04
+mpc_vers: dc.l    exc04    * Versionsnummer (z.Zt $00001000 fuer 0.1)
+mpc_date: dc.l    $19990415        * Versionsdatum (z.B.  $19960530 fuer 30.05.1996
 mpc_flags: dc.l   0        * Bit 0: Demo-Version, Rest noch uu, 0
 
 mpc_da:

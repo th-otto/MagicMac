@@ -95,6 +95,8 @@ static void _mfree(void *addr);
 
 #endif
 
+long mmalloc( ULONG size);
+
 #include "shelsort.h"
 
 #include "vdi_bind.h"
@@ -269,6 +271,7 @@ static FNT *build_font_list( WORD vdi_handle, WORD no_fonts, WORD font_flags );
 static WORD get_pt_sizes( WORD vdi_handle, BYTE *pts );
 static WORD is_bitmap_mono( WORD vdi_handle, WORD pt );
 static void sort_FNTs( FNT **fonts, WORD font_cnt );
+static int cmp_font_names( FNT **a, FNT **b );
 static FNT *get_FNT( FNT *font, LONG id );
 static WORD count_fonts( FNT *font );
 
@@ -629,7 +632,7 @@ WORD fnts_do( FNT_DIALOG *fnt_dialog, WORD button_flags, LONG id_in, LONG pt_in,
 	{
 		OBJECT *tree;
 		GRECT size;
-		void *flyinf = NULL;
+		void *flyinf;
 		
 		tree = fnt_dialog->tree;
 
@@ -1653,37 +1656,6 @@ static WORD is_bitmap_mono( WORD vdi_handle, WORD pt )
 }
 
 /*----------------------------------------------------------------------------------------*/ 
-/* Fontfamilennamen vergleichen und bei gleichem Namen anhand der ID einordnen (Qsort)		*/
-/* Funktionsergebnis:	< 0: ( a < b ); 0: ( a = b ); > 0: ( a > b )								*/
-/*	a:							Zeiger																				*/
-/*	b:							Zeiger																				*/
-/*----------------------------------------------------------------------------------------*/ 
-static int cmp_font_names(const void *a, const void *b, void *udata)
-{
-	const FNT *c;
-	const FNT *d;
-	WORD cmp;
-	
-	UNUSED(udata);
-	c = *((const FNT **)a);
-	d = *((const FNT **)b);
-	
-	cmp = strcmp( c->family_name, d->family_name );
-
-	if ( cmp == 0 )														/* gleicher Familienname? */
-	{
-		if ( c->id == d->id )
-			cmp = 0;															/* a == b */
-		else if ( c->id > d->id )
-			cmp = 1;															/* a > b */
-		else
-			cmp = -1;														/* a < b */
-	}
-
-	return( cmp );
-}
-
-/*----------------------------------------------------------------------------------------*/ 
 /* Fonts mit Quicksort sortieren und anschliessend verketten											*/
 /* Funktionsergebnis:	-																						*/
 /*	fonts:					vorsortiertes Feld mit Zeigern auf die Font-Strukuren					*/
@@ -1691,7 +1663,11 @@ static int cmp_font_names(const void *a, const void *b, void *udata)
 /*----------------------------------------------------------------------------------------*/ 
 static void sort_FNTs( FNT **fonts, WORD font_cnt )
 {
-	shelsort( fonts, font_cnt, sizeof(FNT *), cmp_font_names, NULL);	/* Fonts sortieren, so dass die Familien aufeinander folgen */
+#if CALL_MAGIC_KERNEL
+	shelsort( fonts, font_cnt, sizeof(FNT *), (int (*)(void *, void *, void *))cmp_font_names, 0L );	/* Fonts sortieren, so dass die Familien aufeinander folgen */
+#else
+	qsort( fonts, font_cnt, sizeof(FNT *), (int (*)(const void *, const void *))cmp_font_names );	/* Fonts nach Familien aufeinander folgenden sortieren */
+#endif
 
 	while ( font_cnt > 0 )
 	{
@@ -1706,6 +1682,36 @@ static void sort_FNTs( FNT **fonts, WORD font_cnt )
 
 		font_cnt--;
 	}	
+}
+
+/*----------------------------------------------------------------------------------------*/ 
+/* Fontfamilennamen vergleichen und bei gleichem Namen anhand der ID einordnen (Qsort)		*/
+/* Funktionsergebnis:	< 0: ( a < b ); 0: ( a = b ); > 0: ( a > b )								*/
+/*	a:							Zeiger																				*/
+/*	b:							Zeiger																				*/
+/*----------------------------------------------------------------------------------------*/ 
+static int	cmp_font_names( FNT **a, FNT **b )
+{
+	FNT	*c;
+	FNT	*d;
+	WORD cmp;
+	
+	c = *a;
+	d = *b;
+	
+	cmp = strcmp( c->family_name, d->family_name );
+
+	if ( cmp == 0 )														/* gleicher Familienname? */
+	{
+		if ( c->id == d->id )
+			cmp = 0;															/* a == b */
+		else if ( c->id > d->id )
+			cmp = 1;															/* a > b */
+		else
+			cmp = -1;														/* a < b */
+	}
+
+	return( cmp );
 }
 
 /*----------------------------------------------------------------------------------------*/ 
@@ -1829,7 +1835,7 @@ static RSHDR	*copy_rsrc( RSHDR *rsc, LONG len )
 	{
 		WORD dummy_global[15];
 
-		vmemcpy(new, rsc, len);								/* Resource kopieren */
+		vmemcpy(new, rsc, (int)len);								/* Resource kopieren */
 		_rsrc_rcfix(dummy_global, new);							/* Resource anpassen */
 	}
 	return( new );															/* Zeiger auf den Resource-Header */

@@ -443,14 +443,6 @@ ddv_loop:
 
 iniddev1:
      DEB  'Devices initialisieren'
- pea      100                      ; Spezial-AUX (nichtblockierend) 27.6.2002
- clr.l    -(sp)                    ; BIOS-Geraet
- lea      (sp),a1
- lea      auxnb_name_s(pc),a0
- move.w   #MX_DEV_INSTALL2,d0
- bsr      Dcntl
- addq.l   #8,sp
-
  pea      2                        ; CON
  clr.l    -(sp)                    ; BIOS-Geraet
  lea      (sp),a1
@@ -2029,8 +2021,6 @@ sfirst_symlink:
  movem.l  a6/a5,-(sp)
  move.l   sp,a6                    ; sp merken
  move.l   a1,a5                    ; a5 = DTA
- move.l   a0,d0
- beq.s    sfs_ok
  move.w   (a0)+,d0                 ; Laenge des Links inkl. EOS und gerade
  suba.w   d0,sp
  lsr.w    #1,d0
@@ -2543,7 +2533,7 @@ kernel:
  DC.L     evnt_sem
  DC.L     Pfree
  DC.W     FDSIZE              ; Laenge eines internen Speicherblocks
- DC.L     int_malloc_c
+ DC.L     int_malloc
  DC.L     int_mfree
  DC.L     resv_intmem
  DC.L     diskchange
@@ -2576,7 +2566,8 @@ Fsfirst:
 fsf_rdlabel:
 ; Label per sfirst lesen. Datum/Uhrzeit ist leider nicht lesbar.
  lea      dta_drive(a1),a1
- move.b   #-1,(a1)+                ; dta_drive
+ /* move.b   #-1,(a1)+ */ /* BINEXACT */                ; dta_drive
+ dc.w $12fc,-1
  move.b   #8,(a1)+                 ; dta_attr
  clr.l    (a1)+                    ; dta_time,dta_date (schade...)
  clr.l    (a1)+                    ; dta_len
@@ -2641,7 +2632,6 @@ D_Fdelete:
 *
 
 D_Dcreate:
- move.w   #0755,d0
  moveq    #xfs_dcreate,d2
  bra.b    _df3
 
@@ -2760,8 +2750,6 @@ fxf_nounlock:
  bsr      sfirst_symlink
  bra      fxf_ende
 fxf_nosf:
- move.l a0,d0
- beq fxf_ende
  move.w   (a0)+,d0
  cmpi.w   #256,d0
  bhi.b    fxf_eloop                ; Link zu lang; FIXME: ELOOP is wrong here
@@ -4126,7 +4114,6 @@ flk_ok:
  move.w   #F_SETLK,-(sp)
  pea      2(sp)
  move.w   (a0),-(sp)
- move.l   sp,a0
  bsr.b    D_Fcntl
  adda.w   #22,sp
  rts
@@ -6654,16 +6641,16 @@ env_set:
  move.l   a1,a0
  bsr      strlen
 
- move.l   d0,d2
+ move.w   d0,d2
  move.l   a2,a0
  bsr      strlen
- add.l    d0,d2
- addq.l   #1,d2               ; EOS ergaenzen
+ add.w    d0,d2
+ addq.w   #1,d2               ; EOS ergaenzen
  move.l   (sp),a0
  bsr      env_end             ; d0 = Env.-Laenge, aendert nicht d2
 
  move.l   (sp),a1             ; src
- lea      0(a1,d2.l),a0       ; dst
+ lea      0(a1,d2.w),a0       ; dst
 ;move.l   d0,d0
  jsr      vmemcpy              ; Environment verschieben
 
@@ -6951,7 +6938,7 @@ create_basepage:
  move.l   CMDLINE(a6),a1
  move.l   d4,a0
  lea      pr_cmdlin(a0),a0
- move.l   #128,d0
+ move.w   #128,d0
  jsr      vmemcpy                        ; genau 128 Bytes Basepage
  move.l   ARG0(a6),d0
  beq.b    crb_no_prfname                ; kein Pfad
@@ -7940,6 +7927,7 @@ pxc_ensmem:
 pxc_einvfn:
  moveq    #EINVFN,d0
 ; bra.b    pxc_ende
+ nop
  
 pxc_ende:
  tst.l    d7
@@ -8618,7 +8606,7 @@ resv_end:
 *
 
 collect_IMB:
- movem.l  d7/a2/a5,-(sp)
+ movem.l  d7/a5,-(sp)
 * a5 durchlaeuft alle Laufwerke (DMDs) von 0 bis LASTDRIVE
  moveq    #0,d7                    ; noch nichts erreicht
  lea      dmdx,a5
@@ -8637,7 +8625,7 @@ coli_next:
  cmpa.l   #dmdx+4*LASTDRIVE,a5
  bls.b    coli_loop
  move.l   d7,d0
- movem.l  (sp)+,d7/a2/a5
+ movem.l  (sp)+,d7/a5
  rts
 
 
@@ -8694,15 +8682,6 @@ intm_ende:
  jsr      fast_clrmem
  move.l   (sp)+,d0                 ; Zeiger auf Datenbereich zurueck
  rts
-
-; via kernel struct exported function:
-; return value in both a0/d0, because of some
-; wrong declaration in some headers
-int_malloc_c:
- bsr.s int_malloc
- move.l d0,a0
- rts
-
 
 **********************************************************************
 *
@@ -9248,7 +9227,7 @@ dpex_200:
  move.l   p_procdata(a4),a0
  lea      pr_fname(a0),a0
  lea      pr_fname(a1),a1
- move.l   #pr_bconmap-pr_fname,d0
+ move.w   #pr_bconmap-pr_fname,d0
  jsr      vmemcpy
  suba.l   a1,a1                    ; kein limit
  move.l   p_procdata(a6),a0
@@ -9258,7 +9237,7 @@ dpex_200:
  move.l   p_env(a6),-(sp)          ; neues Env. retten
  lea      p_parent(a4),a1          ; kopieren ab p_parent
  lea      p_parent(a6),a0
- move.l   #p_cmdlin-p_parent,d0    ; kopieren bis p_cmdlin
+ move.w   #p_cmdlin-p_parent,d0    ; kopieren bis p_cmdlin
  jsr      vmemcpy
  move.l   (sp)+,p_env(a6)          ; neues Env zurueck
 * neue Basepage, neues Env, altes PROCDATA gehoeren neuem Prozess
@@ -10171,7 +10150,8 @@ fsp_hdlvalid:
  bne.b    fsp_nxtlp2               ; ist > 0, nicht aendern
  tst.w    d5                       ; Diskwechsel ?
  bge.b    fsp_set_root             ; ja, auf root setzen
- move.b   #-1,-1(a1)               ; nein, auf -1 setzen
+ /* move.b   #-1,-1(a1) */               ; nein, auf -1 setzen
+ dc.w $137c,-1,-1 /* BINEXACT */
  bra.b    fsp_nxtlp2
 fsp_set_root:
  clr.b    -1(a1)                   ; Zaehler 0 => Pfadhandle im PD loeschen
@@ -11133,9 +11113,6 @@ tal_no1000:
 *
 * DATEN
 *
-
-auxnb_name_s:
- DC.B     'U:\DEV\AUXNB',0         ; 27.6.2002
 
 con_name_s:
  DC.B     'U:\DEV\CON',0

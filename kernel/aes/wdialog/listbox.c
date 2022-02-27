@@ -52,6 +52,8 @@
 #undef Mfree
 #define	Mfree(p)	Mfree(p)
 
+long mmalloc( ULONG size);
+
 #include "wdialog.h"
 #include "listbox.h"
 
@@ -994,12 +996,12 @@ static void	do_slider(LIST_BOX *box, WORD mx, WORD my)
 
 		if ( box->flags & LBOX_REAL )									/* Real-Time-Scrolling? */
 		{
+			WORD	mbutton;
 #if	CALL_MAGIC_KERNEL == 0
 			EVNTDATA ev;
 #else
 			WORD	kstate;
 #endif
-			WORD	mbutton;
 			WORD	d;
 			WORD	offset;
 			WORD	ob;
@@ -1188,12 +1190,12 @@ static void	do_slider_b( LIST_BOX *box, WORD mx, WORD my )
 
 		if ( box->flags & LBOX_REAL )									/* Real-Time-Scrolling? */
 		{
+			WORD	mbutton;
 #if	CALL_MAGIC_KERNEL == 0
 			EVNTDATA ev;
 #else
 			WORD	kstate;
 #endif
-			WORD	mbutton;
 			WORD	d;
 			WORD	offset;
 			WORD	ob;

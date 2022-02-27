@@ -6,15 +6,15 @@ char *strchr(const char *s, int c);
 char *strrchr(const char *s, int c);
 extern int stricmp(const char *s1, const char *s2);
 extern void vstrcpy(char *dst, const char *src);
-extern void vmemcpy(void *dst, void *src, size_t len);
+extern void vmemcpy(void *dst, void *src, int len);
 extern void fast_clrmem(void *von, void *bis);
 extern void ext_8_3(char *dst_name, char *src_int_name);
 extern void int_8_3(char *dst_int_name, char *src_name);
 extern char toupper(char c);
 
-LONG smalloc( ULONG size);
+/* void *smalloc( ULONG size); */
 void smfree( void *memblk );
-void *mmalloc( ULONG size);
+/* long mmalloc( ULONG size); */
 void mfree( void *memblk );
 LONG mshrink( void *memblk, ULONG size);
 WORD dgetdrv( void );

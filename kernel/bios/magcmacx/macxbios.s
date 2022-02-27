@@ -2574,9 +2574,9 @@ read_rtclock:
 
 init_dosclock:
  bsr      _Gettime
- move.w   d0,dos_time.l
+ move.w   d0,dos_time
  swap     d0
- move.w   d0,dos_date.l
+ move.w   d0,dos_date
  rts
 
 

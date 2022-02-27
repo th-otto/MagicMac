@@ -785,7 +785,7 @@ pe_unsuspcnt:  DS.W 1
 
 enable_3d:     DS.W 1              /* int    ist 1, wenn 3D-Objekte        */
 aes_bootdrv:   DS.B 1              /* char   aes_bootdrv                   */
-               DS.B 1              /* char   serno_isok                    */
+serno_isok:    DS.B 1              /* char   serno_isok                    */
 _basepage:     DS.L 1              /* long   _basepage                     */
 mdraw_int_adr: DS.L 1              /* long   mdraw_int_adr                 */
 
@@ -928,9 +928,10 @@ vmn_set:       DS.B mns_sizeof     /* fuer menu_settings */
 
      EVEN
 
+endofvars:
+
 bootstack: ds.b 1024
 
-endofvars:
 
      TEXT
 

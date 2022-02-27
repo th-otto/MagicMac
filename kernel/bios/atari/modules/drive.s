@@ -626,7 +626,7 @@ IRwabs:
  move.l   a1,4(sp)                 ; merken fuer DOS- Writeback
  move.l   dlockx(a1),d3
  beq.b    rwabs_ok
- cmp.l    act_pd,d3
+ cmp.l    act_pd.l,d3
  bne.b    rwabs_elocked
 rwabs_ok:
  clr.l    bufl_timer(a1)           ; fuer DOS- Writeback (als in Arbeit markieren)

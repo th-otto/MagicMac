@@ -768,7 +768,7 @@ vsf_sty_hat_save:
 	move.w     d0,(a0)                  /* intout[0] = new pattern index; */
 	move.w     d0,f_style(a6)           /* pattern index */
 	subq.w     #1,d0
-	cmpi.w     #11,d0                   /* wrong pattern index? */
+	cmpi.w     #21,d0                   /* wrong pattern index? */
 	bhi.s      vsf_sty_hat_err
 	movea.l    f_fill3(a6),a0           /* pointer to first grayscale pattern */
 	lsl.w      #5,d0                    /* *32 for pattern data */

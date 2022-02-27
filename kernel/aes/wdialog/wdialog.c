@@ -136,6 +136,8 @@ extern WORD cdecl _form_wkeybd(OBJECT *tree, WORD objnr, WORD *c, WORD *nxtob, W
 #undef Mfree
 #define	Mfree(p)	Mfree(p)
 
+long mmalloc( ULONG size);
+
 /*----------------------------------------------------------------------------------------*/ 
 /* extern aus WDINTRFC.S																						*/
 /*----------------------------------------------------------------------------------------*/ 

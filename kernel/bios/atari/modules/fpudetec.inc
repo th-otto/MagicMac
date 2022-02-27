@@ -53,7 +53,6 @@
 ; ===> FPU-Abfrage geaendert; ist nun aehnlich zum Hades-TOS
 
 
- move.l   sp,a2                    ; Stackpointer retten
  moveq    #0,d1
 * Test auf (Atari) FPU
  movea.l  8,a0                     ; Busfehler retten
@@ -67,35 +66,16 @@ _noafpu:
  move.l   #_nolfpu,$2c             ; bei LineF Trap gehts dahin
 ;move.l   #_nolfpu,$34             ; TOS 2.05
 
-          cmp.w     #60,cpu_typ.w  ; mc68060
-          bcs.s  no060             ; nein->
-
-        dc.l $4e7a0808             ; movec pcr,d0: get revision number etc
-        swap    d0
-        cmp.w   #0x0431,d0         ; "broken" 68LC/EC060
-        beq.s   no060
-        swap    d0
-        bclr    #0x01,d0
-        dc.l $4e7b0808             ; movec d0,pcr: clear DFP (the disable-FPU bit)
-
-no060:
-          dc.l $F2004000           ; fmove.l d0,fp0
           dc.w $F327               ; fsave   -(sp)
           move.w    (sp),d0        ; Version Bytes ($18=881,$38=882,...
-          move.l    a2,sp          ; Stack korrigieren
 
-          cmp.w     #60,cpu_typ.w  ; mc68060?
-          beq.s  is060             ; ja->
-          cmp.w     #40,cpu_typ.w  ; mc68040?
-          beq.s  is040             ; ja->
           cmp.b     #$18,d0        ; 68881 ?
           beq.s  is881
           cmp.b     #$38,d0        ; 68882 ?
           beq.s  is882               ; ja ->
+          cmp.b     #$40,d0
           bne.s     linef_emu      ; sonst linef
                 
-is060:
-          addq.w    #8,d1               ;16: 68060
 is040:
           addq.w    #2,d1               ; 8: 68040
 is882:
@@ -107,10 +87,8 @@ linef_emu:
 nolfpu:                            ; keine LineF FPU
 
 
+ st is_fpu
 _nolfpu:                           ; keine LineF FPU
- move.w   d1,d0
- bclr     #0,d0
- move.b   d0,is_fpu
  swap     d1                       ; Kennung ins Hiword
  move.l   a1,$2c                   ; alten LineF restaurieren
  move.l   a2,sp                    ; Stack wiederherstellen

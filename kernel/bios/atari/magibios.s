@@ -81,12 +81,12 @@ XFS95     EQU  1
      EXPORT      warm_boot           ; nach AES
      EXPORT      warmbvec,coldbvec   ; nach AES
      EXPORT      ideparm             ; nach IDE.C
-     EXPORT      putch
      EXPORT      prn_wrts            ; -> DEV_BIOS
      IFNE FALCON
      EXPORT      scrbuf_adr,scrbuf_len    ; nach DOS
      ENDIF
      EXPORT mmx_yield
+	EXPORT putch
 
 ;Import vom DOS
 
@@ -554,15 +554,11 @@ syshdr_code:
 syshdr_l1:
  lea      endofvars,sp             ; Hier Stack setzen wegen ggf. Exception
  lea      bot_ok1(pc),a0
- move.l   $2c,-(sp)                ; save LineF handler, in case FP2p060 was installed
- move.l   sp,a1
  move.l   a0,8                     ; Busfehler
  move.l   a0,$10                   ; Illegaler Befehl
- nop                               ; this is just here to prevent old boot program from patching it
  move.l   a0,$2c                   ; Line-F
  moveq    #0,d0
  movec    d0,vbr                   ; fuer 68010/20/30
- movec    d0,cacr                  ; fuer 68040/60
  move.l   #$808,d0                 ; instr/data-cache off/clear
  movec    d0,cacr                  ; fuer 68020/30
  pmove    long_zero,tc             ; fuer 68030: disable translation
@@ -570,14 +566,11 @@ syshdr_l1:
  pmove    long_zero,tt1
  frestore long_zero                ; fuer 68882
 bot_ok1:
- move.l   a1,sp
- move.l   (sp)+,$2c                ; restore LineF handler
-     ENDIF
 
 
 * BIOS- Variablenbereich loeschen
  lea      clear_area,a0
- lea      __e_dos,a1
+ lea      __e_dos.l,a1
  moveq    #0,d0
 bot_vclear:
  move.l   d0,(a0)+
@@ -616,19 +609,6 @@ inst_cook:
 
  bsr      boot_dsel_floppies            ; Floppies deselektieren
 
-*
-* boot_init_video might wait for an VBL interrupt.
-* Make sure the vector ist set, but lock vblqueue.
-* Also make sure mfp interrupts are disabled,
-* since sync_screen will lower the interrupt level.
-*
- clr.w    vblsem
- move.l   #int_vbl,$70             ; VBL
- lea      gpip,a0
- moveq    #0,d1
- move.b d1,$12(a0) ; IMRA
- move.b d1,$14(a0) ; IMRB
- 
  bsr      boot_init_video               ; Videosystem initialisieren
 
 * Beginn der TPA setzen (je nachdem, ob GEM enthalten ist)
@@ -728,7 +708,7 @@ bot_nofast:
 ; FIXME: might need adjustment for CT60
  moveq    #$3d,d0
  lea      exc02(pc),a1
- move.l   #exc03-exc02,d1
+ move.l  #exc03-exc02,d1
 
 * Benutzte Exceptionroutinen initialisieren
 
@@ -1000,8 +980,6 @@ no_magic_pc:
  bcs.b    bot_cpu_weiter      ; 68000 oder 68010
  cmpi.w   #30,cpu_typ
  bcs.b    bot_cpu_nopmmu
- cmp.w    #40,cpu_typ         ; ab 040er CPU: hier keine Init mehr?!?
- bcc.b    bot_cpu_040
  lea      $700,a0
  lea      pmmutab,a1
  moveq    #$3f,d0             ; 64 Langworte
@@ -1018,10 +996,6 @@ bot_cpu_nopmmu:
                               ;  $100: enable data cache
                               ; $1000: data burst enable
                               ; $2000: write allocate
- movec    d0,cacr
- bra.s    bot_cpu_weiter
-bot_cpu_040:
- move.l   #$a0808000,d0
  movec    d0,cacr
 bot_cpu_weiter:
 
@@ -1377,12 +1351,9 @@ ivbl_nocol:
  beq.b    ivbl_l3
  move.l   d0,_v_bas_ad
  move.b   d0,$ffff820d             ; STe
+ lsr.l #8,d0
  lea      $ffff8201,a1             ; low byte
- swap     d0
- move.b   d0,(a1)                  ; high byte
- swap     d0
- lsr.w    #8,d0                    ; mid byte
- move.b   d0,2(a1)
+ movep.w    d0,0(a1)
  clr.l    screenpt
 ivbl_l3:
      ENDIF
@@ -1644,7 +1615,6 @@ Bios_user:
    jmp      (a1)
 exit_bios:
 not_implemented:
-   lsr.w    #2,d0          ; Damit d0 == opcode
 dummy_rte:
    rte
 
@@ -1963,41 +1933,38 @@ fatal_err:
 *
 halt_system:
  moveq    #$d,d0
- IFNE HADES
- bsr.l    putch
- ELSE
- bsr      putch
- ENDC
+ bsr.s    putch
  moveq    #$a,d0
- IFNE HADES
- bsr.l    putch
- ELSE
- bsr      putch
- ENDC
+ bsr.s    putch
  moveq    #$a,d0                   ; CR,LF,LF
- IFNE HADES
- bsr.l    putch
- ELSE
- bsr      putch
- ENDC
+ bsr.s    putch
  bsr.b    putstr                   ; Benutzermeldung
  lea      fatal_errs(pc),a0
  bsr      putstr                   ; "System angehalten"
 halt_endless:
- bsr mmx_yield
  bra      halt_endless
 
 putstr:
  move.b   (a0)+,d0
  beq.b    puts_ende
- IFNE HADES
- bsr.l    putch
- ELSE
  bsr      putch
- ENDC
  bra.b    putstr
 puts_ende:
  rts
+
+putch:
+ move.l	a2,-(sp)				; wg. PureC
+ andi.w   #$00ff,d0
+ move.l   a0,-(sp)
+ move.w   d0,-(sp)
+ move.w   #2,-(sp)                 ; CON
+ move.l   dev_vecs+$68,a0          ; Bconout CON
+ jsr      (a0)
+ addq.l   #4,sp
+ move.l   (sp)+,a0
+ move.l	(sp)+,a2
+ rts
+
 
 **********************************************************************
 *
@@ -2008,6 +1975,7 @@ exc02:    move.b    #2,-(sp)
           bra.w     exc
 exc03:    move.b    #3,-(sp)
           bra.w     exc
+          GLOBL exc04
 exc04:    move.b    #4,-(sp)
           bra.w     exc
 exc05:    move.b    #5,-(sp)
@@ -2142,7 +2110,6 @@ exc:
 pb_loop:
  move.w   (a1)+,(a0)+
  dbf      d0,pb_loop
- move.l   (act_pd).w,(a0)
  move.l   #$12345678,proc_lives
  moveq    #0,d1
  move.b   proc_pc,d1
@@ -2395,7 +2362,7 @@ crsh_loop:
  move.w   jmpop(pc),-6(a1)              ; Opcode fuer "jmp"
  move.l   4(a1),-4(a1)                  ;                  os_start
  move.w   braop(pc),(a1)                ; Branch auf "jmp os_start"
- ;move.w   $1e(a1),$1c(a1)               ; gendatg->palmode ??
+ move.w   $1e(a1),$1c(a1)               ; gendatg->palmode ??
  move.l   a1,_sysbase
  rts
 jmpop:
@@ -2997,9 +2964,7 @@ _bconin:
  lea      8(a0),a1                 ; *Tail
  move.w   (a1),d1                  ; Tail-Index
  cmp.w    -(a1),d1                 ; Head-Index
- bne.s    _bconin_in
- bsr mmx_yield
- bra.s _bconin
+ beq.s _bconin
 _bconin_in:
 ; Head- Index ist ungleich Tail- Index, also Zeichen da!
  move     sr,-(sp)
@@ -3068,11 +3033,9 @@ init_mfp:
  lea      gpip,a0
  moveq    #0,d1
 ; clear all interrupt masks, pending bits etc.
- moveq    #-24,d0
-init_mfp_loop:
- move.b   d1,24(a0,d0.w)
- addq.l   #2,d0
- bne.s    init_mfp_loop
+ movep.l  d1,0(a0)
+ movep.l  d1,8(a0)
+ movep.l  d1,16(a0)
  move.b   #$48,$16(a0)             ; fa17: VR = Hinibble der Vektornummer=4
                                    ;            Automatic-EOI-Modus
  bset     #2,2(a0)                 ; Eingang I2 (CTS) soll Interrupt ausloesen
@@ -3100,34 +3063,8 @@ init_mfp_loop:
 ;move.l   #$880101,d0              ; TOS 1.xx: #$880101
 
 
- ; move.l   #$880105,d0            ; TOS 2.05: #$880105
- ; movep.l  d0,$26(a0)
- moveq    #0,d1
- move.b   d1,$26(a0)               ; scr = 0
- move.b   #$88,$28(a0)             ; ucr.7 =  1: clock mode clk/16
-                                   ;    .6
-                                   ;    .5 = 00: Wortlaenge 8 Bits
-                                   ;    .4
-                                   ;    .3 = 01: start = stop = 1, asynchron
-                                   ;    .2 = 0 : parity disable
-                                   ;    .1 = 0 : parity even
- move.b   #$01,$2a(a0)             ; rsr.7 = 0 : buffer not full
-                                   ;    .6 = 0 : no overrun error
-                                   ;    .5 = 0 : no parity error
-                                   ;    .4 = 0 : no frame error
-                                   ;    .3 = 0 : found/search ? break ?
-                                   ;    .2 = 0 : match ? char in progress ?
-                                   ;    .1 = 0 : synchronous strip disable
-                                   ;    .0 = 1 : receiver enable
- move.b   #$05,$2c(a0)             ; tsr.7 = 0 : Sendepuffer nicht leer
-                                   ;    .6 = 0 : no underrun error
-                                   ;    .5 = 0 : no auto turnaround
-                                   ;    .4 = 0 : Senden nicht beendet
-                                   ;    .3 = 0 : kein Break senden
-                                   ;    .2
-                                   ;    .1 = 10: high Pegel
-                                   ;    .0 = 1 : transmitter enable
-
+ move.l   #$880105,d0            ; TOS 2.05: #$880105
+ movep.l  d0,$26(a0)
  cmpi.b   #4,machine_type          ; Falcon wie Mega STe behandeln
  beq.b    imf_ste
  cmpi.b   #2,machine_type
@@ -3136,22 +3073,16 @@ init_mfp_loop:
  bne.b    imf_ste                  ; Mega STE
  moveq    #0,d1
  lea      GPIP_TT,a0               ; MFP_TT
- moveq    #-24,d0
-init_ttmfp_loop:
- move.b   d1,24(a0,d0.w)
- addq.l   #2,d0
- bne.s    init_ttmfp_loop
+ movep.l  d1,0(a0)
+ movep.l  d1,8(a0)
+ movep.l  d1,16(a0)
  move.b   #$58,$16(a0)             ; andere Vektornummer als MFP_ST
  bset     #7,2(a0)                 ; Eingang I7 (SCSI) soll Interrupt ausloesen
                                    ; bei steigender Flanke
 ;move.l   #$880105,d0
- moveq    #0,d1
- move.b   d1,$26(a0)               ; scr = 0
- move.b   #$88,$28(a0)
- move.b   #$01,$2a(a0)
- move.b   #$05,$2c(a0)
- move.b   #1,$1c(a0)               ; TT_MFP+TCDCR (Timer C/D- Ctrl-Reg)
- move.b   #2,$24(a0)               ; TT_MFP+TDDR  (Timer D- Data-Reg
+ movep.l  d0,$26(a0)
+ move.b   #1,$fffffa9d
+ move.b   #2,$fffffaa5
 ;move.b   #1,iorec_ser2+$22        ; baudrate fuer TT_MFP, unnoetig, s.u.
 imf_ste:
  bsr      init_scc                 ; Mega STE und hoeher
@@ -4001,18 +3932,6 @@ ci_20:
 ci_0:
  rts
 
-; Stop the CPU until an interrupt occurs.
-; This may save some host CPU time on emulators (i.e. ARAnyM).
-mmx_yield:
-  move.w sr,d0
-  IFNE HADES
-  stop    #$2100                 ; Auf Hades: Auch HBL-Int zulassen: SCSI
-  ELSE
-  stop    #$2300
-  ENDC
-  move.w d0,sr
-  rts
-
 **********************************************************************
 *
 * int get_cpu_typ( void )
@@ -4021,48 +3940,39 @@ mmx_yield:
 *
 
 get_cpu_typ:
- move.l   $10,-(a7)                ; save illegal instruction
- move.l   $2c,-(a7)                ; save line F
- move.l   $f4,-(a7)                ; save unimplemented instruction
  move.l   sp,a0                    ; Hier Stack retten wegen ggf. Exception
  moveq    #0,d0                    ; Default CPU ist 68000
- nop                               ; flush pipelines
- lea      set_cpu_typ(pc),a1       ; bei illegal fliegen wir nach dort raus
- move.l   a1,$10                   ; illegal instruction
- move.l   a1,$2c                   ; line F
- move.l   a1,$f4                   ; unimplemented instruction
+ move.l   #set_cpu_typ,$10                   ; illegal instruction
 
  move     ccr,d1
  moveq    #10,d0                   ; War OK ? Kennung fuer 68010 nach d1
  movec.l  cacr,d1
  move.l   d1,d0
- ori.w    #$0101,d1                ; enable '020 instr. and '030 data caches
+ ori.w    #$8200,d1
 
  movec    d1,cacr
  movec    cacr,d1
  movec    d0,cacr                  ; always restore cacr
- btst     #0,d1                    ; if '020 instr. cache was not enabled, this is a 68040+
- beq.s    x040
  moveq    #20,d0                   ; assume 68020
- btst     #8,d1                    ; check if 68030 data cache was enabled
+ btst     #9,d1                    ; check if 68030 data cache was enabled
  beq.b    set_cpu_typ              ; no data cache, we are done
- pmove    tc,12.l                  ; try to access the TC register
  moveq    #30,d0                   ; no fault -> this is a 030
- bra.s    set_cpu_typ
-
-; Ab hier kann es nur noch ein 040 oder ein 060 sein
-
-x040:
- moveq    #40,d0                   ; assume 68040
- dc.w     $4e7a,$1808              ; movec pcr,d1
- moveq    #60,d0                   ; no fault -> this is 68060
+ btst     #15,d1                   ; Bit 15 testen
+ beq.b    set_cpu_typ              ; War 0, obwohl gesetzt ? -> 68030
+; Ab hier kann es nur noch ein 040 oder ein 060 sein 
+ moveq    #40,d0                   ; Kennung für 68040 nach d0 
+ move.l   $f4.w,a1                 ; Exeption61 retten 
+ lea      chk68060(pc),a2          ; bei 060 fliegen wir nach dort raus
+ move.l   a2,$f4.w                 ; Exception umsetzen 
+ cmp2.b   (a0),d0                  ; erzeugt Exception beim 060
+ bra.b    cpu_40_60_ok
+chk68060:
+ moveq    #60,d0                   ; Kennung für 68060 nach d0
+cpu_40_60_ok:
+move.l   a1,$f4.w                 ; Exeption61 restaurieren 
 
 set_cpu_typ:
  move.l   a0,sp                    ; Stack wiederherstellen
- nop                               ; flush pipelines
- move.l   (a7)+,$f4                ; restore unimplemented instruction
- move.l   (a7)+,$2c                ; restore line F
- move.l   (a7)+,$10                ; restore illegal instruction
  rts
 
      IFNE HADES

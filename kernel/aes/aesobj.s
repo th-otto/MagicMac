@@ -530,8 +530,8 @@ obs_11:
  beq.b    obs_11_white             ; nein, Menue ist weiss
  btst     #7,look_flags+1          ; 3D-Menues aktiviert?
  beq.b    obs_11_white             ; nein
-; tst.w    finfo_big+fontmono       ; grosser Zeichensatz aequidistant?
-; bne.b    obs_11_white             ; ja, Menue ist weiss
+ tst.w    finfo_big+fontmono       ; grosser Zeichensatz aequidistant?
+ bne.b    obs_11_white             ; ja, Menue ist weiss
  moveq    #LWHITE,d1               ; Menue ist hellgrau
  bra.b    obs_ok2
 obs_11_white:
@@ -2389,7 +2389,7 @@ init_font:
  bls.b    ifo_standardfont         ; 0 oder 1: Systemfont (default) verwenden
  move.l   a0,-(sp)
  move.l   #$77000000,d0            ; vst_load_fonts(intin[0] = 0)
- clr.l    vcontrl+20               ; contrl[10/11] = 0
+; clr.l    vcontrl+20               ; contrl[10/11] = 0
  bsr      vdi_1
  move.l   (sp)+,a0
  tst.w    vintout
@@ -6214,7 +6214,8 @@ obdrw_l2:
                                    ; tcolor = BLACK
  lea      ob_modes(pc),a0          ; Modi der Objekttypen
  move.b   0(a0,d3.w),d0
- cmpi.b   #-1,d0                   ; TEDINFO ?
+ /* cmpi.b   #-1,d0 */ /* BINEXACT */                  ; TEDINFO ?
+ dc.w $0c00,-1
  bne.b    _obdrw_notedinfo         ; nein
 
 * im Fall G_TEXT,G_BOXTEXT,G_FTEXT,G_FBOXTEXT,G_WINTITLE: TEDINFO auswerten
@@ -7635,7 +7636,8 @@ _obdrw_s3:
 _obdrw_unterstr:
  move.w   d4,d0
  lsr.w    #8,d0                    ; Hibyte von ob_state nach d0
- cmpi.b   #-1,d0
+ /* cmpi.b   #-1,d0 */ /* BINEXACT */
+ dc.w $0c00,-1
  bne.b    _obdrw_no_allu           ; nicht alles unterstreichen
 
 ; alles unterstreichen. Im Fall 3D oben weiss, unten dklgrau.

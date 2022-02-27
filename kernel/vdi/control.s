@@ -752,15 +752,13 @@ wk_arrays:
 	move.w     #0xffff,(a0)+            /* l_udstyle */
 
 /* text attributes */
-	clr.w      t_effects(a6)
-	clr.w      t_light_pct(a6)
-	clr.w      t_rotation(a6)
+	clr.l      t_effects(a6)
 	clr.l      t_hor(a6)                /* t_hor/t_ver */
 	move.w     #T_SYSTEM_FACE,t_number(a6)
 	move.l     #font_hdr1,t_pointer(a6)
 	move.l     buffer_ptr,buffer_addr(a6)
 	move.l     #NVDI_BUF_SIZE,buffer_len(a6)
-	clr.l      t_point_height(a6)       /* Hoehe per vst_height gesetzt */
+	clr.w      t_point_height(a6)       /* Hoehe per vst_height gesetzt */
 	clr.l      t_bitmap_fonts(a6)       /* t_next_font */
 	clr.b      t_font_type(a6)          /* Bitmap-Font */
 	move.b     #1,t_mapping(a6)         /* ASCII-Mapping */

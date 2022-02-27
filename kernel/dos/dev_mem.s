@@ -505,7 +505,7 @@ proc_ioctl:
  move.l   a1,a5                    ; a5 = PLOADINFO *
  lea      pr_cmdlin(a6),a1
  move.l   2(a5),a0
- move.l   #128,d0                  ; immer die ganzen 128 Bytes
+ move.w   #128,d0                  ; immer die ganzen 128 Bytes
  jsr      vmemcpy                   ; Kommandozeile kopieren
  lea      pr_fname(a6),a0
  jsr      strlen

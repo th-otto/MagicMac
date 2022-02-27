@@ -899,7 +899,7 @@ form_alert:
  lea      TREE(a6),a5
 ;lea      popup_tmp,a5
 
- move.l   #alert_tree_end-alert_tree,d0
+ move.w   #alert_tree_end-alert_tree,d0
  move.l   a5,a0
  lea      alert_tree(pc),a1
  jsr      vmemcpy

@@ -83,9 +83,9 @@ WINDXMINUS     EQU  1         ; Fenster duerfen links herausragen.
 ; new version of find_icon_pos:
 ; if set set, start allocating position at the bottom-right,
 ; walking left, then up
-; if unset use old bevhaviour, starting bottom-left, walking
+; if unset use old behaviour, starting bottom-left, walking
 ; right then up
-NEW_FIND_ICON_POS EQU 1
+NEW_FIND_ICON_POS EQU 0
 
 
 /* Fensterrahmen-Elemente */
@@ -5091,7 +5091,7 @@ wstpos_found:
 
 _wind_to_stackpos:
  move.w   d0,-(sp)                 ; whdl
- moveq #0,d0
+; moveq #0,d0
  move.w   nwindows,d0
  subq.w   #1,d0
  sub.w    d1,d0

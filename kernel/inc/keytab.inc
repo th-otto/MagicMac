@@ -30,7 +30,11 @@ S2B  EQU  $7c
 S29  EQU  $5e
  ENDC
 
+IFNE MAGICPC
+XXX  EQU  $20       ; must not be assigned (shift keys etc.)
+ELSE
 XXX  EQU  $00       ; must not be assigned (shift keys etc.)
+ENDIF
 YYY  EQU  XXX       ; is unassigned
 
 

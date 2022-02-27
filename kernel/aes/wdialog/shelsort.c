@@ -55,16 +55,18 @@ static void memxchg(char *s1, char *s2, size_t count)
 
 
 void shelsort(char *base, long count, long size,
-		    int (*compar)(const void *s1, const void *s2, void *udata), void *udata)
+		    int (*compar)(void *s1, void *s2, void *udata), void *udata)
 {
-	char *j;
-	long k2,k,i;
-	void (*xchg)(char *s1, char *s2, size_t count) = memxchg;
+	register int (*vgl)(void *s1, void *s2, void *udata) = compar;
+	register char *j;
+	register long k2,k,i;
+	register void (*xchg)(char *s1, char *s2, size_t count) = memxchg;
+
 
 
 	k2 = count / 2;				/* k2 = Elementzaehler */
 	count *= size;					/* count: max-Byte */
-	if	(0 == (((long) base) & 1) && size == sizeof(long))
+	if	(0 == (((long) base) & 1) && size == 4L)
 		xchg = longxchg;
 	while(k2 > 0)
 		{
@@ -72,7 +74,7 @@ void shelsort(char *base, long count, long size,
 		for	(i = k; i < count; i += size)
 			{
 			j = base + i - k;
-			while((j >= base) && ((*compar)(j,j+k, udata)) > 0)
+			while((j >= base) && ((*vgl)(j,j+k, udata)) > 0)
 				{
 				(*xchg)(j, j + k, size);
 				j -= k;
