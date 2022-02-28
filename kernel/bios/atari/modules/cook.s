@@ -138,15 +138,15 @@ cok_nosw:
 
 * _IDT-Cookie
 
- move.l   #'_IDT',(a5)+
  moveq #0,d0
- move.w   syshdr+$1c(pc),d0
+ move.w   syshdr+$1c,d0
  bclr     #0,d0
  cmp.w    #(idt_tab_end-idt_tab),d0
  bcs.s    idt_ok
  moveq    #0,d0
 idt_ok:
  move.w idt_tab(pc,d0.w),d0
+ move.l   #'_IDT',(a5)+
  move.l d0,(a5)+
 
 * MagiX- Cookie

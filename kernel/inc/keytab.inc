@@ -35,7 +35,11 @@ YYY  EQU  XXX       ; is unassigned
 
 
  IF COUNTRY=COUNTRY_US
+ IFNE MAGICPC
+ INCLUDE "..\bios\keytable\us-mgpc.inc"
+ ELSE
  INCLUDE "..\bios\keytable\us.inc"
+ ENDC
  ENDC
 
  IF COUNTRY=COUNTRY_DE
@@ -43,8 +47,12 @@ YYY  EQU  XXX       ; is unassigned
  ENDC
 
  IF COUNTRY=COUNTRY_FR
+ IFNE MAGICPC
+ INCLUDE "..\bios\keytable\fr-mgpc.inc"
+ ELSE
  INCLUDE "..\bios\keytable\fr.inc"
  ; INCLUDE "..\bios\keytable\fr-pc.inc"
+ ENDC
  ENDC
 
  IF COUNTRY=COUNTRY_UK

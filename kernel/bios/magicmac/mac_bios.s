@@ -224,6 +224,13 @@ altgr_status:       DS.B 1              /* char altgr_status          */
      IF   ALT_NUMKEY
 alt_numkey:         DS.B 1              /* Fuer Alt-Num0..Num9         */
      ENDIF
+     IF   DEADKEYS
+deadkey_asc:        DS.B 1              /* Fuer "dead keys"            */
+deadkey_scan:       DS.B 1              /* Fuer "dead keys"            */
+deadkey_kbsh:       DS.B 1              /* Fuer "dead keys"            */
+     EVEN
+deadkey_subtab:     DS.L 1              /* Fuer "dead keys"            */
+     ENDIF
      EVEN
 key_delay:          DS.B 1              /* char                       */
 key_reprate:        DS.B 1              /* char                       */

@@ -774,6 +774,8 @@ no_deadkey_active:
  move.l   keytblx+9*4,a0            ; dead key table
  move.l   a0,d2
  beq.b    no_deadkey               ; no table
+ btst #3,kbshift
+ bne.s no_deadkey                  ; no deadkey if from alt table
 ndk_loop:
  tst.b    (a0)
  beq.b    no_deadkey               ; Ende der Tabelle
