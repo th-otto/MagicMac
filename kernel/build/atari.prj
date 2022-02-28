@@ -10,11 +10,14 @@ magic.ram
 .S[-DCOUNTRY=1]
 .C[-DCOUNTRY=1]
 
+.S[-DMAGICPC=0]
+.S[-DHADES=0]
+
 .C[-A-]
 .C[-K-]
-.S[-DHADES=0]
-.S[-S]
 .C[-P]
+.C[-G]
+.S[-S]
 .L[-S=0]
 =
 ..\bios\atari\magibios.s

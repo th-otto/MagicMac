@@ -64,6 +64,7 @@ mcopy -b "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
+mcopy -b "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
 
 
 #
@@ -101,6 +102,7 @@ mcopy -b "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
+mcopy -b "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
 
 
 #
@@ -141,6 +143,7 @@ mcopy -b "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
+mcopy -b "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
 
 #
 # Common files
@@ -231,6 +234,14 @@ for lang in $LANGUAGES; do
 
 	mcopy -b "$SRCDIR/kernel/vdi/drivers/*.SYS" "$BUILDROOT/$lang/GEMSYS/"
 	mcopy -b "$SRCDIR/kernel/vdi/drivers/*.OSD" "$BUILDROOT/$lang/GEMSYS/"
+	
+	# strip ROM header for magic_pc.os kernels
+	if test -f "$BUILDROOT/$lang/magic_pc.os"; then
+		if test `dd if="$BUILDROOT/$lang/magic_pc.os" bs=1 count=2` = '`$'; then  # magic 0x6024
+			dd if="$BUILDROOT/$lang/magic_pc.os" of="$BUILDROOT/$lang/magic_pc.tmp" bs=1 skip=38
+			mv "$BUILDROOT/$lang/magic_pc.tmp" "$BUILDROOT/$lang/magic_pc.os"
+		fi
+	fi
 done
 
 set +e

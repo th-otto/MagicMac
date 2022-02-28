@@ -88,6 +88,8 @@ pcmake -B -F hades.prj >> "$ERRFILE"
 mv mhades.ram en
 pcmake -B -F milan.prj >> "$ERRFILE"
 mv mmilan.ram en
+pcmake -B -F magicpc.prj >> "$ERRFILE"
+mv magic_pc.os en
 
 # french
 export PCCFLAGS=-DCOUNTRY=2
@@ -102,6 +104,8 @@ pcmake -B -F hades.prj >> "$ERRFILE"
 mv mhades.ram fr
 pcmake -B -F milan.prj >> "$ERRFILE"
 mv mmilan.ram fr
+pcmake -B -F magicpc.prj >> "$ERRFILE"
+mv magic_pc.os fr
 
 # german
 export PCCFLAGS=-DCOUNTRY=1
@@ -116,6 +120,8 @@ pcmake -B -F hades.prj >> "$ERRFILE"
 mv mhades.ram de
 pcmake -B -F milan.prj >> "$ERRFILE"
 mv mmilan.ram de
+pcmake -B -F magicpc.prj >> "$ERRFILE"
+mv magic_pc.os de
 
 unset PCCFLAGS
 unset PCASFLAGS

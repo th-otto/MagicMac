@@ -10,6 +10,8 @@ magicvdi.prg
 .S[-DCOUNTRY=0]
 .C[-DCOUNTRY=0]
 
+.S[-DMAGICPC=0]
+
 .C[-A-]
 .C[-K-]
 .C[-P]

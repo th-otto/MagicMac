@@ -10,6 +10,8 @@ mmilan.ram
 .S[-DCOUNTRY=1]
 .C[-DCOUNTRY=1]
 
+.S[-DMAGICPC=0]
+
 .C[-A-]
 .C[-K-]
 .C[-P]

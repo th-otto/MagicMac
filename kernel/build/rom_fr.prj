@@ -12,13 +12,18 @@ fr\magic.rom
 .S[-DCOUNTRY=2]
 .C[-DCOUNTRY=2]
 
+.S[-DMAGICPC=0]
+.S[-DHADES=0]
+
 .C[-A-]
 .C[-K-]
 .C[-P]
-.S[-DHADES=0]
+.C[-G]
 .S[-S]
 .L[-S=0]
 .L[-T=$E00000]
+.L[-B=0]
+;.L[-binary] ; requires patched PC.PRG/PLINK.TTP
 =
 ..\bios\atari\magibios.s
 ..\bios\atari\xfs95\xfs95ini.s

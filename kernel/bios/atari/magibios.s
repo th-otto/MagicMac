@@ -4004,6 +4004,11 @@ ci_0:
 ; Stop the CPU until an interrupt occurs.
 ; This may save some host CPU time on emulators (i.e. ARAnyM).
 mmx_yield:
+/*
+ * Magic-PC apparently does not emulate the stop instruction correctly
+ */
+  tst.l magic_pc
+  bne.s mmx_yield_exit
   move.w sr,d0
   IFNE HADES
   stop    #$2100                 ; Auf Hades: Auch HBL-Int zulassen: SCSI
@@ -4011,6 +4016,7 @@ mmx_yield:
   stop    #$2300
   ENDC
   move.w d0,sr
+mmx_yield_exit:
   rts
 
 **********************************************************************

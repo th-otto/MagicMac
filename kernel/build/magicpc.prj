@@ -1,23 +1,34 @@
-; Project file for MagicMagX.OS
-; (MacOSX version, french localization)
-fr\magcmacx.os
+; Project file for MAGIC_PC.OS
+; (MagiC-PC Version, german localization)
+; For other localizations, change the COUNTRY code below
+; Pure-C creates a 38 byte long header for programs
+; linked to absolute addresses; this must be stripped
+; before using it as MagiCPC kernel
+magic_pc.os
 .C[-I..\..\inc_c]
 .C[-I..\inc]
-.C[-I..\..\pc\include]
 .S[-I..\inc]
+.C[-I..\..\pc\include]
 
-.S[-DCOUNTRY=2]
-.C[-DCOUNTRY=2]
+.S[-DCOUNTRY=1]
+.C[-DCOUNTRY=1]
 
-.S[-DMAGICPC=0]
+.S[-DMAGICPC=1]
+.S[-DHADES=0]
 
 .C[-A-]
 .C[-K-]
 .C[-P]
+.C[-G]
 .S[-S]
 .L[-S=0]
+.L[-T=$E00000]
+.L[-B=0]
+;.L[-binary] ; requires patched PC.PRG/PLINK.TTP
 =
-..\bios\magcmacx\macxbios.s
+..\bios\atari\magibios.s
+..\bios\atari\xfs95\xfs95ini.s
+..\bios\atari\modules\ide.c
 ..\allg\read_inf.s
 ..\vdi\math.s
 ..\allg\std.s
@@ -25,13 +36,13 @@ fr\magcmacx.os
 ..\dos\malloc.s
 ..\dos\xfs_vdos.s
 ..\dos\vfat_s.s
-..\dos\vfat.c [-G-]
+..\dos\vfat.c
 ..\dos\dfs_u.s
 ..\dos\dev_bios.s
 ..\dos\dev_pipe.s
 ..\dos\dev_mem.s
 ..\dos\dfs_fat.s
-..\bios\magcmacx\macxfs.s
+..\bios\magicmac\macxfs.s
 ..\vdi\mxvdiknl.s
 ..\vdi\setup.c
 ..\vdi\drivers.c
