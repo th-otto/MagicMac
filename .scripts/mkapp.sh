@@ -1,5 +1,11 @@
 #!/bin/sh
 
+#
+# Script to create a directory structure used
+# by AtariX to populate the root filesystem of
+# a fresh installation
+#
+
 RELEASE_DIR=/tmp/atarix
 RESOURCES_DIR="$RELEASE_DIR/AtariX.app/Contents/Resources"
 SRC_DIR=`pwd`
@@ -51,11 +57,11 @@ cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$RESOURCES_DIR/$LPROJ/roo
 cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.BGH"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
-cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/EXTRAS/MAGX.INF"
+cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
 
 cp -a "$SRC_DIR/extensio/pdlg_slb/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
 
-cp -a "$SRC_DIR/kernel/build/de/magcmacx.os" "$RESOURCES_DIR/$LPROJ/MagicMacX.OS"
+cp -a "$SRC_DIR/kernel/build/$lang/magcmacx.os" "$RESOURCES_DIR/$LPROJ/MagicMacX.OS"
 
 cp -a "$SRC_DIR/auto/accs/$lang/cops.app" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/COPS.ACC"
 for f in "$SRC_DIR/auto/accs/cpx/$lang/"*.cpx; do
@@ -87,14 +93,14 @@ cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$RESOURCES_DIR/$LPROJ/roo
 cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.BGH"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
-cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/EXTRAS/MAGX.INF"
+cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
 
-cp -a "$SRC_DIR/extensio/pdlg_slb/en/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
+cp -a "$SRC_DIR/extensio/pdlg_slb/$lang/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
 
-cp -a "$SRC_DIR/kernel/build/en/magcmacx.os" "$RESOURCES_DIR/$LPROJ/MagicMacX.OS"
+cp -a "$SRC_DIR/kernel/build/$lang/magcmacx.os" "$RESOURCES_DIR/$LPROJ/MagicMacX.OS"
 
-cp -a "$SRC_DIR/auto/accs/en/cops.app" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/COPS.ACC"
-for f in "$SRC_DIR/auto/accs/cpx/en/"*.cpx; do
+cp -a "$SRC_DIR/auto/accs/$lang/cops.app" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/COPS.ACC"
+for f in "$SRC_DIR/auto/accs/cpx/$lang/"*.cpx; do
 	cp -a "$f" "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPX/$(upper $(basename $f))"
 done
 
@@ -125,8 +131,7 @@ cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/roo
 # TODO: french translation
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
-# TODO: french translation
-cp -a "$SRC_DIR/doc/usage/magx_de.inf" "$RESOURCES_DIR/$LPROJ/EXTRAS/MAGX.INF"
+cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
 
 cp -a "$SRC_DIR/extensio/pdlg_slb/$lang/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
 
@@ -219,7 +224,7 @@ cp -a "$SRC_DIR/apps/magiccfg/magiccfg.app" "$RESOURCES_DIR/rootfs-common/EXTRAS
 cp -a "$SRC_DIR/apps/magiccfg/history.txt" "$RESOURCES_DIR/rootfs-common/EXTRAS/MAGICCFG/HISTORY.TXT"
 cp -a "$SRC_DIR/apps/wbdaemon/wbdaemon.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK/WBDAEMON.PRG"
 cp -a "$SRC_DIR/apps/mmxdaemn/mmxdaemn.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/START/MMXDAEMN.PRG"
-cp -a "$SRC_DIR/tools/dev_ser/dev_ser.tos" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/DEV_SER.DEV"
+cp -a "$SRC_DIR/tools/dev_ser/dev_ser.dev" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/DEV_SER.DEV"
 cp -a "$SRC_DIR/extensio/ramdisk/ramdisk.xfs" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/RAMDISK.XFX"
 cp -a "$SRC_DIR/extensio/cd-mxfs/spinmagc.xfs" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/SPINMAGC.XFX"
 cp -a "$SRC_DIR/extensio/edit_slb/editobjc.slb" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/EDITOBJC.SLB"
@@ -254,7 +259,15 @@ cp -a "$SRC_DIR/tools/clock/clock.mup" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOC
 cp -a "$SRC_DIR/tools/clock/clockcol.cpx" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOCK/CLOCKCOL.CPX"
 cp -a "$SRC_DIR/tools/clock/maus.ruf" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOCK/MAUS.RUF"
 cp -a "$SRC_DIR/tools/clock/readme.cat" "$RESOURCES_DIR/rootfs-common/EXTRAS/CLOCK/README.CAT"
-cp -a "$SRC_DIR/apps/instmagc/magx.inf" "$RESOURCES_DIR/rootfs-common/MAGX.INF"
+
+#
+# The installation program replaces @: with the boot drive.
+# for the emulator, that will always be C:
+#
+sed -e 's|@:|C:|g' \
+    -e 's|drives=%|drives=|' \
+    -e 's|_DEV %|_DEV 1 0|' \
+    "$SRC_DIR/apps/instmagc/magx.inf" > "$RESOURCES_DIR/rootfs-common/MAGX.INF"
 
 for f in "$SRC_DIR/kernel/vdi/drivers/"*.sys "$SRC_DIR/kernel/vdi/drivers/"*.osd; do
 	cp -a "$f" "$RESOURCES_DIR/rootfs-common/GEMSYS/$(upper $(basename $f))"
