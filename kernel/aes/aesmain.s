@@ -1039,6 +1039,7 @@ eapl_ende:
 * darf a2 nicht aendern, weil von check_kb aufgerufen
 *
 
+     IF   COUNTRY=COUNTRY_DE
 info_init_s:
  DC.B     $1b,'E',$1b,'Y',22+32,2+32         ; CLS;Pos(2,22)
  DC.B     'cur_up: prev    |  '
@@ -1083,6 +1084,103 @@ in4_s:
  DC.B     'SCR ',0
 used_s:
  DC.B     '%L Byt',$1b,'q',$d,$a,0
+     ENDIF
+
+     IF   (COUNTRY=COUNTRY_US)|(COUNTRY=COUNTRY_UK)
+info_init_s:
+ DC.B     $1b,'E',$1b,'Y',22+32,2+32         ; CLS;Pos(2,22)
+ DC.B     'cur_up: prev    |  '
+ DC.B     'Space:  OK       |  '
+ DC.B     'F:     Freeze   |  '
+ DC.B     'C:      Control'
+ DC.B     $d,$a,'  '
+ DC.B     'cur_dn: next    |  '
+ DC.B     'Return: Switch   |  '
+ DC.B     'U:     Unfreeze |  '
+ DC.B     'Del:    Terminate'
+ DC.B     0
+
+status_s:
+ DC.B     'ready',0
+ DC.B     'wait ',0
+ DC.B     'suspd',0
+ DC.B     'zmbie',0
+ DC.B     'stopd',0
+ DC.B     'run  ',0
+ DC.B     'frozn',0
+
+ev_s:
+ DC.B     'kb'
+ DC.B     'bt'
+ DC.B     'm1'
+ DC.B     'm2'
+ DC.B     'ms'
+ DC.B     'ti'
+ DC.B     'se'
+ DC.B     'io'
+ DC.B     'pi'
+ DC.B     'fk'
+
+in1_s:
+ DC.B     'MENU ',0
+in2_s:
+ DC.B     'MOUSE ',0
+in3_s:
+ DC.B     'KBD ',0
+in4_s:
+ DC.B     'SCR ',0
+used_s:
+ DC.B     '%L Byt',$1b,'q',$d,$a,0
+     ENDIF
+
+     IF  COUNTRY=COUNTRY_FR
+info_init_s:
+ DC.B     $1b,'E',$1b,'Y',22+32,2+32         ; CLS;Pos(2,22)
+ DC.B     'cur_haut: Pr',$82,'c',$82,'dent |  '
+ DC.B     'Espace: OK       |  '
+ DC.B     'F:     Geler    |  '
+ DC.B     'C:    Contr',$93,'ler'
+ DC.B     $d,$a,'  '
+ DC.B     'cur_bas: suivant    |  '
+ DC.B     'Return: 1er plan |  '
+ DC.B     'U:     D',$82,'bloquer|  '
+ DC.B     'Del:  Arr',$88,'ter'
+ DC.B     0
+
+status_s:
+ DC.B     'pr',$88,'t ',0
+ DC.B     'atten',0
+ DC.B     'suspd',0
+ DC.B     'zmbie',0
+ DC.B     'arr',$88,'t',0
+ DC.B     'lanc',$82,0
+ DC.B     'gel',$82,' ',0
+
+ev_s:
+ DC.B     'kb'
+ DC.B     'bt'
+ DC.B     'm1'
+ DC.B     'm2'
+ DC.B     'ms'
+ DC.B     'ti'
+ DC.B     'se'
+ DC.B     'io'
+ DC.B     'pi'
+ DC.B     'fk'
+
+in1_s:
+ DC.B     'MENU ',0
+in2_s:
+ DC.B     'SOUR ',0
+in3_s:
+ DC.B     'CLAV ',0
+in4_s:
+ DC.B     'ECR ',0
+used_s:
+ DC.B     '%L Oct',$1b,'q',$d,$a,0
+     ENDIF
+
+
 
      EVEN
 
