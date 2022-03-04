@@ -3255,15 +3255,15 @@ al_aeserr:     DC.B '[3][AES call %L not implemented.][Cancel]',0
 al_sigerr:     DC.B '[3][System is out of memory!][Continue]',0
      ENDIF
      IF  COUNTRY=COUNTRY_FR
-al_ewrpro:     DC.B 2,'[1][La disquette dans le lecteur %S:|est prot',$82,'g',$82,'e en ',$82,'criture.][Abandon| R',$82,'peter ]',0
-al_edrvnr:     DC.B 2,'[2][Lecteur %S: ne r',$82,'pond pas.|V',$82,'rifiez le lecteur ou|ins',$82,'rez une disquette !][Abandon| R',$82,'peter ]',0
-al_rwfault:    DC.B 2,'[1][Donn',$82,'es sur disquette du lecteur|%S: ',$82,'ventuellement d',$82,'fectueuses.][Abandon | R',$82,'peter ]',0
-al_ereadf:     DC.B 1,'[2][Erreur de lecture sur lecteur %S:.][Abandon| R',$82,'peter ]',0
-al_ewritf:     DC.B 2,'[1][Votre p',$82,'riphique de sortie ne|re',$87,'oit pas de donn',$82,'es.][Abandon| R',$82,'peter ]',0
-al_echgab:     DC.B 1,'[3][Svp, ins',$82,'rez disquette %S |dans le lecteur A: !][  OK  ]',0
+al_ewrpro:     DC.B 2,'[1][La disquette dans le lecteur %S:|est prot',$82,'g',$82,'e en ',$82,'criture.][Annuler| R',$82,'essayer ]',0
+al_edrvnr:     DC.B 2,'[2][Le lecteur %S: ne r',$82,'pond pas.|V',$82,'rifiez le lecteur ou|ins',$82,'rez une disquette !][Annuler| R',$82,'essayer ]',0
+al_rwfault:    DC.B 2,'[1][La disquette du lecteur %S:|cemble d',$82,'fectueuse.][Annuler| R',$82,'essayer ]',0
+al_ereadf:     DC.B 1,'[2][Erreur de lecture sur lecteur %S:.][Annuler| R',$82,'essayer ]',0
+al_ewritf:     DC.B 2,'[1][Le p',$82,'riph',$82,'que de sortie ne|re',$87,'oit aucune donn',$82,'e.][Annuler| R',$82,'essayer ]',0
+al_echgab:     DC.B 1,'[3][Ins',$82,'rez la disquette %S |dans le lecteur A: !][  OK  ]',0
 
-al_aeserr:     DC.B '[3][Appel AES %L erron',$82,'.][Abandon]',0
-               ;    al_fserr:      DC.B '[1][M',$82,'moire insuffisante pour|s',$82,'lection de fichiersl!][Abandon]',0
+al_aeserr:     DC.B '[3][Appel AES %L erron',$82,'.][Annuler]',0
+               ;    al_fserr:      DC.B '[1][M',$82,'moire insuffisante pour|le s',$82,'lecteur de fichier!][Annuler]',0
 al_sigerr:     DC.B '[3][Le syst',$8a,'me n''a plus de m',$82,'moire libre!][ Suite ]',0
      ENDIF
      EVEN
@@ -3304,8 +3304,8 @@ pgm_s:    DC.B "Program returned :|",0
 err_s:    DC.B "| |(Error #%L)|][Cancel]",0
      ENDIF
     IF  COUNTRY=COUNTRY_FR
-pgm_s:    DC.B "Le programme a retourn",$82," :|",0
-err_s:    DC.B "| |(Erreur #%L)|][Abandon]",0
+pgm_s:    DC.B "R",$82,"ponse du programme:|",0
+err_s:    DC.B "| |(Erreur #%L)|][Annuler]",0
      ENDIF
      EVEN
 

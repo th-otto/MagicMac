@@ -1,7 +1,7 @@
 /*
  * resource set indices for pdlg
  *
- * created by ORCS 2.16
+ * created by ORCS 2.18
  */
 
 /*
@@ -17,7 +17,7 @@
  * Number of Trees:          10
  * Number of Userblks:       0
  * Number of Images:         35
- * Total file size:          14858
+ * Total file size:          14878
  */
 
 #undef RSC_NAME
@@ -65,30 +65,30 @@
 #define MAIN_SUBBOX                       12 /* IBOX in tree MAIN_DIALOG */
 
 #define PAGE_DIALOG                        1 /* form/dialog */
-#define PAGE_DEVICE_POPUP                  2 /* BOXTEXT in tree PAGE_DIALOG */ /* max len 30 */
-#define PAGE_QUAL_POPUP                    5 /* BOXTEXT in tree PAGE_DIALOG */ /* max len 24 */
-#define PAGE_COLOR_POPUP                   8 /* BOXTEXT in tree PAGE_DIALOG */ /* max len 15 */
+#define PAGE_DEVICE_POPUP                  2 /* BOXTEXT in tree PAGE_DIALOG */
+#define PAGE_QUAL_POPUP                    5 /* BOXTEXT in tree PAGE_DIALOG */
+#define PAGE_COLOR_POPUP                   8 /* BOXTEXT in tree PAGE_DIALOG */
 #define PAGE_ALL                          11 /* BUTTON in tree PAGE_DIALOG */
 #define PAGE_SELECT                       12 /* BUTTON in tree PAGE_DIALOG */
-#define PAGE_FROM                         13 /* FTEXT in tree PAGE_DIALOG */ /* max len 4 */
-#define PAGE_TO                           15 /* FTEXT in tree PAGE_DIALOG */ /* max len 4 */
+#define PAGE_FROM                         13 /* FTEXT in tree PAGE_DIALOG */
+#define PAGE_TO                           15 /* FTEXT in tree PAGE_DIALOG */
 #define PAGE_EVEN                         16 /* BUTTON in tree PAGE_DIALOG */
 #define PAGE_ODD                          17 /* BUTTON in tree PAGE_DIALOG */
-#define PAGE_COPIES                       18 /* FTEXT in tree PAGE_DIALOG */ /* max len 4 */
+#define PAGE_COPIES                       18 /* FTEXT in tree PAGE_DIALOG */
 
 #define PAPER_DIALOG                       2 /* form/dialog */
-#define PAPER_DEVICE_POPUP                 2 /* BOXTEXT in tree PAPER_DIALOG */ /* max len 30 */
-#define PAPER_SIZE_POPUP                   5 /* BOXTEXT in tree PAPER_DIALOG */ /* max len 13 */
-#define PAPER_QUAL_POPUP                   7 /* BOXTEXT in tree PAPER_DIALOG */ /* max len 8 */
-#define PAPER_INTRAY_POPUP                10 /* BOXTEXT in tree PAPER_DIALOG */ /* max len 13 */
-#define PAPER_OUTTRAY_POPUP               13 /* BOXTEXT in tree PAPER_DIALOG */ /* max len 13 */
-#define PAPER_SCALE                       15 /* FTEXT in tree PAPER_DIALOG */ /* max len 3 */
+#define PAPER_DEVICE_POPUP                 2 /* BOXTEXT in tree PAPER_DIALOG */
+#define PAPER_SIZE_POPUP                   5 /* BOXTEXT in tree PAPER_DIALOG */
+#define PAPER_QUAL_POPUP                   7 /* BOXTEXT in tree PAPER_DIALOG */
+#define PAPER_INTRAY_POPUP                10 /* BOXTEXT in tree PAPER_DIALOG */
+#define PAPER_OUTTRAY_POPUP               13 /* BOXTEXT in tree PAPER_DIALOG */
+#define PAPER_SCALE                       15 /* FTEXT in tree PAPER_DIALOG */
 #define PAPER_PORTRAIT                    16 /* BOX in tree PAPER_DIALOG */
 #define PAPER_LANDSCAPE                   17 /* BOX in tree PAPER_DIALOG */
 
 #define COLOR_DIALOG                       3 /* form/dialog */
-#define COLOR_DEVICE_POPUP                 2 /* BOXTEXT in tree COLOR_DIALOG */ /* max len 30 */
-#define COLOR_DITHER_POPUP                 5 /* BOXTEXT in tree COLOR_DIALOG */ /* max len 30 */
+#define COLOR_DEVICE_POPUP                 2 /* BOXTEXT in tree COLOR_DIALOG */
+#define COLOR_DITHER_POPUP                 5 /* BOXTEXT in tree COLOR_DIALOG */
 #define COLOR_CYAN                         8 /* BUTTON in tree COLOR_DIALOG */
 #define COLOR_MAGENTA                     10 /* BUTTON in tree COLOR_DIALOG */
 #define COLOR_YELLOW                      12 /* BUTTON in tree COLOR_DIALOG */
@@ -96,39 +96,39 @@
 #define COLOR_BRIGHTNESS_IMAGE            15 /* IMAGE in tree COLOR_DIALOG */
 #define COLOR_BRIGHTNESS_BAR              16 /* BOX in tree COLOR_DIALOG */
 #define COLOR_BRIGHTNESS_SLIDER           17 /* BOX in tree COLOR_DIALOG */
-#define COLOR_BRIGHTNESS_TEXT             18 /* TEXT in tree COLOR_DIALOG */ /* max len 43 */
+#define COLOR_BRIGHTNESS_TEXT             18 /* TEXT in tree COLOR_DIALOG */
 #define COLOR_CONTRAST_IMAGE              19 /* IMAGE in tree COLOR_DIALOG */
 #define COLOR_CONTRAST_BAR                20 /* BOX in tree COLOR_DIALOG */
 #define COLOR_CONTRAST_SLIDER             21 /* BOX in tree COLOR_DIALOG */
-#define COLOR_CONTRAST_TEXT               22 /* TEXT in tree COLOR_DIALOG */ /* max len 43 */
+#define COLOR_CONTRAST_TEXT               22 /* TEXT in tree COLOR_DIALOG */
 
 #define DEVICE_DIALOG                      4 /* form/dialog */
-#define DEVICE_DEVICE_POPUP                2 /* BOXTEXT in tree DEVICE_DIALOG */ /* max len 30 */
-#define DEVICE_NAME_POPUP                  5 /* BOXTEXT in tree DEVICE_DIALOG */ /* max len 30 */
+#define DEVICE_DEVICE_POPUP                2 /* BOXTEXT in tree DEVICE_DIALOG */
+#define DEVICE_NAME_POPUP                  5 /* BOXTEXT in tree DEVICE_DIALOG */
 #define DEVICE_BACKGROUND                  8 /* BUTTON in tree DEVICE_DIALOG */
 #define DEVICE_FOREGROUND                  9 /* BUTTON in tree DEVICE_DIALOG */
 
 #define DITHER_DIALOG                      5 /* form/dialog */
-#define DITHER_DEVICE_POPUP                2 /* BOXTEXT in tree DITHER_DIALOG */ /* max len 30 */
-#define DITHER_DITHER_POPUP                5 /* BOXTEXT in tree DITHER_DIALOG */ /* max len 16 */
-#define DITHER_COLOR_POPUP                 8 /* BOXTEXT in tree DITHER_DIALOG */ /* max len 16 */
+#define DITHER_DEVICE_POPUP                2 /* BOXTEXT in tree DITHER_DIALOG */
+#define DITHER_DITHER_POPUP                5 /* BOXTEXT in tree DITHER_DIALOG */
+#define DITHER_COLOR_POPUP                 8 /* BOXTEXT in tree DITHER_DIALOG */
 #define DITHER_BACKGROUND                 11 /* BUTTON in tree DITHER_DIALOG */
 #define DITHER_FOREGROUND                 12 /* BUTTON in tree DITHER_DIALOG */
 
 #define EMPTY_DIALOG                       6 /* unknown form */
 
 #define SUBDLG_ICONS                       7 /* unknown form */
-#define ICON_GENERAL                       1 /* ICON in tree SUBDLG_ICONS */ /* max len 12 */
-#define ICON_PAPER                         2 /* ICON in tree SUBDLG_ICONS */ /* max len 12 */
-#define ICON_DITHER                        3 /* ICON in tree SUBDLG_ICONS */ /* max len 12 */
-#define ICON_DEVICE                        4 /* ICON in tree SUBDLG_ICONS */ /* max len 12 */
-#define ICON_OPTIONS                       5 /* ICON in tree SUBDLG_ICONS */ /* max len 12 */
-#define ICON_PORTRAIT                      6 /* ICON in tree SUBDLG_ICONS */ /* max len 1 */
-#define ICON_LANDSCAPE                     7 /* ICON in tree SUBDLG_ICONS */ /* max len 1 */
+#define ICON_GENERAL                       1 /* ICON in tree SUBDLG_ICONS */
+#define ICON_PAPER                         2 /* ICON in tree SUBDLG_ICONS */
+#define ICON_DITHER                        3 /* ICON in tree SUBDLG_ICONS */
+#define ICON_DEVICE                        4 /* ICON in tree SUBDLG_ICONS */
+#define ICON_OPTIONS                       5 /* ICON in tree SUBDLG_ICONS */
+#define ICON_PORTRAIT                      6 /* ICON in tree SUBDLG_ICONS */
+#define ICON_LANDSCAPE                     7 /* ICON in tree SUBDLG_ICONS */
 
 #define CICON_DIALOG                       8 /* form/dialog */
-#define CICON_PORTRAIT                     1 /* CICON in tree CICON_DIALOG */ /* max len 1 */
-#define CICON_LANDSCAPE                    2 /* CICON in tree CICON_DIALOG */ /* max len 1 */
+#define CICON_PORTRAIT                     1 /* CICON in tree CICON_DIALOG */
+#define CICON_LANDSCAPE                    2 /* CICON in tree CICON_DIALOG */
 
 #define RADIOBUTTONS_DIALOG                9 /* unknown form */
 #define RADIO_LARGE_SELECTED               1 /* IMAGE in tree RADIOBUTTONS_DIALOG */

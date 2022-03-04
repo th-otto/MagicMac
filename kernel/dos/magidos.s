@@ -11500,17 +11500,17 @@ diskerr_s2: DC.B  ':',$d,$a,'[A]bort, [R]etry, [I]gnore ? ',0
 
 out_of_int_mem:
  DC.B   '*** PLUS DE M',$90,'MOIRE INTERNE:',$1b,'K',$d,$a
- DC.B   '*** UTILISER ADDMEM.PRG!',0
+ DC.B   '*** UTILISEZ ADDMEM.PRG!',0
 dos_fatal_errs:
- DC.B   '*** ERREUR FATALE DANS GEMDOS:',0
+ DC.B   '*** ERREUR GEMDOS FATALE:',0
 
-err_1s:  DC.B   'Erreur grave',0
+err_1s:  DC.B   'Erreur fatale',0
 err_02s: DC.B   'Lecteur non disponible',0
 err_03s: DC.B   'Commande inconnue',0
-err_04s: DC.B   'Erreur-CRC',0
+err_04s: DC.B   'Erreur CRC',0
 err_05s: DC.B   'Commande erron',$82,'e',0
 err_06s: DC.B   'Piste non trouv',$82,'e',0
-err_07s: DC.B   'Support inconnu',0
+err_07s: DC.B   'M',$82,'dia inconnu',0
 err_08s: DC.B   'Secteur non trouv',$82,'',0
 err_09s: DC.B   'Pas de papier',0
 err_10s: DC.B   "Erreur d'",$82,"criture",0
@@ -11520,7 +11520,7 @@ err_13s: DC.B   'Disque prot',$82,'g',$82,' en ',$82,'criture',0
 err_14s: DC.B   '',$90,'change de disque non autoris',$82,'',0
 err_15s: DC.B   'P',$82,'riph',$82,'rique inconnu',0
 err_16s: DC.B   'Secteurs d',$82,'fectueux',0
-err_17s: DC.B   'Ins',$82,'rer un autre disque!',0
+err_17s: DC.B   'Ins',$82,'rez un autre disque!',0
 
 err_32s: DC.B   'Num',$82,'ro de fonction non valable',0
 err_33s: DC.B   'Fichier non trouv',$82,'',0
@@ -11530,15 +11530,15 @@ err_36s: DC.B   'Acc',$8a,'s refus',$82,'',0
 err_37s: DC.B   'Handle non valable',0
 err_39s: DC.B   'M',$82,'moire insuffisante',0
 err_40s: DC.B   'Bloc de m',$82,'moire non valable',0
-err_46s: DC.B   'Lecteur non valalble',0
+err_46s: DC.B   'Lecteur non valable',0
 err_48s: DC.B   "Ce n'est pas le m",$88,"me lecteur",0
-err_49s: DC.B   "Pas d'autres fichiers",0
+err_49s: DC.B   "Pas d'autre fichier",0
 err_58s: DC.B   'P',$82,'riph',$82,'rique verrouill',$82,'',0
-err_59s: DC.B   'Erreur-Unlock',0
+err_59s: DC.B   'Erreur Unlock',0
 err_64s: DC.B   'Zone erron',$82,'e',0
 err_65s: DC.B   'Erreur interne',0
 err_66s: DC.B   'Fichier non ex',$82,'cutable',0
-err_67s: DC.B   'Erreur-Mshrink',0
+err_67s: DC.B   'Erreur Mshrink',0
 err_68s: DC.B   "Abandon par l'utilisateur",0   * KAOS
 err_69s: DC.B   'Exception 68000',0             * KAOS
 err_70s: DC.B   'Chemin trop profond',0         * MAGIX
@@ -11546,10 +11546,10 @@ err_80s: DC.B   'Alias trop imbriqu',$82,'s',0            * MINT
 toserrs: DC.B   'Erreur TOS',0
 
 
-change_s1:  DC.B  'Svp, placer disque ',0
-change_s2:  DC.B  ': dans lecteur A: !',0
-diskerr_s1: DC.B  ' dans lecteur ',0
-diskerr_s2: DC.B  ':',$d,$a,'[A]bandon, [R]ecommencer, [I]gnorer ? ',0
+change_s1:  DC.B  'Ins',$82,'rez le disque ',0
+change_s2:  DC.B  ': dans le lecteur A: !',0
+diskerr_s1: DC.B  ' dans le lecteur ',0
+diskerr_s2: DC.B  ':',$d,$a,'[A]nnuler, [R]ecommencer, [I]gnorer ? ',0
 
     ENDC
 

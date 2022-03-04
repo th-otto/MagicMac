@@ -789,14 +789,14 @@ system_halted:    DC.B  'System is halted.',13,10,0
  ENDIF
  IF   COUNTRY=COUNTRY_FR
 no_offscreen_drivers:
-                  DC.B  'Offscreen-driver not found.',13,10
-                  DC.B  'Executing MCMD...',13,10,0
+                  DC.B  'Pilote hors ',$82,'cran non trouv',$82,'.',13,10
+                  DC.B  'Ex',$82,'cution de MCMD...',13,10,0
 
 no_screen_driver:
-                  DC.B  'Screen-driver not found.',13,10
-                  DC.B  'Executing MCMD...',13,10,0
+                  DC.B  'Pilote ',$82,'cran non trouv',$82,'.',13,10
+                  DC.B  'Ex',$82,'cution de MCMD...',13,10,0
 
-system_halted:    DC.B  'System is halted.',13,10,0
+system_halted:    DC.B  'Le syst',$8a,'me est arr',$88,'t',$82,'.',13,10,0
  ENDIF
 
 empty_cmd:        DC.B  0

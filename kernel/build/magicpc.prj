@@ -24,7 +24,7 @@ magic_pc.os
 .L[-S=0]
 .L[-T=$E00000]
 .L[-B=0]
-;.L[-binary] ; requires patched PC.PRG/PLINK.TTP
+.L[-binary] ; requires patched PC.PRG/PLINK.TTP
 =
 ..\bios\atari\magibios.s
 ..\bios\atari\xfs95\xfs95ini.s

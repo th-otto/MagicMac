@@ -3817,7 +3817,7 @@ allein_s: DC.B '  R',$82,'afficher tout    ',0
 strich_s: DC.B '-----------------------',0
 aufr_s:   DC.B "  Ranger l'",$82,"cran",0
 laden_s:  DC.B '  Lancer programme...',0
-bytes_s:  DC.B '  %L kBytes libres',0
+bytes_s:  DC.B '  %L Ko libres',0
 fsel_ldp: DC.B 'Ex',$82,'cuter programme en parall',$8A,'le:',0
 fsel_ldo: DC.B 'Ex',$82,'cuter programme:',0
      ENDIF
@@ -7872,10 +7872,10 @@ fatal_wins:    DC.B      '*** FATAL ERROR IN WINDOW MANAGER:',0
 fatal_stack_s: DC.B      '*** SYSTEM STACK OVERFLOW:',0
      ENDIF
      IF   COUNTRY=COUNTRY_FR
-fatal_errs:    DC.B      "*** ERREUR FATALE DANS L'AES:",0
-fatal_win_mems:DC.B      '*** ZUWENIG SPEICHER IN FENSTERVERWALTUNG:',0
-fatal_wins:    DC.B      '*** FATALER FEHLER IN FENSTERVERWALTUNG:',0
-fatal_stack_s: DC.B      '*** D',$90,'BORDEMENT DES PILES SYSTEMES:',0
+fatal_errs:    DC.B      '*** ERREUR FATALE DANS L',$27,'AES:',0
+fatal_win_mems:DC.B      '*** GESTION DES FENETRES-RAM INSUFFISANTE:',0
+fatal_wins:    DC.B      '*** GESTION DEs FENETRES-ERREUR FATALE:',0
+fatal_stack_s: DC.B      '*** D',$90,'BORDEMENT DE LA PILE SYSTEME:',0
      ENDIF
      EVEN
 

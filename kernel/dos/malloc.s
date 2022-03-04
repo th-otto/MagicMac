@@ -2155,7 +2155,7 @@ do_term_s:
     IF  COUNTRY=COUNTRY_FR
 
 mem_fatal_errs:
- DC.B   '*** ERREUR FATALE DANS LA GESTION DE MEMOIR:',0
+ DC.B   '*** ERREUR FATALE DE GESTION DE MEMOIRE:',0
 mem_err_s:
  DC.B   '*** BLOC M',$90,'MOIRE D',$90,'TRUIT PAR PROGRAMME UTILISATEUR:',$1b,'K'
  DC.B   $d,$a,$1b,'K',$a,0
@@ -2164,9 +2164,9 @@ adrmcb_s:
 datmcb_s:
  DC.B   'Donn',$82,'es  du MCB: ',$1b,'K',0
 do_dump_s:
- DC.B   $d,$a,$1b,'K',$a,'Rel',$8a,'ve du syst',$8a,'me sur disque: ',$1b,'K',$1b,'e',0
+ DC.B   $d,$a,$1b,'K',$a,'Clich',$82,' du syst',$8a,'me sur disque: ',$1b,'K',$1b,'e',0
 do_repair_s:
- DC.B   $d,$a,$1b,'K',$a,'Essai de r',$82,'parer (o/n) ? ',$1b,'K',$1b,'e',0; TPAK o=oui/ n=non
+ DC.B   $d,$a,$1b,'K',$a,'Essayer de r',$82,'parer (o/n) ? ',$1b,'K',$1b,'e',0; TPAK o=oui/ n=non
 do_term_s:
  DC.B   $d,$a,$1b,'K',$a,'Le programme sera termin',$82,'',$d,$a,$1b,'K',$1b,'e',0
 
