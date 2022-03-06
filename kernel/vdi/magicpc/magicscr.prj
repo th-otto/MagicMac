@@ -1,0 +1,12 @@
+magicscr.prg
+
+.S[-S]
+
+.L [-S=8000]			;Stacksize 8k
+;.L[-F-]
+;.L[-R-]
+.L[-M] ; must not malloc from TT ram
+
+=
+
+magicscr.s
