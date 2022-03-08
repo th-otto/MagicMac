@@ -1,0 +1,11 @@
+nfpc32k.sys
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+nfpc32k.s

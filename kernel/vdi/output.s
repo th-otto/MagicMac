@@ -1700,7 +1700,7 @@ vfill_ssave2:
 	addq.w     #1,d4
 
 /*
- * gefuelltes Polygon zeichenen
+ * gefuelltes Polygon zeichnen
  * Eingaben:
  * d4.w Punktanzahl -1
  * d5.w minimale y-Koordinte
@@ -2240,7 +2240,7 @@ fsearch_mm_next2:
 	rts
 
 /*
- * gefuelltes Polygon ueber VDI-Treiber zeichenen
+ * gefuelltes Polygon ueber VDI-Treiber zeichnen
  * Eingaben:
  * d4.w Punktanzahl -1
  * d5.w minimale y-Koordinte

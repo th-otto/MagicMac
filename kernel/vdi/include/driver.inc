@@ -58,6 +58,11 @@ _nvdi_get_FIF_path      EQU 188
 _nvdi_get_INF_name      EQU 192
 _nvdi_vdi_setup_ptr     EQU 196
 _nvdi_vdi_exit          EQU 200
+/* below only present in NVDI 5.x */
+_nvdi_create_ctab       EQU 300
+_nvdi_create_itab       EQU 304
+_nvdi_color2pixel       EQU 308
+_nvdi_color2value       EQU 312
 
 _sf_no_font_hdr     EQU 0                   ;Anzahl der Systemfontheader
 _sf_font_hdr_ptr    EQU 2                   ;Adresse der hintereinanderliegenden Systemfont-Header
@@ -180,3 +185,16 @@ sizeof_BM_FONT:
 FONT_DYNAMIC        EQU 1                       ;Font dynamisch verwalten
 FONT_RESIDENT       EQU 2                       ;Font resident verwalten
 FONT_SYSTEM         EQU 3                       ;Font als Systemfont verwalten
+
+; COLOR_TAB
+                    OFFSET 0
+ctab_magic:         ds.l 1
+ctab_length:        ds.l 1
+ctab_format:        ds.l 1
+                    ds.l 1 ; reserved
+ctab_map_id:        ds.l 1
+ctab_color_space:   ds.l 1
+ctab_flags:         ds.l 1
+ctab_no_colors:     ds.l 1
+                    ds.l 4 ; reserved
+ctab_colors:

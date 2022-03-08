@@ -146,10 +146,8 @@ struct _wk {
 	/* 234 */ short m_width;		/* marker width */
 	/* 236 */ short m_height;		/* marker height */
 	/* 238 */ void *m_data;			/* pointer to marker data */
-	/* 242 */ short free242;
-	/* 244 */ short free244;
-	/* 246 */ short free246;
-	/* 248 */ short free248;
+	/* 242 */ long r_fg_pixel;      /* foreground pixel value */
+	/* 246 */ long r_bg_pixel;      /* background pixel value */
 	/* 250 */ short t_number;		/* font number */
 	/* 252 */ char t_font_type;     /* type of font */
 	          char free253;
@@ -264,7 +262,7 @@ struct _wk {
 	/* 556 */ void *p_get_color_rgb;
 	/* 560 */ void *p_vdi_to_color;
 	/* 564 */ void *p_color_to_vdi;
-	          long free568;
+	/* 568 */ void *p_unknown1;
 	          long free572;
 	          long free576;
 	/* 580 */ void *p_gtext;
@@ -272,7 +270,32 @@ struct _wk {
 	          long free588;
 	          long free592;
 	/* 596 */ void *wk_owner;       /* pointer to owning application */
-	/* 600 WK_LENGTH */
+	/* 600 WK_LENGTH of NVDI 3.x */
+	
+	/* 600 */ void *free600;
+	/* 604 */ void *free604;
+	/* 608 */ long free608;
+	/* 612 */ long wk_px_format;
+	/* 616 */ void *free616;
+	/* 620 */ void *free620;
+	/* 624 */ void *free624;
+	/* 628 */ void *free628;
+	/* 632 */ COLOR_TAB *wk_ctab;
+	/* 636 */ ITAB_REF wk_itab;
+
+	/* 640 */ void *free640;
+	/* 644 */ void *free644;
+
+    /* 648 */ COLOR_ENTRY t_fg_colorrgb; /* text color fg */
+    /* 656 */ COLOR_ENTRY t_bg_colorrgb; /* text color bg */
+    /* 664 */ COLOR_ENTRY f_fg_colorrgb; /* fill color fg */
+    /* 672 */ COLOR_ENTRY f_bg_colorrgb; /* fill color bg */
+    /* 680 */ COLOR_ENTRY l_fg_colorrgb; /* line color fg */
+    /* 688 */ COLOR_ENTRY l_bg_colorrgb; /* line color bg */
+    /* 696 */ COLOR_ENTRY m_fg_colorrgb; /* marker color fg */
+    /* 704 */ COLOR_ENTRY m_bg_colorrgb; /* marker color bg */
+    /* 712 */ COLOR_ENTRY r_fg_colorrgb; /* raster color fg */
+    /* 720 */ COLOR_ENTRY r_bg_colorrgb; /* raster color bg */
 };
 
 #define FORM_ID_STANDARD    0
@@ -316,8 +339,7 @@ typedef struct {
 	/*  86 */ short blitter;
 	/*  88 */ short modecode;
 	/*  90 */ short xbios_res;
-	/*  92 */ short nvdi_cookie_CPU;
-	/*  94 */ short nvdi_cpu_type;
+	/*  92 */ long nvdi_cookie_CPU;
 	/*  96 */ long nvdi_cookie_VDO;
 	/* 100 */ long nvdi_cookie_MCH;
 	/* 104 */ short first_device;
@@ -345,10 +367,73 @@ typedef struct {
 	/* 184 */ void (*get_caches)(long *acache, long *bcache, long *fcache, long *kcache, long *wcache, long *res);
 	/* 188 */ short (*get_FIF_path)(char *path);
 	/* 192 */ short (*get_INF_name)(char *name);
+	/* below only present in NVDI >= 3.02 */
 	/* 196 */ void *vdi_setup_ptr;
 	/* 200 */ void (*vdi_exit)(void);
-	/* 204 */ long free204[31];
-	/* 296 */
+	/* 204 */ void (*unknown204)(void);
+	/* 208 */ void (*unknown208)(void);
+	/* below only present in NVDI >= 4.x */
+	/* 212 */ void (*unknown212)(void);
+	/* 216 */ void (*unknown216)(void);
+	/* 220 */ void (*unknown220)(void);
+	/* 224 */ void (*unknown224)(void);
+	/* 228 */ void (*unknown228)(void);
+	/* 232 */ void (*unknown232)(void);
+	/* 236 */ void (*unknown236)(void);
+	/* 240 */ void (*unknown240)(void);
+	/* 244 */ void (*unknown244)(void);
+	/* 248 */ void (*unknown248)(void);
+	/* 252 */ void (*unknown252)(void);
+	/* 256 */ void (*unknown256)(void);
+	/* 260 */ void (*unknown260)(void);
+	/* 264 */ void (*unknown264)(void);
+	/* 268 */ void (*unknown268)(void);
+	/* 272 */ void (*unknown272)(void);
+	/* below only present in NVDI >= 5.x */
+	/* 276 */ void (*unknown276)(void);
+	/* 280 */ void (*unknown280)(void);
+	/* 284 */ void (*unknown284)(void);
+	/* 288 */ void (*unknown288)(void);
+	/* 292 */ void (*unknown292)(void);
+	/* 296 */ void (*unknown296)(char *);
+	/* 300 */ COLOR_TAB *(*create_ctab)(long color_space, long px_format);
+	/* 304 */ ITAB_REF (*create_itab)(COLOR_TAB *ctab, short bits);
+	/* 308 */ long (*color2pixel)(COLOR_ENTRY *rgb, COLOR_TAB *ctab, short color, long px_format);
+	/* 312 */ long (*color2value)(COLOR_ENTRY *rgb, COLOR_TAB *ctab, short color, long px_format);
+	/* 316 */ void (*unknown316)(void);
+	/* 320 */ void (*unknown320)(void);
+	/* 324 */ void (*unknown324)(void);
+	/* 328 */ long unknown328;
+	/* 332 */ void (*unknown332)(void);
+	/* 336 */ void (*unknown336)(void);
+	/* 340 */ void (*unknown340)(void);
+	/* 344 */ void (*unknown344)(void);
+	/* 348 */ long unknown348;
+	/* 352 */ long unknown352;
+	/* 356 */ void (*unknown356)(void);
+	/* 360 */ void (*unknown360)(void);
+	/* 364 */ void (*unknown364)(void);
+	/* 368 */ void (*unknown368)(void);
+	/* 372 */ void (*unknown372)(void);
+	/* 376 */ void (*unknown376)(void);
+	/* 380 */ void (*unknown380)(void);
+	/* 384 */ void (*unknown384)(void);
+	/* 388 */ void (*unknown388)(void);
+	/* 392 */ void (*unknown392)(void);
+	/* 396 */ void (*unknown396)(void);
+	/* 400 */ void (*unknown400)(void);
+	/* 404 */ void (*unknown404)(void);
+	/* 408 */ void (*unknown408)(void);
+	/* 412 */ void (*unknown412)(void);
+	/* 416 */ void (*unknown416)(void);
+	/* 420 */ void (*unknown420)(void);
+	/* 424 */ void (*unknown424)(void);
+	/* 428 */ void (*unknown428)(void);
+	/* 432 */ void (*unknown432)(void);
+	/* 436 */ void (*unknown436)(void);
+	/* 440 */ void (*unknown440)(void);
+	/* 444 */ void (*unknown444)(void);
+	/* 448 */
 } NVDI_STRUCT;
 
 extern NVDI_STRUCT nvdi_struct;

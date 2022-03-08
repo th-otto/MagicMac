@@ -2593,7 +2593,7 @@ textblt_color:    clr.w    r_bgcol(a6)
 ;d3.w yz
 ;d4.w dx
 ;d5.w dy
-;a6.l r_wmode, r_fgcol, r_bgcol, r_saddr, r_daddr, r_swidth, r_wwidth, r_dplanes
+;a6.l r_wmode, r_fgcol, r_bgcol, r_saddr, r_daddr, r_swidth, r_dwidth, r_dplanes
 expblt:           movea.l  r_saddr(a6),a0
                   movea.l  r_daddr(a6),a1
                   movea.w  r_swidth(a6),a2

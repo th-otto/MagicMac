@@ -16,12 +16,12 @@ MAX_PTS           EQU 1024                ;Maximale Anzahl der Koordinatenpaare 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 		OFFSET 0
-disp_addr1:    ds.l 1 /* pointer to NVDI-Dispatcher */
-disp_addr2:    ds.l 1 /* pointer to Treiber-Dispatcher */
+disp_addr1:    ds.l 1 /* pointer to VDI dispatcher; called from VDI trap entry */
+disp_addr2:    ds.l 1 /* pointer to actual driver-dispatcher */
 wk_handle:     ds.w 1 /* workstation handle */
+driver_id:     ds.w 1 /* device ID */
 
 /* coordinate system */
-driver_id:     ds.w 1 /* device ID */
 pixel_width:   ds.w 1 /* width of a pixel in micro meter */
 pixel_height:  ds.w 1 /* height of a pixel in micro meter */
 res_x:         ds.w 1 /* raster width -1 */
@@ -129,10 +129,8 @@ m_type:        ds.w 1 /* marker type */
 m_width:       ds.w 1 /* marker width */
 m_height:      ds.w 1 /* marker height */
 m_data:        ds.l 1 /* pointer to marker data */
-               ds.w 1
-               ds.w 1
-               ds.w 1
-               ds.w 1
+r_fg_pixel:    ds.l 1
+r_bg_pixel:    ds.l 1
 t_number:      ds.w 1 /* font number */
 t_font_type:   ds.b 1 /* type of font */
 		       ds.b 1
@@ -252,12 +250,14 @@ p_set_color_rgb:ds.l 1
 p_get_color_rgb:ds.l 1
 p_vdi_to_color:ds.l 1
 p_color_to_vdi:ds.l 1
-               ds.l 3
+p_unknown1:    ds.l 1
+               ds.l 2
 p_gtext:       ds.l 1
 p_escapes:     ds.l 1
                ds.w 4
 wk_owner:      ds.l 1 /* pointer to owning application */
 WK_LENGTH:
+WK_LENGTH_300:
 
 WK_SIZE equ WK_LENGTH+(2*MAX_PTS)
 

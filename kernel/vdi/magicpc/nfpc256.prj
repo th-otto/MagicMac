@@ -1,0 +1,11 @@
+nfpc256.sys
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+nfpc256.s

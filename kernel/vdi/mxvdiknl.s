@@ -223,7 +223,6 @@ modecode:         DS.W 1                  ;.w Falcon-modecode
 resolution:       DS.W 1                  ;XBIOS-Aufloesung + 1 fuer v_opnwk
 
 nvdi_cookie_CPU:  DS.L 1
-nvdi_cpu_type equ nvdi_cookie_CPU+2
 nvdi_cookie_VDO:  DS.L 1                  ;Videohardware
 nvdi_cookie_MCH:  DS.L 1
 first_device:     DS.W 1                  ;Nummer des allerersten Geraets
@@ -471,7 +470,7 @@ Mfree: ; not exported!
                   movem.l  (sp)+,d1-d2/a0-a2
                   rts
 
-clear_cpu_caches: move.w   nvdi_cpu_type,d0        ;CPU-Kennung
+clear_cpu_caches: move.w   nvdi_cookie_CPU+2,d0        ;CPU-Kennung
                   cmp.w    #40,d0
                   blt.s    clear_cpu030
                   move.w   sr,-(sp)                ;Statusregister sichern
@@ -1696,7 +1695,6 @@ dummy_rte:        rte
 ; 000019D8: modecode
 ; 000019DA: resolution
 ; 000019DC: nvdi_cookie_CPU
-; 000019de: nvdi_cpu_type
 ; 000019E0: nvdi_cookie_VDO
 ; 000019E4: nvdi_cookie_MCH
 ; 000019E8: first_device
