@@ -1,0 +1,11 @@
+xvga2.sys
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+xvga2.s

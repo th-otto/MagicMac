@@ -276,7 +276,10 @@ enum montypes {STmono=0, STcolor, VGAcolor, TVcolor};
 
 short  __XBIOS(0x05) VsetScreen(void *lscrn, void *pscrn, short rez, short mode);
 short  __XBIOS(0x58) VsetMode(short mode);
+short  __XBIOS(0x58) Vsetmode(short mode); /* alias */
 short  __XBIOS(0x59) VgetMonitor(void);
+short  __XBIOS(0x59) Vgetmonitor(void); /* alias */
+short  __XBIOS(0x59) mon_type(void); /* alias */
 void   __XBIOS(0x5a) VsetSync(short ext);
 long   __XBIOS(0x5b) VgetSize(short mode);
 void   __XBIOS(0x5d) VsetRGB(short index, short count, long *array);

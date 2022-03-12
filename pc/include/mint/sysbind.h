@@ -330,7 +330,9 @@ __BEGIN_DECLS
 #define EsetGray(a) (short)trap_14_ww(0x56,(short)(a))
 #define EsetSmear(a) (short)trap_14_ww(0x57,(short)(a))
 #define VsetMode(a) (short)trap_14_ww(0x58,(short)(a))
+#define Vsetmode(a) (short)trap_14_ww(0x58,(short)(a)) /* alias */
 #define VgetMonitor() (short)trap_14_w(0x59)
+#define Vgetmonitor() (short)trap_14_w(0x59) /* alias */
 #define VsetSync(a) (void)trap_14_ww(0x5a,(short)(a))
 #define VgetSize(a) (long)trap_14_ww(0x5b,(short)(a))
 #define VsetRGB(a,b,c) (void)trap_14_wwwl(0x5d,(short)(a),(short)(b),(long)(c))

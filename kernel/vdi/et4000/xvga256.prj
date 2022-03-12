@@ -1,0 +1,11 @@
+xvga256.sys
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+xvga256.s

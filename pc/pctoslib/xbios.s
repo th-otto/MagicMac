@@ -100,10 +100,11 @@
 				GLOBL	Dsp_HStat
 				GLOBL	Dsp_SetVectors
 				
-				GLOBL	Vsetmode
 				GLOBL	VsetMode
+				GLOBL	Vsetmode
 				GLOBL	Montype
 				GLOBL	VgetMonitor
+				GLOBL	Vgetmonitor
 				GLOBL	VsetSync
 				GLOBL	VgetSize
 				GLOBL	VsetRGB
@@ -1116,6 +1117,7 @@ VsetMode:
 				
 				MODULE	Montype
 VgetMonitor:
+Vgetmonitor:
 				pea		(a2)
 				move.w	#89,-(a7)
 				CALLXBIOS
