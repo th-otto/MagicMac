@@ -1,6 +1,11 @@
+#ifdef __PUREC__
 #include <portab.h>
-#include <aes.h>
 #include <tos.h>
+#include <aes.h>
+#else
+#include <gemx.h>
+#include <osbind.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
@@ -8,7 +13,7 @@
 
 
 
-WORD simple_popup(OBJECT *tree, WORD obj_index, const char*const *names, WORD num_names, WORD selected)
+WORD simple_popup(OBJECT *tree, WORD obj_index, const char *const *names, WORD num_names, WORD selected)
 {
 	OBJECT *obj;
 	WORD i;
@@ -18,11 +23,11 @@ WORD simple_popup(OBJECT *tree, WORD obj_index, const char*const *names, WORD nu
 	obj = &tree[obj_index];
 	for (i = maxlen = 0; i < num_names; i++)
 	{
-		size_t len = strlen(names[i]);
+		WORD len = (WORD)strlen(names[i]);
 		if (len > maxlen)
 			maxlen = (WORD)len;
 	}
-	newtree = Malloc((num_names * 2 + 1) * sizeof(OBJECT));
+	newtree = (OBJECT *)Malloc((num_names * 2 + 1) * sizeof(OBJECT));
 	if (newtree != NULL)
 	{
 		OBJECT *o;
@@ -36,16 +41,16 @@ WORD simple_popup(OBJECT *tree, WORD obj_index, const char*const *names, WORD nu
 		o = newtree;
 		o->ob_next = NIL;
 		o->ob_type = G_BOX;
-		o->ob_state = SHADOWED;
+		o->ob_state = OS_SHADOWED;
 		o->ob_spec.index = 0xff1000L;
-		o->ob_flags = FL3DBAK;
+		o->ob_flags = OF_FL3DBAK;
 		if (num_names > 0)
 		{
 			o->ob_head = 1;
 			o->ob_tail = (num_names * 2) - 1;
 		} else
 		{
-			o->ob_flags |= LASTOB;
+			o->ob_flags |= OF_LASTOB;
 			o->ob_head = o->ob_tail = NIL;
 		}
 		o->ob_width = maxlen;
@@ -60,10 +65,10 @@ WORD simple_popup(OBJECT *tree, WORD obj_index, const char*const *names, WORD nu
 			else
 				o->ob_next = ROOT;
 			o->ob_head = o->ob_tail = i * 2;
-			o->ob_flags = FL3DBAK|SELECTABLE;
+			o->ob_flags = OF_FL3DBAK|OF_SELECTABLE;
 			o->ob_type = G_IBOX;
 			o->ob_spec.index = 0;
-			o->ob_state = NORMAL;
+			o->ob_state = OS_NORMAL;
 			o->ob_width = maxlen;
 			o->ob_height = gl_hchar;
 			o->ob_x = 0;
@@ -71,17 +76,17 @@ WORD simple_popup(OBJECT *tree, WORD obj_index, const char*const *names, WORD nu
 			if ((selected + 1) == i)
 			{
 				sel_y = y;
-				o->ob_state |= CHECKED;
+				o->ob_state |= OS_CHECKED;
 			}
 			o++;
-			o->ob_next = (i * 2) - 1;
+			o->ob_next = i * 2 - 1;
 			o->ob_head = o->ob_tail = NIL;
-			o->ob_flags = NONE;
+			o->ob_flags = OF_NONE;
 			if (i == num_names)
-				o->ob_flags |= LASTOB;
+				o->ob_flags |= OF_LASTOB;
 			o->ob_type = G_STRING;
 			o->ob_spec.free_string = (char *)names[i - 1];
-			o->ob_state = NORMAL;
+			o->ob_state = OS_NORMAL;
 			o->ob_width = 0;
 			o->ob_height = gl_hchar;
 			o->ob_x = gl_wchar * 2;
