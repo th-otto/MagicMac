@@ -16,6 +16,7 @@ VERSION           EQU $0500
 .INCLUDE "..\include\nvdi_wk.inc"
 .INCLUDE "..\include\vdi.inc"
 .INCLUDE "..\include\driver.inc"
+.INCLUDE "nvdipc.inc"
 
 DRV_PLANES = 8
 
@@ -1966,20 +1967,20 @@ load_nvdipc_inf1:
 		movea.l    a0,a2
 		move.l     a2,d0
 		beq.s      load_nvdipc_inf4
-		lea.l      48(a2),a3
+		lea.l      nvdipc_modes(a2),a3
 		move.w     d3,d1
 		ext.l      d1
 		add.l      d1,d1
-		move.w     16(a2,d1.l),d2
+		move.w     nvdipc_defmode(a2,d1.l),d2
 		bmi.s      load_nvdipc_inf2
 		ext.l      d2
 		move.l     d2,d0
 		lsl.l      #2,d0
 		add.l      d2,d0
 		add.l      d0,d0
-		adda.l     d0,a3
-		move.w     6(a3),(a4) /* x_res */
-		move.w     8(a3),2(a4) /* y_res */
+		adda.l     d0,a3 /* d0 = mode number * 10 sizeof(nvdipcmode) */
+		move.w     nvdipcmode_xres(a3),(a4)
+		move.w     nvdipcmode_yres(a3),2(a4)
 		bra.s      load_nvdipc_inf3
 load_nvdipc_inf2:
 		move.w     #640-1,(a4)
