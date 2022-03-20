@@ -1653,9 +1653,9 @@ Bios_user:
    add.w    d0,d0
    move.l   (a1,d0.w),a1      ;Adresse der Biosroutine holen
    jmp      (a1)
-exit_bios:
 not_implemented:
    lsr.w    #2,d0          ; Damit d0 == opcode
+exit_bios:
 dummy_rte:
    rte
 
@@ -2348,7 +2348,7 @@ Cursconf:
 
 _Cursconf:
  DC.W     $a000
- lea      -6(a0),a4
+ lea      -6(a0),a4 ; V_STAT_0
  move.w   4(sp),d0
  cmp.w    #7,d0
  bhi.b    ccnf_err
@@ -2375,19 +2375,19 @@ ccnf_noblink:
  bclr     #0,(a4)
  rts
 ccnf_setrate:
- move.b   7(sp),-$12(a4)
+ move.b   7(sp),-$12(a4) ; V_PERIOD
  rts
 ccnf_getrate:
  moveq    #0,d0
- move.b   -$12(a4),d0
+ move.b   -$12(a4),d0 ; V_PERIOD
  rts
 ccnf_setdelay:
  move.b   7(sp),d0
- move.b   d0,1(a4)
+ move.b   d0,1(a4) ; V_DELAY
  rts
 ccnf_getdelay:
  moveq    #0,d0
- move.b   1(a4),d0
+ move.b   1(a4),d0 ; V_DELAY
  rts
 
 

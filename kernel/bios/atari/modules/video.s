@@ -549,11 +549,15 @@ exit_Esetsmear:
 ;a0.l Zeiger auf die Parameter
 ;Ausgaben:
 ;d0.w modecode
-Vsetmode:           move.w    modecode.w,-(sp)
+Vsetmode:           moveq #88,d0
+                    cmpi.b #4,machine_type
+                    bne.s Vsetmode_exit2
+                    move.w    modecode.w,-(sp)
                               move.w    (a0),d0                       ;Modus nur zurueckliefern?
                               bmi.s          Vsetmode_exit
                               bsr.s          falcon_vmode
 Vsetmode_exit:      move.w    (sp)+,d0                      ;alter modecode
+Vsetmode_exit2:
                               rte
 
                               
@@ -919,10 +923,14 @@ sm2_640_400:        DC.W 1001, 999,   0, 0,67, 867, 26, 20,  0,  0,527, 12,0,0, 
 ;a0.l Zeiger auf die Parameter
 ;Ausgaben:
 ;d0.w monitor
-mon_type:           move.b    MON_ID.w,d0
+mon_type:           moveq #89,d0
+                    cmpi.b #4,machine_type
+                    bne.s mon_type_exit
+                    move.b    MON_ID.w,d0
                               lsr.w          #6,d0
                               and.w          #3,d0               ;Monitortyp
                               move.w    d0,monitor
+mon_type_exit:
                               rte
 
 ;void     VsetSync( WORD external ) (XBIOS 90)

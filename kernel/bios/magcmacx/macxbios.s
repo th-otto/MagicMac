@@ -1345,9 +1345,9 @@ Bios_user:
    add.w    d0,d0
    move.l   (a1,d0.w),a1      ;Adresse der Biosroutine holen
    jmp      (a1)
-exit_bios:
 not_implemented:
    lsr.w    #2,d0          ; Damit d0 == opcode
+exit_bios:
 dummy_rte:
    rte
 
