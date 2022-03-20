@@ -4019,7 +4019,7 @@ mmx_yield:
  * Magic-PC apparently does not emulate the stop instruction correctly
  */
   tst.l magic_pc
-  bne.s mmx_yield_exit
+  bne.s mmx_yield_mgpc
   move.w sr,d0
   IFNE HADES
   stop    #$2100                 ; Auf Hades: Auch HBL-Int zulassen: SCSI
@@ -4027,7 +4027,12 @@ mmx_yield:
   stop    #$2300
   ENDC
   move.w d0,sr
-mmx_yield_exit:
+  rts
+mmx_yield_mgpc:
+  /* invoke function #0 of mpsyield.dll */
+  dc.w 0x4fbf
+  dc.l 0x4e415446
+  dc.w 0
   rts
 
 **********************************************************************
