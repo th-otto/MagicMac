@@ -49,7 +49,7 @@
 #define HDL_CON -1
 #define HDL_AUX -2
 #define HDL_PRN -3
-#define HDL_NUL -4						/* KAOS extension */
+#define HDL_NUL -4		/* KAOS extension */
 
 
 /* definiere Default-Timeout-Zeit in Millisekunden */
@@ -265,14 +265,14 @@ static int readline(int hdl, char *line)
 		if (ret < E_OK)
 		{
 			/* error("Lesefehler"); */
-			return (0);
+			return 0;
 		}
 		if (ret != 1L)
 		{
 			/* error("Dateiende"); */
 			*s = EOS;
 			trim(line);
-			return ((s == line) ? 0 : 1);
+			return s == line ? 0 : 1;
 		}
 		if (*s == '\r')
 			continue;					/* CR Åberlesen */
@@ -281,14 +281,14 @@ static int readline(int hdl, char *line)
 		if ((s - line) > (LBUFLEN - 2))
 		{
 			/* error("ZeilenÅberlauf"); */
-			return (0);
+			return 0;
 		}
 	} while (*s != '\n');
 	*s = EOS;
 	trim(line);
 	if (line[0] == ';')
 		goto again;						/* Kommentar */
-	return (1);
+	return 1;
 }
 
 
@@ -629,7 +629,7 @@ int main(int argc, char *argv[])
 		{
 			form_alert(1, s_process_locked);
 			appl_exit();
-			return (1);
+			return 1;
 		}
 #if DEBUG
 		Cconws("entferne kritische Programme\r\n");
@@ -663,7 +663,7 @@ int main(int argc, char *argv[])
 				form_alert(1, s_timeout);
 				shel_write(SHW_SHUTDOWN, FALSE, 0, NULL, NULL);
 				appl_exit();
-				return (3);
+				return 3;
 			}
 		} while ((!(ev & MU_MESAG)) || (buf[0] != msgtyp));
 
@@ -693,7 +693,7 @@ int main(int argc, char *argv[])
 
 			form_alert(1, s);
 			appl_exit();
-			return (2);
+			return 2;
 		}
 
 		/*
@@ -827,5 +827,5 @@ int main(int argc, char *argv[])
 	/* ---------------------------------------------------------- */
 
 	appl_exit();
-	return (0);
+	return 0;
 }
