@@ -49,7 +49,8 @@ vga_pfreq:          ds.l 1     /* 46 */ ; pixel frequency * 1000000 (Mhz)
                     ds.w 1     /* 74 */
                     ds.w 1     /* 76 */
                     ds.w 1     /* 78 */
-                    ds.w 1     /* 80 */
+                    ds.b 1     /* 80 */
+vga_PEL2:           ds.b 1     /* 81 */ ; value for DAC_PEL
 vga_PEL:            ds.b 1     /* 82 */ ; value for DAC_PEL
 vga_MISC_W:         ds.b 1     /* 83 */ ; value for MISC_W (0xe3)
 vga_ts_regs:        ds.l 1     /* 84 */ ; offset/ptr to TS register values   ; 00AC

@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;******************************************************************************;
 ;*                                                                            *;
-;*        256 color packed-pixel VGA screen driver for NVDI                   *;
+;*        hicolor 5-6-5 VGA screen driver for NVDI                            *;
 ;*                                                                            *;
 ;******************************************************************************;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,8 +22,8 @@ VERSION           EQU $0500
 .INCLUDE "nova.inc"
 .INCLUDE "vgainf.inc"
 
-DRV_PLANES = 8
-PATTERN_LENGTH    EQU 30*16                ;minimale Fuellmusterlaenge
+DRV_PLANES = 16
+PATTERN_LENGTH    EQU 16*62                  ;minimale Fuellmusterlaenge
 
 	OFFSET WK_LENGTH_300
                ds.l 1
@@ -51,7 +51,7 @@ r_bg_colorrgb: ds.w 4 /* raster color bg */
                ds.b 104
 
       ds.b PATTERN_LENGTH
-      /* 1312 */
+      /* 1824 */
 wk_sizeof:
 
 		.text
@@ -71,10 +71,10 @@ header:           bra.s continue          ;Fuer Aufrufe von normale Treibern
                   DC.L  get_scrninfo
                   DC.L  dev_name
                   DC.L  0,0,0,0           ;reserviert
-organisation:     DC.L  256               ;Farben
+organisation:     DC.L  65536             ;Farben
                   DC.W  DRV_PLANES        ;Planes
                   DC.W  2                 ;Pixelformat
-                  DC.W  1                 ;Bitverteilung
+                  DC.W  0x81              ;Bitverteilung
                   DC.W  0,0,0             ;reserviert
 header_end:
 
@@ -97,6 +97,7 @@ init:
 		bsr        get_driver_id
 		move.l     a0,nvdi_struct
 		move.l     a1,driver_struct
+		move.l     _nvdi_aes_wk(a0),aes_wk_ptr
 		movea.l    nvdi_struct(pc),a0
 		movea.l    _nvdi_load_NOD_driver(a0),a2
 		lea.l      organisation,a0
@@ -112,9 +113,8 @@ init:
 		bsr        install_vscr_cookie
 		bsr        check_mste
 		bsr        build_exp
-		bsr        build_color_maps
 		bsr        clear_device
-		move.l     #256,d0
+		move.l     #65536,d0
 		bsr        init_maps
 		bsr        init_res
 		bsr        init_vt52
@@ -164,7 +164,7 @@ save_screen_vecs:
 set_screen_vecs:
 		movea.l    nvdi_struct(pc),a0
 		movea.l    _nvdi_xbios_tab(a0),a1
-		move.l     #myxbios,4(a1)
+		move.l     #myxbios,_xbios_vec(a1)
 		movea.l    _nvdi_mouse_tab(a0),a1
 		move.l     #mouse_len,_mouse_buffer(a1)
 		move.l     #draw_sprite,_draw_spr_vec(a1)
@@ -198,7 +198,7 @@ reset_screen_vecs:
 		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		movea.l    _nvdi_bios_tab(a0),a1
-		movea.l    8(a1),a2
+		movea.l    _vt52_vec_vec(a1),a2
 		move.l     save_vt52_vec(pc),(a2)
 		rts
 
@@ -330,38 +330,60 @@ ext_out_pts:
 ;-
 get_scrninfo:
 		movem.l    d0-d1/a0-a1,-(a7)
-		moveq.l    #6,d0
-		cmpi.w     #1,vgamode+vga_dac_type
-		beq.s      get_scrninfo1
-		moveq.l    #8,d0
-get_scrninfo1:
-		move.w     #2,(a0)+    ;[0] Packed Pixel
-		move.w     #1,(a0)+    ;[1] Hardware-CLUT
-		move.w     #DRV_PLANES,(a0)+    ;[2] Anzahl der Ebenen
-		move.l     #256,(a0)+  ;[3/4] Farbanzahl
+		lea.l      scrninfo(pc),a1
+		move.w     (a1)+,(a0)+    ;[0] Packed Pixel
+		move.w     (a1)+,(a0)+    ;[1] Software-CLUT
+		move.w     (a1)+,(a0)+    ;[2] Anzahl der Ebenen
+		move.l     (a1)+,(a0)+    ;[3/4] Farbanzahl
 		move.w     BYTES_LIN.w,(a0)+ ;[5] Bytes pro Zeile
 relok2:
 		move.l     v_bas_ad.w,(a0)+  ;[6/7] Bildschirmadresse
-		move.w     d0,(a0)+    ;[8]  Bits der Rot-Intensitaet
-		move.w     d0,(a0)+    ;[9]  Bits der Gruen-Intensitaet
-		move.w     d0,(a0)+    ;[10] Bits der Blau-Intensitaet
-		move.w     #0,(a0)+    ;[11] kein Alpha-Channel
-		move.w     #0,(a0)+    ;[12] kein Genlock
-		move.w     #0,(a0)+    ;[13] keine unbenutzten Bits
-		move.w     #1,(a0)+    ;[14] Bitorganisation
-		clr.w      (a0)+       ;[15] unbenutzt
-		move.w     #256-1,d0
-		moveq.l    #0,d1
-		movea.l    nvdi_struct,a1
-		movea.l    _nvdi_colmaptab(a1),a1
-		movea.l    (a1),a1
-get_scrninfo2:
-		moveq.l    #0,d1
-		move.b     (a1)+,d1
-		move.w     d1,(a0)+
-		dbf        d0,get_scrninfo2
+		addq.l     #6,a1
+		move.w     (a1)+,(a0)+    ;[8]  Bits der Rot-Intensitaet
+		move.w     (a1)+,(a0)+    ;[9]  Bits der Gruen-Intensitaet
+		move.w     (a1)+,(a0)+    ;[10] Bits der Blau-Intensitaet
+		move.w     (a1)+,(a0)+    ;[11] kein Alpha-Channel
+		move.w     (a1)+,(a0)+    ;[12] kein Genlock
+		move.w     (a1)+,(a0)+    ;[13] keine unbenutzten Bits
+		move.w     (a1)+,(a0)+    ;[14] Bitorganisation
+		move.w     (a1)+,(a0)+    ;[15] unbenutzt
+		move.w     #255,d0
+scrninfo_loop:
+		move.w     (a1)+,(a0)+
+		dbf        d0,scrninfo_loop
 		movem.l    (a7)+,d0-d1/a0-a1
 		rts
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                  ; 'Daten fuer vq_scrninfo()'
+
+scrninfo:
+                  DC.W 2                  ;Packed Pixels
+                  DC.W 2                  ;Software-CLUT
+                  DC.W DRV_PLANES         ;16 Ebenen
+                  DC.L 65536              ;65536 Farben
+                  DC.W 0,0,0
+                  DC.W 5                  ;5 Bits fuer die Rot-Intensitaet
+                  DC.W 6                  ;5 Bits fuer die Gruen-Intensitaet
+                  DC.W 5                  ;5 Bits fuer die Blau-Intensitaet
+                  DC.W 0                  ;kein Bit fuer Alpha-Channel
+                  DC.W 0                  ;kein Bit fuer Genlock
+                  DC.W 0                  ;kein unbenutztes Bit
+                  DC.W 0x81
+                  DC.W 0
+
+/* GGGBBBBB RRRRRGGG */
+                  DC.W  3,4,5,6,7         ;Bits der Rot-Intensitaet
+                  DCB.W 11,-1
+                  DC.W  13,14,15,0,1,2    ;Bits der Gruen-Intensitaet
+                  DCB.W 10,-1
+                  DC.W  8,9,10,11,12      ;Bits der Blau-Intensitaet
+                  DCB.W 11,-1
+                  DCB.W 16,-1             ;kein Alpha-Channel
+                  DCB.W 16,-1             ;keine Bits fuer Genlock
+                  DCB.W 32,-1             ;unbenutzte Bits
+
+                  DCB.W 156,0             ;reserviert
 
 synth_tab:
 		dc.b 0x00,0x10,0x08,0x18,0x04,0x14,0x0c,0x1c,0x02,0x12,0x0a,0x1a,0x06,0x16,0x0e,0x1e
@@ -385,7 +407,7 @@ find_vgamode1:
 		movea.l    d0,a1
 		bra.s      find_vgamode1
 find_vgamode2:
-		move.w     vgainf_defmode+4(a0),d2 ; vga_defmode[2] == 256 color driver
+		move.w     vgainf_defmode+8(a0),d2 ; vga_defmode[3] == 65536 color driver
 		bmi.s      find_vgamode6
 		lea.l      vgainf_modes(a0),a1
 		moveq.l    #0,d0
@@ -494,13 +516,13 @@ copy_vgainf1:
 		add.l      d0,vga_crtc_regs(a2)
 		add.l      d0,vga_atc_regs(a2)
 		add.l      d0,vga_gdc_regs(a2)
-		cmpi.w     #TOS_PIXW,18(a2)
+		cmpi.w     #TOS_PIXW,vga_pixw(a2)
 		bne.s      copy_vgainf2
-		move.w     #VGA_PIXW,18(a2)
+		move.w     #VGA_PIXW,vga_pixw(a2)
 copy_vgainf2:
-		cmpi.w     #TOS_PIXH,20(a2)
+		cmpi.w     #TOS_PIXH,vga_pixh(a2)
 		bne.s      copy_vgainf3
-		move.w     #VGA_PIXH,20(a2)
+		move.w     #VGA_PIXH,vga_pixh(a2)
 copy_vgainf3:
 		moveq.l    #-1,d0
 		movem.l    (a7)+,d1/a0-a2
@@ -529,13 +551,19 @@ relo_exit:
 		movem.l    (a7)+,d0-d2/a0-a2
 		rts
 
+
+set_color_rgb:
+		rts
+
+palette_data:
+		dc.w 0xffff,0x00f8,0xe007,0xe0ff,0x1f00,0x1ff8,0xff07,0xbad6
+		dc.w 0x3084,0x00a8,0x6005,0x60ad,0x1500,0x15a8,0x7505,0x0000
+
 gooldxbios:
 		movea.l    xbios_tab(pc),a1
 		jmp        (a1)
 
 myxbios:
-		cmp.w      #86,d0
-		beq        esetgray
 		cmp.w      #21,d0
 		beq.s      cursconf
 		cmp.w      #64,d0
@@ -623,21 +651,6 @@ blitmode:
 relok7:
 		moveq.l    #0,d0
 		rte
-
-esetgray:
-		move.w     graymode(pc),-(a7)
-		move.w     (a0),d0
-		bmi.s      esetgray1
-		move.w     d0,graymode
-		moveq.l    #0,d0
-		move.l     #255,d1
-		movea.l    global_ctable(pc),a0
-		lea.l      ctab_colors(a0),a0
-		bsr        set_color_rgb
-esetgray1:
-		move.w     (a7)+,d0
-		rte
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ; 'GEMDOS\BIOS\XBIOS'
 
@@ -693,7 +706,7 @@ relok10:
 		mulu.w     V_CEL_WR.w,d1 /* FIXME: V_CEL_WR is obsolete */
 relok11:
 		adda.l     d1,a1
-		lsl.w      #3,d0
+		lsl.w      #4,d0
 		adda.w     d0,a1
 		move.l     a1,V_CUR_AD.w
 relok12:
@@ -740,90 +753,103 @@ relok18:
 
 ;Cursor zeichnen
 cursor:
-		movem.l    d0-d1/a1/a4-a5,-(a7)
-		movea.l    vgamode+vga_regbase(pc),a5
-		lea.l      TS_I(a5),a4
-		move.b     #2,(a4)+
-		move.b     (a4),-(a7)
-		move.b     #15,(a4)
-		move.b     #4,-1(a4)
-		move.b     (a4),-(a7)
-		ori.b      #8,(a4)
-		lea.l      GDC_I(a5),a5
-		move.b     #5,(a5)+
-		move.b     (a5),-(a7)
-		andi.b     #0xFC,(a5)
+		movem.l    d0-d1/a1,-(a7)
 		moveq.l    #16,d0
 		sub.w      V_CEL_HT.w,d0
 relok19:
 		add.w      d0,d0
 		move.w     d0,d1
-		add.w      d0,d0
+		add.w      d0,d0          ;(16 - Zeichenhoehe) * 6 ; BUG: must be * 10
 		add.w      d1,d0
 		movea.l    V_CUR_AD.w,a1
 relok20:
-		move.w     BYTES_LIN.w,d1
+		moveq.l    #-16,d1
+		add.w      BYTES_LIN.w,d1
 relok21:
-		subq.w     #8,d1
 		jmp        cursor_jmp(pc,d0.w)
 cursor_jmp:
 		not.l      (a1)+
 		not.l      (a1)+
-		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
-		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
-		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
-		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
-		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
-		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
-		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
 		not.l      (a1)+
 		not.l      (a1)+
-		move.b     #5,-1(a5)
-		move.b     (a7)+,(a5)
-		move.b     #4,-(a4)
-		move.b     (a7)+,1(a4)
-		move.b     #2,(a4)+
-		move.b     (a7)+,(a4)
-		movem.l    (a7)+,d0-d1/a1/a4-a5
+		not.l      (a1)+
+		not.l      (a1)+
+		adda.w     d1,a1
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		adda.w     d1,a1
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		adda.w     d1,a1
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		adda.w     d1,a1
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		adda.w     d1,a1
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		adda.w     d1,a1
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		adda.w     d1,a1
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		not.l      (a1)+
+		movem.l    (a7)+,d0-d1/a1
 cursor_exit:
 		rts
-
 
 ;BEL, Klingelzeichen
 vt_bel:
@@ -907,7 +933,7 @@ relok27:
 ;a1 neue Cursoradresse
 ;zerstoert werden d0/d2
 set_x0:
-		lsl.w      #3,d0
+		lsl.w      #4,d0
 		suba.w     d0,a1
 		move.l     a1,V_CUR_AD.w
 relok28:
@@ -954,9 +980,9 @@ vt_rawcon:
 		movea.l    font_image(pc),a0
 		movea.l    V_CUR_AD.w,a1
 relok31:
-		move.w     BYTES_LIN.w,d2
+		moveq.l    #-16,d2
+		add.w      BYTES_LIN.w,d2
 relok32:
-		subq.w     #8,d2
 		move.b     #2,V_CUR_CT.w
 relok33:
 		bclr       #CURSOR_STATE,V_STAT_0.w
@@ -968,7 +994,7 @@ relok36:
 		bne        vt_char_rcol
 		cmp.l      sysfont_addr(pc),d0
 		bne        vt_char_col
-		cmpi.l     #255,V_COL_BG.w
+		cmpi.l     #15,V_COL_BG.w
 relok37:
 		bne        vt_char_col
 		lsl.w      #4,d1
@@ -977,22 +1003,27 @@ relok37:
 relok38:
 		subq.w     #1,d1
 		lea.l      expand_tab(pc),a2
+		move.l     a3,-(a7)
 vt_char_bloop:
 		moveq.l    #0,d0
 		move.b     (a0)+,d0
-		lsl.w      #3,d0
-		move.l     0(a2,d0.w),(a1)+
-		move.l     4(a2,d0.w),(a1)+
+		lsl.w      #4,d0
+		movea.l    a2,a3
+		adda.w     d0,a3
+		move.l     (a3)+,(a1)+
+		move.l     (a3)+,(a1)+
+		move.l     (a3)+,(a1)+
+		move.l     (a3)+,(a1)+
 		adda.w     d2,a1
 		dbf        d1,vt_char_bloop
-
+		movea.l    (a7)+,a3
 vt_n_column:
 		move.w     V_CUR_XY0.w,d0
 relok39:
 		cmp.w      V_CEL_MX.w,d0
 relok40:
 		bge.s      vt_l_column
-		addq.l     #8,V_CUR_AD.w
+		addi.l     #16,V_CUR_AD.w
 relok41:
 		addq.w     #1,V_CUR_XY0.w
 relok42:
@@ -1004,7 +1035,7 @@ relok43:
 		addq.w     #1,hid_cnt
 vt_l_column2:
 		ext.l      d0
-		lsl.l      #3,d0
+		lsl.l      #4,d0
 		sub.l      d0,V_CUR_AD.w
 relok44:
 		clr.w      V_CUR_XY0.w
@@ -1027,70 +1058,53 @@ vt_con_exit2:
 vt_con_exit:
 		rts
 
-vt_char_rcol:
-		movem.l    d3-d7,-(a7)
-		lea.l      V_COL_BG+1.w,a2
-relok51:
-		movep.w    0(a2),d6
-		move.b     (a2)+,d6
-		move.w     d6,d4
-		swap       d6
-		move.w     d4,d6
-		movep.w    1(a2),d5
-		move.b     1(a2),d5
-		move.w     d5,d3
-		swap       d5
-		move.w     d3,d5
-		not.l      d5
-		not.l      d6
-		bra.s      vt_char_col2
-
 vt_char_col:
-		movem.l    d3-d7,-(a7)
-		lea.l      V_COL_BG+1.w,a2
+vt_char_rcol:
+		movem.l    d3-d4/a3,-(a7)
+		lea.l      V_COL_BG.w,a2
+relok51:
+		move.w     (a2)+,d3             ;V_COL_BG
+		move.w     (a2)+,d2             ;V_COL_FG
+		add.w      d2,d2
+		add.w      d3,d3
+		lea.l      palette_data(pc),a2
+		move.w     0(a2,d2.w),d2        ;Vordergrundfarbe
+		move.w     0(a2,d3.w),d3        ;Hintergrundfarbe
+		btst       #CURSOR_INVERSE,V_STAT_0.w ;invertieren ?
 relok52:
-		movep.w    0(a2),d6
-		move.b     (a2)+,d6
-		move.w     d6,d4
-		swap       d6
-		move.w     d4,d6
-		movep.w    1(a2),d5
-		move.b     1(a2),d5
-		move.w     d5,d3
-		swap       d5
-		move.w     d3,d5
-
+		beq.s      vt_char_col2
+		exg        d2,d3
 vt_char_col2:
 		movea.l    d0,a0
 		adda.w     d1,a0
-		move.w     V_FNT_WD.w,d0
+		movea.w    V_FNT_WD.w,a2
 relok53:
-		move.w     V_CEL_HT.w,d1
+		movea.w    BYTES_LIN.w,a3
 relok54:
-		subq.w     #1,d1
-		lea.l      expand_tab(pc),a2
+		lea.l      -16(a3),a3
+		move.w     V_CEL_HT.w,d1
+relok55:
+		subq.w     #1,d1                ;Zeilenzaehler
 vt_char_cloop:
-		moveq.l    #0,d7
-		move.b     (a0),d7
-		lsl.w      #3,d7
-		move.l     0(a2,d7.w),d3
-		move.l     d3,d4
-		not.l      d4
-		and.l      d5,d3
-		and.l      d6,d4
-		or.l       d4,d3
-		move.l     d3,(a1)+
-		move.l     4(a2,d7.w),d3
-		move.l     d3,d4
-		not.l      d4
-		and.l      d5,d3
-		and.l      d6,d4
-		or.l       d4,d3
-		move.l     d3,(a1)+
-		adda.w     d0,a0
-		adda.w     d2,a1
+		move.b     (a0),d4
+		moveq.l    #7,d0
+vt_char_cloop2:
+		add.b      d4,d4
+		bcc.s      vt_char_cbg
+		move.w     d2,(a1)+
+		dbf        d0,vt_char_cloop2
+		adda.w     a2,a0
+		adda.w     a3,a1
 		dbf        d1,vt_char_cloop
-		movem.l    (a7)+,d3-d7
+		movem.l    (a7)+,d3-d4 ; BUG
+		bra        vt_n_column
+vt_char_cbg:
+		move.w     d3,(a1)+
+		dbf        d0,vt_char_cloop2
+		adda.w     a2,a0
+		adda.w     a3,a1
+		dbf        d1,vt_char_cloop
+		movem.l    (a7)+,d3-d4/a3
 		bra        vt_n_column
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -1101,11 +1115,11 @@ vt_esc_seq:
 		beq        vt_seq_Y
 		move.w     d1,d2
 		movem.w    V_CUR_XY0.w,d0-d1
-relok55:
-		movea.l    V_CUR_AD.w,a1
 relok56:
-		movea.w    BYTES_LIN.w,a2
+		movea.l    V_CUR_AD.w,a1
 relok57:
+		movea.w    BYTES_LIN.w,a2
+relok58:
 		move.l     #vt_con0,mycon_state
 		subi.w     #'A',d2
 		cmpi.w     #12,d2
@@ -1202,10 +1216,10 @@ vt_seq_H:
 		bsr        cursor_off
 vt_seq_H_in:
 		clr.l      V_CUR_XY0.w
-relok58:
+relok59:
 		movea.l    v_bas_ad.w,a1
 		move.l     a1,V_CUR_AD.w
-relok59:
+relok60:
 		bra        cursor_on
 
 ;Cursor up and insert (VT52 ESC I)
@@ -1215,11 +1229,11 @@ vt_seq_I:
 		subq.w     #1,d1
 		blt        scroll_down_page
 		suba.w     V_CEL_WR.w,a1 /* FIXME: V_CEL_WR is obsolete */
-relok60:
-		move.l     a1,V_CUR_AD.w
 relok61:
-		move.w     d1,V_CUR_XY1.w
+		move.l     a1,V_CUR_AD.w
 relok62:
+		move.w     d1,V_CUR_XY1.w
+relok63:
 		rts
 
 ; ERASE TO END OF ALPHA SRCEEN (VDI 5, ESCAPE 9)/ Erase to end of page (VT52 ESC J)
@@ -1227,21 +1241,20 @@ v_eeos:
 vt_seq_J:
 		bsr.s      vt_seq_K
 		move.w     V_CUR_XY1.w,d1
-relok63:
-		move.w     V_CEL_MY.w,d2
 relok64:
+		move.w     V_CEL_MY.w,d2
+relok65:
 		sub.w      d1,d2
 		beq.s      vt_seq_J_exit
 		movem.l    d2-d7/a1-a6,-(a7)
 		movea.l    v_bas_ad.w,a1
 		addq.w     #1,d1
 		mulu.w     V_CEL_WR.w,d1 /* FIXME: V_CEL_WR is obsolete */
-relok65:
-		lsr.l      #2,d1 ; BUG?
+relok66:
 		adda.l     d1,a1
 		move.w     d2,d7
 		mulu.w     V_CEL_HT.w,d7
-relok66:
+relok67:
 		subq.w     #1,d7
 		bra        clear_lines
 vt_seq_J_exit:
@@ -1253,7 +1266,7 @@ v_eeol:
 vt_seq_K:
 		bsr        cursor_off
 		move.w     V_CEL_MX.w,d2
-relok67:
+relok68:
 		sub.w      d0,d2
 		bsr        clear_line_part
 		bra        cursor_on
@@ -1265,21 +1278,21 @@ vt_seq_L:
 		bsr        set_x0
 		movem.l    d2-d7/a1-a6,-(a7)
 		move.w     V_CEL_MY.w,d5
-relok68:
+relok69:
 		sub.w      d1,d5
 		beq.s      vt_seq_L_exit
 		movea.l    v_bas_ad.w,a0
 		movea.l    a0,a1
 		movea.w    BYTES_LIN.w,a2
-relok69:
+relok70:
 		movea.w    a2,a3
 		move.w     V_CEL_HT.w,d0
-relok70:
+relok71:
 		mulu.w     d0,d1
 		move.w     d1,d3
 		add.w      d0,d3
 		move.w     V_CEL_MX.w,d4
-relok71:
+relok72:
 		lsl.w      #3,d4
 		addq.w     #7,d4
 		mulu.w     d0,d5
@@ -1290,15 +1303,14 @@ relok71:
 		jsr        bitblt_in
 		movea.l    v_bas_ad.w,a1
 		move.w     V_CUR_XY1.w,d0
-relok72:
-		mulu.w     V_CEL_WR.w,d0 /* FIXME: V_CEL_WR is obsolete */
 relok73:
-		lsr.l      #2,d0 ; BUG?
+		mulu.w     V_CEL_WR.w,d0 /* FIXME: V_CEL_WR is obsolete */
+relok74:
 		adda.l     d0,a1
 		bra        clear_line2
 vt_seq_L_exit:
 		movea.l    V_CUR_AD.w,a1
-relok74:
+relok75:
 		bra        clear_line2
 
 ;Delete Line (VT52 ESC M)
@@ -1308,23 +1320,23 @@ vt_seq_M:
 		bsr        set_x0
 		movem.l    d2-d7/a1-a6,-(a7)
 		move.w     V_CEL_MY.w,d7
-relok75:
+relok76:
 		sub.w      d1,d7
 		beq.s      vt_seq_M_last
 		move.w     V_CEL_HT.w,d3
-relok76:
+relok77:
 		moveq.l    #0,d0
 		mulu.w     d3,d1
 		moveq.l    #0,d2
 		add.w      d1,d3
 		exg        d1,d3
 		movem.w    V_CEL_MX.w,d4-d5
-relok77:
+relok78:
 		addq.w     #1,d4
-		lsl.w      #3,d4
+		lsl.w      #4,d4
 		subq.w     #1,d4
 		mulu.w     V_CEL_HT.w,d5
-relok78:
+relok79:
 		subq.w     #1,d5
 		sub.w      d1,d5
 		bra        scroll_up2
@@ -1332,7 +1344,6 @@ vt_seq_M_last:
 		move.l     a1,d0
 		movea.l    v_bas_ad.w,a1
 		sub.l      a1,d0
-		lsr.l      #2,d0
 		adda.l     d0,a1
 		bra        clear_line2
 
@@ -1344,7 +1355,7 @@ vt_seq_Y:
 vt_set_y:
 		subi.w     #32,d1
 		move.w     V_CUR_XY0.w,d0
-relok79:
+relok80:
 		move.l     #vt_set_x,mycon_state
 		bra        set_cursor_xy
 ;x-Koordinate setzen
@@ -1352,7 +1363,7 @@ vt_set_x:
 		subi.w     #32,d1
 		move.w     d1,d0
 		move.w     V_CUR_XY1.w,d1
-relok80:
+relok81:
 		move.l     #vt_con0,mycon_state
 		bra        set_cursor_xy
 
@@ -1362,14 +1373,10 @@ vt_seq_b:
 		rts
 vt_set_b:
 		lea.l      V_COL_FG.w,a1
-relok81:
+relok82:
 vt_set_col:
 		moveq.l    #15,d0
 		and.w      d0,d1
-		cmp.w      d0,d1
-		bne.s      vt_write_col
-		move.w     #255,d1
-vt_write_col:
 		move.w     d1,(a1)
 		move.l     #vt_con0,mycon_state
 		rts
@@ -1380,18 +1387,18 @@ vt_seq_c:
 		rts
 vt_set_c:
 		lea.l      V_COL_BG.w,a1
-relok82:
+relok83:
 		bra.s      vt_set_col
 
 ;Erase to start of page (VT52 ESC d)
 vt_seq_d:
 		bsr.s      vt_seq_o
 		move.w     V_CUR_XY1.w,d1
-relok83:
+relok84:
 		beq.s      vt_seq_d_exit
 		movem.l    d2-d7/a1-a6,-(a7)
 		mulu.w     V_CEL_HT.w,d1
-relok84:
+relok85:
 		move.w     d1,d7
 		subq.w     #1,d7
 		movea.l    v_bas_ad.w,a1
@@ -1415,17 +1422,17 @@ vt_seq_f:
 ;Save cursor (VT52 ESC j)
 vt_seq_j:
 		bset       #CURSOR_SAVED,V_STAT_0.w
-relok85:
-		move.l     V_CUR_XY0.w,V_SAV_XY.w
 relok86:
+		move.l     V_CUR_XY0.w,V_SAV_XY.w
+relok87:
 		rts
 
 ;Restore cursor (VT52 ESC k)
 vt_seq_k:
 		movem.w    V_SAV_XY.w,d0-d1
-relok87:
-		bclr       #CURSOR_SAVED,V_STAT_0.w
 relok88:
+		bclr       #CURSOR_SAVED,V_STAT_0.w
+relok89:
 		bne        set_cursor_xy
 		moveq.l    #0,d0
 		moveq.l    #0,d1
@@ -1445,7 +1452,7 @@ vt_seq_o:
 		bmi.s      vt_seq_o_exit
 		movea.l    v_bas_ad.w,a1
 		mulu.w     V_CEL_WR.w,d1 /* FIXME: V_CEL_WR is obsolete */
-relok89:
+relok90:
 		adda.l     d1,a1
 		bra        clear_line_part
 vt_seq_o_exit:
@@ -1455,57 +1462,56 @@ vt_seq_o_exit:
 v_rvon:
 vt_seq_p:
 		bset       #CURSOR_INVERSE,V_STAT_0.w
-relok90:
+relok91:
 		rts
 
 ; REVERSE VIDEO OFF (VDI 5, ESCAPE 14)/Normal Video (VT52 ESC q)
 v_rvoff:
 vt_seq_q:
 		bclr       #CURSOR_INVERSE,V_STAT_0.w
-relok91:
+relok92:
 		rts
 
 ;Wrap at end of line (VT52 ESC v)
 vt_seq_v:
 		bset       #CURSOR_WRAP,V_STAT_0.w
-relok92:
+relok93:
 		rts
 
 ;Discard end of line (VT52 ESC w)
 vt_seq_w:
 		bclr       #CURSOR_WRAP,V_STAT_0.w
-relok93:
+relok94:
 		rts
 
 scroll_up_page:
 		movem.l    d2-d7/a1-a6,-(a7)
 		moveq.l    #0,d0
 		move.w     V_CEL_HT.w,d1
-relok94:
+relok95:
 		moveq.l    #0,d2
 		moveq.l    #0,d3
 		movem.w    V_CEL_MX.w,d4-d5
-relok95:
+relok96:
 		addq.w     #1,d4
 		lsl.w      #3,d4
 		subq.w     #1,d4
 		mulu.w     V_CEL_HT.w,d5
-relok96:
+relok97:
 		subq.w     #1,d5
 scroll_up2:
 		moveq.l    #S_ONLY,d7
 		movea.l    v_bas_ad.w,a0
 		movea.l    a0,a1
 		movea.w    BYTES_LIN.w,a2
-relok97:
+relok98:
 		movea.w    a2,a3
 		jsr        bitblt_in
 		movea.l    v_bas_ad.w,a1
 		move.w     V_CEL_MY.w,d0
-relok98:
-		mulu.w     V_CEL_WR.w,d0 /* FIXME: V_CEL_WR is obsolete */
 relok99:
-		lsr.l      #2,d0 ; BUG?
+		mulu.w     V_CEL_WR.w,d0 /* FIXME: V_CEL_WR is obsolete */
+relok100:
 		adda.l     d0,a1
 		bra.s      clear_line2
 
@@ -1515,9 +1521,9 @@ scroll_down_page:
 		moveq.l    #0,d1
 		moveq.l    #0,d2
 		move.w     V_CEL_HT.w,d3
-relok100:
-		movem.w    V_CEL_MX.w,d4-d5
 relok101:
+		movem.w    V_CEL_MX.w,d4-d5
+relok102:
 		addq.w     #1,d4
 		addq.w     #1,d5
 		lsl.w      #3,d4
@@ -1528,59 +1534,45 @@ relok101:
 		movea.l    v_bas_ad.w,a0
 		movea.l    a0,a1
 		movea.w    BYTES_LIN.w,a2
-relok102:
+relok103:
 		movea.w    a2,a3
 		jsr        bitblt_in
 		movea.l    v_bas_ad.w,a1
 		bra.s      clear_line2
 clear_line:
 		movem.l    d2-d7/a1-a6,-(a7)
-		move.l     a1,d2 ; BUG?
-		sub.l      v_bas_ad.w,d2
-		lsr.l      #2,d2
-		add.l      v_bas_ad.w,d2
-		movea.l    d2,a1
 ;Eingabe
 ;a1.l Zeilenadresse
 clear_line2:
 		move.w     V_CEL_HT.w,d7
-relok103:
+relok104:
 		subq.w     #1,d7
 ;d7.w Zeilenzaehler
 clear_lines:
-		lea.l      V_COL_BG+1.w,a2
-relok104:
-		movep.w    0(a2),d6
-		move.b     (a2),d6
-		move.w     d6,d2
-		swap       d6
-		move.w     d2,d6
-		move.w     V_CEL_MX.w,d4
+		move.w     V_COL_BG.w,d6        ;Hintergrundfarbe
 relok105:
-		addq.w     #1,d4
-		move.w     BYTES_LIN.w,d5
+		beq.s      clear_lwhite         ;weiss?
+		move.l     a1,d2
+		movea.l    v_bas_ad.w,a1
+		sub.l      a1,d2
+		lsl.l      #2,d2
+		adda.l     d2,a1
+		add.w      d6,d6
+		lea.l      palette_data(pc),a2
+		adda.w     d6,a2
+		move.w     (a2),d6
+		swap       d6
+		move.w     (a2),d6
+		move.w     V_CEL_MX.w,d4
 relok106:
-		lsr.w      #2,d5
+		move.w     BYTES_LIN.w,d5
+relok107:
 		move.w     d4,d2
-		add.w      d2,d2
+		addq.w     #1,d2
+		lsl.w      #4,d2
 		sub.w      d2,d5
-		lsr.w      #1,d4
-		subq.w     #1,d4
-		moveq.l    #3,d3
-		and.w      d4,d3
-		eori.w     #3,d3
-		add.w      d3,d3
-		lea.l      clear_line_loop(pc,d3.w),a2
-		lsr.w      #2,d4
-		movea.l    vgamode+vga_regbase(pc),a3
-		lea.l      TS_I(a3),a3
-		move.b     #4,(a3)+
-		andi.b     #0xF7,(a3)
-		move.b     #02,-1(a3)
-		move.b     #15,(a3)
 clear_line_bloop:
 		move.w     d4,d2
-		jmp        (a2)
 clear_line_loop:
 		move.l     d6,(a1)+
 		move.l     d6,(a1)+
@@ -1589,8 +1581,29 @@ clear_line_loop:
 		dbf        d2,clear_line_loop
 		adda.w     d5,a1
 		dbf        d7,clear_line_bloop
-		move.b     #4,-(a3)
-		ori.b      #0x08,1(a3)
+		movem.l    (a7)+,d2-d7/a1-a6
+		rts
+clear_lwhite:
+		moveq.l    #-1,d6
+		move.w     V_CEL_MX.w,d4
+relok108:
+		addq.w     #1,d4      ;Zeichenanzahl pro Zeile
+		move.w     BYTES_LIN.w,d5
+relok109:
+		move.w     d4,d2
+		lsl.w      #4,d2
+		sub.w      d2,d5
+		subq.w     #1,d4
+clear_lw_bloop:
+		move.w     d4,d2
+clear_lw_loop:
+		move.l     d6,(a1)+
+		move.l     d6,(a1)+
+		move.l     d6,(a1)+
+		move.l     d6,(a1)+
+		dbf        d2,clear_lw_loop
+		adda.w     d5,a1
+		dbf        d7,clear_lw_bloop
 		movem.l    (a7)+,d2-d7/a1-a6
 		rts
 
@@ -1602,10 +1615,10 @@ clear_line_loop:
 clear_screen:
 		movem.l    d2-d7/a1-a6,-(a7)
 		move.w     V_CEL_MY.w,d7
-relok107:
+relok110:
 		addq.w     #1,d7
 		mulu.w     V_CEL_HT.w,d7
-relok108:
+relok111:
 		subq.w     #1,d7
 		movea.l    v_bas_ad.w,a1
 		bra        clear_lines
@@ -1619,42 +1632,34 @@ relok108:
 ;d0-d2/a0-a1 werden zerstoert
 clear_line_part:
 		move.l     d3,-(a7)
-		lea.l      V_COL_BG+1.w,a0
-relok109:
-		movep.w    0(a0),d3
-		move.b     (a0),d3
-		move.w     d3,d0
+		move.w     V_COL_BG.w,d3
+relok112:
+		add.w      d3,d3
+		lea.l      palette_data(pc),a0
+		adda.w     d3,a0
+		move.w     (a0),d3
 		swap       d3
-		move.w     d0,d3
+		move.w     (a0),d3
 		move.w     V_CEL_HT.w,d1
-relok110:
+relok113:
 		subq.w     #1,d1
 		move.w     d2,d0
 		addq.w     #1,d0
-		lsl.w      #3,d0
+		lsl.w      #4,d0
 		movea.w    BYTES_LIN.w,a0
-relok111:
+relok114:
 		suba.w     d0,a0
 clear_lpart_bloop:
 		move.w     d2,d0
 clear_lpart_loop:
 		move.l     d3,(a1)+
 		move.l     d3,(a1)+
+		move.l     d3,(a1)+
+		move.l     d3,(a1)+
 		dbf        d0,clear_lpart_loop
 		adda.w     a0,a1
 		dbf        d1,clear_lpart_bloop
 		move.l     (a7)+,d3
-		rts
-
-/* FIXME: unused */
-calc_screenaddr:
-		move.w     d1,-(a7)
-		movea.l    v_bas_ad.w,a1
-		muls.w     BYTES_LIN.w,d1
-relok112:
-		adda.l     d1,a1
-		adda.w     d0,a1
-		move.w     (a7)+,d1
 		rts
 
 ;Undraw Sprite ($A00C)
@@ -1664,11 +1669,11 @@ relok112:
 ;d2/a1-a5 werden zerstoert
 undraw_sprite:
 		move.w     (a2)+,d2
-		subq.w     #1,d2
-		bmi        undraw_sprite2
-		movea.l    (a2)+,a1
-		bclr       #0,(a2)
-		beq        undraw_sprite2
+		subq.w     #1,d2         ; line counter - 1 for dbra
+		bmi        undraw_exit
+		movea.l    (a2)+,a1      ; destination address
+		bclr       #0,(a2)       ; save block valid?
+		beq        undraw_exit
 		movea.l    vgamode+vga_regbase(pc),a5
 		lea.l      TS_I(a5),a4
 		move.b     (a4),-(a7)
@@ -1694,17 +1699,20 @@ undraw_sprite:
 		ori.b      #0x08,(a4)
 		move.b     #-1,(a5)
 		movea.w    BYTES_LIN.w,a3
-relok113:
-		lea.l      -20(a3),a3
-		addq.l     #2,a2
-undraw_sprite1:
+relok115:
+		lea.l      -32(a3),a3   ; offset to next line
+		addq.l     #2,a2        ; address of saved background
+undraw_spr_loop:
+		move.l     (a2)+,(a1)+
+		move.l     (a2)+,(a1)+
+		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		adda.w     a3,a1
-		dbf        d2,undraw_sprite1
+		dbf        d2,undraw_spr_loop
 		andi.b     #0xF7,(a4)
 		tst.b      (a0)
 		move.b     #8,-(a5)
@@ -1719,7 +1727,7 @@ undraw_sprite1:
 		move.b     #2,(a4)+
 		move.b     (a7)+,(a4)
 		move.b     (a7)+,-(a4)
-undraw_sprite2:
+undraw_exit:
 		rts
 
 ;Draw Sprite ($A00D)
@@ -1731,174 +1739,211 @@ undraw_sprite2:
 ;Ausgaben
 ;d0-d7/a0-a5 werden zerstoert
 draw_sprite:
-		moveq.l    #15,d2
-		moveq.l    #15,d3
-		move.b     7(a0),d6
-		move.b     9(a0),d7
-		sub.w      (a0)+,d0
-		bpl.s      draw_sprite1
-		add.w      d0,d2
-		bmi        draw_sprite13
-draw_sprite1:
-		move.w     DEV_TAB0.w,d4
-relok114:
+		moveq.l    #15,d2     ; width - 1
+		moveq.l    #15,d3     ; height - 1
+		moveq.l    #0,d6
+		moveq.l    #0,d7
+		move.b     7(a0),d6   ; background color
+		move.b     9(a0),d7   ; foreground color
+		lsl.l      #3,d6
+		lsl.l      #3,d7
+		movea.l    aes_wk_ptr(pc),a1
+		movea.l    wk_ctab(a1),a1
+		lea.l      50(a1,d6.l),a3
+		move.w     (a3)+,d6
+		lsl.l      #5,d6
+		move.w     (a3)+,d6
+		lsl.l      #6,d6
+		move.w     (a3)+,d6
+		lsl.l      #5,d6
+		swap       d6
+		lea.l      50(a1,d7.l),a3
+		move.w     (a3)+,d7
+		lsl.l      #5,d7
+		move.w     (a3)+,d7
+		lsl.l      #6,d7
+		move.w     (a3)+,d7
+		lsl.l      #5,d7
+		swap       d7
+		movea.l    aes_wk_ptr(pc),a1
+		btst       #7,bitmap_flags+1(a1)
+		beq.s      draw_spr_swap
+		rol.w      #8,d6
+		rol.w      #8,d7
+draw_spr_swap:
+		sub.w      (a0)+,d0      ; X_Koord - intxhot
+		bpl.s      draw_spr_x2
+		add.w      d0,d2         ; width to draw - 1
+		bmi        draw_spr_exit
+draw_spr_x2:
+		move.w     DEV_TAB0.w,d4 ; WORK_OUT[0] max. raster width
+relok116:
 		subi.w     #15,d4
 		sub.w      d0,d4
-		bge.s      draw_sprite2
-		add.w      d4,d2
-		bmi        draw_sprite13
-draw_sprite2:
-		sub.w      (a0)+,d1
-		addq.l     #6,a0
-		bpl.s      draw_sprite3
-		add.w      d1,d3
-		bmi        draw_sprite13
+		bge.s      draw_spr_y
+		add.w      d4,d2         ; width to draw - 1
+		bmi        draw_spr_exit
+draw_spr_y:
+		sub.w      (a0)+,d1      ; Y_Koord - intyhot
+		addq.l     #6,a0         ; pointer to sprite-image
+		bpl.s      draw_spr_y2
+		add.w      d1,d3         ; height to draw - 1
+		bmi        draw_spr_exit
 		add.w      d1,d1
 		add.w      d1,d1
-		suba.w     d1,a0
+		suba.w     d1,a0         ; adjust sprite start address
 		moveq.l    #0,d1
-draw_sprite3:
-		move.w     DEV_TAB1.w,d5
-relok115:
+draw_spr_y2:
+		move.w     DEV_TAB1.w,d5 ; WORK_OUT[0] max. raster height
+relok117:
 		subi.w     #15,d5
 		sub.w      d1,d5
-		bge.s      draw_sprite4
-		add.w      d5,d3
-		bmi        draw_sprite13
-draw_sprite4:
+		bge.s      draw_spr_save
+		add.w      d5,d3         ; height to draw - 1
+		bmi        draw_spr_exit
+draw_spr_save:
 		move.w     d3,(a2)
-		addq.w     #1,(a2)+
+		addq.w     #1,(a2)+      ; saved number of lines
 		movea.l    vgamode+vga_regbase(pc),a5
 		lea.l      TS_I(a5),a4
 		move.b     (a4),-(a7)
-		move.b     #2,(a4)+
+		move.b     #0x02,(a4)+
 		move.b     (a4),-(a7)
-		move.b     #15,(a4)
-		move.b     #4,-1(a4)
+		move.b     #0x0F,(a4)
+		move.b     #0x04,-1(a4)
 		move.b     (a4),-(a7)
 		andi.b     #0xF7,(a4)
 		lea.l      GDC_I(a5),a5
 		move.b     (a5),-(a7)
-		move.b     #5,(a5)+
+		move.b     #0x05,(a5)+
 		move.b     (a5),-(a7)
 		andi.b     #0xFC,(a5)
-		move.b     #1,-1(a5)
+		move.b     #0x01,-1(a5)
 		move.b     (a5),-(a7)
-		move.b     #0,(a5)
-		move.b     #8,-1(a5)
+		move.b     #0x00,(a5)
+		move.b     #0x08,-1(a5)
 		move.b     (a5),-(a7)
-		move.b     #0,(a5)
+		move.b     #0x00,(a5)
 		movea.l    vga_memend1(pc),a1
 		move.b     d2,(a1)
-		ori.b      #8,(a4)
-		move.b     #-1,(a5)
+		ori.b      #0x08,(a4)
+		move.b     #0xFF,(a5)
 		move.l     a4,-(a7)
 		muls.w     BYTES_LIN.w,d1
-relok116:
-		movea.l    v_bas_ad.w,a1
-		adda.l     d1,a1
-		moveq.l    #0,d4
-		tst.w      d0
-		bmi.s      draw_sprite5
-		moveq.l    #-19,d4
-		add.w      DEV_TAB0.w,d4
-relok117:
-		cmp.w      d0,d4
-		blt.s      draw_sprite5
-		moveq.l    #-4,d4
-		and.w      d0,d4
-draw_sprite5:
-		movea.l    a1,a4
-		adda.w     d4,a4
-		move.l     a4,(a2)+
-		move.w     #16*16,(a2)+
-		movea.w    BYTES_LIN.w,a3
 relok118:
-		lea.l      -20(a3),a3
+		movea.l    v_bas_ad.w,a1
+		adda.l     d1,a1         ; line address
+		movea.l    a1,a4
+		move.w     d0,d4
+		cmp.w      #15,d2        ; full width?
+		beq.s      draw_spr_saddr
+		moveq.l    #0,d4
+		tst.w      d0            ; beyond left margin?
+		bmi.s      draw_spr_saddr
+		moveq.l    #-15,d4
+		add.w      DEV_TAB0.w,d4 ;32 bytes away from right margin
+relok119:
+draw_spr_saddr:
+		add.w      d4,d4
+		adda.w     d4,a4
+		move.l     a4,(a2)+      ; address of saved background
+		move.w     #256,(a2)+    ; mark as valid
+		movea.w    BYTES_LIN.w,a3
+relok120:
+		lea.l      -32(a3),a3    ; offset to next line
 		move.w     d3,d5
-draw_sprite6:
+draw_spr_sloop:
+		move.l     (a4)+,(a2)+
+		move.l     (a4)+,(a2)+
+		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		adda.w     a3,a4
-		dbf        d5,draw_sprite6
+		dbf        d5,draw_spr_sloop
 		movea.w    BYTES_LIN.w,a3
-relok119:
+relok121:
 		suba.w     d2,a3
-		subq.w     #1,a3
+		suba.w     d2,a3
+		subq.w     #2,a3
 		adda.w     d0,a1
-		cmp.w      #15,d2
-		beq.s      draw_sprite7
+		adda.w     d0,a1
+		cmp.w      #15,d2        ; mouse pointer at screen margins?
+		beq.s      draw_it
 		tst.w      d0
-		bpl.s      draw_sprite7
+		bpl.s      draw_it       ; at left margin?
+		suba.w     d0,a1
 		suba.w     d0,a1
 		neg.w      d0
-		bra.s      draw_sprite8
-draw_sprite7:
+		bra.s      draw_spr_bloop
+draw_it:
 		moveq.l    #0,d0
-draw_sprite8:
-		move.w     (a0)+,d4
-		move.w     (a0)+,d5
-		lsl.w      d0,d4
+draw_spr_bloop:
+		move.w     (a0)+,d4      ; background mask
+		move.w     (a0)+,d5      ; foreground mask
+		lsl.w      d0,d4         ; shift if at left margin
 		lsl.w      d0,d5
-		move.w     d2,d1
-draw_sprite9:
-		add.w      d5,d5
-		bcc.s      draw_sprite10
-		move.b     d7,(a1)+
+		move.w     d2,d1         ; width counter
+draw_spr_loop:
+		add.w      d5,d5         ; foreground bit set?
+		bcc.s      draw_spr_bg
+		move.w     d7,(a1)+
 		add.w      d4,d4
-		dbf        d1,draw_sprite9
-		bra.s      draw_sprite12
-draw_sprite10:
-		add.w      d4,d4
-		bcc.s      draw_sprite11
-		move.b     d6,(a1)+
-		dbf        d1,draw_sprite9
-		bra.s      draw_sprite12
-draw_sprite11:
-		addq.l     #1,a1
-		dbf        d1,draw_sprite9
-draw_sprite12:
+		dbf        d1,draw_spr_loop
+		bra.s      draw_spr_next
+draw_spr_bg:
+		add.w      d4,d4         ; background bit set?
+		bcc.s      draw_spr_nth
+		move.w     d6,(a1)+
+		dbf        d1,draw_spr_loop
+		bra.s      draw_spr_next
+draw_spr_nth:
+		addq.l     #2,a1
+		dbf        d1,draw_spr_loop
+draw_spr_next:
 		adda.w     a3,a1
-		dbf        d3,draw_sprite8
+		dbf        d3,draw_spr_bloop ; next line
 		movea.l    (a7)+,a4
 		andi.b     #0xF7,(a4)
 		movea.l    vga_memend1(pc),a1
 		tst.b      (a1)
-		move.b     #8,-(a5)
+		move.b     #0x08,-(a5)
 		move.b     (a7)+,1(a5)
-		move.b     #1,(a5)+
+		move.b     #0x01,(a5)+
 		move.b     (a7)+,(a5)
-		move.b     #5,-(a5)
+		move.b     #0x05,-(a5)
 		move.b     (a7)+,1(a5)
 		move.b     (a7)+,(a5)
-		lea.l      -10(a5),a5
-		move.b     #4,(a5)+
+		lea.l      TS_I-GDC_I(a5),a5
+		move.b     #0x04,(a5)+
 		move.b     (a7)+,(a5)
-		move.b     #2,-1(a5)
+		move.b     #0x02,-1(a5)
 		move.b     (a7)+,(a5)
 		move.b     (a7)+,-(a5)
-draw_sprite13:
+draw_spr_exit:
 		rts
 
 vbl_mouse:
-		lea.l      vgamode+vga_visible_xres(pc),a0
-		move.l     vgamode+vga_xres(pc),d6
-		cmp.l      (a0),d6
-		beq        vbl_mouse7
 		lea.l      vscr_struct+10(pc),a1
-		movem.w    (a0),d4-d5
-		movem.w    (a1),d2-d3
+		movem.w    (a1),d2-d5
+		subq.w     #1,d4
+		subq.w     #1,d5
+		move.w     d4,d7
+		swap       d7
+		move.w     d5,d7
+		move.l     vgamode+vga_xres(pc),d6
+		cmp.l      d7,d6
+		beq        vbl_mouse_exit
 		add.w      d2,d4
 		add.w      d3,d5
 		moveq.l    #-32,d0
 		moveq.l    #-32,d1
 		add.w      GCURX.w,d0
-relok120:
+relok122:
 		add.w      GCURY.w,d1
-relok121:
+relok123:
 		cmp.w      d2,d0
 		bge.s      vbl_mouse1
 		move.w     d0,d2
@@ -1937,8 +1982,9 @@ vbl_mouse6:
 		swap       d0
 		move.w     d3,d0
 		cmp.l      (a1),d0
-		beq.s      vbl_mouse7
+		beq.s      vbl_mouse_exit
 		move.l     d0,(a1)
+		add.w      d2,d2
 		moveq.l    #7,d0
 		and.w      d2,d0
 		sub.w      d0,d2
@@ -1961,7 +2007,7 @@ vbl_mouse6:
 		swap       d2
 		move.b     #0x33,(a0)
 		move.b     d2,(a1)
-vbl_mouse7:
+vbl_mouse_exit:
 		rts
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1974,21 +2020,15 @@ vbl_mouse7:
 ;kein Register wird zerstoert
 init_res:
 		movem.l    d0-d2/a0-a2,-(a7)
-		movea.l    vgamode+vga_membase(pc),a0
-		movea.l    a0,a1
-		adda.l     #0x0003FFFF,a0
-		adda.l     #0x00100000,a1
-		move.l     a0,vga_memend1
-		move.l     a1,vga_memend2
 		movem.w    vgamode+vga_xres(pc),d0-d1
 		move.w     vgamode+vga_line_width(pc),d2
 		move.l     vgamode+vga_membase(pc),v_bas_ad.w
 		move.w     #DRV_PLANES,PLANES.w
-relok122:
-		move.w     d2,WIDTH.w
-relok123:
-		move.w     d2,BYTES_LIN.w
 relok124:
+		move.w     d2,WIDTH.w
+relok125:
+		move.w     d2,BYTES_LIN.w
+relok126:
 		movem.l    (a7)+,d0-d2/a0-a2
 		rts
 
@@ -2005,9 +2045,9 @@ init_vt52:
 		addq.w     #1,d1
 		move.w     vgamode+vga_line_width(pc),d2
 		move.w     d0,V_REZ_HZ.w
-relok125:
+relok127:
 		move.w     d1,V_REZ_VT.w
-relok126:
+relok128:
 		movea.l    _sf_font_hdr_ptr(a0),a1
 		lea.l      sizeof_FONTHDR(a1),a1
 		cmpi.w     #400,d1
@@ -2015,38 +2055,38 @@ relok126:
 		lea.l      sizeof_FONTHDR(a1),a1
 init_vt52_font:
 		move.l     dat_table(a1),V_FNT_AD.w
-relok127:
-		move.l     off_table(a1),V_OFF_AD.w
-relok128:
-		move.w     #256,V_FNT_WD.w
 relok129:
-		move.l     #0x00FF0000,V_FNT_ND.w
+		move.l     off_table(a1),V_OFF_AD.w
 relok130:
+		move.w     #256,V_FNT_WD.w
+relok131:
+		move.l     #0x00FF0000,V_FNT_ND.w
+relok132:
 		move.w     form_height(a1),d3
 		move.w     d3,V_CEL_HT.w
-relok131:
+relok133:
 		lsr.w      #3,d0
 		subq.w     #1,d0
 		divu.w     d3,d1
 		subq.w     #1,d1
 		mulu.w     d3,d2
 		movem.w    d0-d2,V_CEL_MX.w ; V_CEL_MX/V_CEL_MY/V_CEL_WR
-relok132:
-		move.l     #255,V_COL_BG.w
-relok133:
-		move.w     #1,V_HID_CNT.w
 relok134:
+		move.l     #15,V_COL_BG.w
+relok135:
+		move.w     #1,V_HID_CNT.w
+relok136:
 		move.w     #1,hid_cnt
 		move.w     #256,V_STAT_0.w
-relok135:
-		move.w     #0x1E1E,V_PERIOD.w
-relok136:
-		move.l     v_bas_ad.w,V_CUR_AD.w
 relok137:
-		clr.l      V_CUR_XY.w
+		move.w     #0x1E1E,V_PERIOD.w
 relok138:
-		clr.w      V_CUR_OF.w
+		move.l     v_bas_ad.w,V_CUR_AD.w
 relok139:
+		clr.l      V_CUR_XY.w
+relok140:
+		clr.w      V_CUR_OF.w
+relok141:
 		move.l     #vt_con0,mycon_state
 		movem.l    (a7)+,d0-d4/a0-a2
 		rts
@@ -2063,61 +2103,21 @@ relok139:
 build_exp:
 		movem.l    d0-d2/a0-a1,-(a7)
 		lea.l      expand_tab(pc),a0
-		lea.l      expand_tabo(pc),a1
 		moveq.l    #0,d0
 build_exp_bloop:
 		move.w     d0,d1
 		moveq.l    #7,d2
 build_exp_loop:
-		clr.b      (a0)
+		clr.w      (a0)+
 		add.b      d1,d1
-		bcc.s      build_exp_next
-		not.b      (a0)
+		bcs.s      build_exp_next
+		not.w      -2(a0)
 build_exp_next:
-		addq.l     #1,a0
 		dbf        d2,build_exp_loop
-		movep.l    -8(a0),d1
-		move.l     d1,(a1)+
-		movep.l    -7(a0),d1
-		move.l     d1,(a1)+
 		addq.w     #1,d0
 		cmp.w      #256,d0
 		blt.s      build_exp_bloop
 		movem.l    (a7)+,d0-d2/a0-a1
-		rts
-
-build_color_maps:
-		movem.l    d0-d3/a0-a1,-(a7)
-		movea.l    nvdi_struct(pc),a0
-		movea.l    _nvdi_fills(a0),a0
-		lea.l      64(a0),a0
-		lea.l      color_map(pc),a1
-		move.w     #1152-1,d3
-copy_map_loop:
-		moveq.l    #0,d0
-		move.b     (a0)+,d1
-		move.b     d1,d2
-		lsr.w      #4,d1
-		lsr.b      #1,d1
-		addx.w     d0,d0
-		lsr.b      #1,d1
-		addx.w     d0,d0
-		lsr.b      #1,d1
-		addx.w     d0,d0
-		lsr.b      #1,d1
-		addx.w     d0,d0
-		lsl.w      #4,d0
-		lsr.b      #1,d2
-		addx.w     d0,d0
-		lsr.b      #1,d2
-		addx.w     d0,d0
-		lsr.b      #1,d2
-		addx.w     d0,d0
-		lsr.b      #1,d2
-		addx.w     d0,d0
-		move.w     d0,(a1)+
-		dbf        d3,copy_map_loop
-		movem.l    (a7)+,d0-d3/a0-a1
 		rts
 
 init_vbl:
@@ -2135,8 +2135,10 @@ reset_vbl:
 		rts
 
 clear_device:
+		movem.l    d0-d7/a0-a6,-(a7)
 		bsr.s      initmode
 		bsr        clear_framebuffer
+		movem.l    (a7)+,d0-d7/a0-a6
 		rts
 
 initmode:
@@ -2148,9 +2150,60 @@ initmode_1:
 		bne.s      initmode_2
 		clr.w      0x00D02000
 initmode_2:
+		movea.l    vgamode+vga_membase(pc),a0
+		movea.l    a0,a1
+		adda.l     #0x0003FFFF,a0
+		adda.l     #0x00100000,a1
+		move.l     a0,vga_memend1
+		move.l     a1,vga_memend2
 		movea.l    vgamode+vga_regbase(pc),a0
-		move.b     vgamode+vga_MISC_W(pc),MISC_W(a0)    /* Select color mode & MCLK1 */
+		move.b     vgamode+vga_MISC_W(pc),d0
+		cmpi.w     #1,x1118a
+		bne.s      initmode_3
+		and.b      #0xF3,d0
+		or.b       #0x03,d0
+initmode_3:
+		move.b     d0,MISC_W(a0)
 		move.b     #0x01,VIDSUB(a0)      /* Enable VGA mode */
+		cmpi.w     #1,x1118a
+		bne.s      initmode_4
+		moveq.l    #8,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #12,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #4,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #12,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #4,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #12,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #4,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #12,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #4,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #12,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #8,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+		moveq.l    #12,d1
+		or.b       d0,d1
+		move.b     d1,MISC_W(a0)
+initmode_4:
 		move.b     #0x17,CRTC_IM(a0)
 		move.b     #0x00,CRTC_DM(a0)
 		move.b     #0x17,CRTC_IG(a0)
@@ -2172,73 +2225,78 @@ initmode_2:
 		subq.w     #1,d1
 		addq.l     #1,a3
 		subq.w     #1,d1
-initmode_3:
+initmode_5:
 		addq.w     #1,d0
 		move.b     d0,(a1)
 		move.b     (a3)+,(a2)
-		dbf        d1,initmode_3
+		dbf        d1,initmode_5
+		cmpi.w     #1,x1118a
+		bne.s      initmode_6
+		cmpi.w     #2,x1118c
+		bne.s      initmode_6
+		move.b     #0x07,(a1)
+		move.b     #0xA4,(a2)
+initmode_6:
 		move.b     #0x00,(a1)
 		move.b     #0x03,(a2)
 		cmpi.w     #2,x1118a
-		bne.s      initmode_4
-		tst.w      x1118c
-		beq        initmode_8
-		move.b     DAC_PEL(a0),d0
-		move.b     DAC_PEL(a0),d0
-		move.b     DAC_PEL(a0),d0
-		move.b     DAC_PEL(a0),d0
-		move.b     #0x02,DAC_PEL(a0)
-initmode_4:
-		cmpi.w     #1,x1118a
 		bne.s      initmode_7
-		cmpi.w     #2,x1118c
-		bne.s      initmode_5
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
-		move.b     #0x00,DAC_PEL(a0)  /* HiColor off */
-initmode_5:
-		moveq.l    #31,d0
-		and.w      vgamode+vga_synth,d0
-		lea.l      synth_tab(pc),a1
-		move.b     0(a1,d0.w),d0
-		cmpi.w     #1,vgamode+vga_dac_type
-		beq.s      initmode_6
-		bset       #7,d0
-initmode_6:
-		move.b     d0,(a0) ; BUG? should that be DAC_PEL(a0)?
+		move.b     #0xC0,DAC_PEL(a0)
 initmode_7:
-		cmpi.w     #3,x1118a
+		cmpi.w     #1,x1118a
+		bne.s      initmode_9
+		cmpi.w     #2,x1118c
 		bne.s      initmode_8
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
-		move.b     vgamode+vga_PEL(pc),DAC_PEL(a0)
+		move.b     #0xE0,DAC_PEL(a0)
 initmode_8:
+		moveq.l    #31,d0
+		and.w      vgamode+vga_synth,d0
+		lea.l      synth_tab(pc),a1
+		move.b     0(a1,d0.w),d0
+		cmpi.w     #1,vgamode+vga_dac_type
+		beq.s      initmode_8_1
+		bset       #7,d0
+initmode_8_1:
+		move.b     d0,(a0) ; BUG? should that be DAC_PEL(a0)?
+initmode_9:
+		cmpi.w     #3,x1118a
+		bne.s      initmode_10
+		move.b     DAC_PEL(a0),d0
+		move.b     DAC_PEL(a0),d0
+		move.b     DAC_PEL(a0),d0
+		move.b     DAC_PEL(a0),d0
+		move.b     vgamode+vga_PEL2(pc),DAC_PEL(a0)
+initmode_10:
 		lea.l      CRTC_IG(a0),a1
 		lea.l      CRTC_DG(a0),a2
 		movea.l    vgamode+vga_crtc_regs(pc),a3
 		moveq.l    #0,d0
 		move.w     (a3)+,d1
 		subq.w     #1,d1
-initmode_9:
+initmode_11:
 		move.b     d0,(a1)
 		move.b     (a3)+,(a2)
 		addq.w     #1,d0
-		dbf        d1,initmode_9
+		dbf        d1,initmode_11
 		lea.l      GDC_I(a0),a1
 		lea.l      GDC_D(a0),a2
 		movea.l    vgamode+vga_gdc_regs(pc),a3
 		moveq.l    #0,d0
 		move.w     (a3)+,d1
 		subq.w     #1,d1
-initmode_10:
+initmode_12:
 		move.b     d0,(a1)
 		move.b     (a3)+,(a2)
 		addq.w     #1,d0
-		dbf        d1,initmode_10
+		dbf        d1,initmode_12
 
 		move.b     IS1_RC(a0),d0
 		lea.l      ATC_IW(a0),a1
@@ -2246,12 +2304,19 @@ initmode_10:
 		moveq.l    #0,d0
 		move.w     (a2)+,d1
 		subq.w     #1,d1
-initmode_11:
+initmode_13:
 		move.b     d0,(a1)
 		move.b     (a2)+,(a1)
 		addq.w     #1,d0
-		dbf        d1,initmode_11
+		dbf        d1,initmode_13
 
+		cmpi.w     #1,x1118a
+		bne.s      initmode_14
+		cmpi.w     #2,x1118c
+		bne.s      initmode_14
+		move.b     #0x16,(a1)
+		move.b     #0x80,(a1)
+initmode_14:
 		move.b     #0x20,(a1)           /* enable screen output */
 		move.l     vgamode+vga_visible_xres(pc),d0
 		add.l      #0x00010001,d0
@@ -2264,11 +2329,12 @@ initmode_11:
 		move.l     #vscr_funct,(a1)+
 		move.l     vgamode+vga_visible_xres(pc),d0
 		cmp.l      vgamode+vga_xres(pc),d0
-		bne.s      initmode_12
+		bne.s      initmode_15
 		rts
-initmode_12:
+initmode_15:
 		move.w     vgamode+vga_xres(pc),d0
 		addq.w     #1,d0
+		add.w      d0,d0
 		move.w     d0,vgamode+vga_line_width
 		movea.l    vgamode+vga_regbase(pc),a0
 		lea.l      CRTC_IG(a0),a0
@@ -2331,38 +2397,34 @@ x10896_3:
 		rts
 
 clear_framebuffer:
-		movea.l    vgamode+vga_regbase(pc),a0
-		lea.l      GDC_I(a0),a1
-		move.b     #0x05,(a1)+
-		andi.b     #0xFC,(a1)
-		lea.l      TS_I(a0),a5
-		move.b     #0x04,(a5)+
-		andi.b     #0xF7,(a5)
-		move.b     #0x02,-1(a5)
-		move.b     #0x0F,(a5)
 		movea.l    vgamode+vga_membase(pc),a1
-		move.l     #0x0F0F0F0F,d0
 		move.w     vgamode+vga_xres(pc),d2
-		addq.w     #1,d2
-		lsr.w      #3,d2
-		subq.w     #1,d2
-		move.w     vgamode+vga_yres,d3
-		lsr.w      #1,d3
+		moveq.l    #0,d1
+		move.w     #0xf800,d5 /* red mask */
+		moveq.l    #0x001f,d6 /* blue mask */
+		move.w     #0x07E0,d7 /* green mask */
 clear_framebuffer1:
-		move.w     d2,d1
+		moveq.l    #0,d0
 clear_framebuffer2:
-		move.l     d0,(a1)+
-		dbf        d1,clear_framebuffer2
-		add.l      #0x01010101,d0
-		cmp.b      #255,d0
-		bne.s      clear_framebuffer3
-		move.l     #0x0F0F0F0F,d0
-clear_framebuffer3:
-		dbf        d3,clear_framebuffer1
-		move.b     #0x04,-(a5)
-		ori.b      #0x08,1(a5)
-		move.b     #0x02,(a5)+
-		move.b     #0x0F,(a5)
+		move.w     d1,d3
+		sub.w      d0,d3
+		move.w     d3,d4
+		and.w      d5,d3
+		neg.w      d4
+		and.w      d6,d4
+		or.w       d4,d3
+		move.w     d1,d4
+		add.w      d0,d4
+		and.w      d7,d4
+		or.w       d4,d3
+		rol.w      #8,d3
+		move.w     d3,(a1)+
+		addq.w     #1,d0
+		cmp.w      d2,d0
+		ble.s      clear_framebuffer2
+		addq.w     #1,d1
+		cmp.w      vgamode+vga_yres,d1
+		ble.s      clear_framebuffer1
 		rts
 
 install_vscr_cookie:
@@ -2416,8 +2478,6 @@ wk_init:
 		move.w     (a0)+,bitmap_planes(a6)
 		move.w     (a0)+,bitmap_format(a6)
 		move.w     (a0)+,bitmap_flags(a6)
-		move.l     global_ctable(pc),wk_ctab(a6)
-		move.l     global_itable(pc),wk_itab(a6)
 		move.l     p_fbox(a6),fbox_ptr
 		move.l     p_hline(a6),hline_ptr
 		move.l     p_bitblt(a6),bitblt_ptr
@@ -2426,51 +2486,26 @@ wk_init:
 		move.l     #hline,p_hline(a6)
 		move.l     #bitblt,p_bitblt(a6)
 		move.l     #v_escape,p_escapes(a6)
-		move.l     #set_color_rgb,p_set_color_rgb(a6)
+		move.l     global_itable(pc),wk_itab(a6)
+		move.l     #65536,d0
+		bsr        alloc_ctable
+		move.l     a0,wk_ctab(a6)
+		bne.s      wk_init1
+		move.l     global_ctable(pc),wk_ctab(a6)
+wk_init1:
 		moveq.l    #1,d0
 		rts
 
 wk_reset:
-		rts
-
-set_color_rgb:
-		movem.l    d3-d5/a2,-(a7)
-		move.l     d0,d3
-		move.l     d1,d4
-		movea.l    vgamode+vga_regbase(pc),a1
-		lea.l      DAC_D(a1),a2
-		lea.l      DAC_IW(a1),a1
-		moveq.l    #10,d5
-		cmpi.w     #1,vgamode+vga_dac_type
-		beq.s      set_color_rgb1
-		moveq.l    #8,d5
-set_color_rgb1:
-		move.l     (a0)+,d0
-		move.w     (a0)+,d1
-		move.w     (a0)+,d2
-		move.b     d3,(a1)
-		lsr.w      d5,d0
-		lsr.w      d5,d1
-		lsr.w      d5,d2
-		tst.w      graymode
-		beq.s      set_color_rgb2
-		add.w      d1,d0
-		add.w      d0,d1
-		lsl.w      #2,d1
-		add.w      d1,d0
-		add.w      d2,d2
-		add.w      d2,d0
-		lsr.w      #4,d0
-		move.w     d0,d1
-		move.w     d0,d2
-set_color_rgb2:
-		move.b     d0,(a2)
-		move.b     d1,(a2)
-		move.b     d2,(a2)
-		addq.l     #1,d3
-		cmp.l      d3,d4
-		bge.s      set_color_rgb1
-		movem.l    (a7)+,d3-d5/a2
+		movem.l    d0-d2/a0-a1,-(a7)
+		move.l     wk_ctab(a6),d0
+		beq.s      wk_reset1
+		cmp.l      global_ctable(pc),d0
+		beq.s      wk_reset1
+		movea.l    d0,a0
+		bsr        free_ctable
+wk_reset1:
+		movem.l    (a7)+,d0-d2/a0-a1
 		rts
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2499,11 +2534,11 @@ v_escape:
 		movea.l    a2,a5
 		movea.l    a1,a0
 		movem.w    V_CUR_XY0.w,d0-d1
-relok140:
-		movea.l    V_CUR_AD.w,a1
-relok141:
-		movea.w    BYTES_LIN.w,a2
 relok142:
+		movea.l    V_CUR_AD.w,a1
+relok143:
+		movea.w    BYTES_LIN.w,a2
+relok144:
 		jsr        v_escape_tab(pc,d2.w)
 		movem.l    (a7)+,d1-d7/a2-a5
 v_escape_exit:
@@ -2532,7 +2567,7 @@ v_escape_tab:     DC.W v_escape_exit-v_escape_tab
 ; INQUIRE ADDRESSABLE ALPHA CHARACTER CELLS (VDI 5, ESCAPE 1)
 vq_chcells:
 		move.l     V_CEL_MX.w,d3
-relok143:
+relok145:
 		addi.l     #0x00010001,d3
 		swap       d3
 		move.l     d3,(a4)
@@ -2543,19 +2578,19 @@ relok143:
 v_exit:
 		addq.w     #1,hid_cnt
 		bclr       #CURSOR_STATE,V_STAT_0.w
-relok144:
+relok146:
 		bra        clear_screen
 
 ; ENTER ALPHA MODE (VDI 5, ESCAPE 3)
 v_enter_cur:
 		clr.l      V_CUR_XY0.w
-relok145:
+relok147:
 		move.l     v_bas_ad.w,V_CUR_AD.w
-relok146:
+relok148:
 		move.l     #vt_con0,mycon_state
 		bsr        clear_screen
 		bclr       #CURSOR_STATE,V_STAT_0.w
-relok147:
+relok149:
 		move.w     #1,hid_cnt
 		bra        cursor_on
 
@@ -2588,98 +2623,56 @@ vq_curaddress:
 ;a6.l Workstation
 ;Ausgaben:
 ;-
+hline_exit:
+		movea.l    hline_ptr(pc),a1
+		jmp        (a1)
+
+hline_modes1:
+	dc.b 15,12
+	
 hline:
 		cmp.w      #-1,d7
 		bne.s      hline_exit
 		cmpi.w     #1,wr_mode(a6)
 		bgt.s      hline_exit
-		move.l     r_fg_pixel(a6),d5
-		move.b     d5,d4
-		lsl.w      #8,d5
-		move.b     d4,d5
-		move.w     d5,d4
-		swap       d4
-		move.w     d5,d4
+		move.l     r_fg_pixel+2(a6),d4 ; get pixel value into upper 16 bit
+		move.w     r_fg_pixel+2(a6),d4 ; get pixel value into lowet 16 bit
 		movea.l    v_bas_ad.w,a1
 		cmpa.l     vgamode+vga_membase(pc),a1
 		bne.s      hline_exit
-		muls.w     BYTES_LIN.w,d1
-relok148:
-		ext.l      d0
-		add.l      d0,d1
-		sub.w      d0,d2
-		cmp.w      #32,d2
-		blt.s      hline_small
-		bra.s      hline1
-
-hline_exit:
-		movea.l    hline_ptr(pc),a1
-		jmp        (a1)
-hline_small:
-		adda.l     d1,a1
-		eori.w     #31,d2
-		add.w      d2,d2
-		jmp        hline_sloop(pc,d2.w)
-hline_sloop:
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		move.b     d4,(a1)+
-		rts
-
+		moveq.l    #-32,d6
+		add.w      d2,d6
+		sub.w      d0,d6
+		bmi        hline5
+		tst.w      d4
+		beq.s      hline1
+		cmp.w      #0xFFFF,d4
+		bne        hline5
 hline1:
-		move.l     a5,-(a7)
-		lsr.l      #2,d1
+		move.w     BYTES_LIN.w,d5
+relok150:
+		lsr.w      #2,d5
+		muls.w     d5,d1
+		move.w     d0,d7
+		lsr.w      #1,d7
+		ext.l      d7
+		add.l      d7,d1
 		adda.l     d1,a1
-		add.w      d0,d2
+		move.l     a5,-(a7)
 		movea.l    vgamode+vga_regbase(pc),a5
 		lea.l      TS_I(a5),a5
 		move.b     #0x04,(a5)+
 		andi.b     #0xF7,(a5)
 		move.b     #0x02,-1(a5)
-		moveq.l    #3,d7
-		moveq.l    #15,d5
-		move.w     d0,d6
-		and.w      d7,d6
-		lsl.w      d6,d5
-		move.b     d5,(a5)
+		moveq.l    #1,d5
+		and.w      d0,d5
+		move.b     hline_modes1(pc,d5.w),(a5)
 		move.b     d4,(a1)+
-		moveq.l    #15,d5
-		move.b     d5,(a5)
-		move.w     d2,d6
-		not.w      d6
-		and.w      d7,d6
-		lsr.w      d6,d5
-		lsr.w      #2,d0
-		lsr.w      #2,d2
+		move.b     #0x0F,(a5)
+		moveq.l    #1,d5
+		and.w      d2,d5
+		lsr.w      #1,d0
+		lsr.w      #1,d2
 		sub.w      d0,d2
 		subq.w     #1,d2
 		btst       #0,d1
@@ -2687,6 +2680,7 @@ hline1:
 		move.b     d4,(a1)+
 		subq.w     #1,d2
 hline2:
+		moveq.l    #3,d7
 		move.w     d2,d0
 		not.w      d0
 		and.w      d7,d0
@@ -2710,7 +2704,7 @@ hline4:
 		move.b     d4,(a1)+
 		move.b     d4,(a1)+
 		move.b     d4,(a1)+
-		move.b     d5,(a5)
+		move.b     hline_modes2(pc,d5.w),(a5)
 		move.b     d4,(a1)
 		move.b     #0x04,-(a5)
 		ori.b      #0x08,1(a5)
@@ -2719,349 +2713,39 @@ hline4:
 		movea.l    (a7)+,a5
 		rts
 
-fbox_fast:
-		moveq.l    #15,d4
-		moveq.l    #15,d5
-		lea.l      color_map-64(pc),a0
-		move.w     f_style(a6),d7
-		lsl.w      #6,d7
-		adda.w     d7,a0
-		cmpi.w     #3,f_interior(a6)
-		bne.s      fbox_fast1
-		lea.l      1536(a0),a0
-fbox_fast1:
-		move.w     d1,d7
-		and.w      d4,d7
-		move.w     d7,d6
-		eor.w      d4,d7
-		add.w      d6,d6
-		add.w      d6,d6
-		adda.w     d6,a0
-		move.w     d7,-(a7)
-		sub.w      d1,d3
-		moveq.l    #3,d7
-		and.w      d0,d7
-		lsl.w      d7,d4
-		moveq.l    #3,d6
-		move.w     d2,d7
-		not.w      d7
-		and.w      d6,d7
-		lsr.w      d7,d5
-		move.w     BYTES_LIN.w,d7
-relok149:
-		mulu.w     d7,d1
+hline_modes2:
+	dc.b 3,15
+
+hline5:
+		muls.w     BYTES_LIN.w,d1
+relok151:
 		ext.l      d0
 		add.l      d0,d1
-		lsr.l      #2,d1
+		add.l      d0,d1
 		adda.l     d1,a1
-		lsr.w      #2,d0
-		lsr.w      #2,d2
-		move.w     d2,d6
 		sub.w      d0,d2
-		lsl.w      #2,d7
-		sub.w      d2,d7
-		movea.w    d7,a3
-		moveq.l    #3,d7
-		and.w      d7,d0
-		subq.w     #5,d2
-		add.w      d0,d2
-		add.w      d0,d0
-		add.w      d0,d0
-		and.w      d7,d6
-		sub.w      d6,d2
-		add.w      d6,d6
-		add.w      d6,d6
-		lsr.w      #2,d2
-		cmpi.w     #255,r_fg_pixel+2(a6)
-		bne        fbox_fast18
-		movea.l    fbox_jmptable1(pc,d0.w),a2
-		movea.l    fbox_jmptable2(pc,d6.w),a4
-		bra.s      fbox_fast2
-
-fbox_jmptable1:
-	dc.l fbox_fast7
-	dc.l fbox_fast8
-	dc.l fbox_fast9
-	dc.l fbox_fast10
-fbox_jmptable2:
-	dc.l fbox_fast12
-	dc.l fbox_fast13
-	dc.l fbox_fast14
-	dc.l fbox_fast16
-
-fbox_fast2:
-		movea.l    vgamode+vga_regbase(pc),a5
-		lea.l      GDC_I(a5),a5
-		move.b     #0x05,(a5)+
-		andi.b     #0xFC,(a5)
-		ori.b      #0x02,(a5)
-		move.b     #0x00,-(a5)
-		move.b     #0x0F,1(a5)
-		move.b     #0x01,(a5)+
-		move.b     #0x0F,(a5)
-		lea.l      TS_I-GDC_D(a5),a5
-		move.b     #0x04,(a5)+
-		andi.b     #0xF7,(a5)
-		move.b     #0x02,-1(a5)
-		move.w     (a7)+,d7
-		moveq.l    #15,d0
-		cmp.w      d0,d3
-		bge.s      fbox_fast3
-		move.w     d3,d0
-fbox_fast3:
-		swap       d3
-		move.w     d0,d3
-		move.w     BYTES_LIN.w,d6
-relok150:
-		lsr.w      #2,d6
-		move.w     d6,-(a7)
-fbox_fast4:
-		swap       d3
-		move.w     d3,-(a7)
-		move.l     a1,-(a7)
-		lsr.w      #4,d3
-		move.l     (a0)+,d0
-		dbf        d7,fbox_fast5
-		lea.l      -64(a0),a0
-fbox_fast5:
-		move.w     d7,-(a7)
-		move.l     d0,d1
-		ror.l      #8,d1
-		move.l     d1,d6
-		ror.l      #8,d6
-		move.l     d6,d7
-		ror.l      #8,d7
-fbox_fast6:
-		move.w     d2,-(a7)
-		move.b     d4,(a5)
-		jmp        (a2)
-fbox_fast7:
-		move.b     d7,(a1)+
-		move.b     #0x0F,(a5)
-		move.b     d6,(a1)+
-		move.w     d0,(a1)+
-		bra.s      fbox_fast11
-fbox_fast8:
-		move.b     d6,(a1)+
-		move.b     #0x0F,(a5)
-		move.w     d0,(a1)+
-		bra.s      fbox_fast11
-fbox_fast9:
-		move.b     d1,(a1)+
-		move.b     #0x0F,(a5)
-		move.b     d0,(a1)+
-		bra.s      fbox_fast11
-fbox_fast10:
-		move.b     d0,(a1)+
-		move.b     #0x0F,(a5)
-fbox_fast11:
-		move.l     d0,(a1)+
-		dbf        d2,fbox_fast11
-		jmp        (a4)
-fbox_fast12:
-		move.b     d5,(a5)
-		move.b     d7,(a1)
-		bra.s      fbox_fast17
-fbox_fast13:
-		move.b     d7,(a1)+
-		move.b     d5,(a5)
-		move.b     d6,(a1)
-		bra.s      fbox_fast17
-fbox_fast14:
-		move.w     d6,(a1)+
-		move.b     d5,(a5)
-		move.b     d1,(a1)
-fbox_fast15:
-		bra.s      fbox_fast17
-fbox_fast16:
-		move.w     d6,(a1)+
-		move.b     d1,(a1)+
-		move.b     d5,(a5)
-		move.b     d0,(a1)
-fbox_fast17:
-		move.w     (a7)+,d2
-		adda.w     a3,a1
-		dbf        d3,fbox_fast6
-		move.w     (a7)+,d7
-		movea.l    (a7)+,a1
-		move.w     (a7)+,d3
-		subq.w     #1,d3
-		swap       d3
-		adda.w     (a7),a1
-		dbf        d3,fbox_fast4
-		addq.l     #2,a7
-		move.b     #0x0F,(a5)
-		move.b     #0x04,-(a5)
-		ori.b      #0x08,1(a5)
-		lea.l      GDC_I-TS_I(a5),a5
-		move.b     #0x05,(a5)+
-		andi.b     #0xFC,(a5)
-		moveq.l    #0,d0
-		move.b     #0x00,-(a5)
-		move.b     d0,1(a5)
-		move.b     #0x01,(a5)+
-		move.b     d0,(a5)
-		rts
-
-fbox_jmptable3:
-	dc.l fbox_fast23
-	dc.l fbox_fast24
-	dc.l fbox_fast25
-	dc.l fbox_fast26
-fbox_jmptable4:
-	dc.l fbox_fast30
-	dc.l fbox_fast31
-	dc.l fbox_fast32
-	dc.l fbox_fast33
-
-fbox_fast18:
-		movea.l    fbox_jmptable3(pc,d0.w),a2
-		movea.l    fbox_jmptable4(pc,d6.w),a4
-		move.l     r_fg_pixel(a6),d0
-		move.w     (a7)+,d7
-		movea.l    vgamode+vga_membase(pc),a5
-		adda.l     #0x000FFFFC,a5
-		move.l     a5,-(a7)
-		move.l     (a5),-(a7)
-		clr.l      (a5)
-		movea.l    vgamode+vga_regbase(pc),a5
-		lea.l      GDC_I(a5),a5
-		move.b     #0x05,(a5)+
-		andi.b     #0xfC,(a5)
-		ori.b      #0x02,(a5)
-		move.b     #0x00,-(a5)
-		move.b     #0x0F,1(a5)
-		move.b     #0x01,(a5)+
-		move.b     #0x0F,(a5)
-		move.b     #0x08,-(a5)
-		move.b     d0,1(a5)
-		lea.l      TS_I-GDC_I(a5),a5
-		move.b     #0x04,(a5)+
-		andi.b     #0xF7,(a5)
-		move.b     #0x02,-1(a5)
-		moveq.l    #15,d0
-		cmp.w      d0,d3
-		bge.s      fbox_fast19
-		move.w     d3,d0
-fbox_fast19:
-		swap       d3
-		move.w     d0,d3
-		move.w     BYTES_LIN.w,d6
-relok151:
-		lsr.w      #2,d6
-		move.w     d6,-(a7)
-fbox_fast20:
-		swap       d3
-		move.w     d3,-(a7)
-		move.l     a1,-(a7)
-		lsr.w      #4,d3
-		movep.w    0(a0),d0
-		movep.w    1(a0),d1
-		addq.l     #4,a0
-		dbf        d7,fbox_fast21
-		lea.l      -64(a0),a0
-fbox_fast21:
-		move.w     d7,-(a7)
-		move.w     d0,d6
-		swap       d0
-		move.w     d6,d0
-		move.w     d1,d7
-		swap       d1
-		move.w     d7,d1
-		lsr.w      #8,d6
-		lsr.w      #8,d7
-fbox_fast22:
-		move.w     d2,-(a7)
-		move.b     d4,(a5)
-		jmp        (a2)
-fbox_fast23:
-		move.b     d6,(a1)+
-		move.b     #0x0F,(a5)
-		move.b     d7,(a1)+
-		move.b     d0,(a1)+
-		move.b     d1,(a1)+
-		bra.s      fbox_fast27
-fbox_fast24:
-		move.b     d7,(a1)+
-		move.b     #0x0F,(a5)
-		move.b     d0,(a1)+
-		move.b     d1,(a1)+
-		bra.s      fbox_fast27
-fbox_fast25:
-		move.b     d0,(a1)+
-		move.b     #0x0F,(a5)
-		move.b     d1,(a1)+
-		bra.s      fbox_fast27
-fbox_fast26:
-		move.b     d1,(a1)+
-		move.b     #0x0F,(a5)
-fbox_fast27:
-		lsr.w      #1,d2
-		bcs.s      fbox_fast28
-		movep.w    d0,0(a1)
-		movep.w    d1,1(a1)
-		addq.l     #4,a1
+		btst       #0,d2
+		bne.s      hline6
+		move.w     d4,(a1)+
 		subq.w     #1,d2
-		bmi.s      fbox_fast29
-fbox_fast28:
-		movep.l    d0,0(a1)
-		movep.l    d1,1(a1)
-		addq.l     #8,a1
-		dbf        d2,fbox_fast28
-fbox_fast29:
-		jmp        (a4)
-fbox_fast30:
-		move.b     d5,(a5)
-		move.b     d6,(a1)
-		bra.s      fbox_fast34
-fbox_fast31:
-		move.b     d6,(a1)+
-		move.b     d5,(a5)
-		move.b     d7,(a1)
-		bra.s      fbox_fast34
-fbox_fast32:
-		move.b     d6,(a1)+
-		move.b     d7,(a1)+
-		move.b     d5,(a5)
-		move.b     d0,(a1)
-		bra.s      fbox_fast34
-fbox_fast33:
-		move.b     d6,(a1)+
-		move.b     d7,(a1)+
-		move.b     d0,(a1)+
-		move.b     d5,(a5)
-		move.b     d1,(a1)
-fbox_fast34:
-		move.w     (a7)+,d2
-		adda.w     a3,a1
-		dbf        d3,fbox_fast22
-		move.w     (a7)+,d7
-		movea.l    (a7)+,a1
-		move.w     (a7)+,d3
-		subq.w     #1,d3
-		swap       d3
-		adda.w     (a7),a1
-		dbf        d3,fbox_fast20
-		addq.l     #2,a7
-		move.b     #0x0F,(a5)
-		move.b     #0x04,-(a5)
-		ori.b      #0x08,1(a5)
-		lea.l      GDC_I-TS_I(a5),a5
-		move.b     #0x05,(a5)+
-		andi.b     #0xFC,(a5)
-		moveq.l    #0,d0
-		move.b     #0x00,-(a5)
-		move.b     d0,1(a5)
-		move.b     #0x01,(a5)+
-		move.b     d0,(a5)
-		move.b     #0x08,-(a5)
-		move.b     #0xFF,1(a5)
-		move.l     (a7)+,d0
-		movea.l    (a7)+,a0
-		tst.l      (a0)
-		bne.s      fbox_fast35
-		move.l     d0,(a0)
-fbox_fast35:
+		bmi.s      hline8
+hline6:
+		moveq.l    #14,d0
+		and.w      d2,d0
+		eori.w     #14,d0
+		lsr.w      #4,d2
+		jmp        hline7(pc,d0.w)
+hline7:
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		dbf        d2,hline7
+hline8:
 		rts
 
 fbox_default:
@@ -3082,165 +2766,177 @@ fbox_default:
 fbox:
 		tst.l      r_fg_pixel(a6)
 		bne.s      fbox_default
-		movea.l    f_pointer(a6),a4
-		move.w     wr_mode(a6),d7
-		btst       d7,#0x0C
-		bne.s      fbox_default
 		movea.l    v_bas_ad.w,a1
 		cmpa.l     vgamode+vga_membase(pc),a1
 		bne.s      fbox_default
-		move.w     f_interior(a6),d4
-		tst.w      d7
-		bne.s      fbox_opt
-		tst.l      r_fg_pixel(a6)
-		beq.s      fbox_solid
-		tst.w      d4
-		bne.s      fbox_opt
-		move.l     r_fg_pixel(a6),-(a7)
-		clr.l      r_fg_pixel(a6)
-		bsr.s      fbox_solid
-		move.l     (a7)+,r_fg_pixel(a6)
-		rts
-fbox_opt:
-		subq.w     #F_USER_DEF,d4
-		beq.s      fbox_default
-		addq.w     #F_USER_DEF-F_SOLID,d4
-		beq.s      fbox_solid
-		subq.w     #1,d4
-		bne.s      fbox_opt1
-		cmpi.w     #8,f_style(a6)
-		beq.s      fbox_solid
-fbox_opt1:
-		tst.w      d7
+		move.w     f_interior(a6),d6
+		move.w     wr_mode(a6),d7
+		bne.s      fbox1
+		tst.w      d6
+		beq.s      fbox2
+		subq.w     #1,d6
+		beq.s      fbox3
+		subq.w     #1,d6
 		bne.s      fbox_default
-		move.w     d2,d6
-		sub.w      d0,d6
-		cmp.w      #32,d6
-		bge        fbox_fast
-		bra.s      fbox_default
+		cmpi.w     #8,f_style(a6)
+		bne.s      fbox_default
+		bra.s      fbox3
+fbox1:
+		subq.w     #1,d7
+		bne.s      fbox_default
+		subq.w     #1,d6
+		beq.s      fbox3
+		subq.w     #1,d6
+		bne.s      fbox_default
+		cmpi.w     #8,f_style(a6)
+		bne.s      fbox_default
+		bra.s      fbox3
 
-fbox_solid:
+fbox_modes1:
+	dc.b 15,12,3,15
+
+fbox2:
+		move.l     #0xFFFFFFFF,d4
+		bra.s      fbox4
+fbox3:
+		move.l     r_fg_pixel+2(a6),d4
+		move.w     r_fg_pixel+2(a6),d4 ; BUG?
+fbox4:
 		sub.w      d1,d3
-		moveq.l    #15,d4
-		moveq.l    #15,d5
-		moveq.l    #3,d7
-		and.w      d0,d7
-		lsl.w      d7,d4
-		moveq.l    #3,d6
-		move.w     d2,d7
-		not.w      d7
-		and.w      d6,d7
-		lsr.w      d7,d5
-		move.w     BYTES_LIN.w,d7
+		move.w     BYTES_LIN.w,d6
 relok152:
-		mulu.w     d7,d1
+		movea.w    d6,a3
+		muls.w     d6,d1
 		ext.l      d0
 		add.l      d0,d1
+		add.l      d0,d1
+		moveq.l    #-32,d6
+		add.w      d2,d6
+		sub.w      d0,d6
+		bmi        fbox12
+		tst.w      d4
+		beq.s      fbox5
+		cmp.w      #0xFFFF,d4
+		bne        fbox12
+fbox5:
 		lsr.l      #2,d1
 		adda.l     d1,a1
-		lsr.w      #2,d0
-		lsr.w      #2,d2
+		moveq.l    #1,d5
+		and.w      d0,d5
+		moveq.l    #1,d6
+		and.w      d2,d6
+		move.b     fbox_modes1(pc,d5.w),d5
+		move.b     fbox_modes1+2(pc,d6.w),d6
+		lsr.w      #1,d0
+		lsr.w      #1,d2
 		sub.w      d0,d2
-		lsr.w      #2,d7
-		sub.w      d2,d7
-		cmp.w      #8,d2
-		blt        fbox_solid6
+		move.w     a3,d0
+		lsr.w      #2,d0
+		sub.w      d2,d0
+		movea.w    d0,a3
 		subq.w     #1,d2
-		lea.l      fbox_solid3+2(pc),a0
 		btst       #0,d1
-		bne.s      fbox_solid1
-		subq.l     #2,a0
+		bne.s      fbox6
 		subq.w     #1,d2
-fbox_solid1:
+fbox6:
+		moveq.l    #3,d7
 		move.w     d2,d0
+		not.w      d0
+		and.w      d7,d0
+		add.w      d0,d0
 		lsr.w      #2,d2
 		subq.w     #1,d2
-		move.w     d2,d1
-		not.w      d1
-		and.w      d6,d1
-		add.w      d1,d1
+		and.w      d2,d7
+		eori.w     #3,d7
+		add.w      d7,d7
 		lsr.w      #2,d2
-		lea.l      fbox_solid4(pc,d1.w),a2
-		not.w      d0
-		and.w      d6,d0
-		add.w      d0,d0
-		lea.l      fbox_solid5(pc,d0.w),a4
-		movep.w    r_fg_pixel+3(a6),d1
-		move.b     r_fg_pixel+3(a6),d1
-		move.w     d1,d0
-		swap       d0
-		move.w     d1,d0
-		moveq.l    #15,d1
+		lea.l      fbox10(pc,d7.w),a0
+		lea.l      fbox11(pc,d0.w),a4
+		btst       #0,d1
+		bne.s      fbox7
+		movea.l    a0,a2
+		lea.l      fbox9(pc),a0
+fbox7:
 		movea.l    vgamode+vga_regbase(pc),a5
 		lea.l      TS_I(a5),a5
 		move.b     #0x04,(a5)+
 		andi.b     #0xF7,(a5)
 		move.b     #0x02,-1(a5)
-fbox_solid2:
-		move.b     d4,(a5)
-		move.b     d0,(a1)+
-		move.b     d1,(a5)
-		jmp        (a0)
-fbox_solid3:
-		move.b     d0,(a1)+
-		move.w     d2,d6
-		jmp        (a2)
-fbox_solid4:
-		move.l     d0,(a1)+
-		move.l     d0,(a1)+
-		move.l     d0,(a1)+
-		move.l     d0,(a1)+
-		dbf        d6,fbox_solid4
-		jmp        (a4)
-fbox_solid5:
-		move.b     d0,(a1)+
-		move.b     d0,(a1)+
-		move.b     d0,(a1)+
+		move.w     #15,d7
+fbox8:
 		move.b     d5,(a5)
-		move.b     d0,(a1)
-		adda.w     d7,a1
-		dbf        d3,fbox_solid2
-		move.b     d1,(a5)
+		move.b     d4,(a1)+
+		move.b     d7,(a5)
+		move.w     d2,d0
+		jmp        (a0)
+fbox9:
+		move.b     d4,(a1)+
+		jmp        (a2)
+fbox10:
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		dbf        d0,fbox10
+		jmp        (a4)
+fbox11:
+		move.b     d4,(a1)+
+		move.b     d4,(a1)+
+		move.b     d4,(a1)+
+		move.b     d6,(a5)
+		move.b     d4,(a1)
+		adda.w     a3,a1
+		dbf        d3,fbox8
 		move.b     #0x04,-(a5)
 		ori.b      #0x08,1(a5)
+		move.b     #0x02,(a5)+
+		move.b     #0x0F,(a5)
 		rts
 
-fbox_solid6:
+fbox12:
+		sub.w      d0,d2
+		adda.l     d1,a1
+		move.w     d2,d0
+		addq.w     #1,d0
+		add.w      d0,d0
+		suba.w     d0,a3
+		btst       #0,d2
+		bne.s      fbox13
+		lea.l      fbox15(pc),a0
+		lea.l      fbox17(pc),a2
 		subq.w     #1,d2
-		bpl.s      fbox_solid7
-		and.w      d5,d4
-		moveq.l    #0,d5
-		subq.w     #1,d7
-fbox_solid7:
-		subq.w     #1,d2
-		movep.w    r_fg_pixel+3(a6),d1
-		move.b     r_fg_pixel+3(a6),d1
-		move.w     d1,d0
-		swap       d0
-		move.w     d1,d0
-		moveq.l    #15,d1
-		movea.l    vgamode+vga_regbase(pc),a5
-		lea.l      TS_I(a5),a5
-		move.b     #0x04,(a5)+
-		andi.b     #0xF7,(a5)
-		move.b     #0x02,-1(a5)
-fbox_solid8:
-		move.b     d4,(a5)
-		move.b     d0,(a1)+
-		move.b     d1,(a5)
-		move.w     d2,d6
-		bmi.s      fbox_solid10
-fbox_solid9:
-		move.b     d0,(a1)+
-		dbf        d6,fbox_solid9
-fbox_solid10:
-		move.b     d5,(a5)
-		move.b     d0,(a1)
-		adda.w     d7,a1
-		dbf        d3,fbox_solid8
-		move.b     d1,(a5)
-		move.b     #0x04,-(a5)
-		ori.b      #0x08,1(a5)
+		bmi.s      fbox14
+		moveq.l    #14,d0
+		and.w      d2,d0
+		eori.w     #14,d0
+		lsr.w      #4,d2
+		lea        fbox16(pc,d0.w),a2
+		bra.s      fbox14
+fbox13:
+		moveq.l    #14,d0
+		and.w      d2,d0
+		eori.w     #14,d0
+		lsr.w      #4,d2
+		lea.l      fbox16(pc,d0.w),a0
+fbox14:
+		move.w     d2,d0
+		jmp        (a0)
+fbox15:
+		move.w     d4,(a1)+
+		jmp        (a2)
+fbox16:
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		move.l     d4,(a1)+
+		dbf        d0,fbox16
+fbox17:
+		adda.w     a3,a1
+		dbf        d3,fbox14
 		rts
 
 ;Bitblocktransfer ohne Clipping
@@ -3292,22 +2988,22 @@ bitblt:
 		movea.l    r_daddr(a6),a1
 		movea.w    r_swidth(a6),a2
 		movea.w    r_dwidth(a6),a3
-		move.w     r_splanes(a6),d6
-		cmp.w      r_dplanes(a6),d6
-		bne.s      bitblt_ret
-		subq.w     #DRV_PLANES-1,d6
-		bne.s      bitblt_ret
+		/* BUG: does not check planes */
 bitblt1:
-		moveq.l    #3,d6
-		cmp.w      d6,d7
+		cmpa.l     vgamode+vga_membase(pc),a0
 		bne.s      bitblt_ret
-		movea.l    vgamode+vga_membase(pc),a4
-		cmpa.l     a4,a0
+		cmpa.l     a0,a1
 		bne.s      bitblt_ret
-		cmpa.l     a4,a1
+		cmpa.w     vgamode+vga_line_width(pc),a2
+		bne.s      bitblt_ret
+		cmpa.w     a2,a3
+		bne.s      bitblt_ret
+		cmp.w      #3,d7
 		bne.s      bitblt_ret
 		cmp.w      #15,d4
 		ble.s      bitblt_ret
+		moveq.l    #1,d6
+		moveq.l    #1,d7
 		and.w      d0,d6
 		and.w      d2,d7
 		cmp.w      d6,d7
@@ -3318,21 +3014,24 @@ bitblt1:
 		move.w     a2,d6
 		mulu.w     d6,d1
 		add.l      d0,d1
+		add.l      d0,d1
 		adda.l     d1,a0
 		move.w     a3,d6
 		mulu.w     d6,d3
 		add.l      d2,d3
+		add.l      d2,d3
 		adda.l     d3,a1
 		cmpa.l     a1,a0
-		bhi        bitblt8
+		bhi        bitblt7
 		move.w     a2,d6
 		mulu.w     d5,d6
 		movea.l    a0,a4
 		adda.l     d6,a4
 		adda.w     d4,a4
+		adda.w     d4,a4
 		cmpa.l     a1,a4
-		bcs        bitblt8
-		addq.l     #1,a4
+		bcs        bitblt7
+		addq.l     #2,a4
 		add.l      a4,d1
 		sub.l      a0,d1
 		movea.l    a1,a5
@@ -3340,14 +3039,16 @@ bitblt1:
 		mulu.w     d5,d6
 		adda.l     d6,a5
 		adda.w     d4,a5
-		addq.l     #1,a5
+		adda.w     d4,a5
+		addq.l     #2,a5
 		add.l      a5,d3
 		sub.l      a1,d3
 		exg        a0,a4
 		exg        a1,a5
 		bra.s      bitblt2
 
-blt_modes1: dc.b 15,14,12,8,1,3,7,15
+blt_modes1:
+	dc.b 15,12,3,15
 
 bitblt2:
 		tst.w      is_mste
@@ -3364,15 +3065,15 @@ bitblt3:
 		adda.l     d1,a0
 		adda.l     d3,a1
 		add.w      d0,d4
-		moveq.l    #3,d2
-		moveq.l    #3,d3
+		moveq.l    #1,d2
+		moveq.l    #1,d3
 		and.w      d0,d2
 		and.w      d4,d3
 		move.b     blt_modes1(pc,d2.w),d2
-		move.b     blt_modes1+4(pc,d3.w),d3
+		move.b     blt_modes1+2(pc,d3.w),d3
 		moveq.l    #15,d6
-		lsr.w      #2,d0
-		lsr.w      #2,d4
+		lsr.w      #1,d0
+		lsr.w      #1,d4
 		sub.w      d0,d4
 		addq.w     #1,d4
 		move.w     a2,d0
@@ -3437,14 +3138,15 @@ bitblt5:
 bitblt6:
 		rts
 
-blt_modes2: dc.b 15,14,12,8,1,3,7,15
+blt_modes2:
+	dc.b 15,12,3,15
 
-bitblt8:
+bitblt7:
 		tst.w      is_mste
-		beq.s      bitblt9
+		beq.s      bitblt8
 		move.b     MSTE_CACHE_CTRL.w,-(a7) /* save cache ctrl */
 		andi.b     #0xFE,MSTE_CACHE_CTRL.w /* set 8Mz */
-bitblt9:
+bitblt8:
 		suba.l     d1,a0
 		suba.l     d3,a1
 		lsr.l      #2,d1
@@ -3452,15 +3154,15 @@ bitblt9:
 		adda.l     d1,a0
 		adda.l     d3,a1
 		add.w      d0,d4
-		moveq.l    #3,d2
-		moveq.l    #3,d3
+		moveq.l    #1,d2
+		moveq.l    #1,d3
 		and.w      d0,d2
 		and.w      d4,d3
 		move.b     blt_modes2(pc,d2.w),d2
-		move.b     blt_modes2+4(pc,d3.w),d3
+		move.b     blt_modes2+2(pc,d3.w),d3
 		moveq.l    #15,d6
-		lsr.w      #2,d0
-		lsr.w      #2,d4
+		lsr.w      #1,d0
+		lsr.w      #1,d4
 		sub.w      d0,d4
 		move.w     a2,d0
 		lsr.w      #2,d0
@@ -3474,7 +3176,7 @@ bitblt9:
 		not.w      d7
 		and.w      d6,d7
 		add.w      d7,d7
-		lea.l      bitblt11(pc,d7.w),a4
+		lea.l      bitblt10(pc,d7.w),a4
 		movea.l    vgamode+vga_regbase(pc),a5
 		lea.l      GDC_I(a5),a6
 		move.b     #0x05,(a6)+
@@ -3484,13 +3186,13 @@ bitblt9:
 		move.b     #0x04,(a5)+
 		andi.b     #0xF7,(a5)
 		move.b     #0x02,-1(a5)
-bitblt10:
+bitblt9:
 		move.w     d4,d7
 		move.b     d2,(a5)
 		move.b     (a0)+,(a1)+
 		move.b     d6,(a5)
 		jmp        (a4)
-bitblt11:
+bitblt10:
 		move.b     (a0)+,(a1)+
 		move.b     (a0)+,(a1)+
 		move.b     (a0)+,(a1)+
@@ -3507,23 +3209,22 @@ bitblt11:
 		move.b     (a0)+,(a1)+
 		move.b     (a0)+,(a1)+
 		move.b     (a0)+,(a1)+
-		dbf        d7,bitblt11
+		dbf        d7,bitblt10
 		move.b     d3,(a5)
 		move.b     (a0),(a1)
 		adda.w     d0,a0
 		adda.w     d1,a1
-		dbf        d5,bitblt10
+		dbf        d5,bitblt9
 		move.b     #0x04,-(a5)
 		ori.b      #0x08,1(a5)
 		move.b     #0x02,(a5)+
 		move.b     d6,(a5)
 		andi.b     #0xFC,(a6)
 		tst.w      is_mste
-		beq.s      bitblt12
+		beq.s      bitblt11
 		move.b     (a7)+,MSTE_CACHE_CTRL.w /* restore cache ctrl */
-bitblt12:
+bitblt11:
 		rts
-
 		rts
 
 init_maps:
@@ -3607,12 +3308,24 @@ alloc_tables4:
 		move.l     (a7)+,d3
 		rts
 
+alloc_ctable:
+		moveq.l    #1,d1
+		movea.l    nvdi_struct,a0
+		movea.l    _nvdi_create_ctab(a0),a0
+		jsr        (a0)
+		rts
+
+free_ctable:
+		movea.l    nvdi_struct,a1
+		movea.l    _nvdi_Mfree_sys(a1),a1
+		jsr        (a1)
+		rts
+
 	.data
 
 dev_name:
-		dc.b 'VGA 256 Farben',0
+		dc.b 'VGA 65536 Farben',0
 		.even
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ; 'Relozierungs-Information'
@@ -3703,8 +3416,8 @@ relokation:
                   DC.W relok83-relok82
                   DC.W relok84-relok83
                   DC.W relok85-relok84
-                  DC.W relok86-relok85-2,2
-                  DC.W relok87-relok86
+                  DC.W relok86-relok85
+                  DC.W relok87-relok86-2,2
                   DC.W relok88-relok87
                   DC.W relok89-relok88
                   DC.W relok90-relok89
@@ -3780,47 +3493,47 @@ redirect_ptr:     ds.l 1		; redirect? uncertain, must be set by another program
 
 nvdi_struct:      DS.L 1                  ;Zeiger auf nvdi_struct oder 0
 driver_struct:    DS.L 1
+aes_wk_ptr:       DS.L 1
+
+xbios_tab:        DS.L 1                  ;alte NVDI-XBios-Vektoren
+bios_tab:         DS.L 5                  ;alte NVDI-Bios-Vektoren
+mouse_tab:        DS.L 4                  ;alte Vektoren in mouse_tab
 
 escape_ptr:       ds.l 1
 hline_ptr:        ds.l 1
 bitblt_ptr:       ds.l 1
 fbox_ptr:         ds.l 1
 
-xbios_tab:        DS.L 1                  ;alte NVDI-XBios-Vektoren
-bios_tab:         DS.L 5                  ;alte NVDI-Bios-Vektoren
-mouse_tab:        DS.L 4                  ;alte Vektoren in mouse_tab
-
 mouse_len:        DS.W 1
 mouse_addr:       DS.L 1
 mouse_stat:       DS.W 1
-mouse_savebuf:    DS.B 20*16
+mouse_savebuf:    DS.B 16*16*2
 
-graymode:         ds.w 1
 hid_cnt:          ds.w 1
 mycon_state:      ds.l 1
 
 vscr_struct:      ds.b 22       ; space for VSCR cookie
 
-color_map:        DS.W 1152
-
+                  ds.l 1
 xbios_rez:        ds.w 1
-
 expand_tab:       ds.l 512
 expand_tabo:      ds.l 512
 
-sysfont_addr:     ds.l 1
-font_image:       ds.l 1
-
 save_vt52_vec:    ds.l 1
-linea_save:       ds.w 25
-save_v_bas_ad:    ds.l 1
+
 x1118a:           ds.w 1
 x1118c:           ds.w 1
 
 vgamode:          ds.b VGA_MODESIZE
-
 vga_memend1:      ds.l 1
 vga_memend2:      ds.l 1
+
+linea_save:       ds.w 25
+
+save_v_bas_ad:    ds.l 1
+sysfont_addr:     ds.l 1
+font_image:       ds.l 1
+
 nvdivga_size:     ds.l 1
 nvdivga_path:     ds.b 128
 

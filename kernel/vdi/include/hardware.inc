@@ -34,3 +34,4 @@ ST_PALETTE          EQU $ffff8240
 TT_SHFTMODE         EQU $ffff8262
 TT_PALETTE          EQU $ffff8400
 
+MSTE_CACHE_CTRL     EQU $ffff8e21

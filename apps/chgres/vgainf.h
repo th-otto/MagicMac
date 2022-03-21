@@ -35,7 +35,8 @@ struct vgainf_mode {
 	short o74;
 	short o76;
 	short o78;
-	short o80;
+	unsigned char o80;
+	unsigned char vga_PEL2;             /* value for DAC_PEL */
 	unsigned char vga_PEL;              /* value for DAC_PEL */
 	unsigned char vga_misc_W;           /* value for MISC_W (0xe3) */
 	unsigned char *vga_ts_regs;         /* offset/ptr to TS register values */

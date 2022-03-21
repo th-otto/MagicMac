@@ -1,0 +1,11 @@
+xvga65k.sys
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+xvga65k.s
