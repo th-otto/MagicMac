@@ -1995,6 +1995,7 @@ halt_system:
  lea      fatal_errs(pc),a0
  bsr      putstr                   ; "System angehalten"
 halt_endless:
+ moveq #3,d0
  bsr mmx_yield
  bra      halt_endless
 
@@ -3009,6 +3010,7 @@ _bconin:
  move.w   (a1),d1                  ; Tail-Index
  cmp.w    -(a1),d1                 ; Head-Index
  bne.s    _bconin_in
+ moveq #4,d0
  bsr mmx_yield
  bra.s _bconin
 _bconin_in:

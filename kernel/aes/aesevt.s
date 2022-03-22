@@ -256,6 +256,7 @@ ad_loop:
  bne.b    ad_newsuspend
  tst.l    iocpbuf_cnt              ; sind inzwischen Ereignisse eingetroffen ?
  bne.b    ad__kernel
+ moveq #0,d0
  jsr  mmx_yield
  bra.b    ad_loop                  ; nein, zurueck in die Schleife
 
@@ -278,6 +279,11 @@ ad_newready:
 ad_switch:
  cmpa.l   a0,a3                    ; ist neue APP = alte APP ?
  beq      ad_return                ; ja, kein Kontextwechsel
+  IFNE 0
+  dc.w 0x4fbf
+  dc.l 0x4e415446
+  dc.w 1
+  ENDC
  tst.b    no_switch
  beq.b    ad_chgcntxt              ; kein Kontextwechsel erlaubt!
  move.l   (a0),(a4)                ; unerwuenschte APPL ausklinken
