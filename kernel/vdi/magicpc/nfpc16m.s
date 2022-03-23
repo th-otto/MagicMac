@@ -43,9 +43,9 @@ m_fg_colorrgb: ds.w 4 /* marker color fg */
 m_bg_colorrgb: ds.w 4 /* marker color bg */
 r_fg_colorrgb: ds.w 4 /* raster color fg */
 r_bg_colorrgb: ds.w 4 /* raster color bg */
-               ds.b 328
+               ds.b 104
 
-      ds.b 1792
+      ds.b 2016
       /* 2848 */
 wk_sizeof:
 
@@ -363,8 +363,8 @@ scrninfo:
                   DC.W 8                  ;8 Bits fuer Alpha-Channel
                   DC.W 0                  ;kein Bit fuer Genlock
                   DC.W 0                  ;kein unbenutztes Bit
-                  DC.W 0x81
-                  DC.W 0
+                  DC.W 0x81               ;Bit organization: byte swapped
+                  DC.W 0                  ;reserved
                   DC.W  8,9,10,11,12,13,14,15         ;Bits der Rot-Intensitaet
                   DCB.W 8,-1
                   DC.W  16,17,18,19,20,21,22,23       ;Bits der Gruen-Intensitaet

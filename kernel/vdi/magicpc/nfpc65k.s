@@ -364,8 +364,8 @@ scrninfo:
                   DC.W 0                  ;kein Bit fuer Alpha-Channel
                   DC.W 0                  ;kein Bit fuer Genlock
                   DC.W 0                  ;kein unbenutztes Bit
-                  DC.W 0x81
-                  DC.W 0
+                  DC.W 0x81               ;Bit organization: byte swapped
+                  DC.W 0                  ;reserved
 
                   DC.W  3,4,5,6,7         ;Bits der Rot-Intensitaet
                   DCB.W 11,-1
@@ -1365,15 +1365,9 @@ init_vt52_font:
 		movem.l    (a7)+,d0-d4/a0-a2
 		rts
 
-;Die Felder rgb_in_tab und rgb_out_tab fuer vs_color/vq_color initialisieren
-;Vorgaben:
-;kein Register wird veraendert
-;Eingaben:
-;d0.w Bitanzahl fuer Rot
-;d1.w Bitanzahl fuer Gruen
-;d2.w Bitanzahl fuer Blau
-;Ausgaben:
-;-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Expandier-Tabelle erstellen
+
 build_exp:
 		movem.l    d0-d2/a0-a1,-(a7)
 		lea.l      x_res(pc),a0

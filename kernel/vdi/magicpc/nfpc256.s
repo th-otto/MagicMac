@@ -1279,15 +1279,9 @@ init_vt52_font:
 		movem.l    (a7)+,d0-d4/a0-a2
 		rts
 
-;Die Felder rgb_in_tab und rgb_out_tab fuer vs_color/vq_color initialisieren
-;Vorgaben:
-;kein Register wird veraendert
-;Eingaben:
-;d0.w Bitanzahl fuer Rot
-;d1.w Bitanzahl fuer Gruen
-;d2.w Bitanzahl fuer Blau
-;Ausgaben:
-;-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Expandier-Tabelle erstellen
+
 build_exp:
 		movem.l    d0-d2/a0-a1,-(a7)
 		lea.l      expand_tab,a0

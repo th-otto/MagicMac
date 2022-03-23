@@ -19,8 +19,8 @@ VERSION           EQU $0313
 
 .INCLUDE "..\include\pixmap.inc"
 
-PATTERN_LENGTH    EQU (32*32)             ;Fuellmusterlaenge bei 32 Ebenen
-PAL_LENGTH        EQU   1024              ;Laenge der Pseudo-Palette
+PATTERN_LENGTH    EQU 16*16*4             ;Fuellmusterlaenge bei 32 Ebenen
+PAL_LENGTH        EQU 256*4               ;Laenge der Pseudo-Palette
 
 c_palette         EQU   f_saddr+PATTERN_LENGTH ;Startadresse der Pseudo-Palette
 
@@ -1523,7 +1523,7 @@ aes_wk_ptr:       DS.L 1                  ;Zeiger auf die AES-Workstation
 mouse_len:        DS.W 1
 mouse_addr:       DS.L 1
 mouse_stat:       DS.W 1
-mouse_savebuf:    DS.B 64*16
+mouse_savebuf:    DS.B 16*16*4
 
 ;Farbumwandlungstabelle fuer 256 Farben
 color_map:        DS.B 256

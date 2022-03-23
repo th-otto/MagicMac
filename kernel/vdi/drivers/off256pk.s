@@ -213,6 +213,9 @@ copy_remap_loop:  move.l   (a0)+,(a1)+
                   movem.l  (sp)+,d0/a0-a2
                   rts
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Expandier-Tabelle erstellen
+
 build_exp:        movem.l  d0-d2/a0-a1,-(sp)
                   lea      expand_tab(pc),a0
                   lea      expand_tabo(pc),a1

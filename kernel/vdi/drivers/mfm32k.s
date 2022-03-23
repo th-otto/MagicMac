@@ -19,7 +19,7 @@ VERSION           EQU $0313
 
 .INCLUDE "..\include\pixmap.inc"
 
-PATTERN_LENGTH    EQU (32*16)             ;Fuellmusterlaenge bei 16 Ebenen
+PATTERN_LENGTH    EQU 16*16*2             ;Fuellmusterlaenge bei 16 Ebenen
 
 PAL_LENGTH        EQU 512                 ;Laenge der Pseudo-Palette
 

@@ -19,7 +19,7 @@ VERSION           EQU $313
 
 .INCLUDE "..\include\pixmap.inc"
 
-PATTERN_LENGTH    EQU (32*1)              ;Fuellmusterlaenge bei 1 Ebenen
+PATTERN_LENGTH    EQU (16*16)/8           ;Fuellmusterlaenge bei 1 Ebenen
 
 SCROLL_LINE       EQU 320                 ;Laenge eines MOVEM-Bereichs
 

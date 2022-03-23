@@ -18,7 +18,7 @@ VERSION           EQU $0313
 
 .INCLUDE "..\include\pixmap.inc"
 
-PATTERN_LENGTH    EQU (32*4)              ;Fuellmusterlaenge bei 4 Ebenen
+PATTERN_LENGTH    EQU (16*16)/4           ;Fuellmusterlaenge bei 4 Ebenen
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ; 'NVDI-Treiber initialisieren'

@@ -160,7 +160,7 @@ get_scrninfo:     movem.l  d0-d1/a0-a1,-(sp)
                   move.w   (a1)+,(a0)+    ;[11] kein Alpha-Channel
                   move.w   (a1)+,(a0)+    ;[12] kein Genlock
                   move.w   (a1)+,(a0)+    ;[13] keine unbenutzten Bits
-                  move.w   (a1)+,(a0)+ ;[14] Bitorganisation
+                  move.w   (a1)+,(a0)+    ;[14] Bitorganisation
                   move.w   (a1)+,(a0)+    ;[15] unbenutzt
 
                   moveq    #111,d0
@@ -199,6 +199,9 @@ copy_map_loop:    move.l   (a0)+,(a1)+
                   movem.l  (sp)+,d0/a0-a2
                   rts
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Expandier-Tabelle erstellen
+
 build_exp:        movem.l  d0-d2/a0-a1,-(sp)
                   lea      expand_tab(pc),a0
                   moveq    #0,d0          ;Zaehler
@@ -230,7 +233,7 @@ scrninfo:         DC.W 2                  ;Packed Pixels
                   DC.W 0                  ;kein Bit fuer Genlock
                   DC.W 1                  ;1 unbenutztes Bit
                   DC.W 2                  ;Bitorganisation
-                  DC.W  0
+                  DC.W 0
 
 scrninfo_mot:     DC.W  11,12,13,14,15    ;Bits der Rot-Intensitaet
                   DCB.W 11,-1

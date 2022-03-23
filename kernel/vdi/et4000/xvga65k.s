@@ -139,7 +139,7 @@ reset:
 		bsr        reset_vscr_cookie
 		bsr        reset_vbl
 		bsr        restore_linea
-		bsr        check_screen
+		bsr        check_redirect
 		movem.l    (a7)+,d0-d2/a0-a2
 		rts
 
@@ -228,16 +228,16 @@ restore_linea1:
 		movem.l    (a7)+,d0/a0-a1
 		rts
 
-check_screen:
+check_redirect:
 		move.l     v_bas_ad.w,d0
 		cmp.l      vgamode+vga_membase(pc),d0
-		bne.s      check_screen1
+		bne.s      check_redirect1
 		move.l     redirect_ptr(pc),d0
-		beq.s      check_screen1
+		beq.s      check_redirect1
 		movea.l    d0,a0
 		moveq.l    #1,d0
 		jsr        (a0)
-check_screen1:
+check_redirect1:
 		rts
 
 get_driver_id:
@@ -369,8 +369,8 @@ scrninfo:
                   DC.W 0                  ;kein Bit fuer Alpha-Channel
                   DC.W 0                  ;kein Bit fuer Genlock
                   DC.W 0                  ;kein unbenutztes Bit
-                  DC.W 0x81
-                  DC.W 0
+                  DC.W 0x81               ;Bit organization: byte swapped
+                  DC.W 0                  ;reserved
 
 /* GGGBBBBB RRRRRGGG */
                   DC.W  3,4,5,6,7         ;Bits der Rot-Intensitaet
@@ -1749,7 +1749,7 @@ draw_sprite:
 		lsl.l      #3,d7
 		movea.l    aes_wk_ptr(pc),a1
 		movea.l    wk_ctab(a1),a1
-		lea.l      50(a1,d6.l),a3
+		lea.l      ctab_colors+2(a1,d6.l),a3
 		move.w     (a3)+,d6
 		lsl.l      #5,d6
 		move.w     (a3)+,d6
@@ -1757,7 +1757,7 @@ draw_sprite:
 		move.w     (a3)+,d6
 		lsl.l      #5,d6
 		swap       d6
-		lea.l      50(a1,d7.l),a3
+		lea.l      ctab_colors+2(a1,d7.l),a3
 		move.w     (a3)+,d7
 		lsl.l      #5,d7
 		move.w     (a3)+,d7
@@ -1794,7 +1794,7 @@ draw_spr_y:
 		suba.w     d1,a0         ; adjust sprite start address
 		moveq.l    #0,d1
 draw_spr_y2:
-		move.w     DEV_TAB1.w,d5 ; WORK_OUT[0] max. raster height
+		move.w     DEV_TAB1.w,d5 ; WORK_OUT[1] max. raster height
 relok117:
 		subi.w     #15,d5
 		sub.w      d1,d5
@@ -2091,15 +2091,9 @@ relok141:
 		movem.l    (a7)+,d0-d4/a0-a2
 		rts
 
-;Die Felder rgb_in_tab und rgb_out_tab fuer vs_color/vq_color initialisieren
-;Vorgaben:
-;kein Register wird veraendert
-;Eingaben:
-;d0.w Bitanzahl fuer Rot
-;d1.w Bitanzahl fuer Gruen
-;d2.w Bitanzahl fuer Blau
-;Ausgaben:
-;-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Expandier-Tabelle erstellen
+
 build_exp:
 		movem.l    d0-d2/a0-a1,-(a7)
 		lea.l      expand_tab(pc),a0
@@ -2467,6 +2461,14 @@ reset_vscr_cookie:
 		movem.l    (a7)+,d0-d2/a0-a2
 		rts
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;WK-Tabelle intialisieren
+;Eingaben
+;d1.l pb oder 0L
+;a6.l Workstation
+;Ausgaben
+;Die Workstation wird initialisert
 wk_init:
 		move.l     vgamode+vga_xres(pc),res_x(a6)
 		move.l     vgamode+vga_pixw(pc),pixel_width(a6)
@@ -2633,7 +2635,7 @@ hline_modes1:
 hline:
 		cmp.w      #-1,d7
 		bne.s      hline_exit
-		cmpi.w     #1,wr_mode(a6)
+		cmpi.w     #MD_TRANS-1,wr_mode(a6)
 		bgt.s      hline_exit
 		move.l     r_fg_pixel+2(a6),d4 ; get pixel value into upper 16 bit
 		move.w     r_fg_pixel+2(a6),d4 ; get pixel value into lowet 16 bit

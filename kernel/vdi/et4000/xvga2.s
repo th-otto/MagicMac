@@ -170,7 +170,7 @@ reset:
 		bsr        reset_vscr_cookie
 		bsr        reset_vbl
 		bsr.w      restore_linea
-		bsr.w      check_screen
+		bsr.w      check_redirect
 		movem.l    (a7)+,d0-d2/a0-a2
 		rts
 
@@ -200,16 +200,16 @@ restore_linea1:
 		movem.l    (a7)+,d0/a0-a1
 		rts
 
-check_screen:
+check_redirect:
 		move.l     v_bas_ad.w,d0
 		cmp.l      vgamode+vga_membase(pc),d0
-		bne.s      check_screen1
+		bne.s      check_redirect1
 		move.l     redirect_ptr(pc),d0
-		beq.s      check_screen1
+		beq.s      check_redirect1
 		movea.l    d0,a0
 		moveq.l    #1,d0
 		jsr        (a0)
-check_screen1:
+check_redirect1:
 		rts
 
 ;Ausgaben von v_opnwk()/v_opnvwk()/v_opnbm() zurueckliefern
@@ -335,35 +335,36 @@ default_vga_mode:
 		dc.w 768-1  ; virtual yres
 		dc.w VGA_PIXW ; pixw
 		dc.w VGA_PIXH ; pixh
-		dc.w 1      ; valid
+		dc.w DRV_PLANES ; planes
 		dc.w 0
 		dc.w 2
-		dc.w 128    ; line width
+		dc.w 128        ; line width
 		dc.l 0xfec00000 ; membase
 		dc.l 0xfebf0000 ; regbase
-		dc.w 0x0002
-		dc.w 0x009f
-		dc.w 0x0281
-		dc.w 0x0320
-		dc.w 0x0001
-		dc.w 0x3880
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0000
-		dc.w 0x0003
+		dc.w 2          ; dac_type
+		dc.w 0x009f     ; synth
+		dc.w 641        ; hfreq
+		dc.w 800        ; vfreq
+		dc.l 80000      ; pfreq
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.w 0
+		dc.b 0
+		dc.b 0
+		dc.b 0
+		dc.b 0x03     ; MISC_W
 		dc.l default_ts_regs
 		dc.l default_crtc_regs
 		dc.l default_atc_regs
@@ -1132,6 +1133,14 @@ blitmode_ret:
 		moveq.l    #64,d0
 		rts
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;WK-Tabelle intialisieren
+;Eingaben
+;d1.l pb oder 0L
+;a6.l Workstation
+;Ausgaben
+;Die Workstation wird initialisert
 wk_init:
 		move.l     vgamode+vga_xres(pc),res_x(a6)
 		move.l     vgamode+vga_pixw(pc),pixel_width(a6)

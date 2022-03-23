@@ -18,7 +18,7 @@ VERSION           EQU $0313
 
 .INCLUDE "..\include\pixmap.inc"
 
-PATTERN_LENGTH    EQU (32*4)              ;Fuellmusterlaenge bei 4 Ebenen
+PATTERN_LENGTH    EQU (16*16)/2           ;Fuellmusterlaenge bei 4 Ebenen
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ; 'NVDI-Treiber initialisieren'
@@ -1265,6 +1265,9 @@ init_rgbo_loop:   move.w   d3,d4       ;
 
                   movem.l  (sp)+,d0-d6/a0-a1
                   rts
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Expandier-Tabelle erstellen
 
 build_exp:        movem.l  d0-d2/a0-a1,-(sp)
                   lea      expand_tab,a0

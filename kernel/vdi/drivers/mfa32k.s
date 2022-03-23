@@ -242,7 +242,7 @@ get_scrninfo:     movem.l  d0-d1/a0-a1,-(sp)
                   move.w   (a1)+,(a0)+    ;[11] kein Alpha-Channel
                   move.w   (a1)+,(a0)+    ;[12] kein Genlock
                   move.w   (a1)+,(a0)+    ;[13] keine unbenutzten Bits
-                  move.w   (a1)+,(a0)+ ;[14] Bitorganisation
+                  move.w   (a1)+,(a0)+    ;[14] Bitorganisation
                   move.w   (a1)+,(a0)+    ;[15] unbenutzt
 
                   moveq    #111,d0
@@ -369,9 +369,10 @@ scrninfo:         DC.W 2                  ;Packed Pixels
                   DC.W 0                  ;kein Bit fuer Alpha-Channel
                   DC.W 0                  ;kein Bit fuer Genlock
                   DC.W 1                  ;1 unbenutztes Bit
-                  DC.W 2                  ;Bitorganisation
-                  DC.W  0
+                  DC.W 2                  ;Bitorganisation: falcon format
+                  DC.W 0                  ;reserved
 
+/* RRRRRGG GGGxBBBBB */
 scrninfo_mot:     DC.W  11,12,13,14,15    ;Bits der Rot-Intensitaet
                   DCB.W 11,-1
                   DC.W  6,7,8,9,10        ;Bits der Gruen-Intensitaet
@@ -1169,6 +1170,9 @@ init_res_ext:     move.w   (a0)+,(a1)+
                   move.w   #2200,INQ_TAB6.w ;Anzahl der Rasteroperationen
 init_res_exit:    movem.l  (sp)+,d0-d2/a0-a2
                   rts
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Expandier-Tabelle erstellen
 
 build_exp:        movem.l  d0-d2/a0-a1,-(sp)
                   lea      expand_tab(pc),a0
