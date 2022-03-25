@@ -24,8 +24,7 @@ vga_visible_yres:   ds.w 1     /* 16 */ ; Maximum addressable visible height
 vga_pixw:           ds.w 1     /* 18 */ ; Pixel width in microns
 vga_pixh:           ds.w 1     /* 20 */ ; Pixel height in microns
 vga_planes:         ds.w 1     /* 22 */ ; Number of planes
-                    ds.w 1
-                    ds.w 1
+vga_colors:         ds.l 1     /* 24 */ ; Number of colors
 vga_line_width:     ds.w 1     /* 28 */ ; bytes per scanline
 vga_membase:        ds.l 1     /* 30 */ ; base address of video RAM
 vga_regbase:        ds.l 1     /* 34 */ ; base address of VGA registers

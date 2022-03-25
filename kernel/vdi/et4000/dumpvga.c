@@ -19,8 +19,7 @@ struct vgainf_mode {
 	beshort vga_pixw;             /* Pixel width in microns */
 	beshort vga_pixh;             /* Pixel height in microns */
 	beshort vga_planes;           /* Number of planes */
-	beshort o24;
-	beshort o26;
+	belong vga_colors;            /* Number of colors */
 	beshort vga_line_width;       /* bytes per scanline */
 	belong vga_membase;           /* base address of video RAM */
 	belong vga_regbase;           /* base address of VGA registers */
@@ -214,10 +213,8 @@ int main(int argc, char **argv)
 		printf("pixh:            $%04x %u\n", val, val);
 		val = getbeshort(mode.vga_planes);
 		printf("planes:          $%04x %u\n", val, val);
-		val = getbeshort(mode.o24);
-		printf("24:              $%04x %u\n", val, val);
-		val = getbeshort(mode.o26);
-		printf("26:              $%04x %u\n", val, val);
+		val = getbelong(mode.vga_colors);
+		printf("colors:          $%08x %u\n", val, val);
 		val = getbeshort(mode.vga_line_width);
 		printf("line width:      $%04x %u\n", val, val);
 		val = getbelong(mode.vga_membase);

@@ -22,3 +22,6 @@ DAC_PEL   equ 0x3C6   /* RAMDAC pixel mask */
 DAC_D     equ 0x3C9   /* RAMDAC palette data */
 IS1_RC    equ 0x3DA   /* Input Status Register 1: color emulation */
 CGAMODE   equ 0x3D8   /* Display mode control */
+
+
+VGA_MEMSIZE equ 0x100000

@@ -23,7 +23,7 @@ VERSION           EQU $0500
 .INCLUDE "vgainf.inc"
 
 DRV_PLANES = 24
-PATTERN_LENGTH    EQU 16*16*4                  ;minimale Fuellmusterlaenge
+PATTERN_LENGTH    EQU 16*16*4*2                  ;minimale Fuellmusterlaenge
 
 	OFFSET WK_LENGTH_300
                ds.l 1
@@ -48,10 +48,9 @@ m_fg_colorrgb: ds.w 4 /* marker color fg */
 m_bg_colorrgb: ds.w 4 /* marker color bg */
 r_fg_colorrgb: ds.w 4 /* raster color fg */
 r_bg_colorrgb: ds.w 4 /* raster color bg */
-               ds.b 104
+               ds.b 72
 
       ds.b PATTERN_LENGTH
-      ds.b 992
       /* 2848 */
 wk_sizeof:
 

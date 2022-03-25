@@ -23,7 +23,7 @@ VERSION           EQU $0500
 .INCLUDE "vgainf.inc"
 
 DRV_PLANES = 16
-PATTERN_LENGTH    EQU 16*62                  ;minimale Fuellmusterlaenge
+PATTERN_LENGTH    EQU 16*16*2*2                  ;minimale Fuellmusterlaenge
 
 	OFFSET WK_LENGTH_300
                ds.l 1
@@ -48,7 +48,7 @@ m_fg_colorrgb: ds.w 4 /* marker color fg */
 m_bg_colorrgb: ds.w 4 /* marker color bg */
 r_fg_colorrgb: ds.w 4 /* raster color fg */
 r_bg_colorrgb: ds.w 4 /* raster color bg */
-               ds.b 104
+               ds.b 72
 
       ds.b PATTERN_LENGTH
       /* 1824 */
@@ -1541,6 +1541,7 @@ relok103:
 		jsr        bitblt_in
 		movea.l    v_bas_ad.w,a1
 		bra.s      clear_line2
+
 clear_line:
 		movem.l    d2-d7/a1-a6,-(a7)
 ;Eingabe
@@ -2209,8 +2210,8 @@ initmode_4:
 		move.b     #0x11,CRTC_IG(a0)
 		move.b     #0x00,CRTC_DG(a0)
 		move.b     #0xFF,DAC_PEL(a0)
-		move.b     #0,TS_I(a0)
-		move.b     #0,TS_D(a0)
+		move.b     #0x00,TS_I(a0)
+		move.b     #0x00,TS_D(a0)
 		move.b     #0x03,GENHP(a0)      /* enable upper 32k of graphics mode buffer */
 		move.b     #0xA0,CGAMODE(a0)    /* enable ET4000 extensions */
 		lea.l      TS_I(a0),a1

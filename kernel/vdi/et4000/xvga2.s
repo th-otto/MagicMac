@@ -23,7 +23,7 @@ VERSION           EQU $0500
 .INCLUDE "vgainf.inc"
 
 DRV_PLANES = 1
-PATTERN_LENGTH    EQU (16*16)/8           ;minimale Fuellmusterlaenge
+PATTERN_LENGTH    EQU ((16*16)/8)*2           ;minimale Fuellmusterlaenge
 
 	OFFSET WK_LENGTH_300
                ds.l 1
@@ -48,7 +48,7 @@ m_fg_colorrgb: ds.w 4 /* marker color fg */
 m_bg_colorrgb: ds.w 4 /* marker color bg */
 r_fg_colorrgb: ds.w 4 /* raster color fg */
 r_bg_colorrgb: ds.w 4 /* raster color bg */
-               ds.b 104
+               ds.b 72
 
       ds.b PATTERN_LENGTH
       /* 864 */
@@ -1210,6 +1210,21 @@ bitblt_ret:
 		movea.l    bitblt_ptr(pc),a0
 		jmp        (a0)
 
+;Textausgabe ohne Clipping
+;Vorgaben:
+;Register d0-d7/a0-a5 koennen veraendert werden
+;Eingaben:
+;d0.w xq (linke x-Koordinate des Quellrechtecks)
+;d1.w yq (obere y-Koordinate des Quellrechtecks)
+;d2.w xz (linke x-Koordinate des Zielrechtecks)
+;d3.w yz (obere y-Koordinate des Zielrechtecks)
+;d4.w dx (Breite -1)
+;d5.w dy (Hoehe -1)
+;a0.l Quellblockadresse
+;a2.w Bytes pro Quellzeile
+;a6.l Workstation
+;Ausgaben:
+;-
 textblt:
 		movea.l    v_bas_ad.w,a1
 		movea.w    BYTES_LIN.w,a3

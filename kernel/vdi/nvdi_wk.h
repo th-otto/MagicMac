@@ -296,6 +296,8 @@ struct _wk {
     /* 704 */ COLOR_ENTRY m_bg_colorrgb; /* marker color bg */
     /* 712 */ COLOR_ENTRY r_fg_colorrgb; /* raster color fg */
     /* 720 */ COLOR_ENTRY r_bg_colorrgb; /* raster color bg */
+    /* 728 */ char unknown[72];
+    /* 800 WK_LENGTH of NVDI 5.x */
 };
 
 #define FORM_ID_STANDARD    0
