@@ -1,0 +1,11 @@
+redirect.prg
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+redirect.s

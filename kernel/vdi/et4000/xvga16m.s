@@ -591,8 +591,8 @@ find_vgamode:
 		bsr        load_vga_inf
 		move.l     a0,d0
 		beq.s      find_vgamode7
-		move.w     58(a0),x1118a
-		move.w     60(a0),x1118c
+		move.w     vgainf_cardtype(a0),cardtype
+		move.w     vgainf_cardsubtype(a0),cardsubtype
 		lea.l      vgainf_modes(a0),a1
 		moveq.l    #-1,d1
 find_vgamode1:
@@ -2496,11 +2496,11 @@ clear_device:
 		rts
 
 initmode:
-		cmpi.w     #2,x1118a
+		cmpi.w     #CARD_SPEKTRUM,cardtype
 		bne.s      initmode_1
-		bsr        x10858
+		bsr        initclock
 initmode_1:
-		tst.w      x1118a
+		tst.w      cardtype
 		bne.s      initmode_2
 		clr.w      0x00D02000
 initmode_2:
@@ -2511,28 +2511,28 @@ initmode_2:
 		move.l     a0,vga_memend1
 		move.l     a1,vga_memend2
 		clr.w      byte_swapped
-		move.w     x1118a,d0
-		cmp.w      #1,d0
+		move.w     cardtype,d0
+		cmp.w      #CARD_CRAZYDOTS,d0
 		beq.s      initmode_2_2
-		cmp.w      #2,d0
+		cmp.w      #CARD_SPEKTRUM,d0
 		beq.s      initmode_2_1
-		cmp.w      #3,d0
+		cmp.w      #CARD_VOFA,d0
 		bne.s      initmode_2_2
-		tst.w      x1118c
+		tst.w      cardsubtype
 		beq.s      initmode_2_2
 initmode_2_1:
 		move.w     #1,byte_swapped
 initmode_2_2:
 		movea.l    vgamode+vga_regbase(pc),a0
 		move.b     vgamode+vga_MISC_W(pc),d0
-		cmpi.w     #1,x1118a
+		cmpi.w     #CARD_CRAZYDOTS,cardtype
 		bne.s      initmode_3
 		and.b      #0xF3,d0
 		or.b       #0x03,d0
 initmode_3:
 		move.b     d0,MISC_W(a0)
 		move.b     #0x01,VIDSUB(a0)      /* Enable VGA mode */
-		cmpi.w     #1,x1118a
+		cmpi.w     #CARD_CRAZYDOTS,cardtype
 		bne.s      initmode_4
 		moveq.l    #8,d1
 		or.b       d0,d1
@@ -2597,16 +2597,16 @@ initmode_5:
 		move.b     d0,(a1)
 		move.b     (a3)+,(a2)
 		dbf        d1,initmode_5
-		cmpi.w     #1,x1118a
+		cmpi.w     #CARD_CRAZYDOTS,cardtype
 		bne.s      initmode_6
-		cmpi.w     #2,x1118c
+		cmpi.w     #2,cardsubtype
 		bne.s      initmode_6
 		move.b     #0x07,(a1)
 		move.b     #0xA4,(a2)
 initmode_6:
 		move.b     #0x00,(a1)
 		move.b     #0x03,(a2)
-		cmpi.w     #2,x1118a
+		cmpi.w     #CARD_SPEKTRUM,cardtype
 		bne.s      initmode_7
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
@@ -2614,9 +2614,9 @@ initmode_6:
 		move.b     DAC_PEL(a0),d0
 		move.b     #0xE0,DAC_PEL(a0)
 initmode_7:
-		cmpi.w     #1,x1118a
+		cmpi.w     #CARD_CRAZYDOTS,cardtype
 		bne.s      initmode_9
-		cmpi.w     #2,x1118c
+		cmpi.w     #2,cardsubtype
 		bne.s      initmode_8
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
@@ -2634,7 +2634,7 @@ initmode_8:
 initmode_8_1:
 		move.b     d0,(a0) ; BUG? should that be DAC_PEL(a0)?
 initmode_9:
-		cmpi.w     #3,x1118a
+		cmpi.w     #CARD_VOFA,cardtype
 		bne.s      initmode_10
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
@@ -2677,9 +2677,9 @@ initmode_13:
 		addq.w     #1,d0
 		dbf        d1,initmode_13
 
-		cmpi.w     #1,x1118a
+		cmpi.w     #CARD_CRAZYDOTS,cardtype
 		bne.s      initmode_14
-		cmpi.w     #2,x1118c
+		cmpi.w     #2,cardsubtype
 		bne.s      initmode_14
 		move.b     #0x16,(a1)
 		move.b     #0x80,(a1)
@@ -2710,19 +2710,19 @@ initmode_15:
 		move.b     d0,(a0)
 		rts
 
-x10858:
+initclock:
 		move.w     d3,-(a7)
 		move.w     vgamode+vga_synth,d0
 		move.w     d0,d3
 		and.w      #0x001F,d3
 		or.w       #0x0040,d3
 		move.w     d3,d0
-		bsr.s      x10896
-		moveq.l    #32,d0
+		bsr.s      selectclock
+		moveq.l    #0x20,d0
 		or.w       d3,d0
-		bsr.s      x10896
+		bsr.s      selectclock
 		move.w     d3,d0
-		bsr.s      x10896
+		bsr.s      selectclock
 		movea.l    vgamode+vga_regbase(pc),a0
 		move.b     #0x03,GENHP(a0)      /* enable upper 32k of graphics mode buffer */
 		move.b     #0xA0,CGAMODE(a0)    /* enable ET4000 extensions */
@@ -2731,30 +2731,30 @@ x10858:
 		move.w     (a7)+,d3
 		rts
 
-x10896:
+selectclock:
 		movem.l    d1-d3/a0,-(a7)
 		movea.l    vgamode+vga_regbase(pc),a0
 		move.b     GENMO(a0),d1
 		and.w      #0xFFF3,d1
 		move.w     #0x8000,d2
-x10896_1:
+selectclock_1:
 		move.w     d0,d3
 		and.w      d2,d3
-		beq.s      x10896_2
+		beq.s      selectclock_2
 		move.w     d1,d3
 		or.b       #0x04,d3
 		move.b     d3,MISC_W(a0)
 		or.b       #0x08,d3
 		move.b     d3,MISC_W(a0)
-		bra.s      x10896_3
-x10896_2:
+		bra.s      selectclock_3
+selectclock_2:
 		move.w     d1,d3
 		move.b     d3,MISC_W(a0)
 		or.b       #0x08,d3
 		move.b     d3,MISC_W(a0)
-x10896_3:
+selectclock_3:
 		lsr.w      #1,d2
-		bne.s      x10896_1
+		bne.s      selectclock_1
 		move.b     #0x03,GENHP(a0)      /* enable upper 32k of graphics mode buffer */
 		move.b     #0xA0,CGAMODE(a0)    /* enable ET4000 extensions */
 		move.b     #0x34,CRTC_IG(a0)    /* unlock registers */
@@ -3898,8 +3898,8 @@ xbios_rez:        ds.w 1
 expand_tab:       ds.l 256*8
 
 save_vt52_vec:    ds.l 1
-x1118a:           ds.w 1
-x1118c:           ds.w 1
+cardtype:         ds.w 1
+cardsubtype:      ds.w 1
 
 vgamode:          ds.b VGA_MODESIZE
 

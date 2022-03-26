@@ -5,12 +5,17 @@ vgainf_magic:       ds.b 8     /* 0: 'NVDIVGA' */
 vgainf_nummodes:    ds.w 1     /* 34 */ ; number of modes in file
                     ds.w 1     /* 36 */
 vgainf_defmode:     ds.w 10    /* 38 */ ; default mode numbers
-                    ds.w 1     /* 58 */
-                    ds.w 1     /* 60 */
+vgainf_cardtype:    ds.w 1     /* 58 */ ; 0=GengTEC; 1=CrazyDots; 2=spektrum; 3=VoFa
+vgainf_cardsubtype: ds.w 1     /* 60 */
                     ds.w 1     /* 62 */
                     ds.w 1     /* 64 */
-                    ds.w 1     /* 66 */
+                    ds.w 1     /* 66 */ ; maybe reg base? 0x3b0
 vgainf_modes:                  /* 68 */ ; list of mode offsets/ptrs
+
+CARD_GENGTEC   = 0
+CARD_CRAZYDOTS = 1
+CARD_SPEKTRUM  = 2
+CARD_VOFA      = 3
 
 		    .offset 0
 
@@ -52,10 +57,10 @@ vga_pfreq:          ds.l 1     /* 46 */ ; pixel frequency * 1000000 (Mhz)
 vga_PEL2:           ds.b 1     /* 81 */ ; value for DAC_PEL
 vga_PEL:            ds.b 1     /* 82 */ ; value for DAC_PEL
 vga_MISC_W:         ds.b 1     /* 83 */ ; value for MISC_W (0xe3)
-vga_ts_regs:        ds.l 1     /* 84 */ ; offset/ptr to TS register values   ; 00AC
-vga_crtc_regs:      ds.l 1     /* 88 */ ; offset/ptr to CRTC register values ; 00b6
-vga_atc_regs:       ds.l 1     /* 92 */ ; offset/ptr to ATC register values  ; 00f8
-vga_gdc_regs:       ds.l 1     /* 96 */ ; offset/ptr to GDC register values  ; 0112
+vga_ts_regs:        ds.l 1     /* 84 */ ; offset/ptr to TS register values
+vga_crtc_regs:      ds.l 1     /* 88 */ ; offset/ptr to CRTC register values
+vga_atc_regs:       ds.l 1     /* 92 */ ; offset/ptr to ATC register values
+vga_gdc_regs:       ds.l 1     /* 96 */ ; offset/ptr to GDC register values
 
 VGA_MODESIZE equ $268          /* size needed for a mode + all register values */
 
@@ -65,16 +70,3 @@ VGA_PIXH equ 265
 
 TOS_PIXW equ 278
 TOS_PIXH equ 278
-
-
-
-GC_VOLKSFARBEN      equ 0
-GC_GENGTEC_VGA      equ 0
-GC_CRAZY_DOTS_MST   equ 0
-GC_CRAZY_DOTS_VME   equ 0
-GC_CRAZY_DOTS_II    equ 0
-GC_SPEKTRUM_1       equ 0
-GC_SPEKTRUM_HC      equ 0
-GC_SPEKTRUM_TC      equ 0
-GC_MEDUSA           equ 0
-GC_MEGA_4000        equ 0

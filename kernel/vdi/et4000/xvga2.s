@@ -322,8 +322,8 @@ synth_tab:
 		dc.b 0x00,0x10,0x08,0x18,0x04,0x14,0x0c,0x1c,0x02,0x12,0x0a,0x1a,0x06,0x16,0x0e,0x1e
 		dc.b 0x01,0x11,0x09,0x19,0x05,0x15,0x0d,0x1d,0x03,0x13,0x0b,0x1b,0x07,0x17,0x0f,0x1f
 
-x102b8: dc.w 1
-x102ba: dc.w 0
+default_cardtype:    dc.w CARD_CRAZYDOTS
+default_cardsubtype: dc.w 0
 
 default_vga_mode:
 		dc.l -1
@@ -470,8 +470,8 @@ find_vgamode:
 		bsr        load_vga_inf
 		move.l     a0,d0
 		beq.s      find_vgamode7
-		move.w     58(a0),x1118a
-		move.w     60(a0),x1118c
+		move.w     vgainf_cardtype(a0),cardtype
+		move.w     vgainf_cardsubtype(a0),cardsubtype
 		lea.l      vgainf_modes(a0),a1
 		moveq.l    #-1,d1
 find_vgamode1:
@@ -521,8 +521,8 @@ find_vgamode7:
 
 /* not used anywhere? */
 set_defaults:
-		move.w     x102b8(pc),x1118a
-		move.w     x102ba(pc),x1118c
+		move.w     default_cardtype(pc),cardtype
+		move.w     default_cardsubtype(pc),cardsubtype
 		lea.l      default_vga_mode(pc),a0
 		lea.l      vgamode(pc),a1
 		move.w     #VGA_MODESIZE,d0
@@ -730,15 +730,15 @@ reset_vbl:
 
 clear_device:
 		bsr.s      initmode
-		bsr        clear_screen
+		bsr        clear_framebuffer
 		rts
 
 initmode:
-		cmpi.w     #2,x1118a
+		cmpi.w     #CARD_SPEKTRUM,cardtype
 		bne.s      initmode_1
-		bsr        x10858
+		bsr        initclock
 initmode_1:
-		tst.w      x1118a
+		tst.w      cardtype
 		bne.s      initmode_2
 		clr.w      0x00D02000
 initmode_2:
@@ -754,8 +754,8 @@ initmode_2:
 		move.b     #0x11,CRTC_IG(a0)
 		move.b     #0x00,CRTC_DG(a0)
 		move.b     #0xFF,DAC_PEL(a0)
-		move.b     #0,TS_I(a0)
-		move.b     #0,TS_D(a0)
+		move.b     #0x00,TS_I(a0)
+		move.b     #0x00,TS_D(a0)
 		move.b     #0x03,GENHP(a0)      /* enable upper 32k of graphics mode buffer */
 		move.b     #0xA0,CGAMODE(a0)    /* enable ET4000 extensions */
 		lea.l      TS_I(a0),a1
@@ -773,9 +773,9 @@ initmode_3:
 		dbf        d1,initmode_3
 		move.b     #0x00,(a1)
 		move.b     #0x03,(a2)
-		cmpi.w     #2,x1118a
+		cmpi.w     #CARD_SPEKTRUM,cardtype
 		bne.s      initmode_4
-		tst.w      x1118c
+		tst.w      cardsubtype
 		beq        initmode_8
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
@@ -783,9 +783,9 @@ initmode_3:
 		move.b     DAC_PEL(a0),d0
 		move.b     #0x02,DAC_PEL(a0)
 initmode_4:
-		cmpi.w     #1,x1118a
+		cmpi.w     #CARD_CRAZYDOTS,cardtype
 		bne.s      initmode_7
-		cmpi.w     #2,x1118c
+		cmpi.w     #2,cardsubtype
 		bne.s      initmode_5
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
@@ -803,7 +803,7 @@ initmode_5:
 initmode_6:
 		move.b     d0,(a0) ; BUG? should that be DAC_PEL(a0)?
 initmode_7:
-		cmpi.w     #3,x1118a
+		cmpi.w     #CARD_VOFA,cardtype
 		bne.s      initmode_8
 		move.b     DAC_PEL(a0),d0
 		move.b     DAC_PEL(a0),d0
@@ -872,19 +872,19 @@ initmode_12:
 		move.b     d0,1(a0)
 		rts
 
-x10858:
+initclock:
 		move.w     d3,-(a7)
 		move.w     vgamode+vga_synth,d0
 		move.w     d0,d3
 		and.w      #0x001F,d3
 		or.w       #0x0040,d3
 		move.w     d3,d0
-		bsr.s      x10896
-		moveq.l    #32,d0
+		bsr.s      selectclock
+		moveq.l    #0x20,d0
 		or.w       d3,d0
-		bsr.s      x10896
+		bsr.s      selectclock
 		move.w     d3,d0
-		bsr.s      x10896
+		bsr.s      selectclock
 		movea.l    vgamode+vga_regbase(pc),a0
 		move.b     #0x03,GENHP(a0)      /* enable upper 32k of graphics mode buffer */
 		move.b     #0xA0,CGAMODE(a0)    /* enable ET4000 extensions */
@@ -893,30 +893,30 @@ x10858:
 		move.w     (a7)+,d3
 		rts
 
-x10896:
+selectclock:
 		movem.l    d1-d3/a0,-(a7)
 		movea.l    vgamode+vga_regbase(pc),a0
 		move.b     GENMO(a0),d1
 		and.w      #0xFFF3,d1
 		move.w     #0x8000,d2
-x10896_1:
+selectclock_1:
 		move.w     d0,d3
 		and.w      d2,d3
-		beq.s      x10896_2
+		beq.s      selectclock_2
 		move.w     d1,d3
 		or.b       #0x04,d3
 		move.b     d3,MISC_W(a0)
 		or.b       #0x08,d3
 		move.b     d3,MISC_W(a0)
-		bra.s      x10896_3
-x10896_2:
+		bra.s      selectclock_3
+selectclock_2:
 		move.w     d1,d3
 		move.b     d3,MISC_W(a0)
 		or.b       #0x08,d3
 		move.b     d3,MISC_W(a0)
-x10896_3:
+selectclock_3:
 		lsr.w      #1,d2
-		bne.s      x10896_1
+		bne.s      selectclock_1
 		move.b     #0x03,GENHP(a0)      /* enable upper 32k of graphics mode buffer */
 		move.b     #0xA0,CGAMODE(a0)    /* enable ET4000 extensions */
 		move.b     #0x34,CRTC_IG(a0)    /* unlock registers */
@@ -925,16 +925,16 @@ x10896_3:
 		movem.l    (a7)+,d1-d3/a0
 		rts
 
-clear_screen:
+clear_framebuffer:
 		movea.l    vgamode+vga_membase(pc),a1
 		move.w     vgamode+vga_yres,d0
 		addq.w     #1,d0
 		mulu.w     vgamode+vga_line_width(pc),d0
 		lsr.l      #2,d0
 		subq.l     #1,d0
-clear_screen1:
+clear_framebuffer1:
 		clr.l      (a1)+
-		dbf        d0,clear_screen1
+		dbf        d0,clear_framebuffer1
 		rts
 
 install_vscr_cookie:
@@ -1903,8 +1903,8 @@ fontring:         DS.L 1
 
 linea_save:       ds.w 25
 save_v_bas_ad:    ds.l 1
-x1118a:           ds.w 1
-x1118c:           ds.w 1
+cardtype:         ds.w 1
+cardsubtype:      ds.w 1
 
 vgamode:          ds.b VGA_MODESIZE
 

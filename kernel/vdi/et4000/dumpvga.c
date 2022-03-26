@@ -71,8 +71,8 @@ struct vgainf {
 	beshort vgainf_nummodes;              /* number of modes in file */
 	beshort o36;
 	beshort vgainf_defmode[10];           /* default mode numbers */
-	beshort o58;
-	beshort o60;
+	beshort cardtype;
+	beshort cardsubtype;
 	beshort o62;
 	beshort o64;
 	beshort o66;
@@ -173,10 +173,10 @@ int main(int argc, char **argv)
 	val = getbeshort(inf.vgainf_defmode[9]);
 	printf("defmode[9]:      $%04x %d\n", val, (int16_t)val);
 
-	val = getbeshort(inf.o58);
-	printf("58:              $%04x %u\n", val, val);
-	val = getbeshort(inf.o60);
-	printf("60:              $%04x %u\n", val, val);
+	val = getbeshort(inf.cardtype);
+	printf("cardtype:        %u\n", val);
+	val = getbeshort(inf.cardsubtype);
+	printf("cardsubtype:     %u\n", val);
 	val = getbeshort(inf.o62);
 	printf("62:              $%04x %u\n", val, val);
 	val = getbeshort(inf.o64);

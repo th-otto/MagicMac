@@ -14,7 +14,7 @@ ATT_R     equ 0x3C1   /* Attribute Controller Data Read Register */
 GENMO     equ 0x3CC   /* Miscellaneous output read register */
 GDC_SEG   equ 0x3CD   /* GDC segment select, index and data ports */
 GDC_D     equ 0x3CF   /* Graphics Controller Data Register */
-GENHP     equ 0x3BF   /* Herucles Page */
+GENHP     equ 0x3BF   /* Hercules Page */
 TS_D      equ 0x3C5   /* Timing Sequencer data port */
 VIDSUB    equ 0x3C3   /* Video Subsystem register */
 MISC_W    equ 0x3C2   /* Misc Output Write Register */
