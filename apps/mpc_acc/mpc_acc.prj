@@ -1,0 +1,21 @@
+mpc_acc.acc
+
+.C[-I..\..\pc\include]
+.C[-P-]
+.C[-G-]
+.C[-M]
+
+.S[-S]
+
+.L [-S=4096]			;Stacksize 4k
+;.L[-F-]
+;.L[-R-]
+
+=
+cstart0.s
+mpc_acc.c
+mpc_cont.s
+
+..\..\pc\lib\pcgemlib.lib
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pctoslib.lib
