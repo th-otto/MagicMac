@@ -1,0 +1,5 @@
+xfs_pc.ldr
+.S[-I..\..\kernel\inc]
+.L[-S=0]
+=              ; list of modules follows...
+xfs1.s [-B]
