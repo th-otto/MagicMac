@@ -1,0 +1,11 @@
+ncxx2.sys
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+ncxx2.s
