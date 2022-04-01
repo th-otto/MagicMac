@@ -1,0 +1,10 @@
+xfs_pc.ldr
+.S[-I..\..\kernel\inc]
+.L[-S=0]
+=              ; list of modules follows...
+xfs1.s [-B]
+xfs2.c
+cio2con.c
+tos.s
+..\..\pc\lib\pcstdlib.lib
+..\..\pc\lib\pcfltlib.lib
