@@ -529,74 +529,77 @@ static int scan_procs(int doredraw)
 		{
 			/* translate process ID to AES id */
 			appid = appl_find((char *)(0xffff0000L | myatoi(p + 1)));
-			/* get application name */
-			apname[0] = '?';
-			apname[1] = 0;
-			/* BUG: only works for appids <= 255 */
-			apname[2] = appid;
-			apname[3] = 0;
-			appl_find(apname);
-			isspecial = 0;
-			if (strcmp(firstapp, apname) == 0)
+			if (appid >= 0 && appid <= 255)
 			{
-				firstapppos = tree + 1;
-			}
-			if (apname[0] == '?')
-			{
-				isspecial = -1;
-			}
-			if (appid != gl_apid)
-			{
-				if ((deskfirst != NULL && appid == 0) ||
-					(selection || inf_get(nameptr) == NULL))
+				/* get application name */
+				apname[0] = '?';
+				apname[1] = 0;
+				/* Note: only works for appids <= 255 */
+				apname[2] = appid;
+				apname[3] = 0;
+				appl_find(apname);
+				isspecial = 0;
+				if (strcmp(firstapp, apname) == 0)
 				{
-					if (appid == 0 && deskfirst != NULL)
+					firstapppos = tree + 1;
+				}
+				if (apname[0] == '?')
+				{
+					isspecial = -1;
+				}
+				if (appid != gl_apid)
+				{
+					if ((deskfirst != NULL && appid == 0) ||
+						(selection || inf_get(nameptr) == NULL))
 					{
-						nextapp = tree;
-						tree = appline_tree;
-						tree += FIRST_BUTTON;
-					} else
-					{
-						tree++;
-					}
-					numobjs++;
-					ted = tree->ob_spec.tedinfo;
-					i = ted->te_color & 0xf0ff;
-					namebuf[0] = '=';
-					found = default_color;
-					if ((p = inf_get(namebuf)) != NULL)
-						found = myatoi(p);
-					/* BUG: does not check range */
-					i |= found << 8;
-					ted->te_color = i;
-					if (strcmp(ted->te_ptext, nameptr) != 0)
-					{
-						strcpy(ted->te_ptext, nameptr);
-						need_redraw = TRUE;
-					} else if (isspecial >= 0 && (tree->ob_state & frozen_mask) != 0)
-					{
-						need_redraw = TRUE;
-					} else if (isspecial == -1 && (tree->ob_state & frozen_mask) == 0)
-					{
-						need_redraw = TRUE;
-					}
-					tree->ob_flags &= ~OF_HIDETREE;
-					tree->ob_type &= 0xff;
-					tree->ob_type |= appid << 8;
-					if (isspecial != -1)
-					{
-						tree->ob_state &= ~frozen_mask;
-						if (appid == barowner)
-							tree->ob_state |= OS_SELECTED;
-						else
-							tree->ob_state &= ~OS_SELECTED;
-					} else
-					{
-						tree->ob_state |= frozen_mask;
-						if (appid == barowner)
-							tree->ob_state |= OS_SELECTED;
-						else
-							tree->ob_state &= ~OS_SELECTED;
+						if (appid == 0 && deskfirst != NULL)
+						{
+							nextapp = tree;
+							tree = appline_tree;
+							tree += FIRST_BUTTON;
+						} else
+						{
+							tree++;
+						}
+						numobjs++;
+						ted = tree->ob_spec.tedinfo;
+						i = ted->te_color & 0xf0ff;
+						namebuf[0] = '=';
+						found = default_color;
+						if ((p = inf_get(namebuf)) != NULL)
+							found = myatoi(p);
+						/* BUG: does not check range */
+						i |= found << 8;
+						ted->te_color = i;
+						if (strcmp(ted->te_ptext, nameptr) != 0)
+						{
+							strcpy(ted->te_ptext, nameptr);
+							need_redraw = TRUE;
+						} else if (isspecial >= 0 && (tree->ob_state & frozen_mask) != 0)
+						{
+							need_redraw = TRUE;
+						} else if (isspecial == -1 && (tree->ob_state & frozen_mask) == 0)
+						{
+							need_redraw = TRUE;
+						}
+						tree->ob_flags &= ~OF_HIDETREE;
+						tree->ob_type &= 0xff;
+						tree->ob_type |= appid << 8;
+						if (isspecial != -1)
+						{
+							tree->ob_state &= ~frozen_mask;
+							if (appid == barowner)
+								tree->ob_state |= OS_SELECTED;
+							else
+								tree->ob_state &= ~OS_SELECTED;
+						} else
+						{
+							tree->ob_state |= frozen_mask;
+							if (appid == barowner)
+								tree->ob_state |= OS_SELECTED;
+							else
+								tree->ob_state &= ~OS_SELECTED;
+						}
 					}
 				}
 			}
