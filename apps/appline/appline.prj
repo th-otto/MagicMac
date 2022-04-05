@@ -1,0 +1,12 @@
+appline.app
+.C[-P-]
+.C[-I..\..\pc\include]
+.L[-S=4096]   ; Stackgr”že auf 4 KByte setzen
+=
+startup.s
+appline.c
+
+
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib
