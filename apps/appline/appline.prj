@@ -1,0 +1,13 @@
+appline.app
+.C[-S]
+=
+startup.s
+appline.s
+
+aes.s
+itoa.s
+strlen.s
+strcmp.s
+strncmp.s
+strcpy.s
+strcat.s

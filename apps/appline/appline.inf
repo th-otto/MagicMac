@@ -1,0 +1,82 @@
+#/topwind       # Leiste beim Start nach vorne holen
+/backwind      # Leiste immer im Hintergrund halten
+#/nocloser      # Schlieûknopf ausblenden
+#/showmem       # Freien Speicher am rechten Rand anzeigen
+#/topline       # Leiste am oberen Bildschirmrand
+/timer 2000     # Intervall in Millisekunden, in dem die Leiste
+                # aktualisiert werden soll
+/select         # Applikation, der das oberste Fenster gehîrt, selektieren
+/resize         # Leiste immer passend verkleinern
+#/rstart         # Leiste "wÑchst" von rechts nach links bzw. von unten
+                # nach oben
+#/default bottom # Aktion bei Klick auf das Symbol links in der Leiste:
+                # "top"     Fenster nach vorne holen
+                # "bottom"  Fenster nach hinten legen
+                # "close"   AppLine beenden
+                # sonst:    Popup zeigen
+/firstapp cli
+#/deskfirst     # Desktop immer im ersten Button anzeigen
+#/fkeys         # Buttons per Funktionstaste auswÑhlbar
+/large          # freien Speicher mit groûem Systemfont anzeigen
+/xoff 1       # Abstand der Leiste zum linken Bildschirmrand
+/yoff 1       # Abstand vom unteren [bei /topline oberen] Desktoprand
+#/space 3       # nach dem 3. Button einen "Absatz" einfÅgen
+#/nowind         # Apps ohne offene Fenster markieren
+#/vertical       # Buttons untereinander darstellen
+/border 1       # setzt die "StÑrke" des 3D-Effektes
+#/frozen-disabled
+
+# Applikationen, die nicht in der Liste erscheinen sollen
+SCROFF
+WINCOM
+TIMER
+
+# Applikationen, die beim nach vorne holen abstÅrzen, wenn sie gerade
+# keine Fenster geîffnet haben
+!QED
+!KNDINSKY
+!CAT
+!TAKEOFF
+!COMA
+!DESIGNER
+!ESSCODE
+!MANAGER
+!VT52
+!ZOOM
+!HEX_EDIT
+!INTRFACE
+!PAPILLON
+!ST-CAD
+!FONTNAME
+
+# Applikationen, die keine eigene Menueleiste besitzen
+-PROGLIST
+-ST-GUIDE
+-APPLINE
+-SPACE
+-NOTICE
+-MENU
+-QSTART
+-CLI
+-PINPOINT
+-T-CON
+-TWOINONE
+-KOBOLD_3
+-ZCONTROL
+-PARAFIN
+-COMA
+-KOBATCH
+-FINDER
+-REGISTER
+-WISEL
+
+# in welcher Farbe soll der Text in den einzelnen Buttons dargestellt werden?
+=ST-GUIDE 2     # ACCs rot
+=SPACE 2
+=NOTICE 2
+=THING 11       # Desktop grÅn
+=QSTART 15      # Autostart-Apps lila
+=MENU 15
+=WISEL 15
+=* 4            # alle anderen blau
+
