@@ -30,6 +30,7 @@
 SCROFF
 WINCOM
 TIMER
+MAGX_SLD
 
 # Applikationen, die beim nach vorne holen abstÅrzen, wenn sie gerade
 # keine Fenster geîffnet haben
