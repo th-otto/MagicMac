@@ -28,6 +28,7 @@ for lang in ${LANGUAGES}; do
 	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPX"
 	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/AUTO/ACCS/CPZ"
 	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG"
+	mkdir -p "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/APPLINE"
 done
 
 set -e
@@ -57,6 +58,7 @@ cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$RESOURCES_DIR/$LPROJ/roo
 cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.BGH"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
+cp -a "$SRC_DIR/apps/appline/appline.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/APPLINE/APPLINE.RSC"
 cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
 
 cp -a "$SRC_DIR/extensio/pdlg_slb/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
@@ -93,6 +95,7 @@ cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$RESOURCES_DIR/$LPROJ/roo
 cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.BGH"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_${lang}.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
+cp -a "$SRC_DIR/apps/appline/$lang/appline.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/APPLINE/APPLINE.RSC"
 cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
 
 cp -a "$SRC_DIR/extensio/pdlg_slb/$lang/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
@@ -131,6 +134,7 @@ cp -a "$SRC_DIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$RESOURCES_DIR/$LPROJ/roo
 # TODO: french translation
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.txt" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.TXT"
 cp -a "$SRC_DIR/apps/magiccfg/doc/magiccfg_en.hyp" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGICCFG/MAGICCFG.HYP"
+cp -a "$SRC_DIR/apps/appline/$lang/appline.rsc" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/APPLINE/APPLINE.RSC"
 cp -a "$SRC_DIR/doc/usage/magx_${lang}.inf" "$RESOURCES_DIR/$LPROJ/rootfs/EXTRAS/MAGX.INF"
 
 cp -a "$SRC_DIR/extensio/pdlg_slb/$lang/pdlg.slb" "$RESOURCES_DIR/$LPROJ/rootfs/GEMSYS/MAGIC/XTENSION/PDLG.SLB"
@@ -224,6 +228,8 @@ cp -a "$SRC_DIR/apps/magiccfg/magiccfg.app" "$RESOURCES_DIR/rootfs-common/EXTRAS
 cp -a "$SRC_DIR/apps/magiccfg/history.txt" "$RESOURCES_DIR/rootfs-common/EXTRAS/MAGICCFG/HISTORY.TXT"
 cp -a "$SRC_DIR/apps/wbdaemon/wbdaemon.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/GEMDESK/WBDAEMON.PRG"
 cp -a "$SRC_DIR/apps/mmxdaemn/mmxdaemn.prg" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/START/MMXDAEMN.PRG"
+cp -a "$SRC_DIR/apps/appline/appline.app" "$RESOURCES_DIR/rootfs-common/EXTRAS/APPLINE/APPLINE.APP"
+cp -a "$SRC_DIR/apps/appline/appline.inf" "$RESOURCES_DIR/rootfs-common/EXTRAS/APPLINE/APPLINE.INF"
 cp -a "$SRC_DIR/tools/dev_ser/dev_ser.dev" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/DEV_SER.DEV"
 cp -a "$SRC_DIR/extensio/ramdisk/ramdisk.xfs" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/RAMDISK.XFX"
 cp -a "$SRC_DIR/extensio/cd-mxfs/spinmagc.xfs" "$RESOURCES_DIR/rootfs-common/GEMSYS/MAGIC/XTENSION/SPINMAGC.XFX"

@@ -26,6 +26,7 @@ for lang in $LANGUAGES; do
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/CLOCK"
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/AES_LUPE"
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/MAGICCFG"
+	mkdir -p "$BUILDROOT/$lang/EXTRAS/APPLINE"
 done
 
 
@@ -53,6 +54,7 @@ mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS
 mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
 cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
 cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+mcopy -b "$SRCDIR/apps/applicat/applicat.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
@@ -91,6 +93,7 @@ mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS
 mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
 cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
 cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+mcopy -b "$SRCDIR/apps/applicat/$lang/applicat.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
@@ -131,6 +134,7 @@ mcopy -b "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS
 # TODO: french translation
 cp "apps/magiccfg/doc/magiccfg_en.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
 cp "apps/magiccfg/doc/magiccfg_en.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+mcopy -b "$SRCDIR/apps/applicat/$lang/applicat.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
@@ -187,6 +191,7 @@ for lang in $LANGUAGES; do
 	mcopy -b "$SRCDIR/apps/vt52/vt52.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/magiccfg/magiccfg.app" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
 	mcopy -b "$SRCDIR/apps/magiccfg/history.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
+	mcopy -b "$SRCDIR/apps/appline/appline.app" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 	mcopy -b "$SRCDIR/apps/wbdaemon/wbdaemon.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/mmxdaemn/mmxdaemn.prg" "$BUILDROOT/$lang/GEMSYS/MAGIC/START/MMXDAEMN.PRX"
 	mcopy -b "$SRCDIR/tools/dev_ser/dev_ser.dev" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
