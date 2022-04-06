@@ -192,6 +192,7 @@ for lang in $LANGUAGES; do
 	mcopy -b "$SRCDIR/apps/magiccfg/magiccfg.app" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
 	mcopy -b "$SRCDIR/apps/magiccfg/history.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
 	mcopy -b "$SRCDIR/apps/appline/appline.app" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
+	mcopy -b "$SRCDIR/apps/appline/appline.inf" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 	mcopy -b "$SRCDIR/apps/wbdaemon/wbdaemon.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy -b "$SRCDIR/apps/mmxdaemn/mmxdaemn.prg" "$BUILDROOT/$lang/GEMSYS/MAGIC/START/MMXDAEMN.PRX"
 	mcopy -b "$SRCDIR/tools/dev_ser/dev_ser.dev" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
