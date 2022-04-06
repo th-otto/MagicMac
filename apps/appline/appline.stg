@@ -15,7 +15,7 @@
 
 @node "Main" "AppLine"
 @symbol r "AppLine"
-@{B}@{"AppLine V2.5                                                        AppLine" ignore} @{b}
+@{B}@{"AppLine V2.6                                                        AppLine" ignore} @{b}
 @line 1 75 0 0 7
 
 @limage "appline.img" 1
@@ -273,7 +273,9 @@ Konfigurierbarkeit zu erreichen:
 @line 1 75 0 0 7
 
   Schaltet den zur Anzeige des freien Speichers verwendeten Font auf den
-  grožen Systemzeichensatz um (defaultm„žig wird der kleine verwendet)
+  grožen Systemzeichensatz um (defaultm„žig wird der kleine verwendet).
+  Ist ein Parameter angegeben der ungleich 0 ist, wird auch fr alle
+  anderen Buttons der grože Systemzeichensatz benutzt.
 @endnode
 
 
@@ -376,9 +378,8 @@ Pixel horizontal) locker 16 Buttons darstellen lassen...den meisten
 Anwendern drfte daher der Speicher ausgehen, bevor es in der Leiste
 zu eng wird ;-)
 
-Wem der verwendete kleine Font in der Leiste zu mickrig ist, der kann mit
-einem RSC-Editor die in appline.rsc vorliegenden Buttons auf den grožen
-Systemfont „ndern oder applineb.rsc in appline.rsc umbenennen.
+Wem der verwendete kleine Font in der Leiste zu mickrig ist, der kann
+den Schalter /large mit einem Parameter ungleich 0 versehen.
 Frei definierbare Fonts werde ich nicht implementieren.
 @endnode
 
@@ -506,6 +507,12 @@ folgende Adresse:
 @node "History"
 @{B}@{"History                                                             AppLine" ignore} @{b}
 @line 1 75 0 0 7
+
+@{B}V2.5 -> V2.6@{b}
+ú Umstellung auf Pure-C
+ú Schalter /large um Parameter erweitert, dadurch jetzt nur noch eine
+  Resource-Datei.
+
 
 @{B}V2.4 -> V2.5@{b}
 ú Aufgrund der Vielzahl der Anfragen ist Anzeige der Namen in den Buttons

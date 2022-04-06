@@ -958,8 +958,20 @@ int main(void)
 		frozen_mask = OS_DISABLED;
 		nowindow_mask = OS_CROSSED;
 	}
-	if (inf_get("/large"))
+	if ((p = inf_get("/large")) != NULL)
+	{
 		tree[ROOT].ob_spec.tedinfo->te_font = IBM;
+		if (myatoi(p) != 0)
+		{
+			do
+			{
+				tree++;
+				tree->ob_spec.tedinfo->te_font = IBM;
+			} while (!(tree->ob_flags & OF_LASTOB));
+		}
+	}
+
+	tree = appline_tree;
 	if (inf_get("/nocloser"))
 	{
 		tree[CLOSER_BUTTON].ob_width = 0;
