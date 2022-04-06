@@ -864,7 +864,6 @@ static void cleanup(void)
 int main(void)
 {
 	int do_popup;
-	int rsc_ok;
 	int border;
 	int freeze;
 	_WORD xoff;
@@ -892,19 +891,13 @@ int main(void)
 		appl_exit();
 		return 1;
 	}
-	/* check number of planes */
-	rsc_ok = 0;
-	if (gl_planes < 4)
-		rsc_ok = rsrc_load("applinem.rsc");
-	if (rsc_ok == 0)
-		rsc_ok = rsrc_load("appline.rsc");
-	if (rsc_ok == 0)
+	if (rsrc_load("appline.rsc") == 0)
 	{
 		form_alert(1, "[3][|AppLine:|RSC-File konnte nicht|geladen werden.][ Ende ]");
 		appl_exit();
 		return 1;
 	}
-	
+
 	rsrc_gaddr(R_TREE, APPLINE_TREE, &appline_tree);
 	rsrc_gaddr(R_TREE, APP_POPUP, &app_popup);
 	rsrc_gaddr(R_TREE, MAIN_POPUP, &main_popup);
@@ -912,23 +905,27 @@ int main(void)
 	
 	wind_get_grect(0, WF_WORKXYWH, &desk);
 	load_inffile();
-	tree = appline_tree;
 
+	tree = appline_tree;
 	if (gl_planes >= 4)
 	{
+		border = 4;
 		p = inf_get("/border");
 		if (p != NULL)
-		{
 			border = myatoi(p);
-			do
-			{
-				tree++;
-				tree->ob_spec.tedinfo->te_thickness = border;
-			} while (!(tree->ob_flags & OF_LASTOB));
-			tree = appline_tree;
-		}
+	} else
+	{
+		border = -1;
+		tree[ROOT].ob_flags &= ~OF_FL3DBAK;
+		tree[ROOT].ob_spec.tedinfo->te_color = 0x1121;
 	}
+	do
+	{
+		tree++;
+		tree->ob_spec.tedinfo->te_thickness = border;
+	} while (!(tree->ob_flags & OF_LASTOB));
 	
+	tree = appline_tree;
 	tree[FIRST_BUTTON].ob_spec.tedinfo->te_ptext[0] = '\0';
 	xoff = 0;
 	yoff = 0;
