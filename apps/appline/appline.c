@@ -221,6 +221,12 @@ static void sendmsg(_WORD appid, _WORD msg, _WORD w3, _WORD w4, _WORD w5, _WORD 
 }
 
 
+static void sm_special(_WORD cmd, _WORD appid)
+{
+	sendmsg(1, SM_M_SPECIAL, 0, 0x4D41, 0x4758, cmd, appid);
+}
+
+
 static void send_update(void)
 {
 	int app;
@@ -832,7 +838,7 @@ static int cycle_windows(_WORD appid, int mode, const char *name)
 	if (inf_get(apname) == NULL)
 	{
 		/* MagiC special: send message to SCRENMGR to activate app */
-		sendmsg(1, SM_M_SPECIAL, 0, 0x4D41, 0x4758, SMC_SWITCH, appid);
+		sm_special(SMC_SWITCH, appid);
 	}
 	if (mode == 2)
 		return appid;
@@ -1162,7 +1168,7 @@ int main(void)
 						selection ^= TRUE;
 						break;
 					case MAINP_UNHIDEALL:
-						sendmsg(1, SM_M_SPECIAL, 0, 0x4D41, 0x4758, SMC_UNHIDEALL, appid);
+						sm_special(SMC_UNHIDEALL, appid);
 						break;
 					case MAINP_QUIT:
 						cont = FALSE;
@@ -1173,18 +1179,18 @@ int main(void)
 					switch (events)
 					{
 					case APP_KILL:
-						sendmsg(1, SM_M_SPECIAL, 0, 0x4D41, 0x4758, SMC_TERMINATE, appid);
+						sm_special(SMC_TERMINATE, appid);
 						break;
 					case APP_QUIT:
 						sendmsg(appid, AP_TERM, 0, 0, 0, 0, 0);
 						break;
 					case APP_FREEZE:
-						sendmsg(1, SM_M_SPECIAL, 0, 0x4D41, 0x4758, freeze, appid);
+						sm_special(freeze, appid);
 						break;
 					case APP_HIDEALL:
 					case APP_HIDE:
 						if (cycle_windows(appid, 2, p) == appid)
-							sendmsg(1, SM_M_SPECIAL, 0, 0x4D41, 0x4758, (events - APP_HIDEALL) + SMC_HIDEOTHERS, appid);
+							sm_special((events - APP_HIDEALL) + SMC_HIDEOTHERS, appid);
 						break;
 					case APP_BOTTOM:
 						cycle_windows(appid, 1, p);
