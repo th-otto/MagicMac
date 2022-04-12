@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;******************************************************************************;
 ;*                                                                            *;
-;*                 2-Color Matrox CX screen driver for NVDI                   *;
+;*                 2-Color Matrix CX screen driver for NVDI                   *;
 ;*                                                                            *;
 ;******************************************************************************;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -105,12 +105,12 @@ init:
 		movea.l    driver_struct(pc),a1
 		move.l     a0,driver_offscreen(a1)
 		beq.s      init_err
-		bsr.w      save_screen_vecs
+		bsr        save_screen_vecs
 		movem.l    d0-d7/a0-a6,-(a7)
 		DC.W 0xa000
 		bsr        save_linea
 		bsr        rundriver
-		bsr.w      set_screen_vecs
+		bsr        set_screen_vecs
 		bsr        install_vscr_cookie
 		moveq.l    #2,d0
 		bsr        init_maps
@@ -164,11 +164,11 @@ reset:
 		movea.l    _nvdi_unload_NOD_driver(a0),a2
 		movea.l    driver_offscreen(a1),a0
 		jsr        (a2)
-		bsr.w      reset_screen_vecs
+		bsr        reset_screen_vecs
 		bsr        reset_vscr_cookie
 		bsr        remove_vecs
-		bsr.w      restore_linea
-		bsr.w      check_redirect
+		bsr        restore_linea
+		bsr        check_redirect
 		movem.l    (a7)+,d0-d2/a0-a2
 		rts
 
@@ -654,7 +654,7 @@ remove_vecs:
 		moveq.l    #28,d0 ; VBL
 		movea.l    oldvbl(pc),a0
 		movea.w    #-1,a1
-		bsr.w      setvec
+		bsr        setvec
 		move.w     cxs_462(a2),d0
 		bmi.s      remove_vecs2
 		bne.s      remove_vecs1
@@ -662,7 +662,7 @@ remove_vecs:
 remove_vecs1:
 		movea.l    oldvme(pc),a0
 		movea.w    #-1,a1
-		bsr.w      setvec
+		bsr        setvec
 		movea.l    cxs_282(a2),a1
 		move.b     d0,161(a1)
 		andi.b     #0xEF,vme_mask.w
@@ -680,7 +680,7 @@ remove_vecs3:
 		moveq.l    #28,d0 ; VBL
 		movea.l    oldvbl(pc),a0
 		movea.w    #-1,a1
-		bsr.w      setvec
+		bsr        setvec
 		movem.l    (a7)+,d0/a0-a2
 		rts
 

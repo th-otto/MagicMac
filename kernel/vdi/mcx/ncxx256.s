@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;******************************************************************************;
 ;*                                                                            *;
-;*                 16-Color Matrix CX screen driver for NVDI                  *;
+;*                256-Color Matrix CX screen driver for NVDI                  *;
 ;*                                                                            *;
 ;******************************************************************************;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,8 +22,8 @@ VERSION           EQU $0500
 .INCLUDE "cxs.inc"
 
 
-DRV_PLANES = 4
-PATTERN_LENGTH    EQU ((16*16)/2)*2           ;minimale Fuellmusterlaenge
+DRV_PLANES = 8
+PATTERN_LENGTH    EQU (16*16)*2           ;minimale Fuellmusterlaenge
 
 	OFFSET WK_LENGTH_300
                ds.l 1
@@ -51,7 +51,7 @@ r_bg_colorrgb: ds.w 4 /* raster color bg */
                ds.b 72
 
       ds.b PATTERN_LENGTH
-      /* 1056 */
+      /* 1312 */
 wk_sizeof:
 
 		.text
@@ -71,7 +71,7 @@ header:           bra.s continue          ;Fuer Aufrufe von normale Treibern
                   DC.L  get_scrninfo
                   DC.L  dev_name
                   DC.L  0,0,0,0           ;reserviert
-organisation:     DC.L  16                ;Farben
+organisation:     DC.L  256               ;Farben
                   DC.W  DRV_PLANES        ;Planes
                   DC.W  2                 ;Pixelformat
                   DC.W  1                 ;Bitverteilung
@@ -115,7 +115,7 @@ init:
 		bsr        rundriver
 		bsr        set_screen_vecs
 		bsr        build_exp
-		moveq.l    #16,d0
+		move.l     #256,d0
 		bsr        init_maps
 		bsr        init_res
 		bsr        init_vt52
@@ -276,7 +276,7 @@ get_opnwkinfo:
 work_out_int:
 		move.w     (a2)+,(a0)+
 		dbf        d0,work_out_int
-		move.w     #16,26-90(a0)        ;work_out[13]: Anzahl der Farben
+		move.w     #256,26-90(a0)       ;work_out[13]: Anzahl der Farben
 		move.w     #1,70-90(a0)         ;work_out[35]: Farbe ist vorhanden
 		move.w     #0,78-90(a0)         ;work_out[39]: mehr als 32767 Farbabstufungen in der Palette
 		moveq.l    #12-1,d0
@@ -334,7 +334,7 @@ get_scrninfo:
 		move.w     #2,(a0)+    ;[0] Packed Pixel
 		move.w     #1,(a0)+    ;[1] Hardware-CLUT
 		move.w     #DRV_PLANES,(a0)+    ;[2] Anzahl der Ebenen
-		move.l     #16,(a0)+   ;[3/4] Farbanzahl
+		move.l     #256,(a0)+  ;[3/4] Farbanzahl
 		move.w     BYTES_LIN.w,(a0)+ ;[5] Bytes pro Zeile
 relok2:
 		move.l     v_bas_ad.w,(a0)+  ;[6/7] Bildschirmadresse
@@ -346,19 +346,16 @@ relok2:
 		move.w     #0,(a0)+    ;[13] keine unbenutzten Bits
 		move.w     #1,(a0)+    ;[14] Bitorganisation
 		clr.w      (a0)+       ;[15] unbenutzt
-		moveq.l    #15,d0
+		move.w     #255,d0
+		moveq.l    #0,d1
 		movea.l    nvdi_struct,a1
 		movea.l    _nvdi_colmaptab(a1),a1
 		movea.l    (a1),a1
 get_scrninfo1:
-		moveq.l    #15,d1
-		and.b      (a1)+,d1
+		moveq.l    #0,d1
+		move.b     (a1)+,d1
 		move.w     d1,(a0)+
 		dbf        d0,get_scrninfo1
-		move.w     #240-1,d0
-get_scrninfo2:
-		move.w     #15,(a0)+
-		dbf        d0,get_scrninfo2
 		movem.l    (a7)+,d0-d1/a0-a1
 		rts
 
@@ -376,12 +373,12 @@ rundriver:
 		move.b     d0,(a1)+
 		move.b     d0,(a2)+
 		move.b     #0,cmdline
-		lea.l      cxs_path(pc),a0
+		lea.l      cxs_path,a0
 rundriver1:
 		addq.b     #1,cmdline
 		move.b     (a0)+,(a1)+
 		bne.s      rundriver1
-		lea.l      cxx_driv_name(pc),a0
+		lea.l      cxx_driv_name,a0
 rundriver2:
 		move.b     (a0)+,(a2)+
 		bne.s      rundriver2
@@ -391,7 +388,6 @@ rundriver2:
 		suba.l     a2,a2
 ; execute cxx_driv.ttp
 		bsr        pexec
-; FIXME: no error check here
 		move.w     #0x7D01,-(a7) ; unknown
 		trap       #14
 		addq.l     #2,a7
@@ -522,7 +518,7 @@ x104a8:    dc.l 0
 x104ac:    dc.l 0
 x104b0:    dc.l 0
 x104b4:    dc.l 0
-fontbuf_ptr:    dc.l 0
+fontbuf_ptr: dc.l 0
            dc.l 0
            dc.l 0
 dac_type:  dc.w 0
@@ -609,7 +605,6 @@ cursconf:
 		jsr        cursconf_tab(pc,d0.w)
 cursconf1:
 		rte
-
 cursconf_tab:
 		dc.b cursconf_0-cursconf_tab
 		dc.b cursconf_1-cursconf_tab
@@ -656,7 +651,7 @@ esetgray:
 		bmi.s      esetgray1
 		move.w     d0,graymode
 		moveq.l    #0,d0
-		moveq.l    #15,d1
+		move.l     #255,d1
 		movea.l    global_ctable(pc),a0
 		lea.l      ctab_colors(a0),a0
 		bsr        set_color_rgb
@@ -719,7 +714,7 @@ relok10:
 		mulu.w     V_CEL_WR.w,d1 /* FIXME: V_CEL_WR is obsolete */
 relok11:
 		adda.l     d1,a1
-		lsl.w      #2,d0
+		lsl.w      #3,d0
 		adda.w     d0,a1
 		move.l     a1,V_CUR_AD.w
 relok12:
@@ -773,44 +768,61 @@ relok19:
 		add.w      d0,d0
 		move.w     d0,d1
 		add.w      d0,d0
-		add.w      d1,d0 /* (16 - Zeichenhoehe) * 6; BUG: must be * 4 */
+		add.w      d1,d0 /* (16 - Zeichenhoehe) * 6 */
 		movea.l    V_CUR_AD.w,a1
 relok20:
 		move.w     BYTES_LIN.w,d1
 relok21:
+		subq.w     #8,d1 ; offset to next line
 		jmp        cursor_jmp(pc,d0.w)
 cursor_jmp:
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		adda.w     d1,a1
-		not.l      (a1)
+		not.l      (a1)+
+		not.l      (a1)+
 		movem.l    (a7)+,d0-d1/a1/a4-a5
 cursor_exit:
 		rts
@@ -888,16 +900,8 @@ vt_cr:
 		pea.l      cursor_on(pc)
 		movea.l    V_CUR_AD.w,a1
 relok27:
-
-;Cursor an den Zeilenanfang setzen
-;Eingabe
-;d0 Cursorspalte
-;a1 Cursoradresse
-;Ausgabe
-;a1 neue Cursoradresse
-;zerstoert werden d0/d2
 set_x0:
-		lsl.w      #2,d0
+		lsl.w      #3,d0
 		suba.w     d0,a1
 		move.l     a1,V_CUR_AD.w
 relok28:
@@ -946,6 +950,7 @@ vt_rawcon:
 relok31:
 		move.w     BYTES_LIN.w,d2
 relok32:
+		subq.w     #8,d2
 		move.b     #2,V_CUR_CT.w        ;Zaehler auf 2 -> keinen Cursor zeichnen
 relok33:
 		bclr       #CURSOR_STATE,V_STAT_0.w ;Cursor nicht sichtbar
@@ -955,10 +960,9 @@ relok35:
 		btst       #CURSOR_INVERSE,V_STAT_0.w
 relok36:
 		bne        vt_char_rcol
-
 		cmp.l      sysfont_addr(pc),d0
 		bne        vt_char_col
-		cmpi.l     #15,V_COL_BG.w
+		cmpi.l     #255,V_COL_BG.w
 relok37:
 		bne        vt_char_col
 		lsl.w      #4,d1
@@ -970,10 +974,10 @@ relok38:
 vt_char_bloop:
 		moveq.l    #0,d0
 		move.b     (a0)+,d0
-		add.w      d0,d0
-		add.w      d0,d0
-		move.l     0(a2,d0.w),(a1)
-		adda.w     d2,a1
+		lsl.w      #3,d0
+		move.l     0(a2,d0.w),(a1)+
+		move.l     4(a2,d0.w),(a1)+
+		adda.w     d2,a1 ; BUG: a1 already advanced by 8
 		dbf        d1,vt_char_bloop
 vt_n_column:
 		move.w     V_CUR_XY0.w,d0
@@ -981,7 +985,7 @@ relok39:
 		cmp.w      V_CEL_MX.w,d0
 relok40:
 		bge.s      vt_l_column
-		addq.l     #4,V_CUR_AD.w
+		addq.l     #8,V_CUR_AD.w
 relok41:
 		addq.w     #1,V_CUR_XY0.w
 relok42:
@@ -993,7 +997,7 @@ relok43:
 		beq.s      vt_con_exit
 		addq.w     #1,hid_cnt
 		ext.l      d0
-		lsl.l      #2,d0
+		lsl.l      #3,d0
 		sub.l      d0,V_CUR_AD.w
 relok44:
 		clr.w      V_CUR_XY0.w
@@ -1018,55 +1022,65 @@ vt_con_exit:
 
 vt_char_rcol:
 		movem.l    d3-d7,-(a7)
-		lea.l      nibble2tab,a2
-		move.w     V_COL_FG.w,d6
+		lea.l      V_COL_BG+1.w,a2
 relok51:
-		move.w     V_COL_BG.w,d5
-relok52:
-		add.w      d5,d5
-		add.w      d5,d5
-		add.w      d6,d6
-		add.w      d6,d6
-		move.l     0(a2,d5.w),d5
-		move.l     0(a2,d6.w),d6
+		movep.w    0(a2),d6
+		move.b     (a2)+,d6
+		move.w     d6,d4
+		swap       d6
+		move.w     d4,d6
+		movep.w    1(a2),d5
+		move.b     1(a2),d5
+		move.w     d5,d3
+		swap       d5
+		move.w     d3,d5
+		not.l      d5
+		not.l      d6
 		bra.s      vt_char_col1
 
 vt_char_col:
 		movem.l    d3-d7,-(a7)
-		lea.l      nibble2tab,a2
-		move.w     V_COL_FG.w,d5
-relok53:
-		move.w     V_COL_BG.w,d6
-relok54:
-		add.w      d5,d5
-		add.w      d5,d5
-		add.w      d6,d6
-		add.w      d6,d6
-		move.l     0(a2,d5.w),d5
-		move.l     0(a2,d6.w),d6
+		lea.l      V_COL_BG+1.w,a2
+relok52:
+		movep.w    0(a2),d6
+		move.b     (a2)+,d6
+		move.w     d6,d4
+		swap       d6
+		move.w     d4,d6
+		movep.w    1(a2),d5
+		move.b     1(a2),d5
+		move.w     d5,d3
+		swap       d5
+		move.w     d3,d5
 vt_char_col1:
 		movea.l    d0,a0
 		adda.w     d1,a0
 		move.w     V_FNT_WD.w,d0
-relok55:
+relok53:
 		move.w     V_CEL_HT.w,d1
-relok56:
+relok54:
 		subq.w     #1,d1
 		lea.l      expand_tab(pc),a2
 vt_char_cloop:
 		moveq.l    #0,d7
 		move.b     (a0),d7
-		add.w      d7,d7
-		add.w      d7,d7
+		lsl.w      #3,d7
 		move.l     0(a2,d7.w),d3
 		move.l     d3,d4
 		not.l      d4
 		and.l      d5,d3
 		and.l      d6,d4
 		or.l       d4,d3
-		move.l     d3,(a1)
+		move.l     d3,(a1)+
+		move.l     4(a2,d7.w),d3
+		move.l     d3,d4
+		not.l      d4
+		and.l      d5,d3
+		and.l      d6,d4
+		or.l       d4,d3
+		move.l     d3,(a1)+
 		adda.w     d0,a0
-		adda.w     d2,a1
+		adda.w     d2,a1 ; BUG: a1 already advanced by 8
 		dbf        d1,vt_char_cloop
 		movem.l    (a7)+,d3-d7
 		bra        vt_n_column
@@ -1079,11 +1093,11 @@ vt_esc_seq:
 		beq        vt_seq_Y
 		move.w     d1,d2
 		movem.w    V_CUR_XY.w,d0-d1
-relok57:
+relok55:
 		movea.l    V_CUR_AD.w,a1
-relok58:
+relok56:
 		movea.w    BYTES_LIN.w,a2
-relok59:
+relok57:
 		move.l     #vt_con0,mycon_state
 		subi.w     #'A',d2
 		cmpi.w     #12,d2
@@ -1180,10 +1194,10 @@ vt_seq_H:
 		bsr        cursor_off
 vt_seq_H_in:
 		clr.l      V_CUR_XY.w
-relok60:
+relok58:
 		movea.l    v_bas_ad.w,a1
 		move.l     a1,V_CUR_AD.w
-relok61:
+relok59:
 		bra        cursor_on
 
 ;Cursor up and insert (VT52 ESC I)
@@ -1193,11 +1207,11 @@ vt_seq_I:
 		subq.w     #1,d1
 		blt        scroll_down_page
 		suba.w     V_CEL_WR.w,a1 /* FIXME: V_CEL_WR is obsolete */
-relok62:
+relok60:
 		move.l     a1,V_CUR_AD.w
-relok63:
+relok61:
 		move.w     d1,V_CUR_XY1.w
-relok64:
+relok62:
 		rts
 
 ; ERASE TO END OF ALPHA SRCEEN (VDI 5, ESCAPE 9)/ Erase to end of page (VT52 ESC J)
@@ -1205,21 +1219,21 @@ v_eeos:
 vt_seq_J:
 		bsr.s      vt_seq_K
 		move.w     V_CUR_XY1.w,d1
-relok65:
+relok63:
 		move.w     V_CEL_MY.w,d2
-relok66:
+relok64:
 		sub.w      d1,d2
 		beq.s      vt_seq_J_exit
 		movem.l    d2-d7/a1-a6,-(a7)
 		movea.l    v_bas_ad.w,a1
 		addq.w     #1,d1
 		mulu.w     V_CEL_WR.w,d1 /* FIXME: V_CEL_WR is obsolete */
-relok67:
+relok65:
 		lsr.l      #2,d1 ; BUG
 		adda.l     d1,a1
 		move.w     d2,d7
 		mulu.w     V_CEL_HT.w,d7
-relok68:
+relok66:
 		subq.w     #1,d7
 		bra        clear_lines
 vt_seq_J_exit:
@@ -1231,7 +1245,7 @@ v_eeol:
 vt_seq_K:
 		bsr        cursor_off
 		move.w     V_CEL_MX.w,d2
-relok69:
+relok67:
 		sub.w      d0,d2
 		bsr        clear_line_part
 		bra        cursor_on
@@ -1243,21 +1257,21 @@ vt_seq_L:
 		bsr        set_x0
 		movem.l    d2-d7/a1-a6,-(a7)
 		move.w     V_CEL_MY.w,d5
-relok70:
+relok68:
 		sub.w      d1,d5
 		beq.s      vt_seq_L_exit
 		movea.l    v_bas_ad.w,a0
 		movea.l    a0,a1
 		movea.w    BYTES_LIN.w,a2
-relok71:
+relok69:
 		movea.w    a2,a3
 		move.w     V_CEL_HT.w,d0
-relok72:
+relok70:
 		mulu.w     d0,d1
 		move.w     d1,d3
 		add.w      d0,d3
 		move.w     V_CEL_MX.w,d4
-relok73:
+relok71:
 		lsl.w      #3,d4
 		addq.w     #7,d4
 		mulu.w     d0,d5
@@ -1269,14 +1283,15 @@ relok73:
 		jsr        bitblt_in
 		movea.l    v_bas_ad.w,a1
 		move.w     V_CUR_XY1.w,d0
-relok74:
+relok72:
 		mulu.w     V_CEL_WR.w,d0 /* FIXME: V_CEL_WR is obsolete */
-relok75:
+relok73:
+		lsr.l      #2,d0 ; BUG
 		adda.l     d0,a1
 		bra        clear_line2
 vt_seq_L_exit:
 		movea.l    V_CUR_AD.w,a1
-relok76:
+relok74:
 		bra        clear_line2
 
 ;Delete Line (VT52 ESC M)
@@ -1286,27 +1301,32 @@ vt_seq_M:
 		bsr        set_x0
 		movem.l    d2-d7/a1-a6,-(a7)
 		move.w     V_CEL_MY.w,d7
-relok77:
+relok75:
 		sub.w      d1,d7
 		beq.s      vt_seq_M_last
 		move.w     V_CEL_HT.w,d3
-relok78:
+relok76:
 		moveq.l    #0,d0
 		mulu.w     d3,d1
 		moveq.l    #0,d2
 		add.w      d1,d3
 		exg        d1,d3
 		movem.w    V_CEL_MX.w,d4-d5
-relok79:
+relok77:
 		addq.w     #1,d4
 		lsl.w      #3,d4
 		subq.w     #1,d4
 		mulu.w     V_CEL_HT.w,d5
-relok80:
+relok78:
 		subq.w     #1,d5
 		sub.w      d1,d5
 		bra        scroll_up2
 vt_seq_M_last:
+		move.l     a1,d0 ; BUG
+		movea.l    v_bas_ad.w,a1
+		sub.l      a1,d0
+		lsr.l      #2,d0
+		adda.l     d0,a1
 		bra        clear_line2
 
 ;Set cursor position (VT52 ESC Y)
@@ -1317,7 +1337,7 @@ vt_seq_Y:
 vt_set_y:
 		subi.w     #32,d1
 		move.w     V_CUR_XY0.w,d0
-relok81:
+relok79:
 		move.l     #vt_set_x,mycon_state
 		bra        set_cursor_xy
 ;x-Koordinate setzen
@@ -1325,7 +1345,7 @@ vt_set_x:
 		subi.w     #32,d1
 		move.w     d1,d0
 		move.w     V_CUR_XY1.w,d1
-relok82:
+relok80:
 		move.l     #vt_con0,mycon_state
 		bra        set_cursor_xy
 
@@ -1335,9 +1355,14 @@ vt_seq_b:
 		rts
 vt_set_b:
 		lea.l      V_COL_FG.w,a1
-relok83:
+relok81:
 vt_set_col:
-		and.w      #15,d1
+		moveq.l    #15,d0
+		and.w      d0,d1
+		cmp.w      d0,d1
+		bne.s      vt_set_b1
+		move.w     #255,d1
+vt_set_b1:
 		move.w     d1,(a1)
 		move.l     #vt_con0,mycon_state
 		rts
@@ -1348,18 +1373,18 @@ vt_seq_c:
 		rts
 vt_set_c:
 		lea.l      V_COL_BG.w,a1
-relok84:
+relok82:
 		bra.s      vt_set_col
 
 ;Erase to start of page (VT52 ESC d)
 vt_seq_d:
 		bsr.s      vt_seq_o
 		move.w     V_CUR_XY1.w,d1
-relok85:
+relok83:
 		beq.s      vt_seq_d_exit
 		movem.l    d2-d7/a1-a6,-(a7)
 		mulu.w     V_CEL_HT.w,d1
-relok86:
+relok84:
 		move.w     d1,d7
 		subq.w     #1,d7
 		movea.l    v_bas_ad.w,a1
@@ -1383,17 +1408,17 @@ vt_seq_f:
 ;Save cursor (VT52 ESC j)
 vt_seq_j:
 		bset       #CURSOR_SAVED,V_STAT_0.w
-relok87:
+relok85:
 		move.l     V_CUR_XY.w,V_SAV_XY.w
-relok88:
+relok86:
 		rts
 
 ;Restore cursor (VT52 ESC k)
 vt_seq_k:
 		movem.w    V_SAV_XY.w,d0-d1
-relok89:
+relok87:
 		bclr       #CURSOR_SAVED,V_STAT_0.w
-relok90:
+relok88:
 		bne        set_cursor_xy
 		moveq.l    #0,d0
 		moveq.l    #0,d1
@@ -1413,7 +1438,7 @@ vt_seq_o:
 		bmi.s      vt_seq_o_exit
 		movea.l    v_bas_ad.w,a1
 		mulu.w     V_CEL_WR.w,d1 /* FIXME: V_CEL_WR is obsolete */
-relok91:
+relok89:
 		adda.l     d1,a1
 		bra        clear_line_part
 vt_seq_o_exit:
@@ -1423,57 +1448,57 @@ vt_seq_o_exit:
 v_rvon:
 vt_seq_p:
 		bset       #CURSOR_INVERSE,V_STAT_0.w
-relok92:
+relok90:
 		rts
 
 ; REVERSE VIDEO OFF (VDI 5, ESCAPE 14)/Normal Video (VT52 ESC q)
 v_rvoff:
 vt_seq_q:
 		bclr       #CURSOR_INVERSE,V_STAT_0.w
-relok93:
+relok91:
 		rts
 
 ;Wrap at end of line (VT52 ESC v)
 vt_seq_v:
 		bset       #CURSOR_WRAP,V_STAT_0.w
-relok94:
+relok92:
 		rts
 
 ;Discard end of line (VT52 ESC w)
 vt_seq_w:
 		bclr       #CURSOR_WRAP,V_STAT_0.w
-relok95:
+relok93:
 		rts
 
 scroll_up_page:
 		movem.l    d2-d7/a1-a6,-(a7)
 		moveq.l    #0,d0
 		move.w     V_CEL_HT.w,d1
-relok96:
+relok94:
 		moveq.l    #0,d2
 		moveq.l    #0,d3
 		movem.w    V_CEL_MX.w,d4-d5
-relok97:
+relok95:
 		addq.w     #1,d4
 		lsl.w      #3,d4
 		subq.w     #1,d4
 		mulu.w     V_CEL_HT.w,d5
-relok98:
+relok96:
 		subq.w     #1,d5
 scroll_up2:
 		moveq.l    #3,d7
 		movea.l    v_bas_ad.w,a0
 		movea.l    a0,a1
 		movea.w    BYTES_LIN.w,a2
-relok99:
+relok97:
 		movea.w    a2,a3
 		movea.l    aes_wk_ptr(pc),a6
 		jsr        bitblt_in
 		movea.l    v_bas_ad.w,a1
 		move.w     V_CEL_MY.w,d0
-relok100:
+relok98:
 		mulu.w     V_CEL_WR.w,d0 /* FIXME: V_CEL_WR is obsolete */
-relok101:
+relok99:
 		adda.l     d0,a1
 		bra.s      clear_line2
 
@@ -1483,9 +1508,9 @@ scroll_down_page:
 		moveq.l    #0,d1
 		moveq.l    #0,d2
 		move.w     V_CEL_HT.w,d3
-relok102:
+relok100:
 		movem.w    V_CEL_MX.w,d4-d5
-relok103:
+relok101:
 		addq.w     #1,d4
 		addq.w     #1,d5
 		lsl.w      #3,d4
@@ -1496,7 +1521,7 @@ relok103:
 		movea.l    v_bas_ad.w,a0
 		movea.l    a0,a1
 		movea.w    BYTES_LIN.w,a2
-relok104:
+relok102:
 		movea.w    a2,a3
 		movea.l    aes_wk_ptr(pc),a6
 		jsr        bitblt_in
@@ -1509,28 +1534,29 @@ clear_line:
 ;a1.l Zeilenadresse
 clear_line2:
 		move.w     V_CEL_HT.w,d7
-relok105:
+relok103:
 		subq.w     #1,d7
 ;d7.w Zeilenzaehler
 clear_lines:
-		lea.l      nibble2tab,a2
-		move.w     V_COL_BG.w,d6
-relok106:
-		add.w      d6,d6
-		add.w      d6,d6
-		move.l     0(a2,d6.w),d6
+		lea.l      V_COL_BG+1.w,a2
+relok104:
+		movep.w    0(a2),d6
+		move.b     (a2),d6
+		move.w     d6,d2
+		swap       d6
+		move.w     d2,d6
 		move.w     V_CEL_MX.w,d4
-relok107:
+relok105:
 		move.w     BYTES_LIN.w,d5
-relok108:
+relok106:
 		move.w     d4,d2
 		addq.w     #1,d2
-		add.w      d2,d2
-		add.w      d2,d2
+		lsl.w      #3,d2
 		sub.w      d2,d5
 clear_line_bloop:
 		move.w     d4,d2
 clear_line_loop:
+		move.l     d6,(a1)+
 		move.l     d6,(a1)+
 		dbf        d2,clear_line_loop
 		adda.w     d5,a1
@@ -1547,10 +1573,10 @@ clear_line_loop:
 clear_screen:
 		movem.l    d2-d7/a1-a6,-(a7)
 		move.w     V_CEL_MY.w,d7
-relok109:
+relok107:
 		addq.w     #1,d7
 		mulu.w     V_CEL_HT.w,d7
-relok110:
+relok108:
 		subq.w     #1,d7
 		movea.l    v_bas_ad.w,a1
 		bra.s      clear_lines
@@ -1564,31 +1590,33 @@ relok110:
 ;d0-d2/a0-a1 werden zerstoert
 clear_line_part:
 		move.l     d3,-(a7)
-		lea.l      nibble2tab,a3
-		move.w     V_COL_BG.w,d3
-relok111:
-		add.w      d3,d3
-		add.w      d3,d3
-		move.l     0(a3,d3.w),d3
+		lea.l      V_COL_BG+1.w,a0
+relok109:
+		movep.w    0(a0),d3
+		move.b     (a0),d3
+		move.w     d3,d0
+		swap       d3
+		move.w     d0,d3
 		move.w     V_CEL_HT.w,d1
-relok112:
+relok110:
 		subq.w     #1,d1
 		move.w     d2,d0
 		addq.w     #1,d0
-		add.w      d0,d0
-		add.w      d0,d0
+		lsl.w      #3,d0
 		movea.w    BYTES_LIN.w,a0
-relok113:
+relok111:
 		suba.w     d0,a0
 clear_lpart_bloop:
 		move.w     d2,d0
 clear_lpart_loop:
+		move.l     d3,(a1)+
 		move.l     d3,(a1)+
 		dbf        d0,clear_lpart_loop
 		adda.w     a0,a1
 		dbf        d1,clear_lpart_bloop
 		move.l     (a7)+,d3
 		rts
+
 
 ;Undraw Sprite ($A00C)
 ;Eingaben
@@ -1603,10 +1631,12 @@ undraw_sprite:
 		bclr       #0,(a2)      ; save block valid?
 		beq.s      undraw_exit
 		movea.w    BYTES_LIN.w,a3
-relok114:
-		lea.l      -12(a3),a3   ; offset to next line
+relok112:
+		lea.l      -20(a3),a3   ; offset to next line
 		addq.l     #2,a2
 undraw_spr_loop:
+		move.l     (a2)+,(a1)+
+		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
 		move.l     (a2)+,(a1)+
@@ -1628,15 +1658,13 @@ draw_sprite:
 		moveq.l    #15,d3     ; height - 1
 		move.b     7(a0),d6   ; background color
 		move.b     9(a0),d7   ; foreground color
-		and.w      #15,d6
-		and.w      #15,d7
 		sub.w      (a0)+,d0      ; X_Koord - intxhot
 		bpl.s      draw_spr_x2
 		add.w      d0,d2         ; width to draw - 1
 		bmi        draw_spr_exit
 draw_spr_x2:
 		move.w     DEV_TAB0.w,d4 ; WORK_OUT[0] max. raster width
-relok115:
+relok113:
 		subi.w     #15,d4
 		sub.w      d0,d4
 		bge.s      draw_spr_y
@@ -1654,7 +1682,7 @@ draw_spr_y:
 		moveq.l    #0,d1
 draw_spr_y2:
 		move.w     DEV_TAB1.w,d5 ; WORK_OUT[1] max. raster height
-relok116:
+relok114:
 		subi.w     #15,d5
 		sub.w      d1,d5
 		bge.s      draw_spr_save
@@ -1664,7 +1692,7 @@ draw_spr_save:
 		move.w     d3,(a2)
 		addq.w     #1,(a2)+      ; saved number of lines
 		muls.w     BYTES_LIN.w,d1
-relok117:
+relok115:
 		movea.l    v_bas_ad.w,a1
 		adda.l     d1,a1         ; line address
 		moveq.l    #0,d4
@@ -1672,45 +1700,37 @@ relok117:
 		bmi.s      draw_spr_saddr
 		moveq.l    #-19,d4
 		add.w      DEV_TAB0.w,d4
-relok118:
+relok116:
 		cmp.w      d0,d4
 		blt.s      draw_spr_saddr
 		moveq.l    #-4,d4
 		and.w      d0,d4
 draw_spr_saddr:
 		movea.l    a1,a4
-		lsr.w      #1,d4
 		adda.w     d4,a4
 		move.l     a4,(a2)+      ; address of saved background
 		move.w     #256,(a2)+    ; mark as valid
 		movea.w    BYTES_LIN.w,a3
-relok119:
-		lea.l      -12(a3),a3    ; offset to next line
+relok117:
+		lea.l      -20(a3),a3    ; offset to next line
 		move.w     d3,d5
 draw_spr_sloop:
+		move.l     (a4)+,(a2)+
+		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		move.l     (a4)+,(a2)+
 		adda.w     a3,a4
 		dbf        d5,draw_spr_sloop
 		movea.w    BYTES_LIN.w,a3
-relok120:
-		moveq.l    #1,d1
-		and.w      d0,d1
-		beq.s      draw_spr1
-		moveq.l    #-16,d1
-		bra.s      draw_spr2
-draw_spr1:
-		moveq.l    #15,d1
-		lsl.w      #4,d6
-		lsl.w      #4,d7
-draw_spr2:
-		asr.w      #1,d0
+relok118:
+		suba.w     d2,a3
+		subq.w     #1,a3
 		adda.w     d0,a1
 		cmp.w      #15,d2        ; mouse pointer at screen margins?
 		beq.s      draw_it
 		tst.w      d0
-		bpl.s      draw_it       ; at left margin?
+		bpl.s      draw_it
 		suba.w     d0,a1
 		neg.w      d0
 		bra.s      draw_spr_bloop
@@ -1721,90 +1741,87 @@ draw_spr_bloop:
 		move.w     (a0)+,d5
 		lsl.w      d0,d4
 		lsl.w      d0,d5
-		move.l     a1,-(a7)
-		movem.w    d1-d2/d6-d7,-(a7)
+		move.w     d2,d1
 draw_spr_loop:
 		add.w      d5,d5
 		bcc.s      draw_spr_bg
-		and.b      d1,(a1)
-		or.b       d7,(a1)
+		move.b     d7,(a1)+
 		add.w      d4,d4
+		dbf        d1,draw_spr_loop
 		bra.s      draw_spr_nth
 draw_spr_bg:
 		add.w      d4,d4
-		bcc.s      draw_spr_nth
-		and.b      d1,(a1)
-		or.b       d6,(a1)
-draw_spr_nth:
-		ror.b      #4,d1
-		ror.b      #4,d6
-		ror.b      #4,d7
-		cmp.b      #15,d1
-		bne.s      draw_spr_skip
-		addq.l     #1,a1
+		bcc.s      draw_spr_skip
+		move.b     d6,(a1)+
+		dbf        d1,draw_spr_loop
+		bra.s      draw_spr_nth
 draw_spr_skip:
-		dbf        d2,draw_spr_loop
-		movem.w    (a7)+,d1-d2/d6-d7
-		movea.l    (a7)+,a1
+		addq.l     #1,a1
+		dbf        d1,draw_spr_loop
+draw_spr_nth:
 		adda.w     a3,a1
 		dbf        d3,draw_spr_bloop
 draw_spr_exit:
 		rts
 
 panscreen:
-		movem.w    GCURX.w,d0-d1
-relok121:
-		movem.w    vscr_struct+10(pc),d4-d5 ; get x/y
-		movem.w    visible_xres(pc),d6-d7
-		add.w      d4,d6
-		add.w      d5,d7
-		sub.w      #32,d0
-		sub.w      #32,d1
-		cmp.w      d4,d0
+		lea.l      visible_xres(pc),a0
+		move.l     xres(pc),d6
+		lea.l      vscr_struct+10(pc),a1
+		movem.w    (a0),d4-d5
+		movem.w    (a1),d2-d3
+		add.w      d2,d4
+		add.w      d3,d5
+		moveq.l    #-32,d0
+		moveq.l    #-32,d1
+		add.w      GCURX.w,d0
+relok119:
+		add.w      GCURY.w,d1
+relok120:
+		cmp.w      d2,d0
 		bge.s      panscreen1
-		move.w     d0,d4
-		and.w      #-4,d4
+		move.w     d0,d2
 		bpl.s      panscreen1
-		moveq.l    #0,d4
+		moveq.l    #0,d2
 panscreen1:
-		cmp.w      d5,d1
+		cmp.w      d3,d1
 		bge.s      panscreen2
-		move.w     d1,d5
+		move.w     d1,d3
 		bpl.s      panscreen2
-		moveq.l    #0,d5
+		moveq.l    #0,d3
 panscreen2:
-		add.w      #64,d0
-		add.w      #64,d1
-		cmp.w      d7,d1
+		moveq.l    #64,d7
+		add.w      d7,d0
+		add.w      d7,d1
+		cmp.w      d5,d1
 		ble.s      panscreen4
-		cmp.w      yres(pc),d1
+		cmp.w      d6,d1
 		ble.s      panscreen3
-		move.w     yres(pc),d1
+		move.w     d6,d1
 panscreen3:
-		sub.w      d7,d1
-		add.w      d1,d5
+		sub.w      d5,d1
+		add.w      d1,d3
 panscreen4:
-		cmp.w      d6,d0
+		cmp.w      d4,d0
 		ble.s      panscreen6
-		cmp.w      xres(pc),d0
+		swap       d6
+		cmp.w      d6,d0
 		ble.s      panscreen5
-		move.w     xres(pc),d0
+		move.w     d6,d0
 panscreen5:
-		sub.w      d6,d0
-		add.w      d0,d4
-		addq.w     #3,d4
-		and.w      #-4,d4
+		sub.w      d4,d0
+		add.w      d0,d2
 panscreen6:
-		movem.w    d4-d5,vscr_struct+10
+		move.w     d2,(a1)+
+		move.w     d3,(a1)+
 		movea.l    cxs_info1(pc),a0
 		movea.l    cxs_282(a0),a1
 		btst       #0,65(a1)
 		beq.s      panscreen8
-		move.w     d4,d0
-		and.l      #0x0000FFF8,d0
-		lsr.w      #1,d0
-		mulu.w     line_width(pc),d5
-		add.l      d5,d0
+		move.w     d2,d0
+		and.l      #0x0000FFFC,d0
+		mulu.w     line_width(pc),d3
+		add.l      d3,d0
 		add.l      cxs_274(a0),d0
 		sub.l      cxs_278(a0),d0
 		swap       d0
@@ -1813,12 +1830,12 @@ panscreen6:
 		bne.s      panscreen7
 		cmpi.w     #0x01CB,cxs_400(a0)
 		bne.s      panscreen8
-		and.w      #7,d4
-		lsl.w      #5,d4
+		and.w      #3,d2
+		lsl.w      #5,d2
 		movea.l    cxs_rgbtab(a0),a2
 		move.b     #2,(a2)
 		move.b     #2,2(a2)
-		move.b     d4,4(a2)
+		move.b     d2,4(a2)
 		rts
 panscreen7:
 		move.l     d0,screen_offset
@@ -1832,11 +1849,11 @@ init_res:
 		move.w     line_width(pc),d2
 		move.l     vga_membase(pc),v_bas_ad.w
 		move.w     #DRV_PLANES,PLANES.w
-relok122:
+relok121:
 		move.w     d2,WIDTH.w
-relok123:
+relok122:
 		move.w     d2,BYTES_LIN.w
-relok124:
+relok123:
 		movem.l    (a7)+,d0-d2/a0-a2
 		rts
 
@@ -1855,11 +1872,11 @@ init_vt52:
 		addq.w     #1,d1
 		move.w     line_width(pc),d2
 		move.w     d0,V_REZ_HZ.w
+relok124:
+		move.w     d1,V_REZ_VT.w
 relok125:
 		move.w     d1,V_REZ_VT.w
 relok126:
-		move.w     d1,V_REZ_VT.w
-relok127:
 		movea.l    _sf_font_hdr_ptr(a0),a1
 		lea.l      sizeof_FONTHDR(a1),a1
 		cmpi.w     #400,d1
@@ -1867,38 +1884,38 @@ relok127:
 		lea.l      sizeof_FONTHDR(a1),a1
 init_vt52_font:
 		move.l     dat_table(a1),V_FNT_AD.w
-relok128:
+relok127:
 		move.l     off_table(a1),V_OFF_AD.w
-relok129:
+relok128:
 		move.w     #256,V_FNT_WD.w
-relok130:
+relok129:
 		move.l     #0x00FF0000,V_FNT_ND.w
-relok131:
+relok130:
 		move.w     form_height(a1),d3
 		move.w     d3,V_CEL_HT.w
-relok132:
+relok131:
 		lsr.w      #3,d0
 		subq.w     #1,d0
 		divu.w     d3,d1
 		subq.w     #1,d1
 		mulu.w     d3,d2
 		movem.w    d0-d2,V_CEL_MX.w /* V_CEL_MX/V_CEL_MY/V_CEL_WR */
+relok132:
+		move.l     #255,V_COL_BG.w
 relok133:
-		move.l     #15,V_COL_BG.w
-relok134:
 		move.w     #1,V_HID_CNT.w
-relok135:
+relok134:
 		move.w     #1,hid_cnt
 		move.w     #256,V_STAT_0.w
-relok136:
+relok135:
 		move.w     #0x1E1E,V_PERIOD.w
-relok137:
+relok136:
 		move.l     v_bas_ad.w,V_CUR_AD.w
-relok138:
+relok137:
 		clr.l      V_CUR_XY.w
-relok139:
+relok138:
 		clr.w      V_CUR_OF.w
-relok140:
+relok139:
 		move.l     #vt_con0,mycon_state
 		movem.l    (a7)+,d0-d4/a0-a2
 		rts
@@ -1912,17 +1929,13 @@ build_exp:
 		moveq.l    #0,d0
 build_exp_bloop:
 		move.w     d0,d1
-		moveq.l    #3,d2
+		moveq.l    #7,d2
 build_exp_loop:
 		clr.b      (a0)
 		add.b      d1,d1
 		bcc.s      build_exp1
-		eori.b     #0xF0,(a0)
+		not.b      (a0)
 build_exp1:
-		add.b      d1,d1
-		bcc.s      build_exp2
-		eori.b     #0x0F,(a0)
-build_exp2:
 		addq.l     #1,a0
 		dbf        d2,build_exp_loop
 		addq.w     #1,d0
@@ -2120,7 +2133,7 @@ wk_init:
 		move.l     xres(pc),res_x(a6)
 		move.l     pixw(pc),pixel_width(a6)
 		move.w     #DRV_PLANES-1,r_planes(a6)
-		move.w     #15,colors(a6)
+		move.w     #255,colors(a6)
 		move.l     res_x(a6),clip_xmax(a6)
 		lea.l      organisation(pc),a0
 		move.l     (a0)+,bitmap_colors(a6)
@@ -2222,11 +2235,11 @@ v_escape:
 		movea.l    a2,a5
 		movea.l    a1,a0
 		movem.w    V_CUR_XY.w,d0-d1
-relok141:
+relok140:
 		movea.l    V_CUR_AD.w,a1
-relok142:
+relok141:
 		movea.w    BYTES_LIN.w,a2
-relok143:
+relok142:
 		jsr        v_escape_tab(pc,d2.w)
 		movem.l    (a7)+,d1-d7/a2-a5
 v_escape_exit:
@@ -2255,7 +2268,7 @@ v_escape_tab:     DC.W v_escape_exit-v_escape_tab
 ; INQUIRE ADDRESSABLE ALPHA CHARACTER CELLS (VDI 5, ESCAPE 1)
 vq_chcells:
 		move.l     V_CEL_MX.w,d3
-relok144:
+relok143:
 		addi.l     #0x00010001,d3
 		swap       d3
 		move.l     d3,(a4)
@@ -2266,19 +2279,19 @@ relok144:
 v_exit:
 		addq.w     #1,hid_cnt
 		bclr       #CURSOR_STATE,V_STAT_0.w
-relok145:
+relok144:
 		bra        clear_screen
 
 ; ENTER ALPHA MODE (VDI 5, ESCAPE 3)
 v_enter_cur:
 		clr.l      V_CUR_XY.w
-relok146:
+relok145:
 		move.l     v_bas_ad.w,V_CUR_AD.w
-relok147:
+relok146:
 		move.l     #vt_con0,mycon_state
 		bsr        clear_screen
 		bclr       #CURSOR_STATE,V_STAT_0.w
-relok148:
+relok147:
 		move.w     #1,hid_cnt
 		bra        cursor_on
 
@@ -2306,12 +2319,21 @@ vq_curaddress:
 ;d0.w x1
 ;d1.w y
 ;d2.w x2
-;d6.w Linienmuster
-;d7.w Schreibmodus
+;d6.w Schreibmodus
+;d7.w Linienmuster
 ;a6.l Workstation
 ;Ausgaben:
 ;-
 hline_accel:
+		tst.w      d6
+		bne.s      hline_accel3
+		cmp.w      #-1,d7
+		bne.s      hline_accel3
+		move.l     r_fg_pixel(a6),d5
+		beq.s      hline_accel1
+		cmpi.w     #1,d5
+		bne.s      hline_accel3
+hline_accel1:
 		move.l     a0,-(a7)
 		movea.l    x104b4(pc),a0
 		movea.l    x104a4(pc),a1
@@ -2335,30 +2357,84 @@ hline_accel:
 		move.w     #0x0301,(a1)+
 		move.w     #0x0200,(a0)
 		addq.l     #1,a0
-hline_accel1:
+hline_accel2:
 		btst       d4,(a0)
-		beq.s      hline_accel1
+		beq.s      hline_accel2
+		movea.l    (a7)+,a0
+		rts
+hline_accel3:
+		move.l     d3,-(a7)
+		move.w     d1,d3
+		bsr.s      hline_accel4
+		move.l     (a7)+,d3
+		rts
+
+hline_accel4:
+		move.l     a0,-(a7)
+		sub.w      d0,d2
+		sub.w      d1,d3
+		movea.l    x104a4(pc),a1
+		move.w     #0x4F00,(a1)+
+		move.w     d0,(a1)+
+		move.w     d1,(a1)+
+		move.w     #0x3D00,(a1)+
+		move.l     r_fg_pixel(a6),d0
+		move.b     d0,(a1)+
+		move.b     d0,(a1)+
+		move.l     r_bg_pixel(a6),d0
+		move.b     d0,(a1)+
+		move.b     d0,(a1)+
+		subq.w     #2,d6
+		bmi.s      hline_accel6
+		bne.s      hline_accel5
+		move.l     #0xFFFF0000,-4(a1)
+		bra.s      hline_accel6
+hline_accel5:
+		not.w      d7
+		move.l     -(a1),d0
+		swap       d0
+		move.l     d0,(a1)+
+hline_accel6:
+		move.w     #0x4100,(a1)+
+		move.w     #-1,(a1)+
+		add.w      d6,d6
+		add.w      d6,d6
+		move.l     x115de+8(pc,d6.w),(a1)+
+		move.w     d7,(a1)+
+		move.w     #0x5400,(a1)+
+		move.w     d2,(a1)+
+		move.w     d3,(a1)+
+		move.w     #0x0301,(a1)+
+		movea.l    x104b4(pc),a0
+		move.w     x104a4+2(pc),2(a0)
+		move.w     #0,4(a0)
+		move.w     #0x0200,(a0)
+		addq.l     #1,a0
+hline_accel7:
+		btst       #0,(a0)
+		beq.s      hline_accel7
 		movea.l    (a7)+,a0
 		rts
 
+x115de:
+	dc.l 0x00050600
+	dc.l 0x00050700
+	dc.l 0x00060600
+	dc.l 0x00050700
+
 hline:
-		movea.l    v_bas_ad.w,a1
 		move.w     wr_mode(a6),d6
-		bne.s      hline_exit
+		cmp.w      #MD_XOR-1,d6
+		beq.s      hline_exit
 		move.w     d2,d4
 		sub.w      d0,d4
 		cmp.w      #50,d4
 		blt.s      hline_exit
 		tst.w      bitmap_addr(a6) ; BUG: must be long
 		bne.s      hline_exit
+		movea.l    v_bas_ad.w,a1
 		cmpa.l     vga_membase(pc),a1
-		bne.s      hline_exit
-		cmp.w      #-1,d7
-		bne.s      hline_exit
-		move.l     r_fg_pixel(a6),d5
-		beq.s      hline_accel
-		cmpi.w     #1,d5
-		beq.s      hline_accel
+		beq        hline_accel
 hline_exit:
 		movea.l    hline_ptr(pc),a1
 		jmp        (a1)
@@ -2396,13 +2472,12 @@ vline_accel:
 		move.w     d0,(a1)+
 		move.w     d1,(a1)+
 		move.w     #0x3D00,(a1)+
-		lea.l      nibbletab(pc),a0
 		move.l     r_fg_pixel(a6),d0
-		add.w      d0,d0
-		move.w     0(a0,d0.w),(a1)+
+		move.b     d0,(a1)+
+		move.b     d0,(a1)+
 		move.l     r_bg_pixel(a6),d0
-		add.w      d0,d0
-		move.w     0(a0,d0.w),(a1)+
+		move.b     d0,(a1)+
+		move.b     d0,(a1)+
 		subq.w     #2,d6
 		bmi.s      vline_a2
 		bne.s      vline_a1
@@ -2418,7 +2493,7 @@ vline_a2:
 		move.w     #0xFFFF,(a1)+
 		add.w      d6,d6
 		add.w      d6,d6
-		move.l     x1160a+8(pc,d6.w),(a1)+
+		move.l     x116b4+8(pc,d6.w),(a1)+
 		move.w     d7,(a1)+
 		move.w     #0x5400,(a1)+
 		move.w     #0,(a1)+
@@ -2435,62 +2510,7 @@ vline_a3:
 		movea.l    (a7)+,a0
 		rts
 
-x1160a:
-	dc.l 0x00050600
-	dc.l 0x00050700
-	dc.l 0x00060600
-	dc.l 0x00050700
-
-/* 1161a */
-		move.l     a0,-(a7)
-		move.w     wr_mode(a6),d6
-		movea.l    x104a4(pc),a1
-		sub.w      d0,d2
-		sub.w      d1,d3
-		move.w     #0x4F00,(a1)+
-		move.w     d0,(a1)+
-		move.w     d1,(a1)+
-		move.w     #0x3D00,(a1)+
-		lea.l      nibbletab(pc),a0
-		move.l     r_fg_pixel(a6),d0
-		add.w      d0,d0
-		move.w     0(a0,d0.w),(a1)+
-		move.l     r_bg_pixel(a6),d0
-		add.w      d0,d0
-		move.w     0(a0,d0.w),(a1)+
-		subq.w     #2,d6
-		bmi.s      hline_a2
-		bne.s      hline_a1
-		move.l     #0xFFFF0000,-4(a1)
-		bra.s      hline_a2
-hline_a1:
-		not.w      d7
-		move.l     -(a1),d0
-		swap       d0
-		move.l     d0,(a1)+
-hline_a2:
-		move.w     #0x4100,(a1)+
-		move.w     #0xFFFF,(a1)+
-		add.w      d6,d6
-		add.w      d6,d6
-		move.l     x116a2+8(pc,d6.w),(a1)+
-		move.w     d7,(a1)+
-		move.w     #0x5400,(a1)+
-		move.w     d2,(a1)+
-		move.w     d3,(a1)+
-		move.w     #0x0301,(a1)+
-		movea.l    x104b4(pc),a0
-		move.w     x104a4+2(pc),2(a0)
-		move.w     #0,4(a0)
-		move.w     #0x0200,(a0)
-		addq.l     #1,a0
-hline_a3:
-		btst       #0,(a0)
-		beq.s      hline_a3
-		movea.l    (a7)+,a0
-		rts
-
-x116a2:
+x116b4:
 	dc.l 0x00050600
 	dc.l 0x00050700
 	dc.l 0x00060600
@@ -2528,12 +2548,6 @@ fbox_accel:
 fbox_a1:
 		move.w     #0x0200,d4
 		moveq.l    #0,d5
-		lea.l      nibbletab(pc),a0
-		add.w      d6,d6
-		move.l     0(a0,d6.w),d6
-		move.w     r_bg_pixel+2(a6),d6
-		add.w      d6,d6
-		move.w     0(a0,d6.w),d6
 		movea.l    x104b4(pc),a0
 		lea.l      1(a0),a1
 		lea.l      2(a0),a2
@@ -2548,8 +2562,10 @@ fbox_a1:
 		move.w     d1,(a4)+
 		addq.w     #1,d1
 		move.w     #0x3D00,(a4)+
-		move.l     d6,(a4)+
-		swap       d6
+		move.b     d6,(a4)+
+		move.b     d6,(a4)+
+		move.b     r_bg_pixel+3(a6),(a4)+
+		move.b     r_bg_pixel+3(a6),(a4)+
 		move.w     #0x4100,(a4)+
 		moveq.l    #15,d0
 		and.w      d1,d0
@@ -2557,7 +2573,7 @@ fbox_a1:
 		add.w      d0,d0
 		movea.l    f_pointer(a6),a6
 		adda.w     d0,a6
-		eori.w     #0x000F,d1
+		eori.w     #15,d1
 		add.w      d7,d7
 		move.w     fbox_accel_jmptab(pc,d7.w),d7
 		jmp        fbox_accel_jmptab(pc,d7.w)
@@ -2713,12 +2729,9 @@ fbox_accel_erase3:
 fbox:
 		movea.l    v_bas_ad.w,a1
 		move.w     BYTES_LIN.w,d4
-relok149:
+relok148:
 		tst.w      bitmap_width(a6)
-		beq.s      fbox1
-		movea.l    bitmap_addr(a6),a1
-		move.w     bitmap_width(a6),d4
-fbox1:
+		bne.s      fbox_exit
 		cmpi.w     #4,f_interior(a6)
 		beq.s      fbox_exit
 		cmpa.l     vga_membase(pc),a1
@@ -2728,7 +2741,7 @@ fbox_exit:
 		jmp        (a1)
 
 bitblt_in:
-		move.w     d7,r_wmode(a6)
+		move.w     d7,494(a6)
 		move.w     d4,d6
 		move.w     d5,d7
 		bra.s      bitblt1
@@ -3028,7 +3041,7 @@ gtext13:
 		movem.l    (a7)+,d0-d1/a0/a2
 		movea.l    v_bas_ad.w,a1
 		movea.w    BYTES_LIN.w,a3
-relok150:
+relok149:
 		cmpa.l     vga_membase(pc),a1
 		bne        textblt_exit
 		cmpa.l     x104b0(pc),a0
@@ -3045,10 +3058,8 @@ relok150:
 		move.w     d2,(a1)+
 		move.w     d3,(a1)+
 		move.w     #0x3D00,(a1)+
-		lea.l      nibbletab(pc),a3
-		move.l     r_fg_pixel(a6),d7
-		add.w      d7,d7
-		move.w     0(a3,d7.w),(a1)+
+		move.b     d7,(a1)+
+		move.b     d7,(a1)+
 		move.w     #0x0000,(a1)+
 		move.w     #0x4100,(a1)+
 		move.w     #0xFFFF,(a1)+
@@ -3172,6 +3183,17 @@ alloc_tables4:
 
 	.data
 
+cxx_driv_name:
+		dc.b ':\MATRIX\CXX_DRIV.TTP',0
+cxx_info_name:
+		dc.b ':\MATRIX\CXX_INFO.TOS',0
+cxs_path:
+		dc.b ':\MATRIX\CXX\*.CXS',0
+		.even
+dev_name:
+		dc.b 'Matric CXX 256 Farben',0
+		.even
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ; 'Relozierungs-Information'
 relokation:
@@ -3261,9 +3283,9 @@ relokation:
                   DC.W relok83-relok82
                   DC.W relok84-relok83
                   DC.W relok85-relok84
-                  DC.W relok86-relok85
+                  DC.W relok86-relok85-2,2
                   DC.W relok87-relok86
-                  DC.W relok88-relok87-2,2
+                  DC.W relok88-relok87
                   DC.W relok89-relok88
                   DC.W relok90-relok89
                   DC.W relok91-relok90
@@ -3325,56 +3347,7 @@ relokation:
                   DC.W relok147-relok146
                   DC.W relok148-relok147
                   DC.W relok149-relok148
-                  DC.W relok150-relok149
                   DC.W 0
-
-nibbletab:
-		dc.w 0x0000
-		dc.w 0x1111
-		dc.w 0x2222
-		dc.w 0x3333
-		dc.w 0x4444
-		dc.w 0x5555
-		dc.w 0x6666
-		dc.w 0x7777
-		dc.w 0x8888
-		dc.w 0x9999
-		dc.w 0xaaaa
-		dc.w 0xbbbb
-		dc.w 0xcccc
-		dc.w 0xdddd
-		dc.w 0xeeee
-		dc.w 0xffff
-
-nibble2tab:
-		dc.l 0x00000000
-		dc.l 0x11111111
-		dc.l 0x22222222
-		dc.l 0x33333333
-		dc.l 0x44444444
-		dc.l 0x55555555
-		dc.l 0x66666666
-		dc.l 0x77777777
-		dc.l 0x88888888
-		dc.l 0x99999999
-		dc.l 0xaaaaaaaa
-		dc.l 0xbbbbbbbb
-		dc.l 0xcccccccc
-		dc.l 0xdddddddd
-		dc.l 0xeeeeeeee
-		dc.l 0xffffffff
-
-cxx_driv_name:
-		dc.b ':\MATRIX\CXX_DRIV.TTP',0
-cxx_info_name:
-		dc.b ':\MATRIX\CXX_INFO.TOS',0
-cxs_path:
-		dc.b ':\MATRIX\CXX\*.CXS',0
-		.even
-
-dev_name:
-		dc.b 'Matric CXX 16 Farben',0
-		.even
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ; 'Laufzeitdaten'
@@ -3404,13 +3377,15 @@ mouse_stat:       DS.W 1
 mouse_savebuf:    DS.B 20*16
 
 aes_wk_ptr:       ds.l 1
+
+graymode:         ds.w 1
 hid_cnt:          ds.w 1
 mycon_state:      ds.l 1
 save_vt52_vec:    ds.l 1
-
 vscr_struct:      ds.b 22
 xbios_rez:        ds.w 1
-expand_tab:       ds.l 256
+
+expand_tab:       ds.l 512
 
 linea_save:       ds.w 25
 save_v_bas_ad:    ds.l 1
@@ -3424,15 +3399,16 @@ pixh:             ds.w 1
 
 x10b0a:           ds.w 1
                   ds.l 1
+
 line_width:       ds.w 1
 vga_membase:      ds.l 1
 colorbits:        ds.w 1
-
 sysfont_addr:     ds.l 1
 font_image:       ds.l 1
 bold_image:       ds.l 1
 oldvbl:           ds.l 1
 oldvme:           ds.l 1
+
 screen_offset:    ds.l 1
 
 cmdline:          ds.b 128
@@ -3441,5 +3417,4 @@ pathbuf:          ds.b 128
 global_ctable:    ds.l 1
 global_itable:    ds.l 1
 
-graymode:         ds.w 1
 fontbuf:          ds.b 256*16
