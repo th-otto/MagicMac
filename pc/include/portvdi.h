@@ -1139,6 +1139,8 @@ struct _gcbitmap
 #define	T_SUB_OVER			(T_ARITH_MODE+6)
 #define	T_MIN				(T_ARITH_MODE+7)
 
+#ifndef __RECT16
+#define __RECT16
 typedef struct			/* Rechteck fÅr 16-Bit-Koordinaten */
 {
 	int16_t x1;
@@ -1154,6 +1156,7 @@ typedef struct			/* Rechteck fÅr 32-Bit-Koordinaten */
 	int32_t	x2;
 	int32_t	y2;
 } RECT32;
+#endif
 
 
 int32_t		v_color2nearest		(_WORD handle, int32_t color_space, COLOR_ENTRY *color, COLOR_ENTRY *nearest_color);

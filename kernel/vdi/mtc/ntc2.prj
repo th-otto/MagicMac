@@ -1,0 +1,11 @@
+ntc2.sys
+
+.S[-S]
+
+.L [-S=0]			;Stacksize 0
+;.L[-F-]
+;.L[-R-]
+
+=
+
+ntc2.s
