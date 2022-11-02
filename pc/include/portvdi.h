@@ -42,6 +42,10 @@ extern VDIPB _VdiParBlk;
 
 typedef int32_t fix31;
 
+/*
+ * should actually be unsigned short, to match wchar_t,
+ * but that would break most bindings
+ */
 typedef short vdi_wchar_t; /* 16bit string, eg. for unicode */
 
 #define fix31_to_point(a) ((_WORD)((((a) + 32768L) >> 16)))

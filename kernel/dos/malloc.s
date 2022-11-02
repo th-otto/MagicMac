@@ -1221,7 +1221,7 @@ Mgetlen:
 *  Wenn die Basepage "exklusiv" ist, wird <new_owner> einfach der
 *  neue Eigner. Wenn die Basepage "shared" ist, wird sie
 *  aus der Liste von <process> ausgetragen, aber nicht freigegeben.
-*  Der Referenzzaehler ist dann quasi "eine Nummer zu gro",$9e,"".
+*  Der Referenzzaehler ist dann quasi "eine Nummer zu gross".
 *
 
 Mzombie:
