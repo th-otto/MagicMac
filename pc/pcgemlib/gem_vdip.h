@@ -79,7 +79,7 @@ _vdi_trap_00 (VDIPB * vdipb, long cntrl_0_1, _WORD handle)
 
 #define VDI_PARAMS(_control,_intin,_ptsin,_intout,_ptsout) \
 	VDIPB vdi_params;         \
-	vdi_params.control = _control;   \
+	vdi_params.contrl  = _control;   \
 	vdi_params.intin   = _intin;   \
 	vdi_params.ptsin   = _ptsin;   \
 	vdi_params.intout  = _intout;   \

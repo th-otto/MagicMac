@@ -2,11 +2,6 @@
 
 				GLOBL	_VdiCtrl
 				GLOBL	_VdiCtrl2
-				GLOBL	vdi
-			if NEW_MT
-				GLOBL	_mt_vdi_end
-				GLOBL	_mt_vdi
-			endc
 
 				MODULE	_VdiCtrl
 				
@@ -25,6 +20,7 @@ _VdiCtrl2:
 
 				ENDMOD
 
+				GLOBL	vdi
 				MODULE	vdi
 								
 				move.l	a2,-(a7)
@@ -44,6 +40,7 @@ _VdiCtrl2:
 ; d1 - nintout
 ; d0 - intout[0] or zero
 ; a0 - &intout[1] or NULL
+				GLOBL	_mt_vdi_end
 				MODULE	_mt_vdi_end
 				move.l	sp,d1
 				move.l	a2,-(a7)
@@ -70,6 +67,7 @@ _mt_vdi_end1:	VDI_END
 ; d1 - nintout
 ; d0 - intout[0] or zero
 ; a0 - &intout[1] or NULL
+				GLOBL	_mt_vdi
 				MODULE	_mt_vdi
 				move.l	sp,d1
 				addq.l	#4,d1

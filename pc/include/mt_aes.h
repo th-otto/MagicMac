@@ -1,14 +1,73 @@
 #ifndef __MTAES__
 #define __MTAES__
 
-#define _mt_aes _mt_aes_alt
 #include <aes.h>
-#undef _mt_aes
 #include <wdlgevnt.h>
 #include <wdlgpdlg.h>
 #include <wdlgfslx.h>
 #include <wdlglbox.h>
 #include <wdlgedit.h>
+
+#ifndef _SCANX
+#define _SCANX
+typedef struct
+{
+	unsigned char	scancode;
+	unsigned char	nclicks;
+	_WORD	objnr;
+} SCANX;
+#endif
+
+#ifndef _XDO_INF
+#define _XDO_INF
+typedef struct
+{
+	SCANX	*unsh;
+	SCANX	*shift;
+	SCANX	*ctrl;
+	SCANX	*alt;
+	void	*resvd;
+} XDO_INF;
+#endif
+
+/** structure comprising the most of the input arguments of mt_evnt_multi()
+ */
+#if !defined(_MT_GEMLIB_H_) && !defined(__PORTAES_H__)
+typedef struct {
+	_WORD emi_flags;          /* the event mask to watch */
+	_WORD emi_bclicks;		  /* see mt_evnt_multi() */
+	_WORD emi_bmask;		  /* see mt_evnt_multi() */
+	_WORD emi_bstate;		  /* see mt_evnt_multi() */
+	_WORD emi_m1leave;
+	GRECT emi_m1;             /* the first rectangle to watch */
+	_WORD emi_m2leave;
+	GRECT emi_m2;             /* the second rectangle to watch */
+	_WORD emi_tlow;		  	  /* see mt_evnt_multi() */
+	_WORD emi_thigh;          /* the timer 32-bit value of interval split into short type member */
+} EVMULT_IN;
+
+typedef struct {
+	_WORD emo_events;	/* the bitfield of events occured (also a return value of mt_evnt_multi_fast() */
+	PXY   emo_mouse;
+	_WORD emo_mbutton;
+	_WORD emo_kmeta;
+	_WORD emo_kreturn;
+	_WORD emo_mclicks;
+} EVMULT_OUT;
+
+typedef void __CDECL (*FSEL_CALLBACK)( _WORD *msg);
+
+/** parameters for the init callback function (7th parameter of xfrm_popup() )
+ */
+struct POPUP_INIT_args
+{
+	OBJECT *tree;
+	_WORD scrollpos;
+	_WORD nlines;
+	void *param;
+};
+
+#endif
 
 /* Low level interface */
 
@@ -21,7 +80,7 @@ typedef struct
 	void	*addrout[AES_ADDROUTMAX];
 } MX_PARMDATA;
 
-extern _WORD _mt_aes(MX_PARMDATA *pb, const _WORD *contrl, _WORD *global_aes);
+extern _WORD _mt_aes_alt(MX_PARMDATA *pb, const _WORD *contrl, _WORD *global_aes);
 
 #define	mt_AESversion(aes_global)   (((AES_GLOBAL *)aes_global)->ap_version)
 #define	mt_AESnumapps(aes_global)   (((AES_GLOBAL *)aes_global)->ap_count)
@@ -74,7 +133,11 @@ extern WORD mt_evnt_multi(
 
 _WORD mt_evnt_multi_fast (const EVMULT_IN * em_i, _WORD MesagBuf[], EVMULT_OUT *em_o, _WORD *global_aes);
 
-extern WORD mt_evnt_dclick( WORD ev_dnew, WORD ev_dgetset, WORD *global_aes );
+WORD mt_evnt_dclick( WORD ev_dnew, WORD ev_dgetset, WORD *global_aes );
+
+void	MT_EVNT_multi( WORD evtypes, WORD nclicks, WORD bmask, WORD bstate,
+							MOBLK *m1, MOBLK *m2, ULONG ms,
+							EVNT *event, WORD *global_aes);
 
 /****** Menu definitions ************************************************/
 

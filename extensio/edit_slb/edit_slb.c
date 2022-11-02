@@ -88,7 +88,7 @@ void *sys_set_editob( WORD cdecl (*editob)( PARMBLK *pb) )
 
 	d.intin[0] = 4;	/* Subcode 4: Edit-Objekt definieren */
 	d.addrin[0] = editob;	/* Funktionsnummer */
-	_mt_aes( &d, c, NULL );
+	_mt_aes_alt( &d, c, NULL );
 	return( d.addrout[0] );
 }
 void *sys_set_getfn( WORD fn )
@@ -98,7 +98,7 @@ void *sys_set_getfn( WORD fn )
 
 	d.intin[0] = 1;	/* Subcode 1: AES-Funktion ermitteln */
 	d.intin[1] = fn;	/* Funktionsnummer */
-	_mt_aes( &d, c, NULL );
+	_mt_aes_alt( &d, c, NULL );
 	return( d.addrout[0] );
 }
 WORD sys_set_setfn( WORD fn, void *f )
@@ -109,7 +109,7 @@ WORD sys_set_setfn( WORD fn, void *f )
 	d.intin[0] = 2;	/* Subcode 2: AES-Funktion „ndern */
 	d.intin[1] = fn;	/* Funktionsnummer */
 	d.addrin[0] = f;
-	_mt_aes( &d, c, NULL );
+	_mt_aes_alt( &d, c, NULL );
 	return( d.intout[0] );
 }
 

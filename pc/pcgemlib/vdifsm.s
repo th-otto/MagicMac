@@ -196,6 +196,7 @@ vqt_f_extent2:	lea		_GemParBlk,a0
 				ENDMOD
 
 
+				GLOBL	vqt_f_extent16
 				MODULE	vqt_f_extent16
 
 				move.l	a1,-(a7)
@@ -255,6 +256,7 @@ vqt_f_extentn2:	clr.w	(a0)
 				ENDMOD
 
 
+				GLOBL vqt_f_extent16n
 				MODULE	vqt_f_extent16n
 
 				move.l	a1,-(a7)

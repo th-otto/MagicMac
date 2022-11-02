@@ -22,7 +22,7 @@ typedef struct _vdi_control {
 #define __VDIPB
 typedef struct
 {
-    _WORD    *control;
+    _WORD    *contrl;
     _WORD    *intin;
     _WORD    *ptsin;
     _WORD    *intout;

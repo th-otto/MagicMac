@@ -47,7 +47,7 @@ static WORD	c_str_to_vdi( const UBYTE *src, UWORD *des )
 /*----------------------------------------------------------------------------------------*/ 
 static void	init_vdi_pb( VDIPB *pb, VDI_SMALL *p )
 {
-	pb->control = p->contrl;
+	pb->contrl = p->contrl;
 	pb->intin = p->intin;
 	pb->ptsin = p->ptsin;
 	pb->intout = p->intout;
@@ -129,7 +129,7 @@ static WORD	vqt_ext_name( WORD handle, WORD index, BYTE *name, WORD *font_format
 	WORD	intout[48];
 	WORD	ptsout[16];
 
-	pb.control = contrl;
+	pb.contrl = contrl;
 	pb.intin = intin;
 	pb.ptsin = ptsin;
 	pb.intout = intout;
@@ -185,7 +185,7 @@ WORD vqt_xfntinfo( WORD handle, WORD flags, WORD id, WORD index, XFNT_INFO *info
 	WORD	intout[16];
 	WORD	ptsout[16];
 
-	pb.control = contrl;
+	pb.contrl = contrl;
 	pb.intin = intin;
 	pb.ptsin = ptsin;
 	pb.intout = intout;
@@ -239,7 +239,7 @@ static void	vdi_text( WORD opcode, WORD handle, WORD x, WORD y, const char *stri
 	WORD	intout[16];
 	WORD	ptsout[16];
 
-	pb.control = contrl;
+	pb.contrl = contrl;
 	pb.intin = intin;
 	pb.ptsin = ptsin;
 	pb.intout = intout;
@@ -696,7 +696,7 @@ static void	vqt_fontheader( WORD handle, BYTE *buffer, BYTE *tdf_name )
 	WORD	ptsin[2];														/* Dummy */
 	WORD	ptsout[2];														/* Dummy */
 
-	pb.control = contrl;
+	pb.contrl = contrl;
 	pb.intin = intin;
 	pb.ptsin = ptsin;
 	pb.intout = intout;

@@ -15,8 +15,6 @@
 				GLOBL	vq_cellarray
 				GLOBL	vq_color
 				GLOBL	vq_extnd
-				GLOBL	vq_gdos
-				GLOBL	vq_vgdos
 				GLOBL	vqt_devinfo
 				GLOBL	vq_scrninfo
 				GLOBL	vqt_char_index
@@ -459,6 +457,24 @@ vq_scrninfo1:	move.w	(a0)+,(a1)+
 				ENDMOD
 
 
+; long vq_vgdos(void)
+				GLOBL	vq_vgdos
+				MODULE	vq_vgdos
+				move.l	a2,-(a7)
+				moveq	#-2,d0
+				trap	#2
+				move.l	(a7)+,a2
+				/* MiNT may trash the upper bits of d0 */
+				cmp.w	#-2,d0
+				bne vq_vgdos1
+				moveq.l	#-2,d0
+vq_vgdos1:
+				rts
+				ENDMOD
+
+
+; short vq_gdos(void)
+				GLOBL	vq_gdos
 				MODULE	vq_gdos
 
 				bsr		vq_vgdos
@@ -467,15 +483,6 @@ vq_scrninfo1:	move.w	(a0)+,(a1)+
 				ext.w	d0
 				rts
 
-				ENDMOD
-
-
-				MODULE	vq_vgdos
-				move.l	a2,-(a7)
-				moveq	#-2,d0
-				trap	#2
-				move.l	(a7)+,a2
-				rts
 				ENDMOD
 
 

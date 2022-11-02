@@ -35,7 +35,7 @@
 /* absolute value for any type of number */
 #define	abs(x)		((x)<0?(-(x)):(x))
 
-/* maximum and minumum for any type of number */
+/* maximum and minimum for any type of number */
 #define max(x,y)   	(((x)>(y))?(x):(y))
 #define	min(x,y)   	(((x)<(y))?(x):(y))
 

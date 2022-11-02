@@ -583,6 +583,10 @@ typedef struct rshdr
 
 #ifndef _AES_GLOBAL_defined
 #define _AES_GLOBAL_defined
+/*
+ * used by DESKTOP.APP of PC-GEM to store the color
+ * spec of the desktop background window
+ */
 typedef union
 {
 	void *spec;			/* PC_GEM */
@@ -720,7 +724,7 @@ _WORD _aes(_WORD dummy, _LONG code);
 #ifndef _MT_GEMLIB_H_
 _WORD aes(AESPB *pb);
 #endif
-/* _WORD _mt_aes(AESPB *pb, _LONG code); */
+_WORD _mt_aes(AESPB *pb, _LONG code);
 
 
 

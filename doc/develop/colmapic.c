@@ -12,5 +12,5 @@ void *sys_recalc_cicon_colours( UWORD colour_values[3*256] )
 
 	d.intin[0] = 5;
 	d.addrin[0] = colour_values;
-	_mt_aes( &d, c, NULL );
+	_mt_aes_alt( &d, c, NULL );
 }

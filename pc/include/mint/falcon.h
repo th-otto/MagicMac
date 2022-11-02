@@ -537,7 +537,7 @@ long __XBIOS(0x89) Dsptristate(short dspxmit, short dsprec);
 long __XBIOS(0x8a) Gpio(short mode, short data);
 long __XBIOS(0x8b) Devconnect(short src, short dst, short sclk, short pre, short proto);
 short __XBIOS(0x8c) Sndstatus(short reset);
-long __XBIOS(0x8d) Buffptr(long *ptr);
+long __XBIOS(0x8d) Buffptr(SndBufPtr *ptr);
 
 #endif /* __PUREC__ */
 

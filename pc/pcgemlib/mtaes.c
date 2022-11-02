@@ -1,6 +1,6 @@
 #include "gem_aesP.h"
 
-_WORD _mt_aes(MX_PARMDATA *data, const _WORD *control, _WORD *aes_global)
+_WORD _mt_aes_alt(MX_PARMDATA *data, const _WORD *control, _WORD *aes_global)
 {
 	AESPB pb;
 	

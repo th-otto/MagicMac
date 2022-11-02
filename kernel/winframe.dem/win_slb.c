@@ -45,7 +45,7 @@ static WORD sys_set_winframe_manager( WINFRAME_HANDLER *old_wfh,
 	d.intin[0] = 6;	/* Subcode 6: Fensterrahmen-Manager */
 	d.addrin[0] = old_wfh;
 	d.addrin[1] = new_wfh;
-	_mt_aes( &d, c, NULL );
+	_mt_aes_alt( &d, c, NULL );
 	if	(set)
 		*set = d.addrout[0];
 	return( d.intout[0] );
