@@ -770,7 +770,7 @@ void	v_getbitmap_info(_WORD handle, _WORD ch,
 
 void	v_opnbm(_WORD *work_in, MFDB *bitmap, _WORD *handle, _WORD *work_out);
 void	v_clsbm(_WORD handle);
-_WORD	vq_scrninfo(_WORD handle, _WORD *work_out);
+void	vq_scrninfo(_WORD handle, _WORD *work_out);
 
 void v_get_driver_info(_WORD device, _WORD select, char *info_string);
 
