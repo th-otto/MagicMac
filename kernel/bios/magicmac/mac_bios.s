@@ -2208,13 +2208,13 @@ Initmous:
 * Maus ausschalten
 inims_0:
  move.l   #dummyfn,kbdvecs+$10     ; mousevec
- bra.b    initm_neg
+ /* bra.b    initm_neg */
 * relativer Modus
 inims_1:
- bra.b    initm_neg
+ /* bra.b    initm_neg */
 * absoluter Modus
 inims_2:
- bra.b    initm_neg
+ /* bra.b    initm_neg */
 inims_4:
 initm_neg:
  moveq    #-1,d0

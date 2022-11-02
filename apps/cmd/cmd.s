@@ -6674,8 +6674,8 @@ lep_2:
  bsr      mouse                * GEM- Programme (*.app, *.prg) mit Maus
      IFEQ MAGIX
  move.l   d+etvcritic_alt(pc),-(sp)  * Diskettenfehler vom Desktop korrigieren
-     ENDIF
  bra.b    lep_3                   *  lassen (per Alert- Box)
+     ENDIF
 lep_1:
      IFEQ MAGIX
  pea      etv_critic_neu(pc)
