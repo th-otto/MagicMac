@@ -173,7 +173,7 @@ struct XVDI_PARAMS {
 
 static void set_vdipb(VDIPB *pb, struct XVDI_PARAMS *params)
 {
-	pb->control = params->control;
+	pb->contrl = params->control;
 	pb->intin = params->intin;
 	pb->ptsin = params->ptsin;
 	pb->intout = params->intout;
@@ -1216,7 +1216,7 @@ WORD vq_ext_devinfo(WORD handle, WORD device, WORD *dev_exists, char *filepath, 
 		WORD ptsout[16];
 	} params;
 	
-	pb.control = params.control;
+	pb.contrl = params.control;
 	pb.intin = params.intin;
 	pb.ptsin = params.ptsin;
 	pb.intout = params.intout;
