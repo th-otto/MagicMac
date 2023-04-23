@@ -940,25 +940,25 @@ ckb_no_esc:
  cmpi.b   #$60,1(a1)
  bne.b    ckb_nxtca
 * CTRL-ALT-'<'
- moveq    #6,d1                    ; Spezialfunktion #6: Alle einblenden
+ moveq    #SMC_UNHIDEALL,d1        ; Spezialfunktion #6: Alle einblenden
  bra.b    ckb_send_spec
 ckb_nxtca:
  cmpi.b   #$33,1(a1)
  bne.b    ckb_nxtca2
 * CTRL-ALT-','
- moveq    #7,d1                    ; Spezialfunktion #7: Andere ausblenden
+ moveq    #SMC_HIDEOTHERS,d1       ; Spezialfunktion #7: Andere ausblenden
  bra.b    ckb_send_spec
 ckb_nxtca2:
  cmpi.b   #$35,1(a1)
  bne.b    ckb_nxtca3
 * CTRL-ALT-'-'
- moveq    #8,d1                    ; Spezialfunktion #8: Aktuelle ausblenden
+ moveq    #SMC_HIDEACT,d1          ; Spezialfunktion #8: Aktuelle ausblenden
  bra.b    ckb_send_spec
 ckb_nxtca3:
  cmpi.b   #$47,1(a1)
  bne.b    ckb_nxtca4
 * CTRL-ALT-Clr
- moveq    #0,d1                    ; Spezialfunktion #0: Aufraeumen
+ moveq    #SMC_TIDY_UP,d1          ; Spezialfunktion #0: Aufraeumen
  bra.b    ckb_send_spec
 ckb_nxtca4:
  cmpi.b   #9,3(a1)                 ; ja, war Tab ?
@@ -966,7 +966,7 @@ ckb_nxtca4:
  tst.b    hotkey_sem
  bne.b    ckb_no_ca
 * CTRL-ALT-TAB
- moveq    #5,d1                    ; Spezialfunktion #5: APP wechseln
+ moveq    #SMC_TASKSWITCH,d1       ; Spezialfunktion #5: APP wechseln
 ckb_send_spec:
  move.w   d2,(a0)                  ; Taste entfernen
  move.w   (sp)+,sr

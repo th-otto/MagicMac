@@ -1574,7 +1574,7 @@ api_d3:
  bsr      end_update               ; Sperrung loesen
  move.l   (sp)+,a2
 api_d1:
- moveq    #1,d0                    ; loeschen
+ moveq    #SMC_TERMINATE,d0        ; loeschen
 api_sndmsg:
  subq.l   #8,sp
  move.l   sp,a0
@@ -1670,7 +1670,7 @@ api_tidy:
  subq.l   #8,sp
  move.l   sp,a0
  move.l   #'MAGX',(a0)+            ; mbuf[4,5] = magischer Wert
- clr.l    (a0)                     ; mbuf[6]   = 0 (aufraeumen)
+ clr.l    (a0)                     ; mbuf[6]   = SMC_TIDY_UP (aufraeumen)
  move.l   sp,a0
  moveq    #0,d2                    ; mbuf[3] ist 0
  moveq    #1,d1                    ; dst_apid = SCRENMGR
@@ -4372,7 +4372,7 @@ scrmg_m1:
 * switch( mbuf[6] )
 
  move.w   (a0)+,d0
- cmpi.w   #8,d0
+ cmpi.w   #SMC_HIDEACT,d0
  bhi      scrmg_nomsg              ; ungueltig
  move.w   (a0),d1                  ; ap_id
  cmpi.w   #NAPPS,d1
@@ -4395,10 +4395,10 @@ scrmg_switch:
  DC.W     scrmg_2-scrmg_switch     ; SMC_SWITCH
  DC.W     scrmg_3-scrmg_switch     ; SMC_FREEZE
  DC.W     scrmg_4-scrmg_switch     ; SMC_UNFREEZE
- DC.W     scrmg_5-scrmg_switch
- DC.W     scrmg_6-scrmg_switch
- DC.W     scrmg_7-scrmg_switch
- DC.W     scrmg_8-scrmg_switch
+ DC.W     scrmg_5-scrmg_switch     ; SMC_TASKSWITCH
+ DC.W     scrmg_6-scrmg_switch     ; SMC_UNHIDEALL
+ DC.W     scrmg_7-scrmg_switch     ; SMC_HIDEOTHERS
+ DC.W     scrmg_8-scrmg_switch     ; SMC_HIDEACT
 
 *
 * mbuf[6] = 0 (SMC_TIDY_UP): Aufraeumen
@@ -4463,7 +4463,7 @@ scrmg_4:
  bra      scrmg_nomsg
 
 *
-* mbuf[6] = 5: umschalten
+* mbuf[6] = 5 (SMC_TASKSWITCH): umschalten
 *
 
 scrmg_5:
@@ -4471,7 +4471,7 @@ scrmg_5:
  bra      scrmg_nomsg
 
 *
-* mbuf[6] = 6: Alle einblenden
+* mbuf[6] = 6 (SMC_UNHIDEALL): Alle einblenden
 *
 
 scrmg_6:
@@ -4480,7 +4480,7 @@ scrmg_6:
  bra      scrmg_nomsg
 
 *
-* mbuf[6] = 7: Andere ausblenden
+* mbuf[6] = 7 (SMC_HIDEOTHERS): Andere ausblenden
 *
 
 scrmg_7:
@@ -4488,7 +4488,7 @@ scrmg_7:
  bra      scrmg_nomsg
 
 *
-* mbuf[6] = 8: Aktuelle ausblenden
+* mbuf[6] = 8 (SMC_HIDEACT): Aktuelle ausblenden
 *
 
 scrmg_8:

@@ -1283,7 +1283,7 @@ void _appl_yield(void);
 #define SMC_SWITCH      2           /* MagiC 2  */
 #define SMC_FREEZE      3           /* MagiC 2  */
 #define SMC_UNFREEZE    4           /* MagiC 2  */
-#define SMC_RES5        5           /* MagiC 2  */
+#define SMC_TASKSWITCH  5           /* MagiC 2  */
 #define SMC_UNHIDEALL   6           /* MagiC 3.1 */
 #define SMC_HIDEOTHERS  7           /* MagiC 3.1 */
 #define SMC_HIDEACT     8           /* MagiC 3.1 */
