@@ -26,8 +26,8 @@ dev_fds:       DS.L -MIN_FHANDLE   ; FDs fuer Handles -4/-3/-2/-1
 
 dskchg_drvs:   DS.L 1              ; Bitvektor der zu wechselnden Disks
 dskchg_sem:    DS.B bl_sizeof      ; Semaphore fuer den Diskwechsel
-pexec_sem:     DS.B bl_sizeof      ; Sempahore fuer Pexec
-fat12_sem:     DS.B bl_sizeof      ; Sempahore fuer 12-Bit-FAT
+pexec_sem:     DS.B bl_sizeof      ; Semaphore fuer Pexec
+fat12_sem:     DS.B bl_sizeof      ; Semaphore fuer 12-Bit-FAT
 
 bufl:          DS.L 2              ; neue Mag!X- Sektor-Pufferlisten
 bufl_size:     DS.L 1              ; Groesse der installierten Puffer
