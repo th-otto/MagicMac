@@ -67,6 +67,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF iniddev1
      XDEF iniddev2
      XDEF deleddev
+     XREF _Memavail
 
 * aus MALLOC
 
@@ -9776,7 +9777,8 @@ dosvars:
 D_Sysconf:
  move.w   (a0),d0
  addq.w   #1,d0
- cmpi.w   #3,d0
+ cmpi.w   #7,d0
+ beq.s    sysc_availmem
  bhi.b    sysc_err
  add.w    d0,d0
  add.w    d0,d0
@@ -9786,11 +9788,40 @@ sysc_err:
  moveq    #EINVFN,d0
  rts
 
+sysc_availmem:
+ movem.l  a5/d7,-(sp)
+ moveq    #0,d7                    ; total
+ lea      (mem_root+8).w,a5
+sysc_availmem_tt_loop:
+ move.l   (a5),d0
+ beq.b    sysc_availmem_tt_ende
+ move.l   a5,a0
+ bsr      _Memavail
+ addq.l   #4,a5
+ add.l    d0,d7
+ bra.b    sysc_availmem_tt_loop
+sysc_availmem_tt_ende:
+ lea      mem_root.w,a0
+ bsr      _Memavail
+ add.l    d0,d7
+ move.l   d7,d0
+ movem.l  (sp)+,a5/d7
+ lsr.l    #8,d0          ; / PAGESIZE
+ lsr.l    #5,d0
+ rts
+
 sysc_tab:
- DC.L     2              ; -1: max. Wert fuer Parameter: 2
- DC.L     -1             ;  0: max. Anzahl Speicherbereiche pro Prozess
- DC.L     -1             ;  1: max. Laenge der Kommandozeile bei Pexec
- DC.L     32             ;  2: Anz. offener Dateien pro Prozess
+ DC.L     7              ; -1: max. Wert fuer Parameter: 2
+ DC.L     0x7fffffff     ;  0: Max. value of memory regions per process
+ DC.L     0x7fffffff     ;  1: Max. length of command line string for Pexec
+ DC.L     MAX_OPEN       ;  2: Max. number of open files per process
+ dc.l     0              ;  3: Max. number of supplementary groups per process
+ dc.l     -1             ;  4: Max. number of processes per user
+ dc.l     200            ;  5: HZ (CLK_TCK)
+ dc.l     8192           ;  6: Pagesize
+ dc.l     0              ;  7: Available physical pages
+; dc.l     1024           ;  8: Password buffer size
+; dc.l     1024           ;  9: Group buffer size
  
 
 **********************************************************************

@@ -42,6 +42,7 @@ _memtop        EQU $436
      XDEF mfork
      XDEF Memshare,Memunsh         ; an DEV_MEM fuer F_SETSHMBLK
      XDEF Pmemsave,Pmemrestore     ; an MAGIDOS fuer Pfork()
+     XDEF _Memavail
 
 * Importe aus dem BIOS
 
