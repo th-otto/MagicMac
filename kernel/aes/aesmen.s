@@ -1432,7 +1432,7 @@ menat1:
  bsr      mn_at_get
  beq.b    menat1_set               ; ist keins da, neues eintragen
 ; Es ist eins da. Entfernen.
- bclr     #3,ob_flags(a6)          ; SUBMENU_B
+ bclr     #(SUBMENU_B-8),ob_flags(a6)
  clr.b    ob_type(a6)
  subq.w   #1,atpop_refcnt(a0)      ; Referenzzaehler dekrementieren
  move.l   ob_spec(a6),a0           ; char *
@@ -1512,7 +1512,7 @@ menat1_found:
  move.l   a0,d0
  divu     #atpop_sizeof,d0         ; durch Elementlaenge teilen
 ; Objekt modifizieren
- bset     #3,ob_flags(a6)          ; SUBMENU_B
+ bset     #(SUBMENU_B-8),ob_flags(a6)
  add.b    #128,d0
  move.b   d0,ob_type(a6)
 ; Pfeil eintragen
@@ -1559,7 +1559,7 @@ menat_ende:
 mn_at_get:
  cmpi.b   #G_STRING,ob_type+1(a0)
  bne.b    menatg_err
- btst     #3,ob_flags(a0)          ; SUBMENU_B
+ btst     #(SUBMENU_B-8),ob_flags(a0)
  beq.b    menatg_err
 ; MultiTOS prueft hier noch, ob der Pfeil im String eingetragen ist.
 ; Das schenken wir uns aber hier...
