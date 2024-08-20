@@ -1338,7 +1338,7 @@ void validate_color_mode(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings, LONG colo
 {
 	if (get_mode(drv_info, settings) != NULL)
 	{
-		LONG caps;
+		unsigned long caps;
 		
 		caps = get_mode(drv_info, settings)->color_capabilities;
 		if ((caps & color_mode) == 0)

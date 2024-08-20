@@ -266,7 +266,7 @@ PRN_DIALOG *pdlg_create(WORD dialog_flags)
 			d->drivers = get_driver_list(d->tree_addr, vdi_handle);
 			if (d->drivers != NULL)
 			{
-				init_settings(d->drivers, &d->settings);
+				init_settings(d->drivers, &d->current_settings);
 				return d;
 			}
 			Mfree(d->rsc);
@@ -402,7 +402,7 @@ static void reset_sub_dialog(PRN_DIALOG *prn_dialog, PRN_ENTRY *new_printer, WOR
 	WORD dummy;
 	
 	if (old_sub->reset_dlg != NULL)
-		old_sub->reset_dlg(&prn_dialog->settings, old_sub);
+		old_sub->reset_dlg(&prn_dialog->current_settings, old_sub);
 	if (dialog != NULL && old_sub->tree != NULL)
 	{
 		WORD dummy;
@@ -415,7 +415,7 @@ static void reset_sub_dialog(PRN_DIALOG *prn_dialog, PRN_ENTRY *new_printer, WOR
 	printer_sub = find_sub_dialog(prn_dialog, sub_id)->sub;
 	prn_dialog->printer_sub_id = printer_sub->sub_id;
 	if (printer_sub->init_dlg != NULL)
-		printer_sub->init_dlg(&prn_dialog->settings, printer_sub);
+		printer_sub->init_dlg(&prn_dialog->current_settings, printer_sub);
 	ow -= prn_dialog->tree[ROOT].ob_width;
 	oh -= prn_dialog->tree[ROOT].ob_height;
 	if (printer_sub->tree != NULL)
@@ -607,22 +607,22 @@ WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *documen
 		prn_dialog->sub_count = 0;
 		prn_dialog->exit_button = 0;
 		if (settings)
-			prn_dialog->settings = *settings;
-		validate_settings(prn_dialog->drivers, &prn_dialog->settings);
-		driver = get_driver(prn_dialog->drivers, &prn_dialog->settings);
+			prn_dialog->current_settings = *settings;
+		validate_settings(prn_dialog->drivers, &prn_dialog->current_settings);
+		driver = get_driver(prn_dialog->drivers, &prn_dialog->current_settings);
 		if (driver != NULL)
-			vstrcpy(driver->device, prn_dialog->settings.device);
+			vstrcpy(driver->device, prn_dialog->current_settings.device);
 		if (create_lboxes(prn_dialog))
 		{
-			PRN_ENTRY *printer = get_printer(prn_dialog->drivers, &prn_dialog->settings);
+			PRN_ENTRY *printer = get_printer(prn_dialog->drivers, &prn_dialog->current_settings);
 			PDLG_SUB *sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;
 			WORD exit_button;
 			
 			prn_dialog->printer_sub_id = sub->sub_id;
 			if (printer->setup_panel)
-				printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
+				printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->current_settings, NULL, printer);
 			if (sub->init_dlg)
-				sub->init_dlg(&prn_dialog->settings, sub);
+				sub->init_dlg(&prn_dialog->current_settings, sub);
 			wind_update(BEG_UPDATE);
 			wind_update(BEG_MCTRL);
 			form_center_grect(tree, &prn_dialog->clip);
@@ -654,13 +654,13 @@ WORD pdlg_do(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *documen
 			wind_update(END_MCTRL);
 			wind_update(END_UPDATE);
 			if (printer->close_panel)
-				printer->close_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
+				printer->close_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->current_settings, NULL, printer);
 			free_lboxes(prn_dialog);
 			free_printer_items(prn_dialog);
 			Mfree(tree);
 			if (prn_dialog->exit_button == MAIN_OK)
 			{
-				*settings = prn_dialog->settings;
+				*settings = prn_dialog->current_settings;
 				nvdi_write_settings(get_driver(prn_dialog->drivers, settings), settings);
 				return PDLG_OK;
 			}
@@ -691,18 +691,18 @@ WORD pdlg_xopen(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, const char *docu
 			prn_dialog->sub_count = 0;
 			prn_dialog->exit_button = 0;
 			if (settings)
-				prn_dialog->settings = *settings;
-			validate_settings(prn_dialog->drivers, &prn_dialog->settings);
+				prn_dialog->current_settings = *settings;
+			validate_settings(prn_dialog->drivers, &prn_dialog->current_settings);
 			if (create_lboxes(prn_dialog))
 			{
-				PRN_ENTRY *printer = get_printer(prn_dialog->drivers, &prn_dialog->settings);
+				PRN_ENTRY *printer = get_printer(prn_dialog->drivers, &prn_dialog->current_settings);
 				PDLG_SUB *sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;
 				
 				prn_dialog->printer_sub_id = sub->sub_id;
 				if (printer->setup_panel)
-					printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->settings, NULL, printer);
+					printer->setup_panel((DRV_ENTRY *)prn_dialog->drivers, &prn_dialog->current_settings, NULL, printer);
 				if (sub->init_dlg)
-					sub->init_dlg(&prn_dialog->settings, sub);
+					sub->init_dlg(&prn_dialog->current_settings, sub);
 				if (sub->tree != NULL)
 				{
 					WORD whdl = wdlg_open(prn_dialog->dialog, prn_dialog->title, NAME|MOVER, x, y, 0, NULL);
@@ -788,7 +788,7 @@ WORD pdlg_evnt(PRN_DIALOG *prn_dialog, PRN_SETTINGS *settings, EVNT *events, WOR
 	}
 	if (prn_dialog->exit_button == MAIN_OK)
 	{
-		*settings = prn_dialog->settings;
+		*settings = prn_dialog->current_settings;
 		nvdi_write_settings(get_driver(prn_dialog->drivers, settings), settings);
 		*button = PDLG_OK;
 	} else
@@ -885,7 +885,7 @@ static void build_lists(PRN_DIALOG *prn_dialog)
 	PDLG_SUB *sub;
 	
 	prn_dialog->printer_items = NULL;
-	for (sub = get_printer(prn_dialog->drivers, &prn_dialog->settings)->sub_dialogs; sub != NULL; sub = sub->next)
+	for (sub = get_printer(prn_dialog->drivers, &prn_dialog->current_settings)->sub_dialogs; sub != NULL; sub = sub->next)
 	{
 		PRINTER_ENTRY *entry = Malloc(sizeof(*entry));
 		if (entry != NULL)
@@ -1062,7 +1062,7 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 			return FALSE;
 		case MAIN_OK:
 			if (new_sub->reset_dlg != 0)
-				new_sub->reset_dlg(&prn_dialog->settings, new_sub);
+				new_sub->reset_dlg(&prn_dialog->current_settings, new_sub);
 			if (new_sub->tree != NULL)
 				deselect_button(new_sub, MAIN_OK);
 			prn_dialog->exit_button = MAIN_OK;
@@ -1077,7 +1077,7 @@ static int do_button(PRN_DIALOG *prn_dialog, WORD obj)
 					return TRUE;
 				{
 					struct PDLG_HNDL_args args;
-					args.settings = &prn_dialog->settings;
+					args.settings = &prn_dialog->current_settings;
 					args.sub = this_sub;
 					args.exit_obj = obj;
 #pragma warn -stv
@@ -1151,17 +1151,18 @@ static int pdlg_notequal(PDLG_SUB *s1, PDLG_SUB *s2)
 
 static int do_device_popup(PRN_DIALOG *prn_dialog, WORD obj)
 {
-	PRN_SETTINGS *settings = &prn_dialog->settings;
-	char **namep; /* o12 */
-	XDRV_ENTRY *driver; /* o8 */
-	char **names; /* o4 */
-	PRN_ENTRY **printers;
+	PRN_SETTINGS *settings = &prn_dialog->current_settings;
+	XDRV_ENTRY *driver;
+	PRN_ENTRY *selected;
 	PRN_ENTRY *printer;
-	PRN_ENTRY **entriep;
-	WORD active;
-	
+
 	{
 		WORD num_printers;
+		WORD active;
+		char **names;
+		char **namep;
+		PRN_ENTRY **printers;
+		PRN_ENTRY **entriep;
 		
 		num_printers = 0;
 		for (driver = prn_dialog->drivers; driver != NULL; driver = driver->next)
@@ -1186,23 +1187,23 @@ static int do_device_popup(PRN_DIALOG *prn_dialog, WORD obj)
 				}
 				*namep++ = printer->name;
 				*entriep++ = printer;
-				
 			}
 		}
 		active = simple_popup(prn_dialog->tree, obj, names, num_printers, active);
+		if (active >= 0)
+			selected = printers[active];
 		Mfree(names);
+		if (active < 0)
+			return FALSE;
 	}
 		
-	if (active >= 0)
 	{
-		PRN_ENTRY *selected;
-		XDRV_ENTRY *new_driver; /* o24 */
-		PDLG_SUB *new_sub; /* o20 */
-		PDLG_SUB *old_sub; /* o16 */
+		XDRV_ENTRY *new_driver;
+		PDLG_SUB *new_sub;
+		PDLG_SUB *old_sub;
 		WORD first;
 		
 		printer = get_printer(prn_dialog->drivers, settings);
-		selected = printers[active];
 		if (printer != selected)
 		{
 			old_sub = ((PRINTER_ENTRY *)lbox_get_slct_item(prn_dialog->printer_lbox))->sub;

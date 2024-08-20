@@ -107,7 +107,7 @@ struct _prn_dialog {
 	LONG  format;           /* Structure type */
 	LONG  reserved;         /* reserved */
 	
-	/*  16 */ PRN_SETTINGS settings;
+	/*  16 */ PRN_SETTINGS current_settings;
 	          /*   0 LONG magic */
 	          /*   4 LONG length */
 	          /*   8 LONG format */
