@@ -77,7 +77,7 @@ PDLG_SUB			*gsub_dialogs;
 /*----------------------------------------------------------------------------------------*/ 
 
 LONG cdecl	pinit_my_special1( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog );
-LONG cdecl	psub_my_special1( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog, WORD exit_obj );
+LONG cdecl	psub_my_special1( struct PDLG_HNDL_args args );
 LONG cdecl	preset_my_special1( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog );
 
 LONG cdecl	pinit_my_special2( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog );
@@ -219,16 +219,15 @@ LONG cdecl	pinit_my_special1( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog )
 /*	sub_dialog:				Zeiger auf die Unterdialog-Struktur											*/
 /* exit_obj:				Objektnummer																		*/
 /*----------------------------------------------------------------------------------------*/ 
-LONG cdecl psub_my_special1( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog, WORD exit_obj )
+LONG cdecl psub_my_special1( struct PDLG_HNDL_args args)
 {
 	OBJECT	*tree;
 	WORD		offset;
 
-	(void) settings;
-	tree = sub_dialog->tree;											/* Zeiger auf den Objektbaum */
-	offset = sub_dialog->index_offset;								/* Offset fr die Objektindizes */
+	tree = args.sub->tree;											/* Zeiger auf den Objektbaum */
+	offset = args.sub->index_offset;								/* Offset fr die Objektindizes */
 
-	switch ( exit_obj - sub_dialog->index_offset )
+	switch ( args.exit_obj - args.sub->index_offset )
 	{
 		case	MYSP_PUSH_ME1:												/* Beispielbutton */
 		{
@@ -236,10 +235,10 @@ LONG cdecl psub_my_special1( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog, WORD 
 			/* invertiert den Status eines Icons */
 		
 			tree[PUSH_ME_ICON1 + offset].ob_state ^= SELECTED;	/* Selektion eines Icons „ndern */
-			redraw_obj( sub_dialog, PUSH_ME_ICON1 + offset );
+			redraw_obj( args.sub, PUSH_ME_ICON1 + offset );
 			
-			obj_DESELECTED( tree, exit_obj );						/* Button wieder normal */
-			redraw_obj( sub_dialog, exit_obj );
+			obj_DESELECTED( tree, args.exit_obj );						/* Button wieder normal */
+			redraw_obj( args.sub, args.exit_obj );
 			break;
 		}
 	}
@@ -327,50 +326,18 @@ LONG cdecl	preset_my_special2( PRN_SETTINGS *settings, PDLG_SUB *sub_dialog )
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	is_macprn( WORD handle, WORD id )
 {
-	VDIPB	pb;
-	WORD	contrl[16];
-	WORD	intin[1];
-	WORD	ptsin[1];
-	WORD	intout[64];
-	WORD	ptsout[64];
+	_WORD dev_exists;
+	char filename[40];
+	char devname[40];
+	
+	filename[0] = '\0';
+	devname[0] = '\0';
+	vqt_devinfo(handle, id, &dev_exists, filename, devname);
 
-	contrl[0] = 248;														/* Funktionsnummer */
-	contrl[1] = 0;
-	contrl[3] = 1;															/* ID wird bergeben */
-	contrl[5] = 0;
-	contrl[6] = handle;
-
-	intin[0] = id;
-
-	pb.control = contrl;
-	pb.intin = intin;
-	pb.ptsin = ptsin;
-   pb.intout = intout;
-	pb.ptsout = ptsout;
-
-   vdi( &pb );
-
-	if ( contrl[4] && intout[0] )										/* Treiber vorhanden? */
-	{
-		BYTE	macprn[6] = { 'M','A','C','P','R','N' };
-		WORD	i;
-		WORD	len;
-
-		len = contrl[4];
-		if ( len > 6 )
-			len = 6;															/* nur die ersten 6 Buchstaben abtesten */
-		
-		for ( i = 0; i < len; i++ )
-		{
-        if ( intout[i] != macprn[i] )
-        {
- 	       if ( intout[i] != ( macprn[i] + ( 'a' - 'A' )))
-					return( 0 );											/* ist nicht MACPRN */
-			}
-		}
-		return( 1 );
-   }
-	return( 0 );
+	if (strncmp(filename, "MACPRN", 6) == 0 ||
+		strncmp(filename, "macprn", 6) == 0)
+		return 1;
+	return 0;
 }
 
 /*----------------------------------------------------------------------------------------*/ 

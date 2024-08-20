@@ -78,50 +78,18 @@ WORD				gprn_is_print_dialog;
 /*----------------------------------------------------------------------------------------*/ 
 static WORD	is_macprn( WORD handle, WORD id )
 {
-	VDIPB	pb;
-	WORD	contrl[16];
-	WORD	intin[1];
-	WORD	ptsin[1];
-	WORD	intout[64];
-	WORD	ptsout[64];
+	_WORD dev_exists;
+	char filename[40];
+	char devname[40];
+	
+	filename[0] = '\0';
+	devname[0] = '\0';
+	vqt_devinfo(handle, id, &dev_exists, filename, devname);
 
-	contrl[0] = 248;														/* Funktionsnummer */
-	contrl[1] = 0;
-	contrl[3] = 1;															/* ID wird bergeben */
-	contrl[5] = 0;
-	contrl[6] = handle;
-
-	intin[0] = id;
-
-	pb.control = contrl;
-	pb.intin = intin;
-	pb.ptsin = ptsin;
-   pb.intout = intout;
-	pb.ptsout = ptsout;
-
-   vdi( &pb );
-
-	if ( contrl[4] && intout[0] )										/* Treiber vorhanden? */
-	{
-		BYTE	macprn[6] = { 'M','A','C','P','R','N' };
-		WORD	i;
-		WORD	len;
-
-		len = contrl[4];
-		if ( len > 6 )
-			len = 6;															/* nur die ersten 6 Buchstaben abtesten */
-		
-		for ( i = 0; i < len; i++ )
-		{
-        if ( intout[i] != macprn[i] )
-        {
- 	       if ( intout[i] != ( macprn[i] + ( 'a' - 'A' )))
-					return( 0 );											/* ist nicht MACPRN */
-			}
-		}
-		return( 1 );
-   }
-	return( 0 );
+	if (strncmp(filename, "MACPRN", 6) == 0 ||
+		strncmp(filename, "macprn", 6) == 0)
+		return 1;
+	return 0;
 }
 
 /*----------------------------------------------------------------------------------------*/ 

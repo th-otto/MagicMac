@@ -4,7 +4,7 @@ pdlgsmp2.app
 
 =
 
-..\..\pc\lib\pcstart.o				;PC-Startup-Code
+..\..\pc\lib\cstart0.o				;PC-Startup-Code
 
 pdlgsmp2.c				;Hauptprogramm
 

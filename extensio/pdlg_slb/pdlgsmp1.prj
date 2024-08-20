@@ -4,7 +4,7 @@ pdlgsmp1.app
 
 =
 
-..\..\pc\lib\pcstart.o				;PC-Startup-Code
+..\..\pc\lib\cstart0.o				;PC-Startup-Code
 
 pdlgsmp1.c				;Hauptprogramm
 

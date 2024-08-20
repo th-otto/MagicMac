@@ -151,7 +151,7 @@ struct _prn_dialog {
 	/* 392 */ GRECT clip;
 	/* 400 */ DIALOG *dialog;
 	/* 404 */ WORD sub_whdl;
-	/* 406 */ exit_button;
+	/* 406 */ WORD exit_button;
 	/* 408 */ WORD edit_obj;
 	/* 410 */ WORD option_flags;
 	/* 412 */ RSHDR *rsc;

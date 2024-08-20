@@ -3,7 +3,7 @@ pdlgsmp3.app
 .C[-I..\..\pc\include]
 =
 
-..\..\pc\lib\pcstart.o				;PC-Startup-Code
+..\..\pc\lib\cstart0.o				;PC-Startup-Code
 
 pdlgsmp3.c				;Hauptprogramm
 
