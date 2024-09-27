@@ -301,8 +301,8 @@ struct _wk {
 };
 
 #define FORM_ID_STANDARD    0
-#define FORM_ID_PIXPACKED   1
-#define FORM_ID_INTERLEAVED 2
+#define FORM_ID_INTERLEAVED 1
+#define FORM_ID_PIXPACKED   2
 
 /* NVDI-Struktur, der NVDI-Cookie zeigt hierauf */
 

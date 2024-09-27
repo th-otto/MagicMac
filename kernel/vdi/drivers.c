@@ -329,7 +329,7 @@ WK *create_bitmap(DEVICE_DRIVER *device_driver, WK *dev_wk, MFDB *fdb, WORD *int
 	if (info.planes == 1)					/* monochrom? */
 	{
 		info.colors = 2;
-		info.format = FORM_ID_INTERLEAVED;
+		info.format = FORM_ID_PIXPACKED;
 		info.flags = 1;
 	}
 

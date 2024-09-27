@@ -1323,28 +1323,28 @@ int nvdi_write_settings(XDRV_ENTRY *drv_info, PRN_SETTINGS *settings)
 			nvdihdr.o52 = 0;
 			nvdihdr.info.colors = 2;
 			nvdihdr.info.planes = 1;
-			nvdihdr.info.format = FORM_ID_INTERLEAVED;
+			nvdihdr.info.format = FORM_ID_PIXPACKED;
 			nvdihdr.info.flags = 1;
 			break;
 		case CC_8_COLOR:
 			nvdihdr.o52 = 0x10;
 			nvdihdr.info.colors = 8;
 			nvdihdr.info.planes = 3;
-			nvdihdr.info.format = FORM_ID_PIXPACKED;
+			nvdihdr.info.format = FORM_ID_INTERLEAVED;
 			nvdihdr.info.flags = 1;
 			break;
 		case CC_16M_GREY:
 			nvdihdr.o52 = 0x10f;
 			nvdihdr.info.colors = 0x1000000L; /* 16M */
 			nvdihdr.info.planes = 32;
-			nvdihdr.info.format = FORM_ID_INTERLEAVED;
+			nvdihdr.info.format = FORM_ID_PIXPACKED;
 			nvdihdr.info.flags = 1;
 			break;
 		case CC_16M_COLOR:
 			nvdihdr.o52 = 0x11f;
 			nvdihdr.info.colors = 0x1000000L; /* 16M */
 			nvdihdr.info.planes = 32;
-			nvdihdr.info.format = FORM_ID_INTERLEAVED;
+			nvdihdr.info.format = FORM_ID_PIXPACKED;
 			nvdihdr.info.flags = 1;
 			break;
 		}
