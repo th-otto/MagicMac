@@ -49,7 +49,7 @@ int DoAesInit(void)
 	_WORD dummy;
 #if DEBUG_LOG==ON
 long ret;
-	ret=Fopen(PROGRAM_NAME ".log",O_WRONLY|O_CREAT|O_APPEND);
+	ret=Fcreate(PROGRAM_NAME ".log",0);
 	if(ret>=0)
 	{
 		debug_handle=(int)ret;

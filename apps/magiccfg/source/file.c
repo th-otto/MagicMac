@@ -398,11 +398,15 @@ XATTR xattr;
 		}
 	}
 	
-	ret=Fopen(mgx_path,O_WRONLY|O_CREAT|O_TRUNC);
+	ret=Fcreate(mgx_path,0);
 	if(ret<0L)
 	{
 		Mfree(savebuffer);
 		form_xerr(ret,mgx_filename);
+		/*
+		 * FIXME: if we renamed existing magx.inf above,
+		 * try to rename it back,
+		 */
 		return;
 	}
 
