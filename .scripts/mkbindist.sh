@@ -27,6 +27,7 @@ for lang in $LANGUAGES; do
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/AES_LUPE"
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/MAGICCFG"
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/APPLINE"
+	mkdir -p "$BUILDROOT/$lang/EXTRAS/WDIALOG"
 done
 
 
@@ -56,6 +57,7 @@ cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/ma
 cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
 mcopy -b "$SRCDIR/apps/appline/appline.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
+mcopy -b "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 
@@ -95,6 +97,7 @@ cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/ma
 cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
 mcopy -b "$SRCDIR/apps/appline/$lang/appline.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
+mcopy -b "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 
@@ -136,6 +139,7 @@ cp "apps/magiccfg/doc/magiccfg_en.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccf
 cp "apps/magiccfg/doc/magiccfg_en.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
 mcopy -b "$SRCDIR/apps/appline/$lang/appline.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
 mcopy -b "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
+mcopy -b "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
 
 mcopy -b "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 
@@ -147,6 +151,7 @@ mcopy -b "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
 mcopy -b "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
+
 
 #
 # Common files

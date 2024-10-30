@@ -108,7 +108,7 @@ void main(void)
 		/* lang auf den zweiten Klick gewartet                      */
 		/* ------------------------------------------------------------- */
 
-		waitfor = MU_KEYBD + MU_BUTTON + MU_MESAG + MU_TIMER;
+		waitfor = MU_KEYBD | MU_BUTTON | MU_MESAG | MU_TIMER;
 
 		if (status.rtbutt_dclick)
 		{

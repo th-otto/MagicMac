@@ -2230,15 +2230,15 @@ wg_dcolor:
  bmi.b    wg_endsw
  lea      dcol_box+2,a0
  add.w    d0,a0
- addq.l   #2,a5
- move.w   (a0),(a5)+
- move.w   -(a0),(a5)+
+ addq.l   #2,a5                    ; skip intout[1]
+ move.w   (a0),(a5)+               ; intout[2] = active color
+ move.w   -(a0),(a5)+              ; intout[3] = inactive color
  lsr.w    #2,d0
  lea      f3d_box,a0
  add.w    d0,a0
  move.w   #$0100,d1                ; nur kFore3D unterstuetzt
  move.b   (a0),d1
- move.w   d1,(a5)
+ move.w   d1,(a5)                  ; intout[4] = 3d flags
  bra.b    wg_endsw
 
 * case 14 (WF_NEWDESK)
