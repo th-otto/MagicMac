@@ -1,0 +1,10 @@
+vt52test.tos    ; name of executable pgm is topmost window
+.C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
+.S[-I..\..\inc_as]
+.L[-S=4096]
+=              ; list of modules follows...
+..\..\pc\lib\cstartv.o
+vt52test.c
+..\..\pc\lib\pcstdlib.lib   ; standard lib
+..\..\pc\lib\pctoslib.lib   ; TOS lib

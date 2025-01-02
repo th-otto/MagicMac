@@ -1,8 +1,8 @@
 /*
-*
-* Video-Initialisierung fuer Hades
-*
-*/
+ *
+ * Video-Initialisierung fuer Hades
+ *
+ */
 
 boot_init_video:
                 bsr screen_init
@@ -49,7 +49,9 @@ pcim64t:        cmp.w   #$5847,pci_conf1+2
                 cmp.w   #$5847,pci_conf4+2
                 bne     isainit
 
-m64init:        lea     $7fe70000,a0           ;source emulator.bin mach64 pci
+m64init:
+                lea     $7fe70000,a0           ;source emulator.bin mach64 pci
+
 m64init2:       lea     $300000,a1             ;dest (uebersetzt mit org $300000)
                 move.l  a1,a2
                 move.w  #430,d0                ;laenge(6824)/16
