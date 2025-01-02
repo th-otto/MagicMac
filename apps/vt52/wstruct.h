@@ -46,7 +46,7 @@ typedef struct _window
 	WORD	dx;																/* Breite einer Scrollspalte in Pixeln */
 	WORD	dy;																/* Hîhe einer Scrollzeile in Pixeln */
 	WORD	snap_dx;															/* Vielfaches fÅr horizontale Fensterposition */
-	WORD	snap_dy															/* Vielfaches fÅr vertikale Fensterposition */;							
+	WORD	snap_dy;														/* Vielfaches fÅr vertikale Fensterposition */
 	WORD	snap_dw;															/* Vielfaches der Fensterbreite */
 	WORD	snap_dh;															/* Vielfaches der Fensterhîhe */
 	WORD	limit_w;															/* maximal anzuzeigende Breite der ArbeitsflÑche oder 0 */
