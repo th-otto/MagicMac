@@ -1,5 +1,5 @@
-; Project file for MAGIC.RAM
-; (Atari Version, english localization)
+; Project file for MRAVEN.RAM
+; (Atari Version, german localization)
 ; For other localizations, change the COUNTRY code below
 mraven.ram
 .C[-I..\..\inc_c]
@@ -7,13 +7,13 @@ mraven.ram
 .S[-I..\inc]
 .C[-I..\..\pc\include]
 
-.S[-DCOUNTRY=0]
-.C[-DCOUNTRY=0]
-.C[-DRAVEN=1]
+.S[-DCOUNTRY=1]
+.C[-DCOUNTRY=1]
 
 .S[-DMAGICPC=0]
 .S[-DHADES=0]
 .S[-DRAVEN=1]
+.C[-DRAVEN=1]
 
 .C[-A-]
 .C[-K-]

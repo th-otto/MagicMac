@@ -12,6 +12,7 @@ magic.ram
 
 .S[-DMAGICPC=0]
 .S[-DHADES=0]
+.S[-DRAVEN=0]
 
 .C[-A-]
 .C[-K-]
