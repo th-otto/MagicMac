@@ -149,11 +149,19 @@ static idestatus wait_for_ready(IDEREGS *ide, ULONG timeout)
 
 	until = *_hz_200 + timeout;
 
+#if defined(RAVEN)
+    status = ide->asrdor;
+    while (status & (1 << 7)) {
+        status = ide->asrdor;
+		if (*_hz_200 > until)
+			return TIMEOUT;
+    }
+#else
 	while (*GPIP & 0x20)
 		if (*_hz_200 > until)
 			return TIMEOUT;
-
 	status = ide->srcr;
+#endif
 
 	if (status & (IDE_SERR | IDE_SDRQ))
 		return status;
@@ -169,7 +177,11 @@ static idestatus ide_identify(int device, void *data)
 	idestatus status;
 
 	ide->sdh = ((device & 7) << 4) | 0xa0;
+#if defined(RAVEN)
+	ide->asrdor = (1 << 1);	/* no interrupts */
+#else
 	ide->asrdor = 0;	/* enable interrupt */
+#endif
 	ide->srcr = IDE_IDENTIFY;	/* send ATA command IDENTIFY DEVICE */
 
 	status = wait_for_ready(ide, LONG_TIMEOUT);
@@ -225,7 +237,15 @@ idestatus IDERecalibrate(unit device)
 
 static ideerror ide_diagnostic(void)
 {
+#if defined(RAVEN)
 	IDEREGS *ide = (IDEREGS *) IDEDR;
+    ide->sdh = 0xa0;
+	ide->asrdor = 0;
+	ide->srcr = IDE_DIAGNOSTIC; /* send ATA command EXECUTE DEVICE DIAGNOSTICS */
+    wait_for_ready(ide, LONG_TIMEOUT);
+	return ide->er;
+#else
+    IDEREGS *ide = (IDEREGS *) IDEDR;
 	ULONG until;
 
 	ide->sdh = 0xa0;
@@ -239,6 +259,7 @@ static ideerror ide_diagnostic(void)
 			return TIMEOUT;
 
 	return ide->er;
+#endif
 }
 
 #if 0

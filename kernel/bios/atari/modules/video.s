@@ -6,7 +6,11 @@
      IFNE HADES
      INCLUDE "..\..\bios\atari\modules\had_ivid.s"
      ELSE
+     IFNE RAVEN
+     INCLUDE "..\..\bios\atari\modules\rav_ivid.s"
+     ELSE
      INCLUDE "..\..\bios\atari\modules\ivid.s"
+     ENDIF
      ENDIF
 
 **********************************************************************
@@ -14,6 +18,9 @@
 * void *Physbase( void )
 *
 Physbase:
+IFNE RAVEN
+ move.l   _v_bas_ad,d0
+ELSE
  moveq    #0,d0
  move.l   d0,a0
  movep.w  -$7dff(a0),d0            ; $ffff8201 und $ffff8203 auslesen
@@ -22,6 +29,7 @@ Physbase:
  beq.b    phb_st
  move.b   $ffff820d,d0             ; STe
 phb_st:
+ENDIF
  rte
 
 **********************************************************************
@@ -39,7 +47,7 @@ Logbase:
 *
 
 Getrez:
-     IFNE HADES
+     IFNE HADES | RAVEN
  moveq #2,d0
  rte
      ELSE

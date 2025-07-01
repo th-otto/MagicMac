@@ -642,7 +642,11 @@ falcon_height:    move.w   d2,(a0)+
 ;Anzahl der Zeilen
 vt52_rez_tab:     DC.W 4,160,320,200      ;0 320 * 200 ST
                   DC.W 2,160,640,200      ;1 640 * 200 ST
+                  IFNE RAVEN
+                  DC.W 1,80,640,480       ;2 640 * 480 Raven mono
+                  ELSE
                   DC.W 1,80,640,400       ;2 640 * 400 ST
+                  ENDIF
                   DC.W 0,0,0,0            ;3 Dummy-Eintrag
                   DC.W 4,320,640,480      ;4 640 * 480 TT
                   DC.W 0,0,0,0            ;5 Dummy-Eintrag

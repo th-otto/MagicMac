@@ -46,7 +46,12 @@ DEBUG3    EQU  0
 XFS95     EQU  0
      INCLUDE "hades.inc"
      ELSE
+     IFNE RAVEN
+XFS95     EQU  0
+     INCLUDE "raven.inc"
+     ELSE
 XFS95     EQU  1
+     ENDIF
      ENDIF
 
      EXPORT      _start
@@ -170,7 +175,7 @@ endc
 
 ;----------------------------------------
 
-     IFNE HADES
+     IFNE HADES | RAVEN
 _movecd equ $4e7a ; used for movec xx,dn
 _movec  equ $4e7b ; used for movec d0,xx
 _cacr   equ $0002
@@ -552,6 +557,15 @@ syshdr_code:
 ;                             ;    (geht auch fuer mc68040)
  clr.b    dma_sctr2           ;vme int off, scsi count0/eop und buserror off
      ELSE
+     IFNE RAVEN
+ move     #$2700,sr
+ DEBON
+ DEB      'start'
+ clr.l   d0                   ; Cache aus
+ DC.W    cpusha               ; Cache flush
+ DC.W    _movec,_cacr         ; Cache setzen
+ DC.W    cinva                ; caches invalid
+     ELSE
  move     #$2700,sr
  move.w   #$100,$ffff8606          ; 3.06: DMA-Write an Peripherie
  move.w   #0,$ffff8606             ; 3.06: DMA-Read (nur Leitung geklappert)
@@ -583,6 +597,7 @@ syshdr_l1:
 bot_ok1:
  move.l   a1,sp
  move.l   (sp)+,$2c                ; restore LineF handler
+     ENDIF
      ENDIF
 
 
@@ -654,11 +669,19 @@ bot_aestpa:
 
 * Installation einiger Exceptionvektoren fuer Disk und Ausgabe
 
+IFNE RAVEN
+ move.l   #dummy_hdv_init,hdv_init
+ move.l   #dummy_rwabs,hdv_rw
+ move.l   #dummy_getbpb,hdv_bpb
+ move.l   #dummy_mediach,hdv_mediach
+ move.l   #dummy_boot,hdv_boot
+ELSE
  move.l   #flp_hdv_init,hdv_init
  move.l   #flp_rwabs,hdv_rw
  move.l   #flp_getbpb,hdv_bpb
  move.l   #flp_mediach,hdv_mediach
  move.l   #flp_boot,hdv_boot
+ENDIF 
  move.l   #FDC_TIMEOUT,flptimeout
  move.l   #bcostat_prt,prv_lsto
  move.l   #bconout_prt,prv_lst
@@ -767,7 +790,7 @@ bot_l1:
 ; 68060: jede Menge Schweinkram (hier nur fuer den Hades einbinden)
 ;
 
-     IFNE HADES
+     IFNE HADES | RAVEN
  cmp.w    #60,cpu_typ              ; 68060: movep bringt Bomben!
  bcs.b    excp_00
  move.l   #unim_int_instr,$f4.w
@@ -832,6 +855,7 @@ bot_loop4:
 
 * TOS 2.05 hat folgende Initialisierung:
 
+     IFEQ RAVEN
  movea.l  8,a0
  movea.l  sp,a1
  move.l   #bot_l2,8
@@ -840,6 +864,7 @@ bot_loop4:
 bot_l2:
  move.l   a0,8
  movea.l  a1,sp
+     ENDIF
 
 * MFP und Vektoren initialisieren
 
@@ -863,14 +888,14 @@ bot_l3:
 
 * Cartridge testen
 
-;    IFEQ HADES
+;    IFEQ HADES | RAVEN
  moveq    #2,d0
  bsr      cartscan
 ;    ENDIF
 
 ; Aufloesung setzen (MagiX)
 
-     IFNE HADES
+     IFNE HADES | RAVEN
  move.b   #2,sshiftmd.w            ; Aufloesung: ST-High
      ELSE
  cmpi.b   #4,machine_type          ; Falcon?
@@ -925,7 +950,7 @@ bot_l4:
 
 * Cartridge testen
 
-;    IFEQ HADES
+;    IFEQ HADES | RAVEN
  clr.w    d0
  bsr      cartscan
 ;    ENDIF
@@ -942,7 +967,7 @@ bot_l4:
 
 ; FIXME: boot loader for CTPCI invokes trap #0 here
 
-;    IFEQ HADES
+;    IFEQ HADES | RAVEN
  moveq    #1,d0
  bsr      cartscan
 ;    ENDIF
@@ -1007,6 +1032,12 @@ no_magic_pc:
 
 * Prozessorcaches und PMMU initialisieren
 
+     IFNE RAVEN
+  move.l   #$a0c08000,d0
+  nop
+  movec    d0,cacr
+  nop
+     ELSE
  cmpi.w   #20,cpu_typ
  bcs.b    bot_cpu_weiter      ; 68000 oder 68010
  cmpi.w   #30,cpu_typ
@@ -1035,9 +1066,10 @@ bot_cpu_040:
  move.l   #$a0808000,d0
  movec    d0,cacr
 bot_cpu_weiter:
+     ENDIF
 
 ;
-     IFEQ HADES
+     IFEQ HADES | RAVEN
  cmp.b    #4,machine_type
  bne.b    try_ext_scsidrvr
  bsr      dsp_stdinit              ;DSP-Code hochladen
@@ -1090,6 +1122,7 @@ try_ext_scsidrvr:
 
 ;Test auf SCSI-RAM. Setze Busfehlervektor fuer den Fall, dass die
 ; Systemvariable $868 Schrott enthalten sollte.
+     IFEQ RAVEN
  movea.l  8.w,a0
  movea.l  sp,a1
  move.l   #no_scsiram,8.w          ;Busfehlervektor setzen
@@ -1111,6 +1144,8 @@ no_scsiram:
  movea.l  a1,sp
  move.l   a0,8.w                   ;Busfehlervektor zurueck
 ;
+     ENDIF
+
 try_dskboot:
  move.l   hdv_rw,-(sp)
  bsr      dskboot                  ; von Floppy booten
@@ -1124,8 +1159,15 @@ try_dskboot:
  jsr      secb_ext                 ; (Sektorpufferliste!)
  move.b   #3,machine_type          ; wieder TT eintragen
      ELSE
+     IFNE RAVEN
+ move.b   #4,machine_type          ; Booten von IDE erzwingen?!?     
+ bsr      dmaboot                  ; IDE boot
+ jsr      secb_ext                 ; (Sektorpufferliste!)
+ move.b   #0,machine_type          ; wieder ST eintragen
+     ELSE
  bsr      dmaboot                  ; von SCSI und ACSI booten
  jsr      secb_ext                 ; (Sektorpufferliste!)
+     ENDIF
      ENDIF
 
 boot_no_dma:
@@ -1151,6 +1193,31 @@ boot_no_dma:
      INCLUDE "auto.s"
      INCLUDE "puntaes.s"
 
+
+**********************************************************************
+*
+* debug print
+*
+IF DEBUG
+IFNE RAVEN
+debug_putc:
+ btst.b   #5,RAVEN_PADDR_UART2+RAVEN_UART_LSR
+ beq.b    debug_putc
+ move.b   d0,RAVEN_PADDR_UART2+RAVEN_UART_THR
+ rts
+debug_puts:
+ move.b   (a0)+,d0
+ beq.b	  debug_puts_done
+ bsr.b    debug_putc
+ bra.b    debug_puts
+debug_puts_done:
+ rts
+ELSE
+debug_putc:
+debug_puts:
+ rts
+ENDIF
+ENDIF
 
 
 **********************************************************************
@@ -1262,7 +1329,7 @@ int_vbl:
  bmi      ivbl_locked              ; ja, ende
  movem.l  d0/d1/d2/d3/d4/d5/d6/d7/a0/a1/a2/a3/a4/a5/a6,-(sp)
  addq.l   #1,_vbclock              ; Anzahl aller VBL-Routinen mitzaehlen
-     IFEQ HADES
+     IFEQ HADES | RAVEN
  tst.b    machine_type
  beq.b    ivbl_st                  ; kein DMA-Sound !
 
@@ -1345,7 +1412,7 @@ ivbl_monitor_change:
 ivbl_monitor_ok:
      ENDIF
  jsr      vdi_cursor               ; Cursorblinken
-     IFEQ HADES
+     IFEQ HADES | RAVEN
  move.w   palette_last.w,d1        ; Palette fuer den Falcon aendern?
  bmi.s    ivbl_setcolor
 
@@ -1974,19 +2041,19 @@ fatal_err:
 *
 halt_system:
  moveq    #$d,d0
- IFNE HADES
+ IFNE HADES | RAVEN
  bsr.l    putch
  ELSE
  bsr      putch
  ENDC
  moveq    #$a,d0
- IFNE HADES
+ IFNE HADES | RAVEN
  bsr.l    putch
  ELSE
  bsr      putch
  ENDC
  moveq    #$a,d0                   ; CR,LF,LF
- IFNE HADES
+ IFNE HADES | RAVEN
  bsr.l    putch
  ELSE
  bsr      putch
@@ -2002,7 +2069,7 @@ halt_endless:
 putstr:
  move.b   (a0)+,d0
  beq.b    puts_ende
- IFNE HADES
+ IFNE HADES | RAVEN
  bsr.l    putch
  ELSE
  bsr      putch
@@ -2141,7 +2208,7 @@ exc62:    move.b    #62,-(sp)
 exc63:    move.b    #63,-(sp)
 
 exc:
-     IFNE HADES
+     IFNE HADES | RAVEN
      INCLUDE "..\..\bios\atari\modules\had_exc.s"
      ELSE
  move.b   (sp)+,proc_pc            ; Vektornummer
@@ -2519,9 +2586,15 @@ bconout_midi:
  move.w   (a0),d1
 _bconout_midi:
 bcomidi_loop:
+IFNE RAVEN
+ btst     #7,RAVEN_PADDR_MFP2+$2D
+ beq.b    bcomidi_loop
+ move.b   d1,RAVEN_PADDR_MFP2+$2F
+ELSE
  btst     #1,midictl             ; MIDI-ACIA
  beq.b    bcomidi_loop
  move.b   d1,midi             ; MIDI-Senderegister
+ENDIF 
  rts
 
 
@@ -2719,11 +2792,21 @@ bcostat_con:
  rts
 
 bcostat_ikbd:
+IFNE RAVEN
+ move.b   RAVEN_PADDR_UART1+RAVEN_UART_LSR,d2
+ lsr.b    #4,d2
+ELSE
  move.b   keyctl,d2             ; IKBD-ACIA
+ENDIF
  bra.b    _bcostat
 
 bcostat_midi:
+IFNE RAVEN
+ move.b   RAVEN_PADDR_MFP2+$2D,d2
+ lsr.b    #6,d2
+ELSE
  move.b   midictl,d2             ; MIDI-ACIA
+ENDIF
 _bcostat:
  moveq    #-1,d0
  btst     #1,d2
@@ -2739,7 +2822,11 @@ bconout_ikbd:
    move.w   (a0),d1
 
 _bconout_ikbd:
+IFNE RAVEN
+   btst     #5,RAVEN_PADDR_UART1+RAVEN_UART_LSR
+ELSE
    btst     #1,keyctl            ;Keyboard-ACIA
+ENDIF
    beq.b    _bconout_ikbd        ;Sender noch nicht bereit
 
    move.w    d0,-(sp)
@@ -2750,7 +2837,11 @@ _o_ikbd_wait:
    cmp.b    tcdr,d2
    beq.b    _o_ikbd_wait
    dbf      d0,_o_ikbd_timc
+IFNE RAVEN
+   move.b   d1,RAVEN_PADDR_UART1+RAVEN_UART_THR
+ELSE   
    move.b   d1,keybd             ;Zeichen in Senderegister schreiben
+ENDIF   
    move.w (sp)+,d0
    rts
 
@@ -3259,10 +3350,21 @@ imfp_loop:
  bsr      _mfpint
  dbf      d7,imfp_loop
 
+IFNE RAVEN
+ move.l   #key_int,$0074.w           ; keyboard interrupt on UART1-RX
+ or.b     #$01,RAVEN_PADDR_UART1+$08 ; rx fifo enabled
+ move.b   #$01,RAVEN_PADDR_UART1+$04 ; recv interrupt enabled
+
+ move.l   #midi_int,$0170.w          ; midi interrupt on MFP1-RX
+ moveq    #12,d0
+ bsr      _mfpint
+
+ELSE
  lea      midikey_int(pc),a2
  moveq    #6,d0
  bsr      _mfpint
 
+ENDIF
  lea      int_mfp2(pc),a2          ; CTS- Interruptroutine
  moveq    #2,d0
  bsr      _mfpint
@@ -3984,8 +4086,12 @@ ead08d1:  movea.l d0,a0
      INCLUDE "..\..\bios\atari\modules\serial.s"
      INCLUDE "..\..\bios\atari\modules\clock.s"
      INCLUDE "..\..\bios\atari\modules\video.s"
+IFNE RAVEN
+     INCLUDE "..\..\bios\atari\modules\rav_keyb.s"
+ELSE
      INCLUDE "..\..\bios\atari\modules\keyb.s"
 
+ENDIF
 
 
 *********************************************************************
@@ -4017,6 +4123,9 @@ ci_0:
 ; Stop the CPU until an interrupt occurs.
 ; This may save some host CPU time on emulators (i.e. ARAnyM).
 mmx_yield:
+IFNE RAVEN
+  rts
+ENDIF
 /*
  * Magic-PC apparently does not emulate the stop instruction correctly
  */
@@ -4045,6 +4154,11 @@ mmx_yield_mgpc:
 *
 
 get_cpu_typ:
+     IFNE RAVEN
+ moveq    #60,d0
+ rts
+     ELSE
+
  move.l   $10,-(a7)                ; save illegal instruction
  move.l   $2c,-(a7)                ; save line F
  move.l   $f4,-(a7)                ; save unimplemented instruction
@@ -4088,11 +4202,16 @@ set_cpu_typ:
  move.l   (a7)+,$2c                ; restore line F
  move.l   (a7)+,$10                ; restore illegal instruction
  rts
+     ENDIF
 
      IFNE HADES
      INCLUDE "..\..\bios\atari\modules\had_cook.s"
      ELSE
+     IFNE RAVEN
+     INCLUDE "..\..\bios\atari\modules\rav_cook.s"
+     ELSE
      INCLUDE "..\..\bios\atari\modules\cook.s"
+     ENDIF
      ENDIF
 
 
@@ -4283,5 +4402,9 @@ pmmu_tt1:
      INCLUDE "..\..\bios\atari\modules\unim_int.s"
      ENDIF
      
+     IFNE    RAVEN
+     INCLUDE "..\..\bios\atari\modules\unim_int.s"
+     ENDIF   
+
      END
 

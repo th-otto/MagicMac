@@ -387,6 +387,7 @@ dma_noide:
      
 ;SCSI
 db_scsidev:
+IFEQ RAVEN
  movea.l  8.w,a0                   ; TT/Medusa mit "echtem" SCSI-Chip?
  movea.l  sp,a1
  move.l   #dma_noscsi,8.w          ; Busfehlervektor setzen
@@ -463,6 +464,7 @@ db_ac_loop:
  tst.w    d0
  bne.b    db_ac_loop               ; Fehler beim Ausfuehren des Bootsektors
      
+ENDIF     
 dmab_ende:
  rts
 
@@ -684,6 +686,26 @@ cps_20:
  dbra     d0,cps_20
  rts
 
+IFNE RAVEN
+dummy_hdv_init:
+ move.l   #$52,maxacctim           ; 0,4sec
+ clr.w    _nflops
+ clr.w    mediach_statx            ; 2*char, fuer A: und B: kein Diskwechsel
+ clr.w    current_disk             ; Disk A: liegt in Drive A:
+ rts
+dummy_rwabs:
+ moveq    #EUNDEV,d0
+ rts
+dummy_getbpb:
+ moveq    #0,d0          ; NULL-Zeiger, d.h. BPB ist ungueltig
+ rts
+dummy_mediach:
+ moveq    #EUNDEV,d0
+ rts
+dummy_boot:
+ moveq    #1,d0
+ rts
+ENDIF
 
 **********************************************************************
 *
@@ -693,7 +715,7 @@ cps_20:
 flp_hdv_init:
  move.w   d7,-(sp)
 
-     IFEQ HADES
+     IFEQ HADES | RAVEN
  lea      int_mfp7(pc),a2          ; Interrupt DMA busy initialisieren
  moveq    #7,d0
  bsr      _mfpint
@@ -704,6 +726,7 @@ flp_hdv_init:
  clr.w    mediach_statx            ; 2*char, fuer A: und B: kein Diskwechsel
  clr.w    current_disk             ; Disk A: liegt in Drive A:
  clr.w    d7                       ; mit Laufwerk A: beginnen
+     IFEQ RAVEN
 fhi_loop:
  clr.l    -(sp)
  clr.w    -(sp)
@@ -722,6 +745,7 @@ fhi_nxt:
  addq.w   #1,d7
  cmpi.w   #2,d7
  bcs.b    fhi_loop
+     ENDIF
  move.w   (sp)+,d7
  rts
 
@@ -1004,6 +1028,7 @@ tstmc_ende:
 flp_rwabs:
  link     a6,#0
  moveq    #EUNDEV,d0
+IFEQ RAVEN
  move.w   $12(a6),d1               ; d1 = dev
  cmpi.w   #1,d1
  bhi.b    rw_ende                  ; dev > 1 (nicht A: oder B:)
@@ -1042,6 +1067,7 @@ flprwabs_l2:
 rw_ende2:
  bsr      acsi_end
 rw_ende:
+ENDIF
  unlk     a6
  rts
 
