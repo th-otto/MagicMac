@@ -15,6 +15,7 @@ magic_pc.os
 
 .S[-DMAGICPC=1]
 .S[-DHADES=0]
+.S[-DRAVEN=0]
 
 .C[-A-]
 .C[-K-]
