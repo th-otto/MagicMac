@@ -245,7 +245,7 @@ static ideerror ide_diagnostic(void)
 	wait_for_ready(ide, LONG_TIMEOUT);
 	return ide->er;
 #else
-    IDEREGS *ide = (IDEREGS *) IDEDR;
+	IDEREGS *ide = (IDEREGS *) IDEDR;
 	ULONG until;
 
 	ide->sdh = 0xa0;
