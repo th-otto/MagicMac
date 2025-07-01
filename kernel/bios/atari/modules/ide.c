@@ -150,12 +150,12 @@ static idestatus wait_for_ready(IDEREGS *ide, ULONG timeout)
 	until = *_hz_200 + timeout;
 
 #if defined(RAVEN)
-    status = ide->asrdor;
-    while (status & (1 << 7)) {
-        status = ide->asrdor;
+	status = ide->asrdor;
+	while (status & (1 << 7)) {
+		status = ide->asrdor;
 		if (*_hz_200 > until)
 			return TIMEOUT;
-    }
+	}
 #else
 	while (*GPIP & 0x20)
 		if (*_hz_200 > until)
@@ -239,10 +239,10 @@ static ideerror ide_diagnostic(void)
 {
 #if defined(RAVEN)
 	IDEREGS *ide = (IDEREGS *) IDEDR;
-    ide->sdh = 0xa0;
+	ide->sdh = 0xa0;
 	ide->asrdor = 0;
 	ide->srcr = IDE_DIAGNOSTIC; /* send ATA command EXECUTE DEVICE DIAGNOSTICS */
-    wait_for_ready(ide, LONG_TIMEOUT);
+	wait_for_ready(ide, LONG_TIMEOUT);
 	return ide->er;
 #else
     IDEREGS *ide = (IDEREGS *) IDEDR;
