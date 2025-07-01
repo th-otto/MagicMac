@@ -56,12 +56,14 @@
  move.l   sp,a2                    ; Stackpointer retten
  moveq    #0,d1
 * Test auf (Atari) FPU
+    IFEQ RAVEN
  movea.l  8,a0                     ; Busfehler retten
  move.l   #_noafpu,8               ; neuen Busfehler eintragen
  move.l   $fffffa46,d0
  move.l   d1,$fffffa46             ; Atari FPU initialisieren
  addq.w   #1,d1                    ; Bit0: SFP004 ("Atari FPU")
 _noafpu:
+    ENDIF
 * Test auf (Line F) FPU
  movea.l  $2c,a1                   ; LineF retten
  move.l   #_nolfpu,$2c             ; bei LineF Trap gehts dahin
