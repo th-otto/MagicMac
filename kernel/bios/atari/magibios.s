@@ -1196,10 +1196,9 @@ boot_no_dma:
 
 **********************************************************************
 *
-* debug print
+* debug print, called by DEB macro 
 *
-IF DEBUG
-IFNE RAVEN
+IFNE RAVEN & DEBUG
 debug_putc:
  btst.b   #5,RAVEN_PADDR_UART2+RAVEN_UART_LSR
  beq.b    debug_putc
@@ -1212,11 +1211,6 @@ debug_puts:
  bra.b    debug_puts
 debug_puts_done:
  rts
-ELSE
-debug_putc:
-debug_puts:
- rts
-ENDIF
 ENDIF
 
 
