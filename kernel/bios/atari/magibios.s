@@ -3355,9 +3355,12 @@ IFNE RAVEN
  or.b     #$01,RAVEN_PADDR_UART1+$08 ; rx fifo enabled
  move.b   #$01,RAVEN_PADDR_UART1+$04 ; recv interrupt enabled
 
- move.l   #midi_int,$0170.w          ; midi interrupt on MFP1-RX
- moveq    #12,d0
- bsr      _mfpint
+ bclr     #4,RAVEN_PADDR_MFP2+$07
+ bclr     #4,RAVEN_PADDR_MFP2+$0B
+ bclr     #4,RAVEN_PADDR_MFP2+$0F
+ bclr     #4,RAVEN_PADDR_MFP2+$13
+ move.l   #midi_int,$0170.w          ; midi interrupt on MFP2-RX
+ bset     #4,RAVEN_PADDR_MFP2+$07
 
 ELSE
  lea      midikey_int(pc),a2

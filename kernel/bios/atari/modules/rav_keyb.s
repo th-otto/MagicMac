@@ -118,7 +118,7 @@ keybd_struct:
 
 ;==============================================================
 ;
-; Interrupt fuer MIDI (MFP1- RS232 Puffer voll)
+; Interrupt fuer MIDI (MFP2- RS232 Puffer voll)
 ;
 ; Ruft <midisys> auf. Rettet d0-d3/a0-a3
 ;
@@ -128,7 +128,7 @@ keybd_struct:
 midi_int:
  movem.l  d0/d1/d2/d3/a0/a1/a2/a3,-(sp)
  bsr.s    midisys
- bclr     #4,isra                  ; IRQ RS232 Puffer voll Interrupt-Servcice-Bit loeschen
+ bclr     #4,RAVEN_PADDR_MFP2+$0F ; IRQ MFP2-RS232 Puffer voll Interrupt-Servcice-Bit loeschen
  movem.l  (sp)+,a3/a2/a1/a0/d3/d2/d1/d0
  rte
 
@@ -138,10 +138,10 @@ midi_int:
 ;
 ; Darf d0-d3/a0-a3 benutzen
 midisys:
-   btst     #7,rsr                  ;MFP1-RS232 Puffer voll?
+   btst     #7,RAVEN_PADDR_MFP2+$2B ;MFP2-RS232 Puffer voll?
    beq.b    exit_midisys            ;nein, schnell wieder raus
    move.w   d2,-(sp)                ;Status sichern
-   move.b   udr,d0                  ;Daten vom MFP1-RS232 holen
+   move.b   RAVEN_PADDR_MFP2+$2F,d0 ;Daten vom MFP2-RS232 holen
    lea      iorec_midi,a0
    movea.l  kbdvecs+0,a2            ;midivec
    jsr      (a2)
