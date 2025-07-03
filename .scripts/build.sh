@@ -24,7 +24,7 @@ SRCDIR=c:/src/magicmac
 
 clash_option="-D s"
 mmd $clash_option $SRCDIR
-mcopy $clash_option -bso apps auto doc extensio inc_as inc_c kernel lib non-tos pc test tools $SRCDIR
+mcopy $clash_option -so apps auto doc extensio inc_as inc_c kernel lib non-tos pc test tools $SRCDIR
 mcopy $clash_option "C:/pc/lib/*.lib" $SRCDIR/pc/lib
 mcopy $clash_option "C:/pc/lib/*.o" $SRCDIR/pc/lib
 
