@@ -13,7 +13,7 @@ sudo apt-get install -y \
 	libsdl1.2-dev
 
 curl --get https://tho-otto.de/download/mag-hdd.tar.bz2 --output mag-hdd.tar.bz2
-curl --get https://tho-otto.de/download/aranym-1.1.0-xenial-x86_64-4ebb186.tar.xz --output aranym.tar.xz
+curl --get https://tho-otto.de/download/aranym-1.1.0-jammy-x86_64-2472761.tar.xz --output aranym.tar.xz
 
 mkdir -p ~/tmp/udo
 (
