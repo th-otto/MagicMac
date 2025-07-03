@@ -86,6 +86,8 @@ pcmake -B -F atari.prj >> "$ERRFILE"
 mv magic.ram en
 pcmake -B -F hades.prj >> "$ERRFILE"
 mv mhades.ram en
+pcmake -B -F raven.prj >> "$ERRFILE"
+mv mraven.ram en
 pcmake -B -F milan.prj >> "$ERRFILE"
 mv mmilan.ram en
 pcmake -B -F magicpc.prj >> "$ERRFILE"
@@ -102,6 +104,8 @@ pcmake -B -F atari.prj >> "$ERRFILE"
 mv magic.ram fr
 pcmake -B -F hades.prj >> "$ERRFILE"
 mv mhades.ram fr
+pcmake -B -F raven.prj >> "$ERRFILE"
+mv mraven.ram fr
 pcmake -B -F milan.prj >> "$ERRFILE"
 mv mmilan.ram fr
 pcmake -B -F magicpc.prj >> "$ERRFILE"
@@ -118,6 +122,8 @@ pcmake -B -F atari.prj >> "$ERRFILE"
 mv magic.ram de
 pcmake -B -F hades.prj >> "$ERRFILE"
 mv mhades.ram de
+pcmake -B -F raven.prj >> "$ERRFILE"
+mv mraven.ram de
 pcmake -B -F milan.prj >> "$ERRFILE"
 mv mmilan.ram de
 pcmake -B -F magicpc.prj >> "$ERRFILE"

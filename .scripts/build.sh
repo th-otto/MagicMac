@@ -16,7 +16,7 @@ mkdir -p "${BUILDROOT}"
 mkdir -p "${OUT}"
 
 aranym="${SCRIPT_DIR}/aranym"
-aranym="$aranym/usr/bin/aranym-jit"
+aranym="$aranym/usr/bin/aranym"
 
 unset CC CXX
 

@@ -12,6 +12,7 @@ mhades.ram
 
 .S[-DMAGICPC=0]
 .S[-DHADES=1]
+.S[-DRAVEN=0]
 
 .C[-A-]
 .C[-K-]

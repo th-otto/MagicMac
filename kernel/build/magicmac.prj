@@ -11,6 +11,7 @@ mag_mac.ram
 .C[-DCOUNTRY=1]
 
 .S[-DMAGICPC=0]
+.S[-DRAVEN=0]
 
 .C[-A-]
 .C[-K-]
