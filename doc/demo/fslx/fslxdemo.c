@@ -55,8 +55,8 @@ int main( void )
 					" Titel ",
 					-1,-1,
 					&whdl,
-					pathbuf, 128,
-					fname, 33,
+					pathbuf, (int)sizeof(pathbuf),
+					fname, (int)sizeof(fname),
 					"*.PRG,*.APP\0"
 					"*.TOS,*.TTP\0"
 					"*\0",

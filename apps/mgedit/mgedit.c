@@ -522,8 +522,8 @@ static void saveas_file_open( WINDOW *w )
 					NULL),
 				-1,-1,
 				&fslx_whdl,
-				fslx_path, 256,
-				fslx_fname, 64,
+				fslx_path, (int)sizeof(fslx_path),
+				fslx_fname, (int)sizeof(fslx_fname) - 2,
 				NULL,
 				0L,
 				NULL,
@@ -813,8 +813,8 @@ static int do_menu( int title, int entry, WINDOW *w)
 							Rgetstring(STR_LOADFILE,NULL),
 							-1,-1,
 							&fslx_whdl,
-							fslx_path, 256,
-							fslx_fname, 64,
+							fslx_path, (int)sizeof(fslx_path),
+							fslx_fname, (int)sizeof(fslx_fname),
 							NULL,
 							0L,
 							NULL,
@@ -953,6 +953,7 @@ int main( int argc, char *argv[] )
 	int i;
 	LONG err;
 	int update = FALSE;
+	char *pattern;
 	WORD dummy;
 
 
@@ -1055,8 +1056,8 @@ int main( int argc, char *argv[] )
 								fslx_fname,
 								&fslx_button,
 								&fslx_nfiles,
-								NULL,
-								NULL))
+								&dummy,
+								&pattern))
 			{
 			switch(fslx_mode)
 				{

@@ -269,6 +269,86 @@ setc_rte:
 ;d1.w Anzahl der Bomben - 1
 ;Ausgaben:
 ;-
+ .IFNE 0
+__printbombs:
+  pea NF_DEBUG(pc)
+  bsr nf_getid
+  addq.l #4,a7
+  move.l d0,d7
+
+ lea proc_regs+32,a3
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ pea bomb_regd0msg(pc)
+ move.l d7,-(a7)
+ bsr nf_call
+ lea 40(a7),a7
+
+ lea proc_regs+64,a3
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ move.l -(a3),-(a7)
+ pea bomb_rega0msg(pc)
+ move.l d7,-(a7)
+ bsr nf_call
+ lea 40(a7),a7
+
+ moveq #0,d0
+ move.w proc_stk,d0
+ move.l d0,-(a7)
+ move.l proc_usp,-(a7)
+ move.l proc_stk+2,-(a7)
+ pea bomb_pcmsg(pc)
+ move.l d7,-(a7)
+ bsr nf_call
+ lea 20(a7),a7
+ rts
+
+nf_debugprintf:
+  pea NF_DEBUG(pc)
+  bsr nf_getid
+  addq.l #4,a7
+  rts
+nf_getid:
+  .dc.w 0x7300
+  rts
+nf_call:
+  .dc.w 0x7301
+  rts
+bomb_regd0msg:
+ .ascii "D0 = %08lx D1 = %08lx D2 = %08lx D3 = %08lx"
+ .dc.b 10
+ .ascii "D4 = %08lx D5 = %08lx D6 = %08lx D7 = %08lx"
+ .dc.b 10
+ .dc.b 0
+bomb_rega0msg:
+ .ascii "A0 = %08lx A1 = %08lx A2 = %08lx A3 = %08lx"
+ .dc.b 10
+ .ascii "A4 = %08lx A5 = %08lx A6 = %08lx A7 = %08lx"
+ .dc.b 10
+ .dc.b 0
+bomb_pcmsg:
+ .ascii "PC = %08lx USP = %08lx SR = %04lx"
+ .dc.b 10
+ .dc.b 0
+NF_DEBUG:
+ .ascii "DEBUGPRINTF"
+ .dc.b 0
+
+ .even
+
+ .ELSE
 __printbombs:
  move.b   sshiftmd,d7
  and.w    #7,d7          ; auf STE/TT/Falcon Aufloesungen 0 bis 7 zulassen
@@ -314,6 +394,7 @@ prbo_wait:
  bsr      _Vsync
  dbf      d7,prbo_wait
  rts
+ .ENDC
 
 prbo_restab1:
  DC.W     3

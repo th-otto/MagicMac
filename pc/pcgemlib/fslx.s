@@ -67,10 +67,16 @@
 				move.w	(a0)+,(a1)
 				move.l	16(a7),a1			; nfiles
 				move.w	(a0)+,(a1)
-				move.l	20(a7),a1			; sort_mode
+				move.l	20(a7),d1			; sort_mode
+				beq.s   fslx_evnt1
+				move.l  d1,a1
 				move.w	(a0)+,(a1)
-				move.l	24(a7),a1
+fslx_evnt1:
+				move.l	24(a7),d1
+				beq.s   fslx_evnt2
+				move.l  d1,a1
 				move.l	_GemParBlk+addrout,(a1)
+fslx_evnt2:
 				rts
 				
 				ENDMOD
