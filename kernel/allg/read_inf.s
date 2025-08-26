@@ -7,6 +7,8 @@
 	INCLUDE "dos.inc"
 	INCLUDE "errno.inc"
 
+NUM_DRIVES     EQU  32             ; hoechste Laufwerknummer
+
 	XDEF	read_inf
 	XDEF	rinf_sec
 	XDEF rinf_tok
@@ -21,6 +23,7 @@
 	XDEF	rinf_dvh
 
 	XREF	dfs_longnames
+	XREF	drive_from_letter
 
 * von STD
 
@@ -344,7 +347,7 @@ vfat_tok2:	DC.B	'drives=',0
 rinf_vfat:
  movem.l	a6/d7,-(sp)
  move.l	a0,d0
- beq.b	rivf_ende				; keine INF-Datei
+ beq.s	rivf_ende				; keine INF-Datei
  lea		vfat_tok(pc),a1
  bsr.s		rinf_sec
  tst.l	d0
@@ -356,15 +359,13 @@ rinf_vfat:
  move.l	a0,a6
  moveq	#0,d7				; noch keine Laufwerke
 rivf_loop:
+ moveq  #0,d0
  move.b	(a6)+,d0
- andi.w	#$5f,d0				; toupper
- subi.w	#'A',d0
- bmi.b	rivf_endloop
- cmpi.w	#'Z'-'A',d0 ; LASTDRIVE
- bhi.b	rivf_endloop
+ bsr	drive_from_letter
+ bmi.s	rivf_endloop
 
 ; d0 ist jetzt die Laufwerknummer.
-
+rivf_set:
  bset.l	d0,d7				; merken!
 
 ; Laufwerk freigeben (unmount)

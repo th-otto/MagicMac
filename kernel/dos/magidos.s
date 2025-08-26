@@ -1307,8 +1307,8 @@ dc_ende:
 *
 
 d_chkdrv:
- cmpi.w   #LASTDRIVE,d0
- bhi      chkdrv_edrive            ; Nicht im Bereich 0..LASTDRIVE
+ cmpi.w   #NUM_DRIVES,d0
+ bcc      chkdrv_edrive            ; Nicht im Bereich 0..NUM_DRIVES-1
 
 * Auf LOCK testen
 
@@ -1425,6 +1425,26 @@ dfr_ende:
 *              vor dem ersten Zugriff ge-lock-t, da Standardpfade
 *              nicht mehr geschuetzt werden.
 *
+
+    .globl drive_from_letter
+drive_from_letter:
+    bsr		toupper
+    cmpi.b	#'1',d0
+    bmi.b	drive_from_letter_err
+    cmpi.b	#'6',d0
+    bhi.b	drive_from_letter_a
+    sub.b	#'1'-26,d0
+    rts
+drive_from_letter_a:
+    subi.b	#'A',d0
+    bmi.s	drive_from_letter_err
+    cmpi.b	#'Z'-'A',d0
+    bhi.b	drive_from_letter_err
+    tst.b	d0
+    rts
+drive_from_letter_err:
+    moveq	#-1,d0
+    rts
 
 path_to_DD:
 
@@ -2002,8 +2022,8 @@ Fsnext:
  movea.l  p_dta(a0),a0             ; a0 = DTA
  moveq    #0,d0
  move.b   dta_drive(a0),d0
- cmpi.w   #LASTDRIVE,d0
- bhi.b    fsn_enmfil               ; von Drdlabel
+ cmpi.w   #NUM_DRIVES,d0
+ bcc.b    fsn_enmfil               ; von Drdlabel
  move.l   a0,-(sp)
  bsr      drv_to_dmd
  move.l   d_xfs(a0),a2
@@ -2514,7 +2534,7 @@ eject_ende:
 
 deflt_doslimits:
  DC.W     0         ; Versionsnummer der Struktur
- DC.W     26        ; maximale Zahl der DOS- Laufwerke
+ DC.W     NUM_DRIVES ; maximale Zahl der DOS- Laufwerke
  DC.L     32768     ; maximale Sektorgroesse auf BIOS- Ebene
  DC.W     1         ; minimale Anzahl von FATs
  DC.W     2         ; maximale Anzahl von FATs
@@ -4320,7 +4340,7 @@ D_Dsetdrv:
 Dsetdrv:
  movea.l  act_pd,a0
  move.b   d0,p_defdrv(a0)
- move.w   #$a,-(sp)
+ move.w   #$a,-(sp) /* Drvmap() */
  trap     #$d
  addq.w   #2,sp
  rts
@@ -4344,8 +4364,8 @@ kllo_loop:
 kllo_nxtloop:
  addq.l   #4,a5
  addq.w   #1,d7
- cmpi.w   #LASTDRIVE,d7
- bls.b    kllo_loop
+ cmpi.w   #NUM_DRIVES,d7
+ bcs.b    kllo_loop
  movem.l  (sp)+,a5/d7
  rts
 
@@ -4360,8 +4380,8 @@ D_Dlock:
  move.w   (a0)+,d2                 ; int mode
  move.w   (a0),a0                  ; int drv
  move.w   a0,d1
- cmp.w    #LASTDRIVE,a0
- bhi      dlk_ende                 ; Laufwerknummer nicht 0..LASTDRIVE
+ cmp.w    #NUM_DRIVES,a0
+ bcc.s    dlk_ende                 ; Laufwerknummer nicht 0..NUM_DRIVES-1
  cmp.w    #DRIVE_U,a0
  beq      dlk_ende                 ; Laufwerk U: nicht gueltig!
  add.w    a0,a0
@@ -6276,7 +6296,7 @@ pk_fclose_nxtloop:
 
 * Alle Pfadhandles loeschen
 
- moveq    #LASTDRIVE,d6            ; dbra- Zaehler
+ moveq    #NUM_DRIVES-1,d6         ; dbra- Zaehler
  lea      pathcntx,a4
 pkx_stdpthloop:
  move.b   p_drvx(a5,d6.w),d0
@@ -6313,8 +6333,8 @@ pkx_loop:
  move.l   a5,a1
  jsr      (a2)
 pkx_next:
- cmpa.l   #dmdx+4*LASTDRIVE,a4
- bls.b    pkx_loop
+ cmpa.l   #dmdx+4*NUM_DRIVES,a4
+ bcs.b    pkx_loop
 
 * Alle zum Prozess gehoerigen Semaphoren freigeben
 
@@ -6468,7 +6488,7 @@ seth_hdlnxt:
 
 * Standard- Pfad- Handles kopieren
 
- moveq    #LASTDRIVE,d7            ; dbra- Zaehler
+ moveq    #NUM_DRIVES-1,d7         ; dbra- Zaehler
  lea      pathcntx,a0
  lea      pathx,a1
  moveq    #0,d0                    ; Hibyte loeschen
@@ -8620,7 +8640,7 @@ resv_end:
 
 collect_IMB:
  movem.l  d7/a2/a5,-(sp)
-* a5 durchlaeuft alle Laufwerke (DMDs) von 0 bis LASTDRIVE
+* a5 durchlaeuft alle Laufwerke (DMDs) von 0 bis NUM_DRIVES-1
  moveq    #0,d7                    ; noch nichts erreicht
  lea      dmdx,a5
 coli_loop:
@@ -8635,8 +8655,8 @@ coli_loop:
  or.l     d0,d7
 * naechstes Laufwerk
 coli_next:
- cmpa.l   #dmdx+4*LASTDRIVE,a5
- bls.b    coli_loop
+ cmpa.l   #dmdx+4*NUM_DRIVES,a5
+ bcc.b    coli_loop
  move.l   d7,d0
  movem.l  (sp)+,d7/a2/a5
  rts
@@ -9545,8 +9565,8 @@ sync_sync:
 sync_nxtloop:
  addq.l   #4,a5
  addq.w   #1,d7
- cmpi.w   #LASTDRIVE,d7
- bls.b    sync_loop
+ cmpi.w   #NUM_DRIVES,d7
+ bcc.b    sync_loop
  movem.l  (sp)+,a6/a5/d7/d6
  rts
 
@@ -9560,7 +9580,7 @@ sync_nxtloop:
 
 Sunmount:
  movem.l  a6/a5/a4/d7,-(sp)
- suba.w   #LASTDRIVE+LASTDRIVE+4,sp
+ suba.w   #NUM_DRIVES+NUM_DRIVES+4,sp
  move.l   a0,a5               ; a5 = dmd
  lea      (sp),a4             ; noch nix gesperrt
 
@@ -9592,8 +9612,8 @@ sunm_locked:
  move.w   d7,(a4)+            ; Laufwerk merken !
 sunm_nxtloop:
  addq.w   #1,d7
- cmpi.w   #LASTDRIVE,d7
- bls.b    sunm_loop
+ cmpi.w   #NUM_DRIVES,d7
+ bcc.b    sunm_loop
  moveq    #0,d0               ; kein Fehler
 
 ; 2. Phase: DMDs freigeben
@@ -9612,7 +9632,7 @@ sunm_unlloop:
  bra.b    sunm_unlloop
 sunm_unllendloop:
  move.l   d7,d0               ; Fehlercode
- adda.w   #LASTDRIVE+LASTDRIVE+4,sp
+ adda.w   #NUM_DRIVES+NUM_DRIVES+4,sp
  movem.l  (sp)+,a6/a5/a4/d7
  rts
 
@@ -10208,8 +10228,8 @@ fsp_set_root:
  clr.b    -1(a1)                   ; Zaehler 0 => Pfadhandle im PD loeschen
 fsp_nxtlp2:
  addq.w   #1,d1
- cmpi.w   #LASTDRIVE,d1
- bls.b    fsp_loop2
+ cmpi.w   #NUM_DRIVES,d1
+ bcc.b    fsp_loop2
 
  cmpi.l   #'_PRG',p_res3(a0)       ; paralleler Prozess ?
  beq.b    fsp_ende                 ; ja, parent ist ungueltig

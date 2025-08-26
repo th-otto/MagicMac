@@ -7,14 +7,16 @@
 int main( void )
 {
 	long ret;
-
-
-	ret = Psetlimit(3, -1L);
-	printf("\r\nHole  Limit: R…kgabe: %ld\n", ret);
+	int i;
+	
+	for (i = 0; i < 4; i++)
+	{
+		ret = Psetlimit(i, -1L);
+		printf("Hole  Limit(%d): R…kgabe: %ld\n", i, ret);
+	}
 	ret = Psetlimit(3, 128000L);
 	printf("\r\nSetze Limit: R…kgabe: %ld\n", ret);
 	ret = Psetlimit(3, -1L);
 	printf("\r\nHole  Limit: R…kgabe: %ld\n", ret);
-	Pexec(0, "c:\\kaosdesk\\mcmd.tos", "", NULL);
-	return((int)ret);
+	return(0);
 }

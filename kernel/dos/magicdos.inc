@@ -2,7 +2,7 @@
 __a_dos        EQU  $2900
 
 N_STDPATHS     EQU  40             ; Anzahl der Standardpfade
-LASTDRIVE      EQU  'Z'-'A'        ; hoechste Laufwerknummer
+NUM_DRIVES     EQU  32             ; hoechste Laufwerknummer
 
      XDEF  __a_dos
 
@@ -31,15 +31,15 @@ fat12_sem:     DS.B bl_sizeof      ; Semaphore fuer 12-Bit-FAT
 
 bufl:          DS.L 2              ; neue Mag!X- Sektor-Pufferlisten
 bufl_size:     DS.L 1              ; Groesse der installierten Puffer
-bufl_timer:    DS.L LASTDRIVE+1    ; fuer Writeback (letzter Zugriff)
+bufl_timer:    DS.L NUM_DRIVES     ; fuer Writeback (letzter Zugriff)
 bufl_wback:    DS.L 1              ; PD *, initiiert writeback
 p_doslimits:   DS.L 1              ; Zeiger auf DOSLIMIT-Struktur
 
 act_pd:        DS.L 1              ; aktueller PD
 pathx:         DS.L N_STDPATHS     ; Tabelle der 40 Standard- DDs
 pathcntx:      DS.B N_STDPATHS     ; Referenzzaehler fuer pathx
-dmdx:          DS.L LASTDRIVE+1    ; Tabelle der DMDs
-dlockx:        DS.L LASTDRIVE+1    ; Laufwerk- Sperren
+dmdx:          DS.L NUM_DRIVES     ; Tabelle der DMDs
+dlockx:        DS.L NUM_DRIVES     ; Laufwerk- Sperren
 nxt_procid:    DS.W 1              ; naechste freie Prozess-ID
 procx:         DS.L 1              ; Tabelle der Prozesse
 xfs_list:      DS.L 1              ; Tabelle der Dateisysteme

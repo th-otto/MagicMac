@@ -49,6 +49,7 @@ _memtop        EQU $436
      XREF halt_system
      XREF config_status
      XREF scrbuf_adr,scrbuf_len
+     XREF drive_from_letter
 
 * von MAGIDOS
 
@@ -351,10 +352,9 @@ mem_err_dump:
  bsr      str_to_con
  bsr      getkey
  move.w   d0,d7
- subi.b   #'A',d7
- bcs.b    meme_nodmp
- cmpi.b   #LASTDRIVE,d7
- bhi.b    meme_nodmp
+ bsr      drive_from_letter
+ bmi.b    meme_nodmp
+ exg      d0,d7
  jsr      putch
  ext.w    d7
  move.w   d7,d0

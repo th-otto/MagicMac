@@ -339,7 +339,7 @@ drv_open:
 * DD der Root initialisieren
  move.l   d0,a1
  move.l   a0,fd_dmd(a1)
- move.w   #dir_sizeof*(LASTDRIVE+5),fd_len+2(a1)  ; Dateilaenge
+ move.w   #dir_sizeof*(NUM_DRIVES+4),fd_len+2(a1)  ; Dateilaenge
  move.l   (udrv_root).l,fd_xdata(a1)                ; Zeiger auf Daten
  move.l   #memblk_drv,fd_ddev(a1)
  move.w   #FT_MEMBLK,fd_xftype(a1)
@@ -374,8 +374,8 @@ do_both:
  movem.l  (sp)+,d0/d1/d2
 startdd_loopn_u:
  addq.w   #1,d0
- cmpi.w   #LASTDRIVE,d0
- bls      startdd_loop_u
+ cmpi.w   #NUM_DRIVES,d0
+ bcc.s    startdd_loop_u
  move.l   d2,(udrv_drvs).l             ; aktualisieren
 do_ok:
  moveq    #0,d0

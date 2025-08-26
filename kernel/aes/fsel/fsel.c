@@ -41,6 +41,15 @@ static unsigned char fselx[] = {
 #define fsel_rsc ((RSHDR *) fselx)
 #define fsel_rslen sizeof(fselx)
 
+/* drives are A:->Z:, 1:->6: */
+#define DriveToLetter(d) ((d) < 26 ? 'A' + (d) : (d) - 26 + '1')
+#define DriveFromLetter(d) \
+	(((d) >= 'A' && (d) <= 'Z') ? ((d) - 'A') : \
+	 ((d) >= 'a' && (d) <= 'z') ? ((d) - 'a') : \
+	 ((d) >= '1' && (d) <= '6') ? ((d) - '1' + 26) : \
+	 -1)
+#define NUM_DRIVES 32
+
 /*----------------------------------------------------------------------------------------*/ 
 /* Makros und Funktionsdefinitionen fuer Aufrufe an den MagiC-Kernel                       */
 /*----------------------------------------------------------------------------------------*/ 
@@ -434,7 +443,8 @@ static void trim_path(char *spath, char *dpath)
 {
      if   ((!*spath) || (spath[1] != ':'))
           {
-          *dpath++ = Dgetdrv() + 'A';
+          int drv = Dgetdrv();
+          *dpath++ = DriveToLetter(drv);
           *dpath++ = ':';
           }
      else {
@@ -1490,7 +1500,7 @@ static void change_drive( FSEL_DIALOG *fsd, char drvname )
           {
           olddrv = fsd->path[0];        /* altes Laufwerk */
           fsd->path[0] = drvname;
-          errcode = Dgetpath(fsd->path+2, drvname-'A'+1);
+          errcode = Dgetpath(fsd->path+2, DriveFromLetter(drvname)+1);
           if   (!errcode)
                {
                if   (fsd->path[strlen(fsd->path)-1] != '\\')
@@ -2442,7 +2452,11 @@ static int do_key(FSEL_DIALOG *fsd, WORD key, WORD kstate)
      if   ((char) key == '\x09')   /* Tab */
           return(1);               /* ignorieren! */
 
-     if   ((offs >= 'A') && (offs <= 'Z'))
+     if   ((offs >= 'A' && offs <= 'Z')
+#if NUM_DRIVES > 26
+           || (offs >= '1' && offs <= '6')
+#endif
+           )
           {
           change_drive(fsd, offs);
           redraw:
@@ -2782,7 +2796,7 @@ static int do_button(FSEL_DIALOG *fsd, int exitbutton,
      OBJECT *tree;
      long drives;
      int desel;
-     char drivestrs[26*3+1+5];
+     char drivestrs[NUM_DRIVES*3+1+5];
      int dummy;
      int newwidth;
 
@@ -2885,12 +2899,12 @@ static int do_button(FSEL_DIALOG *fsd, int exitbutton,
           s = drivestrs;
           t = NULL;
           for  (line = 0,drives = Drvmap();
-                    (line < 'Z'-'A'+1) && (drives);
+                    (line < NUM_DRIVES) && (drives);
                     line++,drives >>= 1L)
                {
                if   (drives & 1L)
                     {
-                    *s = line + 'A';
+                    *s = DriveToLetter(line);
                     if   (*s == fsd->path[0])
                          t = s;         /* akt. Laufwerk */
                     s++;
