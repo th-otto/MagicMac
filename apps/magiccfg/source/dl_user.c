@@ -200,7 +200,8 @@ char *next,*ptr=data;
 	{
 		if(data[1]==':')
 		{
-		int button=VF_DRIVE_A+(data[0]-'A');
+			int drv = data[0] >= 'A' ? data[0] - 'A' : data[0] - '1' + 26;
+			int button=VF_DRIVE_A+drv;
 			if(tree[button].ob_state & OS_SELECTED)
 				tree[button].ob_state&=~OS_SELECTED;
 			else

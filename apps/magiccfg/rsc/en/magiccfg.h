@@ -1,7 +1,7 @@
 /*
  * resource set indices for magiccfg
  *
- * created by ORCS 2.17
+ * created by ORCS 2.18
  */
 
 /*
@@ -13,18 +13,22 @@
  * Number of Tedinfos:       65
  * Number of Free Strings:   36
  * Number of Free Images:    0
- * Number of Objects:        291
+ * Number of Objects:        297
  * Number of Trees:          17
  * Number of Userblks:       0
  * Number of Images:         0
- * Total file size:          17190
+ * Total file size:          17334
  */
 
+#ifdef RSC_NAME
 #undef RSC_NAME
+#endif
 #ifndef __ALCYON__
 #define RSC_NAME "magiccfg"
 #endif
+#ifdef RSC_ID
 #undef RSC_ID
+#endif
 #ifdef magiccfg
 #define RSC_ID magiccfg
 #else
@@ -44,7 +48,7 @@
 #define NUM_IB 0
 #define NUM_CIB 1
 #define NUM_TI 65
-#define NUM_OBS 291
+#define NUM_OBS 297
 #define NUM_TREE 17
 #endif
 
@@ -196,8 +200,14 @@
 #define VF_DRIVE_X        25 /* BOXCHAR in tree VFAT */
 #define VF_DRIVE_Y        26 /* BOXCHAR in tree VFAT */
 #define VF_DRIVE_Z        27 /* BOXCHAR in tree VFAT */
-#define VF_OK             28 /* BUTTON in tree VFAT */
-#define VF_CANCEL         29 /* BUTTON in tree VFAT */
+#define VF_DRIVE_1        28 /* BOXCHAR in tree VFAT */
+#define VF_DRIVE_2        29 /* BOXCHAR in tree VFAT */
+#define VF_DRIVE_3        30 /* BOXCHAR in tree VFAT */
+#define FV_DRIVE_4        31 /* BOXCHAR in tree VFAT */
+#define VF_DRIVE_5        32 /* BOXCHAR in tree VFAT */
+#define VF_DRIVE_6        33 /* BOXCHAR in tree VFAT */
+#define VF_OK             34 /* BUTTON in tree VFAT */
+#define VF_CANCEL         35 /* BUTTON in tree VFAT */
 
 /* Other */
 #define OTHER              9 /* form/dialog */

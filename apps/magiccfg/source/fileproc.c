@@ -356,11 +356,12 @@ char *ptr;
 		ptr=line+7;
 		while(*ptr)
 		{
-			if((*ptr>='A')&&(*ptr<='Z'))		/*	Buchstaben von A bis Z	*/
+			if (*ptr >= 'A' && *ptr <= 'Z')		/*	Buchstaben von A bis Z	*/
 			{
-			long bitset=1L;
-				bitset=bitset<<(*ptr-'A');		/*	...rollen...	*/
-				mgx_vfat_drives|=bitset;		/*	...Bit setzen	*/
+				mgx_vfat_drives |= 1UL << (*ptr-'A');		/*	...Bit setzen	*/
+			} else if (*ptr >= '1' && *ptr <= '6')		/*	Buchstaben von A bis Z	*/
+			{
+				mgx_vfat_drives |= 1UL << (*ptr-('1' - 26));		/*	...Bit setzen	*/
 			}
 			ptr++;
 		}
@@ -645,10 +646,15 @@ char *line;
 		int i;
 		char *ptr;
 			ptr=line;
-			for(i=0;i<26;i++)
+			for(i=0;i<32;i++)
 			{
 				if(bitset & mgx_vfat_drives)
-					*ptr++=i+'a';
+				{
+					if (i < 26)
+						*ptr++ = i + 'a';
+					else
+						*ptr++ = i - 26 + '1';
+				}
 				bitset=bitset<<1;
 			}
 			*ptr=0;

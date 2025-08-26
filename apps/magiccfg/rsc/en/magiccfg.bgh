@@ -1,6 +1,6 @@
 #BGH 000 000 000
 
- BubbleGEM Help-File by ORCS 2.17 for ResourceMaster/ORCS
+ BubbleGEM Help-File by ORCS 2.18 for ResourceMaster/ORCS
 
 #User 000
 # 000 Title
@@ -11,9 +11,9 @@
 #Dial 001
 # 000 This is a window of the|MagiC Configurator !
 # 001 ^
-#Dial 002 Author
+#Dial 002
 # 001 >001
-#Dial 003 Main dialog
+#Dial 003
 # 001 Version number of MagiC
 # 003 Determines if MagiC uses the modern 3D look or the old fashioned TOS look.
 # 004 Determines if the backdrop button is displayed. If not, a click on the window title bar acts like clicking the backdrop button.
@@ -34,7 +34,7 @@
 # 020 Opens a dialog, where you can configure boot settings (boot log, boot picture, ...)
 # 021 Opens a dialog, where you can define, which shared libs are loaded resident when booting the OS.
 # 022 Opens a dialog, where you find misc stuff :-)
-#Dial 004 Path
+#Dial 004
 # 001 Determines the clipboard path. The clipboard is used for data exchange between applications (copy&paste).
 # 002 Determines the path, where accs are loaded.
 # 003 Determines the path, where applications are launched when booting the OS.
@@ -43,7 +43,7 @@
 # 006 This program is used to redirect TOS and TTP programs (e.g. VT52.PRG, TOS2GEM, ...).
 # 013 >002
 # 014 >003
-#Dial 005 Resolution
+#Dial 005
 # 002 Determines the color depth.
 # 004 Determines the resolution (in the selected color depth). Only resolutions known to the MagiC Configurator are displayed.
 # 005 ^
@@ -65,7 +65,7 @@
 # 021 Activates the user defined settings.
 # 022 Enter here the VDI device number.
 # 023 Enter here the mode code if needed.
-#Dial 006 Variables
+#Dial 006
 # 002 Click on the variable you want to change. Double-clicking activates/deactivates the variable.
 # 003 ^
 # 004 ^
@@ -85,7 +85,7 @@
 # 020 Accepts the modified variable.
 # 021 Removes the selected variable.
 # 022 Accepts the changes and closes the dialog.
-#Dial 007 Font
+#Dial 007
 # 002 Determines the name of the big AES font.
 # 003 Determines the height of the big AES font. 0 sets a default size.
 # 005 Determines the name of the small AES font.
@@ -94,7 +94,7 @@
 # 008 >003
 # 010 Determines the AES object raster width. Important when using proportional fonts (tip: use a width of 8 pixels). When set to 0 the AES tries to determine the size by its own.
 # 011 Determines the AES object raster height. Important when using proportional fonts (tip: use a height of 16 pixels).  When set to 0 the AES tries to determine the size by its own.
-#Dial 008 VFAT
+#Dial 008
 # 002 When selected, this drive supports long file names
 # 003 ^
 # 004 ^
@@ -121,9 +121,15 @@
 # 025 ^
 # 026 ^
 # 027 ^
-# 028 Accepts the changes and closes the dialog. The settings will be active after restart of the OS.
-# 029 >003
-#Dial 009 Other
+# 028 ^
+# 029 ^
+# 030 ^
+# 031 ^
+# 032 ^
+# 033 ^
+# 034 Accepts the changes and closes the dialog. The settings will be active after restart of the OS.
+# 035 >003
+#Dial 009
 # 003 Determines the size (in bytes) of the shell buffer.
 # 004 Activates multi-tasking while booting. This can lead to problems while booting!
 # 005 Determines the length of a time slice in milliseconds (when using preemptive multitasking). When set to 0 preemptive multitasking is deactivated (useful to avoid memory problems when launching accs)
@@ -131,27 +137,27 @@
 # 010 Defines the standard mask for the file selector. Seperate the masks by ";". Double patterns are seperated by "," ( e.g. "*.PRG,*.APP" or "*.JPG,*.JPEG").
 # 011 >002
 # 012 >003
-#Dial 010 Background
+#Dial 010
 # 002 Determines the background pattern.
 # 004 Determines the background color.
 # 005 This box gives you a preview of the desktop background.
 # 007 >002
 # 008 >003
-#Dial 011 Boot
+#Dial 011
 # 001 Determines the path of the boot log file.
 # 002 Determines the path of the boot picture (XIMG format).
 # 003 Determines the backround tile (XIMG format) of the boot screen.
 # 004 Determines the size of the cookie jar.
 # 005 >002
 # 006 >003
-#Dial 012 Window
+#Dial 012
 # 001 Determines the max. number of windows (16 should be the minimum for practical reasons).
 # 003 Determines the font used in the window information bar.
 # 004 Determines the size of the font in the information bar. 0 sets a default size.
 # 005 Determines the size of the information bar in pixels.
 # 006 >002
 # 007 >003
-#Dial 013 Libraries
+#Dial 013
 # 002 A single click selects the library so that you can change the minimum version number required. A double click opens the file selector where you can choose another library.
 # 003 ^
 # 004 ^
