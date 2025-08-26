@@ -625,8 +625,7 @@ setjmp:
  bsr      memavail
  bsr      lwrite_long
  lea      bytes_free_s(pc),a0
- bsr      strcon
- rts
+ bra      strstdout
 
 
 * COMMAND- eigene etv_term Routine zum Abbruch von
@@ -833,7 +832,7 @@ memavail:
 
 
 * void rwrite_long(d0 = unsigned long zahl, d1 = int len)
-* Schreibt eine Langzahl linksbÅndig
+* Schreibt eine Langzahl rechtsbÅndig
 
 rwrite_long:
  moveq    #' ',d2
@@ -854,24 +853,28 @@ lwrite_long:
 *  Das Feld wird links mit <fill_char> aufgefÅllt.
 
 
-PUFFER    SET  -20
+STRBUFSIZE    SET  12
 
 write_long:
- link     a6,#PUFFER
+ link     a6,#-STRBUFSIZE
  movem.l  d6/d7,-(sp)
  move.w   d1,d7                    * len
  move.b   d2,d6                    * leader
- lea      PUFFER(a6),a0
-;move.l   d0,d0                    * zahl
+ lea      -STRBUFSIZE(a6),a0
  bsr      long_to_str
  sub.w    d0,d7                    * d0 ist tatsÑchliche LÑnge
+ ble.s    wl_nofill
+ tst.b    d6
+ beq.s    wl_nofill
+ move.l   a0,-(a7)
  bra.b    wl_put
 wl_loop:
  move.b   d6,d0
  bsr      putchar
 wl_put:
  dbra     d7,wl_loop
- lea      PUFFER(a6),a0
+ move.l   (a7)+,a0
+wl_nofill:
  bsr      strstdout                * Zahl ausgeben
  movem.l  (sp)+,d6/d7
  unlk     a6
@@ -882,43 +885,69 @@ wl_put:
 *  Rechnet eine Zahl dezimal in einen String um, dessen LÑnge zurÅckgegeben
 *  wird.
 
-*    DATA
-deztab:   DC.L 10000000,1000000,100000,10000,1000,100,10,1,0
-*    TEXT
-
 long_to_str:
- move.l   d7,-(sp)
- move.l   d0,d7
- move.l   a0,a1
- st       d2             * Flag fÅr fÅhrende Null setzen
- lea      deztab(pc),a2
+ lea      STRBUFSIZE(a0),a1
+ clr.b    -(a1)
+ move.l   a1,a0
 lts_loop:
- move.l   (a2)+,d1       * Divisor
- beq.b    its_10
- moveq    #-1,d0         * ZÑhler
-lts_loop2:
- addq.w   #1,d0
- sub.l    d1,d7
- bcc.b    lts_loop2
- add.l    d1,d7
- tst.w    d0
- bne.b    its_3          * Ziffer > 0
- cmpi.w   #1,d1
- beq.b    its_3          * letzte Ziffer muû gedruckt werden
- tst.w    d2
- bne.b    lts_loop       * fÅhrende Nullen unterdrÅcken
-its_3:
- addi.w   #'0',d0
- move.b   d0,(a1)+       * Zahl abspeichern
- clr.w    d2             * Flag fÅr fÅhrende Null lîschen
- bra.b    lts_loop       * NÑchste Ziffer
-its_10:
- clr.b    (a1)
+ bsr      _uldiv10
+ tst.l    d0
+ bne.s    lts_loop
  suba.l   a0,a1          * Stringanfang abziehen
  move.l   a1,d0          * StringlÑnge zurÅckgeben
- move.l   (sp)+,d7
  rts
 
+
+_uldiv10:
+	move.l	d0,d2
+	swap	d2
+	tst.w	d2
+	bne.s	_uldiv1
+	divu	#10,d0
+	swap	d0
+	add.b   #'0',d0
+	move.b  d0,-(a0)
+	clr.w	d0
+	swap	d0
+	rts
+_uldiv1:
+	clr.w	d0
+	swap	d0
+	swap	d2
+	divu	#10,d0
+	move.w	d0,d1
+	move.w	d2,d0
+	divu	#10,d0
+	swap	d0
+	add.b   #'0',d0
+	move.b  d0,-(a0)
+	move.w	d1,d0
+	swap	d0
+	rts
+
+_ulmul:
+	move.l	d0,d2
+	swap	d2
+	tst.w	d2
+	bne.s	_ulmul2
+	move.l	d1,d2
+	swap	d2
+	tst.w	d2
+	bne.s	_ulmul1
+	mulu	d1,d0
+	rts
+_ulmul1:
+	mulu	d0,d2
+	swap	d2
+	mulu	d1,d0
+	add.l	d2,d0
+	rts
+_ulmul2:
+	mulu	d1,d2
+	swap	d2
+	mulu	d1,d0
+	add.l	d2,d0
+	rts
 
 * char *skip_sep(a0 = string)
 * a0 = char *string;
@@ -2566,21 +2595,8 @@ srcht_end:
  rts
 
 
-* Routinen zur Freigabe von GEMDOS- Speicher
-
-free_mediach:
- moveq    #2,d0
- rts
-free_rw:
- moveq    #E_CHNG,d0
- rts
-free_bpb:
- moveq    #0,d0
- rts
-
-
 *    DATA
-bytesinsg_s:  DC.B  '  Bytes insgesamt verfÅgbar',$d,$a,0
+kbinsg_s:     DC.B  '  KB insgesamt verfÅgbar',$d,$a,0
 bytes_in_s:   DC.B  '  Bytes in ',0
 hauptsp_s:    DC.B  '  Bytes Hauptspeicher',$d,$a,0
 nbytesvers:   DC.B  ' versteckten/System- Datei(en)',$d,$a,0
@@ -2635,30 +2651,12 @@ ctf_1:
  cmpi.w   #2,d6
  bne.b    ctf_31
 * FREE
- clr.l    -(sp)
- gemdos   Super          * in Super- Mode
- addq.l   #6,sp
- move.l   d0,-(sp)       * alten SP merken
- move.l   hdv_bpb,-(sp)
- move.l   hdv_rw,-(sp)
- move.l   hdv_mediach,-(sp)
- lea      free_bpb(pc),a0
- move.l   a0,hdv_bpb
- lea      free_rw(pc),a0
- move.l   a0,hdv_rw
- lea      free_mediach(pc),a0
- move.l   a0,hdv_mediach
  move.w   d7,-(sp)
  addq.w   #1,(sp)
  pea      DFREE_BUFFER(a6)
  gemdos   Dfree               * Zugriff gibt Speicher frei
  addq.l   #8,sp
- move.l   (sp)+,hdv_mediach
- move.l   (sp)+,hdv_rw
- move.l   (sp)+,hdv_bpb
- gemdos   Super          * in User Mode
- addq.l   #6,sp
- bra      ctf_end
+ bra      ctf_32
 ctf_31:
  move.w   d7,d0
  bsr      label_to_stdout
@@ -2675,18 +2673,20 @@ ctf_30:
  beq      ctf_end           * TREE
  bsr      crlf_stdout
  bsr      crlf_stdout
+ctf_32:
  lea      DFREE_BUFFER(a6),a0
-* Multiplikation geht in die Hose, wenn Zahlen > 16 Bit!
- move.l   $c(a0),d0                     * Sektoren/Cluster
+ move.l   12(a0),d0                     * Sektoren/Cluster
  move.l   8(a0),d1                      * Bytes/Sektor
- mulu     d1,d0                         * d0 = Bytes/Cluster
+ bsr      _ulmul                        * d0 = Bytes/Cluster
+ lsr.l    #8,d0
+ lsr.l    #2,d0
  move.l   4(a0),d1                      * Cluster
- mulu     d1,d0                         * d0 = Bytes
+ bsr      _ulmul                        * d0 = Bytes
 * Gesamtplatz auf Disk
  moveq    #10,d1         * Feld 10 Zeichen lang
 * move.l   d0,d0
  bsr      rwrite_long
- lea      bytesinsg_s(pc),a0
+ lea      kbinsg_s(pc),a0
  bsr      strstdout
  move.w   d+hid_sys_no(pc),d0
  beq.b    ctf_2
@@ -2703,6 +2703,8 @@ ctf_30:
  bsr      strstdout
 ctf_2:
 * Gesamtgrîûe und Anzahl der Benutzerdateien
+ cmpi.w   #2,d6
+ beq.s    ctf_3
  moveq    #10,d1         * Feld 10 Zeichen lang
  move.l   d+normal_len(pc),d0
  bsr      rwrite_long
@@ -2722,7 +2724,6 @@ ctf_2:
  lea      nverzeichns(pc),a0
  bsr      strstdout
 ctf_3:
- moveq    #10,d0
  lea      DFREE_BUFFER(a6),a0
  bsr      print_free
 * Jetzt Grîûe des Hauptspeichers ermitteln
@@ -2754,21 +2755,21 @@ ctf_end:
 
 *    DATA
 nbytesfreis:  DC.B  '  Bytes frei',$d,$a,0
+nkbfree:      DC.B  '  KB frei',$d,$a,0
 *    TEXT
      EVEN
 
 print_free:
- move.w   d0,d1
-* Multiplikation geht in die Hose, wenn Zahlen > 16 Bit!
- move.l   $c(a0),d0                     * Sektoren/Cluster
- move.l   8(a0),d2                      * Bytes/Sektor
- mulu     d2,d0                         * d0 = Bytes/Cluster
- move.l   (a0),d2                       * Cluster
- mulu     d2,d0                         * d0 = Bytes
-* move.w   d1,d1
-* move.l   d0,d0
+ move.l   12(a0),d0                     * Sektoren/Cluster
+ move.l   8(a0),d1                      * Bytes/Sektor
+ bsr      _ulmul                        * d0 = Bytes/Cluster
+ lsr.l    #8,d0
+ lsr.l    #2,d0
+ move.l   (a0),d1                       * Cluster
+ bsr      _ulmul                        * d0 = Bytes
+ moveq    #10,d1
  bsr      rwrite_long
- lea      nbytesfreis(pc),a0
+ lea      nkbfree(pc),a0
  bsr      strstdout
  rts
 
@@ -3298,7 +3299,6 @@ cr_11:
  ext.l    d6
  move.l   d6,d0
  bsr      long_to_str
- move.l   a4,a0
  bsr      strcon
  lea      ndateiens(pc),a0
  bsr      strcon
@@ -4209,7 +4209,6 @@ dir_8:
  bsr      crlf_stdout
  tst.b    q_flag-w_flag(a3)
  bne.b    dir_11
- moveq    #8,d0
  lea      DFREE_BUFFER(a6),a0
  bsr      print_free
 dir_11:

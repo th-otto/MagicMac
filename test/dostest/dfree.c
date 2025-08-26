@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		drv = argv[1][0];
 		if (drv >= 'A' && drv <= 'Z')
 			drv = drv - 'A';
-		else if (drv >= 'a' && drv <= 'a')
+		else if (drv >= 'a' && drv <= 'z')
 			drv = drv - 'a';
 		else if (drv >= '1' && drv <= '6')
 			drv = drv - '1' + 26;
