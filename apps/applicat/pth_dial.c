@@ -44,14 +44,16 @@ static int is_disk(char *path)
 {
 	char c;
 
-	c = (*path++) & 0x5f;
-	if ((c < 'A') || (c > 'Z'))
-		return (FALSE);
+	c = *path++;
+	if (!(c >= 'A' && c <= 'Z') ||
+		 (c >= 'a' && c <= 'z') ||
+		 (c >= '1' && c <= '6'))
+		return FALSE;
 	if (*path++ != ':')
-		return (FALSE);
+		return FALSE;
 	if (*path++ != '\\')
-		return (FALSE);
-	return (!(*path));
+		return FALSE;
+	return *path == '\0';
 }
 
 
