@@ -1149,14 +1149,19 @@ ustr100:
 
 isdrive:
  move.w   d5,-(sp)
+ clr.w    d5
  move.b   (a0),d5
+ cmpi.w   #'1',d5
+ blt.s    isd_err
+ cmpi.w   #'6',d5
+ bhi.s    isdrivea
+ subi.w   #'1'-26,d5
+ bra.s    chkdrive
+isdrivea:
  andi.w   #$5f,d5             * toupper
  subi.w   #'A',d5
  blt.b    isd_err
- IFF      KAOS
- cmpi.w   #15,d5
- bgt.b    isd_err
- ENDIF
+chkdrive:
  bios     Drvmap
  addq.l   #2,sp
  moveq    #1,d1
@@ -1183,6 +1188,8 @@ isd_end:
  move.w   (sp)+,d5
  rts
 
+drive_to_letter:
+ dc.b    "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
 
  IFF      KAOS
 * int chgdrive(drive)
@@ -1207,8 +1214,9 @@ chgdrive:
 
  lea      DTA(a6),a1
  move.w   #%111110,d0         * alle Attribute
+ lea      drive_to_letter(pc),a0
+ add.b    0(a0,d7.w),d7
  lea      croots(pc),a0       * "X:\*.*"
- add.b    #'A',d7
  move.b   d7,(a0)
  bsr      sfirst
 
@@ -1668,19 +1676,22 @@ strstdout:
 *                        Ignor.   0
 
 *         DATA
-change_s:  DC.B  'Bitte Disk X: in Laufwerk A: einlegen!',0
-diskerr_s: DC.B  '  auf Laufwerk X:',$d,$a
+change_s:     DC.B     'Bitte Disk '
+change_s_dr:  DC.B     'X: in Laufwerk A: einlegen!',0
+diskerr_s:    DC.B     '  auf Laufwerk '
+diskerr_s_dr: DC.B  'X:',$d,$a
            DC.B  '[A]bbruch, [W]iederholen, [I]gnorieren ?',0
 *         TEXT
           EVEN
 
 etv_critic_neu:
+ lea      drive_to_letter(pc),a0
+ move.w   6(sp),d0                 * Laufwerknummer
+ move.b   0(a0,d0.w),d0
  lea      diskerr_s(pc),a0
  lea      change_s(pc),a1
- moveq    #'A',d0
- add.w    6(sp),d0                 * Laufwerknummer
- move.b   d0,15(a0)
- move.b   d0,11(a1)
+ move.b   d0,diskerr_s_dr-diskerr_s(a0)
+ move.b   d0,change_s_dr-change_s(a1)
  bsr      crlf_con
  lea      change_s(pc),a0
  cmpi.w   #EOTHER,4(sp)
@@ -1966,8 +1977,9 @@ dats_1:
 *  Kopiert den Default- Pfad fr das angegebene Laufwerk
 
 drive_to_defpath:
- move.b   d0,(a0)
- addi.b   #'A',(a0)+
+ lea      drive_to_letter(pc),a1
+ move.b   0(a1,d0.w),d1
+ move.b   d1,(a0)+
  move.b   #':',(a0)+
  clr.b    (a0)                     * Falls Dgetpath() Fehler meldet
  addq.w   #1,d0
@@ -1989,19 +2001,21 @@ dtd_end:
 *  Gibt den Diskettennamen, falls vorhanden, nach stdout
 
 *    DATA
-disk_in_lw_s: DC.B  $d,$a,' Disk in Laufwerk A ',0
-keinname_s:   DC.B  'hat keinen Namen',0
-ist_s:        DC.B  'ist ',0
+disk_in_lw_s:    DC.B  $d,$a,' Disk in Laufwerk '
+disk_in_lw_s_dr: DC.B  'A ',0
+keinname_s:      DC.B  'hat keinen Namen',0
+ist_s:           DC.B  'ist ',0
 *    TEXT
      EVEN
 
 label_to_stdout:
  link     a6,#-$30
  lea      croots(pc),a1
+ lea      drive_to_letter(pc),a0
+ move.b   0(a0,d0.w),d0
  move.b   d0,(a1)
- addi.b   #'A',(a1)
  lea      disk_in_lw_s(pc),a0
- move.b   (a1),20(a0)
+ move.b   (a1),disk_in_lw_s_dr-disk_in_lw_s(a0)
  bsr      strstdout                * a0[] ausdrucken
 
  lea      -$2c(a6),a1              * DTA
@@ -2115,8 +2129,9 @@ p_p:
 p_n:
  gemdos   Dgetdrv
  addq.l   #2,sp
- moveq    #'A',d7
- add.w    d0,d7
+ lea      drive_to_letter(pc),a0
+ moveq    #0,d7
+ move.b   0(a0,d0.w),d7
  bra.b    p_d7next
 p_g:
  moveq    #'>',d7
@@ -2435,9 +2450,10 @@ search_whole_tree:
  movem.l  a5/d7,-(sp)
  lea      -110(a6),a5              ; Pufferadresse
  move.w   d1,d7                    ; is_ck
+ lea      drive_to_letter(pc),a0
+ move.b   0(a0,d0.w),d0
  lea      d+treelevel(pc),a0
  move.w   #8,(a0)
- addi.b   #'A',d0
  move.b   d0,(a5)+
  move.b   #':',(a5)+
  move.b   #'\',(a5)+
