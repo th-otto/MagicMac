@@ -26,8 +26,9 @@
 /* Thread identifiers. The structure of the attribute type is
    deliberately not exposed. */
 typedef struct __pthread_t *pthread_t;
-
-
+#if defined(__PUREC__) && !defined(_PTHREADP_H)
+struct __pthread_t { int dummy; };
+#endif
 #define __LOCK_ALIGNMENT __attribute__ ((__aligned__ (4)))
 #define __ONCE_ALIGNMENT __attribute__ ((__aligned__ (4)))
 

@@ -29,34 +29,28 @@
 #ifndef __SCSIDISK_H
 #define __SCSIDISK_H
 
-LONG Read6(ULONG BlockAdr,
-              UWORD TransferLen, void *buffer);
+long Read6(unsigned long BlockAdr, unsigned short TransferLen, void *buffer);
 
-LONG Read10(ULONG BlockAdr,
-               UWORD TransferLen, void *buffer);
+long Read10(unsigned long BlockAdr, unsigned short TransferLen, void *buffer);
 
-LONG Write6(ULONG BlockAdr,
-               UWORD TransferLen, void *buffer);
+long Write6(unsigned long BlockAdr, unsigned short TransferLen, void *buffer);
 
-LONG Write10(ULONG BlockAdr,
-                UWORD TransferLen, void *buffer);
+long Write10(unsigned long BlockAdr, unsigned short TransferLen, void *buffer);
 
 
-LONG Read(ULONG BlockAdr,
-             UWORD TransferLen, void *buffer);
+long Read(unsigned long BlockAdr, unsigned short TransferLen, void *buffer);
   /*
    * ReadCmd liest Datenbl”cke ein
    * Wenn n”tig, wird ein langes Kommando (10 Byte, Class 1) verwendet.
    */
 
-LONG Write(ULONG BlockAdr,
-              UWORD TransferLen, void *buffer);
+long Write(unsigned long BlockAdr, unsigned short TransferLen, void *buffer);
   /*
    * WriteCmd speichert Datenbl”cke ab.
    * Wenn n”tig, wird ein langes Kommando (10 Byte, Class 1) verwendet.
    */
 
-LONG StartStop(BOOLEAN LoadEject, BOOLEAN StartFlag);
+long StartStop(int LoadEject, int StartFlag);
 
 
 /*-------------------------------------------------------------------------*/
@@ -72,10 +66,10 @@ LONG StartStop(BOOLEAN LoadEject, BOOLEAN StartFlag);
 /*-                                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG ReadCapacity(BOOLEAN PMI, ULONG *BlockAdr, ULONG *BlockLen);
+long ReadCapacity(int PMI, unsigned long *BlockAdr, unsigned long *BlockLen);
 
 
-BOOLEAN init_scsidisk (void);
+int init_scsidisk (void);
   /* Initialisierung des Moduls */
 
 

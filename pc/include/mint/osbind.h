@@ -314,6 +314,9 @@ long __XBIOS(160)	CacheCtrl(short opcode, short param);
 long __XBIOS(161)	WdgCtrl(short opcode);
 long __XBIOS(162)	ExtRsConf(short command, short device, long param);
 
+/* Hatari */
+void __XBIOS(255) HatariControl(const char *command);
+
 /*
  * fallback
  */
@@ -1533,6 +1536,9 @@ __extension__								\
 #define CacheCtrl(a, b) trap_14_www((short)(160),(unsigned short)(a), (unsigned short)(b))
 #define WdgCtrl(a) trap_14_ww((short)(161),(unsigned short)(a))
 #define ExtRsConf(a, b, c) trap_14_wwwl((short)(162),(unsigned short)(a),(unsigned short)(b),(unsigned long)(c))
+
+/* Hatari */
+#define HatariControl(a) (void)trap_14_wl((short)255, (long)(a))
 
 #endif /* __GNUC__ */
 

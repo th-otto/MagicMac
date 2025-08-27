@@ -87,7 +87,7 @@ __END_NAMESPACE_STD
 /* Conversion state information.  */
 typedef struct
 {
-  int __count;
+  long __count;
   union
   {
     unsigned long __wch;

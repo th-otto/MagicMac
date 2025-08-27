@@ -52,7 +52,7 @@ typedef short vdi_wchar_t; /* 16bit string, eg. for unicode */
 #define point_to_fix31(a) (((fix31)(a)) << 16)
 
 
-void vdi( VDIPB *vdipb );
+void vdi(VDIPB *vdipb);
 
 typedef _WORD VdiHdl;   /* for better readability */
 
@@ -67,52 +67,52 @@ typedef struct point_coord
 
 /****** Control definitions *********************************************/
 
-void    v_opnwk( _WORD work_in[16],  _WORD *handle, _WORD work_out[57]);
-void    v_clswk( _WORD handle );
-void    v_opnvwk( _WORD work_in[11], _WORD *handle, _WORD work_out[57]);
-void    v_clsvwk( _WORD handle );
-void    v_clrwk( _WORD handle );
-void    v_updwk( _WORD handle );
-_WORD    vst_load_fonts( _WORD handle, _WORD select );
-void    vst_unload_fonts( _WORD handle, _WORD select );
-void    vs_clip( _WORD handle, _WORD clip_flag, _WORD *pxyarray );
+void    v_opnwk(_WORD work_in[16], VdiHdl *handle, _WORD work_out[57]);
+void    v_clswk(VdiHdl handle);
+void    v_opnvwk(_WORD work_in[11], VdiHdl *handle, _WORD work_out[57]);
+void    v_clsvwk(VdiHdl handle);
+void    v_clrwk(VdiHdl handle);
+void    v_updwk(VdiHdl handle);
+_WORD    vst_load_fonts(VdiHdl handle, _WORD select);
+void    vst_unload_fonts(VdiHdl handle, _WORD select);
+void    vs_clip(VdiHdl handle, _WORD clip_flag, _WORD *pxyarray);
 void  vs_clip_pxy(VdiHdl handle, PXY pxy[]);
 void  vs_clip_off(VdiHdl handle);
 
 
 /****** Output definitions **********************************************/
 
-void    v_pline( _WORD handle, _WORD count, _WORD *pxyarray );
-void    v_pmarker( _WORD handle, _WORD count, _WORD *pxyarray );
-void    v_gtext( _WORD handle, _WORD x, _WORD y, const char *string );
-void    v_gtextn( _WORD handle, _WORD x, _WORD y, const char *string, _WORD len );
-void    v_gtext16( _WORD handle, _WORD x, _WORD y, const vdi_wchar_t *string );
-void    v_gtext16n( _WORD handle, _WORD x, _WORD y, const vdi_wchar_t *string, _WORD len );
-void    v_fillarea( _WORD handle, _WORD count, _WORD *pxyarray );
-void    v_cellarray( _WORD handle, _WORD *pxyarray, _WORD row_length,
+void    v_pline(VdiHdl handle, _WORD count, _WORD *pxyarray);
+void    v_pmarker(VdiHdl handle, _WORD count, _WORD *pxyarray);
+void    v_gtext(VdiHdl handle, _WORD x, _WORD y, const char *string);
+void    v_gtextn(VdiHdl handle, _WORD x, _WORD y, const char *string, _WORD len);
+void    v_gtext16(VdiHdl handle, _WORD x, _WORD y, const vdi_wchar_t *string);
+void    v_gtext16n(VdiHdl handle, _WORD x, _WORD y, const vdi_wchar_t *string, _WORD len);
+void    v_fillarea(VdiHdl handle, _WORD count, _WORD *pxyarray);
+void    v_cellarray(VdiHdl handle, _WORD *pxyarray, _WORD row_length,
                      _WORD el_used, _WORD num_rows, _WORD wrt_mode,
-                     _WORD *colarray );
-void    v_contourfill( _WORD handle, _WORD x, _WORD y, _WORD index );
-void    vr_recfl( _WORD handle, _WORD *pxyarray );
-void    v_bar( _WORD handle, _WORD *pxyarray );
-void    v_arc( _WORD handle, _WORD x, _WORD y, _WORD radius,
-               _WORD begang, _WORD endang );
-void    v_pieslice( _WORD handle, _WORD x, _WORD y, _WORD radius,
-                    _WORD begang, _WORD endang );
-void    v_circle( _WORD handle, _WORD x, _WORD y, _WORD radius );
-void    v_ellarc( _WORD handle, _WORD x, _WORD y, _WORD xradius,
-                  _WORD yradius, _WORD begang, _WORD endang );
-void    v_ellpie( _WORD handle, _WORD x, _WORD y, _WORD xradius,
-                  _WORD yradius, _WORD begang, _WORD endang );
-void    v_ellipse( _WORD handle, _WORD x, _WORD y, _WORD xradius,
-                   _WORD yradius  );
-void    v_rbox  ( _WORD handle, _WORD *pxyarray );
-void    v_rfbox ( _WORD handle, _WORD *pxyarray );
-void    v_justified( _WORD handle, _WORD x, _WORD y, const char *string,
+                     _WORD *colarray);
+void    v_contourfill(VdiHdl handle, _WORD x, _WORD y, _WORD index);
+void    vr_recfl(VdiHdl handle, _WORD *pxyarray);
+void    v_bar(VdiHdl handle, _WORD *pxyarray);
+void    v_arc(VdiHdl handle, _WORD x, _WORD y, _WORD radius,
+               _WORD begang, _WORD endang);
+void    v_pieslice(VdiHdl handle, _WORD x, _WORD y, _WORD radius,
+                    _WORD begang, _WORD endang);
+void    v_circle(VdiHdl handle, _WORD x, _WORD y, _WORD radius);
+void    v_ellarc(VdiHdl handle, _WORD x, _WORD y, _WORD xradius,
+                  _WORD yradius, _WORD begang, _WORD endang);
+void    v_ellpie(VdiHdl handle, _WORD x, _WORD y, _WORD xradius,
+                  _WORD yradius, _WORD begang, _WORD endang);
+void    v_ellipse(VdiHdl handle, _WORD x, _WORD y, _WORD xradius,
+                   _WORD yradius );
+void    v_rbox  (VdiHdl handle, _WORD *pxyarray);
+void    v_rfbox (VdiHdl handle, _WORD *pxyarray);
+void    v_justified(VdiHdl handle, _WORD x, _WORD y, const char *string,
                      _WORD length, _WORD word_space,
-                     _WORD char_space );
-void	v_justified16(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD len, _WORD word_space, _WORD char_space);
-void	v_justified16n(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD num, _WORD len, _WORD word_space, _WORD char_space);
+                     _WORD char_space);
+void	v_justified16(VdiHdl handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD len, _WORD word_space, _WORD char_space);
+void	v_justified16n(VdiHdl handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD num, _WORD len, _WORD word_space, _WORD char_space);
 
 
 /****** Attribute definitions *****************************************/
@@ -431,53 +431,53 @@ void	v_justified16n(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WO
 #define XBIT_MIDDLE      1
 #define XBIT_BOTTOM      2
 
-_WORD    vswr_mode( _WORD handle, _WORD mode );
-void    vs_color( _WORD handle, _WORD index, const _WORD rgb_in[3] );
-_WORD    vsl_type( _WORD handle, _WORD style );
-void    vsl_udsty( _WORD handle, _WORD pattern );
-_WORD    vsl_width( _WORD handle, _WORD width );
-_WORD    vsl_color( _WORD handle, _WORD color_index );
-void    vsl_ends( _WORD handle, _WORD beg_style, _WORD end_style );
-_WORD    vsm_type( _WORD handle, _WORD symbol );
-_WORD    vsm_height( _WORD handle, _WORD height );
-_WORD    vsm_color( _WORD handle, _WORD color_index );
-void     vst_height( _WORD handle, _WORD height, _WORD *char_width,
+_WORD    vswr_mode(VdiHdl handle, _WORD mode);
+void    vs_color(VdiHdl handle, _WORD index, const _WORD rgb_in[3]);
+_WORD    vsl_type(VdiHdl handle, _WORD style);
+void    vsl_udsty(VdiHdl handle, _WORD pattern);
+_WORD    vsl_width(VdiHdl handle, _WORD width);
+_WORD    vsl_color(VdiHdl handle, _WORD color_index);
+void    vsl_ends(VdiHdl handle, _WORD beg_style, _WORD end_style);
+_WORD    vsm_type(VdiHdl handle, _WORD symbol);
+_WORD    vsm_height(VdiHdl handle, _WORD height);
+_WORD    vsm_color(VdiHdl handle, _WORD color_index);
+void     vst_height(VdiHdl handle, _WORD height, _WORD *char_width,
                     _WORD *char_height, _WORD *cell_width,
-                    _WORD *cell_height );
-_WORD    vst_point( _WORD handle, _WORD point, _WORD *char_width,
+                    _WORD *cell_height);
+_WORD    vst_point(VdiHdl handle, _WORD point, _WORD *char_width,
                     _WORD *char_height, _WORD *cell_width,
-                    _WORD *cell_height );
-_WORD    vst_rotation( _WORD handle, _WORD angle );
-_WORD    vst_font( _WORD handle, _WORD font );
-_WORD    vst_color( _WORD handle, _WORD color_index );
-_WORD    vst_effects( _WORD handle, _WORD effect );
-void    vst_alignment( _WORD handle, _WORD hor_in, _WORD vert_in,
-                       _WORD *hor_out, _WORD *vert_out );
-_WORD    vsf_interior( _WORD handle, _WORD style );
-_WORD    vsf_style( _WORD handle, _WORD style_index );
-_WORD    vsf_color( _WORD handle, _WORD color_index );
-_WORD    vsf_perimeter( _WORD handle, _WORD per_vis );
+                    _WORD *cell_height);
+_WORD    vst_rotation(VdiHdl handle, _WORD angle);
+_WORD    vst_font(VdiHdl handle, _WORD font);
+_WORD    vst_color(VdiHdl handle, _WORD color_index);
+_WORD    vst_effects(VdiHdl handle, _WORD effect);
+void    vst_alignment(VdiHdl handle, _WORD hor_in, _WORD vert_in,
+                       _WORD *hor_out, _WORD *vert_out);
+_WORD    vsf_interior(VdiHdl handle, _WORD style);
+_WORD    vsf_style(VdiHdl handle, _WORD style_index);
+_WORD    vsf_color(VdiHdl handle, _WORD color_index);
+_WORD    vsf_perimeter(VdiHdl handle, _WORD per_vis);
 _WORD vsf_xperimeter(VdiHdl , _WORD vis, _WORD style);
-void    vsf_udpat( _WORD handle, _WORD *pfill_pat, _WORD planes );
+void    vsf_udpat(VdiHdl handle, _WORD *pfill_pat, _WORD planes);
 _WORD v_copies          (VdiHdl , _WORD count);
 _WORD v_orient          (VdiHdl , _WORD orientation);
 _WORD v_page_size       (VdiHdl , _WORD page_id);
 _WORD v_trays           (VdiHdl , _WORD input, _WORD output, _WORD *set_input, _WORD *set_output);
-void v_ps_halftone     (VdiHdl , _WORD _index, _WORD _angle, _WORD _frequency ); 
+void v_ps_halftone     (VdiHdl , _WORD _index, _WORD _angle, _WORD _frequency); 
 _WORD vq_calibrate      (VdiHdl , _WORD *flag);
 _WORD vq_page_name      (VdiHdl , _WORD page_id, char *page_name, _LONG *page_width, _LONG *page_height);
 _WORD vq_tray_names     (VdiHdl , char *input_name, char *output_name, _WORD *input, _WORD *output);
 _WORD vs_calibrate      (VdiHdl , _WORD flag, _WORD *rgb);
 void v_etext(VdiHdl handle, _WORD x, _WORD y, const char *string, _WORD offsets[]);
-void v_tray(_WORD handle, _WORD tray);
-void v_setrgbi(_WORD handle, _WORD primtype, _WORD r, _WORD g, _WORD b, _WORD i);
+void v_tray(VdiHdl handle, _WORD tray);
+void v_setrgbi(VdiHdl handle, _WORD primtype, _WORD r, _WORD g, _WORD b, _WORD i);
 void v_xbit_image(short handle, const char *filename, _WORD aspect, _WORD x_scale, _WORD y_scale, _WORD h_align, _WORD v_align, _WORD rotation, _WORD background, _WORD foreground, _WORD xy[]);
-void v_topbot(_WORD handle, _WORD height, _WORD *char_width, 
+void v_topbot(VdiHdl handle, _WORD height, _WORD *char_width, 
                  _WORD *char_height, _WORD *cell_width, 
                  _WORD *cell_height);
-void vs_bkcolor(_WORD handle, _WORD color);
-void v_pat_rotate(_WORD handle, _WORD angle);
-void vs_grayoverride(_WORD handle, _WORD grayval);
+void vs_bkcolor(VdiHdl handle, _WORD color);
+void v_pat_rotate(VdiHdl handle, _WORD angle);
+void vs_grayoverride(VdiHdl handle, _WORD grayval);
 
 
 /****** Raster definitions *********************************************/
@@ -499,14 +499,14 @@ typedef struct
 } MFDB;
 #endif
 
-void    vro_cpyfm( _WORD handle, _WORD vr_mode, _WORD *pxyarray,
-                   MFDB *psrcMFDB, MFDB *pdesMFDB );
-void    vrt_cpyfm( _WORD handle, _WORD vr_mode, _WORD *pxyarray,
+void    vro_cpyfm(VdiHdl handle, _WORD vr_mode, _WORD *pxyarray,
+                   MFDB *psrcMFDB, MFDB *pdesMFDB);
+void    vrt_cpyfm(VdiHdl handle, _WORD vr_mode, _WORD *pxyarray,
                    MFDB *psrcMFDB, MFDB *pdesMFDB,
-                   _WORD *color_index );
-void    vr_trnfm( _WORD handle, MFDB *psrcMFDB, MFDB *pdesMFDB );
-void    v_get_pixel( _WORD handle, _WORD x, _WORD y, _WORD *pel,
-                     _WORD *index );
+                   _WORD *color_index);
+void    vr_trnfm(VdiHdl handle, MFDB *psrcMFDB, MFDB *pdesMFDB);
+void    v_get_pixel(VdiHdl handle, _WORD x, _WORD y, _WORD *pel,
+                     _WORD *index);
 
 
 /****** Input definitions **********************************************/
@@ -545,127 +545,127 @@ typedef void (*VEX_TIMV)(void);
 typedef void (*VEX_WHEELV)(_WORD wheel_number, _WORD wheel_amount);
 #endif
 
-_WORD    vsin_mode( _WORD handle, _WORD dev_type, _WORD mode );
-void    vrq_locator( _WORD handle, _WORD x, _WORD y, _WORD *xout,
-                     _WORD *yout, _WORD *term );
-_WORD    vsm_locator( _WORD handle, _WORD x, _WORD y, _WORD *xout,
-                     _WORD *yout, _WORD *term );
-void    vrq_valuator( _WORD handle, _WORD valuator_in,
-                      _WORD *valuator_out, _WORD *terminator );
-void    vsm_valuator( _WORD handle, _WORD val_in, _WORD *val_out,
-                      _WORD *term, _WORD *status );
-void    vrq_choice( _WORD handle, _WORD ch_in, _WORD *ch_out );
-_WORD    vsm_choice( _WORD handle, _WORD *choice );
-void vrq_string( _WORD handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, char *string );
-void vrq_string16( _WORD handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, _WORD *string );
-_WORD vsm_string( _WORD handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, char *string );
-_WORD vsm_string16( _WORD handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, _WORD *string );
-void    vsc_form( _WORD handle, _WORD *pcur_form );
-void    vex_timv( _WORD handle, VEX_TIMV tim_addr, VEX_TIMV *otim_addr, _WORD *tim_conv );
-void    v_show_c( _WORD handle, _WORD reset );
-void    v_hide_c( _WORD handle );
-void    vq_mouse( _WORD handle, _WORD *pstatus, _WORD *x, _WORD *y );
-void    vex_butv( _WORD handle, VEX_BUTV pusrcode, VEX_BUTV *psavcode);
-void    vex_motv( _WORD handle, VEX_MOTV pusrcode, VEX_MOTV *psavcode);
-void    vex_curv( _WORD handle, VEX_CURV pusrcode, VEX_CURV *psavcode);
+_WORD    vsin_mode(VdiHdl handle, _WORD dev_type, _WORD mode);
+void    vrq_locator(VdiHdl handle, _WORD x, _WORD y, _WORD *xout,
+                     _WORD *yout, _WORD *term);
+_WORD    vsm_locator(VdiHdl handle, _WORD x, _WORD y, _WORD *xout,
+                     _WORD *yout, _WORD *term);
+void    vrq_valuator(VdiHdl handle, _WORD valuator_in,
+                      _WORD *valuator_out, _WORD *terminator);
+void    vsm_valuator(VdiHdl handle, _WORD val_in, _WORD *val_out,
+                      _WORD *term, _WORD *status);
+void    vrq_choice(VdiHdl handle, _WORD ch_in, _WORD *ch_out);
+_WORD    vsm_choice(VdiHdl handle, _WORD *choice);
+void vrq_string(VdiHdl handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, char *string);
+void vrq_string16(VdiHdl handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, _WORD *string);
+_WORD vsm_string(VdiHdl handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, char *string);
+_WORD vsm_string16(VdiHdl handle, _WORD max_length, _WORD echo_mode, _WORD *echo_xy, _WORD *string);
+void    vsc_form(VdiHdl handle, _WORD *pcur_form);
+void    vex_timv(VdiHdl handle, VEX_TIMV tim_addr, VEX_TIMV *otim_addr, _WORD *tim_conv);
+void    v_show_c(VdiHdl handle, _WORD reset);
+void    v_hide_c(VdiHdl handle);
+void    vq_mouse(VdiHdl handle, _WORD *pstatus, _WORD *x, _WORD *y);
+void    vex_butv(VdiHdl handle, VEX_BUTV pusrcode, VEX_BUTV *psavcode);
+void    vex_motv(VdiHdl handle, VEX_MOTV pusrcode, VEX_MOTV *psavcode);
+void    vex_curv(VdiHdl handle, VEX_CURV pusrcode, VEX_CURV *psavcode);
 void    vex_wheelv(VdiHdl handle, VEX_WHEELV pusrcode, VEX_WHEELV *psavcode);
-void    vq_key_s( _WORD handle, _WORD *pstatus );
+void    vq_key_s(VdiHdl handle, _WORD *pstatus);
 
 
 /****** Inquire definitions *******************************************/
 
-void    vq_extnd( _WORD handle, _WORD owflag, _WORD *work_out );
-_WORD    vq_color( _WORD handle, _WORD color_index,
-                  _WORD set_flag, _WORD *rgb );
-void    vql_attributes( _WORD handle, _WORD *attrib );
-void    vqm_attributes( _WORD handle, _WORD *attrib );
-void    vqf_attributes( _WORD handle, _WORD *attrib );
-void    vqt_attributes( _WORD handle, _WORD *attrib );
-void    vqt_extent( _WORD handle, const char *string, _WORD *extent );
+void    vq_extnd(VdiHdl handle, _WORD owflag, _WORD *work_out);
+_WORD    vq_color(VdiHdl handle, _WORD color_index,
+                  _WORD set_flag, _WORD *rgb);
+void    vql_attributes(VdiHdl handle, _WORD *attrib);
+void    vqm_attributes(VdiHdl handle, _WORD *attrib);
+void    vqf_attributes(VdiHdl handle, _WORD *attrib);
+void    vqt_attributes(VdiHdl handle, _WORD *attrib);
+void    vqt_extent(VdiHdl handle, const char *string, _WORD *extent);
 void  vqt_extent16(VdiHdl handle, const vdi_wchar_t *wstr, _WORD *extent);
-void    vqt_extentn( _WORD handle, const char *string, _WORD len, _WORD *extent );
+void    vqt_extentn(VdiHdl handle, const char *string, _WORD len, _WORD *extent);
 void  vqt_extent16n  (VdiHdl , const vdi_wchar_t *wstr, _WORD num, _WORD *extent);
-_WORD    vqt_width( _WORD handle, _WORD character,
+_WORD    vqt_width(VdiHdl handle, _WORD character,
                    _WORD *cell_width, _WORD *left_delta,
-                   _WORD *right_delta );
-_WORD    vqt_name( _WORD handle, _WORD element_num, char *name);
-void    vq_cellarray( _WORD handle, _WORD *pxyarray,
+                   _WORD *right_delta);
+_WORD    vqt_name(VdiHdl handle, _WORD element_num, char *name);
+void    vq_cellarray(VdiHdl handle, _WORD *pxyarray,
                       _WORD row_length, _WORD num_rows,
                       _WORD *el_used, _WORD *rows_used,
-                      _WORD *status, _WORD *colarray );
-void    vqin_mode( _WORD handle, _WORD dew_type, _WORD *input_mode );
-void    vqt_fontinfo( _WORD handle, _WORD *minADE, _WORD *maxADE,
+                      _WORD *status, _WORD *colarray);
+void    vqin_mode(VdiHdl handle, _WORD dew_type, _WORD *input_mode);
+void    vqt_fontinfo(VdiHdl handle, _WORD *minADE, _WORD *maxADE,
                       _WORD *distances, _WORD *maxwidth,
-                      _WORD *effects );
+                      _WORD *effects);
 
 /****** Escape definitions *********************************************/
 
-void    vq_chcells( _WORD handle, _WORD *rows, _WORD *columns );
-void    v_exit_cur( _WORD handle );
-void    v_enter_cur( _WORD handle );
-void    v_curup( _WORD handle );
-void    v_curdown( _WORD handle );
-void    v_curright( _WORD handle );
-void    v_curleft( _WORD handle );
-void    v_curhome( _WORD handle );
-void    v_eeos( _WORD handle );
-void    v_eeol( _WORD handle );
-void    vs_curaddress( _WORD handle, _WORD row, _WORD column );
-void    v_curaddress( _WORD handle, _WORD row, _WORD column );
-void    v_curtext( _WORD handle, const char *string );
-void	v_curtext16n(_WORD handle, const vdi_wchar_t *wstr, _WORD num);
-void    v_rvon( _WORD handle );
-void    v_rvoff( _WORD handle );
-void    vq_curaddress( _WORD handle, _WORD *row, _WORD *column );
-_WORD    vq_tabstatus( _WORD handle );
-void    v_hardcopy( _WORD handle );
-void    v_dspcur( _WORD handle, _WORD x, _WORD y );
-void    v_rmcur( _WORD handle );
-void    v_form_adv( _WORD handle );
-void    v_output_window( _WORD handle, _WORD *xyarray );
-void    v_clear_disp_list( _WORD handle );
-void    v_bit_image( _WORD handle, const char *filename,
+void    vq_chcells(VdiHdl handle, _WORD *rows, _WORD *columns);
+void    v_exit_cur(VdiHdl handle);
+void    v_enter_cur(VdiHdl handle);
+void    v_curup(VdiHdl handle);
+void    v_curdown(VdiHdl handle);
+void    v_curright(VdiHdl handle);
+void    v_curleft(VdiHdl handle);
+void    v_curhome(VdiHdl handle);
+void    v_eeos(VdiHdl handle);
+void    v_eeol(VdiHdl handle);
+void    vs_curaddress(VdiHdl handle, _WORD row, _WORD column);
+void    v_curaddress(VdiHdl handle, _WORD row, _WORD column);
+void    v_curtext(VdiHdl handle, const char *string);
+void	v_curtext16n(VdiHdl handle, const vdi_wchar_t *wstr, _WORD num);
+void    v_rvon(VdiHdl handle);
+void    v_rvoff(VdiHdl handle);
+void    vq_curaddress(VdiHdl handle, _WORD *row, _WORD *column);
+_WORD    vq_tabstatus(VdiHdl handle);
+void    v_hardcopy(VdiHdl handle);
+void    v_dspcur(VdiHdl handle, _WORD x, _WORD y);
+void    v_rmcur(VdiHdl handle);
+void    v_form_adv(VdiHdl handle);
+void    v_output_window(VdiHdl handle, _WORD *xyarray);
+void    v_clear_disp_list(VdiHdl handle);
+void    v_bit_image(VdiHdl handle, const char *filename,
                      _WORD aspect, _WORD x_scale, _WORD y_scale,
-                     _WORD h_align, _WORD v_align, _WORD *xyarray );
-void    vq_scan( _WORD handle, _WORD *g_slice, _WORD *g_page,
+                     _WORD h_align, _WORD v_align, _WORD *xyarray);
+void    vq_scan(VdiHdl handle, _WORD *g_slice, _WORD *g_page,
                  _WORD *a_slice, _WORD *a_page, _WORD *div_fac);
-void    v_alpha_text( _WORD handle, const char *string );
-void	v_alpha_text16n(_WORD handle, const vdi_wchar_t *wstr, _WORD num);
-_WORD   vs_palette( _WORD handle, _WORD palette );
-void	v_sound( _WORD handle, _WORD frequency, _WORD duration );
-_WORD	vs_mute( _WORD handle, _WORD action );
-_WORD    vqp_films( _WORD handle, char *film_names );
-_WORD    vqp_filmname(_WORD handle, _WORD index, char *name);
-void    vqp_state( _WORD handle, _WORD *port, _WORD *film,
+void    v_alpha_text(VdiHdl handle, const char *string);
+void	v_alpha_text16n(VdiHdl handle, const vdi_wchar_t *wstr, _WORD num);
+_WORD   vs_palette(VdiHdl handle, _WORD palette);
+void	v_sound(VdiHdl handle, _WORD frequency, _WORD duration);
+_WORD	vs_mute(VdiHdl handle, _WORD action);
+_WORD    vqp_films(VdiHdl handle, char *film_names);
+_WORD    vqp_filmname(VdiHdl handle, _WORD index, char *name);
+void    vqp_state(VdiHdl handle, _WORD *port, _WORD *film,
                    _WORD *lightness, _WORD *interlace,
-                   _WORD *planes, _WORD *indexes );
-void    vsp_state( _WORD handle, _WORD port, _WORD film_num,
+                   _WORD *planes, _WORD *indexes);
+void    vsp_state(VdiHdl handle, _WORD port, _WORD film_num,
                    _WORD lightness, _WORD interlace, _WORD planes,
-                   _WORD *indexes );
-void    vsp_save( _WORD handle );
-void    vsp_message( _WORD handle );
-_WORD    vqp_error( _WORD handle );
-void    v_meta_extents( _WORD handle, _WORD min_x, _WORD min_y,
-                        _WORD max_x, _WORD max_y );
-void    v_write_meta( _WORD handle,
+                   _WORD *indexes);
+void    vsp_save(VdiHdl handle);
+void    vsp_message(VdiHdl handle);
+_WORD    vqp_error(VdiHdl handle);
+void    v_meta_extents(VdiHdl handle, _WORD min_x, _WORD min_y,
+                        _WORD max_x, _WORD max_y);
+void    v_write_meta(VdiHdl handle,
                       _WORD num_intin, _WORD *intin,
-                      _WORD num_ptsin, _WORD *ptsin );
-void    vm_coords( _WORD handle, _WORD llx, _WORD lly, _WORD urx, _WORD ury );
-void    vm_filename( _WORD handle, const char *filename );
-void    vm_pagesize( _WORD handle, _WORD pgwidth, _WORD pdheight );
-void    v_offset( _WORD handle, _WORD offset );
-void    v_fontinit( _WORD handle, const void * font_header );
-void    v_escape2000( _WORD handle, _WORD times );
+                      _WORD num_ptsin, _WORD *ptsin);
+void    vm_coords(VdiHdl handle, _WORD llx, _WORD lly, _WORD urx, _WORD ury);
+void    vm_filename(VdiHdl handle, const char *filename);
+void    vm_pagesize(VdiHdl handle, _WORD pgwidth, _WORD pdheight);
+void    v_offset(VdiHdl handle, _WORD offset);
+void    v_fontinit(VdiHdl handle, const void * font_header);
+void    v_escape2000(VdiHdl handle, _WORD times);
 
-void    vt_resolution( _WORD handle, _WORD xres, _WORD yres,
-                       _WORD *xset, _WORD *yset );
-void    vt_axis( _WORD handle, _WORD xres, _WORD yres,
-                 _WORD *xset, _WORD *yset );
-void    vt_origin( _WORD handle, _WORD xorigin, _WORD yorigin );
-void    vq_tdimensions( _WORD handle, _WORD *xdimension, _WORD *ydimension );
-void    vt_alignment( _WORD handle, _WORD dx, _WORD dy );
-void    vsp_film( _WORD handle, _WORD index, _WORD lightness );
-void    vsc_expose( _WORD handle, _WORD state );
+void    vt_resolution(VdiHdl handle, _WORD xres, _WORD yres,
+                       _WORD *xset, _WORD *yset);
+void    vt_axis(VdiHdl handle, _WORD xres, _WORD yres,
+                 _WORD *xset, _WORD *yset);
+void    vt_origin(VdiHdl handle, _WORD xorigin, _WORD yorigin);
+void    vq_tdimensions(VdiHdl handle, _WORD *xdimension, _WORD *ydimension);
+void    vt_alignment(VdiHdl handle, _WORD dx, _WORD dy);
+void    vsp_film(VdiHdl handle, _WORD index, _WORD lightness);
+void    vsc_expose(VdiHdl handle, _WORD state);
 
 
 /* return values for vq_vgdos() inquiry */
@@ -680,18 +680,18 @@ void    vsc_expose( _WORD handle, _WORD state );
 
 /* Testet ob ein GDOS geladen ist */
 /* Achtung, das ABC-GEM (GEM 2.1) schmiert bei dieser Funktion ab!!! */
-_WORD    vq_gdos( void );
-_LONG	vq_vgdos( void );
+_WORD    vq_gdos( void);
+_LONG	vq_vgdos( void);
 
 /****** Bezier definitions *********************************************/
 
-_WORD    v_bez_on( _WORD handle );
-void    v_bez_off( _WORD handle );
-_WORD    v_bez_con( _WORD handle, _WORD onoff );
-void    v_set_app_buff( _WORD handle, void **buf_p, _WORD nparagraphs );
-void    v_bez( _WORD handle, _WORD count, _WORD *xyarr, char *bezarr, _WORD *extent, _WORD *totpts, _WORD *totmoves );
-void    v_bez_fill( _WORD handle, _WORD count, _WORD *xyarr, char *bezarr, _WORD *extent, _WORD *totpts, _WORD *totmoves );
-_WORD   v_bez_qual( _WORD handle, _WORD prcnt, _WORD *actual );
+_WORD    v_bez_on(VdiHdl handle);
+void    v_bez_off(VdiHdl handle);
+_WORD    v_bez_con(VdiHdl handle, _WORD onoff);
+void    v_set_app_buff(VdiHdl handle, void **buf_p, _WORD nparagraphs);
+void    v_bez(VdiHdl handle, _WORD count, _WORD *xyarr, char *bezarr, _WORD *extent, _WORD *totpts, _WORD *totmoves);
+void    v_bez_fill(VdiHdl handle, _WORD count, _WORD *xyarr, char *bezarr, _WORD *extent, _WORD *totpts, _WORD *totmoves);
+_WORD   v_bez_qual(VdiHdl handle, _WORD prcnt, _WORD *actual);
 
 
 /****** FSMGDOS definitions ********************************************/
@@ -732,56 +732,56 @@ typedef struct fsm_component_t
 }   fsm_component_t;
 
 
-void    vqt_f_extent( _WORD handle, const char *string, _WORD *extent );
+void    vqt_f_extent(VdiHdl handle, const char *string, _WORD *extent);
 void	vqt_f_extent16  (VdiHdl, const vdi_wchar_t *str, _WORD extent[]);
-void    vqt_f_extentn( _WORD handle, const char *string, _WORD len, _WORD *extent );
+void    vqt_f_extentn(VdiHdl handle, const char *string, _WORD len, _WORD *extent);
 void	vqt_f_extent16n (VdiHdl, const vdi_wchar_t *str, _WORD num, _WORD extent[]);
-void    v_killoutline( _WORD handle, fsm_component_t *component );
-/* void    v_getoutline( _WORD handle, _WORD ch, fsm_component_t **component ); */
-void    v_getoutline(_WORD handle, _WORD ch, _WORD *xyarray, char *bezarray, _WORD maxpts, _WORD *count);
-void    vst_scratch( _WORD handle, _WORD mode );
-void    vst_error( _WORD handle, _WORD mode, _WORD *errorvar );
-void    vqt_advance( _WORD handle, _WORD ch, _WORD *advx, _WORD *advy,
-                       _WORD *remx, _WORD *remy );
-void    vqt_advance32( _WORD handle, _WORD ch, fix31 *advx, fix31 *advy);
-_WORD    vst_arbpt( _WORD handle, _WORD point, _WORD *chwd, _WORD *chht,
-                   _WORD *cellwd, _WORD *cellht );
-fix31   vst_arbpt32( _WORD handle, fix31 point, _WORD *chwd, _WORD *chht,
-                   _WORD *cellwd, _WORD *cellht );
-void    vqt_devinfo( _WORD handle, _WORD devnum, _WORD *devexits, char *filename, char *device_name );
-_WORD	vq_devinfo(_WORD handle, _WORD device, _WORD *dev_exists, char *file_name, char *device_name);
-_WORD    v_flushcache( _WORD handle );
-void    vqt_cachesize( _WORD handle, _WORD which_cache, _LONG *size );
-void    vqt_get_tables( _WORD handle, _WORD **gascii, _WORD **sytle );
-_WORD    v_loadcache( _WORD handle, const char *filename, _WORD mode );
-_WORD    v_savecache( _WORD handle, const char *filename );
-_WORD    vst_setsize( _WORD handle, _WORD point, _WORD *chwd, _WORD *chht, _WORD *cellwd, _WORD *cellht );
-fix31   vst_setsize32( _WORD handle, fix31 point, _WORD *chwd, _WORD *chht, _WORD *cellwd, _WORD *cellht );
-_WORD    vst_skew( _WORD handle, _WORD skew );
-void	v_shtext( _WORD handle, _WORD x, _WORD y, const char *text, _WORD color, _WORD xshadow, _WORD yshadow);
-void	vqt_get_table(_WORD handle, _WORD **map);
-void	vqt_get_tables( _WORD handle, _WORD **gascii, _WORD **style );
-void	vst_charmap(_WORD handle, _WORD mode);
-void	vst_kern(_WORD handle, _WORD tmode, _WORD pmode, _WORD *tracks, _WORD *pairs);
-void	vqt_fontheader(_WORD handle, char *buffer, char *pathname);
-void	vqt_pairkern(_WORD handle, _WORD ch1, _WORD ch2, fix31 *x, fix31 *y);
-void	vqt_trackkern(_WORD handle, fix31 *x, fix31 *y);
-void	v_getbitmap_info(_WORD handle, _WORD ch,
+void    v_killoutline(VdiHdl handle, fsm_component_t *component);
+/* void    v_getoutline(VdiHdl handle, _WORD ch, fsm_component_t **component); */
+void    v_getoutline(VdiHdl handle, _WORD ch, _WORD *xyarray, char *bezarray, _WORD maxpts, _WORD *count);
+void    vst_scratch(VdiHdl handle, _WORD mode);
+void    vst_error(VdiHdl handle, _WORD mode, _WORD *errorvar);
+void    vqt_advance(VdiHdl handle, _WORD ch, _WORD *advx, _WORD *advy,
+                       _WORD *remx, _WORD *remy);
+void    vqt_advance32(VdiHdl handle, _WORD ch, fix31 *advx, fix31 *advy);
+_WORD    vst_arbpt(VdiHdl handle, _WORD point, _WORD *chwd, _WORD *chht,
+                   _WORD *cellwd, _WORD *cellht);
+fix31   vst_arbpt32(VdiHdl handle, fix31 point, _WORD *chwd, _WORD *chht,
+                   _WORD *cellwd, _WORD *cellht);
+void    vqt_devinfo(VdiHdl handle, _WORD devnum, _WORD *devexits, char *filename, char *device_name);
+_WORD	vq_devinfo(VdiHdl handle, _WORD device, _WORD *dev_exists, char *file_name, char *device_name);
+_WORD    v_flushcache(VdiHdl handle);
+void    vqt_cachesize(VdiHdl handle, _WORD which_cache, _LONG *size);
+void    vqt_get_tables(VdiHdl handle, _WORD **gascii, _WORD **sytle);
+_WORD    v_loadcache(VdiHdl handle, const char *filename, _WORD mode);
+_WORD    v_savecache(VdiHdl handle, const char *filename);
+_WORD    vst_setsize(VdiHdl handle, _WORD point, _WORD *chwd, _WORD *chht, _WORD *cellwd, _WORD *cellht);
+fix31   vst_setsize32(VdiHdl handle, fix31 point, _WORD *chwd, _WORD *chht, _WORD *cellwd, _WORD *cellht);
+_WORD    vst_skew(VdiHdl handle, _WORD skew);
+void	v_shtext(VdiHdl handle, _WORD x, _WORD y, const char *text, _WORD color, _WORD xshadow, _WORD yshadow);
+void	vqt_get_table(VdiHdl handle, _WORD **map);
+void	vqt_get_tables(VdiHdl handle, _WORD **gascii, _WORD **style);
+void	vst_charmap(VdiHdl handle, _WORD mode);
+void	vst_kern(VdiHdl handle, _WORD tmode, _WORD pmode, _WORD *tracks, _WORD *pairs);
+void	vqt_fontheader(VdiHdl handle, char *buffer, char *pathname);
+void	vqt_pairkern(VdiHdl handle, _WORD ch1, _WORD ch2, fix31 *x, fix31 *y);
+void	vqt_trackkern(VdiHdl handle, fix31 *x, fix31 *y);
+void	v_getbitmap_info(VdiHdl handle, _WORD ch,
         	fix31 *advancex, fix31 *advancey, fix31 *xoffset, fix31 *yoffset,
         	_WORD *width, _WORD *height, _WORD **bitmap);
 
 
 
-void	v_opnbm(_WORD *work_in, MFDB *bitmap, _WORD *handle, _WORD *work_out);
-void	v_clsbm(_WORD handle);
-void	vq_scrninfo(_WORD handle, _WORD *work_out);
+void	v_opnbm(_WORD *work_in, MFDB *bitmap, VdiHdl *handle, _WORD *work_out);
+void	v_clsbm(VdiHdl handle);
+void	vq_scrninfo(VdiHdl handle, _WORD *work_out);
 
 void v_get_driver_info(_WORD device, _WORD select, char *info_string);
 
 
-void vqt_real_extent(_WORD handle, _WORD x, _WORD y, const char *string, _WORD *extent);
-void vqt_real_extentn(_WORD handle, _WORD x, _WORD y, const char *string, _WORD len, _WORD *extent);
-void vqt_real_extent16n(_WORD handle, _WORD x, _WORD y, const vdi_wchar_t *wstring, _WORD num, _WORD *extent);
+void vqt_real_extent(VdiHdl handle, _WORD x, _WORD y, const char *string, _WORD *extent);
+void vqt_real_extentn(VdiHdl handle, _WORD x, _WORD y, const char *string, _WORD len, _WORD *extent);
+void vqt_real_extent16n(VdiHdl handle, _WORD x, _WORD y, const vdi_wchar_t *wstring, _WORD num, _WORD *extent);
 
 
 /****** SPEEDO definitions ********************************************/
@@ -806,14 +806,14 @@ typedef struct
 	_WORD height;
 } BIT_IMAGE;
 
-_WORD vq_margins(_WORD handle, _WORD *top, _WORD *bot, _WORD *lft, _WORD *rgt, _WORD *xdpi, _WORD *ydpi);
-_WORD vq_driver_info(_WORD handle, _WORD *lib, _WORD *drv, _WORD *plane, _WORD *attr, char name[27]);
-_WORD vq_bit_image(_WORD handle, _WORD *ver, _WORD *maximg, _WORD *form);
-_WORD vs_page_info(_WORD handle, _WORD type, const char txt[60]);
-_WORD vs_crop(_WORD handle, _WORD ltx1, _WORD lty1, _WORD ltx2, _WORD lty2, _WORD ltlen, _WORD ltoffset);
-_WORD vq_image_type(_WORD handle, const char *file, BIT_IMAGE *img);
-_WORD vs_save_disp_list(_WORD handle, const char *name);
-_WORD vs_load_disp_list(_WORD handle, const char *name);
+_WORD vq_margins(VdiHdl handle, _WORD *top, _WORD *bot, _WORD *lft, _WORD *rgt, _WORD *xdpi, _WORD *ydpi);
+_WORD vq_driver_info(VdiHdl handle, _WORD *lib, _WORD *drv, _WORD *plane, _WORD *attr, char name[27]);
+_WORD vq_bit_image(VdiHdl handle, _WORD *ver, _WORD *maximg, _WORD *form);
+_WORD vs_page_info(VdiHdl handle, _WORD type, const char txt[60]);
+_WORD vs_crop(VdiHdl handle, _WORD ltx1, _WORD lty1, _WORD ltx2, _WORD lty2, _WORD ltlen, _WORD ltoffset);
+_WORD vq_image_type(VdiHdl handle, const char *file, BIT_IMAGE *img);
+_WORD vs_save_disp_list(VdiHdl handle, const char *name);
+_WORD vs_load_disp_list(VdiHdl handle, const char *name);
 
 
 
@@ -845,9 +845,9 @@ typedef struct
 } XFNT_INFO;
 #endif
 
-void    v_ftext( _WORD handle, _WORD x, _WORD y, const char *string );
-void	v_ftext_offset(_WORD handle, _WORD x, _WORD y, const char *sstr, const _WORD *offset);
-void    v_ftextn( _WORD handle, _WORD x, _WORD y, const char *string, _WORD len );
+void    v_ftext(VdiHdl handle, _WORD x, _WORD y, const char *string);
+void	v_ftext_offset(VdiHdl handle, _WORD x, _WORD y, const char *sstr, const _WORD *offset);
+void    v_ftextn(VdiHdl handle, _WORD x, _WORD y, const char *string, _WORD len);
 void	v_ftext16       (VdiHdl, _WORD x, _WORD y, const vdi_wchar_t *wstr);
 void	v_ftext16n      (VdiHdl, _WORD x, _WORD y, const vdi_wchar_t *wstr, _WORD num);
 void	v_ftext_offset16(VdiHdl, _WORD x, _WORD y, const vdi_wchar_t *wstr, const _WORD *offset);
@@ -865,8 +865,8 @@ void  vst_width	(VdiHdl, _WORD width, _WORD *char_width, _WORD *char_height, _WO
 /*
  * The following functions requires NVDI version 4.x or higher
  */
-_WORD vqt_char_index (_WORD handle, _WORD scr_index, _WORD scr_mode, _WORD dst_mode);
-_WORD vst_map_mode   (_WORD handle, _WORD mode);
+_WORD vqt_char_index (VdiHdl handle, _WORD scr_index, _WORD scr_mode, _WORD dst_mode);
+_WORD vst_map_mode   (VdiHdl handle, _WORD mode);
 
 #define vqt_is_char_available(handle,unicode) \
 	(vqt_char_index(handle,unicode,CHARIDX_UNICODE,CHARIDX_DIRECT)!=0xFFFF)
@@ -880,53 +880,53 @@ _WORD vst_map_mode   (_WORD handle, _WORD mode);
 /*----------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------------------*/
-/* Konstanten fr Pixelformate																				*/
+/* Constants for pixel formats															  */
 /*----------------------------------------------------------------------------------------*/
-#define	PX_1COMP	0x01000000L										/* Pixel besteht aus einer benutzten Komponente: Farbindex */
-#define	PX_2COMP	0x02000000L										/* Pixel besteht aus zwei benutzten Komponenten, z.B. AG */
-#define	PX_3COMP	0x03000000L										/* Pixel besteht aus drei benutzten Komponenten, z.B. RGB */
-#define	PX_4COMP	0x04000000L										/* Pixel besteht aus vier benutzten Komponenten, z.B. CMYK */
+#define	PX_1COMP	0x01000000L		/* Pixel consists of one used component: color index */
+#define	PX_2COMP	0x02000000L		/* Pixel consists of two used components, eg. alpha+gray */
+#define	PX_3COMP	0x03000000L		/* Pixel consists of three components used, e.g. RGB */
+#define	PX_4COMP	0x04000000L		/* Pixel consists of four components used, e.g. CMYK */
 
-#define	PX_REVERSED	0x00800000L										/* Pixel wird in umgekehrter Bytreihenfolge ausgegeben */
-#define	PX_xFIRST	0x00400000L										/* unbenutzte Bits liegen vor den benutzen (im Motorola-Format betrachtet) */
-#define	PX_kFIRST	0x00200000L										/* K liegt vor CMY (im Motorola-Format betrachtet) */
-#define	PX_aFIRST	0x00100000L										/* Alphakanal liegen vor den Farbbits (im Motorola-Format betrachtet) */
+#define	PX_REVERSED	0x00800000L		/* Pixel is output in reverse byte order */
+#define	PX_xFIRST	0x00400000L		/* nused bits precede the used bits (viewed in Motorola format) */
+#define	PX_kFIRST	0x00200000L		/* K is in front of CMY (viewed in Motorola format) */
+#define	PX_aFIRST	0x00100000L		/* Alpha channels are in front of the color bits (viewed in Motorola format) */
 
-#define	PX_PACKED	0x00020000L										/* Bits sind aufeinanderfolgend abgelegt */
-#define	PX_PLANES	0x00010000L										/* Bits sind auf mehrere Ebenen verteilt (Reihenfolge: 0, 1, ..., n) */
-#define	PX_IPLANES	0x00000000L										/* Bits sind auf mehrere Worte verteilt (Reihenfolge: 0, 1, ..., n) */
+#define	PX_PACKED	0x00020000L		/* Bits are stored consecutively */
+#define	PX_PLANES	0x00010000L		/* Bits are distributed over separate planes (order: 0, 1, ..., n) */
+#define	PX_IPLANES	0x00000000L		/* Bits are distributed over interleave planes (order: 0, 1, ..., n) */
 
-#define	PX_USES1	0x00000100L										/* 1 Bit des Pixels wird benutzt */
-#define	PX_USES2	0x00000200L										/* 2 Bit des Pixels werden benutzt */
-#define	PX_USES3	0x00000300L										/* 3 Bit des Pixels werden benutzt */
-#define	PX_USES4	0x00000400L										/* 4 Bit des Pixels werden benutzt */
-#define	PX_USES8	0x00000800L										/* 8 Bit des Pixels werden benutzt */
-#define	PX_USES15	0x00000f00L										/* 15 Bit des Pixels werden benutzt */
-#define	PX_USES16	0x00001000L										/* 16 Bit des Pixels werden benutzt */
-#define	PX_USES24	0x00001800L										/* 24 Bit des Pixels werden benutzt */
-#define	PX_USES30	0x00001e00L										/* 30 Bit des Pixels werden benutzt */
-#define	PX_USES32	0x00002000L										/* 32 Bit des Pixels werden benutzt */
-#define	PX_USES48	0x00003000L										/* 48 Bit des Pixels werden benutzt */
+#define	PX_USES1	0x00000100L		/* 1 bit of the pixel is used */
+#define	PX_USES2	0x00000200L		/* 2 bits of the pixel are used */
+#define	PX_USES3	0x00000300L		/* 3 bits of the pixel are used */
+#define	PX_USES4	0x00000400L		/* 4 bits of the pixel are used */
+#define	PX_USES8	0x00000800L		/* 8 bits of the pixel are used */
+#define	PX_USES15	0x00000f00L		/* 15 bits of the pixel are used */
+#define	PX_USES16	0x00001000L		/* 16 bits of the pixel are used */
+#define	PX_USES24	0x00001800L		/* 24 bits of the pixel are used */
+#define	PX_USES30	0x00001e00L		/* 30 bits of the pixel are used */
+#define	PX_USES32	0x00002000L		/* 32 bits of the pixel are used */
+#define	PX_USES48	0x00003000L		/* 48 bits of the pixel are used */
 
-#define	PX_1BIT		0x00000001L										/* Pixel besteht aus 1 Bit */
-#define	PX_2BIT		0x00000002L										/* Pixel besteht aus 2 Bit */
-#define	PX_3BIT		0x00000003L										/* Pixel besteht aus 3 Bit */
-#define	PX_4BIT		0x00000004L										/* Pixel besteht aus 4 Bit */
-#define	PX_8BIT		0x00000008L										/* Pixel besteht aus 8 Bit */
-#define	PX_16BIT	0x00000010L										/* Pixel besteht aus 16 Bit */
-#define	PX_24BIT	0x00000018L										/* Pixel besteht aus 24 Bit */
-#define	PX_32BIT	0x00000020L										/* Pixel besteht aus 32 Bit */
-#define	PX_48BIT	0x00000030L										/* Pixel besteht aus 48 Bit */
-#define	PX_64BIT	0x00000040L										/* Pixel besteht aus 64 Bit */
+#define	PX_1BIT		0x00000001L		/* Pixel consists of 1 bit */
+#define	PX_2BIT		0x00000002L		/* Pixel consists of 2 bit */
+#define	PX_3BIT		0x00000003L		/* Pixel consists of 3 bit */
+#define	PX_4BIT		0x00000004L		/* Pixel consists of 3 bit */
+#define	PX_8BIT		0x00000008L		/* Pixel consists of 8 bit */
+#define	PX_16BIT	0x00000010L		/* Pixel consists of 16 bit */
+#define	PX_24BIT	0x00000018L		/* Pixel consists of 24 bit */
+#define	PX_32BIT	0x00000020L		/* Pixel consists of 32 bit */
+#define	PX_48BIT	0x00000030L		/* Pixel consists of 48 bit */
+#define	PX_64BIT	0x00000040L		/* Pixel consists of 64 bit */
 
-#define	PX_CMPNTS	0x0f000000L										/* Maske fr Anzahl der Pixelkomponenten */
-#define	PX_FLAGS	0x00f00000L										/* Maske fr diverse Flags */
-#define	PX_PACKING	0x00030000L										/* Maske fr Pixelformat */
-#define	PX_USED		0x00003f00L										/* Maske fr Anzahl der benutzten Bits */
-#define	PX_BITS		0x0000003fL										/* Maske fr Anzahl der Bits pro Pixel */
+#define	PX_CMPNTS	0x0f000000L		/* Mask for number of pixel components */
+#define	PX_FLAGS	0x00f00000L		/* Mask for various flags */
+#define	PX_PACKING	0x00030000L		/* Mask for pixel order */
+#define	PX_USED		0x00003f00L		/* Mask for the number of bits used */
+#define	PX_BITS		0x0000003fL		/* Mask for the number of bits per pixel */
 
 /*----------------------------------------------------------------------------------------*/
-/* Pixelformate fr ATARI-Grafik																				*/
+/* Pixel formats for ATARI graphics														  */
 /*----------------------------------------------------------------------------------------*/
 #define	PX_ATARI1	( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
 #define	PX_ATARI2	( PX_IPLANES | PX_1COMP | PX_USES2 | PX_2BIT )
@@ -935,7 +935,7 @@ _WORD vst_map_mode   (_WORD handle, _WORD mode);
 #define	PX_FALCON15	( PX_PACKED | PX_3COMP | PX_USES16 | PX_16BIT )
 
 /*----------------------------------------------------------------------------------------*/
-/* Pixelformate fr Macintosh																					*/
+/* Pixel formats for Macintosh															  */
 /*----------------------------------------------------------------------------------------*/
 #define	PX_MAC1		( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
 #define	PX_MAC4		( PX_PACKED | PX_1COMP | PX_USES4 | PX_4BIT )
@@ -944,7 +944,7 @@ _WORD vst_map_mode   (_WORD handle, _WORD mode);
 #define	PX_MAC32	( PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
-/* Pixelformate fr Grafikkarten																				*/
+/* Pixel formats for graphics cards														  */
 /*----------------------------------------------------------------------------------------*/
 #define	PX_VGA1		( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
 #define	PX_VGA4		( PX_PLANES | PX_1COMP | PX_USES4 | PX_4BIT )
@@ -959,16 +959,15 @@ _WORD vst_map_mode   (_WORD handle, _WORD mode);
 #define	PX_NOVA32	( PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
-/* Pixelformate fr Drucker																					*/
+/* Pixel formats for printers															  */
 /*----------------------------------------------------------------------------------------*/
 #define	PX_PRN1		( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
 #define	PX_PRN8		( PX_PACKED | PX_1COMP | PX_USES8 | PX_8BIT )
 #define	PX_PRN32	( PX_xFIRST | PX_PACKED | PX_3COMP | PX_USES24 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
-/* bevorzugte (schnelle) Pixelformate fr Bitmaps 														*/
+/* Preferred Transfer modes for bitmaps												      */
 /*----------------------------------------------------------------------------------------*/
-
 #define	PX_PREF1	( PX_PACKED | PX_1COMP | PX_USES1 | PX_1BIT )
 #define	PX_PREF2	( PX_PACKED | PX_1COMP | PX_USES2 | PX_2BIT )
 #define	PX_PREF4	( PX_PACKED | PX_1COMP | PX_USES4 | PX_4BIT )
@@ -982,7 +981,7 @@ _WORD vst_map_mode   (_WORD handle, _WORD mode);
 #define	PX_BGRA		( PX_REVERSED | PX_PACKED | PX_3COMP | PX_USES32 | PX_32BIT )
 
 /*----------------------------------------------------------------------------------------*/
-/* Farbtabellen																									*/
+/* Color tables																			  */
 /*----------------------------------------------------------------------------------------*/
 
 enum
@@ -1051,7 +1050,7 @@ typedef struct
 	COLOR_ENTRY	colors[1];
 } COLOR_TAB;
 
-/* vordefinierte Tabelle mit 256 Eintr„gen */
+/** Color table with 256 colors */
 typedef struct
 {
 	int32_t		magic;				/* 'ctab' */
@@ -1084,41 +1083,37 @@ typedef INVERSE_CTAB *ITAB_REF;
 typedef struct _gcbitmap GCBITMAP;
 struct _gcbitmap
 {
-	int32_t		magic;			/* Strukturkennung 'cbtm' */
-	int32_t		length;			/* Strukturl„nge */
-	int32_t		format;			/* Strukturformat (0) */
-	int32_t		reserved;		/* reserviert (0) */
+	int32_t		magic;			/* Structure identifier 'cbtm' */
+	int32_t		length;			/* Structure length */
+	int32_t		format;			/* Structure format (0) */
+	int32_t		reserved;		/* Reserved (0) */
 
-	unsigned char *addr;		/* Adresse der Bitmap */
-	int32_t		width;			/* Breite einer Zeile in Bytes */
-	int32_t		bits;			/* Bittiefe */
-	uint32_t	px_format;		/* Pixelformat */
+	unsigned char *addr;		/* Bitmap address */
+	int32_t		width;			/* Width of a line in byte */
+	int32_t		bits;			/* Bit depth */
+	uint32_t	px_format;		/* Pixel format */
 
-	int32_t		xmin;			/* minimale diskrete x-Koordinate der Bitmap */
-	int32_t		ymin;			/* minimale diskrete y-Koordinate der Bitmap */
-	int32_t		xmax;			/* maximale diskrete x-Koordinate der Bitmap + 1 */
-	int32_t		ymax;			/* maximale diskrete y-Koordinate der Bitmap + 1 */
+	int32_t		xmin;			/* minimum discrete x-coordinate of the bitmap */
+	int32_t		ymin;			/* minimum discrete y-coordinate of the bitmap */
+	int32_t		xmax;			/* maximum discrete x-coordinate of the bitmap + 1 */
+	int32_t		ymax;			/* maximum discrete y-coordinate of the bitmap + 1 */
 
-	CTAB_REF	ctab;			/* Verweis auf die Farbtabelle oder 0L */
-	ITAB_REF 	itab;			/* Verweis auf die inverse Farbtabelle oder 0L */
-	int32_t		color_space;	/* Farbraum */
-	int32_t		reserved1;		/* reserviert (0) */
+	CTAB_REF	ctab;			/* Reference to the color table or 0L */
+	ITAB_REF 	itab;			/* Reference to the inverse color table or 0L */
+	int32_t		color_space;	/* Color space */
+	int32_t		reserved1;		/* Reserved (0) */
 };
 
-/*----------------------------------------------------------------------------------------*/
-/* Transfermodes for Bitmaps															  */
-/*----------------------------------------------------------------------------------------*/
-
-/* Moduskonstanten */
-#define	T_NOT				4	/* Konstante fr Invertierung bei logischen Transfermodi */
-#define	T_COLORIZE			16	/* Konstante fr Einf„rbung */
+/* Mode constants */
+#define	T_NOT				4	/* Constant for inversion in logical transfer modes */
+#define	T_COLORIZE			16	/* Constant for coloring */
 
 #define	T_LOGIC_MODE		0
 #define	T_DRAW_MODE			32
-#define	T_ARITH_MODE		64	/* Konstante fr Arithmetische Transfermodi */
-#define	T_DITHER_MODE		128	/* Konstante frs Dithern */
+#define	T_ARITH_MODE		64	/* Constants for arithmetic transfer modes */
+#define	T_DITHER_MODE		128	/* Constant for dithering */
 
-/* logische Transfermodi */
+/* Logical transfer modes */
 #define	T_LOGIC_COPY		(T_LOGIC_MODE+0)
 #define	T_LOGIC_OR			(T_LOGIC_MODE+1)
 #define	T_LOGIC_XOR			(T_LOGIC_MODE+2)
@@ -1128,13 +1123,13 @@ struct _gcbitmap
 #define	T_LOGIC_NOT_XOR		(T_LOGIC_MODE+6)
 #define	T_LOGIC_NOT_AND		(T_LOGIC_MODE+7)
 
-/* Zeichenmodi */
+/* Drawing modes */
 #define	T_REPLACE			 (T_DRAW_MODE+0)
 #define	T_TRANSPARENT		 (T_DRAW_MODE+1)
 #define	T_HILITE			 (T_DRAW_MODE+2)
 #define	T_REVERS_TRANSPARENT (T_DRAW_MODE+3)
 
-/* arithmetische Transfermodi */
+/* Arithmetische Transfermodi */
 #define	T_BLEND				(T_ARITH_MODE+0)
 #define	T_ADD				(T_ARITH_MODE+1)
 #define	T_ADD_OVER			(T_ARITH_MODE+2)
@@ -1163,61 +1158,61 @@ typedef struct			/* Rechteck fr 32-Bit-Koordinaten */
 #endif
 
 
-int32_t		v_color2nearest		(_WORD handle, int32_t color_space, COLOR_ENTRY *color, COLOR_ENTRY *nearest_color);
-uint32_t	v_color2value		(_WORD handle, int32_t color_space, COLOR_ENTRY *color);
-COLOR_TAB *	v_create_ctab		(_WORD handle, int32_t color_space, uint32_t px_format);
-ITAB_REF	v_create_itab		(_WORD handle, COLOR_TAB *ctab, _WORD bits );
-uint32_t	v_ctab_idx2value	(_WORD handle, _WORD __index );
-_WORD		v_ctab_idx2vdi		(_WORD handle, _WORD __index);
-_WORD		v_ctab_vdi2idx		(_WORD handle, _WORD vdi_index);
-_WORD		v_delete_ctab		(_WORD handle, COLOR_TAB *ctab);
-_WORD		v_delete_itab		(_WORD handle, ITAB_REF itab);
-int32_t		v_get_ctab_id		(_WORD handle);
-_WORD		v_get_outline		(_WORD handle, _WORD __index, _WORD x_offset, _WORD y_offset, _WORD *pts, char *flags, _WORD max_pts);
-_WORD		v_open_bm		(_WORD base_handle, GCBITMAP *bitmap, _WORD color_flags, _WORD unit_flags, _WORD pixel_width, _WORD pixel_height);
-_WORD		v_resize_bm		(_WORD handle, _WORD width, _WORD height, int32_t b_width, unsigned char *addr);
-void		v_setrgb		(_WORD handle, _WORD type, _WORD r, _WORD g, _WORD b);
-int32_t		v_value2color		(_WORD handle, uint32_t value, COLOR_ENTRY *color);
-_WORD		vq_ctab			(_WORD handle, int32_t ctab_length, COLOR_TAB *ctab);
-int32_t		vq_ctab_entry		(_WORD handle, _WORD __index, COLOR_ENTRY *color);
-int32_t		vq_ctab_id		(_WORD handle);
-_WORD		vq_dflt_ctab		(_WORD handle, int32_t ctab_length, COLOR_TAB *ctab);
-int32_t		vq_hilite_color		(_WORD handle, COLOR_ENTRY *hilite_color);
-_WORD		vq_margins		(_WORD handle, _WORD *top_margin, _WORD *bottom_margin, _WORD *left_margin, _WORD *right_margin, _WORD *hdpi, _WORD *vdpi);
-int32_t		vq_max_color		(_WORD handle, COLOR_ENTRY *hilite_color);
-int32_t		vq_min_color		(_WORD handle, COLOR_ENTRY *hilite_color);
-int32_t		vq_prn_scaling		(_WORD handle);
-int32_t		vq_px_format		(_WORD handle, uint32_t *px_format);
-int32_t		vq_weight_color		(_WORD handle, COLOR_ENTRY *hilite_color);
-int32_t		vqf_bg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vqf_fg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vql_bg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vql_fg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vqm_bg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vqm_fg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vqr_bg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vqr_fg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vqt_bg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-int32_t		vqt_fg_color		(_WORD handle, COLOR_ENTRY *fg_color);
-void		vr_transfer_bits	(_WORD handle, GCBITMAP *src_bm, GCBITMAP *dst_bm, const _WORD *src_rect, const _WORD *dst_rect, _WORD mode);
-_WORD		vs_ctab			(_WORD handle, COLOR_TAB *ctab);
-_WORD		vs_ctab_entry		(_WORD handle, _WORD __index, int32_t color_space, COLOR_ENTRY *color);
-_WORD		vs_dflt_ctab		(_WORD handle);
+int32_t		v_color2nearest		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *color, COLOR_ENTRY *nearest_color);
+uint32_t	v_color2value		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *color);
+COLOR_TAB *	v_create_ctab		(VdiHdl handle, int32_t color_space, uint32_t px_format);
+ITAB_REF	v_create_itab		(VdiHdl handle, COLOR_TAB *ctab, _WORD bits);
+uint32_t	v_ctab_idx2value	(VdiHdl handle, _WORD __index);
+_WORD		v_ctab_idx2vdi		(VdiHdl handle, _WORD __index);
+_WORD		v_ctab_vdi2idx		(VdiHdl handle, _WORD vdi_index);
+_WORD		v_delete_ctab		(VdiHdl handle, COLOR_TAB *ctab);
+_WORD		v_delete_itab		(VdiHdl handle, ITAB_REF itab);
+int32_t		v_get_ctab_id		(VdiHdl handle);
+_WORD		v_get_outline		(VdiHdl handle, _WORD __index, _WORD x_offset, _WORD y_offset, _WORD *pts, char *flags, _WORD max_pts);
+VdiHdl		v_open_bm		(VdiHdl base_handle, GCBITMAP *bitmap, _WORD color_flags, _WORD unit_flags, _WORD pixel_width, _WORD pixel_height);
+_WORD		v_resize_bm		(VdiHdl handle, _WORD width, _WORD height, int32_t b_width, unsigned char *addr);
+void		v_setrgb		(VdiHdl handle, _WORD type, _WORD r, _WORD g, _WORD b);
+int32_t		v_value2color		(VdiHdl handle, uint32_t value, COLOR_ENTRY *color);
+_WORD		vq_ctab			(VdiHdl handle, int32_t ctab_length, COLOR_TAB *ctab);
+int32_t		vq_ctab_entry		(VdiHdl handle, _WORD __index, COLOR_ENTRY *color);
+int32_t		vq_ctab_id		(VdiHdl handle);
+_WORD		vq_dflt_ctab		(VdiHdl handle, int32_t ctab_length, COLOR_TAB *ctab);
+int32_t		vq_hilite_color		(VdiHdl handle, COLOR_ENTRY *hilite_color);
+_WORD		vq_margins		(VdiHdl handle, _WORD *top_margin, _WORD *bottom_margin, _WORD *left_margin, _WORD *right_margin, _WORD *hdpi, _WORD *vdpi);
+int32_t		vq_max_color		(VdiHdl handle, COLOR_ENTRY *hilite_color);
+int32_t		vq_min_color		(VdiHdl handle, COLOR_ENTRY *hilite_color);
+int32_t		vq_prn_scaling		(VdiHdl handle);
+int32_t		vq_px_format		(VdiHdl handle, uint32_t *px_format);
+int32_t		vq_weight_color		(VdiHdl handle, COLOR_ENTRY *hilite_color);
+int32_t		vqf_bg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vqf_fg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vql_bg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vql_fg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vqm_bg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vqm_fg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vqr_bg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vqr_fg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vqt_bg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+int32_t		vqt_fg_color		(VdiHdl handle, COLOR_ENTRY *fg_color);
+void		vr_transfer_bits	(VdiHdl handle, GCBITMAP *src_bm, GCBITMAP *dst_bm, const _WORD *src_rect, const _WORD *dst_rect, _WORD mode);
+_WORD		vs_ctab			(VdiHdl handle, COLOR_TAB *ctab);
+_WORD		vs_ctab_entry		(VdiHdl handle, _WORD __index, int32_t color_space, COLOR_ENTRY *color);
+_WORD		vs_dflt_ctab		(VdiHdl handle);
 _WORD		vs_document_info	(_WORD vdi_handle, _WORD type, const char *s, _WORD wchar);
-_WORD		vs_hilite_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *hilite_color);
-_WORD		vs_max_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *min_color);
-_WORD		vs_min_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *min_color);
-_WORD		vs_weight_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *weight_color);
-_WORD		vsf_bg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *bg_color);
-_WORD		vsf_fg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *fg_color);
-_WORD		vsl_bg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *bg_color);
-_WORD		vsl_fg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *fg_color);
-_WORD		vsm_bg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *bg_color);
-_WORD		vsm_fg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *fg_color);
-_WORD		vsr_bg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *bg_color);
-_WORD		vsr_fg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *fg_color);
-_WORD		vst_bg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *bg_color);
-_WORD		vst_fg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *fg_color);
+_WORD		vs_hilite_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *hilite_color);
+_WORD		vs_max_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *min_color);
+_WORD		vs_min_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *min_color);
+_WORD		vs_weight_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *weight_color);
+_WORD		vsf_bg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *bg_color);
+_WORD		vsf_fg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *fg_color);
+_WORD		vsl_bg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *bg_color);
+_WORD		vsl_fg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *fg_color);
+_WORD		vsm_bg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *bg_color);
+_WORD		vsm_fg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *fg_color);
+_WORD		vsr_bg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *bg_color);
+_WORD		vsr_fg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *fg_color);
+_WORD		vst_bg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *bg_color);
+_WORD		vst_fg_color		(VdiHdl handle, int32_t color_space, COLOR_ENTRY *fg_color);
 
 
 /*
@@ -1327,6 +1322,7 @@ _WORD		vst_fg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *fg_color);
 #define udef_vqt_attributes vqt_attributes
 #define udef_vqt_cachesize vqt_cachesize
 #define udef_vqt_extent vqt_extent
+#define udef_vqt_real_extent vqt_real_extent
 #define udef_vqt_extent16 vqt_extent16
 #define udef_vqt_extent16n vqt_extent16n
 #define udef_vqt_fontinfo vqt_fontinfo
@@ -1383,10 +1379,10 @@ _WORD		vst_fg_color		(_WORD handle, int32_t color_space, COLOR_ENTRY *fg_color);
  * Some useful extensions.
  */
 
-void  vdi_array2str (const _WORD *src, char  *des, _WORD len);
-_WORD vdi_str2array (const char  *src, _WORD *des);
-_WORD vdi_str2arrayn (const char  *src, _WORD *des, _WORD len);
-_WORD vdi_wstrlen   (const _WORD *wstr);
+void  vdi_array2str(const _WORD *src, char  *des, _WORD len);
+_WORD vdi_str2array(const char  *src, _WORD *des);
+_WORD vdi_str2arrayn(const char  *src, _WORD *des, _WORD len);
+_WORD vdi_wstrlen(const _WORD *wstr);
 
 EXTERN_C_END
 

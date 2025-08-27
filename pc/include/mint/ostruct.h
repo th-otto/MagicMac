@@ -169,7 +169,6 @@ typedef struct
  */
 #define        PE_GO_FREE          6           /* just go, then free */
 
-#ifdef __MINT__
 #define        PE_CBASEPAGE_FLAGS  7           /* create basepage defining the program flags */
 #define        PE_ASYNC_LOADGO	   100	       /* load and asynchronously go */
 #define        PE_INIT             101         /* Inherits path- and file-handles (MagiC) */
@@ -181,7 +180,6 @@ typedef struct
 #define        PE_OVERLAY	       200	       /* load and overlay	     */
 #define        PE_OVERLAY_GO       204         /* overlay and go */
 #define        PE_OVERLAY_GO_FREE  206         /* overlay, go and free */
-#endif
 
 #define        PE_PTRACE           0x8000      /* activate tracing */
 

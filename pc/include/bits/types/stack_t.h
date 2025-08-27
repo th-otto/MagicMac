@@ -22,6 +22,10 @@
 #define __need_size_t
 #include <stddef.h>
 
+#ifndef	_BITS_TYPES_H
+#include <bits/types.h>
+#endif
+
 /* Structure describing a signal stack.  */
 typedef struct
   {

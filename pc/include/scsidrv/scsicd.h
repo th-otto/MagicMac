@@ -1,4 +1,3 @@
-/*{{{}}}*/
 /*********************************************************************
  *
  * Kommandos zum Zugriff auf CD-ROMs
@@ -43,7 +42,7 @@
 /*-   FALSE : CD spielt weiter                                            -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG PauseResume(BOOLEAN Pause);
+long PauseResume(int Pause);
 
 
 /*-------------------------------------------------------------------------*/
@@ -52,18 +51,18 @@ LONG PauseResume(BOOLEAN Pause);
 /*- SCSI-Opcode $A5                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG PlayAudio(LONG BlockAdr, LONG TransLength);
+long PlayAudio(long BlockAdr, long TransLength);
 
 
 typedef union
 {
   struct {
-  BYTE Resrvd;
-  BYTE M;
-  BYTE S;
-  BYTE F;
+	unsigned char Resrvd;
+    unsigned char M;
+    unsigned char S;
+    unsigned char F;
   } s;
-  ULONG longval;
+  unsigned long longval;
 }tMSF;
 
 /*-------------------------------------------------------------------------*/
@@ -74,7 +73,7 @@ typedef union
 /*-                                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG PlayAudioMSF(tMSF Start, tMSF Stop);
+long PlayAudioMSF(tMSF Start, tMSF Stop);
 
 
 /*-------------------------------------------------------------------------*/
@@ -84,7 +83,7 @@ LONG PlayAudioMSF(tMSF Start, tMSF Stop);
 /*-                                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG PlayAudioTrack(UWORD StartTrack, UWORD StartIndex, UWORD EndTrack, UWORD EndIndex);
+long PlayAudioTrack(unsigned short StartTrack, unsigned short StartIndex, unsigned short EndTrack, unsigned short EndIndex);
 
 
 /*-------------------------------------------------------------------------*/
@@ -95,7 +94,7 @@ LONG PlayAudioTrack(UWORD StartTrack, UWORD StartIndex, UWORD EndTrack, UWORD En
 /*-                                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG PlayAudioRelative(UWORD StartTrack, ULONG RelAdr, ULONG Len);
+long PlayAudioRelative(unsigned short StartTrack, unsigned long RelAdr, unsigned long Len);
 
 
 /*-------------------------------------------------------------------------*/
@@ -106,8 +105,7 @@ LONG PlayAudioRelative(UWORD StartTrack, ULONG RelAdr, ULONG Len);
 /*-                                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG ReadHeader(BOOLEAN  MSF, ULONG BlockAdr,
-                BYTE    *Mode, tMSF *AbsoluteAdr);
+long ReadHeader(int  MSF, unsigned long BlockAdr, char *Mode, tMSF *AbsoluteAdr);
 
 /* Werte fÅr SubFormat */
 #define SubQ      0
@@ -133,7 +131,7 @@ LONG ReadHeader(BOOLEAN  MSF, ULONG BlockAdr,
 #define DATATRACK     4
 #define FOURCHANNEL   8
 
-#if 0
+
 /* ControlBits:
  Bit          0                                 1
   0       Audio without pre-emphasis    Audio with pre-emphasis  
@@ -141,100 +139,34 @@ LONG ReadHeader(BOOLEAN  MSF, ULONG BlockAdr,
   2       Audio track                   Data track               
   3       Two channel audio             Four channel audio       
  */
-
-TYPE  tADRControl = (Ctrl0, Ctrl1, Ctrl2, Ctrl3,
-                     Adr0, Adr1, Adr2, Adr3);
-      tsADRControl = SET OF tADRControl;
-      tSubData = RECORD
-                  Res0        : BYTE;
-                  AudioStatus : UChar;
-                  SubLen      : SHORTCARD;  /* Header 4 Bytes */
-
-                  SubFormat   : BYTE;
-                  ADRControl  : tsADRControl;
-                  TrackNo     : UChar;
-
-                  CASE : SHORTCARD OF
-                    SubQ      :
-                                QIndex    : UChar;
-                                QAbsAdr   : tMSF;       /* auf der CD */
-                                QRelAdr   : tMSF;       /* im Track   */
-                                QMCVal    : BYTE;       /* Bit 8 */
-                                QUPC14    : BYTE;
-                                QUPC      : ARRAY[0..13] OF BYTE;
-                                QTCVal    : BYTE;       /* Bit 8 */
-                                QISRC14   : BYTE;
-                                QISRC     : ARRAY[0..13] OF BYTE;
-                                /* SubQ : insgesamt 48 Bytes */
-
-                   |CDPos     :
-                                IndexNo   : UChar;
-                                AbsAdr    : tMSF;       /* auf der CD */
-                                RelAdr    : tMSF;       /* im Track   */
-                                /* CDPos : insgesamt 16 Bytes */
-
-                   |MediaCatNo:
-                                upcRes7   : BYTE;
-                                MCVal     : BYTE;       /* Bit 8 */
-                                UPC14     : BYTE;
-                                UPC       : ARRAY[0..13] OF BYTE;
-                                /* MediaCatNo : insgesamt 24 Bytes */
-
-                   |TrackISRC :
-                                isrcRes7  : BYTE;
-                                TCVal     : BYTE;       /* Bit 8 */
-                                ISRC14    : BYTE;
-                                ISRC      : ARRAY[0..13] OF BYTE;
-                                /* TrackISR : insgesamt 24 Bytes */
-                  END;
-                END;
-#endif
-
 typedef struct{
-  BYTE  Res0;
-  UCHAR AudioStatus;
-  UWORD SubLen;           /* Header 4 Bytes */
+  char  Res0;
+  unsigned char AudioStatus;
+  unsigned short SubLen;           /* Header 4 Bytes */
 
-  BYTE  SubFormat;
-  BYTE  ADRControl;
-  UCHAR TrackNo;
+  signed char  SubFormat;
+  unsigned char  ADRControl;
+  unsigned char TrackNo;
   union{
     struct{
-      UCHAR QIndex;
+      unsigned char QIndex;
       tMSF QAbsAdr;         /* auf der CD */
       tMSF QRelAdr;         /* im Track   */
-      BYTE QMCVal;          /* Bit 8 */
-      BYTE QUPC14;
-      BYTE QUPC[14];
-      BYTE QTCVal;          /* Bit 8 */
-      BYTE QISRC14;
-      BYTE QISRC[14];
+      signed char QMCVal;   /* Bit 8 */
+      signed char QUPC14;
+      char QUPC[14];
+      unsigned char QTCVal;          /* Bit 8 */
+      unsigned char QISRC14;
+      char QISRC[14];
       /* SubQ : insgesamt 48 Bytes */
     } subq;
     struct {
-      UCHAR   IndexNo;
+      unsigned char   IndexNo;
       tMSF    AbsAdr;       /* auf der CD */
       tMSF    RelAdr;       /* im Track   */
       /* CDPos : insgesamt 16 Bytes */
     } cdpos;
   } data;
-#if 0
-                   |MediaCatNo:
-                                upcRes7   : BYTE;
-                                MCVal     : BYTE;       /* Bit 8 */
-                                UPC14     : BYTE;
-                                UPC       : ARRAY[0..13] OF BYTE;
-                                /* MediaCatNo : insgesamt 24 Bytes */
-
-                   |TrackISRC :
-                                isrcRes7  : BYTE;
-                                TCVal     : BYTE;       /* Bit 8 */
-                                ISRC14    : BYTE;
-                                ISRC      : ARRAY[0..13] OF BYTE;
-                                /* TrackISR : insgesamt 24 Bytes */
-                  END;
-                END;
-#endif
 } tSubData;
 
 /*-------------------------------------------------------------------------*/
@@ -245,26 +177,24 @@ typedef struct{
 /*-                                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG ReadSubChannel(BOOLEAN MSF, BOOLEAN SUBQ,
-                       UWORD SubFormat, UWORD Track,
-                       void *Data, UWORD Len);
+long ReadSubChannel(int MSF, int SUBQ, unsigned short SubFormat, unsigned short Track, void *Data, unsigned short Len);
 
 
 
 #define MAXTOC 100          /* Maximum laut SCSI-2 */
 typedef struct{
-  BYTE  Res0;
-  UBYTE ADRControl;
-  UCHAR TrackNo;
-  BYTE  Res3;
+  unsigned char Res0;
+  unsigned char ADRControl;
+  unsigned char TrackNo;
+  char  Res3;
   tMSF  AbsAddress;
-}tTOCEntry;
+} tTOCEntry;
 
 typedef struct
 {
-  UWORD TOCLen;           /* ohne TOCLen-Feld */
-  UCHAR FirstTrack;
-  UCHAR LastTrack;
+  unsigned short TOCLen;           /* ohne TOCLen-Feld */
+  unsigned char FirstTrack;
+  unsigned char LastTrack;
 }tTOCHead;
 
 typedef struct
@@ -282,15 +212,13 @@ typedef struct
 /*-                                                                       -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
-LONG ReadTOC(BOOLEAN MSF, UWORD StartTrack,
-                  void *Buffer, UWORD Len);
+long ReadTOC(int MSF, unsigned short StartTrack, void *Buffer, unsigned short Len);
 
 
-LONG ReadCDDA12(ULONG BlockAdr,
-                UWORD TransferLen, void *buffer);
+long ReadCDDA12(unsigned long BlockAdr, unsigned short TransferLen, void *buffer);
 
 
-BOOLEAN init_scsicd(void);
+int init_scsicd(void);
 
 
 #endif

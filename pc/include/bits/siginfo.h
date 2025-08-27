@@ -38,6 +38,10 @@ typedef union sigval
      && (defined _SIGNAL_H || defined __need_siginfo_t))
 # define __have_siginfo_t	1
 
+#ifndef	_BITS_TYPES_H
+#include <bits/types.h>
+#endif
+
 typedef struct siginfo
   {
     int si_signo;		/* Signal number.  */

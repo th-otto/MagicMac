@@ -58,6 +58,7 @@ struct nf_ops
 #define NF_ID_SCSI      "NF_SCSIDRV"
 #define NF_ID_HOSTEXEC  "HOSTEXEC"
 #define NF_ID_CONFIG    "NF_CONFIG"
+#define NF_ID_DEBUGGER  "NF_DEBUGGER"
 
 
 __BEGIN_DECLS
@@ -141,6 +142,11 @@ int nf_debugvprintf(const char *fmt, va_list args);
  */
 long nf_exec(const char *cmd);
 long nf_execv(long argc, const char *const *argv);
+
+/*
+ * Invoke Hatari debugger
+ */
+void nf_debugger(void);
 
 __END_DECLS
 

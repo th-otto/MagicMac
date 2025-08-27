@@ -573,6 +573,36 @@ typedef struct rshdr
 	_UWORD	rsh_nimages;
 	_UWORD	rsh_rssize;		/* total bytes in resource */
 } RSHDR;
+
+#ifndef __RSXHDR
+#define __RSXHDR
+/** TODO */
+typedef struct rsxhdr
+{
+	unsigned short	rsh_vrsn;     /**< Version, should be 3 for extended (32bit) format */
+	unsigned short	rsh_extvrsn;  /**< Not used, initialised to 'IN' for Interface */
+
+	unsigned long	rsh_object;     /**< Offset to OBJECT structures from file start */
+	unsigned long	rsh_tedinfo;        /**< Offset to TEDINFO structures */
+	unsigned long	rsh_iconblk;  /**< Offset to ICONBLK structures */
+	unsigned long	rsh_bitblk;     /**< Offset to BITBLK structures */
+	unsigned long	rsh_frstr;      /**< Offset to string pointer table */
+	unsigned long	rsh_string;     /**< Offset to string data */
+	unsigned long	rsh_imdata;   /**< Offset to image data */
+	unsigned long	rsh_frimg;      /**< Offset to image pointer table */
+	unsigned long	rsh_trindex;        /**< Offset to tree pointer table */
+
+	unsigned long	rsh_nobs;     /**< Number of OBJECTs in the file */
+	unsigned long	rsh_ntree;      /**< Number of object tress in the file */
+	unsigned long	rsh_nted;       /**< Number of TEDINFOs in the file */
+	unsigned long	rsh_nib;        /**< Number of ICONBLKs in the file */
+	unsigned long	rsh_nbb;        /**< Number of BITBLKs in the file */
+	unsigned long	rsh_nstring;        /**< Number of free strings in the file */
+	unsigned long	rsh_nimages;        /**< Number of free images in the file */
+	unsigned long	rsh_rssize;   /**< Total bytes in resource                     */
+} RSXHDR;
+#endif
+
 #endif
 
 
@@ -1145,10 +1175,10 @@ typedef struct
  *  as follows:
  *  <table>
  *  <tr><td>\a ap_event <td> \a ap_value
- *  <tr><td> #APPEVNT_TIMER (0) <td> Elapsed Time (in milliseconds)
- *  <tr><td> #APPEVNT_BUTTON (1) <td> low word  = state (1 = down), high word = # of clicks
- *  <tr><td> #APPEVNT_MOUSE (2) <td> low word  = X pos, high word = Y pos
- *  <tr><td> #APPEVNT_KEYBOARD (3) <td> bits 0-7 = ASCII code, bits 8-15 = scan code, bits 16-31 = shift key
+ *  <tr><td> #APPEVNT_TIMER (0) <td> Elapsed Time (in 20ms ticks)
+ *  <tr><td> #APPEVNT_BUTTON (1) <td> high word  = state (1 = down), low word = # of clicks
+ *  <tr><td> #APPEVNT_MOUSE (2) <td> high word  = X pos, low word = Y pos
+ *  <tr><td> #APPEVNT_KEYBOARD (3) <td> bits 24-31 = scan code, bits 16-23 = ASCII code, bits 0-7 = shift state
  *
  *  Please read documentation of mt_appl_trecord() and mt_appl_tplay() for more details and
  *  known bugs related to this structure.
@@ -1283,7 +1313,7 @@ void _appl_yield(void);
 #define SMC_SWITCH      2           /* MagiC 2  */
 #define SMC_FREEZE      3           /* MagiC 2  */
 #define SMC_UNFREEZE    4           /* MagiC 2  */
-#define SMC_TASKSWITCH  5           /* MagiC 2  */
+#define SMC_RES5        5           /* MagiC 2  */
 #define SMC_UNHIDEALL   6           /* MagiC 3.1 */
 #define SMC_HIDEOTHERS  7           /* MagiC 3.1 */
 #define SMC_HIDEACT     8           /* MagiC 3.1 */
@@ -1621,8 +1651,7 @@ void objc_wchange( OBJECT *ob_ctree, _WORD ob_cobject,
                  _WORD ob_cnewstate, GRECT *clip, _WORD whandle);
 void objc_wdraw( OBJECT *ob_drtree, _WORD ob_drstartob,
                _WORD ob_drdepth, GRECT *clip, _WORD whandle);
-_WORD objc_wedit( OBJECT *ob_edtree, _WORD ob_edobject,
-               _WORD ob_edchar, _WORD *ob_edidx, _WORD ob_edkind, _WORD whandle );
+_WORD objc_wedit(OBJECT *ob_edtree, _WORD ob_edobject, _WORD ob_edchar, _WORD *ob_edidx, _WORD ob_edkind, _WORD whandle);
 _WORD objc_xedit( OBJECT *ob_edtree, _WORD ob_edobject,
                _WORD ob_edchar, _WORD *ob_edidx, _WORD ob_edkind, GRECT *r );
 
@@ -1666,12 +1695,9 @@ _WORD form_center( OBJECT *fo_ctree, _WORD *fo_cx, _WORD *fo_cy,
 _WORD form_center_grect (OBJECT *, GRECT *r);
 _WORD form_keybd( OBJECT *fo_ktree, _WORD fo_kobject, _WORD fo_kobnext,
                 _WORD fo_kchar, _WORD *fo_knxtobject, _WORD *fo_knxtchar );
-_WORD form_wkeybd( OBJECT *fo_ktree, _WORD fo_kobject, _WORD fo_kobnext,
-                _WORD fo_kchar, _WORD *fo_knxtobject, _WORD *fo_knxtchar, _WORD whandle );
-_WORD form_button( OBJECT *fo_btree, _WORD fo_bobject, _WORD fo_bclicks,
-                _WORD *fo_bnxtobj );
-_WORD form_wbutton( OBJECT *fo_btree, _WORD fo_bobject, _WORD fo_bclicks,
-                _WORD *fo_bnxtobj, _WORD whandle );
+_WORD form_wkeybd(OBJECT *fo_ktree, _WORD fo_kobject, _WORD fo_kobnext, _WORD fo_kchar, _WORD *fo_knxtobject, _WORD *fo_knxtchar, _WORD whandle);
+_WORD form_button(OBJECT *fo_btree, _WORD fo_bobject, _WORD fo_bclicks, _WORD *fo_bnxtobj);
+_WORD form_wbutton(OBJECT *fo_btree, _WORD fo_bobject, _WORD fo_bclicks, _WORD *fo_bnxtobj, _WORD whandle);
 _WORD form_dial_grect( _WORD subfn, const GRECT *lg, const GRECT *bg );
 
 /* MagiC */
@@ -2147,7 +2173,7 @@ typedef struct _sheltail {
 #define SHW_RESCHG          SWM_REZCHANGE
 #define SHW_BROADCAST		SWM_BROADCAST	/* alias (Geneva) */
 #define SHW_GLOBMSG         SWM_BROADCAST
-#define SHW_SETENV
+#define SHW_SETENV          SWM_ENVIRON
 #define SHW_INFRECGN		SWM_NEWMSG		/* alias */
 #define SHW_MSGREC          SWM_NEWMSG
 #define SHW_AESSEND			SWM_AESMSG		/* alias */

@@ -29,7 +29,11 @@ struct __jmp_buf_tag
 
 __BEGIN_NAMESPACE_STD
 
+#ifdef __ACS__
+typedef char  jmp_buf[12*4];
+#else
 typedef struct __jmp_buf_tag jmp_buf[1];
+#endif
 
 /* Store the calling environment in ENV, also saving the signal mask.
    Return 0. */

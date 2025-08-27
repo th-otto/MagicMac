@@ -43,6 +43,7 @@ typedef struct {
 	unsigned char reserved2[40];
 	unsigned char copyright[48];
 	unsigned char distributionSerial[4];
+	unsigned char _pad[108];
 } INQUIRY_DATA;
 
 typedef struct {

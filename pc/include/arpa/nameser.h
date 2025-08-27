@@ -73,6 +73,8 @@ __BEGIN_DECLS
 #define IQUERY		0x1		/* inverse query */
 #define STATUS		0x2		/* nameserver status query */
 /*#define xxx		0x3		   0x3 reserved */
+#define NS_NOTIFY_OP 0x4	/* Zone change notification. */
+#define NS_UPDATE_OP 0x5	/* Zone update message. */
 	/* non standard */
 #define UPDATEA		0x9		/* add resource record */
 #define UPDATED		0xa		/* delete a specific resource record */
@@ -102,7 +104,7 @@ __BEGIN_DECLS
 #define T_NS		2		/* authoritative server */
 #define T_MD		3		/* mail destination */
 #define T_MF		4		/* mail forwarder */
-#define T_CNAME		5		/* connonical name */
+#define T_CNAME		5		/* canonical name */
 #define T_SOA		6		/* start of authority zone */
 #define T_MB		7		/* mailbox domain name */
 #define T_MG		8		/* mail group member */
@@ -127,12 +129,36 @@ __BEGIN_DECLS
 #define T_GPOS		27		/* geographical location, RFC 1712 */
 #define T_AAAA		28		/* ipv6 host address */
 #define T_LOC		29		/* location information, RFC 1876 */
+#define T_NXT		30		/* Next Valid Name in Zone */
+#define T_EID		31		/* Endpoint identifier */
+#define T_NIMLOC	32		/* Nimrod locator */
+#define T_SRV		33		/* Server selection */
+#define T_ATMA		34		/* ATM Address */
+#define T_NAPTR		35		/* Naming Authority PoinTeR */
+#define T_KX		36		/* Key Exchanger */
+#define T_CERT		37		/* Certificates in the DNS */
+#define T_A6		38		/* IP6 address */
+#define T_DNAME		39		/* non-terminal redirection */
+#define T_SINK		40		/* unknown */
+#define T_OPT		41		/* EDNS0 option (meta-RR) */
+#define T_APL		42		/* lists of address prefixes */
+#define T_DS		43		/* Delegation Signer */
+#define T_SSHFP		44		/* SSH Fingerprint */
+#define T_IPSECKEY	45		/* IPsec keying material */
+#define T_RRSIG		46		/* new security signature */
+#define T_NSEC		47		/* provable insecure information */
+#define T_DNSKEY	48		/* new security key */
 	/* non standard */
+#define T_SPF		99		/* sender policy framework */
 #define T_UINFO		100		/* user (finger) information */
 #define T_UID		101		/* user ID */
 #define T_GID		102		/* group ID */
 #define T_UNSPEC	103		/* Unspecified format (binary data) */
+#define T_UNSPECA	104		/* "unspecified ascii". Ugly MIT hack */
 	/* Query type values which do not appear in resource records */
+#define T_TKEY		249		/* Transaction Key [RFC2930] */
+#define T_TSIG		250		/* Transaction Signature [RFC2845] */
+#define T_IXFR		251		/* incremental transfer [RFC1995] */
 #define T_AXFR		252		/* transfer zone of authority */
 #define T_MAILB		253		/* transfer mailbox records */
 #define T_MAILA		254		/* transfer mail agent records */
@@ -146,7 +172,10 @@ __BEGIN_DECLS
 #define C_CHAOS		3		/* for chaos net at MIT */
 #define C_HS		4		/* for Hesiod name server at MIT */
 	/* Query class values which do not appear in resource records */
+#define C_NONE		254		/* for prereq. sections in update requests */
 #define C_ANY		255		/* wildcard match */
+#define C_QU		0x8000		/* mDNS QU flag in queries */
+#define C_CACHE_FLUSH	0x8000		/* mDNS cache flush flag in replies */
 
 /*
  * Status return codes for T_UNSPEC conversion routines
@@ -257,7 +286,7 @@ __END_DECLS
 }
 
 #define GETLONG(l, cp) { \
-	(l) = *(cp)++ << 8; \
+	(l) = *(cp)++; (l) <<= 8; \
 	(l) |= *(cp)++; (l) <<= 8; \
 	(l) |= *(cp)++; (l) <<= 8; \
 	(l) |= *(cp)++; \
@@ -273,11 +302,11 @@ __END_DECLS
  * Warning: PUTLONG destroys its first argument.
  */
 #define PUTLONG(l, cp) { \
-	(cp)[3] = l; \
-	(cp)[2] = (l >>= 8); \
-	(cp)[1] = (l >>= 8); \
-	(cp)[0] = l >> 8; \
-	(cp) += sizeof(unsigned long); \
+	(cp)[3] = l; l >>= 8; \
+	(cp)[2] = l; l >>= 8; \
+	(cp)[1] = l; l >>= 8; \
+	(cp)[0] = l; \
+	(cp) += 4; \
 }
 
 #endif /* !_ARPA_NAMESER_H_ */

@@ -1,7 +1,6 @@
-/*{{{}}}*/
 /*********************************************************************
  *
- * SCSI-Aufrufe fÅr alle GerÑte
+ * SCSI-Calls for all devices
  *
  * $Source: U:\USR\src\scsi\CBHD\include\scsidrv\RCS\scsi.h,v $
  *
@@ -30,23 +29,22 @@
 #ifndef __SCSI_H
 #define __SCSI_H
 
-#include <portab.h>
-#include "scsidrv/scsidefs.h"           /* Typen fÅr SCSI-Lib */
+#include "scsidrv/scsidefs.h"
 
 
 /*****************************************************************************
  * Konstanten
  *****************************************************************************/
 
-#define DIRECTACCESSDEV  0       /* GerÑt mit Direktzugriff (Festplatte) */
-#define SEQACCESSDEV     1       /*   "    "  seq. Zugriff  (Streamer)   */
-#define PRINTERDEV       2       /* Drucker                              */
+#define DIRECTACCESSDEV  0       /* direct access device (harddisk)      */
+#define SEQACCESSDEV     1       /* sequentidal acces  (Streamer)        */
+#define PRINTERDEV       2       /* Printer                              */
 #define PROCESSORDEV     3       /* Hostadapter                          */
-#define WORMDEV          4       /* WORM-Laufwerk                        */
-#define ROMDEV           5       /* nur-lese Laufwerk (CD-ROM)           */
-#define SCANNERDEF       6       /* Scanner                              */
+#define WORMDEV          4       /* WORM-drive                           */
+#define ROMDEV           5       /* read-only drive (CD-ROM)             */
+#define SCANNERDEF       6       /* scanner                              */
 #define OPTICALMEMDEV    7       /* optical memory device                */
-#define MEDIUMCHNGDEV    8       /* medium changer device (zB JukeBox)   */
+#define MEDIUMCHNGDEV    8       /* medium changer device (eg. JukeBox)  */
 #define COMMDEV          9       /* Communicationdevice                  */
 #define GRAPHDEV1       10
 #define GRAPHDEV2       11
@@ -112,6 +110,7 @@
 #define UNMAP		            0x42
 #define READ_TOC                0x43
 #define READ_HEADER             0x44
+#define GET_CONFIGURATION       0x46
 #define GET_EVENT_STATUS_NOTIFICATION 0x4a
 #define LOG_SELECT              0x4c
 #define LOG_SENSE               0x4d
@@ -176,9 +175,12 @@
 #define SAM_STAT_TASK_ABORTED    0x40
 
 /* values for service action in */
-#define	SAI_READ_CAPACITY_16  0x10
+#define SAI_REPORT_SUPPORTED_OPCODES  0x0c
+#define SAI_READ_CAPACITY_16  0x10
+#define SAI_SEEK_CAPACITY_16  0x11
 #define SAI_GET_LBA_STATUS    0x12
 #define SAI_REPORT_REFERRALS  0x13
+#define SAI_GET_PHY_ELEM_STATUS 0x17
 
 /* values for VARIABLE_LENGTH_CMD service action codes
  * see spc4r17 Section D.3.5, table D.7 and D.8 */
@@ -278,64 +280,62 @@
 /* Inquiry-Struktur */
 typedef struct
 {
-  UCHAR Device;
-  UCHAR Qualifier;
-  UCHAR Version;
-  UCHAR Format;
-  UCHAR AddLen;
-  UCHAR Res1;
-  UWORD Res2;
+  unsigned char Device;
+  unsigned char Qualifier;
+  unsigned char Version;
+  unsigned char Format;
+  unsigned char AddLen;
+  unsigned char Res1;
+  unsigned short Res2;
   char  Vendor[8];
   char  Product[16];
   char  Revision[4];
-}tInqData;
+} tInqData;
 
 /* Modesense/select-Typen */
 
-/* Pages fÅr CD-ROMS */
-/* {{{ */
+/* Pages for CD-ROMS */
 typedef struct{
-  BYTE CDP0DRes2;
-  BYTE InactTMul;      /* unteres Nibble */
-  UWORD SperMSF;
-  UWORD FperMSF;
-}tCDPage0D;
+  unsigned char CDP0DRes2;
+  unsigned char InactTMul;      /* lower Nibble */
+  unsigned short SperMSF;
+  unsigned short FperMSF;
+} tCDPage0D;
 
 typedef struct {
-  UBYTE ImmedFlags;
-  BYTE CD0ERes3;
-  BYTE CD0ERes4;
-  UBYTE LBAFlags;
-  UWORD BlocksPerSecond;
+  unsigned char ImmedFlags;
+  unsigned char CD0ERes3;
+  unsigned char CD0ERes4;
+  unsigned char LBAFlags;
+  unsigned short BlocksPerSecond;
     /* Genau:
      *   LBAFlags MOD 10H = 0 -> BlocksPerSecond
      *   LBAFlags MOD 10H = 8 -> 256 * BlocksPerSecond
      */
-  UBYTE Port0Channel;
-  UBYTE Port0Volume;
-  UBYTE Port1Channel;
-  UBYTE Port1Volume;
-  UBYTE Port2Channel;
-  UBYTE Port2Volume;
-  UBYTE Port3Channel;
-  UBYTE Port3Volume;
-}tCDPage0E;
-/* }}} */
+  unsigned char Port0Channel;
+  unsigned char Port0Volume;
+  unsigned char Port1Channel;
+  unsigned char Port1Volume;
+  unsigned char Port2Channel;
+  unsigned char Port2Volume;
+  unsigned char Port3Channel;
+  unsigned char Port3Volume;
+} tCDPage0E;
 
-/* allgmeine Struktur fÅr ModeSense/Select */
+/* general strcture for ModeSense/Select */
 typedef struct{
-  BYTE ModeLength;
-  BYTE MediumType;
-  UBYTE DeviceSpecs;  /* GerÑteabhÑngig */
-  BYTE BlockDescLen;
+  signed char ModeLength;
+  signed char MediumType;
+  unsigned char DeviceSpecs;  /* device dependant */
+  signed char BlockDescLen;
 } tParmHead;
 
 typedef struct{
-  ULONG Blocks;                  /* Byte HH = DensityCode */
-  ULONG BlockLen;                /* Byte HH = Reserved    */
+  unsigned long Blocks;                  /* Byte HH = DensityCode */
+  unsigned long BlockLen;                /* Byte HH = Reserved    */
 } tBlockDesc;
 
-/* die Varianten fÅr die Pages */
+/* variants of Pages */
 typedef union{
   tCDPage0D CDP0D;
   tCDPage0E CDP0E;
@@ -349,139 +349,119 @@ typedef struct{
 
 
 /*****************************************************************************
- * Variablen
+ * Variables
  *****************************************************************************/
-extern long ScsiFlags;   /* Wert fÅr tScsiCmd.Flags */
+extern long ScsiFlags;   /* values for tScsiCmd.Flags */
 
 
 /*****************************************************************************
- * Funktionen
+ * Functions
  *****************************************************************************/
 
-LONG TestUnitReady(void);
+long TestUnitReady(void);
 
 
-LONG Inquiry(void  *data, BOOLEAN Vital, UWORD VitalPage, WORD length);
-  /* Inquiry von einem GerÑt abholen */
+/* read inquiry from a device */
+long Inquiry(void  *data, int Vital, unsigned short VitalPage, short length);
 
 #define MODESEL_SMP 0x01            /* Save Mode Parameters */
 #define MODESEL_PF  0x10            /* Page Format          */
 
-LONG ModeSelect(UWORD        SelectFlags,
-                void        *Buffer,
-                UWORD        ParmLen);
+long ModeSelect(unsigned short SelectFlags, void *Buffer, unsigned short ParmLen);
 
 #define MODESENSE_CURVAL 0          /* current values     */
 #define MODESENSE_CHANGVAL 1        /* changeable values  */
 #define MODESENSE_DEFVAL 2          /* default values     */
 #define MODESENSE_SAVEDVAL 3        /* save values        */
 
-LONG ModeSense(UWORD     PageCode,
-               UWORD     PageControl,
-               void     *Buffer,
-               UWORD     ParmLen);
+long ModeSense(unsigned short PageCode, unsigned short PageControl, void *Buffer, unsigned short ParmLen);
 
 
-LONG PreventMediaRemoval(BOOLEAN Prevent);
+long PreventMediaRemoval(int Prevent);
 
 
-BOOLEAN init_scsi (void);
-  /* Initialisierung des Moduls */
+/* Initialization of the module */
+int init_scsi(void);
 
 
 
 /*-------------------------------------------------------------------------*/
 /*-                                                                       -*/
-/*- Allgemeine Tools                                                      -*/
+/*- General tools                                                         -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
 void SuperOn(void);
 
 void SuperOff(void);
 
-void Wait(ULONG Ticks);
+void Wait(unsigned long Ticks);
 
-void SetBlockSize(ULONG NewLen);
-  /*
-   * SetBlockLen legt die BlocklÑnge fÅr das SCSI-GerÑt fest
-   * (normalerweise 512 Bytes).
-   */
+/*
+ * SetBlockLen defines the block size of the device
+ * (normally 512 bytes).
+ */
+void SetBlockSize(unsigned long NewLen);
 
-ULONG GetBlockSize();
-  /*
-   * GetBlockLen gibt die aktuell eingestellte BlocklÑnge zurÅck.
-   */
+/*
+ * GetBlockLen return the define block size.
+ */
+unsigned long GetBlockSize(void);
 
 
-void SetScsiUnit(tHandle handle, WORD Lun, ULONG MaxLen);
-  /*
-   * SetScsiUnit legt das GerÑt fest an das die nachfolgenden Kommandos
-   * gesendet werden und wie lang die Transfers maximal sein dÅrfen.
-   */
+/*
+ * SetScsiUnit specifies the device to which the following commands
+ * are sent and the maximum length of the transfers.
+ */
+void SetScsiUnit(tHandle handle, short Lun, unsigned long MaxLen);
 
 
 /*-------------------------------------------------------------------------*/
 /*-                                                                       -*/
-/*- Zugriff fÅr Submodule (ScsiStreamer, ScsiCD, ScsiDisk...)             -*/
+/*- Access for submodules (ScsiStreamer, ScsiCD, ScsiDisk...)             -*/
 /*-                                                                       -*/
 /*-------------------------------------------------------------------------*/
 
 typedef struct
 {
-  UBYTE     Command;
-  BYTE      LunAdr;
-  UWORD     Adr;
-  UBYTE     Len;
-  BYTE      Flags;
-}tCmd6;
+  unsigned char Command;
+  unsigned char LunAdr;
+  unsigned short     Adr;
+  unsigned char Len;
+  unsigned char Flags;
+} tCmd6;
 
 typedef struct
 {
-  UBYTE     Command;
-  BYTE      Lun;
-  ULONG     Adr;
-  BYTE      Reserved;
-  UBYTE     LenHigh;
-  UBYTE     LenLow;
-  BYTE      Flags;
-}tCmd10;
+  unsigned char Command;
+  unsigned char Lun;
+  unsigned long     Adr;
+  signed char Reserved;
+  unsigned char LenHigh;
+  unsigned char LenLow;
+  unsigned char Flags;
+} tCmd10;
 
 typedef struct
 {
-  UBYTE     Command;
-  BYTE      Lun;
-  ULONG     Adr;
-  ULONG     Len;
-  BYTE      Reserved;
-  BYTE      Flags;
-}tCmd12;
+  unsigned char Command;
+  unsigned char Lun;
+  unsigned long     Adr;
+  unsigned long     Len;
+  signed char Reserved;
+  unsigned char Flags;
+} tCmd12;
 
 
-extern ULONG    BlockLen;
-extern ULONG    MaxDmaLen;
-extern UWORD    LogicalUnit;
+extern unsigned long    BlockLen;
+extern unsigned long    MaxDmaLen;
+extern unsigned short    LogicalUnit;
 
-void SetCmd6(tCmd6 *Cmd,
-             UWORD Opcode,
-             ULONG BlockAdr,
-             UWORD TransferLen);
-
-void SetCmd10(tCmd10 *Cmd,
-              UWORD Opcode,
-              ULONG BlockAdr,
-              UWORD TransferLen);
+void SetCmd6(tCmd6 *Cmd, unsigned short Opcode, unsigned long BlockAdr, unsigned short TransferLen);
+void SetCmd10(tCmd10 *Cmd, unsigned short Opcode, unsigned long BlockAdr, unsigned short TransferLen);
          
-void SetCmd12(tCmd12 *Cmd,
-              UWORD Opcode,
-              ULONG BlockAdr,
-              ULONG TransferLen);
+void SetCmd12(tCmd12 *Cmd, unsigned short Opcode, unsigned long BlockAdr, unsigned long TransferLen);
 
-tpSCSICmd SetCmd(BYTE    *Cmd,
-                 WORD     CmdLen,
-                 void    *Buffer,
-                 ULONG    Len,
-                 ULONG   TimeOut);
+tpSCSICmd SetCmd(char *Cmd, short CmdLen, void *Buffer, unsigned long Len, unsigned long TimeOut);
 
 
 #endif
-

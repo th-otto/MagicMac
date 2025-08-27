@@ -65,6 +65,7 @@
 #define  __FLT_DENORM_MIN__ 1.40129846432481707092e-45F
 #define  __FLT_HAS_INFINITY__ 1
 #define  __FLT_HAS_QUIET_NAN__ 1
+#define __SIZEOF_FLOAT__ 4
 
 #ifdef __mcoldfire__
 #define  __DBL_MANT_DIG__                     53
@@ -77,6 +78,22 @@
 #define  __DBL_MIN__      ((double)2.2250738585072014e-308L)	/* min decimal value of a "double" */
 #define  __DBL_MAX__      ((double)1.7976931348623157e+308L)	/* max decimal value of a "double" */
 #define  __DBL_DENORM_MIN__ ((double)4.9406564584124654e-324L)	/* Minimum positive values, including subnormals. */
+#define  __DBL_HAS_INFINITY__  1
+#define  __DBL_HAS_QUIET_NAN__ 1
+#define __SIZEOF_DOUBLE__      8
+#define  __LDBL_MANT_DIG__                __DBL_MANT_DIG__
+#define  __LDBL_DIG__                     __DBL_DIG__
+#define  __LDBL_MIN_EXP__                 __DBL_MIN_EXP__
+#define  __LDBL_MIN_10_EXP__              __DBL_MIN_10_EXP__
+#define  __LDBL_MAX_EXP__                 __DBL_MAX_EXP__
+#define  __LDBL_MAX_10_EXP__              __DBL_MAX_10_EXP__
+#define  __LDBL_EPSILON__                 __DBL_EPSILON__
+#define  __LDBL_MIN__                     __DBL_MIN__
+#define  __LDBL_MAX__                     __DBL_MAX__
+#define  __LDBL_DENORM_MIN__              __DBL_DENORM_MIN__
+#define  __LDBL_HAS_INFINITY__            __DBL_HAS_INFINITY__
+#define  __LDBL_HAS_QUIET_NAN__           __DBL_HAS_QUIET_NAN__
+#define __SIZEOF_LONG_DOUBLE__ __SIZEOF_DOUBLE__
 #else
 #define  __DBL_MANT_DIG__                     64
 #define  __DBL_DIG__                          18	/* digits of precision of a "double" */
@@ -88,22 +105,28 @@
 #define  __DBL_MIN__      1.681051571556046753E-4932	/* min decimal value of a "double" */
 #define  __DBL_MAX__      1.189731495357231765E+4932	/* max decimal value of a "double" */
 #define  __DBL_DENORM_MIN__ ((double)1.82259976594123730126e-4951L)	/* Minimum positive values, including subnormals. */
-#endif
-#define  __DBL_HAS_INFINITY__ 1
+#define  __DBL_HAS_INFINITY__  1
 #define  __DBL_HAS_QUIET_NAN__ 1
-
-#define  __LDBL_MANT_DIG__                    64
-#define  __LDBL_DIG__                         18
-#define  __LDBL_MIN_EXP__                (-16382)
-#define  __LDBL_MIN_10_EXP__              (-4931)
-#define  __LDBL_MAX_EXP__                  16384
-#define  __LDBL_MAX_10_EXP__                4932
-#define  __LDBL_EPSILON__ 5.421010862427522170E-0020L
-#define  __LDBL_MIN__     1.681051571556046753E-4932L
-#define  __LDBL_MAX__     1.1897314953572317649999999999E+4932L
-#define  __LDBL_DENORM_MIN__ 1.82259976594123730126e-4951L
-#define  __LDBL_HAS_INFINITY__ 1
-#define  __LDBL_HAS_QUIET_NAN__ 1
+#ifdef __68881__
+#define __SIZEOF_DOUBLE__ 12
+#else
+#define __SIZEOF_DOUBLE__ 10
+#endif
+/* double and long double are the same type */
+#define  __LDBL_MANT_DIG__                __DBL_MANT_DIG__
+#define  __LDBL_DIG__                     __DBL_DIG__
+#define  __LDBL_MIN_EXP__                 __DBL_MIN_EXP__
+#define  __LDBL_MIN_10_EXP__              __DBL_MIN_10_EXP__
+#define  __LDBL_MAX_EXP__                 __DBL_MAX_EXP__
+#define  __LDBL_MAX_10_EXP__              __DBL_MAX_10_EXP__
+#define  __LDBL_EPSILON__                 __DBL_EPSILON__
+#define  __LDBL_MIN__                     __DBL_MIN__
+#define  __LDBL_MAX__                     __DBL_MAX__
+#define  __LDBL_DENORM_MIN__              __DBL_DENORM_MIN__
+#define  __LDBL_HAS_INFINITY__            __DBL_HAS_INFINITY__
+#define  __LDBL_HAS_QUIET_NAN__           __DBL_HAS_QUIET_NAN__
+#define __SIZEOF_LONG_DOUBLE__ __SIZEOF_DOUBLE__
+#endif
 
 /* Whether types support subnormal numbers.  */
 #define __FLT_HAS_SUBNORM__		1

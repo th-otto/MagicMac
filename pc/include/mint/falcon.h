@@ -180,8 +180,8 @@ __extension__								\
  * 0: 640x480; 1280x720 (with OVERSCAN set)
  * 1: 800x600; 1680x1050 (with OVERSCAN set)
  * 2: 1024x768; 1920x1080 (with OVERSCAN set)
- * 3: 1280x1024
- * 4: 1600x1200
+ * 3: 1280x1024; 1920x1200 (with OVERSCAN set)
+ * 4: 1600x1200; 2560x1440 (with OVERSCAN set)
  */
 #define SVEXT_BASERES(res) ((res & 0xf) << 9)	/* specify base resolution */
 #define	SVEXT			0x4000	/* enable SuperVidel's extensions */
@@ -262,7 +262,7 @@ enum montypes {STmono=0, STcolor, VGAcolor, TVcolor};
 #define Validmode(mode)							\
 	(short)trap_14_ww((short)95,(short)(mode))
 #define VsetMask(ormask,andmask,overlay)					\
-	(void)trap_14_wllw((short)150,(long)(ormask),(long)(andmask),(short)(overlay))
+	(short)trap_14_wllw((short)150,(long)(ormask),(long)(andmask),(short)(overlay))
 
 #endif /* __GNUC__ */
 
@@ -296,7 +296,7 @@ void   __XBIOS(0x96) VsetMask(long ormask, long andmask, short overlay);
 
 /* _SND cookie values */
 
-#define SND_PSG		0x01	/* Yamaha PSG */
+#define SND_PSG		0x01	/* PSG */
 #define	SND_8BIT	0x02	/* 8-bit DMA */
 #define	SND_16BIT	0x04	/* 16-bit CODEC */
 #define	SND_DSP		0x08	/* DSP */
@@ -339,11 +339,27 @@ void   __XBIOS(0x96) VsetMask(long ormask, long andmask, short overlay);
 #define	PRE320		2	/* / 320 */
 #define	PRE160		3	/* / 160 */
 
-/* Record/Playback modes */
+/* NSoundcmd modes. Only available with SND_EXT */
 
-#define	STEREO8		0	/* 8 bit stereo */
-#define	STEREO16	1	/* 16 bit stereo */
-#define	MONO8		2	/* 8 bit mono */
+#define SETRATE			7	/* Set sample rate */
+#define SET8BITFORMAT	8	/* 8 bits format */
+#define SET16BITFORMAT	9	/* 16 bits format */
+#define SET24BITFORMAT	10	/* 24 bits format */
+#define SET32BITFORMAT	11	/* 32 bits format */
+#define LTATTEN_MASTER	12	/* Attenuation */
+#define RTATTEN_MASTER	13
+#define LTATTEN_MICIN	14
+#define RTATTEN_MICIN	15
+#define LTATTEN_FMGEN	16
+#define RTATTEN_FMGEN	17
+#define LTATTEN_LINEIN	18
+#define RTATTEN_LINEIN	19
+#define LTATTEN_CDIN	20
+#define RTATTEN_CDIN	21
+#define LTATTEN_VIDIN	22
+#define RTATTEN_VIDIN	23
+#define LTATTEN_AUXIN	24
+#define RTATTEN_AUXIN	25
 
 /* Record/Playback tracks range from 0 to 3 */
 
@@ -426,6 +442,17 @@ void   __XBIOS(0x96) VsetMask(long ormask, long andmask, short overlay);
 	 * interrupts disabled, buffer operation disabled.
 	 */
 
+/* Extended Sndstatus commands. Only available with SND_EXT */
+
+#define SND_QUERYFORMATS	2
+#define SND_QUERYMIXERS		3
+#define SND_QUERYSOURCES	4
+#define SND_QUERYDUPLEX		5
+#define SND_QUERY8BIT		8
+#define SND_QUERY16BIT		9
+#define SND_QUERY24BIT		10
+#define SND_QUERY32BIT		11
+
 /* Sndstatus status return */
 
 #define	SS_OK		0	/* No errors */
@@ -438,6 +465,19 @@ void   __XBIOS(0x96) VsetMask(long ormask, long andmask, short overlay);
 
 #define SS_ERROR	0xf
 
+/* Return values for SND_QUERYFORMATS */
+
+#define SND_FORMAT8		(1<<0)
+#define SND_FORMAT16	(1<<1)
+#define SND_FORMAT24	(1<<2)
+#define SND_FORMAT32	(1<<3)
+
+/* Return values for SND_QUERY{8,16,24,32}BIT */
+
+#define SND_FORMATSIGNED		(1<<0)
+#define SND_FORMATUNSIGNED		(1<<1)
+#define SND_FORMATBIGENDIAN		(1<<2)
+#define SND_FORMATLITTLEENDIAN	(1<<3)
 
 /* Soundcmd() params */
 
@@ -455,9 +495,23 @@ void   __XBIOS(0x96) VsetMask(long ormask, long andmask, short overlay);
 #define SNDNOTLOCK		-128
 
 /* Setmode() modes */
-#define MODE_STEREO8	0
-#define MODE_STEREO16	1
-#define MODE_MONO		2
+#define MODE_STEREO8	0	/* 8 bit stereo */
+#define MODE_STEREO16	1	/* 16 bit stereo */
+#define MODE_MONO		2	/* 8 bit mono */
+
+/* Extended modes. Only available with SND_EXT */
+
+#define MODE_MONO16		3	/* 16 bit mono, big-endian */
+#define MODE_STEREO24	4	/* 24 bit stereo, big-endian */
+#define MODE_STEREO32	5	/* 32 bit stereo, big-endian */
+#define MODE_MONO24		6	/* 24 bit mono, big-endian */
+#define MODE_MONO32		7	/* 32 bit mono, big-endian */
+
+/* aliases */
+
+#define	STEREO8		MODE_STEREO8
+#define	STEREO16	MODE_STEREO16
+#define	MONO8		MODE_MONO
 
 /* Dsptristate() params */
 #define DSP_TRISTATE	0
@@ -504,6 +558,9 @@ typedef struct SndBufPtr {
 #define Setinterrupt(src_inter,cause)					\
 	(long)trap_14_www((short)135,(short)(src_inter),		\
 		(short)(cause))
+#define NSetinterrupt(src_inter,cause,inth_addr)			\
+		(long)trap_14_wwwl((short)135,(short)(src_inter),	\
+		(short)(cause),(long)(inth_addr))
 #define Buffoper(mode)							\
 	(long)trap_14_ww((short)136,(short)(mode))
 #define Dsptristate(dspxmit,dsprec)					\
@@ -515,7 +572,7 @@ typedef struct SndBufPtr {
 	(long)trap_14_wwwwww((short)139,(short)(src),(short)(dst),	\
 		(short)(sclk),(short)(pre),(short)(proto))
 #define Sndstatus(reset)						\
-	(short)trap_14_ww((short)140,(short)(reset))
+	(long)trap_14_ww((short)140,(short)(reset))
 #define Buffptr(ptr)							\
 	(long)trap_14_wl((short)141,(long)(ptr))
 
@@ -536,7 +593,7 @@ long __XBIOS(0x88) Buffoper(short mode);
 long __XBIOS(0x89) Dsptristate(short dspxmit, short dsprec);
 long __XBIOS(0x8a) Gpio(short mode, short data);
 long __XBIOS(0x8b) Devconnect(short src, short dst, short sclk, short pre, short proto);
-short __XBIOS(0x8c) Sndstatus(short reset);
+long __XBIOS(0x8c) Sndstatus(short reset);
 long __XBIOS(0x8d) Buffptr(SndBufPtr *ptr);
 
 #endif /* __PUREC__ */

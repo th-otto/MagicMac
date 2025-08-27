@@ -58,7 +58,7 @@
 
 #ifndef __MSHORT__
 #  if (defined(__PUREC__) && (__PUREC__ < 0x400)) || defined(__TURBOC__) || defined(__AHCC__)
-#     define __MSHORT__
+#     define __MSHORT__ 1
 #  endif
 #endif
 

@@ -184,10 +184,10 @@ struct mutimbuf
 # define FIONBIO	(('F'<< 8) | 8)		/* just mintlib emulation */
 # define FIBMAP		(('F'<< 8) | 10)
 
-# define FMACOPENRES	(('F'<< 8) | 72)	/* macmint/macfile.h */
-# define FMACGETTYCR	(('F'<< 8) | 73)	/* macmint/macfile.h */
-# define FMACSETTYCR	(('F'<< 8) | 74)	/* macmint/macfile.h */
-# define FMAGICMAC	(('F'<< 8) | 75)	/* (reserved for MagiCMac) */
+# define FMACOPENRES	(('F' << 8) | 72)	/* macmint/macfile.h */
+# define FMACGETTYCR	(('F' << 8) | 73)	/* macmint/macfile.h */
+# define FMACSETTYCR	(('F' << 8) | 74)	/* macmint/macfile.h */
+# define FMAGICMAC	(('F' << 8) | 75)	/* (reserved for MagiCMac) */
 
 
 /*

@@ -54,14 +54,26 @@ enum
 #define IPPROTO_ICMP		IPPROTO_ICMP
     IPPROTO_IGMP = 2,	   /* Internet Group Management Protocol. */
 #define IPPROTO_IGMP		IPPROTO_IGMP
+    IPPROTO_GGP = 3,	   /* Gateway-to-Gateway */
+#define IPPROTO_GGP		IPPROTO_GGP
     IPPROTO_IPIP = 4,	   /* IPIP tunnels (older KA9Q tunnels use 94).  */
 #define IPPROTO_IPIP		IPPROTO_IPIP
+    IPPROTO_ST = 5,	   /* Stream */
+#define IPPROTO_ST		IPPROTO_ST
     IPPROTO_TCP = 6,	   /* Transmission Control Protocol.  */
 #define IPPROTO_TCP		IPPROTO_TCP
+    IPPROTO_CBT = 7,	   /* CBT  */
+#define IPPROTO_CBT		IPPROTO_CBT
     IPPROTO_EGP = 8,	   /* Exterior Gateway Protocol.  */
 #define IPPROTO_EGP		IPPROTO_EGP
+    IPPROTO_IGP = 9,	   /* any private interior gateway.  */
+#define IPPROTO_IGP		IPPROTO_IGP
+    IPPROTO_NVP_II = 11,	   /* Network Voice Protocol  */
+#define IPPROTO_NVP_II		IPPROTO_NVP_II
     IPPROTO_PUP = 12,	   /* PUP protocol.  */
 #define IPPROTO_PUP		IPPROTO_PUP
+    IPPROTO_CHAOS = 16,	   /* Chaos.  */
+#define IPPROTO_CHAOS		IPPROTO_CHAOS
     IPPROTO_UDP = 17,	   /* User Datagram Protocol.  */
 #define IPPROTO_UDP		IPPROTO_UDP
     IPPROTO_IDP = 22,	   /* XNS IDP protocol.  */
@@ -90,12 +102,16 @@ enum
 #define IPPROTO_PIM		IPPROTO_PIM
     IPPROTO_COMP = 108,	   /* Compression Header Protocol.  */
 #define IPPROTO_COMP		IPPROTO_COMP
+    IPPROTO_L2TP = 115,	   /* Layer 2 Tunnelling Protocol.  */
+#define IPPROTO_L2TP		IPPROTO_L2TP
     IPPROTO_SCTP = 132,	   /* Stream Control Transmission Protocol.  */
 #define IPPROTO_SCTP		IPPROTO_SCTP
     IPPROTO_UDPLITE = 136, /* UDP-Lite protocol.  */
 #define IPPROTO_UDPLITE		IPPROTO_UDPLITE
     IPPROTO_MPLS = 137,    /* MPLS in IP.  */
 #define IPPROTO_MPLS		IPPROTO_MPLS
+    IPPROTO_ETHERNET = 143, /* Ethernet-within-IPv6 Encapsulation.  */
+#define IPPROTO_ETHERNET	IPPROTO_ETHERNET
     IPPROTO_RAW = 255,	   /* Raw IP packets.  */
 #define IPPROTO_RAW		IPPROTO_RAW
     IPPROTO_MAX
@@ -201,6 +217,9 @@ enum
 #define	INADDR_BROADCAST	((in_addr_t) 0xffffffffUL)
 /* Address indicating an error return.  */
 #define	INADDR_NONE		((in_addr_t) 0xffffffffUL)
+/* Dummy address for source of ICMPv6 errors converted to IPv4 (RFC
+   7600).  */
+#define	INADDR_DUMMY		((in_addr_t) 0xc0000008)
 
 /* Network number for local host loopback.  */
 #define	IN_LOOPBACKNET		127
