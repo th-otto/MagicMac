@@ -21,58 +21,19 @@
 #include "vfatconf.h"
 #include "gemutils.h"
 
+#define NUM_DRIVES 32
+typedef char drives_assert[DISK6 - DISKA + 1 == NUM_DRIVES ? 1 : -1];
+
 static long conf_temp;
 static long conf_temp_valid;
 static long old_conf_temp;
-
-/* hier sind Dinge drin, die nicht in magx.h enthalten sind,
-   weil sie nicht fr die ™ffentlichkeit sind */
-
-typedef struct
-     {
-     LONG magic;                   /* muž $87654321 sein              */
-     void *membot;                 /* Ende der AES- Variablen         */
-     void *aes_start;              /* Startadresse                    */
-     LONG magic2;                  /* ist 'MAGX'                      */
-     ULONG date;                   /* Erstelldatum ttmmjjjj           */
-     void (*chgres)(int res, int txt);  /* Aufl”sung „ndern           */
-     LONG (**shel_vector)(void);   /* residentes Desktop              */
-     char *aes_bootdrv;            /* von hieraus wurde gebootet      */
-     WORD *vdi_device;             /* vom AES benutzter VDI-Treiber   */
-     void *reservd1;
-     void *reservd2;
-     void *reservd3;
-     WORD version;                 /* z.B. $0201 ist V2.1             */
-     WORD release;                 /* 0=alpha..3=release              */
-	void *_basepage;
-	WORD **moff_cnt;
-	UWORD **shel_buf_len;
-	void	**shel_buf;
-	void *notready_list;
-	void	**menu_app;
-	void **menutree;
-	void **desktree;
-	WORD **desktree_1stob;
-	void **dos_magic;
-	WORD *nwindows;
-	void **p_fsel;
-	void *ctrl_timeslice;
-	void	**topwind_app;
-	void **mouse_app;
-	void **keyb_app;
-	void	*suspend_list;
-	WORD	install_drv;
-	char	kernelpath[16];
-     } AESVARS2;
-
-
 
 static long old_conf_perm;
 static long conf_perm;
 static int is_temp = TRUE;
 
 
-void ob_disable_enable(OBJECT *tree, int which, int dis)
+static void ob_disable_enable(OBJECT *tree, int which, int dis)
 {
 	if	(dis)
 		(tree+which)->ob_state |=  DISABLED;
@@ -87,19 +48,30 @@ void ob_disable_enable(OBJECT *tree, int which, int dis)
 *
 ************************************************************/
 
-void	save_conf_to_inf( void )
+static char letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
+static long get_bootdrive(void)
+{
+	return *((short *)0x446);
+}
+
+
+static void	save_conf_to_inf( void )
 {
 	XATTR xa;
 	char infpath[] = "A:\\MAGX.INF";
 	char infpath2[] = "A:\\MAGX.&&&";
 	char *buf = NULL;
-	AESVARS2 *av;
 	long errc;
 	int handle = -1;
 	char *s;
 	char *sec_vfat,*next_sec,*drives_asng;
 	char c_rett;
-	char drives_line[] = "drives=abcdefghijklmnopqrstuvwxyz123456\r\n";
+	char drives_line[7 + NUM_DRIVES + 2 + 1] = "drives=";
 	char *end_sec1;
 	char *sec2;
 	char *insert = NULL;
@@ -112,10 +84,13 @@ void	save_conf_to_inf( void )
 
 	s = drives_line+7;
 	errc = conf_perm;
-	for	(c_rett = 'a'; errc; c_rett++,errc >>= 1L)
+	for	(c_rett = 0; errc && c_rett < NUM_DRIVES; c_rett++,errc >>= 1L)
 		{
 		if	(errc & 1L)
-			*s++ = c_rett;
+			*s = letter_from_drive(c_rett);
+			if (*s >= 'A')
+				*s += 'a' - 'A';
+			s++;
 		}
 	*s++ = '\r';
 	*s++ = '\n';
@@ -124,9 +99,8 @@ void	save_conf_to_inf( void )
 	/* INF-Datei ”ffnen */
 	/* ---------------- */
 
-	av = *((AESVARS2 **)(_GemParBlk.global+11));
-	infpath[0] += *(av->aes_bootdrv);
-	infpath2[0] += *(av->aes_bootdrv);
+	infpath[0] = letter_from_drive((int)Supexec(get_bootdrive));
+	infpath2[0] = infpath[0];
 	errc = Fopen(infpath, O_RDWR);
 	if	((errc == EFILNF) || (errc == EPTHNF) || (errc == EDRIVE))
 		{
@@ -297,7 +271,7 @@ void	save_conf_to_inf( void )
 
 static void init_conf( void )
 {
-	register int i;
+	int i;
 	long ret;
 	long bit;
 	char path[] = "U:\\";
@@ -307,13 +281,13 @@ static void init_conf( void )
 	ret = Dcntl(VFAT_CNFDFLN, path, -1L);
 	if	(ret >= E_OK)
 		conf_perm = old_conf_perm = ret;
-	for	(i = 0, bit = 1L; i <= 'Z'-'A'; i++,bit <<= 1)
+	for	(i = 0, bit = 1L; i < NUM_DRIVES; i++,bit <<= 1)
 		{
 		stat[1] = i;
 		ret = Dcntl(MX_KER_DRVSTAT, "U:\\", (long) stat);
 		if	(ret > 0L)		/* gemountet */
 			{
-			path[0] = i+'A';
+			path[0] = letter_from_drive(i);
 			ret = Dcntl(VFAT_CNFLN, path, -1L);
 			if	(ret >= E_OK)	/* VFAT */
 				{
@@ -335,10 +309,10 @@ static void init_conf( void )
 
 static void set_conf(OBJECT *tree, long conf, long valid)
 {
-	register int i;
+	int i;
 	long bit;
 
-	for	(i = 0,bit = 1L; i <= 'Z'-'A'; i++,bit <<= 1L)
+	for	(i = 0,bit = 1L; i < NUM_DRIVES; i++,bit <<= 1L)
 		{
 		ob_sel_dsel(tree, i+DISKA, (bit&conf) != 0);
 		ob_disable_enable(tree, i+DISKA, (bit&valid) == 0);
@@ -348,11 +322,11 @@ static void set_conf(OBJECT *tree, long conf, long valid)
 
 static long get_conf(OBJECT *tree)
 {
-	register int i;
+	int i;
 	long conf;
 
 	conf = 0L;
-	for	(i = 0; i <= 'Z'-'A'; i++)
+	for	(i = 0; i < NUM_DRIVES; i++)
 		conf |= ((long) selected(tree, i+DISKA) << i);
 	return(conf);
 }
@@ -360,7 +334,7 @@ static long get_conf(OBJECT *tree)
 
 static void exit_conf( OBJECT *tree )
 {
-	register int i;
+	int i;
 	long ret,old;
 	long bit;
 	char path[] = "U:\\";
@@ -372,9 +346,9 @@ static void exit_conf( OBJECT *tree )
 	else	conf_perm = get_conf(tree);
 
 	Dcntl(VFAT_CNFDFLN, path, conf_perm);
-	for	(i = 0, bit = 1L; i <= 'Z'-'A'; i++,bit <<= 1)
+	for	(i = 0, bit = 1L; i < NUM_DRIVES; i++,bit <<= 1)
 		{
-		path[0] = i+'A';
+		path[0] = letter_from_drive(i);
 		if	(conf_temp_valid & bit)
 			{
 			ret = (conf_temp & bit) ? 1L : 0L;

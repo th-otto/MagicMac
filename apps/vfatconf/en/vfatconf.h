@@ -1,7 +1,7 @@
 /*
  * resource set indices for vfatconf
  *
- * created by ORCS 2.16
+ * created by ORCS 2.18
  */
 
 /*
@@ -13,18 +13,22 @@
  * Number of Tedinfos:       0
  * Number of Free Strings:   3
  * Number of Free Images:    0
- * Number of Objects:        34
+ * Number of Objects:        40
  * Number of Trees:          1
  * Number of Userblks:       0
  * Number of Images:         0
- * Total file size:          1118
+ * Total file size:          1262
  */
 
+#ifdef RSC_NAME
 #undef RSC_NAME
+#endif
 #ifndef __ALCYON__
 #define RSC_NAME "vfatconf"
 #endif
+#ifdef RSC_ID
 #undef RSC_ID
+#endif
 #ifdef vfatconf
 #define RSC_ID vfatconf
 #else
@@ -44,7 +48,7 @@
 #define NUM_IB 0
 #define NUM_CIB 0
 #define NUM_TI 0
-#define NUM_OBS 34
+#define NUM_OBS 40
 #define NUM_TREE 1
 #endif
 
@@ -58,15 +62,18 @@
 #define LAUFWERKE          7 /* IBOX in tree T_SELECT */
 #define DISKA              8 /* BOXCHAR in tree T_SELECT */
 #define DISKZ             33 /* BOXCHAR in tree T_SELECT */
+#define DISK1             34 /* BOXCHAR in tree T_SELECT */
+#define DISK2             35 /* BOXCHAR in tree T_SELECT */
+#define DISK3             36 /* BOXCHAR in tree T_SELECT */
+#define DISK4             37 /* BOXCHAR in tree T_SELECT */
+#define DISK5             38 /* BOXCHAR in tree T_SELECT */
+#define DISK6             39 /* BOXCHAR in tree T_SELECT */
 
 #define ALRT_WRTERR        0 /* Alert string */
-/* [3][VFATCONF:|Save error.][Cancel] */
 
 #define ALRT_NO_INF        1 /* Alert string */
-/* [3][There is no MAGX.INF|on the boot disk.|Please first create one,|e.g. with MAGXDESK!][Cancel] */
 
 #define ALRT_MEMERR        2 /* Alert string */
-/* [3][Not enough memory for|loading MAGX.INF.][Cancel] */
 
 
 
