@@ -241,7 +241,7 @@ int main(void)
 	{
 		Dsetdrv('U' - 'A');
 		Dsetpath("\\");
-		help[0] = latter_from_drive(ramdisk_drive);
+		help[0] = letter_from_drive(ramdisk_drive);
 		help[1] = 0;
 		if (Frename(0, help, mountname) != 0L)
 		{
@@ -685,7 +685,7 @@ LONG Pdomain_kernel(WORD ignore)
  * Zeiger auf allozierten Speicher oder NULL bzw. L„nge des gr”žten
  * freien Speicherblocks
  */
-void *Mxalloc_kernel(LONG amount, WORD mode)
+void *Mxalloc_kernel(LONG amount, short mode)
 {
 	return (void *)((kernel->mxalloc)(amount, mode & ~0x4000, _BasPag));
 }
@@ -702,7 +702,7 @@ void *Mxalloc_kernel(LONG amount, WORD mode)
  * 0: Alles OK
  * sonst: GEMDOS-Fehlercode (z.B. EIMBA)
  */
-WORD Mfree_kernel(void *block)
+short Mfree_kernel(void *block)
 {
 	return((WORD)(kernel->mfree)(block));
 }

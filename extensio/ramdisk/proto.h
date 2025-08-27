@@ -118,8 +118,8 @@ void *Kmalloc(LONG len);
 void *Krealloc(void *ptr, LONG old_len, LONG new_len);
 LONG Pdomain_gemdos(WORD domain);
 LONG Pdomain_kernel(WORD ignore);
-void *Mxalloc_kernel(LONG amount, WORD mode);
-WORD Mfree_kernel(void *block);
+void *Mxalloc_kernel(LONG amount, short mode);
+short Mfree_kernel(void *block);
 #ifdef DEBUG
 void trace(const char *format, ...);
 #define TRACE(x) trace x
@@ -152,8 +152,8 @@ _GLOBAL	WORD			ram_type,
 						eight_bit;
 _GLOBAL char			volume_label[RAM_MAXFNAME + 2];
 _GLOBAL LONG			(*p_Pdomain)(WORD ignore);
-_GLOBAL void			*(*_Mxalloc)(LONG amount, WORD mode);
-_GLOBAL WORD			(*_Mfree)(void *block);
+_GLOBAL void			*(*_Mxalloc)(LONG amount, short mode);
+_GLOBAL short			(*_Mfree)(void *block);
 #ifdef DEBUG
 _GLOBAL	WORD			debug_to_screen;
 #endif
