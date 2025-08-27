@@ -72,6 +72,7 @@ DEBUG     EQU  0
      XREF      srch_process
      XREF      env_clr_int
      XREF      Mxalloc,Mxfree,Mchgown
+     XREF      drive_from_letter
      IF   DEBUG
      XREF      str_to_con
      ENDIF
@@ -2423,8 +2424,8 @@ dsetdrv_path:
  cmpi.b   #':',1(a5)
  bne.b    dp_nodrv
  move.b   (a5),d0
- subi.b   #'A',d0
- bcs.b    dp_nodrv
+ jsr      drive_from_letter
+ bmi.s    dp_nodrv
  ext.w    d0
  move.w   d0,-(sp)
  move.w   #$e,-(sp)

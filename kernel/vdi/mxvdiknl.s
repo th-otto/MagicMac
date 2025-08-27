@@ -417,7 +417,7 @@ init_gdos:        lea.l    screen_driver,a1     ;Treibertabelle
                   move.w   AESVARS_idrive(a0),d0   ;Installationslaufwerk
 
                   lea.l    gdos_path,a0
-                  add.w    #'A',d0
+                  add.w    #'A',d0 ; FIXME: drive_to_letter
                   move.b   d0,(a0)+       ;Laufwerksbuchstabe
                   move.b   #':',(a0)+
                   move.b   #$5C,(a0)+

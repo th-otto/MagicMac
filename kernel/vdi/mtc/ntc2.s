@@ -370,7 +370,7 @@ run_cxx_info:
 		move.w     #25,-(a7) ; Dgetdrv
 		trap       #1
 		addq.l     #2,a7
-		add.w      #'A',d0
+		add.w      #'A',d0 ; FIXME: drive_to_letter
 		lea.l      cxx_info_name(pc),a0
 		lea.l      pathbuf(pc),a1
 		move.b     d0,(a1)+
@@ -393,7 +393,7 @@ run_cxx_info2:
 		move.w     #25,-(a7) ; Dgetdrv
 		trap       #1
 		addq.l     #2,a7
-		add.w      #'A',d0
+		add.w      #'A',d0 ; FIXME: drive_to_letter
 		lea.l      cxx_driv_name(pc),a0
 		lea.l      pathbuf(pc),a1
 		move.b     d0,(a1)+

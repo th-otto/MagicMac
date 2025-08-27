@@ -450,7 +450,7 @@ load_vga_inf:
 		addq.l     #2,a7
 		lea.l      nvdivga_path(pc),a0
 		movea.l    a0,a1
-		addi.b     #'A',d0
+		addi.b     #'A',d0 ; FIXME: drive_to_letter
 		move.b     d0,(a0)+
 		move.b     #':',(a0)+
 		move.l     #'\AUT',(a0)+

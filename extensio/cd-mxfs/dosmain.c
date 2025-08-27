@@ -80,10 +80,24 @@ Bconws (char *str)
 /* Lowlevel-FS-Funktionen */
 
 
+static int drive_from_letter(int drv)
+{
+	if (drv >= 'A' && drv <= 'Z')
+		drv = drv - 'A';
+	else if (drv >= 'a' && drv <= 'z')
+		drv = drv - 'a';
+	else if (drv >= '1' && drv <= '6')
+		drv = (drv - '1') + 26;
+	else
+		return -1;
+	return drv;
+}
+
+
 static char *
 tune_pn (char *pathname, int *drive)
 {
-	if (drive) *drive = toupper(pathname[0]) - 'A';
+	if (drive) *drive = drive_from_letter(pathname[0]);
 	
 	pathname += 2; /* skip : */
 	if (pathname[0] == '\\') pathname += 1;

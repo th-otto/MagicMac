@@ -318,7 +318,7 @@ rundriver:
 		move.w     #25,-(a7) ; Dgetdrv
 		trap       #1
 		addq.l     #2,a7
-		add.w      #'A',d0
+		add.w      #'A',d0 ; FIXME: drive_to_letter
 ; construct command line for cxx_driv.ttp
 		lea.l      cmdline+1(pc),a1
 		lea.l      pathbuf(pc),a2
@@ -417,7 +417,7 @@ run_cxx_info:
 		move.w     #25,-(a7) ; Dgetdrv
 		trap       #1
 		addq.l     #2,a7
-		add.w      #'A',d0
+		add.w      #'A',d0 ; FIXME: drive_to_letter
 		lea.l      cxx_info_name(pc),a0
 		lea.l      pathbuf(pc),a1
 		move.b     d0,(a1)+

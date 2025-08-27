@@ -2158,7 +2158,7 @@ load_nvdipc_inf1:
 		move.b     (a1)+,(a0)+
 		dbf        d1,load_nvdipc_inf1
 		bsr.w      dgetdrv
-		add.b      #'A',d0
+		add.b      #'A',d0 ; FIXME: drive_to_letter
 		move.b     d0,(a7)
 		lea.l      20(a7),a1
 		lea.l      (a7),a0

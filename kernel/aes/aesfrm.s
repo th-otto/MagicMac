@@ -3150,7 +3150,7 @@ getvc_weiter:
  move.l   mctrl_btrett+4,-(sp)     ; letzte Einstellung sichern
  clr.w    beg_mctrl_cnt            ; alles bereit machen fuer Umschaltung
 
- addi.b   #'A',d1
+ addi.b   #'A',d1 ; FIXME: drive_to_letter
  lsl.w    #8,d1                    ; Laufwerbuchstabe "X",EOS
  move.w   d1,-(sp)
  move.l   sp,-(sp)                 ; String "X"

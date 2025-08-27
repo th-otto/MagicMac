@@ -118,6 +118,28 @@ static char	logfile[256];
 static char logback[256];
 #endif
 
+#define NUM_DRIVES 32
+
+static int letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
+static int drive_from_letter(int drv)
+{
+	if (drv >= 'A' && drv <= 'Z')
+		drv = drv - 'A';
+	else if (drv >= 'a' && drv <= 'z')
+		drv = drv - 'a';
+	else if (drv >= '1' && drv <= '6')
+		drv = (drv - '1') + 26;
+	else
+		return -1;
+	return drv;
+}
+
+
 int main(void)
 {
 	char	help[2];
@@ -219,7 +241,7 @@ int main(void)
 	{
 		Dsetdrv('U' - 'A');
 		Dsetpath("\\");
-		help[0] = ramdisk_drive + 65;
+		help[0] = latter_from_drive(ramdisk_drive);
 		help[1] = 0;
 		if (Frename(0, help, mountname) != 0L)
 		{
@@ -404,12 +426,14 @@ invalid_line:
  */
 		if (!stricmp(input, "drive"))
 		{
+			int drv;
+
 			if (arg[2])
 				goto invalid_line;
-			arg[1] &= ~32;
-			if ((arg[1] < 'A') || (arg[1] > 'Z') || (arg[1] == 'U'))
+			drv = drive_from_letter(arg[1]);
+			if (drv < 0 || drv == 'U' - 'A')
 				goto invalid_line;
-			ramdisk_drive = arg[1] - 'A';
+			ramdisk_drive = drv;
 			continue;
 		}
 /*
@@ -569,17 +593,15 @@ LONG get_and_set_drive(void)
 	int i;
 
 	_drvbits = (LONG *)0x4c2;
-	for (i = 2; i < 26; i++)
+	for (i = 2; i < NUM_DRIVES; i++)
 	{
 		if ((i != ('U' - 'A')) && !(*_drvbits & (1L << i)))
 		{
 			*_drvbits |= (1L << i);
-			break;
+			return i;
 		}
 	}
-	if (i == 26)
-		return -1;
-	return i;
+	return -1;
 }
 
 /*

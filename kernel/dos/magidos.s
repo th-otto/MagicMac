@@ -1446,6 +1446,9 @@ drive_from_letter_err:
     moveq	#-1,d0
     rts
 
+drive_to_letter:
+ dc.b    "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+
 path_to_DD:
 
 ;    DEBT a0,'path_to_DD '
@@ -1503,9 +1506,8 @@ pthdd_nodev:
  beq.b    startdd_actdrv           ; Nullstring -> aktuelles Laufwerk
  cmpi.b   #':',1(a3)
  bne.b    startdd_actdrv           ; keine Laufwerkangabe->aktuelles Laufwerk
- jsr      toupper
+ bsr      drive_from_letter
  move.b   d0,d6
- subi.b   #'A',d6
  addq.l   #2,a3                    ; Laufwerkangabe ueberspringen
  bra.b    startdd_bothdrv
 startdd_actdrv:
@@ -1877,13 +1879,6 @@ dgp_root:
  sub.l    d1,d0                    ; Laenge des Pfad-Anfangs
  sub.w    d0,d7
  move.l   (sp)+,a0                 ; DD zurueck
-/*
- moveq    #'A',d1
- add.w    d_drive(a1),d1
- move.b   #$5c,(a5)+
- move.b   d1,(a5)+
- clr.b    (a5)
-*/
 dgp_ok:
  move.l   dd_dmd(a0),a2
  move.l   d_xfs(a2),a2
@@ -1928,15 +1923,18 @@ pathcmpl:
  bra.b    pcpl_nxt
 pcpl_drv:
  move.l   act_pd,a0
- moveq    #'A',d0
- add.b    p_defdrv(a0),d0
+ moveq    #0,d0
+ move.b   p_defdrv(a0),d0
+ lea      drive_to_letter(pc),a0
+ move.b   0(a0,d0.w),d0
  move.b   d0,(a6)+
  move.b   d1,(a6)+
 pcpl_nxt:
  cmpi.b   #$5c,(a5)
  beq.b    pcpl_defpath
  move.w   d7,d1               ; buflen
- subi.w   #'A'-1,d0           ; drivecode (1 = A, ...)
+ bsr      drive_from_letter
+ addq.w   #1,d0               ; drivecode (1 = A, ...)
  move.l   a6,a0               ; pathbuf
  clr.b    (a0)                ; zur Sicherheit
  bsr      Dgetcwd
@@ -8522,8 +8520,9 @@ etv_critic_vec:
  bne.b    etvc_err
  lea      change_s1(pc),a0
  bsr.b    str_to_con
- moveq    #'A',d0
- add.w    6(sp),d0                 ; Laufwerknummer
+ move.w   6(sp),d0                 ; Laufwerknummer
+ lea      drive_to_letter(pc),a0
+ move.b   0(a0,d0.w),d0
  bsr      Bputch
  lea      change_s2(pc),a0
  bsr.b    str_to_con
@@ -8534,8 +8533,9 @@ etvc_err:
  bsr.b    str_to_con
  lea      diskerr_s1(pc),a0
  bsr.b    str_to_con
- moveq    #'A',d0
- add.w    6(sp),d0                 ; Laufwerknummer
+ move.w   6(sp),d0                 ; Laufwerknummer
+ lea      drive_to_letter(pc),a0
+ move.b   0(a0,d0.w),d0
  bsr      Bputch
  lea      diskerr_s2(pc),a0
  bsr      str_to_con
@@ -10458,10 +10458,12 @@ sbo_endloop1:
 ; kein SLBPATH, suche in X:\GEMSYS\MAGIC\XTENSION
 
 slb_no_srch:
- lea      128+4(sp),a0             ; Zeiger auf 30-Byte-Puffer
  lea      xtpath(pc),a1
- move.b   _bootdev+1,d0
- add.b    #'A',d0
+ move.w   _bootdev,d0
+ lea      drive_to_letter(pc),a0
+ move.b   0(a0,d0.w),d0
+ lea      128+4(sp),a0             ; Zeiger auf 30-Byte-Puffer
+slb_no_srch1:
  move.b   d0,(a0)+
 sbo_ispath:
  move.b   (a1)+,(a0)+
