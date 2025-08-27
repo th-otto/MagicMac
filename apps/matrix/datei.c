@@ -167,6 +167,12 @@ Sonst wird vom vorhandenen Pfadnamen der Dateiname bzw.
 
 ***********************************************************/
 
+static int letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
 char *makepath(char *path, char *typ)
 {
 		  char *ret;
@@ -180,7 +186,7 @@ char *makepath(char *path, char *typ)
 		*path = '\0';
 		}
 	else {
-		*path++ = Dgetdrv()+'A';
+		*path++ = letter_from_drive(Dgetdrv());
 		*path++ = ':';
 		Dgetpath(path, 0);
 		init = TRUE;

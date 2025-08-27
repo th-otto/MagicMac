@@ -635,7 +635,7 @@ void dial_laufwe(void)
 		{
 		if	(drvs & 1L)	/* existiert, nicht angemeldet */
 			{
-			int letter = i >= 26 ? i - 26 + '1' : i + 'A';
+			int letter = letter_from_drive(i);
 			c = diskname_to_iconblk(letter, &name);
 			make_icon(ITYP_DISK, c, letter, name, NULL, FALSE,-1,0);
 			}

@@ -211,6 +211,12 @@ static void recalc(int *wert, int old, int new)
 
 static char infpath[128];
 
+static int letter_from_drive(int drv)
+{
+	return drv >= 26 ? drv - 26 + '1' : drv + 'A';
+}
+
+
 static void read_inf(char *fname)
 {
 	char buf[512];
@@ -332,10 +338,7 @@ static void read_inf(char *fname)
 		
 		s = infpath;
 		drv = Dgetdrv();
-		if (drv >= 26)
-			*s++ = drv - 26 + '1';
-		else
-			*s++ = drv + 'A';
+		*s++ = letter_from_drive(drv);
 		*s++ = ':';
 		Dgetpath(s, 0);
 		s += strlen(s);

@@ -100,7 +100,7 @@ void dim_chg(int idx)
 	do	{
 		itoa(mtx[nr].xdim, hori_s, 10);
 		itoa(mtx[nr].ydim, vert_s, 10);
-		((dim_info + DIMNAME)->ob_spec.free_string)[21] = 'A' + nr; /* Matrix - Name */
+		dim_info[DIMNAME].ob_spec.free_string[21] = 'A' + nr; /* Matrix - Name */
 		(dim_info[DIM_HORI].ob_spec.tedinfo)->te_ptext  = hori_s;
 		(dim_info[DIM_HORI].ob_spec.tedinfo)->te_txtlen = 3;
 		(dim_info[DIM_VERT].ob_spec.tedinfo)->te_ptext  = vert_s;
@@ -141,7 +141,7 @@ void nachkom(int idx)
 
 	do	{
 		itoa(format[nr][1], nach_s, 10);
-		((nach_info + NACHNAME)->ob_spec.free_string)[7] = 'A' + nr;  /* Matrix - Name */
+		nach_info[NACHNAME].ob_spec.free_string[7] = 'A' + nr;  /* Matrix - Name */
 		(nach_info[NSTELLEN].ob_spec.tedinfo)->te_ptext  = nach_s;
 		(nach_info[NSTELLEN].ob_spec.tedinfo)->te_txtlen = 3;
 		ob_dsel(nach_info, NACH_OK);
