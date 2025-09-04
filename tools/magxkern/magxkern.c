@@ -229,99 +229,103 @@ int main(void)
 	struct mgx_pd *pd;
 	struct mgx_procdata *pr;
 	APPL **applx;
-	register int i;
+	int i;
 	char str[130];
 	unsigned char n;
 	char *s1,*s2;
-
-
-/*
-	appl = NULL;
-	printf("offs ap_pd = 0x%08lx\n", &appl->ap_pd);
-*/
+	FILE *out = stdout;
 
 	/* DOS-KERNEL */
 
-	ret = Dcntl(KER_GETINFO, (char *) NULL, 0);
+	ret = Dcntl(KER_GETINFO, "U:\\", 0);
 	if	(ret < 0)
-		return((int) ret);
+	{
+		fprintf(stderr, "KER_GETINFO failed: %ld\n", ret);
+		return 1;
+	}
 	ki = (struct mgx_dos_kernel_inf *) ret;
 
-	printf("DOS-Kernel:\n");
-	printf(" Version = %d\n", ki->m_Version);
-	printf(" act_pd = 0x%08lx\n", ki->act_pd);
-	printf("\n");
+	fprintf(out, "DOS-Kernel:\n");
+	fprintf(out, " Version = %d\n", ki->m_Version);
+	fprintf(out, " act_pd = 0x%08lx\n", ki->act_pd);
+	fprintf(out, "\n");
 
 	/* DOSVARS */
 
 	ret = Sconfig(SC_DOSVARS, 0);
 	if	(ret < 0)
-		return((int) ret);
+	{
+		fprintf(stderr, "Sconfig failed: %ld\n", ret);
+		return 1;
+	}
 	dv = (struct mgx_dosvars *) ret;
 
 	xa = *((struct mgx_xaes_appls **) dv->xaes_appls);
 	applx = (APPL **) &(xa->applx);
 
-	printf("XAES-Struktur fr DOS:\n");
-	printf(" Magic = 0x%08lx\n", xa->dos_magic);
-	printf(" act_appl = 0x%08lx\n", xa->act_appl);
-	printf(" ap_pd_offs = 0x%04x\n", xa->ap_pd_offs);
-	printf(" appln = %d\n", xa->appln);
-	printf(" maxappln = %d\n", xa->maxappln);
-	printf(" applx = 0x%08lx\n", xa->applx);
-	printf("\n");
+	fprintf(out, "XAES-Struktur fr DOS:\n");
+	fprintf(out, " Magic = 0x%08lx\n", xa->dos_magic);
+	fprintf(out, " act_appl = 0x%08lx\n", xa->act_appl);
+	fprintf(out, " ap_pd_offs = 0x%04x\n", xa->ap_pd_offs);
+	fprintf(out, " appln = %d\n", xa->appln);
+	fprintf(out, " maxappln = %d\n", xa->maxappln);
+	fprintf(out, " applx = 0x%08lx\n", xa->applx);
+	fprintf(out, "\n");
 
 	/* APPLX */
 
-	printf("Applikationen:\n");
+	fprintf(out, "Applikationen:\n");
 	for	(i = 0; i < xa->appln; i++)
 	{
-		printf(" slot %d\n", i);
+		fprintf(out, " slot %d\n", i);
 		appl = *applx++;
 		if	(!appl)
 			continue;		/* Slot ist leer */
 
-		printf(" appl = 0x%08lx\n", appl);
+		fprintf(out, " appl = 0x%08lx\n", appl);
 		if	((INT32) appl & 0x80000000L)
 		{
-			printf(" eingefroren\n");
+			fprintf(out, " eingefroren\n");
 			appl = (APPL *) ((INT32) appl &= ~0x80000000L);
 		}
-		printf(" ap_id = %d\n", appl->ap_id);
+		fprintf(out, " ap_id = %d\n", appl->ap_id);
 		str[8] = '\0';
 		memcpy(str, appl->ap_name, 8);
-		printf(" ap_name = %s\n", str);
-		printf(" ap_pd = 0x%08lx\n", appl->ap_pd);
+		fprintf(out, " ap_name = %s\n", str);
+		fprintf(out, " ap_pd = 0x%08lx\n", appl->ap_pd);
 
 		pd = (struct mgx_pd *) (appl->ap_pd);
 		if	(pd)
-			printf("\n");
+			fprintf(out, "\n");
 
 		while(pd)
 		{
-			printf("  pd = 0x%08lx\n", pd);
-			printf("  procid = %d\n", pd->p_procid);
+			fprintf(out, "  pd = 0x%08lx\n", pd);
+			fprintf(out, "  procid = %d\n", pd->p_procid);
 			pr = (struct mgx_procdata *) pd->p_procdata;
 			if	(pr)
 			{
-				s1 = (pr->pr_flags & 1) ? "(kein Eintrag in U:\PROC)" : "";
+				s1 = (pr->pr_flags & 1) ? "(kein Eintrag in U:\\PROC)" : "";
 				s2 = (pr->pr_flags & 2) ? "(durch Pfork() erzeugt)" : "";
-				printf("  pr_flags = 0x%04x %s %s\n", pr->pr_flags, s1, s2);
-				printf("  pr_procname = %s\n", pr->pr_procname);
-				printf("  pr_fname = %s\n", pr->pr_fname);
+				fprintf(out, "  pr_flags = 0x%04x %s %s\n", pr->pr_flags, s1, s2);
+				fprintf(out, "  pr_procname = %s\n", pr->pr_procname);
+				fprintf(out, "  pr_fname = %s\n", pr->pr_fname);
 				n = pr->pr_cmdlin[0];
 				if	(n > 127)
 					n = 127;
 				memcpy(str, pr->pr_cmdlin + 1, n);
 				str[n] = '\0';
-				printf("  pr_cmdlin = %s\n", str);
+				fprintf(out, "  pr_cmdlin = %s\n", str);
 			}
-			printf("\n");
+			fprintf(out, "\n");
 			pd = (struct mgx_pd *) pd->p_parent;
 		}
 
-		printf("\n");
+		fprintf(out, "\n");
 	}
 
-	return(0);
+	if (out != stdout)
+		fclose(out);
+
+	return 0;
 }

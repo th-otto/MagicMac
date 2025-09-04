@@ -1,4 +1,4 @@
-magxkern.ttp    ; name of executable pgm is topmost window
+magxkern.tos    ; name of executable pgm is topmost window
 .C[-I..\..\inc_c]
 .C[-I..\..\pc\include]
 .S[-I..\..\inc_as]
