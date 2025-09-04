@@ -68,6 +68,7 @@ NPDL           EQU  64             ; soviele Prozesse verwenden die SharedLib
      XDEF iniddev2
      XDEF deleddev
      XREF _Memavail
+     XREF dfr_proc
 
 * aus MALLOC
 
@@ -1367,6 +1368,17 @@ dfr_again:
 dfr_weiter:
  moveq    #0,d1                    ; automount
 ;move.w   d0,d0
+;
+; check for MiNT compatible pseudo drive numbers:
+; 32 - u:\dev
+; 33 - u:\pipe
+; 34 - u:\proc
+; 35 - u:\ram
+; 36 - u:\shm
+; 37 - u:\kern
+ cmp.w #34,d0
+ beq   dfree_proc
+dfr_gemdos:
  bsr.s    d_chkdrv
  tst.l    d0
  blt.b    dfr_ende                 ; Fehlercode woertlich weiterreichen
@@ -1395,7 +1407,10 @@ dfr_go:
 dfr_ende:
  movem.l  (sp)+,d7/a6
  rts
-
+dfree_proc:
+ move.l   (a6),a1                  ; long df[4]
+ bsr      dfr_proc
+ bra.s    dfr_ende
 
 **********************************************************************
 *
@@ -4336,10 +4351,13 @@ D_Fsetdta:
 D_Dsetdrv:
  move.w   (a0),d0
 Dsetdrv:
+ cmpi.b   #NUM_DRIVES,d0
+ bcc.s    Dsetdrv_err
  movea.l  act_pd,a0
  move.b   d0,p_defdrv(a0)
+Dsetdrv_err:
  move.w   #$a,-(sp) /* Drvmap() */
- trap     #$d
+ trap     #13
  addq.w   #2,sp
  rts
 

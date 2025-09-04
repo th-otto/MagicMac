@@ -90,6 +90,8 @@ pseudo_dirs:
  DC.L     udrv_procdir
  DC.B     'SHM',0,0,0
  DC.L     udrv_shmdir
+pseudo_dirs_end:
+num_pseudo_dirs equ (pseudo_dirs_end-pseudo_dirs)/10
 
 
 **********************************************************************
@@ -115,7 +117,7 @@ fsu_init:
 
 ; die 4 Pseudoverzeichnisse anlegen
 
- moveq    #3,d7                         ; vier Pseudoverzeichnisse
+ moveq    #num_pseudo_dirs-1,d7                         ; vier Pseudoverzeichnisse
  lea      pseudo_dirs(pc),a4
 dosi_loop2:
  move.b   #$10,dir_attr(a5)             ; Unterverzeichnis
@@ -375,7 +377,7 @@ do_both:
 startdd_loopn_u:
  addq.w   #1,d0
  cmpi.w   #NUM_DRIVES,d0
- bcc.s    startdd_loop_u
+ bcs.s    startdd_loop_u
  move.l   d2,(udrv_drvs).l             ; aktualisieren
 do_ok:
  moveq    #0,d0
@@ -411,6 +413,7 @@ fsu_dfree:
  moveq    #0,d0                    ; kein Fehler
  rts
 * FUer U:\PROC
+ .globl dfr_proc
 dfr_proc:
  move.l   a6,-(sp)
  move.l   a1,a6

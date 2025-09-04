@@ -7,8 +7,6 @@
 	INCLUDE "dos.inc"
 	INCLUDE "errno.inc"
 
-NUM_DRIVES     EQU  32             ; hoechste Laufwerknummer
-
 	XDEF	read_inf
 	XDEF	rinf_sec
 	XDEF rinf_tok
