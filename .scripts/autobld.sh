@@ -18,6 +18,12 @@ pcmake -B -F test/all.prj >> "$ERRFILE"
 pcmake -B -F apps/all.prj >> "$ERRFILE"
 pcmake -B -F extensio/all.prj >> "$ERRFILE"
 
+PH_BIT3="$PWD\tools\slb_demo\ph_bit3.ttp"
+
+$PH_BIT3 extensio\load_img\load_img.slb
+$PH_BIT3 extensio\edit_slb\editobjc.slb
+$PH_BIT3 extensio\xp_rastr.slb\xp_rastr.slb
+
 #
 # pdlg currently has to be build separately, because
 # we need different localizations for it
@@ -26,14 +32,17 @@ cd extensio\pdlg_slb
 # english
 export PCCFLAGS=-DCOUNTRY=0
 pcmake -B -F pdlg_slb.prj >> "$ERRFILE"
+$PH_BIT3 pdlg.slb
 mv pdlg.slb en
 # french
 export PCCFLAGS=-DCOUNTRY=2
 pcmake -B -F pdlg_slb.prj >> "$ERRFILE"
+$PH_BIT3 pdlg.slb
 mv pdlg.slb fr
 # german
 export PCCFLAGS=-DCOUNTRY=1
 pcmake -B -F pdlg_slb.prj >> "$ERRFILE"
+$PH_BIT3 pdlg.slb
 mv pdlg.slb de
 unset PCCFLAGS
 
@@ -69,6 +78,8 @@ pcmake -B -F vdi/drivers/all.prj >> "$ERRFILE"
 pcmake -B -F winframe/winframe.prj >> "$ERRFILE"
 pcmake -B -F bios/atari/boot/all.prj >> "$ERRFILE"
 pcmake -B -F bios/atari/boot/ct60new.prj >> "$ERRFILE"
+
+$PH_BIT3 winframe\winframe.slb
 
 #
 # now the kernels
