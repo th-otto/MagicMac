@@ -8,10 +8,10 @@
 **
 */
 
-	INCLUDE "ERRNO.INC"
-	INCLUDE "MGX_XFS.INC"
-	INCLUDE "KERNEL.INC"
-	INCLUDE "MACXKER.INC"
+	INCLUDE "errno.inc"
+	INCLUDE "mgx_xfs.inc"
+	INCLUDE "kernel.inc"
+	INCLUDE "macxker.inc"
 
 	XDEF mxfs_init
 

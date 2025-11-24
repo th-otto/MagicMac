@@ -1,4 +1,3 @@
-
 * BIOS fuer MagiC MAC X
 * ********************
 
@@ -101,7 +100,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 
 * Import aus STD
 
-     XREF      putch,putstr,getch,str_to_con,debug_puts
+     XREF      putch,putstr,getch,debug_puts
      IMPORT    date2str            ; void date2str( a0 = char *s, d0 = WORD date)
      IF   DEBUG
      XREF hexl,crlf
@@ -154,17 +153,17 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 
 
      INCLUDE "lowmem.inc"
-	 include "country.inc"
+	 INCLUDE "country.inc"
      INCLUDE "bios.inc"
      INCLUDE "dos.inc"
      INCLUDE "errno.inc"
      INCLUDE "kernel.inc"
      INCLUDE "macxker.inc"
      INCLUDE "debug.inc"
-	 INCLUDE "..\dos\magicdos.inc"
+     INCLUDE "..\dos\magicdos.inc"
 
-	INCLUDE "version.inc"
-	
+     INCLUDE "version.inc"
+
 NCOOKIES  EQU  21
 NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 
@@ -185,8 +184,8 @@ clear_area          EQU $9a4            /* war vorher auf $98c        */
      OFFSET clear_area
 
 p_iorec_ser1:       DS.L 1              /* IOREC *p_iorec_ser1        */
-; IOREC:            DS.B $e             /*   0: IOREC fuer Eingabe     */
-;                   DS.B $e             /*  $e: IOREC fuer Ausgabe     */
+; IOREC:            DS.B $e             /*   0: IOREC fuer Eingabe    */
+;                   DS.B $e             /*  $e: IOREC fuer Ausgabe    */
 ;                   DS.B 1              /* $1c: aux_status_rcv        */
 ;                   DS.B 1              /* $1d: aux_status_tmt        */
 ;                   DS.B 1              /* $1e: aux_lock_rcv          */
@@ -217,18 +216,18 @@ pack_joy:           DS.B 3              /* char [3],$fe/$ff,joy0,joy1 */
 kbshift:            DS.B 1              /* char kbshift               */
 keyrepeat:          DS.B 3              /* char keyrepeat[3]          */
                                         /* keyrepeat[0]: Scancode     */
-                                        /* keyrepeat[1]: Verzoeg       */
+                                        /* keyrepeat[1]: Verzoeg      */
                                         /* keyrepeat[2]: unben.       */
 altgr_status:       DS.B 1              /* char altgr_status          */
      IF   ALT_NUMKEY
-alt_numkey:         DS.B 1              /* Fuer Alt-Num0..Num9         */
+alt_numkey:         DS.B 1              /* Fuer Alt-Num0..Num9        */
      ENDIF
      IF   DEADKEYS
-deadkey_asc:        DS.B 1              /* Fuer "dead keys"            */
-deadkey_scan:       DS.B 1              /* Fuer "dead keys"            */
-deadkey_kbsh:       DS.B 1              /* Fuer "dead keys"            */
+deadkey_asc:        DS.B 1              /* Fuer "dead keys"           */
+deadkey_scan:       DS.B 1              /* Fuer "dead keys"           */
+deadkey_kbsh:       DS.B 1              /* Fuer "dead keys"           */
      EVEN
-deadkey_subtab:     DS.L 1              /* Fuer "dead keys"            */
+deadkey_subtab:     DS.L 1              /* Fuer "dead keys"           */
      ENDIF
      EVEN
 key_delay:          DS.B 1              /* char                       */
@@ -256,10 +255,10 @@ is_fpu:             DS.B 1              /* LineF- FPU existiert       */
      EVEN
 stack_offset:       DS.W 1              /* 6:68000, 8: 68010 ff       */
 config_status:      DS.L 1
-                    DS.L 1              /* 04: hier -> DOSVARS            */
-                    DS.L 1              /* 08: hier -> AESVARS            */
-                    DS.L 1              /* 12: hier -> vdi_tidy           */
-hddf_vector:        DS.L 1              /* 16: -> hddriver_functions      */
+                    DS.L 1              /* 04: hier -> DOSVARS              */
+                    DS.L 1              /* 08: hier -> AESVARS              */
+                    DS.L 1              /* 12: hier -> vdi_tidy             */
+hddf_vector:        DS.L 1              /* 16: -> hddriver_functions        */
 status_bits:        DS.L 1              /* 20: Bit 0: APP-Manager ist aktiv */
 pkill_vector:       DS.L 1              /* 24: VERKETTEN: z.B. fuer DSP     */
 
@@ -269,22 +268,22 @@ bconmap_struct:     DS.L 1              /* long *maptab               */
                     DS.W 1              /* aktueller serieller Port (>= 6) */
 p_rsconf:           DS.L 1              /* Pointer auf Rsconf (device 1)   */
 p_iorec:            DS.L 1              /* Pointer auf iorec (device 1)    */
-ttram_md:           DS.L 4              /* MD fuer TTRAM-Block              */
+ttram_md:           DS.L 4              /* MD fuer TTRAM-Block             */
      IFNE FALCON
 scrbuf_adr:         DS.L 1              /* Startadresse (netto, ohne MCB)  */
-scrbuf_len:         DS.L 1              /* tatsaechliche Laenge              */
+scrbuf_len:         DS.L 1              /* tatsaechliche Laenge            */
      ENDIF
-pe_slice:           DS.W 1              /* fuer XAES (Zeitscheibe)          */
-pe_timer:           DS.W 1              /* fuer XAES (Zeitscheibe)          */
+pe_slice:           DS.W 1              /* fuer XAES (Zeitscheibe)         */
+pe_timer:           DS.W 1              /* fuer XAES (Zeitscheibe)         */
 first_sem:
 dummy_sem:          DS.B bl_sizeof      /* Dummy- Semaphore                */
 app0:               DS.L 1              /* APP #0 und Default- Superstack  */
 pgm_superst:        DS.L 1              /* Default- Superstack             */
 p_mgxinf:
 pgm_userst:         DS.L 1
-dflt_maptable:      DS.L NSERIAL*6     /* fuer 4 Eintraege a 24 Bytes       */
-intern_maptab:      DS.L NSERIAL*6           ;interne MapTab. Enthaelt die Adressen
-                                       ;der seriellen Mag!X-Biosroutinen
+dflt_maptable:      DS.L NSERIAL*6      /* fuer 4 Eintraege a 24 Bytes     */
+intern_maptab:      DS.L NSERIAL*6      /* interne MapTab. Enthaelt die Adressen */
+                                        /* der seriellen Mag!X-Biosroutinen */
 ;
 ; Anschliessend eine Kopie der Geraetevektoren.
 ; Ist der Eintrag 0, so ist eine externe Routine eingehaengt, andernfalls ist
@@ -303,13 +302,26 @@ Mac_xfsx:           DS.L 1              /* ->Tabelle mit XFS-Daten         */
 warmbvec:           DS.L 1              /* Sprungadr. fuer Ctrl-Alt-Del     */
 coldbvec:           DS.L 1              /* Sprungadr. fuer Ctrl-Alt-Rsh-Del */
 sust_len:           DS.L 1              /* Supervisorstack pro Applikation */
-datemode:           DS.W 1         ;fuer date2str (->STD.S)
+datemode:           DS.W 1              /* fuer date2str (->STD.S) */
 log_fd:             DS.L 1              /* DateiHandle fuer Bootlog */
 log_fd_pd:          DS.L 1              /* Prozessdeskriptor fuer Handle */
 log_oldconout:      DS.L 1              /* Alter Vektor fuer Bootlog */
 p_vt52:             DS.L 1              /* fuer VT52.PRG */
 __e_bios:
 
+; Speicherbelegung in "lowmem":
+;     0 ..  $140		Interrupt-Vektoren
+;  $140 ..  $380		(frei, 576 Bytes)
+;  $380 ..  $5b4		offizielle Systemvariablen
+;  $5b4 ..  $840		(frei, 652 Bytes)
+;  $840 ..  $9a4		MagiC-BIOS-Variablen mit festen Adressen
+;  $9a4 .. $1200		BIOS
+; $1200 .. $28d6		VDI
+; $2900 .. (variabel)	DOS
+
+IF __e_bios >= $1200
+ "ueberlauf der Bios-Variablen"
+ENDIF
 
 	XDEF act_pd
 
@@ -370,17 +382,17 @@ MSysX:
  DC.L     0                   ; prtout                            0c0
  DC.L     0                   ; MacSys_prn_wrts                   0c4
  DC.L     0                   ; serconf                           0c8
- DC.L     0                   ; MacSys_seris                      0cc
- DC.L     0                   ; MacSys_seros                      0d0
- DC.L     0                   ; MacSys_serin                      0d4
- DC.L     0                   ; MacSys_serout                     0d8
+ DC.L     0                   ; MacSysX_seris                     0cc
+ DC.L     0                   ; MacSysX_seros                     0d0
+ DC.L     0                   ; MacSysX_serin                     0d4
+ DC.L     0                   ; MacSysX_serout                    0d8
  DC.L     0                   ; SerOpen                           0dc
  DC.L     0                   ; SerClose                          0e0
  DC.L     0                   ; SerRead                           0e4
  DC.L     0                   ; SerWrite                          0e8
  DC.L     0                   ; SerStat                           0ec
  DC.L     0                   ; SerIoctl                          0f0
- DCB.L    PTRLEN,0            ; MacSys_GetKbOrMous                0f4
+ DCB.L    PTRLEN,0            ; MacSysX_GetKbOrMous               0f4
  DC.L     0                   ; MacSys_dos_macfn                  104
  DC.L     0                   ; MacSys_xfs_version                108
  DC.L     0                   ; MacSys_xfs_flags                  10c
@@ -388,8 +400,8 @@ MSysX:
  DCB.L    PTRLEN,0            ; MacSys_xfs_dev                    120
  DCB.L    PTRLEN,0            ; MacSys_drv2devcode                130
  DCB.L    PTRLEN,0            ; MacSys_rawdrvr                    140
- DCB.L    PTRLEN,0            ; MacSys_Daemon                     150
- DC.L     0                   ; MacSys_Yield                      160
+ DCB.L    PTRLEN,0            ; MacSysX_Daemon                    150
+ DC.L     0                   ; MacSysX_Yield                     160
 
 **********************************************************************
 *
@@ -421,7 +433,7 @@ MSys:
  DC.L     0                   ; $48 prt_cin
  DC.L     0                   ; $4c prt_cout
  DC.L     0                   ; $50 ser_rsconf
- DC.L     0                   ; $54 ser_cis  FUer ser1 (Atari -> MAC)
+ DC.L     0                   ; $54 ser_cis  Fuer ser1 (Atari -> MAC)
  DC.L     0                   ; $58 ser_cos
  DC.L     0                   ; $5c ser_cin
  DC.L     0                   ; $60 ser_cout
@@ -559,7 +571,7 @@ bot_aestpa:
  move.w   #3,seekrate
  move.w   #-1,_dumpflg
  move.w   #-1,pe_slice             ; Zeitscheibensteuerung abschalten
- clr.l    act_appl.l               ; single task
+ clr.l    act_appl                 ; single task
 
  move.l   #'_DMY',dummy_sem+bl_name  ; Dummy- Semaphore initialisieren
  clr.l    hddf_vector              ; kein paralleler Plattentransfer
@@ -679,7 +691,7 @@ _cpyloop3:
 
  move.l   #default_keytblx,default_keytblxp
  clr.b    kbshift
- clr.b    altgr_status   
+ clr.b    altgr_status
      IF   ALT_NUMKEY
  clr.b    alt_numkey
      ENDIF
@@ -1035,7 +1047,7 @@ IRwabs:
  move.l   a1,4(sp)            ; merken fuer DOS- Writeback
  move.l   dlockx(a1),d3
  beq.b    rwabs_ok
- cmp.l    act_pd.l,d3
+ cmp.l    act_pd,d3
  bne.b    rwabs_elocked
 rwabs_ok:
  clr.l    bufl_timer(a1)      ; fuer DOS- Writeback (als in Arbeit markieren)
@@ -1640,7 +1652,6 @@ Bmalloc:
 * (zu Debugging-Zwecken)
 *
 
-mac_puts:
 debug_puts:
  move.l   a0,a1
  lea      MSysX+MacSysX_debugout(pc),a0
@@ -1820,7 +1831,7 @@ _Scrdmp:
  move.l   a0,d0                    ; Hardcopy installiert ?
  beq.b    _scrd_err                ; nein !
  jsr      (a0)
-* MagiC 3.0: DUMMY-ROUTINE FUeR HARDCOPY
+* MagiC 3.0: DUMMY-ROUTINE FUER HARDCOPY
 do_hardcopy:
 _scrd_err:
  move.w   #-1,_dumpflg
@@ -2574,9 +2585,9 @@ read_rtclock:
 
 init_dosclock:
  bsr      _Gettime
- move.w   d0,dos_time.l
+ move.w   d0,dos_time
  swap     d0
- move.w   d0,dos_date.l
+ move.w   d0,dos_date
  rts
 
 
@@ -2957,7 +2968,7 @@ handle_package:
    suba.l   d1,a1
    move.b   d0,(a1)                 ;eintragen
    subq.b   #1,kbdvecs+$25          ;ikbd_cnt
-   bne.b    hdlpckg_l1               ;noch nicht fertig
+   bne.b    hdlpckg_l1              ;noch nicht fertig
 hdlpckg_l2:
                                     ;aus Komp.gruenden bleibt d0 = (a1).b
    move.l   a0,-(sp)                ;Paketanfang als Parameter
@@ -2984,7 +2995,7 @@ handle_joy:
    move.b   d0,-6(a2,d1.w)          ;Wert merken (z.B. Bit 7 = Feuerknopf)
    movea.l  kbdvecs+$18,a2          ;joyvec
    lea      pack_joy,a0             ;Paketanfang
-   bra.b    hdlpckg_l2               ;Vektor anspringen
+   bra.b    hdlpckg_l2              ;Vektor anspringen
 ;--------------------------------------------------
 hdlpckg_table:
  DC.L     pack_state
@@ -3336,6 +3347,8 @@ bpw_ende:
  movem.l  (sp)+,d6/d7/a6
  rts
 
+; Stop the CPU until an interrupt occurs.
+; This may save some host CPU time on emulators (i.e. ARAnyM).
 mmx_yield:
  move.l a0,-(a7)
  move.l a1,-(a7)
