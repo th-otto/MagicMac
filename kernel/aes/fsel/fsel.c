@@ -276,7 +276,7 @@ static void init_xted(OBJECT *ob,
                          int vislen)
 {
      register TEDINFO *t;
-     static char *tmplt_8_3 = "________.___";
+     static char tmplt_8_3[] = "________.___";
 
 
      t = ob->ob_spec.tedinfo;

@@ -1,0 +1,31 @@
+EVAL_WIN32 := case `uname -s` in *MINGW*|CYGWIN*) echo 1;; *) echo 0; esac
+WIN32 := $(shell $(EVAL_WIN32))
+EVAL_MACOS := case `uname -s` in Darwin*) echo 1;; *) echo 0; esac
+MACOS := $(shell $(EVAL_MACOS))
+
+ifeq ($(WIN32),1)
+BINDIR = $(top_srcdir)/bin/win32/
+else
+ifeq ($(MACOS),1)
+BINDIR = $(top_srcdir)/bin/macos/
+else
+BINDIR = $(top_srcdir)/bin/linux/
+endif
+endif
+
+CC = $(BINDIR)m68k-atari-tos-pc-pcc
+AS = $(BINDIR)m68k-atari-tos-pc-pasm
+LD = $(BINDIR)m68k-atari-tos-pc-plink
+# 0=US, 1=DE, 2=FR
+COUNTRY ?= 1
+
+LIBDIR = $(top_srcdir)/pc/lib
+STARTUP = $(LIBDIR)/cstartv.o
+
+all::
+
+.s.o:
+	$(AS) -S -O=$@ $(DEFINES) $(ASMINCLUDES) $<
+.c.o:
+	$(CC) -O=$@ $(CFLAGS) $<
+
