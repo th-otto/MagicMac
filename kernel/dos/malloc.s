@@ -93,14 +93,14 @@ md_own:        DS.L      1    /* 0x0c: Prozess (1 = "unbenutzt")            */
 mc_init:
 
      DEBON
-     DEB  'Initialisierung der Speicherverwaltung'
+     DEB  'Initialize memory management'
 
 * MemoryParameterBlock initialisieren (bios Getmpb)
  lea      mem_root.w,a0
  lea      MEMLEN_OFFS(a0),a1
  jsr      fast_clrmem              ; 16 Zeiger loeschen
 
-     DEB  'Getmpb() aufrufen'
+     DEB  'Call Getmpb()'
 
  subq.l   #8,sp
  clr.l    -(sp)                    ; Platz fuer drei Zeiger
@@ -158,7 +158,7 @@ mci_no_end_st:
      IFNE FALCON
  move.l   scrbuf_adr,d0
  beq.b    mci_no_scrbuf
-     DEB  'Bildschirmspeicher allozieren'
+     DEB  'Allocate screen memory'
  cmp.l    (mem_root+MEMLEN_OFFS).w,d0   ; Ende ST-RAM == Anfang Bildschirm ?
 /*
  cmp.l    mem_top,d0               ; Ende ST-RAM == Anfang Bildschirm ?
@@ -181,7 +181,7 @@ mci_no_end_st:
  move.l   #ur_pd,mcb_owner(a0)          ; Block belegen
 mci_no_scrbuf:
      ENDIF
-     DEB  'Initialisierung der Speicherverwaltung beendet'
+     DEB  'Initialization of memory management finished'
  rts
 
 

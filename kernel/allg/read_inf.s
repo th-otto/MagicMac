@@ -910,7 +910,7 @@ rimg_ende:
 rinf_bdev:
  movem.l	d7/a6,-(sp)
 	DEBON
-	DEB	'Lese Ger',$84,'teinformationen'
+	DEB	'Read device information'
  suba.w	#80,sp
  move.l	a0,d0
  beq		rbd_ok				; keine INF-Datei
@@ -999,7 +999,7 @@ rinf_dvh:
 _rinf_dvh:
  movem.l	d7/a6,-(sp)
 	DEBON
-	DEB	'Lese Handle-Ger',$84,'teinformationen'
+	DEB	'Read device handle information'
  move.w	d0,d7				; d7 = Handle
  move.l	a1,a6				; a6 = Token
  suba.w	#80,sp

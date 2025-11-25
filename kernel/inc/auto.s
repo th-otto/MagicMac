@@ -9,7 +9,7 @@
      IMPORT    rinf_bdev           /* long rinf_bdev( a0 = char *inf ) */
      IMPORT    rinf_dvh            /* long rinf_dvh( a0 = char *inf ) */
 
-	DEB	'Bootlaufwerk setzen'
+	DEB	'Set boot drive'
  bsr 	set_bootdrive			; Bootlaufwerk als aktuelles
 ;move.l	$bffff,-(sp)			; TOS 3.06
 ;trap	#$d					; bios Kbshift
@@ -19,28 +19,28 @@
 
 * Jetzt (ab MagiC 5.01) die magx.inf laden und auswerten
 
-	DEB	'MAGX.INF lesen und auswerten'
+	DEB	'Load and parse MAGX.INF'
  jsr		read_inf
  move.l	d0,p_mgxinf
-	DEB	'VFAT konfigurieren'
+	DEB	'Configure VFAT'
  move.l	d0,a0
  jsr		rinf_vfat				; lange Dateinamen aktivieren
 
 * Jetzt (ab MagiC 5.13 vom 1.6.97) Tastaturtabellen laden
 
-	DEB	'Tastaturtabellen einlesen'
+	DEB	'Load keyboard tables'
  bsr		read_keytbl
 
 * Jetzt (ab MagiC 6) Cookie-Tabelle anlegen
 
-	DEB	'neue Cookies anlegen ?'
+	DEB	'Create new cookies ?'
  move.l	p_mgxinf,a0
  jsr		rinf_coo
  tst.l	d0
  beq.s 	bot_no_coo
  cmpi.l	#NCOOKIES,d0
  bcs.s	bot_no_coo			; Mindestgroesse
-	DEB	'ja, neue Cookies anlegen!'
+	DEB	'yes, create new cookies!'
  move.l	d0,-(sp)				; Anzahl merken
  lsl.l	#3,d0				; * 8 wg. 2 LONGs pro Eintrag
  move.l	d0,-(sp)
@@ -83,7 +83,7 @@ no_idt_val:
 
 * Jetzt (ab MagiC 6) log-Datei oeffnen
 
-	DEB	'BOOT.LOG ',$94,'ffnen?'
+	DEB	'Open BOOT.LOG?'
  move.l	p_mgxinf,a0
  jsr		rinf_log				; Log-Datei oeffnen
  move.l	d0,log_fd
@@ -95,7 +95,7 @@ bot_nolog:
 
 * Jetzt (ab MagiC 6) Startbild laden
 
-	DEB	'Startbild laden und anzeigen'
+	DEB	'Load and display start screen'
 	IFEQ	MACINTOSH
  move.l	#'EdDI',d0			; Behne-Routinen versagen auf dem Milan
  bsr		getcookie
@@ -111,30 +111,30 @@ no_eddi:
 
 * Jetzt XTENSION-Ordner, dann AUTO-Ordner
 
-	DEB	'Ger',$84,'tetreiber (DEV) laden'
+	DEB	'Load device drivers (DEV)'
  lea 	devdir_s(pc),a5
  lea 	devpgm_s(pc),a6
  bsr 	auto_programs			; \GEMSYS\MAGIC\XTENSION\*.DEV
-	DEB	'Dateisysteme (XFS) laden'
+	DEB	'Load file systems (XFS)'
  lea 	xfsdir_s(pc),a5
  lea 	xfspgm_s(pc),a6
  bsr 	auto_programs			; \GEMSYS\MAGIC\XTENSION\*.XFS
-	DEB	'BIOS-Ger',$84,'tedateien aus MAGX.INF konfigurieren'
+	DEB	'Configure BIOS devices from MAGX.INF'
  move.l	p_mgxinf,a0
  jsr		rinf_bdev
-	DEB	'Restliche Ger',$84,'tedateien initialisieren'
+	DEB	'Initialize remaining devices'
  jsr		iniddev1
-	DEB	'Ger',$84,'te-Handles aus MAGX.INF zuweisen'
+	DEB	'Assign device handles from MAGX.INF'
  move.l	p_mgxinf,a0
  jsr		rinf_dvh
-	DEB	'Restliche Handles des DOS initialisieren'
+	DEB	'Initialize remaining DOS handles DOS'
  jsr		iniddev2
-	DEB	'AUTOEXEC.BAT ausf',$81,'hren'
+	DEB	'Execute AUTOEXEC.BAT'
  lea 	autoexec_s(pc),a6
  bsr 	autoexec				; \AUTO\AUTOEXEC.BAT
  tst.w	d0					; ausgefuehrt ?
  beq.b	no_autop				; ja, OK
-	DEB	'kein AUTOEXEC.BAT => AUTO-Ordner ausf',$81,'hren'
+	DEB	'No AUTOEXEC.BAT => run programs from AUTO folder'
  lea 	autodir_s(pc),a5
  lea 	autopgm_s(pc),a6
  bsr 	auto_programs			; \AUTO\*.PRG
@@ -142,7 +142,7 @@ no_autop:
 
 * Boot-Log schliessen
 
-	DEB	'BOOT.LOG schlie',$9e,'en'
+	DEB	'Close BOOT.LOG'
  move.l	log_fd,d0
  bmi.b	bot_nolog2
  move.l	dev_vecs+$68,a1
@@ -164,7 +164,7 @@ bot_nolog2:
 
 * Kommandoprozessor laden
 
-	DEB	'Kommandoprozessor starten'
+	DEB	'Execute COMMAND.PRG'
  pea 	nullstring(pc)
  pea 	nullstring(pc)
  pea 	cmdname(pc)
@@ -194,7 +194,7 @@ bot_nodcr:
 * durchlaufen
 
 resolut_change_loop:
-	DEB	'AES ausf',$81,'hren'
+	DEB	'Execute AES'
 	IFNE	MILANCOMP
 * CPU-Cache einschalten
  move.w	#1,-(sp)				; enable

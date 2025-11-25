@@ -138,7 +138,7 @@ dosdev_drv:
 ;         EVEN
 
 dxfs_init:
-     DEB  'DFSs initialisieren'
+     DEB  'Initialize DFSs'
 
 ;     lea      init(pc),a0
 ;     jsr      str_to_con
@@ -238,7 +238,7 @@ dxfs_drv_open:
      DEBON
  move.l   d_dfs(a0),d0
  bne      ddo_mediach              ; schon initialisiert
-     DEB  $99,'ffne neues DOSXFS- Laufwerk'
+     DEB  'Open new DOSXFS drive'
  movem.l  a4/a5,-(sp)
  move.l   a0,a5                    ; a5 = DMD *
 
@@ -274,7 +274,7 @@ ddo_ende:
  movem.l  (sp)+,a4/a5
  rts
 ddo_mediach:
-;     DEB  'Diskwechseltest eines DOSXFS- Laufwerks'
+;     DEB  'Medium-change on DOSXFS drive'
  move.l   d0,a1
  move.l   dfs_drv_open(a1),a1
  jmp      (a1)

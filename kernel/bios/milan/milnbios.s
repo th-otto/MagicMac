@@ -470,7 +470,7 @@ bot_no_aes:
 *
 
  jsr      ihdv                          ; hdv_xxx initialisieren
- DEB      'Hdv-Vektoren initialisiert'
+ DEB      'Initialize Hdv-Vectors'
 
  jsr      get_odevv
  move.l   2*32(a0),prv_lsto             ; Bcostat fuer Geraet 0
@@ -479,7 +479,7 @@ bot_no_aes:
  move.l   3*32+4(a0),prv_aux            ; Bconout fuer Geraet 1
  move.l   #do_hardcopy,scr_dump         ; MagiC 3.0: Dummy-Routine
  move.l   #do_hardcopy,prtblk_vec       ; MagiC 3.0: Dummy-Routine
- DEB      'Hardcopy initialisiert'
+ DEB      'Initialized Hardcopy'
 
 *
 * Initialisierung des FRB sowie end_os und _membot
@@ -496,7 +496,7 @@ bot_no_aes:
  beq.b    bot_no_frb
 ;move.l   d0,d0
  bsr      bmada_cook               ; Cookie eintragen
- DEB      'FRB-Puffer angelegt'
+ DEB      'Allocated FRB buffer'
 bot_no_frb:
  move.l   end_os,d0
 ; add.l   #$2000,d0                ; 8k (??!!??) noetig, sonst Crash
@@ -520,7 +520,7 @@ bot_no_frb:
 *
 
  jsr      ibkgdma                  ; ACSI/FDC-Semaphoren usw.
- DEB      'Hintergrund-DMA initialisiert'
+ DEB      'Initialized background DMA'
 
 *
 * diverse
@@ -549,7 +549,7 @@ bot_no_frb:
 bot_loop:
  move.l   a1,(a0)+                 ; immer denselben Vektor
  dbra     d0,bot_loop
- DEB      'Vektoren 2..63 initialisiert'
+ DEB      'Initialized vectors 2..63'
 
 *
 * Benutzte Exceptionroutinen initialisieren
@@ -568,9 +568,9 @@ excp_00:
 bot_loop2:
  move.l   a3,(a1)+
  dbf      d0,bot_loop2
- DEB      'benutzte Vektoren initialisiert'
+ DEB      'Initialized used vectors'
  jsr      iexcvecs                 ; Belegte Interrupts: HBL,VBL usw.
- DEB      'Interrupts initialisiert'
+ DEB      'Initialized interrupts'
 
  move.l   #BiosDisp,$b4            ; BIOS
  move.l   #XBiosDisp,$b8           ; XBIOS
@@ -588,7 +588,7 @@ bot_loop2:
 bot_loop3:
  clr.l    (a0)+
  dbf      d0,bot_loop3
- DEB      'weitere Interrupts initialisiert'
+ DEB      'Initialized more interrupts'
 
 * Devicevektoren initialisieren
 
@@ -604,25 +604,25 @@ bot_loop4:
  move.l   #bconin_con,mbiosvecs+$28     ; Bconin(2)
  move.l   #bconstat_con,dev_vecs+$8     ; Bconstat(2)
  move.l   #bconstat_con,mbiosvecs+$8    ; Bconstat(2)
- DEB      'Ger',$84,'tevektoren initialisiert'
+ DEB      'Initialized device vectors'
 
 * MFP und Vektoren initialisieren, Interrupts fuer 200Hz und IKBD
 
  jsr      iperiph
- DEB      'Peripherie initialisiert'
+ DEB      'Initialized peripherie'
  move.w   #$1111,flg_50hz          ; jedes vierte Bit gesetzt
  move.w   #20,_timer_ms            ; 50Hz
  lea      int_hz200(pc),a0
  jsr      ihz200
- DEB      'hz200 initialisiert'
+ DEB      'Initialized hz200'
  lea      int_ikbd(pc),a0
  jsr      iikbd
- DEB      'IKBD-Interrupt initialisiert'
+ DEB      'Initialized IKBD interrupt'
 
 * Bconmap
 
  bsr      init_bconmap
- DEB      'Bconmap initialisiert'
+ DEB      'Initialized Bconmap'
 
 * Tastatur
 
@@ -653,7 +653,7 @@ _cpyloop3:
 
  move.l   #default_keytblx,default_keytblxp
  bsr      _Bioskeys                ; 9 Standard-Tastaturtabellen (GER)
- DEB      'Tastatur initialisiert'
+ DEB      'Initialized keyboard'
 
 ; Aufloesung setzen (MagiX)
 
@@ -667,19 +667,19 @@ _cpyloop3:
 * Interrupts zulassen
 
  jsr      iintmask
- DEB      'Interrups zugelassen'
+ DEB      'Enabled interrupts'
 
 * Diskpuffer anlegen
 
  move.l   #4096,d0
  bsr      Bmalloc
  move.l   a0,_dskbufp              ; _dskbufp = Malloc(4096L)
- DEB      'Diskpuffer angelegt'
+ DEB      'Allocated disk buffer'
 
 * DOS initialisieren
 
  jsr      dos_init
- DEB      'DOS initialisiert'
+ DEB      'Initialized DOS'
  move.l   milan,a6
  move.l   milh_meminfo(a6),a6
  move.w   (a6)+,d7                 ; Tabellenlaenge
@@ -694,7 +694,7 @@ addmem_loop:
 addmem_nxt:
  addq.l   #8,a6
  dbra     d7,addmem_loop
- DEB      'Alternativen Speicher angemeldet'
+ DEB      'Registered alternative memory'
 
 * Supervisorstack anlegen
 
@@ -731,7 +731,7 @@ addmem_nxt:
  move.l   a0,usp
 
  bsr      init_dosclock
- DEB      'DOS-Uhr initialisiert'
+ DEB      'Initialized DOS clock'
 
 *
 * Prozessorcaches und PMMU initialisieren
@@ -750,24 +750,24 @@ addmem_nxt:
 *
 
  bsr      try_ext_scsidrvr              ; residentes SCSI.RAM initialisieren
- DEB      'SCSI.RAM initialisiert'
+ DEB      'Initialized SCSI.RAM'
  move.l   hdv_rw,-(sp)
  bsr      dskboot                  ; von Floppy booten
- DEB      'dskboot ausgef',$81,'hrt'
+ DEB      'executed dskboot'
  bsr      apkgboot                 ; Flash-PKGs starten
- DEB      'apkgboot ausgef',$81,'hrt'
+ DEB      'executed apkgboot'
  move.l   (sp)+,a0
  cmpa.l   hdv_rw,a0
  bne.b    boot_no_dma              ; hat schon von Floppy gebootet
 
  bsr      dmaboot                  ; von SCSI und ACSI booten
- DEB      'dmaboot ausgef',$81,'hrt'
+ DEB      'executed dmaboot'
  jsr      secb_ext                 ; (Sektorpufferliste!)
- DEB      'Sektorpuffer erweitert'
+ DEB      'Extended sector buffer'
 
 boot_no_dma:
  bsr      exec_respgms             ; residente Programme ausfuehren
- DEB      'residente Programme ausgef',$81,'hrt'
+ DEB      'Executed resident programs'
 
 *
 * VDI nach DMA-Boot initialisieren (muss Treiber laden)

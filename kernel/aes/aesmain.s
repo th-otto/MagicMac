@@ -340,7 +340,7 @@ DEBUG     EQU  0
 
 aes_start:
      DEBON
-     DEB  'AES: vor dem ersten Befehl'
+     DEB  'AES: before first command'
 
  movea.l  4(sp),a5                 ; a5 = Zeiger auf Basepage
  move.l   a5,_basepage
@@ -361,7 +361,7 @@ aes_start:
  gemdos   Mshrink
  lea      12(sp),sp
 
-     DEB  'AES: nach Mshrink()'
+     DEB  'AES: after Mshrink()'
 
  move.l   _basepage,a0
  move.l   $2c(a0),a0
@@ -389,7 +389,7 @@ aes_start:
 
  move.l   etv_term,dflt_etvt       ; etv_term des DOS merken
  move.l   #draw_int,mdraw_int_adr  ; Dummyroutine
-     DEB  'AES: vor Setzen von IPL7'
+     DEB  'AES: before setting IPL7'
  ori      #$700,sr
  move.l   $88,old_trap2
  move.l   #aes_trap2,$88
@@ -499,7 +499,7 @@ aes_start:
  bsr      init_APPL
 
  andi     #$f8ff,sr
-     DEB  'AES: IPL wieder auf 3'
+     DEB  'AES: IPL again to 3'
 
 * Applikation 1 (SCRENMGR) initialisieren
 

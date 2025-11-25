@@ -283,7 +283,7 @@ imb_sizeof:
 dos_init:
 
      DEBON
-     DEB  'Initialisierung des DOS'
+     DEB  'Initialize DOS'
 
 * Prozesstabelle initialisieren und loeschen
 
@@ -313,7 +313,7 @@ dos_init:
 
 * Dateisysteme (XFSs) initialisieren
 
-     DEB  'XFSs initialisieren'
+     DEB  'Initialize XFSs'
 
  move.l   #dosxfs,xfs_list
 
@@ -329,7 +329,7 @@ dosi_nfs:
  bne.b    dosi_nloop
  move.l   (sp)+,a5
 
-     DEB  'Semaphoren erstellen'
+     DEB  'Create semaphores'
 
  move.l   #'_DCH',d1
  lea      dskchg_sem,a0
@@ -346,7 +346,7 @@ dosi_nfs:
 
 * Rest initialisieren
 
-     DEB  'Rest des DOS initialieren'
+     DEB  'Initialize rest of DOS'
 
  clr.l    lslb_list                ; keine SharedLib geladen
  bsr      os_init                  ; Prozess setzen
@@ -383,7 +383,7 @@ dosi_nfs:
 *
 
 deleddev:
-     DEB  'Devices wieder l',$94,'schen'
+     DEB  'Remove devices'
  movem.l  a5/a6/d7,-(sp)
 
 ; erst die Standard-Handles des Boot-Prozesses loeschen
@@ -444,7 +444,7 @@ ddv_loop:
 *
 
 iniddev1:
-     DEB  'Devices initialisieren'
+     DEB  'Initialize devices'
  pea      100                      ; Spezial-AUX (nichtblockierend) 27.6.2002
  clr.l    -(sp)                    ; BIOS-Geraet
  lea      (sp),a1
@@ -488,7 +488,7 @@ iniddev1:
 *
 
 iniddev2:
-     DEB  'Ger',$84,'tehandles -1..-4 erzeugen'
+     DEB  'Create devices handles -1..-4'
  movem.l  d7/a5/a4,-(sp)
  moveq    #3,d7
  lea      dev_fds,a5
@@ -510,7 +510,7 @@ dosi_savedm:
  movem.l  (sp)+,d7/a5/a4
 
 ;    DEBON
-     DEB  'Initialisierung abgeschlossen'
+     DEB  'Initialization finished'
 
  rts
 
@@ -8968,7 +8968,7 @@ dt_go:
 
      IF   DEBUG_FN
  movem.l  d0-d3/a0-a2,-(sp)
- DEB      'DOS-Aufruf...'
+ DEB      'DOS Call...'
  move.l   $1038272,d0
  DEBL     d0,' $1038272 = '
  move.l   $1038272+12,d0
@@ -8981,7 +8981,7 @@ dt_ret:
 
      IF   DEBUG_FN
  movem.l  d0-d3/a0-a2,-(sp)
- DEB      '...DOS-Aufruf beendet'
+ DEB      '...DOS Call finished'
  move.l   $1038272,d0
  DEBL     d0,' $1038272 = '
  move.l   $1038272+12,d0
@@ -10564,7 +10564,7 @@ sbo_no_env:
 
 ; Lib initialisieren
 
-     DEB 'Initialisiere SLB...'
+     DEB 'Initalize SLB...'
 
  pea      ur_pd                    ; parent
  pea      (a3)                     ; child

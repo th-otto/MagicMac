@@ -314,7 +314,7 @@ dfs_fat_drv:
 ;    EVEN
 
 dosfs_init:
-;     DEB  'DFS_FAT initialisieren'
+;     DEB  'Initialize DFS_FAT'
  movem.l  a6/d7/d6,-(sp)
 
 ; lea          init(pc),a0
@@ -875,7 +875,7 @@ drv_open:
  tst.l    d_dfs(a0)                ; Laufwerk schon bekannt ?
  bne      dosf_chkdrv              ; ja, nur Diskwechsel testen
 
-;     DEB  'Versuchen, auf dem Laufwerk Dateisystem DFS_FAT zu ',$94,'ffnen'
+;     DEB  'Try to open DFS_FAT on drive'
 
  move.l   a5,-(sp)
  suba.w   #bx_sizeof,sp
@@ -886,7 +886,7 @@ drv_open:
  bsr      getxbpb
  bmi      do_ende                  ; Fehler
 
-;     DEB  'Laufwerk enth',$84,'lt DOS-FAT-Dateistruktur => ',$94,'ffnen'
+;     DEB  'Drive contains DOS-FAT filesystem => open'
 
 * Dateisystem eintragen
  move.l   #dfs_fat_drv,d_dfs(a5)        ; Dateisystem eintragen
@@ -997,7 +997,7 @@ do_ende:
  rts
 
 dosf_chkdrv:
-;     DEB  'Diskwechseltest eines DFS_FAT- Laufwerks'
+;     DEB  'Test medium change on DFS_FAT drive'
  move.l   a0,-(sp)
  move.w   d_drive(a0),-(sp)
  move.w   #9,-(sp)

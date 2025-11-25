@@ -699,12 +699,12 @@ _cpyloop3:
 
 * Grafikausgabe initialisieren
 
- DEB      'Grafikausgabe initialisieren'
+ DEB      'Initialize graphics'
 
  move.l   MSysX+MacSysX_pixmap(pc),a0
  jsr      vdi_blinit               ; Blitterstatus des VDI initialisieren
                                    ; (fuer Atari VDI)
- DEB      'VT52 initialisieren'
+ DEB      'Initialize VT52'
 
  jsr      vt52_init                ; VT52 initialisieren
 
@@ -713,7 +713,7 @@ _cpyloop3:
 
 * Nochmal den Mac aufrufen
 
- DEB      'BIOS-Initialisierung abgeschlossen'
+ DEB      'BIOS initialization finished'
 
  lea      MSysX+MacSysX_biosinit(pc),a0 ; PPC-Adresse
  MACPPCE                                ; Mac anspringen
@@ -766,11 +766,11 @@ _cpyloop3:
 
 * MagiX- VDI initialisieren
 
- DEB      'MagiC-VDI initialisieren'
+ DEB      'Initialize MagiC-VDI'
 
  jsr      vdi_init                 ; VDI initialisieren (MXVDI)
 
- DEB      'MagiC-VDI-Initialisierung abgeschlossen'
+ DEB      'MagiC-VDI initialization finished'
 
  DC.W     $a000
  move.l   a0,a1                         ; Parameter: Zeiger auf LineA-Variablen
@@ -781,15 +781,15 @@ _cpyloop3:
 
 ;bsr      exec_respgms             ; residente Programme ausfuehren
 
- DEB      'Von Platte booten'
+ DEB      'Boot from disk'
 
  bsr      dskboot                  ; hdv_boot aufrufen
 
- DEB      'Sektorpufferliste erweitern'
+ DEB      'Extend sector buffer list'
 
  jsr      secb_ext                 ; Sektorpufferliste erweitern
 
- DEB      'allozierten Userstack wieder freigeben'
+ DEB      'free allocates userstack'
 
 ;
 ; allozierten Userstack wieder freigeben
@@ -800,7 +800,7 @@ _cpyloop3:
  tst.w    d0
  bne      fatal_err
 
- DEB      'AUTO-Prozess durchfuehren'
+ DEB      'Execute AUTO process'
 
 * Bootlaufwerk setzen
 * MAGX.INF lesen
@@ -1695,7 +1695,7 @@ print_bombs10:
 ;    IF DEBUG
 ; moveq   #0,d1
 ; move.w  6(sp),d1
-; DEBL    d1,'Systemfehler (Bomben) :'
+; DEBL    d1,'System error (Bombs) :'
 ;    ENDIF
 
  lsr.w    #2,d0                    ; /4 ist Vektornummer
@@ -1714,8 +1714,8 @@ pb_loop:
 * Betriebssystem ueberpruefen
  lea      _start,a0
  lea      _ende,a1
-; DEBL    a0,'Pr',$81,'fsummenberechnung von :'
-; DEBL    a1,'                     bis :'
+; DEBL    a0,'Checksum calculation from :'
+; DEBL    a1,'                       to :'
  moveq    #0,d0
 os_chkloop:
  add.l    (a0)+,d0
@@ -1724,8 +1724,8 @@ os_chkloop:
  cmp.l    os_chksum,d0
  beq      os_chk_ok
 
-;    DEBL os_chksum,'erwartete Pr',$81,'fsumme '
-;    DEBL d0,'Falsche Pr',$81,'fsumme '
+;    DEBL os_chksum,'expected checksum '
+;    DEBL d0,'wrong checksum '
 
  lea      os_corr_s(pc),a0
  jsr      putstr

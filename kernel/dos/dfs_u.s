@@ -100,7 +100,7 @@ num_pseudo_dirs equ (pseudo_dirs_end-pseudo_dirs)/10
 *
 
 fsu_init:
-     DEB  'DFS_U initialisieren'
+     DEB  'Initialze DFS_U'
  movem.l  d7/a5/a4,-(sp)
 
 ; Root allozieren
@@ -325,7 +325,7 @@ drv_open:
  bne      fsu_chkdrv               ; ja, nur Diskwechsel
  cmpi.w   #DRIVE_U,d_drive(a0)     ; unser Treiber ?
  bne      do_edrive                ; nein
-     DEB  'Auf dem Laufwerk Dateisystem DFS_U eintragen'
+     DEB  'Register drive on filesystem DFS_U'
 * Dateisystem eintragen
  move.l   #dfs_u_drv,d_dfs(a0)     ; Dateisystem eintragen
  move.w   #-1,d_biosdev(a0)        ; kein BIOS-Device
@@ -347,7 +347,7 @@ drv_open:
  move.w   #FT_MEMBLK,fd_xftype(a1)
  move.b   #$10,fd_attr(a1)
 fsu_chkdrv:
-     DEB  'Auf dem Laufwerk Dateisystem DFS_U testen'
+     DEB  'Test drive on filesystem DFS_U'
 * Laufwerke als Unterverzeichnisse eintragen
  move.l   _drvbits,d2
  move.l   (udrv_drvs).l,d1
