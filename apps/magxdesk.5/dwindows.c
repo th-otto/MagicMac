@@ -10,10 +10,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include "pattern.h"
+#include "ll.h"
 #include "k.h"
 #include <stdio.h>
 #include <sys/stat.h>
-#include "ll.h"
+
+extern char	*print_big_bytes(ULONG64 z, char *p);
 
 static char *str_free;
 static char *str_full;
@@ -385,7 +387,7 @@ static void set_info(WINDOW *mywindow)
 			int lwc;
 
 			/* long percent; */
-			unsigned long bytes;
+			ULONG64 bytes;
 			_DISKINFO di;
 			_DISKINFO *d;
 
@@ -411,8 +413,9 @@ static void set_info(WINDOW *mywindow)
 				strcpy(s, str_full);
 			else
 			{
-				bytes = d->b_free * d->b_secsiz * d->b_clsiz;
+				bytes = ullmul(d->b_free, d->b_secsiz * d->b_clsiz);
 				print_big_bytes(bytes, s);
+				
 				s += strlen(s);
 				strcpy(s, str_free);
 

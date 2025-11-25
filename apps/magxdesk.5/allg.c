@@ -785,41 +785,61 @@ char *print_ull(ULONG64 z, int shift, char *p)
 *
 *********************************************************************/
 
-char *print_big_bytes(unsigned long z, char *p)
+char *print_big_bytes(ULONG64 z, char *p)
 {
-	if	(z >= 0x40000000L)
+	ULONG l = z.p.lo;	/* l = untere 32 Bit */
+	int shift;
+
+	if (z.p.hi)
+		shift = 10;
+	else
+		shift = 0;
+
+	if	(z.p.hi >= (1UL << shift))
+	{
+		*p++ = '#';		/* öberlauf */
+		*p = '\0';
+		return p;
+	}
+	if (shift > 0)
+	{
+		l >>= shift;			/* durch 1024 teilen */
+		l |= (z.p.hi << (32 - shift));		/* obere 10 Bit ODERn */
+	}
+
+	if	(l >= 0x40000000L)
 		{
-		*p++ = '0' + (z >> 30L);	/* G = 2^30 */
+		*p++ = '0' + (l >> 30L);	/* G = 2^30 */
 		*p++ = ',';
-		z &= 0x3fffffffL;
-		*p++ = '0' + (z / (100L * 0x100000L));
-		*p++ = 'G';
+		l &= 0x3fffffffL;
+		*p++ = '0' + (l / (100L * 0x100000L));
+		*p++ = shift ? 'T' : 'G';
 		}
 	else
-	if	(z >= 0xa00000L)
+	if	(l >= 0xa00000L)
 		{
-		z >>= 20L;			/* M = 2^20 */
-		ultoa(z, p, 10);
+		l >>= 20L;			/* M = 2^20 */
+		ultoa(l, p, 10);
 		while(*p)
 			p++;
-		*p++ = 'M';
+		*p++ = shift ? 'G' : 'M';
 		}
 	else	
-	if	(z >= 0x100000L)
+	if	(l >= 0x100000L)
 		{
-		*p++ = '0' + (z >> 20L);	/* G = 2^20 */
+		*p++ = '0' + (l >> 20L);	/* G = 2^20 */
 		*p++ = ',';
-		z &= 0x7ffffL;
-		*p++ = '0' + (z / (100L * 0x400L));
-		*p++ = 'M';
+		l &= 0x7ffffL;
+		*p++ = '0' + (l / (100L * 0x400L));
+		*p++ = shift ? 'G' : 'M';
 		}
 	else
 		{
-		z >>= 10L;			/* K = 2^10 */
-		ultoa(z, p, 10);
+		l >>= 10L;			/* K = 2^10 */
+		ultoa(l, p, 10);
 		while(*p)
 			p++;
-		*p++ = 'K';
+		*p++ = shift ? 'M' : 'K';
 		}
 
 	/* Korrektur fÅr öberlauf */
