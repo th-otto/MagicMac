@@ -863,7 +863,7 @@ static long read_wind(WINDOW *w, int free_flag)
 		anzahl = 0;
 
 		err = err_xr = E_OK;
-		while ((err == E_OK) && (err_xr == E_OK))
+		while (err == E_OK)
 		{
 
 			/* Hier ggf. mehr Speicher allozieren */
@@ -914,8 +914,8 @@ static long read_wind(WINDOW *w, int free_flag)
 				err = err_xr = E_OK;
 			} else
 			{
+				err_xr = E_OK;
 				err = Dxreaddir(maxnamelen + 4 + 1, dirhandle, mdta->filename - 4, &xa, &err_xr);
-
 				/* berlange Dateinamen... */
 
 				if (err == ERANGE)
@@ -927,7 +927,7 @@ static long read_wind(WINDOW *w, int free_flag)
 
 				/* Fehler oder "." oder ".." */
 
-				if (err || err_xr ||
+				if (err ||
 					(mdta->filename[0] == '.') &&
 					((!mdta->filename[1]) || ((mdta->filename[1] == '.') && (!mdta->filename[2]))))
 					continue;
@@ -940,29 +940,39 @@ static long read_wind(WINDOW *w, int free_flag)
 
 			/* Symlink behandeln... */
 
-			if ((xa.st_mode & S_IFMT) == S_IFLNK)
+			mdta->is_alias = 0;
+			if (err_xr == E_OK)
 			{
-				XATTR xa2;
+				if ((xa.st_mode & S_IFMT) == S_IFLNK)
+				{
+					XATTR xa2;
+	
+					mdta->is_alias = 1;
+					strcpy(epath, mdta->filename);
+					err = Fxattr(0, path, &xa2);
+					if (!err)
+						xa = xa2;
+					else
+						mdta->is_alias = 2;	/* nicht aufgel”st!! */
+					err = E_OK;
+				}
 
-				mdta->is_alias = 1;
-				strcpy(epath, mdta->filename);
-				err = Fxattr(0, path, &xa2);
-				if (!err)
-					xa = xa2;
-				else
-					mdta->is_alias = 2;	/* nicht aufgel”st!! */
-				err = E_OK;
+				/* alles klar, abspeichern... */
+	
+				mdta->time = xa.st_mtim.u.d.time;	/* Modif.zeit */
+				mdta->date = xa.st_mtim.u.d.date;
+				mdta->filesize = xa.st_size;
+				mdta->attrib = xa.st_attr;
+				mdta->mode = xa.st_mode;
 			} else
-				mdta->is_alias = 0;
-
-			/* alles klar, abspeichern... */
-
+			{
+				mdta->time = 0;
+				mdta->date = 0;
+				mdta->filesize = 0;
+				mdta->attrib = 0;
+				mdta->mode = 0;
+			}
 			mdta->number = anzahl;
-			mdta->time = xa.st_mtim.u.d.time;	/* Modif.zeit */
-			mdta->date = xa.st_mtim.u.d.date;
-			mdta->filesize = xa.st_size;
-			mdta->attrib = xa.st_attr;
-			mdta->mode = xa.st_mode;
 			anzahl++;
 			ziele += sizeof(MYDTA) + strlen(mdta->filename) + 1;
 			if (((long) ziele) & 1)
@@ -985,8 +995,7 @@ static long read_wind(WINDOW *w, int free_flag)
 			if (err == EFILNF || err == ENMFIL)
 				err = E_OK;
 		}
-	}
-	while (err != E_OK);
+	} while (err != E_OK);
 
 	w->realnum = anzahl;
 
