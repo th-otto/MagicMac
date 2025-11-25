@@ -19,7 +19,7 @@ NOWRITE   EQU  0
      INCLUDE "kernel.inc"
      INCLUDE "structs.inc"
      INCLUDE "debug.inc"
-	 INCLUDE "magicdos.inc"
+     INCLUDE "magicdos.inc"
 
      SUPER
 
@@ -57,7 +57,7 @@ SECBUFN2       EQU  2         ; 2 Sektoren fuer Daten puffern
 
 * from AES
 
-	 XREF act_appl
+     XREF act_appl
 
 * von MATH
 
@@ -176,26 +176,26 @@ FAT32_ROFF equ 32
 
      OFFSET
 * BCB
-b_link:        DS.L      1    /* 0x00: Zeiger auf naechsten BCB             */
-b_bufdrv:      DS.W      1    /* 0x04: Laufwerknummer, -1 fuer ungueltig     */
+b_link:        DS.L      1    /* 0x00: Zeiger auf naechsten BCB            */
+b_bufdrv:      DS.W      1    /* 0x04: Laufwerknummer, -1 fuer ungueltig   */
 b_buftyp:      DS.W      1    /* 0x06: FAT=0, DIR=1, DATA=2                */
 b_bufrec:      DS.W      1    /* 0x08: Sektornummer (GEMDOS- Code)         */
-b_dirty:       DS.W      1    /* 0x0a: Pufferinhalt geaendert               */
+b_dirty:       DS.W      1    /* 0x0a: Pufferinhalt geaendert              */
 b_dmd:         DS.L      1    /* 0x0c: Zeiger auf DMD von b_bufdrv         */
 b_bufr:        DS.L      1    /* 0x10: Zeiger auf Sektorpuffer             */
 
      OFFSET
 
-xb_next:       DS.L      1    /* 0x00: Zeiger auf naechsten XBCB            */
+xb_next:       DS.L      1    /* 0x00: Zeiger auf naechsten XBCB           */
 xb_prev:       DS.L      1    /* 0x04: Zeiger auf vorherigen XBCB          */
 xb_first:      DS.L      1    /* 0x08: Zeiger auf den Anfang der Liste     */
-xb_drv:        DS.W      1    /* 0x0c: Laufwerknummer, -1 fuer ungueltig     */
-xb_dirty:      DS.W      1    /* 0x0e: Pufferinhalt geaendert               */
+xb_drv:        DS.W      1    /* 0x0c: Laufwerknummer, -1 fuer ungueltig   */
+xb_dirty:      DS.W      1    /* 0x0e: Pufferinhalt geaendert              */
 xb_secno:      DS.L      1    /* 0x10: Sektornummer (BIOS- Code)           */
 xb_secno2:     DS.L      1    /* 0x14: Kopie (z.B. FAT #1) oder 0          */
 xb_dmd:        DS.L      1    /* 0x18: Zeiger auf DMD von b_bufdrv         */
 xb_data:       DS.L      1    /* 0x1c: Zeiger auf Sektorpuffer             */
-xb_sem:        DS.B bl_sizeof /* 0x20: Veraenderungs- Semaphore             */
+xb_sem:        DS.B bl_sizeof /* 0x20: Veraenderungs- Semaphore            */
 xb_sizeof:
 
 *
@@ -243,7 +243,7 @@ pun_pstart:    DS.L      16   /* 0x12: Physikalischer Partitionsanfang     */
 pun_cookie:    DS.L      1    /* 0x52: z.B. 'AHDI'                         */
 pun_cookiep:   DS.L      1    /* 0x56: Zeiger auf den Cookie               */
 pun_version:   DS.W      1    /* 0x5a: Versionsnummer                      */
-pun_msectsize: DS.W      1    /* 0x5e: Groesse der installierten Puffer      */
+pun_msectsize: DS.W      1    /* 0x5e: Groesse der installierten Puffer    */
 
      TEXT
 
@@ -580,25 +580,26 @@ set_disk_clean:
  bmi.b    sdc_ende                 ; Fehler
 
  move.l   d_nfree_cl(a5),d0
- ror.w #8,d0
- swap d0
- ror.w #8,d0
+ ror.w    #8,d0
+ swap     d0
+ ror.w    #8,d0
  move.l   d0,FSI_Free_Count(a1)
- moveq    #FAT32_ROFF,d1
- move.l   d_1stfree_cl(a5),d0
- cmp.l    d1,d0
- bcc.b    sdc_putnf
- move.l   d1,d0
+ moveq    #FAT32_ROFF,d1           ; minimale Cluster-Nummer ist 32
+ move.l   d_1stfree_cl(a5),d0      ; erster freier Cluster
+ cmp.l    d1,d0                    ; d0 >= 32?
+ bcc.b    sdc_putnf                ; ja, Cluster-Nummer ist gueltig
+ move.l   d1,d0                    ; nein, nimm 32 als Minimum
 sdc_putnf:
- move.l   d_numcl(a5),d1
- cmp.l    d1,d0
- bcs.s    sdc_putnf2
- moveq    #FAT32_ROFF,d0
+ move.l   d_numcl(a5),d1           ; Anzahl Cluster
+ cmp.l    d1,d0                    ; d0 >= Anzahl Cluster
+ bcs.s    sdc_putnf2               ; nein, ist gueltig
+ moveq    #FAT32_ROFF,d0           ; Nummer ist ungueltig, nimm 32
+
 sdc_putnf2:
- ror.w #8,d0
- swap d0
- ror.w #8,d0
- move.l   d0,FSI_Nxt_Free(a1)
+ ror.w    #8,d0
+ swap     d0
+ ror.w    #8,d0                    ; -> little-endian
+ move.l   d0,FSI_Nxt_Free(a1)      ; im Sektor speichern
 ; Sektor aendern (nicht verzoegert)
  move.w   #1,xb_dirty(a0)          ; Puffer als geaendert markieren
 ;move.l   a0,a0                    ; XBCB
@@ -969,22 +970,28 @@ dro_bothroot:
  move.l   a5,a0
  bsr      rd_fsinfo                ; Lesen
  ble.b    do_ok                    ; Fehler oder ungueltig
+
+ ; Anzahl freier Cluster aus Sektor lesen und in big-endian wandeln: d0
  move.l   FSI_Free_Count(a1),d0
- ror.w #8,d0
- swap d0
- ror.w #8,d0
+ ror.w    #8,d0
+ swap     d0
+ ror.w    #8,d0                    ; -> big-endian
+
+ ; naechsten freien Cluster aus Sektor lesen und in big-endian wandeln: d2
  move.l   FSI_Nxt_Free(a1),d2
- ror.w #8,d2
- swap d2
- ror.w #8,d2
- move.l   d_numcl(a5),d1
- cmp.l    d1,d0 ; number free clusters <= numcl?
- bcc.s    do_ok ; no, error
- cmp.l    d1,d2 ; next free cluster <= numcl?
- bcc.s    do_ok ; no, error
+ ror.w    #8,d2
+ swap     d2
+ ror.w    #8,d2                    ; -> big-endian
+
+ ; gueltigen Bereich pruefen, ggf. ignorieren
+ move.l   d_numcl(a5),d1           ; Anzahl aller Cluster
+ cmp.l    d1,d0                    ; number free clusters >= numcl?
+ bcc.s    do_ok                    ; yes, ignore
+ cmp.l    d1,d2                    ; next free cluster >= numcl?
+ bcc.s    do_ok                    ; yes, ignore
  moveq.l  #FAT32_ROFF,d1
- cmp.l    d1,d2 ; next free cluster < 32?
- bcs.s    do_ok ; yes, error
+ cmp.l    d1,d2                    ; next free cluster < 32?
+ bcs.s    do_ok                    ; yes, ignore
  
  move.l   d0,d_nfree_cl(a5)
  move.l   d2,d_1stfree_cl(a5)
@@ -2091,7 +2098,7 @@ dosroot_rw:
  move.w   d_lrecsiz(a2),d0
  lsr.l    d0,d1                    ; Sektor-Offset berechnen
  add.l    d_fatrec(a2),d1          ;  + Beginn 2. FAT
- add.l    d_fsiz(a2),d1            ;  + Laenge der FAT  => Beginn root
+ add.l    d_fsiz(a2),d1            ;  + Laenge der FAT => Beginn root
 * Sektor holen
  lea      (bufl+4).w,a0            ; 2. Pufferliste (DIR/DATA)
  moveq    #0,d2                    ; kein gespiegelter Sektor
@@ -2294,7 +2301,7 @@ _fdel_nxtcl:
  bsr      FAT_read
  bmi      _fdel_ende
  moveq    #-1,d1
- move.l   d1,d_1stfree_cl(a5)         ; Cache fuer freien Cluster loeschen!!
+ move.l   d1,d_1stfree_cl(a5)      ; Cache fuer freien Cluster loeschen!!
  move.l   d0,d7
  move.l   a5,a0
  moveq    #0,d1
@@ -3048,7 +3055,7 @@ fsh_eaccdn:
 *
 *  Setzt den Dateipointer (falls moeglich) auf den naechsten Cluster der
 *  Datei. Erweitert <file>, falls noetig und moeglich.
-*  Rueckgabe: -1 Fehler             EQ oder PL
+*  Rueckgabe: -1 Fehler            EQ oder PL
 *            <0 BIOS- Fehler       MI
 *             0 ok                 EQ oder PL
 *
