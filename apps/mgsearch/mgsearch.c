@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include "toserror.h"
 #include "windows.h"
-#include "mgsearch.h"
+#include "de/mgsearch.h"
 #include "search.h"
 #include "srch_win.h"
 #include "gemutils.h"

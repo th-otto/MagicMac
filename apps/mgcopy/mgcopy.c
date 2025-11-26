@@ -35,7 +35,7 @@
 #include <aes.h>
 #include <string.h>
 #include <stdlib.h>
-#include "mgcopy.h"
+#include "de/mgcopy.h"
 #include "gemut_mt.h"
 #include "beg_dial.h"
 #include "dat_dial.h"

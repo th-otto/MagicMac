@@ -21,7 +21,7 @@
 #include "windows.h"
 #include "globals.h"
 #include "toserror.h"
-#include "mgnotice.h"
+#include "de/mgnotice.h"
 #include "gemut_mt.h"
 #include <wdlgfslx.h>
 #if DEBUG

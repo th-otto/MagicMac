@@ -28,135 +28,52 @@ for lang in $LANGUAGES; do
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/MAGICCFG"
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/APPLINE"
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/WDIALOG"
+
+
+	mcopy "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
+	mcopy "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
+	mcopy "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
+	mcopy "$SRCDIR/kernel/build/$lang/mraven.ram" "$BUILDROOT/$lang"
+	mcopy "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
+	mcopy "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
+	mcopy "$SRCDIR/kernel/build/$lang/magiclin.os" "$BUILDROOT/$lang"
+
+# localizations
+
+	mcopy "$SRCDIR/apps/applicat/$lang/applicat.inf" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/applicat/$lang/applicat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/chgres/$lang/chgres.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/magxdesk.5/$lang/magxdesk.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/cmd/mcmd.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/mgcopy/$lang/mgcopy.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/mgedit/$lang/mgedit.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/mgnotice.2/$lang/mgnotice.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/mgnotice.2/$lang/mgnotice.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/mgformat/$lang/mgformat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/mgsearch/$lang/mgsearch.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	# TODO: french translation
+	mcopy "$SRCDIR/apps/mod_app/$lang/mod_app.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/shutdown/$lang/shutdown.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/vfatconf/$lang/vfatconf.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/vt52/$lang/vt52.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
+	mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
+	# TODO: french translation
+	if test "$lang" = "fr"; then
+		cp "apps/magiccfg/doc/magiccfg_en.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
+		cp "apps/magiccfg/doc/magiccfg_en.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+	else
+		cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
+		cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
+	fi
+	mcopy "$SRCDIR/apps/appline/$lang/appline.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
+	mcopy "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
+	mcopy "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
+	mcopy "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
+
+	mcopy "$SRCDIR/auto/accs/$lang/cops.app" "$BUILDROOT/$lang/AUTO/ACCS/COPS.ACC"
+	mcopy "$SRCDIR/auto/accs/cpx/$lang/*.CPX" "$BUILDROOT/$lang/AUTO/ACCS/CPX/"
 done
-
-
-#
-# German localizations
-#
-lang=de
-
-mcopy "$SRCDIR/apps/applicat/applicat.inf" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/applicat/applicat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/chgres/chgres.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/magxdesk.5/magxdesk.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/cmd/mcmd.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgcopy/mgcopy.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgedit/mgedit.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgformat/mgformat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgnotice.2/mgnotice.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgnotice.2/mgnotice.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgsearch/mgsearch.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mod_app/mod_app.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/shutdown/$lang/shutdown.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/vfatconf/vfatconf.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/vt52/$lang/vt52.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
-mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
-cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
-cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
-mcopy "$SRCDIR/apps/appline/appline.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
-mcopy "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
-mcopy "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
-
-mcopy "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
-
-mcopy "$SRCDIR/auto/accs/$lang/cops.app" "$BUILDROOT/$lang/AUTO/ACCS/COPS.ACC"
-mcopy "$SRCDIR/auto/accs/cpx/$lang/*.CPX" "$BUILDROOT/$lang/AUTO/ACCS/CPX/"
-
-mcopy "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mraven.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magiclin.os" "$BUILDROOT/$lang"
-
-
-#
-# English localizations
-#
-lang=en
-
-mcopy "$SRCDIR/apps/applicat/us/applicat.inf" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/applicat/us/applicat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/chgres/$lang/chgres.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/magxdesk.5/us/magxdesk.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/cmd/mcmd.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgcopy/us/mgcopy.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgedit/us/mgedit.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgformat/us/mgformat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgnotice.2/us/mgnotice.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgnotice.2/us/mgnotice.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgsearch/us/mgsearch.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mod_app/$lang/mod_app.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/shutdown/$lang/shutdown.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/vfatconf/$lang/vfatconf.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/vt52/$lang/vt52.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
-mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
-cp "apps/magiccfg/doc/magiccfg_${lang}.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
-cp "apps/magiccfg/doc/magiccfg_${lang}.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
-mcopy "$SRCDIR/apps/appline/$lang/appline.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
-mcopy "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
-mcopy "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
-
-mcopy "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
-
-mcopy "$SRCDIR/auto/accs/$lang/cops.app" "$BUILDROOT/$lang/AUTO/ACCS/COPS.ACC"
-mcopy "$SRCDIR/auto/accs/cpx/$lang/*.CPX" "$BUILDROOT/$lang/AUTO/ACCS/CPX/"
-
-mcopy "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mraven.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magiclin.os" "$BUILDROOT/$lang"
-
-
-#
-# French localizations
-#
-lang=fr
-
-mcopy "$SRCDIR/apps/applicat/$lang/applicat.inf" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/applicat/$lang/applicat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/chgres/$lang/chgres.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/magxdesk.5/$lang/magxdesk.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/cmd/mcmd.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgcopy/$lang/mgcopy.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgedit/$lang/mgedit.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgformat/$lang/mgformat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgnotice.2/$lang/mgnotice.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgnotice.2/$lang/mgnotice.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/mgsearch/$lang/mgsearch.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-# TODO: french translation
-mcopy "$SRCDIR/apps/mod_app/en/mod_app.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/shutdown/$lang/shutdown.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/vfatconf/$lang/vfatconf.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/vt52/$lang/vt52.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
-mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.bgh" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
-# TODO: french translation
-cp "apps/magiccfg/doc/magiccfg_en.txt" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.txt"
-cp "apps/magiccfg/doc/magiccfg_en.hyp" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/magiccfg.hyp"
-mcopy "$SRCDIR/apps/appline/$lang/appline.rsc" "$BUILDROOT/$lang/EXTRAS/APPLINE/"
-mcopy "$SRCDIR/doc/usage/magx_${lang}.inf" "$BUILDROOT/$lang/EXTRAS/magx.inf"
-mcopy "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
-
-mcopy "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
-
-mcopy "$SRCDIR/auto/accs/$lang/cops.app" "$BUILDROOT/$lang/AUTO/ACCS/COPS.ACC"
-mcopy "$SRCDIR/auto/accs/cpx/$lang/*.CPX" "$BUILDROOT/$lang/AUTO/ACCS/CPX/"
-
-mcopy "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/mraven.ram" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
-mcopy "$SRCDIR/kernel/build/$lang/magiclin.os" "$BUILDROOT/$lang"
 
 
 #
@@ -179,7 +96,6 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/tools/memexamn/memexamn.ttp" "$BUILDROOT/$lang/BIN/"
 
 	mcopy "$SRCDIR/apps/applicat/applicat.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-	# mcopy "$SRCDIR/apps/applicat/rsc/*.RSC" "$BUILDROOT/$lang/GEMSYS/GEMDESK/RSC/"
 	
 	mcopy "$SRCDIR/apps/chgres/chgres.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/magxdesk.5/magxdesk.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"

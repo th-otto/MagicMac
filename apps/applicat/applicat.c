@@ -83,7 +83,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "windows.h"
-#include "applicat.h"
+#include "de/applicat.h"
 #include "gemut_mt.h"
 
 #include "anw_dial.h"

@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "gemut_mt.h"
 #include "globals.h"
-#include "mgedit.h"
+#include "de/mgedit.h"
 #include "toserror.h"
 
 /****************************************************************

@@ -22,7 +22,7 @@
 #include <wdlgfslx.h>
 #include "windows.h"
 #include "globals.h"
-#include "mgnotice.h"
+#include "de/mgnotice.h"
 #include "gemut_mt.h"
 #if DEBUG
 #include <stdio.h>

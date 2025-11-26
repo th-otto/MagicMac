@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <country.h>
-#include "mgformat.h"
+#include "de/mgformat.h"
 #include "gemut_mt.h"
 #include "globals.h"
 

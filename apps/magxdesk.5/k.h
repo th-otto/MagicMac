@@ -8,7 +8,7 @@
 
 #include <aes.h>
 #include <wdlgwdlg.h>
-#include "magxdesk.h"
+#include "de/magxdesk.h"
 #include "country.h"
 #include "..\applicat\appldata.h"
 #include "av.h"

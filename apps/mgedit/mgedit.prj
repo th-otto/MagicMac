@@ -6,9 +6,9 @@ mgedit.app
 .L[-S=$1000]   ; Stackgr”že 4k
 =
 ..\..\pc\lib\cstartv.o     ; startup code
-mgedit.c         (mgedit.h,globals.h)
-opt_dial.c		(mgedit.h,globals.h)
-mgedwind.c		(globals.h)
+mgedit.c
+opt_dial.c
+mgedwind.c
 ..\..\lib\mylibs\gemut_mt.c
 
 ..\..\pc\lib\pcstdlib.lib

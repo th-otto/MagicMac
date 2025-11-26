@@ -38,7 +38,7 @@
 #endif
 #endif
 
-#include "appline.h"
+#include "de/appline.h"
 
 #ifndef FALSE
 #  define FALSE 0

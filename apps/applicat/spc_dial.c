@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "gemut_mt.h"
 #include "toserror.h"
-#include "applicat.h"
+#include "de/applicat.h"
 #include "appl.h"
 #include <wdlglbox.h>
 #include "appldata.h"

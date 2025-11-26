@@ -17,7 +17,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gemut_mt.h"
-#include "mgcopy.h"
+#include "de/mgcopy.h"
 #include "beg_dial.h"
 #include "cpfiles.h"
 #include "globals.h"

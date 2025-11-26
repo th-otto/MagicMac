@@ -7,9 +7,9 @@ mgsearch.app
 .L[-S=$4000]   ; Stackgr”že auf 16 KByte setzen
 =              ; list of modules follows...
 ..\..\pc\lib\cstartv.o     ; startup code
-mgsearch.c      (mgsearch.h)
-search.c       	(search.h)
-srch_win.c		(srch_win.h)
+mgsearch.c
+search.c
+srch_win.c
 ..\magxdesk.5\pattern.c
 ..\..\lib\mylibs\gemutils.c
 ..\..\lib\mylibs\windows.c

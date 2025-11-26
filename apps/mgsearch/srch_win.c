@@ -10,7 +10,7 @@
 #include <tos.h>
 #include <string.h>
 #include <stdlib.h>
-#include "mgsearch.h"
+#include "de/mgsearch.h"
 #include "gemutils.h"
 #include "portab.h"
 #include "windows.h"

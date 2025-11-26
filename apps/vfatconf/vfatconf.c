@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <mint/dcntl.h>
 #include "toserror.h"
-#include "vfatconf.h"
+#include "de/vfatconf.h"
 #include "gemutils.h"
 
 #define NUM_DRIVES 32

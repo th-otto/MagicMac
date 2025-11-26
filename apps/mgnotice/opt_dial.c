@@ -12,7 +12,7 @@
 #include "gemut_mt.h"
 #include "windows.h"
 #include "globals.h"
-#include "mgnotice.h"
+#include "de/mgnotice.h"
 
 static struct prefs localprefs;
 

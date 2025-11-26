@@ -12,7 +12,7 @@
 #include "appl.h"
 #include "country.h"
 #include "appldata.h"
-#include "applicat.h"
+#include "de/applicat.h"
 #include "typ_dial.h"
 
 

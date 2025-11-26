@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gemut_mt.h"
-#include "applicat.h"
+#include "de/applicat.h"
 #include "appl.h"
 #include "appldata.h"
 #include "icp_dial.h"

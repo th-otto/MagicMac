@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include "chgres.h"
+#include "de/chgres.h"
 #include "extern.h"
 #include "vgainf.h"
 

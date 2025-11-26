@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gemut_mt.h"
-#include "applicat.h"
+#include "de/applicat.h"
 #include "windows.h"
 #include "appl.h"
 #include "appldata.h"

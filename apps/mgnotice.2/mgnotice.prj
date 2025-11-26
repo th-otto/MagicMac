@@ -7,10 +7,10 @@ mgnotice.app
 .L[-S=$1000]   ; Stackgr”že 4k
 =
 ..\..\pc\lib\cstartv.o     ; startup code
-mgnotice.c     (mgnotice.h,globals.h,windows.h)
-opt_dial.c	(mgnotice.h,globals.h)
-windows.c		(windows.h)
-mgnwind.c		(globals.h,windows.h)
+mgnotice.c
+opt_dial.c
+windows.c
+mgnwind.c
 ..\..\lib\mylibs\gemut_mt.c
 
 ..\..\pc\lib\pcstdlib.lib

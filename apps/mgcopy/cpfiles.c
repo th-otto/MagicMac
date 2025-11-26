@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <mint/dcntl.h>
-#include "mgcopy.h"
+#include "de/mgcopy.h"
 #include "cpfiles.h"
 #include "gemut_mt.h"
 #include "globals.h"

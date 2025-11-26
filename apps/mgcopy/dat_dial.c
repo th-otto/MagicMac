@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "gemut_mt.h"
 #include "country.h"
-#include "mgcopy.h"
+#include "de/mgcopy.h"
 #include "dat_dial.h"
 #include "globals.h"
 

@@ -8,7 +8,7 @@ vfatconf.prg
 .L[-S=$1000]   ; Stackgr”že auf 4 KByte setzen
 =              ; list of modules follows...
 ..\..\pc\lib\cstartv.o     ; startup code
-vfatconf.c     (vfatconf.h)
+vfatconf.c
 ..\..\lib\mylibs\gemutils.c
 
 ..\..\pc\lib\pcstdlib.lib   ; standard lib

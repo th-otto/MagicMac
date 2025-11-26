@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include "globals.h"
 #include <wdlgfslx.h>
-#include "mgedit.h"
+#include "de/mgedit.h"
 #include "mm7.h"
 #include "gemut_mt.h"
 #include "toserror.h"

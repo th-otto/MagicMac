@@ -16,7 +16,7 @@
 #include "country.h"
 #include "windows.h"
 #include "appl.h"
-#include "applicat.h"
+#include "de/applicat.h"
 #include "appldata.h"
 #include "anw_dial.h"					/* wegen d_anw */
 #include "ica_dial.h"					/* wegen d_ica */

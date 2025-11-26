@@ -6,20 +6,20 @@ MAGXDESK.APP
 .L[-S=2048]
 =
 ..\..\pc\lib\cstartv.o
-magxdesk.c	(k.h,magxdesk.h)	; RAHMENPROGRAMM, REDRAWS
-dmenu.c		(k.h,magxdesk.h)	; Menue
-defaults.c	(k.h,magxdesk.h)	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
-dklick.c	(k.h,magxdesk.h)	; MAUSAKTIONEN (™FFNEN)
-dialogs.c	(k.h,magxdesk.h,dlg_info.h)	; DIALOGE
-dlg_info.c	(k.h,magxdesk.h,dlg_info.h)	; Datei-Info
-klick.c		(k.h,magxdesk.h)	 	; MAUSAKTIONEN
-dwindows.c	(k.h,magxdesk.h)
-pattern.c	(pattern.h)
-files.c		(k.h,magxdesk.h)	; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
-allg.c		(k.h)
+magxdesk.c	; RAHMENPROGRAMM, REDRAWS
+dmenu.c		; Menue
+defaults.c	; LADEN/ABSPEICHERN DER EINSTELLUNGEN
+dklick.c	; MAUSAKTIONEN (™FFNEN)
+dialogs.c	; DIALOGE
+dlg_info.c	; Datei-Info
+klick.c		; MAUSAKTIONEN
+dwindows.c	
+pattern.c	
+files.c		; DATEIOPERATIONEN (L™SCH,KOP,VERSCH,UMBEN)
+allg.c
 imgload.c
-kachel.c	(kachel.h)
-spec.c		(k.h)						; TOS- SPEZIFISCHES
+kachel.c
+spec.c		; TOS- SPEZIFISCHES
 ..\..\kernel\aes\wdialog\shelsort.c
 ..\..\lib\mylibs\ll.c			; long long lib
 
