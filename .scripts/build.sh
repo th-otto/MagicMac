@@ -67,8 +67,10 @@ SRCARCHIVE="${PROJECT_LOWER}-${ATAG}-src.zip"
 
 export BINARCHIVE
 export SRCARCHIVE
+export VERSION
 echo "BINARCHIVE=$BINARCHIVE" >> $GITHUB_ENV
 echo "SRCARCHIVE=$SRCARCHIVE" >> $GITHUB_ENV
+echo "VERSION=$VERSION" >> $GITHUB_ENV
 
 
 (
@@ -76,4 +78,8 @@ cd "${BUILDROOT}"
 zip -r "${OUT}/${BINARCHIVE}" .
 )
 git archive --format=zip --prefix=${PROJECT_LOWER}/ HEAD > "${OUT}/${SRCARCHIVE}"
+
+. ${SCRIPT_DIR}/mklinuxdist.sh
+
+
 ls -l "${OUT}"
