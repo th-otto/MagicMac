@@ -491,6 +491,9 @@ void main(void)
 				w_ev.mbutton = 1;		/* Doppelklick simulieren */
 			}
 			mausknopf(w_ev.mclicks, (EVNTDATA *) & (w_ev.mx));
+			graf_mkstate(&w_ev.mx, &w_ev.my, &w_ev.mbutton, &w_ev.kstate);
+			if (w_ev.mbutton & 1)
+				evnt_button(1, 1, 0, &w_ev.mx, &w_ev.my, &w_ev.mbutton, &w_ev.kstate);
 		}
 	}
 }
