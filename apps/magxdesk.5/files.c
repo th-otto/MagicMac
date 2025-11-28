@@ -29,7 +29,7 @@ long eject_medium(char *path)
 	long ret;
 
 	ret = Dcntl(CDROMEJECT, path, 0L);
-	if	(!ret)
+	if (!ret)
 		auto_close_windows();
 	return err_alert(ret);
 }
@@ -50,34 +50,31 @@ long get_real_drive(char *path)
 
 
 	p = get_name(path);
-	if	(*p)				/* Dateiname muž abgespalten werden */
-		{
-		drv = (int) (p-path);
+	if (*p)								/* Dateiname muž abgespalten werden */
+	{
+		drv = (int) (p - path);
 		memcpy(buf, path, drv);
 		buf[drv] = EOS;
 		path = buf;
-		}
+	}
 
 	drv = drive_from_letter(path[0]);
 	Dsetdrv(drv);
 	ret = Dsetpath(path);
-	if	(ret)
-		return ret;		/* Fehler bei Dsetpath */
+	if (ret)
+		return ret;						/* Fehler bei Dsetpath */
 
 	ret = Dgetdrv();
-	if	(ret >= 0)
+	if (ret >= 0)
 		drv = (int) ret;
 
-	if	(drv == 'U'-'A')
-		{
+	if (drv == 'U' - 'A')
+	{
 
-		ret = Dgetpath(buf, 0);	/* Pfad von U: */
-		if	(!ret &&
-			 buf[0] == '\\' &&
-			 drive_from_letter(buf[1]) >= 0 &&
-			 (buf[2] == '\\' || !buf[2]))
+		ret = Dgetpath(buf, 0);			/* Pfad von U: */
+		if (!ret && buf[0] == '\\' && drive_from_letter(buf[1]) >= 0 && (buf[2] == '\\' || !buf[2]))
 			drv = drive_from_letter(buf[1]);
-		}
+	}
 
 	return drv;
 }
@@ -89,13 +86,13 @@ long get_real_drive(char *path)
 *
 *********************************************************************/
 
-static int qbreak( void )
+static int qbreak(void)
 {
-	if	((Kbshift(-1) & (K_LSHIFT | K_RSHIFT)) == (K_LSHIFT | K_RSHIFT))
-		{
-		if	(1 == Rform_alert(1, ALRT_STOP_PROC))
+	if ((Kbshift(-1) & (K_LSHIFT | K_RSHIFT)) == (K_LSHIFT | K_RSHIFT))
+	{
+		if (1 == Rform_alert(1, ALRT_STOP_PROC))
 			return TRUE;
-		}
+	}
 	return FALSE;
 }
 
@@ -109,22 +106,21 @@ static int qbreak( void )
 
 void set_dirty(long err, char *path, int drv, char val)
 {
-	if	(err != EWRPRO && err != EDRIVE && err != EFILNF &&
-		 err != EPTHNF && err != EACCDN)
+	if (err != EWRPRO && err != EDRIVE && err != EFILNF && err != EPTHNF && err != EACCDN)
+	{
+
+		if (drv < 0)
 		{
-
-		if	(drv < 0)
-			{
 			err = get_real_drive(path);
-			if	(err < 0)
-				return;		/* Fehler bei Dsetpath */
+			if (err < 0)
+				return;					/* Fehler bei Dsetpath */
 			drv = (int) err;
-			}
-
-		if	(dirty_drives[drv] == 1)
-			return;		/* schon "dirty" */
-		dirty_drives[drv] = val;
 		}
+
+		if (dirty_drives[drv] == 1)
+			return;						/* schon "dirty" */
+		dirty_drives[drv] = val;
+	}
 }
 
 
@@ -137,18 +133,21 @@ void set_dirty(long err, char *path, int drv, char val)
 *
 *********************************************************************/
 
-static long _nbytes,_hbytes;
-static int  _nfiles,_hfiles,_folders;
-static int  depth;
+static long _nbytes;
+static long _hbytes;
+static int _nfiles;
+static int _hfiles;
+static int _folders;
+static int depth;
 static char *_path;
 
 
-static long _walk_path( void )
+static long _walk_path(void)
 {
-	long	dir;
+	long dir;
 	long errcode;
 	char *endp;
-	char name[MAX_NAMELEN+1+4];
+	char name[MAX_NAMELEN + 1 + 4];
 	XATTR xa;
 	long err_xr;
 
@@ -156,84 +155,82 @@ static long _walk_path( void )
 	errcode = strlen(_path);
 	endp = _path + errcode;
 	depth++;
-	if	(depth > MAX_PATHDEPTH || errcode > MAX_PATHLEN-MAX_NAMELEN-1)
-		{
+	if (depth > MAX_PATHDEPTH || errcode > MAX_PATHLEN - MAX_NAMELEN - 1)
+	{
 		err_alert(EPTHOV);
 		depth--;
 		return E_OK;
-		}
-	if	(qbreak())
+	}
+	if (qbreak())
 		return EBREAK;
 
 	errcode = Dopendir(_path, 0);
-	if	(errcode < E_OK)
+	if (errcode < E_OK)
 		return err_alert(errcode);
 
 	dir = errcode;
-	do	{
-		errcode = Dxreaddir(sizeof(name), dir,
-						name,
-						&xa, &err_xr);
-		if	(qbreak())
-			{
-			Dclosedir(dir);
-			return EBREAK;
-			}
-		if	(errcode)
-			break;
-		if	(err_xr)
-			{
-			errcode = err_xr;
-			break;
-			}
-
-		if	(name[4] == '.')
-			{
-			if	(name[5] == '.' || name[5] == EOS)
-				 continue;
-			}
-
-		if	((xa.st_mode & S_IFMT) == S_IFDIR)
-			{
-			_folders++;
-			strcpy(endp, name+4);
-			strcat(endp, "\\");
-			errcode = _walk_path();	/* REKURSION */
-			*endp = EOS;
-			if	(errcode)
-				{
-				Dclosedir(dir);
-				return errcode;
-				}
-			}
-		else {
-			if	(xa.st_attr & (FA_HIDDEN | FA_SYSTEM))
-				{
-				_hfiles++;
-				_hbytes += xa.st_size;
-				}
-			else {
-				_nfiles++;
-				_nbytes += xa.st_size;
-				}
-			}
-
-		if	(qbreak())
+	do
+	{
+		errcode = Dxreaddir(sizeof(name), dir, name, &xa, &err_xr);
+		if (qbreak())
+		{
 			Dclosedir(dir);
 			return EBREAK;
 		}
-	while(!errcode);
+		if (errcode)
+			break;
+		if (err_xr)
+		{
+			errcode = err_xr;
+			break;
+		}
+
+		if (name[4] == '.')
+		{
+			if (name[5] == '.' || name[5] == EOS)
+				continue;
+		}
+
+		if ((xa.st_mode & S_IFMT) == S_IFDIR)
+		{
+			_folders++;
+			strcpy(endp, name + 4);
+			strcat(endp, "\\");
+			errcode = _walk_path();		/* REKURSION */
+			*endp = EOS;
+			if (errcode)
+			{
+				Dclosedir(dir);
+				return errcode;
+			}
+		} else
+		{
+			if (xa.st_attr & (FA_HIDDEN | FA_SYSTEM))
+			{
+				_hfiles++;
+				_hbytes += xa.st_size;
+			} else
+			{
+				_nfiles++;
+				_nbytes += xa.st_size;
+			}
+		}
+
+		if (qbreak())
+		{
+			Dclosedir(dir);
+			return EBREAK;
+		}
+	} while (!errcode);
 
 	Dclosedir(dir);
 	depth--;
-	if	(errcode == EFILNF || errcode == ENMFIL)
+	if (errcode == EFILNF || errcode == ENMFIL)
 		errcode = E_OK;
 	return err_alert(errcode);
 }
 
-long walk_path(char *path, long *nbytes,
-			long *hbytes, int *folders,
-			int *nfiles, int *hfiles)
+long walk_path(char *path, long *nbytes, long *hbytes, int *folders, int *nfiles, int *hfiles)
 {
 	long errcode;
 
@@ -241,10 +238,10 @@ long walk_path(char *path, long *nbytes,
 	_nbytes = _hbytes = _nfiles = _hfiles = _folders = depth = 0;
 	_path = path;
 	errcode = _walk_path();
-	*nbytes   = _nbytes;		/* Bytes in normalen Dateien */
-	*hbytes   = _hbytes;		/* Bytes in versteckten Dateien */
-	*folders  = _folders;		/* Anzahl Ordner */
-	*nfiles   = _nfiles;		/* Anzahl normale Dateien */
-	*hfiles   = _hfiles;		/* Anzahl versteckte Dateien */
+	*nbytes = _nbytes;					/* Bytes in normalen Dateien */
+	*hbytes = _hbytes;					/* Bytes in versteckten Dateien */
+	*folders = _folders;				/* Anzahl Ordner */
+	*nfiles = _nfiles;					/* Anzahl normale Dateien */
+	*hfiles = _hfiles;					/* Anzahl versteckte Dateien */
 	return errcode;
 }
