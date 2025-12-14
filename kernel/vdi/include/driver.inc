@@ -71,7 +71,7 @@ _sf_image           EQU 10                  ;Zeiger auf das umsortierte Bitimage
 _sf_bold_image      EQU 14                  ;Zeiger auf das umsortierte fette Bitimage des 8*16 Systemfonts
 
 /* device driver (DEVICE_DRIVER) */
-		OFFSET 0
+                 OFFSET 0
 driver_name:     ds.b 9                 ;unsigned char [9]  Name
 driver_status:   ds.b 1                 ;unsigned char    Status
 driver_use:      ds.w 1                 ;unsigned int         Semaphore
@@ -88,10 +88,10 @@ DRIVER_RESIDENT     EQU 2                   ;Treiber resident verwalten
 DRIVER_NVDI         EQU 3                   ;NVDI-Bildschirmtreiber
 DRIVER_AVDI         EQU 4                   ;ATARI-VDI
 
-					
-					OFFSET 0
+
                                         ;typedef struct
                                         ;{
+                        OFFSET 0
 ORGANISATION_colors:    DS.L    1   ;   LONG    colors;
 ORGANISATION_planes:    DS.W    1   ;   WORD    planes;
 ORGANISATION_format:    DS.W    1   ;   WORD    format;
@@ -100,10 +100,10 @@ ORGANISATION_reser:     DS.W    3   ;   WORD    reserved[3];            /* reser
                                         ;} ORGANISATION;
 sizeof_ORGANISATION:
 
-.OFFSET
 
                                         ;typedef struct DRIVER_tag
                                         ;{
+                        OFFSET 0
 DRIVER_next:            DS.L    1   ;   struct DRIVER_tag   *next;
     
 DRIVER_code:            DS.L    1   ;   DRVR_HEADER *code;
@@ -150,7 +150,7 @@ N_MEMORY            EQU 61
 N_IMAGE             EQU 91
 
 /* driver file header (DRVR_HEADER) */
-		OFFSET 0
+                  OFFSET 0
 DRVR_branch:      ds.w 1
 DRVR_magic:       ds.b 8
 DRVR_version:     ds.w 1

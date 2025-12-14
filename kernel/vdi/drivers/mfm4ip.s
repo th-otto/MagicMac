@@ -1,13 +1,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;******************************************************************************;
 ;*                                                                            *;
-;*            4-Plane-Bildschirmtreiber fuer NVDI 3.0                         *;
+;*            2-Plane-Bildschirmtreiber fuer NVDI 3.0                         *;
 ;*                                                                            *;
 ;******************************************************************************;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Labels und Konstanten
 
-VERSION           EQU $0313
+VERSION           EQU $0314
 
 .INCLUDE "..\include\linea.inc"
 .INCLUDE "..\include\tos.inc"
@@ -18,7 +18,7 @@ VERSION           EQU $0313
 
 .INCLUDE "..\include\pixmap.inc"
 
-PATTERN_LENGTH    EQU (16*16)/2           ;Fuellmusterlaenge bei 4 Ebenen
+PATTERN_LENGTH    EQU (32*2)              ;Fuellmusterlaenge bei 2 Ebenen
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                   ; 'NVDI-Treiber initialisieren'
@@ -194,8 +194,8 @@ get_scrninfo:     movem.l  d0-d1/a0-a1,-(sp)
 
                   move.w   #0,(a0)+       ;[0] Interleaved Planes
                   move.w   #1,(a0)+       ;[1] Hardware-CLUT
-                  move.w   #4,(a0)+       ;[2] Anzahl der Ebenen
-                  move.l   #16,(a0)+      ;[3/4] Farbanzahl
+                  move.w   #2,(a0)+       ;[2] Anzahl der Ebenen
+                  move.l   #4,(a0)+       ;[3/4] Farbanzahl
                   move.w   BYTES_LIN.w,(a0)+ ;[5] Bytes pro Zeile
                   move.l   v_bas_ad.w,(a0)+  ;[6/7] Bildschirmadresse
                   move.w   d0,(a0)+       ;[8]  Bits der Rot-Intensitaet
@@ -477,7 +477,7 @@ set_color_rgb:    lea      vdi_palette(pc),a1 ;VDI-Palette
                   movea.l  sp,a0
                   addq.l   #1,a0
 
-                  lea      rgb_in_tab,a1  ;Tabelle ohne Kalibration
+                  lea      rgb_in_tab,a1  ;Tabelle ohne Kalibrierung
 
                   move.b   (a1,d0.w),(a0)+   ;Intensitaet der Grundfarbe setzen
                   move.b   (a1,d1.w),(a0)+   ;Intensitaet der Grundfarbe setzen
@@ -562,7 +562,7 @@ dev_name:         DC.B  'Mac 4 Farben interleaved',0
                   BSS
 
 nvdi_struct:      DS.L 1                  ;Zeiger auf nvdi_struct oder 0
-driver_struct:    DS.L  1
+driver_struct:    DS.L 1
 
 x_res:            DS.W 1                  ;adressierbare Rasterbreite (von 0 aus)
 y_res:            DS.W 1                  ;adressierbare Rasterhoehe (von 0 aus)
