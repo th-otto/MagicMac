@@ -304,6 +304,8 @@ struct _wk {
 #define FORM_ID_INTERLEAVED 1
 #define FORM_ID_PIXPACKED   2
 
+typedef struct { int opaque; } NVDIFILE;
+
 /* NVDI-Struktur, der NVDI-Cookie zeigt hierauf */
 
 /* es fehlen noch Funktionen zum
@@ -372,25 +374,25 @@ typedef struct {
 	/* below only present in NVDI >= 3.02 */
 	/* 196 */ void *vdi_setup_ptr;
 	/* 200 */ void (*vdi_exit)(void);
-	/* 204 */ void (*unknown204)(void);
-	/* 208 */ void (*unknown208)(void);
+	/* 204 */ _BOOL (*font_get_id)(const char *filename, long *id);
+	/* 208 */ _BOOL (*font_uninstalled)(const char *filename);
 	/* below only present in NVDI >= 4.x */
-	/* 212 */ void (*unknown212)(void);
-	/* 216 */ void (*unknown216)(void);
-	/* 220 */ void (*unknown220)(void);
-	/* 224 */ void (*unknown224)(void);
-	/* 228 */ void (*unknown228)(void);
-	/* 232 */ void (*unknown232)(void);
-	/* 236 */ void (*unknown236)(void);
-	/* 240 */ void (*unknown240)(void);
-	/* 244 */ void (*unknown244)(void);
-	/* 248 */ void (*unknown248)(void);
-	/* 252 */ void (*unknown252)(void);
-	/* 256 */ void (*unknown256)(void);
-	/* 260 */ void (*unknown260)(void);
-	/* 264 */ void (*unknown264)(void);
-	/* 268 */ void (*unknown268)(void);
-	/* 272 */ void (*unknown272)(void);
+	/* 212 */ void (*reserved212)(void);
+	/* 216 */ void (*cpuflush)(void);
+	/* 220 */ void (*set_font_config)(unsigned short);
+	/* 224 */ unsigned short (*get_font_config)(void);
+	/* 228 */ char *spoolpath;
+	/* 232 */ _BOOL (*nvdifile_create)(NVDIFILE *f);
+	/* 236 */ _BOOL (*nvdifile_open)(NVDIFILE *f);
+	/* 240 */ _BOOL (*nvdifile_close)(NVDIFILE *f);
+	/* 244 */ long (*nvdifile_write)(NVDIFILE *f, const void *val, long size);
+	/* 248 */ _BOOL (*nvdifile_flush)(NVDIFILE *f);
+	/* 252 */ long (*nvdifile_read)(NVDIFILE *f, void *val, long size);
+	/* 256 */ _BOOL (*nvdifile_getc)(NVDIFILE *f, unsigned char *c);
+	/* 260 */ long (*nvdifile_readat)(NVDIFILE *f, void *val, long offset, long size);
+	/* 264 */ void (*nvdifile_seek)(NVDIFILE *f, long offset);
+	/* 268 */ void (*nvdifile_skip)(NVDIFILE *f, long offset);
+	/* 272 */ long (*nvdifile_tell)(NVDIFILE *f);
 	/* below only present in NVDI >= 5.x */
 	/* 276 */ void (*unknown276)(void);
 	/* 280 */ void (*unknown280)(void);
@@ -402,18 +404,18 @@ typedef struct {
 	/* 304 */ ITAB_REF (*create_itab)(COLOR_TAB *ctab, short bits);
 	/* 308 */ long (*color2pixel)(COLOR_ENTRY *rgb, COLOR_TAB *ctab, short color, long px_format);
 	/* 312 */ long (*color2value)(COLOR_ENTRY *rgb, COLOR_TAB *ctab, short color, long px_format);
-	/* 316 */ void (*unknown316)(void);
-	/* 320 */ void (*unknown320)(void);
-	/* 324 */ void (*unknown324)(void);
+	/* 316 */ void (*reserved316)(void);
+	/* 320 */ void (*reserved320)(void);
+	/* 324 */ void (*reserved324)(void);
 	/* 328 */ long unknown328;
 	/* 332 */ void (*unknown332)(void);
 	/* 336 */ void (*unknown336)(void);
 	/* 340 */ void (*unknown340)(void);
 	/* 344 */ void (*unknown344)(void);
-	/* 348 */ long unknown348;
-	/* 352 */ long unknown352;
-	/* 356 */ void (*unknown356)(void);
-	/* 360 */ void (*unknown360)(void);
+	/* 348 */ long max_mem;
+	/* 352 */ long min_mem;
+	/* 356 */ void (*get_docappname)(char *appname, char *docname);
+	/* 360 */ void (*start_printmon)(const char *title);
 	/* 364 */ void (*unknown364)(void);
 	/* 368 */ void (*unknown368)(void);
 	/* 372 */ void (*unknown372)(void);
@@ -427,14 +429,14 @@ typedef struct {
 	/* 404 */ void (*unknown404)(void);
 	/* 408 */ void (*unknown408)(void);
 	/* 412 */ void (*unknown412)(void);
-	/* 416 */ void (*unknown416)(void);
-	/* 420 */ void (*unknown420)(void);
-	/* 424 */ void (*unknown424)(void);
-	/* 428 */ void (*unknown428)(void);
+	/* 416 */ void (*reserved416)(void);
+	/* 420 */ void (*reserved420)(void);
+	/* 424 */ void (*reserved424)(void);
+	/* 428 */ _BOOL (*save_config)(void);
 	/* 432 */ void (*unknown432)(void);
 	/* 436 */ void (*unknown436)(void);
-	/* 440 */ void (*unknown440)(void);
-	/* 444 */ void (*unknown444)(void);
+	/* 440 */ void (*reserved440)(void);
+	/* 444 */ void (*reserved444)(void);
 	/* 448 */
 } NVDI_STRUCT;
 

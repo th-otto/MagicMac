@@ -426,7 +426,7 @@ MSysX:
  DCB.L    PTRLEN,0            ; MacSys_rawdrvr                    140
  DC.L     0                   ; MacSysX_Daemon                    150
  DC.L     0                   ; MacSysX_BlockDev                  154
- DC.L     0                   ; reserved for future               158
+ DC.L     0                   ; MacSysX_Network                   158
  DC.L     0                   ; reserved for future               15c
  DC.L     0                   ; MacSysX_Yield                     160
 
