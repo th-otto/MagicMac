@@ -72,7 +72,6 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/kernel/aes/wdialog/$lang/wdialog.prg" "$BUILDROOT/$lang/EXTRAS/WDIALOG/wdialog.prg"
 	mcopy "$SRCDIR/extensio/pdlg_slb/$lang/pdlg.slb" "$BUILDROOT/$lang/GEMSYS/MAGIC/XTENSION/"
 
-	mcopy "$SRCDIR/auto/accs/$lang/cops.app" "$BUILDROOT/$lang/AUTO/ACCS/COPS.ACC"
 	mcopy "$SRCDIR/auto/accs/cpx/$lang/*.CPX" "$BUILDROOT/$lang/AUTO/ACCS/CPX/"
 done
 
@@ -82,6 +81,7 @@ done
 #
 for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/auto/accs/cops.inf" "$BUILDROOT/$lang/GEMSYS/HOME/"
+	mcopy "$SRCDIR/auto/accs/cops.acc" "$BUILDROOT/$lang/AUTO/ACCS/COPS.ACC"
 	mcopy "$SRCDIR/auto/accs/*.PAL" "$BUILDROOT/$lang/AUTO/ACCS/"
 	mcopy "$SRCDIR/auto/accs/cpx/*.CPX" "$BUILDROOT/$lang/AUTO/ACCS/CPX/"
 	mcopy "$SRCDIR/auto/accs/cpz/*.CPZ" "$BUILDROOT/$lang/AUTO/ACCS/CPZ/"
