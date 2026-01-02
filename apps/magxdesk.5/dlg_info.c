@@ -386,7 +386,7 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 		/* Sektoren pro Cluster: */
 		ultoa(frei.b_clsiz, (tree+DI_SECCL)->ob_spec.free_string, 10);
 		/* Bytes pro Sektor: */
-		ultoa(frei.b_secsiz,(tree+DI_BYSEC)->ob_spec.free_string, 10);
+		ultoa(frei.b_secsiz > 0xFFFFUL ? 0xFFFFUL : frei.b_secsiz,(tree+DI_BYSEC)->ob_spec.free_string, 10);
 		/* Bytes pro Cluster: */
 		frei.b_secsiz *= frei.b_clsiz;
 	
