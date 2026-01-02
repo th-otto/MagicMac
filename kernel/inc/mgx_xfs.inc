@@ -66,12 +66,12 @@ dev_putc:      DS.L      1
      OFFSET
 
 dd_dmd:        DS.L      1    /* 0x00: Zeiger auf DMD                      */
-dd_refcnt:     DS.W      1    /* 0x04: Ref.zaehler fuer Standardpfade        */
+dd_refcnt:     DS.W      1    /* 0x04: Ref.zaehler fuer Standardpfade      */
 
      OFFSET
 
 fd_dmd:        DS.L      1    /* 0x00: Zeiger auf DMD                      */
-fd_refcnt:     DS.W      1    /* 0x04: Ref.zaehler fuers Schliessen oder -1   */
+fd_refcnt:     DS.W      1    /* 0x04: Ref.zaehler fuers Schliessen oder -1*/
 fd_mode:       DS.W      1    /* 0x06: Open- Modus (0,1,2) und flags       */
 fd_dev:        DS.L      1    /* 0x08: Zeiger auf MX_DEV                   */
 
@@ -86,7 +86,7 @@ dta_drive:     DS.B      1    /* 0x14: */
 dta_res2:      DS.B      1    /* 0x15: */
 dta_time:      DS.W      1    /* 0x16: gefundene Zeit                      */
 dta_date:      DS.W      1    /* 0x18: gefundenes Datum                    */
-dta_len:       DS.L      1    /* 0x1a: gefundene Laenge                     */
+dta_len:       DS.L      1    /* 0x1a: gefundene Laenge                    */
 dta_name:      DS.B      14   /* 0x1e: gefundener Dateiname                */
 
      OFFSET
@@ -113,7 +113,7 @@ xattr_mode:    DS.W      1    /* %ttttsssrwxrwxrwx                         */
                               /*         2: setgid (?)                     */
                               /*         4: setuid (?)                     */
                               /* Bit 0..8: access modes                    */
-                              /*         rwx fuer user/group/world          */
+                              /*         rwx fuer user/group/world         */
 xattr_index:   DS.L      1
 xattr_dev:     DS.W      1
 xattr_res1:    DS.W      1
@@ -192,23 +192,23 @@ CMODE_ECHO          EQU  2
 BCMODE_ECHO         EQU  1
 
 /* Open- Modus von Dateien (Mag!X- intern)                                 */
-/* NOINHERIT wird nicht unterstuetzt, weil nach TOS- Konvention nur die     */
+/* NOINHERIT wird nicht unterstuetzt, weil nach TOS- Konvention nur die    */
 /* Handles 0..5 vererbt werden                                             */
 /* HiByte wie unter MiNT verwendet                                         */
 
-OM_RPERM       EQU  1         /* Datei ist zum Lesen geoeffnet              */
+OM_RPERM       EQU  1         /* Datei ist zum Lesen geoeffnet             */
 BOM_RPERM      EQU  0
-OM_WPERM       EQU  2         /* Datei ist zum Schreiben geoeffnet          */
+OM_WPERM       EQU  2         /* Datei ist zum Schreiben geoeffnet         */
 BOM_WPERM      EQU  1
-OM_EXEC        EQU  4         /* Datei ist zum Ausfuehren geoeffnet          */
+OM_EXEC        EQU  4         /* Datei ist zum Ausfuehren geoeffnet        */
 BOM_EXEC       EQU  2
 OM_APPEND      EQU  8         /* Schreibzugriffe ans Ende (Kernel!)        */
 BOM_APPEND     EQU  3
-OM_RDENY       EQU  16        /* andere duerfen nicht gleichz. lesen        */
+OM_RDENY       EQU  16        /* andere duerfen nicht gleichz. lesen       */
 BOM_RDENY      EQU  4
-OM_WDENY       EQU  32        /* andere duerfen nicht gleichz. schreiben    */
+OM_WDENY       EQU  32        /* andere duerfen nicht gleichz. schreiben   */
 BOM_WDENY      EQU  5
-OM_NOCHECK     EQU  64        /* KEINE ueberpruefung durch den Kernel        */
+OM_NOCHECK     EQU  64        /* KEINE Ueberpruefung durch den Kernel      */
 BOM_NOCHECK    EQU  6
 
 
@@ -245,6 +245,7 @@ O_LOCK         EQU  $8000     ; von Mag!X nicht unterstuetzt
 KER_GETINFO    EQU  $0100     /* Kernel: gib Zeiger auf Kernel zurueck    */
 KER_DOSLIMITS  EQU  $0101     /* Kernel: Limits fuer FAT-Dateisysteme */
 KER_INSTXFS    EQU  $0200     /* Kernel: installiere ein XFS */
+KER_SETWBACK   EQU  $0300     /* Kernel: konfiguriere writeback */
 DFS_GETINFO    EQU  $1100     /* XFS_DOS: gib Zeiger auf DFS-Kernel */
 DFS_INSTDFS    EQU  $1200     /* XFS_DOS: installiere ein DFS */
 DEV_M_INSTALL  EQU  $cd00     /* DFS_U */
@@ -258,6 +259,8 @@ FTRUNCATE      EQU  $4604
 SHMGETBLK      EQU  $4d00
 SHMSETBLK      EQU  $4d01
 PBASEADDR      EQU  $5002
+
+LASTDRIVE      EQU  'Z'-'A'   ; hoechste Laufwerknummer
 
 /* Modi und Codes fuer Dpathconf() */
 

@@ -37,7 +37,7 @@
  move.l	p_mgxinf,a0
  jsr		rinf_coo
  tst.l	d0
- beq.s 	bot_no_coo
+ beq.s  bot_no_coo
  cmpi.l	#NCOOKIES,d0
  bcs.s	bot_no_coo			; Mindestgroesse
 	DEB	'yes, create new cookies!'

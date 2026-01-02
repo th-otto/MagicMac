@@ -37,7 +37,7 @@ host_hdv_rwabs:
 *
 * long host_hdv_getbpb(int drv)
 *
-* Röckgabe NULL fÅr ungÅltigen BPB
+* Rueckgabe NULL fuer ungueltigen BPB
 *
 
 host_hdv_getbpb:
@@ -59,7 +59,7 @@ host_hdv_getbpb:
 *
 * long host_hdv_mediach(int drive)
 *
-* RÅckgabe EUNDEV fÅr unbekanntes Laufwerk
+* Rueckgabe EUNDEV fuer unbekanntes Laufwerk
 *
 
 host_hdv_mediach:
@@ -75,7 +75,7 @@ host_hdv_mediach:
 *
 * long host_hdv_boot()
 *
-* RÅckgabewert wird derzeit ignoriert.
+* Rueckgabewert wird derzeit ignoriert.
 *
 
 host_hdv_boot:

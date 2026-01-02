@@ -1,3 +1,5 @@
+FSIZE_MIN		EQU	(9*128)
+
 **********************************************************************
 *
 * void read_keytbl( void )
@@ -26,23 +28,23 @@ read_keytbl:
 ; determine file size
 
   move.w #FSTAT,-(a7)
-  pea 2(a7)
+  pea 2(a7)				; &xattr
   move.w d7,-(a7)
   move.w	#$104,-(sp)			; Fcntl
   trap	#1
-  adda.w #10,a7
+  lea 10(a7),a7
   tst.l d0
-  bmi rdkt_close
+  bmi.s rdkt_close
 
-  move.l xattr_size(a7),d6
-  cmpi.l #(9*128),d6
-  bcs rdkt_close
-  
+  move.l xattr_size(a7),d6		; d6 = file size
+  cmpi.l #FSIZE_MIN,d6
+  bcs.s rdkt_close			; file too small
+
 ; Speicher allozieren
 
  move.w	#2,-(sp)				; lieber ST-RAM
- move.l d6,a0			; 10 Zeiger + 10 Tabellen je 128 Bytes
- pea N_KEYTBL*4(a0)
+ move.l d6,a0
+ pea (N_KEYTBL*4)(a0)		; 10 Zeiger + 10 Tabellen je 128 Bytes
  move.w	#$44,-(sp)			; Mxalloc
  trap	#1
  addq.l	#8,sp
@@ -53,11 +55,11 @@ read_keytbl:
 ; Datei einlesen
 
  pea		(N_KEYTBL*4)(a6)
- move.l	d6,-(sp)		; 10 Tabellen
+ move.l	d6,-(sp)		    ; ganze Datei
  move.w	d7,-(sp)
  move.w	#$3f,-(sp)			; Fread
  trap	#1
- adda.w	#12,sp
+ lea 12(a7),a7
  sub.l	d6,d0
  bne.b	rdkt_free				; Dateilaenge zu kurz
 
@@ -77,7 +79,7 @@ rdkt_loop:
  clr.l -4(a0)
 rdkt_inst:
  ENDC
- 
+
  bsr 	_Bioskeys				; richtig aktivieren
  bra.b	rdkt_close
 

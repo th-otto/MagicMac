@@ -124,10 +124,11 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      XREF      appl_IOcomplete     ; XAES
      XREF      evnt_IO             ; XAES
      XREF      evnt_sem            ; XAES
+     XREF      act_appl            ; XAES
      XREF      endofvars           ; AES: Ende aller Variablen
      XREF      _ende               ; AES: Ende des Betriebssystems
      XREF      gem_magics          ; AES: Parameterblock
-	 XDEF mmx_yield
+     XDEF      mmx_yield
 
 * Import von AESOBJ
 
@@ -152,7 +153,7 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
 
 
      INCLUDE "lowmem.inc"
-	 INCLUDE "country.inc"
+     INCLUDE "country.inc"
      INCLUDE "bios.inc"
      INCLUDE "dos.inc"
      INCLUDE "errno.inc"
@@ -161,7 +162,11 @@ COMMAND        EQU  $37            ; "Apple"-Taste fuer Calamus-Unterstuetzung
      INCLUDE "debug.inc"
      INCLUDE "..\dos\magicdos.inc"
 
-     INCLUDE "version.inc"
+; MagicOnLinux has its own version
+D_DAY	EQU	3
+D_MONTH	EQU	1
+D_YEAR	EQU	2026
+     INCLUDE "version1.inc"
 
 NCOOKIES  EQU  21
 NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
@@ -169,9 +174,8 @@ NSERIAL   EQU  4              /* max. Anzahl serieller Schnittstellen */
 N_KEYTBL       EQU 9+DEADKEYS             ; 10 Tastaturtabellen
 
 	 XREF cpu020 ; from mxvdiknl.o
-	 XREF act_appl ; from AES
 
-	OFFSET
+     OFFSET
 
 ; BPB, erweitert fuer Floppy Disk
 fbpb_bpb:      DS.B $12  /*   0: BPB */
@@ -322,31 +326,31 @@ p_vt52:             DS.L 1              /* fuer VT52.PRG */
 __e_bios:
 
 ; Speicherbelegung in "lowmem":
-;     0 ..  $140		Interrupt-Vektoren
-;  $140 ..  $380		(frei, 576 Bytes)
-;  $380 ..  $5b4		offizielle Systemvariablen
-;  $5b4 ..  $840		(frei, 652 Bytes)
-;  $840 ..  $9a4		MagiC-BIOS-Variablen mit festen Adressen
-;  $9a4 .. $1200		BIOS
-; $1200 .. $28d6		VDI
-; $2900 .. (variabel)	DOS
+;     0 ..  $140        Interrupt-Vektoren
+;  $140 ..  $380        (frei, 576 Bytes)
+;  $380 ..  $5b4        offizielle Systemvariablen
+;  $5b4 ..  $840        (frei, 652 Bytes)
+;  $840 ..  $9a4        MagiC-BIOS-Variablen mit festen Adressen
+;  $9a4 .. $1200        BIOS
+; $1200 .. $28d6        VDI
+; $2900 .. (variabel)   DOS
 
 IF __e_bios >= $1200
  "ueberlauf der Bios-Variablen"
 ENDIF
 
-       OFFSET $600             /* war vorher unbenutzt */
+     OFFSET $600         /* war vorher unbenutzt */
 mbiosvecs:
-Bconstatvec:           DS.L 8
-Bconinvec:             DS.L 8
-Bcostatvec:            DS.L 8
-Bconoutvec:            DS.L 8
+Bconstatvec:        DS.L 8
+Bconinvec:          DS.L 8
+Bcostatvec:         DS.L 8
+Bconoutvec:         DS.L 8
 __e_bios_ovfl:
 
 IF __e_bios_ovfl >= $840
  "ueberlauf der ueberlauf-Bios-Variablen"
 ENDIF
- 
+
 	XDEF act_pd
 
         TEXT
@@ -357,8 +361,8 @@ ENDIF
 
 **********************************************************************
 *
-* Header fuer MagicMacX. Uebergabestruktur zwischen
-* Atari und MacOS X
+* Header fuer MagicOnLinux. Uebergabestruktur zwischen
+* Atari und Host
 *
 **********************************************************************
 
@@ -369,65 +373,95 @@ ENDIF
  */
 MSysX:
  DC.L     'MagC'              ;                                   000
- DC.L     MacSysX_sizeof      ; MacSys_len                        004
+ DC.L     MacSysX_sizeof      ; MacSysX_len                       004
  DC.L     syshdr              ; Adresse des Atari-Syshdr          008
  DC.L     tab_unshift         ; 9*128 Bytes fuer Tastaturtabellen 00c
  DC.L     mem_root            ;                                   010
  DC.L     act_pd              ;                                   014
  DC.L     act_appl            ;                                   018
- DC.L     0                   ; MacSys_verAtari                   01c
+ DC.L     3                   ; MacSysX_verAtari                  01c
 
- DC.L     0                   ; MacSys_verMac                     020
+ DC.L     0                   ; MacSysX_verMac                    020
  DC.W     0                   ; CPU (30=68030, 40=68040)          024
  DC.W     0                   ; FPU-Typ                           026
- DCB.L    PTRLEN,0            ; MacSys_Init                       028
- DCB.L    PTRLEN,0            ; MacSys_BiosInit                   038
- DCB.L    PTRLEN,0            ; MacSys_VdiInit                    048
- DC.L     0                   ; MacSys_pixmap                     058
+ DC.L     0                   ; MacSysX_Init                      028
+ DC.L     0                   ; MacSysX_dev_in                    02c
+ DC.L     0                   ; MacSysX_dev_out                   030
+ DC.L     0                   ; MacSysX_Ikbdws                    034
+ DC.L     0                   ; MacSysX_BiosInit                  038
+ DC.L     0                   ; MacSysX_dev_istat                 03c
+ DC.L     0                   ; MacSysX_dev_ostat                 040
+ DC.L     0                   ; MacSysX_Dosound                   044
+ DC.L     0                   ; MacSysX_VdiInit                   048
+ DC.L     0                   ; (reserved)                        04c
+ DC.L     0                   ; (reserved)                        050
+ DC.L     0                   ; (reserved)                        054
+ DC.L     0                   ; MacSysX_pixmap                    058
  DC.L     0                   ; MacSysX_pMMXCookie                05c
- DCB.L    PTRLEN,0            ; MacSysX_Xcmd                      060
- DC.L     0                   ; MacSys_PPCAddr                    070 DO NOT USE
- DC.L     0                   ; MacSysX_VideoAddr                 074 DO NOT USE
- DCB.L    PTRLEN,0            ; MacSysX_Exec68k                   078
+ DC.L     0                   ; MacSysX_Xcmd                      060
+ DC.L     0                   ; (reserved)                        064
+ DC.L     0                   ; (reserved)                        068
+ DC.L     0                   ; (reserved)                        06c
+ DC.L     0                   ; MacSysX_PPCAddr                   070 unused in MagicOnLinux
+ DC.L     0                   ; MacSysX_VideoAddr                 074 unused in MagicOnLinux
+ DC.L     0                   ; MacSysX_Exec68k                   078
+ DC.L     0                   ; (reserved)                        07c
+ DC.L     0                   ; (reserved)                        080
+ DC.L     0                   ; (reserved)                        084
  DC.L     0                   ; MacSysX_gettime                   088
  DC.L     0                   ; MacSysX_settime                   08c
  DC.L     0                   ; MacSysX_Setpalette                090
  DC.L     0                   ; MacSysX_Setcolor                  094
  DC.L     0                   ; MacSysX_VsetRGB                   098
  DC.L     0                   ; MacSysX_VgetRGB                   09c
- DC.L     0                   ; MacSys_syshalt                    0a0
- DC.L     0                   ; MacSys_syserr                     0a4
- DC.L     0                   ; MacSys_coldboot                   0a8
- DC.L     0                   ; MacSys_exit                       0ac
- DC.L     0                   ; MacSys_debugout                   0b0
- DC.L     0                   ; MacSys_error                      0b4
- DC.L     0                   ; prtos                             0b8
- DC.L     0                   ; prtin                             0bc
- DC.L     0                   ; prtout                            0c0
- DC.L     0                   ; MacSys_prn_wrts                   0c4
- DC.L     0                   ; serconf                           0c8
+ DC.L     0                   ; MacSysX_syshalt                   0a0
+ DC.L     0                   ; MacSysX_syserr                    0a4
+ DC.L     0                   ; MacSysX_coldboot                  0a8
+ DC.L     0                   ; MacSysX_exit                      0ac
+ DC.L     0                   ; MacSysX_debugout                  0b0
+ DC.L     0                   ; MacSysX_error                     0b4
+ DC.L     0                   ; MacSysX_prtos                     0b8
+ DC.L     0                   ; MacSysX_prtin                     0bc
+ DC.L     0                   ; MacSysX_prtout                    0c0
+ DC.L     0                   ; MacSysX_prn_wrts                  0c4
+ DC.L     0                   ; MacSysX_serconf                   0c8
  DC.L     0                   ; MacSysX_seris                     0cc
  DC.L     0                   ; MacSysX_seros                     0d0
  DC.L     0                   ; MacSysX_serin                     0d4
  DC.L     0                   ; MacSysX_serout                    0d8
- DC.L     0                   ; SerOpen                           0dc
- DC.L     0                   ; SerClose                          0e0
- DC.L     0                   ; SerRead                           0e4
- DC.L     0                   ; SerWrite                          0e8
- DC.L     0                   ; SerStat                           0ec
- DC.L     0                   ; SerIoctl                          0f0
- DCB.L    PTRLEN,0            ; MacSysX_GetKbOrMous               0f4
- DC.L     0                   ; MacSys_dos_macfn                  104
- DC.L     0                   ; MacSys_xfs_version                108
- DC.L     0                   ; MacSys_xfs_flags                  10c
- DCB.L    PTRLEN,0            ; MacSys_xfs                        110
- DCB.L    PTRLEN,0            ; MacSys_xfs_dev                    120
- DCB.L    PTRLEN,0            ; MacSys_drv2devcode                130
- DCB.L    PTRLEN,0            ; MacSys_rawdrvr                    140
+ DC.L     0                   ; MacSysX_SerOpen                   0dc
+ DC.L     0                   ; MacSysX_SerClose                  0e0
+ DC.L     0                   ; MacSysX_SerRead                   0e4
+ DC.L     0                   ; MacSysX_SerWrite                  0e8
+ DC.L     0                   ; MacSysX_SerStat                   0ec
+ DC.L     0                   ; MacSysX_SerIoctl                  0f0
+ DC.L     0                   ; MacSysX_GetKeybOrMouse            0f4
+ DC.L     0                   ; (reserved)                        0f8
+ DC.L     0                   ; (reserved)                        0fc
+ DC.L     0                   ; (reserved)                        100
+ DC.L     0                   ; MacSysX_dos_macfn                 104
+ DC.L     0                   ; MacSysX_xfs_version               108
+ DC.L     0                   ; MacSysX_xfs_flags                 10c
+ DC.L     0                   ; MacSysX_xfs                       110
+ DC.L     0                   ; (reserved)                        114
+ DC.L     0                   ; (reserved)                        118
+ DC.L     0                   ; (reserved)                        11c
+ DC.L     0                   ; MacSysX_xfs_dev                   120
+ DC.L     0                   ; (reserved)                        124
+ DC.L     0                   ; (reserved)                        128
+ DC.L     0                   ; (reserved)                        12c
+ DC.L     0                   ; MacSysX_drv2devcode               130
+ DC.L     0                   ; (reserved)                        134
+ DC.L     0                   ; (reserved)                        138
+ DC.L     0                   ; (reserved)                        13c
+ DC.L     0                   ; MacSysX_rawdrvr                   140
+ DC.L     0                   ; (reserved)                        144
+ DC.L     0                   ; (reserved)                        148
+ DC.L     0                   ; (reserved)                        14c
  DC.L     0                   ; MacSysX_Daemon                    150
  DC.L     0                   ; MacSysX_BlockDev                  154
  DC.L     0                   ; MacSysX_Network                   158
- DC.L     0                   ; reserved for future               15c
+ DC.L     0                   ; MacSysX_Setscreen                 15c
  DC.L     0                   ; MacSysX_Yield                     160
 
 **********************************************************************
@@ -528,7 +562,7 @@ bot_ver_ok:
  DEBON
 
  lea      MSysX+MacSysX_init(pc),a0
- MACPPCE
+ MACPPC /* was MACPPCE in MagcMacX */
 
  move.w   MSysX+MacSysX_fpu(pc),d0
  beq.b    bot_ok1                  ; keine FPU
@@ -537,7 +571,7 @@ bot_ver_ok:
 bot_ok1:
 * BIOS- Variablenbereich loeschen
  lea      clear_area,a0
- lea      __e_dos.l,a1
+ lea      __e_dos,a1
  moveq    #0,d0
 bot_vclear:
  move.l   d0,(a0)+
@@ -743,7 +777,7 @@ _cpyloop3:
  DEB      'BIOS initialization finished'
 
  lea      MSysX+MacSysX_biosinit(pc),a0 ; PPC-Adresse
- MACPPCE                                ; Mac anspringen
+ MACPPC /* was MACPPCE in MagcMacX */
 
 * Interrupts zulassen
 
@@ -816,7 +850,7 @@ _cpyloop3:
 
  jsr      secb_ext                 ; Sektorpufferliste erweitern
 
- DEB      'free allocates userstack'
+ DEB      'free allocated userstack'
 
 ;
 ; allozierten Userstack wieder freigeben
@@ -1552,27 +1586,27 @@ ret0_rte:
    rte
 
 ori_dev_vecs:
- DC.L     ret0                     ; Bconstat(0)       PRT
+ DC.L     bconstat_prt             ; Bconstat(0)       PRT
  DC.L     bconstat_ser1            ;                   AUX
  DC.L     bconstat_con             ;                   CON
- DC.L     ret0                     ;                   MIDI
- DC.L     dummyfn                  ;                   IKBD
+ DC.L     bconstat_midi            ;                   MIDI
+ DC.L     bconstat_ikbd            ;                   IKBD
  DC.L     dummyfn                  ;                   RAWCON
  DC.L     dummyfn
  DC.L     dummyfn
  DC.L     bconin_prt               ; Bconin(0)         PRT
  DC.L     bconin_ser1              ;                   AUX
  DC.L     bconin_con               ;                   CON
- DC.L     ret0                     ;                   MIDI
- DC.L     dummyfn                  ;                   IKBD
+ DC.L     bconin_midi              ;                   MIDI
+ DC.L     bconin_ikbd              ;                   IKBD
  DC.L     dummyfn                  ;                   RAWCON
  DC.L     dummyfn
  DC.L     dummyfn
  DC.L     bcostat_prt              ; Bcostat(0)        PRT
  DC.L     bcostat_ser1             ;                   AUX
  DC.L     bcostat_con              ;                   CON
- DC.L     ret0                     ;                   MIDI (!!!)
- DC.L     ret0                     ;                   IKBD (!!!)
+ DC.L     bcostat_ikbd             ;                   IKBD (!!!)
+ DC.L     bcostat_midi             ;                   MIDI (!!!)
 
  DC.L     dummyfn                  ;                   RAWCON
  DC.L     dummyfn
@@ -1580,8 +1614,8 @@ ori_dev_vecs:
  DC.L     bconout_prt              ; Bconout(0,c)      PRT
  DC.L     bconout_ser1             ;                   AUX
  DC.L     vdi_conout               ;                   CON
- DC.L     ret0                     ;                   MIDI
- DC.L     ret0                     ;                   IKBD
+ DC.L     bconout_midi             ;                   MIDI
+ DC.L     bconout_ikbd             ;                   IKBD
  DC.L     vdi_rawout               ;                   RAWCON
  DC.L     dummynopfn
  DC.L     dummynopfn
@@ -1982,7 +2016,7 @@ _ran_lok:
 *
 * EQ/NE d0 = long getcookie( d0 = long val )
 *
-* Rueckgabe:         d0 = 0    nicht gefunden
+* Rueckgabe:        d0 = 0    nicht gefunden
 *                   sonst     d1.l = Wert des Cookies, a0 = Zeiger
 *
 
@@ -2080,10 +2114,10 @@ bin_to_bcd:
 
 Ikbdws:
  move.w   (a0)+,d0                 ; Anzahl Zeichen
- bne.b    ikbdws_ende              ; ungleich 1, fertig
+ bne.b    ikbdws_host              ; ungleich 1, host aufrufen
  move.l   (a0),a0                  ; Daten
  cmpi.b   #$1c,(a0)                ; IKBD: Interrogate time-of-day ?
- bne.b    ikbdws_ende              ; nein, fertig
+ bne.b    ikbdws_host              ; nein, host aufrufen
 ; Uhr des Tastaturchips auslesen
  subq.l   #6,sp                    ; char data[6]
  bsr      _Gettime                 ; d0 = Uhrzeit vom Mac holen
@@ -2093,6 +2127,14 @@ Ikbdws:
  move.l   kbdvecs+$14,a2           ; clockvec
  jsr      (a2)
  addq.l   #4,sp
+ addq.l   #6,sp
+ bra.b    ikbdws_ende
+ikbdws_host:
+ move.l   a0,-(sp)
+ move.w   d0,-(sp)
+ lea      (sp),a1
+ lea      MSysX+MacSysX_Ikbdws(pc),a0
+ MACPPC
  addq.l   #6,sp
 ikbdws_ende:
  moveq    #0,d0
@@ -2214,8 +2256,8 @@ _bmp_ende:
 
 init_bconmap:
  lea      dflt_maptable,a0
- lea      bconmap_struct,a1
- move.l   a0,(a1)+
+ lea      bconmap_struct,a1   ; Zeiger vom Typ (BCONMAP *)
+ move.l   a0,(a1)+            ; Zeiger vom Typ (MAPTAB *), ist dflt_maptable
  lea      maptab_data(pc),a2
  bsr      _bco_cpy            ; ser1 (ST-MFP)
  moveq    #1,d0               ; zunaechst eine Schnittstelle
@@ -2325,12 +2367,34 @@ pling:
  jmp      (a0)
 
 hdl_pling:
+ lea      MSysX+MacSysX_Dosound(pc),a0 
+ tst.l    (a0)                     ; emulator with Dosound support?
+ beq.s    old_pling
+ pea      sound_data
+ pea      pling_data
+ pea      2                        ; pling
+ lea      (sp),a1
+ MACPPC
+ adda     #12,sp
+pling_ende:
+ rts
+old_pling:
  move.l   #pling_data,sound_data
  clr.b    sound_delay
-pling_ende:
  rts
 
 hdl_klick:
+ lea      MSysX+MacSysX_Dosound(pc),a0 
+ tst.l    (a0)                     ; emulator with Dosound support?
+ beq.s    old_klick
+ pea      sound_data
+ pea      klick_data
+ pea      1                        ; klick
+ lea      (sp),a1
+ MACPPC
+ adda     #12,sp
+ rts
+old_klick:
  move.l   #klick_data,sound_data
  clr.b    sound_delay
  rts
@@ -2473,9 +2537,20 @@ Dosound:
  move.l   (a1),d0                  ; laufendes Tonprogramm
  move.l   (a0),d1                  ; neues Tonprogramm
  bmi.b    dsnd_get                 ;  ist -1 => laufendes zurueckgeben
+ lea      MSysX+MacSysX_Dosound(pc),a0 
+ tst.l    (a0)                     ; emulator with Dosound support?
+ beq.s    old_dosound
+ move.l   a1,-(sp)                 ; Zeiger auf sound_data, sound_delay und sound_byte 
+ move.l   d1,-(sp)                 ; neues Tonprogramm
+ clr.l    -(sp)                    ; dosound
+ lea      (sp),a1
+ MACPPC
+ adda     #12,sp
+dsnd_get:
+ rte
+old_dosound:
  move.l   d1,(a1)+                 ; neues setzen
  clr.b    (a1)                     ; Flag loeschen
-dsnd_get:
  rte
 
 
@@ -2655,7 +2730,14 @@ Getrez:
 *
 
 Setscreen:
- move.l   (a0),d0                 ; *log
+ move.l   (a0),d0                  ; *log
+ lea      (a0),a1                  ; Params
+ lea      MSysX+MacSysX_Setscreen(pc),a0
+ tst.l    (a0)                     ; emulator with setscreen support?
+ beq.s    old_setscreen
+ MACPPC
+ rte
+old_setscreen:
  moveq    #-1,d1
  cmp.l    d0,d1
  beq.b    setscr_nolog            ; log. Adr. nicht aendern
@@ -2866,7 +2948,7 @@ mdki_loop:
 
 ; Taste/Mausnachricht wurde verarbeitet
  lea      1,a1
- lea      MSysX+MacSysX_GetKbOrMous(pc),a0
+ lea      MSysX+MacSysX_GetKeybOrMouse(pc),a0
  MACPPCE
 
  tst.l    d0                       ; weitere Daten?
@@ -2906,17 +2988,19 @@ midisys:
 ikbdsys:
 ; Taste/Mausnachricht holen
  suba.l   a1,a1
- lea      MSysX+MacSysX_GetKbOrMous(pc),a0
+ lea      MSysX+MacSysX_GetKeybOrMouse(pc),a0
  MACPPCE
 
-   move.b   kbdvecs+$24,d1          ;ikbd_state
-   bne.b    handle_package          ;bin gerade beim Empfangen eines Pakets!
-;  Es ist kein Paket oder der Anfang eines solchen
-   cmpi.b   #$f6,d0                 ;Tastendruck ?
-   bcc.b    no_key
-   lea      iorec_kb,a0             ;Tastatur-IOREC
-   move.l   kbdvecs-4,a1            ;i.a. handle_key
-   jmp      (a1)
+ move.b   kbdvecs+$24,d1           ; ikbd_state
+ bne.b    handle_package           ; bin gerade beim Empfangen eines Pakets!
+; Es ist kein Paket oder der Anfang eines solchen
+ cmpi.b   #$f6,d0                  ; Tastendruck ?
+ bcc.b    no_key
+ tst.b    d0                       ; The emulator sometimes sets interrupt, but does not have data
+ beq.b    subr_dummy               ; ignore NUL bytes from emulator
+ lea      iorec_kb,a0              ; Tastatur-IOREC
+ move.l   kbdvecs-4,a1             ; i.a. handle_key
+ jmp      (a1)
 
 ;Es ist kein Tastendruck, also Beginn eines Pakets
 no_key:
@@ -2935,9 +3019,9 @@ pak_subr_tab:
    dc.w  subr_relmouse - pak_subr_tab  ;$f8: relative Mausposition
    dc.w  subr_relmouse - pak_subr_tab  ;$f9:...
    dc.w  subr_relmouse - pak_subr_tab  ;$fa:...
-   dc.w  subr_relmouse - pak_subr_tab  ;$fb: realtive Mausposition
+   dc.w  subr_relmouse - pak_subr_tab  ;$fb: relative Mausposition
    dc.w  subr_dummy - pak_subr_tab     ;$fc: Uhrzeit
-   dc.w  subr_joy - pak_subr_tab       ;$fd: ??
+   dc.w  subr_joy - pak_subr_tab       ;$fd: Joysticks 0 und 1, nach Abfrage
    dc.w  subr_joy - pak_subr_tab       ;$fe: Joystick 0
    dc.w  subr_joy - pak_subr_tab       ;$ff: Joystick 1
 
@@ -2962,14 +3046,14 @@ subr_dummy:
 pk_code_len:         ;in der Form: ikbd_state, Paket-Laenge
  dc.b 1,7
  dc.b 2,5
+ dc.b 3,2           ; Paket $f8 plus 2 Datenbytes: Maus
  dc.b 3,2
  dc.b 3,2
- dc.b 3,2
- dc.b 3,2
- dc.b 4,6
- dc.b 5,2
- dc.b 6,1
- dc.b 7,1
+ dc.b 3,2           ; Paket $fb plus 2 Datenbytes: Maus
+ dc.b 4,6           ; Paket $fc plus 6 Datenbytes: Uhrzeit
+ dc.b 5,2           ; Paket $fd plus 2 Datenbytes: Joysticks
+ dc.b 6,1           ; Paket $fe plus 1 Datenbyte: Joystick 0
+ dc.b 7,1           ; Paket $ff plus 1 Datenbyte: Joystick 1
  .EVEN
 ;-------------------------------------------------------------
 ;
@@ -3139,7 +3223,7 @@ install_cookies:
  move.w   MSysX+MacSysX_cpu(pc),d1
  move.l   d1,(a5)+                 ; und CPU eintragen
  clr.w    cpu020                        ; MATHS.S: 68020-Arithmetik moeglich?
- cmpi.b   #20,d0
+ cmpi.b   #20,d1
  bcs      scpu_typ
  addq.w   #1,cpu020                     ; mindestens 020-Prozessor
 scpu_typ:
@@ -3271,8 +3355,11 @@ init_aux_iorec:
  rts
 
 bconin_ser1:
- lea      MSysX+MacSysX_serin(pc),a0
+ move.w   #1,-(sp)                 ; AUX: 1
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_in(pc),a0
  MACPPC
+ addq.l   #2,sp
  cmpi.l   #$ffffffff,d0            ; Zeichen gelesen?
  bne.b    bconin_ser1_ende         ; ja
  tst.w    pe_slice
@@ -3284,36 +3371,133 @@ bconin_ser1_ende:
 
 bconout_ser1:
  lea      6(sp),a0                 ; MUSS hier stehen bleiben (wg. jsr 4(a2) im Dispatcher)
- lea      (a0),a1
- lea      MSysX+MacSysX_serout(pc),a0
+ move.l   a0,-(sp)                 ; Parameter fuer Bconout
+ move.w   #1,-(sp)                 ; AUX: 1
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_out(pc),a0
  MACPPC
+ addq.l   #6,sp
  rts
 
 bconstat_ser1:
- lea      MSysX+MacSysX_seris(pc),a0
+ move.w   #1,-(sp)                 ; AUX: 1
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_istat(pc),a0
  MACPPC
+ addq.l   #2,sp
  rts
 
 bcostat_ser1:
- lea      MSysX+MacSysX_seros(pc),a0
+ move.w   #1,-(sp)                 ; AUX: 1
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_ostat(pc),a0
  MACPPC
+ addq.l   #2,sp
+ rts
+
+
+bconin_prt:
+ clr.w    -(sp)                    ; PRN: 0
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_in(pc),a0
+ MACPPC
+ addq.l   #2,sp
  rts
 
 bconout_prt:
  lea      6(sp),a0                 ; MUSS hier stehen bleiben (wg. jsr 4(a2) im Dispatcher)
- lea      (a0),a1
- lea      MSysX+MacSysX_prtout(pc),a0
+ move.l   a0,-(sp)                 ; Parameter fuer Bconout
+ clr.w    -(sp)                    ; PRN: 0
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_out(pc),a0
  MACPPC
+ addq.l   #6,sp
  rts
 
-bconin_prt:
- lea      MSysX+MacSysX_prtin(pc),a0
+bconstat_prt:
+ clr.w    -(sp)                    ; PRN: 0
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_istat(pc),a0
  MACPPC
+ addq.l   #2,sp
  rts
 
 bcostat_prt:
- lea      MSysX+MacSysX_prtos(pc),a0
+ clr.w    -(sp)                    ; PRN: 0
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_ostat(pc),a0
  MACPPC
+ addq.l   #2,sp
+ rts
+
+
+bconin_midi:
+ move.w   #3,-(sp)                 ; MIDI: 3
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_in(pc),a0
+ MACPPC
+ addq.l   #2,sp
+ rts
+
+bconout_midi:
+ lea      6(sp),a0                 ; MUSS hier stehen bleiben (wg. jsr 4(a2) im Dispatcher)
+ move.l   a0,-(sp)                 ; Parameter fuer Bconout
+ move.w   #3,-(sp)                 ; MIDI: 3
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_out(pc),a0
+ MACPPC
+ addq.l   #6,sp
+ rts
+
+bconstat_midi:
+ move.w   #3,-(sp)                 ; MIDI: 3
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_istat(pc),a0
+ MACPPC
+ addq.l   #2,sp
+ rts
+
+bcostat_midi:
+ move.w   #3,-(sp)                 ; MIDI: 3
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_ostat(pc),a0
+ MACPPC
+ addq.l   #2,sp
+ rts
+
+
+bconin_ikbd:
+ move.w   #4,-(sp)                 ; IKBD: 4
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_in(pc),a0
+ MACPPC
+ addq.l   #2,sp
+ rts
+
+bconout_ikbd:
+ lea      6(sp),a0                 ; MUSS hier stehen bleiben (wg. jsr 4(a2) im Dispatcher)
+ move.l   a0,-(sp)                 ; Parameter fuer Bconout
+ move.w   #4,-(sp)                 ; IKBD: 4
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_out(pc),a0
+ MACPPC
+ addq.l   #6,sp
+ rts
+
+bconstat_ikbd:
+ move.w   #4,-(sp)                 ; IKBD: 4
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_istat(pc),a0
+ MACPPC
+ addq.l   #2,sp
+ rts
+
+bcostat_ikbd:
+ move.w   #4,-(sp)                 ; IKBD: 4
+ lea      (sp),a1
+ lea      MSysX+MacSysX_dev_ostat(pc),a0
+ MACPPC
+ addq.l   #2,sp
  rts
 
 

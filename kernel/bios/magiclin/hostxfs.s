@@ -21,7 +21,7 @@
 	XREF	Mac_xfsx					; von MAGXBIOS
 	XREF	dmdx
 	XREF pe_slice
-	XREF	appl_begcritic,appl_endcritic	; Ñndert d2/a2
+	XREF	appl_begcritic,appl_endcritic	; aendert d2/a2
 	XREF Mappl_IOcomplete			; von AESEVT
 	XREF	vmemcpy					; von STD
 
@@ -29,7 +29,7 @@
 
 /*
 *
-* Dies sind die Funktionsnummern fÅr die
+* Dies sind die Funktionsnummern fuer die
 * XFS-Funktion auf der Mac-Seite.
 *
 */
@@ -67,8 +67,8 @@ macxfs_freeDD       EQU  28 ; new
 
 /*
 *
-* Dies sind die Funktionsnummern fÅr die
-* GerÑte-Funktion auf der Mac-Seite.
+* Dies sind die Funktionsnummern fuer die
+* Geraete-Funktion auf der Mac-Seite.
 *
 */
 
@@ -116,9 +116,9 @@ io_sizeof:
 
 /*
 *
-* Dies sind die eigentlichen Treiber, die Åber eine
+* Dies sind die eigentlichen Treiber, die ueber eine
 * Assemblerschnittstelle mit dem MagiX- Kernel und
-* Åber eine C-Schnittstelle mit dem Mac-Teil
+* ueber eine C-Schnittstelle mit dem Mac-Teil
 * kommunizieren.
 *
 */
@@ -138,7 +138,7 @@ fd_refnum:		DS.W 1		; MacIntosh-FD
 
 mxfs:
  DC.B	'MMCX_HFS'			; Name
- DC.L	0					; nÑchstes XFS
+ DC.L	0					; naechstes XFS
  DC.L	0					; Flags
  DC.L	mxfs_init
  DC.L	mxfs_sync
@@ -196,11 +196,11 @@ mdev:
 mxfs_diskchange:
  cmpi.l	#E_CHNG,d0
  bne.b	mxdc_ok
- move.l	(sp)+,a0			; DMD zurÅck
+ move.l	(sp)+,a0			; DMD zurueck
  move.w	d_drive(a0),d0
  jmp 	diskchange
 mxdc_ok:
- addq.l	#4,sp			; DMD Åberlesen
+ addq.l	#4,sp			; DMD ueberlesen
  rts
 
 
@@ -261,7 +261,7 @@ mxfs_sync:
 *
 * Ein Programm wird gerade terminiert. Das XFS kann alle von diesem
 * Programm belegten Ressourcen freigeben.
-* Alle Ressourcen, von dem der Kernel weiû (d.h. geîffnete Dateien)
+* Alle Ressourcen, von dem der Kernel weiss (d.h. geoeffnete Dateien)
 * sind bereits vom Kernel freigegeben worden.
 *
 
@@ -282,7 +282,7 @@ mxfs_pterm:
 * long mxfs_garbcoll( a0 = DMD *dir )
 *
 * Sucht nach einem unbenutzten FD
-* RÅckgabe TRUE, wenn mindestens einer gefunden wurde.
+* Rueckgabe TRUE, wenn mindestens einer gefunden wurde.
 *
 
 mxfs_garbcoll:
@@ -294,7 +294,7 @@ mxfs_garbcoll:
 *
 * void mxfs_freeDD( a0 = DD *dir )
 *
-* Der Kernel hat den ReferenzzÑhler des DD auf 0 dekrementiert.
+* Der Kernel hat den Referenzzaehler des DD auf 0 dekrementiert.
 * Die Struktur kann jetzt freigegeben werden.
 *
 
@@ -315,14 +315,14 @@ mxfs_freeDD:
 * long mxfs_drv_open( a0 = DMD *dmd )
 *
 * Initialisiert den DMD.
-* Diskwechsel auf der Mac-Seite sind z.Zt. noch nicht mîglich,
+* Diskwechsel auf der Mac-Seite sind z.Zt. noch nicht moeglich,
 * daher wird bereits hier ein E_OK geliefert.
 *
 
 mxfs_drv_open:
  move.l	a0,-(sp)				; DMD merken
 
- subq.l	#6,sp				; Platz fÅr DD
+ subq.l	#6,sp				; Platz fuer DD
  move.l	d_xfs(a0),-(sp)		; Flag "schon initialisiert", Diskwechsel ?
  pea 	0+4(sp)				; &dd
  move.w	d_drive(a0),-(sp)
@@ -369,8 +369,8 @@ drvop_err:
 *
 * long mxfs_drv_close( a0 = DMD *dmd , d0 = int mode)
 *
-* mode == 0:	Frage, ob schlieûen erlaubt, ggf. schlieûen
-*		1:	Schlieûen erzwingen, muû E_OK liefern
+* mode == 0:	Frage, ob schliessen erlaubt, ggf. schliessen
+*		1:	Schliessen erzwingen, muss E_OK liefern
 *
 
 mxfs_drv_close:
@@ -410,14 +410,14 @@ drvcl_err:
 * einen DD um.
 *
 * mode == 0: pathname zeigt auf eine beliebige Datei. Gib den DD
-*		   zurÅck, in dem die Datei liegt.
+*		   zurueck, in dem die Datei liegt.
 *		   gib in a0 einen Zeiger auf den isolierten Dateinamen
-*		   zurÅck.
+*		   zurueck.
 *		1: pathname ist selbst ein Verzeichnis, gib dessen DD
-*		   zurÅck, a0 ist danach undefiniert.
+*		   zurueck, a0 ist danach undefiniert.
 *
-* RÅckgabe:
-*  d0 = DD des Pfades, ReferenzzÑhler entsprechend erhîht
+* Rueckgabe:
+*  d0 = DD des Pfades, Referenzzaehler entsprechend erhoeht
 *  d1 = Rest- Dateiname ohne beginnenden '\'
 * oder
 *  d0 = ELINK
@@ -427,22 +427,22 @@ drvcl_err:
 *  a1 = NULL
 *		   Der Pfad stellt den Parent des Wurzelverzeichnisses
 *		   dar, der Kernel kann, wenn das Laufwerk U: ist, auf
-*		   U:\ zurÅckgehen.
-*  a1 = Pfad des symbolischen Links. Der Pfad enthÑlt einen
-*		   symbolischen Link, womîglich auf ein
-*		   anderes Laufwerk. Der Kernel muû den Restpfad <a0>
+*		   U:\ zurueckgehen.
+*  a1 = Pfad des symbolischen Links. Der Pfad enthaelt einen
+*		   symbolischen Link, womoeglich auf ein
+*		   anderes Laufwerk. Der Kernel muss den Restpfad <a0>
 *		   relativ zum neuen DD <a0> umwandeln.
-*		   a1 zeigt auf ein Wort fÅr die ZeichenkettenlÑnge
+*		   a1 zeigt auf ein Wort fuer die Zeichenkettenlaenge
 *		   (gerade Zahl auf gerader Adresse, inkl. EOS),
 *		   danach folgt die Zeichenkette. Der Puffer kann
-*		   flÅchtig sein, der Kernel kopiert den Pfad um.
+*		   fluechtig sein, der Kernel kopiert den Pfad um.
 *
 *
-* z.Zt. werden keine SymLinks unterstÅtzt. Auch der Parent eines
+* z.Zt. werden keine SymLinks unterstuetzt. Auch der Parent eines
 * Wurzelverzeichnisses wird nicht korrekt behandelt.
-* Es wÑre sinnvoll, einen öberblick Åber alle angeforderten DDs zu haben, um
+* Es waere sinnvoll, einen Ueberblick ueber alle angeforderten DDs zu haben, um
 * einer bereits referenzierten dirID keinen neuen Deskriptor anfordern
-* zu mÅssen, sondern einfach den ReferenzzÑhler zu erhîhen.
+* zu muessen, sondern einfach den Referenzzaehler zu erhoehen.
 *
 
 mxfs_path2DD:
@@ -450,11 +450,11 @@ mxfs_path2DD:
  move.l	dd_dmd(a0),a2
  move.l	a2,-(sp)				; DMD merken
 
- move.w	d_drive(a2),-(sp)		; fÅr alten Emulator: RÅckgabe vorbesetzen
- suba.w	#20,sp 				; Platz fÅr:
+ move.w	d_drive(a2),-(sp)		; fuer alten Emulator: Rueckgabe vorbesetzen
+ suba.w	#20,sp 				; Platz fuer:
 							;  Zeiger auf Rest-Dateiname
 							;  dirID des Pfads, in dem SymLink liegt
-							;  dazugehîrige VRefNum
+							;  dazugehoerige VRefNum
 							;  Zeiger auf den SymLink
 							;  MagiC-Laufwerk
  pea		20(sp)				; &dir_drive (20..21)
@@ -492,21 +492,21 @@ mxfs_path2DD:
  add.w	d2,a2
  move.l	(a2),(sp)				; DMD wechseln
  bge.b	p2d_samedrv
- moveq	#EPTHNF,d0			; neuer DMD ungÅltig???
+ moveq	#EPTHNF,d0			; neuer DMD ungueltig???
 
 p2d_samedrv:
  cmpi.l	#ELINK,d0 			; Symlink ?
  beq.b	p2d_link				; ja!
- tst.l	d0					; RÅckgabewert...
+ tst.l	d0					; Rueckgabewert...
  bmi.b	p2d_err				; ist Fehler
  move.l	d1,-(sp)				; Rest-Dateinamen merken
  jsr 	int_malloc			; DD allozieren
  move.l	d0,a0				; a0 = DD *
  move.l	d4,dd_dirid(a0)		; DirID in den DD eintragen
  move.w	d5,dd_vrefnum(a0)		; vRefNum in den DD eintragen
- move.l	(sp)+,d1				; Dateinamen zurÅck
+ move.l	(sp)+,d1				; Dateinamen zurueck
  move.l	(sp),dd_dmd(a0)		; DMD in den DD eintragen
- addq.w	#1,dd_refcnt(a0)		; ReferenzzÑhler auf 1
+ addq.w	#1,dd_refcnt(a0)		; Referenzzaehler auf 1
 ;move.l	a0,d0
 p2d_err:
  move.l	(sp)+,a2
@@ -523,10 +523,10 @@ p2d_link:
  move.l	d0,a2				; a2 = DD *
  move.l	d4,dd_dirid(a2)		; DirID in den DD eintragen
  move.w	d3,dd_vrefnum(a2)		; vRefNum in den DD eintragen
- move.l	(sp)+,d1				; Dateinamen zurÅck
- move.l	(sp)+,a1				; Symlink zurÅck
+ move.l	(sp)+,d1				; Dateinamen zurueck
+ move.l	(sp)+,a1				; Symlink zurueck
  move.l	(sp)+,dd_dmd(a2)		; DMD in den DD eintragen
- addq.w	#1,dd_refcnt(a2)		; ReferenzzÑhler auf 1
+ addq.w	#1,dd_refcnt(a2)		; Referenzzaehler auf 1
  move.l	#ELINK,d0
  movem.l	(sp)+,d3/d4/d5
  rts
@@ -541,7 +541,7 @@ p2d_ende:
 * long mxfs_sfirst(a0 = DD *d, a1 = char *name, d0 = DTA *dta,
 *			    d1 = int attrib)
 *
-* RÅckgabe:	d0 = errcode
+* Rueckgabe:	d0 = errcode
 *		    oder
 *			d0 = ELINK
 *			a0 = char *link
@@ -569,7 +569,7 @@ mxfs_sfirst:
 *
 * long mxfs_snext(a0 = DTA *dta, a1 = DMD *d)
 *
-* RÅckgabe:	d0 = errcode
+* Rueckgabe:	d0 = errcode
 *		    oder
 *			d0 = ELINK
 *			a0 = char *link
@@ -594,13 +594,13 @@ mxfs_snext:
 * d0 = FD * mxfs_fopen(a0 = DD *d, a1 = char *name, d0 = int omode,
 *				   d1 = int attrib )
 *
-* ôffnet und/oder erstellt Dateien, ôffnet den Dateitreiber.
+* oeffnet und/oder erstellt Dateien, oeffnet den Dateitreiber.
 * Der Open- Modus ist vom Kernel bereits in die interne
 * MagiX- Spezifikation konvertiert worden.
 *
-* Eine Wiederholung im Fall E_CHNG wird vom Kernel Åbernommen.
+* Eine Wiederholung im Fall E_CHNG wird vom Kernel uebernommen.
 *
-* RÅckgabe:
+* Rueckgabe:
 * d0 = ELINK: Datei ist symbolischer Link
 *		    a0 ist der Dateiname des symbolischen Links
 *
@@ -622,7 +622,7 @@ mxfs_fopen:
  MACPPCE
  lea 	16(sp),sp
 
- tst.l	d0					; RÅckgabewert
+ tst.l	d0					; Rueckgabewert
  bmi.b	fop_err				; ist Fehlercode
  move.w	d0,-(sp)				; RefNum (d.h. Mac-Handle (16 Bit))
  jsr 	int_malloc			; FD allozieren
@@ -642,13 +642,13 @@ fop_err:
 *
 * long mxfs_fdelete(a0 = DD *d, a1 = char *name)
 *
-* Eine Wiederholung im Fall E_CHNG wird vom Kernel Åbernommen.
+* Eine Wiederholung im Fall E_CHNG wird vom Kernel uebernommen.
 *
-* RÅckgabe:
+* Rueckgabe:
 * d0 = ELINK: Datei ist symbolischer Link
 *		    a0 ist der Dateiname des symbolischen Links
 *
-* Es dÅrfen keine SubDirs oder Labels gelîscht werden.
+* Es duerfen keine SubDirs oder Labels geloescht werden.
 *
 
 mxfs_fdelete:
@@ -702,8 +702,8 @@ mxfs_frename:
 * long mxfs_xattr( a0 = DD *dir, a1 = char *name, d0 = XATTR *xa,
 *			    d1 = int mode )
 *
-* mode == 0:	Folge symbolischen Links  (d.h. gib ELINK zurÅck)
-*		1:	Folge nicht  (d.h. erstelle XATTR fÅr den Link)
+* mode == 0:	Folge symbolischen Links  (d.h. gib ELINK zurueck)
+*		1:	Folge nicht  (d.h. erstelle XATTR fuer den Link)
 *
 
 mxfs_xattr:
@@ -729,7 +729,7 @@ mxfs_xattr:
 * long mxfs_attrib( a0 = DD *dir, a1 = char *name, d0 = int mode,
 *				d1 = int attrib )
 *
-* RÅckgabe:	>= 0 	Attribut
+* Rueckgabe:	>= 0 	Attribut
 *			<  0 	Fehler
 *
 * mode == 0:	Lies Attribut
@@ -759,7 +759,7 @@ mxfs_attrib:
 * long mxfs_chown( a0 = DD *dir, a1 = char *name, d0 = int uid,
 *			    d1 = int gid )
 *
-* RÅckgabe:	== 0 	OK
+* Rueckgabe:	== 0 	OK
 *			<  0 	Fehler
 *
 
@@ -785,7 +785,7 @@ mxfs_chown:
 *
 * long mxfs_chmod( a0 = DD *dir, a1 = char *name, d0 = int mode )
 *
-* RÅckgabe:	== 0 	OK
+* Rueckgabe:	== 0 	OK
 *			<  0 	Fehler
 *
 
@@ -810,7 +810,7 @@ mxfs_chmod:
 *
 * long mxfs_dcreate(a0 = DD *d, a1 = char *name, d0 = int mode )
 *
-* mode ist Åblicherweise "directory file" mit RWXRwXRwX
+* mode ist ueblicherweise "directory file" mit RWXRwXRwX
 *
 *
 * Hier wird "mode" ignoriert!
@@ -923,7 +923,7 @@ dop_ok:
 * long mxfs_dreaddir( a0 = void *dh, d0 = int len, a1 = char *buf,
 *				  d1 = XATTR *xattr, d2 = long *xr )
 *
-* För Dreaddir (xattr = NULL) und Dxreaddir
+* Fuer Dreaddir (xattr = NULL) und Dxreaddir
 *
 
 mxfs_dreaddir:
@@ -1014,8 +1014,8 @@ mxfs_dclosedir:
 *			    i.e. to a maximum 8 character base name and a maxi-
 *			    mum 3 character extension.
 *		6:	0 = case-sensitiv
-*			1 = nicht case-sensitiv, immer in Groûschrift
-*			2 = nicht case-sensitiv, aber unbeeinfluût
+*			1 = nicht case-sensitiv, immer in Grossschrift
+*			2 = nicht case-sensitiv, aber unbeeinflusst
 *
 *	  If  any  of these items are unlimited, then 0x7fffffffL is
 *	  returned.
@@ -1157,7 +1157,7 @@ mxfs_readlink:
 * long mxfs_dcntl( a0 = DD *d, a1 = char *name, d0 = int cmd,
 *			    d1 = long arg )
 *
-* FÅhrt Spezialfunktionen aus
+* Fuehrt Spezialfunktionen aus
 *
 
 mxfs_dcntl:
@@ -1230,7 +1230,7 @@ mdev_write:
 * mode & 0x0001:	cooked
 * mode & 0x0002:	echo mode
 *
-* RÅckgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
+* Rueckgabe: ist i.a. ein Langwort bei CON, sonst ein Byte
 *		  0x0000FF1A bei EOF
 *
 
@@ -1255,7 +1255,7 @@ mdev_getc:
 * mode & 0x0001:	cooked
 * mode & 0x0002:	echo mode
 *
-* RÅckgabe: Anzahl gelesener Bytes oder Fehlercode
+* Rueckgabe: Anzahl gelesener Bytes oder Fehlercode
 *
 
 mdev_getline:
@@ -1279,7 +1279,7 @@ mdev_getline:
 *
 * mode & 0x0001:	cooked
 *
-* RÅckgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
+* Rueckgabe: Anzahl geschriebener Bytes, 4 bei einem Terminal
 *
 
 mdev_putc:
@@ -1378,7 +1378,7 @@ mdev_datime:
 *
 * long long mdev_close(a0 = FD *file)
 *
-* schreibt alles zurÅck, ruft den Dateitreiber auf und gibt ggf.
+* schreibt alles zurueck, ruft den Dateitreiber auf und gibt ggf.
 * den FD frei.
 *
 
