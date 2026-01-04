@@ -31,12 +31,6 @@ for lang in $LANGUAGES; do
 	mkdir -p "$BUILDROOT/$lang/EXTRAS/WDIALOG"
 
 
-	mcopy "$SRCDIR/kernel/build/$lang/magic.ram" "$BUILDROOT/$lang"
-	mcopy "$SRCDIR/kernel/build/$lang/mmilan.ram" "$BUILDROOT/$lang"
-	mcopy "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
-	mcopy "$SRCDIR/kernel/build/$lang/mraven.ram" "$BUILDROOT/$lang"
-	mcopy "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
-	mcopy "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
 	mcopy "$SRCDIR/kernel/build/$lang/magiclin.os" "$BUILDROOT/$lang"
 
 # localizations
@@ -151,10 +145,11 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/kernel/bios/atari/boot/magxboot.prg" "$BUILDROOT/$lang/AUTO/"
 	mcopy "$SRCDIR/tools/hardcopy/hardcopy.prg" "$BUILDROOT/$lang/EXTRAS/"
 	mcopy "$SRCDIR/tools/flock_ok/flock_ok.prg" "$BUILDROOT/$lang/EXTRAS/FLOCK_OK/"
-	mcopy "$SRCDIR/tools/flock_ok/flock_ok.eng" "$BUILDROOT/$lang/EXTRAS/FLOCK_OK/"
-	mcopy "$SRCDIR/tools/flock_ok/flock_ok.txt" "$BUILDROOT/$lang/EXTRAS/FLOCK_OK/"
+	# TODO: french translation
+	mcopy "$SRCDIR/tools/flock_ok/$lang/flock_ok.txt" "$BUILDROOT/$lang/EXTRAS/FLOCK_OK/"
 	mcopy "$SRCDIR/tools/aes_lupe/aes_lupe.app" "$BUILDROOT/$lang/EXTRAS/AES_LUPE/"
 	mcopy "$SRCDIR/tools/aes_lupe/aes_lupe.img" "$BUILDROOT/$lang/EXTRAS/AES_LUPE/"
+	# TODO: english & french translation
 	mcopy "$SRCDIR/tools/aes_lupe/aes_lupe.txt" "$BUILDROOT/$lang/EXTRAS/AES_LUPE/"
 	mcopy "$SRCDIR/tools/clock/clock.app" "$BUILDROOT/$lang/EXTRAS/CLOCK/"
 	mcopy "$SRCDIR/tools/clock/clock.gen" "$BUILDROOT/$lang/EXTRAS/CLOCK/"

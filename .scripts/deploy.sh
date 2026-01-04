@@ -56,9 +56,7 @@ upload_file "${SRCARCHIVE}" "${UPLOAD_DIR}/${PROJECT_LOWER}/${SRCARCHIVE}"
 for f in magiconlinux-*; do
 	if test -f "$f"; then
 		upload_file "$f" "${UPLOAD_DIR}/${PROJECT_LOWER}/$f"
-		zip=${f##*-}
-		lang=${zip%.zip}
-		link_file "$f" "magiconlinux-${lang}-latest.zip"
+		link_file "$f" "magiconlinux-latest.zip"
 	fi
 done
 

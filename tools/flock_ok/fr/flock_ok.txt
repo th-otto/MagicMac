@@ -1,0 +1,39 @@
+FLOCK_OK - Un programme pour MagiC >= 3.0, les ordinateurs ST et
+certains pilotes de disque dur.
+
+Depuis la version 3.0, MagiC permet l'accŠs parallŠle aux disquettes et
+aux disques durs en arriŠre-plan. Les ordinateurs ST utilisant la mˆme
+puce pour les disquettes et les disques durs (la puce DMA), l'accŠs
+doit ˆtre synchronis‚ entre le pilote de disquette (inclus dans le
+noyau MagiC) et le pilote de disque dur (g‚n‚ralement charg‚ depuis le
+disque dur). Aucun autre systŠme d'exploitation compatible TOS ne
+prenant en charge le "DMA en arriŠre-plan" (ni MiNT ni TOS n'‚tant
+r‚entrants, ils sont et resteront incapables d'effectuer du DMA en
+arriŠre-plan), un pilote de disque dur sp‚cifique est n‚cessaire pour
+utiliser cette fonctionnalit‚ (par exemple, HDDRIVER d'Uwe Seimet).
+
+Si vous utilisez un autre pilote de disque dur (par exemple, AHDI),
+veillez … ne pas activer le "DMA en arriŠre-plan" dans MagiC CPX,
+sous peine de perte de donn‚es. Si vous souhaitez utiliser le DMA en
+arriŠre-plan pour disquette, vous devez donc utiliser ce petit
+programme qui empˆche le pilote de disque d'acc‚der … la puce DMA
+lorsque la disquette est active. N'utilisez pas ce programme avec
+HDDRIVER.
+
+*** IMPORTANT ***
+
+Le programme FLOCK_OK.PRG doit ˆtre copi‚ dans le "dossier automatique
+des applications",
+
+normalement situ‚ dans \gemsys\magic\start.
+
+NE LE COPIEZ PAS DANS LE DOSSIER AUTOMATIQUE NORMAL !!!
+
+Les utilisateurs de TT n'ont pas besoin de ce programme si le disque
+dur est connect‚ en SCSI et non en ACSI, car le SCSI de TT utilise un
+mat‚riel complŠtement diff‚rent,
+
+sans conflit entre SCSI et disquette.
+
+Oliver Scheel, Ludwigshafen, mars 1995
+Traduction: Thorsten Otto, janvier 2025
