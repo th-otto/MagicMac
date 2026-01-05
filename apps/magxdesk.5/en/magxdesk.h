@@ -5,7 +5,7 @@
  */
 
 /*
- * Number of Strings:        264
+ * Number of Strings:        265
  * Number of Bitblks:        8
  * Number of Iconblks:       8
  * Number of Color Iconblks: 0
@@ -13,18 +13,22 @@
  * Number of Tedinfos:       14
  * Number of Free Strings:   43
  * Number of Free Images:    0
- * Number of Objects:        245
+ * Number of Objects:        246
  * Number of Trees:          9
  * Number of Userblks:       0
  * Number of Images:         24
- * Total file size:          15000
+ * Total file size:          15040
  */
 
+#ifdef RSC_NAME
 #undef RSC_NAME
+#endif
 #ifndef __ALCYON__
 #define RSC_NAME "magxdesk"
 #endif
+#ifdef RSC_ID
 #undef RSC_ID
+#endif
 #ifdef magxdesk
 #define RSC_ID magxdesk
 #else
@@ -35,7 +39,7 @@
 # define RSC_STATIC_FILE 0
 #endif
 #if !RSC_STATIC_FILE
-#define NUM_STRINGS 264
+#define NUM_STRINGS 265
 #define NUM_FRSTR 43
 #define NUM_UD 0
 #define NUM_IMAGES 24
@@ -44,7 +48,7 @@
 #define NUM_IB 8
 #define NUM_CIB 0
 #define NUM_TI 14
-#define NUM_OBS 245
+#define NUM_OBS 246
 #define NUM_TREE 9
 #endif
 
@@ -238,6 +242,7 @@
 #define ABOU_IMG                           1 /* IMAGE in tree T_ABOUT */
 #define ABOU_OS                            2 /* STRING in tree T_ABOUT */
 #define ABOU_VER                           3 /* TEXT in tree T_ABOUT */
+#define ABOU_HOSTVERS                      7 /* STRING in tree T_ABOUT */
 
 #define T_POPKAT                           8 /* form/dialog */
 

@@ -498,7 +498,8 @@ extern long read_bootsec(int lw, long *ser, int *bps, int *spc,
 					int *res,	int *nfats, int *ndirs, int *nsects,
 					int *media, int *spf, int *spt, int *nsides,
 					int *nhid, int *exec);
-extern char *os_ver_s;
+extern char os_ver_s[];
+extern char os_hostvers[];
 extern void set_parent_paths( void );
 extern void res_exec( void );
 extern void get_syshdr( void );

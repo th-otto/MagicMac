@@ -11616,7 +11616,7 @@ gem_magics:
  DC.L     aes_start                ; $08: Start von AES/DESKTOP
 
  DC.L     'MAGX'                   ; $0c: bei KAOS : 'KAOS'
- DC.L     D_BCD                    ; $10: Erstelldatum
+ DC.L     D_BCD_DDMMYYYY           ; $10: Erstelldatum
  DC.L     change_resolution        ; $14: d0=dev/d1=txt/d2=xdv
  DC.L     shel_vector              ; $18: ROM- Desktop
  DC.L     aes_bootdrv              ; $1c: char *, hierhin kommt DESKTOP.INF

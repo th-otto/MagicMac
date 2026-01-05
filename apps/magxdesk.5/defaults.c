@@ -1500,12 +1500,15 @@ static void status_to_ascii(char *inf)
 	/* ----------- */
 
 	for	(i = 0; i < ANZPROGRAMS; i++)
+	{
+		if (i < INDEX_USER || menuprograms[i].path[0] != '\0')
 		{
-		prtstr("#_DPG ");
-		prtstr(menuprograms[i].path);
-		*s++ = '\r';
-		*s++ = '\n';
+			prtstr("#_DPG ");
+			prtstr(menuprograms[i].path);
+			*s++ = '\r';
+			*s++ = '\n';
 		}
+	}
 
 	/* "#_DPP line" */
 	/* ------------ */
@@ -1546,7 +1549,7 @@ void save_status(int is_inf)
 			handle = (int) doserr;
 			if	(doserr > E_OK)
 				{
-				char *os_ver_s2 =
+				static char os_ver_s2[] =
 						"#_MAG MAG!X v__.__\r\n"
 						"#[boot]\r\n"
 						"#[aes]\r\n"

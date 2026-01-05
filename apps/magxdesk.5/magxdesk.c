@@ -1422,7 +1422,6 @@ static void _rsrc_load(char *fname)
 
 void get_rsc(void)
 {
-	int i;
 	OBJECT *image;
 	int isfirst;
 
@@ -1492,17 +1491,16 @@ void get_rsc(void)
 #endif
 	image = adr_about + ABOU_IMG;
 	image->ob_height = image->ob_spec.bitblk->bi_hl;
-	while ((image->ob_y + image->ob_height > (adr_about + ABOU_OS)->ob_y) && (image->ob_y > 0))
+	while ((image->ob_y + image->ob_height > adr_about[ABOU_OS].ob_y) && image->ob_y > 0)
 		image->ob_y--;
 
 	strcpy(adr_about[ABOU_VER].ob_spec.tedinfo->te_ptext + 10, pgm_ver);
+	/* copy "vom" to version string */
+	os_ver_s[14] = adr_about[ABOU_OS].ob_spec.free_string[14];
+	os_ver_s[15] = adr_about[ABOU_OS].ob_spec.free_string[15];
+	os_ver_s[16] = adr_about[ABOU_OS].ob_spec.free_string[16];
 	adr_about[ABOU_OS].ob_spec.free_string = os_ver_s;
-	i = adr_about->ob_width;
-	i -= (int) strlen(os_ver_s) * gl_hwchar;
-	i /= 2;
-	if (i < 0)
-		i = 0;
-	adr_about[ABOU_OS].ob_x = i;
+	adr_about[ABOU_HOSTVERS].ob_spec.free_string = os_hostvers;
 
 	allg_init();
 	menu_init();

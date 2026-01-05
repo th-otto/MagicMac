@@ -10,6 +10,7 @@
 #include "k.h"
 #include <vdi.h>
 #include <string.h>
+#include <mint/sysvars.h>
 
 
 /*********************************************************************
@@ -24,25 +25,41 @@
 *
 *********************************************************************/
 
-char *os_ver_s = "MagiC v__.__  vom __.__.____";
+char os_ver_s[] = "MagiC v__.__  vom __.__.____";
+char os_hostvers[14];
+
 static AESVARS *aesvars;
+
+typedef struct {
+	unsigned long mgmx_magic;     /* 'MgMx' */
+	unsigned long mgmx_version;   /* emulator version */
+	unsigned long mgmx_len;       /* size of this structure */
+	unsigned long mgmx_xcmd;      /* set by kernel; XCmd callback */
+	unsigned long mgmx_xcmd_exec; /* set by kernel; XCmd callback */
+	unsigned long mgmx_internal;  /* set by kernel; ptr to MSysX structure */
+	unsigned long mgmx_daemon;    /* set by kernel; mmx daemon callback */
+} MgMx_COOKIE;
 
 void get_syshdr( void )
 {
+	COOKIE *cookie;
+	MgMx_COOKIE *mgmx;
+
 	aesvars = *((AESVARS **) (aes_global+11));
 	if	(aesvars->magic2 != 'MAGX')
 		Pterm(-1);
 	inf_name[0] = letter_from_drive(*(aesvars->aes_bootdrv));
 
 	os_ver_s[ 7] = (((aesvars->version) >> 12)     ) + '0';
-	os_ver_s[ 8] = (((aesvars->version) >> 8) & 0xf) +'0';
-	os_ver_s[10] = (((aesvars->version) >> 4) & 0xf) +'0';
-	os_ver_s[11] = (((aesvars->version)     ) & 0xf) +'0';
+	os_ver_s[ 8] = (((aesvars->version) >> 8) & 0xf) + '0';
+	os_ver_s[10] = (((aesvars->version) >> 4) & 0xf) + '0';
+	os_ver_s[11] = (((aesvars->version)     ) & 0xf) + '0';
 
 	if	(aesvars->release < 3)
 		os_ver_s[12] = 0xe0 + aesvars->release;
 
-	os_ver_s[18] = (((aesvars->date) >> 28)      ) + '0';
+	/* aesvars->date is DD/MM/YYYY */
+	os_ver_s[18] = (((aesvars->date) >> 28) & 0xf) + '0';
 	os_ver_s[19] = (((aesvars->date) >> 24) & 0xf) + '0';
 	os_ver_s[21] = (((aesvars->date) >> 20) & 0xf) + '0';
 	os_ver_s[22] = (((aesvars->date) >> 16) & 0xf) + '0';
@@ -50,6 +67,31 @@ void get_syshdr( void )
 	os_ver_s[25] = (((aesvars->date) >>  8) & 0xf) + '0';
 	os_ver_s[26] = (((aesvars->date) >>  4) & 0xf) + '0';
 	os_ver_s[27] = (((aesvars->date)      ) & 0xf) + '0';
+
+	cookie = (COOKIE *)getcookie(0x4d674d78L); /* 'MgMx' */
+	if (cookie != 0)
+	{
+		mgmx = (MgMx_COOKIE *)cookie->value;
+		if (mgmx != 0 && mgmx->mgmx_magic == 0x4d674d78L && mgmx->mgmx_len >= sizeof(*mgmx) && mgmx->mgmx_internal != 0)
+		{
+			OSHEADER *syshdr = *((SYSHDR **)(mgmx->mgmx_internal + 8));
+			
+			/* os_date is MM/DD/YYYY */
+			os_ver_s[21] = (((syshdr->os_date) >> 28) & 0xf) + '0';
+			os_ver_s[22] = (((syshdr->os_date) >> 24) & 0xf) + '0';
+			os_ver_s[18] = (((syshdr->os_date) >> 20) & 0xf) + '0';
+			os_ver_s[19] = (((syshdr->os_date) >> 16) & 0xf) + '0';
+			os_ver_s[24] = (((syshdr->os_date) >> 12) & 0xf) + '0';
+			os_ver_s[25] = (((syshdr->os_date) >>  8) & 0xf) + '0';
+			os_ver_s[26] = (((syshdr->os_date) >>  4) & 0xf) + '0';
+			os_ver_s[27] = (((syshdr->os_date)      ) & 0xf) + '0';
+			/* checks MacSysX_verAtari */
+			if (*((unsigned long *)(mgmx->mgmx_internal + 0x1c)) == 0)
+				strcpy(os_hostvers, "MagicMagX");
+			else
+				strcpy(os_hostvers, "MagicOnLinux");
+		}
+	}
 }
 
 

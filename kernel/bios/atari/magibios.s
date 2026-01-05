@@ -523,7 +523,7 @@ syshdr:
  DC.L     __e_dos             ; Beginn des freien RAMs
  DC.L     syshdr_code
  DC.L     gem_magics          ; GEM- Parameterblock
- DC.L     D_BCD               ; USA-Format!
+ DC.L     D_BCD_MMDDYYYY      ; USA-Format!
  DC.W     COUNTRY+COUNTRY+PALMODE
  DC.W     D_DOSDATE           ; Datum im GEMDOS- Format
  DC.L     _mifl_unused        ; _root
