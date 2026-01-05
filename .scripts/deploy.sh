@@ -50,7 +50,7 @@ link_file() {
 #upload file(s):
 echo "upload ${BINARCHIVE}"
 upload_file "${BINARCHIVE}" "${UPLOAD_DIR}/${PROJECT_LOWER}/${BINARCHIVE}"
-link_file "$BINARCHIVE" "${PROJECT_LOWER}-${ATAG}-latest.zip"
+link_file "$BINARCHIVE" "${PROJECT_LOWER}-latest.zip"
 echo "upload ${SRCARCHIVE}"
 upload_file "${SRCARCHIVE}" "${UPLOAD_DIR}/${PROJECT_LOWER}/${SRCARCHIVE}"
 for f in magiconlinux-*; do

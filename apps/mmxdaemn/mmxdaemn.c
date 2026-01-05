@@ -62,7 +62,17 @@ static int ap_id;
 
 static COOKIE *getcookie(long key)
 {
-	return((COOKIE *) xbios(39, 'AnKr', 4, key));
+	COOKIE *jar = (COOKIE *)Setexc(0x5a0 / 4, (void (*)(void))-1);
+	if (jar != NULL)
+	{
+		while (jar->key != 0)
+		{
+			if (jar->key == key)
+				return jar;
+			jar++;
+		}
+	}
+	return jar;
 }
 
 
