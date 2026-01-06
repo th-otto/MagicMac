@@ -5,19 +5,19 @@
  */
 
 /*
- * Number of Strings:        265
+ * Number of Strings:        271
  * Number of Bitblks:        8
  * Number of Iconblks:       8
  * Number of Color Iconblks: 0
  * Number of Color Icons:    0
- * Number of Tedinfos:       14
+ * Number of Tedinfos:       16
  * Number of Free Strings:   43
  * Number of Free Images:    0
- * Number of Objects:        246
+ * Number of Objects:        248
  * Number of Trees:          9
  * Number of Userblks:       0
  * Number of Images:         24
- * Total file size:          15040
+ * Total file size:          15256
  */
 
 #ifdef RSC_NAME
@@ -39,7 +39,7 @@
 # define RSC_STATIC_FILE 0
 #endif
 #if !RSC_STATIC_FILE
-#define NUM_STRINGS 265
+#define NUM_STRINGS 271
 #define NUM_FRSTR 43
 #define NUM_UD 0
 #define NUM_IMAGES 24
@@ -47,8 +47,8 @@
 #define NUM_FRIMG 0
 #define NUM_IB 8
 #define NUM_CIB 0
-#define NUM_TI 14
-#define NUM_OBS 246
+#define NUM_TI 16
+#define NUM_OBS 248
 #define NUM_TREE 9
 #endif
 
@@ -242,7 +242,9 @@
 #define ABOU_IMG                           1 /* IMAGE in tree T_ABOUT */
 #define ABOU_OS                            2 /* STRING in tree T_ABOUT */
 #define ABOU_VER                           3 /* TEXT in tree T_ABOUT */
-#define ABOU_HOSTVERS                      7 /* STRING in tree T_ABOUT */
+#define ABOU_HOSTVERS                      4 /* STRING in tree T_ABOUT */
+#define O_LIZNZ1                           7 /* TEXT in tree T_ABOUT */
+#define O_LIZNZ2                           8 /* TEXT in tree T_ABOUT */
 
 #define T_POPKAT                           8 /* form/dialog */
 
@@ -328,7 +330,7 @@
 
 #define ALRT_FREE_AT_DRV                  40 /* Alert string */
 
-#define STR_SHOW_FILE                     41 /* Free string */
+#define STR_SHORT_FILE                    41 /* Free string */
 
 #define STR_SHORT_VIEW                    42 /* Free string */
 
