@@ -1,0 +1,217 @@
+diff --git a/kernel/dos/magicdos.inc b/kernel/dos/magicdos.inc
+index 267d6a9..024d5f3 100644
+--- a/kernel/dos/magicdos.inc
++++ b/kernel/dos/magicdos.inc
+@@ -11,8 +11,13 @@ NUM_DRIVES     EQU  32             ; hoechste Laufwerknummer
+ otimer:        DS.L 1              ; alte etv_timer Routine
+ otrap2:        DS.L 1              ; alte Trap #2- Routine
+ last_ms:       DS.W 1              ; ms seit letztem Stellen der Uhr
++dos_time_date:
+ dos_time:      DS.W 1              ; Zeit im DOS- Format
+ dos_date:      DS.W 1              ; Wort mit Datum im DOS- Format
++sys_tz:        DS.L 2              /* The timezone that we're living in. */
++sys_tz_set:    DS.W 1
++timezone:      DS.L 1              /* Seconds west of GMT. */
++xtime:         DS.L 3              /* The current time in UTC. */
+ xaes_appls:    DS.L 1              ; hier haengt sich XAES ein
+ mem_root:      DS.L 16             ; 16 Speicherlisten (ST-RAM, TT-RAM, ...)
+                DS.L 16             ; Endadressen fuer vorherige Bloecke
+diff --git a/kernel/dos/magidos.s b/kernel/dos/magidos.s
+index f31f06a..598c638 100644
+--- a/kernel/dos/magidos.s
++++ b/kernel/dos/magidos.s
+@@ -1367,6 +1367,7 @@ dfr_again:
+ dfr_weiter:
+  moveq    #0,d1                    ; automount
+ ;move.w   d0,d0
++dfr_gemdos:
+  bsr.s    d_chkdrv
+  tst.l    d0
+  blt.b    dfr_ende                 ; Fehlercode woertlich weiterreichen
+@@ -8929,16 +8930,16 @@ gogogo:
+ 
+  lea      dos_fx(pc),a1
+  move.w   (a0)+,d0                 ; Funktionsnummer
+- cmpi.w   #$5c,d0
++ cmpi.w   #dos_fx_len,d0
+      IFNE DEBUG_FN
+  bls      dt_go                    ; GEMDOS- Funktionsnummer
+- cmpi.w   #$153,d0
++ cmpi.w   #dos_fx2_len+0xff,d0
+  bhi      dt_einvfn
+  subi.w   #$ff,d0
+  bcs      dt_mac_xtension
+      ELSE
+  bls.b    dt_go                    ; GEMDOS- Funktionsnummer
+- cmpi.w   #$153,d0
++ cmpi.w   #dos_fx2_len+0xff,d0
+  bhi.b    dt_einvfn
+  subi.w   #$ff,d0
+  bcs.b    dt_mac_xtension
+@@ -10986,6 +10987,89 @@ dtsetd_l2:
+ monthlenx:
+  DC.B     31,28,31,30,31,30,31,31,30,31,30,31
+ 
++**********************************************************************
++* long Tgettimeofday(timeval *tv, timezone *tzp)
++
++D_Tgettimeofday:
++  move.l 4(a0),a1
++  move.l (a0),a0
++Tgettimeofday:
++  move.l   a1,d0
++  beq.s    Tgettimeofday_notz
++  move.l   sys_tz,(a1)+
++  move.l   sys_tz+4,(a1)+
++Tgettimeofday_notz:
++  move.l   a0,d0
++  beq.s    Tgettimeofday_notv
++  /*
++   * since we always manage time/date in local time,
++   * we can only return UTC time if the timezone
++   * was ever set by some tool like tzinit
++   */
++  tst.b    sys_tz_set
++  beq      ill_func
++Tgettimeofday_notv:
++  moveq    #E_OK,d0
++  rts
++  
++**********************************************************************
++* long Tsettimeofday(timeval *tv, timezone *tzp)
++
++D_Tsettimeofday:
++  move.l 4(a0),a1
++  move.l (a0),a0
++Tsettimeofday:
++  move.l   a1,d0
++  beq.s    Tsettimeofday_notz
++  move.l   (a1)+,d0
++  move.l   d0,sys_tz
++  move.l   (a1)+,sys_tz+4
++  muls     #60,d0
++  move.l   timezone,d1
++  move.l   d0,timezone
++  sub.l    d0,d1
++  smi      d2
++  ext.w    d2
++  ext.l    d2
++  add.l    d1,xtime+4
++  move.l   xtime,d1
++  addx.l   d2,d1
++  move.l   d1,xtime
++  st       sys_tz_set
++  /*
++   * if time is not set also, we must still update clocks
++   */
++  move.l   a1,d0
++  bne.s    Tsettimeofday_notz
++  bsr      synch_timers
++Tsettimeofday_notz:
++  move.l   (a0),d0
++  smi      d1
++  ext.w    d1
++  ext.l    d1
++  move.l   d1,xtime
++  move.l   d1,xtime+4
++  bsr      unix2xbios
++  move.l   timezone,d1
++  sub.l    d1,d0
++  move.l   d0,dos_time_date
++  bsr      dosclock_to_xbios
++Tsettimeofday_nottv:
++  moveq    #E_OK,d0
++  rts
++  
++synch_timers:
++  move.l   xtime+4,d0
++  sub.l    timezone,d0
++  bsr      unix2xbios
++  move.l   d0,dos_time_date
++  bra      dosclock_to_xbios
++
++unix2xbios:
++  rts
++
++unixtime:
++  rts
+ 
+ **********************************************************************
+ *
+@@ -11012,7 +11096,7 @@ D_Tsettime:
+ 
+ setclock_ok:
+  bsr      dosclock_to_xbios
+- moveq    #0,d0
++ moveq    #E_OK,d0
+  rts
+ setclock_err:
+  moveq    #ERROR,d0
+@@ -11040,7 +11124,7 @@ dos_etv_timer:
+  cmpi.w   #2000,(a0)               ; schon wieder 2s voll ?
+  bcs      det_ende                 ; nein, Ende
+  subi.w   #2000,(a0)               ; 2s in die Uhr uebertragen
+- move.l   dos_time,d7
++ move.l   dos_time_date,d7
+  swap     d7                       ; d7.lo ist jetzt dos_time
+  addq.w   #1,d7                    ; Zeit erhoehen
+  move.w   d7,d0
+@@ -11103,7 +11187,7 @@ dosevtt_l1:
+  andi.w   #$fe00,d7                ; Monat auf 0
+  addi.w   #$221,d7                 ; Jahr weiterzaehlen
+ det_wr:
+- move.l   d7,dos_time              ; dos_time/dos_date schreiben
++ move.l   d7,dos_time_date         ; dos_time/dos_date schreiben
+  bra.b    det_ende
+ det_wr_time:
+  move.w   d7,dos_time              ; nur Zeit hat sich geaendert
+@@ -11124,12 +11208,23 @@ restore_time:
+  jsr      chk_rtclock
+  bcs.b    restrtm_end
+  jsr      read_rtclock
+- move     sr,d1
++ move     sr,d2
+  ori      #$700,sr
+  move.w   d0,dos_time
+  swap     d0
+  move.w   d0,dos_date
+- move     d1,sr
++ bsr      unixtime
++ move.l   timezone,d1
++ add.l    d1,d0
++ tst.l    d1
++ smi      d1
++ ext.w    d1
++ ext.l    d1
++ move.l   d0,xtime+4
++ move.l   xtime,d0
++ addx.l   d1,d0
++ move.l   d0,xtime
++ move     d2,sr
+ restrtm_end:
+  rts
+ 
+@@ -11326,6 +11421,7 @@ dos_fx:
+  DC.W     ill_func-dos_fx
+  DC.W     ill_func-dos_fx
+  DC.W     D_Flock-dos_fx           ; 0x5c
++dos_fx_len equ ((*-dos_fx)/2)-1
+ 
+ dos_fx2:
+  DC.W     D_Syield-dos_fx2         ; 0xff
+@@ -11410,9 +11506,13 @@ dos_fx2:
+  DC.W     Psetreuid-dos_fx2        ; 0x14E
+  DC.W     Psetregid-dos_fx2        ; 0x14F
+  DC.W     Ssync-dos_fx2            ; 0x150
+- DC.W     ill_func-dos_fx2         ; 0x151
+- DC.W     D_Dreadlabel-dos_fx2     ; 0x152   (338)
++ DC.W     ill_func-dos_fx2         ; 0x151 ; Shutdown
++ DC.W     D_Dreadlabel-dos_fx2     ; 0x152
+  DC.W     D_Dwritelabel-dos_fx2    ; 0x153
++ DC.W     ill_func-dos_fx2         ; 0x154 ; Ssystem
++ DC.W     D_Tgettimeofday-dos_fx2  ; 0x155
++ DC.W     D_Tsettimeofday-dos_fx2  ; 0x156
++dos_fx2_len equ ((*-dos_fx2)/2)-1
+ 
+ 
+ errcodes: DC.B  -1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17

@@ -1,18 +1,27 @@
-CROSS=m68k-atari-mint-
-CC = $(CROSS)gcc
+top_srcdir = ../..
+include $(top_srcdir)/Makefile.common
 
-CFLAGS = -O2 -Wall -Wstrict-prototypes -Wmissing-prototypes -W
+INCLUDES = -I$(top_srcdir)/pc/include
+CFLAGS = -A- -P- -L64 $(INCLUDES) $(DEFINES)
+LDFLAGS = -S=16000
 
 OBJS = \
+	$(STARTUP) \
 	chgres.o \
 	popup.o \
 	inf.o \
 	$(empty)
 
-all: chgres.prg
+LIBS = $(LIBDIR)/pcstdlib.lib $(LIBDIR)/pctoslib.lib $(LIBDIR)/pcgemlib.lib
 
-chgres.prg: $(OBJS) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJS) -lgem
+PROGRAMS = chgres.prg
 
-clean:
-	$(RM) *.o chgres.prg
+all:: $(PROGRAMS)
+
+chgres.prg: $(OBJS)
+	$(LD) -O=$@ $(LDFLAGS) $(OBJS) $(LIBS)
+
+$(OBJS): $(MAKEFILE_LIST)
+
+clean::
+	$(RM) *.o *.pdb $(PROGRAMS)

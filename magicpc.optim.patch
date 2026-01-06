@@ -1,0 +1,82 @@
+diff --git a/kernel/bios/atari/magibios.s b/kernel/bios/atari/magibios.s
+index 5ff8f37..2322287 100644
+--- a/kernel/bios/atari/magibios.s
++++ b/kernel/bios/atari/magibios.s
+@@ -622,13 +622,15 @@ inst_cook:
+ * Also make sure mfp interrupts are disabled,
+ * since sync_screen will lower the interrupt level.
+ *
++ IFNE NOT_MAGICPC
+  clr.w    vblsem
+  move.l   #int_vbl,$70             ; VBL
+  lea      gpip,a0
+  moveq    #0,d1
+  move.b d1,$12(a0) ; IMRA
+  move.b d1,$14(a0) ; IMRB
+- 
++ ENDC
++
+  bsr      boot_init_video               ; Videosystem initialisieren
+ 
+ * Beginn der TPA setzen (je nachdem, ob GEM enthalten ist)
+@@ -728,7 +730,7 @@ bot_nofast:
+ ; FIXME: might need adjustment for CT60
+  moveq    #$3d,d0
+  lea      exc02(pc),a1
+- move.l   #exc03-exc02,d1
++ moveq.l  #exc03-exc02,d1
+ 
+ * Benutzte Exceptionroutinen initialisieren
+ 
+diff --git a/kernel/bios/atari/modules/scsi.s b/kernel/bios/atari/modules/scsi.s
+index fb7b314..5d99816 100644
+--- a/kernel/bios/atari/modules/scsi.s
++++ b/kernel/bios/atari/modules/scsi.s
+@@ -232,11 +232,11 @@ ncr_rd:
+  tst.b    _scsi_wrflag
+  bne.b    dmarw_l1
+ * lesen
+- bsr      _dmaread_scsi
++ bsr.s    _dmaread_scsi
+  bra      ttdmarw_ende
+ * schreiben
+ dmarw_l1:
+- bsr      _dmawrite_scsi
++ bsr.s    _dmawrite_scsi
+ 
+ ttdmarw_ende:
+  bsr      cache_invalid       ; Veraendert KEINE Register!
+diff --git a/kernel/build/atari.prj b/kernel/build/atari.prj
+index 9b979da..931858c 100644
+--- a/kernel/build/atari.prj
++++ b/kernel/build/atari.prj
+@@ -10,6 +10,9 @@ magic.ram
+ .S[-DCOUNTRY=1]
+ .C[-DCOUNTRY=1]
+ 
++.S[-DNOT_MAGICPC=0]
++.S[-DMAGICPC=1]
++
+ .C[-A-]
+ .C[-K-]
+ .S[-DHADES=0]
+diff --git a/kernel/inc/auto.s b/kernel/inc/auto.s
+index a28886a..cff802d 100644
+--- a/kernel/inc/auto.s
++++ b/kernel/inc/auto.s
+@@ -70,6 +70,7 @@ bot_coo_ende:
+  move.l	d0,_p_cookies			; Zeiger umsetzen
+ bot_no_coo:
+ 
++ IFNE NOT_MAGICPC
+ /* override idt cookie */
+  move.l	p_mgxinf,a0
+  jsr		rinf_idt
+@@ -80,6 +81,7 @@ bot_no_coo:
+  beq.s      no_idt_val
+  move.l     a1,4(a0)         /* overwrite _IDT cookie value */
+ no_idt_val:
++ ENDC
+ 
+ * Jetzt (ab MagiC 6) log-Datei oeffnen
+ 

@@ -1,0 +1,31 @@
+diff --git a/kernel/dos/magidos.s b/kernel/dos/magidos.s
+index 5554e9d..b3b5096 100644
+--- a/kernel/dos/magidos.s
++++ b/kernel/dos/magidos.s
+@@ -9837,6 +9837,14 @@ syi_err:
+  rts
+ 
+ 
++**********************************************************************
++*
++* long Ssystem(int mode, long arg1, long arg2)
++*
++* Control cookie jar, memory access and various system settings. 
++*
++Ssystem:
++  rts
+ 
+ 
+ **********************************************************************
+@@ -11388,9 +11397,10 @@ dos_fx2:
+  DC.W     Psetreuid-dos_fx2        ; 0x14E
+  DC.W     Psetregid-dos_fx2        ; 0x14F
+  DC.W     Ssync-dos_fx2            ; 0x150
+- DC.W     ill_func-dos_fx2         ; 0x151
++ DC.W     ill_func-dos_fx2         ; 0x151 ; Shutdown
+  DC.W     D_Dreadlabel-dos_fx2     ; 0x152   (338)
+  DC.W     D_Dwritelabel-dos_fx2    ; 0x153
++ DC.W     Ssystem-dos_fx2          ; 0x154
+ 
+ 
+ errcodes: DC.B  -1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17

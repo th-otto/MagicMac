@@ -1,0 +1,7 @@
+off16m.nod
+
+.L [-S=0]			;Stacksize 0
+
+=
+
+off16m.s

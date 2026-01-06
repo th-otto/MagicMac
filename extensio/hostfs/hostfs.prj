@@ -1,0 +1,20 @@
+hostfs.xfs
+.C[-I..\..\inc_c]
+.C[-I..\..\pc\include]
+.S[-I..\..\kernel\inc]
+.C[-P-]
+.L[-S=8192]
+=
+..\..\pc\lib\cstart0.o      ; startup code
+main.c
+hostxfs.c
+hostdev.c
+util.c
+nfapi.c
+
+mxxfs.s
+mxdev.s
+mxkernel.s
+
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcstdlib.lib

@@ -1,0 +1,9 @@
+x.tos
+.C[-I..\..\pc\include]
+=
+..\..\pc\lib\cstartv.o
+x.c
+
+..\..\pc\lib\pctoslib.lib
+..\..\pc\lib\pcgemlib.lib
+..\..\pc\lib\pcstdlib.lib

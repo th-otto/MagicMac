@@ -615,7 +615,7 @@ static int key_2_action(int key, char ascii, int kstate)
 
 void init_popup(OBJECT *dialog, int objnr, POPINFO *pop, int rscpop, int defobj)
 {
-	rsrc_gaddr(0, rscpop, &(pop->tree));
+	rsrc_gaddr(R_TREE, rscpop, &(pop->tree));
 	pop->obnum = defobj;
 	dialog += objnr;
 	dialog->ob_spec.free_string = (char *) pop;
@@ -1410,7 +1410,7 @@ void open_all_wind(void)
 *
 ****************************************************************/
 
-static void _rsrc_load(char *fname)
+static void _rsrc_load(const char *fname)
 {
 	if (!rsrc_load(fname))
 	{
@@ -1436,12 +1436,25 @@ void get_rsc(void)
 		strcat(desk_path, "\\");
 
 		_rsrc_load("magxdesk.rsc");
-		rsrc_gaddr(0, HAUPTMEN, &adr_hauptmen);
-		rsrc_gaddr(0, T_ICONS, &adr_icons);
-		rsrc_gaddr(0, T_EINST, &adr_einst);
-		rsrc_gaddr(0, T_TTPPAR, &adr_ttppar);
-		rsrc_gaddr(0, T_ABOUT, &adr_about);
-		rsrc_gaddr(0, T_DATINF, &adr_datinf);
+#ifdef _RSM_CRC_
+		{
+			char *crc;
+			
+			if (rsrc_gaddr(R_STRING, _RSM_CRC_, &crc) == 0 ||
+				strcmp(crc, _RSM_CRC_STRING_) != 0)
+			{
+				form_xerr(EACCDN, "magxdesk.rsc");
+				appl_exit();
+				Pterm((int) EACCDN);
+			}
+		}
+#endif
+		rsrc_gaddr(R_TREE, HAUPTMEN, &adr_hauptmen);
+		rsrc_gaddr(R_TREE, T_ICONS, &adr_icons);
+		rsrc_gaddr(R_TREE, T_EINST, &adr_einst);
+		rsrc_gaddr(R_TREE, T_TTPPAR, &adr_ttppar);
+		rsrc_gaddr(R_TREE, T_ABOUT, &adr_about);
+		rsrc_gaddr(R_TREE, T_DATINF, &adr_datinf);
 		tree = adr_hauptmen;
 #define fix_menu(obj) \
 		if ((tree[obj].ob_x + tree[obj].ob_width + 2) > (desk_g.g_x + desk_g.g_w)) \
