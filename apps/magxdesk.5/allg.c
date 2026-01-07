@@ -199,8 +199,8 @@ void subobj_draw(OBJECT *tree, int obj, int n, char *s)
 
 int find_obj(OBJECT *tree, int x, int y)
 {
-	register int i,obx,oby,obw,obh;
-	register ICONBLK *icn;
+	int i,obx,oby,obw,obh;
+	ICONBLK *icn;
 	int end;
 
 
@@ -322,7 +322,7 @@ void objs_uneditable(OBJECT *tree, ...)
 
 void objs_disable(OBJECT *tree, ...)
 {
-	register OBJECT *t;
+	OBJECT *t;
 	va_list argpoint;
 	int	objnr;
 
@@ -479,9 +479,9 @@ WORD Rform_alert( WORD defbutton, WORD alert_id )
 WORD Rxform_alert( WORD defbutton, WORD alert_id,
 				char drv, char *path )
 {
-	register char *alert;
+	char *alert;
 	char buf[256];
-	register char *t;
+	char *t;
 
 
 	alert = Rgetstring(alert_id);
@@ -555,7 +555,7 @@ long Dwritelabel(char *path, char *name)
 
 char *get_name(char *path)
 {
-	register char *n;
+	char *n;
 
 	n = strrchr(path, '\\');
 	if	(!n)
@@ -578,7 +578,7 @@ char *get_name(char *path)
 void get_app_name(char *path, char apname[9])
 {
 	char *name,*apnamp;
-	register int i;
+	int i;
 
 	name = get_name(path);
 	apnamp = apname;
@@ -606,7 +606,7 @@ void get_app_name(char *path, char apname[9])
 
 void abbrev_path(char *dst, char *src, int len )
 {
-	register char *t,*u;
+	char *t,*u;
 	int l;
 
 	if	((l = (int) strlen(src)) < len)
@@ -614,7 +614,7 @@ void abbrev_path(char *dst, char *src, int len )
 		strcpy(dst, src);
 		return;
 		}
-	
+
 	u = t = src + l - len + 6;
 	while((*t) && (*t != '\\'))
 		t++;
@@ -715,8 +715,8 @@ void drv_to_str(char *s, char c)
 
 char *print_ul(unsigned long z, char *p)
 {
-	register char *s;
-	register int len;
+	char *s;
+	int len;
 	char	hilfs[20];
 
 
@@ -780,7 +780,7 @@ char *print_ull(ULONG64 z, int shift, char *p)
 * Festplatten-Kapazit„ten.
 *
 * z >= 1 G	=> n,m G
-* 
+*
 * Setzt Zeiger hinter den String;
 *
 *********************************************************************/
@@ -824,7 +824,7 @@ char *print_big_bytes(ULONG64 z, char *p)
 			p++;
 		*p++ = shift ? 'G' : 'M';
 		}
-	else	
+	else
 	if	(l >= 0x100000L)
 		{
 		*p++ = '0' + (l >> 20L);	/* G = 2^20 */
@@ -864,7 +864,7 @@ char *print_big_bytes(ULONG64 z, char *p)
 
 void fname_int(char *s, char *d)
 {
-	register char *p = d;
+	char *p = d;
 
 	while(*s && *s != '.')			/* Name */
 		*p++ = *s++;
@@ -882,7 +882,7 @@ void fname_int(char *s, char *d)
 
 void fname_ext(char *s, char *d)
 {
-	register char *p = s;
+	char *p = s;
 
 	while(*p && p < s+8)
 		{

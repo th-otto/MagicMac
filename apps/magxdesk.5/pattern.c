@@ -16,7 +16,7 @@
 #pragma warn -pia
 char toupper( unsigned char c )
 {
-	register char *s;
+	char *s;
 	static char lower_s[] = "„”‚…†‡‘¤°±³´À";
 	static char upper_s[] = "™š¶€’¥·¸²µÁ";
 

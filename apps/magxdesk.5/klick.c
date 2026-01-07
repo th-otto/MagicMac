@@ -62,7 +62,7 @@ void obj_malen(WINDOW *w, int index)
 
 static void destroy_all_selmasks( void )
 {
-	register int i;
+	int i;
 	WINDOW **pw,*w;
 
 
@@ -88,7 +88,7 @@ void dsel_all( void )
 	OBJECT *tree;
 	GRECT g;
 	int   dummy;
-	register int i;
+	int i;
 	WINDOW **pw,*w;
 
 
@@ -126,16 +126,16 @@ void dsel_all( void )
 
 static int grect_toggle(WINDOW *w, char *sel_status, GRECT *g)
 {
-	register int i,rx,ry;
-	register int mx,my,mrx,mry;	/* Maxima */
+	int i,rx,ry;
+	int mx,my,mrx,mry;	/* Maxima */
 	int tx,ty;		/* Koordinaten des Wurzelobjekts */
 	int x,y;			/* aktuelle Koordinaten */
 	int toggle;		/* Flag "ist im Rechteck" */
 	int tail;
 	int newstate;
 	GRECT  ob;
-	register OBJECT *t = w->pobj;
-	register ICONBLK *icn;
+	OBJECT *t = w->pobj;
+	ICONBLK *icn;
 	int dirty = FALSE;
 
 
@@ -231,8 +231,8 @@ static int grect_toggle(WINDOW *w, char *sel_status, GRECT *g)
 void rubberbox( WINDOW *w, int x, int y, int mx, int my )
 {
 	EVNTDATA ev;
-	register int i,tail;
-	register OBJECT *tree = w->pobj;
+	int i,tail;
+	OBJECT *tree = w->pobj;
 	GRECT rub,box,mg;
 	int dummy;
 	int timer;
@@ -559,10 +559,10 @@ void mausknopf(int anzahl, EVNTDATA *ev)
 void sel_all(WINDOW *w)
 {
 	OBJECT *tree = w->pobj;
-	register OBJECT *ob;
+	OBJECT *ob;
 	GRECT g;
 	int   dummy;
-	register int i,head;
+	int i,head;
 	WINDOW *ow;
 
 
@@ -674,8 +674,8 @@ void init_icnobj(OBJECT *o, CICONBLK *icn, int typ, char *text,
 int make_icon(int typ, CICONBLK *cic, char c, char *icntext,
 			char *path, int is_alias, int x, int y)
 {
-	register int i,j,k;
-	register OBJECT *ob,*parent;
+	int i,j,k;
+	OBJECT *ob,*parent;
 	ICONBLK *ic;
 	char *newmemptr;
 
@@ -1021,7 +1021,7 @@ static void move_icons(int x, int y, WINDOW *w, int kbsh)
 	OBJECT **mov_boxes;
 	int anz_boxes;
 	int old_x,old_y,old_kbsh;
-	register int i;
+	int i;
 	OBJECT *zieltree;
 	int zielwhdl;
 	int zielobj;
@@ -1393,8 +1393,8 @@ static int mvx,mvy;
 static int mv_obj(WINDOW *w, int obj, void *dummy)
 {
 	GRECT g;
-	register OBJECT *tree = w->pobj;
-	register OBJECT *o;
+	OBJECT *tree = w->pobj;
+	OBJECT *o;
 
 	o = tree+obj;
 	objc_grect(tree, obj, &g);
@@ -1430,7 +1430,7 @@ static int mk_obj(WINDOW *w, int obj, void *dummy)
 	int typ;
 	MYDTA *file;
 	CICONBLK *cic;
-	register OBJECT *tree = w->pobj + obj;
+	OBJECT *tree = w->pobj + obj;
 	char *icontext;
 	char *iconpath;
 	char path[128];
@@ -1767,7 +1767,7 @@ static void wait_kobold_answer(int *msg)
 /*
 		if	(msg[0] == SH_WDRAW)
 			{
-			register int i;
+			int i;
 			if	((msg[3] >= 0) &&
 				 (msg[3] < ANZDRIVES))
 				dirty_drives[msg[3]] = TRUE;

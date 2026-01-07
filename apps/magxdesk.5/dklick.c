@@ -38,7 +38,7 @@ typedef struct          /* used by Pexec */
 
 APPLICATION *dfile_to_app(char *filepath)
 {
-	register DATAFILE *da;
+	DATAFILE *da;
 
 	da = find_datafile(get_name(filepath));
 	if	(da)
@@ -213,7 +213,7 @@ static void init_xarg(char **nxt_xarg, long *xarg_free)
 static int add_param(char *arg, char **nxt_xarg,
 				long *xarg_free, int do_spaces)
 {
-	register char *s;
+	char *s;
 	long len,extra_len;
 	int contains_spaces;
 
@@ -289,7 +289,7 @@ Cconws("\"\r\n");
 
 static void fix_xarg(char *xarg, char *nxt_xarg)
 {
-	register char *s,*t,*u;
+	char *s,*t,*u;
 	long len;
 	long extra_len;
 
@@ -343,7 +343,7 @@ static void fix_xarg(char *xarg, char *nxt_xarg)
 
 static int xarg2arg(char *xarg, char *nxt_xarg, int fail)
 {
-	register char *s,*t;
+	char *s,*t;
 	long len;
 
 
@@ -410,11 +410,11 @@ static int get_param(char *pgm, WINDOW *w, int obj,
 				char **nxt_xarg, long *xarg_free)
 {
 	OBJECT *tree;
-	register int iwnr,i;
+	int iwnr,i;
 	char path[128];
 	char *endppath,rettc;
 	int nargs;
-	register WINDOW *iw;
+	WINDOW *iw;
 
 
 	if	(pgm)
@@ -899,8 +899,8 @@ static void set_selmask(WINDOW *w, char *sel_mask)
 void open_window(char *path, char *mask, char *sel_mask,
 			int new)
 {
-	register WINDOW **pw,*w,*new_w;
-	register int wnr,free;
+	WINDOW **pw,*w,*new_w;
+	int wnr,free;
 	long ret;
 
 
@@ -988,7 +988,7 @@ static long setpath(char *program, int stdpath)
 	long doserr;
 	char	rett,*endp;
 	char *path;
-	register int i;
+	int i;
 	WINDOW **pw,*w,*tw;
 
 

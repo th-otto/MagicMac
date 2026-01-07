@@ -3,7 +3,7 @@ MAGXDESK.APP
 .C[-I..\..\lib\mylibs]
 .C[-I..\..\pc\include]
 .C[-P]
-.L[-S=2048]
+.L[-S=4096]
 =
 ..\..\pc\lib\cstartv.o
 magxdesk.c	; RAHMENPROGRAMM, REDRAWS

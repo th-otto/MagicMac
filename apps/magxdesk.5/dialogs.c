@@ -66,7 +66,7 @@ long init_xted(OBJECT *ob, char *path, XTED *xted,
 {
 	long err;
 	int maxnamelen;
-	register TEDINFO *t;
+	TEDINFO *t;
 	static char *tmplt_8_3 = "________.___";
 
 
@@ -352,7 +352,7 @@ void dial_maske(void)
 {
 	OBJECT *adr_maske;
 	char	oldmask[20];
-	register char *quel,*ziel;
+	char *quel,*ziel;
 	int ret;
 	WINDOW *w;
 
@@ -437,7 +437,7 @@ void dial_deskfmt( int is_fmt )
 {
 	char *arg1,*arg2,*arg3;
 	char	tail[128];
-	register char	*pgm;
+	char	*pgm;
 	int config;
 	WINDOW *w;
 
@@ -513,9 +513,9 @@ void dial_deskfmt( int is_fmt )
 void dial_search( void )
 {
 	char	arg[140];
-	register char *s;
-	register int i;
-	register OBJECT *tree;
+	char *s;
+	int i;
+	OBJECT *tree;
 	char c;
 	int	icn,sicn;
 	WINDOW *w;
@@ -594,8 +594,8 @@ int letter_from_drive(int drv)
 
 void dial_laufwe(void)
 {
-	register int i;
-	register ICON *ic;
+	int i;
+	ICON *ic;
 	char *name;
 	CICONBLK *c;
 	int dev;
@@ -807,7 +807,7 @@ static int chk_einste(OBJECT *tree, int exitbutton)
 {
 	int kats[] = {EIN_GRP1, EIN_GRP2, EIN_GRP3, EIN_GRP4, EIN_GRP5};
 	TEDINFO *ted;
-	register int kat,off;
+	int kat,off;
 	MENUPROGRAM *pgm;
 	EVNTDATA ev;
 
@@ -1113,7 +1113,7 @@ void dial_einste(void)
 
 int dial_ttppar(char *pgm, char *par)
 {
-	register char *ziel1,*ziel2;
+	char *ziel1,*ziel2;
 
 
 	ziel1 = (adr_ttppar+TTPPAR_T)->ob_spec.free_string;
@@ -1186,7 +1186,7 @@ void dial_fontsel( void )
 {
 	int work_out[57],work_in [12];	 /* VDI- Felder fÅr v_opnvwk() */
 	int	handle;
-	register int i;
+	int i;
 	void	*fnt_dialog;
 	int button,check_boxes;
 	long id,pt,ratio;

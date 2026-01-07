@@ -37,7 +37,7 @@ void menu_init( void )
 
 int key_2_menu( int key, int kstate, int *t, int *e )
 {
-	register int title, entry;
+	int title, entry;
 	int ascii;
 
 
@@ -468,11 +468,11 @@ void modify_menu( void )
 void change_objs_menu( int updwin, int updpgm )
 {
 	char buf[128];
-	register int i;
-	register OBJECT *o;
-	register WINDOW *w;
-	register MENUPROGRAM *mp;
-	register char *s;
+	int i;
+	OBJECT *o;
+	WINDOW *w;
+	MENUPROGRAM *mp;
+	char *s;
 	int *prev;
 	int last;
 	int ftaste;

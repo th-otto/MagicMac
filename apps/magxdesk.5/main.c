@@ -54,7 +54,7 @@ Send(dest, what, m3, m4, m5, m6, m7)
 int dest, what, m3, m4, m5, m6, m7;
 {
 	static int msg[8];
-	register int    *m;
+	int    *m;
 
 	if (dest == -1) {
 		dest = appl_find("MAGXDESK");

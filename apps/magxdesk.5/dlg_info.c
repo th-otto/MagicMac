@@ -118,8 +118,8 @@ int info_file(char *path, int drv, MYDTA *f,
 	char *wintitle;
 	static long len_of_varstrings = 0;
 	int *obx;
-	register char *_varstrings;
-	register long l;
+	char *_varstrings;
+	long l;
 
 
 
@@ -488,7 +488,7 @@ static int init_info_file_tree( INFO_FILE_DATA *ifd, int weiter )
 
 	if	((ifd->f.is_alias) || (ifd->isdeskalias))
 		{
-		register TEDINFO *t;
+		TEDINFO *t;
 		XTED *xted;
 		int vislen;
 
