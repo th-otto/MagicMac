@@ -29,31 +29,34 @@
 extern char __text[];
 typedef void *PD;
 
-int	gl_hhbox, gl_hwbox, gl_hhchar, gl_hwchar;
-int	ap_id;
-int	ncolours;
+int gl_hhbox, gl_hwbox;
+int gl_hhchar, gl_hwchar;
+int ap_id;
+int ncolours;
 GRECT scrg;
-int aes_handle;		/* Screen-Workstation des AES */
+int aes_handle;							/* Screen-Workstation des AES */
 int vdi_handle;
-int	work_out[57], work_in[12];	 /* VDI- Felder fuer v_opnvwk() */
+int work_out[57];
+int work_in[12];							/* VDI- Felder fuer v_opnvwk() */
 OBJECT *adr_window;
 
 static void open_work(void);
 
-WINFRAME_HANDLER old_wfh,new_wfh;
+WINFRAME_HANDLER old_wfh;
+WINFRAME_HANDLER new_wfh;
 WINFRAME_SETTINGS *settings;
 WORD h_inw;
 
 typedef struct
 {
-	WORD	control[5];
-	WORD	intin[AES_INTINMAX];
-	WORD	intout[AES_INTOUTMAX];
-	void	*addrin[AES_ADDRINMAX];
-	void	*addrout[AES_ADDROUTMAX];
+	WORD control[5];
+	WORD intin[AES_INTINMAX];
+	WORD intout[AES_INTOUTMAX];
+	void *addrin[AES_ADDRINMAX];
+	void *addrout[AES_ADDROUTMAX];
 } MT_PARMDATA;
 
-void _aes_trap(MT_PARMDATA *aes_params, const WORD *control, WORD *global_aes);
+void _aes_trap(MT_PARMDATA * aes_params, const WORD * control, WORD * global_aes);
 
 
 /*********************************************************************
@@ -62,20 +65,18 @@ void _aes_trap(MT_PARMDATA *aes_params, const WORD *control, WORD *global_aes);
 *
 *********************************************************************/
 
-static WORD sys_set_winframe_manager( WINFRAME_HANDLER *old_wfh,
-						WINFRAME_HANDLER *new_wfh,
-						WINFRAME_SETTINGS **set )
+static WORD sys_set_winframe_manager(WINFRAME_HANDLER *old_wfh, WINFRAME_HANDLER *new_wfh, WINFRAME_SETTINGS **set)
 {
 	MT_PARMDATA d;
-	static WORD	const c[] = { 0, 1, 1, 2 };
+	static WORD const c[] = { 0, 1, 1, 2 };
 
-	d.intin[0] = 6;	/* Subcode 6: Fensterrahmen-Manager */
+	d.intin[0] = 6;						/* Subcode 6: Fensterrahmen-Manager */
 	d.addrin[0] = old_wfh;
 	d.addrin[1] = new_wfh;
-	_aes_trap( &d, c, NULL );
-	if	(set)
+	_aes_trap(&d, c, NULL);
+	if (set)
 		*set = d.addrout[0];
-	return( d.intout[0] );
+	return (d.intout[0]);
 }
 
 
@@ -90,9 +91,9 @@ static void open_work(void)
 	register int i;
 
 
-	for  (i = 0; i < 10; work_in[i++] = 1)
+	for (i = 0; i < 10; work_in[i++] = 1)
 		;
-	work_in[10]=2;                     /* Rasterkoordinaten */
+	work_in[10] = 2;					/* Rasterkoordinaten */
 	v_opnvwk(work_in, &vdi_handle, work_out);
 }
 
@@ -105,37 +106,40 @@ static void open_work(void)
 *
 *****************************************************************/
 
-LONG cdecl slb_init( void )
+LONG cdecl slb_init(void)
 {
 	register int i;
-	char *path,*name;
+	char *path;
+	char *name;
 
 
 	/* Initialisierung */
 	/* --------------- */
 
-	if   ((ap_id = appl_init()) < 0)
-		return(ERROR);
+	if ((ap_id = appl_init()) < 0)
+		return (ERROR);
 	i = _GemParBlk.global[10];
+
 	ncolours = (i > 8) ? 32767 : (1 << i);
-	if	(ncolours < 16)
-		return(-1L);
+	if (ncolours < 16)
+		return (-1L);
 	wind_get_grect(SCREEN, WF_WORKXYWH, &scrg);
 
 	/* RSC-Datei im Pfad der SLB suchen */
 	/* -------------------------------- */
 
-	path = __text-128;
+	path = __text - 128;
 	name = strrchr(path, '\\');
-	if	(name)
+	if (name && name >= path + 2)
 		name++;
-	else	name = path;
+	else
+		name = path;
 	strcpy(name, "winframe.rsc");
-	if	(!rsrc_load(path))
-		{
-		form_xerr(EFILNF, "winframe.rsc");
-		return(EFILNF);
-		}
+	if (!rsrc_load(path))
+	{
+		form_xerr(EFILNF, path);
+		return (EFILNF);
+	}
 
 	aes_handle = graf_handle(&gl_hwchar, &gl_hhchar, &gl_hwbox, &gl_hhbox);
 	vdi_handle = aes_handle;
@@ -162,16 +166,15 @@ LONG cdecl slb_init( void )
 	/* Manager anmelden */
 	/* ---------------- */
 
-	if	(!sys_set_winframe_manager(&old_wfh, &new_wfh,
-					&settings))
-		{
+	if (!sys_set_winframe_manager(&old_wfh, &new_wfh, &settings))
+	{
 		form_xerr(ERROR, "winframe.slb");
-		return(ERROR);
-		}
+		return (ERROR);
+	}
 
 	h_inw = settings->h_inw - 1;
 	global_init2();
-	return(E_OK);
+	return (E_OK);
 }
 
 
@@ -184,7 +187,7 @@ LONG cdecl slb_init( void )
 *
 *****************************************************************/
 
-extern void cdecl slb_exit( void )
+extern void cdecl slb_exit(void)
 {
 
 	/* AES-Funktionen wieder entfernen */
@@ -204,9 +207,9 @@ extern void cdecl slb_exit( void )
 *****************************************************************/
 
 #pragma warn -par
-extern LONG cdecl slb_open( PD *pd )
+extern LONG cdecl slb_open(PD *pd)
 {
-	return(E_OK);
+	return (E_OK);
 }
 
 
@@ -216,7 +219,8 @@ extern LONG cdecl slb_open( PD *pd )
 *
 *****************************************************************/
 
-extern void cdecl slb_close( PD *pd )
+extern void cdecl slb_close(PD *pd)
 {
 }
+
 #pragma warn .par
