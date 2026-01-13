@@ -17,14 +17,18 @@
  * Number of Trees:          10
  * Number of Userblks:       0
  * Number of Images:         35
- * Total file size:          14878
+ * Total file size:          14904
  */
 
+#ifdef RSC_NAME
 #undef RSC_NAME
+#endif
 #ifndef __ALCYON__
 #define RSC_NAME "pdlg"
 #endif
+#ifdef RSC_ID
 #undef RSC_ID
+#endif
 #ifdef pdlg
 #define RSC_ID pdlg
 #else
