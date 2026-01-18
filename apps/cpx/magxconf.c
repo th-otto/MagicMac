@@ -178,6 +178,7 @@ static _WORD handle_msg(_WORD obj, _WORD *msg)
 	{
 	case OK:
 		tree[OK].ob_state &= ~OS_SELECTED;
+		set_config();
 		ret = 1;
 		break;
 	case CANCEL:
