@@ -1,1 +1,0 @@
-# french localizations go here

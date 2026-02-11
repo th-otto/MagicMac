@@ -54,7 +54,6 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/apps/mgsearch/$lang/mgsearch.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	# TODO: french translation
 	mcopy "$SRCDIR/apps/mod_app/$lang/mod_app.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-	mcopy "$SRCDIR/apps/shutdown/$lang/shutdown.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/vfatconf/$lang/vfatconf.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/vt52/$lang/vt52.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
@@ -114,6 +113,7 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/apps/mod_app/mod_app.ttp" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/showfile/showfile.ttp" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/tools/showfree/showfree.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/shutdown/shutdown.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/shutdown/shutdown.inf" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/vfatconf/vfatconf.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/vt52/vt52.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"

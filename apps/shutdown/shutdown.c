@@ -86,39 +86,53 @@ int ap_id;
 int nappl;
 int unappl;
 unsigned long timeout = TIMEOUT;
+int language = COUNTRY_US;
 
 APPLINF applx[NAPPL];
 APPLSPEC uncrit[UNAPPL];
 
+/* german */
+static char const s_syntax_error1_de[] = "Fehler in SHUTDOWN.INF. Zeile| |";
+static char const s_syntax_error2_de[] = "][Weiter]";
+static char const s_process_locked_de[] = "[3][SHUTDOWN:| |Prozeû ist gesperrt.][Abbruch]";
+static char const s_timeout_de[] = "[3][SHUTDOWN:| |ZeitÅberschreitung.][Abbruch]";
+static char const s_unknown_de[] = "<Unbekannt>";
+static char const s_impossible_de[] = "[3][SHUTDOWN:| |Shutdown- Prozeû nicht mîglich.|%s lieferte Fehlercode %d.][Abbruch]";
+static char const s_active_app_de[] = "[3][SHUTDOWN:| |%s ist noch aktiv.|Bitte manuell beenden!][Abbruch]";
+static char const s_successful_de[] = "[3][SHUTDOWN:| |Shutdown war erfolgreich.|Rechner jetzt abschalten!][Neustart|Kaltstart%s]";
+static char const s_poweroff_de[] = "|Ausschalten";
 
-#if COUNTRY == COUNTRY_DE || COUNTRY == COUNTRY_SG
-static char const s_syntax_error[] = "[3][SHUTDOWN:|Fehler in SHUTDOWN.INF. Zeile| |%s][Weiter]";
-static char const s_process_locked[] = "[3][SHUTDOWN:| |Prozeû ist gesperrt.][Abbruch]";
-static char const s_timeout[] = "[3][SHUTDOWN:| |ZeitÅberschreitung.][Abbruch]";
-static char const s_unknown[] = "<Unbekannt>";
-static char const s_impossible[] = "[3][SHUTDOWN:| |Shutdown- Prozeû nicht mîglich.|%s lieferte Fehlercode %d.][Abbruch]";
-static char const s_active_app[] = "[3][SHUTDOWN:| |%s ist noch aktiv.|Bitte manuell beenden!][Abbruch]";
-static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown war erfolgreich.|Rechner jetzt abschalten!][Neustart|Kaltstart%s]";
-static char const s_poweroff[] = "|Ausschalten";
-#elif COUNTRY == COUNTRY_US || COUNTRY == COUNTRY_UK
-static char const s_syntax_error[] = "[3][SHUTDOWN:|Error in SHUTDOWN.INF. Line| |%s][Continue]";
-static char const s_process_locked[] = "[3][SHUTDOWN:| |Process ist currently locked.][Cancel]";
-static char const s_timeout[] = "[3][SHUTDOWN:| |Timeout.][Cancel]";
-static char const s_unknown[] = "<unknown>";
-static char const s_impossible[] = "[3][SHUTDOWN:| |Shutdown process failed.|%s has sent error code %d.][Cancel]";
-static char const s_active_app[] = "[3][SHUTDOWN:| |%s is still running.|Please terminate manually!][Cancel]";
-static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown was successful.|Shut off computer now!][Restart|Cold Boot%s]";
-static char const s_poweroff[] = "|Power off";
-#elif COUNTRY == COUNTRY_FR || COUNTRY == COUNTRY_SF
-static char const s_syntax_error[] = "[3][SHUTDOWN:|Erreur dans SHUTDOWN.INF. Ligne| |%s][Suite]";
-static char const s_process_locked[] = "[3][SHUTDOWN:| |Processus bloquÇ.][Abandon]";
-static char const s_timeout[] = "[3][SHUTDOWN:| |DÇbordement temps.][Abandon]";
-static char const s_unknown[] = "<inconnu>";
-static char const s_impossible[] = "[3][SHUTDOWN:| |Processus Shutdown impossible. |%s retourne erreur %d.][Abandon]";
-static char const s_active_app[] = "[3][SHUTDOWN:| |%s encore actif.|Quittez manuellement !][Abandon]";
-static char const s_successful[] = "[3][SHUTDOWN:| |Shutdown rÇussi.|Eteignez l'ordinateur!][RedÇmarrer|Reset Ö froid%s]";
-static char const s_poweroff[] = "|Eteindre";
-#endif
+/* english */
+static char const s_syntax_error1_en[] = "Error in SHUTDOWN.INF. Line| |%s";
+static char const s_syntax_error2_en[] = "][Continue]";
+static char const s_process_locked_en[] = "[3][SHUTDOWN:| |Process ist currently locked.][Cancel]";
+static char const s_timeout_en[] = "[3][SHUTDOWN:| |Timeout.][Cancel]";
+static char const s_unknown_en[] = "<unknown>";
+static char const s_impossible_en[] = "[3][SHUTDOWN:| |Shutdown process failed.|%s has sent error code %d.][Cancel]";
+static char const s_active_app_en[] = "[3][SHUTDOWN:| |%s is still running.|Please terminate manually!][Cancel]";
+static char const s_successful_en[] = "[3][SHUTDOWN:| |Shutdown was successful.|Shut off computer now!][Restart|Cold Boot%s]";
+static char const s_poweroff_en[] = "|Power off";
+
+/* french */
+static char const s_syntax_error1_fr[] = "Erreur dans SHUTDOWN.INF. Ligne| |%s";
+static char const s_syntax_error2_fr[] = "][Suite]";
+static char const s_process_locked_fr[] = "[3][SHUTDOWN:| |Processus bloquÇ.][Abandon]";
+static char const s_timeout_fr[] = "[3][SHUTDOWN:| |DÇbordement temps.][Abandon]";
+static char const s_unknown_fr[] = "<inconnu>";
+static char const s_impossible_fr[] = "[3][SHUTDOWN:| |Processus Shutdown impossible. |%s retourne erreur %d.][Abandon]";
+static char const s_active_app_fr[] = "[3][SHUTDOWN:| |%s encore actif.|Quittez manuellement !][Abandon]";
+static char const s_successful_fr[] = "[3][SHUTDOWN:| |Shutdown rÇussi.|Eteignez l'ordinateur!][RedÇmarrer|Reset Ö froid%s]";
+static char const s_poweroff_fr[] = "|Eteindre";
+
+static const char *s_syntax_error1;
+static const char *s_syntax_error2;
+static const char *s_process_locked;
+static const char *s_timeout;
+static const char *s_unknown;
+static const char *s_impossible;
+static const char *s_active_app;
+static const char *s_successful;
+static const char *s_poweroff;
 
 /****************************************************************
 *
@@ -354,9 +368,12 @@ static void load_defaults(void)
 			char t[256];
 
 		  err:
-			strncpy(s, path, 59);
-			s[59] = EOS;
-			sprintf(t, s_syntax_error, s);
+			strncpy(s, path, sizeof(s) - 1);
+			s[sizeof(s) - 1] = EOS;
+			strcpy(t, "[3][SHUTDOWN:|");
+			strcat(t, s_syntax_error1);
+			strcat(t, s);
+			strcat(t, s_syntax_error2);
 			form_alert(1, t);
 			continue;
 		}
@@ -479,8 +496,11 @@ static void remove_apps(char type)
 		while (strlen(name) < 8)
 			strcat(name, " ");
 		apid = appl_find(name);
-		if (apid >= 0)					/* Programm lÑuft */
+		if (apid >= 0)
+		{
+			/* Programm lÑuft */
 			remove_app(apid, name);
+		}
 	}
 }
 
@@ -520,13 +540,13 @@ static void remove_accs(void)
 *
 * Erwartet ein bis vier Parameter:
 *
-* arg1 =	[-w|-c] Warm- bzw. Kaltstart ohne RÅckfrage
-* arg2 =	GerÑtenummer (dev), Default: -1
-*		wenn -1: Shutdown, kein Auflîsungswechsel
+* arg1 = [-w|-c] Warm- bzw. Kaltstart ohne RÅckfrage
+* arg2 = GerÑtenummer (dev), Default: -1
+*		  wenn -1: Shutdown, kein Auflîsungswechsel
 *
-* arg3 =  Texthîhe. Default: 0 (d.h. nicht setzen)
+* arg3 = Texthîhe. Default: 0 (d.h. nicht setzen)
 *
-* arg4 = 	Falcon- Auflîsungsmodus.
+* arg4 = Falcon-Auflîsungsmodus.
 *
 ******************************************************************/
 
@@ -547,10 +567,52 @@ int main(int argc, char *argv[])
 
 	ap_id = appl_init();
 
-	/* -w oder -c */
+	/* get AES language, sub-function 3 */
+	(void) appl_getinfo(3, &language, NULL, NULL, NULL);
+
+	switch (language)
+	{
+	case COUNTRY_DE:
+	case COUNTRY_SG:
+		s_syntax_error1 = s_syntax_error1_de;
+		s_syntax_error2 = s_syntax_error2_de;
+		s_process_locked = s_process_locked_de;
+		s_impossible = s_impossible_de;
+		s_unknown = s_unknown_de;
+		s_successful = s_successful_de;
+		s_poweroff = s_poweroff_de;
+		s_active_app = s_active_app_de;
+		s_timeout = s_timeout_de;
+		break;
+	case COUNTRY_FR:
+	case COUNTRY_SF:
+		s_syntax_error1 = s_syntax_error1_fr;
+		s_syntax_error2 = s_syntax_error2_fr;
+		s_process_locked = s_process_locked_fr;
+		s_impossible = s_impossible_fr;
+		s_unknown = s_unknown_fr;
+		s_successful = s_successful_fr;
+		s_poweroff = s_poweroff_fr;
+		s_active_app = s_active_app_fr;
+		s_timeout = s_timeout_fr;
+		break;
+	default:
+		s_syntax_error1 = s_syntax_error1_en;
+		s_syntax_error2 = s_syntax_error2_en;
+		s_process_locked = s_process_locked_en;
+		s_impossible = s_impossible_en;
+		s_unknown = s_unknown_en;
+		s_successful = s_successful_en;
+		s_poweroff = s_poweroff_en;
+		s_active_app = s_active_app_en;
+		s_timeout = s_timeout_en;
+		break;
+	}
 
 	ct60 = xbios(39, 'AnKr', 4, 0x43543630L) != 0;
 	
+	/* -w oder -c */
+
 	if (argc >= 2 && argv[1][0] == '-')
 	{
 		c = toupper(argv[1][1]);
@@ -677,7 +739,6 @@ int main(int argc, char *argv[])
 
 		if (!buf[3] && (buf[4] >= 0))
 		{
-
 			/* Eine Applikation hat den Prozeû per AP_TFAIL   */
 			/* verweigert.                              */
 			/* Namen der App zur ap_id <buf[4]> ermitteln   */
@@ -751,10 +812,10 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-		/* Wenn nur noch Programme laufen, die ignoriert        */
-		/* werden dÅrfen, hat das AES aber den Shutdown-Prozeû  */
-		/* schon abgebrochen. D.h. wir mÅssen diese Programme   */
-		/* entfernen und starten einen 2. Versuch.          */
+		/* Wenn nur noch Programme laufen, die ignoriert       */
+		/* werden dÅrfen, hat das AES aber den Shutdown-Prozeû */
+		/* schon abgebrochen. D.h. wir mÅssen diese Programme  */
+		/* entfernen und starten einen zweiten Versuch.        */
 		/* --------------------------------------------------- */
 
 		if (!buf[3])
@@ -776,8 +837,8 @@ int main(int argc, char *argv[])
 		remove_accs();
 
 /* beim Auflîsungswechsel nicht ausfÅhren
-		exec_pgm_path( "\\GEMSYS\\MAGIC\\STOP\\" );
-		shutdown_devices( "U:\\DEV\\" );
+		exec_pgm_path("\\GEMSYS\\MAGIC\\STOP\\");
+		shutdown_devices("U:\\DEV\\");
 */
 
 		/* Shutdown */

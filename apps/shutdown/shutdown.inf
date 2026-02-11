@@ -1,2 +1,14 @@
+# Default Configuration for SHUTDOWN (MagiC 3 and newer)
+# (c) Andreas Kromke 1995
+#
+# keywords:
+#
+#  timeout <time>   : maximum reaction time for "modern" programs
+#                     0: wait indefinitely
+#  ignore <prg>     : non-critical "old" pograms
+#  terminate <prg>  : special case for XCONTROL
+#
+
+timeout 10000
 ignore MGCLOCK
-terminate XCONTROL
+#terminate XCONTROL
