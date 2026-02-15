@@ -45,7 +45,6 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/apps/applicat/$lang/applicat.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/chgres/$lang/chgres.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/magxdesk.5/$lang/magxdesk.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
-	mcopy "$SRCDIR/apps/cmd/mcmd.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/mgcopy/$lang/mgcopy.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/mgedit/$lang/mgedit.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/mgnotice.2/$lang/mgnotice.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
@@ -98,6 +97,7 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/apps/applicat/applicat.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	
 	mcopy "$SRCDIR/apps/chgres/chgres.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/cmd/mcmd.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/magxdesk.5/magxdesk.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/magxdesk.5/rsc/*" "$BUILDROOT/$lang/GEMSYS/GEMDESK/RSC/"
 	

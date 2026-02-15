@@ -2,10 +2,12 @@
      INCLUDE "osbind.inc"
 
 
+ANZ_SUFFIX     EQU  6	; siehe unten!
+
 
 **********************************************************************
 *
-* CMD, letzte énderung 28.5.92
+* CMD, letzte énderung 28.5.92, dann 8.2.2026
 *
 * Switches:                   CMD.PRG
 *           KAOS              KCMD.PRG
@@ -30,8 +32,8 @@ SP_PARGV  EQU  PARGV-4
 SP_BATCH  EQU  BATCH-4
 
 
-                XREF    _StkSize
-                GLOBL	_stksize
+     XREF    _StkSize
+     GLOBL	_stksize
 
      OFFSET    0
 
@@ -56,9 +58,12 @@ attrplus       EQU       q_flag         * Bei ATTRIB
 s_flag:        DS.B      1              * Bei DIR
 attrminus      EQU       s_flag         * Bei ATTRIB
 
+language:      DS.B      1
+
+               EVEN
      IFEQ MAGIX
-etvcritic_alt: DS.L      1
-     ENDIF
+etvcritic_alt: DS.L      1			; unter TOS und KAOS verwenden wir einen eigenen etv_critic-Handler
+     ENDC
 
 config_alt:    DS.L      1
 
@@ -73,11 +78,11 @@ zeiger_adr     EQU       hid_sys_len    * Bei DIR
 
 jmp_env:       DS.L      4
 
- IFF      KAOS
-laststring:    DS.B      130            * UNDO- Puffer
-home_ypos:     DS.W      1              * FÅr Editor
- ENDC
- IF       ACC
+	IFF KAOS
+laststring:    DS.B      130            * UNDO- Puffer fÅr den Zeilen-Editor (nur TOS)
+home_ypos:     DS.W      1              * fÅr den Zeilen-Editor (nur TOS)
+	ENDC
+	IF ACC
 screenbuf:     DS.L      ZEILEN*20
 pnt_of_boot:   DS.L      1
 ap_id:         DS.W      1
@@ -97,8 +102,7 @@ addrout:       DS.L      1
 ev_mgpbuff:    DS.W      8
 alt_ssp:       DS.L      1
 evnt_ret:      DS.L      20        * oberste Langworte des ssp hier sichern
-     ENDC
-
+	ENDC
 
 stacktop:      DS.L      1
 
@@ -125,7 +129,7 @@ _stksize:       dc.l    _StkSize                * Stack size entry
 
 Start0:
 
- IFF      ACC
+	IFF ACC					; Wir laufen NICHT als .ACC
 
  movea.l  4(sp),a1
  move.l   #$100,d0                 ; ProgrammlÑnge + $100
@@ -146,207 +150,11 @@ Start0:
  xbios    Supexec
  addq.l   #6,sp
 
- ENDIF
+	ENDC
 
- IF       ACC
-
- INCLUDE  "aesbind.inc"
-
-ZEILEN    EQU  19                  * soviele Bildschirmzeilen retten
-
- move.l   a0,a1
- move.l   #$100,d0                 ; ProgrammlÑnge + $100
- add.l    $c(a1),d0
- add.l    $14(a1),d0
- add.l    $1c(a1),d0
- lea      -32(a1,d0.l),sp
- lea      d+stacktop(pc),a0
- move.l   sp,(a0)
-* ssp retten
- clr.l    -(sp)
- gemdos   Super
- addq.l   #6,sp
- move.l   sp,usp                   * USP restaurieren
- lea      d+alt_ssp(pc),a0
- move.l   d0,(a0)
- move.l   d0,sp                    * SSP restaurieren
- lea      d+c_sysbase(pc),a0
- move.l   _sysbase,a1
- move.l   a1,(a0)+                 * Zeiger auf Beginn des Betriebssystems
- move.l   phystop,(a0)
- andi.w   #$dfff,sr                * User mode
-
- move.w   os_version(a1),d1
- cmpi.w   #$0102,d1                * TOS - Version >= 1.2 ?
- bcs.b    tos_10
- move.l   os_run(a1),d0
- lea      _run(pc),a0
- move.l   d0,(a0)
-tos_10:
-* Default-Interrupt-SSP feststellen
- lea      intssp(pc),a0
- cmpi.w   #$0104,d1                * TOS - Version > 1.4 ?
- bhi.b    unknown
- andi.w   #6,d1
- move.w   0(a0,d1.w),(a0)          * ssp holen und in <intssp> merken
-unknown:
-
- lea      aespb(pc),a0
- lea      _base(pc),a1
- moveq    #6-1,d0
-ini_53:
- move.l   (a0),d1
- add.l    a1,d1
- move.l   d1,(a0)+
- dbra     d0,ini_53
-* noch leeres Environment anmelden (vorher haben ACCs kein Environment)
- lea      _base+$2c(pc),a0
- lea      d+environment(pc),a1
- move.l   a1,(a0)
- clr.b    (a1)+
- clr.b    (a1)
-
-** ap_id = appl_init();
-** if (ap_id < 0) Pterm0();
- M_appl_init
- bmi      exit
- lea      d+ap_id(pc),a0
- move.w   d0,(a0)
- lea      d+global+2(pc),a0        ; ap_count
- cmpi.w   #1,(a0)
- lea      d+isxaes(pc),a0
- shi.b    (a0)                     ; merken, wenn XAES
-
-** menu_id=menu_register(gl_apid,"  CMD");
-** if     (menu_id == -1) Pterm0();
- lea      d+intin(pc),a0
- move.w   d0,(a0)
- lea      d+addrin(pc),a0
- lea      pgmname(pc),a1
- move.l   a1,(a0)
- M_menu_register
- bmi      exit
- lea      d+menu_id(pc),a0
- move.w   d0,(a0)
-
-** wind_get(0, WF_WORKXYWH, &xdesk, &ydesk, &wdesk, &hdesk);
- lea      d+intin(pc),a0
- move.l   #$00000004,(a0)
- M_wind_get
- bmi      exit
- lea      d+intout+2(pc),a0
- lea      d+xdesk(pc),a1
- move.l   (a0)+,(a1)+
- move.l   (a0),(a1)
-
-* Zeiger auf Ur- Prozeû merken
- move.b   d+isxaes(pc),d0
- bne.b    ini_xaes_nopd
- move.l   _run(pc),a0
- move.l   (a0),d0
-ini_parent:
- move.l   d0,a0
- adda.w   #$24,a0
- move.l   (a0),d0                  * Elter- Prozeû
- bne.b    ini_parent
- lea      d+pnt_of_boot(pc),a1
- move.l   a0,(a1)
-ini_xaes_nopd:
-
-again:
- move.l   d+stacktop(pc),sp
-* ssp und usp rÅcksetzen
- clr.l    -(sp)
- gemdos   Super
- addq.l   #6,sp
- move.l   sp,usp                   * USP restaurieren
- move.l   d+alt_ssp(pc),sp         * SSP restaurieren
- andi.w   #$dfff,sr                * User mode
-
-* Prozeû umschalten (vor den Ur- PD einhÑngen), wenn nicht XAES
- move.b   d+isxaes(pc),d0
- bne.b    ini_isxaes
- move.l   d+pnt_of_boot(pc),a0
- lea      _base(pc),a1
- move.l   a1,(a0)                  * ACC als Elter des Ur- PD anmelden
-ini_isxaes:
-
-** evnt_mesag(ev_mgpbuff);
-ini_waitmesag:
- lea      d+addrin(pc),a0
- lea      d+ev_mgpbuff(pc),a1
- move.l   a1,(a0)
- M_evnt_mesag
- move.w   d+ev_mgpbuff(pc),d0
- cmpi.w   #AC_OPEN,d0
- bne.b    ini_waitmesag
-
-* Die folgenden Befehle klappen nicht unter Atari- MistGEM
-* move.w   d+menu_id(pc),d0
-* cmp.w    d+ev_mgpbuff+3*2(pc),d0
-* bne.b    init_waitmesag
-
-* Die Nachricht ist angekommen, daû wir aufgerufen werden.
-
-* Oberste Interrupt- Stack- Werte retten
-* (AES - Fehler korrigieren)
- move.b   d+isxaes(pc),d0
- bne.b    ini_isxaes2
- move.w   intssp(pc),a1
- moveq    #20-1,d0
- lea      d+evnt_ret(pc),a0
-ini_stkrett:
- move.l   -(a1),(a0)+
- dbra     d0,ini_stkrett
-
-* Wir melden uns als aktuellen Prozeû an.
- move.l   d+pnt_of_boot(pc),a0
- clr.l    (a0)                     * als Elter des Ur-PD abmelden
- move.l   _run(pc),a0
- lea      _base+$24(pc),a1
- move.l   (a0),(a1)                * Hauptapp als unser Elter
- lea      _base(pc),a1
- move.l   a1,(a0)                  * Wir als aktueller Prozeû
-ini_isxaes2:
-
-* Mauszeiger abschalten
- DC.W     A_HIDE_MOUSE
-
-** wind_update(TRUE);
- lea      d+intin(pc),a0
- move.w   #1,(a0)
- M_wind_update
- beq      again
-
-** whdl = wind_create(0,xdesk,ydesk,wdesk,hdesk);
-** if   (whdl < 0) goto err;
- lea      d+intin(pc),a0
- clr.w    (a0)+
- move.l   d+xdesk(pc),(a0)+
- move.l   d+wdesk(pc),(a0)+
- M_wind_create
- bmi      err
- lea      d+whdl(pc),a0
- move.w   d0,(a0)
-
-** wind_open(whdl,xdesk,ydesk,wdesk,hdesk);
- lea      d+intin(pc),a0
- move.w   d0,(a0)+
- move.l   d+xdesk(pc),(a0)+
- move.l   d+wdesk(pc),(a0)+
- M_wind_open
- bmi      err1
-
-* Bildschirmspeicher (MenÅleiste) sichern
- xbios    Physbase
- addq.l   #2,sp
- move.l   d0,a0
- lea      d+screenbuf(pc),a1
- move.w   #ZEILEN*20-1,d0
-ini_52:
- move.l   (a0)+,(a1)+
- dbra     d0,ini_52
- ENDIF
+	IF ACC					; Wir laufen als .ACC
+ INCLUDE "acc_init.s"
+	ENDC
 
 * DOS- Vektoren auf CMD lenken
 
@@ -366,14 +174,14 @@ ini_52:
  addq.l   #8,sp
 no_kaos:
 
-     IFEQ MAGIX
+	IFEQ MAGIX				; Wir laufen NICHT unter MagiC: aktiviere unseren etc-critic-Handler
  pea      etv_critic_neu(pc)
  move.w   #$101,-(sp)    * etv_critic
  bios     Setexc
  addq.l   #8,sp
  lea      d+etvcritic_alt(pc),a0
  move.l   d0,(a0)
-     ENDIF
+	ENDC
 
  pea      etv_term_neu(pc)
  move.w   #$102,-(sp)    * etv_term
@@ -389,42 +197,45 @@ no_kaos:
 * von TC gestartet, Befehl "sh" ignorieren
  clr.b    (a5)
 not_from_tc:
- IF       ACC
+	IF ACC
  clr.b    (a5)
- ENDIF
+	ENDC
  move.b   (a5)+,d7
  ext.w    d7                       * LÑnge der Kommandozeile
  clr.b    0(a5,d7.w)               * Kommandozeile mit EOS abschlieûen
 
- IFF      ACC
-* Environment- Behandlung
+	IFF ACC					; Wir laufen NICHT als .ACC
+
+* Environment-Behandlung
  lea      _base+$2c(pc),a2
- move.l   (a2),a0                  * Zeiger auf Environment- String
+ move.l   (a2),a0                  * Zeiger auf altes Environment
  lea      d+environment(pc),a1
  move.l   a1,(a2)                  * Zeiger in Basepage auf neues Environment setzen
- move.l a0,d0
- beq.s ini_22
+ move.l   a0,d0				* altes Environment NULL (unwahrscheinlich)?
+ beq.s	ini_22				* ja, nix kopieren
 * Environment kopieren
  move.w   #env_ende-environment-2,d1
 ini_23:
  move.b   (a0)+,(a1)+
  dbeq     d1,ini_23
+ bne.s    ini_22
  tst.b    (a0)
- beq.b    ini_22
- tst.w    d1
- bhi.b    ini_23
+ beq.s    ini_22
+ subq.w   #1,d1
+ bcc.s    ini_23
 ini_22:
  clr.b    (a1)+                    * Kopie mit zwei Nullbytes abschlieûen
  clr.b    (a1)
- ENDIF
+
+	ENDC					; IFF ACC
 
 * Maus aus, Cursor ein, Bildschirm lîschen, Titelmeldung
 
  bsr      cursor                   * Cursor ein/Maus aus
 
      IFEQ BOOT
- bsr      cls_com
-     ENDIF
+ bsr      cls_com				; Bildschirm lîschen und VT52 initialisieren
+     ENDC
 
  lea      titels(pc),a0            * Titelmeldung
  bsr      strcon
@@ -432,19 +243,21 @@ ini_22:
 * AUTOEXEC.BAT, BOOT.BAT oder Kommandozeile ausfÅhren
  tst.w    d7                       * LÑnge der Kommandozeile
  bne.b    ini_setjmp               ; Kommandozeile existiert
- IF       ACC
+
+	IF ACC
  lea      acc_init(pc),a0
  tst.w    (a0)                     ; AUTOEXEC schon einmal ausgefÅhrt ?
  bne.b    ini_nocmd                ; ja, nichts tun
  st       (a0)
- ENDC
+	ENDC
+
  lea      autoexec1s(pc),a5
- IFF      ACC
+	IFF ACC
  DC.W     A_INIT
  tst.l    8(a0)                    * GEM initialisiert ?
  bne.b    ini_srchauto
  lea      bootbats(pc),a5          * GEM nicht init., also "boot.bat"
- ENDC
+	ENDC
 ini_srchauto:
  clr.w    d0
  move.l   a5,a0
@@ -479,22 +292,27 @@ ini_mainloop:
 
 
 
- IFF      ACC
 * void get_sysvars
 *  MUû IM SUPERVISOR-MODUS AUSGEFöHRT WERDEN
 *
-
 get_sysvars:
  lea      d+c_sysbase(pc),a0
- move.l   _sysbase,(a0)+           * Zeiger auf Beginn des Betriebssystems
+ move.l   _sysbase,a1
+ move.l   os_base(a1),a1
+ move.b   os_palmode+1(a1),d0
+ lsr.b    #1,d0
+ move.b   d0,language-c_sysbase(a0)
+ move.l   a1,(a0)+           * Zeiger auf Beginn des Betriebssystems
+ IF c_phystop-c_sysbase!=4
+ ERROR "wrong offset for c_phystop"
+ ENDC
  move.l   phystop,(a0)
  rts
- ENDC
 
 
 * AES Handler fÅr den Betrieb als Accessory
 
- IF       ACC
+	IF ACC
 _aes:
  lea      d+control(pc),a0
  clr.l    (a0)
@@ -508,10 +326,10 @@ _aes:
  trap     #2
  move.w   d+intout(pc),d0
  rts
- ENDC
+	ENDC
 
 
-* Alle etv- Vektoren wieder zurÅcksetzen und exit()
+* Alle etv-Vektoren wieder zurÅcksetzen und exit()
 
 restore_etv:
  move.l   d+config_alt(pc),-(sp)
@@ -519,79 +337,24 @@ restore_etv:
  gemdos   Sconfig
  addq.l   #8,sp
 
-     IFEQ MAGIX
+     IFEQ MAGIX				; Wir laufen NICHT mit MagiC
  move.l   d+etvcritic_alt(pc),-(sp)
  move.w   #$101,-(sp)              * etv_critic
  bios     Setexc
  addq.l   #8,sp
-     ENDIF
+     ENDC
 
  move.l   etv_term_neu-4(pc),-(sp)
  move.w   #$102,-(sp)
  bios     Setexc                   * etv_term
  addq.l   #8,sp
 exit:
- IF       ACC
-* Zuallererst Cursor ausschalten
- clr.w    -(sp)
- xbios    Cursconf
- addq.l   #4,sp
-* Oberste Interrupt- Stack- Werte rÅcksetzen
-* (AES - Fehler korrigieren)
- move.b   d+isxaes(pc),d0
- bne.b    ini_isxaes3
- move.w   intssp(pc),a1
- moveq    #20-1,d0
- lea      d+evnt_ret(pc),a0
-ini_menurett:
- move.l   (a0)+,-(a1)
- dbra     d0,ini_menurett
-* Bildschirmspeicher (MenÅleiste) restaurieren
-ini_isxaes3:
-err3:
- xbios    Physbase
- addq.l   #2,sp
- move.l   d0,a0
- lea      d+screenbuf(pc),a1
- move.w   #ZEILEN*20-1,d0
-ini_menurst:
- move.l   (a1)+,(a0)+
- dbra     d0,ini_menurst
+	IF ACC					; Wir laufen als .ACC
+ INCLUDE "acc_exit.s"
+	ENDC
 
-
-** wind_close(whdl);
-err2:
- lea      d+intin(pc),a0
- move.w   d+whdl(pc),(a0)
- M_wind_close
-
-** wind_delete(whdl);
-err1:
- lea      d+intin(pc),a0
- move.w   d+whdl(pc),(a0)
- M_wind_delete
-
-** wind_update(FALSE);
-err:
- lea      d+intin(pc),a0
- clr.w    (a0)
- M_wind_update
-
-* Maus einschalten
- bsr      mouse
-
-* Wir melden uns als aktueller Prozeû wieder ab
- move.b   d+isxaes(pc),d0
- bne.b    ini_isxaes4
- move.l   _run(pc),a0
- lea      _base+$24(pc),a1
- move.l   (a1),(a0)                * Hauptapp als aktueller Prozeû
- clr.l    (a1)                     * kein Elter
-ini_isxaes4:
- bra      again
- ENDC
- IFF      ACC
- IFF      BOOT
+	IFF ACC
+	IFF BOOT
  bsr      mouse
  clr.w    -(sp)
  move.b   is_kaos(pc),d0
@@ -599,11 +362,11 @@ ini_isxaes4:
  move.w   #EBREAK,(sp)             ; fÅr MagiX Bildschirm aufrÑumen
 ini_exnk:
  gemdos   Pterm
- ENDC
- IF       BOOT
+	ENDC
+	IF BOOT
  gemdos   Pterm0
- ENDC
- ENDC
+	ENDC
+	ENDC
 
 * void setjmp()
 *  Setzt die RÅcksprungadresse fÅr alle Unterbrechungen und
@@ -625,6 +388,7 @@ setjmp:
  bsr      memavail
  bsr      lwrite_long
  lea      bytes_free_s(pc),a0
+ bsr      get_country_str
  bra      strstdout
 
 
@@ -861,19 +625,19 @@ write_long:
  move.w   d1,d7                    * len
  move.b   d2,d6                    * leader
  lea      -STRBUFSIZE(a6),a0
- bsr      long_to_str
- sub.w    d0,d7                    * d0 ist tatsÑchliche LÑnge
- ble.s    wl_nofill
- tst.b    d6
- beq.s    wl_nofill
- move.l   a0,-(a7)
+ bsr      long_to_str			; gibt d0 und a0 zurÅck
+ sub.w    d0,d7                    * d0 ist tatsÑchliche LÑnge, a0 der Anfang
+ ble.s    wl_nofill				; alles belegt, nicht auffÅllen
+ tst.b    d6					; Åberhaupt auffÅllen?
+ beq.s    wl_nofill				; nein
+ move.l   a0,-(sp)
  bra.b    wl_put
 wl_loop:
  move.b   d6,d0
  bsr      putchar
 wl_put:
  dbra     d7,wl_loop
- move.l   (a7)+,a0
+ move.l   (sp)+,a0
 wl_nofill:
  bsr      strstdout                * Zahl ausgeben
  movem.l  (sp)+,d6/d7
@@ -881,73 +645,99 @@ wl_nofill:
  rts
 
 
-* int long_to_str(d0 = unsigned long zahl, a0 = char string[])
-*  Rechnet eine Zahl dezimal in einen String um, dessen LÑnge zurÅckgegeben
-*  wird.
-
+*
+* d0/a0 = long_to_str(d0 = unsigned long zahl, a0 = char string[])
+*  Wandelt eine Zahl dezimal in eine Zeichenkette um.
+* In d0 wird die LÑnge zurÅckgegeben.
+* In a0 wird der Zeiger auf das erste Zeichen zurÅckgegeben.
+*
+* d0,d1,d2,a0,a1 werden zerstîrt.
+*
 long_to_str:
- lea      STRBUFSIZE(a0),a1
- clr.b    -(a1)
- move.l   a1,a0
+ lea		STRBUFSIZE(a0),a1	; wir fangen rechts an ...
+ clr.b	-(a1)			; ... und schreiben erstmal das Null-Byte
+ move.l	a1,a0
 lts_loop:
- bsr      _uldiv10
- tst.l    d0
- bne.s    lts_loop
- suba.l   a0,a1          * Stringanfang abziehen
- move.l   a1,d0          * StringlÑnge zurÅckgeben
+ bsr		_uldiv10		; niedrigstwertige Dezimalziffer nach -(a0)
+ tst.l	d0			; verbleibender Quotient?
+ bne.s	lts_loop		; ja, weitere Ziffern folgen
+ suba.l   a0,a1         ; Zeichenketten-Anfang abziehen
+ move.l   a1,d0         ; ZeichenkettenlÑnge zurÅckgeben
  rts
 
 
-_uldiv10:
-	move.l	d0,d2
-	swap	d2
-	tst.w	d2
-	bne.s	_uldiv1
-	divu	#10,d0
-	swap	d0
-	add.b   #'0',d0
-	move.b  d0,-(a0)
-	clr.w	d0
-	swap	d0
-	rts
-_uldiv1:
-	clr.w	d0
-	swap	d0
-	swap	d2
-	divu	#10,d0
-	move.w	d0,d1
-	move.w	d2,d0
-	divu	#10,d0
-	swap	d0
-	add.b   #'0',d0
-	move.b  d0,-(a0)
-	move.w	d1,d0
-	swap	d0
-	rts
+*
+* Teile d0.l durch 10 und wandle den Divisionsrest in eine
+* Dezimalziffer um, die nach -(a0) geschrieben wird.
+* Gib den Quotienten in d0.l zurÅck.
+* d1 und d2 werden zerstîrt, a0 um 1 verringert.
+*
 
+*
+* Der Befehl "divu" des 68000 teilt 32 Bit durch 16 Bit, aber
+* Quotient und Rest dÅrfen nur je 16 Bit groû sein.
+* Teile ich 1048576 durch 10, dann ist das 104857 mit Rest 6,
+* d.h. der Quotient ist 0x19999 und paût nicht in 16 Bit.
+*
+* TODO: Statt die oberen 16 Bit des Dividenden abfragen, also
+*       dividend > 65535, dann besser abfragen, ob
+*       dividend > 655350
+*
+_uldiv10:
+ move.l	d0,d2
+ swap	d2
+ tst.w	d2			; obere 16 Bit
+ bne.s	_uldiv1		; sind ungleich Null, komplizierte Methode
+ divu	#10,d0		; Durch 10 teilen
+ swap	d0			; Rest in den unteren 16 Bit
+ add.b	#'0',d0		; in Dezimalziffer wandeln
+ move.b	d0,-(a0)	; Ziffer abspeichern
+ clr.w	d0
+ swap	d0			; d0.l = Quotient
+ rts
+_uldiv1:
+ clr.w	d0
+ swap	d0
+ swap	d2
+ divu	#10,d0
+ move.w	d0,d1
+ move.w	d2,d0
+ divu	#10,d0
+ swap	d0
+ add.b	#'0',d0
+ move.b	d0,-(a0)
+ move.w	d1,d0
+ swap	d0
+ rts
+
+*
+* d0 = d0 * d1
+* Zerstîrt d0/d2
+*
 _ulmul:
-	move.l	d0,d2
-	swap	d2
-	tst.w	d2
-	bne.s	_ulmul2
-	move.l	d1,d2
-	swap	d2
-	tst.w	d2
-	bne.s	_ulmul1
-	mulu	d1,d0
-	rts
+ move.l	d0,d2
+ swap	d2
+ tst.w	d2
+ bne.s	_ulmul2
+ move.l	d1,d2
+ swap	d2
+ tst.w	d2
+ bne.s	_ulmul1
+ mulu	d1,d0
+ rts
 _ulmul1:
-	mulu	d0,d2
-	swap	d2
-	mulu	d1,d0
-	add.l	d2,d0
-	rts
+ mulu	d0,d2
+ swap	d2
+ mulu	d1,d0
+ add.l	d2,d0
+ rts
 _ulmul2:
-	mulu	d1,d2
-	swap	d2
-	mulu	d1,d0
-	add.l	d2,d0
-	rts
+ mulu	d1,d2
+ swap	d2
+ mulu	d1,d0
+ add.l	d2,d0
+ rts
+
 
 * char *skip_sep(a0 = string)
 * a0 = char *string;
@@ -1173,7 +963,7 @@ ustr100:
 *  sonst: Fehlermeldung und Erhîhung des errorlevel, RÅckgabe -1
 *  Falls alles ok:
 *  PrÅft, ob die Diskette des in <path> spezifizierten Laufwerks
-*  gewechselt wurde und veranlaût, wenn ja, GEMDOS zur Neuinitialisierung
+*  gewechselt wurde, und veranlaût, wenn ja, GEMDOS zur Neuinitialisierung
 *  seiner internen Pfadpuffer.
 
 isdrive:
@@ -1321,6 +1111,7 @@ std_end:
  rts
 
 
+*
 * void fatal(d0 = errno)
 * int errno;
 *  Falls <errno> < 0, wird der Fehlercode ausgedruckt und CMD
@@ -1335,67 +1126,11 @@ fat_end:
  rts
 
 
+*
 * void print_err(d0 = errno)
 * int errno;
-*  Schreibt den zum DOS- Fehlercode <errno> gehîrenden Fehlerstring nach CON:
-
-*    DATA
-errcodes: DC.B  -1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-13,-14,-15,-16,-17
-          DC.B  -32,-33,-34,-35,-36,-37,-39,-40,-46,-48,-49,-64,-65,-66
-          DC.B  -67,-69,0
-
-     EVEN
-errstrs:
-*                BIOS- Fehler
- DC.W     err_1s-errstrs,err_02s-errstrs,err_03s-errstrs
- DC.W    err_04s-errstrs,err_05s-errstrs,err_06s-errstrs
- DC.W    err_07s-errstrs,err_08s-errstrs,err_09s-errstrs
- DC.W    err_10s-errstrs,err_11s-errstrs
- DC.W    err_13s-errstrs,err_14s-errstrs,err_15s-errstrs
- DC.W    err_16s-errstrs,err_17s-errstrs
-*                GEMDOS- Fehler
- DC.W    err_32s-errstrs,err_33s-errstrs,err_34s-errstrs
- DC.W    err_35s-errstrs,err_36s-errstrs,err_37s-errstrs
- DC.W    err_39s-errstrs,err_40s-errstrs,err_46s-errstrs,err_48s-errstrs
- DC.W    err_49s-errstrs,err_64s-errstrs,err_65s-errstrs
- DC.W    err_66s-errstrs,err_67s-errstrs,err_69s-errstrs
-
-err_1s:  DC.B  'Allgemeiner Fehler',0
-err_02s: DC.B  'Laufwerk nicht bereit',0
-err_03s: DC.B  'Unbekanntes Kommando',0
-err_04s: DC.B  'CRC- Fehler',0
-err_05s: DC.B  'Kommando falsch',0
-err_06s: DC.B  'Spur nicht gefunden',0
-err_07s: DC.B  'Unbekanntes Medium',0
-err_08s: DC.B  'Sektor nicht gefunden',0
-err_09s: DC.B  'Kein Papier',0
-err_10s: DC.B  'Schreibfehler',0
-err_11s: DC.B  'Lesefehler',0
-err_13s: DC.B  'Disk schreibgeschÅtzt',0
-err_14s: DC.B  'Unerlaubter Diskwechsel',0
-err_15s: DC.B  'Unbekanntes GerÑt',0
-err_16s: DC.B  'Defekte Sektoren',0
-err_17s: DC.B  'Andere Disk einlegen!',0
-
-err_32s: DC.B  'UngÅltige Funktionsnummer',0
-err_33s: DC.B  'Datei nicht gefunden',0
-err_34s: DC.B  'Pfad nicht gefunden',0
-err_35s: DC.B  'Zuviele geîffnete Dateien',0
-err_36s: DC.B  'Zugriff unmîglich',0
-err_37s: DC.B  'UngÅltiges Handle',0
-err_39s: DC.B  'Zuwenig Speicher',0
-err_40s: DC.B  'UngÅltiger Speicherblock',0
-err_46s: DC.B  'UngÅltiges Laufwerk',0
-err_48s: DC.B  'Nicht dasselbe Laufwerk',0
-err_49s: DC.B  'Keine weiteren Dateien',0
-err_64s: DC.B  'Falscher Bereich',0
-err_65s: DC.B  'Interner Fehler',0
-err_66s: DC.B  'Datei nicht ausfÅhrbar',0
-err_67s: DC.B  'Mshrink- Fehler',0
-err_69s: DC.B  '68000 Exception',0           * KAOS
-toserrs: DC.B  'TOS Fehler',0
-*    TEXT
-     EVEN
+*  Schreibt den zum DOS- Fehlercode <errno> gehîrenden Fehlertext nach CON:
+*
 
 print_err:
  lea      errcodes(pc),a0
@@ -1413,10 +1148,11 @@ pre_print:
  rts
 
 
+*
 * int crprint_err(d0 = int errcode)
 *  wie print_err, gibt vorher und nachher cr/lf nach CON
 *  Gibt Fehlercode wieder in d0 zurÅck
-
+*
 crprint_err:
  move.w   d0,-(sp)
  bsr      crlf_con
@@ -1449,11 +1185,11 @@ checkpath:
  addq.w   #1,d0          * korrekte Laufwerksnummer wie "x:" ?
  bge.b    chp_end        * ja => return(>0), Fehler => return(0)
 
- IFF      KAOS
+	IFF KAOS
  move.l   a5,a0
  bsr      str_to_drive   * Diskwechsel prÅfen
  bmi.b    chp_end        * Fehler => return(<0)
- ENDC
+	ENDC
 
  move.l   a5,a0
  bsr      strlen
@@ -1487,6 +1223,7 @@ chp_end:
  rts
 
 
+*
 * int split_path(a0 = string1, a1 = string2, a2 = string3)
 *  strcpy(string3,string1)
 *  strcpy(string2,string1)
@@ -1509,7 +1246,7 @@ chp_end:
 *                                     return(1)
 *                            2. Fall: string1 ist korrekte Datei
 *                                     goto LABEL
-
+*
 split_path:
  movem.l  d7/a3/a4/a5,-(sp)
  movea.l  a0,a3
@@ -1588,8 +1325,10 @@ splp_20:
  movem.l   (sp)+,d7/a3/a4/a5
  rts
 
-* Erst Cursor aus-, dann Mauszeiger einschalten
 
+*
+* Erst Cursor aus-, dann Mauszeiger einschalten
+*
 mouse:
      IFEQ BOOT
  clr.w    -(sp)
@@ -1602,34 +1341,32 @@ mouse:
  clr.w    (a1)                     ; intin[0] = 0
  DC.W     A_SHOW_MOUSE
 mo_no:
-     ENDIF
+     ENDC
  rts
 
-* Erst Mauszeiger aus-, dann Cursor einschalten
 
+*
+* Erst Mauszeiger aus-, dann Cursor einschalten
+*
 cursor:
      IFEQ BOOT
  DC.W     A_HIDE_MOUSE
  move.w   #1,-(sp)
  xbios    Cursconf
  addq.l   #4,sp
-     ENDIF
+     ENDC
  rts
 
-
-*    DATA
-clss:  DC.B  ESC,'E',ESC,'v',ESC,'q',0    * Csr/CLS/WRAP/Normal
-*    TEXT
-     EVEN
 
 cls_com:
  lea      clss(pc),a0
 
 
+*
 * void strcon(string)
 * a0 = char *string;
-*  gibt einen String an die Konsole CON:
-
+*  gibt eine Zeichenkette an die Konsole CON:
+*
 strcon:
  move.l   a5,-(sp)
  move.l   a0,a5                    * string in a5[]
@@ -1643,17 +1380,19 @@ strc_end:
  rts
 
 
+*
 * void crlf_con()
-
+*
 crlf_con:
  moveq    #CR,d0
  bsr.b    putch
  moveq    #LF,d0
 
 
+*
 * void putch()
 *  Druckt das Zeichen in d0 nach Device 2 (CON)
-
+*
 putch:
  move.w   d0,-(sp)
  move.w   #2,-(sp)
@@ -1662,17 +1401,19 @@ putch:
  rts
 
 
+*
 * void crlf_stdout()
-
+*
 crlf_stdout:
  moveq    #CR,d0
  bsr.b    putchar
  moveq    #LF,d0
 
 
+*
 * long putchar()
 *  Druckt das Zeichen in d0 nach stdout
-
+*
 putchar:
  move.w   d0,-(sp)
  lea      1(sp),a0
@@ -1683,11 +1424,12 @@ putchar:
  rts
 
 
+*
 * void strstdout(a0 = string)
 * a0 = char *string;
 *  Ersatz fÅr fehlerhafte Funktion gemdos Cconws(), deren Ausgabe man nicht
 *  auf den Drucker lenken kann.
-
+*
 strstdout:
  move.l   a0,-(sp)                 * string retten
  bsr      strlen
@@ -1704,37 +1446,23 @@ strstdout:
 *                        Wiederh. $10000
 *                        Ignor.   0
 
-*         DATA
-change_s:     DC.B     'Bitte Disk '
-change_s_dr:  DC.B     'X: in Laufwerk A: einlegen!',0
-diskerr_s:    DC.B     '  auf Laufwerk '
-diskerr_s_dr: DC.B  'X:',$d,$a
-           DC.B  '[A]bbruch, [W]iederholen, [I]gnorieren ?',0
-*         TEXT
-          EVEN
-
 etv_critic_neu:
- lea      drive_to_letter(pc),a0
- move.w   6(sp),d0                 * Laufwerknummer
- move.b   0(a0,d0.w),d0
- lea      diskerr_s(pc),a0
- lea      change_s(pc),a1
- move.b   d0,diskerr_s_dr-diskerr_s(a0)
- move.b   d0,change_s_dr-change_s(a1)
  bsr      crlf_con
  lea      change_s(pc),a0
- cmpi.w   #EOTHER,4(sp)
- beq.b    etc_4
  move.w   4(sp),d0                 * Fehlercode
+ cmpi.w   #EOTHER,d0
+ beq.s    etc_4
  bsr      print_err
  lea      diskerr_s(pc),a0
 etc_4:
- bsr      strcon
+ move.w   6(sp),d0                 * Laufwerknummer
+ lea      strcon(pc),a1
+ bsr      print_with_driveletter
 etc_getkey:
  move.w   #2,-(sp)
  bios     Bconin
  addq.l   #4,sp
- cmpi.b   #3,d0
+ cmpi.b   #3,d0				* ^C
  bne.b    etc_nobreak
  move.w   #EBREAK,-(sp)
  gemdos   Pterm
@@ -1743,23 +1471,28 @@ etc_nobreak:
  cmpi.w   #EOTHER,4(sp)
  beq.b    etc_6
  bsr      d0_upper
- cmpi.b   #'A',d0   * Abbruch
+ cmpi.b   #'A',d0   			* A: "Abbruch" oder "Abort"
  bne.b    etc_2
+	* Abort
  move.w   4(sp),d1
  ext.l    d1
  bra.b    etc_11
 etc_6:
  move.b   #' ',d0
- bra.b    etc_5
+ bra.b    etc_retry
 etc_2:
+ cmpi.b	#'R',d0
+ beq.b	etc_retry				* R: "Retry"
  cmpi.b   #'W',d0   * Wiederh.
  bne.b    etc_3
-etc_5:
+ 	* Retry
+etc_retry:
  move.l   #$10000,d1
  bra.b    etc_11
 etc_3:
- cmpi.b   #'I',d0   * Ignor.
+ cmpi.b   #'I',d0			* I: "Ignore" oder "Ignorieren"
  bne.b    etc_getkey
+ 	* Ignore
  clr.l    d1
 etc_11:
  move.l   d1,-(sp)  * RÅckgabewert auf Stapel retten
@@ -1770,12 +1503,12 @@ etc_11:
  bsr      crlf_con
  move.l   (sp)+,d0  * RÅckgabewert von Stapel
  rts
-     ENDIF
+     ENDC
 
 
 * d0 = char *getenv(a0 = char *string)
 *  PrÅft, ob die Variable <string> im environment existiert
-*  RÅckgabe: Zeiger auf den WERT der Variablen (im Env.) oder NULL
+*  RÅckgabe: d0 = Zeiger auf den WERT der Variablen (im Env.) oder NULL
 *  RÅckgabe: a0 = Zeiger auf die Variable selbst
 *  Z-Flag korrekt beeinfluût
 
@@ -1816,16 +1549,12 @@ getenv_end:
  rts
 
 
+*
 * int env_set(a0 = char *zuweisung)
 *  Setzt eine Variable im Environment. RÅckgabe: 0 = OK
 *                                                1 = Syntaxfehler
 *                                                2 = Environment voll
-
-*    DATA
-out_of_envs:   DC.B  $d,$a,'Environment voll',$d,$a,0
-*    TEXT
-     EVEN
-
+*
 env_set:
  movem.l  d7/a5/a4,-(sp)
  move.l   a0,a5
@@ -1879,6 +1608,7 @@ envset_14:
  cmp.l    a0,d0
  ble.b    envset_12
  lea      out_of_envs(pc),a0
+ bsr      get_country_str
  bsr      strcon
  moveq    #2,d0       * Environment ist voll
  bra.b    envset_end
@@ -1896,11 +1626,9 @@ envset_end:
  rts
 
 
-*    DATA
-syntaxfehlers: DC.B  $d,$a,'Syntax: SET [var=[wert]]',$d,$a,0
-*    TEXT
-     EVEN
-
+*
+*
+*
 set_com:
  subq.w   #2,SP_ARGC(sp)
  bge.b    setcom_4
@@ -1929,6 +1657,7 @@ setcom_4:
  subq.w   #2,d0
  beq.b    setcom_5
  lea      syntaxfehlers(pc),a0
+ bsr      get_country_str
  bsr      strcon
 setcom_5:
  bsr      inc_errlv
@@ -2028,24 +1757,13 @@ dtd_end:
 
 * void label_to_stdout(d0 = int nr)
 *  Gibt den Diskettennamen, falls vorhanden, nach stdout
-
-*    DATA
-disk_in_lw_s:    DC.B  $d,$a,' Disk in Laufwerk '
-disk_in_lw_s_dr: DC.B  'A ',0
-keinname_s:      DC.B  'hat keinen Namen',0
-ist_s:           DC.B  'ist ',0
-*    TEXT
-     EVEN
-
+*
 label_to_stdout:
  link     a6,#-$30
  lea      croots(pc),a1
- lea      drive_to_letter(pc),a0
- move.b   0(a0,d0.w),d0
- move.b   d0,(a1)
  lea      disk_in_lw_s(pc),a0
- move.b   (a1),disk_in_lw_s_dr-disk_in_lw_s(a0)
- bsr      strstdout                * a0[] ausdrucken
+ lea      strstdout(pc),a1         * a0[] ausdrucken
+ bsr      print_with_driveletter
 
  lea      -$2c(a6),a1              * DTA
  moveq    #8,d0                    * Suchen nach "Volume"
@@ -2053,8 +1771,11 @@ label_to_stdout:
  bsr      sfirst
 
  lea      keinname_s(pc),a0
+ bsr      get_country_str
+ tst.l    d0
  bne.b    lts_print
  lea      ist_s(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  lea      -$e(a6),a0
 lts_print:
@@ -2087,25 +1808,6 @@ isoo_end:
 
 
 * void prompt_to_con( void )
-
-*    DATA
-prompt_zeichen:
- DC.B     p_unterstr-p_t,'_'
- DC.B     p_b-p_t,'b'
- DC.B     p_d-p_t,'d'
- DC.B     p_e-p_t,'e'
- DC.B     p_g-p_t,'g'
- DC.B     p_h-p_t,'h'
- DC.B     p_l-p_t,'l'
- DC.B     p_n-p_t,'n'
- DC.B     p_p-p_t,'p'
- DC.B     p_q-p_t,'q'
- DC.B     p_t-p_t,'t'
- DC.B     p_d7next-p_t,0
-
-def_prompt: DC.B    '$n$g',0       * Default- Prompt
-     EVEN
-*    TEXT
 
 STRING    SET  -250
 
@@ -2277,7 +1979,7 @@ STRING    SET   -8
 
 *void print_attr(d0 = char attr)
 * Rechnet Attribut in vierstelligen String um (RSHA) und schreibt nach stdout
-* Dahinter werden 2 Leerstellen geschrieben
+* Dahinter werden zwei Leerstellen geschrieben
 
 print_attr:
  link     a6,#STRING
@@ -2336,6 +2038,7 @@ attr:
  bge.b    attr_10
  bsr      print_err
  lea      auf_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bra.b    attr_20
 attr_10:
@@ -2350,11 +2053,9 @@ attr_99:
  rts
 
 
-*    DATA
-syntaxattrs:  DC.B  'Syntax: ATTRIB [[+|-]{rash}] datei(en)',CR,LF,0
-*    TEXT
-     EVEN
-
+*
+*
+*
 attrib_com:
  move.l   a5,-(sp)
  bsr      crlf_con
@@ -2405,6 +2106,7 @@ atcom_20:
  move.l   a5,a0
  bsr      strcon
  lea      not_founds(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
 atcom_21:
@@ -2416,6 +2118,7 @@ atcom_21:
  bra.b    atcom_end
 atcom_50:
  lea      syntaxattrs(pc),a0
+ bsr      get_country_str
  bsr      strcon              * Fehlermeldung ausgeben und Ende
  bsr      inc_errlv
 atcom_end:
@@ -2499,12 +2202,7 @@ search_whole_tree:
 *  <is_ck> wie oben.
 *  global: a5 (Pfad), a7 (is_ck)
 *  Jeder Aufruf schreibt 48 Bytes auf den Stapel
-
-*    DATA
-pfadzutiefs: DC.B  $d,$a,'Pfad zu tief',$d,$a,0
-pfads:       DC.B  $d,$a,'Pfad: ',0
-*    TEXT
-     EVEN
+*
 
 DTA       SET  -44                 * char DTA[44]
 
@@ -2525,6 +2223,7 @@ srcht_11:
  tst.w    d7                       * d7 = 0 => nur "tree"s ausgeben
  beq.b    srcht_3
  lea      pfads(pc),a0             * Vollen Pfadnamen angeben (ck_com())
+ bsr      get_country_str
  bsr      strstdout
  move.l   a5,a0
  bsr      strstdout
@@ -2567,6 +2266,7 @@ srcht_5:
  bra.b    srcht_9
 srcht_6:
  lea      pfadzutiefs(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
  bra.b    srcht_end
@@ -2595,15 +2295,6 @@ srcht_end:
  rts
 
 
-*    DATA
-kbinsg_s:     DC.B  '  KB insgesamt verfÅgbar',$d,$a,0
-bytes_in_s:   DC.B  '  Bytes in ',0
-hauptsp_s:    DC.B  '  Bytes Hauptspeicher',$d,$a,0
-nbytesvers:   DC.B  ' versteckten/System- Datei(en)',$d,$a,0
-nbytesbens:   DC.B  ' Benutzerdatei(en)',$d,$a,0
-nverzeichns:  DC.B  '  Verzeichnis(sse)',$d,$a,0
-*    TEXT
-     EVEN
 
 DFREE_BUFFER   SET   -16
 
@@ -2621,7 +2312,7 @@ ck_com:
 ck_tree_free:
  link     a6,#DFREE_BUFFER
  movem.l  d6/d7/a5,-(sp)
- move     d0,d6               * 0 fÅr TREE, 1 fÅr CK
+ move     d0,d6               * 0 fÅr TREE, 1 fÅr CK, 2 fÅr FREE
  lea      d+normal_no(pc),a0
  clr.l    (a0)+
  clr.w    (a0)+
@@ -2687,6 +2378,7 @@ ctf_32:
 * move.l   d0,d0
  bsr      rwrite_long
  lea      kbinsg_s(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  move.w   d+hid_sys_no(pc),d0
  beq.b    ctf_2
@@ -2695,11 +2387,13 @@ ctf_32:
  move.l   d+hid_sys_len(pc),d0
  bsr      rwrite_long
  lea      bytes_in_s(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  move.w   d+hid_sys_no(pc),d0
  ext.l    d0
  bsr      lwrite_long
  lea      nbytesvers(pc),a0
+ bsr      get_country_str
  bsr      strstdout
 ctf_2:
 * Gesamtgrîûe und Anzahl der Benutzerdateien
@@ -2709,11 +2403,13 @@ ctf_2:
  move.l   d+normal_len(pc),d0
  bsr      rwrite_long
  lea      bytes_in_s(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  move.w   d+normal_no(pc),d0
  ext.l    d0
  bsr      lwrite_long
  lea      nbytesbens(pc),a0
+ bsr      get_country_str
  bsr      strstdout
 * Anzahl der Subdirectories
  move.w   d+subdir_no(pc),d0
@@ -2722,6 +2418,7 @@ ctf_2:
 * move.l  d0,d0
  bsr      rwrite_long
  lea      nverzeichns(pc),a0
+ bsr      get_country_str
  bsr      strstdout
 ctf_3:
  lea      DFREE_BUFFER(a6),a0
@@ -2732,6 +2429,7 @@ ctf_3:
  move.l   d+c_phystop(pc),d0
  bsr      rwrite_long
  lea      hauptsp_s(pc),a0
+ bsr      get_country_str
  bsr      strstdout
 * Jetzt Grîûe des freien Speichers
  bsr      memavail
@@ -2739,51 +2437,62 @@ ctf_3:
 * move.l   d0,d0
  bsr      rwrite_long
  lea      nbytesfreis(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  bra.b    ctf_end
 ctf_50:
- bsr      inc_errlv
+ bsr      inc_errlv			; es ist ein Fehler aufgetreten
 ctf_end:
  movem.l  (sp)+,a5/d7/d6
  unlk     a6
  rts
 
 
-* void print_free(a0 = long *dfree_buffer, d0 = int outp_len)
+*
+* void print_free(a0 = long *dfree_buffer, d0 = output_width)
 *  Druckt die Grîûe des freien Diskettenplatzes
 *  mit Ausgabebreite <outp_len>
-
-*    DATA
-nbytesfreis:  DC.B  '  Bytes frei',$d,$a,0
-nkbfree:      DC.B  '  KB frei',$d,$a,0
-*    TEXT
-     EVEN
+*
+* Wird benutzt von DIR, CK, TREE und FREE.
+*
 
 print_free:
  move.l   12(a0),d0                     * Sektoren/Cluster
  move.l   8(a0),d1                      * Bytes/Sektor
  bsr      _ulmul                        * d0 = Bytes/Cluster
- lsr.l    #8,d0
+ cmpi.l	#1024,d0
+ bcs.b	prf_1					; Cluster < 1 kB
+ lsr.l    #8,d0					; Bytes -> kBytes
  lsr.l    #2,d0
- move.l   (a0),d1                       * Cluster
+ move.l   (a0),d1                       * Anzahl Cluster
+ bsr      _ulmul                        * d0 = kBytes
+ bra.b	prf_kb
+prf_1:
+ move.l   (a0),d1                       * Anzahl Cluster
  bsr      _ulmul                        * d0 = Bytes
- moveq    #10,d1
- bsr      rwrite_long
- lea      nkbfree(pc),a0
+ lea      nbytesfreis(pc),a2			; in Bytes?
+ cmpi.l	#$100000,d0				* unter 1 MB?
+ bcs.b	prf_print					* ja, drucke Bytes
+ lsr.l    #8,d0					; Bytes -> kBytes
+ lsr.l    #2,d0
+prf_kb:
+ lea      nkbfree(pc),a2				; in kBbytes
+ cmpi.l	#$100000,d0				* unter 1 GB?
+ bcs.b	prf_print					* ja, drucke kB
+ lsr.l    #8,d0					; kBytes -> MBytes
+ lsr.l    #2,d0
+ lea      nmbfree(pc),a2				; in MBbytes
+prf_print:
+ moveq    #10,d1                        * Feld 10 Zeichen breit
+ bsr      rwrite_long				; rechtsbÅndig
+ move.l	a2,a0					; in B/kB/MB
+ bsr      get_country_str
  bsr      strstdout
  rts
 
 
 * int isdevice(a0 = char dateiname[])
 *  Stellt fest, ob ein Dateiname ein Device 'CON:', 'AUX:', 'PRN:' ist.
-
-*    DATA
-device_s:  DC.B  'CON'
-           DC.B  'AUX'
-           DC.B  'PRN'
-           DC.B  'NUL'
-*    TEXT
-     EVEN
 
 isdevice:
  movem.l  d7/a4,-(sp)
@@ -2826,12 +2535,7 @@ isdv_5:
 * int fileren(alt_name,neu_name)
 *  verschiebt eine Datei
 *  RÅckgabewert 0, wenn alles in Ordnung
-
-*    DATA
-rens:      DC.B  'MV ',0
-err_rens:  DC.B  ' => Fehler : ',0
-*    TEXT
-     EVEN
+*
 
 ALT_NAME  SET  8
 NEU_NAME  SET  $c
@@ -2845,6 +2549,7 @@ fileren:
  addq.l   #8,sp
  move.l   d0,(sp)
  lea      rens(pc),a0              * "MV "
+ bsr      get_country_str
  bsr      strcon
  move.l   ALT_NAME(a6),a0          * "altername"
  bsr      strcon
@@ -2857,6 +2562,7 @@ fileren:
  bra.b    renf_end
 renf_1:
  lea      err_rens(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.w   2(sp),d0                 * Low- Word des Fehlercodes
  bsr      print_err
@@ -2870,14 +2576,7 @@ renf_end:
 * int filecopy(quell_dateiname,ziel_dateiname)
 *  kopiert eine Datei
 *  RÅckgabewert 0, wenn alles in Ordnung
-
-*    DATA
-isidents:  DC.B  ' Quelle und Ziel identisch',$d,$a,0
-copys:     DC.B  'COPY ',0
-auf_s:     DC.B  ' auf ',0
-zielvolls: DC.B  ' Zieldisk voll',$d,$a,0
-     EVEN
-*    TEXT
+*
 
 DTA_ZIEL       SET  -44
 DTA_QUELL      SET  DTA_ZIEL-44
@@ -2924,12 +2623,14 @@ fc_1:
  dbne     d0,fc_1
  bne.b    fc_2
  lea      isidents(pc),a0
+ bsr      get_country_str
  bra      fc_70
 
 * AUSGABE DES KOMMENTARS "COPY quelle ziel"
 
 fc_2:
  lea      copys(pc),a0             * "COPY "
+ bsr      get_country_str
  bsr      strcon
  move.l   a3,a0
  bsr      strcon
@@ -2952,6 +2653,7 @@ fc_2:
 fc_3:
  bsr      print_err
  lea      auf_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.l   (sp),a0
  bra      fc_70
@@ -3024,7 +2726,9 @@ fc_8:
  cmpi.w   #-4,d7              * Zieldatei NUL: ?
  beq.b    fc_31
  addq.l   #4,sp
- pea      zielvolls(pc)
+ lea      zielvolls(pc),a0
+ bsr      get_country_str
+ pea      (a0)
  cmp.l    d3,d0
  bcs.b    fc_11                 * weniger geschrieben als vorhin gelesen
 fc_31:
@@ -3087,15 +2791,6 @@ fc_90:
  unlk     a6
  rts
 
-
-*    DATA
-syntaxrens:   DC.B  'Syntax: MV Quelle Ziel',$d,$a,0
-syntaxcopys:  DC.B  'Syntax: COPY [-t] Quelle Ziel',$d,$a,0
-unerlcopy_s:  DC.B  'UngÅltiges COPY',$d,$a,0
-unerlren_s:   DC.B  'UngÅltiges MV',$d,$a,0
-ndateiens:    DC.B  ' Datei(en) kopiert',$d,$a,0
-*    TEXT
-     EVEN
 
 DTA        SET  -44            * char DTA[44]
 ZIELPFAD   SET  DTA-150        * char ZIELPFAD[150]
@@ -3198,6 +2893,7 @@ cr_20:
  bsr      strcon
  lea      not_founds(pc),a0
 cr_4:
+ bsr      get_country_str
  bsr      strcon              * Fehlermeldung ausgeben und Ende
  bsr      inc_errlv
  bra      cr_end
@@ -3239,7 +2935,9 @@ cr_6:
  bsr      sfirst
  beq.b    cr_7
 
- lea      keine_dateiens+3(pc),a0       * "Keine Dateien"
+ lea      keine_dateiens(pc),a0       * "Keine Dateien"
+ bsr      get_country_str
+ addq.l   #3,a0
  bsr      strcon
  lea      crlfs(pc),a0
  bra.b    cr_4
@@ -3298,9 +2996,10 @@ cr_11:
  move.l   a4,a0
  ext.l    d6
  move.l   d6,d0
- bsr      long_to_str
- bsr      strcon
+ bsr      long_to_str		; gibt d0 und a0 zurÅck
+ bsr      strcon			; nimmt a0
  lea      ndateiens(pc),a0
+ bsr      get_country_str
  bsr      strcon
 cr_end:
  movem.l  (sp)+,a5/a4/a3/d7/d6/d5/d4/d3
@@ -3387,15 +3086,6 @@ numa5_5:
  rts
 
 
-*    DATA
-akt_date_is:     DC.B  $d,$a,'Aktuelles Datum ist ',0
-give_dates:      DC.B  $d,$a,'Neues Datum (tt/mm/jj) : ',0
-akt_time_is:     DC.B  $d,$a,'Aktuelle Zeit ist ',0
-give_times:      DC.B  $d,$a,'Neue Zeit (hh:mm:ss) : ',0
-falsches_forms:  DC.B  $d,$a,'Falsches Format',$d,$a,0
-*    TEXT
-     EVEN
-
 STRING         SET  -140
 
 time_com:
@@ -3428,6 +3118,7 @@ da_ti:
 *
  lea      STRING(a6),a5
 * move.l a0,a0
+ bsr      get_country_str
  move.l   a2,-(sp)
  move.l   a1,-(sp)
  bsr      strstdout
@@ -3437,6 +3128,7 @@ da_ti:
  move.l   a5,a0
  bsr      strstdout
  move.l   (sp)+,a0
+ bsr      get_country_str
  bsr      strcon
  move.l   a5,a0
  clr.w    d0
@@ -3514,6 +3206,7 @@ dati_6:
  bge.b    dati_20
  bsr      inc_errlv
  lea      falsches_forms(pc),a0
+ bsr      get_country_str
  bsr      strcon
 dati_20:
  movem.l  (sp)+,a5/d7/d6/d5/d4
@@ -3526,28 +3219,19 @@ dati_20:
 *  Ist query_flag != 0, wird vorher die Sicherheitsfrage gestellt
 *  RÅckgabe 1, wenn Fehler aufgetreten
 
-*    DATA
-loesch_s:  DC.B  $d,$a,'Lîsche ',0
-auswahl_s: DC.B  ' (J/N/G/A) ? ',0
-global_s:  DC.B  'Global',0
-nein_s:    DC.B  'Nein',0
-ja_s:      DC.B  'Ja',0
-quit_s:    DC.B  'Abbruch',0
-dels:      DC.B  $d,$a,'DEL ',0
-*    TEXT
-     EVEN
-
 unlink:
  link     a6,#-4
  move.b   d+query_flag(pc),d0
  beq      unl_6
  lea      loesch_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.l   8(a6),a0
  bsr      strcon
  lea      auswahl_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
-unl_9:
+unl_ask_again:
  gemdos   Cnecin
  addq.l   #2,sp
  bsr      d0_upper
@@ -3557,41 +3241,46 @@ unl_9:
  beq.b    unl_2
  ENDC
 
- cmpi.b   #'G',d0
- beq.b    unl_3
- cmpi.b   #'A',d0
- beq.b    unl_4
- cmpi.b   #'Q',d0
- beq.b    unl_4
- cmpi.b   #'J',d0
- beq.b    unl_5
- cmpi.b   #'Y',d0
- beq.b    unl_5
- cmpi.b   #'N',d0
- bne.b    unl_9
+ cmpi.b   #'G',d0				* "Global"
+ beq.b    unl_global
+ cmpi.b   #'A',d0				* "Abort"?
+ beq.b    unl_abort
+ cmpi.b   #'Q',d0				* "Quit"?
+ beq.b    unl_abort
+ cmpi.b   #'J',d0				* "Ja"
+ beq.b    unl_yes
+ cmpi.b   #'Y',d0				* "Yes"
+ beq.b    unl_yes
+ cmpi.b   #'O',d0				* "Oui"
+ beq.b    unl_yes
+ cmpi.b   #'N',d0				* "Nein", "Non, "No"
+ bne.b    unl_ask_again
  lea      nein_s(pc),a0            * Nein
+ bsr      get_country_str
  bsr      strcon
  clr.w    d0
- bra.b    unl_7
+ bra.b    unl_ret_d0
 
  IFF      KAOS
 unl_2:
  bra      break     * CTRL-C
  ENDC
 
-unl_3:
+unl_global:
  lea      d+query_flag(pc),a0
  clr.b    (a0)                     * Global: Flag fÅr Sicherheitsfrage lîschen
  lea      global_s(pc),a0
  bra.b    unl_1
-unl_4:
+unl_abort:
  lea      quit_s(pc),a0            * Quit
+ bsr      get_country_str
  bsr      strcon
  moveq    #1,d0
- bra.b    unl_7
-unl_5:
+ bra.b    unl_ret_d0
+unl_yes:
  lea      ja_s(pc),a0              * Ja
 unl_1:
+ bsr      get_country_str
  bsr      strcon
 unl_6:
  move.l   8(a6),(sp)
@@ -3604,6 +3293,7 @@ unl_6:
  move.w   (sp)+,d0
  bsr      print_err
  lea      auf_s(pc),a0             * Fehler
+ bsr      get_country_str
  bsr      strcon
  move.l   8(a6),a0
  bsr      strcon
@@ -3613,20 +3303,16 @@ unl_8:
  move.b   d+query_flag(pc),d0
  bne.b    unl_10
  lea      dels(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.l   8(a6),a0
  bsr      strcon
 unl_10:
  clr.w    d0
-unl_7:
+unl_ret_d0:
  unlk     a6
  rts
 
-
-*    DATA
-syntax_dels: DC.B  $d,$a,'Syntax: DEL [-n] datei1 ...',$d,$a,0
-*    TEXT
-     EVEN
 
 STRING1   SET  -150                * char *STRING1[150]
 STRING2   SET  STRING1-150         * char *STRING2[150]
@@ -3638,6 +3324,7 @@ del_com:
  subq.w   #1,ARGC(a6)
  bgt.b    del_1
  lea      syntax_dels(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
  bra.b    del_end
@@ -3679,6 +3366,7 @@ del_2:
  move.l   a5,a0
  bsr      strcon
  lea      not_founds(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
 del_3:
@@ -3725,12 +3413,6 @@ dire_end:
 * DTA  *eintrag;
 *  Druckt einen Directory- Eintrag (DTA-Struktur)
 *  Er wird mit CR/LF abgeschlossen, wenn das w-Flag NICHT gesetzt war
-
-*    DATA
-space3_s:        DC.B  '   ',0
-dir_zeichens:    DC.B  '   <DIR>',0
-*    TEXT
-     EVEN
 
 dir_entry_print:
  link     a6,#0
@@ -3810,6 +3492,7 @@ dep_4:
  btst     #4,21(a5)                * Subdirectory ?
  beq.b    dep_5
  lea      dir_zeichens(pc),a0      * Ja
+ bsr      get_country_str
  bsr      strstdout
  bra.b    dep_25
 dep_5:
@@ -3884,6 +3567,7 @@ dep_7:
  tst.w    d6
  bne.b    dep_11
  lea      taste_drueckens(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bra.b    dep_9
 dep_8:
@@ -3902,7 +3586,7 @@ dep_9:
  cmpi.b   #3,d0               * CTRL-C ?
  beq      break
 
- ENDIF
+ ENDC
 
  lea      dellines(pc),a0
  bsr      strcon
@@ -3915,9 +3599,9 @@ dep_11:
 
 * int cmp_dta(a0 = char *eintrag1, a1 = char *eintrag2)
 *  Vergleicht zwei Directory- EintrÑge (ab Byte 21)
-*  sort_mode : 'A'    nach Art (Extension)
-*              'G'    nach Grîûe
-*              'D'    nach Datum/Zeit
+*  sort_mode : 'A' nach Art (type)
+*              'G' nach Grîûe (size)
+*              'D' nach Datum/Zeit
 *              sonst: nach Namen
 
 cmp_dta:
@@ -3925,7 +3609,7 @@ cmp_dta:
  btst     #4,21-20(a0)   * Attribut = Subdir ?
  beq.b    cmpd_1             * nein
  btst     #4,21-20(a1)
- bne.b    cmpd_2             * Beides Subdirs => sortiere nach Namen
+ bne.b    cmpd_2             * Beides Verzeichnisse => sortiere nach Namen
 * Jetzt ist e1 subdir, e2 nicht => e2 > e1
  moveq    #-1,d0
  bra      cmpd_end
@@ -3936,8 +3620,9 @@ cmpd_1:
  moveq    #1,d0
  bra      cmpd_end
 cmpd_3:
- cmpi.w   #'G',d2
+ cmpi.b   #'G',d2			* "Grîûe"
  bne.b    cmpd_6
+cmpd_size:
  move.l   26-20(a1),d1   * nach Grîûe sortieren
  sub.l    26-20(a0),d1
 cmpd_12:
@@ -3950,8 +3635,9 @@ cmpd_12:
 cmpd_5:
  bra.b    cmpd_end
 cmpd_6:
- cmpi.w   #'A',d2
+ cmpi.b   #'A',d2			* "Art"
  bne.b    cmpd_10
+cmpd_type:
  movem.l  a0/a1,-(sp)
  adda.w   #30-20,a0      * Zeiger auf den Namen
  adda.w   #30-20,a1
@@ -3973,7 +3659,7 @@ cmpd_9:
  bne.b    cmpd_end
  bra.b    cmpd_2             * Typ gleich => Namensvergleich
 cmpd_10:
- cmpi.w   #'D',d2
+ cmpi.b   #'D',d2			* "Datum" oder "Date"
  beq.b    cmpd_13
 cmpd_2:
  lea      30-20(a1),a1   * Namen vergleichen
@@ -3993,13 +3679,6 @@ cmpd_11:
 cmpd_end:
  rts
 
-
-*    DATA
-verzchn_vons:   DC.B  ' Verzeichnis von ',0
-n_dbytes:       DC.B  '  Bytes in',0
-n_dateiens:     DC.B  ' Datei(en)',0
-*    TEXT
-     EVEN
 
 STRING         SET  -(16+150+200)       * char STRING[200]
 DUMMYSTRING    SET  -(16+150)           * char DUMMYSTRING[150]
@@ -4106,35 +3785,37 @@ dir_14:
  move.l   a5,a0
  bsr      split_path
  lea      verzchn_vons(pc),a0      * "Verzeichnis von "
+ bsr      get_country_str
  bsr      strstdout
  lea      STRING(a6),a0
  bsr      wholepath
  lea      STRING(a6),a0
  bsr      strstdout
  lea      sort_mode(pc),a0
- move.l   a4,d0                    * Speicher da ?
- bne.b    dir_31
+ move.l   a4,d0                    * Speicher vorhanden ?
+ bne.b    dir_31				* ja
  move.b   #'U',(a0)                * kein Speicher => nicht sortieren
 dir_31:
  move.b   (a0),d0
- lea      nach_art_s(pc),a0
+ lea      nach_art_s(pc),a0		* "nach Art" oder "by type"
  cmpi.b   #'A',d0
- beq.b    dir_16
- lea      nach_grs_s(pc),a0
+ beq.b    dir_print_sort
+ lea      nach_grs_s(pc),a0		* "nach Grîûe"
  cmpi.b   #'G',d0
- beq.b    dir_16
- lea      nach_dat_s(pc),a0
+ beq.b    dir_print_sort
+ lea      nach_dat_s(pc),a0		* "nach Datum" oder "by date"
  cmpi.b   #'D',d0
- beq.b    dir_16
- lea      nach_nix_s(pc),a0
+ beq.b    dir_print_sort
+ lea      nach_nix_s(pc),a0		* "unsorted" oder "unsortiert"
  cmpi.b   #'U',d0
- bne.b    dir_15
-dir_16:
+ bne.b    dir_skip_sort_output
+dir_print_sort:
+ bsr      get_country_str
  bsr      strstdout
-dir_15:
+dir_skip_sort_output:
  bsr      crlf_stdout
  bsr      crlf_stdout
-* Jetzt wird das komplette Verzeichnis in den Puffer geschrieben
+* Jetzt wird das gesamte Verzeichnis in den Puffer geschrieben
 * oder gleich ausgedruckt, falls <sort_mode> = 'U'(nsortiert)
  move.l   a4,zeiger_adr-w_flag(a3)
  lea      4*MAXDIR(a4),a0
@@ -4142,7 +3823,7 @@ dir_15:
  clr.w    dir_zeilen-w_flag(a3)
  lea      dir_entry(pc),a1
  lea      sort_mode(pc),a0
- cmpi.b   #'U',(a0)
+ cmpi.b   #'U',(a0)				* "unsorted"
  bne.b    dir_27
  lea      dir_entry_print(pc),a1
 dir_27:
@@ -4156,19 +3837,19 @@ dir_12:
  lea      keine_dateiens(pc),a0
  beq.b    dir_8
  lea      sort_mode(pc),a0
- cmpi.b   #'U',(a0)
+ cmpi.b   #'U',(a0)				* "unsorted"
  beq.b    dir_28
 *
 * Das Verzeichnis wird jetzt sortiert, falls <sort_mode> <> 'U'
 *
- move.l   a4,-(sp)
+ move.l   a4,-(sp)				* Zeigertabelle
  lea      d+dir_zeilen(pc),a0
  move.w   (a0),d7
  clr.w    (a0)
  ext.l    d7
- move.l   d7,-(sp)
- pea      cmp_dta(pc)        * Vergleichs- Routine
- bsr      sortiere
+ move.l   d7,-(sp)				* Anzahl Elemente
+ pea      cmp_dta(pc)        		* Vergleichs- Routine
+ bsr      shellsort
  adda.w   #12,sp
 * Das Verzeichnis wird ausgegeben
  subq.w   #1,d7
@@ -4198,6 +3879,7 @@ dir_29:
  move.l   d+normal_len(pc),d0
  bsr      rwrite_long
  lea      n_dbytes(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  moveq    #11,d1
  move.w   d+normal_no(pc),d0
@@ -4205,6 +3887,7 @@ dir_29:
  bsr      rwrite_long
  lea      n_dateiens(pc),a0
 dir_8:
+ bsr      get_country_str
  bsr      strstdout
  bsr      crlf_stdout
  tst.b    q_flag-w_flag(a3)
@@ -4226,6 +3909,7 @@ pause_com:
  move.l   SP_ARGV+4(sp),a5
  addq.l   #4,a5          * a5 auf ersten Parameter (argv[1])
  lea      taste_drueckens(pc),a0
+ bsr      get_country_str
  subq.w   #1,SP_ARGC+4(sp)
  bne.b    pause_1
  move.l   a0,(a5)
@@ -4260,11 +3944,6 @@ pause_4:
  rts
 
 
-*    DATA
-echo_ists:  DC.B  $d,$a,'ECHO ist ',0
-*    TEXT
-     EVEN
-
 echo_com:
  movem.l  d7/a5,-(sp)
  sf       d7
@@ -4273,6 +3952,7 @@ echo_7:
  cmpi.w   #2,SP_ARGC+8(sp)
  bge.b    echo_2
  lea      echo_ists(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  lea      ons(pc),a0               * "ON"
  tst.b    (a5)
@@ -4325,11 +4005,6 @@ echo_8:
  rts
 
 
-*    DATA
-rmd_syntaxs: DC.B  $d,$a,'Syntax: MD/RD Verzeichnis',$d,$a,0
-*    TEXT
-     EVEN
-
 rd_com:
  moveq    #Ddelete,d0
  bra.b    rmd_com
@@ -4349,17 +4024,13 @@ rmd_com:
  bsr      crprint_err
  bra.b    rmd_50
 rmd_1:
+ bsr      get_country_str
  bsr      strcon
 rmd_50:
  bsr      inc_errlv
 rmd_end:
  rts
 
-
-*    DATA
-ren_syntaxs: DC.B  $d,$a,'Syntax: REN Quelle Name',$d,$a,0
-*    TEXT
-     EVEN
 
 DEST      SET  -128
 
@@ -4416,6 +4087,7 @@ ren_5:
  bra.b    ren_end
 ren_1:
  lea      ren_syntaxs(pc),a0
+ bsr      get_country_str
  bsr      strcon
 ren_50:
  bsr      inc_errlv
@@ -4424,11 +4096,6 @@ ren_end:
  unlk     a6
  rts
 
-
-*    DATA
-kein_pfads: DC.B  'Kein Pfad',0
-*    TEXT
-     EVEN
 
 STRING    SET       -150        * char STRING[150]
 DUMMY     SET       -(4+150)
@@ -4442,6 +4109,7 @@ path_com:
  bsr      getenv
  bne.b    path_1
  lea      kein_pfads(pc),a0
+ bsr      get_country_str
 path_1:
  bsr      strstdout
  bsr      crlf_stdout
@@ -4488,10 +4156,12 @@ touch_file:
  move.w   d0,d7                    * nur echte Dateien
  bge.b    tf_2
  lea      kann_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.l   8(a6),a0
  bsr      strcon
  lea      nicht_offn_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
  moveq    #1,d0
@@ -4519,13 +4189,6 @@ tf_50:
  rts
 
 
-*    DATA
-datei_s:      DC.B  $d,$a,'Datei: ',0
-kann_s:       DC.B  $d,$a,'Kann ',0
-nicht_offn_s: DC.B  ' nicht îffnen',$d,$a,0
-*    TEXT
-     EVEN
-
 type_file:
  link     a6,#0
  movem.l  d6/d7/a5/a4,-(sp)
@@ -4542,6 +4205,7 @@ tyf_3:
  beq.b    tyf_12
  move.l   d0,a4               * a4 = Pufferadresse
  lea      datei_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.l   8(a6),a0
  bsr      strcon
@@ -4553,10 +4217,12 @@ tyf_3:
  move.l   d0,d7
  bge.b    tyf_2
  lea      kann_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.l   8(a6),a0
  bsr      strcon
  lea      nicht_offn_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
 tyf_12:
  bsr      inc_errlv
@@ -4584,11 +4250,6 @@ tyf_50:
  rts
 
 
-*    DATA
-syntax_ts:  DC.B  $d,$a,'Syntax: TYPE|TOUCH Dateiname(n)',$d,$a,0
-*    TEXT
-     EVEN
-
 touch_com:
  lea      touch_file(pc),a1
  bra.b    t_com
@@ -4600,6 +4261,7 @@ t_com:
  cmpi.w   #2,SP_ARGC+8(sp)
  bge.b    toty_2
  lea      syntax_ts(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
  bra.b    toty_end
@@ -4616,6 +4278,7 @@ toty_1:
  move.l   a5,a0
  bsr      strcon
  lea      not_founds(pc),a0
+ bsr      get_country_str
  bsr      strcon
 toty_2:
  subq.w   #1,SP_ARGC+8(sp)
@@ -4624,20 +4287,6 @@ toty_end:
  movem.l  (sp)+,a5/a4
  rts
 
-
-*    DATA
-     IFNE MAGIX
-kaos_s:     DC.B  LF,'MagiC v',0
-     ELSE
-kaos_s:     DC.B  LF,'KAOS v',0
-     ENDIF
-tos_s:      DC.B  LF,'TOS v',0
-gemdos_s:   DC.B  ',  GEMDOS v',0
- IF       ACC
-aes_s:      DC.B  'AES v',0
- ENDC
-     EVEN
-*    TEXT
 
 ver_com:
  lea      kaos_s(pc),a0
@@ -4666,27 +4315,27 @@ ver_1:
  ror.w    #8,d0                    * Low/High - Byte vertauschen
  bsr.b    print_ver
  bsr      crlf_stdout
- IFF      ACC
+	IFF ACC
  lea      titels(pc),a0
- IFNE     MAGIX
- clr.b    17(a0)
- ELSE
- clr.b    19(a0)
- ENDIF
+	IFNE MAGIX
+ clr.b    17(a0)				; Variante for MagiC
+	ELSE
+ clr.b    19(a0)				; Variante fÅr KAOS und TOS
+	ENDC
  bsr      strstdout
- ENDC
- IF       ACC
+	ENDC
+	IF ACC
  lea      aes_s(pc),a0
  bsr      strstdout
  move.w   d+global(pc),d0
  bsr.b    print_ver
- ENDC
+	ENDC
  bra      crlf_stdout
 
 print_ver:
  move.w   d0,-(sp)
  lsr.w    #8,d0
- bsr.b    prv_1                       * oberste Ziffer ausgeben
+ bsr.b    prv_1                    * oberste Ziffer ausgeben
  moveq    #'.',d0                  * '.' ausgeben
  bsr      putchar
  move.w   (sp)+,d0                 * unterste Ziffer ausgeben
@@ -4694,13 +4343,6 @@ prv_1:
  andi.l   #$ff,d0
  bsr      lwrite_long
  rts
-
-
-*    DATA
-status_s:      DC.B  $d,$a,'Flag ist ',0
-error_verifys: DC.B  'UngÅltiger Zustand',$d,$a,0
-*    TEXT
-     EVEN
 
 
 break_com:
@@ -4733,6 +4375,7 @@ vb_11:
  move     d0,d6
 vb_12:
  lea      status_s(pc),a0
+ bsr      get_country_str
  bsr      strstdout
  lea      ons(pc),a0               * "ON"
  tst.w    d6
@@ -4750,6 +4393,7 @@ vb_2:
  bge.b    vb_3
  bsr      inc_errlv
  lea      error_verifys(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bra.b    vb_end
 vb_3:
@@ -4814,13 +4458,13 @@ cpms_end:
  rts
 
 
-* void sortiere(vergleich, anzahl, pointerfeld)
+* void shellsort(vergleich, anzahl, pointerfeld)
 * int (*vergleich)(a0 = void *s1, a1 = void *s2);
 * unsigned long anzahl;
 * char *pointerfeld[];
 *  Sortiert mit Shellsort
 
-sortiere:
+shellsort:
  link     a6,#0
  movem.l  d5/d6/d7/a5/a4,-(sp)
  move.l   $c(a6),d7
@@ -4867,13 +4511,6 @@ sor_7:
  unlk     a6
  rts
 
-
-*    DATA
-syntax_sorts:   DC.B  $d,$a,'Syntax: SORT -C -R -n',$d,$a,0
-sort_memerrs:   DC.B  $d,$a,'SORT: Zuwenig Speicher',$d,$a,0
-sort_zielvolls: DC.B  'SORT: Zieldisk voll',$d,$a,0
-*    TEXT
-     EVEN
 
 sort_com:
  link     a6,#0
@@ -4925,6 +4562,7 @@ sort_8:
 sort_10:
  lea      sort_memerrs(pc),a0
 sort_11:
+ bsr      get_country_str
  bsr      strcon
 sort_50:
  bsr      inc_errlv
@@ -4971,9 +4609,9 @@ sort_18:
 sort_21:
  clr.b    (a5)
  move.l   a3,-(sp)                 * Adresse des Pointerfeldes
- move.l   d7,-(sp)                 * Anzahl gelesener Strings = LÑnge desselben
+ move.l   d7,-(sp)                 * Anzahl gelesener Zeichenketten = LÑnge desselben
  pea      cmps(pc)                 * Vergleichsfunktion
- bsr      sortiere
+ bsr      shellsort
  adda.w   #12,sp
  tst.l    d7
  beq.b    sort_25                      * Anzahl ist Null
@@ -4982,6 +4620,7 @@ sort_22:
  bsr      strstdout                * String ausgeben
  bsr      crlf_stdout              * CR/LF hinterhersenden
  lea      sort_zielvolls(pc),a0
+ bsr      get_country_str
  bsr      fatal
  subq.l   #1,d0
  bne      sort_11
@@ -5035,11 +4674,6 @@ cnt_end:
  rts
 
 
-*    DATA
-syntax_finds:  DC.B  $d,$a,'Syntax: FIND string',$d,$a,0
-*    TEXT
-     EVEN
-
 STRING    SET  -200
 
 find_com:
@@ -5049,6 +4683,7 @@ find_com:
  bge.b    find_1
  bsr      inc_errlv
  lea      syntax_finds(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bra.b    find_end
 find_1:
@@ -5097,11 +4732,6 @@ find_end:
  rts
 
 
-*    DATA
-mehrs:  DC.B  $d,'--Mehr--',0
-*    TEXT
-     EVEN
-
 more_com:
  movem.l  d7/a5,-(sp)
  lea      _base+$80(pc),a5
@@ -5117,6 +4747,7 @@ more_2:
  subq.w   #1,d7
  bhi.b    more_3
  lea      mehrs(pc),a0
+ bsr      get_country_str
  bsr      strcon
  clr.w    -(sp)                    ; Platz fÅr 2 Bytes schaffen
  lea      (sp),a0                  ; Puffer
@@ -5165,16 +4796,6 @@ cat_strings:
  rts
 
 
-*    DATA
-syntax_ifs:   DC.B  $d,$a,'Fehler in IF- Ausdruck',$d,$a,0
-not_s:        DC.B  'NOT',0
-errorlevel_s: DC.B  'ERRORLEVEL',0
-exist_s:      DC.B  'EXIST',0
-equal_s:      DC.B  '='
-gleich_s:     DC.B  '=',0
-*    TEXT
-     EVEN
-
 if_com:
  link     a6,#-$80
  movem.l  d6/d7/a4/a5,-(sp)
@@ -5188,6 +4809,7 @@ if_com:
  bne.b    i1
 i11:
  lea      syntax_ifs(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
  bra      i100
@@ -5272,15 +4894,11 @@ i100:
  rts
 
 
-*    DATA
-syntax_shifts:    DC.B  $d,$a,'SHIFT: Operand fehlt',$d,$a,0
-*    TEXT
-     EVEN
-
 shift_com:
  tst.w    SP_BATCH(sp)             * checken, ob im Batch- Modus
  beq.b    shf_end
  lea      syntax_shifts(pc),a0
+ bsr      get_country_str
  movea.l  SP_PARGC(sp),a1
  tst.w    (a1)
  beq.b    shf_1
@@ -5294,11 +4912,6 @@ shf_1:
 shf_end:
  rts
 
-
-*    DATA
-lbl_not_found_s: DC.B  $d,$a,'GOTO: Label nicht gefunden',$d,$a,0
-*    TEXT
-     EVEN
 
 goto_com:
  link     a6,#-130
@@ -5337,6 +4950,7 @@ goto_5:
  beq.b    goto_1
 goto_50:
  lea      lbl_not_found_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
 goto_end:
  movem.l  (sp)+,a5/a4
@@ -5356,11 +4970,6 @@ end_com:
 end_end:
  rts
 
-
-*    DATA
-for_error_s:     DC.B  $d,$a,'FOR: Syntaxfehler oder Schachtelung',$d,$a,0
-*    TEXT
-     EVEN
 
 for_com:
  link     a6,#-$80
@@ -5450,6 +5059,7 @@ for_3:
  bra      exe_restzeile       * Wie bei IF
 for_50:
  lea      for_error_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
 for_end:
  movem.l  (sp)+,a5/a4/d6/d7
@@ -5457,359 +5067,9 @@ for_end:
  rts
 
 
- IFF      KAOS
-
-* int input(string,len)
-* char *string;
-* int  len;
-*            Register a3 ist global in diesem Modul
-
-* lokal  akt_len d6
-*        zeiger  d7
-*        x       d4
-*        string  a5
-*        maxlen  d5
-*        Ftaste  a4
-*            Register a3 ist global in diesem Modul
-
-input:
- link     a6,#0
- movem.l  a5/a4/a3/d7/d6/d5/d4,-(sp)
- DC.W     A_INIT
- move.l   a0,a3               * a3 = Zeiger auf LineA
- move.l   8(a6),a5
- move.w   $c(a6),d5
- bsr      cursor              * Cursor einschalten
- lea      d+home_ypos(pc),a0
- move.w   v_cur_cx(a3),d4     * Cursorspalte
- move.w   v_cur_cy(a3),(a0)   * home_ypos,  Cursorzeile
- clr.w    d7
- clr.w    d6
- suba.l   a4,a4
-inp_1:
- move.w   d4,-(sp)
- add.w    d7,(sp)
- bsr      gotox               * gotox(x+zeiger)
- addq.l   #2,sp
- move.l   a4,d0
- beq.b    inp_15
- move.b   (a4),d0
- beq.b    inp_15
- addq.l   #1,a4
- cmpi.b   #LF,d0
- beq      inp_end
- cmpi.b   #CR,d0
- beq      inp_end
- bra      inp_20
-inp_15:
- gemdos   Cnecin
- addq.l   #2,sp
- andi.l   #$00ffffff,d0       * evtl. Shiftstatus lîschen
- cmpi.l   #K_CTRL_C,d0        * CTRL-C bewirkt Warmstart
- bne.b    inp_80
- gemdos   Pterm0
-inp_80:
- cmpi.l   #CR,d0              * CR Åberlesen, wenn Tastaturcode 0
- beq.b    inp_1
- cmpi.l   #LF,d0              * LF schlieût ab, wenn Tastaturcode 0
- beq      inp_end
- cmpi.l   #K_RETURN,d0
- beq      inp_90
- cmpi.l   #K_ENTER,d0
- beq      inp_end                * RETURN und ENTER beenden die Eingabe
- cmpi.l   #K_BS,d0
- bne.b    inp_2
- tst.w    d7
- beq.b    inp_1                  * Zeiger ist auf Feldanfang
- subq.w   #1,d7
-inp_3:
- bsr      str_del             * Zeichen vor Cursorposition lîschen
- bsr      string_at
- moveq    #' ',d0
- bsr      putch
- bra      inp_1                  * weiter
-inp_2:
- cmpi.l   #K_DEL,d0
- beq.b    inp_3                  * analog zu BACKSPACE
- cmpi.l   #K_TAB,d0
- bne.b    inp_4
- cmp.w    d6,d7               * zeiger am Feldende ?
- bcs.b    inp_5
- clr.w    d7                  * zeiger nach Feldanfang
- bra      inp_1
-inp_5:
- move.w   d6,d7               * zeiger nach Feldende
- bra      inp_1
-inp_4:
- cmpi.l   #K_LTARROW,d0
- bne.b    inp_6
- tst.w    d7
- beq      inp_1
- subq.w   #1,d7
- bra      inp_1
-inp_6:
- cmpi.l   #K_RTARROW,d0
- bne.b    inp_7
- cmp.w    d6,d7
- bcc      inp_1
- addq.w   #1,d7
- bra      inp_1
-inp_7:
- cmpi.l   #K_INSERT,d0
- bne.b    inp_8
- lea      ovwr_flag(pc),a0
- not.w    (a0)
- bra      inp_1
-inp_8:
- cmpi.l   #K_CLR,d0
- bne.b    inp_9
- move.w   d6,-(sp)
- move.w   d4,-(sp)
- bsr      spacestr_at
- addq.l   #4,sp
- clr.w    d6
- clr.w    d7
- bra      inp_1
-inp_9:
- cmpi.l   #K_UNDO,d0
- bne.b    inp_10
- lea      d+laststring(pc),a4
- bra      inp_1
-inp_10:
- cmpi.l   #K_F1,d0
- blt      inp_20
- cmpi.l   #K_F10,d0
- bgt      inp_20
- swap     d0
- addi.b   #'0'-$3b+1,d0
- cmpi.b   #'9',d0
- ble.b    inp_11
- move.b   #'0',d0             * F10 als F0 darstellen
-inp_11:
- lea      func_s(pc),a0
- move.b   d0,1(a0)
-* move.l   a0,a0
- bsr      getenv
- tst.l    d0
- beq      inp_1                  * Funktionstaste nicht belegt
- move.l   d0,a4
- bra      inp_1
-* Jetzt kommen die druckbaren Zeichen:
-inp_20:
- clr.w    d2
- move.b   d0,d2                    * obere 8 Bit lîschen
- beq      inp_1
- cmp.w    d5,d7                    * Eingabefeld voll ?
- bge      inp_1
- move.w   ovwr_flag(pc),d0
- beq.b    inp_21
- bsr      str_del
-inp_21:
- bsr      str_ins
- bsr      string_at
- addq.w   #1,d7
- bra      inp_1
-inp_90:
- move.w   d6,d0
- subq.w   #1,d0
- bcs.b    inp_end                * Leerstring eingegeben
- move.l   a5,a1
- lea      d+laststring(pc),a0
- cmpi.w   #128,d0
- bls.b    inp_91
- move.w   #128,d0
-inp_91:
- move.b   (a1)+,(a0)+
- dbra     d0,inp_91
- clr.b    (a0)
-inp_end:
- clr.b    0(a5,d6.w)          * Erzeuge EOS am Ende
- move.l   a5,-(sp)
- bsr      str_adjust
- addq.l   #4,sp
- moveq    #CR,d0
- bsr      putch
- movem.l  (sp)+,a5/a4/a3/d7/d6/d5/d4
- unlk     a6
- rts
-
-
-
-* void gotox(x)
-* int x;
-
-
-gotox:
- moveq    #$1b,d0
- bsr      putch
- moveq    #'Y',d0
- bsr      putch
- moveq    #32,d0
- add.w    d+home_ypos(pc),d0
- clr.l    d1
- move.w   4(sp),d1
- move.w   v_cel_mx(a3),d2
- addq.w   #1,d2
- divu     d2,d1
- add.w    d1,d0
- swap     d1
- move.w   d1,-(sp)
- bsr      putch
- moveq    #32,d0
- add.w    (sp)+,d0
- bsr      putch
- rts
-
-
-**********************************************************************
-*
-* void str_at()
-*
-*  Schreibt den String <char a5[]>, der eine LÑnge von <int d6> hat,
-*  ab Position <int d7> nach Bildschirm- Position <int d4>
-*
-
-string_at:
- movem.l  d3/a4,-(sp)
- move.w   d4,-(sp)
- add.w    d7,(sp)
- bsr.b    gotox
- addq.l   #2,sp
- move.l   a5,a4
- adda.w   d7,a4                    ; a4 = ab hier ausgeben
- move.w   d6,d3
- sub.w    d7,d3                    ; d3 = Anzahl auszugebender Zeichen
- bra.b    strat_2
-strat_1:
- move.w   v_cur_cy(a3),-(sp)
- clr.w    d0
- move.b   (a4)+,d0
- move.w   d0,-(sp)
- move.w   #5,-(sp)
- bios     Bconout
- addq.l   #6,sp
- move.w   (sp)+,d0
-
-* Falls sich der Cursor nach der Ausgabe links befindet und er vorher
-* auf der letzten Zeile stand, muû der Bildschirm gescrollt haben.
-* Folglich wandert unsere Home- Position nach oben
-
- tst.w    v_cur_cx(a3)
- bne.b    strat_2
- cmp.w    v_cel_my(a3),d0
- bcs.b    strat_2
- lea      d+home_ypos(pc),a0
- subq.w   #1,(a0)
-strat_2:
- dbra     d3,strat_1
- movem.l  (sp)+,d3/a4
- rts
-
-
-* void spacestr_at(x,len)
-* int x,len;
-
-spacestr_at:
- link     a6,#0
- move.w   8(a6),-(sp)
- bsr      gotox
- addq.l   #2,sp
-sstrat_1:
- subq.w   #1,$a(a6)
- bcs.b    sstrat_end
- moveq    #' ',d0
- bsr      putch
- bra.b    sstrat_1
-sstrat_end:
- unlk     a6
- rts
-
-
-**************************************************************
-*
-* fÅgt in einen String <char a5[]> der MaximallÑnge <int d5>
-* an Position <int d7> das Zeichen <char d2> ein.
-* akt_len (d6) wird entsprechend erhîht
-*
-**************************************************************
-
-* void str_ins()
-
-str_ins:
- move.l   a5,a1
- adda.w   d7,a1                    ; a0 = EinfÅgeposition
- move.l   a5,a0
- add.w    d6,a0                    ; a0 = String- Ende
- cmp.w    d5,d6
- beq.b    strins_90                ; akt_len == max_len
- bra.b    strins_1
-strins_2:
- move.b   (a0),1(a0)
-strins_1:
- subq.l   #1,a0
- cmpa.l   a1,a0
- bcc.b    strins_2
- addq.w   #1,d6
-strins_90:
- move.b   d2,(a1)
- rts
-
-
-**************************************************************
-*
-* nimmt aus einem <char a5[]> der LÑnge <int d6> an Position
-* <int d7> ein Zeichen heraus.
-* Die LÑnge wird entsprechend korrigiert
-*
-**************************************************************
-
-* void str_del()
-
-str_del:
- move.l   a5,a0
- adda.w   d7,a0                    ; a0 = string + pos
- move.w   d6,d0
- sub.w    d7,d0                    ; d1 = len - pos
- beq.b    sd100
- bra.b    sd3
-sd2:
- move.b   1(a0),(a0)+
-sd3:
- dbra     d0,sd2
- subq.w   #1,d6                    ; len = len - 1
-sd100:
- rts
-
-
-**************************************************************
-*
-* Entfernt aus einem <string> die rechtsbÅndigen Leerstellen.
-* Wenn <string> nur aus Leerstellen besteht, bekommt <string>
-* die LÑnge 0.
-*
-**************************************************************
-
-* void str_adjust(string)
-* char string[];
-
-str_adjust:
- move.l   4(sp),a0
- move.l   a0,a1
-stradj_1:
- tst.b    (a0)+
- bne.b    stradj_1
- subq.l   #1,a0
-stradj_2:
- cmpa.l   a0,a1
- bcc.b    stradj_end
- cmpi.b   #' ',-(a0)
- beq.b    stradj_2
- addq.l   #1,a0
-stradj_end:
- clr.b    (a0)
- rts
-
- ENDIF
+	IFF KAOS				; Wir laufen unter TOS, also weder KAOS noch MagiC
+ INCLUDE "input.s"			; TOS hat keinen Zeilen-Editor, wir benutzen deshalb einen eigenen
+	ENDC
 
 
 * int read_str(d0 = int handle, a0 = char *string)
@@ -5962,11 +5222,6 @@ inc_errlv:
 *  ein_str wird unter Expansion nach aus_str kopiert
 *  Es werden nur die Parameter %n und %var% eingesetzt
 
-*    DATA
-zeile_gekuerzt_s:  DC.B  $d,$a,'Kommandozeile gekÅrzt',$d,$a,0
-*    TEXT
-     EVEN
-
 expand_macro:
  movem.l  d4/d6/d7/a3/a4/a5,-(sp)
  move.l   a1,a3          * Eingabe
@@ -6097,6 +5352,7 @@ exm_15:
  cmpi.w   #$7f,d6
  blt.b    exm_16
  lea      zeile_gekuerzt_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
 exm_16:
  clr.b    (a4)
@@ -6152,14 +5408,6 @@ rstd_3:
 *  Schreiben geîffnet (falls vorhanden), andernfalls gleich create()
 *  RÅckgabewert 1, falls ok; sonst 0
 
-*    DATA
-pipe_errs:   DC.B  CR,LF,' Pipe- Fehler',0
-redir_errs:  DC.B  CR,LF,' Fehler beim Umlenken von STD',0
-stdx_namtab: DC.B  'IN ',0,'OUT',0,'AUX',0
-             DC.B  'PRN',0,'ERR',0,'XTRA',0
-*    TEXT
-     EVEN
-
 redirect_stdx:
  movem.l  d5/d6/d7/a5,-(sp)
  move.w   d0,d5
@@ -6171,6 +5419,7 @@ redirect_stdx:
  cmpi.w   #1,d5
  bhi.b    rx_2
  lea      pipe_errs(pc),a0
+ bsr      get_country_str
  cmp.l    (a5),d7
  bne.b    rx_15
 rx_2:
@@ -6219,6 +5468,7 @@ rx_4:
  bra.b    rx_end
 rx_5:
  lea      redir_errs(pc),a0
+ bsr      get_country_str
  bsr      strcon
  lea      stdx_namtab(pc),a0
  mulu.w   #4,d5
@@ -6276,11 +5526,6 @@ cmde_1:
 * int  anzahl_param;
 * char *parameter[];
 
-*    DATA
-batch_errs:  DC.B  $d,$a,'BATCH zu tief verschachtelt',$d,$a,0
-*    TEXT
-     EVEN
-
 batch_exec:
  link     a6,#-130
  move.l   a5,-(sp)
@@ -6289,6 +5534,7 @@ batch_exec:
  cmpi.w   #4,(a5)
  ble.b    bate_6
  lea      batch_errs(pc),a0   * "BATCH zu tief verschachtelt"
+ bsr      get_country_str
  bsr      strcon
  bra      break
 bate_1:
@@ -6565,7 +5811,7 @@ cle_22:
 cle_25:
  lea      errorlevel(pc),a0
  lea      d+errlv2(pc),a1
- move.w   (a0),(a1) * alten Wert von errorlevel retten
+ move.w   (a0),(a1)           * alten Wert von errorlevel retten
  clr.w    (a0)                * errorlevel lîschen
  move.l   a5,a0
  bsr      intern_com_search
@@ -6646,12 +5892,6 @@ cle_end:
 
 * load_exec_pgm(a0 = char filename[], a1 = char commandline[])
 
-*    DATA
-exec_fehler1_s:  DC.B  $d,$a,'EXEC Fehler =>',0
-exec_fehler2_s:  DC.B  '<=',$d,$a,0
-*    TEXT
-     EVEN
-
 load_exec_pgm:
  movem.l  d7/a3/a4/a5,-(sp)
  move.l   a0,a5                    * Kommando
@@ -6690,17 +5930,17 @@ lep_2:
      IFEQ MAGIX
  move.l   d+etvcritic_alt(pc),-(sp)  * Diskettenfehler vom Desktop korrigieren
  bra.b    lep_3                   *  lassen (per Alert- Box)
-     ENDIF
+     ENDC
 lep_1:
      IFEQ MAGIX
  pea      etv_critic_neu(pc)
-     ENDIF
+     ENDC
 lep_3:
      IFEQ MAGIX
  move.w   #$101,-(sp)
  bios     Setexc
  addq.l   #8,sp
-     ENDIF
+     ENDC
 
  move.l   etv_term_neu-4(pc),-(sp)
  move.w   #$102,-(sp)
@@ -6720,7 +5960,7 @@ lep_3:
  move.w   #$101,-(sp)
  bios     Setexc
  addq.l   #8,sp
-     ENDIF
+     ENDC
  pea      etv_term_neu(pc)
  move.w   #$102,-(sp)
  bios     Setexc
@@ -6731,10 +5971,12 @@ lep_3:
  cmpi.w   #EBREAK,d7
  beq      break
  lea      exec_fehler1_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  move.w   d7,d0
  bsr      print_err
  lea      exec_fehler2_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  cmpi.w   #EXCPT,d7
  beq      break
@@ -6748,20 +5990,6 @@ lep_end:
 *                   1  = ok
 *  *handlepointer   0  = normale Programmdatei
 *                sonst = Handle der Batchdatei
-
-*    DATA
-pgm_typ_tab:
-bat_s:    DC.B  '.BAT',0           ; Batch
-btp_s:    DC.B  '.BTP',0           ; Batch takes parameter (NeoDesk)
-          DC.B  '.TTP',0
-          DC.B  '.TOS',0
-prg_s:    DC.B  '.PRG',0
-app_s:    DC.B  '.APP',0
-acc_s:    DC.B  '.ACC',0
-ANZ_SUFFIX     EQU  6
-
-*    TEXT
-     EVEN
 
 check_pgm_type:
  movem.l  d7/a6/a5/a4/a3,-(sp)
@@ -6797,12 +6025,12 @@ cpty_2:
  bne.b    cpty_2
  subq.l   #1,a4               ; a4 auf Ende des Dateinamens
 
- IFF      ACC
+	IFF ACC
  moveq    #ANZ_SUFFIX-1,d7
- ENDC
- IF       ACC
+	ENDC
+	IF ACC
  moveq    #ANZ_SUFFIX-2-1,d7  ; im ACC nicht nach APP/PRG suchen
- ENDC
+	ENDC
 
 cpty_3:
  move.l   a3,a1
@@ -6847,12 +6075,6 @@ cpty_end:
 
 
 * void extern_cmd_exec(d0 = int argc, a0 = char *argv[])
-
-*    DATA
-pfad_ueberl_s:   DC.B  $d,$a,'PfadÅberlauf',0
-kmd_nicht_gef_s: DC.B  $d,$a,'Kommando nicht gefunden',$d,$a,0
-*    TEXT
-     EVEN
 
 parameter_len   EQU      _base+$80
 parameter       EQU      _base+$80+1
@@ -6905,6 +6127,8 @@ ece_5:
  beq.b    ece_6
  cmpi.b   #';',(a3)
  beq.b    ece_6
+ cmpi.b   #',',(a3)
+ beq.b    ece_6
  subq.w   #1,d7
  bcs.b    ece_11              * Pfad- öberlauf
  move.b   (a3)+,(a2)+         * Pfad holen
@@ -6948,11 +6172,13 @@ ece_10:
  bra.b    ece_end
 ece_11:
  lea      pfad_ueberl_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
 ece_12:
  tst.b    (a3)
  bne.b    ece_4
  lea      kmd_nicht_gef_s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  bsr      inc_errlv
 ece_end:
@@ -6987,12 +6213,6 @@ clpi_1:
 *  is_out = 0  :  Eingabedatei pipen.i
 *  is_out > 0  :  Ausgabedatei pipen.o
 *  is_out < 0  :  global       pipe?.?
-
-*    DATA
-pipe_path: DC.B  'TMPDIR=',0
-pipe_nams: DC.B  '\$$pipe?.?',0
-*    TEXT
-     EVEN
 
 make_pipename:
  move.l   a5,-(sp)
@@ -7041,38 +6261,104 @@ mpi_end:
  move.l   (sp)+,a5
  rts
 
-* TODO: Localization
+**********************************************************************
+*
+* char *get_county_str(a0 = char *s)
+*
+* language: country code
+* a0: ptr to countries & strings, as below:
+* char n1,n2,...,-1      countries for 1st string
+* char s1[]              1st string
+* char n3,n4,...,-1      countries for 2nd string
+* char s2[]              2nd string
+* char -1                terminator
+* char defs[]            default string (usually english)
+*
+**********************************************************************
 
-*       DATA
+get_country_str:
+		move.l  d4,-(a7)
+		move.l  d1,-(a7)
+		move.b  d+language(pc),d4
+get_country_str_loop:
+        move.b  (a0)+,d1
+        bmi.s   _chk_ende                       ; Abschlussbyte, Default verwenden
+_chk_nxt:
+        cmp.b   d4,d1                           ; unsere Nationalitaet ?
+        beq.s   _chk_found
+        move.b  (a0)+,d1                        ; naechste Nationalitaet
+        bge.s   _chk_nxt                        ; weiter vergleichen
+_chk_nxtstr:
+        tst.b   (a0)+                           ; Zeichenkette ueberspringen
+        bne.s   _chk_nxtstr
+        bra.s   get_country_str_loop            ; nicht gefunden
+
+_chk_found:
+        tst.b   (a0)+
+        bge.s   _chk_found
+_chk_ende:
+		move.l  (a7)+,d1
+		move.l  (a7)+,d4
+        rts
+
+
+print_with_driveletter:
+		bsr.s   get_country_str
+		lea     -80(sp),sp
+		pea     (a1)
+        lea     drive_to_letter(pc),a1
+        move.b  0(a1,d0.w),d0
+		lea     4(sp),a1
+insert_drive_letter_loop:
+		move.b  (a0)+,d1
+		cmp.b   #'%',d1
+		bne.s   insert_drive_letter_put
+		move.b  d0,d1
+insert_drive_letter_put:
+		move.b  d1,(a1)+
+		bne.s   insert_drive_letter_loop
+insert_drive_letter_end:
+        move.l  (sp)+,a1
+        move.l  sp,a0
+        jsr     (a1)
+		lea     80(sp),sp
+		rts
+
+*    DATA
 
 autoexec1s: DC.B  'C:\AUTOEXEC.BAT',0
 autoexec2s: DC.B  '\AUTOEXEC.BAT',0
 
- IFF      ACC
+	IFF ACC
 bootbats:     DC.B  '\BOOT.BAT',0
- ENDC
+	ENDC
 
- IFF      KAOS
+	IFF KAOS
 func_s:       DC.B  'F0=',0
-titels:       DC.B  'GEMDOSø SHELL v2.62 Ω ''90 Andreas Kromke',$d,$a
- ENDC
- IF       KAOS
- IFNE     MAGIX
-titels:       DC.B  'MagiC SHELL v2.66 Ω ''93 Andreas Kromke',$d,$a
- ELSE
-titels:       DC.B  'KAOSø   SHELL v2.62 Ω ''90 Andreas Kromke',$d,$a
- ENDIF
- ENDC
-
- IF       ACC
+titels:       DC.B  'GEMDOSø SHELL v2.67 Ω ',$27,'90 Andreas Kromke',CR,LF
+	ENDC
+	IF KAOS
+	IFNE MAGIX
+titels:       DC.B  'MagiC SHELL v2.67 Ω ',$27,'93/',$27,'26 Andreas Kromke',CR,LF
+	ELSE
+titels:       DC.B  'KAOSø   SHELL v2.67 Ω ',$27,'90 Andreas Kromke',CR,LF
+	ENDC
+	ENDC
+	IF ACC
               DC.B  'Accessory- Version',CR,LF
- ENDC
-              DC.B  $a,0
-nach_art_s:   DC.B  ' nach Art',0
-nach_dat_s:   DC.B  ' nach Datum',0
-nach_grs_s:   DC.B  ' nach Grîûe',0
-nach_nix_s:   DC.B  ' unsortiert',0
-bytes_free_s: DC.B  ' Bytes frei',$d,$a,$a,0
+	ENDC
+              DC.B  LF,0
+
+     IFNE MAGIX
+kaos_s:     DC.B  LF,'MagiC v',0
+     ELSE
+kaos_s:     DC.B  LF,'KAOS v',0
+     ENDC
+tos_s:      DC.B  LF,'TOS v',0
+gemdos_s:   DC.B  ',  GEMDOS v',0
+	IF ACC
+aes_s:      DC.B  'AES v',0
+	ENDC
 
 croots:       DC.B  'A:'
 allroots:     DC.B  '\'
@@ -7084,10 +6370,72 @@ spaces:       DC.B  ' '
 leers:        DC.B  0
 promptis:     DC.B  'PROMPT=',0
 pathis:       DC.B  'PATH=',0
-taste_drueckens: DC.B  'Taste drÅcken ',0
-not_founds:      DC.B  '  nicht gefunden'
 crlfs:        DC.B  $d,$a,0
-keine_dateiens:  DC.B  $d,$a,' Keine Dateien',0
+
+not_s:        DC.B  'NOT',0
+errorlevel_s: DC.B  'ERRORLEVEL',0
+exist_s:      DC.B  'EXIST',0
+equal_s:      DC.B  '='
+gleich_s:     DC.B  '=',0
+
+stdx_namtab: DC.B  'IN ',0,'OUT',0,'AUX',0
+             DC.B  'PRN',0,'ERR',0,'XTRA',0
+
+pipe_path: DC.B  'TMPDIR=',0
+pipe_nams: DC.B  '\$$pipe?.?',0
+
+clss:  DC.B  ESC,'E',ESC,'v',ESC,'q',0    * clear screen/wrap ON/inverse OFF
+
+device_s:  DC.B  'CON'
+           DC.B  'AUX'
+           DC.B  'PRN'
+           DC.B  'NUL'
+
+pgm_typ_tab:
+bat_s:    DC.B  '.BAT',0           ; Batch
+btp_s:    DC.B  '.BTP',0           ; Batch takes parameter (NeoDesk)
+          DC.B  '.TTP',0
+          DC.B  '.TOS',0
+prg_s:    DC.B  '.PRG',0
+app_s:    DC.B  '.APP',0
+acc_s:    DC.B  '.ACC',0
+* ANZ_SUFFIX     EQU  6 siehe oben!
+
+prompt_zeichen:
+ DC.B     p_unterstr-p_t,'_'
+ DC.B     p_b-p_t,'b'
+ DC.B     p_d-p_t,'d'
+ DC.B     p_e-p_t,'e'
+ DC.B     p_g-p_t,'g'
+ DC.B     p_h-p_t,'h'
+ DC.B     p_l-p_t,'l'
+ DC.B     p_n-p_t,'n'
+ DC.B     p_p-p_t,'p'
+ DC.B     p_q-p_t,'q'
+ DC.B     p_t-p_t,'t'
+ DC.B     p_d7next-p_t,0
+
+def_prompt: DC.B    '$n$g',0       * Default- Prompt
+
+errcodes: DC.B  -1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-13,-14,-15,-16,-17
+          DC.B  -32,-33,-34,-35,-36,-37,-39,-40,-46,-48,-49,-64,-65,-66
+          DC.B  -67,-69,0
+
+     EVEN
+errstrs:
+*                BIOS- Fehler
+ DC.W     err_1s-errstrs,err_02s-errstrs,err_03s-errstrs
+ DC.W    err_04s-errstrs,err_05s-errstrs,err_06s-errstrs
+ DC.W    err_07s-errstrs,err_08s-errstrs,err_09s-errstrs
+ DC.W    err_10s-errstrs,err_11s-errstrs
+ DC.W    err_13s-errstrs,err_14s-errstrs,err_15s-errstrs
+ DC.W    err_16s-errstrs,err_17s-errstrs
+*                GEMDOS- Fehler
+ DC.W    err_32s-errstrs,err_33s-errstrs,err_34s-errstrs
+ DC.W    err_35s-errstrs,err_36s-errstrs,err_37s-errstrs
+ DC.W    err_39s-errstrs,err_40s-errstrs,err_46s-errstrs,err_48s-errstrs
+ DC.W    err_49s-errstrs,err_64s-errstrs,err_65s-errstrs
+ DC.W    err_66s-errstrs,err_67s-errstrs,err_69s-errstrs
 
 attrib_s: DC.B  'attrib',0
 break_s:  DC.B  'break',0
@@ -7129,16 +6477,16 @@ is_echo:       DC.B    0
 is_kaos:       DC.B    0
           EVEN
 tpa_base:      DC.L    0
-     IFF  KAOS
-ovwr_flag:     DC.W    0
-     ENDC
+	IFF KAOS
+ovwr_flag:     DC.W    0			; fÅr den Zeilen-Editor, den wir nur unter TOS brauchen
+	ENDC
 for_flag:      DC.W    0
 for_hdl:       DC.W    0
 for_pos:       DC.L    0
 errorlevel:    DC.W    0
 batchlevel:    DC.W    0
 
-     IF   ACC
+	IF ACC
 _run:          DC.L    os10_run
 acc_init:      DC.W    0
 * Default-SSP fÅr jeden neuen Prozeû (von GEMDOS- Pexec() festgesetzt)
@@ -7153,14 +6501,13 @@ aespb:    DC.L      (d+control)-_base
           DC.L      (d+addrin)-_base
           DC.L      (d+addrout)-_base
 pgmname:  DC.B      '  CMD',0
-     ENDC
+	ENDC
 
+     INCLUDE "messages.inc"
 
 ************ BEGINN DES BSS ***********
-
 
         BSS
 
 d:
-
-	    DS.B  bsslen
+     DS.B  bsslen
