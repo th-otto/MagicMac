@@ -1116,7 +1116,7 @@ std_end:
 * int errno;
 *  Falls <errno> < 0, wird der Fehlercode ausgedruckt und CMD
 *  neu gestartet (break)
-
+*
 fatal:
  tst      d0
  bge.b    fat_end
@@ -1246,6 +1246,8 @@ chp_end:
 *                                     return(1)
 *                            2. Fall: string1 ist korrekte Datei
 *                                     goto LABEL
+*
+* Wird benutzt von DEL, DIR, MV, COPY, FOR
 *
 split_path:
  movem.l  d7/a3/a4/a5,-(sp)
@@ -5216,13 +5218,13 @@ inc_errlv:
  rts
 
 
-* void expand_macro(a0 = char *aus_str, a1 = char ein_str[],
+* void expand_macros(a0 = char *aus_str, a1 = char ein_str[],
 *                   d0 = int anzpar, a2 = char *par[anzpar])
 *
 *  ein_str wird unter Expansion nach aus_str kopiert
 *  Es werden nur die Parameter %n und %var% eingesetzt
 
-expand_macro:
+expand_macros:
  movem.l  d4/d6/d7/a3/a4/a5,-(sp)
  move.l   a1,a3          * Eingabe
  move.l   a0,a4          * Ausgabe
@@ -5262,7 +5264,7 @@ exm_40:
  ext.w    d0
  subi.w   #'0',d0
  cmp.w    d7,d0
- bcc.b    exm_4             * Zuwenig Parameter
+ bcc.b    exm_4             * Zuwenige Parameter
  add.w    d0,d0
  add.w    d0,d0
  movea.l  0(a5,d0.w),a2  * a2[] ist der einzusetzende Parameter
@@ -5344,7 +5346,7 @@ exm_13:
  move.b   d0,(a4)+       * Ohne Expansion einfach kopieren
  addq.w   #1,d6
 exm_14:
- cmpi.w   #$7f,d6        * Aufhîren bei 128 Zeichen oder Stringende
+ cmpi.w   #$7f,d6        * Aufhîren bei 128 Zeichen oder Ende der Zeichenkette
  bge.b    exm_15
  tst.b    (a3)
  bne      exm_1
@@ -5638,9 +5640,9 @@ cmdline_exec:
  move.w   (a0),d0                  * Anzahl der Parameter
  move.l   COMMAND(a6),a1           * Zu expandierende Kommandozeile
  lea      EXPAND_BUF(a6),a0        * FÅr Ergebnis der Expansion
- bsr      expand_macro
+ bsr      expand_macros            * z.B. %1 und %PATH% ggf. expandieren
  lea      EXPAND_BUF(a6),a0
- move.l   a0,COMMAND(a6)      * COMMAND(a6)[] ist expandierte Zeile
+ move.l   a0,COMMAND(a6)      * COMMAND(a6)[] ist jetzt expandierte Zeile
 
 * ggf. im Batchbetrieb Prompt und Kommandozeile echoen
 
@@ -5664,21 +5666,24 @@ cle_3:
  lea      leers(pc),a1
  move.l   a1,(a0)+                 * EintrÑge mit Zeigern auf Nullstring
  dbra     d0,cle_3                    *  initialisieren
+
+* For d7 = 0..19: Schleife
+
  clr.w    d7
-cle_4:
+cle_argloop:
  move.l   a5,a0
- bsr      skip_sep
- move.l   d0,a5
+ bsr      skip_sep      * Åberspringe Leerzeichen und Tabulatoren
+ move.l   d0,a5         * a5 auf erstes Nicht-Trenn-Zeichen
 
 * Test auf Ende der Kommandozeile
 
  tst.b    (a5)
- beq      cle_22                      * Zeilenende
+ beq      cle_argloop_end                      * Zeilenende
 
 * Test auf Pipe- Zeichen
 
  cmpi.b   #'|',(a5)
- bne.b    cle_7
+ bne.b    cle_no_pipe
  addq.l   #1,a5
  move.l   a5,a0
  bsr      skip_sep
@@ -5696,36 +5701,39 @@ cle_4:
  moveq    #1,d0                    * STDOUT
  bsr      redirect_stdx
  tst.w    d0
- bne.b    cle_6                       * Ok
- clr.w    d7
- clr.l    COMMAND(a6)              * Fehler
-cle_6:
- bra      cle_22
+ bne.b    cle_pipe_ok                       * Ok
+ clr.w    d7                        * argc lîschen
+ clr.l    COMMAND(a6)              * Kommandozeile, lîschen, weil Fehler
+cle_pipe_ok:
+ bra      cle_argloop_end
 
 * Test auf Standarddatei- Umlenkung
 
-cle_7:
+cle_no_pipe:
  cmpi.b   #'>',1(a5)               * Test auf "0>" bis "5>"
- bne.b    cle_40
+ bne.b    cle_no_redir_stdnout
  move.b   (a5),d5
  sub.b    #'0',d5
- bcs.b    cle_40
+ bcs.b    cle_no_redir_stdnout
  cmpi.b   #5,d5
- bhi.b    cle_40
+ bhi.b    cle_no_redir_stdnout
  addq.l   #1,a5
- bra.b    cle_8
-cle_40:
+ bra.b    cle_redir
+cle_no_redir_stdnout:
  moveq    #1,d5                    * d5 = STDOUT
  cmpi.b   #'>',(a5)
- beq.b    cle_8
+ beq.b    cle_redir
  cmpi.b   #'<',(a5)
- bne.b    cle_16
+ bne.b    cle_no_redirect
  clr.w    d5                       * d5 = STDIN
-cle_8:
+
+* Standard-Kanal d5 (0..5) wird umgelenkt
+
+cle_redir:
  addq.l   #1,a5
  clr.w    d4
- tst.w    d5
- beq.b    cle_12
+ tst.w    d5                * stdin?
+ beq.b    cle_12            * ja
  cmpi.b   #'>',(a5)           * STDOUT mit ">>" an Datei anhÑngen
  bne.b    cle_12
  moveq    #1,d4
@@ -5741,56 +5749,91 @@ cle_12:
  move.b   (a5),d3
  clr.b    (a5)
  tst.b    (a4)
- beq.b    cle_15
+ beq.b    cle_redir_ok
  move.w   d4,d1                    * Flag fÅr create/append
  move.l   a4,a1
  lea      STDX_TAB(a6),a0
  move.w   d5,d0                    * STD- Handle
  bsr      redirect_stdx
  tst.w    d0
- bne.b    cle_15
- clr.w    d7
+ bne.b    cle_redir_ok
+ clr.w    d7                    * Fehler
  clr.l    COMMAND(a6)
- bra.b    cle_22
-cle_15:
+ bra.b    cle_argloop_end
+cle_redir_ok:
  move.b   d3,(a5)
- bra.b    cle_21
-cle_16:
+ bra.b    cle_argloop_continue
+
+* Keine Umlenkung. a5 zeigt auf den gerade bearbeiteten Parameter
+
+cle_no_redirect:
  movea.w  d7,a0
  adda.l   a0,a0
  adda.l   a0,a0
  move.l   a5,ARGV_TAB(a6,a0.l)     * Parameter eintragen
- addq.w   #1,d7
+ addq.w   #1,d7                     * argc++
+cle_cont_arg:
  cmpi.b   #$27,(a5)   * '
- beq.b    cle_17
+ beq.b    cle_param_quoted
  cmpi.b   #$22,(a5)   * "
- bne.b    cle_20
-cle_17:
- move.b   (a5),d3
- movea.w  d7,a0
- subq.w   #1,a0
- adda.l   a0,a0
- adda.l   a0,a0
- addq.l   #1,ARGV_TAB(a6,a0.l)
-cle_18:
+ bne.b    cle_param_unquoted
+
+* Ein Abschnitt beginnt mit " oder '
+cle_param_quoted:
+ move.b   (a5),d3           * d3 ist das Quote-Zeichen " oder '
+ move.l   a5,a0             * destination for copy loop
+* Schleife fÅrs Suchen nach dem korrespondierenden Abschluû, " oder '
+cle_loop_endquote:
  addq.l   #1,a5
- tst.b    (a5)
- beq.b    cle_21
- cmp.b    (a5),d3
- beq.b    cle_21
- bra.b    cle_18
-cle_20:
- move.l   a5,a0
- bsr      search_sep
- move.l   d0,a5
-cle_21:
+ move.b   (a5),d0
+ move.b   d0,(a0)+
+ bne.b    cle_q1
+ subq.l   #1,a0
+ move.l   a0,a5
+ bra.b    cle_argloop_continue            * Zeilenende kommt vor dem abschlieûenden Quote
+cle_q1:
+ cmp.b    (a5),d3           * Quote passend?
+ bne.b    cle_loop_endquote   * weiter nach passendem Quote suchen
+ subq.l   #1,a0
+* end quote gefunden. a0 zeigt auf Ziel fÅr den Rest der Zeile, a5 auf das end quote
+* kopiere ab a5+1 nach a0, bis Ende
+ move.l   a5,a1
+ move.l   a0,a5             * hier geht's nachher weiter
+cle_q3:
+ addq.l   #1,a1
+ move.b   (a1),d0
+ move.b   d0,(a0)+
+ bne      cle_q3
+ ; Es kînnten weitere Abschnitte ".." oder '..'kommen
+ bra      cle_cont_arg
+
+* Der Parameter beginnt weder mit " noch '
+cle_param_unquoted:
+ * wir kopieren bis Separator oder quote
+ move.b   (a5),d0
+ beq.b    cle_argloop_end
+ cmpi.b   #$27,d0   * '
+ beq.b    cle_param_quoted
+ cmpi.b   #$22,d0   * "
+ beq.b    cle_param_quoted
+ cmpi.b   #' ',d0       * separator
+ beq.b    cle_argloop_continue
+ cmpi.b   #TAB,d0       * separator
+ beq.b    cle_argloop_continue
+ addq.l   #1,a5
+ bra.b cle_param_unquoted
+* a5 zeigt direkt hinter das derzeitige argv, also auf Separator oder NUL
+cle_argloop_continue:
  move.b   (a5),d3
  clr.b    (a5)+
  tst.b    d3
- beq.b    cle_22
+ beq.b    cle_argloop_end
  cmpi.w   #20,d7
- blt      cle_4
-cle_22:
+ blt      cle_argloop     * Schleife fÅr d7 = 0..19 (20 argv)
+
+* Ende der ARGV-Schleife
+
+cle_argloop_end:
  tst.w    d7
  ble.b    cle_27
  movea.l  ARGV_TAB(a6),a5
@@ -6335,13 +6378,13 @@ bootbats:     DC.B  '\BOOT.BAT',0
 
 	IFF KAOS
 func_s:       DC.B  'F0=',0
-titels:       DC.B  'GEMDOSø SHELL v2.67 Ω ',$27,'90 Andreas Kromke',CR,LF
+titels:       DC.B  'GEMDOSø SHELL v2.68 Ω ',$27,'90 Andreas Kromke',CR,LF
 	ENDC
 	IF KAOS
 	IFNE MAGIX
-titels:       DC.B  'MagiC SHELL v2.67 Ω ',$27,'93/',$27,'26 Andreas Kromke',CR,LF
+titels:       DC.B  'MagiC SHELL v2.68 Ω ',$27,'93/',$27,'26 Andreas Kromke',CR,LF
 	ELSE
-titels:       DC.B  'KAOSø   SHELL v2.67 Ω ',$27,'90 Andreas Kromke',CR,LF
+titels:       DC.B  'KAOSø   SHELL v2.68 Ω ',$27,'90 Andreas Kromke',CR,LF
 	ENDC
 	ENDC
 	IF ACC

@@ -1,19 +1,19 @@
-MACRO     gemdos    fnummer
-          IF fnummer = 0
+MACRO     gemdos    fnum
+          IF fnum = 0
           clr.w     -(sp)
           ELSE
-          move.w    #fnummer,-(sp)
+          move.w    #fnum,-(sp)
           ENDIF
           trap      #1
           ENDM
 
-MACRO     xbios fnummer
-          move.w    #fnummer,-(sp)
+MACRO     xbios fnum
+          move.w    #fnum,-(sp)
           trap      #14
           ENDM
 
-MACRO     bios fnummer
-          move.w    #fnummer,-(sp)
+MACRO     bios fnum
+          move.w    #fnum,-(sp)
           trap      #13
           ENDM
 
@@ -75,11 +75,11 @@ Vsync     EQU 37
 Wvbl      EQU Vsync
 Supexec   EQU 38
 Puntaes   EQU 39
-Floprate EQU 41
-DMAread  EQU 42
-DMAwrite EQU 43
-Bconmap  EQU 44
-NVMaccess   EQU 46
+Floprate  EQU 41
+DMAread   EQU 42
+DMAwrite  EQU 43
+Bconmap   EQU 44
+NVMaccess EQU 46
 Blitmode  EQU 64
 
 
@@ -139,7 +139,7 @@ Fsnext    EQU $4f
 Frename   EQU $56
 Fdatime   EQU $57
 
-* BIOS- und GEMDOS- Fehlercodes:
+* BIOS and GEMDOS error codes:
 
 E_OK      EQU 0
 ERROR     EQU -1
@@ -178,7 +178,7 @@ EGSBF     EQU -67
 EBREAK    EQU -68             * KAOS
 EXCPT     EQU -69             * KAOS
 
-* GEMDOS- Handles
+* GEMDOS handles
 
 STDIN     EQU  0
 STDOUT    EQU  1
@@ -217,14 +217,14 @@ K_F10     EQU $440000
 K_ESC     EQU $01001B
 K_CTRL_C  EQU $2e0003
 
-* Struktur "VDIESC" (relativ zu LINEA)
+* struct "VDIESC" (relative to LINEA)
 
 v_cel_mx  EQU -$2c
 v_cel_my  EQU -$2a
 v_cur_cx  EQU -$1c
 v_cur_cy  EQU -$1a
 
-* Struktur "SYSHDR" (TOS- Header, auf den _sysbase zeigt)
+* struct "SYSHDR" (TOS header, pointed to by _sysbase)
 
 os_version     EQU  2
 os_start       EQU  4
@@ -238,11 +238,11 @@ os_gendatg     EQU  $1e
 os_root        EQU  $20
 os_kbshift     EQU  $24
 os_run         EQU  $28
-os10_root      EQU  $56fa     * fÅr TOS 1.0
-os10_kbshift   EQU  $e1b      * fÅr TOS 1.0
-os10_run       EQU  $602c     * fÅr TOS 1.0
+os10_root      EQU  $56fa     * for TOS 1.0
+os10_kbshift   EQU  $e1b      * for TOS 1.0
+os10_run       EQU  $602c     * for TOS 1.0
 
-* Systemvariablen
+* system variables
 
 proc_lives     EQU $380
 proc_regs      EQU $384
@@ -315,14 +315,14 @@ prv_aux        EQU $512
 pun_ptr        EQU $516
 memval3        EQU $51a
 dev_vecs       EQU $51e       /* long dev_vecs[8*4]         */
-cpu_typ        EQU $59e       /* int cpy_typ                */
+cpu_typ        EQU $59e       /* int cpu_type               */
 _p_cookies     EQU $5a0       /* long *cookie               */
 ramtop         EQU $5a4
 ramvalid       EQU $5a8
-bell_hook      EQU $5ac       /* long *pointer auf pling    */
-kcl_hook       EQU $5b0       /* long *pointer auf keyklick */
+bell_hook      EQU $5ac       /* long *pointer to pling     */
+kcl_hook       EQU $5b0       /* long *pointer to key click */
 
-* Line-A Funktionen
+* Line-A functions
 
 A_INIT              EQU $A000
 A_PUT_PIXEL         EQU $A001
@@ -340,11 +340,11 @@ A_UNDRAW_SPRITE     EQU $A00C
 A_DRAW_SPRITE       EQU $A00D
 A_COPY_RASTER_FORM  EQU $A00E
 
-* Offsets fÅr Line-A Variablen
+* Offsets for Line-A variables
 
 MOUSE_BT            EQU -$254
 
-* Offsets fÅr Basepage
+* Offsets for basepage
 
 p_lowtpa            EQU  0
 p_hitpa             EQU  4
