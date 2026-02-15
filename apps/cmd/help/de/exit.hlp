@@ -1,0 +1,5 @@
+Syntax: EXIT
+Zweck:  cmd verlassen
+
+Im Gegensatz zu COMMAND.COM in MS-DOS bewirkt auch im Batch-Betrieb der
+Befehl EXIT ein Verlassen des Kommando-Interpreters.

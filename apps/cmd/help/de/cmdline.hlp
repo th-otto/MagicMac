@@ -1,0 +1,34 @@
+Parameter und Variablen
+
+Vor Ausfhrung jeder Kommandozeile (ob von Tastatur oder Batch-Datei)
+werden Parameter voneinander getrennt, evtl. Datei-Umlenkungen
+durchgefhrt und Environment-Variable ausgewertet. Das Trennzeichen ist
+immer die Leerstelle, w„hrend unter MS-DOS auch das Komma zugelassen
+ist. Mit Setzen in Anfhrungszeichen wird die Auswertung verhindert.
+Eine Zeichenkette in Anfhrungszeichen ist immer ein ganzer Parameter,
+egal, ob davor oder dahinter oder dazwischen Leerzeichen oder andere
+Sonderzeichen ('>','<','|','%') stehen oder nicht. Die Auswertung von
+Variablen wie %1 oder %path% oder Steuerzeichen wie %\n% kann durch
+Einklammerung in Hochkommata verhindert werden.
+
+"......"       ... ist EIN Parameter, kann ' oder Leerzeichen enthalten.
+'......'       Wertet ... nicht aus, kann " oder Leerzeichen enthalten.
+%var%          Gibt Wert von var (mit SET gesetzt) an, falls vorhanden.
+%%             Das '%'- Zeichen selbst
+%\n%           Zeilenvorschub (Line Feed)
+%\r%           Wagenrcklauf  (Carriage Return)
+%\b%           Rckschritt    (Backspace)
+%\t%           Tabulator
+
+Beispiel: SET "f1=dir -q%\n%" belegt eine Funktionstaste. Beim Bet„tigen
+          wird der Befehl automatisch ausgefhrt.
+
+Im Gegensatz zu UNIX werden Environment-Variablen in '%' eingeklammert, um
+das Ende des Variablennamens deutlich zu markieren; Ausdrcke wie
+"$(pfad)/datei" (UNIX) sind daher nicht notwendig, man schreibt einfach
+"%pfad%\datei".
+
+Bemerkung: MS-DOS kennt weder die einfachen Anfhrungszeichen ', um die
+           doppelten Anfhrungszeichen " innerhalb eines Parameters einge-
+           ben zu k”nnen, noch die M”glichkeit, Environment-Variablen mit
+           Hilfe des %-Zeichens innerhalb der Eingabezeile einzusetzen.

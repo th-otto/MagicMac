@@ -1,0 +1,13 @@
+Syntax: TYPE datei1 datei2 ...
+Zweck:  Datei(en) anzeigen
+
+TYPE kann beliebig viele Argumente haben. Ist <datei> ein Dateimuster
+oder ein Pfad, werden alle passenden Dateien angezeigt. Die Dateinamen
+erscheinen nur auf dem Bildschirm und werden nicht nach stdout
+geschrieben.
+Im Gegensatz zu "MORE" wird das Zeichen ^Z nicht ausgewertet, damit die
+Verkettung von Dateien auch bei solchen Dateien funktioniert, die dieses
+Zeichen enthalten.
+Bemerkung: TYPE wirkt wie CAT in UNIX. Mit "TYPE datei1 datei2 >datei3"
+           kann man Dateien verketten. Dabei erh„lt <datei3>, im
+           Gegensatz zum COPY-Befehl, das aktuelle Datum.

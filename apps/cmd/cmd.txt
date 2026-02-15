@@ -298,7 +298,7 @@ angesprochenen  Laufwerk  die Diskette gewechselt  wurde.  Wenn  ja,  wird
 GEMDOS  durch  den Aufruf von Fsfirst()  dazu  veranlat,  seine  internen 
 Pfadpuffer zu aktualisieren.  Daher ist darauf zu achten,  da  z.B.  beim 
 Wechsel des aktuellen Laufwerks schon eine Diskette eingelegt ist.
-Â¸Da  besagter  Fsfirst() - Aufruf mit dem Wurzelverzeichnis  als  Pfad  der 
+Da  besagter  Fsfirst() - Aufruf mit dem Wurzelverzeichnis  als  Pfad  der 
 einzige  (!) GEMDOS - Befehl ist,  der den Diskettenwechsel abfragt  (auch 
 ein Programmierfehler!),  gibt es sonst Schwierigkeiten mit dem  Auffinden 
 von Pfaden und Dateien z.B.  bei COPY und CD.
@@ -517,7 +517,7 @@ Sortiermodi:
 Beim Sortieren (wenn nicht Option -U aktiv ist) werden Ordner immer zuerst 
 angezeigt.  Wird  kein Sortiermodus angegeben,  wird der des letzten  DIR- 
 Aufrufs  benutzt;  bei  Fehleingaben wird nach  Namen  sortiert.  Bei  der 
-Ausgabe eines Verzeichnis wird der Sortiermodus mit ausgegeben, wenn nicht 
+Ausgabe eines Verzeichnis wird der Sortiermodus mit ausgegeben, wenn nicht 
 nach Namen sortiert wird.
 
 DIR kann maximal 512 Eintr„ge sortieren und ben”tigt dazu kurzfristig etwa 
@@ -560,7 +560,7 @@ Syntax: ECHO
 Zweck:  Zeichenketten ausgeben oder ECHO- Modus setzen/anzeigen
 ECHO  ohne Parameter zeigt den ECHO- Modus fr den  Batchbetrieb  an.  Per 
 Default  ist  ECHO  immer OFF (d.h.  die  ausgefhrten  Zeilen  werden  im 
-Batchbetrieb nicht angezeigt).
+Batchbetrieb _nicht_ angezeigt).
 ECHO ON oder ECHO OFF setzt den ECHO- Modus.
 ECHO <string> gibt <string> und dann einen Zeilenvorschub nach stdout aus, 
 mit der Option -n wird dieser Zeilenvorschub unterdrckt.
@@ -592,7 +592,7 @@ stdout. Man mu also stdin auf die zu durchsuchende Datei umlenken.
 FIND unterscheidet nicht zwischen Gro- und Kleinschreibung.
 Bemerkung: Falls <string> Leerstellen enth„lt, mu <string> in Anfhrungs-
            zeichen gesetzt werden.
-           CTRL-Z wird als Dateiende erkannt
+           CTRL-Z wird als Dateiende erkannt.
 
 1.14 FOR
 --------
@@ -690,7 +690,7 @@ Das Verschieben ist immer nur auf demselben Laufwerk m”glich.  Die  Angabe
 von Ger„ten (CON:,AUX:,PRN:) ist unzul„ssig.  Ebenso darf keine Datei  mit 
 dem neuen Namen schon existieren.
 MV  gibt bei Fehlernummern den vom DOS erhaltenen Fehlercode  im  Klartext 
-aus. Leider hat dieser nur bei KAOS unmittelbar etwas mit dem tats„chlich 
+aus.  Leider hat dieser nur bei KAOS unmittelbar etwas mit dem tats„chlich 
 aufgetretenen Fehler zu tun.
 Wenn  man nicht unter KAOS arbeitet,  ist der MV- Befehl mit  Vorsicht  zu 
 genieen.   Schwierigkeiten  gibt  es  beispielsweise  bei  vollem   Root- 
@@ -784,11 +784,11 @@ Syntax: REN alter_pfadname neuer_dateiname
 Zweck:  Eine Datei oder einen Ordner umbenennen
 Der  Befehl  REN  entspricht v”llig seinem  Pendent  in  COMMAND.COM.  Der 
 Parameter  <alter_pfadname>  enth„lt Pfad und  Namen  der  umzubenennenden 
-Datei, der Parameter <neuer_dateiname> enth„lt den neuen Namen ohne Pfad.
+Datei, der Parameter <neuer_dateiname> enth„lt den neuen Namen - ohne Pfad.
 Mit  diesem Befehl kann eine Datei im selben Verzeichnis  umbenannt,  also 
-nicht  verschoben werden (siehe MV).  Auerdem wird immer nur  eine  Datei 
+nicht  verschoben werden (siehe MV).  Auerdem wird immer nur  _eine_  Datei 
 behandelt, die Parameter drfen beide keine Wildcards ('?','*') enthalten.
-Ab  TOS 1.4 k”nnen mit diesem Befehl auch Ordner  umbenannt  werden.  Dazu 
+Ab  TOS 1.4 k”nnen mit diesem Befehl auch Ordner  umbenannt  werden.  Dazu 
 wird der Ordner wie eine Datei ohne abschlieendes '\' spezifiziert.
 1. Beispiel:
   ren c:\compiler\turbo\tc.prg tc.ttp
@@ -796,7 +796,7 @@ ist „quivalent zu
   mv  c:\compiler\turbo\tc.prg c:\compiler\turbo\tc.ttp
 2. Beispiel (ab TOS 1.4):
   ren folder ordner
-Benennt  den Ordner "folder" in "ordner" um.  Ein „quivalenter MV-  Befehl 
+Benennt  den Ordner "folder" in "ordner" um.  Ein „quivalenter MV-  Befehl 
 ist  nicht  m”glich,  da dieser alle Dateien aus dem  Ordner  "folder"  zu 
 verschieben versuchte.  Das Verschieben von Ordnern ist auch unter TOS 1.4 
 nicht m”glich,  so da der MV- Befehl beim Behandeln von Ordnern berhaupt 
@@ -1005,7 +1005,7 @@ die  nun nutzlosen (Null-) Relocationdaten von der Datei zu entfernen  und
 diese so zu krzen.
 Ab TOS 1.4 gibt es ein sogenanntes "Fastload- Bit" im Programmheader,  das 
 bewirkt,  da nicht mehr der gesamte freie Speicher,  sondern nur noch das 
-BSS gel”scht wird. EXE2BIN fragt nun ab, ob dieses Bit bereits gesetzt ist 
+BSS gel”scht wird. EXE2BIN fragt nun ab, ob dieses Bit bereits gesetzt ist, 
 und,  wenn  nicht,  setzt es.  Dabei bleiben Datum und Uhrzeit  der  Datei 
 explizit erhalten.
 
@@ -1206,7 +1206,7 @@ in der Version 1.2.3 keine Probleme.
 4. Ger„te (Devices)
 -------------------
 
-TOS kennt 3 Ger„te,  die wie normale Dateien behandelt werden,  z.B.  kann 
+TOS kennt drei Ger„te,  die wie normale Dateien behandelt werden,  z.B.  kann 
 die Standard- Ausgabe auf den Drucker gelenkt werden:
 
 1) CON:   Bildschirm/Tastatur
@@ -1216,7 +1216,7 @@ die Standard- Ausgabe auf den Drucker gelenkt werden:
 Mit  "TYPE  datei >AUX:" kann man z.B.  einfach Daten  ber  die  serielle 
 Schnittstelle schicken.
 Im Gegensatz zu MS-DOS fehlt erstens das Ger„t "NUL:", zweitens k”nnen die 
-Doppelpunkte nicht weggelassen werden.
+Doppelpunkte nicht weggelassen werden.
 
 Unter KAOS gilt:
 1)   Es gibt das Ger„t NUL:
@@ -1253,7 +1253,7 @@ Beispiel: SET "f1=dir -q%\n%" belegt eine Funktionstaste.  Beim  Bet„tigen
           wird der Befehl automatisch ausgefhrt.
 
 Im Gegensatz zu UNIX werden Environment- Variable in '%' eingeklammert, um 
--das  Ende  des  Variablennamens  deutlich  zu  markieren;   Ausdrcke  wie 
+das  Ende  des  Variablennamens  deutlich  zu  markieren;   Ausdrcke  wie 
 "$(pfad)/datei"  (UNIX) sind daher nicht notwendig,  man schreibt  einfach 
 "%pfad%\datei".
 
@@ -1456,7 +1456,7 @@ Batchdatei gltigen Ausgabekanal.
 9. CMD als Accessory. Allgemeines und spezielles 
 ------------------------------------------------
 
-CMD ist ein Programm, da, einmal gestartet oder aktiviert, v”llig auf GEM 
+CMD ist ein Programm, das, einmal gestartet oder aktiviert, v”llig auf GEM 
 verzichtet. Es ist in seiner Funktion v”llig von DOS abh„ngig.
 Ein Accessory l„uft bei GEM unter einer eigenen "Applikation",  aber unter 
 demselben "Prozess" wie das gerade laufende Hauptprogramm.  Das heit, da 
@@ -1566,7 +1566,7 @@ Der Grund fr das letztere Verhalten ist folgendes:
 GEMDOS legt fr jeden Proze einen Supervisor- Stack an.  Dieser wird  fr 
 Interrupts  genutzt;  auch die Rcksprungadresse von einem Trap wird  hier 
 aufbewahrt.  Leider ist dieser "Interrupt- Stack" jedesmal DERSELBE (nicht 
-nur  der gleich,  sondern tats„chlich derselbe).  TOS  1.2  beispielsweise 
+nur  der gleiche, sondern tats„chlich derselbe).  TOS  1.2  beispielsweise 
 setzt den ssp immer auf $755a beim Start eines Prozesses.
 Beim Aktivieren des ACC geschieht folgendes:
 

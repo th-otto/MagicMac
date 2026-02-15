@@ -1,0 +1,8 @@
+Syntax: FREE [x:]
+Zweck:  Gibt GEMDOS-Speicher fr aktuelles oder Laufwerk x: frei.
+
+Wenn das "100-Ordner-Problem" akut wird, kann man mit diesem Befehl den
+Speicher fr eine gerade nicht ben”tigte Harddisk- Partition freigeben.
+Auerdem kann man diesen Befehl anwenden, wenn GEMDOS sich weigert, Ordner
+oder Dateien zu l”schen, obwohl diese leer bzw. nicht schreibgeschtzt
+sind.

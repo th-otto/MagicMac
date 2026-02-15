@@ -1,0 +1,16 @@
+Syntax: DATE
+        DATE datumsangabe
+        DATE datei
+Zweck:  Systemdatum setzen
+
+Wird DATE ohne Parameter gestartet, kann das Datum von Hand eingegeben
+werden. Wird nur <Return> gedrckt, bleibt die alte Einstellung erhalten.
+Wird nur eine Zahl eingegeben, wird nur der Tag ge„ndert, bei zwei Zahlen
+Tag und Monat. Tag, Monat, Jahr k”nnen durch beliebige nichtnumerische
+Zeichen voneinander getrennt werden.
+Bemerkung: Mit "DATE <datei" kann das Datum statt von der Standard-
+           Eingabe auch von einer Datei gelesen werden.
+           Bei TOS 1.0 wird nur die GEMDOS-Uhr gesetzt, so da die alte
+           Zeit im  Tastaturprozessor (XBIOS- Aufruf) und so bei einem
+           Reset erhalten bleibt. Ab TOS 1.2 wird die Hardware-Uhr
+           (Quarzuhr bzw. Tastaturprozessor) mitgesetzt.

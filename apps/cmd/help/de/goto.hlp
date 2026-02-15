@@ -1,0 +1,4 @@
+Syntax: GOTO label
+Zweck:  Unbedingter Sprung in Batch-Dateien
+
+Die Sprungmarke ("label") in einer Batch-Datei hat die Form ":name".

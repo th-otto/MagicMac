@@ -1,0 +1,91 @@
+Stdout/Stdin-Umlenkung
+
+Wie MS-DOS und UNIX hat auch GEMDOS sogenannte Standard-Dateien und
+physikalische Dateien.
+Die Standard-Dateien haben die Handle-Nummern 0 bis 5, dabei sind:
+
+  0 "stdin",  Standard-Eingabe    (normalerweise Tastatur)
+  1 "stdout", Standard-Ausgabe    (normalerweise Bildschirm)
+  2 "stdaux", Standard-Hilfsdatei (normalerweise RS-232)
+  3 "stdprn", Standard-Druckdatei (normalerweise Centronics)
+  4 "stderr", unbenutzt           (bei KAOS und ab TOS 1.04: Bildschirm)
+  5 "stdxtra" unbenutzt           (bei KAOS und ab TOS 1.04: Bildschirm)
+
+Alle Standard-Dateien (0 bis 5) k”nnen mit der DOS-Funktion Fforce() auf
+jede beliebige Datei oder jedes beliebige Ger„t umgelenkt werden. Die
+"normalen" Dateien dagegen (Handles 6 bis 75) k”nnen nicht umgelenkt
+werden. Die Umlenkung ist jedoch nicht so problemlos, wie es den
+Anschein hat. Neben der total verkorksten Behandlung der Standardpfade
+liegen hier die schlimmsten Fehler des GEMDOS (in Fforce(), Fdup() und
+Fclose()).
+
+Im Gegensatz zu COMMAND.COM unter MS-DOS kann CMD unter TOS s„mtliche
+sechs Standarddateien auf der Kommandozeile umlenken. Bei den internen
+Befehlen des CMD (z.B. DIR >dirlist) funktioniert die Umlenkung
+problemlos. Beim Aufruf von (externen) Programmen (z.B. SID >list)
+konnte man bisher auch beim TOS 1.02 die Ausgabe nicht umlenken, da die
+gesamte zeichenorientierte Ausgabe nicht funktioniert. Diese Fehler sind
+unter KAOS v”llig und ab TOS 1.04 teilweise behoben.
+Umlenkungen werden in folgender Form eingegeben:
+
+>datei              Erstellt <datei>, lenkt STDOUT auf <datei>
+>>datei             H„ngt STDOUT an <datei> an und erstellt ggf. <datei>
+<datei              Lenkt STDIN auf <datei>, falls diese existiert
+pgm | .. | pgm      Pipe
+n>datei             fr 0 <= n <= 5 : Wie oben, aber mit bel. Std.datei
+n>>datei            fr 0 <= n <= 5 : Wie oben, aber mit bel. Std.datei
+
+Die Ausgabedatei wird bei '<' zum Lesen, bei '>' und '>>' zum Lesen und
+Schreiben ge”ffnet.  Die Eingaben "pgm >out" und "pgm 1>out"  sind
+„quivalent. Die Handles 2..5 k”nnen nicht mit '<' umgelenkt werden; daher
+werden sie immer zum Lesen und Schreiben ge”ffnet und ggf. erstellt. Bei
+der Umlenkung von STDAUX (mit "2>datei") wird sowohl die Ein- als auch die
+Ausgabe auf die serielle Schnittstelle unter DOS umgelenkt. Es sind also
+sowohl die Befehle Cauxout(), Cauxos() als auch Cauxin() und Cauxis()
+betroffen. Es ist im brigen nicht zu empfehlen, STDIN auf den Drucker zu
+lenken, da man von dort meist nicht kann.
+
+Auch eine Pipe kann umgelenkt werden, z.B. "DIR | SORT >dirlist".
+
+Als Kommandos zwischen dem ersten und letzten "|" der Pipe kommen in
+erster Linie "Filter" in Frage, also solche Programme oder Befehle, die
+von stdin lesen und nach stdout schreiben.
+
+Fr die Pipes werden normalerweise im Wurzelverzeichnis des aktuellen
+Laufwerks tempor„re Dateien mit Namen "\$$PIPE?.?" erstellt. Daher soll-
+ten sich keine Dateien dieses Namens dort befinden, und auerdem darf das
+aktuelle Laufwerk nicht schreibgeschtzt sein. Ist eine Environment-
+Variable TMPDIR vorhanden, werden die tempor„ren Dateien dort erstellt
+(inzwischen ist der Hersteller von MS-DOS auch auf den Dreh gekommen,
+Version 5.0 macht es genauso, wie CMD es seit Jahren tut). Beispielsweise
+bei TMPDIR=c:\tmp oder TMPDIR=c:\tmp\ heien die tempor„ren Dateien dann
+c:\tmp\$$pipe?.?. Durch dieses Verfahren l„t sich erreichen, da Pipes
+immer auf dem schnellsten Speichermedium, also auf Ramdisk oder
+Festplatte angelegt werden, auch wenn man sich gerade "auf der Diskette
+befindet".
+
+Ein Anwendungsbeispiel fr das Umlenken einer anderen Standarddatei:
+"PRINT drucktext 3>out"
+
+Ruft das Programm "PRINT" (s.u.) auf mit umgelenkter STDPRN- Datei. Die
+Datei "drucktext" wird jetzt nicht direkt auf den Drucker geschrieben,
+sondern einschlielich aller Steuerzeichen in die Datei "out". Ebenso
+k”nnte man mit:
+
+"PRINT drucktext 3>con"
+
+den fr Epson-Drucker bersetzten Text auf den Bildschirm schreiben. So
+lassen sich gut eigene oder fremde Programme testen, die eine Ausgabe auf
+den Drucker machen. Das Resultat l„t sich hinterher exakt mit DUMP
+analysieren.
+
+Ich empfehle, eigene Programme so zu schreiben, da der Standardkanal 4
+fr die Fehlerausgabe (STDERR) verwendet wird.
+Mit:
+
+"PGM 4>prn"
+
+k”nnte man dann z.B. alle Fehlermeldungen auf den Drucker lenken. Man mu
+allerdings vorher prfen, ob der Standardkanal 4 gltig ist (etwa mit
+Fdup()), dies ist fr TOS-Versionen vor 1.04 notwendig, KAOS bereitet auch
+in der Version 1.2.3 keine Probleme.

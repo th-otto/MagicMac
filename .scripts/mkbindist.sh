@@ -19,6 +19,7 @@ for lang in $LANGUAGES; do
 	mkdir -p "$BUILDROOT/$lang/GEMSYS/GEMDESK"
 	mkdir -p "$BUILDROOT/$lang/GEMSYS/GEMDESK/PAT"
 	mkdir -p "$BUILDROOT/$lang/GEMSYS/GEMDESK/RSC"
+	mkdir -p "$BUILDROOT/$lang/GEMSYS/GEMDESK/HELP"
 	mkdir -p "$BUILDROOT/$lang/BIN"
 	mkdir -p "$BUILDROOT/$lang/CLIPBRD"
 	mkdir -p "$BUILDROOT/$lang/EXTRAS"
@@ -53,6 +54,8 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/apps/mgsearch/$lang/mgsearch.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	# TODO: french translation
 	mcopy "$SRCDIR/apps/mod_app/$lang/mod_app.txt" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	# TODO: english & french translation
+	mcopy "$SRCDIR/apps/cmd/help/de/*.HLP" "$BUILDROOT/$lang/GEMSYS/GEMDESK/HELP/"
 	mcopy "$SRCDIR/apps/vfatconf/$lang/vfatconf.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/vt52/$lang/vt52.rsc" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/magiccfg/rsc/$lang/magiccfg.rsc" "$BUILDROOT/$lang/EXTRAS/MAGICCFG/"
@@ -98,6 +101,7 @@ for lang in $LANGUAGES; do
 	
 	mcopy "$SRCDIR/apps/chgres/chgres.prg" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/cmd/mcmd.tos" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
+	mcopy "$SRCDIR/apps/cmd/help/help.bat" "$BUILDROOT/$lang/BIN/"
 	mcopy "$SRCDIR/apps/magxdesk.5/magxdesk.app" "$BUILDROOT/$lang/GEMSYS/GEMDESK/"
 	mcopy "$SRCDIR/apps/magxdesk.5/rsc/*" "$BUILDROOT/$lang/GEMSYS/GEMDESK/RSC/"
 	

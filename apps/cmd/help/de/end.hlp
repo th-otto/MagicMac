@@ -1,0 +1,6 @@
+Syntax: END
+Zweck:  Bricht Batch-Datei ab
+
+END bricht nur die laufende Batch-Datei ab; wenn diese von einer anderen
+Batchdatei aufgerufen wurde, wird die n„chste Zeile wieder aus der
+bergeordneten Batch-Ddatei geholt.

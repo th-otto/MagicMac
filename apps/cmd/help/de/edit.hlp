@@ -1,0 +1,43 @@
+Editor-Steuertasten
+
+Wegen der vielen Fehler des Systemaufrufs Cconrs() (falsche Behandlung von 
+Umlauten, falsche Reaktion bei öberlauf des Eingabepuffers, Fehler bei 
+Eingaben Åber ein Zeilenende hinaus) enthÑlt CMD eine eigene Routine zur 
+Eingabe einer Zeile. Sie wird benutzt bei der Eingabe eines Kommandos, bei 
+DATE und TIME. Da von stdin gelesen wird, kann die Eingabe auch umgelenkt 
+werden.
+
+Der grîûte Vorteil der eigenen Eingaberoutine ist die Mîglichkeit, die 
+Funktionstasten frei zu definieren. Die Belegung dieser Tasten steht im 
+Environment, wird also mit dem SET-Befehl vorgenommen. Ein Beispiel:
+
+  SET "f1=edit "
+
+belegt die Funktionstaste F1 mit der Zeichenkette "edit ". Wenn wie hier 
+die Zeichenkette Leerstellen enthÑlt, muû der Parameter des SET-Kommandos 
+in AnfÅhrungszeichen gesetzt werden. FÅr die Taste F10 muû F0 geschrieben 
+werden. Sinnigerweise sollten die Funktionstasten- Belegungen zusammen mit 
+der PATH-Definition in der AUTOEXEC.BAT-Datei stehen.
+Folgende Sondertasten werden benutzt:
+
+F1..F10             Je nach Belegung
+TAB                 Cursor an Anfang/Ende der Eingabe
+BS                  Zeichen links von Cursor lîschen
+DEL                 Zeichen unter Cursor lîschen
+RETURN              Eingabe abschlieûen, Befehl in UNDO- Puffer
+ENTER               Eingabe abschlieûen
+INSERT              EinfÅge- /öberschreibmodus wechseln
+CLR                 Eingabe lîschen
+UNDO                letzte Eingabe aufrufen
+Cursor L/R          Cursor bewegen
+
+Unter KAOS gilt:
+
+  Es wird einfach der Cconrs- Aufruf (bzw.  Fread(STDIN,...) benutzt. KAOS 
+  enthÑlt den oben beschriebenen Editor, der damit jedem Programm 
+  zugÑnglich ist.  Damit sind unter jedem Programm, das von KCMD gestartet 
+  wurde,  die Funktionstasten belegt (z.B. SID,PROBE,PASCAL- Programme mit 
+  readln(), FORTRAN- Programme mit READ(*,*) usw.).
+
+  In  KAOS 1.4 ist der Zeileneditor noch einmal verbessert und erweitert 
+  worden, siehe dortige Dokumentation!

@@ -1,0 +1,35 @@
+Syntax: MV pfad
+        MV datei(muster)
+        MV pfad pfad
+        MV datei(muster) pfad
+        MV datei1 datei2
+Zweck:  Datei(en) umbenennen oder verschieben
+
+MV (move) wirkt Ñhnlich wie COPY, kopiert die Datei(en) jedoch nicht,
+sondern verschiebt sie innerhalb der Verzeichnis- Struktur desselben
+Laufwerks, was natÅrlich viel schneller geht. Beispiele:
+
+- "MV datei neuername"      benennt die die <datei> einfach um.
+- "MV . \"                  verschiebt alle Dateien im aktuellen Unter-
+                            verzeichnis (".") in das Wurzelverzeichnis
+                            ("\").
+- "MV \*.h headers"         verschiebt alle C- Headerdateien vom Wurzel-
+                            verzeichnis in den (hoffentlich vorhandenen)
+                            Ordner "headers".
+- "MV auto\dat.prg"         Schiebt die Datei "dat.prg" vom AUTO- Ordner
+                            ins aktuelle Verzeichnis.
+
+Das Verschieben ist immer nur auf demselben Laufwerk mîglich. Die Angabe
+von GerÑten (CON:, AUX:, PRN:) ist unzulÑssig. Ebenso darf keine Datei
+mit dem neuen Namen schon existieren.
+MV gibt bei Fehlernummern den vom DOS erhaltenen Fehlercode im Klartext
+aus. Leider hat dieser nur bei KAOS unmittelbar etwas mit dem
+tatsÑchlich aufgetretenen Fehler zu tun.
+Wenn man nicht unter KAOS arbeitet, ist der MV- Befehl mit Vorsicht zu
+genieûen. Schwierigkeiten gibt es beispielsweise bei vollem Wurzel-
+Verzeichnis oder Umbenennen in ein existierendes Unterverzeichnis usw..
+Bemerkung: Bei MS-DOS ist hier nur das Umbenennen EINER Datei in DEMSELBEN
+           VERZEICHNIS mîglich. CMD bietet dagegen alle Mîglichkeiten des
+           UNIX-Kommandos MV.
+           Auûerdem hat auch CMD den Befehl REN, der wie unter MS-DOS
+           arbeitet und ab TOS 1.04 auch Ordner umbenennen kann.

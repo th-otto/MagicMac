@@ -1,0 +1,11 @@
+Syntax: TOUCH datei1 datei2 ...
+Zweck: Datum und Uhrzeit der Datei auf aktuelles Datum und aktuelle
+       Uhrzeit setzen, als ob sie ge„ndert worden w„re.
+
+Das Archivbit (ab TOS 1.04 untersttzt) wird nicht ver„ndert.
+Als <datei> kann man auch einen Pfad angeben, etwa "TOUCH \", dann werden
+alle Dateien auf dem Wurzellaufwerk in Uhrzeit und Datum aktualisiert.
+Sinnvoll ist die Anwendung fr ein MAKE, das man so zwingen kann,
+Quelltexte neu zu bersetzen, da sich jetzt ein neueres Datum haben als
+die bereits erzeugten Objektdateien, oder fr den Fall, da man Dateien
+mit dem nichtssagenden Datum 6.2.86 hat.

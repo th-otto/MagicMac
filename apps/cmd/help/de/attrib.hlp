@@ -1,0 +1,19 @@
+Syntax: ATTRIB [schalter1 schalter2 ...] name1 name2 ...
+               schalter = +|-{rsha}
+               name     = Dateiname oder -muster oder Pfad
+Zweck:  Attributbyte von Dateien anzeigen oder „ndern.
+
+Werden keine Schalter angegeben, werden die Attribute nur angezeigt:
+  R Read-Only                 (schreibgeschtzt)
+  S System                    (versteckte Systemdatei)
+  H Hidden                    (versteckte Datei)
+  A Archive                   (erst ab TOS 1.4 untersttzt)
+Mit "ATTRIB +r c: f:" lassen sich beispielsweise alle Dateien in den
+aktuellen Verzeichnissen der Laufwerke C: und F: schreibschtzen.
+"ATTRIB -rsha d:\cmd.prg" l”scht alle obigen Attribute der Datei cmd.prg
+im Wurzelverzeichnis von D:.
+Ab TOS 1.04 wird das Attribut 'A' korrekt ausgewertet, ansonsten erfllt
+kein einziges der Attribute bei irgendeinem originalen Atari-Betriebs-
+system den ursprnglich dokumentierten Zweck! Insbesondere kann man
+unter TOS auf schreibgeschtzte Dateien schreiben.
+Disknamen und Ordner werden nicht angezeigt oder ver„ndert!

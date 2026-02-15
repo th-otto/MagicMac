@@ -1,0 +1,10 @@
+Syntax: SORT [-C] [-R] [-n]
+Zweck:  Textdatei sortieren
+
+^Z in der Datei wird als Dateiende erkannt.
+SORT ist ein Filter, d.h. liest von stdin und schreibt nach stdout.
+Mit -C wird Gro-/Kleinschreibung unterschieden. Mit -R wird umgekehrt
+sortiert.
+-n enth„lt die Position des Schlssels; z.B. vergleicht SORT -4 die
+Zeilen erst ab der vierten Spalte.
+Es k”nnen nur Dateien sortiert werden, die ganz in den Speicher passen.

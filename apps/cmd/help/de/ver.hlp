@@ -1,0 +1,27 @@
+Syntax: VER
+Zweck:  TOS/KAOS-Version, GEMDOS-Version und CMD-Version anzeigen
+
+Die GEMDOS- Version hat nicht unbedingt etwas mit der TOS- Version zu tun.
+Hier eine Aufstellung einiger klassischer (deutscher) Versionen fÅr den
+ST (ohne die fÅr STE oder TT):
+
+TOS  1.0 20/06/85, GEMDOS 0.13     Disketten-Version (uralt)
+TOS  1.0 20/11/85, GEMDOS 0.19     Disketten-Version (erste "endgÅltige")
+TOS  1.0 06/02/86, GEMDOS 0.19     Disketten-version
+                                   ROMs ("ROM TOS")
+TOS  1.0 06/02/86, GEMDOS 0.20     dito mit Turbo-DOS
+TOS  1.2 22/04/87, GEMDOS 0.19     ROMs ("Blitter TOS")
+KAOS 1.2 22/04/87, GEMDOS 0.20     KAOS (Vorversion vom November '87)
+KAOS 1.2 22/04/87, GEMDOS 0.21     KAOS 1.2.3  (vom Juli '88)
+TOS  1.4 18/05/88, GEMDOS 0.21     Diskversion 1.4 (Beta Version)
+TOS  1.4 08/08/88, GEMDOS 0.21     Diskversion 1.4 (Developer Version)
+TOS  1.4 22/02/89, GEMDOS 0.21     ROMs 1.04       (Messe-Version)
+TOS  1.4 06/04/89, GEMDOS 0.21     ROMs ("Rainbow" TOS 1.04)
+KAOS 1.4 06/04/89, GEMDOS 0.22     KAOS 1.4.x
+
+
+KCMD.ACC gibt hier auch die AES-Versionsnummer aus, die jedoch von
+geringerem Interesse ist. TOS 1.0/1.2 geben hier $120 an (wird dezimal als
+V1.32 angezeigt), TOS 1.04 gibt $140 an (wird als V1.64 angezeigt) und KAOS
+1.4 $141 (also V1.65). GEM 2.2 von ABC hat Versionsnummer $210 (als V2.16
+angezeigt).

@@ -1,0 +1,16 @@
+Syntax: RD ordnername
+Zweck:  Verzeichnis lîschen
+
+RD (remove directory) kann nur leere (!) Verzeichnisse lîschen.
+Auûer bei KAOS bewirkt das Lîschen des aktuellen (leeren) Verzeichnisses
+Bomben oder Schlimmeres. Bei KAOS gibt es nur ein "Zugriff unmîglich". Man
+beachte, daû auch die aktuellen Verzeichnisse des Desktop geschÅtzt werden
+mÅssen und nicht gelîscht werden sollten. KAOS tut dies von sich aus;
+daher kann es vorkommen, daû sich Ordner aus "unerfindlichen" GrÅnden
+nicht lîschen lassen. In diesem Fall genÅgt ein FREE (s.o.), um das
+Laufwerk auch fÅr DESKTOP abzumelden; dann lassen sich alle Ordner
+lîschen.
+Bemerkung: Aufgrund eines der vielen TOS- Fehler kann es vorkommen, daû
+           ein gerade erstelltes Verzeichnis nicht gelîscht werden kann.
+           Abhilfe: IBM kaufen, KAOS benutzen oder einfach UNDO, RETURN
+           betÑtigen.

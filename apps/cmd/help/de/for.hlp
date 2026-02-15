@@ -1,0 +1,12 @@
+Syntax: FOR [NOT] var ( wert1 wert2 .. ) ...
+Zweck:  Steuerung in Batch-Dateien
+
+Ohne "NOT": Setzt var=wert1 und fhrt ... aus. Beim n„chstenmal wird
+var=wert2 gesetzt und ... ausgefhrt usw. Ist die Liste zuende, d.h. ')'
+erreicht, wird ... nicht ausgefhrt, sondern gleich zum n„chsten
+Kommando bergegangen.
+Mit "NOT": Setzt var=wert1, berspringt ... Beim n„chstenmal wird
+var=wert2 gesetzt und ... wieder bersprungen usw. Ist die Liste zuende,
+d.h. ')' erreicht, wird ... ausgefhrt.
+FOR darf nicht geschachtelt werden!
+Die Leerzeichen vor und nach den Klammern sind notwendig!

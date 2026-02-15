@@ -1,0 +1,11 @@
+Syntax: SET
+        SET symbol=
+        SET symbol=wert
+Zweck:  Environment manipulieren
+
+Ohne Parameter wird das Environment ausgegeben. Mit "SET symbol=" wird die
+Environment- Variable <symbol> gelîscht, mit "SET symbol=wert" auf einen
+neuen Wert gesetzt.
+Soll der Wert Leerstellen enthalten, setzt man "symbol=wert" in AnfÅh-
+rungszeichen.
+Bemerkung: Das Environment ist etwa 1 kB groû, also i.a. ausreichend.

@@ -1,0 +1,9 @@
+Syntax: FIND zeichenkette
+Zweck:  Zeichenketten in Textdateien suchen
+
+FIND ist ein Filter, das heit, er liest von stdin und schreibt nach
+stdout. Man mu also stdin auf die zu durchsuchende Datei umlenken.
+FIND unterscheidet nicht zwischen Gro- und Kleinschreibung.
+Bemerkung: Falls <zeichenkette> Leerstellen enth„lt, mu der Parameter
+           in Anfhrungszeichen gesetzt werden.
+           CTRL-Z wird als Dateiende erkannt.

@@ -1,0 +1,20 @@
+Ger„te (Devices)
+
+TOS kennt drei Ger„te, die wie Dateien behandelt werden, z.B. kann die
+Standard- Ausgabe auf den Drucker gelenkt werden:
+
+1) CON:   Bildschirm/Tastatur
+2) AUX:   RS-232
+3) PRN:   Drucker
+
+Mit "TYPE datei >AUX:" kann man z.B. Daten ber die serielle
+Schnittstelle schicken.
+Im Gegensatz zu MS-DOS fehlt erstens das Ger„t "NUL:", zweitens k”nnen die
+Doppelpunkte nicht weggelassen werden.
+
+Unter KAOS gilt:
+1)   Es gibt das Ger„t NUL:
+2)   Auch "con","a:\Con" oder "con.c" usw. werden als Ger„te erkannt, dies
+     wegen der Kompatibilit„t zu MS-DOS.
+3)   Das Erstellen von Ordnern mit Ger„tenamen sowie das Umbenennen in ein
+     Ger„t wird von KAOS abgewiesen.

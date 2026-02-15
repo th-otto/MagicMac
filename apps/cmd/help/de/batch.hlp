@@ -1,0 +1,35 @@
+Batch-Dateien
+
+Das Konzept der Batch-Datei entspricht im wesentlichen dem im MS-DOS.
+Batch-Befehle sind GOTO, SHIFT, IF, END, FOR und PAUSE.
+
+Das Label fr GOTO sieht so aus: ":label". Es steht am Zeilenanfang
+einer Zeile der Batch-Datei. Steht dahinter ein Leerzeichen, so wird
+alles rechts davon ignoriert. Mit ": Kommentar" kann man so eine Batch-
+Datei kommentieren; ein Befehl REM des MS-DOS wird bei CMD nicht
+ben”tigt.
+
+Das ECHO-Flag wirkt bei CMD nur auf die Ausfhrung von Batch-Dateien. Es
+ist normalerweise (anders als bei MS-DOS) ausgeschaltet und braucht nur
+mit ECHO ON eingeschaltet zu werden, wenn man eine komplizierte Batch-
+Datei verfolgen m”chte.
+
+Batch-Dateien k”nnen verschachtelt werden, die neue Batch-Datei erh„lt
+auch neue Parameter. Bis zu drei Ebenen sind m”glich.
+
+Eine Batch-Datei kann mit CTRL-C abgebrochen werden. Nach jeder
+Ausfhrung einer Kommandozeile prft CMD, ob CTRL-C im Tastaturpuffer
+steht. In diesem Fall wird der gesamte Batchproze sofort unterbrochen,
+also auch bei Verschachtelung der Batch-Dateien sofort die n„chste
+Kommandozeile von der Tastatur erwartet.
+
+Enth„lt das Kommando zum Aufruf einer Batch-Datei eine Ein-/ Ausgabeum-
+lenkung (fr irgendeinen oder mehrere der sechs Standard- Kan„le), so
+gilt (im Gegensatz zu MS-DOS) die Umlenkung fr die ganze Batch-Datei.
+Soll innerhalb der Batch-Datei eine Ausgabe unbedingt auf den Bildschirm
+ausgegeben werden, kann man z.B. schreiben:
+
+"ECHO string >CON:"
+
+Die folgenden Zeilen der Batch-Datei verwenden wieder den fr die ganze
+Batch-Datei gltigen Ausgabekanal.

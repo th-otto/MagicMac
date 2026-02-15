@@ -1,0 +1,13 @@
+Syntax: MORE
+Zweck:  Seitenweise Ausgabe von Texten
+
+MORE ist ein Filter, d.h. es wird von stdin gelesen und nach stdout
+geschrieben. Wird "--Mehr--" angezeigt, kann die Ausgabe mit ^C abge-
+brochen werden. Mit der Leertaste wird eine Seite, sonst eine Zeile
+weitergebl„ttert.
+^Z in der Datei wird als Dateiende erkannt.
+MORE sollte wie alle Filter nur in Pipes oder bei umgelenkter Standard-
+Eingabe angewendet werden, da sonst von der Tastatur gelesen wird; z.B.
+wirkt "MORE <datei" „hnlich wie die Funktion "Datei anzeigen" im Atari-
+Desktop (ohne sich jedoch bei leeren Dateien oder solchen mit
+n*4096 Bytes oder Lesefehlern aufzuh„ngen...)

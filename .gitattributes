@@ -13,3 +13,4 @@
 *.txt -text
 *.TXT -text
 *.bgh -text
+*.hlp -text

@@ -1,0 +1,9 @@
+Syntax: MD ordner
+Zweck:  Neuen Ordner erstellen
+
+MD (make directory) erstellt einen neuen Ordner mit Namen <ordner>. Ein
+Ordner oder eine Datei gleichen Namens darf nicht schon im selben
+Verzeichnis vorhanden sein.
+Achtung:  Normale Dateien oder Disk-Namen werden vor TOS 1.04 wegen
+          eines GEMDOS-Fehlers durch MD gel”scht, wenn sie den gleichen
+          Namen wie der neue Ordner haben!

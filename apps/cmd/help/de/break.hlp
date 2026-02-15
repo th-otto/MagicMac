@@ -1,0 +1,13 @@
+Syntax: BREAK
+        BREAK ON
+        BREAK OFF
+Zweck:  Break-Verify-Flag von KAOS anzeigen oder „ndern. Unter normalem
+        GEMDOS hat der Befehl keine Wirkung.
+
+Beim Starten von CMD ist das Break-Flag immer ausgeschaltet. Bei
+eingeschaltetem Flag kann man ein laufendes Programm vor und nach jedem
+GEMDOS-Aufruf abbrechen.
+Im Gegensatz zu MS-DOS bewirkt das Bet„tigen von CTRL-C im TOS leider
+keinen Interrupt in eine Break-Behandlungs-Routine. Daher wirkt CTRL-C
+wirklich nur bei Eintritt und Austritt aus GEMDOS, wenn der Tastatur-
+puffer durchsucht wird und bei Bedarf ein Programmabbruch erfolgt.

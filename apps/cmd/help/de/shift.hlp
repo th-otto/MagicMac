@@ -1,0 +1,6 @@
+Syntax: SHIFT
+Zweck:  Die Parameter der Batchdatei verschieben
+
+SHIFT schiebt den Parameter %1 nach %0, %2 nach %1 usw.; so k”nnen auch
+mehr als zehn Parameter verwendet werden oder in einer FOR-Schleife eine
+Aktion fr alle Parameter ausgefhrt werden.

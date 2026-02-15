@@ -1,0 +1,14 @@
+Syntax: CD
+        CD d:
+        CD pfad
+        CD d:pfad
+Zweck:  Aktuelles Verzeichnis anzeigen oder wechseln
+
+CD (change directory) ohne Parameter zeigt das aktuelle Verzeichnis des
+aktuellen Laufwerks.
+CD d: zeigt das aktuelle Verzeichnis des Laufwerks d:.
+CD pfad setzt <pfad> als aktuelles Verzeichnis des aktuellen Laufwerks.
+CD d:pfad setzt <pfad> als aktuelles Verzeichnis des Laufwerks d:. Diese
+Befehlsform mit d: als einem nicht aktuellen Laufwerk ist, obwohl
+dokumentiert, bei originalen Atari-Betriebssystemen nicht m”glich und
+funktioniert nur unter KAOS.

@@ -1,0 +1,12 @@
+Syntax: PAUSE
+        PAUSE text1 text2 ...
+Zweck:  Unterbrechung und Verzweigung in Batch-Datei
+
+PAUSE schreibt den Text> nach "CON:", nicht nach stdout; ebenso wird
+IMMER von "CON:" (Tastatur) gelesen, ohne Rcksicht auf die Standard-
+Eingabe-Umlenkung.
+Wird kein Text als Parameter angegeben, gibt PAUSE die Meldung
+"Taste drcken" aus.
+Der Code der bet„tigten Taste wird nach "errorlevel" geschrieben; mit
+Hilfe des "IF ERRORLEVEL"-Befehls kann dann abh„ngig von der bet„tigten
+Taste im Batch-Programm verzweigt werden.

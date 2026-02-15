@@ -1,0 +1,53 @@
+Syntax: DIR pfad1 pfad2 ...
+        DIR -W -P -Q -S ...
+        DIR -WQP pfad
+        DIR -P pfad1 -W pfad2 -W -D pfad3 ...
+Zweck:  Inhaltsverzeichnis anzeigen
+
+-W (wide) gibt eine "platzsparende" Liste aus.
+-P (page) h„lt die Ausgabe nach jeder Seite an.
+-Q (quick) verzichtet auf Laufwerknamen und freien Speicher.
+-S (system) listet alle Dateien mit Attributen.
+
+Sortiermodi:
+-N ordne nach Namen
+-D ordne nach Datum/Zeit
+-G ordne nach Gr”e
+-A ordne nach Art
+-U unsortiert
+
+Beim Sortieren (d.h. ohne "-U") werden Ordner immer zuerst angezeigt.
+Wird kein Sortiermodus angegeben, wird der des letzten DIR-Aufrufs
+verwendet; bei Fehleingaben wird nach Namen sortiert. Bei der Ausgabe
+eines Verzeichnisses wird der Sortiermodus mit ausgegeben, wenn nicht
+nach Namen sortiert wird.
+
+DIR kann maximal 512 Eintr„ge sortieren und ben”tigt dazu kurzfristig
+etwa 14 kB Hautpspeicher. Ist nicht gengend freier Speicher vorhanden,
+wird das Verzeichnis unsortiert ausgegeben. Dies ist besonders fr
+den Betrieb als Accessory, also CMD.ACC notwendig; WORDPLUS l„t immer
+nur etwa 4 kB frei, andere Programme sind noch rigoroser.
+
+DIR kann beliebig viele Argumente haben, die Verzeichnisse werden dann
+nacheinander ausgegeben. Dabei werden Gesamtanzahl und Gesamtl„nge aller
+Dateien ganz am Ende ausgegeben, wo bei die Angabe des freien Speicher-
+platzes weggelassen wird. Diese M”glichkeit ist praktisch, wenn man die
+Gesamtl„nge bestimmter Dateien ermitteln m”chte, die auf unterschied-
+lichen Pfaden liegen, um sie auf einen Speicher zu kopieren, auf dem
+wom”glich nicht mehr gengend Platz ist.
+
+Ist <pfad> ein Dateimuster (z.B. "texte\*.doc"), werden alle passenden
+Dateien ausgegeben.
+
+Ohne Schalter "s" werden nur "normale" Dateien ausgegeben. Mit "s"
+werden auch Systemdateien oder versteckte (!) Dateien angezeigt,
+Dateien mit Attribut "Volume" jedoch nie.
+
+Man beachte, da beim originalen Atari-GEMDOS z.B. schreibgeschtzte,
+versteckte Dateien oder versteckte Disk-Namen wieder sichtbar werden.
+Dieser Fehler ist auch in TOS 1.04 noch enthalten, aber die
+Dokumentation wurde dem Fehler angepat ("It's a feature, not a bug").
+
+Der Schalter "q" ist fr TOS „lter als 1.04 und Festplatten gedacht, die
+mit kleinen Clustern (1 kB) formatiert sind und daher eine besonders groe
+FAT haben. Die Ausgabe erfolgt dann sehr viel schneller.

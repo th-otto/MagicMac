@@ -1,0 +1,148 @@
+CMD als Accessory
+
+CMD ist ein Programm, das, einmal gestartet oder aktiviert, v”llig auf GEM
+verzichtet. Es ist in seiner Funktion v”llig von GEMDOS abh„ngig.
+Ein Accessory l„uft bei GEM unter einer eigenen "Applikation", aber unter
+demselben "Proze" wie das gerade laufende Hauptprogramm. Das heit, da
+es sich fr AES um zwei Applikationen, fr DOS aber um denselben Proze
+handelt. Gerade letzteres fhrt zu ziemlichen Schwierigkeiten, da
+KCMD.ACC fr DOS kein eigenst„ndiges Programm ist.
+
+DOS merkt sich bei den folgenden Resourcen, welchem Proze sie angeh”ren:
+
+1) ge”ffnete Dateien
+2) Speicherbl”cke (per Malloc() reserviert)
+3) Standardpfade
+4) Standardlaufwerk
+5) Standarddateien.
+
+Anhand des PD (ProzeDeskriptor) w„hlt DOS zum Beispiel das
+Standardlaufwerk aus, so wie etwa VDI anhand des Ger„te-Handles die
+gerade eingestellte Fllfarbe verwendet. Ein Accessory, das etwa das
+Standardlaufwerk oder einen Pfad „ndert, wrde das Hauptprogramm
+beeinflussen und ggf. in Schwierigkeiten bringen. Andererseits mten bei
+jeder Aktivierung des Accessories die Pfade und Standarddateien vom
+Hauptprogramm wieder bernommen werden.
+
+Die Antwort auf die L”sung all dieser Probleme ist einfach, die
+Realisierung schon schwieriger:
+
+Man mte KCMD.ACC als EIGENEN Proze laufen lassen.
+Wie teilt man AES eine neue Applikation mit : appl_init()
+Wie identifiziert AES eine Applikation: durch eine ap_id ("Handle")
+Wie l”scht man diese Applikation wieder: appl_exit()
+Wie teilt man VDI eine neue "Workstation" mit: v_opnvwk()
+Wie identifiziert VDI eine "Workstation": durch ein Handle
+Wie l”scht man eine solche wieder: v_clsvwk()
+
+Wie erzeugt man einen neuen Proze: durch Pexec()
+Wie identifiziert DOS einen Proze: durch den PD (Basepage)
+Wie l”scht man einen Proze: mit Pterm() oder Ptermres()
+
+Leider verwaltet das altmodische GEMDOS keine "Prozehandles", die sich
+wie in moderneren Betriebssystemen erzeugen und wieder l”schen lassen.
+Was bleibt also: Pexec() erzeugt einen neuen Proze. Der Modus 0 kommt
+nicht in Frage, er l„dt eine Programmdatei, das m”chten wir vermeiden. Die
+Modi 5 (Basepage anlegen) und dann 4 (starten) k”nnten vielleicht
+funktionieren.
+
+Was passiert aber mit unserem Proze, wenn er per "exit" verlassen wurde
+und die Hauptapplikation wieder zum Zug kommen soll? Nehmen wir etwa an,
+wir haben fr Laufwerk A: den Standardpfad "\texte", und die Disk wird
+gewechselt, w„hrend das Accessory nicht aktiv ist. Wie ist es umgekehrt,
+wenn die Hauptapplikation den Pfad "a:\meinetexte" hat, und wir mssen die
+Disk wechseln, w„hrend KCMD.ACC aktiv ist.
+
+Die Antwort auf alle diese Fragen ist: Durcheinander
+
+Es sei denn, man verwendet KAOS:
+
+KAOS behandelt bei Diskwechseln nicht nur den laufenden Proze, sondern
+auch alle Vorg„nger (ber p_parent verkettet). Nur so ist sichergestellt,
+da auch die "schlafenden" Prozesse nicht "abgeh„ngt" werden und alle
+Diskwechsel mitbekommen ber:
+
+1) Ungltigmachen des aktuellen Pfades (zurck zur Root)
+2) Ungltigmachen aller Standarddateien, die auf der alten Disk liegen
+
+Also l„uft KCMD.ACC ohne gr”ere šberraschungen nur unter KAOS. Die
+Umschaltung der Prozesse geschieht ganz problemlos ber die ab TOS 1.02
+dokumentierte Systemvariable _run, die im TOS-Header enthalten ist.
+Diese Methode ist einfacher als das Erzeugen einer Basepage o.„.
+
+Wird KCMD.ACC vor Aktivieren des Desktop zur Initialisierung gestartet,
+passiert folgendes:
+
+Die Basepage von KCMD.ACC (die bisher fr GEMDOS unbekannt ist), wird als
+Proze unter den Ur-PD eingeh„ngt (das Groelter des Desktop). So kann
+KCMD.ACC alle Diskwechsel mitbekommen, solange es schl„ft. Anschlieend
+wird einfach in den event-multi gesprungen.
+
+Wird KCMD.ACC nun aktiviert, passiert folgendes:
+
+KCMD.ACC h„ngt seine Basepage aus der Kette der Prozesse aus und
+installiert wieder NULL als Ur-Groelter des Desktop. Anschlieend h„ngt
+sich KCMD.ACC ber die laufende Applikation. Fr GEMDOS sieht es jetzt
+also so aus, da KCMD.ACC von der Hauptapplikation ber Pexec() gestartet
+wurde. Schlielich wird die Variable _run auf KCMD.ACC geleitet, also fr
+GEMDOS der neue Proze gestartet.
+
+Bei der Eingabe von "exit" wird wieder _run auf die laufende Haupt-
+Applikation gelegt und KCMD.ACC als Ur-Groelter des Desktop installiert.
+
+Durch diese Vorgehensweise wird erreicht, da sowohl AES als auch GEMDOS
+das Accessory als eigenst„ndige Applikation bzw. Proze ansehen und es zu
+keinen "Besitzstreitigkeiten" oder "Kompetenzproblemen" kommt.
+
+
+Groe Probleme bereitet das Starten von Programmen von Accessories aus.
+Die Erfahrung mit verschiedenen Accessories (STOOLS, Schr”ttle-Shell)
+zeigte folgendes Verhalten:
+
+- Applikationen (Programme unter GEM) DšRFEN NICHT gestartet werden.
+  Bisher kann AES nur eine Applikation gleichzeitig verwalten.
+- Das Starten von TOS-Programmen unter DESKTOP ist m”glich
+- Das Starten von TOS-Programmen unter anderen Applikationen ist zwar
+  zun„chst m”glich, die Eingabe von "exit" zur Rckkehr in die
+  Hauptapplikation endet jedoch IMMER mit einem Systemabsturz.
+
+Der Grund fr das letztere Verhalten ist folgendes:
+
+GEMDOS legt fr jeden Proze einen Supervisor-Stack an. Dieser wird fr
+Interrupts genutzt; auch die Rcksprungadresse von einem Trap wird hier
+aufbewahrt. Leider ist dieser "Interrupt-Stack" jedesmal DERSELBE (nicht
+nur der gleiche, sondern tats„chlich derselbe). TOS 1.02 beispielsweise
+setzt den SSP immer auf $755a beim Start eines Prozesses.
+Beim Aktivieren des ACC geschieht folgendes:
+
+- Die Hauptapplikation ruft AES auf (evnt...); Rcksprungadresse und
+  geretteter SR liegen auf dem Supervisorstack der Hauptapplikation.
+- Der Kontextwechsel (Umschalten aller Register einschlielich SSP) auf
+  das ACC findet statt.
+- Das ACC l„uft. ACCs haben einen eigenen Supervisor-Stack, der von AES
+  angelegt wird, bevor das ACC (nicht ber Pexec()!) das erste Mal
+  gestartet wird.
+- Wird nun ein neuer Proze gestartet, legt GEMDOS denselben Supervisor-
+  Stack an, wie ihn die Haupapplikation hat. Beim ersten Interrupt oder
+  DOS-Aufruf werden Rcksprungadresse und geretteter SR zerst”rt.
+  Soll nun die Hauptapplikation wieder gestartet werden, liegt die
+  Rcksprungadresse nicht mehr auf dem Stack. Das System strzt ab.
+
+Der Fehler tritt im Desktop nicht auf, da DESKTOP einen eigenen Interrupt-
+Stack hat und st„ndig im Supervisormodus l„uft.
+Der Fehler ist offensichtlich gleichzeitig AES und GEMDOS anzulasten. Man
+kann auch sagen, da das Starten von Prozessen von einem Accessory aus
+einfach nicht erlaubt ist.
+
+Die Korrektur: KCMD.ACC wei von TOS 1.0,1.02,1.04 (vom 6.4.89), welchen
+Standard-Supervisor-Stack GEMDOS fr neue Prozesse anlegt. Es fragt die
+TOS-Versionsnummer ab und merkt sich diesen "Default SSP".
+
+Wird das ACC aktiviert, werden die obersten 20 32-Bit-Worte dieses Stacks
+gesichert (sicherheitshalber, es mten eigentlich die obersten drei Worte
+gengen). Wird dieser Stack zerst”rt, macht das nichts, da vor dem
+n„chsten AES-Aufruf (zur Rckkehr in die Hauptapplikation) die 20
+Langworte wieder zurckgeschrieben werden. Bisher hat sich diese Manahme
+als ausreichend erwiesen. Trotzdem k”nnten im Einzelfall Probleme
+auftreten. Man sollte vorher immer testen, ob der Aufruf von Programmen
+funktioniert, bevor man wichtige Daten aufs Spiel setzt.

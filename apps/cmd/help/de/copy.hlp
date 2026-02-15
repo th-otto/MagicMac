@@ -1,0 +1,52 @@
+Syntax: COPY [-t] pfad
+        COPY [-t] datei(muster)
+        COPY [-t] pfad pfad
+        COPY [-t] datei(muster) pfad
+        COPY [-t] datei1 datei2
+Zweck:  Datei(en) kopieren
+
+Fehlt der zweite Parameter, wird das aktuelle Verzeichnis angenommen.
+Ist die Quelle ein Pfad oder ein Dateimuster, werden alle Dateien des
+Pfades bzw. alle passenden Dateien kopiert.
+
+Ein Pfad kann auf '\' enden oder auch nicht.
+
+Wird <datei2> angegeben, erh„lt die Kopie der Datei den Namen <datei2>.
+Quelle und Ziel k”nnen auch Ger„te ("CON:","AUX:","PRN:") sein. Ist die
+Quelle ein Ger„t (CON:,AUX:), wird kopiert, bis eine Zeile gelesen wird,
+die nur aus CTRL-Z besteht. Nach jeder eingelesenen Zeile wird die
+Zeichenfolge CR/LF erg„nzt.
+
+Eine Datei kann nicht in sich selbst kopiert werden; CMD f„ngt diesen
+Fehler geschickt ab. KAOS tut dies selbst.
+
+Sind weniger als 10 kB Speicher frei, wird der gesamte freie Speicher als
+Kopierpuffer benutzt, sonst wird nur die H„lfte verwendet. So kann sich
+(im Gegensatz zum Desktop ab TOS 1.2) eine dynamische Ramdisk noch
+vergr”ern.
+
+Im Gegensatz zum Desktop-COPY beim originalen TOS behalten Dateien beim
+Kopieren ihr altes Datum und die Uhrzeit (nicht aber bei originalem TOS
+1.0/1.02 und KCMD.PRG, da KCMD den GEMDOS-Fehler nicht abf„ngt). Jedoch
+ist das Dateiattribut immer 0 (normale Datei, nicht schreibgeschtzt,
+sichtbar usw.).
+
+Mit dem Schalter 'T' erh„lt die Zieldatei das Tagesdatum, also
+entspricht "COPY -t ..." dem blichen Desktop-COPY. Dieser Schalter ist
+zu empfehlen, wenn man z.B. Dateien mit dem nichtssagenden Datum 6.2.86
+oder 22.4.87 kopiert. 'T' ist die Abkrzung fr "Touch" und bedeutet,
+da nderungdatum und -uhrzeit auf das aktuelle Datum und Uhrzeit
+gesetzt werden, so als ob die Datei Datei gerade ge„ndert worden w„re
+(siehe auch internes Kommando "TOUCH"). Wichtig ist das z.B., wenn man ein
+MAKE benutzt.
+
+Bemerkung: In MS-DOS existiert eine Befehlsform zum Verketten von Dateien
+           ("COPY datei1+datei2+... zieldatei). CMD verwendet dazu den
+           TYPE- Befehl (s.u.).
+           Fr das Erstellen von Batchdateien eignet sich der Befehl "COPY
+           CON: datei". Die Eingabe wird mit einer Zeile abgeschlossen,
+           die nur aus CTRL-Z besteht.
+
+           Fr das Testen, ob eine Datei einen Lesefehler enth„lt, eignet
+           sich besonders der Befehl "COPY datei nul". Hierbei wird
+           besonders schnell gelesen, da nichts geschrieben werden mu.

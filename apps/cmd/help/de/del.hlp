@@ -1,0 +1,16 @@
+Syntax: DEL [-n] datei1 datei2 ...
+Zweck:  Datei(en) lîschen
+
+DEL (delete) kann beliebig viele Argumente haben. Ist <datei> ein
+Dateimuster oder ein Pfad, werden alle passenden Dateien nach Sicher-
+heitsabfragen gelîscht; diese Sicherheitsabfrage kann mit dem Schalter
+"-N" abgeschaltet werden.
+Auf die Sicherheitsabfragen kann geantwortet werden:
+J,O,Y     Ja/Oui/Yes: angezeigte Datei lîschen; weiterfragen
+N         Nein/Non/No: angezeigte Datei nicht lîschen; weiterfragen
+G         Global: ab jetzt alle Dateien ohne Abfragen lîschen
+A,Q,^C    Abbruch/Quit: Lîschen beenden
+LÑût sich eine Datei nicht lîschen, kann sie schreibgeschÅtzt sein,
+oder sie wurde von CMD oder einem anderen VorgÑngerprozeû geîffnet und
+noch nicht wieder geschlossen. In solch einem Fall genÅgt es, das
+Laufwerk mit dem Kommando "free" (s.u.) abzumelden.

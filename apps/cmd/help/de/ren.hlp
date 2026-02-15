@@ -1,0 +1,24 @@
+Syntax: REN alter_pfadname neuer_dateiname
+Zweck:  Eine Datei oder einen Ordner umbenennen
+
+Der Befehl REN entspricht v”llig seinem Pendent in MS-DOS.COM. Der
+Parameter <alter_pfadname> enth„lt Pfad und Namen der umzubenennenden
+Datei, der Parameter <neuer_dateiname> enth„lt den neuen Namen - ohne
+Pfad.
+Mit diesem Befehl kann eine Datei im selben Verzeichnis umbenannt, also
+nicht verschoben werden (siehe MV). Auerdem wird immer nur eine Datei
+verarbeitet, die Parameter drfen beide keine "Wildcards" ('?','*')
+enthalten.
+Ab TOS 1.04 k”nnen mit diesem Befehl auch Ordner umbenannt werden. Dazu
+wird der Ordner wie eine Datei ohne abschlieendes '\' spezifiziert.
+1. Beispiel:
+  ren c:\compiler\turbo\tc.prg tc.ttp
+ist „quivalent zu
+  mv  c:\compiler\turbo\tc.prg c:\compiler\turbo\tc.ttp
+2. Beispiel (ab TOS 1.4):
+  ren folder ordner
+Benennt den Ordner "folder" in "ordner" um. Ein „quivalenter MV-Befehl
+ist nicht m”glich, da dieser alle Dateien aus dem Ordner "folder" zu
+verschieben versuchte. Das Verschieben von Ordnern ist auch unter TOS 1.04
+nicht m”glich, so da der MV-Befehl beim Behandeln von Ordnern berhaupt
+nicht verwendet wird.

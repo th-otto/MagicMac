@@ -1,0 +1,103 @@
+Starten von Programmen (externe Kommandos)
+
+Programme auf dem Massenspeicher (Diskette, Harddisk etc.) werden als
+externe Kommandos bezeichnet. Insbesondere gilt das fr solche, die die
+Kommandozeile auswerten (i.a. alle .TTP-Programme). Bei der Umlenkung
+der Standardein- bzw. Ausgabe ist darauf zu achten, da einige
+Laufzeitsysteme von Compiler-sprachen von sich aus die Kommandozeile
+nach Eintr„gen wie ">datei" absuchen und die Ausgabe selbst umlenken.
+Will man diese Umlenkung benutzen, mu man den Ausdruck ">datei" in
+Anfhrungszeichen setzen, um die Auswertung durch CMD zu verhindern.
+
+An das aufrufende Programm wird auer der Kommandozeile auch eine Kopie
+des (durch SET anzeigbaren) Environments bergeben. Das Programm kann so
+alle Eintr„ge des Environments verwenden, ohne sie jedoch zu „ndern (z.B.
+die PATH- Variable oder die Funktionstasten- Definitionen). Am einfachsten
+zeigt sich dieser Effekt, wenn man von CMD aus einfach noch einmal "CMD"
+eingibt.
+
+Ntzlich ist die Einrichtung der PATH-Variablen, die es erm”glicht,
+externe Kommandos aufzurufen, die sich nicht im aktuellen Verzeichnis
+befinden, ohne lange Pfadangaben zu machen. Beispiel:
+
+Sei PATH=p1;p2; gesetzt und als Kommando "edit" eingegeben. Kommandos
+werden in folgender Reihenfolge gesucht:
+
+- Internes Kommando "edit"
+- Batchdatei   "edit.bat",    "edit.btp"
+- TOS-Programm "edit.ttp",    "edit.tos"
+- GEM-Programm "edit.prg",    "edit.app"
+- Batchdatei   "p1\edit.bat"  "p1\edit.btp"
+- TOS-Programm "p1\edit.ttp", "p1\edit.tos"
+- GEM-Programm "p1\edit.prg", "p1\edit.app"
+- Batchdatei   "p2\edit.bat", "p2\edit.btp"
+- TOS-Programm "p2\edit.ttp", "p2\edit.tos"
+- GEM-Programm "p2\edit.prg", "p2\edit.app"
+
+Man kann den Dateityp auch explizit angeben (z.B. "edit.prg"), wenn man
+verhindern will, da eine gleichnamige Batchdatei o.„. aufgerufen wird.
+Der Dateityp .ACC wird nicht automatisch gesucht, wenn keine Dateinamen-
+Erweiterung eingegeben wurde, kann aber explizit etwa mit
+"C:\KAOSCONF.ACC" gestartet werden. Programme vom Typ ".ACC" werden wie
+Programme vom Typ ".PRG" oder ".APP" im Grafikmodus gestartet.
+
+Gibt man einen expliziten Pfad an, z.B. "a:edit", wird die PATH-Variable
+nicht verwendet und nur im angegebenen Verzeichnis gesucht.
+
+Achtung: Beim Betrieb als Accessory werden Kommandos, die auf .PRG oder
+.APP enden, nicht automatisch gesucht und daher nicht gefunden, wenn man
+nicht den vollst„ndigen Namen mit Dateinamenerweiterung eingibt. Dies
+ist als Vorsichtsmanahme n”tig, da Atari-GEM nicht die F„higkeit
+besitzt, mehrere Applikationen gleichzeitig zu verwalten. Startet
+man etwa WORDPLUS von WORDPLUS aus, gibt es Systemfehler. Will man trotz
+aller Warnungen ein Programm mit Endung .PRG starten, mu
+man das mit eingeben.
+
+GEM-Programme werden mit Mauszeiger und ohne Cursor gestartet. Der
+etv_critic-Handler des DESKTOP wird installiert (Diskettenfehler per
+Alertbox anzeigen). Der Bildschirm wird bei Aufruf des Programms nicht
+gel”scht. Man kann dies aber vorher durch CLS tun.
+
+TOS-Programme oder Batch-Dateien werden mit Cursor und ohne Mauszeiger
+gestartet. Der etv_critic-Handler des CMD bleibt installiert.
+
+Ansonsten besteht kein Unterschied zwischen dem Aufruf von GEM- und TOS-
+Programmen.  Selbstverst„ndlich  k”nnen Parameter an GEM-Programme
+bergeben werden. Ob diese auch ausgewertet werden, ist eine andere
+Frage. Die Dateiarten BAT/BTP und TOS/TTP und PRG/APP sind fr CMD
+jeweils „quvalent. Der Dateityp BTP existiert fr Neodesk.
+
+Nach dem Aufruf jedes Programmes wird dessen Rckgabewert untersucht. Ist
+er negativ, wird er als DOS- oder BIOS-Fehlercode interpretiert und im
+Klartext ausgegeben. Beim Entwickeln eigener Programme kann man beispiels-
+weise so kodieren:
+
+     if (0 > (handle = Fopen("program.hlp", O_RDONLY)))
+         exit(handle);       /* Mit DOS- Fehlercode beenden */
+
+oder:
+
+     if (NULL == (ptr = (char *) Malloc(10240L)))
+        Pterm((int) ENSMEM);
+
+statt:
+     if (...)
+     {
+         fprintf(stderr, "Nicht gengend Speicher!\n");
+         exit(1);
+     }
+
+Das  spart nicht nur Tipparbeit, sondern grenzt den Fehler (unter KAOS,
+denn TOS liefert h„ufig falsche Codes) h„ufig auch noch besser ein, z.B.
+im oberen Fall:
+
+  "Datei nicht gefunden"
+  "Pfad nicht gefunden"
+  "Ungltiges Laufwerk"
+  "Interner Fehler"
+  "Nicht gengend (interner) Speicher"
+  "Nicht gengend Datei-Handles"
+  "Spur nicht gefunden"
+  "CRC-Fehler"
+  "Sektor nicht gefunden"
+  "Laufwerk nicht bereit"

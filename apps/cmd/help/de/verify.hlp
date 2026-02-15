@@ -1,0 +1,13 @@
+Syntax: VERIFY
+        VERIFY ON
+        VERIFY OFF
+Zweck:  Read/Write-Verify-Flag des BIOS anzeigen oder Ñndern
+
+Beim Einschalten des Rechners ist das VERIFY-Flag (im Gegensatz zu MS-
+DOS) immer eingeschaltet. Wenn man mit Diskette arbeitet, kann man die
+Schreibzugriffe durch "VERIFY OFF" stark beschleunigen. DafÅr wird
+besonders bei billigen Disketten das Risiko etwas hîher, daû Schreibfehler
+nicht erkannt werden.
+Das Verify-Flag hat normalerweise nur Auswirkungen auf die Laufwerke A:
+und B:, es sei denn, ein anderes Treiberprogramm (Festplatte) fragt diese
+Systemvariable ebenfalls ab.

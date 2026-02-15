@@ -1,0 +1,13 @@
+Syntax: IF ERRORLEVEL n ... Fhrt ... aus, wenn Fehlercode >= n oder < 0
+        IF s1 == s2 ...     Fhrt ... aus, wenn <s1> = <s2>.
+        IF EXIST datei ...  Fhrt ... aus, wenn <datei> existiert.
+        IF NOT ...          Fhrt ... aus, wenn Bedingung nicht erfllt
+Zweck:  Bedingter Sprung in Batch-Datei
+
+Der Fehlercode ERRORLEVEL wurde vom letzten ausgefhrten internen oder
+externen Kommando zurckgegeben. Ein Wert ungleich Null signalisiert
+i.a., da ein Fehler aufgetreten ist. Die Befehle IF, END, FOR, GOTO
+„ndern den Fehlercode nicht.
+Wenn eine Zeichenkette leer sein kann, mu sie fr den Vergleich in
+Anfhrungszeigen eingeschlossen werden, also beispielsweise:
+    IF "%1" == "%ENV_VAR%"

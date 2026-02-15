@@ -1,0 +1,27 @@
+Syntax: PROMPT
+        PROMPT zeichenkette
+Zweck:  Prompt-Text Ñndern
+
+PROMPT ohne Parameter setzt das Standard-Prompt ("$n$g"), mit Parameter
+kînnen auûer den normalen Zeichen auch die bei MS-DOS Åblichen Sonderzei-
+chen verwendet werden, z.B. "$p$g" fÅr den absoluten Pfad, oder auch
+"$ej$eH$eK$t$ek$n$g":
+
+  $$    Das Dollarzeichen '$' selbst
+  $_    Neue Zeile (CR,LF)
+  $b    Das Zeichen '|'
+  $d    Datum
+  $e    Das Zeichen ESC (1BH)
+  $g    Das Zeichen '>'
+  $h    RÅckschritt (backspace)
+  $l    Das Zeichen '<'
+  $n    aktuelles Laufwerk
+  $p    absoluter aktueller Pfad mit Laufwerk
+  $q    Das Zeichen '='
+  $t    Zeit
+
+Bemerkung: Das "Prompt" ist eine Environment-Variable, kann also auch mit
+           SET manipuliert werden.
+           Das bei MS-DOS vorhandene Prompt-Zeichen "$v" fÅr die DOS-
+           Version fehlt bei CMD. Als Ersatz siehe das interne Kommando
+           VER.

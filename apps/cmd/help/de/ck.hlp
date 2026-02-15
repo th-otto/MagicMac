@@ -1,0 +1,10 @@
+Syntax: CK
+        CK d:
+Zweck:  Laufwerk-Informationen ausgeben
+
+CK (checkdisk) zeigt die Laufwerk-Informationen fr das Laufwerk d:.
+Ohne Parameter wird das aktuelle Laufwerk angenommen.
+Auerdem  wird die Gr”e des Hauptspeichers angezeigt. CMD verl„t sich
+dabei auf die Systemvariable phystop; ist diese Variable z.B. von einer
+resetfesten Ramdisk manipuliert worden, kann der tats„chliche Speicher
+gr”er sein, als von CK angezeigt.

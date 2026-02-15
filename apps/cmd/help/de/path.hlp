@@ -1,0 +1,10 @@
+Syntax: PATH
+        PATH pfad1;pfad2...
+Zweck:  Kommando- Suchpfad setzen oder anzeigen
+
+PATH ohne Parameter zeigt den Suchpfad an. Mit Parameter wird dieser
+gesetzt. Es wird nicht geprÅft, ob die Pfadangaben korrekt sind.
+Bemerkung: Der Suchpfad ist eine Environment-Variable, kann also auch mit
+           SET manipuliert werden, z.B.:
+               SET %path%;pfad3
+           hÑngt <pfad3> an den Suchpfad an.

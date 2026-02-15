@@ -1,0 +1,6 @@
+Syntax: TREE
+        TREE d:
+Zweck:  Pfade ausgeben
+
+Zeigt rekursiv alle Pfade ab dem aktuellen Verzeichnis bzw. auf dem
+angegebenen Laufwerk an.
