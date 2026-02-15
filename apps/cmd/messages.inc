@@ -107,7 +107,7 @@ change_s:               DC.B COUNTRY_DE,COUNTRY_SG,-1,'Bitte Disk %: in Laufwerk
 diskerr_s:              DC.B COUNTRY_DE,COUNTRY_SG,-1,'  auf Laufwerk %:',CR,LF
                         DC.B                          '[A]bbruch, [W]iederholen, [I]gnorieren ?',0
                         DC.B COUNTRY_FR,COUNTRY_SF,-1,'  sur le disque %:',$d,$a
-                                                      '[A]nnuler, [R]ecommencer, [I]gnorer ?',0
+                        DC.B                          '[A]nnuler, [R]ecommencer, [I]gnorer ?',0
                         DC.B                       -1,'  on drive %:',CR,LF
                         DC.B                          '[A]bort, [R]etry, [I]gnore ?',0
      ENDC
