@@ -93,6 +93,7 @@ for lang in $LANGUAGES; do
 	mtype "$SRCDIR/apps/cpx/tslice.cp" >> "$BUILDROOT/$lang/AUTO/ACCS/CPX/TSLICE.CPX"
 
 	mcopy "$SRCDIR/tools/crashdmp/crashdmp.tos" "$BUILDROOT/$lang/BIN/"
+	mcopy "$SRCDIR/tools/dump/dump.ttp" "$BUILDROOT/$lang/BIN/"
 	mcopy "$SRCDIR/tools/fc/fc.ttp" "$BUILDROOT/$lang/BIN/"
 	mcopy "$SRCDIR/apps/limitmem/limitmem.ttp" "$BUILDROOT/$lang/BIN/"
 	mcopy "$SRCDIR/tools/memexamn/memexamn.ttp" "$BUILDROOT/$lang/BIN/"
