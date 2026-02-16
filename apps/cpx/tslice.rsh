@@ -1,11 +1,17 @@
 /*
  * GEM resource C output of tslice
  *
- * created by ORCS 2.16
+ * created by ORCS 2.18
  */
 
 #if !defined(__GNUC__) || !defined(__mc68000__)
 #include <portab.h>
+#endif
+
+#ifndef __STDC__
+# ifdef __PUREC__
+#  define __STDC__ 1
+# endif
 #endif
 
 #ifdef OS_WINDOWS
@@ -19,7 +25,7 @@
 #  endif
 #else
 #  ifdef __TURBOC__
-#    include <portaes.h>
+#    include <aes.h>
 #    define CP (_WORD *)
 #  endif
 #endif
@@ -176,7 +182,11 @@
 #  ifdef WORD
 #    define _WORD WORD
 #  else
-#    define _WORD short
+#    ifdef __PUREC__
+#      define _WORD int
+#    else
+#      define _WORD short
+#    endif
 #  endif
 #endif
 
@@ -266,10 +276,10 @@
 extern _BOOL W_Cicon_Setpalette(_WORD *_palette);
 #endif
 #ifndef hrelease_objs
-extern _VOID hrelease_objs(OBJECT *_ob, _WORD _num_objs);
+extern void hrelease_objs(OBJECT *_ob, _WORD _num_objs);
 #endif
 #ifndef hfix_objs
-extern _VOID *hfix_objs(RSHDR *_hdr, OBJECT *_ob, _WORD _num_objs);
+extern void *hfix_objs(RSHDR *_hdr, OBJECT *_ob, _WORD _num_objs);
 #endif
 #endif
 
@@ -333,7 +343,7 @@ static char tslice_string_12[] = "Background Priority:";
 static char tslice_string_13[] = "Pre-emptive Multitasking";
 static char tslice_string_14[] = "OK";
 static char tslice_string_15[] = "Save";
-static char tslice_string_16[] = "Abort";
+static char tslice_string_16[] = "Cancel";
 static char tslice_string_17[] = "[1][   Magic is not installed!   ][Abort]";
 static char tslice_string_18[] = "[1][MagiC-AES is not active!][ Abort ]";
 static char tslice_string_19[] = "MagiC Timeslice";
@@ -447,9 +457,8 @@ _WORD wchar;
 #endif
 #if NUM_OBS != 0
 	{
-		_WORD Obj;
 		OBJECT *tree;
-		for (Obj = 0, tree = rs_object; Obj < NUM_OBS; Obj++, tree++)
+		for (tree = rs_object; tree < &rs_object[NUM_OBS]; tree++)
 		{
 			tree->ob_x = wchar * (tree->ob_x & 0xff) + (tree->ob_x >> 8);
 			tree->ob_y = hchar * (tree->ob_y & 0xff) + (tree->ob_y >> 8);
@@ -527,7 +536,7 @@ void *gaddr;
 	case R_OBSPEC:
 		if (idx < 0 || idx >= NUM_OBS)
 			return 0;
-		*((_LONG **)gaddr) = &rs_object[idx].ob_spec.index;
+		*((_LONG_PTR **)gaddr) = &rs_object[idx].ob_spec.index;
 		break;
 #endif
 #if NUM_TI != 0
@@ -615,6 +624,7 @@ _WORD tslice_rsc_free()
 #endif /* RSC_NAMED_FUNCTIONS */
 
 #else /* !RSC_STATIC_FILE */
+#if 0
 _WORD rs_numstrings = 39;
 _WORD rs_numfrstr = 30;
 
@@ -631,4 +641,5 @@ _WORD rs_numtree = 1;
 char rs_name[] = "tslice.rsc";
 
 _WORD _rsc_format = 2; /* RSC_FORM_SOURCE2 */
+#endif
 #endif /* RSC_STATIC_FILE */
