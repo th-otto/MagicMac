@@ -121,8 +121,6 @@ XFS95     EQU  1
      IMPORT    vdi_cursor          ; VDI: Cursorblinken
      IMPORT    int_linea           ; VDI: LineA- Interrupt
      IMPORT    Blitmode            ; VDI
-     IMPORT    vt_seq_e            ; VDI: Cursor ein
-     IMPORT    vt_seq_f            ; VDI: Cursor aus
      IMPORT    vdi_init            ; VDI: initialisieren (fuer MXVDI)
      IMPORT    vdi_blinit          ; VDI: Blitterstatus initialisieren (d0)
      IMPORT    vt52_init           ; VDI: VT52 initialisieren
@@ -2415,26 +2413,41 @@ _Cursconf:
  cmp.w    #7,d0
  bhi.b    ccnf_err
  add.w    d0,d0
- add.w    d0,d0
- move.l   ccnf_tab(pc,d0.w),a0
- jmp      (a0)
+ move.w	ccnf_tab(pc,d0.w),d0
+ jmp 	ccnf_tab(pc,d0.w)
 
 ccnf_tab:
- DC.L     vt_seq_f       ; CURS_HIDE
- DC.L     vt_seq_e       ; CURS_SHOW
- DC.L     ccnf_blink     ; CURS_BLINK
- DC.L     ccnf_noblink   ; CURS_NOBLINK
- DC.L     ccnf_setrate   ; CURS_SETRATE
- DC.L     ccnf_getrate   ; CURS_GETRATE
- DC.L     ccnf_setdelay  ; CURS_SETDELAY
- DC.L     ccnf_getdelay  ; CURS_GETDELAY
+ DC.W	ccnf_curs_hide-ccnf_tab	; CURS_HIDE (Esc 'f')
+ DC.W	ccnf_curs_show-ccnf_tab	; CURS_SHOW (Esc 'e')
+ DC.W	ccnf_blink-ccnf_tab		; CURS_BLINK
+ DC.W	ccnf_noblink-ccnf_tab	; CURS_NOBLINK
+ DC.W	ccnf_setrate-ccnf_tab 	; CURS_SETRATE
+ DC.W	ccnf_getrate-ccnf_tab 	; CURS_GETRATE
+ DC.W	ccnf_setdelay-ccnf_tab 	; CURS_SETDELAY
+ DC.W	ccnf_getdelay-ccnf_tab 	; CURS_GETDELAY
+
+ccnf_curs_hide:
+ move.l	con_state.w,a0
+ moveq	#$1b,d1		; ESC
+ jsr		(a0)			; note that this call is supposed to change con_state!
+ move.l	con_state.w,a0
+ moveq	#'f',d1
+ jmp		(a0)
+
+ccnf_curs_show:
+ move.l	con_state.w,a0
+ moveq	#$1b,d1		; ESC
+ jsr		(a0)			; note that this call is supposed to change con_state!
+ move.l	con_state.w,a0
+ moveq	#'e',d1
+ jmp		(a0)
 
 ccnf_blink:
- bset     #0,(a4)
+ bset     #0,(a4) ; CURSOR_BL
 ccnf_err:
  rts
 ccnf_noblink:
- bclr     #0,(a4)
+ bclr     #0,(a4) ; CURSOR_BL
  rts
 ccnf_setrate:
  move.b   7(sp),-$12(a4) ; V_PERIOD

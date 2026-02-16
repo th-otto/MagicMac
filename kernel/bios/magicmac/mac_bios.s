@@ -155,8 +155,6 @@ N_KEYTBL       EQU  9+DEADKEYS            ; 9 Tastaturtabellen
      XREF      vdi_cursor          ; VDI: Cursorblinken
      XREF      int_linea           ; VDI: LineA- Interrupt
      XREF      Blitmode            ; VDI
-     XREF      vt_seq_e            ; VDI: Cursor ein
-     XREF      vt_seq_f            ; VDI: Cursor aus
      XREF      vdi_init            ; VDI: initialisieren (fuer MXVDI)
      XREF      vdi_blinit          ; VDI: Blitterstatus initialisieren (d0)
      XREF      vt52_init           ; VDI: VT52 initialisieren
@@ -1645,47 +1643,62 @@ Cursconf:
 
 _Cursconf:
  DC.W     $a000
- lea      -6(a0),a4      ; Adresse linea-Vektoren
+ lea      -6(a0),a4      ; V_STAT_0
  move.w   4(sp),d0
  cmp.w    #7,d0
  bhi.b    ccnf_err
  add.w    d0,d0
 
- add.w    d0,d0
- move.l   ccnf_tab(pc,d0.w),a0
- jmp      (a0)
+ move.w	ccnf_tab(pc,d0.w),d0
+ jmp 	ccnf_tab(pc,d0.w)
 
 ccnf_tab:
- DC.L     vt_seq_f       ; CURS_HIDE
- DC.L     vt_seq_e       ; CURS_SHOW
- DC.L     ccnf_blink     ; CURS_BLINK
- DC.L     ccnf_noblink   ; CURS_NOBLINK
- DC.L     ccnf_setrate   ; CURS_SETRATE
- DC.L     ccnf_getrate   ; CURS_GETRATE
- DC.L     ccnf_setdelay  ; CURS_SETDELAY
- DC.L     ccnf_getdelay  ; CURS_GETDELAY
+ DC.W	ccnf_curs_hide-ccnf_tab	; CURS_HIDE (Esc 'f')
+ DC.W	ccnf_curs_show-ccnf_tab	; CURS_SHOW (Esc 'e')
+ DC.W	ccnf_blink-ccnf_tab		; CURS_BLINK
+ DC.W	ccnf_noblink-ccnf_tab	; CURS_NOBLINK
+ DC.W	ccnf_setrate-ccnf_tab 	; CURS_SETRATE
+ DC.W	ccnf_getrate-ccnf_tab 	; CURS_GETRATE
+ DC.W	ccnf_setdelay-ccnf_tab 	; CURS_SETDELAY
+ DC.W	ccnf_getdelay-ccnf_tab 	; CURS_GETDELAY
+
+ccnf_curs_hide:
+ move.l	con_state.w,a0
+ moveq	#$1b,d1		; ESC
+ jsr		(a0)			; note that this call is supposed to change con_state!
+ move.l	con_state.w,a0
+ moveq	#'f',d1
+ jmp		(a0)
+
+ccnf_curs_show:
+ move.l	con_state.w,a0
+ moveq	#$1b,d1		; ESC
+ jsr		(a0)			; note that this call is supposed to change con_state!
+ move.l	con_state.w,a0
+ moveq	#'e',d1
+ jmp		(a0)
 
 ccnf_blink:
- bset     #0,(a4)
+ bset     #0,(a4) ; CURSOR_BL
 ccnf_err:
  rts
 ccnf_noblink:
- bclr     #0,(a4)
+ bclr     #0,(a4) ; CURSOR_BL
  rts
 ccnf_setrate:
- move.b   7(sp),-$12(a4)
+ move.b   7(sp),-$12(a4) ; V_PERIOD
  rts
 ccnf_getrate:
  moveq    #0,d0
- move.b   -$12(a4),d0
+ move.b   -$12(a4),d0 ; V_PERIOD
  rts
 ccnf_setdelay:
  move.b   7(sp),d0
- move.b   d0,1(a4)
+ move.b   d0,1(a4) ; V_DELAY
  rts
 ccnf_getdelay:
  moveq    #0,d0
- move.b   1(a4),d0
+ move.b   1(a4),d0 ; V_DELAY
  rts
 
 
