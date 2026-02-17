@@ -368,9 +368,6 @@ WORD cdecl hdl_spc(struct HNDL_OBJ_args args)
 		if (d_spc)						/* Dialog ist schon ge”ffnet ! */
 			return 0;					/* create verweigern */
 
-		if (is_multiwindow)
-			objs_disable(tree, DF_OK, DF_CN, 0);
-
 		if ((args.data) && (*((char **) args.data)))
 		{
 			memcpy(&key, *((char **) args.data), sizeof(long));
