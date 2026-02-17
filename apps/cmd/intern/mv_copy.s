@@ -404,6 +404,7 @@ cr_20:
 cr_4:
  bsr      get_country_str
  bsr      strcon              * Fehlermeldung ausgeben und Ende
+cr_41:
  bsr      inc_errlv
  bra      cr_end
 cr_5:
@@ -448,8 +449,8 @@ cr_6:
  bsr      get_country_str
  addq.l   #3,a0
  bsr      strcon
- lea      crlfs(pc),a0
- bra.b    cr_4
+ bsr      crlf_stdout
+ bra.b    cr_41
 cr_7:
  lea      STRING1(a6),a1                * Pfad der Quelldatei
  lea      QUELLDATEI(a6),a0

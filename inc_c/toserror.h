@@ -29,7 +29,7 @@
 #define EACCDN	-36L	/* access denied				 5 */
 #define EIHNDL	-37L	/* invalid handle				 6 */
 #define ENSMEM	-39L	/* insufficient memory			 8 */
-#define EIMBA	-40L	/* invalid memory block address 	 9 */
+#define EIMBA	-40L	/* invalid memory block address  9 */
 #define EDRIVE	-46L	/* invalid drive was specified	15 */
 #define ENSAME - 48L	/* MV between two different drives 17 */
 #define ENMFIL	-49L	/* no more files				18 */

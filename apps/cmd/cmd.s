@@ -3559,7 +3559,7 @@ spaces:       DC.B  ' '
 leers:        DC.B  0
 promptis:     DC.B  'PROMPT=',0
 pathis:       DC.B  'PATH=',0
-crlfs:        DC.B  $d,$a,0
+crlfs:        DC.B  CR,LF,0
 
 not_s:        DC.B  'NOT',0
 errorlevel_s: DC.B  'ERRORLEVEL',0

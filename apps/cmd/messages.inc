@@ -106,7 +106,7 @@ change_s:               DC.B COUNTRY_DE,COUNTRY_SG,-1,'Bitte Disk %: in Laufwerk
                         DC.B                       -1,'Insert disk %: to drive A:!',0
 diskerr_s:              DC.B COUNTRY_DE,COUNTRY_SG,-1,'  auf Laufwerk %:',CR,LF
                         DC.B                          '[A]bbruch, [W]iederholen, [I]gnorieren ?',0
-                        DC.B COUNTRY_FR,COUNTRY_SF,-1,'  sur le disque %:',$d,$a
+                        DC.B COUNTRY_FR,COUNTRY_SF,-1,'  sur le disque %:',CR,LF
                         DC.B                          '[A]nnuler, [R]ecommencer, [I]gnorer ?',0
                         DC.B                       -1,'  on drive %:',CR,LF
                         DC.B                          '[A]bort, [R]etry, [I]gnore ?',0
