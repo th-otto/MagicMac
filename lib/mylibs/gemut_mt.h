@@ -6,7 +6,7 @@
 
 extern void print_values(char *s, int n, int values[]);
 extern int scan_values(char **s, int n, int values[]);
-extern void Mrsrc_load( char *fname, WORD *global );
+extern void Mrsrc_load( const char *fname, WORD *global );
 extern void objc_grect(OBJECT *tree, int objn, GRECT *g);
 extern void subobj_draw(OBJECT *tree, int obj, int start, int depth);
 extern void  Mgraf_mouse(int type);
@@ -22,9 +22,9 @@ extern void objs_setradio(OBJECT *tree, int set, ...);
 extern void objs_getradio(OBJECT *tree, int *get, ...);
 extern int top_whdl( void );
 extern int find_obj(OBJECT *tree, int x, int y);
+void open_work(void);
 
 extern int vdi_handle;
-void open_work(void);
 extern int work_out[57],work_in[12];
 extern int ap_id;
 extern GRECT scrg;

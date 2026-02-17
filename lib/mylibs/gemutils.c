@@ -360,7 +360,7 @@ void open_work(void)
 *
 *********************************************************************/
 
-void Mrsrc_load( char *fname )
+void Mrsrc_load( const char *fname )
 {
 	if	(!rsrc_load(fname))
 		{

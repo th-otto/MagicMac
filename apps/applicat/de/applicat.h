@@ -5,19 +5,19 @@
  */
 
 /*
- * Number of Strings:        175
+ * Number of Strings:        187
  * Number of Bitblks:        0
  * Number of Iconblks:       8
  * Number of Color Iconblks: 0
  * Number of Color Icons:    0
  * Number of Tedinfos:       31
- * Number of Free Strings:   36
+ * Number of Free Strings:   47
  * Number of Free Images:    0
- * Number of Objects:        126
+ * Number of Objects:        127
  * Number of Trees:          7
  * Number of Userblks:       0
  * Number of Images:         16
- * Total file size:          8940
+ * Total file size:          9148
  */
 
 #ifdef RSC_NAME
@@ -39,8 +39,8 @@
 # define RSC_STATIC_FILE 0
 #endif
 #if !RSC_STATIC_FILE
-#define NUM_STRINGS 175
-#define NUM_FRSTR 36
+#define NUM_STRINGS 187
+#define NUM_FRSTR 47
 #define NUM_UD 0
 #define NUM_IMAGES 16
 #define NUM_BB 0
@@ -48,7 +48,7 @@
 #define NUM_IB 8
 #define NUM_CIB 0
 #define NUM_TI 31
-#define NUM_OBS 126
+#define NUM_OBS 127
 #define NUM_TREE 7
 #endif
 
@@ -91,6 +91,7 @@
 #define DEL_PGM           36 /* BUTTON in tree T_APPS */
 #define NEU_DAT           37 /* BUTTON in tree T_APPS */
 #define DEL_DAT           38 /* BUTTON in tree T_APPS */
+#define BUT_VERSION       39 /* STRING in tree T_APPS */
 
 #define T_ANWNDG           1 /* form/dialog */
 #define ANWNDG_T           2 /* FTEXT in tree T_ANWNDG */
@@ -248,6 +249,28 @@
 
 #define STR_CHOOSE_PATH   35 /* Free string */
 
+#define STR_APPS          36 /* Free string */
+
+#define STR_DATS          37 /* Free string */
+
+#define STR_BTCH          38 /* Free string */
+
+#define STR_DEVC          39 /* Free string */
+
+#define STR_ALIS          40 /* Free string */
+
+#define STR_FLDR          41 /* Free string */
+
+#define STR_DRVS          42 /* Free string */
+
+#define STR_TRSH          43 /* Free string */
+
+#define STR_PRNT          44 /* Free string */
+
+#define STR_FREE          45 /* Free string */
+
+#define _RSM_CRC_         46 /* Free string */
+#define _RSM_CRC_STRING_ "& RSM-crc >E865< crc-MSR $"
 
 
 

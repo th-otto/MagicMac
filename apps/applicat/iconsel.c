@@ -14,6 +14,7 @@
 #include "de/applicat.h"
 #include "windows.h"
 #include "appl.h"
+#include "inf.h"
 #include "appldata.h"
 #include "iconsel.h"
 #include "ica_dial.h"
@@ -39,9 +40,9 @@ WINDOW *mywindow = NULL;
 *
 ****************************************************************/
 
-int xrel, yrel;
+static int xrel, yrel;
 
-void draw_boxes(OBJECT * tree, OBJECT * mov_boxes[], int anz_boxes, GRECT * grenz, int xoff, int yoff)
+void draw_boxes(OBJECT *tree, OBJECT *mov_boxes[], int anz_boxes, GRECT *grenz, int xoff, int yoff)
 {
 	int px, py;
 	int pxy[10];
@@ -97,7 +98,7 @@ void draw_boxes(OBJECT * tree, OBJECT * mov_boxes[], int anz_boxes, GRECT * gren
 *
 ****************************************************************/
 
-void move_icons(int x_koor, int y_koor, OBJECT * tree, int objnr)
+void move_icons(int x_koor, int y_koor, OBJECT *tree, int objnr)
 {
 	int clip_rect[4];
 	GRECT g;
@@ -110,9 +111,9 @@ void move_icons(int x_koor, int y_koor, OBJECT * tree, int objnr)
 	int zielobj;
 	int altobj = 0;
 	OBJECT *alttree = NULL;
-	void (*set_icon) (int iconnr, int objnr);
-	void (*malen) (int objnr);
-	void (*altmalen) (int objnr) = NULL;
+	void (*set_icon)(int iconnr, int objnr);
+	void (*malen)(int objnr);
+	void (*altmalen)(int objnr) = NULL;
 
 
 	mov_boxes = tree + objnr;			/* Tabelle aller Objekte */
@@ -142,8 +143,7 @@ void move_icons(int x_koor, int y_koor, OBJECT * tree, int objnr)
 		do
 		{
 			graf_mkstate(&ev.x, &ev.y, &ev.bstate, &ev.kstate);
-		}
-		while (ev.x == old_x && ev.y == old_y && (ev.bstate & 1));
+		} while (ev.x == old_x && ev.y == old_y && (ev.bstate & 1));
 		graf_mouse(M_OFF, NULL);
 		draw_boxes(tree, &mov_boxes, 1, ptr_g, old_x - x_koor, old_y - y_koor);
 
@@ -172,8 +172,7 @@ void move_icons(int x_koor, int y_koor, OBJECT * tree, int objnr)
 			altobj = zielobj;
 			altmalen = malen;
 		}
-	}
-	while (ev.bstate & 1);
+	} while (ev.bstate & 1);
 
 	if (zielobj > 0)
 	{
@@ -194,7 +193,7 @@ void move_icons(int x_koor, int y_koor, OBJECT * tree, int objnr)
 *******************************************************************/
 
 #pragma warn -par
-static void button_iconsel(WINDOW * w, int kstate, int x, int y, int button, int nclicks)
+static void button_iconsel(WINDOW *w, int kstate, int x, int y, int button, int nclicks)
 {
 	int objnr;
 	EVNTDATA ev;
@@ -237,7 +236,7 @@ void init_iconsel(void)
 {
 	WINDEFPOS *w;
 
-	w = def_wind_pos("ICONS");
+	w = def_wind_pos(IDENT_ICONS);
 	if (w)
 	{
 		iconwindow.out = w->g;
@@ -255,12 +254,12 @@ void init_iconsel(void)
 *******************************************************************/
 
 #pragma warn -par
-static void close_iconsel(WINDOW * w, int kstate)
+static void close_iconsel(WINDOW *w, int kstate)
 {
 	WINDEFPOS *wd;
 	WINDOW **sw;
 
-	wd = def_wind_pos("ICONS");
+	wd = def_wind_pos(IDENT_ICONS);
 	if (wd)
 		wd->g = iconwindow.out;
 
@@ -292,21 +291,21 @@ int open_iconsel(void)
 	if (mywindow)						/* schon ge”ffnet */
 	{
 		wind_set(WF_TOP, mywindow->handle, 0, 0, 0, 0);
-		return (0);						/* OK */
+		return 0;						/* OK */
 	}
 	w = new_window();
 	if (!w)
-		return (-1);					/* kein Slot */
+		return -1;					/* kein Slot */
 	iconwindow.handle = wind_create_grect(NAME + CLOSER + FULLER + MOVER + SIZER + UPARROW + DNARROW + VSLIDE, &scrg);
 
 	iconwindow.tree = Malloc(sizeof(OBJECT) * (icnn + 1));
 	if (!iconwindow.tree)
-		return (-3);
+		return -3;
 
 	if (iconwindow.handle < 0)
 	{
 		Mfree(iconwindow.tree);
-		return (-2);					/* kein AES-Fenster */
+		return -2;					/* kein AES-Fenster */
 	}
 
 	/* Baum aufbauen */
@@ -371,5 +370,5 @@ int open_iconsel(void)
 	wind_set_str(iconwindow.handle, WF_NAME, Rgetstring(STR_WTIT_ICONS, NULL));
 	iconwindow.open(&iconwindow);
 	wind_set(iconwindow.handle, WF_BEVENT, 0x0001, 0, 0, 0);
-	return (0);
+	return 0;
 }

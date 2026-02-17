@@ -82,6 +82,7 @@
 #include <vdi.h>
 #include <string.h>
 #include <stdlib.h>
+#include "toserror.h"
 #include "windows.h"
 #include "de/applicat.h"
 #include "gemut_mt.h"
@@ -96,6 +97,8 @@
 #include "spc_dial.h"
 
 #include "appl.h"
+#include "inf.h"
+#include "read_inf.h"
 #include "appldata.h"
 #include "iconsel.h"
 
@@ -125,11 +128,7 @@ struct zeile linx[MAX_LINN];
 struct iconfile rscx[MAX_RSCN];
 
 
-void open_work(void);
-void close_work(void);
-
-static void _rsrc_load(char *fname);
-void Mgraf_mouse(int type);
+static void close_work(void);
 
 /* Dialoge */
 
@@ -169,8 +168,24 @@ int main(int argc, char *argv[])
 
 	Pdomain(1);
 	if ((ap_id = appl_init()) < 0)
+	{
 		Pterm(-1);
+	}
+
 	Mrsrc_load("applicat.rsc", NULL);
+#ifdef _RSM_CRC_
+	{
+		char *crc;
+		
+		if ((crc = Rgetstring(_RSM_CRC_, NULL)) == NULL ||
+			strcmp(crc, _RSM_CRC_STRING_) != 0)
+		{
+			form_xerr(EACCDN, "applicat.rsc");
+			appl_exit();
+			Pterm((int) EACCDN);
+		}
+	}
+#endif
 	objc_sysvar(0, MX_ENABLE3D, 0, 0, &is_3d, &dummy);
 	wind_get_grect(SCREEN, WF_WORKXYWH, &scrg);
 	vdi_handle = graf_handle(&gl_hwchar, &gl_hhchar, &gl_hwbox, &gl_hhbox);
@@ -179,7 +194,11 @@ int main(int argc, char *argv[])
 	/* ------------------- */
 
 	if (get_inf())
-		return (-1);
+	{
+		rsrc_free();
+		appl_exit();
+		return -1;
+	}
 
 	/* Kommandozeile auswerten */
 	/* ----------------------- */
@@ -190,7 +209,9 @@ int main(int argc, char *argv[])
 		{
 		  par_err:
 			Rform_alert(1, ALRT_ERRARG, NULL);
-			return (-1);
+			rsrc_free();
+			appl_exit();
+			return -1;
 		}
 		action[0] = argv[1][1];
 		if (!action[0])
@@ -213,10 +234,15 @@ int main(int argc, char *argv[])
 		goto fehler;
 	}
 
+	/* Dialog "Registrierte Programme" */
 	rsrc_gtree(T_APPS, &adr_ica_dialog);
 	ica_dial_init_rsc();
+
+	/* Dialog "Registrierte Pfade */
 	rsrc_gtree(T_FOLDRS, &adr_icp_dialog);
 	icp_dial_init_rsc();
+
+	/* Dialog "Default-Icons" */
 	rsrc_gtree(T_SPECIA, &adr_spc_dialog);
 	spc_dial_init_rsc();
 
@@ -243,29 +269,29 @@ int main(int argc, char *argv[])
 		switch (action[1])
 		{
 		case 'a':
-			d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 0, args, STR_WINTITLE_APP);
+			d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, IDENT_APPLICATIONS, 0, args, STR_WINTITLE_APP);
 			if (!d_ica)
 				goto fehler;
 			break;
 		case 'd':
-			d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 1, args, STR_WINTITLE_APP);
+			d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, IDENT_APPLICATIONS, 1, args, STR_WINTITLE_APP);
 			if (!d_ica)
 				goto fehler;
 			break;
 		case 'o':
-			d_icp = xy_wdlg_init(hdl_icp, adr_icp_dialog, "PATHS", 0, args, STR_WINTITLE_PTH);
+			d_icp = xy_wdlg_init(hdl_icp, adr_icp_dialog, IDENT_PATHS, 0, args, STR_WINTITLE_PTH);
 			if (!d_icp)
 				goto fehler;
 			break;
 		case 's':
-			d_spc = xy_wdlg_init(hdl_spc, adr_spc_dialog, "SPECIAL", 0, args, STR_WINTITLE_SPC);
+			d_spc = xy_wdlg_init(hdl_spc, adr_spc_dialog, IDENT_SPECIAL, 0, args, STR_WINTITLE_SPC);
 			if (!d_spc)
 				goto fehler;
 			break;
 		}
 	} else if (action[0] == 'a')
 	{
-		d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 2, args, STR_WINTITLE_APP);
+		d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, IDENT_APPLICATIONS, 2, args, STR_WINTITLE_APP);
 		if (!d_ica)
 			goto fehler;
 	}
@@ -274,15 +300,15 @@ int main(int argc, char *argv[])
 	{
 		is_multiwindow = TRUE;
 
-		d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, "APPLICATIONS", 0, args, STR_WINTITLE_APP);
+		d_ica = xy_wdlg_init(hdl_ica, adr_ica_dialog, IDENT_APPLICATIONS, 0, args, STR_WINTITLE_APP);
 		if (!d_ica)
 			goto fehler;
 
-		d_icp = xy_wdlg_init(hdl_icp, adr_icp_dialog, "PATHS", 0, args, STR_WINTITLE_PTH);
+		d_icp = xy_wdlg_init(hdl_icp, adr_icp_dialog, IDENT_PATHS, 0, args, STR_WINTITLE_PTH);
 		if (!d_icp)
 			goto fehler;
 
-		d_spc = xy_wdlg_init(hdl_spc, adr_spc_dialog, "SPECIAL", 0, args, STR_WINTITLE_SPC);
+		d_spc = xy_wdlg_init(hdl_spc, adr_spc_dialog, IDENT_SPECIAL, 0, args, STR_WINTITLE_SPC);
 		if (!d_spc)
 			goto fehler;
 	}
@@ -363,16 +389,16 @@ int main(int argc, char *argv[])
 			if (w_ev.msg[0] == AP_TERM)
 			{
 				close_work();
-				return (0);
+				return 0;
 			}
-/*
-			if	(w_ev.msg[0] == AV_START)
-				{
-				}
-*/
+#if 0
+			if (w_ev.msg[0] == AV_START)
+			{
+			}
+#endif
 
-			if (((w_ev.msg[0] >= 20) && (w_ev.msg[0] < 40)) ||	/* WM_XX */
-				(w_ev.msg[0] >= 1040))
+			if ((w_ev.msg[0] >= WM_REDRAW && w_ev.msg[0] < AC_OPEN) ||	/* WM_XX */
+				w_ev.msg[0] >= 1040) /* Protocolls */
 			{
 				w = whdl2window(w_ev.msg[3]);
 				if (w)
@@ -417,7 +443,7 @@ int main(int argc, char *argv[])
 
   fehler:
 	close_work();
-	return (0);
+	return 0;
 }
 
 
@@ -427,7 +453,7 @@ long err_alert(long e)
 {
 	form_xerr(e, err_file);
 	err_file = NULL;
-	return (e);
+	return e;
 }
 
 
@@ -437,7 +463,7 @@ long err_alert(long e)
 *
 *************************************************************/
 
-DIALOG *xy_wdlg_init(HNDL_OBJ hndl_obj, OBJECT * tree, char *ident, int code, void *data, int title_code)
+DIALOG *xy_wdlg_init(HNDL_OBJ hndl_obj, OBJECT *tree, const char *ident, int code, void *data, int title_code)
 {
 	int whdl;
 	WINDEFPOS *wd;
@@ -447,7 +473,7 @@ DIALOG *xy_wdlg_init(HNDL_OBJ hndl_obj, OBJECT * tree, char *ident, int code, vo
 
 
 	if (NULL == (du = Malloc(sizeof(struct dialog_userdata))))
-		return (NULL);
+		return NULL;
 	if ((wd = def_wind_pos(ident)) != NULL)
 	{
 		x = wd->g.g_x;
@@ -474,7 +500,7 @@ DIALOG *xy_wdlg_init(HNDL_OBJ hndl_obj, OBJECT * tree, char *ident, int code, vo
 
 	if (!d)
 		Mfree(du);
-	return (d);
+	return d;
 }
 
 
@@ -485,7 +511,7 @@ DIALOG *xy_wdlg_init(HNDL_OBJ hndl_obj, OBJECT * tree, char *ident, int code, vo
 *
 *************************************************************/
 
-void save_dialog_xy(DIALOG * d)
+void save_dialog_xy(DIALOG *d)
 {
 	WINDEFPOS *wd;
 	OBJECT *tree;
@@ -534,7 +560,7 @@ void subobj_wdraw(void *d, int obj, int startob, int depth)
 *
 ****************************************************************/
 
-void close_work(void)
+static void close_work(void)
 {
 	rsrc_free();
 	v_clsvwk(vdi_handle);
@@ -549,9 +575,9 @@ void close_work(void)
 *
 ****************************************************************/
 
-int rsrc_gtree(int index, OBJECT ** tree)
+int rsrc_gtree(int index, OBJECT **tree)
 {
-	return (rsrc_gaddr(R_TREE, index, tree));
+	return rsrc_gaddr(R_TREE, index, tree);
 }
 
 
@@ -577,7 +603,7 @@ int extract_apname(char *path, char *name)
 	{
 	  over:
 		Rform_alert(1, ALRT_FNAME_2LONG, NULL);
-		return (-1);
+		return -1;
 	}
 	strcpy(fname, nurname);
 	f = strchr(fname, '.');
@@ -588,10 +614,10 @@ int extract_apname(char *path, char *name)
 	if (strpbrk(fname, "[]:\\'"))
 	{
 		Rform_alert(1, ALRT_FNAME_INVAL, NULL);
-		return (-1);
+		return -1;
 	}
 	strcpy(name, fname);
-	return (nurname == path);
+	return nurname == path;
 }
 
 
@@ -608,6 +634,6 @@ int get_deficonnr(long key)
 
 	for (i = 0, spc_file = spcx; i < spcn; i++, spc_file++)
 		if (spc_file->key == key)
-			return (spc_file->iconnr);
-	return (0);
+			return spc_file->iconnr;
+	return 0;
 }

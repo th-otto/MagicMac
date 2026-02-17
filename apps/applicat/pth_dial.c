@@ -93,7 +93,7 @@ WORD cdecl hdl_pth(struct HNDL_OBJ_args args)
 		if (d_pth)						/* Dialog ist schon ge”ffnet ! */
 		{
 			wind_set(wdlg_get_handle(d_pth), WF_TOP, 0, 0, 0, 0);
-			return (0);					/* create verweigern */
+			return 0;					/* create verweigern */
 		}
 
 		if (args.clicks == 0 && args.data)
@@ -115,7 +115,7 @@ WORD cdecl hdl_pth(struct HNDL_OBJ_args args)
 
 		TXT(tree + FLDN_PTH) = mypth.path;
 
-		return (1);
+		return 1;
 	}
 
 	/* 3. Fall: Dialog soll geschlossen werden */
@@ -125,11 +125,11 @@ WORD cdecl hdl_pth(struct HNDL_OBJ_args args)
 	{									/* Wenn Dialog geschlossen werden soll... */
 	  close_dialog:
 		save_dialog_xy(args.dialog);
-		return (0);						/* ...dann schliežen wir ihn auch */
+		return 0;						/* ...dann schliežen wir ihn auch */
 	}
 
 	if (args.obj < 0)
-		return (1);
+		return 1;
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
@@ -213,10 +213,10 @@ WORD cdecl hdl_pth(struct HNDL_OBJ_args args)
 		goto close_dialog;
 	}
 
-	return (1);
+	return 1;
 
   ende:
 	ob_dsel(tree, args.obj);
 	subobj_wdraw(args.dialog, args.obj, args.obj, 1);
-	return (1);							/* weiter */
+	return 1;							/* weiter */
 }

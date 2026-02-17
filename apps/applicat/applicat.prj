@@ -20,6 +20,7 @@ pth_dial.c  ; Pfad-Disk eintragen
 spc_dial.c  ; Icons fr Spezialobjekte
 
 inf.c
+read_inf.c
 windows.c
 ..\..\lib\mylibs\gemut_mt.c
 ..\..\pc\lib\pcstdlib.lib   ; standard lib

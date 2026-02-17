@@ -1,2 +1,2 @@
-void init_iconsel( void );
-int open_iconsel( void );
+void init_iconsel(void);
+int open_iconsel(void);

@@ -23,8 +23,8 @@ WINDOW *windows[NWINDOWS];
 
 WINDOW *whdl2window(int whdl)
 {
-	register int i;
-	register WINDOW **w;
+	int i;
+	WINDOW **w;
 
 
 	for (i = 0, w = windows; i < NWINDOWS; i++, w++)
@@ -32,9 +32,9 @@ WINDOW *whdl2window(int whdl)
 		if (!*w)
 			continue;					/* leerer Slot */
 		if ((*w)->handle == whdl)
-			return (*w);
+			return *w;
 	}
-	return (NULL);
+	return NULL;
 }
 
 
@@ -46,16 +46,16 @@ WINDOW *whdl2window(int whdl)
 
 WINDOW **new_window(void)
 {
-	register int i;
-	register WINDOW **w;
+	int i;
+	WINDOW **w;
 
 
 	for (i = 0, w = windows; i < NWINDOWS; i++, w++)
 	{
 		if (!*w)
-			return (w);					/* leerer Slot */
+			return w;					/* leerer Slot */
 	}
-	return (NULL);
+	return NULL;
 }
 
 
@@ -65,18 +65,18 @@ WINDOW **new_window(void)
 *
 ****************************************************************/
 
-WINDOW **find_slot_window(WINDOW * myw)
+WINDOW **find_slot_window(WINDOW *myw)
 {
-	register int i;
-	register WINDOW **w;
+	int i;
+	WINDOW **w;
 
 
 	for (i = 0, w = windows; i < NWINDOWS; i++, w++)
 	{
 		if (*w == myw)
-			return (w);
+			return w;
 	}
-	return (NULL);
+	return NULL;
 }
 
 
@@ -90,7 +90,7 @@ WINDOW **find_slot_window(WINDOW * myw)
 *
 ****************************************************************/
 
-void obj_malen(int whdl, OBJECT * tree, int index)
+void obj_malen(int whdl, OBJECT *tree, int index)
 {
 	GRECT list, neu;
 
@@ -105,8 +105,7 @@ void obj_malen(int whdl, OBJECT * tree, int index)
 		if (rc_intersect(&neu, &list))
 			objc_draw_grect(tree, index, 1, &list);
 		wind_get_grect(whdl, WF_NEXTXYWH, &list);
-	}
-	while (list.g_w > 0);
+	} while (list.g_w > 0);
 }
 
 
@@ -117,10 +116,9 @@ void obj_malen(int whdl, OBJECT * tree, int index)
 *
 ****************************************************************/
 
-void redraw_window(WINDOW * w, GRECT * neu)
+void redraw_window(WINDOW *w, GRECT *neu)
 {
 	GRECT g;
-
 
 	graf_mouse(M_OFF, NULL);
 	wind_get(w->handle, WF_FIRSTXYWH, &(g.g_x), &(g.g_y), &(g.g_w), &(g.g_h));
@@ -129,8 +127,7 @@ void redraw_window(WINDOW * w, GRECT * neu)
 		if (rc_intersect(neu, &g))
 			w->draw(w, &g);
 		wind_get(w->handle, WF_NEXTXYWH, &(g.g_x), &(g.g_y), &(g.g_w), &(g.g_h));
-	}
-	while (g.g_w > 0);					/* bis Rechteckliste vollst„ndig */
+	} while (g.g_w > 0);					/* bis Rechteckliste vollst„ndig */
 	graf_mouse(M_ON, NULL);
 }
 
@@ -141,7 +138,7 @@ void redraw_window(WINDOW * w, GRECT * neu)
 *
 ****************************************************************/
 
-int update_window(WINDOW * w)
+int update_window(WINDOW *w)
 {
 	WMESAG mesag;
 
@@ -155,7 +152,7 @@ int update_window(WINDOW * w)
 	mesag.msg.is_zero = 0;
 	mesag.msg.whdl = w->handle;
 	mesag.msg.g = w->out;
-	return (appl_write(ap_id, 16, mesag.message));
+	return appl_write(ap_id, 16, mesag.message);
 }
 
 
@@ -165,10 +162,10 @@ int update_window(WINDOW * w)
 *
 ****************************************************************/
 
-static void calc_in(WINDOW * w)
+static void calc_in(WINDOW *w)
 {
-	register int scrolled_pixels;
-	register GRECT *ob_grect;
+	int scrolled_pixels;
+	GRECT *ob_grect;
 
 
 
@@ -198,7 +195,7 @@ static void calc_in(WINDOW * w)
 *
 ****************************************************************/
 
-static void calc_collin(WINDOW * w)
+static void calc_collin(WINDOW *w)
 {
 	int x, y;
 	int c;
@@ -230,7 +227,7 @@ static void calc_collin(WINDOW * w)
 *
 ****************************************************************/
 
-void window_calc_hslider(WINDOW * w)
+void window_calc_hslider(WINDOW *w)
 {
 	long hsize, hpos;
 
@@ -270,7 +267,7 @@ void window_calc_hslider(WINDOW * w)
 *
 ****************************************************************/
 
-static void arrange_window_horizontal(WINDOW * w)
+static void arrange_window_horizontal(WINDOW *w)
 {
 	OBJECT *o;
 
@@ -295,7 +292,7 @@ static void arrange_window_horizontal(WINDOW * w)
 *
 ****************************************************************/
 
-void window_calc_vslider(WINDOW * w)
+void window_calc_vslider(WINDOW *w)
 {
 	long vsize, vpos;
 
@@ -336,9 +333,9 @@ void window_calc_vslider(WINDOW * w)
 *
 ****************************************************************/
 
-static int arrange_window(WINDOW * w)
+static int arrange_window(WINDOW *w)
 {
-	register int i, j;
+	int i, j;
 	int x, y, cols;
 	int oldcols;
 	int old_hshift, old_vshift;
@@ -394,7 +391,7 @@ static int arrange_window(WINDOW * w)
 		oldcols = anzahl;
 	if (anzahl < cols)
 		cols = anzahl;
-	return ((oldcols != cols) || (old_vshift != w->vshift) || (old_hshift != w->hshift));
+	return oldcols != cols || old_vshift != w->vshift || old_hshift != w->hshift;
 }
 
 
@@ -404,7 +401,7 @@ static int arrange_window(WINDOW * w)
 *
 ****************************************************************/
 
-static void fulled(WINDOW * w)
+static void fulled(WINDOW *w)
 {
 	GRECT prev, full;
 	GRECT *out;
@@ -454,10 +451,10 @@ static void fulled(WINDOW * w)
 *
 ****************************************************************/
 
-void hshift(WINDOW * w, int newshift)
+void hshift(WINDOW *w, int newshift)
 {
-	register int diff;					/* um soviele Spalten scrollen */
-	register int xcopy;					/* soviele x-Pixel werden kopiert */
+	int diff;					/* um soviele Spalten scrollen */
+	int xcopy;					/* soviele x-Pixel werden kopiert */
 	MFDB src_mfdb, dest_mfdb;
 	int pxy[8];
 	GRECT g;
@@ -528,8 +525,7 @@ void hshift(WINDOW * w, int newshift)
 			w->draw(w, &g);
 		}
 		wind_get(w->handle, WF_NEXTXYWH, &(g.g_x), &(g.g_y), &(g.g_w), &(g.g_h));
-	}
-	while (g.g_w > 0);					/* bis Rechteckliste vollst„ndig */
+	} while (g.g_w > 0);					/* bis Rechteckliste vollst„ndig */
 
 	graf_mouse(M_ON, NULL);
 }
@@ -542,10 +538,10 @@ void hshift(WINDOW * w, int newshift)
 *
 ****************************************************************/
 
-static void vshift(WINDOW * w, int newshift)
+static void vshift(WINDOW *w, int newshift)
 {
-	register int diff;					/* um soviele Zeilen Scrollen */
-	register int ycopy;					/* soviele y-Pixel werden kopiert */
+	int diff;					/* um soviele Zeilen Scrollen */
+	int ycopy;					/* soviele y-Pixel werden kopiert */
 	MFDB src_mfdb, dest_mfdb;
 	int pxy[8];
 	GRECT g;
@@ -616,8 +612,7 @@ static void vshift(WINDOW * w, int newshift)
 			w->draw(w, &g);
 		}
 		wind_get(w->handle, WF_NEXTXYWH, &(g.g_x), &(g.g_y), &(g.g_w), &(g.g_h));
-	}
-	while (g.g_w > 0);					/* bis Rechteckliste vollst„ndig */
+	} while (g.g_w > 0);					/* bis Rechteckliste vollst„ndig */
 
 	graf_mouse(M_ON, NULL);
 }
@@ -632,7 +627,7 @@ static void vshift(WINDOW * w, int newshift)
 *
 ****************************************************************/
 
-static void arrowed(WINDOW * w, int arrow)
+static void arrowed(WINDOW *w, int arrow)
 {
 	int new_hshift, new_vshift;
 
@@ -696,31 +691,31 @@ static void arrowed(WINDOW * w, int arrow)
 ****************************************************************/
 
 #pragma warn -par
-static void dummy_hshift(WINDOW * w, int newshift)
+static void dummy_hshift(WINDOW *w, int newshift)
 {
 }
 
-static void iconified(WINDOW * w, GRECT * g)
+static void iconified(WINDOW *w, GRECT *g)
 {
 }
 
-static void uniconified(WINDOW * w, GRECT * g, int unhide)
+static void uniconified(WINDOW *w, GRECT *g, int unhide)
 {
 }
 
-static void alliconified(WINDOW * w, GRECT * g, int hide)
+static void alliconified(WINDOW *w, GRECT *g, int hide)
 {
 }
 
-static void closed(WINDOW * w, int kstate)
+static void closed(WINDOW *w, int kstate)
 {
 }
 
-static void buttoned(WINDOW * w, int kstate, int x, int y, int button, int nclicks)
+static void buttoned(WINDOW *w, int kstate, int x, int y, int button, int nclicks)
 {
 }
 
-static void keyed(WINDOW * w, int kstate, int key)
+static void keyed(WINDOW *w, int kstate, int key)
 {
 }
 
@@ -734,7 +729,7 @@ static void keyed(WINDOW * w, int kstate, int key)
 *
 ****************************************************************/
 
-static void hslid(WINDOW * w, int newpos)
+static void hslid(WINDOW *w, int newpos)
 {
 	long newshift;
 
@@ -756,7 +751,7 @@ static void hslid(WINDOW * w, int newpos)
 *
 ****************************************************************/
 
-static void vslid(WINDOW * w, int newpos)
+static void vslid(WINDOW *w, int newpos)
 {
 	long newshift;
 
@@ -775,7 +770,7 @@ static void vslid(WINDOW * w, int newpos)
 *
 ****************************************************************/
 
-static void sized(WINDOW * w, GRECT * g)
+static void sized(WINDOW *w, GRECT *g)
 {
 	if (w->flags & WFLAG_ICONIFIED)
 		return;
@@ -794,7 +789,7 @@ static void sized(WINDOW * w, GRECT * g)
 *
 ****************************************************************/
 
-static void moved(WINDOW * w, GRECT * g)
+static void moved(WINDOW *w, GRECT *g)
 {
 	g->g_x &= ~7;
 	if (wind_set(w->handle, WF_CURRXYWH, g->g_x, g->g_y, g->g_w, g->g_h))
@@ -811,7 +806,7 @@ static void moved(WINDOW * w, GRECT * g)
 *
 ****************************************************************/
 
-static void opened(WINDOW * w)
+static void opened(WINDOW *w)
 {
 	wind_open_grect(w->handle, &(w->out));
 	arrange_window(w);
@@ -829,13 +824,13 @@ static void opened(WINDOW * w)
 *
 ****************************************************************/
 
-static void _draw_obj_window(WINDOW * w, GRECT * g)
+static void _draw_obj_window(WINDOW *w, GRECT *g)
 {
 	objc_draw_grect(w->tree, 0, 1, g);
 }
 
 
-static void _message_obj_window(WINDOW * w, int kstate, int message[16])
+static void _message_obj_window(WINDOW *w, int kstate, int message[16])
 {
 	switch (message[0])
 	{
@@ -890,7 +885,7 @@ static void _message_obj_window(WINDOW * w, int kstate, int message[16])
 *
 ****************************************************************/
 
-void init_window(WINDOW * w)
+void init_window(WINDOW *w)
 {
 	w->close = closed;
 	w->open = opened;

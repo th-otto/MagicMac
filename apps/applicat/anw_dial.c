@@ -12,6 +12,7 @@
 #include "gemut_mt.h"
 #include "de/applicat.h"
 #include "appl.h"
+#include "inf.h"
 #include "appldata.h"
 #include "ica_dial.h"
 #include "anw_dial.h"
@@ -54,18 +55,18 @@ static int suffixtyp(char *s)
 	if (s)
 	{
 		s++;
-		ext[0] = (*s++ & 0x5f);
-		ext[1] = (*s++ & 0x5f);
-		ext[2] = (*s++ & 0x5f);
+		ext[0] = (*s++ & 0x5f); /* _toupper() */
+		ext[1] = (*s++ & 0x5f); /* _toupper() */
+		ext[2] = (*s++ & 0x5f); /* _toupper() */
 		ext[3] = '\0';
-		if (!stricmp(ext, "PRG") || !stricmp(ext, "APP"))
-			return (PGMT_ISGEM);
-		if (!stricmp(ext, "TOS"))
-			return (0);
-		if (!stricmp(ext, "TTP"))
-			return (PGMT_TP);
+		if (strcmp(ext, "PRG") == 0 || strcmp(ext, "APP") == 0)
+			return PGMT_ISGEM;
+		if (strcmp(ext, "TOS") == 0)
+			return 0;
+		if (stricmp(ext, "TTP") == 0)
+			return PGMT_TP;
 	}
-	return (PGMT_ISGEM);
+	return PGMT_ISGEM;
 }
 
 
@@ -108,7 +109,7 @@ WORD cdecl hdl_anwndg(struct HNDL_OBJ_args args)
 		if (d_anw)						/* Dialog ist schon ge”ffnet ! */
 		{
 			wind_set(wdlg_get_handle(d_anw), WF_TOP, 0, 0, 0, 0);
-			return (0);					/* create verweigern */
+			return 0;					/* create verweigern */
 		}
 
 		if (args.data && args.clicks == 0)
@@ -123,7 +124,7 @@ WORD cdecl hdl_anwndg(struct HNDL_OBJ_args args)
 			mypgm.name[0] = EOS;		/* neue Anwendung */
 			mypgm.rscname[0] = EOS;
 			mypgm.rscindex = 0;
-			mypgm.iconnr = get_deficonnr('APPS');
+			mypgm.iconnr = get_deficonnr(ICON_KEY_APPS);
 			mypgm.path[0] = EOS;
 			if (args.data)
 			{
@@ -180,7 +181,7 @@ WORD cdecl hdl_anwndg(struct HNDL_OBJ_args args)
 
 		objs_setradio(tree, (mypgm.config & PGMT_WINPATH) ? ANW_WPTH : ANW_OPTH, ANW_WPTH, ANW_OPTH, 0);
 
-		return (1);
+		return 1;
 	}
 
 	/* 3. Fall: Dialog soll geschlossen werden */
@@ -190,11 +191,11 @@ WORD cdecl hdl_anwndg(struct HNDL_OBJ_args args)
 	{
 	  close_dialog:
 		save_dialog_xy(args.dialog);
-		return (0);						/* ...dann schliežen wir ihn auch */
+		return 0;						/* ...dann schliežen wir ihn auch */
 	}
 
 	if (args.obj < 0)
-		return (1);
+		return 1;
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
@@ -331,10 +332,10 @@ WORD cdecl hdl_anwndg(struct HNDL_OBJ_args args)
 		subobj_wdraw(args.dialog, LIMITMEM, LIMITMEM, 1);
 	}
 
-	return (1);
+	return 1;
 
   ende:
 	ob_dsel(tree, args.obj);
 	subobj_wdraw(args.dialog, args.obj, args.obj, 1);
-	return (1);							/* weiter */
+	return 1;							/* weiter */
 }

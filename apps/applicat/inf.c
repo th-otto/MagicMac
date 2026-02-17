@@ -16,6 +16,7 @@
 #include "country.h"
 #include "windows.h"
 #include "appl.h"
+#include "inf.h"
 #include "de/applicat.h"
 #include "appldata.h"
 #include "anw_dial.h"					/* wegen d_anw */
@@ -25,350 +26,45 @@
 #include "spc_dial.h"					/* wegen d_spc */
 #include "typ_dial.h"					/* wegen d_typ */
 
-#define DEBUG 0
 #define WBUFLEN 8000L
 
-#define LBUFLEN 128
-static char *inf_buf;
-static char *cpos;						/* Position innerhalb der Datei */
-static char *lpos;						/* Position innerhalb der Zeile */
 
+/*
+ * local variables
+ */
 
-long put_icons(void);
-static char line[LBUFLEN];
-int n_windefpos = 0;
-WINDEFPOS windefpos[MAXWINDEFPOS];
-static int old_w, old_h;				/* alte Bildschirmgrîûe */
-
-static char const applicat_inf[] = "applicat.inf";
 static char const applicat_dat[] = "applicat.dat";
 
-
-/****************************************************************
-*
-* Merkt sich die Ressource-Informationen im global-Feld.
-*
-****************************************************************/
-
-static int systemglobal[5];
-
-static void save_rscdata(int *save)
-{
-	memcpy(save, _GemParBlk.global +5, 5 * sizeof(int));
-}
-
-static void restore_rscdata(int *save)
-{
-	memcpy(_GemParBlk.global +5, save, 5 * sizeof(int));
-}
+/*
+ * global variables
+ */
+char const applicat_inf[] = "applicat.inf";
+int n_windefpos = 0;
+WINDEFPOS windefpos[MAXWINDEFPOS];
 
 
 /****************************************************************
 *
-* Rechnet Koordinaten linear um. Der Wert <wert> wurde bei
-* Bildschirmgrîûe <old> abgespeichert, jetzt ist die
-* Bildschirmgrîûe <new>.
+* Write string or flush the write buffer
+*
+* wbuf	write buffer
+* *wlen	current number of characters in write buffer
+* s		string to write, or NULL to flush the write buffer
 *
 ****************************************************************/
 
-static void recalc(int *wert, int old, int new)
-{
-	unsigned long tmp;
-
-	tmp = (unsigned long) *wert;
-	tmp *= new;
-	tmp /= old;
-	*wert = (int) tmp;
-}
-
-
-/*********************************************************************
-*
-* Ermittelt bzw. setzt eine Fensterposition.
-*
-*********************************************************************/
-
-WINDEFPOS *def_wind_pos(const char *s)
-{
-	WINDEFPOS *w;
-	int i;
-
-	for (i = 0, w = windefpos; i < n_windefpos; i++, w++)
-	{
-		if (!strcmp(w->name, s))
-			return (w);
-	}
-	return (NULL);
-}
-
-
-/*********************************************************************
-*
-* Liest eine Fensterposition ein.
-*
-*********************************************************************/
-
-static void put_wind_pos(char *s)
-{
-	WINDEFPOS *w;
-
-	if (n_windefpos >= MAXWINDEFPOS)
-		return;
-	w = windefpos + n_windefpos;
-	sscanf(s, "WINDOW %s %d,%d,%d,%d", &(w->name), &(w->g.g_x), &(w->g.g_y), &(w->g.g_w), &(w->g.g_h));
-	if (old_w != scrg.g_w)
-	{
-		recalc(&(w->g.g_x), old_w, scrg.g_w);
-		recalc(&(w->g.g_w), old_w, scrg.g_w);
-	}
-	if (old_h != scrg.g_h)
-	{
-		recalc(&(w->g.g_y), old_h, scrg.g_h);
-		recalc(&(w->g.g_h), old_h, scrg.g_h);
-	}
-	w->g.g_x += scrg.g_x;
-	w->g.g_y += scrg.g_y;
-	n_windefpos++;
-}
-
-
-/*********************************************************************
-*
-* Gibt das <n>-te Icon der Datei fname zurÅck
-*
-*********************************************************************/
-
-static int get_icon(const char *fname, int n)
-{
-	int i;
-
-	for (i = 0; i < rscn; i++)
-		if (!stricmp(rscx[i].fname, fname))
-		{
-			if (n >= rscx[i].nicons)
-				return (-1);			/* Fehler ! */
-			return (rscx[i].firsticon + n);
-		}
-	return (-1);
-}
-
-
-/*********************************************************************
-*
-* LÑdt alle Icons in den Speicher
-*
-*********************************************************************/
-
-void load_icons(void)
-{
-	int i;
-	char fname[MAX_PATHLEN];
-	long errcode;
-	struct icon *ic;
-	OBJECT *ob;
-	int objnr;
-	DTA mydta;
-	int rscglobal[5];
-
-	strcpy(fname, "rsc\\12345678901234567890");
-	save_rscdata(systemglobal);			/* System-RSC merken */
-
-	strcpy(rscx[0].fname, "<intern>");
-	rscx[0].nicons = 7;
-	rscx[0].firsticon = 1;
-	rsrc_gtree(T_DEFICN, &(rscx[0].adr_icons));
-
-	ic = icnx;
-	icnn = 0;
-	
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_FLPDSK;
-	ic++;
-	icnn++;
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_ORDNER;
-	ic++;
-	icnn++;
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_PROGRA;
-	ic++;
-	icnn++;
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_DATEI;
-	ic++;
-	icnn++;
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_BTCHDA;
-	ic++;
-	icnn++;
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_PAPIER;
-	ic++;
-	icnn++;
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_DRUCKR;
-	ic++;
-	icnn++;
-	ic->rscfile = 0;					/* internes Icon */
-	ic->objnr = I_PAR;
-	ic++;
-	icnn++;
-
-
-	rscn = 1;
-
-	Fsetdta(&mydta);
-	errcode = Fsfirst("rsc\\*.rsc", 0);
-	for (; errcode == E_OK; errcode = Fsnext())
-	{
-		if (rscn >= MAX_RSCN)
-		{
-			save_rscdata(rscglobal);
-			restore_rscdata(systemglobal);
-			Rform_alert(1, ALRT_TOOMANY_RSC, NULL);
-			restore_rscdata(rscglobal);
-			break;
-		}
-		strcpy(fname + 4, mydta.d_fname);
-		strcpy(rscx[rscn].fname, mydta.d_fname);
-		if (!rsrc_load(fname))
-		{
-			form_xerr(EFILNF, fname);
-			continue;
-		}
-
-		if (!rsrc_gaddr(R_TREE, 0, &rscx[rscn].adr_icons))
-		{
-			save_rscdata(rscglobal);
-			restore_rscdata(systemglobal);
-			Rform_alert(1, ALRT_FORMATICERR, NULL);
-			restore_rscdata(rscglobal);
-			continue;
-		}
-
-		rscx[rscn].nicons = 0;
-		rscx[rscn].firsticon = icnn;
-		objnr = rscx[rscn].adr_icons->ob_head;	/* erstes Kind */
-
-		while (objnr > 0)				/* gÅltig und nicht parent */
-		{
-			ob = rscx[rscn].adr_icons + objnr;
-			if ((ob->ob_type != G_ICON) && (ob->ob_type != G_CICON))
-			{
-				save_rscdata(rscglobal);
-				restore_rscdata(systemglobal);
-				Rform_alert(1, ALRT_FORMATICERR, NULL);
-				restore_rscdata(rscglobal);
-				break;
-			}
-			if (icnn >= MAX_ICNN)
-			{
-				save_rscdata(rscglobal);
-				restore_rscdata(systemglobal);
-				Rform_alert(1, ALRT_2MANY_ICONS, NULL);
-				restore_rscdata(rscglobal);
-				break;
-			}
-			ic->rscfile = rscn;
-			ic->objnr = objnr;
-			/* ic -> sel_pgm = ic -> sel_dat = FALSE */
-			ic++;
-			rscx[rscn].nicons++;		/* Anzahl in der Datei */
-			icnn++;						/* Gesamtanzahl */
-			objnr = ob->ob_next;
-		}
-		rscn++;
-		if (icnn >= MAX_ICNN)
-			break;
-	}
-
-	/* Icons umrechnen */
-	/* --------------- */
-
-	for (i = 0; i < spcn; i++)
-	{
-		spcx[i].iconnr = get_icon(spcx[i].rscname, spcx[i].rscindex);
-		if (spcx[i].iconnr < 0)
-			spcx[i].iconnr = 3; /* I_DATEI */
-	}
-
-	for (i = 0; i < pgmn; i++)
-	{
-		pgmx[i].iconnr = get_icon(pgmx[i].rscname, pgmx[i].rscindex);
-		if (pgmx[i].iconnr < 0)
-		{
-			pgmx[i].iconnr = get_deficonnr('APPS');
-			if (!pgmx[i].iconnr)
-				pgmx[i].iconnr = 2; /* I_PROGRA */
-		}
-	}
-
-	for (i = 0; i < datn; i++)
-	{
-		datx[i].iconnr = get_icon(datx[i].rscname, datx[i].rscindex);
-		if (datx[i].iconnr < 0)
-		{
-			datx[i].iconnr = get_deficonnr('DATS');
-			if (!datx[i].iconnr)
-				datx[i].iconnr = 3; /* I_DATEI */
-		}
-	}
-
-	for (i = 0; i < pthn; i++)
-	{
-		pthx[i].iconnr = get_icon(pthx[i].rscname, pthx[i].rscindex);
-		if (pthx[i].iconnr < 0)
-		{
-			pthx[i].iconnr = get_deficonnr('FLDR');
-			if (!pthx[i].iconnr)
-				pthx[i].iconnr = 1; /* I_ORDNER */
-		}
-	}
-
-	restore_rscdata(systemglobal);		/* System-RSC zurÅck */
-}
-
-
-/****************************************************************
-*
-* Fehler bei Dateioperation
-*
-****************************************************************/
-
-static void serror(char *s)
-{
-	char buf[512];
-
-	sprintf(buf, Rgetstring(ALRT_ERR_IN_INF, NULL), s);
-	form_alert(1, buf);
-}
-
-static void error(int id)
-{
-	serror(Rgetstring(id, NULL));
-}
-
-
-/****************************************************************
-*
-* Zeichenkette schreiben
-*
-* wbuf	Schreibpuffer
-* *wlen	Zeichen im Schreibpuffer
-*
-****************************************************************/
-
-static long iwrite(int hdl, char *wbuf, long *wlen, char *s)
+static long iwrite(int hdl, char *wbuf, long *wlen, const char *s)
 {
 	long ret, len;
 
 	if (s)
 		len = strlen(s);
 	else
-		len = 0L;
+		len = 0;
 
 	if (s && (len < (WBUFLEN - *wlen)))
 	{
+		/* there is enough space in the write buffer */
 		strcat(wbuf, s);
 		*wlen += len;
 	} else
@@ -377,160 +73,23 @@ static long iwrite(int hdl, char *wbuf, long *wlen, char *s)
 		if (ret < 0)
 		{
 			error(STR_ERR_WR_INF);
-			return (ret);
+			return ret;
 		}
+
 		if (ret != *wlen)
 		{
 			error(STR_ERR_FULL_INF);
-			return (ERROR);
+			return ERROR;
 		}
+
 		if (s)
 			strcpy(wbuf, s);
+
 		*wlen = len;
 	}
-	return (E_OK);
+
+	return E_OK;
 }
-
-
-/****************************************************************
-*
-* Entfernt rechtsbÅndige Leerstellen aus <string>
-*
-****************************************************************/
-
-static void trim(char *s)
-{
-	char *t;
-
-	t = s + strlen(s) - 1;
-	while ((t >= s) && isspace(*t))
-	{
-		*t = EOS;
-		t--;
-	}
-}
-
-
-/****************************************************************
-*
-* Liest einen Pfad mit max <len> Zeichen
-*
-* RÅckgabe 1: öberlauf
-*
-****************************************************************/
-
-int scanpath(char **lpos, char *buf, int len)
-{
-	char *s;
-
-	s = *lpos;
-	while (isspace(*s))
-		s++;
-	if (*s == '\'')
-	{
-		s++;
-		while (*s && ((*s != '\'') || (s[1] == '\'')))
-		{
-			if (!len)
-				return (1);
-			if (*s == '\'' && (s[1] == '\''))	/* doppeltes ' */
-				s++;
-			*buf++ = *s++;
-			len--;
-		}
-		if (!*s)
-			return (-1);				/* fehlendes ' */
-		s++;
-	} else
-	{
-		while (*s && ((*s != ' ')))
-		{
-			if (!len)
-				return (1);
-			*buf++ = *s++;
-			len--;
-		}
-	}
-	*lpos = s;
-	*buf = EOS;
-	return (0);
-}
-
-
-/****************************************************************
-*
-* Extrahiert die Zeichenkette s aus der Gruppe [s]
-*
-* Röckgabe TRUE, wenn Fehler
-*
-****************************************************************/
-
-static int getgroup(char *buf)
-{
-	char *s;
-
-	*buf = EOS;
-	s = line;
-	while (isspace(*s))					/* fÅhrende Leerstellen Åberlesen */
-		s++;
-	if (*s++ != '[')
-		return (1);						/* Fehler */
-
-	if (*s == '\'')
-	{
-		s++;
-		while (*s && ((*s != '\'') || (s[1] == '\'')))
-		{
-			if (*s == '\'' && (s[1] == '\''))	/* doppeltes ' */
-				s++;
-			*buf++ = *s++;
-		}
-		if (!*s)
-			return (-1);				/* fehlendes ' */
-		s++;
-	} else
-	{
-		while (*s && ((*s != ']')))
-		{
-			*buf++ = *s++;
-		}
-	}
-
-	if (*s != ']')
-		return (1);						/* letztes Zeichen nicht ']' */
-
-	*buf = EOS;
-	return (0);
-}
-
-#if 0
-static int getgroup(char *s)
-{
-	char *t;
-
-	*s = EOS;
-	t = line;
-	while (isspace(*t))					/* fÅhrende Leerstellen Åberlesen */
-		t++;
-	if (*t++ != '[')
-		return (1);						/* Fehler */
-
-	if (*t == '\'')
-	{
-		if (scanpath(&t, s, MAX_NAMELEN))
-			return (1);
-	} else
-	{
-		while ((*t) && ((*t != ']')))
-			*s++ = *t++;
-	}
-
-	if (*t != ']')
-		return (1);						/* letztes Zeichen nicht ']' */
-	return (0);
-}
-#endif
-
 
 
 /****************************************************************
@@ -542,7 +101,7 @@ static int getgroup(char *s)
 *
 ****************************************************************/
 
-int path_2_arg(char *path, char *buf, int len)
+static int path_2_arg(const char *path, char *buf, int len)
 {
 	char *hoch;
 
@@ -550,7 +109,7 @@ int path_2_arg(char *path, char *buf, int len)
 	if (hoch)
 	{
 		if (!(--len))
-			return (-1);
+			return -1;
 		*buf++ = '\'';
 	}
 
@@ -559,345 +118,45 @@ int path_2_arg(char *path, char *buf, int len)
 		if (*path == '\'')
 		{
 			if (!(--len))
-				return (-1);
+				return -1;
 			*buf++ = '\'';
 		}
+
 		if (!(--len))
-			return (-1);
+			return -1;
 		*buf++ = *path++;
 	}
 
 	if (hoch)
 	{
 		if (!(--len))
-			return (-1);
+			return -1;
 		*buf++ = '\'';
 	}
+
 	*buf = EOS;
-	return (0);
+	return 0;
 }
 
 
-/****************************************************************
+/*********************************************************************
 *
-* Liest einen int
+* global: Ermittelt bzw. setzt eine Fensterposition.
 *
-****************************************************************/
+*********************************************************************/
 
-int scanint(char **lpos, int *val)
+WINDEFPOS *def_wind_pos(const char *s)
 {
-	long l;
-	char *endptr;
+	WINDEFPOS *w;
+	int i;
 
-	while (isspace(**lpos))
-		(*lpos)++;
-	if (**lpos != '-' && (**lpos < '0' || **lpos > '9'))
-		return (-1);
-	l = strtol(*lpos, &endptr, 10);
-	if (endptr == *lpos)
-		return (-1);					/* Fehler */
-	*val = (int) l;
-	return (0);
-}
-
-
-/****************************************************************
-*
-* Liest eine Zeile
-*
-****************************************************************/
-
-static void readline(void)
-{
-	char *s;
-
-  again:
-	s = line;
-	do
+	for (i = 0, w = windefpos; i < n_windefpos; i++, w++)
 	{
-		if (!*cpos)
-		{
-			error(STR_ERR_EOF_INF);
-			exit(1);					/* Dateiende */
-		}
-		*s = *cpos++;					/* ein Zeichen */
-		if (*s == '\r')
-			continue;					/* CR Åberlesen */
-		if (*s != '\n')
-			s++;
-		if ((s - line) > (LBUFLEN - 2))
-		{
-			error(STR_ERR_LEN_INF);
-			exit(-1);					/* ZeilenÅberlauf */
-		}
-	}
-	while (*s != '\n');
-	*s = EOS;
-	trim(line);
-#if DEBUG
-	Cconws(line);
-	Cconws("\r\n");
-#endif
-	if (line[0] == ';')
-		goto again;						/* Kommentar */
-	lpos = line;
-}
-
-
-/****************************************************************
-*
-* Liest eine Nicht-Leerzeile
-*
-****************************************************************/
-
-static void rreadline(void)
-{
-	do
-		readline();
-	while (!line[0]);
-}
-
-
-/****************************************************************
-*
-* Liest die Textdatei "applicat.inf".
-*
-****************************************************************/
-
-long get_inf(void)
-{
-	long ret;
-	int hdl;
-	int ver;
-	char group[100];
-	char iconname[128];
-	XATTR xa;
-
-	ret = Fxattr(0, applicat_inf, &xa);
-	if (ret < E_OK)
-		goto err_open;
-	if (NULL == (inf_buf = Malloc(xa.st_size + 1)))
-	{
-		form_xerr(ENSMEM, NULL);
-		return (ENSMEM);
+		if (!strcmp(w->name, s))
+			return w;
 	}
 
-	ret = Fopen(applicat_inf, O_RDONLY);
-	if (ret < E_OK)
-	{
-	  err_open:
-		if (inf_buf)
-			Mfree(inf_buf);
-		inf_buf = NULL;
-		form_xerr(ret, applicat_inf);
-		return (ret);
-	}
-	hdl = (int) ret;
-	ret = Fread(hdl, xa.st_size, inf_buf);
-	Fclose(hdl);
-	if (ret < E_OK)
-		goto err_open;
-	inf_buf[ret] = EOS;
-	cpos = inf_buf;						/* Leseposition: Dateianfang */
-
-	readline();
-	if (getgroup(group) || (1 != sscanf(group, "APPLICAT Header V %d", &ver)))
-	{
-		char s[512];
-
-		error(STR_ERR_HEAD_INF);
-	  err:
-		strcpy(s, Rgetstring(STR_LINE, NULL));
-		strcat(s, line);
-		serror(s);
-		if (inf_buf)
-			Mfree(inf_buf);
-		inf_buf = NULL;
-		return (1);
-	}
-
-	if (ver != 0)
-	{
-		error(STR_ERR_VERSION);
-		goto err;
-	}
-
-	old_w = scrg.g_w;
-	old_h = scrg.g_h;
-	rreadline();
-	if (!strncmp(line, "SCREENSIZE ", 11))
-	{
-		sscanf(line, "SCREENSIZE %d,%d", &old_w, &old_h);
-		rreadline();
-	}
-
-	while (!strncmp(line, "WINDOW ", 7))
-	{
-		put_wind_pos(line);
-		rreadline();
-	}
-
-	while (strncmp(line, "[End]", 5))
-	{
-		if (!line[0])
-		{
-			readline();
-			continue;
-		}
-
-		if (getgroup(group))
-		{
-		  erri:
-			error(STR_ERR_FORMAT);
-			goto err;
-		}
-
-		if (!strcmp(group, "<Pfade>"))
-		{
-			readline();
-			while (line[0] != '[')
-			{
-				if (pthn >= MAX_PTHN)
-				{
-					Rform_alert(1, ALRT_OVERFLOW, NULL);
-					goto err;
-				}
-				if (scanpath(&lpos, pthx[pthn].path, MAX_PATHLEN))
-					goto erri;
-				if (scanpath(&lpos, pthx[pthn].rscname, MAX_NAMELEN))
-					goto erri;
-				if (scanint(&lpos, &pthx[pthn].rscindex))
-					goto erri;
-				if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
-					goto erri;
-				readline();
-				pthn++;
-			}
-			continue;
-		}
-
-		if (!strcmp(group, "<Spezial>"))
-		{
-			readline();
-			while (line[0] != '[')
-			{
-				if (spcn >= MAX_SPCN)
-				{
-					Rform_alert(1, ALRT_OVERFLOW, NULL);
-					goto err;
-				}
-				if (scanpath(&lpos, (char *) &(spcx[spcn].key), 4))
-					goto erri;
-				if (scanpath(&lpos, spcx[spcn].name, MAX_NAMELEN))
-					goto erri;
-				if (scanpath(&lpos, spcx[spcn].rscname, MAX_NAMELEN))
-					goto erri;
-				if (scanint(&lpos, &spcx[spcn].rscindex))
-					goto erri;
-				if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
-					goto erri;
-				readline();
-				spcn++;
-			}
-			continue;
-		}
-
-		/* Applikation */
-		/* ----------- */
-
-		if (pgmn >= MAX_PGMN)
-		{
-			Rform_alert(1, ALRT_OVERFLOW, NULL);
-			goto err;
-		}
-		strcpy(pgmx[pgmn].name, group);
-		readline();
-		if (line[0])
-		{
-			if (scanpath(&lpos, pgmx[pgmn].rscname, MAX_NAMELEN))
-				goto erri;
-			if (scanint(&lpos, &pgmx[pgmn].rscindex))
-				goto erri;
-			if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
-				goto erri;
-		}
-		readline();
-
-		if (scanpath(&lpos, pgmx[pgmn].path, MAX_PATHLEN))
-			goto erri;
-
-/*		strcpy(pgmx[pgmn].path, line);	*/
-		readline();
-		if (scanint(&lpos, &pgmx[pgmn].config))
-		{
-			error(STR_ERR_FORMAT);
-			goto err;
-		}
-		rreadline();
-		if (!strncmp(line, "LIMITMEM=", 9))
-		{
-			pgmx[pgmn].memlimit = atol(line + 9);
-			rreadline();
-		}
-		pgmx[pgmn].types = -1;			/* Ende der Verkettung */
-		pgmx[pgmn].ntypes = 0;			/* Anzahl Dateitypen */
-		while (line[0] != '[')
-		{
-			/* Dateityp suchen */
-			int i;
-
-			if (datn >= MAX_DATN || linn >= MAX_LINN)
-			{
-				Rform_alert(1, ALRT_OVERFLOW, NULL);
-				goto err;
-			}
-			if (scanpath(&lpos, datx[datn].name, MAX_NAMELEN))
-				goto erri;
-			if (scanpath(&lpos, datx[datn].rscname, MAX_NAMELEN))
-				goto erri;
-			if (scanint(&lpos, &datx[datn].rscindex))
-				goto erri;
-			if (scanpath(&lpos, iconname, (int)sizeof(iconname)))
-				goto erri;
-
-			for (i = 0; i < datn; i++)
-			{
-				if (!stricmp(datx[datn].name, datx[i].name))
-				{
-					error(STR_ERR_MULTITYP);
-					goto err;			/* schon verkettet */
-				}
-				break;
-			}
-			/* vorn einketten */
-			datx[datn].next = pgmx[pgmn].types;
-			datx[datn].pgm = pgmn;
-			pgmx[pgmn].types = datn;
-
-			linx[linn].pgmnr = pgmn;
-			linx[linn].reldatnr = pgmx[pgmn].ntypes;
-			linx[linn].datnr = datn;
-			linx[linn].selected = FALSE;
-			datn++;
-			linn++;
-
-			pgmx[pgmn].ntypes++;
-
-			rreadline();
-		}
-
-		if (pgmx[pgmn].ntypes == 0)
-		{
-			linx[linn].pgmnr = pgmn;
-			linx[linn].reldatnr = -1;
-			linx[linn].datnr = -1;
-			linn++;
-		}
-		pgmn++;
-	}
-
-	Mfree(inf_buf);
-	return (0);
+	return NULL;
 }
 
 
@@ -910,7 +169,7 @@ long get_inf(void)
 *
 ****************************************************************/
 
-void get_len(long *npg, long *nd, long *npt, long *ns, long *ni, char **m_used)
+static void get_len(long *npg, long *nd, long *npt, long *ns, long *ni, char **m_used)
 {
 	struct pgm_file *pg;
 	struct dat_file *d;
@@ -928,6 +187,7 @@ void get_len(long *npg, long *nd, long *npt, long *ns, long *ni, char **m_used)
 		form_xerr(ENSMEM, NULL);
 		return;
 	}
+
 	memset(buf, 0, icnn);
 	used = buf;
 
@@ -966,8 +226,8 @@ void get_len(long *npg, long *nd, long *npt, long *ns, long *ni, char **m_used)
 	}
 	*npt = pthn;
 
-	/* Anzahl Spezialicons */
-	/* ------------------- */
+	/* Anzahl Spezial-Icons */
+	/* -------------------- */
 
 	for (i = 0, s = spcx; i < spcn; i++, s++)
 	{
@@ -984,6 +244,7 @@ void get_len(long *npg, long *nd, long *npt, long *ns, long *ni, char **m_used)
 			n++;
 	}
 	*ni = n;
+
 	if (m_used)
 		*m_used = buf;
 	else
@@ -993,11 +254,11 @@ void get_len(long *npg, long *nd, long *npt, long *ns, long *ni, char **m_used)
 
 /****************************************************************
 *
-* Ermittelt Icondaten
+* Ermittelt Icon-Daten
 *
 ****************************************************************/
 
-void calc_ic(int icn, int *o, char **rnam, char **inam)
+static void calc_ic(int icn, int *o, char **rnam, char **inam)
 {
 	struct iconfile *rscf;
 	OBJECT *obj;
@@ -1007,7 +268,7 @@ void calc_ic(int icn, int *o, char **rnam, char **inam)
 	/* Resourcedatei fÅr Programm-Icon */
 	*rnam = rscf->fname;
 	/* Iconnummer innerhalb der Ressource */
-	*o = icn - rscf->firsticon;
+	*o = icn - rscf->firsticon;		/* Achtung: fÅhrt wohl zu -1 bei I_FLPDSK! */
 	/* Name des Icons (dummy) */
 	obj = rscf->adr_icons + icnx[icn].objnr;
 	if (obj->ob_type == G_USERDEF)
@@ -1015,241 +276,6 @@ void calc_ic(int icn, int *o, char **rnam, char **inam)
 	else if ((obj->ob_type == G_ICON) || (obj->ob_type == G_CICON))
 		icb = (ICONBLK *) obj->ob_spec.iconblk;
 	*inam = icb->ib_ptext;
-}
-
-
-/****************************************************************
-*
-* Schreibt die Textdatei "applicat.inf".
-*
-****************************************************************/
-
-long put_inf(void)
-{
-	long ret;
-	struct dat_file *d;
-	struct zeile *z;
-	int i, n;
-	long npg, nd, npt, ns, ni;
-	char *wbuf;
-	long wlen;
-	char buf[512];
-	char buf1[152];
-	char buf2[50];
-	char buf3[152];
-	WINDEFPOS *w;
-	char *rnam, *inam;
-	int o;
-	int hdl;
-	char *fname = "applicat.$$$";
-
-	/* x,y-Positionen aller offenen Dialoge sichern */
-	/* -------------------------------------------- */
-
-	if (d_anw)
-		save_dialog_xy(d_anw);
-	if (d_ica)
-		save_dialog_xy(d_ica);
-	if (d_icp)
-		save_dialog_xy(d_icp);
-	if (d_pth)
-		save_dialog_xy(d_pth);
-	if (d_spc)
-		save_dialog_xy(d_spc);
-	if (d_typ)
-		save_dialog_xy(d_typ);
-	if (mywindow)
-	{
-		w = def_wind_pos("ICONS");
-		if ((!w) && (n_windefpos < MAXWINDEFPOS))
-		{
-			w = windefpos + n_windefpos;	/* freien Eintrag suchen */
-			strcpy(w->name, "ICONS");
-			n_windefpos++;
-		}
-
-		if (w)
-			w->g = mywindow->out;
-	}
-
-	/* INF-Datei erstellen */
-	/* ------------------- */
-
-	wbuf = Malloc(WBUFLEN);
-	if (!wbuf)
-		return (ENSMEM);
-	wlen = 0L;							/* Schreibpuffer ist leer */
-	*wbuf = EOS;
-	ret = Fcreate(fname, 0);
-	if (ret < E_OK)
-	{
-		Mfree(buf);
-		form_xerr(ret, fname);
-		return (ret);
-	}
-	hdl = (int) ret;
-
-	/* Header schreiben */
-	/* ---------------- */
-
-	ret = iwrite(hdl, wbuf, &wlen, "[APPLICAT Header V 0]\r\n");
-	if (ret)
-	{
-	  err:
-		Mfree(wbuf);
-		Fclose(hdl);
-		return (ret);
-	}
-
-	/* Fensterpositionen schreiben */
-	/* --------------------------- */
-
-	sprintf(buf, "SCREENSIZE %d,%d\r\n", scrg.g_w, scrg.g_h);
-	ret = iwrite(hdl, wbuf, &wlen, buf);
-	if (ret)
-		goto err;
-	for (i = 0, w = windefpos; i < n_windefpos; i++, w++)
-	{
-		sprintf(buf, "WINDOW %s %d,%d,%d,%d\r\n", w->name,
-				w->g.g_x - scrg.g_x, w->g.g_y - scrg.g_y, w->g.g_w, w->g.g_h);
-		ret = iwrite(hdl, wbuf, &wlen, buf);
-		if (ret)
-			goto err;
-	}
-
-	/* Tabellengrîûen ermitteln und schreiben */
-	/* -------------------------------------- */
-
-	get_len(&npg, &nd, &npt, &ns, &ni, NULL);
-
-	sprintf(buf, ";PROGRAMS = %ld of %d\r\n"
-			";FILETYPES = %ld of %d\r\n"
-			";PATHS = %ld of %d\r\n"
-			";SPECS = %ld of %d\r\n"
-			";ICONS = %ld of %d/%d\r\n",
-			npg, MAX_PGMN,
-			nd, MAX_DATN,
-			npt, MAX_PTHN,
-			ns, MAX_SPCN,
-			ni, icnn, MAX_ICNN);
-
-	ret = iwrite(hdl, wbuf, &wlen, buf);
-	if (ret)
-		goto err;
-
-	/* EintrÑge erstellen */
-	/* ------------------ */
-
-	for (i = 0, z = linx; i < linn;)
-	{
-		/* Gruppe: Programmname */
-		n = z->pgmnr;
-
-		calc_ic(pgmx[n].iconnr, &o, &rnam, &inam);
-
-		path_2_arg(pgmx[n].name, buf1, 150);
-		path_2_arg(rnam, buf2, 50);
-		path_2_arg(pgmx[n].path, buf3, 150);
-
-		sprintf(buf, "[%s]\r\n" "%s %d \"%s\"\r\n" "%s\r\n" "%d\r\n", buf1, buf2, o, inam, buf3, pgmx[n].config);
-		ret = iwrite(hdl, wbuf, &wlen, buf);
-		if (ret)
-			goto err;
-
-		if (pgmx[n].memlimit)
-		{
-			sprintf(buf, "LIMITMEM=%ld\r\n", pgmx[n].memlimit);
-			ret = iwrite(hdl, wbuf, &wlen, buf);
-			if (ret)
-				goto err;
-		}
-		/* angemeldete Dateitypen */
-		while ((i < linn) && (z->pgmnr == n))
-		{
-			if (z->datnr >= 0)
-			{
-				d = datx + z->datnr;
-
-				calc_ic(d->iconnr, &o, &rnam, &inam);
-
-				path_2_arg(d->name, buf1, 150);
-				path_2_arg(rnam, buf2, 50);
-
-				sprintf(buf, "%s %s %d \"%s\"\r\n", buf1, buf2, o, inam);
-				ret = iwrite(hdl, wbuf, &wlen, buf);
-				if (ret)
-					goto err;
-			}
-			i++;
-			z++;
-		}
-	}
-
-
-	/* Pfade erstellen */
-	/* --------------- */
-
-	ret = iwrite(hdl, wbuf, &wlen, "[<Pfade>]\r\n");
-	if (ret)
-		goto err;
-	for (i = 0; i < pthn; i++)
-	{
-		calc_ic(pthx[i].iconnr, &o, &rnam, &inam);
-
-		path_2_arg(pthx[i].path, buf1, 150);
-		path_2_arg(rnam, buf2, 50);
-
-		sprintf(buf, "%s %s %d \"%s\"\r\n", buf1, buf2, o, inam);
-		ret = iwrite(hdl, wbuf, &wlen, buf);
-		if (ret)
-			goto err;
-	}
-
-
-	/* Defaulticons */
-	/* ------------ */
-
-	ret = iwrite(hdl, wbuf, &wlen, "[<Spezial>]\r\n");
-	if (ret)
-		goto err;
-	for (i = 0; i < spcn; i++)
-	{
-		char val[5];
-
-		calc_ic(spcx[i].iconnr, &o, &rnam, &inam);
-		strncpy(val, (char *) &spcx[i].key, 4);
-		val[4] = EOS;
-
-		path_2_arg(rnam, buf2, 50);
-
-		sprintf(buf, "%s %s %s %d \"%s\"\r\n", val, spcx[i].name, buf2, o, inam);
-		ret = iwrite(hdl, wbuf, &wlen, buf);
-		if (ret)
-			goto err;
-	}
-
-
-	ret = iwrite(hdl, wbuf, &wlen, "[End]\r\n");
-	if (ret)
-		goto err;
-	ret = iwrite(hdl, wbuf, &wlen, NULL);	/* flush buffer */
-	if (ret)
-		goto err;
-	Mfree(wbuf);
-
-	ret = Fclose(hdl);
-	if (!ret)
-		ret = Fdelete(applicat_inf);
-	if (!ret)
-		ret = Frename(0, "applicat.$$$", applicat_inf);
-	if (ret)
-	{
-		form_xerr(EWRITF, NULL);
-		return (ret);
-	}
-
-	put_icons();
-	return (ret);
 }
 
 
@@ -1264,7 +290,7 @@ long put_inf(void)
 *
 ****************************************************************/
 
-static long put_icondata(int action, int n_icn, int *ic, CICONBLK ** cb, char *data, long offset)
+static long put_icondata(int action, int n_icn, int *ic, CICONBLK **cb, char *data, long offset)
 {
 	int i;
 	int n;
@@ -1316,7 +342,7 @@ static long put_icondata(int action, int n_icn, int *ic, CICONBLK ** cb, char *d
 			}
 			break;
 		default:
-			exit(-1);
+			exit(1);
 		}
 
 		if (action)
@@ -1378,7 +404,7 @@ static long put_icondata(int action, int n_icn, int *ic, CICONBLK ** cb, char *d
 			cic = cic->next_res;
 		}
 	}
-	return (all_len);
+	return all_len;
 }
 
 
@@ -1394,10 +420,10 @@ static int compare_ico_dat(const void *_e1, const void *_e2)
 	const DATAFILE *e2 = (const DATAFILE *) _e2;
 
 	if ((e1->daname[0] == '*') && (e2->daname[0] != '*'))
-		return (1);						/* '*'-lose Typen nach vorn */
+		return 1;						/* '*'-lose Typen nach vorn */
 	if ((e1->daname[0] != '*') && (e2->daname[0] == '*'))
-		return (-1);
-	return (stricmp(e1->daname, e2->daname));
+		return -1;
+	return stricmp(e1->daname, e2->daname);
 }
 
 
@@ -1417,7 +443,7 @@ static int compare_ico_dat(const void *_e1, const void *_e2)
 *
 ****************************************************************/
 
-long put_icons(void)
+static long put_icons(void)
 {
 	int i, n;
 	int hdl;
@@ -1448,8 +474,8 @@ long put_icons(void)
 	int msg[8];
 
 
-	/* LÑnge der Strings bestimmen */
-	/* --------------------------- */
+	/* LÑnge der Zeichenketten bestimmen */
+	/* --------------------------------- */
 
 	all_slen = 0;
 	for (i = 0, pgm_file = pgmx; i < pgmn; i++, pgm_file++)
@@ -1483,7 +509,7 @@ long put_icons(void)
 	h.version = 0x0002L;
 	get_len(&h.n_ap2ic, &h.n_da2ic, &h.n_pa2ic, &h.n_sp2ic, &h.n_icn, &used_icons);
 	if (!used_icons)
-		return (ENSMEM);
+		return ENSMEM;
 	ic = Malloc(h.n_icn * sizeof(int));	/* interne Icon-Nummern */
 	for (i = 0, curr_ic = ic, buf = used_icons; i < icnn; i++, buf++)
 	{
@@ -1492,8 +518,8 @@ long put_icons(void)
 	}
 	Mfree(used_icons);
 
-	/* LÑnge der Icondaten bestimmen */
-	/* ----------------------------- */
+	/* LÑnge der Icon-Daten bestimmen */
+	/* ------------------------------ */
 
 	all_iconlen = put_icondata(0, (int) h.n_icn, ic, NULL, NULL, 0L);
 
@@ -1510,7 +536,7 @@ long put_icons(void)
 
 	buf = Malloc(all_len);
 	if (!buf || !ic)
-		return (ENSMEM);
+		return ENSMEM;
 
 	slen = sizeof(struct ico_head);
 
@@ -1640,8 +666,8 @@ long put_icons(void)
 		curr_pth->icon_nr = cci - ic;
 	}
 
-	/* Spezialicons anlegen */
-	/* -------------------- */
+	/* Spezial-Icons anlegen */
+	/* --------------------- */
 
 	for (i = 0, curr_spc = spc, spc_file = spcx; i < spcn; i++, curr_spc++, spc_file++)
 	{
@@ -1708,7 +734,7 @@ long put_icons(void)
 		{
 			Mfree(buf2);
 			err_alert(ERROR);
-			return (ERROR);
+			return ERROR;
 		}
 	}
 
@@ -1717,7 +743,7 @@ long put_icons(void)
 
 	ret = Fcreate(applicat_dat, 0);
 	if (ret < 0L)
-		return (ret);
+		return ret;
 	hdl = (int) ret;
 
 	ret = Fwrite(hdl, all_len, buf);
@@ -1725,11 +751,255 @@ long put_icons(void)
 	Fclose(hdl);
 
 	if (ret < E_OK)
-		return (ret);
+		return ret;
+
 	if (ret != all_len)
 	{
 		Fdelete(applicat_dat);
 		error(STR_ERR_FULL_INF);
 	}
-	return (E_OK);
+
+	return E_OK;
+}
+
+
+/****************************************************************
+*
+* global: Schreibt die Textdatei "applicat.inf".
+*
+****************************************************************/
+
+long put_inf(void)
+{
+	long ret;
+	struct dat_file *d;
+	struct zeile *z;
+	int i, n;
+	long npg, nd, npt, ns, ni;
+	char *wbuf;
+	long wlen;
+	char buf512[512];
+	char buf1[152];
+	char buf2[50];
+	char buf3[152];
+	WINDEFPOS *w;
+	char *rnam, *inam;
+	int o;
+	int hdl;
+	char *fname = "applicat.$$$";
+
+	/* x,y-Positionen aller offenen Dialoge sichern */
+	/* -------------------------------------------- */
+
+	if (d_anw)
+		save_dialog_xy(d_anw);
+	if (d_ica)
+		save_dialog_xy(d_ica);
+	if (d_icp)
+		save_dialog_xy(d_icp);
+	if (d_pth)
+		save_dialog_xy(d_pth);
+	if (d_spc)
+		save_dialog_xy(d_spc);
+	if (d_typ)
+		save_dialog_xy(d_typ);
+	if (mywindow)
+	{
+		w = def_wind_pos(IDENT_ICONS);
+		if ((!w) && (n_windefpos < MAXWINDEFPOS))
+		{
+			w = windefpos + n_windefpos;	/* freien Eintrag suchen */
+			strcpy(w->name, IDENT_ICONS);
+			n_windefpos++;
+		}
+
+		if (w)
+			w->g = mywindow->out;
+	}
+
+	/* INF-Datei erstellen */
+	/* ------------------- */
+
+	wbuf = Malloc(WBUFLEN);
+	if (!wbuf)
+		return ENSMEM;
+	wlen = 0L;		/* Schreibpuffer ist leer */
+	*wbuf = EOS;
+	ret = Fcreate(fname, 0);
+	if (ret < E_OK)
+	{
+		Mfree(wbuf);
+		form_xerr(ret, fname);
+		return ret;
+	}
+	hdl = (int) ret;
+
+	/* Header schreiben */
+	/* ---------------- */
+
+	ret = iwrite(hdl, wbuf, &wlen, "[APPLICAT Header V 0]\r\n");
+	if (ret)
+	{
+	  err:
+		Mfree(wbuf);
+		Fclose(hdl);
+		return ret;
+	}
+
+	/* Fensterpositionen schreiben */
+	/* --------------------------- */
+
+	sprintf(buf512, "SCREENSIZE %d,%d\r\n", scrg.g_w, scrg.g_h);
+	ret = iwrite(hdl, wbuf, &wlen, buf512);
+	if (ret)
+		goto err;
+	for (i = 0, w = windefpos; i < n_windefpos; i++, w++)
+	{
+		sprintf(buf512, "WINDOW %s %d,%d,%d,%d\r\n", w->name,
+				w->g.g_x - scrg.g_x, w->g.g_y - scrg.g_y, w->g.g_w, w->g.g_h);
+		ret = iwrite(hdl, wbuf, &wlen, buf512);
+		if (ret)
+			goto err;
+	}
+
+	/* Tabellengrîûen ermitteln und schreiben */
+	/* -------------------------------------- */
+
+	get_len(&npg, &nd, &npt, &ns, &ni, NULL);
+
+	sprintf(buf512, ";PROGRAMS = %ld of %d\r\n"
+			";FILETYPES = %ld of %d\r\n"
+			";PATHS = %ld of %d\r\n"
+			";SPECS = %ld of %d\r\n"
+			";ICONS = %ld of %d/%d\r\n",
+			npg, MAX_PGMN,
+			nd, MAX_DATN,
+			npt, MAX_PTHN,
+			ns, MAX_SPCN,
+			ni, icnn, MAX_ICNN);
+
+	ret = iwrite(hdl, wbuf, &wlen, buf512);
+	if (ret)
+		goto err;
+
+	/* EintrÑge rausschreiben */
+	/* ---------------------- */
+
+	for (i = 0, z = linx; i < linn; )
+	{
+		/* Gruppe: Programmname */
+		n = z->pgmnr;
+
+		calc_ic(pgmx[n].iconnr, &o, &rnam, &inam);
+
+		path_2_arg(pgmx[n].name, buf1, 150);
+		path_2_arg(rnam, buf2, 50);
+		path_2_arg(pgmx[n].path, buf3, 150);
+
+		sprintf(buf512, "[%s]\r\n"
+		        "%s %d \"%s\"\r\n"
+		        "%s\r\n"
+		        "%d\r\n",
+		        buf1, buf2, o, inam, buf3, pgmx[n].config);
+		ret = iwrite(hdl, wbuf, &wlen, buf512);
+		if (ret)
+			goto err;
+
+		if (pgmx[n].memlimit)
+		{
+			sprintf(buf512, "LIMITMEM=%ld\r\n", pgmx[n].memlimit);
+			ret = iwrite(hdl, wbuf, &wlen, buf512);
+			if (ret)
+				goto err;
+		}
+
+		/* angemeldete Dateitypen */
+		while (i < linn && z->pgmnr == n)
+		{
+			if (z->datnr >= 0)
+			{
+				d = datx + z->datnr;
+
+				calc_ic(d->iconnr, &o, &rnam, &inam);
+
+				path_2_arg(d->name, buf1, 150);
+				path_2_arg(rnam, buf2, 50);
+
+				sprintf(buf512, "%s %s %d \"%s\"\r\n", buf1, buf2, o, inam);
+				ret = iwrite(hdl, wbuf, &wlen, buf512);
+				if (ret)
+					goto err;
+			}
+			i++;
+			z++;
+		}
+	}
+
+
+	/* Pfade rausschreiben */
+	/* ------------------- */
+
+	ret = iwrite(hdl, wbuf, &wlen, "[" SECTION_PATHS "]\r\n");
+	if (ret)
+		goto err;
+	for (i = 0; i < pthn; i++)
+	{
+		calc_ic(pthx[i].iconnr, &o, &rnam, &inam);
+
+		path_2_arg(pthx[i].path, buf1, 150);
+		path_2_arg(rnam, buf2, 50);
+
+		sprintf(buf512, "%s %s %d \"%s\"\r\n", buf1, buf2, o, inam);
+		ret = iwrite(hdl, wbuf, &wlen, buf512);
+		if (ret)
+			goto err;
+	}
+
+
+	/* Default-Icons rausschreiben */
+	/* --------------------------- */
+
+	ret = iwrite(hdl, wbuf, &wlen, "[" SECTION_SPECIAL "]\r\n");
+	if (ret)
+		goto err;
+	for (i = 0; i < spcn; i++)
+	{
+		char val[5];
+
+		/* FÅr I_FLPDSK wird o hier -1, falls es ein internes Icon ist. Unschîn. */
+		calc_ic(spcx[i].iconnr, &o, &rnam, &inam);
+		strncpy(val, (char *) &spcx[i].key, 4);
+		val[4] = EOS;
+
+		/* enclose in '', if necessary */
+		path_2_arg(rnam, buf2, 50);
+		path_2_arg(spcx[i].name, buf3, 50);
+
+		sprintf(buf512, "%s %s %s %d \"%s\"\r\n", val, buf3, buf2, o, inam);
+		ret = iwrite(hdl, wbuf, &wlen, buf512);
+		if (ret)
+			goto err;
+	}
+
+	ret = iwrite(hdl, wbuf, &wlen, "[End]\r\n");
+	if (ret)
+		goto err;
+	ret = iwrite(hdl, wbuf, &wlen, NULL);	/* flush buffer */
+	if (ret)
+		goto err;
+	Mfree(wbuf);
+
+	ret = Fclose(hdl);
+	if (!ret)
+		ret = Fdelete(applicat_inf);
+	if (!ret)
+		ret = Frename(0, "applicat.$$$", applicat_inf);
+	if (ret)
+	{
+		form_xerr(EWRITF, NULL);
+		return ret;
+	}
+
+	put_icons();
+	return ret;
 }

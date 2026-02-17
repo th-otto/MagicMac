@@ -5,7 +5,7 @@
 
 extern void print_values(char *s, int n, int values[]);
 extern int scan_values(char **s, int n, int values[]);
-extern void Mrsrc_load( char *fname );
+extern void Mrsrc_load( const char *fname );
 extern void objc_grect(OBJECT *tree, int objn, GRECT *g);
 extern void subobj_draw(OBJECT *tree, int obj, int start, int depth);
 extern void  Mgraf_mouse(int type);

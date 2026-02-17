@@ -13,7 +13,9 @@
 #include "country.h"
 #include "appldata.h"
 #include "de/applicat.h"
+#include "gemut_mt.h"
 #include "typ_dial.h"
+#include "ica_dial.h"
 
 
 #define TXT(a)      ((((a) -> ob_spec.tedinfo))->te_ptext)
@@ -21,19 +23,6 @@
 static struct dat_file mydat;			/* Anwendung in Arbeit */
 static struct pgm_file mypgm;			/* Anwendung in Arbeit */
 
-extern int rsrc_gtree(int gindex, OBJECT ** tree);
-extern int selected(OBJECT * tree, int which);
-extern void ob_dsel(OBJECT * tree, int which);
-extern void ob_sel(OBJECT * tree, int which);
-extern void objs_hide(OBJECT * tree, ...);
-extern void objs_unhide(OBJECT * tree, ...);
-
-extern void fname_ext(char *s, char *d);
-extern void Mgraf_mouse(int type);
-extern long err_alert(long e);
-
-extern int insert_dat(struct pgm_file *pgm, struct dat_file *dat);
-extern int change_dat(struct pgm_file *pgm, struct dat_file *dat, char *newname);
 
 /*********************************************************************
 *
@@ -77,7 +66,7 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 		if (d_typ)						/* Dialog ist schon ge”ffnet ! */
 		{
 			wind_set(wdlg_get_handle(d_typ), WF_TOP, 0, 0, 0, 0);
-			return (0);					/* create verweigern */
+			return 0;					/* create verweigern */
 		}
 
 		(TXT(tree + FTYPE_2))[0] = EOS;
@@ -95,8 +84,6 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 		{
 			if (args.clicks == 2)
 			{
-				extern char *def_txt;
-
 				mypgm = *((struct pgm_file *) args.data);
 				strcpy(TXT(tree + FTYPE_1), def_txt);
 			}
@@ -120,7 +107,7 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 
 		strcpy((tree + FTYPE_ANW)->ob_spec.free_string, mypgm.name);
 
-		return (1);
+		return 1;
 	}
 
 	/* 3. Fall: Dialog soll geschlossen werden */
@@ -130,11 +117,11 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 	{
 	  close_dialog:
 		save_dialog_xy(args.dialog);
-		return (0);						/* ...dann schliežen wir ihn auch */
+		return 0;						/* ...dann schliežen wir ihn auch */
 	}
 
 	if (args.obj < 0)
-		return (1);
+		return 1;
 
 	/* 4. Fall: Exitbutton wurde bet„tigt */
 	/* ---------------------------------- */
@@ -144,7 +131,7 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 
 	if (args.obj == FTYPE_OK)
 	{
-		register int i;
+		int i;
 
 		ob_dsel(tree, args.obj);
 		if (mydat.name[0])				/* Zeichenkette editieren */
@@ -168,10 +155,10 @@ WORD cdecl hdl_ftypes(struct HNDL_OBJ_args args)
 		goto close_dialog;
 	}
 
-	return (1);
+	return 1;
 
   ende:
 	ob_dsel(tree, args.obj);
 	subobj_wdraw(args.dialog, args.obj, args.obj, 1);
-	return (1);							/* weiter */
+	return 1;							/* weiter */
 }

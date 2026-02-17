@@ -366,7 +366,7 @@ void open_work(void)
 *
 *********************************************************************/
 
-void Mrsrc_load( char *fname, WORD *global )
+void Mrsrc_load( const char *fname, WORD *global )
 {
 	if	(!mt_rsrc_load(fname, global))
 		{
@@ -536,7 +536,7 @@ int is_absolute_path(char *path)
 
 char *Rgetstring( WORD string_id, WORD *global )
 {
-	char *alert;
+	char *alert = NULL;
 
 	mt_rsrc_gaddr(R_STRING, string_id, &alert, global);
 	return(alert);

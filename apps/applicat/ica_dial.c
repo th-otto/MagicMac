@@ -1,7 +1,7 @@
 /*
 *
 * EnthÑlt die spezifischen Routinen fÅr den Dialog
-* "Anwendungen/Dateitypen auswÑhlen"
+* "Anwendungen/Dateitypen auswÑhlen" bzw. "Registrierte Programme"
 *
 */
 
@@ -15,6 +15,7 @@
 #include "de/applicat.h"
 #include "windows.h"
 #include "appl.h"
+#include "inf.h"
 #include <wdlglbox.h>
 #include "ica_dial.h"
 #include "appldata.h"
@@ -40,7 +41,7 @@ struct spd_file
 	int datnr;
 };
 
-/* Die 4 "Fenster" */
+/* Die vier "Fenster" */
 
 /*
  PDFLS:	Ist aktiv, wenn keine Applikation ausgewÑhlt ist.
@@ -70,16 +71,16 @@ static int visible_datlen = -1;
 
 static int showindex_to_pgmicnobj(int index)
 {
-	static int icons[] = { PICON1, PICON2, PICON3, PICON4, PICON5 };
+	static const int icons[] = { PICON1, PICON2, PICON3, PICON4, PICON5 };
 
-	return (icons[index]);
+	return icons[index];
 }
 
 static int showindex_to_daticnobj(int index)
 {
-	static int icons[] = { DICON1, DICON2, DICON3, DICON4, DICON5 };
+	static const int icons[] = { DICON1, DICON2, DICON3, DICON4, DICON5 };
 
-	return (icons[index]);
+	return icons[index];
 }
 
 static int pgmicnobj_to_showindex(int objnr)
@@ -87,17 +88,17 @@ static int pgmicnobj_to_showindex(int objnr)
 	switch (objnr)
 	{
 	case PICON1:
-		return (0);
+		return 0;
 	case PICON2:
-		return (1);
+		return 1;
 	case PICON3:
-		return (2);
+		return 2;
 	case PICON4:
-		return (3);
+		return 3;
 	case PICON5:
-		return (4);
+		return 4;
 	}
-	return (-1);
+	return -1;
 }
 
 static int daticnobj_to_showindex(int objnr)
@@ -105,17 +106,17 @@ static int daticnobj_to_showindex(int objnr)
 	switch (objnr)
 	{
 	case DICON1:
-		return (0);
+		return 0;
 	case DICON2:
-		return (1);
+		return 1;
 	case DICON3:
-		return (2);
+		return 2;
 	case DICON4:
-		return (3);
+		return 3;
 	case DICON5:
-		return (4);
+		return 4;
 	}
-	return (-1);
+	return -1;
 }
 
 static int pgmobj_to_showindex(int objnr)
@@ -123,17 +124,17 @@ static int pgmobj_to_showindex(int objnr)
 	switch (objnr)
 	{
 	case PRG1:
-		return (0);
+		return 0;
 	case PRG2:
-		return (1);
+		return 1;
 	case PRG3:
-		return (2);
+		return 2;
 	case PRG4:
-		return (3);
+		return 3;
 	case PRG5:
-		return (4);
+		return 4;
 	}
-	return (-1);
+	return -1;
 }
 
 static int datobj_to_showindex(int objnr)
@@ -141,17 +142,17 @@ static int datobj_to_showindex(int objnr)
 	switch (objnr)
 	{
 	case DAT1:
-		return (0);
+		return 0;
 	case DAT2:
-		return (1);
+		return 1;
 	case DAT3:
-		return (2);
+		return 2;
 	case DAT4:
-		return (3);
+		return 3;
 	case DAT5:
-		return (4);
+		return 4;
 	}
-	return (-1);
+	return -1;
 }
 
 
@@ -170,14 +171,14 @@ static int pgm_filetype(int pgm, int n)
 	dat = pgmx[pgm].ntypes;
 	n = dat - n - 1;
 	if ((n >= dat) || (n < 0))
-		return (-1);
+		return -1;
 	dat = pgmx[pgm].types;
 	while (n)
 	{
 		dat = datx[dat].next;
 		n--;
 	}
-	return (dat);
+	return dat;
 }
 
 
@@ -187,7 +188,7 @@ static int pgm_filetype(int pgm, int n)
 *
 *********************************************************************/
 
-static void enable_scroll(DIALOG * d, int *objs)
+static void enable_scroll(DIALOG *d, int *objs)
 {
 	int i;
 
@@ -200,7 +201,7 @@ static void enable_scroll(DIALOG * d, int *objs)
 	}
 }
 
-static void disable_scroll(DIALOG * d, int *objs)
+static void disable_scroll(DIALOG *d, int *objs)
 {
 	int i;
 
@@ -225,7 +226,7 @@ static void disable_scroll(DIALOG * d, int *objs)
 *
 *********************************************************************/
 
-static int scroll_win_app(DIALOG * d, char *ap_path)
+static int scroll_win_app(DIALOG *d, char *ap_path)
 {
 	char fname[MAX_NAMELEN];
 	struct pgm_file *pgm;
@@ -234,11 +235,11 @@ static int scroll_win_app(DIALOG * d, char *ap_path)
 
 	n = extract_apname(ap_path, fname);
 	if (n < 0)
-		return (-2);
+		return -2;
 	for (n = 0, pgm = pgmx; n < pgmn; n++, pgm++)
 		if (!stricmp(pgm->name, fname))
 			goto found;
-	return (-1);
+	return -1;
   found:
 	i = n;
 	for (n = 0, line = linx; n < linn; n++, line++)
@@ -252,7 +253,7 @@ static int scroll_win_app(DIALOG * d, char *ap_path)
 	lbox_ascroll_to(sbox1, n, NULL, NULL);
 	if (d)
 		subobj_wdraw(d, PN_BK, PN_BK, MAX_DEPTH);
-	return (i);
+	return i;
 }
 
 
@@ -264,7 +265,7 @@ static int scroll_win_app(DIALOG * d, char *ap_path)
 *
 *********************************************************************/
 
-static int scroll_win_dat(DIALOG * d, char *datname)
+static int scroll_win_dat(DIALOG *d, char *datname)
 {
 	int j, k;
 	struct dat_file *dat;
@@ -274,7 +275,7 @@ static int scroll_win_dat(DIALOG * d, char *datname)
 		if (!stricmp(dat->name, datname))
 			goto found;
 	}
-	return (-1);
+	return -1;
   found:
 	if (dat->pgm == selected_pgmnr)
 	{
@@ -304,7 +305,7 @@ static int scroll_win_dat(DIALOG * d, char *datname)
 			}
 		}
 	}
-	return (j);
+	return j;
 }
 
 
@@ -329,11 +330,10 @@ static void cdecl select_item1(struct SLCT_ITEM_args args)
 
 static void cdecl select_item2(struct SLCT_ITEM_args args)
 {
-	struct spd_file *spd = (struct spd_file *) args.item;
-	struct zeile *line = (struct zeile *) args.item;
-
 	if (selected_program)
 	{
+		struct spd_file *spd = (struct spd_file *) args.item;
+
 		if (spd->selected)
 		{
 			selected_spdfile = spd;
@@ -343,6 +343,8 @@ static void cdecl select_item2(struct SLCT_ITEM_args args)
 		}
 	} else
 	{
+		struct zeile *line = (struct zeile *) args.item;
+
 		if (line->selected)
 		{
 			selected_datline = line;
@@ -388,7 +390,7 @@ static WORD cdecl set_item1(struct SET_ITEM_args args)
 		dob->ob_flags &= ~TOUCHEXIT;
 		dob = args.tree + dob->ob_head;
 		dob->ob_flags |= HIDETREE;
-		return (args.obj_index);
+		return args.obj_index;
 	}
 
 	ob_height = args.tree[args.obj_index].ob_height;
@@ -401,6 +403,9 @@ static WORD cdecl set_item1(struct SET_ITEM_args args)
 	dob->ob_flags |= TOUCHEXIT;
 	dob->ob_state &= ~DISABLED;
 	strncpy(dob->ob_spec.tedinfo->te_ptext + 1, mypgm->name, visible_pgmlen);
+	/* use localized string for APP_NAME_FREE */
+	if (mypgm->name[0] == '<')
+		strncpy(dob->ob_spec.tedinfo->te_ptext + 1, Rgetstring(STR_FREE, NULL), visible_pgmlen);
 /*	len = (int) strlen(dob -> ob_spec.tedinfo->te_ptext+1);	*/
 	if (mypgm->sel)
 /*	if	(item->selected)	*/
@@ -424,7 +429,7 @@ static WORD cdecl set_item1(struct SET_ITEM_args args)
 	if (mypgm->name[0] == '<')
 	{
 		dob->ob_flags |= HIDETREE;
-		return (args.obj_index);
+		return args.obj_index;
 	}
 	dob->ob_flags &= ~HIDETREE;
 	dob->ob_flags |= TOUCHEXIT;
@@ -449,14 +454,14 @@ static WORD cdecl set_item1(struct SET_ITEM_args args)
 	dob->ob_width = sob->ob_width;
 	dob->ob_height = sob->ob_height;
 
-/*
-	if	(rect)
-		{
+#if 0
+	if (rect)
+	{
 		rect->g_x += xpos_textob;
-		rect->g_w = visible_pgmlen*gl_hwchar;
-		}
-*/
-	return (args.obj_index);
+		rect->g_w = visible_pgmlen * gl_hwchar;
+	}
+#endif
+	return args.obj_index;
 }
 
 
@@ -489,7 +494,7 @@ static WORD cdecl set_item2(struct SET_ITEM_args args)
 		dob->ob_spec.tedinfo->te_ptext[1] = EOS;
 		dob = args.tree + dob->ob_head;
 		dob->ob_flags |= HIDETREE;
-		return (args.obj_index);
+		return args.obj_index;
 	}
 
 	ob_height = args.tree[args.obj_index].ob_height;
@@ -516,11 +521,12 @@ static WORD cdecl set_item2(struct SET_ITEM_args args)
 		dob->ob_state &= ~WHITEBAK;
 	else
 		dob->ob_state |= WHITEBAK;
-/*
-	if	(mydat->sel_icon)
+#if 0
+	if (mydat->sel_icon)
 		ob_sel(dob, 0);
-	else	ob_dsel(dob, 0);
-*/
+	else
+		ob_dsel(dob, 0);
+#endif
 	sob = rscx[ic->rscfile].adr_icons + ic->objnr;
 	ic_height = sob->ob_spec.ciconblk->monoblk.ib_hicon + 8;
 	dob->ob_y = ob_height - ic_height - 2;
@@ -529,14 +535,14 @@ static WORD cdecl set_item2(struct SET_ITEM_args args)
 	dob->ob_width = sob->ob_width;
 	dob->ob_height = sob->ob_height;
 
-/*
-	if	(rect)
-		{
+#if 0
+	if (rect)
+	{
 		rect->g_x += xpos_textob2;
-		rect->g_w = visible_datlen*gl_hwchar;
-		}
-*/
-	return (args.obj_index);
+		rect->g_w = visible_datlen * gl_hwchar;
+	}
+#endif
+	return args.obj_index;
 }
 
 
@@ -563,7 +569,7 @@ static LBOX_ITEM *cat_lines(void)
 		linx[linn - 1].next = NULL;
 	} else
 		sc = NULL;
-	return (sc);
+	return sc;
 }
 
 
@@ -585,8 +591,11 @@ void ica_dial_init_rsc(void)
 	if (!is_3d)
 	{
 		for (i = 1; i < 5; i++)
+		{
 			adr_ica_dialog[ctrl_objs1[i]].ob_spec.obspec.framesize =
 				adr_ica_dialog[ctrl_objs2[i]].ob_spec.obspec.framesize = 1;
+		}
+
 		adr_ica_dialog[ctrl_objs1[3]].ob_spec.obspec.fillpattern =
 			adr_ica_dialog[ctrl_objs2[3]].ob_spec.obspec.fillpattern = 1;
 	}
@@ -594,6 +603,8 @@ void ica_dial_init_rsc(void)
 	adr_ica_dialog[DEL_PGM].ob_state |= DISABLED;
 	adr_ica_dialog[NEU_DAT].ob_state |= DISABLED;
 	adr_ica_dialog[DEL_DAT].ob_state |= DISABLED;
+
+	adr_ica_dialog[BUT_VERSION].ob_spec.free_string = PROGRAM_VERSION_STR;
 
 	enable_scroll(NULL, ctrl_objs1);
 	disable_scroll(NULL, ctrl_objs2);
@@ -790,7 +801,7 @@ int insert_dat(struct pgm_file *pgm, struct dat_file *dat)
 	if (linn >= MAX_LINN)
 	{
 		Rform_alert(1, ALRT_OVERFLOW, NULL);
-		return (-3);					/* öberlauf */
+		return -3;					/* öberlauf */
 	}
 
 	/* Suche <pgm> in pgmx[] */
@@ -802,7 +813,7 @@ int insert_dat(struct pgm_file *pgm, struct dat_file *dat)
 			goto found;
 	}
 	Rform_alert(1, ALRT_APP_INVALID, NULL);
-	return (-1);						/* nicht mehr gefunden! */
+	return -1;						/* nicht mehr gefunden! */
   found:
 
 	/* Suche <dat.name> in datx[] */
@@ -816,7 +827,7 @@ int insert_dat(struct pgm_file *pgm, struct dat_file *dat)
 
 			sprintf(s, Rgetstring(ALRT_FTYPE_INUSE, NULL), dat->name, (pgmx + (mydat->pgm))->name);
 			form_alert(1, s);
-			return (-1);
+			return -1;
 		}
 	}
 
@@ -833,7 +844,7 @@ int insert_dat(struct pgm_file *pgm, struct dat_file *dat)
 	}
 
 	if (datn >= MAX_DATN)
-		return (-2);					/* öberlauf */
+		return -2;					/* öberlauf */
 	newdat = datn;
 	datn++;
 
@@ -919,7 +930,7 @@ int insert_dat(struct pgm_file *pgm, struct dat_file *dat)
 		setup_spdfiles(newline);
 	}
 
-	return (0);
+	return 0;
 }
 
 
@@ -957,7 +968,7 @@ int delete_dat(int dat)
 		}
 	}
 
-	exit(-1);							/* ??? */
+	exit(1);							/* ??? */
 
   ok2:
 	linn--;
@@ -978,7 +989,7 @@ int delete_dat(int dat)
 		}
 	}
 
-	exit(-1);							/* ??? */
+	exit(1);							/* ??? */
   ok3:
 	pgmx[pgm].ntypes--;
 
@@ -993,11 +1004,11 @@ int delete_dat(int dat)
 	} else
 	{
 		if (selected_program)
-			return (0);					/* ?!? */
+			return 0;					/* ?!? */
 		setup_datafiles(-1);
 	}
 
-	return (0);
+	return 0;
 }
 
 
@@ -1022,7 +1033,7 @@ int change_dat(struct pgm_file *pgm, struct dat_file *dat, char *newname)
 			goto found;
 	}
 	Rform_alert(1, ALRT_APP_INVALID, NULL);
-	return (-1);						/* nicht mehr gefunden! */
+	return -1;						/* nicht mehr gefunden! */
   found:
 
 	/* Suche <dat.name> in datx[] */
@@ -1034,7 +1045,7 @@ int change_dat(struct pgm_file *pgm, struct dat_file *dat, char *newname)
 			goto found2;
 	}
 	Rform_alert(1, ALRT_DAT_INVALID, NULL);
-	return (-1);						/* nicht mehr gefunden! */
+	return -1;						/* nicht mehr gefunden! */
 
   found2:
 
@@ -1048,7 +1059,7 @@ int change_dat(struct pgm_file *pgm, struct dat_file *dat, char *newname)
 	delete_dat(j);
 	d_ica = d_icons_alt;
 	insert_dat(pgm, &neudat);
-	return (0);
+	return 0;
 }
 
 
@@ -1066,9 +1077,9 @@ int insert_pgm(struct pgm_file *pgm)
 	/* ---------------- */
 
 	if (pgmx[pgmn].ntypes != 0)
-		return (-1);					/* ??? */
+		return -1;					/* ??? */
 	if (pgmn < 1)
-		return (-1);					/* ??? */
+		return -1;					/* ??? */
 
 	/* Einsortieren in pgmx[] */
 	/* ---------------------- */
@@ -1098,7 +1109,7 @@ int insert_pgm(struct pgm_file *pgm)
 	} else
 	{
 		if (i >= MAX_PGMN)
-			return (-2);				/* öberlauf */
+			return -2;				/* öberlauf */
 		pgmn++;
 	}
 
@@ -1111,10 +1122,11 @@ int insert_pgm(struct pgm_file *pgm)
 	/* --------------------------- */
 
 	if (linn >= MAX_LINN)
-		return (-3);					/* öberlauf */
+		return -3;					/* öberlauf */
 
 	for (j = 0; j < linn; j++)
 	{
+		/* always sort <free> last */
 		if ((pgmx[linx[j].pgmnr].name[0] == '<') || (stricmp(pgmx[linx[j].pgmnr].name, pgm->name) > 0))
 		{
 			for (k = linn; k > j; k--)
@@ -1142,7 +1154,7 @@ int insert_pgm(struct pgm_file *pgm)
 	{
 		setup_datafiles(-1);
 	}
-	return (0);
+	return 0;
 }
 
 
@@ -1171,7 +1183,7 @@ int delete_pgm(int pgm)
 		}
 	}
 
-	exit(-1);							/* ??? */
+	exit(1);							/* ??? */
 
   ok2:
 
@@ -1202,7 +1214,7 @@ int delete_pgm(int pgm)
 	setup_programs(-1);
 	setup_datafiles(-1);
 
-	return (0);
+	return 0;
 }
 
 
@@ -1322,24 +1334,24 @@ static void ica_malen(int objnr)
 		subobj_wdraw(d_ica, objnr, 0, MAX_DEPTH);
 }
 
-int ica_get_zielobj(int x, int y, int whdl, OBJECT ** tree,
-					int *objnr, void (**set_icon) (int iconnr, int objnr), void (**malen) (int objnr))
+int ica_get_zielobj(int x, int y, int whdl, OBJECT **tree,
+					int *objnr, void (**set_icon)(int iconnr, int objnr), void (**malen)(int objnr))
 {
 	GRECT dummy;
 
 	if (!d_ica)
-		return (FALSE);					/* Objekt ungÅltig */
+		return FALSE;					/* Objekt ungÅltig */
 	if (whdl != wdlg_get_handle(d_ica))
-		return (FALSE);
+		return FALSE;
 	wdlg_get_tree(d_ica, tree, &dummy);
 	*objnr = objc_find(*tree, 0, 8, x, y);
 	if ((pgmicnobj_to_showindex(*objnr) >= 0) || (daticnobj_to_showindex(*objnr) >= 0))
 	{
 		*set_icon = ica_set_icon;
 		*malen = ica_malen;
-		return (TRUE);
+		return TRUE;
 	}
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -1349,7 +1361,7 @@ int ica_get_zielobj(int x, int y, int whdl, OBJECT ** tree,
 *
 *********************************************************************/
 
-static void deselect_dfile(DIALOG * d)
+static void deselect_dfile(DIALOG *d)
 {
 	if (selected_datfile)
 	{
@@ -1381,7 +1393,7 @@ static void deselect_dfile(DIALOG * d)
 *
 *********************************************************************/
 
-static void deselect_program(DIALOG * d)
+static void deselect_program(DIALOG *d)
 {
 	enable_scroll(d, ctrl_objs1);
 	disable_scroll(d, ctrl_objs2);
@@ -1432,7 +1444,7 @@ static void deselect_program(DIALOG * d)
 *
 *********************************************************************/
 
-static void pgm_was_selected(DIALOG * d, int pgm, int do_sync)
+static void pgm_was_selected(DIALOG *d, int pgm, int do_sync)
 {
 	GRECT g;
 
@@ -1490,7 +1502,7 @@ static void pgm_was_selected(DIALOG * d, int pgm, int do_sync)
 *
 *********************************************************************/
 
-static void dat_was_selected(DIALOG * d, int dat)
+static void dat_was_selected(DIALOG *d, int dat)
 {
 	if (selected_datfile)
 		deselect_dfile(d);
@@ -1505,7 +1517,7 @@ static void dat_was_selected(DIALOG * d, int dat)
 
 /*********************************************************************
 *
-* Behandelt die Exit- Objekte des Icondialogs
+* Behandelt die Exit-Objekte des Icondialogs
 * Das Exit-Objekt <objnr> wurde mit <clicks> Klicks angewÑhlt.
 *
 * objnr = -1:	Initialisierung.
@@ -1551,7 +1563,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 	if (args.obj == HNDL_INIT)
 	{
 		if (d_ica)						/* Dialog ist schon geîffnet ! */
-			return (0);					/* create verweigern */
+			return 0;					/* create verweigern */
 
 		retcode = 1;					/* keine Aktion notwendig */
 
@@ -1562,7 +1574,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 			if (args.clicks == 1)		/* Icon fÅr Datei */
 			{
 				if (cmd_pgm_path[0] == '<')	/* nicht angem. */
-					cmd_pgm_path = "<frei>";
+					cmd_pgm_path = APP_NAME_FREE;
 			}
 			cmd_pgm = scroll_win_app(NULL, cmd_pgm_path);
 			if (cmd_pgm >= 0)
@@ -1596,7 +1608,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		}
 
 		du->mode = retcode;
-		return (1);
+		return 1;
 	}
 
 	/* 1a. Fall: Dialog ist geîffnet worden */
@@ -1610,7 +1622,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 			def_txt = cmd_dat_path;
 			if ((cmd_dat < 0) && (cmd_pgm >= 0))
 			{
-				d_typ = xy_wdlg_init(hdl_ftypes, adr_ftypes, "DATEITYP_EDIT", 2, pgmx + cmd_pgm, STR_WINTITLE_MTY);
+				d_typ = xy_wdlg_init(hdl_ftypes, adr_ftypes, IDENT_EDIT_FILE_TYPE, 2, pgmx + cmd_pgm, STR_WINTITLE_MTY);
 				if (!d_typ)
 				{
 				  fehler:
@@ -1621,18 +1633,18 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		{
 			if (cmd_pgm >= 0)
 			{
-				d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, "ANW_ANMELDEN", 0, pgmx + cmd_pgm, STR_WINTITLE_1AP);
+				d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, IDENT_REGISTER_APP, 0, pgmx + cmd_pgm, STR_WINTITLE_1AP);
 				if (!d_anw)
 					goto fehler;
 			} else
 			{
-				d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, "ANW_ANMELDEN", 1, cmd_pgm_path, STR_WINTITLE_1AP);
+				d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, IDENT_REGISTER_APP, 1, cmd_pgm_path, STR_WINTITLE_1AP);
 				if (!d_anw)
 					goto fehler;
 			}
 		}
 
-		return (1);
+		return 1;
 	}
 
 
@@ -1643,11 +1655,11 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 	{									/* Wenn Dialog geschlossen werden soll... */
 	  close_dialog:
 		d_ica = NULL;
-		return (0);						/* ...dann schlieûen wir ihn auch */
+		return 0;						/* ...dann schlieûen wir ihn auch */
 	}
 
 	if (args.obj < 0)
-		return (1);
+		return 1;
 
 	/* 4. Fall: Exitbutton wurde betÑtigt */
 	/* ---------------------------------- */
@@ -1663,13 +1675,13 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		if (pgm < 0 || pgmx[pgm].name[0] == '<')	/* freie Dateien */
 		{
 			Rform_alert(1, ALRT_IS_PSEUDO, NULL);
-			return (1);
+			return 1;
 		}
 
-		d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, "ANW_ANMELDEN", 0, pgmx + pgm, STR_WINTITLE_1AP);
+		d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, IDENT_REGISTER_APP, 0, pgmx + pgm, STR_WINTITLE_1AP);
 		if (!d_anw)
 			Rform_alert(1, ALRT_ERRWINDOPEN, NULL);
-		return (1);
+		return 1;
 	}
 
 	/* Doppelklick auf Dateinamen */
@@ -1684,11 +1696,11 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		else
 			dat = linx[dat].datnr;
 
-		d_typ = xy_wdlg_init(hdl_ftypes, adr_ftypes, "DATEITYP_EDIT", 1, datx + dat, STR_WINTITLE_MTY);
+		d_typ = xy_wdlg_init(hdl_ftypes, adr_ftypes, IDENT_EDIT_FILE_TYPE, 1, datx + dat, STR_WINTITLE_MTY);
 		if (!d_typ)
 			Rform_alert(1, ALRT_ERRWINDOPEN, NULL);
 
-		return (1);
+		return 1;
 	}
 
 
@@ -1698,7 +1710,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 	if ((args.clicks == 2) && (pgmicnobj_to_showindex(args.obj) >= 0))
 	{
 		open_iconsel();
-		return (1);
+		return 1;
 	}
 
 
@@ -1708,7 +1720,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 	if ((args.clicks == 2) && (daticnobj_to_showindex(args.obj) >= 0))
 	{
 		open_iconsel();
-		return (1);
+		return 1;
 	}
 
 
@@ -1734,7 +1746,11 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		(args.obj == PN_DOWN) ||
 		(args.obj == PN_BSL) ||
 		(args.obj == PN_SLID) ||
-		(args.obj == PRG1) || (args.obj == PRG2) || (args.obj == PRG3) || (args.obj == PRG4) || (args.obj == PRG5))
+		(args.obj == PRG1) ||
+		(args.obj == PRG2) ||
+		(args.obj == PRG3) ||
+		(args.obj == PRG4) ||
+		(args.obj == PRG5))
 	{
 		oldsel = selected_pgmline;
 
@@ -1749,7 +1765,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		{
 			pgm_was_selected(args.dialog, selected_pgmline->pgmnr, FALSE);
 		}
-		return (1);
+		return 1;
 	}
 
 
@@ -1771,7 +1787,11 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		(args.obj == DN_DOWN) ||
 		(args.obj == DN_BSL) ||
 		(args.obj == DN_SLID) ||
-		(args.obj == DAT1) || (args.obj == DAT2) || (args.obj == DAT3) || (args.obj == DAT4) || (args.obj == DAT5))
+		(args.obj == DAT1) ||
+		(args.obj == DAT2) ||
+		(args.obj == DAT3) ||
+		(args.obj == DAT4) ||
+		(args.obj == DAT5))
 	{
 		oldsel = selected_datline;
 		oldsel2 = selected_spdfile;
@@ -1799,7 +1819,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 				dat_was_selected(args.dialog, selected_datline->datnr);
 			}
 		}
-		return (1);
+		return 1;
 	}
 
 
@@ -1809,7 +1829,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 
 	if (args.obj == NEU_PGM)
 	{
-		d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, "ANW_ANMELDEN", 0, NULL, STR_WINTITLE_1AP);
+		d_anw = xy_wdlg_init(hdl_anwndg, adr_anwndg, IDENT_REGISTER_APP, 0, NULL, STR_WINTITLE_1AP);
 		if (!d_anw)
 			Rform_alert(1, ALRT_ERRWINDOPEN, NULL);
 		goto ende;
@@ -1824,7 +1844,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 
 		sel = selected_pgmnr;
 		if (sel < 0)
-			exit(-1);					/* ??? */
+			exit(1);					/* ??? */
 		deselect_program(args.dialog);
 		if (selected_pgmline)
 		{
@@ -1841,7 +1861,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 	if (args.obj == NEU_DAT)
 	{
 		if (!selected_program)
-			exit(-1);					/* interner Fehler */
+			exit(1);					/* interner Fehler */
 		mypgm = selected_program;
 		if ((mypgm->name[0] != '<') && (!mypgm->path[0]))
 		{
@@ -1849,7 +1869,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 			goto ende;
 		}
 
-		d_typ = xy_wdlg_init(hdl_ftypes, adr_ftypes, "DATEITYP_EDIT", 0, mypgm, STR_WINTITLE_MTY);
+		d_typ = xy_wdlg_init(hdl_ftypes, adr_ftypes, IDENT_EDIT_FILE_TYPE, 0, mypgm, STR_WINTITLE_MTY);
 		if (!d_typ)
 			Rform_alert(1, ALRT_ERRWINDOPEN, NULL);
 		goto ende;
@@ -1864,7 +1884,7 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 
 		sel = selected_datnr;
 		if (!selected_datfile)
-			exit(-1);					/* ??? */
+			exit(1);					/* ??? */
 		deselect_dfile(args.dialog);
 		if (selected_datline)
 		{
@@ -1897,10 +1917,10 @@ WORD cdecl hdl_ica(struct HNDL_OBJ_args args)
 		goto close_dialog;
 	}
 
-	return (1);
+	return 1;
 
   ende:
 	ob_dsel(tree, args.obj);
 	subobj_wdraw(args.dialog, args.obj, args.obj, 1);
-	return (1);							/* weiter */
+	return 1;							/* weiter */
 }
