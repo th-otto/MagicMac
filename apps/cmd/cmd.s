@@ -578,6 +578,7 @@ alloc_tpa:
  move.l   d0,(a0)
  bne.b    atpa_end                 * alles ok
  lea      err_39s(pc),a0
+ bsr      get_country_str
  bsr      strcon
  clr.l    d0                       * Fehler : NULL- Pointer
 atpa_end:
@@ -998,11 +999,9 @@ chkdrive:
  bra.b    isd_end
 isd_err:
  bsr      inc_errlv
- bsr      crlf_con
- lea      err_46s(pc),a0           * "UngÅltiges Laufwerk"
- bsr      strcon
- bsr      crlf_con
- moveq    #-1,d0
+ moveq    #EDRIVE,d0
+ bsr      crprint_err
+ moveq    #ERROR,d0
 isd_end:
  move.w   (sp)+,d5
  rts
@@ -1043,7 +1042,7 @@ chgdrive:
  moveq    #ENMFIL,d1
  sub.l    d1,d0               * Fehlercode "Keine Dateien" abziehen
  beq.b    chgd_end            * "Keine Dateien" ist kein Fehler
- moveq    #-1,d0
+ moveq    #ERROR,d0
 chgd_end:
  move.w   (sp)+,d7
  unlk     a6

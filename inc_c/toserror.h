@@ -9,16 +9,16 @@
 #define E_SEEK	 -6L	/* seek error			*/
 #define EMEDIA	 -7L	/* unknown media		*/
 #define ESECNF	 -8L	/* sector not found		*/
-#define EPAPER	 -9L	/* no paper			*/
+#define EPAPER	 -9L	/* no paper				*/
 #define EWRITF	-10L	/* write fault			*/
 #define EREADF	-11L	/* read fault			*/
 #define EGENRL	-12L	/* general error		*/
 #define EWRPRO	-13L	/* write protect		*/
 #define E_CHNG	-14L	/* media change 		*/
 #define EUNDEV	-15L	/* unknown device		*/
-#define EBADSF	-16L	/* bad sectors on format	*/
+#define EBADSF	-16L	/* bad sectors on format */
 #define EOTHER	-17L	/* insert other disk	*/
-#define EINSERT -18     /* insert media */
+#define EINSERT -18     /* insert media 	    */
 
 /* BDOS level errors */
 
@@ -31,7 +31,7 @@
 #define ENSMEM	-39L	/* insufficient memory			 8 */
 #define EIMBA	-40L	/* invalid memory block address  9 */
 #define EDRIVE	-46L	/* invalid drive was specified	15 */
-#define ENSAME - 48L	/* MV between two different drives 17 */
+#define ENSAME  -48L	/* MV between two different drives 17 */
 #define ENMFIL	-49L	/* no more files				18 */
 
 
@@ -45,7 +45,7 @@
 /* KAOS extensions */
 
 #define EBREAK	-68 	/* user break (^C)				37 */
-#define EXCPT	-69 	/* 68000- exception ("bombs")		38 */
+#define EXCPT	-69 	/* 68000- exception ("bombs")	38 */
 
 /* MiNT extensions */
 
