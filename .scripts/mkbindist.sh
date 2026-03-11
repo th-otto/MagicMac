@@ -37,6 +37,7 @@ for lang in $LANGUAGES; do
 	mcopy "$SRCDIR/kernel/build/$lang/mhades.ram" "$BUILDROOT/$lang"
 	mcopy "$SRCDIR/kernel/build/$lang/mraven.ram" "$BUILDROOT/$lang"
 	mcopy "$SRCDIR/kernel/build/$lang/magcmacx.os" "$BUILDROOT/$lang"
+	mcopy "$SRCDIR/kernel/build/$lang/mag_mac.ram" "$BUILDROOT/$lang"
 	mcopy "$SRCDIR/kernel/build/$lang/magic_pc.os" "$BUILDROOT/$lang"
 	mcopy "$SRCDIR/kernel/build/$lang/magiclin.os" "$BUILDROOT/$lang"
 
