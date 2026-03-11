@@ -14,7 +14,7 @@
 #define	N_IMAGE		91
 
 /*
- * header of a *.OSD/*.NOD/*.SYS driver
+ * header of a *.OSD / *.NOD / *.SYS driver
  */
 typedef struct DRVR_tag {
 	/*  0 */ unsigned short branch;

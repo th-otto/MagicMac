@@ -370,7 +370,6 @@ vtc_charrev:
 	rts
 
 /*
-/*
  * d0 (16 - charheight) * 2
  * a1 cursor address
  * a2 bytes pro line

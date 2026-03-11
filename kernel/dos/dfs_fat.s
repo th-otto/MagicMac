@@ -117,7 +117,7 @@ bs_BootSig:    DS.B      1    /* 0x29 legt fest, dass die folgenden drei Felder 
 bs_VolID:      DS.B      4    /* Seriennummer, die mit bs_VolLab zusammen zur Medienwechselerkennung verwendet wird */
                               /* ist i.a. Datum+Uhrzeit der Formatierung kombiniert */
 bs_VolLab:     DS.B      11   /* muss mit dem Disknamen im Wurzelverzeichnis identisch sein. */
-                              /* Ist "NO NAME    ", wenn das Medium unbenannt ist
+                              /* Ist "NO NAME    ", wenn das Medium unbenannt ist */
 bs_FilSysType: DS.B      8    /* "FAT32   ". Darf aber nicht zur Bestimmung des Typs verwendet werden */
 
 ; Noch wichtig: sector[510] == 0x55, sector[511] == 0xaa
