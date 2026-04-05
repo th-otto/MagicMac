@@ -886,7 +886,7 @@ bot_l3:
 
 * Cartridge testen
 
-;    IFEQ HADES | RAVEN
+;    IFEQ HADES
  moveq    #2,d0
  bsr      cartscan
 ;    ENDIF
@@ -948,7 +948,7 @@ bot_l4:
 
 * Cartridge testen
 
-;    IFEQ HADES | RAVEN
+;    IFEQ HADES
  clr.w    d0
  bsr      cartscan
 ;    ENDIF
@@ -965,7 +965,7 @@ bot_l4:
 
 ; FIXME: boot loader for CTPCI invokes trap #0 here
 
-;    IFEQ HADES | RAVEN
+;    IFEQ HADES
  moveq    #1,d0
  bsr      cartscan
 ;    ENDIF
