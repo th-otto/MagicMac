@@ -558,7 +558,8 @@ int main(int argc, char *argv[])
 	char apname[16];
 	char s[256];
 	int i;
-	int dev, xdv, txt, isfalcon, ct60;
+	int dev, xdv, txt, isfalcon;
+	int have_poweroff;
 	int doex, isgr, isover;
 	int msgtyp;
 	int iteration;
@@ -609,7 +610,8 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-	ct60 = xbios(39, 'AnKr', 4, 0x43543630L) != 0;
+	have_poweroff  = xbios(39, 'AnKr', 4, 0x43543630L) != 0; /* ct60  */
+	have_poweroff |= xbios(39, 'AnKr', 4, 0x5241564EL) != 0; /* raven */
 	
 	/* -w oder -c */
 
@@ -620,7 +622,7 @@ int main(int argc, char *argv[])
 			bootmode = coldboot;
 		else if (c == 'W')
 			bootmode = warmboot;
-		else if (c == 'P' && ct60)
+		else if (c == 'P' && have_poweroff)
 			bootmode = poweroff;
 		argv++;
 		argc--;
@@ -865,7 +867,7 @@ int main(int argc, char *argv[])
 			 */
 			if (bootmode == ask)
 			{
-				sprintf(s, s_successful, ct60 ? s_poweroff : "");
+				sprintf(s, s_successful, have_poweroff ? s_poweroff : "");
 				dev = form_alert(1, s);
 /*				shel_write(SHW_SHUTDOWN, FALSE, 0, NULL, NULL);	*/
 				if (dev == 1)
