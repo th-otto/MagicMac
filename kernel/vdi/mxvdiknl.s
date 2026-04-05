@@ -564,8 +564,10 @@ chk_blitter:      movem.l  d1/a0-a1,-(sp)
                   movea.l  8.w,a1            ;Busfehler-Vektor sichern
                   move.l   #bus_err_tst,8.w  ;eigenen Vektor eintragen
                   moveq.l  #0,d0
+IFEQ RAVEN
                   tst.w    ($ffff8a00).w     ;auf Hardware zugreifen
                   moveq.l  #2,d0             ;Blitter ist vorhanden
+ENDIF
 bus_err_tst:      move.l   a1,8.w            ;Busfehler-Vektor zurueck
                   movea.l  a0,sp             ;Stackpointer zurueck
                   move.w   d1,sr             ;Statusregister zurueck
